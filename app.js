@@ -26,7 +26,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "2.3";
+  const APP_VERSION = "2.4";
 
   let recovering = false;
   async function selfHeal() {
@@ -41,8 +41,14 @@
       await Promise.all(keys.map((k) => caches.delete(k)));
     } catch (e) { /* noop */ }
     try {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map((r) => r.unregister()));
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        if (regs.length) {
+          await Promise.all(regs.map((r) => r.update().catch(() => {})));
+        } else {
+          await navigator.serviceWorker.register("sw.js");
+        }
+      }
     } catch (e) { /* noop */ }
     location.reload();
   }
