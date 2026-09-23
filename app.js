@@ -26,7 +26,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "2.5";
+  const APP_VERSION = "2.6";
 
   let recovering = false;
   async function selfHeal() {
@@ -157,32 +157,18 @@
   }
 
   /* ---------- Caricamento tracce ---------- */
-  async function loadBuiltinFile(file) {
-    const res = await fetch(file);
-    if (!res.ok) throw new Error("HTTP " + res.status + " " + file);
-    const blob = await res.blob();
-    return URL.createObjectURL(blob);
-  }
-
   async function loadAll() {
-    const builtin = [];
-    for (let i = 0; i < BUILTIN.length; i++) {
-      const b = BUILTIN[i];
-      try {
-        const url = await loadBuiltinFile(b.file);
-        builtin.push({
-          id: "builtin-" + i,
-          title: b.title,
-          artist: b.artist || "",
-          url,
-          builtin: true,
-          gradient: PALETTE[i % PALETTE.length],
-          size: null
-        });
-      } catch (e) {
-        console.warn("Salta " + b.file, e);
-      }
-    }
+    const builtin = BUILTIN.map((b, i) => ({
+      id: "builtin-" + i,
+      title: b.title,
+      artist: b.artist || "",
+      album: "",
+      cover: null,
+      url: b.file,
+      builtin: true,
+      gradient: PALETTE[i % PALETTE.length],
+      size: null
+    }));
 
     let added = [];
     try {
