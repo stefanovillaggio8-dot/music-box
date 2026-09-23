@@ -29,6 +29,9 @@
         <p class="hud-title" id="hudTitle">Nessuna traccia</p>
         <p class="hud-sub" id="hudSub">Aggiungi musica per iniziare</p>
       </div>
+      <button class="lyr-btn" id="btnLyrics" hidden aria-label="Mostra testo" title="Testo">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 5a1 1 0 0 0 0 2h16a1 1 0 1 0 0-2H4Zm0 5a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2H4Zm0 5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H4Zm16.5 1.1 1.9 2.1a1 1 0 0 1-1.5 1.3l-1.8-1.9c-.9.6-2 .9-3.1.9-2.4 0-4-1.6-4-3.9s1.6-3.9 4-3.9 4 1.6 4 3.9v-.4c0-.2 0-.3 0-.5-.5-.3-1.1-.5-1.7-.5-1.4 0-2.4 1-2.4 2.4s1 2.4 2.4 2.4c.6 0 1.2-.2 1.7-.5v.2Z"/></svg>
+      </button>
     </section>
 
     <ul class="playlist" id="playlist"></ul>
@@ -68,6 +71,19 @@
       </div>
     </div>
   </footer>
+
+  <div class="lyrics-overlay" id="lyricsPanel" hidden>
+    <div class="lyrics-card">
+      <div class="lyrics-head">
+        <div class="lyrics-head-info">
+          <p class="lyrics-title" id="lyricsTitle"></p>
+          <p class="lyrics-sub" id="lyricsSub"></p>
+        </div>
+        <button class="lyrics-close" id="lyricsClose" aria-label="Chiudi testi">×</button>
+      </div>
+      <div class="lyrics-body" id="lyricsBody"></div>
+    </div>
+  </div>
 
   <div class="toast" id="toast" role="status"></div>
 

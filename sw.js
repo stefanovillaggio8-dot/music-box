@@ -1,10 +1,11 @@
-const CACHE = "musicbox-v1";
+const CACHE = "musicbox-v2";
 const ASSETS = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
   "./manifest.json",
+  "./lyrics.json",
   "./icon-192.png",
   "./icon-512.png",
   "./icon-180.png",

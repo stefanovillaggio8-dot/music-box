@@ -2,10 +2,10 @@
 
 (function () {
   const BUILTIN = [
-    { title: "BLANCO - SOTTOGONNA", file: "songs/track-1.mp3" },
-    { title: "Madame - QUANTO FORTE TI PENSAVO", file: "songs/track-2.mp3" },
-    { title: "Poter scegliere - Nayt (Live)", file: "songs/track-3.mp3" },
-    { title: "Sono Ok", file: "songs/track-4.mp3" }
+    { title: "BLANCO - SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO" },
+    { title: "Madame - QUANTO FORTE TI PENSAVO", file: "songs/track-2.mp3", artist: "Madame" },
+    { title: "Poter scegliere - Nayt (Live)", file: "songs/track-3.mp3", artist: "Nayt" },
+    { title: "Sono Ok", file: "songs/track-4.mp3", artist: "" }
   ];
 
   const PALETTE = [
@@ -21,14 +21,14 @@
   const emptyEl = $("empty");
   const fileInput = $("fileInput");
 
-  const audio = new Audio();
-  audio.preload = "metadata";
-
-  let tracks = [];      // [{ id, title, url, builtin, gradient, blob? }]
+  let audio = null;
+  let tracks = [];
   let currentId = null;
   let shuffle = false;
   let repeat = false;
   let query = "";
+
+  let lyricsData = {};
 
   let db = null;
   const DB_NAME = "musicbox";
@@ -121,6 +121,17 @@
     render();
   }
 
+  async function loadLyrics() {
+    try {
+      const res = await fetch("lyrics.json");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      lyricsData = await res.json();
+    } catch (e) {
+      console.warn("Testi non disponibili", e);
+      lyricsData = {};
+    }
+  }
+
   function hashId(s) {
     let h = 0;
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
@@ -196,6 +207,78 @@
     });
   }
 
+  /* ---------- Audio robusto (fix iOS lock screen) ---------- */
+  function setPlaybackState(s) {
+    if ("mediaSession" in navigator) {
+      try { navigator.mediaSession.playbackState = s; } catch (e) { /* noop */ }
+    }
+  }
+
+  function handleEnded() {
+    if (repeat) {
+      audio.currentTime = 0;
+      doPlay();
+    } else {
+      playById(tracks[nextIndex()].id);
+    }
+  }
+
+  function handleTime() {
+    const t = audio.currentTime;
+    const d = audio.duration || 0;
+    const fill = $("playerProgress").querySelector(".fill");
+    fill.style.width = (d ? (t / d) * 100 : 0) + "%";
+    if (!audio.paused) {
+      $("curTime").textContent = fmtTime(t);
+      $("totTime").textContent = d ? fmtTime(d) : "0:00";
+    }
+    syncPlayUI();
+  }
+
+  function handleMetadata() {
+    $("totTime").textContent = fmtTime(audio.duration || 0);
+  }
+
+  function handleError() {
+    console.warn("Errore audio, provo a recuperare");
+    rebuildAudio(true);
+  }
+
+  function createAudio() {
+    const a = new Audio();
+    a.preload = "metadata";
+    a.addEventListener("play", syncPlayUI);
+    a.addEventListener("pause", syncPlayUI);
+    a.addEventListener("ended", handleEnded);
+    a.addEventListener("timeupdate", handleTime);
+    a.addEventListener("loadedmetadata", handleMetadata);
+    a.addEventListener("error", handleError);
+    return a;
+  }
+
+  function rebuildAudio(autoplay) {
+    const t = current();
+    if (!t) return;
+    const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
+    audio = createAudio();
+    audio.src = t.url;
+    audio.volume = 1;
+    try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
+    if (autoplay) doPlay();
+  }
+
+  async function doPlay() {
+    if (!audio) audio = createAudio();
+    try {
+      audio.volume = 1;
+      setPlaybackState("playing");
+      await audio.play();
+    } catch (e) {
+      console.warn("Play bloccato, ricreo l'audio", e);
+      rebuildAudio(true);
+    }
+  }
+
   /* ---------- Player ---------- */
   function current() {
     return tracks.find((t) => t.id === currentId) || null;
@@ -207,19 +290,30 @@
     $("hudArt").style.background = t ? t.gradient : "linear-gradient(135deg,#333,#222)";
     $("playerTitle").textContent = t ? t.title : "—";
     $("hudTitle").textContent = t ? t.title : "Nessuna traccia";
-    $("hudSub").textContent = t ? (t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
+    $("hudSub").textContent = t ? (t.builtin && lyricsData[t.id] ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
+    updateLyricsButton();
     render();
+  }
+
+  function updateLyricsButton() {
+    $("btnLyrics").hidden = !currentLyrics();
+  }
+
+  function currentLyrics() {
+    if (!currentId || !lyricsData[currentId] || !lyricsData[currentId].text) return null;
+    return lyricsData[currentId];
   }
 
   async function playById(id, autoplay = true) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
     currentId = id;
+    if (!audio) audio = createAudio();
     audio.src = t.url;
+    audio.volume = 1;
     setHud();
-    if (autoplay) {
-      try { await audio.play(); } catch (e) { console.warn("Play bloccato", e); }
-    }
+    updateMediaSession();
+    if (autoplay) await doPlay();
   }
 
   function nextIndex() {
@@ -227,7 +321,7 @@
       let n = Math.floor(Math.random() * tracks.length);
       const cur = tracks.findIndex((x) => x.id === currentId);
       if (cur >= 0 && tracks.length > 1) {
-        while (n === cur) n = Math.floor(Math.random() * tracks.length);
+        for (let k = 0; k < 20 && n === cur; k++) n = Math.floor(Math.random() * tracks.length);
       }
       return n;
     }
@@ -240,15 +334,17 @@
     return (idx - 1 + tracks.length) % Math.max(tracks.length, 1);
   }
 
-  function togglePlay() {
-    if (!currentId && tracks.length) playById(tracks[0].id);
-    if (audio.paused) audio.play();
+  async function togglePlay() {
+    if (!currentId && tracks.length) await playById(tracks[0].id);
+    if (audio.paused) await doPlay();
     else audio.pause();
   }
 
   function syncPlayUI() {
+    if (!audio) return;
     $("iconPlay").hidden = !audio.paused;
     $("iconPause").hidden = audio.paused;
+    setPlaybackState(audio.paused ? "paused" : "playing");
   }
 
   function clampProgress(e) {
@@ -260,19 +356,45 @@
   function updateMediaSession() {
     if (!("mediaSession" in navigator)) return;
     const t = current();
-    navigator.mediaSession.metadata = new MediaMetadata({
+    const meta = new MediaMetadata({
       title: t ? t.title : "MusicBox",
-      artist: "MusicBox",
-      album: ""
+      artist: t && t.builtin ? (BUILTIN[Number(t.id.replace("builtin-", ""))] || {}).artist || "MusicBox" : "MusicBox",
+      album: "MusicBox"
     });
+    navigator.mediaSession.metadata = meta;
     const setHandler = (action, fn) => {
       try { navigator.mediaSession.setActionHandler(action, fn); } catch (e) { /* noop */ }
     };
-    setHandler("play", () => audio.play());
+    setHandler("play", () => doPlay());
     setHandler("pause", () => audio.pause());
     setHandler("nexttrack", () => playById(tracks[nextIndex()].id));
     setHandler("previoustrack", () => playById(tracks[prevIndex()].id));
     setHandler("seekto", (d) => { if (d.seekTime != null) audio.currentTime = d.seekTime; });
+  }
+
+  /* ---------- Testi ---------- */
+  function openLyrics() {
+    const l = currentLyrics();
+    if (!l) return;
+    $("lyricsTitle").textContent = l.title;
+    $("lyricsSub").textContent = l.artist || "";
+    const body = $("lyricsBody");
+    body.innerHTML = "";
+    l.text.split("\n").forEach((line) => {
+      const p = document.createElement("p");
+      p.textContent = line;
+      const trim = line.trim();
+      if (/^\[.*\]$/.test(trim)) p.className = "lyr-sec";
+      else if (!trim) p.className = "lyr-gap";
+      body.appendChild(p);
+    });
+    $("lyricsPanel").hidden = false;
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeLyrics() {
+    $("lyricsPanel").hidden = true;
+    document.body.classList.remove("no-scroll");
   }
 
   /* ---------- Aggiunta / rimozione ---------- */
@@ -280,11 +402,10 @@
     let ok = 0;
     const errors = [];
     for (const file of Array.from(fileList)) {
-      const blob = file;
       const rec = {
         id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
         title: file.name.replace(/\.[^.]+$/, ""),
-        blob,
+        blob: file,
         size: file.size
       };
       try {
@@ -305,9 +426,10 @@
     try { await dbDel(id); } catch (e) { console.warn(e); }
     if (currentId === id) {
       audio.pause();
-      audio.removeAttribute("src");
-      audio.load();
+      closeLyrics();
+      rebuildAudio(false);
       currentId = null;
+      setHud();
     }
     await loadAll();
     toast("Brano eliminato");
@@ -323,42 +445,7 @@
     toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
   }
 
-  /* ---------- Eventi ---------- */
-  audio.addEventListener("play", syncPlayUI);
-  audio.addEventListener("pause", syncPlayUI);
-
-  audio.addEventListener("ended", () => {
-    if (repeat) {
-      audio.currentTime = 0;
-      audio.play();
-    } else {
-      playById(tracks[nextIndex()].id);
-    }
-  });
-
-  audio.addEventListener("timeupdate", () => {
-    const t = audio.currentTime;
-    const d = audio.duration || 0;
-    const fill = $("playerProgress").querySelector(".fill");
-    fill.style.width = (d ? (t / d) * 100 : 0) + "%";
-    if (!audio.paused) {
-      $("curTime").textContent = fmtTime(t);
-      $("totTime").textContent = d ? fmtTime(d) : "0:00";
-    }
-    syncPlayUI();
-  });
-
-  audio.addEventListener("loadedmetadata", () => {
-    $("totTime").textContent = fmtTime(audio.duration || 0);
-  });
-
-  function fmtTime(s) {
-    if (!isFinite(s)) return "0:00";
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return m + ":" + String(sec).padStart(2, "0");
-  }
-
+  /* ---------- Eventi UI ---------- */
   $("btnPlay").addEventListener("click", togglePlay);
   $("btnNext").addEventListener("click", () => playById(tracks[nextIndex()].id));
   $("btnPrev").addEventListener("click", () => {
@@ -378,8 +465,14 @@
     $("btnRepeat").classList.toggle("on", repeat);
   });
 
+  $("btnLyrics").addEventListener("click", openLyrics);
+  $("lyricsClose").addEventListener("click", closeLyrics);
+  $("lyricsPanel").addEventListener("click", (e) => {
+    if (e.target === $("lyricsPanel")) closeLyrics();
+  });
+
   $("playerProgress").addEventListener("click", (e) => {
-    if (!audio.duration) return;
+    if (!audio || !audio.duration) return;
     audio.currentTime = clampProgress(e) * audio.duration;
   });
   $("playerProgress").addEventListener("touchstart", (e) => e.stopPropagation(), { passive: true });
@@ -397,18 +490,23 @@
 
   /* ---------- Avvio ---------- */
   (async function init() {
+    audio = createAudio();
+    setPlaybackState("none");
     try {
       db = await openDB();
     } catch (e) {
       console.warn("DB offline su questo browser", e);
       db = null;
     }
+    await loadLyrics();
     await loadAll();
     updateMediaSession();
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").then((reg) => {
-        console.log("SW registrato", reg);
+        if (!navigator.serviceWorker.controller) {
+          reg.update();
+        }
       }).catch((err) => console.warn("SW fallito", err));
     }
   })();
