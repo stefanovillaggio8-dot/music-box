@@ -13,14 +13,14 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-html, body { height: 100%; }
+html, body { min-height: 100%; }
 
 body {
   background: var(--bg);
   color: var(--txt);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(var(--player-h) + env(safe-area-inset-bottom) + 20px);
+  padding-bottom: 0;
 }
 
 .topbar {
@@ -69,6 +69,9 @@ body {
   margin: 0 4px 8px;
 }
 
+.logo-wrap { display: flex; align-items: baseline; gap: 7px; }
+.ver { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .5px; }
+
 .search-wrap { position: relative; }
 .search-icon {
   position: absolute;
@@ -93,7 +96,7 @@ body {
 #search:focus { border-color: var(--accent); }
 #search::placeholder { color: var(--muted); }
 
-main { padding: 8px 16px 0; }
+main { padding: 8px 16px calc(var(--player-h) + 40px); }
 
 .hud {
   display: flex;

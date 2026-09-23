@@ -25,6 +25,7 @@
   ];
 
   const $ = (id) => document.getElementById(id);
+  const APP_VERSION = "2.1";
   const searchEl = $("search");
   const playlistEl = $("playlist");
   const emptyEl = $("empty");
@@ -1603,9 +1604,16 @@
     render();
   });
 
-  $("btnRefresh").addEventListener("click", () => {
+  $("btnRefresh").addEventListener("click", async () => {
     toast("Aggiorno...");
-    setTimeout(() => window.location.reload(), 350);
+    try {
+      if (swReg) await swReg.update();
+    } catch (e) { /* noop */ }
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    } catch (e) { /* noop */ }
+    setTimeout(() => window.location.reload(), 400);
   });
 
   document.addEventListener("visibilitychange", () => {
@@ -1630,6 +1638,7 @@
   (async function init() {
     audio = createAudio();
     setPlaybackState("none");
+    $("appVer").textContent = "v" + APP_VERSION;
     try {
       db = await openDB();
     } catch (e) {

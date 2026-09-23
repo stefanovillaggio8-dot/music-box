@@ -1,4 +1,4 @@
-const CACHE = "musicbox-v9";
+const CACHE = "musicbox-v10";
 const ASSETS = [
   "./",
   "./index.html",
