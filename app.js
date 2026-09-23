@@ -14,8 +14,9 @@
     { title: "CIGNO NERO RMX (Nayt, Frah Quintale, Tony Boy)", file: "songs/track-10.mp3", artist: "Nayt / Frah Quintale / Tony Boy" },
     { title: "SAITTA - Romantici Terroni", file: "songs/track-11.mp3", artist: "SAITTA" },
     { title: "thasup - s!r!", file: "songs/track-12.mp3", artist: "thasup" },
-    { title: "Tony Boy - Victoria", file: "songs/track-13.mp3", artist: "Tony Boy" }
-  ];
+    { title: "Tony Boy - Victoria", file: "songs/track-13.mp3", artist: "Tony Boy" },
+    { title: "Un mondo a parte (Visual)", file: "songs/track-14.mp3", artist: "Jovanotti" },
+];
 
   const PALETTE = [
     "linear-gradient(135deg,#b06bff,#4fc3ff)",
