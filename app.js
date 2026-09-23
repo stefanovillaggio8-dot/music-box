@@ -41,6 +41,7 @@
   let scrubbing = false;
   let pendingSeek = null;
   let lastSave = 0;
+  let swReg = null;
 
   const LS = {
     get(k, d) {
@@ -642,9 +643,12 @@
   });
 
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden && audio) {
-      syncPlayUI();
-      updateMediaSession();
+    if (!document.hidden) {
+      if (audio) {
+        syncPlayUI();
+        updateMediaSession();
+      }
+      if (swReg) swReg.update().catch(() => {});
     }
     savePos();
   });
@@ -652,6 +656,9 @@
   window.addEventListener("resize", updatePlayerHeight);
   window.addEventListener("orientationchange", updatePlayerHeight);
   if (window.visualViewport) window.visualViewport.addEventListener("resize", updatePlayerHeight);
+  setInterval(() => {
+    if (swReg) swReg.update().catch(() => {});
+  }, 180000);
 
   /* ---------- Avvio ---------- */
   (async function init() {
@@ -701,6 +708,7 @@
         setTimeout(() => window.location.reload(), 500);
       });
       navigator.serviceWorker.register("sw.js").then((reg) => {
+        swReg = reg;
         if (!navigator.serviceWorker.controller) {
           reg.update();
         }
