@@ -45,6 +45,7 @@ body {
   letter-spacing: -0.5px;
 }
 .logo span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.logo.long { font-size: 15px; letter-spacing: -0.2px; line-height: 1.25; max-width: 190px; }
 
 .logo-refresh {
   width: 36px;

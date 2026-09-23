@@ -25,7 +25,32 @@
   ];
 
   const $ = (id) => document.getElementById(id);
-  const APP_VERSION = "2.2";
+  const APP_NAME = "spotifynonavraiimieisoldi";
+  const APP_VERSION = "2.3";
+
+  let recovering = false;
+  async function selfHeal() {
+    if (recovering) return;
+    let done = false;
+    try { done = sessionStorage.getItem("mb-healed") === "1"; } catch (e) { done = false; }
+    if (done) return;
+    recovering = true;
+    try { sessionStorage.setItem("mb-healed", "1"); } catch (e) { /* noop */ }
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    } catch (e) { /* noop */ }
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    } catch (e) { /* noop */ }
+    location.reload();
+  }
+
+  const startedAt = Date.now();
+  window.addEventListener("error", () => {
+    if (Date.now() - startedAt < 8000) selfHeal();
+  });
   const searchEl = $("search");
   const playlistEl = $("playlist");
   const emptyEl = $("empty");
@@ -520,9 +545,9 @@
     const t = current();
     const bi = t && t.builtin ? BUILTIN[Number(t.id.replace("builtin-", ""))] : null;
     const meta = new MediaMetadata({
-      title: t ? t.title : "MusicBox",
-      artist: bi ? (bi.artist || "MusicBox") : (t && t.artist) || "MusicBox",
-      album: "MusicBox",
+      title: t ? t.title : APP_NAME,
+      artist: bi ? (bi.artist || APP_NAME) : (t && t.artist) || APP_NAME,
+      album: APP_NAME,
       artwork: [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
     });
     navigator.mediaSession.metadata = meta;
