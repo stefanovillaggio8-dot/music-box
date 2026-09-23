@@ -39,7 +39,7 @@
   let query = "";
   let favorites = new Set();
   let favOnly = false;
-  let hiddenTracks = new Set(LS.get("mb.hidden", []));
+  let hiddenTracks = new Set();
   let scrubbing = false;
   let pendingSeek = null;
   let lastSave = 0;
@@ -1675,6 +1675,7 @@
   (async function init() {
     audio = createAudio();
     setPlaybackState("none");
+    hiddenTracks = new Set(LS.get("mb.hidden", []));
     $("appVer").textContent = "v" + APP_VERSION;
     try {
       db = await openDB();
