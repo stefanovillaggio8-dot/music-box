@@ -1,4 +1,4 @@
-const CACHE = "musicbox-v2";
+const CACHE = "musicbox-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -29,22 +29,54 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+const CORE_EXT = [".html", ".css", ".js", ".json", ".png"];
+
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type === "opaque") {
+  const url = new URL(event.request.url);
+
+  if (event.request.method !== "GET" || url.origin !== self.location.origin) {
+    return;
+  }
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clone = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(event.request, clone));
           return response;
-        }
-        const clone = response.clone();
-        caches.open(CACHE).then((cache) => {
-          if (event.request.method === "GET") {
-            cache.put(event.request, clone);
+        })
+        .catch(() => caches.match(event.request).then((r) => r || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  const isCore = CORE_EXT.some((ext) => url.pathname.endsWith(ext));
+
+  if (isCore) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
           }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
         });
-        return response;
-      }).catch(() => caches.match("./index.html"));
-    })
-  );
+      })
+    );
+  }
 });

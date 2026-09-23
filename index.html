@@ -15,7 +15,12 @@
 </head>
 <body>
   <header class="topbar">
-    <h1 class="logo">Music<span>Box</span></h1>
+    <div class="topbar-head">
+      <h1 class="logo">Music<span>Box</span></h1>
+      <button class="logo-refresh" id="btnRefresh" aria-label="Aggiorna app" title="Aggiorna">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a8 8 0 1 1-7.1 4.2 1 1 0 1 1 1.74-1A6 6 0 1 0 12 6a1 1 0 0 1-1-1V3.5L8.4 5.1a1 1 0 0 0 0 1.4L11 8.5V7a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M12.7 9.3a1 1 0 0 1 1.4 0l2.2 2.2a1 1 0 0 1 0 1.4l-2.2 2.2a1 1 0 1 1-1.4-1.4l.5-.5h-2.7a1 1 0 1 1 0-2h2.7l-.5-.5a1 1 0 0 1 0-1.4Z"/></svg>
+      </button>
+    </div>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
       <input type="search" id="search" placeholder="Cerca..." autocomplete="off" />

@@ -32,13 +32,33 @@ body {
   background: linear-gradient(180deg, rgba(15,15,20,.98) 0%, rgba(15,15,20,.85) 70%, transparent 100%);
 }
 
+.topbar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
 .logo {
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  margin-bottom: 12px;
 }
 .logo span { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.logo-refresh {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.08);
+  background: var(--card);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-refresh svg { width: 19px; height: 19px; }
+.logo-refresh:active { color: var(--txt); transform: rotate(180deg); }
 
 .search-wrap { position: relative; }
 .search-icon {

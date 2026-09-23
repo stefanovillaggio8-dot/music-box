@@ -488,6 +488,11 @@
     render();
   });
 
+  $("btnRefresh").addEventListener("click", () => {
+    toast("Aggiorno...");
+    setTimeout(() => window.location.reload(), 350);
+  });
+
   /* ---------- Avvio ---------- */
   (async function init() {
     audio = createAudio();
@@ -503,10 +508,27 @@
     updateMediaSession();
 
     if ("serviceWorker" in navigator) {
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        toast("Aggiornamento pronto");
+        setTimeout(() => window.location.reload(), 500);
+      });
       navigator.serviceWorker.register("sw.js").then((reg) => {
         if (!navigator.serviceWorker.controller) {
           reg.update();
         }
+        reg.addEventListener("updatefound", () => {
+          const newWorker = reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                toast("Aggiornamento disponibile");
+              }
+            });
+          }
+        });
       }).catch((err) => console.warn("SW fallito", err));
     }
   })();
