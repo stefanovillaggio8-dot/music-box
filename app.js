@@ -26,7 +26,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "2.6";
+  const APP_VERSION = "2.7";
 
   let recovering = false;
   async function selfHeal() {
@@ -525,10 +525,15 @@
     else audio.pause();
   }
 
+  function setSvgVisible(el, visible) {
+    if (visible) el.removeAttribute("hidden");
+    else el.setAttribute("hidden", "");
+  }
+
   function syncPlayUI() {
     if (!audio) return;
-    $("iconPlay").hidden = !audio.paused;
-    $("iconPause").hidden = audio.paused;
+    setSvgVisible($("iconPlay"), audio.paused);
+    setSvgVisible($("iconPause"), !audio.paused);
     setPlaybackState(audio.paused ? "paused" : "playing");
   }
 
