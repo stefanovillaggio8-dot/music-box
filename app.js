@@ -292,6 +292,13 @@
     }
   }
 
+  function updatePlayerHeight() {
+    const el = $("player");
+    if (!el) return;
+    const h = Math.round(el.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty("--player-h", h + "px");
+  }
+
   function maybeSavePos() {
     const now = Date.now();
     if (now - lastSave < 3000) return;
@@ -642,6 +649,9 @@
     savePos();
   });
   window.addEventListener("pagehide", savePos);
+  window.addEventListener("resize", updatePlayerHeight);
+  window.addEventListener("orientationchange", updatePlayerHeight);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", updatePlayerHeight);
 
   /* ---------- Avvio ---------- */
   (async function init() {
@@ -655,6 +665,8 @@
     }
     await loadLyrics();
     await loadAll();
+    updatePlayerHeight();
+    setTimeout(updatePlayerHeight, 300);
 
     shuffle = LS.get("mb.shuffle", false);
     repeat = LS.get("mb.repeat", false);
