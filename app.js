@@ -58,14 +58,19 @@
   let db = null;
   const DB_NAME = "musicbox";
   const DB_STORE = "tracks";
+  const DB_IMPORTS = "imports";
+  const DB_VERSION = 2;
 
   /* ---------- IndexedDB ---------- */
   function openDB() {
     return new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, 1);
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
       req.onupgradeneeded = () => {
         if (!req.result.objectStoreNames.contains(DB_STORE)) {
           req.result.createObjectStore(DB_STORE, { keyPath: "id" });
+        }
+        if (!req.result.objectStoreNames.contains(DB_IMPORTS)) {
+          req.result.createObjectStore(DB_IMPORTS, { keyPath: "id" });
         }
       };
       req.onsuccess = () => resolve(req.result);
@@ -97,6 +102,24 @@
       const req = tx.objectStore(DB_STORE).getAll();
       req.onsuccess = () => resolve(req.result || []);
       req.onerror = () => reject(req.error);
+    });
+  }
+
+  function dbSetImport(rec) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_IMPORTS, "readwrite");
+      tx.objectStore(DB_IMPORTS).put(rec);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  function dbDelImport(id) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_IMPORTS, "readwrite");
+      tx.objectStore(DB_IMPORTS).delete(id);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
     });
   }
 
@@ -134,7 +157,10 @@
       added = records.map((r) => ({
         id: r.id,
         title: r.title,
-        artist: "",
+        artist: r.artist || "",
+        album: r.album || "",
+        cover: r.cover || null,
+        source: r.source || "file",
         url: URL.createObjectURL(r.blob),
         builtin: false,
         gradient: PALETTE[(builtin.length + Math.abs(hashId(r.id))) % PALETTE.length],
@@ -203,9 +229,17 @@
       const li = document.createElement("li");
       li.className = "track" + (t.id === currentId ? " active" : "");
 
-      const art = document.createElement("div");
-      art.className = "track-art";
-      art.style.background = t.gradient;
+      let art;
+      if (t.cover) {
+        art = document.createElement("img");
+        art.className = "track-art";
+        art.alt = "";
+        art.src = t.cover;
+      } else {
+        art = document.createElement("div");
+        art.className = "track-art";
+        art.style.background = t.gradient;
+      }
 
       const info = document.createElement("div");
       info.className = "track-info";
@@ -222,7 +256,11 @@
 
       const meta = document.createElement("div");
       meta.className = "track-meta";
-      meta.textContent = t.builtin ? (t.artist || "incluso") : "aggiunta";
+      const bits = [];
+      if (t.artist) bits.push(t.artist);
+      if (t.album) bits.push(t.album);
+      if (t.preview) bits.push("anteprima 30s");
+      meta.textContent = t.builtin ? (t.artist || "incluso") : (bits.length ? bits.join(" · ") : "aggiunta");
       info.appendChild(meta);
 
       li.appendChild(art);
@@ -241,7 +279,7 @@
       });
       li.appendChild(favBtn);
 
-      if (!t.builtin) {
+      if (!t.builtin && !t.preview) {
         const del = document.createElement("button");
         del.className = "track-del";
         del.setAttribute("aria-label", "Elimina " + t.title);
@@ -531,6 +569,7 @@
 
   async function removeTrack(id) {
     try { await dbDel(id); } catch (e) { console.warn(e); }
+    try { await dbDelImport(id); } catch (e) { /* noop */ }
     if (currentId === id) {
       audio.pause();
       closeLyrics();
@@ -540,6 +579,759 @@
     }
     await loadAll();
     toast("Brano eliminato");
+  }
+
+  /* ---------- Importazione: OCR + metadati + download ---------- */
+  const IMPORT_LIMIT = 60;
+  const MAX_DOWNLOAD = 40 * 1024 * 1024;
+  const IA_SEARCH = "https://archive.org/advancedsearch.php";
+  const IA_META = "https://archive.org/metadata/";
+  const IA_THUMB = "https://archive.org/services/img/";
+  const COMMONS_API = "https://commons.wikimedia.org/w/api.php";
+  const OCR_SRC = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+
+  let ocrWorker = null;
+  let importList = [];
+  let importActive = null;
+  let libKeys = new Set();
+
+  function normKey(s) {
+    return (s || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\((live|remaster(ed)?|explicit|bonus track)[^)]*\)/g, " ")
+      .replace(/\[(live|remaster(ed)?|explicit)[^\]]*\]/g, " ")
+      .replace(/[^a-z0-9]+/g, "");
+  }
+
+  function trackKeys(t) {
+    const keys = new Set();
+    const a = normKey(t.artist);
+    let ti = normKey(t.title);
+    if (ti) keys.add(ti);
+    if (a && ti.startsWith(a) && ti.length > a.length) {
+      ti = ti.slice(a.length);
+      keys.add(ti);
+    }
+    if (a && ti) keys.add(a + ti);
+    return keys;
+  }
+
+  function libraryKeys() {
+    const keys = new Set();
+    for (const t of tracks) for (const k of trackKeys(t)) keys.add(k);
+    return keys;
+  }
+
+  function parseImportText(text) {
+    const out = [];
+    const seen = new Set();
+    const lines = String(text || "").split(/\r?\n/);
+    for (const raw of lines) {
+      let line = raw.replace(/\s+/g, " ").trim();
+      if (!line) continue;
+      line = line.replace(/^\d{1,3}\s*[.)\-:]\s*/, "");
+      line = line.replace(/^\[?\d{1,3}\]?[\s.\-]+/, "");
+      line = line.replace(/\(?\b\d{1,2}:\d{2}\b\)?\s*$/, "").trim();
+      if (!line || line.length < 2 || line.length > 120) continue;
+      if (!/[a-z0-9]/i.test(normKey(line))) continue;
+      if (/^(album|artista|artist|brani|tracks?|canzoni|playlist|libreria|shuffle|repeat|ora in riproduzione)$/i.test(line)) continue;
+      if (/^\d+$/.test(line)) continue;
+      let artist = "";
+      let title = line;
+      const m = /^(.+?)\s+[-–—]\s+(.+)$/.exec(line);
+      if (m) {
+        artist = m[1].trim();
+        title = m[2].trim();
+      } else {
+        const m2 = /^(.+?)\s{2,}(.+)$/.exec(line);
+        if (m2) {
+          artist = m2[1].trim();
+          title = m2[2].trim();
+        }
+      }
+      const key = normKey(artist + title);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ artist, title });
+      if (out.length >= IMPORT_LIMIT) break;
+    }
+    return out;
+  }
+
+  function ocrLabel(status) {
+    const map = {
+      "loading tesseract core": "Carico il motore OCR",
+      "initializing tesseract": "Preparo il motore OCR",
+      "loading language traineddata": "Scarico la lingua italiana",
+      "initializing api": "Preparo il riconoscimento",
+      "recognizing text": "Leggo lo screenshot"
+    };
+    return map[status] || status;
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error("OCR non scaricabile, serve la connessione"));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function getOcrWorker(onProgress) {
+    if (ocrWorker) return ocrWorker;
+    if (!window.Tesseract) await loadScript(OCR_SRC);
+    ocrWorker = await window.Tesseract.createWorker(["ita", "eng"], 1, {
+      logger: (m) => {
+        if (m && m.status && typeof m.progress === "number") onProgress(ocrLabel(m.status), m.progress);
+      }
+    });
+    return ocrWorker;
+  }
+
+  async function runOcr(file, onProgress) {
+    const worker = await getOcrWorker(onProgress);
+    const res = await worker.recognize(file);
+    return (res && res.data && res.data.text) || "";
+  }
+
+  function archiveUrl(identifier, name) {
+    return "https://archive.org/download/" + encodeURIComponent(identifier) + "/" +
+      encodeURIComponent(name).replace(/%2F/g, "/");
+  }
+
+  function pickAudioFile(files) {
+    const audio = (files || []).filter((f) => {
+      const n = (f.name || "").toLowerCase();
+      return /\.(mp3|m4a|aac|mp4)$/.test(n) && f.size && Number(f.size) < MAX_DOWNLOAD;
+    });
+    audio.sort((a, b) => Number(a.size) - Number(b.size));
+    return audio[0] || null;
+  }
+
+  function titleScore(want, ...texts) {
+    const w = normKey(want);
+    if (!w) return 0;
+    for (const t of texts) {
+      const n = normKey(t);
+      if (!n) continue;
+      if (n === w) return 60;
+      if (n.includes(w)) return 50;
+    }
+    const short = w.slice(0, Math.max(5, Math.floor(w.length / 2)));
+    for (const t of texts) {
+      const n = normKey(t);
+      if (n && short.length > 4 && n.includes(short)) return 28;
+    }
+    return 0;
+  }
+
+  async function iaQuery(query) {
+    const url = IA_SEARCH + "?q=" + encodeURIComponent(query) +
+      "&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=licenseurl" +
+      "&rows=12&page=1&output=json";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("archive non raggiungibile");
+    const json = await res.json();
+    return (json.response && json.response.docs) || [];
+  }
+
+  async function searchArchive(item) {
+    let docs = [];
+    try {
+      docs = await iaQuery('title:("' + item.title + '") AND mediatype:(audio)');
+    } catch (e) { /* noop */ }
+    if (!docs.length) {
+      try {
+        docs = await iaQuery('"' + item.title + '" AND mediatype:(audio)');
+      } catch (e) { /* noop */ }
+    }
+    if (!docs.length) return null;
+
+    const ranked = docs
+      .map((doc) => {
+        let sc = titleScore(item.title, doc.title);
+        if (item.artist) {
+          const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
+          if (creator && normKey(creator).includes(normKey(item.artist))) sc += 15;
+        }
+        return { doc, sc };
+      })
+      .filter((x) => x.doc.identifier && x.sc >= 28)
+      .sort((a, b) => b.sc - a.sc)
+      .slice(0, 4);
+
+    for (const r of ranked) {
+      const doc = r.doc;
+      let meta;
+      try {
+        const mres = await fetch(IA_META + encodeURIComponent(doc.identifier));
+        if (!mres.ok) continue;
+        meta = await mres.json();
+      } catch (e) {
+        continue;
+      }
+      const file = pickAudioFile(meta.files);
+      if (!file) continue;
+      const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
+      return {
+        score: r.sc,
+        title: (doc.title || item.title).toString().slice(0, 120),
+        artist: (creator || item.artist || "").toString().slice(0, 80),
+        album: "",
+        license: doc.licenseurl ? doc.licenseurl.toString().slice(0, 80) : "vedi fonte",
+        source: "Internet Archive",
+        url: archiveUrl(doc.identifier, file.name),
+        cover: IA_THUMB + encodeURIComponent(doc.identifier)
+      };
+    }
+    return null;
+  }
+
+  async function searchCommons(item) {
+    const term = item.title + (item.artist ? " " + item.artist : "");
+    const url = COMMONS_API + "?action=query&format=json&generator=search&gsrsearch=" +
+      encodeURIComponent(term + " filetype:audio") +
+      "&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url%7Cextmetadata&iiextmetadatafilter=LicenseShortName";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("wikimedia non raggiungibile");
+    const json = await res.json();
+    const pages = json.query && json.query.pages ? Object.values(json.query.pages) : [];
+    let best = null;
+    for (const p of pages) {
+      const info = (p.imageinfo || [])[0];
+      if (!info || !info.url) continue;
+      if (!/\.(mp3|m4a|aac|mp4)$/i.test(info.url)) continue;
+      const name = String(p.title || "").replace(/^File:/i, "").replace(/\.[^.]+$/, "");
+      const sc = titleScore(item.title, name);
+      if (sc < 28) continue;
+      const lic = info.extmetadata && info.extmetadata.LicenseShortName ? info.extmetadata.LicenseShortName.value : "Wikimedia Commons";
+      const cand = {
+        score: sc - 5,
+        title: name.slice(0, 120),
+        artist: item.artist || "",
+        album: "",
+        license: String(lic).slice(0, 80),
+        source: "Wikimedia Commons",
+        url: String(info.url).split("?")[0],
+        cover: ""
+      };
+      if (!best || cand.score > best.score) best = cand;
+    }
+    return best;
+  }
+
+  async function findDownload(item) {
+    const cands = [];
+    try {
+      const a = await searchArchive(item);
+      if (a) cands.push(a);
+    } catch (e) { /* noop */ }
+    try {
+      const c = await searchCommons(item);
+      if (c) cands.push(c);
+    } catch (e) { /* noop */ }
+    if (!cands.length) return null;
+    cands.sort((a, b) => b.score - a.score);
+    return cands[0];
+  }
+
+  function sync32(n) {
+    return new Uint8Array([(n >> 21) & 0x7f, (n >> 14) & 0x7f, (n >> 7) & 0x7f, n & 0x7f]);
+  }
+
+  function concatBytes(list) {
+    let total = 0;
+    for (const b of list) total += b.length;
+    const out = new Uint8Array(total);
+    let off = 0;
+    for (const b of list) {
+      out.set(b, off);
+      off += b.length;
+    }
+    return out;
+  }
+
+  function id3Frame(id, payload) {
+    return concatBytes([new TextEncoder().encode(id), sync32(payload.length), new Uint8Array([0, 0]), payload]);
+  }
+
+  function id3Text(id, value) {
+    if (!value) return null;
+    const bytes = new TextEncoder().encode(String(value));
+    const payload = new Uint8Array(1 + bytes.length);
+    payload[0] = 3;
+    payload.set(bytes, 1);
+    return id3Frame(id, payload);
+  }
+
+  function id3Cover(cover) {
+    if (!cover || !cover.data || !cover.data.length) return null;
+    const mime = cover.mime || "image/jpeg";
+    return id3Frame("APIC", concatBytes([
+      new Uint8Array([0]),
+      new TextEncoder().encode(mime),
+      new Uint8Array([0, 3, 0]),
+      cover.data
+    ]));
+  }
+
+  function stripExistingTag(blob, head) {
+    if (!(head[0] === 0x49 && head[1] === 0x44 && head[2] === 0x33)) return blob;
+    const major = head[3];
+    if (major === 2 && head.length >= 8) {
+      const size = (head[5] << 16) | (head[6] << 8) | head[7];
+      if (size > 0 && 6 + size <= blob.size) return blob.slice(6 + size);
+      return blob;
+    }
+    if (head.length >= 10) {
+      const size = ((head[6] & 0x7f) << 21) | ((head[7] & 0x7f) << 14) | ((head[8] & 0x7f) << 7) | (head[9] & 0x7f);
+      if (size > 0 && 10 + size <= blob.size) return blob.slice(10 + size);
+    }
+    return blob;
+  }
+
+  async function tagMp3(blob, meta, cover) {
+    try {
+      if (blob.size > MAX_DOWNLOAD) return blob;
+      const head = new Uint8Array(await blob.slice(0, 10).arrayBuffer());
+      const audio = stripExistingTag(blob, head);
+      const frames = [
+        id3Text("TIT2", meta.title),
+        id3Text("TPE1", meta.artist),
+        id3Text("TALB", meta.album),
+        id3Text("TCOP", meta.license),
+        id3Text("TSRC", meta.source),
+        id3Cover(cover)
+      ].filter(Boolean);
+      const body = concatBytes(frames);
+      const header = concatBytes([
+        new TextEncoder().encode("ID3"),
+        new Uint8Array([3, 0, 0]),
+        sync32(body.length)
+      ]);
+      return new Blob([header, body, audio], { type: blob.type || "audio/mpeg" });
+    } catch (e) {
+      return blob;
+    }
+  }
+
+  async function fetchCoverBlob(url) {
+    if (!url) return null;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      return await res.blob();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function fmtBytes(bytes) {
+    if (!bytes) return "0 KB";
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + " KB";
+    return (bytes / 1024 / 1024).toFixed(1) + " MB";
+  }
+
+  async function downloadDirect(url, onProgress) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const type = (res.headers.get("content-type") || "").toLowerCase();
+    if (type && type.indexOf("audio/") < 0 && type.indexOf("application/octet-stream") < 0) {
+      throw new Error("il link non punta a un file audio");
+    }
+    const total = Number(res.headers.get("content-length") || 0);
+    if (total && total > MAX_DOWNLOAD) throw new Error("file troppo grande (max 40 MB)");
+    if (!res.body) return await res.blob();
+    const reader = res.body.getReader();
+    const chunks = [];
+    let got = 0;
+    for (;;) {
+      const part = await reader.read();
+      if (part.done) break;
+      chunks.push(part.value);
+      got += part.value.byteLength;
+      if (got > MAX_DOWNLOAD) {
+        try { await reader.cancel(); } catch (e) { /* noop */ }
+        throw new Error("file troppo grande (max 40 MB)");
+      }
+      onProgress(total ? got / total : 0, got);
+    }
+    return new Blob(chunks, { type: type || "audio/mpeg" });
+  }
+
+  function readFileWithProgress(file, onProgress) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onprogress = (e) => {
+        if (e.lengthComputable) onProgress(e.loaded / e.total, e.loaded);
+      };
+      fr.onload = () => resolve(new Blob([fr.result], { type: file.type || "audio/mpeg" }));
+      fr.onerror = () => reject(new Error("lettura file fallita"));
+      fr.readAsArrayBuffer(file);
+    });
+  }
+
+  async function saveImported(meta, blob, source) {
+    const id = "i-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+    const coverBlob = await fetchCoverBlob(meta.cover);
+    const isMp3 = /mpeg/i.test(blob.type || "") || /\.(mp3|mpeg)$/i.test(meta.url || "");
+    const audio = isMp3 ? await tagMp3(blob, meta, coverBlob) : blob;
+    const rec = {
+      id,
+      title: meta.title,
+      artist: meta.artist || "",
+      album: meta.album || "",
+      blob: audio,
+      size: audio.size,
+      source: source || "import",
+      license: meta.license || "",
+      pageUrl: meta.url || "",
+      cover: coverBlob || meta.cover || "",
+      date: new Date().toISOString()
+    };
+    await dbPut(rec);
+    await dbSetImport({ id, title: rec.title, artist: rec.artist, album: rec.album, status: "ok", date: rec.date });
+    return rec;
+  }
+
+  async function importItem(item) {
+    const meta = item.meta;
+    if (!meta || !meta.url) return;
+    item.state = "downloading";
+    paintImport(item);
+    if (item.el) item.el.prog.hidden = false;
+    try {
+      const blob = await downloadDirect(meta.url, (ratio, got) => {
+        if (!item.el) return;
+        item.el.fill.style.width = Math.round(ratio * 100) + "%";
+        item.el.bytes.textContent = fmtBytes(got);
+      });
+      await finishImport(item, blob, meta.source);
+    } catch (e) {
+      item.state = "error";
+      if (item.el) {
+        item.el.fill.classList.add("err");
+        item.el.bytes.textContent = e.message;
+      }
+      paintImport(item);
+    }
+  }
+
+  async function autoImportAll() {
+    const todo = importList.filter((x) => x.state === "ready");
+    let idx = 0;
+    const worker = async () => {
+      for (;;) {
+        const i = idx++;
+        if (i >= todo.length) return;
+        await importItem(todo[i]);
+      }
+    };
+    const n = Math.min(2, todo.length);
+    const runners = [];
+    for (let k = 0; k < n; k++) runners.push(worker());
+    await Promise.all(runners);
+  }
+
+  function toggleUrlInput(item) {
+    const el = item.el;
+    if (el.url) {
+      el.url.remove();
+      if (el.go) el.go.remove();
+      el.url = null;
+      el.go = null;
+      return;
+    }
+    const input = document.createElement("input");
+    input.className = "imp-url";
+    input.type = "url";
+    input.placeholder = "https://... file audio che puoi scaricare";
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") startUrlDownload(item);
+    });
+    const go = document.createElement("button");
+    go.className = "btn-mini go";
+    go.textContent = "Scarica";
+    go.addEventListener("click", () => startUrlDownload(item));
+    el.actions.appendChild(input);
+    el.actions.appendChild(go);
+    el.url = input;
+    el.go = go;
+  }
+
+  async function startUrlDownload(item) {
+    const url = item.el.url ? item.el.url.value.trim() : "";
+    if (!/^https?:\/\//i.test(url)) {
+      toast("Indirizzo non valido");
+      return;
+    }
+    item.state = "downloading";
+    item.el.prog.hidden = false;
+    if (item.el.url) item.el.url.disabled = true;
+    if (item.el.go) item.el.go.disabled = true;
+    item.el.fill.classList.remove("err");
+    try {
+      const blob = await downloadDirect(url, (ratio, got) => {
+        item.el.fill.style.width = Math.round(ratio * 100) + "%";
+        item.el.bytes.textContent = fmtBytes(got);
+      });
+      item.meta = Object.assign({}, item.meta || {}, {
+        title: item.title,
+        artist: item.artist,
+        album: item.album || "",
+        license: (item.meta && item.meta.license) || "fonte esterna",
+        url
+      });
+      await finishImport(item, blob, "link diretto");
+    } catch (e) {
+      item.state = "error";
+      item.el.fill.classList.add("err");
+      item.el.bytes.textContent = e.message;
+      toast("Download fallito: " + e.message);
+      paintImport(item);
+    }
+  }
+
+  async function finishImport(item, blob, source) {
+    if (item.el) {
+      item.el.fill.classList.add("ok");
+      item.el.fill.style.width = "100%";
+    }
+    const meta = item.meta || { title: item.title, artist: item.artist, album: "" };
+    const rec = await saveImported(meta, blob, source);
+    for (const k of trackKeys(meta)) libKeys.add(k);
+    item.savedId = rec.id;
+    item.state = "done";
+    paintImport(item);
+    toast(meta.title + " importato");
+    await loadAll();
+  }
+
+  function paintImport(item) {
+    const el = item.el;
+    if (!el) return;
+    el.tags.innerHTML = "";
+    el.actions.innerHTML = "";
+    el.url = null;
+    el.go = null;
+    const tag = (text, cls) => {
+      const s = document.createElement("span");
+      s.className = "imp-tag" + (cls ? " " + cls : "");
+      s.textContent = text;
+      el.tags.appendChild(s);
+    };
+    const btn = (text, fn, disabled) => {
+      const b = document.createElement("button");
+      b.className = "btn-mini";
+      b.textContent = text;
+      b.disabled = !!disabled;
+      b.addEventListener("click", fn);
+      el.actions.appendChild(b);
+      return b;
+    };
+
+    if (item.state === "dupe") {
+      tag("già nella libreria", "dup");
+      return;
+    }
+    if (item.state === "missing") {
+      tag("non disponibile", "miss");
+      return;
+    }
+    if (item.state === "done") {
+      tag("importato", "ok");
+      const id = item.savedId;
+      if (id) btn("Riproduci", () => playById(id));
+      return;
+    }
+    if (item.state === "searching") {
+      tag("cerco...", "");
+      return;
+    }
+    if (item.state === "downloading") {
+      tag("scarico", "");
+      btn("Importa file", () => {
+        importActive = item;
+        const inp = $("importAudioInput");
+        inp.value = "";
+        inp.click();
+      });
+      return;
+    }
+    if (item.state === "error") {
+      tag("errore", "miss");
+      if (el.prog) el.prog.hidden = false;
+    }
+    if (item.meta) {
+      btn("Scarica da link", () => toggleUrlInput(item));
+      btn("Importa file", () => {
+        importActive = item;
+        const inp = $("importAudioInput");
+        inp.value = "";
+        inp.click();
+      });
+      if (item.state === "ready") tag("trovato", "ok");
+    }
+  }
+
+  function renderImports() {
+    const box = $("importResults");
+    box.innerHTML = "";
+    $("importStep3").hidden = false;
+    for (const item of importList) {
+      const row = document.createElement("div");
+      row.className = "imp";
+
+      const cover = document.createElement("img");
+      cover.className = "imp-cover";
+      cover.alt = "";
+      cover.src = (item.meta && item.meta.cover) || TRANSPARENT_PIXEL;
+
+      const main = document.createElement("div");
+      main.className = "imp-main";
+
+      const title = document.createElement("p");
+      title.className = "imp-title";
+      title.textContent = item.title + (item.artist ? " — " + item.artist : "");
+      main.appendChild(title);
+
+      const sub = document.createElement("p");
+      sub.className = "imp-sub";
+      sub.textContent = item.meta ? ((item.meta.source || "") + (item.meta.license ? " · " + item.meta.license : "")) : "";
+      main.appendChild(sub);
+
+      const tags = document.createElement("p");
+      tags.className = "imp-tags";
+      main.appendChild(tags);
+
+      const actions = document.createElement("div");
+      actions.className = "imp-actions";
+      main.appendChild(actions);
+
+      const prog = document.createElement("div");
+      prog.className = "imp-progress";
+      prog.hidden = true;
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      const fill = document.createElement("span");
+      fill.className = "bar-fill";
+      bar.appendChild(fill);
+      const bytes = document.createElement("span");
+      bytes.className = "imp-bytes";
+      prog.appendChild(bar);
+      prog.appendChild(bytes);
+      main.appendChild(prog);
+
+      row.appendChild(cover);
+      row.appendChild(main);
+      box.appendChild(row);
+
+      item.el = { tags, actions, prog, fill, bytes, url: null, go: null };
+      paintImport(item);
+    }
+  }
+
+  const TRANSPARENT_PIXEL = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+  let searching = false;
+
+  async function runSearch() {
+    if (searching) return;
+    const parsed = parseImportText($("importText").value);
+    if (!parsed.length) {
+      toast("Non riconosco nessun brano: controlla il testo");
+      return;
+    }
+    searching = true;
+    $("btnFind").disabled = true;
+    importList = parsed.map((p) => ({ title: p.title, artist: p.artist, state: "searching", meta: null }));
+    libKeys = libraryKeys();
+    renderImports();
+
+    const bar = $("searchBar");
+    const fill = $("searchFill");
+    const status = $("searchStatus");
+    bar.hidden = false;
+    status.hidden = false;
+    fill.style.width = "0%";
+
+    for (let i = 0; i < importList.length; i++) {
+      const item = importList[i];
+      status.textContent = "Cerco " + (i + 1) + "/" + importList.length + ": " + item.title;
+      fill.style.width = Math.round(((i + 1) / importList.length) * 100) + "%";
+      let dup = false;
+      for (const k of trackKeys(item)) if (libKeys.has(k)) dup = true;
+      if (dup) {
+        item.state = "dupe";
+      } else {
+        try {
+          const meta = await findDownload(item);
+          if (meta) {
+            item.state = "ready";
+            item.meta = meta;
+          } else {
+            item.state = "missing";
+          }
+        } catch (e) {
+          item.state = "missing";
+        }
+      }
+      paintImport(item);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+
+    const found = importList.filter((x) => x.state === "ready").length;
+    if (found) status.textContent = "Scarico " + found + " brani trovati...";
+    await autoImportAll();
+
+    const done = importList.filter((x) => x.state === "done").length;
+    const dupes = importList.filter((x) => x.state === "dupe").length;
+    const miss = importList.filter((x) => x.state === "missing").length;
+    const errs = importList.filter((x) => x.state === "error").length;
+    status.textContent = "Importati " + done + " · già presenti " + dupes + " · non disponibili " + miss +
+      (errs ? " · errori " + errs : "");
+    searching = false;
+    $("btnFind").disabled = false;
+  }
+
+  async function doOcr(file) {
+    const bar = $("ocrBar");
+    const fill = $("ocrFill");
+    const status = $("ocrStatus");
+    bar.hidden = false;
+    status.hidden = false;
+    fill.classList.remove("err");
+    fill.style.width = "0%";
+    status.textContent = "Preparo il riconoscimento...";
+    $("btnOcr").disabled = true;
+    try {
+      const text = await runOcr(file, (label, p) => {
+        fill.style.width = Math.round(p * 100) + "%";
+        status.textContent = label + " " + Math.round(p * 100) + "%";
+      });
+      $("importText").value = text.trim();
+      const n = parseImportText(text).length;
+      status.textContent = n
+        ? "Riconosciute " + n + " righe: correggi quello che serve, poi cerca."
+        : "Non ho capito il testo: scrivi i brani a mano qui sotto.";
+    } catch (e) {
+      status.textContent = "OCR non disponibile (" + e.message + "): puoi scrivere i titoli a mano.";
+    }
+    $("btnOcr").disabled = false;
+  }
+
+  function openImport() {
+    $("importPanel").hidden = false;
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeImport() {
+    $("importPanel").hidden = true;
+    document.body.classList.remove("no-scroll");
   }
 
   /* ---------- Toast ---------- */
@@ -624,6 +1416,54 @@
     favOnly = !favOnly;
     $("btnFavFilter").classList.toggle("on", favOnly);
     render();
+  });
+
+  $("btnImport").addEventListener("click", openImport);
+  $("importClose").addEventListener("click", closeImport);
+  $("importPanel").addEventListener("click", (e) => {
+    if (e.target === $("importPanel")) closeImport();
+  });
+  $("btnPickImage").addEventListener("click", () => $("importImageInput").click());
+  $("importImageInput").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    const img = $("importPreview");
+    img.src = URL.createObjectURL(file);
+    img.hidden = false;
+    const btn = $("btnOcr");
+    btn.hidden = false;
+    btn.onclick = () => doOcr(file);
+  });
+  $("btnFind").addEventListener("click", runSearch);
+  $("importAudioInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    const item = importActive;
+    e.target.value = "";
+    if (!file || !item) return;
+    item.state = "downloading";
+    paintImport(item);
+    if (item.el) item.el.prog.hidden = false;
+    try {
+      const blob = await readFileWithProgress(file, (ratio, got) => {
+        if (!item.el) return;
+        item.el.fill.classList.remove("err");
+        item.el.fill.style.width = Math.round(ratio * 100) + "%";
+        item.el.bytes.textContent = fmtBytes(got);
+      });
+      item.meta = Object.assign({}, item.meta || {}, {
+        title: item.title,
+        artist: item.artist,
+        album: item.album || "",
+        license: (item.meta && item.meta.license) || "",
+        source: "file locale"
+      });
+      await finishImport(item, blob, "file locale");
+    } catch (err) {
+      item.state = "error";
+      if (item.el) item.el.bytes.textContent = err.message;
+      paintImport(item);
+    }
   });
 
   $("fab").addEventListener("click", () => fileInput.click());
