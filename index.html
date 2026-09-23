@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f0f14" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="MusicBox" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-512.png" />
+  <title>MusicBox</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="logo">Music<span>Box</span></h1>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
+      <input type="search" id="search" placeholder="Cerca..." autocomplete="off" />
+    </div>
+  </header>
+
+  <main>
+    <section class="hud" id="hud">
+      <div class="hud-art" id="hudArt"></div>
+      <div class="hud-info">
+        <p class="hud-title" id="hudTitle">Nessuna traccia</p>
+        <p class="hud-sub" id="hudSub">Aggiungi musica per iniziare</p>
+      </div>
+    </section>
+
+    <ul class="playlist" id="playlist"></ul>
+    <p class="empty" id="empty" hidden>Nessun brano trovato.</p>
+  </main>
+
+  <button class="fab" id="fab" aria-label="Aggiungi musica">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H6a1 1 0 1 1 0-2h5V6a1 1 0 0 1 1-1Z"/></svg>
+  </button>
+  <input type="file" id="fileInput" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav" multiple hidden />
+
+  <footer class="player" id="player">
+    <div class="player-progress" id="playerProgress"></div>
+    <div class="player-body">
+      <div class="player-art" id="playerArt"></div>
+      <div class="player-meta">
+        <p class="player-title" id="playerTitle">—</p>
+        <p class="player-time"><span id="curTime">0:00</span> / <span id="totTime">0:00</span></p>
+      </div>
+      <div class="player-controls">
+        <button id="btnShuffle" class="ctl" aria-label="Shuffle" title="Shuffle">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M18 4h3a1 1 0 0 1 .7 1.7L17 10.4a1 1 0 1 1-1.4-1.4l2.1-2.2h-1.5c-2.9 0-4.8 1.8-6.5 4.1C8 13.2 5.8 15 3.4 15H2a1 1 0 1 1 0-2h1.4c1.6 0 3.3-1.2 4.9-3.3C10 7.4 12.3 5 15.2 5h2.4L15.6 2.8A1 1 0 0 1 17 1.4L21.7 6.1a1 1 0 0 1 0 1.4L17 12.2a1 1 0 0 1-1.4-1.4l2.1-2.1C19 6.7 17.2 5 17.2 5.4Zm-11-1a1 1 0 0 1 .7 1.7l4.9 4.9-1.4 1.4-4.9-4.9A1 1 0 0 1 7 4Zm-5 9h.6c2 0 3.8 1.3 5.4 3.3 1.3 1.6 2.9 3 4.7 3.6a1 1 0 0 0 1.4-1.2c-.6-1.6-2-3-3.4-4.3l1.4-1.4c1.7 1.5 2.7 3.3 3.1 4.6.4-.6.8-1.3 1.1-2h2c-.3.9-.8 1.8-1.3 2.5a1 1 0 0 0 1.5 1.3l2.6-2.6a1 1 0 0 0 0-1.4L20.8 9.4a1 1 0 0 0-1.4 1.4l1.1 1.1c-1.5-.3-3-2-4.6-3.9-1.3-1.6-2.9-3-4.7-3.6a1 1 0 0 0-1.4 1.2c.6 1.6 2 3 3.4 4.3l-1.4 1.4C8 8.4 7 6.6 6.6 5.3c-.4.6-.8 1.3-1.1 2h-2a5 5 0 0 1 1.3-2.5A1 1 0 0 0 2 13Z"/></svg>
+        </button>
+        <button id="btnPrev" class="ctl" aria-label="Precedente" title="Precedente">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 5a1 1 0 0 1 2 0v5.3l9.6-5.7A1 1 0 0 1 19 5.5v13a1 1 0 0 1-1.4.9L8 13.7V19a1 1 0 1 1-2 0V5Z"/></svg>
+        </button>
+        <button id="btnPlay" class="ctl ctl-big" aria-label="Play/Pausa" title="Play/Pausa">
+          <svg id="iconPlay" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5a1 1 0 0 1 1.5-.87l11 6.5a1 1 0 0 1 0 1.74l-11 6.5A1 1 0 0 1 8 18.5v-13Z"/></svg>
+          <svg id="iconPause" viewBox="0 0 24 24" hidden><path fill="currentColor" d="M7 5a1 1 0 0 1 2 0v14a1 1 0 1 1-2 0V5Zm8 0a1 1 0 0 1 2 0v14a1 1 0 1 1-2 0V5Z"/></svg>
+        </button>
+        <button id="btnNext" class="ctl" aria-label="Successiva" title="Successiva">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M18 5a1 1 0 0 0-2 0v5.3L6.4 4.6A1 1 0 0 0 5 5.5v13a1 1 0 0 0 1.4.9L16 13.7V19a1 1 0 1 0 2 0V5Z"/></svg>
+        </button>
+        <button id="btnRepeat" class="ctl" aria-label="Ripeti" title="Ripeti">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 2h3a1 1 0 0 1 1 1v5h-2V4h-2a1 1 0 0 1 0-2Zm-10 0a1 1 0 0 1 0 2H5v4H3V3a1 1 0 0 1 1-1h3Zm10 20h3a1 1 0 0 0 1-1v-5h-2v4h-2a1 1 0 0 0 0 2Zm-10 0a1 1 0 0 0 0-2H5v-4H3v5a1 1 0 0 0 1 1h3Zm8.5-15a5 5 0 0 1 5 5v1a1 1 0 1 1-2 0v-1a3 3 0 0 0-3-3h-5.2l1.4 1.4a1 1 0 0 1-1.4 1.4l-3-3a1 1 0 0 1 0-1.4l3-3a1 1 0 0 1 1.4 1.4L7.3 7h8.2ZM4.5 15a5 5 0 0 1 5-5h.2l-1.4-1.4a1 1 0 0 1 1.4-1.4l3 3a1 1 0 0 1 0 1.4l-3 3a1 1 0 0 1-1.4-1.4l1.4-1.4H9.5a3 3 0 0 0-3 3v1a1 1 0 1 1-2 0v-1Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
