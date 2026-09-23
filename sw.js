@@ -1,5 +1,5 @@
-const CACHE = "spotifynonavraiimieisoldi-v13";
-const ASSETS = [
+const CACHE = "spotifynonavraiimieisoldi-v14";
+const CORE = [
   "./",
   "./index.html",
   "./style.css",
@@ -8,7 +8,9 @@ const ASSETS = [
   "./lyrics.json",
   "./icon-192.png",
   "./icon-512.png",
-  "./icon-180.png",
+  "./icon-180.png"
+];
+const SONGS = [
   "./songs/track-1.mp3",
   "./songs/track-2.mp3",
   "./songs/track-3.mp3",
@@ -24,9 +26,28 @@ const ASSETS = [
   "./songs/track-13.mp3"
 ];
 
+async function cacheSongs(cache) {
+  for (const url of SONGS) {
+    try {
+      const hit = await cache.match(url);
+      if (!hit) await cache.add(url);
+    } catch (e) {
+      /* il brano si scarica alla prima riproduzione */
+    }
+  }
+}
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE).then(async (cache) => {
+      const results = await Promise.allSettled(CORE.map((url) => cache.add(url)));
+      const failed = results
+        .map((r, i) => (r.status === "rejected" ? CORE[i] : null))
+        .filter(Boolean);
+      if (failed.length) console.warn("Non memorizzate:", failed.join(", "));
+      cacheSongs(cache);
+      await self.skipWaiting();
+    })
   );
 });
 

@@ -26,7 +26,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "2.4";
+  const APP_VERSION = "2.5";
 
   let recovering = false;
   async function selfHeal() {
@@ -1752,7 +1752,7 @@
         toast("Aggiornamento pronto");
         setTimeout(() => window.location.reload(), 500);
       });
-      navigator.serviceWorker.register("sw.js").then((reg) => {
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
         swReg = reg;
         if (!navigator.serviceWorker.controller) {
           reg.update();
