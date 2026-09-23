@@ -8,7 +8,7 @@
   --accent2: #4fc3ff;
   --danger: #ff5c7a;
   --radius: 16px;
-  --player-h: 96px;
+  --player-h: 128px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -59,6 +59,15 @@ body {
 }
 .logo-refresh svg { width: 19px; height: 19px; }
 .logo-refresh:active { color: var(--txt); transform: rotate(180deg); }
+.logo-actions { display: flex; gap: 8px; }
+.logo-refresh.on { color: var(--danger); border-color: rgba(255,92,122,.5); }
+#btnFavFilter:active { transform: scale(.92); }
+
+.track-count {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 4px 8px;
+}
 
 .search-wrap { position: relative; }
 .search-icon {
@@ -182,6 +191,22 @@ main { padding: 8px 16px 0; }
   border-radius: 50%;
 }
 .track-del:hover, .track-del:active { color: var(--danger); background: rgba(255,92,122,.12); }
+
+.track-fav {
+  background: none;
+  border: none;
+  color: var(--muted);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex: 0 0 34px;
+}
+.track-fav svg { width: 18px; height: 18px; }
+.track-fav.on { color: var(--danger); }
+.track-fav:active { transform: scale(.85); }
 .track-del svg { width: 18px; height: 18px; }
 
 .empty {
@@ -223,21 +248,59 @@ main { padding: 8px 16px 0; }
   -webkit-backdrop-filter: blur(14px);
 }
 
+.seek-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+}
+.seek-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  height: 30px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.seek-btn svg { width: 17px; height: 17px; }
+.seek-btn:active { color: var(--txt); background: rgba(255,255,255,.07); }
+
 .player-progress {
-  height: 3px;
+  flex: 1;
+  height: 4px;
   background: var(--card-hi);
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 4px;
   position: relative;
+  touch-action: none;
 }
 .player-progress .fill {
   position: absolute;
   inset: 0 auto 0 0;
   width: 0%;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
-  border-radius: 3px;
+  border-radius: 4px;
 }
+.player-progress .knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 13px;
+  height: 13px;
+  margin-left: -6.5px;
+  transform: translateY(-50%) scale(0);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(176,107,255,.55);
+  transition: transform .12s ease;
+  pointer-events: none;
+}
+.player-progress.scrubbing .knob { transform: translateY(-50%) scale(1); }
 
 .player-body {
   display: flex;

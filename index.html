@@ -17,9 +17,14 @@
   <header class="topbar">
     <div class="topbar-head">
       <h1 class="logo">Music<span>Box</span></h1>
-      <button class="logo-refresh" id="btnRefresh" aria-label="Aggiorna app" title="Aggiorna">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a8 8 0 1 1-7.1 4.2 1 1 0 1 1 1.74-1A6 6 0 1 0 12 6a1 1 0 0 1-1-1V3.5L8.4 5.1a1 1 0 0 0 0 1.4L11 8.5V7a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M12.7 9.3a1 1 0 0 1 1.4 0l2.2 2.2a1 1 0 0 1 0 1.4l-2.2 2.2a1 1 0 1 1-1.4-1.4l.5-.5h-2.7a1 1 0 1 1 0-2h2.7l-.5-.5a1 1 0 0 1 0-1.4Z"/></svg>
-      </button>
+      <div class="logo-actions">
+        <button class="logo-refresh" id="btnFavFilter" aria-label="Solo preferiti" title="Solo preferiti">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
+        </button>
+        <button class="logo-refresh" id="btnRefresh" aria-label="Aggiorna app" title="Aggiorna">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a8 8 0 1 1-7.1 4.2 1 1 0 1 1 1.74-1A6 6 0 1 0 12 6a1 1 0 0 1-1-1V3.5L8.4 5.1a1 1 0 0 0 0 1.4L11 8.5V7a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M12.7 9.3a1 1 0 0 1 1.4 0l2.2 2.2a1 1 0 0 1 0 1.4l-2.2 2.2a1 1 0 1 1-1.4-1.4l.5-.5h-2.7a1 1 0 1 1 0-2h2.7l-.5-.5a1 1 0 0 1 0-1.4Z"/></svg>
+        </button>
+      </div>
     </div>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
@@ -39,6 +44,7 @@
       </button>
     </section>
 
+    <p class="track-count" id="trackCount"></p>
     <ul class="playlist" id="playlist"></ul>
     <p class="empty" id="empty" hidden>Nessun brano trovato.</p>
   </main>
@@ -49,7 +55,18 @@
   <input type="file" id="fileInput" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav" multiple hidden />
 
   <footer class="player" id="player">
-    <div class="player-progress" id="playerProgress"></div>
+    <div class="seek-row">
+      <button id="btnSeekBack" class="seek-btn" aria-label="15 secondi indietro" title="15s indietro">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg><span>15</span>
+      </button>
+      <div class="player-progress" id="playerProgress">
+        <span class="fill"></span>
+        <span class="knob"></span>
+      </div>
+      <button id="btnSeekFor" class="seek-btn" aria-label="15 secondi avanti" title="15s avanti">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M18 6l-1.42 1.42L18.16 9H11c-3.87 0-7 3.13-7 7H2c0 4.42 3.58 8 8 8s8-3.58 8-8h-2c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6h7.16l-1.58 1.58L18 18l4-4-4-4z"/></svg><span>15</span>
+      </button>
+    </div>
     <div class="player-body">
       <div class="player-art" id="playerArt"></div>
       <div class="player-meta">

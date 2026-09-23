@@ -1,4 +1,4 @@
-const CACHE = "musicbox-v3";
+const CACHE = "musicbox-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -12,7 +12,16 @@ const ASSETS = [
   "./songs/track-1.mp3",
   "./songs/track-2.mp3",
   "./songs/track-3.mp3",
-  "./songs/track-4.mp3"
+  "./songs/track-4.mp3",
+  "./songs/track-5.mp3",
+  "./songs/track-6.mp3",
+  "./songs/track-7.mp3",
+  "./songs/track-8.mp3",
+  "./songs/track-9.mp3",
+  "./songs/track-10.mp3",
+  "./songs/track-11.mp3",
+  "./songs/track-12.mp3",
+  "./songs/track-13.mp3"
 ];
 
 self.addEventListener("install", (event) => {
