@@ -613,6 +613,22 @@ body.no-scroll { overflow: hidden; }
   object-fit: cover;
 }
 .imp-main { flex: 1; min-width: 0; }
+.imp-remove {
+  flex: 0 0 28px;
+  align-self: flex-start;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.1);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.imp-remove:active { color: var(--danger); border-color: rgba(255,92,122,.5); }
 .imp-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
 .imp-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .imp-tags { font-size: 11px; margin-top: 5px; color: var(--muted); }

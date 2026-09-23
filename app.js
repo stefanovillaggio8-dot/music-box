@@ -681,6 +681,60 @@
     });
   }
 
+  async function loadImage(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      return await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("immagine non leggibile"));
+        img.src = url;
+      });
+    } finally {
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  }
+
+  async function preprocessImage(file) {
+    const img = await loadImage(file);
+    const scale = Math.min(3, Math.max(1, 1800 / Math.max(1, img.width)));
+    const w = Math.max(1, Math.round(img.width * scale));
+    const h = Math.max(1, Math.round(img.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(img, 0, 0, w, h);
+    let data;
+    try {
+      data = ctx.getImageData(0, 0, w, h);
+    } catch (e) {
+      return file;
+    }
+    const px = data.data;
+    let min = 255;
+    let max = 0;
+    const gray = new Uint8Array(w * h);
+    for (let i = 0, p = 0; i < px.length; i += 4, p++) {
+      const g = (px[i] * 0.299 + px[i + 1] * 0.587 + px[i + 2] * 0.114) | 0;
+      gray[p] = g;
+      if (g < min) min = g;
+      if (g > max) max = g;
+    }
+    const range = Math.max(1, max - min);
+    for (let i = 0, p = 0; i < px.length; i += 4, p++) {
+      const v = ((gray[p] - min) * 255 / range) | 0;
+      px[i] = v;
+      px[i + 1] = v;
+      px[i + 2] = v;
+      px[i + 3] = 255;
+    }
+    ctx.putImageData(data, 0, 0);
+    return await new Promise((resolve) => canvas.toBlob((b) => resolve(b || file), "image/png"));
+  }
+
   async function getOcrWorker(onProgress) {
     if (ocrWorker) return ocrWorker;
     if (!window.Tesseract) await loadScript(OCR_SRC);
@@ -689,6 +743,9 @@
         if (m && m.status && typeof m.progress === "number") onProgress(ocrLabel(m.status), m.progress);
       }
     });
+    try {
+      await ocrWorker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
+    } catch (e) { /* noop */ }
     return ocrWorker;
   }
 
@@ -712,21 +769,40 @@
     return audio[0] || null;
   }
 
-  function titleScore(want, ...texts) {
-    const w = normKey(want);
-    if (!w) return 0;
-    for (const t of texts) {
-      const n = normKey(t);
-      if (!n) continue;
-      if (n === w) return 60;
-      if (n.includes(w)) return 50;
+  function normText(s) {
+    return (s || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\((live|remaster(ed)?|explicit|bonus track)[^)]*\)/g, " ")
+      .replace(/\[(live|remaster(ed)?|explicit)[^\]]*\]/g, " ")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function titleTokens(s) {
+    return normText(s).split(" ").filter((t) => t.length >= 3);
+  }
+
+  function titleMatch(query, candidate) {
+    const qt = titleTokens(query);
+    if (!qt.length) {
+      const q = normKey(query);
+      const c = normKey(candidate);
+      if (q && c && (c === q || c.includes(q))) return { score: 70, strong: true };
+      return { score: 0, strong: false };
     }
-    const short = w.slice(0, Math.max(5, Math.floor(w.length / 2)));
-    for (const t of texts) {
-      const n = normKey(t);
-      if (n && short.length > 4 && n.includes(short)) return 28;
-    }
-    return 0;
+    const ct = new Set(titleTokens(candidate));
+    if (!ct.size) return { score: 0, strong: false };
+    let hit = 0;
+    for (const t of qt) if (ct.has(t)) hit++;
+    const frac = hit / qt.length;
+    const extra = ct.size - hit;
+    if (frac === 1 && extra <= 1) return { score: 90, strong: true };
+    if (frac === 1) return { score: 75, strong: true };
+    if (frac >= 0.85 && extra <= 2) return { score: 60, strong: true };
+    if (frac >= 0.6) return { score: 35, strong: false };
+    return { score: 0, strong: false };
   }
 
   async function iaQuery(query) {
@@ -749,21 +825,18 @@
         docs = await iaQuery('"' + item.title + '" AND mediatype:(audio)');
       } catch (e) { /* noop */ }
     }
-    if (!docs.length) return null;
+    if (!docs.length) return [];
 
     const ranked = docs
       .map((doc) => {
-        let sc = titleScore(item.title, doc.title);
-        if (item.artist) {
-          const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
-          if (creator && normKey(creator).includes(normKey(item.artist))) sc += 15;
-        }
-        return { doc, sc };
+        const m = titleMatch(item.title, doc.title);
+        return { doc, sc: m.score, strong: m.strong };
       })
-      .filter((x) => x.doc.identifier && x.sc >= 28)
+      .filter((x) => x.doc.identifier && x.sc > 0)
       .sort((a, b) => b.sc - a.sc)
-      .slice(0, 4);
+      .slice(0, 5);
 
+    const out = [];
     for (const r of ranked) {
       const doc = r.doc;
       let meta;
@@ -777,8 +850,9 @@
       const file = pickAudioFile(meta.files);
       if (!file) continue;
       const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
-      return {
+      out.push({
         score: r.sc,
+        strong: r.strong,
         title: (doc.title || item.title).toString().slice(0, 120),
         artist: (creator || item.artist || "").toString().slice(0, 80),
         album: "",
@@ -786,9 +860,10 @@
         source: "Internet Archive",
         url: archiveUrl(doc.identifier, file.name),
         cover: IA_THUMB + encodeURIComponent(doc.identifier)
-      };
+      });
+      if (out.length >= 3) break;
     }
-    return null;
+    return out;
   }
 
   async function searchCommons(item) {
@@ -800,17 +875,18 @@
     if (!res.ok) throw new Error("wikimedia non raggiungibile");
     const json = await res.json();
     const pages = json.query && json.query.pages ? Object.values(json.query.pages) : [];
-    let best = null;
+    const out = [];
     for (const p of pages) {
       const info = (p.imageinfo || [])[0];
       if (!info || !info.url) continue;
       if (!/\.(mp3|m4a|aac|mp4)$/i.test(info.url)) continue;
       const name = String(p.title || "").replace(/^File:/i, "").replace(/\.[^.]+$/, "");
-      const sc = titleScore(item.title, name);
-      if (sc < 28) continue;
+      const m = titleMatch(item.title, name);
+      if (m.score <= 0) continue;
       const lic = info.extmetadata && info.extmetadata.LicenseShortName ? info.extmetadata.LicenseShortName.value : "Wikimedia Commons";
-      const cand = {
-        score: sc - 5,
+      out.push({
+        score: Math.max(1, m.score - 5),
+        strong: m.strong,
         title: name.slice(0, 120),
         artist: item.artist || "",
         album: "",
@@ -818,25 +894,25 @@
         source: "Wikimedia Commons",
         url: String(info.url).split("?")[0],
         cover: ""
-      };
-      if (!best || cand.score > best.score) best = cand;
+      });
     }
-    return best;
+    out.sort((a, b) => b.score - a.score);
+    return out.slice(0, 3);
   }
 
   async function findDownload(item) {
     const cands = [];
     try {
       const a = await searchArchive(item);
-      if (a) cands.push(a);
+      if (a) cands.push(...a);
     } catch (e) { /* noop */ }
     try {
       const c = await searchCommons(item);
-      if (c) cands.push(c);
+      if (c) cands.push(...c);
     } catch (e) { /* noop */ }
-    if (!cands.length) return null;
     cands.sort((a, b) => b.score - a.score);
-    return cands[0];
+    const list = cands.slice(0, 5);
+    return { best: list.length ? list[0] : null, list };
   }
 
   function sync32(n) {
@@ -936,8 +1012,8 @@
     return (bytes / 1024 / 1024).toFixed(1) + " MB";
   }
 
-  async function downloadDirect(url, onProgress) {
-    const res = await fetch(url);
+  async function downloadDirect(url, onProgress, signal) {
+    const res = await fetch(url, signal ? { signal } : undefined);
     if (!res.ok) throw new Error("HTTP " + res.status);
     const type = (res.headers.get("content-type") || "").toLowerCase();
     if (type && type.indexOf("audio/") < 0 && type.indexOf("application/octet-stream") < 0) {
@@ -1001,7 +1077,13 @@
   async function importItem(item) {
     const meta = item.meta;
     if (!meta || !meta.url) return;
+    for (const k of trackKeys(meta)) if (libKeys.has(k)) {
+      item.state = "dupe";
+      paintImport(item);
+      return;
+    }
     item.state = "downloading";
+    item.controller = new AbortController();
     paintImport(item);
     if (item.el) item.el.prog.hidden = false;
     try {
@@ -1009,9 +1091,10 @@
         if (!item.el) return;
         item.el.fill.style.width = Math.round(ratio * 100) + "%";
         item.el.bytes.textContent = fmtBytes(got);
-      });
+      }, item.controller.signal);
       await finishImport(item, blob, meta.source);
     } catch (e) {
+      if (e && e.name === "AbortError") return;
       item.state = "error";
       if (item.el) {
         item.el.fill.classList.add("err");
@@ -1111,6 +1194,16 @@
     await loadAll();
   }
 
+  function removeImportItem(item) {
+    item.removed = true;
+    if (item.controller) {
+      try { item.controller.abort(); } catch (e) { /* noop */ }
+    }
+    const idx = importList.indexOf(item);
+    if (idx >= 0) importList.splice(idx, 1);
+    if (item.el && item.el.row) item.el.row.remove();
+  }
+
   function paintImport(item) {
     const el = item.el;
     if (!el) return;
@@ -1136,37 +1229,42 @@
 
     if (item.state === "dupe") {
       tag("già nella libreria", "dup");
-      return;
-    }
-    if (item.state === "missing") {
+    } else if (item.state === "missing") {
       tag("non disponibile", "miss");
-      return;
-    }
-    if (item.state === "done") {
+    } else if (item.state === "done") {
       tag("importato", "ok");
-      const id = item.savedId;
-      if (id) btn("Riproduci", () => playById(id));
-      return;
-    }
-    if (item.state === "searching") {
+      if (item.savedId) btn("Riproduci", () => playById(item.savedId));
+    } else if (item.state === "searching") {
       tag("cerco...", "");
-      return;
-    }
-    if (item.state === "downloading") {
+    } else if (item.state === "downloading") {
       tag("scarico", "");
-      btn("Importa file", () => {
-        importActive = item;
-        const inp = $("importAudioInput");
-        inp.value = "";
-        inp.click();
-      });
-      return;
-    }
-    if (item.state === "error") {
+    } else if (item.state === "error") {
       tag("errore", "miss");
       if (el.prog) el.prog.hidden = false;
+    } else if (item.state === "choose") {
+      tag("scegli quella giusta", "");
+    } else if (item.state === "ready") {
+      tag("trovato", "ok");
     }
-    if (item.meta) {
+
+    if (item.state === "choose" && item.candidates.length) {
+      for (const cand of item.candidates) {
+        btn(cand.title + (cand.artist ? " — " + cand.artist : ""), () => {
+          item.meta = cand;
+          item.state = "ready";
+          paintImport(item);
+          importItem(item);
+        });
+      }
+    }
+
+    if (item.meta && item.state !== "done" && item.state !== "choose") {
+      if (item.candidates && item.candidates.length > 1) {
+        btn(el.showAlts ? "Meno versioni" : "Altre versioni (" + item.candidates.length + ")", () => {
+          el.showAlts = !el.showAlts;
+          paintImport(item);
+        });
+      }
       btn("Scarica da link", () => toggleUrlInput(item));
       btn("Importa file", () => {
         importActive = item;
@@ -1174,7 +1272,17 @@
         inp.value = "";
         inp.click();
       });
-      if (item.state === "ready") tag("trovato", "ok");
+      if (el.showAlts && item.candidates.length > 1) {
+        for (const cand of item.candidates) {
+          if (cand === item.meta) continue;
+          btn("Prova: " + cand.title, () => {
+            item.meta = cand;
+            item.state = "ready";
+            paintImport(item);
+            importItem(item);
+          });
+        }
+      }
     }
   }
 
@@ -1228,9 +1336,17 @@
 
       row.appendChild(cover);
       row.appendChild(main);
+
+      const rem = document.createElement("button");
+      rem.className = "imp-remove";
+      rem.setAttribute("aria-label", "Togli dalla lista");
+      rem.textContent = "×";
+      rem.addEventListener("click", () => removeImportItem(item));
+      row.appendChild(rem);
+
       box.appendChild(row);
 
-      item.el = { tags, actions, prog, fill, bytes, url: null, go: null };
+      item.el = { row, tags, actions, prog, fill, bytes, url: null, go: null, showAlts: false };
       paintImport(item);
     }
   }
@@ -1248,7 +1364,7 @@
     }
     searching = true;
     $("btnFind").disabled = true;
-    importList = parsed.map((p) => ({ title: p.title, artist: p.artist, state: "searching", meta: null }));
+    importList = parsed.map((p) => ({ title: p.title, artist: p.artist, state: "searching", meta: null, candidates: [] }));
     libKeys = libraryKeys();
     renderImports();
 
@@ -1261,6 +1377,7 @@
 
     for (let i = 0; i < importList.length; i++) {
       const item = importList[i];
+      if (item.removed) continue;
       status.textContent = "Cerco " + (i + 1) + "/" + importList.length + ": " + item.title;
       fill.style.width = Math.round(((i + 1) / importList.length) * 100) + "%";
       let dup = false;
@@ -1268,32 +1385,38 @@
       if (dup) {
         item.state = "dupe";
       } else {
+        let found = null;
         try {
-          const meta = await findDownload(item);
-          if (meta) {
-            item.state = "ready";
-            item.meta = meta;
-          } else {
-            item.state = "missing";
-          }
+          found = await findDownload(item);
         } catch (e) {
+          found = null;
+        }
+        item.candidates = (found && found.list) || [];
+        const best = found && found.best;
+        if (!best) {
           item.state = "missing";
+        } else if (best.strong) {
+          item.state = "ready";
+          item.meta = best;
+        } else {
+          item.state = "choose";
         }
       }
       paintImport(item);
       await new Promise((r) => setTimeout(r, 120));
     }
 
-    const found = importList.filter((x) => x.state === "ready").length;
-    if (found) status.textContent = "Scarico " + found + " brani trovati...";
+    const auto = importList.filter((x) => x.state === "ready").length;
+    if (auto) status.textContent = "Scarico " + auto + " brani trovati...";
     await autoImportAll();
 
     const done = importList.filter((x) => x.state === "done").length;
     const dupes = importList.filter((x) => x.state === "dupe").length;
     const miss = importList.filter((x) => x.state === "missing").length;
+    const choose = importList.filter((x) => x.state === "choose").length;
     const errs = importList.filter((x) => x.state === "error").length;
-    status.textContent = "Importati " + done + " · già presenti " + dupes + " · non disponibili " + miss +
-      (errs ? " · errori " + errs : "");
+    status.textContent = "Importati " + done + " · da scegliere " + choose + " · già presenti " + dupes +
+      " · non disponibili " + miss + (errs ? " · errori " + errs : "");
     searching = false;
     $("btnFind").disabled = false;
   }
@@ -1309,14 +1432,17 @@
     status.textContent = "Preparo il riconoscimento...";
     $("btnOcr").disabled = true;
     try {
-      const text = await runOcr(file, (label, p) => {
+      status.textContent = "Preparo l'immagine...";
+      const prepared = await preprocessImage(file);
+      status.textContent = "Leggo lo screenshot...";
+      const text = await runOcr(prepared, (label, p) => {
         fill.style.width = Math.round(p * 100) + "%";
         status.textContent = label + " " + Math.round(p * 100) + "%";
       });
       $("importText").value = text.trim();
       const n = parseImportText(text).length;
       status.textContent = n
-        ? "Riconosciute " + n + " righe: correggi quello che serve, poi cerca."
+        ? "Riconosciute " + n + " righe: correggi quelle sbagliate, poi cerca."
         : "Non ho capito il testo: scrivi i brani a mano qui sotto.";
     } catch (e) {
       status.textContent = "OCR non disponibile (" + e.message + "): puoi scrivere i titoli a mano.";
