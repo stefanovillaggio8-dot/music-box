@@ -25,7 +25,7 @@
   ];
 
   const $ = (id) => document.getElementById(id);
-  const APP_VERSION = "2.1";
+  const APP_VERSION = "2.2";
   const searchEl = $("search");
   const playlistEl = $("playlist");
   const emptyEl = $("empty");
@@ -39,6 +39,7 @@
   let query = "";
   let favorites = new Set();
   let favOnly = false;
+  let hiddenTracks = new Set(LS.get("mb.hidden", []));
   let scrubbing = false;
   let pendingSeek = null;
   let lastSave = 0;
@@ -198,18 +199,46 @@
   }
 
   function visibleTracks() {
-    let list = tracks;
+    let list = tracks.filter((t) => !hiddenTracks.has(t.id));
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (!query) return list;
     const q = filterText(query);
     return list.filter((t) => filterText(t.title + " " + t.artist).includes(q));
   }
 
+  function hideTrack(id) {
+    const t = tracks.find((x) => x.id === id);
+    if (!t) return;
+    hiddenTracks.add(id);
+    LS.set("mb.hidden", Array.from(hiddenTracks));
+    if (currentId === id) {
+      if (audio) audio.pause();
+      currentId = null;
+      setHud();
+    }
+    closeLyrics();
+    render();
+    updateRestoreButton();
+    toast(t.builtin ? "Brano nascosto" : "Brano rimosso");
+  }
+
+  function restoreHidden() {
+    hiddenTracks = new Set();
+    LS.set("mb.hidden", []);
+    render();
+    updateRestoreButton();
+    toast("Brani ripristinati");
+  }
+
+  function updateRestoreButton() {
+    $("btnRestore").hidden = hiddenTracks.size === 0;
+  }
+
   function render() {
     const list = visibleTracks();
     playlistEl.innerHTML = "";
 
-    const total = tracks.length;
+    const total = tracks.filter((t) => !hiddenTracks.has(t.id)).length;
     const n = list.length;
     $("trackCount").textContent = (favOnly || query)
       ? n + " di " + total + (total === 1 ? " brano" : " brani")
@@ -218,10 +247,12 @@
     if (!list.length) {
       emptyEl.hidden = false;
       emptyEl.textContent = !total
-        ? "Nessun brano. Tocca + per aggiungere della musica."
-        : favOnly && !query
-          ? "Nessun preferito: tocca il cuore su un brano."
-          : "Nessun brano trovato.";
+        ? "Tutti i brani sono nascosti: tocca l'icona dell'occhio per ripristinarli."
+        : !tracks.length
+          ? "Nessun brano. Tocca + per aggiungere della musica."
+          : favOnly && !query
+            ? "Nessun preferito: tocca il cuore su un brano."
+            : "Nessun brano trovato.";
       return;
     }
     emptyEl.hidden = true;
@@ -280,14 +311,18 @@
       });
       li.appendChild(favBtn);
 
-      if (!t.builtin && !t.preview) {
-        const del = document.createElement("button");
-        del.className = "track-del";
+      const del = document.createElement("button");
+      del.className = "track-del";
+      if (t.builtin || t.preview) {
+        del.setAttribute("aria-label", "Nascondi " + t.title);
+        del.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>';
+        del.addEventListener("click", () => hideTrack(t.id));
+      } else {
         del.setAttribute("aria-label", "Elimina " + t.title);
         del.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 3a1 1 0 0 0-1 1v1H5a1 1 0 1 0 0 2h.3l.9 12.2A3 3 0 0 0 9.2 22h5.6a3 3 0 0 0 3-2.8L18.7 7H19a1 1 0 1 0 0-2h-3V4a1 1 0 0 0-1-1H9Zm4 2v1h-2V5h2Zm-3.7 5.5a1 1 0 0 1 1.9.3l-.4 7a1 1 0 1 1-1.9-.3l.4-7Zm5.9.3a1 1 0 1 1 1.9-.3l-.4 7a1 1 0 1 1-1.9.3l.4-7Z"/></svg>';
         del.addEventListener("click", () => removeTrack(t.id));
-        li.appendChild(del);
       }
+      li.appendChild(del);
 
       li.addEventListener("click", () => playById(t.id));
       playlistEl.appendChild(li);
@@ -1616,6 +1651,8 @@
     setTimeout(() => window.location.reload(), 400);
   });
 
+  $("btnRestore").addEventListener("click", restoreHidden);
+
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
       if (audio) {
@@ -1647,6 +1684,7 @@
     }
     await loadLyrics();
     await loadAll();
+    updateRestoreButton();
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
 
