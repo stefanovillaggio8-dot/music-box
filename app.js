@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "3.2";
+  const APP_VERSION = "3.3";
 
   let recovering = false;
   async function selfHeal() {
@@ -404,11 +404,14 @@
     const list = visibleTracks();
     playlistEl.innerHTML = "";
 
-    const total = tracks.filter((t) => !hiddenTracks.has(t.id)).length;
+    const visibleAll = tracks.filter((t) => !hiddenTracks.has(t.id));
+    const total = visibleAll.length;
+    const mine = visibleAll.filter((t) => !t.builtin && !t.preview).length;
     const n = list.length;
-    $("trackCount").textContent = (favOnly || query)
-      ? n + " di " + total + (total === 1 ? " brano" : " brani")
-      : total + (total === 1 ? " brano" : " brani");
+    let label = profile + " · " + total + (total === 1 ? " brano" : " brani");
+    if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
+    if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
+    $("trackCount").textContent = label;
 
     if (!list.length) {
       emptyEl.hidden = false;
@@ -458,7 +461,8 @@
       if (t.artist) bits.push(t.artist);
       if (t.album) bits.push(t.album);
       if (t.preview) bits.push("anteprima 30s");
-      meta.textContent = t.builtin ? (t.artist || "incluso") : (bits.length ? bits.join(" · ") : "aggiunta");
+      if (t.builtin) meta.textContent = bits.length ? bits.join(" · ") : "per tutti";
+      else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
       info.appendChild(meta);
 
       li.appendChild(art);
@@ -777,40 +781,43 @@
     }
   }
 
+  const OTHER_PROFILE = "Fratello";
+
+  function profileList() {
+    return [profile, profile === DEFAULT_PROFILE ? OTHER_PROFILE : DEFAULT_PROFILE];
+  }
+
   function renderProfiles() {
     const box = $("profileList");
     box.innerHTML = "";
-    for (const name of profiles) {
+    for (const name of profileList()) {
       const row = document.createElement("div");
       row.className = "prof-row" + (name === profile ? " active" : "");
       const ava = document.createElement("div");
       ava.className = "prof-ava";
-      ava.textContent = (name || "?").trim().charAt(0).toUpperCase();
+      ava.textContent = name.charAt(0).toUpperCase();
       const info = document.createElement("div");
       info.style.flex = "1";
       info.style.minWidth = "0";
       const nm = document.createElement("p");
       nm.className = "prof-name";
-      nm.textContent = name + (name === profile ? " (tu)" : "");
+      nm.textContent = name;
       const sub = document.createElement("p");
       sub.className = "prof-sub";
-      sub.textContent = name === profile ? "profilo attivo" : "tocca per ascoltare come " + name;
+      sub.textContent = name === profile ? "stai ascoltando come " + name : "tocca per ascoltare come " + name;
       info.appendChild(nm);
       info.appendChild(sub);
       row.appendChild(ava);
       row.appendChild(info);
       const use = document.createElement("button");
       use.className = "btn-mini" + (name === profile ? " go" : "");
-      use.textContent = name === profile ? "Attivo" : "Usa";
-      use.addEventListener("click", () => switchProfile(name));
+      use.textContent = name === profile ? "Adesso" : "Vai";
       row.appendChild(use);
-      row.addEventListener("click", () => {
-        if (name !== profile) switchProfile(name);
-      });
+      row.addEventListener("click", () => switchProfile(name));
       box.appendChild(row);
     }
-    $("profInitial").textContent = (profile || "?").trim().charAt(0).toUpperCase();
-    $("btnProfile").classList.toggle("on", profiles.length > 1);
+    $("profInitial").textContent = profile.charAt(0).toUpperCase();
+    $("btnProfile").classList.add("on");
   }
 
   async function switchProfile(name) {
@@ -2134,28 +2141,6 @@
   $("profileClose").addEventListener("click", closeProfile);
   $("profilePanel").addEventListener("click", (e) => {
     if (e.target === $("profilePanel")) closeProfile();
-  });
-  $("btnAddProfile").addEventListener("click", () => {
-    const inp = $("profileName");
-    const name = inp.value.trim().slice(0, 18);
-    if (!name) {
-      toast("Scrivi un nome");
-      return;
-    }
-    if (profiles.some((p) => p.toLowerCase() === name.toLowerCase())) {
-      toast("Questo profilo c'è già");
-      return;
-    }
-    if (profiles.length >= 6) {
-      toast("Troppi profili");
-      return;
-    }
-    profiles.push(name);
-    LS.set("mb.profiles", profiles);
-    writeProfileState(name, { hidden: [], favs: [], last: null, time: 0 });
-    inp.value = "";
-    renderProfiles();
-    switchProfile(name);
   });
 
   $("btnRestore").addEventListener("click", restoreHidden);
