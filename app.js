@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "2.7";
+  const APP_VERSION = "2.8";
 
   let recovering = false;
   async function selfHeal() {
@@ -216,12 +216,48 @@
     return (t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
 
+  function wordsOf(s) {
+    return filterText(s).replace(/[^a-z0-9]+/g, " ").trim().split(" ").filter(Boolean);
+  }
+
+  function matchScore(q, t) {
+    const all = wordsOf(q);
+    const words = all.filter((w) => w.length >= 2);
+    if (!words.length) {
+      const nq = normKey(q);
+      if (!nq) return 0;
+      const hay = normKey(t.title + " " + t.artist);
+      return hay.indexOf(nq) >= 0 ? 5 : -1;
+    }
+    const tw = wordsOf(t.title);
+    const aw = wordsOf(t.artist);
+    const hay = tw.concat(aw);
+    let score = 0;
+    for (const w of words) {
+      if (tw.some((x) => x === w)) score += 4;
+      else if (w.length >= 3 && tw.some((x) => x.length >= 3 && (x.startsWith(w) || w.startsWith(x)))) score += 3;
+      else if (aw.some((x) => x === w)) score += 2;
+      else if (w.length >= 3 && aw.some((x) => x.length >= 3 && (x.startsWith(w) || w.startsWith(x)))) score += 1;
+      else if (w.length >= 3 && hay.some((x) => x.indexOf(w) >= 0)) score += 0.5;
+      else return -1;
+    }
+    if (filterText(t.title) === filterText(q)) score += 12;
+    if (t.artist && filterText(t.artist) === filterText(q)) score += 12;
+    if (words.length === 1 && score >= 3) score += 1;
+    return score;
+  }
+
   function visibleTracks() {
     let list = tracks.filter((t) => !hiddenTracks.has(t.id));
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (!query) return list;
-    const q = filterText(query);
-    return list.filter((t) => filterText(t.title + " " + t.artist).includes(q));
+    const scored = [];
+    for (const t of list) {
+      const s = matchScore(query, t);
+      if (s >= 0) scored.push({ t, s });
+    }
+    scored.sort((a, b) => b.s - a.s);
+    return scored.map((x) => x.t);
   }
 
   function hideTrack(id) {
@@ -864,6 +900,48 @@
     return { score: 0, strong: false };
   }
 
+  const VARIANT_WORDS = /(live|remix|remaster|cover|karaoke|medley|instrumental|acoustic|version|edit|mix|strumentale|dj|rework)/;
+
+  function artistMatch(want, got) {
+    const w = titleTokens(want);
+    if (!w.length) return true;
+    if (!got) return false;
+    const g = new Set(titleTokens(got));
+    if (!g.size) return false;
+    let hit = 0;
+    for (const t of w) if (g.has(t)) hit++;
+    return hit / w.length >= 0.6;
+  }
+
+  function hasVariantWords(s) {
+    const raw = (s || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    return VARIANT_WORDS.test(raw);
+  }
+
+  function candidateScore(item, candTitle, candArtist) {
+    const m = titleMatch(item.title, candTitle);
+    if (m.score <= 0) return { score: 0, strong: false };
+    let score = m.score;
+    let strong = m.strong;
+    if (item.artist) {
+      if (artistMatch(item.artist, candArtist)) score += 10;
+      else {
+        score = Math.max(1, score - 45);
+        strong = false;
+      }
+    } else {
+      if (m.score < 90) strong = false;
+    }
+    if (hasVariantWords(candTitle) && !hasVariantWords(item.title)) {
+      score = Math.max(1, score - 15);
+      strong = false;
+    }
+    return { score, strong };
+  }
+
   async function iaQuery(query) {
     const url = IA_SEARCH + "?q=" + encodeURIComponent(query) +
       "&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=licenseurl" +
@@ -888,8 +966,9 @@
 
     const ranked = docs
       .map((doc) => {
-        const m = titleMatch(item.title, doc.title);
-        return { doc, sc: m.score, strong: m.strong };
+        const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
+        const c = candidateScore(item, doc.title, creator);
+        return { doc, creator, sc: c.score, strong: c.strong };
       })
       .filter((x) => x.doc.identifier && x.sc > 0)
       .sort((a, b) => b.sc - a.sc)
@@ -908,12 +987,11 @@
       }
       const file = pickAudioFile(meta.files);
       if (!file) continue;
-      const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
       out.push({
         score: r.sc,
         strong: r.strong,
         title: (doc.title || item.title).toString().slice(0, 120),
-        artist: (creator || item.artist || "").toString().slice(0, 80),
+        artist: (r.creator || "").toString().slice(0, 80),
         album: "",
         license: doc.licenseurl ? doc.licenseurl.toString().slice(0, 80) : "vedi fonte",
         source: "Internet Archive",
@@ -940,12 +1018,12 @@
       if (!info || !info.url) continue;
       if (!/\.(mp3|m4a|aac|mp4)$/i.test(info.url)) continue;
       const name = String(p.title || "").replace(/^File:/i, "").replace(/\.[^.]+$/, "");
-      const m = titleMatch(item.title, name);
-      if (m.score <= 0) continue;
+      const c = candidateScore(item, name, "");
+      if (c.score <= 0) continue;
       const lic = info.extmetadata && info.extmetadata.LicenseShortName ? info.extmetadata.LicenseShortName.value : "Wikimedia Commons";
       out.push({
-        score: Math.max(1, m.score - 5),
-        strong: m.strong,
+        score: Math.max(1, c.score - 5),
+        strong: c.strong,
         title: name.slice(0, 120),
         artist: item.artist || "",
         album: "",
