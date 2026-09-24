@@ -21,6 +21,10 @@
         <span class="ver" id="appVer"></span>
       </div>
       <div class="logo-actions">
+        <button class="logo-refresh prof-btn" id="btnProfile" aria-label="Cambia profilo" title="Cambia profilo">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>
+          <span class="prof-initial" id="profInitial">S</span>
+        </button>
         <button class="logo-refresh" id="btnImport" aria-label="Importa musica" title="Importa musica">
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M4 15a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a1 1 0 1 1 2 0v2a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2a1 1 0 0 1 1-1Z"/></svg>
         </button>
@@ -169,6 +173,26 @@
 
   <input type="file" id="importImageInput" accept="image/*" hidden />
   <input type="file" id="importAudioInput" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav" hidden />
+
+  <div class="profile-overlay" id="profilePanel" hidden>
+    <div class="profile-card">
+      <div class="import-head">
+        <div class="import-head-info">
+          <p class="import-title">Chi ascolta</p>
+          <p class="import-sub">Ognuno ha la sua libreria, i brani condivisi sono per tutti</p>
+        </div>
+        <button class="import-close" id="profileClose" aria-label="Chiudi">×</button>
+      </div>
+      <div class="profile-body">
+        <div id="profileList"></div>
+        <div class="profile-actions">
+          <input type="text" id="profileName" placeholder="Nome del nuovo profilo" maxlength="18" />
+          <button class="btn-main" id="btnAddProfile">Crea profilo</button>
+        </div>
+        <p class="step-hint">I brani con il bollino <strong>incl</strong> sono condivisi e li vede chiunque. Quelli senza bollino sono privati: restano solo su questo telefono e per questo profilo.</p>
+      </div>
+    </div>
+  </div>
 
   <div class="toast" id="toast" role="status"></div>
 

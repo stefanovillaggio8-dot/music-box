@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "3.1";
+  const APP_VERSION = "3.2";
 
   let recovering = false;
   async function selfHeal() {
@@ -76,6 +76,40 @@
   let pendingSeek = null;
   let lastSave = 0;
   let swReg = null;
+
+  const DEFAULT_PROFILE = "Ste";
+  let profile = DEFAULT_PROFILE;
+  let profiles = [DEFAULT_PROFILE];
+
+  function allState() {
+    return LS.get("mb.state", {});
+  }
+
+  function saveAllState(next) {
+    LS.set("mb.state", next);
+  }
+
+  function profileState(name) {
+    const all = allState();
+    return all[name] || { hidden: [], favs: [], last: null, time: 0 };
+  }
+
+  function writeProfileState(name, patch) {
+    const all = allState();
+    all[name] = Object.assign(profileState(name), patch);
+    saveAllState(all);
+  }
+
+  function loadProfileState() {
+    const st = profileState(profile);
+    hiddenTracks = new Set(st.hidden || []);
+    favorites = new Set(st.favs || []);
+    return st;
+  }
+
+  function saveCurrentState() {
+    writeProfileState(profile, { hidden: Array.from(hiddenTracks), favs: Array.from(favorites) });
+  }
 
   const LS = {
     get(k, d) {
@@ -210,7 +244,9 @@
     let added = [];
     try {
       const records = (await dbAll()).filter((r) => r && r.id && r.blob);
-      added = records.map((r) => ({
+      added = records
+        .filter((r) => (r.profile || DEFAULT_PROFILE) === profile)
+        .map((r) => ({
         id: r.id,
         title: r.title,
         artist: r.artist || "",
@@ -340,7 +376,7 @@
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
     hiddenTracks.add(id);
-    LS.set("mb.hidden", Array.from(hiddenTracks));
+    saveCurrentState();
     if (currentId === id) {
       if (audio) audio.pause();
       currentId = null;
@@ -354,7 +390,7 @@
 
   function restoreHidden() {
     hiddenTracks = new Set();
-    LS.set("mb.hidden", []);
+    saveCurrentState();
     render();
     updateRestoreButton();
     toast("Brani ripristinati");
@@ -436,10 +472,23 @@
         e.stopPropagation();
         if (favorites.has(t.id)) favorites.delete(t.id);
         else favorites.add(t.id);
-        LS.set("mb.favs", Array.from(favorites));
+        saveCurrentState();
         render();
       });
       li.appendChild(favBtn);
+
+      if (!t.builtin && !t.preview) {
+        const share = document.createElement("button");
+        share.className = "track-share";
+        share.setAttribute("aria-label", "Condividi " + t.title);
+        share.title = "Condividi con tutti";
+        share.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M4 15a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a1 1 0 1 1 2 0v2a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2a1 1 0 0 1 1-1Z"/></svg>';
+        share.addEventListener("click", (e) => {
+          e.stopPropagation();
+          exportTrack(t);
+        });
+        li.appendChild(share);
+      }
 
       const del = document.createElement("button");
       del.className = "track-del";
@@ -492,8 +541,7 @@
 
   function savePos() {
     if (currentId && audio && isFinite(audio.currentTime)) {
-      LS.set("mb.pos." + currentId, Math.floor(audio.currentTime));
-      LS.set("mb.last", currentId);
+      writeProfileState(profile, { last: currentId, time: Math.floor(audio.currentTime) });
     }
   }
 
@@ -616,8 +664,7 @@
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
     currentId = id;
-    LS.set("mb.last", id);
-    LS.set("mb.pos." + id, 0);
+    writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
     audio.src = t.url;
     audio.volume = 1;
@@ -703,6 +750,114 @@
     savePos();
   }
 
+  async function exportTrack(t) {
+    try {
+      toast("Preparo il file...");
+      let blob = null;
+      if (t.builtin) {
+        const res = await fetch(t.url);
+        if (!res.ok) throw new Error("file non raggiungibile");
+        blob = await res.blob();
+      } else {
+        const rec = await dbGet(t.id);
+        if (rec && rec.blob) blob = rec.blob;
+      }
+      if (!blob) throw new Error("file non trovato");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = (t.artist ? t.artist + " - " : "") + t.title.replace(/[\\/:*?"<>|]/g, "") + ".mp3";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 8000);
+      toast("Salvalo e mettilo in Desktop\\musica mp3: lo avranno tutti");
+    } catch (e) {
+      toast("Esportazione non riuscita: " + e.message);
+    }
+  }
+
+  function renderProfiles() {
+    const box = $("profileList");
+    box.innerHTML = "";
+    for (const name of profiles) {
+      const row = document.createElement("div");
+      row.className = "prof-row" + (name === profile ? " active" : "");
+      const ava = document.createElement("div");
+      ava.className = "prof-ava";
+      ava.textContent = (name || "?").trim().charAt(0).toUpperCase();
+      const info = document.createElement("div");
+      info.style.flex = "1";
+      info.style.minWidth = "0";
+      const nm = document.createElement("p");
+      nm.className = "prof-name";
+      nm.textContent = name + (name === profile ? " (tu)" : "");
+      const sub = document.createElement("p");
+      sub.className = "prof-sub";
+      sub.textContent = name === profile ? "profilo attivo" : "tocca per ascoltare come " + name;
+      info.appendChild(nm);
+      info.appendChild(sub);
+      row.appendChild(ava);
+      row.appendChild(info);
+      const use = document.createElement("button");
+      use.className = "btn-mini" + (name === profile ? " go" : "");
+      use.textContent = name === profile ? "Attivo" : "Usa";
+      use.addEventListener("click", () => switchProfile(name));
+      row.appendChild(use);
+      row.addEventListener("click", () => {
+        if (name !== profile) switchProfile(name);
+      });
+      box.appendChild(row);
+    }
+    $("profInitial").textContent = (profile || "?").trim().charAt(0).toUpperCase();
+    $("btnProfile").classList.toggle("on", profiles.length > 1);
+  }
+
+  async function switchProfile(name) {
+    if (name === profile) {
+      closeProfile();
+      return;
+    }
+    saveCurrentState();
+    profile = name;
+    LS.set("mb.profile", name);
+    if (audio) {
+      try { audio.pause(); } catch (e) { /* noop */ }
+    }
+    currentId = null;
+    const st = loadProfileState();
+    await loadLocalLyrics();
+    await loadAll();
+    updateRestoreButton();
+    setHud();
+    const last = st.last ? tracks.find((t) => t.id === st.last) : null;
+    if (last) {
+      currentId = last.id;
+      audio.src = last.url;
+      const pos = st.time || 0;
+      audio.addEventListener("loadedmetadata", () => {
+        if (pos > 0 && isFinite(audio.duration)) {
+          try { audio.currentTime = Math.min(pos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
+        }
+      }, { once: true });
+      setHud();
+    }
+    updateMediaSession();
+    closeProfile();
+    toast("Ora ascolti: " + name);
+  }
+
+  function openProfile() {
+    renderProfiles();
+    $("profilePanel").hidden = false;
+    document.body.classList.add("no-scroll");
+  }
+
+  function closeProfile() {
+    $("profilePanel").hidden = true;
+    document.body.classList.remove("no-scroll");
+  }
+
   /* ---------- Testi ---------- */
   function openLyrics() {
     const l = currentLyrics();
@@ -736,6 +891,8 @@
       const rec = {
         id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
         title: file.name.replace(/\.[^.]+$/, ""),
+        artist: "",
+        profile: profile,
         blob: file,
         size: file.size
       };
@@ -1416,6 +1573,7 @@
       blob: audio,
       size: audio.size,
       source: source || "import",
+      profile: profile,
       license: meta.license || "",
       pageUrl: meta.url || "",
       cover: coverBlob || meta.cover || "",
@@ -1972,6 +2130,34 @@
     setTimeout(() => window.location.reload(), 400);
   });
 
+  $("btnProfile").addEventListener("click", openProfile);
+  $("profileClose").addEventListener("click", closeProfile);
+  $("profilePanel").addEventListener("click", (e) => {
+    if (e.target === $("profilePanel")) closeProfile();
+  });
+  $("btnAddProfile").addEventListener("click", () => {
+    const inp = $("profileName");
+    const name = inp.value.trim().slice(0, 18);
+    if (!name) {
+      toast("Scrivi un nome");
+      return;
+    }
+    if (profiles.some((p) => p.toLowerCase() === name.toLowerCase())) {
+      toast("Questo profilo c'è già");
+      return;
+    }
+    if (profiles.length >= 6) {
+      toast("Troppi profili");
+      return;
+    }
+    profiles.push(name);
+    LS.set("mb.profiles", profiles);
+    writeProfileState(name, { hidden: [], favs: [], last: null, time: 0 });
+    inp.value = "";
+    renderProfiles();
+    switchProfile(name);
+  });
+
   $("btnRestore").addEventListener("click", restoreHidden);
 
   document.addEventListener("visibilitychange", () => {
@@ -1996,7 +2182,18 @@
   (async function init() {
     audio = createAudio();
     setPlaybackState("none");
-    hiddenTracks = new Set(LS.get("mb.hidden", []));
+    profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
+    profiles = LS.get("mb.profiles", [DEFAULT_PROFILE]);
+    if (profiles.indexOf(profile) < 0) profiles.push(profile);
+    const migrated = profileState(profile);
+    if (!allState()[profile] && LS.get("mb.hidden", null)) {
+      migrated.hidden = LS.get("mb.hidden", []);
+      migrated.favs = LS.get("mb.favs", []);
+      migrated.last = LS.get("mb.last", null);
+      migrated.time = LS.get("mb.pos." + migrated.last, 0);
+      writeProfileState(profile, migrated);
+    }
+    const st = loadProfileState();
     $("appVer").textContent = "v" + APP_VERSION;
     try {
       db = await openDB();
@@ -2014,15 +2211,13 @@
 
     shuffle = LS.get("mb.shuffle", false);
     repeat = LS.get("mb.repeat", false);
-    favorites = new Set(LS.get("mb.favs", []));
     $("btnShuffle").classList.toggle("on", shuffle);
     $("btnRepeat").classList.toggle("on", repeat);
 
-    const lastId = LS.get("mb.last", null);
-    const lastTrack = lastId ? tracks.find((t) => t.id === lastId) : null;
+    const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
     if (lastTrack) {
       currentId = lastTrack.id;
-      const restorePos = LS.get("mb.pos." + lastId, 0);
+      const restorePos = st.time || 0;
       audio.src = lastTrack.url;
       audio.addEventListener("loadedmetadata", () => {
         if (restorePos > 0 && isFinite(audio.duration)) {

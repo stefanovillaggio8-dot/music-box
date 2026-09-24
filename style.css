@@ -453,6 +453,100 @@ body.no-scroll { overflow: hidden; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.prof-btn { position: relative; }
+.prof-initial {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+}
+.prof-btn.on .prof-initial { background: var(--danger); }
+
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  background: rgba(10,10,14,.78);
+  display: flex;
+  align-items: flex-end;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.profile-card {
+  width: 100%;
+  max-height: 88vh;
+  background: var(--card);
+  border-radius: 22px 22px 0 0;
+  border: 1px solid rgba(255,255,255,.07);
+  border-bottom: none;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.profile-body { padding: 16px 18px 24px; overflow-y: auto; max-height: 66vh; }
+.prof-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--card-hi);
+  margin-bottom: 8px;
+  border: 1px solid transparent;
+}
+.prof-row.active { border-color: var(--accent); }
+.prof-ava {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.prof-name { font-size: 15px; font-weight: 700; }
+.prof-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.prof-actions { display: flex; gap: 8px; margin-top: 14px; }
+.prof-actions input {
+  flex: 1;
+  background: var(--card-hi);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--txt);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+}
+.prof-actions .btn-main { margin-top: 0; width: auto; padding: 12px 16px; }
+.profile-body .step-hint { margin-top: 14px; }
+
+.track-share {
+  background: none;
+  border: none;
+  color: var(--muted);
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.track-share svg { width: 17px; height: 17px; }
+.track-share:active { color: var(--accent2); background: rgba(79,195,255,.12); }
+
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 .import-overlay {
