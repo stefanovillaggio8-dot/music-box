@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.9";
+  const APP_VERSION = "5.0";
 
   let recovering = false;
   async function selfHeal() {
@@ -2286,13 +2286,17 @@
     if (!("caches" in window)) return null;
     try {
       const keys = await caches.keys();
+      if (!keys.length) return null;
       for (const k of keys) {
         const c = await caches.open(k);
         const hit = await c.match("app.js");
         if (hit) return c;
       }
-    } catch (e) { /* noop */ }
-    return null;
+      const recenti = keys.slice().sort();
+      return await caches.open(recenti[recenti.length - 1]);
+    } catch (e) {
+      return null;
+    }
   }
 
   function renderOfflineRows(rows) {
@@ -2560,7 +2564,9 @@
     }
     try {
       const cache = await appCache();
-      if (!cache) throw new Error("non disponibile");
+      if (!cache) {
+        throw new Error("il browser non ha piu' spazio per le canzoni offline: libera memoria o tocca piu' tardi");
+      }
       await fetchToCache(t.url, cache, (ratio) => {
         if (el) el.style.background = ratio ? "var(--accent2)" : "";
       });
@@ -2575,7 +2581,7 @@
         el.classList.remove("run");
         el.classList.add("err");
       }
-      toast("Non riesco a scaricare: " + e.message);
+      toast("Download non riuscito: " + e.message);
     } finally {
       cloudBusy = false;
       await refreshCachedSongs();
