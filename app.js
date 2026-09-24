@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.1";
+  const APP_VERSION = "6.2";
 
   let recovering = false;
   async function selfHeal() {
@@ -234,7 +234,6 @@
   /* ---------- Caricamento tracce ---------- */
   async function loadAll() {
     const builtin = BUILTIN
-      .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
       .map((b, i) => {
         const info = coverInfo(b.artist, b.title);
         return {
@@ -560,6 +559,7 @@
     if (currentId) LS.set("mb.pos." + currentId, 0);
     if (queue.length) {
       const next = queue.shift();
+      persistQueue();
       renderQueueCount();
       playById(next);
       return;
@@ -676,18 +676,178 @@
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
+  function persistQueue() {
+    LS.set("mb.queue", queue);
+  }
+
   function renderQueueCount() {
     const el = $("quickCount");
-    if (!el) return;
-    el.hidden = !queue.length;
-    el.textContent = queue.length ? queue.length + (queue.length === 1 ? " brano in coda" : " brani in coda") : "";
+    if (el) {
+      el.hidden = !queue.length;
+      el.textContent = queue.length ? queue.length + (queue.length === 1 ? " brano in coda" : " brani in coda") : "";
+    }
+    const badge = $("queueBadge");
+    if (badge) {
+      badge.hidden = !queue.length;
+      badge.textContent = queue.length ? (queue.length > 9 ? "9+" : queue.length) : "";
+    }
   }
 
   function queueTrack(id, front) {
     if (front) queue.unshift(id);
     else queue.push(id);
+    persistQueue();
     renderQueueCount();
     toast(front ? "Lo suono dopo questo" : "Aggiunto in coda");
+  }
+
+  function openQueue() {
+    renderQueueList();
+    $("queuePanel").hidden = false;
+    syncNoScroll();
+  }
+
+  function closeQueue() {
+    $("queuePanel").hidden = true;
+    syncNoScroll();
+  }
+
+  function moveQueue(i, dir) {
+    const j = i + dir;
+    if (j < 0 || j >= queue.length) return;
+    const id = queue[i];
+    queue[i] = queue[j];
+    queue[j] = id;
+    persistQueue();
+    renderQueueList();
+  }
+
+  function removeQueue(i) {
+    queue.splice(i, 1);
+    persistQueue();
+    renderQueueCount();
+    renderQueueList();
+    if (!queue.length) {
+      $("queueHint").hidden = true;
+      const body = $("queueBody");
+      const e = document.createElement("p");
+      e.className = "queue-empty";
+      e.textContent = "Coda vuota. Tieni premuto su una canzone e scegli \u201cAscolta dopo\u201d o \u201cMetti in coda\u201d.";
+      body.appendChild(e);
+    }
+  }
+
+  function playFromQueue(i) {
+    const id = queue.splice(i, 1)[0];
+    persistQueue();
+    renderQueueCount();
+    closeQueue();
+    playById(id);
+  }
+
+  function renderQueueList() {
+    const body = $("queueBody");
+    body.innerHTML = "";
+
+    const now = tracks.find((x) => x.id === currentId);
+    if (now) {
+      const head = document.createElement("div");
+      head.className = "queue-item queue-now";
+      const hi = document.createElement("div");
+      hi.className = "queue-info";
+      const ht = document.createElement("div");
+      ht.className = "queue-title";
+      ht.textContent = now.title;
+      hi.appendChild(ht);
+      if (now.artist) {
+        const ha = document.createElement("div");
+        ha.className = "queue-artist";
+        ha.textContent = now.artist;
+        hi.appendChild(ha);
+      }
+      head.appendChild(hi);
+      const tag = document.createElement("span");
+      tag.className = "queue-now-tag";
+      tag.textContent = "In riproduzione";
+      head.appendChild(tag);
+      body.appendChild(head);
+    }
+
+    if (!queue.length) {
+      const e = document.createElement("p");
+      e.className = "queue-empty";
+      e.textContent = "Coda vuota. Tieni premuto su una canzone e scegli \u201cAscolta dopo\u201d o \u201cMetti in coda\u201d.";
+      body.appendChild(e);
+      $("queueHint").hidden = true;
+      return;
+    }
+    $("queueHint").hidden = false;
+
+    const btnUp = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 5l7 7-1.4 1.4L12 7.8 6.4 13.4 5 12l7-7Z"/></svg>';
+    const btnDown = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 19l-7-7 1.4-1.4L12 16.2l5.6-5.6L19 12l-7 7Z"/></svg>';
+    const btnPlayQ = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5a1 1 0 0 1 1.5-.87l11 6.5a1 1 0 0 1 0 1.74l-11 6.5A1 1 0 0 1 8 18.5v-13Z"/></svg>';
+    const btnClose = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 5l5 5 5-5 1.4 1.4L13.4 12l5 5L17 18.4l-5-5-5 5L5.6 17l5-5-5-5L7 5Z"/></svg>';
+
+    const mkBtn = (title, html, fn, disabled) => {
+      const b = document.createElement("button");
+      b.className = "qbtn";
+      b.type = "button";
+      b.title = title;
+      b.setAttribute("aria-label", title);
+      b.innerHTML = html;
+      b.disabled = !!disabled;
+      b.addEventListener("click", fn);
+      return b;
+    };
+
+    queue.forEach((id, i) => {
+      const t = tracks.find((x) => x.id === id);
+      const row = document.createElement("div");
+      if (!t) {
+        row.className = "queue-item queue-gone";
+        const g = document.createElement("div");
+        g.className = "queue-info";
+        const gt = document.createElement("div");
+        gt.className = "queue-title";
+        gt.textContent = "Brano non più disponibile";
+        g.appendChild(gt);
+        row.appendChild(g);
+        row.appendChild(mkBtn("Rimuovi", btnClose, () => removeQueue(i)));
+        body.appendChild(row);
+        return;
+      }
+
+      row.className = "queue-item";
+      const num = document.createElement("div");
+      num.className = "queue-num";
+      num.textContent = i + 1;
+      row.appendChild(num);
+
+      const info = document.createElement("div");
+      info.className = "queue-info";
+      info.title = "Riproduci ora";
+      info.addEventListener("click", () => playFromQueue(i));
+      const ti = document.createElement("div");
+      ti.className = "queue-title";
+      ti.textContent = t.title;
+      info.appendChild(ti);
+      if (t.artist) {
+        const ar = document.createElement("div");
+        ar.className = "queue-artist";
+        ar.textContent = t.artist;
+        info.appendChild(ar);
+      }
+      row.appendChild(info);
+
+      const actions = document.createElement("div");
+      actions.className = "queue-actions";
+      actions.appendChild(mkBtn("Riproduci", btnPlayQ, () => playFromQueue(i)));
+      actions.appendChild(mkBtn("Sposta su", btnUp, () => moveQueue(i, -1), i === 0));
+      actions.appendChild(mkBtn("Sposta giù", btnDown, () => moveQueue(i, 1), i === queue.length - 1));
+      actions.appendChild(mkBtn("Rimuovi", btnClose, () => removeQueue(i)));
+      row.appendChild(actions);
+      body.appendChild(row);
+    });
   }
 
   function closeQuick() {
@@ -862,6 +1022,7 @@
   function playNext() {
     if (queue.length) {
       const next = queue.shift();
+      persistQueue();
       renderQueueCount();
       playById(next);
       return;
@@ -1071,7 +1232,7 @@
   function syncNoScroll() {
     const open = !$("importPanel").hidden || !$("lyricsPanel").hidden ||
       !$("profilePanel").hidden || !$("confirmPanel").hidden || !$("offlinePanel").hidden ||
-      !$("quickPanel").hidden;
+      !$("quickPanel").hidden || !$("queuePanel").hidden;
     document.body.classList.toggle("no-scroll", open);
   }
 
@@ -2366,6 +2527,11 @@
     LS.set("mb.shuffle", shuffle);
     $("btnShuffle").classList.toggle("on", shuffle);
   });
+  $("btnQueue").addEventListener("click", openQueue);
+  $("queueClose").addEventListener("click", closeQueue);
+  $("queuePanel").addEventListener("click", (e) => {
+    if (e.target === $("queuePanel")) closeQueue();
+  });
   $("btnRepeat").addEventListener("click", () => {
     repeat = !repeat;
     LS.set("mb.repeat", repeat);
@@ -2845,10 +3011,9 @@
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
       if (!parsed || !parsed.length) return;
-      const mine = parsed.filter((b) => (b.profile || DEFAULT_PROFILE) === profile);
-      const remoteFiles = mine.map((b) => b.file);
+      const remoteFiles = parsed.map((b) => b.file);
       const localFiles = tracks.filter((t) => t.builtin).map((t) => t.url);
-      const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
+      const aggiunte = parsed.filter((b) => localFiles.indexOf(b.file) < 0);
       const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
       if (!aggiunte.length && !tolte.length) return;
       if (tolte.length && tolte.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
@@ -2931,6 +3096,7 @@
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
     profiles = LS.get("mb.profiles", [DEFAULT_PROFILE]);
+    queue = (LS.get("mb.queue", []) || []).filter((x) => typeof x === "string");
     if (profiles.indexOf("Fratello") >= 0) {
       profiles = profiles.map((p) => (p === "Fratello" ? OTHER_PROFILE : p));
     }

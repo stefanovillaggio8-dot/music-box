@@ -106,6 +106,10 @@
         <button id="btnRepeat" class="ctl" aria-label="Ripeti" title="Ripeti">
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 2h3a1 1 0 0 1 1 1v5h-2V4h-2a1 1 0 0 1 0-2Zm-10 0a1 1 0 0 1 0 2H5v4H3V3a1 1 0 0 1 1-1h3Zm10 20h3a1 1 0 0 0 1-1v-5h-2v4h-2a1 1 0 0 0 0 2Zm-10 0a1 1 0 0 0 0-2H5v-4H3v5a1 1 0 0 0 1 1h3Zm8.5-15a5 5 0 0 1 5 5v1a1 1 0 1 1-2 0v-1a3 3 0 0 0-3-3h-5.2l1.4 1.4a1 1 0 0 1-1.4 1.4l-3-3a1 1 0 0 1 0-1.4l3-3a1 1 0 0 1 1.4 1.4L7.3 7h8.2ZM4.5 15a5 5 0 0 1 5-5h.2l-1.4-1.4a1 1 0 0 1 1.4-1.4l3 3a1 1 0 0 1 0 1.4l-3 3a1 1 0 0 1-1.4-1.4l1.4-1.4H9.5a3 3 0 0 0-3 3v1a1 1 0 1 1-2 0v-1Z"/></svg>
         </button>
+        <button id="btnQueue" class="ctl" aria-label="Coda" title="Coda">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z"/></svg>
+          <span class="ctl-badge" id="queueBadge" hidden></span>
+        </button>
       </div>
     </div>
   </footer>
@@ -189,7 +193,7 @@
       </div>
       <div class="profile-body">
         <div id="profileList"></div>
-        <p class="step-hint">Regola semplice: le canzoni che aggiungi dal telefono restano per il nome che hai scelto. Quelle che metti sul computer nelle cartelle <strong>musica mp3 ste</strong> o <strong>musica mp3 emanuele</strong> finiscono nella libreria giusta, e sono le stesse su ogni telefono.</p>
+        <p class="step-hint">Regola semplice: le canzoni che aggiungi dal telefono restano per il nome che hai scelto. Quelle che metti sul computer nelle cartelle <strong>musica mp3 ste</strong> o <strong>musica mp3 emanuele</strong> sono visibili a tutti su ogni telefono, e si scaricano in anticipo solo se lo scegli tu dal pannello offline.</p>
       </div>
     </div>
   </div>
@@ -230,6 +234,22 @@
         <p class="step-hint" id="offlineSpace"></p>
         <div id="offlineList"></div>
         <p class="step-hint">Le canzoni che ascolti vengono salvate da sole. Questo bottone le prepara tutte in anticipo, cos&#39; sono disponibili anche quando non hai campo. Sono circa 60 MB per tutte: occupano spazio sul telefono, e puoi liberarlo quando vuoi.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-overlay" id="queuePanel" hidden>
+    <div class="profile-card">
+      <div class="import-head">
+        <div class="import-head-info">
+          <p class="import-title">Coda</p>
+          <p class="import-sub" id="queueSub">Brani che suoneranno dopo quello attuale</p>
+        </div>
+        <button class="import-close" id="queueClose" aria-label="Chiudi">×</button>
+      </div>
+      <div class="profile-body">
+        <div id="queueBody"></div>
+        <p class="step-hint" id="queueHint">Tocca un brano per riprodurlo subito. Usa le frecce per cambiare l&#39;ordine.</p>
       </div>
     </div>
   </div>
