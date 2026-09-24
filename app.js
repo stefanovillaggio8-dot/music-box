@@ -372,9 +372,14 @@
     return scored.map((x) => x.t);
   }
 
-  function hideTrack(id) {
+  async function hideTrack(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
+    const msg = t.builtin
+      ? "«" + t.title + "» sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
+      : "«" + t.title + "» sparisce dalla tua lista di questo profilo.";
+    const yes = await askConfirm("Togliere dalla lista?", msg, "Togli");
+    if (!yes) return;
     hiddenTracks.add(id);
     saveCurrentState();
     if (currentId === id) {
@@ -385,7 +390,7 @@
     closeLyrics();
     render();
     updateRestoreButton();
-    toast(t.builtin ? "Brano nascosto" : "Brano rimosso");
+    toast("Brano tolto dalla lista");
   }
 
   function restoreHidden() {
@@ -854,6 +859,37 @@
     toast("Ora ascolti: " + name);
   }
 
+  let confirmResolve = null;
+
+  function syncNoScroll() {
+    const open = !$("importPanel").hidden || !$("lyricsPanel").hidden ||
+      !$("profilePanel").hidden || !$("confirmPanel").hidden;
+    document.body.classList.toggle("no-scroll", open);
+  }
+
+  function askConfirm(title, message, okLabel) {
+    $("confirmTitle").textContent = title;
+    $("confirmMsg").textContent = message;
+    $("confirmYes").textContent = okLabel || "Elimina";
+    $("confirmPanel").hidden = false;
+    syncNoScroll();
+    return new Promise((resolve) => { confirmResolve = resolve; });
+  }
+
+  function closeConfirm(result) {
+    $("confirmPanel").hidden = true;
+    const r = confirmResolve;
+    confirmResolve = null;
+    syncNoScroll();
+    if (r) r(result);
+  }
+
+  $("confirmYes").addEventListener("click", () => closeConfirm(true));
+  $("confirmNo").addEventListener("click", () => closeConfirm(false));
+  $("confirmPanel").addEventListener("click", (e) => {
+    if (e.target === $("confirmPanel")) closeConfirm(false);
+  });
+
   function openProfile() {
     renderProfiles();
     $("profilePanel").hidden = false;
@@ -920,6 +956,9 @@
   }
 
   async function removeTrack(id) {
+    const t = tracks.find((x) => x.id === id);
+    const yes = await askConfirm("Eliminare il brano?", "«" + (t ? t.title : "") + "» verrà cancellato da questo telefono e non si potrà più recuperare.", "Elimina");
+    if (!yes) return;
     try { await dbDel(id); } catch (e) { console.warn(e); }
     try { await dbDelImport(id); } catch (e) { /* noop */ }
     if (currentId === id) {
@@ -1712,7 +1751,10 @@
     await loadAll();
   }
 
-  function removeImportItem(item) {
+  async function removeImportItem(item) {
+    if (item.state === "downloading") return;
+    const yes = await askConfirm("Togliere dalla ricerca?", "«" + item.title + "» sparisce da questo elenco. Se era in download, si ferma.", "Togli");
+    if (!yes) return;
     item.removed = true;
     if (item.controller) {
       try { item.controller.abort(); } catch (e) { /* noop */ }
