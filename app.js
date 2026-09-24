@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "5.0";
+  const APP_VERSION = "6.0";
 
   let recovering = false;
   async function selfHeal() {
@@ -76,6 +76,9 @@
   let scrubbing = false;
   let pendingSeek = null;
   let lastSave = 0;
+  let resumeAt = 0;
+  let queue = [];
+  let suppressClick = false;
   let swReg = null;
 
   const DEFAULT_PROFILE = "Ste";
@@ -125,6 +128,9 @@
   let lyricsData = {};
   let coversData = {};
   let localLyrics = {};
+  let lyricLines = [];
+  let lyricActive = -1;
+  let lyricsUserScrollAt = 0;
 
   let db = null;
   const DB_NAME = "musicbox";
@@ -313,7 +319,7 @@
     try {
       const rows = await dbAllLyrics();
       for (const r of rows) {
-        localLyrics[r.id] = { title: r.title, artist: r.artist || "", text: r.text, source: r.source || "" };
+        localLyrics[r.id] = { title: r.title, artist: r.artist || "", text: r.text, synced: r.synced || "", source: r.source || "" };
       }
     } catch (e) {
       localLyrics = {};
@@ -531,7 +537,14 @@
       }
       li.appendChild(del);
 
-      li.addEventListener("click", () => playById(t.id));
+      li.addEventListener("click", () => {
+        if (suppressClick) {
+          suppressClick = false;
+          return;
+        }
+        playById(t.id);
+      });
+      bindLongPress(li, t);
       playlistEl.appendChild(li);
     });
   }
@@ -545,6 +558,12 @@
 
   function handleEnded() {
     if (currentId) LS.set("mb.pos." + currentId, 0);
+    if (queue.length) {
+      const next = queue.shift();
+      renderQueueCount();
+      playById(next);
+      return;
+    }
     if (repeat) {
       audio.currentTime = 0;
       doPlay();
@@ -569,7 +588,9 @@
 
   function savePos() {
     if (currentId && audio && isFinite(audio.currentTime)) {
-      writeProfileState(profile, { last: currentId, time: Math.floor(audio.currentTime) });
+      const sec = Math.floor(audio.currentTime);
+      writeProfileState(profile, { last: currentId, time: sec });
+      LS.set("mb.pos." + currentId, sec);
     }
   }
 
@@ -593,11 +614,18 @@
       updateProgressUI(t, totalDuration());
       maybeSavePos();
     }
+    tickLyrics();
     syncPlayUI();
   }
 
   function handleMetadata() {
-    updateProgressUI(audio.currentTime || 0, totalDuration());
+    const want = resumeAt;
+    resumeAt = 0;
+    if (want > 8 && audio) {
+      const d = totalDuration();
+      try { audio.currentTime = Math.min(want, d > 20 ? d - 5 : want); } catch (e) { /* noop */ }
+    }
+    updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
 
   function handleError() {
@@ -647,6 +675,94 @@
     }
   }
 
+  /* ---------- Menu rapido (pressione lunga) ---------- */
+  function renderQueueCount() {
+    const el = $("quickCount");
+    if (!el) return;
+    el.hidden = !queue.length;
+    el.textContent = queue.length ? queue.length + (queue.length === 1 ? " brano in coda" : " brani in coda") : "";
+  }
+
+  function queueTrack(id, front) {
+    if (front) queue.unshift(id);
+    else queue.push(id);
+    renderQueueCount();
+    toast(front ? "Lo suono dopo questo" : "Aggiunto in coda");
+  }
+
+  function closeQuick() {
+    $("quickPanel").hidden = true;
+    syncNoScroll();
+  }
+
+  function quickAction(label, iconPath, fn, danger) {
+    const b = document.createElement("button");
+    b.className = "quick-btn" + (danger ? " danger" : "");
+    b.type = "button";
+    b.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + iconPath + '"/></svg>';
+    b.appendChild(document.createTextNode(label));
+    b.addEventListener("click", () => {
+      closeQuick();
+      fn();
+    });
+    return b;
+  }
+
+  const ICON_QUEUE = "M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z";
+  const ICON_NEXT = "M6 5l9 7-9 7V5Zm10 0h2v14h-2V5Z";
+  const ICON_HIDE = "M3.3 2 2 3.3l2.4 2.4C2.5 7 1.4 8.7 1 9c1.1 2.3 4 5 7 6l2 2 1.3-1.3 15.4 15.4 1.3-1.3L3.3 2ZM12 5c4.4 0 8 4 8 4-.5 1-1.6 2.4-3.1 3.5l-1.5-1.5c1-.9 1.6-1.9 1.9-2.6-.6-.8-2.6-2.4-5.3-2.4-.4 0-.8 0-1.2.1L9.6 4.9c.8-.1 1.6-.1 2.4-.1Z";
+  const ICON_SHARE = "M18 16a3 3 0 0 0-2.4 1.2l-6.9-4a3 3 0 0 0 0-1.4l7-4.1A3 3 0 1 0 15 6c0 .2 0 .4.1.6l-7 4.1a3 3 0 1 0 0 6.6l6.9 4A3 3 0 1 0 18 16Z";
+  const ICON_OFFLINE = "M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z";
+
+  function openQuickMenu(t) {
+    if (!t) return;
+    $("quickTitle").textContent = t.title;
+    const box = $("quickActions");
+    box.innerHTML = "";
+    box.appendChild(quickAction("Ascolta dopo", ICON_NEXT, () => queueTrack(t.id, true)));
+    box.appendChild(quickAction("Metti in coda", ICON_QUEUE, () => queueTrack(t.id, false)));
+    if (t.builtin) {
+      const el = document.createElement("button");
+      el.className = "quick-btn";
+      el.type = "button";
+      el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + ICON_OFFLINE + '"/></svg>';
+      el.appendChild(document.createTextNode(cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
+      el.addEventListener("click", () => {
+        closeQuick();
+        if (!cloudBusy) cacheOneTrack(t);
+      });
+      box.appendChild(el);
+    } else {
+      box.appendChild(quickAction("Condividi file", ICON_SHARE, () => exportTrack(t)));
+    }
+    box.appendChild(quickAction("Nascondi", ICON_HIDE, () => hideTrack(t.id), true));
+    renderQueueCount();
+    $("quickPanel").hidden = false;
+    syncNoScroll();
+  }
+
+  function bindLongPress(el, t) {
+    let timer = null;
+    const stop = () => {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+    el.addEventListener("pointerdown", (e) => {
+      if (e.button && e.button !== 0) return;
+      if (e.target && e.target.closest && e.target.closest("button")) return;
+      timer = setTimeout(() => {
+        timer = null;
+        suppressClick = true;
+        try { navigator.vibrate && navigator.vibrate(8); } catch (err) { /* noop */ }
+        openQuickMenu(t);
+      }, 550);
+    });
+    ["pointerup", "pointercancel", "pointerleave", "pointermove"].forEach((ev) => el.addEventListener(ev, stop));
+    el.addEventListener("contextmenu", (e) => e.preventDefault());
+  }
+
   /* ---------- Player ---------- */
   function current() {
     return tracks.find((t) => t.id === currentId) || null;
@@ -690,6 +806,7 @@
   async function playById(id, autoplay = true) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
+    if (id !== currentId) resumeAt = LS.get("mb.pos." + id, 0);
     currentId = id;
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
@@ -721,6 +838,16 @@
     return (idx - 1 + tracks.length) % Math.max(tracks.length, 1);
   }
 
+  function playNext() {
+    if (queue.length) {
+      const next = queue.shift();
+      renderQueueCount();
+      playById(next);
+      return;
+    }
+    playById(tracks[nextIndex()].id);
+  }
+
   async function togglePlay() {
     if (!currentId && tracks.length) await playById(tracks[0].id);
     if (audio.paused) await doPlay();
@@ -737,6 +864,8 @@
     setSvgVisible($("iconPlay"), audio.paused);
     setSvgVisible($("iconPause"), !audio.paused);
     setPlaybackState(audio.paused ? "paused" : "playing");
+    const art = $("playerArt");
+    if (art) art.classList.toggle("playing", !audio.paused);
   }
 
   function updateMediaSession() {
@@ -755,7 +884,7 @@
     };
     setHandler("play", () => doPlay());
     setHandler("pause", () => { if (audio) audio.pause(); });
-    setHandler("nexttrack", () => playById(tracks[nextIndex()].id));
+    setHandler("nexttrack", () => playNext());
     setHandler("previoustrack", () => playById(tracks[prevIndex()].id));
     setHandler("seekto", (d) => {
       if (d.seekTime != null && audio && isFinite(audio.duration)) {
@@ -918,7 +1047,8 @@
 
   function syncNoScroll() {
     const open = !$("importPanel").hidden || !$("lyricsPanel").hidden ||
-      !$("profilePanel").hidden || !$("confirmPanel").hidden || !$("offlinePanel").hidden;
+      !$("profilePanel").hidden || !$("confirmPanel").hidden || !$("offlinePanel").hidden ||
+      !$("quickPanel").hidden;
     document.body.classList.toggle("no-scroll", open);
   }
 
@@ -957,6 +1087,49 @@
   }
 
   /* ---------- Testi ---------- */
+  function syncedToText(synced) {
+    return String(synced || "")
+      .replace(/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\]/g, "")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function parseSynced(synced) {
+    const out = [];
+    const re = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]\s*([^\n]*)/g;
+    const s = String(synced || "");
+    let m;
+    while ((m = re.exec(s))) {
+      const sec = Number(m[1]) * 60 + Number(m[2]) + (m[3] ? Number("0." + m[3]) : 0);
+      out.push({ t: sec, text: m[4] });
+    }
+    return out;
+  }
+
+  function activeLineIndex(time) {
+    let idx = -1;
+    for (let i = 0; i < lyricLines.length; i++) {
+      if (Number(lyricLines[i].dataset.t) <= time) idx = i;
+      else break;
+    }
+    return idx;
+  }
+
+  function tickLyrics() {
+    if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
+    if (Date.now() - lyricsUserScrollAt < 4000) return;
+    const idx = activeLineIndex(audio.currentTime || 0);
+    if (idx === lyricActive) return;
+    if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
+    if (idx >= 0) {
+      lyricLines[idx].classList.add("on");
+      if (!lyricsUserScrollAt) {
+        try { lyricLines[idx].scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { /* noop */ }
+      }
+    }
+    lyricActive = idx;
+  }
+
   function openLyrics() {
     const l = currentLyrics();
     if (!l) return;
@@ -964,16 +1137,32 @@
     $("lyricsSub").textContent = l.artist || "";
     const body = $("lyricsBody");
     body.innerHTML = "";
-    l.text.split("\n").forEach((line) => {
-      const p = document.createElement("p");
-      p.textContent = line;
-      const trim = line.trim();
-      if (/^\[.*\]$/.test(trim)) p.className = "lyr-sec";
-      else if (!trim) p.className = "lyr-gap";
-      body.appendChild(p);
-    });
+    lyricLines = [];
+    lyricActive = -1;
+    lyricsUserScrollAt = 0;
+    const synced = parseSynced(l.synced);
+    if (synced.length) {
+      for (const line of synced) {
+        const p = document.createElement("p");
+        p.className = "lyr-line";
+        p.textContent = line.text;
+        p.dataset.t = String(line.t);
+        body.appendChild(p);
+        lyricLines.push(p);
+      }
+    } else {
+      String(l.text || "").split("\n").forEach((line) => {
+        const p = document.createElement("p");
+        p.textContent = line;
+        const trim = line.trim();
+        if (/^\[.*\]$/.test(trim)) p.className = "lyr-sec";
+        else if (!trim) p.className = "lyr-gap";
+        body.appendChild(p);
+      });
+    }
     $("lyricsPanel").hidden = false;
     document.body.classList.add("no-scroll");
+    tickLyrics();
   }
 
   function closeLyrics() {
@@ -1071,10 +1260,15 @@
       const r2 = await fetch("https://lrclib.net/api/get?artist_name=" + safeArtist + "&track_name=" + safeTitle);
       if (r2.ok) {
         const j = await r2.json();
-        const text = j && (j.plainLyrics || String(j.syncedLyrics || "").replace(/\[\d+:\d+(?:\.\d+)?\]/g, ""));
+        const synced = j && j.syncedLyrics ? String(j.syncedLyrics) : "";
+        const text = j && (j.plainLyrics || syncedToText(synced));
         if (text && text.length > 120 &&
             (!j.trackName || titleCompatible(title, j.trackName))) {
-          return { text: text.replace(/\n{3,}/g, "\n\n").trim(), source: "LRCLIB" };
+          return {
+            text: text.replace(/\n{3,}/g, "\n\n").trim(),
+            synced: synced,
+            source: "LRCLIB" + (synced ? " (sincronizzato)" : "")
+          };
         }
       }
     } catch (e) { /* noop */ }
@@ -1122,8 +1316,8 @@
       if (!localLyrics[rec.id]) {
         const l = await findLyrics(rec.artist, rec.title);
         if (l) {
-          localLyrics[rec.id] = { title: rec.title, artist: rec.artist || "", text: l.text, source: l.source };
-          await dbPutLyrics({ id: rec.id, title: rec.title, artist: rec.artist || "", text: l.text, source: l.source });
+          localLyrics[rec.id] = { title: rec.title, artist: rec.artist || "", text: l.text, synced: l.synced || "", source: l.source };
+          await dbPutLyrics({ id: rec.id, title: rec.title, artist: rec.artist || "", text: l.text, synced: l.synced || "", source: l.source });
         }
       }
       await loadAll();
@@ -2136,7 +2330,7 @@
 
   /* ---------- Eventi UI ---------- */
   $("btnPlay").addEventListener("click", togglePlay);
-  $("btnNext").addEventListener("click", () => playById(tracks[nextIndex()].id));
+  $("btnNext").addEventListener("click", () => playNext());
   $("btnPrev").addEventListener("click", () => {
     if (totalDuration() > 3 && audio.currentTime > 3) {
       audio.currentTime = 0;
@@ -2160,6 +2354,15 @@
   $("lyricsClose").addEventListener("click", closeLyrics);
   $("lyricsPanel").addEventListener("click", (e) => {
     if (e.target === $("lyricsPanel")) closeLyrics();
+  });
+  $("lyricsBody").addEventListener("pointerdown", () => {
+    lyricsUserScrollAt = Date.now();
+  });
+  $("lyricsBody").addEventListener("wheel", () => {
+    lyricsUserScrollAt = Date.now();
+  });
+  $("quickPanel").addEventListener("click", (e) => {
+    if (e.target === $("quickPanel")) closeQuick();
   });
 
   const progressBar = $("playerProgress");
