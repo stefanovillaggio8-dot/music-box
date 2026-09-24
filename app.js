@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.2";
+  const APP_VERSION = "4.3";
 
   let recovering = false;
   async function selfHeal() {
@@ -1145,23 +1145,63 @@
     return keys;
   }
 
+  const NOISE_PATTERNS = [
+    /\(?\b\d{1,2}[:.]\d{2}\b\)?/g,
+    /\b\d{1,4}\s?(kb|mb|gb|kbps|mbps)\b/gi,
+    /\b(19|20)\d{2}\b/g,
+    /\b(official|video|audio|visual|visualizer|lyrics?|lyric video|mv|hd|hq|4k|remastered|remaster|explicit|full album|prod|produced|stereo)\b/gi,
+    /\b(play|ascolta|riproduci|scarica|download|condividi|share|aggiungi|add|like|cuore|piu opzioni|more options|ordina per|sort by|qualita|offline|preferito|playlist|album|artista|artist|brani|tracks|canzoni|libreria|ora in riproduzione|shuffle|repeat)\b/gi
+  ];
+
+  const CREDITS = [
+    /\([^)]*\b(prod|produced|by|con|feat|ft|featuring)\b[^)]*\)/gi,
+    /\[[^\]]*\b(prod|produced|by|con|feat|ft|featuring)\b[^\]]*\]/gi,
+    /\s+(ft|feat|featuring)\.?\s+[^-|]+$/i
+  ];
+
+  const STOPWORDS = /^(la|le|il|lo|i|gli|del|della|delle|di|da|a|al|alla|alle|con|per|tra|e|che|mia|mio|tua|tuo|suo|sua|mia|libreria|playlist|brani|canzoni|album|musica|ascolta|riproduci|ascolto|ascoltando|coda|queue|tutto|tutti|ora|in|ora in riproduzione|piu|opzioni|scarica|condividi|aggiungi|preferito|offline|qualita|random|shuffle|repeat|1|2|3|4|5|6|7|8|9|10)$/i;
+
+  function cleanLine(raw) {
+    let line = String(raw || "")
+      .replace(/[\u2018\u2019\u201B]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2013\u2014\u2212]/g, "-")
+      .replace(/[\u00A0\u2007\u202F]/g, " ")
+      .replace(/[^\p{L}\p{N}\s\-:,'&!?().]/gu, " ")
+      .trim();
+    for (const re of CREDITS) line = line.replace(re, " ");
+    for (const re of NOISE_PATTERNS) line = line.replace(re, " ");
+    for (let i = 0; i < 4; i++) {
+      const before = line;
+      line = line.replace(/^\d{1,3}\s*[.)\]:-]\s*/, "");
+      line = line.replace(/^(play|ascolta|riproduci|scarica|download|condividi|share|aggiungi|add|like|cuore)\b\s*/i, "");
+      line = line.trim();
+      if (line === before) break;
+    }
+    line = line.replace(/\(\s*\)|\[\s*\]|\s+[.,;]\s*$/g, " ");
+    line = line.replace(/[ \t]{2,}/g, (m) => (m.length > 2 ? "  " : m));
+    line = line.replace(/^[\s\-:,.'&]+/, "").replace(/[\s\-:,.'&]+$/, "");
+    const words = line.split(/\s+/).filter(Boolean);
+    if (!words.length) return "";
+    const useful = words.filter((w) => !STOPWORDS.test(w));
+    if (!useful.length) return "";
+    const letters = (line.match(/\p{L}/gu) || []).length;
+    if (letters < 3) return "";
+    if (/^\d+$/.test(line)) return "";
+    if (line.length > 120) return "";
+    return line;
+  }
+
   function parseImportText(text) {
     const out = [];
     const seen = new Set();
     const lines = String(text || "").split(/\r?\n/);
     for (const raw of lines) {
-      let line = raw.replace(/\s+/g, " ").trim();
-      if (!line) continue;
-      line = line.replace(/^\d{1,3}\s*[.)\-:]\s*/, "");
-      line = line.replace(/^\[?\d{1,3}\]?[\s.\-]+/, "");
-      line = line.replace(/\(?\b\d{1,2}:\d{2}\b\)?\s*$/, "").trim();
-      if (!line || line.length < 2 || line.length > 120) continue;
-      if (!/[a-z0-9]/i.test(normKey(line))) continue;
-      if (/^(album|artista|artist|brani|tracks?|canzoni|playlist|libreria|shuffle|repeat|ora in riproduzione)$/i.test(line)) continue;
-      if (/^\d+$/.test(line)) continue;
+      const line = cleanLine(raw);
+      if (!line || line.length < 2) continue;
       let artist = "";
       let title = line;
-      const m = /^(.+?)\s+[-–—]\s+(.+)$/.exec(line);
+      const m = /^(.+?)\s+-\s+(.+)$/.exec(line);
       if (m) {
         artist = m[1].trim();
         title = m[2].trim();
@@ -1172,6 +1212,9 @@
           title = m2[2].trim();
         }
       }
+      title = title.replace(/\s+/g, " ").trim();
+      artist = artist.replace(/\s+/g, " ").trim();
+      if (!title) continue;
       const key = normKey(artist + title);
       if (seen.has(key)) continue;
       seen.add(key);
