@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.6";
+  const APP_VERSION = "4.7";
 
   let recovering = false;
   async function selfHeal() {
@@ -2568,6 +2568,63 @@
     }
   }
 
+  let checkingSongs = false;
+  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/track-\d+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"(?:,\s*profile:\s*"((?:[^"\\]|\\.)*)")?\s*\}/g;
+
+  function parseBuiltinFrom(text) {
+    const start = text.indexOf("const BUILTIN = [");
+    if (start < 0) return null;
+    const end = text.indexOf("];", start);
+    if (end < 0) return null;
+    const block = text.slice(start, end);
+    const out = [];
+    const re = new RegExp(BUILTIN_RE.source, "g");
+    let m;
+    while ((m = re.exec(block))) {
+      out.push({
+        title: JSON.parse('"' + m[1] + '"'),
+        file: m[2],
+        artist: JSON.parse('"' + m[3] + '"'),
+        profile: m[4] ? JSON.parse('"' + m[4] + '"') : DEFAULT_PROFILE
+      });
+    }
+    return out;
+  }
+
+  async function checkForNewSongs() {
+    if (checkingSongs) return;
+    checkingSongs = true;
+    try {
+      const res = await fetch("app.js", { cache: "no-store" });
+      if (!res.ok) return;
+      const text = await res.text();
+      const parsed = parseBuiltinFrom(text);
+      if (!parsed || !parsed.length) return;
+      const mine = parsed.filter((b) => (b.profile || DEFAULT_PROFILE) === profile);
+      const remoteFiles = mine.map((b) => b.file);
+      const localFiles = tracks.filter((t) => t.builtin).map((t) => t.url);
+      const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
+      const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
+      if (!aggiunte.length && !tolte.length) return;
+      if (tolte.length && tolte.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
+      BUILTIN.length = 0;
+      for (const b of mine) {
+        BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
+      }
+      await loadCovers();
+      await loadAll();
+      refreshCachedSongs();
+      if (aggiunte.length) {
+        toast((aggiunte.length === 1 ? "Nuova canzone: " : "Nuove canzoni: ") + aggiunte.map((b) => b.title).join(", ").slice(0, 60));
+      }
+      if (tolte.length) {
+        toast(tolte.length === 1 ? "Una canzone non c'e' piu'" : tolte.length + " canzoni non ci sono piu'");
+      }
+    } catch (e) { /* noop */ } finally {
+      checkingSongs = false;
+    }
+  }
+
   async function openOffline() {
     $("offlinePanel").hidden = false;
     syncNoScroll();
@@ -2607,9 +2664,13 @@
         updateMediaSession();
       }
       if (swReg) swReg.update().catch(() => {});
+      checkForNewSongs();
     }
     savePos();
   });
+  setInterval(() => {
+    if (!document.hidden) checkForNewSongs();
+  }, 60000);
   window.addEventListener("pagehide", savePos);
   window.addEventListener("resize", updatePlayerHeight);
   window.addEventListener("orientationchange", updatePlayerHeight);
