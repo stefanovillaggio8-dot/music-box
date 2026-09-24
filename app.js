@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.4";
+  const APP_VERSION = "4.5";
 
   let recovering = false;
   async function selfHeal() {
@@ -2426,11 +2426,50 @@
     await scanOffline();
   }
 
+  async function offlineSpaceInfo() {
+    let txt = "";
+    try {
+      if (navigator.storage && navigator.storage.estimate) {
+        const est = await navigator.storage.estimate();
+        if (est && est.usage) {
+          txt = "Spazio usato dall'app: " + fmtBytes(est.usage) +
+            (est.quota ? " (ne puoi usare " + fmtBytes(est.quota) + ")" : "");
+        }
+      }
+    } catch (e) { /* noop */ }
+    if (!txt) txt = "Le canzoni offline occupano memoria sul telefono (circa 60 MB per tutte).";
+    $("offlineSpace").textContent = txt;
+  }
+
+  async function freeOffline() {
+    const cache = await appCache();
+    if (!cache) {
+      toast("Offline non disponibile qui");
+      return;
+    }
+    let tolti = 0;
+    try {
+      const reqs = await cache.keys();
+      for (const r of reqs) {
+        let pathname = "";
+        try { pathname = new URL(r.url).pathname; } catch (e) { pathname = r.url; }
+        if (/\.mp3$/i.test(pathname)) {
+          await cache.delete(r);
+          tolti++;
+        }
+      }
+    } catch (e) { /* noop */ }
+    await scanOffline();
+    await offlineSpaceInfo();
+    toast(tolti ? tolti + " canzoni liberate" : "Non c'era niente da liberare");
+  }
+
   async function openOffline() {
     $("offlinePanel").hidden = false;
     syncNoScroll();
     $("offlineList").innerHTML = "";
     await scanOffline();
+    await offlineSpaceInfo();
   }
 
   function closeOffline() {
@@ -2448,6 +2487,7 @@
     if (e.target === $("offlinePanel")) closeOffline();
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
+  $("btnOfflineFree").addEventListener("click", freeOffline);
 
   $("btnProfile").addEventListener("click", openProfile);
   $("profileClose").addEventListener("click", closeProfile);
