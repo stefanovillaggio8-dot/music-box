@@ -575,6 +575,21 @@ body.no-scroll { overflow: hidden; }
 .confirm-actions .btn-main { flex: 1; margin-top: 0; padding: 12px; }
 .btn-main.danger { background: var(--danger); color: #fff; }
 
+.off-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.off-name { flex: 1; min-width: 0; font-size: 14px; }
+.off-state { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.off-state.ok { color: #37e6a6; }
+.off-state.run { color: var(--accent2); }
+.off-state.err { color: var(--danger); }
+.off-bar { width: 70px; height: 6px; border-radius: 6px; background: var(--card); overflow: hidden; flex: 0 0 70px; }
+.off-bar span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 .import-overlay {

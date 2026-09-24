@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.3";
+  const APP_VERSION = "4.4";
 
   let recovering = false;
   async function selfHeal() {
@@ -887,7 +887,7 @@
 
   function syncNoScroll() {
     const open = !$("importPanel").hidden || !$("lyricsPanel").hidden ||
-      !$("profilePanel").hidden || !$("confirmPanel").hidden;
+      !$("profilePanel").hidden || !$("confirmPanel").hidden || !$("offlinePanel").hidden;
     document.body.classList.toggle("no-scroll", open);
   }
 
@@ -917,12 +917,12 @@
   function openProfile() {
     renderProfiles();
     $("profilePanel").hidden = false;
-    document.body.classList.add("no-scroll");
+    syncNoScroll();
   }
 
   function closeProfile() {
     $("profilePanel").hidden = true;
-    document.body.classList.remove("no-scroll");
+    syncNoScroll();
   }
 
   /* ---------- Testi ---------- */
@@ -2247,6 +2247,207 @@
     } catch (e) { /* noop */ }
     setTimeout(() => window.location.reload(), 400);
   });
+
+  let offlineBusy = false;
+  let offlineAbort = null;
+
+  async function appCache() {
+    if (!("caches" in window)) return null;
+    try {
+      const keys = await caches.keys();
+      for (const k of keys) {
+        const c = await caches.open(k);
+        const hit = await c.match("app.js");
+        if (hit) return c;
+      }
+    } catch (e) { /* noop */ }
+    return null;
+  }
+
+  function renderOfflineRows(rows) {
+    const box = $("offlineList");
+    box.innerHTML = "";
+    for (const r of rows) {
+      const row = document.createElement("div");
+      row.className = "off-row";
+      const name = document.createElement("div");
+      name.className = "off-name";
+      name.textContent = r.title;
+      const bar = document.createElement("div");
+      bar.className = "off-bar";
+      const fill = document.createElement("span");
+      bar.appendChild(fill);
+      const state = document.createElement("div");
+      state.className = "off-state" + (r.state === "ok" ? " ok" : r.state === "run" ? " run" : r.state === "err" ? " err" : "");
+      state.textContent = r.label;
+      row.appendChild(name);
+      row.appendChild(bar);
+      row.appendChild(state);
+      box.appendChild(row);
+      r.el = { fill, state, bar };
+    }
+  }
+
+  async function scanOffline() {
+    const cache = await appCache();
+    if (!cache) {
+      $("offlineSub").textContent = "Non riesco a preparare le canzoni offline su questo browser";
+      return [];
+    }
+    const rows = [];
+    for (const t of tracks) {
+      if (!t.builtin) {
+        rows.push({ title: t.title, state: "ok", label: "sul telefono", el: null, track: t });
+        continue;
+      }
+      let cached = false;
+      try { cached = !!(await cache.match(t.url)); } catch (e) { cached = false; }
+      rows.push({
+        title: t.title,
+        state: cached ? "ok" : "todo",
+        label: cached ? "pronta" : "da scaricare",
+        el: null,
+        track: t
+      });
+    }
+    renderOfflineRows(rows);
+    const mancanti = rows.filter((r) => r.state === "todo").length;
+    $("offlineSub").textContent = mancanti
+      ? mancanti + (mancanti === 1 ? " canzone da scaricare" : " canzoni da scaricare")
+      : "Tutte le canzoni sono gia' pronte per offline";
+    return rows;
+  }
+
+  async function cacheTrack(row, cache) {
+    const url = row.track.url;
+    row.state = "run";
+    row.label = "0%";
+    if (row.el) {
+      row.el.state.className = "off-state run";
+      row.el.state.textContent = "0%";
+    }
+    try {
+      const res = await fetch(url, { signal: offlineAbort.signal });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const total = Number(res.headers.get("content-length") || 0);
+      let blob;
+      if (res.body) {
+        const reader = res.body.getReader();
+        const chunks = [];
+        let got = 0;
+        for (;;) {
+          const part = await reader.read();
+          if (part.done) break;
+          chunks.push(part.value);
+          got += part.value.byteLength;
+          const pct = total ? Math.min(99, Math.round((got / total) * 100)) : 0;
+          if (row.el) {
+            row.el.fill.style.width = pct + "%";
+            row.el.state.textContent = total ? pct + "%" : fmtBytes(got);
+          }
+        }
+        blob = new Blob(chunks, { type: res.headers.get("content-type") || "audio/mpeg" });
+      } else {
+        blob = await res.blob();
+      }
+      await cache.put(url, new Response(blob, {
+        status: 200,
+        headers: { "Content-Type": blob.type || "audio/mpeg", "Content-Length": String(blob.size) }
+      }));
+      row.state = "ok";
+      row.label = "pronta";
+      if (row.el) {
+        row.el.fill.style.width = "100%";
+        row.el.state.className = "off-state ok";
+        row.el.state.textContent = "pronta";
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") {
+        row.state = "todo";
+        row.label = "da scaricare";
+        if (row.el) {
+          row.el.fill.style.width = "0%";
+          row.el.state.className = "off-state";
+          row.el.state.textContent = "da scaricare";
+        }
+        return;
+      }
+      row.state = "err";
+      row.label = "errore";
+      if (row.el) {
+        row.el.state.className = "off-state err";
+        row.el.state.textContent = "errore";
+      }
+    }
+  }
+
+  async function downloadAllOffline() {
+    if (offlineBusy) {
+      if (offlineAbort) offlineAbort.abort();
+      offlineBusy = false;
+      $("btnOfflineAll").textContent = "Scarica tutte";
+      toast("Scaricamento fermato");
+      return;
+    }
+    const cache = await appCache();
+    if (!cache) {
+      toast("Offline non disponibile qui");
+      return;
+    }
+    const rows = (await scanOffline()).filter((r) => r.state === "todo");
+    if (!rows.length) {
+      toast("Sono gia' tutte pronte");
+      return;
+    }
+    offlineBusy = true;
+    offlineAbort = new AbortController();
+    $("btnOfflineAll").textContent = "Ferma";
+    let idx = 0;
+    let fatto = 0;
+    const worker = async () => {
+      for (;;) {
+        const i = idx++;
+        if (i >= rows.length) return;
+        await cacheTrack(rows[i], cache);
+        fatto++;
+        const rimaste = rows.length - fatto;
+        $("offlineSub").textContent = "Scarico " + fatto + "/" + rows.length + (rimaste ? " (restano " + rimaste + ")" : "");
+      }
+    };
+    const n = Math.min(2, rows.length);
+    const runners = [];
+    for (let k = 0; k < n; k++) runners.push(worker());
+    await Promise.all(runners);
+    offlineBusy = false;
+    offlineAbort = null;
+    $("btnOfflineAll").textContent = "Scarica tutte";
+    const errori = rows.filter((r) => r.state === "err").length;
+    toast(errori ? "Fatto con " + errori + " errori" : "Fatto: canzoni pronte offline");
+    await scanOffline();
+  }
+
+  async function openOffline() {
+    $("offlinePanel").hidden = false;
+    syncNoScroll();
+    $("offlineList").innerHTML = "";
+    await scanOffline();
+  }
+
+  function closeOffline() {
+    if (offlineBusy && offlineAbort) {
+      offlineAbort.abort();
+      offlineBusy = false;
+    }
+    $("offlinePanel").hidden = true;
+    syncNoScroll();
+  }
+
+  $("btnOffline").addEventListener("click", openOffline);
+  $("offlineClose").addEventListener("click", closeOffline);
+  $("offlinePanel").addEventListener("click", (e) => {
+    if (e.target === $("offlinePanel")) closeOffline();
+  });
+  $("btnOfflineAll").addEventListener("click", downloadAllOffline);
 
   $("btnProfile").addEventListener("click", openProfile);
   $("profileClose").addEventListener("click", closeProfile);

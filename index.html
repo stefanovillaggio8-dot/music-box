@@ -25,6 +25,9 @@
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>
           <span class="prof-initial" id="profInitial">S</span>
         </button>
+        <button class="logo-refresh" id="btnOffline" aria-label="Scarica per offline" title="Scarica per offline">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M5 15a1 1 0 0 1 1 1v1.5A1.5 1.5 0 0 0 7.5 19h9a1.5 1.5 0 0 0 1.5-1.5V16a1 1 0 1 1 2 0v1.5A3.5 3.5 0 0 1 16.5 21h-9A3.5 3.5 0 0 1 4 17.5V16a1 1 0 0 1 1-1Z"/></svg>
+        </button>
         <button class="logo-refresh" id="btnImport" aria-label="Importa musica" title="Importa musica">
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M4 15a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a1 1 0 1 1 2 0v2a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2a1 1 0 0 1 1-1Z"/></svg>
         </button>
@@ -198,6 +201,25 @@
       <div class="confirm-actions">
         <button class="btn-ghost" id="confirmNo">Annulla</button>
         <button class="btn-main danger" id="confirmYes">Elimina</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-overlay" id="offlinePanel" hidden>
+    <div class="profile-card">
+      <div class="import-head">
+        <div class="import-head-info">
+          <p class="import-title">Pronte per offline</p>
+          <p class="import-sub" id="offlineSub">Scarica le canzoni per ascoltarle senza rete</p>
+        </div>
+        <button class="import-close" id="offlineClose" aria-label="Chiudi">×</button>
+      </div>
+      <div class="profile-body">
+        <div class="profile-actions">
+          <button class="btn-main" id="btnOfflineAll">Scarica tutte</button>
+        </div>
+        <div id="offlineList"></div>
+        <p class="step-hint">Le canzoni che ascolti vengono salvate da sole. Questo bottone le prepara tutte in anticipo, cos&#39; sono disponibili anche quando non hai campo.</p>
       </div>
     </div>
   </div>
