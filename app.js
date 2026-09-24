@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.7";
+  const APP_VERSION = "4.8";
 
   let recovering = false;
   async function selfHeal() {
@@ -2609,7 +2609,7 @@
       if (!aggiunte.length && !tolte.length) return;
       if (tolte.length && tolte.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
       BUILTIN.length = 0;
-      for (const b of mine) {
+      for (const b of parsed) {
         BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
       }
       await loadCovers();
