@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v31";
+const CACHE = "spotifynonavraiimieisoldi-v32";
 const CORE = [
   "./",
   "./index.html",
@@ -26,6 +26,7 @@ const SONGS = [
   "./songs/track-12.mp3",
   "./songs/track-13.mp3",
   "./songs/track-14.mp3",
+  "./songs/track-15.mp3",
 ];
 
 async function cacheSongs(cache) {
