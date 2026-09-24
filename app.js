@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "3.4";
+  const APP_VERSION = "3.5";
 
   let recovering = false;
   async function selfHeal() {
@@ -455,7 +455,7 @@
       if (t.builtin) {
         const badge = document.createElement("span");
         badge.className = "track-badge";
-        badge.textContent = "incl";
+        badge.textContent = "tutti";
         title.appendChild(badge);
       }
       info.appendChild(title);
