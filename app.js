@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "3.3";
+  const APP_VERSION = "3.4";
 
   let recovering = false;
   async function selfHeal() {
@@ -947,7 +947,7 @@
       }
     }
     if (ok) {
-      toast(ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti");
+      toast((ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti") + " — solo per " + profile);
       await loadAll();
       const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
       for (const t of fresh) enrichTrack(t.id);
