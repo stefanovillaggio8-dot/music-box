@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.8";
+  const APP_VERSION = "4.9";
 
   let recovering = false;
   async function selfHeal() {
@@ -590,19 +590,14 @@
   function handleTime() {
     if (!scrubbing) {
       const t = audio.currentTime;
-      const d = audio.duration || 0;
-      updateProgressUI(t, d);
+      updateProgressUI(t, totalDuration());
       maybeSavePos();
     }
     syncPlayUI();
   }
 
   function handleMetadata() {
-    updateProgressUI(audio.currentTime || 0, audio.duration || 0);
-    if (audio && audio.src && /\.mp3$/i.test(audio.src) && !cachedSongs.has(audio.src)) {
-      cachedSongs.add(audio.src);
-      render();
-    }
+    updateProgressUI(audio.currentTime || 0, totalDuration());
   }
 
   function handleError() {
@@ -774,11 +769,29 @@
     setPlaybackState(audio && !audio.paused ? "playing" : "paused");
   }
 
+  function totalDuration() {
+    if (audio && isFinite(audio.duration) && audio.duration > 0) return audio.duration;
+    try {
+      if (audio && audio.seekable && audio.seekable.length) {
+        return audio.seekable.end(audio.seekable.length - 1);
+      }
+    } catch (e) { /* noop */ }
+    return 0;
+  }
+
   function seekBy(delta) {
-    if (!audio || !isFinite(audio.duration)) return;
-    const t = Math.min(audio.duration, Math.max(0, (audio.currentTime || 0) + delta));
-    audio.currentTime = t;
-    updateProgressUI(t, audio.duration);
+    if (!audio) return;
+    const d = totalDuration();
+    const attuale = audio.currentTime || 0;
+    let t = attuale + delta;
+    if (t < 0) t = 0;
+    if (d && t > d) t = d;
+    try {
+      audio.currentTime = t;
+    } catch (e) {
+      return;
+    }
+    updateProgressUI(audio.currentTime, d);
     savePos();
   }
 
@@ -2125,7 +2138,7 @@
   $("btnPlay").addEventListener("click", togglePlay);
   $("btnNext").addEventListener("click", () => playById(tracks[nextIndex()].id));
   $("btnPrev").addEventListener("click", () => {
-    if (audio.duration && audio.currentTime > 3) {
+    if (totalDuration() > 3 && audio.currentTime > 3) {
       audio.currentTime = 0;
     } else {
       playById(tracks[prevIndex()].id);
