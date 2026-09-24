@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.0";
+  const APP_VERSION = "6.1";
 
   let recovering = false;
   async function selfHeal() {
@@ -726,7 +726,10 @@
       el.className = "quick-btn";
       el.type = "button";
       el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + ICON_OFFLINE + '"/></svg>';
-      el.appendChild(document.createTextNode(cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
+      const gia = isCached(t);
+      el.appendChild(document.createTextNode(gia ? "Già salvata offline" : cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
+      el.disabled = gia;
+      el.style.opacity = gia ? ".55" : "1";
       el.addEventListener("click", () => {
         closeQuick();
         if (!cloudBusy) cacheOneTrack(t);
@@ -743,6 +746,8 @@
 
   function bindLongPress(el, t) {
     let timer = null;
+    let startX = 0;
+    let startY = 0;
     const stop = () => {
       if (timer) {
         clearTimeout(timer);
@@ -752,14 +757,30 @@
     el.addEventListener("pointerdown", (e) => {
       if (e.button && e.button !== 0) return;
       if (e.target && e.target.closest && e.target.closest("button")) return;
+      startX = e.clientX || 0;
+      startY = e.clientY || 0;
       timer = setTimeout(() => {
         timer = null;
         suppressClick = true;
         try { navigator.vibrate && navigator.vibrate(8); } catch (err) { /* noop */ }
         openQuickMenu(t);
       }, 550);
+      const moved = (ev) => {
+        if (!timer) return;
+        const dx = Math.abs((ev.clientX || 0) - startX);
+        const dy = Math.abs((ev.clientY || 0) - startY);
+        if (dx > 10 || dy > 10) stop();
+      };
+      const up = () => {
+        stop();
+        el.removeEventListener("pointermove", moved);
+        el.removeEventListener("pointerup", up);
+        el.removeEventListener("pointercancel", up);
+      };
+      el.addEventListener("pointermove", moved);
+      el.addEventListener("pointerup", up);
+      el.addEventListener("pointercancel", up);
     });
-    ["pointerup", "pointercancel", "pointerleave", "pointermove"].forEach((ev) => el.addEventListener(ev, stop));
     el.addEventListener("contextmenu", (e) => e.preventDefault());
   }
 
@@ -866,6 +887,8 @@
     setPlaybackState(audio.paused ? "paused" : "playing");
     const art = $("playerArt");
     if (art) art.classList.toggle("playing", !audio.paused);
+    const hud = $("hudArt");
+    if (hud) hud.classList.toggle("playing", !audio.paused);
   }
 
   function updateMediaSession() {
@@ -1117,13 +1140,12 @@
 
   function tickLyrics() {
     if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
-    if (Date.now() - lyricsUserScrollAt < 4000) return;
     const idx = activeLineIndex(audio.currentTime || 0);
     if (idx === lyricActive) return;
     if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
     if (idx >= 0) {
       lyricLines[idx].classList.add("on");
-      if (!lyricsUserScrollAt) {
+      if (Date.now() - lyricsUserScrollAt >= 4000) {
         try { lyricLines[idx].scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) { /* noop */ }
       }
     }

@@ -434,23 +434,30 @@ body.no-scroll { overflow: hidden; }
 .lyrics-body .lyr-gap { height: 4px; }
 .lyrics-body .lyr-line {
   transition: color .2s ease, transform .2s ease, opacity .2s ease;
-  opacity: .5;
+  opacity: .55;
   transform: scale(.98);
-  border-radius: 8px;
-  padding: 2px 6px;
-  margin-left: -6px;
+  border-radius: 10px;
+  padding: 4px 12px;
+  margin-left: -12px;
+  margin-right: -12px;
 }
 .lyrics-body .lyr-line.on {
   opacity: 1;
   color: #fff;
   font-weight: 800;
-  transform: scale(1.04);
+  transform: scale(1.03);
+  background: linear-gradient(90deg, rgba(176,107,255,.18), rgba(176,107,255,.04));
   text-shadow: 0 0 18px rgba(176,107,255,.8);
 }
 
 .player-art { position: relative; overflow: hidden; }
-.player-art.playing { border-radius: 50%; animation: vinylSpin 6s linear infinite; }
-.player-art.playing::after {
+.player-art.playing,
+.hud-art.playing {
+  border-radius: 50%;
+  animation: vinylSpin 6s linear infinite;
+}
+.player-art.playing::after,
+.hud-art.playing::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -461,6 +468,7 @@ body.no-scroll { overflow: hidden; }
   background: var(--bg);
   box-shadow: 0 0 0 2px rgba(0,0,0,.4);
 }
+.hud-art { position: relative; overflow: hidden; }
 @keyframes vinylSpin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
