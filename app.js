@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.2";
+  const APP_VERSION = "6.3";
 
   let recovering = false;
   async function selfHeal() {
@@ -234,6 +234,7 @@
   /* ---------- Caricamento tracce ---------- */
   async function loadAll() {
     const builtin = BUILTIN
+      .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
       .map((b, i) => {
         const info = coverInfo(b.artist, b.title);
         return {
@@ -3011,9 +3012,10 @@
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
       if (!parsed || !parsed.length) return;
-      const remoteFiles = parsed.map((b) => b.file);
+      const mine = parsed.filter((b) => (b.profile || DEFAULT_PROFILE) === profile);
+      const remoteFiles = mine.map((b) => b.file);
       const localFiles = tracks.filter((t) => t.builtin).map((t) => t.url);
-      const aggiunte = parsed.filter((b) => localFiles.indexOf(b.file) < 0);
+      const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
       const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
       if (!aggiunte.length && !tolte.length) return;
       if (tolte.length && tolte.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
