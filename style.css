@@ -532,6 +532,27 @@ body.no-scroll { overflow: hidden; }
 .prof-actions .btn-main { margin-top: 0; width: auto; padding: 12px 16px; }
 .profile-body .step-hint { margin-top: 14px; }
 
+.track-cloud {
+  background: none;
+  border: none;
+  color: var(--muted);
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.track-cloud svg { width: 17px; height: 17px; }
+.track-cloud.run { color: var(--accent2); animation: cloudPulse 1s infinite ease-in-out; }
+.track-cloud.ok { color: #37e6a6; }
+.track-cloud.err { color: var(--danger); }
+@keyframes cloudPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
 .track-share {
   background: none;
   border: none;

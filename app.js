@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.5";
+  const APP_VERSION = "4.6";
 
   let recovering = false;
   async function selfHeal() {
@@ -491,6 +491,19 @@
       });
       li.appendChild(favBtn);
 
+      if (t.builtin && !isCached(t)) {
+        const cloud = document.createElement("button");
+        cloud.className = "track-cloud";
+        cloud.setAttribute("aria-label", "Scarica " + t.title + " per offline");
+        cloud.title = "Non e' ancora offline: tocca per scaricarla";
+        cloud.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M6.5 19a4.5 4.5 0 0 1-.4-8.98 6 6 0 0 1 11.6 1.65A4 4 0 0 1 18.5 19h-12Z"/></svg>';
+        cloud.addEventListener("click", (e) => {
+          e.stopPropagation();
+          cacheOneTrack(t, cloud);
+        });
+        li.appendChild(cloud);
+      }
+
       if (!t.builtin && !t.preview) {
         const share = document.createElement("button");
         share.className = "track-share";
@@ -585,6 +598,10 @@
 
   function handleMetadata() {
     updateProgressUI(audio.currentTime || 0, audio.duration || 0);
+    if (audio && audio.src && /\.mp3$/i.test(audio.src) && !cachedSongs.has(audio.src)) {
+      cachedSongs.add(audio.src);
+      render();
+    }
   }
 
   function handleError() {
@@ -2464,6 +2481,93 @@
     toast(tolti ? tolti + " canzoni liberate" : "Non c'era niente da liberare");
   }
 
+  let cachedSongs = new Set();
+  let cloudBusy = false;
+
+  function absUrl(u) {
+    try { return new URL(u, location.href).href; } catch (e) { return u; }
+  }
+
+  async function refreshCachedSongs() {
+    const cache = await appCache();
+    if (!cache) return;
+    const set = new Set();
+    try {
+      const reqs = await cache.keys();
+      for (const r of reqs) {
+        let pathname = "";
+        try { pathname = new URL(r.url).pathname; } catch (e) { pathname = r.url; }
+        if (/\.mp3$/i.test(pathname)) set.add(r.url);
+      }
+    } catch (e) { /* noop */ }
+    cachedSongs = set;
+    render();
+  }
+
+  function isCached(t) {
+    if (!t) return true;
+    if (!t.builtin) return true;
+    return cachedSongs.has(absUrl(t.url));
+  }
+
+  async function fetchToCache(url, cache, onProgress) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const total = Number(res.headers.get("content-length") || 0);
+    let blob;
+    if (res.body) {
+      const reader = res.body.getReader();
+      const chunks = [];
+      let got = 0;
+      for (;;) {
+        const part = await reader.read();
+        if (part.done) break;
+        chunks.push(part.value);
+        got += part.value.byteLength;
+        if (onProgress) onProgress(total ? got / total : 0, got);
+      }
+      blob = new Blob(chunks, { type: res.headers.get("content-type") || "audio/mpeg" });
+    } else {
+      blob = await res.blob();
+    }
+    await cache.put(url, new Response(blob, {
+      status: 200,
+      headers: { "Content-Type": blob.type || "audio/mpeg", "Content-Length": String(blob.size) }
+    }));
+    return blob.size;
+  }
+
+  async function cacheOneTrack(t, el) {
+    if (cloudBusy || !t || !t.builtin) return;
+    cloudBusy = true;
+    if (el) {
+      el.classList.add("run");
+      el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z"/></svg>';
+    }
+    try {
+      const cache = await appCache();
+      if (!cache) throw new Error("non disponibile");
+      await fetchToCache(t.url, cache, (ratio) => {
+        if (el) el.style.background = ratio ? "var(--accent2)" : "";
+      });
+      if (el) {
+        el.classList.remove("run");
+        el.classList.add("ok");
+        el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9.6 16.6 5 12l1.4-1.4 3.2 3.2 8-8L19 7.2l-9.4 9.4Z"/></svg>';
+      }
+      toast(t.title + " pronta per offline");
+    } catch (e) {
+      if (el) {
+        el.classList.remove("run");
+        el.classList.add("err");
+      }
+      toast("Non riesco a scaricare: " + e.message);
+    } finally {
+      cloudBusy = false;
+      await refreshCachedSongs();
+    }
+  }
+
   async function openOffline() {
     $("offlinePanel").hidden = false;
     syncNoScroll();
@@ -2488,7 +2592,6 @@
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
-
   $("btnProfile").addEventListener("click", openProfile);
   $("profileClose").addEventListener("click", closeProfile);
   $("profilePanel").addEventListener("click", (e) => {
@@ -2547,6 +2650,7 @@
     await loadCovers();
     if (db) await loadLocalLyrics();
     await loadAll();
+    refreshCachedSongs();
     updateRestoreButton();
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
