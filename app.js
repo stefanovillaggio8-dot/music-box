@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "3.5";
+  const APP_VERSION = "4.0";
 
   let recovering = false;
   async function selfHeal() {
@@ -226,20 +226,22 @@
 
   /* ---------- Caricamento tracce ---------- */
   async function loadAll() {
-    const builtin = BUILTIN.map((b, i) => {
-      const info = coverInfo(b.artist, b.title);
-      return {
-        id: "builtin-" + i,
-        title: b.title,
-        artist: b.artist || "",
-        album: info && info.album ? info.album : "",
-        cover: info && info.cover ? info.cover : "",
-        url: b.file,
-        builtin: true,
-        gradient: PALETTE[i % PALETTE.length],
-        size: null
-      };
-    });
+    const builtin = BUILTIN
+      .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
+      .map((b, i) => {
+        const info = coverInfo(b.artist, b.title);
+        return {
+          id: "builtin-" + BUILTIN.indexOf(b),
+          title: b.title,
+          artist: b.artist || "",
+          album: info && info.album ? info.album : "",
+          cover: info && info.cover ? info.cover : "",
+          url: b.file,
+          builtin: true,
+          gradient: PALETTE[i % PALETTE.length],
+          size: null
+        };
+      });
 
     let added = [];
     try {
@@ -780,13 +782,13 @@
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 8000);
-      toast("Salvalo e mettilo in Desktop\\musica mp3: lo avranno tutti");
+      toast("Salvalo e mettilo nella cartella musica mp3 " + profile.toLowerCase() + " sul computer: così lo vede chiunque usi quel nome");
     } catch (e) {
       toast("Esportazione non riuscita: " + e.message);
     }
   }
 
-  const OTHER_PROFILE = "Fratello";
+  const OTHER_PROFILE = "Emanuele";
 
   function profileList() {
     return [profile, profile === DEFAULT_PROFILE ? OTHER_PROFILE : DEFAULT_PROFILE];
@@ -2210,7 +2212,11 @@
     audio = createAudio();
     setPlaybackState("none");
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
+    if (profile === "Fratello") profile = OTHER_PROFILE;
     profiles = LS.get("mb.profiles", [DEFAULT_PROFILE]);
+    if (profiles.indexOf("Fratello") >= 0) {
+      profiles = profiles.map((p) => (p === "Fratello" ? OTHER_PROFILE : p));
+    }
     if (profiles.indexOf(profile) < 0) profiles.push(profile);
     const migrated = profileState(profile);
     if (!allState()[profile] && LS.get("mb.hidden", null)) {
