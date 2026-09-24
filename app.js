@@ -28,7 +28,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.3";
+  const APP_VERSION = "6.4";
 
   let recovering = false;
   async function selfHeal() {
@@ -122,6 +122,9 @@
     },
     set(k, v) {
       try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* noop */ }
+    },
+    remove(k) {
+      try { localStorage.removeItem(k); } catch (e) { /* noop */ }
     }
   };
 
@@ -3014,14 +3017,31 @@
       if (!parsed || !parsed.length) return;
       const mine = parsed.filter((b) => (b.profile || DEFAULT_PROFILE) === profile);
       const remoteFiles = mine.map((b) => b.file);
-      const localFiles = tracks.filter((t) => t.builtin).map((t) => t.url);
+      const localBuiltin = tracks.filter((t) => t.builtin);
+      const localFiles = localBuiltin.map((t) => t.url);
       const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
       const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
-      if (!aggiunte.length && !tolte.length) return;
-      if (tolte.length && tolte.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
+
+      // Una canzone che manca al sito puo' sparire solo a meta' di un aggiornamento:
+      // la tolgo solo se la vedo assente DUE controlli di fila (piu' o meno 2 minuti),
+      // cosi' un aggiornamento o una copia vecchia non cancella mai brani validi.
+      const viste = LS.get("mb.senza", []);
+      const confermate = tolte.filter((f) => viste.indexOf(f) >= 0);
+      if (tolte.length) LS.set("mb.senza", tolte);
+      else LS.remove("mb.senza");
+
+      if (confermate.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
+
+      if (!aggiunte.length && !confermate.length) return;
+
       BUILTIN.length = 0;
       for (const b of parsed) {
         BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
+      }
+      for (const t of localBuiltin) {
+        if (remoteFiles.indexOf(t.url) < 0 && confermate.indexOf(t.url) < 0) {
+          BUILTIN.push({ title: t.title, file: t.url, artist: t.artist, profile: profile });
+        }
       }
       await loadCovers();
       await loadAll();
@@ -3029,8 +3049,8 @@
       if (aggiunte.length) {
         toast((aggiunte.length === 1 ? "Nuova canzone: " : "Nuove canzoni: ") + aggiunte.map((b) => b.title).join(", ").slice(0, 60));
       }
-      if (tolte.length) {
-        toast(tolte.length === 1 ? "Una canzone non c'e' piu'" : tolte.length + " canzoni non ci sono piu'");
+      if (confermate.length) {
+        toast(confermate.length === 1 ? "Una canzone non c'e' piu'" : confermate.length + " canzoni non ci sono piu'");
       }
     } catch (e) { /* noop */ } finally {
       checkingSongs = false;
