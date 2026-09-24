@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.1";
+  const APP_VERSION = "4.2";
 
   let recovering = false;
   async function selfHeal() {
@@ -423,7 +423,10 @@
     if (!list.length) {
       emptyEl.hidden = false;
       emptyEl.textContent = !total
-        ? "Tutti i brani sono nascosti: tocca l'icona dell'occhio per ripristinarli."
+        ? (hiddenTracks.size
+          ? "Hai nascosto tutti i brani di " + profile + ": tocca l'icona dell'occhio per rivederli."
+          : "La libreria di " + profile + " è vuota. Le canzoni arrivano dal computer (cartella musica mp3 " +
+            profile.toLowerCase() + ") oppure scaricale con la scheda Importa.")
         : !tracks.length
           ? "Nessun brano. Tocca + per aggiungere della musica."
           : favOnly && !query
@@ -789,6 +792,12 @@
   }
 
   const OTHER_PROFILE = "Emanuele";
+  let switching = false;
+
+  function updateProfileButton() {
+    $("profInitial").textContent = (profile || "?").trim().charAt(0).toUpperCase();
+    $("btnProfile").classList.add("on");
+  }
 
   function profileList() {
     return [profile, profile === DEFAULT_PROFILE ? OTHER_PROFILE : DEFAULT_PROFILE];
@@ -819,46 +828,59 @@
       const use = document.createElement("button");
       use.className = "btn-mini" + (name === profile ? " go" : "");
       use.textContent = name === profile ? "Adesso" : "Vai";
+      use.addEventListener("click", (e) => {
+        e.stopPropagation();
+        switchProfile(name);
+      });
       row.appendChild(use);
-      row.addEventListener("click", () => switchProfile(name));
+      row.addEventListener("click", () => {
+        if (name !== profile) switchProfile(name);
+      });
       box.appendChild(row);
     }
-    $("profInitial").textContent = profile.charAt(0).toUpperCase();
-    $("btnProfile").classList.add("on");
+    updateProfileButton();
   }
 
   async function switchProfile(name) {
+    if (switching) return;
     if (name === profile) {
       closeProfile();
       return;
     }
-    saveCurrentState();
-    profile = name;
-    LS.set("mb.profile", name);
-    if (audio) {
-      try { audio.pause(); } catch (e) { /* noop */ }
-    }
-    currentId = null;
-    const st = loadProfileState();
-    await loadLocalLyrics();
-    await loadAll();
-    updateRestoreButton();
-    setHud();
-    const last = st.last ? tracks.find((t) => t.id === st.last) : null;
-    if (last) {
-      currentId = last.id;
-      audio.src = last.url;
-      const pos = st.time || 0;
-      audio.addEventListener("loadedmetadata", () => {
-        if (pos > 0 && isFinite(audio.duration)) {
-          try { audio.currentTime = Math.min(pos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
-        }
-      }, { once: true });
+    switching = true;
+    try {
+      saveCurrentState();
+      profile = name;
+      LS.set("mb.profile", name);
+      updateProfileButton();
+      if (audio) {
+        try { audio.pause(); } catch (e) { /* noop */ }
+      }
+      currentId = null;
+      const st = loadProfileState();
+      await loadLocalLyrics();
+      await loadAll();
+      updateRestoreButton();
       setHud();
+      const last = st.last ? tracks.find((t) => t.id === st.last) : null;
+      if (last) {
+        currentId = last.id;
+        audio.src = last.url;
+        const pos = st.time || 0;
+        audio.addEventListener("loadedmetadata", () => {
+          if (pos > 0 && isFinite(audio.duration)) {
+            try { audio.currentTime = Math.min(pos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
+          }
+        }, { once: true });
+        setHud();
+      }
+      updateMediaSession();
+      updateProfileButton();
+      closeProfile();
+      toast("Ora ascolti: " + name);
+    } finally {
+      switching = false;
     }
-    updateMediaSession();
-    closeProfile();
-    toast("Ora ascolti: " + name);
   }
 
   let confirmResolve = null;
@@ -2228,7 +2250,8 @@
       migrated.time = LS.get("mb.pos." + migrated.last, 0);
       writeProfileState(profile, migrated);
     }
-    const st = loadProfileState();
+    const st =     loadProfileState();
+    updateProfileButton();
     $("appVer").textContent = "v" + APP_VERSION;
     try {
       db = await openDB();
