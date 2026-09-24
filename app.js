@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "3.0";
+  const APP_VERSION = "3.1";
 
   let recovering = false;
   async function selfHeal() {
@@ -127,6 +127,15 @@
     });
   }
 
+  function dbGet(id) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, "readonly");
+      const req = tx.objectStore(DB_STORE).get(id);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
   function dbDel(id) {
     return new Promise((resolve, reject) => {
       const tx = db.transaction(DB_STORE, "readwrite");
@@ -200,7 +209,7 @@
 
     let added = [];
     try {
-      const records = await dbAll();
+      const records = (await dbAll()).filter((r) => r && r.id && r.blob);
       added = records.map((r) => ({
         id: r.id,
         title: r.title,
@@ -740,8 +749,8 @@
     if (ok) {
       toast(ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti");
       await loadAll();
-      const fresh = tracks.filter((t) => !t.builtin);
-      fresh.slice(-ok).forEach((t) => { enrichTrack({ id: t.id, title: t.title, artist: t.artist, album: t.album }); });
+      const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
+      for (const t of fresh) enrichTrack(t.id);
     }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
@@ -781,6 +790,12 @@
     return hit / w.length;
   }
 
+  function titleCompatible(want, got) {
+    const a = tokenOverlap(stripVariants(want), got);
+    const b = tokenOverlap(stripVariants(got), want);
+    return Math.max(a, b) >= 0.7;
+  }
+
   async function findLyrics(artist, title) {
     const safeArtist = encodeURIComponent(artist || "Unknown");
     const safeTitle = encodeURIComponent(stripVariants(title));
@@ -789,7 +804,7 @@
       if (r1.ok) {
         const j = await r1.json();
         if (j && j.lyrics && j.lyrics.length > 120 &&
-            (!j.title || tokenOverlap(stripVariants(title), j.title) >= 0.7)) {
+            (!j.title || titleCompatible(title, j.title))) {
           return { text: String(j.lyrics).replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").trim(), source: "lyrics.ovh" };
         }
       }
@@ -800,7 +815,7 @@
         const j = await r2.json();
         const text = j && (j.plainLyrics || String(j.syncedLyrics || "").replace(/\[\d+:\d+(?:\.\d+)?\]/g, ""));
         if (text && text.length > 120 &&
-            (!j.trackName || tokenOverlap(stripVariants(title), j.trackName) >= 0.7)) {
+            (!j.trackName || titleCompatible(title, j.trackName))) {
           return { text: text.replace(/\n{3,}/g, "\n\n").trim(), source: "LRCLIB" };
         }
       }
@@ -815,7 +830,7 @@
       if (!r.ok) return null;
       const j = await r.json();
       for (const res of (j.results || [])) {
-        if (tokenOverlap(stripVariants(title), res.trackName || "") < 0.7) continue;
+        if (!titleCompatible(title, res.trackName || "")) continue;
         if (artist && tokenOverlap(artist, res.artistName || "") < 0.5) continue;
         const url = (res.artworkUrl100 || "").replace("100x100", "600x600");
         if (url) return { cover: url, album: res.collectionName || "" };
@@ -824,22 +839,28 @@
     return null;
   }
 
-  async function enrichTrack(rec) {
-    if (!rec || !rec.title) return;
+  async function enrichTrack(id) {
+    if (!id) return;
     try {
-      const patch = { id: rec.id };
+      const rec = await dbGet(id);
+      if (!rec || !rec.blob) return;
+      const patch = {};
+      let changed = false;
       if (!rec.cover) {
         const c = await findCoverLocal(rec.artist, rec.title);
         if (c) {
+          patch.album = c.album || rec.album || "";
           patch.coverUrl = c.cover;
-          patch.album = c.album;
           try {
             const ir = await fetch(c.cover);
             if (ir.ok) patch.cover = await ir.blob();
-          } catch (e) { patch.coverUrl = c.cover; }
+          } catch (e) {
+            patch.cover = null;
+          }
+          changed = true;
         }
       }
-      await dbPut(Object.assign({}, rec, patch));
+      if (changed) await dbPut(Object.assign({}, rec, patch));
       if (!localLyrics[rec.id]) {
         const l = await findLyrics(rec.artist, rec.title);
         if (l) {
@@ -1402,7 +1423,7 @@
     };
     await dbPut(rec);
     await dbSetImport({ id, title: rec.title, artist: rec.artist, album: rec.album, status: "ok", date: rec.date });
-    enrichTrack({ id, title: rec.title, artist: rec.artist, album: rec.album });
+    enrichTrack(id);
     return rec;
   }
 
