@@ -319,6 +319,8 @@ main { padding: 8px 16px calc(var(--player-h) + 40px); }
   height: 52px;
   flex: 0 0 52px;
   border-radius: 12px;
+  object-fit: cover;
+  background: var(--card-hi);
 }
 
 .player-meta { flex: 1; min-width: 0; }

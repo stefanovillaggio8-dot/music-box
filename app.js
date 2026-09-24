@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "2.8";
+  const APP_VERSION = "3.0";
 
   let recovering = false;
   async function selfHeal() {
@@ -88,12 +88,15 @@
   };
 
   let lyricsData = {};
+  let coversData = {};
+  let localLyrics = {};
 
   let db = null;
   const DB_NAME = "musicbox";
   const DB_STORE = "tracks";
   const DB_IMPORTS = "imports";
-  const DB_VERSION = 2;
+  const DB_LYRICS = "lyrics";
+  const DB_VERSION = 3;
 
   /* ---------- IndexedDB ---------- */
   function openDB() {
@@ -105,6 +108,9 @@
         }
         if (!req.result.objectStoreNames.contains(DB_IMPORTS)) {
           req.result.createObjectStore(DB_IMPORTS, { keyPath: "id" });
+        }
+        if (!req.result.objectStoreNames.contains(DB_LYRICS)) {
+          req.result.createObjectStore(DB_LYRICS, { keyPath: "id" });
         }
       };
       req.onsuccess = () => resolve(req.result);
@@ -157,19 +163,40 @@
     });
   }
 
+  function dbAllLyrics() {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_LYRICS, "readonly");
+      const req = tx.objectStore(DB_LYRICS).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  function dbPutLyrics(rec) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_LYRICS, "readwrite");
+      tx.objectStore(DB_LYRICS).put(rec);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   /* ---------- Caricamento tracce ---------- */
   async function loadAll() {
-    const builtin = BUILTIN.map((b, i) => ({
-      id: "builtin-" + i,
-      title: b.title,
-      artist: b.artist || "",
-      album: "",
-      cover: null,
-      url: b.file,
-      builtin: true,
-      gradient: PALETTE[i % PALETTE.length],
-      size: null
-    }));
+    const builtin = BUILTIN.map((b, i) => {
+      const info = coverInfo(b.artist, b.title);
+      return {
+        id: "builtin-" + i,
+        title: b.title,
+        artist: b.artist || "",
+        album: info && info.album ? info.album : "",
+        cover: info && info.cover ? info.cover : "",
+        url: b.file,
+        builtin: true,
+        gradient: PALETTE[i % PALETTE.length],
+        size: null
+      };
+    });
 
     let added = [];
     try {
@@ -202,6 +229,46 @@
     } catch (e) {
       console.warn("Testi non disponibili", e);
       lyricsData = {};
+    }
+  }
+
+  async function loadCovers() {
+    try {
+      const res = await fetch("covers.json");
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      coversData = await res.json();
+    } catch (e) {
+      coversData = {};
+    }
+  }
+
+  function stripArtistPrefix(artist, title) {
+    const a = (artist || "").trim();
+    const t = (title || "").trim();
+    if (a && t.toLowerCase().startsWith(a.toLowerCase() + " - ")) return t.slice(a.length + 3).trim();
+    return t;
+  }
+
+  function coverKey(artist, title) {
+    return normKey((artist || "") + " " + stripArtistPrefix(artist, title));
+  }
+
+  function coverInfo(artist, title) {
+    const k1 = coverKey(artist, title);
+    if (coversData[k1]) return coversData[k1];
+    const k2 = normKey((artist || "") + " " + (title || ""));
+    return coversData[k2] || null;
+  }
+
+  async function loadLocalLyrics() {
+    localLyrics = {};
+    try {
+      const rows = await dbAllLyrics();
+      for (const r of rows) {
+        localLyrics[r.id] = { title: r.title, artist: r.artist || "", text: r.text, source: r.source || "" };
+      }
+    } catch (e) {
+      localLyrics = {};
     }
   }
 
@@ -501,13 +568,26 @@
     return tracks.find((t) => t.id === currentId) || null;
   }
 
+  function setArt(el, t) {
+    if (!el) return;
+    const cover = t && t.cover ? String(t.cover).replace(/["'()]/g, "") : "";
+    if (cover) {
+      el.style.backgroundImage = 'url("' + cover + '")';
+      el.style.backgroundSize = "cover";
+      el.style.backgroundPosition = "center";
+    } else {
+      el.style.backgroundImage = "";
+      el.style.background = t ? t.gradient : "linear-gradient(135deg,#333,#222)";
+    }
+  }
+
   function setHud() {
     const t = current();
-    $("playerArt").style.background = t ? t.gradient : "linear-gradient(135deg,#333,#222)";
-    $("hudArt").style.background = t ? t.gradient : "linear-gradient(135deg,#333,#222)";
+    setArt($("playerArt"), t);
+    setArt($("hudArt"), t);
     $("playerTitle").textContent = t ? t.title : "—";
     $("hudTitle").textContent = t ? t.title : "Nessuna traccia";
-    $("hudSub").textContent = t ? (t.builtin && lyricsData[t.id] ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
+    $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
     updateLyricsButton();
     render();
   }
@@ -517,8 +597,10 @@
   }
 
   function currentLyrics() {
-    if (!currentId || !lyricsData[currentId] || !lyricsData[currentId].text) return null;
-    return lyricsData[currentId];
+    if (!currentId) return null;
+    if (lyricsData[currentId] && lyricsData[currentId].text) return lyricsData[currentId];
+    if (localLyrics[currentId] && localLyrics[currentId].text) return localLyrics[currentId];
+    return null;
   }
 
   async function playById(id, autoplay = true) {
@@ -658,6 +740,8 @@
     if (ok) {
       toast(ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti");
       await loadAll();
+      const fresh = tracks.filter((t) => !t.builtin);
+      fresh.slice(-ok).forEach((t) => { enrichTrack({ id: t.id, title: t.title, artist: t.artist, album: t.album }); });
     }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
@@ -674,6 +758,100 @@
     }
     await loadAll();
     toast("Brano eliminato");
+  }
+
+  function stripVariants(s) {
+    return normText(s)
+      .replace(/\b(live|remastered|remaster|explicit|version|edit|remix|cover|instrumental|acoustic|medley|karaoke|strumentale)\b/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function tokenOverlap(want, got) {
+    const w = titleTokens(want);
+    if (!w.length) {
+      const nq = normKey(want);
+      if (!nq) return 1;
+      return normKey(got).indexOf(nq) >= 0 ? 1 : 0;
+    }
+    const g = new Set(titleTokens(got));
+    if (!g.size) return 0;
+    let hit = 0;
+    for (const t of w) if (g.has(t)) hit++;
+    return hit / w.length;
+  }
+
+  async function findLyrics(artist, title) {
+    const safeArtist = encodeURIComponent(artist || "Unknown");
+    const safeTitle = encodeURIComponent(stripVariants(title));
+    try {
+      const r1 = await fetch("https://api.lyrics.ovh/v1/" + safeArtist + "/" + safeTitle);
+      if (r1.ok) {
+        const j = await r1.json();
+        if (j && j.lyrics && j.lyrics.length > 120 &&
+            (!j.title || tokenOverlap(stripVariants(title), j.title) >= 0.7)) {
+          return { text: String(j.lyrics).replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").trim(), source: "lyrics.ovh" };
+        }
+      }
+    } catch (e) { /* noop */ }
+    try {
+      const r2 = await fetch("https://lrclib.net/api/get?artist_name=" + safeArtist + "&track_name=" + safeTitle);
+      if (r2.ok) {
+        const j = await r2.json();
+        const text = j && (j.plainLyrics || String(j.syncedLyrics || "").replace(/\[\d+:\d+(?:\.\d+)?\]/g, ""));
+        if (text && text.length > 120 &&
+            (!j.trackName || tokenOverlap(stripVariants(title), j.trackName) >= 0.7)) {
+          return { text: text.replace(/\n{3,}/g, "\n\n").trim(), source: "LRCLIB" };
+        }
+      }
+    } catch (e) { /* noop */ }
+    return null;
+  }
+
+  async function findCoverLocal(artist, title) {
+    const term = (artist ? artist + " " : "") + stripVariants(title);
+    try {
+      const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(term) + "&entity=song&limit=8");
+      if (!r.ok) return null;
+      const j = await r.json();
+      for (const res of (j.results || [])) {
+        if (tokenOverlap(stripVariants(title), res.trackName || "") < 0.7) continue;
+        if (artist && tokenOverlap(artist, res.artistName || "") < 0.5) continue;
+        const url = (res.artworkUrl100 || "").replace("100x100", "600x600");
+        if (url) return { cover: url, album: res.collectionName || "" };
+      }
+    } catch (e) { /* noop */ }
+    return null;
+  }
+
+  async function enrichTrack(rec) {
+    if (!rec || !rec.title) return;
+    try {
+      const patch = { id: rec.id };
+      if (!rec.cover) {
+        const c = await findCoverLocal(rec.artist, rec.title);
+        if (c) {
+          patch.coverUrl = c.cover;
+          patch.album = c.album;
+          try {
+            const ir = await fetch(c.cover);
+            if (ir.ok) patch.cover = await ir.blob();
+          } catch (e) { patch.coverUrl = c.cover; }
+        }
+      }
+      await dbPut(Object.assign({}, rec, patch));
+      if (!localLyrics[rec.id]) {
+        const l = await findLyrics(rec.artist, rec.title);
+        if (l) {
+          localLyrics[rec.id] = { title: rec.title, artist: rec.artist || "", text: l.text, source: l.source };
+          await dbPutLyrics({ id: rec.id, title: rec.title, artist: rec.artist || "", text: l.text, source: l.source });
+        }
+      }
+      await loadAll();
+      if (currentId === rec.id) setHud();
+    } catch (e) {
+      console.warn("Completamento automatico fallito", e);
+    }
   }
 
   /* ---------- Importazione: OCR + metadati + download ---------- */
@@ -952,31 +1130,30 @@
     return (json.response && json.response.docs) || [];
   }
 
+  function iaSearchPhrase(title) {
+    const core = normText(title)
+      .replace(/\b(live|remastered|remaster|explicit|version|edit|remix|cover|instrumental|acoustic|medley|karaoke|strumentale)\b/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return core || normText(title);
+  }
+
   async function searchArchive(item) {
+    const phrase = iaSearchPhrase(item.title);
     let docs = [];
     try {
-      docs = await iaQuery('title:("' + item.title + '") AND mediatype:(audio)');
+      docs = await iaQuery('title:("' + phrase + '") AND mediatype:(audio)');
     } catch (e) { /* noop */ }
     if (!docs.length) {
       try {
-        docs = await iaQuery('"' + item.title + '" AND mediatype:(audio)');
+        docs = await iaQuery('"' + phrase + '" AND mediatype:(audio)');
       } catch (e) { /* noop */ }
     }
     if (!docs.length) return [];
 
-    const ranked = docs
-      .map((doc) => {
-        const creator = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
-        const c = candidateScore(item, doc.title, creator);
-        return { doc, creator, sc: c.score, strong: c.strong };
-      })
-      .filter((x) => x.doc.identifier && x.sc > 0)
-      .sort((a, b) => b.sc - a.sc)
-      .slice(0, 5);
-
     const out = [];
-    for (const r of ranked) {
-      const doc = r.doc;
+    for (const doc of docs.slice(0, 5)) {
+      if (!doc.identifier) continue;
       let meta;
       try {
         const mres = await fetch(IA_META + encodeURIComponent(doc.identifier));
@@ -985,22 +1162,39 @@
       } catch (e) {
         continue;
       }
-      const file = pickAudioFile(meta.files);
-      if (!file) continue;
-      out.push({
-        score: r.sc,
-        strong: r.strong,
-        title: (doc.title || item.title).toString().slice(0, 120),
-        artist: (r.creator || "").toString().slice(0, 80),
-        album: "",
-        license: doc.licenseurl ? doc.licenseurl.toString().slice(0, 80) : "vedi fonte",
-        source: "Internet Archive",
-        url: archiveUrl(doc.identifier, file.name),
-        cover: IA_THUMB + encodeURIComponent(doc.identifier)
+      const docArtist = Array.isArray(doc.creator) ? doc.creator[0] : doc.creator;
+      const files = (meta.files || []).filter((f) => {
+        return /\.(mp3|m4a|aac|mp4)$/i.test(f.name || "") && f.size && Number(f.size) < MAX_DOWNLOAD;
       });
-      if (out.length >= 3) break;
+      for (const f of files) {
+        const candTitle = (f.title || String(f.name).replace(/\.[^.]+$/, "")).toString().slice(0, 120);
+        const candArtist = (f.artist || docArtist || "").toString().slice(0, 80);
+        const c = candidateScore(item, candTitle, candArtist);
+        if (c.score <= 0) continue;
+        let score = c.score;
+        let strong = c.strong;
+        if (hasVariantWords(String(f.name) + " " + (doc.title || "")) && !hasVariantWords(item.title)) {
+          score = Math.max(1, score - 15);
+          strong = false;
+        }
+        out.push({
+          score,
+          strong,
+          title: candTitle,
+          artist: candArtist,
+          album: (doc.title || "").toString().slice(0, 80),
+          license: doc.licenseurl ? doc.licenseurl.toString().slice(0, 80) : "vedi fonte",
+          source: "Internet Archive",
+          url: archiveUrl(doc.identifier, f.name),
+          cover: IA_THUMB + encodeURIComponent(doc.identifier)
+        });
+      }
+      out.sort((a, b) => b.score - a.score);
+      if (out.length > 12) out.length = 12;
+      if (out.length && out[0].score >= 100 && out[0].strong) break;
     }
-    return out;
+    out.sort((a, b) => b.score - a.score);
+    return out.slice(0, 3);
   }
 
   async function searchCommons(item) {
@@ -1208,6 +1402,7 @@
     };
     await dbPut(rec);
     await dbSetImport({ id, title: rec.title, artist: rec.artist, album: rec.album, status: "ok", date: rec.date });
+    enrichTrack({ id, title: rec.title, artist: rec.artist, album: rec.album });
     return rec;
   }
 
@@ -1386,7 +1581,7 @@
 
     if (item.state === "choose" && item.candidates.length) {
       for (const cand of item.candidates) {
-        btn(cand.title + (cand.artist ? " — " + cand.artist : ""), () => {
+        btn(cand.title + (cand.artist ? " — " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : ""), () => {
           item.meta = cand;
           item.state = "ready";
           paintImport(item);
@@ -1446,7 +1641,11 @@
 
       const sub = document.createElement("p");
       sub.className = "imp-sub";
-      sub.textContent = item.meta ? ((item.meta.source || "") + (item.meta.license ? " · " + item.meta.license : "")) : "";
+      const bits = [];
+      if (item.meta && item.meta.album) bits.push(item.meta.album);
+      if (item.meta && item.meta.source) bits.push(item.meta.source);
+      if (item.meta && item.meta.license) bits.push(item.meta.license);
+      sub.textContent = bits.join(" · ");
       main.appendChild(sub);
 
       const tags = document.createElement("p");
@@ -1785,6 +1984,8 @@
       db = null;
     }
     await loadLyrics();
+    await loadCovers();
+    if (db) await loadLocalLyrics();
     await loadAll();
     updateRestoreButton();
     updatePlayerHeight();
