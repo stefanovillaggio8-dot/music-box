@@ -27,7 +27,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "4.0";
+  const APP_VERSION = "4.1";
 
   let recovering = false;
   async function selfHeal() {
@@ -1922,6 +1922,7 @@
   let searching = false;
 
   async function runSearch() {
+    $("importTarget").textContent = "Sta scaricando nella libreria di " + profile + ".";
     if (searching) return;
     const parsed = parseImportText($("importText").value);
     if (!parsed.length) {
@@ -2017,6 +2018,7 @@
   }
 
   function openImport() {
+    $("importTarget").textContent = "Sta scaricando nella libreria di " + profile + ".";
     $("importPanel").hidden = false;
     document.body.classList.add("no-scroll");
   }
