@@ -113,5 +113,13 @@
   },
   "builtin-3": "https://cdn-images.dzcdn.net/images/cover/4c7bfe234626097e0e056103ad431ab1/1000x1000-000000-80-0-0.jpg",
   "builtin-10": "https://cdn-images.dzcdn.net/images/cover/df1b4ef1a9d2e6f618aff0619b414052/1000x1000-000000-80-0-0.jpg",
-  "builtin-13": "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/1000x1000-000000-80-0-0.jpg"
+  "builtin-13": "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/1000x1000-000000-80-0-0.jpg",
+  "exit": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/e798c51181666bc041ad037b7c50a1c1/1000x1000-000000-80-0-0.jpg",
+    "title": "EXIT (feat. Poco Cone, Ukic & Đ-Shock)",
+    "artist": "Petrov",
+    "album": "EXIT (feat. Poco Cone, Ukic & Đ-Shock)",
+    "source": "Deezer",
+    "date": "2026-09-24T23:27:13.832Z"
+  }
 }

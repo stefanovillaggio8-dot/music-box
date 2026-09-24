@@ -17,6 +17,7 @@
     { title: "Tony Boy - Victoria", file: "songs/track-13.mp3", artist: "Tony Boy" },
     { title: "Un mondo a parte (Visual)", file: "songs/track-14.mp3", artist: "Jovanotti" },
     { title: "Sogni Appesi", file: "songs/track-15.mp3", artist: "", profile: "Ste" },
+    { title: "Exit", file: "songs/track-16.mp3", artist: "", profile: "Ste" },
 ];
 
   const PALETTE = [
