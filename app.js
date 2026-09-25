@@ -20,7 +20,7 @@
     { title: "nayt - Exit", file: "songs/track-16.mp3", artist: "nayt", profile: "Ste" },
     { title: "Hai visto mai", file: "songs/track-17.mp3", artist: "Frah Quintale", profile: "Ste" },
     { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "", profile: "Ste" },
-    { title: "Stella Cadente - Videoclip Ufficiale", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
+    { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -32,7 +32,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.7";
+  const APP_VERSION = "6.8";
 
   let recovering = false;
   async function selfHeal() {
