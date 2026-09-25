@@ -356,6 +356,23 @@ main { padding: 8px 16px calc(var(--player-h) + 40px); }
 .ctl-big svg { width: 26px; height: 26px; }
 .ctl-big:active { transform: scale(.95); }
 
+.vol-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 10px 8px;
+}
+.vol-row .ctl { width: 32px; height: 32px; opacity: .8; }
+.vol-row .ctl svg { width: 17px; height: 17px; }
+.vol-row .ctl.muted { color: var(--muted); }
+.vol-row input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  height: 26px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 body.no-scroll { overflow: hidden; }
 
 [hidden] { display: none !important; }

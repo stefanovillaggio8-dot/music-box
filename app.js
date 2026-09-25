@@ -30,7 +30,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.6";
+  const APP_VERSION = "6.7";
 
   let recovering = false;
   async function selfHeal() {
@@ -664,7 +664,7 @@
     const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
     audio = createAudio();
     audio.src = t.url;
-    audio.volume = 1;
+    audio.volume = volumePct / 100;
     try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
     if (autoplay) doPlay();
   }
@@ -672,7 +672,7 @@
   async function doPlay() {
     if (!audio) audio = createAudio();
     try {
-      audio.volume = 1;
+      audio.volume = volumePct / 100;
       setPlaybackState("playing");
       await audio.play();
     } catch (e) {
@@ -998,7 +998,7 @@
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
     audio.src = t.url;
-    audio.volume = 1;
+    audio.volume = volumePct / 100;
     setHud();
     updateProgressUI(0, 0);
     const activeEl = playlistEl.querySelector(".track.active");
@@ -3113,9 +3113,33 @@
     if (swReg) swReg.update().catch(() => {});
   }, 180000);
 
+  /* ---------- Volume ---------- */
+  let volumePct = LS.get("mb.vol", 100);
+  let volumeBeforeMute = 100;
+  function updateVolumeUI() {
+    const s = $("volSlider");
+    if (s) s.value = String(volumePct);
+    const b = $("btnVolIcon");
+    if (b) b.classList.toggle("muted", volumePct === 0);
+  }
+  function setVolume(v) {
+    volumePct = Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+    if (volumePct > 0) volumeBeforeMute = volumePct;
+    if (audio) audio.volume = volumePct / 100;
+    LS.set("mb.vol", volumePct);
+    updateVolumeUI();
+  }
+  $("volSlider").addEventListener("input", (e) => setVolume(e.target.value));
+  $("btnVolIcon").addEventListener("click", () => {
+    if (volumePct > 0) setVolume(0);
+    else setVolume(volumeBeforeMute || 100);
+  });
+
   /* ---------- Avvio ---------- */
   (async function init() {
     audio = createAudio();
+    audio.volume = volumePct / 100;
+    updateVolumeUI();
     setPlaybackState("none");
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
