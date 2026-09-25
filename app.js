@@ -19,6 +19,7 @@
     { title: "Sogni Appesi", file: "songs/track-15.mp3", artist: "", profile: "Ste" },
     { title: "nayt - Exit", file: "songs/track-16.mp3", artist: "nayt", profile: "Ste" },
     { title: "Hai visto mai", file: "songs/track-17.mp3", artist: "Frah Quintale", profile: "Ste" },
+    { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "", profile: "Ste" },
 ];
 
   const PALETTE = [
