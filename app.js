@@ -21,6 +21,7 @@
     { title: "Hai visto mai", file: "songs/track-17.mp3", artist: "Frah Quintale", profile: "Ste" },
     { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "", profile: "Ste" },
     { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
+    { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
 ];
 
   const PALETTE = [
