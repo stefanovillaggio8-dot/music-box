@@ -25,6 +25,7 @@
     { title: "Canzone Test", file: "songs/track-21.mp3", artist: "Prova Uno", profile: "Ste" },
     { title: "Canzone Test", file: "songs/track-22.mp3", artist: "Prova Due", profile: "Emanuele" },
     { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
+    { title: "zero rimorsi", file: "songs/track-24.mp3", artist: "il tre", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -2781,12 +2782,8 @@
   function elGuide(item) {
     const el = item.el;
     if (!el || el.guida) return;
-    aggiungiPonte(item);
-    const yt = linkYouTube((item.meta && item.meta.artist) || item.artist,
-      (item.meta && item.meta.title) || item.title);
-    if (yt) el.actions.appendChild(yt);
-    el.actions.appendChild(linkConvertitore());
-    // i passi restano, ma chiusi: la riga deve restare corta
+    // i link yt/noTube e i tasti del PC li aggiunge il blocco comune in fondo
+    // a paintImport: cosi' valgono anche per i brani "non disponibile"
     const piu = document.createElement("details");
     piu.className = "hint-more imp-altro";
     const somma = document.createElement("summary");
@@ -3002,10 +2999,16 @@
       }
     }
 
-    // I tasti del PC compaiono SEMPRE (tranne mentre si scarica davvero):
-    // prima stavano solo sui brani con anteprima 30s, quindi per tutti gli
-    // altri stati sparivano e non si capiva il perche'.
+    /* Link e tasti per trovare il brano: valgono per OGNI stato, non solo per
+       le anteprime. Prima "yt" e "noTube" comparivano solo quando c'era
+       l'anteprima di 30s, e sui brani "non disponibile" mancavano proprio i
+       link che servono di piu'. */
     if (item.state !== "downloading" && item.state !== "done" && item.state !== "searching") {
+      const nomeBrano = (item.meta && item.meta.title) || item.title;
+      const nomeArtista = (item.meta && item.meta.artist) || item.artist;
+      const yt = linkYouTube(nomeArtista, nomeBrano);
+      if (yt) el.actions.appendChild(yt);
+      el.actions.appendChild(linkConvertitore());
       aggiungiPonte(item);
     }
 
