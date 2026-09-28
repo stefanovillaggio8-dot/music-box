@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.24";
+  const APP_VERSION = "6.25";
 
   let recovering = false;
   async function selfHeal() {
@@ -2555,6 +2555,23 @@
      dal telefono il browser blocca la richiesta, e va bene cosi'. */
   const PONTE_URL = "http://127.0.0.1:8788";
   let ponteCache = null;
+
+  // Manda un errore al registro del programma sul PC, se e' acceso.
+  // Serve a me per capire cosa si rompe senza dover chiedere ogni volta.
+  function segnalaErrore(testo) {
+    const msg = "v" + APP_VERSION + " | " + String(testo || "").slice(0, 300);
+    try {
+      const ctl = new AbortController();
+      const scad = setTimeout(() => ctl.abort(), 3000);
+      fetch(PONTE_URL + "/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ testo: msg }),
+        signal: ctl.signal
+      }).catch(() => {}).then(() => clearTimeout(scad));
+    } catch (e) { /* noop */ }
+  }
+
   async function ponteOnline() {
     if (ponteCache && Date.now() - ponteCache.t < 15000) return ponteCache.ok;
     let ok = false;
@@ -3332,6 +3349,10 @@
           item.state = "missing";
           item.tagMancato = "non riesco a cercarlo";
           try { paintImport(item); } catch (e2) { /* se anche questo fallisce, pazienza */ }
+          // e lo scrivo nel registro del PC, cosi' gli errori si possono
+          // leggere davvero invece di sparire
+          segnalaErrore("ricerca fallita su \"" + (item.title || "?") + "\": " +
+            ((e && (e.message || e)) || "errore sconosciuto"));
         }
       }));
       await new Promise((r) => setTimeout(r, 80));
