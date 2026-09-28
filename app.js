@@ -22,6 +22,7 @@
     { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "", profile: "Ste" },
     { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
+    { title: "Canzone Test", file: "songs/track-21.mp3", artist: "Prova Uno", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -2569,9 +2570,12 @@
   }
 
   // Campo dove incollare il link di YouTube, col tasto per convertirlo.
-  function campoLinkYouTube(item) {
+  // cartella: "" (solo libreria), "ste" o "emanuela" (salva anche la copia).
+  function campoLinkYouTube(item, cartella) {
     const el = item.el;
-    if (!el || el.ytUrl) return;
+    if (!el) return;
+    el.cartella = cartella || "";
+    if (el.ytUrl) return;
     const inp = document.createElement("input");
     inp.className = "imp-url";
     inp.type = "url";
@@ -2606,7 +2610,11 @@
       const r = await fetch(PONTE_URL + "/convert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url })
+        body: JSON.stringify({
+          url: url,
+          cartella: (el.cartella || ""),
+          titolo: [(item.artist || ""), (item.title || "")].join(" - ").replace(/^\s*-\s*/, "").trim()
+        })
       });
       if (!r.ok) {
         let msg = "conversione non riuscita";
@@ -2616,6 +2624,9 @@
         } catch (e) {}
         throw new Error(msg);
       }
+      // se avevo chiesto una copia su disco, te dico se e' andata bene
+      const copia = r.headers.get("X-Cartella") || "";
+      if (copia === "non salvata") toast("Ho l'mp3, ma non sono riuscito a salvarlo in cartella");
       // leggo a pezzetti cosi' si vede l'avanzamento
       const lettore = r.body && r.body.getReader ? r.body.getReader() : null;
       let parti = [];
@@ -2665,9 +2676,17 @@
       if (el.ponte !== "controllo") return;   // intanto il brano si e' ridisegnato
       el.ponte = online ? "si" : "no";
       if (!online || el.ytUrl) return;
-      const bp = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item));
-      bp.classList.add("btn-mini-auto");
-      bp.title = "Scarico e converto io col PC: devi solo incollare il link di YouTube";
+      // Tre strade, e si distinguono a colori: solo libreria, oppure con
+      // copia nella cartella di Ste, oppure in quella di Emanuele.
+      const b1 = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item, ""));
+      b1.classList.add("btn-mini-auto");
+      b1.title = "Scarico e converto io col PC: lo metto in libreria";
+      const b2 = btn("Salva in mp3 Ste", () => campoLinkYouTube(item, "ste"));
+      b2.classList.add("btn-mini-cartella");
+      b2.title = "Oltre che in libreria, salvo una copia in musica mp3 ste";
+      const b3 = btn("Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela"));
+      b3.classList.add("btn-mini-cartella");
+      b3.title = "Oltre che in libreria, salvo una copia in musica mp3 emanuele";
     });
   }
 

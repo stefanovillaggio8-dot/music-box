@@ -873,6 +873,15 @@ body.no-scroll { overflow: hidden; }
   }
   .btn-mini-auto:active { background: #24b862; }
 
+  /* VIOLA = salva anche una copia nella cartella mp3 di Ste o di Emanuele */
+  .btn-mini-cartella {
+    background: rgba(190,140,255,.16);
+    border-color: rgba(190,140,255,.5);
+    color: #d4b8ff;
+    font-weight: 600;
+    white-space: normal;
+  }
+
   /* BLU = "apri i miei file": serve a scegliere l'mp3 gia' scaricato a mano */
   .btn-mini-file {
     background: rgba(90,160,255,.14);
