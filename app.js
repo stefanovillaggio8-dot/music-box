@@ -37,7 +37,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.30";
+  const APP_VERSION = "6.31";
 
   let recovering = false;
   async function selfHeal() {
@@ -2254,15 +2254,55 @@
     return a;
   }
 
+  /* Copia negli appunti. Su https e su 127.0.0.1 funziona l'API moderna;
+     su una pagina http normale (per esempio il telefono aperto con
+     l'indirizzo della rete) il browser la blocca, e uso il metodo vecchio. */
+  async function copiaNegliAppunti(testo) {
+    const t = String(testo || "");
+    if (!t) return false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(t);
+        return true;
+      }
+    } catch (e) { /* provo con il metodo vecchio */ }
+    try {
+      const area = document.createElement("textarea");
+      area.value = t;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.top = "-1000px";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+      area.setSelectionRange(0, t.length);
+      const ok = document.execCommand("copy");
+      area.remove();
+      return !!ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /* Quando del brano c'e' solo l'anteprima di 30 secondi, offro la strada per
      ascoltarlo intero: cerco la canzone su YouTube. Uso la pagina di ricerca
      e non un link a caso, perche' cosi' porta sempre alla canzone giusta
-     anche se l'artista ha un nome con lo spazio o dei caratteri strani. */
+     anche se l'artista ha un nome con lo spazio o dei caratteri strani.
+     Premendo copio anche il link negli appunti, cosi' non serve ricordarselo. */
   function linkYouTube(artista, titolo) {
     const q = [artista, titolo].map((s) => String(s || "").trim()).filter(Boolean).join(" ");
     if (!q) return null;
-    return linkEsterno("yt", "https://www.youtube.com/results?search_query=" + encodeURIComponent(q),
-      "Cerca \"" + q + "\" su YouTube", "btn-yt");
+    const indirizzo = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+    const a = linkEsterno("yt", indirizzo,
+      "Apre YouTube e copia il link di ricerca negli appunti", "btn-yt");
+    a.addEventListener("click", () => {
+      copiaNegliAppunti(indirizzo).then((ok) => {
+        toast(ok
+          ? "Link di ricerca copiato: incollalo nella barra di YouTube"
+          : "Non sono riuscito a copiare: apri YouTube e cerca \"" + q + "\"");
+      });
+    });
+    return a;
   }
 
   // Il convertitore e' un sito esterno: apro la pagina, non un brano a caso.
@@ -2758,16 +2798,16 @@
     const el = item.el;
     if (!el || el.ponte) return;
     el.ponte = true;
+    const gruppo = nuovoGruppo(el, "Sul PC (scarica e converti da solo)");
     // dichiaro lo stato PRIMA dei tasti: i tasti lo richiamano al click
-    const stato = statoPonte(el);
+    const stato = statoPonte(gruppo);
     scriviStatoPonte(stato, "controllo il PC...");
-    // solo libreria, oppure con copia nella cartella mp3
-    nuovoBottone(el.actions, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato),
+    nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato),
       "btn-mini-auto", "Scarico e converto io col PC: metto il brano in libreria");
-    nuovoBottone(el.actions, "Salva in mp3 Ste", () => campoLinkYouTube(item, "ste", stato),
+    nuovoBottone(gruppo, "Salva in mp3 Ste", () => campoLinkYouTube(item, "ste", stato),
       "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 ste");
-    nuovoBottone(el.actions, "Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato),
-      "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 emanuela");
+    nuovoBottone(gruppo, "Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato),
+      "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 emanuele");
     ponteOnline().then((online) => {
       if (!rigaViva(el)) return;
       scriviStatoPonte(stato, online
@@ -2777,23 +2817,20 @@
   }
 
   // Mostra i passi da seguire sotto un brano che ha solo l'anteprima.
-  // I tasti del PC stanno PRIMA: l'ho visto nello screenshot, le spiegazioni
-  // erano cosi' lunghe che i tasti finivano fuori inquadratura.
   function elGuide(item) {
     const el = item.el;
     if (!el || el.guida) return;
-    // i link yt/noTube e i tasti del PC li aggiunge il blocco comune in fondo
-    // a paintImport: cosi' valgono anche per i brani "non disponibile"
+    const gruppo = nuovoGruppo(el, "A mano (senza PC)");
     const piu = document.createElement("details");
     piu.className = "hint-more imp-altro";
     const somma = document.createElement("summary");
-    somma.textContent = "Se non hai il PC, fallo a mano";
+    somma.textContent = "Come si fa senza il PC";
     piu.appendChild(somma);
     piu.appendChild(guidaPassi([
-      "sul telefono: apri la canzone, usa noTube, scarica, poi scegli il file"
+      "apri la canzone su YouTube, usa noTube, scarica, poi scegli il file qui sotto"
     ]));
-    el.actions.appendChild(piu);
-    nuovoBottone(el.actions, "Apri i miei file", () => scegliFilePer(item),
+    gruppo.appendChild(piu);
+    nuovoBottone(gruppo, "Apri i miei file", () => scegliFilePer(item),
       "btn-mini-file", "Scegli l'mp3 che hai gia' scaricato a mano");
     el.guida = true;
   }
@@ -2913,6 +2950,21 @@
     return b;
   }
 
+  /* Un gruppo di tasti con scritto sopra cosa serve. I tasti erano tutti
+     sciolti nella stessa riga e non si capiva piu' niente. */
+  function nuovoGruppo(el, etichetta) {
+    const g = document.createElement("div");
+    g.className = "imp-gruppo-azioni";
+    if (etichetta) {
+      const t = document.createElement("span");
+      t.className = "imp-gruppo-etichetta";
+      t.textContent = etichetta;
+      g.appendChild(t);
+    }
+    el.actions.appendChild(g);
+    return g;
+  }
+
   function paintImport(item) {
     const el = item.el;
     if (!el) return;
@@ -2924,13 +2976,16 @@
     el.ponte = null;    // idem per il controllo del ponte sul PC
     el.ytUrl = null;
     el.ytGo = null;
+    // da qui in poi i tasti finiscono nel gruppo indicato: cosi' restano
+    // separati per invece di finire tutti sciolti nella stessa riga
+    let gruppo = nuovoGruppo(el, "");
     const tag = (text, cls) => {
       const s = document.createElement("span");
       s.className = "imp-tag" + (cls ? " " + cls : "");
       s.textContent = text;
       el.tags.appendChild(s);
     };
-    const btn = (text, fn, disabled) => nuovoBottone(el.actions, text, fn, "", "", disabled);
+    const btn = (text, fn, disabled) => nuovoBottone(gruppo, text, fn, "", "", disabled);
 
     if (item.state === "dupe") {
       tag("già nella libreria", "dup");
@@ -2999,19 +3054,6 @@
       }
     }
 
-    /* Link e tasti per trovare il brano: valgono per OGNI stato, non solo per
-       le anteprime. Prima "yt" e "noTube" comparivano solo quando c'era
-       l'anteprima di 30s, e sui brani "non disponibile" mancavano proprio i
-       link che servono di piu'. */
-    if (item.state !== "downloading" && item.state !== "done" && item.state !== "searching") {
-      const nomeBrano = (item.meta && item.meta.title) || item.title;
-      const nomeArtista = (item.meta && item.meta.artist) || item.artist;
-      const yt = linkYouTube(nomeArtista, nomeBrano);
-      if (yt) el.actions.appendChild(yt);
-      el.actions.appendChild(linkConvertitore());
-      aggiungiPonte(item);
-    }
-
     if (item.state === "choose" && item.candidates.length) {
       for (const cand of item.candidates) {
         // ogni versione si puo' ascoltare prima di sceglierla
@@ -3074,6 +3116,21 @@
           });
         }
       }
+    }
+
+    /* Link e tasti per trovare il brano: valgono per OGNI stato, non solo per
+       le anteprime. Prima "yt" e "noTube" comparivano solo quando c'era
+       l'anteprima di 30s, e sui brani "non disponibile" mancavano proprio i
+       link che servono di piu'.
+       Stanno in fondo, in gruppi separati: cosi' la riga si legge a blocchi. */
+    if (item.state !== "downloading" && item.state !== "done" && item.state !== "searching") {
+      const web = nuovoGruppo(el, "Cercalo su internet");
+      const nomeBrano = (item.meta && item.meta.title) || item.title;
+      const nomeArtista = (item.meta && item.meta.artist) || item.artist;
+      const yt = linkYouTube(nomeArtista, nomeBrano);
+      if (yt) web.appendChild(yt);
+      web.appendChild(linkConvertitore());
+      aggiungiPonte(item);
     }
   }
 

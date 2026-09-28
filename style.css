@@ -1122,11 +1122,32 @@ a.btn-mp3:active { background: rgba(110,231,160,.2); }
   font-weight:700;
 }
 /* ============================================================
-   COLORI DEI TASTI DEL PC
+   COLORI E GRUPPI DEI TASTI
    Stanno QUI IN FONDO apposta: la regola generale .btn-mini e'
    piu' in alto nel file e, avendo la stessa importanza, quella
    dopo vince. Prima stavano sopra e i colori sparivano.
    ============================================================ */
+
+/* I tasti non sono piu' sciolti: sono a gruppi, con una riga
+   piccola sopra che spiega a cosa serve ogni gruppo. */
+.imp-gruppo-azioni {
+  flex: 0 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.imp-gruppo-azioni:first-child { margin-top: 2px; }
+.imp-gruppo-etichetta {
+  flex: 0 0 100%;
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: .7;
+}
 
 /* VERDE = automatico col PC. Unico tasto verde: e' quello che
    fa tutto da solo e non ha bisogno di noTube. */
@@ -1175,3 +1196,5 @@ button.btn-mini-file {
 /* I passi manuali stanno chiusi: la riga del brano resta corta */
 .imp-altro summary { color: #8fc4ff; }
 .imp-altro[open] summary { color: #b6d8ff; }
+/* dentro un gruppo, il campo per il link prende lo spazio che resta */
+.imp-gruppo-azioni .imp-url { flex: 1 1 220px; min-width: 0; }
