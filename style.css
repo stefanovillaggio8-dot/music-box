@@ -873,17 +873,21 @@ body.no-scroll { overflow: hidden; }
   }
   .btn-mini-auto:active { background: #24b862; }
 
-  /* Riga che dice se il programma sul PC e' acceso: verde se funziona,
-     arancione se e' spento, cosi' non resti a indovinare. */
+  /* Riga che dice se il programma sul PC e' acceso. Sta sulla stessa riga dei
+     tasti (inline): prima andava a capo e spingeva tutto sotto la piega. */
   .imp-stato-ponte {
-    flex: 0 0 100%;
-    font-size: 12px;
-    line-height: 1.5;
-    margin: 2px 0 6px;
+    flex: 0 0 auto;
+    font-size: 11.5px;
+    line-height: 1.4;
+    margin: 0 2px;
     color: var(--muted);
+    white-space: nowrap;
   }
   .imp-stato-ponte.imp-stato-ok { color: #6ee7a0; }
   .imp-stato-ponte.imp-stato-no { color: #ffc46b; }
+
+  /* I passi manuali stanno chiusi, cosi' la riga del brano resta corta */
+  .imp-altro summary { color: #8fc4ff; }
 
   /* VIOLA = salva anche una copia nella cartella mp3 di Ste o di Emanuele */
   .btn-mini-cartella {

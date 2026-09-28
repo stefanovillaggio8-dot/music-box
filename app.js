@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.22";
+  const APP_VERSION = "6.23";
 
   let recovering = false;
   async function selfHeal() {
@@ -2711,8 +2711,6 @@
     const el = item.el;
     if (!el || el.ponte) return;
     el.ponte = true;
-    const stato = statoPonte(el);
-    scriviStatoPonte(stato, "controllo il PC...");
     // solo libreria, oppure con copia nella cartella mp3
     const b1 = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato));
     b1.classList.add("btn-mini-auto");
@@ -2722,31 +2720,42 @@
     b2.title = "Oltre che in libreria, salvo una copia in musica mp3 ste";
     const b3 = btn("Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato));
     b3.classList.add("btn-mini-cartella");
-    b3.title = "Oltre che in libreria, salvo una copia in musica mp3 emanuele";
+    b3.title = "Oltre che in libreria, salvo una copia in musica mp3 emanuela";
+    // lo stato viene DOPO i tasti, cosi' sta sulla stessa riga e si legge
+    const stato = statoPonte(el);
+    scriviStatoPonte(stato, "controllo il PC...");
     ponteOnline().then((online) => {
       if (!el.isConnected) return;
       scriviStatoPonte(stato, online
         ? "programma sul PC: acceso"
-        : "programma sul PC: spento (i tasti verdi e viola funzionano solo da qui)");
+        : "programma sul PC: spento");
     });
   }
 
   // Mostra i passi da seguire sotto un brano che ha solo l'anteprima.
+  // I tasti del PC stanno PRIMA: l'ho visto nello screenshot, le spiegazioni
+  // erano cosi' lunghe che i tasti finivano fuori inquadratura.
   function elGuide(item) {
     const el = item.el;
     if (!el || el.guida) return;
+    aggiungiPonte(item);
     const yt = linkYouTube((item.meta && item.meta.artist) || item.artist,
       (item.meta && item.meta.title) || item.title);
     if (yt) el.actions.appendChild(yt);
     el.actions.appendChild(linkConvertitore());
-    el.actions.appendChild(guidaPassi([
-      "sul PC: tocca VERDE, incolla il link di YouTube e faccio io",
-      "sul telefono: apri la canzone, usa noTube, scarica, poi tocca BLU"
+    // i passi restano, ma chiusi: la riga deve restare corta
+    const piu = document.createElement("details");
+    piu.className = "hint-more imp-altro";
+    const somma = document.createElement("summary");
+    somma.textContent = "Se non hai il PC, fallo a mano";
+    piu.appendChild(somma);
+    piu.appendChild(guidaPassi([
+      "sul telefono: apri la canzone, usa noTube, scarica, poi scegli il file"
     ]));
+    el.actions.appendChild(piu);
     const b = btn("Apri i miei file", () => scegliFilePer(item));
     b.classList.add("btn-mini-file");
     el.guida = true;
-    aggiungiPonte(item);
   }
 
   function toggleUrlInput(item) {
