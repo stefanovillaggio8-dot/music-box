@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.10";
+  const APP_VERSION = "6.11";
 
   let recovering = false;
   async function selfHeal() {
@@ -1633,6 +1633,53 @@
     return false;
   }
 
+  /* Un artista con lo spazio (es. "Post Malone", "Tyler, The Creator") non e'
+     ancora in libreria non viene riconosciuto, perche' la riga sembra un titolo.
+     Qui si chiede a iTunes se quella frase e' un artista.
+     Attenzione pero': certi titoli sono anche nomi di artisti ("Blinding Lights",
+     "Mamma Mia"), quindi se la frase e' anche un brano la lasciamo com'e' e non
+     la trasformiamo in "tutte le canzoni dell'artista".
+     Con "artista: nome" invece si forza la scelta. */
+  async function iTunesQuestoEArtista(nome) {
+    const grezzo = String(nome || "").trim();
+    const forzato = /^artista\s*:/i.test(grezzo);
+    const t = grezzo.replace(/^artista\s*:\s*/i, "");
+    if (!t) return "";
+    const parole = t.split(/\s+/).filter(Boolean);
+    if (parole.length > 5) return "";
+    if (!forzato && parole.length < 2) return "";
+    const mio = normKey(t);
+    if (!mio) return "";
+    try {
+      // Se l'utente ha scritto "artista:" usa la ricerca artisti dedicata,
+      // che e' precisa. Altrimenti cerco fra i brani: cosi' con una sola
+      // richiesta vedo sia il nome dell'artista sia il titolo del brano.
+      const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(t) +
+        (forzato ? "&entity=musicArtist&limit=8" : "&entity=song&limit=30") + "&country=IT");
+      if (!r.ok) return "";
+      const d = await r.json();
+      const risultati = (d && d.results) || [];
+      // 1) e' anche un brano? allora non tocchiamo niente (salvo "artista:")
+      if (!forzato) {
+        for (const s of risultati) {
+          if (s && s.trackName && normKey(s.trackName) === mio) return "";
+        }
+      }
+      // 2) e' un artista esatto
+      for (const s of risultati) {
+        if (s && s.artistName && normKey(s.artistName) === mio) return String(s.artistName);
+      }
+      // 3) nome molto simile (typo, accenti, virgole)
+      let migliore = "", punteggio = 0;
+      for (const s of risultati) {
+        if (!s || !s.artistName) continue;
+        const p = titleMatch(mio, normKey(s.artistName)).score;
+        if (p > punteggio) { punteggio = p; migliore = String(s.artistName); }
+      }
+      return punteggio >= 88 ? migliore : "";
+    } catch (e) { return ""; }
+  }
+
   /* Scrive anche "artista e nome" senza trattino (es. "nayt tropico"):
      se la riga parte con un artista che gia' conosciamo, tutto quello
      che viene dopo e' il brano. Provo l'artista piu' lungo per primo,
@@ -2726,6 +2773,18 @@
     importList = [];
     const daCercare = [];
     const gruppi = [];
+    // Righe tipo "Post Malone": sembrano un titolo, ma se iTunes conferma
+    // che sono un artista le trattiamo come "tutte le canzoni di quell'artista".
+    for (const p of parsed) {
+      if (p.artistOnly || p.artist) continue;
+      const forzato = /^artista\s*:/i.test(String(p.title || "").trim());
+      if (!forzato && !/\s/.test(p.title || "")) continue;
+      const nome = await iTunesQuestoEArtista(p.title);
+      if (nome) {
+        p.artistOnly = true;
+        p.title = nome;
+      }
+    }
     for (const p of parsed) {
       if (p.artistOnly) {
         const segnaposto = {
