@@ -24,6 +24,7 @@
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
     { title: "Canzone Test", file: "songs/track-21.mp3", artist: "Prova Uno", profile: "Ste" },
     { title: "Canzone Test", file: "songs/track-22.mp3", artist: "Prova Due", profile: "Emanuele" },
+    { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
 ];
 
   const PALETTE = [
