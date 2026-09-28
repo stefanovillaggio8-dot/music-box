@@ -35,7 +35,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.18";
+  const APP_VERSION = "6.19";
 
   let recovering = false;
   async function selfHeal() {
@@ -3135,15 +3135,24 @@
     const gruppi = [];
     // Righe tipo "Post Malone": sembrano un titolo, ma se iTunes conferma
     // che sono un artista le trattiamo come "tutte le canzoni di quell'artista".
-    for (const p of parsed) {
-      if (p.artistOnly || p.artist) continue;
+    // Controllo 4 righe alla volta: prima facevo una richiesta per riga.
+    const daControllare = parsed.filter((p) => {
+      if (p.artistOnly || p.artist) return false;
       const forzato = /^artista\s*:/i.test(String(p.title || "").trim());
-      if (!forzato && !/\s/.test(p.title || "")) continue;
-      const nome = await iTunesQuestoEArtista(p.title);
-      if (nome) {
-        p.artistOnly = true;
-        p.title = nome;
-      }
+      return forzato || /\s/.test(p.title || "");
+    });
+    for (let i = 0; i < daControllare.length; i += 4) {
+      const lotto = daControllare.slice(i, i + 4);
+      await Promise.all(lotto.map(async (p) => {
+        let nome = "";
+        try {
+          nome = await conScadenza(iTunesQuestoEArtista(p.title), 12000, "scaduto");
+        } catch (e) { nome = ""; }
+        if (nome) {
+          p.artistOnly = true;
+          p.title = nome;
+        }
+      }));
     }
     for (const p of parsed) {
       if (p.artistOnly) {
@@ -3223,35 +3232,44 @@
       renderImports();
     }
 
-    for (let i = 0; i < daCercare.length; i++) {
-      const item = daCercare[i];
-      if (item.removed) continue;
-      avanta("Cerco " + (i + 1) + "/" + daCercare.length + ": " + item.title);
-      /* senza artista scritto: 2-6 parole, e non piu' di 15 righe cosi' per
-         batch, altrimenti la ricerca si allunga troppo */
-      if (!item.artist && !item.anteprima && item.title &&
-          item.title.indexOf(" ") > 0 && item.title.split(/\s+/).length <= 6 && sconosciuti < 15) {
-        sconosciuti++;
-        avanta("Cerco di chi e': " + item.title);
-        const indovinato = await itunesGuess(item.title);
-        if (indovinato && indovinato.artist) {
-          item.artist = indovinato.artist;
-          if (titleMatch(item.title, indovinato.title).score < 90) item.title = indovinato.title;
-          if (!item.album) item.album = indovinato.album;
-          if (!item.copertina) item.copertina = indovinato.cover;
-          if (!item.secs) item.secs = indovinato.secs;
-          if (!item.anteprima) item.anteprima = previewCandidate(indovinato);
+    /* Prima cercavo un brano alla volta: con un artista da 30 canzoni si
+       poteva stare "cerco..." per minuti. Adesso ne cerco 5 in contemporanea:
+       il tempo si abbassa di parecchio e i risultati arrivano tutti insieme. */
+    const QUANTI_INSIEME = 5;
+    const rimasti = daCercare.filter((x) => !x.removed);
+    for (let i = 0; i < rimasti.length; i += QUANTI_INSIEME) {
+      const lotto = rimasti.slice(i, i + QUANTI_INSIEME);
+      avanta("Cerco " + Math.min(i + 1, rimasti.length) + "-" + Math.min(i + lotto.length, rimasti.length) +
+        "/" + rimasti.length + "...");
+      await Promise.all(lotto.map(async (item) => {
+        if (item.removed) return;
+        /* senza artista scritto: 2-6 parole, e non piu' di 15 righe cosi' per
+           batch, altrimenti la ricerca si allunga troppo */
+        if (!item.artist && !item.anteprima && item.title &&
+            item.title.indexOf(" ") > 0 && item.title.split(/\s+/).length <= 6 && sconosciuti < 15) {
+          sconosciuti++;
+          try {
+            const indovinato = await conScadenza(itunesGuess(item.title), 12000, "scaduto");
+            if (indovinato && indovinato.artist) {
+              item.artist = indovinato.artist;
+              if (titleMatch(item.title, indovinato.title).score < 90) item.title = indovinato.title;
+              if (!item.album) item.album = indovinato.album;
+              if (!item.copertina) item.copertina = indovinato.cover;
+              if (!item.secs) item.secs = indovinato.secs;
+              if (!item.anteprima) item.anteprima = previewCandidate(indovinato);
+            }
+          } catch (e) { /* nessun artista: vado avanti col titolo cosi' com'e' */ }
         }
-      }
-      let dup = false;
-      for (const k of trackKeys(item)) if (libKeys.has(k)) dup = true;
-      if (dup) {
-        item.state = "dupe";
-      } else {
-        await cercaItemSingolo(item);
-      }
-      paintImport(item);
-      await new Promise((r) => setTimeout(r, 120));
+        let dup = false;
+        for (const k of trackKeys(item)) if (libKeys.has(k)) dup = true;
+        if (dup) {
+          item.state = "dupe";
+          paintImport(item);
+        } else {
+          await cercaItemSingolo(item);
+        }
+      }));
+      await new Promise((r) => setTimeout(r, 80));
     }
 
     const auto = importList.filter((x) => x.state === "ready").length;
