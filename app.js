@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.12";
+  const APP_VERSION = "6.13";
 
   let recovering = false;
   async function selfHeal() {
@@ -2207,6 +2207,23 @@
     return "";
   }
 
+  /* Quando del brano c'e' solo l'anteprima di 30 secondi, offro la strada per
+     ascoltarlo intero: cerco la canzone su YouTube. Uso la pagina di ricerca
+     e non un link a caso, perche' cosi' porta sempre alla canzone giusta
+     anche se l'artista ha un nome con lo spazio o dei caratteri strani. */
+  function linkYouTube(artista, titolo) {
+    const q = [artista, titolo].map((s) => String(s || "").trim()).filter(Boolean).join(" ");
+    if (!q) return null;
+    const a = document.createElement("a");
+    a.className = "btn-mini btn-yt";
+    a.textContent = "yt";
+    a.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.title = "Cerca \"" + q + "\" su YouTube";
+    return a;
+  }
+
   async function findDownload(item) {
     const cands = [];
     try {
@@ -2569,6 +2586,10 @@
         });
         b.title = nota || "Ascolta prima di importare";
         if (nota) {
+          // solo 30 secondi: aggiungo il pulsante per cercarla su YouTube
+          const yt = linkYouTube((item.meta && item.meta.artist) || item.artist,
+            (item.meta && item.meta.title) || item.title);
+          if (yt) el.actions.appendChild(yt);
           const sp = document.createElement("span");
           sp.className = "imp-nota-anteprima";
           sp.textContent = nota;
@@ -2617,6 +2638,9 @@
           importItem(item);
         });
         if (nota) {
+          // anche fra le versioni alternative: solo anteprima = va su YouTube
+          const yt = linkYouTube(cand.artist, cand.title);
+          if (yt) el.actions.appendChild(yt);
           const sp = document.createElement("span");
           sp.className = "imp-nota-anteprima";
           sp.textContent = nota;
@@ -2653,12 +2677,57 @@
     }
   }
 
+  /* Ordine di priorita' nella lista delle canzoni trovate: prima quelle con
+     il brano COMPLETO (pronti da importare), poi le altre, e in fondo quelle
+     che hanno solo l'anteprima di 30 secondi. I gruppi ("Canzoni di ...")
+     restano attaccati: non si mescola un gruppo con gli altri. */
+  function prioritaImport(x) {
+    const solo30 = !!(x.meta && x.meta.license === "solo 30 secondi");
+    if (x.state === "ready") return 0;            // brano completo
+    if (x.state === "done") return 1;
+    if (solo30) return 9;                          // solo anteprima: in fondo
+    if (x.state === "found") return 0;            // trovato completo
+    if (x.state === "choose") return 2;
+    return 3;
+  }
+  function ordinaImport(lista) {
+    // blocchi: un brano sciolto, oppure un gruppo intero di canzoni
+    const blocchi = [];
+    let attuale = null;
+    for (const x of lista) {
+      if (x.gruppo) {
+        if (!attuale || attuale.gruppo !== x.gruppo) {
+          attuale = { gruppo: x.gruppo, voci: [] };
+          blocchi.push(attuale);
+        }
+        attuale.voci.push(x);
+      } else {
+        attuale = null;
+        blocchi.push({ gruppo: "", voci: [x] });
+      }
+    }
+    for (const b of blocchi) {
+      b.voci.forEach((v, i) => { v._ord = i; });
+      b.voci.sort((a, c) => (prioritaImport(a) - prioritaImport(c)) || (a._ord - c._ord));
+      // il blocco vale quanto il suo brano migliore
+      b.prio = Math.min.apply(null, b.voci.map(prioritaImport));
+    }
+    const ordine = blocchi.map((b, i) => ({ b: b, i: i }));
+    ordine.sort((a, c) => (a.b.prio - c.b.prio) || (a.i - c.i));
+    const fuori = [];
+    for (const o of ordine) for (const v of o.b.voci) fuori.push(v);
+    return fuori;
+  }
+
   function renderImports() {
     const box = $("importResults");
     box.innerHTML = "";
     $("importStep3").hidden = false;
+    // mentre cerca non riordino niente, se no' le righe saltano sotto gli occhi
+    const inCorso = importList.some((x) => x.state === "searching" || x.state === "downloading");
+    const daMostrare = inCorso ? importList.slice() : ordinaImport(importList);
     let gruppoCorrente = null;
-    for (const item of importList) {
+    for (const item of daMostrare) {
       if (item.gruppo && item.gruppo !== gruppoCorrente) {
         gruppoCorrente = item.gruppo;
         const testata = document.createElement("div");
