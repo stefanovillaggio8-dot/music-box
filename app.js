@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.16";
+  const APP_VERSION = "6.17";
 
   let recovering = false;
   async function selfHeal() {
@@ -1470,7 +1470,7 @@
   async function findCoverLocal(artist, title) {
     const term = (artist ? artist + " " : "") + stripVariants(title);
     try {
-      const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(term) + "&entity=song&limit=8");
+      const r = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(term) + "&entity=song&limit=8", 12000);
       if (!r.ok) return null;
       const j = await r.json();
       for (const res of (j.results || [])) {
@@ -1654,8 +1654,8 @@
       // Se l'utente ha scritto "artista:" usa la ricerca artisti dedicata,
       // che e' precisa. Altrimenti cerco fra i brani: cosi' con una sola
       // richiesta vedo sia il nome dell'artista sia il titolo del brano.
-      const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(t) +
-        (forzato ? "&entity=musicArtist&limit=8" : "&entity=song&limit=30") + "&country=IT");
+      const r = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(t) +
+        (forzato ? "&entity=musicArtist&limit=8" : "&entity=song&limit=30") + "&country=IT", 12000);
       if (!r.ok) return "";
       const d = await r.json();
       const risultati = (d && d.results) || [];
@@ -1939,11 +1939,38 @@
     return { score, strong };
   }
 
+  /* Una richiesta che non risponde non deve bloccare la ricerca: senza questo
+     un solo sito lento lasciava tutti i brani successivi fermi su "cerco...".
+     Dopo i secondi indicati mollo tutto e vado avanti col brano seguente. */
+  function conScadenza(promessa, ms, messaggio) {
+    return new Promise((ok, ko) => {
+      const t = setTimeout(() => ko(new Error(messaggio || "troppo lento")), ms);
+      if (promessa && typeof promessa.then === "function") {
+        promessa.then(
+          (v) => { clearTimeout(t); ok(v); },
+          (e) => { clearTimeout(t); ko(e); }
+        );
+      } else {
+        clearTimeout(t);
+        ok(promessa);
+      }
+    });
+  }
+
+  // fetch con tempo massimo: se il sito non risponde, siamo salvi
+  function fetchConScadenza(url, ms, opzioni) {
+    const ctl = new AbortController();
+    const scad = setTimeout(() => ctl.abort(), ms || 12000);
+    const fatto = fetch(url, Object.assign({}, opzioni || {}, { signal: ctl.signal }));
+    return conScadenza(fatto, (ms || 12000) + 1500, "richiesta scaduta")
+      .finally(() => clearTimeout(scad));
+  }
+
   async function iaQuery(query, rows) {
     const url = IA_SEARCH + "?q=" + encodeURIComponent(query) +
       "&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=licenseurl" +
       "&rows=" + (rows || 12) + "&page=1&output=json";
-    const res = await fetch(url);
+    const res = await fetchConScadenza(url, 12000);
     if (!res.ok) throw new Error("archive non raggiungibile");
     const json = await res.json();
     return (json.response && json.response.docs) || [];
@@ -2021,8 +2048,8 @@
     const url = COMMONS_API + "?action=query&format=json&generator=search&gsrsearch=" +
       encodeURIComponent(term + " filetype:audio") +
       "&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url%7Cextmetadata&iiextmetadatafilter=LicenseShortName";
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("wikimedia non raggiungibile");
+  const res = await fetchConScadenza(url, 12000);
+  if (!res.ok) throw new Error("wikimedia non raggiungibile");
     const json = await res.json();
     const pages = json.query && json.query.pages ? Object.values(json.query.pages) : [];
     const out = [];
@@ -2075,8 +2102,8 @@
     for (const term of [name, name + " canzoni"]) {
       let data = null;
       try {
-        const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(term) +
-          "&entity=song&limit=200&country=IT");
+        const r = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(term) +
+          "&entity=song&limit=200&country=IT", 12000);
         if (!r.ok) continue;
         data = await r.json();
       } catch (e) {
@@ -2110,8 +2137,8 @@
     if (!testo) return null;
     let data = null;
     try {
-      const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(testo) +
-        "&entity=song&limit=25&country=IT");
+      const r = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(testo) +
+        "&entity=song&limit=25&country=IT", 12000);
       if (!r.ok) return null;
       data = await r.json();
     } catch (e) {
@@ -2254,6 +2281,41 @@
     cands.sort((a, b) => b.score - a.score);
     const list = cands.slice(0, 5);
     return { best: list.length ? list[0] : null, list };
+  }
+
+  /* Cerca un brano e gli assegna lo stato trovato (trovato / scegli /
+     solo anteprima / non disponibile). La usa sia il ciclo principale sia il
+     tasto "Riprova", cosi' la logica e' sempre la stessa.
+     Massimo 35 secondi: se un sito e' lento, quel brano resta "non
+     disponibile" e gli altri vengono cercati lo stesso. */
+  async function cercaItemSingolo(item) {
+    let found = null;
+    let scaduto = false;
+    try {
+      found = await conScadenza(findDownload(item), 35000, "ricerca scaduta");
+    } catch (e) {
+      found = null;
+      scaduto = /scadut|lent/i.test(String((e && e.message) || ""));
+    }
+    item.candidates = (found && found.list) || [];
+    item.tagMancato = "";
+    const best = found && found.best;
+    if (best && best.strong) {
+      item.state = "ready";
+      item.meta = best;
+    } else if (item.anteprima) {
+      // il brano intero non e' in nessun archivio: resta l'anteprima
+      item.candidates = item.candidates.concat([item.anteprima]);
+      item.meta = item.anteprima;
+      item.state = "found";
+      item.tagTrovato = "anteprima 30s";
+    } else if (best) {
+      item.state = "choose";
+    } else {
+      item.state = "missing";
+      item.tagMancato = scaduto ? "ricerca scaduta" : "";
+    }
+    paintImport(item);
   }
 
   function sync32(n) {
@@ -2757,7 +2819,16 @@
     if (item.state === "dupe") {
       tag("già nella libreria", "dup");
     } else if (item.state === "missing") {
-      tag("non disponibile", "miss");
+      tag(item.tagMancato || "non disponibile", "miss");
+      if (item.tagMancato) {
+        // la ricerca e' andata in timeout: rifacila toccando qui
+        btn("Riprova", () => {
+          item.state = "searching";
+          item.tagMancato = "";
+          paintImport(item);
+          cercaItemSingolo(item);
+        });
+      }
     } else if (item.state === "done") {
       tag("importato", "ok");
       if (item.savedId) btn("Riproduci", () => playById(item.savedId));
@@ -3157,28 +3228,7 @@
       if (dup) {
         item.state = "dupe";
       } else {
-        let found = null;
-        try {
-          found = await findDownload(item);
-        } catch (e) {
-          found = null;
-        }
-        item.candidates = (found && found.list) || [];
-        const best = found && found.best;
-        if (best && best.strong) {
-          item.state = "ready";
-          item.meta = best;
-        } else if (item.anteprima) {
-          // il brano intero non e' in nessun archivio: resta l'anteprima
-          item.candidates = item.candidates.concat([item.anteprima]);
-          item.meta = item.anteprima;
-          item.state = "found";
-          item.tagTrovato = "anteprima 30s";
-        } else if (best) {
-          item.state = "choose";
-        } else {
-          item.state = "missing";
-        }
+        await cercaItemSingolo(item);
       }
       paintImport(item);
       await new Promise((r) => setTimeout(r, 120));
