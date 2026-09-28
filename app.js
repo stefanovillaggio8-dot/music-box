@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.20";
+  const APP_VERSION = "6.21";
 
   let recovering = false;
   async function selfHeal() {
@@ -2941,6 +2941,13 @@
         });
         bR.title = notaAnteprima(item.meta) || "Ascolta prima di importare";
       }
+    }
+
+    // I tasti del PC compaiono SEMPRE (tranne mentre si scarica davvero):
+    // prima stavano solo sui brani con anteprima 30s, quindi per tutti gli
+    // altri stati sparivano e non si capiva il perche'.
+    if (item.state !== "downloading" && item.state !== "done" && item.state !== "searching") {
+      aggiungiPonte(item);
     }
 
     if (item.state === "choose" && item.candidates.length) {
