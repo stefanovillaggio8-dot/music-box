@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.28";
+  const APP_VERSION = "6.29";
 
   let recovering = false;
   async function selfHeal() {
@@ -2604,6 +2604,17 @@
   // cartella: "" (solo libreria), "ste" o "emanuela" (salva anche la copia).
   // Prima di mostrare il campo controllo che il programma sul PC sia vivo:
   // se e' spento te lo dico, invece di lasciare un campo che non serve.
+  /* La riga del brano esiste ancora? item.el e' un oggetto mio, non un
+     elemento della pagina: per sapere se e' ancora attaccata devo guardare
+     l'elemento vero, cioe' la riga o il contenitore dei tasti.
+     Prima usavo el.isConnected, che su un oggetto e' sempre undefined:
+     la funzione usciva subito e non creava niente. */
+  function rigaViva(el) {
+    if (!el) return false;
+    const nodo = el.row || el.actions;
+    return !!(nodo && nodo.isConnected);
+  }
+
   async function campoLinkYouTube(item, cartella, stato) {
     const el = item.el;
     if (!el) return;
@@ -2611,7 +2622,7 @@
     segnalaErrore("premuto: " + (cartella ? "salva in " + cartella : "solo libreria"));
     scriviStatoPonte(stato, "controllo il PC...");
     const online = await ponteOnline();
-    if (!el.isConnected) return;
+    if (!rigaViva(el)) return;
     if (!online) {
       scriviStatoPonte(stato, "programma sul PC: spento");
       toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
@@ -2638,6 +2649,7 @@
     el.actions.appendChild(go);
     el.ytUrl = inp;
     el.ytGo = go;
+    segnalaErrore("campo pronto per incollare il link");
     try { inp.focus(); } catch (e) {}
   }
 
@@ -2756,7 +2768,7 @@
     nuovoBottone(el.actions, "Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato),
       "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 emanuela");
     ponteOnline().then((online) => {
-      if (!el.isConnected) return;
+      if (!rigaViva(el)) return;
       scriviStatoPonte(stato, online
         ? "programma sul PC: acceso"
         : "programma sul PC: spento");
