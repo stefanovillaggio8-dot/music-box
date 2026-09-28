@@ -851,6 +851,59 @@ body.no-scroll { overflow: hidden; }
 .step-title { font-size: 14px; font-weight: 700; }
 .step-hint { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
 
+/* Esempi brevi: due righe, si leggono anche sul telefono */
+.hint-box {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.hint-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  font-size: 12.5px;
+}
+.hint-row + .hint-row { border-top: 1px solid var(--line); }
+.hint-row code {
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 3px 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.hint-row span { color: var(--muted); white-space: nowrap; text-align: right; }
+
+/* Il caso raro di "artista:" sta chiuso, si apre con un tocco */
+.hint-more { margin-top: 10px; }
+.hint-more summary {
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px 0;
+  list-style: none;
+}
+.hint-more summary::-webkit-details-marker { display: none; }
+.hint-more summary::before { content: "\203A\00a0"; }
+.hint-more[open] summary::before { content: "\2039\00a0"; }
+.hint-more p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 2px 0 0;
+}
+.hint-more code {
+  background: rgba(255,255,255,.06);
+  border-radius: 5px;
+  padding: 1px 5px;
+  font-size: 12px;
+}
+
 .import-shot { display: flex; align-items: center; gap: 12px; }
 .import-shot img {
   width: 64px;

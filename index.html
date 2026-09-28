@@ -166,7 +166,15 @@
               <p class="step-title">Controlla il testo</p>
             </div>
             <textarea id="importText" rows="5" placeholder="es. BLANCO - SOTTOGONNA&#10;Madame - QUANTO FORTE TI PENSAVO&#10;nayt"></textarea>
-            <p class="step-hint">Una riga per canzone, nel formato <strong>Artista - Titolo</strong>. Se invece scrivi <strong>solo il nome di un artista</strong> (anche con lo spazio, es. <strong>post malone</strong>), ti elenco tutte le sue canzoni che trovo: poi le importi tutte con un tocco, o scegli le singole. Se un titolo sembra anche il nome di un artista (es. <strong>Blinding Lights</strong>) lo tengo per&#39;s come brano: per volere l&#39;artista scrivi <strong>artista: nome</strong>. Cio&#39; che non serve (numeri, durate, cuoricini, pulsanti) lo tolgo io: se resta qualche errore dell&#39;OCR, correggi la riga.</p>
+            <div class="hint-box">
+              <div class="hint-row"><code>BLANCO - SOTTOGONNA</code><span>una canzone</span></div>
+              <div class="hint-row"><code>post malone</code><span>tutte le sue canzoni</span></div>
+            </div>
+            <p class="step-hint">Una riga per canzone. Cio&#39; che non serve (numeri, durate, cuoricini, pulsanti) lo tolgo io: se resta un errore dell&#39;OCR, correggi la riga.</p>
+            <details class="hint-more">
+              <summary>Solo se sbaglio a indovinare l&#39;artista</summary>
+              <p>Se scrivi il titolo di un brano e lui vuoi invece le canzoni di un artista, aggiungi <code>artista:</code> davanti.<br>Es. <code>artista: blinding lights</code></p>
+            </details>
             <button class="btn-main" id="btnFind">Cerca i brani</button>
             <div class="bar" id="searchBar" hidden><span class="bar-fill" id="searchFill"></span></div>
             <p class="ocr-status" id="searchStatus" hidden></p>
