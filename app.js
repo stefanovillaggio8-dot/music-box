@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.15";
+  const APP_VERSION = "6.16";
 
   let recovering = false;
   async function selfHeal() {
@@ -2235,9 +2235,10 @@
   }
 
   // Il convertitore e' un sito esterno: apro la pagina, non un brano a caso.
+  // Chiamato "noTube" e non "mp3" perche' il nome dice che e' un sito.
   function linkConvertitore() {
-    return linkEsterno("mp3", LINK_CONVERTITORE,
-      "Convertitore esterno: apri la pagina e incolla li' il link del video", "btn-mp3");
+    return linkEsterno("noTube", LINK_CONVERTITORE,
+      "Sito esterno: apri la pagina, incolla il link del video e scarica tu", "btn-mp3");
   }
 
   async function findDownload(item) {
@@ -2592,6 +2593,22 @@
     }
   }
 
+  // Il tasto che scarica e converte da solo col PC. Compare solo se il ponte
+  // e' acceso: se e' spento non metto un tasto che non funzionerebbe.
+  function aggiungiPonte(item) {
+    const el = item.el;
+    if (!el || el.ponte) return;
+    el.ponte = "controllo";
+    ponteOnline().then((online) => {
+      if (el.ponte !== "controllo") return;   // intanto il brano si e' ridisegnato
+      el.ponte = online ? "si" : "no";
+      if (!online || el.ytUrl) return;
+      const bp = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item));
+      bp.classList.add("btn-mini-auto");
+      bp.title = "Scarico e converto io col PC: devi solo incollare il link di YouTube";
+    });
+  }
+
   // Mostra i passi da seguire sotto un brano che ha solo l'anteprima.
   function elGuide(item) {
     const el = item.el;
@@ -2601,26 +2618,13 @@
     if (yt) el.actions.appendChild(yt);
     el.actions.appendChild(linkConvertitore());
     el.actions.appendChild(guidaPassi([
-      "tocca yt e apri la canzone su YouTube",
-      "tocca mp3, incolla il link, scarica il file",
-      "torna qui e tocca il tasto verde: scegli l'mp3"
+      "sul PC: tocca VERDE, incolla il link di YouTube e faccio io",
+      "sul telefono: apri la canzone, usa noTube, scarica, poi tocca BLU"
     ]));
-    const b = btn("Scelgo l'mp3 scaricato", () => scegliFilePer(item));
-    b.classList.add("btn-mini-verde");
+    const b = btn("Apri i miei file", () => scegliFilePer(item));
+    b.classList.add("btn-mini-file");
     el.guida = true;
-    // Se il ponte sul PC e' acceso, posso convertire da solo senza siti
-    // esterni. Se e' spento il tasto non compare: niente pulsanti morti.
-    if (!el.ponte) {
-      el.ponte = "controllo";
-      ponteOnline().then((online) => {
-        if (el.ponte !== "controllo") return;   // intanto il brano si e' ridisegnato
-        el.ponte = online ? "si" : "no";
-        if (!online || el.ytUrl) return;
-        const bp = btn("Scarica da YouTube col PC", () => campoLinkYouTube(item));
-        bp.classList.add("btn-mini-verde");
-        bp.title = "Uso il convertitore sul PC: niente siti esterni";
-      });
-    }
+    aggiungiPonte(item);
   }
 
   function toggleUrlInput(item) {
@@ -2839,6 +2843,14 @@
           sp.textContent = nota;
           el.actions.appendChild(sp);
         }
+      }
+      // qui il tasto che scarica da solo col PC mancava: senza, chi ha piu'
+      // versioni non trovava mai la strada automatica
+      if (item.candidates.some((c) => notaAnteprima(c))) {
+        el.actions.appendChild(guidaPassi([
+          "se ti serve tutta la canzone: sul PC tocca il tasto verde e incolla il link di YouTube"
+        ]));
+        aggiungiPonte(item);
       }
     }
 
