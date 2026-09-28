@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.21";
+  const APP_VERSION = "6.22";
 
   let recovering = false;
   async function selfHeal() {
@@ -4030,6 +4030,12 @@ function closeImport() {
     const st =     loadProfileState();
     updateProfileButton();
     $("appVer").textContent = "v" + APP_VERSION;
+  // Scrivo la versione anche nella schermata di ricerca: se la pagina e' vecchia
+  // la vedi subito, senza dover andare a cercare la versione nel menu'.
+  try {
+    const vp = $("versionePagina");
+    if (vp) vp.textContent = "pagina v" + APP_VERSION;
+  } catch (e) { /* noop */ }
     try {
       db = await openDB();
     } catch (e) {
