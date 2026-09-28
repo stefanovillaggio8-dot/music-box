@@ -37,7 +37,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.31";
+  const APP_VERSION = "6.32";
 
   let recovering = false;
   async function selfHeal() {
@@ -2289,17 +2289,60 @@
      e non un link a caso, perche' cosi' porta sempre alla canzone giusta
      anche se l'artista ha un nome con lo spazio o dei caratteri strani.
      Premendo copio anche il link negli appunti, cosi' non serve ricordarselo. */
-  function linkYouTube(artista, titolo) {
+  // Chiede al programma sul PC di trovare il video ORIGINALE del brano.
+  // Non serve nessuna chiave: usa lo stesso motore che scarica l'mp3.
+  async function cercaVideoEsatto(artista, titolo, secondi) {
+    try {
+      const ctl = new AbortController();
+      const scad = setTimeout(() => ctl.abort(), 20000);
+      const q = "?artista=" + encodeURIComponent(artista || "") +
+        "&titolo=" + encodeURIComponent(titolo || "") +
+        "&sec=" + encodeURIComponent(String(Math.round(secondi || 0) || 0));
+      const r = await fetch(PONTE_URL + "/cerca" + q, { cache: "no-store", signal: ctl.signal });
+      clearTimeout(scad);
+      if (!r.ok) return "";
+      const j = await r.json();
+      return (j && j.trovato && j.video && j.video.url) ? String(j.video.url) : "";
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /* Tasto YouTube. Premendolo:
+     1) se il PC e' collegato cerca il video ORIGINALE del brano, lo copia
+        negli appunti e lo apre;
+     2) se il brano non si trova, o se non c'e' il PC, apre la ricerca con
+        artista e titolo, cosi' la trovi comunque.
+     Il link di ricerca resta negli appunti in ogni caso. */
+  function linkYouTube(artista, titolo, secondi) {
     const q = [artista, titolo].map((s) => String(s || "").trim()).filter(Boolean).join(" ");
     if (!q) return null;
-    const indirizzo = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
-    const a = linkEsterno("yt", indirizzo,
-      "Apre YouTube e copia il link di ricerca negli appunti", "btn-yt");
-    a.addEventListener("click", () => {
-      copiaNegliAppunti(indirizzo).then((ok) => {
-        toast(ok
-          ? "Link di ricerca copiato: incollalo nella barra di YouTube"
-          : "Non sono riuscito a copiare: apri YouTube e cerca \"" + q + "\"");
+    const ricerca = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+    const a = linkEsterno("yt", ricerca,
+      "Cerca il video originale su YouTube e copia il link negli appunti", "btn-yt");
+    a.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      segnalaErrore("yt premuto: " + q.slice(0, 60));
+      const testoVecchio = a.textContent;
+      a.textContent = "...";
+      cercaVideoEsatto(artista, titolo, secondi).then((esatto) => {
+        if (!a.isConnected) return;   // il brano e' sparito dalla lista
+        a.textContent = testoVecchio;
+        if (esatto) {
+          copiaNegliAppunti(esatto).then((ok) => {
+            toast(ok ? "Video originale trovato e link copiato negli appunti"
+              : "Video originale trovato, ma non sono riuscito a copiare il link");
+          });
+          segnalaErrore("video esatto: " + esatto);
+          try { window.open(esatto, "_blank", "noopener"); } catch (e) { /* noop */ }
+          return;
+        }
+        copiaNegliAppunti(ricerca).then((ok) => {
+          toast(ok
+            ? "Non ho trovato il video esatto: ho aperto la ricerca e copiato il link"
+            : "Apro la ricerca su YouTube: \"" + q + "\"");
+        });
+        try { window.open(ricerca, "_blank", "noopener"); } catch (e) { /* noop */ }
       });
     });
     return a;
@@ -2776,10 +2819,13 @@
 
   // Riga che dice se il programma sul PC e' acceso. Prima non si vedeva nulla
   // e non si capiva perche': ora lo stato e' sempre scritto.
-  function statoPonte(el) {
+  // Riga che dice se il programma sul PC e' acceso. Prima si aspettava
+  // l'oggetto del brano e faceva el.actions.appendChild: ma ora i tasti
+  // stanno in gruppi, e li passo direttamente il contenitore.
+  function statoPonte(contenitore) {
     const s = document.createElement("span");
     s.className = "imp-stato-ponte";
-    el.actions.appendChild(s);
+    contenitore.appendChild(s);
     return s;
   }
 
@@ -3077,7 +3123,7 @@
         });
         if (nota) {
           // anche fra le versioni alternative: solo anteprima = yt + convertitore
-          const yt = linkYouTube(cand.artist, cand.title);
+          const yt = linkYouTube(cand.artist, cand.title, item.secs);
           if (yt) el.actions.appendChild(yt);
           el.actions.appendChild(linkConvertitore());
           const sp = document.createElement("span");
@@ -3127,7 +3173,7 @@
       const web = nuovoGruppo(el, "Cercalo su internet");
       const nomeBrano = (item.meta && item.meta.title) || item.title;
       const nomeArtista = (item.meta && item.meta.artist) || item.artist;
-      const yt = linkYouTube(nomeArtista, nomeBrano);
+      const yt = linkYouTube(nomeArtista, nomeBrano, item.secs);
       if (yt) web.appendChild(yt);
       web.appendChild(linkConvertitore());
       aggiungiPonte(item);
