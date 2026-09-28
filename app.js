@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.13";
+  const APP_VERSION = "6.14";
 
   let recovering = false;
   async function selfHeal() {
@@ -2207,6 +2207,22 @@
     return "";
   }
 
+  /* Link esterni (aperti in una scheda nuova, senza dare il link alla pagina).
+     linkEsterno fa il bottone, poi ne faccio due: la ricerca su YouTube per
+     sentire il brano, e il convertitore che mi ha chiesto Stefano. */
+  const LINK_CONVERTITORE = "https://notube.link/it/youtube-app-429";
+
+  function linkEsterno(testo, href, titolo, classe) {
+    const a = document.createElement("a");
+    a.className = "btn-mini" + (classe ? " " + classe : "");
+    a.textContent = testo;
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.title = titolo || "";
+    return a;
+  }
+
   /* Quando del brano c'e' solo l'anteprima di 30 secondi, offro la strada per
      ascoltarlo intero: cerco la canzone su YouTube. Uso la pagina di ricerca
      e non un link a caso, perche' cosi' porta sempre alla canzone giusta
@@ -2214,14 +2230,14 @@
   function linkYouTube(artista, titolo) {
     const q = [artista, titolo].map((s) => String(s || "").trim()).filter(Boolean).join(" ");
     if (!q) return null;
-    const a = document.createElement("a");
-    a.className = "btn-mini btn-yt";
-    a.textContent = "yt";
-    a.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.title = "Cerca \"" + q + "\" su YouTube";
-    return a;
+    return linkEsterno("yt", "https://www.youtube.com/results?search_query=" + encodeURIComponent(q),
+      "Cerca \"" + q + "\" su YouTube", "btn-yt");
+  }
+
+  // Il convertitore e' un sito esterno: apro la pagina, non un brano a caso.
+  function linkConvertitore() {
+    return linkEsterno("mp3", LINK_CONVERTITORE,
+      "Convertitore esterno: apri la pagina e incolla li' il link del video", "btn-mp3");
   }
 
   async function findDownload(item) {
@@ -2586,10 +2602,11 @@
         });
         b.title = nota || "Ascolta prima di importare";
         if (nota) {
-          // solo 30 secondi: aggiungo il pulsante per cercarla su YouTube
+          // solo 30 secondi: aggiungo i due bottoni per ascoltarlo davvero
           const yt = linkYouTube((item.meta && item.meta.artist) || item.artist,
             (item.meta && item.meta.title) || item.title);
           if (yt) el.actions.appendChild(yt);
+          el.actions.appendChild(linkConvertitore());
           const sp = document.createElement("span");
           sp.className = "imp-nota-anteprima";
           sp.textContent = nota;
@@ -2638,9 +2655,10 @@
           importItem(item);
         });
         if (nota) {
-          // anche fra le versioni alternative: solo anteprima = va su YouTube
+          // anche fra le versioni alternative: solo anteprima = yt + convertitore
           const yt = linkYouTube(cand.artist, cand.title);
           if (yt) el.actions.appendChild(yt);
+          el.actions.appendChild(linkConvertitore());
           const sp = document.createElement("span");
           sp.className = "imp-nota-anteprima";
           sp.textContent = nota;
