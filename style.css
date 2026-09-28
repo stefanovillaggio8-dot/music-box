@@ -873,6 +873,18 @@ body.no-scroll { overflow: hidden; }
   }
   .btn-mini-auto:active { background: #24b862; }
 
+  /* Riga che dice se il programma sul PC e' acceso: verde se funziona,
+     arancione se e' spento, cosi' non resti a indovinare. */
+  .imp-stato-ponte {
+    flex: 0 0 100%;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 2px 0 6px;
+    color: var(--muted);
+  }
+  .imp-stato-ponte.imp-stato-ok { color: #6ee7a0; }
+  .imp-stato-ponte.imp-stato-no { color: #ffc46b; }
+
   /* VIOLA = salva anche una copia nella cartella mp3 di Ste o di Emanuele */
   .btn-mini-cartella {
     background: rgba(190,140,255,.16);

@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.19";
+  const APP_VERSION = "6.20";
 
   let recovering = false;
   async function selfHeal() {
@@ -2573,15 +2573,33 @@
 
   // Campo dove incollare il link di YouTube, col tasto per convertirlo.
   // cartella: "" (solo libreria), "ste" o "emanuela" (salva anche la copia).
-  function campoLinkYouTube(item, cartella) {
+  // Prima di mostrare il campo controllo che il programma sul PC sia vivo:
+  // se e' spento te lo dico, invece di lasciare un campo che non serve.
+  async function campoLinkYouTube(item, cartella, stato) {
     const el = item.el;
     if (!el) return;
     el.cartella = cartella || "";
-    if (el.ytUrl) return;
+    scriviStatoPonte(stato, "controllo il PC...");
+    const online = await ponteOnline();
+    if (!el.isConnected) return;
+    if (!online) {
+      scriviStatoPonte(stato, "programma sul PC: spento. Apri la Music Box dal PC (link 'Sul PC' nella dashboard)");
+      toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
+      return;
+    }
+    scriviStatoPonte(stato, "programma sul PC: acceso");
+    if (el.ytUrl) {
+      el.ytUrl.focus();
+      return;
+    }
+    const invio = document.createElement("span");
+    invio.className = "imp-nota-anteprima";
+    invio.textContent = "incolla qui il link di YouTube (quello che finisce con watch?v=...)";
+    el.actions.appendChild(invio);
     const inp = document.createElement("input");
     inp.className = "imp-url";
     inp.type = "url";
-    inp.placeholder = "incolla qui il link di YouTube";
+    inp.placeholder = "https://www.youtube.com/watch?v=...";
     const go = document.createElement("button");
     go.className = "btn-mini go";
     go.textContent = "Scarica";
@@ -2590,6 +2608,7 @@
     el.actions.appendChild(go);
     el.ytUrl = inp;
     el.ytGo = go;
+    try { inp.focus(); } catch (e) {}
   }
 
   // Scarica l'mp3 dal PC e lo mette subito in libreria, agganciandolo a questo
@@ -2668,27 +2687,47 @@
     }
   }
 
-  // Il tasto che scarica e converte da solo col PC. Compare solo se il ponte
-  // e' acceso: se e' spento non metto un tasto che non funzionerebbe.
+  // Riga che dice se il programma sul PC e' acceso. Prima non si vedeva nulla
+  // e non si capiva perche': ora lo stato e' sempre scritto.
+  function statoPonte(el) {
+    const s = document.createElement("span");
+    s.className = "imp-stato-ponte";
+    el.actions.appendChild(s);
+    return s;
+  }
+
+  function scriviStatoPonte(s, testo) {
+    if (!s) return;
+    s.textContent = testo;
+    s.classList.remove("imp-stato-ok", "imp-stato-no");
+    if (testo.indexOf("controllo") === 0) return;   // ancora in prova: resta grigio
+    s.classList.add(testo.indexOf("acceso") >= 0 ? "imp-stato-ok" : "imp-stato-no");
+  }
+
+  /* I tasti per il PC sono SEMPRE visibili, anche se il programma e' spento.
+     Prima comparivano solo quando una richiesta riusciva: se falliva non
+     vedevi niente e restavi a indovinare. Meglio un tasto che spiega. */
   function aggiungiPonte(item) {
     const el = item.el;
     if (!el || el.ponte) return;
-    el.ponte = "controllo";
+    el.ponte = true;
+    const stato = statoPonte(el);
+    scriviStatoPonte(stato, "controllo il PC...");
+    // solo libreria, oppure con copia nella cartella mp3
+    const b1 = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato));
+    b1.classList.add("btn-mini-auto");
+    b1.title = "Scarico e converto io col PC: metto il brano in libreria";
+    const b2 = btn("Salva in mp3 Ste", () => campoLinkYouTube(item, "ste", stato));
+    b2.classList.add("btn-mini-cartella");
+    b2.title = "Oltre che in libreria, salvo una copia in musica mp3 ste";
+    const b3 = btn("Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato));
+    b3.classList.add("btn-mini-cartella");
+    b3.title = "Oltre che in libreria, salvo una copia in musica mp3 emanuele";
     ponteOnline().then((online) => {
-      if (el.ponte !== "controllo") return;   // intanto il brano si e' ridisegnato
-      el.ponte = online ? "si" : "no";
-      if (!online || el.ytUrl) return;
-      // Tre strade, e si distinguono a colori: solo libreria, oppure con
-      // copia nella cartella di Ste, oppure in quella di Emanuele.
-      const b1 = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item, ""));
-      b1.classList.add("btn-mini-auto");
-      b1.title = "Scarico e converto io col PC: lo metto in libreria";
-      const b2 = btn("Salva in mp3 Ste", () => campoLinkYouTube(item, "ste"));
-      b2.classList.add("btn-mini-cartella");
-      b2.title = "Oltre che in libreria, salvo una copia in musica mp3 ste";
-      const b3 = btn("Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela"));
-      b3.classList.add("btn-mini-cartella");
-      b3.title = "Oltre che in libreria, salvo una copia in musica mp3 emanuele";
+      if (!el.isConnected) return;
+      scriviStatoPonte(stato, online
+        ? "programma sul PC: acceso"
+        : "programma sul PC: spento (i tasti verdi e viola funzionano solo da qui)");
     });
   }
 
