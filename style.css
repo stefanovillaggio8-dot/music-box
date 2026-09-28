@@ -849,6 +849,28 @@ body.no-scroll { overflow: hidden; }
   justify-content: center;
 }
 .step-title { font-size: 14px; font-weight: 700; }
+/* Passi da seguire sotto un brano con sola anteprima */
+.imp-guida {
+  flex: 0 0 100%;
+  margin: 8px 0 4px;
+  padding-left: 20px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--txt);
+}
+.imp-guida li { margin: 0; }
+.imp-guida li::marker { color: var(--muted); }
+
+/* Il tasto che sceglie l'mp3 scaricato: verde e ben visibile */
+.btn-mini-verde {
+  background: #1f9d55;
+  border-color: transparent;
+  color: #04140a;
+  font-weight: 700;
+  white-space: normal;
+}
+.btn-mini-verde:active { background: #24b862; }
+
 .step-hint { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
 
 /* Esempi brevi: due righe, si leggono anche sul telefono */

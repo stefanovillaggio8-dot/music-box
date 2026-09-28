@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.14";
+  const APP_VERSION = "6.15";
 
   let recovering = false;
   async function selfHeal() {
@@ -2462,6 +2462,167 @@
     await Promise.all(runners);
   }
 
+  /* Apre il selettore file per agganciare un brano a questo pezzo della lista.
+     Serve dopo aver scaricato l'mp3 da qualche parte a mano. */
+  function scegliFilePer(item) {
+    importActive = item;
+    const inp = $("importAudioInput");
+    inp.value = "";
+    inp.click();
+  }
+
+  // Numeri da seguire, uno per riga: si legge meglio di un paragrafo.
+  function guidaPassi(testi) {
+    const ol = document.createElement("ol");
+    ol.className = "imp-guida";
+    for (const t of testi) {
+      const li = document.createElement("li");
+      li.textContent = t;
+      ol.appendChild(li);
+    }
+    return ol;
+  }
+
+  /* Ponte YouTube sul PC: un piccolo programma (strumenti-youtube) che gira
+     solo sulla mia macchina e ascolta su 127.0.0.1. Se e' acceso, posso
+     scaricare e convertire da solo. Funziona SOLO aprendo la app sul PC:
+     dal telefono il browser blocca la richiesta, e va bene cosi'. */
+  const PONTE_URL = "http://127.0.0.1:8788";
+  let ponteCache = null;
+  async function ponteOnline() {
+    if (ponteCache && Date.now() - ponteCache.t < 15000) return ponteCache.ok;
+    let ok = false;
+    try {
+      const ctl = new AbortController();
+      const scad = setTimeout(() => ctl.abort(), 1500);
+      const r = await fetch(PONTE_URL + "/ping", { cache: "no-store", signal: ctl.signal });
+      clearTimeout(scad);
+      ok = !!r.ok;
+    } catch (e) {
+      ok = false;
+    }
+    ponteCache = { ok: ok, t: Date.now() };
+    return ok;
+  }
+
+  // Campo dove incollare il link di YouTube, col tasto per convertirlo.
+  function campoLinkYouTube(item) {
+    const el = item.el;
+    if (!el || el.ytUrl) return;
+    const inp = document.createElement("input");
+    inp.className = "imp-url";
+    inp.type = "url";
+    inp.placeholder = "incolla qui il link di YouTube";
+    const go = document.createElement("button");
+    go.className = "btn-mini go";
+    go.textContent = "Scarica";
+    go.addEventListener("click", () => convertiDaYouTube(item));
+    el.actions.appendChild(inp);
+    el.actions.appendChild(go);
+    el.ytUrl = inp;
+    el.ytGo = go;
+  }
+
+  // Scarica l'mp3 dal PC e lo mette subito in libreria, agganciandolo a questo
+  // brano. Mostra l'avanzamento mentre arrivano i byte.
+  async function convertiDaYouTube(item) {
+    const el = item.el;
+    const url = el.ytUrl ? el.ytUrl.value.trim() : "";
+    if (!url) {
+      toast("Prima incolla il link di YouTube");
+      return;
+    }
+    if (el.ytGo) el.ytGo.disabled = true;
+    if (el.ytUrl) el.ytUrl.disabled = true;
+    item.state = "downloading";
+    el.prog.hidden = false;
+    el.fill.classList.remove("err");
+    el.fill.style.width = "3%";
+    el.bytes.textContent = "converto col PC...";
+    try {
+      const r = await fetch(PONTE_URL + "/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url })
+      });
+      if (!r.ok) {
+        let msg = "conversione non riuscita";
+        try {
+          const j = await r.json();
+          if (j && j.errore) msg = String(j.errore);
+        } catch (e) {}
+        throw new Error(msg);
+      }
+      // leggo a pezzetti cosi' si vede l'avanzamento
+      const lettore = r.body && r.body.getReader ? r.body.getReader() : null;
+      let parti = [];
+      let totale = 0;
+      if (lettore) {
+        for (;;) {
+          const passo = await lettore.read();
+          if (passo.done) break;
+          parti.push(passo.value);
+          totale += passo.value.length;
+          el.fill.style.width = Math.min(95, 10 + Math.round(totale / 90000)) + "%";
+          el.bytes.textContent = fmtBytes(totale);
+        }
+      } else {
+        parti = [await r.arrayBuffer()];
+        totale = parti[0].byteLength;
+      }
+      const blob = new Blob(parti, { type: "audio/mpeg" });
+      el.fill.style.width = "100%";
+      el.bytes.textContent = fmtBytes(blob.size);
+      item.meta = Object.assign({}, item.meta || {}, {
+        title: item.title,
+        artist: item.artist,
+        album: item.album || "",
+        license: (item.meta && item.meta.license) || "",
+        source: "youtube (convertito sul PC)"
+      });
+      await finishImport(item, blob, "youtube (convertito sul PC)");
+    } catch (err) {
+      // non lo porto in "errore": puo' essere un link sbagliato, e serve
+      // riprovare senza perdere il brano
+      el.fill.classList.add("err");
+      el.bytes.textContent = String((err && err.message) || err);
+      item.state = "found";
+      if (el.ytGo) el.ytGo.disabled = false;
+      if (el.ytUrl) el.ytUrl.disabled = false;
+    }
+  }
+
+  // Mostra i passi da seguire sotto un brano che ha solo l'anteprima.
+  function elGuide(item) {
+    const el = item.el;
+    if (!el || el.guida) return;
+    const yt = linkYouTube((item.meta && item.meta.artist) || item.artist,
+      (item.meta && item.meta.title) || item.title);
+    if (yt) el.actions.appendChild(yt);
+    el.actions.appendChild(linkConvertitore());
+    el.actions.appendChild(guidaPassi([
+      "tocca yt e apri la canzone su YouTube",
+      "tocca mp3, incolla il link, scarica il file",
+      "torna qui e tocca il tasto verde: scegli l'mp3"
+    ]));
+    const b = btn("Scelgo l'mp3 scaricato", () => scegliFilePer(item));
+    b.classList.add("btn-mini-verde");
+    el.guida = true;
+    // Se il ponte sul PC e' acceso, posso convertire da solo senza siti
+    // esterni. Se e' spento il tasto non compare: niente pulsanti morti.
+    if (!el.ponte) {
+      el.ponte = "controllo";
+      ponteOnline().then((online) => {
+        if (el.ponte !== "controllo") return;   // intanto il brano si e' ridisegnato
+        el.ponte = online ? "si" : "no";
+        if (!online || el.ytUrl) return;
+        const bp = btn("Scarica da YouTube col PC", () => campoLinkYouTube(item));
+        bp.classList.add("btn-mini-verde");
+        bp.title = "Uso il convertitore sul PC: niente siti esterni";
+      });
+    }
+  }
+
   function toggleUrlInput(item) {
     const el = item.el;
     if (el.url) {
@@ -2488,10 +2649,23 @@
     el.go = go;
   }
 
+  // Un link YouTube (o un'altra pagina video) non e' un file audio: scaricarlo
+  // darebbe solo la pagina del video. Meglio spiegare che cosa fare davvero.
+  function eLinkVideo(url) {
+    return /(?:youtube\.com|youtu\.be|vimeo\.com|dailymotion\.com|facebook\.com\/watch|instagram\.com\/reel)/i.test(url);
+  }
+
   async function startUrlDownload(item) {
     const url = item.el.url ? item.el.url.value.trim() : "";
     if (!/^https?:\/\//i.test(url)) {
       toast("Indirizzo non valido");
+      return;
+    }
+    if (eLinkVideo(url)) {
+      item.el.url.value = "";
+      if (item.el.go) item.el.go.disabled = false;
+      toast("Questo e' il link di un video: convertilo prima in mp3 (tasto mp3), poi scegli il file scaricato");
+      elGuide(item);
       return;
     }
     item.state = "downloading";
@@ -2556,6 +2730,10 @@
     el.actions.innerHTML = "";
     el.url = null;
     el.go = null;
+    el.guida = false;   // la guida si puo' riedisegnare al prossimo paintImport
+    el.ponte = null;    // idem per il controllo del ponte sul PC
+    el.ytUrl = null;
+    el.ytGo = null;
     const tag = (text, cls) => {
       const s = document.createElement("span");
       s.className = "imp-tag" + (cls ? " " + cls : "");
@@ -2602,15 +2780,12 @@
         });
         b.title = nota || "Ascolta prima di importare";
         if (nota) {
-          // solo 30 secondi: aggiungo i due bottoni per ascoltarlo davvero
-          const yt = linkYouTube((item.meta && item.meta.artist) || item.artist,
-            (item.meta && item.meta.title) || item.title);
-          if (yt) el.actions.appendChild(yt);
-          el.actions.appendChild(linkConvertitore());
+          // solo 30 secondi: dice il perche' e i passi da seguire
           const sp = document.createElement("span");
           sp.className = "imp-nota-anteprima";
           sp.textContent = nota;
           el.actions.appendChild(sp);
+          elGuide(item);
         }
       }
       btn("Importa", () => {
@@ -2675,12 +2850,7 @@
         });
       }
       btn("Scarica da link", () => toggleUrlInput(item));
-      btn("Importa file", () => {
-        importActive = item;
-        const inp = $("importAudioInput");
-        inp.value = "";
-        inp.click();
-      });
+      btn("Importa file", () => scegliFilePer(item));
       if (el.showAlts && item.candidates.length > 1) {
         for (const cand of item.candidates) {
           if (cand === item.meta) continue;
