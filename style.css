@@ -938,6 +938,23 @@ body.no-scroll { overflow: hidden; }
   border-top: 1px solid rgba(255,255,255,.07);
 }
 .imp:first-child { border-top: none; padding-top: 2px; }
+.imp-gruppo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding-bottom: 2px;
+}
+.imp-gruppo:first-child { margin-top: 0; }
+.imp-gruppo-nome {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: var(--accent2);
+}
+.imp-gruppo + .imp { border-top: none; padding-top: 2px; }
 .imp-cover {
   width: 54px;
   height: 54px;

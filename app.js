@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.8";
+  const APP_VERSION = "6.9";
 
   let recovering = false;
   async function selfHeal() {
@@ -1609,6 +1609,61 @@
     return line;
   }
 
+  /* Scrive solo il nome di un artista (es. "nayt") e vuoi tutte le sue
+     canzoni: funziona se la riga e' una parola sola, oppure se e' un
+     artista che gia' conosciamo (in libreria o nelle copertine). */
+  const KNOWN_ARTISTS = new Set();
+
+  function collectKnownArtists() {
+    KNOWN_ARTISTS.clear();
+    for (const t of tracks) if (t.artist) KNOWN_ARTISTS.add(t.artist);
+    for (const k of Object.keys(coversData || {})) {
+      const c = coversData[k];
+      if (c && c.artist) KNOWN_ARTISTS.add(c.artist);
+    }
+  }
+
+  function looksLikeArtist(line) {
+    const t = String(line || "").trim();
+    if (!t) return false;
+    if (!/\s/.test(t)) return true;
+    const k = normKey(t);
+    if (!k) return false;
+    for (const a of KNOWN_ARTISTS) if (normKey(a) === k) return true;
+    return false;
+  }
+
+  /* Scrive anche "artista e nome" senza trattino (es. "nayt tropico"):
+     se la riga parte con un artista che gia' conosciamo, tutto quello
+     che viene dopo e' il brano. Provo l'artista piu' lungo per primo,
+     cosi' "the beatles yesterday" non diventa "the" + "beatles yesterday". */
+  function splitKnownArtist(line) {
+    const t = String(line || "").trim();
+    if (!t) return null;
+    const low = t.toLowerCase();
+    const nomi = [];
+    for (const a of KNOWN_ARTISTS) {
+      const s = String(a || "").trim();
+      if (s) nomi.push(s);
+    }
+    nomi.sort((a, b) => b.length - a.length);
+    for (const a of nomi) {
+      const al = a.toLowerCase();
+      if (t.length <= a.length || !low.startsWith(al)) continue;
+      const dopo = t.slice(a.length).replace(/^[\s\-:,|]+/, "").trim();
+      if (dopo) return { artist: a, title: dopo };
+    }
+    /* Caso inverso: il nome dell'artista arriva in fondo ("tropico nayt"). */
+    for (const a of nomi) {
+      const al = a.toLowerCase();
+      if (t.length <= a.length + 1) continue;
+      if (!low.endsWith(al)) continue;
+      const prima = t.slice(0, t.length - a.length).replace(/[\s\-:,|]+$/, "").trim();
+      if (prima) return { artist: a, title: prima };
+    }
+    return null;
+  }
+
   function parseImportText(text) {
     const out = [];
     const seen = new Set();
@@ -1618,6 +1673,7 @@
       if (!line || line.length < 2) continue;
       let artist = "";
       let title = line;
+      let artistOnly = false;
       const m = /^(.+?)\s+-\s+(.+)$/.exec(line);
       if (m) {
         artist = m[1].trim();
@@ -1627,6 +1683,14 @@
         if (m2) {
           artist = m2[1].trim();
           title = m2[2].trim();
+        } else {
+          const m3 = splitKnownArtist(line);
+          if (m3) {
+            artist = m3.artist;
+            title = m3.title;
+          } else if (looksLikeArtist(line)) {
+            artistOnly = true;
+          }
         }
       }
       title = title.replace(/\s+/g, " ").trim();
@@ -1635,7 +1699,7 @@
       const key = normKey(artist + title);
       if (seen.has(key)) continue;
       seen.add(key);
-      out.push({ artist, title });
+      out.push({ artist, title, artistOnly });
       if (out.length >= IMPORT_LIMIT) break;
     }
     return out;
@@ -1828,10 +1892,10 @@
     return { score, strong };
   }
 
-  async function iaQuery(query) {
+  async function iaQuery(query, rows) {
     const url = IA_SEARCH + "?q=" + encodeURIComponent(query) +
       "&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=licenseurl" +
-      "&rows=12&page=1&output=json";
+      "&rows=" + (rows || 12) + "&page=1&output=json";
     const res = await fetch(url);
     if (!res.ok) throw new Error("archive non raggiungibile");
     const json = await res.json();
@@ -1937,6 +2001,107 @@
     }
     out.sort((a, b) => b.score - a.score);
     return out.slice(0, 3);
+  }
+
+  /* Scrivevo solo "nayt": invece di un brano, cerco TUTTE le canzoni
+     di quell'artista. L'elenco esce dal catalogo pubblico di iTunes,
+     poi ogni canzone la cerco anche dove si scarica per davvero. */
+  const ARTIST_TRACK_LIMIT = 20;
+
+  function itunesArtwork(url) {
+    return String(url || "").replace("100x100", "600x600");
+  }
+
+  /* Nell'elenco di un artista voglio i pezzi suoi, non le compilation dove
+     c'e' solo come feat: quindi l'artista deve essere il nome principale. */
+  function artistaCatalogo(want, got) {
+    if (!artistMatch(want, got)) return false;
+    const w = normKey(want);
+    const g = normKey(got);
+    if (!w || !g) return false;
+    return g.startsWith(w) && g.length <= w.length + 22;
+  }
+
+  async function itunesArtistTracks(name) {
+    const out = [];
+    const vistati = new Set();
+    for (const term of [name, name + " canzoni"]) {
+      let data = null;
+      try {
+        const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(term) +
+          "&entity=song&limit=200&country=IT");
+        if (!r.ok) continue;
+        data = await r.json();
+      } catch (e) {
+        continue;
+      }
+      for (const s of (data.results || [])) {
+        if (out.length >= ARTIST_TRACK_LIMIT) break;
+        if (!s || !s.trackName || !s.artistName) continue;
+        if (!artistaCatalogo(name, s.artistName)) continue;
+        const key = normKey(s.artistName + " " + s.trackName);
+        if (vistati.has(key)) continue;
+        vistati.add(key);
+        out.push({
+          artist: s.artistName,
+          title: s.trackName,
+          album: s.collectionName || "",
+          cover: itunesArtwork(s.artworkUrl100),
+          secs: Math.round((s.trackTimeMillis || 0) / 1000),
+          preview: s.previewUrl || ""
+        });
+      }
+      if (out.length >= 3) break;
+    }
+    return out;
+  }
+
+  /* Riga scritta senza artista ("ayl popolare"): se non so di chi si tratta,
+     chiedo a iTunes chi e' l'artista e qual e' il titolo esatto. Cosi' la ricerca
+     del download parte con una scia giusta invece di indovinare. */
+  async function itunesGuess(testo) {
+    if (!testo) return null;
+    let data = null;
+    try {
+      const r = await fetch("https://itunes.apple.com/search?term=" + encodeURIComponent(testo) +
+        "&entity=song&limit=25&country=IT");
+      if (!r.ok) return null;
+      data = await r.json();
+    } catch (e) {
+      return null;
+    }
+    let best = null;
+    for (const s of (data.results || [])) {
+      if (!s || !s.trackName) continue;
+      const m = titleMatch(testo, s.trackName);
+      if (m.score < 70) continue;
+      const score = m.score + (artistMatch(testo, s.artistName) ? 8 : 0);
+      if (best && score <= best.score) continue;
+      best = {
+        score: score,
+        artist: s.artistName || "",
+        title: s.trackName,
+        album: s.collectionName || "",
+        cover: itunesArtwork(s.artworkUrl100),
+        secs: Math.round((s.trackTimeMillis || 0) / 1000),
+        preview: s.previewUrl || ""
+      };
+    }
+    return best;
+  }
+
+  function previewCandidate(s) {
+    return {
+      score: 20,
+      strong: false,
+      title: s.title,
+      artist: s.artist,
+      album: s.album,
+      license: "solo 30 secondi",
+      source: "anteprima 30s",
+      url: s.preview,
+      cover: s.cover
+    };
   }
 
   async function findDownload(item) {
@@ -2287,6 +2452,12 @@
       if (el.prog) el.prog.hidden = false;
     } else if (item.state === "choose") {
       tag("scegli quella giusta", "");
+    } else if (item.state === "found") {
+      tag(item.tagTrovato || "trovato", "ok");
+      btn("Importa", () => {
+        item.state = "ready";
+        importItem(item);
+      });
     } else if (item.state === "ready") {
       tag("trovato", "ok");
     }
@@ -2334,14 +2505,44 @@
     const box = $("importResults");
     box.innerHTML = "";
     $("importStep3").hidden = false;
+    let gruppoCorrente = null;
     for (const item of importList) {
+      if (item.gruppo && item.gruppo !== gruppoCorrente) {
+        gruppoCorrente = item.gruppo;
+        const testata = document.createElement("div");
+        testata.className = "imp-gruppo";
+        const nome = document.createElement("span");
+        nome.className = "imp-gruppo-nome";
+        nome.textContent = gruppoCorrente;
+        testata.appendChild(nome);
+        const tutte = document.createElement("button");
+        tutte.className = "btn-mini";
+        const conta = () => importList.filter((x) => x.gruppo === gruppoCorrente && x.state === "found").length;
+        const aggiornaTutte = () => {
+          tutte.textContent = conta() ? "Importa tutte (" + conta() + ")" : "Niente da importare";
+          tutte.disabled = !conta();
+        };
+        aggiornaTutte();
+        tutte.addEventListener("click", async () => {
+          for (const x of importList) {
+            if (x.gruppo !== gruppoCorrente || x.state !== "found") continue;
+            x.state = "ready";
+            paintImport(x);
+          }
+          aggiornaTutte();
+          await autoImportAll();
+          aggiornaTutte();
+        });
+        testata.appendChild(tutte);
+        box.appendChild(testata);
+      }
       const row = document.createElement("div");
       row.className = "imp";
 
       const cover = document.createElement("img");
       cover.className = "imp-cover";
       cover.alt = "";
-      cover.src = (item.meta && item.meta.cover) || TRANSPARENT_PIXEL;
+      cover.src = (item.meta && item.meta.cover) || item.copertina || TRANSPARENT_PIXEL;
 
       const main = document.createElement("div");
       main.className = "imp-main";
@@ -2354,7 +2555,9 @@
       const sub = document.createElement("p");
       sub.className = "imp-sub";
       const bits = [];
-      if (item.meta && item.meta.album) bits.push(item.meta.album);
+      const album = (item.meta && item.meta.album) || item.album;
+      if (album) bits.push(album);
+      if (item.secs) bits.push(fmtTime(item.secs));
       if (item.meta && item.meta.source) bits.push(item.meta.source);
       if (item.meta && item.meta.license) bits.push(item.meta.license);
       sub.textContent = bits.join(" · ");
@@ -2406,6 +2609,7 @@
   async function runSearch() {
     $("importTarget").textContent = "Sta scaricando nella libreria di " + profile + ".";
     if (searching) return;
+    collectKnownArtists();
     const parsed = parseImportText($("importText").value);
     if (!parsed.length) {
       toast("Non riconosco nessun brano: controlla il testo");
@@ -2413,8 +2617,28 @@
     }
     searching = true;
     $("btnFind").disabled = true;
-    importList = parsed.map((p) => ({ title: p.title, artist: p.artist, state: "searching", meta: null, candidates: [] }));
     libKeys = libraryKeys();
+    importList = [];
+    const daCercare = [];
+    const gruppi = [];
+    for (const p of parsed) {
+      if (p.artistOnly) {
+        const segnaposto = {
+          gruppo: "Canzoni di " + p.title,
+          title: p.title,
+          artist: "",
+          state: "searching",
+          meta: null,
+          candidates: []
+        };
+        importList.push(segnaposto);
+        gruppi.push({ nome: p.title, segnaposto });
+      } else {
+        const item = { title: p.title, artist: p.artist, state: "searching", meta: null, candidates: [] };
+        importList.push(item);
+        daCercare.push(item);
+      }
+    }
     renderImports();
 
     const bar = $("searchBar");
@@ -2424,11 +2648,77 @@
     status.hidden = false;
     fill.style.width = "0%";
 
-    for (let i = 0; i < importList.length; i++) {
-      const item = importList[i];
+    let fatti = 0;
+    let sconosciuti = 0;
+    const avanta = (testo) => {
+      fatti++;
+      status.textContent = testo;
+      const totale = daCercare.length + gruppi.length;
+      fill.style.width = (totale ? Math.min(100, Math.round((fatti / totale) * 100)) : 100) + "%";
+    };
+
+    for (const g of gruppi) {
+      avanta("Cerco le canzoni di " + g.nome + "...");
+      let trovate = [];
+      try {
+        trovate = await itunesArtistTracks(g.nome);
+      } catch (e) {
+        trovate = [];
+      }
+      if (!trovate.length) {
+        // di quell'artista non c'e' niente: la riga torna a essere un titolo
+        const segnaposto = importList.indexOf(g.segnaposto);
+        if (segnaposto >= 0) importList.splice(segnaposto, 1);
+        const item = { title: g.nome, artist: "", state: "searching", meta: null, candidates: [] };
+        importList.push(item);
+        daCercare.push(item);
+        continue;
+      }
+      const gruppo = "Canzoni di " + g.nome + " (" + trovate.length + ")";
+      const nuovi = [];
+      for (const s of trovate) {
+        if (importList.length + nuovi.length >= IMPORT_LIMIT) break;
+        const item = {
+          gruppo,
+          title: s.title,
+          artist: s.artist,
+          album: s.album,
+          secs: s.secs,
+          copertina: s.cover,
+          anteprima: s.preview ? previewCandidate(s) : null,
+          state: "searching",
+          meta: null,
+          candidates: []
+        };
+        nuovi.push(item);
+        daCercare.push(item);
+      }
+      const idx = importList.indexOf(g.segnaposto);
+      if (idx >= 0) importList.splice(idx, 1, ...nuovi);
+      else importList.push(...nuovi);
+      renderImports();
+    }
+
+    for (let i = 0; i < daCercare.length; i++) {
+      const item = daCercare[i];
       if (item.removed) continue;
-      status.textContent = "Cerco " + (i + 1) + "/" + importList.length + ": " + item.title;
-      fill.style.width = Math.round(((i + 1) / importList.length) * 100) + "%";
+      avanta("Cerco " + (i + 1) + "/" + daCercare.length + ": " + item.title);
+      /* senza artista scritto: 2-6 parole, e non piu' di 15 righe cosi' per
+         batch, altrimenti la ricerca si allunga troppo */
+      if (!item.artist && !item.anteprima && item.title &&
+          item.title.indexOf(" ") > 0 && item.title.split(/\s+/).length <= 6 && sconosciuti < 15) {
+        sconosciuti++;
+        avanta("Cerco di chi e': " + item.title);
+        const indovinato = await itunesGuess(item.title);
+        if (indovinato && indovinato.artist) {
+          item.artist = indovinato.artist;
+          if (titleMatch(item.title, indovinato.title).score < 90) item.title = indovinato.title;
+          if (!item.album) item.album = indovinato.album;
+          if (!item.copertina) item.copertina = indovinato.cover;
+          if (!item.secs) item.secs = indovinato.secs;
+          if (!item.anteprima) item.anteprima = previewCandidate(indovinato);
+        }
+      }
       let dup = false;
       for (const k of trackKeys(item)) if (libKeys.has(k)) dup = true;
       if (dup) {
@@ -2442,13 +2732,19 @@
         }
         item.candidates = (found && found.list) || [];
         const best = found && found.best;
-        if (!best) {
-          item.state = "missing";
-        } else if (best.strong) {
+        if (best && best.strong) {
           item.state = "ready";
           item.meta = best;
-        } else {
+        } else if (item.anteprima) {
+          // il brano intero non e' in nessun archivio: resta l'anteprima
+          item.candidates = item.candidates.concat([item.anteprima]);
+          item.meta = item.anteprima;
+          item.state = "found";
+          item.tagTrovato = "anteprima 30s";
+        } else if (best) {
           item.state = "choose";
+        } else {
+          item.state = "missing";
         }
       }
       paintImport(item);
@@ -2464,8 +2760,10 @@
     const miss = importList.filter((x) => x.state === "missing").length;
     const choose = importList.filter((x) => x.state === "choose").length;
     const errs = importList.filter((x) => x.state === "error").length;
+    const daImportare = importList.filter((x) => x.state === "found").length;
     status.textContent = "Importati " + done + " · da scegliere " + choose + " · già presenti " + dupes +
-      " · non disponibili " + miss + (errs ? " · errori " + errs : "");
+      " · non disponibili " + miss + (errs ? " · errori " + errs : "") +
+      (daImportare ? " · " + daImportare + " canzoni pronte da importare" : "");
     searching = false;
     $("btnFind").disabled = false;
   }
