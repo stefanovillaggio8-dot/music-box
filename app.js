@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.23";
+  const APP_VERSION = "6.24";
 
   let recovering = false;
   async function selfHeal() {
@@ -3199,7 +3199,7 @@
     });
     for (let i = 0; i < daControllare.length; i += 4) {
       const lotto = daControllare.slice(i, i + 4);
-      await Promise.all(lotto.map(async (p) => {
+      await Promise.allSettled(lotto.map(async (p) => {
         let nome = "";
         try {
           nome = await conScadenza(iTunesQuestoEArtista(p.title), 12000, "scaduto");
@@ -3289,43 +3289,63 @@
     }
 
     /* Prima cercavo un brano alla volta: con un artista da 30 canzoni si
-       poteva stare "cerco..." per minuti. Adesso ne cerco 5 in contemporanea:
-       il tempo si abbassa di parecchio e i risultati arrivano tutti insieme. */
+       poteva stare "cerco..." per minuti. Adesso ne cerco 5 in contemporanea.
+       Ogni brano e' protetto da try/catch e uso allSettled: se uno solo
+       fallisce, gli altri devono continuare lo stesso. */
     const QUANTI_INSIEME = 5;
     const rimasti = daCercare.filter((x) => !x.removed);
     for (let i = 0; i < rimasti.length; i += QUANTI_INSIEME) {
       const lotto = rimasti.slice(i, i + QUANTI_INSIEME);
       avanta("Cerco " + Math.min(i + 1, rimasti.length) + "-" + Math.min(i + lotto.length, rimasti.length) +
         "/" + rimasti.length + "...");
-      await Promise.all(lotto.map(async (item) => {
-        if (item.removed) return;
-        /* senza artista scritto: 2-6 parole, e non piu' di 15 righe cosi' per
-           batch, altrimenti la ricerca si allunga troppo */
-        if (!item.artist && !item.anteprima && item.title &&
-            item.title.indexOf(" ") > 0 && item.title.split(/\s+/).length <= 6 && sconosciuti < 15) {
-          sconosciuti++;
-          try {
-            const indovinato = await conScadenza(itunesGuess(item.title), 12000, "scaduto");
-            if (indovinato && indovinato.artist) {
-              item.artist = indovinato.artist;
-              if (titleMatch(item.title, indovinato.title).score < 90) item.title = indovinato.title;
-              if (!item.album) item.album = indovinato.album;
-              if (!item.copertina) item.copertina = indovinato.cover;
-              if (!item.secs) item.secs = indovinato.secs;
-              if (!item.anteprima) item.anteprima = previewCandidate(indovinato);
-            }
-          } catch (e) { /* nessun artista: vado avanti col titolo cosi' com'e' */ }
-        }
-        let dup = false;
-        for (const k of trackKeys(item)) if (libKeys.has(k)) dup = true;
-        if (dup) {
-          item.state = "dupe";
-          paintImport(item);
-        } else {
-          await cercaItemSingolo(item);
+      await Promise.allSettled(lotto.map(async (item) => {
+        try {
+          if (item.removed) return;
+          /* senza artista scritto: 2-6 parole, e non piu' di 15 righe cosi' per
+             batch, altrimenti la ricerca si allunga troppo */
+          if (!item.artist && !item.anteprima && item.title &&
+              item.title.indexOf(" ") > 0 && item.title.split(/\s+/).length <= 6 && sconosciuti < 15) {
+            sconosciuti++;
+            try {
+              const indovinato = await conScadenza(itunesGuess(item.title), 12000, "scaduto");
+              if (indovinato && indovinato.artist) {
+                item.artist = indovinato.artist;
+                if (titleMatch(item.title, indovinato.title).score < 90) item.title = indovinato.title;
+                if (!item.album) item.album = indovinato.album;
+                if (!item.copertina) item.copertina = indovinato.cover;
+                if (!item.secs) item.secs = indovinato.secs;
+                if (!item.anteprima) item.anteprima = previewCandidate(indovinato);
+              }
+            } catch (e) { /* nessun artista: vado avanti col titolo cosi' com'e' */ }
+          }
+          let dup = false;
+          for (const k of trackKeys(item)) if (libKeys.has(k)) dup = true;
+          if (dup) {
+            item.state = "dupe";
+            paintImport(item);
+          } else {
+            await cercaItemSingolo(item);
+          }
+        } catch (e) {
+          // un brano che va in errore non deve bloccare gli altri: lo metto
+          // "non disponibile" cosi' non resta fermo su "cerco..."
+          item.state = "missing";
+          item.tagMancato = "non riesco a cercarlo";
+          try { paintImport(item); } catch (e2) { /* se anche questo fallisce, pazienza */ }
         }
       }));
       await new Promise((r) => setTimeout(r, 80));
+    }
+
+    /* Rete di sicurezza: se per qualunque motivo qualche brano e' rimasto
+       su "cerco...", lo chiudo qui. Cosi' la lista non mostra mai righe
+       ferme, e l'utente puo' riprovare con il tasto Riprova. */
+    for (const it of importList) {
+      if (it.state === "searching" && !it.removed) {
+        it.state = "missing";
+        it.tagMancato = "ricerca interrotta";
+        try { paintImport(it); } catch (e) { /* noop */ }
+      }
     }
 
     const auto = importList.filter((x) => x.state === "ready").length;
