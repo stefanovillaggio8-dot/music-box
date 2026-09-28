@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.27";
+  const APP_VERSION = "6.28";
 
   let recovering = false;
   async function selfHeal() {
@@ -2575,18 +2575,30 @@
   async function ponteOnline() {
     if (ponteCache && Date.now() - ponteCache.t < 15000) return ponteCache.ok;
     let ok = false;
+    let perche = "";
     try {
       const ctl = new AbortController();
       const scad = setTimeout(() => ctl.abort(), 1500);
       const r = await fetch(PONTE_URL + "/ping", { cache: "no-store", signal: ctl.signal });
       clearTimeout(scad);
       ok = !!r.ok;
+      if (!ok) perche = "risposta " + r.status;
     } catch (e) {
       ok = false;
+      // il motivo vero: dal telefono o da una pagina su internet il browser
+      // blocca la richiesta, e senza sapere questo sembra un mio bug
+      perche = String((e && (e.name + ": " + e.message)) || "errore");
     }
     ponteCache = { ok: ok, t: Date.now() };
+    if (segnalatoIndirizzo !== window.location.href) {
+      segnalatoIndirizzo = window.location.href;
+      segnalaErrore("pagina aperta su " + window.location.href +
+        (window.isSecureContext ? " (sicura)" : " (non sicura)") +
+        " -> programma sul PC " + (ok ? "raggiungibile" : "NON raggiungibile: " + perche));
+    }
     return ok;
   }
+  let segnalatoIndirizzo = "";
 
   // Campo dove incollare il link di YouTube, col tasto per convertirlo.
   // cartella: "" (solo libreria), "ste" o "emanuela" (salva anche la copia).

@@ -861,52 +861,6 @@ body.no-scroll { overflow: hidden; }
 .imp-guida li { margin: 0; }
 .imp-guida li::marker { color: var(--muted); }
 
-/* Il tasto che sceglie l'mp3 scaricato: verde e ben visibile */
-/* VERDE = automatico col PC. E' l'unico tasto verde, cosi' si capisce subito
-   quale fa tutto da solo e quale no. */
-.btn-mini-auto {
-  background: #1f9d55;
-  border-color: transparent;
-  color: #04140a;
-  font-weight: 700;
-  white-space: normal;
-  }
-  .btn-mini-auto:active { background: #24b862; }
-
-  /* Riga che dice se il programma sul PC e' acceso. Sta sulla stessa riga dei
-     tasti (inline): prima andava a capo e spingeva tutto sotto la piega. */
-  .imp-stato-ponte {
-    flex: 0 0 auto;
-    font-size: 11.5px;
-    line-height: 1.4;
-    margin: 0 2px;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .imp-stato-ponte.imp-stato-ok { color: #6ee7a0; }
-  .imp-stato-ponte.imp-stato-no { color: #ffc46b; }
-
-  /* I passi manuali stanno chiusi, cosi' la riga del brano resta corta */
-  .imp-altro summary { color: #8fc4ff; }
-
-  /* VIOLA = salva anche una copia nella cartella mp3 di Ste o di Emanuele */
-  .btn-mini-cartella {
-    background: rgba(190,140,255,.16);
-    border-color: rgba(190,140,255,.5);
-    color: #d4b8ff;
-    font-weight: 600;
-    white-space: normal;
-  }
-
-  /* BLU = "apri i miei file": serve a scegliere l'mp3 gia' scaricato a mano */
-  .btn-mini-file {
-    background: rgba(90,160,255,.14);
-    border-color: rgba(90,160,255,.45);
-    color: #8fc4ff;
-    font-weight: 600;
-    white-space: normal;
-    }
-
 .step-hint { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
 
 /* Esempi brevi: due righe, si leggono anche sul telefono */
@@ -1167,3 +1121,57 @@ a.btn-mp3:active { background: rgba(110,231,160,.2); }
   border-color:transparent;
   font-weight:700;
 }
+/* ============================================================
+   COLORI DEI TASTI DEL PC
+   Stanno QUI IN FONDO apposta: la regola generale .btn-mini e'
+   piu' in alto nel file e, avendo la stessa importanza, quella
+   dopo vince. Prima stavano sopra e i colori sparivano.
+   ============================================================ */
+
+/* VERDE = automatico col PC. Unico tasto verde: e' quello che
+   fa tutto da solo e non ha bisogno di noTube. */
+.btn-mini .btn-mini-auto,
+button.btn-mini-auto {
+  background: #1f9d55;
+  border-color: #1f9d55;
+  color: #04140a;
+  font-weight: 700;
+  white-space: normal;
+}
+button.btn-mini-auto:active { background: #24b862; }
+
+/* VIOLA = salva anche una copia nella cartella mp3 di Ste o Emanuele */
+.btn-mini .btn-mini-cartella,
+button.btn-mini-cartella {
+  background: rgba(190,140,255,.22);
+  border-color: rgba(190,140,255,.65);
+  color: #e2cdff;
+  font-weight: 600;
+  white-space: normal;
+}
+
+/* BLU = "apri i miei file": sceglie l'mp3 gia' scaricato a mano */
+.btn-mini .btn-mini-file,
+button.btn-mini-file {
+  background: rgba(90,160,255,.2);
+  border-color: rgba(90,160,255,.6);
+  color: #b6d8ff;
+  font-weight: 600;
+  white-space: normal;
+}
+
+/* Riga che dice se il programma sul PC e' acceso */
+.imp-stato-ponte {
+  flex: 0 0 auto;
+  font-size: 11.5px;
+  line-height: 1.4;
+  margin: 0 2px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.imp-stato-ponte.imp-stato-ok { color: #6ee7a0; font-weight: 600; }
+.imp-stato-ponte.imp-stato-no { color: #ffc46b; font-weight: 600; }
+
+/* I passi manuali stanno chiusi: la riga del brano resta corta */
+.imp-altro summary { color: #8fc4ff; }
+.imp-altro[open] summary { color: #b6d8ff; }
