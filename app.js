@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.25";
+  const APP_VERSION = "6.26";
 
   let recovering = false;
   async function selfHeal() {
@@ -2728,19 +2728,16 @@
     const el = item.el;
     if (!el || el.ponte) return;
     el.ponte = true;
-    // solo libreria, oppure con copia nella cartella mp3
-    const b1 = btn("Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato));
-    b1.classList.add("btn-mini-auto");
-    b1.title = "Scarico e converto io col PC: metto il brano in libreria";
-    const b2 = btn("Salva in mp3 Ste", () => campoLinkYouTube(item, "ste", stato));
-    b2.classList.add("btn-mini-cartella");
-    b2.title = "Oltre che in libreria, salvo una copia in musica mp3 ste";
-    const b3 = btn("Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato));
-    b3.classList.add("btn-mini-cartella");
-    b3.title = "Oltre che in libreria, salvo una copia in musica mp3 emanuela";
-    // lo stato viene DOPO i tasti, cosi' sta sulla stessa riga e si legge
+    // dichiaro lo stato PRIMA dei tasti: i tasti lo richiamano al click
     const stato = statoPonte(el);
     scriviStatoPonte(stato, "controllo il PC...");
+    // solo libreria, oppure con copia nella cartella mp3
+    nuovoBottone(el.actions, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato),
+      "btn-mini-auto", "Scarico e converto io col PC: metto il brano in libreria");
+    nuovoBottone(el.actions, "Salva in mp3 Ste", () => campoLinkYouTube(item, "ste", stato),
+      "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 ste");
+    nuovoBottone(el.actions, "Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato),
+      "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 emanuela");
     ponteOnline().then((online) => {
       if (!el.isConnected) return;
       scriviStatoPonte(stato, online
@@ -2770,8 +2767,8 @@
       "sul telefono: apri la canzone, usa noTube, scarica, poi scegli il file"
     ]));
     el.actions.appendChild(piu);
-    const b = btn("Apri i miei file", () => scegliFilePer(item));
-    b.classList.add("btn-mini-file");
+    nuovoBottone(el.actions, "Apri i miei file", () => scegliFilePer(item),
+      "btn-mini-file", "Scegli l'mp3 che hai gia' scaricato a mano");
     el.guida = true;
   }
 
@@ -2875,6 +2872,21 @@
     if (item.el && item.el.row) item.el.row.remove();
   }
 
+  /* Crea un tasto nella lista del brano.
+     Sta FUORI da paintImport perche' serve anche ad altre funzioni
+     (aggiungiPonte): dentro, non era visibile e crashava con
+     "btn is not defined", bloccando ogni brano. */
+  function nuovoBottone(azioni, testo, fn, classe, titolo, disabilitato) {
+    const b = document.createElement("button");
+    b.className = "btn-mini" + (classe ? " " + classe : "");
+    b.textContent = testo;
+    b.disabled = !!disabilitato;
+    if (titolo) b.title = titolo;
+    if (fn) b.addEventListener("click", fn);
+    azioni.appendChild(b);
+    return b;
+  }
+
   function paintImport(item) {
     const el = item.el;
     if (!el) return;
@@ -2892,15 +2904,7 @@
       s.textContent = text;
       el.tags.appendChild(s);
     };
-    const btn = (text, fn, disabled) => {
-      const b = document.createElement("button");
-      b.className = "btn-mini";
-      b.textContent = text;
-      b.disabled = !!disabled;
-      b.addEventListener("click", fn);
-      el.actions.appendChild(b);
-      return b;
-    };
+    const btn = (text, fn, disabled) => nuovoBottone(el.actions, text, fn, "", "", disabled);
 
     if (item.state === "dupe") {
       tag("già nella libreria", "dup");
