@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.26";
+  const APP_VERSION = "6.27";
 
   let recovering = false;
   async function selfHeal() {
@@ -2596,11 +2596,12 @@
     const el = item.el;
     if (!el) return;
     el.cartella = cartella || "";
+    segnalaErrore("premuto: " + (cartella ? "salva in " + cartella : "solo libreria"));
     scriviStatoPonte(stato, "controllo il PC...");
     const online = await ponteOnline();
     if (!el.isConnected) return;
     if (!online) {
-      scriviStatoPonte(stato, "programma sul PC: spento. Apri la Music Box dal PC (link 'Sul PC' nella dashboard)");
+      scriviStatoPonte(stato, "programma sul PC: spento");
       toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
       return;
     }
@@ -2635,8 +2636,10 @@
     const url = el.ytUrl ? el.ytUrl.value.trim() : "";
     if (!url) {
       toast("Prima incolla il link di YouTube");
+      segnalaErrore("Scarica premuto ma il campo era vuoto");
       return;
     }
+    segnalaErrore("converto: " + url.slice(0, 60) + " cartella=" + (el.cartella || "nessuna"));
     if (el.ytGo) el.ytGo.disabled = true;
     if (el.ytUrl) el.ytUrl.disabled = true;
     item.state = "downloading";
@@ -2683,6 +2686,7 @@
         totale = parti[0].byteLength;
       }
       const blob = new Blob(parti, { type: "audio/mpeg" });
+      segnalaErrore("mp3 ricevuto: " + blob.size + " byte, lo metto in libreria");
       el.fill.style.width = "100%";
       el.bytes.textContent = fmtBytes(blob.size);
       item.meta = Object.assign({}, item.meta || {}, {
@@ -2698,6 +2702,7 @@
       // riprovare senza perdere il brano
       el.fill.classList.add("err");
       el.bytes.textContent = String((err && err.message) || err);
+      segnalaErrore("conversione fallita: " + String((err && err.message) || err).slice(0, 160));
       item.state = "found";
       if (el.ytGo) el.ytGo.disabled = false;
       if (el.ytUrl) el.ytUrl.disabled = false;
