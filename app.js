@@ -23,6 +23,7 @@
     { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
     { title: "Canzone Test", file: "songs/track-21.mp3", artist: "Prova Uno", profile: "Ste" },
+    { title: "Canzone Test", file: "songs/track-22.mp3", artist: "Prova Due", profile: "Emanuele" },
 ];
 
   const PALETTE = [
