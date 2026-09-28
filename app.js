@@ -33,7 +33,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.9";
+  const APP_VERSION = "6.10";
 
   let recovering = false;
   async function selfHeal() {
@@ -2104,6 +2104,62 @@
     };
   }
 
+  // ---- Ascoltare PRIMA di importare ------------------------------------
+  // Un solo player per tutta la schermata: se ne avvii un altro, il primo si ferma.
+  let anteprimaAudio = null, anteprimaBtn = null;
+  function fermaAnteprima() {
+    if (anteprimaAudio) {
+      try { anteprimaAudio.pause(); } catch (e) {}
+      anteprimaAudio.src = "";
+      anteprimaAudio = null;
+    }
+    if (anteprimaBtn) {
+      anteprimaBtn.textContent = anteprimaBtn.dataset.label || "Ascolta";
+      anteprimaBtn.classList.remove("btn-mini-on");
+      anteprimaBtn = null;
+    }
+  }
+  // cand: il risultato della ricerca. Se ha l'anteprima di 30s si sente quella,
+  // altrimenti si sente il brano vero. Il bottone dice sempre di cosa si tratta.
+  function bottoneAnteprima(cand, testo) {
+    const solo30 = !!(cand && cand.license === "solo 30 secondi");
+    const src = (cand && (cand.preview || cand.url)) || "";
+    const etichetta = testo || (solo30 ? "Anteprima 30s" : (cand && cand.url ? "Ascolta" : ""));
+    return { etichetta: etichetta, solo30: solo30, src: src, cand: cand };
+  }
+  function ascoltaPrima(b, fn) {
+    if (!b || !b.src) return;
+    if (anteprimaAudio && anteprimaAudio.src === b.src && !anteprimaAudio.paused) { fermaAnteprima(); return; }
+    fermaAnteprima();
+    try {
+      anteprimaAudio = new Audio();
+      anteprimaAudio.preload = "none";
+      anteprimaAudio.src = b.src;
+      anteprimaAudio.addEventListener("ended", fermaAnteprima);
+      anteprimaAudio.addEventListener("error", () => {
+        fermaAnteprima();
+        if (fn) fn(new Error("non e' stato possibile suonare l'anteprima"));
+      });
+      anteprimaBtn = b.el;
+      b.el.dataset.label = b.etichetta;
+      b.el.textContent = "Ferma";
+      b.el.classList.add("btn-mini-on");
+      anteprimaAudio.play();
+      if (fn) fn(null);
+    } catch (e) {
+      fermaAnteprima();
+      if (fn) fn(e);
+    }
+  }
+  // Dice SEMPRE perche' un brano e' solo 30 secondi: cosi' non si crede
+  // di poter ascoltarlo tutto prima di importarlo.
+  function notaAnteprima(cand) {
+    if (cand && cand.license === "solo 30 secondi") {
+      return "Solo 30 secondi di anteprima: il brano completo non e' liberamente scaricabile.";
+    }
+    return "";
+  }
+
   async function findDownload(item) {
     const cands = [];
     try {
@@ -2454,22 +2510,71 @@
       tag("scegli quella giusta", "");
     } else if (item.state === "found") {
       tag(item.tagTrovato || "trovato", "ok");
+      // Prima di importare: ascoltalo, se c'e' qualcosa da sentire.
+      const bInfo = bottoneAnteprima(item.meta);
+      if (bInfo.src) {
+        const nota = notaAnteprima(item.meta);
+        const b = btn(bInfo.etichetta, () => {
+          const b2 = bottoneAnteprima(item.meta);
+          ascoltaPrima({ src: b2.src, etichetta: b2.etichetta, el: b }, (err) => {
+            if (err) toast("Anteprima non disponibile per questo brano.");
+          });
+        });
+        b.title = nota || "Ascolta prima di importare";
+        if (nota) {
+          const sp = document.createElement("span");
+          sp.className = "imp-nota-anteprima";
+          sp.textContent = nota;
+          el.actions.appendChild(sp);
+        }
+      }
       btn("Importa", () => {
+        fermaAnteprima();
         item.state = "ready";
         importItem(item);
       });
     } else if (item.state === "ready") {
       tag("trovato", "ok");
+      // anche quando ha trovato subito il brano completo: ascoltalo prima
+      const bInfoR = bottoneAnteprima(item.meta);
+      if (bInfoR.src) {
+        const bR = btn(bInfoR.etichetta, () => {
+          const b2 = bottoneAnteprima(item.meta);
+          ascoltaPrima({ src: b2.src, etichetta: b2.etichetta, el: bR }, (err) => {
+            if (err) toast("Anteprima non disponibile per questo brano.");
+          });
+        });
+        bR.title = notaAnteprima(item.meta) || "Ascolta prima di importare";
+      }
     }
 
     if (item.state === "choose" && item.candidates.length) {
       for (const cand of item.candidates) {
-        btn(cand.title + (cand.artist ? " — " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : ""), () => {
+        // ogni versione si puo' ascoltare prima di sceglierla
+        const bInfo = bottoneAnteprima(cand);
+        if (bInfo.src) {
+          const b = btn("▶ " + bInfo.etichetta, () => {
+            const b2 = bottoneAnteprima(cand);
+            ascoltaPrima({ src: b2.src, etichetta: "▶ " + b2.etichetta, el: b }, (err) => {
+              if (err) toast("Anteprima non disponibile per questa versione.");
+            });
+          });
+          b.title = notaAnteprima(cand) || "Ascolta prima di scegliere";
+        }
+        const nota = notaAnteprima(cand);
+        btn((cand.title + (cand.artist ? " — " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : "")), () => {
+          fermaAnteprima();
           item.meta = cand;
           item.state = "ready";
           paintImport(item);
           importItem(item);
         });
+        if (nota) {
+          const sp = document.createElement("span");
+          sp.className = "imp-nota-anteprima";
+          sp.textContent = nota;
+          el.actions.appendChild(sp);
+        }
       }
     }
 
@@ -2803,10 +2908,11 @@
     document.body.classList.add("no-scroll");
   }
 
-  function closeImport() {
+function closeImport() {
+    fermaAnteprima();                 // l'anteprima non continua a suonare a schermo chiuso
     $("importPanel").hidden = true;
     document.body.classList.remove("no-scroll");
-  }
+}
 
   /* ---------- Toast ---------- */
   let toastTimer = null;

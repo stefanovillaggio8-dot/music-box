@@ -1011,6 +1011,23 @@ body.no-scroll { overflow: hidden; }
 }
 
 @media (min-width: 560px) {
-  body { max-width: 480px; margin: 0 auto; }
-  .player, .fab { left: 0; right: 0; margin: 0 auto; max-width: 480px; }
+    body { max-width: 480px; margin: 0 auto; }
+    .player, .fab { left: 0; right: 0; margin: 0 auto; max-width: 480px; }
+}
+
+/* --- Anteprima prima di importare --- */
+/* la spiega sotto ai pulsanti: dice che l'anteprima dura 30 secondi */
+.imp-nota-anteprima{
+  flex:0 0 100%;
+  font-size:12px;
+  line-height:1.45;
+  color:#8b93a3;
+  margin:2px 0 4px 2px;
+}
+/* bottone "Ferma" mentre suona */
+.btn-mini-on{
+  background:linear-gradient(135deg,#7c5cff,#00d0ff);
+  color:#05070c;
+  border-color:transparent;
+  font-weight:700;
 }
