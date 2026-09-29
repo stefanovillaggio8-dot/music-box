@@ -29,6 +29,7 @@
     { title: "Il Filmografo", file: "songs/track-27.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "Paganini", file: "songs/track-28.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "terr1", file: "songs/track-29.mp3", artist: "kid yugi", profile: "Ste" },
+    { title: "Sintetico", file: "songs/track-30.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [
