@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.41";
+  const APP_VERSION = "6.42";
 
   let recovering = false;
   async function selfHeal() {
@@ -95,7 +95,15 @@
   let suppressClick = false;
   let swReg = null;
 
-  const DEFAULT_PROFILE = "Ste";
+  /* I profili: ognuno ha la sua libreria e la sua cartella di mp3 sul PC.
+     Prima erano due fissi (Ste ed Emanuele); ora l'elenco e' una lista, cosi'
+     aggiungere un profilo e' una riga e basta. */
+  const PROFILI = [
+    { nome: "Ste", cartella: "ste" },
+    { nome: "Emanuele", cartella: "emanuela" },
+    { nome: "Ari", cartella: "ari" }
+  ];
+  const DEFAULT_PROFILE = PROFILI[0].nome;
   let profile = DEFAULT_PROFILE;
   let profiles = [DEFAULT_PROFILE];
 
@@ -364,12 +372,13 @@
       avviso.hidden = true;
       return;
     }
-    const altro = profile === DEFAULT_PROFILE ? OTHER_PROFILE : DEFAULT_PROFILE;
-    const quanti = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === altro).length;
-    if (!quanti) {
+    const altro = PROFILI.map((p) => p.nome).find((n) => n !== profile &&
+      BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === n).length > 0);
+    if (!altro) {
       avviso.hidden = true;
       return;
     }
+    const quanti = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === altro).length;
     avviso.innerHTML = "";
     const p = document.createElement("div");
     p.textContent = "Nel profilo " + profile + " non ci sono brani. In " + altro + " ce ne sono " + quanti + ".";
@@ -1343,7 +1352,14 @@
   }
 
   function profileList() {
-    return [profile, profile === DEFAULT_PROFILE ? OTHER_PROFILE : DEFAULT_PROFILE];
+    // il profilo aperto per primo, poi tutti gli altri
+    const nomi = PROFILI.map((p) => p.nome);
+    return [profile].concat(nomi.filter((n) => n !== profile));
+  }
+
+  function cartellaDi(nome) {
+    const p = PROFILI.find((x) => x.nome === nome);
+    return p ? p.cartella : "";
   }
 
   function renderProfiles() {
@@ -3130,10 +3146,13 @@
     scriviStatoPonte(stato, "controllo il PC...");
     nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato),
       "btn-mini-auto", "Scarico e converto io col PC: metto il brano in libreria");
-    nuovoBottone(gruppo, "Salva in mp3 Ste", () => campoLinkYouTube(item, "ste", stato),
-      "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 ste");
-    nuovoBottone(gruppo, "Salva in mp3 Emanuela", () => campoLinkYouTube(item, "emanuela", stato),
-      "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 emanuele");
+    // un tasto per ogni profilo: oltre che in libreria salvo una copia nella
+    // sua cartella mp3 sul PC. Prima erano due scritti a mano.
+    for (const p of PROFILI) {
+      if (!p.cartella) continue;
+      nuovoBottone(gruppo, "Salva in mp3 " + p.nome, () => campoLinkYouTube(item, p.cartella, stato),
+        "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 " + p.cartella);
+    }
     ponteOnline().then((online) => {
       if (!rigaViva(el)) return;
       scriviStatoPonte(stato, online
