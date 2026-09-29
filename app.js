@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.34";
+  const APP_VERSION = "6.35";
 
   let recovering = false;
   async function selfHeal() {
@@ -1663,10 +1663,15 @@
       const d = await r.json();
       const risultati = (d && d.results) || [];
       // 1) e' anche un brano? allora non tocchiamo niente (salvo "artista:")
+      //    ATTENZIONE: se quel titolo lo hanno pochi artisti, e' quasi certamente
+      //    una coincidenza: per "kid yugi" esiste un solo brano omonimo di un
+      //    artista sconosciuto, ma "Kid Yugi" e' un nome d'arte. Se invece il
+      //    titolo e' in mano a molti (Blinding Lights, Mamma Mia...) allora
+      //    e' davvero un brano e lo lasciamo brano.
       if (!forzato) {
-        for (const s of risultati) {
-          if (s && s.trackName && normKey(s.trackName) === mio) return "";
-        }
+        const omonimi = risultati.filter((s) => s && s.trackName && normKey(s.trackName) === mio);
+        const artistiDiversi = new Set(omonimi.map((s) => String(s.artistName || "")));
+        if (omonimi.length >= 4 && artistiDiversi.size >= 3) return "";
       }
       // 2) e' un artista esatto
       for (const s of risultati) {
