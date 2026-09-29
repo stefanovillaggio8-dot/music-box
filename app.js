@@ -16,10 +16,10 @@
     { title: "thasup - s!r!", file: "songs/track-12.mp3", artist: "thasup" },
     { title: "Tony Boy - Victoria", file: "songs/track-13.mp3", artist: "Tony Boy" },
     { title: "Un mondo a parte (Visual)", file: "songs/track-14.mp3", artist: "Jovanotti" },
-    { title: "Sogni Appesi", file: "songs/track-15.mp3", artist: "", profile: "Ste" },
+    { title: "Sogni Appesi", file: "songs/track-15.mp3", artist: "Ultimo", profile: "Ste" },
     { title: "nayt - Exit", file: "songs/track-16.mp3", artist: "nayt", profile: "Ste" },
     { title: "Hai visto mai", file: "songs/track-17.mp3", artist: "Frah Quintale", profile: "Ste" },
-    { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "", profile: "Ste" },
+    { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "Jovanotti", profile: "Ste" },
     { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
     { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
@@ -37,7 +37,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.36";
+  const APP_VERSION = "6.37";
 
   let recovering = false;
   async function selfHeal() {
@@ -296,6 +296,22 @@
       console.warn("Testi non disponibili", e);
       lyricsData = {};
     }
+  }
+
+  /* Passa all'avvio su tutti i brani: chi non ha la copertina cerca di
+     recuperarla da solo, e lascia traccia di quelli che restano scoperti
+     (serve a me per capire quando manca qualcosa in covers.json). */
+  function recuperaCopertineMancanti() {
+    const senza = tracks.filter((t) => !t.cover);
+    if (!senza.length) return;
+    for (const t of senza) {
+      if (!t.builtin) enrichTrack(t.id);
+    }
+    const dettaglio = senza.slice(0, 8).map((t) => {
+      const k = normKey((t.artist || "") + " " + (t.title || ""));
+      return (t.artist || "?") + " - " + t.title + " [chiave " + k + (coversData[k] ? ": c'è in covers.json" : ": ASSENTE") + "]";
+    });
+    segnalaErrore("senza copertina: " + senza.length + " -> " + dettaglio.join(" || "));
   }
 
   async function loadCovers() {
@@ -2357,18 +2373,31 @@
     a.addEventListener("click", (ev) => {
       ev.preventDefault();
       segnalaErrore("yt premuto: " + q.slice(0, 60));
+      // Apro la scheda SUBITO, durante il clic. Prima aspettavo la ricerca
+      // e poi aprivo: il browser lo considerava una finestra popup e la
+      // bloccava, quindi su molti brani YouTube non si apriva.
+      let scheda = null;
+      try { scheda = window.open("about:blank", "_blank"); } catch (e) { scheda = null; }
       const testoVecchio = a.textContent;
       a.textContent = "...";
+      const vaiA = (destinazione) => {
+        if (scheda && !scheda.closed) {
+          try { scheda.location.href = destinazione; return; } catch (e) { /* noop */ }
+        }
+        // il browser ha bloccato la finestra: ci vado io nella stessa scheda
+        try { window.location.href = destinazione; } catch (e) { /* noop */ }
+      };
       cercaVideoEsatto(artista, titolo, secondi).then((esatto) => {
-        if (!a.isConnected) return;   // il brano e' sparito dalla lista
-        a.textContent = testoVecchio;
+        // se nel frattempo il brano si e' ridisegnato non importa: la scheda
+        // l'ho gia' aperta e voglio comunque mostrargli il video
+        if (a.isConnected) a.textContent = testoVecchio;
         if (esatto) {
+          segnalaErrore("video esatto: " + esatto);
           copiaNegliAppunti(esatto).then((ok) => {
             toast(ok ? "Video originale trovato e link copiato negli appunti"
               : "Video originale trovato, ma non sono riuscito a copiare il link");
           });
-          segnalaErrore("video esatto: " + esatto);
-          try { window.open(esatto, "_blank", "noopener"); } catch (e) { /* noop */ }
+          vaiA(esatto);
           return;
         }
         copiaNegliAppunti(ricerca).then((ok) => {
@@ -2376,7 +2405,7 @@
             ? "Non ho trovato il video esatto: ho aperto la ricerca e copiato il link"
             : "Apro la ricerca su YouTube: \"" + q + "\"");
         });
-        try { window.open(ricerca, "_blank", "noopener"); } catch (e) { /* noop */ }
+        vaiA(ricerca);
       });
     });
     return a;
@@ -4279,6 +4308,7 @@ function closeImport() {
     await loadCovers();
     if (db) await loadLocalLyrics();
     await loadAll();
+    recuperaCopertineMancanti();
     refreshCachedSongs();
     updateRestoreButton();
     updatePlayerHeight();
