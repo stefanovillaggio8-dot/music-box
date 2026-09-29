@@ -37,7 +37,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.32";
+  const APP_VERSION = "6.33";
 
   let recovering = false;
   async function selfHeal() {
@@ -1680,7 +1680,32 @@
         const p = titleMatch(mio, normKey(s.artistName)).score;
         if (p > punteggio) { punteggio = p; migliore = String(s.artistName); }
       }
-      return punteggio >= 88 ? migliore : "";
+      if (punteggio >= 88) return migliore;
+      // 4) Ultimo tentativo: chiedo l'elenco degli artisti.
+      //    Nei risultati dei brani il nome e' spesso "Kid Yugi, Night Skinny &
+      //    Artie 5ive", quindi non coincide mai e senza questo passaggio un
+      //    artista come "kid yugi" finiva trattato come titolo di un brano.
+      if (!forzato) {
+        try {
+          const r2 = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(t) +
+            "&entity=musicArtist&limit=8&country=IT", 12000);
+          if (r2.ok) {
+            const d2 = await r2.json();
+            const artisti = (d2 && d2.results) || [];
+            for (const a of artisti) {
+              if (a && a.artistName && normKey(a.artistName) === mio) return String(a.artistName);
+            }
+            let m2 = "", p2 = 0;
+            for (const a of artisti) {
+              if (!a || !a.artistName) continue;
+              const p = titleMatch(mio, normKey(a.artistName)).score;
+              if (p > p2) { p2 = p; m2 = String(a.artistName); }
+            }
+            if (p2 >= 90) return m2;
+          }
+        } catch (e) { /* noop */ }
+      }
+      return "";
     } catch (e) { return ""; }
   }
 
@@ -3411,12 +3436,22 @@
         trovate = [];
       }
       if (!trovate.length) {
-        // di quell'artista non c'e' niente: la riga torna a essere un titolo
+        // di quell'artista non c'e' niente: lo lascio scritto come artista
+        // e basta. Prima lo trasformavo in un titolo di brano, e finivo
+        // per proporre una canzone qualsiasi che non c'entra niente.
         const segnaposto = importList.indexOf(g.segnaposto);
         if (segnaposto >= 0) importList.splice(segnaposto, 1);
-        const item = { title: g.nome, artist: "", state: "searching", meta: null, candidates: [] };
+        const item = {
+          gruppo: "",
+          title: g.nome,
+          artist: "",
+          state: "missing",
+          tagMancato: "nessun brano di quest'artista",
+          meta: null,
+          candidates: []
+        };
         importList.push(item);
-        daCercare.push(item);
+        renderImports();
         continue;
       }
       const gruppo = "Canzoni di " + g.nome + " (" + trovate.length + ")";
