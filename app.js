@@ -22,8 +22,6 @@
     { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "", profile: "Ste" },
     { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
-    { title: "Canzone Test", file: "songs/track-21.mp3", artist: "Prova Uno", profile: "Ste" },
-    { title: "Canzone Test", file: "songs/track-22.mp3", artist: "Prova Due", profile: "Emanuele" },
     { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
     { title: "zero rimorsi", file: "songs/track-24.mp3", artist: "il tre", profile: "Ste" },
     { title: "Poter scegliere", file: "songs/track-25.mp3", artist: "nayt", profile: "Ste" },
@@ -38,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.33";
+  const APP_VERSION = "6.34";
 
   let recovering = false;
   async function selfHeal() {

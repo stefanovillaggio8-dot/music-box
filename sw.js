@@ -32,8 +32,6 @@ const SONGS = [
   "./songs/track-18.mp3",
   "./songs/track-19.mp3",
   "./songs/track-20.mp3",
-  "./songs/track-21.mp3",
-  "./songs/track-22.mp3",
   "./songs/track-23.mp3",
   "./songs/track-24.mp3",
   "./songs/track-25.mp3",
