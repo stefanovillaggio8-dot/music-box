@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.44";
+  const APP_VERSION = "6.45";
 
   let recovering = false;
   async function selfHeal() {
@@ -3055,6 +3055,11 @@
     return !!(nodo && nodo.isConnected);
   }
 
+  /* Un solo pulsante e non devi incollare piu' niente a mano:
+     cerco io il video giusto, te lo apro, te lo metto negli appunti e parto
+     subito con la conversione. Prima dovevi aprire YouTube, copiare il link,
+     tornare indietro e incollarlo: erano 4 passaggi e sembrava che non
+     funzionasse. Il campo dove incollare resta, per quando sbaglio video. */
   async function campoLinkYouTube(item, cartella, stato) {
     const el = item.el;
     if (!el) return;
@@ -3073,6 +3078,36 @@
       el.ytUrl.focus();
       return;
     }
+    /* Apro la scheda SUBITO, durante il clic: se aspetto la ricerca il
+       browser la blocca, e senza scheda non posso mostrarti il video. */
+    let scheda = null;
+    try { scheda = window.open("about:blank", "_blank"); } catch (e) { scheda = null; }
+    scriviStatoPonte(stato, "cerco il video giusto su YouTube...");
+    const esatto = await cercaVideoEsatto(item.artist, item.title, item.secs);
+    if (!rigaViva(el)) return;
+    scriviStatoPonte(stato, "programma sul PC: acceso");
+    if (!esatto) {
+      // non ho trovato il brano: apro la ricerca cosi' la vedi e scegli tu
+      const ricerca = "https://www.youtube.com/results?search_query=" +
+        encodeURIComponent([item.artist, item.title].filter(Boolean).join(" "));
+      if (scheda) { try { scheda.location.replace(ricerca); } catch (e) {} }
+      copiaNegliAppunti(ricerca);
+      toast("Non ho trovato il video esatto: ti ho aperto la ricerca e ho copiato il link");
+      segnalaErrore("video esatto non trovato: apro la ricerca");
+      campoLinkManuale(item, stato);
+      return;
+    }
+    if (scheda) { try { scheda.location.replace(esatto); } catch (e) {} }
+    copiaNegliAppunti(esatto);
+    segnalaErrore("video esatto: " + esatto);
+    toast("Video giusto trovato e link copiato: sto scaricando");
+    await convertiDaYouTube(item, esatto);
+  }
+
+  /* Il campo da incollare, per quando serve scegliere il video a mano. */
+  function campoLinkManuale(item, stato) {
+    const el = item.el;
+    if (!el || el.ytUrl) return;
     const invio = document.createElement("span");
     invio.className = "imp-nota-anteprima";
     invio.textContent = "incolla qui il link di YouTube (quello che finisce con watch?v=...)";
@@ -3095,9 +3130,10 @@
 
   // Scarica l'mp3 dal PC e lo mette subito in libreria, agganciandolo a questo
   // brano. Mostra l'avanzamento mentre arrivano i byte.
-  async function convertiDaYouTube(item) {
+  // urlPronto: quando l'ho gia' trovato io, non aspetto che lo incolli.
+  async function convertiDaYouTube(item, urlPronto) {
     const el = item.el;
-    const url = el.ytUrl ? el.ytUrl.value.trim() : "";
+    const url = urlPronto || (el.ytUrl ? el.ytUrl.value.trim() : "");
     if (!url) {
       toast("Prima incolla il link di YouTube");
       segnalaErrore("Scarica premuto ma il campo era vuoto");
