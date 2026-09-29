@@ -37,7 +37,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.38";
+  const APP_VERSION = "6.39";
 
   let recovering = false;
   async function selfHeal() {
@@ -2134,7 +2134,9 @@
   /* Scrivevo solo "nayt": invece di un brano, cerco TUTTE le canzoni
      di quell'artista. L'elenco esce dal catalogo pubblico di iTunes,
      poi ogni canzone la cerco anche dove si scarica per davvero. */
-  const ARTIST_TRACK_LIMIT = 20;
+  // Prima fermava a 20 brani per artista, e con artisti grandi (Nayt ne ha
+  // 69 su iTunes) ne mostrava pochissimi. Ora tiene il passo con la lista.
+  const ARTIST_TRACK_LIMIT = 60;
 
   function itunesArtwork(url) {
     return String(url || "").replace("100x100", "600x600");
@@ -2150,9 +2152,42 @@
     return g.startsWith(w) && g.length <= w.length + 22;
   }
 
+  /* L'id dell'artista su iTunes: serve per aprirne il catalogo completo. */
+  async function itunesArtistId(name) {
+    const mio = normKey(name);
+    if (!mio) return 0;
+    try {
+      const r = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(name) +
+        "&entity=musicArtist&limit=8&country=IT", 12000);
+      if (!r.ok) return 0;
+      const d = await r.json();
+      for (const a of ((d && d.results) || [])) {
+        if (a && a.artistId && normKey(a.artistName) === mio) return a.artistId;
+      }
+    } catch (e) { /* noop */ }
+    return 0;
+  }
+
   async function itunesArtistTracks(name) {
     const out = [];
     const vistati = new Set();
+    const aggiungi = (s) => {
+      if (out.length >= ARTIST_TRACK_LIMIT) return;
+      if (!s || !s.trackName || !s.artistName) return;
+      if (!artistaCatalogo(name, s.artistName)) return;
+      const key = normKey(s.artistName + " " + s.trackName);
+      if (vistati.has(key)) return;
+      vistati.add(key);
+      out.push({
+        artist: s.artistName,
+        title: s.trackName,
+        album: s.collectionName || "",
+        cover: itunesArtwork(s.artworkUrl100),
+        secs: Math.round((s.trackTimeMillis || 0) / 1000),
+        preview: s.previewUrl || ""
+      });
+    };
+    // 1) ricerca normale, che trova subito i pezzi piu' noti
     for (const term of [name, name + " canzoni"]) {
       let data = null;
       try {
@@ -2163,23 +2198,23 @@
       } catch (e) {
         continue;
       }
-      for (const s of (data.results || [])) {
-        if (out.length >= ARTIST_TRACK_LIMIT) break;
-        if (!s || !s.trackName || !s.artistName) continue;
-        if (!artistaCatalogo(name, s.artistName)) continue;
-        const key = normKey(s.artistName + " " + s.trackName);
-        if (vistati.has(key)) continue;
-        vistati.add(key);
-        out.push({
-          artist: s.artistName,
-          title: s.trackName,
-          album: s.collectionName || "",
-          cover: itunesArtwork(s.artworkUrl100),
-          secs: Math.round((s.trackTimeMillis || 0) / 1000),
-          preview: s.previewUrl || ""
-        });
-      }
+      for (const s of (data.results || [])) aggiungi(s);
       if (out.length >= 3) break;
+    }
+    // 2) catalogo dell'artista: la ricerca normale ne trova solo una parte.
+    //    Per "kid yugi" dava 5 brani, cosi' invece arrivano tutti.
+    if (out.length < ARTIST_TRACK_LIMIT) {
+      const id = await itunesArtistId(name);
+      if (id) {
+        try {
+          const r = await fetchConScadenza("https://itunes.apple.com/lookup?id=" + id +
+            "&entity=song&limit=200&country=IT", 15000);
+          if (r.ok) {
+            const d = await r.json();
+            for (const s of ((d && d.results) || [])) aggiungi(s);
+          }
+        } catch (e) { /* noop */ }
+      }
     }
     return out;
   }
@@ -2373,37 +2408,50 @@
     a.addEventListener("click", (ev) => {
       ev.preventDefault();
       segnalaErrore("yt premuto: " + q.slice(0, 60));
-      // Apro subito la ricerca su YouTube, durante il clic: aspettare la
-      // ricerca del video esatto faceva restare la scheda su about:blank, e
-      // aprire dopo veniva bloccato come popup. Cosi' l'utente vede subito
-      // qualcosa, e quando trovo il video originale la stessa scheda ci va.
+      // Apro subito una scheda (durante il clic, altrimenti il browser la
+      // blocca) ma con un avviso dentro: se lascio about:blank sembra rotto,
+      // e se apro direttamente la ricerca di YouTube sembra che non abbia
+      // trovato niente. La ricerca del video esatto puo' mettere 10 secondi.
       let scheda = null;
-      try { scheda = window.open(ricerca, "_blank"); } catch (e) { scheda = null; }
+      try { scheda = window.open("about:blank", "_blank"); } catch (e) { scheda = null; }
       if (!scheda) {
         segnalaErrore("yt: il browser ha bloccato la nuova scheda");
         copiaNegliAppunti(ricerca);
         toast("Il browser ha bloccato la nuova scheda: link di ricerca copiato negli appunti");
         return;
       }
+      try {
+        scheda.document.open();
+        scheda.document.write(
+          "<!doctype html><html><head><meta charset='utf-8'><title>Cerco il video</title></head>" +
+          "<body style='background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif;" +
+          "display:flex;height:100vh;align-items:center;justify-content:center;text-align:center'>" +
+          "<div><div style='font-size:34px'>&#127916;</div>" +
+          "<p style='font-size:18px'>Sto cercando il video originale di</p>" +
+          "<p style='font-size:22px;font-weight:700'>" + String(q).replace(/[<>&]/g, " ") + "</p>" +
+          "<p style='color:#8b949e;font-size:15px'>Ci metto qualche secondo. Non chiudere questa scheda.</p></div>" +
+          "</body></html>");
+        scheda.document.close();
+      } catch (e) { /* la scheda non si lascia scrivere: pazienza */ }
       const testoVecchio = a.textContent;
       a.textContent = "...";
       cercaVideoEsatto(artista, titolo, secondi).then((esatto) => {
         if (a.isConnected) a.textContent = testoVecchio;
         if (!esatto) {
-          copiaNegliAppunti(ricerca).then((ok) => {
-            toast(ok
-              ? "Non ho trovato il video esatto: ho aperto la ricerca e copiato il link"
-              : "Ho aperto la ricerca su YouTube: \"" + q + "\"");
-          });
+          // niente video esatto: allora si va alla ricerca, che almeno la
+          // vedi e la cerchi tu
+          try { scheda.location.replace(ricerca); } catch (e) {
+            try { scheda.location.href = ricerca; } catch (e2) { /* noop */ }
+          }
+          copiaNegliAppunti(ricerca);
+          toast("Non ho trovato il video esatto: ti ho aperto la ricerca");
+          segnalaErrore("video esatto non trovato per: " + q.slice(0, 60));
           return;
         }
-        // la scheda c'e' gia': la porto al video originale
-        let spostata = false;
-        try { scheda.location.replace(esatto); spostata = true; } catch (e) { /* noop */ }
-        if (!spostata) {
-          try { scheda.location.href = esatto; spostata = true; } catch (e) { /* noop */ }
+        try { scheda.location.replace(esatto); } catch (e) {
+          try { scheda.location.href = esatto; } catch (e2) { /* noop */ }
         }
-        segnalaErrore("video esatto: " + esatto + (spostata ? " (schedata aggiornata)" : " (schedata non aggiornabile)"));
+        segnalaErrore("video esatto: " + esatto);
         copiaNegliAppunti(esatto).then((ok) => {
           toast(ok ? "Video originale trovato e link copiato negli appunti"
             : "Video originale trovato, ma non sono riuscito a copiare il link");
