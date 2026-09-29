@@ -26,6 +26,7 @@
     { title: "Canzone Test", file: "songs/track-22.mp3", artist: "Prova Due", profile: "Emanuele" },
     { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
     { title: "zero rimorsi", file: "songs/track-24.mp3", artist: "il tre", profile: "Ste" },
+    { title: "Poter scegliere", file: "songs/track-25.mp3", artist: "nayt", profile: "Ste" },
 ];
 
   const PALETTE = [
