@@ -36,7 +36,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.35";
+  const APP_VERSION = "6.36";
 
   let recovering = false;
   async function selfHeal() {
@@ -999,7 +999,10 @@
   async function playById(id, autoplay = true) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
-    if (id !== currentId) resumeAt = LS.get("mb.pos." + id, 0);
+    // Ogni brano parte dall'inizio. Prima riprendeva da dove avevo lasciato
+    // la volta prima, e capitava di sentire un brano gia' a meta' senza
+    // averlo scelto tu.
+    if (id !== currentId) resumeAt = 0;
     currentId = id;
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
@@ -1222,7 +1225,8 @@
       if (last) {
         currentId = last.id;
         audio.src = last.url;
-        const pos = st.time || 0;
+        // anche cambiando profilo il brano riparte dall'inizio
+        const pos = 0;
         audio.addEventListener("loadedmetadata", () => {
           if (pos > 0 && isFinite(audio.duration)) {
             try { audio.currentTime = Math.min(pos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
@@ -4287,7 +4291,8 @@ function closeImport() {
     const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
     if (lastTrack) {
       currentId = lastTrack.id;
-      const restorePos = st.time || 0;
+      // anche riaprendo la app il brano riparte da capo, non da meta'
+      const restorePos = 0;
       audio.src = lastTrack.url;
       audio.addEventListener("loadedmetadata", () => {
         if (restorePos > 0 && isFinite(audio.duration)) {
