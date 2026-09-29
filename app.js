@@ -26,6 +26,7 @@
     { title: "zero rimorsi", file: "songs/track-24.mp3", artist: "il tre", profile: "Ste" },
     { title: "Poter scegliere", file: "songs/track-25.mp3", artist: "nayt", profile: "Ste" },
     { title: "NON MI RICONOSCO", file: "songs/track-26.mp3", artist: "MACE", profile: "Ste" },
+    { title: "Il Filmografo", file: "songs/track-27.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [
