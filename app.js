@@ -40,7 +40,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.39";
+  const APP_VERSION = "6.40";
 
   let recovering = false;
   async function selfHeal() {
@@ -338,11 +338,33 @@
     return normKey((artist || "") + " " + stripArtistPrefix(artist, title));
   }
 
+  /* Chiave "sporca", senza togliere cio' che c'e' tra parentesi: serve perche'
+     il programma che scarica le copertine le chiama in un modo e io in
+     un altro (per esempio "nayt - Poter scegliere - Nayt (Live)": qui
+     diventa naytpotersceglierenayt, li' naytpotersceglierenaytlive).
+     Se provo una sola forma, quelle copertine non le trovo mai. */
+  function chiaveSemplice(s) {
+    return String(s || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "");
+  }
+
   function coverInfo(artist, title) {
-    const k1 = coverKey(artist, title);
-    if (coversData[k1]) return coversData[k1];
-    const k2 = normKey((artist || "") + " " + (title || ""));
-    return coversData[k2] || null;
+    const senzaArtista = stripArtistPrefix(artist, title);
+    const varianti = [
+      coverKey(artist, title),
+      normKey((artist || "") + " " + (title || "")),
+      chiaveSemplice((artist || "") + " " + (title || "")),
+      chiaveSemplice((artist || "") + " " + senzaArtista),
+      normKey(title || ""),
+      chiaveSemplice(title || "")
+    ];
+    for (const k of varianti) {
+      if (k && coversData[k] && coversData[k].cover) return coversData[k];
+    }
+    return null;
   }
 
   async function loadLocalLyrics() {
