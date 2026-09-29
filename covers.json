@@ -182,5 +182,21 @@
     "album": "NON MI RICONOSCO",
     "source": "Deezer",
     "date": "2026-09-29T00:26:58.033Z"
+  },
+  "ultimosogniappesi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
+    "title": "Sogni appesi",
+    "artist": "Ultimo",
+    "album": "Pianeti",
+    "source": "Deezer",
+    "date": "2026-09-29T00:31:31.579Z"
+  },
+  "jovanottiilpiugrandespettacolodopoilbigbang": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
+    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+    "artist": "Jovanotti",
+    "album": "Ora (Special Super Deluxe Box)",
+    "source": "Deezer",
+    "date": "2026-09-29T00:31:32.931Z"
   }
 }
