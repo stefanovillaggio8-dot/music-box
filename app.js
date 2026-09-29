@@ -27,6 +27,7 @@
     { title: "Poter scegliere", file: "songs/track-25.mp3", artist: "nayt", profile: "Ste" },
     { title: "NON MI RICONOSCO", file: "songs/track-26.mp3", artist: "MACE", profile: "Ste" },
     { title: "Il Filmografo", file: "songs/track-27.mp3", artist: "Kid Yugi", profile: "Ste" },
+    { title: "Paganini", file: "songs/track-28.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [
