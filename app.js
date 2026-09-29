@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.43";
+  const APP_VERSION = "6.44";
 
   let recovering = false;
   async function selfHeal() {
@@ -2592,7 +2592,8 @@
       const q = "?artista=" + encodeURIComponent(artista || "") +
         "&titolo=" + encodeURIComponent(titolo || "") +
         "&sec=" + encodeURIComponent(String(Math.round(secondi || 0) || 0));
-      const r = await fetch(PONTE_URL + "/cerca" + q, { cache: "no-store", signal: ctl.signal });
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const r = await fetch(base + "/cerca" + q, { cache: "no-store", signal: ctl.signal });
       clearTimeout(scad);
       if (!r.ok) return "";
       const j = await r.json();
@@ -2959,17 +2960,46 @@
      solo sulla mia macchina e ascolta su 127.0.0.1. Se e' acceso, posso
      scaricare e convertire da solo. Funziona SOLO aprendo la app sul PC:
      dal telefono il browser blocca la richiesta, e va bene cosi'. */
-  const PONTE_URL = "http://127.0.0.1:8788";
-  let ponteCache = null;
+  /* Il programma che scarica puo' stare sul computer stesso (127.0.0.1) oppure
+     nella rete privata di casa (Tailscale, indirizzo 100.x): dal telefono
+     127.0.0.1 sarebbe il telefono stesso, quindi provo piu' indirizzi.
+     Resto solo su 127.0.0.1 e sull'indirizzo privato: mai su 0.0.0.0, che
+     aprirebbe il programma a chiunque sia sul Wi-Fi. */
+  const INDIRIZZI_PONTE = ["http://127.0.0.1:8788", "http://100.106.211.2:8788"];
+  let ponteCheRisponde = "";
+  let segnalatoIndirizzo = "";
 
   // Manda un errore al registro del programma sul PC, se e' acceso.
   // Serve a me per capire cosa si rompe senza dover chiedere ogni volta.
+
+  /* Provo gli indirizzi uno alla volta finche' uno risponde.
+     Sul computer risponde 127.0.0.1, dal telefono risponde l'indirizzo
+     della rete privata. Uso quello che ha risposto per tutte le richieste
+     successive, cosi' non rifaccio la prova ogni volta. */
+  async function trovaPonte() {
+    if (ponteCheRisponde) return ponteCheRisponde;
+    for (const base of INDIRIZZI_PONTE) {
+      try {
+        const ctl = new AbortController();
+        const scad = setTimeout(() => ctl.abort(), 1800);
+        const r = await fetch(base + "/ping", { cache: "no-store", signal: ctl.signal });
+        clearTimeout(scad);
+        if (r.ok) {
+          ponteCheRisponde = base;
+          return base;
+        }
+      } catch (e) { /* questo indirizzo non va bene, provo il prossimo */ }
+    }
+    return "";
+  }
+
   function segnalaErrore(testo) {
     const msg = "v" + APP_VERSION + " | " + String(testo || "").slice(0, 300);
     try {
+      const base = ponteCheRisponde || INDIRIZZI_PONTE[0];
       const ctl = new AbortController();
       const scad = setTimeout(() => ctl.abort(), 3000);
-      fetch(PONTE_URL + "/log", {
+      fetch(base + "/log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ testo: msg }),
@@ -2980,31 +3010,35 @@
 
   async function ponteOnline() {
     if (ponteCache && Date.now() - ponteCache.t < 15000) return ponteCache.ok;
+    const base = await trovaPonte();
     let ok = false;
     let perche = "";
-    try {
-      const ctl = new AbortController();
-      const scad = setTimeout(() => ctl.abort(), 1500);
-      const r = await fetch(PONTE_URL + "/ping", { cache: "no-store", signal: ctl.signal });
-      clearTimeout(scad);
-      ok = !!r.ok;
-      if (!ok) perche = "risposta " + r.status;
-    } catch (e) {
-      ok = false;
-      // il motivo vero: dal telefono o da una pagina su internet il browser
-      // blocca la richiesta, e senza sapere questo sembra un mio bug
-      perche = String((e && (e.name + ": " + e.message)) || "errore");
+    if (!base) {
+      perche = "nessun indirizzo risponde (" + INDIRIZZI_PONTE.join(", ") + ")";
+    } else {
+      try {
+        const ctl = new AbortController();
+        const scad = setTimeout(() => ctl.abort(), 1500);
+        const r = await fetch(base + "/ping", { cache: "no-store", signal: ctl.signal });
+        clearTimeout(scad);
+        ok = !!r.ok;
+        if (!ok) perche = "risposta " + r.status;
+      } catch (e) {
+        ok = false;
+        // il motivo vero: dal telefono o da una pagina su internet il browser
+        // blocca la richiesta, e senza sapere questo sembra un mio bug
+        perche = String((e && (e.name + ": " + e.message)) || "errore");
+      }
     }
     ponteCache = { ok: ok, t: Date.now() };
     if (segnalatoIndirizzo !== window.location.href) {
       segnalatoIndirizzo = window.location.href;
       segnalaErrore("pagina aperta su " + window.location.href +
         (window.isSecureContext ? " (sicura)" : " (non sicura)") +
-        " -> programma sul PC " + (ok ? "raggiungibile" : "NON raggiungibile: " + perche));
+        " -> programma sul PC " + (ok ? "raggiungibile su " + base : "NON raggiungibile: " + perche));
     }
     return ok;
   }
-  let segnalatoIndirizzo = "";
 
   // Campo dove incollare il link di YouTube, col tasto per convertirlo.
   // cartella: "" (solo libreria), "ste" o "emanuela" (salva anche la copia).
@@ -3078,7 +3112,8 @@
     el.fill.style.width = "3%";
     el.bytes.textContent = "converto col PC...";
     try {
-      const r = await fetch(PONTE_URL + "/convert", {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+    const r = await fetch(base + "/convert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
