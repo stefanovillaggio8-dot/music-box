@@ -40,7 +40,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.40";
+  const APP_VERSION = "6.41";
 
   let recovering = false;
   async function selfHeal() {
@@ -247,7 +247,143 @@
   }
 
   /* ---------- Caricamento tracce ---------- */
+  /* ---------- Rinominare un brano tenendo premesso ----------
+     Il nome nuovo lo tengo da parte per dispositivo, senza toccare la
+     libreria sul PC: e' il modo meno invasivo e funziona anche per i brani
+     che vengono dal sito (che non posso modificare li'). */
+  let editId = null;
+
+  function nomiRinomati() {
+    try {
+      return LS.get("mb.rinomini", {}) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function applicaRinomina(t) {
+    const mappa = nomiRinomati();
+    const r = mappa[t.id];
+    if (!r) return t;
+    if (r.title) t.title = r.title;
+    if (r.artist) t.artist = r.artist;
+    return t;
+  }
+
+  function applicaRinomine() {
+    const mappa = nomiRinomati();
+    for (const t of tracks) {
+      const r = mappa[t.id];
+      if (!r) continue;
+      if (r.title) t.title = r.title;
+      if (r.artist) t.artist = r.artist;
+    }
+  }
+
+  function apriRinomina(id) {
+    const t = tracks.find((x) => x.id === id);
+    if (!t) return;
+    editId = id;
+    $("editTitle").value = t.title || "";
+    $("editArtist").value = t.artist || "";
+    const mappa = nomiRinomati();
+    $("editAvviso").textContent = mappa[id]
+      ? "Questo brano ha gia' un nome cambiato su questo dispositivo."
+      : "Il cambio vale solo su questo telefono o computer.";
+    $("editPanel").hidden = false;
+    syncNoScroll();
+    try { $("editTitle").focus(); } catch (e) { /* noop */ }
+  }
+
+  function chiudiRinomina(salva) {
+    const id = editId;
+    editId = null;
+    $("editPanel").hidden = true;
+    syncNoScroll();
+    if (!salva || !id) return;
+    const mappa = nomiRinomati();
+    mappa[id] = { title: String($("editTitle").value || "").trim(), artist: String($("editArtist").value || "").trim() };
+    if (!mappa[id].title && !mappa[id].artist) delete mappa[id];
+    try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
+    applicaRinomine();
+    render();
+    toast("Nome cambiato");
+  }
+
+  $("editSave").addEventListener("click", () => chiudiRinomina(true));
+  $("editCancel").addEventListener("click", () => chiudiRinomina(false));
+  $("editReset").addEventListener("click", () => {
+    const id = editId;
+    if (!id) return;
+    const mappa = nomiRinomati();
+    delete mappa[id];
+    try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
+    editId = null;
+    $("editPanel").hidden = true;
+    syncNoScroll();
+    applicaRinomine();
+    render();
+    toast("Rimesso il nome originale");
+  });
+  $("editPanel").addEventListener("click", (e) => {
+    if (e.target === $("editPanel")) chiudiRinomina(false);
+  });
+
+  /* Tieni premesso (telefono e computer) e si apre la modifica del nome. */
+  function collegaPressioneLunga(el, id) {
+    let timer = null;
+    let giaPartito = false;
+    const via = (v) => { timer = setTimeout(() => { giaPartito = true; apriRinomina(id); }, 600); };
+    const pulisci = () => { if (timer) clearTimeout(timer); timer = null; };
+    el.addEventListener("touchstart", () => via(), { passive: true });
+    el.addEventListener("touchend", () => setTimeout(pulisci, 60), { passive: true });
+    el.addEventListener("touchmove", pulisci, { passive: true });
+    el.addEventListener("mousedown", () => via());
+    el.addEventListener("mouseup", pulisci);
+    el.addEventListener("mouseleave", pulisci);
+    el.addEventListener("contextmenu", (e) => { e.preventDefault(); apriRinomina(id); });
+    // se la pressione lunga ha aperto la finestra, il click non deve suonare
+    el.addEventListener("click", (e) => {
+      if (giaPartito) { giaPartito = false; e.stopPropagation(); e.preventDefault(); }
+    }, true);
+  }
+
+  /* Se il profilo aperto non ha brani ma un altro profilo ne ha, te lo dico:
+     succede perche' le librerie sono diverse e si sembra sparito tutto. */
+  function avvisaProfiloVuoto() {
+    const avviso = $("avvisoProfilo");
+    if (!avviso) return;
+    if (tracks.length) {
+      avviso.hidden = true;
+      return;
+    }
+    const miei = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === profile).length;
+    if (miei > 0) {
+      avviso.hidden = true;
+      return;
+    }
+    const altro = profile === DEFAULT_PROFILE ? OTHER_PROFILE : DEFAULT_PROFILE;
+    const quanti = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === altro).length;
+    if (!quanti) {
+      avviso.hidden = true;
+      return;
+    }
+    avviso.innerHTML = "";
+    const p = document.createElement("div");
+    p.textContent = "Nel profilo " + profile + " non ci sono brani. In " + altro + " ce ne sono " + quanti + ".";
+    const b = document.createElement("button");
+    b.textContent = "Vai al profilo " + altro;
+    b.addEventListener("click", () => {
+      avviso.hidden = true;
+      switchProfile(altro);
+    });
+    avviso.appendChild(p);
+    avviso.appendChild(b);
+    avviso.hidden = false;
+  }
+
   async function loadAll() {
+    applicaRinomine();
     const builtin = BUILTIN
       .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
       .map((b, i) => {
@@ -495,6 +631,7 @@
       return;
     }
     emptyEl.hidden = true;
+    avvisaProfiloVuoto();
 
     list.forEach((t) => {
       const li = document.createElement("li");
@@ -537,6 +674,9 @@
 
       li.appendChild(art);
       li.appendChild(info);
+      // tenendo premuto (o col tasto destro) si cambia il nome della canzone
+      collegaPressioneLunga(li, t.id);
+      li.title = "Tieni premuto per cambiare il nome";
 
       const favBtn = document.createElement("button");
       favBtn.className = "track-fav" + (favorites.has(t.id) ? " on" : "");

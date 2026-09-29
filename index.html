@@ -63,6 +63,7 @@
     <p class="track-count" id="trackCount"></p>
     <ul class="playlist" id="playlist"></ul>
     <p class="empty" id="empty" hidden>Nessun brano trovato.</p>
+  <div class="avviso-profilo" id="avvisoProfilo" hidden></div>
   </main>
 
   <button class="fab" id="fab" aria-label="Aggiungi musica">
@@ -228,6 +229,23 @@
       <div class="confirm-actions">
         <button class="btn-ghost" id="confirmNo">Annulla</button>
         <button class="btn-main danger" id="confirmYes">Elimina</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rinomina il brano: si apre tenendo premuto sulla canzone -->
+  <div class="confirm-overlay" id="editPanel" hidden>
+    <div class="confirm-card">
+      <p class="confirm-title">Cambia il nome</p>
+      <label class="edit-label" for="editTitle">Nome della canzone</label>
+      <input class="edit-input" id="editTitle" type="text" autocomplete="off">
+      <label class="edit-label" for="editArtist">Artista</label>
+      <input class="edit-input" id="editArtist" type="text" autocomplete="off">
+      <p class="confirm-msg" id="editAvviso"></p>
+      <div class="confirm-actions">
+        <button class="btn-ghost" id="editReset">Rimetti l'originale</button>
+        <button class="btn-ghost" id="editCancel">Annulla</button>
+        <button class="btn-main" id="editSave">Salva</button>
       </div>
     </div>
   </div>

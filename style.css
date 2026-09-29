@@ -1121,6 +1121,48 @@ a.btn-mp3:active { background: rgba(110,231,160,.2); }
   border-color:transparent;
   font-weight:700;
 }
+/* Finestra per cambiare il nome del brano (tenendo premesso) */
+.edit-label {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 10px 0 4px;
+}
+.edit-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--txt);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.edit-input:focus { outline: 2px solid #7c5cff; outline-offset: 1px; }
+
+/* Avviso: "non ci sono brani in questo profilo" */
+.avviso-profilo {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #ffc46b;
+  background: rgba(255,196,107,.1);
+  border: 1px solid rgba(255,196,107,.35);
+  border-radius: 10px;
+}
+.avviso-profilo button {
+  margin-top: 8px;
+  padding: 7px 12px;
+  font-size: 12px;
+  color: #05070c;
+  background: #ffc46b;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
 /* ============================================================
    COLORI E GRUPPI DEI TASTI
    Stanno QUI IN FONDO apposta: la regola generale .btn-mini e'
