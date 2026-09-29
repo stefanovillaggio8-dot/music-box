@@ -37,7 +37,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.37";
+  const APP_VERSION = "6.38";
 
   let recovering = false;
   async function selfHeal() {
@@ -2373,39 +2373,41 @@
     a.addEventListener("click", (ev) => {
       ev.preventDefault();
       segnalaErrore("yt premuto: " + q.slice(0, 60));
-      // Apro la scheda SUBITO, durante il clic. Prima aspettavo la ricerca
-      // e poi aprivo: il browser lo considerava una finestra popup e la
-      // bloccava, quindi su molti brani YouTube non si apriva.
+      // Apro subito la ricerca su YouTube, durante il clic: aspettare la
+      // ricerca del video esatto faceva restare la scheda su about:blank, e
+      // aprire dopo veniva bloccato come popup. Cosi' l'utente vede subito
+      // qualcosa, e quando trovo il video originale la stessa scheda ci va.
       let scheda = null;
-      try { scheda = window.open("about:blank", "_blank"); } catch (e) { scheda = null; }
+      try { scheda = window.open(ricerca, "_blank"); } catch (e) { scheda = null; }
+      if (!scheda) {
+        segnalaErrore("yt: il browser ha bloccato la nuova scheda");
+        copiaNegliAppunti(ricerca);
+        toast("Il browser ha bloccato la nuova scheda: link di ricerca copiato negli appunti");
+        return;
+      }
       const testoVecchio = a.textContent;
       a.textContent = "...";
-      const vaiA = (destinazione) => {
-        if (scheda && !scheda.closed) {
-          try { scheda.location.href = destinazione; return; } catch (e) { /* noop */ }
-        }
-        // il browser ha bloccato la finestra: ci vado io nella stessa scheda
-        try { window.location.href = destinazione; } catch (e) { /* noop */ }
-      };
       cercaVideoEsatto(artista, titolo, secondi).then((esatto) => {
-        // se nel frattempo il brano si e' ridisegnato non importa: la scheda
-        // l'ho gia' aperta e voglio comunque mostrargli il video
         if (a.isConnected) a.textContent = testoVecchio;
-        if (esatto) {
-          segnalaErrore("video esatto: " + esatto);
-          copiaNegliAppunti(esatto).then((ok) => {
-            toast(ok ? "Video originale trovato e link copiato negli appunti"
-              : "Video originale trovato, ma non sono riuscito a copiare il link");
+        if (!esatto) {
+          copiaNegliAppunti(ricerca).then((ok) => {
+            toast(ok
+              ? "Non ho trovato il video esatto: ho aperto la ricerca e copiato il link"
+              : "Ho aperto la ricerca su YouTube: \"" + q + "\"");
           });
-          vaiA(esatto);
           return;
         }
-        copiaNegliAppunti(ricerca).then((ok) => {
-          toast(ok
-            ? "Non ho trovato il video esatto: ho aperto la ricerca e copiato il link"
-            : "Apro la ricerca su YouTube: \"" + q + "\"");
+        // la scheda c'e' gia': la porto al video originale
+        let spostata = false;
+        try { scheda.location.replace(esatto); spostata = true; } catch (e) { /* noop */ }
+        if (!spostata) {
+          try { scheda.location.href = esatto; spostata = true; } catch (e) { /* noop */ }
+        }
+        segnalaErrore("video esatto: " + esatto + (spostata ? " (schedata aggiornata)" : " (schedata non aggiornabile)"));
+        copiaNegliAppunti(esatto).then((ok) => {
+          toast(ok ? "Video originale trovato e link copiato negli appunti"
+            : "Video originale trovato, ma non sono riuscito a copiare il link");
         });
-        vaiA(ricerca);
       });
     });
     return a;
