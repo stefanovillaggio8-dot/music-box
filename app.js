@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.42";
+  const APP_VERSION = "6.43";
 
   let recovering = false;
   async function selfHeal() {
@@ -455,7 +455,23 @@
     const senza = tracks.filter((t) => !t.cover);
     if (!senza.length) return;
     for (const t of senza) {
-      if (!t.builtin) enrichTrack(t.id);
+      if (!t.builtin) {
+        // ritrovo la copertina e ridisegno quando arriva, altrimenti
+        // l'immagine resta vuota anche se poi e' stata trovata
+        Promise.resolve(enrichTrack(t.id)).then((fatto) => {
+          if (fatto) {
+            const ora = tracks.find((x) => x.id === t.id);
+            if (ora && !ora.cover) {
+              const gia = coverInfo(ora.artist, ora.title);
+              if (gia && gia.cover) {
+                ora.cover = gia.cover;
+                if (!ora.album) ora.album = gia.album || "";
+                render();
+              }
+            }
+          }
+        }).catch(() => { /* noop */ });
+      }
     }
     const dettaglio = senza.slice(0, 8).map((t) => {
       const k = normKey((t.artist || "") + " " + (t.title || ""));
@@ -1675,6 +1691,16 @@
   }
 
   async function findCoverLocal(artist, title) {
+    /* Prima guardo covers.json: e' il posto dove le copertine sono gia'
+       controllate e funzionanti (per esempio quelle prese da Deezer).
+       Prima chiedevo solo a iTunes, e cosi' quei brani restavano senza
+       immagine perche' iTunes non aveva (o non restituiva) il disegno. */
+    try {
+      const gia = coverInfo(artist, title);
+      if (gia && gia.cover) {
+        return { cover: gia.cover, album: gia.album || "" };
+      }
+    } catch (e) { /* noop */ }
     const term = (artist ? artist + " " : "") + stripVariants(title);
     try {
       const r = await fetchConScadenza("https://itunes.apple.com/search?term=" + encodeURIComponent(term) + "&entity=song&limit=8", 12000);
