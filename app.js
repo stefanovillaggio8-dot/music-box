@@ -35,6 +35,7 @@
     { title: "Lilith", file: "songs/track-33.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "Eva", file: "songs/track-34.mp3", artist: "Kid Yugi, Tedua & Junior K", profile: "Ste" },
     { title: "l'anima", file: "songs/track-35.mp3", artist: "madame", profile: "Ste" },
+    { title: "IL GIORNO CHE ASPETTAVO", file: "songs/track-36.mp3", artist: "Ultimo", profile: "Ste" },
 ];
 
   const PALETTE = [
