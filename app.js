@@ -43,6 +43,7 @@
     { title: "Lucifero", file: "songs/track-41.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "the cure", file: "songs/track-42.mp3", artist: "olivia rodriguo", profile: "Ste" },
     { title: "solo domande", file: "songs/track-43.mp3", artist: "nayt & 3D", profile: "Ste" },
+    { title: "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]", file: "songs/track-44.mp3", artist: "nayt", profile: "Ste" },
 ];
 
   const PALETTE = [
