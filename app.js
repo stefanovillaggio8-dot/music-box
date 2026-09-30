@@ -45,6 +45,7 @@
     { title: "solo domande", file: "songs/track-43.mp3", artist: "nayt & 3D", profile: "Ste" },
     { title: "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]", file: "songs/track-44.mp3", artist: "nayt", profile: "Ste" },
     { title: "ZZ Prova A", file: "songs/track-45.mp3", artist: "", profile: "Ste" },
+    { title: "ZZ Prova B", file: "songs/track-46.mp3", artist: "", profile: "Ste" },
 ];
 
   const PALETTE = [
