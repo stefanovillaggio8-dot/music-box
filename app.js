@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.61";
+  const APP_VERSION = "6.62";
 
   let recovering = false;
   async function selfHeal() {
@@ -3417,6 +3417,23 @@
      subito con la conversione. Prima dovevi aprire YouTube, copiare il link,
      tornare indietro e incollarlo: erano 4 passaggi e sembrava che non
      funzionasse. Il campo dove incollare resta, per quando sbaglio video. */
+  /* Se il brano e' gia' nella libreria non lo riscarico da YouTube: e' una
+     richiesta inutile che fa salire il conto delle richieste e, prima o poi,
+     porta a un blocco. Meglio dirti "ce l'hai gia'" e farti sentire quello
+     che hai. */
+  function giaInLibreria(t) {
+    try {
+      for (const x of tracks) {
+        if (!x || !x.url) continue;
+        if (hiddenTracks.has(x.id)) continue;
+        if (stessoBrano({ title: t.title, artist: t.artist }, { title: x.title, artist: x.artist })) {
+          return x;
+        }
+      }
+    } catch (e) { /* noop */ }
+    return null;
+  }
+
   async function campoLinkYouTube(item, cartella, stato) {
     const scrivi = (testo) => scriviStatoPonte(stato, testo);
     item.cartella = cartella || "";
@@ -3428,6 +3445,16 @@
     const el = item.el;
     if (!el) { scrivi("programma sul PC: spento"); return; }
     scrivi("programma sul PC: acceso");
+    /* Prima di tutto: e' gia' nella libreria? allora non scarico niente,
+       non solo per risparmiare, ma per non chiedere a YouTube. */
+    const gia = giaInLibreria(item);
+    if (gia && gia.url) {
+      scrivi("brano gia' in libreria");
+      toast("Questo brano ce l'hai gia': non lo riscarico");
+      segnalaErrore("brano gia' presente, non riscaricato: " +
+        String((item.artist || "") + " " + (item.title || "")).slice(0, 60));
+      return;
+    }
     if (!online) {
       scrivi("programma sul PC: spento");
       toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
