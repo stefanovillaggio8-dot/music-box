@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.48";
+  const APP_VERSION = "6.49";
 
   let recovering = false;
   async function selfHeal() {
@@ -104,6 +104,11 @@
     { nome: "Ari", cartella: "ari" }
   ];
   const DEFAULT_PROFILE = PROFILI[0].nome;
+  /* Il tasto semplice "Scarica l'mp3 col PC" adesso salva anche una copia
+     nella cartella del profilo: cosi' il brano finisce nella libreria
+     condivisa e si vede anche dagli altri dispositivi. Prima restava solo in
+     questo browser, e per questo si vedevano numeri diversi su PC e telefono. */
+  const CARTELLA_PREDEFINITA = PROFILI[0].cartella;
   let profile = DEFAULT_PROFILE;
   let profiles = [DEFAULT_PROFILE];
 
@@ -3269,8 +3274,8 @@
     // dichiaro lo stato PRIMA dei tasti: i tasti lo richiamano al click
     const stato = statoPonte(gruppo);
     scriviStatoPonte(stato, "controllo il PC...");
-    nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, "", stato),
-      "btn-mini-auto", "Scarico e converto io col PC: metto il brano in libreria");
+    nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, CARTELLA_PREDEFINITA, stato),
+      "btn-mini-auto", "Scarico e converto io col PC: il brano va in libreria e resta su tutti i dispositivi");
     // un tasto per ogni profilo: oltre che in libreria salvo una copia nella
     // sua cartella mp3 sul PC. Prima erano due scritti a mano.
     for (const p of PROFILI) {
@@ -4734,5 +4739,40 @@ function closeImport() {
         });
       }).catch((err) => console.warn("SW fallito", err));
     }
+
+    /* Controllo se online c'e' una versione piu' nuova di questa pagina.
+       Serve perche' i brani condivisi stanno dentro il codice: se il browser
+       tiene la copia vecchia, qui mancano gli ultimi brani e sembra che la
+       libreria sia diversa da un dispositivo all'altro. Prima non se ne
+       accorgeva nessuno. */
+    try {
+      fetch("app.js?t=" + Date.now(), { cache: "no-store" }).then((r) => r.text()).then((txt) => {
+        const m = /APP_VERSION\s*=\s*"([\d.]+)"/.exec(txt || "");
+        if (!m) return;
+        const remota = m[1];
+        const mia = String(APP_VERSION);
+        const num = (v) => v.split(".").map((n) => parseInt(n, 10) || 0);
+        const a = num(mia), b = num(remota);
+        const nuova = b[0] > a[0] || (b[0] === a[0] && (b[1] > a[1] || (b[1] === a[1] && b[2] > a[2])));
+        if (!nuova) return;
+        let avviso = document.getElementById("avviso-vecchia");
+        if (!avviso) {
+          avviso = document.createElement("div");
+          avviso.id = "avviso-vecchia";
+          avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
+            "background:#3b1e05;border:1px solid #f0883e;color:#ffd8a8;padding:10px 12px;" +
+            "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+          document.body.appendChild(avviso);
+        }
+        avviso.textContent = "Stai usando una versione vecchia (" + mia + " invece di " + remota +
+          "): qui mancano gli ultimi brani. Tocca per aggiornare.";
+        avviso.onclick = () => {
+          avviso.textContent = "Aggiorno...";
+          if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
+          setTimeout(() => window.location.reload(true), 900);
+        };
+        segnalaErrore("versione vecchia in uso: " + mia + ", online c'e' " + remota);
+      }).catch(() => { /* offline: niente avviso */ });
+    } catch (e) { /* noop */ }
   })();
 })();
