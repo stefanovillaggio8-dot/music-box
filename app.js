@@ -47,7 +47,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.50";
+  const APP_VERSION = "6.51";
 
   let recovering = false;
   async function selfHeal() {
@@ -4820,38 +4820,42 @@ function closeImport() {
       }).catch((err) => console.warn("SW fallito", err));
     }
 
-    /* Controllo se online c'e' una versione piu' nuova di questa pagina.
-       Serve perche' i brani condivisi stanno dentro il codice: se il browser
-       tiene la copia vecchia, qui mancano gli ultimi brani e sembra che la
-       libreria sia diversa da un dispositivo all'altro. Prima non se ne
-       accorgeva nessuno. */
+    /* Controllo se online c'e' qualcosa di piu' nuovo: non solo una versione
+       diversa della pagina, ma anche piu' brani condivisi. Senza questo il
+       telefono non si accorgeva mai che il PC aveva aggiunto canzoni, e
+       sembrava che il tasto "condividi" non funzionasse. */
     try {
+      /* Conto i brani condivisi che ho davvero caricato: la lista iniziale,
+         non il codice (il sorgente non e' disponibile qui dentro). */
+      let mieiBrani = 0;
+      try { mieiBrani = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { mieiBrani = 0; }
       fetch("app.js?t=" + Date.now(), { cache: "no-store" }).then((r) => r.text()).then((txt) => {
-        const m = /APP_VERSION\s*=\s*"([\d.]+)"/.exec(txt || "");
-        if (!m) return;
-        const remota = m[1];
-        const mia = String(APP_VERSION);
-        const num = (v) => v.split(".").map((n) => parseInt(n, 10) || 0);
-        const a = num(mia), b = num(remota);
-        const nuova = b[0] > a[0] || (b[0] === a[0] && (b[1] > a[1] || (b[1] === a[1] && b[2] > a[2])));
-        if (!nuova) return;
+        if (!txt) return;
+        const m = /APP_VERSION\s*=\s*"([\d.]+)"/.exec(txt);
+        const suoiBrani = (txt.match(/file:\s*"songs\/track-/g) || []).length;
+        const nuovaVersione = m && m[1] !== String(APP_VERSION);
+        const nuoviBrani = suoiBrani > mieiBrani;
+        if (!nuovaVersione && !nuoviBrani) return;
+        const cosa = [];
+        if (nuoviBrani) cosa.push(suoiBrani - mieiBrani + (suoiBrani - mieiBrani === 1 ? " brano nuovo" : " brani nuovi"));
+        if (nuovaVersione) cosa.push("versione " + (m ? m[1] : "?"));
         let avviso = document.getElementById("avviso-vecchia");
         if (!avviso) {
           avviso = document.createElement("div");
           avviso.id = "avviso-vecchia";
           avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
-            "background:#3b1e05;border:1px solid #f0883e;color:#ffd8a8;padding:10px 12px;" +
+            "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:10px 12px;" +
             "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
           document.body.appendChild(avviso);
         }
-        avviso.textContent = "Stai usando una versione vecchia (" + mia + " invece di " + remota +
-          "): qui mancano gli ultimi brani. Tocca per aggiornare.";
+        avviso.textContent = "C'è " + cosa.join(" e ") +
+          " online che qui non ci sono. Tocca per aggiornare la libreria.";
         avviso.onclick = () => {
           avviso.textContent = "Aggiorno...";
           if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
           setTimeout(() => window.location.reload(true), 900);
         };
-        segnalaErrore("versione vecchia in uso: " + mia + ", online c'e' " + remota);
+        segnalaErrore("da aggiornare: qui " + mieiBrani + " brani condivisi, online " + suoiBrani);
       }).catch(() => { /* offline: niente avviso */ });
     } catch (e) { /* noop */ }
   })();
