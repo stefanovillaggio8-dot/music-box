@@ -47,7 +47,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.54";
+  const APP_VERSION = "6.55";
 
   let recovering = false;
   async function selfHeal() {
@@ -422,26 +422,56 @@
         };
       });
 
-    let added = [];
-    try {
-      const records = (await dbAll()).filter((r) => r && r.id && r.blob);
-      added = records
-        .filter((r) => (r.profile || DEFAULT_PROFILE) === profile)
-        .map((r) => ({
-        id: r.id,
-        title: r.title,
-        artist: r.artist || "",
-        album: r.album || "",
-        cover: r.cover || null,
-        source: r.source || "file",
-        url: URL.createObjectURL(r.blob),
-        builtin: false,
-        gradient: PALETTE[(builtin.length + Math.abs(hashId(r.id))) % PALETTE.length],
-        size: r.size
-      }));
-    } catch (e) {
-      console.warn("IndexedDB non disponibile", e);
+  let added = [];
+  let doppioni = 0;
+  try {
+    const records = (await dbAll()).filter((r) => r && r.id && r.blob);
+    added = records
+  .filter((r) => (r.profile || DEFAULT_PROFILE) === profile)
+  /* Se il brano esiste gia' nella libreria condivisa non lo mostro due volte:
+       la copia nel browser serve per non riscaricarlo, ma elencarla
+       creava due righe identiche e i contatti non tornavano piu' con gli
+       altri dispositivi. Il brano condiviso fa da riga unica. */
+  .filter((r) => {
+    if (eGiaCondiviso({ title: r.title, artist: r.artist })) {
+      doppioni++;
+      /* Non mostro la riga, ma segno il brano come "gia' in lista" cosi'
+         handleError puo' usare questa copia se il file online non parte. */
+      _copieLocali.set(_chiaveBrano({ artist: r.artist, title: r.title }), r);
+      return false;
     }
+    return true;
+  })
+  .map((r) => ({
+  id: r.id,
+  title: r.title,
+  artist: r.artist || "",
+  album: r.album || "",
+  cover: r.cover || null,
+  source: r.source || "file",
+  url: URL.createObjectURL(r.blob),
+  builtin: false,
+  gradient: PALETTE[(builtin.length + Math.abs(hashId(r.id))) % PALETTE.length],
+  size: r.size
+  }));
+  } catch (e) {
+    console.warn("IndexedDB non disponibile", e);
+  }
+  if (doppioni) {
+    /* Lo segno come condivisi cosi' non li cerco piu' da condividere e
+       non li ricontrollo a ogni avvio. */
+    try {
+      const tutti = await dbAll();
+      for (const r of tutti || []) {
+        if (r && !r.condiviso && eGiaCondiviso({ title: r.title, artist: r.artist })) {
+          r.condiviso = true;
+          try { await dbPut(r); } catch (e2) { /* pazienza */ }
+        }
+      }
+    } catch (e3) { /* noop */ }
+    segnalaErrore("libreria: nascosti " + doppioni + " doppioni (brani gia' condivisi)");
+  }
+
 
     tracks = builtin.concat(added);
     render();
@@ -792,6 +822,14 @@
   /* La lista si ridisegna spesso e il confronto coi brani condivisi gira ogni
      volta: me lo ricordo, cosi' non ripeto lo stesso lavoro. */
   const _memoCondiviso = new Map();
+  /* Copie nel browser dei brani che esistono gia' nella libreria condivisa.
+     Non le mostro in lista (altrimenti ci sarebbero due righe identiche),
+     ma le tengo qui: se il file online non si puo' suonare, uso questa. */
+  const _copieLocali = new Map();
+  function _chiaveBrano(t) {
+  return normKey(t.artist) + "|" + normKey(t.title);
+  }
+
   function eGiaCondiviso(t) {
     if (t.builtin) return true;
     const k = normKey(t.artist) + "|" + normKey(t.title);
@@ -1024,21 +1062,57 @@
   }
 
   function handleError() {
-    console.warn("Errore audio, provo a recuperare");
-    rebuildAudio(true);
+  console.warn("Errore audio, provo a recuperare");
+  const t = current();
+  if (t && t.builtin && !t._provatoLocale) {
+    /* Il brano viene dal sito e non si vuole: uso la copia nel browser. */
+    t._provatoLocale = true;
+    usaCopiaLocale(t).then((blob) => {
+      if (!blob) {
+        segnalaErrore("brano non riproducibile e senza copia locale: " +
+          String((t.artist || "") + " " + (t.title || "")).slice(0, 60));
+        return;
+      }
+      audio = createAudio();
+      audio.src = URL.createObjectURL(blob);
+      audio.volume = volumePct / 100;
+      segnalaErrore("uso la copia locale per: " +
+        String((t.artist || "") + " " + (t.title || "")).slice(0, 60));
+      doPlay();
+    });
+    return;
+  }
+  rebuildAudio(true);
+  }
+
+  /* Se un brano condiviso non si puo' suonare dal sito (per esempio il file
+     non e' ancora stato pubblicato), provo con la copia che ho nel browser. */
+  async function usaCopiaLocale(brano) {
+    try {
+      const k = _chiaveBrano(brano);
+      let rec = _copieLocali.get(k);
+      if (rec === undefined) {
+        const tutti = await dbAll();
+        rec = (tutti || []).find((r) => r && r.blob && _chiaveBrano({ artist: r.artist, title: r.title }) === k) || null;
+        _copieLocali.set(k, rec);
+      }
+      return (rec && rec.blob) ? rec.blob : null;
+    } catch (e) {
+      return null;
+    }
   }
 
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
     a.addEventListener("play", () => {
-      syncPlayUI();
-      updateMediaSession();
+    syncPlayUI();
+    updateMediaSession();
     });
     a.addEventListener("pause", () => {
-      syncPlayUI();
-      updateMediaSession();
-      savePos();
+    syncPlayUI();
+    updateMediaSession();
+    savePos();
     });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
