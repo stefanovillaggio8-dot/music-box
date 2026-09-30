@@ -10,7 +10,7 @@
     { title: "Kid Yugi x Lil Peep MASHUP", file: "songs/track-6.mp3", artist: "Kid Yugi / Lil Peep" },
     { title: "Lil Peep - Star Shopping", file: "songs/track-7.mp3", artist: "Lil Peep" },
     { title: "Malpensa", file: "songs/track-8.mp3", artist: "G.Mineiro, Flatpearl, Succo" },
-    { title: "MOSTRO - LA CITTÀ", file: "songs/track-9.mp3", artist: "MOSTRO" },
+    { title: "MOSTRO - LA CITTÃ€", file: "songs/track-9.mp3", artist: "MOSTRO" },
     { title: "CIGNO NERO RMX (Nayt, Frah Quintale, Tony Boy)", file: "songs/track-10.mp3", artist: "Nayt / Frah Quintale / Tony Boy" },
     { title: "SAITTA - Romantici Terroni", file: "songs/track-11.mp3", artist: "SAITTA" },
     { title: "thasup - s!r!", file: "songs/track-12.mp3", artist: "thasup" },
@@ -19,8 +19,8 @@
     { title: "Sogni Appesi", file: "songs/track-15.mp3", artist: "Ultimo", profile: "Ste" },
     { title: "nayt - Exit", file: "songs/track-16.mp3", artist: "nayt", profile: "Ste" },
     { title: "Hai visto mai", file: "songs/track-17.mp3", artist: "Frah Quintale", profile: "Ste" },
-    { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "Jovanotti", profile: "Ste" },
-    { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
+    { title: "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "Jovanotti", profile: "Ste" },
+    { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "ModÃ ", profile: "Ste" },
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
     { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
     { title: "zero rimorsi", file: "songs/track-24.mp3", artist: "il tre", profile: "Ste" },
@@ -44,9 +44,7 @@
     { title: "the cure", file: "songs/track-42.mp3", artist: "olivia rodriguo", profile: "Ste" },
     { title: "solo domande", file: "songs/track-43.mp3", artist: "nayt & 3D", profile: "Ste" },
     { title: "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]", file: "songs/track-44.mp3", artist: "nayt", profile: "Ste" },
-    { title: "ZZ Prova A", file: "songs/track-45.mp3", artist: "", profile: "Ste" },
-    { title: "ZZ Prova B", file: "songs/track-46.mp3", artist: "", profile: "Ste" },
-];
+  ];
 
   const PALETTE = [
     "linear-gradient(135deg,#b06bff,#4fc3ff)",
@@ -57,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.60";
+  const APP_VERSION = "6.61";
 
   let recovering = false;
   async function selfHeal() {
@@ -534,7 +532,7 @@
     }
     const dettaglio = senza.slice(0, 8).map((t) => {
       const k = normKey((t.artist || "") + " " + (t.title || ""));
-      return (t.artist || "?") + " - " + t.title + " [chiave " + k + (coversData[k] ? ": c'è in covers.json" : ": ASSENTE") + "]";
+      return (t.artist || "?") + " - " + t.title + " [chiave " + k + (coversData[k] ? ": c'Ã¨ in covers.json" : ": ASSENTE") + "]";
     });
     segnalaErrore("senza copertina: " + senza.length + " -> " + dettaglio.join(" || "));
   }
@@ -582,7 +580,7 @@
       chiaveSemplice((artist || "") + " " + senzaArtista),
       normKey(title || ""),
       chiaveSemplice(title || "")
-    ];
+  ];
     for (const k of varianti) {
       if (k && coversData[k] && coversData[k].cover) return coversData[k];
     }
@@ -702,8 +700,8 @@
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
     const msg = t.builtin
-      ? "«" + t.title + "» sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
-      : "«" + t.title + "» sparisce dalla tua lista di questo profilo.";
+      ? "Â«" + t.title + "Â» sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
+      : "Â«" + t.title + "Â» sparisce dalla tua lista di questo profilo.";
     const yes = await askConfirm("Togliere dalla lista?", msg, "Togli");
     if (!yes) return;
     hiddenTracks.add(id);
@@ -914,7 +912,7 @@
        sembrava sbagliato. Adesso lo dice, e lo scrivo anche nel registro del
        PC cosi' i numeri si possono controllare senza chiedere. */
     const nascosti = hiddenTracks.size;
-    let label = profile + " — " + total + (total === 1 ? " brano" : " brani");
+    let label = profile + " â€” " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
     if (nascosti) label += " (" + nascosti + " nascosti)";
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
@@ -945,7 +943,7 @@
       emptyEl.textContent = !total
         ? (hiddenTracks.size
           ? "Hai nascosto tutti i brani di " + profile + ": tocca l'icona dell'occhio per rivederli."
-          : "La libreria di " + profile + " è vuota. Le canzoni arrivano dal computer (cartella musica mp3 " +
+          : "La libreria di " + profile + " Ã¨ vuota. Le canzoni arrivano dal computer (cartella musica mp3 " +
             profile.toLowerCase() + ") oppure scaricale con la scheda Importa.")
         : !tracks.length
           ? "Nessun brano. Tocca + per aggiungere della musica."
@@ -992,8 +990,8 @@
       if (t.artist) bits.push(t.artist);
       if (t.album) bits.push(t.album);
       if (t.preview) bits.push("anteprima 30s");
-      if (t.builtin) meta.textContent = bits.length ? bits.join(" · ") : "per tutti";
-      else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
+      if (t.builtin) meta.textContent = bits.length ? bits.join(" Â· ") : "per tutti";
+      else meta.textContent = bits.length ? bits.join(" Â· ") + " Â· solo tua" : "solo tua";
       info.appendChild(meta);
 
       li.appendChild(art);
@@ -1363,7 +1361,7 @@
         g.className = "queue-info";
         const gt = document.createElement("div");
         gt.className = "queue-title";
-        gt.textContent = "Brano non più disponibile";
+        gt.textContent = "Brano non piÃ¹ disponibile";
         g.appendChild(gt);
         row.appendChild(g);
         row.appendChild(mkBtn("Rimuovi", btnClose, () => removeQueue(i)));
@@ -1397,7 +1395,7 @@
       actions.className = "queue-actions";
       actions.appendChild(mkBtn("Riproduci", btnPlayQ, () => playFromQueue(i)));
       actions.appendChild(mkBtn("Sposta su", btnUp, () => moveQueue(i, -1), i === 0));
-      actions.appendChild(mkBtn("Sposta giù", btnDown, () => moveQueue(i, 1), i === queue.length - 1));
+      actions.appendChild(mkBtn("Sposta giÃ¹", btnDown, () => moveQueue(i, 1), i === queue.length - 1));
       actions.appendChild(mkBtn("Rimuovi", btnClose, () => removeQueue(i)));
       row.appendChild(actions);
       body.appendChild(row);
@@ -1441,7 +1439,7 @@
       el.type = "button";
       el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + ICON_OFFLINE + '"/></svg>';
       const gia = isCached(t);
-      el.appendChild(document.createTextNode(gia ? "Già salvata offline" : cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
+      el.appendChild(document.createTextNode(gia ? "GiÃ  salvata offline" : cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
       el.disabled = gia;
       el.style.opacity = gia ? ".55" : "1";
       el.addEventListener("click", () => {
@@ -1520,7 +1518,7 @@
     const t = current();
     setArt($("playerArt"), t);
     setArt($("hudArt"), t);
-    $("playerTitle").textContent = t ? t.title : "—";
+    $("playerTitle").textContent = t ? t.title : "â€”";
     $("hudTitle").textContent = t ? t.title : "Nessuna traccia";
     $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
     updateLyricsButton();
@@ -1686,7 +1684,7 @@
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 8000);
-      toast("Salvalo e mettilo nella cartella musica mp3 " + profile.toLowerCase() + " sul computer: così lo vede chiunque usi quel nome");
+      toast("Salvalo e mettilo nella cartella musica mp3 " + profile.toLowerCase() + " sul computer: cosÃ¬ lo vede chiunque usi quel nome");
     } catch (e) {
       toast("Esportazione non riuscita: " + e.message);
     }
@@ -1939,7 +1937,7 @@
       }
     }
     if (ok) {
-      toast((ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti") + " — solo per " + profile);
+      toast((ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti") + " â€” solo per " + profile);
       await loadAll();
       const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
       for (const t of fresh) enrichTrack(t.id);
@@ -1949,7 +1947,7 @@
 
   async function removeTrack(id) {
     const t = tracks.find((x) => x.id === id);
-    const yes = await askConfirm("Eliminare il brano?", "«" + (t ? t.title : "") + "» verrà cancellato da questo telefono e non si potrà più recuperare.", "Elimina");
+    const yes = await askConfirm("Eliminare il brano?", "Â«" + (t ? t.title : "") + "Â» verrÃ  cancellato da questo telefono e non si potrÃ  piÃ¹ recuperare.", "Elimina");
     if (!yes) return;
     try { await dbDel(id); } catch (e) { console.warn(e); }
     try { await dbDelImport(id); } catch (e) { /* noop */ }
@@ -3618,7 +3616,7 @@
        se nel frattempo la lista si e' ridisegnata, questa riga e' vecchia e
        non la vede piu' nessuno, e la riga nuova fa il controllo per conto
        suo. Prima invece uscivo subito e la scritta "controllo il PC..."
-       restava lì per sempre, e sembrava che il programma fosse occupato. */
+       restava lÃ¬ per sempre, e sembrava che il programma fosse occupato. */
     ponteOnline().then((online) => {
       scriviStatoPonte(stato, online
         ? "programma sul PC: acceso"
@@ -3741,7 +3739,7 @@
 
   async function removeImportItem(item) {
     if (item.state === "downloading") return;
-    const yes = await askConfirm("Togliere dalla ricerca?", "«" + item.title + "» sparisce da questo elenco. Se era in download, si ferma.", "Togli");
+    const yes = await askConfirm("Togliere dalla ricerca?", "Â«" + item.title + "Â» sparisce da questo elenco. Se era in download, si ferma.", "Togli");
     if (!yes) return;
     item.removed = true;
     if (item.controller) {
@@ -3805,7 +3803,7 @@
     const btn = (text, fn, disabled) => nuovoBottone(gruppo, text, fn, "", "", disabled);
 
     if (item.state === "dupe") {
-      tag("già nella libreria", "dup");
+      tag("giÃ  nella libreria", "dup");
     } else if (item.state === "missing") {
       tag(item.tagMancato || "non disponibile", "miss");
       if (item.tagMancato) {
@@ -3876,16 +3874,16 @@
         // ogni versione si puo' ascoltare prima di sceglierla
         const bInfo = bottoneAnteprima(cand);
         if (bInfo.src) {
-          const b = btn("▶ " + bInfo.etichetta, () => {
+          const b = btn("â–¶ " + bInfo.etichetta, () => {
             const b2 = bottoneAnteprima(cand);
-            ascoltaPrima({ src: b2.src, etichetta: "▶ " + b2.etichetta, el: b }, (err) => {
+            ascoltaPrima({ src: b2.src, etichetta: "â–¶ " + b2.etichetta, el: b }, (err) => {
               if (err) toast("Anteprima non disponibile per questa versione.");
             });
           });
           b.title = notaAnteprima(cand) || "Ascolta prima di scegliere";
         }
         const nota = notaAnteprima(cand);
-        btn((cand.title + (cand.artist ? " — " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : "")), () => {
+        btn((cand.title + (cand.artist ? " â€” " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : "")), () => {
           fermaAnteprima();
           item.meta = cand;
           item.state = "ready";
@@ -4044,7 +4042,7 @@
 
       const title = document.createElement("p");
       title.className = "imp-title";
-      title.textContent = item.title + (item.artist ? " — " + item.artist : "");
+      title.textContent = item.title + (item.artist ? " â€” " + item.artist : "");
       main.appendChild(title);
 
       const sub = document.createElement("p");
@@ -4055,7 +4053,7 @@
       if (item.secs) bits.push(fmtTime(item.secs));
       if (item.meta && item.meta.source) bits.push(item.meta.source);
       if (item.meta && item.meta.license) bits.push(item.meta.license);
-      sub.textContent = bits.join(" · ");
+      sub.textContent = bits.join(" Â· ");
       main.appendChild(sub);
 
       const tags = document.createElement("p");
@@ -4086,7 +4084,7 @@
       const rem = document.createElement("button");
       rem.className = "imp-remove";
       rem.setAttribute("aria-label", "Togli dalla lista");
-      rem.textContent = "×";
+      rem.textContent = "Ã—";
       rem.addEventListener("click", () => removeImportItem(item));
       row.appendChild(rem);
 
@@ -4299,9 +4297,9 @@
     const choose = importList.filter((x) => x.state === "choose").length;
     const errs = importList.filter((x) => x.state === "error").length;
     const daImportare = importList.filter((x) => x.state === "found").length;
-    status.textContent = "Importati " + done + " · da scegliere " + choose + " · già presenti " + dupes +
-      " · non disponibili " + miss + (errs ? " · errori " + errs : "") +
-      (daImportare ? " · " + daImportare + " canzoni pronte da importare" : "");
+    status.textContent = "Importati " + done + " Â· da scegliere " + choose + " Â· giÃ  presenti " + dupes +
+      " Â· non disponibili " + miss + (errs ? " Â· errori " + errs : "") +
+      (daImportare ? " Â· " + daImportare + " canzoni pronte da importare" : "");
     searching = false;
     $("btnFind").disabled = false;
   }
@@ -5148,7 +5146,7 @@ function closeImport() {
           segnalaErrore("aggiornamento disponibile: " + che.join(" e ") +
             " (qui " + miei + " brani, online " + suoi + ")");
           if (branoInCorso()) {
-            avvisoAggiornamento("C'è " + che.join(" e ") + ": aggiorno quando finisci.");
+            avvisoAggiornamento("C'Ã¨ " + che.join(" e ") + ": aggiorno quando finisci.");
             return;
           }
           if (navigator.serviceWorker) {
