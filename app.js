@@ -47,7 +47,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.52";
+  const APP_VERSION = "6.53";
 
   let recovering = false;
   async function selfHeal() {
@@ -640,65 +640,103 @@
     $("btnRestore").hidden = hiddenTracks.size === 0;
   }
 
-  /* Rende pubblici i brani che esistono solo su questo dispositivo.
-     Ogni brano importato a mano resta nel browser da cui l'hai importato,
-     percio' su un altro telefono non si vede. Qui prendo quei brani e li
-     mando al programma sul PC, che li mette nella cartella del profilo: da
-     li' entrano nella libreria condivisa e li vedono tutti i dispositivi. */
+  /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
+     DA SOLO: non c'e' un tasto da premere. Ogni brano importato a mano resta
+     nel browser da cui l'hai importato, quindi senza questo non lo vedresti
+     dagli altri dispositivi. Chiamo questa funzione all'avvio e ogni volta
+     che finisce un import, cosi' non ci resta niente da fare a mano.
+
+     I brani senza file (per esempio solo un'anteprima o un link) non si
+     possono condividere: non c'e' niente da mandare. */
+  let condivisioneInCorso = false;
   async function condividiBraniLocali() {
-    const online = await ponteOnline();
-    if (!online) {
-      toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
-      return;
-    }
-    let daMandare = [];
+    if (condivisioneInCorso) return;
+    if (!db) return;
+    condivisioneInCorso = true;
+    const ind = $("shareInd");
+    const badge = $("shareBadge");
     try {
-      const tutti = await dbAll();
-      daMandare = (tutti || []).filter((r) => r && r.blob && r.blob.size && !r.condiviso);
-    } catch (e) {
-      toast("Non sono riuscito a leggere i brani di questo dispositivo");
-      segnalaErrore("condivisione fallita in lettura: " + String((e && e.message) || e).slice(0, 140));
-      return;
-    }
-    if (!daMandare.length) {
-      toast("Qui non ci sono brani da condividere");
-      return;
-    }
-    const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-    const bottone = $("btnCondividi");
-    if (bottone) bottone.disabled = true;
-    let fatti = 0;
-    let falliti = 0;
-    for (const r of daMandare) {
-      const nome = [(r.artist || ""), (r.title || "")].join(" - ")
-        .replace(/^\s*-\s*/, "").replace(/\s*-\s*$/, "").trim() || "brano";
+      let daMandare = [];
+      let senzaFile = 0;
       try {
-        const risp = await fetch(base + "/salva?nome=" + encodeURIComponent(nome) +
-          "&cartella=" + encodeURIComponent(CARTELLA_PREDEFINITA), {
-          method: "POST",
-          headers: { "Content-Type": "audio/mpeg" },
-          body: r.blob
-        });
-        if (!risp.ok) throw new Error("il programma ha risposto " + risp.status);
-        r.condiviso = true;
-        try { await dbPut(r); } catch (e2) { /* va bene anche senza rifare la scrittura */ }
-        fatti++;
-        if (bottone) bottone.textContent = "Condiviso " + fatti + " di " + daMandare.length;
+        const tutti = await dbAll();
+        daMandare = (tutti || []).filter((r) => r && r.blob && r.blob.size && !r.condiviso);
+        senzaFile = (tutti || []).filter((r) => r && !r.blob && !r.condiviso).length;
       } catch (e) {
-        falliti++;
-        segnalaErrore("brano non condiviso (" + nome.slice(0, 40) + "): " +
-          String((e && e.message) || e).slice(0, 120));
+        segnalaErrore("condivisione: lettura brani fallita: " + String((e && e.message) || e).slice(0, 120));
+        return;
       }
+      if (senzaFile) {
+        segnalaErrore("condivisione: " + senzaFile + " brani senza file, non condivisibili");
+      }
+      if (!daMandare.length) {
+        if (ind) ind.hidden = true;
+        return;
+      }
+      const online = await ponteOnline();
+      if (!online) {
+        /* Il PC non c'e': non e' un errore, lascio i brani qui e riprovo
+           al prossimo avvio. Non disturbo l'utente con un avviso. */
+        if (ind) ind.hidden = true;
+        return;
+      }
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      if (ind) {
+        ind.hidden = false;
+        ind.classList.add("busy");
+        ind.title = "Sto condividendo " + daMandare.length + " brani con gli altri dispositivi";
+      }
+      let fatti = 0;
+      let falliti = 0;
+      for (const r of daMandare) {
+        const nome = [(r.artist || ""), (r.title || "")].join(" - ")
+          .replace(/^\s*-\s*/, "").replace(/\s*-\s*$/, "").trim() || "brano";
+        try {
+          const risp = await fetch(base + "/salva?nome=" + encodeURIComponent(nome) +
+            "&cartella=" + encodeURIComponent(CARTELLA_PREDEFINITA), {
+            method: "POST",
+            headers: { "Content-Type": "audio/mpeg" },
+            body: r.blob
+          });
+          if (!risp.ok) throw new Error("il programma ha risposto " + risp.status);
+          r.condiviso = true;
+          try { await dbPut(r); } catch (e2) { /* va bene anche senza riscrivere */ }
+          fatti++;
+          if (badge) badge.textContent = String(daMandare.length - fatti - falliti);
+        } catch (e) {
+          falliti++;
+          segnalaErrore("brano non condiviso (" + nome.slice(0, 40) + "): " +
+            String((e && e.message) || e).slice(0, 120));
+        }
+      }
+      if (ind) ind.classList.remove("busy");
+      toast(falliti
+        ? "Condivisi " + fatti + " brani, " + falliti + " non riusciti"
+        : "Condivisi " + fatti + (fatti === 1 ? " brano" : " brani") + ": ora si vedono anche sugli altri dispositivi");
+      segnalaErrore("condivisione finita: " + fatti + " condivisi, " + falliti + " falliti, " + senzaFile + " senza file");
+    } finally {
+      condivisioneInCorso = false;
+      render();
     }
-    if (bottone) {
-      bottone.disabled = false;
-      bottone.textContent = "Condividi con gli altri dispositivi";
+  }
+
+  /* Aggiorna l'indicatore: dice quanti brani privati ci sono ancora da
+     condividere, e sparisce quando non ne resta nessuno. */
+  function aggiornaIndicatoreCondivisione() {
+    const ind = $("shareInd");
+    const badge = $("shareBadge");
+    if (!ind) return;
+    const privati = tracks.filter((t) => !t.builtin && !t.preview).length;
+    const daCondividere = privati > 0;
+    ind.hidden = !daCondividere && !condivisioneInCorso;
+    if (badge) {
+      badge.hidden = !daCondividere;
+      badge.textContent = String(privati);
     }
-    toast(falliti
-      ? "Condivisi " + fatti + " brani, " + falliti + " non riusciti"
-      : "Condivisi " + fatti + " brani: ora si vedono anche sugli altri dispositivi");
-    segnalaErrore("condivisione finita: " + fatti + " condivisi, " + falliti + " falliti");
-    render();
+    ind.title = daCondividere
+      ? privati + (privati === 1 ? " brano solo su questo dispositivo: si condivide da solo" :
+        " brani solo su questo dispositivo: si condividono da soli")
+      : "Tutti i brani sono gia' condivisi";
   }
 
   function render() {
@@ -713,21 +751,7 @@
     if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
-    /* I brani che esistono solo qui si possono condividere: il pulsante sta
-       nella barra in alto (non tra le canzoni) e mostra solo il numero. */
-    const btnCond = $("btnCondividi");
-    if (btnCond) {
-      btnCond.hidden = !mine;
-      const badge = $("shareBadge");
-      if (badge) {
-        badge.hidden = !mine;
-        badge.textContent = String(mine);
-      }
-      btnCond.title = mine
-        ? mine + (mine === 1 ? " brano esiste" : " brani esistono") +
-          " solo su questo dispositivo: tocca per condividerli con gli altri"
-        : "Condividi i brani di questo dispositivo";
-    }
+    aggiornaIndicatoreCondivisione();
 
     if (!list.length) {
       emptyEl.hidden = false;
@@ -2983,6 +3007,9 @@
     };
     await dbPut(rec);
     await dbSetImport({ id, title: rec.title, artist: rec.artist, album: rec.album, status: "ok", date: rec.date });
+    /* Ogni brano nuovo lo condivido subito con gli altri dispositivi, senza
+       aspettare che venga ricaricata la pagina. */
+    condividiBraniLocali();
     enrichTrack(id);
     return rec;
   }
@@ -4244,8 +4271,6 @@ function closeImport() {
   });
 
   $("fab").addEventListener("click", () => fileInput.click());
-  const btnCondividi = $("btnCondividi");
-  if (btnCondividi) btnCondividi.addEventListener("click", () => condividiBraniLocali());
   fileInput.addEventListener("change", () => {
     if (fileInput.files.length) addFiles(fileInput.files);
     fileInput.value = "";
@@ -4767,9 +4792,13 @@ function closeImport() {
     await loadLyrics();
     await loadCovers();
     if (db) await loadLocalLyrics();
-    await loadAll();
-    recuperaCopertineMancanti();
-    refreshCachedSongs();
+  await loadAll();
+  recuperaCopertineMancanti();
+  refreshCachedSongs();
+  /* Appena aperta la pagina, condivido da solo i brani che esistono solo qui:
+     non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
+     avvio, e intanto i brani restano al sicuro qui. */
+  setTimeout(() => { condividiBraniLocali(); }, 1200);
     updateRestoreButton();
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
