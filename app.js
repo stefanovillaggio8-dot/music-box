@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.47";
+  const APP_VERSION = "6.48";
 
   let recovering = false;
   async function selfHeal() {
@@ -2979,6 +2979,7 @@
      aprirebbe il programma a chiunque sia sul Wi-Fi. */
   const INDIRIZZI_PONTE = ["http://127.0.0.1:8788", "http://100.106.211.2:8788"];
   let ponteCheRisponde = "";
+  let ponteCache = null;
   let segnalatoIndirizzo = "";
 
   // Manda un errore al registro del programma sul PC, se e' acceso.
@@ -3031,31 +3032,35 @@
     } catch (e) { /* noop */ }
   }
 
+  /* Questa funzione non deve mai rompersi: se le succede qualcosa di inatteso
+     la scritta del brano resta ferma su "controllo il PC..." e sembra che il
+     programma sia occupato. Quindi ogni errore diventa una risposta
+     "programma spento", che e' la verita' quando qualcosa non funziona. */
   async function ponteOnline() {
-    if (ponteCache && Date.now() - ponteCache.t < 30000) return ponteCache.ok;
-    /* Se l'indirazzo giusto e' gia' noto mi fido: fa gia' il ping e la
-       risposta e' stata ok, non lo rifaccio. Prima facevo due richieste di
-       fila e la scritta "controllo il PC..." restava ferma il doppio. */
-    if (ponteCheRisponde) {
-      ponteCache = { ok: true, t: Date.now() };
-      return true;
+    try {
+      if (ponteCache && Date.now() - ponteCache.t < 30000) return ponteCache.ok;
+      /* Se l'indirizzo giusto e' gia' noto mi fido: ha gia' risposto una
+         volta, non rifaccio la richiesta. */
+      if (ponteCheRisponde) {
+        ponteCache = { ok: true, t: Date.now() };
+        return true;
+      }
+      const base = await trovaPonte();
+      const ok = !!base;
+      const perche = ok ? "" : "nessun indirizzo risponde (" + INDIRIZZI_PONTE.join(", ") + ")";
+      ponteCache = { ok: ok, t: Date.now() };
+      if (segnalatoIndirizzo !== window.location.href) {
+        segnalatoIndirizzo = window.location.href;
+        segnalaErrore("pagina aperta su " + window.location.href +
+          (window.isSecureContext ? " (sicura)" : " (non sicura)") +
+          " -> programma sul PC " + (ok ? "raggiungibile su " + base : "NON raggiungibile: " + perche));
+      }
+      return ok;
+    } catch (e) {
+      ponteCache = { ok: false, t: Date.now() };
+      segnalaErrore("controllo del PC fallito: " + String((e && (e.message || e)) || "errore").slice(0, 160));
+      return false;
     }
-    const base = await trovaPonte();
-    let ok = false;
-    let perche = "";
-    if (!base) {
-      perche = "nessun indirizzo risponde (" + INDIRIZZI_PONTE.join(", ") + ")";
-    } else {
-      ok = true;
-    }
-    ponteCache = { ok: ok, t: Date.now() };
-    if (segnalatoIndirizzo !== window.location.href) {
-      segnalatoIndirizzo = window.location.href;
-      segnalaErrore("pagina aperta su " + window.location.href +
-        (window.isSecureContext ? " (sicura)" : " (non sicura)") +
-        " -> programma sul PC " + (ok ? "raggiungibile su " + base : "NON raggiungibile: " + perche));
-    }
-    return ok;
   }
 
   // Campo dove incollare il link di YouTube, col tasto per convertirlo.
