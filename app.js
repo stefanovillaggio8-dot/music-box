@@ -40,6 +40,7 @@
     { title: "Gilgamesh", file: "songs/track-38.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "Tristano e Isotta", file: "songs/track-39.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "Donna", file: "songs/track-40.mp3", artist: "Kid Yugi", profile: "Ste" },
+    { title: "Lucifero", file: "songs/track-41.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [
