@@ -41,9 +41,9 @@
   },
   "mostrolacitta": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/a0640b2d6a07c5c41cad8b854dc7fba8/1000x1000-000000-80-0-0.jpg",
-    "title": "La città",
+    "title": "La cittÃ ",
     "artist": "Mostro",
-    "album": "La città",
+    "album": "La cittÃ ",
     "source": "Deezer",
     "date": "2026-09-24T11:50:19.272Z"
   },
@@ -67,7 +67,7 @@
     "cover": "https://cdn-images.dzcdn.net/images/cover/b8ef88ad883dd34f992c085ccb4b71dc/1000x1000-000000-80-0-0.jpg",
     "title": "Malpensa",
     "artist": "G.Mineiro",
-    "album": "È O G.",
+    "album": "Ãˆ O G.",
     "source": "Deezer",
     "date": "2026-09-24T11:50:46.266Z"
   },
@@ -129,7 +129,7 @@
   },
   "ilpiugrandespettacolodopoilbigbang": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
-    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+    "title": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "artist": "Jovanotti",
     "album": "Ora (Special Super Deluxe Box)",
     "source": "Deezer",
@@ -138,26 +138,10 @@
   "modastellacadente": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
     "title": "Stella cadente",
-    "artist": "Modà",
+    "artist": "ModÃ ",
     "album": "Passione maledetta",
     "source": "Deezer",
     "date": "2026-09-25T01:08:52.226Z"
-  },
-  "ferrodichecovkidyugixnutslilpeep": {
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/3a/a3/78/3aa378df-bd60-9e64-7258-230601783bd7/195497889907.jpg/600x600bb.jpg",
-    "title": "Lil Peep",
-    "artist": "Eduardo Soto",
-    "album": "Chillax",
-    "source": "Apple Music",
-    "date": "2026-09-27T00:34:38.024Z"
-  },
-  "naytlastronautavisual": {
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5a/1c/23/5a1c2302-a5a7-3a5a-137e-680a8f59d1f9/8445775276540.png/600x600bb.jpg",
-    "title": "Lastronauta",
-    "artist": "Diego Nóvoa",
-    "album": "Lastronauta - Single",
-    "source": "Apple Music",
-    "date": "2026-09-28T22:07:39.082Z"
   },
   "iltrezerorimorsi": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/85c2c6e0a4fb0b08fc6e73523f16ef93/1000x1000-000000-80-0-0.jpg",
@@ -193,7 +177,7 @@
   },
   "jovanottiilpiugrandespettacolodopoilbigbang": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
-    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+    "title": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "artist": "Jovanotti",
     "album": "Ora (Special Super Deluxe Box)",
     "source": "Deezer",
@@ -247,14 +231,6 @@
     "source": "Deezer",
     "date": "2026-09-29T14:54:21.694Z"
   },
-  "kidyugituttifenomenieroina": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/8146ef421a4049aa935853d265d5362d/1000x1000-000000-80-0-0.jpg",
-    "title": "Eroina",
-    "artist": "Alan Walker",
-    "album": "World of Walker, Season One: Rise of the Drones",
-    "source": "Deezer",
-    "date": "2026-09-30T00:41:48.842Z"
-  },
   "kidyugililith": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
     "title": "Lilith",
@@ -262,22 +238,6 @@
     "album": "I Nomi del Diavolo",
     "source": "Deezer",
     "date": "2026-09-30T00:41:56.389Z"
-  },
-  "kidyugiteduajuniorkeva": {
-    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/08/a7/6b/08a76b26-157e-caa7-5fca-18f518f839bb/cover.jpg/600x600bb.jpg",
-    "title": "Eva (feat. Ева Польна)",
-    "artist": "Vintazh",
-    "album": "PLATINUM 1",
-    "source": "Apple Music",
-    "date": "2026-09-30T00:42:08.835Z"
-  },
-  "madamelanima": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/b85bea4e5ea9ebfcc1df08bd90a5f466/1000x1000-000000-80-0-0.jpg",
-    "title": "L'Anima",
-    "artist": "GiGi Girls",
-    "album": "Greatest Hits",
-    "source": "Deezer",
-    "date": "2026-09-30T00:42:19.535Z"
   },
   "ultimoilgiornocheaspettavo": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/bd1dfacb7af3aee698621f47e9c64b1f/1000x1000-000000-80-0-0.jpg",
@@ -342,5 +302,13 @@
     "album": "HABITAT",
     "source": "Deezer",
     "date": "2026-09-30T22:00:35.570Z"
+  },
+  "oliviarodrigothecure": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
+    "title": "the cure",
+    "artist": "Olivia Rodrigo",
+    "album": "you seem pretty sad for a girl so in love",
+    "source": "Deezer",
+    "date": "2026-09-30T23:02:23.673Z"
   }
 }
