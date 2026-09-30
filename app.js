@@ -37,6 +37,7 @@
     { title: "l'anima", file: "songs/track-35.mp3", artist: "madame", profile: "Ste" },
     { title: "IL GIORNO CHE ASPETTAVO", file: "songs/track-36.mp3", artist: "Ultimo", profile: "Ste" },
     { title: "La Violenza Necessaria", file: "songs/track-37.mp3", artist: "Kid Yugi & Shiva", profile: "Ste" },
+    { title: "Gilgamesh", file: "songs/track-38.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [
