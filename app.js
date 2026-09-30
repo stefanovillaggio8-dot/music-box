@@ -42,6 +42,7 @@
     { title: "Donna", file: "songs/track-40.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "Lucifero", file: "songs/track-41.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "the cure", file: "songs/track-42.mp3", artist: "olivia rodriguo", profile: "Ste" },
+    { title: "solo domande", file: "songs/track-43.mp3", artist: "nayt & 3D", profile: "Ste" },
 ];
 
   const PALETTE = [

@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v659";
+const CACHE = "spotifynonavraiimieisoldi-v660";
 const CORE = [
   "./",
   "./index.html",
@@ -52,6 +52,7 @@ const SONGS = [
   "./songs/track-40.mp3",
   "./songs/track-41.mp3",
   "./songs/track-42.mp3",
+  "./songs/track-43.mp3",
 ];
 
 /* PRIMA, a ogni aggiornamento, scaricavo TUTTE le canzoni (161 MB) sul
