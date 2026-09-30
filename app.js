@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.63";
+  const APP_VERSION = "6.64";
 
   let recovering = false;
   async function selfHeal() {
@@ -365,22 +365,46 @@
     if (e.target === $("editPanel")) chiudiRinomina(false);
   });
 
-  /* Tieni premesso (telefono e computer) e si apre la modifica del nome. */
+/* Tieni premesso (telefono e computer) e si apre la modifica del nome.
+     Quando hai aperto la modifica, il tocco successivo NON deve suonare il
+     brano: prima succedeva il contrario, e finivi per ascoltare la canzone
+     mentre cercavi di rinominarla. */
   function collegaPressioneLunga(el, id) {
     let timer = null;
     let giaPartito = false;
-    const via = (v) => { timer = setTimeout(() => { giaPartito = true; apriRinomina(id); }, 600); };
+    let apertoIl = 0;
+    const apri = () => {
+      giaPartito = true;
+      apertoIl = Date.now();
+      apriRinomina(id);
+    };
+    const via = (v) => { timer = setTimeout(apri, 600); };
     const pulisci = () => { if (timer) clearTimeout(timer); timer = null; };
-    el.addEventListener("touchstart", () => via(), { passive: true });
+    el.addEventListener("touchstart", (e) => {
+      via();
+      /* Su telefono, tenendo premuto il browser prepara anche i clic e il
+         menu: li blocco qui, altrimenti la canzone parte da sola. */
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
     el.addEventListener("touchend", () => setTimeout(pulisci, 60), { passive: true });
+    el.addEventListener("touchcancel", pulisci, { passive: true });
     el.addEventListener("touchmove", pulisci, { passive: true });
-    el.addEventListener("mousedown", () => via());
+    el.addEventListener("mousedown", (e) => { via(); if (e.button === 2) pulisci(); });
     el.addEventListener("mouseup", pulisci);
     el.addEventListener("mouseleave", pulisci);
-    el.addEventListener("contextmenu", (e) => { e.preventDefault(); apriRinomina(id); });
-    // se la pressione lunga ha aperto la finestra, il click non deve suonare
+    /* il tasto destro apre la modifica: e' gia' aperta, quindi segnalo
+       anche questo, cosi' il clic dopo non suona niente */
+    el.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      apri();
+    });
+    /* qualunque clic nei pressi dell'apertura viene ignorato */
     el.addEventListener("click", (e) => {
-      if (giaPartito) { giaPartito = false; e.stopPropagation(); e.preventDefault(); }
+      if (giaPartito || (apertoIl && Date.now() - apertoIl < 1200)) {
+        giaPartito = false;
+        e.stopPropagation();
+        e.preventDefault();
+      }
     }, true);
   }
 
@@ -420,7 +444,6 @@
   }
 
   async function loadAll() {
-    applicaRinomine();
     const builtin = BUILTIN
       .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
 .map((b, i) => {
@@ -468,7 +491,10 @@
   title: r.title,
   artist: r.artist || "",
   album: r.album || "",
-  cover: r.cover || null,
+  /* Se nel file delle copertine c'e' una copertina giusta per questo brano,
+     la preferisco a quella salvata nel database: quella risale al giorno in
+     cui l'hai importato e conteneva anche copertine sbagliate. */
+  cover: (coverInfo(r.artist, r.title) || {}).cover || r.cover || null,
   source: r.source || "file",
   url: URL.createObjectURL(r.blob),
   builtin: false,
@@ -496,6 +522,11 @@
 
 
     tracks = builtin.concat(added);
+    /* I nomi che hai cambiato vanno messi DOPO che la lista e' stata
+       ricostruita: prima li applicavo alla lista vecchia, che qui dentro
+       veniva buttata via, e al riavvio il brano tornava col nome
+       originale. */
+    applicaRinomine();
     render();
   }
 
@@ -544,10 +575,16 @@
 
   async function loadCovers() {
     try {
-      const res = await fetch("covers.json");
+      /* Aggiungo il tempo alla richiesta: senza, il telefono può servire la
+         copia vecchia del file e le copertine restano quelle sbagliate. */
+      const res = await fetch("covers.json?t=" + Date.now());
       if (!res.ok) throw new Error("HTTP " + res.status);
       coversData = await res.json();
     } catch (e) {
+      try {
+        const res = await fetch("covers.json");
+        if (res.ok) { coversData = await res.json(); return; }
+      } catch (e2) { /* noop */ }
       coversData = {};
     }
   }
