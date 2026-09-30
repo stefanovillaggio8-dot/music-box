@@ -39,6 +39,7 @@
     { title: "La Violenza Necessaria", file: "songs/track-37.mp3", artist: "Kid Yugi & Shiva", profile: "Ste" },
     { title: "Gilgamesh", file: "songs/track-38.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "Tristano e Isotta", file: "songs/track-39.mp3", artist: "Kid Yugi", profile: "Ste" },
+    { title: "Donna", file: "songs/track-40.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [

@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v101";
+const CACHE = "spotifynonavraiimieisoldi-v102";
 const CORE = [
   "./",
   "./index.html",
@@ -49,17 +49,16 @@ const SONGS = [
   "./songs/track-37.mp3",
   "./songs/track-38.mp3",
   "./songs/track-39.mp3",
+  "./songs/track-40.mp3",
 ];
 
+/* PRIMA, a ogni aggiornamento, scaricavo TUTTE le canzoni (161 MB) sul
+   telefono. Il telefono restavaoccupato a scaricare musica e la libreria non
+   si aggiornava piu'. Ora all'aggiornamento scarico solo i file piccoli del
+   sito: le canzoni restano li' e si scaricano solo quando le ascolti o
+   quando premi tu "scarica per offline". */
 async function cacheSongs(cache) {
-  for (const url of SONGS) {
-    try {
-      const hit = await cache.match(url);
-      if (!hit) await cache.add(url);
-    } catch (e) {
-      /* il brano si scarica alla prima riproduzione */
-    }
-  }
+  return 0;
 }
 
 self.addEventListener("install", (event) => {
