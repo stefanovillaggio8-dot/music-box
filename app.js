@@ -53,7 +53,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.58";
+  const APP_VERSION = "6.59";
 
   let recovering = false;
   async function selfHeal() {
@@ -5085,43 +5085,77 @@ function closeImport() {
       }).catch((err) => console.warn("SW fallito", err));
     }
 
-    /* Controllo se online c'e' qualcosa di piu' nuovo: non solo una versione
-       diversa della pagina, ma anche piu' brani condivisi. Senza questo il
-       telefono non si accorgeva mai che il PC aveva aggiunto canzoni, e
-       sembrava che il tasto "condividi" non funzionasse. */
-    try {
-      /* Conto i brani condivisi che ho davvero caricato: la lista iniziale,
-         non il codice (il sorgente non e' disponibile qui dentro). */
-      let mieiBrani = 0;
-      try { mieiBrani = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { mieiBrani = 0; }
-      fetch("app.js?t=" + Date.now(), { cache: "no-store" }).then((r) => r.text()).then((txt) => {
-        if (!txt) return;
-        const m = /APP_VERSION\s*=\s*"([\d.]+)"/.exec(txt);
-        const suoiBrani = (txt.match(/file:\s*"songs\/track-/g) || []).length;
-        const nuovaVersione = m && m[1] !== String(APP_VERSION);
-        const nuoviBrani = suoiBrani > mieiBrani;
-        if (!nuovaVersione && !nuoviBrani) return;
-        const cosa = [];
-        if (nuoviBrani) cosa.push(suoiBrani - mieiBrani + (suoiBrani - mieiBrani === 1 ? " brano nuovo" : " brani nuovi"));
-        if (nuovaVersione) cosa.push("versione " + (m ? m[1] : "?"));
-        let avviso = document.getElementById("avviso-vecchia");
-        if (!avviso) {
-          avviso = document.createElement("div");
-          avviso.id = "avviso-vecchia";
-          avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
-            "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:10px 12px;" +
-            "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
-          document.body.appendChild(avviso);
-        }
-        avviso.textContent = "C'è " + cosa.join(" e ") +
-          " online che qui non ci sono. Tocca per aggiornare la libreria.";
-        avviso.onclick = () => {
-          avviso.textContent = "Aggiorno...";
-          if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
-          setTimeout(() => window.location.reload(true), 900);
-        };
-        segnalaErrore("da aggiornare: qui " + mieiBrani + " brani condivisi, online " + suoiBrani);
-      }).catch(() => { /* offline: niente avviso */ });
-    } catch (e) { /* noop */ }
+    /* Controllo periodico: la pagina aperta sul telefono o sul PC deve
+       accorgersi da sola dei brani nuovi che arrivano dagli altri
+       dispositivi. Prima controllavo solo quando aprivi la pagina, quindi se
+       la lasciavi aperta non si aggiornava mai. Ora ogni 60 secondi guardo
+       online se ci sono piu' brani, e se ci sono ricarico da solo.
+       Non ricarico pero' mentre stai scaricando o suonando: in quel caso ti
+       mostro un avviso e aggiorno quando sei fermo. */
+    let _stoControllando = false;
+    function branoInCorso() {
+      try {
+        if (importList && importList.some((x) => x && x.state === "downloading")) return true;
+      } catch (e) { /* noop */ }
+      try { if (offlineBusy) return true; } catch (e2) { /* noop */ }
+      try { if (anteprimaAudio && !anteprimaAudio.paused) return true; } catch (e3) { /* noop */ }
+      return false;
+    }
+    function numeroBraniOnline(testo) {
+      return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
+    }
+    function avvisoAggiornamento(testo) {
+      let avviso = document.getElementById("avviso-vecchia");
+      if (!avviso) {
+        avviso = document.createElement("div");
+        avviso.id = "avviso-vecchia";
+        avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
+          "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:10px 12px;" +
+          "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+        document.body.appendChild(avviso);
+      }
+      avviso.textContent = testo;
+      avviso.onclick = () => {
+        avviso.textContent = "Aggiorno...";
+        if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
+        setTimeout(() => window.location.reload(true), 900);
+      };
+    }
+    function controllaAggiornamenti() {
+      if (_stoControllando) return;
+      if (document.hidden) return;              // non aggiorno la pagina che non guardi
+      if (!navigator.onLine) return;
+      _stoControllando = true;
+      let miei = 0;
+      try { miei = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { miei = 0; }
+      fetch("app.js?t=" + Date.now(), { cache: "no-store" })
+        .then((r) => r.ok ? r.text() : "")
+        .then((txt) => {
+          _stoControllando = false;
+          if (!txt) return;
+          const suoi = numeroBraniOnline(txt);
+          const m = /APP_VERSION\s*=\s*"([\d.]+)"/.exec(txt);
+          const versioneNuova = !!(m && m[1] !== String(APP_VERSION));
+          const braniNuovi = suoi > miei;
+          if (!braniNuovi && !versioneNuova) return;
+          const che = [];
+          if (braniNuovi) che.push((suoi - miei) + (suoi - miei === 1 ? " brano nuovo" : " brani nuovi"));
+          if (versioneNuova) che.push("versione " + (m ? m[1] : "?"));
+          segnalaErrore("aggiornamento disponibile: " + che.join(" e ") +
+            " (qui " + miei + " brani, online " + suoi + ")");
+          if (branoInCorso()) {
+            avvisoAggiornamento("C'è " + che.join(" e ") + ": aggiorno quando finisci.");
+            return;
+          }
+          if (navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistration().then((r) => r && r.update());
+          }
+          setTimeout(() => window.location.reload(true), 1200);
+        })
+        .catch(() => { _stoControllando = false; });
+    }
+    setInterval(controllaAggiornamenti, 60000);
+    setTimeout(controllaAggiornamenti, 8000);
+
   })();
 })();
