@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.49";
+  const APP_VERSION = "6.50";
 
   let recovering = false;
   async function selfHeal() {
@@ -635,6 +635,67 @@
     $("btnRestore").hidden = hiddenTracks.size === 0;
   }
 
+  /* Rende pubblici i brani che esistono solo su questo dispositivo.
+     Ogni brano importato a mano resta nel browser da cui l'hai importato,
+     percio' su un altro telefono non si vede. Qui prendo quei brani e li
+     mando al programma sul PC, che li mette nella cartella del profilo: da
+     li' entrano nella libreria condivisa e li vedono tutti i dispositivi. */
+  async function condividiBraniLocali() {
+    const online = await ponteOnline();
+    if (!online) {
+      toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
+      return;
+    }
+    let daMandare = [];
+    try {
+      const tutti = await dbAll();
+      daMandare = (tutti || []).filter((r) => r && r.blob && r.blob.size && !r.condiviso);
+    } catch (e) {
+      toast("Non sono riuscito a leggere i brani di questo dispositivo");
+      segnalaErrore("condivisione fallita in lettura: " + String((e && e.message) || e).slice(0, 140));
+      return;
+    }
+    if (!daMandare.length) {
+      toast("Qui non ci sono brani da condividere");
+      return;
+    }
+    const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+    const bottone = $("btnCondividi");
+    if (bottone) bottone.disabled = true;
+    let fatti = 0;
+    let falliti = 0;
+    for (const r of daMandare) {
+      const nome = [(r.artist || ""), (r.title || "")].join(" - ")
+        .replace(/^\s*-\s*/, "").replace(/\s*-\s*$/, "").trim() || "brano";
+      try {
+        const risp = await fetch(base + "/salva?nome=" + encodeURIComponent(nome) +
+          "&cartella=" + encodeURIComponent(CARTELLA_PREDEFINITA), {
+          method: "POST",
+          headers: { "Content-Type": "audio/mpeg" },
+          body: r.blob
+        });
+        if (!risp.ok) throw new Error("il programma ha risposto " + risp.status);
+        r.condiviso = true;
+        try { await dbPut(r); } catch (e2) { /* va bene anche senza rifare la scrittura */ }
+        fatti++;
+        if (bottone) bottone.textContent = "Condiviso " + fatti + " di " + daMandare.length;
+      } catch (e) {
+        falliti++;
+        segnalaErrore("brano non condiviso (" + nome.slice(0, 40) + "): " +
+          String((e && e.message) || e).slice(0, 120));
+      }
+    }
+    if (bottone) {
+      bottone.disabled = false;
+      bottone.textContent = "Condividi con gli altri dispositivi";
+    }
+    toast(falliti
+      ? "Condivisi " + fatti + " brani, " + falliti + " non riusciti"
+      : "Condivisi " + fatti + " brani: ora si vedono anche sugli altri dispositivi");
+    segnalaErrore("condivisione finita: " + fatti + " condivisi, " + falliti + " falliti");
+    render();
+  }
+
   function render() {
     const list = visibleTracks();
     playlistEl.innerHTML = "";
@@ -647,6 +708,18 @@
     if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
+    /* Se ci sono brani che esistono solo qui, offro di condividerli: altrimenti
+       l'utente li vede sparire dagli altri dispositivi e non capisce perche'. */
+    const rigaCond = $("rigaCondividi");
+    if (rigaCond) {
+      if (mine) {
+        rigaCond.hidden = false;
+        $("testoCondividi").textContent = mine + (mine === 1 ? " brano esiste" : " brani esistono") +
+          " solo su questo dispositivo: puoi condividerli con gli altri.";
+      } else {
+        rigaCond.hidden = true;
+      }
+    }
 
     if (!list.length) {
       emptyEl.hidden = false;
@@ -4163,6 +4236,8 @@ function closeImport() {
   });
 
   $("fab").addEventListener("click", () => fileInput.click());
+  const btnCondividi = $("btnCondividi");
+  if (btnCondividi) btnCondividi.addEventListener("click", () => condividiBraniLocali());
   fileInput.addEventListener("change", () => {
     if (fileInput.files.length) addFiles(fileInput.files);
     fileInput.value = "";
