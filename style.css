@@ -1278,25 +1278,6 @@ button.btn-mini-file {
 }
 .ordine-bt { cursor: pointer; }
 
-/* Riga dei brani eliminati: deve stare subito sotto il contatore, ben
-   visibile, perche' il bottone piccolo in alto non si trova. */
-.track-nascosti {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 0 0 10px;
-  padding: 9px 12px;
-  border: 1px solid #6b4a1f;
-  border-radius: 10px;
-  background: #241a10;
-  color: #ffd8a8;
-  font-size: 13px;
-  line-height: 1.45;
-}
-.track-nascosti[hidden] { display: none; }
-.track-nascosti span { flex: 1 1 200px; min-width: 0; }
-.track-nascosti button { flex: 0 0 auto; cursor: pointer; }
 
 /* Finestra delle statistiche */
 #statsCorpo h4 {

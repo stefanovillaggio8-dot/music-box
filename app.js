@@ -10,7 +10,7 @@
     { title: "Kid Yugi x Lil Peep MASHUP", file: "songs/track-6.mp3", artist: "Kid Yugi / Lil Peep" },
     { title: "Lil Peep - Star Shopping", file: "songs/track-7.mp3", artist: "Lil Peep" },
     { title: "Malpensa", file: "songs/track-8.mp3", artist: "G.Mineiro, Flatpearl, Succo" },
-    { title: "MOSTRO - LA CITTÀ", file: "songs/track-9.mp3", artist: "MOSTRO" },
+    { title: "MOSTRO - LA CITTÃƒâ‚¬", file: "songs/track-9.mp3", artist: "MOSTRO" },
     { title: "CIGNO NERO RMX (Nayt, Frah Quintale, Tony Boy)", file: "songs/track-10.mp3", artist: "Nayt / Frah Quintale / Tony Boy" },
     { title: "SAITTA - Romantici Terroni", file: "songs/track-11.mp3", artist: "SAITTA" },
     { title: "thasup - s!r!", file: "songs/track-12.mp3", artist: "thasup" },
@@ -19,8 +19,8 @@
     { title: "Sogni Appesi", file: "songs/track-15.mp3", artist: "Ultimo", profile: "Ste" },
     { title: "nayt - Exit", file: "songs/track-16.mp3", artist: "nayt", profile: "Ste" },
     { title: "Hai visto mai", file: "songs/track-17.mp3", artist: "Frah Quintale", profile: "Ste" },
-    { title: "Il Più Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "Jovanotti", profile: "Ste" },
-    { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "Modà", profile: "Ste" },
+    { title: "Il PiÃƒÂ¹ Grande Spettacolo Dopo Il Big Bang", file: "songs/track-18.mp3", artist: "Jovanotti", profile: "Ste" },
+    { title: "Stella Cadente", file: "songs/track-19.mp3", artist: "ModÃƒÂ ", profile: "Ste" },
     { title: "Kid Yugi x Nuts - Lil Peep", file: "songs/track-20.mp3", artist: "Ferro di checov", profile: "Ste" },
     { title: "Lastronauta (Visual)", file: "songs/track-23.mp3", artist: "nayt", profile: "Ste" },
     { title: "zero rimorsi", file: "songs/track-24.mp3", artist: "il tre", profile: "Ste" },
@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.66";
+  const APP_VERSION = "6.67";
 
   let recovering = false;
   async function selfHeal() {
@@ -572,7 +572,7 @@
     html += "</div>";
 
     if (n.topArtisti.length) {
-      html += "<h4>Artisti più ascoltati</h4><div class=\"stat-lista\">";
+      html += "<h4>Artisti piÃƒÂ¹ ascoltati</h4><div class=\"stat-lista\">";
       for (const [a, v] of n.topArtisti) {
         html += '<div class="stat-item"><span>' + a + "</span><b>" + v + "</b></div>";
       }
@@ -581,9 +581,9 @@
       html += '<p class="step-hint">Non hai ancora ascoltato niente con questo profilo: ascolta una canzone e i numeri si riempiono da soli.</p>';
     }
     if (n.topBrani.length) {
-      html += "<h4>Brani più ascoltati</h4><div class=\"stat-lista\">";
+      html += "<h4>Brani piÃƒÂ¹ ascoltati</h4><div class=\"stat-lista\">";
       for (const b of n.topBrani) {
-        html += '<div class="stat-item"><span>' + (b.artista ? b.artista + " — " : "") + b.titolo +
+        html += '<div class="stat-item"><span>' + (b.artista ? b.artista + " Ã¢â‚¬â€ " : "") + b.titolo +
           "</span><b>" + _tempoTesto(b.s) + "</b></div>";
       }
       html += "</div>";
@@ -595,7 +595,7 @@
       const m = _numeriProfilo(pr.nome);
       const chi = pr.nome === profile ? " (sei tu)" : "";
       html += '<div class="stat-item' + (pr.nome === profile ? " io" : "") + '"><span>' + pr.nome + chi +
-        "</span><b>" + m.brani + " brani · " + m.volte + " ascolti</b></div>";
+        "</span><b>" + m.brani + " brani Ã‚Â· " + m.volte + " ascolti</b></div>";
     }
     html += "</div>";
     html += '<p class="step-hint">Gli ascolti si contano sul dispositivo dove stai ascoltando: se ascolti sul telefono, il computer non lo sa.</p>';
@@ -760,7 +760,7 @@
     }
     const dettaglio = senza.slice(0, 8).map((t) => {
       const k = normKey((t.artist || "") + " " + (t.title || ""));
-      return (t.artist || "?") + " - " + t.title + " [chiave " + k + (coversData[k] ? ": c'è in covers.json" : ": ASSENTE") + "]";
+      return (t.artist || "?") + " - " + t.title + " [chiave " + k + (coversData[k] ? ": c'ÃƒÂ¨ in covers.json" : ": ASSENTE") + "]";
     });
     segnalaErrore("senza copertina: " + senza.length + " -> " + dettaglio.join(" || "));
   }
@@ -791,7 +791,7 @@
 
   async function loadCovers() {
     try {
-      /* Aggiungo il tempo alla richiesta: senza, il telefono può servire la
+      /* Aggiungo il tempo alla richiesta: senza, il telefono puÃƒÂ² servire la
          copia vecchia del file e le copertine restano quelle sbagliate. */
       const res = await fetch("covers.json?t=" + Date.now());
       if (!res.ok) throw new Error("HTTP " + res.status);
@@ -1031,8 +1031,8 @@
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
     const msg = t.builtin
-      ? "«" + t.title + "» sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
-      : "«" + t.title + "» sparisce dalla tua lista di questo profilo.";
+      ? "Ã‚Â«" + t.title + "Ã‚Â» sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
+      : "Ã‚Â«" + t.title + "Ã‚Â» sparisce dalla tua lista di questo profilo.";
     const yes = await askConfirm("Togliere dalla lista?", msg, "Togli");
     if (!yes) return;
     hiddenTracks.add(id);
@@ -1044,7 +1044,7 @@
     }
     closeLyrics();
     render();
-    updateRestoreButton();
+  /* niente: la finestra dei nascosti e' stata tolta */
     toast("Brano tolto dalla lista");
   }
 
@@ -1052,13 +1052,14 @@
     hiddenTracks = new Set();
     saveCurrentState();
     render();
-    updateRestoreButton();
+  /* niente: la finestra dei nascosti e' stata tolta */
     toast("Brani ripristinati: sono di nuovo tutti visibili");
   }
 
-  function updateRestoreButton() {
-    $("btnRestore").hidden = hiddenTracks.size === 0;
-  }
+  /* Non c'e' piu' la finestra dei brani nascosti: quando elimini una canzone
+     ti gia' chiede conferma, quindi una lista di "nascosti" da riportare
+     indietro non serviva a niente. Il menu rapido del brano nascosto offre
+     "Rimetti nella lista". */
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
      DA SOLO: non c'e' un tasto da premere. Ogni brano importato a mano resta
@@ -1247,23 +1248,8 @@ const nascosti = hiddenTracks.size;
        che sembrava scritto male, e non si capiva cosa volesse dire. */
     let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
-    if (nascosti) label += ", " + nascosti + (nascosti === 1 ? " nascosto" : " nascosti");
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
-    /* I brani eliminati: una riga tutta sua, subito sotto il contatore, con
-       il bottone dentro. Prima c'era solo un'icona piccola in alto a destra,
-       e non si capiva cosa fosse ne' come tornarli. */
-    const rigaN = $("rigaNascosti");
-    if (rigaN) {
-      rigaN.hidden = !nascosti;
-      if (nascosti) {
-        $("testoNascosti").textContent = nascosti === 1
-          ? "1 brano è stato eliminato dalla lista:"
-          : nascosti + " brani sono stati eliminati dalla lista:";
-      }
-    }
-    const vecchio = $("btnRestore");
-    if (vecchio) vecchio.hidden = true;
     /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
     const bt = $("btnOrdina");
     if (bt) {
@@ -1290,7 +1276,7 @@ const nascosti = hiddenTracks.size;
       emptyEl.textContent = !total
         ? (hiddenTracks.size
           ? "Hai nascosto tutti i brani di " + profile + ": tocca l'icona dell'occhio per rivederli."
-          : "La libreria di " + profile + " è vuota. Le canzoni arrivano dal computer (cartella musica mp3 " +
+          : "La libreria di " + profile + " ÃƒÂ¨ vuota. Le canzoni arrivano dal computer (cartella musica mp3 " +
             profile.toLowerCase() + ") oppure scaricale con la scheda Importa.")
         : !tracks.length
           ? "Nessun brano. Tocca + per aggiungere della musica."
@@ -1337,8 +1323,8 @@ const nascosti = hiddenTracks.size;
       if (t.artist) bits.push(t.artist);
       if (t.album) bits.push(t.album);
       if (t.preview) bits.push("anteprima 30s");
-      if (t.builtin) meta.textContent = bits.length ? bits.join(" · ") : "per tutti";
-      else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
+      if (t.builtin) meta.textContent = bits.length ? bits.join(" Ã‚Â· ") : "per tutti";
+      else meta.textContent = bits.length ? bits.join(" Ã‚Â· ") + " Ã‚Â· solo tua" : "solo tua";
       info.appendChild(meta);
 
       li.appendChild(art);
@@ -1708,7 +1694,7 @@ const nascosti = hiddenTracks.size;
         g.className = "queue-info";
         const gt = document.createElement("div");
         gt.className = "queue-title";
-        gt.textContent = "Brano non più disponibile";
+        gt.textContent = "Brano non piÃƒÂ¹ disponibile";
         g.appendChild(gt);
         row.appendChild(g);
         row.appendChild(mkBtn("Rimuovi", btnClose, () => removeQueue(i)));
@@ -1742,7 +1728,7 @@ const nascosti = hiddenTracks.size;
       actions.className = "queue-actions";
       actions.appendChild(mkBtn("Riproduci", btnPlayQ, () => playFromQueue(i)));
       actions.appendChild(mkBtn("Sposta su", btnUp, () => moveQueue(i, -1), i === 0));
-      actions.appendChild(mkBtn("Sposta giù", btnDown, () => moveQueue(i, 1), i === queue.length - 1));
+      actions.appendChild(mkBtn("Sposta giÃƒÂ¹", btnDown, () => moveQueue(i, 1), i === queue.length - 1));
       actions.appendChild(mkBtn("Rimuovi", btnClose, () => removeQueue(i)));
       row.appendChild(actions);
       body.appendChild(row);
@@ -1786,7 +1772,7 @@ const nascosti = hiddenTracks.size;
       el.type = "button";
       el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + ICON_OFFLINE + '"/></svg>';
       const gia = isCached(t);
-      el.appendChild(document.createTextNode(gia ? "Già salvata offline" : cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
+      el.appendChild(document.createTextNode(gia ? "GiÃƒÂ  salvata offline" : cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
       el.disabled = gia;
       el.style.opacity = gia ? ".55" : "1";
       el.addEventListener("click", () => {
@@ -1798,12 +1784,35 @@ const nascosti = hiddenTracks.size;
       box.appendChild(quickAction("Condividi file", ICON_SHARE, () => exportTrack(t)));
     }
     box.appendChild(quickAction("Nascondi", ICON_HIDE, () => hideTrack(t.id), true));
+  if (hiddenTracks.size) {
+    box.appendChild(quickAction("Rimetti i nascosti", ICON_HIDE, () => _ripristinaNascosti()));
+  }
     renderQueueCount();
     $("quickPanel").hidden = false;
     syncNoScroll();
   }
 
+  /* Qui si rimettono i brani nascosti: la finestra con la lista di "nascosti"
+     e' stata tolta (l'eliminazione chiede gia' conferma, quindi era inutile),
+     ma se un brano e' stato nascosto puoi riportarlo qui, dal menu del brano
+     o del profilo. */
+function _ripristinaNascosti() {
+    const quanti = hiddenTracks.size;
+    if (!quanti) {
+      toast("Non ci sono brani nascosti");
+      return;
+    }
+    const messaggio = "Vuoi rimettere nella lista i " + quanti +
+      (quanti === 1 ? " brano nascosto?" : " brani nascosti?");
+    if (!confirm(messaggio)) return;
+    hiddenTracks = new Set();
+    saveCurrentState();
+    render();
+    toast("Brani rimessi nella lista");
+  }
+
   function bindLongPress(el, t) {
+
     let timer = null;
     let startX = 0;
     let startY = 0;
@@ -1865,7 +1874,7 @@ const nascosti = hiddenTracks.size;
     const t = current();
     setArt($("playerArt"), t);
     setArt($("hudArt"), t);
-    $("playerTitle").textContent = t ? t.title : "—";
+    $("playerTitle").textContent = t ? t.title : "Ã¢â‚¬â€";
     $("hudTitle").textContent = t ? t.title : "Nessuna traccia";
     $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
     updateLyricsButton();
@@ -2030,7 +2039,7 @@ const nascosti = hiddenTracks.size;
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 8000);
-      toast("Salvalo e mettilo nella cartella musica mp3 " + profile.toLowerCase() + " sul computer: così lo vede chiunque usi quel nome");
+      toast("Salvalo e mettilo nella cartella musica mp3 " + profile.toLowerCase() + " sul computer: cosÃƒÂ¬ lo vede chiunque usi quel nome");
     } catch (e) {
       toast("Esportazione non riuscita: " + e.message);
     }
@@ -2112,7 +2121,7 @@ const nascosti = hiddenTracks.size;
       const st = loadProfileState();
       await loadLocalLyrics();
       await loadAll();
-      updateRestoreButton();
+  /* niente: la finestra dei nascosti e' stata tolta */
       setHud();
       const last = st.last ? tracks.find((t) => t.id === st.last) : null;
       if (last) {
@@ -2283,7 +2292,7 @@ const nascosti = hiddenTracks.size;
       }
     }
     if (ok) {
-      toast((ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti") + " — solo per " + profile);
+      toast((ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti") + " Ã¢â‚¬â€ solo per " + profile);
       await loadAll();
       const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
       for (const t of fresh) enrichTrack(t.id);
@@ -2293,7 +2302,7 @@ const nascosti = hiddenTracks.size;
 
   async function removeTrack(id) {
     const t = tracks.find((x) => x.id === id);
-    const yes = await askConfirm("Eliminare il brano?", "«" + (t ? t.title : "") + "» verrà cancellato da questo telefono e non si potrà più recuperare.", "Elimina");
+    const yes = await askConfirm("Eliminare il brano?", "Ã‚Â«" + (t ? t.title : "") + "Ã‚Â» verrÃƒÂ  cancellato da questo telefono e non si potrÃƒÂ  piÃƒÂ¹ recuperare.", "Elimina");
     if (!yes) return;
     try { await dbDel(id); } catch (e) { console.warn(e); }
     try { await dbDelImport(id); } catch (e) { /* noop */ }
@@ -3989,7 +3998,7 @@ const nascosti = hiddenTracks.size;
        se nel frattempo la lista si e' ridisegnata, questa riga e' vecchia e
        non la vede piu' nessuno, e la riga nuova fa il controllo per conto
        suo. Prima invece uscivo subito e la scritta "controllo il PC..."
-       restava lì per sempre, e sembrava che il programma fosse occupato. */
+       restava lÃƒÂ¬ per sempre, e sembrava che il programma fosse occupato. */
     ponteOnline().then((online) => {
       scriviStatoPonte(stato, online
         ? "programma sul PC: acceso"
@@ -4112,7 +4121,7 @@ const nascosti = hiddenTracks.size;
 
   async function removeImportItem(item) {
     if (item.state === "downloading") return;
-    const yes = await askConfirm("Togliere dalla ricerca?", "«" + item.title + "» sparisce da questo elenco. Se era in download, si ferma.", "Togli");
+    const yes = await askConfirm("Togliere dalla ricerca?", "Ã‚Â«" + item.title + "Ã‚Â» sparisce da questo elenco. Se era in download, si ferma.", "Togli");
     if (!yes) return;
     item.removed = true;
     if (item.controller) {
@@ -4176,7 +4185,7 @@ const nascosti = hiddenTracks.size;
     const btn = (text, fn, disabled) => nuovoBottone(gruppo, text, fn, "", "", disabled);
 
     if (item.state === "dupe") {
-      tag("già nella libreria", "dup");
+      tag("giÃƒÂ  nella libreria", "dup");
     } else if (item.state === "missing") {
       tag(item.tagMancato || "non disponibile", "miss");
       if (item.tagMancato) {
@@ -4247,16 +4256,16 @@ const nascosti = hiddenTracks.size;
         // ogni versione si puo' ascoltare prima di sceglierla
         const bInfo = bottoneAnteprima(cand);
         if (bInfo.src) {
-          const b = btn("▶ " + bInfo.etichetta, () => {
+          const b = btn("Ã¢â€“Â¶ " + bInfo.etichetta, () => {
             const b2 = bottoneAnteprima(cand);
-            ascoltaPrima({ src: b2.src, etichetta: "▶ " + b2.etichetta, el: b }, (err) => {
+            ascoltaPrima({ src: b2.src, etichetta: "Ã¢â€“Â¶ " + b2.etichetta, el: b }, (err) => {
               if (err) toast("Anteprima non disponibile per questa versione.");
             });
           });
           b.title = notaAnteprima(cand) || "Ascolta prima di scegliere";
         }
         const nota = notaAnteprima(cand);
-        btn((cand.title + (cand.artist ? " — " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : "")), () => {
+        btn((cand.title + (cand.artist ? " Ã¢â‚¬â€ " + cand.artist : "") + (cand.album ? " [" + cand.album + "]" : "")), () => {
           fermaAnteprima();
           item.meta = cand;
           item.state = "ready";
@@ -4415,7 +4424,7 @@ const nascosti = hiddenTracks.size;
 
       const title = document.createElement("p");
       title.className = "imp-title";
-      title.textContent = item.title + (item.artist ? " — " + item.artist : "");
+      title.textContent = item.title + (item.artist ? " Ã¢â‚¬â€ " + item.artist : "");
       main.appendChild(title);
 
       const sub = document.createElement("p");
@@ -4426,7 +4435,7 @@ const nascosti = hiddenTracks.size;
       if (item.secs) bits.push(fmtTime(item.secs));
       if (item.meta && item.meta.source) bits.push(item.meta.source);
       if (item.meta && item.meta.license) bits.push(item.meta.license);
-      sub.textContent = bits.join(" · ");
+      sub.textContent = bits.join(" Ã‚Â· ");
       main.appendChild(sub);
 
       const tags = document.createElement("p");
@@ -4457,7 +4466,7 @@ const nascosti = hiddenTracks.size;
       const rem = document.createElement("button");
       rem.className = "imp-remove";
       rem.setAttribute("aria-label", "Togli dalla lista");
-      rem.textContent = "×";
+      rem.textContent = "Ãƒâ€”";
       rem.addEventListener("click", () => removeImportItem(item));
       row.appendChild(rem);
 
@@ -4670,9 +4679,9 @@ const nascosti = hiddenTracks.size;
     const choose = importList.filter((x) => x.state === "choose").length;
     const errs = importList.filter((x) => x.state === "error").length;
     const daImportare = importList.filter((x) => x.state === "found").length;
-    status.textContent = "Importati " + done + " · da scegliere " + choose + " · già presenti " + dupes +
-      " · non disponibili " + miss + (errs ? " · errori " + errs : "") +
-      (daImportare ? " · " + daImportare + " canzoni pronte da importare" : "");
+    status.textContent = "Importati " + done + " Ã‚Â· da scegliere " + choose + " Ã‚Â· giÃƒÂ  presenti " + dupes +
+      " Ã‚Â· non disponibili " + miss + (errs ? " Ã‚Â· errori " + errs : "") +
+      (daImportare ? " Ã‚Â· " + daImportare + " canzoni pronte da importare" : "");
     searching = false;
     $("btnFind").disabled = false;
   }
@@ -5319,10 +5328,6 @@ function closeImport() {
     if (e.target === $("profilePanel")) closeProfile();
   });
 
-  $("btnRestore").addEventListener("click", restoreHidden);
-    const btnTutti = $("btnRipristina");
-    if (btnTutti) btnTutti.addEventListener("click", restoreHidden);
-
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) {
       if (audio) {
@@ -5415,7 +5420,7 @@ function closeImport() {
      avvio, e intanto i brani restano al sicuro qui. */
 setTimeout(() => { condividiBraniLocali(); }, 1200);
   _avviaStatistiche();
-  updateRestoreButton();
+  /* niente: la finestra dei nascosti e' stata tolta */
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
 
@@ -5527,7 +5532,7 @@ setTimeout(() => { condividiBraniLocali(); }, 1200);
           segnalaErrore("aggiornamento disponibile: " + che.join(" e ") +
             " (qui " + miei + " brani, online " + suoi + ")");
           if (branoInCorso()) {
-            avvisoAggiornamento("C'è " + che.join(" e ") + ": aggiorno quando finisci.");
+            avvisoAggiornamento("C'ÃƒÂ¨ " + che.join(" e ") + ": aggiorno quando finisci.");
             return;
           }
           if (navigator.serviceWorker) {
