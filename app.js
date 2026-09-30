@@ -47,7 +47,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.53";
+  const APP_VERSION = "6.54";
 
   let recovering = false;
   async function selfHeal() {
@@ -658,13 +658,29 @@
     try {
       let daMandare = [];
       let senzaFile = 0;
+      let giaCondivisi = 0;
       try {
         const tutti = await dbAll();
-        daMandare = (tutti || []).filter((r) => r && r.blob && r.blob.size && !r.condiviso);
-        senzaFile = (tutti || []).filter((r) => r && !r.blob && !r.condiviso).length;
+        /* Un brano che esiste gia' nella libreria condivisa non lo rimando:
+           si aggiornerebbe da solo e rischierei di crearne un secondo. */
+        const utili = (tutti || []).filter((r) => r && !r.condiviso);
+        giaCondivisi = utili.filter((r) => eGiaCondiviso({ title: r.title, artist: r.artist })).length;
+        for (const r of utili) {
+          if (r.condiviso) continue;
+          if (eGiaCondiviso({ title: r.title, artist: r.artist })) {
+            r.condiviso = true;
+            try { await dbPut(r); } catch (e3) { /* non e' grave */ }
+            continue;
+          }
+          if (r.blob && r.blob.size) daMandare.push(r);
+          else senzaFile++;
+        }
       } catch (e) {
         segnalaErrore("condivisione: lettura brani fallita: " + String((e && e.message) || e).slice(0, 120));
         return;
+      }
+      if (giaCondivisi) {
+        segnalaErrore("condivisione: " + giaCondivisi + " brani erano gia' nella libreria condivisa");
       }
       if (senzaFile) {
         segnalaErrore("condivisione: " + senzaFile + " brani senza file, non condivisibili");
@@ -726,7 +742,7 @@
     const ind = $("shareInd");
     const badge = $("shareBadge");
     if (!ind) return;
-    const privati = tracks.filter((t) => !t.builtin && !t.preview).length;
+    const privati = tracks.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const daCondividere = privati > 0;
     ind.hidden = !daCondividere && !condivisioneInCorso;
     if (badge) {
@@ -739,13 +755,61 @@
       : "Tutti i brani sono gia' condivisi";
   }
 
+  /* Un brano locale e uno condiviso sono lo stesso brano: la copia nel
+     browser serve solo per non scaricarlo due volte, ma elencarlo come
+     "solo tuo" e' sbagliato, e non serve neppure rimandarlo al PC.
+     Prima succedeva esattamente questo: dopo aver condiviso un brano, il PC
+     continuava a dire "10 solo tuoi" perche' non si accorgeva che quel
+     brano era gia' nella libreria di tutti. */
+  /* Come normKey ma lascia gli spazi: serve per capire se un artista e'
+     l'altro piu' i suoi feat (per esempio "Kid Yugi" dentro
+     "Kid Yugi, Tedua & Junior K"). */
+  function normParole(s) {
+    return String(s || "").toLowerCase().normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  }
+  /* Lo stesso artista, o uno che e' l'altro con dentro i feat. */
+  function stessoArtista(a, b) {
+    const x = normParole(a), y = normParole(b);
+    if (!x || !y) return false;
+    if (x === y) return true;
+    const corto = x.length <= y.length ? x : y;
+    const lungo = x.length <= y.length ? y : x;
+    /* il nome corto deve finire a confine di parola, altrimenti
+       "Kid Yugi" risulterebbe dentro "Kid Yugiroll" */
+    return lungo.indexOf(corto) === 0 && lungo.charAt(corto.length) === " ";
+  }
+  function stessoBrano(a, b) {
+    if (!a || !b) return false;
+    const ta = normKey(a.title), tb = normKey(b.title);
+    if (!ta || !tb) return false;
+    const titoliUguali = ta === tb || ta.indexOf(tb) >= 0 || tb.indexOf(ta) >= 0;
+    if (!titoliUguali) return false;
+    if (normKey(a.artist) || normKey(b.artist)) return stessoArtista(a.artist, b.artist);
+    /* Senza artista non si puo' dire con certezza, quindi non confondo. */
+    return ta.length >= 8;
+  }
+  /* La lista si ridisegna spesso e il confronto coi brani condivisi gira ogni
+     volta: me lo ricordo, cosi' non ripeto lo stesso lavoro. */
+  const _memoCondiviso = new Map();
+  function eGiaCondiviso(t) {
+    if (t.builtin) return true;
+    const k = normKey(t.artist) + "|" + normKey(t.title);
+    if (_memoCondiviso.has(k)) return _memoCondiviso.get(k);
+    let r = false;
+    for (const b of BUILTIN) if (stessoBrano(t, b)) { r = true; break; }
+    if (_memoCondiviso.size > 800) _memoCondiviso.clear();
+    _memoCondiviso.set(k, r);
+    return r;
+  }
+
   function render() {
     const list = visibleTracks();
     playlistEl.innerHTML = "";
 
     const visibleAll = tracks.filter((t) => !hiddenTracks.has(t.id));
     const total = visibleAll.length;
-    const mine = visibleAll.filter((t) => !t.builtin && !t.preview).length;
+    const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const n = list.length;
     let label = profile + " · " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
