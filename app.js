@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.65";
+  const APP_VERSION = "6.66";
 
   let recovering = false;
   async function selfHeal() {
@@ -439,6 +439,195 @@
     avviso.appendChild(p);
     avviso.appendChild(b);
     avviso.hidden = false;
+  }
+
+  /* ---------- Statistiche di ascolto ----------
+   Conta quante volte e quanto tempo ho ascoltato ogni brano. I dati sono
+   per profilo: le statistiche di Emanuele stanno separate da quelle di Ste,
+   anche se la libreria e' la stessa. */
+  function statisticheProfilo(nome) {
+    const st = profileState(nome || profile);
+    if (!st.stats || typeof st.stats !== "object") st.stats = {};
+    return st.stats;
+  }
+
+  function _chiaveStats(t) {
+    return _chiaveBrano(t);
+  }
+
+  let _statsUltimoTempo = 0;
+  let _statsCronometro = null;
+  let _statsUltimoSalvataggio = 0;
+
+  function _segnaAscolto(t, secondi, nuovo) {
+    try {
+      if (!t) return;
+      const chiave = _chiaveStats(t);
+      if (!chiave) return;
+      const st = statisticheProfilo();
+      const r = st[chiave] || { v: 0, s: 0 };
+      if (nuovo) r.v = (r.v || 0) + 1;
+      r.s = (r.s || 0) + Math.max(0, Math.round(secondi || 0));
+      r.t = t.title || "";
+      r.a = t.artist || "";
+      st[chiave] = r;
+      const ora = Date.now();
+      if (ora - _statsUltimoSalvataggio > 15000) {
+        _statsUltimoSalvataggio = ora;
+        writeProfileState(profile, { stats: st });
+      }
+    } catch (e) { /* le statistiche non devono mai fermare l'uso */ }
+  }
+
+  function _salvaStatistiche() {
+    try { writeProfileState(profile, { stats: statisticheProfilo() }); } catch (e) { /* noop */ }
+  }
+
+  /* Segue l'ascolto reale: aggiunge i secondi passati, e non il tempo in
+     cui la app era aperta senza suonare. */
+  function _seguiAscolto(audio) {
+    try {
+      if (!audio) return;
+      if (!audio.paused && !audio.ended) {
+        const t = audio.currentTime || 0;
+        if (_statsUltimoTempo > 0 && t > _statsUltimoTempo) {
+          const d = t - _statsUltimoTempo;
+          if (d > 0 && d < 3) _segnaAscolto(current(), d, false);
+        }
+        _statsUltimoTempo = t;
+      } else {
+        _statsUltimoTempo = 0;
+      }
+    } catch (e) { /* noop */ }
+  }
+
+  /* Fa partire il cronometro delle statistiche. */
+  /* ---------- La finestra delle statistiche ----------
+     Mostra i numeri del profilo aperto e, sotto, un confronto con gli
+     altri due profili: cosi' vedi subito com'e' messa la libreria di tutti. */
+  function _artistiDi(lista) {
+    const set = new Set();
+    for (const t of lista) {
+      const k = gruppoArtista(t);
+      if (k && k !== "zzz") set.add(k);
+    }
+    return set.size;
+  }
+
+  function _tempoTesto(secondi) {
+    const s = Math.max(0, Math.round(secondi || 0));
+    if (s < 60) return s + (s === 1 ? " secondo" : " secondi");
+    const ore = Math.floor(s / 3600);
+    const min = Math.floor((s % 3600) / 60);
+    if (!ore) return min + (min === 1 ? " minuto" : " minuti");
+    return ore + (ore === 1 ? " ora" : " ore") + (min ? " e " + min + (min === 1 ? " minuto" : " minuti") : "");
+  }
+
+  function _numeriProfilo(nome) {
+    const lista = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === nome && !hiddenTracks.has(t.id));
+    const st = profileState(nome);
+    const stats = (st && st.stats) || {};
+    let volte = 0, secondi = 0;
+    const perArtista = new Map();
+    const perBrano = [];
+    for (const k in stats) {
+      const r = stats[k] || {};
+      volte += r.v || 0;
+      secondi += r.s || 0;
+      const nomeArtista = (r.a || "").trim() || "senza artista";
+      perArtista.set(nomeArtista, (perArtista.get(nomeArtista) || 0) + (r.v || 0));
+      if ((r.s || 0) > 0) perBrano.push({ titolo: r.t || "", artista: r.a || "", s: r.s || 0 });
+    }
+    const topArtisti = [...perArtista.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const topBrani = perBrano.sort((a, b) => b.s - a.s).slice(0, 5);
+    return {
+      nome: nome,
+      brani: lista.length,
+      artisti: _artistiDi(lista),
+      tuoi: lista.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length,
+      volte: volte,
+      secondi: secondi,
+      topArtisti: topArtisti,
+      topBrani: topBrani
+    };
+  }
+
+  function _rigaStat(numero, testo, nota) {
+    return '<div class="stat-riga"><b>' + numero + "</b><span>" + testo +
+      (nota ? ' <i>' + nota + "</i>" : "") + "</span></div>";
+  }
+
+  function apriStatistiche() {
+    const pannello = $("statsPanel");
+    if (!pannello) return;
+    const n = _numeriProfilo(profile);
+    $("statsSub").textContent = "Profilo " + profile;
+    let html = "";
+    html += '<div class="stat-griglia">';
+    html += _rigaStat(n.brani, n.brani === 1 ? "brano" : "brani");
+    html += _rigaStat(n.artisti, n.artisti === 1 ? "artista" : "artisti");
+    html += _rigaStat(_tempoTesto(n.secondi), "di musica ascoltata");
+    html += _rigaStat(n.volte, n.volte === 1 ? "ascolto" : "ascolti");
+    if (n.tuoi) html += _rigaStat(n.tuoi, "brani aggiunti da te");
+    html += "</div>";
+
+    if (n.topArtisti.length) {
+      html += "<h4>Artisti più ascoltati</h4><div class=\"stat-lista\">";
+      for (const [a, v] of n.topArtisti) {
+        html += '<div class="stat-item"><span>' + a + "</span><b>" + v + "</b></div>";
+      }
+      html += "</div>";
+    } else {
+      html += '<p class="step-hint">Non hai ancora ascoltato niente con questo profilo: ascolta una canzone e i numeri si riempiono da soli.</p>';
+    }
+    if (n.topBrani.length) {
+      html += "<h4>Brani più ascoltati</h4><div class=\"stat-lista\">";
+      for (const b of n.topBrani) {
+        html += '<div class="stat-item"><span>' + (b.artista ? b.artista + " — " : "") + b.titolo +
+          "</span><b>" + _tempoTesto(b.s) + "</b></div>";
+      }
+      html += "</div>";
+    }
+
+    /* Gli altri profili: utile per capire se la libreria e' quella giusta */
+    html += "<h4>Come sono gli altri profili</h4><div class=\"stat-lista\">";
+    for (const pr of PROFILI) {
+      const m = _numeriProfilo(pr.nome);
+      const chi = pr.nome === profile ? " (sei tu)" : "";
+      html += '<div class="stat-item' + (pr.nome === profile ? " io" : "") + '"><span>' + pr.nome + chi +
+        "</span><b>" + m.brani + " brani · " + m.volte + " ascolti</b></div>";
+    }
+    html += "</div>";
+    html += '<p class="step-hint">Gli ascolti si contano sul dispositivo dove stai ascoltando: se ascolti sul telefono, il computer non lo sa.</p>';
+
+    $("statsCorpo").innerHTML = html;
+    pannello.hidden = false;
+    syncNoScroll();
+  }
+
+  function chiudiStatistiche() {
+    const pannello = $("statsPanel");
+    if (!pannello) return;
+    pannello.hidden = true;
+    syncNoScroll();
+  }
+
+  function _avviaStatistiche() {
+    try {
+      if (_statsCronometro) return;
+      _statsCronometro = setInterval(() => {
+        _seguiAscolto(audio);
+        _salvaStatistiche();
+      }, 5000);
+    } catch (e) { /* noop */ }
+    window.addEventListener("pagehide", _salvaStatistiche);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) _salvaStatistiche();
+    });
+  }
+
+  function _contaAscoltoNuovo(t) {
+    _segnaAscolto(t, 0, true);
   }
 
   async function loadAll() {
@@ -1697,11 +1886,10 @@ const nascosti = hiddenTracks.size;
   async function playById(id, autoplay = true) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
-    // Ogni brano parte dall'inizio. Prima riprendeva da dove avevo lasciato
-    // la volta prima, e capitava di sentire un brano gia' a meta' senza
-    // averlo scelto tu.
     if (id !== currentId) resumeAt = 0;
     currentId = id;
+    _statsUltimoTempo = 0;
+    if (autoplay) _contaAscoltoNuovo(t);
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
     audio.src = t.url;
@@ -5114,6 +5302,11 @@ function closeImport() {
   }
 
   $("btnOffline").addEventListener("click", openOffline);
+    $("btnStatistiche").addEventListener("click", apriStatistiche);
+    $("statsClose").addEventListener("click", chiudiStatistiche);
+    $("statsPanel").addEventListener("click", (e) => {
+      if (e.target === $("statsPanel")) chiudiStatistiche();
+    });
   $("offlineClose").addEventListener("click", closeOffline);
   $("offlinePanel").addEventListener("click", (e) => {
     if (e.target === $("offlinePanel")) closeOffline();
@@ -5220,8 +5413,9 @@ function closeImport() {
   /* Appena aperta la pagina, condivido da solo i brani che esistono solo qui:
      non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
      avvio, e intanto i brani restano al sicuro qui. */
-  setTimeout(() => { condividiBraniLocali(); }, 1200);
-    updateRestoreButton();
+setTimeout(() => { condividiBraniLocali(); }, 1200);
+  _avviaStatistiche();
+  updateRestoreButton();
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
 

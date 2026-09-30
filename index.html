@@ -21,6 +21,9 @@
         <span class="ver" id="appVer"></span>
       </div>
   <div class="logo-actions">
+    <button class="logo-refresh" id="btnStatistiche" aria-label="Statistiche" title="Statistiche di ascolto">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 20h3v-8H4v8Zm6.5 0h3V4h-3v16Zm6.5 0h3v-11h-3v11Z"/></svg>
+    </button>
     <span class="share-ind" id="shareInd" hidden title="Condivisione dei brani di questo dispositivo">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 16.08a2.9 2.9 0 0 0-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11A2.99 2.99 0 1 0 15 5a2.9 2.9 0 0 0 .09.7L8.04 9.81A3 3 0 1 0 8.04 14.19l7.12 4.16c-.05.21-.08.43-.08.65a2.92 2.92 0 1 0 2.92-2.92Z"/></svg>
       <span class="share-badge" id="shareBadge" hidden>0</span>
@@ -209,6 +212,21 @@
 
   <input type="file" id="importImageInput" accept="image/*" hidden />
   <input type="file" id="importAudioInput" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav" hidden />
+
+  <div class="profile-overlay" id="statsPanel" hidden>
+    <div class="profile-card">
+      <div class="import-head">
+        <div class="import-head-info">
+          <p class="import-title">Statistiche</p>
+          <p class="import-sub" id="statsSub"></p>
+        </div>
+        <button class="import-close" id="statsClose" aria-label="Chiudi">&times;</button>
+      </div>
+      <div class="profile-body">
+        <div id="statsCorpo"></div>
+      </div>
+    </div>
+  </div>
 
   <div class="profile-overlay" id="profilePanel" hidden>
     <div class="profile-card">

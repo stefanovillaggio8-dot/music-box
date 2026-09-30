@@ -1297,3 +1297,43 @@ button.btn-mini-file {
 .track-nascosti[hidden] { display: none; }
 .track-nascosti span { flex: 1 1 200px; min-width: 0; }
 .track-nascosti button { flex: 0 0 auto; cursor: pointer; }
+
+/* Finestra delle statistiche */
+#statsCorpo h4 {
+  margin: 18px 0 8px;
+  font-size: 13px;
+  letter-spacing: .3px;
+  color: var(--accent2);
+}
+.stat-griglia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.stat-riga {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+.stat-riga b { font-size: 20px; font-weight: 800; }
+.stat-riga span { font-size: 12px; color: var(--muted); }
+.stat-riga i { font-style: normal; opacity: .8; }
+.stat-lista { display: flex; flex-direction: column; gap: 6px; }
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  font-size: 13px;
+}
+.stat-item b { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.stat-item.io { border-color: var(--accent2); }
+.stat-item span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
