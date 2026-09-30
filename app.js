@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.45";
+  const APP_VERSION = "6.46";
 
   let recovering = false;
   async function selfHeal() {
@@ -2585,6 +2585,14 @@
      Premendo copio anche il link negli appunti, cosi' non serve ricordarselo. */
   // Chiede al programma sul PC di trovare il video ORIGINALE del brano.
   // Non serve nessuna chiave: usa lo stesso motore che scarica l'mp3.
+  /* Se una richiesta al programma del PC fallisce, vuol dire che il PC e'
+     spento o l'indirizzo non va piu': lo dimentico, cosi' alla prossima
+     ricerca lo cerco di nuovo invece di insistere su un indirizzo morto. */
+  function dimenticaPonte() {
+    ponteCheRisponde = "";
+    ponteCache = null;
+  }
+
   async function cercaVideoEsatto(artista, titolo, secondi) {
     try {
       const ctl = new AbortController();
@@ -2599,6 +2607,7 @@
       const j = await r.json();
       return (j && j.trovato && j.video && j.video.url) ? String(j.video.url) : "";
     } catch (e) {
+      dimenticaPonte();
       return "";
     }
   }
@@ -2680,14 +2689,17 @@
 
   async function findDownload(item) {
     const cands = [];
-    try {
-      const a = await searchArchive(item);
-      if (a) cands.push(...a);
-    } catch (e) { /* noop */ }
-    try {
-      const c = await searchCommons(item);
-      if (c) cands.push(...c);
-    } catch (e) { /* noop */ }
+    /* Le due ricerche andavano una dopo l'altra: se un sito ci metteva 8
+       secondi e l'altro 6, la riga restava su "cerco..." per 14 secondi.
+       Adesso partono insieme e ognuno ha un tetto di 9 secondi: al massimo
+       si aspetta il sito piu' lento, non la somma. */
+    const esiti = await Promise.allSettled([
+      conScadenza(searchArchive(item), 9000, "sito lento"),
+      conScadenza(searchCommons(item), 9000, "sito lento")
+    ]);
+    for (const e of esiti) {
+      if (e.status === "fulfilled" && e.value) cands.push(...e.value);
+    }
     cands.sort((a, b) => b.score - a.score);
     const list = cands.slice(0, 5);
     return { best: list.length ? list[0] : null, list };
@@ -2696,13 +2708,13 @@
   /* Cerca un brano e gli assegna lo stato trovato (trovato / scegli /
      solo anteprima / non disponibile). La usa sia il ciclo principale sia il
      tasto "Riprova", cosi' la logica e' sempre la stessa.
-     Massimo 35 secondi: se un sito e' lento, quel brano resta "non
-     disponibile" e gli altri vengono cercati lo stesso. */
+     Massimo 14 secondi: adesso i due siti si cercano insieme e ognuno ha un
+     tetto proprio, quindi non serve stare 35 secondi aspettando. */
   async function cercaItemSingolo(item) {
     let found = null;
     let scaduto = false;
     try {
-      found = await conScadenza(findDownload(item), 35000, "ricerca scaduta");
+      found = await conScadenza(findDownload(item), 14000, "ricerca scaduta");
     } catch (e) {
       found = null;
       scaduto = /scadut|lent/i.test(String((e && e.message) || ""));
@@ -2975,8 +2987,12 @@
   /* Provo gli indirizzi uno alla volta finche' uno risponde.
      Sul computer risponde 127.0.0.1, dal telefono risponde l'indirizzo
      della rete privata. Uso quello che ha risposto per tutte le richieste
-     successive, cosi' non rifaccio la prova ogni volta. */
-  async function trovaPonte() {
+     successive, cosi' non rifaccio la prova ogni volta.
+     Se piu' righe premono i pulsanti insieme condividono la stessa prova:
+     prima ognuna faceva la sua e si avevano 20 richieste in contemporanea,
+     tutte lentissime, e la scritta "controllo il PC..." restava ferma. */
+  let ponteInCorso = null;
+  async function cercaPonte() {
     if (ponteCheRisponde) return ponteCheRisponde;
     for (const base of INDIRIZZI_PONTE) {
       try {
@@ -2991,6 +3007,13 @@
       } catch (e) { /* questo indirizzo non va bene, provo il prossimo */ }
     }
     return "";
+  }
+  function trovaPonte() {
+    if (ponteCheRisponde) return Promise.resolve(ponteCheRisponde);
+    if (!ponteInCorso) {
+      ponteInCorso = cercaPonte().then((r) => { ponteInCorso = null; return r; });
+    }
+    return ponteInCorso;
   }
 
   function segnalaErrore(testo) {
@@ -3009,26 +3032,21 @@
   }
 
   async function ponteOnline() {
-    if (ponteCache && Date.now() - ponteCache.t < 15000) return ponteCache.ok;
+    if (ponteCache && Date.now() - ponteCache.t < 30000) return ponteCache.ok;
+    /* Se l'indirazzo giusto e' gia' noto mi fido: fa gia' il ping e la
+       risposta e' stata ok, non lo rifaccio. Prima facevo due richieste di
+       fila e la scritta "controllo il PC..." restava ferma il doppio. */
+    if (ponteCheRisponde) {
+      ponteCache = { ok: true, t: Date.now() };
+      return true;
+    }
     const base = await trovaPonte();
     let ok = false;
     let perche = "";
     if (!base) {
       perche = "nessun indirizzo risponde (" + INDIRIZZI_PONTE.join(", ") + ")";
     } else {
-      try {
-        const ctl = new AbortController();
-        const scad = setTimeout(() => ctl.abort(), 1500);
-        const r = await fetch(base + "/ping", { cache: "no-store", signal: ctl.signal });
-        clearTimeout(scad);
-        ok = !!r.ok;
-        if (!ok) perche = "risposta " + r.status;
-      } catch (e) {
-        ok = false;
-        // il motivo vero: dal telefono o da una pagina su internet il browser
-        // blocca la richiesta, e senza sapere questo sembra un mio bug
-        perche = String((e && (e.name + ": " + e.message)) || "errore");
-      }
+      ok = true;
     }
     ponteCache = { ok: ok, t: Date.now() };
     if (segnalatoIndirizzo !== window.location.href) {
@@ -3201,6 +3219,7 @@
     } catch (err) {
       // non lo porto in "errore": puo' essere un link sbagliato, e serve
       // riprovare senza perdere il brano
+      dimenticaPonte();
       el.fill.classList.add("err");
       el.bytes.textContent = String((err && err.message) || err);
       segnalaErrore("conversione fallita: " + String((err && err.message) || err).slice(0, 160));
