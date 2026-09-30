@@ -47,7 +47,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.51";
+  const APP_VERSION = "6.52";
 
   let recovering = false;
   async function selfHeal() {
@@ -713,17 +713,20 @@
     if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
-    /* Se ci sono brani che esistono solo qui, offro di condividerli: altrimenti
-       l'utente li vede sparire dagli altri dispositivi e non capisce perche'. */
-    const rigaCond = $("rigaCondividi");
-    if (rigaCond) {
-      if (mine) {
-        rigaCond.hidden = false;
-        $("testoCondividi").textContent = mine + (mine === 1 ? " brano esiste" : " brani esistono") +
-          " solo su questo dispositivo: puoi condividerli con gli altri.";
-      } else {
-        rigaCond.hidden = true;
+    /* I brani che esistono solo qui si possono condividere: il pulsante sta
+       nella barra in alto (non tra le canzoni) e mostra solo il numero. */
+    const btnCond = $("btnCondividi");
+    if (btnCond) {
+      btnCond.hidden = !mine;
+      const badge = $("shareBadge");
+      if (badge) {
+        badge.hidden = !mine;
+        badge.textContent = String(mine);
       }
+      btnCond.title = mine
+        ? mine + (mine === 1 ? " brano esiste" : " brani esistono") +
+          " solo su questo dispositivo: tocca per condividerli con gli altri"
+        : "Condividi i brani di questo dispositivo";
     }
 
     if (!list.length) {

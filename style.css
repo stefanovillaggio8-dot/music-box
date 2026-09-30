@@ -723,21 +723,6 @@ body.no-scroll { overflow: hidden; }
   50% { opacity: .35; }
 }
 
-.track-share {
-  background: none;
-  border: none;
-  color: var(--muted);
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-.track-share svg { width: 17px; height: 17px; }
-.track-share:active { color: var(--accent2); background: rgba(79,195,255,.12); }
-
 .confirm-overlay {
   position: fixed;
   inset: 0;
@@ -1241,31 +1226,24 @@ button.btn-mini-file {
 /* dentro un gruppo, il campo per il link prende lo spazio che resta */
 .imp-gruppo-azioni .imp-url { flex: 1 1 220px; min-width: 0; }
 
-/* Riga con il pulsante per condividere i brani di questo dispositivo.
-   La tengo come blocco semplice: prima era una riga flex e su schermi
-   stretti il testo non andava a capo e si mischiava con le canzoni. */
-.track-share {
-  display: block;
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  box-sizing: border-box;
-  clear: both;
-  margin: 0 0 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--muted);
-  font-size: 12.5px;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+/* Pulsante per condividere i brani di questo dispositivo: sta nella barra in
+   alto, non tra le canzoni, e mostra solo un numero. */
+#btnCondividi { position: relative; }
+#btnCondividi[hidden] { display: none; }
+.share-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #37e6a6;
+  color: #06251a;
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 17px;
+  text-align: center;
+  pointer-events: none;
 }
-.track-share[hidden] { display: none; }
-.track-share span { display: block; margin: 0 0 8px; }
-.track-share button {
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-}
+.share-badge[hidden] { display: none; }
