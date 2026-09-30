@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.68";
+  const APP_VERSION = "6.69";
 
   let recovering = false;
   async function selfHeal() {
@@ -483,8 +483,13 @@
     try { writeProfileState(profile, { stats: statisticheProfilo() }); } catch (e) { /* noop */ }
   }
 
-  /* Segue l'ascolto reale: aggiunge i secondi passati, e non il tempo in
-     cui la app era aperta senza suonare. */
+  /* Segue l'ascolto reale e NON conta quello che salti.
+     Guardo ogni secondo quanto e' andato avanti il brano:
+     - se avanza di poco (1 secondo), e' ascolto vero e lo sommo
+     - se avanza tanto (perche' hai premuto avanti), NON lo sommo: la canzone
+       l'hai saltata, non ascoltata.
+     Prima guardavo ogni 5 secondi e accettavo solo fino a 3 secondi di
+     salto: con quei numeri non contava praticamente niente. */
   function _seguiAscolto(audio) {
     try {
       if (!audio) return;
@@ -492,7 +497,8 @@
         const t = audio.currentTime || 0;
         if (_statsUltimoTempo > 0 && t > _statsUltimoTempo) {
           const d = t - _statsUltimoTempo;
-          if (d > 0 && d < 3) _segnaAscolto(current(), d, false);
+          /* massimo 2 secondi: oltre, e' uno "salto avanti", non ascolto */
+          if (d > 0 && d <= 2) _segnaAscolto(current(), d, false);
         }
         _statsUltimoTempo = t;
       } else {
@@ -615,10 +621,12 @@
   function _avviaStatistiche() {
     try {
       if (_statsCronometro) return;
+      /* Ogni secondo: abbastanza per capire se stai ascoltando o saltando,
+         e abbastanza leggero da non accorgertene. */
       _statsCronometro = setInterval(() => {
         _seguiAscolto(audio);
         _salvaStatistiche();
-      }, 5000);
+      }, 1000);
     } catch (e) { /* noop */ }
     window.addEventListener("pagehide", _salvaStatistiche);
     document.addEventListener("visibilitychange", () => {
@@ -1329,9 +1337,11 @@ const nascosti = hiddenTracks.size;
 
       li.appendChild(art);
       li.appendChild(info);
-      // tenendo premuto (o col tasto destro) si cambia il nome della canzone
-      collegaPressioneLunga(li, t.id);
-      li.title = "Tieni premuto per cambiare il nome";
+      /* Tieni premuto e si apre il menu rapido (che al primo posto ha
+         "Cambia nome e artista"). Qui non metto un secondo gestore di
+         pressione lunga: due insieme si confondevano e la finestra del nome
+         si apriva anche con un tocco normale. */
+      li.title = "Tieni premuto per le azioni sulla canzone";
 
       const favBtn = document.createElement("button");
       favBtn.className = "track-fav" + (favorites.has(t.id) ? " on" : "");
@@ -1754,6 +1764,7 @@ const nascosti = hiddenTracks.size;
   }
 
   const ICON_QUEUE = "M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z";
+const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z";
   const ICON_NEXT = "M6 5l9 7-9 7V5Zm10 0h2v14h-2V5Z";
   const ICON_HIDE = "M3.3 2 2 3.3l2.4 2.4C2.5 7 1.4 8.7 1 9c1.1 2.3 4 5 7 6l2 2 1.3-1.3 15.4 15.4 1.3-1.3L3.3 2ZM12 5c4.4 0 8 4 8 4-.5 1-1.6 2.4-3.1 3.5l-1.5-1.5c1-.9 1.6-1.9 1.9-2.6-.6-.8-2.6-2.4-5.3-2.4-.4 0-.8 0-1.2.1L9.6 4.9c.8-.1 1.6-.1 2.4-.1Z";
   const ICON_SHARE = "M18 16a3 3 0 0 0-2.4 1.2l-6.9-4a3 3 0 0 0 0-1.4l7-4.1A3 3 0 1 0 15 6c0 .2 0 .4.1.6l-7 4.1a3 3 0 1 0 0 6.6l6.9 4A3 3 0 1 0 18 16Z";
@@ -1763,8 +1774,13 @@ const nascosti = hiddenTracks.size;
     if (!t) return;
     $("quickTitle").textContent = t.title;
     const box = $("quickActions");
-    box.innerHTML = "";
-    box.appendChild(quickAction("Ascolta dopo", ICON_NEXT, () => queueTrack(t.id, true)));
+box.innerHTML = "";
+  /* Prima cosa nel menu: cambiare il nome. Stava in una pressione lunga
+     separata, ma sul telefono un semplice tocco genera anche gli eventi del
+     mouse e quella finestra si apriva da sola mentre ascoltavi. Ora la
+     pressione lunga apre SOLO questo menu, e qui dentro c'e' tutto. */
+  box.appendChild(quickAction("Cambia nome e artista", ICON_EDIT, () => apriRinomina(t.id)));
+  box.appendChild(quickAction("Ascolta dopo", ICON_NEXT, () => queueTrack(t.id, true)));
     box.appendChild(quickAction("Metti in coda", ICON_QUEUE, () => queueTrack(t.id, false)));
     if (t.builtin) {
       const el = document.createElement("button");
