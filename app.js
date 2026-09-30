@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.64";
+  const APP_VERSION = "6.65";
 
   let recovering = false;
   async function selfHeal() {
@@ -380,14 +380,12 @@
     };
     const via = (v) => { timer = setTimeout(apri, 600); };
     const pulisci = () => { if (timer) clearTimeout(timer); timer = null; };
-    el.addEventListener("touchstart", (e) => {
-      via();
-      /* Su telefono, tenendo premuto il browser prepara anche i clic e il
-         menu: li blocco qui, altrimenti la canzone parte da sola. */
-      if (e.cancelable) e.preventDefault();
-    }, { passive: false });
+    el.addEventListener("touchstart", () => via(), { passive: true });
     el.addEventListener("touchend", () => setTimeout(pulisci, 60), { passive: true });
     el.addEventListener("touchcancel", pulisci, { passive: true });
+    /* Se il dito si muove, e' uno scorrimento: NON deve aprire la modifica
+       e NON deve essere bloccato, altrimenti non riesci piu' a scorrere
+       la lista passando il dito sulle canzoni. */
     el.addEventListener("touchmove", pulisci, { passive: true });
     el.addEventListener("mousedown", (e) => { via(); if (e.button === 2) pulisci(); });
     el.addEventListener("mouseup", pulisci);
@@ -493,8 +491,13 @@
   album: r.album || "",
   /* Se nel file delle copertine c'e' una copertina giusta per questo brano,
      la preferisco a quella salvata nel database: quella risale al giorno in
-     cui l'hai importato e conteneva anche copertine sbagliate. */
-  cover: (coverInfo(r.artist, r.title) || {}).cover || r.cover || null,
+     cui l'hai importato e conteneva anche copertine sbagliate. E se questo
+     brano e' nella lista di quelli non affidabili, non uso quella salvata. */
+  cover: (function (rr) {
+    if (copertinaNonAffidabile(rr.artist, rr.title)) return null;
+    const giusta = coverInfo(rr.artist, rr.title);
+    return (giusta && giusta.cover) || rr.cover || null;
+  })(r),
   source: r.source || "file",
   url: URL.createObjectURL(r.blob),
   builtin: false,
@@ -571,6 +574,30 @@
       return (t.artist || "?") + " - " + t.title + " [chiave " + k + (coversData[k] ? ": c'è in covers.json" : ": ASSENTE") + "]";
     });
     segnalaErrore("senza copertina: " + senza.length + " -> " + dettaglio.join(" || "));
+  }
+
+  /* Brani per cui la copertina salvata in passato era DI UN ALTRO BRANO
+     (per esempio "Eroina" di Kid Yugi aveva dentro la copertina di Alan
+     Walker). La tolgo dal file delle copertine, ma il telefono e il
+     computer hanno ancora dentro quella sbagliata: senza questa lista me la
+     continuerebbero a mostrare. Preferisco non mostrare niente: una
+     copertina assente si capisce, una sbagliata fa perdere tempo.
+     Quando la copertina giusta arriva nel file, vince quella e questa lista
+     non serve piu'. */
+  const COPERTINE_NON_AFFIDABILI = [
+    { artista: "Kid Yugi & Tutti Fenomeni", titolo: "Eroina" },
+    { artista: "Kid Yugi, Tedua & Junior K", titolo: "Eva" },
+    { artista: "madame", titolo: "l'anima" },
+    { artista: "nayt", titolo: "Lastronauta (Visual)" },
+    { artista: "Ferro di checov", titolo: "Kid Yugi x Nuts - Lil Peep" },
+    { artista: "Nayt / Frah Quintale / Tony Boy", titolo: "CIGNO NERO RMX" }
+  ];
+  function copertinaNonAffidabile(artist, title) {
+    for (const x of COPERTINE_NON_AFFIDABILI) {
+      if (titoloDaProvare(artist, title).some((t) => titleMatch(t, x.titolo).score >= 60) &&
+          artistaSimile(artist, x.artista)) return true;
+    }
+    return false;
   }
 
   async function loadCovers() {
