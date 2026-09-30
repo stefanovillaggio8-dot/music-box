@@ -42,7 +42,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.46";
+  const APP_VERSION = "6.47";
 
   let recovering = false;
   async function selfHeal() {
@@ -3079,19 +3079,21 @@
      tornare indietro e incollarlo: erano 4 passaggi e sembrava che non
      funzionasse. Il campo dove incollare resta, per quando sbaglio video. */
   async function campoLinkYouTube(item, cartella, stato) {
-    const el = item.el;
-    if (!el) return;
-    el.cartella = cartella || "";
+    const scrivi = (testo) => scriviStatoPonte(stato, testo);
+    item.cartella = cartella || "";
     segnalaErrore("premuto: " + (cartella ? "salva in " + cartella : "solo libreria"));
-    scriviStatoPonte(stato, "controllo il PC...");
+    scrivi("controllo il PC...");
     const online = await ponteOnline();
-    if (!rigaViva(el)) return;
+    /* Non esco piu' se la riga e' sparita: lavoro con gli elementi nuovi,
+       cosi' la scritta non resta ferma su "controllo il PC..." per sempre. */
+    const el = item.el;
+    if (!el) { scrivi("programma sul PC: spento"); return; }
+    scrivi("programma sul PC: acceso");
     if (!online) {
-      scriviStatoPonte(stato, "programma sul PC: spento");
+      scrivi("programma sul PC: spento");
       toast("Il programma sul PC non e' acceso: apri la Music Box dal link 'Sul PC' della dashboard");
       return;
     }
-    scriviStatoPonte(stato, "programma sul PC: acceso");
     if (el.ytUrl) {
       el.ytUrl.focus();
       return;
@@ -3100,10 +3102,10 @@
        browser la blocca, e senza scheda non posso mostrarti il video. */
     let scheda = null;
     try { scheda = window.open("about:blank", "_blank"); } catch (e) { scheda = null; }
-    scriviStatoPonte(stato, "cerco il video giusto su YouTube...");
+    scrivi("cerco il video giusto su YouTube...");
     const esatto = await cercaVideoEsatto(item.artist, item.title, item.secs);
-    if (!rigaViva(el)) return;
-    scriviStatoPonte(stato, "programma sul PC: acceso");
+    const dopo = item.el;
+    if (!dopo) return;
     if (!esatto) {
       // non ho trovato il brano: apro la ricerca cosi' la vedi e scegli tu
       const ricerca = "https://www.youtube.com/results?search_query=" +
@@ -3112,18 +3114,20 @@
       copiaNegliAppunti(ricerca);
       toast("Non ho trovato il video esatto: ti ho aperto la ricerca e ho copiato il link");
       segnalaErrore("video esatto non trovato: apro la ricerca");
-      campoLinkManuale(item, stato);
+      scrivi("aperta la ricerca su YouTube");
+      campoLinkManuale(item);
       return;
     }
     if (scheda) { try { scheda.location.replace(esatto); } catch (e) {} }
     copiaNegliAppunti(esatto);
     segnalaErrore("video esatto: " + esatto);
     toast("Video giusto trovato e link copiato: sto scaricando");
+    scrivi("sto scaricando l'mp3...");
     await convertiDaYouTube(item, esatto);
   }
 
   /* Il campo da incollare, per quando serve scegliere il video a mano. */
-  function campoLinkManuale(item, stato) {
+  function campoLinkManuale(item) {
     const el = item.el;
     if (!el || el.ytUrl) return;
     const invio = document.createElement("span");
@@ -3269,12 +3273,23 @@
       nuovoBottone(gruppo, "Salva in mp3 " + p.nome, () => campoLinkYouTube(item, p.cartella, stato),
         "btn-mini-cartella", "Oltre che in libreria, salvo una copia in musica mp3 " + p.cartella);
     }
+    /* Aggiorno lo stato SENZA controllare se la riga e' ancora a schermo:
+       se nel frattempo la lista si e' ridisegnata, questa riga e' vecchia e
+       non la vede piu' nessuno, e la riga nuova fa il controllo per conto
+       suo. Prima invece uscivo subito e la scritta "controllo il PC..."
+       restava lì per sempre, e sembrava che il programma fosse occupato. */
     ponteOnline().then((online) => {
-      if (!rigaViva(el)) return;
       scriviStatoPonte(stato, online
         ? "programma sul PC: acceso"
         : "programma sul PC: spento");
     });
+    /* Rete di sicurezza: dopo 5 secondi la scritta non deve piu' dire
+       "controllo il PC...", altrimenti sembra tutto bloccato. */
+    setTimeout(() => {
+      if (stato && stato.textContent && stato.textContent.indexOf("controllo") === 0) {
+        scriviStatoPonte(stato, "programma sul PC: ?");
+      }
+    }, 5000);
   }
 
   // Mostra i passi da seguire sotto un brano che ha solo l'anteprima.
