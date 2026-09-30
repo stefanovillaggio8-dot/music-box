@@ -102,6 +102,9 @@
   let _numeriGiaInviati = false;
   let _ultimiDuplicati = 0;
   let _ultimiSenzaFile = 0;
+  /* Come e' ordinata la libreria. Di default per artista, cosi' i brani dello
+     stesso artista stanno di fila; si ricorda la scelta per ogni dispositivo. */
+  let ordinamento = "artista";
   let scrubbing = false;
   let pendingSeek = null;
   let lastSave = 0;
@@ -635,15 +638,57 @@
     return score;
   }
 
+  /* Come raggruppo i brani per artista: gli accenti e la punteggiatura non
+     devono creare gruppi diversi ("Kid Yugi" e "kid yugi" sono lo stesso),
+     e i feat non devono spargere un brano in due gruppi. */
+  function gruppoArtista(t) {
+    let a = String(t.artist || "").trim();
+    if (!a) {
+      /* senza artista, provo a toglierlo dal titolo ("Nayt - Esce") */
+      const m = /^([^-]{2,40})\s+-\s+(.+)$/.exec(String(t.title || ""));
+      if (m) a = m[1];
+    }
+    if (!a) return "zzz";
+    return normParole(a.split(/\s*(?:,|feat|ft|&|x|e)\s+/i)[0]) || "zzz";
+  }
+  function titoloOrdinato(t) {
+    return normKey(t.title);
+  }
+  const ORDINAMENTI = [
+    { id: "artista", nome: "Per artista" },
+    { id: "titolo", nome: "Per titolo" },
+    { id: "aggiunti", nome: "Piu' recenti" }
+  ];
+  function ordinaLista(lista) {
+    if (ordinamento === "titolo") {
+      return lista.slice().sort((a, b) => titoloOrdinato(a) < titoloOrdinato(b) ? -1 : 1);
+    }
+    if (ordinamento === "aggiunti") {
+      return lista.slice().sort((a, b) => (b.aggiunto || 0) - (a.aggiunto || 0));
+    }
+    /* Default: tutti i brani di un artista di fila, gli artisti in ordine
+       alfabetico, e dentro ogni gruppo i brani per titolo. Cosi' i 5 brani
+       di Nayt stanno insieme, poi i 5 di Kid Yugi, e se aggiungo un brano
+       nuovo di un artista gia' presente finisce nel suo gruppo da solo. */
+    return lista.slice().sort((a, b) => {
+      const ga = gruppoArtista(a), gb = gruppoArtista(b);
+      if (ga !== gb) return ga < gb ? -1 : 1;
+      const ta = titoloOrdinato(a), tb = titoloOrdinato(b);
+      if (ta !== tb) return ta < tb ? -1 : 1;
+      return String(a.title || "") < String(b.title || "") ? -1 : 1;
+    });
+  }
   function visibleTracks() {
     let list = tracks.filter((t) => !hiddenTracks.has(t.id));
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
-    if (!query) return list;
+    if (!query) return ordinaLista(list);
     const scored = [];
     for (const t of list) {
       const s = matchScore(query, t);
       if (s >= 0) scored.push({ t, s });
     }
+    /* durante la ricerca l'ordine piu' utile e' quanto somigliano al testo
+       scritto, quindi qui non riordino per artista */
     scored.sort((a, b) => b.s - a.s);
     return scored.map((x) => x.t);
   }
@@ -869,6 +914,13 @@
     if (nascosti) label += " (" + nascosti + " nascosti)";
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
+    /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
+    const bt = $("btnOrdina");
+    if (bt) {
+      const scelta = ORDINAMENTI.find((o) => o.id === ordinamento) || ORDINAMENTI[0];
+      bt.textContent = scelta.nome;
+      bt.title = "Cambia ordinamento (ora: " + scelta.nome.toLowerCase() + ")";
+    }
     /* Registro dei numeri della libreria: una volta per avvio. Serve a me per
        capire cosa manca senza dover chiedere uno screenshot a Stefano. */
     if (!_numeriGiaInviati) {
@@ -4437,6 +4489,20 @@ function closeImport() {
   });
 
   $("fab").addEventListener("click", () => fileInput.click());
+  /* Cambio ordinamento: il brano di un artista gia' presente finisce subito
+     nel suo gruppo, senza dover rifare niente. */
+  const btOrdina = $("btnOrdina");
+  if (btOrdina) {
+    btOrdina.addEventListener("click", () => {
+      const i = ORDINAMENTI.findIndex((o) => o.id === ordinamento);
+      const prossimo = ORDINAMENTI[(i + 1) % ORDINAMENTI.length];
+      ordinamento = prossimo.id;
+      LS.set("mb.ordine", ordinamento);
+      segnalaErrore("ordine cambiato: " + prossimo.nome);
+      render();
+    });
+    ordinamento = LS.get("mb.ordine", "artista");
+  }
   fileInput.addEventListener("change", () => {
     if (fileInput.files.length) addFiles(fileInput.files);
     fileInput.value = "";

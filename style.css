@@ -1266,3 +1266,14 @@ button.btn-mini-file {
   transform: none;
 }
 .share-badge[hidden] { display: none; }
+
+/* Riga con il bottone che cambia l'ordinamento della libreria */
+.track-ordine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.ordine-bt { cursor: pointer; }
