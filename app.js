@@ -47,7 +47,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.55";
+  const APP_VERSION = "6.56";
 
   let recovering = false;
   async function selfHeal() {
@@ -92,6 +92,11 @@
   let favorites = new Set();
   let favOnly = false;
   let hiddenTracks = new Set();
+  /* Numeri della libreria, per il registro: cosi' capisco cosa manca senza
+     dover chiedere uno screenshot. */
+  let _numeriGiaInviati = false;
+  let _ultimiDuplicati = 0;
+  let _ultimiSenzaFile = 0;
   let scrubbing = false;
   let pendingSeek = null;
   let lastSave = 0;
@@ -458,6 +463,7 @@
     console.warn("IndexedDB non disponibile", e);
   }
   if (doppioni) {
+    _ultimiDuplicati = doppioni;
     /* Lo segno come condivisi cosi' non li cerco piu' da condividere e
        non li ricontrollo a ogni avvio. */
     try {
@@ -694,10 +700,9 @@
         /* Un brano che esiste gia' nella libreria condivisa non lo rimando:
            si aggiornerebbe da solo e rischierei di crearne un secondo. */
         const utili = (tutti || []).filter((r) => r && !r.condiviso);
-        giaCondivisi = utili.filter((r) => eGiaCondiviso({ title: r.title, artist: r.artist })).length;
         for (const r of utili) {
-          if (r.condiviso) continue;
           if (eGiaCondiviso({ title: r.title, artist: r.artist })) {
+            giaCondivisi++;
             r.condiviso = true;
             try { await dbPut(r); } catch (e3) { /* non e' grave */ }
             continue;
@@ -709,6 +714,7 @@
         segnalaErrore("condivisione: lettura brani fallita: " + String((e && e.message) || e).slice(0, 120));
         return;
       }
+      _ultimiSenzaFile = senzaFile;
       if (giaCondivisi) {
         segnalaErrore("condivisione: " + giaCondivisi + " brani erano gia' nella libreria condivisa");
       }
@@ -849,10 +855,27 @@
     const total = visibleAll.length;
     const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const n = list.length;
-    let label = profile + " · " + total + (total === 1 ? " brano" : " brani");
+    /* I brani nascosti a mano non sparivano senza dire niente: il contatore
+       sembrava sbagliato. Adesso lo dice, e lo scrivo anche nel registro del
+       PC cosi' i numeri si possono controllare senza chiedere. */
+    const nascosti = hiddenTracks.size;
+    let label = profile + " — " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += " (" + mine + " solo " + (mine === 1 ? "tuo" : "tuoi") + ")";
+    if (nascosti) label += " (" + nascosti + " nascosti)";
     if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
+    /* Registro dei numeri della libreria: una volta per avvio. Serve a me per
+       capire cosa manca senza dover chiedere uno screenshot a Stefano. */
+    if (!_numeriGiaInviati) {
+      _numeriGiaInviati = true;
+      try {
+        const condivisi = tracks.filter((t) => t.builtin).length;
+        segnalaErrore("libreria: " + tracks.length + " brani in tutto = " + condivisi + " condivisi + " +
+          (tracks.length - condivisi) + " privati; visibili " + visibleAll.length +
+          "; nascosti a mano " + nascosti + "; duplicati nascosti " + _ultimiDuplicati +
+          "; brani senza file " + _ultimiSenzaFile);
+      } catch (e) { /* noop */ }
+    }
     aggiornaIndicatoreCondivisione();
 
     if (!list.length) {
