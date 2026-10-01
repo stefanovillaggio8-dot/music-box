@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.71";
+  const APP_VERSION = "6.72";
 
   let recovering = false;
   async function selfHeal() {
@@ -491,43 +491,51 @@
        l'hai saltata, non ascoltata.
      Prima guardavo ogni 5 secondi e accettavo solo fino a 3 secondi di
      salto: con quei numeri non contava praticamente niente. */
-  /* Conto il tempo REALE in cui la musica sta suonando, non la differenza
-   fra due controlli della posizione. Prima guardavo ogni secondo quanto era
-   andato avanti il brano e accettavo solo gli avanzamenti piccoli: se il
-   browser rallentava un attimo (e capita spesso sul telefono) quei secondi
-   andavano persi, e 13 secondi di ascolto reale si contavano 3.
-   Adesso parto da quando ho iniziato ad ascoltare e chiudo il conto quando
-   la musica si ferma: cosi' non perdo niente.
-   E saltando i brani non conta nulla, perche' il tempo che passi premendo
-   "avanti" e' pochissimo. */
+  /* Conto il tempo in cui la musica STA SUONANDO, anche se esci dall'app o
+   blocchi il telefono: se la canzone continua, la stai sentendo.
+   Conto a "tratti": ogni volta che guardo, aggiungo il tempo passato e riparto
+   da zero. Serve perche' quando la scheda non e' visibile il browser rallenta
+   i controlli (una volta al minuto, o meno): aggiungendo il tempo passato
+   quei secondi non si perdono. Ogni somma e' limitata a 90 secondi, cosi' se
+   il telefono si e' addormentato di colpo non ti aggiunge minuti fantasma.
+   Saltando i brani non si conta nulla: si conta il tempo che ci metti a
+   premere "avanti", cioe' quasi niente. */
   let _statsAscoltoDa = 0;
-  let _statsBranoCorrente = "";
+  const _STATI_MAX = 90;
 
   function _iniziaAscolto() {
     if (!audio) return;
     if (audio.paused || audio.ended) return;
-    if (document.hidden) return;
     if (!_statsAscoltoDa) _statsAscoltoDa = Date.now();
   }
 
-  /* Chiude il conto del pezzo ascoltato e riparte da zero. */
-  function _chiudiAscolto() {
+  /* Aggiunge il pezzo ascoltato.
+     riparte=true  : sto ancora ascoltando, l'orologio riparte da ADESSO e non
+                     perde il secondofra questo controllo e il prossimo
+                     (prima ripartiva dal controllo successivo: su 10 secondi
+                     se ne perdevano 3, ed e' quello che vedeva Ste).
+     riparte=false : la musica si e' fermata, chiudo tutto. */
+  function _chiudiAscolto(riparte) {
     if (!_statsAscoltoDa) return;
-    const secondi = (Date.now() - _statsAscoltoDa) / 1000;
-    _statsAscoltoDa = 0;
-    /* non credo mai piu' di 10 minuti filati: se il browser si e' addormentato
-       o la pagina e' rimasta ferma a lungo, quei secondi non sono ascolto */
-    if (secondi > 0 && secondi < 600) {
-      _segnaAscolto(current(), secondi, false);
+    const adesso = Date.now();
+    const passati = (adesso - _statsAscoltoDa) / 1000;
+    _statsAscoltoDa = riparte ? adesso : 0;
+    if (passati <= 0 || passati > _STATI_MAX) {
+      if (!riparte) _salvaStatistiche();
+      return;
     }
-    _salvaStatistiche();
+    _segnaAscolto(current(), passati, false);
+    if (!riparte) _salvaStatistiche();
   }
 
   function _seguiAscolto(audio) {
     try {
       const staSuonando = !!(audio && !audio.paused && !audio.ended);
-      if (staSuonando && !document.hidden) _iniziaAscolto();
-      else _chiudiAscolto();
+      if (!staSuonando) { _chiudiAscolto(false); return; }
+      _iniziaAscolto();
+      /* se sono passati almeno 2 secondi, aggiungo il pezzo e l'orologio
+         riparte da adesso: cosi' non si perde nemmeno un secondo */
+      if (Date.now() - _statsAscoltoDa >= 2000) _chiudiAscolto(true);
     } catch (e) { /* noop */ }
   }
 
@@ -671,10 +679,12 @@
         }
       }, 1000);
     } catch (e) { /* noop */ }
-    window.addEventListener("pagehide", () => { _chiudiAscolto(); _salvaStatistiche(); });
+    window.addEventListener("pagehide", () => { _chiudiAscolto(false); });
+    /* Esci dall'app o blocchi il telefono? Se la musica continua a suonare la
+       stai sentendo, quindi il tempo si conta lo stesso. Se invece si ferma,
+       il conto si chiude e basta. */
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) { _chiudiAscolto(); _salvaStatistiche(); }
-      else _iniziaAscolto();
+      _chiudiAscolto(false);
     });
   }
 
@@ -1584,7 +1594,7 @@ const nascosti = hiddenTracks.size;
     syncPlayUI();
     updateMediaSession();
     savePos();
-    _chiudiAscolto();
+    _chiudiAscolto(false);
     });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
@@ -1960,7 +1970,7 @@ function _ripristinaNascosti() {
     if (id !== currentId) resumeAt = 0;
     currentId = id;
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
-    _chiudiAscolto();
+    _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);
     _iniziaAscolto();
     writeProfileState(profile, { last: id, time: 0 });
