@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.74";
+  const APP_VERSION = "6.75";
 
   let recovering = false;
   async function selfHeal() {
@@ -662,6 +662,23 @@
     }
     html += "</div>";
     html += '<p class="step-hint">Gli ascolti si contano sul dispositivo dove stai ascoltando: se ascolti sul telefono, il computer non lo sa.</p>';
+
+    /* Diagnostica visibile: sul telefono non posso leggere cosa succede
+       (il browser vieta al sito di scrivere sul computer), quindi qui dentro
+       mostriamo quello che la pagina crede di sapere. Se i secondi non
+       salgono, qui si vede perche'. */
+    html += "<h4>Come sta andando l'ascolto</h4>";
+    const suonaOra = !!(audio && !audio.paused && !audio.ended);
+    const brano = current();
+    const chiave = brano ? _chiaveStats(brano) : "";
+    const salvati = chiave ? ((statisticheProfilo()[chiave] || {}).s || 0) : 0;
+    html += '<div class="stat-lista">';
+    html += '<div class="stat-item"><span>Música sta suonando</span><b>' + (suonaOra ? "sì" : "no") + "</b></div>";
+    html += '<div class="stat-item"><span>Cronometro</span><b>' +
+      (_statsAscoltoDa ? "va, da " + Math.round((Date.now() - _statsAscoltoDa) / 1000) + "s" : "fermo") + "</b></div>";
+    html += '<div class="stat-item"><span>Secondi di questo brano</span><b>' + Math.round(salvati) + "s</b></div>";
+    html += '<div class="stat-item"><span>Versione della pagina</span><b>' + APP_VERSION + "</b></div>";
+    html += "</div>";
 
     $("statsCorpo").innerHTML = html;
     pannello.hidden = false;
