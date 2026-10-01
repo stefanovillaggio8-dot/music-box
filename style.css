@@ -1318,3 +1318,24 @@ button.btn-mini-file {
 .stat-item b { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .stat-item.io { border-color: var(--accent2); }
 .stat-item span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Numero della versione in alto a destra: serve a capire subito se il
+   browser sta usando una copia vecchia della pagina. */
+.ver-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  min-width: 30px;
+  padding: 0 6px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  align-self: center;
+}
+.ver-badge:active { color: var(--accent2); }

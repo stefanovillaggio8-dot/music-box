@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.73";
+  const APP_VERSION = "6.74";
 
   let recovering = false;
   async function selfHeal() {
@@ -5520,6 +5520,17 @@ function closeImport() {
      avvio, e intanto i brani restano al sicuro qui. */
 setTimeout(() => { condividiBraniLocali(); }, 1200);
   _avviaStatistiche();
+  /* Il numero della versione sempre visibile in alto: e' successo piu' volte
+     che il browser restava su una versione vecchia e sembrava che gli
+     aggiornamenti non funzionassero. Con questo numero lo vedo subito. */
+  try {
+    const vf = $("verBadge");
+    if (vf) {
+      vf.textContent = String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
+      vf.title = "Versione in uso: " + APP_VERSION + " (tocca per ricaricare)";
+      vf.onclick = () => window.location.reload(true);
+    }
+  } catch (e) { /* noop */ }
   /* niente: la finestra dei nascosti e' stata tolta */
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
@@ -5555,22 +5566,25 @@ setTimeout(() => { condividiBraniLocali(); }, 1200);
         toast("Aggiornamento pronto");
         setTimeout(() => window.location.reload(), 500);
       });
-      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
-        swReg = reg;
-        if (!navigator.serviceWorker.controller) {
-          reg.update();
+navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
+      swReg = reg;
+      /* Controllo gli aggiornamenti OGNI volta che apri la pagina, non solo
+         se non c'e' un controller: prima l'aggiornamento partiva a caso e il
+         browser restava su una versione vecchia anche per giorni. */
+      try { reg.update(); } catch (e) { /* noop */ }
+      /* e ogni 10 minuti, se la pagina resta aperta */
+      setInterval(() => { try { reg.update(); } catch (e) { /* noop */ } }, 600000);
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              toast("Aggiornamento disponibile");
+            }
+          });
         }
-        reg.addEventListener("updatefound", () => {
-          const newWorker = reg.installing;
-          if (newWorker) {
-            newWorker.addEventListener("statechange", () => {
-              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-                toast("Aggiornamento disponibile");
-              }
-            });
-          }
-        });
-      }).catch((err) => console.warn("SW fallito", err));
+      });
+    }).catch((err) => console.warn("SW fallito", err));
     }
 
     /* Controllo periodico: la pagina aperta sul telefono o sul PC deve
