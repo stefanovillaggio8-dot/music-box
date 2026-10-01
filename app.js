@@ -56,7 +56,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.75";
+  const APP_VERSION = "6.76";
 
   let recovering = false;
   async function selfHeal() {
@@ -678,6 +678,7 @@
     html += '<div class="stat-item"><span>Cronometro</span><b>' +
       (_statsAscoltoDa ? "va, da " + Math.round((Date.now() - _statsAscoltoDa) / 1000) + "s" : "fermo") + "</b></div>";
     html += '<div class="stat-item"><span>Secondi di questo brano</span><b>' + Math.round(salvati) + "s</b></div>";
+    html += '<div class="stat-item"><span>Timer di riserva</span><b>' + (_statsCronometro ? "attivo" : "non parte") + "</b></div>";
     html += '<div class="stat-item"><span>Versione della pagina</span><b>' + APP_VERSION + "</b></div>";
     html += "</div>";
 
@@ -691,6 +692,17 @@
     if (!pannello) return;
     pannello.hidden = true;
     syncNoScroll();
+  }
+
+  /* Conta anche quando la musica si muove. Prima contavo solo con un timer
+     che parte all'avvio della pagina: se qualcosa in avvio va storto (e sul
+     telefono capita) il timer non parte e i secondi non salgono mai.
+     L'evento timeupdate scatta invece ogni volta che la musica avanza,
+     quindi funziona su ogni dispositivo. */
+  function _contaAlMuoversi() {
+    try {
+      _seguiAscolto(audio);
+    } catch (e) { /* noop */ }
   }
 
   function _avviaStatistiche() {
@@ -1642,6 +1654,9 @@ const nascosti = hiddenTracks.size;
     });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
+    /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
+       evento scatta finche' la musica suona, su computer e su telefono. */
+    a.addEventListener("timeupdate", _contaAlMuoversi);
     a.addEventListener("loadedmetadata", handleMetadata);
     a.addEventListener("error", handleError);
     return a;
