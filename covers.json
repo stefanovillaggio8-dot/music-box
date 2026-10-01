@@ -1,306 +1,314 @@
 {
-    "blancosottogonna":  {
-                             "cover":  "https://cdn-images.dzcdn.net/images/cover/7b07fd9c563ee88ae6c73f2fd12d992d/1000x1000-000000-80-0-0.jpg",
-                             "title":  "SOTTOGONNA",
-                             "artist":  "Blanco",
-                             "album":  "SOTTOGONNA",
-                             "source":  "Deezer",
-                             "date":  "2026-09-24T11:50:15.854Z"
-                         },
-    "madamequantofortetipensavo":  {
-                                       "cover":  "https://cdn-images.dzcdn.net/images/cover/9d2b431e6443a4b410ccb44c5e52394e/1000x1000-000000-80-0-0.jpg",
-                                       "title":  "QUANTO FORTE TI PENSAVO",
-                                       "artist":  "Madame",
-                                       "album":  "L\u0027AMORE",
-                                       "source":  "Deezer",
-                                       "date":  "2026-09-24T11:50:16.090Z"
-                                   },
-    "xcarmesonook":  {
-                         "cover":  "https://cdn-images.dzcdn.net/images/cover/4c7bfe234626097e0e056103ad431ab1/1000x1000-000000-80-0-0.jpg",
-                         "title":  "Sono Ok",
-                         "artist":  "xCarme",
-                         "album":  "Sono Ok",
-                         "source":  "Deezer",
-                         "date":  "2026-09-24T11:50:17.312Z"
-                     },
-    "artie5iveswagmusic":  {
-                               "cover":  "https://cdn-images.dzcdn.net/images/cover/277c5edad6dc3c45d7043776fc3cd3fe/1000x1000-000000-80-0-0.jpg",
-                               "title":  "SWAG MUSIC",
-                               "artist":  "Artie 5ive",
-                               "album":  "SWAG MUSIC",
-                               "source":  "Deezer",
-                               "date":  "2026-09-24T11:50:17.511Z"
-                           },
-    "lilpeepstarshopping":  {
-                                "cover":  "https://cdn-images.dzcdn.net/images/cover/e318144ad9a8155c025f24a511f08815/1000x1000-000000-80-0-0.jpg",
-                                "title":  "Star Shopping",
-                                "artist":  "Lil Peep",
-                                "album":  "Star Shopping",
-                                "source":  "Deezer",
-                                "date":  "2026-09-24T11:50:18.282Z"
-                            },
-    "mostrolacitta":  {
-                          "cover":  "https://cdn-images.dzcdn.net/images/cover/a0640b2d6a07c5c41cad8b854dc7fba8/1000x1000-000000-80-0-0.jpg",
-                          "title":  "La città",
-                          "artist":  "Mostro",
-                          "album":  "La città",
-                          "source":  "Deezer",
-                          "date":  "2026-09-24T11:50:19.272Z"
-                      },
-    "saittaromanticiterroni":  {
-                                   "cover":  "https://cdn-images.dzcdn.net/images/cover/df1b4ef1a9d2e6f618aff0619b414052/1000x1000-000000-80-0-0.jpg",
-                                   "title":  "Romantici Terroni",
-                                   "artist":  "Saitta",
-                                   "album":  "Romantici Terroni",
-                                   "source":  "Deezer",
-                                   "date":  "2026-09-24T11:50:20.234Z"
-                               },
-    "jovanottiunmondoapartevisual":  {
-                                         "cover":  "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/1000x1000-000000-80-0-0.jpg",
-                                         "title":  "Un mondo a parte",
-                                         "artist":  "Jovanotti",
-                                         "album":  "Il corpo umano VOL. 1",
-                                         "source":  "Deezer",
-                                         "date":  "2026-09-24T11:50:21.880Z"
-                                     },
-    "gmineiroflatpearlsuccomalpensa":  {
-                                           "cover":  "https://cdn-images.dzcdn.net/images/cover/b8ef88ad883dd34f992c085ccb4b71dc/1000x1000-000000-80-0-0.jpg",
-                                           "title":  "Malpensa",
-                                           "artist":  "G.Mineiro",
-                                           "album":  "È O G.",
-                                           "source":  "Deezer",
-                                           "date":  "2026-09-24T11:50:46.266Z"
-                                       },
-    "tonyboyvictoria":  {
-                            "cover":  "https://cdn-images.dzcdn.net/images/cover/c85babb20499c6f81ba7e6c952861e34/1000x1000-000000-80-0-0.jpg",
-                            "title":  "Victoria (feat. Artie 5ive)",
-                            "artist":  "Tony Boy",
-                            "album":  "Umile",
-                            "source":  "Deezer",
-                            "date":  "2026-09-24T11:50:47.691Z"
-                        },
-    "naytpotersceglierenaytlive":  {
-                                       "cover":  "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
-                                       "title":  "Poter scegliere",
-                                       "artist":  "Nayt",
-                                       "album":  "Lettera Q",
-                                       "source":  "Deezer",
-                                       "date":  "2026-09-24T11:51:01.708Z"
-                                   },
-    "thasupsr":  {
-                     "cover":  "https://cdn-images.dzcdn.net/images/cover/4f8715052dd572e9bd72fc41498c5b27/1000x1000-000000-80-0-0.jpg",
-                     "title":  "s!r! (feat. Lazza \u0026 Sfera Ebbasta)",
-                     "artist":  "thasup",
-                     "album":  "s!r! (feat. Lazza \u0026 Sfera Ebbasta)",
-                     "source":  "Deezer",
-                     "date":  "2026-09-24T11:51:32.020Z"
-                 },
-    "sogniappesi":  {
-                        "cover":  "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
-                        "title":  "Sogni appesi",
-                        "artist":  "Ultimo",
-                        "album":  "Pianeti",
-                        "source":  "Deezer",
-                        "date":  "2026-09-24T20:00:14.313Z"
-                    },
-    "naytexit":  {
-                     "cover":  "https://cdn-images.dzcdn.net/images/cover/504043e5b8622499655becd271dbfe1c/1000x1000-000000-80-0-0.jpg",
-                     "title":  "Exit",
-                     "artist":  "Nayt",
-                     "album":  "Raptus 3",
-                     "source":  "Deezer",
-                     "date":  "2026-09-24T23:42:52.699Z"
-                 },
-    "frahquintalehaivistomai":  {
-                                    "cover":  "https://cdn-images.dzcdn.net/images/cover/c43dbb59ebd5a16aff13305bbea6838b/1000x1000-000000-80-0-0.jpg",
-                                    "title":  "Hai visto mai",
-                                    "artist":  "Frah Quintale",
-                                    "album":  "Regardez moi",
-                                    "source":  "Deezer",
-                                    "date":  "2026-09-25T00:08:20.666Z"
-                                },
-    "ilpiugrandespettacolodopoilbigbang":  {
-                                               "cover":  "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
-                                               "title":  "Il Più Grande Spettacolo Dopo Il Big Bang",
-                                               "artist":  "Jovanotti",
-                                               "album":  "Ora (Special Super Deluxe Box)",
-                                               "source":  "Deezer",
-                                               "date":  "2026-09-25T00:39:20.515Z"
-                                           },
-    "modastellacadente":  {
-                              "cover":  "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
-                              "title":  "Stella cadente",
-                              "artist":  "Modà",
-                              "album":  "Passione maledetta",
-                              "source":  "Deezer",
-                              "date":  "2026-09-25T01:08:52.226Z"
-                          },
-    "iltrezerorimorsi":  {
-                             "cover":  "https://cdn-images.dzcdn.net/images/cover/85c2c6e0a4fb0b08fc6e73523f16ef93/1000x1000-000000-80-0-0.jpg",
-                             "title":  "Zero rimorsi",
-                             "artist":  "Il Tre",
-                             "album":  "Real Talk",
-                             "source":  "Deezer",
-                             "date":  "2026-09-28T23:37:48.481Z"
-                         },
-    "naytpoterscegliere":  {
-                               "cover":  "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
-                               "title":  "Poter scegliere",
-                               "artist":  "Nayt",
-                               "album":  "Lettera Q",
-                               "source":  "Deezer",
-                               "date":  "2026-09-29T00:07:04.434Z"
-                           },
-    "macenonmiriconosco":  {
-                               "cover":  "https://cdn-images.dzcdn.net/images/cover/6780db314a3cb2c305f1272f4ef63cbe/1000x1000-000000-80-0-0.jpg",
-                               "title":  "NON MI RICONOSCO",
-                               "artist":  "Mace",
-                               "album":  "NON MI RICONOSCO",
-                               "source":  "Deezer",
-                               "date":  "2026-09-29T00:26:58.033Z"
-                           },
-    "ultimosogniappesi":  {
-                              "cover":  "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
-                              "title":  "Sogni appesi",
-                              "artist":  "Ultimo",
-                              "album":  "Pianeti",
-                              "source":  "Deezer",
-                              "date":  "2026-09-29T00:31:31.579Z"
-                          },
-    "jovanottiilpiugrandespettacolodopoilbigbang":  {
-                                                        "cover":  "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
-                                                        "title":  "Il Più Grande Spettacolo Dopo Il Big Bang",
-                                                        "artist":  "Jovanotti",
-                                                        "album":  "Ora (Special Super Deluxe Box)",
-                                                        "source":  "Deezer",
-                                                        "date":  "2026-09-29T00:31:32.931Z"
-                                                    },
-    "kidyugiilfilmografo":  {
-                                "cover":  "https://cdn-images.dzcdn.net/images/cover/3bf71faeefc6eb464f2d21050f50a5b3/1000x1000-000000-80-0-0.jpg",
-                                "title":  "Il Filmografo",
-                                "artist":  "Kid Yugi",
-                                "album":  "The Globe",
-                                "source":  "Deezer",
-                                "date":  "2026-09-29T00:47:52.444Z"
-                            },
-    "kidyugipaganini":  {
-                            "cover":  "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
-                            "title":  "Paganini",
-                            "artist":  "Kid Yugi",
-                            "album":  "Tutti i Nomi del Diavolo",
-                            "source":  "Deezer",
-                            "date":  "2026-09-29T00:48:56.964Z"
-                        },
-    "kidyugiterr1":  {
-                         "cover":  "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
-                         "title":  "Terr1",
-                         "artist":  "Kid Yugi",
-                         "album":  "I Nomi del Diavolo",
-                         "source":  "Deezer",
-                         "date":  "2026-09-29T00:50:58.310Z"
-                     },
-    "naytpotersceglierenayt":  {
-                                   "cover":  "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
-                                   "title":  "Poter scegliere",
-                                   "artist":  "Nayt",
-                                   "album":  "Lettera Q",
-                                   "source":  "Deezer",
-                                   "date":  "2026-09-24T11:51:01.708Z"
-                               },
-    "kidyugisintetico":  {
-                             "cover":  "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
-                             "title":  "Sintetico",
-                             "artist":  "Kid Yugi",
-                             "album":  "Quarto di Bue",
-                             "source":  "Deezer",
-                             "date":  "2026-09-29T01:14:50.594Z"
-                         },
-    "ultimoromantica":  {
-                            "cover":  "https://cdn-images.dzcdn.net/images/cover/febf035782a49c1c831c9ace2f479752/1000x1000-000000-80-0-0.jpg",
-                            "title":  "ROMANTICA",
-                            "artist":  "Ultimo",
-                            "album":  "ROMANTICA",
-                            "source":  "Deezer",
-                            "date":  "2026-09-29T14:54:21.694Z"
-                        },
-    "kidyugililith":  {
-                          "cover":  "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
-                          "title":  "Lilith",
-                          "artist":  "Kid Yugi",
-                          "album":  "I Nomi del Diavolo",
-                          "source":  "Deezer",
-                          "date":  "2026-09-30T00:41:56.389Z"
-                      },
-    "ultimoilgiornocheaspettavo":  {
-                                       "cover":  "https://cdn-images.dzcdn.net/images/cover/bd1dfacb7af3aee698621f47e9c64b1f/1000x1000-000000-80-0-0.jpg",
-                                       "title":  "IL GIORNO CHE ASPETTAVO",
-                                       "artist":  "Ultimo",
-                                       "album":  "IL GIORNO CHE ASPETTAVO",
-                                       "source":  "Deezer",
-                                       "date":  "2026-09-30T00:42:42.266Z"
-                                   },
-    "kidyugishivalaviolenzanecessaria":  {
-                                             "cover":  "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-                                             "title":  "La Violenza Necessaria",
-                                             "artist":  "Kid Yugi",
-                                             "album":  "Anche gli Eroi Muoiono",
-                                             "source":  "Deezer",
-                                             "date":  "2026-09-30T13:28:57.375Z"
-                                         },
-    "kidyugigilgamesh":  {
-                             "cover":  "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-                             "title":  "Gilgamesh",
-                             "artist":  "Kid Yugi",
-                             "album":  "Anche gli Eroi Muoiono",
-                             "source":  "Deezer",
-                             "date":  "2026-09-30T13:29:10.564Z"
-                         },
-    "kidyugitristanoeisotta":  {
-                                   "cover":  "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-                                   "title":  "Tristano e Isotta",
-                                   "artist":  "Kid Yugi",
-                                   "album":  "Anche gli Eroi Muoiono",
-                                   "source":  "Deezer",
-                                   "date":  "2026-09-30T13:29:24.990Z"
-                               },
-    "kidyugidonna":  {
-                         "cover":  "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
-                         "title":  "Donna",
-                         "artist":  "Kid Yugi",
-                         "album":  "Tutti i Nomi del Diavolo",
-                         "source":  "Deezer",
-                         "date":  "2026-09-30T13:30:58.439Z"
-                     },
-    "kidyugilucifero":  {
-                            "cover":  "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
-                            "title":  "Lucifero",
-                            "artist":  "Kid Yugi",
-                            "album":  "I Nomi del Diavolo",
-                            "source":  "Deezer",
-                            "date":  "2026-09-30T13:31:14.428Z"
-                        },
-    "oliviarodriguothecure":  {
-                                  "cover":  "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
-                                  "title":  "the cure",
-                                  "artist":  "Olivia Rodrigo",
-                                  "album":  "you seem pretty sad for a girl so in love",
-                                  "source":  "Deezer",
-                                  "date":  "2026-09-30T20:04:39.127Z"
-                              },
-    "nayt3dsolodomande":  {
-                              "cover":  "https://cdn-images.dzcdn.net/images/cover/dda746027e0384f3b77045390a25f046/1000x1000-000000-80-0-0.jpg",
-                              "title":  "solo domande",
-                              "artist":  "Nayt",
-                              "album":  "HABITAT",
-                              "source":  "Deezer",
-                              "date":  "2026-09-30T22:00:35.570Z"
-                          },
-    "oliviarodrigothecure":  {
-                                 "cover":  "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
-                                 "title":  "the cure",
-                                 "artist":  "Olivia Rodrigo",
-                                 "album":  "you seem pretty sad for a girl so in love",
-                                 "source":  "Deezer",
-                                 "date":  "2026-09-30T23:02:23.673Z"
-                             }
+  "blancosottogonna": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/7b07fd9c563ee88ae6c73f2fd12d992d/1000x1000-000000-80-0-0.jpg",
+    "title": "SOTTOGONNA",
+    "artist": "Blanco",
+    "album": "SOTTOGONNA",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:15.854Z"
+  },
+  "madamequantofortetipensavo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/9d2b431e6443a4b410ccb44c5e52394e/1000x1000-000000-80-0-0.jpg",
+    "title": "QUANTO FORTE TI PENSAVO",
+    "artist": "Madame",
+    "album": "L'AMORE",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:16.090Z"
+  },
+  "xcarmesonook": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/4c7bfe234626097e0e056103ad431ab1/1000x1000-000000-80-0-0.jpg",
+    "title": "Sono Ok",
+    "artist": "xCarme",
+    "album": "Sono Ok",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:17.312Z"
+  },
+  "artie5iveswagmusic": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/277c5edad6dc3c45d7043776fc3cd3fe/1000x1000-000000-80-0-0.jpg",
+    "title": "SWAG MUSIC",
+    "artist": "Artie 5ive",
+    "album": "SWAG MUSIC",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:17.511Z"
+  },
+  "lilpeepstarshopping": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/e318144ad9a8155c025f24a511f08815/1000x1000-000000-80-0-0.jpg",
+    "title": "Star Shopping",
+    "artist": "Lil Peep",
+    "album": "Star Shopping",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:18.282Z"
+  },
+  "mostrolacitta": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/a0640b2d6a07c5c41cad8b854dc7fba8/1000x1000-000000-80-0-0.jpg",
+    "title": "La città",
+    "artist": "Mostro",
+    "album": "La città",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:19.272Z"
+  },
+  "saittaromanticiterroni": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/df1b4ef1a9d2e6f618aff0619b414052/1000x1000-000000-80-0-0.jpg",
+    "title": "Romantici Terroni",
+    "artist": "Saitta",
+    "album": "Romantici Terroni",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:20.234Z"
+  },
+  "jovanottiunmondoapartevisual": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/1000x1000-000000-80-0-0.jpg",
+    "title": "Un mondo a parte",
+    "artist": "Jovanotti",
+    "album": "Il corpo umano VOL. 1",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:21.880Z"
+  },
+  "gmineiroflatpearlsuccomalpensa": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8ef88ad883dd34f992c085ccb4b71dc/1000x1000-000000-80-0-0.jpg",
+    "title": "Malpensa",
+    "artist": "G.Mineiro",
+    "album": "È O G.",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:46.266Z"
+  },
+  "tonyboyvictoria": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/c85babb20499c6f81ba7e6c952861e34/1000x1000-000000-80-0-0.jpg",
+    "title": "Victoria (feat. Artie 5ive)",
+    "artist": "Tony Boy",
+    "album": "Umile",
+    "source": "Deezer",
+    "date": "2026-09-24T11:50:47.691Z"
+  },
+  "naytpotersceglierenaytlive": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+    "title": "Poter scegliere",
+    "artist": "Nayt",
+    "album": "Lettera Q",
+    "source": "Deezer",
+    "date": "2026-09-24T11:51:01.708Z"
+  },
+  "thasupsr": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/4f8715052dd572e9bd72fc41498c5b27/1000x1000-000000-80-0-0.jpg",
+    "title": "s!r! (feat. Lazza & Sfera Ebbasta)",
+    "artist": "thasup",
+    "album": "s!r! (feat. Lazza & Sfera Ebbasta)",
+    "source": "Deezer",
+    "date": "2026-09-24T11:51:32.020Z"
+  },
+  "sogniappesi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
+    "title": "Sogni appesi",
+    "artist": "Ultimo",
+    "album": "Pianeti",
+    "source": "Deezer",
+    "date": "2026-09-24T20:00:14.313Z"
+  },
+  "naytexit": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/504043e5b8622499655becd271dbfe1c/1000x1000-000000-80-0-0.jpg",
+    "title": "Exit",
+    "artist": "Nayt",
+    "album": "Raptus 3",
+    "source": "Deezer",
+    "date": "2026-09-24T23:42:52.699Z"
+  },
+  "frahquintalehaivistomai": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/c43dbb59ebd5a16aff13305bbea6838b/1000x1000-000000-80-0-0.jpg",
+    "title": "Hai visto mai",
+    "artist": "Frah Quintale",
+    "album": "Regardez moi",
+    "source": "Deezer",
+    "date": "2026-09-25T00:08:20.666Z"
+  },
+  "ilpiugrandespettacolodopoilbigbang": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
+    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+    "artist": "Jovanotti",
+    "album": "Ora (Special Super Deluxe Box)",
+    "source": "Deezer",
+    "date": "2026-09-25T00:39:20.515Z"
+  },
+  "modastellacadente": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
+    "title": "Stella cadente",
+    "artist": "Modà",
+    "album": "Passione maledetta",
+    "source": "Deezer",
+    "date": "2026-09-25T01:08:52.226Z"
+  },
+  "iltrezerorimorsi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/85c2c6e0a4fb0b08fc6e73523f16ef93/1000x1000-000000-80-0-0.jpg",
+    "title": "Zero rimorsi",
+    "artist": "Il Tre",
+    "album": "Real Talk",
+    "source": "Deezer",
+    "date": "2026-09-28T23:37:48.481Z"
+  },
+  "naytpoterscegliere": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+    "title": "Poter scegliere",
+    "artist": "Nayt",
+    "album": "Lettera Q",
+    "source": "Deezer",
+    "date": "2026-09-29T00:07:04.434Z"
+  },
+  "macenonmiriconosco": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/6780db314a3cb2c305f1272f4ef63cbe/1000x1000-000000-80-0-0.jpg",
+    "title": "NON MI RICONOSCO",
+    "artist": "Mace",
+    "album": "NON MI RICONOSCO",
+    "source": "Deezer",
+    "date": "2026-09-29T00:26:58.033Z"
+  },
+  "ultimosogniappesi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
+    "title": "Sogni appesi",
+    "artist": "Ultimo",
+    "album": "Pianeti",
+    "source": "Deezer",
+    "date": "2026-09-29T00:31:31.579Z"
+  },
+  "jovanottiilpiugrandespettacolodopoilbigbang": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
+    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+    "artist": "Jovanotti",
+    "album": "Ora (Special Super Deluxe Box)",
+    "source": "Deezer",
+    "date": "2026-09-29T00:31:32.931Z"
+  },
+  "kidyugiilfilmografo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3bf71faeefc6eb464f2d21050f50a5b3/1000x1000-000000-80-0-0.jpg",
+    "title": "Il Filmografo",
+    "artist": "Kid Yugi",
+    "album": "The Globe",
+    "source": "Deezer",
+    "date": "2026-09-29T00:47:52.444Z"
+  },
+  "kidyugipaganini": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
+    "title": "Paganini",
+    "artist": "Kid Yugi",
+    "album": "Tutti i Nomi del Diavolo",
+    "source": "Deezer",
+    "date": "2026-09-29T00:48:56.964Z"
+  },
+  "kidyugiterr1": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
+    "title": "Terr1",
+    "artist": "Kid Yugi",
+    "album": "I Nomi del Diavolo",
+    "source": "Deezer",
+    "date": "2026-09-29T00:50:58.310Z"
+  },
+  "naytpotersceglierenayt": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+    "title": "Poter scegliere",
+    "artist": "Nayt",
+    "album": "Lettera Q",
+    "source": "Deezer",
+    "date": "2026-09-24T11:51:01.708Z"
+  },
+  "kidyugisintetico": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
+    "title": "Sintetico",
+    "artist": "Kid Yugi",
+    "album": "Quarto di Bue",
+    "source": "Deezer",
+    "date": "2026-09-29T01:14:50.594Z"
+  },
+  "ultimoromantica": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/febf035782a49c1c831c9ace2f479752/1000x1000-000000-80-0-0.jpg",
+    "title": "ROMANTICA",
+    "artist": "Ultimo",
+    "album": "ROMANTICA",
+    "source": "Deezer",
+    "date": "2026-09-29T14:54:21.694Z"
+  },
+  "kidyugililith": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
+    "title": "Lilith",
+    "artist": "Kid Yugi",
+    "album": "I Nomi del Diavolo",
+    "source": "Deezer",
+    "date": "2026-09-30T00:41:56.389Z"
+  },
+  "ultimoilgiornocheaspettavo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/bd1dfacb7af3aee698621f47e9c64b1f/1000x1000-000000-80-0-0.jpg",
+    "title": "IL GIORNO CHE ASPETTAVO",
+    "artist": "Ultimo",
+    "album": "IL GIORNO CHE ASPETTAVO",
+    "source": "Deezer",
+    "date": "2026-09-30T00:42:42.266Z"
+  },
+  "kidyugishivalaviolenzanecessaria": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "La Violenza Necessaria",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-09-30T13:28:57.375Z"
+  },
+  "kidyugigilgamesh": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Gilgamesh",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-09-30T13:29:10.564Z"
+  },
+  "kidyugitristanoeisotta": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Tristano e Isotta",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-09-30T13:29:24.990Z"
+  },
+  "kidyugidonna": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
+    "title": "Donna",
+    "artist": "Kid Yugi",
+    "album": "Tutti i Nomi del Diavolo",
+    "source": "Deezer",
+    "date": "2026-09-30T13:30:58.439Z"
+  },
+  "kidyugilucifero": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
+    "title": "Lucifero",
+    "artist": "Kid Yugi",
+    "album": "I Nomi del Diavolo",
+    "source": "Deezer",
+    "date": "2026-09-30T13:31:14.428Z"
+  },
+  "oliviarodriguothecure": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
+    "title": "the cure",
+    "artist": "Olivia Rodrigo",
+    "album": "you seem pretty sad for a girl so in love",
+    "source": "Deezer",
+    "date": "2026-09-30T20:04:39.127Z"
+  },
+  "nayt3dsolodomande": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/dda746027e0384f3b77045390a25f046/1000x1000-000000-80-0-0.jpg",
+    "title": "solo domande",
+    "artist": "Nayt",
+    "album": "HABITAT",
+    "source": "Deezer",
+    "date": "2026-09-30T22:00:35.570Z"
+  },
+  "oliviarodrigothecure": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
+    "title": "the cure",
+    "artist": "Olivia Rodrigo",
+    "album": "you seem pretty sad for a girl so in love",
+    "source": "Deezer",
+    "date": "2026-09-30T23:02:23.673Z"
+  },
+  "kidyuginightskinnyartie5iveportoilcommerciale": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
+    "title": "Porto il Commerciale",
+    "artist": "Kid Yugi",
+    "album": "Quarto di Bue",
+    "source": "Deezer",
+    "date": "2026-10-01T00:49:53.911Z"
+  }
 }
