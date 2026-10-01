@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.70";
+  const APP_VERSION = "6.71";
 
   let recovering = false;
   async function selfHeal() {
@@ -491,20 +491,43 @@
        l'hai saltata, non ascoltata.
      Prima guardavo ogni 5 secondi e accettavo solo fino a 3 secondi di
      salto: con quei numeri non contava praticamente niente. */
+  /* Conto il tempo REALE in cui la musica sta suonando, non la differenza
+   fra due controlli della posizione. Prima guardavo ogni secondo quanto era
+   andato avanti il brano e accettavo solo gli avanzamenti piccoli: se il
+   browser rallentava un attimo (e capita spesso sul telefono) quei secondi
+   andavano persi, e 13 secondi di ascolto reale si contavano 3.
+   Adesso parto da quando ho iniziato ad ascoltare e chiudo il conto quando
+   la musica si ferma: cosi' non perdo niente.
+   E saltando i brani non conta nulla, perche' il tempo che passi premendo
+   "avanti" e' pochissimo. */
+  let _statsAscoltoDa = 0;
+  let _statsBranoCorrente = "";
+
+  function _iniziaAscolto() {
+    if (!audio) return;
+    if (audio.paused || audio.ended) return;
+    if (document.hidden) return;
+    if (!_statsAscoltoDa) _statsAscoltoDa = Date.now();
+  }
+
+  /* Chiude il conto del pezzo ascoltato e riparte da zero. */
+  function _chiudiAscolto() {
+    if (!_statsAscoltoDa) return;
+    const secondi = (Date.now() - _statsAscoltoDa) / 1000;
+    _statsAscoltoDa = 0;
+    /* non credo mai piu' di 10 minuti filati: se il browser si e' addormentato
+       o la pagina e' rimasta ferma a lungo, quei secondi non sono ascolto */
+    if (secondi > 0 && secondi < 600) {
+      _segnaAscolto(current(), secondi, false);
+    }
+    _salvaStatistiche();
+  }
+
   function _seguiAscolto(audio) {
     try {
-      if (!audio) return;
-      if (!audio.paused && !audio.ended) {
-        const t = audio.currentTime || 0;
-        if (_statsUltimoTempo > 0 && t > _statsUltimoTempo) {
-          const d = t - _statsUltimoTempo;
-          /* massimo 2 secondi: oltre, e' uno "salto avanti", non ascolto */
-          if (d > 0 && d <= 2) _segnaAscolto(current(), d, false);
-        }
-        _statsUltimoTempo = t;
-      } else {
-        _statsUltimoTempo = 0;
-      }
+      const staSuonando = !!(audio && !audio.paused && !audio.ended);
+      if (staSuonando && !document.hidden) _iniziaAscolto();
+      else _chiudiAscolto();
     } catch (e) { /* noop */ }
   }
 
@@ -648,9 +671,10 @@
         }
       }, 1000);
     } catch (e) { /* noop */ }
-    window.addEventListener("pagehide", _salvaStatistiche);
+    window.addEventListener("pagehide", () => { _chiudiAscolto(); _salvaStatistiche(); });
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) _salvaStatistiche();
+      if (document.hidden) { _chiudiAscolto(); _salvaStatistiche(); }
+      else _iniziaAscolto();
     });
   }
 
@@ -1554,11 +1578,13 @@ const nascosti = hiddenTracks.size;
     a.addEventListener("play", () => {
     syncPlayUI();
     updateMediaSession();
+    _iniziaAscolto();
     });
     a.addEventListener("pause", () => {
     syncPlayUI();
     updateMediaSession();
     savePos();
+    _chiudiAscolto();
     });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
@@ -1933,8 +1959,10 @@ function _ripristinaNascosti() {
     if (!t) return;
     if (id !== currentId) resumeAt = 0;
     currentId = id;
-    _statsUltimoTempo = 0;
+    /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
+    _chiudiAscolto();
     if (autoplay) _contaAscoltoNuovo(t);
+    _iniziaAscolto();
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
     audio.src = t.url;
