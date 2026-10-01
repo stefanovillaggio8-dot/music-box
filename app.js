@@ -55,7 +55,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.72";
+  const APP_VERSION = "6.73";
 
   let recovering = false;
   async function selfHeal() {
@@ -491,6 +491,20 @@
        l'hai saltata, non ascoltata.
      Prima guardavo ogni 5 secondi e accettavo solo fino a 3 secondi di
      salto: con quei numeri non contava praticamente niente. */
+  /* Registro di controllo: ogni 15 secondi scrivo nel registro del PC com'e'
+     il conteggio. Serve per capire PERCHE' i secondi non salgono guardando
+     il suo telefono, invece di indovinare: quanta musica sta suonando, se il
+     cronometro e' partito, e quanto ha contato finora. */
+  function _segnalaControllo(secondiContati) {
+    try {
+      const t = current();
+      segnalaErrore("controllo ascolto: brano=" + (t ? (t.artist || "?") + " / " + (t.title || "?") : "nessuno") +
+        " | suona=" + (audio ? (audio.paused ? "no" : "si") : "nessun player") +
+        " | cronometro=" + (_statsAscoltoDa ? Math.round((Date.now() - _statsAscoltoDa) / 1000) + "s" : "fermo") +
+        " | contati ora=" + Math.round(secondiContati) + "s");
+    } catch (e) { /* noop */ }
+  }
+
   /* Conto il tempo in cui la musica STA SUONANDO, anche se esci dall'app o
    blocchi il telefono: se la canzone continua, la stai sentendo.
    Conto a "tratti": ogni volta che guardo, aggiungo il tempo passato e riparto
@@ -664,20 +678,32 @@
   function _avviaStatistiche() {
     try {
       if (_statsCronometro) return;
-      /* Ogni secondo: abbastanza per capire se stai ascoltando o saltando,
-         e abbastanza leggero da non accorgertene.
-         Se la finestra delle statistiche e' aperta, la aggiorno ogni 2
-         secondi: senza questo i numeri restavano fermi a com'erano quando
-         l'hai aperta e sembrava che il tempo non si contasse. */
-      _statsCronometro = setInterval(() => {
-        _seguiAscolto(audio);
-        _salvaStatistiche();
-        _tick++;
-        const pannello = $("statsPanel");
-        if (pannello && !pannello.hidden && _tick % 2 === 0) {
-          try { _ricostruisciStatistiche(); } catch (e) { /* noop */ }
-        }
-      }, 1000);
+/* Ogni secondo: abbastanza per capire se stai ascoltando o saltando,
+  e abbastanza leggero da non accorgertene.
+  Se la finestra delle statistiche e' aperta, la aggiorno ogni 2
+  secondi: senza questo i numeri restavano fermi a com'erano quando
+  l'hai aperta e sembrava che il tempo non si contasse. */
+  _statsCronometro = setInterval(() => {
+    _seguiAscolto(audio);
+    _salvaStatistiche();
+    _tick++;
+    const pannello = $("statsPanel");
+    if (pannello && !pannello.hidden && _tick % 2 === 0) {
+      try { _ricostruisciStatistiche(); } catch (e) { /* noop */ }
+    }
+    /* ogni 15 secondi scrivo come sta andando, cosi' lo leggo dal registro
+       e non devo chiedere uno screenshot */
+    if (_tick % 15 === 0) {
+      let contati = 0;
+      try {
+        const st = statisticheProfilo();
+        const t = current();
+        const k = t ? _chiaveStats(t) : "";
+        contati = (k && st[k] && st[k].s) || 0;
+      } catch (e) { /* noop */ }
+      _segnalaControllo(contati);
+    }
+  }, 1000);
     } catch (e) { /* noop */ }
     window.addEventListener("pagehide", () => { _chiudiAscolto(false); });
     /* Esci dall'app o blocchi il telefono? Se la musica continua a suonare la
