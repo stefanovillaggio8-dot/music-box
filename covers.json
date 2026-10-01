@@ -310,5 +310,13 @@
     "album": "Quarto di Bue",
     "source": "Deezer",
     "date": "2026-10-01T00:49:53.911Z"
+  },
+  "gigiperezsailorsong": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/a1d1e955d73e18821b5d3f3d22fceb6a/1000x1000-000000-80-0-0.jpg",
+    "title": "Sailor Song",
+    "artist": "Gigi Perez",
+    "album": "Sailor Song",
+    "source": "Deezer",
+    "date": "2026-10-01T21:36:26.772Z"
   }
 }
