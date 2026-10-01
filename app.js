@@ -56,7 +56,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.77";
+  const APP_VERSION = "6.78";
 
   let recovering = false;
   async function selfHeal() {
@@ -468,8 +468,12 @@
       if (!chiave) return;
       const st = statisticheProfilo();
       const r = st[chiave] || { v: 0, s: 0 };
-      if (nuovo) r.v = (r.v || 0) + 1;
-      r.s = (r.s || 0) + Math.max(0, Math.round(secondi || 0));
+if (nuovo) r.v = (r.v || 0) + 1;
+        /* NON arrotondo qui: i pezzi arrivano piccoli (sul telefono 0,25
+           secondi alla volta) e arrotondandoli uno per uno diventerebbero
+           tutti zero, e i secondi andrebbero persi. Sommo i pezzi esatti e
+           arrotondo solo quando li mostro. */
+        r.s = (r.s || 0) + Math.max(0, Number(secondi) || 0);
       r.t = t.title || "";
       r.a = t.artist || "";
       st[chiave] = r;
@@ -501,7 +505,7 @@
       const t = current();
       segnalaErrore("controllo ascolto: brano=" + (t ? (t.artist || "?") + " / " + (t.title || "?") : "nessuno") +
         " | suona=" + (audio ? (audio.paused ? "no" : "si") : "nessun player") +
-        " | cronometro=" + (_statsAscoltoDa ? Math.round((Date.now() - _statsAscoltoDa) / 1000) + "s" : "fermo") +
+        " | cronometro=" + (_statsConto ? Math.round((Date.now() - _statsTic) / 1000) + "s" : "fermo") +
         " | contati ora=" + Math.round(secondiContati) + "s");
     } catch (e) { /* noop */ }
   }
@@ -515,42 +519,76 @@
    il telefono si e' addormentato di colpo non ti aggiunge minuti fantasma.
    Saltando i brani non si conta nulla: si conta il tempo che ci metti a
    premere "avanti", cioe' quasi niente. */
-  let _statsAscoltoDa = 0;
-  const _STATI_MAX = 90;
+  /* CONTO QUELLO CHE LA MUSICA HA DAVVERO SUONATO.
 
-  function _iniziaAscolto() {
-    if (!audio) return;
-    if (audio.paused || audio.ended) return;
-    if (!_statsAscoltoDa) _statsAscoltoDa = Date.now();
+     Prima contavo con l'orologio: passavano 2 secondi e aggiungevo 2 secondi.
+     Ma sul telefono l'orologio e gli avvisi vanno a modo loro, e quei 2
+     secondi arrivavano a blocchi: il numero cresceva a scatti e sembrava
+     rotto.
+
+     Adesso guardo la posizione DENTRO la canzone. Se la canzone e' al secondo
+     10 e un secondo dopo e' al secondo 11, ho ascoltato esattamente 1 secondo.
+     Non importa che ore siano, non importa con che' frequenza arrivano gli
+     avvisi, non importa se l'app e' in primo piano: se la musica avanza, io
+     conto quello che e'advance. E' il dato vero, non una stima. */
+  let _statsPosVisto = 0;   /* posizione della canzone all'ultimo controllo */
+  let _statsTic = 0;        /* orologio all'ultimo controllo */
+  let _statsConto = false;  /* il conto e' partito? */
+  const _STATI_MAX = 600;   /* saltino assurdo: non si conta */
+
+  function _posizioneMusica() {
+    try {
+      const ct = audio && typeof audio.currentTime === "number" ? audio.currentTime : 0;
+      return (isFinite(ct) && ct > 0) ? ct : 0;
+    } catch (e) { return 0; }
   }
 
-  /* Aggiunge il pezzo ascoltato.
-     riparte=true  : sto ancora ascoltando, l'orologio riparte da ADESSO e non
-                     perde il secondofra questo controllo e il prossimo
-                     (prima ripartiva dal controllo successivo: su 10 secondi
-                     se ne perdevano 3, ed e' quello che vedeva Ste).
-     riparte=false : la musica si e' fermata, chiudo tutto. */
+  function _staSuonandoOra() {
+    try { return !!(audio && !audio.paused && !audio.ended); } catch (e) { return false; }
+  }
+
+  function _iniziaAscolto() {
+    /* Segno da dove si parte quando parte la musica: cosi' anche il primo
+       pezzetto viene contato e non si perde l'inizio della canzone. */
+    _statsConto = true;
+    _statsPosVisto = _posizioneMusica();
+    _statsTic = Date.now();
+  }
+
   function _chiudiAscolto(riparte) {
-    if (!_statsAscoltoDa) return;
-    const adesso = Date.now();
-    const passati = (adesso - _statsAscoltoDa) / 1000;
-    _statsAscoltoDa = riparte ? adesso : 0;
-    if (passati <= 0 || passati > _STATI_MAX) {
-      if (!riparte) _salvaStatistiche();
-      return;
-    }
-    _segnaAscolto(current(), passati, false);
-    if (!riparte) _salvaStatistiche();
+    if (!riparte) { _statsConto = false; _statsPosVisto = 0; _statsTic = 0; }
   }
 
   function _seguiAscolto(audio) {
     try {
-      const staSuonando = !!(audio && !audio.paused && !audio.ended);
-      if (!staSuonando) { _chiudiAscolto(false); return; }
-      _iniziaAscolto();
-      /* se sono passati almeno 2 secondi, aggiungo il pezzo e l'orologio
-         riparte da adesso: cosi' non si perde nemmeno un secondo */
-      if (Date.now() - _statsAscoltoDa >= 2000) _chiudiAscolto(true);
+      if (!_staSuonandoOra()) { _chiudiAscolto(false); return; }
+      const adesso = Date.now();
+      const pos = _posizioneMusica();
+      if (pos <= 0) {
+        /* ripiego per flussi dove la posizione non si legge */
+        if (!_statsConto) { _statsConto = true; _statsTic = adesso; return; }
+        const passati = (adesso - _statsTic) / 1000;
+        if (passati >= 2) {
+          _statsTic = adesso;
+          _segnaAscolto(current(), passati > _STATI_MAX ? _STATI_MAX : passati, false);
+        }
+        return;
+      }
+      if (!_statsConto) _iniziaAscolto();
+      const passati = (adesso - _statsTic) / 1000;
+      const avanti = pos - _statsPosVisto;
+      _statsPosVisto = pos;
+      _statsTic = adesso;
+      if (avanti < 0) return;   /* canzone cambiata o riavvolta: riparto pulito */
+      /* Contiamo il PIU' PICCOLO fra il tempo passato e quanto la canzone ha
+         davvero fatto avanti.
+         - se il telefono si blocca, la canzone resta ferma e non conto troppo;
+         - se gli avvisi arrivano radi, non perdo niente perche' la canzone
+           dice esattamente quanto e' andata avanti. */
+      let quanto = avanti;
+      if (passati >= 0 && passati < quanto) quanto = passati;
+      if (quanto <= 0) return;
+      _segnaAscolto(current(), quanto > _STATI_MAX ? _STATI_MAX : quanto, false);
     } catch (e) { /* noop */ }
   }
 
@@ -675,8 +713,7 @@
     const salvati = chiave ? ((statisticheProfilo()[chiave] || {}).s || 0) : 0;
     html += '<div class="stat-lista">';
     html += '<div class="stat-item"><span>Música sta suonando</span><b>' + (suonaOra ? "sì" : "no") + "</b></div>";
-    html += '<div class="stat-item"><span>Cronometro</span><b>' +
-      (_statsAscoltoDa ? "va, da " + Math.round((Date.now() - _statsAscoltoDa) / 1000) + "s" : "fermo") + "</b></div>";
+    html += '<div class="stat-item"><span>Dove e\' la canzone</span><b>' + _posizioneMusica().toFixed(1) + "s</b></div>";
     html += '<div class="stat-item"><span>Secondi di questo brano</span><b>' + Math.round(salvati) + "s</b></div>";
     html += '<div class="stat-item"><span>Timer di riserva</span><b>' + (_statsCronometro ? "attivo" : "non parte") + "</b></div>";
     html += '<div class="stat-item"><span>Versione della pagina</span><b>' + APP_VERSION + "</b></div>";
