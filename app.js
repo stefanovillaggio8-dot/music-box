@@ -56,7 +56,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.76";
+  const APP_VERSION = "6.77";
 
   let recovering = false;
   async function selfHeal() {
@@ -702,6 +702,16 @@
   function _contaAlMuoversi() {
     try {
       _seguiAscolto(audio);
+      /* Se la finestra delle statistiche e' aperta la aggiorno QUI, non solo
+         col timer: sul telefono il timer va piano e i secondi sembravano
+         saltare a blocchi di 2 secondi invece di crescere davanti agli occhi. */
+      const pannello = $("statsPanel");
+      if (pannello && !pannello.hidden) {
+        _tick++;
+        if (_tick % 8 === 0) {
+          try { _ricostruisciStatistiche(); } catch (e) { /* noop */ }
+        }
+      }
     } catch (e) { /* noop */ }
   }
 
