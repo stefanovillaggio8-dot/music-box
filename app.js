@@ -56,7 +56,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.78";
+  const APP_VERSION = "6.79";
 
   let recovering = false;
   async function selfHeal() {
@@ -134,18 +134,32 @@
   let profile = DEFAULT_PROFILE;
   let profiles = [DEFAULT_PROFILE];
 
-  function allState() {
-    return LS.get("mb.state", {});
-  }
+/* Lo stato dei profili sta in memoria finche' la pagina e' aperta.
 
-  function saveAllState(next) {
-    LS.set("mb.state", next);
-  }
+     Prima ogni volta rileggevo localStorage e riconvertivo il JSON: a ogni
+     chiamata nasceva un oggetto NUOVO. Quindi quando le statistiche
+     aggiungevano un secondo, lo scrivevano su un oggetto che un attimo dopo
+     spariva: i secondi non venivano mai salvati e sul telefono il numero
+     restava sempre a zero. */
+let _statoInMemoria = null;
 
-  function profileState(name) {
-    const all = allState();
-    return all[name] || { hidden: [], favs: [], last: null, time: 0 };
+function allState() {
+  if (!_statoInMemoria) _statoInMemoria = LS.get("mb.state", {}) || {};
+  return _statoInMemoria;
+}
+
+function saveAllState(next) {
+  _statoInMemoria = next || {};
+  LS.set("mb.state", _statoInMemoria);
+}
+
+function profileState(name) {
+  const all = allState();
+  if (!all[name] || typeof all[name] !== "object") {
+    all[name] = { hidden: [], favs: [], last: null, time: 0 };
   }
+  return all[name];
+}
 
   function writeProfileState(name, patch) {
     const all = allState();
