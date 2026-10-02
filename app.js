@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.84";
+  const APP_VERSION = "6.85";
 
   let recovering = false;
   async function selfHeal() {
@@ -174,7 +174,10 @@ function profileState(name) {
 function writeProfileState(name, patch) {
   let fresco = {};
   try { fresco = LS.get("mb.state", {}) || {}; } catch (e) { fresco = {}; }
-  const base = (fresco && typeof fresco[name] === "object" && fresco[name]) ? fresco[name] : profileState(name);
+  /* se questo profilo non esiste ancora parto da uno vuoto pulito, non dalla
+     copia in memoria: altrimenti un profilo nuovo si porterebbe dietro
+     campi vecchi di un altro */
+  const base = (fresco[name] && typeof fresco[name] === "object") ? fresco[name] : {};
   fresco[name] = Object.assign({}, base, patch);
   saveAllState(fresco);
 }
@@ -184,8 +187,11 @@ function writeProfileState(name, patch) {
 window.addEventListener("storage", (e) => {
   if (e && e.key && e.key !== "mb.state") return;
   _statoInMemoria = null;
+  /* puo' arrivare mentre la pagina si sta ancora montando: non deve
+     interrompere niente, quindi ogni parte va protetta */
   try { loadProfileState(); } catch (x) { /* noop */ }
-  render();
+  try { _aggiornaBadgeFalliti(); } catch (x) { /* noop */ }
+  try { render(); } catch (x) { /* noop */ }
 });
 
   function loadProfileState() {

@@ -62,10 +62,13 @@ body {
   .logo-refresh:active { color: var(--txt); transform: rotate(180deg); }
   /* il numero dei brani non scaricati, sopra al bottone */
   .logo-actions { position: relative; }
+  /* il bottone col badge deve essere lui il riferimento, altrimenti il
+     numero finisce sopra l'ultimo bottone del gruppo invece che sul suo */
+  #btnFalliti { position: relative; }
   .logo-badge {
   position: absolute;
-  top: -3px;
-  right: -3px;
+  top: -5px;
+  right: -5px;
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
