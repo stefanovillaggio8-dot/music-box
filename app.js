@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.81";
+  const APP_VERSION = "6.82";
 
   let recovering = false;
   async function selfHeal() {
@@ -974,6 +974,10 @@ if (nuovo) r.v = (r.v || 0) + 1;
       if (!ora) return;
       ora.cover = blob;
       if (album && !ora.album) ora.album = album;
+      /* se il brano e' quello che sta suonando, la schermata di blocco
+         del telefono deve aggiornarsi subito invece di aspettare il brano dopo */
+      const oraInRiposo = current();
+      if (oraInRiposo && oraInRiposo.id === t.id) updateMediaSession();
     } catch (e) { /* noop */ }
   }
 
@@ -1823,14 +1827,17 @@ const nascosti = hiddenTracks.size;
     savePos();
   }
 
-  function handleTime() {
-    if (!scrubbing) {
-      const t = audio.currentTime;
-      updateProgressUI(t, totalDuration());
-      maybeSavePos();
-    }
-    tickLyrics();
-    syncPlayUI();
+function handleTime() {
+  if (!scrubbing) {
+    const t = audio.currentTime;
+    updateProgressUI(t, totalDuration());
+    maybeSavePos();
+  }
+  tickLyrics();
+  syncPlayUI();
+  /* la barra della schermata di blocco del telefono deve camminare
+     insieme al brano: senza questo resta ferma */
+  _aggiornaPosizioneSchermo();
   }
 
   function handleMetadata() {
@@ -2330,28 +2337,70 @@ function _ripristinaNascosti() {
     else el.setAttribute("hidden", "");
   }
 
-  function syncPlayUI() {
-    if (!audio) return;
-    setSvgVisible($("iconPlay"), audio.paused);
-    setSvgVisible($("iconPause"), !audio.paused);
-    setPlaybackState(audio.paused ? "paused" : "playing");
-    const art = $("playerArt");
-    if (art) art.classList.toggle("playing", !audio.paused);
-    const hud = $("hudArt");
-    if (hud) hud.classList.toggle("playing", !audio.paused);
+function syncPlayUI() {
+  if (!audio) return;
+  setSvgVisible($("iconPlay"), audio.paused);
+  setSvgVisible($("iconPause"), !audio.paused);
+  setPlaybackState(audio.paused ? "paused" : "playing");
+  const art = $("playerArt");
+  if (art) art.classList.toggle("playing", !audio.paused);
+  const hud = $("hudArt");
+  if (hud) hud.classList.toggle("playing", !audio.paused);
+  /* se il brano si e' fermo o e' finito, anche la schermata di blocco
+     del telefono deve saperlo */
+  if (audio.paused || audio.ended) _aggiornaPosizioneSchermo();
+  }
+
+  /* La copertina da mostrare sulla schermata di blocco del telefono.
+     La copertina puo' essere un indirizzo internet (le copertine buone
+     sono in covers.json) oppure un'immagine scaricata e tenuta sul
+     dispositivo (quella che ho cercato io con "Scarica tutte le copertine
+     mancanti"). */
+let _copertinaSchermoUrl = "";
+function _copertinaPerSchermo(t) {
+    const c = t && t.cover;
+    try {
+      if (typeof c === "string" && /^https?:\/\//i.test(c)) return c;
+      if (c && typeof c !== "string" && typeof c.size === "number") {
+        /* non tengo via gli indirizzi vecchi, altrimenti a ogni brano
+           se ne crea uno nuovo e la memoria del telefono si riempie */
+        if (_copertinaSchermoUrl) URL.revokeObjectURL(_copertinaSchermoUrl);
+        _copertinaSchermoUrl = URL.createObjectURL(c);
+        return _copertinaSchermoUrl;
+      }
+    } catch (e) { /* noop */ }
+    return "";
+  }
+
+  /* Dov'e' la canzone nella barra: serve per la barra della schermata
+     di blocco. Il telefono la disegna da solo se glielo diciamo. */
+  function _aggiornaPosizioneSchermo() {
+    if (!("mediaSession" in navigator)) return;
+    if (!navigator.mediaSession.setPositionState) return;
+    try {
+      const d = audio && isFinite(audio.duration) ? audio.duration : 0;
+      if (!d || d <= 0) return;
+      const p = Math.max(0, Math.min(audio.currentTime || 0, d));
+      navigator.mediaSession.setPositionState({
+        duration: d,
+        playbackRate: (audio.playbackRate || 1),
+        position: p
+      });
+    } catch (e) { /* noop */ }
   }
 
   function updateMediaSession() {
     if (!("mediaSession" in navigator)) return;
     const t = current();
-    const bi = t && t.builtin ? BUILTIN[Number(t.id.replace("builtin-", ""))] : null;
+    const cop = _copertinaPerSchermo(t);
     const meta = new MediaMetadata({
       title: t ? t.title : APP_NAME,
-      artist: bi ? (bi.artist || APP_NAME) : (t && t.artist) || APP_NAME,
-      album: APP_NAME,
-      artwork: [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
+      artist: t ? (t.artist || APP_NAME) : APP_NAME,
+      album: (t && t.album) ? t.album : APP_NAME,
+      artwork: cop ? [{ src: cop, sizes: "512x512" }] : [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
     });
     navigator.mediaSession.metadata = meta;
+    _aggiornaPosizioneSchermo();
     const setHandler = (action, fn) => {
       try { navigator.mediaSession.setActionHandler(action, fn); } catch (e) { /* noop */ }
     };
