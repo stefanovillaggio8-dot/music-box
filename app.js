@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.86";
+  const APP_VERSION = "6.87";
 
   let recovering = false;
   async function selfHeal() {
@@ -936,23 +936,32 @@ if (nuovo) r.v = (r.v || 0) + 1;
     }
   } catch (e) { /* noop */ }
 
-  const builtin = BUILTIN
-    .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
-    .map((b, i) => {
-    const info = coverInfo(b.artist, b.title);
-    const stabile = "b-" + String(b.file || ("builtin-" + BUILTIN.indexOf(b))).replace(/^.*\//, "").replace(/\.mp3$/i, "");
-    const mia = copertineMie[stabile];
-    return {
-      id: stabile,
-      title: b.title,
-      artist: b.artist || "",
-      album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
-      cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
-      url: b.file,
-      builtin: true,
-      gradient: PALETTE[i % PALETTE.length],
-      size: null
-    };
+const builtin = BUILTIN
+      .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
+      .map((b, i) => {
+      /* Il nome di parecchi file era "ARTISTA - ARTISTA - TITOLO" (per
+         esempio "BLANCO - BLANCO - SOTTOGONNA"): in libreria si vedeva
+         l'artista due volte. Tolgo il nome dell'artista dal titolo quando
+         è ripetuto. La funzione esisteva gia', ma serviva solo per cercare
+         le copertine: qui serve anche per quello che si legge. */
+      const titoloPulito = stripArtistPrefix(b.artist, b.title);
+      if (titoloPulito && titoloPulito !== b.title) {
+      _spostaStatistiche(b.title, b.artist || "", titoloPulito, b.artist || "");
+      }
+      const info = coverInfo(b.artist, b.title);
+      const stabile = "b-" + String(b.file || ("builtin-" + BUILTIN.indexOf(b))).replace(/^.*\//, "").replace(/\.mp3$/i, "");
+      const mia = copertineMie[stabile];
+      return {
+        id: stabile,
+        title: titoloPulito || b.title,
+        artist: b.artist || "",
+        album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
+        cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
+        url: b.file,
+        builtin: true,
+        gradient: PALETTE[i % PALETTE.length],
+        size: null
+      };
     });
 
   let added = [];
