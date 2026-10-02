@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.85";
+  const APP_VERSION = "6.86";
 
   let recovering = false;
   async function selfHeal() {
@@ -375,14 +375,37 @@ window.addEventListener("storage", (e) => {
     return t;
   }
 
+/* Il nome vero di un brano della libreria condivisa. L'id del brano e'
+     "b-" + nome del file, quindi lo riprendo da li'. Serve quando si toglie
+     una rinomina: senza questo il nome restava quello cambiato fino a
+     ricaricare la pagina. */
+function _originaleDi(id) {
+  try {
+    if (typeof id !== "string" || id.indexOf("b-") !== 0) return null;
+    const file = id.slice(2) + ".mp3";
+    for (const b of BUILTIN) {
+      if (String(b.file || "").replace(/^.*\//, "") === file) return b;
+    }
+  } catch (e) { /* noop */ }
+  return null;
+  }
+
   function applicaRinomine() {
-    const mappa = nomiRinomati();
-    for (const t of tracks) {
-      const r = mappa[t.id];
-      if (!r) continue;
+  const mappa = nomiRinomati();
+  for (const t of tracks) {
+    const r = mappa[t.id];
+    if (r && (r.title || r.artist)) {
       if (r.title) t.title = r.title;
       if (r.artist) t.artist = r.artist;
+      continue;
     }
+    /* nessuna rinomina attiva: torna al nome vero */
+    const orig = _originaleDi(t.id);
+    if (orig) {
+      t.title = orig.title || t.title;
+      t.artist = orig.artist || t.artist || "";
+    }
+  }
   }
 
   function apriRinomina(id) {
@@ -407,12 +430,50 @@ window.addEventListener("storage", (e) => {
     syncNoScroll();
     if (!salva || !id) return;
     const mappa = nomiRinomati();
-    mappa[id] = { title: String($("editTitle").value || "").trim(), artist: String($("editArtist").value || "").trim() };
+    const t = tracks.find((x) => x.id === id);
+    const titoloNuovo = String($("editTitle").value || "").trim();
+    const artistaNuovo = String($("editArtist").value || "").trim();
+    /* Prima di cambiare il nome, sposto via le statistiche: la chiave di un
+       brano e' fatta con artista e titolo, quindi se cambio il nome senza
+       spostarle il brano riparte da zero (perde "quante volte l'ho
+       ascoltato" e i secondi).
+       Uso i nomi come saranno DAVVERO dopo il cambio: se lascio vuoto un
+       campo, il brano continua ad avere il vecchio valore, e la chiave
+       deve tenerne conto. */
+if (t) {
+        /* se sto TOLGENDO la rinomina, tutto torna al nome vero del brano */
+        const tolgo = !titoloNuovo && !artistaNuovo;
+        const orig = tolgo ? _originaleDi(id) : null;
+        const titoloEffettivo = titoloNuovo || (orig && orig.title) || t.title;
+        const artistaEffettivo = artistaNuovo || (orig && orig.artist) || t.artist || "";
+        _spostaStatistiche(t.title, t.artist, titoloEffettivo, artistaEffettivo);
+      }
+    mappa[id] = { title: titoloNuovo, artist: artistaNuovo };
     if (!mappa[id].title && !mappa[id].artist) delete mappa[id];
     try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
     applicaRinomine();
     render();
     toast("Nome cambiato");
+  }
+
+  /* Sposta la scheda di ascolto da un nome all'altro quando cambio il nome
+     di un brano. Se il brano torna col nome vero, il percorso e' inverso. */
+  function _spostaStatistiche(titoloDa, artistaDa, titoloA, artistaA) {
+    try {
+      const da = _chiaveBrano({ title: titoloDa, artist: artistaDa });
+      const a = _chiaveBrano({ title: titoloA, artist: artistaA });
+      if (!da || !a || da === a) return;
+      const st = statisticheProfilo();
+      const vecchia = st[da];
+      if (!vecchia) return;
+      const nuova = st[a] || { v: 0, s: 0 };
+      nuova.v = (nuova.v || 0) + (vecchia.v || 0);
+      nuova.s = (nuova.s || 0) + (vecchia.s || 0);
+      if (!nuova.t) { nuova.t = vecchia.t || ""; nuova.a = vecchia.a || ""; }
+      st[a] = nuova;
+      delete st[da];
+      _salvaStatistiche();
+    } catch (e) { /* noop */ }
   }
 
   $("editSave").addEventListener("click", () => chiudiRinomina(true));
@@ -1813,7 +1874,7 @@ const nascosti = hiddenTracks.size;
       audio.currentTime = 0;
       doPlay();
     } else {
-      playById(tracks[nextIndex()].id);
+      playById(idBranoA(nextIndex()));
     }
   }
 
@@ -2323,7 +2384,16 @@ function _ripristinaNascosti() {
     if (autoplay) await doPlay();
   }
 
-  function nextIndex() {
+  /* Il brano in una certa posizione, ma SENZA far esplodere niente.
+     Prima scrivevo direttamente tracks[indice].id: se la libreria e' vuota
+     (un computer nuovo, o un profilo senza brani, o tutti brani nascosti)
+     tracks[0] non esiste e la pagina si fermava con un errore. */
+function idBranoA(indice) {
+  const t = tracks[indice];
+  return (t && t.id) ? t.id : "";
+}
+
+function nextIndex() {
     if (shuffle && tracks.length > 1) {
       let n = Math.floor(Math.random() * tracks.length);
       const cur = tracks.findIndex((x) => x.id === currentId);
@@ -2349,7 +2419,7 @@ function _ripristinaNascosti() {
       playById(next);
       return;
     }
-    playById(tracks[nextIndex()].id);
+    playById(idBranoA(nextIndex()));
   }
 
   async function togglePlay() {
@@ -2433,7 +2503,7 @@ function _copertinaPerSchermo(t) {
     setHandler("play", () => doPlay());
     setHandler("pause", () => { if (audio) audio.pause(); });
     setHandler("nexttrack", () => playNext());
-    setHandler("previoustrack", () => playById(tracks[prevIndex()].id));
+    setHandler("previoustrack", () => playById(idBranoA(prevIndex())));
     setHandler("seekto", (d) => {
       if (d.seekTime != null && audio && isFinite(audio.duration)) {
         audio.currentTime = Math.max(0, Math.min(d.seekTime, audio.duration));
@@ -5363,7 +5433,7 @@ function closeImport() {
     if (totalDuration() > 3 && audio.currentTime > 3) {
       audio.currentTime = 0;
     } else {
-      playById(tracks[prevIndex()].id);
+      playById(idBranoA(prevIndex()));
     }
   });
 
