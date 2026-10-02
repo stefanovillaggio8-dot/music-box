@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.80";
+  const APP_VERSION = "6.81";
 
   let recovering = false;
   async function selfHeal() {
@@ -102,6 +102,9 @@
   let query = "";
   let favorites = new Set();
   let favOnly = false;
+  /* Filtro "solo quelli che non ho ancora ascoltato": comodo per dare una
+     prima ascolto a tutto quello che ho scaricato e non ho mai sentito. */
+  let soloMaiAscoltati = false;
   let hiddenTracks = new Set();
   /* Numeri della libreria, per il registro: cosi' capisco cosa manca senza
      dover chiedere uno screenshot. */
@@ -1314,17 +1317,51 @@ if (nuovo) r.v = (r.v || 0) + 1;
   function titoloOrdinato(t) {
     return normKey(t.title);
   }
-  const ORDINAMENTI = [
-    { id: "artista", nome: "Per artista" },
-    { id: "titolo", nome: "Per titolo" },
-    { id: "aggiunti", nome: "Piu' recenti" }
+const ORDINAMENTI = [
+  { id: "artista", nome: "Per artista" },
+  { id: "titolo", nome: "Per titolo" },
+  { id: "aggiunti", nome: "Piu' recenti" },
+  { id: "ascoltati", nome: "Piu' ascoltati" },
+  { id: "maiascoltati", nome: "Meno ascoltati" }
   ];
+
+  /* Quante volte e per quanti secondi ho ascoltato un brano: me lo dice la
+     scheda di ascolto dello stesso brano. Se non c'e' scheda, il brano non
+     l'ho ancora ascoltato (quindi 0). */
+  function _ascoltoDi(t) {
+    try {
+      if (!t) return { v: 0, s: 0 };
+      const c = _chiaveStats(t);
+      if (!c) return { v: 0, s: 0 };
+      const r = statisticheProfilo()[c];
+      return { v: (r && r.v) || 0, s: (r && r.s) || 0 };
+    } catch (e) { return { v: 0, s: 0 }; }
+  }
   function ordinaLista(lista) {
     if (ordinamento === "titolo") {
       return lista.slice().sort((a, b) => titoloOrdinato(a) < titoloOrdinato(b) ? -1 : 1);
     }
     if (ordinamento === "aggiunti") {
       return lista.slice().sort((a, b) => (b.aggiunto || 0) - (a.aggiunto || 0));
+    }
+    /* Ordinamento per ascolto: nel primo i piu' sentiti in cima, nel
+       secondo i meno sentiti in cima. Chi non hai ancora ascoltato va
+       fuori dai due gruppi (dopo se ordini per "piu' ascoltati", prima se
+       ordini per "meno ascoltati"): cosi' i mai ascoltati non si
+       mescolano con gli altri e restano riconoscibili. */
+    if (ordinamento === "ascoltati" || ordinamento === "maiascoltati") {
+      const su = ordinamento === "ascoltati";
+      const dentro = lista.filter((t) => _ascoltoDi(t).s > 0);
+      const fuori = lista.filter((t) => _ascoltoDi(t).s <= 0);
+      const perTempo = dentro.slice().sort((a, b) => {
+        const x = _ascoltoDi(a);
+        const y = _ascoltoDi(b);
+        const d = y.s - x.s;
+        if (d !== 0) return su ? d : -d;
+        if (y.v !== x.v) return su ? (y.v - x.v) : (x.v - y.v);
+        return (a.artist || "") < (b.artist || "") ? -1 : 1;
+      });
+      return su ? perTempo.concat(fuori) : fuori.concat(perTempo);
     }
     /* Default: tutti i brani di un artista di fila, gli artisti in ordine
        alfabetico, e dentro ogni gruppo i brani per titolo. Cosi' i 5 brani
@@ -1341,6 +1378,7 @@ if (nuovo) r.v = (r.v || 0) + 1;
   function visibleTracks() {
     let list = tracks.filter((t) => !hiddenTracks.has(t.id));
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
+    if (soloMaiAscoltati) list = list.filter((t) => _ascoltoDi(t).s <= 0);
     if (!query) return ordinaLista(list);
     const scored = [];
     for (const t of list) {
@@ -5160,11 +5198,16 @@ function closeImport() {
   $("btnSeekBack").addEventListener("click", () => seekBy(-15));
   $("btnSeekFor").addEventListener("click", () => seekBy(15));
 
-  $("btnFavFilter").addEventListener("click", () => {
+$("btnFavFilter").addEventListener("click", () => {
     favOnly = !favOnly;
     $("btnFavFilter").classList.toggle("on", favOnly);
     render();
-  });
+    });
+  $("btnMaiAscoltati").addEventListener("click", () => {
+    soloMaiAscoltati = !soloMaiAscoltati;
+    $("btnMaiAscoltati").classList.toggle("on", soloMaiAscoltati);
+    render();
+    });
 
   $("btnImport").addEventListener("click", openImport);
   $("importClose").addEventListener("click", closeImport);
