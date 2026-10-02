@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.82";
+  const APP_VERSION = "6.83";
 
   let recovering = false;
   async function selfHeal() {
@@ -166,11 +166,27 @@ function profileState(name) {
   return all[name];
 }
 
-  function writeProfileState(name, patch) {
-    const all = allState();
-    all[name] = Object.assign(profileState(name), patch);
-    saveAllState(all);
-  }
+/* Quando salvo un profilo riparto sempre da quello che c'e' ADESSO sul
+     disco, non da quello che avevo in memoria. Serve per quando la app e'
+     aperta in due finestre: se nell'una metti un preferito e nell'altra
+     un brano nascosto, prima una delle due modifiche spariva (l'ultima
+     scrittura copriva l'altra). */
+function writeProfileState(name, patch) {
+  let fresco = {};
+  try { fresco = LS.get("mb.state", {}) || {}; } catch (e) { fresco = {}; }
+  const base = (fresco && typeof fresco[name] === "object" && fresco[name]) ? fresco[name] : profileState(name);
+  fresco[name] = Object.assign({}, base, patch);
+  saveAllState(fresco);
+}
+
+/* Se un'altra finestra cambia qualcosa, me ne accorgo e rileggo: altrimenti
+   resterei con i dati vecchi in memoria. */
+window.addEventListener("storage", (e) => {
+  if (e && e.key && e.key !== "mb.state") return;
+  _statoInMemoria = null;
+  try { loadProfileState(); } catch (x) { /* noop */ }
+  render();
+});
 
   function loadProfileState() {
     const st = profileState(profile);
@@ -1616,7 +1632,7 @@ const nascosti = hiddenTracks.size;
        che sembrava scritto male, e non si capiva cosa volesse dire. */
     let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
-    if (favOnly || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
+    if (favOnly || soloMaiAscoltati || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
     /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
     const bt = $("btnOrdina");
