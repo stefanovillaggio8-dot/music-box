@@ -46,6 +46,7 @@
     { title: "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]", file: "songs/track-44.mp3", artist: "nayt", profile: "Ste" },
     { title: "Porto il Commerciale", file: "songs/track-45.mp3", artist: "Kid Yugi, Night Skinny & Artie 5ive", profile: "Ste" },
     { title: "sailor song", file: "songs/track-46.mp3", artist: "gigi perez", profile: "Ste" },
+    { title: "nuts", file: "songs/track-47.mp3", artist: "Lil Peep", profile: "Ste" },
 ];
 
   const PALETTE = [
