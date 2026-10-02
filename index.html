@@ -22,7 +22,10 @@
       </div>
   <div class="logo-actions">
     <span class="ver-badge" id="verBadge" title="Versione in uso">6.7</span>
-    <button class="logo-refresh" id="btnStatistiche" aria-label="Statistiche" title="Statistiche di ascolto">
+    <button class="logo-refresh" id="btnCopertine" aria-label="Copertine mancanti" title="Cerca le copertine che mancano">
+  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 5v14H5V5h14m0-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8.5 6.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-4.5 8h14l-3.75-5-3 4-2.25-3L6 19.5Z"/></svg>
+  </button>
+  <button class="logo-refresh" id="btnStatistiche" aria-label="Statistiche" title="Statistiche di ascolto">
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 20h3v-8H4v8Zm6.5 0h3V4h-3v16Zm6.5 0h3v-11h-3v11Z"/></svg>
     </button>
     <span class="share-ind" id="shareInd" hidden title="Condivisione dei brani di questo dispositivo">
@@ -206,6 +209,21 @@
 
   <input type="file" id="importImageInput" accept="image/*" hidden />
   <input type="file" id="importAudioInput" accept="audio/*,.mp3,.m4a,.aac,.ogg,.wav" hidden />
+
+  <div class="profile-overlay" id="coverPanel" hidden>
+  <div class="profile-card">
+  <div class="import-head">
+  <div class="import-head-info">
+  <p class="import-title">Copertine mancanti</p>
+  <p class="import-sub" id="coverSub">Cerco le copertine che mancano</p>
+  </div>
+  <button class="import-close" id="coverClose" aria-label="Chiudi">&times;</button>
+  </div>
+  <div class="profile-body">
+  <div id="coverCorpo"></div>
+  </div>
+  </div>
+  </div>
 
   <div class="profile-overlay" id="statsPanel" hidden>
     <div class="profile-card">

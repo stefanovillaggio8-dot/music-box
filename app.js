@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.79";
+  const APP_VERSION = "6.80";
 
   let recovering = false;
   async function selfHeal() {
@@ -205,7 +205,12 @@ function profileState(name) {
   const DB_STORE = "tracks";
   const DB_IMPORTS = "imports";
   const DB_LYRICS = "lyrics";
-  const DB_VERSION = 3;
+  /* Le copertine che trovo dal browser le tengo qui, per brano.
+     Serve per i brani della libreria condivisa: quelle copertine le puo'
+     correggere solo il computer che le ha scaricate (covers.json), quindi
+     se manca una copertina la cerco io e me la segno qui sul dispositivo. */
+  const DB_COVERS = "copertine";
+  const DB_VERSION = 4;
 
   /* ---------- IndexedDB ---------- */
   function openDB() {
@@ -218,9 +223,12 @@ function profileState(name) {
         if (!req.result.objectStoreNames.contains(DB_IMPORTS)) {
           req.result.createObjectStore(DB_IMPORTS, { keyPath: "id" });
         }
-        if (!req.result.objectStoreNames.contains(DB_LYRICS)) {
-          req.result.createObjectStore(DB_LYRICS, { keyPath: "id" });
-        }
+    if (!req.result.objectStoreNames.contains(DB_LYRICS)) {
+      req.result.createObjectStore(DB_LYRICS, { keyPath: "id" });
+    }
+    if (!req.result.objectStoreNames.contains(DB_COVERS)) {
+      req.result.createObjectStore(DB_COVERS, { keyPath: "id" });
+    }
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
@@ -291,12 +299,31 @@ function profileState(name) {
   }
 
   function dbPutLyrics(rec) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_LYRICS, "readwrite");
-      tx.objectStore(DB_LYRICS).put(rec);
-      tx.oncomplete = resolve;
-      tx.onerror = () => reject(tx.error);
-    });
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_LYRICS, "readwrite");
+    tx.objectStore(DB_LYRICS).put(rec);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+  }
+
+  /* Copertine trovate dal browser, per brano della libreria condivisa. */
+  function dbAllCover() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_COVERS, "readonly");
+    const req = tx.objectStore(DB_COVERS).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+  }
+
+  function dbPutCover(rec) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DB_COVERS, "readwrite");
+    tx.objectStore(DB_COVERS).put(rec);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
   }
 
   /* ---------- Caricamento tracce ---------- */
@@ -812,27 +839,35 @@ if (nuovo) r.v = (r.v || 0) + 1;
   }
 
   async function loadAll() {
-    const builtin = BUILTIN
-      .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
-.map((b, i) => {
-  const info = coverInfo(b.artist, b.title);
-  /* Prima usavo "builtin-" + il numero di posizione nella lista. Ma la lista
-     cresce (ogni canzone nuova viene aggiunta) e puo' cambiare ordine: il
-     numero non e' piu' lo stesso e i nomi che avevi cambiato sparivano al
-     riavvio. Ora uso il nome del file, che non cambia mai. */
-  const stabile = "b-" + String(b.file || ("builtin-" + BUILTIN.indexOf(b))).replace(/^.*\//, "").replace(/\.mp3$/i, "");
-  return {
-  id: stabile,
-          title: b.title,
-          artist: b.artist || "",
-          album: info && info.album ? info.album : "",
-          cover: info && info.cover ? info.cover : "",
-          url: b.file,
-          builtin: true,
-          gradient: PALETTE[i % PALETTE.length],
-          size: null
-        };
-      });
+  /* Copertine che ho cercato io dal browser per questi brani (vedi
+     "Scarica tutte le copertine mancanti"): valgono solo su questo
+     dispositivo, ma cosi' un brano senza copertina la vede comunque. */
+  let copertineMie = {};
+  try {
+    const salvate = await dbAllCover();
+    for (const c of salvate) {
+      if (c && c.id && c.cover) copertineMie[c.id] = c;
+    }
+  } catch (e) { /* noop */ }
+
+  const builtin = BUILTIN
+    .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
+    .map((b, i) => {
+    const info = coverInfo(b.artist, b.title);
+    const stabile = "b-" + String(b.file || ("builtin-" + BUILTIN.indexOf(b))).replace(/^.*\//, "").replace(/\.mp3$/i, "");
+    const mia = copertineMie[stabile];
+    return {
+      id: stabile,
+      title: b.title,
+      artist: b.artist || "",
+      album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
+      cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
+      url: b.file,
+      builtin: true,
+      gradient: PALETTE[i % PALETTE.length],
+      size: null
+    };
+    });
 
   let added = [];
   let doppioni = 0;
@@ -917,6 +952,116 @@ if (nuovo) r.v = (r.v || 0) + 1;
   /* Passa all'avvio su tutti i brani: chi non ha la copertina cerca di
      recuperarla da solo, e lascia traccia di quelli che restano scoperti
      (serve a me per capire quando manca qualcosa in covers.json). */
+  /* ---------- "Scarica tutte le copertine mancanti" ----------
+     Prima si recuperava una copertina alla volta, solo quando aprivi un brano:
+     se ne mancavano 15 non te ne accorgevi e non le cercava mai.
+     Adesso c'e' un bottone: cerca tutte quelle che mancano, una alla volta
+     (per non fare troppe richieste in fila), e alla fine dice quante ne ha
+     sistemate e quante non le ha trovate. */
+  let _copertineInCorso = false;
+  let _copertineAnnullate = false;
+
+  function _elencoSenzaCopertina() {
+    return tracks.filter((t) => !t || !t.cover || !String(t.cover).trim());
+  }
+
+  function _salvaCopertinaMia(t, blob, album) {
+    try {
+      const ora = tracks.find((x) => x.id === t.id);
+      if (!ora) return;
+      ora.cover = blob;
+      if (album && !ora.album) ora.album = album;
+    } catch (e) { /* noop */ }
+  }
+
+  function _stampaCopertine(stato, testo, dettaglio) {
+    const pannello = $("coverPanel");
+    const corpo = $("coverCorpo");
+    if (!pannello || !corpo) return;
+    if ($("coverSub")) {
+      $("coverSub").textContent = testo || "";
+    }
+    let html = "";
+    if (stato === "lavoro") {
+      html = '<div class="stat-lista"><div class="stat-item"><span>Copertine mancanti</span><b>' +
+        (dettaglio && dettaglio.totale !== undefined ? dettaglio.totale : 0) + "</b></div>" +
+        '<div class="stat-item"><span>Fatto</span><b>' + (dettaglio ? dettaglio.fatte : 0) + "</b></div>" +
+        '<div class="stat-item"><span>Adesso sta cercando</span><b>' +
+        (dettaglio && dettaglio.ora ? dettaglio.ora : "-") + "</b></div></div>";
+    } else if (stato === "fine") {
+      const d = dettaglio || { sistemate: 0, nonTrovate: 0, nomi: [] };
+      html = '<div class="stat-lista">';
+      html += '<div class="stat-item"><span>Sistemate</span><b>' + d.sistemate + "</b></div>";
+      html += '<div class="stat-item"><span>Non trovate</span><b>' + d.nonTrovate + "</b></div>";
+      html += "</div>";
+      if (d.nomi && d.nomi.length) {
+        html += '<h4>Non sono state trovate</h4><div class="stat-lista">';
+        for (const n of d.nomi) html += '<div class="stat-item"><span>' + String(n).replace(/[<>]/g, "") + "</span><b>senza</b></div>";
+        html += "</div>";
+      }
+    } else if (stato === "vuoto") {
+      html = '<div class="stat-lista"><div class="stat-item"><span>Copertine mancanti</span><b>0</b></div></div>' +
+        '<p class="nota" style="margin:8px 2px 0">Tutte le copertine ci sono gia.</p>';
+    }
+    corpo.innerHTML = html;
+    pannello.hidden = false;
+    syncNoScroll();
+  }
+
+  function _chiudiPannelloCopertine() {
+    _copertineAnnullate = true;
+    const pannello = $("coverPanel");
+    if (pannello) pannello.hidden = true;
+    syncNoScroll();
+  }
+
+  async function cercaTutteLeCopertine() {
+    if (_copertineInCorso) return;
+    const daCercare = _elencoSenzaCopertina();
+    _copertineInCorso = true;
+    _copertineAnnullate = false;
+    try {
+      if (!daCercare.length) {
+        _stampaCopertine("vuoto", "Non manca nessuna copertina");
+        return;
+      }
+      _stampaCopertine("lavoro", "Sto cercando " + daCercare.length + " copertine, non chiudere la pagina",
+        { totale: daCercare.length, fatte: 0, ora: "" });
+      let sistemate = 0;
+      const nomi = [];
+      for (let i = 0; i < daCercare.length; i++) {
+        if (_copertineAnnullate) break;
+        const t = daCercare[i];
+        const nome = (t.artist || "?") + " - " + t.title;
+        _stampaCopertine("lavoro", "Cerco " + (i + 1) + " di " + daCercare.length + "  (" + nome + ")",
+          { totale: daCercare.length, fatte: sistemate, ora: nome });
+        let presa = false;
+        try {
+          const c = await findCoverLocal(t.artist, t.title);
+          if (c && c.cover) {
+            const ir = await fetch(c.cover);
+            if (ir.ok) {
+              const blob = await ir.blob();
+              _salvaCopertinaMia(t, blob, c.album);
+              try { await dbPutCover({ id: t.id, cover: blob, album: c.album || "", title: t.title, artist: t.artist || "" }); } catch (e) { /* noop */ }
+              presa = true;
+            }
+          }
+        } catch (e) { /* noop */ }
+        if (presa) sistemate++;
+        else nomi.push(nome);
+        /* ogni volta una pausa, cosi' iTunes (e i nostri programmi) non
+           vengono martellati e la pagina resta reattiva */
+        await new Promise((r) => setTimeout(r, 700));
+      }
+      render();
+      _stampaCopertine("fine", "Fatto: " + sistemate + " sistemate, " + nomi.length + " non trovate",
+        { sistemate: sistemate, nonTrovate: nomi.length, nomi: nomi.slice(0, 20) });
+    } finally {
+      _copertineInCorso = false;
+    }
+  }
+
   function recuperaCopertineMancanti() {
     const senza = tracks.filter((t) => !t.cover);
     if (!senza.length) return;
@@ -5509,9 +5654,14 @@ function closeImport() {
   $("btnOffline").addEventListener("click", openOffline);
     $("btnStatistiche").addEventListener("click", apriStatistiche);
     $("statsClose").addEventListener("click", chiudiStatistiche);
-    $("statsPanel").addEventListener("click", (e) => {
+      $("statsPanel").addEventListener("click", (e) => {
       if (e.target === $("statsPanel")) chiudiStatistiche();
-    });
+      });
+      $("btnCopertine").addEventListener("click", cercaTutteLeCopertine);
+      $("coverClose").addEventListener("click", _chiudiPannelloCopertine);
+      $("coverPanel").addEventListener("click", (e) => {
+      if (e.target === $("coverPanel")) _chiudiPannelloCopertine();
+      });
   $("offlineClose").addEventListener("click", closeOffline);
   $("offlinePanel").addEventListener("click", (e) => {
     if (e.target === $("offlinePanel")) closeOffline();
