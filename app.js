@@ -58,7 +58,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.83";
+  const APP_VERSION = "6.84";
 
   let recovering = false;
   async function selfHeal() {
@@ -954,6 +954,10 @@ if (nuovo) r.v = (r.v || 0) + 1;
        veniva buttata via, e al riavvio il brano tornava col nome
        originale. */
     applicaRinomine();
+    /* un brano che avevo segnato come "non scaricato" e' comparso in
+       libreria: non lo riprovo piu' e lo tolgo dalla lista */
+    try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
+    try { _aggiornaBadgeFalliti(); } catch (e) { /* noop */ }
     render();
   }
 
@@ -4318,6 +4322,169 @@ function _copertinaPerSchermo(t) {
   // Scarica l'mp3 dal PC e lo mette subito in libreria, agganciandolo a questo
   // brano. Mostra l'avanzamento mentre arrivano i byte.
   // urlPronto: quando l'ho gia' trovato io, non aspetto che lo incolli.
+  /* ---------- Brani che non sono riuscito a scaricare ----------
+     Prima, quando un download falliva, spariva tutto: spariva il link,
+     spariva l'errore, e dopo un ricaricamento della pagina non sapevo
+     piu' cosa avevo provato a scaricare.
+     Adesso me li segno (per profilo, quindi restano anche dopo aver
+     chiuso la pagina) e ci metto un bottone per riprovare: magari nel
+     frattempo YouTube ha smesso di bloccarmi. */
+  function _falliti() {
+    try {
+      const st = profileState(profile);
+      return Array.isArray(st.falliti) ? st.falliti : [];
+    } catch (e) { return []; }
+  }
+
+  function _salvaFalliti(lista) {
+    try { writeProfileState(profile, { falliti: lista.slice(0, 60) }); } catch (e) { /* noop */ }
+  }
+
+  function _aggiornaBadgeFalliti() {
+    const n = _falliti().length;
+    const b = $("fallitiBadge");
+    if (b) { b.textContent = String(n); b.hidden = n === 0; }
+    const btn = $("btnFalliti");
+    if (btn) btn.classList.toggle("has-falliti", n > 0);
+    return n;
+  }
+
+  function _notaFallito(url, artista, titolo, cartella, errore) {
+    if (!url) return;
+    const voce = {
+      url: String(url),
+      artista: String(artista || ""),
+      titolo: String(titolo || ""),
+      cartella: String(cartella || ""),
+      errore: String(errore || "").slice(0, 160),
+      quando: Date.now()
+    };
+    const lista = _falliti().filter((x) => x.url !== voce.url);
+    lista.unshift(voce);
+    _salvaFalliti(lista);
+    _aggiornaBadgeFalliti();
+  }
+
+  function _togliFallito(url) {
+    _salvaFalliti(_falliti().filter((x) => x.url !== url));
+    _aggiornaBadgeFalliti();
+  }
+
+  /* Se un brano che avevo segnato come fallito e' comparso in libreria
+     (perche' l'hai aggiunto tu a mano), non lo riprovo piu': e' inutile. */
+  function _pulisciFallitiRisolti() {
+    const lista = _falliti();
+    if (!lista.length) return;
+    let tolta = false;
+    const resta = lista.filter((f) => {
+      const gia = tracks.some((t) => stessoBrano(t, { artist: f.artista, title: f.titolo }));
+      if (gia) tolta = true;
+      return !gia;
+    });
+    if (tolta) { _salvaFalliti(resta); _aggiornaBadgeFalliti(); }
+  }
+
+  let _riprovaInCorso = false;
+
+  async function _riprovaFallito(f) {
+    if (_riprovaInCorso) return false;
+    _riprovaInCorso = true;
+    try {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const r = await fetch(base + "/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: f.url,
+          cartella: f.cartella || "",
+          titolo: [f.artista, f.titolo].join(" - ").replace(/^\s*-\s*/, "").trim()
+        })
+      });
+      if (!r.ok) {
+        let msg = "non riuscito";
+        try { const j = await r.json(); if (j && j.errore) msg = String(j.errore); } catch (e) { }
+        /* se YouTube ha bloccato, la pausa la gestisce il programma: non
+           insisto e lascio la voce nella lista */
+        _notaFallito(f.url, f.artista, f.titolo, f.cartella, msg);
+        toast("Non ancora: " + msg.slice(0, 60));
+        return false;
+      }
+      const blob = await r.blob();
+      const meta = {
+        title: f.titolo || (blob && blob.name) || "brano",
+        artist: f.artista || "",
+        album: "",
+        license: "",
+        source: "youtube (convertito sul PC)"
+      };
+      await saveImported(meta, blob, meta.source);
+      for (const k of trackKeys(meta)) libKeys.add(k);
+      _togliFallito(f.url);
+      toast(meta.title + " scaricato");
+      await loadAll();
+      return true;
+    } catch (e) {
+      _notaFallito(f.url, f.artista, f.titolo, f.cartella, (e && e.message) || "errore");
+      return false;
+    } finally {
+      _riprovaInCorso = false;
+    }
+  }
+
+  async function _riprovaTutti() {
+    if (_riprovaInCorso) return;
+    const lista = _falliti();
+    for (let i = 0; i < lista.length; i++) {
+      const f = lista[i];
+      _stampaFalliti("Sto riprovando " + (i + 1) + " di " + lista.length + ": " + (f.titolo || f.artista || "senza nome"));
+      const ok = await _riprovaFallito(f);
+      if (!ok) {
+        /* se e' bloccato mi fermo: gli altri fallirebbero uguale e
+           farei solo danno */
+        _stampaFalliti("Mi fermo: YouTube sta bloccando. Riprova fra qualche minuto.");
+        return;
+      }
+      /* una pausa fra una prova e l'altra, come fa il programma sul PC */
+      await new Promise((r) => setTimeout(r, 2500));
+    }
+    _stampaFalliti("Fatto: ho riprovato tutti.");
+  }
+
+  function _stampaFalliti(sottotitolo) {
+    const pannello = $("fallitiPanel");
+    const corpo = $("fallitiCorpo");
+    if (!pannello || !corpo) return;
+    const lista = _falliti();
+    if ($("fallitiSub")) $("fallitiSub").textContent = sottotitolo || (lista.length ? "Qui puoi riprovare quando vuoi" : "Non c'e' niente da riprovare");
+    let html = "";
+    if (!lista.length) {
+      html = '<div class="stat-lista"><div class="stat-item"><span>Brani non scaricati</span><b>0</b></div></div>' +
+        '<p class="nota" style="margin:8px 2px 0">Non c\'e\' nessun brano scaricato a meta\'.</p>';
+    } else {
+      html = '<div class="profile-actions" style="margin-bottom:10px"><button class="btn-main" id="btnRiprovaTutti">Riprova tutti</button>' +
+        '<button class="btn-ghost" id="btnDimenticaFalliti">Dimentica tutti</button></div>';
+      for (const f of lista) {
+        const nome = [f.artista, f.titolo].filter(Boolean).join(" - ") || "senza nome";
+        const quando = f.quando ? new Date(f.quando) : null;
+        const quandoTxt = quando ? quando.toLocaleDateString("it-IT") + " " + String(quando.getHours()).padStart(2, "0") + ":" + String(quando.getMinutes()).padStart(2, "0") : "";
+        html += '<div class="falliti-riga" data-url="' + encodeURIComponent(f.url) + '">' +
+          '<div class="falliti-info"><div class="falliti-nome">' + String(nome).replace(/[<>]/g, "") + "</div>" +
+          '<div class="falliti-dome">' + String(f.errore || "").replace(/[<>]/g, "") + (quandoTxt ? " - " + quandoTxt : "") + "</div></div>" +
+          '<div class="falliti-btns"><button data-azione="riprova">Riprova</button>' +
+          '<button data-azione="togli">Togli</button></div></div>';
+      }
+    }
+    corpo.innerHTML = html;
+    pannello.hidden = false;
+    syncNoScroll();
+  }
+
+  function _chiudiPannelloFalliti() {
+    const pannello = $("fallitiPanel");
+    if (pannello) pannello.hidden = true;
+    syncNoScroll();
+  }
+
   async function convertiDaYouTube(item, urlPronto) {
     const el = item.el;
     const url = urlPronto || (el.ytUrl ? el.ytUrl.value.trim() : "");
@@ -4391,8 +4558,10 @@ function _copertinaPerSchermo(t) {
       dimenticaPonte();
       el.fill.classList.add("err");
       el.bytes.textContent = String((err && err.message) || err);
-      segnalaErrore("conversione fallita: " + String((err && err.message) || err).slice(0, 160));
-      item.state = "found";
+segnalaErrore("conversione fallita: " + String((err && err.message) || err).slice(0, 160));
+    /* me lo segno, cosi' posso riprovare dopo senza cercare di nuovo il link */
+    _notaFallito(url, item.artist, item.title, (el && el.cartella) || "", (err && err.message) || err);
+    item.state = "found";
       if (el.ytGo) el.ytGo.disabled = false;
       if (el.ytUrl) el.ytUrl.disabled = false;
     }
@@ -5273,6 +5442,38 @@ $("btnFavFilter").addEventListener("click", () => {
     $("btnMaiAscoltati").classList.toggle("on", soloMaiAscoltati);
     render();
     });
+  $("btnFalliti").addEventListener("click", () => _stampaFalliti());
+  $("fallitiClose").addEventListener("click", _chiudiPannelloFalliti);
+  $("fallitiPanel").addEventListener("click", (e) => {
+    if (e.target === $("fallitiPanel")) _chiudiPannelloFalliti();
+  });
+  $("fallitiCorpo").addEventListener("click", async (e) => {
+    const t = e.target;
+    if (!t) return;
+    if (t.id === "btnRiprovaTutti") { _riprovaTutti(); return; }
+    if (t.id === "btnDimenticaFalliti") {
+      _salvaFalliti([]);
+      _aggiornaBadgeFalliti();
+      _stampaFalliti("Ho dimenticato la lista. Non riprovo piu' nulla.");
+      return;
+    }
+    const riga = t.closest ? t.closest(".falliti-riga") : null;
+    if (!riga) return;
+    const url = decodeURIComponent(riga.getAttribute("data-url") || "");
+    const voce = _falliti().find((x) => x.url === url);
+    if (!voce) { _stampaFalliti(); return; }
+    if (t.getAttribute("data-azione") === "togli") {
+      _togliFallito(url);
+      _stampaFalliti();
+      return;
+    }
+    if (t.getAttribute("data-azione") === "riprova") {
+      t.disabled = true;
+      _stampaFalliti("Sto riprovando: " + (voce.titolo || voce.artista || "senza nome"));
+      const ok = await _riprovaFallito(voce);
+      _stampaFalliti(ok ? "Riuscito: " + (voce.titolo || voce.artista) : "Non ancora: riprova fra qualche minuto");
+    }
+  });
 
   $("btnImport").addEventListener("click", openImport);
   $("importClose").addEventListener("click", closeImport);

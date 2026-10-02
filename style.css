@@ -59,7 +59,45 @@ body {
   justify-content: center;
 }
 .logo-refresh svg { width: 19px; height: 19px; }
-.logo-refresh:active { color: var(--txt); transform: rotate(180deg); }
+  .logo-refresh:active { color: var(--txt); transform: rotate(180deg); }
+  /* il numero dei brani non scaricati, sopra al bottone */
+  .logo-actions { position: relative; }
+  .logo-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--danger);
+  color: #fff;
+  font: 700 10px/16px ui-monospace, Consolas, monospace;
+  text-align: center;
+  pointer-events: none;
+  }
+  .logo-refresh.has-falliti { color: var(--danger); border-color: rgba(255,92,122,.5); }
+  .falliti-riga {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 2px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .falliti-riga:last-child { border-bottom: 0; }
+  .falliti-info { flex: 1 1 auto; min-width: 0; }
+  .falliti-nome { font: 600 14px/1.25 var(--font, system-ui); color: var(--txt); }
+  .falliti-dome { font: 400 12px/1.35 var(--font, system-ui); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .falliti-btns { display: flex; gap: 6px; flex: 0 0 auto; }
+  .falliti-btns button {
+  border: 1px solid rgba(255,255,255,.14);
+  background: var(--card);
+  color: var(--txt);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: 600 12px/1 var(--font, system-ui);
+  }
+  .falliti-btns button:disabled { opacity: .5; }
 .logo-actions { display: flex; gap: 8px; }
 .logo-refresh.on { color: var(--danger); border-color: rgba(255,92,122,.5); }
 #btnFavFilter:active { transform: scale(.92); }
