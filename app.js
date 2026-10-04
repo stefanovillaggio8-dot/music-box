@@ -47,6 +47,7 @@
     { title: "Porto il Commerciale", file: "songs/track-45.mp3", artist: "Kid Yugi, Night Skinny & Artie 5ive", profile: "Ste" },
     { title: "sailor song", file: "songs/track-46.mp3", artist: "gigi perez", profile: "Ste" },
     { title: "nuts", file: "songs/track-47.mp3", artist: "Lil Peep", profile: "Ste" },
+    { title: "NEON", file: "songs/track-48.mp3", artist: "Sfera Ebbasta & Shiva", profile: "Ste" },
 ];
 
   const PALETTE = [
