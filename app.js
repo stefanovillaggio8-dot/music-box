@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.90";
+  const APP_VERSION = "6.91";
 
   let recovering = false;
   async function selfHeal() {
@@ -2929,11 +2929,17 @@ async function removeTrack(id) {
       const r = await fetch(base + "/elimina", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: t.url, cartella: cheCartella })
+        body: JSON.stringify({ file: t.url, cartella: cheCartella, pubblica: true })
       });
       const j = await r.json().catch(() => ({}));
-      if (r.ok && j && j.ok) fattoSulPc = true;
-      else motivo = String((j && j.errore) || "non sono riuscito");
+if (r.ok && j && j.ok) {
+          fattoSulPc = true;
+          /* Il computer puo' aver tolto il brano dal sito ma non quello
+             nella cartella (se non ha trovato un file sicuramente identico).
+             In quel caso l'utente deve saperlo, altrimenti crede che
+             l'eliminazione sia a posto e il brano ricompare. */
+          if (j.avviso) motivo = String(j.avviso);
+        } else motivo = String((j && j.errore) || "non sono riuscito");
     } catch (e) {
       motivo = "il computer non ha risposto";
     }
