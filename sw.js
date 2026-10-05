@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v694";
+const CACHE = "spotifynonavraiimieisoldi-v695";
 const CORE = [
   "./",
   "./index.html",

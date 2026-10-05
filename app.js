@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.94";
+  const APP_VERSION = "6.95";
 
   let recovering = false;
   async function selfHeal() {
@@ -2045,10 +2045,15 @@ function rebuildAudio(autoplay) {
       _voglioSuonare = false;
       return true;
     } catch (e) {
+      const nome = String((e && e.name) || "");
       console.warn("Play bloccato" + (hoGiaRiprovato ? " (anche dopo aver ricreato il lettore)" : ""), e);
-      /* il lettore si ricrea UNA volta sola, e senza richiamare doPlay da
-         dentro: altrimenti si ripete per sempre */
-      if (!hoGiaRiprovato) {
+      /* Se il telefono rifiuta perche' non c'e' stata una pressione (il caso
+         dello schermo spento), ricreare il lettore e' la cosa PEGGIORE: un
+         lettore nuovo e' come un brano nuovo, quindi il telefono lo blocca
+         di nuovo. In quel caso mi tengo lo stesso lettore e insisto sullo
+         stesso brano. Ricrearlo resta giusto se il lettore e' rotto. */
+      const rifiutoDelTelefono = /NotAllowedError/i.test(nome);
+      if (!hoGiaRiprovato && !rifiutoDelTelefono) {
         rebuildAudio(false);
         return doPlay(true);
       }
@@ -2056,6 +2061,28 @@ function rebuildAudio(autoplay) {
       _riprovaPiuTardi();
       return false;
     }
+  }
+
+  /* Tenere pronto il brano che viene dopo, cosi' quando l'altro finisce
+     parte SUBITO e non deve aspettare che il file si scarichi dal internet.
+     E' un lettore nascosto e muto: non si sente, serve solo a scaldare il
+     file in memoria. */
+  let _preparato = null;
+  let _preparatoId = "";
+  function _preparaIlSuccessivo(id) {
+    const t = tracks.find((x) => x.id === id);
+    if (!t || !t.url || _preparatoId === id) return;
+    try {
+      if (!_preparato) {
+        _preparato = new Audio();
+        _preparato.preload = "auto";
+        _preparato.muted = true;
+      }
+      _preparato.src = t.url;
+      /* se il brano e' gia' in mano la si riusa, altrimenti lo si scorda */
+      try { _preparato.load(); } catch (e) { /* noop */ }
+      _preparatoId = id;
+    } catch (e) { _preparato = null; _preparatoId = ""; }
   }
 
   let _timerRiprove = null;
@@ -2467,6 +2494,8 @@ function _ripristinaNascosti() {
     if (activeEl) activeEl.scrollIntoView({ block: "nearest" });
     updateMediaSession();
     if (autoplay) await doPlay();
+    /* tengo pronto il brano dopo, cosi' quando questo finisce parte subito */
+    if (autoplay) _preparaIlSuccessivo(queue.length ? queue[0] : idBranoA(nextIndex()));
   }
 
   /* Il brano in una certa posizione, ma SENZA far esplodere niente.
