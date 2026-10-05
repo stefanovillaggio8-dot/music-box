@@ -1380,3 +1380,41 @@ button.btn-mini-file {
   align-self: center;
 }
 .ver-badge:active { color: var(--accent2); }
+
+/* ---------- Barra "installa l'app" ----------
+   Il sito e' gia' un'app: questa barra serve solo a metterla sulla home
+   del telefono con un tocco. Sta sopra il player e sparisce da sola. */
+.barra-installa {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--player-h) + env(safe-area-inset-bottom) + 78px);
+  transform: translateX(-50%) translateY(16px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(94vw, 520px);
+  padding: 12px 14px;
+  background: var(--card-hi);
+  border: 1px solid var(--line, rgba(255, 255, 255, .08));
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease;
+  z-index: 60;
+}
+.barra-installa.visibile { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.barra-testo { flex: 1; font-size: 13.5px; line-height: 1.35; }
+.barra-installa button {
+  font: inherit;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 14px;
+  cursor: pointer;
+}
+.barra-si { background: var(--acc, #e0e0e0); color: #111; font-weight: 600; }
+.barra-no { background: transparent; color: var(--txt-dim, #999); padding: 9px 11px; }
+@media (max-width: 420px) {
+  .barra-testo { font-size: 12.5px; }
+  .barra-installa { gap: 8px; }
+}

@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.95";
+  const APP_VERSION = "6.96";
 
   let recovering = false;
   async function selfHeal() {
@@ -6508,5 +6508,53 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
     setInterval(controllaAggiornamenti, 60000);
     setTimeout(controllaAggiornamenti, 8000);
 
+    /* ---------- Installare sul telefono ----------
+       Il sito gia' e' un'app: ha icona, si apre a schermo intero e funziona
+       anche senza rete. Quello che manca e' il tocco per metterla sulla home.
+       Un'app installata e' anche piu' adatta a tenere suonando con lo
+       schermo spento, perche' non e' piu' una scheda del navigatore.
+       Lo chiedo solo una volta, e solo se il telefono me lo offre. */
+    (function offersInstall() {
+      const giaInstallata = window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+      if (giaInstallata) return;
+      if (localStorage.getItem("mb.install-chiesto") === "si") return;
+      let evento = null;
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        evento = e;
+        if (localStorage.getItem("mb.install-chiesto") === "no") return;
+        try { _offriInstalla(); } catch (err) { /* noop */ }
+      });
+      function _offriInstalla() {
+        const bar = document.createElement("div");
+        bar.className = "barra-installa";
+        bar.innerHTML = '<span class="barra-testo">Mettila sulla home: si apre come un\'app vera e suona anche a schermo spento</span>' +
+          '<button type="button" class="barra-si">Installa</button>' +
+          '<button type="button" class="barra-no" aria-label="Non ora">X</button>';
+        document.body.appendChild(bar);
+        requestAnimationFrame(() => bar.classList.add("visibile"));
+        const chiudi = () => { bar.classList.remove("visibile"); setTimeout(() => bar.remove(), 300); };
+        bar.querySelector(".barra-si").addEventListener("click", async () => {
+          localStorage.setItem("mb.install-chiesto", "si");
+          chiudi();
+          if (evento) { evento.prompt(); try { await evento.userChoice; } catch (e) { /* noop */ } }
+        });
+        bar.querySelector(".barra-no").addEventListener("click", () => {
+          localStorage.setItem("mb.install-chiesto", "no");
+          chiudi();
+        });
+      }
+      /* Su iPhone il navigatore non offre l'installazione: li lascio
+         comunque la scorciatoia, perche' li si installa a mano. */
+      const iPhone = /iPad|iPhone|iPod/.test(navigator.userAgent || "");
+      if (iPhone) {
+        const aspetto = setTimeout(() => {
+          if (localStorage.getItem("mb.install-chiesto")) return;
+          toast("Per metterla sulla home: icona di condivisione, poi 'Aggiungi alla schermata Home'");
+        }, 6000);
+        void aspetto;
+      }
+    })();
   })();
 })();
