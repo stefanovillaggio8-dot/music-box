@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.88";
+  const APP_VERSION = "6.89";
 
   let recovering = false;
   async function selfHeal() {
@@ -2012,32 +2012,46 @@ function handleTime() {
     return a;
   }
 
-  function rebuildAudio(autoplay) {
-    const t = current();
-    if (!t) return;
-    const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
-    audio = createAudio();
-    audio.src = t.url;
-    audio.volume = volumePct / 100;
-    try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
-    if (autoplay) doPlay();
+/* Ricreo il lettore audio. Fermo quello vecchio: se e' ancora vivo
+     continuerebbe a suonare da solo. */
+function rebuildAudio(autoplay) {
+  const t = current();
+  if (!t) return;
+  const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
+  if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
+  audio = createAudio();
+  audio.src = t.url;
+  audio.volume = volumePct / 100;
+  try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
+  if (autoplay) doPlay();
   }
 
-async function doPlay() {
-  if (!audio) audio = createAudio();
-  try {
-    audio.volume = volumePct / 100;
-    setPlaybackState("playing");
-    await audio.play();
-  } catch (e) {
-    console.warn("Play bloccato, ricreo l'audio", e);
-    rebuildAudio(true);
-    /* A schermo spento il browser congela la pagina e rifiuta di far
-       partire il brano successivo: e' un blocco che passa con il tempo.
-       Quindi riprovo: dopo un secondo e dopo tre. Il brano successivo
-       cosi' parte da solo anche con il telefono in tasca. */
-    _riprovaPiuTardi();
-  }
+  /* Faccio partire il brano.
+     Prima, quando play() falliva, chiamavo rebuildAudio(true) che richiamava
+     doPlay(): e se falliva di nuovo richiamava rebuildAudio... all'infinito.
+     Ogni giro creava un lettore nuovo e non si sentiva NULLA, e il ciclo
+     teneva occupato il browser tanto che la musica si fermava al brano dopo.
+     Happenede soprattutto con lo schermo spento e con il tasto "avanti"
+     dalla schermata di blocco, dove il browser blocca play(). */
+  async function doPlay(hoGiaRiprovato) {
+    if (!audio) audio = createAudio();
+    try {
+      audio.volume = volumePct / 100;
+      setPlaybackState("playing");
+      await audio.play();
+      return true;
+    } catch (e) {
+      console.warn("Play bloccato" + (hoGiaRiprovato ? " (anche dopo aver ricreato il lettore)" : ""), e);
+      /* il lettore si ricrea UNA volta sola, e senza richiamare doPlay da
+         dentro: altrimenti si ripete per sempre */
+      if (!hoGiaRiprovato) {
+        rebuildAudio(false);
+        return doPlay(true);
+      }
+      /* ancora bloccato (telefono in standby): riprovo con calma */
+      _riprovaPiuTardi();
+      return false;
+    }
   }
 
   let _timerRiprove = null;
