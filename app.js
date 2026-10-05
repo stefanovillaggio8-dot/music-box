@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.93";
+  const APP_VERSION = "6.94";
 
   let recovering = false;
   async function selfHeal() {
@@ -1873,6 +1873,9 @@ const nascosti = hiddenTracks.size;
 
   function handleEnded() {
     if (currentId) LS.set("mb.pos." + currentId, 0);
+    /* Il brano e' finito e sto partendo col successivo: da qui in avanti
+       se il telefono rifiuta di suonare, insisto (vedi _riprovaPiuTardi) */
+    _cominciaBranoNuovo();
     if (queue.length) {
       const next = queue.shift();
       persistQueue();
@@ -2039,6 +2042,7 @@ function rebuildAudio(autoplay) {
       audio.volume = volumePct / 100;
       setPlaybackState("playing");
       await audio.play();
+      _voglioSuonare = false;
       return true;
     } catch (e) {
       console.warn("Play bloccato" + (hoGiaRiprovato ? " (anche dopo aver ricreato il lettore)" : ""), e);
@@ -2055,25 +2059,54 @@ function rebuildAudio(autoplay) {
   }
 
   let _timerRiprove = null;
+  /* Quando il brano e' finito e parte il successivo, il telefono spesso
+     rifiuta di riprodurre per un po': con lo schermo spento e' proprio
+     normale. Prima mollavo dopo 10 secondi e la musica restava muta.
+     Adesso insisto per qualche minuto: e' l'unica cosa che posso fare da
+     solo, senza che Ste debba toccare il telefono. */
+  let _voglioSuonare = false;
   function _riprovaPiuTardi() {
     if (_timerRiprove) clearTimeout(_timerRiprove);
-    const tentativi = [1000, 3000, 6000];
+    const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
     let i = 0;
     const riprova = () => {
-      if (i >= tentativi.length) return;
-      const quando = tentativi[i++];
+      if (i >= attesa.length) return;
+      const quando = attesa[i++];
       _timerRiprove = setTimeout(() => {
         try {
-          if (audio && audio.paused && currentId) {
-            /* riprovo sul brano corrente, senza ricominciare tutto */
-            audio.play().catch(() => riprova());
+          /* riprovo SOLO se il brano e' ancora quello giusto e non e' partito
+             nel frattempo: altrimenti lo disturberei */
+          if (_voglioSuonare && currentId && audio && audio.paused) {
+            audio.play().then(() => { _voglioSuonare = false; }).catch(() => riprova());
             return;
           }
+          if (!_voglioSuonare && audio && !audio.paused) return;
         } catch (e) { /* noop */ }
         riprova();
       }, quando);
     };
     riprova();
+  }
+
+  /* Se riprovare non e' servito e il telefono torna in primo piano o Ste
+     tocca qualcosa, riprendo: e' il momento in cui il browser permette
+     di nuovo la riproduzione. */
+  function _riprendiSeInAttesa() {
+    if (!_voglioSuonare || !currentId || !audio) return;
+    if (!audio.paused) { _voglioSuonare = false; return; }
+    audio.play().then(() => { _voglioSuonare = false; }).catch(() => { /* riprovo dopo */ _riprovaPiuTardi(); });
+  }
+  ["visibilitychange", "focus", "pageshow"].forEach((ev) => {
+    document.addEventListener(ev, _riprendiSeInAttesa);
+  });
+  ["pointerdown", "touchstart", "keydown"].forEach((ev) => {
+    window.addEventListener(ev, _riprendiSeInAttesa, { passive: true });
+  });
+
+  function _cominciaBranoNuovo() {
+    /* sto cambiando brano: azzero il conto delle riprove */
+    if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
+    _voglioSuonare = true;
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
@@ -2425,6 +2458,7 @@ function _ripristinaNascosti() {
     _iniziaAscolto();
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
+    if (autoplay) _cominciaBranoNuovo();
     audio.src = t.url;
     audio.volume = volumePct / 100;
     setHud();
