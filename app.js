@@ -45,7 +45,7 @@
     { title: "solo domande", file: "songs/track-43.mp3", artist: "nayt & 3D", profile: "Ste" },
     { title: "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]", file: "songs/track-44.mp3", artist: "nayt", profile: "Ste" },
     { title: "Porto il Commerciale", file: "songs/track-45.mp3", artist: "Kid Yugi, Night Skinny & Artie 5ive", profile: "Ste" },
-    { title: "sailor song", file: "songs/track-46.mp3", artist: "gigi perez", profile: "Ste" },
+
     { title: "nuts", file: "songs/track-47.mp3", artist: "Lil Peep", profile: "Ste" },
     { title: "NEON", file: "songs/track-48.mp3", artist: "Sfera Ebbasta & Shiva", profile: "Ste" },
 ];
@@ -2882,22 +2882,113 @@ function _aggiornaPosizioneSchermo() {
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
 
-  async function removeTrack(id) {
-    const t = tracks.find((x) => x.id === id);
-    const yes = await askConfirm("Eliminare il brano?", "«" + (t ? t.title : "") + "» verrà cancellato da questo telefono e non si potrà più recuperare.", "Elimina");
-    if (!yes) return;
-    try { await dbDel(id); } catch (e) { console.warn(e); }
-    try { await dbDelImport(id); } catch (e) { /* noop */ }
-    if (currentId === id) {
-      audio.pause();
-      closeLyrics();
-      rebuildAudio(false);
-      currentId = null;
-      setHud();
+/* Toglie dalla memoria del telefono tutto quello che riguarda un brano:
+     il file audio, l'import, i testi, la copertina che avevo cercato, la
+     coda. Serve dopo aver eliminato un brano, cosi' non resta niente. */
+async function _dimenticaBranoOvunque(id) {
+  const uri = "songs/track-" + String(id).replace(/^b-track-/, "") + ".mp3";
+  try { await dbDel(id); } catch (e) { /* noop */ }
+  try { await dbDelImport(id); } catch (e) { /* noop */ }
+  try {
+    const tx = db.transaction(DB_LYRICS, "readwrite");
+    tx.objectStore(DB_LYRICS).delete(id);
+  } catch (e) { /* noop */ }
+  try {
+    const tx = db.transaction(DB_COVERS, "readwrite");
+    tx.objectStore(DB_COVERS).delete(id);
+  } catch (e) { /* noop */ }
+  delete localLyrics[id];
+  const i = queue.indexOf(id);
+  if (i >= 0) queue.splice(i, 1);
+  /* e dalla copia che il telefono tiene per quando non c'e' rete */
+  try {
+    const chiavi = await caches.keys();
+    for (const k of chiavi) {
+      const c = await caches.open(k);
+      await c.delete(new URL(uri, location.href).href);
+      await c.delete(location.origin + "/" + uri);
+      await c.delete(location.origin + "/music-box/" + uri);
     }
-    await loadAll();
-    toast("Brano eliminato");
+  } catch (e) { /* noop */ }
+}
+
+async function removeTrack(id) {
+  const t = tracks.find((x) => x.id === id);
+  if (!t) return;
+  const cheCartella = cartellaDi(profile);
+  /* Prima provo a farlo davvero sul computer: cancellare il file e
+     toglierlo dal sito. Se il computer non e' raggiungibile non fingono
+     niente: dico che il file resta e lascio decidere a te. */
+  let fattoSulPc = false;
+  let motivo = "";
+  const collegato = await ponteOnline();
+  if (collegato && cheCartella && t.url && /^songs\/track-\d+\.mp3$/.test(t.url)) {
+    try {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const r = await fetch(base + "/elimina", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: t.url, cartella: cheCartella })
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j && j.ok) fattoSulPc = true;
+      else motivo = String((j && j.errore) || "non sono riuscito");
+    } catch (e) {
+      motivo = "il computer non ha risposto";
+    }
+  } else if (!collegato) {
+    motivo = "il computer non e' raggiungibile";
   }
+
+  if (!fattoSulPc) {
+    const si = await askConfirm(
+      "Non posso cancellare il file",
+      "Il programma sul computer " + (motivo || "non e' raggiungibile") + ".\n\n" +
+      "Posso togliere il brano dalla lista di questo telefono, ma il file mp3 resta sul computer " +
+      "e il brano tornera' alla prossima apertura.\n\nVuoi toglierlo solo da qui?",
+      "Togli da qui"
+    );
+    if (!si) return;
+  } else {
+    const si = await askConfirm(
+      "Eliminare per sempre?",
+      "\"" + (t.title || "") + "\" verra' cancellato:\n" +
+      "- il file mp3 dal computer\n" +
+      "- il brano dalla libreria di questo computer\n" +
+      "- il brano dal sito, quindi sparisce anche dagli altri dispositivi\n\n" +
+      "Non si puo' piu' recuperare. Il testo e la copertina spariscono con lui.",
+      "Elimina per sempre"
+    );
+    if (!si) return;
+  }
+
+  if (currentId === id) {
+    try { audio.pause(); } catch (e) { /* noop */ }
+    closeLyrics();
+    currentId = null;
+    setHud();
+  }
+  await _dimenticaBranoOvunque(id);
+  /* anche dai preferiti, dai nascosti e dalle statistiche */
+  try {
+    const st = profileState(profile);
+    const patch = {};
+    if (Array.isArray(st.favs)) patch.favs = st.favs.filter((x) => x !== id);
+    if (Array.isArray(st.hidden)) patch.hidden = st.hidden.filter((x) => x !== id);
+    try { favorites.delete(id); } catch (e) { /* noop */ }
+    try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
+    writeProfileState(profile, patch);
+    const st2 = statisticheProfilo();
+    const c = _chiaveStats(t);
+    if (c && st2[c]) {
+      delete st2[c];
+      _salvaStatistiche();
+    }
+  } catch (e) { /* noop */ }
+  await loadAll();
+  render();
+toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefono");
+}
 
   function stripVariants(s) {
     return normText(s)
