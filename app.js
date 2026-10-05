@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.87";
+  const APP_VERSION = "6.88";
 
   let recovering = false;
   async function selfHeal() {
@@ -2023,16 +2023,43 @@ function handleTime() {
     if (autoplay) doPlay();
   }
 
-  async function doPlay() {
-    if (!audio) audio = createAudio();
-    try {
-      audio.volume = volumePct / 100;
-      setPlaybackState("playing");
-      await audio.play();
-    } catch (e) {
-      console.warn("Play bloccato, ricreo l'audio", e);
-      rebuildAudio(true);
-    }
+async function doPlay() {
+  if (!audio) audio = createAudio();
+  try {
+    audio.volume = volumePct / 100;
+    setPlaybackState("playing");
+    await audio.play();
+  } catch (e) {
+    console.warn("Play bloccato, ricreo l'audio", e);
+    rebuildAudio(true);
+    /* A schermo spento il browser congela la pagina e rifiuta di far
+       partire il brano successivo: e' un blocco che passa con il tempo.
+       Quindi riprovo: dopo un secondo e dopo tre. Il brano successivo
+       cosi' parte da solo anche con il telefono in tasca. */
+    _riprovaPiuTardi();
+  }
+  }
+
+  let _timerRiprove = null;
+  function _riprovaPiuTardi() {
+    if (_timerRiprove) clearTimeout(_timerRiprove);
+    const tentativi = [1000, 3000, 6000];
+    let i = 0;
+    const riprova = () => {
+      if (i >= tentativi.length) return;
+      const quando = tentativi[i++];
+      _timerRiprove = setTimeout(() => {
+        try {
+          if (audio && audio.paused && currentId) {
+            /* riprovo sul brano corrente, senza ricominciare tutto */
+            audio.play().catch(() => riprova());
+            return;
+          }
+        } catch (e) { /* noop */ }
+        riprova();
+      }, quando);
+    };
+    riprova();
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
@@ -2480,19 +2507,26 @@ function _copertinaPerSchermo(t) {
 
   /* Dov'e' la canzone nella barra: serve per la barra della schermata
      di blocco. Il telefono la disegna da solo se glielo diciamo. */
-  function _aggiornaPosizioneSchermo() {
-    if (!("mediaSession" in navigator)) return;
-    if (!navigator.mediaSession.setPositionState) return;
-    try {
-      const d = audio && isFinite(audio.duration) ? audio.duration : 0;
-      if (!d || d <= 0) return;
-      const p = Math.max(0, Math.min(audio.currentTime || 0, d));
-      navigator.mediaSession.setPositionState({
-        duration: d,
-        playbackRate: (audio.playbackRate || 1),
-        position: p
-      });
-    } catch (e) { /* noop */ }
+let _ultimaPosizioneSchermo = 0;
+function _aggiornaPosizioneSchermo() {
+  if (!("mediaSession" in navigator)) return;
+  if (!navigator.mediaSession.setPositionState) return;
+  /* Non lo chiamo a ogni evento della musica: sono 4-5 volte al secondo e
+     non serve. Una volta ogni due secondi la barra della schermata di
+     blocco scorre comunque, e il telefono respira meglio. */
+  const ora = Date.now();
+  if (ora - _ultimaPosizioneSchermo < 2000) return;
+  _ultimaPosizioneSchermo = ora;
+  try {
+    const d = audio && isFinite(audio.duration) ? audio.duration : 0;
+    if (!d || d <= 0) return;
+    const p = Math.max(0, Math.min(audio.currentTime || 0, d));
+    navigator.mediaSession.setPositionState({
+      duration: d,
+      playbackRate: (audio.playbackRate || 1),
+      position: p
+    });
+  } catch (e) { /* noop */ }
   }
 
   function updateMediaSession() {
