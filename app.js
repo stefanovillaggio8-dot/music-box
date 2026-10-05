@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.96";
+  const APP_VERSION = "6.97";
 
   let recovering = false;
   async function selfHeal() {
@@ -1999,12 +1999,14 @@ function handleTime() {
     updateMediaSession();
     _iniziaAscolto();
     });
-    a.addEventListener("pause", () => {
+a.addEventListener("pause", () => {
     syncPlayUI();
     updateMediaSession();
     savePos();
     _chiudiAscolto(false);
-    });
+    /* se l'app non suona piu', spengo anche il silenzio: la batteria */
+    _spendiSessione();
+  });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
     /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
@@ -2029,6 +2031,24 @@ function rebuildAudio(autoplay) {
   if (autoplay) doPlay();
   }
 
+  /* Prima di play(): se il brano non e' ancora pronto, aspetto che sia pronto.
+     Sui telefoni chiedere play() mentre il file sta ancora arrivando viene
+     rifiutato, e il brano non parte: e' una delle ragioni per cui col
+     telefono spento la musica si fermava al brano dopo. */
+  function _prontaARiprodurre() {
+    return new Promise((risolvi) => {
+      if (!audio || audio.readyState >= 2) { risolvi(); return; }
+      let fatto = false;
+      const va = () => { if (!fatto) { fatto = true; risolvi(); } };
+      try {
+        audio.addEventListener("loadeddata", va, { once: true });
+        audio.addEventListener("canplay", va, { once: true });
+      } catch (e) { /* noop */ }
+      /* non aspetto all'infinito: dopo 4 secondi parto comunque */
+      setTimeout(va, 4000);
+    });
+  }
+
   /* Faccio partire il brano.
      Prima, quando play() falliva, chiamavo rebuildAudio(true) che richiamava
      doPlay(): e se falliva di nuovo richiamava rebuildAudio... all'infinito.
@@ -2041,8 +2061,10 @@ function rebuildAudio(autoplay) {
     try {
       audio.volume = volumePct / 100;
       setPlaybackState("playing");
+      await _prontaARiprodurre();
       await audio.play();
       _voglioSuonare = false;
+      _accendiSessione();
       return true;
     } catch (e) {
       const nome = String((e && e.name) || "");
@@ -2063,6 +2085,39 @@ function rebuildAudio(autoplay) {
     }
   }
 
+  /* ---------- Tenere vivo il permesso di suonare (solo telefono) ----------
+     Con lo schermo spento l'iPhone mette in sonno l'audio e al brano dopo
+     non gli permette piu' di ripartire: la musica si ferma e non c'e' modo di
+     ripartire dal sito. Tenendo vivo un brano MUTO in sottofondo, l'iPhone
+     continua a considerare l'app quella che sta suonando e al brano dopo
+     lascia passare play().
+     Non si sente assolutamente nulla: e' silenzio puro, e si ferma da solo
+     quando l'app non suona piu'. */
+  const _SILENZIO = "data:audio/wav;base64,UklGRqQMAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YYAMAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
+  let _sessione = null;
+  let _sessioneTentata = 0;
+function _accendiSessione() {
+    if (_sessione) return;
+    /* non riprovo piu' di una volta ogni 20 secondi, cosi' se il telefono
+       non accetta l'audio in sottofondo non insisto all'infinito */
+    if (Date.now() - _sessioneTentata < 20000) return;
+    _sessioneTentata = Date.now();
+    try {
+      const a = new Audio();
+      a.src = _SILENZIO;
+      a.loop = true;
+      a.muted = true;
+      a.volume = 0;
+      a.playsInline = true;
+      const via = a.play();
+      if (via && typeof via.catch === "function") via.catch(() => {});
+      a.addEventListener("error", () => { _sessione = null; });
+      _sessione = a;
+    } catch (e) { _sessione = null; }
+  }
+  function _spendiSessione() {
+    try { if (_sessione) { _sessione.pause(); } } catch (e) { /* noop */ }
+  }
   /* Tenere pronto il brano che viene dopo, cosi' quando l'altro finisce
      parte SUBITO e non deve aspettare che il file si scarichi dal internet.
      E' un lettore nascosto e muto: non si sente, serve solo a scaldare il
