@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.98";
+  const APP_VERSION = "6.99";
 
   let recovering = false;
   async function selfHeal() {
@@ -2124,15 +2124,26 @@ function _accendiSessione() {
      file in memoria. */
   let _preparato = null;
   let _preparatoId = "";
+  /* Il telefono mi dice se sta risparmiando i dati o se la rete e' lenta:
+     in quel caso scaricare un brano intero prima ancora di ascoltarlo
+     (4-5 MB) e' una cattiva idea. Lo carico solo "abbastanza". */
+  function _meglioNonScaricareTutto() {
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!c) return false;
+    if (c.saveData) return true;
+    return /^(slow-)?2g$|^3g$/.test(String(c.effectiveType || ""));
+  }
   function _preparaIlSuccessivo(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t || !t.url || _preparatoId === id) return;
     try {
       if (!_preparato) {
         _preparato = new Audio();
-        _preparato.preload = "auto";
         _preparato.muted = true;
       }
+      /* col risparmio dati mi basta sapere che il brano esiste: non scarico
+         i suoi 4-5 MB prima di ascoltarlo */
+      _preparato.preload = _meglioNonScaricareTutto() ? "metadata" : "auto";
       _preparato.src = t.url;
       /* se il brano e' gia' in mano la si riusa, altrimenti lo si scorda */
       try { _preparato.load(); } catch (e) { /* noop */ }
