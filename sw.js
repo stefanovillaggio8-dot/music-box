@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v692";
+const CACHE = "spotifynonavraiimieisoldi-v693";
 const CORE = [
   "./",
   "./index.html",
@@ -14,7 +14,6 @@ const CORE = [
 const SONGS = [
   "./songs/track-1.mp3",
   "./songs/track-2.mp3",
-  "./songs/track-3.mp3",
   "./songs/track-4.mp3",
   "./songs/track-5.mp3",
   "./songs/track-6.mp3",
