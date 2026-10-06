@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.102";
+  const APP_VERSION = "6.103";
 
   let recovering = false;
   async function selfHeal() {
@@ -6551,11 +6551,11 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
         avviso = document.createElement("div");
         avviso.id = "avviso-vecchia";
         avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
-          "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:10px 12px;" +
-          "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+          "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:12px 14px;" +
+          "border-radius:10px;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5)";
         document.body.appendChild(avviso);
       }
-      avviso.textContent = testo;
+      avviso.textContent = testo + " Tocca qui per aggiornare adesso.";
       avviso.onclick = () => {
         avviso.textContent = "Aggiorno...";
         if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
@@ -6584,8 +6584,12 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
           if (versioneNuova) che.push("versione " + (m ? m[1] : "?"));
           segnalaErrore("aggiornamento disponibile: " + che.join(" e ") +
             " (qui " + miei + " brani, online " + suoi + ")");
-          if (branoInCorso()) {
-            avvisoAggiornamento("C'è " + che.join(" e ") + ": aggiorno quando finisci.");
+if (branoInCorso()) {
+            /* Prima scrivevo "aggiorno quando finisci": ma se uno sta
+               ascoltando per ore, l'app resta vecchia per sempre (e' capitato
+               proprio per una correzione dell'audio). Ora e' una riga su cui
+               si tocca e si aggiorna subito. */
+            avvisoAggiornamento("C'" + (che.length ? "e'" : "e'") + " " + che.join(" e ") + ":");
             return;
           }
           if (navigator.serviceWorker) {
