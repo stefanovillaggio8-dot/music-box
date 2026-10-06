@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.103";
+  const APP_VERSION = "6.104";
 
   let recovering = false;
   async function selfHeal() {
@@ -1928,7 +1928,12 @@ const nascosti = hiddenTracks.size;
   }
 
 function handleTime() {
-  if (!scrubbing) {
+    /* Segno che l'audio sta DAVVERO scorrendo. Sul telefono con lo schermo
+       spento Safari dice "e' partito" ma il brano resta muto e fermo: e'
+       successo, e l'app ci credeva e non riprovava piu'. Qui guardo il tempo
+       che passa davvero, e se non passa riparo. */
+    _ultimoScorrimento = Date.now();
+    if (!scrubbing) {
     const t = audio.currentTime;
     updateProgressUI(t, totalDuration());
     maybeSavePos();
@@ -2061,7 +2066,11 @@ function rebuildAudio(autoplay) {
       setPlaybackState("playing");
       await _prontaARiprodurre();
       await audio.play();
-      _voglioSuonare = false;
+      /* NON azzero l'intento di sentire qui: con lo schermo spento il
+         telefono risponde "partito" ma l'audio resta muto. Se dicessi
+         "ha suonato", l'app smetterebbe di insistere e resterebbe muta
+         per sempre (e riaprendo l'app non ripartiva piu'). */
+      _ultimoScorrimento = Date.now();
       _nascondiSeRiparte();
       /* Se l'app crede di suonare ma il volume e' a zero, la musica parte
          e non si sente niente: e' successo. Meglio dirlo. */
@@ -2104,8 +2113,8 @@ function rebuildAudio(autoplay) {
              devo solo suonare quello che c'e' adesso. E soprattutto: questo
              tocco e' un "permesso" dell'utente, quindi stavolta l'iPhone
              lascia passare play(). */
-          _voglioSuonare = true;
-          if (audio && !audio.paused) { _voglioSuonare = false; return; }
+          _vuoleSuonare = true;
+          if (audio && !audio.paused) { _vuoleSuonare = false; return; }
           doPlay().then((va) => { if (va) _nascondiQiuto(); });
         });
       }
@@ -2166,12 +2175,37 @@ function rebuildAudio(autoplay) {
 
   let _timerRiprove = null;
   let _timerAiuto = null;
+  /* --- "voglio sentire" e "sto sentendo" ---
+     _vuoleSuonare: l'utente (o il cambio brano automatico) vuole la musica.
+       Si spegne SOLO quando l'utente mette in pausa di proposito.
+     _ultimoScorrimento: l'ultima volta che il tempo del brano e' davvero
+       andato avanti. Se la musica e' "partita" ma il tempo resta fermo,
+       l'audio e' muto: e li' devo intervenire. */
+  let _vuoleSuonare = false;
+  let _ultimoScorrimento = 0;
+
+  /* Controllo ogni 3 secondi: la musica deve camminare. */
+  function _controllaCheSuoni() {
+    try {
+      if (!_vuoleSuonare || !audio || !currentId) return;
+      if (audio.paused) { _riprovaPiuTardi(); return; }
+      /* play() ha risposto "va", ma il tempo non cammina: audio muto */
+      if (Date.now() - _ultimoScorrimento < 7000) return;
+      _nascondiAiuto();
+      _ultimoScorrimento = Date.now();
+      /* il lettore e' "partito" ma e' zittito: lo rifaccio da capo */
+      const t = current();
+      if (t) {
+        rebuildAudio(true);
+        _riprovaPiuTardi();
+      }
+    } catch (e) { /* noop */ }
+  }
   /* Quando il brano e' finito e parte il successivo, il telefono spesso
      rifiuta di riprodurre per un po': con lo schermo spento e' proprio
      normale. Prima mollavo dopo 10 secondi e la musica restava muta.
      Adesso insisto per qualche minuto: e' l'unica cosa che posso fare da
      solo, senza che Ste debba toccare il telefono. */
-  let _voglioSuonare = false;
   function _riprovaPiuTardi() {
     if (_timerRiprove) clearTimeout(_timerRiprove);
     const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
@@ -2181,13 +2215,19 @@ function rebuildAudio(autoplay) {
       const quando = attesa[i++];
       _timerRiprove = setTimeout(() => {
         try {
-          /* riprovo SOLO se il brano e' ancora quello giusto e non e' partito
-             nel frattempo: altrimenti lo disturberei */
-          if (_voglioSuonare && currentId && audio && audio.paused) {
-            audio.play().then(() => { _voglioSuonare = false; }).catch(() => riprova());
+          /* riprovo SOLO se la musica deve davvero suonare e il brano non e'
+             gia' partito: altrimenti lo disturberei */
+          if (_vuoleSuonare && currentId && audio && audio.paused) {
+            _ultimoScorrimento = Date.now();
+            audio.play().catch(() => riprova());
             return;
           }
-          if (!_voglioSuonare && audio && !audio.paused) return;
+          if (_vuoleSuonare && currentId && audio && !audio.paused) {
+            /* "partito" ma forse muto: lo nota _controllaCheSuoni */
+            _controllaCheSuoni();
+            return;
+          }
+          if (!_vuoleSuonare && audio && !audio.paused) return;
         } catch (e) { /* noop */ }
         riprova();
       }, quando);
@@ -2199,7 +2239,7 @@ function rebuildAudio(autoplay) {
        e' partita a meta' e non sa che c'e' un bottone. */
     clearTimeout(_timerAiuto);
     _timerAiuto = setTimeout(() => {
-      if (_voglioSuonare && currentId && audio && audio.paused) {
+      if (_vuoleSuonare && currentId && audio && audio.paused) {
         _mostraAiuto("La musica non e' partita: tocca Continua");
       }
     }, 3000);
@@ -2209,9 +2249,18 @@ function rebuildAudio(autoplay) {
      tocca qualcosa, riprendo: e' il momento in cui il browser permette
      di nuovo la riproduzione. */
   function _riprendiSeInAttesa() {
-    if (!_voglioSuonare || !currentId || !audio) return;
-    if (!audio.paused) { _voglioSuonare = false; return; }
-    audio.play().then(() => { _voglioSuonare = false; }).catch(() => { /* riprovo dopo */ _riprovaPiuTardi(); });
+    /* Torno in primo piano o l'utente tocca: se la musica DOVE suonare,
+       riprovo. Prima guardavo solo l'intento vecchio, ma il telefono con lo
+       schermo spento l'aveva già azzerato: quindi riaprendo l'app non
+       ripartiva niente. Adesso guardo l'intento vero. */
+    if (!_vuoleSuonare || !currentId || !audio) return;
+    if (!audio.paused) {
+      /* gia' "in play": ma e' muto? lo dice _controllaCheSuoni */
+      _controllaCheSuoni();
+      return;
+    }
+    _ultimoScorrimento = Date.now();
+    audio.play().then(() => { _ultimoScorrimento = Date.now(); }).catch(() => { _riprovaPiuTardi(); });
   }
   ["visibilitychange", "focus", "pageshow"].forEach((ev) => {
     document.addEventListener(ev, _riprendiSeInAttesa);
@@ -2223,7 +2272,7 @@ function rebuildAudio(autoplay) {
   function _cominciaBranoNuovo() {
     /* sto cambiando brano: azzero il conto delle riprove */
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
-    _voglioSuonare = true;
+    if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
@@ -2575,7 +2624,12 @@ function _ripristinaNascosti() {
     _iniziaAscolto();
     writeProfileState(profile, { last: id, time: 0 });
     if (!audio) audio = createAudio();
-    if (autoplay) _cominciaBranoNuovo();
+    if (autoplay) {
+      _cominciaBranoNuovo();
+      /* sto cambiando brano da solo: da qui la musica DEVE suonare */
+      _vuoleSuonare = true;
+      _ultimoScorrimento = Date.now();
+    }
     audio.src = t.url;
     audio.volume = volumePct / 100;
     setHud();
@@ -2628,8 +2682,16 @@ function nextIndex() {
 
   async function togglePlay() {
     if (!currentId && tracks.length) await playById(tracks[0].id);
-    if (audio.paused) await doPlay();
-    else audio.pause();
+    if (audio.paused) {
+      /* l'utente preme play: da qui voglio davvero sentire */
+      _vuoleSuonare = true;
+      _ultimoScorrimento = Date.now();
+      await doPlay();
+    } else {
+      /* l'utente preme pause: adesso il silenzio e' voluto, non e' un-guasto */
+      _vuoleSuonare = false;
+      audio.pause();
+    }
   }
 
   function setSvgVisible(el, visible) {
@@ -6388,6 +6450,9 @@ $("btnFavFilter").addEventListener("click", () => {
   setInterval(() => {
     if (swReg) swReg.update().catch(() => {});
   }, 180000);
+  /* Ogni 3 secondi guardo che la musica stia davvero camminando: il telefono
+     con lo schermo spento dice "e' partito" ma poi e' muto. */
+  setInterval(_controllaCheSuoni, 3000);
 
   /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
