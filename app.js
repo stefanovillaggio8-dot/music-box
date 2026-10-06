@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.100";
+  const APP_VERSION = "6.101";
 
   let recovering = false;
   async function selfHeal() {
@@ -2136,10 +2136,14 @@ function _spendiSessione() {
         _aiutoBox.innerHTML = '<span class="aiuto-testo"></span><button type="button" class="aiuto-pulsante">Continua</button>';
         document.body.appendChild(_aiutoBox);
         _aiutoBox.querySelector(".aiuto-pulsante").addEventListener("click", () => {
-          _nascondiAiuto();
-          /* riparto sul brano successivo, che so gia' qual e' */
+          _nascondiQiuto();
+          /* La canzone e' gia' cambiata: qui non devo saltare al brano dopo,
+             devo solo suonare quello che c'e' adesso. E soprattutto: questo
+             tocco e' un "permesso" dell'utente, quindi stavolta l'iPhone
+             lascia passare play(). */
           _voglioSuonare = true;
-          playNext();
+          if (audio && !audio.paused) { _voglioSuonare = false; return; }
+          doPlay().then((va) => { if (va) _nascondiQiuto(); });
         });
       }
       _aiutoBox.querySelector(".aiuto-testo").textContent = testo;
@@ -2217,14 +2221,16 @@ function _spendiSessione() {
       }, quando);
     };
     riprova();
-    /* Se proprio non va, non insisto all'infinito: dopo 12 secondi mostro
-       un bottone grande. Meglio un tocco tu che restare fermo in silenzio. */
+    /* Se proprio non va, non insisto all'infinito: dopo 3 secondi mostro
+       un bottone grande. Meglio un tocco tu che restare fermo in silenzio.
+       Prima aspettavo 12 secondi, ma l'utente vede subito che la musica
+       e' partita a meta' e non sa che c'e' un bottone. */
     clearTimeout(_timerAiuto);
     _timerAiuto = setTimeout(() => {
       if (_voglioSuonare && currentId && audio && audio.paused) {
-        _mostraAiuto("Il telefono non ha fatto ripartire la musica");
+        _mostraAiuto("La musica non e' partita: tocca Continua");
       }
-    }, 12000);
+    }, 3000);
   }
 
   /* Se riprovare non e' servito e il telefono torna in primo piano o Ste
