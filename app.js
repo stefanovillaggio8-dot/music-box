@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.106";
+  const APP_VERSION = "6.107";
 
   let recovering = false;
   async function selfHeal() {
@@ -2882,10 +2882,24 @@ function _aggiornaPosizioneSchermo() {
       toast("Preparo il file...");
       let blob = null;
       if (t.builtin) {
-        const res = await fetch(t.url);
-        if (!res.ok) throw new Error("file non raggiungibile");
-        blob = await res.blob();
-      } else {
+        /* Per i brani della libreria NON passo da un file creato in memoria:
+           su iPhone un "scarica" cosi' finisce in un posto dove poi non lo
+           trovi piu'. Usando il collegamento diretto, il telefono lo mette
+           nelle Download (cartella File) e da li' lo puoi ascoltare anche con
+           lo schermo spento, perche' li e' l'app File, che e' un programma
+           vero e non una pagina web. */
+        const nomeFile = (t.artist ? t.artist + " - " : "") + t.title.replace(/[\\/:*?"<>|]/g, "") + ".mp3";
+        const a2 = document.createElement("a");
+        a2.href = t.url;
+        a2.download = nomeFile;
+        a2.rel = "noopener";
+        document.body.appendChild(a2);
+        a2.click();
+        a2.remove();
+        toast("Salvo nelle Download del telefono. Da li' lo apri con File e lo suoni anche a schermo spento.");
+        return;
+      }
+      {
         const rec = await dbGet(t.id);
         if (rec && rec.blob) blob = rec.blob;
       }
