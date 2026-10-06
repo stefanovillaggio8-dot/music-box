@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.105";
+  const APP_VERSION = "6.106";
 
   let recovering = false;
   async function selfHeal() {
@@ -2183,6 +2183,55 @@ function rebuildAudio(autoplay) {
        l'audio e' muto: e li' devo intervenire. */
   let _vuoleSuonare = false;
   let _ultimoScorrimento = 0;
+
+  /* ---------- Motore audio del telefono (solo iPhone) ----------
+     Perche': col telefono bloccato, il lettore normale chiede il permesso
+     ogni volta che parte un brano, e iPhone lo rifiuta. Il brano che segue
+     resta muto.
+
+     Il motore audio del telefono (Web Audio) invece non chiede il permesso a
+     ogni brano: una volta "svegliato" mentre l'utente preme play, poi suona
+     da solo. Quindi attacco il brano normale a quel motore: e' lo stesso
+     brano, gli stessi comandi, stessa barra, stessa schermata blocco.
+
+     Lo faccio solo su iPhone e solo se va tutto bene: se qualcosa non torna
+     lo stacco e si torna al funzionamento di prima, che funziona. */
+  let _ctx = null;
+  let _nodo = null;
+  function _eIPhone() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent || "") ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+  function _attaccaAlMotore() {
+    if (_ctx || !_eIPhone() || !audio) return;
+    try {
+      const Ac = window.AudioContext || window.webkitAudioContext;
+      if (!Ac) return;
+      const ctx = new Ac();
+      /* va "svegliato" dentro un tocco dell'utente: se lo creo qui fuori
+         il telefono lo lascia fermo e non serve a nulla */
+      const sveglia = ctx.resume ? ctx.resume() : null;
+      const via = (sveglia && typeof sveglia.then === "function")
+        ? sveglia.then(() => { return ctx.state === "running"; })
+        : Promise.resolve(ctx.state === "running");
+      via.then((va) => {
+        if (!va) { try { ctx.close(); } catch (e) { /* noop */ } return; }
+        _nodo = ctx.createMediaElementSource(audio);
+        _nodo.connect(ctx.destination);
+        _ctx = ctx;
+        /* se il telefono addormenta il motore (schermo spento), lo sveglio
+           appena si puo': e' il punto in cui serve */
+        setInterval(() => {
+          try { if (_ctx && _ctx.state === "suspended" && _vuoleSuonare) _ctx.resume(); } catch (e) { /* noop */ }
+        }, 2000);
+      }).catch(() => { try { ctx.close(); } catch (e) { /* noop */ } });
+    } catch (e) { /* niente: resta il funzionamento di prima */ }
+  }
+  /* Lo aggancio al PRIMO tocco: e' l'unico momento in cui il telefono
+     permette di svegliare il motore audio. */
+  ["pointerdown", "touchstart", "keydown", "click"].forEach((ev) => {
+    window.addEventListener(ev, _attaccaAlMotore, { once: false, passive: true });
+  });
 
   /* Controllo ogni 3 secondi: la musica deve camminare.
      Sta pero' VOLUTAMENTE cauto: se la rete arranca e il brano sta ancora
