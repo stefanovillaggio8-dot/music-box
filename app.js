@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.104";
+  const APP_VERSION = "6.105";
 
   let recovering = false;
   async function selfHeal() {
@@ -2184,21 +2184,34 @@ function rebuildAudio(autoplay) {
   let _vuoleSuonare = false;
   let _ultimoScorrimento = 0;
 
-  /* Controllo ogni 3 secondi: la musica deve camminare. */
+  /* Controllo ogni 3 secondi: la musica deve camminare.
+     Sta pero' VOLUTAMENTE cauto: se la rete arranca e il brano sta ancora
+     caricando, il tempo non avanza e non e' che sia muto. In quel caso non
+     tocco niente, altrimenti si sentirebe uno scatto proprio mentre
+     ascolti. Prima cosa provo a riavviare la riproduzione; solo se non
+     basta, e due volte di fila, ricostruisco il lettore. */
+  let _silenziDiFila = 0;
   function _controllaCheSuoni() {
     try {
       if (!_vuoleSuonare || !audio || !currentId) return;
-      if (audio.paused) { _riprovaPiuTardi(); return; }
-      /* play() ha risposto "va", ma il tempo non cammina: audio muto */
-      if (Date.now() - _ultimoScorrimento < 7000) return;
+      if (audio.paused) { _silenziDiFila = 0; _riprovaPiuTardi(); return; }
+      if (Date.now() - _ultimoScorrimento < 10000) return;
+      /* sta ancora scaricando: non e' un silenzio, e' la rete */
+      if (audio.readyState < 3) { _ultimoScorrimento = Date.now(); return; }
       _nascondiAiuto();
       _ultimoScorrimento = Date.now();
-      /* il lettore e' "partito" ma e' zittito: lo rifaccio da capo */
+      _silenziDiFila++;
       const t = current();
-      if (t) {
-        rebuildAudio(true);
-        _riprovaPiuTardi();
+      if (!t) return;
+      if (_silenziDiFila < 3) {
+        /* prima prova: riparto sullo stesso brano, dal punto in cui e' */
+        audio.play().catch(() => { /* il controllo riprova fra poco */ });
+        return;
       }
+      /* il brano e' "partito" ma e' zittito da 30 secondi: lo rifaccio */
+      _silenziDiFila = 0;
+      rebuildAudio(true);
+      _riprovaPiuTardi();
     } catch (e) { /* noop */ }
   }
   /* Quando il brano e' finito e parte il successivo, il telefono spesso
