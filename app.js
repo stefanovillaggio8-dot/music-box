@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.101";
+  const APP_VERSION = "6.102";
 
   let recovering = false;
   async function selfHeal() {
@@ -2004,8 +2004,6 @@ a.addEventListener("pause", () => {
     updateMediaSession();
     savePos();
     _chiudiAscolto(false);
-    /* se l'app non suona piu', spengo anche il silenzio: la batteria */
-    _spendiSessione();
   });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
@@ -2064,7 +2062,10 @@ function rebuildAudio(autoplay) {
       await _prontaARiprodurre();
       await audio.play();
       _voglioSuonare = false;
-      _accendiSessione();
+      _nascondiSeRiparte();
+      /* Se l'app crede di suonare ma il volume e' a zero, la musica parte
+         e non si sente niente: e' successo. Meglio dirlo. */
+      _controllaVolume();
       return true;
     } catch (e) {
       const nome = String((e && e.name) || "");
@@ -2083,44 +2084,6 @@ function rebuildAudio(autoplay) {
       _riprovaPiuTardi();
       return false;
     }
-  }
-
-  /* ---------- Tenere vivo il permesso di suonare (solo telefono) ----------
-     Con lo schermo spento l'iPhone mette in sonno l'audio e al brano dopo
-     non gli permette piu' di ripartire: la musica si ferma e non c'e' modo di
-     ripartire dal sito. Tenendo vivo un brano MUTO in sottofondo, l'iPhone
-     continua a considerare l'app quella che sta suonando e al brano dopo
-     lascia passare play().
-     Non si sente assolutamente nulla: e' silenzio puro, e si ferma da solo
-     quando l'app non suona piu'. */
-  const _SILENZIO = "data:audio/wav;base64,UklGRqQMAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YYAMAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
-  let _sessione = null;
-  let _sessioneTentata = 0;
-function _accendiSessione() {
-    if (_sessione) return;
-    /* non riprovo piu' di una volta ogni 20 secondi, cosi' se il telefono
-       non accetta l'audio in sottofondo non insisto all'infinito */
-    if (Date.now() - _sessioneTentata < 20000) return;
-    _sessioneTentata = Date.now();
-    try {
-const a = new Audio();
-      a.src = _SILENZIO;
-      a.loop = true;
-      /* VOLUME A ZERO MA NON "MUTO": su iPhone un brano in mute non tiene
-         viva la sessione audio (l'altoparlante resta proprio spento e il
-         sistema non concede piu' play()). Il file e' silenzio puro, quindi
-         a volume zero non si sente comunque: e' silenzio digitale. */
-      a.muted = false;
-      a.volume = 0;
-      a.playsInline = true;
-      const via = a.play();
-      if (via && typeof via.catch === "function") via.catch(() => {});
-      a.addEventListener("error", () => { _sessione = null; });
-      _sessione = a;
-    } catch (e) { _sessione = null; }
-  }
-function _spendiSessione() {
-    try { if (_sessione) { _sessione.pause(); } } catch (e) { /* noop */ }
   }
 
   /* ---------- Se l'iPhone non fa partire il brano da solo ----------
@@ -2154,11 +2117,20 @@ function _spendiSessione() {
     try { if (_aiutoBox) _aiutoBox.classList.remove("visibile"); } catch (e) { /* noop */ }
   }
   /* Se riparte (perche' ha insisto o perche' hai toccato), l'aiuto sparisce */
-  const _originaleAccendiSessione = _accendiSessione;
-  _accendiSessione = function () {
-    _nascondiAiuto();
-    return _originaleAccendiSessione();
-  };
+  function _nascondiSeRiparte() {
+    try {
+      if (audio && !audio.paused) _nascondiAiuto();
+    } catch (e) { /* noop */ }
+  }
+
+  /* Volume a zero: l'app parte ma dal telefono non esce niente e sembra
+     che sia tutto rotto. In quel caso te lo dico con parole chiare. */
+  function _controllaVolume() {
+    try {
+      if (volumePct > 0) return;
+      _mostraAiuto("Il volume e' a zero: alzalo con il cursore");
+    } catch (e) { /* noop */ }
+  }
   /* Tenere pronto il brano che viene dopo, cosi' quando l'altro finisce
      parte SUBITO e non deve aspettare che il file si scarichi dal internet.
      E' un lettore nascosto e muto: non si sente, serve solo a scaldare il
