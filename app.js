@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.99";
+  const APP_VERSION = "6.100";
 
   let recovering = false;
   async function selfHeal() {
@@ -2103,10 +2103,14 @@ function _accendiSessione() {
     if (Date.now() - _sessioneTentata < 20000) return;
     _sessioneTentata = Date.now();
     try {
-      const a = new Audio();
+const a = new Audio();
       a.src = _SILENZIO;
       a.loop = true;
-      a.muted = true;
+      /* VOLUME A ZERO MA NON "MUTO": su iPhone un brano in mute non tiene
+         viva la sessione audio (l'altoparlante resta proprio spento e il
+         sistema non concede piu' play()). Il file e' silenzio puro, quindi
+         a volume zero non si sente comunque: e' silenzio digitale. */
+      a.muted = false;
       a.volume = 0;
       a.playsInline = true;
       const via = a.play();
@@ -2115,9 +2119,42 @@ function _accendiSessione() {
       _sessione = a;
     } catch (e) { _sessione = null; }
   }
-  function _spendiSessione() {
+function _spendiSessione() {
     try { if (_sessione) { _sessione.pause(); } } catch (e) { /* noop */ }
   }
+
+  /* ---------- Se l'iPhone non fa partire il brano da solo ----------
+     A volte il sistema proprio non concede il permesso, e nessuna insistenza
+     serve. In quel caso non ti lascio fermo: appare una riga in basso con un
+     bottone grande, e basta un tocco per continuare. */
+  let _aiutoBox = null;
+  function _mostraAiuto(testo) {
+    try {
+      if (!_aiutoBox) {
+        _aiutoBox = document.createElement("div");
+        _aiutoBox.className = "aiuto-riparto";
+        _aiutoBox.innerHTML = '<span class="aiuto-testo"></span><button type="button" class="aiuto-pulsante">Continua</button>';
+        document.body.appendChild(_aiutoBox);
+        _aiutoBox.querySelector(".aiuto-pulsante").addEventListener("click", () => {
+          _nascondiAiuto();
+          /* riparto sul brano successivo, che so gia' qual e' */
+          _voglioSuonare = true;
+          playNext();
+        });
+      }
+      _aiutoBox.querySelector(".aiuto-testo").textContent = testo;
+      _aiutoBox.classList.add("visibile");
+    } catch (e) { /* noop */ }
+  }
+  function _nascondiAiuto() {
+    try { if (_aiutoBox) _aiutoBox.classList.remove("visibile"); } catch (e) { /* noop */ }
+  }
+  /* Se riparte (perche' ha insisto o perche' hai toccato), l'aiuto sparisce */
+  const _originaleAccendiSessione = _accendiSessione;
+  _accendiSessione = function () {
+    _nascondiAiuto();
+    return _originaleAccendiSessione();
+  };
   /* Tenere pronto il brano che viene dopo, cosi' quando l'altro finisce
      parte SUBITO e non deve aspettare che il file si scarichi dal internet.
      E' un lettore nascosto e muto: non si sente, serve solo a scaldare il
@@ -2152,6 +2189,7 @@ function _accendiSessione() {
   }
 
   let _timerRiprove = null;
+  let _timerAiuto = null;
   /* Quando il brano e' finito e parte il successivo, il telefono spesso
      rifiuta di riprodurre per un po': con lo schermo spento e' proprio
      normale. Prima mollavo dopo 10 secondi e la musica restava muta.
@@ -2179,6 +2217,14 @@ function _accendiSessione() {
       }, quando);
     };
     riprova();
+    /* Se proprio non va, non insisto all'infinito: dopo 12 secondi mostro
+       un bottone grande. Meglio un tocco tu che restare fermo in silenzio. */
+    clearTimeout(_timerAiuto);
+    _timerAiuto = setTimeout(() => {
+      if (_voglioSuonare && currentId && audio && audio.paused) {
+        _mostraAiuto("Il telefono non ha fatto ripartire la musica");
+      }
+    }, 12000);
   }
 
   /* Se riprovare non e' servito e il telefono torna in primo piano o Ste

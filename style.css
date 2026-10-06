@@ -1418,3 +1418,43 @@ button.btn-mini-file {
   .barra-testo { font-size: 12.5px; }
   .barra-installa { gap: 8px; }
 }
+/* ---------- "Continua": quando l'iPhone non fa ripartire la musica ----------
+   Non e' un errore: e' il telefono che non concede il permesso. In quel
+   caso l'app smette di insistere e mette un bottone grande, perche' meglio
+   un tocco tu che restare fermo con la pagina muta. */
+.aiuto-riparto {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--player-h) + env(safe-area-inset-bottom) + 22px);
+  transform: translateX(-50%) translateY(16px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(94vw, 520px);
+  padding: 14px 16px;
+  background: var(--card-hi);
+  border: 1px solid var(--line, rgba(255, 255, 255, .1));
+  border-radius: 18px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease;
+  z-index: 70;
+}
+.aiuto-riparto.visibile { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.aiuto-testo { flex: 1; font-size: 14px; line-height: 1.35; }
+.aiuto-pulsante {
+  font: inherit;
+  font-weight: 600;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  background: var(--acc, #e0e0e0);
+  color: #111;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+@media (max-width: 420px) {
+  .aiuto-riparto { flex-wrap: wrap; }
+  .aiuto-pulsante { width: 100%; padding: 13px 18px; }
+}
