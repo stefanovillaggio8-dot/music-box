@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.110";
+  const APP_VERSION = "6.111";
 
   let recovering = false;
   async function selfHeal() {
@@ -1708,13 +1708,39 @@ async function condividiBraniLocali() {
   }
   function stessoBrano(a, b) {
     if (!a || !b) return false;
-    const ta = normKey(a.title), tb = normKey(b.title);
+
+    /* Se da una parte non c'e' l'artista, provo a tirarlo fuori dal titolo.
+       Il file che aggiungi dal telefono si chiama "artista - brano.mp3": senza
+       questo, l'app non lo riconosceva come il brano che c'e' gia' in
+       libreria e lo mostrava due volte (45 brani diventavano 88). */
+    let ta = normKey(a.title), tb = normKey(b.title);
+    let aa = a.artist, ab = b.artist;
+    if (!normKey(aa) && normKey(ab)) aa = _artistaDalTitolo(a.title);
+    if (!normKey(ab) && normKey(aa)) ab = _artistaDalTitolo(b.title);
     if (!ta || !tb) return false;
-    const titoliUguali = ta === tb || ta.indexOf(tb) >= 0 || tb.indexOf(ta) >= 0;
+    /* parlo anche del titolo ripulito dal nome dell'artista */
+    const taSenza = normKey(_titoloSenzaArtista(a.title, aa));
+    const tbSenza = normKey(_titoloSenzaArtista(b.title, ab));
+    const titoliUguali = ta === tb || ta.indexOf(tb) >= 0 || tb.indexOf(ta) >= 0 ||
+      (taSenza.length >= 6 && tbSenza.length >= 6 && (taSenza === tbSenza || taSenza.indexOf(tbSenza) >= 0 || tbSenza.indexOf(taSenza) >= 0));
     if (!titoliUguali) return false;
-    if (normKey(a.artist) || normKey(b.artist)) return stessoArtista(a.artist, b.artist);
+    if (normKey(aa) || normKey(ab)) return stessoArtista(aa, ab);
     /* Senza artista non si puo' dire con certezza, quindi non confondo. */
     return ta.length >= 8;
+  }
+  /* "gigi perez - sailor song" -> "gigi perez" */
+  function _artistaDalTitolo(titolo) {
+    const m = /^([^-]{2,40})\s+-\s+(.+)$/.exec(String(titolo || "").trim());
+    return m ? m[1].trim() : "";
+  }
+  /* "gigi perez - sailor song" -> "sailor song" (se l'artista combacia) */
+  function _titoloSenzaArtista(titolo, artista) {
+    const t = String(titolo || "");
+    if (!normKey(artista)) return t;
+    const m = /^([^-]{2,40})\s+-\s+(.+)$/.exec(t.trim());
+    if (!m) return t;
+    if (!stessoArtista(m[1], artista)) return t;
+    return m[2].trim();
   }
   /* La lista si ridisegna spesso e il confronto coi brani condivisi gira ogni
      volta: me lo ricordo, cosi' non ripeto lo stesso lavoro. */
