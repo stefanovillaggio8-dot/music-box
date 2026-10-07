@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.109";
+  const APP_VERSION = "6.110";
 
   let recovering = false;
   async function selfHeal() {
@@ -1492,6 +1492,13 @@ const ORDINAMENTI = [
        nuovo di un artista gia' presente finisce nel suo gruppo da solo. */
     return lista.slice().sort((a, b) => {
       const ga = gruppoArtista(a), gb = gruppoArtista(b);
+      /* I brani di cui proprio non so l'artista vanno in cima: finendo col
+         gruppo "zzz" erano in fondo alla lista e sembravano spariti (e'
+         successo con un file messo dal telefono). Gli altri artisti restano
+         in ordine alfabetico come prima. */
+      const sa = ga === "zzz";
+      const sb = gb === "zzz";
+      if (sa !== sb) return sa ? -1 : 1;
       if (ga !== gb) return ga < gb ? -1 : 1;
       const ta = titoloOrdinato(a), tb = titoloOrdinato(b);
       if (ta !== tb) return ta < tb ? -1 : 1;
@@ -1557,7 +1564,11 @@ const ORDINAMENTI = [
      I brani senza file (per esempio solo un'anteprima o un link) non si
      possono condividere: non c'e' niente da mandare. */
   let condivisioneInCorso = false;
-  async function condividiBraniLocali() {
+  /* Segna che sto condividendo un brano appena aggiunto dalla pagina: serve per
+   dire "e' rimasto solo qui" se il computer non risponde. */
+let _recentementeAggiunto = false;
+
+async function condividiBraniLocali() {
     if (condivisioneInCorso) return;
     if (!db) return;
     condivisioneInCorso = true;
@@ -1602,8 +1613,16 @@ const ORDINAMENTI = [
         /* Il PC non c'e': non e' un errore, lascio i brani qui e riprovo
            al prossimo avvio. Non disturbo l'utente con un avviso. */
         if (ind) ind.hidden = true;
+        /* Se pero' ho appena aggiunto un brano adesso, dico dove sta: prima
+           l'utente lo cercava nella libreria (sul computer) e non lo
+           trovava, perche' intanto era rimasto solo qui. */
+        if (daMandare.length && _recentementeAggiunto) {
+          _recentementeAggiunto = false;
+          toast("Brano aggiunto solo a questo telefono: il computer non risponde, quindi non e' andato nella libreria");
+        }
         return;
       }
+      _recentementeAggiunto = false;
       const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
       if (ind) {
         ind.hidden = false;
@@ -3221,8 +3240,11 @@ function _aggiornaPosizioneSchermo() {
           } catch (e) { /* pazienza */ }
         }, 300);
       }
-      for (const t of fresh) enrichTrack(t.id);
-      try { condividiBraniLocali(); } catch (e) { /* non blocca l'aggiunta */ }
+for (const t of fresh) enrichTrack(t.id);
+      /* Segno che sto condividendo un brano appena aggiunto: se il computer
+         non risponde l'app lo dice, altrimenti l'utente cerca il brano nella
+         libreria (che e' sul computer) e non lo trova mai. */
+      try { _recentementeAggiunto = true; condividiBraniLocali(); } catch (e) { /* non blocca l'aggiunta */ }
     }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
