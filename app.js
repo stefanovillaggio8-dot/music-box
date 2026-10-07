@@ -138,6 +138,28 @@
      questo browser, e per questo si vedevano numeri diversi su PC e telefono. */
   const CARTELLA_PREDEFINITA = PROFILI[0].cartella;
   let profile = DEFAULT_PROFILE;
+  /* ---------- Dove stanno i file mp3 ----------
+     I brani NON stanno piu' dentro il sito: ci stanno in un deposito
+     separato (music-box-brani). Motivo: dentro il sito facevano 200 MB e
+     GitHub non riusciva piu' a costruire la pagina (ci ho messo due ore e
+     poi falliva). Fuori dal sito la pagina pesa mezzo megabyte e si
+     aggiorna in un minuto.
+
+     La pagina che apri dal computer (quella locale) invece continua a
+     leggere i brani dal disco, perche' li ha gia' li'. */
+  const BRANI_ONLINE = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/";
+  function _doveStaIlBrano(file) {
+    const nome = String(file || "");
+    if (!nome) return "";
+    /* pagina locale: i brani sono sul disco, nessun bisogno di andare online */
+    const qui = location.hostname;
+    const inLocale = qui === "localhost" || qui === "127.0.0.1" || qui === "::1" ||
+      qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net");
+    if (inLocale) return nome;
+    /* online: prendo il brano dal deposito della musica */
+    return BRANI_ONLINE + nome.replace(/^.*\//, "");
+  }
+
   let profiles = [DEFAULT_PROFILE];
 
 /* Lo stato dei profili sta in memoria finche' la pagina e' aperta.
@@ -958,7 +980,7 @@ const builtin = BUILTIN
         artist: b.artist || "",
         album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
         cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
-        url: b.file,
+        url: _doveStaIlBrano(b.file),
         builtin: true,
         gradient: PALETTE[i % PALETTE.length],
         size: null
