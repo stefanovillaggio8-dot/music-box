@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.114";
+  const APP_VERSION = "6.115";
 
   let recovering = false;
   async function selfHeal() {
@@ -6039,6 +6039,52 @@ function closeImport() {
     toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
   }
 
+  /* ---------- Il menu "altro" ----------
+     In alto c'erano dieci tasti in fila: sul telefono si doveva scorrere in
+     lato per vederli, e non si capiva piu' niente. Adesso restano solo
+     statistiche, profilo e questo menu; tutto il resto sta dentro. */
+  function _chiudiAltro() {
+    const m = $("menuAltro");
+    if (m) m.hidden = true;
+    const v = document.getElementById("menu-altro-velo");
+    if (v && v.parentNode) v.parentNode.removeChild(v);
+    const b = $("btnAltro");
+    if (b) {
+      b.setAttribute("aria-expanded", "false");
+      b.classList.remove("on");
+    }
+  }
+  function _apriAltro() {
+    const m = $("menuAltro");
+    if (!m) return;
+    m.hidden = false;
+    let v = document.getElementById("menu-altro-velo");
+    if (!v) {
+      v = document.createElement("div");
+      v.id = "menu-altro-velo";
+      v.className = "menu-altro-velo";
+      document.body.appendChild(v);
+      v.addEventListener("click", _chiudiAltro);
+    }
+    const b = $("btnAltro");
+    if (b) { b.setAttribute("aria-expanded", "true"); b.classList.add("on"); }
+  }
+  /* Toccando una voce del menu il menu si chiude: altrimenti resta aperto
+     sopra la pagina e sembra rotto. */
+  document.addEventListener("click", (e) => {
+    const m = $("menuAltro");
+    if (!m || m.hidden) return;
+    if (m.contains(e.target)) {
+      if (e.target.closest && e.target.closest("button")) _chiudiAltro();
+    }
+  });
+  document.addEventListener("keydown", (e) => {
+    const m = $("menuAltro");
+    if (!m || m.hidden) return;
+    if (e.key === "Escape" || e.key === "Esc") _chiudiAltro();
+  });
+  window.addEventListener("resize", () => { _chiudiAltro(); });
+
   /* ---------- Eventi UI ---------- */
   $("btnPlay").addEventListener("click", togglePlay);
   $("btnNext").addEventListener("click", () => playNext());
@@ -6651,6 +6697,10 @@ $("btnFavFilter").addEventListener("click", () => {
 
   $("btnOffline").addEventListener("click", openOffline);
     $("btnStatistiche").addEventListener("click", apriStatistiche);
+  $("btnAltro").addEventListener("click", () => {
+    const m = $("menuAltro");
+    if (m && m.hidden) _apriAltro(); else _chiudiAltro();
+  });
     $("statsClose").addEventListener("click", chiudiStatistiche);
       $("statsPanel").addEventListener("click", (e) => {
       if (e.target === $("statsPanel")) chiudiStatistiche();
