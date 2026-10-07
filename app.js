@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.112";
+  const APP_VERSION = "6.113";
 
   let recovering = false;
   async function selfHeal() {
@@ -1555,27 +1555,50 @@ const ORDINAMENTI = [
         if (avviso && avviso.parentNode) avviso.parentNode.removeChild(avviso);
         return;
       }
-      if (!avviso) {
+if (!avviso) {
+        /* Uso le stesse regole del progetto invece di inventarmi uno stile:
+           lo stesso colore di attenzione degli altri avvisi, e la riga sta
+           SOPRA il player come gli altri, cosi' non copre niente. */
         avviso = document.createElement("div");
         avviso.id = "avviso-nascosti";
-        avviso.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:99;" +
-          "background:#1d2433;border:1px solid #5b7fb8;color:#d7e6ff;padding:11px 13px;" +
-          "border-radius:10px;font-size:14px;display:flex;align-items:center;gap:10px;" +
-          "box-shadow:0 6px 20px rgba(0,0,0,.45)";
+        avviso.className = "avviso-nascosti";
         document.body.appendChild(avviso);
       }
-      avviso.innerHTML = "";
-      const testo = document.createElement("span");
-      testo.style.flex = "1";
-      testo.textContent = n === 1 ? "1 brano e' stato tolto dalla lista" : n + " brani sono stati tolti dalla lista";
-      const bottone = document.createElement("button");
-      bottone.type = "button";
-      bottone.textContent = "Riporta indietro";
-      bottone.style.cssText = "font:inherit;font-weight:600;border:0;border-radius:999px;" +
-        "padding:9px 14px;background:#e0e0e0;color:#111;cursor:pointer;flex:0 0 auto";
-      bottone.addEventListener("click", () => restoreHidden());
-      avviso.appendChild(testo);
-      avviso.appendChild(bottone);
+      /* Il testo lo metto una volta sola: prima lo riscrivevo a ogni
+         ridisegno della lista, e quello fa saltare gli schermi. */
+      if (!avviso.firstChild) {
+        const riga = document.createElement("div");
+        riga.className = "avviso-nascosti-riga";
+        const testo = document.createElement("span");
+        testo.className = "avviso-nascosti-testo";
+        const bottone = document.createElement("button");
+        bottone.type = "button";
+        bottone.className = "avviso-nascosti-bottone";
+        bottone.textContent = "Rimettili in lista";
+        bottone.addEventListener("click", () => restoreHidden());
+        riga.appendChild(testo);
+        riga.appendChild(bottone);
+        avviso.appendChild(riga);
+        /* elenchi i brani nascosti, cosi' si capisce QUALI sono e non sembra
+           un conto magico */
+        const dettagli = document.createElement("div");
+        dettagli.className = "avviso-nascosti-dettagli";
+        avviso.appendChild(dettagli);
+        avviso._testo = testo;
+        avviso._dettagli = dettagli;
+      }
+      const nomi = Array.from(hiddenTracks)
+        .map((id) => {
+          const t = tracks.find((x) => x.id === id);
+          return t ? t.title : null;
+        })
+        .filter(Boolean)
+        .slice(0, 3);
+      avviso._testo.textContent = n === 1
+        ? "Un brano e' stato tolto dalla tua lista"
+        : n + " brani sono stati tolti dalla tua lista";
+      avviso._dettagli.textContent = nomi.length ? nomi.join(" · ") : "";
+      avviso._dettagli.hidden = !nomi.length;
     } catch (e) { /* noop */ }
   }
 
