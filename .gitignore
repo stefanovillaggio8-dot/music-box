@@ -1,0 +1,6 @@
+﻿/* Brani: stanno nel deposito separato (music-box-brani), non dentro il sito.
+   Motivo: qui dentro facevano 200 MB e GitHub non riusciva piu' a costruire
+   la pagina. Fuori, la pagina e' minuscola e si aggiorna in un minuto.
+   I file mp3 restano comunque su questo computer (la pagina locale li usa),
+   ma non vengono piu' caricati sul sito. */
+songs/
