@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.111";
+  const APP_VERSION = "6.112";
 
   let recovering = false;
   async function selfHeal() {
@@ -1524,9 +1524,11 @@ const ORDINAMENTI = [
   async function hideTrack(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
+    /* Niente virgolette curve: una volta un carattere rotto era finito qui
+       dentro e il messaggio mostrava quadratini invece delle virgolette. */
     const msg = t.builtin
-      ? "«" + t.title + "» sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
-      : "«" + t.title + "» sparisce dalla tua lista di questo profilo.";
+      ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
+      : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
     const yes = await askConfirm("Togliere dalla lista?", msg, "Togli");
     if (!yes) return;
     hiddenTracks.add(id);
@@ -1538,17 +1540,52 @@ const ORDINAMENTI = [
     }
     closeLyrics();
     render();
-  /* niente: la finestra dei nascosti e' stata tolta */
-    toast("Brano tolto dalla lista");
+    toast("Brano tolto dalla lista: per rimetterlo usa la riga che compare in alto");
+  }
+
+  /* Se un brano e' stato tolto dalla lista DEVE esserci un modo per rimetterlo:
+     prima la funzione c'era ma non era collegata a nessun tasto, quindi un brano
+     nascosto spariva per sempre (e' capitato: la lista sembrava avesse un brano
+     in meno e non si capiva il perche'). */
+  function _riportaIndietroSeNascosti() {
+    try {
+      const n = hiddenTracks.size;
+      let avviso = document.getElementById("avviso-nascosti");
+      if (!n) {
+        if (avviso && avviso.parentNode) avviso.parentNode.removeChild(avviso);
+        return;
+      }
+      if (!avviso) {
+        avviso = document.createElement("div");
+        avviso.id = "avviso-nascosti";
+        avviso.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:99;" +
+          "background:#1d2433;border:1px solid #5b7fb8;color:#d7e6ff;padding:11px 13px;" +
+          "border-radius:10px;font-size:14px;display:flex;align-items:center;gap:10px;" +
+          "box-shadow:0 6px 20px rgba(0,0,0,.45)";
+        document.body.appendChild(avviso);
+      }
+      avviso.innerHTML = "";
+      const testo = document.createElement("span");
+      testo.style.flex = "1";
+      testo.textContent = n === 1 ? "1 brano e' stato tolto dalla lista" : n + " brani sono stati tolti dalla lista";
+      const bottone = document.createElement("button");
+      bottone.type = "button";
+      bottone.textContent = "Riporta indietro";
+      bottone.style.cssText = "font:inherit;font-weight:600;border:0;border-radius:999px;" +
+        "padding:9px 14px;background:#e0e0e0;color:#111;cursor:pointer;flex:0 0 auto";
+      bottone.addEventListener("click", () => restoreHidden());
+      avviso.appendChild(testo);
+      avviso.appendChild(bottone);
+    } catch (e) { /* noop */ }
   }
 
   function restoreHidden() {
     hiddenTracks = new Set();
     saveCurrentState();
     render();
-  /* niente: la finestra dei nascosti e' stata tolta */
     toast("Brani ripristinati: sono di nuovo tutti visibili");
   }
+
 
   /* Non c'e' piu' la finestra dei brani nascosti: quando elimini una canzone
      ti gia' chiede conferma, quindi una lista di "nascosti" da riportare
@@ -1767,6 +1804,10 @@ async function condividiBraniLocali() {
   function render() {
     const list = visibleTracks();
     playlistEl.innerHTML = "";
+    /* Se ci sono brani tolti dalla lista, la riga per rimetterli e' gia' qui:
+       senza, un brano nascosto spariva per sempre e il conto sembrava
+       sbagliato senza che si capisse perche'. */
+    try { _riportaIndietroSeNascosti(); } catch (e) { /* noop */ }
 
     const visibleAll = tracks.filter((t) => !hiddenTracks.has(t.id));
     const total = visibleAll.length;
