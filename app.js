@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.116";
+  const APP_VERSION = "6.117";
 
   let recovering = false;
   async function selfHeal() {
@@ -184,10 +184,10 @@ function saveAllState(next) {
 function profileState(name) {
   const all = allState();
   if (!all[name] || typeof all[name] !== "object") {
-    all[name] = { hidden: [], favs: [], last: null, time: 0 };
+    all[name] = { hidden: [], favs: [], playlists: [], last: null, time: 0 };
   }
   return all[name];
-}
+  }
 
 /* Quando salvo un profilo riparto sempre da quello che c'e' ADESSO sul
      disco, non da quello che avevo in memoria. Serve per quando la app e'
@@ -197,9 +197,6 @@ function profileState(name) {
 function writeProfileState(name, patch) {
   let fresco = {};
   try { fresco = LS.get("mb.state", {}) || {}; } catch (e) { fresco = {}; }
-  /* se questo profilo non esiste ancora parto da uno vuoto pulito, non dalla
-     copia in memoria: altrimenti un profilo nuovo si porterebbe dietro
-     campi vecchi di un altro */
   const base = (fresco[name] && typeof fresco[name] === "object") ? fresco[name] : {};
   fresco[name] = Object.assign({}, base, patch);
   saveAllState(fresco);
@@ -221,11 +218,17 @@ window.addEventListener("storage", (e) => {
     const st = profileState(profile);
     hiddenTracks = new Set(st.hidden || []);
     favorites = new Set(st.favs || []);
+    playlists = Array.isArray(st.playlists) ? st.playlists : [];
     return st;
   }
 
+  l
+
+  let playlists = [];
+
   function saveCurrentState() {
-    writeProfileState(profile, { hidden: Array.from(hiddenTracks), favs: Array.from(favorites) });
+  const pl = playlists || [];
+  writeProfileState(profile, { hidden: Array.from(hiddenTracks), favs: Array.from(favorites), playlists: pl });
   }
 
   const LS = {
@@ -6760,6 +6763,134 @@ $("btnFavFilter").addEventListener("click", () => {
   /* Ogni 3 secondi guardo che la musica stia davvero camminando: il telefono
      con lo schermo spento dice "e' partito" ma poi e' muto. */
   setInterval(_controllaCheSuoni, 3000);
+
+
+  /* ---------- Playlist ---------- */
+  function apriPanelPlaylist() {
+    try {
+      const m = $("playlistPanel");
+      if (!m) throw new Error("manca playlistPanel");
+      m.hidden = false;
+      const corpo = $("playlistBody") || m.querySelector(".playlist-body");
+      /* se non c'e' il corpo nel pannello, lo creo al volo */
+      if (!corpo) {
+        const contenitore = document.createElement("div");
+        contenitore.className = "playlist-body";
+        contenitore.innerHTML = '<ul class="playlist-lista"></ul>';
+        const chiudiBtn = document.createElement("button");
+        chiudiBtn.type = "button";
+        chiudiBtn.className = "playlist-chiudi";
+        chiudiBtn.innerHTML = "Chiudi";
+        chiudiBtn.addEventListener("click", () => chiudiPanelPlaylist());
+        m.appendChild(contenitore);
+        m.appendChild(chiudiBtn);
+      }
+      renderPlaylist();
+    } catch (e) { toast("Errore nell'aprire le playlist: " + String(e.message || e).slice(0, 80)); }
+  }
+  function chiudiPanelPlaylist() {
+    const m = $("playlistPanel");
+    if (m) m.hidden = true;
+  }
+  function creaPlaylist() {
+    const nome = prompt("Come vuoi chiamare la playlist?", "Nuova playlist");
+    if (!nome || !nome.trim()) return;
+    const nomePulito = nome.trim();
+    if (playlists.some((pl) => (pl.name || "").trim() === nomePulito)) {
+      toast('C\'e\' gia\' una playlist con questo nome: \"' + nomePulito + '\"');
+      return;
+    }
+    playlists.push({ id: "pl-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6), name: nomePulito, tracks: [], order: "manuale" });
+    saveCurrentState();
+    toast("Playlist "" + nomePulito + "" creata: aggiungi brani dalla lista");
+    apriPanelPlaylist();
+  }
+  function aggiungiAPlaylist(trackId, nomePlaylist) {
+    if (!nomePlaylist) {
+      const nomi = playlists.map((pl) => pl.name || "");
+      const scelta = prompt("A quale playlist aggiungo il brano?\n" + nomi.join("\n") + "\n\nOppure digita un nome nuovo per crearne una nuova:", "");
+      if (!scelta) return;
+      const nomePulito = scelta.trim();
+      let pl = playlists.find((p) => (p.name || "").trim() === nomePulito);
+      if (!pl) {
+        playlists.push({ id: "pl-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6), name: nomePulito, tracks: [trackId], order: "manuale" });
+        toast("Playlist "" + nomePulito + "" creata con il brano");
+        saveCurrentState();
+      } else {
+        if (!pl.tracks.includes(trackId)) pl.tracks.push(trackId);
+        saveCurrentState();
+        toast("Brano aggiunto a "" + nomePulito + """);
+      }
+      return;
+    }
+    const pl = playlists.find((p) => (p.name || "").trim() === nomePlaylist.trim());
+    if (!pl) return;
+    if (!pl.tracks.includes(trackId)) pl.tracks.push(trackId);
+    saveCurrentState();
+    toast("Brano aggiunto a "" + pl.name + """);
+  }
+  function togliDaPlaylist(trackId, nomePlaylist) {
+    const pl = playlists.find((p) => (p.name || "").trim() === nomePlaylist.trim());
+    if (!pl || !pl.tracks) return;
+    pl.tracks = pl.tracks.filter((tid) => tid !== trackId);
+    saveCurrentState();
+  }
+  function renderPlaylist() {
+    try {
+      const m = $("playlistPanel");
+      if (!m) return;
+      const corpo = m.querySelector(".playlist-body");
+      if (!corpo) return;
+      const ul = corpo.querySelector(".playlist-lista") || corpo;
+      if (!ul || !ul.querySelector) return;
+      ul.innerHTML = "";
+      if (!playlists.length) {
+        ul.innerHTML = '<li class="lista-vuota">Nessuna playlist ancora: tocca il brano che vuoi e usa il suo menu per aggiungerlo.</li>';
+        return;
+      }
+      for (const pl of playlists) {
+        const li = document.createElement("li");
+        li.className = "lista-pl";
+        const titolo = document.createElement("span");
+        titolo.className = "pl-titolo";
+        titolo.textContent = pl.name || "senza nome";
+        const conta = document.createElement("span");
+        conta.className = "pl-conta";
+        conta.textContent = (pl.tracks || []).length ? String(pl.tracks.length) + (pl.tracks.length === 1 ? " brano" : " brani") : "vuota";
+        const azioni = document.createElement("div");
+        azioni.className = "pl-azioni";
+        const suona = document.createElement("button");
+        suona.type = "button";
+        suona.className = "pl-btn";
+        suona.textContent = "Suona";
+        suona.addEventListener("click", () => {
+          if (!pl.tracks || !pl.tracks.length) { toast("Playlist vuota: " + pl.name); return; }
+          const listaId = pl.tracks.slice();
+          if (!currentId) { currentPlaylist = pl.name; playById(listaId[0]); }
+          else { currentPlaylist = pl.name; playById(idBranoA(nextIndex())); }
+        });
+        const canc = document.createElement("button");
+        canc.type = "button";
+        canc.className = "pl-btn pl-canc";
+        canc.textContent = "Elimina";
+        canc.addEventListener("click", async () => {
+          const msg = "Eliminare la playlist "" + pl.name + ""?";
+          const ok2 = await askConfirm("Conferma", msg, "Elimina");
+          if (!ok2) return;
+          playlists = playlists.filter((p) => p.id !== pl.id);
+          saveCurrentState();
+          toast("Playlist "" + pl.name + "" eliminata");
+          renderPlaylist();
+        });
+        azioni.appendChild(suona);
+        azioni.appendChild(canc);
+        li.appendChild(titolo);
+        li.appendChild(conta);
+        li.appendChild(azioni);
+        ul.appendChild(li);
+      }
+    } catch (e) { /* pazienza */ }
+  }
 
   /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
