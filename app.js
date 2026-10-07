@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.108";
+  const APP_VERSION = "6.109";
 
   let recovering = false;
   async function selfHeal() {
@@ -3169,6 +3169,7 @@ function _aggiornaPosizioneSchermo() {
   /* ---------- Aggiunta / rimozione ---------- */
   async function addFiles(fileList) {
     let ok = 0;
+    let giaInLista = 0;
     const errors = [];
     for (const file of Array.from(fileList)) {
       const rec = {
@@ -3187,13 +3188,45 @@ function _aggiornaPosizioneSchermo() {
       }
     }
     if (ok) {
-      toast((ok === 1 ? "1 brano aggiunto" : ok + " brani aggiunti") + " — solo per " + profile);
       await loadAll();
       const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
+      /* Se il brano era gia' nella libreria condivisa non lo metto due volte
+         (la riga condivisa basta). Ma allora lo dico: prima non diceva niente
+         e sembrava che il file si fosse perso. */
+      for (const t of fresh) {
+        if (eGiaCondiviso({ title: t.title, artist: t.artist })) giaInLista++;
+      }
+      const parti = [];
+      const nuovi = ok - giaInLista;
+      if (nuovi > 0) parti.push(nuovi === 1 ? "1 brano aggiunto" : nuovi + " brani aggiunti");
+      if (giaInLista > 0) {
+        parti.push(giaInLista === 1
+          ? "1 era gia nella libreria, non l'ho ripetuto"
+          : giaInLista + " erano gia nella libreria, non li ho ripetuti");
+      }
+      toast(parti.join(" e ") + ": solo per " + profile);
+      /* vado subito al brano nuovo, cosi lo vede: prima finiva in fondo alla
+         lista e sembrava non comparire. */
+      const daMostrare = fresh.find((t) => !eGiaCondiviso({ title: t.title, artist: t.artist }));
+      if (daMostrare) {
+        setTimeout(() => {
+          try {
+            const righe = Array.from(playlistEl.children);
+            const li = righe.find((x) => (x.getAttribute("data-id") || "") === daMostrare.id);
+            if (li) {
+              li.scrollIntoView({ block: "center" });
+              li.classList.add("appena-aggiunto");
+              setTimeout(() => li.classList.remove("appena-aggiunto"), 2800);
+            }
+          } catch (e) { /* pazienza */ }
+        }, 300);
+      }
       for (const t of fresh) enrichTrack(t.id);
+      try { condividiBraniLocali(); } catch (e) { /* non blocca l'aggiunta */ }
     }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
+
 
 /* Toglie dalla memoria del telefono tutto quello che riguarda un brano:
      il file audio, l'import, i testi, la copertina che avevo cercato, la
