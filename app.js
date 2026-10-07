@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.115";
+  const APP_VERSION = "6.116";
 
   let recovering = false;
   async function selfHeal() {
@@ -6078,6 +6078,20 @@ function closeImport() {
       if (e.target.closest && e.target.closest("button")) _chiudiAltro();
     }
   });
+  $("btnCreaPlaylist").addEventListener("click", () => {
+    const brani = BUILTIN.map((b) => (b.artist ? (b.artist + " - ") : "") + b.title);
+    const testo = "Playlist da Music Box (" + brani.length + " brani):\n" + brani.join("\n");
+    const blob = new Blob([testo], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a2 = document.createElement("a");
+    a2.href = url;
+    a2.download = "music-box-playlist-" + new Date().toISOString().slice(0, 10) + ".txt";
+    document.body.appendChild(a2);
+    a2.click();
+    a2.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 8000);
+    toast("Playlist salvata nelle Download del telefono: " + brani.length + " brani in ordine");
+  });
   document.addEventListener("keydown", (e) => {
     const m = $("menuAltro");
     if (!m || m.hidden) return;
@@ -7010,3 +7024,4 @@ if (branoInCorso()) {
     })();
   })();
 })();
+
