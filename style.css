@@ -374,28 +374,87 @@ main { padding: 8px 16px calc(var(--player-h) + 40px); }
 }
 .player-time { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
+/* I tasti del player, riorganizzati per telefono.
+
+   Prima erano 6 tasti tutti uguali e attaccati: shuffle, indietro, play,
+   avanti, ripeti, coda. Su uno schermo stretto finivano in tre file e non si
+   capiva quale fosse quello giusto. Adesso:
+     - i tre tasti che si usano sempre (indietro, play, avanti) al centro,
+       grandi, con play ben piu' grosso;
+     - shuffle, ripeti e coda in una riga sotto, piu' piccoli e distanziati,
+       cosi' non si confondono con quelli principali.
+   I tasti principali hanno anche un'etichetta scritta sotto: da solo non si
+   capisce cosa facciano. */
 .player-controls {
   display: flex;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 2px 8px 0;
 }
 .ctl {
   background: none;
   border: none;
   color: var(--txt);
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-radius: 14px;
+  opacity: .8;
+  padding: 0;
+}
+.ctl.on { color: var(--accent); opacity: 1; }
+.ctl svg { width: 21px; height: 21px; flex: 0 0 auto; }
+/* l'etichetta sotto al tasto */
+.ctl span.ctl-label {
+  font-size: 9.5px;
+  line-height: 1;
+  letter-spacing: .2px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.ctl.on span.ctl-label { color: var(--accent); }
+/* play: il tasto piu' importante, quindi il piu' grande e con etichetta */
+.ctl-big {
+  width: 60px;
+  height: 60px;
+  min-height: 60px;
+  background: #fff;
+  color: #0f0f14;
+  opacity: 1;
+  border-radius: 50%;
+  gap: 0;
+}
+.ctl-big svg { width: 27px; height: 27px; }
+.ctl-big span.ctl-label { color: rgba(15,15,20,.62); font-size: 10px; font-weight: 700; margin-top: -1px; }
+.ctl-big:active { transform: scale(.95); }
+/* i tasti secondari: riga tutta loro, piu' piccoli */
+.ctl-secondari {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  opacity: .75;
+  gap: 4px;
+  width: 100%;
+  margin-top: 2px;
 }
-.ctl.on { color: var(--accent); opacity: 1; }
-.ctl svg { width: 20px; height: 20px; }
-.ctl-big { width: 52px; height: 52px; background: #fff; color: #0f0f14; opacity: 1; }
-.ctl-big svg { width: 26px; height: 26px; }
-.ctl-big:active { transform: scale(.95); }
+.ctl-secondari .ctl {
+  width: 42px;
+  height: 38px;
+  min-height: 38px;
+  border-radius: 12px;
+  opacity: .62;
+}
+.ctl-secondari .ctl svg { width: 17px; height: 17px; }
+.ctl-secondari .ctl.on { opacity: 1; }
+/* tocco con dito: area piu' grande di quello che si vede */
+.ctl:active { background: rgba(255,255,255,.09); opacity: 1; }
+.ctl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 .vol-row {
   display: flex;
