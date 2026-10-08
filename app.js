@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.119";
+  const APP_VERSION = "6.120";
 
   let recovering = false;
   async function selfHeal() {
@@ -161,8 +161,13 @@ let playlists = [];
     const inLocale = qui === "localhost" || qui === "127.0.0.1" || qui === "::1" ||
       qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net");
     if (inLocale) return nome;
-    /* online: prendo il brano dal deposito della musica */
-    return BRANI_ONLINE + nome.replace(/^.*\//, "");
+    /* online: prendo il brano dal deposito della musica.
+       ATTENZIONE: qui il nome va tenuto COME E', con la cartella
+       "songs/". Prima facevo .replace(/^.*\//, "") che si mangiava la
+       cartella, e l'app chiedeva "track-1.mp3" invece di
+       "songs/track-1.mp3": il brano non partiva (404) e sembrava che
+       l'app fosse rotta. */
+    return BRANI_ONLINE + nome.replace(/^\/+/, "");
   }
 
   let profiles = [DEFAULT_PROFILE];
