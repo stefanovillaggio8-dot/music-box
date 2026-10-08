@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.118";
+  const APP_VERSION = "6.119";
 
   let recovering = false;
   async function selfHeal() {
@@ -107,6 +107,11 @@
      prima ascolto a tutto quello che ho scaricato e non ho mai sentito. */
   let soloMaiAscoltati = false;
   let hiddenTracks = new Set();
+/* Le playlist vivono qui con gli altri dati dello schermo, NON piu' in
+   basso: prima erano dichiarate dopo le funzioni che le usano, e se una
+   di quelle veniva chiamata presto l'app partiva a meta' e la libreria
+   risultava vuota (l'ho visto succedere dal telefono). */
+let playlists = [];
   /* Numeri della libreria, per il registro: cosi' capisco cosa manca senza
      dover chiedere uno screenshot. */
   let _numeriGiaInviati = false;
