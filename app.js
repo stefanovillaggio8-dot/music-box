@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.117";
+  const APP_VERSION = "6.118";
 
   let recovering = false;
   async function selfHeal() {
@@ -221,11 +221,19 @@ window.addEventListener("storage", (e) => {
     const st = profileState(profile);
     hiddenTracks = new Set(st.hidden || []);
     favorites = new Set(st.favs || []);
+    /* Le playlist stanno qui con il resto. Se il dato non e' un elenco
+       (perche' viene da una versione vecchia), parto da vuoto invece di
+       farmi fermare. */
+    playlists = Array.isArray(st.playlists) ? st.playlists : [];
     return st;
   }
 
   function saveCurrentState() {
-    writeProfileState(profile, { hidden: Array.from(hiddenTracks), favs: Array.from(favorites) });
+    writeProfileState(profile, {
+      hidden: Array.from(hiddenTracks),
+      favs: Array.from(favorites),
+      playlists: Array.isArray(playlists) ? playlists : []
+    });
   }
 
   const LS = {
@@ -2004,6 +2012,10 @@ const nascosti = hiddenTracks.size;
 
   function handleEnded() {
     if (currentId) LS.set("mb.pos." + currentId, 0);
+    /* Se sto ascoltando una playlist, il brano dopo e' il SUO, non quello
+       dopo nella libreria: altrimenti la playlist si fermerebbe al primo. */
+    const idDiPlaylist = _avantiInPlaylist();
+    if (idDiPlaylist) { playById(idDiPlaylist); return; }
     /* Il brano e' finito e sto partendo col successivo: da qui in avanti
        se il telefono rifiuta di suonare, insisto (vedi _riprovaPiuTardi) */
     _cominciaBranoNuovo();
@@ -2661,6 +2673,7 @@ function rebuildAudio(autoplay) {
     return b;
   }
 
+  const ICON_PLAYLIST = "M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z";
   const ICON_QUEUE = "M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z";
 const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z";
   const ICON_NEXT = "M6 5l9 7-9 7V5Zm10 0h2v14h-2V5Z";
@@ -2680,6 +2693,9 @@ box.innerHTML = "";
   box.appendChild(quickAction("Cambia nome e artista", ICON_EDIT, () => apriRinomina(t.id)));
   box.appendChild(quickAction("Ascolta dopo", ICON_NEXT, () => queueTrack(t.id, true)));
     box.appendChild(quickAction("Metti in coda", ICON_QUEUE, () => queueTrack(t.id, false)));
+      /* La playlist e' una mia scelta, quindi la scelgo da qui: tengo questa
+         voce nel menu del brano per decidere in che playlist metterlo. */
+      box.appendChild(quickAction("Aggiungi alla playlist", ICON_PLAYLIST, () => aggiungiAPlaylist(t.id)));
     if (t.builtin) {
       const el = document.createElement("button");
       el.className = "quick-btn";
@@ -6697,6 +6713,11 @@ $("btnFavFilter").addEventListener("click", () => {
 
   $("btnOffline").addEventListener("click", openOffline);
     $("btnStatistiche").addEventListener("click", apriStatistiche);
+  $("btnCreaPlaylist").addEventListener("click", () => { _chiudiAltro(); creaPlaylist(); });
+  $("btnPlaylist").addEventListener("click", () => { _playlistAperta = ""; apriPanelPlaylist(); });
+  $("btnNuovaPlaylist").addEventListener("click", () => creaPlaylist());
+  $("btnTornaDallePlaylist").addEventListener("click", () => chiudiPanelPlaylist());
+  $("playlistPanel").addEventListener("click", (e) => { if (e.target === $("playlistPanel")) chiudiPanelPlaylist(); });
   $("btnAltro").addEventListener("click", () => {
     const m = $("menuAltro");
     if (m && m.hidden) _apriAltro(); else _chiudiAltro();
@@ -6746,6 +6767,226 @@ $("btnFavFilter").addEventListener("click", () => {
   /* Ogni 3 secondi guardo che la musica stia davvero camminando: il telefono
      con lo schermo spento dice "e' partito" ma poi e' muto. */
   setInterval(_controllaCheSuoni, 3000);
+
+  /* ---------- Playlist ----------
+     Le playlist sono DENTRO l'app, non un file da aprire altrove.
+     Ogni playlist e' un nome con dentro i brani che ho scelto io.
+     Non toccano la libreria: un brano puo' stare in tre playlist e nella
+     libreria insieme, e se elimino una playlist i brani restano dove sono. */
+
+  function _playlistCercata(nome) {
+    const pulito = String(nome || "").trim().toLowerCase();
+    return playlists.find((p) => String(p.name || "").trim().toLowerCase() === pulito);
+  }
+
+  /* Ritorna la playlist con quel nome; se non c'e' la crea. */
+  function _playlistConNome(nome, trackId) {
+    const pulito = String(nome || "").trim() || "Nuova playlist";
+    let pl = _playlistCercata(pulito);
+    if (!pl) {
+      pl = { id: "pl-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6), name: pulito, tracks: [] };
+      playlists.push(pl);
+    }
+    if (trackId && !pl.tracks.includes(trackId)) pl.tracks.push(trackId);
+    saveCurrentState();
+    return pl;
+  }
+
+  /* Chiede un nome all'utente. Se chiude senza scrivere, non faccio nulla:
+     non creo playlist a caso. */
+  function _chiediNome(messaggio) {
+    try {
+      const r = window.prompt(messaggio, "Nuova playlist");
+      return r === null ? "" : String(r).trim();
+    } catch (e) {
+      return "Nuova playlist";
+    }
+  }
+
+  function creaPlaylist() {
+    const nome = _chiediNome("Come si chiama la playlist?");
+    if (!nome) return null;
+    const pl = _playlistConNome(nome, "");
+    _aggiornaBadgePlaylist();
+    toast('Playlist "' + pl.name + '" creata. Ora puoi aggiungerci i brani.');
+    apriPanelPlaylist();
+    return pl;
+  }
+
+  /* Aggiunge il brano alla playlist scelta. Usata dal menu del brano. */
+  function aggiungiAPlaylist(trackId) {
+    const t = tracks.find((x) => x.id === trackId);
+    if (!t) return;
+    const nomi = playlists.map((p) => p.name);
+    const testo = 'Aggiungi "' + t.title + '" a una playlist' +
+      (nomi.length
+        ? "\n\nSe ne hai gia' una, scrivi il suo nome:\n  " + nomi.join("\n  ") +
+          "\n\nAltrimenti scrivi un nome nuovo e la creo io."
+        : "\n\nNon hai ancora playlist: scrivi il nome e la creo.");
+    const nome = _chiediNome(testo);
+    if (!nome) return;
+    const pl = _playlistConNome(nome, trackId);
+    _aggiornaBadgePlaylist();
+    toast('"' + t.title + '" aggiunto a "' + pl.name + '"');
+  }
+
+  /* Toglie un brano dalla playlist. I brani NON vengono tolti da nessun
+     altrove: solo da quella playlist. */
+  function togliDaPlaylist(trackId, nomePlaylist) {
+    const pl = _playlistCercata(nomePlaylist);
+    if (!pl || !pl.tracks) return;
+    const cEra = pl.tracks.includes(trackId);
+    pl.tracks = pl.tracks.filter((id) => id !== trackId);
+    saveCurrentState();
+    if (cEra) {
+      const t = tracks.find((x) => x.id === trackId);
+      toast('"' + (t ? t.title : "Brano") + '" tolto da "' + pl.name + '"');
+    }
+  }
+
+  function _aggiornaBadgePlaylist() {
+    const b = $("btnPlaylist");
+    if (b) b.classList.toggle("on", playlists.length > 0);
+    const badge = $("playlistBadge");
+    if (badge) {
+      badge.hidden = !playlists.length;
+      badge.textContent = playlists.length > 9 ? "9+" : String(playlists.length);
+    }
+  }
+
+  /* Quando suono una playlist, il brano dopo e' il suo, non quello dopo
+     della libreria. */
+  let _playlistSuona = [];
+  let _posizionePlaylist = -1;
+  function _suonaPlaylist(pl) {
+    const brani = (pl.tracks || []).map((id) => tracks.find((t) => t.id === id)).filter(Boolean);
+    if (!brani.length) { toast("Playlist \"" + pl.name + "\": non c'e' nessun brano"); return; }
+    _playlistSuona = brani.map((t) => t.id);
+    _posizionePlaylist = 0;
+    chiudiPanelPlaylist();
+    playById(_playlistSuona[0]);
+  }
+  /* Va al brano dopo della playlist; se e' finita, torna alla libreria. */
+  function _avantiInPlaylist() {
+    if (_posizionePlaylist < 0 || !_playlistSuona.length) return "";
+    _posizionePlaylist++;
+    if (_posizionePlaylist >= _playlistSuona.length) {
+      _posizionePlaylist = -1;
+      _playlistSuona = [];
+      return "";
+    }
+    return _playlistSuona[_posizionePlaylist];
+  }
+
+  function renderPlaylist() {
+    const lista = $("playlistLista");
+    const titolo = $("playlistTitolo");
+    if (!lista) return;
+    lista.innerHTML = "";
+
+    /* Se sto guardando dentro una playlist, mostro i suoi brani. */
+    if (_playlistAperta) {
+      const pl = _playlistCercata(_playlistAperta);
+      if (titolo) titolo.textContent = pl ? pl.name : "Playlist";
+      if (!pl || !(pl.tracks || []).length) {
+        const li = document.createElement("li");
+        li.className = "playlist-avviso";
+        li.textContent = "Questa playlist e' vuota. Tocca un brano nella libreria e scegli 'Aggiungi alla playlist'.";
+        lista.appendChild(li);
+      }
+      for (const id of (pl ? pl.tracks : [])) {
+        const t = tracks.find((x) => x.id === id);
+        if (!t) continue;
+        const li = document.createElement("li");
+        li.className = "playlist-voce";
+        const nome = document.createElement("button");
+        nome.type = "button";
+        nome.className = "playlist-nome";
+        nome.textContent = t.title;
+        nome.addEventListener("click", () => { chiudiPanelPlaylist(); playById(t.id); });
+        const togli = document.createElement("button");
+        togli.type = "button";
+        togli.className = "playlist-togli";
+        togli.textContent = "Togli";
+        togli.addEventListener("click", () => { togliDaPlaylist(t.id, pl.name); renderPlaylist(); });
+        li.appendChild(nome);
+        li.appendChild(togli);
+        lista.appendChild(li);
+      }
+      const indietro = document.createElement("button");
+      indietro.type = "button";
+      indietro.className = "confirm-no";
+      indietro.textContent = "Tutte le playlist";
+      indietro.addEventListener("click", () => { _playlistAperta = ""; renderPlaylist(); });
+      lista.appendChild(indietro);
+      return;
+    }
+
+    if (titolo) titolo.textContent = "Le tue playlist";
+    if (!playlists.length) {
+      const li = document.createElement("li");
+      li.className = "playlist-avviso";
+      li.textContent = "Non hai ancora playlist. Tocca 'Nuova playlist' qui sopra per creare la prima.";
+      lista.appendChild(li);
+    }
+    for (const pl of playlists) {
+      const brani = (pl.tracks || []).map((id) => tracks.find((t) => t.id === id)).filter(Boolean);
+      const li = document.createElement("li");
+      li.className = "playlist-voce";
+
+      const nome = document.createElement("button");
+      nome.type = "button";
+      nome.className = "playlist-nome";
+      nome.textContent = pl.name || "senza nome";
+      nome.addEventListener("click", () => { _playlistAperta = pl.name; renderPlaylist(); });
+
+      const conta = document.createElement("span");
+      conta.className = "playlist-conta";
+      conta.textContent = brani.length ? brani.length + (brani.length === 1 ? " brano" : " brani") : "vuota";
+
+      const suona = document.createElement("button");
+      suona.type = "button";
+      suona.className = "playlist-suona";
+      suona.textContent = "Ascolta";
+      suona.disabled = !brani.length;
+      suona.addEventListener("click", () => _suonaPlaylist(pl));
+
+      const elimina = document.createElement("button");
+      elimina.type = "button";
+      elimina.className = "playlist-togli";
+      elimina.textContent = "Elimina";
+      elimina.addEventListener("click", async () => {
+        const va = await askConfirm("Eliminare la playlist?",
+          'Playlist "' + pl.name + '". I brani NON vengono tolti dalla libreria.', "Elimina");
+        if (!va) return;
+        playlists = playlists.filter((p) => p.id !== pl.id);
+        saveCurrentState();
+        renderPlaylist();
+        _aggiornaBadgePlaylist();
+        toast('Playlist "' + pl.name + '" eliminata');
+      });
+
+      li.appendChild(nome);
+      li.appendChild(conta);
+      li.appendChild(suona);
+      li.appendChild(elimina);
+      lista.appendChild(li);
+    }
+    _aggiornaBadgePlaylist();
+  }
+
+  let _playlistAperta = "";
+
+  function apriPanelPlaylist() {
+    const m = $("playlistPanel");
+    if (!m) return;
+    m.hidden = false;
+    renderPlaylist();
+  }
+  function chiudiPanelPlaylist() {
+    const m = $("playlistPanel");
+    if (m) m.hidden = true;
+  }
 
   /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);

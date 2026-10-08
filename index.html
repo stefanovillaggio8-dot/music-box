@@ -19,6 +19,10 @@
       <div class="logo-wrap">
         <h1 class="logo long">spotify<span>nonavraiimieisoldi</span></h1>
         <span class="ver" id="appVer"></span>
+      <button class="logo-refresh" id="btnPlaylist" aria-label="Le tue playlist" title="Le tue playlist">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z"/></svg>
+        <span class="logo-badge" id="playlistBadge" hidden>0</span>
+      </button>
       </div>
   <div class="logo-actions">
         <button class="logo-refresh" id="btnStatistiche" aria-label="Statistiche" title="Statistiche di ascolto">
@@ -69,6 +73,10 @@
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a8 8 0 1 1-7.1 4.2 1 1 0 1 1 1.74-1A6 6 0 1 0 12 6a1 1 0 0 1-1-1V3.5L8.4 5.1a1 1 0 0 0 0 1.4L11 8.5V7a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M12.7 9.3a1 1 0 0 1 1.4 0l2.2 2.2a1 1 0 0 1 0 1.4l-2.2 2.2a1 1 0 1 1-1.4-1.4l.5-.5h-2.7a1 1 0 1 1 0-2h2.7l-.5-.5a1 1 0 0 1 0-1.4Z"/></svg>
       
     <span class="voce-testo">Aggiorna la pagina</span></button>
+    <button class="menu-altro-voce" id="btnCreaPlaylist" type="button">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z"/></svg>
+      <span class="voce-testo">Crea playlist</span>
+    </button>
   </div>
 
   <main>
@@ -291,6 +299,17 @@
         <div id="profileList"></div>
         <p class="step-hint">Regola semplice: le canzoni che aggiungi dal telefono restano per il nome che hai scelto. Quelle che metti sul computer nelle cartelle <strong>musica mp3 ste</strong> o <strong>musica mp3 emanuele</strong> finiscono nella libreria giusta, e sono le stesse su ogni telefono. Se passi al nome dell&#39;altro, vedi la sua libreria.</p>
       </div>
+    </div>
+  </div>
+
+  <div class="profile-overlay" id="playlistPanel" hidden>
+    <div class="profile-card">
+      <div class="playlist-testa">
+        <p class="confirm-title" id="playlistTitolo">Le tue playlist</p>
+        <button type="button" class="playlist-nuova" id="btnNuovaPlaylist">Nuova playlist</button>
+      </div>
+      <ul class="playlist-lista" id="playlistLista"></ul>
+      <button type="button" class="confirm-no" id="btnTornaDallePlaylist">Torna alla libreria</button>
     </div>
   </div>
 
