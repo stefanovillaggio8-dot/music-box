@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.121";
+  const APP_VERSION = "6.122";
 
   let recovering = false;
   async function selfHeal() {
@@ -6027,12 +6027,12 @@ function closeImport() {
 
   /* ---------- Toast ---------- */
   let toastTimer = null;
-  function toast(msg) {
-    const el = $("toast");
-    el.textContent = msg;
-    el.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+function toast(msg, durata) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), durata || 2200);
   }
 
   /* ---------- Il menu "altro" ----------
@@ -6694,6 +6694,7 @@ $("btnFavFilter").addEventListener("click", () => {
   $("btnOffline").addEventListener("click", openOffline);
     $("btnStatistiche").addEventListener("click", apriStatistiche);
   $("btnCreaPlaylist").addEventListener("click", () => { _chiudiAltro(); creaPlaylist(); });
+  $("btnCondividi").addEventListener("click", () => { _chiudiAltro(); _condividiAdesso(); });
   $("btnPlaylist").addEventListener("click", () => { _playlistAperta = ""; apriPanelPlaylist(); });
   $("btnNuovaPlaylist").addEventListener("click", () => creaPlaylist());
   $("btnTornaDallePlaylist").addEventListener("click", () => chiudiPanelPlaylist());
@@ -6968,6 +6969,89 @@ $("btnFavFilter").addEventListener("click", () => {
     if (m) m.hidden = true;
   }
 
+  /* ---------- I brani che sono ancora solo su questo telefono ----------
+     Un brano aggiunto a mano resta nel telefono finche' non arriva al
+     computer, e da lì nella libreria che vede anche gli altri. Prima non
+     lo si ritentava: il brano semplicemente non saliva e non se ne
+     accorgeva nessuno. Adesso si riprova ogni 2 minuti e c'e' anche un
+     bottone per farlo subito. */
+
+  /* Conta i brani che ho qui e che il computer non ha ancora. */
+  function _quantiNonCondivisi() {
+    try {
+      return _nonCondivisiCache;
+    } catch (e) {
+      return 0;
+    }
+  }
+  let _nonCondivisiCache = 0;
+  let _tempoRiprova = null;
+
+  /* Aggiorna il contatore e il bottone. */
+  async function _aggiornaNonCondivisi() {
+    try {
+      if (!db) return;
+      const tutti = await dbAll();
+      const daMandare = (tutti || []).filter((r) => r && r.blob && !r.condiviso &&
+        !eGiaCondiviso({ title: r.title, artist: r.artist }));
+      _nonCondivisiCache = daMandare.length;
+      const b = $("btnCondividi");
+      if (b) {
+        b.hidden = !daMandare.length;
+        const t = $("condividiBadge");
+        if (t) t.textContent = daMandare.length > 9 ? "9+" : String(daMandare.length);
+      }
+    } catch (e) { /* pazienza */ }
+  }
+
+  /* Riprovo da sola ogni 2 minuti: se il computer e' acceso e siamo
+     sulla pagina locale, i brani salgono senza che io debba fare niente.
+     Non controllo prima se il computer risponde: condividiBraniLocali() lo
+     fa gia' e, se non risponde, esce in silenzio senza rompere niente. */
+  function _riprovaCondivisione() {
+    if (_tempoRiprova) clearInterval(_tempoRiprova);
+    _tempoRiprova = setInterval(() => {
+      if (document.hidden) return;
+      if (!_quantiNonCondivisi()) return;
+      condividiBraniLocali();
+    }, 120000);
+  }
+
+  /* Spiega come si fa quando il computer non risponde. Sulla pagina online
+     (https) il browser non permette di chiamare il computer (http): li' il
+     pulsante non riprova all'infinito, dice cosa fare davvero. */
+  function _spiegaPercheNonVa() {
+    const sicura = !!window.isSecureContext;
+    if (sicura) {
+      toast("Qui non posso parlare col computer: pagina sicura. Apri l'app da " +
+        "http://100.106.211.2:8168 e il brano sale da solo", 9000);
+    } else {
+      toast("Il computer non risponde. Sei connesso a Tailscale? " +
+        "Oppure salva il brano in D:\\Musica\\musica mp3 ste", 9000);
+    }
+    segnalaErrore("condivisione non riuscita: pagina " +
+      (sicura ? "sicura (https: non si puo' chiamare il PC)" : "normale") +
+      ", programma sul PC non raggiungibile");
+  }
+
+  /* Il bottone: manda subito tutti i brani solo di questo telefono. */
+  async function _condividiAdesso() {
+    const b = $("btnCondividi");
+    if (b) { b.disabled = true; }
+    try {
+      toast("Sto mandando i brani al computer...");
+      await _aggiornaNonCondivisi();
+      const n = _quantiNonCondivisi();
+      if (!n) { toast("Non ci sono brani da mandare"); return; }
+      const online = await ponteOnline();
+      if (!online) { _spiegaPercheNonVa(); return; }
+      await condividiBraniLocali();
+      setTimeout(_aggiornaNonCondivisi, 4000);
+    } finally {
+      if (b) { b.disabled = false; }
+    }
+  }
+
   /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
   let volumeBeforeMute = 100;
@@ -7036,7 +7120,10 @@ $("btnFavFilter").addEventListener("click", () => {
   /* Appena aperta la pagina, condivido da solo i brani che esistono solo qui:
      non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
      avvio, e intanto i brani restano al sicuro qui. */
-setTimeout(() => { condividiBraniLocali(); }, 1200);
+  setTimeout(() => { condividiBraniLocali(); }, 1200);
+  /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
+     "Manda al computer" compare) e accendo il ritento automatico. */
+  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); }, 1600);
   _avviaStatistiche();
   /* Il numero della versione sempre visibile in alto: e' successo piu' volte
      che il browser restava su una versione vecchia e sembrava che gli
