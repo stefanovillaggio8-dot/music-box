@@ -50,6 +50,7 @@
     { title: "Mostro (Visual)", file: "songs/track-49.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "gianluca grignani", file: "songs/track-50.mp3", artist: "la mia storia tra le dita", profile: "Ste" },
     { title: "Animal I Have Become", file: "songs/track-51.mp3", artist: "Three Days Grace", profile: "Ste" },
+    { title: "Somewhere I Belong", file: "songs/track-52.mp3", artist: "Linkin Park", profile: "Ste" },
 ];
 
   const PALETTE = [
