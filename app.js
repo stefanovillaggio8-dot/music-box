@@ -57,6 +57,7 @@
     { title: "Numb", file: "songs/track-56.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Monster", file: "songs/track-57.mp3", artist: "Skillet", profile: "Ste" },
     { title: "Bring Me To Life", file: "songs/track-58.mp3", artist: "Evanescence", profile: "Ste" },
+    { title: "Sweet Child O' Mine", file: "songs/track-59.mp3", artist: "Guns N' Roses", profile: "Ste" },
 ];
 
   const PALETTE = [
