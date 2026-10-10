@@ -366,5 +366,13 @@
     "album": "Nevermind (Remastered)",
     "source": "Deezer",
     "date": "2026-10-10T14:30:51.836Z"
+  },
+  "linkinparkfaint": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/882448ab63952aa16e502c82db2df160/1000x1000-000000-80-0-0.jpg",
+    "title": "Faint",
+    "artist": "Linkin Park",
+    "album": "Meteora",
+    "source": "Deezer",
+    "date": "2026-10-10T14:31:46.678Z"
   }
 }
