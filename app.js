@@ -54,6 +54,7 @@
     { title: "What I've Done", file: "songs/track-53.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Smells Like Teen Spirit", file: "songs/track-54.mp3", artist: "Nirvana", profile: "Ste" },
     { title: "Faint", file: "songs/track-55.mp3", artist: "Linkin Park", profile: "Ste" },
+    { title: "Numb", file: "songs/track-56.mp3", artist: "Linkin Park", profile: "Ste" },
 ];
 
   const PALETTE = [
