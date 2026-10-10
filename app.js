@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.128";
+  const APP_VERSION = "6.129";
 
   let recovering = false;
   async function selfHeal() {
@@ -7322,7 +7322,119 @@ function _nomePerIlBrano(link, suggerito) {
     } catch (e) { return []; }
   }
 
-  /* ---------- Volume ---------- */
+  /* ---------- Tieni lo schermo acceso e timer di sonno ----------
+   Tieni lo schermo acceso: il telefono non si blocca mentre ascolti. Non
+   costa soldi (niente e' a pagamento), ma la batteria dura un po' meno.
+   Timer: si ferma da solo dopo un po', cosi' di notte non continua a
+   suonare. Quando finisce, spegne anche lo schermo acceso: e' quello che
+   hai chiesto, non lasciare il telefono acceso tutta la notte. */
+
+let _bloccoSchermo = null;
+let _schermoVoluto = false;
+let _timerFine = 0;
+let _timerGiro = null;
+
+const TIMER_SCELTE = [15, 30, 60, 0];
+
+async function _accendiSchermo() {
+  try {
+    if (!navigator.wakeLock || !navigator.wakeLock.request) return false;
+    if (_bloccoSchermo) return true;
+    _bloccoSchermo = await navigator.wakeLock.request("screen");
+    return true;
+  } catch (e) { return false; }
+}
+
+async function _spegneSchermo() {
+  try {
+    if (_bloccoSchermo) { await _bloccoSchermo.release(); }
+  } catch (e) { /* gia' spento */ }
+  _bloccoSchermo = null;
+}
+
+function _disegnaTimer() {
+  const b = $("btnTimer");
+  const badge = $("timerBadge");
+  if (!b || !badge) return;
+  const resta = Math.max(0, Math.ceil((_timerFine - Date.now()) / 60000));
+  const acceso = _schermoVoluto;
+  if (b.classList) b.classList.toggle("on", acceso);
+  if (resta > 0) {
+    badge.hidden = false;
+    badge.textContent = resta + "'";
+    b.title = "Si ferma fra " + resta + " minuti (tocca per cambiare)";
+  } else {
+    badge.hidden = true;
+    b.title = "Timer: si ferma dopo un po'";
+  }
+}
+
+/* Quando si torna sull'app, il blocco dello schermo va richiesto di nuovo:
+   il telefono lo perde da solo ogni volta che lo blocchi. */
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    if (_schermoVoluto) _accendiSchermo();
+    _disegnaTimer();
+  } else if (_bloccoSchermo) {
+    /* non lo tengo: il telefono e' gia' spento, e tenerlo occuperebbe
+       batteria senza servire a niente */
+    _bloccoSchermo = null;
+  }
+});
+
+$("btnSchermo").addEventListener("click", async () => {
+  if (_schermoVoluto) {
+    _schermoVoluto = false;
+    await _spegneSchermo();
+    toast("Schermo normale: si blocca come sempre");
+    _disegnaTimer();
+    return;
+  }
+  const va = await _accendiSchermo();
+  if (!va) {
+    toast("Questo telefono non me lo lascia fare. Continua a funzionare tutto, ma lo schermo si blocca");
+    return;
+  }
+  _schermoVoluto = true;
+  toast("Schermo acceso mentre ascolti. Per spegnerlo: tocca di nuovo, o usa il timer", 5000);
+  _disegnaTimer();
+});
+
+$("btnTimer").addEventListener("click", () => {
+  if (_timerFine) {
+    /* se un timer e' gia' in corsa, il tosto successivo lo toglie */
+    clearInterval(_timerGiro); _timerGiro = null;
+    _timerFine = 0;
+    toast("Timer spento");
+  } else {
+    const minuti = TIMER_SCELTE[0];
+    _timerFine = Date.now() + minuti * 60000;
+    _timerGiro = setInterval(() => {
+      const resta = _timerFine - Date.now();
+      if (resta <= 0) {
+        clearInterval(_timerGiro); _timerGiro = null;
+        _timerFine = 0;
+        /* fermo la musica e spengo anche lo schermo acceso. Uso le funzioni
+           vere (non simulo un tocco sul bottone): cosi' l'icona resta
+           coerente e il brano viene segnato come fermato davvero. */
+        try {
+          _vuoleSuonare = false;
+          if (audio && !audio.paused) audio.pause();
+          syncPlayUI();
+        } catch (e) { /* la musica si ferma comunque */ }
+        _schermoVoluto = false;
+        _spegneSchermo();
+        _disegnaTimer();
+        toast("Timer finito: buonanotte");
+      } else {
+        _disegnaTimer();
+      }
+    }, 20000);
+  }
+  _disegnaTimer();
+});
+
+/* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
   let volumeBeforeMute = 100;
   function updateVolumeUI() {
