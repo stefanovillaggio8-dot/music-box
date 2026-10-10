@@ -47,7 +47,7 @@
       { title: "sailor song", file: "songs/track-46.mp3", artist: "gigi perez", profile: "Ste" },
       { title: "nuts", file: "songs/track-47.mp3", artist: "Lil Peep", profile: "Ste" },
       { title: "NEON", file: "songs/track-48.mp3", artist: "Sfera Ebbasta & Shiva", profile: "Ste" },
-
+    { title: "Mostro (Visual)", file: "songs/track-49.mp3", artist: "Kid Yugi", profile: "Ste" },
 ];
 
   const PALETTE = [
