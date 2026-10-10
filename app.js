@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.129";
+  const APP_VERSION = "6.130";
 
   let recovering = false;
   async function selfHeal() {
@@ -6992,8 +6992,9 @@ function _nomePerIlBrano(link, suggerito) {
     const nome = _chiediNome("Come si chiama la playlist?");
     if (!nome) return null;
     const pl = _playlistConNome(nome, "");
-    _aggiornaBadgePlaylist();
-    toast('Playlist "' + pl.name + '" creata. Ora puoi aggiungerci i brani.');
+      _aggiornaBadgePlaylist();
+      _salvaPlaylistCondivise();
+      toast('Playlist "' + pl.name + '" creata. Ora puoi aggiungerci i brani.');
     apriPanelPlaylist();
     return pl;
   }
@@ -7011,8 +7012,9 @@ function _nomePerIlBrano(link, suggerito) {
     const nome = _chiediNome(testo);
     if (!nome) return;
     const pl = _playlistConNome(nome, trackId);
-    _aggiornaBadgePlaylist();
-    toast('"' + t.title + '" aggiunto a "' + pl.name + '"');
+      _aggiornaBadgePlaylist();
+      _salvaPlaylistCondivise();
+      toast('"' + t.title + '" aggiunto a "' + pl.name + '"');
   }
 
   /* Toglie un brano dalla playlist. I brani NON vengono tolti da nessun
@@ -7022,8 +7024,9 @@ function _nomePerIlBrano(link, suggerito) {
     if (!pl || !pl.tracks) return;
     const cEra = pl.tracks.includes(trackId);
     pl.tracks = pl.tracks.filter((id) => id !== trackId);
-    saveCurrentState();
-    if (cEra) {
+      saveCurrentState();
+      _salvaPlaylistCondivise();
+      if (cEra) {
       const t = tracks.find((x) => x.id === trackId);
       toast('"' + (t ? t.title : "Brano") + '" tolto da "' + pl.name + '"');
     }
@@ -7146,6 +7149,7 @@ function _nomePerIlBrano(link, suggerito) {
         if (!va) return;
         playlists = playlists.filter((p) => p.id !== pl.id);
         saveCurrentState();
+        _salvaPlaylistCondivise();
         renderPlaylist();
         _aggiornaBadgePlaylist();
         toast('Playlist "' + pl.name + '" eliminata');
@@ -7434,7 +7438,58 @@ $("btnTimer").addEventListener("click", () => {
   _disegnaTimer();
 });
 
-/* ---------- Volume ---------- */
+  /* ---------- Le playlist seguono il brano su ogni dispositivo ----------
+     Prima stavano solo dentro il telefono: creavi una playlist sul telefono
+     e non la vedevi da nessun'altra parte. Adesso stanno in un file del sito
+     (playlist.json): sono le stesse ovunque, e cambiando telefono ci sono
+     ancora. Se il servizio non e' attivo su questa pagina, funziona tutto
+     come prima, solo in locale. */
+
+  async function _caricaPlaylistCondivise() {
+    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
+    let arrivate = [];
+    try {
+      const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
+        headers: { "x-chiave": CHIAVE_PUBBLICA }, cache: "no-store"
+      });
+      if (!r.ok) return;
+      const j = await r.json();
+      arrivate = Array.isArray(j && j.playlist) ? j.playlist : [];
+    } catch (e) { return; }
+
+    /* Quelle che ho qui sono le piu' fresche: se la stessa playlist e' anche
+       nel sito, tengo la mia. Cosi' una cancellazione fatta qui si propaga e
+       non viene ricreata al riavvio. */
+    let nuove = 0;
+    for (const p of arrivate) {
+      if (!p || !p.name) continue;
+      if (_playlistCercata(p.name)) continue;
+      playlists.push({
+        id: String(p.id || ("pl-" + String(p.name).toLowerCase().replace(/\s+/g, "-"))),
+        name: String(p.name).slice(0, 60),
+        tracks: (Array.isArray(p.tracks) ? p.tracks : []).filter((t) => /^b-track-\d+$/.test(String(t)))
+      });
+      nuove++;
+    }
+    if (nuove) {
+      saveCurrentState();
+      _aggiornaBadgePlaylist();
+    }
+    segnalaErrore("playlist: " + playlists.length + " in tutto, " + nuove + " arrivate dagli altri dispositivi");
+  }
+
+  async function _salvaPlaylistCondivise() {
+    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
+    try {
+      await fetch(SERVIZIO_PUBBLICA + "/playlist", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
+        body: JSON.stringify({ playlist: playlists })
+      });
+    } catch (e) { /* senza rete le playlist restano pero' nel telefono */ }
+  }
+
+  /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
   let volumeBeforeMute = 100;
   function updateVolumeUI() {
@@ -7505,7 +7560,7 @@ $("btnTimer").addEventListener("click", () => {
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); }, 1600);
+  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); }, 1600);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);
