@@ -49,6 +49,7 @@
       { title: "NEON", file: "songs/track-48.mp3", artist: "Sfera Ebbasta & Shiva", profile: "Ste" },
     { title: "Mostro (Visual)", file: "songs/track-49.mp3", artist: "Kid Yugi", profile: "Ste" },
     { title: "gianluca grignani", file: "songs/track-50.mp3", artist: "la mia storia tra le dita", profile: "Ste" },
+    { title: "Animal I Have Become", file: "songs/track-51.mp3", artist: "Three Days Grace", profile: "Ste" },
 ];
 
   const PALETTE = [
