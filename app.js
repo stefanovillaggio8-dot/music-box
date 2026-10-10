@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.127";
+  const APP_VERSION = "6.128";
 
   let recovering = false;
   async function selfHeal() {
@@ -5294,8 +5294,16 @@ segnalaErrore("conversione fallita: " + String((err && err.message) || err).slic
     // dichiaro lo stato PRIMA dei tasti: i tasti lo richiamano al click
     const stato = statoPonte(gruppo);
     scriviStatoPonte(stato, "controllo il PC...");
-    nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, CARTELLA_PREDEFINITA, stato),
-      "btn-mini-auto", "Scarico e converto io col PC: il brano va in libreria e resta su tutti i dispositivi");
+nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, CARTELLA_PREDEFINITA, stato),
+        "btn-mini-auto", "Scarico e converto io col PC: il brano va in libreria e resta su tutti i dispositivi");
+      /* Aggiungere da YouTube direttamente da qui: il nome lo so gia' (e' il
+         brano che sto cercando), quindi non devo riscriverlo. */
+      nuovoBottone(gruppo, "Aggiungi da YouTube", () => {
+        $("quickPanel").hidden = true;
+        _aggiungiDaYouTube([(item.artista || ""), (item.titolo || "")].join(" - ")
+          .replace(/^\s*-\s*/, "").replace(/\s*-\s*$/, "").trim());
+      }, "btn-mini-auto",
+        "Prendo il link dagli appunti e aggiungo questo brano: col PC acceso subito, col PC spento in coda");
     // un tasto per ogni profilo: oltre che in libreria salvo una copia nella
     // sua cartella mp3 sul PC. Prima erano due scritti a mano.
     for (const p of PROFILI) {
@@ -6732,17 +6740,23 @@ $("btnFavFilter").addEventListener("click", () => {
     });
   }
 
-  function _nomePerIlBrano(link, suggerito) {
-    const dentro = /youtu\.be\/|v=|shorts\//i.test(link);
+function _nomePerIlBrano(link, suggerito) {
     const già = String(suggerito || "").trim();
-    if (gia) return già;
+    if (già) return già;
     let scritto = "";
-    try { scritto = String(prompt("Come si chiama questo brano? Scrivi \"Artista - Titolo\"", "") || "").trim(); } catch (e) { /* noop */ }
+    try {
+      /* Propongo l'ultimo nome usato: cosi' nella maggior parte dei casi
+         basta confermarlo e non riscrivere tutto da capo. */
+      scritto = String(prompt("Come si chiama questo brano? Scrivi \"Artista - Titolo\"",
+        String(LS.get("mb.ultimoNome", "") || "")) || "").trim();
+    } catch (e) { /* noop */ }
     if (scritto) return scritto;
-    return dentro ? "brano da YouTube" : "";
+    return /youtu\.be\/|v=|shorts\//i.test(link) ? "brano da YouTube" : "";
   }
 
-  async function _aggiungiDaYouTube() {
+  /* Se arrivo da una canzone gia' cercata, il nome lo so gia': lo uso
+     quello e non chiedo niente. */
+  async function _aggiungiDaYouTube(suggerito) {
     let link = await _leggiLinkDagliAppunti();
     if (!/youtu\.be\/|youtube\.com\/(watch|shorts)|[?&]v=/i.test(link)) {
       try {
@@ -6754,8 +6768,9 @@ $("btnFavFilter").addEventListener("click", () => {
       toast("Serve un link di YouTube: su YouTube tocca Condividi e poi Copia link");
       return;
     }
-    const nome = _nomePerIlBrano(link);
+    const nome = _nomePerIlBrano(link, suggerito);
     if (!nome) { toast("Scrivi il nome del brano, altrimenti non lo metto in libreria"); return; }
+    try { LS.set("mb.ultimoNome", nome); } catch (e) { /* noop */ }
 
     const cartella = CARTELLA_PREDEFINITA === "ari" ? "ari"
       : (CARTELLA_PREDEFINITA === "emanuela" ? "emanuela" : "ste");
@@ -6817,6 +6832,35 @@ $("btnFavFilter").addEventListener("click", () => {
     }
   }
   $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
+
+  /* Quanti link sono in coda, cioè brani che ho mandato e che il computer
+     scaricera' quando si accende. Serve a non chiedersi "ma e' arrivato?".
+     Se il servizio non e' attivo su questa pagina, semplicemente non
+     mostrare niente invece di dare fastidio. */
+  let _codaAggiornata = 0;
+  async function _aggiornaCoda() {
+    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
+    try {
+      const r = await fetch(SERVIZIO_PUBBLICA + "/coda", {
+        headers: { "x-chiave": CHIAVE_PUBBLICA }, cache: "no-store"
+      });
+      if (!r.ok) return;
+      const j = await r.json();
+      const n = Array.isArray(j && j.voci) ? j.voci.length : 0;
+      _codaAggiornata = n;
+      const b = $("btnCondividi");
+      const badge = $("condividiBadge");
+      if (badge && b && !b.hidden) {
+        const altro = _quantiNonCondivisi();
+        if (n > 0) { badge.textContent = String(altro + n > 9 ? "9+" : altro + n); }
+      }
+      if (n > 0) {
+        toast(n === 1
+          ? "1 brano in coda: entra in libreria quando il computer si accende"
+          : n + " brani in coda: entrano in libreria quando il computer si accende", 5000);
+      }
+    } catch (e) { /* senza rete non aggiorno: pazienza */ }
+  }
 
   /* La casella per mettere la chiave del servizio. Se la chiave c'e' gia'
      non si vede: e' una cosa da fare una volta sola. */
@@ -7349,7 +7393,10 @@ $("btnFavFilter").addEventListener("click", () => {
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); }, 1600);
+  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); }, 1600);
+  /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
+     cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
+  setInterval(() => { _aggiornaCoda(); }, 120000);
   _avviaStatistiche();
   /* Il numero della versione sempre visibile in alto: e' successo piu' volte
      che il browser restava su una versione vecchia e sembrava che gli
