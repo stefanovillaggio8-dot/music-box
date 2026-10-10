@@ -1805,3 +1805,43 @@ li.appena-aggiunto {
 .confirm-no:active { transform: scale(.99); }
 /* numero di playlist con il pallino */
 #playlistBadge { position: absolute; top: -3px; right: -3px; }
+
+/* ---------- La casella della chiave del servizio ----------
+   Serve per mettere (una volta sola) la chiave che permette di pubblicare
+   le canzoni col computer spento. Nascosta se la chiave c'e' gia'. */
+.menu-altro-casella {
+  padding: 12px 13px 14px;
+  margin: 4px 0 10px;
+  background: rgba(176, 107, 255, .08);
+  border: 1px solid rgba(176, 107, 255, .32);
+  border-radius: 15px;
+}
+.menu-altro-titolo { font-size: 14px; font-weight: 800; color: var(--txt); }
+.menu-altro-testo { font-size: 12.5px; line-height: 1.5; color: var(--muted); margin: 6px 0 10px; }
+.menu-altro-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--txt);
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 12px;
+}
+.menu-altro-input:focus { outline: none; border-color: var(--accent); }
+.menu-altro-ok {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 8px;
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #05070c;
+  background: var(--accent);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.menu-altro-ok:active { transform: scale(.99); }
+.menu-altro-stato { font-size: 12.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }

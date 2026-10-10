@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.125";
+  const APP_VERSION = "6.126";
 
   let recovering = false;
   async function selfHeal() {
@@ -6707,6 +6707,44 @@ $("btnFavFilter").addEventListener("click", () => {
     $("btnStatistiche").addEventListener("click", apriStatistiche);
   $("btnCreaPlaylist").addEventListener("click", () => { _chiudiAltro(); creaPlaylist(); });
   $("btnCondividi").addEventListener("click", () => { _chiudiAltro(); _condividiAdesso(); });
+
+  /* La casella per mettere la chiave del servizio. Se la chiave c'e' gia'
+     non si vede: e' una cosa da fare una volta sola. */
+  function _preparaCasellaServizio() {
+    const box = $("casellaServizio");
+    if (!box) return;
+    const gia = !!CHIAVE_PUBBLICA;
+    box.hidden = gia;
+    const inp = $("inChiave");
+    if (inp) inp.value = CHIAVE_PUBBLICA;
+  }
+  $("btnSalvaChiave").addEventListener("click", async () => {
+    const inp = $("inChiave");
+    const stato = $("statoServizio");
+    const v = String((inp && inp.value) || "").trim();
+    if (!v) { if (stato) stato.textContent = "Scrivi prima la chiave."; return; }
+    LS.set("mb.chiave", v);
+    /* riprovo subito con la chiave nuova: se il servizio non la accetta,
+       lo dico subito invece di lasciare l'utente a scoprircelo dopo */
+    try {
+      const r = await fetch(SERVIZIO_PUBBLICA + "/aggiungi", {
+        method: "POST",
+        headers: { "content-type": "audio/mpeg", "x-chiave": v, "x-nome": "prova" },
+        body: new Uint8Array(1024)
+      });
+      if (r.status === 401) {
+        if (stato) stato.textContent = "Chiave sbagliata: copiala di nuovo.";
+        LS.set("mb.chiave", "");
+        return;
+      }
+      if (inp) inp.value = "";
+      _preparaCasellaServizio();
+      toast("Servizio attivato: ora le canzoni si pubblicano anche col computer spento", 5000);
+    } catch (e) {
+      LS.set("mb.chiave", "");
+      if (stato) stato.textContent = "Non riesco a parlare col servizio. Riprova fra poco.";
+    }
+  });
   $("btnPlaylist").addEventListener("click", () => { _playlistAperta = ""; apriPanelPlaylist(); });
   $("btnNuovaPlaylist").addEventListener("click", () => creaPlaylist());
   $("btnTornaDallePlaylist").addEventListener("click", () => chiudiPanelPlaylist());
@@ -7201,7 +7239,7 @@ $("btnFavFilter").addEventListener("click", () => {
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); }, 1600);
+  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); }, 1600);
   _avviaStatistiche();
   /* Il numero della versione sempre visibile in alto: e' successo piu' volte
      che il browser restava su una versione vecchia e sembrava che gli
