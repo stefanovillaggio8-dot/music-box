@@ -350,5 +350,13 @@
     "album": "Meteora",
     "source": "Deezer",
     "date": "2026-10-10T14:30:32.020Z"
+  },
+  "linkinparkwhativedone": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/2dd699adcd68089f49f3ab558a2bd296/1000x1000-000000-80-0-0.jpg",
+    "title": "What I've Done",
+    "artist": "Linkin Park",
+    "album": "Minutes to Midnight",
+    "source": "Deezer",
+    "date": "2026-10-10T14:30:34.548Z"
   }
 }
