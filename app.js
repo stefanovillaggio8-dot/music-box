@@ -59,7 +59,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.123";
+  const APP_VERSION = "6.124";
 
   let recovering = false;
   async function selfHeal() {
@@ -4799,7 +4799,17 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
      127.0.0.1 sarebbe il telefono stesso, quindi provo piu' indirizzi.
      Resto solo su 127.0.0.1 e sull'indirizzo privato: mai su 0.0.0.0, che
      aprirebbe il programma a chiunque sia sul Wi-Fi. */
-  const INDIRIZZI_PONTE = ["http://127.0.0.1:8788", "http://100.106.211.2:8788"];
+  /* Gli indirizzi dove provo a trovare il programma sul computer, in
+     ordine. Il primo che risponde vince e viene usato per tutto il resto.
+
+     - 127.0.0.1: quando la pagina e' aperta sul computer stesso
+     - 192.168.1.2: il computer sulla rete di casa, cioe' quello che
+       interessa quando l'apro dal telefono collegato al Wi-Fi di casa
+     - 100.106.211.2: quello di Tailscale, per quando si usa la rete privata
+
+     Prima mancava quello di casa: dal telefono non riuscivo a trovare il
+     programma del computer e i brani non venivano condivisi. */
+  const INDIRIZZI_PONTE = ["http://127.0.0.1:8788", "http://192.168.1.2:8788", "http://100.106.211.2:8788"];
   let ponteCheRisponde = "";
   let ponteCache = null;
   let segnalatoIndirizzo = "";
@@ -7024,9 +7034,9 @@ $("btnFavFilter").addEventListener("click", () => {
     const sicura = !!window.isSecureContext;
     if (sicura) {
       toast("Qui non posso parlare col computer: pagina sicura. Apri l'app da " +
-        "http://100.106.211.2:8168 e il brano sale da solo", 9000);
+        "http://192.168.1.2:8168 e il brano sale da solo", 9000);
     } else {
-      toast("Il computer non risponde. Sei connesso a Tailscale? " +
+      toast("Il computer non risponde. Sei sulla stessa rete di casa? " +
         "Oppure salva il brano in D:\\Musica\\musica mp3 ste", 9000);
     }
     segnalaErrore("condivisione non riuscita: pagina " +
