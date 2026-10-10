@@ -52,6 +52,7 @@
     { title: "Animal I Have Become", file: "songs/track-51.mp3", artist: "Three Days Grace", profile: "Ste" },
     { title: "Somewhere I Belong", file: "songs/track-52.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "What I've Done", file: "songs/track-53.mp3", artist: "Linkin Park", profile: "Ste" },
+    { title: "Smells Like Teen Spirit", file: "songs/track-54.mp3", artist: "Nirvana", profile: "Ste" },
 ];
 
   const PALETTE = [

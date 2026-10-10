@@ -358,5 +358,13 @@
     "album": "Minutes to Midnight",
     "source": "Deezer",
     "date": "2026-10-10T14:30:34.548Z"
+  },
+  "nirvanasmellsliketeenspirit": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f0282817b697279e56df13909962a54a/1000x1000-000000-80-0-0.jpg",
+    "title": "Smells Like Teen Spirit",
+    "artist": "Nirvana",
+    "album": "Nevermind (Remastered)",
+    "source": "Deezer",
+    "date": "2026-10-10T14:30:51.836Z"
   }
 }
