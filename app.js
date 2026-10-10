@@ -59,6 +59,7 @@
     { title: "Bring Me To Life", file: "songs/track-58.mp3", artist: "Evanescence", profile: "Ste" },
     { title: "Sweet Child O' Mine", file: "songs/track-59.mp3", artist: "Guns N' Roses", profile: "Ste" },
     { title: "Crawling", file: "songs/track-60.mp3", artist: "Linkin Park", profile: "Ste" },
+    { title: "All I Wanted", file: "songs/track-61.mp3", artist: "Paramore", profile: "Ste" },
 ];
 
   const PALETTE = [
