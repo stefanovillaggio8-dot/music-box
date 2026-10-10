@@ -49,7 +49,7 @@
       { title: "NEON", file: "songs/track-48.mp3", artist: "Sfera Ebbasta & Shiva", profile: "Ste" },
     { title: "Mostro (Visual)", file: "songs/track-49.mp3", artist: "Kid Yugi", profile: "Ste" },
 
-          { title: "ZZPROVA COLLAUDO", file: "songs/track-50.mp3", artist: "senza artista", profile: "Ste" },];
+  ];
 
   const PALETTE = [
     "linear-gradient(135deg,#b06bff,#4fc3ff)",
@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.124";
+  const APP_VERSION = "6.125";
 
   let recovering = false;
   async function selfHeal() {
@@ -6084,7 +6084,8 @@ function toast(msg, durata) {
     if (m.contains(e.target)) {
       if (e.target.closest && e.target.closest("button")) _chiudiAltro();
     }
-  });
+  });
+
   document.addEventListener("keydown", (e) => {
     const m = $("menuAltro");
     if (!m || m.hidden) return;
@@ -7046,21 +7047,87 @@ $("btnFavFilter").addEventListener("click", () => {
   }
 
   /* Il bottone: manda subito tutti i brani solo di questo telefono. */
+/* Il posto dove il telefono manda le canzoni quando il computer e' spento.
+     Se non e' impostato (perche' la pagina e' aperta su un computer diverso,
+     o il servizio non esiste ancora) la condivisione semplice funziona lo
+     stesso e non succede niente di rotto. */
+  const SERVIZIO_PUBBLICA = LS.get("mb.servizio", "https://musicbox-dal-telefono.stefanovillaggio8.workers.dev");
+  const CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
+
+  /* Il brano arriva sul sito da solo, senza che il computer sia acceso.
+     Restituisce l'indirizzo del brano cosi' l'app lo suona subito. */
+  async function _pubblicaSulSito(r) {
+    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
+      throw new Error("il servizio non e' attivo su questa pagina");
+    }
+    const nome = [(r.artist || ""), (r.title || "")].join(" - ")
+      .replace(/^\s*-\s*/, "").replace(/\s*-\s*$/, "").trim() || "brano";
+    /* I dati vanno nelle intestazioni, non nell'indirizzo: con i parametri
+       nell'indirizzo il caricamento si bloccava (provarlo e' costato una
+       mezz'ora, me lo ricordo). */
+    const risp = await fetch(SERVIZIO_PUBBLICA + "/aggiungi", {
+      method: "POST",
+      headers: {
+        "content-type": "audio/mpeg",
+        "x-chiave": CHIAVE_PUBBLICA,
+        "x-nome": nome,
+        "x-profilo": CARTELLA_PREDEFINITA === "ari" ? "Ari"
+          : (CARTELLA_PREDEFINITA === "emanuela" ? "Emanuele" : "Ste")
+      },
+      body: r.blob
+    });
+    if (!risp.ok) {
+      let perche = "il programma ha risposto " + risp.status;
+      try { const j = await risp.json(); if (j && j.errore) perche = j.errore; } catch (e) { /* noop */ }
+      throw new Error(perche);
+    }
+    return await risp.json();
+  }
+
   async function _condividiAdesso() {
     const b = $("btnCondividi");
     if (b) { b.disabled = true; }
     try {
-      toast("Sto mandando i brani al computer...");
-      await _aggiornaNonCondivisi();
-      const n = _quantiNonCondivisi();
-      if (!n) { toast("Non ci sono brani da mandare"); return; }
+      const daMandare = await _braniDaMandare();
+      if (!daMandare.length) { toast("Non ci sono brani da mandare"); return; }
+      toast("Sto pubblicando " + daMandare.length + " brani...");
+      /* Prima provo col computer acceso: e' piu' veloce e mantiene anche la
+         copia nella cartella. Se il computer non c'e', vado sul servizio. */
       const online = await ponteOnline();
-      if (!online) { _spiegaPercheNonVa(); return; }
-      await condividiBraniLocali();
-      setTimeout(_aggiornaNonCondivisi, 4000);
+      if (online) {
+        await condividiBraniLocali();
+        setTimeout(_aggiornaNonCondivisi, 4000);
+        return;
+      }
+      let fatti = 0;
+      const problemi = [];
+      for (const r of daMandare) {
+        try {
+          await _pubblicaSulSito(r);
+          r.condiviso = true;
+          try { await dbPut(r); } catch (e2) { /* va bene anche senza */ }
+          fatti++;
+        } catch (e) {
+          problemi.push(String((e && e.message) || e).slice(0, 60));
+        }
+      }
+      toast(fatti
+        ? "Pubblicati " + fatti + (fatti === 1 ? " brano" : " brani") + ": sono sul sito e si sentono subito"
+        : "Pubblicazione fallita: " + (problemi[0] || "errore sconosciuto"), problemi.length ? 7000 : 0);
+      await _aggiornaNonCondivisi();
     } finally {
       if (b) { b.disabled = false; }
     }
+  }
+
+  /* I brani che ho qui e che il computer (o il sito) non hanno ancora. */
+  async function _braniDaMandare() {
+    if (!db) return [];
+    try {
+      const tutti = await dbAll();
+      return (tutti || []).filter((r) => r && r.blob && r.blob.size && !r.condiviso &&
+        !eGiaCondiviso({ title: r.title, artist: r.artist }));
+    } catch (e) { return []; }
   }
 
   /* ---------- Volume ---------- */
