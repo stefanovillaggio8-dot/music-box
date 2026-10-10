@@ -60,7 +60,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.126";
+  const APP_VERSION = "6.127";
 
   let recovering = false;
   async function selfHeal() {
@@ -6707,6 +6707,116 @@ $("btnFavFilter").addEventListener("click", () => {
     $("btnStatistiche").addEventListener("click", apriStatistiche);
   $("btnCreaPlaylist").addEventListener("click", () => { _chiudiAltro(); creaPlaylist(); });
   $("btnCondividi").addEventListener("click", () => { _chiudiAltro(); _condividiAdesso(); });
+
+  /* ---------- Aggiungere una canzone dal link di YouTube ----------
+     Prima si faceva a mano: copiavo il link, aprivo un sito per convertire,
+     scaricavo il file e lo importavo. Adesso:
+     - copio il link su YouTube e torno qui;
+     - tocco questo bottone;
+     - se il computer e' acceso scarica lui e la mette in libreria;
+     - se e' spento, il link resta in coda e quando si accende fa da solo. */
+  function _leggiLinkDagliAppunti() {
+    /* su iPhone funziona solo se lo chiedo mentre l'utente tocca il bottone,
+       ed e' esattamente quello che facciamo. Se il browser lo rifiuta,
+       chiedo il link a mano invece di lasciare l'utente fermo. */
+    return new Promise((ok) => {
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.readText) return ok("");
+        const t = navigator.clipboard.readText();
+        if (t && typeof t.then === "function") {
+          t.then((v) => ok(String(v || "").trim()), () => ok(""));
+          return;
+        }
+        ok(String(t || "").trim());
+      } catch (e) { ok(""); }
+    });
+  }
+
+  function _nomePerIlBrano(link, suggerito) {
+    const dentro = /youtu\.be\/|v=|shorts\//i.test(link);
+    const già = String(suggerito || "").trim();
+    if (gia) return già;
+    let scritto = "";
+    try { scritto = String(prompt("Come si chiama questo brano? Scrivi \"Artista - Titolo\"", "") || "").trim(); } catch (e) { /* noop */ }
+    if (scritto) return scritto;
+    return dentro ? "brano da YouTube" : "";
+  }
+
+  async function _aggiungiDaYouTube() {
+    let link = await _leggiLinkDagliAppunti();
+    if (!/youtu\.be\/|youtube\.com\/(watch|shorts)|[?&]v=/i.test(link)) {
+      try {
+        const scritto = String(prompt("Incolla qui il link di YouTube", link || "") || "").trim();
+        link = scritto;
+      } catch (e) { /* noop */ }
+    }
+    if (!/youtu\.be\/|youtube\.com\/(watch|shorts)|[?&]v=/i.test(link)) {
+      toast("Serve un link di YouTube: su YouTube tocca Condividi e poi Copia link");
+      return;
+    }
+    const nome = _nomePerIlBrano(link);
+    if (!nome) { toast("Scrivi il nome del brano, altrimenti non lo metto in libreria"); return; }
+
+    const cartella = CARTELLA_PREDEFINITA === "ari" ? "ari"
+      : (CARTELLA_PREDEFINITA === "emanuela" ? "emanuela" : "ste");
+
+    /* Se il computer e' acceso: scarica subito, e' piu' veloce. */
+    if (await ponteOnline()) {
+      toast("Sto scaricando " + nome + "...");
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      try {
+        const r = await fetch(base + "/convert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: link, cartella: cartella, titolo: nome })
+        });
+        if (!r.ok) {
+          let perche = "non riesco a scaricare (" + r.status + ")";
+          try { const j = await r.json(); if (j && j.errore) perche = j.errore; } catch (e) { /* noop */ }
+          toast(perche, 6000);
+          segnalaErrore("aggiunta da youtube fallita: " + perche);
+          return;
+        }
+        /* il PC ha gia' messo il brano nella cartella: non serve tenere
+           l'mp3 qui, occuperebbe spazio e creerebbe un doppione */
+        await r.arrayBuffer();
+        toast("Fatto: " + nome + " e' in libreria. Se non la vedi subito, aspetta un minuto e ricarica");
+        segnalaErrore("aggiunta da youtube riuscita: " + nome);
+        return;
+      } catch (e) {
+        /* il computer si e' spento proprio adesso: passo dalla coda */
+      }
+    }
+
+    /* Computer spento: il link resta in coda e viene scaricato all'accensione. */
+    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
+      _spiegaPercheNonVa();
+      return;
+    }
+    try {
+      const r = await fetch(SERVIZIO_PUBBLICA + "/link", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-chiave": CHIAVE_PUBBLICA,
+          "x-link": link,
+          "x-nome": nome,
+          "x-profilo": cartella
+        }
+      });
+      if (!r.ok) {
+        let perche = "non riesco a mettere in coda (" + r.status + ")";
+        try { const j = await r.json(); if (j && j.errore) perche = j.errore; } catch (e) { /* noop */ }
+        toast(perche, 6000);
+        return;
+      }
+      toast("Messo in coda: " + nome + " entra in libreria quando il computer si accende", 6000);
+      segnalaErrore("link in coda: " + nome);
+    } catch (e) {
+      toast("Non riesco a parlare col servizio. Riprova quando hai rete.");
+    }
+  }
+  $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
 
   /* La casella per mettere la chiave del servizio. Se la chiave c'e' gia'
      non si vede: e' una cosa da fare una volta sola. */
