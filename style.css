@@ -826,7 +826,10 @@ body.no-scroll { overflow: hidden; }
 .confirm-overlay {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  /* Sopra tutto. Il riquadro "rimettili in lista" sta a 99 e finiva
+     SOPRA questa finestra: copriva i bottoni e non si poteva ne' confermare
+     ne' annullare (l'utente non poteva piu' premere nulla). */
+  z-index: 120;
   background: rgba(8,8,12,.72);
   display: flex;
   align-items: center;
