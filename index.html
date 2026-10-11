@@ -356,6 +356,20 @@
     </div>
   </div>
 
+  <!-- Quando un brano e' in una playlist, chiedere cosa fare: toglierlo solo
+       dalla libreria, solo dalle playlist, o da entrambe. Senza questo si
+       nascondeva il brano e non si capiva piu' nulla delle playlist. -->
+  <div class="confirm-overlay" id="scopePanel" hidden>
+    <div class="confirm-card">
+      <p class="confirm-title" id="scopeTitle">Cosa vuoi togliere?</p>
+      <p class="confirm-msg" id="scopeMsg"></p>
+      <div class="scope-scelte" id="scopeScelte"></div>
+      <div class="confirm-actions">
+        <button class="btn-ghost" id="scopeAnnulla" type="button">Annulla</button>
+      </div>
+    </div>
+  </div>
+
   <div class="confirm-overlay" id="confirmPanel" hidden>
     <div class="confirm-card">
       <p class="confirm-title" id="confirmTitle">Confermi?</p>

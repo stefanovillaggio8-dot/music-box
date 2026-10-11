@@ -73,7 +73,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.131";
+  const APP_VERSION = "6.132";
 
   let recovering = false;
   async function selfHeal() {
@@ -1568,27 +1568,6 @@ const ORDINAMENTI = [
     return scored.map((x) => x.t);
   }
 
-  async function hideTrack(id) {
-    const t = tracks.find((x) => x.id === id);
-    if (!t) return;
-    /* Niente virgolette curve: una volta un carattere rotto era finito qui
-       dentro e il messaggio mostrava quadratini invece delle virgolette. */
-    const msg = t.builtin
-      ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
-      : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
-    const yes = await askConfirm("Togliere dalla lista?", msg, "Togli");
-    if (!yes) return;
-    hiddenTracks.add(id);
-    saveCurrentState();
-    if (currentId === id) {
-      if (audio) audio.pause();
-      currentId = null;
-      setHud();
-    }
-    closeLyrics();
-    render();
-    toast("Brano tolto dalla lista: per rimetterlo usa la riga che compare in alto");
-  }
 
   /* Se un brano e' stato tolto dalla lista DEVE esserci un modo per rimetterlo:
      prima la funzione c'era ma non era collegata a nessun tasto, quindi un brano
@@ -3424,6 +3403,34 @@ if (r.ok && j && j.ok) {
     );
     if (!si) return;
   } else {
+    /* Se il brano e' anche in una playlist, chiedo dove toglierlo: solo
+       dalla libreria (l'bagno per davvero rimane nelle playlist? no: allora
+       niente), solo dalle playlist, o da entrambe. */
+    const nellePlaylist = _playlistCheContengono(id);
+    if (nellePlaylist.length) {
+      const scelta = await _scegliCosaTogliere(id, t.title || "", true);
+      if (!scelta) return;
+      if (scelta === "playlist") {
+        for (const nome of nellePlaylist) {
+          const pl = _playlistCercata(nome);
+          if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+        }
+        saveCurrentState();
+        _salvaPlaylistCondivise();
+        renderPlaylist();
+        _aggiornaBadgePlaylist();
+        toast("Tolto dalle playlist, ma resta nella libreria e sul sito");
+        return;
+      }
+      /* sia "libreria" che "entrambe": le playlist si svuotano comunque,
+         altrimenti resterebbero con un brano che non esiste piu' */
+      for (const nome of nellePlaylist) {
+        const pl = _playlistCercata(nome);
+        if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+      }
+      saveCurrentState();
+      _salvaPlaylistCondivise();
+    }
     const si = await askConfirm(
       "Eliminare per sempre?",
       "\"" + (t.title || "") + "\" verra' cancellato:\n" +
@@ -7500,6 +7507,129 @@ $("btnTimer").addEventListener("click", () => {
         body: JSON.stringify({ playlist: playlists })
       });
     } catch (e) { /* senza rete le playlist restano pero' nel telefono */ }
+  }
+
+  /* ---------- Cosa togliere, quando il brano e' anche in una playlist ----------
+     Prima: un si'/no e basta. Se nascondevi un brano che era in "gym", il
+     brano restava in playlist ma spariva dalla libreria, e sotto compariva
+     "rimettili in lista" senza che si capisse il nesso.
+     Adesso, se il brano e' in almeno una playlist, si sceglie cosa fare. */
+  function _playlistCheContengono(trackId) {
+    return playlists.filter((p) => (p.tracks || []).includes(trackId)).map((p) => p.name);
+  }
+
+  let _scopeResolve = null;
+
+  /* Restituisce "libreria", "playlist", "entrambe" oppure null se annullato. */
+  function _scegliCosaTogliere(trackId, titolo, perDavvero) {
+    const nomi = _playlistCheContengono(trackId);
+    if (!nomi.length) return Promise.resolve("libreria");
+
+    $("scopeTitle").textContent = perDavvero ? "Eliminare per davvero?" : "Togliere questo brano?";
+    const dove = nomi.length === 1
+      ? "e' nella playlist \"" + nomi[0] + "\""
+      : "e' nelle playlist " + nomi.map((n) => "\"" + n + "\"").join(", ");
+    $("scopeMsg").textContent = "'" + titolo + "' " + dove + ". Dimmi dove vuoi toglierlo.";
+
+    const scelte = $("scopeScelte");
+    scelte.innerHTML = "";
+    const voci = [
+      {
+        id: "libreria",
+        testo: "Solo dalla libreria",
+        dove: perDavvero
+          ? "viene eliminato dal sito: tutti gli altri lo perdono davvero"
+          : "scompare dalla tua libreria, resta online e resta nelle playlist",
+        pericolo: perDavvero
+      },
+      {
+        id: "playlist",
+        testo: "Solo dalle playlist",
+        dove: "resta nella libreria, esce solo da " + (nomi.length === 1 ? "playlist" : "playlist"),
+        pericolo: false
+      },
+      {
+        id: "entrambe",
+        testo: "Da entrambi",
+        dove: perDavvero
+          ? "esce dalla libreria e dalle playlist, e viene eliminato dal sito"
+          : "scompare dalla libreria e da tutte le playlist",
+        pericolo: perDavvero
+      }
+    ];
+    for (const v of voci) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "scope-scelta" + (v.pericolo ? " pericolo" : "");
+      b.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z"/></svg>' +
+        "<span><b>" + v.testo + "</b><span class=\"scope-dove\">" + v.dove + "</span></span>";
+      b.addEventListener("click", () => _chiudiScope(v.id));
+      scelte.appendChild(b);
+    }
+    const dove2 = document.createElement("p");
+    dove2.className = "scope-dove-lista";
+    dove2.textContent = "Playlist interessate: " + nomi.join(", ");
+    scelte.appendChild(dove2);
+
+    $("scopePanel").hidden = false;
+    syncNoScroll();
+    return new Promise((r) => { _scopeResolve = r; });
+  }
+
+  function _chiudiScope(scelta) {
+    $("scopePanel").hidden = true;
+    const r = _scopeResolve;
+    _scopeResolve = null;
+    if (r) r(scelta);
+  }
+
+  $("scopeAnnulla").addEventListener("click", () => _chiudiScope(null));
+  $("scopePanel").addEventListener("click", (e) => { if (e.target === $("scopePanel")) _chiudiScope(null); });
+
+  /* Nasconde il brano, togliendolo anche dalle playlist se richiesto. */
+  async function hideTrack(id, scelta) {
+    const t = tracks.find((x) => x.id === id);
+    if (!t) return;
+    /* Senza scelta chiedo: solo se il brano e' in una playlist. */
+    let cosa = scelta || null;
+    if (!cosa) {
+      cosa = await _scegliCosaTogliere(id, t.title, false);
+      if (!cosa) return;
+    }
+    if (cosa === "playlist" || cosa === "entrambe") {
+      for (const p of _playlistCheContengono(id)) {
+        const pl = _playlistCercata(p);
+        if (!pl) continue;
+        pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+      }
+      saveCurrentState();
+      _salvaPlaylistCondivise();
+    }
+    /* "playlist" vuol dire: NON toccare la libreria. */
+    if (cosa === "playlist") {
+      render();
+      renderPlaylist();
+      _aggiornaBadgePlaylist();
+      toast("Tolto dalle playlist, ma resta nella tua libreria");
+      return;
+    }
+    const msg = t.builtin
+      ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
+      : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
+    hiddenTracks.add(id);
+    saveCurrentState();
+    const extra = cosa === "entrambe"
+      ? " E' uscito anche dalle playlist."
+      : " Resta nelle playlist.";
+    toast(msg.slice(0, 90) + extra);
+    if (currentId === id) {
+      if (audio) audio.pause();
+      currentId = null;
+      setHud();
+    }
+    render();
+    renderPlaylist();
+    _aggiornaBadgePlaylist();
   }
 
   /* ---------- Volume ---------- */

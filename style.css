@@ -1848,3 +1848,35 @@ li.appena-aggiunto {
 }
 .menu-altro-ok:active { transform: scale(.99); }
 .menu-altro-stato { font-size: 12.5px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+/* ---------- Scelta di cosa togliere ----------
+   Quando un brano e' anche in una playlist, non basta un si'/no: bisogna
+   poter scegliere se toglierlo dalla libreria, dalle playlist, o da entrambe. */
+.scope-scelte { display: flex; flex-direction: column; gap: 8px; margin: 14px 0 4px; }
+.scope-scelta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 11px 13px;
+  font: inherit;
+  font-size: 14.5px;
+  text-align: left;
+  color: var(--txt);
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.scope-scelta:active { transform: scale(.99); }
+.scope-scelta svg { width: 20px; height: 20px; flex: 0 0 20px; color: var(--accent2); }
+.scope-scelta.pericolo svg { color: var(--danger); }
+.scope-scelta .scope-dove {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.scope-dove-lista { margin-top: 10px; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
