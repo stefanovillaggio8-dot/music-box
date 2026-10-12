@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.135";
+  const APP_VERSION = "6.136";
 
   let recovering = false;
   async function selfHeal() {
@@ -2923,27 +2923,51 @@ function _ripristinaNascosti() {
      Prima scrivevo direttamente tracks[indice].id: se la libreria e' vuota
      (un computer nuovo, o un profilo senza brani, o tutti brani nascosti)
      tracks[0] non esiste e la pagina si fermava con un errore. */
-function idBranoA(indice) {
-  const t = tracks[indice];
-  return (t && t.id) ? t.id : "";
-}
-
-function nextIndex() {
-    if (shuffle && tracks.length > 1) {
-      let n = Math.floor(Math.random() * tracks.length);
-      const cur = tracks.findIndex((x) => x.id === currentId);
-      if (cur >= 0 && tracks.length > 1) {
-        for (let k = 0; k < 20 && n === cur; k++) n = Math.floor(Math.random() * tracks.length);
-      }
-      return n;
+  function idBranoA(indice) {
+      if (indice === null || indice === undefined || indice < 0) return "";
+      /* Leggo dalla stessa lista usata da nextIndex/prevIndex, altrimenti
+         l'indice punta a un brano diverso (e' successo: avanti suonava un
+         brano nascosto perche' gli indici venivano da due liste diverse). */
+      const lista = _listaPerIlSeguito();
+      const t = (lista && lista[indice]) ? lista[indice] : tracks[indice];
+      return (t && t.id) ? t.id : "";
     }
-    const idx = tracks.findIndex((x) => x.id === currentId);
-    return (idx + 1) % Math.max(tracks.length, 1);
+
+  /* Avanti/Indietro devono seguire la lista che sto GUARDANDO, non tutti i
+     brani. Prima usavano "tracks" (tutti), quindi passando da un brano al
+     successivo si sentivano anche quelli nascosti e quelli rimasti solo
+     dentro una playlist: esattamente quello che non voleva Stefano.
+
+     Se sono dentro una playlist, il seguito e' quello della playlist; se
+     sto filtrando (preferiti, mai ascoltati, ricerca) vedo quello che
+     vedo. */
+  function _listaPerIlSeguito() {
+    try { return visibleTracks(); } catch (e) { return tracks; }
+  }
+
+  function nextIndex() {
+    const lista = _listaPerIlSeguito();
+    if (!lista.length) return -1;
+    if (shuffle && lista.length > 1) {
+      let n = Math.floor(Math.random() * lista.length);
+      const cur = lista.findIndex((x) => x.id === currentId);
+      for (let k = 0; k < 20 && n === cur; k++) n = Math.floor(Math.random() * lista.length);
+      return lista[n] ? lista.findIndex((x) => x.id === lista[n].id) : 0;
+    }
+    const idx = lista.findIndex((x) => x.id === currentId);
+    /* Se il brano che sto ascoltando non e' nella lista (l'ho appena tolto,
+       o ero dentro una playlist e ora sono fuori), parto dall'inizio
+       invece di dare un indice a caso. */
+    if (idx < 0) return 0;
+    return (idx + 1) % lista.length;
   }
 
   function prevIndex() {
-    const idx = tracks.findIndex((x) => x.id === currentId);
-    return (idx - 1 + tracks.length) % Math.max(tracks.length, 1);
+    const lista = _listaPerIlSeguito();
+    if (!lista.length) return -1;
+    const idx = lista.findIndex((x) => x.id === currentId);
+    if (idx < 0) return 0;
+    return (idx - 1 + lista.length) % lista.length;
   }
 
   function playNext() {
