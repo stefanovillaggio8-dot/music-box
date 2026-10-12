@@ -2249,11 +2249,22 @@ function handleTime() {
     const a = new Audio();
     a.preload = "metadata";
     a.addEventListener("play", () => {
+    // Un play reale conferma che il cambio sorgente e' terminato.
+    a._mbCambioBrano = false;
     syncPlayUI();
     updateMediaSession();
     _iniziaAscolto();
     });
 a.addEventListener("pause", () => {
+    /*
+      Safari/iOS puo' mettere in pausa l'elemento audio senza passare dal
+      gestore MediaSession. Se la musica doveva continuare, ricordiamo questa
+      pausa come volontaria, evitando che i timer di recupero la riavviino.
+      Non interveniamo durante il cambio di brano o alla fine naturale.
+    */
+    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano) {
+      _pausaVolontaria();
+    }
     syncPlayUI();
     updateMediaSession();
     savePos();
@@ -3016,6 +3027,8 @@ function _ripristinaNascosti() {
       _vuoleSuonare = true;
       _ultimoScorrimento = Date.now();
     }
+    // La pausa generata dal cambio di sorgente non e' una pausa dell'utente.
+    audio._mbCambioBrano = true;
     audio.src = t.url;
     audio.volume = volumePct / 100;
     setHud();
