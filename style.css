@@ -1806,6 +1806,19 @@ li.appena-aggiunto {
   cursor: pointer;
 }
 .confirm-no:active { transform: scale(.99); }
+/* I tasti che agiscono sui brani (nascondere/riportare in libreria) sono
+   pericolosi quanto un'eliminazione: vanno colorati, non grigi come
+   gli altri. */
+.confirm-no.pericolo {
+  color: #fff;
+  background: rgba(255, 255, 255, .05);
+  border-color: rgba(255, 90, 90, .4);
+}
+.confirm-no.torna {
+  color: var(--accent2);
+  background: rgba(79, 195, 255, .1);
+  border-color: rgba(79, 195, 255, .35);
+}
 /* numero di playlist con il pallino */
 #playlistBadge { position: absolute; top: -3px; right: -3px; }
 

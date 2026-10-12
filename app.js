@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.134";
+  const APP_VERSION = "6.135";
 
   let recovering = false;
   async function selfHeal() {
@@ -1563,8 +1563,47 @@ const ORDINAMENTI = [
       return String(a.title || "") < String(b.title || "") ? -1 : 1;
     });
   }
+  /* I brani che l'utente ha deciso di tenere FUORI dalla libreria ma dentro
+     una playlist. Non somigliano ai brani nascosti col menu "Togliere dalla
+     lista": quelli spariscono davvero, questi restano suonabili e si vedono
+     solo quando apri la playlist che li contiene.
+
+     Motivo (l'ha chiesto Stefano): voleva le canzoni della playlist gym
+     non mischiate con le altre, ma senza perderle. */
+  const LS_PLA = "mb.braniInPlaylist";
+  function _braniSoloInPlaylist() {
+    try {
+      const v = LS.get(LS_PLA, "");
+      return new Set(String(v || "").split(",").map((x) => x.trim()).filter(Boolean));
+    } catch (e) { return new Set(); }
+  }
+  let _soloInPlaylist = _braniSoloInPlaylist();
+
+  function _salvaSoloInPlaylist() {
+    try { LS.set(LS_PLA, [..._soloInPlaylist].join(",")); } catch (e) { /* noop */ }
+  }
+
+  /* Mette un brano "solo nella playlist": sparisce dalla libreria ma
+     continua a esistere e a suonare dentro la sua playlist. */
+  function _mettiSoloInPlaylist(id) {
+    if (!id) return false;
+    _soloInPlaylist.add(id);
+    _salvaSoloInPlaylist();
+    return true;
+  }
+  function _togliSoloInPlaylist(id) {
+    if (!id) return false;
+    if (!_soloInPlaylist.delete(id)) return false;
+    _salvaSoloInPlaylist();
+    return true;
+  }
+
   function visibleTracks() {
-    let list = tracks.filter((t) => !hiddenTracks.has(t.id));
+    /* I brani "solo in playlist" escono dalla libreria, tranne quando sto
+       guardando proprio una playlist: li' devono comparire. */
+    const inPlaylist = _soloInPlaylist;
+    let list = tracks.filter((t) => !hiddenTracks.has(t.id) &&
+      (!inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (soloMaiAscoltati) list = list.filter((t) => _ascoltoDi(t).s <= 0);
     /* Se ho scelto una playlist, vedo solo i suoi brani. Funziona insieme
@@ -2669,6 +2708,9 @@ function rebuildAudio(autoplay) {
 
   const ICON_PLAYLIST = "M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z";
   const ICON_QUEUE = "M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z";
+  /* Libreria: la usano i comandi "solo nella playlist" / "torna in
+     libreria", cosi' si distinguono da quelli delle playlist. */
+  const ICON_LIBRARY = "M4 4h4v16H4V4Zm6 0h4v16h-4V4Zm7.2.4 1.4 14.4-4.2 1.4-14.4Z";
 const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z";
   const ICON_NEXT = "M6 5l9 7-9 7V5Zm10 0h2v14h-2V5Z";
   const ICON_HIDE = "M3.3 2 2 3.3l2.4 2.4C2.5 7 1.4 8.7 1 9c1.1 2.3 4 5 7 6l2 2 1.3-1.3 15.4 15.4 1.3-1.3L3.3 2ZM12 5c4.4 0 8 4 8 4-.5 1-1.6 2.4-3.1 3.5l-1.5-1.5c1-.9 1.6-1.9 1.9-2.6-.6-.8-2.6-2.4-5.3-2.4-.4 0-.8 0-1.2.1L9.6 4.9c.8-.1 1.6-.1 2.4-.1Z";
@@ -2690,6 +2732,38 @@ box.innerHTML = "";
       /* La playlist e' una mia scelta, quindi la scelgo da qui: tengo questa
          voce nel menu del brano per decidere in che playlist metterlo. */
       box.appendChild(quickAction("Aggiungi alla playlist", ICON_PLAYLIST, () => aggiungiAPlaylist(t.id)));
+
+  /* "Solo nella playlist": sparisce dalla libreria ma resta suonabile
+     dentro la playlist. Serve a chi ha brani da usare in un momento
+     preciso (allenamento) e non li vuole mischiati con gli altri. */
+  if (_soloInPlaylist.has(t.id)) {
+    box.appendChild(quickAction("Torna in libreria", ICON_LIBRARY, () => {
+      _togliSoloInPlaylist(t.id);
+      _disegnaLinguettePlaylist();
+      render();
+      toast('"' + t.title + '" e\' di nuovo nella libreria');
+    }));
+  } else {
+    const inChePlaylist = _playlistCheContengono(t.id);
+    if (inChePlaylist.length) {
+      box.appendChild(quickAction("Solo nella playlist", ICON_LIBRARY, async () => {
+        const si = await askConfirm(
+          "Solo nella playlist?",
+          '"' + t.title + '" sparisce dalla libreria, ma resta suonabile dentro\n"' +
+            inChePlaylist.join('", "') + '".\n\n' +
+            "Per rivederlo: apri quella playlist. Per riportarlo in libreria: " +
+            "tieni premuto e scegli 'Torna in libreria'.",
+          "Sposta"
+        );
+        if (!si) return;
+        _mettiSoloInPlaylist(t.id);
+        _playlistAttiva = inChePlaylist[0];
+        _disegnaLinguettePlaylist();
+        render();
+        toast('"' + t.title + '" ora si vede solo dentro "' + inChePlaylist[0] + '"');
+      }));
+    }
+  }
     if (t.builtin) {
       const el = document.createElement("button");
       el.className = "quick-btn";
@@ -6815,8 +6889,11 @@ $("btnFavFilter").addEventListener("click", () => {
     render();
   });
   $("btnNuovaPlLing").addEventListener("click", () => {
+    /* Il "+" apre le playlist: da li' crei una nuova e trovi anche i tasti
+       per nasconderla o riportarla in libreria. */
     _disegnaLinguettePlaylist();
-    creaPlaylist();
+    _playlistAperta = "";
+    apriPanelPlaylist();
   });
   $("btnCondividi").addEventListener("click", () => { _chiudiAltro(); _condividiAdesso(); });
 
@@ -7230,6 +7307,68 @@ function _nomePerIlBrano(link, suggerito) {
       indietro.textContent = "Tutte le playlist";
       indietro.addEventListener("click", () => { _playlistAperta = ""; renderPlaylist(); });
       lista.appendChild(indietro);
+
+      /* Creare una playlist anche da qui, cosi' il "+" delle linguette e
+         il menu Altro fanno la stessa cosa. */
+      const nuova = document.createElement("button");
+      nuova.type = "button";
+      nuova.className = "confirm-no torna";
+      nuova.textContent = "Crea una playlist";
+      nuova.addEventListener("click", () => creaPlaylist());
+      lista.appendChild(nuova);
+
+      /* Qui decido IO quale playlist nascondere: il tasto sta dentro la
+         playlist che sto guardando, quindi si vede solo quella e non
+         rischio di nascondere quella sbagliata. */
+      const quanti = (pl.tracks || []).length;
+      if (quanti) {
+        const gia = (pl.tracks || []).filter((id) => _soloInPlaylist.has(id)).length;
+        if (gia < quanti) {
+          const via = document.createElement("button");
+          via.type = "button";
+            via.className = "confirm-no pericolo";
+          via.textContent = "Nascondi i brani di questa playlist dalla libreria (" + (quanti - gia) + ")";
+          via.title = "Restano suonabili qui dentro, ma non li vedi piu' nella libreria. " +
+            "Puoi sempre riportarli indietro da questo stesso posto.";
+          via.addEventListener("click", async () => {
+            const si = await askConfirm(
+              "Nascondere dalla libreria?",
+              "I " + (quanti - gia) + " brani di \"" + pl.name + "\" spariscono dalla libreria.\n\n" +
+              "Restano suonabili qui dentro, e sul sito per gli altri. " +
+              "Per riportarli: apri questa playlist e premi il tasto qui sotto.",
+              "Nascondi"
+            );
+            if (!si) return;
+            for (const id of (pl.tracks || [])) _mettiSoloInPlaylist(id);
+            _disegnaLinguettePlaylist();
+            renderPlaylist();
+            render();
+            toast('I brani di "' + pl.name + '" si vedono solo dentro la playlist');
+          });
+          lista.appendChild(via);
+        }
+        if (gia) {
+          const torna = document.createElement("button");
+          torna.type = "button";
+          torna.className = "confirm-no torna";
+          torna.textContent = "Riporta in libreria (" + gia + ")";
+          torna.title = "Questi brani tornano a comparire nella libreria normale";
+          torna.addEventListener("click", async () => {
+            const si = await askConfirm(
+              "Riportare in libreria?",
+              gia + (gia === 1 ? " brano torna" : " brani tornano") + " nella libreria normale di \"" + pl.name + "\".",
+              "Riporta"
+            );
+            if (!si) return;
+            for (const id of (pl.tracks || [])) _togliSoloInPlaylist(id);
+            _disegnaLinguettePlaylist();
+            renderPlaylist();
+            render();
+            toast(gia + (gia === 1 ? " brano e' di nuovo" : " brani sono di nuovo") + " in libreria");
+          });
+          lista.appendChild(torna);
+        }
+      }
       return;
     }
 
