@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.142";
+  const APP_VERSION = "6.144";
 
   let recovering = false;
   async function selfHeal() {
@@ -105,9 +105,15 @@
     location.reload();
   }
 
+  /* Non cancellare le cache offline a causa di un errore JavaScript generico:
+     potrebbero contenere le canzoni scaricate dall'utente. Gli aggiornamenti
+     vengono gestiti dal service worker e gli errori restano nella console. */
   const startedAt = Date.now();
-  window.addEventListener("error", () => {
-    if (Date.now() - startedAt < 8000) selfHeal();
+  window.addEventListener("error", (event) => {
+    if (Date.now() - startedAt < 8000) {
+      console.warn("Errore durante l'avvio di Music Box; le cache offline sono state conservate.",
+        event && event.message ? event.message : "");
+    }
   });
   const searchEl = $("search");
   const playlistEl = $("playlist");
@@ -2245,26 +2251,69 @@ function handleTime() {
     }
   }
 
+  /* Bridge opzionale per il wrapper iOS nativo: il sito continua a funzionare
+     normalmente in Safari. Nel wrapper invia titolo, artista e posizione al
+     player di sistema, che gestisce i controlli della schermata di blocco. */
+  let _ultimoInvioStatoNativo = 0;
+  function _notificaStatoNativo(forza = false) {
+    try {
+      const bridge = window.webkit && window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.musicBox;
+      if (!bridge) return;
+      const ora = Date.now();
+      if (!forza && ora - _ultimoInvioStatoNativo < 1000) return;
+      _ultimoInvioStatoNativo = ora;
+      const t = current();
+      bridge.postMessage({
+        type: "state",
+        title: t ? t.title : APP_NAME,
+        artist: t ? (t.artist || APP_NAME) : APP_NAME,
+        album: (t && t.album) ? t.album : APP_NAME,
+        playing: !!(audio && !audio.paused),
+        currentTime: audio && isFinite(audio.currentTime) ? audio.currentTime : 0,
+        duration: audio && isFinite(audio.duration) ? audio.duration : 0
+      });
+    } catch (e) { /* bridge assente o non ancora pronto: Safari resta invariato */ }
+  }
+
+  // Punto d'ingresso invocato dal wrapper nativo dopo il caricamento della pagina.
+  window.__musicBoxNativeReady = () => _notificaStatoNativo(true);
+
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
     a.addEventListener("play", () => {
+    // Un play reale conferma che il cambio sorgente e' terminato.
+    a._mbCambioBrano = false;
     syncPlayUI();
     updateMediaSession();
     _iniziaAscolto();
+    _notificaStatoNativo(true);
     });
 a.addEventListener("pause", () => {
+    /*
+      Safari/iOS puo' mettere in pausa l'elemento audio senza passare dal
+      gestore MediaSession. Se la musica doveva continuare, ricordiamo questa
+      pausa come volontaria, evitando che i timer di recupero la riavviino.
+      Non interveniamo durante il cambio di brano o alla fine naturale.
+    */
+    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano) {
+      _pausaVolontaria();
+    }
     syncPlayUI();
     updateMediaSession();
     savePos();
     _chiudiAscolto(false);
+    _notificaStatoNativo(true);
   });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
+    a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
     /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
        evento scatta finche' la musica suona, su computer e su telefono. */
     a.addEventListener("timeupdate", _contaAlMuoversi);
     a.addEventListener("loadedmetadata", handleMetadata);
+    a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
     a.addEventListener("error", handleError);
     return a;
   }
@@ -2565,7 +2614,7 @@ function rebuildAudio(autoplay) {
 
       const testo = document.createElement("div");
       testo.className = "avviso-nascosti-testo";
-      testo.textContent = "Sei sull'icona: qui la musica si sente, ma a canzone finita la successiva non parte, perche' l'iPhone chiude questa app in sottofondo. Aprila dentro Safari (il browser) e va anche a schermo spento.";
+      testo.textContent = "La modalità app web sulla schermata Home può impedire il passaggio automatico al brano successivo in background su iPhone. Per usare l'icona e continuare con Safari: elimina questa icona, apri il sito in Safari, scegli Condividi > Aggiungi alla schermata Home e disattiva 'Apri come app web' se compare.";
 
       const riga = document.createElement("div");
       riga.className = "avviso-nascosti-riga riga-piu";
@@ -3046,6 +3095,8 @@ function _ripristinaNascosti() {
       _vuoleSuonare = true;
       _ultimoScorrimento = Date.now();
     }
+    // La pausa generata dal cambio di sorgente non e' una pausa dell'utente.
+    audio._mbCambioBrano = true;
     audio.src = t.url;
     audio.volume = volumePct / 100;
     setHud();
@@ -3157,6 +3208,40 @@ function _ripristinaNascosti() {
     else _pausaVolontaria();
   }
 
+  /* Comandi ricevuti dal player nativo iOS (solo quando il bridge esiste). */
+  window.addEventListener("musicbox-native-control", (event) => {
+    const detail = (event && event.detail) || {};
+    try {
+      switch (detail.action) {
+        case "play":
+          _riproduciVolontaria();
+          break;
+        case "pause":
+          _pausaVolontaria();
+          break;
+        case "toggle":
+          if (audio && !audio.paused) _pausaVolontaria();
+          else _riproduciVolontaria();
+          break;
+        case "next":
+          playNext();
+          break;
+        case "previous": {
+          const id = idBranoA(prevIndex());
+          if (id) playById(id);
+          break;
+        }
+        case "seek":
+          if (audio && isFinite(Number(detail.time)) && isFinite(audio.duration)) {
+            audio.currentTime = Math.max(0, Math.min(Number(detail.time), audio.duration));
+            updateProgressUI(audio.currentTime, audio.duration);
+            _notificaStatoNativo(true);
+          }
+          break;
+      }
+    } catch (e) { /* controllo remoto non disponibile: nessun effetto su Safari */ }
+  });
+
   function setSvgVisible(el, visible) {
     if (visible) el.removeAttribute("hidden");
     else el.setAttribute("hidden", "");
@@ -3253,6 +3338,7 @@ function _aggiornaPosizioneSchermo() {
     setHandler("seekforward", () => seekBy(15));
     setHandler("stop", () => { _pausaVolontaria(); });
     setPlaybackState(audio && !audio.paused ? "playing" : "paused");
+    _notificaStatoNativo(true);
   }
 
   function totalDuration() {
@@ -6676,13 +6762,17 @@ $("btnFavFilter").addEventListener("click", () => {
     try {
       const keys = await caches.keys();
       if (!keys.length) return null;
-      for (const k of keys) {
+      const versione = (k) => {
+        const m = /-v(\d+)$/.exec(k);
+        return m ? Number(m[1]) : -1;
+      };
+      const recenti = keys.slice().sort((a, b) => versione(b) - versione(a));
+      for (const k of recenti) {
         const c = await caches.open(k);
         const hit = await c.match("app.js");
         if (hit) return c;
       }
-      const recenti = keys.slice().sort();
-      return await caches.open(recenti[recenti.length - 1]);
+      return await caches.open(recenti[0]);
     } catch (e) {
       return null;
     }
