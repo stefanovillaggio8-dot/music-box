@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.140";
+  const APP_VERSION = "6.141";
 
   let recovering = false;
   async function selfHeal() {
@@ -2509,6 +2509,69 @@ function rebuildAudio(autoplay) {
         _mostraAiuto("La musica non e' partita: tocca Continua");
       }
     }, 3000);
+  }
+
+  /* Se Ste apre l'app dall'icona della Home Screen, iPhone la chiude prima,
+     anche mentre la musica suona: il brano corrente va avanti, ma quando
+     finisce il successivo non parte. ApertA dentro Safari invece funziona
+     anche a schermo spento.
+
+     Glielo dico una volta sola, con il link gia' pronto da incollare, cosi'
+     non resta il dubbio di quale delle due usare. */
+  let _avvisoIconaBox = null;
+
+  function _avvisoIcona() {
+    try {
+      const apertaDaIcona =
+        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+        window.navigator.standalone === true;
+      if (!apertaDaIcona) return;
+      if (LS.get("mb.avviso-icona", "") === "si") return;
+      LS.set("mb.avviso-icona", "si");
+      if (_avvisoIconaBox || !document.body) return;
+
+      const box = document.createElement("div");
+      box.className = "avviso-nascosti";
+
+      const testo = document.createElement("div");
+      testo.className = "avviso-nascosti-testo";
+      testo.textContent = "Sei sull'icona: qui la musica si sente, ma a canzone finita la successiva non parte, perche' l'iPhone chiude questa app in sottofondo. Aprila dentro Safari (il browser) e va anche a schermo spento.";
+
+      const riga = document.createElement("div");
+      riga.className = "avviso-nascosti-riga riga-piu";
+
+      const copia = document.createElement("button");
+      copia.type = "button";
+      copia.className = "avviso-nascosti-bottone";
+      copia.textContent = "Copia il link";
+      copia.addEventListener("click", async () => {
+        const link = String(location.href).split("#")[0];
+        try {
+          await navigator.clipboard.writeText(link);
+          copia.textContent = "Copiato: apri Safari e incolla";
+        } catch (e) {
+          copia.textContent = link;
+        }
+      });
+
+      const chiudi = document.createElement("button");
+      chiudi.type = "button";
+      chiudi.className = "avviso-nascosti-bottone torna";
+      chiudi.textContent = "Ho capito";
+      chiudi.addEventListener("click", () => {
+        box.remove();
+        _avvisoIconaBox = null;
+      });
+
+      riga.appendChild(copia);
+      riga.appendChild(chiudi);
+      box.appendChild(testo);
+      box.appendChild(riga);
+      document.body.appendChild(box);
+      _avvisoIconaBox = box;
+      /* se non lo chiude, sparisce da solo: non deve restare li' per sempre */
+      setTimeout(() => { if (_avvisoIconaBox === box) { box.remove(); _avvisoIconaBox = null; } }, 30000);
+    } catch (e) { /* meglio non mostrare nulla che sbagliare */ }
   }
 
   /* Se riprovare non e' servito e il telefono torna in primo piano o Ste
@@ -8311,7 +8374,7 @@ $("btnTimer").addEventListener("click", () => {
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _disegnaLinguettePlaylist(); }, 1600);
+    setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);

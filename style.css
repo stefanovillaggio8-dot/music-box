@@ -1536,13 +1536,13 @@ li.appena-aggiunto {
    Prima compariva una riga blu in alto, staccata dal resto e difficile da
    capire. Ora ha lo stesso tono degli altri avvisi del progetto, sta sopra il
    player (dove stanno gia' gli altri messaggi) e dice anche QUALI brani sono. */
-.avviso-nascosti {
-  position: fixed;
-  left: 8px;
-  right: 8px;
-  bottom: calc(var(--player-h) + env(safe-area-inset-bottom) + 14px);
-  z-index: 99;
-  padding: 11px 13px;
+  .avviso-nascosti {
+      position: fixed;
+      left: 8px;
+      right: 8px;
+      bottom: calc(var(--player-h) + env(safe-area-inset-bottom) + 14px);
+      z-index: 99;
+      padding: 11px 13px;
   color: #ffc46b;
   background: rgba(255, 196, 107, .1);
   border: 1px solid rgba(255, 196, 107, .35);
@@ -2001,3 +2001,8 @@ li.appena-aggiunto {
   user-select: none;
   -webkit-touch-callout: none;
 }
+  /* Avviso "aperta dall'icona": riuso le classi dell'avviso dei brani
+     nascosti, perche' e' la stessa identica cosa da capire. Qui ci metto
+     solo i due pezzi che mancano. */
+  .avviso-nascosti .riga-piu { margin-top: 8px; }
+  .avviso-nascosti .torna { background: rgba(255, 255, 255, .16); color: #fff; }
