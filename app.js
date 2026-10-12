@@ -62,7 +62,12 @@
     { title: "All I Wanted", file: "songs/track-61.mp3", artist: "Paramore", profile: "Ste" },
     { title: "In the End", file: "songs/track-62.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Runaway", file: "songs/track-63.mp3", artist: "Linkin Park", profile: "Ste" },
-];
+          { title: "Albachiara", file: "songs/track-64.mp3", artist: "Vasco Rossi", profile: "Ste" },
+          { title: "Wonderwall NL", file: "songs/track-65.mp3", artist: "senza artista", profile: "Ste" },
+          { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-66.mp3", artist: "Gianluca Grignani", profile: "Ste" },
+          { title: "Chiello", file: "songs/track-67.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
+          { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "senza artista", profile: "Ste" },
+  ];
 
   const PALETTE = [
     "linear-gradient(135deg,#b06bff,#4fc3ff)",
