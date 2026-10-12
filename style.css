@@ -1942,3 +1942,49 @@ li.appena-aggiunto {
   color: var(--muted);
 }
 .pl-dove-sono b { color: var(--txt); }
+/* ---------- Canzoni con lo stesso nome ----------
+   Raggruppa i brani che si somigliano, cosi' si vede subito se quello che
+   stai cercando e' quello giusto. */
+.simili-gruppo {
+  margin-bottom: 14px;
+  padding: 11px 13px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 14px;
+}
+.simili-titolo {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.simili-conto {
+  padding: 2px 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent2);
+  background: rgba(79, 195, 255, .14);
+  border-radius: 999px;
+}
+.simili-riga {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+}
+.simili-artista { font-size: 13.5px; color: var(--txt); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.simili-dove { flex: 0 0 auto; font-size: 11.5px; color: var(--muted); }
+/* le linguette non devono far comparire il menu "copia" dell'iPhone */
+.pl-ling {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}

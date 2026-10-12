@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.133";
+  const APP_VERSION = "6.134";
 
   let recovering = false;
   async function selfHeal() {
@@ -6282,6 +6282,12 @@ $("btnFavFilter").addEventListener("click", () => {
     render();
     });
   $("btnFalliti").addEventListener("click", () => _stampaFalliti());
+  /* Il bottone "Canzoni con lo stesso nome" e il suo pannello. */
+  $("btnSimili").addEventListener("click", () => { _chiudiAltro(); _stampaSimili(); });
+  $("similiClose").addEventListener("click", _chiudiPannelloSimili);
+  $("similiPanel").addEventListener("click", (e) => {
+    if (e.target === $("similiPanel")) _chiudiPannelloSimili();
+  });
   $("fallitiClose").addEventListener("click", _chiudiPannelloFalliti);
   $("fallitiPanel").addEventListener("click", (e) => {
     if (e.target === $("fallitiPanel")) _chiudiPannelloFalliti();
@@ -7742,6 +7748,61 @@ $("btnTimer").addEventListener("click", () => {
   let _playlistAttiva = "";
   let _lingScrollMemoria = 0;
 
+  /* Tenere premuto, come sui brani: se scorre col dito non succede niente,
+     e su iPhone non compare il menu con "copia". */
+  function _premiLungo(el, fai) {
+    if (!el) return;
+    let timer = null;
+    let via = false;
+    const ferma = () => { if (timer) { clearTimeout(timer); timer = null; } };
+    el.addEventListener("pointerdown", (e) => {
+      if (e.button && e.button !== 0) return;
+      via = false;
+      timer = setTimeout(() => { timer = null; via = true; fai(); }, 550);
+      const mosso = (ev) => {
+        if (!timer) return;
+        if (Math.abs((ev.clientX || 0) - (e.clientX || 0)) > 10 ||
+            Math.abs((ev.clientY || 0) - (e.clientY || 0)) > 10) ferma();
+      };
+      const su = () => {
+        ferma();
+        el.removeEventListener("pointermove", mosso);
+        el.removeEventListener("pointerup", su);
+        el.removeEventListener("pointercancel", su);
+      };
+      el.addEventListener("pointermove", mosso);
+      el.addEventListener("pointerup", su);
+      el.addEventListener("pointercancel", su);
+    });
+    /* se e' stato un tocco lungo, il click normale non deve cambiare
+       la playlist selezionata */
+    el.addEventListener("click", (e) => {
+      if (via) { via = false; e.preventDefault(); e.stopPropagation(); }
+    }, true);
+    /* niente menu contestuale del telefono, niente "copia" */
+    el.addEventListener("contextmenu", (e) => e.preventDefault());
+  }
+
+  /* Chiede prima di cancellare: una playlist non e' un brano, ma
+     cancellarla per sbaglio fa perdere il lavoro di ordinarla. */
+  async function _chiediEdEliminaPlaylist(p) {
+    const n = (p.tracks || []).length;
+    const si = await askConfirm(
+      "Eliminare la playlist?",
+      'Playlist "' + p.name + '"' + (n ? " con " + n + (n === 1 ? " brano" : " brani") : "") +
+      ".\n\nLe canzoni NON vengono toccate: restano tutte nella libreria.",
+      "Elimina"
+    );
+    if (!si) return;
+    playlists = playlists.filter((x) => x.id !== p.id);
+    saveCurrentState();
+    _salvaPlaylistCondivise();
+    if (_playlistAttiva === p.name) _playlistAttiva = "";
+    _disegnaLinguettePlaylist();
+    render();
+    toast('Playlist "' + p.name + '" eliminata');
+  }
+
   function _disegnaLinguettePlaylist() {
     const box = $("plLinguette");
     const scroll = $("plLingScroll");
@@ -7761,6 +7822,13 @@ $("btnTimer").addEventListener("click", () => {
         _playlistAttiva = (_playlistAttiva === p.name ? "" : p.name);
         _disegnaLinguettePlaylist();
         render();
+      });
+      /* Tenendo premuto si cancella la playlist. Uguale a come funziona
+         sui brani, e non si copia il testo tenendo premuto su iPhone. */
+      _premiLungo(b, async () => {
+        suppressClick = true;
+        try { navigator.vibrate && navigator.vibrate(8); } catch (e) { /* noop */ }
+        await _chiediEdEliminaPlaylist(p);
       });
       scroll.appendChild(b);
     }
@@ -7791,6 +7859,81 @@ $("btnTimer").addEventListener("click", () => {
       render();
     }
     return ceNeSonno;
+  }
+
+  /* ---------- Canzoni con lo stesso nome ----------
+   Stefano l'ha chiesto perche' temeva doppioni. Serve a vedere le canzoni
+   che si somigliano, cosi' capisci se quella che stai cercando e' quella
+   giusta o un'altra con identico nome. Non sono errori: sono brani diversi
+   con nomi vicini (per esempio lo stesso titolo di due artisti). */
+  function _gruppiSimili() {
+    const perTitolo = new Map();
+    for (const t of tracks) {
+      if (hiddenTracks.has(t.id)) continue;
+      const titolo = stripArtistPrefix(t.artist, t.title) || t.title || "";
+      const k = normKey(titolo);
+      if (!k || k.length < 3) continue;
+      if (!perTitolo.has(k)) perTitolo.set(k, []);
+      perTitolo.get(k).push(t);
+    }
+    /* Solo i gruppi con piu' di un brano, e in ordine di quante copie ne
+       hanno: cosi' in cima ci sono le cose che pesano di piu'. */
+    const gruppi = [...perTitolo.values()].filter((g) => g.length > 1);
+    gruppi.sort((a, b) => b.length - a.length ||
+      String(a[0].title).localeCompare(String(b[0].title)));
+    return gruppi;
+  }
+
+  function _stampaSimili() {
+    const pannello = $("similiPanel");
+    const corpo = $("similiCorpo");
+    if (!pannello || !corpo) return;
+    const gruppi = _gruppiSimili();
+    const nCopie = gruppi.reduce((s, g) => s + g.length, 0);
+    if ($("similiSub")) {
+      $("similiSub").textContent = gruppi.length
+        ? gruppi.length + (gruppi.length === 1 ? " nome si ripete" : " nomi si ripetono") +
+          " fra le tue canzoni (" + nCopie + " brani)"
+        : "Nessuna canzone con lo stesso nome: la libreria e' pulita";
+    }
+    if (!gruppi.length) {
+      corpo.innerHTML = '<div class="stat-lista"><div class="stat-item"><span>Nomi che si ripetono</span><b>0</b></div></div>' +
+        '<p class="nota" style="margin:8px 2px 0">Nella tua libreria non ci sono due canzoni con lo stesso nome. Tutto in ordine.</p>';
+    } else {
+      let html = "";
+      for (const g of gruppi) {
+        html += '<div class="simili-gruppo"><div class="simili-titolo">' +
+          String(g[0].title).replace(/[<>]/g, "") +
+          (g.length > 2 ? " <span class='simili-conto'>x" + g.length + "</span>" : "") + "</div>";
+        for (const t of g) {
+          html += '<div class="simili-riga" data-id="' + String(t.id).replace(/[<>]/g, "") + '">' +
+            '<span class="simili-artista">' + String(t.artist || "senza artista").replace(/[<>]/g, "") + "</span>" +
+            '<span class="simili-dove">' + (t.builtin ? "dalla libreria" : "aggiunta da te") + "</span>" +
+            "</div>";
+        }
+        html += "</div>";
+      }
+      corpo.innerHTML = html;
+    }
+    pannello.hidden = false;
+    syncNoScroll();
+    _aggiornaBadgeSimili();
+  }
+
+  function _chiudiPannelloSimili() {
+    const m = $("similiPanel");
+    if (m) m.hidden = true;
+  }
+
+  function _aggiornaBadgeSimili() {
+    const b = $("similiBadge");
+    if (!b) return;
+    const gruppi = _gruppiSimili();
+    const n = gruppi.reduce((s, g) => s + g.length, 0);
+    b.hidden = !n;
+    b.textContent = n > 9 ? "9+" : String(n);
+    const voce = $("btnSimili");
+    if (voce) voce.classList.toggle("has-falliti", n > 0);
   }
 
   /* ---------- Volume ---------- */

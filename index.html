@@ -359,6 +359,23 @@
     </div>
   </div>
 
+  <!-- Quali canzoni hanno lo stesso nome. Serve per capire se un brano e'
+       davvero quello che cercavi o un altro con identico nome. -->
+  <button class="menu-altro-voce" id="btnSimili" type="button">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm10 10a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM9 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm10-10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
+    <span class="voce-testo">Canzoni con lo stesso nome</span>
+    <span class="logo-badge" id="similiBadge" hidden>0</span>
+  </button>
+
+  <div class="profile-overlay" id="similiPanel" hidden>
+    <div class="profile-card">
+      <p class="import-title">Canzoni con lo stesso nome</p>
+      <p class="import-sub" id="similiSub">Qui vedi le canzoni che si somigliano tra loro</p>
+      <button class="import-close" id="similiClose" aria-label="Chiudi">&times;</button>
+      <div class="profile-body" id="similiCorpo"></div>
+    </div>
+  </div>
+
   <div class="quick-overlay" id="quickPanel" hidden>
     <div class="quick-card">
       <p class="quick-title" id="quickTitle"></p>
