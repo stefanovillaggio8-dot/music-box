@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6142";
+const CACHE = "spotifynonavraiimieisoldi-v6143";
 const CORE = [
   "./",
   "./index.html",
@@ -97,29 +97,167 @@ self.addEventListener("install", (event) => {
   );
 });
 
+function isMusicBoxSong(url) {
+  return url.hostname === "raw.githubusercontent.com" &&
+    url.pathname.startsWith("/stefanovillaggio8-dot/music-box-brani/main/songs/") &&
+    /\.mp3$/i.test(url.pathname);
+}
+
+async function migrateOfflineSongsAndCleanup() {
+  const keys = await caches.keys();
+  const oldKeys = keys.filter((key) => key !== CACHE);
+  const activeCache = await caches.open(CACHE);
+
+  /* Prima di eliminare vecchie cache, controllo che la versione nuova contenga
+     tutti i file essenziali. Se l'installazione e' incompleta, non elimino nulla. */
+  const coreReady = await Promise.all(CORE.map(async (file) => {
+    try {
+      return !!(await activeCache.match(new URL(file, self.registration.scope).href));
+    } catch (_) {
+      return false;
+    }
+  }));
+  if (!coreReady.every(Boolean)) {
+    console.warn("Cache nuova incompleta: conservo le cache precedenti.");
+    return;
+  }
+
+  const removable = [];
+  for (const key of oldKeys) {
+    const oldCache = await caches.open(key);
+    let safeToDelete = true;
+    const requests = await oldCache.keys();
+
+    for (const request of requests) {
+      let url;
+      try { url = new URL(request.url); } catch (_) { continue; }
+      if (!isMusicBoxSong(url)) continue;
+
+      const cacheKey = new Request(url.href);
+      if (await activeCache.match(cacheKey)) continue;
+
+      const response = await oldCache.match(request);
+      if (!response) continue;
+      try {
+        await activeCache.put(cacheKey, response.clone());
+        if (!(await activeCache.match(cacheKey))) safeToDelete = false;
+      } catch (error) {
+        console.warn("Non riesco a migrare una canzone offline; conservo la vecchia cache.", error);
+        safeToDelete = false;
+      }
+    }
+
+    if (safeToDelete) removable.push(key);
+  }
+
+  await Promise.all(removable.map((key) => caches.delete(key)));
+}
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    migrateOfflineSongsAndCleanup().catch((error) => {
+      /* In caso di problema, meglio conservare i dati delle versioni precedenti. */
+      console.warn("Migrazione cache non completata; conservo le cache precedenti.", error);
+    }).then(() => self.clients.claim())
   );
 });
 
 const CORE_EXT = [".html", ".css", ".js", ".json", ".png"];
 
+async function findCachedMusic(url) {
+  const keys = (await caches.keys()).slice().reverse();
+  for (const key of keys) {
+    try {
+      const cache = await caches.open(key);
+      const response = await cache.match(new Request(url));
+      if (response) return response;
+    } catch (_) { /* provo la cache successiva */ }
+  }
+  return null;
+}
+
+async function cachedMusicResponse(event) {
+  try {
+    const response = await fetch(event.request);
+    /* Memorizzo solo risposte complete (200), mai un frammento audio 206. */
+    if (response && response.status === 200 && !event.request.headers.has("range") && response.type !== "opaque") {
+      event.waitUntil(
+        caches.open(CACHE).then((cache) => cache.put(new Request(event.request.url), response.clone()))
+          .catch(() => {})
+      );
+    }
+    return response;
+  } catch (error) {
+    const cached = await findCachedMusic(event.request.url);
+    if (!cached) {
+      return new Response("Brano non disponibile offline", {
+        status: 503,
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      });
+    }
+
+    const range = event.request.headers.get("range");
+    if (!range) return cached;
+
+    /* Safari/WKWebView puo' chiedere solo una parte del file (Range). La cache
+       contiene il brano intero: ricostruisco una risposta 206 valida per iOS. */
+    const match = /^bytes=(\d*)-(\d*)$/i.exec(range.trim());
+    if (!match || (!match[1] && !match[2])) return cached;
+    const blob = await cached.blob();
+    const size = blob.size;
+    let start;
+    let end;
+    if (!match[1]) {
+      const suffixLength = Number(match[2]);
+      start = Math.max(0, size - suffixLength);
+      end = size - 1;
+    } else {
+      start = Number(match[1]);
+      end = match[2] ? Math.min(Number(match[2]), size - 1) : size - 1;
+    }
+    if (!Number.isFinite(start) || !Number.isFinite(end) || start >= size || end < start) {
+      return new Response(null, {
+        status: 416,
+        headers: { "Content-Range": "bytes */" + size }
+      });
+    }
+    const part = blob.slice(start, end + 1, blob.type || "audio/mpeg");
+    return new Response(part, {
+      status: 206,
+      headers: {
+        "Content-Type": blob.type || "audio/mpeg",
+        "Content-Length": String(part.size),
+        "Content-Range": "bytes " + start + "-" + end + "/" + size,
+        "Accept-Ranges": "bytes"
+      }
+    });
+  }
+}
+
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  if (event.request.method !== "GET" || url.origin !== self.location.origin) {
+  if (event.request.method !== "GET") return;
+
+  /* Le canzoni sono ospitate su raw.githubusercontent.com, fuori dall'origine
+     della pagina: prima venivano escluse e quindi le copie offline non suonavano. */
+  if (isMusicBoxSong(url)) {
+    event.respondWith(cachedMusicResponse(event));
     return;
   }
+
+  if (url.origin !== self.location.origin) return;
 
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+          if (response && response.ok) {
+            const clone = response.clone();
+            event.waitUntil(
+              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
+            );
+          }
           return response;
         })
         .catch(() => caches.match(event.request).then((r) => r || caches.match("./index.html")))
@@ -135,7 +273,9 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (response && response.status === 200) {
             const clone = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+            event.waitUntil(
+              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
+            );
           }
           return response;
         })
@@ -148,7 +288,9 @@ self.addEventListener("fetch", (event) => {
         return fetch(event.request).then((response) => {
           if (response && response.status === 200) {
             const clone = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+            event.waitUntil(
+              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
+            );
           }
           return response;
         });
