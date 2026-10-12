@@ -2270,6 +2270,9 @@ function handleTime() {
     } catch (e) { /* bridge assente o non ancora pronto: Safari resta invariato */ }
   }
 
+  // Punto d'ingresso invocato dal wrapper nativo dopo il caricamento della pagina.
+  window.__musicBoxNativeReady = () => _notificaStatoNativo(true);
+
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
