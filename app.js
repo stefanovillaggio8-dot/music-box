@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.144";
+  const APP_VERSION = "6.145";
 
   let recovering = false;
   async function selfHeal() {
@@ -7359,18 +7359,23 @@ function _nomePerIlBrano(link, suggerito) {
       if (stato) stato.textContent = "Non riesco a parlare col servizio. Riprova fra poco.";
     }
   });
-  $("btnPlaylist").addEventListener("click", () => {
-    /* Il tasto in alto non apre piu' una finestra: le playlist sono gia'
-       nella libreria, con le linguette sopra. Se ne avevi scelta una, torna
-       a tutta la libreria. */
-    _playlistAttiva = "";
-    _disegnaLinguettePlaylist();
-    render();
-    try {
-      const sc = $("plLingScroll");
-      if (sc) sc.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    } catch (e) { /* noop */ }
-  });
+    $("btnPlaylist").addEventListener("click", () => {
+      /* Se sto guardando una playlist, il tasto mi porta indietro a tutta la
+         libreria. Se invece non ne sto guardando nessuna, APRE il pannello con
+         tutte le playlist: prima qui non faceva proprio nulla e sembrava
+         rotto, e Stefano ha segnalato che "non funziona". */
+      if (_playlistAttiva) {
+        _playlistAttiva = "";
+        _disegnaLinguettePlaylist();
+        render();
+        try {
+          const sc = $("plLingScroll");
+          if (sc) sc.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        } catch (e) { /* noop */ }
+        return;
+      }
+      apriPanelPlaylist();
+    });
   $("btnNuovaPlaylist").addEventListener("click", () => creaPlaylist());
   $("btnTornaDallePlaylist").addEventListener("click", () => chiudiPanelPlaylist());
   $("playlistPanel").addEventListener("click", (e) => { if (e.target === $("playlistPanel")) chiudiPanelPlaylist(); });
@@ -8001,56 +8006,78 @@ $("btnTimer").addEventListener("click", () => {
      ancora. Se il servizio non e' attivo su questa pagina, funziona tutto
      come prima, solo in locale. */
 
-  async function _caricaPlaylistCondivise() {
-    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
-    let arrivate = [];
+  /* Unisco le playlist arrivate da fuori a quelle che ho gia' qui. */
+function _unisciPlaylistCondivise(arrivate) {
+  /* Quelle che ho qui sono le piu' fresche: se la stessa playlist e' anche nel
+     sito, tengo la mia per i brani, ma la scelta "nascondila dalla libreria"
+     la rispetto sempre, altrimenti su un dispositivo nuovo i brani nascosti
+     ricompaiono in libreria. */
+  let nuove = 0;
+  for (const p of arrivate) {
+    if (!p || !p.name) continue;
+    if (_playlistCercata(p.name)) {
+      const gia = _playlistCercata(p.name);
+      if (gia && p.nascosta === true) gia.nascosta = true;
+      continue;
+    }
+    playlists.push({
+      id: String(p.id || ("pl-" + String(p.name).toLowerCase().replace(/\s+/g, "-"))),
+      name: String(p.name).slice(0, 60),
+      nascosta: p.nascosta === true,
+      tracks: (Array.isArray(p.tracks) ? p.tracks : []).filter((t) => /^b-track-\d+$/.test(String(t)))
+    });
+    nuove++;
+  }
+  /* La lista dei nascosti dipende anche dalle playlist: la ricalcolo e, se
+     qualcosa e' cambiato, aggiorno quello che si vede. */
+  const prima = [..._soloInPlaylist].join(",");
+  _soloInPlaylist = _ricalcolaSoloInPlaylist();
+  const dopo = [..._soloInPlaylist].join(",");
+  if (prima !== dopo) {
+    saveCurrentState();
+    _disegnaLinguettePlaylist();
+    render();
+  }
+  if (nuove) {
+    saveCurrentState();
+    _aggiornaBadgePlaylist();
+  }
+  return nuove;
+}
+
+async function _caricaPlaylistCondivise() {
+  /* Prima provo dal Worker, che e' chi le scrive e quindi ha le piu' fresche. */
+  if (SERVIZIO_PUBBLICA && CHIAVE_PUBBLICA) {
     try {
       const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
         headers: { "x-chiave": CHIAVE_PUBBLICA }, cache: "no-store"
       });
-      if (!r.ok) return;
-      const j = await r.json();
-      arrivate = Array.isArray(j && j.playlist) ? j.playlist : [];
-    } catch (e) { return; }
-
-    /* Quelle che ho qui sono le piu' fresche: se la stessa playlist e' anche
-       nel sito, tengo la mia per i brani, ma la scelta "nascondila dalla
-       libreria" la rispetto sempre, altrimenti su un dispositivo nuovo i
-       brani nascosti ricompaiono in libreria. */
-    let nuove = 0;
-    for (const p of arrivate) {
-      if (!p || !p.name) continue;
-      if (_playlistCercata(p.name)) {
-        const gia = _playlistCercata(p.name);
-        if (gia && p.nascosta === true) gia.nascosta = true;
-        continue;
+      if (r.ok) {
+        const j = await r.json();
+        if (Array.isArray(j && j.playlist)) _unisciPlaylistCondivise(j.playlist);
       }
-      playlists.push({
-        id: String(p.id || ("pl-" + String(p.name).toLowerCase().replace(/\s+/g, "-"))),
-        name: String(p.name).slice(0, 60),
-        nascosta: p.nascosta === true,
-        tracks: (Array.isArray(p.tracks) ? p.tracks : []).filter((t) => /^b-track-\d+$/.test(String(t)))
-      });
-      nuove++;
-    }
-    /* La lista dei nascosti dipende anche dalle playlist: la ricalcolo e,
-       se qualcosa e' cambiato, aggiorno quello che si vede. */
-    const prima = [..._soloInPlaylist].join(",");
-    _soloInPlaylist = _ricalcolaSoloInPlaylist();
-    const dopo = [..._soloInPlaylist].join(",");
-    if (prima !== dopo) {
-      saveCurrentState();
-      _disegnaLinguettePlaylist();
-      render();
-    }
-    if (nuove) {
-      saveCurrentState();
-      _aggiornaBadgePlaylist();
-    }
-    segnalaErrore("playlist: " + playlists.length + " in tutto, " + nuove + " arrivate dagli altri dispositivi");
+    } catch (e) { /* senza rete uso il file sul sito */ }
   }
 
-  async function _salvaPlaylistCondivise() {
+  /* Poi leggo playlist.json direttamente dal sito.
+
+     Serve perche' il Worker chiede la chiave, e la chiave ce l'hanno solo i
+     dispositivi dove e' stata inserita. Aperto dalla scorciatoia che avvia
+     Safari la memoria del telefono e' un'altra, e la playlist gym non
+     compariva. Questo file e' pubblico e sta gia' sul sito: e' il posto dove
+     le playlist vivono davvero, quindi lo leggo sempre. */
+  try {
+    const r = await fetch("./playlist.json", { cache: "no-cache" });
+    if (r.ok) {
+      const j = await r.json();
+      const elenco = Array.isArray(j) ? j : (Array.isArray(j && j.playlist) ? j.playlist : []);
+      const arrivate = _unisciPlaylistCondivise(elenco);
+      if (arrivate) segnalaErrore("playlist: " + playlists.length + " in tutto, " + arrivate + " lette dal sito");
+    }
+  } catch (e) { /* nessuna rete: restano quelle che ho gia' */ }
+}
+
+async function _salvaPlaylistCondivise() {
     if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
     try {
       await fetch(SERVIZIO_PUBBLICA + "/playlist", {
