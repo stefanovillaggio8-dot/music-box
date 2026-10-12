@@ -1,0 +1,61 @@
+name: Build free iPhone app (unsigned IPA)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "ios-wrapper/**"
+      - "icon-512.png"
+      - ".github/workflows/build-ios-ipa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    name: Build unsigned iOS IPA
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Prepare iOS app icon
+        run: |
+          mkdir -p ios-wrapper/Sources/Assets.xcassets/AppIcon.appiconset
+          sips -z 1024 1024 icon-512.png --out ios-wrapper/Sources/Assets.xcassets/AppIcon.appiconset/AppIcon.png >/dev/null
+
+      - name: Generate Xcode project
+        working-directory: ios-wrapper
+        run: xcodegen generate --spec project.yml
+
+      - name: Build for physical iPhone (unsigned)
+        run: |
+          xcodebuild \
+            -project ios-wrapper/MusicBox.xcodeproj \
+            -scheme MusicBox \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath ios-wrapper/build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          mkdir -p dist/Payload
+          cp -R ios-wrapper/build/Build/Products/Release-iphoneos/MusicBox.app dist/Payload/MusicBox.app
+          cd dist
+          /usr/bin/zip -qry MusicBox-unsigned.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MusicBox-unsigned-IPA
+          path: dist/MusicBox-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
