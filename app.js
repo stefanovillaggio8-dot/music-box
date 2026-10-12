@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.141";
+  const APP_VERSION = "6.142";
 
   let recovering = false;
   async function selfHeal() {
@@ -2245,6 +2245,31 @@ function handleTime() {
     }
   }
 
+  /* Bridge opzionale per il wrapper iOS nativo: il sito continua a funzionare
+     normalmente in Safari. Nel wrapper invia titolo, artista e posizione al
+     player di sistema, che gestisce i controlli della schermata di blocco. */
+  let _ultimoInvioStatoNativo = 0;
+  function _notificaStatoNativo(forza = false) {
+    try {
+      const bridge = window.webkit && window.webkit.messageHandlers &&
+        window.webkit.messageHandlers.musicBox;
+      if (!bridge) return;
+      const ora = Date.now();
+      if (!forza && ora - _ultimoInvioStatoNativo < 1000) return;
+      _ultimoInvioStatoNativo = ora;
+      const t = current();
+      bridge.postMessage({
+        type: "state",
+        title: t ? t.title : APP_NAME,
+        artist: t ? (t.artist || APP_NAME) : APP_NAME,
+        album: (t && t.album) ? t.album : APP_NAME,
+        playing: !!(audio && !audio.paused),
+        currentTime: audio && isFinite(audio.currentTime) ? audio.currentTime : 0,
+        duration: audio && isFinite(audio.duration) ? audio.duration : 0
+      });
+    } catch (e) { /* bridge assente o non ancora pronto: Safari resta invariato */ }
+  }
+
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
@@ -2254,6 +2279,7 @@ function handleTime() {
     syncPlayUI();
     updateMediaSession();
     _iniziaAscolto();
+    _notificaStatoNativo(true);
     });
 a.addEventListener("pause", () => {
     /*
@@ -2269,13 +2295,16 @@ a.addEventListener("pause", () => {
     updateMediaSession();
     savePos();
     _chiudiAscolto(false);
+    _notificaStatoNativo(true);
   });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
+    a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
     /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
        evento scatta finche' la musica suona, su computer e su telefono. */
     a.addEventListener("timeupdate", _contaAlMuoversi);
     a.addEventListener("loadedmetadata", handleMetadata);
+    a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
     a.addEventListener("error", handleError);
     return a;
   }
@@ -3140,6 +3169,40 @@ function _ripristinaNascosti() {
     else _pausaVolontaria();
   }
 
+  /* Comandi ricevuti dal player nativo iOS (solo quando il bridge esiste). */
+  window.addEventListener("musicbox-native-control", (event) => {
+    const detail = (event && event.detail) || {};
+    try {
+      switch (detail.action) {
+        case "play":
+          _riproduciVolontaria();
+          break;
+        case "pause":
+          _pausaVolontaria();
+          break;
+        case "toggle":
+          if (audio && !audio.paused) _pausaVolontaria();
+          else _riproduciVolontaria();
+          break;
+        case "next":
+          playNext();
+          break;
+        case "previous": {
+          const id = idBranoA(prevIndex());
+          if (id) playById(id);
+          break;
+        }
+        case "seek":
+          if (audio && isFinite(Number(detail.time)) && isFinite(audio.duration)) {
+            audio.currentTime = Math.max(0, Math.min(Number(detail.time), audio.duration));
+            updateProgressUI(audio.currentTime, audio.duration);
+            _notificaStatoNativo(true);
+          }
+          break;
+      }
+    } catch (e) { /* controllo remoto non disponibile: nessun effetto su Safari */ }
+  });
+
   function setSvgVisible(el, visible) {
     if (visible) el.removeAttribute("hidden");
     else el.setAttribute("hidden", "");
@@ -3236,6 +3299,7 @@ function _aggiornaPosizioneSchermo() {
     setHandler("seekforward", () => seekBy(15));
     setHandler("stop", () => { _pausaVolontaria(); });
     setPlaybackState(audio && !audio.paused ? "playing" : "paused");
+    _notificaStatoNativo(true);
   }
 
   function totalDuration() {
