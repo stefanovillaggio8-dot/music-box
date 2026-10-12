@@ -2546,7 +2546,7 @@ function rebuildAudio(autoplay) {
 
       const testo = document.createElement("div");
       testo.className = "avviso-nascosti-testo";
-      testo.textContent = "Sei sull'icona: qui la musica si sente, ma a canzone finita la successiva non parte, perche' l'iPhone chiude questa app in sottofondo. Aprila dentro Safari (il browser) e va anche a schermo spento.";
+      testo.textContent = "La modalità app web sulla schermata Home può impedire il passaggio automatico al brano successivo in background su iPhone. Per usare l'icona e continuare con Safari: elimina questa icona, apri il sito in Safari, scegli Condividi > Aggiungi alla schermata Home e disattiva 'Apri come app web' se compare.";
 
       const riga = document.createElement("div");
       riga.className = "avviso-nascosti-riga riga-piu";
