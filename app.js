@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.136";
+  const APP_VERSION = "6.137";
 
   let recovering = false;
   async function selfHeal() {
@@ -2483,19 +2483,51 @@ function rebuildAudio(autoplay) {
      tocca qualcosa, riprendo: e' il momento in cui il browser permette
      di nuovo la riproduzione. */
   function _riprendiSeInAttesa() {
-    /* Torno in primo piano o l'utente tocca: se la musica DOVE suonare,
-       riprovo. Prima guardavo solo l'intento vecchio, ma il telefono con lo
-       schermo spento l'aveva già azzerato: quindi riaprendo l'app non
-       ripartiva niente. Adesso guardo l'intento vero. */
-    if (!_vuoleSuonare || !currentId || !audio) return;
-    if (!audio.paused) {
-      /* gia' "in play": ma e' muto? lo dice _controllaCheSuoni */
-      _controllaCheSuoni();
-      return;
-    }
-    _ultimoScorrimento = Date.now();
-    audio.play().then(() => { _ultimoScorrimento = Date.now(); }).catch(() => { _riprovaPiuTardi(); });
-  }
+        /* Torno in primo piano o l'utente tocca: se la musica DOVE suonare,
+           riprovo. Prima guardavo solo l'intento vecchio, ma il telefono con lo
+           schermo spento l'aveva già azzerato: quindi riaprendo l'app non
+           ripartiva niente. Adesso guardo l'intento vero. */
+        if (!_vuoleSuonare || !currentId || !audio) return;
+        /* Il brano e' finito mentre l'app era in secondo piano? Allora NON
+           riprovo a suonarlo (non riparte da capo, e l'utente resta fermo):
+           vado direttamente al successivo, cosi' riaprendo l'app la musica
+           continua da dove era rimasta. */
+        try {
+          const finito = audio.ended ||
+            (isFinite(audio.duration) && audio.duration > 0 &&
+              audio.currentTime >= audio.duration - 0.4);
+          if (finito) {
+            _cominciaBranoNuovo();
+            const idDiPlaylist = _avantiInPlaylist();
+            if (idDiPlaylist) { playById(idDiPlaylist); return; }
+            if (queue.length) {
+              const next = queue.shift();
+              persistQueue();
+              renderQueueCount();
+              playById(next);
+              return;
+            }
+            if (repeat) { audio.currentTime = 0; doPlay(); return; }
+            const prossimo = idBranoA(nextIndex());
+            if (prossimo && prossimo !== currentId) {
+              playById(prossimo);
+              toast("La canzone era finita: e' partita la successiva");
+              return;
+            }
+            /* Non c'e' niente dopo: almeno non far credere che suoni ancora */
+            _vuoleSuonare = false;
+            syncPlayUI();
+            return;
+          }
+        } catch (e) { /* se non riesco a valutarlo, riprovo sotto */ }
+        if (!audio.paused) {
+          /* gia' "in play": ma e' muto? lo dice _controllaCheSuoni */
+          _controllaCheSuoni();
+          return;
+        }
+        _ultimoScorrimento = Date.now();
+        audio.play().then(() => { _ultimoScorrimento = Date.now(); }).catch(() => { _riprovaPiuTardi(); });
+      }
   ["visibilitychange", "focus", "pageshow"].forEach((ev) => {
     document.addEventListener(ev, _riprendiSeInAttesa);
   });
