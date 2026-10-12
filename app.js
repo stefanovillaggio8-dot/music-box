@@ -66,6 +66,7 @@
           { title: "Wonderwall NL", file: "songs/track-65.mp3", artist: "senza artista", profile: "Ste" },
           { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-66.mp3", artist: "Gianluca Grignani", profile: "Ste" },
           { title: "Chiello", file: "songs/track-67.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
+          { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "senza artista", profile: "Ste" },
   ];
 
   const PALETTE = [
