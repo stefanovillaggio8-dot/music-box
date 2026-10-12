@@ -62,7 +62,8 @@
     { title: "All I Wanted", file: "songs/track-61.mp3", artist: "Paramore", profile: "Ste" },
     { title: "In the End", file: "songs/track-62.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Runaway", file: "songs/track-63.mp3", artist: "Linkin Park", profile: "Ste" },
-];
+          { title: "Albachiara", file: "songs/track-64.mp3", artist: "Vasco Rossi", profile: "Ste" },
+  ];
 
   const PALETTE = [
     "linear-gradient(135deg,#b06bff,#4fc3ff)",
