@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.137";
+  const APP_VERSION = "6.138";
 
   let recovering = false;
   async function selfHeal() {
@@ -7698,9 +7698,11 @@ function _disegnaTimer() {
 /* Quando si torna sull'app, il blocco dello schermo va richiesto di nuovo:
    il telefono lo perde da solo ogni volta che lo blocchi. */
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    if (_schermoVoluto) _accendiSchermo();
-    _disegnaTimer();
+    if (document.visibilityState === "visible") {
+      /* Torno in primo piano: se volevo lo schermo acceso lo riprendo, e
+         riaccendo anche il controllo che porta avanti la musica. */
+      if (_schermoVoluto) { _accendiSchermo(); _accendiSonda(); }
+      _disegnaTimer();
   } else if (_bloccoSchermo) {
     /* non lo tengo: il telefono e' gia' spento, e tenerlo occuperebbe
        batteria senza servire a niente */
@@ -7709,22 +7711,24 @@ document.addEventListener("visibilitychange", () => {
 });
 
 $("btnSchermo").addEventListener("click", async () => {
-  if (_schermoVoluto) {
-    _schermoVoluto = false;
-    await _spegneSchermo();
-    toast("Schermo normale: si blocca come sempre");
-    _disegnaTimer();
-    return;
-  }
-  const va = await _accendiSchermo();
-  if (!va) {
-    toast("Questo telefono non me lo lascia fare. Continua a funzionare tutto, ma lo schermo si blocca");
-    return;
-  }
-  _schermoVoluto = true;
-  toast("Schermo acceso mentre ascolti. Per spegnerlo: tocca di nuovo, o usa il timer", 5000);
-  _disegnaTimer();
-});
+      if (_schermoVoluto) {
+        _schermoVoluto = false;
+        await _spegneSchermo();
+        _spezniSonda();
+        toast("Schermo normale: si blocca come sempre");
+        _disegnaTimer();
+        return;
+      }
+      const va = await _accendiSchermo();
+      if (!va) {
+        toast("Questo telefono non me lo lascia fare. Continua a funzionare tutto, ma lo schermo si blocca");
+        return;
+      }
+      _schermoVoluto = true;
+      _accendiSonda();
+      toast("Schermo acceso mentre ascolti: puoi cambiare app, la musica va avanti. Per spegnerlo: tocca di nuovo, o usa il timer", 6000);
+      _disegnaTimer();
+    });
 
 $("btnTimer").addEventListener("click", () => {
   if (_timerFine) {
@@ -7748,10 +7752,11 @@ $("btnTimer").addEventListener("click", () => {
           if (audio && !audio.paused) audio.pause();
           syncPlayUI();
         } catch (e) { /* la musica si ferma comunque */ }
-        _schermoVoluto = false;
-        _spegneSchermo();
-        _disegnaTimer();
-        toast("Timer finito: buonanotte");
+          _schermoVoluto = false;
+          _spegneSchermo();
+          _spezniSonda();
+          _disegnaTimer();
+          toast("Timer finito: buonanotte");
       } else {
         _disegnaTimer();
       }
@@ -8129,6 +8134,50 @@ $("btnTimer").addEventListener("click", () => {
     b.textContent = n > 9 ? "9+" : String(n);
     const voce = $("btnSimili");
     if (voce) voce.classList.toggle("has-falliti", n > 0);
+  }
+
+  /* Controllo continuo mentre lo schermo e' acceso.
+
+     Quando lasci la pagina in secondo piano con lo schermo acceso, il
+     telefono non va in standby: l'app continua a girare, ma iOS a volte non
+     consegna l'evento "brano finito". Con questo controllo, se il brano e'
+     finito ma il successivo non e' partito, parto io.
+
+     Lo accendo SOLO con lo schermo acceso: a schermo spento il telefono
+     sospende la pagina e il controllo non girerebbe comunque, quindi
+     sarebbe solo fatica e batteria sprecata. */
+  let _sondaAvanti = null;
+
+  function _accendiSonda() {
+    if (_sondaAvanti) clearInterval(_sondaAvanti);
+    _sondaAvanti = setInterval(() => {
+      try {
+        if (!_vuoleSuonare || !currentId || !audio) return;
+        if (!audio.paused && !audio.ended) return;
+        const finito = audio.ended ||
+          (isFinite(audio.duration) && audio.duration > 0 &&
+            audio.currentTime >= audio.duration - 0.6);
+        if (!finito) return;
+        /* Il brano e' finito ma nessuno e' andato avanti: ci penso io. */
+        _cominciaBranoNuovo();
+        const idDiPlaylist = _avantiInPlaylist();
+        if (idDiPlaylist) { playById(idDiPlaylist); return; }
+        if (queue.length) {
+          const next = queue.shift();
+          persistQueue();
+          renderQueueCount();
+          playById(next);
+          return;
+        }
+        if (repeat) { audio.currentTime = 0; doPlay(); return; }
+        const prossimo = idBranoA(nextIndex());
+        if (prossimo && prossimo !== currentId) playById(prossimo);
+        else { _vuoleSuonare = false; syncPlayUI(); }
+      } catch (e) { /* non deve mai fermare niente */ }
+    }, 5000);
+  }
+
+  function _spezniSonda() {    if (_sondaAvanti) { clearInterval(_sondaAvanti); _sondaAvanti = null; }
   }
 
   /* ---------- Volume ---------- */
