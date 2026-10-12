@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.145";
+  const APP_VERSION = "6.146";
 
   let recovering = false;
   async function selfHeal() {
@@ -8018,6 +8018,18 @@ function _unisciPlaylistCondivise(arrivate) {
     if (_playlistCercata(p.name)) {
       const gia = _playlistCercata(p.name);
       if (gia && p.nascosta === true) gia.nascosta = true;
+      /* Una playlist che qui e' VUOTA e' una voce rimasta a meta', non una
+         scelta di Ste: senza questo la lista non si riempiva mai e gym
+         restava invisibile per sempre. Se invece ha gia' dei brani la lascio
+         stare, cosi' una cancellazione fatta qui non viene ricreata. */
+      const suoi = Array.isArray(gia && gia.tracks) ? gia.tracks : [];
+      const arrivati = (Array.isArray(p.tracks) ? p.tracks : [])
+        .filter((t) => /^b-track-\d+$/.test(String(t)));
+      if (!suoi.length && arrivati.length) {
+        gia.tracks = arrivati;
+        if (!gia.id) gia.id = String(p.id || ("pl-" + String(p.name).toLowerCase().replace(/\s+/g, "-")));
+        nuove++;
+      }
       continue;
     }
     playlists.push({
@@ -8073,8 +8085,17 @@ async function _caricaPlaylistCondivise() {
       const elenco = Array.isArray(j) ? j : (Array.isArray(j && j.playlist) ? j.playlist : []);
       const arrivate = _unisciPlaylistCondivise(elenco);
       if (arrivate) segnalaErrore("playlist: " + playlists.length + " in tutto, " + arrivate + " lette dal sito");
+      return;
     }
   } catch (e) { /* nessuna rete: restano quelle che ho gia' */ }
+
+  /* Se non e' andata e non ho nessuna playlist, riprovo una volta sola dopo
+     qualche secondo: la prima richiesta capita mentre il telefono sta ancora
+     agganciando la rete, e senza riprovare la playlist non compariva e
+     non c'era modo di ripararlo senza riaprire l'app. */
+  if (!playlists.length) {
+    setTimeout(() => { _caricaPlaylistCondivise(); }, 5000);
+  }
 }
 
 async function _salvaPlaylistCondivise() {
