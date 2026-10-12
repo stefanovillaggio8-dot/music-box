@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.146";
+  const APP_VERSION = "6.147";
 
   let recovering = false;
   async function selfHeal() {
@@ -2055,13 +2055,14 @@ const nascosti = hiddenTracks.size;
       favBtn.className = "track-fav" + (favorites.has(t.id) ? " on" : "");
       favBtn.setAttribute("aria-label", "Preferito");
       favBtn.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>';
-      favBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (favorites.has(t.id)) favorites.delete(t.id);
-        else favorites.add(t.id);
-        saveCurrentState();
-        render();
-      });
+        favBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (favorites.has(t.id)) favorites.delete(t.id);
+          else favorites.add(t.id);
+          saveCurrentState();
+          _salvaStatoCondiviso();
+          render();
+        });
       li.appendChild(favBtn);
 
       if (t.builtin && !isCached(t)) {
@@ -3826,9 +3827,12 @@ if (r.ok && j && j.ok) {
     const patch = {};
     if (Array.isArray(st.favs)) patch.favs = st.favs.filter((x) => x !== id);
     if (Array.isArray(st.hidden)) patch.hidden = st.hidden.filter((x) => x !== id);
-    try { favorites.delete(id); } catch (e) { /* noop */ }
-    try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
-    writeProfileState(profile, patch);
+      try { favorites.delete(id); } catch (e) { /* noop */ }
+      try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
+      writeProfileState(profile, patch);
+      /* Anche "rimettili in lista" va sul sito, altrimenti dall'altra
+         scorciatoia il brano resterebbe nascosto. */
+      _salvaStatoCondiviso();
     const st2 = statisticheProfilo();
     const c = _chiaveStats(t);
     if (c && st2[c]) {
@@ -8006,6 +8010,76 @@ $("btnTimer").addEventListener("click", () => {
      ancora. Se il servizio non e' attivo su questa pagina, funziona tutto
      come prima, solo in locale. */
 
+  /* ---------- Nascosti e preferiti: gli stessi su ogni dispositivo ----------
+
+     Prima questi due elenchi stavano solo nella memoria di quel telefono.
+     L'app aperta dall'icona e la scorciatoia che avvia Safari hanno due
+     memorie diverse: quindi una canzone che nascondevi da una parte compariva
+     dall'altra, e i cuoricini valevano meta'.
+
+     Adesso stanno anche in stato.json, sul sito, che si legge anche senza
+     chiave (e' pubblico, come playlist.json).
+
+     Quando pero' tolgo un brano NON lo cancello dal sito: lo aggiunto a una
+     lista di "tornano indietro", altrimenti basterebbe un tocco sbagliato per
+     farlo sparire per sempre da tutti i dispositivi. */
+
+  let _timerStatoCondiviso = null;
+  let _statoCondivisoOk = false;
+
+  function _salvaStatoCondiviso() {
+    try {
+      clearTimeout(_timerStatoCondiviso);
+    } catch (e) { /* noop */ }
+    /*Aspetto un po': se Ste preme tre cuoricini in tre secondi, non voglio
+       tre richieste al computer. */
+    _timerStatoCondiviso = setTimeout(async () => {
+      const corpo = JSON.stringify({
+        nascosti: [...hiddenTracks],
+        preferiti: [...favorites]
+      });
+      /* Prima il computer, che e' di solito acceso e risponde subito. Poi, se
+         non c'e', il Worker (funziona anche col computer spento). */
+      try {
+        const r = await fetch(SERVIZIO + "/stato", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: corpo
+        });
+        if (r.ok) { _statoCondivisoOk = true; return; }
+      } catch (e) { /* il computer non c'e': provo dall'altra parte */ }
+      try {
+        if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
+        const r = await fetch(SERVIZIO_PUBBLICA + "/stato", {
+          method: "POST",
+          headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
+          body: corpo
+        });
+        if (r.ok) { _statoCondivisoOk = true; }
+      } catch (e) { /* senza rete resta sul telefono, e va bene */ }
+    }, 2500);
+  }
+
+  async function _caricaStatoCondiviso() {
+    try {
+      const r = await fetch("./stato.json", { cache: "no-cache" });
+      if (!r.ok) return;
+      const j = await r.json();
+      const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
+      const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
+      if (!nasco.length && !prefs.length) return;
+      let cambiati = 0;
+      /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
+         e diventa solo piu' grande. */
+      for (const id of nasco) if (id && !hiddenTracks.has(id)) { hiddenTracks.add(id); cambiati++; }
+      for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
+      if (cambiati) {
+        saveCurrentState();
+        render();
+      }
+    } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
+  }
+
   /* Unisco le playlist arrivate da fuori a quelle che ho gia' qui. */
 function _unisciPlaylistCondivise(arrivate) {
   /* Quelle che ho qui sono le piu' fresche: se la stessa playlist e' anche nel
@@ -8216,8 +8290,9 @@ async function _salvaPlaylistCondivise() {
     const msg = t.builtin
       ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
       : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
-    hiddenTracks.add(id);
-    saveCurrentState();
+      hiddenTracks.add(id);
+      saveCurrentState();
+      _salvaStatoCondiviso();
     const extra = cosa === "entrambe"
       ? " E' uscito anche dalle playlist."
       : " Resta nelle playlist.";
@@ -8542,7 +8617,7 @@ async function _salvaPlaylistCondivise() {
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-    setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
+      setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _caricaStatoCondiviso(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);
