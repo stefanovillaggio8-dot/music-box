@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.138";
+  const APP_VERSION = "6.139";
 
   let recovering = false;
   async function selfHeal() {
@@ -2415,6 +2415,10 @@ function rebuildAudio(autoplay) {
   function _controllaCheSuoni() {
     try {
       if (!_vuoleSuonare || !audio || !currentId) return;
+      /* Il brano e' finito ma l'evento non e' arrivato: lo recupero qui.
+         Questo giro ogni 3 secondi SEMPRE, quindi copre anche il caso in cui
+         il brano e' finito mentre l'app era in primo piano. */
+      if (audio.ended) { _finitoSenzaAvanti(); return; }
       if (audio.paused) { _silenziDiFila = 0; _riprovaPiuTardi(); return; }
       if (Date.now() - _ultimoScorrimento < 10000) return;
       /* sta ancora scaricando: non e' un silenzio, e' la rete */
@@ -2489,34 +2493,16 @@ function rebuildAudio(autoplay) {
            ripartiva niente. Adesso guardo l'intento vero. */
         if (!_vuoleSuonare || !currentId || !audio) return;
         /* Il brano e' finito mentre l'app era in secondo piano? Allora NON
-           riprovo a suonarlo (non riparte da capo, e l'utente resta fermo):
-           vado direttamente al successivo, cosi' riaprendo l'app la musica
-           continua da dove era rimasta. */
+           riprovo a suonarlo (un brano finito non riparte, e l'utente resta
+           fermo): vado al successivo. Anche qui non riscrivo la scelta del
+           brano, chiamo _finitoSenzaAvanti(), che usa handleEnded(). */
         try {
           const finito = audio.ended ||
             (isFinite(audio.duration) && audio.duration > 0 &&
               audio.currentTime >= audio.duration - 0.4);
           if (finito) {
-            _cominciaBranoNuovo();
-            const idDiPlaylist = _avantiInPlaylist();
-            if (idDiPlaylist) { playById(idDiPlaylist); return; }
-            if (queue.length) {
-              const next = queue.shift();
-              persistQueue();
-              renderQueueCount();
-              playById(next);
-              return;
-            }
-            if (repeat) { audio.currentTime = 0; doPlay(); return; }
-            const prossimo = idBranoA(nextIndex());
-            if (prossimo && prossimo !== currentId) {
-              playById(prossimo);
-              toast("La canzone era finita: e' partita la successiva");
-              return;
-            }
-            /* Non c'e' niente dopo: almeno non far credere che suoni ancora */
-            _vuoleSuonare = false;
-            syncPlayUI();
+            toast("La canzone era finita: e' partita la successiva");
+            _finitoSenzaAvanti();
             return;
           }
         } catch (e) { /* se non riesco a valutarlo, riprovo sotto */ }
@@ -8136,12 +8122,33 @@ $("btnTimer").addEventListener("click", () => {
     if (voce) voce.classList.toggle("has-falliti", n > 0);
   }
 
-  /* Controllo continuo mentre lo schermo e' acceso.
+  /* Recupero: il brano e' finito ma nessuno e' andato avanti.
 
-     Quando lasci la pagina in secondo piano con lo schermo acceso, il
-     telefono non va in standby: l'app continua a girare, ma iOS a volte non
-     consegna l'evento "brano finito". Con questo controllo, se il brano e'
-     finito ma il successivo non e' partito, parto io.
+     Prima qui avevo riscritto la scelta del brano successivo (playlist, coda,
+     ripeti...). Era una SBAGLIATURA: due copie di quella logica possono
+     scattare insieme e farti saltare una canzone, o partire due brani insieme.
+     L'unica che sa come funzionano playlist, coda e ripetizione e'
+     handleEnded(): quindi gli passo il problema e non lo risolvo qui. */
+  let _stoRecuperando = false;
+
+  function _finitoSenzaAvanti() {
+    try {
+      if (_stoRecuperando) return;
+      if (!_vuoleSuonare || !currentId || !audio) return;
+      if (!audio.ended) return;
+      /* Non e' davvero finito: siamo ancora agli ultimi secondi */
+      if (isFinite(audio.duration) && audio.duration > 0 &&
+          audio.currentTime < audio.duration - 0.6) return;
+      _stoRecuperando = true;
+      try {
+        handleEnded();
+      } finally {
+        setTimeout(() => { _stoRecuperando = false; }, 1500);
+      }
+    } catch (e) { _stoRecuperando = false; }
+  }
+
+  /* Controllo continuo mentre lo schermo e' acceso.
 
      Lo accendo SOLO con lo schermo acceso: a schermo spento il telefono
      sospende la pagina e il controllo non girerebbe comunque, quindi
@@ -8150,34 +8157,11 @@ $("btnTimer").addEventListener("click", () => {
 
   function _accendiSonda() {
     if (_sondaAvanti) clearInterval(_sondaAvanti);
-    _sondaAvanti = setInterval(() => {
-      try {
-        if (!_vuoleSuonare || !currentId || !audio) return;
-        if (!audio.paused && !audio.ended) return;
-        const finito = audio.ended ||
-          (isFinite(audio.duration) && audio.duration > 0 &&
-            audio.currentTime >= audio.duration - 0.6);
-        if (!finito) return;
-        /* Il brano e' finito ma nessuno e' andato avanti: ci penso io. */
-        _cominciaBranoNuovo();
-        const idDiPlaylist = _avantiInPlaylist();
-        if (idDiPlaylist) { playById(idDiPlaylist); return; }
-        if (queue.length) {
-          const next = queue.shift();
-          persistQueue();
-          renderQueueCount();
-          playById(next);
-          return;
-        }
-        if (repeat) { audio.currentTime = 0; doPlay(); return; }
-        const prossimo = idBranoA(nextIndex());
-        if (prossimo && prossimo !== currentId) playById(prossimo);
-        else { _vuoleSuonare = false; syncPlayUI(); }
-      } catch (e) { /* non deve mai fermare niente */ }
-    }, 5000);
+    _sondaAvanti = setInterval(_finitoSenzaAvanti, 5000);
   }
 
-  function _spezniSonda() {    if (_sondaAvanti) { clearInterval(_sondaAvanti); _sondaAvanti = null; }
+  function _spezniSonda() {
+    if (_sondaAvanti) { clearInterval(_sondaAvanti); _sondaAvanti = null; }
   }
 
   /* ---------- Volume ---------- */
