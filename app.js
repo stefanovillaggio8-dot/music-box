@@ -78,36 +78,17 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.142";
+  const APP_VERSION = "6.143";
 
-  let recovering = false;
-  async function selfHeal() {
-    if (recovering) return;
-    let done = false;
-    try { done = sessionStorage.getItem("mb-healed") === "1"; } catch (e) { done = false; }
-    if (done) return;
-    recovering = true;
-    try { sessionStorage.setItem("mb-healed", "1"); } catch (e) { /* noop */ }
-    try {
-      const keys = await caches.keys();
-      await Promise.all(keys.map((k) => caches.delete(k)));
-    } catch (e) { /* noop */ }
-    try {
-      if ("serviceWorker" in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        if (regs.length) {
-          await Promise.all(regs.map((r) => r.update().catch(() => {})));
-        } else {
-          await navigator.serviceWorker.register("sw.js");
-        }
-      }
-    } catch (e) { /* noop */ }
-    location.reload();
-  }
-
+  /* Non cancellare le cache offline a causa di un errore JavaScript generico:
+     potrebbero contenere le canzoni scaricate dall'utente. Gli aggiornamenti
+     vengono gestiti dal service worker e gli errori restano nella console. */
   const startedAt = Date.now();
-  window.addEventListener("error", () => {
-    if (Date.now() - startedAt < 8000) selfHeal();
+  window.addEventListener("error", (event) => {
+    if (Date.now() - startedAt < 8000) {
+      console.warn("Errore durante l'avvio di Music Box; le cache offline sono state conservate.",
+        event && event.message ? event.message : "");
+    }
   });
   const searchEl = $("search");
   const playlistEl = $("playlist");
@@ -6726,13 +6707,17 @@ $("btnFavFilter").addEventListener("click", () => {
     try {
       const keys = await caches.keys();
       if (!keys.length) return null;
-      for (const k of keys) {
+      const versione = (k) => {
+        const m = /-v(\d+)$/.exec(k);
+        return m ? Number(m[1]) : -1;
+      };
+      const recenti = keys.slice().sort((a, b) => versione(b) - versione(a));
+      for (const k of recenti) {
         const c = await caches.open(k);
         const hit = await c.match("app.js");
         if (hit) return c;
       }
-      const recenti = keys.slice().sort();
-      return await caches.open(recenti[recenti.length - 1]);
+      return await caches.open(recenti[0]);
     } catch (e) {
       return null;
     }
