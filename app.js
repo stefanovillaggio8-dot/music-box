@@ -73,7 +73,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.132";
+  const APP_VERSION = "6.133";
 
   let recovering = false;
   async function selfHeal() {
@@ -1079,21 +1079,27 @@ const builtin = BUILTIN
   }
 
 
-    /* Stesso brano due volte? Ne tengo uno solo. Prima poteva capitare
-     che due brani messi dal telefono con lo stesso nome finivano in lista
-     due volte, e la lista cresceva a ogni ricarica. */
-  const visti = new Map();
-  const senzaDuplicati = [];
-  for (const t of (added || [])) {
-    const k = (t.artist || "") + "|" + (t.title || "");
-    const giunto = visti.get(k);
-    if (!giunto) { visti.set(k, t); senzaDuplicati.push(t); continue; }
-    /* tengo il brano piu' pesante: di solito e' quello intero */
-    if ((t.size || 0) > (giunto.size || 0)) {
-      senzaDuplicati[senzaDuplicati.indexOf(giunto)] = t;
-      visti.set(k, t);
+  /* Stesso brano due volte? Ne tengo uno solo.
+     Prima confrontavo "artista|titolo" alla lettera, ma la libreria ripulisce
+     i nomi (toglie l'artista dal titolo se e' ripetuto: "BLANCO - SOTTOGONNA"
+     si vede come "SOTTOGONNA"). Quindi lo stesso brano, arrivato dal telefono
+     col titolo gia' pulito, non veniva riconosciuto e finiva in lista due
+     volte. Adesso uso stessoBrano(), che e' la funzione gia' pensata per
+     questo e che sa anche tirare l'artista fuori dal titolo. */
+    const visti = [];
+    const senzaDuplicati = [];
+    for (const t of (added || [])) {
+      let doppio = -1;
+      for (let k = 0; k < senzaDuplicati.length; k++) {
+        const g = senzaDuplicati[k];
+        if (stessoBrano(t, g) || (normKey(t.artist) + "|" + normKey(t.title) === normKey(g.artist) + "|" + normKey(g.title))) {
+          doppio = k; break;
+        }
+      }
+      if (doppio < 0) { senzaDuplicati.push(t); visti.push(t); continue; }
+      /* tengo il brano piu' pesante: di solito e' quello intero */
+      if ((t.size || 0) > (senzaDuplicati[doppio].size || 0)) senzaDuplicati[doppio] = t;
     }
-  }
   tracks = builtin.concat(senzaDuplicati);
     /* I nomi che hai cambiato vanno messi DOPO che la lista e' stata
        ricostruita: prima li applicavo alla lista vecchia, che qui dentro
@@ -1556,6 +1562,16 @@ const ORDINAMENTI = [
     let list = tracks.filter((t) => !hiddenTracks.has(t.id));
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (soloMaiAscoltati) list = list.filter((t) => _ascoltoDi(t).s <= 0);
+    /* Se ho scelto una playlist, vedo solo i suoi brani. Funziona insieme
+       alla ricerca e all'ordinamento, non al posto loro: e' quello che
+       chiedeva Stefano ("come la libreria, ma solo le canzoni di
+       quella playlist"). */
+    if (_playlistAttiva) {
+      const pl = _playlistCercata(_playlistAttiva);
+      const id = pl ? pl.id : null;
+      if (id) list = list.filter((t) => (pl.tracks || []).includes(t.id));
+      else if (_playlistAttiva) list = [];
+    }
     if (!query) return ordinaLista(list);
     const scored = [];
     for (const t of list) {
@@ -5441,20 +5457,53 @@ nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, CARTEL
     }
   }
 
-  async function finishImport(item, blob, source) {
-    if (item.el) {
-      item.el.fill.classList.add("ok");
-      item.el.fill.style.width = "100%";
+  /* Questo brano e' gia' nella libreria? Lo controllo PRIMA di salvare,
+     perche' una volta salvare e poi nascondere funzionava, ma lasciava
+     tracce e non diceva niente all'utente: lui vedeva la canzone che
+     riappariva e pensava che il brano si fosse perso.
+
+     Uso stessoBrano() perche' confronta artista e titolo come li vede
+     l'utente (ripuliti, senza "(Remastered)" ecc.). */
+  function giaInLibreria(meta) {
+    if (!meta || !meta.title) return null;
+    /* un brano gia' importato in precedenza su questo dispositivo */
+    for (const t of tracks || []) {
+      if (stessoBrano(meta, t)) return t;
     }
-    const meta = item.meta || { title: item.title, artist: item.artist, album: "" };
-    const rec = await saveImported(meta, blob, source);
-    for (const k of trackKeys(meta)) libKeys.add(k);
-    item.savedId = rec.id;
-    item.state = "done";
-    paintImport(item);
-    toast(meta.title + " importato");
-    await loadAll();
+    /* uno scaricato dal sito (non e' in tracks se e' nascosto) */
+    for (const b of BUILTIN || []) {
+      if (stessoBrano(meta, b)) return { title: stripArtistPrefix(b.artist, b.title) || b.title, artist: b.artist, builtin: true };
+    }
+    return null;
   }
+
+  async function finishImport(item, blob, source) {
+      if (item.el) {
+        item.el.fill.classList.add("ok");
+        item.el.fill.style.width = "100%";
+      }
+      const meta = item.meta || { title: item.title, artist: item.artist, album: "" };
+      /* Se e' gia' presente non lo aggiungo e lo dico: meglio cosi' che
+         lasciare due copie dello stesso brano. */
+      const gia = giaInLibreria(meta);
+      if (gia) {
+        item.state = "done";
+        item.duplicato = true;
+        paintImport(item);
+        toast("\"" + meta.title + "\" era gia' nella libreria: non l'ho aggiunto due volte", 5000);
+        segnalaErrore("import saltato (gia' in libreria): " +
+          String((meta.artist || "") + " " + meta.title).slice(0, 80));
+        return null;
+      }
+      const rec = await saveImported(meta, blob, source);
+      for (const k of trackKeys(meta)) libKeys.add(k);
+      item.savedId = rec.id;
+      item.state = "done";
+      paintImport(item);
+      toast(meta.title + " importato");
+      await loadAll();
+      return rec;
+    }
 
   async function removeImportItem(item) {
     if (item.state === "downloading") return;
@@ -5500,9 +5549,23 @@ nuovoBottone(gruppo, "Scarica l'mp3 col PC", () => campoLinkYouTube(item, CARTEL
   }
 
   function paintImport(item) {
-    const el = item.el;
-    if (!el) return;
-    el.tags.innerHTML = "";
+      const el = item.el;
+      if (!el) return;
+      /* Brano gia' presente in libreria: lo dico subito nella riga, cosi'
+         anche senza guardare l'avviso in fondo si capisce perche' non e'
+         stato aggiunto. */
+      if (item.duplicato) {
+        el.tags.innerHTML = "";
+        el.actions.innerHTML = "";
+        const s = document.createElement("span");
+        s.className = "imp-tag dup";
+        s.textContent = "Gia' nella libreria";
+        el.tags.appendChild(s);
+        if (el.bytes) el.bytes.textContent = "Non l'ho aggiunto due volte";
+        if (el.fill) { el.fill.style.width = "100%"; el.fill.classList.add("ok"); }
+        return;
+      }
+      el.tags.innerHTML = "";
     el.actions.innerHTML = "";
     el.url = null;
     el.go = null;
@@ -6734,6 +6797,16 @@ $("btnFavFilter").addEventListener("click", () => {
   $("btnOffline").addEventListener("click", openOffline);
     $("btnStatistiche").addEventListener("click", apriStatistiche);
   $("btnCreaPlaylist").addEventListener("click", () => { _chiudiAltro(); creaPlaylist(); });
+  /* Le linguette: "Tutte" riporta alla libreria intera, il "+" crea. */
+  $("plLingTutte").addEventListener("click", () => {
+    _playlistAttiva = "";
+    _disegnaLinguettePlaylist();
+    render();
+  });
+  $("btnNuovaPlLing").addEventListener("click", () => {
+    _disegnaLinguettePlaylist();
+    creaPlaylist();
+  });
   $("btnCondividi").addEventListener("click", () => { _chiudiAltro(); _condividiAdesso(); });
 
   /* ---------- Aggiungere una canzone dal link di YouTube ----------
@@ -6919,7 +6992,18 @@ function _nomePerIlBrano(link, suggerito) {
       if (stato) stato.textContent = "Non riesco a parlare col servizio. Riprova fra poco.";
     }
   });
-  $("btnPlaylist").addEventListener("click", () => { _playlistAperta = ""; apriPanelPlaylist(); });
+  $("btnPlaylist").addEventListener("click", () => {
+    /* Il tasto in alto non apre piu' una finestra: le playlist sono gia'
+       nella libreria, con le linguette sopra. Se ne avevi scelta una, torna
+       a tutta la libreria. */
+    _playlistAttiva = "";
+    _disegnaLinguettePlaylist();
+    render();
+    try {
+      const sc = $("plLingScroll");
+      if (sc) sc.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } catch (e) { /* noop */ }
+  });
   $("btnNuovaPlaylist").addEventListener("click", () => creaPlaylist());
   $("btnTornaDallePlaylist").addEventListener("click", () => chiudiPanelPlaylist());
   $("playlistPanel").addEventListener("click", (e) => { if (e.target === $("playlistPanel")) chiudiPanelPlaylist(); });
@@ -7011,12 +7095,17 @@ function _nomePerIlBrano(link, suggerito) {
   function creaPlaylist() {
     const nome = _chiediNome("Come si chiama la playlist?");
     if (!nome) return null;
-    const pl = _playlistConNome(nome, "");
+      const pl = _playlistConNome(nome, "");
       _aggiornaBadgePlaylist();
       _salvaPlaylistCondivise();
       toast('Playlist "' + pl.name + '" creata. Ora puoi aggiungerci i brani.');
-    apriPanelPlaylist();
-    return pl;
+      /* Adesso le playlist stanno nella libreria, con le linguette sopra:
+         non apro piu' la finestra a parte, mostro la libreria con la nuova
+         playlist gia' selezionata. */
+      _playlistAttiva = pl.name;
+      _disegnaLinguettePlaylist();
+      render();
+      return pl;
   }
 
   /* Aggiunge il brano alla playlist scelta. Usata dal menu del brano. */
@@ -7053,14 +7142,17 @@ function _nomePerIlBrano(link, suggerito) {
   }
 
   function _aggiornaBadgePlaylist() {
-    const b = $("btnPlaylist");
-    if (b) b.classList.toggle("on", playlists.length > 0);
-    const badge = $("playlistBadge");
-    if (badge) {
-      badge.hidden = !playlists.length;
-      badge.textContent = playlists.length > 9 ? "9+" : String(playlists.length);
+      const b = $("btnPlaylist");
+      if (b) b.classList.toggle("on", playlists.length > 0);
+      const badge = $("playlistBadge");
+      if (badge) {
+        badge.hidden = !playlists.length;
+        badge.textContent = playlists.length > 9 ? "9+" : String(playlists.length);
+      }
+      /* Anche le linguette sopra la libreria: numero di brani e presenza
+         della playlist dipendono da quello che ho fatto. */
+      try { _disegnaLinguettePlaylist(); } catch (e) { /* noop */ }
     }
-  }
 
   /* Quando suono una playlist, il brano dopo e' il suo, non quello dopo
      della libreria. */
@@ -7170,9 +7262,13 @@ function _nomePerIlBrano(link, suggerito) {
         playlists = playlists.filter((p) => p.id !== pl.id);
         saveCurrentState();
         _salvaPlaylistCondivise();
-        renderPlaylist();
-        _aggiornaBadgePlaylist();
-        toast('Playlist "' + pl.name + '" eliminata');
+    /* Se sto guardando proprio questa playlist e l'ho eliminata, torno
+       alla libreria intera: altrimenti la lista resterebbe vuota senza
+       capire perche'. */
+    if (_playlistAttiva === pl.name) _playlistAttiva = "";
+    _disegnaLinguettePlaylist();
+    render();
+    toast('Playlist "' + pl.name + '" eliminata');
       });
 
       li.appendChild(nome);
@@ -7632,6 +7728,66 @@ $("btnTimer").addEventListener("click", () => {
     _aggiornaBadgePlaylist();
   }
 
+  /* ---------- Le playlist nella libreria ----------
+     Non sono una sezione a parte con una finestra: sono una fila di
+     linguette sopra la libreria. Tocchi una e sotto vedi la lista normale
+     con dentro solo i brani di quella playlist. Torni su "Tutte" e hai di
+     nuovo tutta la libreria. */
+
+  let _playlistAttiva = "";
+  let _lingScrollMemoria = 0;
+
+  function _disegnaLinguettePlaylist() {
+    const box = $("plLinguette");
+    const scroll = $("plLingScroll");
+    const dove = $("plDoveSono");
+    if (!box || !scroll) return;
+    scroll.innerHTML = "";
+    const ceNeSonno = playlists.length > 0;
+    box.hidden = false;   /* la riga c'e' sempre: se non ci sono playlist resta solo "Tutte" e il "+" */
+    for (const p of playlists) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "pl-ling" + (_playlistAttiva === p.name ? " attiva" : "");
+      const n = (p.tracks || []).length;
+      b.textContent = n ? p.name + " · " + n : p.name;
+      b.title = n ? p.name + ": " + n + (n === 1 ? " brano" : " brani") : p.name + ": vuota";
+      b.addEventListener("click", () => {
+        _playlistAttiva = (_playlistAttiva === p.name ? "" : p.name);
+        _disegnaLinguettePlaylist();
+        render();
+      });
+      scroll.appendChild(b);
+    }
+    $("plLingTutte").classList.toggle("attiva", !_playlistAttiva);
+    if (dove) {
+      if (_playlistAttiva) {
+        const pl = _playlistCercata(_playlistAttiva);
+        const n = pl ? (pl.tracks || []).length : 0;
+        dove.innerHTML = "Stai vedendo <b>" + _playlistAttiva + "</b> · " + n +
+          (n === 1 ? " brano" : " brani") + ". <span class=\"pl-torna\">Torna a tutta la libreria</span>";
+        const torna = dove.querySelector(".pl-torna");
+        if (torna) torna.addEventListener("click", () => {
+          _playlistAttiva = "";
+          _disegnaLinguettePlaylist();
+          render();
+        });
+        dove.hidden = false;
+      } else {
+        dove.hidden = true;
+      }
+    }
+    if (!_lingScrollMemoria && scroll.scrollWidth > 0) {
+      scroll.scrollLeft = _lingScrollMemoria;
+    }
+    /* Se la playlist scelta e' sparita (l'ho eliminata altrove) torno su Tutte */
+    if (_playlistAttiva && !_playlistCercata(_playlistAttiva)) {
+      _playlistAttiva = "";
+      render();
+    }
+    return ceNeSonno;
+  }
+
   /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
   let volumeBeforeMute = 100;
@@ -7703,7 +7859,7 @@ $("btnTimer").addEventListener("click", () => {
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); }, 1600);
+  setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _disegnaLinguettePlaylist(); }, 1600);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);

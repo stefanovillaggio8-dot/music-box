@@ -124,9 +124,20 @@
       <button class="logo-refresh" id="btnFavFilter" aria-label="Solo preferiti" title="Solo preferiti">
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
         </button>
-        <span class="ordine-etichetta">Ordina:</span>
-        <button class="btn-mini ordine-bt" id="btnOrdina" type="button" aria-label="Cambia ordinamento">Per artista</button>
-      </p>
+          <span class="ordine-etichetta">Ordina:</span>
+          <button class="btn-mini ordine-bt" id="btnOrdina" type="button" aria-label="Cambia ordinamento">Per artista</button>
+        </p>
+
+        <!-- Le playlist non sono una sezione a parte: sono una fila di
+             linguette qui sopra la libreria, e sotto si vede sempre la lista
+             normale. Scorrendo col dito passi da una playlist all'altra. -->
+        <div class="pl-linguette" id="plLinguette" hidden>
+          <button class="pl-ling" id="plLingTutte" type="button">Tutte</button>
+          <div class="pl-ling-scroll" id="plLingScroll"></div>
+          <button class="pl-ling pl-ling-nuova" id="btnNuovaPlLing" type="button"
+                  aria-label="Crea una playlist" title="Crea una playlist">+</button>
+        </div>
+        <p class="pl-dove-sono" id="plDoveSono" hidden></p>
       <ul class="playlist" id="playlist"></ul>
     <p class="empty" id="empty" hidden>Nessun brano trovato.</p>
   <div class="avviso-profilo" id="avvisoProfilo" hidden></div>
