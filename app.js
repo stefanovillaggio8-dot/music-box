@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.139";
+  const APP_VERSION = "6.140";
 
   let recovering = false;
   async function selfHeal() {
@@ -1577,10 +1577,38 @@ const ORDINAMENTI = [
       return new Set(String(v || "").split(",").map((x) => x.trim()).filter(Boolean));
     } catch (e) { return new Set(); }
   }
-  let _soloInPlaylist = _braniSoloInPlaylist();
+  /* Non perdo le scelte gia' fatte su questo telefono: le unisco a quelle
+     che arrivano dalle playlist condivise. */
+  let _soloInPlaylist = _ricalcolaSoloInPlaylist();
 
   function _salvaSoloInPlaylist() {
     try { LS.set(LS_PLA, [..._soloInPlaylist].join(",")); } catch (e) { /* noop */ }
+  }
+
+  /* I brani nascosti si decidono una volta sola e valgono OVUNQUE.
+
+     Prima la scelta stava solo nella memoria di quel telefono: aperto il sito
+     nel browser (che ha una memoria tutta sua), la libreria mostrava di nuovo
+     i 13 brani di gym e poteva partire una canzone della playlist mentre Ste
+     stava ascoltando la libreria. Adesso la scelta viaggia insieme alla
+     playlist, quindi browser e telefono la vedono uguale. */
+  function _nascostiDallePlaylist() {
+    const fuori = new Set();
+    for (const pl of (playlists || [])) {
+      if (!pl || pl.nascosta !== true) continue;
+      for (const id of (pl.tracks || [])) fuori.add(id);
+    }
+    return fuori;
+  }
+
+  /* Ricalcola i nascosti: ci metto dentro sia quelli decisi qui sia quelli
+     arrivati con le playlist dagli altri dispositivi.
+     Restituisce la lista nuova invece di assegnarla: questa funzione viene
+     chiamata anche mentre _soloInPlaylist si sta inizializzando, e se
+     assegnasse qui il browser si fermerebbe con "Cannot access before
+     initialization". */
+  function _ricalcolaSoloInPlaylist() {
+    return new Set([..._braniSoloInPlaylist(), ..._nascostiDallePlaylist()]);
   }
 
   /* Mette un brano "solo nella playlist": sparisce dalla libreria ma
@@ -2329,14 +2357,14 @@ function rebuildAudio(autoplay) {
         _aiutoBox.innerHTML = '<span class="aiuto-testo"></span><button type="button" class="aiuto-pulsante">Continua</button>';
         document.body.appendChild(_aiutoBox);
         _aiutoBox.querySelector(".aiuto-pulsante").addEventListener("click", () => {
-          _nascondiQiuto();
+          _nascondiAiuto();
           /* La canzone e' gia' cambiata: qui non devo saltare al brano dopo,
              devo solo suonare quello che c'e' adesso. E soprattutto: questo
              tocco e' un "permesso" dell'utente, quindi stavolta l'iPhone
              lascia passare play(). */
           _vuoleSuonare = true;
           if (audio && !audio.paused) { _vuoleSuonare = false; return; }
-          doPlay().then((va) => { if (va) _nascondiQiuto(); });
+          doPlay().then((va) => { if (va) _nascondiAiuto(); });
         });
       }
       _aiutoBox.querySelector(".aiuto-testo").textContent = testo;
@@ -2999,18 +3027,41 @@ function _ripristinaNascosti() {
     playById(idBranoA(nextIndex()));
   }
 
+  /* Mettere in pausa o far ripartire, per scelta.
+
+     Stanno QUI e non dentro i singoli tasti, perche' prima ogni tasto si
+     fermava da solo e il risultato era che quello del blocco schermo fermava
+     l'audio senza dire niente all'app: entro tre secondi l'app credeva che
+     avessi dimenticato di mettere play e la musica ripartiva da sola.
+
+     Ora: il tasto play, il tasto pausa del telefono e quello del blocco
+     schermo passano tutti di qui, quindi non possono piu' discordare. */
+  function _pausaVolontaria() {
+    /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
+       altrimenti chi aspetta di riavviare la musica mi riaccende. */
+    _vuoleSuonare = false;
+    _silenziDiFila = 0;
+    if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
+    if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
+    if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
+    _nascondiAiuto();
+    syncPlayUI();
+  }
+
+  function _riproduciVolontaria() {
+    _vuoleSuonare = true;
+    _ultimoScorrimento = Date.now();
+    _silenziDiFila = 0;
+    if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
+    if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
+    return doPlay();
+  }
+
   async function togglePlay() {
     if (!currentId && tracks.length) await playById(tracks[0].id);
-    if (audio.paused) {
-      /* l'utente preme play: da qui voglio davvero sentire */
-      _vuoleSuonare = true;
-      _ultimoScorrimento = Date.now();
-      await doPlay();
-    } else {
-      /* l'utente preme pause: adesso il silenzio e' voluto, non e' un-guasto */
-      _vuoleSuonare = false;
-      audio.pause();
-    }
+    /* l'utente preme play quando e' fermo, e pause quando sta suonando */
+    if (audio.paused) _riproduciVolontaria();
+    else _pausaVolontaria();
   }
 
   function setSvgVisible(el, visible) {
@@ -3092,8 +3143,11 @@ function _aggiornaPosizioneSchermo() {
     const setHandler = (action, fn) => {
       try { navigator.mediaSession.setActionHandler(action, fn); } catch (e) { /* noop */ }
     };
-    setHandler("play", () => doPlay());
-    setHandler("pause", () => { if (audio) audio.pause(); });
+    /* Tasti del blocco schermo: passano dagli stessi due posti del tasto
+       play/pausa dell'app, altrimenti potrebbero dimenticarsi di dire
+       "l'utente ha messo pausa" e la musica ripartirebbe da sola. */
+    setHandler("play", () => { _riproduciVolontaria(); });
+    setHandler("pause", () => { _pausaVolontaria(); });
     setHandler("nexttrack", () => playNext());
     setHandler("previoustrack", () => playById(idBranoA(prevIndex())));
     setHandler("seekto", (d) => {
@@ -3104,7 +3158,7 @@ function _aggiornaPosizioneSchermo() {
     });
     setHandler("seekbackward", () => seekBy(-15));
     setHandler("seekforward", () => seekBy(15));
-    setHandler("stop", () => { if (audio) audio.pause(); });
+    setHandler("stop", () => { _pausaVolontaria(); });
     setPlaybackState(audio && !audio.paused ? "playing" : "paused");
   }
 
@@ -7380,12 +7434,16 @@ function _nomePerIlBrano(link, suggerito) {
               "Per riportarli: apri questa playlist e premi il tasto qui sotto.",
               "Nascondi"
             );
-            if (!si) return;
-            for (const id of (pl.tracks || [])) _mettiSoloInPlaylist(id);
-            _disegnaLinguettePlaylist();
-            renderPlaylist();
-            render();
-            toast('I brani di "' + pl.name + '" si vedono solo dentro la playlist');
+              if (!si) return;
+              for (const id of (pl.tracks || [])) _mettiSoloInPlaylist(id);
+              /* Salvo anche sulla playlist: cosi' la scelta vale anche nel
+                 browser e sull'altro telefono, e non solo su questo. */
+              pl.nascosta = true;
+              _salvaPlaylistCondivise();
+              _disegnaLinguettePlaylist();
+              renderPlaylist();
+              render();
+              toast('I brani di "' + pl.name + '" si vedono solo dentro la playlist, su tutti i dispositivi');
           });
           lista.appendChild(via);
         }
@@ -7401,11 +7459,13 @@ function _nomePerIlBrano(link, suggerito) {
               gia + (gia === 1 ? " brano torna" : " brani tornano") + " nella libreria normale di \"" + pl.name + "\".",
               "Riporta"
             );
-            if (!si) return;
-            for (const id of (pl.tracks || [])) _togliSoloInPlaylist(id);
-            _disegnaLinguettePlaylist();
-            renderPlaylist();
-            render();
+              if (!si) return;
+              for (const id of (pl.tracks || [])) _togliSoloInPlaylist(id);
+              pl.nascosta = false;
+              _salvaPlaylistCondivise();
+              _disegnaLinguettePlaylist();
+              renderPlaylist();
+              render();
             toast(gia + (gia === 1 ? " brano e' di nuovo" : " brani sono di nuovo") + " in libreria");
           });
           lista.appendChild(torna);
@@ -7771,18 +7831,34 @@ $("btnTimer").addEventListener("click", () => {
     } catch (e) { return; }
 
     /* Quelle che ho qui sono le piu' fresche: se la stessa playlist e' anche
-       nel sito, tengo la mia. Cosi' una cancellazione fatta qui si propaga e
-       non viene ricreata al riavvio. */
+       nel sito, tengo la mia per i brani, ma la scelta "nascondila dalla
+       libreria" la rispetto sempre, altrimenti su un dispositivo nuovo i
+       brani nascosti ricompaiono in libreria. */
     let nuove = 0;
     for (const p of arrivate) {
       if (!p || !p.name) continue;
-      if (_playlistCercata(p.name)) continue;
+      if (_playlistCercata(p.name)) {
+        const gia = _playlistCercata(p.name);
+        if (gia && p.nascosta === true) gia.nascosta = true;
+        continue;
+      }
       playlists.push({
         id: String(p.id || ("pl-" + String(p.name).toLowerCase().replace(/\s+/g, "-"))),
         name: String(p.name).slice(0, 60),
+        nascosta: p.nascosta === true,
         tracks: (Array.isArray(p.tracks) ? p.tracks : []).filter((t) => /^b-track-\d+$/.test(String(t)))
       });
       nuove++;
+    }
+    /* La lista dei nascosti dipende anche dalle playlist: la ricalcolo e,
+       se qualcosa e' cambiato, aggiorno quello che si vede. */
+    const prima = [..._soloInPlaylist].join(",");
+    _soloInPlaylist = _ricalcolaSoloInPlaylist();
+    const dopo = [..._soloInPlaylist].join(",");
+    if (prima !== dopo) {
+      saveCurrentState();
+      _disegnaLinguettePlaylist();
+      render();
     }
     if (nuove) {
       saveCurrentState();
