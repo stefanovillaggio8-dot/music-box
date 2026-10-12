@@ -2006,3 +2006,10 @@ li.appena-aggiunto {
      solo i due pezzi che mancano. */
   .avviso-nascosti .riga-piu { margin-top: 8px; }
   .avviso-nascosti .torna { background: rgba(255, 255, 255, .16); color: #fff; }
+  /* Con la barra di Safari in alto (quando l'app non e' aperta come web app,
+     perche' e' l'unico modo che iPhone lasci suonare a catena) lo spazio
+     prezioso scarseggia. Cosi' l'intestazione esce quando scorro in giu' e
+     torna appena scrivo in su: quando sto scegliendo un brano vedo piu'
+     musica, e il menu resta a portata di mano. */
+  .topbar { transition: transform .18s ease-out; will-change: transform; }
+  .topbar.scorrendo-giu { transform: translateY(-100%); }

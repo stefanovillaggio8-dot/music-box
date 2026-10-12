@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.141";
+  const APP_VERSION = "6.142";
 
   let recovering = false;
   async function selfHeal() {
@@ -2510,6 +2510,36 @@ function rebuildAudio(autoplay) {
       }
     }, 3000);
   }
+
+  /* L'intestazione esce quando scorro in giu' e torna quando scrivo in su.
+
+     Motivo: con l'app aperta dentro Safari (non come web app) l'iPhone mostra
+     la sua barra in alto, e lo spazio per l'elenco dei brani si stringe.
+     Cosi' quando sto scegliendo cosa ascoltare l'intestazione non c'intralcia,
+     ma il menu resta a portata di dito: basta scrivere un po' in su. */
+  (function topbarCheScorre() {
+    try {
+      const barra = document.querySelector(".topbar");
+      if (!barra) return;
+      let ultimo = window.scrollY || 0;
+      let fermo = 0;
+      window.addEventListener("scroll", () => {
+        const ora = window.scrollY || 0;
+        const giù = ora > ultimo + 6;
+        const su = ora < ultimo - 6;
+        /* vicino a cima e in fondo la lascio stare: li' non ci guadagniamo niente */
+        if (ora < 70) { barra.classList.remove("scorrendo-giu"); ultimo = ora; return; }
+        if (Math.abs(ora - ultimo) < 6) return;
+        ultimo = ora;
+        if (giù) barra.classList.add("scorrendo-giu");
+        else if (su) barra.classList.remove("scorrendo-giu");
+        /* se l'utente smette di muoversi, dopo un po' la riporto: non deve
+           restare nascosta per sempre se poi non tocca piu' niente */
+        clearTimeout(fermo);
+        fermo = setTimeout(() => { barra.classList.remove("scorrendo-giu"); }, 2600);
+      }, { passive: true });
+    } catch (e) { /* noop */ }
+  })();
 
   /* Se Ste apre l'app dall'icona della Home Screen, iPhone la chiude prima,
      anche mentre la musica suona: il brano corrente va avanti, ma quando
