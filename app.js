@@ -65,6 +65,7 @@
           { title: "Albachiara", file: "songs/track-64.mp3", artist: "Vasco Rossi", profile: "Ste" },
           { title: "Wonderwall NL", file: "songs/track-65.mp3", artist: "senza artista", profile: "Ste" },
           { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-66.mp3", artist: "Gianluca Grignani", profile: "Ste" },
+          { title: "Chiello", file: "songs/track-67.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
   ];
 
   const PALETTE = [
