@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.149";
+  const APP_VERSION = "6.150";
 
   let recovering = false;
   async function selfHeal() {
@@ -603,22 +603,33 @@ if (t) {
     }, true);
   }
 
-  /* Se la libreria e' vuota, te lo dico con parole utili.
-     Prima questo avviso esisteva perche' ogni profilo vedeva solo i propri
-     brani e poteva capitare di aprire un nome senza niente dentro. Adesso la
-     musica e' di tutti, quindi qui la libreria e' vuota solo se davvero non
-     c'e' niente sul sito. */
+  /* Se il profilo aperto non ha brani ma un altro profilo ne ha, te lo dico:
+     succede perche' le librerie sono diverse e si sembra sparito tutto. */
   function avvisaProfiloVuoto() {
     const avviso = $("avvisoProfilo");
     if (!avviso) return;
-    if (tracks.length || BUILTIN.length) {
+    if (tracks.length) {
       avviso.hidden = true;
       return;
     }
+    const altro = PROFILI.map((p) => p.nome).find((n) => n !== profile &&
+      BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === n).length > 0);
+    if (!altro) {
+      avviso.hidden = true;
+      return;
+    }
+    const quanti = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === altro).length;
     avviso.innerHTML = "";
     const p = document.createElement("div");
-    p.textContent = "La libreria e' vuota: sul sito non c'e' ancora nessuna canzone. Aggiungine una col tasto + e la vedranno tutti.";
+    p.textContent = "Nel profilo " + profile + " non ci sono brani. In " + altro + " ce ne sono " + quanti + ".";
+    const b = document.createElement("button");
+    b.textContent = "Vai al profilo " + altro;
+    b.addEventListener("click", () => {
+      avviso.hidden = true;
+      switchProfile(altro);
+    });
     avviso.appendChild(p);
+    avviso.appendChild(b);
     avviso.hidden = false;
   }
 
@@ -976,6 +987,56 @@ if (nuovo) r.v = (r.v || 0) + 1;
   }
 
   async function loadAll() {
+  /* ---------- Le mie librerie, e quelle degli altri ----------
+
+   Ogni nome ha la sua libreria. Non e' una password e non e' un account: e'
+   solo un nome, e serve a tenere separati i brani che hai aggiunto tu.
+   E' quello che vuole Stefano: le canzoni sue restano sue.
+
+   Due cose permettono di sentire anche qualche canzone degli altri, senza che
+   all'altro sparisca niente:
+   - l'interruttore "vedi anche le canzoni degli altri": le mostra tutte;
+   - "Porta nella mia libreria" dalla pressione lunga: quel brano entra anche
+     nella mia, e resta dov'e'.
+
+   La lista dei brani "miei anche se non li ho aggiunti io" la tengo anche sul
+   sito (stato.json), cosi' vale su ogni dispositivo. */
+
+  const LS_MIEI = "mb.miei";
+  const LS_VEDI = "mb.vediTutti";
+
+  function _mieiCopiati() {
+    try {
+      const v = JSON.parse(LS.get(LS_MIEI, "{}"));
+      const miei = (v && typeof v === "object") ? v : {};
+      const lista = Array.isArray(miei[profile]) ? miei[profile] : [];
+      return new Set(lista.map((x) => String(x || "")).filter(Boolean));
+    } catch (e) { return new Set(); }
+  }
+
+  function _salvaMieiCopiati(lista) {
+    try {
+      const v = JSON.parse(LS.get(LS_MIEI, "{}"));
+      const miei = (v && typeof v === "object") ? v : {};
+      miei[profile] = [...new Set((lista || []).map((x) => String(x || "")).filter(Boolean))].sort();
+      LS.set(LS_MIEI, JSON.stringify(miei));
+    } catch (e) { /* noop */ }
+  }
+
+  function _vedoTutti() {
+    try { return LS.get(LS_VEDI, "") === "si"; } catch (e) { return false; }
+  }
+
+  /* Chiamato per ogni brano mentre carico la libreria. */
+  function _devoVedereBrano(eMio, b) {
+    if (eMio) return true;
+    if (_vedoTutti()) return true;
+    /* l'id del brano e' b-track-<numero>, come lo chiama tutto il resto */
+    const m = /songs\/track-(\d+)\.mp3$/.exec(String((b && b.file) || ""));
+    if (!m) return false;
+    return _mieiCopiati().has("b-track-" + m[1]);
+  }
+
   /* Copertine che ho cercato io dal browser per questi brani (vedi
      "Scarica tutte le copertine mancanti"): valgono solo su questo
      dispositivo, ma cosi' un brano senza copertina la vede comunque. */
@@ -987,14 +1048,13 @@ if (nuovo) r.v = (r.v || 0) + 1;
     }
   } catch (e) { /* noop */ }
 
-/* La musica e' di tutti.
-       Prima ogni nome vedeva solo i brani con il suo nome sopra, e siccome la
-       musica e' online e condivisa quella divisione non aveva piu' senso: un
-       amico che apriva l'app trovava la libreria vuota. Adesso tutti vedono
-       tutti i brani, e il nome dice solo CHI ha aggiunto il brano (serve per
-       le statistiche e per poterlo spostare nella propria libreria con la
-       pressione lunga). */
+/* Ognuno vede la sua libreria, non quella degli altri: le canzoni di Ste
+     sono sue. Per sentire qualche canzone degli altri si puo' accendere
+     l'interruttore "vedi anche le canzoni degli altri", oppure tenere premuto
+     una canzone altrui e scegliere "Porta nella mia libreria": quella la copia
+     e basta, all'altro resta esattamente com'e'. */
     const builtin = BUILTIN
+          .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
           .map((b, i) => {
       /* Il nome di parecchi file era "ARTISTA - ARTISTA - TITOLO" (per
          esempio "BLANCO - BLANCO - SOTTOGONNA"): in libreria si vedeva
@@ -2897,58 +2957,35 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
   const ICON_SHARE = "M18 16a3 3 0 0 0-2.4 1.2l-6.9-4a3 3 0 0 0 0-1.4l7-4.1A3 3 0 1 0 15 6c0 .2 0 .4.1.6l-7 4.1a3 3 0 1 0 0 6.6l6.9 4A3 3 0 1 0 18 16Z";
   const ICON_OFFLINE = "M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z";
 
-  /* Sposta un brano nella libreria di un altro nome: cambio il "profile" del
-     brano dentro l'elenco condiviso. Provo prima col computer (che risponde
-     subito), poi col Worker se il computer non c'e'.
+  /* Porto un brano nella mia libreria.
 
-     Se non riesco a scrivere sul sito NON lo cambio qui, perche' finche' il
-     sito non sa la cosa, al prossimo caricamento il brano torna com'era e
-     sembrerebbe che non ho fatto niente. */
-  async function _spostaBranoA(t, nuovoNome) {
-    const nome = String(nuovoNome || "").trim().slice(0, 24);
-    if (!t || !nome || t.profile === nome) return;
-    const file = String(t.url || "").replace(/^.*\//, "");
-    const numero = (/^track-(\d+)\.mp3$/.exec(file) || [])[1];
+     NON e' uno spostamento: la canzone resta dov'e', e semplicemente entra
+     anche nella mia. E' quello che chiedeva Stefano: "voglio che si duplichi,
+     non che si sposti dalla mia alla sua eliminandosi dalla mia".
+
+     Non si copia nemmeno il file audio (sarebbe sprecato: il brano e' gia'
+     online e lo sentiamo entrambi dallo stesso indirizzo). Metto il brano
+     nella mia lista, che salvo anche sul sito cosi' vale su ogni dispositivo. */
+  async function _portaNellaMiaLibreria(t) {
+    if (!t) return;
+    const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
     if (!numero) {
-      toast("Non posso spostare questo brano: non so qual e' il suo numero");
+      toast("Non posso copiare questo brano: non so qual e' il suo numero");
       return;
     }
-    const corpo = JSON.stringify({ numero: numero, nome: nome });
-    try {
-      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-      const r = await fetch(base + "/proprietario", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: corpo
-      });
-      if (r.ok) {
-        _aggiornaProprietarioLocale(t.id, nome);
-        toast('"' + t.title + '" ora e\' nella libreria di ' + nome);
-        return;
-      }
-    } catch (e) { /* il computer non c'e': provo dal Worker */ }
-    try {
-      if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) throw new Error("niente chiave");
-      const r = await fetch(SERVIZIO_PUBBLICA + "/proprietario", {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
-        body: corpo
-      });
-      if (r.ok) {
-        _aggiornaProprietarioLocale(t.id, nome);
-        toast('"' + t.title + '" ora e\' nella libreria di ' + nome);
-        return;
-      }
-    } catch (e) { /* niente rete: lo dico e non fingo */ }
-    toast("Non sono riuscito a spostarlo: serve il computer acceso o la chiave. Riprova dopo.");
-  }
-
-  function _aggiornaProprietarioLocale(id, nome) {
-    try {
-      const t = tracks.find((x) => x.id === id);
-      if (t) t.profile = nome;
-      render();
-    } catch (e) { /* noop */ }
+    const id = "b-track-" + numero;
+    const gia = _mieiCopiati();
+    if (gia.has(id)) {
+      toast('"' + t.title + '" e\' gia\' nella tua libreria');
+      return;
+    }
+    /* Prima sul telefono, cosi' si vede subito anche se non ho rete. */
+    _salvaMieiCopiati([...gia, id]);
+    try { await loadAll(); } catch (e) { /* noop */ }
+    render();
+    toast('"' + t.title + '" ora e\' anche nella tua libreria (a ' + t.profile + ' resta)');
+    /* Poi sul sito, cosi' la ritrovo su questo e sull'altro dispositivo. */
+    _salvaStatoCondiviso();
   }
 
   function openQuickMenu(t) {
@@ -2998,20 +3035,19 @@ box.innerHTML = "";
       }));
     }
   }
-    /* La musica e' di tutti, ma ogni brano ricorda CHI l'ha aggiunto. Se un
-     brano e' di un altro e lo voglio "mio", lo sposto: cambio il nome sopra
-     al brano, sul sito. Lo chiede Stefano per gli amici ("se tiene premuto
-     una canzone di un altro, puo' portarla nella sua libreria"). */
+    /* Se una canzone e' di un altro nome, posso averla anche io. Stefano lo
+     vuole cosi': che si DUPLICA nella mia libreria, e all'altro resta com'e'. */
   if (t.builtin && t.profile && t.profile !== profile) {
     box.appendChild(quickAction("Porta nella mia libreria", ICON_LIBRARY, async () => {
       const si = await askConfirm(
-        "Portare il brano nella tua libreria?",
-        '"' + t.title + '" l\'ha aggiunto ' + t.profile + '. Lo sposti nella libreria di\n' +
-          profile + ".\n\nLa musica resta la stessa per tutti: cambia solo di chi e'.",
-        "Sposta"
+        "Copiare questa canzone nella tua libreria?",
+        '"' + t.title + '" e\' di ' + t.profile + '.\n\n' +
+          "Copia e basta: a " + t.profile + " resta esattamente come adesso,\n" +
+          "non perde niente e non gli sparisce niente.",
+        "Copia"
       );
       if (!si) return;
-      await _spostaBranoA(t, profile);
+      await _portaNellaMiaLibreria(t);
     }));
   }
     if (t.builtin) {
@@ -7187,11 +7223,11 @@ $("btnFavFilter").addEventListener("click", () => {
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
       if (!parsed || !parsed.length) return;
-      /* Adesso la musica e' di tutti: qui confronto TUTTI i brani del sito
-           con quelli che ho, non solo i miei. Prima prendevo solo i brani col
-           mio nome e cosi' le canzoni degli altri sembravate sparite dal
-           sito: per un amico che apriva l'app erano tutte da cancellare. */
-        const mine = parsed;
+      /* Confronto col sito solo per i brani che SONO nella mia libreria (i miei piu'
+         quelli che ho copiato dagli altri). Se guardassi tutti i brani del
+         sito, le canzoni degli altri sembrerebbero sparite e potrei essere
+         invitato a cancellarle: cosa che non voglio mai. */
+        const mine = parsed.filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b));
       const remoteFiles = mine.map((b) => b.file);
       const localBuiltin = tracks.filter((t) => t.builtin);
       const localFiles = localBuiltin.map((t) => t.url);
@@ -7324,8 +7360,14 @@ function _nomePerIlBrano(link, suggerito) {
     if (!nome) { toast("Scrivi il nome del brano, altrimenti non lo metto in libreria"); return; }
     try { LS.set("mb.ultimoNome", nome); } catch (e) { /* noop */ }
 
-    const cartella = CARTELLA_PREDEFINITA === "ari" ? "ari"
-      : (CARTELLA_PREDEFINITA === "emanuela" ? "emanuela" : "ste");
+    /* Cartella del computer dove mettere il brano scaricato da YouTube.
+
+       Prima era scritta a mano: finiva sempre nella cartella di Ste (o di Ari
+       o Emanuele) anche se stavi ascoltando come un altro nome. Infatti se un
+       amico scaricava una canzone da YouTube, gli finiva nella libreria di
+       Ste. Adesso prendo la cartella del nome aperto, e se questo nome non ha
+       una cartella sul computer uso quella di Ste. */
+    const cartella = cartellaDi(profile) || "ste";
 
     /* Se il computer e' acceso: scarica subito, e' piu' veloce. */
     if (await ponteOnline()) {
@@ -7491,6 +7533,34 @@ function _nomePerIlBrano(link, suggerito) {
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
   $("btnProfile").addEventListener("click", openProfile);
+
+    /* Interruttore "vedi anche le canzoni degli altri".
+
+       Non toglie niente a nessuno: e' solo uno sguardo. Se lo spegni torni a
+       vedere solo la tua libreria, e le canzoni degli altri sono ancora
+       dove sono. */
+    (function collegaVediTutti() {
+      const tasto = $("btnVediTutti");
+      const testo = $("vediTuttiTesto");
+      if (!tasto) return;
+      const disegna = () => {
+        const acceso = _vedoTutti();
+        tasto.classList.toggle("on", acceso);
+        if (testo) testo.textContent = acceso
+          ? "Stai vedendo anche le canzoni degli altri"
+          : "Vedi anche le canzoni degli altri";
+      };
+      tasto.addEventListener("click", async () => {
+        try { LS.set(LS_VEDI, _vedoTutti() ? "" : "si"); } catch (e) { /* noop */ }
+        disegna();
+        try { await loadAll(); } catch (e) { /* noop */ }
+        render();
+        toast(_vedoTutti()
+          ? "Ora vedi anche le canzoni degli altri. Non e' successo niente: sono ancora loro."
+          : "Torni a vedere solo la tua libreria");
+      });
+      disegna();
+    })();
 
     /* Creare un profilo nuovo, senza dover aspettare che io cambi il sito.
        Serve per gli amici: ognuno sul suo telefono scrive il suo nome e gli
@@ -8150,7 +8220,12 @@ $("btnTimer").addEventListener("click", () => {
     _timerStatoCondiviso = setTimeout(async () => {
       const corpo = JSON.stringify({
         nascosti: [...hiddenTracks],
-        preferiti: [...favorites]
+        preferiti: [...favorites],
+        /* i brani che ho copiato nella mia libreria, per ogni nome. Serve
+           cosi' ritrovo la copia anche sull'altro dispositivo. */
+        miei: (function () {
+          try { return JSON.parse(LS.get(LS_MIEI, "{}")) || {}; } catch (e) { return {}; }
+        })()
       });
       /* Prima il computer, che e' di solito acceso e risponde subito. Poi, se
          non c'e', il Worker (funziona anche col computer spento). */
@@ -8178,21 +8253,37 @@ $("btnTimer").addEventListener("click", () => {
     try {
       const r = await fetch("./stato.json", { cache: "no-cache" });
       if (!r.ok) return;
-      const j = await r.json();
-      const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
-      const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
-      if (!nasco.length && !prefs.length) return;
-      let cambiati = 0;
-      /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
-         e diventa solo piu' grande. */
-      for (const id of nasco) if (id && !hiddenTracks.has(id)) { hiddenTracks.add(id); cambiati++; }
-      for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
-      if (cambiati) {
-        saveCurrentState();
-        render();
-      }
-    } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
-  }
+const j = await r.json();
+        const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
+        const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
+        let cambiati = 0;
+        /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
+           e diventa solo piu' grande. */
+        for (const id of nasco) if (id && !hiddenTracks.has(id)) { hiddenTracks.add(id); cambiati++; }
+        for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
+        /* I brani copiati nella mia libreria: devono valere anche sull'altro
+           dispositivo, quindi li metto in elenco insieme a tutto il resto. */
+        if (j && j.miei && typeof j.miei === "object") {
+          try {
+            const miei = JSON.parse(LS.get(LS_MIEI, "{}")) || {};
+            for (const nome of Object.keys(j.miei)) {
+              const lista = Array.isArray(j.miei[nome]) ? j.miei[nome] : [];
+              const mia = new Set(Array.isArray(miei[nome]) ? miei[nome] : []);
+              for (const id of lista) {
+                const s = String(id || "");
+                if (s && !mia.has(s)) { mia.add(s); cambiati++; }
+              }
+              miei[nome] = [...mia].sort();
+            }
+            LS.set(LS_MIEI, JSON.stringify(miei));
+          } catch (e) { /* noop */ }
+        }
+        if (cambiati) {
+          saveCurrentState();
+          render();
+        }
+      } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
+    }
 
   /* Unisco le playlist arrivate da fuori a quelle che ho gia' qui. */
 function _unisciPlaylistCondivise(arrivate) {

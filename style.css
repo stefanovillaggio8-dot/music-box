@@ -2029,3 +2029,22 @@ li.appena-aggiunto {
       outline: none;
   }
   .nuovo-prof input:focus { border-color: var(--accent); }
+
+  /* Interruttore 'vedi anche le canzoni degli altri'. */
+  .vedi-tutti {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      font-size: 14px;
+      text-align: left;
+      color: var(--txt);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      cursor: pointer;
+  }
+  .vedi-tutti.on { border-color: var(--accent); color: var(--accent); }
+  .vedi-tutti:active { transform: translateY(1px); }
+
