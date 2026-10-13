@@ -2013,3 +2013,19 @@ li.appena-aggiunto {
      musica, e il menu resta a portata di mano. */
   .topbar { transition: transform .18s ease-out; will-change: transform; }
   .topbar.scorrendo-giu { transform: translateY(-100%); }
+
+  /* Riga per creare un profilo nuovo (gli amici): sta sotto l'elenco. */
+  .nuovo-prof { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+  .nuovo-prof input {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 14px;
+      color: var(--txt);
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      outline: none;
+  }
+  .nuovo-prof input:focus { border-color: var(--accent); }

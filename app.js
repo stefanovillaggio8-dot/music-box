@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.147";
+  const APP_VERSION = "6.148";
 
   let recovering = false;
   async function selfHeal() {
@@ -156,11 +156,12 @@ let playlists = [];
   /* I profili: ognuno ha la sua libreria e la sua cartella di mp3 sul PC.
      Prima erano due fissi (Ste ed Emanuele); ora l'elenco e' una lista, cosi'
      aggiungere un profilo e' una riga e basta. */
-  const PROFILI = [
-    { nome: "Ste", cartella: "ste" },
-    { nome: "Emanuele", cartella: "emanuela" },
-    { nome: "Ari", cartella: "ari" }
-  ];
+const PROFILI = [
+      { nome: "Ste", cartella: "ste" },
+      { nome: "Emanuele", cartella: "emanuela" },
+      { nome: "Ari", cartella: "ari" },
+      { nome: "Diego", cartella: "diego" }
+    ];
   const DEFAULT_PROFILE = PROFILI[0].nome;
   /* Il tasto semplice "Scarica l'mp3 col PC" adesso salva anche una copia
      nella cartella del profilo: cosi' il brano finisce nella libreria
@@ -3417,9 +3418,32 @@ function _aggiornaPosizioneSchermo() {
     $("btnProfile").classList.add("on");
   }
 
+  /* I profili che sono nati su questo telefono (gli amici). I tre di sistema
+     stanno nel codice; gli altri se li crea qui chi usa l'app, cosi' non
+     devo rifare il sito ogni volta che si aggiunge qualcuno. */
+  function profiliLocali() {
+    try {
+      const v = JSON.parse(LS.get("mb.profili", "[]"));
+      if (!Array.isArray(v)) return [];
+      return v.filter((n) => typeof n === "string" && n.trim() && n.trim().length <= 24);
+    } catch (e) { return []; }
+  }
+
+  function _aggiungiProfiloLocale(nome) {
+    const n = String(nome || "").trim().slice(0, 24);
+    if (!n) return "";
+    const gia = profiliLocali();
+    const tutti = PROFILI.map((p) => p.nome);
+    if (tutti.some((x) => x.toLowerCase() === n.toLowerCase())) return n;
+    gia.push(n);
+    try { LS.set("mb.profili", JSON.stringify(gia)); } catch (e) { /* noop */ }
+    return n;
+  }
+
   function profileList() {
     // il profilo aperto per primo, poi tutti gli altri
-    const nomi = PROFILI.map((p) => p.nome);
+    const base = PROFILI.map((p) => p.nome);
+    const nomi = base.concat(profiliLocali().filter((n) => !base.includes(n)));
     return [profile].concat(nomi.filter((n) => n !== profile));
   }
 
@@ -7403,6 +7427,32 @@ function _nomePerIlBrano(link, suggerito) {
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
   $("btnProfile").addEventListener("click", openProfile);
+
+    /* Creare un profilo nuovo, senza dover aspettare che io cambi il sito.
+       Serve per gli amici: ognuno sul suo telefono scrive il suo nome e gli
+       resta. I brani che aggiunge vengono messi sotto quel nome. */
+    (function collegaCreaProfilo() {
+      const campo = $("nuovoProfNome");
+      const tasto = $("btnCreaProfilo");
+      if (!campo || !tasto) return;
+      const crea = () => {
+        const nome = String(campo.value || "").trim().slice(0, 24);
+        if (!nome) return;
+        const eraGia = profileList().some((x) => x.toLowerCase() === nome.toLowerCase());
+        const salvato = _aggiungiProfiloLocale(nome);
+        campo.value = "";
+        renderProfiles();
+        if (!eraGia) {
+          closeProfile();
+          switchProfile(salvato || nome);
+          toast('Fatto: ora ascolti come "' + nome + '". I brani che aggiungi sono suoi.');
+        } else {
+          toast('"' + nome + '" c\'era gia\'');
+        }
+      };
+      tasto.addEventListener("click", crea);
+      campo.addEventListener("keydown", (e) => { if (e.key === "Enter") crea(); });
+    })();
   $("profileClose").addEventListener("click", closeProfile);
   $("profilePanel").addEventListener("click", (e) => {
     if (e.target === $("profilePanel")) closeProfile();
