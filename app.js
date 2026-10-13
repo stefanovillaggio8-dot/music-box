@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.148";
+  const APP_VERSION = "6.149";
 
   let recovering = false;
   async function selfHeal() {
@@ -603,38 +603,22 @@ if (t) {
     }, true);
   }
 
-  /* Se il profilo aperto non ha brani ma un altro profilo ne ha, te lo dico:
-     succede perche' le librerie sono diverse e si sembra sparito tutto. */
+  /* Se la libreria e' vuota, te lo dico con parole utili.
+     Prima questo avviso esisteva perche' ogni profilo vedeva solo i propri
+     brani e poteva capitare di aprire un nome senza niente dentro. Adesso la
+     musica e' di tutti, quindi qui la libreria e' vuota solo se davvero non
+     c'e' niente sul sito. */
   function avvisaProfiloVuoto() {
     const avviso = $("avvisoProfilo");
     if (!avviso) return;
-    if (tracks.length) {
+    if (tracks.length || BUILTIN.length) {
       avviso.hidden = true;
       return;
     }
-    const miei = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === profile).length;
-    if (miei > 0) {
-      avviso.hidden = true;
-      return;
-    }
-    const altro = PROFILI.map((p) => p.nome).find((n) => n !== profile &&
-      BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === n).length > 0);
-    if (!altro) {
-      avviso.hidden = true;
-      return;
-    }
-    const quanti = BUILTIN.filter((b) => (b.profile || DEFAULT_PROFILE) === altro).length;
     avviso.innerHTML = "";
     const p = document.createElement("div");
-    p.textContent = "Nel profilo " + profile + " non ci sono brani. In " + altro + " ce ne sono " + quanti + ".";
-    const b = document.createElement("button");
-    b.textContent = "Vai al profilo " + altro;
-    b.addEventListener("click", () => {
-      avviso.hidden = true;
-      switchProfile(altro);
-    });
+    p.textContent = "La libreria e' vuota: sul sito non c'e' ancora nessuna canzone. Aggiungine una col tasto + e la vedranno tutti.";
     avviso.appendChild(p);
-    avviso.appendChild(b);
     avviso.hidden = false;
   }
 
@@ -1003,9 +987,15 @@ if (nuovo) r.v = (r.v || 0) + 1;
     }
   } catch (e) { /* noop */ }
 
-const builtin = BUILTIN
-      .filter((b) => (b.profile || DEFAULT_PROFILE) === profile)
-      .map((b, i) => {
+/* La musica e' di tutti.
+       Prima ogni nome vedeva solo i brani con il suo nome sopra, e siccome la
+       musica e' online e condivisa quella divisione non aveva piu' senso: un
+       amico che apriva l'app trovava la libreria vuota. Adesso tutti vedono
+       tutti i brani, e il nome dice solo CHI ha aggiunto il brano (serve per
+       le statistiche e per poterlo spostare nella propria libreria con la
+       pressione lunga). */
+    const builtin = BUILTIN
+          .map((b, i) => {
       /* Il nome di parecchi file era "ARTISTA - ARTISTA - TITOLO" (per
          esempio "BLANCO - BLANCO - SOTTOGONNA"): in libreria si vedeva
          l'artista due volte. Tolgo il nome dell'artista dal titolo quando
@@ -2907,6 +2897,60 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
   const ICON_SHARE = "M18 16a3 3 0 0 0-2.4 1.2l-6.9-4a3 3 0 0 0 0-1.4l7-4.1A3 3 0 1 0 15 6c0 .2 0 .4.1.6l-7 4.1a3 3 0 1 0 0 6.6l6.9 4A3 3 0 1 0 18 16Z";
   const ICON_OFFLINE = "M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z";
 
+  /* Sposta un brano nella libreria di un altro nome: cambio il "profile" del
+     brano dentro l'elenco condiviso. Provo prima col computer (che risponde
+     subito), poi col Worker se il computer non c'e'.
+
+     Se non riesco a scrivere sul sito NON lo cambio qui, perche' finche' il
+     sito non sa la cosa, al prossimo caricamento il brano torna com'era e
+     sembrerebbe che non ho fatto niente. */
+  async function _spostaBranoA(t, nuovoNome) {
+    const nome = String(nuovoNome || "").trim().slice(0, 24);
+    if (!t || !nome || t.profile === nome) return;
+    const file = String(t.url || "").replace(/^.*\//, "");
+    const numero = (/^track-(\d+)\.mp3$/.exec(file) || [])[1];
+    if (!numero) {
+      toast("Non posso spostare questo brano: non so qual e' il suo numero");
+      return;
+    }
+    const corpo = JSON.stringify({ numero: numero, nome: nome });
+    try {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const r = await fetch(base + "/proprietario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: corpo
+      });
+      if (r.ok) {
+        _aggiornaProprietarioLocale(t.id, nome);
+        toast('"' + t.title + '" ora e\' nella libreria di ' + nome);
+        return;
+      }
+    } catch (e) { /* il computer non c'e': provo dal Worker */ }
+    try {
+      if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) throw new Error("niente chiave");
+      const r = await fetch(SERVIZIO_PUBBLICA + "/proprietario", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
+        body: corpo
+      });
+      if (r.ok) {
+        _aggiornaProprietarioLocale(t.id, nome);
+        toast('"' + t.title + '" ora e\' nella libreria di ' + nome);
+        return;
+      }
+    } catch (e) { /* niente rete: lo dico e non fingo */ }
+    toast("Non sono riuscito a spostarlo: serve il computer acceso o la chiave. Riprova dopo.");
+  }
+
+  function _aggiornaProprietarioLocale(id, nome) {
+    try {
+      const t = tracks.find((x) => x.id === id);
+      if (t) t.profile = nome;
+      render();
+    } catch (e) { /* noop */ }
+  }
+
   function openQuickMenu(t) {
     if (!t) return;
     $("quickTitle").textContent = t.title;
@@ -2953,6 +2997,22 @@ box.innerHTML = "";
         toast('"' + t.title + '" ora si vede solo dentro "' + inChePlaylist[0] + '"');
       }));
     }
+  }
+    /* La musica e' di tutti, ma ogni brano ricorda CHI l'ha aggiunto. Se un
+     brano e' di un altro e lo voglio "mio", lo sposto: cambio il nome sopra
+     al brano, sul sito. Lo chiede Stefano per gli amici ("se tiene premuto
+     una canzone di un altro, puo' portarla nella sua libreria"). */
+  if (t.builtin && t.profile && t.profile !== profile) {
+    box.appendChild(quickAction("Porta nella mia libreria", ICON_LIBRARY, async () => {
+      const si = await askConfirm(
+        "Portare il brano nella tua libreria?",
+        '"' + t.title + '" l\'ha aggiunto ' + t.profile + '. Lo sposti nella libreria di\n' +
+          profile + ".\n\nLa musica resta la stessa per tutti: cambia solo di chi e'.",
+        "Sposta"
+      );
+      if (!si) return;
+      await _spostaBranoA(t, profile);
+    }));
   }
     if (t.builtin) {
       const el = document.createElement("button");
@@ -7127,7 +7187,11 @@ $("btnFavFilter").addEventListener("click", () => {
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
       if (!parsed || !parsed.length) return;
-      const mine = parsed.filter((b) => (b.profile || DEFAULT_PROFILE) === profile);
+      /* Adesso la musica e' di tutti: qui confronto TUTTI i brani del sito
+           con quelli che ho, non solo i miei. Prima prendevo solo i brani col
+           mio nome e cosi' le canzoni degli altri sembravate sparite dal
+           sito: per un amico che apriva l'app erano tutte da cancellare. */
+        const mine = parsed;
       const remoteFiles = mine.map((b) => b.file);
       const localBuiltin = tracks.filter((t) => t.builtin);
       const localFiles = localBuiltin.map((t) => t.url);
