@@ -438,5 +438,21 @@
     "album": "Hybrid Theory (Bonus Edition)",
     "source": "Deezer",
     "date": "2026-10-10T14:35:23.384Z"
+  },
+  "vascorossialbachiara": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/bf773d0c35f850652e5c0a0df93db7b7/1000x1000-000000-80-0-0.jpg",
+    "title": "Albachiara",
+    "artist": "Vasco Rossi",
+    "album": "Vasco Rossi",
+    "source": "Deezer",
+    "date": "2026-10-13T13:02:18.798Z"
+  },
+  "gianlucagrignanilamiastoriatraleditafeatannalisa": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
+    "title": "La Mia Storia Tra Le Dita",
+    "artist": "Gianluca Grignani",
+    "album": "Destinazione Paradiso",
+    "source": "Deezer",
+    "date": "2026-10-13T13:02:22.322Z"
   }
 }
