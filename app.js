@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.150";
+  const APP_VERSION = "6.151";
 
   let recovering = false;
   async function selfHeal() {
@@ -8280,6 +8280,9 @@ const j = await r.json();
         }
         if (cambiati) {
           saveCurrentState();
+          /* Ricarico davvero la libreria, non la ridisegno: le canzoni appena
+             copiate devono comparire SUBITO, senza dover riaprire l'app. */
+          try { await loadAll(); } catch (e) { /* noop */ }
           render();
         }
       } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
