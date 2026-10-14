@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.160";
+  const APP_VERSION = "6.162";
 
   let recovering = false;
   async function selfHeal() {
@@ -8780,21 +8780,45 @@ async function _selezionaAggiungiPlaylist() {
   toast(ids.length + (ids.length === 1 ? " canzone aggiunta a " : " canzioni aggiunte a ") + '"' + pl.name + '"');
 }
 
+/* Sposta le canzoni scelte "solo nella playlist".
+
+   Prima non chiedeva in QUALE playlist: le canzoni sparivano dalla libreria
+   senza essere da nessuna parte, e non le ritrovavi piu'. Ste se n'e'
+   accorto e ha ragione: ora chiedo la playlist PRIMA, come si fa quando se ne
+   sceglie una sola dalla pressione lunga. */
 async function _selezionaSoloInPlaylist() {
   const ids = [..._scelti];
   if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
+  const nomi = playlists.map((p) => p.name);
+  const testo = "Metti " + (ids.length === 1 ? "la canzone scelta" : ids.length + " canzioni scelte") +
+    " in una playlist, cosi' escono dalla libreria ma restano suonabili li' dentro." +
+    (nomi.length
+      ? "\n\nScrivi il nome della playlist:\n  " + nomi.join("\n  ") +
+        "\n\nOppure un nome nuovo e la creo io."
+      : "\n\nNon hai ancora playlist: scrivi il nome e la creo.");
+  const nome = _chiediNome(testo);
+  if (!nome) return;
+  /* Prima le metto davvero nella playlist: cosi' non rischio di nasconderle
+     da qualche parte dove poi non le trovo. */
+  const pl = _playlistConNome(nome, ids[0]);
+  for (let i = 1; i < ids.length; i++) {
+    if (pl && Array.isArray(pl.tracks) && pl.tracks.indexOf(ids[i]) < 0) pl.tracks.push(ids[i]);
+  }
   const si = await askConfirm(
-    "Solo nella playlist?",
-    ids.length + (ids.length === 1 ? " canzone sparisce" : " canzioni spariscono") +
-      " dalla libreria, ma restano suonabili dentro la playlist.\n\nPer rivederle: apri quella playlist.",
+    "Tirarle fuori dalla libreria?",
+    ids.length + (ids.length === 1 ? " canzone entra in \"" : " canzioni entrano in \"") + pl.name +
+      "\" e sparisce dalla libreria.\n\nRestano suonabili dentro la playlist: per rivederle,\n" +
+      "apri quella playlist.",
     "Sposta"
   );
   if (!si) return;
   for (const id of ids) _mettiSoloInPlaylist(id);
   _salvaSoloInPlaylist();
   _disegnaLinguettePlaylist();
+  _aggiornaBadgePlaylist();
+  _salvaPlaylistCondivise();
   _chiudiSelezione();
-  toast(ids.length + (ids.length === 1 ? " canzone ora si vede" : " canzioni ora si vedono") + " solo nella playlist");
+  toast("Sono dentro \"" + pl.name + "\" e non le vedi piu' in libreria");
 }
 
 async function _selezionaElimina() {

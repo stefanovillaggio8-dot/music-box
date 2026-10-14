@@ -2143,6 +2143,10 @@ li.appena-aggiunto {
   }
   .logo-actions { flex: 0 0 auto; display: flex; }
   .logo-wrap { flex: 1 1 auto; min-width: 0; }
+  /* La versione resta dopo il titolo (come prima), ma staccata dai tasti:
+     Ste, attaccata al bottone delle statistiche, sembrava parte di quel tasto. */
+  .topbar-head { gap: 14px; }
+  .ver { flex: 0 0 auto; margin-right: 4px; }
 
   /* Scegliere piu' canzioni insieme.
      Ste: un tasto "Seleziona", poi sopra la lista compare una barra con le
