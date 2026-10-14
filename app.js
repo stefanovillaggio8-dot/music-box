@@ -84,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.171";
+  const APP_VERSION = "6.172";
 
   let recovering = false;
   async function selfHeal() {
@@ -7659,8 +7659,36 @@ $("btnFavFilter").addEventListener("click", () => {
     return out;
   }
 
-  async function checkForNewSongs() {
+let _firmaLibreria = "";
+let _ultimoControllo = 0;
+
+/* Ste: "si continua ad aggiornare" senza sapere cosa. Questo me lo dice:
+   ogni volta che la libreria viene davvero ricostruita, il numero della
+   versione mostra quando e' successo. Se resta fermo, la libreria non si
+   e' mossa e quello che vedi e' un'altra cosa. */
+function _aggiornaEtichettaControllo(che) {
+  try {
+    const vb = $("verBadge");
+    if (!vb) return;
+    const quando = new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    vb.dataset.aggiornato = quando;
+    vb.title = "Versione in uso: " + APP_VERSION +
+      "\nUltimo controllo nuove canzoni: " + quando +
+      "\nUltima libreria ricostruita: " + (che || vb.dataset.aggiornato || "nessuna") +
+      "\n(tocca per ricaricare)";
+  } catch (e) { /* noop */ }
+}
+
+async function checkForNewSongs() {
     if (checkingSongs) return;
+    /* Ste: "si continua ad aggiornare". Prima girava ogni 60 secondi e,
+       anche quando non era cambiato niente, ricostruiva tutta la libreria:
+       la lista si ridisegnava da sola e i brani sembravano sparire e
+       tornare. Ora controllo che sia passato un po' di tempo E che la lista
+       sia davvero diversa prima di ridisegnarla. */
+    const ora = Date.now();
+    if (ora - _ultimoControllo < 120000) return;
+    _ultimoControllo = ora;
     checkingSongs = true;
     try {
       const res = await fetch("app.js", { cache: "no-store" });
@@ -7672,24 +7700,29 @@ $("btnFavFilter").addEventListener("click", () => {
          quelli che ho copiato dagli altri). Se guardassi tutti i brani del
          sito, le canzoni degli altri sembrerebbero sparite e potrei essere
          invitato a cancellarle: cosa che non voglio mai. */
-        const mine = parsed.filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b));
+      const mine = parsed.filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b));
       const remoteFiles = mine.map((b) => b.file);
       const localBuiltin = tracks.filter((t) => t.builtin);
       const localFiles = localBuiltin.map((t) => t.url);
       const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
       const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
-
-      // Una canzone che manca al sito puo' sparire solo a meta' di un aggiornamento:
-      // la tolgo solo se la vedo assente DUE controlli di fila (piu' o meno 2 minuti),
-      // cosi' un aggiornamento o una copia vecchia non cancella mai brani validi.
+      /* Una canzone che manca al sito puo' sparire solo a meta' di un aggiornamento:
+         la tolgo solo se la vedo assente DUE controlli di fila (piu' o meno 2 minuti),
+         cosi' un aggiornamento o una copia vecchia non cancella mai brani validi. */
       const viste = LS.get("mb.senza", []);
       const confermate = tolte.filter((f) => viste.indexOf(f) >= 0);
       if (tolte.length) LS.set("mb.senza", tolte);
       else LS.remove("mb.senza");
-
       if (confermate.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
-
-      if (!aggiunte.length && !confermate.length) return;
+      if (!aggiunte.length && !confermate.length) { _aggiornaEtichettaControllo(); return; }
+      /* Firma di quello che ho davanti: se combacia, e' la stessa libreria e
+         non la ridisegno (e' quello che faceva saltare gli schermi). */
+      const firma = (mine.map((b) => b.file).sort().join("|") + "#" + confermate.length);
+      if (firma === _firmaLibreria) { _aggiornaEtichettaControllo(); return; }
+      _firmaLibreria = firma;
+      /* Prima di ridisegnare, mi segno dove eri: cosi' la lista non ti
+         rimanda in cima mentre ti muovi. */
+      _salvaPuntoLibreria();
 
       BUILTIN.length = 0;
       for (const b of parsed) {
@@ -7702,7 +7735,8 @@ $("btnFavFilter").addEventListener("click", () => {
       }
       await loadCovers();
       await loadAll();
-      refreshCachedSongs();
+      _ripristinaPuntoLibreria();
+      _aggiornaEtichettaControllo();
       if (aggiunte.length) {
         toast((aggiunte.length === 1 ? "Nuova canzone: " : "Nuove canzoni: ") + aggiunte.map((b) => b.title).join(", ").slice(0, 60));
       }
@@ -8083,9 +8117,12 @@ $("btnProfile").addEventListener("click", openProfile);
   window.addEventListener("resize", updatePlayerHeight);
   window.addEventListener("orientationchange", updatePlayerHeight);
   if (window.visualViewport) window.visualViewport.addEventListener("resize", updatePlayerHeight);
+  /* Ste: il worker veniva controllato ogni 3 minuti E ogni 10 (due timer
+     insieme, per non so cosa). Con uno solo l'app smette di andare a
+     controllare in continuazione se c'e' una versione nuova. */
   setInterval(() => {
     if (swReg) swReg.update().catch(() => {});
-  }, 180000);
+  }, 600000);
   /* Ogni 3 secondi guardo che la musica stia davvero camminando: il telefono
      con lo schermo spento dice "e' partito" ma poi e' muto. */
   setInterval(_controllaCheSuoni, 3000);
