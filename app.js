@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.155";
+  const APP_VERSION = "6.156";
 
   let recovering = false;
   async function selfHeal() {
@@ -3495,8 +3495,12 @@ function _aggiornaPosizioneSchermo() {
         updateProgressUI(audio.currentTime, audio.duration);
       }
     });
-    setHandler("seekbackward", () => seekBy(-15));
-    setHandler("seekforward", () => seekBy(15));
+    /* NON registro "avanti/indietro di 15 secondi".
+       Ste li aveva: con questi due comandi attivi, l'iPhone si metteva
+       "salta 10 secondi" ai lati della pausa invece di "canzone
+       precedente" e "canzone successiva", che e' quello che voleva lui.
+       Gli advancedi e i rientri di 15 secondi restano comunque disponibili
+       dentro l'app, sulla barra sopra al play. */
     setHandler("stop", () => { _pausaVolontaria(); });
     setPlaybackState(audio && !audio.paused ? "playing" : "paused");
     _notificaStatoNativo(true);
