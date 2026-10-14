@@ -82,7 +82,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.166";
+  const APP_VERSION = "6.167";
 
   let recovering = false;
   async function selfHeal() {
@@ -6088,6 +6088,12 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
       // se avevo chiesto una copia su disco, te dico se e' andata bene
       const copia = r.headers.get("X-Cartella") || "";
       if (copia === "non salvata") toast("Ho l'mp3, ma non sono riuscito a salvarlo in cartella");
+      /* Ste: "ci sono canzoni con un mp3 diverso dal titolo". Il computer ora
+         controlla il titolo VERO del video scaricato: se non e' quello che
+         avevo chiesto me lo dice qui, invece di lasciare un brano sbagliato in
+         libreria senza che se ne accorga nessuno. */
+      let attenzione = r.headers.get("X-Attenzione") || "";
+      if (attenzione) { try { attenzione = decodeURIComponent(attenzione); } catch (e) { } }
       // leggo a pezzetti cosi' si vede l'avanzamento
       const lettore = r.body && r.body.getReader ? r.body.getReader() : null;
       let parti = [];
@@ -6117,6 +6123,13 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
         source: "youtube (convertito sul PC)"
       });
       await finishImport(item, blob, "youtube (convertito sul PC)");
+      /* Se il computer mi ha detto che il video non era quello che avevo
+         chiesto, lo dico subito e adesso: cosi' vedi subito che quel brano
+         e' sbagliato e lo cambi, invece di ritrovartelo fra giorni. */
+      if (attenzione) {
+        toast(attenzione.replace(/^ATTENZIONE:\s*/i, ""), 9000);
+        segnalaErrore(attenzione.slice(0, 160));
+      }
     } catch (err) {
       // non lo porto in "errore": puo' essere un link sbagliato, e serve
       // riprovare senza perdere il brano
