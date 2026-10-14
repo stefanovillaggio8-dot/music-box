@@ -65,11 +65,13 @@
           { title: "Albachiara", file: "songs/track-69.mp3", artist: "Vasco Rossi", profile: "Ste" },
           { title: "Wonderwall NL", file: "songs/track-70.mp3", artist: "senza artista", profile: "Ste" },
           { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-71.mp3", artist: "Gianluca Grignani", profile: "Ste" },
-          { title: "Chiello", file: "songs/track-72.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
+          { title: "HO SBAGLIATO ANCORA", file: "songs/track-72.mp3", artist: "Chiello", profile: "Ste" },
           { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "senza artista", profile: "Ste" },
     { title: "dimmi che ce'", file: "songs/track-64.mp3", artist: "thasup", profile: "Ste" },
     { title: "linkin park in the end", file: "songs/track-65.mp3", artist: "", profile: "Ste" },
-    { title: "thasup dimmi che c'", file: "songs/track-66.mp3", artist: "", profile: "Ste" },
+    /* Ste: qui sotto c'era anche { title: "thasup dimmi che c'", file:
+   "songs/track-66.mp3" }. Era lo STESSO mp3 di "dimmi che ce'" (track-64),
+   byte per byte: la stessa canzone due volte in libreria. Tolta. */
     { title: "l'elfo carusi do sud", file: "songs/track-67.mp3", artist: "", profile: "Ste" },
 ];
 
@@ -82,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.167";
+  const APP_VERSION = "6.168";
 
   let recovering = false;
   async function selfHeal() {
