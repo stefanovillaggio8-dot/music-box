@@ -82,7 +82,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.164";
+  const APP_VERSION = "6.165";
 
   let recovering = false;
   async function selfHeal() {
@@ -1184,6 +1184,12 @@ function _devoVedereBrano(eMio, b) {
       if ((t.size || 0) > (senzaDuplicati[doppio].size || 0)) senzaDuplicati[doppio] = t;
     }
   tracks = builtin.concat(senzaDuplicati);
+    /* Ultimo giro di controllo sulla lista COMPLETA (quella qui sopra
+       guardava solo i brani del telefono, quindi due brani uguali arrivati
+       da due posti diversi restavano entrambi). Uso la chiave esatta
+       artista+titolo, cosi' non rischio di nascondere due canzoni diverse
+       che hanno nomi simili. */
+    tracks = _unisciDuplicatiLocali(tracks);
     /* I nomi che hai cambiato vanno messi DOPO che la lista e' stata
        ricostruita: prima li applicavo alla lista vecchia, che qui dentro
        veniva buttata via, e al riavvio il brano tornava col nome
@@ -1793,8 +1799,15 @@ function visibleTracks(perSuono) {
         const bottone = document.createElement("button");
         bottone.type = "button";
         bottone.className = "avviso-nascosti-bottone";
-        bottone.textContent = "Rimettili in lista";
-        bottone.addEventListener("click", () => restoreHidden());
+        bottone.textContent = "Scegli quali rimettere";
+        /* Ste: prima questo bottone rimetteva TUTTI i brani tolti insieme.
+           Ora apre la lista: si rimette anche uno solo. */
+        bottone.addEventListener("click", () => {
+          const p = $("nascostiPanel");
+          if (p) p.hidden = false;
+          _apriNascosti();
+          syncNoScroll();
+        });
         riga.appendChild(testo);
         riga.appendChild(bottone);
         avviso.appendChild(riga);
@@ -2104,6 +2117,55 @@ async function condividiBraniLocali() {
   function _chiaveBrano(t) {
   return normKey(t.artist) + "|" + normKey(t.title);
   }
+
+  /* Ste: alcune canzoni si duplicavano piu' volte. Il motivo e' che due brani
+   identici salvati sul telefono hanno due id diversi (l'id nasce da data e
+   caso), e l'app li mostrava entrambi: controllavo che non fossero gia' nella
+   libreria condivisa, ma NON controllavo fra loro.
+
+   Qui li unisco per nome+artista e tengo il primo. Gli id delle copie "in
+   piu'" li metto da parte (non cancello niente: se un domani tornassero utili
+   sono ancora li'), cosi' non ricompaiono a ogni avvio. */
+function _unisciDuplicatiLocali(elenco) {
+  try {
+    const giaNascosti = new Set(_duplicatiLocali());
+    const visti = new Map();
+    const nuoviDaRicordare = [];
+    const tenuti = [];
+    for (const t of elenco) {
+      if (!t) continue;
+      /* Un id nella lista dei "da non mostrare" resta nascosto. */
+      if (giaNascosti.has(t.id)) continue;
+      const k = _chiaveBrano({ artist: t.artist, title: t.title });
+      if (visti.has(k)) {
+        /* I brani condivisi non li nascondo per sempre: la lista condivisa
+           puo' cambiare, e un brano che adesso e' doppio domani potrebbe non
+           esserlo piu' (o viceversa). Me li ricordo solo per questa sessione. */
+        if (!t.builtin) nuoviDaRicordare.push(t.id);
+        continue;
+      }
+      visti.set(k, t.id);
+      tenuti.push(t);
+    }
+    if (nuoviDaRicordare.length) {
+      const tutte = giaNascosti.size ? Array.from(giaNascosti) : [];
+      for (const id of nuoviDaRicordare) if (!tutte.includes(id)) tutte.push(id);
+      writeProfileState(profile, { duplicati: tutte.slice(-400) });
+      segnalaErrore("libreria: nascosti " + nuoviDaRicordare.length +
+        " doppioni (stesso brano salvato due volte sul telefono)");
+    }
+    return tenuti;
+  } catch (e) {
+    return elenco;
+  }
+}
+
+function _duplicatiLocali() {
+  try {
+    const st = profileState(profile);
+    return Array.isArray(st.duplicati) ? st.duplicati : [];
+  } catch (e) { return []; }
+}
 
   function eGiaCondiviso(t) {
     if (t.builtin) return true;
@@ -7020,6 +7082,29 @@ $("btnFavFilter").addEventListener("click", () => {
     if (e.target === $("similiPanel")) _chiudiPannelloSimili();
   });
   $("fallitiClose").addEventListener("click", _chiudiPannelloFalliti);
+
+  /* Pannello dei brani tolti dalla lista: chiudi, e dentro si sceglie
+     brano per brano (Ste non vuole rimetterli per forza tutti insieme). */
+  $("nascostiClose").addEventListener("click", _chiudiNascosti);
+  $("nascostiPanel").addEventListener("click", (e) => {
+    if (e.target === $("nascostiPanel")) _chiudiNascosti();
+  });
+  $("nascostiCorpo").addEventListener("click", (e) => {
+    const t = e.target;
+    if (!t) return;
+    const azione = t.getAttribute("data-azione");
+    if (azione === "tutti") {
+      if (!confirm("Vuoi rimettere nella lista tutti i brani tolti?")) return;
+      restoreHidden();
+      _stampaNascosti();
+      return;
+    }
+    if (azione === "rimetti") {
+      const riga = t.closest ? t.closest(".falliti-riga") : null;
+      if (!riga) return;
+      _rimettiNascosto(riga.getAttribute("data-id"));
+    }
+  });
   $("fallitiPanel").addEventListener("click", (e) => {
     if (e.target === $("fallitiPanel")) _chiudiPannelloFalliti();
   });

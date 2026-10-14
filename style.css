@@ -89,6 +89,22 @@ body {
   }
   .falliti-riga:last-child { border-bottom: 0; }
   .falliti-info { flex: 1 1 auto; min-width: 0; }
+  /* Il bottone per rimettere UN brano: abbastanza grande per il dito,
+     e non la pillola tonda (che sembrava un tasto senza nome). */
+  .nascosti-rimetti {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffc46b;
+    background: rgba(255, 196, 107, .12);
+    border: 1px solid rgba(255, 196, 107, .4);
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .nascosti-rimetti:active { transform: translateY(1px); }
   .falliti-nome { font: 600 14px/1.25 var(--font, system-ui); color: var(--txt); }
   .falliti-dome { font: 400 12px/1.35 var(--font, system-ui); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .falliti-btns { display: flex; gap: 6px; flex: 0 0 auto; }
