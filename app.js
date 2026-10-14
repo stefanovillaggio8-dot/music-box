@@ -68,6 +68,7 @@
           { title: "Chiello", file: "songs/track-67.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
           { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "senza artista", profile: "Ste" },
     { title: "dimmi che ce'", file: "songs/track-64.mp3", artist: "thasup", profile: "Ste" },
+    { title: "linkin park in the end", file: "songs/track-65.mp3", artist: "", profile: "Ste" },
 ];
 
   const PALETTE = [
