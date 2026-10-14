@@ -2048,3 +2048,26 @@ li.appena-aggiunto {
   .vedi-tutti.on { border-color: var(--accent); color: var(--accent); }
   .vedi-tutti:active { transform: translateY(1px); }
 
+
+  /* Player piu' basso.
+     Ste: con la barra di Safari in alto la parte di sotto era troppo alta e
+     non si vedeva niente. Riduco le dimensioni ma NON i tasti: ogni controllo
+     resta con una zona da toccare comoda (mai sotto i 40px), altrimenti
+     diventerebbe difficile premerli col dito. */
+  .player { padding: 0 10px calc(6px + env(safe-area-inset-bottom)); }
+  .player-body { gap: 10px; padding-top: 6px; min-height: 62px; }
+  .player-art { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 10px; }
+  .player-title { font-size: 13.5px; }
+  .player-time { font-size: 11.5px; margin-top: 1px; }
+  .player-controls { gap: 8px; padding: 0 6px; }
+  .ctl-big { width: 48px; height: 48px; min-height: 48px; }
+  .ctl-big svg { width: 24px; height: 24px; }
+  .ctl { width: 40px; height: 40px; min-height: 40px; }
+  .vol-row { gap: 8px; padding: 0 8px 2px; }
+  .vol-row .ctl { width: 30px; height: 30px; min-height: 30px; }
+  .seek-row { padding: 2px 4px 0; }
+
+  /* Il player e' piu' basso, quindi anche gli spazi che gli stanno sopra
+     (la lista dei brani, il tondo +) possono stare piu' in basso. */
+  :root { --player-h: 110px; }
+

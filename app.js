@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.154";
+  const APP_VERSION = "6.155";
 
   let recovering = false;
   async function selfHeal() {
@@ -3271,14 +3271,39 @@ function _ripristinaNascosti() {
     try { return visibleTracks(true); } catch (e) { return tracks; }
   }
 
+  /* Canzoni gia' suonate nella riproduzione casuale.
+
+   Ste vuole che in casuale non si senta due volte la stessa canzone: quando
+   non ne rimangono di fresche, ricomincio da capo (e quindi ricominciano anche
+   le ripetizioni, altrimenti la musica resterebbe ferma). */
+let _casualeFresche = null;
+
+function _azzeraCasuale() { _casualeFresche = null; }
+
+function _prossimaCasuale(lista) {
+  if (!_casualeFresche || _casualeFresche.size === 0) {
+    _casualeFresche = new Set(lista.map((t) => t.id));
+  }
+  /* Se sono finite le fresche, ricomincio il giro. */
+  if (_casualeFresche.size >= lista.length) {
+    _casualeFresche = new Set(lista.map((t) => t.id));
+  }
+  /* La canzone che sta suonando non e' piu' "fresca". */
+  if (currentId) _casualeFresche.delete(currentId);
+  const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
+  if (!rimaste.length) {
+    _casualeFresche = new Set(lista.map((t) => t.id));
+    return Math.floor(Math.random() * lista.length);
+  }
+  return lista.findIndex((t) => t.id === rimaste[Math.floor(Math.random() * rimaste.length)].id);
+}
+
   function nextIndex() {
     const lista = _listaPerIlSeguito();
     if (!lista.length) return -1;
     if (shuffle && lista.length > 1) {
-      let n = Math.floor(Math.random() * lista.length);
-      const cur = lista.findIndex((x) => x.id === currentId);
-      for (let k = 0; k < 20 && n === cur; k++) n = Math.floor(Math.random() * lista.length);
-      return lista[n] ? lista.findIndex((x) => x.id === lista[n].id) : 0;
+      const n = _prossimaCasuale(lista);
+      return n >= 0 ? n : 0;
     }
     const idx = lista.findIndex((x) => x.id === currentId);
     /* Se il brano che sto ascoltando non e' nella lista (l'ho appena tolto,
@@ -6723,6 +6748,9 @@ function toast(msg, durata) {
 
 function _accendiCasuale(accendi) {
   shuffle = Boolean(accendi);
+  /* Giro nuovo: se riaccendo il casuale non devo ricordarmi le canzoni
+     dell'ultima volta. */
+  _azzeraCasuale();
   LS.set("mb.shuffle", shuffle);
   try { $("btnShuffle").classList.toggle("on", shuffle); } catch (e) { /* noop */ }
   try { const b = $("btnCasuale"); if (b) b.classList.toggle("on", shuffle); } catch (e) { /* noop */ }
