@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.152";
+  const APP_VERSION = "6.153";
 
   let recovering = false;
   async function selfHeal() {
@@ -1031,6 +1031,18 @@ function _vedoTutti() {
   try { return LS.get(LS_VEDI, "") === "si"; } catch (e) { return false; }
 }
 
+/* "Vedere" e "far suonare" sono due cose diverse.
+
+   Se accendo "vedi anche le canzoni degli altri" me le fa SOLO vedere: quando
+   poi una canzone finisce, proseguo con le mie (e con quelle delle playlist).
+   Se invece voglio che suonino anche le loro, lo dico con l'interruttore
+   "fai suonare anche le canzoni degli altri". */
+const LS_SUONA = "mb.suonaTutti";
+
+function _suonaTutti() {
+  try { return LS.get(LS_SUONA, "") === "si"; } catch (e) { return false; }
+}
+
 /* Chiamato per ogni brano mentre carico la libreria. */
 function _devoVedereBrano(eMio, b) {
   if (eMio) return true;
@@ -1688,12 +1700,29 @@ const ORDINAMENTI = [
     return true;
   }
 
-  function visibleTracks() {
-    /* I brani "solo in playlist" escono dalla libreria, tranne quando sto
-       guardando proprio una playlist: li' devono comparire. */
-    const inPlaylist = _soloInPlaylist;
-    let list = tracks.filter((t) => !hiddenTracks.has(t.id) &&
-      (!inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
+function visibleTracks(perSuono) {
+      /* "perSuono" = sto cercando la canzone che viene DOPO (non sto solo
+         sfogliando la lista). In quel caso valgono due regole diverse, che
+         chiedono Ste:
+         - entrano anche i brani "solo nella playlist": quando una canzone
+           della libreria finisce, vuole che parta anche una della playlist;
+         - NON entrano le canzoni degli altri, a meno che non abbia premuto
+           "fai suonare anche le canzoni degli altri": altrimenti accendere
+           l'interruttore per vederle le farebbe suonare a sorpresa.
+
+         Le canzoni che ho copiato nella mia libreria invece sono mie e
+         suonano, anche se le ha aggiunte qualcun altro. */
+      const perLaCoda = Boolean(perSuono);
+      /* I brani "solo in playlist" escono dalla libreria, tranne quando sto
+         guardando proprio una playlist: li' devono comparire. */
+      const inPlaylist = _soloInPlaylist;
+      let list = tracks.filter((t) => !hiddenTracks.has(t.id) &&
+        (perLaCoda || !inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
+      /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
+      if (perLaCoda && !_suonaTutti()) {
+        const miei = _mieiCopiati();
+        list = list.filter((t) => (t.profile || DEFAULT_PROFILE) === profile || miei.has(t.id));
+      }
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (soloMaiAscoltati) list = list.filter((t) => _ascoltoDi(t).s <= 0);
     /* Se ho scelto una playlist, vedo solo i suoi brani. Funziona insieme
@@ -3234,8 +3263,11 @@ function _ripristinaNascosti() {
      Se sono dentro una playlist, il seguito e' quello della playlist; se
      sto filtrando (preferiti, mai ascoltati, ricerca) vedo quello che
      vedo. */
+  /* La lista per capire quale canzone viene dopo. "true" = sto per far
+     suonare qualcosa, non solo sfogliare: cambia il comportamento (vedi
+     visibleTracks). */
   function _listaPerIlSeguito() {
-    try { return visibleTracks(); } catch (e) { return tracks; }
+    try { return visibleTracks(true); } catch (e) { return tracks; }
   }
 
   function nextIndex() {
@@ -7563,6 +7595,31 @@ function _nomePerIlBrano(link, suggerito) {
         toast(_vedoTutti()
           ? "Ora vedi anche le canzoni degli altri. Non e' successo niente: sono ancora loro."
           : "Torni a vedere solo la tua libreria");
+      });
+      disegna();
+    })();
+
+    /* Secondo interruttore: "fai suonare anche le canzoni degli altri".
+       Sta separato dal primo di proposito: vedere una canzone non deve
+       voler dire che poi la prossima me la mette in fila. */
+    (function collegaSuonaTutti() {
+      const tasto = $("btnSuonaTutti");
+      const testo = $("suonaTuttiTesto");
+      if (!tasto) return;
+      const disegna = () => {
+        const acceso = _suonaTutti();
+        tasto.classList.toggle("on", acceso);
+        if (testo) testo.textContent = acceso
+          ? "Alla fine proseguo anche con le canzoni degli altri"
+          : "Fai suonare anche le canzoni degli altri";
+      };
+      tasto.addEventListener("click", () => {
+        try { LS.set(LS_SUONA, _suonaTutti() ? "" : "si"); } catch (e) { /* noop */ }
+        disegna();
+        render();
+        toast(_suonaTutti()
+          ? "Adesso, quando una canzone finisce, posso proseguire anche con le loro"
+          : "Torno a proseguire solo con le mie e con quelle delle playlist");
       });
       disegna();
     })();
