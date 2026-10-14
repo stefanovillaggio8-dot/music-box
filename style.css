@@ -2121,9 +2121,26 @@ li.appena-aggiunto {
     max-width: 100%;
   }
   .logo-wrap { flex: 1 1 auto; }
-  .logo.long { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  @media (max-width: 360px) {
-    .logo.long { max-width: 118px; font-size: 14px; }
-    .logo-refresh { width: 32px; height: 32px; }
+  /* Ste: il titolo deve restare SCRITTO TUTTO, niente puntini di sospensione.
+     Per farlo stare non lo accorcio: rendo i caratteri un filo più piccoli e
+     lo lascio andare su una riga sola. */
+  .logo.long {
+    max-width: none;
+    width: 100%;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: clamp(10.5px, 3.4vw, 15px);
   }
+  /* I tasti NON si schiacciano e restano tondi come prima (36px): erano
+     quelli che, stringendo lo spazio, diventavano ovali e si premevano male. */
+  .logo-refresh, .prof-btn {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 50%;
+  }
+  .logo-actions { flex: 0 0 auto; display: flex; }
+  .logo-wrap { flex: 1 1 auto; min-width: 0; }
 
