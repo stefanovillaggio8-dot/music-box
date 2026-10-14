@@ -84,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.168";
+  const APP_VERSION = "6.169";
 
   let recovering = false;
   async function selfHeal() {
@@ -6073,10 +6073,15 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
     const r = await fetch(base + "/convert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: url,
-          cartella: (el.cartella || ""),
-          titolo: [(item.artist || ""), (item.title || "")].join(" - ").replace(/^\s*-\s*/, "").trim()
+body: JSON.stringify({
+        url: url,
+        cartella: (el.cartella || ""),
+        /* Artisti e titolo LI MANIO SEPARATI: il PC li mette insieme nel nome
+           del file nell'ordine giusto. Prima gli mandavo "artista - titolo"
+           già attaccato e se il brano aveva i nomi scambiati restavano
+           scambiati per sempre. */
+        artista: (item.artist || ""),
+        titolo: (item.title || "")
         })
       });
       if (!r.ok) {
@@ -6090,6 +6095,10 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
       // se avevo chiesto una copia su disco, te dico se e' andata bene
       const copia = r.headers.get("X-Cartella") || "";
       if (copia === "non salvata") toast("Ho l'mp3, ma non sono riuscito a salvarlo in cartella");
+      /* Ste: riscaricavo lo stesso brano piu' volte e in libreria finivano due
+         copie. Ora il PC se ne accorge e non crea il secondo file: te lo dico
+         perche' cosi' non pensi che sia andato storto qualcosa. */
+      if (copia === "gia-presente") toast("Questo brano ce l'hai gia': non ho creato un secondo file", 5000);
       /* Ste: "ci sono canzoni con un mp3 diverso dal titolo". Il computer ora
          controlla il titolo VERO del video scaricato: se non e' quello che
          avevo chiesto me lo dice qui, invece di lasciare un brano sbagliato in
