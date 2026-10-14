@@ -2106,3 +2106,24 @@ li.appena-aggiunto {
   }
   .player-art img, .player img { -webkit-user-drag: none; pointer-events: none; }
 
+  /* La pagina non deve mai scorrere di lato.
+     Ste: muovendo il dito a destra/sinistra si spostava tutto, e i tre
+     bottoni in alto uscivano dallo schermo. Il motivo e' che il titolo e i
+     bottoni insieme sono piu' larghi del telefono: senza questo, i tasti
+     "spingono" la pagina e la fanno scorrere. */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  /* Adesso il titolo si stringe, e i bottoni restano dentro. */
+  .topbar, .topbar-head, .logo-wrap, .logo-actions {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .logo-wrap { flex: 1 1 auto; }
+  .logo.long { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 360px) {
+    .logo.long { max-width: 118px; font-size: 14px; }
+    .logo-refresh { width: 32px; height: 32px; }
+  }
+
