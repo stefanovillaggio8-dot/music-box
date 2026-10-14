@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.162";
+  const APP_VERSION = "6.163";
 
   let recovering = false;
   async function selfHeal() {
@@ -1757,7 +1757,10 @@ function visibleTracks(perSuono) {
     try {
       const n = hiddenTracks.size;
       let avviso = document.getElementById("avviso-nascosti");
-      if (!n) {
+      /* Ste: questa riga restava per sempre in mezzo allo schermo e occupava
+         troppa parte. Ora non la metto piu' quando i brani nascosti sono
+         molti: per rimetterli basta il menu del tasto "+", che c'e' sempre. */
+      if (!n || n > 3) {
         if (avviso && avviso.parentNode) avviso.parentNode.removeChild(avviso);
         return;
       }
@@ -1787,24 +1790,13 @@ if (!avviso) {
         avviso.appendChild(riga);
         /* elenchi i brani nascosti, cosi' si capisce QUALI sono e non sembra
            un conto magico */
-        const dettagli = document.createElement("div");
-        dettagli.className = "avviso-nascosti-dettagli";
-        avviso.appendChild(dettagli);
         avviso._testo = testo;
-        avviso._dettagli = dettagli;
       }
-      const nomi = Array.from(hiddenTracks)
-        .map((id) => {
-          const t = tracks.find((x) => x.id === id);
-          return t ? t.title : null;
-        })
-        .filter(Boolean)
-        .slice(0, 3);
+      /* Testo breve: Ste, prima c'era anche l'elenco di quali brani erano
+         nascosti e la riga occupava mezza schermata, ferma per sempre. */
       avviso._testo.textContent = n === 1
-        ? "Un brano e' stato tolto dalla tua lista"
-        : n + " brani sono stati tolti dalla tua lista";
-      avviso._dettagli.textContent = nomi.length ? nomi.join(" · ") : "";
-      avviso._dettagli.hidden = !nomi.length;
+        ? "Un brano tolto dalla lista"
+        : n + " brani tolti dalla lista";
     } catch (e) { /* noop */ }
   }
 
@@ -3827,7 +3819,61 @@ function _aggiornaPosizioneSchermo() {
   }
 
   /* ---------- Aggiunta / rimozione ---------- */
-  async function addFiles(fileList) {
+  /* Dopo aver aggiunto un file: lo metto online?
+   Ste: questa scelta era sparita e i brani restavano solo sul telefono senza
+   saperlo. Prima prova col computer (veloce, e' la strada normale); se il
+   computer non risponde uso il servizio, che funziona anche a PC spento. */
+async function _chiediDoveMandare(fresh) {
+  const ids = (fresh || []).filter((t) => !eGiaCondiviso(t)).map((t) => t.id);
+  if (!ids.length) return;
+  const uno = ids.length === 1;
+  const si = await askConfirm(
+    (uno ? "1 brano aggiunto" : ids.length + " brani aggiunti") + ": lo metto online?",
+    "Adesso sono solo su questo telefono.\n\n" +
+      "Provo prima col computer. Se il computer e' spento o non risponde,\n" +
+      "uso il servizio, che funziona anche senza PC acceso.\n\n" +
+      "Se non lo vuoi online, lascialo qui: resta solo su questo telefono.",
+    "Metto online"
+  );
+  if (!si) {
+    toast("Ok: resta solo su questo telefono");
+    return;
+  }
+
+  /* Strada 1: il computer. */
+  try {
+    _recentementeAggiunto = true;
+    await condividiBraniLocali();
+  } catch (e) { /* il computer non c'e': vado col servizio */ }
+
+  /* Strada 2: il servizio, per quello che il computer non ha preso. */
+  const rimasti = [];
+  for (const id of ids) {
+    const r = await dbGet(id);
+    if (r && !r.condiviso) rimasti.push(r);
+  }
+  if (!rimasti.length) {
+    toast(ids.length === 1 ? "Messo online: lo sentono tutti" : ids.length + " brani online");
+    return;
+  }
+  if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
+    toast("Il computer non ha preso i brani e il servizio non e' attivo: restano qui. Riprova dal menu Altro.", 7000);
+    return;
+  }
+  const fatti = [];
+  for (const r of rimasti) {
+    try { await _pubblicaSulSito(r); fatti.push(r); } catch (e) { /* ne riparo dopo */ }
+  }
+  if (fatti.length) {
+    toast(fatti.length === 1 ? "Messo online col servizio" : fatti.length + " brani online col servizio");
+    await loadAll();
+    render();
+    return;
+  }
+  toast("Non sono riuscito a metterli online. Riprova dal menu Altro.", 6000);
+}
+
+async function addFiles(fileList) {
     let ok = 0;
     let giaInLista = 0;
     const errors = [];
@@ -3885,8 +3931,14 @@ for (const t of fresh) enrichTrack(t.id);
       /* Segno che sto condividendo un brano appena aggiunto: se il computer
          non risponde l'app lo dice, altrimenti l'utente cerca il brano nella
          libreria (che e' sul computer) e non lo trova mai. */
-      try { _recentementeAggiunto = true; condividiBraniLocali(); } catch (e) { /* non blocca l'aggiunta */ }
-    }
+try { _recentementeAggiunto = true; condividiBraniLocali(); } catch (e) { /* non blocca l'aggiunta */ }
+        /* Ste: dopo aver aggiunto un file non compariva piu' la scelta
+           "manda al computer / manda al servizio", e restava con la musica
+           solo sul telefono senza saperlo. Gliela chiedo, con tre uscite:
+           col computer, col servizio (funziona anche a PC spento), o lasciare
+           qui e basta. */
+        _chiediDoveMandare(fresh);
+      }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
 
@@ -7534,7 +7586,14 @@ function _nomePerIlBrano(link, suggerito) {
       toast("Messo in coda: " + nome + " entra in libreria quando il computer si accende", 6000);
       segnalaErrore("link in coda: " + nome);
     } catch (e) {
-      toast("Non riesco a parlare col servizio. Riprova quando hai rete.");
+      /* Ste: diceva solo "non riesco a parlare col servizio", che non dice
+         niente. Adesso distinguo i casi: senza rete, senza chiave, oppure
+         il servizio che risponde male. */
+      const perche = e && e.name === "TypeError"
+        ? "Sembra che non ci sia rete: controlla il wifi o i dati."
+        : "Il servizio non ha risposto (" + String((e && e.message) || e).slice(0, 40) + ")";
+      toast("Non riesco a parlare col servizio. " + perche, 8000);
+      segnalaErrore("aggiunta da youtube: " + perche);
     }
   }
   $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
@@ -7942,6 +8001,9 @@ function _aggiornaBadgePlaylist() {
               /* Salvo anche sulla playlist: cosi' la scelta vale anche nel
                  browser e sull'altro telefono, e non solo su questo. */
               pl.nascosta = true;
+              /* Mi ricordo chi l'ha nascosta: cosi' la vedo solo io e gli altri
+                 non se la ritrovano in faccia nelle loro linguette. */
+              pl.nascostaDa = profile;
               _salvaPlaylistCondivise();
               _disegnaLinguettePlaylist();
               renderPlaylist();
@@ -7965,6 +8027,7 @@ function _aggiornaBadgePlaylist() {
               if (!si) return;
               for (const id of (pl.tracks || [])) _togliSoloInPlaylist(id);
               pl.nascosta = false;
+              pl.nascostaDa = "";
               _salvaPlaylistCondivise();
               _disegnaLinguettePlaylist();
               renderPlaylist();
@@ -7985,6 +8048,8 @@ function _aggiornaBadgePlaylist() {
       lista.appendChild(li);
     }
     for (const pl of playlists) {
+      /* Come per le linguette: una playlist nascosta non compare agli altri. */
+      if (pl.nascosta === true && pl.nascostaDa && pl.nascostaDa !== profile) continue;
       const brani = (pl.tracks || []).map((id) => tracks.find((t) => t.id === id)).filter(Boolean);
       const li = document.createElement("li");
       li.className = "playlist-voce";
@@ -8426,7 +8491,10 @@ function _unisciPlaylistCondivise(arrivate) {
     if (!p || !p.name) continue;
     if (_playlistCercata(p.name)) {
       const gia = _playlistCercata(p.name);
-      if (gia && p.nascosta === true) gia.nascosta = true;
+      if (gia && p.nascosta === true) {
+          gia.nascosta = true;
+          gia.nascostaDa = String(p.nascostaDa || "");
+        }
       /* Una playlist che qui e' VUOTA e' una voce rimasta a meta', non una
          scelta di Ste: senza questo la lista non si riempiva mai e gym
          restava invisibile per sempre. Se invece ha gia' dei brani la lascio
@@ -8846,8 +8914,14 @@ async function _selezionaElimina() {
     scroll.innerHTML = "";
     const ceNeSonno = playlists.length > 0;
     box.hidden = false;   /* la riga c'e' sempre: se non ci sono playlist resta solo "Tutte" e il "+" */
-    for (const p of playlists) {
-      const b = document.createElement("button");
+for (const p of playlists) {
+        /* Ste: "agli altri spunta la mia playlist anche se mettono che non
+           vogliono le mie canzoni". Se segno una playlist come nascosta, agli
+           altri non deve comparire NE' la playlist NE' le sue canzoni. A me
+           invece la voglio vedere: per questo ricordo chi l'ha nascosta
+           (nascostaDa) e la nascondo solo agli altri. */
+        if (p.nascosta === true && p.nascostaDa && p.nascostaDa !== profile) continue;
+        const b = document.createElement("button");
       b.type = "button";
       b.className = "pl-ling" + (_playlistAttiva === p.name ? " attiva" : "");
       const n = (p.tracks || []).length;
