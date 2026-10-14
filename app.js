@@ -62,10 +62,10 @@
     { title: "All I Wanted", file: "songs/track-61.mp3", artist: "Paramore", profile: "Ste" },
     { title: "In the End", file: "songs/track-62.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Runaway", file: "songs/track-63.mp3", artist: "Linkin Park", profile: "Ste" },
-          { title: "Albachiara", file: "songs/track-64.mp3", artist: "Vasco Rossi", profile: "Ste" },
-          { title: "Wonderwall NL", file: "songs/track-65.mp3", artist: "senza artista", profile: "Ste" },
-          { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-66.mp3", artist: "Gianluca Grignani", profile: "Ste" },
-          { title: "Chiello", file: "songs/track-67.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
+          { title: "Albachiara", file: "songs/track-69.mp3", artist: "Vasco Rossi", profile: "Ste" },
+          { title: "Wonderwall NL", file: "songs/track-70.mp3", artist: "senza artista", profile: "Ste" },
+          { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-71.mp3", artist: "Gianluca Grignani", profile: "Ste" },
+          { title: "Chiello", file: "songs/track-72.mp3", artist: "HO SBAGLIATO ANCORA", profile: "Ste" },
           { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "senza artista", profile: "Ste" },
     { title: "dimmi che ce'", file: "songs/track-64.mp3", artist: "thasup", profile: "Ste" },
     { title: "linkin park in the end", file: "songs/track-65.mp3", artist: "", profile: "Ste" },
@@ -1810,18 +1810,102 @@ function visibleTracks(perSuono) {
     } catch (e) { /* noop */ }
   }
 
-  function restoreHidden() {
+function restoreHidden() {
     hiddenTracks = new Set();
     saveCurrentState();
     render();
     toast("Brani ripristinati: sono di nuovo tutti visibili");
   }
 
+  /* ---------- I brani tolti dalla lista, uno alla volta ----------
+     Ste: il bottone rimetteva TUTTI i brani tolti insieme, e a lui serviva
+     poterne rimettere anche uno solo. Qui ogni brano ha il suo bottone. */
 
-  /* Non c'e' piu' la finestra dei brani nascosti: quando elimini una canzone
-     ti gia' chiede conferma, quindi una lista di "nascosti" da riportare
-     indietro non serviva a niente. Il menu rapido del brano nascosto offre
-     "Rimetti nella lista". */
+  /* Il brano nascosto con questo id (null se non esiste piu'). */
+  function _trovaNascosto(id) {
+    try {
+      return (Array.isArray(tracks) ? tracks : []).find((t) => t && t.id === id) || null;
+    } catch (e) { return null; }
+  }
+
+  function _apriNascosti() {
+    const corpo = $("nascostiCorpo");
+    if (!corpo) return;
+    corpo.innerHTML = "";
+    const idList = Array.from(hiddenTracks);
+    if (!idList.length) {
+      _stampaNascosti();
+      return;
+    }
+    /* I pezzi sfuggiti non si possono rimettere (il file non c'e' piu' da
+       nessuna parte): non li mostro, cosi' la lista dice solo la verita'. */
+    for (const id of idList) {
+      const t = _trovaNascosto(id);
+      if (!t) continue;
+      const riga = document.createElement("div");
+      riga.className = "falliti-riga";
+      riga.setAttribute("data-id", id);
+      const nome = document.createElement("div");
+      nome.className = "falliti-info";
+      nome.textContent = String(t.title || t.artist || "Senza nome") +
+        (t.artist && t.title ? " · " + t.artist : "");
+      const btn = document.createElement("button");
+      btn.className = "menu-altro-voce nascosti-rimetti";
+      btn.setAttribute("data-azione", "rimetti");
+      btn.textContent = "Rimetti in lista";
+      riga.appendChild(nome);
+      riga.appendChild(btn);
+      corpo.appendChild(riga);
+    }
+    /* In fondo il bottone per tutti, che era quello di prima. */
+    if (idList.length > 1) {
+      const tutti = document.createElement("button");
+      tutti.className = "menu-altro-voce nascosti-rimetti";
+      tutti.setAttribute("data-azione", "tutti");
+      tutti.textContent = "Rimetti tutti (" + idList.length + ")";
+      corpo.appendChild(tutti);
+    }
+    _stampaNascosti();
+  }
+
+  function _chiudiNascosti() {
+    const p = $("nascostiPanel");
+    if (p) p.hidden = true;
+    syncNoScroll();
+  }
+
+  /* Riscrive il pannello con quello che c'e' adesso (dopo aver rimesso un
+     brano la lista si accorcia, e devo dirlo). */
+  function _stampaNascosti(messaggio) {
+    const corpo = $("nascostiCorpo");
+    const sub = $("nascostiSub");
+    if (!corpo) return;
+    const quanti = hiddenTracks.size;
+    if (sub) {
+      sub.textContent = messaggio ||
+        (quanti ? "Rimettine uno alla volta, o tutti insieme" : "Non c'e' piu' niente da rimettere");
+    }
+    if (!quanti) {
+      corpo.innerHTML = "";
+      const fatto = document.createElement("p");
+      fatto.className = "step-hint";
+      fatto.textContent = "Tutti i brani sono di nuovo nella lista.";
+      corpo.appendChild(fatto);
+    } else {
+      _apriNascosti();
+    }
+    _riportaIndietroSeNascosti();
+  }
+
+  /* Rimette in lista UN brano solo. */
+  function _rimettiNascosto(id) {
+    if (!id || !hiddenTracks.has(id)) return;
+    hiddenTracks.delete(id);
+    saveCurrentState();
+    render();
+    const t = _trovaNascosto(id);
+    _stampaNascosti("Rimesso: " + String((t && t.title) || "brano"));
+  }
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
      DA SOLO: non c'e' un tasto da premere. Ogni brano importato a mano resta
