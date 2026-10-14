@@ -2071,3 +2071,38 @@ li.appena-aggiunto {
      (la lista dei brani, il tondo +) possono stare piu' in basso. */
   :root { --player-h: 110px; }
 
+
+  /* Non si puo' ingrandire la pagina con due dita.
+     Ste: senza questo, toccando la barra o la copertina per sbaglio con due
+     dita la pagina si zoomava e non si tornava piu' indietro. */
+  html, body { touch-action: manipulation; }
+  .player, .player * { touch-action: pan-y; }
+  .player-progress { touch-action: none; }
+
+  /* La barra per avanti/indietro era troppo sottile: Ste non riusciva a
+     premerla. La rendo piu' alta da vedere e le do una zona da toccare
+     molto piu' larga della linea visibile, senza spostare niente. */
+  .player-progress { height: 8px; border-radius: 6px; }
+  .player-progress::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      right: -10px;
+      top: -14px;
+      bottom: -14px;
+  }
+  .seek-row { padding-top: 6px; }
+  .seek-btn { height: 36px; }
+  .player-progress .knob { width: 14px; height: 14px; }
+
+  /* Scorrendo il dito verso destra o sinistra sul player non deve succedere
+     niente: niente immagine trascinata, niente salto indietro del browser.
+     In Safari un'immagine si puo' "trascinare" col dito, e una riga lo
+     disattiva. */
+  .player, .player-body, .player-meta, .player-art, .player-controls {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+  }
+  .player-art img, .player img { -webkit-user-drag: none; pointer-events: none; }
+
