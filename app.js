@@ -74,6 +74,7 @@
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
     { title: "l'elfo carusi do sud", file: "songs/track-67.mp3", artist: "", profile: "Ste" },
     { title: "frah quintale nei treni la notte", file: "songs/track-73.mp3", artist: "", profile: "Ste" },
+    { title: "Dimmi Che C'�", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
 ];
 
   const PALETTE = [
