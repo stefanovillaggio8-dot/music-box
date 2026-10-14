@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.153";
+  const APP_VERSION = "6.154";
 
   let recovering = false;
   async function selfHeal() {
@@ -1702,22 +1702,23 @@ const ORDINAMENTI = [
 
 function visibleTracks(perSuono) {
       /* "perSuono" = sto cercando la canzone che viene DOPO (non sto solo
-         sfogliando la lista). In quel caso valgono due regole diverse, che
-         chiedono Ste:
-         - entrano anche i brani "solo nella playlist": quando una canzone
-           della libreria finisce, vuole che parta anche una della playlist;
-         - NON entrano le canzoni degli altri, a meno che non abbia premuto
-           "fai suonare anche le canzoni degli altri": altrimenti accendere
-           l'interruttore per vederle le farebbe suonare a sorpresa.
+         sfogliando la lista). Valgono le stesse regole del resto, con una
+         differenza: le canzoni degli altri NON entrano, a meno che non
+         abbia premuto "fai suonare anche le canzoni degli altri".
 
-         Le canzoni che ho copiato nella mia libreria invece sono mie e
+         Ste ha chiarito: se sto ascoltando dalla libreria, in coda vanno solo
+         canzoni della libreria. E se sto dentro una playlist, in coda vanno
+         solo canzoni di quella playlist (com'e' gia', perche' sotto il filtro
+         della playlist non ci sono le altre).
+
+         Le canzoni che ho copiato nella mia libreria invece sono ormai mie e
          suonano, anche se le ha aggiunte qualcun altro. */
       const perLaCoda = Boolean(perSuono);
       /* I brani "solo in playlist" escono dalla libreria, tranne quando sto
          guardando proprio una playlist: li' devono comparire. */
       const inPlaylist = _soloInPlaylist;
       let list = tracks.filter((t) => !hiddenTracks.has(t.id) &&
-        (perLaCoda || !inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
+        (!inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
       if (perLaCoda && !_suonaTutti()) {
         const miei = _mieiCopiati();
@@ -6710,11 +6711,49 @@ function toast(msg, durata) {
     }
   });
 
-  $("btnShuffle").addEventListener("click", () => {
-    shuffle = !shuffle;
-    LS.set("mb.shuffle", shuffle);
-    $("btnShuffle").classList.toggle("on", shuffle);
-  });
+  /* Pulsante "Riproduzione casuale", nel menu "Altro".
+
+   Ste lo chiede cosi': se lo premo dalla libreria, le canzoni NON seguono
+   l'ordine in cui sono messe ma suonano a caso; e NON si infilano in mezzo
+   le canzoni delle playlist. Viceversa, se lo premo dentro una playlist,
+   suonano a caso solo le canzoni di quella playlist.
+
+   Il resto lo fa gia' nextIndex(), che mescola la lista "per suono": dentro
+   la libreria quella lista e' la libreria, dentro una playlist e' la playlist. */
+
+function _accendiCasuale(accendi) {
+  shuffle = Boolean(accendi);
+  LS.set("mb.shuffle", shuffle);
+  try { $("btnShuffle").classList.toggle("on", shuffle); } catch (e) { /* noop */ }
+  try { const b = $("btnCasuale"); if (b) b.classList.toggle("on", shuffle); } catch (e) { /* noop */ }
+  return shuffle;
+}
+
+function _toggleCasuale() {
+  const acceso = _accendiCasuale(!shuffle);
+  if (!acceso) {
+    toast("Torni in ordine: le canzoni si susseguono come sono nella lista");
+    return;
+  }
+  /* Appena acceso, salto subito a una canzone a caso: cosi' si sente subito
+     che non sta andando piu' in ordine. */
+  const lista = _listaPerIlSeguito();
+  if (lista.length > 1) {
+    const id = lista[Math.floor(Math.random() * lista.length)].id;
+    if (id && id !== currentId) playById(id);
+  }
+  if (_playlistAttiva) {
+    toast('Casuale: suonano solo le canzoni di "' + _playlistAttiva + '", in ordine sparso');
+  } else {
+    toast("Casuale: suonano solo le canzoni della libreria, in ordine sparso");
+  }
+}
+
+$("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale(); });
+
+$("btnShuffle").addEventListener("click", () => {
+  _accendiCasuale(!shuffle);
+});
   $("btnQueue").addEventListener("click", openQueue);
   $("queueClose").addEventListener("click", closeQueue);
   $("queuePanel").addEventListener("click", (e) => {
