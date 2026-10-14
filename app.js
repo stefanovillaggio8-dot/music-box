@@ -73,6 +73,7 @@
    "songs/track-66.mp3" }. Era lo STESSO mp3 di "dimmi che ce'" (track-64),
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
     { title: "l'elfo carusi do sud", file: "songs/track-67.mp3", artist: "", profile: "Ste" },
+    { title: "frah quintale nei treni la notte", file: "songs/track-73.mp3", artist: "", profile: "Ste" },
 ];
 
   const PALETTE = [
