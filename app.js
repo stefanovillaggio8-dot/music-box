@@ -85,7 +85,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.176";
+  const APP_VERSION = "6.177";
 
   let recovering = false;
   async function selfHeal() {
@@ -9506,6 +9506,17 @@ for (const p of playlists) {
 
   /* ---------- Avvio ---------- */
   (async function init() {
+  /* Ste: "continua a ricaricarsi". Serve distinguere due cose diverse:
+     - la PAGINA si ricarica davvero (e' un problema del browser/worker)
+     - oppure la pagina resta aperta ma continua a ricostruire la libreria
+     Questa riga mi dice quale delle due e': se compare piu' di una volta
+     senza che io abbia toccato niente, e' un ricaricamento vero. */
+  try {
+    const _volte = Number(sessionStorage.getItem("mb.avvii") || "0") + 1;
+    sessionStorage.setItem("mb.avvii", String(_volte));
+    segnalaErrore("DIAG avvio pagina numero " + _volte +
+      " | aperta da " + Math.round(performance.now() / 1000) + " secondi");
+  } catch (e) { /* noop */ }
     audio = createAudio();
     audio.volume = volumePct / 100;
     updateVolumeUI();
