@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.159";
+  const APP_VERSION = "6.160";
 
   let recovering = false;
   async function selfHeal() {
@@ -2190,15 +2190,19 @@ const nascosti = hiddenTracks.size;
       }
       li.appendChild(del);
 
-      li.addEventListener("click", () => {
-        if (suppressClick) {
-          suppressClick = false;
-          return;
-        }
-        playById(t.id);
-      });
-      bindLongPress(li, t);
-      playlistEl.appendChild(li);
+li.addEventListener("click", () => {
+    if (suppressClick) {
+      suppressClick = false;
+      return;
+    }
+    /* Se sto scegliendo piu' canzioni, il tocco sceglie e non suona. */
+    if (_alternaSelezione(t.id)) return;
+    playById(t.id);
+    });
+    /* Il segno di spunta sui brani scelti. */
+    if (_inSelezione && _scelti.has(t.id)) li.classList.add("selezionato");
+    bindLongPress(li, t);
+    playlistEl.appendChild(li);
     });
   }
 
@@ -7601,23 +7605,10 @@ function _nomePerIlBrano(link, suggerito) {
       if (stato) stato.textContent = "Non riesco a parlare col servizio. Riprova fra poco.";
     }
   });
-    $("btnPlaylist").addEventListener("click", () => {
-      /* Se sto guardando una playlist, il tasto mi porta indietro a tutta la
-         libreria. Se invece non ne sto guardando nessuna, APRE il pannello con
-         tutte le playlist: prima qui non faceva proprio nulla e sembrava
-         rotto, e Stefano ha segnalato che "non funziona". */
-      if (_playlistAttiva) {
-        _playlistAttiva = "";
-        _disegnaLinguettePlaylist();
-        render();
-        try {
-          const sc = $("plLingScroll");
-          if (sc) sc.scrollIntoView({ block: "nearest", behavior: "smooth" });
-        } catch (e) { /* noop */ }
-        return;
-      }
-      apriPanelPlaylist();
-    });
+  /* Ste: il tasto in alto delle playlist l'ho tolto, non gli serve piu'.
+     Le playlist si aprono dalle linguette sopra la libreria, col "+" per
+     crearne una, e dal menu "Altro". Con lui spariva anche quel numero nel
+     cerchio rosso in alto a destra, che non sapeva cosa fosse. */
   $("btnNuovaPlaylist").addEventListener("click", () => creaPlaylist());
   $("btnTornaDallePlaylist").addEventListener("click", () => chiudiPanelPlaylist());
   $("playlistPanel").addEventListener("click", (e) => { if (e.target === $("playlistPanel")) chiudiPanelPlaylist(); });
@@ -7640,7 +7631,16 @@ function _nomePerIlBrano(link, suggerito) {
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
-  $("btnProfile").addEventListener("click", openProfile);
+  $("btnSeleziona").addEventListener("click", () => {
+  if (_inSelezione) _chiudiSelezione();
+  else _apriSelezione();
+});
+$("selPlaylist").addEventListener("click", () => { _selezionaAggiungiPlaylist(); });
+$("selSolo").addEventListener("click", () => { _selezionaSoloInPlaylist(); });
+$("selElimina").addEventListener("click", () => { _selezionaElimina(); });
+$("selAnnulla").addEventListener("click", () => { _chiudiSelezione(); });
+
+$("btnProfile").addEventListener("click", openProfile);
 
     /* Interruttore "vedi anche le canzoni degli altri".
 
@@ -7834,16 +7834,10 @@ function _nomePerIlBrano(link, suggerito) {
     }
   }
 
-  function _aggiornaBadgePlaylist() {
-      const b = $("btnPlaylist");
-      if (b) b.classList.toggle("on", playlists.length > 0);
-      const badge = $("playlistBadge");
-      if (badge) {
-        badge.hidden = !playlists.length;
-        badge.textContent = playlists.length > 9 ? "9+" : String(playlists.length);
-      }
-      /* Anche le linguette sopra la libreria: numero di brani e presenza
-         della playlist dipendono da quello che ho fatto. */
+function _aggiornaBadgePlaylist() {
+      /* Il tasto in alto delle playlist e il suo numero sono spariti (non
+         servivano piu'), quindi qui resta solo l'aggiornamento delle
+         linguette sopra la libreria. */
       try { _disegnaLinguettePlaylist(); } catch (e) { /* noop */ }
     }
 
@@ -8711,6 +8705,114 @@ async function _salvaPlaylistCondivise() {
     render();
     toast('Playlist "' + p.name + '" eliminata');
   }
+
+  /* ---------- Scegliere più canzioni insieme ----------
+
+   Ste: un tasto "Seleziona" per prendere più brani in una volta e poi:
+   metterli in una playlist, toglierli dalla libreria e lasciarli solo li', o
+   eliminarli. Prima si poteva fare solo un brano alla volta.
+
+   Le azioni riusano le funzioni di sempre (una per brano), quindi non
+   ripeto la logica: se un giorno cambio una, cambia anche qui. */
+
+let _inSelezione = false;
+const _scelti = new Set();
+
+function _quantiScelti() { return _scelti.size; }
+
+function _apriSelezione() {
+  _inSelezione = true;
+  _scelti.clear();
+  _disegnaBarraSelezione();
+  render();
+}
+
+function _chiudiSelezione() {
+  _inSelezione = false;
+  _scelti.clear();
+  _disegnaBarraSelezione();
+  render();
+}
+
+function _alternaSelezione(id) {
+  if (!_inSelezione) return false;
+  if (_scelti.has(id)) _scelti.delete(id);
+  else _scelti.add(id);
+  _disegnaBarraSelezione();
+  render();
+  return true;
+}
+
+function _disegnaBarraSelezione() {
+  const barra = $("selezioneBarra");
+  if (!barra) return;
+  barra.hidden = !_inSelezione;
+  const n = _quantiScelti();
+  const testo = $("selezioneConto");
+  if (testo) {
+    testo.textContent = n === 0 ? "Tocca le canzioni da scegliere"
+      : n === 1 ? "1 canzone scelta" : n + " canzioni scelte";
+  }
+  const b = $("btnSeleziona");
+  if (b) b.classList.toggle("on", _inSelezione);
+}
+
+/* Le azioni vere: riusano le funzioni che gia' esistono per un brano. */
+async function _selezionaAggiungiPlaylist() {
+  const ids = [..._scelti];
+  if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
+  const nomi = playlists.map((p) => p.name);
+  const testo = "Aggiungi " + (ids.length === 1 ? "la canzone scelta" : ids.length + " canzioni scelte") +
+    " a una playlist" +
+    (nomi.length ? "\n\nSe ne hai gia' una, scrivi il suo nome:\n  " + nomi.join("\n  ") +
+      "\n\nAltrimenti scrivi un nome nuovo e la creo io."
+      : "\n\nNon hai ancora playlist: scrivi il nome e la creo.");
+  const nome = _chiediNome(testo);
+  if (!nome) return;
+  /* La prima crea la playlist, le altre ci finiscono dentro. */
+  let pl = _playlistConNome(nome, ids[0]);
+  for (let i = 1; i < ids.length; i++) {
+    if (pl && Array.isArray(pl.tracks) && pl.tracks.indexOf(ids[i]) < 0) pl.tracks.push(ids[i]);
+  }
+  _aggiornaBadgePlaylist();
+  _salvaPlaylistCondivise();
+  _chiudiSelezione();
+  toast(ids.length + (ids.length === 1 ? " canzone aggiunta a " : " canzioni aggiunte a ") + '"' + pl.name + '"');
+}
+
+async function _selezionaSoloInPlaylist() {
+  const ids = [..._scelti];
+  if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
+  const si = await askConfirm(
+    "Solo nella playlist?",
+    ids.length + (ids.length === 1 ? " canzone sparisce" : " canzioni spariscono") +
+      " dalla libreria, ma restano suonabili dentro la playlist.\n\nPer rivederle: apri quella playlist.",
+    "Sposta"
+  );
+  if (!si) return;
+  for (const id of ids) _mettiSoloInPlaylist(id);
+  _salvaSoloInPlaylist();
+  _disegnaLinguettePlaylist();
+  _chiudiSelezione();
+  toast(ids.length + (ids.length === 1 ? " canzone ora si vede" : " canzioni ora si vedono") + " solo nella playlist");
+}
+
+async function _selezionaElimina() {
+  const ids = [..._scelti];
+  if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
+  const si = await askConfirm(
+    "Eliminare " + ids.length + (ids.length === 1 ? " canzone?" : " canzioni?"),
+    "Le canzoni scelte spariscono davvero, dal sito e da ogni dispositivo.\n\n" +
+      "Questa cosa non si può annullare.",
+    "Elimina"
+  );
+  if (!si) return;
+  for (const id of ids) {
+    try { await removeTrack(id); } catch (e) { /* una alla volta: se una falla le altre vanno avanti */ }
+  }
+  _chiudiSelezione();
+  toast(ids.length + (ids.length === 1 ? " canzone eliminata" : " canzioni eliminate"));
+}
 
   function _disegnaLinguettePlaylist() {
     const box = $("plLinguette");

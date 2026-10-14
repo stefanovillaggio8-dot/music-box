@@ -17,12 +17,8 @@
     <div class="topbar-head">
       <div class="logo-wrap">
         <h1 class="logo long">spotify<span>nonavraiimieisoldi</span></h1>
-        <span class="ver" id="appVer"></span>
-      <button class="logo-refresh" id="btnPlaylist" aria-label="Le tue playlist" title="Le tue playlist">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z"/></svg>
-        <span class="logo-badge" id="playlistBadge" hidden>0</span>
-      </button>
-      </div>
+<span class="ver" id="appVer"></span>
+        </div>
   <div class="logo-actions">
         <button class="logo-refresh" id="btnStatistiche" aria-label="Statistiche" title="Statistiche di ascolto">
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 20h3v-8H4v8Zm6.5 0h3V4h-3v16Zm6.5 0h3v-11h-3v11Z"/></svg>
@@ -140,13 +136,25 @@
              linguette qui sopra la libreria, e sotto si vede sempre la lista
              normale. Scorrendo col dito passi da una playlist all'altra. -->
         <div class="pl-linguette" id="plLinguette" hidden>
-          <button class="pl-ling" id="plLingTutte" type="button">Tutte</button>
-          <div class="pl-ling-scroll" id="plLingScroll"></div>
-          <button class="pl-ling pl-ling-nuova" id="btnNuovaPlLing" type="button"
-                  aria-label="Crea una playlist" title="Crea una playlist">+</button>
+<button class="pl-ling" id="plLingTutte" type="button">Tutte</button>
+            <div class="pl-ling-scroll" id="plLingScroll"></div>
+            <button class="pl-ling pl-ling-seleziona" id="btnSeleziona" type="button"
+                    aria-label="Scegli più canzioni insieme" title="Scegli più canzioni insieme">Seleziona</button>
+            <button class="pl-ling pl-ling-nuova" id="btnNuovaPlLing" type="button"
+                    aria-label="Crea una playlist" title="Crea una playlist">+</button>
         </div>
         <p class="pl-dove-sono" id="plDoveSono" hidden></p>
       <ul class="playlist" id="playlist"></ul>
+        <!-- Barra che compare quando sto scegliendo più canzioni. -->
+        <div class="selezione-barra" id="selezioneBarra" hidden>
+          <p class="selezione-conto" id="selezioneConto">0 scelte</p>
+          <div class="selezione-azioni">
+            <button type="button" class="selezione-btn" id="selPlaylist">Aggiungi a playlist</button>
+            <button type="button" class="selezione-btn" id="selSolo">Solo nella playlist</button>
+            <button type="button" class="selezione-btn pericolo" id="selElimina">Elimina</button>
+            <button type="button" class="selezione-btn torna" id="selAnnulla">Annulla</button>
+          </div>
+        </div>
     <p class="empty" id="empty" hidden>Nessun brano trovato.</p>
   <div class="avviso-profilo" id="avvisoProfilo" hidden></div>
   </main>
