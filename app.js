@@ -82,7 +82,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.165";
+  const APP_VERSION = "6.166";
 
   let recovering = false;
   async function selfHeal() {
@@ -1184,11 +1184,16 @@ function _devoVedereBrano(eMio, b) {
       if ((t.size || 0) > (senzaDuplicati[doppio].size || 0)) senzaDuplicati[doppio] = t;
     }
   tracks = builtin.concat(senzaDuplicati);
+    /* I nomi li applico PRIMA di controllare i doppioni. Prima era il
+       contrario: il controllo guardava il nome greudo del file ("Linkin Park -
+       In the End") mentre la libreria mostra quello ripulito ("In the End"),
+       quindi non li riconosceva come lo stesso brano e i duplicati
+       restavano. */
+    try { applicaRinomine(); } catch (e) { /* noop */ }
     /* Ultimo giro di controllo sulla lista COMPLETA (quella qui sopra
        guardava solo i brani del telefono, quindi due brani uguali arrivati
-       da due posti diversi restavano entrambi). Uso la chiave esatta
-       artista+titolo, cosi' non rischio di nascondere due canzoni diverse
-       che hanno nomi simili. */
+       da due posti diversi restavano entrambi). Uso stessoBrano(), la funzione
+       gia' pensata per questo nel progetto. */
     tracks = _unisciDuplicatiLocali(tracks);
     /* I nomi che hai cambiato vanno messi DOPO che la lista e' stata
        ricostruita: prima li applicavo alla lista vecchia, che qui dentro
@@ -2071,6 +2076,19 @@ async function condividiBraniLocali() {
        "Kid Yugi" risulterebbe dentro "Kid Yugiroll" */
     return lungo.indexOf(corto) === 0 && lungo.charAt(corto.length) === " ";
   }
+  /* Sono lo stesso titolo? Uguale, oppure uno dentro l'altro MA solo se sono
+   davvero vicini: "In The End" dentro "Something In The End" non vuol dire
+   che sono la stessa canzone, e "Voglio bene a te" dentro "Voglio bene a te
+   anche" due volte tanto. */
+function quasiUguali(x, y) {
+  if (x === y) return true;
+  if (!x || !y) return false;
+  const corto = Math.min(x.length, y.length);
+  const lungo = Math.max(x.length, y.length);
+  if (corto / lungo < 0.8) return false;
+  return x.indexOf(y) >= 0 || y.indexOf(x) >= 0;
+}
+
   function stessoBrano(a, b) {
     if (!a || !b) return false;
 
@@ -2084,14 +2102,38 @@ async function condividiBraniLocali() {
     if (!normKey(ab) && normKey(aa)) ab = _artistaDalTitolo(b.title);
     if (!ta || !tb) return false;
     /* parlo anche del titolo ripulito dal nome dell'artista */
-    const taSenza = normKey(_titoloSenzaArtista(a.title, aa));
-    const tbSenza = normKey(_titoloSenzaArtista(b.title, ab));
-    const titoliUguali = ta === tb || ta.indexOf(tb) >= 0 || tb.indexOf(ta) >= 0 ||
-      (taSenza.length >= 6 && tbSenza.length >= 6 && (taSenza === tbSenza || taSenza.indexOf(tbSenza) >= 0 || tbSenza.indexOf(taSenza) >= 0));
-    if (!titoliUguali) return false;
-    if (normKey(aa) || normKey(ab)) return stessoArtista(aa, ab);
-    /* Senza artista non si puo' dire con certezza, quindi non confondo. */
-    return ta.length >= 8;
+const taSenza = normKey(_titoloSenzaArtista(a.title, aa));
+      const tbSenza = normKey(_titoloSenzaArtista(b.title, ab));
+const titoliUguali = quasiUguali(ta, tb) ||
+        (taSenza.length >= 6 && tbSenza.length >= 6 && quasiUguali(taSenza, tbSenza));
+    if (titoliUguali) {
+      if (normKey(aa) || normKey(ab)) return stessoArtista(aa, ab);
+      /* Senza artista non si puo' dire con certezza, quindi non confondo. */
+      return ta.length >= 8;
+    }
+    /* Ste: il file che arriva dal telefono spesso NON porta l'artista
+       ("linkin park in the end"), mentre quello del sito lo porta
+       ("Linkin Park - In the End"). Sono la stessa canzone, ma i titoli sono
+       troppo diversi per quasiUguali. Allora guardo se il titolo senza
+       artista COMINIA per il nome dell'artista che conosco e subito dopo
+       c'e' esattamente l'altro titolo.
+       Attenzione: normKey() butta via anche gli spazi, quindi qui confronto
+       parole attaccate ("linkinparkintheend"), non con gli spazi. */
+    const nomeArtista = normKey(aa) || normKey(ab);
+    if (nomeArtista.length >= 3) {
+      /* Se so i due artisti e sono DIVERSI, non e' la stessa canzone:
+         "Kid Yugi - Donna" e "Donna" di Marco restano due brani. */
+      if (normKey(aa) && normKey(ab) && !stessoArtista(aa, ab)) return false;
+      const colArtista = normKey(aa) ? ta : tb;
+      const senzaArtista = normKey(aa) ? tb : ta;
+      /* Provo entrambi i lati: non so da quale dei due titoli sia stato
+         tirato fuori l'artista (se manca, lo prendo dal titolo stesso). */
+      if (senzaArtista.indexOf(nomeArtista) === 0 &&
+          senzaArtista.slice(nomeArtista.length) === colArtista) return true;
+      if (colArtista.indexOf(nomeArtista) === 0 &&
+          colArtista.slice(nomeArtista.length) === senzaArtista) return true;
+    }
+    return false;
   }
   /* "gigi perez - sailor song" -> "gigi perez" */
   function _artistaDalTitolo(titolo) {
@@ -2129,22 +2171,35 @@ async function condividiBraniLocali() {
 function _unisciDuplicatiLocali(elenco) {
   try {
     const giaNascosti = new Set(_duplicatiLocali());
-    const visti = new Map();
     const nuoviDaRicordare = [];
     const tenuti = [];
     for (const t of elenco) {
       if (!t) continue;
       /* Un id nella lista dei "da non mostrare" resta nascosto. */
       if (giaNascosti.has(t.id)) continue;
-      const k = _chiaveBrano({ artist: t.artist, title: t.title });
-      if (visti.has(k)) {
+      /* Cerco il gemello confrontando con stessoBrano() (il confronto giusto
+         del progetto) e NON con una chiave esatta: con la chiave "Linkin
+         Park|In the End" e "|linkin park in the end" non si trovavano mai,
+         perche' le due righe hanno nomi diversi ma sono lo stesso brano. */
+      let p = -1;
+      for (let n = 0; n < tenuti.length; n++) {
+        if (stessoBrano(t, tenuti[n])) { p = n; break; }
+      }
+      if (p >= 0) {
+        /* Ste: un brano con il nome cambiato deve restare quello. Se il
+           gemello che sto scartando ha una rinomina e quello che tengo no,
+           tengo quello con la rinomina: altrimenti il nome scelto da lui
+           sparisce al riavvio. */
+        if (!_haRinomina(tenuti[p].id) && _haRinomina(t.id)) {
+          _spostaRinomina(t.id, tenuti[p].id);
+          tenuti[p] = t;
+        }
         /* I brani condivisi non li nascondo per sempre: la lista condivisa
            puo' cambiare, e un brano che adesso e' doppio domani potrebbe non
            esserlo piu' (o viceversa). Me li ricordo solo per questa sessione. */
         if (!t.builtin) nuoviDaRicordare.push(t.id);
         continue;
       }
-      visti.set(k, t.id);
       tenuti.push(t);
     }
     if (nuoviDaRicordare.length) {
@@ -2165,6 +2220,27 @@ function _duplicatiLocali() {
     const st = profileState(profile);
     return Array.isArray(st.duplicati) ? st.duplicati : [];
   } catch (e) { return []; }
+}
+
+/* Questo brano ha un nome cambiato dall'utente? */
+function _haRinomina(id) {
+  try {
+    const r = nomiRinomati()[id];
+    return !!(r && (r.title || r.artist));
+  } catch (e) { return false; }
+}
+
+/* Porta una rinomina da un id a un altro (quando un brano viene sostituito
+   dalla sua copia gemella, il nome scelto dall'utente deve restare). */
+function _spostaRinomina(daId, aId) {
+  try {
+    const mappa = nomiRinomati();
+    const r = mappa[daId];
+    if (!r) return;
+    if (!mappa[aId]) mappa[aId] = { title: r.title || "", artist: r.artist || "" };
+    delete mappa[daId];
+    LS.set("mb.rinomini", mappa);
+  } catch (e) { /* noop */ }
 }
 
   function eGiaCondiviso(t) {
