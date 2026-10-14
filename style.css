@@ -1536,18 +1536,12 @@ li.appena-aggiunto {
    Prima compariva una riga blu in alto, staccata dal resto e difficile da
    capire. Ora ha lo stesso tono degli altri avvisi del progetto, sta sopra il
    player (dove stanno gia' gli altri messaggi) e dice anche QUALI brani sono. */
-  .avviso-nascosti {
-      position: fixed;
-      left: 8px;
-      right: 8px;
-      bottom: calc(var(--player-h) + env(safe-area-inset-bottom) + 14px);
-      z-index: 99;
-      padding: 11px 13px;
-  color: #ffc46b;
-  background: rgba(255, 196, 107, .1);
-  border: 1px solid rgba(255, 196, 107, .35);
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
+.avviso-nascosti {
+      /* Ste: sta dentro il menu "Altro", quindi NON e' piu' una barretta
+         fissa sopra il player. Segue il flusso normale del menu e non
+         copre niente. */
+      padding: 10px 2px 2px;
+      color: #ffc46b;
   animation: avviso-nascosti-in .22s ease-out;
 }
 @keyframes avviso-nascosti-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

@@ -82,7 +82,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.163";
+  const APP_VERSION = "6.164";
 
   let recovering = false;
   async function selfHeal() {
@@ -1761,21 +1761,27 @@ function visibleTracks(perSuono) {
     try {
       const n = hiddenTracks.size;
       let avviso = document.getElementById("avviso-nascosti");
-      /* Ste: questa riga restava per sempre in mezzo allo schermo e occupava
-         troppa parte. Ora non la metto piu' quando i brani nascosti sono
-         molti: per rimetterli basta il menu del tasto "+", che c'e' sempre. */
-      if (!n || n > 3) {
+      /* Ste: questa riga stava fisso sopra il player e gli dava fastidio per
+         che restava li' tutto il tempo. Ora vive DENTRO il menu "Altro": non
+         si vede piu' passeggiando nell'app, e c'e' comunque ogni volta che
+         serve rimettere qualcosa. Per questo non nascondo piu' la riga quando
+         i brani nascosti sono molti: dentro il menu non occupa spazio. */
+      if (!n) {
         if (avviso && avviso.parentNode) avviso.parentNode.removeChild(avviso);
         return;
       }
-if (!avviso) {
+      if (!avviso) {
         /* Uso le stesse regole del progetto invece di inventarmi uno stile:
-           lo stesso colore di attenzione degli altri avvisi, e la riga sta
-           SOPRA il player come gli altri, cosi' non copre niente. */
+           lo stesso colore di attenzione degli altri avvisi. */
         avviso = document.createElement("div");
         avviso.id = "avviso-nascosti";
         avviso.className = "avviso-nascosti";
-        document.body.appendChild(avviso);
+        /* Dentro il menu "Altro"; se per qualche motivo il menu non c'e',
+           almeno non lo lascio sparire del tutto. Lo metto in cima al menu:
+           e' la cosa piu' urgente e il menu non si scorre. */
+        const menu = document.getElementById("menuAltro");
+        if (menu && menu.firstChild) menu.insertBefore(avviso, menu.firstChild);
+        else (menu || document.body).appendChild(avviso);
       }
       /* Il testo lo metto una volta sola: prima lo riscrivevo a ogni
          ridisegno della lista, e quello fa saltare gli schermi. */
@@ -8279,6 +8285,9 @@ let _timerFine = 0;
 let _timerGiro = null;
 
 const TIMER_SCELTE = [15, 30, 60, 0];
+/* Quale dei tempi e' scelto adesso. Parte dal primo (15 minuti) e ogni tocco
+   sul tasto passa al successivo, arrivando a 0 = spento. */
+let _minutiTimer = TIMER_SCELTE[0];
 
 async function _accendiSchermo() {
   try {
@@ -8349,38 +8358,48 @@ $("btnSchermo").addEventListener("click", async () => {
     });
 
 $("btnTimer").addEventListener("click", () => {
+  /* Ste: i minuti devono potersi scegliere davvero. Prima il tasto partiva
+     sempre da 15 e gli altri valori erano solo scritti e mai usati, quindi
+     30 e 60 non esistevano. Ora ogni tocco passa al tempo successivo
+     (15 -> 30 -> 60 -> spento) e parte subito col nuovo. */
   if (_timerFine) {
-    /* se un timer e' gia' in corsa, il tosto successivo lo toglie */
+    /* il timer sta girando: riparto dal primo valore e azzero il conto */
     clearInterval(_timerGiro); _timerGiro = null;
     _timerFine = 0;
-    toast("Timer spento");
-  } else {
-    const minuti = TIMER_SCELTE[0];
-    _timerFine = Date.now() + minuti * 60000;
-    _timerGiro = setInterval(() => {
-      const resta = _timerFine - Date.now();
-      if (resta <= 0) {
-        clearInterval(_timerGiro); _timerGiro = null;
-        _timerFine = 0;
-        /* fermo la musica e spengo anche lo schermo acceso. Uso le funzioni
-           vere (non simulo un tocco sul bottone): cosi' l'icona resta
-           coerente e il brano viene segnato come fermato davvero. */
-        try {
-          _vuoleSuonare = false;
-          if (audio && !audio.paused) audio.pause();
-          syncPlayUI();
-        } catch (e) { /* la musica si ferma comunque */ }
-          _schermoVoluto = false;
-          _spegneSchermo();
-          _spezniSonda();
-          _disegnaTimer();
-          toast("Timer finito: buonanotte");
-      } else {
-        _disegnaTimer();
-      }
-    }, 20000);
   }
+  _minutiTimer = TIMER_SCELTE[(TIMER_SCELTE.indexOf(_minutiTimer) + 1) % TIMER_SCELTE.length];
+  const minuti = _minutiTimer;
+  if (minuti <= 0) {
+    _timerFine = 0;
+    _disegnaTimer();
+    toast("Timer spento");
+    return;
+  }
+  _timerFine = Date.now() + minuti * 60000;
+  _timerGiro = setInterval(() => {
+    const resta = _timerFine - Date.now();
+    if (resta <= 0) {
+      clearInterval(_timerGiro); _timerGiro = null;
+      _timerFine = 0;
+      /* fermo la musica e spengo anche lo schermo acceso. Uso le funzioni
+         vere (non simulo un tocco sul bottone): cosi' l'icona resta
+         coerente e il brano viene segnato come fermato davvero. */
+      try {
+        _vuoleSuonare = false;
+        if (audio && !audio.paused) audio.pause();
+        syncPlayUI();
+      } catch (e) { /* la musica si ferma comunque */ }
+      _schermoVoluto = false;
+      _spegneSchermo();
+      _spezniSonda();
+      _disegnaTimer();
+      toast("Timer finito: buonanotte");
+    } else {
+      _disegnaTimer();
+    }
+  }, 20000);
   _disegnaTimer();
+  toast("Si ferma fra " + minuti + " minuti (tocca di nuovo per cambiare)");
 });
 
   /* ---------- Le playlist seguono il brano su ogni dispositivo ----------
