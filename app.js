@@ -84,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.172";
+  const APP_VERSION = "6.173";
 
   let recovering = false;
   async function selfHeal() {
@@ -1060,6 +1060,7 @@ function _devoVedereBrano(eMio, b) {
 }
 
   async function loadAll() {
+  _diag("loadAll");
   /* Copertine che ho cercato io dal browser per questi brani (vedi
      "Scarica tutte le copertine mancanti"): valgono solo su questo
      dispositivo, ma cosi' un brano senza copertina la vede comunque. */
@@ -2259,6 +2260,7 @@ function _spostaRinomina(daId, aId) {
   }
 
   function render() {
+    _diag("render");
     const list = visibleTracks();
     playlistEl.innerHTML = "";
     /* Se ci sono brani tolti dalla lista, la riga per rimetterli e' gia' qui:
@@ -2640,6 +2642,7 @@ a.addEventListener("pause", () => {
 /* Ricreo il lettore audio. Fermo quello vecchio: se e' ancora vivo
      continuerebbe a suonare da solo. */
 function rebuildAudio(autoplay) {
+  _diag("rebuildAudio");
   const t = current();
   if (!t) return;
   const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
@@ -5721,6 +5724,26 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
       ponteInCorso = cercaPonte().then((r) => { ponteInCorso = null; return r; });
     }
     return ponteInCorso;
+  }
+
+  /* Ste: "si continua ad aggiornare", "la lista si riordina", "la musica si
+     interrompe e riparte". Ho provato a indovinare il motivo e non ci sono
+     arrivato, quindi adesso lo REGISTRO: ogni volta che la libreria si
+     ricostruisce o la musica riparte, me lo segno e poi leggo cosa e'
+     successo davvero (e con che tempi). Non cambia niente nel
+     comportamento: e' solo un appunto. */
+  let _diagUltimo = 0;
+  function _diag(testo) {
+    try {
+      const ora = Date.now();
+      if (ora - _diagUltimo < 1200) return;
+      _diagUltimo = ora;
+      const el = $("playlist");
+      const scorrimento = el ? Math.round(el.scrollTop) : -1;
+      const quante = Array.isArray(tracks) ? tracks.length : -1;
+      segnalaErrore("DIAG " + testo + " | scorrimento=" + scorrimento +
+        " | brani=" + quante + " | profilo=" + profile);
+    } catch (e) { /* noop */ }
   }
 
   function segnalaErrore(testo) {
