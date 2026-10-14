@@ -1458,6 +1458,28 @@ button.btn-mini-file {
   align-self: center;
 }
 .ver-badge:active { color: var(--accent2); }
+/* Ste: c'e' un aggiornamento pronto. Non lo prendo piu' da solo (prima
+   ricaricava la pagina mentre stavi usando l'app): ora aspetta che lo
+   tocchi tu, e il numero pulsa piano per farti accorgere che c'e'. */
+.ver-badge.ha-aggiornamento {
+  color: #05070c;
+  background: var(--accent2);
+  border-color: var(--accent2);
+  animation: ver-pulse 2.2s ease-in-out infinite;
+}
+@keyframes ver-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ver-badge.ha-aggiornamento { animation: none; }
+}
+/* Il brano che stavi ascoltando quando hai ricaricato: lo evidenzio piano,
+   cosi' lo ritrovi subito invece di cercarlo. */
+.punto-ripreso {
+  box-shadow: inset 3px 0 0 var(--accent2);
+  border-radius: 10px;
+}
 
 /* ---------- Barra "installa l'app" ----------
    Il sito e' gia' un'app: questa barra serve solo a metterla sulla home

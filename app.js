@@ -84,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.169";
+  const APP_VERSION = "6.170";
 
   let recovering = false;
   async function selfHeal() {
@@ -2205,9 +2205,11 @@ function _unisciDuplicatiLocali(elenco) {
       tenuti.push(t);
     }
     if (nuoviDaRicordare.length) {
-      const tutte = giaNascosti.size ? Array.from(giaNascosti) : [];
-      for (const id of nuoviDaRicordare) if (!tutte.includes(id)) tutte.push(id);
-      writeProfileState(profile, { duplicati: tutte.slice(-400) });
+      /* Ste: "ogni volta toglie le canzoni". Non tengo memoria dei doppioni
+         scartati: ogni volta riparto da capo e ricalcolo tutto, quindi un
+         errore di una volta non puo' nascondere un brano per sempre (e se
+         un brano sparisce, cancello il ricordo e torna con il riavvio). */
+      writeProfileState(profile, { duplicati: [] });
       segnalaErrore("libreria: nascosti " + nuoviDaRicordare.length +
         " doppioni (stesso brano salvato due volte sul telefono)");
     }
@@ -8805,6 +8807,11 @@ function _unisciPlaylistCondivise(arrivate) {
       id: String(p.id || ("pl-" + String(p.name).toLowerCase().replace(/\s+/g, "-"))),
       name: String(p.name).slice(0, 60),
       nascosta: p.nascosta === true,
+      /* Ste: qui prima mancava, e infatti Diego vedeva la playlist "gym"
+         che Ste aveva nascosto. Senza sapere DI CHI e' la playlist, la
+         regola "nascondila agli altri" non poteva scattare e la vedeva
+         chiunque. */
+      nascostaDa: String(p.nascostaDa || ""),
       tracks: (Array.isArray(p.tracks) ? p.tracks : []).filter((t) => /^b-track-\d+$/.test(String(t)))
     });
     nuove++;
@@ -9441,8 +9448,11 @@ for (const p of playlists) {
     await loadLyrics();
     await loadCovers();
     if (db) await loadLocalLyrics();
-  await loadAll();
-  recuperaCopertineMancanti();
+await loadAll();
+    /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente
+       dove l'avevo lasciata. */
+    _ripristinaPuntoLibreria();
+    recuperaCopertineMancanti();
   refreshCachedSongs();
   /* Appena aperta la pagina, condivido da solo i brani che esistono solo qui:
      non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
@@ -9455,6 +9465,43 @@ for (const p of playlists) {
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);
   _avviaStatistiche();
+  /* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
+   qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
+   ricaricamento torni esattamente dove eri. */
+function _salvaPuntoLibreria() {
+  try {
+    const el = $("playlist");
+    if (!el) return;
+    LS.set("mb.punto", {
+      scorrimento: el.scrollTop,
+      brano: (current && current.id) || "",
+      profilo: profile
+    });
+  } catch (e) { /* noop */ }
+}
+
+/* Rimette la lista al punto in cui l'avevi lasciata. */
+function _ripristinaPuntoLibreria() {
+  try {
+    const p = LS.get("mb.punto", null);
+    if (!p || !p.scorrimento) return;
+    if (p.profilo && p.profilo !== profile) return;
+    const el = $("playlist");
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollTop = p.scorrimento;
+      /* Se il brano che stavi ascoltando e' ancora in lista, lo metto in
+         evidenza: cosi' lo ritrovi subito senza doverlo cercare. */
+      if (p.brano) {
+        try {
+          const riga = el.querySelector('[data-id="' + p.brano + '"]');
+          if (riga) riga.classList.add("punto-ripreso");
+        } catch (e) { /* noop */ }
+      }
+    });
+  } catch (e) { /* noop */ }
+}
+
   /* Il numero della versione sempre visibile in alto: e' successo piu' volte
      che il browser restava su una versione vecchia e sembrava che gli
      aggiornamenti non funzionassero. Con questo numero lo vedo subito. */
@@ -9466,6 +9513,22 @@ for (const p of playlists) {
       vf.onclick = () => window.location.reload(true);
     }
   } catch (e) { /* noop */ }
+
+  /* La posizione nella lista la ricordo mentre scorro, non solo quando parte
+     un aggiornamento: cosi' un ricaricamento qualsiasi non mi butta in cima.
+     Ste: "mentre scorro mi fa riascire su". */
+  try {
+    const el = $("playlist");
+    if (el) {
+      let _salvoPunto = null;
+      el.addEventListener("scroll", () => {
+        if (_salvoPunto) clearTimeout(_salvoPunto);
+        _salvoPunto = setTimeout(_salvaPuntoLibreria, 600);
+      }, { passive: true });
+      el.addEventListener("click", () => _salvaPuntoLibreria(), true);
+    }
+  } catch (e) { /* noop */ }
+
   /* niente: la finestra dei nascosti e' stata tolta */
     updatePlayerHeight();
     setTimeout(updatePlayerHeight, 300);
@@ -9495,11 +9558,29 @@ for (const p of playlists) {
 
     if ("serviceWorker" in navigator) {
       let refreshing = false;
+      /* Ste: "l'app si aggiorna continuamente e ogni volta toglie le
+         canzoni, mentre scorro mi fa riascire su".
+         Prima, quando il worker si aggiornava, ricaricavo la pagina DA SOLO
+         dopo mezzo secondo. Con gli aggiornamenti frequenti succedeva di
+         continuo: la pagina si ricaricava mentre stavi usando l'app (e
+         quindi brani che sparivano e lista che tornava in cima).
+
+         Adesso NON ricarico piu' da solo: l'aggiornamento aspetta che
+         decidi tu. Se serve subito, tocchi il numero della versione in alto
+         (e li ho lasciato anche la posizione della lista, cosi' non perdi
+         il punto). */
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (refreshing) return;
         refreshing = true;
-        toast("Aggiornamento pronto");
-        setTimeout(() => window.location.reload(), 500);
+        _salvaPuntoLibreria();
+        try {
+          const vb = $("verBadge");
+          if (vb) {
+            vb.classList.add("ha-aggiornamento");
+            vb.title = "C'è un aggiornamento: tocca qui per prenderlo";
+          }
+        } catch (e) { /* noop */ }
+        toast("Aggiornamento pronto: tocca la versione in alto quando vuoi", 6000);
       });
 navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
       swReg = reg;

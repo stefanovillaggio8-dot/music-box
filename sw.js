@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6169";
+const CACHE = "spotifynonavraiimieisoldi-v6170";
 const CORE = [
   "./",
   "./index.html",
@@ -96,7 +96,11 @@ self.addEventListener("install", (event) => {
         .filter(Boolean);
       if (failed.length) console.warn("Non memorizzate:", failed.join(", "));
       cacheSongs(cache);
-      await self.skipWaiting();
+      /* Ste: "l'app si aggiorna continuamente e ogni volta toglie le
+         canzoni". Prima facevo "skipWaiting": la nuova versione si
+         impadroniva subito della pagina aperta, anche mentre stavi usando
+         l'app (e la ricaricava). Adesso l'aggiornamento aspetta: entra
+         quando riapri l'app, senza mezze sorprese. */
     })
   );
 });
