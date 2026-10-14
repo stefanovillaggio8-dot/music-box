@@ -85,7 +85,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.174";
+  const APP_VERSION = "6.175";
 
   let recovering = false;
   async function selfHeal() {
@@ -1943,6 +1943,7 @@ function restoreHidden() {
 let _recentementeAggiunto = false;
 
 async function condividiBraniLocali() {
+    _diag("condividiBraniLocali");
     if (condivisioneInCorso) return;
     if (!db) return;
     condivisioneInCorso = true;
