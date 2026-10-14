@@ -6,6 +6,9 @@ const CORE = [
   "./app.js",
   "./manifest.json",
   "./lyrics.json",
+  /* File minuscolo col numero di versione e di brani: serve al controllo
+     veloce (il telefono lo legge ogni 20 secondi invece di scaricare 400 KB). */
+  "./versione.json",
   "./covers.json",
   "./icon-192.png",
   "./icon-512.png",

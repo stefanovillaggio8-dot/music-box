@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.178";
+  const APP_VERSION = "6.179";
 
   let recovering = false;
   async function selfHeal() {
@@ -5620,6 +5620,10 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
     };
     await dbPut(rec);
     await dbSetImport({ id, title: rec.title, artist: rec.artist, album: rec.album, status: "ok", date: rec.date });
+    /* Ste: "velocizza il tempo in cui ci mette a inserire le canzoni". Ho appena
+       dato la canzone al computer: non mi metto in attesa i secondi che seguono,
+       guardo subito se e' gia' arrivata in libreria (il computer ci mette poco). */
+    try { _ultimoControllo = 0; } catch (e) { /* noop */ }
     /* Ogni brano nuovo lo condivido subito con gli altri dispositivi, senza
        aspettare che venga ricaricata la pagina. */
     condividiBraniLocali(true);
