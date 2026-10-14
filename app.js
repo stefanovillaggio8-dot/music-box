@@ -85,7 +85,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.175";
+  const APP_VERSION = "6.176";
 
   let recovering = false;
   async function selfHeal() {
@@ -1937,13 +1937,26 @@ function restoreHidden() {
 
      I brani senza file (per esempio solo un'anteprima o un link) non si
      possono condividere: non c'e' niente da mandare. */
-  let condivisioneInCorso = false;
+  let _ultimaCondivisione = 0;
+let _condivisioneHaCambiato = false;
+let condivisioneInCorso = false;
   /* Segna che sto condividendo un brano appena aggiunto dalla pagina: serve per
    dire "e' rimasto solo qui" se il computer non risponde. */
 let _recentementeAggiunto = false;
 
-async function condividiBraniLocali() {
+async function condividiBraniLocali(forzato) {
     _diag("condividiBraniLocali");
+    /* Ste: "si continua ad aggiornare". Misurando ho visto che questa funzione
+       veniva richiamata ogni 9-10 secondi e ogni volta ridisegnava tutta la
+       libreria: la lista si riordinava, lo scorrimento tornava su e la musica
+       ripartiva. Nessun timer da 10 secondi esiste, quindi era una catena di
+       tentativi che non finiva. Con questo blocco due cose smettono:
+       non parte piu' di una volta ogni 15 secondi, e la lista si ridisegna
+       solo se c'era davvero qualcosa da condividere. */
+    if (!forzato) {
+      if (Date.now() - _ultimaCondivisione < 15000) return;
+    }
+    _ultimaCondivisione = Date.now();
     if (condivisioneInCorso) return;
     if (!db) return;
     condivisioneInCorso = true;
@@ -1961,6 +1974,7 @@ async function condividiBraniLocali() {
         for (const r of utili) {
           if (eGiaCondiviso({ title: r.title, artist: r.artist })) {
             giaCondivisi++;
+            _condivisioneHaCambiato = true;
             r.condiviso = true;
             try { await dbPut(r); } catch (e3) { /* non e' grave */ }
             continue;
@@ -2018,6 +2032,7 @@ async function condividiBraniLocali() {
           });
           if (!risp.ok) throw new Error("il programma ha risposto " + risp.status);
           r.condiviso = true;
+          _condivisioneHaCambiato = true;
           try { await dbPut(r); } catch (e2) { /* va bene anche senza riscrivere */ }
           fatti++;
           if (badge) badge.textContent = String(daMandare.length - fatti - falliti);
@@ -2034,7 +2049,15 @@ async function condividiBraniLocali() {
       segnalaErrore("condivisione finita: " + fatti + " condivisi, " + falliti + " falliti, " + senzaFile + " senza file");
     } finally {
       condivisioneInCorso = false;
-      render();
+      /* Prima qui c'era render() SEMPRE, anche quando non era successo niente:
+         e' quello che faceva saltare la lista ogni 10 secondi. Ora ridisegno
+         solo se ho davvero condiviso o cambiato qualcosa. */
+      if (_condivisioneHaCambiato) {
+        _condivisioneHaCambiato = false;
+        _salvaPuntoLibreria();
+        render();
+        _ripristinaPuntoLibreria();
+      }
     }
   }
 
@@ -4084,7 +4107,7 @@ async function _chiediDoveMandare(fresh) {
   /* Strada 1: il computer. */
   try {
     _recentementeAggiunto = true;
-    await condividiBraniLocali();
+    await condividiBraniLocali(true);
   } catch (e) { /* il computer non c'e': vado col servizio */ }
 
   /* Strada 2: il servizio, per quello che il computer non ha preso. */
@@ -4172,7 +4195,7 @@ for (const t of fresh) enrichTrack(t.id);
       /* Segno che sto condividendo un brano appena aggiunto: se il computer
          non risponde l'app lo dice, altrimenti l'utente cerca il brano nella
          libreria (che e' sul computer) e non lo trova mai. */
-try { _recentementeAggiunto = true; condividiBraniLocali(); } catch (e) { /* non blocca l'aggiunta */ }
+try { _recentementeAggiunto = true; condividiBraniLocali(true); } catch (e) { /* non blocca l'aggiunta */ }
         /* Ste: dopo aver aggiunto un file non compariva piu' la scelta
            "manda al computer / manda al servizio", e restava con la musica
            solo sul telefono senza saperlo. Gliela chiedo, con tre uscite:
@@ -5597,7 +5620,7 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
     await dbSetImport({ id, title: rec.title, artist: rec.artist, album: rec.album, status: "ok", date: rec.date });
     /* Ogni brano nuovo lo condivido subito con gli altri dispositivi, senza
        aspettare che venga ricaricata la pagina. */
-    condividiBraniLocali();
+    condividiBraniLocali(true);
     enrichTrack(id);
     return rec;
   }
@@ -8581,7 +8604,7 @@ function _aggiornaBadgePlaylist() {
          copia nella cartella. Se il computer non c'e', vado sul servizio. */
       const online = await ponteOnline();
       if (online) {
-        await condividiBraniLocali();
+        await condividiBraniLocali(true);
         setTimeout(_aggiornaNonCondivisi, 4000);
         return;
       }
