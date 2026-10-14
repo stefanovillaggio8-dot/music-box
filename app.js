@@ -75,6 +75,7 @@
     { title: "l'elfo carusi do sud", file: "songs/track-67.mp3", artist: "", profile: "Ste" },
     { title: "frah quintale nei treni la notte", file: "songs/track-73.mp3", artist: "", profile: "Ste" },
     { title: "Dimmi Che C''", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
+    { title: "stupido massimo pericolo", file: "songs/track-75.mp3", artist: "", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -7741,16 +7742,39 @@ function _aggiornaEtichettaControllo(che) {
 
 async function checkForNewSongs() {
     if (checkingSongs) return;
-    /* Ste: "si continua ad aggiornare". Prima girava ogni 60 secondi e,
-       anche quando non era cambiato niente, ricostruiva tutta la libreria:
-       la lista si ridisegnava da sola e i brani sembravano sparire e
-       tornare. Ora controllo che sia passato un po' di tempo E che la lista
-       sia davvero diversa prima di ridisegnarla. */
+    /* Quanti brani ho davanti in questa copia dell'app: serve per il confronto
+       veloce con versione.json. */
+    try { _quantiBraniOnline = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { /* noop */ }
+    /* Ste: "puoi velocizzare il tempo in cui ci mette a inserire le canzoni".
+       Prima aspettavo almeno 2 minuti prima di guardare, e poi scaricavo
+       tutto app.js (400 KB) ogni volta. Ora:
+         - guardo un file minuscolo (versione.json, poche decine di byte)
+           ogni volta, quindi posso farlo spesso senza costare nulla;
+         - scarico i 400 KB di app.js SOLO se quel file mi dice che c'e'
+           qualcosa di nuovo. */
     const ora = Date.now();
-    if (ora - _ultimoControllo < 120000) return;
+    if (ora - _ultimoControllo < 20000) return;
     _ultimoControllo = ora;
     checkingSongs = true;
     try {
+      /* Primo il file leggero: se la versione e' quella che ho gia', ho
+         finito e non scarico nient'altro. */
+      try {
+        const risposta = await fetch("versione.json?t=" + ora, { cache: "no-store" });
+        if (risposta.ok) {
+          const piccolo = await risposta.json();
+          const mia = String(typeof APP_VERSION !== "undefined" ? APP_VERSION : "");
+          const suoi = String(piccolo.versione || "");
+          const stessi = !!mia && !! suoi && mia.split(".").slice(0, 2).join(".") === suoi.split(".").slice(0, 2).join(".");
+          /* Se la versione coincide, non scarico app.js: risparmio 400 KB
+             a ogni controllo. Se invece il conteggio dei brani e' diverso,
+             c'e' davvero qualcosa di nuovo e voglio accorgermene subito. */
+          if (stessi && Number(piccolo.brani || 0) === _quantiBraniOnline) {
+            _aggiornaEtichettaControllo();
+            return;
+          }
+        }
+      } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
       const res = await fetch("app.js", { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
@@ -7774,12 +7798,13 @@ async function checkForNewSongs() {
       if (tolte.length) LS.set("mb.senza", tolte);
       else LS.remove("mb.senza");
       if (confermate.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
-      if (!aggiunte.length && !confermate.length) { _aggiornaEtichettaControllo(); return; }
+      if (!aggiunte.length && !confermate.length) { _quantiBraniOnline = parsed.length; _aggiornaEtichettaControllo(); return; }
       /* Firma di quello che ho davanti: se combacia, e' la stessa libreria e
          non la ridisegno (e' quello che faceva saltare gli schermi). */
       const firma = (mine.map((b) => b.file).sort().join("|") + "#" + confermate.length);
       if (firma === _firmaLibreria) { _aggiornaEtichettaControllo(); return; }
       _firmaLibreria = firma;
+      _quantiBraniOnline = parsed.length;
       /* Prima di ridisegnare, mi segno dove eri: cosi' la lista non ti
          rimanda in cima mentre ti muovi. */
       _salvaPuntoLibreria();
@@ -9735,7 +9760,8 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
       try { if (anteprimaAudio && !anteprimaAudio.paused) return true; } catch (e3) { /* noop */ }
       return false;
     }
-    function numeroBraniOnline(testo) {
+    let _quantiBraniOnline = 0;
+function numeroBraniOnline(testo) {
       return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
     }
     function avvisoAggiornamento(testo) {
