@@ -78,7 +78,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.151";
+  const APP_VERSION = "6.152";
 
   let recovering = false;
   async function selfHeal() {
@@ -986,7 +986,6 @@ if (nuovo) r.v = (r.v || 0) + 1;
     _segnaAscolto(t, 0, true);
   }
 
-  async function loadAll() {
   /* ---------- Le mie librerie, e quelle degli altri ----------
 
    Ogni nome ha la sua libreria. Non e' una password e non e' un account: e'
@@ -1000,43 +999,49 @@ if (nuovo) r.v = (r.v || 0) + 1;
      nella mia, e resta dov'e'.
 
    La lista dei brani "miei anche se non li ho aggiunti io" la tengo anche sul
-   sito (stato.json), cosi' vale su ogni dispositivo. */
+   sito (stato.json), cosi' vale su ogni dispositivo.
 
-  const LS_MIEI = "mb.miei";
-  const LS_VEDI = "mb.vediTutti";
+   STANNO QUI, e non dentro loadAll: le usa anche l'interruttore nel pannello
+   dei nomi, che sta fuori da li'. Prima erano dentro loadAll e quando lui
+   premeva l'interruttore saltava un errore che bloccava l'app intera: spariva
+   la libreria, l'interruttore non faceva niente e la X non chiudeva. */
 
-  function _mieiCopiati() {
-    try {
-      const v = JSON.parse(LS.get(LS_MIEI, "{}"));
-      const miei = (v && typeof v === "object") ? v : {};
-      const lista = Array.isArray(miei[profile]) ? miei[profile] : [];
-      return new Set(lista.map((x) => String(x || "")).filter(Boolean));
-    } catch (e) { return new Set(); }
-  }
+const LS_MIEI = "mb.miei";
+const LS_VEDI = "mb.vediTutti";
 
-  function _salvaMieiCopiati(lista) {
-    try {
-      const v = JSON.parse(LS.get(LS_MIEI, "{}"));
-      const miei = (v && typeof v === "object") ? v : {};
-      miei[profile] = [...new Set((lista || []).map((x) => String(x || "")).filter(Boolean))].sort();
-      LS.set(LS_MIEI, JSON.stringify(miei));
-    } catch (e) { /* noop */ }
-  }
+function _mieiCopiati() {
+  try {
+    const v = JSON.parse(LS.get(LS_MIEI, "{}"));
+    const miei = (v && typeof v === "object") ? v : {};
+    const lista = Array.isArray(miei[profile]) ? miei[profile] : [];
+    return new Set(lista.map((x) => String(x || "")).filter(Boolean));
+  } catch (e) { return new Set(); }
+}
 
-  function _vedoTutti() {
-    try { return LS.get(LS_VEDI, "") === "si"; } catch (e) { return false; }
-  }
+function _salvaMieiCopiati(lista) {
+  try {
+    const v = JSON.parse(LS.get(LS_MIEI, "{}"));
+    const miei = (v && typeof v === "object") ? v : {};
+    miei[profile] = [...new Set((lista || []).map((x) => String(x || "")).filter(Boolean))].sort();
+    LS.set(LS_MIEI, JSON.stringify(miei));
+  } catch (e) { /* noop */ }
+}
 
-  /* Chiamato per ogni brano mentre carico la libreria. */
-  function _devoVedereBrano(eMio, b) {
-    if (eMio) return true;
-    if (_vedoTutti()) return true;
-    /* l'id del brano e' b-track-<numero>, come lo chiama tutto il resto */
-    const m = /songs\/track-(\d+)\.mp3$/.exec(String((b && b.file) || ""));
-    if (!m) return false;
-    return _mieiCopiati().has("b-track-" + m[1]);
-  }
+function _vedoTutti() {
+  try { return LS.get(LS_VEDI, "") === "si"; } catch (e) { return false; }
+}
 
+/* Chiamato per ogni brano mentre carico la libreria. */
+function _devoVedereBrano(eMio, b) {
+  if (eMio) return true;
+  if (_vedoTutti()) return true;
+  /* l'id del brano e' b-track-<numero>, come lo chiama tutto il resto */
+  const m = /songs\/track-(\d+)\.mp3$/.exec(String((b && b.file) || ""));
+  if (!m) return false;
+  return _mieiCopiati().has("b-track-" + m[1]);
+}
+
+  async function loadAll() {
   /* Copertine che ho cercato io dal browser per questi brani (vedi
      "Scarica tutte le copertine mancanti"): valgono solo su questo
      dispositivo, ma cosi' un brano senza copertina la vede comunque. */
