@@ -74,7 +74,7 @@
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
     { title: "l'elfo carusi do sud", file: "songs/track-67.mp3", artist: "", profile: "Ste" },
     { title: "frah quintale nei treni la notte", file: "songs/track-73.mp3", artist: "", profile: "Ste" },
-    { title: "Dimmi Che C'�", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
+    { title: "Dimmi Che C''", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -86,7 +86,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.177";
+  const APP_VERSION = "6.178";
 
   let recovering = false;
   async function selfHeal() {
@@ -9782,13 +9782,20 @@ if (branoInCorso()) {
                ascoltando per ore, l'app resta vecchia per sempre (e' capitato
                proprio per una correzione dell'audio). Ora e' una riga su cui
                si tocca e si aggiorna subito. */
-            avvisoAggiornamento("C'" + (che.length ? "e'" : "e'") + " " + che.join(" e ") + ":");
+            avvisoAggiornamento("C'e' " + (che.length ? "e' " : "") + che.join(" e ") + ":");
             return;
           }
-          if (navigator.serviceWorker) {
-            navigator.serviceWorker.getRegistration().then((r) => r && r.update());
-          }
-          setTimeout(() => window.location.reload(true), 1200);
+          /* Ste: "continua a ricaricarsi". Questo era il colpevole: trovando
+             un brano nuovo, la pagina si ricaricava DA SOLA dopo 1,2 secondi.
+             E siccome scaricando una canzone dal telefono il computer la
+             aggiunge subito, capitava ogni volta: ricarica, trova un brano,
+             ricarica all'infinito (l'ho visto 6 volte in 45 secondi).
+
+             Adesso NON ricarico piu' da solo: ti metto la riga sotto con
+             quello che c'e' di nuovo e tocchi tu quando vuoi. E comunque i
+             brani nuovi entrano da soli, senza ricaricare: li aggiorna
+             checkForNewSongs. */
+          avvisoAggiornamento("Si puo' aggiornare: " + che.join(" e ") + ".");
         })
         .catch(() => { _stoControllando = false; });
     }
