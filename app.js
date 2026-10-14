@@ -84,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.173";
+  const APP_VERSION = "6.174";
 
   let recovering = false;
   async function selfHeal() {
@@ -5741,8 +5741,19 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
       const el = $("playlist");
       const scorrimento = el ? Math.round(el.scrollTop) : -1;
       const quante = Array.isArray(tracks) ? tracks.length : -1;
-      segnalaErrore("DIAG " + testo + " | scorrimento=" + scorrimento +
-        " | brani=" + quante + " | profilo=" + profile);
+      /* Mi serve anche CHI mi sta chiamando: senza questo non si capiva
+         nulla. Prendo solo i nomi delle funzioni, senza file e numeri di
+         riga (cambiano a ogni versione e renderebbero il messaggio illeggibile). */
+      let chiama = "";
+      try {
+        const st = String(new Error().stack || "");
+        chiama = st.split("\n").slice(2, 7).map((riga) => {
+          const m = /at\s+([A-Za-z_$][\w$.<>]*)\s*\(/.exec(riga);
+          return m ? m[1] : "?";
+        }).filter((x) => x && x !== "?").join(" > ");
+      } catch (e) { /* noop */ }
+      segnalaErrore("DIAG " + testo + " | " + (chiama || "nessun chiamante") +
+        " | scorrimento=" + scorrimento + " | brani=" + quante + " | profilo=" + profile);
     } catch (e) { /* noop */ }
   }
 
