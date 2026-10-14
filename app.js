@@ -84,7 +84,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.170";
+  const APP_VERSION = "6.171";
 
   let recovering = false;
   async function selfHeal() {
@@ -9595,7 +9595,15 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
         if (newWorker) {
           newWorker.addEventListener("statechange", () => {
             if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-              toast("Aggiornamento disponibile");
+              /* Ste: "ancora si aggiorna". La nuova versione ASPETTA che
+                 chiuda del tutto l'app (adesso non si impone piu' mentre
+                 stai usando: era quello che faceva sparire i brani e ti
+                 rimandava la lista in cima). Quindi qui devo dirti cosa
+                 fare davvero, altrimenti resta in attesa per sempre. */
+              const vb = $("verBadge");
+              if (vb) vb.classList.add("ha-aggiornamento");
+              toast("Aggiornamento pronto: chiudi del tutto l'app e la riapri", 7000);
+              segnalaErrore("aggiornamento pronto: chiudere del tutto l'app per prenderlo");
             }
           });
         }
