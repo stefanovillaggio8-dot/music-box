@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.186";
+  const APP_VERSION = "6.187";
 
   let recovering = false;
   async function selfHeal() {
@@ -445,7 +445,21 @@ window.addEventListener("storage", (e) => {
   function applicaRinomina(t) {
     const mappa = nomiRinomati();
     const r = mappa[t.id];
-    if (!r) return t;
+    /* Ste: "se cambio l'artista e riavvio torna come prima".
+       Prima, quando il brano NON aveva una rinomina, la funzione usciva
+       subito e lasciava il nome com'era: pero' il nome era gia' stato
+       cambiato in quel momento della sessione, quindi togliere una rinomina
+       non faceva tornare indietro nulla fino al riavvio. Ora, se non c'e' una
+       rinomina, ripristino il nome vero del brano, come fa la versione che
+       lavora su tutta la lista. */
+    if (!r || (!r.title && !r.artist)) {
+      const orig = _originaleDi(t.id);
+      if (orig) {
+        if (orig.title) t.title = orig.title;
+        if (orig.artist) t.artist = orig.artist;
+      }
+      return t;
+    }
     if (r.title) t.title = r.title;
     if (r.artist) t.artist = r.artist;
     return t;
