@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.195";
+  const APP_VERSION = "6.196";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8917,6 +8917,32 @@ if (sicura) {
      o il servizio non esiste ancora) la condivisione semplice funziona lo
      stesso e non succede niente di rotto. */
   const SERVIZIO_PUBBLICA = LS.get("mb.servizio", "https://musicbox-dal-telefono.stefanovillaggio8.workers.dev");
+  /* Ste: "ogni volta che riavvio devo rimettere la chiave".
+     Sul telefono i dati si perdono a ogni riavvio, quindi anche la chiave
+     sparisce e gliela devo chiedere di nuovo. Non posso metterla dentro
+     l'app perche' l'app e' pubblica e chiunque potrebbe usarla.
+
+     Invece la chiedo al computer di casa, che la conserva lui e la consegna
+     solo a chi e' sulla rete di casa. Cosi' quando sei a casa non devi
+     digitare niente: la app se la prende da sola. */
+  async function _prendiChiaveDalComputer() {
+    try {
+      if (LS.get("mb.chiave", "")) return true;
+      const base = await cercaPonte();
+      if (!base) return false;
+      const ctl = new AbortController();
+      const scad = setTimeout(() => ctl.abort(), 2500);
+      const r = await fetch(base + "/chiave", { cache: "no-store", signal: ctl.signal });
+      clearTimeout(scad);
+      if (!r.ok) return false;
+      const j = await r.json();
+      const k = String((j && j.chiave) || "").trim();
+      if (!k) return false;
+      LS.set("mb.chiave", k);
+      segnalaErrore("chiave presa dal computer di casa");
+      return true;
+    } catch (e) { return false; }
+  }
   const CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
 
   /* Il brano arriva sul sito da solo, senza che il computer sia acceso.
@@ -10013,6 +10039,8 @@ await loadAll();
      non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
      avvio, e intanto i brani restano al sicuro qui. */
   setTimeout(() => { condividiBraniLocali(); }, 1200);
+  /* Quando sono a casa prendo la chiave dal computer invece di chiederla. */
+  setTimeout(() => { _prendiChiaveDalComputer(); }, 2500);
   /* Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
      La memoria del browser sul telefono non sempre regge, quindi i nomi li
      tengo anche nel database del telefono. Prima di tutto il resto recupero
@@ -10217,6 +10245,7 @@ function numeroBraniOnline(testo) {
       return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
     }
 let _timerBarraAggiornamento = null;
+let _barraAggiornamentoMostrata = false;
 function _nascondiBarraAggiornamento() {
     /* Ste: "la barra in verde spunta ancora sempre, continuamente anche se non
        c'e' nessun brano nuovo". Prima la barra, una volta comparsa, restava
@@ -10310,10 +10339,18 @@ function avvisoAggiornamento(testo) {
        posto da toccare per aggiornare e' quello. */
     _segnalaBarraVersione();
     try {
-      clearTimeout(_timerBarraAggiornamento);
-      _timerBarraAggiornamento = setTimeout(() => {
-        _nascondiBarraAggiornamento();
-      }, 30000);
+      /* Ste: "la barra verde resta per troppo tempo". Prima il timer veniva
+         riacceso a ogni controllo (ogni minuto), quindi la barra non spariva
+         mai finche' la condizione restava vera: era un avviso che non
+         ascoltava nessuno. Adesso, se la barra e' gia' stata mostrata e
+         Ste non l'ha toccata, non la riaccendo piu': sparisce e basta. */
+      if (!_barraAggiornamentoMostrata) {
+        _barraAggiornamentoMostrata = true;
+        clearTimeout(_timerBarraAggiornamento);
+        _timerBarraAggiornamento = setTimeout(() => {
+          _nascondiBarraAggiornamento();
+        }, 20000);
+      }
     } catch (e) { /* noop */ }
     let avviso = document.getElementById("avviso-vecchia");
     if (avviso) {
@@ -10324,6 +10361,8 @@ function avvisoAggiornamento(testo) {
       avviso.textContent = testo + " Tocca qui per aggiornare adesso.";
       avviso.onclick = () => {
         avviso.textContent = "Aggiorno...";
+        /* Se la tocca davvero, la prossima volta la barra puo' ricomparire. */
+        _barraAggiornamentoMostrata = false;
         if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
         setTimeout(() => window.location.reload(true), 900);
       };
@@ -10363,12 +10402,24 @@ avviso = document.createElement("div");
         _nascondiBarraAggiornamento();
         return;
       }
-          const che = [];
-          if (braniNuovi) che.push((suoi - miei) + (suoi - miei === 1 ? " brano nuovo" : " brani nuovi"));
+const che = [];
+      if (braniNuovi) che.push((suoi - miei) + (suoi - miei === 1 ? " brano nuovo" : " brani nuovi"));
           if (versioneNuova) che.push("versione " + (m ? m[1] : "?"));
           segnalaErrore("aggiornamento disponibile: " + che.join(" e ") +
             " (qui " + miei + " brani, online " + suoi + ")");
-if (branoInCorso()) {
+
+          /* Ste: "spesso spunta la barra verde 'Si puo' aggiornare: 1 brano
+             nuovo' anche se non c'e' niente di nuovo, e resta per un sacco di
+             tempo". Motivo: i brani nuovi NON hanno bisogno di un aggiornamento,
+             entrano da soli nella libreria (e' checkForNewSongs che li porta).
+             La barra li annunciava come se dovessi fare qualcosa, ma non c'era
+             niente da fare: quindi adesso la barra parla SOLO delle versioni,
+             cioe' di cose che devo fare davvero io (toccare per aggiornare). */
+          if (!versioneNuova) {
+            _nascondiBarraAggiornamento();
+            return;
+          }
+          if (branoInCorso()) {
             /* Prima scrivevo "aggiorno quando finisci": ma se uno sta
                ascoltando per ore, l'app resta vecchia per sempre (e' capitato
                proprio per una correzione dell'audio). Ora e' una riga su cui
