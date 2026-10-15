@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.189";
+  const APP_VERSION = "6.190";
 
   let recovering = false;
   async function selfHeal() {
@@ -311,7 +311,15 @@ window.addEventListener("storage", (e) => {
      correggere solo il computer che le ha scaricate (covers.json), quindi
      se manca una copertina la cerco io e me la segno qui sul dispositivo. */
   const DB_COVERS = "copertine";
-  const DB_VERSION = 4;
+  /* I nomi dei brani che Ste ha cambiato.
+     Ste: "se cambio l'artista e riavvio il sito torna di prima". Ho scoperto
+     (con la finestra Diagnostica) che sul suo telefono la memoria del browser
+     si svuota da sola al riavvio: il nome c'era subito dopo averlo cambiato e
+     al riavvio era sparito. Percio' i nomi li tengo QUI, dentro lo stesso
+     database dove stanno i brani, le copertine e i testi: e' un posto che li
+     ha gia' tenuti fino ad adesso senza perdere niente. */
+  const DB_RENOMI = "rinomini";
+  const DB_VERSION = 5;
 
   /* ---------- IndexedDB ---------- */
   function openDB() {
@@ -329,7 +337,10 @@ window.addEventListener("storage", (e) => {
     }
     if (!req.result.objectStoreNames.contains(DB_COVERS)) {
       req.result.createObjectStore(DB_COVERS, { keyPath: "id" });
-    }
+      }
+      if (!req.result.objectStoreNames.contains(DB_RENOMI)) {
+        req.result.createObjectStore(DB_RENOMI, { keyPath: "id" });
+      }
       };
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => reject(req.error);
@@ -509,41 +520,40 @@ function _originaleDi(id) {
      Per questo tengo i nomi anche in IndexedDB, che sul telefono e' molto piu'
      resistente della memoria del browser, e li rileggo da li' all'avvio.
      In pratica il nome non dipende piu' dalla rete. */
-  const _DB_RINOMI = "musicbox-rinomini";
-  function _apriDbRinomini() {
-    return new Promise((risolvi) => {
-      try {
-        const rq = indexedDB.open(_DB_RINOMI, 1);
-        rq.onupgradeneeded = () => { try { rq.result.createObjectStore("ren"); } catch (e) { /* noop */ } };
-        rq.onsuccess = () => risolvi(rq.result);
-        rq.onerror = () => risolvi(null);
-      } catch (e) { risolvi(null); }
-    });
-  }
+  /* Ste: "se cambio l'artista e riavvio il sito torna di prima". Con la
+     finestra Diagnostica si e' visto che sul suo telefono la memoria del
+     browser si svuota da sola al riavvio: il nome c'era subito dopo averlo
+     cambiato, al riavvio era sparito. Quindi non mi fido piu' di lei.
+
+     I nomi li tengo nel database dei brani, lo stesso dove gia' stanno le
+     copertine e i testi: e' un posto che ha gia' tenuto i dati di Ste senza
+     perdere niente, quindi regge anche lui. */
   async function _salvaRinomineSulDisco(mappa) {
     try {
-      const db = await _apriDbRinomini();
-      if (!db) return false;
+      const d = db || await openDB();
+      if (!d) return false;
+      db = d;
       return await new Promise((fatto) => {
         try {
-          const tx = db.transaction("ren", "readwrite");
-          tx.objectStore("ren").put(JSON.parse(JSON.stringify(mappa)), "tutti");
-          tx.oncomplete = () => { try { db.close(); } catch (e) { /* noop */ } fatto(true); };
-          tx.onerror = () => { try { db.close(); } catch (e) { /* noop */ } fatto(false); };
+          const tx = d.transaction(DB_RENOMI, "readwrite");
+          tx.objectStore(DB_RENOMI).put({ id: "tutti", mappa: JSON.parse(JSON.stringify(mappa)) });
+          tx.oncomplete = () => fatto(true);
+          tx.onerror = () => fatto(false);
         } catch (e) { fatto(false); }
       });
     } catch (e) { return false; }
   }
   async function _leggiRinomineDalDisco() {
     try {
-      const db = await _apriDbRinomini();
-      if (!db) return null;
+      const d = db || await openDB();
+      if (!d) return null;
+      db = d;
       return await new Promise((fatto) => {
         try {
-          const tx = db.transaction("ren", "readonly");
-          const chiedi = tx.objectStore("ren").get("tutti");
-          chiedi.onsuccess = () => { try { db.close(); } catch (e) { /* noop */ } fatto(chiedi.result || null); };
-          chiedi.onerror = () => { try { db.close(); } catch (e) { /* noop */ } fatto(null); };
+          const tx = d.transaction(DB_RENOMI, "readonly");
+          const chiedi = tx.objectStore(DB_RENOMI).get("tutti");
+          chiedi.onsuccess = () => fatto((chiedi.result && chiedi.result.mappa) || null);
+          chiedi.onerror = () => fatto(null);
         } catch (e) { fatto(null); }
       });
     } catch (e) { return null; }
