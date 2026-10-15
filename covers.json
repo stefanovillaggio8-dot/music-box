@@ -1,514 +1,506 @@
 {
-  "blancosottogonna": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/7b07fd9c563ee88ae6c73f2fd12d992d/1000x1000-000000-80-0-0.jpg",
-    "title": "SOTTOGONNA",
-    "artist": "Blanco",
-    "album": "SOTTOGONNA",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:02.563Z"
-  },
-  "madamequantofortetipensavo": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/9d2b431e6443a4b410ccb44c5e52394e/1000x1000-000000-80-0-0.jpg",
-    "title": "QUANTO FORTE TI PENSAVO",
-    "artist": "Madame",
-    "album": "L'AMORE",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:03.424Z"
-  },
-  "xcarmesonook": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/4c7bfe234626097e0e056103ad431ab1/1000x1000-000000-80-0-0.jpg",
-    "title": "Sono Ok",
-    "artist": "xCarme",
-    "album": "Sono Ok",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:04.353Z"
-  },
-  "artie5iveswagmusic": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/277c5edad6dc3c45d7043776fc3cd3fe/1000x1000-000000-80-0-0.jpg",
-    "title": "SWAG MUSIC",
-    "artist": "Artie 5ive",
-    "album": "SWAG MUSIC",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:05.213Z"
-  },
-  "lilpeepstarshopping": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/e318144ad9a8155c025f24a511f08815/1000x1000-000000-80-0-0.jpg",
-    "title": "Star Shopping",
-    "artist": "Lil Peep",
-    "album": "Star Shopping",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:09.978Z"
-  },
-  "mostrolacitta": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/a0640b2d6a07c5c41cad8b854dc7fba8/1000x1000-000000-80-0-0.jpg",
-    "title": "La città",
-    "artist": "Mostro",
-    "album": "La città",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:12.577Z"
-  },
-  "saittaromanticiterroni": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/df1b4ef1a9d2e6f618aff0619b414052/1000x1000-000000-80-0-0.jpg",
-    "title": "Romantici Terroni",
-    "artist": "Saitta",
-    "album": "Romantici Terroni",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:17.183Z"
-  },
-  "jovanottiunmondoapartevisual": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/1000x1000-000000-80-0-0.jpg",
-    "title": "Un mondo a parte",
-    "artist": "Jovanotti",
-    "album": "Il corpo umano VOL. 1",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:20.999Z"
-  },
-  "gmineiroflatpearlsuccomalpensa": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/b8ef88ad883dd34f992c085ccb4b71dc/1000x1000-000000-80-0-0.jpg",
-    "title": "Malpensa",
-    "artist": "G.Mineiro",
-    "album": "È O G.",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:11.636Z"
-  },
-  "tonyboyvictoria": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/c85babb20499c6f81ba7e6c952861e34/1000x1000-000000-80-0-0.jpg",
-    "title": "Victoria (feat. Artie 5ive)",
-    "artist": "Tony Boy",
-    "album": "Umile",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:20.137Z"
-  },
-  "thasupsr": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/4f8715052dd572e9bd72fc41498c5b27/1000x1000-000000-80-0-0.jpg",
-    "title": "s!r! (feat. Lazza & Sfera Ebbasta)",
-    "artist": "thasup",
-    "album": "s!r! (feat. Lazza & Sfera Ebbasta)",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:19.198Z"
-  },
-  "sogniappesi": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
-    "title": "Sogni appesi",
-    "artist": "Ultimo",
-    "album": "Pianeti",
-    "source": "Deezer",
-    "date": "2026-09-24T20:00:14.313Z"
-  },
-  "naytexit": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/504043e5b8622499655becd271dbfe1c/1000x1000-000000-80-0-0.jpg",
-    "title": "Exit",
-    "artist": "Nayt",
-    "album": "Raptus 3",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:23.322Z"
-  },
-  "frahquintalehaivistomai": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/c43dbb59ebd5a16aff13305bbea6838b/1000x1000-000000-80-0-0.jpg",
-    "title": "Hai visto mai",
-    "artist": "Frah Quintale",
-    "album": "Regardez moi",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:24.175Z"
-  },
-  "ilpiugrandespettacolodopoilbigbang": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
-    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
-    "artist": "Jovanotti",
-    "album": "Ora (Special Super Deluxe Box)",
-    "source": "Deezer",
-    "date": "2026-09-25T00:39:20.515Z"
-  },
-  "modastellacadente": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
-    "title": "Stella cadente",
-    "artist": "Modà",
-    "album": "Passione maledetta",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:25.998Z"
-  },
-  "iltrezerorimorsi": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/85c2c6e0a4fb0b08fc6e73523f16ef93/1000x1000-000000-80-0-0.jpg",
-    "title": "Zero rimorsi",
-    "artist": "Il Tre",
-    "album": "Real Talk",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:35.781Z"
-  },
-  "naytpoterscegliere": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
-    "title": "Poter scegliere",
-    "artist": "Nayt",
-    "album": "Lettera Q",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:36.787Z"
-  },
-  "macenonmiriconosco": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/6780db314a3cb2c305f1272f4ef63cbe/1000x1000-000000-80-0-0.jpg",
-    "title": "NON MI RICONOSCO",
-    "artist": "Mace",
-    "album": "NON MI RICONOSCO",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:37.678Z"
-  },
-  "ultimosogniappesi": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
-    "title": "Sogni appesi",
-    "artist": "Ultimo",
-    "album": "Pianeti",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:21.871Z"
-  },
-  "jovanottiilpiugrandespettacolodopoilbigbang": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
-    "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
-    "artist": "Jovanotti",
-    "album": "Ora (Special Super Deluxe Box)",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:25.075Z"
-  },
-  "kidyugiilfilmografo": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/3bf71faeefc6eb464f2d21050f50a5b3/1000x1000-000000-80-0-0.jpg",
-    "title": "Il Filmografo",
-    "artist": "Kid Yugi",
-    "album": "The Globe",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:38.525Z"
-  },
-  "kidyugipaganini": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
-    "title": "Paganini",
-    "artist": "Kid Yugi",
-    "album": "Tutti i Nomi del Diavolo",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:39.405Z"
-  },
-  "kidyugiterr1": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
-    "title": "Terr1",
-    "artist": "Kid Yugi",
-    "album": "I Nomi del Diavolo",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:40.310Z"
-  },
-  "naytpotersceglierenayt": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
-    "title": "Poter scegliere",
-    "artist": "Nayt",
-    "album": "Lettera Q",
-    "source": "Deezer",
-    "date": "2026-09-24T11:51:01.708Z"
-  },
-  "kidyugisintetico": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
-    "title": "Sintetico",
-    "artist": "Kid Yugi",
-    "album": "Quarto di Bue",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:41.240Z"
-  },
-  "ultimoromantica": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/febf035782a49c1c831c9ace2f479752/1000x1000-000000-80-0-0.jpg",
-    "title": "ROMANTICA",
-    "artist": "Ultimo",
-    "album": "ROMANTICA",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:42.114Z"
-  },
-  "kidyugililith": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
-    "title": "Lilith",
-    "artist": "Kid Yugi",
-    "album": "I Nomi del Diavolo",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:45.487Z"
-  },
-  "ultimoilgiornocheaspettavo": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/bd1dfacb7af3aee698621f47e9c64b1f/1000x1000-000000-80-0-0.jpg",
-    "title": "IL GIORNO CHE ASPETTAVO",
-    "artist": "Ultimo",
-    "album": "IL GIORNO CHE ASPETTAVO",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:51.853Z"
-  },
-  "kidyugishivalaviolenzanecessaria": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-    "title": "La Violenza Necessaria",
-    "artist": "Kid Yugi",
-    "album": "Anche gli Eroi Muoiono",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:52.768Z"
-  },
-  "kidyugigilgamesh": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-    "title": "Gilgamesh",
-    "artist": "Kid Yugi",
-    "album": "Anche gli Eroi Muoiono",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:53.633Z"
-  },
-  "kidyugitristanoeisotta": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-    "title": "Tristano e Isotta",
-    "artist": "Kid Yugi",
-    "album": "Anche gli Eroi Muoiono",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:54.541Z"
-  },
-  "kidyugidonna": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
-    "title": "Donna",
-    "artist": "Kid Yugi",
-    "album": "Tutti i Nomi del Diavolo",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:55.484Z"
-  },
-  "kidyugilucifero": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
-    "title": "Lucifero",
-    "artist": "Kid Yugi",
-    "album": "I Nomi del Diavolo",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:56.935Z"
-  },
-  "oliviarodriguothecure": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
-    "title": "the cure",
-    "artist": "Olivia Rodrigo",
-    "album": "you seem pretty sad for a girl so in love",
-    "source": "Deezer",
-    "date": "2026-09-30T20:04:39.127Z"
-  },
-  "nayt3dsolodomande": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/dda746027e0384f3b77045390a25f046/1000x1000-000000-80-0-0.jpg",
-    "title": "solo domande",
-    "artist": "Nayt",
-    "album": "HABITAT",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:58.711Z"
-  },
-  "oliviarodrigothecure": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
-    "title": "the cure",
-    "artist": "Olivia Rodrigo",
-    "album": "you seem pretty sad for a girl so in love",
-    "source": "Deezer",
-    "date": "2026-10-10T03:23:57.775Z"
-  },
-  "kidyuginightskinnyartie5iveportoilcommerciale": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
-    "title": "Porto il Commerciale",
-    "artist": "Kid Yugi",
-    "album": "Quarto di Bue",
-    "source": "Deezer",
-    "date": "2026-10-10T03:24:04.918Z"
-  },
-  "lilpeepnuts": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/1cec367f43d884cb853c55e9d6fcaff9/1000x1000-000000-80-0-0.jpg",
-    "title": "nuts",
-    "artist": "Lil Peep",
-    "album": "LIVE FOREVER",
-    "source": "Deezer",
-    "date": "2026-10-10T03:24:06.670Z"
-  },
-  "sferaebbastashivaneon": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/7aa3817cf5e0886a6f987f35d827e8d6/1000x1000-000000-80-0-0.jpg",
-    "title": "NEON",
-    "artist": "Sfera Ebbasta",
-    "album": "SANTANA MONEY GANG",
-    "source": "Deezer",
-    "date": "2026-10-10T03:24:07.599Z"
-  },
-  "gigiperezsailorsong": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/a1d1e955d73e18821b5d3f3d22fceb6a/1000x1000-000000-80-0-0.jpg",
-    "title": "Sailor Song",
-    "artist": "Gigi Perez",
-    "album": "Sailor Song",
-    "source": "Deezer",
-    "date": "2026-10-10T03:24:05.778Z"
-  },
-  "kidyugimostrovisual": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
-    "title": "Mostro",
-    "artist": "Kid Yugi",
-    "album": "Anche gli Eroi Muoiono",
-    "source": "Deezer",
-    "date": "2026-10-10T03:24:08.466Z"
-  },
-  "threedaysgraceanimalihavebecome": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/2bda9b70f023c72f8afa9e3e673abeb4/1000x1000-000000-80-0-0.jpg",
-    "title": "Animal I Have Become",
-    "artist": "Three Days Grace",
-    "album": "One-X",
-    "source": "Deezer",
-    "date": "2026-10-10T14:29:32.807Z"
-  },
-  "linkinparksomewhereibelong": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/882448ab63952aa16e502c82db2df160/1000x1000-000000-80-0-0.jpg",
-    "title": "Somewhere I Belong",
-    "artist": "Linkin Park",
-    "album": "Meteora",
-    "source": "Deezer",
-    "date": "2026-10-10T14:30:32.020Z"
-  },
-  "linkinparkwhativedone": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/2dd699adcd68089f49f3ab558a2bd296/1000x1000-000000-80-0-0.jpg",
-    "title": "What I've Done",
-    "artist": "Linkin Park",
-    "album": "Minutes to Midnight",
-    "source": "Deezer",
-    "date": "2026-10-10T14:30:34.548Z"
-  },
-  "nirvanasmellsliketeenspirit": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/f0282817b697279e56df13909962a54a/1000x1000-000000-80-0-0.jpg",
-    "title": "Smells Like Teen Spirit",
-    "artist": "Nirvana",
-    "album": "Nevermind (Remastered)",
-    "source": "Deezer",
-    "date": "2026-10-10T14:30:51.836Z"
-  },
-  "linkinparkfaint": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/882448ab63952aa16e502c82db2df160/1000x1000-000000-80-0-0.jpg",
-    "title": "Faint",
-    "artist": "Linkin Park",
-    "album": "Meteora",
-    "source": "Deezer",
-    "date": "2026-10-10T14:31:46.678Z"
-  },
-  "linkinparknumb": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/44df4f6fb2534768f4924365c103d0f7/1000x1000-000000-80-0-0.jpg",
-    "title": "Numb",
-    "artist": "Linkin Park",
-    "album": "Meteora (Bonus Edition)",
-    "source": "Deezer",
-    "date": "2026-10-10T14:31:52.761Z"
-  },
-  "skilletmonster": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/fce6fe4cf02a3c78cedb8eb32fa4fa31/1000x1000-000000-80-0-0.jpg",
-    "title": "Monster",
-    "artist": "Skillet",
-    "album": "Awake",
-    "source": "Deezer",
-    "date": "2026-10-10T14:32:25.871Z"
-  },
-  "evanescencebringmetolife": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/56c02d3764f5a078ceecd27b64b7d789/1000x1000-000000-80-0-0.jpg",
-    "title": "Bring Me To Life",
-    "artist": "Evanescence",
-    "album": "Fallen",
-    "source": "Deezer",
-    "date": "2026-10-10T14:33:00.950Z"
-  },
-  "gunsnrosessweetchildomine": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/8bfe7b3b0985d9ff0751090fb2b6f73f/1000x1000-000000-80-0-0.jpg",
-    "title": "Sweet Child O' Mine",
-    "artist": "Guns N' Roses",
-    "album": "Appetite For Destruction (Super Deluxe Edition)",
-    "source": "Deezer",
-    "date": "2026-10-10T14:33:08.649Z"
-  },
-  "linkinparkcrawling": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/033a271b5ec10842c287827c39244fb5/1000x1000-000000-80-0-0.jpg",
-    "title": "Crawling",
-    "artist": "Linkin Park",
-    "album": "Hybrid Theory (Bonus Edition)",
-    "source": "Deezer",
-    "date": "2026-10-10T14:33:41.580Z"
-  },
-  "paramorealliwanted": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/1346bb36e5d61b9fea447a9b3ea50f54/1000x1000-000000-80-0-0.jpg",
-    "title": "All I Wanted",
-    "artist": "Paramore",
-    "album": "Brand New Eyes",
-    "source": "Deezer",
-    "date": "2026-10-10T14:34:05.037Z"
-  },
-  "linkinparkrunaway": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/033a271b5ec10842c287827c39244fb5/1000x1000-000000-80-0-0.jpg",
-    "title": "Runaway",
-    "artist": "Linkin Park",
-    "album": "Hybrid Theory (Bonus Edition)",
-    "source": "Deezer",
-    "date": "2026-10-10T14:35:23.384Z"
-  },
-  "vascorossialbachiara": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/bf773d0c35f850652e5c0a0df93db7b7/1000x1000-000000-80-0-0.jpg",
-    "title": "Albachiara",
-    "artist": "Vasco Rossi",
-    "album": "Vasco Rossi",
-    "source": "Deezer",
-    "date": "2026-10-13T13:02:18.798Z"
-  },
-  "gianlucagrignanilamiastoriatraleditafeatannalisa": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
-    "title": "La Mia Storia Tra Le Dita",
-    "artist": "Gianluca Grignani",
-    "album": "Destinazione Paradiso",
-    "source": "Deezer",
-    "date": "2026-10-13T13:02:22.322Z"
-  },
-  "thasupdimmichece": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/ccf057fd82fa51e4bb6e90f360d66f88/1000x1000-000000-80-0-0.jpg",
-    "title": "Dimmi Che C'è (feat. Tedua)",
-    "artist": "thasup",
-    "album": "Dimmi Che C'è (feat. Tedua)",
-    "source": "Deezer",
-    "date": "2026-10-14T20:22:01.460Z"
-  },
-  "frahquintaleneitrenilanotte": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/fa2f80dd360907c161739f316acf019b/1000x1000-000000-80-0-0.jpg",
-    "title": "Nei treni la notte (feat. Frah Quintale)",
-    "artist": "Coez",
-    "album": "From The Rooftop 2",
-    "source": "Deezer",
-    "date": "2026-10-14T23:25:07.382Z"
-  },
-  "thasupdimmichec": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/ccf057fd82fa51e4bb6e90f360d66f88/1000x1000-000000-80-0-0.jpg",
-    "title": "Dimmi Che C'è (feat. Tedua)",
-    "artist": "thasup",
-    "album": "Dimmi Che C'è (feat. Tedua)",
-    "source": "Deezer",
-    "date": "2026-10-14T23:34:10.482Z"
-  },
-  "chiellohosbagliatoancora": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/d41126f3a101fa45ef8a29e7cefb3ea5/1000x1000-000000-80-0-0.jpg",
-    "title": "HO SBAGLIATO ANCORA",
-    "artist": "Chiello",
-    "album": "HO SBAGLIATO ANCORA",
-    "source": "Deezer",
-    "date": "2026-10-14T23:53:34.872Z"
-  },
-  "gianlucagrignanilamiastoriatraledita": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
-    "title": "la mia storia tra le dita",
-    "artist": "gianluca grignani",
-    "album": "Destinazione Paradiso",
-    "source": "Deezer",
-    "date": "2026-10-14T23:55:38.507Z"
-  },
-  "wonderwallnl": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/ddb062c517401ee74d8a4df6f895d75e/1000x1000-000000-80-0-0.jpg",
-    "title": "Wonderwall NL",
-    "artist": "",
-    "album": "(What's The Story) Morning Glory?",
-    "source": "Deezer",
-    "date": "2026-10-14T23:55:38.719Z"
-  },
-  "sillycup": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe6bce7f9b28ad846750c655d63a800/1000x1000-000000-80-0-0.jpg",
-    "title": "siLLy cUp",
-    "artist": "",
-    "album": "siLLy cUp rMx",
-    "source": "Deezer",
-    "date": "2026-10-14T23:55:38.853Z"
-  },
-  "linkinparkintheend": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/ebcfd1e8de9a186fd448cc3659ad28bb/1000x1000-000000-80-0-0.jpg",
-    "title": "linkin park in the end",
-    "artist": "",
-    "album": "Linkin Park - In The End (bootleg)",
-    "source": "Deezer",
-    "date": "2026-10-15T17:17:28.483Z"
-  }
+ "blancosottogonna": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/7b07fd9c563ee88ae6c73f2fd12d992d/1000x1000-000000-80-0-0.jpg",
+  "title": "SOTTOGONNA",
+  "artist": "Blanco",
+  "album": "SOTTOGONNA",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:02.563Z"
+ },
+ "madamequantofortetipensavo": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/9d2b431e6443a4b410ccb44c5e52394e/1000x1000-000000-80-0-0.jpg",
+  "title": "QUANTO FORTE TI PENSAVO",
+  "artist": "Madame",
+  "album": "L'AMORE",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:03.424Z"
+ },
+ "xcarmesonook": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/4c7bfe234626097e0e056103ad431ab1/1000x1000-000000-80-0-0.jpg",
+  "title": "Sono Ok",
+  "artist": "xCarme",
+  "album": "Sono Ok",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:04.353Z"
+ },
+ "artie5iveswagmusic": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/277c5edad6dc3c45d7043776fc3cd3fe/1000x1000-000000-80-0-0.jpg",
+  "title": "SWAG MUSIC",
+  "artist": "Artie 5ive",
+  "album": "SWAG MUSIC",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:05.213Z"
+ },
+ "lilpeepstarshopping": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/e318144ad9a8155c025f24a511f08815/1000x1000-000000-80-0-0.jpg",
+  "title": "Star Shopping",
+  "artist": "Lil Peep",
+  "album": "Star Shopping",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:09.978Z"
+ },
+ "mostrolacitta": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/a0640b2d6a07c5c41cad8b854dc7fba8/1000x1000-000000-80-0-0.jpg",
+  "title": "La città",
+  "artist": "Mostro",
+  "album": "La città",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:12.577Z"
+ },
+ "saittaromanticiterroni": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/df1b4ef1a9d2e6f618aff0619b414052/1000x1000-000000-80-0-0.jpg",
+  "title": "Romantici Terroni",
+  "artist": "Saitta",
+  "album": "Romantici Terroni",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:17.183Z"
+ },
+ "jovanottiunmondoapartevisual": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/50a4fd0ea65c05a7a505dc871b4606bf/1000x1000-000000-80-0-0.jpg",
+  "title": "Un mondo a parte",
+  "artist": "Jovanotti",
+  "album": "Il corpo umano VOL. 1",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:20.999Z"
+ },
+ "gmineiroflatpearlsuccomalpensa": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/b8ef88ad883dd34f992c085ccb4b71dc/1000x1000-000000-80-0-0.jpg",
+  "title": "Malpensa",
+  "artist": "G.Mineiro",
+  "album": "È O G.",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:11.636Z"
+ },
+ "tonyboyvictoria": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/c85babb20499c6f81ba7e6c952861e34/1000x1000-000000-80-0-0.jpg",
+  "title": "Victoria (feat. Artie 5ive)",
+  "artist": "Tony Boy",
+  "album": "Umile",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:20.137Z"
+ },
+ "thasupsr": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/4f8715052dd572e9bd72fc41498c5b27/1000x1000-000000-80-0-0.jpg",
+  "title": "s!r! (feat. Lazza & Sfera Ebbasta)",
+  "artist": "thasup",
+  "album": "s!r! (feat. Lazza & Sfera Ebbasta)",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:19.198Z"
+ },
+ "sogniappesi": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
+  "title": "Sogni appesi",
+  "artist": "Ultimo",
+  "album": "Pianeti",
+  "source": "Deezer",
+  "date": "2026-09-24T20:00:14.313Z"
+ },
+ "naytexit": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/504043e5b8622499655becd271dbfe1c/1000x1000-000000-80-0-0.jpg",
+  "title": "Exit",
+  "artist": "Nayt",
+  "album": "Raptus 3",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:23.322Z"
+ },
+ "frahquintalehaivistomai": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/c43dbb59ebd5a16aff13305bbea6838b/1000x1000-000000-80-0-0.jpg",
+  "title": "Hai visto mai",
+  "artist": "Frah Quintale",
+  "album": "Regardez moi",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:24.175Z"
+ },
+ "ilpiugrandespettacolodopoilbigbang": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
+  "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+  "artist": "Jovanotti",
+  "album": "Ora (Special Super Deluxe Box)",
+  "source": "Deezer",
+  "date": "2026-09-25T00:39:20.515Z"
+ },
+ "modastellacadente": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
+  "title": "Stella cadente",
+  "artist": "Modà",
+  "album": "Passione maledetta",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:25.998Z"
+ },
+ "iltrezerorimorsi": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/85c2c6e0a4fb0b08fc6e73523f16ef93/1000x1000-000000-80-0-0.jpg",
+  "title": "Zero rimorsi",
+  "artist": "Il Tre",
+  "album": "Real Talk",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:35.781Z"
+ },
+ "naytpoterscegliere": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+  "title": "Poter scegliere",
+  "artist": "Nayt",
+  "album": "Lettera Q",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:36.787Z"
+ },
+ "macenonmiriconosco": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/6780db314a3cb2c305f1272f4ef63cbe/1000x1000-000000-80-0-0.jpg",
+  "title": "NON MI RICONOSCO",
+  "artist": "Mace",
+  "album": "NON MI RICONOSCO",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:37.678Z"
+ },
+ "ultimosogniappesi": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/9c9eefcb12ed26253a275b99786e2f7c/1000x1000-000000-80-0-0.jpg",
+  "title": "Sogni appesi",
+  "artist": "Ultimo",
+  "album": "Pianeti",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:21.871Z"
+ },
+ "jovanottiilpiugrandespettacolodopoilbigbang": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
+  "title": "Il Più Grande Spettacolo Dopo Il Big Bang",
+  "artist": "Jovanotti",
+  "album": "Ora (Special Super Deluxe Box)",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:25.075Z"
+ },
+ "kidyugiilfilmografo": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/3bf71faeefc6eb464f2d21050f50a5b3/1000x1000-000000-80-0-0.jpg",
+  "title": "Il Filmografo",
+  "artist": "Kid Yugi",
+  "album": "The Globe",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:38.525Z"
+ },
+ "kidyugipaganini": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
+  "title": "Paganini",
+  "artist": "Kid Yugi",
+  "album": "Tutti i Nomi del Diavolo",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:39.405Z"
+ },
+ "kidyugiterr1": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
+  "title": "Terr1",
+  "artist": "Kid Yugi",
+  "album": "I Nomi del Diavolo",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:40.310Z"
+ },
+ "naytpotersceglierenayt": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+  "title": "Poter scegliere",
+  "artist": "Nayt",
+  "album": "Lettera Q",
+  "source": "Deezer",
+  "date": "2026-09-24T11:51:01.708Z"
+ },
+ "kidyugisintetico": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
+  "title": "Sintetico",
+  "artist": "Kid Yugi",
+  "album": "Quarto di Bue",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:41.240Z"
+ },
+ "ultimoromantica": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/febf035782a49c1c831c9ace2f479752/1000x1000-000000-80-0-0.jpg",
+  "title": "ROMANTICA",
+  "artist": "Ultimo",
+  "album": "ROMANTICA",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:42.114Z"
+ },
+ "kidyugililith": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
+  "title": "Lilith",
+  "artist": "Kid Yugi",
+  "album": "I Nomi del Diavolo",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:45.487Z"
+ },
+ "ultimoilgiornocheaspettavo": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/bd1dfacb7af3aee698621f47e9c64b1f/1000x1000-000000-80-0-0.jpg",
+  "title": "IL GIORNO CHE ASPETTAVO",
+  "artist": "Ultimo",
+  "album": "IL GIORNO CHE ASPETTAVO",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:51.853Z"
+ },
+ "kidyugishivalaviolenzanecessaria": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+  "title": "La Violenza Necessaria",
+  "artist": "Kid Yugi",
+  "album": "Anche gli Eroi Muoiono",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:52.768Z"
+ },
+ "kidyugigilgamesh": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+  "title": "Gilgamesh",
+  "artist": "Kid Yugi",
+  "album": "Anche gli Eroi Muoiono",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:53.633Z"
+ },
+ "kidyugitristanoeisotta": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+  "title": "Tristano e Isotta",
+  "artist": "Kid Yugi",
+  "album": "Anche gli Eroi Muoiono",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:54.541Z"
+ },
+ "kidyugidonna": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/4d4cbfd3bad39e2a365158b7e6f302d5/1000x1000-000000-80-0-0.jpg",
+  "title": "Donna",
+  "artist": "Kid Yugi",
+  "album": "Tutti i Nomi del Diavolo",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:55.484Z"
+ },
+ "kidyugilucifero": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/971c39d2a04b89d6b7028fed705d3676/1000x1000-000000-80-0-0.jpg",
+  "title": "Lucifero",
+  "artist": "Kid Yugi",
+  "album": "I Nomi del Diavolo",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:56.935Z"
+ },
+ "oliviarodriguothecure": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
+  "title": "the cure",
+  "artist": "Olivia Rodrigo",
+  "album": "you seem pretty sad for a girl so in love",
+  "source": "Deezer",
+  "date": "2026-09-30T20:04:39.127Z"
+ },
+ "nayt3dsolodomande": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/dda746027e0384f3b77045390a25f046/1000x1000-000000-80-0-0.jpg",
+  "title": "solo domande",
+  "artist": "Nayt",
+  "album": "HABITAT",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:58.711Z"
+ },
+ "oliviarodrigothecure": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/07d6896c8afea3a87dcf9381c3d0e6c7/1000x1000-000000-80-0-0.jpg",
+  "title": "the cure",
+  "artist": "Olivia Rodrigo",
+  "album": "you seem pretty sad for a girl so in love",
+  "source": "Deezer",
+  "date": "2026-10-10T03:23:57.775Z"
+ },
+ "kidyuginightskinnyartie5iveportoilcommerciale": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/dc8d2c66f4430e2ec8dce122cba1eddf/1000x1000-000000-80-0-0.jpg",
+  "title": "Porto il Commerciale",
+  "artist": "Kid Yugi",
+  "album": "Quarto di Bue",
+  "source": "Deezer",
+  "date": "2026-10-10T03:24:04.918Z"
+ },
+ "lilpeepnuts": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/1cec367f43d884cb853c55e9d6fcaff9/1000x1000-000000-80-0-0.jpg",
+  "title": "nuts",
+  "artist": "Lil Peep",
+  "album": "LIVE FOREVER",
+  "source": "Deezer",
+  "date": "2026-10-10T03:24:06.670Z"
+ },
+ "sferaebbastashivaneon": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/7aa3817cf5e0886a6f987f35d827e8d6/1000x1000-000000-80-0-0.jpg",
+  "title": "NEON",
+  "artist": "Sfera Ebbasta",
+  "album": "SANTANA MONEY GANG",
+  "source": "Deezer",
+  "date": "2026-10-10T03:24:07.599Z"
+ },
+ "gigiperezsailorsong": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/a1d1e955d73e18821b5d3f3d22fceb6a/1000x1000-000000-80-0-0.jpg",
+  "title": "Sailor Song",
+  "artist": "Gigi Perez",
+  "album": "Sailor Song",
+  "source": "Deezer",
+  "date": "2026-10-10T03:24:05.778Z"
+ },
+ "kidyugimostrovisual": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+  "title": "Mostro",
+  "artist": "Kid Yugi",
+  "album": "Anche gli Eroi Muoiono",
+  "source": "Deezer",
+  "date": "2026-10-10T03:24:08.466Z"
+ },
+ "threedaysgraceanimalihavebecome": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/2bda9b70f023c72f8afa9e3e673abeb4/1000x1000-000000-80-0-0.jpg",
+  "title": "Animal I Have Become",
+  "artist": "Three Days Grace",
+  "album": "One-X",
+  "source": "Deezer",
+  "date": "2026-10-10T14:29:32.807Z"
+ },
+ "linkinparksomewhereibelong": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/882448ab63952aa16e502c82db2df160/1000x1000-000000-80-0-0.jpg",
+  "title": "Somewhere I Belong",
+  "artist": "Linkin Park",
+  "album": "Meteora",
+  "source": "Deezer",
+  "date": "2026-10-10T14:30:32.020Z"
+ },
+ "linkinparkwhativedone": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/2dd699adcd68089f49f3ab558a2bd296/1000x1000-000000-80-0-0.jpg",
+  "title": "What I've Done",
+  "artist": "Linkin Park",
+  "album": "Minutes to Midnight",
+  "source": "Deezer",
+  "date": "2026-10-10T14:30:34.548Z"
+ },
+ "nirvanasmellsliketeenspirit": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/f0282817b697279e56df13909962a54a/1000x1000-000000-80-0-0.jpg",
+  "title": "Smells Like Teen Spirit",
+  "artist": "Nirvana",
+  "album": "Nevermind (Remastered)",
+  "source": "Deezer",
+  "date": "2026-10-10T14:30:51.836Z"
+ },
+ "linkinparkfaint": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/882448ab63952aa16e502c82db2df160/1000x1000-000000-80-0-0.jpg",
+  "title": "Faint",
+  "artist": "Linkin Park",
+  "album": "Meteora",
+  "source": "Deezer",
+  "date": "2026-10-10T14:31:46.678Z"
+ },
+ "linkinparknumb": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/44df4f6fb2534768f4924365c103d0f7/1000x1000-000000-80-0-0.jpg",
+  "title": "Numb",
+  "artist": "Linkin Park",
+  "album": "Meteora (Bonus Edition)",
+  "source": "Deezer",
+  "date": "2026-10-10T14:31:52.761Z"
+ },
+ "skilletmonster": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/fce6fe4cf02a3c78cedb8eb32fa4fa31/1000x1000-000000-80-0-0.jpg",
+  "title": "Monster",
+  "artist": "Skillet",
+  "album": "Awake",
+  "source": "Deezer",
+  "date": "2026-10-10T14:32:25.871Z"
+ },
+ "evanescencebringmetolife": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/56c02d3764f5a078ceecd27b64b7d789/1000x1000-000000-80-0-0.jpg",
+  "title": "Bring Me To Life",
+  "artist": "Evanescence",
+  "album": "Fallen",
+  "source": "Deezer",
+  "date": "2026-10-10T14:33:00.950Z"
+ },
+ "gunsnrosessweetchildomine": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/8bfe7b3b0985d9ff0751090fb2b6f73f/1000x1000-000000-80-0-0.jpg",
+  "title": "Sweet Child O' Mine",
+  "artist": "Guns N' Roses",
+  "album": "Appetite For Destruction (Super Deluxe Edition)",
+  "source": "Deezer",
+  "date": "2026-10-10T14:33:08.649Z"
+ },
+ "linkinparkcrawling": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/033a271b5ec10842c287827c39244fb5/1000x1000-000000-80-0-0.jpg",
+  "title": "Crawling",
+  "artist": "Linkin Park",
+  "album": "Hybrid Theory (Bonus Edition)",
+  "source": "Deezer",
+  "date": "2026-10-10T14:33:41.580Z"
+ },
+ "paramorealliwanted": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/1346bb36e5d61b9fea447a9b3ea50f54/1000x1000-000000-80-0-0.jpg",
+  "title": "All I Wanted",
+  "artist": "Paramore",
+  "album": "Brand New Eyes",
+  "source": "Deezer",
+  "date": "2026-10-10T14:34:05.037Z"
+ },
+ "linkinparkrunaway": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/033a271b5ec10842c287827c39244fb5/1000x1000-000000-80-0-0.jpg",
+  "title": "Runaway",
+  "artist": "Linkin Park",
+  "album": "Hybrid Theory (Bonus Edition)",
+  "source": "Deezer",
+  "date": "2026-10-10T14:35:23.384Z"
+ },
+ "vascorossialbachiara": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/bf773d0c35f850652e5c0a0df93db7b7/1000x1000-000000-80-0-0.jpg",
+  "title": "Albachiara",
+  "artist": "Vasco Rossi",
+  "album": "Vasco Rossi",
+  "source": "Deezer",
+  "date": "2026-10-13T13:02:18.798Z"
+ },
+ "gianlucagrignanilamiastoriatraleditafeatannalisa": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
+  "title": "La Mia Storia Tra Le Dita",
+  "artist": "Gianluca Grignani",
+  "album": "Destinazione Paradiso",
+  "source": "Deezer",
+  "date": "2026-10-13T13:02:22.322Z"
+ },
+ "thasupdimmichece": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/ccf057fd82fa51e4bb6e90f360d66f88/1000x1000-000000-80-0-0.jpg",
+  "title": "Dimmi Che C'è (feat. Tedua)",
+  "artist": "thasup",
+  "album": "Dimmi Che C'è (feat. Tedua)",
+  "source": "Deezer",
+  "date": "2026-10-14T20:22:01.460Z"
+ },
+ "frahquintaleneitrenilanotte": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/fa2f80dd360907c161739f316acf019b/1000x1000-000000-80-0-0.jpg",
+  "title": "Nei treni la notte (feat. Frah Quintale)",
+  "artist": "Coez",
+  "album": "From The Rooftop 2",
+  "source": "Deezer",
+  "date": "2026-10-14T23:25:07.382Z"
+ },
+ "thasupdimmichec": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/ccf057fd82fa51e4bb6e90f360d66f88/1000x1000-000000-80-0-0.jpg",
+  "title": "Dimmi Che C'è (feat. Tedua)",
+  "artist": "thasup",
+  "album": "Dimmi Che C'è (feat. Tedua)",
+  "source": "Deezer",
+  "date": "2026-10-14T23:34:10.482Z"
+ },
+ "chiellohosbagliatoancora": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/d41126f3a101fa45ef8a29e7cefb3ea5/1000x1000-000000-80-0-0.jpg",
+  "title": "HO SBAGLIATO ANCORA",
+  "artist": "Chiello",
+  "album": "HO SBAGLIATO ANCORA",
+  "source": "Deezer",
+  "date": "2026-10-14T23:53:34.872Z"
+ },
+ "gianlucagrignanilamiastoriatraledita": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
+  "title": "la mia storia tra le dita",
+  "artist": "gianluca grignani",
+  "album": "Destinazione Paradiso",
+  "source": "Deezer",
+  "date": "2026-10-14T23:55:38.507Z"
+ },
+ "sillycup": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/0fe6bce7f9b28ad846750c655d63a800/1000x1000-000000-80-0-0.jpg",
+  "title": "siLLy cUp",
+  "artist": "",
+  "album": "siLLy cUp rMx",
+  "source": "Deezer",
+  "date": "2026-10-14T23:55:38.853Z"
+ },
+ "linkinparkintheend": {
+  "cover": "https://cdn-images.dzcdn.net/images/cover/ebcfd1e8de9a186fd448cc3659ad28bb/1000x1000-000000-80-0-0.jpg",
+  "title": "linkin park in the end",
+  "artist": "",
+  "album": "Linkin Park - In The End (bootleg)",
+  "source": "Deezer",
+  "date": "2026-10-15T17:17:28.483Z"
+ }
 }
