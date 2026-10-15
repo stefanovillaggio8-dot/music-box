@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.194";
+  const APP_VERSION = "6.195";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9253,8 +9253,15 @@ $("btnTimer").addEventListener("click", () => {
   }
 
   async function _caricaStatoCondiviso() {
+    /* Ste: "da PC funziona ma da telefono no".
+     Il nome da telefono arrivava gia' sul sito, ma al riavvio l'app rileggeva
+     una copia VECCHIA di stato.json: il sito lo tiene in cache fino a dieci
+     minuti, e il nome appena salvato non c'era ancora in quella copia.
+     Per questo ora lo chiedo sempre fresco ("no-store"), e per sicurezza lo
+     rileggo un paio di volte dopo l'avvio: cosi' se nel frattempo e' arrivato
+     qualcosa dal PC o dall'altro dispositivo, l'app lo vede. */
     try {
-      const r = await fetch("./stato.json", { cache: "no-cache" });
+      const r = await fetch("./stato.json", { cache: "no-store" });
       if (!r.ok) return;
 const j = await r.json();
         const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
@@ -10022,6 +10029,11 @@ await loadAll();
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);
+  /* Rileggo lo stato condiviso un paio di volte dopo l'avvio: il sito puo'
+     essere indietro di qualche minuto, e un nome salvato adesso sul PC o sul
+     telefono deve comparire senza aspettare il riavvio. */
+  setTimeout(() => { _caricaStatoCondiviso(); }, 5000);
+  setTimeout(() => { _caricaStatoCondiviso(); }, 15000);
   _avviaStatistiche();
   /* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
    qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
