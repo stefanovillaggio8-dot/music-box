@@ -87,10 +87,18 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.191";
+  const APP_VERSION = "6.192";
 
   let recovering = false;
+  /* Questa "riparazione" non serve piu' e fa solo danni.
+     Ste: il telefono perde i dati a ogni riavvio, e ho scoperto perche':
+     questa funzione, ogni volta che si apriva l'app, cancellava TUTTE le
+     cache (compresi i brani scaricati) e ricaricava la pagina. Non
+     aggiustava niente di rotto: si limitava a distruggere. Gli aggiornamenti
+     li fa gia' il service worker, quindi la lascio stare. */
   async function selfHeal() {
+    return;
+    /* eslint-disable-next-line no-unreachable */
     if (recovering) return;
     let done = false;
     try { done = sessionStorage.getItem("mb-healed") === "1"; } catch (e) { done = false; }
@@ -673,6 +681,19 @@ function _originaleDi(id) {
     corpo.innerHTML = qs.join("");
   }
 
+  /* Dice la vereta': il nome e' al sicuro solo se e' uscito dal telefono.
+     Sul telefono di Ste quei dati spariscono al riavvio, quindi se non
+     riesco a scriverli sul sito o sul computer, il nome va perso: me lo
+     dico subito invece di lasciare lui a credere che sia salvato. */
+  function _dilloSeNonSicuro() {
+    try {
+      if (_statoCondivisoOk) { toast("Nome cambiato e salvato"); return; }
+      toast("Nome cambiato, MA non e' ancora al sicuro: su questo telefono i\n" +
+        "dati spariscono al riavvio. Collega il Wi-Fi di casa (o lascia il PC\n" +
+        "acceso): l'app lo salva da sola appena puo'.", 9000);
+    } catch (e) { /* noop */ }
+  }
+
   function apriRinomina(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
@@ -725,7 +746,14 @@ if (t) {
     try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
     applicaRinomine();
     render();
-    toast("Nome cambiato");
+    /* Ste: "se cambio l'artista e riavvio il sito torna di prima".
+       Prima scrivevo "Nome cambiato" e basta: sembrava tutto a posto, ma il
+       nome restava solo sul telefono, e sul telefono quei dati spariscono
+       (e' successo: e' sparita anche la chiave del servizio, che aveva messo
+       lui prima). Adesso invece dico la verita': se non riesco a portare il
+       nome fuori dal telefono, dico subito che deve stare sul Wi-Fi di casa,
+       e intanto l'app continua a riprovare da sola. */
+    _dilloSeNonSicuro();
   }
 
   /* Sposta la scheda di ascolto da un nome all'altro quando cambio il nome
@@ -9139,13 +9167,21 @@ $("btnTimer").addEventListener("click", () => {
      senza che tu debba fare niente. */
   function _programmaDiRiprovare() {
     if (!_statoDaSalvare) return;
-    if (_quanteRiprove >= 12) return;
+    /* Riprovo a lungo: il nome deve aspettare il momento giusto (tornare sul
+       Wi-Fi di casa), non dimenticarsi dopo trenta secondi. */
+    if (_quanteRiprove >= 120) return;
     clearTimeout(_timerRiprovaStato);
     _timerRiprovaStato = setTimeout(() => {
       _quanteRiprove++;
       _salvaStatoCondiviso();
     }, 15000);
   }
+  /* Appena la rete torna, riprovo subito invece di aspettare il giro dopo. */
+  try {
+    window.addEventListener("online", () => {
+      if (_statoDaSalvare) { _quanteRiprove = 0; _salvaStatoCondiviso(); }
+    });
+  } catch (e) { /* noop */ }
 
   function _salvaStatoCondiviso() {
     _statoDaSalvare = true;
