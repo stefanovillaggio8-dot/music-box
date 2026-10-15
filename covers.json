@@ -478,5 +478,37 @@
     "album": "Dimmi Che C'è (feat. Tedua)",
     "source": "Deezer",
     "date": "2026-10-14T23:34:10.482Z"
+  },
+  "chiellohosbagliatoancora": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/d41126f3a101fa45ef8a29e7cefb3ea5/1000x1000-000000-80-0-0.jpg",
+    "title": "HO SBAGLIATO ANCORA",
+    "artist": "Chiello",
+    "album": "HO SBAGLIATO ANCORA",
+    "source": "Deezer",
+    "date": "2026-10-14T23:53:34.872Z"
+  },
+  "gianlucagrignanilamiastoriatraledita": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
+    "title": "la mia storia tra le dita",
+    "artist": "gianluca grignani",
+    "album": "Destinazione Paradiso",
+    "source": "Deezer",
+    "date": "2026-10-14T23:55:38.507Z"
+  },
+  "wonderwallnl": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/ddb062c517401ee74d8a4df6f895d75e/1000x1000-000000-80-0-0.jpg",
+    "title": "Wonderwall NL",
+    "artist": "",
+    "album": "(What's The Story) Morning Glory?",
+    "source": "Deezer",
+    "date": "2026-10-14T23:55:38.719Z"
+  },
+  "sillycup": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe6bce7f9b28ad846750c655d63a800/1000x1000-000000-80-0-0.jpg",
+    "title": "siLLy cUp",
+    "artist": "",
+    "album": "siLLy cUp rMx",
+    "source": "Deezer",
+    "date": "2026-10-14T23:55:38.853Z"
   }
 }
