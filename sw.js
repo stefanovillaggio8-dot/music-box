@@ -299,7 +299,7 @@ self.addEventListener("fetch", (event) => {
 
   if (isCore) {
     event.respondWith(
-      fetch(event.request)
+      fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
         .then((response) => {
           if (response && response.status === 200) {
             const clone = response.clone();
