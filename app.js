@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.190";
+  const APP_VERSION = "6.191";
 
   let recovering = false;
   async function selfHeal() {
@@ -312,14 +312,21 @@ window.addEventListener("storage", (e) => {
      se manca una copertina la cerco io e me la segno qui sul dispositivo. */
   const DB_COVERS = "copertine";
   /* I nomi dei brani che Ste ha cambiato.
-     Ste: "se cambio l'artista e riavvio il sito torna di prima". Ho scoperto
-     (con la finestra Diagnostica) che sul suo telefono la memoria del browser
-     si svuota da sola al riavvio: il nome c'era subito dopo averlo cambiato e
-     al riavvio era sparito. Percio' i nomi li tengo QUI, dentro lo stesso
-     database dove stanno i brani, le copertine e i testi: e' un posto che li
-     ha gia' tenuti fino ad adesso senza perdere niente. */
-  const DB_RENOMI = "rinomini";
-  const DB_VERSION = 5;
+     Ste: "se cambio l'artista e riavvio il sito torna di prima". Con la
+     finestra Diagnostica si e' visto che sul suo telefono la memoria del
+     browser si svuota da sola al riavvio: il nome c'era subito dopo averlo
+     cambiato, al riavvio era sparito. Percio' i nomi li tengo qui, dentro il
+     database dei brani, che ha gia' tenuto le copertine e i testi senza
+     perderne nessuno.
+
+     NOTA importante: NON ho creato un magazzino nuovo e NON ho cambiato la
+     versione del database. Prima l'avevo fatto (un "rinomini" nuovo, versione
+     da 4 a 5) ed e' stato un errore: se sul telefono e' rimasta aperta la
+     vecchia pagina, quella blocca l'aggiornamento del database, la nuova
+     connessione resta appesa e i nomi non vengono scritti mai. Per questo il
+     nome lo metto in un magazzino che esiste gia', senza toccare nulla. */
+  const _ID_RINOMI = "__rinomini__";
+  const DB_VERSION = 4;
 
   /* ---------- IndexedDB ---------- */
   function openDB() {
@@ -337,9 +344,6 @@ window.addEventListener("storage", (e) => {
     }
     if (!req.result.objectStoreNames.contains(DB_COVERS)) {
       req.result.createObjectStore(DB_COVERS, { keyPath: "id" });
-      }
-      if (!req.result.objectStoreNames.contains(DB_RENOMI)) {
-        req.result.createObjectStore(DB_RENOMI, { keyPath: "id" });
       }
       };
       req.onsuccess = () => resolve(req.result);
@@ -535,8 +539,12 @@ function _originaleDi(id) {
       db = d;
       return await new Promise((fatto) => {
         try {
-          const tx = d.transaction(DB_RENOMI, "readwrite");
-          tx.objectStore(DB_RENOMI).put({ id: "tutti", mappa: JSON.parse(JSON.stringify(mappa)) });
+          /* Uso il magazzino dei testi, che esiste gia': non creo niente di
+             nuovo e non cambio la versione del database, cosi' niente puo'
+             bloccarsi. L'id e' un nome riservato, nessun brano puo' chiamarsi
+             cosi', quindi non si confonde con niente. */
+          const tx = d.transaction(DB_LYRICS, "readwrite");
+          tx.objectStore(DB_LYRICS).put({ id: _ID_RINOMI, mappa: JSON.parse(JSON.stringify(mappa)) });
           tx.oncomplete = () => fatto(true);
           tx.onerror = () => fatto(false);
         } catch (e) { fatto(false); }
@@ -550,8 +558,8 @@ function _originaleDi(id) {
       db = d;
       return await new Promise((fatto) => {
         try {
-          const tx = d.transaction(DB_RENOMI, "readonly");
-          const chiedi = tx.objectStore(DB_RENOMI).get("tutti");
+          const tx = d.transaction(DB_LYRICS, "readonly");
+          const chiedi = tx.objectStore(DB_LYRICS).get(_ID_RINOMI);
           chiedi.onsuccess = () => fatto((chiedi.result && chiedi.result.mappa) || null);
           chiedi.onerror = () => fatto(null);
         } catch (e) { fatto(null); }
@@ -561,23 +569,44 @@ function _originaleDi(id) {
   /* Se la memoria del browser e' vuota ma sul disco ci sono dei nomi, li
      rimetto: e' il salvataggio che finora non c'era. */
   async function _ripristinaRinomini() {
-    try {
-      const dalDisco = await _leggiRinomineDalDisco();
-      if (!dalDisco || typeof dalDisco !== "object") return 0;
-      const mappa = nomiRinomati();
-      let rimessi = 0;
-      for (const k of Object.keys(dalDisco)) {
-        const r = dalDisco[k];
-        if (!r || (!r.title && !r.artist)) continue;
-        const mia = mappa[k];
-        if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
-          mappa[k] = { title: String(r.title || ""), artist: String(r.artist || "") };
-          rimessi++;
+    /* Ste: "se cambio l'artista e riavvio il sito torna di prima".
+       Nella memoria del browser i nomi spariscono, quindi vanno cercati nel
+       database. Se per un motivo non rispondono al primo tentativo (il
+       telefono all'avvio e' lento e il database si apre dopo), riprovo qualche
+       volta prima di darmi per perso: il nome rientra nella libreria senza che
+       Ste debba toccare nulla. */
+    for (let tentativo = 0; tentativo < 4; tentativo++) {
+      try {
+        const dalDisco = await _leggiRinomineDalDisco();
+        if (dalDisco && typeof dalDisco === "object") {
+          const mappa = nomiRinomati();
+          let rimessi = 0;
+          for (const k of Object.keys(dalDisco)) {
+            const r = dalDisco[k];
+            if (!r || (!r.title && !r.artist)) continue;
+            const mia = mappa[k];
+            if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
+              mappa[k] = { title: String(r.title || ""), artist: String(r.artist || "") };
+              rimessi++;
+            }
+          }
+          if (rimessi) { LS.set("mb.rinomini", mappa); return rimessi; }
+          /* Niente da rimettere puo' voler dire due cose: che i nomi ci
+             sono gia' (e va bene) oppure che il database e' ancora vuoto. In
+             questo caso riprovo piu' tardi, perche' al primo colpo la pagina
+             appena aperta spesso non trova niente. */
+          if (tentativo === 0) {
+            await new Promise((r) => setTimeout(r, 1200));
+            continue;
+          }
+          return 0;
         }
+        await new Promise((r) => setTimeout(r, 1200));
+      } catch (e) {
+        await new Promise((r) => setTimeout(r, 1200));
       }
-      if (rimessi) LS.set("mb.rinomini", mappa);
-      return rimessi;
-    } catch (e) { return 0; }
+    }
+    return 0;
   }
 
   /* La diagnostica.
@@ -1695,6 +1724,10 @@ function _devoVedereBrano(eMio, b) {
     try {
       const rows = await dbAllLyrics();
       for (const r of rows) {
+        /* Questo record non e' un testo: qui ci tengo anche i nomi dei brani
+           che Ste ha cambiato (vedi _salvaRinomineSulDisco), e non devono
+           finire fra i testi. */
+        if (!r || r.id === _ID_RINOMI) continue;
         localLyrics[r.id] = { title: r.title, artist: r.artist || "", text: r.text, synced: r.synced || "", source: r.source || "" };
       }
     } catch (e) {
