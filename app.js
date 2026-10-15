@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.187";
+  const APP_VERSION = "6.188";
 
   let recovering = false;
   async function selfHeal() {
@@ -498,6 +498,78 @@ function _originaleDi(id) {
   }
   }
 
+  /* Il posto dove i nomi vengono tenuti davvero.
+     Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
+     Sul suo telefono la memoria del browser (localStorage) non sopravvive: il
+     nome sparisce e al riavvio il brano torna col nome vero. Perche' succede?
+     Perche' il telefono non riesce a salvare niente da nessuna parte: il
+     computer non e' raggiungibile (l'app non vede piu' la rete di casa) e
+     l'altro servizio richiede una chiave che non e' stata messa.
+
+     Per questo tengo i nomi anche in IndexedDB, che sul telefono e' molto piu'
+     resistente della memoria del browser, e li rileggo da li' all'avvio.
+     In pratica il nome non dipende piu' dalla rete. */
+  const _DB_RINOMI = "musicbox-rinomini";
+  function _apriDbRinomini() {
+    return new Promise((risolvi) => {
+      try {
+        const rq = indexedDB.open(_DB_RINOMI, 1);
+        rq.onupgradeneeded = () => { try { rq.result.createObjectStore("ren"); } catch (e) { /* noop */ } };
+        rq.onsuccess = () => risolvi(rq.result);
+        rq.onerror = () => risolvi(null);
+      } catch (e) { risolvi(null); }
+    });
+  }
+  async function _salvaRinomineSulDisco(mappa) {
+    try {
+      const db = await _apriDbRinomini();
+      if (!db) return false;
+      return await new Promise((fatto) => {
+        try {
+          const tx = db.transaction("ren", "readwrite");
+          tx.objectStore("ren").put(JSON.parse(JSON.stringify(mappa)), "tutti");
+          tx.oncomplete = () => { try { db.close(); } catch (e) { /* noop */ } fatto(true); };
+          tx.onerror = () => { try { db.close(); } catch (e) { /* noop */ } fatto(false); };
+        } catch (e) { fatto(false); }
+      });
+    } catch (e) { return false; }
+  }
+  async function _leggiRinomineDalDisco() {
+    try {
+      const db = await _apriDbRinomini();
+      if (!db) return null;
+      return await new Promise((fatto) => {
+        try {
+          const tx = db.transaction("ren", "readonly");
+          const chiedi = tx.objectStore("ren").get("tutti");
+          chiedi.onsuccess = () => { try { db.close(); } catch (e) { /* noop */ } fatto(chiedi.result || null); };
+          chiedi.onerror = () => { try { db.close(); } catch (e) { /* noop */ } fatto(null); };
+        } catch (e) { fatto(null); }
+      });
+    } catch (e) { return null; }
+  }
+  /* Se la memoria del browser e' vuota ma sul disco ci sono dei nomi, li
+     rimetto: e' il salvataggio che finora non c'era. */
+  async function _ripristinaRinomini() {
+    try {
+      const dalDisco = await _leggiRinomineDalDisco();
+      if (!dalDisco || typeof dalDisco !== "object") return 0;
+      const mappa = nomiRinomati();
+      let rimessi = 0;
+      for (const k of Object.keys(dalDisco)) {
+        const r = dalDisco[k];
+        if (!r || (!r.title && !r.artist)) continue;
+        const mia = mappa[k];
+        if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
+          mappa[k] = { title: String(r.title || ""), artist: String(r.artist || "") };
+          rimessi++;
+        }
+      }
+      if (rimessi) LS.set("mb.rinomini", mappa);
+      return rimessi;
+    } catch (e) { return 0; }
+  }
+
   function apriRinomina(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
@@ -541,6 +613,10 @@ if (t) {
     mappa[id] = { title: titoloNuovo, artist: artistaNuovo };
     if (!mappa[id].title && !mappa[id].artist) delete mappa[id];
     try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
+    /* Oltre che nella memoria del browser, che sul telefono spesso si perde,
+       scrivo il nome nel database del telefono: li' resta anche se il
+       browser dimentica, e al riavvio lo ritroviamo. */
+    try { _salvaRinomineSulDisco(mappa); } catch (e) { /* noop */ }
     /* Lo metto anche sul sito: cosi' se il telefono dimentica (e capita),
        al riavvio il nome torna comunque, e vale anche sull'altro dispositivo. */
     try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
@@ -9781,6 +9857,16 @@ await loadAll();
      non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
      avvio, e intanto i brani restano al sicuro qui. */
   setTimeout(() => { condividiBraniLocali(); }, 1200);
+  /* Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
+     La memoria del browser sul telefono non sempre regge, quindi i nomi li
+     tengo anche nel database del telefono. Prima di tutto il resto recupero
+     quelli da li': devono essere nella libreria gia' dalla prima schermata,
+     altrimenti per un attimo i brani si vedono col nome vecchio. */
+  _ripristinaRinomini().then((n) => {
+    if (n) {
+      try { loadAll(); } catch (e) { /* noop */ }
+    }
+  });
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
       setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _caricaStatoCondiviso(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
