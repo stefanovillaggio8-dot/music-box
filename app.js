@@ -66,16 +66,16 @@
           { title: "Wonderwall NL", file: "songs/track-70.mp3", artist: "", profile: "Ste" },
           { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-71.mp3", artist: "Gianluca Grignani", profile: "Ste" },
           { title: "HO SBAGLIATO ANCORA", file: "songs/track-72.mp3", artist: "Chiello", profile: "Ste" },
-          { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "", profile: "Ste" },
+          { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "thasup", profile: "Ste" },
     { title: "dimmi che ce'", file: "songs/track-64.mp3", artist: "thasup", profile: "Ste" },
     { title: "In the End", file: "songs/track-65.mp3", artist: "Linkin Park", profile: "Ste" },
     /* Ste: qui sotto c'era anche { title: "thasup dimmi che c'", file:
    "songs/track-66.mp3" }. Era lo STESSO mp3 di "dimmi che ce'" (track-64),
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
-    { title: "l'elfo carusi do sud", file: "songs/track-67.mp3", artist: "", profile: "Ste" },
-    { title: "frah quintale nei treni la notte", file: "songs/track-73.mp3", artist: "", profile: "Ste" },
+    { title: "carusi do sud", file: "songs/track-67.mp3", artist: "l'elfo", profile: "Ste" },
+    { title: "nei treni la notte", file: "songs/track-73.mp3", artist: "frah quintale", profile: "Ste" },
     { title: "Dimmi Che C''", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
-    { title: "stupido massimo pericolo", file: "songs/track-75.mp3", artist: "", profile: "Ste" },
+    { title: "stupido", file: "songs/track-75.mp3", artist: "massimo pericolo", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.198";
+  const APP_VERSION = "6.199";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
