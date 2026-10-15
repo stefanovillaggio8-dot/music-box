@@ -63,7 +63,7 @@
     { title: "In the End", file: "songs/track-62.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Runaway", file: "songs/track-63.mp3", artist: "Linkin Park", profile: "Ste" },
           { title: "Albachiara", file: "songs/track-69.mp3", artist: "Vasco Rossi", profile: "Ste" },
-          { title: "Wonderwall NL", file: "songs/track-70.mp3", artist: "", profile: "Ste" },
+          { title: "Wonderwall", file: "songs/track-76.mp3", artist: "Oasis", profile: "Ste" },
           { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-71.mp3", artist: "Gianluca Grignani", profile: "Ste" },
           { title: "HO SBAGLIATO ANCORA", file: "songs/track-72.mp3", artist: "Chiello", profile: "Ste" },
           { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "thasup", profile: "Ste" },
@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.199";
+  const APP_VERSION = "6.200";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
