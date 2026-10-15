@@ -68,7 +68,7 @@
           { title: "HO SBAGLIATO ANCORA", file: "songs/track-72.mp3", artist: "Chiello", profile: "Ste" },
           { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "", profile: "Ste" },
     { title: "dimmi che ce'", file: "songs/track-64.mp3", artist: "thasup", profile: "Ste" },
-    { title: "linkin park in the end", file: "songs/track-65.mp3", artist: "", profile: "Ste" },
+    { title: "In the End", file: "songs/track-65.mp3", artist: "Linkin Park", profile: "Ste" },
     /* Ste: qui sotto c'era anche { title: "thasup dimmi che c'", file:
    "songs/track-66.mp3" }. Era lo STESSO mp3 di "dimmi che ce'" (track-64),
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.197";
+  const APP_VERSION = "6.198";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2877,7 +2877,7 @@ function handleTime() {
         type: "state",
         title: t ? t.title : APP_NAME,
         artist: t ? (t.artist || APP_NAME) : APP_NAME,
-        album: (t && t.album) ? t.album : APP_NAME,
+        album: APP_NAME,
         playing: !!(audio && !audio.paused),
         currentTime: audio && isFinite(audio.currentTime) ? audio.currentTime : 0,
         duration: audio && isFinite(audio.duration) ? audio.duration : 0
@@ -3997,7 +3997,7 @@ function _aggiornaPosizioneSchermo() {
     const meta = new MediaMetadata({
       title: t ? t.title : APP_NAME,
       artist: t ? (t.artist || APP_NAME) : APP_NAME,
-      album: (t && t.album) ? t.album : APP_NAME,
+      album: APP_NAME,
       artwork: cop ? [{ src: cop, sizes: "512x512" }] : [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
     });
     navigator.mediaSession.metadata = meta;
@@ -9507,12 +9507,15 @@ async function _salvaPlaylistCondivise() {
   /* Restituisce "libreria", "playlist", "entrambe" oppure null se annullato. */
   function _scegliCosaTogliere(trackId, titolo, perDavvero) {
     const nomi = _playlistCheContengono(trackId);
-    if (!nomi.length) return Promise.resolve("libreria");
-
+    /* Ste: "eliminare non mi chiede piu la conferma". Prima, se il brano non
+       era in nessuna playlist, la domanda veniva saltata e il brano spariva
+       subito. Adesso chiedo SEMPRE, e offro solo le scelte che hanno senso. */
     $("scopeTitle").textContent = perDavvero ? "Eliminare per davvero?" : "Togliere questo brano?";
-    const dove = nomi.length === 1
-      ? "e' nella playlist \"" + nomi[0] + "\""
-      : "e' nelle playlist " + nomi.map((n) => "\"" + n + "\"").join(", ");
+    const dove = !nomi.length
+      ? "non e' dentro nessuna playlist."
+      : nomi.length === 1
+        ? "e' nella playlist \"" + nomi[0] + "\"."
+        : "e' nelle playlist " + nomi.map((n) => "\"" + n + "\"").join(", ") + ".";
     $("scopeMsg").textContent = "'" + titolo + "' " + dove + ". Dimmi dove vuoi toglierlo.";
 
     const scelte = $("scopeScelte");
@@ -9538,16 +9541,26 @@ async function _salvaPlaylistCondivise() {
         dove: perDavvero
           ? "esce dalla libreria e dalle playlist, e viene eliminato dal sito"
           : "scompare dalla libreria e da tutte le playlist",
-        pericolo: perDavvero
-      }
+pericolo: perDavvero
+    }
     ];
+    /* Se il brano non e' dentro nessuna playlist, le due scelte che
+       riguardano le playlist non hanno senso: le tolgo, cosi' resta solo
+       "togli dalla libreria" (piu' l'annulla che aggiungo sotto). */
+    if (!nomi.length) voci.splice(1, 2);
+    voci.push({
+      id: "",
+      testo: "Lascia tutto com'e'",
+      dove: "non faccio niente",
+      pericolo: false
+    });
     for (const v of voci) {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "scope-scelta" + (v.pericolo ? " pericolo" : "");
       b.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z"/></svg>' +
         "<span><b>" + v.testo + "</b><span class=\"scope-dove\">" + v.dove + "</span></span>";
-      b.addEventListener("click", () => _chiudiScope(v.id));
+      b.addEventListener("click", () => _chiudiScope(v.id || null));
       scelte.appendChild(b);
     }
     const dove2 = document.createElement("p");
