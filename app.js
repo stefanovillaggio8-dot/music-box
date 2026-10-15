@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.185";
+  const APP_VERSION = "6.186";
 
   let recovering = false;
   async function selfHeal() {
@@ -5726,7 +5726,17 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
 
      Prima mancava quello di casa: dal telefono non riuscivo a trovare il
      programma del computer e i brani non venivano condivisi. */
-  const INDIRIZZI_PONTE = ["http://127.0.0.1:8788", "http://192.168.1.2:8788", "http://100.106.211.2:8788"];
+  /* Ste: "il telefono non trova piu' il computer". Il computer aveva cambiato
+     indirizzo sulla rete (ora e' 192.168.1.40, prima era 192.168.1.2) e
+     nell'elenco c'era solo il vecchio: il telefono provava, non rispondeva
+     niente e ogni salvataggio finiva a terra. Metto dentro anche quello
+     nuovo, cosi' va bene con tutti e due. */
+  const INDIRIZZI_PONTE = [
+    "http://127.0.0.1:8788",
+    "http://192.168.1.40:8788",
+    "http://192.168.1.2:8788",
+    "http://100.106.211.2:8788"
+  ];
   let ponteCheRisponde = "";
   let ponteCache = null;
   let segnalatoIndirizzo = "";
@@ -8909,7 +8919,30 @@ $("btnTimer").addEventListener("click", () => {
   let _timerStatoCondiviso = null;
   let _statoCondivisoOk = false;
 
+  let _statoDaSalvare = false;
+  let _timerRiprovaStato = null;
+  let _quanteRiprove = 0;
+  /* Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
+     Prima il nome finiva solo nella memoria del telefono e basta: se il
+     computer era spento, o la rete non rispondeva, il salvataggio si perdeva
+     in silenzio e il brano tornava col nome vero al riavvio.
+
+     Adesso, se non riesco a salvare, riprovo piu' tardi da solo (fino a un
+     po' di volte): appena il computer torna raggiungibile, il nome parte
+     senza che tu debba fare niente. */
+  function _programmaDiRiprovare() {
+    if (!_statoDaSalvare) return;
+    if (_quanteRiprove >= 12) return;
+    clearTimeout(_timerRiprovaStato);
+    _timerRiprovaStato = setTimeout(() => {
+      _quanteRiprove++;
+      _salvaStatoCondiviso();
+    }, 15000);
+  }
+
   function _salvaStatoCondiviso() {
+    _statoDaSalvare = true;
+    _quanteRiprove = 0;
     try {
       clearTimeout(_timerStatoCondiviso);
     } catch (e) { /* noop */ }
@@ -8941,24 +8974,42 @@ $("btnTimer").addEventListener("click", () => {
         })()
       });
       /* Prima il computer, che e' di solito acceso e risponde subito. Poi, se
-         non c'e', il Worker (funziona anche col computer spento). */
+         non c'e', il Worker (funziona anche col computer spento).
+
+         Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
+         Qui c'era scritto "SERVIZIO + /stato", ma SERVIZIO non e' mai stato
+         definito da nessuna parte: la riga andava in errore, l'errore veniva
+         buttato via e il salvataggio finiva lì. Il nome del brano restava
+         solo nella memoria del telefono, che a un certo punto la perde, e al
+         riavvio il brano tornava col nome vero.
+
+         Adesso uso "trovaPonte()", che e' il metodo che il resto dell'app usa
+         gia' per trovare il computer: prova gli indirizzi uno alla volta e
+         restituisce quello che risponde. */
       try {
-        const r = await fetch(SERVIZIO + "/stato", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: corpo
-        });
-        if (r.ok) { _statoCondivisoOk = true; return; }
+        const base = await trovaPonte();
+        if (base) {
+          const r = await fetch(base + "/stato", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: corpo
+          });
+          if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; return; }
+        }
       } catch (e) { /* il computer non c'e': provo dall'altra parte */ }
       try {
-        if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
+        if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
+          _programmaDiRiprovare();
+          return;
+        }
         const r = await fetch(SERVIZIO_PUBBLICA + "/stato", {
           method: "POST",
           headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
+      _programmaDiRiprovare();
     }, 2500);
   }
 
@@ -9774,22 +9825,12 @@ function _ripristinaPuntoLibreria() {
          e quando e' attivo ricarico davvero. */
       vf.onclick = () => {
         try {
-          const reg = (navigator.serviceWorker && navigator.serviceWorker.controller) ? navigator.serviceWorker : null;
-          if (reg && reg.controller) {
-            const inAttesa = (swReg && swReg.waiting) || (reg && reg.waiting) || null;
-            if (inAttesa) {
-              vf.textContent = "Aggiorno...";
-              inAttesa.postMessage({ type: "SKIP_WAITING" });
-              /* Se per qualche motivo il worker non si attiva, dopo poco
-                 ricarico comunque: meglio una versione che resta indietro. */
-              setTimeout(() => window.location.reload(true), 1500);
-              return;
-            }
-          }
-          if (swReg && swReg.update) {
-            try { swReg.update(); } catch (e) { /* pazienza */ }
-          }
-          setTimeout(() => window.location.reload(true), 900);
+          /* Ste: "la versione non si aggiorna". Con il solo ricaricamento non
+             bastava: il telefono teneva la copia vecchia. Adesso il numero
+             apre direttamente una pagina "nuova" (indirizzo mai visto, quindi
+             niente copia vecchia) e da li' in poi l'app si aggiorna da sola. */
+          const nuovoIndirizzo = "./index.html?forza=" + Date.now();
+          window.location.replace(nuovoIndirizzo);
         } catch (e) {
           window.location.reload(true);
         }
@@ -9942,6 +9983,62 @@ function _segnalaBarraVersione() {
         vb.classList.add("ha-aggiornamento");
         vb.title = "C'è un aggiornamento: tocca qui per prenderlo subito";
       }
+    } catch (e) { /* noop */ }
+}
+/* Ste: "non è cambiato niente".
+   Dopo giorni di tentativi si è capito il motivo vero: il sito online era
+   gia' giusto, ma il telefono continuava a usare una copia vecchia dei file
+   salvati nel browser, quindi ricaricando non cambiava nulla e la pagina
+   non si aggiornava da sola.
+
+   Adesso l'app controlla da sola qual e' la versione sul sito e, se il
+   telefono e' rimasto indietro, lo dice con una barra e con un collegamento
+   che porta a una pagina "nuova": un indirizzo diverso non puo' usare la
+   copia vecchia, quindi l'aggiornamento riesce al primo tocco. */
+function _controllaSeSonoVecchio() {
+    try {
+      fetch("./versione.json", { cache: "no-store" })
+        .then((r) => (r && r.ok ? r.json() : null))
+        .then((d) => {
+          if (!d || !d.versione) return;
+          const mia = String(APP_VERSION).replace(/\s.*$/, "");
+          const loro = String(d.versione).replace(/\s.*$/, "");
+          if (mia === loro) {
+            _chiudiBarraVecchio();
+            return;
+          }
+          _mostraBarraVecchio(mia, loro);
+        })
+        .catch(() => { /* niente rete: lascio stare, tanto i brani funzionano lo stesso */ });
+    } catch (e) { /* noop */ }
+}
+function _chiudiBarraVecchio() {
+    try {
+      const b = document.getElementById("avviso-vecchio-app");
+      if (b && b.parentNode) b.parentNode.removeChild(b);
+    } catch (e) { /* noop */ }
+}
+function _mostraBarraVecchio(mia, loro) {
+    try {
+      _chiudiBarraVecchio();
+      const b = document.createElement("div");
+      b.id = "avviso-vecchio-app";
+      b.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:120;" +
+        "background:#3a1414;border:1px solid #ff6b6b;color:#ffe2e2;padding:12px 14px;" +
+        "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+      /* Il collegamento porta a "?forza=<momento>", un indirizzo mai visto
+         prima: il browser non ha niente da riprendere e prende i file nuovi. */
+      const a = document.createElement("a");
+      a.href = "./index.html?forza=" + Date.now();
+      a.textContent = "Aggiorna ora";
+      a.style.cssText = "display:inline-block;margin-top:8px;background:#ff6b6b;color:#3a1414;" +
+        "font-weight:800;padding:9px 16px;border-radius:8px;text-decoration:none";
+      const t = document.createElement("div");
+      t.textContent = "Questo telefono sta ancora sulla versione " + mia +
+        " (ora c'è la " + loro + "). Tocca per aggiornare.";
+      b.appendChild(t);
+      b.appendChild(a);
+      document.body.appendChild(b);
     } catch (e) { /* noop */ }
 }
 function avvisoAggiornamento(testo) {
