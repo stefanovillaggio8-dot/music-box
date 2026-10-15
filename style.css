@@ -2336,4 +2336,10 @@ li.appena-aggiunto {
   cursor: pointer;
   min-height: 40px;
 }
-.fab-menu-chiudi:active { background: rgba(255, 255, 255, .06); }
+.fab-menu-chiudi:active { background: rgba(255, 255, 255, .06); }.aiuto-sottotitolo {
+  margin: 12px 0 2px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt);
+}
+.aiuto-lista b { color: var(--accent2); }
