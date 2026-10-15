@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.188";
+  const APP_VERSION = "6.189";
 
   let recovering = false;
   async function selfHeal() {
@@ -568,6 +568,70 @@ function _originaleDi(id) {
       if (rimessi) LS.set("mb.rinomini", mappa);
       return rimessi;
     } catch (e) { return 0; }
+  }
+
+  /* La diagnostica.
+     Ste: "se cambio l'artista e riavvio il sito torna di prima". Per un pezzo
+     non si capiva se il nome si perdeva nel telefono, sul sito o nel computer,
+     e ogni volta che provavo a correggere tiravo fuori una supposizione.
+     Questa finestra non indovina nulla: guarda davvero dove sono i dati e te
+     li mostra. */
+  async function _rigaDiagnostica(b) {
+    let classe = "diag-ok", testo = "no";
+    try {
+      const v = await b();
+      if (v && v.ok) { testo = v.s; classe = v.no ? "diag-no" : "diag-ok"; }
+      else { testo = (v && v.s) || "no"; classe = "diag-no"; }
+    } catch (e) { testo = "errore"; classe = "diag-no"; }
+    return '<div class="diag-riga"><b>' + b.nome + '</b><span class="' + classe + '">' + testo + "</span></div>";
+  }
+  async function _apriDiagnostica() {
+    const corpo = $("diagBody");
+    const sopra = $("diagOverlay");
+    if (!corpo || !sopra) return;
+    sopra.hidden = false;
+    corpo.innerHTML = "<p>Sto guardando...</p>";
+    const qs = [];
+    qs.push('<div class="diag-sep">versione</div>');
+    qs.push('<div class="diag-riga"><b>in uso</b><span class="diag-ok">' + APP_VERSION + "</span></div>");
+    const schermo = $("verBadge");
+    if (schermo) qs.push('<div class="diag-riga"><b>numero in alto</b><span>' + (schermo.textContent || "?") + "</span></div>");
+
+    qs.push('<div class="diag-sep">i nomi che ho cambiato</div>');
+    qs.push(await _rigaDiagnostica(Object.assign(async function () {
+      const m = nomiRinomati();
+      return { ok: true, s: Object.keys(m).length + " in memoria" };
+    }, { nome: "nella memoria del browser" })));
+    qs.push(await _rigaDiagnostica(Object.assign(async function () {
+      const d = await _leggiRinomineDalDisco();
+      const n = d && typeof d === "object" ? Object.keys(d).length : 0;
+      return { ok: n > 0, no: n === 0, s: n + " sul database del telefono" };
+    }, { nome: "sul database del telefono" })));
+    qs.push(await _rigaDiagnostica(Object.assign(async function () {
+      try {
+        const r = await fetch("./stato.json", { cache: "no-store" });
+        const j = await r.json();
+        const n = j && j.rinomini ? Object.keys(j.rinomini).length : 0;
+        return { ok: n > 0, no: n === 0, s: n + " sul sito" };
+      } catch (e) { return { ok: false, s: "sito non raggiungibile" }; }
+    }, { nome: "sul sito" })));
+
+    qs.push('<div class="diag-sep">col computer</div>');
+    qs.push(await _rigaDiagnostica(Object.assign(async function () {
+      const base = await cercaPonte();
+      return { ok: !!base, no: !base, s: base ? "risponde: " + base : "non raggiungibile" };
+    }, { nome: "raggiungo il PC" })));
+    qs.push(await _rigaDiagnostica(Object.assign(async function () {
+      const k = LS.get("mb.chiave", "");
+      return { ok: !!k, no: !k, s: k ? "chiave presente" : "chiave mancante" };
+    }, { nome: "servizio (funziona a PC spento)" })));
+
+    qs.push('<div class="diag-sep">rete</div>');
+    qs.push(await _rigaDiagnostica(Object.assign(async function () {
+      const onLine = navigator.onLine ? "collegato" : "senza rete";
+      return { ok: navigator.onLine, no: !navigator.onLine, s: onLine };
+    }, { nome: "telefono" })));
+    corpo.innerHTML = qs.join("");
   }
 
   function apriRinomina(id) {
@@ -7534,6 +7598,16 @@ $("fabMenu").addEventListener("click", (e) => {
     render();
   });
 
+  /* Bottone diagnostica nel menu "Altro": serve a me, non agli utenti, ma lo
+   metto lo stesso perche' e' l'unico modo di sapere dove finiscono i dati. */
+  try {
+    const bd = document.getElementById("btnDiagnostica");
+    if (bd) bd.addEventListener("click", () => { _apriDiagnostica(); });
+    const dc = document.getElementById("diagClose");
+    if (dc) dc.addEventListener("click", () => { const o = document.getElementById("diagOverlay"); if (o) o.hidden = true; });
+    const ov = document.getElementById("diagOverlay");
+    if (ov) ov.addEventListener("click", (e) => { if (e.target === ov) ov.hidden = true; });
+  } catch (e) { /* noop */ }
   $("btnRefresh").addEventListener("click", async () => {
     toast("Aggiorno...");
     try {

@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6188" />
+  <link rel="stylesheet" href="style.css?v=6189" />
 </head>
 <body>
   <header class="topbar">
@@ -72,6 +72,9 @@
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm10 10a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM9 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm10-10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
       <span class="logo-badge" id="similiBadge" hidden>0</span>
       <span class="voce-testo">Canzoni con lo stesso nome</span></button>
+<button class="menu-altro-voce" id="btnDiagnostica" type="button">
+  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm2 0v4h6V5Zm8 0v4h6V5Zm0 6v4h6v-4Zm-8 0v4h6v-4Zm-8 0v4h6v-4Zm0 6v2h14v-2Zm8 0v2h6v-2Z"/></svg>
+  <span class="voce-testo">Diagnostica</span></button>
     <button class="menu-altro-voce" id="btnRefresh" type="button">
       
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a8 8 0 1 1-7.1 4.2 1 1 0 1 1 1.74-1A6 6 0 1 0 12 6a1 1 0 0 1-1-1V3.5L8.4 5.1a1 1 0 0 0 0 1.4L11 8.5V7a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M12.7 9.3a1 1 0 0 1 1.4 0l2.2 2.2a1 1 0 0 1 0 1.4l-2.2 2.2a1 1 0 1 1-1.4-1.4l.5-.5h-2.7a1 1 0 1 1 0-2h2.7l-.5-.5a1 1 0 0 1 0-1.4Z"/></svg>
@@ -629,8 +632,17 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
     </div>
   </div>
 
-  <div class="toast" id="toast" role="status"></div>
-
-  <script src="app.js?v=6188"></script>
+<div class="toast" id="toast" role="status"></div>
+<!-- La diagnostica: dice dove sono finiti i dati, senza indovinare.
+     Ste: "se cambio l'artista e riavvio il sito torna di prima" e non si capiva
+     piu' se il nome si perdeva nel telefono, sul sito o nel computer. -->
+<div class="diag-overlay" id="diagOverlay" hidden>
+<div class="diag-box" role="dialog" aria-modal="true">
+<div class="diag-head"><span class="import-title">Diagnostica</span>
+<button class="import-close" id="diagClose" aria-label="Chiudi">&times;</button></div>
+<div class="diag-body" id="diagBody">Sto guardando...</div>
+</div>
+</div>
+<script src="app.js?v=6189"></script>
 </body>
 </html>

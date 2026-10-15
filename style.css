@@ -2347,3 +2347,15 @@ li.appena-aggiunto {
   color: var(--txt);
 }
 .aiuto-lista b { color: var(--accent2); }
+/* Finestra della diagnostica: serve a me per capire dove finiscono i dati
+   senza dover chiedere ogni volta a Ste. */
+.diag-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.diag-box{background:var(--card);border:1px solid var(--line);border-radius:14px;width:100%;max-width:520px;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.diag-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.diag-body{padding:14px 16px;overflow:auto;font-size:13.5px;line-height:1.65}
+.diag-riga{display:flex;gap:10px;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.07)}
+.diag-riga b{font-weight:600;flex:1}
+.diag-riga span{color:var(--muted);text-align:right;word-break:break-all}
+.diag-ok{color:#37e6a6}
+.diag-no{color:#ff8080}
+.diag-sep{margin:14px 0 6px;font-weight:800;letter-spacing:.4px;color:var(--muted);text-transform:uppercase;font-size:11.5px}
