@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.193";
+  const APP_VERSION = "6.194";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8902,7 +8902,7 @@ if (sicura) {
     /* Ste: questo messaggio era illeggibile (tagliato con i puntini).
        Ora va a capo e resta leggibile, ma con le stesse informazioni
        di prima: da dove aprire l'app. */
-    toast("Qui non posso parlare col computer.\nApri l'app da http://192.168.1.2:8168", 7000);
+    toast("Qui non posso parlare col computer.\nApri l'app dal computer: http://192.168.1.40:8168", 7000);
   } else {
     toast("Il computer non risponde.\nSei sulla rete di casa?\nPuoi salvare a mano in: musica mp3 ste", 7000);
   }
@@ -9236,13 +9236,14 @@ $("btnTimer").addEventListener("click", () => {
         }
       } catch (e) { /* il computer non c'e': provo dall'altra parte */ }
       try {
-        if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
-          _programmaDiRiprovare();
-          return;
-        }
+        /* Per /stato non serve la chiave: i nomi devono potersi salvare anche
+           dal sito, perche' li' il browser per regola non puo' parlare col
+           computer di casa e la chiave sul telefono sparisce al riavvio. */
+        const intestazioni = { "content-type": "application/json" };
+        if (CHIAVE_PUBBLICA) intestazioni["x-chiave"] = CHIAVE_PUBBLICA;
         const r = await fetch(SERVIZIO_PUBBLICA + "/stato", {
           method: "POST",
-          headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
+          headers: intestazioni,
           body: corpo
         });
         if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; }
