@@ -1,7 +1,14 @@
 {
  "nascosti": [
+  "b-track-1",
   "b-track-65"
  ],
  "preferiti": [],
- "miei": {}
+ "miei": {},
+ "rinomini": {
+  "b-track-2": {
+   "title": "Prova Nome",
+   "artist": "Prova Artista"
+  }
+ }
 }
