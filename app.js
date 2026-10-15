@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.182";
+  const APP_VERSION = "6.183";
 
   let recovering = false;
   async function selfHeal() {
