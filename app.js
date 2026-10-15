@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.181";
+  const APP_VERSION = "6.182";
 
   let recovering = false;
   async function selfHeal() {
@@ -4093,8 +4093,14 @@ function _aggiornaPosizioneSchermo() {
    saperlo. Prima prova col computer (veloce, e' la strada normale); se il
    computer non risponde uso il servizio, che funziona anche a PC spento. */
 async function _chiediDoveMandare(fresh) {
-  const ids = (fresh || []).filter((t) => !eGiaCondiviso(t)).map((t) => t.id);
-  if (!ids.length) return;
+    const ids = (fresh || []).filter((t) => !eGiaCondiviso(t)).map((t) => t.id);
+    if (!ids.length) {
+      /* Ste: "non lo chiede". Prima, se il brano era gia' in libreria la
+         domanda semplicemente non compariva e sembrava che l'app si fosse
+         dimenticata. Ora lo dico: e' gia' online, non lo aggiungo due volte. */
+      toast("Questa canzone e' gia' in libreria: non la aggiungo due volte", 5000);
+      return;
+    }
   const uno = ids.length === 1;
   const si = await askConfirm(
     (uno ? "1 brano aggiunto" : ids.length + " brani aggiunti") + ": lo metto online?",
@@ -7364,7 +7370,46 @@ $("btnFavFilter").addEventListener("click", () => {
     }
   });
 
-  $("fab").addEventListener("click", () => fileInput.click());
+  /* Ste: "se premo il tasto + non spunta importa musica". Prima questo tasto
+   apriva direttamente i file, senza mostrare niente, quindi non si capiva
+   cosa fosse e "Importa musica" si trovava solo nel menu in alto. Adesso il
+   + apre le scelte, e "Importa musica" c'e' con quel nome. */
+function _chiudiFabMenu() {
+  const m = $("fabMenu");
+  if (m) m.hidden = true;
+  syncNoScroll();
+}
+function _apriFabMenu() {
+  const m = $("fabMenu");
+  if (!m) { fileInput.click(); return; }
+  m.hidden = false;
+  syncNoScroll();
+}
+$("fab").addEventListener("click", _apriFabMenu);
+$("fabChiudi").addEventListener("click", _chiudiFabMenu);
+$("fabImporta").addEventListener("click", () => {
+  _chiudiFabMenu();
+  fileInput.click();
+});
+$("fabCercaTitolo").addEventListener("click", () => {
+  /* Lo dice lui: vuole scrivere il titolo e fare "cerca brani". Gli metto il
+     cursore nella casella di ricerca con il telefono aperto per la tastiera. */
+  _chiudiFabMenu();
+  try {
+    if (searchEl) {
+      searchEl.focus();
+      if (searchEl.scrollIntoView) searchEl.scrollIntoView({ block: "center" });
+    }
+  } catch (e) { /* noop */ }
+  toast("Scrivi il titolo sopra e guarda i brani che trovi", 5000);
+});
+$("fabYouTube").addEventListener("click", () => {
+  _chiudiFabMenu();
+  try { _aggiungiDaYouTube(); } catch (e) { /* noop */ }
+});
+$("fabMenu").addEventListener("click", (e) => {
+  if (e.target === $("fabMenu")) _chiudiFabMenu();
+});
   /* Cambio ordinamento: il brano di un artista gia' presente finisce subito
      nel suo gruppo, senza dover rifare niente. */
   const btOrdina = $("btnOrdina");
