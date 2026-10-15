@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.179";
+  const APP_VERSION = "6.180";
 
   let recovering = false;
   async function selfHeal() {
@@ -527,6 +527,9 @@ if (t) {
     mappa[id] = { title: titoloNuovo, artist: artistaNuovo };
     if (!mappa[id].title && !mappa[id].artist) delete mappa[id];
     try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
+    /* Lo metto anche sul sito: cosi' se il telefono dimentica (e capita),
+       al riavvio il nome torna comunque, e vale anche sull'altro dispositivo. */
+    try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
     applicaRinomine();
     render();
     toast("Nome cambiato");
@@ -2382,7 +2385,7 @@ const nascosti = hiddenTracks.size;
       if (t.artist) bits.push(t.artist);
       if (t.album) bits.push(t.album);
       if (t.preview) bits.push("anteprima 30s");
-      if (t.builtin) meta.textContent = bits.length ? bits.join(" · ") : "per tutti";
+      if (t.builtin) meta.textContent = bits.join(" ");
       else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
       info.appendChild(meta);
 
@@ -7057,9 +7060,16 @@ function toast(msg, durata) {
   const el = $("toast");
   el.textContent = msg;
   el.classList.add("show");
+  /* Ste: i messaggi lunghi si devono poter chiudere subito toccandoli,
+     altrimenti restano li' a coprire la libreria. */
+  el.classList.add("toccabile");
+  el.onclick = () => { el.classList.remove("show"); el.classList.remove("toccabile"); };
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove("show"), durata || 2200);
-  }
+  toastTimer = setTimeout(() => {
+    el.classList.remove("show");
+    el.classList.remove("toccabile");
+  }, durata || 2200);
+}
 
   /* ---------- Il menu "altro" ----------
      In alto c'erano dieci tasti in fila: sul telefono si doveva scorrere in
@@ -8573,13 +8583,14 @@ function _aggiornaBadgePlaylist() {
      pulsante non riprova all'infinito, dice cosa fare davvero. */
   function _spiegaPercheNonVa() {
     const sicura = !!window.isSecureContext;
-    if (sicura) {
-      toast("Qui non posso parlare col computer: pagina sicura. Apri l'app da " +
-        "http://192.168.1.2:8168 e il brano sale da solo", 9000);
-    } else {
-      toast("Il computer non risponde. Sei sulla stessa rete di casa? " +
-        "Oppure salva il brano in D:\\Musica\\musica mp3 ste", 9000);
-    }
+if (sicura) {
+    /* Ste: questo messaggio era illeggibile (tagliato con i puntini).
+       Ora va a capo e resta leggibile, ma con le stesse informazioni
+       di prima: da dove aprire l'app. */
+    toast("Qui non posso parlare col computer.\nApri l'app da http://192.168.1.2:8168", 7000);
+  } else {
+    toast("Il computer non risponde.\nSei sulla rete di casa?\nPuoi salvare a mano in: musica mp3 ste", 7000);
+  }
     segnalaErrore("condivisione non riuscita: pagina " +
       (sicura ? "sicura (https: non si puo' chiamare il PC)" : "normale") +
       ", programma sul PC non raggiungibile");
@@ -8837,6 +8848,21 @@ $("btnTimer").addEventListener("click", () => {
            cosi' ritrovo la copia anche sull'altro dispositivo. */
         miei: (function () {
           try { return JSON.parse(LS.get(LS_MIEI, "{}")) || {}; } catch (e) { return {}; }
+        })(),
+        /* Ste: "quando modifico il nome e l'artista funziona ma quando
+           riavvio l'app ritorna come prima". Il nome stava solo sul telefono
+           (localStorage) e il telefono ogni tanto lo perde. Adesso lo metto
+           anche qui, che e' sul sito: cosi' al riavvio torna indietro, e
+          e segue anche sull'altro dispositivo. */
+        rinomini: (function () {
+          try {
+            const m = nomiRinomati();
+            const copia = {};
+            for (const k of Object.keys(m)) {
+              if (m[k] && (m[k].title || m[k].artist)) copia[k] = { title: m[k].title || "", artist: m[k].artist || "" };
+            }
+            return copia;
+          } catch (e) { return {}; }
         })()
       });
       /* Prima il computer, che e' di solito acceso e risponde subito. Poi, se
@@ -8890,7 +8916,27 @@ const j = await r.json();
             LS.set(LS_MIEI, JSON.stringify(miei));
           } catch (e) { /* noop */ }
         }
-        if (cambiati) {
+        /* I brani copiati nella mia libreria: devono valere anche sull'altro
+dispositivo, quindi li metto in elenco insieme a tutto il resto. */
+    if (j && j.rinomini && typeof j.rinomini === "object") {
+      /* Ste: il nome che avevi cambiato tornava com'era al riavvio, perche'
+         stava solo sul telefono. Se lo ritrovo qui, lo rimetto. */
+      try {
+        const mappa = nomiRinomati();
+        let rimessi = 0;
+        for (const k of Object.keys(j.rinomini)) {
+          const r = j.rinomini[k];
+          if (!r || (!r.title && !r.artist)) continue;
+          const mia = mappa[k];
+          if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
+            mappa[k] = { title: String(r.title || ""), artist: String(r.artist || "") };
+            rimessi++;
+          }
+        }
+        if (rimessi) { LS.set("mb.rinomini", mappa); cambiati++; }
+      } catch (e) { /* noop */ }
+    }
+    if (cambiati) {
           saveCurrentState();
           /* Ricarico davvero la libreria, non la ridisegno: le canzoni appena
              copiate devono comparire SUBITO, senza dover riaprire l'app. */
@@ -9768,23 +9814,43 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
 function numeroBraniOnline(testo) {
       return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
     }
-    function avvisoAggiornamento(testo) {
-      let avviso = document.getElementById("avviso-vecchia");
-      if (!avviso) {
-        avviso = document.createElement("div");
-        avviso.id = "avviso-vecchia";
-        avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
-          "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:12px 14px;" +
-          "border-radius:10px;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5)";
-        document.body.appendChild(avviso);
-      }
+function _nascondiBarraAggiornamento() {
+    /* Ste: "la barra in verde spunta sempre anche se non ho messo niente".
+       Prima la barra, una volta comparsa, restava per sempre. Adesso, quando
+       il controllo dice che non c'e' niente di nuovo, sparisce. */
+    try {
+      const a = document.getElementById("avviso-vecchia");
+      if (a && a.parentNode) a.parentNode.removeChild(a);
+    } catch (e) { /* noop */ }
+}
+function avvisoAggiornamento(testo) {
+    let avviso = document.getElementById("avviso-vecchia");
+    if (avviso) {
+      /* Ste: "la barra in verde spunta sempre anche se non ho messo niente".
+         Il motivo era che la barra, una volta comparsa, non se ne andava
+         piu': restava li' per sempre anche quando ormai non c'era piu' nulla
+         da aggiornare. Adesso quando non c'e' niente la tolgo. */
       avviso.textContent = testo + " Tocca qui per aggiornare adesso.";
       avviso.onclick = () => {
         avviso.textContent = "Aggiorno...";
         if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
         setTimeout(() => window.location.reload(true), 900);
       };
+      return;
     }
+avviso = document.createElement("div");
+    avviso.id = "avviso-vecchia";
+    avviso.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99;" +
+      "background:#132a1f;border:1px solid #37e6a6;color:#c8ffe6;padding:12px 14px;" +
+      "border-radius:10px;font-size:14px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+    document.body.appendChild(avviso);
+    avviso.textContent = testo + " Tocca qui per aggiornare adesso.";
+    avviso.onclick = () => {
+      avviso.textContent = "Aggiorno...";
+      if (navigator.serviceWorker) navigator.serviceWorker.getRegistration().then((r) => r && r.update());
+      setTimeout(() => window.location.reload(true), 900);
+    };
+  }
     function controllaAggiornamenti() {
       if (_stoControllando) return;
       if (document.hidden) return;              // non aggiorno la pagina che non guardi
@@ -9801,7 +9867,11 @@ function numeroBraniOnline(testo) {
           const m = /APP_VERSION\s*=\s*"([\d.]+)"/.exec(txt);
           const versioneNuova = !!(m && m[1] !== String(APP_VERSION));
           const braniNuovi = suoi > miei;
-          if (!braniNuovi && !versioneNuova) return;
+          if (!braniNuovi && !versioneNuova) {
+        /* Niente di nuovo: la barra (se c'era) non deve restare appesa li'. */
+        _nascondiBarraAggiornamento();
+        return;
+      }
           const che = [];
           if (braniNuovi) che.push((suoi - miei) + (suoi - miei === 1 ? " brano nuovo" : " brani nuovi"));
           if (versioneNuova) che.push("versione " + (m ? m[1] : "?"));
