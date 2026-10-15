@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.183";
+  const APP_VERSION = "6.184";
 
   let recovering = false;
   async function selfHeal() {
@@ -9767,8 +9767,33 @@ function _ripristinaPuntoLibreria() {
     const vf = $("verBadge");
     if (vf) {
       vf.textContent = String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
-      vf.title = "Versione in uso: " + APP_VERSION + " (tocca per ricaricare)";
-      vf.onclick = () => window.location.reload(true);
+      vf.title = "Versione in uso: " + APP_VERSION + "\nTocca per aggiornare subito";
+      /* Ste: "se tocco la versione non fa niente". Ricaricare da solo non
+         bastava: il worker vecchio continuava a servire il vecchio app.js.
+         Ora se c'e' un aggiornamento in attesa gli dico di attivarsi subito,
+         e quando e' attivo ricarico davvero. */
+      vf.onclick = () => {
+        try {
+          const reg = (navigator.serviceWorker && navigator.serviceWorker.controller) ? navigator.serviceWorker : null;
+          if (reg && reg.controller) {
+            const inAttesa = (swReg && swReg.waiting) || (reg && reg.waiting) || null;
+            if (inAttesa) {
+              vf.textContent = "Aggiorno...";
+              inAttesa.postMessage({ type: "SKIP_WAITING" });
+              /* Se per qualche motivo il worker non si attiva, dopo poco
+                 ricarico comunque: meglio una versione che resta indietro. */
+              setTimeout(() => window.location.reload(true), 1500);
+              return;
+            }
+          }
+          if (swReg && swReg.update) {
+            try { swReg.update(); } catch (e) { /* pazienza */ }
+          }
+          setTimeout(() => window.location.reload(true), 900);
+        } catch (e) {
+          window.location.reload(true);
+        }
+      };
     }
   } catch (e) { /* noop */ }
 
@@ -9889,16 +9914,49 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
 function numeroBraniOnline(testo) {
       return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
     }
+let _timerBarraAggiornamento = null;
 function _nascondiBarraAggiornamento() {
-    /* Ste: "la barra in verde spunta sempre anche se non ho messo niente".
-       Prima la barra, una volta comparsa, restava per sempre. Adesso, quando
-       il controllo dice che non c'e' niente di nuovo, sparisce. */
+    /* Ste: "la barra in verde spunta ancora sempre, continuamente anche se non
+       c'e' nessun brano nuovo". Prima la barra, una volta comparsa, restava
+       lì per sempre. Adesso quando il controllo dice che non c'e' niente di
+       nuovo sparisce, e sparisce anche da sola dopo un po' se nessuno la
+       tocca. */
     try {
       const a = document.getElementById("avviso-vecchia");
       if (a && a.parentNode) a.parentNode.removeChild(a);
     } catch (e) { /* noop */ }
+    _chiudiBarraVersione();
+}
+/* Il numero della versione in alto diventa giallo quando c'e' qualcosa da
+   aggiornare: cosi' sai che e' lui il posto da toccare. */
+function _chiudiBarraVersione() {
+    try {
+      const vb = $("verBadge");
+      if (vb) vb.classList.remove("ha-aggiornamento");
+    } catch (e) { /* noop */ }
+}
+function _segnalaBarraVersione() {
+    try {
+      const vb = $("verBadge");
+      if (vb) {
+        vb.classList.add("ha-aggiornamento");
+        vb.title = "C'è un aggiornamento: tocca qui per prenderlo subito";
+      }
+    } catch (e) { /* noop */ }
 }
 function avvisoAggiornamento(testo) {
+    /* Ste: "la barra in verde spunta ancora sempre". Oltre a toglierla quando
+       non c'e' niente, adesso sparisce anche da sola dopo 30 secondi se nessuno
+       la tocca: cosi' non resta piu' appesa li' a disturbare la libreria.
+       E il numero della versione in alto diventa giallo, cosi' sai che il
+       posto da toccare per aggiornare e' quello. */
+    _segnalaBarraVersione();
+    try {
+      clearTimeout(_timerBarraAggiornamento);
+      _timerBarraAggiornamento = setTimeout(() => {
+        _nascondiBarraAggiornamento();
+      }, 30000);
+    } catch (e) { /* noop */ }
     let avviso = document.getElementById("avviso-vecchia");
     if (avviso) {
       /* Ste: "la barra in verde spunta sempre anche se non ho messo niente".

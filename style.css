@@ -1452,18 +1452,22 @@ button.btn-mini-file {
 /* Numero della versione in alto a destra: serve a capire subito se il
    browser sta usando una copia vecchia della pagina. */
 .ver-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 20px;
-  min-width: 30px;
-  padding: 0 6px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: var(--card);
-  color: var(--muted);
-  font-size: 10.5px;
-  font-weight: 700;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+/* Ste: "se tocco la versione non fa niente". Era alta 20 pixel: su un
+   telefono e' troppo piccola per essere premuta con il dito, quindi non
+   succedeva niente e sembrava rotta. Ora e' alta 40 pixel (la misura minima
+   comoda col dito) e resta una pillola stretta. */
+height: 40px;
+min-width: 44px;
+padding: 0 12px;
+border-radius: 20px;
+border: 1px solid var(--line);
+background: var(--card);
+color: var(--muted);
+font-size: 12px;
+font-weight: 700;
   letter-spacing: .3px;
   cursor: pointer;
   align-self: center;

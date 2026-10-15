@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6183";
+const CACHE = "spotifynonavraiimieisoldi-v6184";
 const CORE = [
   "./",
   "./index.html",
@@ -92,6 +92,22 @@ const SONGS = [
 async function cacheSongs(cache) {
   return 0;
 }
+
+/* Ste: "se tocco la versione non fa niente, non si aggiorna".
+   Prima non si aggiornava perche' avevo tolto il "skipWaiting": il worker
+   nuovo aspettava che l'app venisse chiusa del tutto, quindi ricaricando la
+   pagina si continuava a usare la versione vecchia, e con lei i nomi dei
+   brani tornavano come prima.
+
+   Adesso e' cosi': il worker aspetta (non ti interrompe mentre usi l'app),
+   ma quando TOCCI il numero della versione gli dico "attivati adesso" e la
+   pagina si ricarica con tutto nuovo. */
+self.addEventListener("message", (event) => {
+  const tipo = (event && event.data && event.data.type) || "";
+  if (tipo === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
