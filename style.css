@@ -2242,3 +2242,46 @@ li.appena-aggiunto {
   .selezione-btn.pericolo { background: rgba(255, 92, 92, .16); border-color: rgba(255, 92, 92, .4); color: #ff9b9b; }
   .selezione-btn.torna { background: rgba(255, 255, 255, .06); }
 
+
+/* ---------- Guida (il "?" nel menu Altro) ----------
+   Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del '?'
+   dove spieghi bene". Il testo e' su un telefono stretto, quindi: titoli
+   ben separati, liste corte, e le note su sfondo diverso per far capire
+   subito cosa e' importante. */
+.aiuto-corpo { -webkit-overflow-scrolling: touch; }
+.aiuto-sez {
+  margin: 16px 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: var(--accent2);
+}
+.aiuto-sez:first-child { margin-top: 0; }
+.aiuto-lista {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--txt);
+}
+.aiuto-lista li { margin: 4px 0; }
+.aiuto-lista b { color: var(--txt); }
+.aiuto-testo { margin: 0; font-size: 14px; line-height: 1.5; color: var(--txt); }
+.aiuto-nota {
+  margin: 8px 0 0;
+  padding: 9px 11px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+  background: rgba(255, 255, 255, .05);
+  border-left: 3px solid var(--accent2);
+  border-radius: 8px;
+}
+.aiuto-codice {
+  padding: 1px 6px;
+  background: rgba(255, 255, 255, .09);
+  border-radius: 5px;
+  font-size: 12.5px;
+  color: var(--txt);
+}

@@ -94,6 +94,13 @@
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 15.5v-7l6 3.5-6 3.5Z"/><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
       <span class="voce-testo">Aggiungi da YouTube (copia il link e tocca qui)</span>
     </button>
+    <!-- Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del
+         '?' dove spieghi bene". Qui sotto spiego come si mettono le canzoni
+         online, con il computer acceso e con il computer spento. -->
+    <button class="menu-altro-voce" id="btnAiuto" type="button">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 18h2v-2h-2v2Zm1-16a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm-1-11h2V4h-2v1Z"/></svg>
+      <span class="voce-testo">Come si usano le canzoni (guida)</span>
+    </button>
 
     <!-- La chiave del servizio che pubblica le canzoni col computer spento.
          Si mette una volta sola e resta nel telefono: serve a non lasciare
@@ -331,6 +338,67 @@
     </div>
     <div class="profile-body">
       <div id="nascostiCorpo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Guida: come si mettono le canzoni online, col computer acceso e spento.
+Ste lo chiedeva perche' i due modi non si capivano. -->
+<div class="profile-overlay" id="aiutoPanel" hidden>
+  <div class="profile-card">
+    <div class="import-head">
+      <div class="import-head-info">
+        <p class="import-title">Come si usano le canzoni</p>
+        <p class="import-sub">Tutto quello che serve sapere, in una pagina</p>
+      </div>
+      <button class="import-close" id="aiutoClose" aria-label="Chiudi">&times;</button>
+    </div>
+    <div class="profile-body aiuto-corpo">
+
+      <p class="aiuto-sez">Mettere una canzone con il COMPUTER ACCESO</p>
+      <ol class="aiuto-lista">
+        <li>Tocca il tasto rotondo <b>+</b> e scegli <b>Importa musica</b>.</li>
+        <li>Scegli il file mp3 dalla galleria.</li>
+        <li>Ti chiede <b>«lo metto online?»</b>: dai <b>Metto online</b>.</li>
+        <li>Il computer la copia nella tua cartella musica e la mette sul sito.</li>
+      </ol>
+      <p class="aiuto-nota">La canzone resta comunque nel tuo telefono, anche se online: i due posti sono indipendenti.</p>
+
+      <p class="aiuto-sez">Mettere una canzone con il COMPUTER SPENTO</p>
+      <ol class="aiuto-lista">
+        <li>Sempre <b>Importa musica</b> e scegli il file mp3.</li>
+        <li>Alla domanda <b>«lo metto online?»</b> dai <b>Metto online</b>.</li>
+        <li>L'app lo manda al servizio internet: la canzone va online <b>subito</b>, senza il computer.</li>
+      </ol>
+      <p class="aiuto-nota">Perche' funziona serve attivare il servizio una volta sola: menu <b>Altro</b> → <b>Pubblica col computer spento</b> → incolla la chiave e premi <b>Attiva</b>.</p>
+
+      <p class="aiuto-sez">Canzoni da YouTube</p>
+      <ol class="aiuto-lista">
+        <li><b>Computer acceso</b> (consigliato): copia il link del video, poi <b>Altro → Aggiungi da YouTube</b>. Viene scaricato subito.</li>
+        <li><b>Computer spento</b>: puoi comunque mandare il link, ma va in <b>coda</b>: verrà scaricato quando il computer si accende.</li>
+      </ol>
+      <p class="aiuto-nota">Con il computer spento YouTube non va scaricato subito: non esiste un modo per farlo senza programmi sul PC.</p>
+
+      <p class="aiuto-sez">Dopo che l'hai aggiunta</p>
+      <p class="aiuto-testo">Compare nella libreria entro pochi secondi. Sui <b>telefoni degli altri</b> entro un minuto circa. Copertine e testi (karaoke) vengono cercati e messi <b>automaticamente</b> ogni 40 minuti.</p>
+
+      <p class="aiuto-sez">Se qualcosa non funziona</p>
+      <ul class="aiuto-lista">
+        <li><b>«non posso parlare col computer»</b>: stai sulla pagina internet (https). Apri l'app dalla rete di casa (<span class="aiuto-codice">192.168.1.2:8168</span>) e prova lì: col computer acceso è più veloce.</li>
+        <li><b>Una canzone non parte</b>: aspetta qualche minuto. Il computer controlla ogni 10 minuti e mette online i file che mancano.</li>
+        <li><b>Non parte ancora</b>: prova a ricaricare la pagina e guarda <b>Alto → Scarica per offline</b>, che rimette i brani anche senza rete.</li>
+        <li><b>Un brano è sparito</b>: <b>Altro → Scegli quali rimettere</b> te lo fa tornare in lista, anche uno solo.</li>
+      </ul>
+
+      <p class="aiuto-sez">Cose che ti capitano spesso</p>
+      <ul class="aiuto-lista">
+        <li><b>Cambio il nome di un brano</b> e al riavvio torna quello vero? Non dovrebbe più: il nome si salva anche sul sito.</li>
+        <li><b>Stessa canzone due volte?</b> L'app unisce da sola quelle che sono davvero lo stesso brano, anche se i nomi sono diversi.</li>
+        <li><b>Sotto una canzone c'era scritto «per tutti»</b>: era un errore, non c'è più.</li>
+      </ul>
+
+      <p class="aiuto-sez">Attenzione</p>
+      <p class="aiuto-testo">Le librerie sono <b>per profilo</b>: quello che aggiungi tu resta tuo. Gli altri non lo vedono, e viceversa. Se vuoi che lo sentano, <b>porta il brano nella loro libreria</b> tenendo premuto sulla canzone.</p>
     </div>
   </div>
 </div>

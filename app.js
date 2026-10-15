@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.180";
+  const APP_VERSION = "6.181";
 
   let recovering = false;
   async function selfHeal() {
@@ -7078,6 +7078,9 @@ function toast(msg, durata) {
   function _chiudiAltro() {
     const m = $("menuAltro");
     if (m) m.hidden = true;
+    /* Anche la guida si chiude insieme al menu: se no resterebbe aperta
+       sopra tutto quando torni a un'altra schermata dal menu. */
+    try { _chiudiAiuto(); } catch (e) { /* non c'e' ancora: va bene */ }
     const v = document.getElementById("menu-altro-velo");
     if (v && v.parentNode) v.parentNode.removeChild(v);
     const b = $("btnAltro");
@@ -8010,7 +8013,34 @@ function _nomePerIlBrano(link, suggerito) {
       segnalaErrore("aggiunta da youtube: " + perche);
     }
   }
-  $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
+  /* ---------- La guida (il "?" nel menu Altro) ----------
+   Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del
+   '?' dove spieghi bene". Spiega come si mettono le canzoni online con il
+   computer acceso e con il computer spento, e cosa fare quando qualcosa
+   non funziona. */
+function _apriAiuto() {
+  const p = $("aiutoPanel");
+  if (!p) return;
+  _chiudiAltro();
+  p.hidden = false;
+  syncNoScroll();
+  try {
+    const corpo = p.querySelector(".aiuto-corpo");
+    if (corpo) corpo.scrollTop = 0;
+  } catch (e) { /* noop */ }
+}
+function _chiudiAiuto() {
+  const p = $("aiutoPanel");
+  if (p) p.hidden = true;
+  syncNoScroll();
+}
+$("btnAiuto").addEventListener("click", _apriAiuto);
+$("aiutoClose").addEventListener("click", _chiudiAiuto);
+$("aiutoPanel").addEventListener("click", (e) => {
+  if (e.target === $("aiutoPanel")) _chiudiAiuto();
+});
+
+$("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
 
   /* Quanti link sono in coda, cioè brani che ho mandato e che il computer
      scaricera' quando si accende. Serve a non chiedersi "ma e' arrivato?".
