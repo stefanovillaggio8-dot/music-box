@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.192";
+  const APP_VERSION = "6.193";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -681,19 +681,6 @@ function _originaleDi(id) {
     corpo.innerHTML = qs.join("");
   }
 
-  /* Dice la vereta': il nome e' al sicuro solo se e' uscito dal telefono.
-     Sul telefono di Ste quei dati spariscono al riavvio, quindi se non
-     riesco a scriverli sul sito o sul computer, il nome va perso: me lo
-     dico subito invece di lasciare lui a credere che sia salvato. */
-  function _dilloSeNonSicuro() {
-    try {
-      if (_statoCondivisoOk) { toast("Nome cambiato e salvato"); return; }
-      toast("Nome cambiato, MA non e' ancora al sicuro: su questo telefono i\n" +
-        "dati spariscono al riavvio. Collega il Wi-Fi di casa (o lascia il PC\n" +
-        "acceso): l'app lo salva da sola appena puo'.", 9000);
-    } catch (e) { /* noop */ }
-  }
-
   function apriRinomina(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t) return;
@@ -753,7 +740,15 @@ if (t) {
        lui prima). Adesso invece dico la verita': se non riesco a portare il
        nome fuori dal telefono, dico subito che deve stare sul Wi-Fi di casa,
        e intanto l'app continua a riprovare da sola. */
-    _dilloSeNonSicuro();
+    try {
+      if (typeof _statoCondivisoOk !== "undefined" && _statoCondivisoOk) {
+        toast("Nome cambiato e salvato");
+      } else {
+        toast("Nome cambiato, MA non è ancora al sicuro: su questo telefono i\n" +
+          "dati spariscono al riavvio. Collega il Wi-Fi di casa (o lascia il PC\n" +
+          "acceso): l'app lo salva da sola appena può.", 9000);
+      }
+    } catch (e) { /* noop */ }
   }
 
   /* Sposta la scheda di ascolto da un nome all'altro quando cambio il nome
