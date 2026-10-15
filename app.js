@@ -87,7 +87,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.196";
+  const APP_VERSION = "6.197";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -679,6 +679,44 @@ function _originaleDi(id) {
       return { ok: navigator.onLine, no: !navigator.onLine, s: onLine };
     }, { nome: "telefono" })));
     corpo.innerHTML = qs.join("");
+  }
+
+  /* Ste: "ogni volta che riavvio devo rimettere la chiave" e "il nome torna
+     come prima".
+     La causa vera era una, e non era un difetto dell'app: Ste stava
+     aprendo il sito nella navigazione PRIVATA di Safari. In privata Safari
+     BUTTA TUTTA la memoria del sito quando chiudi la scheda: nomi dei brani,
+     preferiti, e anche la chiave del servizio. E' esattamente quello che
+     vedevamo: dopo il riavvio tutto spariva.
+
+     Qui l'app lo scopre da sola e lo dice, cosi' non si perdono ore a
+     cercare un bug che non c'e'. */
+  function _scopriSeSeiInPrivata() {
+    try {
+      const segreto = "prova-" + Date.now();
+      LS.set("mb.prova-memoria", segreto);
+      setTimeout(() => {
+        let sopravvive = false;
+        try { sopravvive = LS.get("mb.prova-memoria", "") === segreto; } catch (e) { sopravvive = false; }
+        try { LS.remove("mb.prova-memoria"); } catch (e) { /* noop */ }
+        if (sopravvive) return;
+        _mostraAvvisoPrivata();
+      }, 2500);
+    } catch (e) { /* noop */ }
+  }
+  function _mostraAvvisoPrivata() {
+    try {
+      if (document.getElementById("avviso-privata")) return;
+      const b = document.createElement("div");
+      b.id = "avviso-privata";
+      b.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:130;" +
+        "background:#3a2a10;border:1px solid #ffb347;color:#ffe9c9;padding:12px 14px;" +
+        "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+      b.textContent = "Stai usando la finestra PRIVATA di Safari: qui i dati non restano, " +
+        "quindi i nomi che cambi e le preferenze si perdono. Apri l'app NON in privata " +
+        "(solo dal collegamento normale) e tutto si salva da solo.";
+      document.body.appendChild(b);
+    } catch (e) { /* noop */ }
   }
 
   function apriRinomina(id) {
@@ -10041,6 +10079,9 @@ await loadAll();
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Quando sono a casa prendo la chiave dal computer invece di chiederla. */
   setTimeout(() => { _prendiChiaveDalComputer(); }, 2500);
+  /* Controllo se questa scheda e' in navigazione privata: e' la causa numero
+     uno di "ho cambiato il nome e non e' rimasto". */
+  _scopriSeSeiInPrivata();
   /* Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
      La memoria del browser sul telefono non sempre regge, quindi i nomi li
      tengo anche nel database del telefono. Prima di tutto il resto recupero
