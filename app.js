@@ -141,7 +141,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.206";
+  const APP_VERSION = "6.207";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7512,9 +7512,15 @@ function _toggleCasuale() {
 
 $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale(); });
 
-$("btnShuffle").addEventListener("click", () => {
-  _accendiCasuale(!shuffle);
-});
+/* Ste: "non ho capito ma cos'e'? e la riproduzione casuale non e' la stessa
+     cosa?". Sono la STESSA cosa, e prima c'erano due tasti che la accendevano
+     senza dirlo: quello del menu e quello nella barra del player. Il tasto
+     della barra non mostrava nessun avviso, quindi toccandolo non si capiva
+     niente. Adesso usa la stessa funzione del menu, che accende il tasto e
+     scrive a schermo cosa sta succedendo. */
+  $("btnShuffle").addEventListener("click", () => {
+    _toggleCasuale();
+  });
   $("btnQueue").addEventListener("click", openQueue);
   $("queueClose").addEventListener("click", closeQueue);
   $("queuePanel").addEventListener("click", (e) => {
