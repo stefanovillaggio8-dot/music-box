@@ -76,6 +76,57 @@
     { title: "nei treni la notte", file: "songs/track-73.mp3", artist: "frah quintale", profile: "Ste" },
     { title: "Dimmi Che C''", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
     { title: "stupido", file: "songs/track-75.mp3", artist: "massimo pericolo", profile: "Ste" },
+    { title: "Spettri", file: "songs/track-77.mp3", artist: "nayt, 3D" },
+    { title: "Memoria di uno sconfitto, pt. 2", file: "songs/track-78.mp3", artist: "Mostro" },
+    { title: "G&V", file: "songs/track-79.mp3", artist: "ivanBì" },
+    { title: "Da zero", file: "songs/track-80.mp3", artist: "DOOM" },
+    { title: "Gli occhi della tigre", file: "songs/track-81.mp3", artist: "nayt, 3D" },
+    { title: "Bullet Ballet (feat. Artie 5ive)", file: "songs/track-87.mp3", artist: "Kid Yugi, Artie 5ive" },
+    { title: "SOGNO AMERICANO", file: "songs/track-88.mp3", artist: "Artie 5ive" },
+    { title: "Niente Canzoni D'Amore", file: "songs/track-89.mp3", artist: "Elodie" },
+    { title: "Odi et Amo", file: "songs/track-90.mp3", artist: "Blake el Diablo" },
+    { title: "uNa DiReZioNe giùSta", file: "songs/track-91.mp3", artist: "yungest Moonstar, Neffa, thasup" },
+    { title: "Scale (con Luchè)", file: "songs/track-92.mp3", artist: "Night Skinny, Luchè" },
+    { title: "oh 9od - feat. Nayt", file: "songs/track-93.mp3", artist: "thasup, nayt" },
+    { title: "Doom", file: "songs/track-94.mp3", artist: "nayt, 3D" },
+    { title: "Ballon d'Or (feat. Nayt)", file: "songs/track-95.mp3", artist: "Gemitaiz, nayt" },
+    { title: "un'idea", file: "songs/track-96.mp3", artist: "nayt, 3D" },
+    { title: "guerra dentro", file: "songs/track-97.mp3", artist: "nayt, 3D" },
+    { title: "Cigno nero", file: "songs/track-98.mp3", artist: "Fedez, Francesca Michelini" },
+    { title: "Se Piovesse Il Tuo Nome - con Calcutta", file: "songs/track-99.mp3", artist: "Elisa, Calcutta" },
+    { title: "Chic", file: "songs/track-100.mp3", artist: "Izi" },
+    { title: "molecole (interlude)", file: "songs/track-101.mp3", artist: "thasup" },
+    { title: "Il Tuo Sorriso", file: "songs/track-102.mp3", artist: "Medy" },
+    { title: "AIRFORCE (feat. Madame)", file: "songs/track-103.mp3", artist: "Massimo Pericolo, Crookers, Madame" },
+    { title: "Striscia", file: "songs/track-105.mp3", artist: "TonyPitony" },
+    { title: "MI PIACCIONO LE NERE", file: "songs/track-106.mp3", artist: "TonyPitony" },
+    { title: "CULO", file: "songs/track-107.mp3", artist: "TonyPitony" },
+    { title: "BALÙ - Acoustic Version", file: "songs/track-108.mp3", artist: "TonyPitony" },
+    { title: "OCCHI MEI", file: "songs/track-109.mp3", artist: "thasup, Mara Sattei" },
+    { title: "Non Abbiamo Età", file: "songs/track-110.mp3", artist: "Luchè" },
+    { title: "Voodoo", file: "songs/track-111.mp3", artist: "Guè" },
+    { title: "Concedimi", file: "songs/track-112.mp3", artist: "Matteo Romano" },
+    { title: "INTRO (La Bella Vita)", file: "songs/track-113.mp3", artist: "Artie 5ive" },
+    { title: "GIOVANNI", file: "songs/track-114.mp3", artist: "TonyPitony" },
+    { title: "15 Piani", file: "songs/track-115.mp3", artist: "Sfera Ebbasta, Marracash" },
+    { title: "Labirinto", file: "songs/track-116.mp3", artist: "Luchè" },
+    { title: "Nessuna", file: "songs/track-117.mp3", artist: "Luchè" },
+    { title: "Babydoll", file: "songs/track-118.mp3", artist: "Dominic Fike" },
+    { title: "Baby Mama", file: "songs/track-119.mp3", artist: "Don Pero" },
+    { title: "Lo So Che", file: "songs/track-120.mp3", artist: "Capo Plaza" },
+    { title: "Scrivendo", file: "songs/track-121.mp3", artist: "nayt" },
+    { title: "Vibe", file: "songs/track-122.mp3", artist: "Guè" },
+    { title: "Distrutto", file: "songs/track-123.mp3", artist: "Carla Morrison" },
+    { title: "marte", file: "songs/track-124.mp3", artist: "thasup" },
+    { title: "mi @mio è f@ke", file: "songs/track-125.mp3", artist: "thasup" },
+    { title: "slrl (feat. Lazza & Sfera Ebbasta)", file: "songs/track-126.mp3", artist: "thasup, Lazza, Sfera Ebbasta" },
+    { title: "Hey There Delilah", file: "songs/track-127.mp3", artist: "Plain White T's" },
+    { title: "STANOTTE (feat. Coez, Massimo Pericolo)", file: "songs/track-128.mp3", artist: "TY1, Coez, Massimo Pericolo" },
+    { title: "CRUDELIA - Inervi", file: "songs/track-129.mp3", artist: "Marracash" },
+    { title: "ADRENALINA", file: "songs/track-130.mp3", artist: "Samurai Jay, Vito Salamarca" },
+    { title: "romantici", file: "songs/track-131.mp3", artist: "Tommaso Paradiso" },
+    { title: "RUGGINE (con Chiello, Coez)", file: "songs/track-133.mp3", artist: "MACE, chiello, Coez" },
+    { title: "TUTTO FUORI CONTROLLO (con Franco 126, Kid Yugi, IzI)", file: "songs/track-134.mp3", artist: "MACE, Kid Yugi, IzI, Franco126" },
 ];
 
   const PALETTE = [
@@ -87,7 +138,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.200";
+  const APP_VERSION = "6.201";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
