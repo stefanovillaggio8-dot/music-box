@@ -60,7 +60,6 @@
     { title: "Sweet Child O' Mine", file: "songs/track-59.mp3", artist: "Guns N' Roses", profile: "Ste" },
     { title: "Crawling", file: "songs/track-60.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "All I Wanted", file: "songs/track-61.mp3", artist: "Paramore", profile: "Ste" },
-    { title: "In the End", file: "songs/track-62.mp3", artist: "Linkin Park", profile: "Ste" },
     { title: "Runaway", file: "songs/track-63.mp3", artist: "Linkin Park", profile: "Ste" },
           { title: "Albachiara", file: "songs/track-69.mp3", artist: "Vasco Rossi", profile: "Ste" },
           { title: "Wonderwall", file: "songs/track-76.mp3", artist: "Oasis", profile: "Ste" },
@@ -237,7 +236,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.213";
+  const APP_VERSION = "6.214";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1814,6 +1813,31 @@ function _devoVedereBrano(eMio, b) {
     return false;
   }
 
+/* Ste: "le copertine non vengono aggiornate bene, e il coso che le
+     aggiunge da solo non funziona". Il giro sul computer funziona (ha
+     sistemato 11 copertine e 180 informazioni), ma il telefono rileggeva
+     covers.json solo quando si apriva l'app: quindi le copertine nuove
+     arrivavano sul sito e sul telefono restavano quelle vecchie fino alla
+     prossima riapertura.
+
+     Adesso l'app controlla ogni cinque minuti, e anche quando torni
+     sull'app dopo aver fatto altro. Se il file e' cambiato ricarica la
+     libreria e vedete subito le copertine nuove, senza toccare nulla. */
+  let _copertineRilette = "";
+  async function _ricaricaCopertineSeCambiano(motivo) {
+    try {
+      if (typeof loadCovers !== "function") return 0;
+      const prima = _copertineRilette;
+      await loadCovers();
+      const dopo = JSON.stringify(coversData || {});
+      if (dopo === prima) return 0;
+      _copertineRilette = dopo;
+      try { await loadAll(); } catch (e) { /* noop */ }
+      render();
+      return 1;
+    } catch (e) { return 0; }
+  }
+
   async function loadCovers() {
     try {
       /* Aggiungo il tempo alla richiesta: senza, il telefono può servire la
@@ -1821,10 +1845,15 @@ function _devoVedereBrano(eMio, b) {
       const res = await fetch("covers.json?t=" + Date.now());
       if (!res.ok) throw new Error("HTTP " + res.status);
       coversData = await res.json();
+        try { _copertineRilette = JSON.stringify(coversData); } catch (e2) { /* noop */ }
     } catch (e) {
       try {
         const res = await fetch("covers.json");
-        if (res.ok) { coversData = await res.json(); return; }
+        if (res.ok) {
+          coversData = await res.json();
+          try { _copertineRilette = JSON.stringify(coversData); } catch (e2) { /* noop */ }
+          return;
+        }
       } catch (e2) { /* noop */ }
       coversData = {};
     }
@@ -10378,6 +10407,16 @@ await loadAll();
     _ripristinaPuntoLibreria();
     recuperaCopertineMancanti();
   refreshCachedSongs();
+  /* Controllo anche le copertine nuove: ogni cinque minuti, e subito quando
+     torni sull'app. Vedi la nota sopra _ricaricaCopertineSeCambiano. */
+  setInterval(() => { _ricaricaCopertineSeCambiano("tempo"); }, 300000);
+  try {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _ricaricaCopertineSeCambiano("ritorno");
+    });
+    window.addEventListener("focus", () => { _ricaricaCopertineSeCambiano("ritorno"); });
+  } catch (e) { /* noop */ }
+
   /* Appena aperta la pagina, condivido da solo i brani che esistono solo qui:
      non serve ricordarsi di fare niente. Se il PC non c'e' riprovo al prossimo
      avvio, e intanto i brani restano al sicuro qui. */
