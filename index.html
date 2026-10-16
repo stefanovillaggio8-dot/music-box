@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6207" />
+  <link rel="stylesheet" href="style.css?v=6208" />
 </head>
 <body>
   <header class="topbar">
@@ -238,8 +238,28 @@
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-1 3h2v5.4l3.6 2.1-1 1.7-4.6-2.8V7Z"/></svg>
             <span class="ctl-badge" id="timerBadge" hidden></span>
           </button>
-                  <button id="btnShuffle" class="ctl" aria-label="Shuffle" title="Shuffle">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M18 4h3a1 1 0 0 1 .7 1.7L17 10.4a1 1 0 1 1-1.4-1.4l2.1-2.2h-1.5c-2.9 0-4.8 1.8-6.5 4.1C8 13.2 5.8 15 3.4 15H2a1 1 0 1 1 0-2h1.4c1.6 0 3.3-1.2 4.9-3.3C10 7.4 12.3 5 15.2 5h2.4L15.6 2.8A1 1 0 0 1 17 1.4L21.7 6.1a1 1 0 0 1 0 1.4L17 12.2a1 1 0 0 1-1.4-1.4l2.1-2.1C19 6.7 17.2 5 17.2 5.4Zm-11-1a1 1 0 0 1 .7 1.7l4.9 4.9-1.4 1.4-4.9-4.9A1 1 0 0 1 7 4Zm-5 9h.6c2 0 3.8 1.3 5.4 3.3 1.3 1.6 2.9 3 4.7 3.6a1 1 0 0 0 1.4-1.2c-.6-1.6-2-3-3.4-4.3l1.4-1.4c1.7 1.5 2.7 3.3 3.1 4.6.4-.6.8-1.3 1.1-2h2c-.3.9-.8 1.8-1.3 2.5a1 1 0 0 0 1.5 1.3l2.6-2.6a1 1 0 0 0 0-1.4L20.8 9.4a1 1 0 0 0-1.4 1.4l1.1 1.1c-1.5-.3-3-2-4.6-3.9-1.3-1.6-2.9-3-4.7-3.6a1 1 0 0 0-1.4 1.2c.6 1.6 2 3 3.4 4.3l-1.4 1.4C8 8.4 7 6.6 6.6 5.3c-.4.6-.8 1.3-1.1 2h-2a5 5 0 0 1 1.3-2.5A1 1 0 0 0 2 13Z"/></svg>
+                  <button id="btnShuffle" class="ctl" aria-label="Riproduzione casuale" title="Riproduzione casuale">
+        <svg viewBox="0 0 48 48" role="img" aria-label="Riproduzione casuale">
+          <defs>
+            <path id="casAlta" d="M7 33 C7 21 16 13 33 13"/>
+            <path id="casBassa" d="M7 15 C7 27 16 35 33 35"/>
+            <mask id="mascheraCasuale">
+              <g stroke="#fff" stroke-width="6.4" fill="none" stroke-linecap="round">
+                <use href="#casAlta"/><use href="#casBassa"/>
+              </g>
+              <g fill="#fff">
+                <polygon points="31,7 43,13 31,19"/>
+                <polygon points="31,29 43,35 31,41"/>
+              </g>
+              <g fill="#000" font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+                 font-weight="700" font-size="5.6">
+                <text><textPath href="#casAlta" startOffset="34%" textLength="19" lengthAdjust="spacingAndGlyphs">CASUALE</textPath></text>
+                <text><textPath href="#casBassa" startOffset="34%" textLength="19" lengthAdjust="spacingAndGlyphs">RIPRODUZIONE</textPath></text>
+              </g>
+            </mask>
+          </defs>
+          <rect width="48" height="48" fill="currentColor" mask="url(#mascheraCasuale)"/>
+        </svg>
         </button>
                   <button id="btnQueue" class="ctl" aria-label="Coda" title="Coda">
         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z"/></svg>
@@ -643,6 +663,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6207"></script>
+<script src="app.js?v=6208"></script>
 </body>
 </html>
