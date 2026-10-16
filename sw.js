@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6203";
+const CACHE = "spotifynonavraiimieisoldi-v6204";
 const CORE = [
   "./",
   "./index.html",
@@ -246,7 +246,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-const CORE_EXT = [".html", ".css", ".js", ".json", ".png"];
+const CORE_EXT = [".html", ".css", ".js", ".json", ".png", ".jpg", ".jpeg", ".webp"];
 
 async function findCachedMusic(url) {
   const keys = (await caches.keys()).slice().reverse();
