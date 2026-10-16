@@ -129,6 +129,7 @@
     { title: "TUTTO FUORI CONTROLLO (con Franco 126, Kid Yugi, IzI)", file: "songs/track-134.mp3", artist: "MACE, Kid Yugi, IzI, Franco126" },
     { title: "DAVVERODAVVERO", file: "songs/track-135.mp3", artist: "Artie 5ive", profile: "Ste" },
     { title: "Frosinone", file: "songs/track-136.mp3", artist: "Calcutta", profile: "Ste" },
+    { title: "Ex Angelo", file: "songs/track-138.mp3", artist: "Kid Yugi, Sfera Ebbasta, Shablo" },
 ];
 
   const PALETTE = [
@@ -140,7 +141,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.202";
+  const APP_VERSION = "6.203";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
