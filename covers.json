@@ -965,7 +965,7 @@
     "artist": "Kid Yugi / Lil Peep",
     "album": "",
     "source": "YouTube",
-    "date": "2026-10-16T00:34:45.292Z"
+    "date": "2026-10-16T14:29:26.789Z"
   },
   "naytfrahquintaletonyboycignonerormxnaytfrahquintaletonyboy": {
     "cover": "copertine/track-10.jpg",
@@ -973,7 +973,7 @@
     "artist": "Nayt / Frah Quintale / Tony Boy",
     "album": "",
     "source": "YouTube",
-    "date": "2026-10-16T00:34:49.921Z"
+    "date": "2026-10-16T14:29:29.821Z"
   },
   "naytlastronautavisual": {
     "cover": "copertine/track-23.jpg",
@@ -981,7 +981,7 @@
     "artist": "nayt",
     "album": "",
     "source": "YouTube",
-    "date": "2026-10-16T00:34:52.535Z"
+    "date": "2026-10-16T14:29:32.096Z"
   },
   "kidyugituttifenomenieroina": {
     "cover": "copertine/track-32.jpg",
@@ -989,7 +989,7 @@
     "artist": "Kid Yugi & Tutti Fenomeni",
     "album": "",
     "source": "YouTube",
-    "date": "2026-10-16T00:34:55.685Z"
+    "date": "2026-10-16T14:29:34.345Z"
   },
   "madamelanima": {
     "cover": "copertine/track-35.jpg",
@@ -997,7 +997,7 @@
     "artist": "madame",
     "album": "",
     "source": "YouTube",
-    "date": "2026-10-16T00:34:58.239Z"
+    "date": "2026-10-16T14:29:36.527Z"
   },
   "naytlacanzonedellamoreperdutoftjoanthielesanremo2026": {
     "cover": "copertine/track-44.jpg",
@@ -1005,7 +1005,7 @@
     "artist": "nayt",
     "album": "",
     "source": "YouTube",
-    "date": "2026-10-16T00:35:00.752Z"
+    "date": "2026-10-16T14:29:38.647Z"
   },
   "gianlucagrignanilamiastoriatraleditafeatannalisa2": {
     "cover": "copertine/track-71.jpg",
@@ -1766,5 +1766,29 @@
     "album": "",
     "source": "YouTube",
     "date": "2026-10-16T13:56:26.071Z"
+  },
+  "linkinparkintheend": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/033a271b5ec10842c287827c39244fb5/1000x1000-000000-80-0-0.jpg",
+    "title": "In the End",
+    "artist": "Linkin Park",
+    "album": "Hybrid Theory (Bonus Edition)",
+    "source": "Deezer",
+    "date": "2026-10-16T14:29:14.333Z"
+  },
+  "negromarolaprimavolta": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/727349d4c95073924e2ef6a9e2ea6afd/1000x1000-000000-80-0-0.jpg",
+    "title": "La prima volta",
+    "artist": "Negromaro",
+    "album": "L'immenso per voi",
+    "source": "Deezer",
+    "date": "2026-10-16T14:29:15.486Z"
+  },
+  "girlinredwefellinloveinoctober": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/d3c1dbb04c791f072c05a3c41877fb25/1000x1000-000000-80-0-0.jpg",
+    "title": "we fell in love in october",
+    "artist": "girl in red",
+    "album": "we fell in love in october / forget her",
+    "source": "Deezer",
+    "date": "2026-10-16T14:29:15.694Z"
   }
 }
