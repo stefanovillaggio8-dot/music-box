@@ -395,6 +395,48 @@
     { title: "Punto d'incontro", file: "songs/track-193.mp3", artist: "nayt", profile: "Diego" },
     { title: "Ci nasci, ci muori", file: "songs/track-192.mp3", artist: "nayt", profile: "Diego" },
     { title: "Esistere (più di me)", file: "songs/track-196.mp3", artist: "nayt", profile: "Diego" },
+    { title: "Carusi do sud", file: "songs/track-426.mp3", artist: "Gipsy Prince", profile: "Diego" },
+    { title: "clao (feat. Rondodasosa)", file: "songs/track-438.mp3", artist: "thasup, Rondodasosa", profile: "Diego" },
+    { title: "Stanotte", file: "songs/track-428.mp3", artist: "Gemello, Gemitaiz", profile: "Diego" },
+    { title: "ADRENALINA", file: "songs/track-430.mp3", artist: "Samurai Jay, Vito Salamanca", profile: "Diego" },
+    { title: "Voglio Di Più", file: "songs/track-432.mp3", artist: "Silent Bob, Sick Budd", profile: "Diego" },
+    { title: "COME SAREBBE IL MONDO SE REGNASSE L'ARTE (feat. 22simba)", file: "songs/track-433.mp3", artist: "Diss Gacha, Sala, 22simba", profile: "Diego" },
+    { title: "non avere paura (feat. Astro, Papa V, Sick Luke)", file: "songs/track-434.mp3", artist: "Sadturs, KIID, Astro, Papa V, Sick Luke", profile: "Diego" },
+    { title: "che disastrooo", file: "songs/track-435.mp3", artist: "traparentesi", profile: "Diego" },
+    { title: "rock & rolla (feat. Rkomi)", file: "songs/track-436.mp3", artist: "thasup, Rkomi", profile: "Diego" },
+    { title: "TOKYO DRIFT (feat. Low-Red)", file: "songs/track-437.mp3", artist: "Diss Gacha, Sala, Low-Red", profile: "Diego" },
+    { title: "Vulcano", file: "songs/track-424.mp3", artist: "chiello", profile: "Diego" },
+    { title: "Morto Mai (Piano Solo)", file: "songs/track-440.mp3", artist: "Lazza", profile: "Diego" },
+    { title: "Stare qui", file: "songs/track-425.mp3", artist: "nayt, 3D", profile: "Diego" },
+    { title: "Fenomeno", file: "songs/track-443.mp3", artist: "Fabri Fibra", profile: "Diego" },
+    { title: "90MIN", file: "songs/track-444.mp3", artist: "Salmo", profile: "Diego" },
+    { title: "Acqua salata", file: "songs/track-446.mp3", artist: "chiello", profile: "Diego" },
+    { title: "Chicchi di caffè", file: "songs/track-448.mp3", artist: "Tony Boy", profile: "Diego" },
+    { title: "DARKMONEY (feat. Sfera Ebbasta)", file: "songs/track-449.mp3", artist: "Pyrex, Sfera Ebbasta", profile: "Diego" },
+    { title: "Poesia senza veli", file: "songs/track-450.mp3", artist: "Ultimo", profile: "Diego" },
+    { title: "Problem Solver", file: "songs/track-451.mp3", artist: "Glocky", profile: "Diego" },
+    { title: "Ok", file: "songs/track-452.mp3", artist: "Tony Boy", profile: "Diego" },
+    { title: "Blu Notte", file: "songs/track-453.mp3", artist: "Silent Bob, Sick Budd", profile: "Diego" },
+    { title: "Anche La Luna", file: "songs/track-454.mp3", artist: "Silent Bob, Sick Budd", profile: "Diego" },
+    { title: "Vedova Nera", file: "songs/track-455.mp3", artist: "Silent Bob, Sick Budd", profile: "Diego" },
+    { title: "Vendetta", file: "songs/track-456.mp3", artist: "18K", profile: "Diego" },
+    { title: "Funghi in salsa rosa", file: "songs/track-457.mp3", artist: "L'Elfo, Funkymann", profile: "Diego" },
+    { title: "Stanza Singola (feat. Tommaso Paradiso)", file: "songs/track-458.mp3", artist: "Franco126, Tommaso Paradiso", profile: "Diego" },
+    { title: "Soldiers", file: "songs/track-459.mp3", artist: "Il Tre", profile: "Diego" },
+    { title: "provare qualcosa", file: "songs/track-460.mp3", artist: "nayt, 3D", profile: "Diego" },
+    { title: "Ieri", file: "songs/track-461.mp3", artist: "nayt", profile: "Diego" },
+    { title: "La grande fuga", file: "songs/track-462.mp3", artist: "nayt", profile: "Diego" },
+    { title: "Collane", file: "songs/track-463.mp3", artist: "nayt, Frenetik&Orang3", profile: "Diego" },
+    { title: "BILANCINO (feat. Glocky)", file: "songs/track-464.mp3", artist: "RRARI DAL TACCO, Glocky", profile: "Diego" },
+    { title: "Senza Di Me (feat. Venerus & Franco126)", file: "songs/track-466.mp3", artist: "Gemitaiz, Venerus, Franco126", profile: "Diego" },
+    { title: "Ex Angelo - Original Version", file: "songs/track-467.mp3", artist: "Kid Yugi", profile: "Diego" },
+    { title: "Ricchi x Sempre", file: "songs/track-468.mp3", artist: "Sfera Ebbasta", profile: "Diego" },
+    { title: "CANCELLI DI MEZZANOTTE (con CHIELLO)", file: "songs/track-469.mp3", artist: "Rkomi, chiello", profile: "Diego" },
+    { title: "Cancellare (feat. nayt)", file: "songs/track-470.mp3", artist: "TROPICO, nayt", profile: "Diego" },
+    { title: "Frigobar", file: "songs/track-472.mp3", artist: "Franco126", profile: "Diego" },
+    { title: "Voglio di più", file: "songs/track-473.mp3", artist: "nayt, 3D", profile: "Diego" },
+    { title: "PIETÀ (feat. Kid Yugi)", file: "songs/track-474.mp3", artist: "Artie 5ive, Kid Yugi", profile: "Diego" },
+    { title: "Ti Dirò - Live Room Version", file: "songs/track-475.mp3", artist: "22simba", profile: "Diego" },
 
 ];
 
@@ -407,7 +449,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.217";
+  const APP_VERSION = "6.218";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
