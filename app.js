@@ -437,6 +437,13 @@
     { title: "Voglio di più", file: "songs/track-473.mp3", artist: "nayt, 3D", profile: "Diego" },
     { title: "PIETÀ (feat. Kid Yugi)", file: "songs/track-474.mp3", artist: "Artie 5ive, Kid Yugi", profile: "Diego" },
     { title: "Ti Dirò - Live Room Version", file: "songs/track-475.mp3", artist: "22simba", profile: "Diego" },
+    { title: "Foulard (feat. Tony Boy)", file: "songs/track-477.mp3", artist: "Jerry Sampi, Tony Boy", profile: "Diego" },
+    { title: "Highway", file: "songs/track-480.mp3", artist: "Diss Gacha, Sala, Nersissima Serpe, Tony Boy", profile: "Diego" },
+    { title: "VENTANNI", file: "songs/track-478.mp3", artist: "Måneskin", profile: "Diego" },
+    { title: "siLLy cUp rMx", file: "songs/track-479.mp3", artist: "bloodyfox", profile: "Diego" },
+    { title: "CAZZO DI KILO (feat. MUERO)", file: "songs/track-482.mp3", artist: "Pepe, MUERO", profile: "Diego" },
+    { title: "Addio xx", file: "songs/track-483.mp3", artist: "nayt", profile: "Diego" },
+    { title: "fuck 3x", file: "songs/track-484.mp3", artist: "thasup", profile: "Diego" },
 
 ];
 
@@ -449,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.218";
+  const APP_VERSION = "6.220";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
