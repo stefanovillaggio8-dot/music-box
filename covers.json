@@ -440,12 +440,12 @@
     "date": "2026-10-13T13:02:18.798Z"
   },
   "gianlucagrignanilamiastoriatraleditafeatannalisa": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/527a0535358097f5aa010a598c9edaa7/1000x1000-000000-80-0-0.jpg",
+    "cover": "copertine/track-71.jpg",
     "title": "La Mia Storia Tra Le Dita",
     "artist": "Gianluca Grignani",
     "album": "Destinazione Paradiso",
-    "source": "Deezer",
-    "date": "2026-10-13T13:02:22.322Z"
+    "source": "Deezer+ locale",
+    "date": "2026-10-16T00:41:19.689Z"
   },
   "thasupdimmichece": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/ccf057fd82fa51e4bb6e90f360d66f88/1000x1000-000000-80-0-0.jpg",
@@ -456,12 +456,12 @@
     "date": "2026-10-14T20:22:01.460Z"
   },
   "frahquintaleneitrenilanotte": {
-    "cover": "https://cdn-images.dzcdn.net/images/cover/fa2f80dd360907c161739f316acf019b/1000x1000-000000-80-0-0.jpg",
+    "cover": "copertine/track-73.jpg",
     "title": "Nei treni la notte (feat. Frah Quintale)",
-    "artist": "Coez",
+    "artist": "frah quintale",
     "album": "From The Rooftop 2",
-    "source": "Deezer",
-    "date": "2026-10-14T23:25:07.382Z"
+    "source": "Deezer+ locale",
+    "date": "2026-10-16T00:41:22.412Z"
   },
   "thasupdimmichec": {
     "cover": "https://cdn-images.dzcdn.net/images/cover/ccf057fd82fa51e4bb6e90f360d66f88/1000x1000-000000-80-0-0.jpg",
@@ -1014,5 +1014,13 @@
     "album": "",
     "source": "YouTube",
     "date": "2026-10-16T00:35:00.752Z"
+  },
+  "gianlucagrignanilamiastoriatraleditafeatannalisa2": {
+    "cover": "copertine/track-71.jpg",
+    "title": "La Mia Storia Tra Le Dita",
+    "artist": "Gianluca Grignani",
+    "album": "Destinazione Paradiso",
+    "source": "Deezer+ locale",
+    "date": "2026-10-16T00:41:19.689Z"
   }
 }
