@@ -2,9 +2,35 @@
  "nascosti": [
   "b-track-1",
   "b-track-24",
-  "b-track-65"
+  "b-track-65",
+  "b-track-71"
  ],
  "preferiti": [],
  "miei": {},
- "rinomini": {}
+ "rinomini": {
+  "b-track-68": {
+   "title": "siLLy cUp",
+   "artist": "thasup"
+  },
+  "b-track-72": {
+   "title": "HO SBAGLIATO ANCORA",
+   "artist": "Chiello"
+  },
+  "b-track-75": {
+   "title": "stupido",
+   "artist": "massimo pericolo"
+  },
+  "b-track-67": {
+   "title": "carusi do sud",
+   "artist": "l'elfo"
+  },
+  "b-track-1": {
+   "title": "SOTTOGONNA",
+   "artist": "BLANCO"
+  },
+  "b-track-73": {
+   "title": "nei treni la notte",
+   "artist": "frah quintale"
+  }
+ }
 }
