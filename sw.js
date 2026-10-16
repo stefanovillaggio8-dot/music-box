@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6215";
+const CACHE = "spotifynonavraiimieisoldi-v6216";
 const CORE = [
   "./",
   "./index.html",
@@ -236,6 +236,21 @@ const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-245.mp3",
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-249.mp3",
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-250.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-251.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-252.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-253.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-254.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-255.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-256.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-257.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-258.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-259.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-260.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-261.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-263.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-264.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-265.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-262.mp3",
 ];
 
 /* PRIMA, a ogni aggiornamento, scaricavo TUTTE le canzoni (161 MB) sul

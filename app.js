@@ -225,6 +225,21 @@
     { title: "Mentre Tutto Score", file: "songs/track-245.mp3", artist: "Negromaro" },
     { title: "La prima volta", file: "songs/track-249.mp3", artist: "Negromaro" },
     { title: "we fell in love in october", file: "songs/track-250.mp3", artist: "girl in red" },
+    { title: "Malo Tebya (Hardstyle Remix)", file: "songs/track-251.mp3", artist: "Zyzz" },
+    { title: "Part Of Me (Hardstyle Remix)", file: "songs/track-252.mp3", artist: "Katy Perry" },
+    { title: "Judas (Hardstyle Remix)", file: "songs/track-253.mp3", artist: "Lady Gaga" },
+    { title: "I'm 20 (In Honour of We Go Jim Finale)", file: "songs/track-254.mp3", artist: "Cold Suhou" },
+    { title: "Middle of the Night (Dom Livez Hardstyle Remix)", file: "songs/track-255.mp3", artist: "Kaskade" },
+    { title: "I'm So Lucky (Hardstyle)", file: "songs/track-256.mp3", artist: "Lucky Twice" },
+    { title: "Middle of the Night (Dom Livez Remix)", file: "songs/track-257.mp3", artist: "Elley Duhe" },
+    { title: "Set Fire To The Rain (Hardstyle Remix)", file: "songs/track-258.mp3", artist: "Adele" },
+    { title: "Last Friday Night (Hardstyle Remix)", file: "songs/track-259.mp3", artist: "Katy Perry, Zyzz" },
+    { title: "I Kissed a Girl (Hardstyle)", file: "songs/track-260.mp3", artist: "Katy Perry" },
+    { title: "I Love You So (Jumpstyle Slowed)", file: "songs/track-261.mp3", artist: "YMRTHK" },
+    { title: "Black Widow (Hardstyle Remix)", file: "songs/track-263.mp3", artist: "Iggy Azalea, Rita Ora" },
+    { title: "Rolling In The Deep (Hardstyle Remix)", file: "songs/track-264.mp3", artist: "Adele" },
+    { title: "Blank Space (Hardstyle)", file: "songs/track-265.mp3", artist: "Taylor Swift" },
+    { title: "TiK ToK (Hardstyle Remix)", file: "songs/track-262.mp3", artist: "Katy Perry" },
 ];
 
   const PALETTE = [
@@ -236,7 +251,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.215";
+  const APP_VERSION = "6.216";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
