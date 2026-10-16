@@ -141,7 +141,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.210";
+  const APP_VERSION = "6.211";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -770,6 +770,19 @@ function _originaleDi(id) {
         "quindi i nomi che cambi e le preferenze si perdono. Apri l'app NON in privata " +
         "(solo dal collegamento normale) e tutto si salva da solo.";
       document.body.appendChild(b);
+    } catch (e) { /* noop */ }
+  }
+
+  /* Accende la voce del menu quando il download automatico e' attivo. */
+  function _disegnaScaricaDaSolo() {
+    try {
+      const b = $("btnScaricaDaSolo");
+      if (!b) return;
+      const acceso = LS.get("mb.scaricaDaSolo", "si") === "si";
+      b.classList.toggle("on", acceso);
+      b.title = acceso
+        ? "Accesa: le canzoni nuove che ascolti si scaricano da sole (con un tetto di spazio)"
+        : "Spenta: le canzioni nuove non si scaricano da sole";
     } catch (e) { /* noop */ }
   }
 
@@ -7890,12 +7903,38 @@ $("fabMenu").addEventListener("click", (e) => {
     try {
       if (!brano || !brano.url || !("caches" in window)) return;
       if (offlineBusy) return;
+      /* Ste: "ma cosi' non occupa spazio nel telefono?". Si', e per questo
+         adesso si puo' spegnere del tutto, e comunque non si passa oltre un
+         tetto: ogni canzone e' circa 4-5 MB, e con il tetto sotto si ferma
+         prima di riempire il telefono. I dati del telefono non li spendo
+         quando sono sui dati mobili (se il browser lo sa dirlo). */
+      if (LS.get("mb.scaricaDaSolo", "si") !== "si") return;
+      const connessione = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      const tipo = connessione && connessione.effectiveType ? connessione.type || connessione.effectiveType : "";
+      const suiDati = /^(cellular|2g|3g|4g)$/i.test(String(tipo)) ||
+        (connessione && connessione.saveData === true);
+      if (suiDati) return;
       const cache = await appCache();
       if (!cache) return;
       const gia = await cache.match(brano.url);
       if (gia) return;
-      /* cacheTrack usa il segnale di interruzione comune, quindi per un
-         download fuori programma gli presto il mio e poi gli ridò il suo. */
+      /* Non supero il tetto di spazio. */
+      const tetto = Number(LS.get("mb.tettoScarica", "500")) || 500;
+      try {
+        if (navigator.storage && navigator.storage.estimate) {
+          const stima = await navigator.storage.estimate();
+          const usato = Number((stima && stima.usage) || 0) / (1024 * 1024);
+          if (usato >= tetto) {
+            if (!_avvisoTetto) {
+              _avvisoTetto = true;
+              toast("Ho smesso di scaricare da solo: lo spazio e' arrivato a " +
+                Math.round(usato) + " MB. Puoi cambiare il tetto o liberare spazio " +
+                "dal menu Altro.", 8000);
+            }
+            return;
+          }
+        }
+      } catch (e) { /* il browser non dice: vado avanti */ }
       const mio = offlineAbort;
       const controller = new AbortController();
       offlineAbort = controller;
@@ -7906,6 +7945,7 @@ $("fabMenu").addEventListener("click", (e) => {
       }
     } catch (e) { /* se non si scarica, pazienza: la canzone suona lo stesso */ }
   }
+  let _avvisoTetto = false;
   async function cacheTrack(row, cache) {
     const url = row.track.url;
     row.state = "run";
@@ -8606,6 +8646,20 @@ $("selPlaylist").addEventListener("click", () => { _selezionaAggiungiPlaylist();
 $("selSolo").addEventListener("click", () => { _selezionaSoloInPlaylist(); });
 $("selElimina").addEventListener("click", () => { _selezionaElimina(); });
   $("selScarica").addEventListener("click", () => { _scaricaSelezionati(); });
+  /* Ste: "ma cosi' non occupa spazio nel telefono?". Interruttore per
+     accendere e spegnere il download automatico delle canzoni nuove, e la
+     riga si accende come le altre del menu quando e' attivo. */
+  try {
+    $("btnScaricaDaSolo").addEventListener("click", () => {
+      _chiudiAltro();
+      const acceso = LS.get("mb.scaricaDaSolo", "si") === "si";
+      LS.set("mb.scaricaDaSolo", acceso ? "no" : "si");
+      toast(acceso
+        ? "Ora non scarico piu' da sole le canzoni nuove"
+        : "Ora scarico da sola le canzoni nuove (con un tetto di spazio)");
+    });
+    _disegnaScaricaDaSolo();
+  } catch (e) { /* noop */ }
 $("selAnnulla").addEventListener("click", () => { _chiudiSelezione(); });
 
 $("btnProfile").addEventListener("click", openProfile);
