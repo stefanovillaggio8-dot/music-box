@@ -141,7 +141,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.205";
+  const APP_VERSION = "6.206";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3867,13 +3867,22 @@ function _prossimaCasuale(lista) {
   }
   /* La canzone che sta suonando non e' piu' "fresca". */
   if (currentId) _casualeFresche.delete(currentId);
-  const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
-  if (!rimaste.length) {
-    _casualeFresche = new Set(lista.map((t) => t.id));
-    return Math.floor(Math.random() * lista.length);
+const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
+    if (!rimaste.length) {
+      _casualeFresche = new Set(lista.map((t) => t.id));
+      return Math.floor(Math.random() * lista.length);
+    }
+    /* Ste: "lo shuffle funziona?". Qui c'era un difetto: il numero casuale
+       stava DENTRO la ricerca, quindi veniva rilanciato a ogni canzone
+       esaminata e il confronto era sempre con un candidato diverso. Quando
+       non capitava nessuna uguaglianza la ricerca dava -1, e la riproduzione
+       casuale ripartiva sempre dall'inizio: si sentiva la stessa canzone
+       oppure sembrava che non funzionasse.
+
+       Ora il brano lo scelgo una volta sola, e poi cerco quello. */
+    const scelto = rimaste[Math.floor(Math.random() * rimaste.length)];
+    return lista.findIndex((t) => t.id === scelto.id);
   }
-  return lista.findIndex((t) => t.id === rimaste[Math.floor(Math.random() * rimaste.length)].id);
-}
 
   function nextIndex() {
     const lista = _listaPerIlSeguito();
