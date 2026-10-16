@@ -141,7 +141,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.208";
+  const APP_VERSION = "6.209";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7934,6 +7934,43 @@ $("fabMenu").addEventListener("click", (e) => {
     }
   }
 
+  /* Ste: "quando premo seleziona spunta anche scarica".
+   Nella barra di selezione c'era "Aggiungi a playlist", "Solo nella
+   playlist" ed "Elimina", ma non c'era "Scarica": e cosi' per tenere offline
+   un gruppo di canzoni dovevi scaricarle una alla volta. Ora c'e' anche
+   questo, e scarica SOLO quelle che hai scelto. */
+  async function _scaricaSelezionati() {
+    if (!_inSelezione || !_quantiScelti()) return;
+    const cache = await appCache();
+    if (!cache) { toast("Offline non disponibile qui"); return; }
+    const scelte = [..._scelti];
+    const righe = (await scanOffline()).filter((r) => scelte.indexOf(r.id) >= 0 && r.state !== "pronto");
+    if (!righe.length) { toast("Le canzoni che hai scelto sono gia' pronte offline"); return; }
+    if (offlineBusy) { if (offlineAbort) offlineAbort.abort(); offlineBusy = false; }
+    offlineBusy = true;
+    offlineAbort = new AbortController();
+    toast("Scarico " + righe.length + (righe.length === 1 ? " canzone" : " canzoni") + "…", 4000);
+    let fatto = 0;
+    let idx = 0;
+    const worker = async () => {
+      for (;;) {
+        const i = idx++;
+        if (i >= righe.length) return;
+        await cacheTrack(righe[i], cache);
+        fatto++;
+        _aggiornaBadgeFalliti();
+      }
+    };
+    const n = Math.min(2, righe.length);
+    const runners = [];
+    for (let k = 0; k < n; k++) runners.push(worker());
+    await Promise.all(runners);
+    offlineBusy = false;
+    offlineAbort = null;
+    const errori = righe.filter((r) => r.state === "err").length;
+    toast(errori ? "Fatto con " + errori + " errori" : "Fatto: " + fatto + " canzoni pronte offline");
+    render();
+  }
   async function downloadAllOffline() {
     if (offlineBusy) {
       if (offlineAbort) offlineAbort.abort();
@@ -8533,6 +8570,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
 $("selPlaylist").addEventListener("click", () => { _selezionaAggiungiPlaylist(); });
 $("selSolo").addEventListener("click", () => { _selezionaSoloInPlaylist(); });
 $("selElimina").addEventListener("click", () => { _selezionaElimina(); });
+  $("selScarica").addEventListener("click", () => { _scaricaSelezionati(); });
 $("selAnnulla").addEventListener("click", () => { _chiudiSelezione(); });
 
 $("btnProfile").addEventListener("click", openProfile);

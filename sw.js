@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6208";
+const CACHE = "spotifynonavraiimieisoldi-v6209";
 const CORE = [
   "./",
   "./index.html",
@@ -136,6 +136,11 @@ const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-135.mp3",
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-136.mp3",
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-138.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-68.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-69.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-71.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-72.mp3",
+  "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-76.mp3",
 ];
 
 /* PRIMA, a ogni aggiornamento, scaricavo TUTTE le canzoni (161 MB) sul
