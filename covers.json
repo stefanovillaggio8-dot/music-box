@@ -1022,5 +1022,757 @@
     "album": "Destinazione Paradiso",
     "source": "Deezer+ locale",
     "date": "2026-10-16T00:41:19.689Z"
+  },
+  "coezfacciouncasino": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f5a3ceebd3d9df879aeaef4bdbffddc5/1000x1000-000000-80-0-0.jpg",
+    "title": "Faccio un casino",
+    "artist": "Coez",
+    "album": "Faccio un casino",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:53.834Z"
+  },
+  "coezlamusicanonce": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f5a3ceebd3d9df879aeaef4bdbffddc5/1000x1000-000000-80-0-0.jpg",
+    "title": "La musica non c'è",
+    "artist": "Coez",
+    "album": "Faccio un casino",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:54.214Z"
+  },
+  "coezlatuacanzone": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/fdf90a015c9ab8078ec4af19fecc5659/1000x1000-000000-80-0-0.jpg",
+    "title": "La tua canzone",
+    "artist": "Coez",
+    "album": "È sempre bello",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:56.554Z"
+  },
+  "coezeyomamma": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f5a3ceebd3d9df879aeaef4bdbffddc5/1000x1000-000000-80-0-0.jpg",
+    "title": "E yo mamma",
+    "artist": "Coez",
+    "album": "Faccio un casino",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:56.926Z"
+  },
+  "coezqualcosadigrande": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/1b6679bfc4902af7d71403845d22af0f/1000x1000-000000-80-0-0.jpg",
+    "title": "Qualcosa di grande",
+    "artist": "Coez",
+    "album": "1998",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:57.196Z"
+  },
+  "coezesemprebello": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/fdf90a015c9ab8078ec4af19fecc5659/1000x1000-000000-80-0-0.jpg",
+    "title": "È sempre bello",
+    "artist": "Coez",
+    "album": "È sempre bello",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:57.623Z"
+  },
+  "coezdomenica": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/fdf90a015c9ab8078ec4af19fecc5659/1000x1000-000000-80-0-0.jpg",
+    "title": "Domenica",
+    "artist": "Coez",
+    "album": "È sempre bello",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:57.841Z"
+  },
+  "frahquintale8miliardidipersone": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/c43dbb59ebd5a16aff13305bbea6838b/1000x1000-000000-80-0-0.jpg",
+    "title": "8 miliardi di persone",
+    "artist": "Frah Quintale",
+    "album": "Regardez moi",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:58.047Z"
+  },
+  "modaquelsorrisoinvolto": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/5cd12de6d0f07d8dd81795e2f08d3050/1000x1000-000000-80-0-0.jpg",
+    "title": "Quel sorriso in volto",
+    "artist": "Modà",
+    "album": "Quel sorriso in volto",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:58.371Z"
+  },
+  "modacomeunpittore": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3e985cc598fcf742c321f90ba5448ebc/1000x1000-000000-80-0-0.jpg",
+    "title": "Come un pittore",
+    "artist": "Modà",
+    "album": "Viva i Romantici",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:58.783Z"
+  },
+  "coezlelucidellacitta": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f5a3ceebd3d9df879aeaef4bdbffddc5/1000x1000-000000-80-0-0.jpg",
+    "title": "Le luci della città",
+    "artist": "Coez",
+    "album": "Faccio un casino",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:59.190Z"
+  },
+  "coezleparolepiugrandi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/47a6229c1149d763ff9316fdcf5bf2d5/1000x1000-000000-80-0-0.jpg",
+    "title": "Le parole più grandi",
+    "artist": "Coez",
+    "album": "Niente che non va",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:59.602Z"
+  },
+  "modatappetodifragole": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3e985cc598fcf742c321f90ba5448ebc/1000x1000-000000-80-0-0.jpg",
+    "title": "Tappeto di fragole",
+    "artist": "Modà",
+    "album": "Viva i Romantici",
+    "source": "Deezer",
+    "date": "2026-10-16T13:54:59.889Z"
+  },
+  "modaarrivera": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3e985cc598fcf742c321f90ba5448ebc/1000x1000-000000-80-0-0.jpg",
+    "title": "Arriverà",
+    "artist": "Modà",
+    "album": "Viva i Romantici",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:00.289Z"
+  },
+  "modabiancaatzeitiamomanonpossodirlofeatbiancaatzei": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/7c231aaa2bd76d9afca0541b214a3026/1000x1000-000000-80-0-0.jpg",
+    "title": "Ti amo ma non posso dirlo (feat. Bianca Atzei)",
+    "artist": "Modà, Bianca Atzei",
+    "album": "Ti amo ma non posso dirlo (feat. Bianca Atzei)",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:01.977Z"
+  },
+  "modalanotte": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3e985cc598fcf742c321f90ba5448ebc/1000x1000-000000-80-0-0.jpg",
+    "title": "La notte",
+    "artist": "Modà",
+    "album": "Viva i Romantici",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:02.286Z"
+  },
+  "modaperunanotteinsieme": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/244306121d6f1b16297c39df4347e959/1000x1000-000000-80-0-0.jpg",
+    "title": "Per una notte insieme",
+    "artist": "Modà",
+    "album": "Testa o croce",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:02.601Z"
+  },
+  "modaenoncemaiunafine": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
+    "title": "E non c'è mai una fine",
+    "artist": "Modà",
+    "album": "Passione maledetta",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:02.871Z"
+  },
+  "modanonemaiabbastanza": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971d913f2b1398f3b7f451f14c6d1fef/1000x1000-000000-80-0-0.jpg",
+    "title": "Non è mai abbastanza",
+    "artist": "Modà",
+    "album": "Gioia...non è mai abbastanza!",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:03.171Z"
+  },
+  "modadoveesempresole": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971d913f2b1398f3b7f451f14c6d1fef/1000x1000-000000-80-0-0.jpg",
+    "title": "Dove è sempre sole",
+    "artist": "Modà",
+    "album": "Gioia...non è mai abbastanza!",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:03.487Z"
+  },
+  "modasesipotessenonmorire": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971d913f2b1398f3b7f451f14c6d1fef/1000x1000-000000-80-0-0.jpg",
+    "title": "Se si potesse non morire",
+    "artist": "Modà",
+    "album": "Gioia...non è mai abbastanza!",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:03.870Z"
+  },
+  "modalasciami": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/89866b8d40913139d7f92ae4e59c3cfd/1000x1000-000000-80-0-0.jpg",
+    "title": "Lasciami",
+    "artist": "Modà",
+    "album": "8 CANZONI",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:04.265Z"
+  },
+  "modapassionemaledetta": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/acbdb07054f786c6efd6b4c1f00120c4/1000x1000-000000-80-0-0.jpg",
+    "title": "Passione maledetta",
+    "artist": "Modà",
+    "album": "Passione maledetta",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:04.621Z"
+  },
+  "modaquellicomeme": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/d65dc432be7f82cbd254e007277754e3/1000x1000-000000-80-0-0.jpg",
+    "title": "Quelli come me",
+    "artist": "Modà",
+    "album": "Quelli come me",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:05.021Z"
+  },
+  "modasalvami": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3e985cc598fcf742c321f90ba5448ebc/1000x1000-000000-80-0-0.jpg",
+    "title": "Salvami",
+    "artist": "Modà",
+    "album": "Viva i Romantici",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:05.322Z"
+  },
+  "modaquellochenontihodetto": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3ef95e9374a575840b8706fb9afbdbbe/1000x1000-000000-80-0-0.jpg",
+    "title": "Quello che non ti ho detto",
+    "artist": "Modà",
+    "album": "Il meglio dei Modà, 2000 - 2011 (I primi grandi romantici successi)",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:05.737Z"
+  },
+  "jovanottimifidodite": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/fad867fcdbf62ed94f6ac75ea8f42ed4/1000x1000-000000-80-0-0.jpg",
+    "title": "Mi Fido Di Te",
+    "artist": "Jovanotti",
+    "album": "Buon Sangue",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:07.395Z"
+  },
+  "jovanottiate": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/ceb211dd778d63a73f1892498de47828/1000x1000-000000-80-0-0.jpg",
+    "title": "A Te",
+    "artist": "Jovanotti",
+    "album": "Safari",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:07.687Z"
+  },
+  "jovanottibaciamiancoraradioedit": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f6837ded5fcf7f241ec45e7e397155c5/1000x1000-000000-80-0-0.jpg",
+    "title": "Baciami Ancora - Radio Edit",
+    "artist": "Jovanotti",
+    "album": "Baciami Ancora",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:07.974Z"
+  },
+  "jovanottiragazzamagica": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/57bb77a6f251099fd550a044f3fc7ee7/1000x1000-000000-80-0-0.jpg",
+    "title": "Ragazza Magica",
+    "artist": "Jovanotti",
+    "album": "Lorenzo 2015 CC.",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:08.242Z"
+  },
+  "charliecharlesnaytautoritratto": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/13eea165d3228d93ef6715b90e1a4268/1000x1000-000000-80-0-0.jpg",
+    "title": "Autoritratto",
+    "artist": "Charlie Charles, nayt",
+    "album": "La bella confusione",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:08.538Z"
+  },
+  "naytcertebugie": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+    "title": "Certe bugie",
+    "artist": "nayt",
+    "album": "Lettera Q",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:08.813Z"
+  },
+  "nayt3dseneva": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/dda746027e0384f3b77045390a25f046/1000x1000-000000-80-0-0.jpg",
+    "title": "se ne va",
+    "artist": "nayt, 3D",
+    "album": "HABITAT",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:09.060Z"
+  },
+  "modanontidimentico": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/c84cc03ff23c035721c46157ef7d55a2/1000x1000-000000-80-0-0.jpg",
+    "title": "Non ti dimentico",
+    "artist": "Modà",
+    "album": "Non ti dimentico",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:09.432Z"
+  },
+  "jovanottiletaschepienedisassi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/39dc1d53ed01bff4ece320535a5e90b2/1000x1000-000000-80-0-0.jpg",
+    "title": "Le Tasche Piene Di Sassi",
+    "artist": "Jovanotti",
+    "album": "Ora (Special Super Deluxe Box)",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:09.668Z"
+  },
+  "nayt3dtuttok": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/40653e3ba8ab1dd1592bf222bf9ca99b/1000x1000-000000-80-0-0.jpg",
+    "title": "Tuttok",
+    "artist": "nayt, 3D",
+    "album": "DOOM",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:11.287Z"
+  },
+  "nayt3ddimenticare": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/846686ec912f9be96e7964764e2f71f9/1000x1000-000000-80-0-0.jpg",
+    "title": "Dimenticare",
+    "artist": "nayt, 3D",
+    "album": "HABITAT : tour",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:11.606Z"
+  },
+  "naytcosechenonvuoisentirtidire": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/40653e3ba8ab1dd1592bf222bf9ca99b/1000x1000-000000-80-0-0.jpg",
+    "title": "Cose che non vuoi sentirti dire",
+    "artist": "nayt",
+    "album": "DOOM",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:11.843Z"
+  },
+  "naytprimache": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/6e91191f7da9fbc63c8937bc36b145ae/1000x1000-000000-80-0-0.jpg",
+    "title": "Prima che",
+    "artist": "nayt",
+    "album": "Prima che",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:12.159Z"
+  },
+  "naytdiabbatterelemura18donne": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+    "title": "Di abbattere le mura (18 Donne)",
+    "artist": "nayt",
+    "album": "Lettera Q",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:12.499Z"
+  },
+  "nayt3dmortale": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/40653e3ba8ab1dd1592bf222bf9ca99b/1000x1000-000000-80-0-0.jpg",
+    "title": "Mortale",
+    "artist": "nayt, 3D",
+    "album": "DOOM",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:12.827Z"
+  },
+  "naytbadvibes": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/b8b0db6d53fb06ecec3f62b9fc137227/1000x1000-000000-80-0-0.jpg",
+    "title": "Bad vibes",
+    "artist": "nayt",
+    "album": "Lettera Q",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:13.163Z"
+  },
+  "naytcinascicimuori": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/28ee4d658910ad3189cb8ac3c22c48dc/1000x1000-000000-80-0-0.jpg",
+    "title": "Ci nasci, ci muori",
+    "artist": "nayt",
+    "album": "io Individuo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:13.477Z"
+  },
+  "naytpuntodincontro": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/28ee4d658910ad3189cb8ac3c22c48dc/1000x1000-000000-80-0-0.jpg",
+    "title": "Punto d'incontro",
+    "artist": "nayt",
+    "album": "io Individuo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:13.818Z"
+  },
+  "naytforte": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/28ee4d658910ad3189cb8ac3c22c48dc/1000x1000-000000-80-0-0.jpg",
+    "title": "Forte",
+    "artist": "nayt",
+    "album": "io Individuo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:14.153Z"
+  },
+  "nayt3dnoidue": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/33ab368540e244dc5a50d70c3f2f80df/1000x1000-000000-80-0-0.jpg",
+    "title": "Noi due",
+    "artist": "nayt, 3D",
+    "album": "Raptus",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:14.477Z"
+  },
+  "naytesisterepiudime": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/28ee4d658910ad3189cb8ac3c22c48dc/1000x1000-000000-80-0-0.jpg",
+    "title": "Esistere (più di me)",
+    "artist": "nayt",
+    "album": "io Individuo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:14.913Z"
+  },
+  "naytesserenoi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/28ee4d658910ad3189cb8ac3c22c48dc/1000x1000-000000-80-0-0.jpg",
+    "title": "Essere noi",
+    "artist": "nayt",
+    "album": "io Individuo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:17.947Z"
+  },
+  "nayt3dlulluacousticversion": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/846686ec912f9be96e7964764e2f71f9/1000x1000-000000-80-0-0.jpg",
+    "title": "Lullu - Acoustic Version",
+    "artist": "nayt, 3D",
+    "album": "HABITAT : tour",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:19.358Z"
+  },
+  "kidyugiamelie": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Amelie",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:21.848Z"
+  },
+  "kidyugiperilsangueversato": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Per il Sangue Versato",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:22.134Z"
+  },
+  "kidyugipertechelotto": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Per te che Lotto",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:22.431Z"
+  },
+  "kidyugidavideegolia": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Davide e Golia",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:22.694Z"
+  },
+  "nayt3dcosacontadavvero": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/dda746027e0384f3b77045390a25f046/1000x1000-000000-80-0-0.jpg",
+    "title": "cosa conta davvero",
+    "artist": "nayt, 3D",
+    "album": "HABITAT",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:23.069Z"
+  },
+  "naytcanovaparaguai": {
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/3c/53/b0/3c53b0eb-d5f8-ca87-a6f5-45bb6c6b525e/dj.xlaliiod.jpg/600x600bb.jpg",
+    "title": "Paraguai",
+    "artist": "nayt, Canova",
+    "album": "Paraguai - Single",
+    "source": "Apple Music",
+    "date": "2026-10-16T13:55:23.659Z"
+  },
+  "yungestmoonstarthasupgrazieadio": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/7f3103531a9fd09999ddfbfa8dcbf0ed/1000x1000-000000-80-0-0.jpg",
+    "title": "gRAZie A Dio",
+    "artist": "yungest Moonstar, thasup",
+    "album": "sFaCioLaTe miXTaPe",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:26.469Z"
+  },
+  "kidyugijolly": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/0fe892ceaa7501cadb9eeeeea1812a2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Jolly",
+    "artist": "Kid Yugi",
+    "album": "Anche gli Eroi Muoiono",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:26.985Z"
+  },
+  "fabriziodeandrelaguerradipiero": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/020587a730c9607c8ccadb1834e9e962/1000x1000-000000-80-0-0.jpg",
+    "title": "La guerra di Piero",
+    "artist": "Fabrizio De André",
+    "album": "Volume 3",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:29.185Z"
+  },
+  "fabriziodeandreboccadirosa": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/20c375772b8401dcf508af68d494792f/1000x1000-000000-80-0-0.jpg",
+    "title": "Bocca di rosa",
+    "artist": "Fabrizio De André",
+    "album": "Volume 1",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:29.486Z"
+  },
+  "fabriziodeandreviadelcampo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/20c375772b8401dcf508af68d494792f/1000x1000-000000-80-0-0.jpg",
+    "title": "Via del campo",
+    "artist": "Fabrizio De André",
+    "album": "Volume 1",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:29.749Z"
+  },
+  "fabriziodeandrelacanzonedellamoreperduto": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/221ca65ba6449dbc2b9a368cd6a91c57/1000x1000-000000-80-0-0.jpg",
+    "title": "La Canzone Dell'Amore Perduto",
+    "artist": "Fabrizio De André",
+    "album": "La Canzone Di Marinella",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:30.076Z"
+  },
+  "fabriziodeandreilpescatore": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/04919242829b4930c7df3baffd29d6b9/1000x1000-000000-80-0-0.jpg",
+    "title": "Il pescatore",
+    "artist": "Fabrizio De André",
+    "album": "In Direzione Ostinata e Contraria",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:30.329Z"
+  },
+  "luchetiamo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/a1fe5ed8ea564c284e10eb09255bb2e3/1000x1000-000000-80-0-0.jpg",
+    "title": "Ti Amo",
+    "artist": "Luchè",
+    "album": "Malammore",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:30.680Z"
+  },
+  "luchesferaebbastasimbalaruemiamivicefeatsferaebbastasimbalarue": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/2401f30e689cbaa836233f2244edd66b/1000x1000-000000-80-0-0.jpg",
+    "title": "Miami Vice (feat. Sfera Ebbasta, Simba La Rue)",
+    "artist": "Luchè, Sfera Ebbasta, Simba La Rue",
+    "album": "Il mio lato peggiore",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:32.219Z"
+  },
+  "luchestar": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/93112be916dea22d1fb578f2d83aef2b/1000x1000-000000-80-0-0.jpg",
+    "title": "Star",
+    "artist": "Luchè",
+    "album": "Potere (Il Giorno Dopo)",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:35.333Z"
+  },
+  "luchetornadame": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/849d2b2ecf216c406a9ff7b3570af5d2/1000x1000-000000-80-0-0.jpg",
+    "title": "Torna Da Me",
+    "artist": "Luchè",
+    "album": "Potere",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:35.557Z"
+  },
+  "luchedablondelostessoviso": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/a1fe5ed8ea564c284e10eb09255bb2e3/1000x1000-000000-80-0-0.jpg",
+    "title": "Lo Stesso Viso",
+    "artist": "Luchè, Da Blonde",
+    "album": "Malammore",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:36.687Z"
+  },
+  "calcuttacosamimanchiafare": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/05269ce274b068ff973c108a51d833b1/1000x1000-000000-80-0-0.jpg",
+    "title": "Cosa mi manchi a fare",
+    "artist": "Calcutta",
+    "album": "Mainstream +",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:37.010Z"
+  },
+  "calcuttatutti": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/f398d3c8cab3ef9dabe07b20509d7b4b/1000x1000-000000-80-0-0.jpg",
+    "title": "Tutti",
+    "artist": "Calcutta",
+    "album": "RELAX",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:37.235Z"
+  },
+  "calcuttatakagiketraoroscopofeattakagiketra": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/05269ce274b068ff973c108a51d833b1/1000x1000-000000-80-0-0.jpg",
+    "title": "Oroscopo (feat. Takagi & Ketra)",
+    "artist": "Calcutta, Takagi & Ketra",
+    "album": "Mainstream +",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:38.637Z"
+  },
+  "calcuttaparacetamolo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/585a009d1abcbab1cd207f12a5af5324/1000x1000-000000-80-0-0.jpg",
+    "title": "Paracetamolo",
+    "artist": "Calcutta",
+    "album": "Paracetamolo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:38.840Z"
+  },
+  "negromaromeraviglioso": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/52865a4cb29454b4e0ebf7fb347d93d5/1000x1000-000000-80-0-0.jpg",
+    "title": "Meraviglioso",
+    "artist": "Negromaro",
+    "album": "Attraverso Sanremo",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:41.111Z"
+  },
+  "negromarolimmenso": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/727349d4c95073924e2ef6a9e2ea6afd/1000x1000-000000-80-0-0.jpg",
+    "title": "L'immenso",
+    "artist": "Negromaro",
+    "album": "L'immenso per voi",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:42.115Z"
+  },
+  "negromarosolo3min": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/74b3c9c0b2481780cd4de5025b690ef5/1000x1000-000000-80-0-0.jpg",
+    "title": "Solo 3 min",
+    "artist": "Negromaro",
+    "album": "Unplugged Tour Setlist",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:43.214Z"
+  },
+  "negromarosoloperte": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/74b3c9c0b2481780cd4de5025b690ef5/1000x1000-000000-80-0-0.jpg",
+    "title": "Solo Per Te",
+    "artist": "Negromaro",
+    "album": "Unplugged Tour Setlist",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:44.314Z"
+  },
+  "rinogaetanoamanoamano": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/2eb4e24584b2eecdf3fa26f85822d187/1000x1000-000000-80-0-0.jpg",
+    "title": "A mano a mano",
+    "artist": "Rino Gaetano",
+    "album": "A mano a mano Molella remix",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:44.609Z"
+  },
+  "rinogaetanomailcieloesemprepiublu": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/6682c53240809eb3ec336598e631ef77/1000x1000-000000-80-0-0.jpg",
+    "title": "Ma il cielo è sempre più blu",
+    "artist": "Rino Gaetano",
+    "album": "La Storia",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:44.936Z"
+  },
+  "tizianoferroilregalopiugrande": {
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/4f/1b/fc/4f1bfc11-f319-3f4d-f420-a28ab3934898/14UMGIM52536.rgb.jpg/600x600bb.jpg",
+    "title": "Il Regalo Più Grande",
+    "artist": "Tiziano Ferro",
+    "album": "TZN: The Best Of",
+    "source": "Apple Music",
+    "date": "2026-10-16T13:55:47.192Z"
+  },
+  "maxpezzaliluniversotrannenoi": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/1461d617dcff0f1257a2f39354843937/1000x1000-000000-80-0-0.jpg",
+    "title": "L'universo tranne noi",
+    "artist": "Max Pezzali",
+    "album": "L'universo tranne noi",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:47.518Z"
+  },
+  "artie5ivefwss25freestyle": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/a43393712d211585ec939779d2f4289e/1000x1000-000000-80-0-0.jpg",
+    "title": "FW/SS25 (Freestyle)",
+    "artist": "Artie 5ive",
+    "album": "LA BELLAVITA",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:47.835Z"
+  },
+  "modasonogiasolo": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/3e985cc598fcf742c321f90ba5448ebc/1000x1000-000000-80-0-0.jpg",
+    "title": "Sono già solo",
+    "artist": "Modà",
+    "album": "Viva i Romantici",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:48.379Z"
+  },
+  "modacuoreeventofeattazenda": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/971d913f2b1398f3b7f451f14c6d1fef/1000x1000-000000-80-0-0.jpg",
+    "title": "Cuore e vento (feat. Tazenda)",
+    "artist": "Modà",
+    "album": "Gioia...non è mai abbastanza!",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:48.709Z"
+  },
+  "jovanottisosolochelavita": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/47c816afa83e048eca9fcaebb6cf5ef3/1000x1000-000000-80-0-0.jpg",
+    "title": "So solo che la vita",
+    "artist": "Jovanotti",
+    "album": "NIUIORCHERUBINI (BROOKLYN STUDIO, JOVA SESSION 25)",
+    "source": "Deezer",
+    "date": "2026-10-16T13:55:48.976Z"
+  },
+  "coezgemellotaciturno": {
+    "cover": "copertine/track-141.jpg",
+    "title": "Taciturno",
+    "artist": "Coez, Gemello",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:55:54.396Z"
+  },
+  "modafavola": {
+    "cover": "copertine/track-171.jpg",
+    "title": "Favola",
+    "artist": "Modà",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:55:59.448Z"
+  },
+  "jovanottifixyou": {
+    "cover": "copertine/track-183.jpg",
+    "title": "FIX YOU",
+    "artist": "Jovanotti",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:02.287Z"
+  },
+  "nayt3dtuttiilrestoenoi": {
+    "cover": "copertine/track-198.jpg",
+    "title": "Tutti il resto è noi",
+    "artist": "nayt, 3D",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:05.110Z"
+  },
+  "thasupcoezilyfeatcoez": {
+    "cover": "copertine/track-203.jpg",
+    "title": "ily (feat. Coez)",
+    "artist": "thasup, Coez",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:08.349Z"
+  },
+  "thasupmstar": {
+    "cover": "copertine/track-211.jpg",
+    "title": "m@star",
+    "artist": "thasup",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:11.461Z"
+  },
+  "kidyugiilferrodiechov": {
+    "cover": "copertine/track-215.jpg",
+    "title": "Il Ferro di Echov",
+    "artist": "Kid Yugi",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:14.517Z"
+  },
+  "kidyugigeologyterrifeatgeology": {
+    "cover": "copertine/track-224.jpg",
+    "title": "Terri (feat. Geology)",
+    "artist": "Kid Yugi, Geology",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:17.370Z"
+  },
+  "negromaroestate": {
+    "cover": "copertine/track-232.jpg",
+    "title": "Estate",
+    "artist": "Negromaro",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:20.302Z"
+  },
+  "tizianoferrotiscatterounafoto": {
+    "cover": "copertine/track-241.jpg",
+    "title": "Tiscatterò una foto",
+    "artist": "Tiziano Ferro",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:23.160Z"
+  },
+  "negromaromentretuttoscore": {
+    "cover": "copertine/track-245.jpg",
+    "title": "Mentre Tutto Score",
+    "artist": "Negromaro",
+    "album": "",
+    "source": "YouTube",
+    "date": "2026-10-16T13:56:26.071Z"
   }
 }
