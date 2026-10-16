@@ -224,6 +224,8 @@
     { title: "Cuore e vento (feat. Tazenda)", file: "songs/track-247.mp3", artist: "Modà" },
     { title: "So solo che la vita", file: "songs/track-248.mp3", artist: "Jovanotti" },
     { title: "Mentre Tutto Score", file: "songs/track-245.mp3", artist: "Negromaro" },
+    { title: "La prima volta", file: "songs/track-249.mp3", artist: "Negromaro" },
+    { title: "we fell in love in october", file: "songs/track-250.mp3", artist: "girl in red" },
 ];
 
   const PALETTE = [
@@ -235,7 +237,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.212";
+  const APP_VERSION = "6.213";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
