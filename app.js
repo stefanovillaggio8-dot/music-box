@@ -141,7 +141,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.209";
+  const APP_VERSION = "6.210";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3808,6 +3808,10 @@ function _ripristinaNascosti() {
     // La pausa generata dal cambio di sorgente non e' una pausa dell'utente.
     audio._mbCambioBrano = true;
     audio.src = t.url;
+    /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
+       dentro la canzone non deve aspettare la rete. Vedi la nota sopra
+       _scaricaDaSolaSeServe. */
+    try { _scaricaDaSolaSeServe(t); } catch (e) { /* noop */ }
     audio.volume = volumePct / 100;
     setHud();
     updateProgressUI(0, 0);
@@ -7871,6 +7875,37 @@ $("fabMenu").addEventListener("click", (e) => {
     return rows;
   }
 
+  /* Ste: "nelle canzoni nuove non mi fa skippare avanti: la canzone si sente e
+   va avanti, ma non mi lascia spostarmi dentro, e dopo un po si sistema".
+   Il motivo e' che quelle canzoni le sento in arrivo dalla rete: per spostare
+   la barra dentro il brano aspetto il pezzo che deve arrivare, e si sente un
+   ritardo.
+
+   Con il worker adesso va gia' meglio quando il brano e' gia' scaricato. Ma
+   le canzoni NUOVE non lo sono mai, quindi qui le scarico da sole mentre le
+   ascolto: e' quello che fa la funzione "Scarica" che ho aggiunto, ma senza
+   che tu debba toccare niente. Dalla seconda volta che la senti, lo
+   spostamento e' immediato. */
+  async function _scaricaDaSolaSeServe(brano) {
+    try {
+      if (!brano || !brano.url || !("caches" in window)) return;
+      if (offlineBusy) return;
+      const cache = await appCache();
+      if (!cache) return;
+      const gia = await cache.match(brano.url);
+      if (gia) return;
+      /* cacheTrack usa il segnale di interruzione comune, quindi per un
+         download fuori programma gli presto il mio e poi gli ridò il suo. */
+      const mio = offlineAbort;
+      const controller = new AbortController();
+      offlineAbort = controller;
+      try {
+        await cacheTrack({ track: { url: brano.url }, state: "todo", label: "0%", el: null }, cache);
+      } finally {
+        offlineAbort = mio;
+      }
+    } catch (e) { /* se non si scarica, pazienza: la canzone suona lo stesso */ }
+  }
   async function cacheTrack(row, cache) {
     const url = row.track.url;
     row.state = "run";

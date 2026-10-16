@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6209";
+const CACHE = "spotifynonavraiimieisoldi-v6210";
 const CORE = [
   "./",
   "./index.html",
@@ -265,11 +265,54 @@ async function findCachedMusic(url) {
   return null;
 }
 
+/* Se il brano e' gia' salvato, lo uso subito: e' quello che rende
+     istantaneo lo spostamento dentro la canzone. */
+async function rispostaDallaCache(cached, range) {
+  if (!range) return cached;
+  const match = /^bytes=(\d*)-(\d*)$/i.exec(range.trim());
+  if (!match || (!match[1] && !match[2])) return cached;
+  const blob = await cached.blob();
+  const size = blob.size;
+  let start;
+  let end;
+  if (!match[1]) {
+    start = Math.max(0, size - Number(match[2]));
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] ? Math.min(Number(match[2]), size - 1) : size - 1;
+  }
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start >= size || end < start) {
+    return new Response(null, {
+      status: 416,
+      headers: { "Content-Range": "bytes */" + size }
+    });
+  }
+  const part = blob.slice(start, end + 1, blob.type || "audio/mpeg");
+  return new Response(part, {
+    status: 206,
+    headers: {
+      "Content-Type": blob.type || "audio/mpeg",
+      "Content-Length": String(part.size),
+      "Content-Range": "bytes " + start + "-" + end + "/" + size,
+      "Accept-Ranges": "bytes"
+    }
+  });
+}
+
 async function cachedMusicResponse(event) {
+  const range = event.request.headers.get("range");
+  const gia = await findCachedMusic(event.request.url);
+  /* Brano gia' in mano: lo uso subito, senza aspettare la rete. */
+  if (gia) {
+    try {
+      return await rispostaDallaCache(gia, range);
+    } catch (e) { /* se non riesco, vado in rete */ }
+  }
   try {
     const response = await fetch(event.request);
-    /* Memorizzo solo risposte complete (200), mai un frammento audio 206. */
-    if (response && response.status === 200 && !event.request.headers.has("range") && response.type !== "opaque") {
+    /* Salvo solo risposte complete (200), mai un pezzo audio (206). */
+    if (response && response.status === 200 && !range && response.type !== "opaque") {
       event.waitUntil(
         caches.open(CACHE).then((cache) => cache.put(new Request(event.request.url), response.clone()))
           .catch(() => {})
@@ -277,51 +320,16 @@ async function cachedMusicResponse(event) {
     }
     return response;
   } catch (error) {
-    const cached = await findCachedMusic(event.request.url);
-    if (!cached) {
+    if (!gia) {
       return new Response("Brano non disponibile offline", {
         status: 503,
         headers: { "Content-Type": "text/plain; charset=utf-8" }
       });
     }
-
-    const range = event.request.headers.get("range");
-    if (!range) return cached;
-
-    /* Safari/WKWebView puo' chiedere solo una parte del file (Range). La cache
-       contiene il brano intero: ricostruisco una risposta 206 valida per iOS. */
-    const match = /^bytes=(\d*)-(\d*)$/i.exec(range.trim());
-    if (!match || (!match[1] && !match[2])) return cached;
-    const blob = await cached.blob();
-    const size = blob.size;
-    let start;
-    let end;
-    if (!match[1]) {
-      const suffixLength = Number(match[2]);
-      start = Math.max(0, size - suffixLength);
-      end = size - 1;
-    } else {
-      start = Number(match[1]);
-      end = match[2] ? Math.min(Number(match[2]), size - 1) : size - 1;
-    }
-    if (!Number.isFinite(start) || !Number.isFinite(end) || start >= size || end < start) {
-      return new Response(null, {
-        status: 416,
-        headers: { "Content-Range": "bytes */" + size }
-      });
-    }
-    const part = blob.slice(start, end + 1, blob.type || "audio/mpeg");
-    return new Response(part, {
-      status: 206,
-      headers: {
-        "Content-Type": blob.type || "audio/mpeg",
-        "Content-Length": String(part.size),
-        "Content-Range": "bytes " + start + "-" + end + "/" + size,
-        "Accept-Ranges": "bytes"
-      }
-    });
+    return await rispostaDallaCache(gia, range);
   }
 }
+
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
