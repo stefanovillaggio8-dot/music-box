@@ -79,8 +79,8 @@
     { title: "Spettri", file: "songs/track-77.mp3", artist: "nayt, 3D" },
     { title: "Memoria di uno sconfitto, pt. 2", file: "songs/track-78.mp3", artist: "Mostro" },
     { title: "G&V", file: "songs/track-79.mp3", artist: "ivanBì" },
-    { title: "Da zero", file: "songs/track-80.mp3", artist: "DOOM" },
-    { title: "Gli occhi della tigre", file: "songs/track-81.mp3", artist: "nayt, 3D" },
+    { title: "Da zero", file: "songs/track-80.mp3", artist: "nayt" },
+    { title: "Gli occhi della tigre", file: "songs/track-81.mp3", artist: "nayt" },
     { title: "Bullet Ballet (feat. Artie 5ive)", file: "songs/track-87.mp3", artist: "Kid Yugi, Artie 5ive" },
     { title: "SOGNO AMERICANO", file: "songs/track-88.mp3", artist: "Artie 5ive" },
     { title: "Niente Canzoni D'Amore", file: "songs/track-89.mp3", artist: "Elodie" },
@@ -127,6 +127,8 @@
     { title: "romantici", file: "songs/track-131.mp3", artist: "Tommaso Paradiso" },
     { title: "RUGGINE (con Chiello, Coez)", file: "songs/track-133.mp3", artist: "MACE, chiello, Coez" },
     { title: "TUTTO FUORI CONTROLLO (con Franco 126, Kid Yugi, IzI)", file: "songs/track-134.mp3", artist: "MACE, Kid Yugi, IzI, Franco126" },
+    { title: "DAVVERODAVVERO", file: "songs/track-135.mp3", artist: "Artie 5ive", profile: "Ste" },
+    { title: "Frosinone", file: "songs/track-136.mp3", artist: "Calcutta", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -138,7 +140,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.201";
+  const APP_VERSION = "6.202";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
