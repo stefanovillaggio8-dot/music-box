@@ -2230,21 +2230,35 @@ li.appena-aggiunto {
 .selezione-conto { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
       .selezione-azioni { display: flex; flex-wrap: wrap; gap: 7px; }
 
-     /* Ste: "quando seleziono, le opzioni occupano troppo spazio, metti una
-        sola opzione... piccola tipo in basso a destra, che se la premo
-        appaiono le scelte da fare". Quindi una riga sola col contatore e un
-        tasto "Opzioni" in basso a destra; le scelte compaiono sotto quando
-        lo preme, e restano chiuse finche' non lo richiude. */
+     /* Ste: "le opzioni occupano troppo spazio, metti una sola opzione piccola
+      in basso a destra che se la premo appaiono le scelte" e poi, vedendo la
+      foto: "cosi' occupa comunque tanto quello spazio nero senza nulla".
+      Quindi la barra e' UNA riga sola: contatore, "Opzioni" e X, il piu'
+      compatto possibile. Le scelte compaiono sotto solo se preme "Opzioni". */
+      .selezione-barra {
+        padding: 6px 8px 7px;
+        border-radius: 12px;
+      }
       .selezione-riga {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 10px;
+        gap: 8px;
+      }
+      .selezione-conto {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .selezione-opzioni {
+        flex: 0 0 auto;
         margin-left: auto;
-        min-height: 40px;
-        padding: 8px 18px;
+        min-height: 36px;
+        padding: 6px 16px;
         font: inherit;
         font-size: 13px;
         font-weight: 700;
@@ -2259,11 +2273,12 @@ li.appena-aggiunto {
         background: rgba(255, 255, 255, .22);
       }
       .selezione-anno {
-        min-width: 40px;
-        min-height: 40px;
-        padding: 0 12px;
+        flex: 0 0 auto;
+        min-width: 36px;
+        min-height: 36px;
+        padding: 0 10px;
         font: inherit;
-        font-size: 20px;
+        font-size: 19px;
         line-height: 1;
         color: #fff;
         background: rgba(255, 255, 255, .06);
@@ -2275,8 +2290,8 @@ li.appena-aggiunto {
         display: flex;
         flex-direction: column;
         gap: 7px;
-        margin-top: 10px;
-        padding-top: 10px;
+        margin-top: 8px;
+        padding-top: 8px;
         border-top: 1px solid rgba(255, 255, 255, .1);
       }
       .selezione-menu[hidden] { display: none; }

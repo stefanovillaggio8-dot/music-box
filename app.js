@@ -8499,15 +8499,32 @@ $("fabMenu").addEventListener("click", (e) => {
     let copiate = 0;
     const giaPresenti = [];
     const nonCopiabili = [];
+    /* Ste: "non mi dice quando e' duplicato o no". Prima guardavo SOLO la lista
+       delle copie fatte col pulsante: ma una canzone che ho gia' per conto mio
+       non e' in quella lista, e me la copiava lo stesso. Adesso guardo tutto
+       quello che l'account di destinazione ha gia': sia le copie, sia le
+       canzoni che sono sue, e confronto anche per nome (non solo per id).
+       Due brani diversi possono avere lo stesso file, e due nomi diversi
+       possono essere la stessa canzone. */
+    const idGia = new Set(_mieiCopiatiDi(destinazione));
+    const chiaviGia = new Set();
+    for (const b of BUILTIN) {
+      if ((b.profile || DEFAULT_PROFILE) !== destinazione) continue;
+      if (b.file) idGia.add("b-" + String(b.file).replace(/^.*\//, "").replace(/\.mp3$/i, ""));
+      chiaviGia.add(normKey(b.artist || "") + "|" + normKey(b.title || ""));
+    }
     for (const id of scelte) {
       const t = tracks.find((x) => x.id === id);
       if (!t) { nonCopiabili.push(id); continue; }
       const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
       if (!numero) { nonCopiabili.push(t.title); continue; }
-      const gia = _mieiCopiatiDi(destinazione).has("b-track-" + numero);
-      if (gia) { giaPresenti.push(t.title); continue; }
+      if (idGia.has("b-track-" + numero) ||
+          chiaviGia.has(normKey(t.artist || "") + "|" + normKey(t.title || ""))) {
+        giaPresenti.push(t.title);
+        continue;
+      }
       const ok = await _portaNellaMiaLibreria(t, destinazione);
-      if (ok) copiate++;
+      if (ok) { copiate++; chiaviGia.add(normKey(t.artist || "") + "|" + normKey(t.title || "")); }
       else giaPresenti.push(t.title);
     }
 
@@ -8520,9 +8537,16 @@ $("fabMenu").addEventListener("click", (e) => {
     const parti = [];
     if (copiate) parti.push(copiate + (copiate === 1 ? " canzone portata" : " canzoni portate") + " in " + destinazione);
     if (giaPresenti.length) {
-      parti.push(giaPresenti.length === 1
-        ? '"' + giaPresenti[0] + '" c\'era gia\' in ' + destinazione + ", non l\'ho messa due volte"
-        : giaPresenti.length + " erano gia\' in " + destinazione + ", non le ho messe due volte");
+      /* Nomi scomodi dentro una riga sola sul telefono: se sono in molti dico
+         il numero, se sono in pochi li scrivo, cosi' Ste sa WHICH canzoni ha
+         gia' e non deve andare a cercarle. */
+      const nomi = giaPresenti.slice(0, 4).join(", ");
+      const resto = giaPresenti.length > 4 ? " e altre " + (giaPresenti.length - 4) : "";
+      parti.push((giaPresenti.length === 1
+        ? '"' + nomi + '"'
+        : nomi + resto) + (destinazione === profile
+          ? " le avevi gia' tu, non l'ho rimessa"
+          : " le avevi gia' in " + destinazione + ", non l'ho rimessa"));
     }
     if (nonCopiabili.length) parti.push(nonCopiabili.length + " non trasportabili");
     if (!parti.length) parti.push("Non ho copiato niente");
