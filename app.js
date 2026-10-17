@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.242";
+  const APP_VERSION = "6.243";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3399,6 +3399,17 @@ a.addEventListener("pause", () => {
     const eDelSistema = document.hidden || dalRitorno < 4000;
     if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
+      return;
+    }
+    /* Ste: "adesso non si riapre piu' da zero ma si blocca soltanto la canzone".
+       Qui c'era una corsa: al ritorno l'app controllava se la musica stesse
+       suonando (e in quel momento stava ancora suonando, perche' il telefono
+       ferma l'audio un attimo DOPO), diceva "tutto bene" e smetteva di
+       guardare. Poi arrivava la pausa del sistema, e nessuno riprovava a
+       rimetterla su: restava ferma per sempre.
+       Adesso, quando la pausa e' del sistema, richiamo io la ripresa. */
+    if (a === audio && _vuoleSuonare && !a.ended && eDelSistema) {
+      try { setTimeout(() => _riprendiSeInAttesa(), 400); } catch (e) { /* noop */ }
     }
     syncPlayUI();
     updateMediaSession();
