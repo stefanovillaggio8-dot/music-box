@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.222";
+  const APP_VERSION = "6.223";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1571,6 +1571,22 @@ if (nuovo) r.v = (r.v || 0) + 1;
     html += '<div class="stat-item"><span>Ultimo avvio del tasto</span><b>' + (_diagAvanti.dove || "ancora premuto") + "</b></div>";
     html += '<div class="stat-item"><span>Errore</span><b>' + (_diagAvanti.errore || "nessuno") + "</b></div>";
     html += "</div>";
+    html += "<h4>I filtri, uno per uno</h4>";
+    html += '<div class="stat-lista">';
+    html += '<div class="stat-item"><span>Profilo aperto</span><b>' + _diagAvanti.profilo + "</b></div>";
+    html += '<div class="stat-item"><span>1. dopo nascosti / playlist</span><b>' + _diagAvanti.passo1 + "</b></div>";
+    html += '<div class="stat-item"><span>2. dopo filtro profilo</span><b>' + _diagAvanti.passo2 + "</b></div>";
+    html += '<div class="stat-item"><span>3. dopo preferiti / mai ascoltati</span><b>' + _diagAvanti.passo3 + "</b></div>";
+    html += '<div class="stat-item"><span>4. dopo playlist aperta</span><b>' + _diagAvanti.passo4 + "</b></div>";
+    html += '<div class="stat-item"><span>Suona anche le canzoni degli altri</span><b>' + _diagAvanti.suonaTutti + "</b></div>";
+    html += '<div class="stat-item"><span>Playlist aperta</span><b>' + _diagAvanti.playlistAttiva + "</b></div>";
+    html += '<div class="stat-item"><span>Brani "solo in playlist"</span><b>' + _diagAvanti.soloInPlaylist + "</b></div>";
+    html += '<div class="stat-item"><span>Brani nascosti</span><b>' + _diagAvanti.nascosti + "</b></div>";
+    html += '<div class="stat-item"><span>Solo preferiti</span><b>' + _diagAvanti.favOnly + "</b></div>";
+    html += '<div class="stat-item"><span>Solo mai ascoltati</span><b>' + _diagAvanti.soloMai + "</b></div>";
+    html += '<div class="stat-item"><span>Ricerca attiva</span><b>' + _diagAvanti.ricerca + "</b></div>";
+    html += "</div>";
+    html += '<p class="step-hint">La riga che scende a 0 indica il problema.</p>';
     html += '<p class="step-hint">Premi avanti, poi torna qui: queste righe ti dicono se la coda &egrave; vuota o se qualcosa &egrave; andato storto.</p>';
 
     $("statsCorpo").innerHTML = html;
@@ -4295,13 +4311,40 @@ const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
    coda e lo mostro dentro la pagina (vedi il riquadro "Perche' non va avanti").
    Se una riga dice 0 brani in coda, o un brano dopo che non esiste, o un
    errore, quello e' il motivo. */
-const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "" };
+const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "", profilo: "", playlistAttiva: "", soloInPlaylist: 0, nascosti: 0, suonaTutti: "?", favOnly: "no", soloMai: "no", ricerca: "", passo1: 0, passo2: 0, passo3: 0, passo4: 0 };
 function _aggiornaDiagAvanti(dove) {
   try {
     _diagAvanti.libreria = Array.isArray(tracks) ? tracks.length : 0;
-    let coda = -1;
-    try { coda = visibleTracks(true).length; } catch (e) { coda = -1; }
-    _diagAvanti.coda = coda;
+    _diagAvanti.profilo = String(profile);
+    _diagAvanti.playlistAttiva = _playlistAttiva ? String(_playlistAttiva) : "(nessuna)";
+    _diagAvanti.soloInPlaylist = (_soloInPlaylist && _soloInPlaylist.size) || 0;
+    _diagAvanti.nascosti = (hiddenTracks && hiddenTracks.size) || 0;
+    try { _diagAvanti.suonaTutti = _suonaTutti() ? "si" : "no"; } catch (e) { _diagAvanti.suonaTutti = "?"; }
+    _diagAvanti.favOnly = favOnly ? "si" : "no";
+    _diagAvanti.soloMai = soloMaiAscoltati ? "si" : "no";
+    _diagAvanti.ricerca = query ? String(query) : "(nessuna)";
+
+    /* Ricostruisco i filti di visibleTracks(true) uno per uno, contando quanti
+       brani restano dopo ciascuno: cosi' si vede QUALE filtro li azzera. */
+    const inPl = _soloInPlaylist || new Set();
+    let a = tracks.filter((t) => !hiddenTracks.has(t.id) && (!inPl.has(t.id) || Boolean(_playlistAttiva)));
+    _diagAvanti.passo1 = a.length;
+    if (!_diagAvanti.suonaTutti.match(/^si$/)) {
+      const miei = _mieiCopiati();
+      a = a.filter((t) => (t.profile || DEFAULT_PROFILE) === profile || miei.has(t.id));
+    }
+    _diagAvanti.passo2 = a.length;
+    if (favOnly) a = a.filter((t) => favorites.has(t.id));
+    if (soloMaiAscoltati) a = a.filter((t) => _ascoltoDi(t).s <= 0);
+    _diagAvanti.passo3 = a.length;
+    if (_playlistAttiva) {
+      const pl = _playlistCercata(_playlistAttiva);
+      if (pl && pl.id) a = a.filter((t) => (pl.tracks || []).includes(t.id));
+      else a = [];
+    }
+    _diagAvanti.passo4 = a.length;
+    _diagAvanti.coda = a.length;
+
     const dopo = idBranoA(nextIndex());
     _diagAvanti.dopo = dopo || "(niente)";
     _diagAvanti.esiste = !!dopo && !!tracks.find((x) => x.id === dopo);
