@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.224";
+  const APP_VERSION = "6.225";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1579,6 +1579,8 @@ if (nuovo) r.v = (r.v || 0) + 1;
     html += '<div class="stat-item"><span>3. dopo preferiti / mai ascoltati</span><b>' + _diagAvanti.passo3 + "</b></div>";
     html += '<div class="stat-item"><span>4. dopo playlist aperta</span><b>' + _diagAvanti.passo4 + "</b></div>";
     html += '<div class="stat-item"><span>Suona anche le canzoni degli altri</span><b>' + _diagAvanti.suonaTutti + "</b></div>";
+    html += '<div class="stat-item"><span>Vedi anche le canzoni degli altri</span><b>' + _diagAvanti.vedoTutti + "</b></div>";
+    html += '<div class="stat-item"><span>Brani che hai copiato nella tua libreria</span><b>' + _diagAvanti.mieiCopiati + "</b></div>";
     html += '<div class="stat-item"><span>Playlist aperta</span><b>' + _diagAvanti.playlistAttiva + "</b></div>";
     html += '<div class="stat-item"><span>Brani "solo in playlist"</span><b>' + _diagAvanti.soloInPlaylist + "</b></div>";
     html += '<div class="stat-item"><span>Brani nascosti</span><b>' + _diagAvanti.nascosti + "</b></div>";
@@ -4323,7 +4325,7 @@ const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
    coda e lo mostro dentro la pagina (vedi il riquadro "Perche' non va avanti").
    Se una riga dice 0 brani in coda, o un brano dopo che non esiste, o un
    errore, quello e' il motivo. */
-const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "", profilo: "", playlistAttiva: "", soloInPlaylist: 0, nascosti: 0, suonaTutti: "?", favOnly: "no", soloMai: "no", ricerca: "", passo1: 0, passo2: 0, passo3: 0, passo4: 0 };
+const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "", profilo: "", playlistAttiva: "", soloInPlaylist: 0, nascosti: 0, suonaTutti: "?", vedoTutti: "?", mieiCopiati: 0, favOnly: "no", soloMai: "no", ricerca: "", passo1: 0, passo2: 0, passo3: 0, passo4: 0 };
 function _aggiornaDiagAvanti(dove) {
   try {
     _diagAvanti.libreria = Array.isArray(tracks) ? tracks.length : 0;
@@ -4332,6 +4334,8 @@ function _aggiornaDiagAvanti(dove) {
     _diagAvanti.soloInPlaylist = (_soloInPlaylist && _soloInPlaylist.size) || 0;
     _diagAvanti.nascosti = (hiddenTracks && hiddenTracks.size) || 0;
     try { _diagAvanti.suonaTutti = _suonaTutti() ? "si" : "no"; } catch (e) { _diagAvanti.suonaTutti = "?"; }
+    try { _diagAvanti.vedoTutti = _vedoTutti() ? "si" : "no"; } catch (e) { _diagAvanti.vedoTutti = "?"; }
+    try { _diagAvanti.mieiCopiati = _mieiCopiati().size; } catch (e) { _diagAvanti.mieiCopiati = -1; }
     _diagAvanti.favOnly = favOnly ? "si" : "no";
     _diagAvanti.soloMai = soloMaiAscoltati ? "si" : "no";
     _diagAvanti.ricerca = query ? String(query) : "(nessuna)";
