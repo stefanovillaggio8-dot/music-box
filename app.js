@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.241";
+  const APP_VERSION = "6.242";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4417,6 +4417,7 @@ function playNext() {
     /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
        altrimenti chi aspetta di riavviare la musica mi riaccende. */
     _vuoleSuonare = false;
+    _segnaIntenzioneSono(false);
     _silenziDiFila = 0;
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
@@ -4425,8 +4426,56 @@ function playNext() {
     syncPlayUI();
   }
 
+  /* Ste: "riapro l'app e si ferma la canzone, senza che io tocchi nulla".
+     Sul telefono, quando l'app resta un po' in secondo piano, il sistema
+     BUTTA VIA la pagina e alla riapertura riparte da capo. La musica si
+     ferma e nessuno la riavvia, perche' la domanda "Ste stava ascoltando o no"
+     stava solo nella memoria della pagina, che ho appena perso.
+
+     Qui la domanda la metto sul telefono, e al riavvio la ritrovo. */
+  function _segnaIntenzioneSono(vuole) {
+    try { LS.set("mb.suonava", vuole ? "si" : "no"); } catch (e) { /* noop */ }
+  }
+  function _avevoIntesoDiAscoltare() {
+    try { return LS.get("mb.suonava", "no") === "si"; } catch (e) { return false; }
+  }
+
+  /* Riaccende la musica dopo che la pagina e' stata ricaricata dal telefono. */
+  let _ripresaGiaProvata = false;
+  function _riprendiDopoRicarica() {
+    if (_ripresaGiaProvata) return;
+    if (!_avevoIntesoDiAscoltare()) return;
+    if (!currentId || !audio) return;
+    _ripresaGiaProvata = true;
+    /* Il telefono spesso vieta di far partire l'audio da solo: non e' un
+       errore, e' una regola sua. Riprovo qualche volta e poi, al primo tocco,
+       riparto sicuramente. */
+    let tentativi = 0;
+    const prova = () => {
+      if (!currentId || !audio) return;
+      if (!audio.paused) return;
+      if (tentativi++ > 6) return;
+      audio.play().then(() => {
+        _vuoleSuonare = true;
+        syncPlayUI();
+        updateMediaSession();
+      }).catch(() => { setTimeout(prova, 1200); });
+    };
+    setTimeout(prova, 700);
+    try {
+      ["pointerdown", "touchstart", "keydown"].forEach((ev) => {
+        window.addEventListener(ev, () => {
+          if (currentId && audio && audio.paused && _avevoIntesoDiAscoltare()) {
+            _riproduciVolontaria();
+          }
+        }, { passive: true, once: false });
+      });
+    } catch (e) { /* noop */ }
+  }
+
   function _riproduciVolontaria() {
     _vuoleSuonare = true;
+    _segnaIntenzioneSono(true);
     _ultimoScorrimento = Date.now();
     _silenziDiFila = 0;
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
@@ -10963,6 +11012,9 @@ await loadAll();
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Quando sono a casa prendo la chiave dal computer invece di chiederla. */
   setTimeout(() => { _prendiChiaveDalComputer(); }, 2500);
+  /* Se il telefono aveva buttato via la pagina, e Ste stava ascoltando,
+     provo a rimettere su la musica da solo. */
+  try { setTimeout(() => { _riprendiDopoRicarica(); }, 2000); } catch (e) { /* noop */ }
   /* Spotify: se il telefono e' appena tornato dall'accesso, la finestra si
      apre da sola. E se Ste aveva lasciato una lista in coda aspettando che il
      computer si accendesse, la mando appena il computer c'e'. */
