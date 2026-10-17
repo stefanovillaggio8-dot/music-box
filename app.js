@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.243";
+  const APP_VERSION = "6.244";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -507,14 +507,16 @@
   const fileInput = $("fileInput");
 
   let audio = null;
-/* Quando la pagina e' andata in secondo piano. Serve a distinguere la pausa
-   che faccio io da quella che fa il sistema mettendo l'app in fondo: e' la
-   differenza fra "Ste ha premuto pausa" e "il telefono mi ha messo in pausa",
-   e senza questa differenza la musica non ripartiva al ritorno. */
+/* Quando la pagina e' andata in secondo piano, e quando e' tornata visibile.
+   Servono entrambe: la pausa che fa il sistema arriva mentre l'app e' in
+   secondo piano, OPPURE esattamente nell'istante in cui la riapri. Bastava
+   guardare solo la prima, e infatti funzionava solo se tornavi subito. */
 let _nascostoIl = 0;
+let _visibileIl = 0;
 try {
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) _nascostoIl = Date.now();
+    else _visibileIl = Date.now();
   });
 } catch (e) { /* noop */ }
   let tracks = [];
@@ -3396,7 +3398,12 @@ a.addEventListener("pause", () => {
       la pausa e' del sistema e io devo ripartire al ritorno. Se invece arriva
       con la pagina ben visibile da un po', la tratto come pausa vera. */
     const dalRitorno = Date.now() - _nascostoIl;
-    const eDelSistema = document.hidden || dalRitorno < 4000;
+    const daVisibile = Date.now() - _visibileIl;
+    /* La pausa del sistema arriva o mentre l'app e' in secondo piano, oppure
+       nell'istante esatto in cui la riapri. Per questo guardo DUE momenti: da
+       quanto e' nascosta e da quanto e' visibile. Prima guardavo solo il primo,
+       e percio' funzionava solo se tornavi entro pochi secondi. */
+    const eDelSistema = document.hidden || dalRitorno < 4000 || (daVisibile >= 0 && daVisibile < 2500);
     if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
       return;
@@ -3406,8 +3413,7 @@ a.addEventListener("pause", () => {
        suonando (e in quel momento stava ancora suonando, perche' il telefono
        ferma l'audio un attimo DOPO), diceva "tutto bene" e smetteva di
        guardare. Poi arrivava la pausa del sistema, e nessuno riprovava a
-       rimetterla su: restava ferma per sempre.
-       Adesso, quando la pausa e' del sistema, richiamo io la ripresa. */
+       rimetterla su: restava ferma per sempre. */
     if (a === audio && _vuoleSuonare && !a.ended && eDelSistema) {
       try { setTimeout(() => _riprendiSeInAttesa(), 400); } catch (e) { /* noop */ }
     }
@@ -4451,35 +4457,48 @@ function playNext() {
     try { return LS.get("mb.suonava", "no") === "si"; } catch (e) { return false; }
   }
 
-  /* Riaccende la musica dopo che la pagina e' stata ricaricata dal telefono. */
-  let _ripresaGiaProvata = false;
+  /* Riaccende la musica dopo che la pagina e' stata ricaricata dal telefono.
+
+     Ste: "l'app si aggiorna appena apro e per questo si blocca". Quando esce
+     una versione nuova, il telefono riapre l'app con la pagina nuova e la
+     musica resta ferma. Prima pero' provavo UNA volta sola, 2 secondi dopo
+     l'apertura: ma la libreria in quel momento non e' ancora pronta (ci mette
+     qualche secondo), e la l'avevo brani vuoti, quindi rinunciavo e non
+     ripartiva piu'. Adesso insisto per un po': aspetto i brani e poi riparto. */
+  let _ripresaGiaRiuscita = false;
   function _riprendiDopoRicarica() {
-    if (_ripresaGiaProvata) return;
+    if (_ripresaGiaRiuscita) return;
     if (!_avevoIntesoDiAscoltare()) return;
-    if (!currentId || !audio) return;
-    _ripresaGiaProvata = true;
-    /* Il telefono spesso vieta di far partire l'audio da solo: non e' un
-       errore, e' una regola sua. Riprovo qualche volta e poi, al primo tocco,
-       riparto sicuramente. */
     let tentativi = 0;
     const prova = () => {
-      if (!currentId || !audio) return;
-      if (!audio.paused) return;
-      if (tentativi++ > 6) return;
-      audio.play().then(() => {
-        _vuoleSuonare = true;
-        syncPlayUI();
-        updateMediaSession();
-      }).catch(() => { setTimeout(prova, 1200); });
+      if (_ripresaGiaRiuscita) return;
+      if (!_avevoIntesoDiAscoltare()) return;
+      /* La libreria non e' ancora pronta: non e' un errore, riprovo dopo. */
+      if (!currentId || !audio || !tracks.length) {
+        if (tentativi++ < 20) setTimeout(prova, 800);
+        return;
+      }
+      if (!audio.paused) { _ripresaGiaRiuscita = true; return; }
+      if (tentativi++ < 20) {
+        audio.play().then(() => {
+          _ripresaGiaRiuscita = true;
+          _vuoleSuonare = true;
+          syncPlayUI();
+          updateMediaSession();
+        }).catch(() => { setTimeout(prova, 1000); });
+      }
     };
-    setTimeout(prova, 700);
+    setTimeout(prova, 500);
+    /* Appena arriva un tocco riparto sicuramente: il telefono vieta l'avvio
+       da solo, quindi se l'ha vietato aspetto che Ste tocchi qualcosa. */
     try {
       ["pointerdown", "touchstart", "keydown"].forEach((ev) => {
         window.addEventListener(ev, () => {
-          if (currentId && audio && audio.paused && _avevoIntesoDiAscoltare()) {
+          if (currentId && audio && audio.paused && _avevoIntesoDiAscoltare() && !_ripresaGiaRiuscita) {
             _riproduciVolontaria();
+            _ripresaGiaRiuscita = true;
           }
-        }, { passive: true, once: false });
+        }, { passive: true });
       });
     } catch (e) { /* noop */ }
   }
