@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.232";
+  const APP_VERSION = "6.233";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8554,6 +8554,38 @@ $("fabMenu").addEventListener("click", (e) => {
     try { renderProfiles(); } catch (e) { /* noop */ }
   }
 
+  /* Ste: "se eliminarlo solo dalla playlist o solo dalla libreria no?"
+
+     Questa e' l'azione che mancava: toglie le canzoni scelte dalle playlist e
+     le fa tornare visibili in libreria. E' il contrario esatto di
+     "Togli dalla libreria", che invece le nasconde e le lascia suonare solo li'
+     dentro. */
+  function _selezionaTogliDallaPlaylist() {
+    const ids = [..._scelti];
+    if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
+    let tolte = 0;
+    const nomi = new Set();
+    for (const id of ids) {
+      for (const pl of (playlists || [])) {
+        if (Array.isArray(pl.tracks) && pl.tracks.indexOf(id) >= 0) {
+          pl.tracks = pl.tracks.filter((x) => x !== id);
+          nomi.add(pl.name);
+          tolte++;
+        }
+      }
+      /* Smette anche di essere "solo in playlist": torna in libreria. */
+      _togliSoloInPlaylist(id);
+    }
+    _salvaSoloInPlaylist();
+    _salvaPlaylistCondivise();
+    _disegnaLinguettePlaylist();
+    _aggiornaBadgePlaylist();
+    _chiudiSelezione();
+    toast(tolte
+      ? "Tolte da " + [...nomi].join(", ") + ": ora le vedi di nuovo in libreria"
+      : "Queste canzoni non erano in nessuna playlist");
+  }
+
   async function downloadAllOffline() {
     if (offlineBusy) {
       if (offlineAbort) offlineAbort.abort();
@@ -9152,6 +9184,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
 });
 $("selPlaylist").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaAggiungiPlaylist(); });
 $("selSolo").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaSoloInPlaylist(); });
+$("selFuoriPl").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaTogliDallaPlaylist(); });
 $("selElimina").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaElimina(); });
    $("selScarica").addEventListener("click", () => { _chiudiMenuSelezione(); _scaricaSelezionati(); });
 $("selPorta").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaPortaNellaMia(); });
@@ -10466,8 +10499,7 @@ async function _selezionaSoloInPlaylist() {
   const ids = [..._scelti];
   if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
   const nomi = playlists.map((p) => p.name);
-  const testo = "Metti " + (ids.length === 1 ? "la canzone scelta" : ids.length + " canzioni scelte") +
-    " in una playlist, cosi' escono dalla libreria ma restano suonabili li' dentro." +
+  const testo = "Nascondile dalla libreria e mettile in una playlist: escono dalla libreria ma restano suonabili li' dentro." +
     (nomi.length
       ? "\n\nScrivi il nome della playlist:\n  " + nomi.join("\n  ") +
         "\n\nOppure un nome nuovo e la creo io."
@@ -10494,7 +10526,7 @@ async function _selezionaSoloInPlaylist() {
   _aggiornaBadgePlaylist();
   _salvaPlaylistCondivise();
   _chiudiSelezione();
-  toast("Sono dentro \"" + pl.name + "\" e non le vedi piu' in libreria");
+  toast("Tolte dalla libreria: le senti solo dentro \"" + pl.name + "\"");
 }
 
 async function _selezionaElimina() {
@@ -10503,8 +10535,10 @@ async function _selezionaElimina() {
   const si = await askConfirm(
     "Eliminare " + ids.length + (ids.length === 1 ? " canzone?" : " canzioni?"),
     "Le canzoni scelte spariscono davvero, dal sito e da ogni dispositivo.\n\n" +
+      "Se le vuoi tenere ma solo toglierle dalla libreria, usa\n" +
+      "\"Togli dalla libreria\" invece di questo.\n\n" +
       "Questa cosa non si può annullare.",
-    "Elimina"
+    "Elimina per sempre"
   );
   if (!si) return;
   for (const id of ids) {
