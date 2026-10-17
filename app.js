@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.225";
+  const APP_VERSION = "6.226";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1574,6 +1574,8 @@ if (nuovo) r.v = (r.v || 0) + 1;
     html += "<h4>I filtri, uno per uno</h4>";
     html += '<div class="stat-lista">';
     html += '<div class="stat-item"><span>Profilo aperto</span><b>' + _diagAvanti.profilo + "</b></div>";
+    html += '<div class="stat-item"><span>Brani tuoi</span><b>' + _diagAvanti.braniMiei + "</b></div>";
+    html += '<div class="stat-item"><span>Brani di altri (se interruttore spento devono essere 0)</span><b>' + _diagAvanti.braniAltrui + "</b></div>";
     html += '<div class="stat-item"><span>1. dopo nascosti / playlist</span><b>' + _diagAvanti.passo1 + "</b></div>";
     html += '<div class="stat-item"><span>2. dopo filtro profilo</span><b>' + _diagAvanti.passo2 + "</b></div>";
     html += '<div class="stat-item"><span>3. dopo preferiti / mai ascoltati</span><b>' + _diagAvanti.passo3 + "</b></div>";
@@ -4325,10 +4327,21 @@ const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
    coda e lo mostro dentro la pagina (vedi il riquadro "Perche' non va avanti").
    Se una riga dice 0 brani in coda, o un brano dopo che non esiste, o un
    errore, quello e' il motivo. */
-const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "", profilo: "", playlistAttiva: "", soloInPlaylist: 0, nascosti: 0, suonaTutti: "?", vedoTutti: "?", mieiCopiati: 0, favOnly: "no", soloMai: "no", ricerca: "", passo1: 0, passo2: 0, passo3: 0, passo4: 0 };
+const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "", profilo: "", braniMiei: 0, braniAltrui: 0, playlistAttiva: "", soloInPlaylist: 0, nascosti: 0, suonaTutti: "?", vedoTutti: "?", mieiCopiati: 0, favOnly: "no", soloMai: "no", ricerca: "", passo1: 0, passo2: 0, passo3: 0, passo4: 0 };
 function _aggiornaDiagAvanti(dove) {
   try {
     _diagAvanti.libreria = Array.isArray(tracks) ? tracks.length : 0;
+    /* Quanti di questi non sono miei: se l'interruttore "vedi anche le canzoni
+       degli altri" e' spento, questo numero deve essere 0. */
+    try {
+      let miei = 0, altrui = 0;
+      for (const t of (tracks || [])) {
+        if ((t.profile || DEFAULT_PROFILE) === profile) miei++;
+        else altrui++;
+      }
+      _diagAvanti.braniMiei = miei;
+      _diagAvanti.braniAltrui = altrui;
+    } catch (e) { _diagAvanti.braniMiei = -1; _diagAvanti.braniAltrui = -1; }
     _diagAvanti.profilo = String(profile);
     _diagAvanti.playlistAttiva = _playlistAttiva ? String(_playlistAttiva) : "(nessuna)";
     _diagAvanti.soloInPlaylist = (_soloInPlaylist && _soloInPlaylist.size) || 0;
