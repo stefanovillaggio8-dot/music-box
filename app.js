@@ -4248,19 +4248,34 @@ box.innerHTML = "";
      ma se un brano e' stato nascosto puoi riportarlo qui, dal menu del brano
      o del profilo. */
 function _ripristinaNascosti() {
-    const quanti = hiddenTracks.size;
-    if (!quanti) {
-      toast("Non ci sono brani nascosti");
-      return;
+      /* Ste: "delle canzoni nell'account di Diego che lui non ha messo... rimettile
+         se non ci sono". I brani nascosti si nascondevano per TUTTI gli account
+         (l'elenco e' uno solo), per cui una canzone di Diego spariva anche se
+         non l'aveva nascosta nessuno. E il pulsante rimetteva via TUTTI i
+         brani nascosti, anche quelli di altri: troppo, e poco utile.
+
+         Adesso rimette solo i brani nascosti che sono del profilo aperto, e
+         dice quanti ne rimette e quanti restano nascosti. */
+      if (!hiddenTracks.size) {
+        toast("Non ci sono brani nascosti");
+        return;
+      }
+      /* Gli id dei brani di questo profilo: sono quelli che l'app ha caricato. */
+      const miei = new Set(tracks.map((t) => t.id));
+      const daRimettere = [...hiddenTracks].filter((id) => miei.has(id));
+      if (!daRimettere.length) {
+        const altri = hiddenTracks.size;
+        toast("Nessun brano nascosto in questo profilo (" + altri + " in tutto, ma di altri account)");
+        return;
+      }
+      for (const id of daRimettere) hiddenTracks.delete(id);
+      saveCurrentState();
+      _salvaStatoCondiviso();
+      render();
+      const rimasti = hiddenTracks.size;
+      toast(daRimettere.length + (daRimettere.length === 1 ? " brano rimesso" : " brani rimessi") +
+        (rimasti ? " nella libreria di " + profile + " (" + rimasti + " nascosti negli altri account)" : ""));
     }
-    const messaggio = "Vuoi rimettere nella lista i " + quanti +
-      (quanti === 1 ? " brano nascosto?" : " brani nascosti?");
-    if (!confirm(messaggio)) return;
-    hiddenTracks = new Set();
-    saveCurrentState();
-    render();
-    toast("Brani rimessi nella lista");
-  }
 
   function bindLongPress(el, t) {
 
