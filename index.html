@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6227" />
+  <link rel="stylesheet" href="style.css?v=6228" />
 </head>
 <body>
   <header class="topbar">
@@ -164,6 +164,7 @@
             <button type="button" class="selezione-btn" id="selPlaylist">Aggiungi a playlist</button>
             <button type="button" class="selezione-btn" id="selSolo">Solo nella playlist</button>
             <button type="button" class="selezione-btn" id="selScarica">Scarica offline</button>
+            <button type="button" class="selezione-btn" id="selPorta">Porta nel mio account</button>
   <button type="button" class="selezione-btn pericolo" id="selElimina">Elimina</button>
             <button type="button" class="selezione-btn torna" id="selAnnulla">Annulla</button>
           </div>
@@ -538,13 +539,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
       </div>
 <div class="profile-body">
   <div id="profileList"></div>
-  <button type="button" class="vedi-tutti" id="btnVediTutti">
-    <span id="vediTuttiTesto">Vedi anche le canzoni degli altri</span>
-  </button>
-  <button type="button" class="vedi-tutti" id="btnSuonaTutti">
-    <span id="suonaTuttiTesto">Fai suonare anche le canzoni degli altri</span>
-  </button>
-  <p class="step-hint">Ogni nome ha la sua libreria: le canzoni che aggiungi tu restano tue. "Vedi anche le canzoni degli altri" le fa solo <strong>vedere</strong>: quando una canzone finisce prosegue con le tue e con quelle delle playlist. Se vuoi che suonino anche le loro, accendi l'altro interruttore. E per avere una canzone degli altri <strong>nella tua</strong> per sempre, tienila premuta e scegli "Porta nella mia libreria": te la copia, e a lui non sparisce niente.</p>
+  <p class="step-hint">Ogni nome ha la sua libreria: le canzoni che aggiungi tu restano tue. Per sentire le canzoni di un amico <strong>entra nel suo profilo</strong>: li vedi tutte e puoi sceglierle. Se ne vuoi qualcuna anche nella tua, selezionala e premi <strong>"Porta nel mio account"</strong>: te la copia, e all'amico non sparisce niente.</p>
   <div class="nuovo-prof">
     <input type="text" id="nuovoProfNome" maxlength="24" placeholder="Nome di un amico" aria-label="Nome del nuovo profilo">
     <button type="button" class="btn-mini" id="btnCreaProfilo">Crea</button>
@@ -673,6 +668,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6227"></script>
+<script src="app.js?v=6228"></script>
 </body>
 </html>

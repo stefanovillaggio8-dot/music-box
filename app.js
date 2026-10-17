@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.227";
+  const APP_VERSION = "6.228";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1584,8 +1584,6 @@ html += "<h4>Come sta andando l'ascolto</h4>";
     html += '<div class="stat-item"><span>2. dopo filtro profilo</span><b>' + _diagAvanti.passo2 + "</b></div>";
     html += '<div class="stat-item"><span>3. dopo preferiti / mai ascoltati</span><b>' + _diagAvanti.passo3 + "</b></div>";
     html += '<div class="stat-item"><span>4. dopo playlist aperta</span><b>' + _diagAvanti.passo4 + "</b></div>";
-    html += '<div class="stat-item"><span>Suona anche le canzoni degli altri</span><b>' + _diagAvanti.suonaTutti + "</b></div>";
-    html += '<div class="stat-item"><span>Vedi anche le canzoni degli altri</span><b>' + _diagAvanti.vedoTutti + "</b></div>";
     html += '<div class="stat-item"><span>Brani che hai copiato nella tua libreria</span><b>' + _diagAvanti.mieiCopiati + "</b></div>";
     html += '<div class="stat-item"><span>Playlist aperta</span><b>' + _diagAvanti.playlistAttiva + "</b></div>";
     html += '<div class="stat-item"><span>Brani "solo in playlist"</span><b>' + _diagAvanti.soloInPlaylist + "</b></div>";
@@ -1694,7 +1692,6 @@ html += "<h4>Come sta andando l'ascolto</h4>";
    la libreria, l'interruttore non faceva niente e la X non chiudeva. */
 
 const LS_MIEI = "mb.miei";
-const LS_VEDI = "mb.vediTutti";
 
 function _mieiCopiati() {
   try {
@@ -1709,31 +1706,23 @@ function _salvaMieiCopiati(lista) {
   try {
     const v = JSON.parse(LS.get(LS_MIEI, "{}"));
     const miei = (v && typeof v === "object") ? v : {};
-    miei[profile] = [...new Set((lista || []).map((x) => String(x || "")).filter(Boolean))].sort();
+    miei[profile] = [...new Set((lista || "").map((x) => String(x || "")).filter(Boolean))].sort();
     LS.set(LS_MIEI, JSON.stringify(miei));
   } catch (e) { /* noop */ }
 }
 
-function _vedoTutti() {
-  try { return LS.get(LS_VEDI, "") === "si"; } catch (e) { return false; }
-}
-
-/* "Vedere" e "far suonare" sono due cose diverse.
-
-   Se accendo "vedi anche le canzoni degli altri" me le fa SOLO vedere: quando
-   poi una canzone finisce, proseguo con le mie (e con quelle delle playlist).
-   Se invece voglio che suonino anche le loro, lo dico con l'interruttore
-   "fai suonare anche le canzoni degli altri". */
-const LS_SUONA = "mb.suonaTutti";
-
-function _suonaTutti() {
-  try { return LS.get(LS_SUONA, "") === "si"; } catch (e) { return false; }
-}
+/* Gli interruttori "vedi anche le canzoni degli altri" e "fai suonare anche le
+   canzoni degli altri" sono stati tolti (vedi _devoVedereBrano): Ste preferisce
+   entrare nel profilo dell'amico e scegliere da li'. Non restano piu' ne'
+   l'interruttore ne' la chiave in memoria. */
 
 /* Chiamato per ogni brano mentre carico la libreria. */
 function _devoVedereBrano(eMio, b) {
+  /* Ste: "togli l'interruttore, se voglio vedere le canzoni degli altri basta
+     che vado nel suo profilo". Quindi qui NON c'e' piu' nessuna via per farle
+     entrare in automatico: vedo le mie, e quelle che io ho copiato nella mia
+     libreria (che ormai sono mie a tutti gli effetti). */
   if (eMio) return true;
-  if (_vedoTutti()) return true;
   /* l'id del brano e' b-track-<numero>, come lo chiama tutto il resto */
   const m = /songs\/track-(\d+)\.mp3$/.exec(String((b && b.file) || ""));
   if (!m) return false;
@@ -2465,10 +2454,14 @@ function visibleTracks(perSuono) {
       let list = tracks.filter((t) => !hiddenTracks.has(t.id) &&
         (!inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
-      if (perLaCoda && !_suonaTutti()) {
-        const miei = _mieiCopiati();
-        list = list.filter((t) => (t.profile || DEFAULT_PROFILE) === profile || miei.has(t.id));
-      }
+if (perLaCoda) {
+      /* Per la coda contano le canzoni del profilo aperto e quelle che ho
+         copiato nella mia libreria. Ste ha tolto l'interruttore "fai suonare
+         anche le canzoni degli altri": non serve piu', perche' le canzoni di
+         un amico le vedi e le scegli entrando nel suo profilo. */
+      const miei = _mieiCopiati();
+      list = list.filter((t) => (t.profile || DEFAULT_PROFILE) === profile || miei.has(t.id));
+    }
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (soloMaiAscoltati) list = list.filter((t) => _ascoltoDi(t).s <= 0);
     /* Se ho scelto una playlist, vedo solo i suoi brani. Funziona insieme
@@ -3991,27 +3984,48 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
 
      Non si copia nemmeno il file audio (sarebbe sprecato: il brano e' gia'
      online e lo sentiamo entrambi dallo stesso indirizzo). Metto il brano
-     nella mia lista, che salvo anche sul sito cosi' vale su ogni dispositivo. */
-  async function _portaNellaMiaLibreria(t) {
-    if (!t) return;
+     nella mia lista, che salvo anche sul sito cosi' vale su ogni dispositivo.
+
+     Ste: "se vado nel suo profilo posso trasportare delle canzoni che
+     seleziono nel mio account creando una copia". Percio' la destinazione non
+     e' piu' il profilo aperto: e' SEMPRE il suo account (quello di default),
+     anche mentre sto guardando la libreria di un amico. Prima, se aprivo il
+     profilo di Diego e copiavo una canzone, finiva nella lista di Diego e non
+     nella mia: la copia non me la ritrovavo. */
+  async function _portaNellaMiaLibreria(t, profiloDestinazione) {
+    if (!t) return false;
     const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
     if (!numero) {
       toast("Non posso copiare questo brano: non so qual e' il suo numero");
-      return;
+      return false;
     }
     const id = "b-track-" + numero;
-    const gia = _mieiCopiati();
+    const destinazione = String(profiloDestinazione || DEFAULT_PROFILE);
+    /* La lista va letta e scritta sul profilo di destinazione, non su quello
+       aperto: altrimenti copierei sempre nella lista di chi sto guardando. */
+    let gia = new Set();
+    try {
+      const v = JSON.parse(LS.get(LS_MIEI, "{}"));
+      const miei = (v && typeof v === "object") ? v : {};
+      gia = new Set(Array.isArray(miei[destinazione]) ? miei[destinazione] : []);
+    } catch (e) { gia = new Set(); }
     if (gia.has(id)) {
       toast('"' + t.title + '" e\' gia\' nella tua libreria');
-      return;
+      return false;
     }
     /* Prima sul telefono, cosi' si vede subito anche se non ho rete. */
-    _salvaMieiCopiati([...gia, id]);
+    try {
+      const v = JSON.parse(LS.get(LS_MIEI, "{}"));
+      const miei = (v && typeof v === "object") ? v : {};
+      miei[destinazione] = [...new Set([...gia, id])].sort();
+      LS.set(LS_MIEI, JSON.stringify(miei));
+    } catch (e) { /* noop */ }
     try { await loadAll(); } catch (e) { /* noop */ }
     render();
-    toast('"' + t.title + '" ora e\' anche nella tua libreria (a ' + t.profile + ' resta)');
+    toast('"' + t.title + '" ora e\' anche nella tua libreria (a ' + (t.profile || "?") + ' resta)');
     /* Poi sul sito, cosi' la ritrovo su questo e sull'altro dispositivo. */
     _salvaStatoCondiviso();
+    return true;
   }
 
   function openQuickMenu(t) {
@@ -4350,8 +4364,6 @@ function _aggiornaDiagAvanti(dove) {
     _diagAvanti.playlistAttiva = _playlistAttiva ? String(_playlistAttiva) : "(nessuna)";
     _diagAvanti.soloInPlaylist = (_soloInPlaylist && _soloInPlaylist.size) || 0;
     _diagAvanti.nascosti = (hiddenTracks && hiddenTracks.size) || 0;
-    try { _diagAvanti.suonaTutti = _suonaTutti() ? "si" : "no"; } catch (e) { _diagAvanti.suonaTutti = "?"; }
-    try { _diagAvanti.vedoTutti = _vedoTutti() ? "si" : "no"; } catch (e) { _diagAvanti.vedoTutti = "?"; }
     try { _diagAvanti.mieiCopiati = _mieiCopiati().size; } catch (e) { _diagAvanti.mieiCopiati = -1; }
     _diagAvanti.favOnly = favOnly ? "si" : "no";
     _diagAvanti.soloMai = soloMaiAscoltati ? "si" : "no";
@@ -8517,6 +8529,39 @@ $("fabMenu").addEventListener("click", (e) => {
     toast(errori ? "Fatto con " + errori + " errori" : "Fatto: " + fatto + " canzoni pronte offline");
     render();
   }
+  /* Porto nella mia libreria tutte le canzoni che ho scelto.
+
+   Ste: "se vado nel suo profilo posso trasportare delle canzoni che seleziono
+   nel mio account creando una copia". Le copio SEMPRE nel suo account, anche
+   mentre sto guardando la libreria di un amico, e all'amico non tocco nulla.
+
+   Una canzone per volta: ogni copia ricarica la libreria, e farlo 200 volte
+   di fila sarebbe lentissimo. */
+  async function _selezionaPortaNellaMia() {
+    if (!_inSelezione || !_quantiScelti()) { toast("Prima scegli almeno una canzone"); return; }
+    const scelte = [..._scelti];
+    let fatte = 0, gia = 0, saltate = 0;
+    for (const id of scelte) {
+      const t = tracks.find((x) => x.id === id);
+      if (!t) { saltate++; continue; }
+      const ok = await _portaNellaMiaLibreria(t, DEFAULT_PROFILE);
+      if (ok) fatte++;
+      else {
+        /* Se non e' andata, o e' perche' c'era gia' o perche' il brano non ha
+           un file online. Lo capisco dal messaggio che _portaNellaMiaLibreria
+           lascia sul toast, quindi qui non faccio nient'altro. */
+        const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
+        if (numero) gia++; else saltate++;
+      }
+    }
+    _chiudiSelezione();
+    const parti = [];
+    if (fatte) parti.push(fatte + (fatte === 1 ? " canzone copiata" : " canzoni copiate"));
+    if (gia) parti.push(gia + " era gia' tua");
+    if (saltate) parti.push(saltate + " non trasportabili");
+    toast(parti.length ? parti.join(", ") : "Non ho copiato niente");
+  }
+
   async function downloadAllOffline() {
     if (offlineBusy) {
       if (offlineAbort) offlineAbort.abort();
@@ -9117,6 +9162,7 @@ $("selPlaylist").addEventListener("click", () => { _selezionaAggiungiPlaylist();
 $("selSolo").addEventListener("click", () => { _selezionaSoloInPlaylist(); });
 $("selElimina").addEventListener("click", () => { _selezionaElimina(); });
   $("selScarica").addEventListener("click", () => { _scaricaSelezionati(); });
+$("selPorta").addEventListener("click", () => { _selezionaPortaNellaMia(); });
   /* Ste: "ma cosi' non occupa spazio nel telefono?". Interruttore per
      accendere e spegnere il download automatico delle canzoni nuove, e la
      riga si accende come le altre del menu quando e' attivo. */
@@ -9140,53 +9186,12 @@ $("btnProfile").addEventListener("click", openProfile);
        Non toglie niente a nessuno: e' solo uno sguardo. Se lo spegni torni a
        vedere solo la tua libreria, e le canzoni degli altri sono ancora
        dove sono. */
-    (function collegaVediTutti() {
-      const tasto = $("btnVediTutti");
-      const testo = $("vediTuttiTesto");
-      if (!tasto) return;
-      const disegna = () => {
-        const acceso = _vedoTutti();
-        tasto.classList.toggle("on", acceso);
-        if (testo) testo.textContent = acceso
-          ? "Stai vedendo anche le canzoni degli altri"
-          : "Vedi anche le canzoni degli altri";
-      };
-      tasto.addEventListener("click", async () => {
-        try { LS.set(LS_VEDI, _vedoTutti() ? "" : "si"); } catch (e) { /* noop */ }
-        disegna();
-        try { await loadAll(); } catch (e) { /* noop */ }
-        render();
-        toast(_vedoTutti()
-          ? "Ora vedi anche le canzoni degli altri. Non e' successo niente: sono ancora loro."
-          : "Torni a vedere solo la tua libreria");
-      });
-      disegna();
-    })();
-
-    /* Secondo interruttore: "fai suonare anche le canzoni degli altri".
-       Sta separato dal primo di proposito: vedere una canzone non deve
-       voler dire che poi la prossima me la mette in fila. */
-    (function collegaSuonaTutti() {
-      const tasto = $("btnSuonaTutti");
-      const testo = $("suonaTuttiTesto");
-      if (!tasto) return;
-      const disegna = () => {
-        const acceso = _suonaTutti();
-        tasto.classList.toggle("on", acceso);
-        if (testo) testo.textContent = acceso
-          ? "Alla fine proseguo anche con le canzoni degli altri"
-          : "Fai suonare anche le canzoni degli altri";
-      };
-      tasto.addEventListener("click", () => {
-        try { LS.set(LS_SUONA, _suonaTutti() ? "" : "si"); } catch (e) { /* noop */ }
-        disegna();
-        render();
-        toast(_suonaTutti()
-          ? "Adesso, quando una canzone finisce, posso proseguire anche con le loro"
-          : "Torno a proseguire solo con le mie e con quelle delle playlist");
-      });
-      disegna();
-    })();
+    /* Ste: "togli questa cosa dell'interruttore, se voglio vedere le canzoni
+       degli altri basta che vado nel suo profilo". I due interruttori ("vedi
+       anche le canzoni degli altri" e "fai suonare anche le canzoni degli
+       altri") non servono piu': sono spariti dal menu dei profili e dai
+       filtri. Ora le canzoni di un amico le vedi entrando nel suo profilo, e
+       per averne qualcuna nella tua la selezioni e la sposti. */
 
     /* Creare un profilo nuovo, senza dover aspettare che io cambi il sito.
        Serve per gli amici: ognuno sul suo telefono scrive il suo nome e gli
