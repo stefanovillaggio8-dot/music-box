@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.239";
+  const APP_VERSION = "6.240";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9200,6 +9200,19 @@ $("aiutoPanel").addEventListener("click", (e) => {
 });
 
 $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
+  /* Ste: "posso mettere il link della mia playlist di spotify e in automatico
+     importa le canzoni?". Il pulsante sta nel menu Altro, e se dice di no
+     l'app resta esattamente com'era. */
+  try {
+    const bs = $("btnSpotify");
+    if (bs) bs.addEventListener("click", () => {
+      _chiudiAltro();
+      try { document.body.classList.add("no-scroll"); } catch (e) { /* noop */ }
+      _spotifyMenu();
+    });
+    const sc = $("spotifyChiudi");
+    if (sc) sc.addEventListener("click", _spotifyChiudi);
+  } catch (e) { /* noop */ }
 
   /* Quanti link sono in coda, cioè brani che ho mandato e che il computer
      scaricera' quando si accende. Serve a non chiedersi "ma e' arrivato?".
@@ -10940,6 +10953,17 @@ await loadAll();
   setTimeout(() => { condividiBraniLocali(); }, 1200);
   /* Quando sono a casa prendo la chiave dal computer invece di chiederla. */
   setTimeout(() => { _prendiChiaveDalComputer(); }, 2500);
+  /* Spotify: se il telefono e' appena tornato dall'accesso, la finestra si
+     apre da sola. E se Ste aveva lasciato una lista in coda aspettando che il
+     computer si accendesse, la mando appena il computer c'e'. */
+  try { setTimeout(() => { _spotifyRientro(); }, 900); } catch (e) { /* noop */ }
+  try { setTimeout(() => { _spotifyRiprovaCoda(); }, 7000); } catch (e) { /* noop */ }
+  try {
+    window.addEventListener("online", () => { _spotifyRiprovaCoda(); });
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _spotifyRiprovaCoda();
+    });
+  } catch (e) { /* noop */ }
   /* Controllo se questa scheda e' in navigazione privata: e' la causa numero
      uno di "ho cambiato il nome e non e' rimasto". */
   _scopriSeSeiInPrivata();
