@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.250";
+  const APP_VERSION = "6.251";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1107,6 +1107,27 @@ async function _apriDiagnostica() {
         qs.push('<div class="diag-riga"><b>&nbsp;</b><span>' +
           String(r).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span></div>");
       }
+    }
+    qs.push('<div class="diag-sep">versione</div>');
+    /* Ste: "premo brani nascosti e non mi spunta nessuna canzone". Queste
+       quattro righe dicono subito dove si ferma: quanti brani nascosti ha
+       questo telefono, quanti sono di questo profilo, quanti brani ci sono e
+       quanti si vedono davvero. */
+    qs.push('<div class="diag-sep">la libreria e i brani nascosti</div>');
+    try {
+      const mieiId = new Set(tracks.map((t) => t.id));
+      const diQuesto = [...hiddenTracks].filter((id) => mieiId.has(id)).length;
+      let visibili = 0;
+      try { visibili = visibleTracks(false).length; } catch (e) { visibili = -1; }
+      const riga = (nome, val) => '<div class="diag-riga"><b>' + nome + "</b><span>" + val + "</span></div>";
+      qs.push(riga("profilo aperto", profile));
+      qs.push(riga("brani in libreria", tracks.length));
+      qs.push(riga("brani che si vedono", visibili));
+      qs.push(riga("nascosti su questo telefono", hiddenTracks.size));
+      qs.push(riga("nascosti di questo profilo", diQuesto));
+    } catch (e) {
+      qs.push('<div class="diag-riga"><b>libreria</b><span>errore: ' +
+        String(e && e.message ? e.message : e).slice(0, 60) + "</span></div>");
     }
     qs.push('<div class="diag-sep">versione</div>');
     qs.push('<div class="diag-riga"><b>in uso</b><span class="diag-ok">' + APP_VERSION + "</span></div>");
