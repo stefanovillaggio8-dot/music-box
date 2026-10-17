@@ -493,6 +493,26 @@ body.no-scroll { overflow: hidden; }
 
 [hidden] { display: none !important; }
 
+  /* Ste: "se premo nel testo della canzone si vede in quel modo".
+     Il titolo del brano ora e' toccabile e apre i testi a tutto schermo:
+     ci metto una manina e una riga di sotto, cosi' si capisce che si puo'
+     premere senza dover cercare il bottone piccolo. */
+  .hud-info.si-puoi-toccare {
+    cursor: pointer;
+    border-bottom: 1px dashed rgba(255,255,255,.16);
+    padding-bottom: 3px;
+    margin-bottom: 2px;
+  }
+  .hud-info.si-puoi-toccare:active .hud-title { color: var(--accent2); }
+  .hud-info.si-puoi-toccare::after {
+    content: "tocca per i testi";
+    display: block;
+    font-size: 10px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 1px;
+  }
 .lyrics-overlay {
   position: fixed;
   inset: 0;

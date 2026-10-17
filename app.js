@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.233";
+  const APP_VERSION = "6.234";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7975,6 +7975,22 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
   });
 
   $("btnLyrics").addEventListener("click", openLyrics);
+  /* Ste: "se premo nel testo della canzone si vede in quel modo", guardando
+     un'altra app dove la pagina dei testi si apre toccando il titolo. Qui si
+     poteva aprire solo con il bottone piccolo, e molti non lo vedono proprio.
+     Ora toccare il titolo (o l'artista) apre i testi a tutto schermo. */
+  try {
+    const info = document.querySelector(".hud-info");
+    if (info) {
+      info.classList.add("si-puoi-toccare");
+      info.addEventListener("click", () => {
+        /* Se non ci sono testi non apro niente: meglio non far credere che
+           funzioni, e il bottone resta l'unico modo di accorgersene. */
+        if (!currentLyrics()) { toast("Questa canzone non ha ancora i testi"); return; }
+        if ($("lyricsPanel").hidden) openLyrics(); else closeLyrics();
+      });
+    }
+  } catch (e) { /* noop */ }
   $("lyricsClose").addEventListener("click", closeLyrics);
   $("lyricsPanel").addEventListener("click", (e) => {
     if (e.target === $("lyricsPanel")) closeLyrics();
