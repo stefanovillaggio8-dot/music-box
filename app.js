@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.221";
+  const APP_VERSION = "6.222";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1558,6 +1558,20 @@ if (nuovo) r.v = (r.v || 0) + 1;
     html += '<div class="stat-item"><span>Timer di riserva</span><b>' + (_statsCronometro ? "attivo" : "non parte") + "</b></div>";
     html += '<div class="stat-item"><span>Versione della pagina</span><b>' + APP_VERSION + "</b></div>";
     html += "</div>";
+
+    /* Perche' non va avanti: i numeri veri, presi nell'istante in cui Ste ha
+       premuto il tasto. */
+    html += "<h4>Perch&egrave; non va avanti</h4>";
+    html += '<div class="stat-lista">';
+    html += '<div class="stat-item"><span>Profilo aperto</span><b>' + profile + "</b></div>";
+    html += '<div class="stat-item"><span>Brani in libreria</span><b>' + _diagAvanti.libreria + "</b></div>";
+    html += '<div class="stat-item"><span>Brani in coda (per l\'avanti)</span><b>' + _diagAvanti.coda + "</b></div>";
+    html += '<div class="stat-item"><span>Brano che verrebbe dopo</span><b>' + _diagAvanti.dopo + "</b></div>";
+    html += '<div class="stat-item"><span>Questo brano esiste</span><b>' + (_diagAvanti.esiste ? "s&igrave;" : "NO") + "</b></div>";
+    html += '<div class="stat-item"><span>Ultimo avvio del tasto</span><b>' + (_diagAvanti.dove || "ancora premuto") + "</b></div>";
+    html += '<div class="stat-item"><span>Errore</span><b>' + (_diagAvanti.errore || "nessuno") + "</b></div>";
+    html += "</div>";
+    html += '<p class="step-hint">Premi avanti, poi torna qui: queste righe ti dicono se la coda &egrave; vuota o se qualcosa &egrave; andato storto.</p>';
 
     $("statsCorpo").innerHTML = html;
     pannello.hidden = false;
@@ -3145,6 +3159,7 @@ li.addEventListener("click", () => {
   }
 
   function handleEnded() {
+    try {
     if (currentId) LS.set("mb.pos." + currentId, 0);
     /* Se sto ascoltando una playlist, il brano dopo e' il SUO, non quello
        dopo nella libreria: altrimenti la playlist si fermerebbe al primo. */
@@ -3164,7 +3179,11 @@ li.addEventListener("click", () => {
       audio.currentTime = 0;
       doPlay();
     } else {
+      _aggiornaDiagAvanti("canzone finita");
       playById(idBranoA(nextIndex()));
+    }
+    } catch (e) {
+      _diagAvanti.errore = String(e && e.message ? e.message : e).slice(0, 100);
     }
   }
 
@@ -4270,15 +4289,45 @@ const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
     return (idx - 1 + lista.length) % lista.length;
   }
 
-  function playNext() {
-    if (queue.length) {
-      const next = queue.shift();
-      persistQueue();
-      renderQueueCount();
-      playById(next);
-      return;
+  /* Ste: "nell'account di Diego il tasto avanti non va avanti e quando finisce
+   una canzone non parte l'altra". Sul telefono non posso aprire la console del
+   browser per vedere che cosa succede, quindi qui lascio scritto come va la
+   coda e lo mostro dentro la pagina (vedi il riquadro "Perche' non va avanti").
+   Se una riga dice 0 brani in coda, o un brano dopo che non esiste, o un
+   errore, quello e' il motivo. */
+const _diagAvanti = { libreria: 0, coda: 0, dopo: "(nessuno)", esiste: false, dove: "", errore: "" };
+function _aggiornaDiagAvanti(dove) {
+  try {
+    _diagAvanti.libreria = Array.isArray(tracks) ? tracks.length : 0;
+    let coda = -1;
+    try { coda = visibleTracks(true).length; } catch (e) { coda = -1; }
+    _diagAvanti.coda = coda;
+    const dopo = idBranoA(nextIndex());
+    _diagAvanti.dopo = dopo || "(niente)";
+    _diagAvanti.esiste = !!dopo && !!tracks.find((x) => x.id === dopo);
+    _diagAvanti.dove = dove;
+    _diagAvanti.errore = "";
+  } catch (e) {
+    _diagAvanti.errore = String(e && e.message ? e.message : e).slice(0, 100);
+  }
+}
+
+function playNext() {
+    try {
+      _aggiornaDiagAvanti("tasto avanti");
+      if (queue.length) {
+        const next = queue.shift();
+        persistQueue();
+        renderQueueCount();
+        playById(next);
+        return;
+      }
+      playById(idBranoA(nextIndex()));
+    } catch (e) {
+      /* Non lascio che un errore qui fermi tutto: me lo segno e lo mostro
+         nella pagina, cosi' si capisce cosa e' successo. */
+      _diagAvanti.errore = String(e && e.message ? e.message : e).slice(0, 100);
     }
-    playById(idBranoA(nextIndex()));
   }
 
   /* Mettere in pausa o far ripartire, per scelta.
