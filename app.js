@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.235";
+  const APP_VERSION = "6.236";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -536,6 +536,29 @@ let playlists = [];
   let lastSave = 0;
   let resumeAt = 0;
   let queue = [];
+  /* Ste: "quando c'e' la riproduzione casuale e torno indietro non mi torna
+     alla canzone precedente ma ad un'altra canzone casuale".
+     Il motivo: con il casuale acceso la canzone che suona e' stata scelta a
+     caso, quindi "il brano prima" calcolato sull'elenco era uno qualsiasi.
+     Qui tengo la cronologia di cosa ho davvero ascoltato, e "indietro" la
+     percorre: e' quello che fanno tutti i riproduttori. */
+  let _storico = [];
+  const _STORICO_MAX = 60;
+  function _ricordaBrano(id) {
+    if (!id) return;
+    const i = _storico.lastIndexOf(id);
+    if (i >= 0) _storico.splice(i, 1);
+    _storico.push(id);
+    if (_storico.length > _STORICO_MAX) _storico.splice(0, _storico.length - _STORICO_MAX);
+  }
+  /* Il brano da cui tornare indietro: prendo l'ultimo della cronologia che
+     non sia quello che sta suonando adesso. */
+  function _storicoPrecedente() {
+    for (let i = _storico.length - 1; i >= 0; i--) {
+      if (_storico[i] !== currentId) return _storico[i];
+    }
+    return "";
+  }
   let suppressClick = false;
   let swReg = null;
 
@@ -4188,11 +4211,14 @@ function _ripristinaNascosti() {
     return null;
   }
 
-  async function playById(id, autoplay = true) {
-    const t = tracks.find((x) => x.id === id);
-    if (!t) return;
-    if (id !== currentId) resumeAt = 0;
-    currentId = id;
+async function playById(id, autoplay = true) {
+      const t = tracks.find((x) => x.id === id);
+      if (!t) return;
+      /* Prima di cambiare: metto in cronologia il brano che sto lasciando,
+         cosi' il tasto "indietro" torna davvero a quello. */
+      if (id !== currentId) _ricordaBrano(currentId);
+      if (id !== currentId) resumeAt = 0;
+      currentId = id;
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
     _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);
@@ -4309,6 +4335,13 @@ const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
   function prevIndex() {
     const lista = _listaPerIlSeguito();
     if (!lista.length) return -1;
+    /* Con il casuale acceso, "indietro" deve tornare alla canzone che stavo
+       davvero ascoltando prima, non a quella che sta prima nell'elenco. */
+    const dallaCronologia = _storicoPrecedente();
+    if (dallaCronologia) {
+      const i = lista.findIndex((x) => x.id === dallaCronologia);
+      if (i >= 0) return i;
+    }
     const idx = lista.findIndex((x) => x.id === currentId);
     if (idx < 0) return 0;
     return (idx - 1 + lista.length) % lista.length;
@@ -10992,21 +11025,33 @@ function _ripristinaPuntoLibreria() {
     $("btnShuffle").classList.toggle("on", shuffle);
     $("btnRepeat").classList.toggle("on", repeat);
 
-    const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
-    if (lastTrack) {
-      currentId = lastTrack.id;
-      // anche riaprendo la app il brano riparte da capo, non da meta'
-      const restorePos = 0;
-      audio.src = lastTrack.url;
-      audio.addEventListener("loadedmetadata", () => {
-        if (restorePos > 0 && isFinite(audio.duration)) {
-          try { audio.currentTime = Math.min(restorePos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
-        }
-        updateProgressUI(audio.currentTime || 0, audio.duration || 0);
-      }, { once: true });
-      setHud();
-      updateProgressUI(restorePos || 0, 0);
-    }
+const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
+      if (lastTrack) {
+        currentId = lastTrack.id;
+        /* Ste: "se la riapro mi riparte da zero la canzone". Qui la posizione
+           era fissata a 0 di proposito, quindi riaprendo l'app la canzone
+           ricominciava SEMPRE dall'inizio. Adesso riprendo davvero da dove
+           era rimasta. Se pero' era ferma nei primi secondi, o se il brano e'
+           gia' finito, meglio partire dall'inizio. */
+        let salvato = Number(st.time != null ? st.time : 0) || 0;
+        if (!salvato) salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
+        const restorePos = salvato > 5 ? salvato : 0;
+        audio.src = lastTrack.url;
+        audio.addEventListener("loadedmetadata", () => {
+          if (restorePos > 0 && isFinite(audio.duration)) {
+            /* Se era quasi alla fine, meglio ricominciare che ripartire
+               dagli ultimi secondi. */
+            if (restorePos > audio.duration - 8) {
+              try { audio.currentTime = 0; } catch (e) { /* noop */ }
+            } else {
+              try { audio.currentTime = Math.min(restorePos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
+            }
+          }
+          updateProgressUI(audio.currentTime || 0, audio.duration || 0);
+        }, { once: true });
+        setHud();
+        updateProgressUI(restorePos || 0, 0);
+      }
 
     updateMediaSession();
 
