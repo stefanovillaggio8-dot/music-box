@@ -1,80 +1,81 @@
-﻿{
-    "nascosti":  [
-                     "b-track-1",
-                     "b-track-119",
-                     "b-track-123",
-                     "b-track-154",
-                     "b-track-183",
-                     "b-track-217",
-                     "b-track-218",
-                     "b-track-219",
-                     "b-track-220",
-                     "b-track-24",
-                     "b-track-254",
-                     "b-track-258",
-                     "b-track-264",
-                     "b-track-42",
-                     "b-track-65",
-                     "b-track-71",
-                     "b-track-8",
-                     "b-track-99"
-                 ],
-    "preferiti":  [
-
-                  ],
-    "miei":  {
-                 "Ste":  [
-                             "b-track-135",
-                             "b-track-266",
-                             "b-track-287",
-                             "b-track-290",
-                             "b-track-304",
-                             "b-track-315",
-                             "b-track-349",
-                             "b-track-406",
-                             "b-track-466",
-                             "b-track-483",
-                             "b-track-485",
-                             "b-track-488",
-                             "b-track-504"
-                         ]
-             },
-    "rinomini":  {
-                     "b-track-68":  {
-                                        "title":  "siLLy cUp",
-                                        "artist":  "thasup"
-                                    },
-                     "b-track-72":  {
-                                        "title":  "HO SBAGLIATO ANCORA",
-                                        "artist":  "Chiello"
-                                    },
-                     "b-track-75":  {
-                                        "title":  "stupido",
-                                        "artist":  "massimo pericolo"
-                                    },
-                     "b-track-67":  {
-                                        "title":  "carusi do sud",
-                                        "artist":  "l\u0027elfo"
-                                    },
-                     "b-track-1":  {
-                                       "title":  "SOTTOGONNA",
-                                       "artist":  "BLANCO"
-                                   },
-                     "b-track-73":  {
-                                        "title":  "nei treni la notte",
-                                        "artist":  "frah quintale"
-                                    },
-                     "b-track-212":  {
-                                         "title":  "gRAZie A Dio",
-                                         "artist":  "thasup"
-                                     },
-                     "b-track-91":  {
-                                        "title":  "uNa DiReZioNe giùSta",
-                                        "artist":  "thasup"
-                                    },
-                     "b-track-28":  {
-                                        "title":  "Amelie",
-                                        "artist":  "Kid Yugi"
-                                    }
-                 }
+{
+ "nascosti": [
+  "b-track-1",
+  "b-track-119",
+  "b-track-123",
+  "b-track-154",
+  "b-track-183",
+  "b-track-217",
+  "b-track-218",
+  "b-track-219",
+  "b-track-220",
+  "b-track-24",
+  "b-track-254",
+  "b-track-258",
+  "b-track-264",
+  "b-track-266",
+  "b-track-287",
+  "b-track-290",
+  "b-track-42",
+  "b-track-65",
+  "b-track-71",
+  "b-track-8",
+  "b-track-99"
+ ],
+ "preferiti": [],
+ "miei": {
+  "Ste": [
+   "b-track-135",
+   "b-track-266",
+   "b-track-287",
+   "b-track-290",
+   "b-track-304",
+   "b-track-315",
+   "b-track-349",
+   "b-track-406",
+   "b-track-466",
+   "b-track-483",
+   "b-track-485",
+   "b-track-488",
+   "b-track-504"
+  ]
+ },
+ "rinomini": {
+  "b-track-68": {
+   "title": "siLLy cUp",
+   "artist": "thasup"
+  },
+  "b-track-72": {
+   "title": "HO SBAGLIATO ANCORA",
+   "artist": "Chiello"
+  },
+  "b-track-75": {
+   "title": "stupido",
+   "artist": "massimo pericolo"
+  },
+  "b-track-67": {
+   "title": "carusi do sud",
+   "artist": "l'elfo"
+  },
+  "b-track-1": {
+   "title": "SOTTOGONNA",
+   "artist": "BLANCO"
+  },
+  "b-track-73": {
+   "title": "nei treni la notte",
+   "artist": "frah quintale"
+  },
+  "b-track-212": {
+   "title": "gRAZie A Dio",
+   "artist": "thasup"
+  },
+  "b-track-91": {
+   "title": "uNa DiReZioNe giùSta",
+   "artist": "thasup"
+  },
+  "b-track-28": {
+   "title": "Amelie",
+   "artist": "Kid Yugi"
+  }
+ }
 }

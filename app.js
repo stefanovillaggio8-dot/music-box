@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.249";
+  const APP_VERSION = "6.250";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2630,10 +2630,26 @@ if (perLaCoda) {
   }
 
 function restoreHidden() {
-    hiddenTracks = new Set();
+    /* Ste: nell'account di Diego mancavano 3 canzoni che lui non aveva
+       nascosto. Il bottone rimetteva TUTTI i brani nascosti di tutti gli
+       account: in pratica cancellava anche quelli del tuo profilo. Adesso
+       rimette solo quelli del profilo aperto, e lascia gli altri come
+       sono. */
+    const miei = new Set(tracks.map((t) => t.id));
+    let rimessi = 0;
+    for (const id of Array.from(hiddenTracks)) {
+      if (!miei.has(id)) continue;
+      hiddenTracks.delete(id);
+      rimessi++;
+    }
     saveCurrentState();
+    _salvaStatoCondiviso();
     render();
-    toast("Brani ripristinati: sono di nuovo tutti visibili");
+    const rimasti = hiddenTracks.size;
+    toast(rimessi
+      ? rimessi + (rimessi === 1 ? " brano rimesso" : " brani rimessi") + " nella libreria di " + profile +
+        (rimasti ? " (" + rimasti + " nascosti di altri account, non ho toccato niente)" : "")
+      : "Nessun brano nascosto in questo profilo");
   }
 
   /* ---------- I brani tolti dalla lista, uno alla volta ----------
@@ -8360,7 +8376,11 @@ $("btnFavFilter").addEventListener("click", () => {
     if (!t) return;
     const azione = t.getAttribute("data-azione");
     if (azione === "tutti") {
-      if (!confirm("Vuoi rimettere nella lista tutti i brani tolti?")) return;
+      /* Dice cosa sta per fare, e solo per l'account aperto. */
+      const quanti = Array.from(hiddenTracks).filter((id) => tracks.some((t) => t.id === id)).length;
+      if (!quanti) { toast("Non ci sono brani nascosti in questo profilo"); return; }
+      if (!confirm("Rimetto in lista i " + quanti + " brani nascosti di " + profile + "?\n\n" +
+        "Gli altri account non vengono toccati.")) return;
       restoreHidden();
       _stampaNascosti();
       return;
