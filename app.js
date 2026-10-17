@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.226";
+  const APP_VERSION = "6.227";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1546,7 +1546,11 @@ if (nuovo) r.v = (r.v || 0) + 1;
        (il browser vieta al sito di scrivere sul computer), quindi qui dentro
        mostriamo quello che la pagina crede di sapere. Se i secondi non
        salgono, qui si vede perche'. */
-    html += "<h4>Come sta andando l'ascolto</h4>";
+    /* Rileggo tutto adesso, mentre sto disegnando il riquadro: cosi' i numeri sono
+   those veri di adesso. Prima valevono solo fino all'ultimo "avanti", e se
+   intanto avevi cambiato un interruttore ti mostravano la situazione vecchia. */
+_aggiornaDiagAvanti("aperto le statistiche");
+html += "<h4>Come sta andando l'ascolto</h4>";
     const suonaOra = !!(audio && !audio.paused && !audio.ended);
     const brano = current();
     const chiave = brano ? _chiaveStats(brano) : "";
