@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.248";
+  const APP_VERSION = "6.249";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3311,8 +3311,13 @@ li.addEventListener("click", () => {
   function savePos() {
     if (currentId && audio && isFinite(audio.currentTime)) {
       const sec = Math.floor(audio.currentTime);
-      writeProfileState(profile, { last: currentId, time: sec });
+      /* Salvo ANCHE quando l'ho ascoltata per davvero. Ste: "voglio che dopo
+         6 ore si resetti". Se la posizione e' vecchia di qualche ora, al
+         ritorno la canzone ricomincia dall'inizio invece di tornare a meta'
+         di una canzone che hai smesso di ascoltare sei ore fa. */
+      writeProfileState(profile, { last: currentId, time: sec, quando: Date.now() });
       LS.set("mb.pos." + currentId, sec);
+      try { LS.set("mb.pos.quando." + currentId, Date.now()); } catch (e) { /* noop */ }
     }
   }
 
@@ -11256,13 +11261,26 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
            gia' finito, meglio partire dall'inizio. */
         let salvato = Number(st.time != null ? st.time : 0) || 0;
         if (!salvato) salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
+        /* Ste: "voglio che dopo 6 ore si resetti". Se l'ultima volta che ho
+           ascoltato questa canzone e' piu' vecchia di SEI ORE, non ti rimetto
+           a meta' di una canzone che hai lasciato sei ore fa: ricomincio
+           dall'inizio. Prima non c'era nessun orario, quindi la posizione
+           vecchia sembrava sempre appena salvata. */
+        const LIMITE_VECCHIA = 6 * 60 * 60 * 1000;
+        let quando = Number(st.quando || 0) || 0;
+        if (!quando) quando = Number(LS.get("mb.pos.quando." + lastTrack.id, 0)) || 0;
+        const passate = quando ? (Date.now() - quando) : 0;
+        const troppoVecchia = quando > 0 && passate > LIMITE_VECCHIA;
+        if (troppoVecchia) salvato = 0;
         /* Uso resumeAt, che e' il meccanismo GIA' fatto per questo: se ne'
            accorgono handleMetadata, collegata all'elemento audio. Prima avevo
            aggiunto qui un listener mio che metteva la posizione a mano, e
            quello fermava la canzone quando si riapriva l'app. */
         resumeAt = salvato > 5 ? salvato : 0;
         _segna("ripresa all'avvio", "brano " + lastTrack.id +
-          ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s");
+          ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s" +
+          (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :
+            (quando ? ", ascoltata " + Math.round(passate / 60000) + " minuti fa" : "")));
         audio.src = lastTrack.url;
         setHud();
         updateProgressUI(0, 0);
