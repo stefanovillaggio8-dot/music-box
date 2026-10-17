@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.238";
+  const APP_VERSION = "6.239";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -550,6 +550,12 @@ let playlists = [];
     if (i >= 0) _storico.splice(i, 1);
     _storico.push(id);
     if (_storico.length > _STORICO_MAX) _storico.splice(0, _storico.length - _STORICO_MAX);
+    /* Ste: "il tasto indietro col casuale mi porta ad un'altra canzone".
+       La cronologia stava solo in memoria: la pagina si ricarica spesso (gli
+       aggiornamenti, la chiusura del telefono) e a ogni ricarica partivamo da
+       zero, quindi "indietro" non trovava niente e tornava al brano
+       dell'elenco, che col casuale e' uno a caso. Ora la tengo sul telefono. */
+    try { LS.set("mb.storico", _storico.slice(-_STORICO_MAX)); } catch (e) { /* noop */ }
   }
   /* Il brano da cui tornare indietro: prendo l'ultimo della cronologia che
      non sia quello che sta suonando adesso. */
@@ -558,6 +564,12 @@ let playlists = [];
       if (_storico[i] !== currentId) return _storico[i];
     }
     return "";
+  }
+  function _caricaStorico() {
+    try {
+      const v = LS.get("mb.storico", []);
+      _storico = Array.isArray(v) ? v.filter((x) => typeof x === "string").slice(-_STORICO_MAX) : [];
+    } catch (e) { _storico = []; }
   }
   let suppressClick = false;
   let swReg = null;
@@ -7978,13 +7990,16 @@ function toast(msg, durata) {
   /* ---------- Eventi UI ---------- */
   $("btnPlay").addEventListener("click", togglePlay);
   $("btnNext").addEventListener("click", () => playNext());
-  $("btnPrev").addEventListener("click", () => {
-    if (totalDuration() > 3 && audio.currentTime > 3) {
-      audio.currentTime = 0;
-    } else {
+$("btnPrev").addEventListener("click", () => {
+      /* Ste: "il tasto indietro col casuale mi porta ad un'altra canzone".
+         Prima c'era la regola dei primi 3 secondi: se la canzone era gia'
+         partita, il tasto non tornava indietro ma ricominciava la stessa, e
+         cosi' sembrava non funzionare. Adesso "indietro" va SEMPRE alla
+         canzone di prima (e se e' la prima di tutte, torna alla prima
+         dell'elenco). Per riascoltare da capo una canzone basta tornare indietro
+         nella barra, col dito. */
       playById(idBranoA(prevIndex()));
-    }
-  });
+    });
 
   /* Pulsante "Riproduzione casuale", nel menu "Altro".
 
@@ -8055,9 +8070,8 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
   $("lyricsPlay").addEventListener("click", () => { togglePlay(); _aggiornaComandiTesti(); });
   $("lyricsNext").addEventListener("click", () => { playNext(); });
   $("lyricsPrev").addEventListener("click", () => {
-    /* Come il tasto "indietro" del player: se la canzone e' gia' andata avanti
-       torna indietro di qualche secondo, altrimenti prende il brano prima. */
-    if (totalDuration() > 3 && audio.currentTime > 3) { try { audio.currentTime = 0; } catch (e) { /* noop */ } return; }
+    /* Come il tasto "indietro" del player: ora va SEMPRE al brano precedente,
+       senza la regola dei primi 3 secondi che sembrava un tasto rotto. */
     playById(idBranoA(prevIndex()));
   });
   /* Ste: "se premo nel testo della canzone si vede in quel modo", guardando
@@ -10872,6 +10886,7 @@ for (const p of playlists) {
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
     profiles = LS.get("mb.profiles", [DEFAULT_PROFILE]);
+    _caricaStorico();
     queue = (LS.get("mb.queue", []) || []).filter((x) => typeof x === "string");
     if (profiles.indexOf("Fratello") >= 0) {
       profiles = profiles.map((p) => (p === "Fratello" ? OTHER_PROFILE : p));
