@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.230";
+  const APP_VERSION = "6.231";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9126,11 +9126,17 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
   if (_inSelezione) _chiudiSelezione();
   else _apriSelezione();
 });
-$("selPlaylist").addEventListener("click", () => { _selezionaAggiungiPlaylist(); });
-$("selSolo").addEventListener("click", () => { _selezionaSoloInPlaylist(); });
-$("selElimina").addEventListener("click", () => { _selezionaElimina(); });
-  $("selScarica").addEventListener("click", () => { _scaricaSelezionati(); });
-$("selPorta").addEventListener("click", () => { _selezionaPortaNellaMia(); });
+$("selPlaylist").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaAggiungiPlaylist(); });
+$("selSolo").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaSoloInPlaylist(); });
+$("selElimina").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaElimina(); });
+   $("selScarica").addEventListener("click", () => { _chiudiMenuSelezione(); _scaricaSelezionati(); });
+$("selPorta").addEventListener("click", () => { _chiudiMenuSelezione(); _selezionaPortaNellaMia(); });
+$("selMenuBtn").addEventListener("click", () => {
+    const menu = $("selMenu");
+    if (!menu) return;
+    if (menu.hidden) _apriMenuSelezione();
+    else _chiudiMenuSelezione();
+  });
   /* Ste: "ma cosi' non occupa spazio nel telefono?". Interruttore per
      accendere e spegnere il download automatico delle canzoni nuove, e la
      riga si accende come le altre del menu quando e' attivo. */
@@ -10383,6 +10389,24 @@ function _disegnaBarraSelezione() {
   }
   const b = $("btnSeleziona");
   if (b) b.classList.toggle("on", _inSelezione);
+  if (!_inSelezione) _chiudiMenuSelezione();
+}
+
+/* Ste: "metti una sola opzione, piccola in basso a destra, che se la premo
+   appaiono le scelte da fare". Le scelte sono nascoste finche' non preme
+   "Opzioni", cosi' la barra resta piccola. */
+function _apriMenuSelezione() {
+  const menu = $("selMenu");
+  const tasto = $("selMenuBtn");
+  if (!menu) return;
+  menu.hidden = false;
+  if (tasto) tasto.setAttribute("aria-expanded", "true");
+}
+function _chiudiMenuSelezione() {
+  const menu = $("selMenu");
+  const tasto = $("selMenuBtn");
+  if (menu) menu.hidden = true;
+  if (tasto) tasto.setAttribute("aria-expanded", "false");
 }
 
 /* Le azioni vere: riusano le funzioni che gia' esistono per un brano. */

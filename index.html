@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6230" />
+  <link rel="stylesheet" href="style.css?v=6231" />
 </head>
 <body>
   <header class="topbar">
@@ -160,13 +160,16 @@
         <!-- Barra che compare quando sto scegliendo più canzioni. -->
         <div class="selezione-barra" id="selezioneBarra" hidden>
           <p class="selezione-conto" id="selezioneConto">0 scelte</p>
-          <div class="selezione-azioni">
+          <div class="selezione-riga">
+            <button type="button" class="selezione-opzioni" id="selMenuBtn" aria-haspopup="true" aria-expanded="false">Opzioni</button>
+            <button type="button" class="selezione-anno" id="selAnnulla" aria-label="Annulla la selezione">&times;</button>
+          </div>
+          <div class="selezione-menu" id="selMenu" hidden>
             <button type="button" class="selezione-btn" id="selPlaylist">Aggiungi a playlist</button>
             <button type="button" class="selezione-btn" id="selSolo">Solo nella playlist</button>
             <button type="button" class="selezione-btn" id="selScarica">Scarica offline</button>
             <button type="button" class="selezione-btn" id="selPorta">Porta nel mio account</button>
-  <button type="button" class="selezione-btn pericolo" id="selElimina">Elimina</button>
-            <button type="button" class="selezione-btn torna" id="selAnnulla">Annulla</button>
+            <button type="button" class="selezione-btn pericolo" id="selElimina">Elimina</button>
           </div>
         </div>
     <p class="empty" id="empty" hidden>Nessun brano trovato.</p>
@@ -668,6 +671,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6230"></script>
+<script src="app.js?v=6231"></script>
 </body>
 </html>

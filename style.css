@@ -2227,9 +2227,64 @@ li.appena-aggiunto {
     border-radius: 14px;
     box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
   }
-  .selezione-conto { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-  .selezione-azioni { display: flex; flex-wrap: wrap; gap: 7px; }
-  .selezione-btn {
+.selezione-conto { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+      .selezione-azioni { display: flex; flex-wrap: wrap; gap: 7px; }
+
+     /* Ste: "quando seleziono, le opzioni occupano troppo spazio, metti una
+        sola opzione... piccola tipo in basso a destra, che se la premo
+        appaiono le scelte da fare". Quindi una riga sola col contatore e un
+        tasto "Opzioni" in basso a destra; le scelte compaiono sotto quando
+        lo preme, e restano chiuse finche' non lo richiude. */
+      .selezione-riga {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .selezione-opzioni {
+        margin-left: auto;
+        min-height: 40px;
+        padding: 8px 18px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        color: #fff;
+        background: rgba(255, 255, 255, .12);
+        border: 1px solid rgba(255, 255, 255, .16);
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .selezione-opzioni:active { transform: translateY(1px); }
+      .selezione-opzioni[aria-expanded="true"] {
+        background: rgba(255, 255, 255, .22);
+      }
+      .selezione-anno {
+        min-width: 40px;
+        min-height: 40px;
+        padding: 0 12px;
+        font: inherit;
+        font-size: 20px;
+        line-height: 1;
+        color: #fff;
+        background: rgba(255, 255, 255, .06);
+        border: 1px solid rgba(255, 255, 255, .12);
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .selezione-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, .1);
+      }
+      .selezione-menu[hidden] { display: none; }
+      .selezione-menu .selezione-btn {
+        width: 100%;
+        text-align: left;
+      }
+      .selezione-btn {
     flex: 1 1 auto;
     min-width: 96px;
     padding: 10px 10px;
