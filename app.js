@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.237";
+  const APP_VERSION = "6.238";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3367,8 +3367,15 @@ a.addEventListener("pause", () => {
       gestore MediaSession. Se la musica doveva continuare, ricordiamo questa
       pausa come volontaria, evitando che i timer di recupero la riavviino.
       Non interveniamo durante il cambio di brano o alla fine naturale.
-    */
-    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano) {
+
+      Ste: "quando torno indietro la musica si stoppa, e altre volte funziona".
+      Il motivo era QUI: quando l'app va in secondo piano, il sistema mette in
+      pausa l'audio. Arrivava questo evento, l'app lo scambiava per una pausa
+      dell'utente, si segnava "ha fermato lui" e al ritorno non ripartiva
+      piu'. Percio' dipendeva da quale evento arrivava prima, e infatti a volte
+      funzionava e a volte no. Se la pagina non si vede, la pausa non e' dell'
+      utente: e' il sistema che ci ha messo in pausa e io devo ripartire. */
+    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !document.hidden) {
       _pausaVolontaria();
     }
     syncPlayUI();
