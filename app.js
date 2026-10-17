@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.228";
+  const APP_VERSION = "6.229";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1693,13 +1693,20 @@ html += "<h4>Come sta andando l'ascolto</h4>";
 
 const LS_MIEI = "mb.miei";
 
-function _mieiCopiati() {
+/* I brani che ho copiato nella libreria di UN account qualsiasi.
+   Serve quando sto trasportando canzoni: se l'account di destinazione non e'
+   quello aperto, devo leggere la sua lista, non quella di chi sto guardando. */
+function _mieiCopiatiDi(nome) {
   try {
     const v = JSON.parse(LS.get(LS_MIEI, "{}"));
     const miei = (v && typeof v === "object") ? v : {};
-    const lista = Array.isArray(miei[profile]) ? miei[profile] : [];
+    const lista = Array.isArray(miei[nome]) ? miei[nome] : [];
     return new Set(lista.map((x) => String(x || "")).filter(Boolean));
   } catch (e) { return new Set(); }
+}
+
+function _mieiCopiati() {
+  return _mieiCopiatiDi(profile);
 }
 
 function _salvaMieiCopiati(lista) {
@@ -4701,12 +4708,13 @@ function _aggiornaPosizioneSchermo() {
     return p ? p.cartella : "";
   }
 
-  function renderProfiles() {
+function renderProfiles() {
     const box = $("profileList");
     box.innerHTML = "";
+    const sceltaCopia = !!_destinazioneCopia;
     for (const name of profileList()) {
       const row = document.createElement("div");
-      row.className = "prof-row" + (name === profile ? " active" : "");
+      row.className = "prof-row" + (name === profile && !sceltaCopia ? " active" : "");
       const ava = document.createElement("div");
       ava.className = "prof-ava";
       ava.textContent = name.charAt(0).toUpperCase();
@@ -4718,25 +4726,30 @@ function _aggiornaPosizioneSchermo() {
       nm.textContent = name;
       const sub = document.createElement("p");
       sub.className = "prof-sub";
-      sub.textContent = name === profile ? "stai ascoltando come " + name : "tocca per ascoltare come " + name;
+      sub.textContent = sceltaCopia
+        ? "tocca per portare qui le canzoni scelte"
+        : (name === profile ? "stai ascoltando come " + name : "tocca per ascoltare come " + name);
       info.appendChild(nm);
       info.appendChild(sub);
       row.appendChild(ava);
       row.appendChild(info);
       const use = document.createElement("button");
-      use.className = "btn-mini" + (name === profile ? " go" : "");
-      use.textContent = name === profile ? "Adesso" : "Vai";
+      use.className = "btn-mini" + (name === profile && !sceltaCopia ? " go" : "");
+      use.textContent = (name === profile && !sceltaCopia) ? "Adesso" : (sceltaCopia ? "Qui" : "Vai");
       use.addEventListener("click", (e) => {
         e.stopPropagation();
+        /* In scelta-copia questo tasto NON cambia profilo: sceglie dove
+           copiare. Cambiare profilo qui sarebbe una gran sorpresa. */
+        if (sceltaCopia) { _trasportaInAccount(name); return; }
         switchProfile(name);
       });
-      row.appendChild(use);
       row.addEventListener("click", () => {
+        if (sceltaCopia) { _trasportaInAccount(name); return; }
         if (name !== profile) switchProfile(name);
       });
       box.appendChild(row);
     }
-    updateProfileButton();
+if (!sceltaCopia) updateProfileButton();
   }
 
   async function switchProfile(name) {
@@ -4814,7 +4827,13 @@ function _aggiornaPosizioneSchermo() {
     if (e.target === $("confirmPanel")) closeConfirm(false);
   });
 
-  function openProfile() {
+  /* Ste: "quando premo porta nel mio account deve farmi scegliere in che account".
+
+   Quando non e' NULL, il pannello dei profili non cambia profilo: serve solo a
+   scegliere DOVE mettere le canzoni che avevo selezionato. */
+let _destinazioneCopia = null;
+
+function openProfile() {
     renderProfiles();
     $("profilePanel").hidden = false;
     syncNoScroll();
@@ -4822,6 +4841,21 @@ function _aggiornaPosizioneSchermo() {
 
   function closeProfile() {
     $("profilePanel").hidden = true;
+    _destinazioneCopia = null;
+    syncNoScroll();
+  }
+
+  /* Apre il pannello per scegliere in che account trasportare le canzoni. */
+  function _chiediAccountPerCopia(ids) {
+    if (!ids || !ids.length) return;
+    _destinazioneCopia = ids.slice();
+    const sottotitolo = $("profileSub");
+    if (sottotitolo) {
+      sottotitolo.textContent = "Scegli in che account portare " +
+        (ids.length === 1 ? "la canzone scelta" : "le " + ids.length + " canzioni scelte");
+    }
+    renderProfiles();
+    $("profilePanel").hidden = false;
     syncNoScroll();
   }
 
@@ -8531,35 +8565,61 @@ $("fabMenu").addEventListener("click", (e) => {
   }
   /* Porto nella mia libreria tutte le canzoni che ho scelto.
 
-   Ste: "se vado nel suo profilo posso trasportare delle canzoni che seleziono
-   nel mio account creando una copia". Le copio SEMPRE nel suo account, anche
-   mentre sto guardando la libreria di un amico, e all'amico non tocco nulla.
+   Ste: "quando premo porta nel mio account deve farmi scegliere in che account,
+   e se e' duplicata deve dirmelo e non metterla".
 
-   Una canzone per volta: ogni copia ricarica la libreria, e farlo 200 volte
-   di fila sarebbe lentissimo. */
-  async function _selezionaPortaNellaMia() {
+   Quindi: apro il pannetto dei profili e gli faccio scegliere la destinazione
+   (prima finiva a caso nel suo account di default). Poi controllo una per una
+   se la canzone c'e' gia' in quella lista: se c'e' la salto e glielo dico,
+   senza toccare niente. */
+  function _selezionaPortaNellaMia() {
     if (!_inSelezione || !_quantiScelti()) { toast("Prima scegli almeno una canzone"); return; }
-    const scelte = [..._scelti];
-    let fatte = 0, gia = 0, saltate = 0;
+    /* Non apro la finestra di sistema del browser: gli mostro il pannello dei
+       profili, che e' quello che usa gia' per scegliere con chi ascoltare. */
+    _chiediAccountPerCopia([..._scelti]);
+  }
+
+  /* La copia vera: una canzone alla volta, con il controllo dei duplicati. */
+  async function _trasportaInAccount(nome, ids) {
+    const scelte = (ids && ids.length) ? ids.slice() : (_destinazioneCopia ? _destinazioneCopia.slice() : [..._scelti]);
+    _destinazioneCopia = null;
+    const panelChiuso = $("profilePanel") && !$("profilePanel").hidden;
+    if (panelChiuso) { $("profilePanel").hidden = true; syncNoScroll(); }
+    if (!scelte.length) { toast("Non hai scelto nessuna canzone"); return; }
+    const destinazione = String(nome || DEFAULT_PROFILE);
+
+    let copiate = 0;
+    const giaPresenti = [];
+    const nonCopiabili = [];
     for (const id of scelte) {
       const t = tracks.find((x) => x.id === id);
-      if (!t) { saltate++; continue; }
-      const ok = await _portaNellaMiaLibreria(t, DEFAULT_PROFILE);
-      if (ok) fatte++;
-      else {
-        /* Se non e' andata, o e' perche' c'era gia' o perche' il brano non ha
-           un file online. Lo capisco dal messaggio che _portaNellaMiaLibreria
-           lascia sul toast, quindi qui non faccio nient'altro. */
-        const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
-        if (numero) gia++; else saltate++;
-      }
+      if (!t) { nonCopiabili.push(id); continue; }
+      const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
+      if (!numero) { nonCopiabili.push(t.title); continue; }
+      const gia = _mieiCopiatiDi(destinazione).has("b-track-" + numero);
+      if (gia) { giaPresenti.push(t.title); continue; }
+      const ok = await _portaNellaMiaLibreria(t, destinazione);
+      if (ok) copiate++;
+      else giaPresenti.push(t.title);
     }
-    _chiudiSelezione();
+
+    /* Adesso riaccendo il pannello come prima, con il suo sottotitolo. */
+    const sottotitolo = $("profileSub");
+    if (sottotitolo) sottotitolo.textContent = "Scegli il tuo nome";
+    try { _chiudiSelezione(); } catch (e) { /* noop */ }
+
+    /* Il conto finale: Ste vuole sapere cosa e' successo, canzone per canzone. */
     const parti = [];
-    if (fatte) parti.push(fatte + (fatte === 1 ? " canzone copiata" : " canzoni copiate"));
-    if (gia) parti.push(gia + " era gia' tua");
-    if (saltate) parti.push(saltate + " non trasportabili");
-    toast(parti.length ? parti.join(", ") : "Non ho copiato niente");
+    if (copiate) parti.push(copiate + (copiate === 1 ? " canzone portata" : " canzoni portate") + " in " + destinazione);
+    if (giaPresenti.length) {
+      parti.push(giaPresenti.length === 1
+        ? '"' + giaPresenti[0] + '" c\'era gia\' in ' + destinazione + ", non l\'ho messa due volte"
+        : giaPresenti.length + " erano gia\' in " + destinazione + ", non le ho messe due volte");
+    }
+    if (nonCopiabili.length) parti.push(nonCopiabili.length + " non trasportabili");
+    if (!parti.length) parti.push("Non ho copiato niente");
+    toast(parti.join(". "), giaPresenti.length ? 7000 : 4000);
+    try { renderProfiles(); } catch (e) { /* noop */ }
   }
 
   async function downloadAllOffline() {
@@ -9277,12 +9337,12 @@ $("btnProfile").addEventListener("click", openProfile);
 
   /* Chiede un nome all'utente. Se chiude senza scrivere, non faccio nulla:
      non creo playlist a caso. */
-  function _chiediNome(messaggio) {
+  function _chiediNome(messaggio, valoreIniziale) {
     try {
-      const r = window.prompt(messaggio, "Nuova playlist");
+      const r = window.prompt(messaggio, valoreIniziale == null ? "Nuova playlist" : valoreIniziale);
       return r === null ? "" : String(r).trim();
     } catch (e) {
-      return "Nuova playlist";
+      return valoreIniziale == null ? "Nuova playlist" : valoreIniziale;
     }
   }
 
