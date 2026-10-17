@@ -4214,6 +4214,9 @@ function _ripristinaNascosti() {
     try { _scaricaDaSolaSeServe(t); } catch (e) { /* noop */ }
     audio.volume = volumePct / 100;
     setHud();
+    /* Se la pagina dei testi e' aperta, il play/pausa e' lo sfondo devono
+       seguire il brano nuovo. */
+    if (!$("lyricsPanel").hidden) { _aggiornaComandiTesti(); _aggiornaSfondoTesti(); }
     updateProgressUI(0, 0);
     const activeEl = playlistEl.querySelector(".track.active");
     if (activeEl) activeEl.scrollIntoView({ block: "nearest" });
@@ -4842,7 +4845,33 @@ function openProfile() {
     }
     $("lyricsPanel").hidden = false;
     document.body.classList.add("no-scroll");
+    _aggiornaSfondoTesti();
+    _aggiornaComandiTesti();
     tickLyrics();
+  }
+
+  /* Lo sfondo prende i colori della copertina, come in Liner: senza questo
+     resta uno sfondo nero e la pagina sembra mezza fatta. */
+  function _aggiornaSfondoTesti() {
+    try {
+      const sfondo = $("lyricsSfondo");
+      if (!sfondo) return;
+      const t = current();
+      const img = t && t.cover ? t.cover : "";
+      sfondo.style.backgroundImage = img ? "url(" + img + ")" : "";
+      sfondo.style.opacity = img ? ".55" : "0";
+    } catch (e) { /* noop */ }
+  }
+
+  /* Il tasto play/pausa deve dire quello che sta succedendo davvero. */
+  function _aggiornaComandiTesti() {
+    try {
+      const p = $("lyricsPlay");
+      if (!p) return;
+      const suona = !!(audio && !audio.paused && !audio.ended);
+      p.innerHTML = suona ? "&#10074;&#10074;" : "&#9654;";
+      p.setAttribute("aria-label", suona ? "Pausa" : "Play");
+    } catch (e) { /* noop */ }
   }
 
   function closeLyrics() {
@@ -7975,6 +8004,16 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
   });
 
   $("btnLyrics").addEventListener("click", openLyrics);
+  /* I tre comandi dentro i testi a tutto schermo: riusano le funzioni vere
+     del player, cosi' non possono andare discordi con quelli del basso. */
+  $("lyricsPlay").addEventListener("click", () => { togglePlay(); _aggiornaComandiTesti(); });
+  $("lyricsNext").addEventListener("click", () => { playNext(); });
+  $("lyricsPrev").addEventListener("click", () => {
+    /* Come il tasto "indietro" del player: se la canzone e' gia' andata avanti
+       torna indietro di qualche secondo, altrimenti prende il brano prima. */
+    if (totalDuration() > 3 && audio.currentTime > 3) { try { audio.currentTime = 0; } catch (e) { /* noop */ } return; }
+    playById(idBranoA(prevIndex()));
+  });
   /* Ste: "se premo nel testo della canzone si vede in quel modo", guardando
      un'altra app dove la pagina dei testi si apre toccando il titolo. Qui si
      poteva aprire solo con il bottone piccolo, e molti non lo vedono proprio.

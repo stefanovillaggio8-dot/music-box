@@ -295,15 +295,21 @@
   </footer>
 
   <div class="lyrics-overlay" id="lyricsPanel" hidden>
+    <div class="lyrics-sfondo" id="lyricsSfondo"></div>
     <div class="lyrics-card">
       <div class="lyrics-head">
         <div class="lyrics-head-info">
           <p class="lyrics-title" id="lyricsTitle"></p>
           <p class="lyrics-sub" id="lyricsSub"></p>
         </div>
-        <button class="lyrics-close" id="lyricsClose" aria-label="Chiudi testi">×</button>
+        <button class="lyrics-close" id="lyricsClose" aria-label="Chiudi testi">&times;</button>
       </div>
       <div class="lyrics-body" id="lyricsBody"></div>
+      <div class="lyrics-pie">
+        <button class="lyrics-nav" id="lyricsPrev" aria-label="Brano precedente">&#9664;&#9664;</button>
+        <button class="lyrics-nav grande" id="lyricsPlay" aria-label="Pausa o play">&#10074;&#10074;</button>
+        <button class="lyrics-nav" id="lyricsNext" aria-label="Brano successivo">&#9654;&#9654;</button>
+      </div>
     </div>
   </div>
 
