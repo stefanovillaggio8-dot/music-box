@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.247";
+  const APP_VERSION = "6.248";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -513,10 +513,31 @@
    guardare solo la prima, e infatti funzionava solo se tornavi subito. */
 let _nascostoIl = 0;
 let _visibileIl = 0;
+/* Ste: "dopo 6 ore si resetta la canzone, non riparte da quel punto".
+   La posizione veniva salvata ogni 3 secondi mentre suona, ma se l'app resta
+   ferma in secondo piano (o il telefono la butta via) l'ultimo salvataggio puo'
+   non arrivare mai: al ritorno la posizione risulta 0 e la canzone riparte
+   dall'inizio. Salvo quindi la posizione esattamente quando l'app va in
+   fondo, che e' l'ultimo momento in cui sono ancora in tempo. */
 try {
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) { _nascostoIl = Date.now(); _segna("app nel secondo piano"); }
-    else { _visibileIl = Date.now(); _segna("tornato in primo piano"); }
+    if (document.hidden) {
+      _nascostoIl = Date.now();
+      try { savePos(); } catch (e) { /* noop */ }
+      _segna("app nel secondo piano", "salvo la posizione a " +
+        Math.round((audio && audio.currentTime) || 0) + "s");
+    } else {
+      _visibileIl = Date.now();
+      _segna("tornato in primo piano");
+    }
+  });
+} catch (e) { /* noop */ }
+/* Su alcuni telefoni la pagina viene "congelata": arriva questo evento invece
+   del visibilitychange, e senza salvare qui perdiamo la posizione. */
+try {
+  document.addEventListener("freeze", () => {
+    try { savePos(); } catch (e) { /* noop */ }
+    _segna("pagina congelata dal sistema, salvo la posizione");
   });
 } catch (e) { /* noop */ }
   let tracks = [];
@@ -3332,9 +3353,12 @@ function handleMetadata() {
     resumeAt = 0;
     if (want > 8 && audio) {
       const d = totalDuration();
-      /* Ste: se la canzone era quasi finita, meglio ricominciare che
-         fargli sentire gli ultimi secondi. */
-      if (d > 0 && want >= d - 8) {
+      /* Ste: se la canzone era davvero agli ultimi secondi, ricomincio. Prima
+         scattava con 8 secondi di margine, e su una canzone lunga con uno
+         scaricamento lento poteva capitare che la posizione salvata fosse
+         "quasi vicina alla fine" mentre il brano era ancora lontano: e la
+         canzone ripartiva dall'inizio. Ora il margine e' di 3 secondi. */
+      if (d > 0 && want >= d - 3) {
         try { audio.currentTime = 0; } catch (e) { /* noop */ }
       } else {
         try { audio.currentTime = Math.min(want, d > 20 ? d - 5 : want); } catch (e) { /* noop */ }
