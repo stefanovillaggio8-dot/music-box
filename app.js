@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.244";
+  const APP_VERSION = "6.245";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -515,8 +515,8 @@ let _nascostoIl = 0;
 let _visibileIl = 0;
 try {
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) _nascostoIl = Date.now();
-    else _visibileIl = Date.now();
+    if (document.hidden) { _nascostoIl = Date.now(); _segna("app nel secondo piano"); }
+    else { _visibileIl = Date.now(); _segna("tornato in primo piano"); }
   });
 } catch (e) { /* noop */ }
   let tracks = [];
@@ -1049,13 +1049,43 @@ function _originaleDi(id) {
     } catch (e) { testo = "errore"; classe = "diag-no"; }
     return '<div class="diag-riga"><b>' + b.nome + '</b><span class="' + classe + '">' + testo + "</span></div>";
   }
-  async function _apriDiagnostica() {
+  /* ---------- Registro degli eventi ----------
+
+   Ste: "si stoppa ancora", e ormai sono cinque tentativi a indovinare. Invece
+   di tirare a indovino registro quello che SUCCEDE, con l'orario, e lo
+   mostro nel pannello diagnostica cosi' si legge la verita'.
+
+   Non e' roba che lascia traccia fuori dal telefono: resta in memoria e nel
+   browser, e sparisce al prossimo avvio pulito. */
+let _registro = [];
+function _segna(evento, dettaglio) {
+  try {
+    const ora = new Date();
+    const hh = String(ora.getHours()).padStart(2, "0");
+    const mm = String(ora.getMinutes()).padStart(2, "0");
+    const ss = String(ora.getSeconds()).padStart(2, "0");
+    _registro.push(hh + ":" + mm + ":" + ss + "  " + evento + (dettaglio ? " — " + dettaglio : ""));
+    if (_registro.length > 60) _registro.splice(0, _registro.length - 60);
+  } catch (e) { /* noop */ }
+}
+
+async function _apriDiagnostica() {
     const corpo = $("diagBody");
     const sopra = $("diagOverlay");
     if (!corpo || !sopra) return;
     sopra.hidden = false;
     corpo.innerHTML = "<p>Sto guardando...</p>";
     const qs = [];
+    /* Il registro PRIMA di tutto: e' la cosa che serve a Ste adesso. */
+    qs.push('<div class="diag-sep">registro degli ultimi eventi</div>');
+    if (!_registro.length) {
+      qs.push('<div class="diag-riga"><b>vuoto</b><span>non e\' successo niente</span></div>');
+    } else {
+      for (const r of _registro) {
+        qs.push('<div class="diag-riga"><b>&nbsp;</b><span>' +
+          String(r).replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</span></div>");
+      }
+    }
     qs.push('<div class="diag-sep">versione</div>');
     qs.push('<div class="diag-riga"><b>in uso</b><span class="diag-ok">' + APP_VERSION + "</span></div>");
     const schermo = $("verBadge");
@@ -3378,6 +3408,7 @@ function handleTime() {
     const a = new Audio();
     a.preload = "metadata";
     a.addEventListener("play", () => {
+    _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
     a._mbCambioBrano = false;
     syncPlayUI();
@@ -3404,6 +3435,8 @@ a.addEventListener("pause", () => {
        quanto e' nascosta e da quanto e' visibile. Prima guardavo solo il primo,
        e percio' funzionava solo se tornavi entro pochi secondi. */
     const eDelSistema = document.hidden || dalRitorno < 4000 || (daVisibile >= 0 && daVisibile < 2500);
+    _segna("evento PAUSE", "del sistema: " + (eDelSistema ? "si" : "NO (lo tratto come tua)" +
+      ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
     if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
       return;
@@ -4431,6 +4464,7 @@ function playNext() {
      Ora: il tasto play, il tasto pausa del telefono e quello del blocco
      schermo passano tutti di qui, quindi non possono piu' discordare. */
   function _pausaVolontaria() {
+    _segna("pausa VOLUTARIA (premi tu o il play del telefono)");
     /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
        altrimenti chi aspetta di riavviare la musica mi riaccende. */
     _vuoleSuonare = false;
@@ -4504,6 +4538,7 @@ function playNext() {
   }
 
   function _riproduciVolontaria() {
+    _segna("riproduzione VOLUTARIA");
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);
     _ultimoScorrimento = Date.now();
@@ -11044,6 +11079,7 @@ await loadAll();
   setTimeout(() => { _prendiChiaveDalComputer(); }, 2500);
   /* Se il telefono aveva buttato via la pagina, e Ste stava ascoltando,
      provo a rimettere su la musica da solo. */
+  _segna("PAGINA APERTA, versione " + APP_VERSION);
   try { setTimeout(() => { _riprendiDopoRicarica(); }, 2000); } catch (e) { /* noop */ }
   /* Spotify: se il telefono e' appena tornato dall'accesso, la finestra si
      apre da sola. E se Ste aveva lasciato una lista in coda aspettando che il
