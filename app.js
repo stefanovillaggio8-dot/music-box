@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.240";
+  const APP_VERSION = "6.241";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -507,6 +507,16 @@
   const fileInput = $("fileInput");
 
   let audio = null;
+/* Quando la pagina e' andata in secondo piano. Serve a distinguere la pausa
+   che faccio io da quella che fa il sistema mettendo l'app in fondo: e' la
+   differenza fra "Ste ha premuto pausa" e "il telefono mi ha messo in pausa",
+   e senza questa differenza la musica non ripartiva al ritorno. */
+let _nascostoIl = 0;
+try {
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) _nascostoIl = Date.now();
+  });
+} catch (e) { /* noop */ }
   let tracks = [];
   let currentId = null;
   let shuffle = false;
@@ -3375,19 +3385,19 @@ function handleTime() {
     });
 a.addEventListener("pause", () => {
     /*
-      Safari/iOS puo' mettere in pausa l'elemento audio senza passare dal
-      gestore MediaSession. Se la musica doveva continuare, ricordiamo questa
-      pausa come volontaria, evitando che i timer di recupero la riavviino.
-      Non interveniamo durante il cambio di brano o alla fine naturale.
+      Ste: "riapro l'app e si ferma la musica". Il motivo era QUI: questo
+      evento scatta anche quando e' il SISTEMA a mettere in pausa (succede
+      quando l'app va in secondo piano), e l'app lo scambiava per una pausa
+      dell'utente: si segnava "ha fermato lui" e al ritorno non ripartiva piu'.
+      Il primo tentativo (guardare se la pagina si vede) non bastava: la pausa
+      del sistema arriva spesso un attimo DOPO il ritorno in primo piano.
 
-      Ste: "quando torno indietro la musica si stoppa, e altre volte funziona".
-      Il motivo era QUI: quando l'app va in secondo piano, il sistema mette in
-      pausa l'audio. Arrivava questo evento, l'app lo scambiava per una pausa
-      dell'utente, si segnava "ha fermato lui" e al ritorno non ripartiva
-      piu'. Percio' dipendeva da quale evento arrivava prima, e infatti a volte
-      funzionava e a volte no. Se la pagina non si vede, la pausa non e' dell'
-      utente: e' il sistema che ci ha messo in pausa e io devo ripartire. */
-    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !document.hidden) {
+      Adesso guardo il tempo: se la pagina e' stata nascosta fino a poco fa,
+      la pausa e' del sistema e io devo ripartire al ritorno. Se invece arriva
+      con la pagina ben visibile da un po', la tratto come pausa vera. */
+    const dalRitorno = Date.now() - _nascostoIl;
+    const eDelSistema = document.hidden || dalRitorno < 4000;
+    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
     }
     syncPlayUI();
