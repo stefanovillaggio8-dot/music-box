@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.246";
+  const APP_VERSION = "6.247";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1935,9 +1935,17 @@ function _devoVedereBrano(eMio, b) {
     applicaRinomine();
     /* un brano che avevo segnato come "non scaricato" e' comparso in
        libreria: non lo riprovo piu' e lo tolgo dalla lista */
-    try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
-    try { _aggiornaBadgeFalliti(); } catch (e) { /* noop */ }
-    render();
+try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
+      try { _aggiornaBadgeFalliti(); } catch (e) { /* noop */ }
+      /* Ste: "mi sono scomparse tutte le canzoni". Metto qui il numero vero
+         dei brani caricati: se la libreria e' vuota lo vedo subito nel
+         registro, senza dover dedurlo. */
+      _segna("libreria pronta", tracks.length + " brani, profilo " + profile +
+        ", ricerca " + (query ? '"' + query + '"' : "nessuna") +
+        ", preferiti " + (favOnly ? "si" : "no") +
+        ", mai ascoltati " + (soloMaiAscoltati ? "si" : "no") +
+        ", playlist " + (_playlistAttiva || "nessuna"));
+      render();
   }
 
   async function loadLyrics() {
@@ -3339,7 +3347,7 @@ function handleMetadata() {
        arrivata. */
     try {
       _segna("dopo la ripresa", "posizione reale " + Math.round((audio && audio.currentTime) || 0) +
-        "s su " + Math.round(totalDuration()) + "s");
+      "s su " + Math.round(totalDuration()) + "s");
     } catch (e) { /* noop */ }
 updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
