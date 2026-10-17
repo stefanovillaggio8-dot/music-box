@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.245";
+  const APP_VERSION = "6.246";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3319,7 +3319,7 @@ function handleTime() {
   _aggiornaPosizioneSchermo();
   }
 
-  function handleMetadata() {
+function handleMetadata() {
     const want = resumeAt;
     resumeAt = 0;
     if (want > 8 && audio) {
@@ -3332,7 +3332,16 @@ function handleTime() {
         try { audio.currentTime = Math.min(want, d > 20 ? d - 5 : want); } catch (e) { /* noop */ }
       }
     }
-    updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
+    /* Ste: "la canzone riparte da capo SOLO quando riapro l'app dall'icona".
+       Quando si riapre dalla pagina gia' aperta funziona: la differenza e' che
+       dall'icona il telefono crea la pagina da zero. Quindi segno dove mi
+       trovo davvero dopo la ripresa: se qui torna 0, la posizione non e'
+       arrivata. */
+    try {
+      _segna("dopo la ripresa", "posizione reale " + Math.round((audio && audio.currentTime) || 0) +
+        "s su " + Math.round(totalDuration()) + "s");
+    } catch (e) { /* noop */ }
+updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
 
   function handleError() {
@@ -11220,6 +11229,8 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
            aggiunto qui un listener mio che metteva la posizione a mano, e
            quello fermava la canzone quando si riapriva l'app. */
         resumeAt = salvato > 5 ? salvato : 0;
+        _segna("ripresa all'avvio", "brano " + lastTrack.id +
+          ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s");
         audio.src = lastTrack.url;
         setHud();
         updateProgressUI(0, 0);
