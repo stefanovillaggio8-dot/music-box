@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.236";
+  const APP_VERSION = "6.237";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3270,7 +3270,13 @@ function handleTime() {
     resumeAt = 0;
     if (want > 8 && audio) {
       const d = totalDuration();
-      try { audio.currentTime = Math.min(want, d > 20 ? d - 5 : want); } catch (e) { /* noop */ }
+      /* Ste: se la canzone era quasi finita, meglio ricominciare che
+         fargli sentire gli ultimi secondi. */
+      if (d > 0 && want >= d - 8) {
+        try { audio.currentTime = 0; } catch (e) { /* noop */ }
+      } else {
+        try { audio.currentTime = Math.min(want, d > 20 ? d - 5 : want); } catch (e) { /* noop */ }
+      }
     }
     updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
@@ -11035,22 +11041,14 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
            gia' finito, meglio partire dall'inizio. */
         let salvato = Number(st.time != null ? st.time : 0) || 0;
         if (!salvato) salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
-        const restorePos = salvato > 5 ? salvato : 0;
+        /* Uso resumeAt, che e' il meccanismo GIA' fatto per questo: se ne'
+           accorgono handleMetadata, collegata all'elemento audio. Prima avevo
+           aggiunto qui un listener mio che metteva la posizione a mano, e
+           quello fermava la canzone quando si riapriva l'app. */
+        resumeAt = salvato > 5 ? salvato : 0;
         audio.src = lastTrack.url;
-        audio.addEventListener("loadedmetadata", () => {
-          if (restorePos > 0 && isFinite(audio.duration)) {
-            /* Se era quasi alla fine, meglio ricominciare che ripartire
-               dagli ultimi secondi. */
-            if (restorePos > audio.duration - 8) {
-              try { audio.currentTime = 0; } catch (e) { /* noop */ }
-            } else {
-              try { audio.currentTime = Math.min(restorePos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
-            }
-          }
-          updateProgressUI(audio.currentTime || 0, audio.duration || 0);
-        }, { once: true });
         setHud();
-        updateProgressUI(restorePos || 0, 0);
+        updateProgressUI(0, 0);
       }
 
     updateMediaSession();
