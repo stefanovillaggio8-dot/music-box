@@ -456,7 +456,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.223";
+  const APP_VERSION = "6.224";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1772,6 +1772,15 @@ function _devoVedereBrano(eMio, b) {
         album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
         cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
         url: _doveStaIlBrano(b.file),
+        /* Ste: "nell'account di Diego il tasto avanti non va avanti".
+           Qui mancava proprio questo pezzo: quando l'app costruiva il brano si
+           dimenticava di segnare di chi e'. Nella coda (visibleTracks) il
+           controllo e' (brano.profile || "Ste") === profilo aperto: senza questo
+           campo diventava sempre "Ste", quindi nell'account di un amico TUTTI i
+           brani venivano scartati, la coda restava vuota e avanti/indietro/
+           fine brano non potevano funzionare. Nel profilo Ste non si notava,
+           perche' il fallback tornava per caso giusto. */
+        profile: b.profile || DEFAULT_PROFILE,
         builtin: true,
         gradient: PALETTE[i % PALETTE.length],
         size: null
@@ -1814,6 +1823,9 @@ function _devoVedereBrano(eMio, b) {
   })(r),
   source: r.source || "file",
   url: URL.createObjectURL(r.blob),
+  /* Come sopra: anche le canzoni che aggiungi tu devono sapere di quale
+     profilo sono, altrimenti spariscono dalla coda negli account degli amici. */
+  profile: r.profile || DEFAULT_PROFILE,
   builtin: false,
   gradient: PALETTE[(builtin.length + Math.abs(hashId(r.id))) % PALETTE.length],
   size: r.size
