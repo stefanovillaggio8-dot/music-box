@@ -2721,7 +2721,21 @@ function restoreHidden() {
       tutti.textContent = "Rimetti tutti (" + idList.length + ")";
       corpo.appendChild(tutti);
     }
-    _stampaNascosti();
+    /* Ste: "premo brani nascosti e non mi spunta nessuna canzone". Qui il
+       pannello restava VUOTO: _apriNascosti finiva chiamando _stampaNascosti,
+       che richiama _apriNascosti, che richiama _stampaNascosti... all'infinito.
+       Il browser interrompe con "chiamate troppo profonde" e la lista non
+       arriva mai a essere disegnata. Quindi qui aggiorno solo il sottotitolo,
+       senza richiamare la funzione che riapre tutto. */
+    const qui = $("nascostiSub");
+    if (qui) {
+      const miei = Array.from(hiddenTracks).filter((id) =>
+        (Array.isArray(tracks) ? tracks : []).some((t) => t && t.id === id)).length;
+      qui.textContent = miei
+        ? miei + " di " + profile + ": rimettine uno alla volta, o tutti insieme"
+        : "Nessun brano nascosto in questo profilo";
+    }
+    _riportaIndietroSeNascosti();
   }
 
   function _chiudiNascosti() {
