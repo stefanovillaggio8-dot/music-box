@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.269";
+  const APP_VERSION = "6.270";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -521,17 +521,22 @@ let _visibileIl = 0;
    dall'inizio. Salvo quindi la posizione esattamente quando l'app va in
    fondo, che e' l'ultimo momento in cui sono ancora in tempo. */
 try {
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      _nascostoIl = Date.now();
-      try { savePos(); } catch (e) { /* noop */ }
-      _segna("app nel secondo piano", "salvo la posizione a " +
-        Math.round((audio && audio.currentTime) || 0) + "s");
-    } else {
-      _visibileIl = Date.now();
-      _segna("tornato in primo piano");
-    }
-  });
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    _nascostoIl = Date.now();
+    try { savePos(); } catch (e) { /* noop */ }
+    /* Mandare i minuti anche quando l'app va in secondo piano: se no,
+       gli ultimi minuti di una sessione restano solo qui e il computer non
+       li vede mai. */
+    try { _salvaStatistiche(); } catch (e) { /* noop */ }
+    try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
+    _segna("app nel secondo piano", "salvo la posizione a " +
+    Math.round((audio && audio.currentTime) || 0) + "s");
+  } else {
+    _visibileIl = Date.now();
+    _segna("tornato in primo piano");
+  }
+});
 } catch (e) { /* noop */ }
 /* Su alcuni telefoni la pagina viene "congelata": arriva questo evento invece
    del visibilitychange, e senza salvare qui perdiamo la posizione. */
@@ -1441,6 +1446,7 @@ if (nuovo) r.v = (r.v || 0) + 1;
       if (ora - _statsUltimoSalvataggio > 15000) {
         _statsUltimoSalvataggio = ora;
         writeProfileState(profile, { stats: st });
+    try { _programmaStatCondivise(); } catch (e) { /* noop */ }
       }
     } catch (e) { /* le statistiche non devono mai fermare l'uso */ }
   }
@@ -1495,6 +1501,20 @@ if (nuovo) r.v = (r.v || 0) + 1;
     }
   } catch (e) { /* noop */ }
   return fuori;
+}
+/* I minuti devono anche PARTIRE, non solo arrivare. Prima salvavo i
+   secondi solo sul telefono e non li mandavo mai: quindi gli altri
+   dispositivi restavano a zero per sempre. Non lo faccio ogni 15
+   secondi per non intasare il computer: ogni 3 minuti va benissimo,
+   e _salvaStatoCondiviso gia' aspetta e unisce tutto. */
+let _statCondiviseUltimo = 0;
+function _programmaStatCondivise() {
+  try {
+    const ora = Date.now();
+    if (ora - _statCondiviseUltimo < 180000) return;
+    _statCondiviseUltimo = ora;
+    _salvaStatoCondiviso();
+  } catch (e) { /* noop */ }
 }
 function _salvaStatistiche() {
     try { writeProfileState(profile, { stats: statisticheProfilo() }); } catch (e) { /* noop */ }
