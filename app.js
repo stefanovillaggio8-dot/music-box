@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.287";
+  const APP_VERSION = "6.288";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12299,9 +12299,14 @@ function _spotifyPnl(titolo, sotto, html) {
    indovinare. E' roba mia di diagnostica: quando funziona si puo'
    togliere. */
 function _spotifyTraccia(testo) {
-  try {
-    const p = $("spotifyPanel");
-    if (!p) return;
+    /* Prima di tutto mando: se il pannello non c'e' o il disegno va storto,
+       la riga deve uscire lo stesso. Prima mandavo solo in fondo, e se
+       la funzione tornava prima (perche' il pannello mancava) non partiva
+       niente: esattamente il caso in cui mi serve saperlo. */
+    _spotifyTracciaManda(testo);
+    try {
+      const p = $("spotifyPanel");
+      if (!p) return;
     p.hidden = false;
     let box = document.getElementById("spotifyTraccia");
     if (!box) {
@@ -12649,7 +12654,8 @@ const bs = $("btnSpotify");
          questo codice arriva proprio sul telefono: se questa riga non la
          vedo, il problema non e' Spotify, e' che l'app vecchia gira ancora
          e il pulsante non ha nessun collegamento. */
-      try { _spotifyTraccia("app avviata: pulsante Spotify presente=" + !!bs); } catch (e) {}
+      try { _spotifyTraccia("app avviata: pulsante Spotify presente=" + !!bs +
+          " versione=" + String((typeof APP_VERSION !== "undefined" ? APP_VERSION : "?"))); } catch (e) {}
       if (bs && !bs._collegatoSpotify) {
       bs._collegatoSpotify = true;
       /* Metto il collegamento DENTRO l'HTML, ma solo con una riga corta e
