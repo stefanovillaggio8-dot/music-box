@@ -444,7 +444,7 @@
     { title: "Punto d'incontro", file: "songs/track-506.mp3", artist: "nayt", profile: "Diego" },
     { title: "Ci nasci, ci muori", file: "songs/track-507.mp3", artist: "nayt", profile: "Diego" },
     { title: "Esistere (più di me)", file: "songs/track-508.mp3", artist: "nayt", profile: "Diego" },
-    { title: "lazza verdi nei viola", file: "songs/track-509.mp3", artist: "", profile: "Ste" },
+    { title: "verdi nei viola", file: "songs/track-509.mp3", artist: "lazza", profile: "Ste" },
     { title: "httpsyoutu.ben1udKKJ91rgis=P J0auRTrkgmDjob", file: "songs/track-510.mp3", artist: "", profile: "Ste" },
 ];
 
