@@ -446,6 +446,7 @@
     { title: "Esistere (più di me)", file: "songs/track-508.mp3", artist: "nayt", profile: "Diego" },
     { title: "verdi nei viola", file: "songs/track-509.mp3", artist: "lazza", profile: "Ste" },
     { title: "Ne vale la pena (Version 1)", file: "songs/track-510.mp3", artist: "22simba", profile: "Diego" },
+    { title: "Ne vale la pena (Version 1) ESCLUSIVA VINILE", file: "songs/track-511.mp3", artist: "22simba", profile: "Ste" },
 ];
 
   const PALETTE = [
