@@ -17,7 +17,6 @@
   "b-track-287",
   "b-track-290",
   "b-track-42",
-  "b-track-510",
   "b-track-65",
   "b-track-71",
   "b-track-8",
@@ -93,5 +92,8 @@
    "title": "m@star",
    "artist": "thasup"
   }
- }
+ },
+ "nascostiRimossi": [
+  "b-track-510"
+ ]
 }
