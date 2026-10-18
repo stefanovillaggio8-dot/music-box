@@ -228,11 +228,49 @@ function _spotifyPnl(titolo, sotto, html) {
   p.hidden = false;
   syncNoScroll();
 }
+/* === La traccia ===
+
+   Ste: "non funziona, non dice niente, la X non chiude". Ho cambiato
+   questo codice tante volte e ogni volta pensavo di aver capito: non
+   avevo. Il problema e' che ogni tentativo finiva con lo stesso
+   "non funziona", senza nessun indizio.
+
+   Adesso ogni passo lascia un segno scritto dentro il pannello, uno
+   sotto l'altro. Si vede esattamente dove si ferma, senza dover
+   indovinare. E' roba mia di diagnostica: quando funziona si puo'
+   togliere. */
+function _spotifyTraccia(testo) {
+  try {
+    const p = $("spotifyPanel");
+    if (!p) return;
+    p.hidden = false;
+    let box = document.getElementById("spotifyTraccia");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "spotifyTraccia";
+      box.style.cssText = "margin-top:12px;font:600 12px/1.6 ui-monospace,Consolas,monospace;" +
+        "color:#7fd7ff;opacity:.9;word-break:break-word";
+      const card = p.querySelector(".import-card");
+      if (!card) return;
+      card.appendChild(box);
+    }
+    const riga = document.createElement("div");
+    riga.textContent = "• " + testo;
+    box.appendChild(riga);
+  } catch (e) { /* la traccia non deve mai bloccare niente */ }
+}
+if (typeof window !== "undefined") { try { window._spotifyTraccia = _spotifyTraccia; } catch (e) {} }
+
+/* Ste: "la X per chiudere non funziona". Anche qui lascio un segno,
+   cosi' si distingue "non arriva il tocco" da "arriva ma non funziona". */
 function _spotifyChiudi() {
+  _spotifyTraccia("X premuta");
   const p = $("spotifyPanel");
   if (p) p.hidden = true;
+  const box = document.getElementById("spotifyTraccia");
+  if (box && box.parentNode) box.parentNode.removeChild(box);
   try { document.body.classList.remove("no-scroll"); } catch (e) { /* noop */ }
-  syncNoScroll();
+  try { syncNoScroll(); } catch (e) { /* noop */ }
 }
 
 function _spotifyParla(variabile, testo) {

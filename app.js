@@ -2786,13 +2786,18 @@ const nome = document.createElement("div");
   }
 
   /* Rimette in lista UN brano solo. */
-  function _rimettiNascosto(id) {
-    if (!id || !hiddenTracks.has(id)) return;
-    hiddenTracks.delete(id);
-    saveCurrentState();
-    render();
-    const t = _trovaNascosto(id);
-    _stampaNascosti("Rimesso: " + String((t && t.title) || "brano"));
+function _rimettiNascosto(id) {
+  if (!id || !hiddenTracks.has(id)) return;
+  hiddenTracks.delete(id);
+  /* Ste: "li rimetto e funzionano, ma al riavvio si tolgono di nuovo".
+     Segno che questo brano l'ho rimesso io, cosi' il ricaricamento dal
+     sito non lo nasconde di nuovo. */
+  _nascostoTombaAggiungi(id);
+  saveCurrentState();
+  _salvaStatoCondiviso();
+  render();
+  const t = _trovaNascosto(id);
+  _stampaNascosti("Rimesso: " + String((t && t.title) || "brano"));
   }
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
@@ -4337,8 +4342,8 @@ function _ripristinaNascosti() {
         toast("Nessun brano nascosto in questo profilo (" + altri + " in tutto, ma di altri account)");
         return;
       }
-      for (const id of daRimettere) hiddenTracks.delete(id);
-      saveCurrentState();
+for (const id of daRimettere) { hiddenTracks.delete(id); _nascostoTombaAggiungi(id); }
+  saveCurrentState();
       _salvaStatoCondiviso();
       render();
       const rimasti = hiddenTracks.size;
@@ -10332,6 +10337,38 @@ $("btnTimer").addEventListener("click", () => {
     });
   } catch (e) { /* noop */ }
 
+  /* === La tomba dei brani rimessi in lista ===
+
+   Ste: "le rimetto e funzionano, ma quando riavvio l'app si tolgono di
+   nuovo". Il motivo era questo: all'avvio l'app rilegge stato.json dal
+   sito e UNISCE i brani nascosti a quelli che ha gia' nella testa. Un
+   brano che avevo appena rimesso in lista tornava cosi' nascosto, e
+   sembrava che il rimettere non fosse servito a niente.
+
+   Il sito pero' si aggiorna con qualche secondo di ritardo, e finche'
+   non si aggiorna il file vecchio continua a mandare indietro quei
+   brani. Serve un segno che dica "quuesto l'ho rimesso io, non
+   rimetterlo".
+
+   Il segno e' una lista di nomi rimossi, tenuta sul telefono. Quando
+   invece nascondi un brano di nuovo, il segno sparisce: la scelta piu'
+   recente vince sempre. */
+  function _nascostiTomba() {
+    try { return new Set(LS.get("mb.nascistiRimossi", []) || []); } catch (e) { return new Set(); }
+  }
+  function _nascostoTombaAggiungi(id) {
+    try {
+      const s = _nascostiTomba();
+      if (!s.has(id)) { s.add(id); LS.set("mb.nascistiRimossi", [...s]); }
+    } catch (e) { /* noop */ }
+  }
+  function _nascostoTombaRimuovi(id) {
+    try {
+      const s = _nascostiTomba();
+      if (s.has(id)) { s.delete(id); LS.set("mb.nascistiRimossi", [...s]); }
+    } catch (e) { /* noop */ }
+  }
+
   function _salvaStatoCondiviso() {
     _statoDaSalvare = true;
     _quanteRiprove = 0;
@@ -10423,7 +10460,7 @@ const j = await r.json();
         let cambiati = 0;
         /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
            e diventa solo piu' grande. */
-        for (const id of nasco) if (id && !hiddenTracks.has(id)) { hiddenTracks.add(id); cambiati++; }
+        for (const id of nasco) if (id && !hiddenTracks.has(id) && !_nascostiTomba().has(id)) { hiddenTracks.add(id); cambiati++; }
         for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
            dispositivo, quindi li metto in elenco insieme a tutto il resto. */
@@ -10704,6 +10741,7 @@ pericolo: perDavvero
       ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
       : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
       hiddenTracks.add(id);
+      _nascostoTombaRimuovi(id);
       saveCurrentState();
       _salvaStatoCondiviso();
     const extra = cosa === "entrambe"
