@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.281";
+  const APP_VERSION = "6.282";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8758,7 +8758,7 @@ $("fabMenu").addEventListener("click", (e) => {
 
   searchEl.addEventListener("input", () => {
     query = searchEl.value.trim();
-    render();
+      try { LS.set("mb.ricerca", query); } catch (e) { /* noop */ }
   });
 
   /* Bottone diagnostica nel menu "Altro": serve a me, non agli utenti, ma lo
@@ -11902,13 +11902,34 @@ const che = [];
              che sono rare, e con un segno che ricorda di non farlo due
              volte per la stessa versione: il ciclo non puo' tornare. */
           const _versioneDaPrendere = m ? String(m[1]) : "";
+          /* l'ultimo momento in cui Ste ha toccato lo schermo: serve per non
+   ricaricare l'app mentre la sta usando */
+let _ultimoTocco = Date.now();
           let _giaRicaricata = false;
           try { _giaRicaricata = sessionStorage.getItem("mb.aggiornatoA") === _versioneDaPrendere; } catch (e) { }
-          if (!_giaRicaricata && _versioneDaPrendere) {
+          /* Ste: "se scorro mentre cerco una canzone e si aggiorna mi ritorna
+     all'inizio no?". Aspetto che il dito stia fermo: se mi tocca
+     ancora, rimetto tutto e riprovo al prossimo giro. Ricaricare
+     mentre sta usando lo schermo e' sempre scomodo. */
+  const _toccatoPiuFa = () => {
+    try { return Date.now() - _ultimoTocco < 6000; } catch (e) { return false; }
+  };
+if (!_giaRicaricata && _versioneDaPrendere) {
             try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
             toast("C'e' la versione " + _versioneDaPrendere + ": aggiorno e riparto", 4000);
             setTimeout(function () {
-              try { window.location.reload(); } catch (e) { }
+              try {
+                /* Ste: "se scorro mentre cerco una canzone e si aggiorna mi
+                   ritorna all'inizio no?". Aspetto che il dito stia fermo:
+                   se mi tocca ancora, rimetto tutto e riprovo dopo. Lo
+                   scorrimento della libreria viene gia' ricordato, ma non
+                   voglio nemmeno ricaricargli la schiena sotto gli occhi. */
+                if (_toccatoPiuFa()) {
+                  setTimeout(function () { controllaAggiornamenti(); }, 12000);
+                  return;
+                }
+                window.location.reload();
+              } catch (e) { }
             }, 1500);
             return;
           }
