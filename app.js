@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.280";
+  const APP_VERSION = "6.281";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11887,11 +11887,29 @@ const che = [];
             return;
           }
           if (branoInCorso()) {
-            /* Prima scrivevo "aggiorno quando finisci": ma se uno sta
-               ascoltando per ore, l'app resta vecchia per sempre (e' capitato
-               proprio per una correzione dell'audio). Ora e' una riga su cui
-               si tocca e si aggiorna subito. */
+            /* Sta suonando qualcosa: non lo interrompo. Appena finisce il
+               brano riprovo e mi aggiorno da solo. */
             avvisoAggiornamento("C'e' " + (che.length ? "e' " : "") + che.join(" e ") + ":");
+            return;
+          }
+          /* Ste: per sei volte di fila ha provato correzioni che il telefono
+             non aveva MAI prese, perche' l'aggiornamento era solo una riga da
+             toccare e non lo toccava. E io intanto corregevo e corregevo una
+             versione che nessuno stava usando: la piu' inutile delle cose.
+             Prima l'aggiornamento automatico c'era, ma entrava in un ciclo
+             di ricariche quando compariva un brano nuovo (l'ho visto sei
+             volte in 45 secondi). Percio' lo riporto SOLO per le versioni,
+             che sono rare, e con un segno che ricorda di non farlo due
+             volte per la stessa versione: il ciclo non puo' tornare. */
+          const _versioneDaPrendere = m ? String(m[1]) : "";
+          let _giaRicaricata = false;
+          try { _giaRicaricata = sessionStorage.getItem("mb.aggiornatoA") === _versioneDaPrendere; } catch (e) { }
+          if (!_giaRicaricata && _versioneDaPrendere) {
+            try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
+            toast("C'e' la versione " + _versioneDaPrendere + ": aggiorno e riparto", 4000);
+            setTimeout(function () {
+              try { window.location.reload(); } catch (e) { }
+            }, 1500);
             return;
           }
           /* Ste: "continua a ricaricarsi". Questo era il colpevole: trovando
