@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.282";
+  const APP_VERSION = "6.283";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12262,13 +12262,17 @@ function _spotifyTraccia(testo) {
          e senza questo il riquadro verrebbe schiacciato a zero e le righe
          non si vedrebbero. Ste: "non ci sono manco le linee blu": erano
          scritte, ma schiacciate fuori vista. */
-      box.style.cssText = "flex:0 0 auto;margin:0 0 10px;padding:8px 10px;border-radius:10px;" +
+      box.style.cssText = "position:fixed;top:6px;left:6px;right:6px;z-index:999;" +
+        "max-height:34vh;overflow:auto;margin:0;padding:8px 10px;border-radius:12px;" +
         "background:rgba(127,215,255,.08);border:1px solid rgba(127,215,255,.25);" +
         "font:600 12px/1.6 ui-monospace,Consolas,monospace;color:#7fd7ff;" +
         "word-break:break-word";
-      const card = p.querySelector(".import-card");
-      if (!card) return;
-      card.insertBefore(box, card.firstChild);
+      /* Ste: "non vedo le linee blu". Le mettevo dentro la finestra, che
+         pero' ha overflow:hidden: quando il contenuto e' alto le righe
+         finivano fuori vista e sembrava che non ci fossero state scritte.
+         Adesso stanno in un riquadro fermo in alto, fuori da tutto:
+         nessun pannello puo' tagliarle via. */
+      document.body.appendChild(box);
     }
     const riga = document.createElement("div");
     riga.textContent = "- " + testo;
@@ -12285,7 +12289,11 @@ function _spotifyChiudi() {
   if (p) p.hidden = true;
   const box = document.getElementById("spotifyTraccia");
   if (box && box.parentNode) box.parentNode.removeChild(box);
-  try { document.body.classList.remove("no-scroll"); } catch (e) { /* noop */ }
+try { document.body.classList.remove("no-scroll"); } catch (e) { /* noop */ }
+    try {
+      const box = document.getElementById("spotifyTraccia");
+      if (box && box.parentNode) box.parentNode.removeChild(box);
+    } catch (e) { /* noop */ }
   try { syncNoScroll(); } catch (e) { /* noop */ }
 }
 
