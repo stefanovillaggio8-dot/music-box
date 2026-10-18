@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.288";
+  const APP_VERSION = "6.289";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8328,28 +8328,23 @@ function _portaAlBranoScaricato(meta) {
   } catch (e) { /* se non riesco non cambio niente */ }
 }
 
-/* Ste: "un solo link, non due. l'app potrebbe accorgersi da sola di
-   essere sul link giusto". Tre link diverse (casa, Tailscale, internet)
-   e non si sapeva quale potesse scaricare: quello di internet non parla
-   col PC perche' il browser vieta, e quello sbagliato fa fallire tutto.
-   Adesso la pagina dice da sola: QUI POSSO SCARICARE, oppure QUI SOLO
-   ASCOLTO. Basta guardare in alto, senza indovinare. */
+/* Ste: "sia quando apro 192.168.1.40:8788/app/ e sia quando apro l'altro di
+   github, non spunta 'qui puoi solo ascoltare'".
+
+   L'avevo messo per capire da quale link si puo' scaricare, ma faceva due
+   danni:
+     - diceva il falso, perche' restava fermo dopo il primo controllo: se
+       quel controllo falliva una volta la scritta non veniva piu'
+       aggiornata, e cosi' diceva "solo ascoltare" anche col computer
+       collegato e funzionante;
+     - era una frase che spaventava senza motivo.
+
+   Adesso non compare piu' niente. Se serve sapere se il computer risponde,
+   me lo dice il canale delle tracce, non uno sbarrone a schermo. */
 function _mostraAvvisoCollegamento(ok, base) {
   try {
     const el = $("avvisoCollegamento");
-    if (!el) return;
-    if (ok) {
-      el.className = "avviso-collegamento ok";
-      el.innerHTML = "<b>Qui posso scaricare.</b> Il computer e' vicino: per aggiungere canzoni usa pure questa pagina.";
-      el.hidden = false;
-      return;
-    }
-    el.className = "avviso-collegamento";
-    const altro = window.isSecureContext ? "" :
-      " (questa pagina e' aperta da internet: per un sito sicuro il browser non fa parlare col PC)";
-    el.innerHTML = "<b>Qui posso solo ascoltare.</b> Per aggiungere canzoni apri la pagina del computer" +
-      " &mdash; quella che finisce con <code>8788/app/</code>" + altro + ".";
-    el.hidden = false;
+    if (el) { el.hidden = true; el.textContent = ""; el.innerHTML = ""; }
   } catch (e) { /* noop */ }
 }
 function toast(msg, durata) {
