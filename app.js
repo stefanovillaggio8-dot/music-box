@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.285";
+  const APP_VERSION = "6.286";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9518,6 +9518,24 @@ function _nomePerIlBrano(link, suggerito) {
 
   /* Se arrivo da una canzone gia' cercata, il nome lo so gia': lo uso
      quello e non chiedo niente. */
+  /* I titoli di YouTube vengono sporchi: "Ne vale la pena (Version 1)
+     [ESCLUSIVA VINILE]", "Official Video", "Audio", "Lyrics"... Se lascio
+     cosi' il brano si chiama con quella robaccia dentro e poi non
+     corrisponde piu' a nessun brano dell'altro utente.
+     Tolgo solo le parentesi "parole" (quelle che dicono che tipo di file
+     e'), e solo se stanno in fondo. "Live", "Remastered" e "Version 1"
+     invece li lascio: quelli dicono il brano, non il formato del file. */
+  function _titoloMenoSpazzatura(t) {
+    let s = String(t || "").trim();
+    const robaccia = /(official|video|audio|lyric|lyrics|visualizer|testo|con testo|clip|full album|album|exclusiva|esclusiva|streaming|hd|hq|4k|\bmv\b|\bm\/v\b|1080p|720p|visual)/i;
+    for (let giri = 0; giri < 4; giri++) {
+      const m = /\s*[\[\(\{]([^\]\)\}]*)[\]\)\}]\s*$/.exec(s);
+      if (!m) break;
+      if (!robaccia.test(m[1])) break;
+      s = s.slice(0, m.index).trim();
+    }
+    return s.replace(/\s{2,}/g, " ").trim();
+  }
   async function _aggiungiDaYouTube(suggerito) {
     let link = await _leggiLinkDagliAppunti();
     if (!/youtu\.be\/|youtube\.com\/(watch|shorts)|[?&]v=/i.test(link)) {
@@ -9544,11 +9562,17 @@ function _nomePerIlBrano(link, suggerito) {
       if (r.ok) {
         const d = await r.json();
         if (d && d.titolo) {
-          proposto = String(d.titolo).trim();
-          /* "Artista - Titolo" e' gia' la forma giusta; se nel titolo del
-             video non c'e' il trattino ci metto dentro il canale */
-          if (proposto.indexOf(" - ") < 0 && d.canale) {
-            proposto = String(d.canale).trim() + " - " + proposto;
+          proposto = _titoloMenoSpazzatura(d.titolo);
+          /* "Artista - Titolo" e' gia' la forma giusta. Se il titolo del
+             video NON ha il trattino allora l'artista non c'e' dentro, e
+             metto il canale. Se pero' il canale e' una sigla tipo "UC123"
+             o un nome generico, meglio lasciare il titolo come e': meglio
+             un titolo imperfetto che un artista sbagliato. */
+          const canale = String(d.canale || "").trim();
+          const canaleSenzaSenso = /^UC[A-Za-z0-9_-]+$/.test(canale) ||
+            /^(VEVO|Topic|Audio|Videos?|Records|Official)$/i.test(canale);
+          if (proposto.indexOf(" - ") < 0 && canale && !canaleSenzaSenso) {
+            proposto = canale + " - " + proposto;
           }
         }
       }
