@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.289";
+  const APP_VERSION = "6.290";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -468,6 +468,42 @@
      cache (compresi i brani scaricati) e ricaricava la pagina. Non
      aggiustava niente di rotto: si limitava a distruggere. Gli aggiornamenti
      li fa gia' il service worker, quindi la lascio stare. */
+  /* Ste: "192.168.1.40:8788/app/ non mi spunta ancora se posso solo
+     ascoltare", e le tracce di Spotify non arrivavano.
+
+     Il computer e il sito servivano gia' la versione nuova, senza quella
+     frase: quello che vedeva era una COPIA VECCHIA rimasta sul telefono,
+     e lo stesso vale per le tracce che non arrivavano.
+
+     Questo pulsante fa pulizia totale: chiude i service worker, cancella
+     le cache e riapre. Dopo, sul telefono c'e' solo la versione nuova.
+
+     Non lo collego all'avvio perche' cancellare le cache significa perdere
+     le canzoni scaricate, e quello lo decidi tu premendo il pulsante. */
+  async function _aggiornaDavvero() {
+    const b = $("btnRefresh");
+    if (b) b.disabled = true;
+    try { toast("Aggiorno l'app, aspetta un secondo...", 4000); } catch (e) { /* noop */ }
+    try {
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
+      }
+    } catch (e) { /* noop */ }
+    try {
+      const chiavi = await caches.keys();
+      await Promise.all(chiavi.map((k) => caches.delete(k)));
+    } catch (e) { /* noop */ }
+    try {
+      const via = location.pathname + "?r=" + Date.now();
+      location.replace(via);
+    } catch (e) { try { location.reload(); } catch (x) { /* noop */ } }
+  }
+  try {
+    const b = $("btnRefresh");
+    if (b) b.addEventListener("click", _aggiornaDavvero);
+  } catch (e) { /* noop */ }
+
   async function selfHeal() {
     return;
     /* eslint-disable-next-line no-unreachable */
