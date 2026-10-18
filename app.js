@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.286";
+  const APP_VERSION = "6.287";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12323,11 +12323,42 @@ function _spotifyTraccia(testo) {
          nessun pannello puo' tagliarle via. */
       document.body.appendChild(box);
     }
-    const riga = document.createElement("div");
-    riga.textContent = "- " + testo;
-    box.appendChild(riga);
-  } catch (e) { /* la traccia non deve mai bloccare niente */ }
-}
+const riga = document.createElement("div");
+      riga.textContent = "- " + testo;
+      box.appendChild(riga);
+    } catch (e) { /* la traccia non deve mai bloccare niente */ }
+    _spotifyTracciaManda(testo);
+  }
+
+  /* Ste: "ancora spotify non apre nulla", e io ogni volta avevo indovinato
+     una causa diversa. Il problema e' che vedevo solo quello che diceva
+     lui, non quello che sapeva il telefono.
+
+     Adesso ogni riga di traccia viene anche mandata al computer di lavoro
+     (il worker), e li' la leggo io: cosi' vedo se il pulsante e' arrivato,
+     se la funzione c'e', cosa ha risposto il salto a Spotify e se e'
+     comparso un errore. Basta un tocco e mi arriva la verita'.
+
+     Ogni invio e' una scrittura, quindi non ne faccio troppi: al massimo
+     8 per sessione e non piu' di uno ogni 4 secondi. */
+  let _tracciaInviate = 0;
+  let _tracciaUltimo = 0;
+  function _spotifyTracciaManda(testo) {
+    try {
+      if (_tracciaInviate >= 8) return;
+      const ora = Date.now();
+      if (ora - _tracciaUltimo < 4000) return;
+      _tracciaUltimo = ora;
+      _tracciaInviate++;
+      const dove = String(SERVIZIO_PUBBLICA || "").trim();
+      if (!dove) return;
+      fetch(dove + "/problema", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ riga: String(testo).slice(0, 160) })
+      }).catch(function () { /* nessuna rete? pazienza */ });
+    } catch (e) { /* mai bloccare l'app per una traccia */ }
+  }
 if (typeof window !== "undefined") { try { window._spotifyTraccia = _spotifyTraccia; } catch (e) {} }
 
 /* Ste: "la X per chiudere non funziona". Anche qui lascio un segno,
@@ -12613,8 +12644,13 @@ if (typeof window !== "undefined") {
 }
 
 function _spotifyAggancia() {
-    const bs = $("btnSpotify");
-    if (bs && !bs._collegatoSpotify) {
+const bs = $("btnSpotify");
+      /* Ste: "ancora spotify non apre nulla". Prima cosa da sapere e' se
+         questo codice arriva proprio sul telefono: se questa riga non la
+         vedo, il problema non e' Spotify, e' che l'app vecchia gira ancora
+         e il pulsante non ha nessun collegamento. */
+      try { _spotifyTraccia("app avviata: pulsante Spotify presente=" + !!bs); } catch (e) {}
+      if (bs && !bs._collegatoSpotify) {
       bs._collegatoSpotify = true;
       /* Metto il collegamento DENTRO l'HTML, ma solo con una riga corta e
          senza "<" o ">": se metto codice dentro la pagina rischio di
