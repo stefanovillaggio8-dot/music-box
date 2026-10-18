@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.278";
+  const APP_VERSION = "6.279";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12219,14 +12219,20 @@ function _spotifyTraccia(testo) {
     if (!box) {
       box = document.createElement("div");
       box.id = "spotifyTraccia";
-      box.style.cssText = "margin-top:12px;font:600 12px/1.6 ui-monospace,Consolas,monospace;" +
-        "color:#7fd7ff;opacity:.9;word-break:break-word";
+      /* flex:0 0 auto e' FONDAMENTALE: la finestra e' una colonna flex,
+         e senza questo il riquadro verrebbe schiacciato a zero e le righe
+         non si vedrebbero. Ste: "non ci sono manco le linee blu": erano
+         scritte, ma schiacciate fuori vista. */
+      box.style.cssText = "flex:0 0 auto;margin:0 0 10px;padding:8px 10px;border-radius:10px;" +
+        "background:rgba(127,215,255,.08);border:1px solid rgba(127,215,255,.25);" +
+        "font:600 12px/1.6 ui-monospace,Consolas,monospace;color:#7fd7ff;" +
+        "word-break:break-word";
       const card = p.querySelector(".import-card");
       if (!card) return;
-      card.appendChild(box);
+      card.insertBefore(box, card.firstChild);
     }
     const riga = document.createElement("div");
-    riga.textContent = "• " + testo;
+    riga.textContent = "- " + testo;
     box.appendChild(riga);
   } catch (e) { /* la traccia non deve mai bloccare niente */ }
 }
