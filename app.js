@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.268";
+  const APP_VERSION = "6.269";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1445,7 +1445,58 @@ if (nuovo) r.v = (r.v || 0) + 1;
     } catch (e) { /* le statistiche non devono mai fermare l'uso */ }
   }
 
-  function _salvaStatistiche() {
+  /* Tutte le statistiche di tutti i profili, da mettere nei dati
+   condivisi: cosi' i minuti ascoltati valgono su ogni dispositivo
+   e su ogni link, non solo su quello dove stai ascoltando. */
+/* Le statistiche che arrivano dal sito: per ogni brano tengo il numero
+   piu' alto fra il mio e quello arrivato. Non sommo, perche' altrimenti
+   ascoltare lo stesso brano su telefono e computer lo conterebbe due
+   volte. E non perdo niente: se un dispositivo non ha ancora salvato
+   nulla, il numero dell'altro resta intatto. */
+  function _unisciStatistiche(remote) {
+    try {
+      if (!remote || typeof remote !== "object") return 0;
+      let cambiati = 0;
+      for (const nome of Object.keys(remote)) {
+        const arrivo = remote[nome];
+        if (!arrivo || typeof arrivo !== "object") continue;
+        /* Uso la copia del profilo e la riscrivo per nome: cosi' funziona
+           anche per i profili che NON sto usando adesso (se sono su Ste,
+           arrivano anche i minuti di Diego). */
+        const copia = JSON.parse(JSON.stringify(profileState(nome) || {}));
+        if (!copia.stats || typeof copia.stats !== "object") copia.stats = {};
+        for (const k of Object.keys(arrivo)) {
+          const a = arrivo[k] || {};
+          const b = copia.stats[k] || { v: 0, s: 0 };
+          const v = Math.max(Number(b.v) || 0, Number(a.v) || 0);
+          const sec = Math.max(Number(b.s) || 0, Number(a.s) || 0);
+          if (v !== (b.v || 0) || sec !== (b.s || 0)) cambiati++;
+          copia.stats[k] = { v: v, s: sec, t: b.t || a.t || "", a: b.a || a.a || "" };
+        }
+        if (cambiati) writeProfileState(nome, { stats: copia.stats });
+      }
+      return cambiati;
+    } catch (e) { return 0; }
+  }
+
+  function _statisticheDiTutti() {
+  const fuori = {};
+  try {
+    const tutti = allState() || {};
+    for (const nome of Object.keys(tutti)) {
+      const st = tutti[nome];
+      if (st && st.stats && typeof st.stats === "object" && Object.keys(st.stats).length) {
+        fuori[nome] = {};
+        for (const k of Object.keys(st.stats)) {
+          const r = st.stats[k] || {};
+          fuori[nome][k] = { v: r.v || 0, s: r.s || 0, t: r.t || "", a: r.a || "" };
+        }
+      }
+    }
+  } catch (e) { /* noop */ }
+  return fuori;
+}
+function _salvaStatistiche() {
     try { writeProfileState(profile, { stats: statisticheProfilo() }); } catch (e) { /* noop */ }
   }
 
@@ -1660,7 +1711,7 @@ if (nuovo) r.v = (r.v || 0) + 1;
         "</span><b>" + m.brani + " brani · " + m.volte + " ascolti</b></div>";
     }
     html += "</div>";
-    html += '<p class="step-hint">Gli ascolti si contano sul dispositivo dove stai ascoltando: se ascolti sul telefono, il computer non lo sa.</p>';
+    html += '<p class="step-hint">I minuti ascoltati valgono su tutti i dispositivi e su tutti i link: vengono salvati insieme al resto.</p>';
 
     /* Diagnostica visibile: sul telefono non posso leggere cosa succede
        (il browser vieta al sito di scrivere sul computer), quindi qui dentro
@@ -10395,8 +10446,15 @@ $("btnTimer").addEventListener("click", () => {
        tre richieste al computer. */
     _timerStatoCondiviso = setTimeout(async () => {
       const corpo = JSON.stringify({
-        nascosti: [...hiddenTracks],
-        preferiti: [...favorites],
+nascosti: [...hiddenTracks],
+  preferiti: [...favorites],
+  /* Ste: "le statistiche non funzionano bene, i minuti ascoltati a Diego
+     non spuntano". Le statistiche stavano solo nella memoria di questo
+     dispositivo, quindi sull'altro link (che per il browser e' un posto
+     diverso) e sugli altri apparevano a zero. Ora viaggiano anche nei dati
+     condivisi, e quando arrivano tengo il numero piu' alto: cosi' due
+     dispositivi non si azzerano a vicenda e i secondi non si perdono. */
+  statistiche: _statisticheDiTutti(),
         /* i brani che ho copiato nella mia libreria, per ogni nome. Serve
            cosi' ritrovo la copia anche sull'altro dispositivo. */
         miei: (function () {
@@ -10478,6 +10536,9 @@ const j = await r.json();
            e diventa solo piu' grande. */
         for (const id of nasco) if (id && !hiddenTracks.has(id) && !_nascostiTomba().has(id)) { hiddenTracks.add(id); cambiati++; }
         for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
+  /* Anche i minuti ascoltati arrivano da qui: senza questo, sull'altro
+     dispositivo le statistiche erano tutte a zero. */
+  if (j && j.statistiche) cambiati += _unisciStatistiche(j.statistiche);
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
            dispositivo, quindi li metto in elenco insieme a tutto il resto. */
         if (j && j.miei && typeof j.miei === "object") {
