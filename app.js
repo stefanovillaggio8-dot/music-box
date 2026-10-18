@@ -9530,7 +9530,31 @@ function _nomePerIlBrano(link, suggerito) {
       toast("Serve un link di YouTube: su YouTube tocca Condividi e poi Copia link");
       return;
     }
-    const nome = _nomePerIlBrano(link, suggerito);
+    /* Ste: "diego ha messo una canzone incollando il link di yt ma spunta
+     il link di yt, non il titolo e artista". Prima l'app chiedeva il nome a
+     mano e proponeva l'ultimo nome usato: se non veniva riscritto restava
+     il link (o "brano da YouTube"). Ora chiedo al computer come si chiama
+     davvero quel video e lo propongo gia' scritto: si preme "ok" e via.
+     Se il computer non c'e' o YouTube non risponde, si comporta come prima. */
+  let proposto = suggerito;
+  if (!proposto && (await ponteOnline())) {
+    try {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const r = await fetch(base + "/titolo?url=" + encodeURIComponent(link));
+      if (r.ok) {
+        const d = await r.json();
+        if (d && d.titolo) {
+          proposto = String(d.titolo).trim();
+          /* "Artista - Titolo" e' gia' la forma giusta; se nel titolo del
+             video non c'e' il trattino ci metto dentro il canale */
+          if (proposto.indexOf(" - ") < 0 && d.canale) {
+            proposto = String(d.canale).trim() + " - " + proposto;
+          }
+        }
+      }
+    } catch (e) { /* nessun problema: si chiede a mano come prima */ }
+  }
+  const nome = _nomePerIlBrano(link, proposto);
     if (!nome) { toast("Scrivi il nome del brano, altrimenti non lo metto in libreria"); return; }
     try { LS.set("mb.ultimoNome", nome); } catch (e) { /* noop */ }
 
