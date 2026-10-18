@@ -60,9 +60,16 @@ async function _spotifyAccedi() {
     toast("Il telefono non mi fa fare le operazioni sicure: usa Safari aggiornato");
     return;
   }
+  /* ATTENZIONE: la chiave DEVE sopravvivere al salto su Spotify.
+     Se resta solo in una variabile, la pagina si ricarica e la variabile
+     sparisce: al ritorno non c'e' niente da scambiare e il login fallisce
+     con "Accesso scaduto". Quindi la metto via insieme al suo stato. */
   _spotifyChiave = pk.verifier;
   const stato = base(String(Date.now()));
-  try { LS.set("mb.spotifyStato", stato); } catch (e) { /* noop */ }
+  try {
+    LS.set("mb.spotifyStato", stato);
+    LS.set("mb.spotifyChiave", pk.verifier);
+  } catch (e) { /* noop */ }
   const q = new URLSearchParams({
     client_id: SPOTIFY_CLIENT_ID,
     response_type: "code",
@@ -82,7 +89,11 @@ async function _spotifyCompletaAccesso(code, stato) {
   let salvato = "";
   try { salvato = String(LS.get("mb.spotifyStato", "")); } catch (e) {}
   if (!salvato || salvato !== stato) { toast("Accesso non valido, riprova"); return false; }
-  const verifier = _spotifyChiave || "";
+  /* La chiave la prendo da li': dopo il redirect la pagina e' nuova e la
+     variabile in memoria non esiste piu'. */
+  let verifier = "";
+  try { verifier = String(LS.get("mb.spotifyChiave", "")); } catch (e) {}
+  if (!verifier) verifier = _spotifyChiave || "";
   if (!verifier) { toast("Accesso scaduto, riprova"); return false; }
   let r;
   try {
@@ -102,7 +113,10 @@ async function _spotifyCompletaAccesso(code, stato) {
   const j = await r.json();
   _spotifySalvaToken(j);
   _spotifyChiave = null;
-  try { LS.remove("mb.spotifyStato"); } catch (e) {}
+  try {
+    LS.remove("mb.spotifyStato");
+    LS.remove("mb.spotifyChiave");
+  } catch (e) {}
   return true;
 }
 
