@@ -79,7 +79,39 @@ async function _spotifyAccedi() {
     code_challenge_method: "S256",
     state: stato
   });
-  window.location.href = "https://accounts.spotify.com/authorize?" + q.toString();
+  const url = "https://accounts.spotify.com/authorize?" + q.toString();
+
+  /* Prima: far vedere che l'app ha capito e sta per portare su Spotify.
+     Ste: "sto aprendo spotify ma non si apre": senza questa riga non si
+     capiva nemmeno se il comando era partito. */
+  try {
+    _spotifyPnl("Sto aprendo Spotify", "",
+      '<p class="step-hint">Ti porto su Spotify per dargli l\'accesso. ' +
+      'L\'accesso me lo dai una volta sola.</p>');
+  } catch (e) { /* noop */ }
+
+  try { window.location.href = url; } catch (e) { /* non salto: vedo sotto */ }
+
+  /* Ste: "ma non si apre". Il salto lo fa il codice da solo, e quando
+     l'app e' installata sulla schermata Home il telefono lo blocca:
+     non succede niente e non si capisce perche'.
+     Allora: se dopo qualche secondo la pagina non e' cambiata, gli mostro
+     il collegamento VERO da toccare con il dito. Un link toccato dal
+     telefono funziona sempre, perche' lo gestisce il browser e non il
+     nostro codice. */
+  try {
+    setTimeout(function () {
+      /* se la pagina e' cambiata non do disturbare niente */
+      if (typeof document !== "undefined" && document.hidden) return;
+      try {
+        _spotifyPnl("Tocca per aprire Spotify", "una volta sola",
+          '<p class="step-hint">Il telefono non ha voluto aprire la pagina da solo. ' +
+          'Tocca il collegamento qui sotto: poi su Spotify premi "Accetta".</p>' +
+          '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
+          String(url).replace(/&/g, "&amp;") + '">Apri Spotify</a>');
+      } catch (e) { /* noop */ }
+    }, 2500);
+  } catch (e) { /* noop */ }
 }
 
 /* Step 2: Spotify rimanda qui con ?code=... e io scambio il codice per il
