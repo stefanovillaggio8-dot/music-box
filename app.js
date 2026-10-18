@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.294";
+  const APP_VERSION = "6.295";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -10840,30 +10840,17 @@ rinomini: (function () {
       try { return _eliminatiDaMandare(); } catch (e) { return []; }
     })()
   });
-      /* Prima il computer, che e' di solito acceso e risponde subito. Poi, se
-         non c'e', il Worker (funziona anche col computer spento).
+      /* Adesso scrivo SOLO sul Worker. Prima scrivevo prima sul computer e,
+         se andava, non scrivevo piu' da nessuna parte: ma il computer salva
+         con "git push" e riscrive stato.json usando solo cinque chiavi,
+         senza "eliminati". Ogni salvataggio passato di li' cancellava gli
+         eliminati che il Worker aveva messo, e i due litigavano sullo
+         stesso file.
 
-         Ste: "se cambio l'artista e riavvio il sito torna di nuovo come prima".
-         Qui c'era scritto "SERVIZIO + /stato", ma SERVIZIO non e' mai stato
-         definito da nessuna parte: la riga andava in errore, l'errore veniva
-         buttato via e il salvataggio finiva lì. Il nome del brano restava
-         solo nella memoria del telefono, che a un certo punto la perde, e al
-         riavvio il brano tornava col nome vero.
+         Ste: "ho nascosto delle cose ma dopo che aggiorno tornano".
+         Erano due scrittori che si disfacevano a vicenda il lavoro.
 
-         Adesso uso "trovaPonte()", che e' il metodo che il resto dell'app usa
-         gia' per trovare il computer: prova gli indirizzi uno alla volta e
-         restituisce quello che risponde. */
-      try {
-        const base = await trovaPonte();
-        if (base) {
-          const r = await fetch(base + "/stato", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: corpo
-          });
-if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); return; }
-         }
-       } catch (e) { /* il computer non c'e': provo dall'altra parte */ }
+         Un posto solo che scrive = nessuna gara. */
       try {
         /* Per /stato non serve la chiave: i nomi devono potersi salvare anche
            dal sito, perche' li' il browser per regola non puo' parlare col
