@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.273";
+  const APP_VERSION = "6.274";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1459,7 +1459,31 @@ if (nuovo) r.v = (r.v || 0) + 1;
    ascoltare lo stesso brano su telefono e computer lo conterebbe due
    volte. E non perdo niente: se un dispositivo non ha ancora salvato
    nulla, il numero dell'altro resta intatto. */
-  function _unisciStatistiche(remote) {
+  /* Toglie dalla lista dei nascosti i brani che qualcun altro ha ripreso.
+   Li tolgo davvero da tutte le mie liste, non solo da quella aperta:
+   se no, riaprendo un altro profilo ritornavano nascosti lo stesso. */
+function _togliRimossi(elenco) {
+  try {
+    if (!Array.isArray(elenco) || !elenco.length) return 0;
+    let tolti = 0;
+    for (const id of elenco) {
+      if (!id || typeof id !== "string") continue;
+      const vuoto = (st) => Array.isArray(st && st.hidden) && !st.hidden.includes(id);
+      const tutti = allState() || {};
+      for (const nome of Object.keys(tutti)) {
+        const st = tutti[nome];
+        if (st && Array.isArray(st.hidden) && st.hidden.includes(id)) {
+          st.hidden = st.hidden.filter((x) => x !== id);
+          writeProfileState(nome, { hidden: st.hidden });
+          tolti++;
+        }
+      }
+      if (hiddenTracks.has(id)) { hiddenTracks.delete(id); tolti++; }
+    }
+    return tolti;
+  } catch (e) { return 0; }
+}
+function _unisciStatistiche(remote) {
     try {
       if (!remote || typeof remote !== "object") return 0;
       let cambiati = 0;
@@ -10475,6 +10499,13 @@ nascosti: [...hiddenTracks],
      condivisi, e quando arrivano tengo il numero piu' alto: cosi' due
      dispositivi non si azzerano a vicenda e i secondi non si perdono. */
   statistiche: _statisticheDiTutti(),
+  /* Ste: "dice che l'ha aggiunta ma non c'e'". Il telefono aveva ancora
+     in testa quel brano come nascosto e me lo rimandava a ogni giro,
+     cosi' il server lo rimetteva nascosto e la canzone spariva di nuovo.
+     Ora mando anche l'elenco dei brani che ho ripreso: il server li toglie
+     davvero e non basta piu' nasconderli sul sito, bisogna dirgli che
+     sono stati presi di mira. */
+  nascostiRimossi: [..._nascostiTomba()],
         /* i brani che ho copiato nella mia libreria, per ogni nome. Serve
            cosi' ritrovo la copia anche sull'altro dispositivo. */
         miei: (function () {
@@ -10559,6 +10590,12 @@ const j = await r.json();
   /* Anche i minuti ascoltati arrivano da qui: senza questo, sull'altro
      dispositivo le statistiche erano tutte a zero. */
   if (j && j.statistiche) cambiati += _unisciStatistiche(j.statistiche);
+  /* E i brani che QUALCUNO ha ripreso: li tolgo anch'io, non solo li
+     nascondo. Senza questo, il telefono che li aveva ancora in testa li
+     rimandava e il brano restava sparito per sempre. */
+  if (j && Array.isArray(j.nascostiRimossi)) {
+    cambiati += _togliRimossi(j.nascostiRimossi);
+  }
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
            dispositivo, quindi li metto in elenco insieme a tutto il resto. */
         if (j && j.miei && typeof j.miei === "object") {
