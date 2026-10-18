@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.291";
+  const APP_VERSION = "6.292";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -513,6 +513,18 @@
       console.warn("Errore durante l'avvio di Music Box; le cache offline sono state conservate.",
         event && event.message ? event.message : "");
     }
+    /* Ste: "ancora non va comunque". Se un errore capita mentre il pannello
+       di Spotify e' aperto, lo scrivo DENTRO il pannello: altrimenti la
+       pagina resta ferma su una frase di mezzo e sembra che l'app sia
+       morta, mentre io non vedo niente. */
+    try {
+      const p = $("spotifyPanel");
+      const c = $("spotifyCorpo");
+      if (p && !p.hidden && c) {
+        c.textContent = "Qualcosa e' andato storto: " +
+          String((event && event.message) || "errore sconosciuto");
+      }
+    } catch (e) { /* noop */ }
   });
   const searchEl = $("search");
   const playlistEl = $("playlist");
@@ -2943,8 +2955,10 @@ function _eliminaNascosto(id) {
     if (i >= 0) { tracks.splice(i, 1); tolto = true; }
   } catch (e) { /* noop */ }
   try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
-  /* Nascosto non e' piu' "rimosso", quindi tolgo anche la tomba */
-  try { _nascostoTombaRimuovi(id); } catch (e) { /* noop */ }
+  /* Lo metto nella lista dei "non tornare piu' nascosti". Prima facevo il
+   contrario: toglievo il segno, e cosi' al riavvio il brano tornava
+   nascosto senza che nessuno l'avesse rimesso. */
+  try { _nascostoTombaAggiungi(id); } catch (e) { /* noop */ }
 
   try {
     if (t && t.file && /^https?:/i.test(String(t.file))) {
