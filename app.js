@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.264";
+  const APP_VERSION = "6.265";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9464,6 +9464,22 @@ $("aiutoPanel").addEventListener("click", (e) => {
 });
 
 $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
+  /* Ste: "premo importa da spotify e non spunta niente". Finora il
+     pulsone lo collegava solo spotify.js, e va a dire che quel
+     collegamento non partiva. Qui lo collego anche da app.js, dove so
+     che il codice gira: due tentativi non fanno danno, e _spotifyApri
+     si accorge da se' di non rifare il lavoro due volte. */
+  try {
+    window._spotifyCollegaQui = function () {
+      const b = $("btnSpotify");
+      if (!b || b._collegatoQui) return;
+      b._collegatoQui = true;
+      b.addEventListener("click", function () {
+        try { if (typeof _spotifyApri === "function") _spotifyApri(); } catch (e) { /* noop */ }
+      });
+    };
+    window._spotifyCollegaQui();
+  } catch (e) { /* noop */ }
   /* Ste: "posso mettere il link della mia playlist di spotify e in automatico
      importa le canzoni?". Il pulsante sta nel menu Altro, e se dice di no
      l'app resta esattamente com'era.
