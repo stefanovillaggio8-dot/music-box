@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.290";
+  const APP_VERSION = "6.291";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -471,38 +471,12 @@
   /* Ste: "192.168.1.40:8788/app/ non mi spunta ancora se posso solo
      ascoltare", e le tracce di Spotify non arrivavano.
 
-     Il computer e il sito servivano gia' la versione nuova, senza quella
-     frase: quello che vedeva era una COPIA VECCHIA rimasta sul telefono,
-     e lo stesso vale per le tracce che non arrivavano.
+     Il pulsante c'era gia' nel codice ma non nella pagina: il
+     "$('btnRefresh').addEventListener" di sotto findava un pulsante che
+     non esisteva, e l'errore faceva saltare TUTTO il resto del codice
+     successivo. Ora il pulsante c'e' nella pagina e quel pezzo funziona.
 
-     Questo pulsante fa pulizia totale: chiude i service worker, cancella
-     le cache e riapre. Dopo, sul telefono c'e' solo la versione nuova.
-
-     Non lo collego all'avvio perche' cancellare le cache significa perdere
-     le canzoni scaricate, e quello lo decidi tu premendo il pulsante. */
-  async function _aggiornaDavvero() {
-    const b = $("btnRefresh");
-    if (b) b.disabled = true;
-    try { toast("Aggiorno l'app, aspetta un secondo...", 4000); } catch (e) { /* noop */ }
-    try {
-      if ("serviceWorker" in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
-      }
-    } catch (e) { /* noop */ }
-    try {
-      const chiavi = await caches.keys();
-      await Promise.all(chiavi.map((k) => caches.delete(k)));
-    } catch (e) { /* noop */ }
-    try {
-      const via = location.pathname + "?r=" + Date.now();
-      location.replace(via);
-    } catch (e) { try { location.reload(); } catch (x) { /* noop */ } }
-  }
-  try {
-    const b = $("btnRefresh");
-    if (b) b.addEventListener("click", _aggiornaDavvero);
-  } catch (e) { /* noop */ }
+     Quello che fa il pulsante e' scritto piu' in basso, dove era gia'. */
 
   async function selfHeal() {
     return;
@@ -2856,8 +2830,21 @@ const nome = document.createElement("div");
     btn.className = "nascosti-rimetti";
     btn.setAttribute("data-azione", "rimetti");
     btn.textContent = "Rimetti in lista";
+    /* Ste: "nella lista dei brani nascosti aggiungi un pulsante tipo x
+       tutto a destra della canzone che se lo premo viene eliminata
+       definitivamente, aggiungi pero' una conferma".
+
+       Sta DOPO "Rimetti in lista" cosi' finisce davvero in fondo a destra,
+       e non viene confuso con l'altro bottone. */
+    const via = document.createElement("button");
+    via.className = "nascosti-via";
+    via.setAttribute("data-azione", "elimina");
+    via.setAttribute("aria-label", "Elimina per sempre questo brano nascosto");
+    via.setAttribute("title", "Elimina per sempre");
+    via.textContent = "\u00d7";
     riga.appendChild(nome);
     riga.appendChild(btn);
+    riga.appendChild(via);
     corpo.appendChild(riga);
   }
   /* In fondo il bottone per tutti. Dice quanti sono QUELLI di questo
@@ -2932,6 +2919,45 @@ function _rimettiNascosto(id) {
   const t = _trovaNascosto(id);
   _stampaNascosti("Rimesso: " + String((t && t.title) || "brano"));
   }
+
+  /* Ste: "nella lista dei brani nascosti metti una x che elimina il brano
+     per sempre".Diverso dal "Rimetti in lista": quello lo riporta indietro,
+     questo lo butta via. Percio' prima gli chiedo SEMPRE conferma, e gli
+     dico esattamente cosa sto facendo: non cancello niente per sbaglio. */
+function _eliminaNascosto(id) {
+  if (!id) return;
+  const t = _trovaNascosto(id);
+  const nome = String((t && t.title) || "questo brano");
+  const chi = (t && t.artist) ? String(t.artist) : "";
+  const testo = chi ? nome + " di " + chi : nome;
+  if (!confirm("Vuoi davvero ELIMINARE PER SEMPRE:\n\n" + testo +
+    "\n\nNon e' come rimetterlo in lista: questo brano sparisce e non si " +
+    "recupera piu'. Vuoi continuare?")) return;
+
+  /* Tolgo il brano dai dati. Se il file c'era davvero, lo cancello
+     anche: altrimenti resterebbe il file senza piu' nessuna riga che lo
+     nomini, e la libreria si riempirebbe di robba invisibile. */
+  let tolto = false;
+  try {
+    const i = tracks.findIndex((x) => x && x.id === id);
+    if (i >= 0) { tracks.splice(i, 1); tolto = true; }
+  } catch (e) { /* noop */ }
+  try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
+  /* Nascosto non e' piu' "rimosso", quindi tolgo anche la tomba */
+  try { _nascostoTombaRimuovi(id); } catch (e) { /* noop */ }
+
+  try {
+    if (t && t.file && /^https?:/i.test(String(t.file))) {
+      fetch(String(t.file), { method: "DELETE" }).catch(function () { /* noop */ });
+    }
+  } catch (e) { /* noop */ }
+
+  try { saveCurrentState(); } catch (e) { /* noop */ }
+  try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
+  try { render(); } catch (e) { /* noop */ }
+  try { _stampaNascosti("Eliminato per sempre: " + nome); } catch (e) { /* noop */ }
+  try { toast("Eliminato: " + nome, 4000); } catch (e) { /* noop */ }
+}
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
      DA SOLO: non c'e' un tasto da premere. Ogni brano importato a mano resta
@@ -8648,6 +8674,13 @@ $("btnFavFilter").addEventListener("click", () => {
       const riga = t.closest ? t.closest(".falliti-riga") : null;
       if (!riga) return;
       _rimettiNascosto(riga.getAttribute("data-id"));
+      return;
+    }
+    if (azione === "elimina") {
+      const riga = t.closest ? t.closest(".falliti-riga") : null;
+      if (!riga) return;
+      _eliminaNascosto(riga.getAttribute("data-id"));
+      return;
     }
   });
   $("fallitiPanel").addEventListener("click", (e) => {
@@ -8788,9 +8821,20 @@ $("fabMenu").addEventListener("click", (e) => {
     fileInput.value = "";
   });
 
+  /* Ste: "la barra di ricerca delle canzoni non funziona piu".
+     Qui il testo veniva salvato ma la lista non veniva ridisegnata: scrivevo
+     la parola cercata e non facevo accorgere niente a nessuno, quindi la
+     ricerca sembrava morta. Mancava una sola riga: il ridisegno.
+     Con un piccolo ritardo, altrimenti ridisegnerebbe a ogni lettera. */
+  let _ricercaScaduta = null;
   searchEl.addEventListener("input", () => {
     query = searchEl.value.trim();
       try { LS.set("mb.ricerca", query); } catch (e) { /* noop */ }
+    try { if (_ricercaScaduta) clearTimeout(_ricercaScaduta); } catch (e) {}
+    _ricercaScaduta = setTimeout(function () {
+      _ricercaScaduta = null;
+      try { render(); } catch (e) { /* noop */ }
+    }, 160);
   });
 
   /* Bottone diagnostica nel menu "Altro": serve a me, non agli utenti, ma lo
@@ -8803,8 +8847,19 @@ $("fabMenu").addEventListener("click", (e) => {
     const ov = document.getElementById("diagOverlay");
     if (ov) ov.addEventListener("click", (e) => { if (e.target === ov) ov.hidden = true; });
   } catch (e) { /* noop */ }
+  /* Ste: "192.168.1.40:8788/app/ non mi spunta ancora se posso solo
+     ascoltare". Il pulsante chiude anche i service worker: senza, il
+     worker vecchio torna su al prossimo riavvio e siamo al punto di
+     prima. Prima non c'era, ed e' per questo che l'app sembrava
+     "incastrata" su una versione vecchia. */
   $("btnRefresh").addEventListener("click", async () => {
-    toast("Aggiorno...");
+    toast("Aggiorno l'app, aspetta un secondo...");
+    try {
+      if ("serviceWorker" in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
+      }
+    } catch (e) { /* noop */ }
     try {
       if (swReg) await swReg.update();
     } catch (e) { /* noop */ }
@@ -10739,8 +10794,32 @@ const j = await r.json();
         let cambiati = 0;
         /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
            e diventa solo piu' grande. */
-        for (const id of nasco) if (id && !hiddenTracks.has(id) && !_nascostiTomba().has(id)) { hiddenTracks.add(id); cambiati++; }
-        for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
+for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
+
+        /* Ste: "alcune volte mi vengono nascoste canzoni a caso".
+         Lo stato condiviso arriva da altri dispositivi e da altri
+         momenti. Se contiene un id che in questa libreria non esiste,
+         non lo aggiungo: un id che non c'e' non nasconde nulla, ma
+         resta li' eauhccando i contatori, e se domani torna fuori quel
+un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
+          nascosto. */
+        let scartati = 0;
+        for (const id of nasco) {
+          if (!id) continue;
+          if (hiddenTracks.has(id) || _nascostiTomba().has(id)) continue;
+          if (!(Array.isArray(tracks) && tracks.some((t) => t && t.id === id))) {
+            scartati++;
+            continue;
+          }
+          hiddenTracks.add(id);
+          cambiati++;
+        }
+        if (scartati) {
+          try {
+            console.warn("Stato condiviso: " + scartati +
+              " brani nascosti che non esistono qui, scartati.");
+          } catch (e) { /* noop */ }
+        }
   /* Anche i minuti ascoltati arrivano da qui: senza questo, sull'altro
      dispositivo le statistiche erano tutte a zero. */
   if (j && j.statistiche) cambiati += _unisciStatistiche(j.statistiche);
@@ -12628,45 +12707,42 @@ function _spotifySicuro(s) {
 let _ultimoTapSpotify = 0;
 
 function _spotifyApri() {
-  _spotifyTraccia("bottone toccato");
-  /* il bottone puo' ricevere due eventi per un tocco (listener + onclick):
-     se arriva subito un secondo evento lo lascio passare, non rifaccio
-     tutto un'altra volta */
-  const ora = Date.now();
-  if (ora - _ultimoTapSpotify < 800) return;
-  _ultimoTapSpotify = ora;
+  /* Ste: "ancora spotify non apre nulla". Per cinque volte ho provato a
+     indovinare guardando il pulsante. Il problema vero e' che qui dentro
+     c'erano DUE strade per lo stesso tocco: il collegamento scritto nella
+     pagina e quello che mettevo a mano da JavaScript. Si pestavano, e
+     partiva una a caso, sapendo solo una delle due.
 
-  let p = null;
-  try { p = $("spotifyPanel"); } catch (e) { p = null; }
-
-  /* passo 1: mostrare qualcosa, subito */
+     Adesso c'e' una strada sola e ogni passo e' protetto: se qualcosa
+     non va, lo scrivo a schermo invece di lasciare tutto a meta'. */
+  try { _spotifyTraccia("bottone toccato"); } catch (e) { /* la traccia non blocca niente */ }
   try {
+    const ora = Date.now();
+    if (ora - _ultimoTapSpotify < 800) return;
+    _ultimoTapSpotify = ora;
+
+    let p = null;
+    try { p = $("spotifyPanel"); } catch (e) { p = null; }
+
+    /* passo 1: mostrare qualcosa, subito */
     if (!p) throw new Error("il pannello di Spotify non c'e' nella pagina");
     p.hidden = false;
     $("spotifyTitolo").textContent = "Spotify";
     $("spotifySotto").textContent = "un attimo...";
     $("spotifyCorpo").innerHTML = '<p class="step-hint">Sto aprendo...</p>';
-    document.body.classList.add("no-scroll");
-  } catch (errore) {
-    try { toast("Spotify non si apre: " + (errore && errore.message ? errore.message : String(errore)), 8000); } catch (e) {}
-    return;
-  }
+    try { document.body.classList.add("no-scroll"); } catch (e) {}
 
-  _spotifyTraccia("pannello aperto");
-  /* passo 2: chiudere il menu Altro e aprire il contenuto vero */
-  try { if (typeof _chiudiAltro === "function") _chiudiAltro(); } catch (e) { /* noop */ }
-  _spotifyTraccia("menu chiuso");
-  try {
+    _spotifyTraccia("pannello aperto");
+    /* passo 2: chiudere il menu Altro e aprire il contenuto vero */
+    try { if (typeof _chiudiAltro === "function") _chiudiAltro(); } catch (e) { /* noop */ }
+    _spotifyTraccia("menu chiuso");
     _spotifyMenu();
   } catch (errore) {
     const che = (errore && errore.message) ? errore.message : String(errore);
-    _spotifyTraccia("ERRORE: " + che);
+    try { _spotifyTraccia("ERRORE: " + che); } catch (e) {}
     try {
-      p.hidden = false;
-      $("spotifyTitolo").textContent = "Spotify non si apre";
-      $("spotifySotto").textContent = "";
-      $("spotifyCorpo").innerHTML =
-        '<p class="step-hint">' + _spotifySicuro(che) + "</p>";
+      _spotifyPnl("Spotify non si apre", "", '<p class="step-hint">' +
+        String(che) + "</p>");
     } catch (e) { /* noop */ }
     try { toast("Spotify non si apre: " + che, 8000); } catch (e) {}
   }
@@ -12689,11 +12765,11 @@ const bs = $("btnSpotify");
           " versione=" + String((typeof APP_VERSION !== "undefined" ? APP_VERSION : "?"))); } catch (e) {}
       if (bs && !bs._collegatoSpotify) {
       bs._collegatoSpotify = true;
-      /* Metto il collegamento DENTRO l'HTML, ma solo con una riga corta e
-         senza "<" o ">": se metto codice dentro la pagina rischio di
-         romperla (e' successo: nel menu si vedeva un pezzo di codice come
-         se fosse testo). */
-      try { bs.setAttribute("onclick", "window._spotifyApri && window._spotifyApri()"); } catch (e) {}
+      /* PRIMA riscrivevo l'"onclick" scritto nella pagina con un altro
+         codice. Risultato: due strade diverse per lo stesso tocco, che si
+         pestavano, e non sapevo quale fosse partita. Per fare un colpo
+         solo. Adesso non tocco piu' la pagina: mi collego e basta.
+         L'"onclick" della pagina resta quello, ed e' gia' protetto. */
       bs.addEventListener("click", _spotifyApri);
     }
     const sc = $("spotifyChiudi");
