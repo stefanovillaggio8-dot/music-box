@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.295";
+  const APP_VERSION = "6.296";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -10935,22 +10935,40 @@ for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambi
          resta li' eauhccando i contatori, e se domani torna fuori quel
 un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
           nascosto. */
-        let scartati = 0;
+        /* Ste: "alcune volte mi vengono nascoste canzoni a caso".
+           Avevo messo un filtro che scartava gli id "che non esistono in
+           questa libreria". Ma qui la libreria NON e' ancora stata
+           caricata: tracks e' vuoto, quindi il filtro scartava TUTTO
+           quello che arrivava dal sito e i brani nascosti tornavano
+           visibili. Ste: "ho nascosto delle cose, aggiorno, e tornano".
+           Era un mio filtro a fare il danno.
+
+           Adesso metto dentro tutto, e l'eventuale id in piu' lo segno
+           DOPO, quando la libreria c'e' gia'. Un id che non corrisponde a
+           nulla non fa sparire niente: al massimo un contatore che non
+           torna. */
+        const idForseStrani = [];
         for (const id of nasco) {
           if (!id) continue;
           if (hiddenTracks.has(id) || _nascostiTomba().has(id)) continue;
-          if (!(Array.isArray(tracks) && tracks.some((t) => t && t.id === id))) {
-            scartati++;
-            continue;
-          }
           hiddenTracks.add(id);
+          if (!(Array.isArray(tracks) && tracks.some((t) => t && t.id === id))) idForseStrani.push(id);
           cambiati++;
         }
-        if (scartati) {
-          try {
-            console.warn("Stato condiviso: " + scartati +
-              " brani nascosti che non esistono qui, scartati.");
-          } catch (e) { /* noop */ }
+        if (idForseStrani.length) {
+          setTimeout(function () {
+            try {
+              if (!Array.isArray(tracks) || !tracks.length) return;
+              let quanti = 0;
+              for (const id of idForseStrani) {
+                if (!tracks.some((t) => t && t.id === id)) quanti++;
+              }
+              if (quanti) {
+                console.warn("Stato condiviso: " + quanti +
+                  " brani nascosti che qui non esistono. Non fanno danno, ma il conto non torna.");
+              }
+            } catch (e) { /* noop */ }
+          }, 5000);
         }
   /* Anche i minuti ascoltati arrivano da qui: senza questo, sull'altro
      dispositivo le statistiche erano tutte a zero. */
