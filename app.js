@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.267";
+  const APP_VERSION = "6.268";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -10051,7 +10051,7 @@ if (sicura) {
     /* Ste: questo messaggio era illeggibile (tagliato con i puntini).
        Ora va a capo e resta leggibile, ma con le stesse informazioni
        di prima: da dove aprire l'app. */
-    toast("Qui non posso parlare col computer.\nApri l'app dal computer: http://192.168.1.40:8168", 7000);
+    toast("Qui non posso parlare col computer, perche' questa pagina e' aperta da internet e il browser non mi fa chiamare la rete di casa.\nApri l'app da qui: http://192.168.1.40:8788/app/", 9000);
   } else {
     toast("Il computer non risponde.\nSei sulla rete di casa?\nPuoi salvare a mano in: musica mp3 ste", 7000);
   }
