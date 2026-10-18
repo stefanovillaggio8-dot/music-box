@@ -10798,11 +10798,37 @@ nascosti: [...hiddenTracks],
      minuti, e il nome appena salvato non c'era ancora in quella copia.
      Per questo ora lo chiedo sempre fresco ("no-store"), e per sicurezza lo
      rileggo un paio di volte dopo l'avvio: cosi' se nel frattempo e' arrivato
-     qualcosa dal PC o dall'altro dispositivo, l'app lo vede. */
+     qualcosa dal PC o dall'altro dispositivo, l'app lo vede.
+
+     Ste: "il titolo e l'artista li posso cambiare solo nell'app di github".
+     Motivo: "./stato.json" aperto dal computer e' una COPIA sul disco, non
+     il posto vero dove stanno i dati, e quella copia non cambia da sola.
+     Adesso chiedo prima al Worker, che e' chi scrive, e uso il file solo se
+     il Worker non risponde. */
+    try {
+      if (SERVIZIO_PUBBLICA) {
+        const rw = await fetch(SERVIZIO_PUBBLICA + "/stato", { cache: "no-store" });
+        if (rw.ok) {
+          const jw = await rw.json();
+          if (jw && jw.stato) {
+            if (await _applicaStatoCondiviso(jw.stato)) return;
+          }
+        }
+      }
+    } catch (e) { /* senza rete leggo il file sul sito */ }
+
     try {
       const r = await fetch("./stato.json", { cache: "no-store" });
       if (!r.ok) return;
 const j = await r.json();
+      await _applicaStatoCondiviso(j);
+    } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
+  }
+
+  /* Mette dentro quello che arriva dal Worker o dal sito. Ritorna true se
+     ha fatto qualcosa, cosi' il chiamante sa che puo' fermarsi. */
+  async function _applicaStatoCondiviso(j) {
+    try {
         const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
         let cambiati = 0;
@@ -10880,15 +10906,18 @@ dispositivo, quindi li metto in elenco insieme a tutto il resto. */
         if (rimessi) { LS.set("mb.rinomini", mappa); cambiati++; }
       } catch (e) { /* noop */ }
     }
-    if (cambiati) {
-          saveCurrentState();
-          /* Ricarico davvero la libreria, non la ridisegno: le canzoni appena
-             copiate devono comparire SUBITO, senza dover riaprire l'app. */
-          try { await loadAll(); } catch (e) { /* noop */ }
-          render();
-        }
-      } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
+if (cambiati) {
+    saveCurrentState();
+    /* Ricarico davvero la libreria, non la ridisegno: le canzoni appena
+       copiate devono comparire SUBITO, senza dover riaprire l'app. */
+    try { await loadAll(); } catch (e) { /* noop */ }
+    render();
+    return true;
     }
+    return false;
+    } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
+    return false;
+  }
 
   /* Unisco le playlist arrivate da fuori a quelle che ho gia' qui. */
 function _unisciPlaylistCondivise(arrivate) {
@@ -10950,20 +10979,31 @@ function _unisciPlaylistCondivise(arrivate) {
 }
 
 async function _caricaPlaylistCondivise() {
-  /* Prima provo dal Worker, che e' chi le scrive e quindi ha le piu' fresche. */
-  if (SERVIZIO_PUBBLICA && CHIAVE_PUBBLICA) {
+  /* Prima provo dal Worker, che e' chi le scrive e quindi ha le piu' fresche.
+
+     Ste: "posso modificare il titolo e l'artista solo nell'app di github, e
+     nel link di tailscale mancano delle canzoni". Prima chiedevo la chiave
+     segreta per LEGGERE, e chi non ce l'aveva ripiegava su playlist.json:
+     sul computer quella e' una copia vecchia sul disco, quindi nomi
+     indietro e canzoni mancanti. Ora la lettura e' aperta (vedi il
+     worker): e' roba gia' pubblica. Scrivere continua a volere la chiave. */
+  if (SERVIZIO_PUBBLICA) {
     try {
-      const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
-        headers: { "x-chiave": CHIAVE_PUBBLICA }, cache: "no-store"
-      });
+      const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", { cache: "no-store" });
       if (r.ok) {
         const j = await r.json();
-        if (Array.isArray(j && j.playlist)) _unisciPlaylistCondivise(j.playlist);
+        if (Array.isArray(j && j.playlist)) {
+          const arrivate = _unisciPlaylistCondivise(j.playlist);
+          if (arrivate) {
+            try { segnalaErrore("playlist dal worker: " + playlists.length + " in tutto"); } catch (e) {}
+          }
+          return;
+        }
       }
     } catch (e) { /* senza rete uso il file sul sito */ }
   }
 
-  /* Poi leggo playlist.json direttamente dal sito.
+  /* Se il Worker non c'e', leggo playlist.json dal sito.
 
      Serve perche' il Worker chiede la chiave, e la chiave ce l'hanno solo i
      dispositivi dove e' stata inserita. Aperto dalla scorciatoia che avvia
