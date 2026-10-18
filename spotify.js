@@ -285,6 +285,7 @@ function _spotifyParla(variabile, testo) {
 
 /* Il pulsante del menu. */
 function _spotifyMenu() {
+  _spotifyTraccia("sono dentro _spotifyMenu");
   if (_spotifyToken()) {
     _spotifyMostraPlaylist();
     return;
@@ -487,6 +488,7 @@ function _spotifySicuro(s) {
 let _ultimoTapSpotify = 0;
 
 function _spotifyApri() {
+  _spotifyTraccia("bottone toccato");
   /* il bottone puo' ricevere due eventi per un tocco (listener + onclick):
      se arriva subito un secondo evento lo lascio passare, non rifaccio
      tutto un'altra volta */
@@ -510,12 +512,15 @@ function _spotifyApri() {
     return;
   }
 
+  _spotifyTraccia("pannello aperto");
   /* passo 2: chiudere il menu Altro e aprire il contenuto vero */
   try { if (typeof _chiudiAltro === "function") _chiudiAltro(); } catch (e) { /* noop */ }
+  _spotifyTraccia("menu chiuso");
   try {
     _spotifyMenu();
   } catch (errore) {
     const che = (errore && errore.message) ? errore.message : String(errore);
+    _spotifyTraccia("ERRORE: " + che);
     try {
       p.hidden = false;
       $("spotifyTitolo").textContent = "Spotify non si apre";
