@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.276";
+  const APP_VERSION = "6.277";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7045,6 +7045,9 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
       const ok = !!base;
       const perche = ok ? "" : "nessun indirizzo risponde (" + INDIRIZZI_PONTE.join(", ") + ")";
       ponteCache = { ok: ok, t: Date.now() };
+        /* e lo dico a schermo, cosi' non devi indovinare se questa
+           pagina puo' scaricare oppure no */
+        try { _mostraAvvisoCollegamento(ok, base); } catch (e) { /* noop */ }
       if (segnalatoIndirizzo !== window.location.href) {
         segnalatoIndirizzo = window.location.href;
         segnalaErrore("pagina aperta su " + window.location.href +
@@ -7276,12 +7279,12 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
         license: "",
         source: "youtube (convertito sul PC)"
       };
-      await saveImported(meta, blob, meta.source);
-      for (const k of trackKeys(meta)) libKeys.add(k);
-      _togliFallito(f.url);
-      toast(meta.title + " scaricato");
-      await loadAll();
-      return true;
+await saveImported(meta, blob, meta.source);
+        for (const k of trackKeys(meta)) libKeys.add(k);
+        _togliFallito(f.url);
+        await loadAll();
+        _portaAlBranoScaricato(meta);
+        return true;
     } catch (e) {
       _notaFallito(f.url, f.artista, f.titolo, f.cartella, (e && e.message) || "errore");
       return false;
@@ -8278,6 +8281,76 @@ function closeImport() {
 
   /* ---------- Toast ---------- */
   let toastTimer = null;
+/* Ste: "dice fatto ma non spunta nella libreria". Il messaggio diceva solo
+   "scaricato" e poi bisognava cercare il brano a mano: in una libreria di
+   duecento pezzi, in ordine alfabetico, era una caccia. Adesso il messaggio
+   dice DOVE e' finita ("in Diego, 34") e toccandolo ti porta dritto li',
+   cambiando profilo se serve.
+
+   Ricordo di oggi: brano scaricato, messaggio "fatto", e poi venti minuti
+   a chiedersi dove fosse finito. */
+function _portaAlBranoScaricato(meta) {
+  try {
+    const titolo = String((meta && meta.title) || "").trim();
+    if (!titolo) { toast("Scaricato"); return; }
+    let scelto = null;
+    for (const t of tracks) {
+      if (String(t.title || "").trim() === titolo) { scelto = t; break; }
+    }
+    if (!scelto) { toast(titolo + " scaricato"); return; }
+    const diChi = scelto.profile || DEFAULT_PROFILE;
+    const posto = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === diChi)
+      .findIndex((t) => t.id === scelto.id) + 1;
+    const el = $("toast");
+    if (!el) { toast(titolo + " scaricato"); return; }
+    el.textContent = titolo + " \u2014 in " + diChi + ", numero " + posto + ". Tocca per andare";
+    el.classList.add("show");
+    el.classList.add("toccabile");
+    el.onclick = () => {
+      el.classList.remove("show");
+      el.classList.remove("toccabile");
+      /* se il brano e' di un altro profilo, ci vado: qui non si vedrebbe */
+      try {
+        if (diChi !== profile && typeof switchProfile === "function") switchProfile(diChi);
+      } catch (e) { /* noop */ }
+      try { playById(scelto.id, false); } catch (e) { /* noop */ }
+      try {
+        const riga = playlistEl && playlistEl.querySelector('[data-id="' + scelto.id + '"]');
+        if (riga && riga.scrollIntoView) riga.scrollIntoView({ block: "center" });
+      } catch (e) { /* noop */ }
+    };
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      el.classList.remove("show");
+      el.classList.remove("toccabile");
+    }, 9000);
+  } catch (e) { /* se non riesco non cambio niente */ }
+}
+
+/* Ste: "un solo link, non due. l'app potrebbe accorgersi da sola di
+   essere sul link giusto". Tre link diverse (casa, Tailscale, internet)
+   e non si sapeva quale potesse scaricare: quello di internet non parla
+   col PC perche' il browser vieta, e quello sbagliato fa fallire tutto.
+   Adesso la pagina dice da sola: QUI POSSO SCARICARE, oppure QUI SOLO
+   ASCOLTO. Basta guardare in alto, senza indovinare. */
+function _mostraAvvisoCollegamento(ok, base) {
+  try {
+    const el = $("avvisoCollegamento");
+    if (!el) return;
+    if (ok) {
+      el.className = "avviso-collegamento ok";
+      el.innerHTML = "<b>Qui posso scaricare.</b> Il computer e' vicino: per aggiungere canzoni usa pure questa pagina.";
+      el.hidden = false;
+      return;
+    }
+    el.className = "avviso-collegamento";
+    const altro = window.isSecureContext ? "" :
+      " (questa pagina e' aperta da internet: per un sito sicuro il browser non fa parlare col PC)";
+    el.innerHTML = "<b>Qui posso solo ascoltare.</b> Per aggiungere canzoni apri la pagina del computer" +
+      " &mdash; quella che finisce con <code>8788/app/</code>" + altro + ".";
+    el.hidden = false;
+  } catch (e) { /* noop */ }
+}
 function toast(msg, durata) {
   const el = $("toast");
   el.textContent = msg;

@@ -2540,3 +2540,22 @@ li.appena-aggiunto {
 .spotify-riga:active { transform: translateY(1px); }
 .spotify-nome { font-size: 14.5px; font-weight: 700; }
 .spotify-quante { font-size: 12px; color: var(--muted); }
+
+/* Ste: "un solo link, non due". Adesso l'app dice chiaramente se da
+   questa pagina puo' scaricare (perche' parla col PC) oppure se puo'
+   solo ascoltare. Serve a non confondersi fra il link di casa, quello
+   di Tailscale e quello di internet. */
+.avviso-collegamento {
+  margin: 10px 0 4px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  background: rgba(255, 196, 107, .10);
+  border: 1px solid rgba(255, 196, 107, .35);
+  color: var(--txt);
+}
+.avviso-collegamento.ok {
+  background: rgba(126, 220, 160, .10);
+  border-color: rgba(126, 220, 160, .35);
+}
