@@ -1,14 +1,7 @@
 {
  "nascosti": [
-  "b-track-1",
-  "b-track-119",
-  "b-track-123",
-  "b-track-154",
   "b-track-183",
-  "b-track-217",
-  "b-track-218",
   "b-track-219",
-  "b-track-220",
   "b-track-24",
   "b-track-254",
   "b-track-258",
@@ -20,15 +13,22 @@
   "b-track-511",
   "b-track-65",
   "b-track-71",
-  "b-track-8",
   "b-track-99",
   "builtin-2",
   "builtin-22"
  ],
  "nascostiRimossi": [
+  "b-track-1",
+  "b-track-119",
+  "b-track-123",
+  "b-track-154",
+  "b-track-217",
+  "b-track-218",
+  "b-track-220",
   "b-track-266",
   "b-track-287",
   "b-track-290",
+  "b-track-8",
   "prova-test-xyz"
  ],
  "preferiti": [],
@@ -82,7 +82,7 @@
    "artist": "thasup"
   },
   "b-track-91": {
-   "title": "uNa DiReZioNe giï¿½Sta",
+   "title": "uNa DiReZioNe gi�Sta",
    "artist": "thasup"
   },
   "b-track-28": {
@@ -102,8 +102,8 @@
    "artist": "thasup"
   },
   "b-track-512": {
-   "title": "le mie colpe",
-   "artist": "glocky"
+   "title": "le mie colpe glocky",
+   "artist": ""
   }
  }
 }
