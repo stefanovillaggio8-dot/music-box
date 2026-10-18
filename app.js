@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.279";
+  const APP_VERSION = "6.280";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12068,7 +12068,7 @@ async function _spotifyAccedi() {
       '<p class="step-hint">Tocca il pulsante qui sotto: ti porta su Spotify per ' +
       "dargli l'accesso. Me lo dai una volta sola e non ti chiedo la password.</p>" +
       '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
-      String(url).replace(/&/g, "&amp;") + '">Apri Spotify</a>');
+      String(url).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Apri Spotify</a>');
   } catch (e) { /* noop */ }
   _spotifyTraccia("accesso: sto per aprire Spotify");
   let aperta = false;
