@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.283";
+  const APP_VERSION = "6.284";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
