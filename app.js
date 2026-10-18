@@ -458,7 +458,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.277";
+  const APP_VERSION = "6.278";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12034,10 +12034,10 @@ async function _spotifyAccedi() {
     toast("Il telefono non mi fa fare le operazioni sicure: usa Safari aggiornato");
     return;
   }
-  /* ATTENZIONE: la chiave DEVE sopravvivere al salto su Spotify.
-     Se resta solo in una variabile, la pagina si ricarica e la variabile
-     sparisce: al ritorno non c'e' niente da scambiare e il login fallisce
-     con "Accesso scaduto". Quindi la metto via insieme al suo stato. */
+  /* ATTENZIONE: la chiave DEVE sopravvivere al salto su Spotify. Se resta
+     solo in una variabile, la pagina si ricarica e la variabile sparisce:
+     al ritorno non c'e' niente da scambiare e il login finisce con
+     "Accesso scaduto". Percio' la metto via insieme al suo stato. */
   _spotifyChiave = pk.verifier;
   const stato = base(String(Date.now()));
   try {
@@ -12055,37 +12055,34 @@ async function _spotifyAccedi() {
   });
   const url = "https://accounts.spotify.com/authorize?" + q.toString();
 
-  /* Prima: far vedere che l'app ha capito e sta per portare su Spotify.
-     Ste: "sto aprendo spotify ma non si apre": senza questa riga non si
-     capiva nemmeno se il comando era partito. */
+  /* Ste: "sto aprendo spotify ma non si apre", e poi "non compare manco il
+     pulsante". Prima scrivevo una riga e saltavo, e se il salto non
+     partiva compariva un link DOPO due secondi e mezzo: ma proprio
+     mentre succedeva il salto portava l'app in secondo piano, il codice
+     vedeva la pagina nascosta e non mostrava niente. Il link spariva
+     proprio quando serviva.
+     Adesso il link compare SUBITO e resta li'. Un tocco su un link vero
+     funziona sempre: lo gestisce il telefono, non il nostro codice. */
   try {
-    _spotifyPnl("Sto aprendo Spotify", "",
-      '<p class="step-hint">Ti porto su Spotify per dargli l\'accesso. ' +
-      'L\'accesso me lo dai una volta sola.</p>');
+    _spotifyPnl("Accedi a Spotify", "un tocco e si apre",
+      '<p class="step-hint">Tocca il pulsante qui sotto: ti porta su Spotify per ' +
+      "dargli l'accesso. Me lo dai una volta sola e non ti chiedo la password.</p>" +
+      '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
+      String(url).replace(/&/g, "&amp;") + '">Apri Spotify</a>');
   } catch (e) { /* noop */ }
-
-  try { window.location.href = url; } catch (e) { /* non salto: vedo sotto */ }
-
-  /* Ste: "ma non si apre". Il salto lo fa il codice da solo, e quando
-     l'app e' installata sulla schermata Home il telefono lo blocca:
-     non succede niente e non si capisce perche'.
-     Allora: se dopo qualche secondo la pagina non e' cambiata, gli mostro
-     il collegamento VERO da toccare con il dito. Un link toccato dal
-     telefono funziona sempre, perche' lo gestisce il browser e non il
-     nostro codice. */
+  _spotifyTraccia("accesso: sto per aprire Spotify");
+  let aperta = false;
   try {
-    setTimeout(function () {
-      /* se la pagina e' cambiata non do disturbare niente */
-      if (typeof document !== "undefined" && document.hidden) return;
-      try {
-        _spotifyPnl("Tocca per aprire Spotify", "una volta sola",
-          '<p class="step-hint">Il telefono non ha voluto aprire la pagina da solo. ' +
-          'Tocca il collegamento qui sotto: poi su Spotify premi "Accetta".</p>' +
-          '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
-          String(url).replace(/&/g, "&amp;") + '">Apri Spotify</a>');
-      } catch (e) { /* noop */ }
-    }, 2500);
-  } catch (e) { /* noop */ }
+    /* il tocco e' suo: e' l'unico modo che iOS lascia passare quando
+       l'app e' installata sulla schermata Home */
+    const f = window.open(url, "_blank");
+    aperta = !!(f && !f.closed);
+    _spotifyTraccia("finestra nuova: " + (aperta ? "aperta" : "bloccata"));
+  } catch (e) { _spotifyTraccia("finestra nuova: bloccata"); }
+  if (!aperta) {
+    try { window.location.href = url; _spotifyTraccia("salto diretto: provato"); }
+    catch (e) { _spotifyTraccia("salto diretto: bloccato"); }
+  }
 }
 
 /* Step 2: Spotify rimanda qui con ?code=... e io scambio il codice per il
