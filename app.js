@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.257";
+  const APP_VERSION = "6.258";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11180,6 +11180,10 @@ for (const p of playlists) {
   try {
     const vp = $("versionePagina");
     if (vp) vp.textContent = "pagina v" + APP_VERSION;
+    // Ste: "non va ancora" e non sapevo quale versione avesse davvero
+    // il telefono. Ora la versione e' scritta anche nella guida.
+    const vg = $("versioneApp");
+    if (vg) vg.textContent = "v" + APP_VERSION;
   } catch (e) { /* noop */ }
     try {
       db = await openDB();

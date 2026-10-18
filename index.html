@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6257" />
+  <link rel="stylesheet" href="style.css?v=6258" />
 </head>
 <body>
   <header class="topbar">
@@ -104,7 +104,7 @@
            volta sola (serve per vedere anche le playlist private, che sono
            private perche' sono sue), poi sceglie la playlist e il computer
            scarica tutto da YouTube. -->
-      <button class="menu-altro-voce" id="btnSpotify" type="button" onclick="window._spotifyApri &amp;&amp; window._spotifyApri()">
+      <button class="menu-altro-voce" id="btnSpotify" type="button" onclick="(function(){var p=document.getElementById('spotifyPanel');if(!p){document.title='SPOTIFY: pannello non trovato';return;}p.hidden=false;document.getElementById('spotifyTitolo').textContent='Il bottone risponde';document.getElementById('spotifySotto').textContent='';document.getElementById('spotifyCorpo').innerHTML='<p class=&quot;step-hint&quot;>Funziona. Adesso sto aprendo Spotify...</p>';if(window._spotifyApri){window._spotifyApri();}else{document.getElementById('spotifyCorpo').innerHTML='<p class=&quot;step-hint&quot;>Ma il pulsante NON c-e: spotify-ui.js non si e-caricato.</p>';}})()">
         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.72 1.11.3.18.39.57.21.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.14-9.97-1.17a.78.78 0 1 1-.45-1.49c3.63-1.1 8.15-.57 11.24 1.33.36.23.47.7.25 1.07Zm.1-2.86C14.7 8.9 9.2 8.76 6.1 9.68a.94.94 0 1 1-.54-1.79c3.54-1.06 9.75-.9 13.68 1.34a.93.93 0 1 1-.96 1.61Z"/></svg>
         <span class="voce-testo">Importa una playlist da Spotify</span>
       </button>
@@ -439,6 +439,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
       <div class="import-head-info">
         <p class="import-title">Come si usano le canzoni</p>
         <p class="import-sub">Tutto quello che serve sapere, in una pagina</p>
+        <p class="import-sub">Versione <b id="versioneApp">?</b></p>
       </div>
       <button class="import-close" id="aiutoClose" aria-label="Chiudi">&times;</button>
     </div>
@@ -700,8 +701,8 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="spotify.js?v=6257"></script>
-<script src="spotify-ui.js?v=6257"></script>
-<script src="app.js?v=6257"></script>
+<script src="spotify.js?v=6258"></script>
+<script src="spotify-ui.js?v=6258"></script>
+<script src="app.js?v=6258"></script>
 </body>
 </html>
