@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.296";
+  const APP_VERSION = "6.297";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1966,7 +1966,29 @@ function _devoVedereBrano(eMio, b) {
      l'interruttore "vedi anche le canzoni degli altri", oppure tenere premuto
      una canzone altrui e scegliere "Porta nella mia libreria": quella la copia
      e basta, all'altro resta esattamente com'e'. */
-/* I brani che l'utente ha eliminato per davvero con la X: non li
+/* Ste: "quando nascondo e aggiorno tornano indietro". I dati sul sito
+   c'erano gia' tutti (verificato), quindi il guaio e' sul telefono: o
+   arrivali non vengono messi dentro, o vengono tolti subito dopo.
+
+   Qui mi scrivo quello che vedo, e poi lo leggo dal computer invece di
+   continuare a indovinare. Costa niente e non blocca niente. */
+  let _diUltimoInvio = 0;
+  function _diChe(riga) {
+    try {
+      const dove = String(SERVIZIO_PUBBLICA || "").trim();
+      if (!dove) return;
+      const ora = Date.now();
+      if (ora - _diUltimoInvio < 1500) return;
+      _diUltimoInvio = ora;
+      fetch(dove + "/problema", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ riga: String(riga).slice(0, 160) })
+      }).catch(function () { /* senza rete pazienza */ });
+    } catch (e) { /* mai bloccare l'app per una traccia */ }
+  }
+
+  /* I brani che l'utente ha eliminato per davvero con la X: non li
      carico, e non li lascio rientrare. Ste: "premo la X e invece di
      eliminarsi tornano nella libreria". Il motivo era che la libreria
      viene ricostruita da capo, e il brano eliminato era ancora nella
@@ -10948,13 +10970,18 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
            nulla non fa sparire niente: al massimo un contatore che non
            torna. */
         const idForseStrani = [];
+        let aggiunti = 0;
         for (const id of nasco) {
           if (!id) continue;
           if (hiddenTracks.has(id) || _nascostiTomba().has(id)) continue;
           hiddenTracks.add(id);
+          aggiunti++;
           if (!(Array.isArray(tracks) && tracks.some((t) => t && t.id === id))) idForseStrani.push(id);
           cambiati++;
         }
+        _diChe("stato dal sito: arrivano " + nasco.length + " nascosti, messi dentro " +
+          aggiunti + ", gia' locali " + hiddenTracks.size + ", brani in libreria " +
+          (Array.isArray(tracks) ? tracks.length : -1) + ", tombone locali " + _nascostiTomba().size);
         if (idForseStrani.length) {
           setTimeout(function () {
             try {
@@ -10978,6 +11005,8 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
      rimandava e il brano restava sparito per sempre. */
   if (j && Array.isArray(j.nascostiRimossi)) {
     cambiati += _togliRimossi(j.nascostiRimossi);
+    _diChe("tolti i rimessi: arrivano " + j.nascostiRimossi.length +
+      ", adesso nascosti " + hiddenTracks.size);
   }
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
            dispositivo, quindi li metto in elenco insieme a tutto il resto. */
