@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.253";
+  const APP_VERSION = "6.254";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2701,26 +2701,44 @@ function restoreHidden() {
       const riga = document.createElement("div");
       riga.className = "falliti-riga";
       riga.setAttribute("data-id", id);
-      const nome = document.createElement("div");
-      nome.className = "falliti-info";
-      nome.textContent = String(t.title || t.artist || "Senza nome") +
-        (t.artist && t.title ? " · " + t.artist : "");
-      const btn = document.createElement("button");
-      btn.className = "menu-altro-voce nascosti-rimetti";
-      btn.setAttribute("data-azione", "rimetti");
-      btn.textContent = "Rimetti in lista";
-      riga.appendChild(nome);
-      riga.appendChild(btn);
-      corpo.appendChild(riga);
+const nome = document.createElement("div");
+    nome.className = "falliti-info";
+    /* Titolo e artista su due righe. Ste: "e' buggato", perche' il
+       bottone e il testo si sovrapponevano e il titolo andava a capo di
+       una parola per riga: era colpa del bottone, che voleva essere largo
+       come tutta la finestra dentro una riga stretta. */
+    const titolo = document.createElement("div");
+    titolo.className = "falliti-nome";
+    titolo.textContent = String(t.title || "Senza nome");
+    nome.appendChild(titolo);
+    if (t.artist) {
+      const chi = document.createElement("div");
+      chi.className = "falliti-dome";
+      chi.textContent = String(t.artist);
+      nome.appendChild(chi);
     }
-    /* In fondo il bottone per tutti, che era quello di prima. */
-    if (idList.length > 1) {
-      const tutti = document.createElement("button");
-      tutti.className = "menu-altro-voce nascosti-rimetti";
-      tutti.setAttribute("data-azione", "tutti");
-      tutti.textContent = "Rimetti tutti (" + idList.length + ")";
-      corpo.appendChild(tutti);
-    }
+    const btn = document.createElement("button");
+    /* Solo "nascosti-rimetti": NON anche "menu-altro-voce", che ha
+       width:100% e schiacciava il testo del brano a una parola per riga. */
+    btn.className = "nascosti-rimetti";
+    btn.setAttribute("data-azione", "rimetti");
+    btn.textContent = "Rimetti in lista";
+    riga.appendChild(nome);
+    riga.appendChild(btn);
+    corpo.appendChild(riga);
+  }
+  /* In fondo il bottone per tutti. Dice quanti sono QUELLI di questo
+     profilo: Ste ha visto "Rimetti tutti (21)" nell'account di Diego,
+     ma quei 21 includono anche 18 brani di un altro account e non
+     tocca rimetterli insieme. */
+  const mieiId = idList.filter((id) => _trovaNascosto(id));
+  if (mieiId.length > 1) {
+    const tutti = document.createElement("button");
+    tutti.className = "menu-altro-voce nascosti-rimetti";
+    tutti.setAttribute("data-azione", "tutti");
+    tutti.textContent = "Rimetti tutti i miei (" + mieiId.length + ")";
+    corpo.appendChild(tutti);
+  }
     /* Ste: "premo brani nascosti e non mi spunta nessuna canzone". Qui il
        pannello restava VUOTO: _apriNascosti finiva chiamando _stampaNascosti,
        che richiama _apriNascosti, che richiama _stampaNascosti... all'infinito.
@@ -9443,16 +9461,16 @@ $("aiutoPanel").addEventListener("click", (e) => {
 $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaYouTube(); });
   /* Ste: "posso mettere il link della mia playlist di spotify e in automatico
      importa le canzoni?". Il pulsante sta nel menu Altro, e se dice di no
-     l'app resta esattamente com'era. */
+     l'app resta esattamente com'era.
+     Il pulsante lo collega spotify-ui.js, perche' prima stava qui dentro
+     un try/catch che si mangiava gli errori: se qualcosa andava storto
+     semplicemente non apriva niente (Ste: "premo importa da spotify e
+     non apre nulla"). Qui non lo collego piu' per non legarlo due volte,
+     ma se il file non c'e' lo dico. */
   try {
-    const bs = $("btnSpotify");
-    if (bs) bs.addEventListener("click", () => {
-      _chiudiAltro();
-      try { document.body.classList.add("no-scroll"); } catch (e) { /* noop */ }
-      _spotifyMenu();
-    });
-    const sc = $("spotifyChiudi");
-    if (sc) sc.addEventListener("click", _spotifyChiudi);
+    if (!$("btnSpotify") && $("spotifyPanel")) {
+      toast("Spotify non si e' caricato bene", 5000);
+    }
   } catch (e) { /* noop */ }
 
   /* Quanti link sono in coda, cioè brani che ho mandato e che il computer

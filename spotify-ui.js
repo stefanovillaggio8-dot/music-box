@@ -208,3 +208,43 @@ async function _spotifyRientro() {
   toast("Collegato a Spotify", 4000);
   _spotifyMostraPlaylist();
 }
+
+/* Ste: "se premo importa da spotify non apre nulla".
+   Prima il bottone era collegato dentro app.js, dentro un try/catch che
+   si mangiava ogni errore: se qualcosa andava storto non succedeva
+   niente e non si capiva perche'. Ora il collegamento sta qui, vicino al
+   resto di Spotify, e se un errore capita lo dice a voce invece di
+   fallire in silenzio. */
+function _spotifyAggancia() {
+  const bs = $("btnSpotify");
+  if (bs && !bs._collegatoSpotify) {
+    bs._collegatoSpotify = true;
+    bs.addEventListener("click", () => {
+      if (typeof _chiudiAltro === "function") { try { _chiudiAltro(); } catch (e) { /* noop */ } }
+      try { document.body.classList.add("no-scroll"); } catch (e) { /* noop */ }
+      try {
+        _spotifyMenu();
+      } catch (errore) {
+        _spotifyChiudi();
+        toast("Spotify non si apre: " + (errore && errore.message ? errore.message : String(errore)), 8000);
+      }
+    });
+  }
+  const sc = $("spotifyChiudi");
+  if (sc && !sc._collegatoSpotify) {
+    sc._collegatoSpotify = true;
+    sc.addEventListener("click", _spotifyChiudi);
+  }
+  const p = $("spotifyPanel");
+  if (p && !p._collegatoSpotify) {
+    p._collegatoSpotify = true;
+    p.addEventListener("click", (e) => { if (e.target === p) _spotifyChiudi(); });
+  }
+}
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", _spotifyAggancia);
+  } else {
+    _spotifyAggancia();
+  }
+}
