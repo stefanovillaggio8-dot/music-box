@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.259";
+  const APP_VERSION = "6.260";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11180,10 +11180,16 @@ for (const p of playlists) {
   try {
     const vp = $("versionePagina");
     if (vp) vp.textContent = "pagina v" + APP_VERSION;
-    // Ste: "non va ancora" e non sapevo quale versione avesse davvero
-    // il telefono. Ora la versione e' scritta anche nella guida.
+    // Ste: "non funziona e non mi dice niente". Ora la guida dice se
+    // Spotify e' pronto o no: se qui dice "non caricato", il problema non
+    // e' nel resto dell'app e non serve continuare a cercare.
     const vg = $("versioneApp");
     if (vg) vg.textContent = "v" + APP_VERSION;
+    const st = $("statoSpotify");
+    if (st) {
+      st.textContent = (typeof window !== "undefined" && window._spotifyPronto)
+        ? "pronto" : "NON caricato";
+    }
   } catch (e) { /* noop */ }
     try {
       db = await openDB();
