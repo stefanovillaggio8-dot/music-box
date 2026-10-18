@@ -215,20 +215,73 @@ async function _spotifyRientro() {
    niente e non si capiva perche'. Ora il collegamento sta qui, vicino al
    resto di Spotify, e se un errore capita lo dice a voce invece di
    fallire in silenzio. */
+/* Ste: "se premo importa da spotify non apre nulla" e poi, anche dopo la
+   correzione: "non mi dice niente e non apre niente".
+
+   Il fatto che non dicesse NULLA era l'indizio: se il codice di errore fosse
+   partito, avrebbe scritto qualcosa. Non partiva niente, quindi il tap non
+   arrivava al bottone, oppure il pannello restava nascosto e la scritta di
+   errore finiva su un pannello che non si vedeva.
+
+   Per questo adesso il pannello si rende VISIBILE al primo tocco, prima di
+   fare qualsiasi altra cosa. Se poi qualcosa va storto, la scritta di
+   errore resta dentro il pannello, dove la si vede, e non solo in un avviso
+   che passa via. */
+function _spotifySicuro(s) {
+  return String(s).replace(/[&<>]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+  });
+}
+
+let _ultimoTapSpotify = 0;
+
+function _spotifyApri() {
+  /* il bottone puo' ricevere due eventi per un tocco (listener + onclick):
+     se arriva subito un secondo evento lo lascio passare, non rifaccio
+     tutto un'altra volta */
+  const ora = Date.now();
+  if (ora - _ultimoTapSpotify < 800) return;
+  _ultimoTapSpotify = ora;
+
+  let p = null;
+  try { p = $("spotifyPanel"); } catch (e) { p = null; }
+
+  /* passo 1: mostrare qualcosa, subito */
+  try {
+    if (!p) throw new Error("il pannello di Spotify non c'e' nella pagina");
+    p.hidden = false;
+    $("spotifyTitolo").textContent = "Spotify";
+    $("spotifySotto").textContent = "un attimo...";
+    $("spotifyCorpo").innerHTML = '<p class="step-hint">Sto aprendo...</p>';
+    document.body.classList.add("no-scroll");
+  } catch (errore) {
+    try { toast("Spotify non si apre: " + (errore && errore.message ? errore.message : String(errore)), 8000); } catch (e) {}
+    return;
+  }
+
+  /* passo 2: chiudere il menu Altro e aprire il contenuto vero */
+  try { if (typeof _chiudiAltro === "function") _chiudiAltro(); } catch (e) { /* noop */ }
+  try {
+    _spotifyMenu();
+  } catch (errore) {
+    const che = (errore && errore.message) ? errore.message : String(errore);
+    try {
+      p.hidden = false;
+      $("spotifyTitolo").textContent = "Spotify non si apre";
+      $("spotifySotto").textContent = "";
+      $("spotifyCorpo").innerHTML =
+        '<p class="step-hint">' + _spotifySicuro(che) + "</p>";
+    } catch (e) { /* noop */ }
+    try { toast("Spotify non si apre: " + che, 8000); } catch (e) {}
+  }
+}
+if (typeof window !== "undefined") { try { window._spotifyApri = _spotifyApri; } catch (e) {} }
+
 function _spotifyAggancia() {
   const bs = $("btnSpotify");
   if (bs && !bs._collegatoSpotify) {
     bs._collegatoSpotify = true;
-    bs.addEventListener("click", () => {
-      if (typeof _chiudiAltro === "function") { try { _chiudiAltro(); } catch (e) { /* noop */ } }
-      try { document.body.classList.add("no-scroll"); } catch (e) { /* noop */ }
-      try {
-        _spotifyMenu();
-      } catch (errore) {
-        _spotifyChiudi();
-        toast("Spotify non si apre: " + (errore && errore.message ? errore.message : String(errore)), 8000);
-      }
-    });
+    bs.addEventListener("click", _spotifyApri);
   }
   const sc = $("spotifyChiudi");
   if (sc && !sc._collegatoSpotify) {
