@@ -459,7 +459,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.293";
+  const APP_VERSION = "6.294";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1294,6 +1294,11 @@ if (t) {
     mappa[id] = { title: titoloNuovo, artist: artistaNuovo };
     if (!mappa[id].title && !mappa[id].artist) delete mappa[id];
     try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
+    /* Segno che questo nome l'ho cambiato ADESSO io: e' l'unico che va
+       mandato al sito. Tutti gli altri nomi che ho in testa possono essere
+       vecchi, e mandarli farebbe tornare indietro le correzioni fatte da
+       un altro telefono. */
+    _rinominaDaMandareSegna(id, mappa[id]);
     /* Oltre che nella memoria del browser, che sul telefono spesso si perde,
        scrivo il nome nel database del telefono: li' resta anche se il
        browser dimentica, e al riavvio lo ritroviamo. */
@@ -1349,6 +1354,9 @@ if (t) {
     const mappa = nomiRinomati();
     delete mappa[id];
     try { LS.set("mb.rinomini", mappa); } catch (e) { /* noop */ }
+    /* Rimettere il nome originale e' una correzione come tutte le altre:
+       va mandata, e va tolta dalla lista dei "solo questi". */
+    _rinominaDaMandareSegna(id, null);
     editId = null;
     $("editPanel").hidden = true;
     syncNoScroll();
@@ -1957,8 +1965,19 @@ function _devoVedereBrano(eMio, b) {
      l'interruttore "vedi anche le canzoni degli altri", oppure tenere premuto
      una canzone altrui e scegliere "Porta nella mia libreria": quella la copia
      e basta, all'altro resta esattamente com'e'. */
-    const builtin = BUILTIN
-          .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
+/* I brani che l'utente ha eliminato per davvero con la X: non li
+     carico, e non li lascio rientrare. Ste: "premo la X e invece di
+     eliminarsi tornano nella libreria". Il motivo era che la libreria
+     viene ricostruita da capo, e il brano eliminato era ancora nella
+     libreria condivisa: tornava indietro a ogni ricarica. Adesso l'elenco
+     degli eliminati viaggia col resto dei dati, quindi vale su tutti i
+     telefoni. */
+  let eliminati = {};
+  try { eliminati = LS.get("mb.eliminati", null) || {}; } catch (e) { eliminati = {}; }
+
+  const builtin = BUILTIN
+  .filter((b) => !eliminati[b && b.id])
+  .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
           .map((b, i) => {
       /* Il nome di parecchi file era "ARTISTA - ARTISTA - TITOLO" (per
          esempio "BLANCO - BLANCO - SOTTOGONNA"): in libreria si vedeva
@@ -2960,6 +2979,17 @@ function _eliminaNascosto(id) {
    nascosto senza che nessuno l'avesse rimesso. */
   try { _nascostoTombaAggiungi(id); } catch (e) { /* noop */ }
 
+  /* E nella lista dei brani eliminati per davvero. Ste: "premo la X e
+     invece di eliminarsi tornano nella libreria": la libreria viene
+     ricostruita da capo, e se il brano e' ancora in quella lista torna
+     indietro. Segnandolo qui, la libreria non lo ricarica piu'. */
+  try {
+    const el = LS.get("mb.eliminati", null) || {};
+    el[id] = Date.now();
+    LS.set("mb.eliminati", el);
+    _eliminatiDaMandareSegna(id);
+  } catch (e) { /* noop */ }
+
   try {
     if (t && t.file && /^https?:/i.test(String(t.file))) {
       fetch(String(t.file), { method: "DELETE" }).catch(function () { /* noop */ });
@@ -3315,6 +3345,62 @@ function _spostaRinomina(daId, aId) {
     delete mappa[daId];
     LS.set("mb.rinomini", mappa);
   } catch (e) { /* noop */ }
+}
+
+  /* I nomi che sto per mandare al sito.
+
+   Ste: "modifico il titolo e l'artista, resta per un po' cosi', poi a caso
+   torna come prima, e su tailscale torna indietro appena aggiorno la
+   pagina".
+
+   Motivo: l'app mandava TUTTA la sua lista di nomi cambiati, ogni volta
+   che salvava qualcosa. Ma quella lista era vecchia su un telefono che non
+   aveva ancora riletto gli aggiornamenti degli altri: e cosi' la rimandava
+   indietro e sovrascriveva il nome nuovo con quello vecchio. Due
+   dispositivi che si parlano addosso, e il nome "vibrava".
+
+   Adesso mando SOLO i nomi che l'utente ha cambiato davvero, e appena sono
+   partiti non li rimando piu': cosi' un dispositivo vecchio non puo' piu'
+   rovinare un nome nuovo scritto da un altro.
+
+   Nota: dal sito arriva tutto quello che c'e', quindi gli altri nomi
+   arrivano lo stesso dalla lettura. */
+function _rinominiDaMandare() {
+  try {
+    const v = LS.get("mb.rinominiDaMandare", null);
+    return (v && typeof v === "object") ? v : {};
+  } catch (e) { return {}; }
+}
+function _rinominaDaMandareSegna(id, valore) {
+  try {
+    const m = _rinominiDaMandare();
+    if (valore && (valore.title || valore.artist)) m[id] = { title: valore.title || "", artist: valore.artist || "" };
+    else delete m[id];
+    LS.set("mb.rinominiDaMandare", m);
+  } catch (e) { /* noop */ }
+}
+function _rinominiDaMandareSvuota() {
+  try { LS.set("mb.rinominiDaMandare", {}); } catch (e) { /* noop */ }
+}
+
+/* Gli stessi due giochi, ma per i brani eliminati con la X: si mandano
+   solo quelli appena eliminati, e un brano non ancora partito non viene
+   rimesso dentro dalla lettura. */
+function _eliminatiDaMandare() {
+  try {
+    const v = LS.get("mb.eliminatiDaMandare", null);
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
+}
+function _eliminatiDaMandareSegna(id) {
+  try {
+    const m = _eliminatiDaMandare();
+    if (m.indexOf(id) < 0) m.push(id);
+    LS.set("mb.eliminatiDaMandare", m);
+  } catch (e) { /* noop */ }
+}
+function _eliminatiDaMandareSvuota() {
+  try { LS.set("mb.eliminatiDaMandare", []); } catch (e) { /* noop */ }
 }
 
   function eGiaCondiviso(t) {
@@ -10739,17 +10825,21 @@ nascosti: [...hiddenTracks],
            (localStorage) e il telefono ogni tanto lo perde. Adesso lo metto
            anche qui, che e' sul sito: cosi' al riavvio torna indietro, e
           e segue anche sull'altro dispositivo. */
-        rinomini: (function () {
-          try {
-            const m = nomiRinomati();
-            const copia = {};
-            for (const k of Object.keys(m)) {
-              if (m[k] && (m[k].title || m[k].artist)) copia[k] = { title: m[k].title || "", artist: m[k].artist || "" };
-            }
-            return copia;
-          } catch (e) { return {}; }
-        })()
-      });
+rinomini: (function () {
+      /* Solo i nomi cambiati ADESSO su questo dispositivo, non tutta la
+         lista: altrimenti un telefono con la lista vecchia sovrascrive
+         i nomi nuovi messi da un altro e il nome "vibra" (vedi le tre
+         funzioni spiegate piu' su, _rinominiDaMandare). */
+      try {
+        return _rinominiDaMandare();
+      } catch (e) { return {}; }
+    })(),
+    /* Idem per i brani eliminati con la X: solo quelli appena eliminati,
+       altrimenti un dispositivo vecchio li rimetterebbe dentro. */
+    eliminati: (function () {
+      try { return _eliminatiDaMandare(); } catch (e) { return []; }
+    })()
+  });
       /* Prima il computer, che e' di solito acceso e risponde subito. Poi, se
          non c'e', il Worker (funziona anche col computer spento).
 
@@ -10771,9 +10861,9 @@ nascosti: [...hiddenTracks],
             headers: { "content-type": "application/json" },
             body: corpo
           });
-          if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; return; }
-        }
-      } catch (e) { /* il computer non c'e': provo dall'altra parte */ }
+if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); return; }
+         }
+       } catch (e) { /* il computer non c'e': provo dall'altra parte */ }
       try {
         /* Per /stato non serve la chiave: i nomi devono potersi salvare anche
            dal sito, perche' li' il browser per regola non puo' parlare col
@@ -10785,7 +10875,7 @@ nascosti: [...hiddenTracks],
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -10830,6 +10920,20 @@ const j = await r.json();
   async function _applicaStatoCondiviso(j) {
     try {
         const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
+
+      /* I brani che l'utente ha ELIMINATO davvero con la X valgono anche
+         qui: Ste ha premuto la X dal computer, e quei brani devono stare
+         eliminati anche su questo telefono. */
+      if (Array.isArray(j && j.eliminati) && j.eliminati.length) {
+        try {
+          const el = LS.get("mb.eliminati", null) || {};
+          let nuovi = 0;
+          for (const id of j.eliminati) {
+            if (id && !el[id]) { el[id] = 0; nuovi++; }
+          }
+          if (nuovi) LS.set("mb.eliminati", el);
+        } catch (e) { /* noop */ }
+      }
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
         let cambiati = 0;
         /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
@@ -10894,10 +10998,17 @@ dispositivo, quindi li metto in elenco insieme a tutto il resto. */
       try {
         const mappa = nomiRinomati();
         let rimessi = 0;
-        for (const k of Object.keys(j.rinomini)) {
-          const r = j.rinomini[k];
-          if (!r || (!r.title && !r.artist)) continue;
-          const mia = mappa[k];
+for (const k of Object.keys(j.rinomini)) {
+      const r = j.rinomini[k];
+      if (!r || (!r.title && !r.artist)) continue;
+      /* Se questo nome l'ho cambiato adesso e non e' ancora partito, il
+         sito ha ancora il vecchio: non lo prendo, altrimenti il nome torna
+         indietro mentre sto cercando di salvarlo. */
+      try {
+        const inAttesa = _rinominiDaMandare();
+        if (inAttesa[k]) continue;
+      } catch (e) { /* noop */ }
+      const mia = mappa[k];
           if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
             mappa[k] = { title: String(r.title || ""), artist: String(r.artist || "") };
             rimessi++;
@@ -10987,21 +11098,26 @@ async function _caricaPlaylistCondivise() {
      sul computer quella e' una copia vecchia sul disco, quindi nomi
      indietro e canzoni mancanti. Ora la lettura e' aperta (vedi il
      worker): e' roba gia' pubblica. Scrivere continua a volere la chiave. */
-  if (SERVIZIO_PUBBLICA) {
-    try {
-      const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", { cache: "no-store" });
-      if (r.ok) {
-        const j = await r.json();
-        if (Array.isArray(j && j.playlist)) {
-          const arrivate = _unisciPlaylistCondivise(j.playlist);
-          if (arrivate) {
-            try { segnalaErrore("playlist dal worker: " + playlists.length + " in tutto"); } catch (e) {}
-          }
-          return;
+if (SERVIZIO_PUBBLICA) {
+  try {
+    const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", { cache: "no-store" });
+    if (r.ok) {
+      const j = await r.json();
+      if (Array.isArray(j && j.playlist)) {
+        const arrivate = _unisciPlaylistCondivise(j.playlist);
+        if (arrivate) {
+          try { segnalaErrore("playlist dal worker: " + playlists.length + " in tutto"); } catch (e) {}
         }
       }
-    } catch (e) { /* senza rete uso il file sul sito */ }
+    }
+  } catch (e) { /* senza rete uso il file sul sito */ }
   }
+  /* ATTENZIONE: qui NON si torna indietro. Prima, dopo aver letto il
+     Worker, uscivo subito e playlist.json non veniva letto affatto.
+     Ste: "alcune canzoni vengono eliminate". I due posti non contengono
+     esattamente la stessa cosa: uscendo al primo, prendevo solo quello
+     che aveva meno canzoni e perdevi le altre. Adesso leggo entrambi e
+     li unisco. */
 
   /* Se il Worker non c'e', leggo playlist.json dal sito.
 
