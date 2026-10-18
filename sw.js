@@ -1,10 +1,9 @@
-const CACHE = "spotifynonavraiimieisoldi-v6266";
+const CACHE = "spotifynonavraiimieisoldi-v6267";
 const CORE = [
   "./",
   "./index.html",
   "./style.css",
   "./app.js",
-  "./spotify.js",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
