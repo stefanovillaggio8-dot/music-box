@@ -540,26 +540,35 @@ if (typeof window !== "undefined") {
 }
 
 function _spotifyAggancia() {
-  const bs = $("btnSpotify");
-  if (bs && !bs._collegatoSpotify) {
-    bs._collegatoSpotify = true;
-    bs.addEventListener("click", _spotifyApri);
+    const bs = $("btnSpotify");
+    if (bs && !bs._collegatoSpotify) {
+      bs._collegatoSpotify = true;
+      /* Metto il collegamento DENTRO l'HTML, ma solo con una riga corta e
+         senza "<" o ">": se metto codice dentro la pagina rischio di
+         romperla (e' successo: nel menu si vedeva un pezzo di codice come
+         se fosse testo). */
+      try { bs.setAttribute("onclick", "window._spotifyApri && window._spotifyApri()"); } catch (e) {}
+      bs.addEventListener("click", _spotifyApri);
+    }
+    const sc = $("spotifyChiudi");
+    if (sc && !sc._collegatoSpotify) {
+      sc._collegatoSpotify = true;
+      try { sc.setAttribute("onclick", "document.getElementById('spotifyPanel').hidden=true;window._spotifyChiudi && window._spotifyChiudi()"); } catch (e) {}
+      sc.addEventListener("click", _spotifyChiudi);
+    }
+    const p = $("spotifyPanel");
+    if (p && !p._collegatoSpotify) {
+      p._collegatoSpotify = true;
+      p.addEventListener("click", (e) => { if (e.target === p) _spotifyChiudi(); });
+    }
   }
-  const sc = $("spotifyChiudi");
-  if (sc && !sc._collegatoSpotify) {
-    sc._collegatoSpotify = true;
-    sc.addEventListener("click", _spotifyChiudi);
+  if (typeof document !== "undefined") {
+    /* Ste: "non funziona e non mi dice niente" per sei versioni di fila.
+       Proviamo due volte: subito e quando la pagina e' pronta. Il
+       collegamento non parte due volte perche' il contrassegno lo
+       blocca, quindi e' innocuo. */
+    try { _spotifyAggancia(); } catch (e) { /* noop */ }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", _spotifyAggancia);
+    }
   }
-  const p = $("spotifyPanel");
-  if (p && !p._collegatoSpotify) {
-    p._collegatoSpotify = true;
-    p.addEventListener("click", (e) => { if (e.target === p) _spotifyChiudi(); });
-  }
-}
-if (typeof document !== "undefined") {
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", _spotifyAggancia);
-  } else {
-    _spotifyAggancia();
-  }
-}
