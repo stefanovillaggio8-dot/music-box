@@ -457,7 +457,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.261";
+  const APP_VERSION = "6.262";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11223,11 +11223,14 @@ for (const p of playlists) {
     // e' nel resto dell'app e non serve continuare a cercare.
     const vg = $("versioneApp");
     if (vg) vg.textContent = "v" + APP_VERSION;
-    const st = $("statoSpotify");
-    if (st) {
-      st.textContent = (typeof window !== "undefined" && window._spotifyPronto)
-        ? "pronto" : "NON caricato";
-    }
+const st = $("statoSpotify");
+  if (st) {
+  /* Prima qui guardavo un segnalino che poteva essere vero mentre la
+     funzione non esisteva: la guida diceva "pronto" e intanto il pulsante
+     non aveva niente da chiamare. Ora guardo la funzione per davvero. */
+  const che = (typeof window !== "undefined") ? typeof window._spotifyApri : "no window";
+  st.textContent = (che === "function") ? "pronto" : "NON caricato (" + che + ")";
+  }
   } catch (e) { /* noop */ }
     try {
       db = await openDB();
