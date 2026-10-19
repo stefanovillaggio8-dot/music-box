@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.306";
+  const APP_VERSION = "6.307";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2720,18 +2720,62 @@ const ORDINAMENTI = [
     return new Set([..._braniSoloInPlaylist(), ..._nascostiDallePlaylist()]);
   }
 
+  /* Ste: "226 da entrambe le parti, poi 227 su github a caso".
+   I brani "solo nelle playlist" stanno in una lista salvata nel telefono,
+   quindi ogni link ne aveva una diversa: e il numero di brani in libreria
+   cambiava di uno a caso, a seconda di quale dei due link veniva aperto.
+
+   Adesso anche questa lista viaggia col resto dei dati, come i nascosti:
+   si manda quello che ho messo adesso, e i "togli" viaggiano a parte. */
+
+function _soloInPlaylistDaMandare() {
+  try {
+    const v = LS.get("mb.soloInPlaylistDaMandare", null);
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
+}
+function _soloInPlaylistSegna(id, via) {
+  try {
+    const m = _soloInPlaylistDaMandare();
+    if (via && id && m.indexOf(id) < 0) m.push(id);
+    LS.set("mb.soloInPlaylistDaMandare", m);
+  } catch (e) { /* noop */ }
+}
+function _soloInPlaylistDaMandareSvuota() {
+  try { LS.set("mb.soloInPlaylistDaMandare", []); } catch (e) { /* noop */ }
+}
+function _soloInPlaylistRimossiDaMandare() {
+  try {
+    const v = LS.get("mb.soloInPlaylistRimossi", null);
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
+}
+function _soloInPlaylistRimossaSegna(id) {
+  try {
+    const m = _soloInPlaylistRimossiDaMandare();
+    if (id && m.indexOf(id) < 0) m.push(id);
+    LS.set("mb.soloInPlaylistRimossi", m);
+  } catch (e) { /* noop */ }
+}
+function _soloInPlaylistRimossiSvuota() {
+  try { LS.set("mb.soloInPlaylistRimossi", []); } catch (e) { /* noop */ }
+}
+
   /* Mette un brano "solo nella playlist": sparisce dalla libreria ma
      continua a esistere e a suonare dentro la sua playlist. */
   function _mettiSoloInPlaylist(id) {
     if (!id) return false;
     _soloInPlaylist.add(id);
     _salvaSoloInPlaylist();
+    _soloInPlaylistSegna(id, true);
+    _soloInPlaylistRimossaSegna(id);
     return true;
   }
   function _togliSoloInPlaylist(id) {
     if (!id) return false;
     if (!_soloInPlaylist.delete(id)) return false;
     _salvaSoloInPlaylist();
+    _soloInPlaylistRimossaSegna(id);
     return true;
   }
 
@@ -11017,6 +11061,14 @@ rinomini: (function () {
        deve tirarli fuori dall'elenco degli eliminati. */
     eliminatiRimossi: (function () {
       try { return _eliminatiRimossiDaMandare(); } catch (e) { return []; }
+    })(),
+    /* E i brani "solo nelle playlist": anche questi stavano solo nel
+       telefono, e ogni link ne aveva una diversa. */
+    soloInPlaylist: (function () {
+      try { return _soloInPlaylistDaMandare(); } catch (e) { return []; }
+    })(),
+    soloInPlaylistRimossi: (function () {
+      try { return _soloInPlaylistRimossiDaMandare(); } catch (e) { return []; }
     })()
   });
       /* Adesso scrivo SOLO sul Worker. Prima scrivevo prima sul computer e,
@@ -11041,7 +11093,7 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _nascostiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _nascostiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -11274,7 +11326,26 @@ for (const k of Object.keys(j.rinomini)) {
         if (rimessi) { LS.set("mb.rinomini", mappa); cambiati++; }
       } catch (e) { /* noop */ }
     }
-/* Ste: "la libreria che ho su github e' diversa da quella su tailscale".
+/* Ste: "226 da entrambe, poi 227 su github a caso". I brani "solo nelle
+  playlist" stavano salvati nel telefono, e ogni link ne aveva una diversa.
+
+  Qui prendo quella lista dal Worker, come faccio per i nascosti: se il
+  Worker risponde, e' lui la verita'. */
+  if (Array.isArray(j && j.soloInPlaylist)) {
+    try {
+      const fuori = new Set(Array.isArray(j.soloInPlaylistRimossi) ? j.soloInPlaylistRimossi : []);
+      const giusto = j.soloInPlaylist.filter(function (id) { return id && !fuori.has(id); });
+      const stessi = giusto.length === _soloInPlaylist.size &&
+        giusto.every(function (id) { return _soloInPlaylist.has(id); });
+      if (!stessi) {
+        _soloInPlaylist = new Set(giusto);
+        _salvaSoloInPlaylist();
+        cambiati++;
+      }
+    } catch (e) { /* noop */ }
+  }
+
+  /* Ste: "la libreria che ho su github e' diversa da quella su tailscale".
      La chiamo DOPO che ho applicato tutto (nascosti, nomi, eliminati) e
      DOPO che la libreria e' stata ricaricata: cosi' conta davvero e non
      un numero di mezzo lavoro. */
