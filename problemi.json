@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792434743894,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792434765909,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792438058122,
   "r": "FINALE: visibili 239 su 239 | nascosti 0 | soloPlaylist 0 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.i"
+ },
+ {
+  "t": 1792439724550,
+  "r": "app avviata: pulsante Spotify presente=true versione=6.322"
  }
 ]
