@@ -1,21 +1,21 @@
 {
  "eliminati": [
-  "Ste.brano-prova-perfilo",
-  "b-track-1",
-  "b-track-183",
-  "b-track-219",
-  "b-track-24",
-  "b-track-254",
-  "b-track-258",
-  "b-track-264",
-  "b-track-266",
-  "b-track-287",
-  "b-track-290",
-  "b-track-42",
-  "b-track-511",
-  "b-track-65",
-  "b-track-71",
-  "brano-prova-1"
+  "Ste.b-track-1",
+  "Ste.b-track-183",
+  "Ste.b-track-219",
+  "Ste.b-track-24",
+  "Ste.b-track-254",
+  "Ste.b-track-258",
+  "Ste.b-track-264",
+  "Ste.b-track-266",
+  "Ste.b-track-287",
+  "Ste.b-track-290",
+  "Ste.b-track-42",
+  "Ste.b-track-511",
+  "Ste.b-track-65",
+  "Ste.b-track-71",
+  "Ste.brano-prova-1",
+  "Ste.brano-prova-perfilo"
  ],
  "soloInPlaylist": [
   "Ste.b-track-251",
@@ -100,7 +100,7 @@
    "artist": "thasup"
   },
   "b-track-91": {
-   "title": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+   "title": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
    "artist": "thasup"
   },
   "b-track-28": {
@@ -130,6 +130,24 @@
   "b-track-515": {
    "title": "A Te",
    "artist": "Jovanotti"
+  }
+ },
+ "statistiche": {
+  "Ste": {
+   "BRANCO|SOTTOGONNA": {
+    "v": 3,
+    "s": 420,
+    "t": "SOTTOGONNA",
+    "a": "BRANCO"
+   }
+  },
+  "Diego": {
+   "Variety|Canzone": {
+    "v": 7,
+    "s": 900,
+    "t": "Canzone",
+    "a": "Variety"
+   }
   }
  }
 }
