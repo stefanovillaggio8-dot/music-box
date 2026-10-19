@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.299";
+  const APP_VERSION = "6.300";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -10846,7 +10846,24 @@ nascosti: [...hiddenTracks],
      Ora mando anche l'elenco dei brani che ho ripreso: il server li toglie
      davvero e non basta piu' nasconderli sul sito, bisogna dirgli che
      sono stati presi di mira. */
-  nascostiRimossi: [..._nascostiTomba()],
+  nascostiRimossi: (function () {
+      /* Ste: "su github sono 231 brani, su tailscale 237". La libreria era
+         uguale (250 e 250), ma i nascosti no (15 e 10).
+
+         Motivo: la lista dei "brani ripresi" (i tomboni) non si consumava
+         MAI. Ogni volta che rimettevo in lista una canzone, il segno
+         restava li' per sempre e il server non me la lasciava piu'
+         nascondere: se la ri-nascotevo, lui me la toglieva di nuovo.
+
+         E infatti i dati erano 25 tomboni contro 3 brani nascosti: il
+         server stava continuamente cancellando.
+
+         Un tombone vale una volta sola. Se un brano e' di nuovo tra i
+         nascosti, il suo tombone non vale piu' e va fuori. */
+      try {
+        return [..._nascostiTomba()].filter(function (id) { return !hiddenTracks.has(id); });
+      } catch (e) { return []; }
+    })(),
         /* i brani che ho copiato nella mia libreria, per ogni nome. Serve
            cosi' ritrovo la copia anche sull'altro dispositivo. */
         miei: (function () {
