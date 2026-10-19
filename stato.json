@@ -189,8 +189,8 @@
     "a": "Lil Peep"
    },
    "vascorossi|albachiara": {
-    "v": 0,
-    "s": 6,
+    "v": 1,
+    "s": 49,
     "t": "Albachiara",
     "a": "Vasco Rossi"
    },
@@ -299,7 +299,7 @@
    "rinogaetano|mailcieloesemprepiublu": {
     "v": 0,
     "s": 2,
-    "t": "Ma il cielo è sempre più blu",
+    "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "samuraijayvitosalamarca|adrenalina": {
@@ -329,7 +329,7 @@
    "macekidyugiizifranco126|tuttofuoricontrolloconfranco126kidyugiizi": {
     "v": 1,
     "s": 200,
-    "t": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
+    "t": "TUTTO FUORI CONTROLLO â (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "massimopericolocrookersmadame|airforcefeatmadame": {
@@ -341,14 +341,14 @@
    "moda|enoncemaiunafine": {
     "v": 1,
     "s": 0,
-    "t": "E non c'è mai una fine",
-    "a": "Modà"
+    "t": "E non c'Ã¨ mai una fine",
+    "a": "ModÃ "
    },
    "moda|cuoreeventofeattazenda": {
     "v": 0,
     "s": 3,
     "t": "Cuore e vento (feat. Tazenda)",
-    "a": "Modà"
+    "a": "ModÃ "
    },
    "nayt3d|dimenticare": {
     "v": 1,
@@ -423,8 +423,8 @@
     "a": "Nirvana"
    },
    "iggyazalearitaora|blackwidowhardstyleremix": {
-    "v": 0,
-    "s": 3,
+    "v": 1,
+    "s": 6,
     "t": "Black Widow (Hardstyle Remix)",
     "a": "Iggy Azalea, Rita Ora"
    },
@@ -546,7 +546,7 @@
     "v": 0,
     "s": 188,
     "t": "Miami Vice",
-    "a": "Luchè, Sfera Ebbasta, Simba La Rue"
+    "a": "LuchÃ¨, Sfera Ebbasta, Simba La Rue"
    },
    "coez|qualcosadigrande": {
     "v": 0,
@@ -558,7 +558,7 @@
     "v": 0,
     "s": 377,
     "t": "Come un pittore",
-    "a": "Modà"
+    "a": "ModÃ "
    },
    "kidyugi|amelie": {
     "v": 0,
@@ -624,13 +624,13 @@
     "v": 0,
     "s": 40,
     "t": "Bocca di rosa",
-    "a": "Fabrizio De André"
+    "a": "Fabrizio De AndrÃ©"
    },
    "moda|favola": {
     "v": 0,
     "s": 153,
     "t": "Favola",
-    "a": "Modà"
+    "a": "ModÃ "
    },
    "adele|setfiretotherainhardstyleremix": {
     "v": 1,
@@ -672,7 +672,7 @@
     "v": 0,
     "s": 155,
     "t": "Non ti dimentico",
-    "a": "Modà"
+    "a": "ModÃ "
    },
    "capoplaza|losoche": {
     "v": 0,
@@ -708,7 +708,7 @@
     "v": 0,
     "s": 201,
     "t": "Salvami",
-    "a": "Modà"
+    "a": "ModÃ "
    },
    "thasup|grazieadio": {
     "v": 0,
@@ -751,6 +751,30 @@
     "s": 176,
     "t": "A Te",
     "a": "Jovanotti"
+   },
+   "negromaro|soloperte": {
+    "v": 1,
+    "s": 1,
+    "t": "Solo Per Te",
+    "a": "Negromaro"
+   },
+   "22simba|2passidalcielononunoinpiu": {
+    "v": 0,
+    "s": 0,
+    "t": "2 passi dal cielo non uno in più",
+    "a": "22simba"
+   },
+   "nersissimaserpe|nonfartirubareisogni": {
+    "v": 0,
+    "s": 0,
+    "t": "Non farti rubare i Sogni",
+    "a": "Nersissima Serpe"
+   },
+   "22simba|abercrombie": {
+    "v": 2,
+    "s": 58,
+    "t": "Abercrombie",
+    "a": "22simba"
    }
   },
   "Diego": {
@@ -781,7 +805,7 @@
    "coez|lelucidellacitta": {
     "v": 1,
     "s": 0,
-    "t": "Le luci della città",
+    "t": "Le luci della cittÃ ",
     "a": "Coez"
    },
    "marracashcoez|quellichenonpensanoilcervello": {
@@ -807,6 +831,12 @@
     "s": 9,
     "t": "whereimat (feat. Artie 5ive)",
     "a": "Ddusi, Artie 5ive"
+   },
+   "glocky|lemiecolpe": {
+    "v": 1,
+    "s": 9,
+    "t": "le mie colpe",
+    "a": "glocky"
    }
   }
  }
