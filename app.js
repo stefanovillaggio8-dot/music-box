@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.297";
+  const APP_VERSION = "6.298";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2121,6 +2121,15 @@ function _devoVedereBrano(eMio, b) {
       if ((t.size || 0) > (senzaDuplicati[doppio].size || 0)) senzaDuplicati[doppio] = t;
     }
   tracks = builtin.concat(senzaDuplicati);
+    /* Ste: "la pagina di github e quella di tailscale non hanno le stesse
+       canzoni". Non sapevo quale delle due avesse i brani e quale no, e
+       senza questo ogni volta che lo chiedevo lui doveva contarle a mano.
+       Adesso la libreria si annuncia da sola e io lo vedo sul computer. */
+    try {
+      _diChe("libreria: " + tracks.length + " brani, profilo " + profile +
+        ", duplicati via " + senzaDuplicati.length +
+        ", nascosti " + hiddenTracks.size + ", da " + String(location.host || "?"));
+    } catch (e) { /* noop */ }
     /* I nomi li applico PRIMA di controllare i doppioni. Prima era il
        contrario: il controllo guardava il nome greudo del file ("Linkin Park -
        In the End") mentre la libreria mostra quello ripulito ("In the End"),
