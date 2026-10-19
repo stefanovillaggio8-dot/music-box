@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.309";
+  const APP_VERSION = "6.310";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11118,17 +11118,22 @@ rinomini: (function () {
      il posto vero dove stanno i dati, e quella copia non cambia da sola.
      Adesso chiedo prima al Worker, che e' chi scrive, e uso il file solo se
      il Worker non risponde. */
-    try {
-      if (SERVIZIO_PUBBLICA) {
-        const rw = await fetch(SERVIZIO_PUBBLICA + "/stato", { cache: "no-store" });
-        if (rw.ok) {
-          const jw = await rw.json();
-          if (jw && jw.stato) {
-            if (await _applicaStatoCondiviso(jw.stato)) return;
-          }
-        }
-      }
-    } catch (e) { /* senza rete leggo il file sul sito */ }
+try {
+  if (SERVIZIO_PUBBLICA) {
+  const rw = await fetch(SERVIZIO_PUBBLICA + "/stato", { cache: "no-store" });
+  _diChe("worker /stato: " + (rw && rw.ok ? "risponde" : "non risponde"));
+  if (rw.ok) {
+  const jw = await rw.json();
+  if (jw && jw.stato) {
+  if (await _applicaStatoCondiviso(jw.stato)) return;
+  }
+  }
+  }
+  } catch (e) {
+  /* Se qui dentro scappa un errore, la funzione finisce e non applica
+     niente: me lo segno, altrimenti non si capisce perche'. */
+  try { _diChe("worker /stato KO: " + String((e && e.message) || e).slice(0, 80)); } catch (x) {}
+  }
 
     try {
       const r = await fetch("./stato.json", { cache: "no-store" });
@@ -11141,6 +11146,10 @@ const j = await r.json();
   /* Mette dentro quello che arriva dal Worker o dal sito. Ritorna true se
      ha fatto qualcosa, cosi' il chiamante sa che puo' fermarsi. */
   async function _applicaStatoCondiviso(j) {
+    /* La prima riga dice che siamo entrati. Prima la traccia veniva
+       dopo il ciclo dei nascosti: se li' saltava qualcosa, il catch
+       se lo mangiava in silenzio e io non vedevo niente. */
+    try { _diChe("ENTRO: stato dal sito, nascosti " + (Array.isArray(j && j.nascosti) ? j.nascosti.length : -1)); } catch (e) { /* noop */ }
     try {
         const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
 
