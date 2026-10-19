@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.335";
+  const APP_VERSION = "6.336";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12818,6 +12818,9 @@ function _spotifySalvaToken(t) {
     access: t.access_token,
     scadenza: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000
   };
+  /* Il "refresh token" e' il permesso che dura: con quello Spotify mi
+     rinnova il permesso corto senza che Ste debba riautorizzare. */
+  if (t && t.refresh_token) valore.refresh = String(t.refresh_token);
   let salvato = false;
   try { LS.set("mb.spotify", valore); salvato = true; } catch (e) { /* noop */ }
   /* Ste: "stai usando la finestra PRIVATA di Safari". In privata la memoria
@@ -12935,10 +12938,13 @@ async function _spotifyAccedi() {
     response_type: "code",
     redirect_uri: SPOTIFY_REDIRECT,
     scope: SPOTIFY_SCOPI,
-    code_challenge: pk.sfida,
-    code_challenge_method: "S256",
-    state: stato
-  });
+      code_challenge: pk.sfida,
+      code_challenge_method: "S256",
+      /* "offline" chiede a Spotify anche il permesso lunghissimo: senza,
+         dopo un'ora l'app chiede l'accesso di nuovo. */
+      access_type: "offline",
+      state: stato
+    });
   const url = "https://accounts.spotify.com/authorize?" + q.toString();
 
   /* Ste: "sto aprendo spotify ma non si apre", e poi "non compare manco il
@@ -13047,9 +13053,42 @@ async function _spotifyCompletaAccesso(code, stato) {
   return true;
   }
 
+  /* Rinnovo il permesso con il refresh token: serve quando il permesso
+     corto e' scaduto ma quello lungo c'e' ancora. */
+  async function _spotifyRinnova() {
+    try {
+      let v = LS.get("mb.spotify", null);
+      if (!v || !v.refresh) {
+        try { v = JSON.parse(sessionStorage.getItem("mb.spotify") || "null"); } catch (e) { v = null; }
+      }
+      if (!v || !v.refresh) return false;
+      const r = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: v.refresh,
+          client_id: SPOTIFY_CLIENT_ID
+        }).toString()
+      });
+      if (!r.ok) { _spotifyTraccia("rinnovo del permesso fallito: " + r.status); return false; }
+      const j = await r.json();
+      if (!j || !j.access_token) return false;
+      _spotifySalvaToken(j);
+      _spotifyTraccia("permesso rinnovato senza riautorizzare");
+      return true;
+    } catch (e) { return false; }
+  }
   async function _spotifyApi(percorso) {
-    const token = _spotifyToken();
-    if (!token) return null;
+      let token = _spotifyToken();
+      if (!token) {
+        /* Il permesso e' scaduto, ma quello lungo c'e': me lo rinnova e
+           riprovo, cosi' Ste non deve riautorizzare ogni ora. */
+        const rinnovato = await _spotifyRinnova();
+        if (!rinnovato) return null;
+        token = _spotifyToken();
+        if (!token) return null;
+      }
     try {
       const r = await fetch("https://api.spotify.com/v1" + percorso, {
         headers: { Authorization: "Bearer " + token }
