@@ -10,8 +10,30 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6333" />
-</head>
+  <link rel="stylesheet" href="style.css?v=6334" />
+    <script>
+      /* Ste: "ho fatto l'accesso con Spotify e mi e' tornato su musicbox, ma e' spuntato
+         di nuovo accedi con Spotify".
+         Motivo: il codice che Spotify rimanda nell'indirimento (?code=...) sparisce se la
+         pagina si ricarica, e lo scambio del permesso non avviene piu'.
+         Adesso lo metto da parte qui, prima che l'app si avvii, in sessionStorage: anche
+         se la pagina si ricarica, il codice e' ancora li'. */
+      (function () {
+        try {
+          var q = new URLSearchParams(window.location.search || "");
+          var c = q.get("code") || "";
+          var s = q.get("state") || "";
+          var e = q.get("error") || "";
+          if (c || e) {
+            sessionStorage.setItem("mb.spotifyRitorno", JSON.stringify({ c: c, s: s, e: e }));
+            if (window.history && window.history.replaceState) {
+              window.history.replaceState({}, "", window.location.pathname + window.location.hash);
+            }
+          }
+        } catch (x) { /* niente, l'app riprovera' da sola */ }
+      })();
+    </script>
+  </head>
 <body>
   <header class="topbar">
     <div class="topbar-head">
@@ -698,6 +720,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6333"></script>
+<script src="app.js?v=6334"></script>
 </body>
 </html>

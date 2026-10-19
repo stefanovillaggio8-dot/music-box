@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.333";
+  const APP_VERSION = "6.334";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12204,7 +12204,9 @@ await loadAll();
   /* Spotify: se il telefono e' appena tornato dall'accesso, la finestra si
      apre da sola. E se Ste aveva lasciato una lista in coda aspettando che il
      computer si accendesse, la mando appena il computer c'e'. */
-  try { setTimeout(() => { _spotifyRientro(); }, 900); } catch (e) { /* noop */ }
+    /* (lo scambio del permesso parte piu' in basso, appena la pagina si apre:
+       non deve aspettare la libreria, o quando la rete e' lenta non parte
+       mai e l'app ti rimanda a "Accedi con Spotify".) */
   try { setTimeout(() => { _spotifyRiprovaCoda(); }, 7000); } catch (e) { /* noop */ }
   try {
     window.addEventListener("online", () => { _spotifyRiprovaCoda(); });
@@ -12666,6 +12668,16 @@ function _pannelloAperto() {
     if (p && !p.hidden) return true;
     /* un accesso a Spotify in corso: se mi ricarico, perdo il codice */
     if (LS.get("mb.spotifyStato", "")) return true;
+    /* Ste: "premo apri spotify, la pagina si ricarica e mi spunta di nuovo accedi
+       con spotify". Motivo: il ricaricamento automatico (quando c'e' una versione
+       nuova) partiva proprio mentre tornavo da Spotify, e il codice che Spotify
+       aveva messo nell'indirimento andava perso. Adesso, se c'e' un rientro in
+       corso, l'app NON si ricarica e aspetta. */
+    try {
+      const cerca = String(window.location.search || "");
+      if (cerca.indexOf("code=") >= 0 || cerca.indexOf("error=") >= 0) return true;
+      if (sessionStorage.getItem("mb.spotifyRitorno")) return true;
+    } catch (e) { /* noop */ }
     const q = $("scopePanel");
     if (q && !q.hidden) return true;
   } catch (e) { /* noop */ }
@@ -12814,6 +12826,13 @@ function _spotifySalvaToken(t) {
      anche in privata: cosi' almeno finche' non chiudi la scheda
      l'accesso resta. */
   try { sessionStorage.setItem("mb.spotify", JSON.stringify(valore)); } catch (e) { /* noop */ }
+  /* Se questa scheda e' stata aperta da un'altra (l'app di casa che ha lanciato
+     l'accesso), le mando il permesso: cosi' anche li' funziona. */
+  try {
+    if (window.opener && !window.opener.closed && window.opener.postMessage) {
+      window.opener.postMessage({ musicbox: "spotify-token", token: valore }, "*");
+    }
+  } catch (e) { /* noop */ }
   return salvato;
   }
   function _spotifyToken() {
@@ -13161,19 +13180,21 @@ function _spotifyPnl(titolo, sotto, html) {
      8 per sessione e non piu' di uno ogni 4 secondi. */
   let _tracciaInviate = 0;
   let _tracciaUltimo = 0;
+  let _tracciaSpotifyInviate = 0;
+  let _tracciaSpotifyUltimo = 0;
   function _spotifyTracciaManda(testo) {
     try {
-      if (_tracciaInviate >= 8) return;
+      if (_tracciaSpotifyInviate >= 30) return;
       const ora = Date.now();
-      if (ora - _tracciaUltimo < 4000) return;
-      _tracciaUltimo = ora;
-      _tracciaInviate++;
+      if (ora - _tracciaSpotifyUltimo < 500) return;
+      _tracciaSpotifyUltimo = ora;
+      _tracciaSpotifyInviate++;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riga: String(testo).slice(0, 160) })
+        body: JSON.stringify({ riga: "SPOTIFY: " + String(testo).slice(0, 140) })
       }).catch(function () { /* nessuna rete? pazienza */ });
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
@@ -13410,11 +13431,31 @@ async function _spotifyControllaLavoro(id, totale) {
    partire tutto senza toccare niente. */
 async function _spotifyRientro() {
   let q = null;
-  try { q = new URLSearchParams(window.location.search); } catch (e) { return; }
-  const code = q.get("code") || "";
-  const stato = q.get("state") || "";
-  const errore = q.get("error") || "";
+  try { q = new URLSearchParams(window.location.search); } catch (e) { q = null; }
+  let code = q ? (q.get("code") || "") : "";
+  let stato = q ? (q.get("state") || "") : "";
+  let errore = q ? (q.get("error") || "") : "";
+  /* Ste: "ho fatto l'accesso con Spotify e mi e' tornato su musicbox e mi e' spuntato
+     di nuovo accedi con Spotify".
+     Motivo: se la pagina si ricarica proprio mentre torno da Spotify, il codice
+     nell'indirimento sparisce e lo scambio muore a meta'. Per questo il codice
+     viene messo da parte nella pagina PRIMA che l'app si avvii (vedi index.html) e
+     qui lo recupero: cosi' lo scambio va avanti anche dopo un ricaricamento. */
+  if ((!code && !errore) || !stato) {
+    try {
+      const salvato = JSON.parse(sessionStorage.getItem("mb.spotifyRitorno") || "null");
+      if (salvato) {
+        if (!code) code = String(salvato.c || "");
+        if (!stato) stato = String(salvato.s || "");
+        if (!errore) errore = String(salvato.e || "");
+      }
+    } catch (e) { /* noop */ }
+  }
   if (!code && !errore) return;
+  /* Il codice si usa una volta sola: lo metto via subito, cosi' un secondo
+     tentativo non prova a scambiarlo di nuovo (Spotify lo rifiuterebbe e
+     l'app mostrerebbe un errore per niente). */
+  try { sessionStorage.removeItem("mb.spotifyRitorno"); } catch (e) { /* noop */ }
   /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
      accedi con spotify". Lo scambio del codice col permesso avviene qui,
      e se nel frattempo l'app si ricarica, lo scambio muore a meta' e
@@ -13539,12 +13580,33 @@ const bs = $("btnSpotify");
       p.addEventListener("click", (e) => { if (e.target === p) _spotifyChiudi(); });
     }
   }
-  if (typeof document !== "undefined") {
+  /* Se un'altra scheda mi ha mandato il permesso di Spotify, lo prendo. */
+try {
+  window.addEventListener("message", function (e) {
+    try {
+      const d = e && e.data;
+      if (!d || d.musicbox !== "spotify-token" || !d.token || !d.token.access) return;
+      LS.set("mb.spotify", d.token);
+      try { sessionStorage.setItem("mb.spotify", JSON.stringify(d.token)); } catch (x) { /* noop */ }
+      _spotifyTraccia("permesso ricevuto da un'altra scheda");
+      toast("Collegato a Spotify", 3000);
+      try { _spotifyMostraPlaylist(); } catch (x) { /* noop */ }
+    } catch (x) { /* noop */ }
+  });
+} catch (e) { /* noop */ }
+if (typeof document !== "undefined") {
     /* Ste: "non funziona e non mi dice niente" per sei versioni di fila.
        Proviamo due volte: subito e quando la pagina e' pronta. Il
        collegamento non parte due volte perche' il contrassegno lo
        blocca, quindi e' innocuo. */
     try { _spotifyAggancia(); } catch (e) { /* noop */ }
+      /* Ste: "ho fatto l'accesso con spotify, mi e' tornato su musicbox e mi e' spuntato
+         di nuovo accedi con spotify".
+         Motivo: lo scambio del permesso aspettava che la libreria fosse pronta, e
+         quando la rete e' lenta (o l'app si sta aggiornando) non partiva mai: la
+         pagina ti mostrava di nuovo "Accedi con Spotify" come se niente fosse.
+         Adesso parte appena la pagina si apre, e senza aspettare la libreria. */
+      try { setTimeout(function () { _spotifyRientro(); }, 60); } catch (e) { /* noop */ }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", _spotifyAggancia);
     }
