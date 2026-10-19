@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792443775659,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792443779664,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792445144851,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792445160625,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
