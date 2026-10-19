@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.327";
+  const APP_VERSION = "6.328";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12913,20 +12913,25 @@ async function _spotifyCompletaAccesso(code, stato) {
       const r = await fetch("https://api.spotify.com/v1" + percorso, {
         headers: { Authorization: "Bearer " + token }
       });
-      if (r.status === 401) {
-        /* Ste: "non sono riuscito a leggere le tue playlist".
-           Motivo: il token era scaduto (o non valido), ma restava li' e
-           l'app credeva di essere gia' collegata: cosi' non offriva
-           nemmeno il pulsante per ricollegarsi.
+      if (r.status === 401 || r.status === 403) {
+        /* Ste: "non sono riuscito a leggere le tue playlist" e non
+           compariva piu' "Accedi con Spotify".
+           Motivo: il token era scaduto, OPPURE era stato concesso con i
+           permessi di una versione vecchia dell'app (allora Spotify
+           risponde 403 e non 401). Prima cancellavo il token solo sul
+           401: sul 403 restava, e l'app credeva di essere gia' collegata
+           e non offriva piu' il pulsante per ricollegarsi.
 
-           Quando Spotify dice 401, il token non vale piu': lo cancello,
-           cosi' la prossima volta compare la schermata di accesso. */
+           Ora in entrambi i casi il token viene via, e compare di nuovo
+           la schermata di accesso. */
         try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
+        _spotifyErrore = r.status;
         return null;
       }
-      if (!r.ok) return null;
+      if (!r.ok) { _spotifyErrore = r.status; return null; }
+      _spotifyErrore = 0;
       return await r.json();
-    } catch (e) { return null; }
+    } catch (e) { _spotifyErrore = -1; return null; }
   }
 
 /* Le playlist, anche le private: per queste serve l'accesso. */
@@ -13093,55 +13098,75 @@ function _spotifyParla(variabile, testo) {
 }
 
 /* Il pulsante del menu. */
+/* La schermata di accesso. Sta in una funzione sua perche' la devono
+   chiamare due posti: il menu (quando non c'e' un accesso valido) e la
+   lettura delle playlist (quando il token era scaduto, o i permessi
+   erano stati concessi con una versione vecchia dell'app).
+
+   Ste: "non mi spunta piu' accedi con spotify e l'autorizzazione perche'
+   gia' l'ho fatta prima penso". Motivo: il token c'era ma l'API
+   rispondeva 403 e il codice lo cancellava solo sul 401: l'app credeva
+   di essere gia' collegata e non offriva piu' il pulsante. */
+let _spotifyErrore = 0;
+function _spotifyChiediAccesso(perche) {
+  const extra = perche ? '<p class="step-hint">' + perche + '</p>' : '';
+  _spotifyPnl("Collegare Spotify",
+    "",
+    extra +
+    '<p class="step-hint">Per vedere le tue playlist serve l\'accesso al tuo ' +
+    'account Spotify. Me lo dai una volta sola, non ti chiedo la password e ' +
+    'il permesso vale solo su questo telefono.</p>' +
+    '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
+    '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
+  try {
+    $("spotifyAccedi").addEventListener("click", () => { _spotifyChiudi(); _spotifyAccedi(); });
+    $("spotifySalta").addEventListener("click", () => {
+      _spotifyChiudi();
+      toast("Nessun problema, l'app resta come e'");
+    });
+  } catch (e) { /* noop */ }
+}
 function _spotifyMenu() {
   _spotifyTraccia("sono dentro _spotifyMenu");
   if (_spotifyToken()) {
     _spotifyMostraPlaylist();
     return;
   }
-  _spotifyPnl("Collegare Spotify",
-    "",
-    '<p class="step-hint">Per vedere le tue playlist serve l\'accesso al tuo ' +
-    'account Spotify. Me lo dai una volta sola, non ti chiedo la password e ' +
-    'il permesso vale solo su questo telefono.</p>' +
-    '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
-    '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
-  $("spotifyAccedi").addEventListener("click", () => { _spotifyChiudi(); _spotifyAccedi(); });
-  $("spotifySalta").addEventListener("click", () => {
-    _spotifyChiudi();
-    toast("Nessun problema, l'app resta come e'");
-  });
+  _spotifyChiediAccesso("");
 }
 
   async function _spotifyMostraPlaylist() {
-    /* Ste: "non sono riuscito a leggere le tue playlist. Prova a
-       collegare Spotify di nuovo".
-       Se non c'e' un accesso valido, il messaggio giusto non e' "non
-       riuscito": e' che non sono ancora collegato. E' quello che diceva
-       prima, ma il token scaduto restava nascosto e l'app non offriva
-       nemmeno il pulsante per ricollegarsi. Ora il token scaduto viene
-       cancellato (vedi _spotifyApi) e quindi qui si torna al collegamento. */
+    /* Ste: "non mi spunta piu' accedi con spotify e l'autorizzazione
+       perche' gia' l'ho fatta prima penso".
+       Motivo: il token c'era (l'avevi concesso prima, quindi Spotify non
+       chiede piu'), ma l'API rispondeva 403: i permessi erano stati
+       concessi con una versione vecchia dell'app. Il codice cancellava il
+       token solo sul 401, quindi l'app credeva di essere collegata e non
+       offriva piu' il pulsante.
+
+       Ora sul 401 E sul 403 il token viene via, e qui si torna al
+       collegamento: l'app deve offrirti "Accedi con Spotify" per farmi
+       riconsentire i permessi. */
     if (!_spotifyToken()) {
-      _spotifyPnl("Collegare Spotify", "", '<p class="step-hint">' +
-        "Per vedere le tue playlist serve l'accesso al tuo account Spotify. " +
-        "Me lo dai una volta sola, non ti chiedo la password.</p>" +
-        '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
-        '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
-      try {
-        $("spotifyAccedi").addEventListener("click", () => { _spotifyChiudi(); _spotifyAccedi(); });
-        $("spotifySalta").addEventListener("click", () => {
-          _spotifyChiudi();
-          toast("Nessun problema, l'app resta come e'");
-        });
-      } catch (e) { /* noop */ }
+      _spotifyChiediAccesso("L'accesso che avevi dato non vale piu' (o i permessi sono cambiati). " +
+        "Accetta di nuovo e ci riprovo.");
       return;
     }
     _spotifyPnl("Le tue playlist", "sto leggendo...", '<p class="step-hint">Un attimo...</p>');
     const tutte = await _spotifyPlaylist();
     if (!tutte.length) {
+      /* Se mentre leggevo il token e' sparito (401 o 403), torno al
+         collegamento invece di dare un avviso che non aiuta. */
+      if (!_spotifyToken()) {
+        _spotifyChiediAccesso("L'accesso che avevi dato non vale piu'. Accetta di nuovo.");
+        return;
+      }
+      const perche = _spotifyErrore === -1
+        ? "Non riesco a parlare con Spotify: controlla la rete."
+        : (_spotifyErrore ? ("Spotify ha risposto " + _spotifyErrore + ".") : "");
       _spotifyPnl("Playlist", "",
         '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
-        'Prova a collegare Spotify di nuovo.</p>');
+        perche + ' Prova a collegare Spotify di nuovo.</p>');
       return;
     }
   let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
