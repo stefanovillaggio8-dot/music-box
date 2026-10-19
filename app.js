@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.321";
+  const APP_VERSION = "6.322";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11774,27 +11774,57 @@ async function _selezionaSoloInPlaylist() {
       : "\n\nNon hai ancora playlist: scrivi il nome e la creo.");
   const nome = _chiediNome(testo);
   if (!nome) return;
-  /* Prima le metto davvero nella playlist: cosi' non rischio di nasconderle
-     da qualche parte dove poi non le trovo. */
-  const pl = _playlistConNome(nome, ids[0]);
-  for (let i = 1; i < ids.length; i++) {
-    if (pl && Array.isArray(pl.tracks) && pl.tracks.indexOf(ids[i]) < 0) pl.tracks.push(ids[i]);
+  /* Cerco (o creo) la playlist, ma NON ci metto dentro niente ancora:
+     prima chiedo e poi, se va bene, ci metto le canzoni. Prima le scrivevo
+     subito, e se poi annullavi la conferma erano lo' lo stesso. */
+  const pl = _playlistConNome(nome, "");
+  /* Ste: "se faccio 'togli dalla libreria' e me la sposta in una playlist
+     dove c'e' gia' quella canzone, quella canzone viene scartata ma viene
+     solamente eliminata dalla libreria, mentre le altre (quelle che non
+     sono gia' presenti) vengono eliminate dalla libreria e spostate nella
+     playlist".
+
+     Quindi: le canzoni che ci sono gia' nella playlist NON la rimetto (sarebbe
+     un doppione) e la tolgo solo dalla libreria. Le altre la metto davvero
+     nella playlist e la tolgo dalla libreria. */
+  const giaPresenti = [];
+  const daSpostare = [];
+  for (const id of ids) {
+    if (pl && Array.isArray(pl.tracks) && pl.tracks.indexOf(id) >= 0) giaPresenti.push(id);
+    else daSpostare.push(id);
+  }
+  const righe = [];
+  if (giaPresenti.length) {
+    righe.push(giaPresenti.length + (giaPresenti.length === 1 ? " canzone e' gia' in \"" : " canzoni sono gia' in \"") +
+      pl.name + "\": la tolgo solo dalla libreria.");
+  }
+  if (daSpostare.length) {
+    righe.push(daSpostare.length + (daSpostare.length === 1 ? " canzone entra in \"" : " canzoni entrano in \"") +
+      pl.name + "\" e sparisce dalla libreria.");
   }
   const si = await askConfirm(
     "Tirarle fuori dalla libreria?",
-    ids.length + (ids.length === 1 ? " canzone entra in \"" : " canzioni entrano in \"") + pl.name +
-      "\" e sparisce dalla libreria.\n\nRestano suonabili dentro la playlist: per rivederle,\n" +
+    righe.join("\n") +
+      "\n\nRestano suonabili dentro la playlist: per rivederle,\n" +
       "apri quella playlist.",
     "Sposta"
   );
   if (!si) return;
+  /* Ora metto davvero le nuove nella playlist (quelle che c'erano gia' non le
+     rimetto: sarebbe un doppione). */
+  for (const id of daSpostare) {
+    if (pl && Array.isArray(pl.tracks) && pl.tracks.indexOf(id) < 0) pl.tracks.push(id);
+  }
+  /* E le tolgo TUTTE dalla libreria: sia quelle appena spostate sia quelle
+     che erano gia' nella playlist. */
   for (const id of ids) _mettiSoloInPlaylist(id);
   _salvaSoloInPlaylist();
   _disegnaLinguettePlaylist();
   _aggiornaBadgePlaylist();
   _salvaPlaylistCondivise();
   _chiudiSelezione();
-  toast("Tolte dalla libreria: le senti solo dentro \"" + pl.name + "\"");
+  toast("Tolte dalla libreria: le senti solo dentro \"" + pl.name + "\"" +
+    (giaPresenti.length ? " (" + giaPresenti.length + " erano gia' li')" : ""));
 }
 
 async function _selezionaElimina() {
