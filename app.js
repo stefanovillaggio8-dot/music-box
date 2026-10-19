@@ -2,6 +2,7 @@
 
 (function () {
   const BUILTIN = [
+  { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
 
       { title: "QUANTO FORTE TI PENSAVO", file: "songs/track-2.mp3", artist: "Madame", profile: "Ste" },
       { title: "Sono Ok", file: "songs/track-4.mp3", artist: "XCarme", profile: "Ste" },
@@ -582,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.318";
+  const APP_VERSION = "6.319";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11778,9 +11779,6 @@ async function _selezionaElimina() {
   for (const id of ids) {
     try { await _eliminaBrano(id); } catch (e) { /* una alla volta: se una falla le altre vanno avanti */ }
   }
-  _chiudiSelezione();
-  toast(ids.length + (ids.length === 1 ? " canzone eliminata" : " canzioni eliminate"));
-}
   _chiudiSelezione();
   toast(ids.length + (ids.length === 1 ? " canzone eliminata" : " canzioni eliminate"));
 }
