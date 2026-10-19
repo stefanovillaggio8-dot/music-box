@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792442781144,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792442841138,
   "r": "worker /stato: risponde"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792444120164,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792444123438,
   "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  }
 ]
