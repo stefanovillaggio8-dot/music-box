@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792441831102,
-  "r": "X premuta"
- },
- {
   "t": 1792441835273,
   "r": "bottone toccato"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792443764112,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792443766687,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
