@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.300";
+  const APP_VERSION = "6.301";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11009,17 +11009,40 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
            torna. */
         const idForseStrani = [];
         let aggiunti = 0;
+        /* Ste: "su tailscale sono 11 nascosti e su github 17", con la
+           libreria identica (250 e 250). Fin qui ho solo ACCUMULATO quello
+           che arrivava dal server sopra quello che avevo in testa: e
+           allora ogni link teneva i suoi, e i due non coincidevano mai.
+
+           Il posto dove vivo e' il server, non la mia testa. Se il server
+           risponde con l'elenco dei nascosti, quello e' l'elenco vero:
+           prendo quello, e non quello che avevo prima. Se non risponde,
+           tengo quello che ho: meglio una lista vecchia che una vuota. */
+        const viaRimossi = new Set(Array.isArray(j && j.nascostiRimossi) ? j.nascostiRimossi : []);
+        if (nasco.length) {
+          try {
+            const nuovo = new Set();
+            for (const id of nasco) {
+              if (!id || viaRimossi.has(id)) continue;
+              nuovo.add(id);
+            }
+            const stessi = nuovo.size === hiddenTracks.size &&
+              [...nuovo].every(function (x) { return hiddenTracks.has(x); });
+            if (!stessi) {
+              hiddenTracks.clear();
+              for (const id of nuovo) hiddenTracks.add(id);
+              cambiati++;
+            }
+          } catch (e) { /* noop */ }
+        }
         for (const id of nasco) {
           if (!id) continue;
-          if (hiddenTracks.has(id) || _nascostiTomba().has(id)) continue;
-          hiddenTracks.add(id);
-          aggiunti++;
           if (!(Array.isArray(tracks) && tracks.some((t) => t && t.id === id))) idForseStrani.push(id);
-          cambiati++;
         }
-        _diChe("stato dal sito: arrivano " + nasco.length + " nascosti, messi dentro " +
-          aggiunti + ", gia' locali " + hiddenTracks.size + ", brani in libreria " +
-          (Array.isArray(tracks) ? tracks.length : -1) + ", tombone locali " + _nascostiTomba().size);
+_diChe("stato dal sito: arrivano " + nasco.length + " nascosti, adesso ne ho " +
+          hiddenTracks.size + ", brani in libreria " +
+          (Array.isArray(tracks) ? tracks.length : -1) + ", tombone " + viaRimossi.size +
+          ", da " + String(location.host || "?"));
         if (idForseStrani.length) {
           setTimeout(function () {
             try {
