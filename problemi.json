@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792448709353,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792448769563,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792452768882,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792452771226,
+  "r": "worker /stato: risponde"
  }
 ]
