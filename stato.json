@@ -19,6 +19,7 @@
   "b-track-71",
   "b-track-8",
   "b-track-99",
+  "brano-prova-nuovo",
   "builtin-2",
   "builtin-22"
  ],
@@ -34,6 +35,8 @@
  "eliminati": [
   "brano-prova-1"
  ],
+ "soloInPlaylist": [],
+ "soloInPlaylistRimossi": [],
  "preferiti": [],
  "miei": {
   "Ste": [
