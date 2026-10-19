@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792431166070,
-  "r": "libreria: 250 brani, profilo Ste, duplicati via 0, nascosti 0, da 100.106.211.2:8167"
- },
- {
   "t": 1792431169315,
   "r": "X premuta"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792434030355,
   "r": "app avviata: pulsante Spotify presente=true versione=6.317"
+ },
+ {
+  "t": 1792434036316,
+  "r": "worker /stato: risponde"
  }
 ]
