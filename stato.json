@@ -131,23 +131,5 @@
    "title": "A Te",
    "artist": "Jovanotti"
   }
- },
- "statistiche": {
-  "Ste": {
-   "BRANCO|SOTTOGONNA": {
-    "v": 3,
-    "s": 420,
-    "t": "SOTTOGONNA",
-    "a": "BRANCO"
-   }
-  },
-  "Diego": {
-   "Variety|Canzone": {
-    "v": 7,
-    "s": 900,
-    "t": "Canzone",
-    "a": "Variety"
-   }
-  }
  }
 }
