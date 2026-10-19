@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792437479157,
-  "r": "visibili 219 su 243 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
   "t": 1792437481422,
   "r": "libreria: 250 brani, profilo Ste, duplicati via 0, nascosti 0, da 192.168.1.40:8788"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792439762745,
+  "r": "visibili 239 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792439768610,
   "r": "visibili 239 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  }
 ]
