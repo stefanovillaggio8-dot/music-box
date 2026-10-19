@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792431492510,
-  "r": "bottone toccato"
- },
- {
   "t": 1792431572273,
   "r": "app avviata: pulsante Spotify presente=true versione=6.314"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792434081394,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792434085234,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
