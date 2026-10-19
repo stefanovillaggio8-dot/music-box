@@ -449,6 +449,7 @@
     { title: "Ne vale la pena (Version 1) ESCLUSIVA VINILE", file: "songs/track-511.mp3", artist: "22simba", profile: "Ste" },
     { title: "httpswww.youtube.comwatchv=ZgvSgtRtax4&list=RDZgvSgtRtax4&start radio=1", file: "songs/track-512.mp3", artist: "", profile: "Diego" },
     { title: "mi manchi", file: "songs/track-513.mp3", artist: "paky", profile: "Ste" },
+    { title: "Disfruto - Carla Morrison", file: "songs/track-514.mp3", artist: "Carla Morrison", profile: "Ste" },
 ];
 
   const PALETTE = [
