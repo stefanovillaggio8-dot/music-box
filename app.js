@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.298";
+  const APP_VERSION = "6.299";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -10940,6 +10940,18 @@ const j = await r.json();
     try {
         const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
 
+      /* PRIMA di tutto: la lista dei brani rimessi la prendo dal Worker.
+         GitHub e il computer sono due posti diversi per il browser, e
+         ognuno aveva la sua. Quello che ne aveva di piu' toglieva dai
+         nascosti brani che sull'altro erano ancora nascosti: e cosi' uno
+         dei due link mostrava 10 nascosti e l'altro 15, con la libreria
+         identica. Il posto vero e' il Worker, quindi prendo il suo.
+         Se il Worker non ha niente, non tocco niente: meglio tenere la
+         lista locale che azzerarla. */
+      if (Array.isArray(j && j.nascostiRimossi) && j.nascostiRimossi.length) {
+        try { LS.set("mb.nascistiRimossi", [...new Set(j.nascostiRimossi)]); } catch (e) { /* noop */ }
+      }
+
       /* I brani che l'utente ha ELIMINATO davvero con la X valgono anche
          qui: Ste ha premuto la X dal computer, e quei brani devono stare
          eliminati anche su questo telefono. */
@@ -11012,10 +11024,25 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
   /* E i brani che QUALCUNO ha ripreso: li tolgo anch'io, non solo li
      nascondo. Senza questo, il telefono che li aveva ancora in testa li
      rimandava e il brano restava sparito per sempre. */
-  if (j && Array.isArray(j.nascostiRimossi)) {
-    cambiati += _togliRimossi(j.nascostiRimossi);
-    _diChe("tolti i rimessi: arrivano " + j.nascostiRimossi.length +
-      ", adesso nascosti " + hiddenTracks.size);
+if (j && Array.isArray(j.nascostiRimossi)) {
+  /* Ste: "la pagina di github e quella di tailscale non hanno le stesse
+     canzoni". Misurato: la libreria e' la stessa (250 e 250), ma una
+     ne mostrava 10 nascosti e l'altra 15.
+
+     Motivo: ogni link ha la sua memoria (github e il computer sono due
+     posti diversi per il browser) e ognuno aveva la propria lista dei
+     brani rimessi. Quello che aveva 5 tomboni in piu' toglieva dai
+     nascosti 5 brani che sull'altro erano ancora nascosti.
+
+     Il posto vero di questa lista e' il Worker: adesso, se il Worker
+     risponde, si prende la sua lista e si butta via quella locale.
+     Solo se non risponde (niente rete) si tiene quella che c'era gia'. */
+  cambiati += _togliRimossi(j.nascostiRimossi);
+  try {
+    if (j.nascostiRimossi.length) LS.set("mb.nascistiRimossi", [...new Set(j.nascostiRimossi)]);
+  } catch (e) { /* noop */ }
+  _diChe("tolti i rimessi: arrivano " + j.nascostiRimossi.length +
+    ", adesso nascosti " + hiddenTracks.size);
   }
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
            dispositivo, quindi li metto in elenco insieme a tutto il resto. */
