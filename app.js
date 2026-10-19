@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.329";
+  const APP_VERSION = "6.330";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12796,22 +12796,32 @@ let _spotifyAccess = null;
 let _spotifyChiave = null;   /* la "code_verifier" dell'accesso in corso */
 
 function _spotifySalvaToken(t) {
+  const valore = {
+    access: t.access_token,
+    scadenza: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000
+  };
+  let salvato = false;
+  try { LS.set("mb.spotify", valore); salvato = true; } catch (e) { /* noop */ }
+  /* Ste: "stai usando la finestra PRIVATA di Safari". In privata la memoria
+     non sopravvive: il token sparisce e l'app ti chiede l'accesso ogni
+     volta. Salvo anche in sessionStorage, che regge per la sessione
+     anche in privata: cosi' almeno finche' non chiudi la scheda
+     l'accesso resta. */
+  try { sessionStorage.setItem("mb.spotify", JSON.stringify(valore)); } catch (e) { /* noop */ }
+  return salvato;
+  }
+  function _spotifyToken() {
   try {
-    LS.set("mb.spotify", {
-      access: t.access_token,
-      scadenza: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000
-    });
-    return true;
-  } catch (e) { return false; }
-}
-function _spotifyToken() {
-  try {
-    const v = LS.get("mb.spotify", null);
+    let v = LS.get("mb.spotify", null);
+    if (!v || !v.access) {
+      /* provo la copia di sessione (serve in privata) */
+      try { v = JSON.parse(sessionStorage.getItem("mb.spotify") || "null"); } catch (e) { v = null; }
+    }
     if (!v || !v.access) return "";
     if (Number(v.scadenza || 0) < Date.now()) return "";
     return String(v.access);
-  } catch (e) { return ""; }
-}
+    } catch (e) { return ""; }
+  }
 
 /* Il codice di verifica per PKCE: una stringa casuale, e il suo "impronta"
    SHA-256 che Spotify pretende di vedere al posto della password. */
@@ -12976,6 +12986,7 @@ async function _spotifyCompletaAccesso(code, stato) {
            Ora in entrambi i casi il token viene via, e compare di nuovo
            la schermata di accesso. */
         try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
+        try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
         _spotifyErrore = r.status;
         return null;
       }
