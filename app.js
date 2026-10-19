@@ -534,8 +534,55 @@
     return "b-" + String((b && b.file) || ("builtin-" + BUILTIN.indexOf(b)))
       .replace(/^.*\//, "").replace(/\.mp3$/i, "");
   }
+  let _diUltimoInvio4 = 0;
+  let _diUltimoInvio3 = 0;
+  let _diUltimoInvio2 = 0;
+  let _diUltimoInvio = 0;
+
+
+  function _diCheFinale() {
+    let quanti = 0;
+    try { quanti = visibleTracks().length; } catch (e) { quanti = -1; }
+    _diChe("FINALE: visibili " + quanti + " su " + tracks.length +
+      " | nascosti " + hiddenTracks.size +
+      " | soloPlaylist " + _soloInPlaylist.size +
+      " | playlist " + (_playlistAttiva ? _playlistAttiva : "nessuna") +
+      " | preferiti " + (favOnly ? "si" : "no") +
+      " | maiascoltati " + (soloMaiAscoltati ? "si" : "no") +
+      " | eliminati " + (function () { try { return Object.keys(LS.get("mb.eliminati", {}) || {}).length; } catch (e) { return -1; } })() +
+      " | da " + String(location.host || "?"));
+  }
+
+
+  function _diChe(riga) {
+    try {
+      const dove = String(SERVIZIO_PUBBLICA || "").trim();
+      if (!dove) return;
+      const ora = Date.now();
+      /* Ogni tipo di riga ha il suo scomparto. Con uno solo se li
+         mangiavano a vicenda: la riga "FINALE" arriva un secondo dopo
+         quella della libreria e finiva sempre scartata dal limite di
+         1500 millisecondi. E quella e' proprio quella che mi serve. */
+      const testo = String(riga);
+      /* Il limite si applica SOLO alle due righe che arrivanocontinue
+         (libreria e visibili), altrimenti si mangiano a vicenda: la
+         libreria gira di continuo e faceva scartare anche le righe
+         sul worker, che erano proprio quelle che mi servivano. */
+      if (testo.indexOf("libreria") === 0 || testo.indexOf("visibili") === 0) {
+        const quale = testo.indexOf("visibili") === 0 ? 2 : 1;
+        const ultima = quale === 2 ? _diUltimoInvio2 : _diUltimoInvio;
+        if (ora - ultima < 1500) return;
+        if (quale === 2) _diUltimoInvio2 = ora; else _diUltimoInvio = ora;
+      }
+      fetch(dove + "/problema", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ riga: testo.slice(0, 160) })
+      }).catch(function () { /* senza rete pazienza */ });
+    } catch (e) { /* mai bloccare l'app per una traccia */ }
+  }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.315";
+  const APP_VERSION = "6.316";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2031,34 +2078,7 @@ function _devoVedereBrano(eMio, b) {
   let _diUltimoInvio = 0;
   let _diUltimoInvio2 = 0;
   let _diUltimoInvio3 = 0;
-  let _diUltimoInvio4 = 0;
-  function _diChe(riga) {
-    try {
-      const dove = String(SERVIZIO_PUBBLICA || "").trim();
-      if (!dove) return;
-      const ora = Date.now();
-      /* Ogni tipo di riga ha il suo scomparto. Con uno solo se li
-         mangiavano a vicenda: la riga "FINALE" arriva un secondo dopo
-         quella della libreria e finiva sempre scartata dal limite di
-         1500 millisecondi. E quella e' proprio quella che mi serve. */
-      const testo = String(riga);
-      /* Il limite si applica SOLO alle due righe che arrivanocontinue
-         (libreria e visibili), altrimenti si mangiano a vicenda: la
-         libreria gira di continuo e faceva scartare anche le righe
-         sul worker, che erano proprio quelle che mi servivano. */
-      if (testo.indexOf("libreria") === 0 || testo.indexOf("visibili") === 0) {
-        const quale = testo.indexOf("visibili") === 0 ? 2 : 1;
-        const ultima = quale === 2 ? _diUltimoInvio2 : _diUltimoInvio;
-        if (ora - ultima < 1500) return;
-        if (quale === 2) _diUltimoInvio2 = ora; else _diUltimoInvio = ora;
-      }
-      fetch(dove + "/problema", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riga: testo.slice(0, 160) })
-      }).catch(function () { /* senza rete pazienza */ });
-    } catch (e) { /* mai bloccare l'app per una traccia */ }
-  }
+  let _diUltimoInvio4 = 0;
 
   /* I brani che l'utente ha eliminato per davvero con la X: non li
      carico, e non li lascio rientrare. Ste: "premo la X e invece di
@@ -2070,8 +2090,19 @@ function _devoVedereBrano(eMio, b) {
   let eliminati = {};
   try { eliminati = LS.get("mb.eliminati", null) || {}; } catch (e) { eliminati = {}; }
 
+  /* La chiave di un brano eliminato porta con se' il profilo.
+     Ste: "se elimino dei brani dalla mia libreria, nella libreria di Diego
+     devono restare se presenti". Prima la lista era globale: quello che
+     eliminavo io spariva anche a Diego. E capita anche il contrario: brani
+     che spariscono a caso, perche' la lista globale si mescolava.
+
+     Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
+     elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
+  function _chiaveEliminato(id, profilo) {
+    return String(profilo || profile || "Ste") + "." + String(id || "");
+  }
   const builtin = BUILTIN
-  .filter((b) => !eliminati[_idBranoStabile(b)])
+  .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
   .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
           .map((b, i) => {
       /* Il nome di parecchi file era "ARTISTA - ARTISTA - TITOLO" (per
@@ -2933,25 +2964,50 @@ async function _eliminaBrano(id) {
      rispondeva, e comunque DOPO aver gia' fatto il lavoro. Adesso la
      chiedo per prima, e la conferma finale viene dopo. */
   const nellePlaylist = _playlistCheContengono(id);
-  let ancheDallePlaylist = true;
+  let ancheDallePlaylist = false;
   if (nellePlaylist.length) {
-    const scelta = await _scegliCosaTogliere(id, t.title || "", true);
+    /* Ste: "se premo 'solo dalla libreria' mi dice che lo elimina da tutto".
+       Le scelte del dialogo hanno questi significati:
+         - "Solo dalla libreria"  -> esce dalla libreria, RESTA nelle playlist
+         - "Da entrambi"          -> esce da entrambe e viene cancellato
+       Prima le contavo al contrario, e la conferma finale diceva la cosa
+       sbagliata. */
+    const scelta = await _scegliCosaTogliere(id, t.title || "", true, true);
     if (!scelta) return;                 /* annullato: non faccio niente */
-    ancheDallePlaylist = scelta !== "playlist";
+    ancheDallePlaylist = scelta === "entrambe";
   }
 
-  if (!confirm("Vuoi davvero ELIMINARE PER SEMPRE:\n\n" + testo +
-    "\n\nIl brano sparisce dalla libreria" +
-    (ancheDallePlaylist && nellePlaylist.length ? " e dalle playlist" : "") +
-    ", da tutti i tuoi link, e non si recupera piu'.\n\nVuoi continuare?")) return;
+  /* La conferma finale deve dire ESATTAMENTE quello che succede. */
+  const cosa = ancheDallePlaylist
+    ? "Il brano sparisce dalla libreria E dalle playlist, viene cancellato dal sito e non si recupera piu'."
+    : (nellePlaylist.length
+      ? "Il brano sparisce dalla libreria, ma RESTA nelle playlist e nel sito."
+      : "Il brano sparisce dalla libreria, viene cancellato dal sito e non si recupera piu'.");
+  if (!confirm("Vuoi davvero ELIMINARE:\n\n" + testo +
+    "\n\n" + cosa + "\n\nVuoi continuare?")) return;
+
+  /* Se resta nelle playlist non e' un'eliminazione: il brano esce dalla
+     libreria e basta. */
+  if (!ancheDallePlaylist && nellePlaylist.length) {
+    try {
+      _mettiSoloInPlaylist(id);
+      _salvaSoloInPlaylist();
+      _salvaSoloInPlaylistDaMandare();
+      _salvaStatoCondiviso();
+      saveCurrentState();
+      render();
+      toast(nome + ": tolto dalla libreria, resta nelle playlist", 5000);
+    } catch (e) { /* noop */ }
+    return;
+  }
 
   /* Segno subito che e' eliminato per sempre: la libreria viene
      ricostruita da capo, e senza questo segno il brano rientrerebbe. */
   try {
     const el = LS.get("mb.eliminati", null) || {};
-    el[id] = Date.now();
+    el[_chiaveEliminato(id)] = Date.now();
     LS.set("mb.eliminati", el);
-    _eliminatiDaMandareSegna(id);
+    _eliminatiDaMandareSegna(_chiaveEliminato(id));
   } catch (e) { /* noop */ }
 
   /* E se il computer e' acceso, cancello anche il file mp3: e' la
@@ -3401,10 +3457,12 @@ function _eliminatiRimossiDaMandare() {
 function _eliminatoRimessoSegna(id) {
   try {
     const m = _eliminatiRimossiDaMandare();
-    if (id && m.indexOf(id) < 0) m.push(id);
+    /* anche qui la chiave porta il profilo, come tutte le altre */
+    const chiave = _chiaveEliminato(id);
+    if (chiave && m.indexOf(chiave) < 0) m.push(chiave);
     LS.set("mb.eliminatiRimossiDaMandare", m);
   } catch (e) { /* noop */ }
-}
+  }
 function _eliminatiRimossiDaMandareSvuota() {
   try { LS.set("mb.eliminatiRimossiDaMandare", []); } catch (e) { /* noop */ }
 }
@@ -10913,15 +10971,43 @@ const j = await r.json();
 
       /* I brani che l'utente ha ELIMINATO davvero con la X valgono anche
          qui: Ste ha premuto la X dal computer, e quei brani devono stare
-         eliminati anche su questo telefono. */
+         eliminati anche su questo telefono.
+
+         Ma solo quelli del PROFILO aperto: la chiave e' "profilo.id", e
+         cosi' quello che ho eliminato io non sparisce dalla libreria di
+         Diego. */
       if (Array.isArray(j && j.eliminati) && j.eliminati.length) {
         try {
           const el = LS.get("mb.eliminati", null) || {};
           let nuovi = 0;
           for (const id of j.eliminati) {
-            if (id && !el[id]) { el[id] = 0; nuovi++; }
+            /* Le chiavi vecchie (senza profilo) erano eliminazioni globali,
+               e falsavano la libreria degli altri. Le metto col profilo
+               principale, cosi' il brano che avevo eliminato resta
+               eliminato per me e non tocca la libreria di Diego. */
+            const chiave = (id && String(id).indexOf(".") < 0)
+              ? DEFAULT_PROFILE + "." + String(id)
+              : String(id || "");
+            if (!chiave || chiave.indexOf(profile + ".") !== 0) continue;
+            if (!el[chiave]) { el[chiave] = 0; nuovi++; }
           }
           if (nuovi) LS.set("mb.eliminati", el);
+        } catch (e) { /* noop */ }
+      }
+
+      /* E quelli che QUALCUNO ha rimesso in lista dopo averli eliminati:
+         tolgo la chiave dalla mia lista, cosi' il brano torna davvero.
+         Prima questo passaggio non esisteva, e il brano restava
+         "eliminato" su questo telefono anche se l'avevo rimesso. */
+      if (Array.isArray(j && j.eliminatiRimossi) && j.eliminatiRimossi.length) {
+        try {
+          const el = LS.get("mb.eliminati", null) || {};
+          let tolti = 0;
+          for (const chiave of j.eliminatiRimossi) {
+            if (!chiave || String(chiave).indexOf(profile + ".") !== 0) continue;
+            if (el[chiave]) { delete el[chiave]; tolti++; }
+          }
+          if (tolti) { LS.set("mb.eliminati", el); cambiati++; }
         } catch (e) { /* noop */ }
       }
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
@@ -11025,19 +11111,7 @@ for (const k of Object.keys(j.rinomini)) {
   /* Ste: "la libreria che ho su github e' diversa da quella su tailscale".
      La chiamo DOPO che ho applicato tutto (nascosti, nomi, eliminati) e
      DOPO che la libreria e' stata ricaricata: cosi' conta davvero e non
-     un numero di mezzo lavoro. */
-  function _diCheFinale() {
-    let quanti = 0;
-    try { quanti = visibleTracks().length; } catch (e) { quanti = -1; }
-    _diChe("FINALE: visibili " + quanti + " su " + tracks.length +
-      " | nascosti " + hiddenTracks.size +
-      " | soloPlaylist " + _soloInPlaylist.size +
-      " | playlist " + (_playlistAttiva ? _playlistAttiva : "nessuna") +
-      " | preferiti " + (favOnly ? "si" : "no") +
-      " | maiascoltati " + (soloMaiAscoltati ? "si" : "no") +
-      " | eliminati " + (function () { try { return Object.keys(LS.get("mb.eliminati", {}) || {}).length; } catch (e) { return -1; } })() +
-      " | da " + String(location.host || "?"));
-  }
+     un numero di mezzo lavoro. */
   /* La chiamo SEMPRE, non solo quando qualcosa e' cambiato: altrimenti
      se non cambia niente non mi arriva mai la riga, e io resto al buio
      proprio quando i due link coincidono. */
@@ -11195,7 +11269,7 @@ async function _salvaPlaylistCondivise() {
   let _scopeResolve = null;
 
   /* Restituisce "libreria", "playlist", "entrambe" oppure null se annullato. */
-  function _scegliCosaTogliere(trackId, titolo, perDavvero) {
+  function _scegliCosaTogliere(trackId, titolo, perDavvero, perEliminazione) {
     const nomi = _playlistCheContengono(trackId);
     /* Ste: "eliminare non mi chiede piu la conferma". Prima, se il brano non
        era in nessuna playlist, la domanda veniva saltata e il brano spariva
@@ -11238,6 +11312,22 @@ pericolo: perDavvero
        riguardano le playlist non hanno senso: le tolgo, cosi' resta solo
        "togli dalla libreria" (piu' l'annulla che aggiungo sotto). */
     if (!nomi.length) voci.splice(1, 2);
+    /* Ste: "se premo 'solo dalla libreria' mi dice che lo elimina da
+       tutto, dal sito e dalle playlist". Quel pulsante vuol dire una cosa
+       sola: il brano esce dalla LIBRERIA e resta nelle playlist (e nel
+       sito, per gli altri). Eliminare davvero e' un'altra scelta.
+       Percio' quando si sta eliminando, mostro solo le due scelte vere. */
+    if (perEliminazione) {
+      const utili = voci.filter((v) => v.id === "libreria" || v.id === "entrambe");
+      if (utili.length) {
+        utili[0].dove = "esce dalla libreria, ma resta nelle playlist e nel sito";
+        utili[0].pericolo = false;
+        utili[1].dove = "esce dalla libreria E dalle playlist, e viene cancellato per sempre";
+        utili[1].pericolo = true;
+        voci.length = 0;
+        for (const v of utili) voci.push(v);
+      }
+    }
     voci.push({
       id: "",
       testo: "Lascia tutto com'e'",
