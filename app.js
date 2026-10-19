@@ -262,7 +262,7 @@
     { title: "2 passi dal cielo non uno in più", file: "songs/track-287.mp3", artist: "22simba", profile: "Diego" },
     { title: "Arricchiti (feat. Guè)", file: "songs/track-288.mp3", artist: "22simba, Guè", profile: "Diego" },
     { title: "Sipario (feat. Promessa)", file: "songs/track-295.mp3", artist: "22simba, Promessa", profile: "Diego" },
-    { title: "Abercrombie", file: "songs/track-290.mp3", artist: "22simba", profile: "Diego" },
+
     { title: "ALTALENE (feat. Mara Sattei & Coez)", file: "songs/track-291.mp3", artist: "BLOODY VINYL, Slait, thasup, Mara Sattei, Coez", profile: "Diego" },
     { title: "gua10 (feat. Lazza)", file: "songs/track-292.mp3", artist: "thasup, Lazza", profile: "Diego" },
     { title: "EGOISTA", file: "songs/track-293.mp3", artist: "Sayf", profile: "Diego" },
