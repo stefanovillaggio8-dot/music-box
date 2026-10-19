@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.334";
+  const APP_VERSION = "6.335";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12871,6 +12871,21 @@ async function _spotifyPkce() {
 
 /* Step 1: butto Ste su Spotify per l'accesso. */
 async function _spotifyAccedi() {
+  /* Ste: "l'accesso funziona, ma poi su questo link non c'e' piu' niente".
+     Spotify rimanda sempre al link sicuro, e il permesso vale solo per il
+     sito in cui e' nato. Se sono su una pagina "http" (quella di casa o
+     quella di tailscale), allora l'accesso lo faccio sul link sicuro, che e'
+     l'unico dove Spotify puo' rimandare. */
+  try {
+    const dove = String(window.location.origin || "");
+    const sicuro = "https://stefanovillaggio8-dot.github.io";
+    if (dove && dove !== sicuro && !/127\.0\.0\.1|localhost/.test(dove)) {
+      _spotifyTraccia("accesso da un link http: lo faccio sul link sicuro");
+      toast("Ti apro l'app su internet per il permesso di Spotify", 4000);
+      window.open(sicuro + "/music-box/?spotify=accedi", "_blank");
+      return;
+    }
+  } catch (e) { /* noop */ }
   /* Ste: "se premo accedi con spotify si ricarica la pagina e spunta di
      nuovo accedi con spotify".
 
@@ -13607,6 +13622,15 @@ if (typeof document !== "undefined") {
          pagina ti mostrava di nuovo "Accedi con Spotify" come se niente fosse.
          Adesso parte appena la pagina si apre, e senza aspettare la libreria. */
       try { setTimeout(function () { _spotifyRientro(); }, 60); } catch (e) { /* noop */ }
+      /* Ste: "l'accesso parte dal link di casa e non funziona".
+         Adesso l'app di casa apre questa pagina con "?spotify=accedi": qui, sul
+         link sicuro, l'accesso parte da solo e il permesso nasce dove Spotify
+         puo' rimandare. */
+      try {
+        if (/[?&]spotify=accedi\b/.test(String(window.location.search || ""))) {
+          setTimeout(function () { _spotifyAccedi(); }, 400);
+        }
+      } catch (e) { /* noop */ }
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", _spotifyAggancia);
     }
