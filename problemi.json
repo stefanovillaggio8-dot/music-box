@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792431293610,
-  "r": "libreria: 251 brani, profilo Ste, duplicati via 0, nascosti 0, da 192.168.1.40:8788"
- },
- {
   "t": 1792431410535,
   "r": "bottone toccato"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792434048368,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792434051386,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
