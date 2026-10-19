@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792441835273,
-  "r": "bottone toccato"
- },
- {
   "t": 1792441844964,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792443766687,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792443775659,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
