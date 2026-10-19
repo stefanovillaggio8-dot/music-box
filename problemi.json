@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792446973549,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792446978286,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792448664284,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792448679333,
+  "r": "worker /stato: risponde"
  }
 ]
