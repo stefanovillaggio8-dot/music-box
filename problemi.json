@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792443805832,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792443809663,
   "r": "worker /stato: risponde"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792445250730,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792445508503,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
