@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792441747612,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792441756284,
   "r": "bottone toccato"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792442841138,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792443735951,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 15"
  }
 ]
