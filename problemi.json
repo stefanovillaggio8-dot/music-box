@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792440135371,
-  "r": "libreria: 207 brani, profilo Diego, duplicati via 0, nascosti 0, da 127.0.0.1:8167"
- },
- {
   "t": 1792440155999,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792442025520,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792442503338,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  }
 ]
