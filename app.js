@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.319";
+  const APP_VERSION = "6.320";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2121,6 +2121,14 @@ function _devoVedereBrano(eMio, b) {
   }
   const builtin = BUILTIN
   .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
+  /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
+     Metto una traccia: quante canzoni ho scartato e con che chiave, cosi'
+     vedo dal computer se la chiave e' quella giusta. */
+  .filter(function (b) {
+    const k = _chiaveEliminato(_idBranoStabile(b));
+    if (!eliminati[k]) return true;
+    return false;
+  })
   .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
           .map((b, i) => {
       /* Il nome di parecchi file era "ARTISTA - ARTISTA - TITOLO" (per
@@ -2242,6 +2250,11 @@ function _devoVedereBrano(eMio, b) {
       if ((t.size || 0) > (senzaDuplicati[doppio].size || 0)) senzaDuplicati[doppio] = t;
     }
   tracks = builtin.concat(senzaDuplicati);
+    try {
+      _diChe("libreria: " + tracks.length + " brani, scartati " +
+        (BUILTIN.length - builtin.length) + " per eliminazione, profilo " + profile +
+        ", chiavi eliminate " + Object.keys(eliminati).length);
+    } catch (e) { /* noop */ }
     /* Ste: "la pagina di github e quella di tailscale non hanno le stesse
        canzoni". Non sapevo quale delle due avesse i brani e quale no, e
        senza questo ogni volta che lo chiedevo lui doveva contarle a mano.
@@ -3034,6 +3047,7 @@ async function _eliminaBrano(id) {
     el[_chiaveEliminato(id)] = Date.now();
     LS.set("mb.eliminati", el);
     _eliminatiDaMandareSegna(_chiaveEliminato(id));
+    _diChe("ELIMINO: " + _chiaveEliminato(id) + " (elenco ora " + Object.keys(el).length + ")");
   } catch (e) { /* noop */ }
 
   /* E se il computer e' acceso, provo a cancellare anche il file mp3: e' la
