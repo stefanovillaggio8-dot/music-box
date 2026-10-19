@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792451119121,
-  "r": "bottone toccato"
- },
- {
   "t": 1792452664794,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792454040803,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792454044085,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
