@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792444120164,
-  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
   "t": 1792444123438,
   "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792446906562,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792446909942,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
