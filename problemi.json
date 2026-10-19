@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792431423950,
-  "r": "app avviata: pulsante Spotify presente=true versione=6.314"
- },
- {
   "t": 1792431427137,
   "r": "libreria: 248 brani, profilo Ste, duplicati via 0, nascosti 0, da 192.168.1.40:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792434057886,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792434061464,
+  "r": "visibili 245 su 245 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
