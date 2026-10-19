@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.302";
+  const APP_VERSION = "6.303";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2742,12 +2742,31 @@ if (perLaCoda) {
        alla ricerca e all'ordinamento, non al posto loro: e' quello che
        chiedeva Stefano ("come la libreria, ma solo le canzoni di
        quella playlist"). */
-    if (_playlistAttiva) {
-      const pl = _playlistCercata(_playlistAttiva);
-      const id = pl ? pl.id : null;
-      if (id) list = list.filter((t) => (pl.tracks || []).includes(t.id));
-      else if (_playlistAttiva) list = [];
-    }
+if (_playlistAttiva) {
+    const pl = _playlistCercata(_playlistAttiva);
+    const id = pl ? pl.id : null;
+    if (id) list = list.filter((t) => (pl.tracks || []).includes(t.id));
+    else if (_playlistAttiva) list = [];
+  }
+
+  /* Ste: "su github ci sono 231 brani, su tailscale 237". I brani ci sono
+     tutti e due i posti (250 e 250): cambia quello che viene MOSTRATO,
+     perche' playlist attiva, "solo preferiti", "mai ascoltati" e ricerca
+     sono scelte dell'istantaneo, e il browser le tiene da parte per ogni
+     link. Quindi aprire un link diverso da quello che usavi prima mostra
+     un altro pezzo di libreria.
+
+     Adesso me lo dico da solo, invece di chiedertelo ogni volta. */
+  if (!perLaCoda && !query) {
+    try {
+      _diChe("visibili " + list.length + " su " + tracks.length +
+        " | nascosti " + hiddenTracks.size +
+        " | playlist attiva " + (_playlistAttiva ? _playlistAttiva : "nessuna") +
+        " | solo preferiti " + (favOnly ? "si" : "no") +
+        " | mai ascoltati " + (soloMaiAscoltati ? "si" : "no") +
+        " | da " + String(location.host || "?"));
+    } catch (e) { /* noop */ }
+  }
     if (!query) return ordinaLista(list);
     const scored = [];
     for (const t of list) {
