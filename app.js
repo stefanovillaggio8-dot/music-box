@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.323";
+  const APP_VERSION = "6.324";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12944,41 +12944,35 @@ function _spotifyPnl(titolo, sotto, html) {
    indovinare. E' roba mia di diagnostica: quando funziona si puo'
    togliere. */
 function _spotifyTraccia(testo) {
-    /* Prima di tutto mando: se il pannello non c'e' o il disegno va storto,
-       la riga deve uscire lo stesso. Prima mandavo solo in fondo, e se
-       la funzione tornava prima (perche' il pannello mancava) non partiva
-       niente: esattamente il caso in cui mi serve saperlo. */
-    _spotifyTracciaManda(testo);
-    try {
-      const p = $("spotifyPanel");
-      if (!p) return;
-    p.hidden = false;
+  /* Prima di tutto mando: se il pannello non c'e' o il disegno va storto,
+  la riga deve uscire lo stesso. */
+  _spotifyTracciaManda(testo);
+  try {
+    /* Ste: "appena apro l'app subito mi spunta questa schermata".
+       Qui prima c'era "p.hidden = false": serviva per far vedere le righe
+       dentro il pannello. Ma questa funzione la chiamo anche all'avvio
+       (per dire "pulsante Spotify presente"), e quindi il pannello di
+       Spotify si apriva da solo a ogni avvio.
+
+       Ora la traccia scrive in un riquadro a parte, in alto, e NON tocca
+       il pannello di Spotify. */
     let box = document.getElementById("spotifyTraccia");
     if (!box) {
       box = document.createElement("div");
       box.id = "spotifyTraccia";
-      /* flex:0 0 auto e' FONDAMENTALE: la finestra e' una colonna flex,
-         e senza questo il riquadro verrebbe schiacciato a zero e le righe
-         non si vedrebbero. Ste: "non ci sono manco le linee blu": erano
-         scritte, ma schiacciate fuori vista. */
       box.style.cssText = "position:fixed;top:6px;left:6px;right:6px;z-index:999;" +
         "max-height:34vh;overflow:auto;margin:0;padding:8px 10px;border-radius:12px;" +
         "background:rgba(127,215,255,.08);border:1px solid rgba(127,215,255,.25);" +
         "font:600 12px/1.6 ui-monospace,Consolas,monospace;color:#7fd7ff;" +
-        "word-break:break-word";
-      /* Ste: "non vedo le linee blu". Le mettevo dentro la finestra, che
-         pero' ha overflow:hidden: quando il contenuto e' alto le righe
-         finivano fuori vista e sembrava che non ci fossero state scritte.
-         Adesso stanno in un riquadro fermo in alto, fuori da tutto:
-         nessun pannello puo' tagliarle via. */
+        "word-break:break-word;pointer-events:none";
       document.body.appendChild(box);
     }
-const riga = document.createElement("div");
-      riga.textContent = "- " + testo;
-      box.appendChild(riga);
-    } catch (e) { /* la traccia non deve mai bloccare niente */ }
-    _spotifyTracciaManda(testo);
-  }
+    const riga = document.createElement("div");
+    riga.textContent = "- " + testo;
+    box.appendChild(riga);
+  } catch (e) { /* la traccia non deve mai bloccare niente */ }
+  _spotifyTracciaManda(testo);
+}
 
   /* Ste: "ancora spotify non apre nulla", e io ogni volta avevo indovinato
      una causa diversa. Il problema e' che vedevo solo quello che diceva
@@ -13292,12 +13286,6 @@ if (typeof window !== "undefined") {
 
 function _spotifyAggancia() {
 const bs = $("btnSpotify");
-      /* Ste: "ancora spotify non apre nulla". Prima cosa da sapere e' se
-         questo codice arriva proprio sul telefono: se questa riga non la
-         vedo, il problema non e' Spotify, e' che l'app vecchia gira ancora
-         e il pulsante non ha nessun collegamento. */
-      try { _spotifyTraccia("app avviata: pulsante Spotify presente=" + !!bs +
-          " versione=" + String((typeof APP_VERSION !== "undefined" ? APP_VERSION : "?"))); } catch (e) {}
       if (bs && !bs._collegatoSpotify) {
       bs._collegatoSpotify = true;
       /* PRIMA riscrivevo l'"onclick" scritto nella pagina con un altro
