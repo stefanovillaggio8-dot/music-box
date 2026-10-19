@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.301";
+  const APP_VERSION = "6.302";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1973,13 +1973,18 @@ function _devoVedereBrano(eMio, b) {
    Qui mi scrivo quello che vedo, e poi lo leggo dal computer invece di
    continuare a indovinare. Costa niente e non blocca niente. */
   let _diUltimoInvio = 0;
+  let _diUltimoInvio2 = 0;
   function _diChe(riga) {
     try {
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       const ora = Date.now();
-      if (ora - _diUltimoInvio < 1500) return;
-      _diUltimoInvio = ora;
+      /* Due contatori separati: prima le due righe si pestavano e una
+         mangiava l'altra, e io non sapevo se il dato era arrivato. */
+      const quale = String(riga).indexOf("stato dal sito") === 0 ? 2 : 1;
+      const prima = quale === 2 ? _diUltimoInvio2 : _diUltimoInvio;
+      if (ora - prima < 1500) return;
+      if (quale === 2) _diUltimoInvio2 = ora; else _diUltimoInvio = ora;
       fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
