@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792434705001,
-  "r": "app avviata: pulsante Spotify presente=true versione=6.318"
- },
- {
   "t": 1792434707363,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792438025927,
   "r": "app avviata: pulsante Spotify presente=true versione=6.320"
+ },
+ {
+  "t": 1792438028363,
+  "r": "libreria: 246 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  }
 ]
