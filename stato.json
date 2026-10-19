@@ -131,5 +131,683 @@
    "title": "A Te",
    "artist": "Jovanotti"
   }
+ },
+ "statistiche": {
+  "Ste": {
+   "evanescence|bringmetolife": {
+    "v": 1,
+    "s": 16,
+    "t": "Bring Me To Life",
+    "a": "Evanescence"
+   },
+   "blanco|sottogonna": {
+    "v": 3,
+    "s": 25,
+    "t": "SOTTOGONNA",
+    "a": "BLANCO"
+   },
+   "ferrodichecov|kidyugixnutslilpeep": {
+    "v": 1,
+    "s": 160,
+    "t": "Kid Yugi x Nuts - Lil Peep",
+    "a": "Ferro di checov"
+   },
+   "frahquintale|haivistomai": {
+    "v": 0,
+    "s": 162,
+    "t": "Hai visto mai",
+    "a": "Frah Quintale"
+   },
+   "artie5ive|swagmusic": {
+    "v": 4,
+    "s": 179,
+    "t": "SWAG MUSIC",
+    "a": "Artie 5ive"
+   },
+   "gianlucagrignani|lamiastoriatraleditafeatannalisa": {
+    "v": 2,
+    "s": 13,
+    "t": "La Mia Storia Tra Le Dita (Feat. Annalisa)",
+    "a": "Gianluca Grignani"
+   },
+   "lamiastoriatraledita|gianlucagrignani": {
+    "v": 0,
+    "s": 6,
+    "t": "gianluca grignani",
+    "a": "la mia storia tra le dita"
+   },
+   "gigiperez|sailorsong": {
+    "v": 0,
+    "s": 165,
+    "t": "sailor song",
+    "a": "gigi perez"
+   },
+   "lilpeep|nuts": {
+    "v": 0,
+    "s": 4,
+    "t": "nuts",
+    "a": "Lil Peep"
+   },
+   "vascorossi|albachiara": {
+    "v": 0,
+    "s": 6,
+    "t": "Albachiara",
+    "a": "Vasco Rossi"
+   },
+   "senzaartista|wonderwallnl": {
+    "v": 0,
+    "s": 125,
+    "t": "Wonderwall NL",
+    "a": "senza artista"
+   },
+   "kidyugi|mostrovisual": {
+    "v": 0,
+    "s": 11,
+    "t": "Mostro (Visual)",
+    "a": "Kid Yugi"
+   },
+   "oliviarodrigo|thecure": {
+    "v": 0,
+    "s": 14,
+    "t": "the cure",
+    "a": "Olivia Rodrigo"
+   },
+   "madame|lanima": {
+    "v": 1,
+    "s": 364,
+    "t": "l'anima",
+    "a": "madame"
+   },
+   "kidyugi|terr1": {
+    "v": 1,
+    "s": 132,
+    "t": "terr1",
+    "a": "kid yugi"
+   },
+   "saitta|romanticiterroni": {
+    "v": 0,
+    "s": 115,
+    "t": "Romantici Terroni",
+    "a": "SAITTA"
+   },
+   "thasup|dimmichece": {
+    "v": 1,
+    "s": 183,
+    "t": "dimmi che ce'",
+    "a": "thasup"
+   },
+   "|thasupdimmichec": {
+    "v": 1,
+    "s": 10,
+    "t": "thasup dimmi che c'",
+    "a": ""
+   },
+   "chiello|hosbagliatoancora": {
+    "v": 2,
+    "s": 12,
+    "t": "HO SBAGLIATO ANCORA",
+    "a": "Chiello"
+   },
+   "hosbagliatoancora|chiello": {
+    "v": 0,
+    "s": 5,
+    "t": "Chiello",
+    "a": "HO SBAGLIATO ANCORA"
+   },
+   "iltre|zerorimorsi": {
+    "v": 1,
+    "s": 112,
+    "t": "zero rimorsi",
+    "a": "il tre"
+   },
+   "madame|quantofortetipensavo": {
+    "v": 3,
+    "s": 178,
+    "t": "QUANTO FORTE TI PENSAVO",
+    "a": "Madame"
+   },
+   "frahquintale|neitrenilanotte": {
+    "v": 0,
+    "s": 0,
+    "t": "frah quintale nei treni la notte",
+    "a": ""
+   },
+   "oasis|wonderwall": {
+    "v": 1,
+    "s": 19,
+    "t": "Wonderwall",
+    "a": "Oasis"
+   },
+   "jovanotti|sosolochelavita": {
+    "v": 1,
+    "s": 2,
+    "t": "So solo che la vita",
+    "a": "Jovanotti"
+   },
+   "jovanotti|ragazzamagica": {
+    "v": 0,
+    "s": 10,
+    "t": "Ragazza Magica",
+    "a": "Jovanotti"
+   },
+   "lelfo|carusidosud": {
+    "v": 0,
+    "s": 28,
+    "t": "carusi do sud",
+    "a": "l'elfo"
+   },
+   "rinogaetano|mailcieloesemprepiublu": {
+    "v": 0,
+    "s": 2,
+    "t": "Ma il cielo è sempre più blu",
+    "a": "Rino Gaetano"
+   },
+   "samuraijayvitosalamarca|adrenalina": {
+    "v": 1,
+    "s": 13,
+    "t": "ADRENALINA",
+    "a": "Samurai Jay, Vito Salamarca"
+   },
+   "calcuttatakagiketra|oroscopofeattakagiketra": {
+    "v": 1,
+    "s": 83,
+    "t": "Oroscopo (feat. Takagi & Ketra)",
+    "a": "Calcutta, Takagi & Ketra"
+   },
+   "mace|nonmiriconosco": {
+    "v": 0,
+    "s": 3,
+    "t": "NON MI RICONOSCO",
+    "a": "MACE"
+   },
+   "macechiellocoez|ruggineconchiellocoez": {
+    "v": 0,
+    "s": 5,
+    "t": "RUGGINE (con Chiello, Coez)",
+    "a": "MACE, chiello, Coez"
+   },
+   "macekidyugiizifranco126|tuttofuoricontrolloconfranco126kidyugiizi": {
+    "v": 1,
+    "s": 200,
+    "t": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "massimopericolocrookersmadame|airforcefeatmadame": {
+    "v": 0,
+    "s": 4,
+    "t": "AIRFORCE (feat. Madame)",
+    "a": "Massimo Pericolo, Crookers, Madame"
+   },
+   "moda|enoncemaiunafine": {
+    "v": 1,
+    "s": 0,
+    "t": "E non c'è mai una fine",
+    "a": "Modà"
+   },
+   "moda|cuoreeventofeattazenda": {
+    "v": 0,
+    "s": 3,
+    "t": "Cuore e vento (feat. Tazenda)",
+    "a": "Modà"
+   },
+   "nayt3d|dimenticare": {
+    "v": 1,
+    "s": 133,
+    "t": "Dimenticare",
+    "a": "nayt, 3D"
+   },
+   "thasup|marte": {
+    "v": 0,
+    "s": 21,
+    "t": "marte",
+    "a": "thasup"
+   },
+   "linkinpark|runaway": {
+    "v": 0,
+    "s": 151,
+    "t": "Runaway",
+    "a": "Linkin Park"
+   },
+   "carlamorrison|distrutto": {
+    "v": 1,
+    "s": 2,
+    "t": "Distrutto",
+    "a": "Carla Morrison"
+   },
+   "linkinpark|crawling": {
+    "v": 2,
+    "s": 12,
+    "t": "Crawling",
+    "a": "Linkin Park"
+   },
+   "artie5ive|introlabellavita": {
+    "v": 1,
+    "s": 10,
+    "t": "INTRO (La Bella Vita)",
+    "a": "Artie 5ive"
+   },
+   "artie5ive|davverodavvero": {
+    "v": 2,
+    "s": 139,
+    "t": "DAVVERODAVVERO",
+    "a": "Artie 5ive"
+   },
+   "artie5ive|fwss25freestyle": {
+    "v": 0,
+    "s": 144,
+    "t": "FW/SS25 (Freestyle)",
+    "a": "Artie 5ive"
+   },
+   "artie5ive|sognoamericano": {
+    "v": 1,
+    "s": 144,
+    "t": "SOGNO AMERICANO",
+    "a": "Artie 5ive"
+   },
+   "zyzz|malotebyahardstyleremix": {
+    "v": 1,
+    "s": 2,
+    "t": "Malo Tebya (Hardstyle Remix)",
+    "a": "Zyzz"
+   },
+   "ymrthk|iloveyousojumpstyleslowed": {
+    "v": 0,
+    "s": 18,
+    "t": "I Love You So (Jumpstyle Slowed)",
+    "a": "YMRTHK"
+   },
+   "nirvana|smellsliketeenspirit": {
+    "v": 0,
+    "s": 4,
+    "t": "Smells Like Teen Spirit",
+    "a": "Nirvana"
+   },
+   "iggyazalearitaora|blackwidowhardstyleremix": {
+    "v": 0,
+    "s": 3,
+    "t": "Black Widow (Hardstyle Remix)",
+    "a": "Iggy Azalea, Rita Ora"
+   },
+   "taylorswift|blankspacehardstyle": {
+    "v": 0,
+    "s": 2,
+    "t": "Blank Space (Hardstyle)",
+    "a": "Taylor Swift"
+   },
+   "katyperry|tiktokhardstyleremix": {
+    "v": 0,
+    "s": 1,
+    "t": "TiK ToK (Hardstyle Remix)",
+    "a": "Katy Perry"
+   },
+   "katyperry|ikissedagirlhardstyle": {
+    "v": 0,
+    "s": 3,
+    "t": "I Kissed a Girl (Hardstyle)",
+    "a": "Katy Perry"
+   },
+   "katyperryzyzz|lastfridaynighthardstyleremix": {
+    "v": 0,
+    "s": 0,
+    "t": "Last Friday Night (Hardstyle Remix)",
+    "a": "Katy Perry, Zyzz"
+   },
+   "luckytwice|imsoluckyhardstyle": {
+    "v": 0,
+    "s": 0,
+    "t": "I'm So Lucky (Hardstyle)",
+    "a": "Lucky Twice"
+   },
+   "kaskade|middleofthenightdomlivezhardstyleremix": {
+    "v": 0,
+    "s": 0,
+    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
+    "a": "Kaskade"
+   },
+   "katyperry|partofmehardstyleremix": {
+    "v": 0,
+    "s": 42,
+    "t": "Part Of Me (Hardstyle Remix)",
+    "a": "Katy Perry"
+   },
+   "franco126|futuripossibili": {
+    "v": 1,
+    "s": 12,
+    "t": "Futuri Possibili",
+    "a": "Franco126"
+   },
+   "jvke|her": {
+    "v": 1,
+    "s": 173,
+    "t": "her",
+    "a": "JVKE"
+   },
+   "girlinred|wefellinloveinoctober": {
+    "v": 1,
+    "s": 157,
+    "t": "we fell in love in october",
+    "a": "girl in red"
+   },
+   "xcarme|sonook": {
+    "v": 0,
+    "s": 12,
+    "t": "Sono Ok",
+    "a": "XCarme"
+   },
+   "threedaysgrace|animalihavebecome": {
+    "v": 1,
+    "s": 0,
+    "t": "Animal I Have Become",
+    "a": "Three Days Grace"
+   },
+   "linkinpark|whativedone": {
+    "v": 0,
+    "s": 115,
+    "t": "What I've Done",
+    "a": "Linkin Park"
+   },
+   "ladygaga|judashardstyleremix": {
+    "v": 0,
+    "s": 12,
+    "t": "Judas (Hardstyle Remix)",
+    "a": "Lady Gaga"
+   },
+   "kidyugituttifenomeni|eroina": {
+    "v": 0,
+    "s": 0,
+    "t": "Eroina",
+    "a": "Kid Yugi & Tutti Fenomeni"
+   },
+   "kidyugi|ilfilmografo": {
+    "v": 0,
+    "s": 0,
+    "t": "Il Filmografo",
+    "a": "Kid Yugi"
+   },
+   "kidyugi|perilsangueversato": {
+    "v": 0,
+    "s": 141,
+    "t": "Per il Sangue Versato",
+    "a": "Kid Yugi"
+   },
+   "nayt|badvibes": {
+    "v": 1,
+    "s": 125,
+    "t": "Bad vibes",
+    "a": "nayt"
+   },
+   "nayt|cinascicimuori": {
+    "v": 0,
+    "s": 306,
+    "t": "Ci nasci, ci muori",
+    "a": "nayt"
+   },
+   "luchesferaebbastasimbalarue|miamivice": {
+    "v": 0,
+    "s": 188,
+    "t": "Miami Vice",
+    "a": "Luchè, Sfera Ebbasta, Simba La Rue"
+   },
+   "coez|qualcosadigrande": {
+    "v": 0,
+    "s": 95,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
+   },
+   "moda|comeunpittore": {
+    "v": 0,
+    "s": 377,
+    "t": "Come un pittore",
+    "a": "Modà"
+   },
+   "kidyugi|amelie": {
+    "v": 0,
+    "s": 142,
+    "t": "Amelie",
+    "a": "Kid Yugi"
+   },
+   "thasupnayt|oh9od": {
+    "v": 0,
+    "s": 162,
+    "t": "oh 9od",
+    "a": "thasup, nayt"
+   },
+   "coezgemello|taciturno": {
+    "v": 0,
+    "s": 10,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
+   "kidyugi|lilith": {
+    "v": 0,
+    "s": 126,
+    "t": "Lilith",
+    "a": "Kid Yugi"
+   },
+   "nayt|lacanzonedellamoreperdutoftjoanthielesanremo2026": {
+    "v": 0,
+    "s": 295,
+    "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
+    "a": "nayt"
+   },
+   "ty1coezmassimopericolo|stanotte": {
+    "v": 0,
+    "s": 126,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "nayt|exit": {
+    "v": 0,
+    "s": 50,
+    "t": "Exit",
+    "a": "nayt"
+   },
+   "lazza|verdineiviola": {
+    "v": 1,
+    "s": 9,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
+   "gianlucagrignani|lamiastoriatraledita": {
+    "v": 0,
+    "s": 8,
+    "t": "la mia storia tra le dita",
+    "a": "gianluca grignani"
+   },
+   "|httpsyoutuben1udkkj91rgispj0aurtrkgmdjob": {
+    "v": 1,
+    "s": 9,
+    "t": "httpsyoutu.ben1udKKJ91rgis=P J0auRTrkgmDjob",
+    "a": ""
+   },
+   "fabriziodeandre|boccadirosa": {
+    "v": 0,
+    "s": 40,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De André"
+   },
+   "moda|favola": {
+    "v": 0,
+    "s": 153,
+    "t": "Favola",
+    "a": "Modà"
+   },
+   "adele|setfiretotherainhardstyleremix": {
+    "v": 1,
+    "s": 0,
+    "t": "Set Fire To The Rain (Hardstyle Remix)",
+    "a": "Adele"
+   },
+   "paky|mimanchi": {
+    "v": 1,
+    "s": 140,
+    "t": "mi manchi",
+    "a": "paky"
+   },
+   "gemitaizvenerusfranco126|senzadimefeatvenerusfranco126": {
+    "v": 0,
+    "s": 139,
+    "t": "Senza Di Me (feat. Venerus & Franco126)",
+    "a": "Gemitaiz, Venerus, Franco126"
+   },
+   "kidyugiartie5ive|bulletballet": {
+    "v": 0,
+    "s": 158,
+    "t": "Bullet Ballet",
+    "a": "Kid Yugi, Artie 5ive"
+   },
+   "kidyugiteduajuniork|eva": {
+    "v": 0,
+    "s": 124,
+    "t": "Eva",
+    "a": "Kid Yugi, Tedua & Junior K"
+   },
+   "nayt3d|mortale": {
+    "v": 0,
+    "s": 138,
+    "t": "Mortale",
+    "a": "nayt, 3D"
+   },
+   "moda|nontidimentico": {
+    "v": 0,
+    "s": 155,
+    "t": "Non ti dimentico",
+    "a": "Modà"
+   },
+   "capoplaza|losoche": {
+    "v": 0,
+    "s": 132,
+    "t": "Lo So Che",
+    "a": "Capo Plaza"
+   },
+   "nayt|gliocchidellatigre": {
+    "v": 0,
+    "s": 126,
+    "t": "Gli occhi della tigre",
+    "a": "nayt"
+   },
+   "nayt|cosacontadavvero": {
+    "v": 0,
+    "s": 128,
+    "t": "cosa conta davvero",
+    "a": "nayt"
+   },
+   "nayt|diabbatterelemura18donne": {
+    "v": 0,
+    "s": 164,
+    "t": "Di abbattere le mura (18 Donne)",
+    "a": "nayt"
+   },
+   "kidyugishiva|laviolenzanecessaria": {
+    "v": 0,
+    "s": 121,
+    "t": "La Violenza Necessaria",
+    "a": "Kid Yugi & Shiva"
+   },
+   "moda|salvami": {
+    "v": 0,
+    "s": 201,
+    "t": "Salvami",
+    "a": "Modà"
+   },
+   "thasup|grazieadio": {
+    "v": 0,
+    "s": 97,
+    "t": "gRAZie A Dio",
+    "a": "thasup"
+   },
+   "marracash|crudeliainervi": {
+    "v": 0,
+    "s": 183,
+    "t": "CRUDELIA - Inervi",
+    "a": "Marracash"
+   },
+   "coez|latuacanzone": {
+    "v": 0,
+    "s": 155,
+    "t": "La tua canzone",
+    "a": "Coez"
+   },
+   "kidyugi|gilgamesh": {
+    "v": 0,
+    "s": 123,
+    "t": "Gilgamesh",
+    "a": "Kid Yugi"
+   },
+   "jovanotti|baciamiancoraradioedit": {
+    "v": 0,
+    "s": 143,
+    "t": "Baciami Ancora - Radio Edit",
+    "a": "Jovanotti"
+   },
+   "kidyugi|ilferrodiechov": {
+    "v": 1,
+    "s": 6,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
+   },
+   "jovanotti|ate": {
+    "v": 1,
+    "s": 176,
+    "t": "A Te",
+    "a": "Jovanotti"
+   }
+  },
+  "Diego": {
+   "18k85prod|ilmesedopoluglio": {
+    "v": 2,
+    "s": 70,
+    "t": "Il mese dopo Luglio",
+    "a": "18K, 85Prod"
+   },
+   "18kkidyugi|nokizzy": {
+    "v": 0,
+    "s": 1,
+    "t": "No Kizzy",
+    "a": "18K, Kid Yugi"
+   },
+   "18k|vendetta": {
+    "v": 0,
+    "s": 4,
+    "t": "Vendetta",
+    "a": "18K"
+   },
+   "22simbatimonsilentbob|20annifeatsilentbob": {
+    "v": 0,
+    "s": 2,
+    "t": "20 Anni (feat. Silent Bob)",
+    "a": "22simba, Timon, Silent Bob"
+   },
+   "coez|lelucidellacitta": {
+    "v": 1,
+    "s": 0,
+    "t": "Le luci della città",
+    "a": "Coez"
+   },
+   "marracashcoez|quellichenonpensanoilcervello": {
+    "v": 0,
+    "s": 35,
+    "t": "QUELLI CHE NON PENSANO - Il cervello",
+    "a": "Marracash, Coez"
+   },
+   "gemitaizvenerusfranco126|senzadimefeatvenerusfranco126": {
+    "v": 0,
+    "s": 2,
+    "t": "Senza Di Me (feat. Venerus & Franco126)",
+    "a": "Gemitaiz, Venerus, Franco126"
+   },
+   "|httpswwwyoutubecomwatchvzgvsgtrtax4listrdzgvsgtrtax4startradio1": {
+    "v": 1,
+    "s": 5,
+    "t": "httpswww.youtube.comwatchv=ZgvSgtRtax4&list=RDZgvSgtRtax4&start radio=1",
+    "a": ""
+   },
+   "ddusiartie5ive|whereimatfeatartie5ive": {
+    "v": 1,
+    "s": 9,
+    "t": "whereimat (feat. Artie 5ive)",
+    "a": "Ddusi, Artie 5ive"
+   }
+  }
  }
 }
