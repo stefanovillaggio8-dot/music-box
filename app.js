@@ -12189,7 +12189,7 @@ if (!_giaRicaricata && _versioneDaPrendere) {
       }
     })();
   })();
-})();
+
 
 /* ============================================================
    Da qui in poi c'era il file spotify.js, ora dentro app.js.
@@ -12825,3 +12825,5 @@ const bs = $("btnSpotify");
       document.addEventListener("DOMContentLoaded", _spotifyAggancia);
     }
   }
+
+})();
