@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792437553694,
-  "r": "FINALE: visibili 242 su 243 | nascosti 0 | soloPlaylist 1 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
- },
- {
   "t": 1792437572818,
   "r": "visibili 241 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792439844958,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792439858112,
+  "r": "visibili 214 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  }
 ]
