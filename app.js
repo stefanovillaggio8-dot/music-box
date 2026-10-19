@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.331";
+  const APP_VERSION = "6.332";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12644,6 +12644,10 @@ let _ultimoTocco = Date.now();
   const _toccatoPiuFa = () => {
     try { return Date.now() - _ultimoTocco < 6000; } catch (e) { return false; }
   };
+/* Vero mentre l'accesso a Spotify e' in corso: blocca il ricaricamento
+   automatico, che altrimenti lo cancella a meta'. */
+let _loginSpotifyInCorso = false;
+
 /* Ste: "premo accedi con spotify, mi spunta per un attimo 'apri spotify'
    ma poi e' come se si aggiornasse la pagina e si toglie".
 
@@ -12977,8 +12981,27 @@ async function _spotifyCompletaAccesso(code, stato) {
         code_verifier: verifier
       }).toString()
     });
-  } catch (e) { toast("Non riesco a parlare con Spotify"); return false; }
-  if (!r.ok) { toast("Spotify non ha accettato l'accesso"); return false; }
+  } catch (e) { toast("Non riesco a parlare con Spotify"); _loginSpotifyInCorso = false; return false; }
+  if (!r.ok) {
+    /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
+       accedi con spotify". Il motivo lo voglio sapere: Spotify risponde con
+       un JSON che dice il perche'. Lo mostro, cosi' non devo indovinare. */
+    let perche = "Spotify non ha accettato l'accesso";
+    try {
+      const jj = await r.json();
+      if (jj && (jj.error_description || jj.error)) {
+        perche = String(jj.error_description || jj.error);
+      }
+    } catch (e) { /* risposta non in json: tengo il messaggio generico */ }
+    _spotifyErrore = r.status;
+    _loginSpotifyInCorso = false;
+    toast(perche, 9000);
+    try {
+      _spotifyPnl("Accesso non riuscito", "", '<p class="step-hint">' +
+        _spotifySicuro(perche) + "</p>");
+    } catch (e) { /* noop */ }
+    return false;
+  }
   const j = await r.json();
   _spotifySalvaToken(j);
   _spotifyChiave = null;
@@ -12986,8 +13009,9 @@ async function _spotifyCompletaAccesso(code, stato) {
     LS.remove("mb.spotifyStato");
     LS.remove("mb.spotifyChiave");
   } catch (e) {}
+  _loginSpotifyInCorso = false;
   return true;
-}
+  }
 
   async function _spotifyApi(percorso) {
     const token = _spotifyToken();
@@ -13192,9 +13216,6 @@ function _spotifyParla(variabile, testo) {
    rispondeva 403 e il codice lo cancellava solo sul 401: l'app credeva
    di essere gia' collegata e non offriva piu' il pulsante. */
 let _spotifyErrore = 0;
-/* Vero mentre l'accesso a Spotify e' in corso: blocca il ricaricamento
-   automatico, che altrimenti lo cancella a meta'. */
-let _loginSpotifyInCorso = false;
 function _spotifyChiediAccesso(perche) {
   const extra = perche ? '<p class="step-hint">' + perche + '</p>' : '';
   _spotifyPnl("Collegare Spotify",
@@ -13394,12 +13415,28 @@ async function _spotifyRientro() {
   const stato = q.get("state") || "";
   const errore = q.get("error") || "";
   if (!code && !errore) return;
+  /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
+     accedi con spotify". Lo scambio del codice col permesso avviene qui,
+     e se nel frattempo l'app si ricarica, lo scambio muore a meta' e
+     sembra che non sia successo niente. */
+  _loginSpotifyInCorso = true;
   try {
     history.replaceState({}, document.title, window.location.pathname);
   } catch (e) { /* noop */ }
-  if (errore) { toast("Non hai concesso Spotify: " + errore, 6000); return; }
+  if (errore) {
+    _loginSpotifyInCorso = false;
+    toast("Non hai concesso Spotify: " + errore, 6000);
+    return;
+  }
   const ok = await _spotifyCompletaAccesso(code, stato);
-  if (!ok) return;
+  if (!ok) {
+    /* Se non e' andata, adesso la schermata dice PERCHE'. Prima spariva
+       tutto in silenzio e tornava "Accedi con Spotify", senza spiegare
+       niente. */
+    _loginSpotifyInCorso = false;
+    return;
+  }
+  _loginSpotifyInCorso = false;
   toast("Collegato a Spotify", 4000);
   _spotifyMostraPlaylist();
 }
