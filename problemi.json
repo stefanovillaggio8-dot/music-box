@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792440688786,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792440698654,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792442533463,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792442563508,
   "r": "worker /stato: risponde"
  }
 ]
