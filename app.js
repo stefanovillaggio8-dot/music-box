@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.324";
+  const APP_VERSION = "6.325";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2863,13 +2863,22 @@ function _soloInPlaylistRimossiSvuota() {
   try { LS.set("mb.soloInPlaylistRimossi", []); } catch (e) { /* noop */ }
 }
 
+  /* La chiave di un brano "solo in playlist" porta con se' il profilo.
+     Ste: "si sono tolte 2 canzoni nell'account di diego": la lista era
+     globale, e i brani che Ste tiene in una playlist sparivano anche dalla
+     libreria di Diego (che contiene gli stessi brani condivisi).
+     Ora ogni account vede solo le proprie scelte. */
+  function _chiaveSoloInPlaylist(id, profilo) {
+    return String(profilo || profile || "Ste") + "." + String(id || "");
+  }
+
   /* Mette un brano "solo nella playlist": sparisce dalla libreria ma
      continua a esistere e a suonare dentro la sua playlist.
 
      Ste: "le ho fatte restare solo nella playlist gym, sono scomparse ma
      sono tornate".
      Motivo: qui il brano veniva segnato SIA fra quelli da mandare SIA fra
-     quelli da togliere. Il server, quando vede un brano in entrambe le
+     quelli da togliere, e il server, quando vede un brano in entrambe le
      liste, lo toglie: quindi la lista si annullava da sola e il brano
      tornava in libreria.
 
@@ -2878,21 +2887,25 @@ function _soloInPlaylistRimossiSvuota() {
      libreria, lo mando fra quelli da togliere. */
   function _mettiSoloInPlaylist(id) {
     if (!id) return false;
-    _soloInPlaylist.add(id);
+    const chiave = _chiaveSoloInPlaylist(id);
+    _soloInPlaylist.add(chiave);
     _salvaSoloInPlaylist();
-    _soloInPlaylistSegna(id, true);
+    _soloInPlaylistSegna(chiave, true);
     /* non lo metto fra quelli da togliere: altrimenti si annullano. */
     try {
-      const m = _soloInPlaylistRimossiDaMandare().filter(function (x) { return x !== id; });
+      const m = _soloInPlaylistRimossiDaMandare().filter(function (x) { return x !== chiave; });
       LS.set("mb.soloInPlaylistRimossi", m);
     } catch (e) { /* noop */ }
     return true;
   }
   function _togliSoloInPlaylist(id) {
     if (!id) return false;
-    if (!_soloInPlaylist.delete(id)) return false;
+    const chiave = _chiaveSoloInPlaylist(id);
+    /* provo a toglierlo anche se c'e' con la chiave vecchia */
+    _soloInPlaylist.delete(chiave);
+    _soloInPlaylist.delete(id);
     _salvaSoloInPlaylist();
-    _soloInPlaylistRimossaSegna(id);
+    _soloInPlaylistRimossaSegna(chiave);
     return true;
   }
 
@@ -2911,13 +2924,27 @@ function visibleTracks(perSuono) {
          suonano, anche se le ha aggiunte qualcun altro. */
       const perLaCoda = Boolean(perSuono);
       /* I brani "solo in playlist" escono dalla libreria, tranne quando sto
-         guardando proprio una playlist: li' devono comparire. */
+         guardando proprio una playlist: li' devono comparire.
+
+         Ste: "si sono tolte 2 canzoni nell'account di diego".
+         Motivo: questa lista era GLOBALE. Le canzoni che Ste tiene in una
+         playlist sparivano anche dalla libreria di Diego, che contiene gli
+         stessi brani condivisi.
+
+         Ora la chiave porta con se' il profilo, come per i brani eliminati:
+         ogni account vede solo le proprie scelte. */
       const inPlaylist = _soloInPlaylist;
+      const inPlaylistDi = function (id) {
+        return inPlaylist.has(_chiaveSoloInPlaylist(id)) ||
+          /* le chiavi vecchie (senza profilo) erano globali: le metto con
+             l'account principale, cosi' non toccano gli altri. */
+          (inPlaylist.has(id) && !String(id).indexOf(".") && id);
+      };
       /* Ste: "togli completamente sta cosa dei nascosti": non c'e' piu'
          nessun filtro sui brani nascosti. Quello che resta e' quello dei
          brani "solo nelle playlist" (una scelta diversa, che resta). */
       let list = tracks.filter((t) =>
-        (!inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
+        (!inPlaylistDi(t.id) || Boolean(_playlistAttiva)));
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
 if (perLaCoda) {
       /* Per la coda contano le canzoni del profilo aperto e quelle che ho
@@ -4716,7 +4743,7 @@ box.innerHTML = "";
   /* "Solo nella playlist": sparisce dalla libreria ma resta suonabile
      dentro la playlist. Serve a chi ha brani da usare in un momento
      preciso (allenamento) e non li vuole mischiati con gli altri. */
-  if (_soloInPlaylist.has(t.id)) {
+  if (_soloInPlaylist.has(_chiaveSoloInPlaylist(t.id)) || _soloInPlaylist.has(t.id)) {
     box.appendChild(quickAction("Torna in libreria", ICON_LIBRARY, () => {
       _togliSoloInPlaylist(t.id);
       _disegnaLinguettePlaylist();
@@ -10510,7 +10537,7 @@ function _aggiornaBadgePlaylist() {
          rischio di nascondere quella sbagliata. */
       const quanti = (pl.tracks || []).length;
       if (quanti) {
-        const gia = (pl.tracks || []).filter((id) => _soloInPlaylist.has(id)).length;
+        const gia = (pl.tracks || []).filter((id) => _soloInPlaylist.has(_chiaveSoloInPlaylist(id)) || _soloInPlaylist.has(id)).length;
         if (gia < quanti) {
           const via = document.createElement("button");
           via.type = "button";
@@ -11293,7 +11320,15 @@ for (const k of Object.keys(j.rinomini)) {
   if (Array.isArray(j && j.soloInPlaylist)) {
     try {
       const fuori = new Set(Array.isArray(j.soloInPlaylistRimossi) ? j.soloInPlaylistRimossi : []);
-      const giusto = j.soloInPlaylist.filter(function (id) { return id && !fuori.has(id); });
+      /* Le chiavi vecchie (senza profilo) erano globali: riguardavano
+         anche la libreria degli altri. Ste: "si sono tolte 2 canzoni
+         nell'account di diego". Le metto con il profilo principale, cosi'
+         non toccano piu' gli altri account. */
+      const giusto = j.soloInPlaylist
+        .filter(function (id) { return id && !fuori.has(id); })
+        .map(function (id) {
+          return String(id).indexOf(".") >= 0 ? String(id) : DEFAULT_PROFILE + "." + String(id);
+        });
       const stessi = giusto.length === _soloInPlaylist.size &&
         giusto.every(function (id) { return _soloInPlaylist.has(id); });
       if (!stessi) {
