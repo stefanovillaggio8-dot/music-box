@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.328";
+  const APP_VERSION = "6.329";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12644,6 +12644,36 @@ let _ultimoTocco = Date.now();
   const _toccatoPiuFa = () => {
     try { return Date.now() - _ultimoTocco < 6000; } catch (e) { return false; }
   };
+/* Ste: "premo accedi con spotify, mi spunta per un attimo 'apri spotify'
+   ma poi e' come se si aggiornasse la pagina e si toglie".
+
+   Motivo: quando c'e' una versione nuova, l'app si ricarica da sola dopo
+   un secondo e mezzo. E siccome io pubblico spesso, succedeva a caso: se
+   il pannello di Spotify era aperto, il ricaricamento lo chiudeva mentre
+   cercavo il link.
+
+   Ora, se c'e' un pannello aperto (o un accesso a Spotify in corso), il
+   ricaricamento ASPETTA: si fa quando non stai usando niente. */
+function _pannelloAperto() {
+  try {
+    const p = $("spotifyPanel");
+    if (p && !p.hidden) return true;
+    /* un accesso a Spotify in corso: se mi ricarico, perdo il codice */
+    if (LS.get("mb.spotifyStato", "")) return true;
+    const q = $("scopePanel");
+    if (q && !q.hidden) return true;
+  } catch (e) { /* noop */ }
+  return false;
+}
+function _ricaricaQuandoLibero() {
+  try {
+    if (_pannelloAperto()) {
+      setTimeout(function () { _ricaricaQuandoLibero(); }, 6000);
+      return;
+    }
+    window.location.reload();
+  } catch (e) { /* noop */ }
+}
 if (!_giaRicaricata && _versioneDaPrendere) {
             try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
             toast("C'e' la versione " + _versioneDaPrendere + ": aggiorno e riparto", 4000);
@@ -12658,7 +12688,7 @@ if (!_giaRicaricata && _versioneDaPrendere) {
                   setTimeout(function () { controllaAggiornamenti(); }, 12000);
                   return;
                 }
-                window.location.reload();
+                _ricaricaQuandoLibero();
               } catch (e) { }
             }, 1500);
             return;
@@ -12818,11 +12848,20 @@ async function _spotifyAccedi() {
      "Accesso scaduto". Percio' la metto via insieme al suo stato. */
   _spotifyChiave = pk.verifier;
   /* "base" qui non esisteva: era un aiutante definito dentro _spotifyPkce,
-     e quindi non era in vista qui. Ogni tocco su "Accedi con Spotify"
-     moriva con un ReferenceError, e l'errore finiva in un cassetto
-     (vedi il gestore degli errori in cima all'app) senza che si vedesse
-     niente. Ora uso l'aiutante vero, _b64url. */
-  const stato = _b64url(new TextEncoder().encode(String(Date.now())));
+  e quindi non era in vista qui. Ogni tocco su "Accedi con Spotify"
+  moriva con un ReferenceError, e l'errore finiva in un cassetto
+  (vedi il gestore degli errori in cima all'app) senza che si vedesse
+  niente. Ora uso l'aiutante vero, _b64url. */
+  /* Ste: "dice accesso non valido, riprova".
+     Motivo: la chiave (verifier) la tenevo nella memoria del telefono, e
+     se l'accesso partiva da un link (tailscale) e tornava su un altro
+     (github.io), la chiave restava sull'altra origine e al ritorno non
+     c'era: "accesso non valido".
+
+     Adesso la chiave viaggia dentro il "state", che Spotify rimanda
+     indietro identico. Cosi' funziona da qualunque link, senza dover
+     stare attenti a dove e' cominciato. */
+  const stato = _b64url(new TextEncoder().encode(String(Date.now()))) + "." + pk.verifier;
   try {
     LS.set("mb.spotifyStato", stato);
     LS.set("mb.spotifyChiave", pk.verifier);
@@ -12872,15 +12911,27 @@ async function _spotifyAccedi() {
    permesso vero. */
 async function _spotifyCompletaAccesso(code, stato) {
   if (!code || !stato) return false;
-  let salvato = "";
-  try { salvato = String(LS.get("mb.spotifyStato", "")); } catch (e) {}
-  if (!salvato || salvato !== stato) { toast("Accesso non valido, riprova"); return false; }
-  /* La chiave la prendo da li': dopo il redirect la pagina e' nuova e la
-     variabile in memoria non esiste piu'. */
+  /* La chiave (verifier) la prendo PRIMA dal "state", che viaggia
+     nell'indirizzo di ritorno: cosi' funziona anche se l'accesso e'
+     cominciato su un link e torna su un altro (tailscale -> github.io).
+     Ste: "dice accesso non valido, riprova". */
   let verifier = "";
-  try { verifier = String(LS.get("mb.spotifyChiave", "")); } catch (e) {}
+  const parti = String(stato).split(".");
+  if (parti.length >= 2) verifier = parti.slice(1).join(".");
+  if (!verifier) {
+    try { verifier = String(LS.get("mb.spotifyChiave", "")); } catch (e) {}
+  }
   if (!verifier) verifier = _spotifyChiave || "";
   if (!verifier) { toast("Accesso scaduto, riprova"); return false; }
+  /* Controllo che lo "state" torni quello giusto, quando l'ho trovato
+     nella memoria di questo telefono. Se invece e' arrivato con la chiave
+     dentro, il controllo ce l'ha gia' fatto Spotify. */
+  let salvato = "";
+  try { salvato = String(LS.get("mb.spotifyStato", "")); } catch (e) {}
+  if (salvato && salvato !== stato && parti.length < 2) {
+    toast("Accesso non valido, riprova");
+    return false;
+  }
   let r;
   try {
     r = await fetch("https://accounts.spotify.com/api/token", {
