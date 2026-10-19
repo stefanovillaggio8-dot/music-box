@@ -5,7 +5,7 @@
       { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
       { title: "QUANTO FORTE TI PENSAVO", file: "songs/track-2.mp3", artist: "Madame", profile: "Ste" },
       { title: "Sono Ok", file: "songs/track-4.mp3", artist: "XCarme", profile: "Ste" },
-      { title: "SWAG MUSIC", file: "songs/track-5.mp3", artist: "Artie 5ive", profile: "Ste" },
+
       { title: "Kid Yugi x Lil Peep MASHUP", file: "songs/track-6.mp3", artist: "Kid Yugi / Lil Peep", profile: "Ste" },
       { title: "Star Shopping", file: "songs/track-7.mp3", artist: "Lil Peep", profile: "Ste" },
       { title: "Malpensa", file: "songs/track-8.mp3", artist: "G.Mineiro, Flatpearl, Succo", profile: "Ste" },
@@ -11759,7 +11759,7 @@ async function _selezionaElimina() {
   const ids = [..._scelti];
   if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
   const si = await askConfirm(
-    "Eliminare " + ids.length + (ids.length === 1 ? " canzone?" : " canzioni?"),
+    "Eliminare " + ids.length + (ids.length === 1 ? " canzone?" : " canzoni?"),
     "Le canzoni scelte spariscono davvero, dal sito e da ogni dispositivo.\n\n" +
       "Se le vuoi tenere ma solo toglierle dalla libreria, usa\n" +
       "\"Togli dalla libreria\" invece di questo.\n\n" +
@@ -11767,9 +11767,20 @@ async function _selezionaElimina() {
     "Elimina per sempre"
   );
   if (!si) return;
+  /* Ste: "ho cancellato una canzone su tailscale e su github non si e'
+     cancellata".
+     Motivo: qui si chiamava removeTrack, che toglie il brano da questo
+     telefono ma NON segna l'eliminazione nei dati condivisi: quindi
+     l'altro link non ne sapeva niente e il brano restava li'.
+
+     Ora si passa da _eliminaBrano, che segna l'eliminazione (e la manda
+     a tutti i link) e chiede la conferma. */
   for (const id of ids) {
-    try { await removeTrack(id); } catch (e) { /* una alla volta: se una falla le altre vanno avanti */ }
+    try { await _eliminaBrano(id); } catch (e) { /* una alla volta: se una falla le altre vanno avanti */ }
   }
+  _chiudiSelezione();
+  toast(ids.length + (ids.length === 1 ? " canzone eliminata" : " canzioni eliminate"));
+}
   _chiudiSelezione();
   toast(ids.length + (ids.length === 1 ? " canzone eliminata" : " canzioni eliminate"));
 }
