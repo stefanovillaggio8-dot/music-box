@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792413943283,
-  "r": "libreria: 250 brani, profilo Ste, duplicati via 0, nascosti 11, da 192.168.1.40:8788"
- },
- {
   "t": 1792413957750,
   "r": "libreria: 250 brani, profilo Ste, duplicati via 0, nascosti 11, da 192.168.1.40:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792431293610,
   "r": "libreria: 251 brani, profilo Ste, duplicati via 0, nascosti 0, da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792431410535,
+  "r": "bottone toccato"
  }
 ]
