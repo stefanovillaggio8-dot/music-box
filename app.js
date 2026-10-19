@@ -238,7 +238,7 @@
     { title: "I Kissed a Girl (Hardstyle)", file: "songs/track-260.mp3", artist: "Katy Perry" },
     { title: "I Love You So (Jumpstyle Slowed)", file: "songs/track-261.mp3", artist: "YMRTHK" },
     { title: "Black Widow (Hardstyle Remix)", file: "songs/track-263.mp3", artist: "Iggy Azalea, Rita Ora" },
-    { title: "Rolling In The Deep (Hardstyle Remix)", file: "songs/track-264.mp3", artist: "Adele" },
+
     { title: "Blank Space (Hardstyle)", file: "songs/track-265.mp3", artist: "Taylor Swift" },
     { title: "TiK ToK (Hardstyle Remix)", file: "songs/track-262.mp3", artist: "Katy Perry" },
 
