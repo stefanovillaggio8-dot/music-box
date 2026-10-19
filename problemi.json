@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792432675629,
-  "r": "libreria: 238 brani, profilo Ste, duplicati via 0, nascosti 0, da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792434020817,
   "r": "app avviata: pulsante Spotify presente=true versione=6.317"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792434675192,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792434687060,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
