@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792452709046,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792452712618,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792454093613,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792454096349,
+  "r": "SPOTIFY: accesso: sto per aprire Spotify"
  }
 ]
