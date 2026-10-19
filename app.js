@@ -582,7 +582,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.317";
+  const APP_VERSION = "6.318";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3018,8 +3018,16 @@ async function _eliminaBrano(id) {
     return;
   }
 
-  /* Segno subito che e' eliminato per sempre: la libreria viene
-     ricostruita da capo, e senza questo segno il brano rientrerebbe. */
+  /* Segno che e' eliminato per sempre: la libreria viene ricostruita da
+     capo, e senza questo segno il brano rientrerebbe. Lo segno PRIMA di
+     parlare col computer, cosi' l'eliminazione vale anche se il computer
+     non risponde: e' un'informazione che viaggia col resto dei dati.
+
+     Ste: "mi dice 'il programma sul computer non e' raggiungibile... il
+     brano tornera' alla prossima apertura'". La seconda frase era FALSA:
+     il brano non torna piu', perche' ora l'eliminazione viaggia sul
+     server. Quello che resta sul computer e' solo il file mp3, e lo
+     cancellera' il computer stesso quando si rimette in contatto. */
   try {
     const el = LS.get("mb.eliminati", null) || {};
     el[_chiaveEliminato(id)] = Date.now();
@@ -3027,18 +3035,39 @@ async function _eliminaBrano(id) {
     _eliminatiDaMandareSegna(_chiaveEliminato(id));
   } catch (e) { /* noop */ }
 
-  /* E se il computer e' acceso, cancello anche il file mp3: e' la
+  /* E se il computer e' acceso, provo a cancellare anche il file mp3: e' la
      cancellazione vera, non solo "non lo vedo piu'".
-     Se l'utente annulla la domanda sul computer, removeTrack restituisce
-     false e io non elimino niente: prima, annullando, il brano spariva
-     lo stesso. */
-  let fatto = false;
+     Se il computer non risponde, NON e' un errore: la canzone sparisce
+     lo stesso, e il file resta li' fino a che il computer si rimette in
+     contatto. Prima qui usciva un avviso spaventoso e la cancellazione
+     non veniva fatta. */
+  let fileCancellato = false;
+  let computerRaggiunto = false;
   try {
-    fatto = await removeTrack(id);
-  } catch (e) { fatto = false; }
-  if (!fatto) {
-    try { toast("Non ho eliminato niente: hai annullato", 4000); } catch (e) {}
-    return;
+    computerRaggiunto = await ponteOnline();
+  } catch (e) { computerRaggiunto = false; }
+  if (computerRaggiunto) {
+    try {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const cheCartella = cartellaDi(profile) || "ste";
+      const t = tracks.find((x) => x && x.id === id);
+      const url = (t && t.file) ? String(t.file) : ("songs/track-" + String(id).replace(/^b-track-/, "") + ".mp3");
+      const r = await fetch(base + "/elimina", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: url, cartella: cheCartella, pubblica: true })
+      });
+      fileCancellato = !!(r && r.ok);
+    } catch (e) { fileCancellato = false; }
+  }
+  /* Se il file non l'ho potuto cancellare adesso, lo metto in lista e lo
+     riprovo quando il computer si rimette in contatto. */
+  if (!fileCancellato) {
+    try {
+      const t = tracks.find((x) => x && x.id === id);
+      const url = (t && t.file) ? String(t.file) : ("songs/track-" + String(id).replace(/^b-track-/, "") + ".mp3");
+      _pendenteCancellazioneAggiungi(url, cartellaDi(profile) || "ste");
+    } catch (e) { /* noop */ }
   }
 
   /* Tolgo il brano dalla libreria e dalle playlist. */
@@ -3060,8 +3089,61 @@ async function _eliminaBrano(id) {
   try { saveCurrentState(); } catch (e) { /* noop */ }
   try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
   try { render(); } catch (e) { /* noop */ }
-  try { toast("Eliminato per sempre: " + nome, 4000); } catch (e) { /* noop */ }
+  /* Il messaggio dice quello che e' successo davvero. */
+  try {
+    toast(fileCancellato
+      ? "Eliminato per sempre: " + nome + " (file e brano)"
+      : (computerRaggiunto
+        ? "Brano eliminato: " + nome + ". Il file sul computer non l'ho potuto cancellare"
+        : "Brano eliminato: " + nome + ". Il computer non era raggiungibile, quindi il file mp3 resta li' ma la canzone non torna piu'"), 7000);
+  } catch (e) { /* noop */ }
 }
+
+  /* Le cancellazioni che non sono riuscite perché il computer non c'era.
+     Ste: "il programma sul computer non e' raggiungibile... il file mp3
+     resta sul computer". Ora la canzone sparisce comunque, ma il file
+     no: e' giusto aspettare che il computer si rimetta in contatto per
+     cancellare anche quello. Però se non lo faccio, il file resta li' per
+     sempre. Quindi lo metto in una lista e lo riprovo. */
+  function _pendentiCancellazione() {
+    try {
+      const v = LS.get("mb.pendentiCancellazione", null);
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function _pendenteCancellazioneAggiungi(file, cartella) {
+    try {
+      if (!file) return;
+      const m = _pendentiCancellazione();
+      const gia = m.some((x) => x && x.file === file && x.cartella === cartella);
+      if (!gia) m.push({ file: String(file), cartella: String(cartella || "ste"), quando: Date.now() });
+      LS.set("mb.pendentiCancellazione", m);
+    } catch (e) { /* noop */ }
+  }
+  async function _provaCancellazioniPendenti() {
+    const m = _pendentiCancellazione();
+    if (!m.length) return;
+    let base = "";
+    try { base = (await trovaPonte()) || INDIRIZZI_PONTE[0]; } catch (e) { return; }
+    if (!base) return;
+    const rimaste = [];
+    for (const p of m) {
+      let ok = false;
+      try {
+        const r = await fetch(base + "/elimina", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file: p.file, cartella: p.cartella, pubblica: true })
+        });
+        ok = !!(r && r.ok);
+      } catch (e) { ok = false; }
+      if (!ok) rimaste.push(p);
+    }
+    try { LS.set("mb.pendentiCancellazione", rimaste); } catch (e) { /* noop */ }
+    if (m.length !== rimaste.length) {
+      try { toast("Cancellati " + (m.length - rimaste.length) + " file che erano rimasti sul computer"); } catch (e) {}
+    }
+  }
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
      DA SOLO: non c'e' un tasto da premere. Ogni brano importato a mano resta
@@ -5714,9 +5796,10 @@ if (r.ok && j && j.ok) {
     const si = await askConfirm(
       "Non posso cancellare il file",
       "Il programma sul computer " + (motivo || "non e' raggiungibile") + ".\n\n" +
-      "Posso togliere il brano dalla lista di questo telefono, ma il file mp3 resta sul computer " +
-      "e il brano tornera' alla prossima apertura.\n\nVuoi toglierlo solo da qui?",
-      "Togli da qui"
+      "Posso togliere il brano dalla libreria di questo telefono, ma il file mp3 resta sul computer.\n\n" +
+      "La canzone pero' NON tornera': l'ho segnata come eliminata, e questa segnalazione va su tutti i link.\n\n" +
+      "Vuoi toglierlo comunque?",
+      "Togli comunque"
     );
     /* Ste: "se premo annulla lo elimina lo stesso".
        Prima questo "return" non diceva niente a chi aveva chiamato, che
@@ -7212,6 +7295,10 @@ if (r.ok && j && j.ok) {
         clearTimeout(scad);
         if (r.ok) {
           ponteCheRisponde = base;
+          /* Il computer e' di nuovo raggiungibile: riprovo a cancellare i
+             file che erano rimasti in lista (quando l'ho eliminato un
+             brano col computer spento). */
+          try { setTimeout(function () { _provaCancellazioniPendenti(); }, 1500); } catch (e) { /* noop */ }
           return base;
         }
       } catch (e) { /* questo indirizzo non va bene, provo il prossimo */ }
