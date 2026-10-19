@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792431601380,
-  "r": "app avviata: pulsante Spotify presente=true versione=6.314"
- },
- {
   "t": 1792431618167,
   "r": "app avviata: pulsante Spotify presente=true versione=6.314"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792434124780,
+  "r": "visibili 245 su 245 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792434130141,
   "r": "visibili 245 su 245 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
