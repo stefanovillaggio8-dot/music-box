@@ -259,7 +259,7 @@
     { title: "Ne vale la pena (feat. Sayf)", file: "songs/track-284.mp3", artist: "22simba, Sayf", profile: "Diego" },
     { title: "Freedom", file: "songs/track-285.mp3", artist: "22simba", profile: "Diego" },
     { title: "Valle dei Re", file: "songs/track-286.mp3", artist: "22simba", profile: "Diego" },
-    { title: "2 passi dal cielo non uno in più", file: "songs/track-287.mp3", artist: "22simba", profile: "Diego" },
+
     { title: "Arricchiti (feat. Guè)", file: "songs/track-288.mp3", artist: "22simba, Guè", profile: "Diego" },
     { title: "Sipario (feat. Promessa)", file: "songs/track-295.mp3", artist: "22simba, Promessa", profile: "Diego" },
 
