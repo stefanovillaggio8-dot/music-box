@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792432611378,
-  "r": "libreria: 248 brani, profilo Ste, duplicati via 0, nascosti 0, da 192.168.1.40:8788"
- },
- {
   "t": 1792432621357,
   "r": "libreria: 248 brani, profilo Ste, duplicati via 0, nascosti 0, da 192.168.1.40:8788"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792434655934,
+  "r": "app avviata: pulsante Spotify presente=true versione=6.318"
+ },
+ {
+  "t": 1792434657741,
   "r": "app avviata: pulsante Spotify presente=true versione=6.318"
  }
 ]
