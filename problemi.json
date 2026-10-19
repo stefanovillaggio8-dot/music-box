@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792439837823,
-  "r": "visibili 239 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
   "t": 1792439844958,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792440785135,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792440788500,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  }
 ]
