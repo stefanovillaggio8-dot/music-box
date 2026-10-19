@@ -470,12 +470,72 @@
 
      Ora l'id si calcola in un posto solo, e lo usano sia il filtro sia la
      costruzione: cosi' le due cose non possono piu' andare storte. */
+  /* ---------- SHA-256 in JavaScript puro ----------
+     Serve per la sfida PKCE di Spotify quando crypto.subtle non c'e'.
+     Su una pagina non sicura (http su una rete locale) il browser non
+     ce lo da, e senza questo l'accesso a Spotify non parte dal computer.
+     Quando invece c'e' crypto.subtle, uso quello: e' piu' veloce. */
+  const _K_SHA256 = [
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+  ];
+  function _sha256Testo( testo ) {
+    /* i byte del testo, in UTF-8 */
+    const messaggio = new TextEncoder().encode(String(testo || ""));
+    const bit = messaggio.length * 8;
+    const conCoda = new Uint8Array(((messaggio.length + 9 + 63) >> 6) << 6);
+    conCoda.set(messaggio);
+    conCoda[messaggio.length] = 0x80;
+    const dv = new DataView(conCoda.buffer);
+    dv.setUint32(conCoda.length - 4, bit >>> 0, false);
+    dv.setUint32(conCoda.length - 8, Math.floor(bit / 4294967296), false);
+    const h = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    const w = new Uint32Array(64);
+    const ruota = (x, n) => (x >>> n) | (x << (32 - n));
+    for (let blocco = 0; blocco < conCoda.length; blocco += 64) {
+      for (let i = 0; i < 16; i++) w[i] = dv.getUint32(blocco + i * 4, false);
+      for (let i = 16; i < 64; i++) {
+        const s0 = ruota(w[i - 15], 7) ^ ruota(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+        const s1 = ruota(w[i - 2], 17) ^ ruota(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+        w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+      }
+      let [a, b, c, d, e, f, g, hh] = h;
+      for (let i = 0; i < 64; i++) {
+        const S1 = ruota(e, 6) ^ ruota(e, 11) ^ ruota(e, 25);
+        const ch = (e & f) ^ (~e & g);
+        const t1 = (hh + S1 + ch + _K_SHA256[i] + w[i]) >>> 0;
+        const S0 = ruota(a, 2) ^ ruota(a, 13) ^ ruota(a, 22);
+        const maj = (a & b) ^ (a & c) ^ (b & c);
+        const t2 = (S0 + maj) >>> 0;
+        hh = g; g = f; f = e; e = (d + t1) >>> 0;
+        d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+      }
+      h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0; h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+      h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0; h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+    }
+    const fuori = new Uint8Array(32);
+    const dv2 = new DataView(fuori.buffer);
+    for (let i = 0; i < 8; i++) dv2.setUint32(i * 4, h[i], false);
+    return fuori;
+  }
+  /* Il codice per l'accesso a Spotify in base64-url (senza + / =) */
+  function _b64url(bytes) {
+    let s = "";
+    for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
   function _idBranoStabile(b) {
     return "b-" + String((b && b.file) || ("builtin-" + BUILTIN.indexOf(b)))
       .replace(/^.*\//, "").replace(/\.mp3$/i, "");
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.314";
+  const APP_VERSION = "6.315";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2864,9 +2924,26 @@ async function _eliminaBrano(id) {
   const nome = String(t.title || "questo brano");
   const chi = t.artist ? String(t.artist) : "";
   const testo = chi ? nome + " di " + chi : nome;
+
+  /* Ste: "quando mi chiede la conferma per eliminarlo deve chiedere pure
+     se voglio solo toglierlo dalla libreria o anche dalla playlist se e'
+     in una playlist".
+
+     Prima la domanda sulla playlist veniva chiesta solo se il computer
+     rispondeva, e comunque DOPO aver gia' fatto il lavoro. Adesso la
+     chiedo per prima, e la conferma finale viene dopo. */
+  const nellePlaylist = _playlistCheContengono(id);
+  let ancheDallePlaylist = true;
+  if (nellePlaylist.length) {
+    const scelta = await _scegliCosaTogliere(id, t.title || "", true);
+    if (!scelta) return;                 /* annullato: non faccio niente */
+    ancheDallePlaylist = scelta !== "playlist";
+  }
+
   if (!confirm("Vuoi davvero ELIMINARE PER SEMPRE:\n\n" + testo +
-    "\n\nIl brano sparisce dalla libreria, da tutti i tuoi link e non si " +
-    "recupera piu'. Vuoi continuare?")) return;
+    "\n\nIl brano sparisce dalla libreria" +
+    (ancheDallePlaylist && nellePlaylist.length ? " e dalle playlist" : "") +
+    ", da tutti i tuoi link, e non si recupera piu'.\n\nVuoi continuare?")) return;
 
   /* Segno subito che e' eliminato per sempre: la libreria viene
      ricostruita da capo, e senza questo segno il brano rientrerebbe. */
@@ -2878,10 +2955,18 @@ async function _eliminaBrano(id) {
   } catch (e) { /* noop */ }
 
   /* E se il computer e' acceso, cancello anche il file mp3: e' la
-     cancellazione vera, non solo "non lo vedo piu'". */
+     cancellazione vera, non solo "non lo vedo piu'".
+     Se l'utente annulla la domanda sul computer, removeTrack restituisce
+     false e io non elimino niente: prima, annullando, il brano spariva
+     lo stesso. */
+  let fatto = false;
   try {
-    await removeTrack(id);
-  } catch (e) { /* il brano e' comunque segnato come eliminato */ }
+    fatto = await removeTrack(id);
+  } catch (e) { fatto = false; }
+  if (!fatto) {
+    try { toast("Non ho eliminato niente: hai annullato", 4000); } catch (e) {}
+    return;
+  }
 
   /* Tolgo il brano dalla libreria e dalle playlist. */
   try {
@@ -2889,9 +2974,11 @@ async function _eliminaBrano(id) {
     if (i >= 0) tracks.splice(i, 1);
   } catch (e) { /* noop */ }
   try {
-    for (const p of _playlistCheContengono(id)) {
-      const pl = _playlistCercata(p);
-      if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+    if (ancheDallePlaylist) {
+      for (const p of nellePlaylist) {
+        const pl = _playlistCercata(p);
+        if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+      }
     }
     saveCurrentState();
     _salvaPlaylistCondivise();
@@ -5556,7 +5643,10 @@ if (r.ok && j && j.ok) {
       "e il brano tornera' alla prossima apertura.\n\nVuoi toglierlo solo da qui?",
       "Togli da qui"
     );
-    if (!si) return;
+    /* Ste: "se premo annulla lo elimina lo stesso".
+       Prima questo "return" non diceva niente a chi aveva chiamato, che
+       continuava a toglierlo. Ora dico chiaramente: non ho fatto niente. */
+    if (!si) return false;
   } else {
     /* Se il brano e' anche in una playlist, chiedo dove toglierlo: solo
        dalla libreria (l'bagno per davvero rimane nelle playlist? no: allora
@@ -5575,7 +5665,7 @@ if (r.ok && j && j.ok) {
         renderPlaylist();
         _aggiornaBadgePlaylist();
         toast("Tolto dalle playlist, ma resta nella libreria e sul sito");
-        return;
+        return true;
       }
       /* sia "libreria" che "entrambe": le playlist si svuotano comunque,
          altrimenti resterebbero con un brano che non esiste piu' */
@@ -5595,7 +5685,7 @@ if (r.ok && j && j.ok) {
       "Non si puo' piu' recuperare. Il testo e la copertina spariscono con lui.",
       "Elimina per sempre"
     );
-    if (!si) return;
+    if (!si) return false;
   }
 
   if (currentId === id) {
@@ -5626,7 +5716,8 @@ if (r.ok && j && j.ok) {
   } catch (e) { /* noop */ }
   await loadAll();
   render();
-toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefono");
+  toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefono");
+  return true;
 }
 
   function stripVariants(s) {
@@ -7020,7 +7111,25 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
   let ponteInCorso = null;
   async function cercaPonte() {
     if (ponteCheRisponde) return ponteCheRisponde;
-    for (const base of INDIRIZZI_PONTE) {
+    /* Ste: "il programma sul computer non e' raggiungibile" (dal PC, dalla
+       pagina sulla porta 8167). Da li' la pagina e' su una porta diversa
+       dal programma, e il browser la blocca. Provo quindi anche:
+         - lo STESSO indirizzo della pagina, ma sulla porta giusta
+           (stessa famiglia di rete: il browser lo accetta);
+         - l'indirizzo della pagina con la porta del programma, se la
+           pagina e' gia' sulla porta giusta (e' il caso normale).
+       Sono tentativi in piu', e non rompono niente. */
+    const porte = [8788];
+    const host = String(location.hostname || "");
+    const portaPagina = Number(String(location.port || "")) || 0;
+    if (host && portaPagina && portaPagina !== 8788) porte.unshift(portaPagina);
+    const candidati = [];
+    for (const p of porte) {
+      if (host) candidati.push("http://" + host + ":" + p);
+    }
+    for (const base of INDIRIZZI_PONTE) candidati.push(base);
+
+    for (const base of candidati) {
       try {
         const ctl = new AbortController();
         const scad = setTimeout(() => ctl.abort(), 1800);
@@ -12263,11 +12372,20 @@ function _spotifyToken() {
 async function _spotifyPkce() {
   const byte = new Uint8Array(48);
   crypto.getRandomValues(byte);
-  const base = (b) => btoa(String.fromCharCode.apply(null, b))
-    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  const verifier = base(byte);
-  const somma = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
-  return { verifier: verifier, sfida: base(new Uint8Array(somma)) };
+  const verifier = _b64url(byte);
+  /* Ste: "dal PC mi dice 'il telefono non mi fa fare le operazioni sicure'".
+     Motivo: crypto.subtle esiste solo in una pagina sicura (https, oppure
+     localhost). Sul computer l'app sta su http://100.x, e li' non c'e'.
+     Per questo uso lo SHA-256 scritto a mano quando manca quello del
+     browser: e' piu' lento, ma funziona anche senza HTTPS. */
+  let somma = null;
+  try {
+    if (crypto && crypto.subtle && typeof crypto.subtle.digest === "function") {
+      somma = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
+    }
+  } catch (e) { somma = null; }
+  if (!somma) somma = _sha256Testo(verifier);
+  return { verifier: verifier, sfida: _b64url(new Uint8Array(somma)) };
 }
 
 /* Step 1: butto Ste su Spotify per l'accesso. */
@@ -12283,7 +12401,12 @@ async function _spotifyAccedi() {
      al ritorno non c'e' niente da scambiare e il login finisce con
      "Accesso scaduto". Percio' la metto via insieme al suo stato. */
   _spotifyChiave = pk.verifier;
-  const stato = base(String(Date.now()));
+  /* "base" qui non esisteva: era un aiutante definito dentro _spotifyPkce,
+     e quindi non era in vista qui. Ogni tocco su "Accedi con Spotify"
+     moriva con un ReferenceError, e l'errore finiva in un cassetto
+     (vedi il gestore degli errori in cima all'app) senza che si vedesse
+     niente. Ora uso l'aiutante vero, _b64url. */
+  const stato = _b64url(new TextEncoder().encode(String(Date.now())));
   try {
     LS.set("mb.spotifyStato", stato);
     LS.set("mb.spotifyChiave", pk.verifier);
