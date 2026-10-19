@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.305";
+  const APP_VERSION = "6.306";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -741,7 +741,27 @@ window.addEventListener("storage", (e) => {
 
   function loadProfileState() {
     const st = profileState(profile);
-    hiddenTracks = new Set(st.hidden || []);
+    /* Ste: "la libreria di github e' diversa da quella di tailscale
+       (226 e 228)". I brani nascosti sono UNA lista sola, condivisa da
+       tutti: e infatti il server ne ha una sola. Ma qui la ricaricavo
+       dal profilo aperto, quindi ogni link ripartiva dalla lista di
+       quello usato per ultimo, e i due mostravano numeri diversi.
+
+       Adesso parto dall'unione di tutti i profili: non perdo niente, e
+       subito dopo il server mi dice la lista vera. */
+    try {
+      const tutti = allState() || {};
+      const unione = new Set(st.hidden || []);
+      for (const nome of Object.keys(tutti)) {
+        const s2 = tutti[nome];
+        if (s2 && Array.isArray(s2.hidden)) {
+          for (const id of s2.hidden) if (id) unione.add(id);
+        }
+      }
+      hiddenTracks = unione;
+    } catch (e) {
+      hiddenTracks = new Set(st.hidden || []);
+    }
     favorites = new Set(st.favs || []);
     /* Le playlist stanno qui con il resto. Se il dato non e' un elenco
        (perche' viene da una versione vecchia), parto da vuoto invece di
@@ -11141,6 +11161,22 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
             if (!stessi) {
               hiddenTracks.clear();
               for (const id of nuovo) hiddenTracks.add(id);
+              /* La lista dei nascosti e' una sola per tutti: se la lascio
+                 scritta solo nel profilo aperto, l'altro profilo riparte
+                 dalla sua copia vecchia e i due link tornano a mostrare
+                 numeri diversi. La scrivo ovunque. */
+              try {
+                const tutti = allState() || {};
+                const nomi = Object.keys(tutti);
+                if (PROFILI && PROFILI.length) {
+                  for (const p of PROFILI) if (p && p.nome) nomi.push(p.nome);
+                }
+                for (const nome of nomi) {
+                  if (!nome) continue;
+                  const vecchio = tutti[nome] || {};
+                  writeProfileState(nome, Object.assign({}, vecchio, { hidden: [...nuovo] }));
+                }
+              } catch (e) { /* noop */ }
               cambiati++;
             }
           } catch (e) { /* noop */ }
