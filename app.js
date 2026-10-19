@@ -167,7 +167,7 @@
     { title: "se ne va", file: "songs/track-180.mp3", artist: "nayt, 3D" },
     { title: "Non ti dimentico", file: "songs/track-181.mp3", artist: "Modà" },
     { title: "Le Tasche Piene Di Sassi", file: "songs/track-182.mp3", artist: "Jovanotti" },
-    { title: "FIX YOU", file: "songs/track-183.mp3", artist: "Jovanotti" },
+
     { title: "Tuttok", file: "songs/track-184.mp3", artist: "nayt, 3D" },
     { title: "Dimenticare", file: "songs/track-185.mp3", artist: "nayt, 3D" },
     { title: "Cose che non vuoi sentirti dire", file: "songs/track-187.mp3", artist: "nayt" },
