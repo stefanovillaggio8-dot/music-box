@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792434030355,
-  "r": "app avviata: pulsante Spotify presente=true versione=6.317"
- },
- {
   "t": 1792434036316,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792434694939,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792434705001,
+  "r": "app avviata: pulsante Spotify presente=true versione=6.318"
  }
 ]
