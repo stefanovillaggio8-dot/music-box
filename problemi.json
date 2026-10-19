@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792441690379,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 28 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
- },
- {
   "t": 1792441693734,
   "r": "FINALE: visibili 27 su 237 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792442717183,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792442720724,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  }
 ]
