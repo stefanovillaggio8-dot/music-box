@@ -459,8 +459,21 @@
   ];
 
   const $ = (id) => document.getElementById(id);
+  /* L'id stabile di un brano: "b-track-12" e cosi' via.
+     Ste: "quando elimino certe canzoni rimangono nella libreria".
+     Il filtro dei brani eliminati guardava "b.id", ma i brani dell'app non
+     hanno un campo id: l'id veniva calcolato DOPO, quando la libreria si
+     costruiva. Quindi il filtro guardava "eliminati[undefined]", cioe'
+     niente, e i brani eliminati tornavano sempre.
+
+     Ora l'id si calcola in un posto solo, e lo usano sia il filtro sia la
+     costruzione: cosi' le due cose non possono piu' andare storte. */
+  function _idBranoStabile(b) {
+    return "b-" + String((b && b.file) || ("builtin-" + BUILTIN.indexOf(b)))
+      .replace(/^.*\//, "").replace(/\.mp3$/i, "");
+  }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.313";
+  const APP_VERSION = "6.314";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1995,19 +2008,6 @@ function _devoVedereBrano(eMio, b) {
   let eliminati = {};
   try { eliminati = LS.get("mb.eliminati", null) || {}; } catch (e) { eliminati = {}; }
 
-  /* L'id stabile di un brano: "b-track-12" e cosi' via.
-     Ste: "quando elimino certe canzoni rimangono nella libreria".
-     Il filtro dei brani eliminati guardava "b.id", ma i brani dell'app non
-     hanno un campo id: l'id veniva calcolato DOPO, quando la libreria si
-     costruiva. Quindi il filtro guardava "eliminati[undefined]", cioe'
-     niente, e i brani eliminati tornavano sempre.
-
-     Ora l'id si calcola in un posto solo, e lo usano sia il filtro sia la
-     costruzione: cosi' le due cose non possono piu' andare storte. */
-  function _idBranoStabile(b) {
-    return "b-" + String((b && b.file) || ("builtin-" + BUILTIN.indexOf(b)))
-      .replace(/^.*\//, "").replace(/\.mp3$/i, "");
-  }
   const builtin = BUILTIN
   .filter((b) => !eliminati[_idBranoStabile(b)])
   .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
