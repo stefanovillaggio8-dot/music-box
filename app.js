@@ -241,7 +241,7 @@
     { title: "Rolling In The Deep (Hardstyle Remix)", file: "songs/track-264.mp3", artist: "Adele" },
     { title: "Blank Space (Hardstyle)", file: "songs/track-265.mp3", artist: "Taylor Swift" },
     { title: "TiK ToK (Hardstyle Remix)", file: "songs/track-262.mp3", artist: "Katy Perry" },
-    { title: "Non farti rubare i Sogni", file: "songs/track-266.mp3", artist: "Nersissima Serpe", profile: "Diego" },
+
     { title: "Bruciasse Il Cielo", file: "songs/track-280.mp3", artist: "BLANCO", profile: "Diego" },
     { title: "Vite da sogno (feat. nayt)", file: "songs/track-268.mp3", artist: "3D, nayt", profile: "Diego" },
     { title: "Cratere", file: "songs/track-269.mp3", artist: "Frah Quintale", profile: "Diego" },
