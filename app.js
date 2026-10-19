@@ -10997,14 +10997,14 @@ $("btnTimer").addEventListener("click", () => {
        tre richieste al computer. */
     _timerStatoCondiviso = setTimeout(async () => {
       const corpo = JSON.stringify({
-/* Solo i brani nascosti ADESSO su questo dispositivo. Prima mandavo
-       tutta la lista, e gli altri link me la rimandavano indietro:
-       Ste "quando rimetto le cose in libreria, dopo un po' vengono
-       nascoste di nuovo". Il server unisce quello che arriva, quindi
-       mandare solo il nuovo lo lascia lo stesso, senza rischio. */
-    nascosti: (function () {
-      try { return _nascostiDaMandare(); } catch (e) { return []; }
-    })(),
+/* Brani nascosti adesso. Il campo si chiama "nascostiNuovi" perche'
+       il server non accetta piu' l'elenco intero: quello me lo
+       rimandavano indietro i telefoni con la versione vecchia, e i
+       brani che avevo rimesso in lista tornavano nascosti anche su
+       github. Ora contano solo le scelte fatte adesso. */
+nascostiNuovi: (function () {
+try { return _nascostiDaMandare(); } catch (e) { return []; }
+})(),
   preferiti: [...favorites],
   /* Ste: "le statistiche non funzionano bene, i minuti ascoltati a Diego
      non spuntano". Le statistiche stavano solo nella memoria di questo
@@ -12209,8 +12209,16 @@ await loadAll();
   /* Rileggo lo stato condiviso un paio di volte dopo l'avvio: il sito puo'
      essere indietro di qualche minuto, e un nome salvato adesso sul PC o sul
      telefono deve comparire senza aspettare il riavvio. */
+  /* Ste: "ho rimesso dei brani nascosti, sono tornati in libreria e
+     dopo che si aggiorna l'app sono spariti di nuovo". Se il worker
+     non risponde al primo giro i dati non arrivano, e resta tutto
+     com'era. Provo piu' volte nei primi due minuti: cosi' un momento
+     di rete scarsa non lascia l'app con una copia vecchia. */
   setTimeout(() => { _caricaStatoCondiviso(); }, 5000);
   setTimeout(() => { _caricaStatoCondiviso(); }, 15000);
+  setTimeout(() => { _caricaStatoCondiviso(); }, 30000);
+  setTimeout(() => { _caricaStatoCondiviso(); }, 60000);
+  setTimeout(() => { _caricaStatoCondiviso(); }, 120000);
   _avviaStatistiche();
   /* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
    qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
