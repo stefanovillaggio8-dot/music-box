@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.325";
+  const APP_VERSION = "6.326";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9635,17 +9635,32 @@ $("fabMenu").addEventListener("click", (e) => {
   }
 
   async function refreshCachedSongs() {
-    const cache = await appCache();
-    if (!cache) return;
+    /* Ste: "diego aveva scaricato le canzoni, ha chiuso l'app e una volta
+       riaperta doveva di nuovo scaricarle".
+
+       Motivo: qui guardavo solo la cache della versione corrente. Ma le
+       canzoni scaricate possono stare in una cache vecchia (per esempio
+       se l'aggiornamento e' appena successo e il service worker non ha
+       ancora migrato i brani), e allora l'app non le vedeva e le
+       ridownloadava.
+
+       Adesso guardo TUTTE le cache, come fa il service worker quando
+       serve un brano. */
     const set = new Set();
     try {
-      const reqs = await cache.keys();
-      for (const r of reqs) {
-        let pathname = "";
-        try { pathname = new URL(r.url).pathname; } catch (e) { pathname = r.url; }
-        if (/\.mp3$/i.test(pathname)) set.add(r.url);
+      const chiavi = await caches.keys();
+      for (const chiave of chiavi) {
+        let cache = null;
+        try { cache = await caches.open(chiave); } catch (e) { continue; }
+        let reqs = [];
+        try { reqs = await cache.keys(); } catch (e) { continue; }
+        for (const r of reqs) {
+          let nome = "";
+          try { nome = new URL(r.url).pathname; } catch (e) { nome = r.url; }
+          if (/\.mp3$/i.test(nome)) set.add(r.url);
+        }
       }
-    } catch (e) { /* noop */ }
+    } catch (e) { /* niente cache: pazienza */ }
     cachedSongs = set;
     render();
   }

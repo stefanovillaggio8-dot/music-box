@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6325";
+const CACHE = "spotifynonavraiimieisoldi-v6326";
 const CORE = [
   "./",
   "./index.html",
@@ -541,7 +541,18 @@ async function migrateOfflineSongsAndCleanup() {
     for (const request of requests) {
       let url;
       try { url = new URL(request.url); } catch (_) { continue; }
-      if (!isMusicBoxSong(url)) continue;
+      /* Ste: "diego aveva scaricato le canzoni, ha chiuso l'app e una
+         volta riaperta doveva di nuovo scaricarle".
+
+         Motivo: qui migravo solo i brani con l'indirizzo di
+         raw.githubusercontent. Ma dal computer e da tailscale i brani hanno
+         un indirizzo LOCALE (http://100.x:8788/app/songs/...), e quelli
+         non venivano migrati: all'aggiornamento la cache vecchia veniva
+         cancellata e le canzoni scaricate andavano perse.
+
+         Adesso migro QUALSIASI file audio, da qualunque indirizzo. */
+      const eBrano = /\.mp3$/i.test(url.pathname) || isMusicBoxSong(url);
+      if (!eBrano) continue;
 
       const cacheKey = new Request(url.href);
       if (await activeCache.match(cacheKey)) continue;
