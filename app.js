@@ -741,27 +741,11 @@ window.addEventListener("storage", (e) => {
 
   function loadProfileState() {
     const st = profileState(profile);
-    /* Ste: "la libreria di github e' diversa da quella di tailscale
-       (226 e 228)". I brani nascosti sono UNA lista sola, condivisa da
-       tutti: e infatti il server ne ha una sola. Ma qui la ricaricavo
-       dal profilo aperto, quindi ogni link ripartiva dalla lista di
-       quello usato per ultimo, e i due mostravano numeri diversi.
-
-       Adesso parto dall'unione di tutti i profili: non perdo niente, e
-       subito dopo il server mi dice la lista vera. */
-    try {
-      const tutti = allState() || {};
-      const unione = new Set(st.hidden || []);
-      for (const nome of Object.keys(tutti)) {
-        const s2 = tutti[nome];
-        if (s2 && Array.isArray(s2.hidden)) {
-          for (const id of s2.hidden) if (id) unione.add(id);
-        }
-      }
-      hiddenTracks = unione;
-    } catch (e) {
-      hiddenTracks = new Set(st.hidden || []);
-    }
+    /* Ste: "togli completamente sta cosa dei nascosti". Non esiste piu'
+       la lista dei brani nascosti: un brano si toglie con "Elimina", che
+       chiede conferma e lo cancella per sempre. Qui non carico piu'
+       niente, e cosi' ogni filtro basato sui nascosti diventa inutile. */
+    hiddenTracks = new Set();
     favorites = new Set(st.favs || []);
     /* Le playlist stanno qui con il resto. Se il dato non e' un elenco
        (perche' viene da una versione vecchia), parto da vuoto invece di
@@ -771,8 +755,9 @@ window.addEventListener("storage", (e) => {
   }
 
   function saveCurrentState() {
+    /* Ste: "togli completamente sta cosa dei nascosti": qui non si
+       salvano piu' i brani nascosti. */
     writeProfileState(profile, {
-      hidden: Array.from(hiddenTracks),
       favs: Array.from(favorites),
       playlists: Array.isArray(playlists) ? playlists : []
     });
@@ -1163,18 +1148,16 @@ async function _apriDiagnostica() {
        quattro righe dicono subito dove si ferma: quanti brani nascosti ha
        questo telefono, quanti sono di questo profilo, quanti brani ci sono e
        quanti si vedono davvero. */
-    qs.push('<div class="diag-sep">la libreria e i brani nascosti</div>');
-    try {
-      const mieiId = new Set(tracks.map((t) => t.id));
-      const diQuesto = [...hiddenTracks].filter((id) => mieiId.has(id)).length;
-      let visibili = 0;
-      try { visibili = visibleTracks(false).length; } catch (e) { visibili = -1; }
+      qs.push('<div class="diag-sep">la libreria</div>');
+  try {
+  const mieiId = new Set(tracks.map((t) => t.id));
+  let visibili = 0;
+  try { visibili = visibleTracks(false).length; } catch (e) { visibili = -1; }
       const riga = (nome, val) => '<div class="diag-riga"><b>' + nome + "</b><span>" + val + "</span></div>";
       qs.push(riga("profilo aperto", profile));
       qs.push(riga("brani in libreria", tracks.length));
       qs.push(riga("brani che si vedono", visibili));
-      qs.push(riga("nascosti su questo telefono", hiddenTracks.size));
-      qs.push(riga("nascosti di questo profilo", diQuesto));
+      qs.push(riga("brani eliminati per sempre", _quantiEliminati()));
     } catch (e) {
       qs.push('<div class="diag-riga"><b>libreria</b><span>errore: ' +
         String(e && e.message ? e.message : e).slice(0, 60) + "</span></div>");
@@ -1514,29 +1497,7 @@ if (nuovo) r.v = (r.v || 0) + 1;
    nulla, il numero dell'altro resta intatto. */
   /* Toglie dalla lista dei nascosti i brani che qualcun altro ha ripreso.
    Li tolgo davvero da tutte le mie liste, non solo da quella aperta:
-   se no, riaprendo un altro profilo ritornavano nascosti lo stesso. */
-function _togliRimossi(elenco) {
-  try {
-    if (!Array.isArray(elenco) || !elenco.length) return 0;
-    let tolti = 0;
-    for (const id of elenco) {
-      if (!id || typeof id !== "string") continue;
-      const vuoto = (st) => Array.isArray(st && st.hidden) && !st.hidden.includes(id);
-      const tutti = allState() || {};
-      for (const nome of Object.keys(tutti)) {
-        const st = tutti[nome];
-        if (st && Array.isArray(st.hidden) && st.hidden.includes(id)) {
-          st.hidden = st.hidden.filter((x) => x !== id);
-          writeProfileState(nome, { hidden: st.hidden });
-          tolti++;
-        }
-      }
-      if (hiddenTracks.has(id)) { hiddenTracks.delete(id); tolti++; }
-    }
-    return tolti;
-  } catch (e) { return 0; }
-}
-function _unisciStatistiche(remote) {
+   se no, riaprendo un altro profilo ritornavano nascosti lo stesso. */function _unisciStatistiche(remote) {
     try {
       if (!remote || typeof remote !== "object") return 0;
       let cambiati = 0;
@@ -1723,7 +1684,7 @@ function _salvaStatistiche() {
   }
 
   function _numeriProfilo(nome) {
-    const lista = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === nome && !hiddenTracks.has(t.id));
+    const lista = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === nome);
     const st = profileState(nome);
     const stats = (st && st.stats) || {};
     let volte = 0, secondi = 0;
@@ -2800,7 +2761,10 @@ function visibleTracks(perSuono) {
       /* I brani "solo in playlist" escono dalla libreria, tranne quando sto
          guardando proprio una playlist: li' devono comparire. */
       const inPlaylist = _soloInPlaylist;
-      let list = tracks.filter((t) => !hiddenTracks.has(t.id) &&
+      /* Ste: "togli completamente sta cosa dei nascosti": non c'e' piu'
+         nessun filtro sui brani nascosti. Quello che resta e' quello dei
+         brani "solo nelle playlist" (una scelta diversa, che resta). */
+      let list = tracks.filter((t) =>
         (!inPlaylist.has(t.id) || Boolean(_playlistAttiva)));
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
 if (perLaCoda) {
@@ -2858,288 +2822,39 @@ if (_playlistAttiva) {
   /* Se un brano e' stato tolto dalla lista DEVE esserci un modo per rimetterlo:
      prima la funzione c'era ma non era collegata a nessun tasto, quindi un brano
      nascosto spariva per sempre (e' capitato: la lista sembrava avesse un brano
-     in meno e non si capiva il perche'). */
-  function _riportaIndietroSeNascosti() {
-    try {
-      const n = hiddenTracks.size;
-      let avviso = document.getElementById("avviso-nascosti");
-      /* Ste: questa riga stava fisso sopra il player e gli dava fastidio per
-         che restava li' tutto il tempo. Ora vive DENTRO il menu "Altro": non
-         si vede piu' passeggiando nell'app, e c'e' comunque ogni volta che
-         serve rimettere qualcosa. Per questo non nascondo piu' la riga quando
-         i brani nascosti sono molti: dentro il menu non occupa spazio. */
-      if (!n) {
-        if (avviso && avviso.parentNode) avviso.parentNode.removeChild(avviso);
-        return;
-      }
-      if (!avviso) {
-        /* Uso le stesse regole del progetto invece di inventarmi uno stile:
-           lo stesso colore di attenzione degli altri avvisi. */
-        avviso = document.createElement("div");
-        avviso.id = "avviso-nascosti";
-        avviso.className = "avviso-nascosti";
-        /* Dentro il menu "Altro"; se per qualche motivo il menu non c'e',
-           almeno non lo lascio sparire del tutto. Lo metto in cima al menu:
-           e' la cosa piu' urgente e il menu non si scorre. */
-        const menu = document.getElementById("menuAltro");
-        if (menu && menu.firstChild) menu.insertBefore(avviso, menu.firstChild);
-        else (menu || document.body).appendChild(avviso);
-      }
-      /* Il testo lo metto una volta sola: prima lo riscrivevo a ogni
-         ridisegno della lista, e quello fa saltare gli schermi. */
-      if (!avviso.firstChild) {
-        const riga = document.createElement("div");
-        riga.className = "avviso-nascosti-riga";
-        const testo = document.createElement("span");
-        testo.className = "avviso-nascosti-testo";
-        const bottone = document.createElement("button");
-        bottone.type = "button";
-        bottone.className = "avviso-nascosti-bottone";
-        bottone.textContent = "Scegli quali rimettere";
-        /* Ste: prima questo bottone rimetteva TUTTI i brani tolti insieme.
-           Ora apre la lista: si rimette anche uno solo. */
-        bottone.addEventListener("click", () => {
-          const p = $("nascostiPanel");
-          if (p) p.hidden = false;
-          _apriNascosti();
-          syncNoScroll();
-        });
-        riga.appendChild(testo);
-        riga.appendChild(bottone);
-        avviso.appendChild(riga);
-        /* elenchi i brani nascosti, cosi' si capisce QUALI sono e non sembra
-           un conto magico */
-        avviso._testo = testo;
-      }
-      /* Testo breve: Ste, prima c'era anche l'elenco di quali brani erano
-         nascosti e la riga occupava mezza schermata, ferma per sempre. */
-      avviso._testo.textContent = n === 1
-        ? "Un brano tolto dalla lista"
-        : n + " brani tolti dalla lista";
-    } catch (e) { /* noop */ }
-  }
-
-function restoreHidden() {
-    /* Ste: nell'account di Diego mancavano 3 canzoni che lui non aveva
-       nascosto. Il bottone rimetteva TUTTI i brani nascosti di tutti gli
-       account: in pratica cancellava anche quelli del tuo profilo. Adesso
-       rimette solo quelli del profilo aperto, e lascia gli altri come
-       sono. */
-    const miei = new Set(tracks.map((t) => t.id));
-    let rimessi = 0;
-    for (const id of Array.from(hiddenTracks)) {
-      if (!miei.has(id)) continue;
-      hiddenTracks.delete(id);
-      rimessi++;
-    }
-    saveCurrentState();
-    _salvaStatoCondiviso();
-    render();
-    const rimasti = hiddenTracks.size;
-    toast(rimessi
-      ? rimessi + (rimessi === 1 ? " brano rimesso" : " brani rimessi") + " nella libreria di " + profile +
-        (rimasti ? " (" + rimasti + " nascosti di altri account, non ho toccato niente)" : "")
-      : "Nessun brano nascosto in questo profilo");
-  }
-
-  /* ---------- I brani tolti dalla lista, uno alla volta ----------
+     in meno e non si capiva il perche'). */  /* ---------- I brani tolti dalla lista, uno alla volta ----------
      Ste: il bottone rimetteva TUTTI i brani tolti insieme, e a lui serviva
      poterne rimettere anche uno solo. Qui ogni brano ha il suo bottone. */
 
-  /* Il brano nascosto con questo id (null se non esiste piu'). */
-  function _trovaNascosto(id) {
-    try {
-      return (Array.isArray(tracks) ? tracks : []).find((t) => t && t.id === id) || null;
-    } catch (e) { return null; }
-  }
-
-  function _apriNascosti() {
-    const corpo = $("nascostiCorpo");
-    if (!corpo) return;
-    corpo.innerHTML = "";
-    const idList = Array.from(hiddenTracks);
-    if (!idList.length) {
-      _stampaNascosti();
-      return;
-    }
-    /* I pezzi sfuggiti non si possono rimettere (il file non c'e' piu' da
-       nessuna parte): non li mostro, cosi' la lista dice solo la verita'. */
-    for (const id of idList) {
-      const t = _trovaNascosto(id);
-      if (!t) continue;
-      const riga = document.createElement("div");
-      riga.className = "falliti-riga";
-      riga.setAttribute("data-id", id);
-const nome = document.createElement("div");
-    nome.className = "falliti-info";
-    /* Titolo e artista su due righe. Ste: "e' buggato", perche' il
-       bottone e il testo si sovrapponevano e il titolo andava a capo di
-       una parola per riga: era colpa del bottone, che voleva essere largo
-       come tutta la finestra dentro una riga stretta. */
-    const titolo = document.createElement("div");
-    titolo.className = "falliti-nome";
-    titolo.textContent = String(t.title || "Senza nome");
-    nome.appendChild(titolo);
-    if (t.artist) {
-      const chi = document.createElement("div");
-      chi.className = "falliti-dome";
-      chi.textContent = String(t.artist);
-      nome.appendChild(chi);
-    }
-    const btn = document.createElement("button");
-    /* Solo "nascosti-rimetti": NON anche "menu-altro-voce", che ha
-       width:100% e schiacciava il testo del brano a una parola per riga. */
-    btn.className = "nascosti-rimetti";
-    btn.setAttribute("data-azione", "rimetti");
-    btn.textContent = "Rimetti in lista";
-    /* Ste: "nella lista dei brani nascosti aggiungi un pulsante tipo x
-       tutto a destra della canzone che se lo premo viene eliminata
-       definitivamente, aggiungi pero' una conferma".
-
-       Sta DOPO "Rimetti in lista" cosi' finisce davvero in fondo a destra,
-       e non viene confuso con l'altro bottone. */
-    const via = document.createElement("button");
-    via.className = "nascosti-via";
-    via.setAttribute("data-azione", "elimina");
-    via.setAttribute("aria-label", "Elimina per sempre questo brano nascosto");
-    via.setAttribute("title", "Elimina per sempre");
-    via.textContent = "\u00d7";
-    riga.appendChild(nome);
-    riga.appendChild(btn);
-    riga.appendChild(via);
-    corpo.appendChild(riga);
-  }
-  /* In fondo il bottone per tutti. Dice quanti sono QUELLI di questo
-     profilo: Ste ha visto "Rimetti tutti (21)" nell'account di Diego,
-     ma quei 21 includono anche 18 brani di un altro account e non
-     tocca rimetterli insieme. */
-  const mieiId = idList.filter((id) => _trovaNascosto(id));
-  if (mieiId.length > 1) {
-    const tutti = document.createElement("button");
-    tutti.className = "menu-altro-voce nascosti-rimetti";
-    tutti.setAttribute("data-azione", "tutti");
-    tutti.textContent = "Rimetti tutti i miei (" + mieiId.length + ")";
-    corpo.appendChild(tutti);
-  }
-    /* Ste: "premo brani nascosti e non mi spunta nessuna canzone". Qui il
-       pannello restava VUOTO: _apriNascosti finiva chiamando _stampaNascosti,
-       che richiama _apriNascosti, che richiama _stampaNascosti... all'infinito.
-       Il browser interrompe con "chiamate troppo profonde" e la lista non
-       arriva mai a essere disegnata. Quindi qui aggiorno solo il sottotitolo,
-       senza richiamare la funzione che riapre tutto. */
-    const qui = $("nascostiSub");
-    if (qui) {
-      const miei = Array.from(hiddenTracks).filter((id) =>
-        (Array.isArray(tracks) ? tracks : []).some((t) => t && t.id === id)).length;
-      qui.textContent = miei
-        ? miei + " di " + profile + ": rimettine uno alla volta, o tutti insieme"
-        : "Nessun brano nascosto in questo profilo";
-    }
-    _riportaIndietroSeNascosti();
-  }
-
-  function _chiudiNascosti() {
-    const p = $("nascostiPanel");
-    if (p) p.hidden = true;
-    syncNoScroll();
-  }
-
-  /* Riscrive il pannello con quello che c'e' adesso (dopo aver rimesso un
-     brano la lista si accorcia, e devo dirlo). */
-  function _stampaNascosti(messaggio) {
-    const corpo = $("nascostiCorpo");
-    const sub = $("nascostiSub");
-    if (!corpo) return;
-    const quanti = hiddenTracks.size;
-    if (sub) {
-      sub.textContent = messaggio ||
-        (quanti ? "Rimettine uno alla volta, o tutti insieme" : "Non c'e' piu' niente da rimettere");
-    }
-    if (!quanti) {
-      corpo.innerHTML = "";
-      const fatto = document.createElement("p");
-      fatto.className = "step-hint";
-      fatto.textContent = "Tutti i brani sono di nuovo nella lista.";
-      corpo.appendChild(fatto);
-    } else {
-      _apriNascosti();
-    }
-    _riportaIndietroSeNascosti();
-  }
-
-  /* Rimette in lista UN brano solo. */
-function _rimettiNascosto(id) {
-  if (!id || !hiddenTracks.has(id)) return;
-  hiddenTracks.delete(id);
-  /* Ste: "li rimetto e funzionano, ma al riavvio si tolgono di nuovo".
-     Segno che questo brano l'ho rimesso io, cosi' il ricaricamento dal
-     sito non lo nasconde di nuovo. */
-_nascostoTombaAggiungi(id);
-  /* Se questo brano l'avevo nascosto un attimo fa e non e' ancora partito,
-     tolgo anche la richiesta: non voglio mandare "nascosto" e "rimosso"
-     nella stessa borsa, con la seconda che arriva dopo. */
-  try {
-    const m = _nascostiDaMandare().filter(function (x) { return x !== id; });
-    LS.set("mb.nascostiDaMandare", m);
-  } catch (e) { /* noop */ }
-
-  /* Ste: "quando rimetto un brano dalla lista dei brani eliminati, resta
-     un po' in libreria e poi dopo pochissimo tempo ritorna nella lista".
-
-     Motivo: "rimettere in lista" toglieva il brano dai nascosti, ma NON
-     dall'elenco degli eliminati. Il server continuava a considerarlo
-     eliminato, e al giro dopo me lo rimetteva fra le cose eliminate.
-
-     Rimettere in lista deve valere anche per l'eliminazione: e come per
-     i nascosti, si dice al server "questo non e' piu' eliminato". */
-  try {
-    const el = LS.get("mb.eliminati", null) || {};
-    if (el[id]) {
-      delete el[id];
-      LS.set("mb.eliminati", el);
-      _eliminatoRimessoSegna(id);
-    }
-  } catch (e) { /* noop */ }
-  try { _nascostiDaMandareSvuota(); } catch (e) { /* noop */ }
-  saveCurrentState();
-  _salvaStatoCondiviso();
-  render();
-  const t = _trovaNascosto(id);
-  _stampaNascosti("Rimesso: " + String((t && t.title) || "brano"));
-  }
-
-  /* Ste: "nella lista dei brani nascosti metti una x che elimina il brano
+  /* Il brano nascosto con questo id (null se non esiste piu'). */  /* Riscrive il pannello con quello che c'e' adesso (dopo aver rimesso un
+     brano la lista si accorcia, e devo dirlo). */  /* Rimette in lista UN brano solo. */  /* Ste: "nella lista dei brani nascosti metti una x che elimina il brano
      per sempre".Diverso dal "Rimetti in lista": quello lo riporta indietro,
      questo lo butta via. Percio' prima gli chiedo SEMPRE conferma, e gli
      dico esattamente cosa sto facendo: non cancello niente per sbaglio. */
-function _eliminaNascosto(id) {
+/* Ste: "togli completamente sta cosa dei nascosti... quando elimino una
+   canzone si elimini direttamente per sempre chiedendo pero' una conferma".
+
+   Questa e' l'unica maniera di togliere un brano adesso. Prima c'era
+   "Nascondi" (che lo faceva sparire e poi tornava) e la X (che valeva solo
+   per i brani nascosti). Adesso c'e' solo "Elimina": chiede conferma, e
+   il brano sparisce per davvero, su tutti i link.
+
+   La lista dei brani eliminati ("mb.eliminati") viaggia col resto dei
+   dati, quindi quello che elimino qui sparisce anche su github e su
+   tailscale. */
+async function _eliminaBrano(id) {
   if (!id) return;
-  const t = _trovaNascosto(id);
-  const nome = String((t && t.title) || "questo brano");
-  const chi = (t && t.artist) ? String(t.artist) : "";
+  const t = tracks.find((x) => x && x.id === id);
+  if (!t) return;
+  const nome = String(t.title || "questo brano");
+  const chi = t.artist ? String(t.artist) : "";
   const testo = chi ? nome + " di " + chi : nome;
   if (!confirm("Vuoi davvero ELIMINARE PER SEMPRE:\n\n" + testo +
-    "\n\nNon e' come rimetterlo in lista: questo brano sparisce e non si " +
+    "\n\nIl brano sparisce dalla libreria, da tutti i tuoi link e non si " +
     "recupera piu'. Vuoi continuare?")) return;
 
-  /* Tolgo il brano dai dati. Se il file c'era davvero, lo cancello
-     anche: altrimenti resterebbe il file senza piu' nessuna riga che lo
-     nomini, e la libreria si riempirebbe di robba invisibile. */
-  let tolto = false;
-  try {
-    const i = tracks.findIndex((x) => x && x.id === id);
-    if (i >= 0) { tracks.splice(i, 1); tolto = true; }
-  } catch (e) { /* noop */ }
-  try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
-  /* Lo metto nella lista dei "non tornare piu' nascosti". Prima facevo il
-   contrario: toglievo il segno, e cosi' al riavvio il brano tornava
-   nascosto senza che nessuno l'avesse rimesso. */
-  try { _nascostoTombaAggiungi(id); } catch (e) { /* noop */ }
-
-  /* E nella lista dei brani eliminati per davvero. Ste: "premo la X e
-     invece di eliminarsi tornano nella libreria": la libreria viene
-     ricostruita da capo, e se il brano e' ancora in quella lista torna
-     indietro. Segnandolo qui, la libreria non lo ricarica piu'. */
+  /* Segno subito che e' eliminato per sempre: la libreria viene
+     ricostruita da capo, e senza questo segno il brano rientrerebbe. */
   try {
     const el = LS.get("mb.eliminati", null) || {};
     el[id] = Date.now();
@@ -3147,17 +2862,30 @@ function _eliminaNascosto(id) {
     _eliminatiDaMandareSegna(id);
   } catch (e) { /* noop */ }
 
+  /* E se il computer e' acceso, cancello anche il file mp3: e' la
+     cancellazione vera, non solo "non lo vedo piu'". */
   try {
-    if (t && t.file && /^https?:/i.test(String(t.file))) {
-      fetch(String(t.file), { method: "DELETE" }).catch(function () { /* noop */ });
+    await removeTrack(id);
+  } catch (e) { /* il brano e' comunque segnato come eliminato */ }
+
+  /* Tolgo il brano dalla libreria e dalle playlist. */
+  try {
+    const i = tracks.findIndex((x) => x && x.id === id);
+    if (i >= 0) tracks.splice(i, 1);
+  } catch (e) { /* noop */ }
+  try {
+    for (const p of _playlistCheContengono(id)) {
+      const pl = _playlistCercata(p);
+      if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
     }
+    saveCurrentState();
+    _salvaPlaylistCondivise();
   } catch (e) { /* noop */ }
 
   try { saveCurrentState(); } catch (e) { /* noop */ }
   try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
   try { render(); } catch (e) { /* noop */ }
-  try { _stampaNascosti("Eliminato per sempre: " + nome); } catch (e) { /* noop */ }
-  try { toast("Eliminato: " + nome, 4000); } catch (e) { /* noop */ }
+  try { toast("Eliminato per sempre: " + nome, 4000); } catch (e) { /* noop */ }
 }
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
@@ -3559,28 +3287,6 @@ function _eliminatiDaMandareSegna(id) {
 function _eliminatiDaMandareSvuota() {
   try { LS.set("mb.eliminatiDaMandare", []); } catch (e) { /* noop */ }
 }
-
-/* Idem per i brani nascosti: si manda solo quello che ho nascosto adesso.
-   Vedi la nota dove chiamo _nascostoDaMandareSegna: se mando tutta la
-   lista, un link che non ha ancora visto i cambiamenti degli altri me li
-   rimanda indietro e ricomincio da capo. */
-function _nascostiDaMandare() {
-  try {
-    const v = LS.get("mb.nascostiDaMandare", null);
-    return Array.isArray(v) ? v : [];
-  } catch (e) { return []; }
-}
-function _nascostoDaMandareSegna(id) {
-  try {
-    const m = _nascostiDaMandare();
-    if (id && m.indexOf(id) < 0) m.push(id);
-    LS.set("mb.nascostiDaMandare", m);
-  } catch (e) { /* noop */ }
-}
-function _nascostiDaMandareSvuota() {
-  try { LS.set("mb.nascostiDaMandare", []); } catch (e) { /* noop */ }
-}
-
 /* I brani che l'utente ha rimesso in lista DOPO averli eliminati: il
    server deve toglierli dall'elenco degli eliminati, altrimenti al giro
    dopo me li rimette fra le cose eliminate. */
@@ -3619,19 +3325,21 @@ function _eliminatiRimossiDaMandareSvuota() {
     /* Se ci sono brani tolti dalla lista, la riga per rimetterli e' gia' qui:
        senza, un brano nascosto spariva per sempre e il conto sembrava
        sbagliato senza che si capisse perche'. */
-    try { _riportaIndietroSeNascosti(); } catch (e) { /* noop */ }
+    try { /* i brani nascosti non esistono piu' */ } catch (e) { /* noop */ }
 
-    const visibleAll = tracks.filter((t) => !hiddenTracks.has(t.id));
+    const visibleAll = tracks.slice();
     const total = visibleAll.length;
     const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const n = list.length;
-    /* I brani nascosti a mano non sparivano senza dire niente: il contatore
-       sembrava sbagliato. Adesso lo dice, e lo scrivo anche nel registro del
-       PC cosi' i numeri si possono controllare senza chiedere. */
-const nascosti = hiddenTracks.size;
-    /* Scritta semplice, senza simboli strani: prima c'era un trattino lungo
-       che sembrava scritto male, e non si capiva cosa volesse dire. */
-    let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
+function _quantiEliminati() {
+  try {
+    const el = LS.get("mb.eliminati", null) || {};
+    return Object.keys(el).length;
+  } catch (e) { return 0; }
+}
+
+  /* Ste: "togli completamente sta cosa dei nascosti". */
+  let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
     if (favOnly || soloMaiAscoltati || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
@@ -3658,11 +3366,11 @@ const nascosti = hiddenTracks.size;
 
     if (!list.length) {
       emptyEl.hidden = false;
-      emptyEl.textContent = !total
-        ? (hiddenTracks.size
-          ? "Hai nascosto tutti i brani di " + profile + ": tocca l'icona dell'occhio per rivederli."
-          : "La libreria di " + profile + " è vuota. Le canzoni arrivano dal computer (cartella musica mp3 " +
-            profile.toLowerCase() + ") oppure scaricale con la scheda Importa.")
+emptyEl.textContent = !total
+  ? (tracks.length
+  ? "La libreria di " + profile + " è vuota: i brani che hai eliminato non tornano piu'. Aggiungine di nuovi."
+  : "La libreria di " + profile + " è vuota. Le canzoni arrivano dal computer (cartella mus" +
+  profile.toLowerCase() + ") oppure scaricale con la scheda Importa.")
         : !tracks.length
           ? "Nessun brano. Tocca + per aggiungere della musica."
           : favOnly && !query
@@ -3762,15 +3470,17 @@ const nascosti = hiddenTracks.size;
 
       const del = document.createElement("button");
       del.className = "track-del";
-      if (t.builtin || t.preview) {
-        del.setAttribute("aria-label", "Togli dalla lista " + t.title);
-        del.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm5 11H7v-2h10v2Z"/></svg>';
-        del.addEventListener("click", () => hideTrack(t.id));
-      } else {
-        del.setAttribute("aria-label", "Elimina " + t.title);
-        del.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 3a1 1 0 0 0-1 1v1H5a1 1 0 1 0 0 2h.3l.9 12.2A3 3 0 0 0 9.2 22h5.6a3 3 0 0 0 3-2.8L18.7 7H19a1 1 0 1 0 0-2h-3V4a1 1 0 0 0-1-1H9Zm4 2v1h-2V5h2Zm-3.7 5.5a1 1 0 0 1 1.9.3l-.4 7a1 1 0 1 1-1.9-.3l.4-7Zm5.9.3a1 1 0 1 1 1.9-.3l-.4 7a1 1 0 1 1-1.9.3l.4-7Z"/></svg>';
-        del.addEventListener("click", () => removeTrack(t.id));
-      }
+      /* Ste: "togli completamente sta cosa dei nascosti... quando elimino
+         una canzone si elimini direttamente per sempre chiedendo pero' una
+         conferma". Prima questo bottone nascondeva i brani dell'app e
+         rimuoveva gli altri: due cose diverse, e la prima non reggeva.
+         Adesso fa sempre la stessa cosa, e chiede conferma. */
+      del.setAttribute("aria-label", "Elimina " + t.title);
+      del.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 3a1 1 0 0 0-1 1v1H5a1 1 0 1 0 0 2h.3l.9 12.2A3 3 0 0 0 9.2 22h5.6a3 3 0 0 0 3-2.8L18.7 7H19a1 1 0 1 0 0-2h-3V4a1 1 0 0 0-1-1H9Zm4 2v1h-2V5h2Zm-3.7 5.5a1 1 0 0 1 1.9.3l-.4 7a1 1 0 1 1-1.9-.3l.4-7Zm5.9.3a1 1 0 1 1 1.9-.3l-.4 7a1 1 0 1 1-1.9.3l.4-7Z"/></svg>';
+      del.addEventListener("click", (e) => {
+        e.stopPropagation();
+        _eliminaBrano(t.id);
+      });
       li.appendChild(del);
 
 li.addEventListener("click", () => {
@@ -4748,27 +4458,32 @@ box.innerHTML = "";
       await _portaNellaMiaLibreria(t);
     }));
   }
-    if (t.builtin) {
-      const el = document.createElement("button");
-      el.className = "quick-btn";
-      el.type = "button";
-      el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + ICON_OFFLINE + '"/></svg>';
-      const gia = isCached(t);
-      el.appendChild(document.createTextNode(gia ? "Già salvata offline" : cloudBusy ? "Salvataggio in corso..." : "Scarica per offline"));
-      el.disabled = gia;
-      el.style.opacity = gia ? ".55" : "1";
-      el.addEventListener("click", () => {
-        closeQuick();
-        if (!cloudBusy) cacheOneTrack(t);
-      });
-      box.appendChild(el);
-    } else {
-      box.appendChild(quickAction("Condividi file", ICON_SHARE, () => exportTrack(t)));
-    }
-    box.appendChild(quickAction("Nascondi", ICON_HIDE, () => hideTrack(t.id), true));
-  if (hiddenTracks.size) {
-    box.appendChild(quickAction("Rimetti i nascosti", ICON_HIDE, () => _ripristinaNascosti()));
+  /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
+     ascoltare senza connessione". Il bottone di download offline c'era
+     solo per i brani "builtin" (quelli dell'app): i brani condivisi, come
+     quelli di Diego, non avevano nemmeno il pulsante. Ora c'e' per tutti i
+     brani che hanno un file. */
+  if (t.url) {
+    const el = document.createElement("button");
+    el.className = "quick-btn";
+    el.type = "button";
+    el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + ICON_OFFLINE + '"/></svg>';
+    const gia = isCached(t);
+    el.appendChild(document.createTextNode(gia ? "Già salvata offline" : cloudBusy ? "Salvataggio..." : "Salva per offline"));
+    el.disabled = gia;
+    el.style.opacity = gia ? ".55" : "1";
+    el.addEventListener("click", () => {
+    closeQuick();
+    if (!cloudBusy) cacheOneTrack(t);
+    });
+    box.appendChild(el);
+  } else {
+  box.appendChild(quickAction("Condividi file", ICON_SHARE, () => exportTrack(t)));
   }
+    /* Ste: "togli completamente sta cosa dei nascosti" e "quando elimino una
+       canzone si elimini direttamente per sempre chiedendo pero' una
+       conferma". */
+    box.appendChild(quickAction("Elimina", ICON_HIDE, () => _eliminaBrano(t.id), true));
     renderQueueCount();
     $("quickPanel").hidden = false;
     syncNoScroll();
@@ -4777,38 +4492,7 @@ box.innerHTML = "";
   /* Qui si rimettono i brani nascosti: la finestra con la lista di "nascosti"
      e' stata tolta (l'eliminazione chiede gia' conferma, quindi era inutile),
      ma se un brano e' stato nascosto puoi riportarlo qui, dal menu del brano
-     o del profilo. */
-function _ripristinaNascosti() {
-      /* Ste: "delle canzoni nell'account di Diego che lui non ha messo... rimettile
-         se non ci sono". I brani nascosti si nascondevano per TUTTI gli account
-         (l'elenco e' uno solo), per cui una canzone di Diego spariva anche se
-         non l'aveva nascosta nessuno. E il pulsante rimetteva via TUTTI i
-         brani nascosti, anche quelli di altri: troppo, e poco utile.
-
-         Adesso rimette solo i brani nascosti che sono del profilo aperto, e
-         dice quanti ne rimette e quanti restano nascosti. */
-      if (!hiddenTracks.size) {
-        toast("Non ci sono brani nascosti");
-        return;
-      }
-      /* Gli id dei brani di questo profilo: sono quelli che l'app ha caricato. */
-      const miei = new Set(tracks.map((t) => t.id));
-      const daRimettere = [...hiddenTracks].filter((id) => miei.has(id));
-      if (!daRimettere.length) {
-        const altri = hiddenTracks.size;
-        toast("Nessun brano nascosto in questo profilo (" + altri + " in tutto, ma di altri account)");
-        return;
-      }
-for (const id of daRimettere) { hiddenTracks.delete(id); _nascostoTombaAggiungi(id); }
-  saveCurrentState();
-      _salvaStatoCondiviso();
-      render();
-      const rimasti = hiddenTracks.size;
-      toast(daRimettere.length + (daRimettere.length === 1 ? " brano rimesso" : " brani rimessi") +
-        (rimasti ? " nella libreria di " + profile + " (" + rimasti + " nascosti negli altri account)" : ""));
-    }
-
-  function bindLongPress(el, t) {
+     o del profilo. */  function bindLongPress(el, t) {
 
     let timer = null;
     let startX = 0;
@@ -7451,8 +7135,7 @@ toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefon
     try {
       for (const x of tracks) {
         if (!x || !x.url) continue;
-        if (hiddenTracks.has(x.id)) continue;
-        if (stessoBrano({ title: t.title, artist: t.artist }, { title: x.title, artist: x.artist })) {
+            if (stessoBrano({ title: t.title, artist: t.artist }, { title: x.title, artist: x.artist })) {
           return x;
         }
       }
@@ -8948,39 +8631,11 @@ $("btnFavFilter").addEventListener("click", () => {
   });
   $("fallitiClose").addEventListener("click", _chiudiPannelloFalliti);
 
-  /* Pannello dei brani tolti dalla lista: chiudi, e dentro si sceglie
-     brano per brano (Ste non vuole rimetterli per forza tutti insieme). */
-  $("nascostiClose").addEventListener("click", _chiudiNascosti);
-  $("nascostiPanel").addEventListener("click", (e) => {
-    if (e.target === $("nascostiPanel")) _chiudiNascosti();
-  });
-  $("nascostiCorpo").addEventListener("click", (e) => {
-    const t = e.target;
-    if (!t) return;
-    const azione = t.getAttribute("data-azione");
-    if (azione === "tutti") {
-      /* Dice cosa sta per fare, e solo per l'account aperto. */
-      const quanti = Array.from(hiddenTracks).filter((id) => tracks.some((t) => t.id === id)).length;
-      if (!quanti) { toast("Non ci sono brani nascosti in questo profilo"); return; }
-      if (!confirm("Rimetto in lista i " + quanti + " brani nascosti di " + profile + "?\n\n" +
-        "Gli altri account non vengono toccati.")) return;
-      restoreHidden();
-      _stampaNascosti();
-      return;
-    }
-    if (azione === "rimetti") {
-      const riga = t.closest ? t.closest(".falliti-riga") : null;
-      if (!riga) return;
-      _rimettiNascosto(riga.getAttribute("data-id"));
-      return;
-    }
-    if (azione === "elimina") {
-      const riga = t.closest ? t.closest(".falliti-riga") : null;
-      if (!riga) return;
-      _eliminaNascosto(riga.getAttribute("data-id"));
-      return;
-    }
-  });
+  /* Ste: "togli completamente sta cosa dei nascosti". Il pannello dei brani
+     tolti dalla lista non esiste piu', e con lui i pulsanti "Rimetti in
+     lista". Ora l'unico modo per togliere un brano e' Elimina, che chiede
+     conferma e lo cancella per sempre. */
+
   $("fallitiPanel").addEventListener("click", (e) => {
     if (e.target === $("fallitiPanel")) _chiudiPannelloFalliti();
   });
@@ -9223,21 +8878,26 @@ $("fabMenu").addEventListener("click", (e) => {
       return [];
     }
     const rows = [];
-    for (const t of tracks) {
-      if (!t.builtin) {
-        rows.push({ title: t.title, state: "ok", label: "sul telefono", el: null, track: t });
-        continue;
-      }
-      let cached = false;
-      try { cached = !!(await cache.match(t.url)); } catch (e) { cached = false; }
-      rows.push({
-        title: t.title,
-        state: cached ? "ok" : "todo",
-        label: cached ? "pronta" : "da scaricare",
-        el: null,
-        track: t
-      });
+  for (const t of tracks) {
+    /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
+       ascoltare senza connessione". Prima, per un brano che non era
+       "builtin", scrivevo "sul telefono" e lo davo per gia' scaricato:
+       ma non era mai stato scaricato, e senza rete non si sentiva niente.
+       Ora guardo davvero in cache, per tutti i brani. */
+    if (!t.url) {
+      rows.push({ title: t.title, state: "ok", label: "non scaricabile", el: null, track: t });
+      continue;
     }
+    let cached = false;
+    try { cached = !!(await cache.match(t.url)) || !!(await cache.match(absUrl(t.url))); } catch (e) { cached = false; }
+    rows.push({
+      title: t.title,
+      state: cached ? "ok" : "todo",
+      label: cached ? "pronta" : "da scaricare",
+      el: null,
+      track: t
+    });
+  }
     renderOfflineRows(rows);
     const mancanti = rows.filter((r) => r.state === "todo").length;
     $("offlineSub").textContent = mancanti
@@ -9627,8 +9287,12 @@ $("fabMenu").addEventListener("click", (e) => {
 
   function isCached(t) {
     if (!t) return true;
-    if (!t.builtin) return true;
-    return cachedSongs.has(absUrl(t.url));
+    /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva ascoltare
+       senza connessione". Prima qui, per un brano che non era "builtin"
+       (quello di Diego e' condiviso, non e' dell'app), rispondevo sempre
+       "gia' salvata": cosi' l'app credeva che fosse tutto pronto e non
+       scaricava mai niente. Ora guardo davvero in cache, come per gli altri. */
+    return cachedSongs.has(absUrl(t.url)) || cachedSongs.has(t.url);
   }
 
   async function fetchToCache(url, cache, onProgress) {
@@ -9659,7 +9323,12 @@ $("fabMenu").addEventListener("click", (e) => {
   }
 
   async function cacheOneTrack(t, el) {
-    if (cloudBusy || !t || !t.builtin) return;
+    /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
+       ascoltare senza connessione". Prima qui fermavo tutto se il brano
+       non era "builtin": i brani condivisi (quelli di Diego, degli amici)
+       non si potevano proprio scaricare. Ora va bene QUALSIASI brano che
+       abbia un indirizzo. */
+    if (cloudBusy || !t || !t.url) return;
     cloudBusy = true;
     if (el) {
       el.classList.add("run");
@@ -10468,17 +10137,17 @@ function _aggiornaBadgePlaylist() {
           const via = document.createElement("button");
           via.type = "button";
             via.className = "confirm-no pericolo";
-          via.textContent = "Nascondi i brani di questa playlist dalla libreria (" + (quanti - gia) + ")";
-          via.title = "Restano suonabili qui dentro, ma non li vedi piu' nella libreria. " +
-            "Puoi sempre riportarli indietro da questo stesso posto.";
-          via.addEventListener("click", async () => {
-            const si = await askConfirm(
-              "Nascondere dalla libreria?",
-              "I " + (quanti - gia) + " brani di \"" + pl.name + "\" spariscono dalla libreria.\n\n" +
-              "Restano suonabili qui dentro, e sul sito per gli altri. " +
-              "Per riportarli: apri questa playlist e premi il tasto qui sotto.",
-              "Nascondi"
-            );
+            via.textContent = "Sposta i brani di questa playlist fuori dalla libreria (" + (quanti - gia) + ")";
+            via.title = "Restano suonabili qui dentro, ma non li vedi piu' nella libreria. " +
+              "Puoi sempre riportarli indietro da questo stesso posto.";
+            via.addEventListener("click", async () => {
+              const si = await askConfirm(
+                "Spostare i brani fuori dalla libreria?",
+                "I " + (quanti - gia) + " brani di \"" + pl.name + "\" spariscono dalla libreria.\n\n" +
+                "Restano suonabili qui dentro, e sul sito per gli altri. " +
+                "Per riportarli: apri questa playlist e premi il tasto qui sotto.",
+                "Sposta"
+              );
               if (!si) return;
               for (const id of (pl.tracks || [])) _mettiSoloInPlaylist(id);
               /* Salvo anche sulla playlist: cosi' la scelta vale anche nel
@@ -10970,24 +10639,7 @@ $("btnTimer").addEventListener("click", () => {
 
    Il segno e' una lista di nomi rimossi, tenuta sul telefono. Quando
    invece nascondi un brano di nuovo, il segno sparisce: la scelta piu'
-   recente vince sempre. */
-  function _nascostiTomba() {
-    try { return new Set(LS.get("mb.nascistiRimossi", []) || []); } catch (e) { return new Set(); }
-  }
-  function _nascostoTombaAggiungi(id) {
-    try {
-      const s = _nascostiTomba();
-      if (!s.has(id)) { s.add(id); LS.set("mb.nascistiRimossi", [...s]); }
-    } catch (e) { /* noop */ }
-  }
-  function _nascostoTombaRimuovi(id) {
-    try {
-      const s = _nascostiTomba();
-      if (s.has(id)) { s.delete(id); LS.set("mb.nascistiRimossi", [...s]); }
-    } catch (e) { /* noop */ }
-  }
-
-  function _salvaStatoCondiviso() {
+   recente vince sempre. */  function _salvaStatoCondiviso() {
     _statoDaSalvare = true;
     _quanteRiprove = 0;
     try {
@@ -10997,15 +10649,11 @@ $("btnTimer").addEventListener("click", () => {
        tre richieste al computer. */
     _timerStatoCondiviso = setTimeout(async () => {
       const corpo = JSON.stringify({
-/* Brani nascosti adesso. Il campo si chiama "nascostiNuovi" perche'
-       il server non accetta piu' l'elenco intero: quello me lo
-       rimandavano indietro i telefoni con la versione vecchia, e i
-       brani che avevo rimesso in lista tornavano nascosti anche su
-       github. Ora contano solo le scelte fatte adesso. */
-nascostiNuovi: (function () {
-try { return _nascostiDaMandare(); } catch (e) { return []; }
-})(),
-  preferiti: [...favorites],
+        /* Ste: "togli completamente sta cosa dei nascosti": qui non ci
+           sono piu' i campi dei brani nascosti. Quello che resta e' la
+           lista dei brani ELIMINATI per sempre (piu' sotto), che e' la
+           cosa che fa avere la stessa libreria a tutti i link. */
+        preferiti: [...favorites],
   /* Ste: "le statistiche non funzionano bene, i minuti ascoltati a Diego
      non spuntano". Le statistiche stavano solo nella memoria di questo
      dispositivo, quindi sull'altro link (che per il browser e' un posto
@@ -11013,30 +10661,6 @@ try { return _nascostiDaMandare(); } catch (e) { return []; }
      condivisi, e quando arrivano tengo il numero piu' alto: cosi' due
      dispositivi non si azzerano a vicenda e i secondi non si perdono. */
   statistiche: _statisticheDiTutti(),
-  /* Ste: "dice che l'ha aggiunta ma non c'e'". Il telefono aveva ancora
-     in testa quel brano come nascosto e me lo rimandava a ogni giro,
-     cosi' il server lo rimetteva nascosto e la canzone spariva di nuovo.
-     Ora mando anche l'elenco dei brani che ho ripreso: il server li toglie
-     davvero e non basta piu' nasconderli sul sito, bisogna dirgli che
-     sono stati presi di mira. */
-  nascostiRimossi: (function () {
-      /* Ste: "su github sono 231 brani, su tailscale 237". La libreria era
-         uguale (250 e 250), ma i nascosti no (15 e 10).
-
-         Motivo: la lista dei "brani ripresi" (i tomboni) non si consumava
-         MAI. Ogni volta che rimettevo in lista una canzone, il segno
-         restava li' per sempre e il server non me la lasciava piu'
-         nascondere: se la ri-nascotevo, lui me la toglieva di nuovo.
-
-         E infatti i dati erano 25 tomboni contro 3 brani nascosti: il
-         server stava continuamente cancellando.
-
-         Un tombone vale una volta sola. Se un brano e' di nuovo tra i
-         nascosti, il suo tombone non vale piu' e va fuori. */
-      try {
-        return [..._nascostiTomba()].filter(function (id) { return !hiddenTracks.has(id); });
-      } catch (e) { return []; }
-    })(),
         /* i brani che ho copiato nella mia libreria, per ogni nome. Serve
            cosi' ritrovo la copia anche sull'altro dispositivo. */
         miei: (function () {
@@ -11097,7 +10721,7 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _nascostiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -11160,9 +10784,8 @@ const j = await r.json();
          identica. Il posto vero e' il Worker, quindi prendo il suo.
          Se il Worker non ha niente, non tocco niente: meglio tenere la
          lista locale che azzerarla. */
-      if (Array.isArray(j && j.nascostiRimossi) && j.nascostiRimossi.length) {
-        try { LS.set("mb.nascistiRimossi", [...new Set(j.nascostiRimossi)]); } catch (e) { /* noop */ }
-      }
+      /* Ste: "togli completamente sta cosa dei nascosti". La lista dei
+         "brani ripresi" non serve piu': non esistono piu' i nascosti. */
 
       /* I brani che l'utente ha ELIMINATO davvero con la X valgono anche
          qui: Ste ha premuto la X dal computer, e quei brani devono stare
@@ -11202,99 +10825,16 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
            DOPO, quando la libreria c'e' gia'. Un id che non corrisponde a
            nulla non fa sparire niente: al massimo un contatore che non
            torna. */
-        const idForseStrani = [];
-        let aggiunti = 0;
-        /* Ste: "su tailscale sono 11 nascosti e su github 17", con la
-           libreria identica (250 e 250). Fin qui ho solo ACCUMULATO quello
-           che arrivava dal server sopra quello che avevo in testa: e
-           allora ogni link teneva i suoi, e i due non coincidevano mai.
-
-           Il posto dove vivo e' il server, non la mia testa. Se il server
-           risponde con l'elenco dei nascosti, quello e' l'elenco vero:
-           prendo quello, e non quello che avevo prima. Se non risponde,
-           tengo quello che ho: meglio una lista vecchia che una vuota. */
-        const viaRimossi = new Set(Array.isArray(j && j.nascostiRimossi) ? j.nascostiRimossi : []);
-        if (nasco.length) {
-          try {
-            const nuovo = new Set();
-            for (const id of nasco) {
-              if (!id || viaRimossi.has(id)) continue;
-              nuovo.add(id);
-            }
-            const stessi = nuovo.size === hiddenTracks.size &&
-              [...nuovo].every(function (x) { return hiddenTracks.has(x); });
-            if (!stessi) {
-              hiddenTracks.clear();
-              for (const id of nuovo) hiddenTracks.add(id);
-              /* La lista dei nascosti e' una sola per tutti: se la lascio
-                 scritta solo nel profilo aperto, l'altro profilo riparte
-                 dalla sua copia vecchia e i due link tornano a mostrare
-                 numeri diversi. La scrivo ovunque. */
-              try {
-                const tutti = allState() || {};
-                const nomi = Object.keys(tutti);
-                if (PROFILI && PROFILI.length) {
-                  for (const p of PROFILI) if (p && p.nome) nomi.push(p.nome);
-                }
-                for (const nome of nomi) {
-                  if (!nome) continue;
-                  const vecchio = tutti[nome] || {};
-                  writeProfileState(nome, Object.assign({}, vecchio, { hidden: [...nuovo] }));
-                }
-              } catch (e) { /* noop */ }
-              cambiati++;
-            }
-          } catch (e) { /* noop */ }
-        }
-        for (const id of nasco) {
-          if (!id) continue;
-          if (!(Array.isArray(tracks) && tracks.some((t) => t && t.id === id))) idForseStrani.push(id);
-        }
-_diChe("stato dal sito: arrivano " + nasco.length + " nascosti, adesso ne ho " +
-          hiddenTracks.size + ", brani in libreria " +
-          (Array.isArray(tracks) ? tracks.length : -1) + ", tombone " + viaRimossi.size +
-          ", da " + String(location.host || "?"));
-        if (idForseStrani.length) {
-          setTimeout(function () {
-            try {
-              if (!Array.isArray(tracks) || !tracks.length) return;
-              let quanti = 0;
-              for (const id of idForseStrani) {
-                if (!tracks.some((t) => t && t.id === id)) quanti++;
-              }
-              if (quanti) {
-                console.warn("Stato condiviso: " + quanti +
-                  " brani nascosti che qui non esistono. Non fanno danno, ma il conto non torna.");
-              }
-            } catch (e) { /* noop */ }
-          }, 5000);
-        }
+        /* Ste: "togli completamente sta cosa dei nascosti". Non c'e' piu'
+           nessuna lista di brani nascosti: quello che arriva dal server
+           con questo nome viene ignorato. I brani che vuoi togliere si
+           eliminano con "Elimina", che chiede conferma e cancella per
+           sempre (e quello viaggia su tutti i link). */
   /* Anche i minuti ascoltati arrivano da qui: senza questo, sull'altro
      dispositivo le statistiche erano tutte a zero. */
   if (j && j.statistiche) cambiati += _unisciStatistiche(j.statistiche);
-  /* E i brani che QUALCUNO ha ripreso: li tolgo anch'io, non solo li
-     nascondo. Senza questo, il telefono che li aveva ancora in testa li
-     rimandava e il brano restava sparito per sempre. */
-if (j && Array.isArray(j.nascostiRimossi)) {
-  /* Ste: "la pagina di github e quella di tailscale non hanno le stesse
-     canzoni". Misurato: la libreria e' la stessa (250 e 250), ma una
-     ne mostrava 10 nascosti e l'altra 15.
-
-     Motivo: ogni link ha la sua memoria (github e il computer sono due
-     posti diversi per il browser) e ognuno aveva la propria lista dei
-     brani rimessi. Quello che aveva 5 tomboni in piu' toglieva dai
-     nascosti 5 brani che sull'altro erano ancora nascosti.
-
-     Il posto vero di questa lista e' il Worker: adesso, se il Worker
-     risponde, si prende la sua lista e si butta via quella locale.
-     Solo se non risponde (niente rete) si tiene quella che c'era gia'. */
-  cambiati += _togliRimossi(j.nascostiRimossi);
-  try {
-    if (j.nascostiRimossi.length) LS.set("mb.nascistiRimossi", [...new Set(j.nascostiRimossi)]);
-  } catch (e) { /* noop */ }
-  _diChe("tolti i rimessi: arrivano " + j.nascostiRimossi.length +
-    ", adesso nascosti " + hiddenTracks.size);
-  }
+  /* Ste: "togli completamente sta cosa dei nascosti": qui non c'e' piu'
+     niente da togliere, i "brani ripresi" non esistono piu'. */
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
            dispositivo, quindi li metto in elenco insieme a tutto il resto. */
         if (j && j.miei && typeof j.miei === "object") {
@@ -11609,65 +11149,7 @@ pericolo: perDavvero
   $("scopeAnnulla").addEventListener("click", () => _chiudiScope(null));
   $("scopePanel").addEventListener("click", (e) => { if (e.target === $("scopePanel")) _chiudiScope(null); });
 
-  /* Nasconde il brano, togliendolo anche dalle playlist se richiesto. */
-  async function hideTrack(id, scelta) {
-    const t = tracks.find((x) => x.id === id);
-    if (!t) return;
-    /* Senza scelta chiedo: solo se il brano e' in una playlist. */
-    let cosa = scelta || null;
-    if (!cosa) {
-      cosa = await _scegliCosaTogliere(id, t.title, false);
-      if (!cosa) return;
-    }
-    if (cosa === "playlist" || cosa === "entrambe") {
-      for (const p of _playlistCheContengono(id)) {
-        const pl = _playlistCercata(p);
-        if (!pl) continue;
-        pl.tracks = (pl.tracks || []).filter((x) => x !== id);
-      }
-      saveCurrentState();
-      _salvaPlaylistCondivise();
-    }
-    /* "playlist" vuol dire: NON toccare la libreria. */
-    if (cosa === "playlist") {
-      render();
-      renderPlaylist();
-      _aggiornaBadgePlaylist();
-      toast("Tolto dalle playlist, ma resta nella tua libreria");
-      return;
-    }
-    const msg = t.builtin
-      ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
-      : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
-hiddenTracks.add(id);
-    /* Segno che questo brano l'ho nascosto ADESSO io: e' l'unico che va
-       mandato al server.
-       Ste: "quando rimetto le cose nella libreria da quelli nascosti
-       ritornano, ma dopo un po' vengono nascosti di nuovo".
-       Motivo: ogni link mandava TUTTA la sua lista di nascosti. Rimettevo
-       qui, e un secondo dopo l'altro link (che non sapeva niente) mi
-       rimandava indietro la sua lista vecchia e me lo nasconteva di
-       nuovo. Come per i nomi: si manda solo quello che hai fatto adesso,
-       e "rimettere in lista" viaggia a parte, come segno. */
-    _nascostoDaMandareSegna(id);
-    _nascostoTombaRimuovi(id);
-      saveCurrentState();
-      _salvaStatoCondiviso();
-    const extra = cosa === "entrambe"
-      ? " E' uscito anche dalle playlist."
-      : " Resta nelle playlist.";
-    toast(msg.slice(0, 90) + extra);
-    if (currentId === id) {
-      if (audio) audio.pause();
-      currentId = null;
-      setHud();
-    }
-    render();
-    renderPlaylist();
-    _aggiornaBadgePlaylist();
-  }
-
-  /* ---------- Le playlist nella libreria ----------
+  /* Nasconde il brano, togliendolo anche dalle playlist se richiesto. */  /* ---------- Le playlist nella libreria ----------
      Non sono una sezione a parte con una finestra: sono una fila di
      linguette sopra la libreria. Tocchi una e sotto vedi la lista normale
      con dentro solo i brani di quella playlist. Torni su "Tutte" e hai di
@@ -11954,8 +11436,7 @@ for (const p of playlists) {
   function _gruppiSimili() {
     const perTitolo = new Map();
     for (const t of tracks) {
-      if (hiddenTracks.has(t.id)) continue;
-      const titolo = stripArtistPrefix(t.artist, t.title) || t.title || "";
+        const titolo = stripArtistPrefix(t.artist, t.title) || t.title || "";
       const k = normKey(titolo);
       if (!k || k.length < 3) continue;
       if (!perTitolo.has(k)) perTitolo.set(k, []);
