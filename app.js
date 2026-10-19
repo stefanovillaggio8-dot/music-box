@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.307";
+  const APP_VERSION = "6.308";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11354,11 +11354,17 @@ for (const k of Object.keys(j.rinomini)) {
     try { quanti = visibleTracks().length; } catch (e) { quanti = -1; }
     _diChe("FINALE: visibili " + quanti + " su " + tracks.length +
       " | nascosti " + hiddenTracks.size +
+      " | soloPlaylist " + _soloInPlaylist.size +
       " | playlist " + (_playlistAttiva ? _playlistAttiva : "nessuna") +
       " | preferiti " + (favOnly ? "si" : "no") +
       " | maiascoltati " + (soloMaiAscoltati ? "si" : "no") +
+      " | eliminati " + (function () { try { return Object.keys(LS.get("mb.eliminati", {}) || {}).length; } catch (e) { return -1; } })() +
       " | da " + String(location.host || "?"));
   }
+  /* La chiamo SEMPRE, non solo quando qualcosa e' cambiato: altrimenti
+     se non cambia niente non mi arriva mai la riga, e io resto al buio
+     proprio quando i due link coincidono. */
+  try { setTimeout(_diCheFinale, 1200); } catch (e) { /* noop */ }
 
   if (cambiati) {
     saveCurrentState();
