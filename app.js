@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.330";
+  const APP_VERSION = "6.331";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12656,6 +12656,8 @@ let _ultimoTocco = Date.now();
    ricaricamento ASPETTA: si fa quando non stai usando niente. */
 function _pannelloAperto() {
   try {
+    /* un accesso a Spotify in corso: se mi ricarico, perdo tutto */
+    if (_loginSpotifyInCorso) return true;
     const p = $("spotifyPanel");
     if (p && !p.hidden) return true;
     /* un accesso a Spotify in corso: se mi ricarico, perdo il codice */
@@ -12846,11 +12848,25 @@ async function _spotifyPkce() {
 
 /* Step 1: butto Ste su Spotify per l'accesso. */
 async function _spotifyAccedi() {
-  if (!SPOTIFY_CLIENT_ID) { toast("Manca il Client ID di Spotify"); return; }
+  /* Ste: "se premo accedi con spotify si ricarica la pagina e spunta di
+     nuovo accedi con spotify".
+
+     Motivo: il pulsante chiudeva il pannello e poi partiva l'accesso. Ma
+     chiudendo il pannello, il controllo "c'e' un pannello aperto?" diceva
+     no, e il ricaricamento automatico (che parte quando c'e' una versione
+     nuova) scattava proprio mentre l'accesso era in mezzo: la pagina si
+     ricaricava e l'accesso andava perso.
+
+     Adesso: il pannello resta aperto (deve, cosi' si vede il link
+     "Apri Spotify") e un segnale dedicated dice che l'accesso e' in
+     corso, cosi' il ricaricamento aspetta. */
+  _loginSpotifyInCorso = true;
+  if (!SPOTIFY_CLIENT_ID) { toast("Manca il Client ID di Spotify"); _loginSpotifyInCorso = false; return; }
   let pk;
   try { pk = await _spotifyPkce(); } catch (e) {
-    toast("Il telefono non mi fa fare le operazioni sicure: usa Safari aggiornato");
-    return;
+  toast("Il telefono non mi fa fare le operazioni sicure: usa Safari aggiornato");
+  _loginSpotifyInCorso = false;
+  return;
   }
   /* ATTENZIONE: la chiave DEVE sopravvivere al salto su Spotify. Se resta
      solo in una variabile, la pagina si ricarica e la variabile sparisce:
@@ -12905,15 +12921,21 @@ async function _spotifyAccedi() {
   _spotifyTraccia("accesso: sto per aprire Spotify");
   let aperta = false;
   try {
-    /* il tocco e' suo: e' l'unico modo che iOS lascia passare quando
-       l'app e' installata sulla schermata Home */
-    const f = window.open(url, "_blank");
-    aperta = !!(f && !f.closed);
-    _spotifyTraccia("finestra nuova: " + (aperta ? "aperta" : "bloccata"));
+  /* il tocco e' suo: e' l'unico modo che iOS lascia passare quando
+  l'app e' installata sulla schermata Home */
+  const f = window.open(url, "_blank");
+  aperta = !!(f && !f.closed);
+  _spotifyTraccia("finestra nuova: " + (aperta ? "aperta" : "bloccata"));
   } catch (e) { _spotifyTraccia("finestra nuova: bloccata"); }
+  /* Ste: "se premo accedi con spotify si ricarica la pagina".
+  Prima, se la finestra nuova non si apriva, l'app SALTA via di sua sponda
+  (location.href = url): la pagina spariva e tornava, e sembrava un
+  ricaricamento a caso. Inoltre l'accesso a meta' perdevi.
+  Non lo faccio piu': il link qui sotto c'e' SEMPRE, e un tocco su un link
+  vero lo gestisce il telefono, non il nostro codice. */
   if (!aperta) {
-    try { window.location.href = url; _spotifyTraccia("salto diretto: provato"); }
-    catch (e) { _spotifyTraccia("salto diretto: bloccato"); }
+  try { _spotifyTraccia("salto diretto: non lo faccio, resta il link"); }
+  catch (e) { /* noop */ }
   }
 }
 
@@ -13170,6 +13192,9 @@ function _spotifyParla(variabile, testo) {
    rispondeva 403 e il codice lo cancellava solo sul 401: l'app credeva
    di essere gia' collegata e non offriva piu' il pulsante. */
 let _spotifyErrore = 0;
+/* Vero mentre l'accesso a Spotify e' in corso: blocca il ricaricamento
+   automatico, che altrimenti lo cancella a meta'. */
+let _loginSpotifyInCorso = false;
 function _spotifyChiediAccesso(perche) {
   const extra = perche ? '<p class="step-hint">' + perche + '</p>' : '';
   _spotifyPnl("Collegare Spotify",
@@ -13181,7 +13206,7 @@ function _spotifyChiediAccesso(perche) {
     '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
     '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
   try {
-    $("spotifyAccedi").addEventListener("click", () => { _spotifyChiudi(); _spotifyAccedi(); });
+    $("spotifyAccedi").addEventListener("click", () => { _spotifyAccedi(); });
     $("spotifySalta").addEventListener("click", () => {
       _spotifyChiudi();
       toast("Nessun problema, l'app resta come e'");
