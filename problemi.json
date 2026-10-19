@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792440745149,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792440760954,
   "r": "app avviata: pulsante Spotify presente=true versione=6.323"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792442662103,
   "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792442672125,
+  "r": "worker /stato: risponde"
  }
 ]
