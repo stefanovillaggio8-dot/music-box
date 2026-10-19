@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792416670220,
-  "r": "libreria: 207 brani, profilo Diego, duplicati via 0, nascosti 0, da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792422986120,
   "r": "app avviata: pulsante Spotify presente=true versione=6.313"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792431461743,
   "r": "X premuta"
+ },
+ {
+  "t": 1792431492510,
+  "r": "bottone toccato"
  }
 ]
