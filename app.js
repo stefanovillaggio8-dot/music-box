@@ -1,6 +1,10 @@
 "use strict";
 
 (function () {
+  /* Vero mentre l'accesso a Spotify e' in corso: blocca il ricaricamento
+     automatico, che altrimenti lo cancella a meta'. Lo dichiaro con var
+     in cima all'app, cosi' e' visibile da tutte le funzioni. */
+  var _loginSpotifyInCorso = false;
   const BUILTIN = [
   { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
 
@@ -12644,10 +12648,6 @@ let _ultimoTocco = Date.now();
   const _toccatoPiuFa = () => {
     try { return Date.now() - _ultimoTocco < 6000; } catch (e) { return false; }
   };
-/* Vero mentre l'accesso a Spotify e' in corso: blocca il ricaricamento
-   automatico, che altrimenti lo cancella a meta'. */
-let _loginSpotifyInCorso = false;
-
 /* Ste: "premo accedi con spotify, mi spunta per un attimo 'apri spotify'
    ma poi e' come se si aggiornasse la pagina e si toglie".
 
