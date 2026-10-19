@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.304";
+  const APP_VERSION = "6.305";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1974,21 +1974,28 @@ function _devoVedereBrano(eMio, b) {
    continuare a indovinare. Costa niente e non blocca niente. */
   let _diUltimoInvio = 0;
   let _diUltimoInvio2 = 0;
+  let _diUltimoInvio3 = 0;
   function _diChe(riga) {
     try {
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       const ora = Date.now();
-      /* Due contatori separati: prima le due righe si pestavano e una
-         mangiava l'altra, e io non sapevo se il dato era arrivato. */
-      const quale = String(riga).indexOf("stato dal sito") === 0 ? 2 : 1;
-      const prima = quale === 2 ? _diUltimoInvio2 : _diUltimoInvio;
-      if (ora - prima < 1500) return;
-      if (quale === 2) _diUltimoInvio2 = ora; else _diUltimoInvio = ora;
+      /* Tre scomparti separati. Con uno solo le righe si pestavano: la
+         libreria arriva subito prima dei visibili, e quella mangiava
+         questa. E cosi' non sapevo mai quale filtro fosse attivo. */
+      const testo = String(riga);
+      let quale = 1;
+      if (testo.indexOf("stato dal sito") === 0) quale = 2;
+      else if (testo.indexOf("visibili") === 0) quale = 3;
+      const ultima = quale === 2 ? _diUltimoInvio2 : (quale === 3 ? _diUltimoInvio3 : _diUltimoInvio);
+      if (ora - ultima < 1500) return;
+      if (quale === 2) _diUltimoInvio2 = ora;
+      else if (quale === 3) _diUltimoInvio3 = ora;
+      else _diUltimoInvio = ora;
       fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riga: String(riga).slice(0, 160) })
+        body: JSON.stringify({ riga: testo.slice(0, 160) })
       }).catch(function () { /* senza rete pazienza */ });
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
@@ -3007,6 +3014,25 @@ _nascostoTombaAggiungi(id);
     const m = _nascostiDaMandare().filter(function (x) { return x !== id; });
     LS.set("mb.nascostiDaMandare", m);
   } catch (e) { /* noop */ }
+
+  /* Ste: "quando rimetto un brano dalla lista dei brani eliminati, resta
+     un po' in libreria e poi dopo pochissimo tempo ritorna nella lista".
+
+     Motivo: "rimettere in lista" toglieva il brano dai nascosti, ma NON
+     dall'elenco degli eliminati. Il server continuava a considerarlo
+     eliminato, e al giro dopo me lo rimetteva fra le cose eliminate.
+
+     Rimettere in lista deve valere anche per l'eliminazione: e come per
+     i nascosti, si dice al server "questo non e' piu' eliminato". */
+  try {
+    const el = LS.get("mb.eliminati", null) || {};
+    if (el[id]) {
+      delete el[id];
+      LS.set("mb.eliminati", el);
+      _eliminatoRimessoSegna(id);
+    }
+  } catch (e) { /* noop */ }
+  try { _nascostiDaMandareSvuota(); } catch (e) { /* noop */ }
   saveCurrentState();
   _salvaStatoCondiviso();
   render();
@@ -3485,6 +3511,26 @@ function _nascostoDaMandareSegna(id) {
 }
 function _nascostiDaMandareSvuota() {
   try { LS.set("mb.nascostiDaMandare", []); } catch (e) { /* noop */ }
+}
+
+/* I brani che l'utente ha rimesso in lista DOPO averli eliminati: il
+   server deve toglierli dall'elenco degli eliminati, altrimenti al giro
+   dopo me li rimette fra le cose eliminate. */
+function _eliminatiRimossiDaMandare() {
+  try {
+    const v = LS.get("mb.eliminatiRimossiDaMandare", null);
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
+}
+function _eliminatoRimessoSegna(id) {
+  try {
+    const m = _eliminatiRimossiDaMandare();
+    if (id && m.indexOf(id) < 0) m.push(id);
+    LS.set("mb.eliminatiRimossiDaMandare", m);
+  } catch (e) { /* noop */ }
+}
+function _eliminatiRimossiDaMandareSvuota() {
+  try { LS.set("mb.eliminatiRimossiDaMandare", []); } catch (e) { /* noop */ }
 }
 
   function eGiaCondiviso(t) {
@@ -10946,6 +10992,11 @@ rinomini: (function () {
        altrimenti un dispositivo vecchio li rimetterebbe dentro. */
     eliminati: (function () {
       try { return _eliminatiDaMandare(); } catch (e) { return []; }
+    })(),
+    /* E i brani che ho rimesso in lista DOPO averli eliminati: il server
+       deve tirarli fuori dall'elenco degli eliminati. */
+    eliminatiRimossi: (function () {
+      try { return _eliminatiRimossiDaMandare(); } catch (e) { return []; }
     })()
   });
       /* Adesso scrivo SOLO sul Worker. Prima scrivevo prima sul computer e,
@@ -10970,7 +11021,7 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _nascostiDaMandareSvuota(); }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _nascostiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -11187,7 +11238,22 @@ for (const k of Object.keys(j.rinomini)) {
         if (rimessi) { LS.set("mb.rinomini", mappa); cambiati++; }
       } catch (e) { /* noop */ }
     }
-if (cambiati) {
+/* Ste: "la libreria che ho su github e' diversa da quella su tailscale".
+     La chiamo DOPO che ho applicato tutto (nascosti, nomi, eliminati) e
+     DOPO che la libreria e' stata ricaricata: cosi' conta davvero e non
+     un numero di mezzo lavoro. */
+  function _diCheFinale() {
+    let quanti = 0;
+    try { quanti = visibleTracks().length; } catch (e) { quanti = -1; }
+    _diChe("FINALE: visibili " + quanti + " su " + tracks.length +
+      " | nascosti " + hiddenTracks.size +
+      " | playlist " + (_playlistAttiva ? _playlistAttiva : "nessuna") +
+      " | preferiti " + (favOnly ? "si" : "no") +
+      " | maiascoltati " + (soloMaiAscoltati ? "si" : "no") +
+      " | da " + String(location.host || "?"));
+  }
+
+  if (cambiati) {
     saveCurrentState();
     /* Ricarico davvero la libreria, non la ridisegno: le canzoni appena
        copiate devono comparire SUBITO, senza dover riaprire l'app. */
