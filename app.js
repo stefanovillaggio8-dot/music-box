@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.303";
+  const APP_VERSION = "6.304";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2999,7 +2999,14 @@ function _rimettiNascosto(id) {
   /* Ste: "li rimetto e funzionano, ma al riavvio si tolgono di nuovo".
      Segno che questo brano l'ho rimesso io, cosi' il ricaricamento dal
      sito non lo nasconde di nuovo. */
-  _nascostoTombaAggiungi(id);
+_nascostoTombaAggiungi(id);
+  /* Se questo brano l'avevo nascosto un attimo fa e non e' ancora partito,
+     tolgo anche la richiesta: non voglio mandare "nascosto" e "rimosso"
+     nella stessa borsa, con la seconda che arriva dopo. */
+  try {
+    const m = _nascostiDaMandare().filter(function (x) { return x !== id; });
+    LS.set("mb.nascostiDaMandare", m);
+  } catch (e) { /* noop */ }
   saveCurrentState();
   _salvaStatoCondiviso();
   render();
@@ -3457,6 +3464,27 @@ function _eliminatiDaMandareSegna(id) {
 }
 function _eliminatiDaMandareSvuota() {
   try { LS.set("mb.eliminatiDaMandare", []); } catch (e) { /* noop */ }
+}
+
+/* Idem per i brani nascosti: si manda solo quello che ho nascosto adesso.
+   Vedi la nota dove chiamo _nascostoDaMandareSegna: se mando tutta la
+   lista, un link che non ha ancora visto i cambiamenti degli altri me li
+   rimanda indietro e ricomincio da capo. */
+function _nascostiDaMandare() {
+  try {
+    const v = LS.get("mb.nascostiDaMandare", null);
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
+}
+function _nascostoDaMandareSegna(id) {
+  try {
+    const m = _nascostiDaMandare();
+    if (id && m.indexOf(id) < 0) m.push(id);
+    LS.set("mb.nascostiDaMandare", m);
+  } catch (e) { /* noop */ }
+}
+function _nascostiDaMandareSvuota() {
+  try { LS.set("mb.nascostiDaMandare", []); } catch (e) { /* noop */ }
 }
 
   function eGiaCondiviso(t) {
@@ -10855,7 +10883,14 @@ $("btnTimer").addEventListener("click", () => {
        tre richieste al computer. */
     _timerStatoCondiviso = setTimeout(async () => {
       const corpo = JSON.stringify({
-nascosti: [...hiddenTracks],
+/* Solo i brani nascosti ADESSO su questo dispositivo. Prima mandavo
+       tutta la lista, e gli altri link me la rimandavano indietro:
+       Ste "quando rimetto le cose in libreria, dopo un po' vengono
+       nascoste di nuovo". Il server unisce quello che arriva, quindi
+       mandare solo il nuovo lo lascia lo stesso, senza rischio. */
+    nascosti: (function () {
+      try { return _nascostiDaMandare(); } catch (e) { return []; }
+    })(),
   preferiti: [...favorites],
   /* Ste: "le statistiche non funzionano bene, i minuti ascoltati a Diego
      non spuntano". Le statistiche stavano solo nella memoria di questo
@@ -10935,7 +10970,7 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _nascostiDaMandareSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -11412,8 +11447,18 @@ pericolo: perDavvero
     const msg = t.builtin
       ? "'" + t.title + "' sparisce dalla tua lista, ma resta nel sito e gli altri lo vedono ancora."
       : "'" + t.title + "' sparisce dalla tua lista di questo profilo.";
-      hiddenTracks.add(id);
-      _nascostoTombaRimuovi(id);
+hiddenTracks.add(id);
+    /* Segno che questo brano l'ho nascosto ADESSO io: e' l'unico che va
+       mandato al server.
+       Ste: "quando rimetto le cose nella libreria da quelli nascosti
+       ritornano, ma dopo un po' vengono nascosti di nuovo".
+       Motivo: ogni link mandava TUTTA la sua lista di nascosti. Rimettevo
+       qui, e un secondo dopo l'altro link (che non sapeva niente) mi
+       rimandava indietro la sua lista vecchia e me lo nasconteva di
+       nuovo. Come per i nomi: si manda solo quello che hai fatto adesso,
+       e "rimettere in lista" viaggia a parte, come segno. */
+    _nascostoDaMandareSegna(id);
+    _nascostoTombaRimuovi(id);
       saveCurrentState();
       _salvaStatoCondiviso();
     const extra = cosa === "entrambe"
