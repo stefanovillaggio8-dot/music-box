@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.320";
+  const APP_VERSION = "6.321";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2864,13 +2864,28 @@ function _soloInPlaylistRimossiSvuota() {
 }
 
   /* Mette un brano "solo nella playlist": sparisce dalla libreria ma
-     continua a esistere e a suonare dentro la sua playlist. */
+     continua a esistere e a suonare dentro la sua playlist.
+
+     Ste: "le ho fatte restare solo nella playlist gym, sono scomparse ma
+     sono tornate".
+     Motivo: qui il brano veniva segnato SIA fra quelli da mandare SIA fra
+     quelli da togliere. Il server, quando vede un brano in entrambe le
+     liste, lo toglie: quindi la lista si annullava da sola e il brano
+     tornava in libreria.
+
+     Ora: se metto un brano "solo in playlist", lo mando in quella lista e
+     lo TOLGO da quella dei "da togliere". Viceversa se lo rimetto in
+     libreria, lo mando fra quelli da togliere. */
   function _mettiSoloInPlaylist(id) {
     if (!id) return false;
     _soloInPlaylist.add(id);
     _salvaSoloInPlaylist();
     _soloInPlaylistSegna(id, true);
-    _soloInPlaylistRimossaSegna(id);
+    /* non lo metto fra quelli da togliere: altrimenti si annullano. */
+    try {
+      const m = _soloInPlaylistRimossiDaMandare().filter(function (x) { return x !== id; });
+      LS.set("mb.soloInPlaylistRimossi", m);
+    } catch (e) { /* noop */ }
     return true;
   }
   function _togliSoloInPlaylist(id) {
@@ -3023,12 +3038,24 @@ async function _eliminaBrano(id) {
     try {
       _mettiSoloInPlaylist(id);
       _salvaSoloInPlaylist();
-      _salvaSoloInPlaylistDaMandare();
+      /* Ste: "le ho fatte restare solo nella playlist gym, sono scomparse
+         ma sono tornate".
+         Motivo: qui chiamavo una funzione che non esisteva
+         ("_salvaSoloInPlaylistDaMandare"). L'errore finiva nel catch e il
+         brano non veniva messo nella lista dei "solo in playlist": quindi
+         tornava in libreria.
+         Quella che esiste e' _soloInPlaylistSegna, che segna il brano da
+         mandare al server. */
+      _soloInPlaylistSegna(id, true);
+      _soloInPlaylistRimossaSegna(id);
       _salvaStatoCondiviso();
       saveCurrentState();
       render();
       toast(nome + ": tolto dalla libreria, resta nelle playlist", 5000);
-    } catch (e) { /* noop */ }
+    } catch (e) {
+      try { toast("Non sono riuscito a toglierlo dalla libreria: " +
+        String((e && e.message) || "errore"), 5000); } catch (x) {}
+    }
     return;
   }
 
