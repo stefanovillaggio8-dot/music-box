@@ -583,7 +583,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.326";
+  const APP_VERSION = "6.327";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12906,18 +12906,28 @@ async function _spotifyCompletaAccesso(code, stato) {
   return true;
 }
 
-async function _spotifyApi(percorso) {
-  const token = _spotifyToken();
-  if (!token) return null;
-  try {
-    const r = await fetch("https://api.spotify.com/v1" + percorso, {
-      headers: { Authorization: "Bearer " + token }
-    });
-    if (r.status === 401) return null;
-    if (!r.ok) return null;
-    return await r.json();
-  } catch (e) { return null; }
-}
+  async function _spotifyApi(percorso) {
+    const token = _spotifyToken();
+    if (!token) return null;
+    try {
+      const r = await fetch("https://api.spotify.com/v1" + percorso, {
+        headers: { Authorization: "Bearer " + token }
+      });
+      if (r.status === 401) {
+        /* Ste: "non sono riuscito a leggere le tue playlist".
+           Motivo: il token era scaduto (o non valido), ma restava li' e
+           l'app credeva di essere gia' collegata: cosi' non offriva
+           nemmeno il pulsante per ricollegarsi.
+
+           Quando Spotify dice 401, il token non vale piu': lo cancello,
+           cosi' la prossima volta compare la schermata di accesso. */
+        try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
+        return null;
+      }
+      if (!r.ok) return null;
+      return await r.json();
+    } catch (e) { return null; }
+  }
 
 /* Le playlist, anche le private: per queste serve l'accesso. */
 async function _spotifyPlaylist() {
@@ -12993,36 +13003,37 @@ function _spotifyPnl(titolo, sotto, html) {
    sotto l'altro. Si vede esattamente dove si ferma, senza dover
    indovinare. E' roba mia di diagnostica: quando funziona si puo'
    togliere. */
-function _spotifyTraccia(testo) {
-  /* Prima di tutto mando: se il pannello non c'e' o il disegno va storto,
-  la riga deve uscire lo stesso. */
-  _spotifyTracciaManda(testo);
-  try {
-    /* Ste: "appena apro l'app subito mi spunta questa schermata".
-       Qui prima c'era "p.hidden = false": serviva per far vedere le righe
-       dentro il pannello. Ma questa funzione la chiamo anche all'avvio
-       (per dire "pulsante Spotify presente"), e quindi il pannello di
-       Spotify si apriva da solo a ogni avvio.
+  function _spotifyTraccia(testo) {
+    /* Prima di tutto mando: se il pannello non c'e' o il disegno va storto,
+    la riga deve uscire lo stesso. */
+    _spotifyTracciaManda(testo);
+    try {
+      /* Ste: "appena apro spotify spunta questo" (il riquadro con le righe
+         blu). Era la mia diagnostica: mi serviva per capire dove si
+         fermava, ma non ha senso stare in mezzo all'app.
 
-       Ora la traccia scrive in un riquadro a parte, in alto, e NON tocca
-       il pannello di Spotify. */
-    let box = document.getElementById("spotifyTraccia");
-    if (!box) {
-      box = document.createElement("div");
-      box.id = "spotifyTraccia";
-      box.style.cssText = "position:fixed;top:6px;left:6px;right:6px;z-index:999;" +
-        "max-height:34vh;overflow:auto;margin:0;padding:8px 10px;border-radius:12px;" +
-        "background:rgba(127,215,255,.08);border:1px solid rgba(127,215,255,.25);" +
-        "font:600 12px/1.6 ui-monospace,Consolas,monospace;color:#7fd7ff;" +
-        "word-break:break-word;pointer-events:none";
-      document.body.appendChild(box);
-    }
-    const riga = document.createElement("div");
-    riga.textContent = "- " + testo;
-    box.appendChild(riga);
-  } catch (e) { /* la traccia non deve mai bloccare niente */ }
-  _spotifyTracciaManda(testo);
-}
+         Ora il riquadro compare SOLO se metti ?traccia nell'indirizzo.
+         Le righe continuano ad andare al computer di lavoro (quelle le
+         leggo io), ma non si vedono piu' sul telefono. */
+      let mostrare = false;
+      try { mostrare = /[?&]traccia\b/.test(String(location.search || "")); } catch (e) { mostrare = false; }
+      if (!mostrare) return;
+      let box = document.getElementById("spotifyTraccia");
+      if (!box) {
+        box = document.createElement("div");
+        box.id = "spotifyTraccia";
+        box.style.cssText = "position:fixed;top:6px;left:6px;right:6px;z-index:999;" +
+          "max-height:34vh;overflow:auto;margin:0;padding:8px 10px;border-radius:12px;" +
+          "background:rgba(127,215,255,.08);border:1px solid rgba(127,215,255,.25);" +
+          "font:600 12px/1.6 ui-monospace,Consolas,monospace;color:#7fd7ff;" +
+          "word-break:break-word;pointer-events:none";
+        document.body.appendChild(box);
+      }
+      const riga = document.createElement("div");
+      riga.textContent = "- " + testo;
+      box.appendChild(riga);
+    } catch (e) { /* la traccia non deve mai bloccare niente */ }
+  }
 
   /* Ste: "ancora spotify non apre nulla", e io ogni volta avevo indovinato
      una causa diversa. Il problema e' che vedevo solo quello che diceva
@@ -13102,15 +13113,37 @@ function _spotifyMenu() {
   });
 }
 
-async function _spotifyMostraPlaylist() {
-  _spotifyPnl("Le tue playlist", "sto leggendo...", '<p class="step-hint">Un attimo...</p>');
-  const tutte = await _spotifyPlaylist();
-  if (!tutte.length) {
-    _spotifyPnl("Playlist", "",
-      '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
-      'Prova a collegare Spotify di nuovo.</p>');
-    return;
-  }
+  async function _spotifyMostraPlaylist() {
+    /* Ste: "non sono riuscito a leggere le tue playlist. Prova a
+       collegare Spotify di nuovo".
+       Se non c'e' un accesso valido, il messaggio giusto non e' "non
+       riuscito": e' che non sono ancora collegato. E' quello che diceva
+       prima, ma il token scaduto restava nascosto e l'app non offriva
+       nemmeno il pulsante per ricollegarsi. Ora il token scaduto viene
+       cancellato (vedi _spotifyApi) e quindi qui si torna al collegamento. */
+    if (!_spotifyToken()) {
+      _spotifyPnl("Collegare Spotify", "", '<p class="step-hint">' +
+        "Per vedere le tue playlist serve l'accesso al tuo account Spotify. " +
+        "Me lo dai una volta sola, non ti chiedo la password.</p>" +
+        '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
+        '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
+      try {
+        $("spotifyAccedi").addEventListener("click", () => { _spotifyChiudi(); _spotifyAccedi(); });
+        $("spotifySalta").addEventListener("click", () => {
+          _spotifyChiudi();
+          toast("Nessun problema, l'app resta come e'");
+        });
+      } catch (e) { /* noop */ }
+      return;
+    }
+    _spotifyPnl("Le tue playlist", "sto leggendo...", '<p class="step-hint">Un attimo...</p>');
+    const tutte = await _spotifyPlaylist();
+    if (!tutte.length) {
+      _spotifyPnl("Playlist", "",
+        '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
+        'Prova a collegare Spotify di nuovo.</p>');
+      return;
+    }
   let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
     'che hai gia\' non vengono copiate due volte.</p><div class="spotify-lista">';
   for (const p of tutte) {
