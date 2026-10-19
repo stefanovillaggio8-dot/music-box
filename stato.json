@@ -1,11 +1,6 @@
 {
  "nascosti": [
   "b-track-1",
-  "b-track-284",
-  "builtin-2",
-  "builtin-22"
- ],
- "nascostiRimossi": [
   "b-track-119",
   "b-track-123",
   "b-track-154",
@@ -18,17 +13,22 @@
   "b-track-254",
   "b-track-258",
   "b-track-264",
-  "b-track-266",
-  "b-track-287",
-  "b-track-290",
+  "b-track-284",
   "b-track-42",
-  "b-track-45",
-  "b-track-510",
-  "b-track-511",
   "b-track-65",
   "b-track-71",
   "b-track-8",
   "b-track-99",
+  "builtin-2",
+  "builtin-22"
+ ],
+ "nascostiRimossi": [
+  "b-track-266",
+  "b-track-287",
+  "b-track-290",
+  "b-track-45",
+  "b-track-510",
+  "b-track-511",
   "prova-test-xyz"
  ],
  "eliminati": [
@@ -85,7 +85,7 @@
    "artist": "thasup"
   },
   "b-track-91": {
-   "title": "uNa DiReZioNe giÃÂÃÂ¯ÃÂÃÂ¿ÃÂÃÂ½Sta",
+   "title": "uNa DiReZioNe giÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¿ÃÂÃÂÃÂÃÂ½Sta",
    "artist": "thasup"
   },
   "b-track-28": {
