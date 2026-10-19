@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792440119225,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792440135371,
   "r": "libreria: 207 brani, profilo Diego, duplicati via 0, nascosti 0, da 127.0.0.1:8167"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792442023191,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 28 | playlist nessuna | preferiti no | maiascoltati no | eliminati 11 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792442025520,
+  "r": "worker /stato: risponde"
  }
 ]
