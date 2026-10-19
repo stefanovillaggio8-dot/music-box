@@ -460,7 +460,7 @@
 
   const $ = (id) => document.getElementById(id);
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.308";
+  const APP_VERSION = "6.309";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1995,22 +1995,27 @@ function _devoVedereBrano(eMio, b) {
   let _diUltimoInvio = 0;
   let _diUltimoInvio2 = 0;
   let _diUltimoInvio3 = 0;
+  let _diUltimoInvio4 = 0;
   function _diChe(riga) {
     try {
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       const ora = Date.now();
-      /* Tre scomparti separati. Con uno solo le righe si pestavano: la
-         libreria arriva subito prima dei visibili, e quella mangiava
-         questa. E cosi' non sapevo mai quale filtro fosse attivo. */
+      /* Ogni tipo di riga ha il suo scomparto. Con uno solo se li
+         mangiavano a vicenda: la riga "FINALE" arriva un secondo dopo
+         quella della libreria e finiva sempre scartata dal limite di
+         1500 millisecondi. E quella e' proprio quella che mi serve. */
       const testo = String(riga);
       let quale = 1;
       if (testo.indexOf("stato dal sito") === 0) quale = 2;
       else if (testo.indexOf("visibili") === 0) quale = 3;
-      const ultima = quale === 2 ? _diUltimoInvio2 : (quale === 3 ? _diUltimoInvio3 : _diUltimoInvio);
+      else if (testo.indexOf("FINALE") === 0) quale = 4;
+      const ultima = quale === 2 ? _diUltimoInvio2 :
+        (quale === 3 ? _diUltimoInvio3 : (quale === 4 ? _diUltimoInvio4 : _diUltimoInvio));
       if (ora - ultima < 1500) return;
       if (quale === 2) _diUltimoInvio2 = ora;
       else if (quale === 3) _diUltimoInvio3 = ora;
+      else if (quale === 4) _diUltimoInvio4 = ora;
       else _diUltimoInvio = ora;
       fetch(dove + "/problema", {
         method: "POST",
