@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792440060536,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792440065995,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792441835273,
   "r": "bottone toccato"
+ },
+ {
+  "t": 1792441843310,
+  "r": "worker /stato: risponde"
  }
 ]
