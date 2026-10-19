@@ -582,7 +582,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.316";
+  const APP_VERSION = "6.317";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1365,17 +1365,34 @@ async function _apriDiagnostica() {
   }
 
   /* Accende la voce del menu quando il download automatico e' attivo. */
-  function _disegnaScaricaDaSolo() {
+function _disegnaScaricaDaSolo() {
     try {
-      const b = $("btnScaricaDaSolo");
-      if (!b) return;
-      const acceso = LS.get("mb.scaricaDaSolo", "si") === "si";
-      b.classList.toggle("on", acceso);
-      b.title = acceso
-        ? "Accesa: le canzoni nuove che ascolti si scaricano da sole (con un tetto di spazio)"
-        : "Spenta: le canzioni nuove non si scaricano da sole";
+    const b = $("btnScaricaDaSolo");
+    if (!b) return;
+    const acceso = LS.get("mb.scaricaDaSolo", "si") === "si";
+    b.classList.toggle("on", acceso);
+    b.title = acceso
+      ? "Accesa: le canzoni nuove che ascolti si scaricano da sole (con un tetto di spazio)"
+      : "Spenta: le canzioni nuove non si scaricano da sole";
     } catch (e) { /* noop */ }
   }
+  /* Ste: "ho scaricato tutte le canzoni ma la nuvoletta c'e' ancora".
+     Il tetto di spazio era fisso a 500 MB e non si poteva cambiare. */
+  function _disegnaTettoScarica() {
+    try {
+      const b = $("btnTettoScarica");
+      if (!b) return;
+      const mb = Number(LS.get("mb.tettoScarica", "500")) || 500;
+      b.title = mb >= 999999
+        ? "Senza tetto: tengo offline tutto quello che entra"
+        : "Tengo offline al massimo " + mb + " MB";
+      const t = b.querySelector(".voce-testo");
+      if (t) t.textContent = mb >= 999999
+        ? "Quanto tenere offline: tutto"
+        : "Quanto tenere offline: " + mb + " MB";
+    } catch (e) { /* noop */ }
+  }
+
 
   function apriRinomina(id) {
     const t = tracks.find((x) => x.id === id);
@@ -9202,9 +9219,14 @@ $("fabMenu").addEventListener("click", (e) => {
       }
       row.state = "err";
       row.label = "errore";
+      /* Ste: "se premo mi dice impossibile scaricare". Prima l'errore
+         veniva buttato via e la riga diceva solo "errore": non si capiva
+         il motivo (spazio finito, rete, file che non c'e'...). */
+      row.motivo = String((e && e.message) || "errore");
       if (row.el) {
         row.el.state.className = "off-state err";
         row.el.state.textContent = "errore";
+        row.el.state.title = row.motivo;
       }
     }
   }
@@ -9401,8 +9423,13 @@ $("fabMenu").addEventListener("click", (e) => {
     offlineBusy = false;
     offlineAbort = null;
     $("btnOfflineAll").textContent = "Scarica tutte";
-    const errori = rows.filter((r) => r.state === "err").length;
-    toast(errori ? "Fatto con " + errori + " errori" : "Fatto: canzoni pronte offline");
+    const errori = rows.filter((r) => r.state === "err");
+    if (errori.length) {
+      const primi = errori.slice(0, 2).map((r) => (r.title || "canzone") + " (" + (r.motivo || "errore") + ")");
+      toast("Fatto con " + errori.length + " errori: " + primi.join(", "), 9000);
+    } else {
+      toast("Fatto: " + fatto + " canzoni pronte offline");
+    }
     await scanOffline();
   }
 
@@ -9535,7 +9562,17 @@ $("fabMenu").addEventListener("click", (e) => {
         el.classList.remove("run");
         el.classList.add("err");
       }
-      toast("Download non riuscito: " + e.message);
+      /* Ste: "se premo mi dice impossibile scaricare".
+         Il motivo vero e' quasi sempre lo SPAZIO: il telefono non ha
+         piu' posto per un'altra canzone. E' un messaggio che spaventa e
+         non dice niente, quindi qui lo spiego e dico cosa fare. */
+      const che = String((e && e.message) || "errore");
+      const troppoPieno = /quota|spazio|Quota/i.test(che) ||
+        (e && (e.name === "QuotaExceededError"));
+      toast(troppoPieno
+        ? "Non c'e' piu' spazio sul telefono per questa canzone. " +
+          "Liberane un po' (menu Altro > Quanto tenere offline) e riprova."
+        : "Download non riuscito: " + che, 8000);
     } finally {
       cloudBusy = false;
       await refreshCachedSongs();
@@ -10068,6 +10105,36 @@ $("selMenuBtn").addEventListener("click", () => {
         : "Ora scarico da sola le canzoni nuove (con un tetto di spazio)");
     });
     _disegnaScaricaDaSolo();
+  } catch (e) { /* noop */ }
+
+  /* Ste: "in teoria io ho scaricato tutte le canzoni del mio account, ma
+     accanto alla canzone mi spunta ancora la nuvoletta".
+
+     Motivo: lo scaricamento automatico aveva un tetto di 500 MB, e la
+     libreria sono oltre 400 canzoni: quindi la maggior parte non era
+     mai stata scaricata, e la nuvoletta tornava SEMPRE. Il tetto non
+     era regolabile da nessuna parte.
+
+     Ora c'e' una voce che chiede quanto vuoi tenere offline, e con
+     "tutto" non c'e' tetto (fino a quando il telefono ha spazio). */
+  try {
+    $("btnTettoScarica").addEventListener("click", async () => {
+      _chiudiAltro();
+      const ora = Number(LS.get("mb.tettoScarica", "500")) || 500;
+      const scelte = [
+        { mb: "200", testo: "200 MB (poco)" },
+        { mb: "500", testo: "500 MB (quanto basta)" },
+        { mb: "2000", testo: "2 GB" },
+        { mb: "10000", testo: "10 GB" },
+        { mb: "999999", testo: "Tutto quello che entra (senza tetto)" }
+      ];
+      const chiedi = await _scegliTettoScarica(ora, scelte);
+      if (chiedi) {
+        LS.set("mb.tettoScarica", String(chiedi));
+        toast("Tetto di scaricamento: " + (chiedi === "999999" ? "senza tetto" : chiedi + " MB"));
+      }
+    });
+    _disegnaTettoScarica();
   } catch (e) { /* noop */ }
 $("selAnnulla").addEventListener("click", () => { _chiudiSelezione(); });
 
@@ -11267,6 +11334,48 @@ async function _salvaPlaylistCondivise() {
   }
 
   let _scopeResolve = null;
+
+  /* Chiede quanto tenere offline. Uso lo stesso dialogo delle scelte che
+     c'e' gia' ("togli questo brano"), cosi' non ne invento un altro e
+     funziona anche su schermi piccoli. */
+  function _scegliTettoScarica(ora, scelte) {
+    try {
+      const tit = $("scopeTitle");
+      const msg = $("scopeMsg");
+      const box = $("scopeScelte");
+      if (!tit || !msg || !box) return Promise.resolve(null);
+      tit.textContent = "Quanto tenere offline?";
+      msg.textContent = "Le canzoni offline occupano spazio sul telefono. " +
+        "Ora ne tieni " + (ora >= 999999 ? "tutte quante" : ora + " MB") + ".";
+      box.innerHTML = "";
+      for (const s of scelte) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "scope-scelta";
+        b.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z"/></svg>' +
+          "<span><b>" + s.testo + "</b></span>";
+        b.addEventListener("click", () => _chiudiScope(s.mb));
+        box.appendChild(b);
+      }
+      const lascia = document.createElement("button");
+      lascia.type = "button";
+      lascia.className = "scope-scelta";
+      lascia.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4Z"/></svg>' +
+        "<span><b>Lascia com'e'</b></span>";
+      lascia.addEventListener("click", () => _chiudiScope(null));
+      box.appendChild(lascia);
+      const p = document.createElement("p");
+      p.className = "scope-dove-lista";
+      p.textContent = "Fuori dal tetto le canzoni non si scaricano da sole, ma " +
+        "le puoi sempre scaricare a mano con la nuvoletta.";
+      box.appendChild(p);
+      /* il dialogo risolve con una promessa: mi aggancio come fa l'altro */
+      return new Promise((resolve) => {
+        _scopeResolve = resolve;
+        $("scopePanel").hidden = false;
+      });
+    } catch (e) { return Promise.resolve(null); }
+  }
 
   /* Restituisce "libreria", "playlist", "entrambe" oppure null se annullato. */
   function _scegliCosaTogliere(trackId, titolo, perDavvero, perEliminazione) {
