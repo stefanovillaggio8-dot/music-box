@@ -2,7 +2,7 @@
 
 (function () {
   const BUILTIN = [
-      { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
+
       { title: "QUANTO FORTE TI PENSAVO", file: "songs/track-2.mp3", artist: "Madame", profile: "Ste" },
       { title: "Sono Ok", file: "songs/track-4.mp3", artist: "XCarme", profile: "Ste" },
 
