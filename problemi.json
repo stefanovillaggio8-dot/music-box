@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792505527441,
-  "r": "SPOTIFY: [v6.350] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792505527926,
   "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792505677421,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505677420,
+  "r": "worker /stato: risponde"
  }
 ]
