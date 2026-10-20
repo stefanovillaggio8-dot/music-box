@@ -490,7 +490,7 @@
    },
    "xcarme|sonook": {
     "v": 0,
-    "s": 18,
+    "s": 110,
     "t": "Sono Ok",
     "a": "XCarme"
    },
@@ -821,7 +821,7 @@
    "coez|esemprebello": {
     "v": 0,
     "s": 31,
-    "t": "ÃÂ sempre bello",
+    "t": "ÃÂÃÂ sempre bello",
     "a": "Coez"
    },
    "calcutta|tutti": {
@@ -829,6 +829,12 @@
     "s": 1,
     "t": "Tutti",
     "a": "Calcutta"
+   },
+   "kidyugililpeep|kidyugixlilpeepmashup": {
+    "v": 0,
+    "s": 28,
+    "t": "Kid Yugi x Lil Peep MASHUP",
+    "a": "Kid Yugi / Lil Peep"
    }
   },
   "Diego": {
