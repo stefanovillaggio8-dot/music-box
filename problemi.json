@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792531915863,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792531918007,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792531918008,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792531918029,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792531918148,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792531919247,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792531924123,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792531924160,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792531924236,
   "r": "SPOTIFY: [v6.365] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792531936546,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792531936549,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792531936667,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792531936674,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792531936806,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792531937768,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792531937766,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792531983450,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792531983442,
+  "r": "worker /stato: risponde"
  }
 ]
