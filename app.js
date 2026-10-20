@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.371";
+  const APP_VERSION = "6.372";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12939,14 +12939,35 @@ function _ricaricaQuandoLibero() {
   try {
     _spotifyTraccia("sto per ricaricare la pagina (aggiornamento)");
     if (_pannelloAperto()) {
-      setTimeout(function () { _ricaricaQuandoLibero(); }, 6000);
-      return;
-    }
-    window.location.reload();
-  } catch (e) { /* noop */ }
-}
+    setTimeout(function () { _ricaricaQuandoLibero(); }, 6000);
+    return;
+    }
+    /* Ricarico da un indirizzo mai visto (con "?forza="): cosi' non prendo
+       la copia VECCHIA dalla cache del browser. Era anche per questo che
+       l'app restava ferma alla versione precedente e non si aggiornava
+       piu'. */
+    try {
+    window.location.replace("./index.html?forza=" + Date.now());
+    } catch (e) {
+    window.location.reload();
+    }
+  } catch (e) { /* noop */ }
+}
   if (!_giaRicaricata && _versioneDaPrendere) {
-              try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
+              try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
+              /* Ste: l'app resta bloccata su una versione vecchia e non
+                 riprova piu'. Motivo: il segnale "ho gia' preso questa
+                 versione" veniva messo PRIMA del ricaricamento, ma il
+                 ricaricamento poteva prendere ancora il file vecchio (il
+                 worker del servizio non era ancora pronto): l'app si
+                 credeva aggiornata e non riprovava piu'. Adesso, se dopo
+                 il ricaricamento la versione che gira e' ancora diversa,
+                 il segnale viene tolto e l'app riprova. */
+              try {
+                if (String(APP_VERSION) !== String(_versioneDaPrendere)) {
+                  sessionStorage.removeItem("mb.aggiornatoA");
+                }
+              } catch (e) { /* noop */ }
               /* Ste: "l'app non parte e i file restano vecchi".
                  Motivo: il worker del servizio aspettava che l'app venisse
                  chiusa del tutto per prendere il posto di quello vecchio, e
