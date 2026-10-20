@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792528397262,
-  "r": "SPOTIFY: [v6.361] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792528397268,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792528439367,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792528459814,
+  "r": "worker /stato: risponde"
  }
 ]
