@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6351" />
+  <link rel="stylesheet" href="style.css?v=6352" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -28,19 +28,24 @@
         function traccia(riga) {
           try {
             var testo = JSON.stringify({ riga: "SPOTIFY: " + riga });
-            /* sendBeacon e' fatto per questo: parte subito e resta vivo
-               anche se la pagina viene chiusa. */
-            if (navigator && navigator.sendBeacon) {
-              try {
-                navigator.sendBeacon(SERVIZIO + "/problema", new Blob([testo], { type: "application/json" }));
-                return;
-              } catch (x) { }
-            }
+            /* Niente sendBeacon: su iPhone quella con un Blob JSON viene
+               rifiutata e la traccia non parte. */
             fetch(SERVIZIO + "/problema", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: testo
             }).catch(function () { });
+            /* Se la pagina si ricarica subito, la traccia si perde: ne
+               mando una seconda copia un istante dopo. */
+            try {
+              setTimeout(function () {
+                fetch(SERVIZIO + "/problema", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: testo
+                }).catch(function () { });
+              }, 900);
+            } catch (x) { }
           } catch (x) { }
         }
         try {
@@ -789,7 +794,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6351"></script>
-<script src="app.js?v=6351"></script>
+<script src="fuoco.js?v=6352"></script>
+<script src="app.js?v=6352"></script>
 </body>
 </html>

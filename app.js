@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.351";
+  const APP_VERSION = "6.352";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13349,19 +13349,25 @@ function _spotifyPnl(titolo, sotto, html) {
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       var corpoTraccia = JSON.stringify({ riga: "SPOTIFY: [v" + (typeof APP_VERSION !== "undefined" ? APP_VERSION : "?") + "] " + String(testo).slice(0, 120) });
-  try {
-    /* sendBeacon e' fatto per questo: parte subito e resta vivo anche se la
-       pagina viene ricaricata o chiusa mentre e' in viaggio. */
-    if (navigator && navigator.sendBeacon) {
-      navigator.sendBeacon(dove + "/problema", new Blob([corpoTraccia], { type: "application/json" }));
-      return;
-    }
-  } catch (e) { /* uso la fetch sotto */ }
-  fetch(dove + "/problema", {
+      /* Niente sendBeacon: su iPhone quella con un Blob JSON viene rifiutata
+         (non puo' fare la preflight del CORS) e la traccia non parte:
+         stavo lavorando al buio. */
+      fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: corpoTraccia
       }).catch(function () { /* nessuna rete? pazienza */ });
+      /* Se la pagina si ricarica subito, la traccia si perde: ne mando una
+         seconda copia un istante dopo (se sono ancora vivo). */
+      try {
+        setTimeout(function () {
+          fetch(dove + "/problema", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: corpoTraccia
+          }).catch(function () { });
+        }, 900);
+      } catch (e) { /* noop */ }
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
 if (typeof window !== "undefined") { try { window._spotifyTraccia = _spotifyTraccia; } catch (e) {} }
