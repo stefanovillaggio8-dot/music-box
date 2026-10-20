@@ -821,7 +821,7 @@
    "coez|esemprebello": {
     "v": 0,
     "s": 31,
-    "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ sempre bello",
+    "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ sempre bello",
     "a": "Coez"
    },
    "calcutta|tutti": {
@@ -838,9 +838,15 @@
    },
    "gmineiroflatpearlsucco|malpensa": {
     "v": 0,
-    "s": 81,
+    "s": 85,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
+   },
+   "mostro|lacitta": {
+    "v": 0,
+    "s": 124,
+    "t": "LA CITTÀ",
+    "a": "MOSTRO"
    }
   },
   "Diego": {
