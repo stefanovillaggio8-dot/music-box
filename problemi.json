@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792459074539,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792459078539,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792460839038,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792460842442,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
