@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792458921887,
-  "r": "SPOTIFY: [v6.344] ritorno: nessun codice (indirimento: [?spotify=accedi], memoria: [])"
- },
- {
   "t": 1792458924464,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792459441339,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792459572149,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
