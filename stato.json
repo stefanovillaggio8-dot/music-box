@@ -1380,7 +1380,7 @@
    },
    "frahquintale|dueali": {
     "v": 0,
-    "s": 524,
+    "s": 550,
     "t": "Due ali",
     "a": "Frah Quintale"
    },
@@ -2253,6 +2253,12 @@
     "s": 2,
     "t": "Cancellare (feat. nayt)",
     "a": "TROPICO, nayt"
+   },
+   "nayt|addioxx": {
+    "v": 0,
+    "s": 112,
+    "t": "Addio xx",
+    "a": "nayt"
    }
   }
  }
