@@ -1,5 +1,73 @@
 [
  {
+  "t": 1792525707419,
+  "r": "SPOTIFY: [v6.359] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792525711173,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792525711182,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525711190,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792525711181,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792525712373,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525714273,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792525715143,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792525715150,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792525715251,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525716331,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525721796,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525723053,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792525727513,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792525727514,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525727517,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525737333,
+  "r": "worker /stato: risponde"
+ },
+ {
   "t": 1792525737353,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -90,73 +158,5 @@
  {
   "t": 1792525953073,
   "r": "worker /stato: risponde"
- },
- {
-  "t": 1792525953080,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792525953086,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525954276,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792525955480,
-  "r": "SPOTIFY: [v6.359] bottone toccato"
- },
- {
-  "t": 1792525955749,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525955900,
-  "r": "SPOTIFY: [v6.359] premo il pulsante 'Accedi con Spotify' del pannello"
- },
- {
-  "t": 1792525956076,
-  "r": "SPOTIFY: [v6.359] bottone toccato"
- },
- {
-  "t": 1792525956706,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525956709,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792525956710,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792525956801,
-  "r": "SPOTIFY: [v6.359] premo il pulsante 'Accedi con Spotify' del pannello"
- },
- {
-  "t": 1792525957683,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525957680,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792525962948,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792525963104,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525963097,
-  "r": "SPOTIFY: [v6.359] ritorno: nessun codice (indirimento: [?spotify=accedi], memoria: [])"
- },
- {
-  "t": 1792525963348,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
