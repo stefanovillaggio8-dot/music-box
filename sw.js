@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6354";
+const CACHE = "spotifynonavraiimieisoldi-v6355";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -731,7 +731,14 @@ self.addEventListener("fetch", (event) => {
 
   const isCore = CORE_EXT.some((ext) => url.pathname.endsWith(ext));
 
-  if (isCore) {
+  /* Due file devono restare SEMPRE freschi:
+     - versione.json: con questo l'app controlla se c'e' una versione
+       nuova. Servito dalla cache, l'app non vedrebbe mai l'aggiornamento.
+     - stato.json: e' il fallback quando il worker non risponde, e deve
+       dire le eliminazioni e le playlist giuste. */
+  const sempreFresco = /versione\.json$|stato\.json$/.test(url.pathname);
+
+  if (isCore && !sempreFresco) {
     /* Ste: "ci sta un sacco di tempo a caricare".
        Prima questi file (app.js 622 KB, lyrics.json 1,7 MB, copertine 130 KB)
        venivano presi PRIMA dalla rete: quasi 2,5 MB a ogni avvio, e l'app
@@ -767,6 +774,22 @@ self.addEventListener("fetch", (event) => {
           })
           .catch(() => caches.match(event.request));
       })
+    );
+  } else if (isCore) {
+    /* versione.json e stato.json: sempre dalla rete, e la copia la
+       metto in cache per dopo. */
+    event.respondWith(
+      fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+        .then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            event.waitUntil(
+              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
+            );
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
     );
   } else {
     event.respondWith(
