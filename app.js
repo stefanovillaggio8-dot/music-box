@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.344";
+  const APP_VERSION = "6.345";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13296,14 +13296,19 @@ function _spotifyPnl(titolo, sotto, html) {
       _tracciaSpotifyInviate++;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
-      fetch(dove + "/problema", {
+      var corpoTraccia = JSON.stringify({ riga: "SPOTIFY: [v" + (typeof APP_VERSION !== "undefined" ? APP_VERSION : "?") + "] " + String(testo).slice(0, 120) });
+  try {
+    /* sendBeacon e' fatto per questo: parte subito e resta vivo anche se la
+       pagina viene ricaricata o chiusa mentre e' in viaggio. */
+    if (navigator && navigator.sendBeacon) {
+      navigator.sendBeacon(dove + "/problema", new Blob([corpoTraccia], { type: "application/json" }));
+      return;
+    }
+  } catch (e) { /* uso la fetch sotto */ }
+  fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riga: "SPOTIFY: [v" + (typeof APP_VERSION !== "undefined" ? APP_VERSION : "?") + "] " + String(testo).slice(0, 120) }),
-        /* "keepalive": la richiesta continua anche se la pagina viene ricaricata
-           o chiusa mentre e' in viaggio. Senza, le tracce sparivano proprio
-           quando servivano di piu'. */
-        keepalive: true
+        body: corpoTraccia
       }).catch(function () { /* nessuna rete? pazienza */ });
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }

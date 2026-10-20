@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6344" />
+  <link rel="stylesheet" href="style.css?v=6345" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -27,11 +27,19 @@
         var SERVIZIO = "https://musicbox-dal-telefono.stefanovillaggio8.workers.dev";
         function traccia(riga) {
           try {
+            var testo = JSON.stringify({ riga: "SPOTIFY: " + riga });
+            /* sendBeacon e' fatto per questo: parte subito e resta vivo
+               anche se la pagina viene chiusa. */
+            if (navigator && navigator.sendBeacon) {
+              try {
+                navigator.sendBeacon(SERVIZIO + "/problema", new Blob([testo], { type: "application/json" }));
+                return;
+              } catch (x) { }
+            }
             fetch(SERVIZIO + "/problema", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ riga: "SPOTIFY: " + riga }),
-              keepalive: true
+              body: testo
             }).catch(function () { });
           } catch (x) { }
         }
@@ -63,6 +71,13 @@
           if (!code || !verifier) { traccia("la pagina non trova la chiave nello state"); return; }
           try { sessionStorage.setItem("mb.spotifyScambio", "in corso"); } catch (x) { }
           traccia("la pagina scambia il codice col permesso");
+          /* Niente "keepalive" qui: su Safari quelle richieste vengono
+             accodate e partono solo quando la pagina viene chiusa, e la
+             pagina non si chiude mai: lo scambio restava appeso per
+             sempre. E un tempo massimo, cosi' non puo' aspettare all'infinito. */
+          var ctl = null;
+          try { ctl = new AbortController(); } catch (x) { }
+          var scad = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (x) { } }, 20000);
           fetch("https://accounts.spotify.com/api/token", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -73,10 +88,11 @@
               client_id: "97b894cf504b412fa96e5a7ced1880c4",
               code_verifier: verifier
             }).toString(),
-            keepalive: true
+            signal: ctl ? ctl.signal : undefined
           }).then(function (r) {
             return r.json().then(function (j) { return { ok: r.ok, j: j }; });
           }).then(function (x) {
+            try { clearTimeout(scad); } catch (z) { }
             if (x.ok && x.j && x.j.access_token) {
               try {
                 var v = { access: x.j.access_token, scadenza: Date.now() + (Number(x.j.expires_in || 3600) - 60) * 1000 };
@@ -794,6 +810,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6344"></script>
+<script src="app.js?v=6345"></script>
 </body>
 </html>
