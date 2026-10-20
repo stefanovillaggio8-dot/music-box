@@ -2310,7 +2310,7 @@ li.appena-aggiunto {
   }
   .logo-wrap { flex: 1 1 auto; }
   /* Ste: il titolo deve restare SCRITTO TUTTO, niente puntini di sospensione.
-     Per farlo stare non lo accorcio: rendo i caratteri un filo più piccoli e
+     Per farlo stare non lo accorcio: rendo i caratteri un filo piÃ¹ piccoli e
      lo lascio andare su una riga sola. */
   .logo.long {
     max-width: none;
@@ -2613,4 +2613,11 @@ li.appena-aggiunto {
 .avviso-collegamento.ok {
   background: rgba(126, 220, 160, .10);
   border-color: rgba(126, 220, 160, .35);
+}
+
+/* Ste: "non trovo app" (per staccare Spotify). Ho aggiunto un bottone
+   "stacca Spotify da questo telefono": e' un link, non un bottone grosso. */
+.btn-link{
+  background:none;border:0;padding:0;color:#7fd3ff;font:inherit;
+  text-decoration:underline;cursor:pointer;
 }

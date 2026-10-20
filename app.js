@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.369";
+  const APP_VERSION = "6.370";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13892,15 +13892,35 @@ function _spotifyChiediAccesso(perche) {
       '<span class="spotify-quante">' + p.canzoni + " canzoni" +
       (p.privata ? " · privata" : "") + "</span></button>";
   }
-  html += "</div>" +
-    '<button class="btn-main" id="spotifyEsci" style="margin-top:12px">Chiudi</button>';
-  _spotifyPnl("Le tue playlist", tutte.length + " playlist", html);
-
-  for (const b of document.querySelectorAll(".spotify-riga")) {
-    b.addEventListener("click", () => { _spotifyImporta(b.getAttribute("data-id")); });
-  }
-  $("spotifyEsci").addEventListener("click", _spotifyChiudi);
-}
+  html += "</div>" +
+    '<button class="btn-main" id="spotifyEsci" style="margin-top:12px">Chiudi</button>' +
+    '<p class="step-hint" style="margin-top:14px">Se Spotify continua a dire che l\'accesso non basta, stacca l\'app: ' +
+    '<button class="btn-link" id="spotifyStacca" type="button">stacca Spotify da questo telefono</button>' +
+    ' (e poi su Spotify: Account &gt; Privacy e sicurezza &gt; App &gt; MusicBox &gt; Rimuovi accesso).</p>';
+  _spotifyPnl("Le tue playlist", tutte.length + " playlist", html);
+
+  for (const b of document.querySelectorAll(".spotify-riga")) {
+    b.addEventListener("click", () => { _spotifyImporta(b.getAttribute("data-id")); });
+  }
+  $("spotifyEsci").addEventListener("click", _spotifyChiudi);
+  /* Ste: "non trovo app" (per togliere l'accesso a Spotify).
+     Il pulsante "stacca" fa la parte che puo' fare l'app: dimenticarsi il
+     permesso. Poi su Spotify va tolto a mano (e li' gli dico dove). */
+  try {
+    const stacca = $("spotifyStacca");
+    if (stacca) {
+      stacca.addEventListener("click", function () {
+        _spotifyTraccia("stacco Spotify da questo telefono");
+        try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
+        try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
+        try { LS.remove("mb.spotifyErrore"); LS.remove("mb.spotifyErroreQuando"); } catch (e) { /* noop */ }
+        try { _mostraCollegatoNo(); } catch (e) { /* noop */ }
+        toast("Permesso dimenticato. Ora su Spotify togli l'accesso a MusicBox e riprova.");
+        _spotifyChiudi();
+      });
+    }
+  } catch (e) { /* noop */ }
+}
 
 /* Leggo la lista e la mando al computer. */
 async function _spotifyImporta(playlistId) {
