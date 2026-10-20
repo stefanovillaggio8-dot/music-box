@@ -1848,7 +1848,7 @@
    },
    "nerone|mezzasiga": {
     "v": 0,
-    "s": 218,
+    "s": 254,
     "t": "Mezza siga",
     "a": "NERONE"
    },
@@ -1902,7 +1902,7 @@
    },
    "nayt3d|peresserevivi": {
     "v": 0,
-    "s": 95,
+    "s": 189,
     "t": "Per essere vivi",
     "a": "nayt, 3D"
    },
@@ -2175,6 +2175,12 @@
     "s": 1,
     "t": "Fiori Del Male (feat. Sfera Ebbasta)",
     "a": "Dark Polo Gang, Sfera Ebbasta"
+   },
+   "frahquintale|buiodigiorno": {
+    "v": 0,
+    "s": 8,
+    "t": "Buio di giorno",
+    "a": "Frah Quintale"
    }
   }
  }
