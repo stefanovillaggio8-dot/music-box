@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792454117165,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792454129759,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792455533067,
   "r": "SPOTIFY: il ritorno e' arrivato nella pagina (col codice)"
+ },
+ {
+  "t": 1792455535919,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
