@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6348" />
+  <link rel="stylesheet" href="style.css?v=6349" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -84,9 +84,16 @@
               traccia("il worker ha fatto lo scambio: biglietto pronto");
             } else {
               var perche = String((j && j.errore) || "scambio non riuscito");
-              try { localStorage.setItem("mb.spotifyErrore", perche); } catch (x) { }
-              try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (x) { }
-              traccia("il worker ha rifiutato: " + perche);
+              /* Il codice si usa una volta sola: se lo dice, vuol dire che
+                 lo scambio lo ha gia' fatto l'app. Non e' un errore. */
+              if (/invalid authorization code|invalid_grant/i.test(perche)) {
+                try { sessionStorage.setItem("mb.spotifyScambio", "in corso"); } catch (x) { }
+                traccia("il codice e' gia' stato usato: aspetto il permesso");
+              } else {
+                try { localStorage.setItem("mb.spotifyErrore", perche); } catch (x) { }
+                try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (x) { }
+                traccia("il worker ha rifiutato: " + perche);
+              }
             }
           }).catch(function (e) {
             try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (x) { }
@@ -782,7 +789,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6348"></script>
-<script src="app.js?v=6348"></script>
+<script src="fuoco.js?v=6349"></script>
+<script src="app.js?v=6349"></script>
 </body>
 </html>

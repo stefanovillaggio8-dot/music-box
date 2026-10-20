@@ -17,6 +17,18 @@
    - le fiamme sono appoggiate sulla linea di bruciatura e salgono in alto;
    - le bragia saltano;
    - a fine brano non resta piu' niente della copertina.
+
+   E poi (20/10/2026, Ste): "il fuoco fa tipo a impulsi come se battesse,
+   togli sta cosa. si puo' fare che si vede il fuoco che si muove pure
+   quando vedo dalle notifiche la canzone in corso?"
+
+   - gli impulsi: venivano dal fatto che le fiamme venivano ricreate da
+     zero (innerHTML) a ogni aggiornamento: l'animazione ripartiva e
+     sembrava un battito. Adesso le fiamme restano le stesse e si spostano
+     solo.
+   - le notifiche: la copertina che brucia viene disegnata su un canvas e
+     pubblicata come artwork della media session, cosi' la si vede anche
+     nel pannello delle notifiche / blocco schermo del telefono.
    ========================================================================== */
 (function () {
   "use strict";
@@ -53,10 +65,10 @@
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%}",
     ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;",
-    "  animation:mbSfarfalla .26s linear infinite alternate}",
+    "  animation:mbSfarfalla .34s linear infinite alternate}",
     "@keyframes mbSfarfalla{0%{transform:scale(1,1) rotate(-3deg)}",
-    "  50%{transform:scale(.92,1.12) rotate(2deg)}",
-    "  100%{transform:scale(1.05,.95) rotate(-1.5deg)}}",
+    "  50%{transform:scale(.94,1.10) rotate(2deg)}",
+    "  100%{transform:scale(1.04,.96) rotate(-1.5deg)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-bragia i{position:absolute;border-radius:50%;",
     "  background:radial-gradient(circle,#ffe6a0 0%,#ff7a10 50%,rgba(255,80,0,0) 100%);",
@@ -105,6 +117,14 @@
     '</linearGradient>' +
   '</defs></svg>';
 
+  /* Il disegno di una fiamma, in un quadrato 60x160: la base e' in basso
+     (y = 147) e la punta in alto (y = 2). Serve sia all'SVG (nella pagina)
+     sia al canvas (per la notifica). */
+  var PERCORSO_FIAMMA = "M27 2 C 33 18 21 27 17 43 C 11 64 11 88 17 112 C 21 129 27 141 30 147 " +
+                        "C 34 140 39 127 42 109 C 46 86 45 62 40 42 C 37 27 24 20 27 2 Z";
+  var PERCORSO_CUORE = "M29.4 60 C 30.6 70 27.6 76 27 85 C 26.4 94 28.4 102 30 106 " +
+                       "C 31.6 102 33.6 94 33 85 C 32.4 76 29.4 70 29.4 60 Z";
+
   /* --------------------------------------------------------------------------
      3. Il disegno (uguale alla prova)
      -------------------------------------------------------------------------- */
@@ -150,8 +170,8 @@
   function fiammaSVG() {
     return '<svg viewBox="0 0 60 160" preserveAspectRatio="xMidYMax meet">' +
       '<g filter="url(#mbBagliore)">' +
-      '<path d="M27 2 C 33 18 21 27 17 43 C 11 64 11 88 17 112 C 21 129 27 141 30 147 C 34 140 39 127 42 109 C 46 86 45 62 40 42 C 37 27 24 20 27 2 Z" fill="url(#mbFiamma)"/>' +
-      '<path d="M29.4 60 C 30.6 70 27.6 76 27 85 C 26.4 94 28.4 102 30 106 C 31.6 102 33.6 94 33 85 C 32.4 76 29.4 70 29.4 60 Z" fill="url(#mbCuore)"/>' +
+      '<path d="' + PERCORSO_FIAMMA + '" fill="url(#mbFiamma)"/>' +
+      '<path d="' + PERCORSO_CUORE + '" fill="url(#mbCuore)"/>' +
       "</g></svg>";
   }
 
@@ -169,41 +189,23 @@
 
   /* Le fiamme: poche, appoggiate sulla linea di bruciatura, e salgono.
      "lato" e' la dimensione in pixel della copertina: serve per dare alle
-     fiamme una misura giusta anche su una copertina piccola (52 px). */
+     fiamme una misura giusta anche su una copertina piccola (52 px).
+     Ogni fiamma ha i suoi numeri casuali, scelti una volta sola: se li
+     ricalcolassi a ogni fotogramma le fiamme "saltellerebbero". */
   function fiammeAttorno(a, lato) {
     var r = (function (s) {
       return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
     })(a.seme + 7);
-    var out = "";
+    var out = [];
     var N = a.punti.length;
     var ogni = Math.max(1, Math.round(N / 13));
     for (var i = 0; i < N; i += ogni) {
-      var p = a.punti[i];
-      var ux = p.x - a.cx, uy = p.y - a.cy;
-      var lun = Math.sqrt(ux * ux + uy * uy) || 1;
-      ux /= lun; uy /= lun;
-      /* IL FUOCO SALE: le fiamme leccano verso l'alto, con una piccola
-         inclinazione verso l'esterno. */
-      var vx = ux * 0.38, vy = uy * 0.38 - 1.0;
-      /* la punta della fiamma guarda verso (sin t, -cos t): per puntarla
-         verso (vx, vy) serve t = atan2(vx, -vy) */
-      var ang = Math.atan2(vx, -vy) * 180 / Math.PI;
-      ang += (r() - 0.5) * 34;
-      /* misura in pixel, rapportata alla copertina (sul Music Box la
-         copertina e' piccola: 52 px, quindi le fiamme devono essere
-         proporzionate, non enormi) */
       var alt = lato * (0.11 + r() * 0.13) + lato * 0.07 * a.prog;
       if (r() < 0.18) alt = alt * 1.6;
-      var larg = alt * (0.40 + r() * 0.16);
-      out += '<div class="mb-fiamma" style="left:' + p.x.toFixed(1) + "%;top:" + p.y.toFixed(1) +
-        "%;width:" + larg.toFixed(1) + "px;height:" + alt.toFixed(1) + "px;animation-delay:-" +
-        (r() * 0.9).toFixed(2) + 's;transform:translate(-50%,-100%) rotate(' + ang.toFixed(0) + 'deg)">' +
-        fiammaSVG() + "</div>";
+      out.push({ i: i, alt: alt, larg: alt * (0.40 + r() * 0.16), attesa: r() * 0.9 });
     }
     return out;
   }
-
-  function lunga0(v) { return v || 1; }
 
   function stratoBragia(lato) {
     var h = "";
@@ -282,23 +284,35 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
+  /* PROVA TEMPORANEA */
+  var TEST = -1;
+  try {
+    var mm = /[?&]fuocoTest=([\d.]+)/.exec(String(window.location.search || ""));
+    if (mm) TEST = parseFloat(mm[1]);
+  } catch (e) { /* noop */ }
+
   var stato = {
     box: null,
     ultimoTitolo: "",
     progVisto: -1,      /* l'ultimo bruciato che ho visto */
-    progDisegnato: -1,  /* l'ultimo bruciato che ho disegnato */
+    progChar: -1,       /* l'ultimo bruciato disegnato nella crosta */
+    progNotifica: -1,
     tPrecedente: 0,
-    seme: 7
+    seme: 7,
+    fiamme: [],         /* le fiamme vive: non le ricreo piu' */
+    ultimoArtwork: ""
   };
 
-  function disegna(prog, lato, raggio) {
+  /* La crosta (il nero che morde la copertina) */
+  function disegnaChar(prog) {
     var box = stato.box;
     var a = arte(prog, stato.seme);
     var sc = box.querySelector(".mb-strato-char");
     sc.innerHTML = stratoChar(a);
     /* il nero deve avere la stessa forma della copertina (rotonda quando
        suona il disco, quadrata quando no) */
-    sc.style.borderRadius = raggio;
+    var art = document.getElementById("playerArt");
+    try { sc.style.borderRadius = getComputedStyle(art).borderRadius; } catch (e) { /* noop */ }
 
     var vecchioCalore = box.querySelector(".mb-calore");
     if (vecchioCalore) vecchioCalore.remove();
@@ -307,47 +321,51 @@
     var temp = document.createElement("div");
     temp.innerHTML = stratoCalore(a);
     while (temp.firstChild) box.insertBefore(temp.firstChild, box.querySelector(".mb-fiamme"));
+    stato.progChar = prog;
+  }
 
-    /* Ste: "appena la musica e' praticamente finita ed e' tutto nero, togli
-       le fiamme e lascia soltanto le particelle".
-       Motivo: col bruciato quasi finito lo schermo e' nero, ma le fiamme
-       continuavano a ballare sopra il nero e sembrava un errore. Adesso,
-       quando il bruciato e' quasi finito, le fiamme spariscono (con una
-       sfumatura lenta, non di colpo) e resta solo la bragia: le particelle
-       che salgono. */
-    var fiamme = box.querySelector(".mb-fiamme");
-    var calore = box.querySelector(".mb-calore");
-    var quasiFinita = prog > 0.90;
-    if (quasiFinita) {
-      if (fiamme.style.opacity !== "0") {
-        fiamme.style.transition = "opacity 1.1s ease";
-        fiamme.style.opacity = "0";
-      }
-      if (calore) {
-        if (!calore.style.transition) calore.style.transition = "opacity 1.1s ease";
-        calore.style.opacity = "0";
-      }
-    } else {
-      if (fiamme.style.opacity === "0") {
-        fiamme.style.transition = "opacity .5s ease";
-        fiamme.style.opacity = "";
-      }
-      if (calore) calore.style.opacity = "";
+  /* Le fiamme: si creano una volta sola e poi si spostano. Se le
+     ricreassi a ogni fotogramma l'animazione ripartireebbe da capo e il
+     fuoco sembrerebbe battere (e Ste l'ha visto: "fa tipo a impulsi"). */
+  function preparaFiamme(prog, lato) {
+    var box = stato.box;
+    var a = arte(prog, stato.seme);
+    stato.fiamme = fiammeAttorno(a, lato);
+    var contenitore = box.querySelector(".mb-fiamme");
+    contenitore.innerHTML = "";
+    for (var k = 0; k < stato.fiamme.length; k++) {
+      var f = stato.fiamme[k];
+      var el = document.createElement("div");
+      el.className = "mb-fiamma";
+      el.innerHTML = fiammaSVG();
+      el.style.animationDelay = "-" + f.attesa.toFixed(2) + "s";
+      contenitore.appendChild(el);
+      f.el = el;
     }
-    /* le fiamme si ridisegnano solo quando il bruciato e' cambiato un po':
-       rifarle ogni fotogramma azzererebbe l'animazione della fiamma */
-    if (!quasiFinita && Math.abs(prog - stato.progDisegnato) > 0.008) {
-      fiamme.innerHTML = fiammeAttorno(a, lato);
+  }
+
+  function spostaFiamme(a, lato) {
+    for (var k = 0; k < stato.fiamme.length; k++) {
+      var f = stato.fiamme[k];
+      if (!f.el) continue;
+      var p = a.punti[f.i];
+      if (!p) continue;
+      var ux = p.x - a.cx, uy = p.y - a.cy;
+      var lun = Math.sqrt(ux * ux + uy * uy) || 1;
+      ux /= lun; uy /= lun;
+      /* IL FUOCO SALE: le fiamme leccano verso l'alto, con una piccola
+         inclinazione verso l'esterno. */
+      var vx = ux * 0.38, vy = uy * 0.38 - 1.0;
+      /* la punta della fiamma guarda verso (sin t, -cos t): per puntarla
+         verso (vx, vy) serve t = atan2(vx, -vy) */
+      var ang = Math.atan2(vx, -vy) * 180 / Math.PI;
+      var alt = f.alt * (0.75 + 0.25 * (a.R / 45));
+      f.el.style.left = p.x.toFixed(2) + "%";
+      f.el.style.top = p.y.toFixed(2) + "%";
+      f.el.style.height = alt.toFixed(1) + "px";
+      f.el.style.width = (alt * 0.42).toFixed(1) + "px";
+      f.el.style.transform = "translate(-50%,-100%) rotate(" + ang.toFixed(1) + "deg)";
     }
-    if (!box.querySelector(".mb-bragia").childNodes.length) {
-      box.querySelector(".mb-bragia").innerHTML = stratoBragia(lato);
-    }
-    /* Quando spariscono le fiamme, le particelle restanosole e un filo piu'
-       luminose: e' l'unica cosa che si vede sul nero. */
-    var bragia = box.querySelector(".mb-bragia");
-    bragia.style.transition = "opacity 1.1s ease";
-    bragia.style.opacity = quasiFinita ? "1" : "";
-    stato.progDisegnato = prog;
   }
 
   function ciclo() {
@@ -363,7 +381,8 @@
       if (titoloOra !== stato.ultimoTitolo) {
         stato.ultimoTitolo = titoloOra;
         stato.progVisto = -1;
-        stato.progDisegnato = -1;
+        stato.progChar = -1;
+        stato.progNotifica = -1;
         stato.tPrecedente = 0;
         stato.seme = (stato.seme * 7 + 13) % 997;
       }
@@ -376,18 +395,19 @@
       if (audio && isFinite(audio.currentTime)) t = audio.currentTime;
 
       /* il tempo e' tornato indietro: brano nuovo o riavvolto */
-      if (t < stato.tPrecedente - 1.5) { stato.progVisto = -1; stato.progDisegnato = -1; }
+      if (t < stato.tPrecedente - 1.5) { stato.progVisto = -1; stato.progChar = -1; }
       stato.tPrecedente = t;
 
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
+      if (TEST >= 0) { prog = TEST; suona = true; }
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;
         /* se e' sparito tutto, la copertina non c'e' piu': niente fuoco */
         if (prog <= 0.001) {
-          if (stato.box) { stato.box.remove(); stato.box = null; }
+          if (stato.box) { stato.box.remove(); stato.box = null; stato.fiamme = []; }
           requestAnimationFrame(ciclo);
           return;
         }
@@ -401,6 +421,8 @@
           document.body.appendChild(d.firstChild);
         }
         stato.box = monta(art);
+        stato.fiamme = [];
+        stato.progChar = -1;
       }
 
       /* il disco gira: il fuoco resta dritto */
@@ -412,12 +434,196 @@
       var g = -angoloGiro(art);
       stato.box.style.transform = g ? "rotate(" + g.toFixed(2) + "deg)" : "";
 
-      var raggio = "";
-      try { raggio = getComputedStyle(art).borderRadius; } catch (e) { /* noop */ }
+      var a = arte(prog, stato.seme);
+      /* la crosta si ridisegna quando il bruciato e' cambiato un po' (il
+         filtro della grana e' costoso, non serve ogni fotogramma) */
+      if (Math.abs(prog - stato.progChar) > 0.003) disegnaChar(prog);
+      /* le fiamme si spostano ogni fotogramma, ma senza ricrearle: e' il
+         loro spostamento a fare il movimento, l'animazione fa il resto */
+      if (!stato.fiamme.length) preparaFiamme(prog, r.width);
+      spostaFiamme(a, r.width);
+      if (!stato.box.querySelector(".mb-bragia").childNodes.length) {
+        stato.box.querySelector(".mb-bragia").innerHTML = stratoBragia(r.width);
+      }
 
-      if (Math.abs(prog - stato.progDisegnato) > 0.001) disegna(prog, r.width, raggio);
+  /* Ste: "appena la musica e' praticamente finita ed e' tutto nero, togli le
+  fiamme e lascia soltanto le particelle".
+  Motivo: col bruciato quasi finito lo schermo diventa nero, ma le fiamme
+  continuavano a ballare sopra il nero e sembrava un errore. Adesso, quando il
+  bruciato e' quasi finito, le fiamme spariscono (con una sfumatura lenta,
+  non di colpo) e resta solo la bragia: le particelle che salgono. */
+  var quasiFinita = prog > 0.90;
+  var contFiamme = stato.box.querySelector(".mb-fiamme");
+  var calore = stato.box.querySelector(".mb-calore");
+  var bragia = stato.box.querySelector(".mb-bragia");
+  if (quasiFinita) {
+  if (contFiamme.style.opacity !== "0") {
+  contFiamme.style.transition = "opacity 1.1s ease";
+  contFiamme.style.opacity = "0";
+  }
+  if (calore) {
+  if (!calore.style.transition) calore.style.transition = "opacity 1.1s ease";
+  calore.style.opacity = "0";
+  }
+  } else {
+  if (contFiamme.style.opacity === "0") {
+  contFiamme.style.transition = "opacity .5s ease";
+  contFiamme.style.opacity = "";
+  }
+  if (calore) calore.style.opacity = "";
+  }
+  /* Quando spariscono le fiamme, le particelle restano sole e un filo piu'
+  luminose: e' l'unica cosa che si vede sul nero. */
+  bragia.style.transition = "opacity 1.1s ease";
+  bragia.style.opacity = quasiFinita ? "1" : "";
+
+      /* la copertina che brucia anche nelle notifiche del telefono */
+      aggiornaNotifica(prog, suona);
     } catch (e) { /* il fuoco non deve mai far cadere l'app */ }
     requestAnimationFrame(ciclo);
+  }
+
+  /* --------------------------------------------------------------------------
+     6. Le notifiche del telefono
+     La copertina che brucia viene disegnata su un canvas e pubblicata come
+     artwork della media session: cosi' si vede anche nel pannello delle
+     notifiche e nella schermata di blocco.
+     -------------------------------------------------------------------------- */
+  var tela = null, ctxTela = null;
+  var imgCopertina = null, urlCopertina = "";
+
+  function preparaTela() {
+    if (tela) return;
+    try {
+      tela = document.createElement("canvas");
+      tela.width = 256;
+      tela.height = 256;
+      ctxTela = tela.getContext("2d");
+    } catch (e) { /* noop */ }
+  }
+
+  function caricaCopertina(url) {
+    if (!url || url === urlCopertina) return;
+    urlCopertina = url;
+    try {
+      var img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function () { imgCopertina = img; };
+      img.onerror = function () { imgCopertina = null; };
+      img.src = url;
+    } catch (e) { /* noop */ }
+  }
+
+  /* una fiamma sul canvas */
+  function fiammaCanvas(x, y, h, ang) {
+    var s = h / 160;
+    ctxTela.save();
+    ctxTela.translate(x, y);
+    ctxTela.rotate(ang * Math.PI / 180);
+    ctxTela.scale(s, s);
+    ctxTela.translate(-30, -147);
+    var g = ctxTela.createLinearGradient(0, 0, 0, -145);
+    g.addColorStop(0, "#fffdf2");
+    g.addColorStop(0.08, "#ffe07a");
+    g.addColorStop(0.25, "#ffa617");
+    g.addColorStop(0.50, "#f45300");
+    g.addColorStop(0.80, "rgba(205,38,0,.55)");
+    g.addColorStop(1, "rgba(160,15,0,0)");
+    ctxTela.shadowColor = "rgba(255,120,20,.8)";
+    ctxTela.shadowBlur = 12;
+    ctxTela.fillStyle = g;
+    ctxTela.fill(new Path2D(PERCORSO_FIAMMA));
+    ctxTela.shadowBlur = 0;
+    /* il cuore: sfumato, altrimenti sembra una macchia bianca */
+    var gc = ctxTela.createLinearGradient(0, 0, 0, -110);
+    gc.addColorStop(0, "rgba(255,252,235,.85)");
+    gc.addColorStop(0.35, "rgba(255,235,170,.45)");
+    gc.addColorStop(1, "rgba(255,205,90,0)");
+    /* PROVA: senza cuore */
+    void gc;
+    ctxTela.restore();
+  }
+
+  function copertinaCheBrucia(prog) {
+    if (!imgCopertina || !ctxTela) return "";
+    var L = tela.width;
+    var a = arte(prog, stato.seme);
+    try {
+      ctxTela.clearRect(0, 0, L, L);
+      /* la copertina */
+      var w = imgCopertina.naturalWidth || L, h = imgCopertina.naturalHeight || L;
+      var lato = Math.max(w, h);
+      ctxTela.drawImage(imgCopertina, (L - w) / 2 - (lato - w) / 2, (L - h) / 2 - (lato - h) / 2, lato, lato);
+      /* la crosta carbonizzata */
+      ctxTela.save();
+      ctxTela.scale(L / 100, L / 100);
+      ctxTela.fillStyle = "#0a0807";
+      ctxTela.fill(new Path2D("M0 0 H100 V100 H0 Z " + a.path), "evenodd");
+      ctxTela.strokeStyle = "rgba(96,74,54,.75)";
+      ctxTela.lineWidth = 2.4;
+      ctxTela.lineJoin = "round";
+      ctxTela.shadowColor = "rgba(90,68,50,.7)";
+      ctxTela.shadowBlur = 4;
+      ctxTela.stroke(new Path2D(a.path));
+      ctxTela.shadowBlur = 0;
+      ctxTela.restore();
+      /* le fiamme sulla linea di bruciatura */
+      var ogni = Math.max(1, Math.round(a.punti.length / 13));
+      for (var i = 0; i < a.punti.length; i += ogni) {
+        var p = a.punti[i];
+        var ux = p.x - a.cx, uy = p.y - a.cy;
+        var lun = Math.sqrt(ux * ux + uy * uy) || 1;
+        ux /= lun; uy /= lun;
+        var vx = ux * 0.38, vy = uy * 0.38 - 1.0;
+        var ang = Math.atan2(vx, -vy) * 180 / Math.PI;
+        var alt = L * (0.12 + 0.12 * ((i * 7) % 5) / 5) + L * 0.06 * a.prog;
+        fiammaCanvas(p.x / 100 * L, p.y / 100 * L, alt, ang);
+      }
+      return tela.toDataURL("image/jpeg", 0.82);
+    } catch (e) { /* il canvas non e' disegnabile: lascio com'e' */ }
+    return "";
+  }
+
+  function aggiornaNotifica(prog, suona) {
+    if (!("mediaSession" in navigator)) return;
+    var meta = navigator.mediaSession.metadata;
+    if (!meta) return;
+    var cop = "";
+    try { cop = meta.artwork && meta.artwork[0] ? String(meta.artwork[0].src || "") : ""; } catch (e) { /* noop */ }
+    if (!cop) return;
+    /* l'app ha cambiato copertina: ricarico l'immagine */
+    if (cop !== stato.ultimoArtwork && cop.indexOf("data:") !== 0) {
+      stato.ultimoArtwork = cop;
+      caricaCopertina(cop);
+    }
+    if (!suona) return;
+    /* non troppo spesso: il blocco schermo non ha bisogno di 60 fotogrammi
+       al secondo, e il telefono si scalda */
+    var adesso = Date.now();
+    if (adesso - (stato.ultimaNotifica || 0) < 900) return;
+    stato.ultimaNotifica = adesso;
+    preparaTela();
+    var bruciata = copertinaCheBrucia(prog);
+    if (!bruciata) return;
+      if (TEST >= 0) {
+        var imgProva = document.getElementById("mb-prova-notifica");
+        if (!imgProva) {
+          imgProva = document.createElement("img");
+          imgProva.id = "mb-prova-notifica";
+          imgProva.style.cssText = "position:fixed;left:10px;top:120px;width:256px;height:256px;z-index:9999;border:2px solid #f80";
+          document.body.appendChild(imgProva);
+        }
+        imgProva.src = bruciata;
+      }
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: meta.title || "",
+        artist: meta.artist || "",
+        album: meta.album || "",
+        artwork: [{ src: bruciata, sizes: "256x256", type: "image/jpeg" }]
+      });
+      stato.ultimoArtwork = bruciata;
+    } catch (e) { /* il browser non accetta l'artwork: lascio com'e' */ }
   }
 
   if (document.readyState === "loading") {

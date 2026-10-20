@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.348";
+  const APP_VERSION = "6.349";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13101,6 +13101,35 @@ async function _spotifyCompletaAccesso(code, stato) {
   try { j = await r.json(); } catch (e) { }
   if (!j || !j.ok) {
     const perche = String((j && j.errore) || ("il worker ha risposto " + r.status));
+    /* Ste: "dice invalid authorization code".
+       Il codice di Spotify si usa una volta sola: se lo dice, vuol dire che
+       lo scambio lo ha gia' fatto qualcun'altro (la pagina, che parte
+       prima). Non e' un errore: l'app aspetta semplicemente il permesso. */
+    if (/invalid authorization code|invalid_grant/i.test(perche)) {
+      _spotifyTraccia("il codice e' gia' stato usato: aspetto il permesso");
+      try { sessionStorage.setItem("mb.spotifyScambio", "in corso"); } catch (e) { /* noop */ }
+      for (let giro = 0; giro < 60; giro++) {
+        if (_spotifyToken()) {
+          _spotifyTraccia("permesso arrivato");
+          toast("Collegato a Spotify", 4000);
+          try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+          _loginSpotifyInCorso = false;
+          return true;
+        }
+        const b3 = String(sessionStorage.getItem("mb.spotifyBiglietto") || "");
+        if (b3) {
+          const preso3 = await _spotifyPrendiPermesso(b3);
+          if (preso3) {
+            _spotifyTraccia("permesso preso col biglietto");
+            toast("Collegato a Spotify", 4000);
+            try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+            _loginSpotifyInCorso = false;
+            return true;
+          }
+        }
+        await new Promise(function (r) { setTimeout(r, 500); });
+      }
+    }
     _spotifyTraccia("il worker ha rifiutato lo scambio: " + perche);
     try { LS.set("mb.spotifyErrore", perche); } catch (e) { /* noop */ }
     _loginSpotifyInCorso = false;
@@ -13639,6 +13668,36 @@ async function _spotifyRientro() {
     return;
   }
   _spotifyTraccia("ritorno: codice trovato (dal " + (q && q.get("code") ? "indirimento" : "ricordo della pagina") + ") indirimento: [" + String((window.location && window.location.search) || "").slice(0, 70) + "]");
+  /* Ste: "dice invalid authorization code".
+     Motivo: il codice si usa una volta sola, e lo usavano due: la pagina
+     (che parte subito) e l'app (che parte dopo qualche secondo). Il primo
+     lo faceva bene, il secondo trovava il codice gia' bruciato.
+     Adesso: se la pagina ha gia' iniziato lo scambio, l'app NON lo rifa e
+     aspetta solo il permesso. */
+  try {
+    if (sessionStorage.getItem("mb.spotifyScambio")) {
+      _spotifyTraccia("la pagina sta gia' facendo lo scambio: non lo rifo, aspetto");
+      for (let giro = 0; giro < 60; giro++) {
+        if (_spotifyToken()) {
+          _spotifyTraccia("permesso arrivato");
+          toast("Collegato a Spotify", 4000);
+          try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+          return;
+        }
+        const b2 = String(sessionStorage.getItem("mb.spotifyBiglietto") || "");
+        if (b2) {
+          const preso2 = await _spotifyPrendiPermesso(b2);
+          if (preso2) {
+            _spotifyTraccia("permesso preso col biglietto");
+            toast("Collegato a Spotify", 4000);
+            try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+            return;
+          }
+        }
+        await new Promise(function (r) { setTimeout(r, 500); });
+      }
+    }
+  } catch (e) { /* noop */ }
   /* Il codice resta da parte finche' lo scambio non e' finito: se la pagina
      si ricarica durante lo scambio, il codice c'e' ancora e si puo'
      riprovare. (Spotify lo accetta una volta sola: se lo scambio e' andato
