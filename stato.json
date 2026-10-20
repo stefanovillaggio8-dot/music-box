@@ -790,9 +790,15 @@
    },
    "tonypitony|striscia": {
     "v": 0,
-    "s": 12,
+    "s": 28,
     "t": "Striscia",
     "a": "TonyPitony"
+   },
+   "nayt|cosechenonvuoisentirtidire": {
+    "v": 0,
+    "s": 18,
+    "t": "Cose che non vuoi sentirti dire",
+    "a": "nayt"
    }
   },
   "Diego": {
