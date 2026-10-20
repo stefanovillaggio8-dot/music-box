@@ -1572,7 +1572,7 @@
    },
    "sadturskiidastropapavsickluke|nonaverepaurafeatastropapavsickluke": {
     "v": 0,
-    "s": 159,
+    "s": 240,
     "t": "non avere paura (feat. Astro, Papa V, Sick Luke)",
     "a": "Sadturs, KIID, Astro, Papa V, Sick Luke"
    },
@@ -2109,6 +2109,12 @@
     "s": 133,
     "t": "occrl purpl3 (feat. Marracash)",
     "a": "thasup, Marracash"
+   },
+   "tonyboysickluke|rocknroll": {
+    "v": 0,
+    "s": 52,
+    "t": "Rock'n'roll",
+    "a": "Tony Boy, Sick Luke"
    }
   }
  }
