@@ -1,65 +1,5 @@
 [
  {
-  "t": 1792519213129,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519214368,
-  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519224522,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792519224620,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519224841,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519225821,
-  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519226051,
-  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519254390,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519254414,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792519255599,
-  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519256682,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519257917,
-  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519314757,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519314750,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792519314947,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792519315964,
   "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +98,65 @@
  {
   "t": 1792519896270,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519896268,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792519897515,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792519897513,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519900811,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519902019,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519902023,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792519903884,
+  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
+ },
+ {
+  "t": 1792519904065,
+  "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
+ },
+ {
+  "t": 1792519903880,
+  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
+ },
+ {
+  "t": 1792519904790,
+  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
+ },
+ {
+  "t": 1792519904791,
+  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
+ },
+ {
+  "t": 1792519904970,
+  "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
+ },
+ {
+  "t": 1792519908355,
+  "r": "SPOTIFY: [v6.353] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQCgPjuhlraXhd5G_SE2pLKMMrqjUp1nal2o5Y4UxxEbPrA78lwyppKHCL"
+ },
+ {
+  "t": 1792519908503,
+  "r": "SPOTIFY: [v6.353] permesso preso col biglietto"
+ },
+ {
+  "t": 1792519909251,
+  "r": "SPOTIFY: [v6.353] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQCgPjuhlraXhd5G_SE2pLKMMrqjUp1nal2o5Y4UxxEbPrA78lwyppKHCL"
  }
 ]
