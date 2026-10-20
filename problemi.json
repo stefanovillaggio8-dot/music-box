@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792525964866,
-  "r": "SPOTIFY: [v6.359] premo il link 'Apri Spotify' (sto andando su Spotify)"
- },
- {
-  "t": 1792525965111,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525965807,
-  "r": "SPOTIFY: [v6.359] premo il link 'Apri Spotify' (sto andando su Spotify)"
- },
- {
-  "t": 1792525969079,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525970934,
-  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
- },
- {
   "t": 1792525970936,
   "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792525979818,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525980072,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525980064,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525980624,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525980655,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525981453,
+  "r": "SPOTIFY: [v6.359] bottone toccato"
  }
 ]
