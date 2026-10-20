@@ -936,7 +936,7 @@
    },
    "artie5ive|albv": {
     "v": 1,
-    "s": 163,
+    "s": 246,
     "t": "ALBV",
     "a": "Artie 5ive"
    },
@@ -1020,7 +1020,7 @@
    },
    "fsksatellite|ansiano": {
     "v": 0,
-    "s": 233,
+    "s": 290,
     "t": "ANSIA NO",
     "a": "FSK SATELLITE"
    },
@@ -2155,7 +2155,7 @@
    "silentbobsickbudd|morireeniente": {
     "v": 0,
     "s": 160,
-    "t": "Morire Ã Niente",
+    "t": "Morire ÃÂ Niente",
     "a": "Silent Bob, Sick Budd"
    }
   }
