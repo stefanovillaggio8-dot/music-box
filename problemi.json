@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792505013960,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792505527441,
   "r": "SPOTIFY: [v6.350] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792505674147,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792505677421,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
