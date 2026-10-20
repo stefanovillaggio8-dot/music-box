@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792517320491,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792517321385,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792517506334,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792517529968,
+  "r": "SPOTIFY: [v6.351] ritorno: nessun codice (indirimento: [?fuocoTest=0.5], memoria: [])"
  }
 ]
