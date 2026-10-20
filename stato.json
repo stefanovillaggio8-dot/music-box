@@ -2124,9 +2124,15 @@
    },
    "shirosagisu|clavarlaespada": {
     "v": 0,
-    "s": 177,
+    "s": 184,
     "t": "clavar la espada",
     "a": "Shiro SAGISU"
+   },
+   "lelfofunkymann|funghiinsalsarosa": {
+    "v": 0,
+    "s": 150,
+    "t": "Funghi in salsa rosa",
+    "a": "L'Elfo, Funkymann"
    }
   }
  }
