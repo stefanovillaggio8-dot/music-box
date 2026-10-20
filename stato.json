@@ -532,7 +532,7 @@
    },
    "nayt|badvibes": {
     "v": 1,
-    "s": 141,
+    "s": 148,
     "t": "Bad vibes",
     "a": "nayt"
    },
@@ -787,6 +787,12 @@
     "s": 112,
     "t": "L'immenso",
     "a": "Negromaro"
+   },
+   "tonypitony|striscia": {
+    "v": 0,
+    "s": 2,
+    "t": "Striscia",
+    "a": "TonyPitony"
    }
   },
   "Diego": {
