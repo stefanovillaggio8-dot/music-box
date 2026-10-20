@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792464367540,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792464370277,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465665658,
   "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792465672531,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
