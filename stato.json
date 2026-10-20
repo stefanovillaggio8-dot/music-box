@@ -490,7 +490,7 @@
    },
    "xcarme|sonook": {
     "v": 0,
-    "s": 12,
+    "s": 18,
     "t": "Sono Ok",
     "a": "XCarme"
    },
@@ -592,7 +592,7 @@
    },
    "ty1coezmassimopericolo|stanotte": {
     "v": 0,
-    "s": 126,
+    "s": 140,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
@@ -821,7 +821,7 @@
    "coez|esemprebello": {
     "v": 0,
     "s": 31,
-    "t": "Ã sempre bello",
+    "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
    "calcutta|tutti": {
