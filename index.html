@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6336" />
+  <link rel="stylesheet" href="style.css?v=6337" />
     <script>
       /* Ste: "ho fatto l'accesso con Spotify e mi e' tornato su musicbox, ma e' spuntato
          di nuovo accedi con Spotify".
@@ -26,9 +26,6 @@
           var e = q.get("error") || "";
           if (c || e) {
             sessionStorage.setItem("mb.spotifyRitorno", JSON.stringify({ c: c, s: s, e: e }));
-            if (window.history && window.history.replaceState) {
-              window.history.replaceState({}, "", window.location.pathname + window.location.hash);
-            }
           }
         } catch (x) { /* niente, l'app riprovera' da sola */ }
       })();
@@ -720,6 +717,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6336"></script>
+<script src="app.js?v=6337"></script>
 </body>
 </html>

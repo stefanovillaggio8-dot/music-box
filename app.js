@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.336";
+  const APP_VERSION = "6.337";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12964,6 +12964,21 @@ async function _spotifyAccedi() {
   } catch (e) { /* noop */ }
   _spotifyTraccia("accesso: sto per aprire Spotify");
   let aperta = false;
+  /* Ste: "si apre una pagina nera senza indirizzo e ritorna a musicbox".
+     Motivo: con l'app installata sulla schermata Home, aprire una finestra
+     nuova su iPhone fa una schermata NERA (la web app non puo' uscire dal
+     suo indirizzo) e poi si torna indietro. Per questo, se l'app e' aperta
+     dalla schermata Home, non apro niente: lascio il link e il tocco lo
+     gestisce il telefono. */
+  let daIcona = false;
+  try {
+    daIcona = !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  } catch (e) { daIcona = false; }
+  if (daIcona) {
+    _spotifyTraccia("sono nella web app: niente finestra nuova, devi toccare il link");
+    try { _spotifyPnl("Accedi a Spotify", "un tocco e si apre", "<p class=\"step-hint\">Tocca il pulsante qui sotto: si aprira il browser, e l'accesso a Spotify e' una cosa sola. Dopo averlo concesso, torna qui.</p>"); } catch (e) { /* noop */ }
+    return;
+  }
   try {
   /* il tocco e' suo: e' l'unico modo che iOS lascia passare quando
   l'app e' installata sulla schermata Home */
@@ -13023,6 +13038,7 @@ async function _spotifyCompletaAccesso(code, stato) {
     });
   } catch (e) { toast("Non riesco a parlare con Spotify"); _loginSpotifyInCorso = false; return false; }
   if (!r.ok) {
+    _spotifyTraccia("scambio rifiutato da Spotify (" + r.status + ")");
     /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
        accedi con spotify". Il motivo lo voglio sapere: Spotify risponde con
        un JSON che dice il perche'. Lo mostro, cosi' non devo indovinare. */
@@ -13043,6 +13059,7 @@ async function _spotifyCompletaAccesso(code, stato) {
     return false;
   }
   const j = await r.json();
+  _spotifyTraccia("scambio andato bene, salvo il permesso");
   _spotifySalvaToken(j);
   _spotifyChiave = null;
   try {
@@ -13505,7 +13522,8 @@ async function _spotifyRientro() {
       }
     } catch (e) { /* noop */ }
   }
-  if (!code && !errore) return;
+  if (!code && !errore) { _spotifyTraccia("ritorno: nessun codice nell'indirimento"); return; }
+  _spotifyTraccia("ritorno: codice trovato (dal " + (q && q.get("code") ? "indirimento" : "ricordo della pagina") + ")");
   /* Il codice si usa una volta sola: lo metto via subito, cosi' un secondo
      tentativo non prova a scambiarlo di nuovo (Spotify lo rifiuterebbe e
      l'app mostrerebbe un errore per niente). */
@@ -13523,7 +13541,9 @@ async function _spotifyRientro() {
     toast("Non hai concesso Spotify: " + errore, 6000);
     return;
   }
+  _spotifyTraccia("ritorno: scambio il codice col permesso");
   const ok = await _spotifyCompletaAccesso(code, stato);
+  _spotifyTraccia(ok ? "ritorno: permesso ottenuto" : "ritorno: lo scambio e' fallito");
   if (!ok) {
     /* Se non e' andata, adesso la schermata dice PERCHE'. Prima spariva
        tutto in silenzio e tornava "Accedi con Spotify", senza spiegare
