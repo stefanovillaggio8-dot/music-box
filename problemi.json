@@ -1,5 +1,9 @@
 [
  {
+  "t": 1792532054207,
+  "r": "SPOTIFY: il worker ha rifiutato: Authorization code expired"
+ },
+ {
   "t": 1792532054204,
   "r": "SPOTIFY: [v6.365] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQCPVIbweHXlzXqEJ1q5SpdtdrYanhhzkZliJccqyiYMbt2LkjioRCbFHW"
  },
@@ -153,10 +157,6 @@
  },
  {
   "t": 1792532093107,
-  "r": "SPOTIFY: [v6.365] premo il pulsante 'Accedi con Spotify' del pannello"
- },
- {
-  "t": 1792532094039,
   "r": "SPOTIFY: [v6.365] premo il pulsante 'Accedi con Spotify' del pannello"
  }
 ]
