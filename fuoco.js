@@ -796,6 +796,10 @@
     var cop = "";
     try { cop = meta.artwork && meta.artwork[0] ? String(meta.artwork[0].src || "") : ""; } catch (e) { /* noop */ }
     if (!cop) return;
+    /* Se e' l'icona dell'app (succede quando un brano non ha una
+       copertina) non la tocco: se no, nella notifica compare il logo
+       del Music Box al posto della copertina (Ste, 20/10/2026). */
+    if (/icon-\d+\.png$/i.test(cop)) return;
     /* l'app ha cambiato copertina: ricarico l'immagine */
     if (cop !== stato.ultimoArtwork && cop.indexOf("data:") !== 0) {
       stato.ultimoArtwork = cop;

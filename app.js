@@ -3731,6 +3731,13 @@ emptyEl.textContent = !total
         art = document.createElement("img");
         art.className = "track-art";
         art.alt = "";
+        /* Ste: "le copertine si scaricano dopo molto tempo". Prima
+           l'app chiedeva tutte le copertine della lista in una volta
+           (200 e piu' immagini): l'app partiva lenta e il telefono
+           scaricava un sacco di roba. Con "lazy" l'app parte subito e
+           le copertine arrivano man mano che si scorre. */
+        art.loading = "lazy";
+        art.decoding = "async";
         art.src = t.cover;
       } else {
         art = document.createElement("div");
