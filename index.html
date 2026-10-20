@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6342" />
+  <link rel="stylesheet" href="style.css?v=6343" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -40,7 +40,16 @@
           var code = q.get("code") || "";
           var stato = q.get("state") || "";
           var errore = q.get("error") || "";
-          if (!code && !errore) return;
+          if (!code && !errore) {
+            /* Niente codice nell'indirimento: pero' se la pagina precedente
+               aveva messo via un codice, lo dico: e' la traccia che serve
+               a capire cosa sta succedendo. */
+            try {
+              if (sessionStorage.getItem("mb.spotifyRitorno")) traccia("pagina nuova senza codice, ma c'e' un codice messo via");
+            } catch (z) { }
+            return;
+          }
+          traccia("pagina nuova con il codice (scambio qui)");
           try { sessionStorage.setItem("mb.spotifyRitorno", JSON.stringify({ c: code, s: stato, e: errore })); } catch (x) { }
           if (errore) {
             try { localStorage.setItem("mb.spotifyErrore", String(errore)); } catch (x) { }
@@ -785,6 +794,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6342"></script>
+<script src="app.js?v=6343"></script>
 </body>
 </html>

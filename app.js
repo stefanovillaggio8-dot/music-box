@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.342";
+  const APP_VERSION = "6.343";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13280,7 +13280,7 @@ function _spotifyPnl(titolo, sotto, html) {
       fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riga: "SPOTIFY: " + String(testo).slice(0, 140) }),
+        body: JSON.stringify({ riga: "SPOTIFY: [v" + (typeof APP_VERSION !== "undefined" ? APP_VERSION : "?") + "] " + String(testo).slice(0, 120) }),
         /* "keepalive": la richiesta continua anche se la pagina viene ricaricata
            o chiusa mentre e' in viaggio. Senza, le tracce sparivano proprio
            quando servivano di piu'. */
@@ -13533,7 +13533,6 @@ async function _spotifyRientro() {
      qui lo recupero: cosi' lo scambio va avanti anche dopo un ricaricamento. */
   if ((!code && !errore) || !stato) {
     try {
-      if (sessionStorage.getItem("mb.spotifyScambio")) { _spotifyTraccia("lo scambio e' gia' partito dalla pagina: non lo rifaccio"); return; }
       const salvato = JSON.parse(sessionStorage.getItem("mb.spotifyRitorno") || "null");
       if (salvato) {
         if (!code) code = String(salvato.c || "");
@@ -13543,7 +13542,7 @@ async function _spotifyRientro() {
     } catch (e) { /* noop */ }
   }
   if (!code && !errore) {
-    _spotifyTraccia("ritorno: nessun codice nell'indirimento");
+    _spotifyTraccia("ritorno: nessun codice (indirimento: [" + String((window.location && window.location.search) || "").slice(0, 70) + "], memoria: [" + String(sessionStorage.getItem("mb.spotifyRitorno") || "").slice(0, 40) + "])");
     /* Ste: "non va ancora, porta sempre ad accedi con spotify".
        Se lo scambio l'ha gia' iniziato la pagina (e' lei che lo fa, perche'
        e' l'unica che puo' finire prima che il telefono cambi scheda), l'app
@@ -13590,7 +13589,7 @@ async function _spotifyRientro() {
     } catch (e) { /* noop */ }
     return;
   }
-  _spotifyTraccia("ritorno: codice trovato (dal " + (q && q.get("code") ? "indirimento" : "ricordo della pagina") + ")");
+  _spotifyTraccia("ritorno: codice trovato (dal " + (q && q.get("code") ? "indirimento" : "ricordo della pagina") + ") indirimento: [" + String((window.location && window.location.search) || "").slice(0, 70) + "]");
   /* Il codice resta da parte finche' lo scambio non e' finito: se la pagina
      si ricarica durante lo scambio, il codice c'e' ancora e si puo'
      riprovare. (Spotify lo accetta una volta sola: se lo scambio e' andato
@@ -13607,8 +13606,32 @@ async function _spotifyRientro() {
     toast("Non hai concesso Spotify: " + errore, 6000);
     return;
   }
+  /* Se la pagina ha gia' iniziato lo scambio, gli do un po' di tempo:
+     il codice si usa una volta sola, e due scambi insieme non funzionano. */
+  try {
+    if (sessionStorage.getItem("mb.spotifyScambio")) {
+      _spotifyTraccia("aspetto che la pagina finisca lo scambio");
+      for (let giro = 0; giro < 12; giro++) {
+        if (_spotifyToken()) {
+          _spotifyTraccia("permesso arrivato dalla pagina");
+          toast("Collegato a Spotify", 4000);
+          try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+          return;
+        }
+        await new Promise(function (r) { setTimeout(r, 250); });
+      }
+    }
+  } catch (e) { /* noop */ }
   _spotifyTraccia("ritorno: scambio il codice col permesso");
   const ok = await _spotifyCompletaAccesso(code, stato);
+  /* Se lo scambio e' fallito ma il permesso c'e' lo stesso (perche' l'ha
+     preso la pagina), va bene: non e' un errore. */
+  if (!ok && _spotifyToken()) {
+    _spotifyTraccia("il permesso c'era gia': lo scambio non serve piu'");
+    toast("Collegato a Spotify", 4000);
+    try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+    return;
+  }
   try { sessionStorage.removeItem("mb.spotifyRitorno"); } catch (e) { /* noop */ }
   _spotifyTraccia(ok ? "ritorno: permesso ottenuto" : "ritorno: lo scambio e' fallito");
   if (!ok) {
