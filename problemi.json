@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792458942774,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792458945839,
   "r": "SPOTIFY: la pagina scambia il codice col permesso"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792460411860,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792460545309,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
