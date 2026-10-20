@@ -149,8 +149,16 @@
         function aggiorna() {
           var c = campo(), b = bottone();
           if (!c || !b) return;
-          if (c.value && c.value.trim()) b.classList.add("visibile");
+          var acceso = !!(c.value && c.value.trim());
+          if (acceso) b.classList.add("visibile");
           else b.classList.remove("visibile");
+          /* Metto la visibilita' anche direttamente sul bottone: cosi'
+             funziona anche se il telefono ha ancora il vecchio style.css
+             in cache (il CSS nuovo arriva dopo). */
+          try {
+            b.style.opacity = acceso ? "1" : "0";
+            b.style.pointerEvents = acceso ? "auto" : "none";
+          } catch (err) { }
         }
         document.addEventListener("input", function (e) {
           if (e.target && e.target.id === "search") aggiorna();
