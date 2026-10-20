@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792473964387,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792473967692,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792473970942,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792473978604,
-  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792473984743,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792473989999,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792505527441,
   "r": "SPOTIFY: [v6.350] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792505527926,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792505527972,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792505529984,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792505530042,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505530019,
+  "r": "worker /stato: risponde"
  }
 ]
