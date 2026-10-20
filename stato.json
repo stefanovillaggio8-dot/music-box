@@ -1332,7 +1332,7 @@
    },
    "gemellogemitaiz|stanotte": {
     "v": 0,
-    "s": 239,
+    "s": 336,
     "t": "Stanotte",
     "a": "Gemello, Gemitaiz"
    },
@@ -2121,6 +2121,12 @@
     "s": 103,
     "t": "Rock'n'roll",
     "a": "Tony Boy, Sick Luke"
+   },
+   "shirosagisu|clavarlaespada": {
+    "v": 0,
+    "s": 34,
+    "t": "clavar la espada",
+    "a": "Shiro SAGISU"
    }
   }
  }
