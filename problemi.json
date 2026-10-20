@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792462444868,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792462448446,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465268303,
   "r": "SPOTIFY: [v6.348] bottone toccato"
+ },
+ {
+  "t": 1792465272112,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
