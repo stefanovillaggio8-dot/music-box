@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792518213709,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792518216703,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792520195405,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
   "t": 1792520240940,
   "r": "SPOTIFY: [v6.353] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792521830293,
   "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792521830287,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792521830308,
+  "r": "SPOTIFY: [v6.357] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792521969968,
+  "r": "SPOTIFY: [v6.357] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
