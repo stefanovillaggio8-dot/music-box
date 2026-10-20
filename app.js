@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.352";
+  const APP_VERSION = "6.353";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.

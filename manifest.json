@@ -4,7 +4,7 @@
   "description": "Il tuo player musicale personale",
   "id": "./",
   "start_url": "./index.html",
-  "scope": "./",
+  "scope": "./index.html",
   "display": "browser",
   "orientation": "portrait",
   "background_color": "#0f0f14",
