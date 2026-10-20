@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792452779732,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792452784729,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792455305154,
   "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
+ },
+ {
+  "t": 1792455307366,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
