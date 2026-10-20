@@ -10,7 +10,15 @@
   var _spotifyTentativoInCorso = false;
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
-  var _spotifyAccessoQui = false;
+  /* Sta nella memoria della scheda (non in una variabile): cosi' se la
+     pagina si ricarica, l'app sa ancora che l'accesso e' partito da qui e
+     non ripropono la scelta fra le due strade. */
+  function _accessoQui() {
+    try { return !!sessionStorage.getItem("mb.spotifyAccessoQui"); } catch (e) { return false; }
+  }
+  function _segnaAccessoQui() {
+    try { sessionStorage.setItem("mb.spotifyAccessoQui", "1"); } catch (e) { /* noop */ }
+  }
   const BUILTIN = [
   { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
 
@@ -594,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.365";
+  const APP_VERSION = "6.366";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12638,7 +12646,8 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
              vecchio, la pagina restava con i file vecchi e non si
              ricaricava: l'app non si aggiornava mai da sola. Adesso, quando
              il worker cambia, la pagina si ricarica e prende i file nuovi. */
-          _segna("il worker del servizio e' cambiato: ricarico per prendere i file nuovi");
+          _segna("il worker del servizio e' cambiato: ricarico per prendere i file nuovi");
+          _spotifyTraccia("ricarico: il worker del servizio e' cambiato");
           try { setTimeout(function () { window.location.reload(); }, 400); } catch (e) { /* noop */ }
         });
 navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
@@ -12926,9 +12935,10 @@ function _pannelloAperto() {
   } catch (e) { /* noop */ }
   return false;
 }
-function _ricaricaQuandoLibero() {
-  try {
-    if (_pannelloAperto()) {
+function _ricaricaQuandoLibero() {
+  try {
+    _spotifyTraccia("sto per ricaricare la pagina (aggiornamento)");
+    if (_pannelloAperto()) {
       setTimeout(function () { _ricaricaQuandoLibero(); }, 6000);
       return;
     }
@@ -13157,10 +13167,14 @@ async function _spotifyAccedi() {
      Adesso: il pannello resta aperto (deve, cosi' si vede il link
      "Apri Spotify") e un segnale dedicated dice che l'accesso e' in
      corso, cosi' il ricaricamento aspetta. */
-  _loginSpotifyInCorso = true;
-  /* Un accesso nuovo cancella l'errore del tentativo vecchio: altrimenti
-     quello resta scritto e l'app sembra ancora rotta. */
-  try { LS.remove("mb.spotifyErrore"); LS.remove("mb.spotifyErroreQuando"); } catch (e) { /* noop */ }
+  _loginSpotifyInCorso = true;
+  /* Segnalo che l'accesso e' partito QUI: sta nella memoria della scheda,
+     cosi' se la pagina si ricarica l'app lo sa e non ripropono la scelta
+     fra le due strade (che era il giro a vuoto). */
+  try { _segnaAccessoQui(); } catch (e) { /* noop */ }
+  /* Un accesso nuovo cancella l'errore del tentativo vecchio: altrimenti
+     quello resta scritto e l'app sembra ancora rotta. */
+  try { LS.remove("mb.spotifyErrore"); LS.remove("mb.spotifyErroreQuando"); } catch (e) { /* noop */ }
   if (!SPOTIFY_CLIENT_ID) { toast("Manca il Client ID di Spotify"); _loginSpotifyInCorso = false; return; }
   let pk;
   try { pk = await _spotifyPkce(); } catch (e) {
@@ -13252,7 +13266,7 @@ async function _spotifyAccedi() {
        gia' partito in questa scheda. Quando e' partito qui, il pannello
        dice una cosa sola: "tocca Apri Spotify". */
     const sicuro = "https://stefanovillaggio8-dot.github.io/music-box/?spotify=accedi";
-    if (_spotifyAccessoQui) {
+    if (_accessoQui()) {
       _spotifyPnl("Accedi a Spotify", "manca solo il via libera a Spotify",
         '<p class="step-hint">Tocca il pulsante qui sotto: si apre Spotify, li dai il permesso e poi torni qui. Me lo dai una volta sola e non ti chiedo la password.</p>' +
         '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" id="spotifyApriLink" href="' +
@@ -13380,7 +13394,12 @@ async function _spotifyCompletaAccesso(code, stato) {
     try { verifier = String(LS.get("mb.spotifyChiave", "")); } catch (e) {}
   }
   if (!verifier) verifier = _spotifyChiave || "";
-  if (!verifier) { toast("Accesso scaduto, riprova"); return false; }
+  if (!verifier) {
+    _spotifyTraccia("NON TROVO LA CHIAVE: state lungo " + String(stato || "").length + ", parti " + parti.length + ", memoria " + String(LS.get("mb.spotifyChiave", "") || "").length);
+    toast("Accesso scaduto, riprova");
+    return false;
+  }
+  _spotifyTraccia("chiave trovata (lunga " + verifier.length + ")");
   /* Controllo che lo "state" torni quello giusto, quando l'ho trovato
      nella memoria di questo telefono. Se invece e' arrivato con la chiave
      dentro, il controllo ce l'ha gia' fatto Spotify. */
