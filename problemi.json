@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532094970,
-  "r": "SPOTIFY: [v6.365] ritorno: nessun codice (indirimento: [?spotify=accedi], memoria: [])"
- },
- {
   "t": 1792532094971,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792537219691,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792537316852,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
