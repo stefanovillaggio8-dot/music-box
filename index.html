@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6362" />
+  <link rel="stylesheet" href="style.css?v=6363" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -132,13 +132,30 @@
       </div>
     </div>
     <div class="search-wrap">
-      <!-- Ste: una X tutto a sinistra che cancella quello che c'e' scritto
-           nella ricerca e riporta alla libreria -->
+      <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
+      <input type="search" id="search" placeholder="Cerca..." autocomplete="off" />
+      <!-- Ste: una X a destra che cancella quello che c'e' scritto nella
+           ricerca e riporta alla libreria. Il comportamento sta qui, non in
+           app.js: cosi' funziona anche se il telefono ha ancora il vecchio
+           app.js in cache (la pagina invece arriva sempre dalla rete). -->
       <button type="button" class="search-x" id="searchX" aria-label="Cancella la ricerca" title="Cancella la ricerca">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12Z"/></svg>
       </button>
-      <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
-      <input type="search" id="search" placeholder="Cerca..." autocomplete="off" />
+      <script>
+      (function () {
+        document.addEventListener("click", function (e) {
+          var x = e.target && e.target.closest ? e.target.closest("#searchX") : null;
+          if (!x) return;
+          var campo = document.getElementById("search");
+          if (!campo) return;
+          campo.value = "";
+          /* l'evento "input" fa azzerare il filtro all'app e ridisegnare
+             la libreria: non devo toccare l'interno dell'app */
+          try { campo.dispatchEvent(new Event("input", { bubbles: true })); } catch (err) { }
+          try { campo.blur(); } catch (err) { }
+        });
+      })();
+      </script>
     </div>
   </header>
 
@@ -802,7 +819,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6362"></script>
-<script src="app.js?v=6362"></script>
+<script src="fuoco.js?v=6363"></script>
+<script src="app.js?v=6363"></script>
 </body>
 </html>
