@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792525508410,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525509361,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792525509357,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792525698285,
   "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792525738549,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525738572,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525739031,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525768606,
+  "r": "worker /stato: risponde"
  }
 ]
