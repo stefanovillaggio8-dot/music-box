@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.367";
+  const APP_VERSION = "6.368";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13074,7 +13074,12 @@ function _ricaricaQuandoLibero() {
    Comunque lo teniamo in un posto solo cosi' e' facile cambiarlo. */
 const SPOTIFY_CLIENT_ID = "97b894cf504b412fa96e5a7ced1880c4";
 const SPOTIFY_REDIRECT = "https://stefanovillaggio8-dot.github.io/music-box/";
-const SPOTIFY_SCOPI = "playlist-read-private playlist-read-collaborative";
+  /* Ste: "da Spotify: 0 playlist (errore 403)".
+     Il 403 vuol dire "accesso non sufficiente": il token c'e' ma manca un
+     permesso. Chiedo quindi il pacchetto completo di quelli che servono
+     per leggere le playlist (private, collaborative e il profilo), cosi'
+     non dipende da cosa era stato concesso tanto tempo fa. */
+  const SPOTIFY_SCOPI = "playlist-read-private playlist-read-collaborative user-read-private user-read-email";
 
 let _spotifyAccess = null;
 let _spotifyChiave = null;   /* la "code_verifier" dell'accesso in corso */
