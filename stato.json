@@ -912,7 +912,7 @@
    },
    "22simbapromessa|sipariofeatpromessa": {
     "v": 0,
-    "s": 192,
+    "s": 290,
     "t": "Sipario (feat. Promessa)",
     "a": "22simba, Promessa"
    },
@@ -2130,9 +2130,15 @@
    },
    "lelfofunkymann|funghiinsalsarosa": {
     "v": 0,
-    "s": 150,
+    "s": 151,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
+   },
+   "fabrifibra|fenomeno": {
+    "v": 0,
+    "s": 23,
+    "t": "Fenomeno",
+    "a": "Fabri Fibra"
    }
   }
  }
