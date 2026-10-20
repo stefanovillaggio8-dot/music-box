@@ -590,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.358";
+  const APP_VERSION = "6.359";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13095,8 +13095,17 @@ async function _spotifyAccedi() {
       '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
       String(sicuro).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Accedi con Spotify (nel browser)</a>' +
       '<p class="step-hint" style="margin-top:14px">Se sei gia\' nel browser e preferisci fare tutto qui, c\'e\' anche questa strada:</p>' +
-      '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
+      '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" id="spotifyApriLink" href="' +
       String(url).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Apri Spotify</a>');
+    /* Ste: "non va ancora". Motivo: del pannello dell'accesso non arrivava
+       nessuna traccia, e cosi' non sapevo quale pulsante avesse premuto.
+       Adesso ogni tocco lascia un segno. */
+    try {
+      const legame = $("spotifyApriLink");
+      if (legame) legame.addEventListener("click", function () {
+        _spotifyTraccia("premo il link 'Apri Spotify' (sto andando su Spotify)");
+      });
+    } catch (e) { /* noop */ }
   } catch (e) { /* noop */ }
   _spotifyTraccia("accesso: sto per aprire Spotify");
   let aperta = false;
@@ -13512,7 +13521,10 @@ function _spotifyChiediAccesso(perche) {
     '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
     '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
   try {
-    $("spotifyAccedi").addEventListener("click", () => { _spotifyAccedi(); });
+    $("spotifyAccedi").addEventListener("click", () => {
+      _spotifyTraccia("premo il pulsante 'Accedi con Spotify' del pannello");
+      _spotifyAccedi();
+    });
     $("spotifySalta").addEventListener("click", () => {
       _spotifyChiudi();
       toast("Nessun problema, l'app resta come e'");

@@ -66,10 +66,13 @@
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%}",
     ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;",
-    "  animation:mbSfarfalla .34s linear infinite alternate}",
-    "@keyframes mbSfarfalla{0%{transform:scale(1,1) rotate(-3deg)}",
-    "  50%{transform:scale(.94,1.10) rotate(2deg)}",
-    "  100%{transform:scale(1.04,.96) rotate(-1.5deg)}}",
+    "  animation:mbSfarfalla .38s linear infinite alternate}",
+    /* La fiamma NON cambia dimensione: se cresce e si rimpicciolisce, con
+       tutte le fiamme vicine si vede un "battito" (Ste: "anche pulsa il
+       fuoco"). Ora ondeggia solo di luminosita', come il fuoco vero. */
+    "@keyframes mbSfarfalla{0%{opacity:.78}",
+    "  50%{opacity:1}",
+    "  100%{opacity:.88}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-bragia i{position:absolute;border-radius:50%;",
     "  background:radial-gradient(circle,#ffe6a0 0%,#ff7a10 50%,rgba(255,80,0,0) 100%);",
@@ -203,7 +206,10 @@
     for (var i = 0; i < N; i += ogni) {
       var alt = lato * (0.11 + r() * 0.13) + lato * 0.07 * a.prog;
       if (r() < 0.18) alt = alt * 1.6;
-      out.push({ i: i, alt: alt, larg: alt * (0.40 + r() * 0.16), attesa: r() * 0.9 });
+      /* il ritardo e' distribuito col numero d'oro: le fiamme non si
+         muovono a gruppi */
+      var k = out.length;
+      out.push({ i: i, alt: alt, larg: alt * (0.40 + r() * 0.16), attesa: ((k * 0.6180339887) % 1) * 0.9 });
     }
     return out;
   }
@@ -216,7 +222,7 @@
       h += '<i style="left:' + (4 + (i * 13) % 92).toFixed(0) + "%;top:" + (14 + (i * 17) % 76).toFixed(0) +
         "%;width:" + d.toFixed(1) + "px;height:" + d.toFixed(1) + "px;--mbdx:" + dx +
         "px;animation-duration:" + (2.6 + (i % 6) * 0.35).toFixed(2) + "s;animation-delay:" +
-        (i * 0.19).toFixed(2) + 's"></i>';
+        (((i * 0.6180339887) % 1) * 3.4).toFixed(2) + 's"></i>';
     }
     return h;
   }
@@ -321,6 +327,13 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
+  /* PROVA TEMPORANEA */
+  var TEST = -1;
+  try {
+    var mm = /[?&]fuocoTest=([\d.]+)/.exec(String(window.location.search || ""));
+    if (mm) TEST = parseFloat(mm[1]);
+  } catch (e) { /* noop */ }
+
   var stato = {
     box: null,
     ultimoTitolo: "",
@@ -438,6 +451,7 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
+      if (TEST >= 0) { prog = TEST; suona = true; stato.suonaOra = true; }
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;
@@ -487,7 +501,7 @@
          battesse"). Le muovo solo quando il bruciato e' cambiato un po':
          i passi sono troppo piccoli per vedersi, l'animazione gira
          liscia. */
-      var cambiato = Math.abs(prog - stato.progChar) > 0.01;
+      var cambiato = Math.abs(prog - stato.progChar) > 0.02;
       if (cambiato) disegnaChar(prog);
       if (!stato.fiamme.length) preparaFiamme(prog, r.width);
       if (cambiato || stato.progFiamme < 0) {
@@ -605,8 +619,17 @@
     ctxTela.restore();
   }
 
+  /* Il fuoco deve MUOVERSI: ogni disegno e' un po' diverso dal
+     precedente, altrimenti nella notifica del telefono si vede sempre la
+     stessa immagine e sembra ferma. */
+  function rnd(seme) {
+    var x = Math.sin(seme * 127.1 + 311.7) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
   function copertinaCheBrucia(prog) {
     if (!imgCopertina || !ctxTela) return "";
+    var t = Date.now() / 1000;
     var L = tela.width;
     var a = arte(prog, stato.seme);
     try {
@@ -630,6 +653,7 @@
       ctxTela.restore();
       /* le fiamme sulla linea di bruciatura */
       var ogni = Math.max(1, Math.round(a.punti.length / 13));
+      var n = 0;
       for (var i = 0; i < a.punti.length; i += ogni) {
         var p = a.punti[i];
         var ux = p.x - a.cx, uy = p.y - a.cy;
@@ -637,8 +661,26 @@
         ux /= lun; uy /= lun;
         var vx = ux * 0.38, vy = uy * 0.38 - 1.0;
         var ang = Math.atan2(vx, -vy) * 180 / Math.PI;
-        var alt = L * (0.12 + 0.12 * ((i * 7) % 5) / 5) + L * 0.06 * a.prog;
+        /* ogni fiamma sballa un po': una cresce, una si rimpicciolisce,
+           una si piega. E' quello che fa sembrare vivo il fuoco. */
+        var sballo = rnd(t * 3 + n * 7.3);
+        var sballo2 = rnd(t * 3 + n * 7.3 + 11.7);
+        ang += (sballo - 0.5) * 26;
+        var alt = L * (0.10 + 0.16 * sballo) + L * 0.05 * a.prog;
         fiammaCanvas(p.x / 100 * L, p.y / 100 * L, alt, ang);
+        n++;
+      }
+      /* qualche bragia che sale: da' l'idea che il fuoco si muova */
+      for (var e = 0; e < 9; e++) {
+        var s1 = rnd(t * 2 + e * 3.1);
+        var s2 = rnd(t * 2 + e * 3.1 + 5.5);
+        var ex = (10 + s1 * 80) / 100 * L;
+        var ey = (30 + ((s2 * 100 + t * 26) % 70)) / 100 * L;
+        var er = L * 0.012 * (0.6 + s1);
+        ctxTela.fillStyle = "rgba(255," + Math.round(150 + s2 * 90) + ",60," + (0.5 + 0.4 * s1).toFixed(2) + ")";
+        ctxTela.beginPath();
+        ctxTela.arc(ex, ey, er, 0, Math.PI * 2);
+        ctxTela.fill();
       }
       return tela.toDataURL("image/jpeg", 0.82);
     } catch (e) { /* il canvas non e' disegnabile: lascio com'e' */ }
