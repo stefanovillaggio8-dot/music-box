@@ -1,5 +1,33 @@
 [
  {
+  "t": 1792525383633,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525383668,
+  "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792525384579,
+  "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792525385953,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525386127,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792525386130,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792525386136,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
   "t": 1792525387304,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
@@ -130,33 +158,5 @@
  {
   "t": 1792525698727,
   "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792525698727,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525698733,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792525699909,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525699908,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792525700068,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525700112,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525701137,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  }
 ]
