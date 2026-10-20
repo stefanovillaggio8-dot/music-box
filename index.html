@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6338" />
+  <link rel="stylesheet" href="style.css?v=6339" />
     <script>
       /* Ste: "ho fatto l'accesso con Spotify e mi e' tornato su musicbox, ma e' spuntato
          di nuovo accedi con Spotify".
@@ -26,6 +26,18 @@
           var e = q.get("error") || "";
           if (c || e) {
             sessionStorage.setItem("mb.spotifyRitorno", JSON.stringify({ c: c, s: s, e: e }));
+            /* Ste: "si apre una pagina nera e ritorna a musicbox dicendomi di
+               nuovo accedi con spotify".
+               Qui lascio una traccia: cosi' so se il ritorno di Spotify e'
+               arrivato davvero nella pagina, anche se poi l'app non fa niente.
+               E' l'informazione che mi serve di piu'. */
+            try {
+              fetch("https://musicbox-dal-telefono.stefanovillaggio8.workers.dev/problema", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ riga: "SPOTIFY: il ritorno e' arrivato nella pagina" + (c ? " (col codice)" : " (con un errore: " + e + ")") })
+              }).catch(function () { });
+            } catch (y) { }
           }
         } catch (x) { /* niente, l'app riprovera' da sola */ }
       })();
@@ -717,6 +729,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6338"></script>
+<script src="app.js?v=6339"></script>
 </body>
 </html>
