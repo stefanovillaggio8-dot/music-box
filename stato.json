@@ -1020,7 +1020,7 @@
    },
    "fsksatellite|ansiano": {
     "v": 0,
-    "s": 290,
+    "s": 350,
     "t": "ANSIA NO",
     "a": "FSK SATELLITE"
    },
@@ -1758,7 +1758,7 @@
    },
    "franco126tommasoparadiso|stanzasingolafeattommasoparadiso": {
     "v": 0,
-    "s": 155,
+    "s": 232,
     "t": "Stanza Singola (feat. Tommaso Paradiso)",
     "a": "Franco126, Tommaso Paradiso"
    },
@@ -2155,7 +2155,7 @@
    "silentbobsickbudd|morireeniente": {
     "v": 0,
     "s": 160,
-    "t": "Morire ÃÂ Niente",
+    "t": "Morire ÃÂÃÂ Niente",
     "a": "Silent Bob, Sick Budd"
    }
   }
