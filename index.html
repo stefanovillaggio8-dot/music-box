@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6346" />
+  <link rel="stylesheet" href="style.css?v=6347" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -70,7 +70,28 @@
           var verifier = parti.length >= 2 ? parti.slice(1).join(".") : "";
           if (!code || !verifier) { traccia("la pagina non trova la chiave nello state"); return; }
           try { sessionStorage.setItem("mb.spotifyScambio", "in corso"); } catch (x) { }
-          traccia("la pagina scambia il codice col permesso");
+          traccia("la pagina chiede al worker di scambiare il codice");
+          /* Lo scambio lo fa il worker (sul server): dal telefono la
+             richiesta restava appesa (iPhone sospende la scheda) o moriva
+             con la pagina. */
+          fetch("https://musicbox-dal-telefono.stefanovillaggio8.workers.dev/spotify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: code, verifier: verifier })
+          }).then(function (r) { return r.json(); }).then(function (j) {
+            if (j && j.ok && j.biglietto) {
+              try { sessionStorage.setItem("mb.spotifyBiglietto", String(j.biglietto)); } catch (x) { }
+              traccia("il worker ha fatto lo scambio: biglietto pronto");
+            } else {
+              var perche = String((j && j.errore) || "scambio non riuscito");
+              try { localStorage.setItem("mb.spotifyErrore", perche); } catch (x) { }
+              try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (x) { }
+              traccia("il worker ha rifiutato: " + perche);
+            }
+          }).catch(function (e) {
+            try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (x) { }
+            traccia("la pagina: non riesco a parlare col worker (" + String((e && e.message) || e) + ")");
+          });
           /* Niente "keepalive" qui: su Safari quelle richieste vengono
              accodate e partono solo quando la pagina viene chiusa, e la
              pagina non si chiude mai: lo scambio restava appeso per
@@ -113,13 +134,6 @@
             try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (z) { }
             traccia("la pagina: scambio fallito (" + String((e && e.message) || e) + ")");
           });
-          /* L'indirimento si pulisce subito: il codice e' gia' in viaggio e
-             nella memoria della pagina. */
-          try {
-            if (window.history && window.history.replaceState) {
-              window.history.replaceState({}, "", window.location.pathname + window.location.hash);
-            }
-          } catch (x) { }
         } catch (x) { }
       })();
     </script>
@@ -810,7 +824,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6346"></script>
-<script src="app.js?v=6346"></script>
+<script src="fuoco.js?v=6347"></script>
+<script src="app.js?v=6347"></script>
 </body>
 </html>

@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.346";
+  const APP_VERSION = "6.347";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13026,12 +13026,41 @@ async function _spotifyAccedi() {
 
 /* Step 2: Spotify rimanda qui con ?code=... e io scambio il codice per il
    permesso vero. */
+async /* Ste: "non funziona ancora a spotify".
+   Motivo: lo scambio lo faceva il telefono, e li' la richiesta restava
+   appesa (iPhone sospende la scheda quando non la guardi) o moriva con la
+   pagina (quando l'app si aggiorna e si ricarica). Sul server non succede
+   niente di tutto questo: la richiesta a Spotify parte, va e torna.
+   Adesso: il telefono manda il codice al worker, il worker fa lo scambio e
+   da' indietro un "biglietto"; il telefono poi chiede se il permesso e'
+   pronto (il biglietto va e basta una volta). */
+/* Il worker tiene il permesso per qualche minuto e lo dà a chi ha il
+   biglietto giusto. Il biglietto va e basta una volta. */
+async function _spotifyPrendiPermesso(biglietto) {
+  if (!biglietto) return false;
+  try {
+    for (let giro = 0; giro < 60; giro++) {
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?biglietto=" + encodeURIComponent(biglietto), { cache: "no-store" });
+      const j = await r.json();
+      if (j && j.ok && j.permesso) {
+        _spotifySalvaToken(j.permesso);
+        try { sessionStorage.removeItem("mb.spotifyBiglietto"); } catch (e) { /* noop */ }
+        return true;
+      }
+      await new Promise(function (r2) { setTimeout(r2, 500); });
+    }
+    _spotifyTraccia("il permesso non e' arrivato in tempo");
+    return false;
+  } catch (e) {
+    _spotifyTraccia("errore nel prendere il permesso: " + String((e && e.message) || e));
+    return false;
+  }
+}
 async function _spotifyCompletaAccesso(code, stato) {
   if (!code || !stato) return false;
   /* La chiave (verifier) la prendo PRIMA dal "state", che viaggia
-     nell'indirizzo di ritorno: cosi' funziona anche se l'accesso e'
-     cominciato su un link e torna su un altro (tailscale -> github.io).
-     Ste: "dice accesso non valido, riprova". */
+     nell'indirimento di ritorno: cosi' funziona anche se l'accesso e'
+     cominciato su un link e torna su un altro (tailscale -> github.io). */
   let verifier = "";
   const parti = String(stato).split(".");
   if (parti.length >= 2) verifier = parti.slice(1).join(".");
@@ -13051,64 +13080,45 @@ async function _spotifyCompletaAccesso(code, stato) {
   }
   let r;
   try {
-    /* Tempo massimo: se Spotify non risponde, l'app non aspetta per sempre. */
+    _spotifyTraccia("chiedo al worker di scambiare il codice");
     const _ctl = new AbortController();
     const _scad = setTimeout(function () { try { _ctl.abort(); } catch (e) { } }, 20000);
-    _spotifyTraccia("chiedo a Spotify lo scambio del codice");
-    r = await fetch("https://accounts.spotify.com/api/token", {
-      signal: _ctl.signal,
+    r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: SPOTIFY_REDIRECT,
-        client_id: SPOTIFY_CLIENT_ID,
-        code_verifier: verifier
-      }).toString()
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code, verifier: verifier }),
+      signal: _ctl.signal
     });
+    try { clearTimeout(_scad); } catch (e) { }
   } catch (e) {
-    _spotifyTraccia("lo scambio e' fallito: " + String((e && e.message) || e));
-    try { LS.set("mb.spotifyErrore", "Non riesco a parlare con Spotify: " + String((e && e.message) || e)); } catch (x) { /* noop */ }
-    toast("Non riesco a parlare con Spotify");
+    _spotifyTraccia("non riesco a parlare col worker: " + String((e && e.message) || e));
+    try { LS.set("mb.spotifyErrore", "Non riesco a parlare con il computer: " + String((e && e.message) || e)); } catch (x) { /* noop */ }
+    toast("Non riesco a parlare con il computer");
     _loginSpotifyInCorso = false;
     return false;
   }
-  try { clearTimeout(_scad); } catch (e) { }
-  if (!r.ok) {
-    _spotifyTraccia("scambio rifiutato da Spotify (" + r.status + ")");
+  let j = null;
+  try { j = await r.json(); } catch (e) { }
+  if (!j || !j.ok) {
+    const perche = String((j && j.errore) || ("il worker ha risposto " + r.status));
+    _spotifyTraccia("il worker ha rifiutato lo scambio: " + perche);
     try { LS.set("mb.spotifyErrore", perche); } catch (e) { /* noop */ }
-    /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
-       accedi con spotify". Il motivo lo voglio sapere: Spotify risponde con
-       un JSON che dice il perche'. Lo mostro, cosi' non devo indovinare. */
-    let perche = "Spotify non ha accettato l'accesso";
-    try {
-      const jj = await r.json();
-      if (jj && (jj.error_description || jj.error)) {
-        perche = String(jj.error_description || jj.error);
-      }
-    } catch (e) { /* risposta non in json: tengo il messaggio generico */ }
-    _spotifyErrore = r.status;
     _loginSpotifyInCorso = false;
     toast(perche, 9000);
-    try {
-      _spotifyPnl("Accesso non riuscito", "", '<p class="step-hint">' +
-        _spotifySicuro(perche) + "</p>");
-    } catch (e) { /* noop */ }
+    try { _spotifyPnl("Accesso non riuscito", "", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>"); } catch (e) { /* noop */ }
     return false;
   }
-  const j = await r.json();
-  _spotifyTraccia("scambio andato bene, salvo il permesso");
+  _spotifyTraccia("il worker ha fatto lo scambio: aspetto il permesso");
+  try { sessionStorage.setItem("mb.spotifyBiglietto", String(j.biglietto || "")); } catch (e) { /* noop */ }
+  const preso = await _spotifyPrendiPermesso(String(j.biglietto || ""));
+  if (!preso) return false;
+  _spotifyTraccia("permesso preso, salvo");
   try { LS.remove("mb.spotifyErrore"); } catch (e) { /* noop */ }
-  _spotifySalvaToken(j);
   _spotifyChiave = null;
-  try {
-    LS.remove("mb.spotifyStato");
-    LS.remove("mb.spotifyChiave");
-  } catch (e) {}
+  try { LS.remove("mb.spotifyStato"); LS.remove("mb.spotifyChiave"); } catch (e) { /* noop */ }
   _loginSpotifyInCorso = false;
   return true;
-  }
+}
 
   /* Rinnovo il permesso con il refresh token: serve quando il permesso
      corto e' scaduto ma quello lungo c'e' ancora. */
@@ -13578,6 +13588,17 @@ async function _spotifyRientro() {
        e' l'unica che puo' finire prima che il telefono cambi scheda), l'app
        aspetta il permesso invece di rifare lo scambio da capo. */
     try {
+      const bigliettoPronto = String(sessionStorage.getItem("mb.spotifyBiglietto") || "");
+      if (bigliettoPronto) {
+        _spotifyTraccia("c'e' un biglietto: prendo il permesso");
+        const preso = await _spotifyPrendiPermesso(bigliettoPronto);
+        if (preso) {
+          _spotifyTraccia("permesso preso (dal biglietto)");
+          toast("Collegato a Spotify", 4000);
+          try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+          return;
+        }
+      }
       if (sessionStorage.getItem("mb.spotifyScambio")) {
         _spotifyTraccia("lo scambio e' gia' partito: aspetto il permesso");
         for (let giro = 0; giro < 60; giro++) {
