@@ -1641,7 +1641,8 @@ if (nuovo) r.v = (r.v || 0) + 1;
    nulla, il numero dell'altro resta intatto. */
   /* Toglie dalla lista dei nascosti i brani che qualcun altro ha ripreso.
    Li tolgo davvero da tutte le mie liste, non solo da quella aperta:
-   se no, riaprendo un altro profilo ritornavano nascosti lo stesso. */function _unisciStatistiche(remote) {
+   se no, riaprendo un altro profilo ritornavano nascosti lo stesso. */
+function _unisciStatistiche(remote) {
     try {
       if (!remote || typeof remote !== "object") return 0;
       let cambiati = 0;
@@ -2100,7 +2101,8 @@ function _devoVedereBrano(eMio, b) {
   let _diUltimoInvio = 0;
   let _diUltimoInvio2 = 0;
   let _diUltimoInvio3 = 0;
-  let _diUltimoInvio4 = 0;
+  let _diUltimoInvio4 = 0;
+
 
   /* I brani che l'utente ha eliminato per davvero con la X: non li
      carico, e non li lascio rientrare. Ste: "premo la X e invece di
@@ -3005,12 +3007,16 @@ if (_playlistAttiva) {
   /* Se un brano e' stato tolto dalla lista DEVE esserci un modo per rimetterlo:
      prima la funzione c'era ma non era collegata a nessun tasto, quindi un brano
      nascosto spariva per sempre (e' capitato: la lista sembrava avesse un brano
-     in meno e non si capiva il perche'). */  /* ---------- I brani tolti dalla lista, uno alla volta ----------
+     in meno e non si capiva il perche'). */
+  /* ---------- I brani tolti dalla lista, uno alla volta ----------
      Ste: il bottone rimetteva TUTTI i brani tolti insieme, e a lui serviva
      poterne rimettere anche uno solo. Qui ogni brano ha il suo bottone. */
 
-  /* Il brano nascosto con questo id (null se non esiste piu'). */  /* Riscrive il pannello con quello che c'e' adesso (dopo aver rimesso un
-     brano la lista si accorcia, e devo dirlo). */  /* Rimette in lista UN brano solo. */  /* Ste: "nella lista dei brani nascosti metti una x che elimina il brano
+  /* Il brano nascosto con questo id (null se non esiste piu'). */
+  /* Riscrive il pannello con quello che c'e' adesso (dopo aver rimesso un
+     brano la lista si accorcia, e devo dirlo). */
+  /* Rimette in lista UN brano solo. */
+  /* Ste: "nella lista dei brani nascosti metti una x che elimina il brano
      per sempre".Diverso dal "Rimetti in lista": quello lo riporta indietro,
      questo lo butta via. Percio' prima gli chiedo SEMPRE conferma, e gli
      dico esattamente cosa sto facendo: non cancello niente per sbaglio. */
@@ -4830,7 +4836,8 @@ box.innerHTML = "";
   /* Qui si rimettono i brani nascosti: la finestra con la lista di "nascosti"
      e' stata tolta (l'eliminazione chiede gia' conferma, quindi era inutile),
      ma se un brano e' stato nascosto puoi riportarlo qui, dal menu del brano
-     o del profilo. */  function bindLongPress(el, t) {
+     o del profilo. */
+  function bindLongPress(el, t) {
 
     let timer = null;
     let startX = 0;
@@ -9191,22 +9198,16 @@ $("fabMenu").addEventListener("click", (e) => {
   let offlineBusy = false;
   let offlineAbort = null;
 
+  /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
+     Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
+     connessione non gli si apre l'app". Se le canzoni e i file dell'app
+     stanno nella stessa cache, quando il telefono libera spazio si porta
+     via anche l'app, e allora non si apre piu' offline. */
+  const CACHE_BRANI = "spotifynonavraiimieisoldi-brani";
   async function appCache() {
     if (!("caches" in window)) return null;
     try {
-      const keys = await caches.keys();
-      if (!keys.length) return null;
-      const versione = (k) => {
-        const m = /-v(\d+)$/.exec(k);
-        return m ? Number(m[1]) : -1;
-      };
-      const recenti = keys.slice().sort((a, b) => versione(b) - versione(a));
-      for (const k of recenti) {
-        const c = await caches.open(k);
-        const hit = await c.match("app.js");
-        if (hit) return c;
-      }
-      return await caches.open(recenti[0]);
+      return await caches.open(CACHE_BRANI);
     } catch (e) {
       return null;
     }
@@ -9308,13 +9309,27 @@ $("fabMenu").addEventListener("click", (e) => {
           const stima = await navigator.storage.estimate();
           const usato = Number((stima && stima.usage) || 0) / (1024 * 1024);
           if (usato >= tetto) {
-            if (!_avvisoTetto) {
+            /* Ste: "i download dopo un po' si liberano e devo reinstallarli".
+               Prima l'app smetteva di scaricare e basta: ma il telefono
+               restava pieno, e allora iOS liberava lo spazio come gli
+               pareva (e si portava via anche le canzoni appena scaricate).
+               Adesso libero io le canzoni PIU' VECCHIE e poi continuo a
+               scaricare: il telefono resta sotto il tetto e non si
+               libera piu' niente all'improvviso. */
+            const liberato = await _liberaCanzoniVecchie(cache, usato - tetto * 0.9);
+            if (liberato > 0) {
+              if (!_avvisoTetto) {
+                _avvisoTetto = true;
+                toast("Ho liberato " + Math.round(liberato) + " MB di canzoni vecchie " +
+                  "per restare sotto il tetto di " + Math.round(tetto) + " MB.", 6000);
+              }
+            } else if (!_avvisoTetto) {
               _avvisoTetto = true;
-              toast("Ho smesso di scaricare da solo: lo spazio e' arrivato a " +
-                Math.round(usato) + " MB. Puoi cambiare il tetto o liberare spazio " +
+              toast("Lo spazio e' arrivato a " + Math.round(usato) + " MB: ho smesso di " +
+                "scaricare da solo. Puoi cambiare il tetto o liberare spazio " +
                 "dal menu Altro.", 8000);
+              return;
             }
-            return;
           }
         }
       } catch (e) { /* il browser non dice: vado avanti */ }
@@ -9329,6 +9344,39 @@ $("fabMenu").addEventListener("click", (e) => {
     } catch (e) { /* se non si scarica, pazienza: la canzone suona lo stesso */ }
   }
   let _avvisoTetto = false;
+
+  /* Libero le canzoni offline piu' vecchie (le piu' grandi non le
+     tocco: liberare 3 MB con una canzone da 30 MB e' inutile).
+     Ogni canzone sa quando e' stata scaricata (header X-Scaricato). */
+  async function _liberaCanzoniVecchie(cache, quantoMB) {
+    try {
+      const richieste = await cache.keys();
+      const voci = [];
+      for (const r of richieste) {
+        try {
+          const res = await cache.match(r);
+          if (!res) continue;
+          const size = Number(res.headers.get("Content-Length") || 0);
+          if (!size) continue;
+          voci.push({ r: r, size: size, quando: Number(res.headers.get("X-Scaricato") || 0) });
+        } catch (e) { /* questa non la guardo */ }
+      }
+      if (!voci.length) return 0;
+      /* le piu' vecchie prima; a parita' di eta', le piu' piccole */
+      voci.sort((a, b) => (a.quando - b.quando) || (a.size - b.size));
+      let liberato = 0;
+      const obiettivo = Math.max(1, quantoMB) * 1024 * 1024;
+      for (const v of voci) {
+        if (liberato >= obiettivo) break;
+        try {
+          await cache.delete(v.r);
+          liberato += v.size;
+        } catch (e) { /* non sono riuscito a liberarla: vado avanti */ }
+      }
+      return liberato / (1024 * 1024);
+    } catch (e) { return 0; }
+  }
+
   async function cacheTrack(row, cache) {
     const url = row.track.url;
     row.state = "run";
@@ -9363,7 +9411,12 @@ $("fabMenu").addEventListener("click", (e) => {
       }
       await cache.put(url, new Response(blob, {
         status: 200,
-        headers: { "Content-Type": blob.type || "audio/mpeg", "Content-Length": String(blob.size) }
+        headers: {
+          "Content-Type": blob.type || "audio/mpeg",
+          "Content-Length": String(blob.size),
+          /* l'ora del download: serve per liberare le piu' vecchie */
+          "X-Scaricato": String(Date.now())
+        }
       }));
       row.state = "ok";
       row.label = "pronta";
@@ -11069,7 +11122,8 @@ $("btnTimer").addEventListener("click", () => {
 
    Il segno e' una lista di nomi rimossi, tenuta sul telefono. Quando
    invece nascondi un brano di nuovo, il segno sparisce: la scelta piu'
-   recente vince sempre. */  function _salvaStatoCondiviso() {
+   recente vince sempre. */
+  function _salvaStatoCondiviso() {
     _statoDaSalvare = true;
     _quanteRiprove = 0;
     try {
@@ -11367,7 +11421,8 @@ for (const k of Object.keys(j.rinomini)) {
   /* Ste: "la libreria che ho su github e' diversa da quella su tailscale".
      La chiamo DOPO che ho applicato tutto (nascosti, nomi, eliminati) e
      DOPO che la libreria e' stata ricaricata: cosi' conta davvero e non
-     un numero di mezzo lavoro. */
+     un numero di mezzo lavoro. */
+
   /* La chiamo SEMPRE, non solo quando qualcosa e' cambiato: altrimenti
      se non cambia niente non mi arriva mai la riga, e io resto al buio
      proprio quando i due link coincidono. */
@@ -11661,7 +11716,8 @@ pericolo: perDavvero
   $("scopeAnnulla").addEventListener("click", () => _chiudiScope(null));
   $("scopePanel").addEventListener("click", (e) => { if (e.target === $("scopePanel")) _chiudiScope(null); });
 
-  /* Nasconde il brano, togliendolo anche dalle playlist se richiesto. */  /* ---------- Le playlist nella libreria ----------
+  /* Nasconde il brano, togliendolo anche dalle playlist se richiesto. */
+  /* ---------- Le playlist nella libreria ----------
      Non sono una sezione a parte con una finestra: sono una fila di
      linguette sopra la libreria. Tocchi una e sotto vedi la lista normale
      con dentro solo i brani di quella playlist. Torni su "Tutte" e hai di
@@ -12178,8 +12234,12 @@ const st = $("statoSpotify");
       console.warn("DB offline su questo browser", e);
       db = null;
     }
-    await loadLyrics();
-    await loadCovers();
+    /* Ste: "ci sta un sacco di tempo a caricare".
+       I testi delle canzoni sono 1,7 MB e le copertine 130 KB: aspettarli
+       bloccava l'app per secondi. Adesso si caricano in secondo piano:
+       l'app si usa subito, e i testi arrivano dopo. */
+    try { loadLyrics(); } catch (e) { /* i testi non sono indispensabili */ }
+    try { loadCovers(); } catch (e) { /* neanche le copertine */ }
     if (db) await loadLocalLyrics();
 await loadAll();
     /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente

@@ -1,4 +1,11 @@
 const CACHE = "spotifynonavraiimieisoldi-v6353";
+/* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
+   Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
+   connessione non gli si apre l'app". Con le canzoni e i file dell'app
+   nella stessa cache, quando il telefono libera spazio si porta via
+   anche l'app. Cosi' i file dell'app restano al sicuro e le canzoni
+   scaricate non si devono ricopiare a ogni aggiornamento (sono GB). */
+const CACHE_BRANI = "spotifynonavraiimieisoldi-brani";
 const CORE = [
   "./",
   "./index.html",
@@ -515,8 +522,11 @@ function isMusicBoxSong(url) {
 
 async function migrateOfflineSongsAndCleanup() {
   const keys = await caches.keys();
-  const oldKeys = keys.filter((key) => key !== CACHE);
+  /* la cache delle canzoni non si tocca: le canzoni scaricate restano
+     dove sono e i file dell'app restano separati */
+  const oldKeys = keys.filter((key) => key !== CACHE && key !== CACHE_BRANI);
   const activeCache = await caches.open(CACHE);
+  const cacheBrani = await caches.open(CACHE_BRANI);
 
   /* Prima di eliminare vecchie cache, controllo che la versione nuova contenga
      tutti i file essenziali. Se l'installazione e' incompleta, non elimino nulla. */
@@ -555,13 +565,15 @@ async function migrateOfflineSongsAndCleanup() {
       if (!eBrano) continue;
 
       const cacheKey = new Request(url.href);
-      if (await activeCache.match(cacheKey)) continue;
+      if (await cacheBrani.match(cacheKey)) continue;
 
       const response = await oldCache.match(request);
       if (!response) continue;
       try {
-        await activeCache.put(cacheKey, response.clone());
-        if (!(await activeCache.match(cacheKey))) safeToDelete = false;
+        /* le canzoni migrate vanno nella cache delle canzoni, non in
+           quella dell'app */
+        await cacheBrani.put(cacheKey, response.clone());
+        if (!(await cacheBrani.match(cacheKey))) safeToDelete = false;
       } catch (error) {
         console.warn("Non riesco a migrare una canzone offline; conservo la vecchia cache.", error);
         safeToDelete = false;
@@ -584,6 +596,26 @@ self.addEventListener("activate", (event) => {
 });
 
 const CORE_EXT = [".html", ".css", ".js", ".json", ".png", ".jpg", ".jpeg", ".webp"];
+
+/* Ste: "quando diego toglie la connessione non gli si apre l'app".
+   Se il telefono e' offline e i file dell'app non sono piu' in cache
+   (il telefono ha liberato spazio), invece della pagina di errore del
+   browser ne mostro una che spiega cosa fare. */
+const PAGINA_SENZA_RETE = `<!doctype html><html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Box - senza connessione</title><style>
+body{background:#0f0f14;color:#e8e8f0;font:16px/1.5 system-ui,-apple-system,sans-serif;
+display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:24px;text-align:center}
+div{max-width:420px}h1{font-size:20px;margin:0 0 10px}p{color:#a9b0c0;margin:0 0 18px}
+button{background:#3a2410;border:1px solid #7a4a1c;color:#ffcf9f;padding:12px 20px;border-radius:10px;
+font:inherit;font-size:15px;cursor:pointer}
+</style></head><body><div>
+<h1>Sei senza connessione</h1>
+<p>L'app non era ancora stata salvata su questo telefono, quindi adesso
+non si puo' aprire. Collegati a una rete e riapri: dopo si aprira' anche
+senza connessione.</p>
+<button onclick="location.reload()">Riprova</button>
+</div></body></html>`;
 
 async function findCachedMusic(url) {
   const keys = (await caches.keys()).slice().reverse();
@@ -689,7 +721,10 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => caches.match(event.request).then((r) => r || caches.match("./index.html")))
+        .catch(() => caches.match(event.request).then((r) => r || caches.match("./index.html"))
+          .then((r) => r || new Response(PAGINA_SENZA_RETE, {
+            headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
+          })))
     );
     return;
   }
@@ -697,18 +732,41 @@ self.addEventListener("fetch", (event) => {
   const isCore = CORE_EXT.some((ext) => url.pathname.endsWith(ext));
 
   if (isCore) {
+    /* Ste: "ci sta un sacco di tempo a caricare".
+       Prima questi file (app.js 622 KB, lyrics.json 1,7 MB, copertine 130 KB)
+       venivano presi PRIMA dalla rete: quasi 2,5 MB a ogni avvio, e l'app
+       restava ad aspettare. Adesso si servono dalla CACHE (l'app parte
+       subito) e in secondo piano si aggiornano: la copia nuova arriva la
+       volta dopo, senza far aspettare nessuno.
+       L'aggiornamento dell'app resta garantito dal controllo della versione
+       che c'e' dentro l'app (versione.json). */
     event.respondWith(
-      fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
-        .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            event.waitUntil(
-              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
-            );
-          }
-          return response;
-        })
-        .catch(() => caches.match(event.request))
+      caches.open(CACHE).then((cache) => cache.match(event.request)).then((cached) => {
+        if (cached) {
+          /* in secondo piano: controllo se online c'e' qualcosa di nuovo */
+          event.waitUntil(
+            fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+              .then((response) => {
+                if (response && response.status === 200) {
+                  const clone = response.clone();
+                  return cache.put(event.request, clone).catch(() => {});
+                }
+              })
+              .catch(() => { /* niente rete: tengo quella che ho */ })
+          );
+          return cached;
+        }
+        /* non l'ho mai preso: vado a prenderlo dalla rete */
+        return fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+          .then((response) => {
+            if (response && response.status === 200) {
+              const clone = response.clone();
+              event.waitUntil(cache.put(event.request, clone).catch(() => {}));
+            }
+            return response;
+          })
+          .catch(() => caches.match(event.request));
+      })
     );
   } else {
     event.respondWith(
