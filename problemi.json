@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792465315701,
-  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
- },
- {
   "t": 1792465318426,
   "r": "SPOTIFY: [v6.348] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQDaEXBhyptFcFFHgSVJQCTGU7m7ZNkWacin8viK2ZOZloc-JEqaEuhpWk"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465950125,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792465953991,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
  }
 ]
