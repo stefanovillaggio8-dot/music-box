@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792525424144,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525424028,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525425249,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792525425248,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
   "t": 1792525425375,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792525715150,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792525715251,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525716331,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792525721796,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792525723053,
+  "r": "worker /stato: risponde"
  }
 ]
