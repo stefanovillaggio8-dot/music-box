@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792455295638,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792455305154,
   "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792455562288,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792455567191,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
