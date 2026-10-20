@@ -814,9 +814,15 @@
    },
    "lilpeep|starshopping": {
     "v": 0,
-    "s": 58,
+    "s": 101,
     "t": "Star Shopping",
     "a": "Lil Peep"
+   },
+   "coez|esemprebello": {
+    "v": 0,
+    "s": 15,
+    "t": "È sempre bello",
+    "a": "Coez"
    }
   },
   "Diego": {
