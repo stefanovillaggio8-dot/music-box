@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792532054124,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792532054140,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792532054136,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792532054207,
-  "r": "SPOTIFY: il worker ha rifiutato: Authorization code expired"
- },
- {
   "t": 1792532054204,
   "r": "SPOTIFY: [v6.365] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQCPVIbweHXlzXqEJ1q5SpdtdrYanhhzkZliJccqyiYMbt2LkjioRCbFHW"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792532083972,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792532091788,
+  "r": "SPOTIFY: [v6.365] bottone toccato"
+ },
+ {
+  "t": 1792532092696,
+  "r": "SPOTIFY: [v6.365] bottone toccato"
+ },
+ {
+  "t": 1792532093107,
+  "r": "SPOTIFY: [v6.365] premo il pulsante 'Accedi con Spotify' del pannello"
+ },
+ {
+  "t": 1792532094039,
+  "r": "SPOTIFY: [v6.365] premo il pulsante 'Accedi con Spotify' del pannello"
  }
 ]
