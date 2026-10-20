@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792505530019,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792505530073,
   "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792506167640,
   "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792506167853,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
