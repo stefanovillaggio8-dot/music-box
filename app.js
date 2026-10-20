@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.366";
+  const APP_VERSION = "6.367";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13518,22 +13518,35 @@ async function _spotifyCompletaAccesso(code, stato) {
       const r = await fetch("https://api.spotify.com/v1" + percorso, {
         headers: { Authorization: "Bearer " + token }
       });
-      if (r.status === 401 || r.status === 403) {
-        /* Ste: "non sono riuscito a leggere le tue playlist" e non
-           compariva piu' "Accedi con Spotify".
-           Motivo: il token era scaduto, OPPURE era stato concesso con i
-           permessi di una versione vecchia dell'app (allora Spotify
-           risponde 403 e non 401). Prima cancellavo il token solo sul
-           401: sul 403 restava, e l'app credeva di essere gia' collegata
-           e non offriva piu' il pulsante per ricollegarsi.
-
-           Ora in entrambi i casi il token viene via, e compare di nuovo
-           la schermata di accesso. */
-        try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
-        try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
-        _spotifyErrore = r.status;
-        return null;
-      }
+      if (r.status === 401 || r.status === 403) {
+        /* Ste: "non sono riuscito a leggere le tue playlist" e non
+           compariva piu' "Accedi con Spotify".
+           Motivo: il token era scaduto, OPPURE era stato concesso con i
+           permessi di una versione vecchia dell'app (allora Spotify
+           risponde 403 e non 401).
+
+           Ste: "appena ho premuto apri spotify mi ha detto accesso scaduto".
+           Motivo: sul 403 buttavo via il token, ma il 403 vuol dire che il
+           token e' valido e mancano solo i permessi: buttarlo non serve a
+           niente e faceva perdere l'accesso. Ora il token resta; sul 401
+           (li' il token e' davvero scaduto) viene buttato, come prima.
+
+           E Spotify spiega PERCHE': con un 403 di solito vuol dire che
+           manca un permesso ("Insufficient client scope"). Me lo segno. */
+        try {
+          const corpoErrore = await r.clone().json();
+          const messaggio = String((corpoErrore && corpoErrore.error && (corpoErrore.error.message || corpoErrore.error.reason || corpoErrore.error.status)) || "");
+          _spotifyTraccia("Spotify ha risposto " + r.status + ": " + (messaggio || "(senza spiegazione)"));
+        } catch (e) {
+          _spotifyTraccia("Spotify ha risposto " + r.status + " (non riesco a leggere la spiegazione)");
+        }
+        if (r.status === 401) {
+          try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
+          try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
+        }
+        _spotifyErrore = r.status;
+        return null;
+      }
       if (!r.ok) { _spotifyErrore = r.status; return null; }
       _spotifyErrore = 0;
       return await r.json();
