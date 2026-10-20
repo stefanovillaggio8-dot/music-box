@@ -1,65 +1,5 @@
 [
  {
-  "t": 1792473984743,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792473989999,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792473993332,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 55 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792473997987,
-  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792474004188,
-  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792474009696,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792474013099,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792474015777,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792474021055,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792474028972,
-  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792474035543,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792474040903,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792474044384,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792474047377,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792474052726,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792504868574,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
@@ -158,5 +98,65 @@
  {
   "t": 1792505530042,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505530019,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792505530073,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792505531206,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | eliminati 11 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792505534693,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505534737,
+  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792505534748,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792505534767,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792505535892,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 11 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792505541511,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792505543447,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505543443,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792505543660,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505544668,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792505544713,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 11 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792505544945,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 11 | da stefanovillaggio8-dot.github."
  }
 ]
