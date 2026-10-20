@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792466280908,
-  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
   "t": 1792466287636,
   "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792473589317,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792473596362,
+  "r": "SPOTIFY: [v6.349] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQBW9ePXmAtcJaOa53b05sUur50y9fLduDg8-UjV6THWID-BhOxL30GMOc"
  }
 ]
