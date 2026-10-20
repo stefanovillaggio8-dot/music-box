@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792522398801,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792522413003,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792525478067,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792525481106,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
