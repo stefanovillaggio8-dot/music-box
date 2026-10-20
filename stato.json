@@ -858,7 +858,7 @@
    },
    "glocky|lemiecolpe": {
     "v": 1,
-    "s": 120,
+    "s": 240,
     "t": "le mie colpe",
     "a": "glocky"
    },
@@ -924,13 +924,13 @@
    },
    "22simbapromessaflacog|oldfashionfeatpromessaeflacog": {
     "v": 1,
-    "s": 579,
+    "s": 708,
     "t": "Old Fashion (feat. Promessa e Flaco G)",
     "a": "22simba, Promessa, Flaco G"
    },
    "22simbapromessa|sipariofeatpromessa": {
     "v": 0,
-    "s": 290,
+    "s": 332,
     "t": "Sipario (feat. Promessa)",
     "a": "22simba, Promessa"
    },
@@ -1026,7 +1026,7 @@
    },
    "frahquintalefranco126|chicchidiriso": {
     "v": 0,
-    "s": 157,
+    "s": 324,
     "t": "Chicchi di riso",
     "a": "Frah Quintale, Franco126"
    },
@@ -1206,7 +1206,7 @@
    },
    "sayf|unacottaperte": {
     "v": 0,
-    "s": 285,
+    "s": 423,
     "t": "Una cotta per te",
     "a": "Sayf"
    },
@@ -1398,7 +1398,7 @@
    },
    "coez|chiamame": {
     "v": 1,
-    "s": 539,
+    "s": 724,
     "t": "Chiama me",
     "a": "Coez"
    },
@@ -1446,7 +1446,7 @@
    },
    "drillionairethasupshiva|upperfeatthasupshiva": {
     "v": 2,
-    "s": 12,
+    "s": 173,
     "t": "UPPER (feat. thasup & Shiva)",
     "a": "Drillionaire, thasup, Shiva"
    },
@@ -1794,7 +1794,7 @@
    },
    "nayt3d|fuori": {
     "v": 0,
-    "s": 259,
+    "s": 386,
     "t": "Fuori",
     "a": "nayt, 3D"
    },
@@ -2034,7 +2034,7 @@
    },
    "nayt3d|viadaqui": {
     "v": 0,
-    "s": 161,
+    "s": 261,
     "t": "Via da qui",
     "a": "nayt, 3D"
    },
@@ -2124,7 +2124,7 @@
    },
    "jerrysampitonyboy|foulardfeattonyboy": {
     "v": 0,
-    "s": 122,
+    "s": 249,
     "t": "Foulard (feat. Tony Boy)",
     "a": "Jerry Sampi, Tony Boy"
    },
