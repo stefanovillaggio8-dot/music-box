@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792465281962,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792465290869,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465870410,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792465876221,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
