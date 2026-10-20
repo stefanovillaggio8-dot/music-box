@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.337";
+  const APP_VERSION = "6.338";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12955,28 +12955,29 @@ async function _spotifyAccedi() {
      proprio quando serviva.
      Adesso il link compare SUBITO e resta li'. Un tocco su un link vero
      funziona sempre: lo gestisce il telefono, non il nostro codice. */
+  /* Ste: "si apre una pagina nera senza indirizzo e ritorna a musicbox".
+     Motivo: con l'app installata sulla schermata Home, aprire una finestra
+     nuova su iPhone fa una schermata NERA (la web app non puo' uscire dal
+     suo indirizzo). Per questo, se l'app e' aperta dalla schermata Home non
+     apro nessuna finestra: lascio il link e lo gestisce il telefono. */
+  let daIcona = false;
+  try {
+    daIcona = !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  } catch (e) { daIcona = false; }
   try {
     _spotifyPnl("Accedi a Spotify", "un tocco e si apre",
       '<p class="step-hint">Tocca il pulsante qui sotto: ti porta su Spotify per ' +
       "dargli l'accesso. Me lo dai una volta sola e non ti chiedo la password.</p>" +
+      (daIcona ? "<p class=\"step-hint\">Se sei nell'app della schermata Home, il permesso puo' restare li' e non passare al ritorno: in quel caso apri il sito nel browser.</p>" : "") +
       '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
       String(url).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Apri Spotify</a>');
   } catch (e) { /* noop */ }
   _spotifyTraccia("accesso: sto per aprire Spotify");
   let aperta = false;
-  /* Ste: "si apre una pagina nera senza indirizzo e ritorna a musicbox".
-     Motivo: con l'app installata sulla schermata Home, aprire una finestra
-     nuova su iPhone fa una schermata NERA (la web app non puo' uscire dal
-     suo indirizzo) e poi si torna indietro. Per questo, se l'app e' aperta
-     dalla schermata Home, non apro niente: lascio il link e il tocco lo
-     gestisce il telefono. */
-  let daIcona = false;
-  try {
-    daIcona = !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
-  } catch (e) { daIcona = false; }
   if (daIcona) {
+    /* Nella web app non apro finestre: su iPhone fanno una schermata nera.
+       Il link qui sopra basta, e si apre nel browser. */
     _spotifyTraccia("sono nella web app: niente finestra nuova, devi toccare il link");
-    try { _spotifyPnl("Accedi a Spotify", "un tocco e si apre", "<p class=\"step-hint\">Tocca il pulsante qui sotto: si aprira il browser, e l'accesso a Spotify e' una cosa sola. Dopo averlo concesso, torna qui.</p>"); } catch (e) { /* noop */ }
     return;
   }
   try {
