@@ -790,7 +790,7 @@
    },
    "tonypitony|striscia": {
     "v": 0,
-    "s": 34,
+    "s": 35,
     "t": "Striscia",
     "a": "TonyPitony"
    },
@@ -811,6 +811,12 @@
     "s": 149,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
+   },
+   "lilpeep|starshopping": {
+    "v": 0,
+    "s": 5,
+    "t": "Star Shopping",
+    "a": "Lil Peep"
    }
   },
   "Diego": {
