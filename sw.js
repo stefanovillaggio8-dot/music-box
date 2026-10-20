@@ -747,64 +747,72 @@ self.addEventListener("fetch", (event) => {
        volta dopo, senza far aspettare nessuno.
        L'aggiornamento dell'app resta garantito dal controllo della versione
        che c'e' dentro l'app (versione.json). */
-    event.respondWith(
-      caches.open(CACHE).then((cache) => cache.match(event.request)).then((cached) => {
-        if (cached) {
-          /* in secondo piano: controllo se online c'e' qualcosa di nuovo */
-          event.waitUntil(
-            fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
-              .then((response) => {
-                if (response && response.status === 200) {
-                  const clone = response.clone();
-                  return cache.put(event.request, clone).catch(() => {});
-                }
-              })
-              .catch(() => { /* niente rete: tengo quella che ho */ })
-          );
-          return cached;
-        }
-        /* non l'ho mai preso: vado a prenderlo dalla rete */
-        return fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+    /* IMPORTANTISSIMO: event.waitUntil() si puo' chiamare SOLO mentre
+       l'evento e' ancora aperto. Prima stava dentro la catena di
+       promise (quindi dopo che l'evento era finito): Chrome lo rifiuta e
+       la richiesta muore. Per le copertine voleva dire "immagine rotta"
+       (Ste, 20/10/2026: "sono scomparse tutte le copertine").
+       E la catena non deve mai rigettare: altrimenti il browser riceve
+       un errore di rete invece della risposta. */
+    const cache = caches.open(CACHE);
+    /* NB: "c" (la cache) resta dentro la sua catena, altrimenti non e'
+       definito e la promise rigetta (e ogni file diventa un 504). */
+    const lavoro = cache.then((c) => c.match(event.request).then((cached) => {
+      if (cached) {
+        /* in secondo piano: controllo se online c'e' qualcosa di nuovo */
+        fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
           .then((response) => {
             if (response && response.status === 200) {
               const clone = response.clone();
-              event.waitUntil(cache.put(event.request, clone).catch(() => {}));
+              return c.put(event.request, clone).catch(() => {});
             }
-            return response;
           })
-          .catch(() => caches.match(event.request));
-      })
-    );
-  } else if (isCore) {
-    /* versione.json e stato.json: sempre dalla rete, e la copia la
-       metto in cache per dopo. */
-    event.respondWith(
-      fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+          .catch(() => { /* niente rete: tengo quella che ho */ });
+        return cached;
+      }
+      /* non l'ho mai preso: vado a prenderlo dalla rete */
+      return fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
         .then((response) => {
           if (response && response.status === 200) {
             const clone = response.clone();
-            event.waitUntil(
-              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
-            );
+            c.put(event.request, clone).catch(() => {});
           }
           return response;
         })
-        .catch(() => caches.match(event.request))
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((cached) => {
-        if (cached) return cached;
-        return fetch(event.request).then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            event.waitUntil(
-              caches.open(CACHE).then((cache) => cache.put(event.request, clone)).catch(() => {})
-            );
-          }
-          return response;
-        });
+        .catch((e) => caches.match(event.request).then((r) => r || new Response("", { status: 504 })));
+    }));
+    event.respondWith(lavoro);
+    event.waitUntil(lavoro.catch(() => { }));
+    return;
+  } else if (isCore) {
+    /* versione.json e stato.json: sempre dalla rete, e la copia la
+       metto in cache per dopo. */
+    const cache2 = caches.open(CACHE);
+    const lavoro2 = fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+      .then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          cache2.then((c) => c.put(event.request, clone)).catch(() => {});
+        }
+        return response;
       })
-    );
+      .catch((e) => caches.match(event.request).then((r) => r || new Response("ERRORE SW: " + (e && (e.message || e)), { status: 504 })));
+    event.respondWith(lavoro2);
+    event.waitUntil(lavoro2.catch(() => { }));
+    return;
+  } else {
+    const lavoro3 = caches.match(event.request).then((cached) => {
+      if (cached) return cached;
+      return fetch(event.request).then((response) => {
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE).then((c) => c.put(event.request, clone)).catch(() => {});
+        }
+        return response;
+      }).catch(() => new Response("", { status: 504 }));
+    });
+    event.respondWith(lavoro3);
+    event.waitUntil(lavoro3.catch(() => { }));
+    return;
   }
 });
