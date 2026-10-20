@@ -594,7 +594,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.364";
+  const APP_VERSION = "6.365";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4493,7 +4493,7 @@ function rebuildAudio(autoplay) {
 
       const testo = document.createElement("div");
       testo.className = "avviso-nascosti-testo";
-        testo.textContent = "Sei nella modalità APP WEB (l'icona sulla schermata Home). Su iPhone, in questa modalità, quando lo schermo si spegne l'app viene sospesa: la musica continua, ma quando finisce il brano nessuno riparte, e l'accesso a Spotify non torna indietro. Come si risolve: apri il sito in Safari, scegli Condividi > Aggiungi alla schermata Home e, quando compare l'opzione 'Apri come app web', TOGLILA. (Se l'opzione non compare, l'icona è già a posto.)";
+        testo.textContent = "Sei nella modalità APP WEB (l'icona sulla schermata Home). Su iPhone, in questa modalità, quando lo schermo si spegne l'app viene sospesa: la musica continua, ma il brano successivo non parte in automatico in background, e l'accesso a Spotify non torna indietro. Come si risolve: apri il sito in Safari, scegli Condividi > Aggiungi alla schermata Home e, quando compare l'opzione 'Apri come app web', TOGLILA. (Se l'opzione non compare, l'icona è già a posto.)";
 
       const riga = document.createElement("div");
       riga.className = "avviso-nascosti-riga riga-piu";
