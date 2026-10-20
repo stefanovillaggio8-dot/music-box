@@ -590,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.356";
+  const APP_VERSION = "6.357";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4899,13 +4899,22 @@ box.innerHTML = "";
     }
   }
 
+  /* Vero quando la libreria e' arrivata davvero (cosi' la schermata vuota
+     non fa credere che non ci sia niente mentre sta caricando). */
+  var _libreriaPronta = false;
   function setHud() {
+    if (tracks && tracks.length) _libreriaPronta = true;
     const t = current();
     setArt($("playerArt"), t);
     setArt($("hudArt"), t);
+    /* Ste: ha mandato la foto della schermata vuota e credeva che la
+       libreria fosse sparita. Era solo il momento PRIMA che arrivasse.
+       Ora, mentre carica, la scritta lo dice. */
+    const staCaricando = !t && !_libreriaPronta;
     $("playerTitle").textContent = t ? t.title : "—";
-    $("hudTitle").textContent = t ? t.title : "Nessuna traccia";
-    $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto") : "Aggiungi musica per iniziare";
+    $("hudTitle").textContent = t ? t.title : (staCaricando ? "Sto caricando..." : "Nessuna traccia");
+    $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto")
+      : (staCaricando ? "Un attimo, sto prendendo la libreria" : "Aggiungi musica per iniziare");
     updateLyricsButton();
     render();
   }
