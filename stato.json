@@ -954,7 +954,7 @@
    },
    "blanco|bruciasseilcielo": {
     "v": 2,
-    "s": 407,
+    "s": 509,
     "t": "Bruciasse Il Cielo",
     "a": "BLANCO"
    },
@@ -1290,7 +1290,7 @@
    },
    "nayt3d|ancorainpiedi": {
     "v": 0,
-    "s": 12,
+    "s": 54,
     "t": "Ancora in piedi",
     "a": "nayt, 3D"
    },
