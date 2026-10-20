@@ -92,48 +92,6 @@
             try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (x) { }
             traccia("la pagina: non riesco a parlare col worker (" + String((e && e.message) || e) + ")");
           });
-          /* Niente "keepalive" qui: su Safari quelle richieste vengono
-             accodate e partono solo quando la pagina viene chiusa, e la
-             pagina non si chiude mai: lo scambio restava appeso per
-             sempre. E un tempo massimo, cosi' non puo' aspettare all'infinito. */
-          var ctl = null;
-          try { ctl = new AbortController(); } catch (x) { }
-          var scad = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (x) { } }, 20000);
-          fetch("https://accounts.spotify.com/api/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-              grant_type: "authorization_code",
-              code: code,
-              redirect_uri: "https://stefanovillaggio8-dot.github.io/music-box/",
-              client_id: "97b894cf504b412fa96e5a7ced1880c4",
-              code_verifier: verifier
-            }).toString(),
-            signal: ctl ? ctl.signal : undefined
-          }).then(function (r) {
-            return r.json().then(function (j) { return { ok: r.ok, j: j }; });
-          }).then(function (x) {
-            try { clearTimeout(scad); } catch (z) { }
-            if (x.ok && x.j && x.j.access_token) {
-              try {
-                var v = { access: x.j.access_token, scadenza: Date.now() + (Number(x.j.expires_in || 3600) - 60) * 1000 };
-                if (x.j.refresh_token) v.refresh = String(x.j.refresh_token);
-                localStorage.setItem("mb.spotify", JSON.stringify(v));
-                sessionStorage.setItem("mb.spotify", JSON.stringify(v));
-                localStorage.removeItem("mb.spotifyErrore");
-              } catch (z) { }
-              try { sessionStorage.setItem("mb.spotifyScambio", "fatto"); } catch (z) { }
-              traccia("la pagina ha scambiato il codice: permesso preso");
-            } else {
-              var perche = String((x.j && (x.j.error_description || x.j.error)) || "Spotify non ha accettato il codice");
-              try { localStorage.setItem("mb.spotifyErrore", perche); } catch (z) { }
-              try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (z) { }
-              traccia("la pagina: scambio rifiutato (" + perche + ")");
-            }
-          }).catch(function (e) {
-            try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (z) { }
-            traccia("la pagina: scambio fallito (" + String((e && e.message) || e) + ")");
-          });
         } catch (x) { }
       })();
     </script>

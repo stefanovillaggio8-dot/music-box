@@ -13026,7 +13026,7 @@ async function _spotifyAccedi() {
 
 /* Step 2: Spotify rimanda qui con ?code=... e io scambio il codice per il
    permesso vero. */
-async /* Ste: "non funziona ancora a spotify".
+/* Ste: "non funziona ancora a spotify".
    Motivo: lo scambio lo faceva il telefono, e li' la richiesta restava
    appesa (iPhone sospende la scheda quando non la guardi) o moriva con la
    pagina (quando l'app si aggiorna e si ricarica). Sul server non succede
@@ -13129,19 +13129,17 @@ async function _spotifyCompletaAccesso(code, stato) {
         try { v = JSON.parse(sessionStorage.getItem("mb.spotify") || "null"); } catch (e) { v = null; }
       }
       if (!v || !v.refresh) return false;
-      const r = await fetch("https://accounts.spotify.com/api/token", {
+      /* Anche il rinnovo passa dal worker: dal telefono la richiesta
+         restava appesa (iPhone sospende la scheda). */
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          grant_type: "refresh_token",
-          refresh_token: v.refresh,
-          client_id: SPOTIFY_CLIENT_ID
-        }).toString()
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: v.refresh })
       });
-      if (!r.ok) { _spotifyTraccia("rinnovo del permesso fallito: " + r.status); return false; }
       const j = await r.json();
-      if (!j || !j.access_token) return false;
-      _spotifySalvaToken(j);
+      if (!j || !j.ok) { _spotifyTraccia("rinnovo del permesso fallito: " + String((j && j.errore) || r.status)); return false; }
+      const preso = await _spotifyPrendiPermesso(String(j.biglietto || ""));
+      if (!preso) return false;
       _spotifyTraccia("permesso rinnovato senza riautorizzare");
       return true;
     } catch (e) { return false; }
