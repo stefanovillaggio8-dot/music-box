@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.370";
+  const APP_VERSION = "6.371";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13560,6 +13560,9 @@ async function _spotifyCompletaAccesso(code, stato) {
           const corpoErrore = await r.clone().json();
           const messaggio = String((corpoErrore && corpoErrore.error && (corpoErrore.error.message || corpoErrore.error.reason || corpoErrore.error.status)) || "");
           _spotifyTraccia("Spotify ha risposto " + r.status + ": " + (messaggio || "(senza spiegazione)"));
+          /* La parola esatta di Spotify la voglio vedere ANCHE io, non solo
+             nella traccia: se non va, l'app deve dire che cosa manca. */
+          if (messaggio) _spotifyMotivo = messaggio;
         } catch (e) {
           _spotifyTraccia("Spotify ha risposto " + r.status + " (non riesco a leggere la spiegazione)");
         }
@@ -13766,7 +13769,10 @@ function _spotifyParla(variabile, testo) {
    gia' l'ho fatta prima penso". Motivo: il token c'era ma l'API
    rispondeva 403 e il codice lo cancellava solo sul 401: l'app credeva
    di essere gia' collegata e non offriva piu' il pulsante. */
-let _spotifyErrore = 0;
+  let _spotifyErrore = 0;
+  /* La parola esatta che dice Spotify (per es. "Insufficient client scope"):
+     la voglio vedere anche nella schermata, non solo nelle tracce. */
+  let _spotifyMotivo = "";
 function _spotifyChiediAccesso(perche) {
   const extra = perche ? '<p class="step-hint">' + perche + '</p>' : '';
   _spotifyPnl("Collegare Spotify",
@@ -13876,12 +13882,12 @@ function _spotifyChiediAccesso(perche) {
         }
         return;
       }
-      const perche = _spotifyErrore === -1
-        ? "Non riesco a parlare con Spotify: controlla la rete."
-        : (_spotifyErrore ? ("Spotify ha risposto " + _spotifyErrore + ".") : "");
-      _spotifyPnl("Playlist", "",
-        '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
-        perche + ' Prova a collegare Spotify di nuovo.</p>');
+      const perche = _spotifyErrore === -1
+        ? "Non riesco a parlare con Spotify: controlla la rete."
+        : (_spotifyErrore ? ("Spotify ha risposto " + _spotifyErrore + "." + (_spotifyMotivo ? " (" + _spotifyMotivo + ")" : "")) : "");
+      _spotifyPnl("Playlist", "",
+        '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
+        perche + ' Prova a collegare Spotify di nuovo.</p>');
       return;
     }
   let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
