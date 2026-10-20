@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.349";
+  const APP_VERSION = "6.350";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12908,6 +12908,9 @@ async function _spotifyAccedi() {
      "Apri Spotify") e un segnale dedicated dice che l'accesso e' in
      corso, cosi' il ricaricamento aspetta. */
   _loginSpotifyInCorso = true;
+  /* Un accesso nuovo cancella l'errore del tentativo vecchio: altrimenti
+     quello resta scritto e l'app sembra ancora rotta. */
+  try { LS.remove("mb.spotifyErrore"); LS.remove("mb.spotifyErroreQuando"); } catch (e) { /* noop */ }
   if (!SPOTIFY_CLIENT_ID) { toast("Manca il Client ID di Spotify"); _loginSpotifyInCorso = false; return; }
   let pk;
   try { pk = await _spotifyPkce(); } catch (e) {
@@ -12990,10 +12993,16 @@ async function _spotifyAccedi() {
     return;
   }
   try {
+    /* La strada che funziona sempre: l'app sul link sicuro, in una scheda
+       nuova. Li' l'accesso parte e torna col codice, anche se l'app e'
+       quella della schermata Home (che su iPhone fa uno schermo nero e
+       perde il codice). */
+    const sicuro = "https://stefanovillaggio8-dot.github.io/music-box/?spotify=accedi";
     _spotifyPnl("Accedi a Spotify", "un tocco e si apre",
-      '<p class="step-hint">Tocca il pulsante qui sotto: ti porta su Spotify per ' +
-      "dargli l'accesso. Me lo dai una volta sola e non ti chiedo la password.</p>" +
-      (daIcona ? "<p class=\"step-hint\">Sei nell'app della schermata Home. Su iPhone l'app e il browser hanno due memorie separate, e quando torni da Spotify il sistema passa alla schermata Home: per Spotify conviene usare il BROWSER (Safari).</p>" : "") +
+      '<p class="step-hint">Tocca il pulsante qui sotto: si apre l\'app su internet, e l\'accesso a Spotify si fa li\' (funziona sia dall\'app della schermata Home sia dal browser). Me lo dai una volta sola e non ti chiedo la password.</p>' +
+      '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
+      String(sicuro).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Accedi con Spotify (nel browser)</a>' +
+      '<p class="step-hint" style="margin-top:14px">Se sei gia\' nel browser e preferisci fare tutto qui, c\'e\' anche questa strada:</p>' +
       '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
       String(url).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Apri Spotify</a>');
   } catch (e) { /* noop */ }
@@ -13131,7 +13140,7 @@ async function _spotifyCompletaAccesso(code, stato) {
       }
     }
     _spotifyTraccia("il worker ha rifiutato lo scambio: " + perche);
-    try { LS.set("mb.spotifyErrore", perche); } catch (e) { /* noop */ }
+    try { LS.set("mb.spotifyErrore", perche); LS.set("mb.spotifyErroreQuando", String(Date.now())); } catch (e) { /* noop */ }
     _loginSpotifyInCorso = false;
     toast(perche, 9000);
     try { _spotifyPnl("Accesso non riuscito", "", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>"); } catch (e) { /* noop */ }
@@ -13655,7 +13664,13 @@ async function _spotifyRientro() {
        non la vedessi, Ste penserebbe che non e' successo niente. */
     try {
       const vecchio = String(LS.get("mb.spotifyErrore", "") || "");
-      if (vecchio) {
+      /* Ste: "appena apro musicbox mi spunta codice non autorizzato".
+         Motivo: l'errore del tentativo di ieri era ancora scritto e veniva
+         mostrato all'avvio, sembrando un errore di adesso. Adesso l'errore
+         ha un orario: se e' vecchio non viene mostrato. */
+      const quando = Number(LS.get("mb.spotifyErroreQuando", 0) || 0);
+      const fresco = quando && (Date.now() - quando) < 15 * 60 * 1000;
+      if (vecchio && fresco) {
         _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito",
           '<p class="step-hint">' + _spotifySicuro(vecchio) + "</p>" +
           '<button class="btn-main" id="spotifyRiprova" style="display:block;text-align:center;margin-top:10px">Riprova</button>');

@@ -284,11 +284,19 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
+  /* PROVA TEMPORANEA */
+  var TEST = -1;
+  try {
+    var mm = /[?&]fuocoTest=([\d.]+)/.exec(String(window.location.search || ""));
+    if (mm) TEST = parseFloat(mm[1]);
+  } catch (e) { /* noop */ }
+
   var stato = {
     box: null,
     ultimoTitolo: "",
     progVisto: -1,      /* l'ultimo bruciato che ho visto */
     progChar: -1,       /* l'ultimo bruciato disegnato nella crosta */
+    progFiamme: -1,     /* l'ultimo bruciato a cui ho mosso le fiamme */
     progNotifica: -1,
     tPrecedente: 0,
     seme: 7,
@@ -394,6 +402,7 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
+      if (TEST >= 0) { prog = TEST; suona = true; }
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;
@@ -427,13 +436,19 @@
       stato.box.style.transform = g ? "rotate(" + g.toFixed(2) + "deg)" : "";
 
       var a = arte(prog, stato.seme);
-      /* la crosta si ridisegna quando il bruciato e' cambiato un po' (il
-         filtro della grana e' costoso, non serve ogni fotogramma) */
-      if (Math.abs(prog - stato.progChar) > 0.003) disegnaChar(prog);
-      /* le fiamme si spostano ogni fotogramma, ma senza ricrearle: e' il
-         loro spostamento a fare il movimento, l'animazione fa il resto */
+      /* Il fuoco NON si sposta a ogni fotogramma. Le fiamme hanno un
+         filtro di sfocatura: muoverle 60 volte al secondo fa scattare il
+         telefono e il fuoco sembra battere (Ste: "il fuoco pulsa come se
+         battesse"). Le muovo solo quando il bruciato e' cambiato un po':
+         i passi sono troppo piccoli per vedersi, l'animazione gira
+         liscia. */
+      var cambiato = Math.abs(prog - stato.progChar) > 0.004;
+      if (cambiato) disegnaChar(prog);
       if (!stato.fiamme.length) preparaFiamme(prog, r.width);
-      spostaFiamme(a, r.width);
+      if (cambiato || stato.progFiamme < 0) {
+        spostaFiamme(a, r.width);
+        stato.progFiamme = prog;
+      }
       if (!stato.box.querySelector(".mb-bragia").childNodes.length) {
         stato.box.querySelector(".mb-bragia").innerHTML = stratoBragia(r.width);
       }
@@ -584,6 +599,48 @@
     return "";
   }
 
+  /* Il telefono vuole un indirizzo vero: iOS non accetta le immagini
+     "data:" come copertina della notifica (si vede solo un quadrato
+     vuoto). Quindi mando il disegno al server, che lo salva, e uso
+     l'indirizzo del file. Se il server non c'e' (per esempio la versione
+     su internet) uso il "data:" come riserva. */
+  function mettiArtwork(src) {
+    try {
+      var meta = navigator.mediaSession.metadata;
+      if (!meta) return;
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: meta.title || "",
+        artist: meta.artist || "",
+        album: meta.album || "",
+        artwork: [{ src: src, sizes: "256x256", type: src.indexOf("data:") === 0 ? "image/jpeg" : "image/png" }]
+      });
+      stato.ultimoArtwork = src;
+    } catch (e) { /* il browser non accetta l'artwork: lascio com'e' */ }
+  }
+
+  function pubblicaNotifica(prog) {
+    if (!imgCopertina || !ctxTela) return;
+    var bruciata = copertinaCheBrucia(prog);
+    if (!bruciata) return;
+    try {
+      if (tela.toBlob) {
+        tela.toBlob(function (blob) {
+          if (!blob) { mettiArtwork(bruciata); return; }
+          try {
+            fetch("fuoco-notifica.png", { method: "POST", body: blob, cache: "no-store" })
+              .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+              .then(function () {
+                mettiArtwork(new URL("fuoco-notifica.png?v=" + Date.now(), String(window.location.href)).href);
+              })
+              .catch(function () { mettiArtwork(bruciata); });
+          } catch (e) { mettiArtwork(bruciata); }
+        }, "image/png");
+        return;
+      }
+    } catch (e) { /* noop */ }
+    mettiArtwork(bruciata);
+  }
+
   function aggiornaNotifica(prog, suona) {
     if (!("mediaSession" in navigator)) return;
     var meta = navigator.mediaSession.metadata;
@@ -596,24 +653,18 @@
       stato.ultimoArtwork = cop;
       caricaCopertina(cop);
     }
+    /* Se l'immagine non e' ancora pronta non pubblico niente: altrimenti
+       il telefono si ferma su un quadrato vuoto (e iOS non lo cambia
+       piu'). */
+    if (!imgCopertina) return;
     if (!suona) return;
     /* non troppo spesso: il blocco schermo non ha bisogno di 60 fotogrammi
        al secondo, e il telefono si scalda */
     var adesso = Date.now();
-    if (adesso - (stato.ultimaNotifica || 0) < 900) return;
+    if (adesso - (stato.ultimaNotifica || 0) < 1500) return;
     stato.ultimaNotifica = adesso;
     preparaTela();
-    var bruciata = copertinaCheBrucia(prog);
-    if (!bruciata) return;
-    try {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: meta.title || "",
-        artist: meta.artist || "",
-        album: meta.album || "",
-        artwork: [{ src: bruciata, sizes: "256x256", type: "image/jpeg" }]
-      });
-      stato.ultimoArtwork = bruciata;
-    } catch (e) { /* il browser non accetta l'artwork: lascio com'e' */ }
+    pubblicaNotifica(prog);
   }
 
   if (document.readyState === "loading") {
