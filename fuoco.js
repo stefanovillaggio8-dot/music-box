@@ -284,13 +284,6 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
-  /* PROVA TEMPORANEA */
-  var TEST = -1;
-  try {
-    var mm = /[?&]fuocoTest=([\d.]+)/.exec(String(window.location.search || ""));
-    if (mm) TEST = parseFloat(mm[1]);
-  } catch (e) { /* noop */ }
-
   var stato = {
     box: null,
     ultimoTitolo: "",
@@ -401,7 +394,6 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
-      if (TEST >= 0) { prog = TEST; suona = true; }
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;
@@ -514,33 +506,41 @@
     } catch (e) { /* noop */ }
   }
 
-  /* una fiamma sul canvas */
+  /* una fiamma sul canvas.
+     ATTENZIONE: i gradienti si creano PRIMA delle trasformazioni della
+     tela. Se li creo dopo (nello spazio trasformato) il gradiente viene
+     interpretato con le coordinate sbagliate e la fiamma esce tutta
+     bianca: me l'ha fatto vedere il test. */
   function fiammaCanvas(x, y, h, ang) {
     var s = h / 160;
-    ctxTela.save();
-    ctxTela.translate(x, y);
-    ctxTela.rotate(ang * Math.PI / 180);
-    ctxTela.scale(s, s);
-    ctxTela.translate(-30, -147);
-    var g = ctxTela.createLinearGradient(0, 0, 0, -145);
+    var rad = ang * Math.PI / 180;
+    var dx = Math.sin(rad), dy = -Math.cos(rad);
+    /* gradiente nella spazio della tela: dalla base alla punta */
+    var g = ctxTela.createLinearGradient(x, y, x + dx * h, y + dy * h);
     g.addColorStop(0, "#fffdf2");
     g.addColorStop(0.08, "#ffe07a");
     g.addColorStop(0.25, "#ffa617");
     g.addColorStop(0.50, "#f45300");
     g.addColorStop(0.80, "rgba(205,38,0,.55)");
     g.addColorStop(1, "rgba(160,15,0,0)");
+    var gc = ctxTela.createLinearGradient(x, y, x + dx * h * 0.72, y + dy * h * 0.72);
+    gc.addColorStop(0, "rgba(255,252,235,.9)");
+    gc.addColorStop(0.35, "rgba(255,235,170,.45)");
+    gc.addColorStop(1, "rgba(255,205,90,0)");
+
+    ctxTela.save();
+    ctxTela.translate(x, y);
+    ctxTela.rotate(rad);
+    ctxTela.scale(s, s);
+    ctxTela.translate(-30, -147);
     ctxTela.shadowColor = "rgba(255,120,20,.8)";
     ctxTela.shadowBlur = 12;
     ctxTela.fillStyle = g;
     ctxTela.fill(new Path2D(PERCORSO_FIAMMA));
     ctxTela.shadowBlur = 0;
     /* il cuore: sfumato, altrimenti sembra una macchia bianca */
-    var gc = ctxTela.createLinearGradient(0, 0, 0, -110);
-    gc.addColorStop(0, "rgba(255,252,235,.85)");
-    gc.addColorStop(0.35, "rgba(255,235,170,.45)");
-    gc.addColorStop(1, "rgba(255,205,90,0)");
-    /* PROVA: senza cuore */
-    void gc;
+    ctxTela.fillStyle = gc;
+    ctxTela.fill(new Path2D(PERCORSO_CUORE));
     ctxTela.restore();
   }
 
@@ -605,16 +605,6 @@
     preparaTela();
     var bruciata = copertinaCheBrucia(prog);
     if (!bruciata) return;
-      if (TEST >= 0) {
-        var imgProva = document.getElementById("mb-prova-notifica");
-        if (!imgProva) {
-          imgProva = document.createElement("img");
-          imgProva.id = "mb-prova-notifica";
-          imgProva.style.cssText = "position:fixed;left:10px;top:120px;width:256px;height:256px;z-index:9999;border:2px solid #f80";
-          document.body.appendChild(imgProva);
-        }
-        imgProva.src = bruciata;
-      }
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: meta.title || "",
