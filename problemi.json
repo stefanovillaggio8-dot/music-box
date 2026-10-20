@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792460719078,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792460724881,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -156,7 +152,11 @@
   "r": "SPOTIFY: la pagina scambia il codice col permesso"
  },
  {
-  "t": 1792462340646,
-  "r": "SPOTIFY: [v6.346] ritorno: codice trovato (dal ricordo della pagina) indirimento: []"
+  "t": 1792462338694,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792462342950,
+  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
  }
 ]
