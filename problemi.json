@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792504992171,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792504992253,
-  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
   "t": 1792504992221,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792505600394,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792505600431,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505607729,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
