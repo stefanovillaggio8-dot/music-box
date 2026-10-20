@@ -358,7 +358,7 @@
    },
    "thasup|marte": {
     "v": 0,
-    "s": 62,
+    "s": 142,
     "t": "marte",
     "a": "thasup"
    },
@@ -805,6 +805,12 @@
     "s": 116,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
+   },
+   "fedezfrancescamichelini|cignonero": {
+    "v": 0,
+    "s": 54,
+    "t": "Cigno nero",
+    "a": "Fedez, Francesca Michelini"
    }
   },
   "Diego": {
