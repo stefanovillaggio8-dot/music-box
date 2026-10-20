@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792465264643,
-  "r": "SPOTIFY: [v6.348] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792465268303,
   "r": "SPOTIFY: [v6.348] bottone toccato"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465857093,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792465863246,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
