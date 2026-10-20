@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532094967,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792532094968,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792532100491,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792537216903,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
