@@ -590,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.357";
+  const APP_VERSION = "6.358";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12474,8 +12474,15 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
             vb.title = "C'è un aggiornamento: tocca qui per prenderlo";
           }
         } catch (e) { /* noop */ }
-        toast("Aggiornamento pronto: tocca la versione in alto quando vuoi", 6000);
-      });
+          toast("Aggiornamento pronto: tocca la versione in alto quando vuoi", 6000);
+          /* Ste: "l'app non parte e i file restano vecchi".
+             Motivo: quando il worker del servizio prende il posto di quello
+             vecchio, la pagina restava con i file vecchi e non si
+             ricaricava: l'app non si aggiornava mai da sola. Adesso, quando
+             il worker cambia, la pagina si ricarica e prende i file nuovi. */
+          _segna("il worker del servizio e' cambiato: ricarico per prendere i file nuovi");
+          try { setTimeout(function () { window.location.reload(); }, 400); } catch (e) { /* noop */ }
+        });
 navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
       swReg = reg;
       /* Controllo gli aggiornamenti OGNI volta che apri la pagina, non solo
@@ -12770,9 +12777,22 @@ function _ricaricaQuandoLibero() {
     window.location.reload();
   } catch (e) { /* noop */ }
 }
-if (!_giaRicaricata && _versioneDaPrendere) {
-            try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
-            toast("C'e' la versione " + _versioneDaPrendere + ": aggiorno e riparto", 4000);
+  if (!_giaRicaricata && _versioneDaPrendere) {
+              try { sessionStorage.setItem("mb.aggiornatoA", _versioneDaPrendere); } catch (e) { }
+              /* Ste: "l'app non parte e i file restano vecchi".
+                 Motivo: il worker del servizio aspettava che l'app venisse
+                 chiusa del tutto per prendere il posto di quello vecchio, e
+                 l'app non glielo chiedeva MAI: quindi i file che serviva
+                 dalla cache erano sempre quelli vecchi (e se uno era
+                 finito rotto, l'app non partiva proprio: schermata vuota e
+                 pulsanti senza icona). Adesso glielo dico: "attivati subito". */
+              try {
+                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                  navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+                  _segna("chiedo al worker del servizio di attivarsi subito");
+                }
+              } catch (e) { /* noop */ }
+              toast("C'e' la versione " + _versioneDaPrendere + ": aggiorno e riparto", 4000);
             setTimeout(function () {
               try {
                 /* Ste: "se scorro mentre cerco una canzone e si aggiorna mi

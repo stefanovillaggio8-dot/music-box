@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6357";
+const CACHE = "spotifynonavraiimieisoldi-v6358";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -759,6 +759,31 @@ self.addEventListener("fetch", (event) => {
        definito e la promise rigetta (e ogni file diventa un 504). */
     const lavoro = cache.then((c) => c.match(event.request).then((cached) => {
       if (cached) {
+        /* Se il file in cache e' ROTTO (un download interrotto), non lo uso:
+           l'app non partirebbe (schermata vuota, pulsanti senza icona).
+           Ste: ha mandato la foto dell'app vuota e pensava che la libreria
+           fosse sparita. */
+        let intero = true;
+        try {
+          if (cached.status !== 200 || !cached.ok) intero = false;
+          else {
+            const lung = Number(cached.headers.get("content-length") || 0);
+            if (lung && lung < 200) intero = false;
+          }
+        } catch (e) { intero = false; }
+        if (!intero) {
+          try { c.delete(event.request).catch(() => { }); } catch (e) { }
+          /* e vado a prenderlo dalla rete */
+          return fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
+            .then((response) => {
+              if (response && response.status === 200) {
+                const clone = response.clone();
+                c.put(event.request, clone).catch(() => {});
+              }
+              return response;
+            })
+            .catch((e) => new Response("", { status: 504 }));
+        }
         /* in secondo piano: controllo se online c'e' qualcosa di nuovo */
         fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
           .then((response) => {
