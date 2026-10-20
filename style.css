@@ -160,9 +160,30 @@ body {
 .ver { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .5px; }
 
 .search-wrap { position: relative; }
+/* Ste: la X per cancellare la ricerca, tutto a sinistra */
+.search-x {
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  z-index: 2;
+}
+.search-x svg { width: 15px; height: 15px; }
+.search-x:active { color: var(--txt); background: var(--card-hi); }
 .search-icon {
   position: absolute;
-  left: 12px;
+  left: 38px;
   top: 50%;
   transform: translateY(-50%);
   width: 18px;
@@ -175,7 +196,7 @@ body {
   background: var(--card);
   border: 1px solid transparent;
   border-radius: 11px;
-  padding: 9px 14px 9px 38px;
+  padding: 9px 14px 9px 62px;
   color: var(--txt);
   font-size: 15px;
   outline: none;

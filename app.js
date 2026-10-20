@@ -459,6 +459,7 @@
     { title: "mi manchi", file: "songs/track-513.mp3", artist: "paky", profile: "Ste" },
     { title: "Disfruto - Carla Morrison", file: "songs/track-514.mp3", artist: "Carla Morrison", profile: "Ste" },
     { title: "Jovanotti - A Te", file: "songs/track-515.mp3", artist: "le tasche piene di sassi", profile: "Ste" },
+    { title: "non avere paura", file: "songs/track-516.mp3", artist: "tommaso paradiso", profile: "Ste" },
 ];
 
   const PALETTE = [
@@ -9256,6 +9257,23 @@ $("fabMenu").addEventListener("click", (e) => {
       try { render(); } catch (e) { /* noop */ }
     }, 160);
   });
+
+  /* Ste: "una x tutto a sinistra che cancella quello che c'e' scritto e
+     riporta alla libreria". */
+  try {
+    const sx = document.getElementById("searchX");
+    if (sx && searchEl) {
+      sx.addEventListener("click", () => {
+        searchEl.value = "";
+        query = "";
+        try { LS.set("mb.ricerca", ""); } catch (e) { /* noop */ }
+        try { if (_ricercaScaduta) { clearTimeout(_ricercaScaduta); _ricercaScaduta = null; } } catch (e) { }
+        try { render(); } catch (e) { /* noop */ }
+        /* chiudo la tastiera: si torna alla libreria */
+        try { searchEl.blur(); } catch (e) { /* noop */ }
+      });
+    }
+  } catch (e) { /* noop */ }
 
   /* Bottone diagnostica nel menu "Altro": serve a me, non agli utenti, ma lo
    metto lo stesso perche' e' l'unico modo di sapere dove finiscono i dati. */
