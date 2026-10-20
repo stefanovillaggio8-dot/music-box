@@ -1,5 +1,13 @@
 [
  {
+  "t": 1792531989070,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792531989084,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
   "t": 1792531989240,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -150,13 +158,5 @@
  {
   "t": 1792532017971,
   "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792532018550,
-  "r": "SPOTIFY: [v6.365] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792532019581,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
