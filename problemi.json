@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792454015867,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
- },
- {
   "t": 1792454018916,
   "r": "SPOTIFY: bottone toccato"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792455444366,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792455446478,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
