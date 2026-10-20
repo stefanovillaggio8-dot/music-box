@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792525975903,
-  "r": "SPOTIFY: la pagina: non riesco a parlare col worker (Load failed)"
- },
- {
   "t": 1792525976406,
   "r": "SPOTIFY: la pagina: non riesco a parlare col worker (Load failed)"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792528363939,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792528373831,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
