@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792455282126,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792455285536,
   "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 11"
  },
@@ -148,15 +144,19 @@
   "r": "SPOTIFY: il ritorno e' arrivato nella pagina (col codice)"
  },
  {
-  "t": 1792455538172,
-  "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
+  "t": 1792455535919,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792455542338,
+  "t": 1792455540298,
+  "r": "SPOTIFY: bottone toccato"
+ },
+ {
+  "t": 1792455544674,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792455548623,
   "r": "worker /stato: risponde"
- },
- {
-  "t": 1792455546730,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
