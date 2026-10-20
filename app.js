@@ -590,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.360";
+  const APP_VERSION = "6.361";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13578,14 +13578,37 @@ function _spotifyChiediAccesso(perche) {
     });
   } catch (e) { /* noop */ }
 }
-function _spotifyMenu() {
-  _spotifyTraccia("sono dentro _spotifyMenu");
-  if (_spotifyToken()) {
-    _spotifyMostraPlaylist();
-    return;
+  function _spotifyMenu() {
+    _spotifyTraccia("sono dentro _spotifyMenu");
+    if (_spotifyToken()) {
+      _spotifyMostraPlaylist();
+      return;
+    }
+    /* Il pannello si apre SUBITO (non voglio aspettare la rete per
+       mostrargli qualcosa). */
+    _spotifyChiediAccesso("");
+    /* Ste: "non va ancora". Motivo: se il permesso arriva mentre l'app e'
+       aperta (per eso' l'ha fatto nella scheda del browser), il bottone
+       Spotify non lo andava a chiedere al server: mostrava subito "Accedi
+       con Spotify" e sembrava che tutto fosse rifatto da capo.
+       Adesso, in parallelo, l'app chiede al server se c'e' un permesso
+       pronto: se c'e', il pannello si riempie di playlist. */
+    try { _spotifyPrendiSePronto(); } catch (e) { /* noop */ }
   }
-  _spotifyChiediAccesso("");
-}
+
+  async function _spotifyPrendiSePronto() {
+    try {
+      const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
+      const jj = await rr.json();
+      if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
+        _spotifyTraccia("il server aveva il permesso: lo prendo e mostro le playlist");
+        _spotifySalvaToken(jj.permesso);
+        try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
+        toast("Collegato a Spotify", 4000);
+        _spotifyMostraPlaylist();
+      }
+    } catch (e) { /* il server non risponde: pazienza */ }
+  }
 
   async function _spotifyMostraPlaylist() {
     /* Ste: "non mi spunta piu' accedi con spotify e l'autorizzazione
