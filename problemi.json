@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792462441989,
-  "r": "SPOTIFY: [v6.346] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792462444868,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465264643,
   "r": "SPOTIFY: [v6.348] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792465268303,
+  "r": "SPOTIFY: [v6.348] bottone toccato"
  }
 ]
