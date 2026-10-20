@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792528488507,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792528488610,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
  },
@@ -148,15 +144,19 @@
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
  },
  {
-  "t": 1792528650947,
+  "t": 1792528650930,
+  "r": "SPOTIFY: [v6.362] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792528653896,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792528652779,
-  "r": "SPOTIFY: [v6.362] premo il pulsante 'Accedi con Spotify' del pannello"
+  "t": 1792528656165,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792528656829,
-  "r": "SPOTIFY: [v6.362] ritorno: nessun codice (indirimento: [?spotify=accedi], memoria: [])"
+  "t": 1792528658751,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  }
 ]
