@@ -327,13 +327,6 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
-  /* PROVA TEMPORANEA */
-  var TEST = -1;
-  try {
-    var mm = /[?&]fuocoTest=([\d.]+)/.exec(String(window.location.search || ""));
-    if (mm) TEST = parseFloat(mm[1]);
-  } catch (e) { /* noop */ }
-
   var stato = {
     box: null,
     ultimoTitolo: "",
@@ -451,7 +444,6 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
-      if (TEST >= 0) { prog = TEST; suona = true; stato.suonaOra = true; }
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;
