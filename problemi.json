@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792519904790,
-  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
- },
- {
-  "t": 1792519904791,
-  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
- },
- {
   "t": 1792519904970,
   "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
  },
@@ -157,6 +149,14 @@
  },
  {
   "t": 1792519942635,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519943840,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792519945275,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
