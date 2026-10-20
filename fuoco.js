@@ -308,14 +308,45 @@
     temp.innerHTML = stratoCalore(a);
     while (temp.firstChild) box.insertBefore(temp.firstChild, box.querySelector(".mb-fiamme"));
 
+    /* Ste: "appena la musica e' praticamente finita ed e' tutto nero, togli
+       le fiamme e lascia soltanto le particelle".
+       Motivo: col bruciato quasi finito lo schermo e' nero, ma le fiamme
+       continuavano a ballare sopra il nero e sembrava un errore. Adesso,
+       quando il bruciato e' quasi finito, le fiamme spariscono (con una
+       sfumatura lenta, non di colpo) e resta solo la bragia: le particelle
+       che salgono. */
+    var fiamme = box.querySelector(".mb-fiamme");
+    var calore = box.querySelector(".mb-calore");
+    var quasiFinita = prog > 0.90;
+    if (quasiFinita) {
+      if (fiamme.style.opacity !== "0") {
+        fiamme.style.transition = "opacity 1.1s ease";
+        fiamme.style.opacity = "0";
+      }
+      if (calore) {
+        if (!calore.style.transition) calore.style.transition = "opacity 1.1s ease";
+        calore.style.opacity = "0";
+      }
+    } else {
+      if (fiamme.style.opacity === "0") {
+        fiamme.style.transition = "opacity .5s ease";
+        fiamme.style.opacity = "";
+      }
+      if (calore) calore.style.opacity = "";
+    }
     /* le fiamme si ridisegnano solo quando il bruciato e' cambiato un po':
        rifarle ogni fotogramma azzererebbe l'animazione della fiamma */
-    if (Math.abs(prog - stato.progDisegnato) > 0.008) {
-      box.querySelector(".mb-fiamme").innerHTML = fiammeAttorno(a, lato);
+    if (!quasiFinita && Math.abs(prog - stato.progDisegnato) > 0.008) {
+      fiamme.innerHTML = fiammeAttorno(a, lato);
     }
     if (!box.querySelector(".mb-bragia").childNodes.length) {
       box.querySelector(".mb-bragia").innerHTML = stratoBragia(lato);
     }
+    /* Quando spariscono le fiamme, le particelle restanosole e un filo piu'
+       luminose: e' l'unica cosa che si vede sul nero. */
+    var bragia = box.querySelector(".mb-bragia");
+    bragia.style.transition = "opacity 1.1s ease";
+    bragia.style.opacity = quasiFinita ? "1" : "";
     stato.progDisegnato = prog;
   }
 

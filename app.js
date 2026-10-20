@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.345";
+  const APP_VERSION = "6.346";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4079,6 +4079,12 @@ a.addEventListener("pause", () => {
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
     a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
+    /* Ste: "funziona anche nella schermata di blocco, dalla notifica della
+       canzone". Motivo: la barra del brano nella schermata di blocco
+       restava ferma, perche' la posizione veniva aggiornata solo quando
+       cambiava il brano. Ora, mentre la musica suona, il telefono sa
+       sempre a che punto siamo. */
+    a.addEventListener("timeupdate", () => _aggiornaPosizioneSchermo());
     /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
        evento scatta finche' la musica suona, su computer e su telefono. */
     a.addEventListener("timeupdate", _contaAlMuoversi);
@@ -5248,7 +5254,7 @@ function _aggiornaPosizioneSchermo() {
      non serve. Una volta ogni due secondi la barra della schermata di
      blocco scorre comunque, e il telefono respira meglio. */
   const ora = Date.now();
-  if (ora - _ultimaPosizioneSchermo < 2000) return;
+  if (ora - _ultimaPosizioneSchermo < 800) return;
   _ultimaPosizioneSchermo = ora;
   try {
     const d = audio && isFinite(audio.duration) ? audio.duration : 0;
