@@ -820,9 +820,15 @@
    },
    "coez|esemprebello": {
     "v": 0,
-    "s": 15,
-    "t": "È sempre bello",
+    "s": 31,
+    "t": "Ã sempre bello",
     "a": "Coez"
+   },
+   "calcutta|tutti": {
+    "v": 1,
+    "s": 1,
+    "t": "Tutti",
+    "a": "Calcutta"
    }
   },
   "Diego": {
