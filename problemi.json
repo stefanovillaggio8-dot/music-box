@@ -1,5 +1,9 @@
 [
  {
+  "t": 1792517431138,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
   "t": 1792517431202,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -154,9 +158,5 @@
  {
   "t": 1792521561627,
   "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792521561641,
-  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
