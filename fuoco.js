@@ -284,6 +284,30 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
+  /* PROVA: misura dei fotogrammi */
+  var MISURA = { attivo: false, tempi: [], ultimo: 0, inizio: 0 };
+  function misuraFrame(t) {
+    if (!MISURA.attivo) { MISURA.attivo = true; MISURA.ultimo = t; MISURA.inizio = t; MISURA.tempi = []; return; }
+    var d = t - MISURA.ultimo;
+    MISURA.ultimo = t;
+    if (t - MISURA.inizio < 4000) { MISURA.tempi.push(d); return; }
+    MISURA.attivo = false;
+    var tempi = MISURA.tempi.slice().sort(function (a, b) { return a - b; });
+    var media = 0, lenti = 0;
+    for (var i = 0; i < tempi.length; i++) { media += tempi[i]; if (tempi[i] > 50) lenti++; }
+    media = tempi.length ? media / tempi.length : 0;
+    var p95 = tempi.length ? tempi[Math.floor(tempi.length * 0.95)] : 0;
+    var testo = "frames=" + tempi.length + " media=" + media.toFixed(1) + "ms p95=" + p95.toFixed(1) + "ms lenti=" + lenti;
+    var box = document.getElementById("mb-misura");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "mb-misura";
+      box.style.cssText = "position:fixed;left:0;top:0;z-index:99999;background:#000;color:#0f0;font:12px monospace;padding:4px";
+      document.body.appendChild(box);
+    }
+    box.textContent = testo;
+  }
+
   var stato = {
     box: null,
     ultimoTitolo: "",
@@ -478,6 +502,7 @@
 
       /* la copertina che brucia anche nelle notifiche del telefono */
       aggiornaNotifica(prog, suona);
+      misuraFrame(performance.now());
     } catch (e) { /* il fuoco non deve mai far cadere l'app */ }
     requestAnimationFrame(ciclo);
   }

@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.350";
+  const APP_VERSION = "6.351";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13624,6 +13624,22 @@ async function _spotifyRientro() {
        e' l'unica che puo' finire prima che il telefono cambi scheda), l'app
        aspetta il permesso invece di rifare lo scambio da capo. */
     try {
+      /* Ste: "non va ancora". Motivo: su iPhone l'app si riapre dalla sua
+         iccola e l'indirimento riparte pulito: il codice che Spotify aveva
+         messo sparisce. Adesso l'app chiede al worker se c'e' un permesso
+         pronto (il worker l'ha fatto lo scambio, e lo tiene): cosi' non
+         importa in che scheda o in che app siamo. */
+      try {
+        const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
+        const jj = await rr.json();
+        if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
+          _spotifyTraccia("il worker aveva il permesso pronto: lo prendo");
+          _spotifySalvaToken(jj.permesso);
+          toast("Collegato a Spotify", 4000);
+          try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+          return;
+        }
+      } catch (e) { /* il worker non risponde: pazienza */ }
       const bigliettoPronto = String(sessionStorage.getItem("mb.spotifyBiglietto") || "");
       if (bigliettoPronto) {
         _spotifyTraccia("c'e' un biglietto: prendo il permesso");
