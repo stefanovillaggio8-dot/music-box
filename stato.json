@@ -382,19 +382,19 @@
    },
    "artie5ive|introlabellavita": {
     "v": 1,
-    "s": 11,
+    "s": 90,
     "t": "INTRO (La Bella Vita)",
     "a": "Artie 5ive"
    },
    "artie5ive|davverodavvero": {
-    "v": 9,
-    "s": 460,
+    "v": 11,
+    "s": 467,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
    "artie5ive|fwss25freestyle": {
-    "v": 2,
-    "s": 196,
+    "v": 3,
+    "s": 211,
     "t": "FW/SS25 (Freestyle)",
     "a": "Artie 5ive"
    },
@@ -580,7 +580,7 @@
    },
    "kidyugi|lilith": {
     "v": 1,
-    "s": 128,
+    "s": 129,
     "t": "Lilith",
     "a": "Kid Yugi"
    },
@@ -853,6 +853,18 @@
     "s": 141,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
+   },
+   "tommasoparadiso|nonaverepaura": {
+    "v": 1,
+    "s": 17,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
+   "tommasoparadiso|romantici": {
+    "v": 0,
+    "s": 6,
+    "t": "romantici",
+    "a": "Tommaso Paradiso"
    }
   },
   "Diego": {
