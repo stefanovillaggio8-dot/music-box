@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792462401561,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792462404865,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465075383,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792465088448,
+  "r": "worker /stato: risponde"
  }
 ]
