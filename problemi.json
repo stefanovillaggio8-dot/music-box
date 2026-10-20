@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792462681525,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792462708804,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465315701,
   "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
+ },
+ {
+  "t": 1792465318426,
+  "r": "SPOTIFY: [v6.348] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQDaEXBhyptFcFFHgSVJQCTGU7m7ZNkWacin8viK2ZOZloc-JEqaEuhpWk"
  }
 ]
