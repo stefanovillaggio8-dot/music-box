@@ -388,7 +388,7 @@
    },
    "artie5ive|davverodavvero": {
     "v": 3,
-    "s": 223,
+    "s": 267,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -781,6 +781,12 @@
     "s": 147,
     "t": "NEON",
     "a": "Sfera Ebbasta & Shiva"
+   },
+   "negromaro|limmenso": {
+    "v": 0,
+    "s": 60,
+    "t": "L'immenso",
+    "a": "Negromaro"
    }
   },
   "Diego": {
