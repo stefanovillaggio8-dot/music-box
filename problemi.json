@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792460615085,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
   "t": 1792460698672,
   "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792462319476,
+  "r": "SPOTIFY: [v6.345] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792462322344,
   "r": "SPOTIFY: [v6.345] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
