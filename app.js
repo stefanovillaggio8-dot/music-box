@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.341";
+  const APP_VERSION = "6.342";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12968,7 +12968,7 @@ async function _spotifyAccedi() {
     _spotifyPnl("Accedi a Spotify", "un tocco e si apre",
       '<p class="step-hint">Tocca il pulsante qui sotto: ti porta su Spotify per ' +
       "dargli l'accesso. Me lo dai una volta sola e non ti chiedo la password.</p>" +
-      (daIcona ? "<p class=\"step-hint\">Se sei nell'app della schermata Home, il permesso puo' restare li' e non passare al ritorno: in quel caso apri il sito nel browser.</p>" : "") +
+      (daIcona ? "<p class=\"step-hint\">Sei nell'app della schermata Home. Su iPhone l'app e il browser hanno due memorie separate, e quando torni da Spotify il sistema passa alla schermata Home: per Spotify conviene usare il BROWSER (Safari).</p>" : "") +
       '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
       String(url).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Apri Spotify</a>');
   } catch (e) { /* noop */ }
@@ -13562,7 +13562,14 @@ async function _spotifyRientro() {
         }
         try {
           const perche = String(LS.get("mb.spotifyErrore", "") || "");
-          if (perche) _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>");
+          let extra = "";
+          try {
+            const daIcona = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+            if (daIcona) {
+              extra = "<p class=\"step-hint\">Sei nell'app della schermata Home: su iPhone l'app e il browser hanno due memorie separate, e quando torni da Spotify il sistema passa alla schermata Home. Per Spotify usa il BROWSER (Safari).</p>";
+            }
+          } catch (e) { /* noop */ }
+          if (perche) _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>" + extra);
         } catch (e) { /* noop */ }
         return;
       }
