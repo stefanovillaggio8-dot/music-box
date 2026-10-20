@@ -845,7 +845,7 @@
    "mostro|lacitta": {
     "v": 0,
     "s": 188,
-    "t": "LA CITTÃÂÃÂÃÂÃÂ",
+    "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
    },
    "naytfrahquintaletonyboy|cignonerormx": {
@@ -912,7 +912,7 @@
    },
    "glocky|lemiecolpe": {
     "v": 1,
-    "s": 240,
+    "s": 359,
     "t": "le mie colpe",
     "a": "glocky"
    },
@@ -1800,7 +1800,7 @@
    },
    "22simba|nevalelapenaversion1": {
     "v": 3,
-    "s": 1250,
+    "s": 1270,
     "t": "Ne vale la pena (Version 1)",
     "a": "22simba"
    },
@@ -1902,7 +1902,7 @@
    },
    "rraridaltaccoglocky|bilancinofeatglocky": {
     "v": 0,
-    "s": 118,
+    "s": 122,
     "t": "BILANCINO (feat. Glocky)",
     "a": "RRARI DAL TACCO, Glocky"
    },
