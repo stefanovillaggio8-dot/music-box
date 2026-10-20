@@ -178,7 +178,12 @@ body {
   color: var(--muted);
   cursor: pointer;
   z-index: 2;
+  /* Ste: la X spunta solo quando c'e' qualcosa scritto nella ricerca */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
 }
+.search-x.visibile { opacity: 1; pointer-events: auto; }
 .search-x svg { width: 15px; height: 15px; }
 .search-x:active { color: var(--txt); background: var(--card-hi); }
 .search-icon {

@@ -143,17 +143,36 @@
       </button>
       <script>
       (function () {
+        function campo() { return document.getElementById("search"); }
+        function bottone() { return document.getElementById("searchX"); }
+        /* Ste: "la x deve spuntare solo quando scrivo qualcosa" */
+        function aggiorna() {
+          var c = campo(), b = bottone();
+          if (!c || !b) return;
+          if (c.value && c.value.trim()) b.classList.add("visibile");
+          else b.classList.remove("visibile");
+        }
+        document.addEventListener("input", function (e) {
+          if (e.target && e.target.id === "search") aggiorna();
+        });
         document.addEventListener("click", function (e) {
           var x = e.target && e.target.closest ? e.target.closest("#searchX") : null;
           if (!x) return;
-          var campo = document.getElementById("search");
-          if (!campo) return;
-          campo.value = "";
+          var c = campo();
+          if (!c) return;
+          c.value = "";
           /* l'evento "input" fa azzerare il filtro all'app e ridisegnare
              la libreria: non devo toccare l'interno dell'app */
-          try { campo.dispatchEvent(new Event("input", { bubbles: true })); } catch (err) { }
-          try { campo.blur(); } catch (err) { }
+          try { c.dispatchEvent(new Event("input", { bubbles: true })); } catch (err) { }
+          try { c.blur(); } catch (err) { }
+          aggiorna();
         });
+        /* l'app rimette dentro la ricerca di ieri: controllo un paio di
+           volte, per vedere se la X deve comparire */
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", aggiorna);
+        aggiorna();
+        setTimeout(aggiorna, 250);
+        setTimeout(aggiorna, 900);
       })();
       </script>
     </div>
