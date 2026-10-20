@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532053792,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792532053934,
   "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792532082688,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792532082759,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
