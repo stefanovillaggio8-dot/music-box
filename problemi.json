@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792517331020,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792517331085,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792520119143,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792520133625,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
