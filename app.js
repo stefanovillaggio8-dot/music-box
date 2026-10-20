@@ -590,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.361";
+  const APP_VERSION = "6.362";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1345,16 +1345,54 @@ async function _apriDiagnostica() {
      Qui l'app lo scopre da sola e lo dice, cosi' non si perdono ore a
      cercare un bug che non c'e'. */
   function _scopriSeSeiInPrivata() {
+    /* Ste: "dice che sono in una finestra privata ma non e' vero".
+       Motivo: la prova scriveva una chiave e dopo 2,5 secondi controllava
+       se era sopravvissuta. Ma se in quei 2,5 secondi la pagina si
+       ricaricava (e succede, perche' l'app si aggiorna), la lettura
+       falliva e l'app dava la colpa alla finestra privata: un falso
+       allarme.
+
+       Adesso distingue i tre casi:
+       - la chiave e' sopravvissuta: tutto bene, niente avviso;
+       - la lettura e' fallita: la pagina si e' ricaricata, NON e' privata;
+       - la scrittura e' fallita: la memoria non c'e' (privata davvero, o
+         spazio pieno/bloccato): in questo caso il messaggio parla di
+         quello che e' vero. */
+    let scritta = false;
     try {
       const segreto = "prova-" + Date.now();
       LS.set("mb.prova-memoria", segreto);
+      scritta = true;
       setTimeout(() => {
+        let letta = false;
         let sopravvive = false;
-        try { sopravvive = LS.get("mb.prova-memoria", "") === segreto; } catch (e) { sopravvive = false; }
+        try { letta = true; sopravvive = LS.get("mb.prova-memoria", "") === segreto; } catch (e) { letta = false; }
         try { LS.remove("mb.prova-memoria"); } catch (e) { /* noop */ }
         if (sopravvive) return;
+        if (!letta) {
+          /* la lettura e' fallita: la pagina si e' ricaricata. Non e'
+             la finestra privata, e non c'e' niente da segnalare. */
+          return;
+        }
         _mostraAvvisoPrivata();
       }, 2500);
+    } catch (e) {
+      /* la scrittura e' fallita: la memoria del sito non e' scrivibile */
+      _mostraAvvisoMemoria();
+    }
+  }
+  function _mostraAvvisoMemoria() {
+    try {
+      if (document.getElementById("avviso-privata")) return;
+      const b = document.createElement("div");
+      b.id = "avviso-privata";
+      b.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:130;" +
+        "background:#3a2a10;border:1px solid #ffb347;color:#ffe9c9;padding:12px 14px;" +
+        "border-radius:10px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.5)";
+      b.textContent = "Il browser non riesce a salvare i dati di questo sito (spazio pieno " +
+        "o blocco dei cookie). I nomi che cambi e le preferenze potrebbero non restare. " +
+        "Prova a svuotare i dati del sito dalle impostazioni del browser.";
+      document.body.appendChild(b);
     } catch (e) { /* noop */ }
   }
   function _mostraAvvisoPrivata() {
