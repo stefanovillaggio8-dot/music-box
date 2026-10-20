@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.340";
+  const APP_VERSION = "6.341";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13533,6 +13533,7 @@ async function _spotifyRientro() {
      qui lo recupero: cosi' lo scambio va avanti anche dopo un ricaricamento. */
   if ((!code && !errore) || !stato) {
     try {
+      if (sessionStorage.getItem("mb.spotifyScambio")) { _spotifyTraccia("lo scambio e' gia' partito dalla pagina: non lo rifaccio"); return; }
       const salvato = JSON.parse(sessionStorage.getItem("mb.spotifyRitorno") || "null");
       if (salvato) {
         if (!code) code = String(salvato.c || "");
@@ -13543,6 +13544,29 @@ async function _spotifyRientro() {
   }
   if (!code && !errore) {
     _spotifyTraccia("ritorno: nessun codice nell'indirimento");
+    /* Ste: "non va ancora, porta sempre ad accedi con spotify".
+       Se lo scambio l'ha gia' iniziato la pagina (e' lei che lo fa, perche'
+       e' l'unica che puo' finire prima che il telefono cambi scheda), l'app
+       aspetta il permesso invece di rifare lo scambio da capo. */
+    try {
+      if (sessionStorage.getItem("mb.spotifyScambio")) {
+        _spotifyTraccia("lo scambio e' gia' partito: aspetto il permesso");
+        for (let giro = 0; giro < 60; giro++) {
+          if (_spotifyToken()) {
+            _spotifyTraccia("permesso arrivato: collegato");
+            toast("Collegato a Spotify", 4000);
+            try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
+            return;
+          }
+          await new Promise(function (r) { setTimeout(r, 500); });
+        }
+        try {
+          const perche = String(LS.get("mb.spotifyErrore", "") || "");
+          if (perche) _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>");
+        } catch (e) { /* noop */ }
+        return;
+      }
+    } catch (e) { /* noop */ }
     /* Se prima lo scambio e' fallito, la parola dell'errore resta qui: se
        non la vedessi, Ste penserebbe che non e' successo niente. */
     try {

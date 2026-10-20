@@ -10,36 +10,92 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6340" />
+  <link rel="stylesheet" href="style.css?v=6341" />
     <script>
-      /* Ste: "ho fatto l'accesso con Spotify e mi e' tornato su musicbox, ma e' spuntato
-         di nuovo accedi con Spotify".
-         Motivo: il codice che Spotify rimanda nell'indirimento (?code=...) sparisce se la
-         pagina si ricarica, e lo scambio del permesso non avviene piu'.
-         Adesso lo metto da parte qui, prima che l'app si avvii, in sessionStorage: anche
-         se la pagina si ricarica, il codice e' ancora li'. */
+      /* Ste: "non va ancora, porta sempre ad accedi con spotify".
+         Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
+         navigazione alla "web app" installata sulla home: li' la memoria e'
+         separata da Safari e l'indirimento e' pulito, quindi l'app non trova
+         il codice e mostra "Accedi con Spotify". Intanto lo scambio, partito
+         nella scheda di Safari, veniva abbandonato.
+
+         Adesso lo scambio lo fa QUESTA pagina, subito: l'app.js sono oltre
+         400 KB e sul telefono servono qualche secondo a partire, e in quel
+         tempo il permesso andava perso. Qui lo scambio parte subito e dura
+         meno di un secondo. */
       (function () {
+        var SERVIZIO = "https://musicbox-dal-telefono.stefanovillaggio8.workers.dev";
+        function traccia(riga) {
+          try {
+            fetch(SERVIZIO + "/problema", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ riga: "SPOTIFY: " + riga }),
+              keepalive: true
+            }).catch(function () { });
+          } catch (x) { }
+        }
         try {
           var q = new URLSearchParams(window.location.search || "");
-          var c = q.get("code") || "";
-          var s = q.get("state") || "";
-          var e = q.get("error") || "";
-          if (c || e) {
-            sessionStorage.setItem("mb.spotifyRitorno", JSON.stringify({ c: c, s: s, e: e }));
-            /* Ste: "si apre una pagina nera e ritorna a musicbox dicendomi di
-               nuovo accedi con spotify".
-               Qui lascio una traccia: cosi' so se il ritorno di Spotify e'
-               arrivato davvero nella pagina, anche se poi l'app non fa niente.
-               E' l'informazione che mi serve di piu'. */
-            try {
-              fetch("https://musicbox-dal-telefono.stefanovillaggio8.workers.dev/problema", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ riga: "SPOTIFY: il ritorno e' arrivato nella pagina" + (c ? " (col codice)" : " (con un errore: " + e + ")") })
-              }).catch(function () { });
-            } catch (y) { }
+          var code = q.get("code") || "";
+          var stato = q.get("state") || "";
+          var errore = q.get("error") || "";
+          if (!code && !errore) return;
+          try { sessionStorage.setItem("mb.spotifyRitorno", JSON.stringify({ c: code, s: stato, e: errore })); } catch (x) { }
+          if (errore) {
+            try { localStorage.setItem("mb.spotifyErrore", String(errore)); } catch (x) { }
+            traccia("la pagina ha trovato un errore di Spotify: " + errore);
+            return;
           }
-        } catch (x) { /* niente, l'app riprovera' da sola */ }
+          /* La chiave (verifier) viaggia dentro lo "state": cosi' funziona
+             anche se l'accesso e' cominciato su un link e torna su un altro. */
+          var parti = String(stato || "").split(".");
+          var verifier = parti.length >= 2 ? parti.slice(1).join(".") : "";
+          if (!code || !verifier) { traccia("la pagina non trova la chiave nello state"); return; }
+          try { sessionStorage.setItem("mb.spotifyScambio", "in corso"); } catch (x) { }
+          traccia("la pagina scambia il codice col permesso");
+          fetch("https://accounts.spotify.com/api/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              grant_type: "authorization_code",
+              code: code,
+              redirect_uri: "https://stefanovillaggio8-dot.github.io/music-box/",
+              client_id: "97b894cf504b412fa96e5a7ced1880c4",
+              code_verifier: verifier
+            }).toString(),
+            keepalive: true
+          }).then(function (r) {
+            return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+          }).then(function (x) {
+            if (x.ok && x.j && x.j.access_token) {
+              try {
+                var v = { access: x.j.access_token, scadenza: Date.now() + (Number(x.j.expires_in || 3600) - 60) * 1000 };
+                if (x.j.refresh_token) v.refresh = String(x.j.refresh_token);
+                localStorage.setItem("mb.spotify", JSON.stringify(v));
+                sessionStorage.setItem("mb.spotify", JSON.stringify(v));
+                localStorage.removeItem("mb.spotifyErrore");
+              } catch (z) { }
+              try { sessionStorage.setItem("mb.spotifyScambio", "fatto"); } catch (z) { }
+              traccia("la pagina ha scambiato il codice: permesso preso");
+            } else {
+              var perche = String((x.j && (x.j.error_description || x.j.error)) || "Spotify non ha accettato il codice");
+              try { localStorage.setItem("mb.spotifyErrore", perche); } catch (z) { }
+              try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (z) { }
+              traccia("la pagina: scambio rifiutato (" + perche + ")");
+            }
+          }).catch(function (e) {
+            try { sessionStorage.setItem("mb.spotifyScambio", "fallito"); } catch (z) { }
+            traccia("la pagina: scambio fallito (" + String((e && e.message) || e) + ")");
+          });
+          /* L'indirimento si pulisce subito: il codice e' gia' in viaggio e
+             nella memoria della pagina. */
+          try {
+            if (window.history && window.history.replaceState) {
+              window.history.replaceState({}, "", window.location.pathname + window.location.hash);
+            }
+          } catch (x) { }
+        } catch (x) { }
       })();
     </script>
   </head>
@@ -729,6 +785,6 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="app.js?v=6340"></script>
+<script src="app.js?v=6341"></script>
 </body>
 </html>
