@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792454009214,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
   "t": 1792454012550,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 55 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da 192.168.1.40:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792455425935,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792455442056,
+  "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
  }
 ]
