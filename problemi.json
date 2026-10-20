@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792473788756,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792473792762,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792473798758,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792504871451,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792504986110,
+  "r": "SPOTIFY: [v6.350] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792504986174,
+  "r": "SPOTIFY: [v6.350] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
