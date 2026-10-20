@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.343";
+  const APP_VERSION = "6.344";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12964,6 +12964,25 @@ async function _spotifyAccedi() {
   try {
     daIcona = !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
   } catch (e) { daIcona = false; }
+  if (daIcona) {
+    /* Ste: "faccio apri spotify e mi riporta a music box".
+       Motivo: quando Spotify rimanda all'app, iPhone apre la "web app"
+       installata sulla home, e la riapre DALLA SUA ICONA: l'indirimento
+       riparte pulito e il codice che Spotify aveva messo sparisce. Quindi
+       dall'icona l'accesso non puo' funzionare.
+       Adesso il pulsante apre l'app sul link sicuro: quella si apre nel
+       BROWSER (iPhone apre le schede nuove di una web app nel browser), e
+       li' il ritorno torna col codice e lo scambio avviene. */
+    _spotifyTraccia("sono nella web app: l'accesso parte nel browser");
+    const dove2 = "https://stefanovillaggio8-dot.github.io/music-box/?spotify=accedi";
+    try {
+      _spotifyPnl("Accedi a Spotify", "si apre nel browser",
+        "<p class=\"step-hint\">Su iPhone, l'app sulla schermata Home e il browser hanno due memorie separate, e quando torni da Spotify il sistema riapre l'app dall'iccola: l'indirimento riparte pulito e l'accesso si perde. Per questo il pulsante qui sotto apre l'app nel BROWSER: li' l'accesso funziona.</p>" +
+        '<a class="btn-main" style="display:block;text-align:center;margin-top:10px" href="' +
+        String(dove2).replace(/&/g, "&amp;") + '" target="_blank" rel="noopener">Accedi con Spotify (nel browser)</a>');
+    } catch (e) { /* noop */ }
+    return;
+  }
   try {
     _spotifyPnl("Accedi a Spotify", "un tocco e si apre",
       '<p class="step-hint">Tocca il pulsante qui sotto: ti porta su Spotify per ' +
