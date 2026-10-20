@@ -329,6 +329,8 @@
     progFiamme: -1,     /* l'ultimo bruciato a cui ho mosso le fiamme */
     x: -1, y: -1, lato: -1, altezza: -1,
     progNotifica: -1,
+    tipoArtwork: "",
+    suonaOra: false,
     tPrecedente: 0,
     seme: 7,
     fiamme: [],         /* le fiamme vive: non le ricreo piu' */
@@ -528,6 +530,7 @@
   if (bragia.style.opacity !== (quasiFinita ? "1" : "")) bragia.style.opacity = quasiFinita ? "1" : "";
 
       /* la copertina che brucia anche nelle notifiche del telefono */
+      stato.suonaOra = suona;
       aggiornaNotifica(prog, suona);
     } catch (e) { /* il fuoco non deve mai far cadere l'app */ }
     requestAnimationFrame(ciclo);
@@ -651,11 +654,17 @@
     try {
       var meta = navigator.mediaSession.metadata;
       if (!meta) return;
+      /* ogni volta cambio anche il "tipo" dichiarato: su iPhone serve a
+         far ricaricare davvero l'immagine (l'indirizzo cambia gia', ma
+         cosi' e' certo) */
+      var tipo = src.indexOf("data:") === 0 ? "image/jpeg" : "image/png";
+      if (stato.tipoArtwork === tipo) tipo = tipo === "image/png" ? "image/jpeg" : "image/png";
+      stato.tipoArtwork = tipo;
       navigator.mediaSession.metadata = new MediaMetadata({
         title: meta.title || "",
         artist: meta.artist || "",
         album: meta.album || "",
-        artwork: [{ src: src, sizes: "256x256", type: src.indexOf("data:") === 0 ? "image/jpeg" : "image/png" }]
+        artwork: [{ src: src, sizes: "256x256", type: tipo }]
       });
       stato.ultimoArtwork = src;
     } catch (e) { /* il browser non accetta l'artwork: lascio com'e' */ }
@@ -666,37 +675,51 @@
      che ha il telefono per arrivare al file. Gli indirizzi sono gli
      stessi che usa l'app per scaricare i brani. */
   var INDIRIZZI_PONTE = [
-    "http://127.0.0.1:8788",
+    /* l'indirizzo della pagina stessa: se l'app e' aperta dal computer di
+       casa (la versione normale) il disegno ci arriva subito e senza
+       problemi di rete mista */
+    "",
     "http://192.168.1.40:8788",
     "http://192.168.1.2:8788",
-    "http://100.106.211.2:8788"
+    "http://100.106.211.2:8788",
+    "http://127.0.0.1:8788"
   ];
-  var ponteFuoco = "";
+  var ponteFuoco = null;   /* l'indirizzo che ha funzionato */
   var giriPonte = 0;
 
+  function percorsoPonte(indirizzo) {
+    return indirizzo + "/app/fuoco-notifica.png";
+  }
+
+  /* Provo gli indirizzi uno dopo l'altro. Se uno funziona lo ricordo, ma
+     se smette di funzionare riprovo tutti (il telefono cambia rete). */
   function mandaAlPonte(blob, finito) {
-    if (ponteFuoco) { inviaAlPonte(ponteFuoco, blob, finito); return; }
-    if (giriPonte >= INDIRIZZI_PONTE.length) { giriPonte = 0; finito(""); return; }
+    /* NB: "finito(null)" vuol dire "non e' arrivato a nessun indirizzo".
+       L'indirizzo vuoto (la pagina stessa) e' un successo, non un
+       fallimento: se lo tratto come fallimento la notifica resta ferma. */
+    if (ponteFuoco !== null) {
+      inviaAlPonte(ponteFuoco, blob, function (ok) {
+        if (ok) { finito(ponteFuoco); return; }
+        ponteFuoco = null;
+        mandaAlPonte(blob, finito);
+      });
+      return;
+    }
+    if (giriPonte >= INDIRIZZI_PONTE.length) { giriPonte = 0; finito(null); return; }
     var a = INDIRIZZI_PONTE[giriPonte++];
-    try {
-      fetch(a + "/app/fuoco-notifica.png", { method: "POST", body: blob, cache: "no-store" })
-        .then(function (r) {
-          if (!r.ok) throw new Error("http " + r.status);
-          ponteFuoco = a;
-          giriPonte = 0;
-          inviaAlPonte(a, blob, finito);
-        })
-        .catch(function () { mandaAlPonte(blob, finito); });
-    } catch (e) { mandaAlPonte(blob, finito); }
+    inviaAlPonte(a, blob, function (ok) {
+      if (ok) { ponteFuoco = a; giriPonte = 0; finito(a); return; }
+      mandaAlPonte(blob, finito);
+    });
   }
 
   function inviaAlPonte(indirizzo, blob, finito) {
     try {
-      fetch(indirizzo + "/app/fuoco-notifica.png", { method: "POST", body: blob, cache: "no-store" })
+      fetch(percorsoPonte(indirizzo), { method: "POST", body: blob, cache: "no-store" })
         .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
-        .then(function () { finito(indirizzo); })
-        .catch(function () { finito(""); });
-    } catch (e) { finito(""); }
+        .then(function () { finito(true); })
+        .catch(function () { finito(false); });
+    } catch (e) { finito(false); }
   }
 
   function pubblicaNotifica(prog) {
@@ -708,9 +731,11 @@
         tela.toBlob(function (blob) {
           if (!blob) { mettiArtwork(bruciata); return; }
           mandaAlPonte(blob, function (indirizzo) {
-            if (!indirizzo) { mettiArtwork(bruciata); return; }
-            /* la notifica prende l'indirizzo del computer di casa */
-            mettiArtwork(indirizzo + "/app/fuoco-notifica.png?v=" + Date.now());
+            if (indirizzo === null) { mettiArtwork(bruciata); return; }
+            /* la notifica prende l'indirizzo del computer di casa; il
+               "?v=" cambia ogni volta, cosi' il telefono va a prendere
+               il disegno nuovo invece di tenere quello vecchio */
+            mettiArtwork(percorsoPonte(indirizzo) + "?v=" + Date.now());
           });
         }, "image/png");
         return;
@@ -719,7 +744,18 @@
     mettiArtwork(bruciata);
   }
 
+  var _battito = null;
+  var _progNotifica = 0;
+
   function aggiornaNotifica(prog, suona) {
+    /* il progresso reale, ricalcolato dal tempo del brano */
+    try {
+      var tDom2 = secondi((document.getElementById("curTime") || {}).textContent);
+      var dur2 = secondi((document.getElementById("totTime") || {}).textContent);
+      if (suona && dur2 > 0) _progNotifica = Math.max(0, Math.min(1, tDom2 / dur2));
+      else if (prog > _progNotifica) _progNotifica = prog;
+    } catch (e) { /* noop */ }
+    prog = _progNotifica;
     if (!("mediaSession" in navigator)) return;
     var meta = navigator.mediaSession.metadata;
     if (!meta) return;
@@ -739,16 +775,30 @@
     /* non troppo spesso: il blocco schermo non ha bisogno di 60 fotogrammi
        al secondo, e il telefono si scalda */
     var adesso = Date.now();
-    if (adesso - (stato.ultimaNotifica || 0) < 1500) return;
+    if (adesso - (stato.ultimaNotifica || 0) < 1200) return;
     stato.ultimaNotifica = adesso;
     preparaTela();
     pubblicaNotifica(prog);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", function () { mettiStile(); requestAnimationFrame(ciclo); });
-  } else {
+  /* Il ciclo principale gira con requestAnimationFrame, ma quando la
+     pagina e' in secondo piano (il telefono in tasca) quelli non girano.
+     Per la notifica aggiungo un battito con setInterval, che invece
+     continua: cosi' la copertina che brucia si muove anche a schermo
+     spento. */
+  function parti() {
     mettiStile();
     requestAnimationFrame(ciclo);
+    if (!_battito) {
+      _battito = setInterval(function () {
+        aggiornaNotifica(stato.progVisto, stato.suonaOra);
+      }, 1200);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", parti);
+  } else {
+    parti();
   }
 })();
