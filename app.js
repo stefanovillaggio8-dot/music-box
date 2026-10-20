@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.368";
+  const APP_VERSION = "6.369";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13085,10 +13085,28 @@ let _spotifyAccess = null;
 let _spotifyChiave = null;   /* la "code_verifier" dell'accesso in corso */
 
 function _spotifySalvaToken(t) {
-  const valore = {
-    access: t.access_token,
-    scadenza: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000
-  };
+  const valore = {
+    access: t.access_token,
+    scadenza: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000
+  };
+  /* Ste: "da Spotify: 0 playlist (errore 403)".
+     Il 403 vuol dire "accesso non sufficiente": il token c'era, ma non aveva
+     i permessi giusti. Motivo (mio): l'app aveva piu' strade per prendere
+     un permesso (dal codice appena scambiato, che e' nuovo e ha i permessi
+     giusti; e dal worker, con un permesso piu' vecchio). La seconda strada
+     sostituiva la prima: il permesso nuovo veniva buttato via e restava
+     quello vecchio, e la lettura delle playlist falliva con il 403.
+     Adesso la protezione sta qui dentro, in un posto solo: se ho gia' un
+     permesso valido e questo che mi arriva e' piu' vecchio, non lo
+     sostituisco. */
+  try {
+    const attuale = LS.get("mb.spotify", null);
+    if (attuale && attuale.access && Number(attuale.scadenza || 0) > Date.now() &&
+        Number(attuale.scadenza || 0) >= Number(valore.scadenza || 0)) {
+      _spotifyTraccia("ho gia' un permesso valido: non lo sostituisco con il piu' vecchio");
+      return true;
+    }
+  } catch (e) { /* noop */ }
   /* Il "refresh token" e' il permesso che dura: con quello Spotify mi
      rinnova il permesso corto senza che Ste debba riautorizzare. */
   if (t && t.refresh_token) valore.refresh = String(t.refresh_token);
