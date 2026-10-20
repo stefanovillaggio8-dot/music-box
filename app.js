@@ -5,6 +5,9 @@
      automatico, che altrimenti lo cancella a meta'. Lo dichiaro con var
      in cima all'app, cosi' e' visibile da tutte le funzioni. */
   var _loginSpotifyInCorso = false;
+  /* Vero solo quando l'utente ha premuto "Accedi con Spotify": serve per
+     non mostrare la schermata dell'errore a ogni avvio dell'app. */
+  var _spotifyTentativoInCorso = false;
   const BUILTIN = [
   { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
 
@@ -587,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.355";
+  const APP_VERSION = "6.356";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13717,9 +13720,23 @@ async function _spotifyRientro() {
           return;
         }
       }
+      /* Ste: "ogni volta che apro musicbox mi si apre la pagina accedi con
+         spotify". Motivo: il segnale "lo scambio e' in corso" non veniva
+         mai cancellato, quindi a ogni avvio l'app aspettava 30 secondi che
+         arrivasse un permesso che non sarebbe mai arrivato, e poi mostrava
+         la schermata dell'errore. Adesso il segnale ha un orario: se e'
+         vecchio lo cancello e l'app non aspetta niente. */
+      const scambioQuando = Number(sessionStorage.getItem("mb.spotifyScambioQuando", 0) || 0);
+      if (scambioQuando && (Date.now() - scambioQuando) > 90000) {
+        _spotifyTraccia("il segnale dello scambio era vecchio: lo cancello");
+        try {
+          sessionStorage.removeItem("mb.spotifyScambio");
+          sessionStorage.removeItem("mb.spotifyScambioQuando");
+        } catch (e) { /* noop */ }
+      }
       if (sessionStorage.getItem("mb.spotifyScambio")) {
         _spotifyTraccia("lo scambio e' gia' partito: aspetto il permesso");
-        for (let giro = 0; giro < 60; giro++) {
+        for (let giro = 0; giro < 12; giro++) {
           if (_spotifyToken()) {
             _spotifyTraccia("permesso arrivato: collegato");
             toast("Collegato a Spotify", 4000);
@@ -13728,17 +13745,26 @@ async function _spotifyRientro() {
           }
           await new Promise(function (r) { setTimeout(r, 500); });
         }
+        /* All'avvio non deve comparire NESSUNA schermata di errore: si vede
+           solo quando l'utente ha premuto "Accedi con Spotify" e il
+           tentativo e' fallito (e li' la mostra l'app stessa). */
         try {
-          const perche = String(LS.get("mb.spotifyErrore", "") || "");
-          let extra = "";
-          try {
-            const daIcona = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
-            if (daIcona) {
-              extra = "<p class=\"step-hint\">Sei nell'app della schermata Home: su iPhone l'app e il browser hanno due memorie separate, e quando torni da Spotify il sistema passa alla schermata Home. Per Spotify usa il BROWSER (Safari).</p>";
-            }
-          } catch (e) { /* noop */ }
-          if (perche) _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>" + extra);
+          sessionStorage.removeItem("mb.spotifyScambio");
+          sessionStorage.removeItem("mb.spotifyScambioQuando");
         } catch (e) { /* noop */ }
+        if (_spotifyTentativoInCorso) {
+          try {
+            const perche = String(LS.get("mb.spotifyErrore", "") || "");
+            let extra = "";
+            try {
+              const daIcona = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+              if (daIcona) {
+                extra = "<p class=\"step-hint\">Sei nell'app della schermata Home: su iPhone l'app e il browser hanno due memorie separate, e quando torni da Spotify il sistema passa alla schermata Home. Per Spotify usa il BROWSER (Safari).</p>";
+              }
+            } catch (e) { /* noop */ }
+            if (perche) _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito", '<p class="step-hint">' + _spotifySicuro(perche) + "</p>" + extra);
+          } catch (e) { /* noop */ }
+        }
         return;
       }
     } catch (e) { /* noop */ }

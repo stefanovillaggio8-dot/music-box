@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6355" />
+  <link rel="stylesheet" href="style.css?v=6356" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -74,7 +74,10 @@
           var parti = String(stato || "").split(".");
           var verifier = parti.length >= 2 ? parti.slice(1).join(".") : "";
           if (!code || !verifier) { traccia("la pagina non trova la chiave nello state"); return; }
-          try { sessionStorage.setItem("mb.spotifyScambio", "in corso"); } catch (x) { }
+          try {
+            sessionStorage.setItem("mb.spotifyScambio", "in corso");
+            sessionStorage.setItem("mb.spotifyScambioQuando", String(Date.now()));
+          } catch (x) { }
           traccia("la pagina chiede al worker di scambiare il codice");
           /* Lo scambio lo fa il worker (sul server): dal telefono la
              richiesta restava appesa (iPhone sospende la scheda) o moriva
@@ -794,7 +797,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6355"></script>
-<script src="app.js?v=6355"></script>
+<script src="fuoco.js?v=6356"></script>
+<script src="app.js?v=6356"></script>
 </body>
 </html>
