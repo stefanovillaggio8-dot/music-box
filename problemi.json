@@ -1,5 +1,89 @@
 [
  {
+  "t": 1792519255599,
+  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519256682,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519257917,
+  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519314757,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519314750,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792519314947,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519315964,
+  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519316176,
+  "r": "FINALE: visibili 1 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519326917,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519329247,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519341676,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519879414,
+  "r": "SPOTIFY: [v6.353] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792519880137,
+  "r": "SPOTIFY: [v6.353] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792519880711,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792519880820,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519882815,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792519882870,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792519882881,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792519882871,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792519884093,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792519885571,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
   "t": 1792519886318,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
@@ -74,89 +158,5 @@
  {
   "t": 1792519903880,
   "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
- },
- {
-  "t": 1792519904790,
-  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
- },
- {
-  "t": 1792519904791,
-  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
- },
- {
-  "t": 1792519904970,
-  "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
- },
- {
-  "t": 1792519908355,
-  "r": "SPOTIFY: [v6.353] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQCgPjuhlraXhd5G_SE2pLKMMrqjUp1nal2o5Y4UxxEbPrA78lwyppKHCL"
- },
- {
-  "t": 1792519908503,
-  "r": "SPOTIFY: [v6.353] permesso preso col biglietto"
- },
- {
-  "t": 1792519909251,
-  "r": "SPOTIFY: [v6.353] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQCgPjuhlraXhd5G_SE2pLKMMrqjUp1nal2o5Y4UxxEbPrA78lwyppKHCL"
- },
- {
-  "t": 1792519909404,
-  "r": "SPOTIFY: [v6.353] permesso preso col biglietto"
- },
- {
-  "t": 1792519909869,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792519909973,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519910474,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519911148,
-  "r": "SPOTIFY: [v6.353] accesso: sto per aprire Spotify"
- },
- {
-  "t": 1792519911295,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519911286,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792519911932,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519912000,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792519911988,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792519911989,
-  "r": "SPOTIFY: [v6.353] accesso: sto per aprire Spotify"
- },
- {
-  "t": 1792519911994,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792519912404,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792519912406,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792519913220,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  }
 ]
