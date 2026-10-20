@@ -594,7 +594,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.363";
+  const APP_VERSION = "6.364";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1399,9 +1399,15 @@ async function _apriDiagnostica() {
       document.body.appendChild(b);
     } catch (e) { /* noop */ }
   }
-  function _mostraAvvisoPrivata() {
-    try {
-      if (document.getElementById("avviso-privata")) return;
+  function _mostraAvvisoPrivata() {
+    try {
+      /* Ste: "mi spunta che sto usando la scheda privata anche se non e'
+         vero". Motivo: era un falso allarme (la pagina si ricaricava durante
+         la prova) e l'app funziona lo stesso: disturbare l'utente non
+         serve a niente. L'informazione resta nella diagnostica. */
+      if (LS.get("mb.avvisoPrivata", "") === "no") return;
+      try { LS.set("mb.avvisoPrivata", "no"); } catch (e) { /* noop */ }
+      if (document.getElementById("avviso-privata")) return;
       const b = document.createElement("div");
       b.id = "avviso-privata";
       b.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:130;" +
@@ -4241,8 +4247,22 @@ function rebuildAudio(autoplay) {
          lettore nuovo e' come un brano nuovo, quindi il telefono lo blocca
          di nuovo. In quel caso mi tengo lo stesso lettore e insisto sullo
          stesso brano. Ricrearlo resta giusto se il lettore e' rotto. */
-      const rifiutoDelTelefono = /NotAllowedError/i.test(nome);
-      if (!hoGiaRiprovato && !rifiutoDelTelefono) {
+      const rifiutoDelTelefono = /NotAllowedError/i.test(nome);
+      /* Ste: "quando finisce una canzone non riparte l'altra".
+         Motivo: nella modalità APP WEB (l'icona sulla schermata Home),
+         iPhone sospende l'app e non lascia ripartire il brano successivo
+         da solo. Adesso, quando succede, l'app lo dice e spiega come
+         togliere l'opzione 'Apri come app web'. */
+      if (rifiutoDelTelefono) {
+        try {
+          const daIcona = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+          if (daIcona) {
+            _avvisoIcona();
+            toast("iPhone ha bloccato il brano successivo: guarda l'avviso in basso", 6000);
+          }
+        } catch (e) { /* noop */ }
+      }
+      if (!hoGiaRiprovato && !rifiutoDelTelefono) {
         rebuildAudio(false);
         return doPlay(true);
       }
@@ -4473,7 +4493,7 @@ function rebuildAudio(autoplay) {
 
       const testo = document.createElement("div");
       testo.className = "avviso-nascosti-testo";
-      testo.textContent = "La modalità app web sulla schermata Home può impedire il passaggio automatico al brano successivo in background su iPhone. Per usare l'icona e continuare con Safari: elimina questa icona, apri il sito in Safari, scegli Condividi > Aggiungi alla schermata Home e disattiva 'Apri come app web' se compare.";
+        testo.textContent = "Sei nella modalità APP WEB (l'icona sulla schermata Home). Su iPhone, in questa modalità, quando lo schermo si spegne l'app viene sospesa: la musica continua, ma quando finisce il brano nessuno riparte, e l'accesso a Spotify non torna indietro. Come si risolve: apri il sito in Safari, scegli Condividi > Aggiungi alla schermata Home e, quando compare l'opzione 'Apri come app web', TOGLILA. (Se l'opzione non compare, l'icona è già a posto.)";
 
       const riga = document.createElement("div");
       riga.className = "avviso-nascosti-riga riga-piu";
@@ -5373,18 +5393,28 @@ function _aggiornaPosizioneSchermo() {
      dicono), ma non si vedeva da nessuna parte: sembrava che l'app non
      avesse fatto niente. Adesso il bottone "Spotify" dice che sei
      collegato. */
-  function _mostraCollegatoSi() {
-    try {
-      const b = $("btnSpotify");
-      if (!b) return;
-      b.classList.add("collegato");
-      const t = b.querySelector(".voce-testo");
-      if (t && t.textContent.indexOf("Spotify (collegato)") < 0) {
-        t.textContent = "Spotify (collegato)";
-        b.title = "Sei collegato a Spotify";
-      }
-    } catch (e) { /* noop */ }
-  }
+  function _mostraCollegatoSi() {
+    try {
+      const b = $("btnSpotify");
+      if (!b) return;
+      /* Ste: "spunta spotify collegato pero' mi dice che e' scaduto".
+         Motivo: dicevo "collegato" appena avevo il permesso, anche se era
+         scaduto. Adesso lo dico solo se il permesso e' valido davvero. */
+      const _v = LS.get("mb.spotify", null);
+      if (!_v || !_v.access || Number(_v.scadenza || 0) < Date.now()) {
+        b.classList.remove("collegato");
+        const _tt = b.querySelector(".voce-testo");
+        if (_tt && _tt.textContent.indexOf("Spotify (collegato)") >= 0) _tt.textContent = "Importa una playlist da Spotify";
+        return;
+      }
+      b.classList.add("collegato");
+      const t = b.querySelector(".voce-testo");
+      if (t && t.textContent.indexOf("Spotify (collegato)") < 0) {
+        t.textContent = "Spotify (collegato)";
+        b.title = "Sei collegato a Spotify";
+      }
+    } catch (e) { /* noop */ }
+  }
   function _mostraCollegatoNo() {
     try {
       const b = $("btnSpotify");
@@ -13285,6 +13315,37 @@ async function _spotifyAccedi() {
    pronto (il biglietto va e basta una volta). */
 /* Il worker tiene il permesso per qualche minuto e lo dà a chi ha il
    biglietto giusto. Il biglietto va e basta una volta. */
+  /* Ste: "dice accesso scaduto".
+     Il permesso di Spotify dura un'ora sola, ma ce n'e' uno lungo che
+     permette di rinnovarlo: adesso l'app lo rinnova da sola, in silenzio,
+     e non costringe a riautorizzare ogni ora. */
+  async function _spotifyRinnovaSeScaduto() {
+    try {
+      const v = LS.get("mb.spotify", null);
+      if (!v || !v.access) return false;
+      if (!v.refresh) return false;
+      if (Number(v.scadenza || 0) > Date.now() + 60000) return true;  /* ancora buono */
+      _spotifyTraccia("il permesso e' scaduto: lo rinovo");
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: v.refresh })
+      });
+      const j = await r.json();
+      if (!j || !j.ok || !j.permesso || !j.permesso.access_token) {
+        _spotifyTraccia("non sono riuscito a rinnovare il permesso");
+        try { _mostraCollegatoNo(); } catch (e) { /* noop */ }
+        return false;
+      }
+      _spotifySalvaToken(j.permesso);
+      try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
+      _spotifyTraccia("permesso rinnovato");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async function _spotifyPrendiPermesso(biglietto) {
     if (!biglietto) return false;
     try { _mostraCollegatoNo(); } catch (e) { /* noop */ }
@@ -13672,12 +13733,18 @@ function _spotifyChiediAccesso(perche) {
     });
   } catch (e) { /* noop */ }
 }
-  function _spotifyMenu() {
-    _spotifyTraccia("sono dentro _spotifyMenu");
+  function _spotifyMenu() {
+    _spotifyTraccia("sono dentro _spotifyMenu");
     if (_spotifyToken()) {
       _spotifyMostraPlaylist(true);
       return;
     }
+    /* Il permesso e' scaduto? Provo a rinnovarlo in silenzio prima di
+       chiedere l'accesso di nuovo (il permesso dura un'ora, ma si puo'
+       rinnovare). */
+    try {
+      _spotifyRinnovaSeScaduto().then(function (ok) { if (ok) _spotifyMostraPlaylist(true); });
+    } catch (e) { /* noop */ }
     /* Il pannello si apre SUBITO (non voglio aspettare la rete per
        mostrargli qualcosa). */
     _spotifyChiediAccesso("");
