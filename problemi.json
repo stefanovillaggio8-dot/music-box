@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792461105779,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792461109382,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792462444868,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792462448446,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
