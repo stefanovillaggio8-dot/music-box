@@ -152,11 +152,11 @@
   "r": "SPOTIFY: il ritorno e' arrivato nella pagina (col codice)"
  },
  {
-  "t": 1792455535919,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792455538172,
+  "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
  },
  {
-  "t": 1792455540298,
-  "r": "SPOTIFY: bottone toccato"
+  "t": 1792455542338,
+  "r": "worker /stato: risponde"
  }
 ]
