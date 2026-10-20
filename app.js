@@ -590,7 +590,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.359";
+  const APP_VERSION = "6.360";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5259,6 +5259,15 @@ function _copertinaPerSchermo(t) {
     const c = t && t.cover;
     try {
       if (typeof c === "string" && /^https?:\/\//i.test(c)) return c;
+      /* Le copertine sono anche nel sito, nella cartella "copertine": sono
+         percorsi relativi ("copertine/xxx.jpg"). Prima l'app li scartava
+         (accettava solo http://) e, non trovando la copertina, metteva
+         la sua icona nella notifica: si vedeva il logo del Music Box
+         invece della copertina (Ste, 20/10/2026). La notifica vuole
+         anche un indirizzo completo, quindi lo completo qui. */
+      if (typeof c === "string" && c.trim() && !/^data:/i.test(c)) {
+        try { return new URL(c, document.baseURI).href; } catch (e) { return c; }
+      }
       if (c && typeof c !== "string" && typeof c.size === "number") {
         /* non tengo via gli indirizzi vecchi, altrimenti a ogni brano
            se ne crea uno nuovo e la memoria del telefono si riempie */
@@ -5292,6 +5301,35 @@ function _aggiornaPosizioneSchermo() {
       position: p
     });
   } catch (e) { /* noop */ }
+  }
+
+  /* Ste: "non va ancora". Il permesso in realta' arrivava (le tracce lo
+     dicono), ma non si vedeva da nessuna parte: sembrava che l'app non
+     avesse fatto niente. Adesso il bottone "Spotify" dice che sei
+     collegato. */
+  function _mostraCollegatoSi() {
+    try {
+      const b = $("btnSpotify");
+      if (!b) return;
+      b.classList.add("collegato");
+      const t = b.querySelector(".voce-testo");
+      if (t && t.textContent.indexOf("Spotify (collegato)") < 0) {
+        t.textContent = "Spotify (collegato)";
+        b.title = "Sei collegato a Spotify";
+      }
+    } catch (e) { /* noop */ }
+  }
+  function _mostraCollegatoNo() {
+    try {
+      const b = $("btnSpotify");
+      if (!b) return;
+      b.classList.remove("collegato");
+      const t = b.querySelector(".voce-testo");
+      if (t && t.textContent.indexOf("Spotify (collegato)") >= 0) {
+        t.textContent = "Importa una playlist da Spotify";
+        b.title = "";
+      }
+    } catch (e) { /* noop */ }
   }
 
   function updateMediaSession() {
@@ -13153,14 +13191,16 @@ async function _spotifyAccedi() {
    pronto (il biglietto va e basta una volta). */
 /* Il worker tiene il permesso per qualche minuto e lo dà a chi ha il
    biglietto giusto. Il biglietto va e basta una volta. */
-async function _spotifyPrendiPermesso(biglietto) {
-  if (!biglietto) return false;
+  async function _spotifyPrendiPermesso(biglietto) {
+    if (!biglietto) return false;
+    try { _mostraCollegatoNo(); } catch (e) { /* noop */ }
   try {
     for (let giro = 0; giro < 60; giro++) {
       const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?biglietto=" + encodeURIComponent(biglietto), { cache: "no-store" });
       const j = await r.json();
       if (j && j.ok && j.permesso) {
         _spotifySalvaToken(j.permesso);
+        try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
         try { sessionStorage.removeItem("mb.spotifyBiglietto"); } catch (e) { /* noop */ }
         return true;
       }
@@ -13565,7 +13605,9 @@ function _spotifyMenu() {
       return;
     }
     _spotifyPnl("Le tue playlist", "sto leggendo...", '<p class="step-hint">Un attimo...</p>');
+    _spotifyTraccia("sto chiedendo a Spotify le tue playlist");
     const tutte = await _spotifyPlaylist();
+    _spotifyTraccia("da Spotify: " + tutte.length + " playlist (errore " + _spotifyErrore + ")");
     if (!tutte.length) {
       /* Se mentre leggevo il token e' sparito (401 o 403), torno al
          collegamento invece di dare un avviso che non aiuta. */
@@ -13752,6 +13794,7 @@ async function _spotifyRientro() {
         if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
           _spotifyTraccia("il worker aveva il permesso pronto: lo prendo");
           _spotifySalvaToken(jj.permesso);
+          try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
           toast("Collegato a Spotify", 4000);
           try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
           return;
