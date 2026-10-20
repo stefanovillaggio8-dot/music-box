@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792455458486,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792455465011,
   "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
  },
@@ -156,7 +152,11 @@
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792455935124,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+  "t": 1792455932553,
+  "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
+ },
+ {
+  "t": 1792455937310,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
