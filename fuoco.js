@@ -217,7 +217,7 @@
   function stratoBragia(lato) {
     var h = "";
     var d = Math.max(2, lato * 0.075);
-    for (var i = 0; i < 26; i++) {
+    for (var i = 0; i < 15; i++) {
       var dx = (i % 2 === 0 ? 1 : -1) * (6 + (i * 7) % 16);
       h += '<i style="left:' + (4 + (i * 13) % 92).toFixed(0) + "%;top:" + (14 + (i * 17) % 76).toFixed(0) +
         "%;width:" + d.toFixed(1) + "px;height:" + d.toFixed(1) + "px;--mbdx:" + dx +
@@ -533,7 +533,10 @@
   /* Quando spariscono le fiamme, le particelle restano sole e un filo piu'
   luminose: e' l'unica cosa che si vede sul nero. */
   if (!bragia.style.transition) bragia.style.transition = "opacity 1.1s ease";
-  if (bragia.style.opacity !== (quasiFinita ? "1" : "")) bragia.style.opacity = quasiFinita ? "1" : "";
+  /* all'inizio le particelle sono poche e tenui: appaiono piano piano
+     mentre la carta si consuma (Ste: "troppe particelle all'inizio") */
+  var opacitaBragia = quasiFinita ? "1" : Math.min(1, prog * 2.5).toFixed(2);
+  if (bragia.style.opacity !== opacitaBragia) bragia.style.opacity = opacitaBragia;
 
       /* la copertina che brucia anche nelle notifiche del telefono */
       stato.suonaOra = suona;
@@ -653,23 +656,26 @@
         ux /= lun; uy /= lun;
         var vx = ux * 0.38, vy = uy * 0.38 - 1.0;
         var ang = Math.atan2(vx, -vy) * 180 / Math.PI;
-        /* ogni fiamma sballa un po': una cresce, una si rimpicciolisce,
-           una si piega. E' quello che fa sembrare vivo il fuoco. */
-        var sballo = rnd(t * 3 + n * 7.3);
-        var sballo2 = rnd(t * 3 + n * 7.3 + 11.7);
-        ang += (sballo - 0.5) * 26;
-        var alt = L * (0.10 + 0.16 * sballo) + L * 0.05 * a.prog;
+        /* Ogni fiamma ondeggia in modo CONTINUO (una sinusoide): se il
+           disegno cambia a caso, fra un'immagine e l'altra il fuoco
+           salta e nella notifica si vede "a scatti" (Ste, 20/10/2026). */
+        var f = n * 1.7;
+        var sballo = 0.5 + 0.5 * Math.sin(t * 1.15 + f);
+        ang += Math.sin(t * 0.85 + f * 1.3) * 9;
+        var alt = L * (0.12 + 0.07 * sballo) + L * 0.05 * a.prog;
         fiammaCanvas(p.x / 100 * L, p.y / 100 * L, alt, ang);
         n++;
       }
-      /* qualche bragia che sale: da' l'idea che il fuoco si muova */
-      for (var e = 0; e < 9; e++) {
-        var s1 = rnd(t * 2 + e * 3.1);
-        var s2 = rnd(t * 2 + e * 3.1 + 5.5);
-        var ex = (10 + s1 * 80) / 100 * L;
-        var ey = (30 + ((s2 * 100 + t * 26) % 70)) / 100 * L;
-        var er = L * 0.012 * (0.6 + s1);
-        ctxTela.fillStyle = "rgba(255," + Math.round(150 + s2 * 90) + ",60," + (0.5 + 0.4 * s1).toFixed(2) + ")";
+      /* qualche bragia che sale: poche, e con un movimento continuo */
+      for (var e = 0; e < 5; e++) {
+        var s1 = rnd(e * 3.1);
+        var s2 = rnd(e * 3.1 + 5.5);
+        var scorrere = (s1 * 100 + t * 9) % 100;
+        var ex = (14 + s2 * 72) / 100 * L;
+        var ey = (72 - scorrere * 0.55) / 100 * L;
+        var er = L * 0.011 * (0.6 + s1 * 0.8);
+        var chiaro = 0.25 + 0.55 * (1 - scorrere / 100);
+        ctxTela.fillStyle = "rgba(255," + Math.round(150 + s2 * 90) + ",60," + chiaro.toFixed(2) + ")";
         ctxTela.beginPath();
         ctxTela.arc(ex, ey, er, 0, Math.PI * 2);
         ctxTela.fill();
@@ -813,7 +819,7 @@
     /* non troppo spesso: il blocco schermo non ha bisogno di 60 fotogrammi
        al secondo, e il telefono si scalda */
     var adesso = Date.now();
-    if (adesso - (stato.ultimaNotifica || 0) < 1200) return;
+    if (adesso - (stato.ultimaNotifica || 0) < 600) return;
     stato.ultimaNotifica = adesso;
     preparaTela();
     pubblicaNotifica(prog);
@@ -830,7 +836,7 @@
     if (!_battito) {
       _battito = setInterval(function () {
         aggiornaNotifica(stato.progVisto, stato.suonaOra);
-      }, 1200);
+      }, 600);
     }
   }
 
