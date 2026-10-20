@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792528404905,
-  "r": "libreria: 204 brani, scartati 234 per eliminazione, profilo Diego, chiavi eliminate 31"
- },
- {
-  "t": 1792528404991,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792528405532,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792528406735,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -157,6 +145,18 @@
  },
  {
   "t": 1792528475041,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792528475082,
+  "r": "SPOTIFY: [v6.362] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792528475989,
+  "r": "SPOTIFY: [v6.362] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792528476886,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  }
 ]
