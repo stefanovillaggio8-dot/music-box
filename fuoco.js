@@ -56,7 +56,8 @@
      2. Lo stile
      -------------------------------------------------------------------------- */
   var CSS = [
-    ".mb-fuoco{position:fixed;z-index:60;pointer-events:none;overflow:visible}",
+    ".mb-fuoco{position:fixed;left:0;top:0;z-index:60;pointer-events:none;overflow:visible}",
+    ".mb-fuoco .mb-dentro{position:absolute;inset:0;pointer-events:none;overflow:visible}",
     ".mb-fuoco .mb-strato-char{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}",
     ".mb-fuoco .mb-strato-char svg{width:100%;height:100%;display:block}",
     ".mb-fuoco .mb-calore{position:absolute;pointer-events:none;z-index:3;border-radius:50%;",
@@ -229,13 +230,49 @@
     var box = document.createElement("div");
     box.className = "mb-fuoco";
     box.innerHTML =
-      '<div class="mb-strato-char"></div>' +
-      '<div class="mb-calore"></div>' +
-      '<svg class="mb-brasa" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>' +
-      '<div class="mb-fiamme"></div>' +
-      '<div class="mb-bragia"></div>';
+      '<div class="mb-dentro">' +
+        '<div class="mb-strato-char"></div>' +
+        '<div class="mb-calore"></div>' +
+        '<svg class="mb-brasa" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>' +
+        '<div class="mb-fiamme"></div>' +
+        '<div class="mb-bragia"></div>' +
+      '</div>';
     document.body.appendChild(box);
     return box;
+  }
+
+  /* Il disco del player gira quando suona (6 secondi un giro). Il fuoco
+     invece sta fermo: gli oppongo lo stesso giro al contrario.
+     Lo faccio con un'animazione e non con il JavaScript a ogni
+     fotogramma: altrimenti il telefono scatta e il fuoco pulsa. */
+  var gira = null;
+  var osservaGiro = null;
+
+  function allineaGiro(art, box) {
+    if (!box) return;
+    var dentro = box.querySelector(".mb-dentro");
+    if (!dentro) return;
+    var suona = art.classList.contains("playing");
+    if (suona && !gira) {
+      try {
+        gira = dentro.animate(
+          [{ transform: "rotate(0deg)" }, { transform: "rotate(-360deg)" }],
+          { duration: 6000, iterations: Infinity, easing: "linear" }
+        );
+      } catch (e) { gira = null; }
+    } else if (!suona && gira) {
+      try { gira.cancel(); } catch (e) { /* noop */ }
+      gira = null;
+      dentro.style.transform = "";
+    }
+  }
+
+  function guardaGiro(art) {
+    if (osservaGiro || !art) return;
+    try {
+      osservaGiro = new MutationObserver(function () { allineaGiro(art, stato.box); });
+      osservaGiro.observe(art, { attributes: true, attributeFilter: ["class"] });
+    } catch (e) { /* noop */ }
   }
 
   /* Il disco del player gira quando suona: il fuoco invece sta fermo,
@@ -284,36 +321,13 @@
   /* --------------------------------------------------------------------------
      5. Il ciclo
      -------------------------------------------------------------------------- */
-  /* PROVA: misura dei fotogrammi */
-  var MISURA = { attivo: false, tempi: [], ultimo: 0, inizio: 0 };
-  function misuraFrame(t) {
-    if (!MISURA.attivo) { MISURA.attivo = true; MISURA.ultimo = t; MISURA.inizio = t; MISURA.tempi = []; return; }
-    var d = t - MISURA.ultimo;
-    MISURA.ultimo = t;
-    if (t - MISURA.inizio < 4000) { MISURA.tempi.push(d); return; }
-    MISURA.attivo = false;
-    var tempi = MISURA.tempi.slice().sort(function (a, b) { return a - b; });
-    var media = 0, lenti = 0;
-    for (var i = 0; i < tempi.length; i++) { media += tempi[i]; if (tempi[i] > 50) lenti++; }
-    media = tempi.length ? media / tempi.length : 0;
-    var p95 = tempi.length ? tempi[Math.floor(tempi.length * 0.95)] : 0;
-    var testo = "frames=" + tempi.length + " media=" + media.toFixed(1) + "ms p95=" + p95.toFixed(1) + "ms lenti=" + lenti;
-    var box = document.getElementById("mb-misura");
-    if (!box) {
-      box = document.createElement("div");
-      box.id = "mb-misura";
-      box.style.cssText = "position:fixed;left:0;top:0;z-index:99999;background:#000;color:#0f0;font:12px monospace;padding:4px";
-      document.body.appendChild(box);
-    }
-    box.textContent = testo;
-  }
-
   var stato = {
     box: null,
     ultimoTitolo: "",
     progVisto: -1,      /* l'ultimo bruciato che ho visto */
     progChar: -1,       /* l'ultimo bruciato disegnato nella crosta */
     progFiamme: -1,     /* l'ultimo bruciato a cui ho mosso le fiamme */
+    x: -1, y: -1, lato: -1, altezza: -1,
     progNotifica: -1,
     tPrecedente: 0,
     seme: 7,
@@ -338,7 +352,10 @@
     if (vecchiaBrasa) vecchiaBrasa.remove();
     var temp = document.createElement("div");
     temp.innerHTML = stratoCalore(a);
-    while (temp.firstChild) box.insertBefore(temp.firstChild, box.querySelector(".mb-fiamme"));
+    /* il calore e la brasa vanno dentro .mb-dentro, davanti alle fiamme */
+    var dentro = box.querySelector(".mb-dentro") || box;
+    var rif = dentro.querySelector(".mb-fiamme");
+    while (temp.firstChild) dentro.insertBefore(temp.firstChild, rif);
     stato.progChar = prog;
   }
 
@@ -440,16 +457,26 @@
         stato.box = monta(art);
         stato.fiamme = [];
         stato.progChar = -1;
+        stato.x = -1; stato.y = -1; stato.lato = -1; stato.altezza = -1;
+        guardaGiro(art);
+        allineaGiro(art, stato.box);
       }
 
-      /* il disco gira: il fuoco resta dritto */
+      /* La posizione si mette con un transform: left/top farebbero
+         layout + ridisegno a ogni fotogramma e il telefono scattava
+         (il fuoco sembrava battere). */
       var r = art.getBoundingClientRect();
-      stato.box.style.left = r.left + "px";
-      stato.box.style.top = r.top + "px";
-      stato.box.style.width = r.width + "px";
-      stato.box.style.height = r.height + "px";
-      var g = -angoloGiro(art);
-      stato.box.style.transform = g ? "rotate(" + g.toFixed(2) + "deg)" : "";
+      if (stato.lato !== r.width || stato.altezza !== r.height) {
+        stato.lato = r.width;
+        stato.altezza = r.height;
+        stato.box.style.width = r.width + "px";
+        stato.box.style.height = r.height + "px";
+      }
+      if (stato.x !== r.left || stato.y !== r.top) {
+        stato.x = r.left;
+        stato.y = r.top;
+        stato.box.style.transform = "translate(" + r.left.toFixed(1) + "px," + r.top.toFixed(1) + "px)";
+      }
 
       var a = arte(prog, stato.seme);
       /* Il fuoco NON si sposta a ogni fotogramma. Le fiamme hanno un
@@ -486,23 +513,22 @@
   }
   if (calore) {
   if (!calore.style.transition) calore.style.transition = "opacity 1.1s ease";
-  calore.style.opacity = "0";
+  if (calore.style.opacity !== "0") calore.style.opacity = "0";
   }
   } else {
   if (contFiamme.style.opacity === "0") {
   contFiamme.style.transition = "opacity .5s ease";
   contFiamme.style.opacity = "";
   }
-  if (calore) calore.style.opacity = "";
+  if (calore && calore.style.opacity === "0") calore.style.opacity = "";
   }
   /* Quando spariscono le fiamme, le particelle restano sole e un filo piu'
   luminose: e' l'unica cosa che si vede sul nero. */
-  bragia.style.transition = "opacity 1.1s ease";
-  bragia.style.opacity = quasiFinita ? "1" : "";
+  if (!bragia.style.transition) bragia.style.transition = "opacity 1.1s ease";
+  if (bragia.style.opacity !== (quasiFinita ? "1" : "")) bragia.style.opacity = quasiFinita ? "1" : "";
 
       /* la copertina che brucia anche nelle notifiche del telefono */
       aggiornaNotifica(prog, suona);
-      misuraFrame(performance.now());
     } catch (e) { /* il fuoco non deve mai far cadere l'app */ }
     requestAnimationFrame(ciclo);
   }
@@ -635,6 +661,44 @@
     } catch (e) { /* il browser non accetta l'artwork: lascio com'e' */ }
   }
 
+  /* Il telefono prende il Music Box da internet (github.io), quindi la
+     copertina bruciata va chesta al computer di casa: e' l'unico modo
+     che ha il telefono per arrivare al file. Gli indirizzi sono gli
+     stessi che usa l'app per scaricare i brani. */
+  var INDIRIZZI_PONTE = [
+    "http://127.0.0.1:8788",
+    "http://192.168.1.40:8788",
+    "http://192.168.1.2:8788",
+    "http://100.106.211.2:8788"
+  ];
+  var ponteFuoco = "";
+  var giriPonte = 0;
+
+  function mandaAlPonte(blob, finito) {
+    if (ponteFuoco) { inviaAlPonte(ponteFuoco, blob, finito); return; }
+    if (giriPonte >= INDIRIZZI_PONTE.length) { giriPonte = 0; finito(""); return; }
+    var a = INDIRIZZI_PONTE[giriPonte++];
+    try {
+      fetch(a + "/app/fuoco-notifica.png", { method: "POST", body: blob, cache: "no-store" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("http " + r.status);
+          ponteFuoco = a;
+          giriPonte = 0;
+          inviaAlPonte(a, blob, finito);
+        })
+        .catch(function () { mandaAlPonte(blob, finito); });
+    } catch (e) { mandaAlPonte(blob, finito); }
+  }
+
+  function inviaAlPonte(indirizzo, blob, finito) {
+    try {
+      fetch(indirizzo + "/app/fuoco-notifica.png", { method: "POST", body: blob, cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
+        .then(function () { finito(indirizzo); })
+        .catch(function () { finito(""); });
+    } catch (e) { finito(""); }
+  }
+
   function pubblicaNotifica(prog) {
     if (!imgCopertina || !ctxTela) return;
     var bruciata = copertinaCheBrucia(prog);
@@ -643,14 +707,11 @@
       if (tela.toBlob) {
         tela.toBlob(function (blob) {
           if (!blob) { mettiArtwork(bruciata); return; }
-          try {
-            fetch("fuoco-notifica.png", { method: "POST", body: blob, cache: "no-store" })
-              .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.text(); })
-              .then(function () {
-                mettiArtwork(new URL("fuoco-notifica.png?v=" + Date.now(), String(window.location.href)).href);
-              })
-              .catch(function () { mettiArtwork(bruciata); });
-          } catch (e) { mettiArtwork(bruciata); }
+          mandaAlPonte(blob, function (indirizzo) {
+            if (!indirizzo) { mettiArtwork(bruciata); return; }
+            /* la notifica prende l'indirizzo del computer di casa */
+            mettiArtwork(indirizzo + "/app/fuoco-notifica.png?v=" + Date.now());
+          });
         }, "image/png");
         return;
       }
