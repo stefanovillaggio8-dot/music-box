@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792474028972,
-  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792474035543,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792474040903,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792505541511,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792505543447,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792505543443,
+  "r": "worker /stato: risponde"
  }
 ]
