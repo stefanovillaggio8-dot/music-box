@@ -918,7 +918,7 @@
    },
    "22simba|valledeire": {
     "v": 0,
-    "s": 194,
+    "s": 227,
     "t": "Valle dei Re",
     "a": "22simba"
    },
@@ -1272,7 +1272,7 @@
    },
    "tonyboy|oltre": {
     "v": 0,
-    "s": 192,
+    "s": 317,
     "t": "Oltre",
     "a": "Tony Boy"
    },
@@ -1338,7 +1338,7 @@
    },
    "maneskin|ventanni": {
     "v": 0,
-    "s": 763,
+    "s": 962,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
@@ -1524,7 +1524,7 @@
    },
    "dissgachasala22simba|comesarebbeilmondoseregnasselartefeat22simba": {
     "v": 0,
-    "s": 223,
+    "s": 347,
     "t": "COME SAREBBE IL MONDO SE REGNASSE L'ARTE (feat. 22simba)",
     "a": "Diss Gacha, Sala, 22simba"
    },
@@ -1674,7 +1674,7 @@
    },
    "nayt3dmadman|famefeatmadman": {
     "v": 0,
-    "s": 164,
+    "s": 308,
     "t": "Fame (feat. MadMan)",
     "a": "nayt, 3D, MadMan"
    },
@@ -1794,7 +1794,7 @@
    },
    "frahquintale|lambada": {
     "v": 0,
-    "s": 115,
+    "s": 243,
     "t": "Lambada",
     "a": "Frah Quintale"
    },
@@ -1902,7 +1902,7 @@
    },
    "nayt3d|provarequalcosa": {
     "v": 0,
-    "s": 250,
+    "s": 376,
     "t": "provare qualcosa",
     "a": "nayt, 3D"
    },
@@ -2073,6 +2073,18 @@
     "s": 158,
     "t": "Cracovia, Pt. 3",
     "a": "Il Tre"
+   },
+   "franco126giorgiopoi|nottetempofeatgiorgiopoi": {
+    "v": 0,
+    "s": 133,
+    "t": "Nottetempo (feat. Giorgio Poi)",
+    "a": "Franco126, Giorgio Poi"
+   },
+   "tonyboyfrahquintale|correrefeatfrahquintale": {
+    "v": 0,
+    "s": 137,
+    "t": "Correre (feat. Frah Quintale)",
+    "a": "Tony Boy, Frah Quintale"
    }
   }
  }
