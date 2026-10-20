@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792455425935,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792455442056,
   "r": "SPOTIFY: ritorno: nessun codice nell'indirimento"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792455614908,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792455629399,
+  "r": "worker /stato: risponde"
  }
 ]
