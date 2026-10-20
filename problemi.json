@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792462458102,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792462473534,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792465281962,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792465288461,
+  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
  }
 ]
