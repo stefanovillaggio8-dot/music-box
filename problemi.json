@@ -1,162 +1,162 @@
 [
  {
-  "t": 1792524424519,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792524425243,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792524425238,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792524425679,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792524456667,
+  "t": 1792522365682,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792524456681,
+  "t": 1792522365672,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
  {
-  "t": 1792524456690,
+  "t": 1792522365668,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792524456786,
+  "t": 1792522365709,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792522366846,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792522384312,
+  "r": "SPOTIFY: [v6.357] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792522395817,
+  "r": "SPOTIFY: [v6.357] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792522398745,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792522398807,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792522398801,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792522413003,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792522416396,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792522419723,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792522419751,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792522428259,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792522428341,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
  {
-  "t": 1792524458068,
+  "t": 1792522436657,
+  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792522439749,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792522439771,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792522440259,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792524407678,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792524407667,
+  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792524407738,
+  "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792524577407,
+  "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [?fuocoTest=0.5], memoria: [])"
+ },
+ {
+  "t": 1792524577408,
+  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792524577427,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792524578128,
+  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792524578136,
+  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792524581637,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
  },
  {
-  "t": 1792524459822,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792524459836,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792524459862,
+  "t": 1792524583406,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
  {
-  "t": 1792524459927,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792524461016,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792524469911,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792524469949,
+  "t": 1792524583394,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792524470364,
+  "t": 1792524583399,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792524471151,
+  "t": 1792524583491,
   "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
  {
-  "t": 1792524471157,
+  "t": 1792524584584,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
  },
  {
-  "t": 1792524471622,
-  "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
+  "t": 1792525350326,
+  "r": "SPOTIFY: [v6.358] ritorno: nessun codice (indirimento: [?fuocoTest=0.5], memoria: [])"
  },
  {
-  "t": 1792524580117,
-  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792524580191,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792524580196,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792524580209,
+  "t": 1792525351227,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
  {
-  "t": 1792525557713,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792525869413,
-  "r": "SPOTIFY: [v6.359] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792525872503,
-  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792525872520,
+  "t": 1792525351177,
   "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
  {
-  "t": 1792525880900,
-  "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792525883472,
-  "r": "libreria: 235 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792525885910,
-  "r": "SPOTIFY: [v6.359] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792525888437,
-  "r": "SPOTIFY: [v6.359] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792525891261,
-  "r": "visibili 234 su 234 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792525891317,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525891341,
+  "t": 1792525351216,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792525916415,
-  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+  "t": 1792525351222,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792525919849,
+  "t": 1792525938405,
   "r": "FINALE: visibili 210 su 237 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792525922567,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792525922594,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792525930312,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
