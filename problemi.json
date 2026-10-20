@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792528172411,
-  "r": "SPOTIFY: [v6.361] ritorno: nessun codice (indirimento: [?spotify=accedi], memoria: [])"
- },
- {
-  "t": 1792528172410,
-  "r": "SPOTIFY: [v6.361] accesso: sto per aprire Spotify"
- },
- {
-  "t": 1792528172472,
-  "r": "SPOTIFY: [v6.361] da Spotify: 0 playlist (errore 403)"
- },
- {
-  "t": 1792528172852,
-  "r": "SPOTIFY: [v6.361] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792528173373,
-  "r": "SPOTIFY: [v6.361] da Spotify: 0 playlist (errore 403)"
- },
- {
-  "t": 1792528173840,
-  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792528173837,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792528178476,
   "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792528178487,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792528178601,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792528178758,
+  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
+ },
+ {
+  "t": 1792528178760,
+  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
+ },
+ {
+  "t": 1792528178990,
+  "r": "SPOTIFY: [v6.361] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQD3YjuQQ4zVo_eHV_eSsXb-5D6NPqvvynnHA9dXQ8sVnUQoIFTR92xlml"
+ },
+ {
+  "t": 1792528183550,
+  "r": "visibili 210 su 237 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
