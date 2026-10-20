@@ -587,7 +587,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.339";
+  const APP_VERSION = "6.340";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13026,7 +13026,12 @@ async function _spotifyCompletaAccesso(code, stato) {
   }
   let r;
   try {
+    /* Tempo massimo: se Spotify non risponde, l'app non aspetta per sempre. */
+    const _ctl = new AbortController();
+    const _scad = setTimeout(function () { try { _ctl.abort(); } catch (e) { } }, 20000);
+    _spotifyTraccia("chiedo a Spotify lo scambio del codice");
     r = await fetch("https://accounts.spotify.com/api/token", {
+      signal: _ctl.signal,
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
@@ -13037,9 +13042,17 @@ async function _spotifyCompletaAccesso(code, stato) {
         code_verifier: verifier
       }).toString()
     });
-  } catch (e) { toast("Non riesco a parlare con Spotify"); _loginSpotifyInCorso = false; return false; }
+  } catch (e) {
+    _spotifyTraccia("lo scambio e' fallito: " + String((e && e.message) || e));
+    try { LS.set("mb.spotifyErrore", "Non riesco a parlare con Spotify: " + String((e && e.message) || e)); } catch (x) { /* noop */ }
+    toast("Non riesco a parlare con Spotify");
+    _loginSpotifyInCorso = false;
+    return false;
+  }
+  try { clearTimeout(_scad); } catch (e) { }
   if (!r.ok) {
     _spotifyTraccia("scambio rifiutato da Spotify (" + r.status + ")");
+    try { LS.set("mb.spotifyErrore", perche); } catch (e) { /* noop */ }
     /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
        accedi con spotify". Il motivo lo voglio sapere: Spotify risponde con
        un JSON che dice il perche'. Lo mostro, cosi' non devo indovinare. */
@@ -13061,6 +13074,7 @@ async function _spotifyCompletaAccesso(code, stato) {
   }
   const j = await r.json();
   _spotifyTraccia("scambio andato bene, salvo il permesso");
+  try { LS.remove("mb.spotifyErrore"); } catch (e) { /* noop */ }
   _spotifySalvaToken(j);
   _spotifyChiave = null;
   try {
@@ -13256,9 +13270,9 @@ function _spotifyPnl(titolo, sotto, html) {
   let _tracciaSpotifyUltimo = 0;
   function _spotifyTracciaManda(testo) {
     try {
-      if (_tracciaSpotifyInviate >= 30) return;
+      if (_tracciaSpotifyInviate >= 60) return;
       const ora = Date.now();
-      if (ora - _tracciaSpotifyUltimo < 500) return;
+      if (ora - _tracciaSpotifyUltimo < 120) return;
       _tracciaSpotifyUltimo = ora;
       _tracciaSpotifyInviate++;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
@@ -13266,7 +13280,11 @@ function _spotifyPnl(titolo, sotto, html) {
       fetch(dove + "/problema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ riga: "SPOTIFY: " + String(testo).slice(0, 140) })
+        body: JSON.stringify({ riga: "SPOTIFY: " + String(testo).slice(0, 140) }),
+        /* "keepalive": la richiesta continua anche se la pagina viene ricaricata
+           o chiusa mentre e' in viaggio. Senza, le tracce sparivano proprio
+           quando servivano di piu'. */
+        keepalive: true
       }).catch(function () { /* nessuna rete? pazienza */ });
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
@@ -13523,20 +13541,36 @@ async function _spotifyRientro() {
       }
     } catch (e) { /* noop */ }
   }
-  if (!code && !errore) { _spotifyTraccia("ritorno: nessun codice nell'indirimento"); return; }
+  if (!code && !errore) {
+    _spotifyTraccia("ritorno: nessun codice nell'indirimento");
+    /* Se prima lo scambio e' fallito, la parola dell'errore resta qui: se
+       non la vedessi, Ste penserebbe che non e' successo niente. */
+    try {
+      const vecchio = String(LS.get("mb.spotifyErrore", "") || "");
+      if (vecchio) {
+        _spotifyPnl("Accesso non riuscito", "l'ultimo tentativo e' fallito",
+          '<p class="step-hint">' + _spotifySicuro(vecchio) + "</p>" +
+          '<button class="btn-main" id="spotifyRiprova" style="display:block;text-align:center;margin-top:10px">Riprova</button>');
+        try {
+          const b = $("spotifyRiprova");
+          if (b) b.addEventListener("click", function () { _spotifyAccedi(); });
+        } catch (e) { /* noop */ }
+      }
+    } catch (e) { /* noop */ }
+    return;
+  }
   _spotifyTraccia("ritorno: codice trovato (dal " + (q && q.get("code") ? "indirimento" : "ricordo della pagina") + ")");
-  /* Il codice si usa una volta sola: lo metto via subito, cosi' un secondo
-     tentativo non prova a scambiarlo di nuovo (Spotify lo rifiuterebbe e
-     l'app mostrerebbe un errore per niente). */
-  try { sessionStorage.removeItem("mb.spotifyRitorno"); } catch (e) { /* noop */ }
+  /* Il codice resta da parte finche' lo scambio non e' finito: se la pagina
+     si ricarica durante lo scambio, il codice c'e' ancora e si puo'
+     riprovare. (Spotify lo accetta una volta sola: se lo scambio e' andato
+     bene, non si riprova.) */
   /* Ste: "premo apri spotify e mi si aggiorna la pagina e mi si riapre
      accedi con spotify". Lo scambio del codice col permesso avviene qui,
      e se nel frattempo l'app si ricarica, lo scambio muore a meta' e
      sembra che non sia successo niente. */
   _loginSpotifyInCorso = true;
-  try {
-    history.replaceState({}, document.title, window.location.pathname);
-  } catch (e) { /* noop */ }
+  /* L'indirimento si pulisce DOPO lo scambio: se la pagina si ricarica
+     prima, il codice deve restare visibile nell'indirimento. */
   if (errore) {
     _loginSpotifyInCorso = false;
     toast("Non hai concesso Spotify: " + errore, 6000);
@@ -13544,6 +13578,7 @@ async function _spotifyRientro() {
   }
   _spotifyTraccia("ritorno: scambio il codice col permesso");
   const ok = await _spotifyCompletaAccesso(code, stato);
+  try { sessionStorage.removeItem("mb.spotifyRitorno"); } catch (e) { /* noop */ }
   _spotifyTraccia(ok ? "ritorno: permesso ottenuto" : "ritorno: lo scambio e' fallito");
   if (!ok) {
     /* Se non e' andata, adesso la schermata dice PERCHE'. Prima spariva
@@ -13552,6 +13587,9 @@ async function _spotifyRientro() {
     _loginSpotifyInCorso = false;
     return;
   }
+  try {
+    history.replaceState({}, document.title, window.location.pathname);
+  } catch (e) { /* noop */ }
   _loginSpotifyInCorso = false;
   toast("Collegato a Spotify", 4000);
   _spotifyMostraPlaylist();
