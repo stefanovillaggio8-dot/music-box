@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792521287726,
-  "r": "SPOTIFY: [v6.356] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792521506013,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792522419751,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792522428259,
+  "r": "libreria: 244 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
