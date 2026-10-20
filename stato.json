@@ -845,7 +845,7 @@
    "mostro|lacitta": {
     "v": 0,
     "s": 188,
-    "t": "LA CITTÃ",
+    "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
    "naytfrahquintaletonyboy|cignonerormx": {
@@ -1595,8 +1595,8 @@
     "a": "Silent Bob, Sick Budd"
    },
    "astrotonyboyartie5ive|paninarofeattonyboyartie5ive": {
-    "v": 0,
-    "s": 430,
+    "v": 1,
+    "s": 453,
     "t": "PANINARO (feat. Tony Boy, Artie 5ive)",
     "a": "Astro, Tony Boy, Artie 5ive"
    },
@@ -1799,8 +1799,8 @@
     "a": "Danien & Thee"
    },
    "22simba|nevalelapenaversion1": {
-    "v": 2,
-    "s": 1125,
+    "v": 3,
+    "s": 1126,
     "t": "Ne vale la pena (Version 1)",
     "a": "22simba"
    },
@@ -1878,7 +1878,7 @@
    },
    "macekidyugiizifranco126|tuttofuoricontrolloconfranco126kidyugiizi": {
     "v": 0,
-    "s": 387,
+    "s": 458,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -2124,7 +2124,7 @@
    },
    "nayt3dmezzosangue|lividifeatmezzosangue": {
     "v": 0,
-    "s": 275,
+    "s": 375,
     "t": "Lividi (feat. MezzoSangue)",
     "a": "nayt, 3D, Mezzosangue"
    },
