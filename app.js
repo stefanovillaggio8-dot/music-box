@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.395";
+  const APP_VERSION = "6.396";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2301,6 +2301,9 @@ function _devoVedereBrano(eMio, b) {
         url: _branoInGym(stabile)
           ? _doveStaIlBranoConBassi(b.file)
           : _doveStaIlBrano(b.file),
+        /* Il nome del file: serve per sapere se questo brano e' stato
+           potenziato (e metterci il contrassegno). */
+        file: b.file || "",
         /* Ste: "nell'account di Diego il tasto avanti non va avanti".
            Qui mancava proprio questo pezzo: quando l'app costruiva il brano si
            dimenticava di segnare di chi e'. Nella coda (visibleTracks) il
@@ -3928,7 +3931,7 @@ emptyEl.textContent = !total
       /* Ste: "fai che si capisca quali sono state boostate e quali no".
          Il contrassegno "bassi" vuol dire: questo brano suona con la
          versione potenziata (bassi piu' pieni, voce avanti, piu' forte). */
-      if (t.file && _branoInGym(t.id) && _ePotenziato(t.file)) {
+      if (t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
         const badge = document.createElement("span");
         badge.className = "track-badge track-badge-bassi";
         badge.textContent = "bassi";
@@ -11911,7 +11914,13 @@ if (SERVIZIO_PUBBLICA) {
      agganciando la rete, e senza riprovare la playlist non compariva e
      non c'era modo di ripararlo senza riaprire l'app. */
   if (!playlists.length) {
-    setTimeout(() => { _caricaPlaylistCondivise(); }, 5000);
+    setTimeout(() => {
+    _caricaPlaylistCondivise().then(function () {
+      /* Le playlist sono arrivate: ridisegno, cosi' i brani della gym
+         prendono il contrassegno "bassi" (se sono potenziati). */
+      try { render(); } catch (e) { }
+    });
+  }, 5000);
   }
 }
 
@@ -14972,11 +14981,15 @@ if (typeof document !== "undefined") {
          tiene l'app: le mando al servizio ogni volta che l'app parte, cosi'
          il computer vede la lista vera e prepara i brani con i bassi. */
       try {
-        setTimeout(function () {
+        let tentativi = 0;
+        const manda = function () {
+          tentativi++;
           try {
             if (typeof _salvaPlaylistCondivise === "function") _salvaPlaylistCondivise();
           } catch (e) { /* noop */ }
-        }, 1500);
+          if (tentativi < 6) setTimeout(manda, 20000);
+        };
+        setTimeout(manda, 1500);
       } catch (e) { /* noop */ }
       /* Ste: "ho fatto l'accesso con spotify, mi e' tornato su musicbox e mi e' spuntato
          di nuovo accedi con spotify".
