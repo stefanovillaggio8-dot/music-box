@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792617936570,
-  "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
- },
- {
   "t": 1792617937543,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792618004413,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792618013172,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
