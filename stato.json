@@ -141,8 +141,8 @@
     "a": "Evanescence"
    },
    "blanco|sottogonna": {
-    "v": 3,
-    "s": 25,
+    "v": 4,
+    "s": 26,
     "t": "SOTTOGONNA",
     "a": "BLANCO"
    },
@@ -262,7 +262,7 @@
    },
    "madame|quantofortetipensavo": {
     "v": 3,
-    "s": 336,
+    "s": 348,
     "t": "QUANTO FORTE TI PENSAVO",
     "a": "Madame"
    },
@@ -388,12 +388,12 @@
    },
    "artie5ive|davverodavvero": {
     "v": 12,
-    "s": 468,
+    "s": 481,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
    "artie5ive|fwss25freestyle": {
-    "v": 3,
+    "v": 4,
     "s": 211,
     "t": "FW/SS25 (Freestyle)",
     "a": "Artie 5ive"
