@@ -159,7 +159,11 @@
           if (Date.now() - _via > 800) return;      /* era una pressione lunga */
           var riga = e.target && e.target.closest ? e.target.closest(".lyr-line") : null;
           if (!riga) return;
-          var t = Number(riga.getAttribute("data-t"));
+          /* attenzione: Number(null) fa 0, non NaN: se non guardo
+             l'attributo direttamente la stima non parte mai e la canzone
+             salta all'inizio */
+          var attr = riga.getAttribute("data-t");
+          var t = (attr === null || attr === "") ? NaN : Number(attr);
           if (!isFinite(t)) {
             /* Questa canzone non ha i tempi: stimo dove siamo dalla
                posizione della riga (meglio che niente). */
