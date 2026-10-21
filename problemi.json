@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792618279482,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792618279518,
-  "r": "SPOTIFY: [v6.394] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792618280014,
-  "r": "SPOTIFY: [v6.394] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792618280476,
-  "r": "SPOTIFY: [v6.394] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792618280928,
-  "r": "SPOTIFY: [v6.394] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792618281583,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792618281597,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792618281580,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
   "t": 1792618281583,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792618341083,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792618341186,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792618341223,
+  "r": "SPOTIFY: [v6.394] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792618341071,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792618341777,
+  "r": "SPOTIFY: [v6.394] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792618342138,
+  "r": "SPOTIFY: [v6.394] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792618342628,
+  "r": "SPOTIFY: [v6.394] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792618343236,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792618343496,
+  "r": "worker /stato: risponde"
  }
 ]
