@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792619818968,
-  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792619819651,
-  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792619819871,
-  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792619820554,
-  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792619821046,
-  "r": "visibili 208 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792619821039,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792619821037,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792619821064,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792619947244,
   "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792619947287,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792619947322,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792619947332,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792619948532,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792619950606,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792619950594,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792619950610,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
