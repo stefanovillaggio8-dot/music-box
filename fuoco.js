@@ -510,7 +510,6 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
-      if (window.__mbForzaProg !== undefined) { prog = window.__mbForzaProg; suona = true; }
 
       /* lo sfondo grande della schermata dei testi brucia insieme: lo
          chiamo PRIMA di qualsiasi ritorno, cosi' la schermata dei testi
@@ -941,20 +940,6 @@
      punto in cui ho toccato". L'audio sta dentro l'app (non si vede nel
      DOM), quindi espongo un modo per spostare la canzone: la pagina
      chiama questa funzione. */
-  /* PROVA: disegno il fumo e lo restituisco (solo per le prove) */
-  window.__mbDisegnaFumo = function (prog) {
-    try {
-      if (!imgCopertina) {
-        var im = new Image();
-        im.crossOrigin = "anonymous";
-        im.onload = function () { imgCopertina = im; };
-        im.src = "copertine/artie5ivedavverodavvero.jpg";
-        return "carico";
-      }
-      return copertinaCheBrucia(prog);
-    } catch (e) { return "ERRORE: " + e; }
-  };
-
   window.__mbVaiA = function (sec) {
     try {
       var a = stato.audio;
