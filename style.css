@@ -2628,3 +2628,21 @@ li.appena-aggiunto {
   background:#14161c;color:#e8e6e3;font-size:16px;
 }
 .spotify-link-campo:focus{outline:2px solid #7fd3ff;outline-offset:1px}
+
+/* Ste: i due pulsanti del pannello "Bassi e volume" (accendi i bassi e
+   ripristina audio). Classe fatta per l'occasione, perche' nel CSS del sito
+   non c'era un pulsante che andasse bene dentro il riquadro. */
+.import-box .bassi-pulsante {
+  display: block;
+  width: 100%;
+  margin: 10px 0 4px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .08);
+  color: #f2f2f2;
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.import-box .bassi-pulsante:active { background: rgba(255, 255, 255, .16); }

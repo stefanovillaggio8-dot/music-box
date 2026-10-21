@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.385";
+  const APP_VERSION = "6.386";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4158,6 +4158,14 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
+    /* Se la catena dei bassi e' accesa, l'elemento nuovo va ricollegato a
+       lei: altrimenti la musica uscirebbe dalle cuffie senza i bassi (e,
+       peggio, con la catena mezza staccata). */
+    try {
+      if (typeof bassiAccesi !== "undefined" && bassiAccesi && typeof _collegaElemento === "function") {
+        setTimeout(function () { try { _collegaElemento(); } catch (e) { } }, 0);
+      }
+    } catch (e) { }
     a.addEventListener("play", () => {
     _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
@@ -12418,7 +12426,12 @@ for (const p of playlists) {
   }
 
   /* ---------- Volume ---------- */
-  let volumePct = LS.get("mb.vol", 100);
+  let volumePct = Number(LS.get("mb.vol", 100)) || 100;
+  /* All'avrio la catena dei bassi non e' accesa (per accenderla serve un
+     tocco: vedi la nota sopra). Quindi il volume parte dal massimo 100%:
+     se nell'ultima sessione era oltre, torna al 100% invece di far partire
+     una catena che lascerebbe l'audio in silenzio. */
+  if (volumePct > 100) { volumePct = 100; LS.set("mb.vol", 100); }
   let volumeBeforeMute = 100;
 
   /* ---------- Bassi e volume extra (oltre il 100%) ----------
@@ -12427,40 +12440,98 @@ for (const p of playlists) {
      amplificatore: l'elemento audio del browser arriva al 100% e basta, per
      andare oltre serve appunto l'amplificatore. */
   let bassiPct = Number(LS.get("mb.bassi", 0)) || 0;
+  let bassiAccesi = false;      /* la catena e' viva? */
   let _ctx = null, _fonte = null, _filtroBassi = null, _gain = null, _audioCollegato = null;
+  let _catenaRifiutata = false;  /* questo telefono non lascia accendere la catena */
 
-  function _preparaGrafico() {
+  /* Ste, 21/10/2026: "le canzoni non si sentono piu'". Motivo trovato: la
+     catena Web Audio (filtro bassi + amplificatore) si accendeva DA SOLA,
+     perche' bastava che il volume fosse rimasto oltre il 100% dalla volta
+     prima. Ma il browser permette di partire l'audio solo dopo un tocco
+     dell'utente: la catena quindi restava "sospesa" e la musica, che ci
+     passava dentro, non usciva piu' dalle cuffie. Silenzio totale.
+     Adesso la catena si accende SOLO dall'interruttore del pannello
+     (quello e' un tocco, quindi il browser la lascia partire) e se non
+     parte si ricostruisce l'elemento audio: l'uscita torna diretta. */
+  function _collegaElemento() {
+    try {
+      if (!_ctx || !audio) return false;
+      if (_audioCollegato === audio) return true;
+      try { if (_fonte) _fonte.disconnect(); } catch (e) { }
+      _fonte = _ctx.createMediaElementSource(audio);
+      _filtroBassi = _ctx.createBiquadFilter();
+      _filtroBassi.type = "lowshelf";
+      _filtroBassi.frequency.value = 180;
+      _gain = _ctx.createGain();
+      _fonte.connect(_filtroBassi);
+      _filtroBassi.connect(_gain);
+      _gain.connect(_ctx.destination);
+      _audioCollegato = audio;
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function _dimenticaCatena() {
+    _ctx = null; _fonte = null; _filtroBassi = null; _gain = null; _audioCollegato = null;
+    bassiAccesi = false;
+  }
+
+  /* Ricostruisce l'elemento audio: una volta collegato a una catena Web
+     Audio non puo' piu' tornare diretto alle cuffie, quindi va rifatto
+     da capo. */
+  function _ricostruisciAudio() {
+    try {
+      if (typeof rebuildAudio === "function") { rebuildAudio(true); return true; }
+    } catch (e) { }
+    return false;
+  }
+
+  async function _accendiCatena() {
+    /* Accende la catena. Va chiamata da un tocco dell'utente. */
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC || !audio) return false;
       if (!_ctx) _ctx = new AC();
-      if (_audioCollegato !== audio) {
-        /* l'elemento audio e' stato rifatto (cambia brano): rifaccio il
-           collegamento */
-        try { if (_fonte) _fonte.disconnect(); } catch (e) { }
-        _fonte = _ctx.createMediaElementSource(audio);
-        _filtroBassi = _ctx.createBiquadFilter();
-        _filtroBassi.type = "lowshelf";
-        _filtroBassi.frequency.value = 180;
-        _gain = _ctx.createGain();
-        _fonte.connect(_filtroBassi);
-        _filtroBassi.connect(_gain);
-        _gain.connect(_ctx.destination);
-        _audioCollegato = audio;
+      if (_ctx.state === "suspended") { try { await _ctx.resume(); } catch (e) { } }
+      for (let i = 0; i < 12 && _ctx.state !== "running"; i++) {
+        await new Promise(function (r) { setTimeout(r, 60); });
       }
-      try { if (_ctx.state === "suspended") _ctx.resume(); } catch (e) { }
+      if (_ctx.state !== "running") {
+        /* il contesto non si e' svegliato: l'elemento audio e' intrappolato
+           nella catena e da li' non esce piu' niente. Lo rifaccio: l'uscita
+           torna diretta e la musica si sente. */
+        _dimenticaCatena();
+        _ricostruisciAudio();
+        _catenaRifiutata = true;
+        return false;
+      }
+      if (!_collegaElemento()) {
+        _dimenticaCatena();
+        _ricostruisciAudio();
+        _catenaRifiutata = true;
+        return false;
+      }
+      _catenaRifiutata = false;
+      bassiAccesi = true;
       return true;
-    } catch (e) { return false; }
+    } catch (e) {
+      _dimenticaCatena();
+      _ricostruisciAudio();
+      _catenaRifiutata = true;
+      return false;
+    }
   }
 
   function _applicaAudio() {
     try {
       const v = Number(volumePct) || 0;
-      const serveGrafico = (v > 100) || (Number(bassiPct) > 0);
-      if (serveGrafico && !_preparaGrafico()) {
-        /* il browser non permette la catena: l'app continua come prima */
+      if (!bassiAccesi) {
+        /* Senza la catena l'elemento audio va diretto alle cuffie: il
+           volume non puo' passare il 100% e i bassi restano spenti. */
         if (audio) audio.volume = Math.min(1, v / 100);
-        return false;
+        if (_gain) _gain.gain.value = 1;
+        if (_filtroBassi) _filtroBassi.gain.value = 0;
+        return true;
       }
       if (audio) audio.volume = v > 100 ? 1 : v / 100;
       if (_gain) _gain.gain.value = v > 100 ? v / 100 : 1;
@@ -12477,9 +12548,26 @@ for (const p of playlists) {
   function setVolume(v) {
     volumePct = Math.max(0, Math.min(150, Math.round(Number(v) || 0)));
     if (volumePct > 0) volumeBeforeMute = volumePct;
-    _applicaAudio();
     LS.set("mb.vol", volumePct);
     updateVolumeUI();
+    if (volumePct > 100) {
+      /* Oltre il 100% serve la catena: la accendo adesso (questo e' un
+         tocco dell'utente, quindi il browser la lascia partire). Se non
+         parte, torno al 100% e lo dico: la musica si sente SEMPRE. */
+      _accendiCatena().then(function (ok) {
+        if (!ok) {
+          volumePct = 100; volumeBeforeMute = 100;
+          LS.set("mb.vol", 100);
+          updateVolumeUI();
+          _applicaAudio();
+          toast("Questo telefono non permette il volume oltre il 100%");
+        } else {
+          _applicaAudio();
+        }
+      });
+    } else {
+      _applicaAudio();
+    }
   }
   $("volSlider").addEventListener("input", (e) => setVolume(e.target.value));
   try { $("btnBassiVolume").addEventListener("click", apriBassiVolume); } catch (e) { /* noop */ }
@@ -12504,12 +12592,14 @@ for (const p of playlists) {
         '<div class="import-head"><span class="import-title">Bassi e volume</span>' +
         '<button class="import-close" id="bassiVolumeChiudi" aria-label="Chiudi">&times;</button></div>' +
         '<div class="import-body">' +
-        "<p class=\"step-hint\">I bassi si alzano fino a +20 dB. Il volume si puo' portare fino al 150% (senti un po' piu' forte, senza sporcare gli altri).</p>" +
+        "<p class=\"step-hint\">I bassi si alzano fino a +20 dB. Il volume si puo' portare fino al 150% (senti un po' piu' forte, senza sporcare gli altri). I bassi e il volume oltre il 100% si accendono con un tocco (e' il browser che lo chiede): se non si accendono, la musica si sente lo stesso.</p>" +
         '<label class="step-hint" for="bassiSlider">Bassi: <span id="bassiValore">0</span></label>' +
         '<input type="range" id="bassiSlider" min="0" max="100" step="1" value="' + Number(bassiPct) + '" />' +
+        '<button class="bassi-pulsante" id="bassiAccendi" type="button">Accendi i bassi</button>' +
         '<label class="step-hint" for="volExtraSlider">Volume: <span id="volExtraValore">' + Number(volumePct) + '%</span></label>' +
         '<input type="range" id="volExtraSlider" min="0" max="150" step="1" value="' + Number(volumePct) + '" />' +
-        "<div id=\"bassiAvviso\" class=\"step-hint\" hidden>Questo browser non permette di alzare i bassi: l'app continua a funzionare come prima.</div>" +
+        '<button class="bassi-pulsante" id="bassiRipristina" type="button">Ripristina audio</button>' +
+        '<div id="bassiAvviso" class="step-hint" hidden>Questo browser non permette di alzare i bassi: l\'app continua a funzionare come prima.</div>' +
         '</div></div>';
       document.body.appendChild(box);
       const bs = box.querySelector("#bassiSlider");
@@ -12518,10 +12608,79 @@ for (const p of playlists) {
         bassiPct = Math.max(0, Math.min(100, Math.round(Number(bs.value) || 0)));
         box.querySelector("#bassiValore").textContent = String(bassiPct);
         LS.set("mb.bassi", bassiPct);
-        const va = _applicaAudio();
-        const av = box.querySelector("#bassiAvviso");
-        if (av) av.hidden = !!va;
+        if (bassiPct > 0 && !bassiAccesi) {
+          /* i bassi si accendono solo qui: e' un tocco dell'utente, quindi
+             il browser permette al contesto audio di partire */
+          _accendiCatena().then(function (ok) {
+            _applicaAudio();
+            const av = box.querySelector("#bassiAvviso");
+            if (av) av.hidden = !!ok;
+            if (!ok) {
+              bassiPct = 0;
+              LS.set("mb.bassi", 0);
+              bs.value = "0";
+              const bv = box.querySelector("#bassiValore");
+              if (bv) bv.textContent = "0";
+              toast("Questo telefono non permette di alzare i bassi: la musica si sente lo stesso");
+            }
+          });
+        } else {
+          _applicaAudio();
+        }
       });
+      const bAccendi = box.querySelector("#bassiAccendi");
+      if (bAccendi) {
+        bAccendi.addEventListener("click", function () {
+          if (bassiAccesi) {
+            bAccendi.textContent = "Accendi i bassi";
+            /* spegne: la catena viene staccata e l'elemento audio rifatto,
+               cosi' l'uscita torna diretta alle cuffie */
+            _dimenticaCatena();
+            _ricostruisciAudio();
+            bassiPct = 0;
+            LS.set("mb.bassi", 0);
+            bs.value = "0";
+            const bv = box.querySelector("#bassiValore");
+            if (bv) bv.textContent = "0";
+            _applicaAudio();
+            toast("Bassi spenti");
+          } else {
+            bassiPct = Math.max(20, bassiPct || 40);
+            bs.value = String(bassiPct);
+            const bv = box.querySelector("#bassiValore");
+            if (bv) bv.textContent = String(bassiPct);
+            LS.set("mb.bassi", bassiPct);
+            _accendiCatena().then(function (ok) {
+              _applicaAudio();
+              const av = box.querySelector("#bassiAvviso");
+              if (av) av.hidden = !!ok;
+              if (ok) bAccendi.textContent = "Spegni i bassi";
+              toast(ok ? "Bassi accesi" : "Questo telefono non permette i bassi: la musica si sente lo stesso");
+            });
+          }
+        });
+      }
+      const bRipristina = box.querySelector("#bassiRipristina");
+      if (bRipristina) {
+        bRipristina.addEventListener("click", function () {
+          _dimenticaCatena();
+          volumePct = 100; volumeBeforeMute = 100;
+          bassiPct = 0;
+          LS.set("mb.vol", 100); LS.set("mb.bassi", 0);
+          _ricostruisciAudio();
+          _applicaAudio();
+          updateVolumeUI();
+          const vs2 = box.querySelector("#volExtraSlider");
+          if (vs2) vs2.value = "100";
+          const vv2 = box.querySelector("#volExtraValore");
+          if (vv2) vv2.textContent = "100%";
+          const bs2 = box.querySelector("#bassiSlider");
+          if (bs2) bs2.value = "0";
+          const bv2 = box.querySelector("#bassiValore");
+          if (bv2) bv2.textContent = "0";
+          toast("Audio ripristinato");
+        });
+      }
       vs.addEventListener("input", function () {
         setVolume(vs.value);
         box.querySelector("#volExtraValore").textContent = Number(volumePct) + "%";
@@ -12538,6 +12697,8 @@ for (const p of playlists) {
     if (vs) vs.value = String(volumePct);
     const bv = box.querySelector("#bassiValore");
     if (bv) bv.textContent = String(bassiPct);
+    const bAcc = box.querySelector("#bassiAccendi");
+    if (bAcc) bAcc.textContent = bassiAccesi ? "Spegni i bassi" : "Accendi i bassi";
     const vv = box.querySelector("#volExtraValore");
     if (vv) vv.textContent = Number(volumePct) + "%";
     syncNoScroll();
