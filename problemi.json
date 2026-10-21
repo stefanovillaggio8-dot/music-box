@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792617923166,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792617924273,
-  "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
- },
- {
-  "t": 1792617924272,
-  "r": "FINALE: visibili 120 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati si | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792617924843,
-  "r": "FINALE: visibili 120 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati si | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792617927477,
-  "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
- },
- {
-  "t": 1792617929224,
-  "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
- },
- {
   "t": 1792617936570,
   "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792617983569,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792617983569,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792617983728,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792617984783,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792617984782,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792617985088,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792618004413,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
