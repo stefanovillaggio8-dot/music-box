@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.393";
+  const APP_VERSION = "6.394";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -842,6 +842,36 @@ const PROFILI = [
   /* Ste: i brani delle playlist "gym" suonano con i bassi gia' alzati.
      Le versioni con i bassi le prepara il computer (music-auto/prepara-bassi-gym.mjs)
      e stanno nella cartella "songs/bassi" del deposito dei brani. */
+  /* I brani potenziati (bassi piu' pieni, voce avanti, volume piu' forte):
+     l'elenco lo scrive il computer. */
+  let _potenziati = new Set();
+  let _potenziatiCaricati = false;
+
+  function _nomeFileBrano(file) {
+    return String(file || "").replace(/^.*\//, "");
+  }
+
+  function _ePotenziato(file) {
+    try {
+      if (!_potenziati.size) return false;
+      return _potenziati.has(_nomeFileBrano(file));
+    } catch (e) { return false; }
+  }
+
+  async function _caricaElencoPotenziati() {
+    try {
+      if (typeof BRANI_ONLINE !== "string" || !BRANI_ONLINE) return;
+      const r = await fetch(BRANI_ONLINE + "songs/bassi/elenco.json", { cache: "no-cache" });
+      if (!r.ok) return;
+      const d = await r.json();
+      const lista = d && Array.isArray(d.brani) ? d.brani : [];
+      if (!lista.length) return;
+      _potenziati = new Set(lista.map((x) => String(x || "")));
+      _potenziatiCaricati = true;
+      try { render(); } catch (e) { }
+    } catch (e) { /* senza rete: niente contrassegno, ma la musica va lo stesso */ }
+  }
+
   function _branoInGym(idBrano) {
     try {
       const pl = _playlistCercata("gym");
@@ -2268,7 +2298,9 @@ function _devoVedereBrano(eMio, b) {
         artist: b.artist || "",
         album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
         cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
-        url: _branoInGym(stabile) ? _doveStaIlBranoConBassi(b.file) : _doveStaIlBrano(b.file),
+        url: (_ePotenziato(b.file) || _branoInGym(stabile))
+          ? _doveStaIlBranoConBassi(b.file)
+          : _doveStaIlBrano(b.file),
         /* Ste: "nell'account di Diego il tasto avanti non va avanti".
            Qui mancava proprio questo pezzo: quando l'app costruiva il brano si
            dimenticava di segnare di chi e'. Nella coda (visibleTracks) il
@@ -3891,6 +3923,16 @@ emptyEl.textContent = !total
         const badge = document.createElement("span");
         badge.className = "track-badge";
         badge.textContent = "tutti";
+        title.appendChild(badge);
+      }
+      /* Ste: "fai che si capisca quali sono state boostate e quali no".
+         Il contrassegno "bassi" vuol dire: questo brano suona con la
+         versione potenziata (bassi piu' pieni, voce avanti, piu' forte). */
+      if (t.file && _ePotenziato(t.file)) {
+        const badge = document.createElement("span");
+        badge.className = "track-badge track-badge-bassi";
+        badge.textContent = "bassi";
+        badge.title = "Questo brano suona potenziato (bassi piu' pieni, voce avanti, piu' forte)";
         title.appendChild(badge);
       }
       info.appendChild(title);
@@ -14918,6 +14960,9 @@ if (typeof document !== "undefined") {
        collegamento non parte due volte perche' il contrassegno lo
        blocca, quindi e' innocuo. */
     try { _spotifyAggancia(); } catch (e) { /* noop */ }
+      /* L'elenco dei brani potenziati: serve per il contrassegno e per
+         scegliere la versione giusta da suonare. */
+      try { setTimeout(function () { _caricaElencoPotenziati(); }, 800); } catch (e) { /* noop */ }
       /* Ste: "io ho 25 brani nella playlist gym non 13". Le playlist le
          tiene l'app: le mando al servizio ogni volta che l'app parte, cosi'
          il computer vede la lista vera e prepara i brani con i bassi. */

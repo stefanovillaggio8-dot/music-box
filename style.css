@@ -2648,3 +2648,10 @@ li.appena-aggiunto {
   cursor: pointer;
 }
 .import-box .bassi-pulsante:active { background: rgba(255, 255, 255, .16); }
+/* Ste: il contrassegno "bassi" sulle schede dei brani potenziati (quelli
+   con la versione dal computer: bassi piu' pieni, voce avanti, piu' forte). */
+.track-badge-bassi {
+  color: #ffd166;
+  border-color: #ffd166;
+  margin-left: 6px;
+}

@@ -50,10 +50,13 @@
       }
       var r = sfondo.getBoundingClientRect();
       var lato = Math.max(r.width, r.height);
+      /* le fiamme sullo sfondo grande sono piu' piccole: la schermata e'
+         molto piu' grande del disco del player */
+      var latoFiamme = lato * 0.34;
       if (stato.progTesti !== prog) {
         disegnaChar(stato.boxTesti, a, "");
         if (!stato.boxTesti._fiamme || !stato.boxTesti._fiamme.length) {
-          preparaFiamme(stato.boxTesti, a, lato);
+          preparaFiamme(stato.boxTesti, a, latoFiamme);
         }
         spostaFiamme(stato.boxTesti, a);
         stato.progTesti = prog;
@@ -90,11 +93,7 @@
     ".mb-fuoco{position:fixed;left:0;top:0;z-index:60;pointer-events:none;overflow:visible}",
     ".mb-fuoco .mb-dentro{position:absolute;inset:0;pointer-events:none;overflow:visible}",
     /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
-    ".mb-fuoco-dentro{position:absolute;left:0;top:0;z-index:0}",
-    /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
-    ".mb-fuoco-dentro{position:absolute;left:0;top:0;z-index:0}",
-    /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
-    ".mb-fuoco-dentro{position:absolute;left:0;top:0;z-index:0}",
+    ".mb-fuoco-dentro{position:absolute;inset:0;z-index:0}",
     ".mb-fuoco .mb-strato-char{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}",
     ".mb-fuoco .mb-strato-char svg{width:100%;height:100%;display:block}",
     ".mb-fuoco .mb-calore{position:absolute;pointer-events:none;z-index:3;border-radius:50%;",
@@ -422,7 +421,6 @@
     var dentro = box.querySelector(".mb-dentro") || box;
     var rif = dentro.querySelector(".mb-fiamme");
     while (temp.firstChild) dentro.insertBefore(temp.firstChild, rif);
-    stato.progChar = prog;
   }
 
   /* Le fiamme: si creano una volta sola e poi si spostano. Se le
@@ -503,6 +501,12 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
+      if (window.__mbForzaProg !== undefined) { prog = window.__mbForzaProg; suona = true; }
+
+      /* lo sfondo grande della schermata dei testi brucia insieme: lo
+         chiamo PRIMA di qualsiasi ritorno, cosi' la schermata dei testi
+         ha il fuoco anche quando non sta suonando niente */
+      aggiornaTesti(arte(prog, stato.seme), prog);
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;
@@ -562,8 +566,6 @@
         stato.progFiamme = prog;
       }
 
-      /* lo sfondo grande della schermata dei testi brucia insieme */
-      aggiornaTesti(a, prog);
       if (!stato.box.querySelector(".mb-bragia").childNodes.length) {
         stato.box.querySelector(".mb-bragia").innerHTML = stratoBragia(r.width);
       }
