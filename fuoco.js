@@ -60,6 +60,7 @@
         if (!stato.boxTesti._fiamme || !stato.boxTesti._fiamme.length) {
           preparaFiamme(stato.boxTesti, a, latoFiamme);
         }
+        mostraFumo(stato.boxTesti, prog);
         spostaFiamme(stato.boxTesti, a);
         stato.progTesti = prog;
       }
@@ -114,6 +115,16 @@
     "  50%{opacity:1}",
     "  100%{opacity:.88}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
+    /* il fumo: alla fine, quando la copertina e' bruciata, quello che
+       resta e' fumo che sale e si disperde */
+    ".mb-fuoco .mb-fumo{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;",
+    "  transition:opacity 1.2s ease}",
+    ".mb-fuoco .mb-fumo.on{opacity:1}",
+    ".mb-fuoco .mb-fumo i{position:absolute;bottom:-14%;width:30%;height:30%;border-radius:50%;",
+    "  background:radial-gradient(circle,rgba(205,203,212,.55) 0%,rgba(160,160,170,0) 70%);",
+    "  animation:mbSaleFumo 3.4s linear infinite}",
+    "@keyframes mbSaleFumo{0%{transform:translateY(0) scale(.6);opacity:0}",
+    "  18%{opacity:.85}100%{transform:translateY(-130%) scale(1.5);opacity:0}}",
     ".mb-fuoco .mb-bragia i{position:absolute;border-radius:50%;",
     "  background:radial-gradient(circle,#ffe6a0 0%,#ff7a10 50%,rgba(255,80,0,0) 100%);",
     "  animation:mbBragiaSale 3.4s linear infinite}",
@@ -282,6 +293,7 @@
         '<svg class="mb-brasa" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>' +
         '<div class="mb-fiamme"></div>' +
         '<div class="mb-bragia"></div>' +
+        '<div class="mb-fumo"></div>' +
       '</div>';
     document.body.appendChild(box);
     return box;
@@ -300,6 +312,7 @@
         '<svg class="mb-brasa" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>' +
         '<div class="mb-fiamme"></div>' +
         '<div class="mb-bragia"></div>' +
+        '<div class="mb-fumo"></div>' +
       '</div>';
     try { sfondo.parentNode.insertBefore(box, sfondo.nextSibling); }
     catch (e) { document.body.appendChild(box); }
@@ -451,6 +464,34 @@
     }
   }
 
+  /* Le macchie di fumo: le creo una volta sola e poi le faccio salire
+     col CSS. */
+  function preparaFumo(box) {
+    var contenitore = box.querySelector(".mb-fumo");
+    if (!contenitore) return;
+    if (contenitore.childNodes.length) return;
+    var h = "";
+    for (var i = 0; i < 10; i++) {
+      var sinistra = 4 + ((i * 23) % 92);
+      var durata = 3 + ((i * 7) % 5) * 0.45;
+      h += '<i style="left:' + sinistra + '%;animation-duration:' + durata.toFixed(2) +
+        's;animation-delay:-' + ((i * 0.83) % 4).toFixed(2) + 's"></i>';
+    }
+    contenitore.innerHTML = h;
+  }
+
+  function mostraFumo(box, prog) {
+    if (!box) return;
+    var contenitore = box.querySelector(".mb-fumo");
+    if (!contenitore) return;
+    if (prog > 0.5) {
+      preparaFumo(box);
+      if (!contenitore.classList.contains("on")) contenitore.classList.add("on");
+    } else if (contenitore.classList.contains("on")) {
+      contenitore.classList.remove("on");
+    }
+  }
+
   function spostaFiamme(box, a) {
     var elenco = box._fiamme || [];
     for (var k = 0; k < elenco.length; k++) {
@@ -569,6 +610,7 @@
       var cambiato = Math.abs(prog - stato.progChar) > 0.02;
       if (cambiato) disegnaChar(stato.box, a, raggio);
       if (!stato.box._fiamme || !stato.box._fiamme.length) preparaFiamme(stato.box, a, r.width);
+      mostraFumo(stato.box, prog);
       if (cambiato || stato.progFiamme < 0) {
         spostaFiamme(stato.box, a);
         stato.progFiamme = prog;

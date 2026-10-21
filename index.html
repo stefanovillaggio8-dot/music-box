@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6402" />
+  <link rel="stylesheet" href="style.css?v=6403" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -166,6 +166,80 @@
           setTimeout(function () { try { b.click(); } catch (e) { } }, 80);
         }
         setInterval(_controllaBrano, 700);
+      })();
+      </script>
+      <script>
+      (function () {
+        /* Ste: "non lo vedo comunque il fumo".
+           Il fumo dentro l'app sta in fuoco.js, che sul telefono resta in
+           cache: arriva solo dopo che l'app si aggiorna. Per non aspettare
+           lo metto anche qui, nella pagina (che arriva sempre dalla
+           rete): un velo di fumo sopra il disco del player e sopra lo
+           sfondo grande della schermata dei testi, che si accende
+           quando la copertina e' quasi bruciata. */
+        var STILE_FUMO =
+          ".mb-fumo-p{position:fixed;pointer-events:none;z-index:61;opacity:0;overflow:hidden;" +
+          "border-radius:inherit;transition:opacity 1.2s ease}" +
+          ".mb-fumo-p.on{opacity:1}" +
+          ".mb-fumo-p i{position:absolute;bottom:-14%;width:32%;height:32%;border-radius:50%;" +
+          "background:radial-gradient(circle,rgba(205,203,212,.6) 0%,rgba(160,160,170,0) 70%);" +
+          "animation:mbSaleFumoP 3.4s linear infinite}" +
+          "@keyframes mbSaleFumoP{0%{transform:translateY(0) scale(.6);opacity:0}" +
+          "18%{opacity:.9}100%{transform:translateY(-140%) scale(1.5);opacity:0}}";
+        function _stile() {
+          if (document.getElementById("mb-stile-fumo")) return;
+          var st = document.createElement("style");
+          st.id = "mb-stile-fumo";
+          st.textContent = STILE_FUMO;
+          (document.head || document.documentElement).appendChild(st);
+        }
+        function _fumoSu(el) {
+          if (!el) return null;
+          var v = el.parentNode ? el.parentNode.querySelector(".mb-fumo-p") : null;
+          if (v) return v;
+          v = document.createElement("div");
+          v.className = "mb-fumo-p";
+          var h = "";
+          for (var i = 0; i < 9; i++) {
+            var sinistra = 4 + ((i * 23) % 92);
+            var durata = 3 + ((i * 7) % 5) * 0.45;
+            h += '<i style="left:' + sinistra + '%;animation-duration:' + durata.toFixed(2) +
+              's;animation-delay:-' + ((i * 0.83) % 4).toFixed(2) + 's"></i>';
+          }
+          v.innerHTML = h;
+          (el.parentNode || document.body).appendChild(v);
+          return v;
+        }
+        function _progresso() {
+          var barra = document.getElementById("playerProgress");
+          var fill = barra ? barra.querySelector(".fill") : null;
+          if (!fill || !barra || !barra.offsetWidth) return 0;
+          return Math.max(0, Math.min(1, fill.offsetWidth / barra.offsetWidth));
+        }
+        function _mettiFumo(velo, el, acceso) {
+          if (!velo || !el) return;
+          var r = el.getBoundingClientRect();
+          velo.style.left = r.left + "px";
+          velo.style.top = r.top + "px";
+          velo.style.width = r.width + "px";
+          velo.style.height = r.height + "px";
+          velo.style.borderRadius = getComputedStyle(el).borderRadius;
+          if (acceso) velo.classList.add("on");
+          else if (velo.classList.contains("on")) velo.classList.remove("on");
+        }
+        function _controllaFumo() {
+          _stile();
+          var prog = _progresso();
+          var acceso = prog > 0.5;
+          var disco = document.getElementById("playerArt");
+          _mettiFumo(_fumoSu(disco), disco, acceso);
+          var pannello = document.getElementById("lyricsPanel");
+          var sfondo = document.getElementById("lyricsSfondo");
+          if (pannello && !pannello.hidden && sfondo) {
+            _mettiFumo(_fumoSu(sfondo), sfondo, acceso);
+          }
+        }
+        setInterval(_controllaFumo, 1200);
       })();
       </script>
       <script>
@@ -970,7 +1044,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6402"></script>
-<script src="app.js?v=6402"></script>
+<script src="fuoco.js?v=6403"></script>
+<script src="app.js?v=6403"></script>
 </body>
 </html>

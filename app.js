@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.402";
+  const APP_VERSION = "6.403";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4488,6 +4488,41 @@ function rebuildAudio(autoplay) {
     if (c.saveData) return true;
     return /^(slow-)?2g$|^3g$/.test(String(c.effectiveType || ""));
   }
+  /* Scarica un brano nella cache del telefono, in silenzio.
+     Serve perche' i brani potenziati (quelli della playlist gym) sono file
+     nuovi: la prima volta che ne suoni una, senza questo l'app aspetta
+     che il file arrivi e la musica parte in ritardo. */
+  let _precaricaInCorso = false;
+  async function _precaricaInCache(t) {
+    try {
+      if (_precaricaInCorso) return;
+      if (!t || !t.url) return;
+      const cache = await appCache();
+      if (!cache) return;
+      _precaricaInCorso = true;
+      try { await fetchToCache(t.url, cache, null); } catch (e) { }
+      _precaricaInCorso = false;
+    } catch (e) { _precaricaInCorso = false; }
+  }
+
+  /* Scarica, una alla volta, le canzoni della playlist gym: cosi' quando
+     Ste preme play su una, parte subito. */
+  async function _precaricaGym() {
+    try {
+      if (_meglioNonScaricareTutto()) return;
+      const gym = [];
+      for (const p of (playlists || [])) {
+        if (String(p.name || "").trim().toLowerCase() !== "gym") continue;
+        for (const id of (p.tracks || [])) gym.push(String(id));
+      }
+      if (!gym.length) return;
+      const miei = tracks.filter((t) => t && gym.indexOf(t.id) >= 0);
+      for (const t of miei) {
+        try { await _precaricaInCache(t); } catch (e) { }
+      }
+    } catch (e) { /* senza rete: pazienza */ }
+  }
+
   function _preparaIlSuccessivo(id) {
     const t = tracks.find((x) => x.id === id);
     if (!t || !t.url || _preparatoId === id) return;
@@ -4496,13 +4531,19 @@ function rebuildAudio(autoplay) {
         _preparato = new Audio();
         _preparato.muted = true;
       }
-      /* col risparmio dati mi basta sapere che il brano esiste: non scarico
-         i suoi 4-5 MB prima di ascoltarlo */
+      /* Ste: "anche quando metto avanti ci mettono tanto a partire".
+         Prima qui si scaricava solo il METADATA del brano e il file vero
+         arrivava quando la canzone partiva (e l'app aspettava). Adesso il
+         brano dopo lo scarico per davvero, in silenzio, e lo metto nella
+         cache del telefono: cosi' "avanti" parte subito. */
       _preparato.preload = _meglioNonScaricareTutto() ? "metadata" : "auto";
       _preparato.src = t.url;
       /* se il brano e' gia' in mano la si riusa, altrimenti lo si scorda */
       try { _preparato.load(); } catch (e) { /* noop */ }
       _preparatoId = id;
+      /* E lo metto anche nella cache del service worker: cosi' la prossima
+         volta che parte, non deve scaricare niente. */
+      if (!_meglioNonScaricareTutto()) { try { _precaricaInCache(t); } catch (e) { } }
     } catch (e) { _preparato = null; _preparatoId = ""; }
   }
 
@@ -11960,6 +12001,10 @@ if (SERVIZIO_PUBBLICA) {
       /* Le playlist sono arrivate: ridisegno, cosi' i brani della gym
          prendono il contrassegno "bassi" (se sono potenziati). */
       try { render(); } catch (e) { }
+      /* E scarico in anticipo le canzoni della gym: cosi' premere play
+         su una parte subito (Ste: "per partire le canzoni ci mettono un
+         sacco di tempo"). */
+      try { _precaricaGym(); } catch (e) { }
     });
   }, 5000);
   }
