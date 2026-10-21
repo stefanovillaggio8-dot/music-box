@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792611066020,
-  "r": "SPOTIFY: [v6.386] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792611066452,
   "r": "SPOTIFY: [v6.386] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792611354908,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792612880425,
+  "r": "SPOTIFY: [v6.387] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
