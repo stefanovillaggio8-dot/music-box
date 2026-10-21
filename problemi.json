@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792609720402,
-  "r": "SPOTIFY: [v6.385] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792609720458,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792609720537,
-  "r": "SPOTIFY: [v6.385] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792609720822,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792609720822,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792609720873,
-  "r": "SPOTIFY: [v6.385] X premuta"
- },
- {
-  "t": 1792609721050,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792609721421,
-  "r": "SPOTIFY: [v6.385] da Spotify: 0 playlist (errore 401)"
- },
- {
-  "t": 1792609721502,
-  "r": "SPOTIFY: [v6.385] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792609721722,
-  "r": "SPOTIFY: [v6.385] X premuta"
- },
- {
   "t": 1792609721805,
   "r": "SPOTIFY: [v6.385] X premuta"
  },
@@ -158,5 +118,45 @@
  {
   "t": 1792611070420,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792611070910,
+  "r": "SPOTIFY: [v6.386] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792611071083,
+  "r": "SPOTIFY: [v6.386] X premuta"
+ },
+ {
+  "t": 1792611071165,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792611071177,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792611071186,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792611071385,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792611071802,
+  "r": "SPOTIFY: [v6.386] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792611071986,
+  "r": "SPOTIFY: [v6.386] X premuta"
+ },
+ {
+  "t": 1792611072400,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792611072456,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
