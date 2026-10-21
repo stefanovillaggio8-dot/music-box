@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532095857,
-  "r": "SPOTIFY: [v6.365] ritorno: nessun codice (indirimento: [?spotify=accedi], memoria: [])"
- },
- {
   "t": 1792532096040,
   "r": "SPOTIFY: [v6.365] premo il link 'Apri Spotify' (sto andando su Spotify)"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792609140363,
   "r": "prova automatica: controllo che la traccia arrivi"
+ },
+ {
+  "t": 1792609718990,
+  "r": "SPOTIFY: [v6.385] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
