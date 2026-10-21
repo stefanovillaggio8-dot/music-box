@@ -7,7 +7,32 @@
   var _loginSpotifyInCorso = false;
   /* Vero solo quando l'utente ha premuto "Accedi con Spotify": serve per
      non mostrare la schermata dell'errore a ogni avvio dell'app. */
-  var _spotifyTentativoInCorso = false;
+    var _spotifyTentativoInCorso = false;
+    /* Ste: "la notifica in alto deve restare fino quando chiudo l'app" e
+       "quando dalle cuffie premo il tasto, parte una canzone di soundcloud".
+       Motivo (uno solo): i tasti delle cuffie vanno SEMPRE all'app che sta
+       suonando. Se MusicBox non sta suonando niente, il telefono da' il
+       comando all'ultima app che ha suonato (SoundCloud) e la notifica
+       sparisce.
+       Adesso l'app tiene su una PISTA SILENZIOSA (volume zero): cosi' il
+       telefono sa che la sessione audio e' di MusicBox, il tasto delle
+       cuffie riparte la musica di MusicBox e la notifica in alto resta
+       finche' l'app e' aperta. */
+    let _silenzio = null;
+    function _accendiSilenzio() {
+      try {
+        if (_silenzio) return;
+        if (!window.Audio) return;
+        /* WAV di 0,1 secondi di silenzio (generato sul computer). */
+        const silenzio = "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+        _silenzio = new Audio(silenzio);
+        _silenzio.loop = true;
+        _silenzio.volume = 0;
+        _silenzio.setAttribute("playsinline", "");
+        const prova = _silenzio.play();
+        if (prova && prova.catch) prova.catch(() => { });
+      } catch (e) { /* noop */ }
+    }
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
   /* Sta nella memoria della scheda (non in una variabile): cosi' se la
@@ -603,7 +628,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.381";
+  const APP_VERSION = "6.382";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11203,8 +11228,12 @@ document.addEventListener("visibilitychange", () => {
       /* Torno in primo piano: se volevo lo schermo acceso lo riprendo, e
          riaccendo anche il controllo che porta avanti la musica. */
       if (_schermoVoluto) { _accendiSchermo(); _accendiSonda(); }
+      /* Ste: "i tasti delle cuffie devono ripartire la musica di musicbox".
+         Riprendo anche la sessione audio: se nel frattempo l'ha presa
+         un'altra app, io la riprendo. */
+      try { if (current()) { updateMediaSession(); _accendiSilenzio(); setPlaybackState("playing"); } } catch (e) { /* noop */ }
       _disegnaTimer();
-  } else if (_bloccoSchermo) {
+    } else if (_bloccoSchermo) {
     /* non lo tengo: il telefono e' gia' spento, e tenerlo occuperebbe
        batteria senza servire a niente */
     _bloccoSchermo = null;
@@ -12435,7 +12464,8 @@ for (const p of playlists) {
     try {
       if (current() || (tracks && tracks.length)) {
         updateMediaSession();
-        setPlaybackState("paused");
+        _accendiSilenzio();
+        setPlaybackState("playing");
         _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
       }
     } catch (e) { /* noop */ }
