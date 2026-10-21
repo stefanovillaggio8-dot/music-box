@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.386";
+  const APP_VERSION = "6.387";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12486,39 +12486,45 @@ for (const p of playlists) {
     return false;
   }
 
-  async function _accendiCatena() {
-    /* Accende la catena. Va chiamata da un tocco dell'utente. */
+  function _accendiCatena() {
+    /* Accende la catena dei bassi.
+       VA CHIAMATA DIRETTAMENTE DAL TOCCO dell'utente: la ripresa del
+       contesto audio (resume) va chiesta subito, senza attese, perche' il
+       browser permette di partire l'audio solo se la richiesta nasce dal
+       tocco. Dopo un await il tocco e' perso, il contesto resta
+       "sospeso" e la musica (che passa dentro la catena) non esce piu'.
+       Per questo l'elemento audio viene collegato alla catena SOLO se il
+       contesto e' davvero sveglio: cosi' non puo' restare intrappolato,
+       e se non parte l'elemento viene rifatto e la musica torna. */
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
-      if (!AC || !audio) return false;
+      if (!AC || !audio) return Promise.resolve(false);
       if (!_ctx) _ctx = new AC();
-      if (_ctx.state === "suspended") { try { await _ctx.resume(); } catch (e) { } }
-      for (let i = 0; i < 12 && _ctx.state !== "running"; i++) {
-        await new Promise(function (r) { setTimeout(r, 60); });
-      }
-      if (_ctx.state !== "running") {
-        /* il contesto non si e' svegliato: l'elemento audio e' intrappolato
-           nella catena e da li' non esce piu' niente. Lo rifaccio: l'uscita
-           torna diretta e la musica si sente. */
-        _dimenticaCatena();
-        _ricostruisciAudio();
-        _catenaRifiutata = true;
-        return false;
-      }
-      if (!_collegaElemento()) {
-        _dimenticaCatena();
-        _ricostruisciAudio();
-        _catenaRifiutata = true;
-        return false;
-      }
-      _catenaRifiutata = false;
-      bassiAccesi = true;
-      return true;
+      /* qui, senza attese: il tocco e' ancora valido */
+      if (_ctx.state === "suspended") { try { _ctx.resume(); } catch (e) { } }
+      return new Promise(function (risolvi) {
+        setTimeout(function () {
+          try {
+            if (_ctx && _ctx.state === "running" && _collegaElemento()) {
+              _catenaRifiutata = false;
+              bassiAccesi = true;
+              risolvi(true);
+              return;
+            }
+          } catch (e) { }
+          /* il contesto non si e' svegliato: l'elemento audio e' intrappolato
+             nella catena e da li' non esce piu' niente. Lo rifaccio: l'uscita
+             torna diretta e la musica si sente. */
+          _dimenticaCatena();
+          _ricostruisciAudio();
+          _catenaRifiutata = true;
+          risolvi(false);
+        }, 900);
+      });
     } catch (e) {
       _dimenticaCatena();
       _ricostruisciAudio();
-      _catenaRifiutata = true;
-      return false;
+      return Promise.resolve(false);
     }
   }
 
@@ -12599,6 +12605,7 @@ for (const p of playlists) {
         '<label class="step-hint" for="volExtraSlider">Volume: <span id="volExtraValore">' + Number(volumePct) + '%</span></label>' +
         '<input type="range" id="volExtraSlider" min="0" max="150" step="1" value="' + Number(volumePct) + '" />' +
         '<button class="bassi-pulsante" id="bassiRipristina" type="button">Ripristina audio</button>' +
+        '<p class="step-hint">Se i bassi non si accendono, il telefono ha un modo suo che funziona sempre: Impostazioni &gt; Accessibilita&apos; &gt; Audio e video &gt; Adattamento cuffie &gt; attiva <b>Amplifica</b> e <b>Boost audio</b>. Funziona con qualsiasi app e non costa niente.</p>' +
         '<div id="bassiAvviso" class="step-hint" hidden>Questo browser non permette di alzare i bassi: l\'app continua a funzionare come prima.</div>' +
         '</div></div>';
       document.body.appendChild(box);
@@ -14365,9 +14372,14 @@ function _spotifyParla(variabile, testo) {
         }
         return;
       }
+      /* Se la lettura fallisce, il collegamento non serve a niente: il
+         bottone non deve fare finta di essere collegato. */
+      if (_spotifyErrore) { try { _mostraCollegatoNo(); } catch (e) { } }
       const perche = _spotifyErrore === -1
         ? "Non riesco a parlare con Spotify: controlla la rete."
-        : (_spotifyErrore ? ("Spotify ha risposto " + _spotifyErrore + "." + (_spotifyMotivo ? " (" + _spotifyMotivo + ")" : "")) : "");
+        : (_spotifyErrore === 403
+          ? "Spotify ha risposto 403: l'accesso non basta per leggere le playlist. (E' il caso in cui l'account che ha registrato l'app non ha Spotify Premium: per le playlist si puo' usare il link, che si incolla sotto.)"
+          : (_spotifyErrore ? ("Spotify ha risposto " + _spotifyErrore + "." + (_spotifyMotivo ? " (" + _spotifyMotivo + ")" : "")) : ""));
       /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
          apre music box ma c'e' scritto che l'accesso e' scaduto".
          Motivo: l'app aveva in tasca un permesso VECCHIO (senza i permessi
