@@ -141,8 +141,8 @@
     "a": "Evanescence"
    },
    "blanco|sottogonna": {
-    "v": 5,
-    "s": 36,
+    "v": 6,
+    "s": 37,
     "t": "SOTTOGONNA",
     "a": "BLANCO"
    },
@@ -364,7 +364,7 @@
    },
    "linkinpark|runaway": {
     "v": 1,
-    "s": 151,
+    "s": 153,
     "t": "Runaway",
     "a": "Linkin Park"
    },
@@ -923,12 +923,12 @@
    "coez|lamusicanonce": {
     "v": 0,
     "s": 28,
-    "t": "La musica non c'ÃÂÃÂ¨",
+    "t": "La musica non c'ÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
    "linkinpark|faint": {
     "v": 1,
-    "s": 1,
+    "s": 4,
     "t": "Faint",
     "a": "Linkin Park"
    }
