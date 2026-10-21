@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532096769,
-  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
- },
- {
   "t": 1792532096771,
   "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792609967878,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792610045897,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
