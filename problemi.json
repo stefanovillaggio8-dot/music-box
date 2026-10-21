@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792612882563,
-  "r": "SPOTIFY: [v6.387] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792612883102,
   "r": "SPOTIFY: [v6.387] X premuta"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792613921633,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792613925135,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
