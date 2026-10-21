@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792619198799,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792619198818,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792619198909,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792619200003,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792619200012,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
   "t": 1792619200138,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792619282171,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792619282310,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792619283460,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792619283450,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792619283575,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792619365705,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
