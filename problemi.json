@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792612940730,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792612940987,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792612942045,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792612942045,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
   "t": 1792612942192,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792614252458,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792614252590,
+  "r": "SPOTIFY: [v6.389] X premuta"
+ },
+ {
+  "t": 1792614253498,
+  "r": "SPOTIFY: [v6.389] X premuta"
+ },
+ {
+  "t": 1792614256125,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792614256331,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
