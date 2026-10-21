@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6378";
+const CACHE = "spotifynonavraiimieisoldi-v6379";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -491,11 +491,35 @@ async function cacheSongs(cache) {
    ma quando TOCCI il numero della versione gli dico "attivati adesso" e la
    pagina si ricarica con tutto nuovo. */
 self.addEventListener("message", (event) => {
-  const tipo = (event && event.data && event.data.type) || "";
+  const data = (event && event.data) || {};
+  const tipo = data.type || "";
   if (tipo === "SKIP_WAITING") {
     self.skipWaiting();
+    return;
+  }
+  /* Ste: "fai in modo che i download partono anche in background".
+     Il worker del servizio vive un po' piu' a lungo della pagina, quindi
+     e' lui che puo' portare avanti lo scaricamento anche se l'app viene
+     sospesa (schermo spento). */
+  if (tipo === "SCARICA" && Array.isArray(data.url)) {
+    event.waitUntil(scaricaPerContoMio(data.url, data.cache || "spotifynonavraiimieisoldi-brani"));
   }
 });
+
+/* Scarica una lista di brani e li mette in cache. */
+async function scaricaPerContoMio(url, nomeCache) {
+  try {
+    const cache = await caches.open(nomeCache);
+    for (const u of url) {
+      try {
+        const richiesta = new Request(u);
+        if (await cache.match(richiesta)) continue;
+        const r = await fetch(richiesta);
+        if (r && r.status === 200) await cache.put(richiesta, r.clone());
+      } catch (e) { /* un brano che non va non ferma gli altri */ }
+    }
+  } catch (e) { /* noop */ }
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -703,7 +727,13 @@ self.addEventListener("fetch", (event) => {
 
   /* Le canzoni sono ospitate su raw.githubusercontent.com, fuori dall'origine
      della pagina: prima venivano escluse e quindi le copie offline non suonavano. */
-  if (isMusicBoxSong(url)) {
+  /* Ste: "si scaricano ma non partono senza connessione".
+     Prima il worker metteva in cache (e serviva da li') solo le canzoni che
+     arrivano da GitHub. Ma dal link di casa e da tailscale i brani arrivano
+     dal computer di casa, e quelli non finivano mai in cache: scaricati si',
+     ma senza rete non suonavano.
+     Adesso vale per ogni canzone (.mp3), da qualunque origine. */
+  if (isMusicBoxSong(url) || (url.origin === self.location.origin && /\.mp3$/i.test(url.pathname))) {
     event.respondWith(cachedMusicResponse(event));
     return;
   }
