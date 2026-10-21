@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792537510562,
-  "r": "SPOTIFY: prova 1792537510127"
- },
- {
-  "t": 1792538164518,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
   "t": 1792609140363,
   "r": "prova automatica: controllo che la traccia arrivi"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792610509632,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792610536094,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792610536098,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
