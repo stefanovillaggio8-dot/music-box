@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792619817779,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1792619817771,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792619887802,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792619944976,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
