@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6403";
+const CACHE = "spotifynonavraiimieisoldi-v6404";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -692,12 +692,36 @@ async function rispostaDallaCache(cached, range) {
   });
 }
 
+let _ultimaRivalidazione = 0;
+async function _rivalidaBrano(url) {
+  /* Prendo la versione nuova del file e la metto in cache. Lo faccio al massimo
+     una volta all'ora: sono file di qualche MB e non voglio scaricarli a ogni
+     ascolto. */
+  try {
+    const ora = Date.now();
+    if (ora - _ultimaRivalidazione < 3600000) return;
+    _ultimaRivalidazione = ora;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res || res.status !== 200) return;
+    const cache = await caches.open(CACHE_BRANI);
+    await cache.put(new Request(url), res.clone());
+  } catch (e) { /* pazienza: la prossima volta si riprova */ }
+}
+
 async function cachedMusicResponse(event) {
   const range = event.request.headers.get("range");
   const gia = await findCachedMusic(event.request.url);
   /* Brano gia' in mano: lo uso subito, senza aspettare la rete. */
   if (gia) {
     try {
+      /* Lo servo subito (cosi' parte all'istante) e intanto vado a prendere
+         la versione nuova del file: e' cosi' che le canzoni potenziate si
+         aggiornano (Ste: "sembra che non sia cambiato niente coi boost").
+         Solo i file potenziati si controllano, e non piu' di una volta
+         all'ora: gli altri non cambiano mai. */
+      if (!range && /\/bassi\//.test(event.request.url)) {
+        try { event.waitUntil(_rivalidaBrano(event.request.url)); } catch (e) { }
+      }
       return await rispostaDallaCache(gia, range);
     } catch (e) { /* se non riesco, vado in rete */ }
   }
@@ -706,7 +730,7 @@ async function cachedMusicResponse(event) {
     /* Salvo solo risposte complete (200), mai un pezzo audio (206). */
     if (response && response.status === 200 && !range && response.type !== "opaque") {
       event.waitUntil(
-        caches.open(CACHE).then((cache) => cache.put(new Request(event.request.url), response.clone()))
+        caches.open(CACHE_BRANI).then((cache) => cache.put(new Request(event.request.url), response.clone()))
           .catch(() => {})
       );
     }

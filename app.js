@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.403";
+  const APP_VERSION = "6.404";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4497,7 +4497,12 @@ function rebuildAudio(autoplay) {
     try {
       if (_precaricaInCorso) return;
       if (!t || !t.url) return;
-      const cache = await appCache();
+      /* Cache SEPARATA: i brani che scarico in anticipo non devono stare
+         dove stanno le tue download (altrimenti, quando il telefono e'
+         pieno, si portano via le tue). */
+      if (!("caches" in window)) return;
+      let cache = null;
+      try { cache = await caches.open("spotifynavraiimieisoldi-prefetch"); } catch (e) { cache = null; }
       if (!cache) return;
       _precaricaInCorso = true;
       try { await fetchToCache(t.url, cache, null); } catch (e) { }
