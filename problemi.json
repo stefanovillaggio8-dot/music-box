@@ -1,162 +1,162 @@
 [
  {
-  "t": 1792609769005,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+  "t": 1792532096812,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792611066020,
-  "r": "SPOTIFY: [v6.386] ritorno: nessun codice (indirimento: [], memoria: [])"
+  "t": 1792532096846,
+  "r": "worker /stato: risponde"
  },
  {
-  "t": 1792611066452,
-  "r": "SPOTIFY: [v6.386] ritorno: nessun codice (indirimento: [], memoria: [])"
+  "t": 1792532096852,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792611066468,
+  "t": 1792532096867,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
  {
-  "t": 1792611066471,
+  "t": 1792532096898,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792611066450,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+  "t": 1792532096978,
+  "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
  },
  {
-  "t": 1792611066871,
+  "t": 1792532096976,
+  "r": "SPOTIFY: [v6.365] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQBGMGQc39R5TXExjo7KSXVYmn0EoMhVLN_Jz7GO5rkkQwGItiJQm3k0Gk"
+ },
+ {
+  "t": 1792532097010,
+  "r": "SPOTIFY: [v6.365] premo il link 'Apri Spotify' (sto andando su Spotify)"
+ },
+ {
+  "t": 1792532097106,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792611070420,
+  "t": 1792532097314,
+  "r": "SPOTIFY: [v6.365] da Spotify: 0 playlist (errore 403)"
+ },
+ {
+  "t": 1792532097655,
+  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
+ },
+ {
+  "t": 1792532097656,
+  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
+ },
+ {
+  "t": 1792532097874,
+  "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
+ },
+ {
+  "t": 1792532097876,
+  "r": "SPOTIFY: [v6.365] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQBGMGQc39R5TXExjo7KSXVYmn0EoMhVLN_Jz7GO5rkkQwGItiJQm3k0Gk"
+ },
+ {
+  "t": 1792532098107,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792532098221,
+  "r": "SPOTIFY: [v6.365] da Spotify: 0 playlist (errore 403)"
+ },
+ {
+  "t": 1792532098526,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792532098525,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792532098541,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792532098553,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792532098540,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
+ },
+ {
+  "t": 1792532098882,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792532099052,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792611070910,
-  "r": "SPOTIFY: [v6.386] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792611071083,
-  "r": "SPOTIFY: [v6.386] X premuta"
- },
- {
-  "t": 1792611071165,
+  "t": 1792532099062,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792611071177,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792611071186,
+  "t": 1792532099073,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
  {
-  "t": 1792611071385,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+  "t": 1792532100276,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
  {
-  "t": 1792611071802,
-  "r": "SPOTIFY: [v6.386] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792611071986,
-  "r": "SPOTIFY: [v6.386] X premuta"
- },
- {
-  "t": 1792611072400,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792611072456,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792611072659,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792611072673,
-  "r": "SPOTIFY: [v6.386] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792611073565,
-  "r": "SPOTIFY: [v6.386] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792611073668,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792611073665,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792611073870,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792611074480,
-  "r": "SPOTIFY: [v6.386] X premuta"
- },
- {
-  "t": 1792611075386,
-  "r": "SPOTIFY: [v6.386] X premuta"
- },
- {
-  "t": 1792611082650,
+  "t": 1792532100485,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792611087880,
+  "t": 1792532100491,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792537216903,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792537219691,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792537316852,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792611104147,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792537316853,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
  {
-  "t": 1792611104324,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792537510562,
+  "r": "SPOTIFY: prova 1792537510127"
  },
  {
-  "t": 1792611105442,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+  "t": 1792538164518,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
  {
-  "t": 1792611105461,
-  "r": "worker /stato: risponde"
+  "t": 1792609140363,
+  "r": "prova automatica: controllo che la traccia arrivi"
  },
  {
-  "t": 1792611105445,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+  "t": 1792609964186,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
  {
-  "t": 1792611105528,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+  "t": 1792609967878,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
  {
-  "t": 1792611110179,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792610045897,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
  {
-  "t": 1792611110215,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792610049337,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
  {
-  "t": 1792611111385,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792611111386,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792611111421,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792611284558,
+  "t": 1792611290318,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
