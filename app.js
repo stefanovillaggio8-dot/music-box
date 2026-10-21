@@ -3921,7 +3921,13 @@ emptyEl.textContent = !total
       info.className = "track-info";
       const title = document.createElement("div");
       title.className = "track-title";
-      title.textContent = t.title;
+      /* Il testo va in un pezzo suo: e' quello che si tronca con i
+         puntini. I contrassegni ("tutti", "bassi") stanno accanto e non
+         vengono mai tagliati. */
+      const testoTitolo = document.createElement("span");
+      testoTitolo.className = "track-testo";
+      testoTitolo.textContent = t.title;
+      title.appendChild(testoTitolo);
       if (t.builtin) {
         const badge = document.createElement("span");
         badge.className = "track-badge";
@@ -5918,6 +5924,23 @@ function openProfile() {
     lyricActive = -1;
     lyricsUserScrollAt = 0;
     const synced = parseSynced(l.synced);
+    /* Ste: "il testo va in ritardo anche senza premere niente".
+       Ho confrontato i tempi con la durata vera di tutti i mp3: per 51 brani
+       su 350 i tempi sono di una versione diversa (piu' corta o piu'
+       lunga), e le righe arrivano con troppo ritardo (o troppo presto).
+       Se l'ultima riga finisce dopo la fine del brano, ri-scalo i tempi
+       sulla durata vera: e' un'approssimazione, ma toglie decine di
+       secondi di scarto. */
+    try {
+      const dur = totalDuration();
+      if (dur > 20 && synced.length) {
+        const ultimo = synced[synced.length - 1].t;
+        if (ultimo > dur + 5) {
+          const fattore = (dur - 2) / ultimo;
+          for (const riga of synced) riga.t = Math.round(riga.t * fattore * 10) / 10;
+        }
+      }
+    } catch (e) { /* noop */ }
     if (synced.length) {
       for (const line of synced) {
         const p = document.createElement("p");
