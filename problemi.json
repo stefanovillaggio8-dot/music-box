@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532096771,
-  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
- },
- {
   "t": 1792532096802,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792610045897,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792610049337,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
