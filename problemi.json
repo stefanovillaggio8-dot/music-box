@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792625421598,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792625421650,
-  "r": "visibili 239 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
-  "t": 1792625421730,
-  "r": "SPOTIFY: [v6.402] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792625422623,
-  "r": "SPOTIFY: [v6.402] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792625422635,
-  "r": "SPOTIFY: [v6.402] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792625423510,
-  "r": "SPOTIFY: [v6.402] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792625423867,
-  "r": "visibili 239 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
-  "t": 1792625423890,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792625423916,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792625423916,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
   "t": 1792625425099,
   "r": "FINALE: visibili 26 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 100.106.211.2:8167"
  },
@@ -158,5 +118,45 @@
  {
   "t": 1792625452032,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792625452047,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792625452058,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792625453025,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792625453248,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792625453254,
+  "r": "FINALE: visibili 26 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1792625453253,
+  "r": "visibili 26 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1792625453266,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792625453289,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792625453266,
+  "r": "FINALE: visibili 26 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1792625454472,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
  }
 ]
