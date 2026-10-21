@@ -141,7 +141,7 @@
     "a": "Evanescence"
    },
    "blanco|sottogonna": {
-    "v": 4,
+    "v": 5,
     "s": 33,
     "t": "SOTTOGONNA",
     "a": "BLANCO"
@@ -466,7 +466,7 @@
    },
    "katyperry|partofmehardstyleremix": {
     "v": 0,
-    "s": 92,
+    "s": 172,
     "t": "Part Of Me (Hardstyle Remix)",
     "a": "Katy Perry"
    },
@@ -865,6 +865,12 @@
     "s": 6,
     "t": "romantici",
     "a": "Tommaso Paradiso"
+   },
+   "paramore|alliwanted": {
+    "v": 0,
+    "s": 3,
+    "t": "All I Wanted",
+    "a": "Paramore"
    }
   },
   "Diego": {
