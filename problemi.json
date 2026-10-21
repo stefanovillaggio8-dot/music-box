@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792617905111,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792617905358,
-  "r": "SPOTIFY: [v6.394] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792617905777,
-  "r": "SPOTIFY: [v6.394] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792617906123,
-  "r": "SPOTIFY: [v6.394] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792617906356,
-  "r": "SPOTIFY: [v6.394] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792617906325,
-  "r": "SPOTIFY: [v6.394] il server aveva il permesso: lo prendo"
- },
- {
   "t": 1792617906998,
   "r": "SPOTIFY: [v6.394] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792617923064,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792617923061,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792617923166,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792617924273,
+  "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792617924272,
+  "r": "FINALE: visibili 120 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati si | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792617924843,
+  "r": "FINALE: visibili 120 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati si | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792617927477,
+  "r": "visibili 120 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati si | da 192.168.1.40:8788"
  }
 ]
