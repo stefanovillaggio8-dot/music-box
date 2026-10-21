@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792615318248,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792615318249,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792615318431,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792616036493,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
   "t": 1792616148624,
   "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792616200064,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792616200606,
+  "r": "SPOTIFY: [v6.393] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792616201306,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616201314,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616205537,
+  "r": "worker /stato: risponde"
  }
 ]
