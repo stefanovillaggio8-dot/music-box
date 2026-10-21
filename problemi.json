@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792626500620,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792626501784,
   "r": "visibili 27 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792626705312,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792626708249,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
