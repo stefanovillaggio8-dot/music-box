@@ -52,9 +52,11 @@
       var lato = Math.max(r.width, r.height);
       /* le fiamme sullo sfondo grande sono piu' piccole: la schermata e'
          molto piu' grande del disco del player */
-      var latoFiamme = lato * 0.34;
+      var latoFiamme = lato * 0.27;
       if (stato.progTesti !== prog) {
         disegnaChar(stato.boxTesti, a, "");
+        var caloreTesti = stato.boxTesti.querySelector(".mb-calore");
+        if (caloreTesti) caloreTesti.remove();
         if (!stato.boxTesti._fiamme || !stato.boxTesti._fiamme.length) {
           preparaFiamme(stato.boxTesti, a, latoFiamme);
         }
@@ -62,7 +64,9 @@
         stato.progTesti = prog;
       }
       if (!stato.boxTesti.querySelector(".mb-bragia").childNodes.length) {
-        stato.boxTesti.querySelector(".mb-bragia").innerHTML = stratoBragia(lato);
+        /* le bragia restano piccole: sullo sfondo grande altrimenti
+           sembrano macchie enormi */
+        stato.boxTesti.querySelector(".mb-bragia").innerHTML = stratoBragia(lato, 3);
       }
     } catch (e) { /* noop */ }
   }
@@ -250,9 +254,9 @@
     return out;
   }
 
-  function stratoBragia(lato) {
+  function stratoBragia(lato, misura) {
     var h = "";
-    var d = Math.max(2, lato * 0.075);
+    var d = misura || Math.max(2, lato * 0.075);
     for (var i = 0; i < 15; i++) {
       var dx = (i % 2 === 0 ? 1 : -1) * (6 + (i * 7) % 16);
       h += '<i style="left:' + (4 + (i * 13) % 92).toFixed(0) + "%;top:" + (14 + (i * 17) % 76).toFixed(0) +
@@ -501,7 +505,6 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
-      if (window.__mbForzaProg !== undefined) { prog = window.__mbForzaProg; suona = true; }
 
       /* lo sfondo grande della schermata dei testi brucia insieme: lo
          chiamo PRIMA di qualsiasi ritorno, cosi' la schermata dei testi
