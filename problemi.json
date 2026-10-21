@@ -1,53 +1,5 @@
 [
  {
-  "t": 1792615193818,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792615194526,
-  "r": "SPOTIFY: [v6.391] da Spotify: 0 playlist (errore 401)"
- },
- {
-  "t": 1792615194881,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792615205100,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792615206029,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792615206291,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792615207238,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792615207241,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792615207509,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792615317255,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792615317190,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792615317191,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792615318248,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +110,53 @@
  {
   "t": 1792616198152,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792616198151,
+  "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792616198188,
+  "r": "SPOTIFY: [v6.393] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792616198174,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616198745,
+  "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792616198931,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792616199065,
+  "r": "SPOTIFY: [v6.393] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792616199681,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792616199681,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616199672,
+  "r": "SPOTIFY: [v6.393] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792616200027,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792616200074,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792616200064,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
