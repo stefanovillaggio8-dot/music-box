@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792626471653,
-  "r": "filtro canzoni scaricate: no"
- },
- {
-  "t": 1792626472018,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792626472050,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792626472842,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792626473282,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792626473284,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
   "t": 1792626474064,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792626515630,
   "r": "visibili 27 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792626516219,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792626516272,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792626516273,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792626516399,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792626517471,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792626527215,
+  "r": "worker /stato: risponde"
  }
 ]
