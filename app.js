@@ -628,7 +628,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.382";
+  const APP_VERSION = "6.383";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12462,12 +12462,18 @@ for (const p of playlists) {
        notifica resta finche' l'app e' aperta. */
     setPlaybackState("none");
     try {
-      if (current() || (tracks && tracks.length)) {
-        updateMediaSession();
-        _accendiSilenzio();
-        setPlaybackState("playing");
-        _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
-      }
+      /* Ste: "quando dalle cuffie premo il tasto, parte una canzone di
+         soundcloud" e "la notifica deve restare fino quando chiudo l'app".
+         La pista silenziosa parte SEMPRE, appena apri l'app: cosi' il
+         telefono sa che la sessione audio e' di MusicBox, e i tasti
+         delle cuffie tornano a me anche con la musica ferma.
+         (Con l'app chiusa del tutto, invece, la sessione non esiste piu' e
+         iOS da' il comando all'ultima app che ha suonato: quello lo
+         decide il sistema, non l'app.) */
+      updateMediaSession();
+      _accendiSilenzio();
+      setPlaybackState("playing");
+      _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
     } catch (e) { /* noop */ }
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
