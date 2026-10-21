@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.376";
+  const APP_VERSION = "6.377";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13623,9 +13623,29 @@ async function _spotifyCompletaAccesso(code, stato) {
   }
 
 /* Le playlist, anche le private: per queste serve l'accesso. */
-async function _spotifyPlaylist() {
-  const tutte = [];
-  let url = "/me/playlists?limit=50";
+  async function _spotifyPlaylist() {
+    const tutte = [];
+    /* Prima la strada del sito di Spotify: le API normali chiedono
+       l'abbonamento Premium, il sito no. Se il server risponde, uso la sua
+       lista; se no, provo con le API (per chi ha Premium). */
+    try {
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/playlist", { cache: "no-store" });
+      const j = await r.json();
+      if (j && j.ok && j.voci && j.voci.length) {
+        _spotifyTraccia("le playlist sono arrivate dal sito di Spotify (" + j.voci.length + ")");
+        for (const p of j.voci) {
+          const info = p || {};
+          tutte.push({
+            id: String(info.id || info.uri || "").split(":").pop(),
+            nome: String(info.name || ""),
+            privata: info.public === false || /private/i.test(String(info.privacy || "")),
+            canzoni: Number((info.tracks && info.tracks.total) || (info.trackCount || 0) || 0)
+          });
+        }
+        return tutte;
+      }
+    } catch (e) { /* il server non risponde: uso le API */ }
+    let url = "/me/playlists?limit=50";
   for (let pagina = 0; pagina < 4 && url; pagina++) {
     const j = await _spotifyApi(url);
     if (!j) break;
@@ -13644,9 +13664,24 @@ async function _spotifyPlaylist() {
 
 /* I titoli veri della playlist: qui Spotify dà i nomi, che è quello che
    mi serve (l'audio poi lo cerco su YouTube). */
-async function _spotifyBrani(playlistId) {
-  const brani = [];
-  let url = "/playlists/" + playlistId + "/tracks?limit=100";
+  async function _spotifyBrani(playlistId) {
+    const brani = [];
+    /* Prima la strada del sito (senza Premium). */
+    try {
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/brani?id=" + encodeURIComponent(playlistId), { cache: "no-store" });
+      const j = await r.json();
+      if (j && j.ok && j.brani && j.brani.length) {
+        _spotifyTraccia("i brani sono arrivati dal sito di Spotify (" + j.brani.length + ")");
+        for (const b of j.brani) {
+          const nome = String((b && b.titolo) || "").replace(/\s+/g, " ").trim();
+          const chi = String((b && b.artista) || "").replace(/\s+/g, " ").trim();
+          if (!nome || !chi) continue;
+          brani.push(nome + "|" + chi);
+        }
+        if (brani.length) return brani;
+      }
+    } catch (e) { /* il server non risponde: uso le API */ }
+    let url = "/playlists/" + playlistId + "/tracks?limit=100";
   for (let pagina = 0; pagina < 12 && url; pagina++) {
     const j = await _spotifyApi(url);
     if (!j) break;
