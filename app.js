@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.389";
+  const APP_VERSION = "6.390";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12453,6 +12453,28 @@ for (const p of playlists) {
      Adesso la catena si accende SOLO dall'interruttore del pannello
      (quello e' un tocco, quindi il browser la lascia partire) e se non
      parte si ricostruisce l'elemento audio: l'uscita torna diretta. */
+  /* Ste, 21/10/2026: i bassi non si accendevano sull'iPhone.
+     Il browser lascia svegliare l'audio SOLO entro un tocco dell'utente, e
+     se lo sveglio quando preme "Accendi i bassi" a volte il tocco e' gia'
+     invecchiato e non parte (la musica sparisce).
+     Cosi' preparo il motore audio al PRIMO tocco che fa in assoluto: da
+     li' in poi l'audio e' sveglio e i bassi si accendono subito. */
+  let _audioProno = false;
+  function _preparaAudio() {
+    if (_audioProno) return;
+    _audioProno = true;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!_ctx) _ctx = new AC();
+      if (_ctx.state === "suspended") { try { _ctx.resume(); } catch (e) { } }
+    } catch (e) { }
+  }
+  try {
+    ["pointerdown", "touchstart", "click", "keydown"].forEach(function (ev) {
+      window.addEventListener(ev, _preparaAudio, { once: true, passive: true });
+    });
+  } catch (e) { }
   function _collegaElemento() {
     try {
       if (!_ctx || !audio) return false;
@@ -12502,6 +12524,15 @@ for (const p of playlists) {
       if (!_ctx) _ctx = new AC();
       /* qui, senza attese: il tocco e' ancora valido */
       if (_ctx.state === "suspended") { try { _ctx.resume(); } catch (e) { } }
+      /* se e' gia' sveglio (l'ho preparato al primo tocco) siamo a posto:
+         colleghiamo subito, senza aspettare */
+      if (_ctx.state === "running") {
+        if (_collegaElemento()) {
+          _catenaRifiutata = false;
+          bassiAccesi = true;
+          return Promise.resolve(true);
+        }
+      }
       return new Promise(function (risolvi) {
         setTimeout(function () {
           try {
@@ -13566,7 +13597,24 @@ async function _spotifyPkce() {
 }
 
 /* Step 1: butto Ste su Spotify per l'accesso. */
-async function _spotifyAccedi() {
+async function _spotifyAccedi(soloAutomatico) {
+  /* Ste, 21/10/2026: "all'avvio dell'app si apre spotify".
+     Se l'accesso parte DA SOLO (soloAutomatico) e l'app e' aperta come app
+     (dall'icona sulla schermata), non lo faccio: l'accesso automatico parte
+     solo quando arrivi da un link. Se invece lo preme lui, passo sempre. */
+  try {
+    const daIcona = (window.navigator && window.navigator.standalone === true) ||
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if (soloAutomatico && daIcona) {
+      _spotifyTraccia("accesso automatico fermato: l'app e' aperta come app");
+      try {
+        const u = new URL(window.location.href);
+        u.searchParams.delete("spotify");
+        window.history.replaceState({}, "", u.toString());
+      } catch (e) { }
+      return;
+    }
+  } catch (e) { /* noop */ }
   /* Ste: "l'accesso funziona, ma poi su questo link non c'e' piu' niente".
      Spotify rimanda sempre al link sicuro, e il permesso vale solo per il
      sito in cui e' nato. Se sono su una pagina "http" (quella di casa o
@@ -14938,7 +14986,32 @@ if (typeof document !== "undefined") {
          puo' rimandare. */
       try {
         if (/[?&]spotify=accedi\b/.test(String(window.location.search || ""))) {
-          setTimeout(function () { _spotifyAccedi(); }, 400);
+          /* L'app aperta come app (dall'icona sulla schermata) ha in
+             memoria un parametro rimasto da un collegamento vecchio: non
+             devo aprire Spotify da solo. */
+          let daIcona = false;
+          try {
+            daIcona = (window.navigator && window.navigator.standalone === true) ||
+              (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+          } catch (e) { }
+          if (daIcona) {
+            try {
+              const u = new URL(window.location.href);
+              u.searchParams.delete("spotify");
+              window.history.replaceState({}, "", u.toString());
+            } catch (e) { }
+            try { sessionStorage.setItem("mb.spotifyRitorno", ""); } catch (e) { }
+            try { _spotifyTraccia("parte da sola (icona): non apro Spotify"); } catch (e) { }
+          } else {
+            /* arrivo da un link (l'app di casa): l'accesso parte, ma una
+               volta sola per sessione, cosi' non si apre a ogni ricarica */
+            let giaPartito = false;
+            try { giaPartito = !!sessionStorage.getItem("mb.spotifyPartito"); } catch (e) { }
+            if (!giaPartito) {
+              try { sessionStorage.setItem("mb.spotifyPartito", "1"); } catch (e) { }
+              setTimeout(function () { _spotifyAccedi(true); }, 400);
+            }
+          }
         }
       } catch (e) { /* noop */ }
     if (document.readyState === "loading") {
