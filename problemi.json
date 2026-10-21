@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792532097655,
-  "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
- },
- {
-  "t": 1792532097656,
-  "r": "SPOTIFY: pagina nuova con il codice (scambio qui)"
- },
- {
-  "t": 1792532097874,
-  "r": "SPOTIFY: il worker ha fatto lo scambio: biglietto pronto"
- },
- {
-  "t": 1792532097876,
-  "r": "SPOTIFY: [v6.365] ritorno: codice trovato (dal indirimento) indirimento: [?code=AQBGMGQc39R5TXExjo7KSXVYmn0EoMhVLN_Jz7GO5rkkQwGItiJQm3k0Gk"
- },
- {
-  "t": 1792532098107,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
-  "t": 1792532098221,
-  "r": "SPOTIFY: [v6.365] da Spotify: 0 playlist (errore 403)"
- },
- {
-  "t": 1792532098526,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792532098525,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
- },
- {
   "t": 1792532098541,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | eliminati 31 | da stefanovillaggio8-dot.github."
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792609721502,
   "r": "SPOTIFY: [v6.385] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792609721722,
+  "r": "SPOTIFY: [v6.385] X premuta"
+ },
+ {
+  "t": 1792609721805,
+  "r": "SPOTIFY: [v6.385] X premuta"
+ },
+ {
+  "t": 1792609721966,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792609721965,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792609722247,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792609722361,
+  "r": "SPOTIFY: [v6.385] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792609722638,
+  "r": "SPOTIFY: [v6.385] X premuta"
+ },
+ {
+  "t": 1792609724745,
+  "r": "worker /stato: risponde"
  }
 ]
