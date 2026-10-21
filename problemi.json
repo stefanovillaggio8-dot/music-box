@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792621687678,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792621687739,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792621687914,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792621688954,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792621688977,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792621690825,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792621690873,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792621690916,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792621691435,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
   "t": 1792621692083,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792621802044,
   "r": "SPOTIFY: [v6.399] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792621802046,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792621802141,
+  "r": "SPOTIFY: [v6.399] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792621802239,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792621802597,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792621803072,
+  "r": "SPOTIFY: [v6.399] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792621803109,
+  "r": "SPOTIFY: [v6.399] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792621803782,
+  "r": "SPOTIFY: [v6.399] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792621803850,
+  "r": "SPOTIFY: [v6.399] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792621804521,
+  "r": "SPOTIFY: [v6.399] Spotify ha risposto 401: Missing/invalid/expired access token"
  }
 ]
