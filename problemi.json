@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792626340883,
-  "r": "SPOTIFY: [v6.403] il server aveva il permesso: lo prendo"
- },
- {
   "t": 1792626340921,
   "r": "SPOTIFY: [v6.403] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792626385983,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792626400672,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
