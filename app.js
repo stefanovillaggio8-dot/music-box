@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.374";
+  const APP_VERSION = "6.375";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13112,13 +13112,13 @@ function _spotifySalvaToken(t) {
   };
   /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
      apre music box ma c'e' scritto che l'accesso e' scaduto".
-     Motivo: l'app aveva un permesso VECCHIO (senza i permessi giusti) e
-     si teneva quello, scartando quello appena scambiato (che era quello
-     buono): cosi' Spotify rispondeva 403 e l'app diceva "accesso scaduto".
-     Adesso: il permesso appena scambiato vince SEMPRE. E il permesso
-     "vecchio" che il server tiene (quello che potrebbe essere scaduto
-     davvero) non viene usato al posto di quello buono: se ne l'app lo
-     chiede apposta e non ha n'altro, va bene anche quello. */
+     Motivo: l'app teneva un permesso VECCHIO e scartava quello appena
+     scambiato (che era quello buono): cosi' Spotify rispondeva 403 e
+     l'app diceva "accesso scaduto".
+     Adesso la regola e' semplice: l'ULTIMO permesso che arriva vince,
+     perche' e' il piu' nuovo. E sul 403 (permesso senza i permessi
+     giusti) il permesso viene buttato via, cosi' la volta dopo se ne
+     chiede uno nuovo. */
   /* Il "refresh token" e' il permesso che dura: con quello Spotify mi
 
      rinnova il permesso corto senza che Ste debba riautorizzare. */
@@ -13850,32 +13850,31 @@ function _spotifyChiediAccesso(perche) {
        con Spotify" e sembrava che tutto fosse rifatto da capo.
        Adesso, in parallelo, l'app chiede al server se c'e' un permesso
        pronto: se c'e', il pannello si riempie di playlist. */
-    try { _spotifyPrendiSePronto(); } catch (e) { /* noop */ }
-  }
-
+      try { _spotifyPrendiSePronto(); } catch (e) { /* noop */ }
+    }
   async function _spotifyPrendiSePronto() {
-    try {
-      const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
-      const jj = await rr.json();
-      if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
-        /* Ste: "accesso scaduto" e Spotify ha risposto 403.
-           Motivo: questo permesso e' quello che il SERVER tiene da prima
-           (potrebbe avere i permessi vecchi, e sostituireva quello appena
-           scambiato, che era quello buono). Adesso, se ho gia' un permesso
-           valido, questo NON lo sostituisce. */
-        if (_spotifyToken()) {
-          _spotifyTraccia("ho gia' un permesso valido: non lo sostituisco con quello del server");
-          _spotifyMostraPlaylist(true);
-          return;
-        }
-        _spotifyTraccia("il server aveva il permesso: lo prendo e mostro le playlist");
-        _spotifySalvaToken(jj.permesso);
-        try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
-        toast("Collegato a Spotify", 4000);
-        _spotifyMostraPlaylist();
-      }
-    } catch (e) { /* il server non risponde: pazienza */ }
+  try {
+  const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
+  const jj = await rr.json();
+  if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
+  /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
+     apre music box ma c'e' scritto che l'accesso e' scaduto".
+     Motivo: questo permesso e' quello che il SERVER tiene, e il server lo
+     ha fatto scambiare la pagina un secondo fa (quindi e' il PIU' NUOVO e
+     ha i permessi giusti). Prima lo scartavo se l'app aveva gia' un
+     permesso in tasca: e quello era il VECCHIO, senza i permessi giusti,
+     quindi Spotify rispondeva 403 e l'app diceva "accesso scaduto".
+     Adesso il permesso del server vince SEMPRE (e' il piu' nuovo), e la
+     funzione dice se l'ha preso, cosi' chi chiama puo' riprovare. */
+  _spotifyTraccia("il server aveva il permesso: lo prendo");
+  _spotifySalvaToken(jj.permesso);
+  try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
+  return true;
   }
+  } catch (e) { /* il server non risponde: pazienza */ }
+  return false;
+  }
+
 
   async function _spotifyMostraPlaylist(chiediAccesso) {
     /* Ste: "non mi spunta piu' accedi con spotify e l'autorizzazione
@@ -13930,6 +13929,27 @@ function _spotifyChiediAccesso(perche) {
       const perche = _spotifyErrore === -1
         ? "Non riesco a parlare con Spotify: controlla la rete."
         : (_spotifyErrore ? ("Spotify ha risposto " + _spotifyErrore + "." + (_spotifyMotivo ? " (" + _spotifyMotivo + ")" : "")) : "");
+      /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
+         apre music box ma c'e' scritto che l'accesso e' scaduto".
+         Motivo: l'app aveva in tasca un permesso VECCHIO (senza i permessi
+         giusti) e provava subito a leggere le playlist con quello: Spotify
+         rispondeva 403, l'app buttava via il permesso e diceva "accesso
+         scaduto", senza chiedere al server se nel frattempo ce n'era stato
+         uno nuovo (che c'era: l'aveva appena scambiato la pagina).
+         Adesso: se la lettura fallisce, l'app chiede al server un permesso
+         e, se c'e', riprova. */
+      try {
+        const pronto = await _spotifyPrendiSePronto();
+        if (pronto) {
+          _spotifyTraccia("il server aveva un permesso buono: riprovo le playlist");
+          const altre = await _spotifyPlaylist();
+          if (altre.length) {
+            _spotifyPnl("Le tue playlist", altre.length + " playlist",
+              '<p class="step-hint">Tocca la playlist da importare.</p>');
+            return;
+          }
+        }
+      } catch (e) { /* il server non risponde: pazienza */ }
       _spotifyPnl("Playlist", "",
         '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
         perche + ' Prova a collegare Spotify di nuovo.</p>');
@@ -14108,8 +14128,22 @@ async function _spotifyRientro() {
       }
     } catch (e) { /* noop */ }
   }
-  if (!code && !errore) {
-    _spotifyTraccia("ritorno: nessun codice (indirimento: [" + String((window.location && window.location.search) || "").slice(0, 70) + "], memoria: [" + String(sessionStorage.getItem("mb.spotifyRitorno") || "").slice(0, 40) + "])");
+    if (!code && !errore) {
+    _spotifyTraccia("ritorno: nessun codice (indirimento: [" + String((window.location && window.location.search) || "").slice(0, 70) + "], memoria: [" + String(sessionStorage.getItem("mb.spotifyRitorno") || "").slice(0, 40) + "])");
+    /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
+       apre music box ma c'e' scritto che l'accesso e' scaduto".
+       Motivo: l'app aveva in tasca un permesso VECCHIO (senza i permessi
+       giusti) e provava subito a leggere le playlist con quello: Spotify
+       rispondeva 403, l'app buttava via il permesso e diceva "accesso
+       scaduto", senza chiedere al server se nel frattempo ce n'era stato
+       uno nuovo (che c'era: l'aveva appena scambiato la pagina).
+       Adesso, quando non c'e' un permesso in tasca, l'app chiede al server
+       se ne ha uno pronto. */
+    try {
+      if (!_spotifyToken()) {
+        _spotifyPrendiSePronto().then(function (preso) { if (preso) _spotifyMostraPlaylist(true); });
+      }
+    } catch (e) { /* noop */ }
     /* Ste: "non va ancora, porta sempre ad accedi con spotify".
        Se lo scambio l'ha gia' iniziato la pagina (e' lei che lo fa, perche'
        e' l'unica che puo' finire prima che il telefono cambi scheda), l'app
@@ -14125,11 +14159,8 @@ async function _spotifyRientro() {
         const jj = await rr.json();
         if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
           _spotifyTraccia("il worker aveva il permesso pronto: lo prendo");
-          /* Se ho gia' un permesso valido, questo NON lo sostituisce: e' quello
-             che il server tiene da prima (potrebbe avere i permessi vecchi, e
-             faceva fallire la lettura delle playlist con il 403). */
-          if (!_spotifyToken()) _spotifySalvaToken(jj.permesso);
-          else _spotifyTraccia("ho gia' un permesso valido: tengo questo");
+          /* L'ultimo permesso che arriva vince: e' il piu' nuovo. */
+          _spotifySalvaToken(jj.permesso);
           try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
           toast("Collegato a Spotify", 4000);
           try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
