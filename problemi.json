@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792616432589,
-  "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792616432926,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792616451139,
   "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792616474899,
+  "r": "worker /stato: risponde"
  }
 ]
