@@ -13851,27 +13851,47 @@ function _spotifyParla(variabile, testo) {
   /* La parola esatta che dice Spotify (per es. "Insufficient client scope"):
      la voglio vedere anche nella schermata, non solo nelle tracce. */
   let _spotifyMotivo = "";
-function _spotifyChiediAccesso(perche) {
-  const extra = perche ? '<p class="step-hint">' + perche + '</p>' : '';
-  _spotifyPnl("Collegare Spotify",
-    "",
-    extra +
-    '<p class="step-hint">Per vedere le tue playlist serve l\'accesso al tuo ' +
-    'account Spotify. Me lo dai una volta sola, non ti chiedo la password e ' +
-    'il permesso vale solo su questo telefono.</p>' +
-    '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
-    '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
-  try {
-    $("spotifyAccedi").addEventListener("click", () => {
-      _spotifyTraccia("premo il pulsante 'Accedi con Spotify' del pannello");
-      _spotifyAccedi();
-    });
-    $("spotifySalta").addEventListener("click", () => {
-      _spotifyChiudi();
-      toast("Nessun problema, l'app resta come e'");
-    });
-  } catch (e) { /* noop */ }
-}
+  function _spotifyChiediAccesso(perche) {
+  const extra = perche ? '<p class="step-hint">' + perche + '</p>' : '';
+  /* Ste: "ogni volta devo fare un sacco di foto delle playlist e mandartele
+     dal pc, e un casino ci sto tanto tempo".
+     Con il link della playlist non serve fare niente: l'app lo legge da
+     sola. Serve solo che la playlist sia PUBBLICA (in Spotify si cambia con
+     un tocco), e non serve l'abbonamento Premium. */
+  _spotifyPnl("Importare da Spotify",
+    "",
+    extra +
+    '<p class="step-hint"><b>Il modo piu\' semplice:</b> in Spotify apri la playlist, ' +
+    'tocca Condividi, copia il link, e incollalo qui sotto. L\'app legge i titoli ' +
+    'da sola e li scarica. Serve che la playlist sia pubblica.</p>' +
+    '<input id="spotifyLinkCampo" class="spotify-link-campo" type="url" ' +
+    'inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false" ' +
+    'placeholder="https://open.spotify.com/playlist/...">' +
+    '<button class="btn-main" id="spotifyLinkVai" style="margin-top:10px">Importa questa playlist</button>' +
+    '<p class="step-hint" style="margin-top:16px"><b>Oppure</b> collega il tuo account: ' +
+    'serve solo se vuoi vedere l\'elenco delle tue playlist. Me lo dai una volta sola, ' +
+    'non ti chiedo la password e il permesso vale solo su questo telefono.</p>' +
+    '<button class="btn-main" id="spotifyAccedi">Accedi con Spotify</button>' +
+    '<button class="btn-main" id="spotifySalta" style="margin-top:10px">Non ora</button>');
+    try {
+      $("spotifyLinkVai").addEventListener("click", async function () {
+        const testo = String(($("spotifyLinkCampo") || {}).value || "").trim();
+        if (!testo) { toast("Incolla prima il link della playlist"); return; }
+        const m = /playlist\/([A-Za-z0-9]+)/.exec(testo);
+        if (!m) { toast("Quel link non sembra il link di una playlist"); return; }
+        _spotifyTraccia("importo la playlist dal link: " + m[1]);
+        _spotifyImporta(m[1]);
+      });
+      $("spotifyAccedi").addEventListener("click", () => {
+        _spotifyTraccia("premo il pulsante 'Accedi con Spotify' del pannello");
+        _spotifyAccedi();
+      });
+      $("spotifySalta").addEventListener("click", () => {
+        _spotifyChiudi();
+        toast("Nessun problema, l'app resta come e'");
+      });
+    } catch (e) { /* noop */ }
+  }
   function _spotifyMenu() {
     _spotifyTraccia("sono dentro _spotifyMenu");
     if (_spotifyToken()) {

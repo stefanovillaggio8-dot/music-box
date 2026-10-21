@@ -2310,7 +2310,7 @@ li.appena-aggiunto {
   }
   .logo-wrap { flex: 1 1 auto; }
   /* Ste: il titolo deve restare SCRITTO TUTTO, niente puntini di sospensione.
-     Per farlo stare non lo accorcio: rendo i caratteri un filo piÃ¹ piccoli e
+     Per farlo stare non lo accorcio: rendo i caratteri un filo piÃƒÂ¹ piccoli e
      lo lascio andare su una riga sola. */
   .logo.long {
     max-width: none;
@@ -2621,3 +2621,10 @@ li.appena-aggiunto {
   background:none;border:0;padding:0;color:#7fd3ff;font:inherit;
   text-decoration:underline;cursor:pointer;
 }
+/* Il campo dove incollare il link della playlist di Spotify. */
+.spotify-link-campo{
+  display:block;width:100%;margin-top:10px;padding:12px 14px;
+  border-radius:10px;border:1px solid #3a3f4a;
+  background:#14161c;color:#e8e6e3;font-size:16px;
+}
+.spotify-link-campo:focus{outline:2px solid #7fd3ff;outline-offset:1px}
