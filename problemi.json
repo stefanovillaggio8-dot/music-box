@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792609721805,
-  "r": "SPOTIFY: [v6.385] X premuta"
- },
- {
-  "t": 1792609721966,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792609721965,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792609722247,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792609722361,
-  "r": "SPOTIFY: [v6.385] da Spotify: 0 playlist (errore 401)"
- },
- {
-  "t": 1792609722638,
-  "r": "SPOTIFY: [v6.385] X premuta"
- },
- {
-  "t": 1792609724745,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792609724814,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792611072456,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792611072659,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792611072673,
+  "r": "SPOTIFY: [v6.386] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792611073565,
+  "r": "SPOTIFY: [v6.386] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792611073668,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792611073665,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792611073870,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792611074480,
+  "r": "SPOTIFY: [v6.386] X premuta"
  }
 ]
