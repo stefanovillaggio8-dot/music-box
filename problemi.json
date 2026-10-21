@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792621288588,
-  "r": "SPOTIFY: [v6.398] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792621288758,
-  "r": "SPOTIFY: [v6.398] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792621289402,
-  "r": "SPOTIFY: [v6.398] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792621289569,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792621289714,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792621289702,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792621289688,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792621290923,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792621291899,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1792621291916,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792621684475,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792621684546,
+  "r": "SPOTIFY: [v6.399] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792621684481,
+  "r": "SPOTIFY: [v6.399] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792621684752,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792621685271,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792621685666,
+  "r": "SPOTIFY: [v6.399] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792621685676,
+  "r": "SPOTIFY: [v6.399] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792621686225,
+  "r": "SPOTIFY: [v6.399] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792621687152,
+  "r": "SPOTIFY: [v6.399] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792621687245,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
