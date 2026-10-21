@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.375";
+  const APP_VERSION = "6.376";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13586,6 +13586,14 @@ async function _spotifyCompletaAccesso(code, stato) {
     /* La parola esatta di Spotify la voglio vedere ANCHE io, non solo
     nella traccia: se non va, l'app deve dire che cosa manca. */
     if (messaggio) _spotifyMotivo = messaggio;
+    /* Ste: "ancora mi dice accesso scaduto". In realta' Spotify ha
+       risposto che per le playlist vuole che l'account che ha registrato
+       l'app sia Premium. Non e' un permesso scaduto: e' una regola di
+       Spotify. */
+    if (/premium subscription|required for the owner/i.test(messaggio)) {
+      _spotifyMotivo = "per leggere le playlist Spotify chiede che l'account con cui e' stata registrata l'app abbia l'abbonamento Premium";
+      _spotifyErrore = 403;
+    }
     } catch (e) {
     _spotifyTraccia("Spotify ha risposto " + r.status + " (non riesco a leggere la spiegazione)");
         }
@@ -13950,9 +13958,13 @@ function _spotifyChiediAccesso(perche) {
           }
         }
       } catch (e) { /* il server non risponde: pazienza */ }
+      const servePremium = /Premium/.test(_spotifyMotivo || "");
       _spotifyPnl("Playlist", "",
-        '<p class="step-hint">Non sono riuscito a leggere le tue playlist. ' +
-        perche + ' Prova a collegare Spotify di nuovo.</p>');
+        '<p class="step-hint">' +
+        (servePremium
+          ? "Per leggere le playlist, Spotify chiede che l'account con cui e' stata registrata questa app (il tuo) abbia l'abbonamento Premium. Non e' un permesso scaduto: e' una regola di Spotify. Con l'abbonamento attivo funziona tutto senza rifare niente."
+          : ("Non sono riuscito a leggere le tue playlist. " + perche + " Prova a collegare Spotify di nuovo.")) +
+        '</p>');
       return;
     }
   let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
