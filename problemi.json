@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792615193650,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792615193616,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792615193818,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792616157760,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616198132,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792616198152,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
