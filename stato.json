@@ -388,7 +388,7 @@
    },
    "artie5ive|davverodavvero": {
     "v": 24,
-    "s": 489,
+    "s": 497,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -913,6 +913,18 @@
     "s": 0,
     "t": "Disfruto - Carla Morrison",
     "a": "Carla Morrison"
+   },
+   "blakeeldiablo|odietamo": {
+    "v": 0,
+    "s": 23,
+    "t": "Odi et Amo",
+    "a": "Blake el Diablo"
+   },
+   "coez|lamusicanonce": {
+    "v": 0,
+    "s": 12,
+    "t": "La musica non c'è",
+    "a": "Coez"
    }
   },
   "Diego": {
