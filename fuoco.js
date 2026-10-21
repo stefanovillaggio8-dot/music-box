@@ -943,7 +943,16 @@
      chiama questa funzione. */
   /* PROVA: disegno il fumo e lo restituisco (solo per le prove) */
   window.__mbDisegnaFumo = function (prog) {
-    try { return copertinaCheBrucia(prog); } catch (e) { return "ERRORE: " + e; }
+    try {
+      if (!imgCopertina) {
+        var im = new Image();
+        im.crossOrigin = "anonymous";
+        im.onload = function () { imgCopertina = im; };
+        im.src = "copertine/artie5ivedavverodavvero.jpg";
+        return "carico";
+      }
+      return copertinaCheBrucia(prog);
+    } catch (e) { return "ERRORE: " + e; }
   };
 
   window.__mbVaiA = function (sec) {

@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.397";
+  const APP_VERSION = "6.398";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11922,6 +11922,30 @@ if (SERVIZIO_PUBBLICA) {
     });
   }, 5000);
   }
+}
+
+async function _mandaGymAlServizio() {
+  /* Manda al servizio i brani della playlist "gym": il computer li prepara
+     potenziati (bassi, voce avanti, volume piu' forte).
+     Non serve la chiave segreta: qui si scrive solo quella lista. */
+  try {
+    if (!SERVIZIO_PUBBLICA) return;
+    const gym = [];
+    for (const p of (playlists || [])) {
+      if (String(p.name || "").trim().toLowerCase() !== "gym") continue;
+      for (const t of (p.tracks || [])) gym.push(String(t));
+    }
+    if (!gym.length) return;
+    const r = await fetch(SERVIZIO_PUBBLICA + "/gym", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ tracks: gym })
+    });
+    try {
+      if (r && r.ok) segnalaErrore("gym: " + gym.length + " brani mandati al computer");
+      else segnalaErrore("gym: il servizio non ha accettato la lista (" + (r ? r.status : "?") + ")");
+    } catch (e) { }
+  } catch (e) { /* senza rete: la lista arriva al prossimo giro */ }
 }
 
 async function _salvaPlaylistCondivise() {
