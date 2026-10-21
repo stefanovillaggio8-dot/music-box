@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792616496579,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792616496792,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792616497788,
   "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792616778812,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792616803395,
+  "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792616803347,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
