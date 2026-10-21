@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.384";
+  const APP_VERSION = "6.385";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4100,7 +4100,7 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       }
       audio = createAudio();
       audio.src = URL.createObjectURL(blob);
-      audio.volume = volumePct / 100;
+      _applicaAudio();
       segnalaErrore("uso la copia locale per: " +
         String((t.artist || "") + " " + (t.title || "")).slice(0, 60));
       doPlay();
@@ -4235,7 +4235,7 @@ function rebuildAudio(autoplay) {
   if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
   audio = createAudio();
   audio.src = t.url;
-  audio.volume = volumePct / 100;
+  _applicaAudio();
   try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
   if (autoplay) doPlay();
   }
@@ -4268,7 +4268,7 @@ function rebuildAudio(autoplay) {
   async function doPlay(hoGiaRiprovato) {
     if (!audio) audio = createAudio();
     try {
-      audio.volume = volumePct / 100;
+      _applicaAudio();
       setPlaybackState("playing");
       await _prontaARiprodurre();
       await audio.play();
@@ -5093,7 +5093,7 @@ async function playById(id, autoplay = true) {
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
     try { _scaricaDaSolaSeServe(t); } catch (e) { /* noop */ }
-    audio.volume = volumePct / 100;
+    _applicaAudio();
     setHud();
     /* Se la pagina dei testi e' aperta, il play/pausa e' lo sfondo devono
        seguire il brano nuovo. */
@@ -12420,6 +12420,54 @@ for (const p of playlists) {
   /* ---------- Volume ---------- */
   let volumePct = LS.get("mb.vol", 100);
   let volumeBeforeMute = 100;
+
+  /* ---------- Bassi e volume extra (oltre il 100%) ----------
+     Ste: "posso aumentare ancora di piu' i bassi e il volume della musica".
+     I bassi si alzano con un filtro (Web Audio) e il volume con un
+     amplificatore: l'elemento audio del browser arriva al 100% e basta, per
+     andare oltre serve appunto l'amplificatore. */
+  let bassiPct = Number(LS.get("mb.bassi", 0)) || 0;
+  let _ctx = null, _fonte = null, _filtroBassi = null, _gain = null, _audioCollegato = null;
+
+  function _preparaGrafico() {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC || !audio) return false;
+      if (!_ctx) _ctx = new AC();
+      if (_audioCollegato !== audio) {
+        /* l'elemento audio e' stato rifatto (cambia brano): rifaccio il
+           collegamento */
+        try { if (_fonte) _fonte.disconnect(); } catch (e) { }
+        _fonte = _ctx.createMediaElementSource(audio);
+        _filtroBassi = _ctx.createBiquadFilter();
+        _filtroBassi.type = "lowshelf";
+        _filtroBassi.frequency.value = 180;
+        _gain = _ctx.createGain();
+        _fonte.connect(_filtroBassi);
+        _filtroBassi.connect(_gain);
+        _gain.connect(_ctx.destination);
+        _audioCollegato = audio;
+      }
+      try { if (_ctx.state === "suspended") _ctx.resume(); } catch (e) { }
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function _applicaAudio() {
+    try {
+      const v = Number(volumePct) || 0;
+      const serveGrafico = (v > 100) || (Number(bassiPct) > 0);
+      if (serveGrafico && !_preparaGrafico()) {
+        /* il browser non permette la catena: l'app continua come prima */
+        if (audio) audio.volume = Math.min(1, v / 100);
+        return false;
+      }
+      if (audio) audio.volume = v > 100 ? 1 : v / 100;
+      if (_gain) _gain.gain.value = v > 100 ? v / 100 : 1;
+      if (_filtroBassi) _filtroBassi.gain.value = (Number(bassiPct) / 100) * 20;
+      return true;
+    } catch (e) { return false; }
+  }
   function updateVolumeUI() {
     const s = $("volSlider");
     if (s) s.value = String(volumePct);
@@ -12427,17 +12475,73 @@ for (const p of playlists) {
     if (b) b.classList.toggle("muted", volumePct === 0);
   }
   function setVolume(v) {
-    volumePct = Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+    volumePct = Math.max(0, Math.min(150, Math.round(Number(v) || 0)));
     if (volumePct > 0) volumeBeforeMute = volumePct;
-    if (audio) audio.volume = volumePct / 100;
+    _applicaAudio();
     LS.set("mb.vol", volumePct);
     updateVolumeUI();
   }
   $("volSlider").addEventListener("input", (e) => setVolume(e.target.value));
+  try { $("btnBassiVolume").addEventListener("click", apriBassiVolume); } catch (e) { /* noop */ }
   $("btnVolIcon").addEventListener("click", () => {
     if (volumePct > 0) setVolume(0);
     else setVolume(volumeBeforeMute || 100);
   });
+
+  /* Ste: "nella playlist gym metti l'opzione che posso aumentare ancora di
+     piu' i bassi e il volume della musica". */
+  function apriBassiVolume() {
+    try { _chiudiAltro(); } catch (e) { /* noop */ }
+    let box = document.getElementById("bassiVolumePanel");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "bassiVolumePanel";
+      box.className = "import-overlay";
+      box.setAttribute("role", "dialog");
+      box.setAttribute("aria-modal", "true");
+      box.innerHTML =
+        '<div class="import-box">' +
+        '<div class="import-head"><span class="import-title">Bassi e volume</span>' +
+        '<button class="import-close" id="bassiVolumeChiudi" aria-label="Chiudi">&times;</button></div>' +
+        '<div class="import-body">' +
+        "<p class=\"step-hint\">I bassi si alzano fino a +20 dB. Il volume si puo' portare fino al 150% (senti un po' piu' forte, senza sporcare gli altri).</p>" +
+        '<label class="step-hint" for="bassiSlider">Bassi: <span id="bassiValore">0</span></label>' +
+        '<input type="range" id="bassiSlider" min="0" max="100" step="1" value="' + Number(bassiPct) + '" />' +
+        '<label class="step-hint" for="volExtraSlider">Volume: <span id="volExtraValore">' + Number(volumePct) + '%</span></label>' +
+        '<input type="range" id="volExtraSlider" min="0" max="150" step="1" value="' + Number(volumePct) + '" />' +
+        "<div id=\"bassiAvviso\" class=\"step-hint\" hidden>Questo browser non permette di alzare i bassi: l'app continua a funzionare come prima.</div>" +
+        '</div></div>';
+      document.body.appendChild(box);
+      const bs = box.querySelector("#bassiSlider");
+      const vs = box.querySelector("#volExtraSlider");
+      bs.addEventListener("input", function () {
+        bassiPct = Math.max(0, Math.min(100, Math.round(Number(bs.value) || 0)));
+        box.querySelector("#bassiValore").textContent = String(bassiPct);
+        LS.set("mb.bassi", bassiPct);
+        const va = _applicaAudio();
+        const av = box.querySelector("#bassiAvviso");
+        if (av) av.hidden = !!va;
+      });
+      vs.addEventListener("input", function () {
+        setVolume(vs.value);
+        box.querySelector("#volExtraValore").textContent = Number(volumePct) + "%";
+      });
+      box.querySelector("#bassiVolumeChiudi").addEventListener("click", function () {
+        box.hidden = true;
+      });
+      box.addEventListener("click", function (e) { if (e.target === box) box.hidden = true; });
+    }
+    box.hidden = false;
+    const bs = box.querySelector("#bassiSlider");
+    const vs = box.querySelector("#volExtraSlider");
+    if (bs) bs.value = String(bassiPct);
+    if (vs) vs.value = String(volumePct);
+    const bv = box.querySelector("#bassiValore");
+    if (bv) bv.textContent = String(bassiPct);
+    const vv = box.querySelector("#volExtraValore");
+    if (vv) vv.textContent = Number(volumePct) + "%";
+    syncNoScroll();
+  }
 
   /* ---------- Avvio ---------- */
   (async function init() {
@@ -12453,7 +12557,7 @@ for (const p of playlists) {
       " | aperta da " + Math.round(performance.now() / 1000) + " secondi");
   } catch (e) { /* noop */ }
     audio = createAudio();
-    audio.volume = volumePct / 100;
+    _applicaAudio();
     updateVolumeUI();
     /* Ste: "quando dalle cuffie premo il tasto, parte una canzone di
        soundcloud" e "la notifica in alto deve restare fino quando chiudo
