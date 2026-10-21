@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792615191860,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792615192288,
-  "r": "SPOTIFY: [v6.391] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792615193616,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792615193621,
-  "r": "SPOTIFY: [v6.391] da Spotify: 0 playlist (errore 401)"
- },
- {
   "t": 1792615193650,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792616154826,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792616156599,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792616156601,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792616156656,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616157760,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
  }
 ]
