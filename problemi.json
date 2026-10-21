@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792614802866,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792614802930,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792614802985,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792614803030,
-  "r": "SPOTIFY: [v6.390] X premuta"
- },
- {
   "t": 1792614804114,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792615207238,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792615207241,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792615207509,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792615317255,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792615317190,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
