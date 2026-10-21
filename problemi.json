@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792616434119,
-  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792616434237,
-  "r": "SPOTIFY: [v6.393] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792616435334,
-  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792616435429,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792616435438,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792616435460,
-  "r": "visibili 208 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792616435506,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792616436355,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792616491381,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
   "t": 1792616491381,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792616741086,
   "r": "SPOTIFY: [v6.393] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792616741866,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792616741986,
+  "r": "SPOTIFY: [v6.393] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792616742137,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616742180,
+  "r": "SPOTIFY: [v6.393] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792616742333,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792616742331,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792616742348,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792616742356,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792616743151,
+  "r": "SPOTIFY: [v6.393] da Spotify: 0 playlist (errore 401)"
  }
 ]
