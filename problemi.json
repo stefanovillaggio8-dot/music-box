@@ -1,10 +1,6 @@
 [
  {
   "t": 1792616381494,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792616381494,
   "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
  {
@@ -158,5 +154,9 @@
  {
   "t": 1792616688250,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616739257,
+  "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
