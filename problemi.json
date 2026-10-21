@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792616279328,
-  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792616279623,
-  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792616340444,
   "r": "SPOTIFY: [v6.393] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792616683928,
   "r": "SPOTIFY: [v6.393] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792616684828,
+  "r": "SPOTIFY: [v6.393] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792616686189,
+  "r": "worker /stato: risponde"
  }
 ]
