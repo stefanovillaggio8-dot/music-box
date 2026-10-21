@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.390";
+  const APP_VERSION = "6.391";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12432,6 +12432,8 @@ for (const p of playlists) {
      se nell'ultima sessione era oltre, torna al 100% invece di far partire
      una catena che lascerebbe l'audio in silenzio. */
   if (volumePct > 100) { volumePct = 100; LS.set("mb.vol", 100); }
+  /* I bassi e il volume oltre il 100% non si possono fare dal browser su
+     iPhone: per quello ci sono i file con i bassi gia' alzati. */
   let volumeBeforeMute = 100;
 
   /* ---------- Bassi e volume extra (oltre il 100%) ----------
@@ -12560,19 +12562,14 @@ for (const p of playlists) {
   }
 
   function _applicaAudio() {
+    /* Sempre e solo la strada diretta: l'elemento audio va dritto alle
+       cuffie. La catena Web Audio (filtro bassi + amplificatore) su iPhone
+       e' instabile: quando si attiva, l'audio sparisce e non torna. */
     try {
       const v = Number(volumePct) || 0;
-      if (!bassiAccesi) {
-        /* Senza la catena l'elemento audio va diretto alle cuffie: il
-           volume non puo' passare il 100% e i bassi restano spenti. */
-        if (audio) audio.volume = Math.min(1, v / 100);
-        if (_gain) _gain.gain.value = 1;
-        if (_filtroBassi) _filtroBassi.gain.value = 0;
-        return true;
-      }
-      if (audio) audio.volume = v > 100 ? 1 : v / 100;
-      if (_gain) _gain.gain.value = v > 100 ? v / 100 : 1;
-      if (_filtroBassi) _filtroBassi.gain.value = (Number(bassiPct) / 100) * 20;
+      if (audio) audio.volume = Math.min(1, Math.max(0, v / 100));
+      if (_gain) _gain.gain.value = 1;
+      if (_filtroBassi) _filtroBassi.gain.value = 0;
       return true;
     } catch (e) { return false; }
   }
@@ -12583,28 +12580,13 @@ for (const p of playlists) {
     if (b) b.classList.toggle("muted", volumePct === 0);
   }
   function setVolume(v) {
-    volumePct = Math.max(0, Math.min(150, Math.round(Number(v) || 0)));
+    /* Il massimo e' il 100%: oltre serve la catena Web Audio, che su
+       iPhone fa sparire l'audio (vedi la nota sopra). */
+    volumePct = Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
     if (volumePct > 0) volumeBeforeMute = volumePct;
     LS.set("mb.vol", volumePct);
     updateVolumeUI();
-    if (volumePct > 100) {
-      /* Oltre il 100% serve la catena: la accendo adesso (questo e' un
-         tocco dell'utente, quindi il browser la lascia partire). Se non
-         parte, torno al 100% e lo dico: la musica si sente SEMPRE. */
-      _accendiCatena().then(function (ok) {
-        if (!ok) {
-          volumePct = 100; volumeBeforeMute = 100;
-          LS.set("mb.vol", 100);
-          updateVolumeUI();
-          _applicaAudio();
-          toast("Questo telefono non permette il volume oltre il 100%");
-        } else {
-          _applicaAudio();
-        }
-      });
-    } else {
-      _applicaAudio();
-    }
+    _applicaAudio();
   }
   $("volSlider").addEventListener("input", (e) => setVolume(e.target.value));
   try { $("btnBassiVolume").addEventListener("click", apriBassiVolume); } catch (e) { /* noop */ }
@@ -12629,101 +12611,23 @@ for (const p of playlists) {
         '<div class="import-head"><span class="import-title">Bassi e volume</span>' +
         '<button class="import-close" id="bassiVolumeChiudi" aria-label="Chiudi">&times;</button></div>' +
         '<div class="import-body">' +
-        "<p class=\"step-hint\">I bassi si alzano fino a +20 dB. Il volume si puo' portare fino al 150% (senti un po' piu' forte, senza sporcare gli altri). I bassi e il volume oltre il 100% si accendono con un tocco (e' il browser che lo chiede): se non si accendono, la musica si sente lo stesso.</p>" +
-        '<label class="step-hint" for="bassiSlider">Bassi: <span id="bassiValore">0</span></label>' +
-        '<input type="range" id="bassiSlider" min="0" max="100" step="1" value="' + Number(bassiPct) + '" />' +
-        '<button class="bassi-pulsante" id="bassiAccendi" type="button">Accendi i bassi</button>' +
+        "<p class=\"step-hint\"><b>Volume del brano:</b> si regola qui (fino al 100%). Per sentire piu' forte alza anche il volume del telefono.</p>" +
         '<label class="step-hint" for="volExtraSlider">Volume: <span id="volExtraValore">' + Number(volumePct) + '%</span></label>' +
-        '<input type="range" id="volExtraSlider" min="0" max="150" step="1" value="' + Number(volumePct) + '" />' +
+        '<input type="range" id="volExtraSlider" min="0" max="100" step="1" value="' + Number(volumePct) + '" />' +
         '<button class="bassi-pulsante" id="bassiRipristina" type="button">Ripristina audio</button>' +
-        "<p class=\"step-hint\">Se i bassi non si accendono, il telefono ha un modo suo che funziona sempre (e non costa niente):</p>" +
-        '</p>' +
-        "<p class=\"step-hint\"><b>1.</b> Impostazioni &gt; Accessibilita' &gt; Audio e video &gt; <b>Regolazioni cuffie</b> (e entra dentro)</p>" +
-        '</p>' +
-        "<p class=\"step-hint\"><b>2.</b> Attiva <b>Amplifica</b></p>" +
-        '</p>' +
-        "<p class=\"step-hint\"><b>3.</b> Alza lo slider <b>Boost audio</b>: e' il volume che va oltre il 100% e rende la voce piu' piena.</p>" +
-        '</p>' +
-        "<p class=\"step-hint\">Le opzioni dentro 'Regolazioni cuffie' le vedi quando le cuffie sono collegate. Questo amplifica l'audio del telefono, quindi funziona anche con MusicBox.</p>" +
-        '<div id="bassiAvviso" class="step-hint" hidden>Questo browser non permette di alzare i bassi: l\'app continua a funzionare come prima.</div>' +
+        "<p class=\"step-hint\"><b>I bassi.</b> Sul telefono il browser non permette di aggiungere bassi all'audio mentre suona (e' una cosa che fa impazzire il suono, non l'ho lasciata attiva). Percio' i bassi veri li preparo io nei file stessi delle canzoni: quando sono pronti l'app te lo dice. Intanto, sul telefono: Impostazioni &gt; Accessibilita' &gt; Audio e video &gt; <b>Regolazioni cuffie</b> (entra dentro) e attiva <b>Amplifica</b> e alza <b>Boost audio</b>. Funziona solo con AirPods, AirPods Pro, EarPods e alcune Beats.</p>" +
         '</div></div>';
       document.body.appendChild(box);
-      const bs = box.querySelector("#bassiSlider");
       const vs = box.querySelector("#volExtraSlider");
-      bs.addEventListener("input", function () {
-        bassiPct = Math.max(0, Math.min(100, Math.round(Number(bs.value) || 0)));
-        box.querySelector("#bassiValore").textContent = String(bassiPct);
-        LS.set("mb.bassi", bassiPct);
-        if (bassiPct > 0 && !bassiAccesi) {
-          /* i bassi si accendono solo qui: e' un tocco dell'utente, quindi
-             il browser permette al contesto audio di partire */
-          _accendiCatena().then(function (ok) {
-            _applicaAudio();
-            const av = box.querySelector("#bassiAvviso");
-            if (av) av.hidden = !!ok;
-            if (!ok) {
-              bassiPct = 0;
-              LS.set("mb.bassi", 0);
-              bs.value = "0";
-              const bv = box.querySelector("#bassiValore");
-              if (bv) bv.textContent = "0";
-              toast("Questo telefono non permette di alzare i bassi: la musica si sente lo stesso");
-            }
-          });
-        } else {
-          _applicaAudio();
-        }
-      });
-      const bAccendi = box.querySelector("#bassiAccendi");
-      if (bAccendi) {
-        bAccendi.addEventListener("click", function () {
-          if (bassiAccesi) {
-            bAccendi.textContent = "Accendi i bassi";
-            /* spegne: la catena viene staccata e l'elemento audio rifatto,
-               cosi' l'uscita torna diretta alle cuffie */
-            _dimenticaCatena();
-            _ricostruisciAudio();
-            bassiPct = 0;
-            LS.set("mb.bassi", 0);
-            bs.value = "0";
-            const bv = box.querySelector("#bassiValore");
-            if (bv) bv.textContent = "0";
-            _applicaAudio();
-            toast("Bassi spenti");
-          } else {
-            bassiPct = Math.max(20, bassiPct || 40);
-            bs.value = String(bassiPct);
-            const bv = box.querySelector("#bassiValore");
-            if (bv) bv.textContent = String(bassiPct);
-            LS.set("mb.bassi", bassiPct);
-            _accendiCatena().then(function (ok) {
-              _applicaAudio();
-              const av = box.querySelector("#bassiAvviso");
-              if (av) av.hidden = !!ok;
-              if (ok) bAccendi.textContent = "Spegni i bassi";
-              toast(ok ? "Bassi accesi" : "Questo telefono non permette i bassi: la musica si sente lo stesso");
-            });
-          }
-        });
-      }
       const bRipristina = box.querySelector("#bassiRipristina");
       if (bRipristina) {
         bRipristina.addEventListener("click", function () {
+          /* Ste, 21/10/2026: "funziona di nuovo solo se faccio ripristina
+             volume". Questo bottone rifa l'elemento audio, cosi' l'uscita
+             torna diretta alle cuffie. */
           _dimenticaCatena();
-          volumePct = 100; volumeBeforeMute = 100;
-          bassiPct = 0;
-          LS.set("mb.vol", 100); LS.set("mb.bassi", 0);
           _ricostruisciAudio();
           _applicaAudio();
-          updateVolumeUI();
-          const vs2 = box.querySelector("#volExtraSlider");
-          if (vs2) vs2.value = "100";
-          const vv2 = box.querySelector("#volExtraValore");
-          if (vv2) vv2.textContent = "100%";
-          const bs2 = box.querySelector("#bassiSlider");
-          if (bs2) bs2.value = "0";
-          const bv2 = box.querySelector("#bassiValore");
-          if (bv2) bv2.textContent = "0";
           toast("Audio ripristinato");
         });
       }
@@ -12741,10 +12645,7 @@ for (const p of playlists) {
     const vs = box.querySelector("#volExtraSlider");
     if (bs) bs.value = String(bassiPct);
     if (vs) vs.value = String(volumePct);
-    const bv = box.querySelector("#bassiValore");
-    if (bv) bv.textContent = String(bassiPct);
-    const bAcc = box.querySelector("#bassiAccendi");
-    if (bAcc) bAcc.textContent = bassiAccesi ? "Spegni i bassi" : "Accendi i bassi";
+
     const vv = box.querySelector("#volExtraValore");
     if (vv) vv.textContent = Number(volumePct) + "%";
     syncNoScroll();
@@ -13525,6 +13426,9 @@ const SPOTIFY_REDIRECT = "https://stefanovillaggio8-dot.github.io/music-box/";
   const SPOTIFY_SCOPI = "playlist-read-private playlist-read-collaborative user-read-private user-read-email";
 
 let _spotifyAccess = null;
+/* All'avvio l'app controlla se il permesso di Spotify e' valido, ma non deve
+   aprire niente: il pannello di Spotify si apre solo se lo chiede Ste. */
+let _spotifySilenzioso = true;
 let _spotifyChiave = null;   /* la "code_verifier" dell'accesso in corso */
 
 function _spotifySalvaToken(t) {
@@ -14156,6 +14060,9 @@ function _spotifyPnl(titolo, sotto, html) {
   $("spotifyTitolo").textContent = titolo;
   $("spotifySotto").textContent = sotto || "";
   $("spotifyCorpo").innerHTML = html || "";
+  /* Se l'app sta solo controllando se il permesso e' valido, il pannello
+     resta chiuso: si apre solo quando lo chiede lui. */
+  if (typeof _spotifySilenzioso !== "undefined" && _spotifySilenzioso) return;
   p.hidden = false;
   syncNoScroll();
 }
@@ -14882,6 +14789,8 @@ function _spotifySicuro(s) {
 let _ultimoTapSpotify = 0;
 
 function _spotifyApri() {
+  /* Ste lo ha chiesto lui: da qui in poi il pannello si apre normalmente. */
+  try { _spotifySilenzioso = false; } catch (e) { }
   /* Ste: "ancora spotify non apre nulla". Per cinque volte ho provato a
      indovinare guardando il pulsante. Il problema vero e' che qui dentro
      c'erano DUE strade per lo stesso tocco: il collegamento scritto nella
