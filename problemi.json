@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792620737928,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792620738124,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792620739135,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792620999060,
   "r": "FINALE: visibili 27 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792621007869,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792621007872,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
