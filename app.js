@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.388";
+  const APP_VERSION = "6.389";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12605,15 +12605,15 @@ for (const p of playlists) {
         '<label class="step-hint" for="volExtraSlider">Volume: <span id="volExtraValore">' + Number(volumePct) + '%</span></label>' +
         '<input type="range" id="volExtraSlider" min="0" max="150" step="1" value="' + Number(volumePct) + '" />' +
         '<button class="bassi-pulsante" id="bassiRipristina" type="button">Ripristina audio</button>' +
-        '<p class="step-hint">Se i bassi non si accendono, il telefono ha un modo suo che funziona sempre (e non costa niente):' +
+        "<p class=\"step-hint\">Se i bassi non si accendono, il telefono ha un modo suo che funziona sempre (e non costa niente):</p>" +
         '</p>' +
-        '<p class="step-hint"><b>1.</b> Impostazioni &gt; Accessibilita&apos; &gt; Audio e video &gt; <b>Regolazioni cuffie</b> (e entra dentro)' +
+        "<p class=\"step-hint\"><b>1.</b> Impostazioni &gt; Accessibilita' &gt; Audio e video &gt; <b>Regolazioni cuffie</b> (e entra dentro)</p>" +
         '</p>' +
-        '<p class="step-hint"><b>2.</b> Attiva <b>Amplifica</b>' +
+        "<p class=\"step-hint\"><b>2.</b> Attiva <b>Amplifica</b></p>" +
         '</p>' +
-        '<p class="step-hint"><b>3.</b> Alza lo slider <b>Boost audio</b>: e' il volume che va oltre il 100% e rende la voce piu' piena.' +
+        "<p class=\"step-hint\"><b>3.</b> Alza lo slider <b>Boost audio</b>: e' il volume che va oltre il 100% e rende la voce piu' piena.</p>" +
         '</p>' +
-        '<p class="step-hint">Le opzioni dentro "Regolazioni cuffie" le vedi quando le cuffie sono collegate. Questo amplifica l'audio del telefono, quindi funziona anche con MusicBox.</p>' +
+        "<p class=\"step-hint\">Le opzioni dentro 'Regolazioni cuffie' le vedi quando le cuffie sono collegate. Questo amplifica l'audio del telefono, quindi funziona anche con MusicBox.</p>" +
         '<div id="bassiAvviso" class="step-hint" hidden>Questo browser non permette di alzare i bassi: l\'app continua a funzionare come prima.</div>' +
         '</div></div>';
       document.body.appendChild(box);
