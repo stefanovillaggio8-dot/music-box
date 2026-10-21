@@ -25,14 +25,29 @@
         if (!window.Audio) return;
         /* WAV di 0,1 secondi di silenzio (generato sul computer). */
         const silenzio = "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
-        _silenzio = new Audio(silenzio);
-        _silenzio.loop = true;
-        /* Volume NON zero: a volume zero il telefono riconosce il trucco,
-           chiude la sessione audio e la notifica sparisce di nuovo. A 0,01
-           non si sente niente ma la sessione resta la nostra. */
-        _silenzio.volume = 0.01;
-        _silenzio.setAttribute("playsinline", "");
-        const prova = _silenzio.play();
+        /* Prima il file vero (silenzio.mp3, 3 minuti): continua a suonare
+           anche quando iPhone congela il JavaScript dell'app in secondo
+           piano, e quindi la sessione audio resta viva (e con lei la
+           notifica e i tasti delle cuffie). Il peccato di 0,1 secondi
+           resta come piano B, se il file non si riesce a caricare. */
+        const a = new Audio("silenzio.mp3");
+        a.loop = true;
+        a.volume = 0.01;
+        a.setAttribute("playsinline", "");
+        a.addEventListener("error", function () {
+          /* Il file non si e' caricato: uso il peccato di sempre. */
+          try {
+            const b = new Audio(silenzio);
+            b.loop = true;
+            b.volume = 0.01;
+            b.setAttribute("playsinline", "");
+            const p2 = b.play();
+            if (p2 && p2.catch) p2.catch(() => { });
+            _silenzio = b;
+          } catch (e) { }
+        });
+        _silenzio = a;
+        const prova = a.play();
         if (prova && prova.catch) prova.catch(() => { });
       } catch (e) { /* noop */ }
     }
@@ -631,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.399";
+  const APP_VERSION = "6.400";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
