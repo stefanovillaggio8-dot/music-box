@@ -877,6 +877,24 @@
     "s": 145,
     "t": "Monster",
     "a": "Skillet"
+   },
+   "calcutta|cosamimanchiafare": {
+    "v": 1,
+    "s": 0,
+    "t": "Cosa mi manchi a fare",
+    "a": "Calcutta"
+   },
+   "calcutta|frosinone": {
+    "v": 0,
+    "s": 155,
+    "t": "Frosinone",
+    "a": "Calcutta"
+   },
+   "nayt|addioxx": {
+    "v": 0,
+    "s": 35,
+    "t": "Addio xx",
+    "a": "nayt"
    }
   },
   "Diego": {
