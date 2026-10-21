@@ -1,5 +1,17 @@
 [
  {
+  "t": 1792612882523,
+  "r": "SPOTIFY: [v6.387] X premuta"
+ },
+ {
+  "t": 1792612882563,
+  "r": "SPOTIFY: [v6.387] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792612883102,
+  "r": "SPOTIFY: [v6.387] X premuta"
+ },
+ {
   "t": 1792612883562,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
@@ -144,19 +156,7 @@
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
  {
-  "t": 1792613834032,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792613921633,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792613925135,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792614063880,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+  "t": 1792614237182,
+  "r": "SPOTIFY: [v6.389] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
