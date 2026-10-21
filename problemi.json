@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792614760923,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792614801987,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792614802098,
-  "r": "SPOTIFY: [v6.390] X premuta"
- },
- {
   "t": 1792614802866,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792615205100,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792615206029,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792615206291,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792615207238,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
