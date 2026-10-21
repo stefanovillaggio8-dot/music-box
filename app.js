@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.396";
+  const APP_VERSION = "6.397";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -14985,9 +14985,10 @@ if (typeof document !== "undefined") {
         const manda = function () {
           tentativi++;
           try {
+            if (typeof _mandaGymAlServizio === "function") _mandaGymAlServizio();
             if (typeof _salvaPlaylistCondivise === "function") _salvaPlaylistCondivise();
           } catch (e) { /* noop */ }
-          if (tentativi < 6) setTimeout(manda, 20000);
+          if (tentativi < 8) setTimeout(manda, 20000);
         };
         setTimeout(manda, 1500);
       } catch (e) { /* noop */ }

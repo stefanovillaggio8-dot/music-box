@@ -510,6 +510,7 @@
       var prog = stato.progVisto;
       if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
+      if (window.__mbForzaProg !== undefined) { prog = window.__mbForzaProg; suona = true; }
 
       /* lo sfondo grande della schermata dei testi brucia insieme: lo
          chiamo PRIMA di qualsiasi ritorno, cosi' la schermata dei testi
@@ -740,6 +741,28 @@
         fiammaCanvas(p.x / 100 * L, p.y / 100 * L, alt, ang);
         n++;
       }
+      /* Il fumo: quando la carta e' quasi finita, quello che resta non
+         e' piu' nero ma fumo che sale e si disperde. */
+      if (prog > 0.55) {
+        var quanto = Math.min(1, (prog - 0.55) / 0.4);
+        for (var f2 = 0; f2 < 9; f2++) {
+          var q1 = rnd(f2 * 5.3 + 1.1);
+          var q2 = rnd(f2 * 5.3 + 2.7);
+          var sale = (q1 * 100 + t * 11) % 100;
+          var fx = (12 + q2 * 76) / 100 * L;
+          var fy = (78 - sale * 0.62) / 100 * L;
+          var fr = L * (0.05 + q1 * 0.10) * (1 + quanto * 0.5);
+          var gr = ctxTela.createRadialGradient(fx, fy, 0, fx, fy, fr);
+          var al = (0.05 + 0.10 * quanto) * (1 - sale / 100);
+          gr.addColorStop(0, "rgba(196,194,200," + al.toFixed(3) + ")");
+          gr.addColorStop(1, "rgba(170,170,178,0)");
+          ctxTela.fillStyle = gr;
+          ctxTela.beginPath();
+          ctxTela.arc(fx, fy, fr, 0, Math.PI * 2);
+          ctxTela.fill();
+        }
+      }
+
       /* qualche bragia che sale: poche, e con un movimento continuo */
       for (var e = 0; e < 5; e++) {
         var s1 = rnd(e * 3.1);
@@ -918,6 +941,11 @@
      punto in cui ho toccato". L'audio sta dentro l'app (non si vede nel
      DOM), quindi espongo un modo per spostare la canzone: la pagina
      chiama questa funzione. */
+  /* PROVA: disegno il fumo e lo restituisco (solo per le prove) */
+  window.__mbDisegnaFumo = function (prog) {
+    try { return copertinaCheBrucia(prog); } catch (e) { return "ERRORE: " + e; }
+  };
+
   window.__mbVaiA = function (sec) {
     try {
       var a = stato.audio;
@@ -925,6 +953,11 @@
       if (!isFinite(sec) || sec < 0) return false;
       a.currentTime = sec;
       try { if (a.paused) a.play(); } catch (e) { /* noop */ }
+      /* Ste: "quando premo il testo va poi in ritardo rispetto alla
+         canzone". Dopo il salto dico all'app che il tempo e' cambiato:
+         senza questo la barra (e la riga evidenziata) restano indietro
+         fino al prossimo aggiornamento. */
+      try { a.dispatchEvent(new Event("timeupdate")); } catch (e) { /* noop */ }
       return true;
     } catch (e) { return false; }
   };

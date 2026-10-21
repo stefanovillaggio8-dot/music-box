@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6396" />
+  <link rel="stylesheet" href="style.css?v=6397" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -141,6 +141,33 @@
       <button type="button" class="search-x" id="searchX" aria-label="Cancella la ricerca" title="Cancella la ricerca">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12Z"/></svg>
       </button>
+      <script>
+      (function () {
+        /* Ste: "quando cambia canzone si aggiorna in automatico il testo".
+           Il telefono serve l'app dalla cache, quindi la correzione
+           dentro app.js non gli arriva subito: la metto qui, nella
+           pagina, che arriva sempre dalla rete.
+           Se il brano cambia mentre la schermata dei testi e' aperta,
+           richiudo e riapro: l'app ricarica i testi del brano nuovo. */
+        var _branoPrima = "";
+        function _controllaBrano() {
+          var titolo = document.getElementById("playerTitle");
+          if (!titolo) return;
+          var ora = (titolo.textContent || "").trim();
+          if (!_branoPrima) { _branoPrima = ora; return; }
+          if (ora === _branoPrima) return;
+          _branoPrima = ora;
+          var pannello = document.getElementById("lyricsPanel");
+          if (!pannello || pannello.hidden) return;
+          var b = document.getElementById("btnLyrics");
+          if (!b) return;
+          /* il tasto chiude e riapre: cosi' l'app ricarica i testi */
+          b.click();
+          setTimeout(function () { try { b.click(); } catch (e) { } }, 80);
+        }
+        setInterval(_controllaBrano, 700);
+      })();
+      </script>
       <script>
       (function () {
         /* Ste: "se tocco una parte di testo mi porta la canzone in avanti
@@ -893,7 +920,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6396"></script>
-<script src="app.js?v=6396"></script>
+<script src="fuoco.js?v=6397"></script>
+<script src="app.js?v=6397"></script>
 </body>
 </html>
