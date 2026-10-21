@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792532096040,
-  "r": "SPOTIFY: [v6.365] premo il link 'Apri Spotify' (sto andando su Spotify)"
- },
- {
   "t": 1792532096769,
   "r": "SPOTIFY: la pagina chiede al worker di scambiare il codice"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792609964186,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792609967878,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
