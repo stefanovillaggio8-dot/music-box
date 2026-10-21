@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792616246409,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792616246421,
   "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792616381032,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792616383877,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
  }
 ]
