@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792619881636,
-  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792619881578,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792619881576,
-  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792619882185,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792619882191,
-  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792619882295,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792619882342,
-  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792619882856,
-  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792619883301,
   "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792620000677,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792620000703,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792620000753,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792620000792,
+  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792620001322,
+  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792620001743,
+  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792620002239,
+  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792620002896,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792620002892,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
