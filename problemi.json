@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792624883756,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792624884505,
-  "r": "SPOTIFY: [v6.401] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792624884513,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792624884688,
-  "r": "SPOTIFY: [v6.401] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792624884979,
-  "r": "SPOTIFY: [v6.401] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792624885016,
-  "r": "SPOTIFY: [v6.401] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792624885231,
-  "r": "SPOTIFY: [v6.401] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792624885767,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792624885924,
-  "r": "SPOTIFY: [v6.401] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792624886194,
   "r": "SPOTIFY: [v6.401] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792625421730,
   "r": "SPOTIFY: [v6.402] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792625422623,
+  "r": "SPOTIFY: [v6.402] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792625422635,
+  "r": "SPOTIFY: [v6.402] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792625423510,
+  "r": "SPOTIFY: [v6.402] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792625423867,
+  "r": "visibili 239 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1792625423890,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792625423916,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792625423916,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792625425099,
+  "r": "FINALE: visibili 26 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1792625426081,
+  "r": "visibili 26 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
  }
 ]
