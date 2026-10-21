@@ -603,7 +603,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.380";
+  const APP_VERSION = "6.381";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -11208,6 +11208,19 @@ document.addEventListener("visibilitychange", () => {
     /* non lo tengo: il telefono e' gia' spento, e tenerlo occuperebbe
        batteria senza servire a niente */
     _bloccoSchermo = null;
+  } else {
+    /* Ste: "la notifica in alto deve restare fino quando chiudo l'app".
+       Motivo: andando in secondo piano l'app diceva al telefono "non sto
+       suonando niente", e allora la notifica della musica spariva (e i
+       tasti delle cuffie tornavano a un'altra app). Qui la sessione resta
+       la nostra: la notifica resta finche' l'app e' aperta e sparisce
+       solo quando chiudi l'app del tutto. */
+    try {
+      if (current()) {
+        updateMediaSession();
+        setPlaybackState(audio && !audio.paused ? "playing" : "paused");
+      }
+    } catch (e) { /* noop */ }
   }
 });
 
@@ -12410,7 +12423,22 @@ for (const p of playlists) {
     audio = createAudio();
     audio.volume = volumePct / 100;
     updateVolumeUI();
+    /* Ste: "quando dalle cuffie premo il tasto, parte una canzone di
+       soundcloud" e "la notifica in alto deve restare fino quando chiudo
+       l'app".
+       Motivo: qui l'app diceva al telefono "non sto suonando niente", e
+       allora il telefono dava i comandi a chi aveva suonato prima (e la
+       notifica spariva). Adesso, se c'e' una canzone, l'app si prende la
+       sessione subito: i tasti delle cuffie tornano a MusicBox e la
+       notifica resta finche' l'app e' aperta. */
     setPlaybackState("none");
+    try {
+      if (current() || (tracks && tracks.length)) {
+        updateMediaSession();
+        setPlaybackState("paused");
+        _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
+      }
+    } catch (e) { /* noop */ }
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
     profiles = LS.get("mb.profiles", [DEFAULT_PROFILE]);
