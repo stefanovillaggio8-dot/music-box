@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.372";
+  const APP_VERSION = "6.373";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13590,6 +13590,18 @@ async function _spotifyCompletaAccesso(code, stato) {
         if (r.status === 401) {
           try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
           try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
+        } else if (r.status === 403) {
+          /* Ste: "Spotify ha risposto 403", e non va avanti.
+             Il 403 vuol dire "accesso non sufficiente": il token c'e' ma non
+             ha i permessi giusti. E il permesso LUNGO (quello che serve per
+             rinnovare) porta con se' gli stessi permessi vecchi: quindi
+             rinnovarlo non risolve niente e si resta sempre fermi li'.
+             Per questo, sul 403 butto via ANCHE il permesso lungo: l'app
+             chiede un accesso NUOVO, con i permessi giusti, e l'utente
+             approva una volta sola. */
+          try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
+          try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
+          _spotifyTraccia("permesso senza i permessi giusti: lo butto via, serve un accesso nuovo");
         }
         _spotifyErrore = r.status;
         return null;
