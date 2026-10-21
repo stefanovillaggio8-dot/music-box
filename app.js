@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.391";
+  const APP_VERSION = "6.392";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -839,6 +839,28 @@ const PROFILI = [
      La pagina che apri dal computer (quella locale) invece continua a
      leggere i brani dal disco, perche' li ha gia' li'. */
   const BRANI_ONLINE = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/";
+  /* Ste: i brani delle playlist "gym" suonano con i bassi gia' alzati.
+     Le versioni con i bassi le prepara il computer (music-auto/prepara-bassi-gym.mjs)
+     e stanno nella cartella "songs/bassi" del deposito dei brani. */
+  function _branoInGym(idBrano) {
+    try {
+      const pl = _playlistCercata("gym");
+      if (!pl || !pl.tracks || !pl.tracks.length) return false;
+      return pl.tracks.indexOf(String(idBrano)) >= 0;
+    } catch (e) { return false; }
+  }
+
+  function _doveStaIlBranoConBassi(file) {
+    const nome = String(file || "");
+    if (!nome) return "";
+    const soloNome = nome.replace(/^.*\//, "");
+    const qui = location.hostname;
+    const inLocale = qui === "localhost" || qui === "127.0.0.1" || qui === "::1" ||
+      qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net");
+    if (inLocale) return "songs/bassi/" + soloNome;
+    return BRANI_ONLINE + "songs/bassi/" + soloNome;
+  }
+
   function _doveStaIlBrano(file) {
     const nome = String(file || "");
     if (!nome) return "";
@@ -2246,7 +2268,7 @@ function _devoVedereBrano(eMio, b) {
         artist: b.artist || "",
         album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
         cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
-        url: _doveStaIlBrano(b.file),
+        url: _branoInGym(stabile) ? _doveStaIlBranoConBassi(b.file) : _doveStaIlBrano(b.file),
         /* Ste: "nell'account di Diego il tasto avanti non va avanti".
            Qui mancava proprio questo pezzo: quando l'app costruiva il brano si
            dimenticava di segnare di chi e'. Nella coda (visibleTracks) il
@@ -4158,6 +4180,20 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
+    /* Se il brano con i bassi non esiste ancora (il computer non l'ha
+       preparato), il brano non parte: in quel caso riprovo con il file
+       normale, cosi' si sente lo stesso. */
+    a.addEventListener("error", function () {
+      try {
+        if (a.src && a.src.indexOf("/bassi/") >= 0) {
+          const normale = a.src.replace("/bassi/", "/");
+          if (normale && normale !== a.src) {
+            a.src = normale;
+            try { a.play(); } catch (e) { }
+          }
+        }
+      } catch (e) { }
+    });
     /* Se la catena dei bassi e' accesa, l'elemento nuovo va ricollegato a
        lei: altrimenti la musica uscirebbe dalle cuffie senza i bassi (e,
        peggio, con la catena mezza staccata). */
