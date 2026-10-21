@@ -2310,7 +2310,7 @@ li.appena-aggiunto {
   }
   .logo-wrap { flex: 1 1 auto; }
   /* Ste: il titolo deve restare SCRITTO TUTTO, niente puntini di sospensione.
-     Per farlo stare non lo accorcio: rendo i caratteri un filo piÃƒÂ¹ piccoli e
+     Per farlo stare non lo accorcio: rendo i caratteri un filo più piccoli e
      lo lascio andare su una riga sola. */
   .logo.long {
     max-width: none;
