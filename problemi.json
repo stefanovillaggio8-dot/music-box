@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792619253027,
-  "r": "SPOTIFY: [v6.395] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792619253847,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792619253832,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792619253863,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792619253899,
-  "r": "SPOTIFY: [v6.395] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792619253943,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792619255068,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 55 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792619257449,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792619257435,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792619257436,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792619818857,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792619818925,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792619818968,
+  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792619819651,
+  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792619819871,
+  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792619820554,
+  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792619821046,
+  "r": "visibili 208 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792619821039,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792619821037,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792619821064,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
