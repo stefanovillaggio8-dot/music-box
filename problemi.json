@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792612897023,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792612897214,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792612897038,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792612910924,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792612911108,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792612911015,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792614241721,
   "r": "SPOTIFY: [v6.389] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792614242444,
+  "r": "SPOTIFY: [v6.389] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792614242628,
+  "r": "SPOTIFY: [v6.389] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792614243417,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792614243410,
+  "r": "SPOTIFY: [v6.389] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792614243863,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
