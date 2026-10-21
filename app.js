@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.401";
+  const APP_VERSION = "6.402";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3957,12 +3957,10 @@ emptyEl.textContent = !total
       /* I contrassegni stanno QUI, non nel titolo: la riga del titolo viene
          troncata con i puntini e il contrassegno spariva (Ste: "non si
          capisce se c'e' scritto bassi perche' spuntano i ..."). */
-      if (t.builtin) {
-        const badge = document.createElement("span");
-        badge.className = "track-badge";
-        badge.textContent = "tutti";
-        contrassegni.push(badge);
-      }
+      /* Ste (21/10/2026): "togli il tutti, e' inutile". Il contrassegno
+         "tutti" (le canzoni condivise con gli altri profili) e' sparito:
+         diceva una cosa che si capisce gia' guardando la libreria, e
+         rubava spazio al contrassegno "bassi", che invece serve. */
       /* Ste: "fai che si capisca quali sono state boostate e quali no".
          Il contrassegno "BASSI" vuol dire: questo brano suona con la versione
          potenziata (bassi piu' pieni, voce avanti, piu' forte). */
