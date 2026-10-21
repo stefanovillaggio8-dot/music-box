@@ -170,6 +170,56 @@
       </script>
       <script>
       (function () {
+        /* Ste: "il testo va in ritardo anche senza premere niente".
+           Misuro quanto la riga evidenziata e' indietro rispetto alla
+           canzone e, se il ritardo e' netto, sposto i tempi di tutte le
+           righe di quella differenza. L'app legge i tempi dalle righe
+           (data-t), quindi la correzione vale subito, anche se il
+           telefono ha ancora il vecchio app.js in cache. */
+        function _secondi(txt) {
+          var p = String(txt || "").split(":");
+          var s = 0;
+          for (var i = 0; i < p.length; i++) s = s * 60 + (parseFloat(p[i]) || 0);
+          return s;
+        }
+        /* I tempi ORIGINALI delle righe: la correzione si misura sempre su
+           questi, non sui tempi gia' corretti (altrimenti la correzione
+           "scappa" e i tempi vanno a zero). */
+        var _tempiOriginali = null;
+        function _correggiRitardo() {
+          var corpo = document.getElementById("lyricsBody");
+          if (!corpo) return;
+          var righe = corpo.querySelectorAll(".lyr-line[data-t]");
+          if (!righe.length) { _tempiOriginali = null; return; }
+          /* i testi sono cambiati: riparto dai tempi nuovi */
+          if (!_tempiOriginali || _tempiOriginali.length !== righe.length) {
+            _tempiOriginali = [];
+            for (var g = 0; g < righe.length; g++) _tempiOriginali.push(Number(righe[g].getAttribute("data-t")));
+          }
+          var attiva = corpo.querySelector(".lyr-line.on");
+          if (!attiva) return;
+          var indice = -1;
+          for (var k = 0; k < righe.length; k++) { if (righe[k] === attiva) { indice = k; break; } }
+          if (indice < 0 || !isFinite(_tempiOriginali[indice])) return;
+          var tOra = _secondi((document.getElementById("curTime") || {}).textContent);
+          if (!tOra) return;
+          var ritardo = tOra - _tempiOriginali[indice];   /* positivo = la riga e' indietro */
+          /* oltre i 60 secondi non e' uno scarto ma un altro brano: non
+             tocco niente (e' un caso diverso) */
+          if (ritardo < 2 || ritardo > 60) return;
+          for (var j = 0; j < righe.length; j++) {
+            if (!isFinite(_tempiOriginali[j])) continue;
+            var nuovo = Math.max(0, _tempiOriginali[j] - ritardo);
+            if (Math.abs(Number(righe[j].getAttribute("data-t")) - nuovo) > 0.2) {
+              righe[j].setAttribute("data-t", String(Math.round(nuovo * 10) / 10));
+            }
+          }
+        }
+        setInterval(_correggiRitardo, 1500);
+      })();
+      </script>
+      <script>
+      (function () {
         /* Ste: "se tocco una parte di testo mi porta la canzone in avanti
            nel punto in cui ho toccato".
            Le righe con i tempi hanno data-t. La canzone la sposto
