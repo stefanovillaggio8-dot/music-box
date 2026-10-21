@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.400";
+  const APP_VERSION = "6.401";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3943,22 +3943,7 @@ emptyEl.textContent = !total
       testoTitolo.className = "track-testo";
       testoTitolo.textContent = t.title;
       title.appendChild(testoTitolo);
-      if (t.builtin) {
-        const badge = document.createElement("span");
-        badge.className = "track-badge";
-        badge.textContent = "tutti";
-        title.appendChild(badge);
-      }
-      /* Ste: "fai che si capisca quali sono state boostate e quali no".
-         Il contrassegno "bassi" vuol dire: questo brano suona con la
-         versione potenziata (bassi piu' pieni, voce avanti, piu' forte). */
-      if (t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
-        const badge = document.createElement("span");
-        badge.className = "track-badge track-badge-bassi";
-        badge.textContent = "bassi";
-        badge.title = "Questo brano suona potenziato (bassi piu' pieni, voce avanti, piu' forte)";
-        title.appendChild(badge);
-      }
+      const contrassegni = [];
       info.appendChild(title);
 
       const meta = document.createElement("div");
@@ -3969,6 +3954,26 @@ emptyEl.textContent = !total
       if (t.preview) bits.push("anteprima 30s");
       if (t.builtin) meta.textContent = bits.join(" ");
       else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
+      /* I contrassegni stanno QUI, non nel titolo: la riga del titolo viene
+         troncata con i puntini e il contrassegno spariva (Ste: "non si
+         capisce se c'e' scritto bassi perche' spuntano i ..."). */
+      if (t.builtin) {
+        const badge = document.createElement("span");
+        badge.className = "track-badge";
+        badge.textContent = "tutti";
+        contrassegni.push(badge);
+      }
+      /* Ste: "fai che si capisca quali sono state boostate e quali no".
+         Il contrassegno "BASSI" vuol dire: questo brano suona con la versione
+         potenziata (bassi piu' pieni, voce avanti, piu' forte). */
+      if (t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
+        const badge = document.createElement("span");
+        badge.className = "track-badge track-badge-bassi";
+        badge.textContent = "bassi";
+        badge.title = "Questo brano suona potenziato (bassi piu' pieni, voce avanti, piu' forte)";
+        contrassegni.push(badge);
+      }
+      for (const b of contrassegni) meta.appendChild(b);
       info.appendChild(meta);
 
       li.appendChild(art);
