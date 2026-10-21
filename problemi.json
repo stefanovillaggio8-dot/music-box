@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792624881892,
-  "r": "SPOTIFY: [v6.401] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792624882054,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792624935762,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792624938961,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
