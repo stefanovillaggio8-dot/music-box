@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792626339973,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792626340016,
-  "r": "SPOTIFY: [v6.403] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792626340269,
-  "r": "SPOTIFY: [v6.403] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792626340742,
-  "r": "SPOTIFY: [v6.403] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792626340757,
-  "r": "SPOTIFY: [v6.403] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792626340636,
-  "r": "SPOTIFY: [v6.403] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792626340883,
   "r": "SPOTIFY: [v6.403] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792626370811,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792626370814,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792626370949,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792626372029,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792626372030,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792626372183,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792626385983,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  }
 ]
