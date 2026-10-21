@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792616932402,
-  "r": "SPOTIFY: [v6.394] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792616932730,
-  "r": "SPOTIFY: [v6.394] il server aveva il permesso: lo prendo"
- },
- {
   "t": 1792616932968,
   "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792617141717,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792617142933,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792617144809,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
