@@ -136,7 +136,7 @@
   "Ste": {
    "evanescence|bringmetolife": {
     "v": 1,
-    "s": 54,
+    "s": 146,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -388,7 +388,7 @@
    },
    "artie5ive|davverodavvero": {
     "v": 28,
-    "s": 512,
+    "s": 529,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -436,7 +436,7 @@
    },
    "katyperry|tiktokhardstyleremix": {
     "v": 0,
-    "s": 1,
+    "s": 23,
     "t": "TiK ToK (Hardstyle Remix)",
     "a": "Katy Perry"
    },
@@ -923,7 +923,7 @@
    "coez|lamusicanonce": {
     "v": 0,
     "s": 28,
-    "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
+    "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
    "linkinpark|faint": {
@@ -931,6 +931,12 @@
     "s": 4,
     "t": "Faint",
     "a": "Linkin Park"
+   },
+   "frahquintale|8miliardidipersone": {
+    "v": 0,
+    "s": 13,
+    "t": "8 miliardi di persone",
+    "a": "Frah Quintale"
    }
   },
   "Diego": {
