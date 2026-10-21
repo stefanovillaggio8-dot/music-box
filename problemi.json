@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792616494692,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792616496579,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792616775304,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792616778812,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
