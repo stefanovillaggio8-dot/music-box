@@ -569,6 +569,7 @@
       " | playlist " + (_playlistAttiva ? _playlistAttiva : "nessuna") +
       " | preferiti " + (favOnly ? "si" : "no") +
       " | maiascoltati " + (soloMaiAscoltati ? "si" : "no") +
+      " | scaricate " + (soloScaricate ? "si" : "no") +
       " | eliminati " + (function () { try { return Object.keys(LS.get("mb.eliminati", {}) || {}).length; } catch (e) { return -1; } })() +
       " | da " + String(location.host || "?"));
   }
@@ -602,7 +603,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.379";
+  const APP_VERSION = "6.380";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -723,6 +724,9 @@ try {
   /* Filtro "solo quelli che non ho ancora ascoltato": comodo per dare una
      prima ascolto a tutto quello che ho scaricato e non ho mai sentito. */
   let soloMaiAscoltati = false;
+  /* Filtro "solo le canzoni scaricate": quelle che sono gia' sul telefono e
+     quindi suonano anche senza rete. */
+  let soloScaricate = false;
   let hiddenTracks = new Set();
 /* Le playlist vivono qui con gli altri dati dello schermo, NON piu' in
    basso: prima erano dichiarate dopo le funzioni che le usano, e se una
@@ -3045,6 +3049,9 @@ if (perLaCoda) {
     }
     if (favOnly) list = list.filter((t) => favorites.has(t.id));
     if (soloMaiAscoltati) list = list.filter((t) => _ascoltoDi(t).s <= 0);
+    /* Solo le canzoni scaricate: si guardano davvero in tutte le cache, come
+       fa il worker del servizio quando serve un brano. */
+    if (soloScaricate) list = list.filter((t) => isCached(t));
     /* Se ho scelto una playlist, vedo solo i suoi brani. Funziona insieme
        alla ricerca e all'ordinamento, non al posto loro: e' quello che
        chiedeva Stefano ("come la libreria, ma solo le canzoni di
@@ -3762,7 +3769,7 @@ function _quantiEliminati() {
   /* Ste: "togli completamente sta cosa dei nascosti". */
   let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
-    if (favOnly || soloMaiAscoltati || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
+    if (favOnly || soloMaiAscoltati || soloScaricate || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
     /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
     const bt = $("btnOrdina");
@@ -9153,6 +9160,13 @@ $("btnFavFilter").addEventListener("click", () => {
   $("btnMaiAscoltati").addEventListener("click", () => {
     soloMaiAscoltati = !soloMaiAscoltati;
     $("btnMaiAscoltati").classList.toggle("on", soloMaiAscoltati);
+    render();
+    });
+  /* Ste: "aggiungi anche un filtro 'canzoni scaricate'". */
+  $("btnScaricate").addEventListener("click", () => {
+    soloScaricate = !soloScaricate;
+    $("btnScaricate").classList.toggle("on", soloScaricate);
+    _diChe("filtro canzoni scaricate: " + (soloScaricate ? "si" : "no"));
     render();
     });
   $("btnFalliti").addEventListener("click", () => _stampaFalliti());
