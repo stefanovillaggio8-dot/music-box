@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792625425099,
-  "r": "FINALE: visibili 26 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 100.106.211.2:8167"
- },
- {
-  "t": 1792625426081,
-  "r": "visibili 26 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
-  "t": 1792625427239,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792625427236,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792625427259,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792625428444,
-  "r": "visibili 26 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
-  "t": 1792625428457,
-  "r": "FINALE: visibili 26 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 100.106.211.2:8167"
- },
- {
   "t": 1792625429985,
   "r": "visibili 26 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792625454472,
   "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792625463402,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792625463402,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792625463589,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792625464609,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792625464608,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792625464807,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792625478030,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
