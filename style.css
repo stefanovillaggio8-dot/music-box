@@ -276,12 +276,22 @@ main { padding: 8px 16px calc(var(--player-h) + 40px); }
 .track-title {
   font-size: 14px;
   font-weight: 600;
+  /* Una riga: il testo dentro e i contrassegni accanto. */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+/* Solo il testo si tronca con i puntini: i contrassegni restano interi. */
+.track-testo {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .track-badge {
   display: inline-block;
+  flex: 0 0 auto;   /* il contrassegno non si stringe mai */
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .4px;
@@ -2653,5 +2663,4 @@ li.appena-aggiunto {
 .track-badge-bassi {
   color: #ffd166;
   border-color: #ffd166;
-  margin-left: 6px;
 }
