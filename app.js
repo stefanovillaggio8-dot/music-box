@@ -602,7 +602,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.373";
+  const APP_VERSION = "6.374";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13110,26 +13110,18 @@ function _spotifySalvaToken(t) {
     access: t.access_token,
     scadenza: Date.now() + (Number(t.expires_in || 3600) - 60) * 1000
   };
-  /* Ste: "da Spotify: 0 playlist (errore 403)".
-     Il 403 vuol dire "accesso non sufficiente": il token c'era, ma non aveva
-     i permessi giusti. Motivo (mio): l'app aveva piu' strade per prendere
-     un permesso (dal codice appena scambiato, che e' nuovo e ha i permessi
-     giusti; e dal worker, con un permesso piu' vecchio). La seconda strada
-     sostituiva la prima: il permesso nuovo veniva buttato via e restava
-     quello vecchio, e la lettura delle playlist falliva con il 403.
-     Adesso la protezione sta qui dentro, in un posto solo: se ho gia' un
-     permesso valido e questo che mi arriva e' piu' vecchio, non lo
-     sostituisco. */
-  try {
-    const attuale = LS.get("mb.spotify", null);
-    if (attuale && attuale.access && Number(attuale.scadenza || 0) > Date.now() &&
-        Number(attuale.scadenza || 0) >= Number(valore.scadenza || 0)) {
-      _spotifyTraccia("ho gia' un permesso valido: non lo sostituisco con il piu' vecchio");
-      return true;
-    }
-  } catch (e) { /* noop */ }
-  /* Il "refresh token" e' il permesso che dura: con quello Spotify mi
-     rinnova il permesso corto senza che Ste debba riautorizzare. */
+  /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
+     apre music box ma c'e' scritto che l'accesso e' scaduto".
+     Motivo: l'app aveva un permesso VECCHIO (senza i permessi giusti) e
+     si teneva quello, scartando quello appena scambiato (che era quello
+     buono): cosi' Spotify rispondeva 403 e l'app diceva "accesso scaduto".
+     Adesso: il permesso appena scambiato vince SEMPRE. E il permesso
+     "vecchio" che il server tiene (quello che potrebbe essere scaduto
+     davvero) non viene usato al posto di quello buono: se ne l'app lo
+     chiede apposta e non ha n'altro, va bene anche quello. */
+  /* Il "refresh token" e' il permesso che dura: con quello Spotify mi
+
+     rinnova il permesso corto senza che Ste debba riautorizzare. */
   if (t && t.refresh_token) valore.refresh = String(t.refresh_token);
   let salvato = false;
   try { LS.set("mb.spotify", valore); salvato = true; } catch (e) { /* noop */ }
@@ -13577,15 +13569,25 @@ async function _spotifyCompletaAccesso(code, stato) {
 
            E Spotify spiega PERCHE': con un 403 di solito vuol dire che
            manca un permesso ("Insufficient client scope"). Me lo segno. */
-        try {
-          const corpoErrore = await r.clone().json();
-          const messaggio = String((corpoErrore && corpoErrore.error && (corpoErrore.error.message || corpoErrore.error.reason || corpoErrore.error.status)) || "");
-          _spotifyTraccia("Spotify ha risposto " + r.status + ": " + (messaggio || "(senza spiegazione)"));
-          /* La parola esatta di Spotify la voglio vedere ANCHE io, non solo
-             nella traccia: se non va, l'app deve dire che cosa manca. */
-          if (messaggio) _spotifyMotivo = messaggio;
-        } catch (e) {
-          _spotifyTraccia("Spotify ha risposto " + r.status + " (non riesco a leggere la spiegazione)");
+    try {
+    /* Leggo la risposta come testo e poi ci leggo dentro: se Spotify
+       risponde in un modo che non e' JSON, la parola la vedo lo stesso
+       (e prima non la vedevo per niente: diceva solo "non riesco a
+       leggere la spiegazione"). */
+    const testoErrore = await r.clone().text();
+    let messaggio = "";
+    try {
+    const corpoErrore = JSON.parse(testoErrore || "{}");
+    messaggio = String((corpoErrore && corpoErrore.error && (corpoErrore.error.message || corpoErrore.error.reason || corpoErrore.error.status)) || "");
+    } catch (e) {
+    messaggio = String(testoErrore || "").slice(0, 120);
+    }
+    _spotifyTraccia("Spotify ha risposto " + r.status + ": " + (messaggio || "(senza spiegazione)"));
+    /* La parola esatta di Spotify la voglio vedere ANCHE io, non solo
+    nella traccia: se non va, l'app deve dire che cosa manca. */
+    if (messaggio) _spotifyMotivo = messaggio;
+    } catch (e) {
+    _spotifyTraccia("Spotify ha risposto " + r.status + " (non riesco a leggere la spiegazione)");
         }
         if (r.status === 401) {
           try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
@@ -13851,19 +13853,29 @@ function _spotifyChiediAccesso(perche) {
     try { _spotifyPrendiSePronto(); } catch (e) { /* noop */ }
   }
 
-  async function _spotifyPrendiSePronto() {
-    try {
-      const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
-      const jj = await rr.json();
-      if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
-        _spotifyTraccia("il server aveva il permesso: lo prendo e mostro le playlist");
-        _spotifySalvaToken(jj.permesso);
-        try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
-        toast("Collegato a Spotify", 4000);
-        _spotifyMostraPlaylist();
-      }
-    } catch (e) { /* il server non risponde: pazienza */ }
-  }
+  async function _spotifyPrendiSePronto() {
+    try {
+      const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
+      const jj = await rr.json();
+      if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
+        /* Ste: "accesso scaduto" e Spotify ha risposto 403.
+           Motivo: questo permesso e' quello che il SERVER tiene da prima
+           (potrebbe avere i permessi vecchi, e sostituireva quello appena
+           scambiato, che era quello buono). Adesso, se ho gia' un permesso
+           valido, questo NON lo sostituisce. */
+        if (_spotifyToken()) {
+          _spotifyTraccia("ho gia' un permesso valido: non lo sostituisco con quello del server");
+          _spotifyMostraPlaylist(true);
+          return;
+        }
+        _spotifyTraccia("il server aveva il permesso: lo prendo e mostro le playlist");
+        _spotifySalvaToken(jj.permesso);
+        try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
+        toast("Collegato a Spotify", 4000);
+        _spotifyMostraPlaylist();
+      }
+    } catch (e) { /* il server non risponde: pazienza */ }
+  }
 
   async function _spotifyMostraPlaylist(chiediAccesso) {
     /* Ste: "non mi spunta piu' accedi con spotify e l'autorizzazione
@@ -14112,8 +14124,12 @@ async function _spotifyRientro() {
         const rr = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify?pronto=1", { cache: "no-store" });
         const jj = await rr.json();
         if (jj && jj.ok && jj.permesso && jj.permesso.access_token) {
-          _spotifyTraccia("il worker aveva il permesso pronto: lo prendo");
-          _spotifySalvaToken(jj.permesso);
+          _spotifyTraccia("il worker aveva il permesso pronto: lo prendo");
+          /* Se ho gia' un permesso valido, questo NON lo sostituisce: e' quello
+             che il server tiene da prima (potrebbe avere i permessi vecchi, e
+             faceva fallire la lettura delle playlist con il 403). */
+          if (!_spotifyToken()) _spotifySalvaToken(jj.permesso);
+          else _spotifyTraccia("ho gia' un permesso valido: tengo questo");
           try { _mostraCollegatoSi(); } catch (e) { /* noop */ }
           toast("Collegato a Spotify", 4000);
           try { _spotifyMostraPlaylist(); } catch (e) { /* noop */ }
