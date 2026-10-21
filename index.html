@@ -178,14 +178,20 @@
            sfondo grande della schermata dei testi, che si accende
            quando la copertina e' quasi bruciata. */
         var STILE_FUMO =
-          ".mb-fumo-p{position:fixed;pointer-events:none;z-index:61;opacity:0;overflow:hidden;" +
-          "border-radius:inherit;transition:opacity 1.2s ease}" +
+          /* niente overflow nascosto: il fumo deve poter salire FUORI dal
+             disco, altrimenti sul disco piccolo sembra fermo in basso */
+          ".mb-fumo-p{position:fixed;pointer-events:none;z-index:61;opacity:0;" +
+          "transition:opacity 1.2s ease}" +
           ".mb-fumo-p.on{opacity:1}" +
-          ".mb-fumo-p i{position:absolute;bottom:-14%;width:32%;height:32%;border-radius:50%;" +
-          "background:radial-gradient(circle,rgba(205,203,212,.6) 0%,rgba(160,160,170,0) 70%);" +
-          "animation:mbSaleFumoP 3.4s linear infinite}" +
-          "@keyframes mbSaleFumoP{0%{transform:translateY(0) scale(.6);opacity:0}" +
-          "18%{opacity:.9}100%{transform:translateY(-140%) scale(1.5);opacity:0}}";
+          ".mb-fumo-p i{position:absolute;bottom:-18%;width:48%;height:48%;border-radius:50%;" +
+          "background:radial-gradient(circle,rgba(210,208,216,.62) 0%,rgba(160,160,170,0) 70%);" +
+          "animation:mbSaleFumoP 3.6s linear infinite}" +
+          "@keyframes mbSaleFumoP{0%{transform:translateY(18%) scale(.45);opacity:0}" +
+          "14%{opacity:.95}70%{opacity:.55}100%{transform:translateY(-300%) scale(1.7);opacity:0}}" +
+          /* l'aria calda che esce dalla linea di bruciatura */
+          ".mb-fumo-p::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-8%;height:38%;" +
+          "background:radial-gradient(ellipse at 50% 100%,rgba(200,198,206,.5) 0%,rgba(150,150,160,0) 72%);" +
+          "filter:blur(6px)}";
         function _stile() {
           if (document.getElementById("mb-stile-fumo")) return;
           var st = document.createElement("style");
