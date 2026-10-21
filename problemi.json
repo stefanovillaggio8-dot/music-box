@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792614789234,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792616025124,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792616250667,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792616250645,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792616250656,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792616250760,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792616251907,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792616252903,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
   "t": 1792616277600,
   "r": "SPOTIFY: [v6.393] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -157,6 +125,38 @@
  },
  {
   "t": 1792616493169,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792616493151,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792616493168,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792616493253,
+  "r": "SPOTIFY: [v6.393] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792616493162,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616493187,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792616493494,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792616494116,
+  "r": "SPOTIFY: [v6.393] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792616495671,
   "r": "worker /stato: risponde"
  }
 ]
