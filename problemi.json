@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792609718990,
-  "r": "SPOTIFY: [v6.385] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792609719470,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792609719470,
-  "r": "SPOTIFY: [v6.385] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792609719479,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792609719496,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792609719511,
-  "r": "SPOTIFY: [v6.385] il server aveva il permesso: lo prendo"
- },
- {
   "t": 1792609720402,
   "r": "SPOTIFY: [v6.385] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792611066020,
   "r": "SPOTIFY: [v6.386] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792611066452,
+  "r": "SPOTIFY: [v6.386] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792611066468,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792611066471,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792611066450,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792611066871,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792611070420,
+  "r": "worker /stato: risponde"
  }
 ]
