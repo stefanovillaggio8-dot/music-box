@@ -659,6 +659,8 @@ body.no-scroll { overflow: hidden; }
   -webkit-overflow-scrolling: touch;
 }
 .lyrics-body p { margin-bottom: 6px; }
+/* le righe con i tempi si possono toccare: la canzone va li' */
+.lyrics-body .lyr-line[data-t] { cursor: pointer; }
 .lyrics-body .lyr-line {
   transition: color .25s ease, transform .25s ease, opacity .25s ease;
   opacity: .34;

@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6392" />
+  <link rel="stylesheet" href="style.css?v=6393" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -141,6 +141,30 @@
       <button type="button" class="search-x" id="searchX" aria-label="Cancella la ricerca" title="Cancella la ricerca">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12Z"/></svg>
       </button>
+      <script>
+      (function () {
+        /* Ste: "se tocco una parte di testo mi porta la canzone in avanti
+           nel punto in cui ho toccato".
+           Le righe con i tempi hanno data-t. La canzone la sposto
+           chiamando la funzione che lascia fuoco.js (l'audio sta dentro
+           l'app, non si vede nel DOM). */
+        var _x0 = 0, _y0 = 0, _via = 0;
+        document.addEventListener("pointerdown", function (e) {
+          _x0 = e.clientX || 0; _y0 = e.clientY || 0; _via = Date.now();
+        }, true);
+        document.addEventListener("pointerup", function (e) {
+          var dx = Math.abs((e.clientX || 0) - _x0);
+          var dy = Math.abs((e.clientY || 0) - _y0);
+          if (dx > 12 || dy > 12) return;          /* era uno scorrimento */
+          if (Date.now() - _via > 800) return;      /* era una pressione lunga */
+          var riga = e.target && e.target.closest ? e.target.closest(".lyr-line") : null;
+          if (!riga) return;
+          var t = Number(riga.getAttribute("data-t"));
+          if (!isFinite(t)) return;
+          if (window.__mbVaiA) window.__mbVaiA(t);
+        }, true);
+      })();
+      </script>
       <script>
       (function () {
         function campo() { return document.getElementById("search"); }
@@ -852,7 +876,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6392"></script>
-<script src="app.js?v=6392"></script>
+<script src="fuoco.js?v=6393"></script>
+<script src="app.js?v=6393"></script>
 </body>
 </html>

@@ -33,6 +33,37 @@
 (function () {
   "use strict";
 
+  /* Lo sfondo della schermata dei testi: stessa copertina, stesso
+     bruciato. */
+  function aggiornaTesti(a, prog) {
+    try {
+      var pannello = document.getElementById("lyricsPanel");
+      var sfondo = document.getElementById("lyricsSfondo");
+      if (!pannello || !sfondo) return;
+      if (pannello.hidden) {
+        if (stato.boxTesti) { stato.boxTesti.remove(); stato.boxTesti = null; }
+        return;
+      }
+      if (!stato.boxTesti) {
+        stato.boxTesti = montaTesti(sfondo);
+        stato.progTesti = -1;
+      }
+      var r = sfondo.getBoundingClientRect();
+      var lato = Math.max(r.width, r.height);
+      if (stato.progTesti !== prog) {
+        disegnaChar(stato.boxTesti, a, "");
+        if (!stato.boxTesti._fiamme || !stato.boxTesti._fiamme.length) {
+          preparaFiamme(stato.boxTesti, a, lato);
+        }
+        spostaFiamme(stato.boxTesti, a);
+        stato.progTesti = prog;
+      }
+      if (!stato.boxTesti.querySelector(".mb-bragia").childNodes.length) {
+        stato.boxTesti.querySelector(".mb-bragia").innerHTML = stratoBragia(lato);
+      }
+    } catch (e) { /* noop */ }
+  }
+
   /* --------------------------------------------------------------------------
      1. L'elemento audio
      L'app lo crea con "new Audio()" e lo tiene in una variabile interna
@@ -58,6 +89,12 @@
   var CSS = [
     ".mb-fuoco{position:fixed;left:0;top:0;z-index:60;pointer-events:none;overflow:visible}",
     ".mb-fuoco .mb-dentro{position:absolute;inset:0;pointer-events:none;overflow:visible}",
+    /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
+    ".mb-fuoco-dentro{position:absolute;left:0;top:0;z-index:0}",
+    /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
+    ".mb-fuoco-dentro{position:absolute;left:0;top:0;z-index:0}",
+    /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
+    ".mb-fuoco-dentro{position:absolute;left:0;top:0;z-index:0}",
     ".mb-fuoco .mb-strato-char{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}",
     ".mb-fuoco .mb-strato-char svg{width:100%;height:100%;display:block}",
     ".mb-fuoco .mb-calore{position:absolute;pointer-events:none;z-index:3;border-radius:50%;",
@@ -247,6 +284,25 @@
     return box;
   }
 
+  /* Lo stesso disegno, ma dentro la schermata dei testi: lo sfondo
+     grande con la copertina sfocata che brucia insieme al disco.
+     Ste: "la copertina brucia anche nella schermata dei testi". */
+  function montaTesti(sfondo) {
+    var box = document.createElement("div");
+    box.className = "mb-fuoco mb-fuoco-dentro";
+    box.innerHTML =
+      '<div class="mb-dentro">' +
+        '<div class="mb-strato-char"></div>' +
+        '<div class="mb-calore"></div>' +
+        '<svg class="mb-brasa" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>' +
+        '<div class="mb-fiamme"></div>' +
+        '<div class="mb-bragia"></div>' +
+      '</div>';
+    try { sfondo.parentNode.insertBefore(box, sfondo.nextSibling); }
+    catch (e) { document.body.appendChild(box); }
+    return box;
+  }
+
   /* Il disco del player gira quando suona (6 secondi un giro). Il fuoco
      invece sta fermo: gli oppongo lo stesso giro al contrario.
      Lo faccio con un'animazione e non con il JavaScript a ogni
@@ -337,6 +393,9 @@
     progNotifica: -1,
     tipoArtwork: "",
     suonaOra: false,
+    audio: null,
+    boxTesti: null,
+    progTesti: -1,
     tPrecedente: 0,
     seme: 7,
     fiamme: [],         /* le fiamme vive: non le ricreo piu' */
@@ -344,15 +403,14 @@
   };
 
   /* La crosta (il nero che morde la copertina) */
-  function disegnaChar(prog) {
-    var box = stato.box;
-    var a = arte(prog, stato.seme);
+  function disegnaChar(box, a, raggio) {
     var sc = box.querySelector(".mb-strato-char");
     sc.innerHTML = stratoChar(a);
     /* il nero deve avere la stessa forma della copertina (rotonda quando
        suona il disco, quadrata quando no) */
-    var art = document.getElementById("playerArt");
-    try { sc.style.borderRadius = getComputedStyle(art).borderRadius; } catch (e) { /* noop */ }
+    if (raggio) {
+      try { sc.style.borderRadius = raggio; } catch (e) { /* noop */ }
+    }
 
     var vecchioCalore = box.querySelector(".mb-calore");
     if (vecchioCalore) vecchioCalore.remove();
@@ -370,14 +428,13 @@
   /* Le fiamme: si creano una volta sola e poi si spostano. Se le
      ricreassi a ogni fotogramma l'animazione ripartireebbe da capo e il
      fuoco sembrerebbe battere (e Ste l'ha visto: "fa tipo a impulsi"). */
-  function preparaFiamme(prog, lato) {
-    var box = stato.box;
-    var a = arte(prog, stato.seme);
-    stato.fiamme = fiammeAttorno(a, lato);
+  function preparaFiamme(box, a, lato) {
+    var fiamme = fiammeAttorno(a, lato);
+    box._fiamme = fiamme;
     var contenitore = box.querySelector(".mb-fiamme");
     contenitore.innerHTML = "";
-    for (var k = 0; k < stato.fiamme.length; k++) {
-      var f = stato.fiamme[k];
+    for (var k = 0; k < fiamme.length; k++) {
+      var f = fiamme[k];
       var el = document.createElement("div");
       el.className = "mb-fiamma";
       el.innerHTML = fiammaSVG();
@@ -387,9 +444,10 @@
     }
   }
 
-  function spostaFiamme(a, lato) {
-    for (var k = 0; k < stato.fiamme.length; k++) {
-      var f = stato.fiamme[k];
+  function spostaFiamme(box, a) {
+    var elenco = box._fiamme || [];
+    for (var k = 0; k < elenco.length; k++) {
+      var f = elenco[k];
       if (!f.el) continue;
       var p = a.punti[f.i];
       if (!p) continue;
@@ -433,6 +491,7 @@
       var tDom = secondi(cur.textContent);
       var dur = secondi(tot.textContent);
       var audio = scegliAudio(tDom);
+      if (audio) stato.audio = audio;
       var suona = audio ? (!audio.paused && !audio.ended) : art.classList.contains("playing");
       var t = tDom;
       if (audio && isFinite(audio.currentTime)) t = audio.currentTime;
@@ -487,6 +546,8 @@
       }
 
       var a = arte(prog, stato.seme);
+      var raggio = "";
+      try { raggio = getComputedStyle(art).borderRadius; } catch (e) { /* noop */ }
       /* Il fuoco NON si sposta a ogni fotogramma. Le fiamme hanno un
          filtro di sfocatura: muoverle 60 volte al secondo fa scattare il
          telefono e il fuoco sembra battere (Ste: "il fuoco pulsa come se
@@ -494,12 +555,15 @@
          i passi sono troppo piccoli per vedersi, l'animazione gira
          liscia. */
       var cambiato = Math.abs(prog - stato.progChar) > 0.02;
-      if (cambiato) disegnaChar(prog);
-      if (!stato.fiamme.length) preparaFiamme(prog, r.width);
+      if (cambiato) disegnaChar(stato.box, a, raggio);
+      if (!stato.box._fiamme || !stato.box._fiamme.length) preparaFiamme(stato.box, a, r.width);
       if (cambiato || stato.progFiamme < 0) {
-        spostaFiamme(a, r.width);
+        spostaFiamme(stato.box, a);
         stato.progFiamme = prog;
       }
+
+      /* lo sfondo grande della schermata dei testi brucia insieme */
+      aggiornaTesti(a, prog);
       if (!stato.box.querySelector(".mb-bragia").childNodes.length) {
         stato.box.querySelector(".mb-bragia").innerHTML = stratoBragia(r.width);
       }
@@ -839,6 +903,21 @@
       }, 600);
     }
   }
+
+  /* Ste: "se tocco una parte di testo mi porta la canzone in avanti nel
+     punto in cui ho toccato". L'audio sta dentro l'app (non si vede nel
+     DOM), quindi espongo un modo per spostare la canzone: la pagina
+     chiama questa funzione. */
+  window.__mbVaiA = function (sec) {
+    try {
+      var a = stato.audio;
+      if (!a) return false;
+      if (!isFinite(sec) || sec < 0) return false;
+      a.currentTime = sec;
+      try { if (a.paused) a.play(); } catch (e) { /* noop */ }
+      return true;
+    } catch (e) { return false; }
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", parti);

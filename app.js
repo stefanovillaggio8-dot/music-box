@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.392";
+  const APP_VERSION = "6.393";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -14918,6 +14918,16 @@ if (typeof document !== "undefined") {
        collegamento non parte due volte perche' il contrassegno lo
        blocca, quindi e' innocuo. */
     try { _spotifyAggancia(); } catch (e) { /* noop */ }
+      /* Ste: "io ho 25 brani nella playlist gym non 13". Le playlist le
+         tiene l'app: le mando al servizio ogni volta che l'app parte, cosi'
+         il computer vede la lista vera e prepara i brani con i bassi. */
+      try {
+        setTimeout(function () {
+          try {
+            if (typeof _salvaPlaylistCondivise === "function") _salvaPlaylistCondivise();
+          } catch (e) { /* noop */ }
+        }, 1500);
+      } catch (e) { /* noop */ }
       /* Ste: "ho fatto l'accesso con spotify, mi e' tornato su musicbox e mi e' spuntato
          di nuovo accedi con spotify".
          Motivo: lo scambio del permesso aspettava che la libreria fosse pronta, e
