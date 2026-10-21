@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792620001322,
-  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792620001743,
-  "r": "SPOTIFY: [v6.396] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792620002239,
-  "r": "SPOTIFY: [v6.396] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792620002896,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792620002892,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
   "t": 1792620002896,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792620105488,
   "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792620106133,
+  "r": "SPOTIFY: [v6.397] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792620106582,
+  "r": "SPOTIFY: [v6.397] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792620107046,
+  "r": "SPOTIFY: [v6.397] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792620107652,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792620107652,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
