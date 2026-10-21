@@ -631,7 +631,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.394";
+  const APP_VERSION = "6.395";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2298,7 +2298,7 @@ function _devoVedereBrano(eMio, b) {
         artist: b.artist || "",
         album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
         cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
-        url: (_ePotenziato(b.file) || _branoInGym(stabile))
+        url: _branoInGym(stabile)
           ? _doveStaIlBranoConBassi(b.file)
           : _doveStaIlBrano(b.file),
         /* Ste: "nell'account di Diego il tasto avanti non va avanti".
@@ -3928,7 +3928,7 @@ emptyEl.textContent = !total
       /* Ste: "fai che si capisca quali sono state boostate e quali no".
          Il contrassegno "bassi" vuol dire: questo brano suona con la
          versione potenziata (bassi piu' pieni, voce avanti, piu' forte). */
-      if (t.file && _ePotenziato(t.file)) {
+      if (t.file && _branoInGym(t.id) && _ePotenziato(t.file)) {
         const badge = document.createElement("span");
         badge.className = "track-badge track-badge-bassi";
         badge.textContent = "bassi";
@@ -5160,6 +5160,11 @@ async function playById(id, autoplay = true) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      /* Ste: "quando cambia canzone si aggiorna in automatico il testo".
+         Prima restavano i testi del brano precedente. */
+      try {
+        if (!$("lyricsPanel").hidden && typeof openLyrics === "function") openLyrics();
+      } catch (e) { /* noop */ }
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
     _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);

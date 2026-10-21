@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <link rel="stylesheet" href="style.css?v=6394" />
+  <link rel="stylesheet" href="style.css?v=6395" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -160,7 +160,20 @@
           var riga = e.target && e.target.closest ? e.target.closest(".lyr-line") : null;
           if (!riga) return;
           var t = Number(riga.getAttribute("data-t"));
-          if (!isFinite(t)) return;
+          if (!isFinite(t)) {
+            /* Questa canzone non ha i tempi: stimo dove siamo dalla
+               posizione della riga (meglio che niente). */
+            var righe = document.querySelectorAll("#lyricsBody p");
+            var n = righe.length, k = 0, j;
+            for (j = 0; j < n; j++) { if (righe[j] === riga) { k = j; break; } }
+            var dur = 0;
+            try {
+              var p = String((document.getElementById("totTime") || {}).textContent || "").split(":");
+              for (j = 0; j < p.length; j++) dur = dur * 60 + (parseFloat(p[j]) || 0);
+            } catch (e) { dur = 0; }
+            if (!dur || n < 2) return;
+            t = (k / (n - 1)) * dur;
+          }
           if (window.__mbVaiA) window.__mbVaiA(t);
         }, true);
       })();
@@ -876,7 +889,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6394"></script>
-<script src="app.js?v=6394"></script>
+<script src="fuoco.js?v=6395"></script>
+<script src="app.js?v=6395"></script>
 </body>
 </html>

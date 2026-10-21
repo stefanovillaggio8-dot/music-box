@@ -367,20 +367,25 @@
      audio diverso e non deve confondermi). */
   function scegliAudio(tDom) {
     var migliore = null, diffMin = 3;
+    var suonante = null;
     for (var i = catalogAudio.length - 1; i >= 0; i--) {
       var a = catalogAudio[i];
       if (!a) continue;
-      var t, d;
+      var t, d, suona;
       try {
         if (!a.src) continue;
         t = a.currentTime;
         d = a.duration;
+        suona = !a.paused && !a.ended;
         if (!isFinite(d) || d <= 0) continue;
       } catch (e) { continue; }
       var diff = Math.abs(t - tDom);
+      /* quello che sta suonando davvero ha la precedenza: e' il brano
+         principale, non l'anteprima */
+      if (suona && diff < 6 && !suonante) suonante = a;
       if (diff < diffMin) { diffMin = diff; migliore = a; }
     }
-    return migliore;
+    return suonante || migliore;
   }
 
   /* --------------------------------------------------------------------------
