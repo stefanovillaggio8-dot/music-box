@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792637684169,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792637684168,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792637684401,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792647855672,
   "r": "suono: originale b-track-352"
+ },
+ {
+  "t": 1792647855676,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792648018309,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
