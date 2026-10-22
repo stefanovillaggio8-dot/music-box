@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792646991134,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792646991133,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792646991132,
   "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792648353720,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792648353732,
+  "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792648508720,
+  "r": "suono: originale b-track-318"
  }
 ]
