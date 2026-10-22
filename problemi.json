@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792627663370,
-  "r": "SPOTIFY: [v6.405] il server aveva il permesso: lo prendo"
- },
- {
   "t": 1792627663826,
   "r": "SPOTIFY: [v6.405] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792627701273,
   "r": "visibili 27 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792627711473,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  }
 ]
