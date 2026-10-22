@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792633081088,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792633083229,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633083244,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
   "t": 1792633083221,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792633127795,
   "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792633127794,
+  "r": "suono: POTENZIATO b-track-253"
+ },
+ {
+  "t": 1792633132614,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792633132614,
+  "r": "suono: POTENZIATO b-track-55"
  }
 ]
