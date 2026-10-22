@@ -1,61 +1,5 @@
 [
  {
-  "t": 1792633201342,
-  "r": "SPOTIFY: [v6.410] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792633201807,
-  "r": "SPOTIFY: [v6.410] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792633202244,
-  "r": "SPOTIFY: [v6.410] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792633202807,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792633202805,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792633202802,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633202801,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792633203988,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792633206281,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633206280,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792633206291,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792633206403,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792633207483,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792633210091,
-  "r": "suono: originale b-track-135"
- },
- {
   "t": 1792633210092,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -157,6 +101,62 @@
  },
  {
   "t": 1792633461929,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792633461946,
+  "r": "SPOTIFY: [v6.410] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792633461929,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792633461929,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792633462078,
+  "r": "SPOTIFY: [v6.410] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792633462445,
+  "r": "SPOTIFY: [v6.410] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792633463010,
+  "r": "SPOTIFY: [v6.410] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792633463082,
+  "r": "SPOTIFY: [v6.410] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792633463765,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792633463872,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792633463866,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792633463886,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792633464093,
+  "r": "SPOTIFY: [v6.410] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792633465077,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792633467124,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
