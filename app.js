@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.411";
+  const APP_VERSION = "6.412";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -944,7 +944,21 @@ const PROFILI = [
     try {
       const o = String(location.origin || "");
       if (!/^https?:\/\/(127\.0\.0\.1|localhost|\[?::1\]?|\d{1,3}(\.\d{1,3}){3})(:\d+)?$/.test(o)) return;
-      if (LS.get("mb.collegamentoCasa", "") !== o) LS.set("mb.collegamentoCasa", o);
+      if (LS.get("mb.collegamentoCasa", "") === o) return;
+      LS.set("mb.collegamentoCasa", o);
+      /* Adesso che so del collegamento di casa ricalcolo gli indirizzi di
+         tutti i brani: prima puntavano tutti a internet. */
+      try { _ricalcolaIndirizzi(); } catch (e) { }
+    } catch (e) { }
+  }
+
+  /* Ricalcola l'indirizzo di ogni brano (e ridisegna). */
+  function _ricalcolaIndirizzi() {
+    try {
+      for (const t of tracks) {
+        if (t && t.file) t.url = _doveStaIlBrano(t.file);
+      }
+      try { render(); } catch (e) { }
     } catch (e) { }
   }
 
@@ -10280,7 +10294,11 @@ $("fabMenu").addEventListener("click", (e) => {
       if (!cache) {
         throw new Error("il browser non ha piu' spazio per le canzoni offline: libera memoria o tocca piu' tardi");
       }
-      await fetchToCache(t.url, cache, (ratio) => {
+      /* L'indirizzo va ricalcolato adesso: quello del brano puo' essere
+         vecchio (calcolato all'avvio, prima che l'app sapesse del
+         collegamento di casa) e manderebbe il download su internet. */
+      const dove = (typeof _urlDelBrano === "function") ? _urlDelBrano(t) : t.url;
+      await fetchToCache(dove || t.url, cache, (ratio) => {
         if (el) el.style.background = ratio ? "var(--accent2)" : "";
       });
       if (el) {
