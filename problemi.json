@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792630439689,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792630439706,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792630635125,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792630638333,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
