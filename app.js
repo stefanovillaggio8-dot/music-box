@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.410";
+  const APP_VERSION = "6.411";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -925,6 +925,29 @@ const PROFILI = [
     return BRANI_ONLINE + "songs/bassi/" + soloNome;
   }
 
+  /* Il collegamento veloce: se l'app e' stata aperta dal computer di casa,
+     i brani si prendono da li' (600 MB/s) invece che da internet (2,8 MB/s).
+     Ste: "e' normale che ci stanno tanto tempo per scaricarsi pure con la
+     connessione di casa?". */
+  function _collegamentoDiCasa() {
+    try {
+      const o = String(LS.get("mb.collegamentoCasa", "") || "").trim();
+      if (!o) return "";
+      if (!/^https?:\/\/(127\.0\.0\.1|localhost|\[?::1\]?|\d{1,3}(\.\d{1,3}){3})(:\d+)?$/.test(o)) return "";
+      return o;
+    } catch (e) { return ""; }
+  }
+
+  /* Se l'app e' aperta su un indirizzo del computer di casa, me lo ricordo:
+     cosi' anche aperta dopo dal link di GitHub i brani arrivano veloci. */
+  function _ricordaCollegamentoDiCasa() {
+    try {
+      const o = String(location.origin || "");
+      if (!/^https?:\/\/(127\.0\.0\.1|localhost|\[?::1\]?|\d{1,3}(\.\d{1,3}){3})(:\d+)?$/.test(o)) return;
+      if (LS.get("mb.collegamentoCasa", "") !== o) LS.set("mb.collegamentoCasa", o);
+    } catch (e) { }
+  }
+
   function _doveStaIlBrano(file) {
     const nome = String(file || "");
     if (!nome) return "";
@@ -938,6 +961,18 @@ const PROFILI = [
          sacco ad avviarsi. */
       /^192\.168\./.test(qui) || /^10\./.test(qui) || /^172\.(1[6-9]|2\d|3[01])\./.test(qui);
     if (inLocale) return nome;
+    /* L'app aperta dal link di GitHub, ma il computer di casa e' vicino:
+       i brani li prendo da li', che e' 220 volte piu' veloce. */
+    try {
+      const casa = _collegamentoDiCasa();
+      if (casa && casa !== location.origin) {
+        const mio = String(location.origin || "");
+        const giaLocale = /^https?:\/\/(127\.0\.0\.1|localhost|\[?::1\]?|\d{1,3}(\.\d{1,3}){3})(:\d+)?$/.test(mio);
+        if (!giaLocale && /^\d{1,3}(\.\d{1,3}){3}/.test(casa)) {
+          return casa + "/app/" + nome.replace(/^\/+/, "");
+        }
+      }
+    } catch (e) { }
     /* online: prendo il brano dal deposito della musica.
        ATTENZIONE: qui il nome va tenuto COME E', con la cartella
        "songs/". Prima facevo .replace(/^.*\//, "") che si mangiava la
@@ -15192,6 +15227,11 @@ if (typeof document !== "undefined") {
        collegamento non parte due volte perche' il contrassegno lo
        blocca, quindi e' innocuo. */
     try { _spotifyAggancia(); } catch (e) { /* noop */ }
+      /* Se l'app e' aperta sul computer di casa, me lo ricordo: cosi' i
+         brani arrivano veloci anche quando poi apri l'app dal link di
+         GitHub (Ste: "ci stanno tanto tempo per scaricarsi pure con la
+         connessione di casa"). */
+      try { setTimeout(function () { _ricordaCollegamentoDiCasa(); }, 300); } catch (e) { /* noop */ }
       /* L'elenco dei brani potenziati: serve per il contrassegno e per
          scegliere la versione giusta da suonare. */
       try { setTimeout(function () { _caricaElencoPotenziati(); }, 800); } catch (e) { /* noop */ }
