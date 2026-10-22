@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792629033633,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792629033639,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792629033629,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792629033767,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792629034816,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 55 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1792629037174,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792629037185,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792629037191,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792629037304,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792629910004,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792629909918,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792629909905,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792629909901,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792629911130,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 55 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792629913112,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792629913251,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792629913232,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792629913242,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
