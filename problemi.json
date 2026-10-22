@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792633485739,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792633486765,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792633495655,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792633495661,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633496510,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633496872,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
   "t": 1792633496870,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792633800536,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792633800664,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792633800467,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792633800546,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792633801626,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792633804298,
+  "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792633804300,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
