@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.405";
+  const APP_VERSION = "6.406";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4506,6 +4506,20 @@ function rebuildAudio(autoplay) {
      Serve perche' i brani potenziati (quelli della playlist gym) sono file
      nuovi: la prima volta che ne suoni una, senza questo l'app aspetta
      che il file arrivi e la musica parte in ritardo. */
+  /* La connessione del telefono: su una rete lenta (o con il risparmio
+     dati) scaricare un brano da 4 MB in anticipo rallenta tutto. */
+  function _reteAbbastanzaVeloce() {
+    try {
+      const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (!c) return true;
+      if (c.saveData) return false;
+      const tipo = String(c.effectiveType || c.type || "");
+      if (tipo === "slow-2g" || tipo === "2g" || tipo === "3g") return false;
+      if (c.downlink && Number(c.downlink) < 1.2) return false;
+      return true;
+    } catch (e) { return true; }
+  }
+
   let _precaricaInCorso = false;
   async function _precaricaInCache(t) {
     try {
@@ -4522,24 +4536,6 @@ function rebuildAudio(autoplay) {
       try { await fetchToCache(t.url, cache, null); } catch (e) { }
       _precaricaInCorso = false;
     } catch (e) { _precaricaInCorso = false; }
-  }
-
-  /* Scarica, una alla volta, le canzoni della playlist gym: cosi' quando
-     Ste preme play su una, parte subito. */
-  async function _precaricaGym() {
-    try {
-      if (_meglioNonScaricareTutto()) return;
-      const gym = [];
-      for (const p of (playlists || [])) {
-        if (String(p.name || "").trim().toLowerCase() !== "gym") continue;
-        for (const id of (p.tracks || [])) gym.push(String(id));
-      }
-      if (!gym.length) return;
-      const miei = tracks.filter((t) => t && gym.indexOf(t.id) >= 0);
-      for (const t of miei) {
-        try { await _precaricaInCache(t); } catch (e) { }
-      }
-    } catch (e) { /* senza rete: pazienza */ }
   }
 
   function _preparaIlSuccessivo(id) {
@@ -4562,7 +4558,14 @@ function rebuildAudio(autoplay) {
       _preparatoId = id;
       /* E lo metto anche nella cache del service worker: cosi' la prossima
          volta che parte, non deve scaricare niente. */
-      if (!_meglioNonScaricareTutto()) { try { _precaricaInCache(t); } catch (e) { } }
+      /* Solo se la rete e' veloce: scaricare un file da 4 MB su una rete
+         lenta blocca tutto (Ste: "le canzoni ci stanno un sacco ad
+         avviarsi"). */
+      try {
+        if (!_meglioNonScaricareTutto() && _reteAbbastanzaVeloce()) {
+          _precaricaInCache(t);
+        }
+      } catch (e) { }
     } catch (e) { _preparato = null; _preparatoId = ""; }
   }
 
@@ -5266,7 +5269,12 @@ async function playById(id, autoplay = true) {
     }
     // La pausa generata dal cambio di sorgente non e' una pausa dell'utente.
     audio._mbCambioBrano = true;
-    audio.src = _urlDelBrano(t);
+    const _url = _urlDelBrano(t);
+    /* Ste: "il boost sembra che non sia cambiato nulla". Metto in traccia
+       l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
+       potenziato, se c'e' "songs/" e' l'originale. */
+    try { _segna("suono: " + (String(_url).indexOf("/bassi/") >= 0 ? "POTENZIATO" : "originale") + " " + t.id); } catch (e) { }
+    audio.src = _url;
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
@@ -12020,10 +12028,7 @@ if (SERVIZIO_PUBBLICA) {
       /* Le playlist sono arrivate: ridisegno, cosi' i brani della gym
          prendono il contrassegno "bassi" (se sono potenziati). */
       try { render(); } catch (e) { }
-      /* E scarico in anticipo le canzoni della gym: cosi' premere play
-         su una parte subito (Ste: "per partire le canzoni ci mettono un
-         sacco di tempo"). */
-      try { _precaricaGym(); } catch (e) { }
+
     });
   }, 5000);
   }
