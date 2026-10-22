@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792632636095,
-  "r": "SPOTIFY: [v6.409] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792632637044,
   "r": "SPOTIFY: [v6.409] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792632737703,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
+ },
+ {
+  "t": 1792632741582,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
