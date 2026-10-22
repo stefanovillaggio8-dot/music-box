@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792626609235,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792626612213,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792626705312,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792626708249,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792627201455,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792627201631,
-  "r": "SPOTIFY: [v6.404] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792627201748,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792627202007,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792627202097,
-  "r": "SPOTIFY: [v6.404] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792627202511,
-  "r": "SPOTIFY: [v6.404] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792627202982,
   "r": "SPOTIFY: [v6.404] il worker aveva il permesso pronto: lo prendo"
  },
@@ -157,6 +117,46 @@
  },
  {
   "t": 1792627249225,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792627249391,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792627249431,
+  "r": "SPOTIFY: [v6.404] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792627249677,
+  "r": "SPOTIFY: [v6.404] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792627250180,
+  "r": "SPOTIFY: [v6.404] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792627250330,
+  "r": "SPOTIFY: [v6.404] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792627250573,
+  "r": "SPOTIFY: [v6.404] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792627251083,
+  "r": "SPOTIFY: [v6.404] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792627251566,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792627251577,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792627251714,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  }
 ]
