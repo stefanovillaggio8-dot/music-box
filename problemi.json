@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792632678412,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792632737703,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
   "t": 1792632741582,
   "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792632918826,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792632949696,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792632949680,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
