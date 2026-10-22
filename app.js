@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.408";
+  const APP_VERSION = "6.409";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4540,7 +4540,7 @@ function rebuildAudio(autoplay) {
          pieno, si portano via le tue). */
       if (!("caches" in window)) return;
       let cache = null;
-      try { cache = await caches.open("spotifynavraiimieisoldi-prefetch"); } catch (e) { cache = null; }
+      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch"); } catch (e) { cache = null; }
       if (!cache) return;
       _precaricaInCorso = true;
       try { await fetchToCache(t.url, cache, null); } catch (e) { }
@@ -12066,6 +12066,60 @@ async function _mandaGymAlServizio() {
       else segnalaErrore("gym: il servizio non ha accettato la lista (" + (r ? r.status : "?") + ")");
     } catch (e) { }
   } catch (e) { /* senza rete: la lista arriva al prossimo giro */ }
+}
+
+/* Tiene sotto il tetto ("Quanto tenere offline") lo spazio delle canzoni.
+   Prima non c'era nessun tetto: quando il telefono era pieno, il browser
+   buttava via le voci piu' vecchie delle cache, e se ne buttava via anche
+   le download di Ste ("i download che faccio vengono resettati").
+   Adesso: si svuota prima la cache delle canzoni che si sono solo
+   ascoltate, e solo se serve si tocca la cache delle download (e in quel
+   caso le piu' vecchie, che sono le meno usate). */
+async function _tieniSpazioSottoIlTetto() {
+  try {
+    if (!("caches" in window)) return;
+    const tettoMb = Number(LS.get("mb.tettoScarica", "500")) || 500;
+    if (tettoMb >= 999999) return;   /* senza tetto: non toccare niente */
+    const tetto = tettoMb * 1024 * 1024;
+    const stream = await caches.open("spotifynonavraiimieisoldi-stream");
+    const miei = await caches.open("spotifynonavraiimieisoldi-brani");
+    const dimensione = async (cache) => {
+      let totale = 0;
+      try {
+        for (const req of await cache.keys()) {
+          const r = await cache.match(req);
+          if (!r) continue;
+          totale += Number(r.headers.get("content-length") || 0) || 0;
+        }
+      } catch (e) { }
+      return totale;
+    };
+    let tot = await dimensione(stream);
+    let mie = await dimensione(miei);
+    if (tot + mie <= tetto) return;
+    /* Prima le canzoni solo ascoltate, dalla piu' vecchia */
+    for (const req of await stream.keys()) {
+      if (tot + mie <= tetto) break;
+      try {
+        const r = await stream.match(req);
+        const sz = r ? (Number(r.headers.get("content-length") || 0) || 0) : 0;
+        await stream.delete(req);
+        tot -= sz;
+      } catch (e) { }
+    }
+    /* Poi, se serve davvero, le download di Ste: le piu' vecchie */
+    if (tot + mie > tetto) {
+      for (const req of await miei.keys()) {
+        if (tot + mie <= tetto) break;
+        try {
+          const r = await miei.match(req);
+          const sz = r ? (Number(r.headers.get("content-length") || 0) || 0) : 0;
+          await miei.delete(req);
+          mie -= sz;
+        } catch (e) { }
+      }
+    }
+  } catch (e) { /* pazienza */ }
 }
 
 async function _salvaPlaylistCondivise() {

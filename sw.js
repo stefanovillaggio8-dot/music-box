@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6408";
+const CACHE = "spotifynonavraiimieisoldi-v6409";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -6,6 +6,16 @@ const CACHE = "spotifynonavraiimieisoldi-v6408";
    anche l'app. Cosi' i file dell'app restano al sicuro e le canzoni
    scaricate non si devono ricopiare a ogni aggiornamento (sono GB). */
 const CACHE_BRANI = "spotifynonavraiimieisoldi-brani";
+/* I brani che l'app scarica in anticipo (per far partire le canzoni subito)
+   stanno in una cache a parte: non devono riempire la cache dei brani e non
+   devono far fuori le download di Ste. */
+const CACHE_PREFETCH = "spotifynonavraiimieisoldi-prefetch";
+/* I brani che si suonano "al volo" stanno in una cache separata da quelli che
+   Ste ha scaricato apposta. Motivo: quando il telefono e' pieno il browser
+   butta via le voci piu' vecchie, e se le due cose fossero mescolate a
+   buttare via sarebbero state proprio le download di Ste ("i download che
+   faccio vengono resettati"). */
+const CACHE_STREAM = "spotifynonavraiimieisoldi-stream";
 const CORE = [
   "./",
   "./index.html",
@@ -552,7 +562,9 @@ async function migrateOfflineSongsAndCleanup() {
   const keys = await caches.keys();
   /* la cache delle canzoni non si tocca: le canzoni scaricate restano
      dove sono e i file dell'app restano separati */
-  const oldKeys = keys.filter((key) => key !== CACHE && key !== CACHE_BRANI);
+  const oldKeys = keys.filter((key) => key !== CACHE && key !== CACHE_BRANI &&
+    key !== CACHE_PREFETCH && key !== CACHE_STREAM &&
+    key !== "spotifynonavraiimieisoldi-info");
   const activeCache = await caches.open(CACHE);
   const cacheBrani = await caches.open(CACHE_BRANI);
 
@@ -619,7 +631,7 @@ self.addEventListener("activate", (event) => {
      accumularsi: a ogni nuova versione la svuoto (cosi' il telefono non si
      riempie e non si scarica 100 MB di file in una volta). */
   event.waitUntil(
-    caches.delete("spotifynavraiimieisoldi-prefetch").catch(() => {})
+    caches.delete("spotifynonavraiimieisoldi-prefetch").catch(() => {})
   );
   event.waitUntil(
     migrateOfflineSongsAndCleanup().catch((error) => {
@@ -699,6 +711,15 @@ async function rispostaDallaCache(cached, range) {
 }
 
 let _ultimaRivalidazione = 0;
+const _CHIAVE_RIVALIDAZIONE = "ultima-rivalidazione";
+async function _leggiUltimaRivalidazione() {
+  try {
+    const c = await caches.open("spotifynonavraiimieisoldi-info");
+    const r = await c.match(_CHIAVE_RIVALIDAZIONE);
+    if (!r) return 0;
+    return Number(await r.text()) || 0;
+  } catch (e) { return 0; }
+}
 async function _rivalidaBrano(url) {
   /* Prendo la versione nuova del file e la metto in cache. Lo faccio al massimo
      una volta all'ora: sono file di qualche MB e non voglio scaricarli a ogni
@@ -707,9 +728,13 @@ async function _rivalidaBrano(url) {
     const ora = Date.now();
     if (ora - _ultimaRivalidazione < 3600000) return;
     _ultimaRivalidazione = ora;
+    try {
+      const c = await caches.open("spotifynonavraiimieisoldi-info");
+      await c.put(_CHIAVE_RIVALIDAZIONE, new Response(String(ora)));
+    } catch (e) { }
     const res = await fetch(url, { cache: "no-store" });
     if (!res || res.status !== 200) return;
-    const cache = await caches.open(CACHE_BRANI);
+    const cache = await caches.open(CACHE_STREAM);
     await cache.put(new Request(url), res.clone());
   } catch (e) { /* pazienza: la prossima volta si riprova */ }
 }
@@ -736,7 +761,7 @@ async function cachedMusicResponse(event) {
     /* Salvo solo risposte complete (200), mai un pezzo audio (206). */
     if (response && response.status === 200 && !range && response.type !== "opaque") {
       event.waitUntil(
-        caches.open(CACHE_BRANI).then((cache) => cache.put(new Request(event.request.url), response.clone()))
+        caches.open(CACHE_STREAM).then((cache) => cache.put(new Request(event.request.url), response.clone()))
           .catch(() => {})
       );
     }
