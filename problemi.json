@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792633083221,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792633083450,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792633132614,
   "r": "suono: POTENZIATO b-track-55"
+ },
+ {
+  "t": 1792633138153,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
