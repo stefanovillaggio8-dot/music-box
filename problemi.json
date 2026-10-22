@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792628441162,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792628441169,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792628441360,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792628442370,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792628442368,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792628442569,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792628444531,
-  "r": "visibili 27 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792628471151,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792628471151,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792628472270,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792628472352,
-  "r": "FINALE: visibili 27 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8788"
- },
- {
   "t": 1792628472352,
   "r": "visibili 27 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792628724998,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792628725001,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792628725018,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792628725159,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792628726211,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792628778128,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792628778069,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792628778069,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792628778286,
+  "r": "SPOTIFY: [v6.406] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792628778328,
+  "r": "SPOTIFY: [v6.406] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792628778538,
+  "r": "SPOTIFY: [v6.406] ricarico: il worker del servizio e' cambiato"
+ },
+ {
+  "t": 1792628778995,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
