@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792637684401,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792637685378,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792637685375,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792637685607,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
  },
@@ -157,6 +145,18 @@
  },
  {
   "t": 1792648018309,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792648018307,
+  "r": "suono: originale b-track-486"
+ },
+ {
+  "t": 1792648165039,
+  "r": "suono: originale b-track-457"
+ },
+ {
+  "t": 1792648165055,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
