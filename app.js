@@ -1618,7 +1618,7 @@ function _disegnaScaricaDaSolo() {
     try {
       const b = $("btnTettoScarica");
       if (!b) return;
-      const mb = Number(LS.get("mb.tettoScarica", "500")) || 500;
+      const mb = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
       b.title = mb >= 999999
         ? "Senza tetto: tengo offline tutto quello che entra"
         : "Tengo offline al massimo " + mb + " MB";
@@ -5919,6 +5919,10 @@ if (!sceltaCopia) updateProfileButton();
       saveCurrentState();
       profile = name;
       LS.set("mb.profile", name);
+      /* Comunica il cambio di profilo al service worker per usare le cache giuste */
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: "SET_PROFILE", profile: name });
+      }
       updateProfileButton();
       if (audio) {
         try { audio.pause(); } catch (e) { /* noop */ }
@@ -9684,12 +9688,27 @@ $("fabMenu").addEventListener("click", (e) => {
      Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
      connessione non gli si apre l'app". Se le canzoni e i file dell'app
      stanno nella stessa cache, quando il telefono libera spazio si porta
-     via anche l'app, e allora non si apre piu' offline. */
-  const CACHE_BRANI = "spotifynonavraiimieisoldi-brani";
-  async function appCache() {
+     via anche l'app, e allora non si apre piu' offline.
+     Ora ogni profilo ha le sue cache separate: brani-<profilo> e stream-<profilo>. */
+  const CACHE_PREFIX = "spotifynonavraiimieisoldi";
+  function cacheBraniName(p) { return CACHE_PREFIX + "-brani-" + (p || profile); }
+  function cacheStreamName(p) { return CACHE_PREFIX + "-stream-" + (p || profile); }
+  function cachePrefetchName() { return CACHE_PREFIX + "-prefetch"; }
+  function cacheInfoName() { return CACHE_PREFIX + "-info"; }
+
+  async function appCache(p) {
     if (!("caches" in window)) return null;
     try {
-      return await caches.open(CACHE_BRANI);
+      return await caches.open(cacheBraniName(p));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function streamCache(p) {
+    if (!("caches" in window)) return null;
+    try {
+      return await caches.open(cacheStreamName(p));
     } catch (e) {
       return null;
     }
@@ -9785,7 +9804,7 @@ $("fabMenu").addEventListener("click", (e) => {
       const gia = await cache.match(brano.url);
       if (gia) return;
       /* Non supero il tetto di spazio. */
-      const tetto = Number(LS.get("mb.tettoScarica", "500")) || 500;
+      const tetto = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
       try {
         if (navigator.storage && navigator.storage.estimate) {
           const stima = await navigator.storage.estimate();
@@ -10133,7 +10152,7 @@ $("fabMenu").addEventListener("click", (e) => {
       if (navigator.serviceWorker && navigator.serviceWorker.controller) {
         const daScaricare = rows.filter((r) => r.state === "todo").map((r) => r.url).filter(Boolean);
         if (daScaricare.length) {
-          navigator.serviceWorker.controller.postMessage({ type: "SCARICA", url: daScaricare, cache: "spotifynonavraiimieisoldi-brani" });
+          navigator.serviceWorker.controller.postMessage({ type: "SCARICA", url: daScaricare, cache: cacheBraniName() });
           _diChe("chiedo al worker di scaricare " + daScaricare.length + " brani");
         }
       }
@@ -10166,6 +10185,34 @@ $("fabMenu").addEventListener("click", (e) => {
         }
       }
     } catch (e) { /* noop */ }
+    /* Aggiunge info cache canzoni + avviso soglia */
+    try {
+      if ("caches" in window) {
+        const tettoMb = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
+        if (tettoMb < 999999) {
+          const tetto = tettoMb * 1024 * 1024;
+          const stream = await caches.open(cacheStreamName());
+          const miei = await caches.open(cacheBraniName());
+          const dimensione = async (cache) => {
+            let totale = 0;
+            try {
+              for (const req of await cache.keys()) {
+                const r = await cache.match(req);
+                if (!r) continue;
+                totale += Number(r.headers.get("content-length") || 0) || 0;
+              }
+            } catch (e) { }
+            return totale;
+          };
+          const tot = await dimensione(stream);
+          const mie = await dimensione(miei);
+          const usato = tot + mie;
+          const perc = tetto > 0 ? Math.round((usato / tetto) * 100) : 0;
+          const avviso = perc >= 80 ? " ⚠️" : "";
+          txt += "\nCanzoni offline: " + fmtBytes(usato) + " / " + tettoMb + " MB (" + perc + "%)" + avviso;
+        }
+      }
+    } catch (e) { }
     if (!txt) txt = "Le canzoni offline occupano memoria sul telefono (circa 60 MB per tutte).";
     $("offlineSpace").textContent = txt;
   }
@@ -10174,8 +10221,8 @@ $("fabMenu").addEventListener("click", (e) => {
     /* Svuoto TUTTE le cache, non solo quella di un momento: dopo un
        aggiornamento i brani scaricati finiscono nella cache nuova (il worker
        del servizio li migra li'), e svuotando solo la vecchia non si
-       liberava davvero niente. Cancello solo i brani: i file dell'app
-       restano, cosi' l'app si apre anche senza rete. */
+liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell'app
+        restano, cosi' l'app si apre anche senza rete. */
     if (!("caches" in window)) {
       toast("Offline non disponibile qui");
       return;
@@ -10184,6 +10231,8 @@ $("fabMenu").addEventListener("click", (e) => {
     try {
       const chiavi = await caches.keys();
       for (const chiave of chiavi) {
+        /* Cancella solo le cache del profilo corrente (brani e stream) */
+        if (!chiave.includes("-" + profile + "-") && !chiave.endsWith("-" + profile)) continue;
         let cache = null;
         try { cache = await caches.open(chiave); } catch (e) { continue; }
         let reqs = [];
@@ -10277,6 +10326,41 @@ $("fabMenu").addEventListener("click", (e) => {
     return blob.size;
   }
 
+  async function _controllaSpazioAvviso() {
+    try {
+      if (!("caches" in window)) return false;
+      const tettoMb = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
+      if (tettoMb >= 999999) return false;
+      const tetto = tettoMb * 1024 * 1024;
+      const stream = await caches.open(cacheStreamName());
+      const miei = await caches.open(cacheBraniName());
+      const dimensione = async (cache) => {
+        let totale = 0;
+        try {
+          for (const req of await cache.keys()) {
+            const r = await cache.match(req);
+            if (!r) continue;
+            totale += Number(r.headers.get("content-length") || 0) || 0;
+          }
+        } catch (e) { }
+        return totale;
+      };
+      const tot = await dimensione(stream);
+      const mie = await dimensione(miei);
+      const usato = tot + mie;
+      const perc = tetto > 0 ? (usato / tetto) * 100 : 0;
+      if (perc >= 80) {
+        toast("Attenzione: spazio offline al " + Math.round(perc) + "% (" +
+          Math.round(usato / 1024 / 1024) + " MB su " + tettoMb + " MB). " +
+          "Le canzoni più vecchie verranno rimosse automaticamente.", 8000);
+        /* Pulizia automatica proattiva */
+        await _tieniSpazioSottoIlTetto();
+        return true;
+      }
+    } catch (e) { }
+    return false;
+  }
+
   async function cacheOneTrack(t, el) {
     /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
        ascoltare senza connessione". Prima qui fermavo tutto se il brano
@@ -10284,6 +10368,7 @@ $("fabMenu").addEventListener("click", (e) => {
        non si potevano proprio scaricare. Ora va bene QUALSIASI brano che
        abbia un indirizzo. */
     if (cloudBusy || !t || !t.url) return;
+    await _controllaSpazioAvviso();
     cloudBusy = true;
     if (el) {
       el.classList.add("run");
@@ -10870,7 +10955,7 @@ $("selMenuBtn").addEventListener("click", () => {
   try {
     $("btnTettoScarica").addEventListener("click", async () => {
       _chiudiAltro();
-      const ora = Number(LS.get("mb.tettoScarica", "500")) || 500;
+      const ora = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
       const scelte = [
         { mb: "200", testo: "200 MB (poco)" },
         { mb: "500", testo: "500 MB (quanto basta)" },
@@ -10880,7 +10965,7 @@ $("selMenuBtn").addEventListener("click", () => {
       ];
       const chiedi = await _scegliTettoScarica(ora, scelte);
       if (chiedi) {
-        LS.set("mb.tettoScarica", String(chiedi));
+        LS.set("mb.tettoScarica-" + profile, String(chiedi));
         toast("Tetto di scaricamento: " + (chiedi === "999999" ? "senza tetto" : chiedi + " MB"));
       }
     });
@@ -12131,11 +12216,11 @@ async function _mandaGymAlServizio() {
 async function _tieniSpazioSottoIlTetto() {
   try {
     if (!("caches" in window)) return;
-    const tettoMb = Number(LS.get("mb.tettoScarica", "500")) || 500;
+    const tettoMb = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
     if (tettoMb >= 999999) return;   /* senza tetto: non toccare niente */
     const tetto = tettoMb * 1024 * 1024;
-    const stream = await caches.open("spotifynonavraiimieisoldi-stream");
-    const miei = await caches.open("spotifynonavraiimieisoldi-brani");
+    const stream = await caches.open(cacheStreamName());
+    const miei = await caches.open(cacheBraniName());
     const dimensione = async (cache) => {
       let totale = 0;
       try {
@@ -12160,7 +12245,7 @@ async function _tieniSpazioSottoIlTetto() {
         tot -= sz;
       } catch (e) { }
     }
-    /* Poi, se serve davvero, le download di Ste: le piu' vecchie */
+    /* Poi, se serve davvero, le download del profilo: le piu' vecchie */
     if (tot + mie > tetto) {
       for (const req of await miei.keys()) {
         if (tot + mie <= tetto) break;
@@ -13052,6 +13137,10 @@ for (const p of playlists) {
     }
     const st =     loadProfileState();
     updateProfileButton();
+    /* Imposta il profilo attivo nel service worker per le cache per profilo */
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: "SET_PROFILE", profile: profile });
+    }
     $("appVer").textContent = "v" + APP_VERSION;
   // Scrivo la versione anche nella schermata di ricerca: se la pagina e' vecchia
   // la vedi subito, senza dover andare a cercare la versione nel menu'.

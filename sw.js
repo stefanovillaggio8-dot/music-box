@@ -4,18 +4,25 @@ const CACHE = "spotifynonavraiimieisoldi-v6412";
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
    nella stessa cache, quando il telefono libera spazio si porta via
    anche l'app. Cosi' i file dell'app restano al sicuro e le canzoni
-   scaricate non si devono ricopiare a ogni aggiornamento (sono GB). */
-const CACHE_BRANI = "spotifynonavraiimieisoldi-brani";
+   scaricate non si devono ricopiare a ogni aggiornamento (sono GB).
+   Ora ogni profilo ha le sue cache: brani-<profilo>, stream-<profilo>. */
+const CACHE_PREFIX = "spotifynonavraiimieisoldi";
+const CACHE_BRANI = CACHE_PREFIX + "-brani";  /* deprecato: usato per migrazione vecchie cache */
+function cacheBraniName(p) { return CACHE_PREFIX + "-brani-" + p; }
+function cacheStreamName(p) { return CACHE_PREFIX + "-stream-" + p; }
+function cachePrefetchName(p) { return CACHE_PREFIX + "-prefetch-" + p; }
+function cacheInfoName() { return CACHE_PREFIX + "-info"; }
+
 /* I brani che l'app scarica in anticipo (per far partire le canzoni subito)
-   stanno in una cache a parte: non devono riempire la cache dei brani e non
-   devono far fuori le download di Ste. */
-const CACHE_PREFETCH = "spotifynonavraiimieisoldi-prefetch";
-/* I brani che si suonano "al volo" stanno in una cache separata da quelli che
-   Ste ha scaricato apposta. Motivo: quando il telefono e' pieno il browser
+   stanno in una cache a parte per profilo: non devono riempire la cache dei brani e non
+   devono far fuori le download degli utenti. */
+/* I brani che si suonano "al volo" stanno in una cache separata per profilo da quelli che
+   l'utente ha scaricato apposta. Motivo: quando il telefono e' pieno il browser
    butta via le voci piu' vecchie, e se le due cose fossero mescolate a
-   buttare via sarebbero state proprio le download di Ste ("i download che
+   buttare via sarebbero state proprio le download dell'utente ("i download che
    faccio vengono resettati"). */
-const CACHE_STREAM = "spotifynonavraiimieisoldi-stream";
+
+let activeProfile = "Ste";  /* profilo di default, l'app lo sovrascrive via message */
 const CORE = [
   "./",
   "./index.html",
@@ -510,12 +517,16 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
     return;
   }
+  if (tipo === "SET_PROFILE" && data.profile) {
+    activeProfile = data.profile;
+    return;
+  }
   /* Ste: "fai in modo che i download partono anche in background".
      Il worker del servizio vive un po' piu' a lungo della pagina, quindi
      e' lui che puo' portare avanti lo scaricamento anche se l'app viene
      sospesa (schermo spento). */
   if (tipo === "SCARICA" && Array.isArray(data.url)) {
-    event.waitUntil(scaricaPerContoMio(data.url, data.cache || "spotifynonavraiimieisoldi-brani"));
+    event.waitUntil(scaricaPerContoMio(data.url, data.cache || cacheBraniName(activeProfile)));
   }
 });
 
@@ -560,13 +571,16 @@ function isMusicBoxSong(url) {
 
 async function migrateOfflineSongsAndCleanup() {
   const keys = await caches.keys();
-  /* la cache delle canzoni non si tocca: le canzoni scaricate restano
-     dove sono e i file dell'app restano separati */
-  const oldKeys = keys.filter((key) => key !== CACHE && key !== CACHE_BRANI &&
-    key !== CACHE_PREFETCH && key !== CACHE_STREAM &&
-    key !== "spotifynonavraiimieisoldi-info");
+  /* Non toccare le cache per profilo: brani-<profilo>, stream-<profilo>, prefetch-<profilo>
+     e la cache info. Cancelliamo solo le vecchie cache condivise (senza suffisso profilo). */
+  const profileCachePattern = new RegExp("^" + CACHE_PREFIX + "-(brani|stream|prefetch)-.+$");
+  const oldKeys = keys.filter((key) => key !== CACHE &&
+    key !== CACHE_BRANI &&
+    key !== cacheInfoName() &&
+    !profileCachePattern.test(key));
   const activeCache = await caches.open(CACHE);
-  const cacheBrani = await caches.open(CACHE_BRANI);
+  /* Migriamo dalla vecchia cache condivisa CACHE_BRANI verso il profilo di default "Ste" */
+  const cacheBraniDefault = await caches.open(cacheBraniName("Ste"));
 
   /* Prima di eliminare vecchie cache, controllo che la versione nuova contenga
      tutti i file essenziali. Se l'installazione e' incompleta, non elimino nulla. */
@@ -605,15 +619,14 @@ async function migrateOfflineSongsAndCleanup() {
       if (!eBrano) continue;
 
       const cacheKey = new Request(url.href);
-      if (await cacheBrani.match(cacheKey)) continue;
+      if (await cacheBraniDefault.match(cacheKey)) continue;
 
       const response = await oldCache.match(request);
       if (!response) continue;
       try {
-        /* le canzoni migrate vanno nella cache delle canzoni, non in
-           quella dell'app */
-        await cacheBrani.put(cacheKey, response.clone());
-        if (!(await cacheBrani.match(cacheKey))) safeToDelete = false;
+        /* le canzoni migrate vanno nella cache delle canzoni del profilo di default */
+        await cacheBraniDefault.put(cacheKey, response.clone());
+        if (!(await cacheBraniDefault.match(cacheKey))) safeToDelete = false;
       } catch (error) {
         console.warn("Non riesco a migrare una canzone offline; conservo la vecchia cache.", error);
         safeToDelete = false;
@@ -634,18 +647,20 @@ self.addEventListener("message", (event) => {
   if (!dati || dati.type !== "SVUOTA-CANZONI") return;
   event.waitUntil(
     Promise.all([
-      caches.delete("spotifynonavraiimieisoldi-stream"),
-      caches.delete("spotifynonavraiimieisoldi-prefetch")
+      caches.delete(cacheStreamName(activeProfile)),
+      caches.delete(cachePrefetchName(activeProfile))
     ]).catch(() => {})
   );
 });
 
 self.addEventListener("activate", (event) => {
-  /* I brani scaricati in anticipo stanno in una cache a parte e non devono
+  /* I brani scaricati in anticipo stanno in una cache a parte per profilo e non devono
      accumularsi: a ogni nuova versione la svuoto (cosi' il telefono non si
      riempie e non si scarica 100 MB di file in una volta). */
   event.waitUntil(
-    caches.delete("spotifynonavraiimieisoldi-prefetch").catch(() => {})
+    caches.keys().then(keys => Promise.all(
+      keys.filter(k => k.startsWith(CACHE_PREFIX + "-prefetch-")).map(k => caches.delete(k))
+    ).catch(() => {}))
   );
   event.waitUntil(
     migrateOfflineSongsAndCleanup().catch((error) => {
@@ -743,12 +758,12 @@ async function _rivalidaBrano(url) {
     if (ora - _ultimaRivalidazione < 300000) return;
     _ultimaRivalidazione = ora;
     try {
-      const c = await caches.open("spotifynonavraiimieisoldi-info");
+      const c = await caches.open(cacheInfoName());
       await c.put(_CHIAVE_RIVALIDAZIONE, new Response(String(ora)));
     } catch (e) { }
     const res = await fetch(url, { cache: "no-store" });
     if (!res || res.status !== 200) return;
-    const cache = await caches.open(CACHE_STREAM);
+    const cache = await caches.open(cacheStreamName(activeProfile));
     await cache.put(new Request(url), res.clone());
   } catch (e) { /* pazienza: la prossima volta si riprova */ }
 }
@@ -775,7 +790,7 @@ async function cachedMusicResponse(event) {
     /* Salvo solo risposte complete (200), mai un pezzo audio (206). */
     if (response && response.status === 200 && !range && response.type !== "opaque") {
       event.waitUntil(
-        caches.open(CACHE_STREAM).then((cache) => cache.put(new Request(event.request.url), response.clone()))
+        caches.open(cacheStreamName(activeProfile)).then((cache) => cache.put(new Request(event.request.url), response.clone()))
           .catch(() => {})
       );
     }
