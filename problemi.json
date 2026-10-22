@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792628718788,
-  "r": "SPOTIFY: [v6.406] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792628718963,
-  "r": "SPOTIFY: [v6.406] ricarico: il worker del servizio e' cambiato"
- },
- {
-  "t": 1792628719439,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792628719462,
-  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
- },
- {
-  "t": 1792628719590,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792628719644,
-  "r": "SPOTIFY: [v6.406] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792628721144,
-  "r": "SPOTIFY: [v6.406] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792628721144,
-  "r": "SPOTIFY: [v6.406] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792628721210,
-  "r": "SPOTIFY: [v6.406] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792628721383,
-  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1792628721801,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792628721801,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792628784585,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792628784565,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792628784713,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792628785775,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792628820527,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792628820526,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792628820589,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792628820820,
+  "r": "SPOTIFY: [v6.406] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792628820858,
+  "r": "SPOTIFY: [v6.406] ricarico: il worker del servizio e' cambiato"
+ },
+ {
+  "t": 1792628821257,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792628821286,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792628821406,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
