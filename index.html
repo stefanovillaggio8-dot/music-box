@@ -310,7 +310,9 @@
            impiega a cambiare riga (l'evento di tempo arriva ogni 250
            millisecondi). Se il testo ti sembra ancora indietro, poi'
            regolo: basta cambiare _SPOSTAMENTO_TESTO. */
-        var _SPOSTAMENTO_TESTO = 0.5;
+        /* Ste: "ancora il testo e' poco indietro rispetto alla voce":
+           mezzo secondo non bastava, quindi ora ne metto uno. */
+        var _SPOSTAMENTO_TESTO = 1.0;
         function _spostaTesto() {
           var righe = document.querySelectorAll("#lyricsBody .lyr-line[data-t]");
           if (!righe.length) return;
