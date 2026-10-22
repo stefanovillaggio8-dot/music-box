@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792633079782,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792633079783,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792633081088,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
  },
@@ -157,6 +149,14 @@
  },
  {
   "t": 1792633124343,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792633124343,
+  "r": "suono: POTENZIATO b-track-262"
+ },
+ {
+  "t": 1792633127795,
   "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
