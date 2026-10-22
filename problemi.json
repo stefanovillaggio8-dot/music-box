@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792632563062,
-  "r": "suono: POTENZIATO b-track-257"
- },
- {
-  "t": 1792632563302,
-  "r": "FINALE: visibili 27 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8788"
- },
- {
-  "t": 1792632567952,
-  "r": "suono: POTENZIATO b-track-58"
- },
- {
-  "t": 1792632567951,
-  "r": "visibili 27 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
   "t": 1792632576431,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792632638134,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792632638148,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792632639360,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1792632641889,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792632641899,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
