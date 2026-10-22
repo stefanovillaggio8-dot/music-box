@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6409";
+const CACHE = "spotifynonavraiimieisoldi-v6410";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -626,6 +626,20 @@ async function migrateOfflineSongsAndCleanup() {
   await Promise.all(removable.map((key) => caches.delete(key)));
 }
 
+/* Ste: quando l'app si aggiorna, le canzoni che ha in cache possono essere
+   vecchie (per esempio la versione potenziata precedente). L'app chiede
+   allora di svuotarle, cosi' la prossima canzone arriva nuova. */
+self.addEventListener("message", (event) => {
+  const dati = event && event.data ? event.data : null;
+  if (!dati || dati.type !== "SVUOTA-CANZONI") return;
+  event.waitUntil(
+    Promise.all([
+      caches.delete("spotifynonavraiimieisoldi-stream"),
+      caches.delete("spotifynonavraiimieisoldi-prefetch")
+    ]).catch(() => {})
+  );
+});
+
 self.addEventListener("activate", (event) => {
   /* I brani scaricati in anticipo stanno in una cache a parte e non devono
      accumularsi: a ogni nuova versione la svuoto (cosi' il telefono non si
@@ -726,7 +740,7 @@ async function _rivalidaBrano(url) {
      ascolto. */
   try {
     const ora = Date.now();
-    if (ora - _ultimaRivalidazione < 3600000) return;
+    if (ora - _ultimaRivalidazione < 300000) return;
     _ultimaRivalidazione = ora;
     try {
       const c = await caches.open("spotifynonavraiimieisoldi-info");

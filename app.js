@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.409";
+  const APP_VERSION = "6.410";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13503,6 +13503,26 @@ const che = [];
              che sono rare, e con un segno che ricorda di non farlo due
              volte per la stessa versione: il ciclo non puo' tornare. */
           const _versioneDaPrendere = m ? String(m[1]) : "";
+
+          /* Ste: "col volume basso non cambia nulla". Motivo: il telefono aveva
+
+             in cache il brano potenziato VECCHIO (quasi uguale all'originale)
+
+             e la rivalidazione aspettava un'ora. Ora, quando c'e' una versione
+
+             nuova, dico al service worker di svuotare le cache dei brani: la
+
+             prima canzone dopo arriva nuova. */
+
+          try {
+
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+
+              navigator.serviceWorker.controller.postMessage({ type: "SVUOTA-CANZONI" });
+
+            }
+
+          } catch (e) { /* noop */ }
           /* l'ultimo momento in cui Ste ha toccato lo schermo: serve per non
    ricaricare l'app mentre la sta usando */
 let _ultimoTocco = Date.now();
