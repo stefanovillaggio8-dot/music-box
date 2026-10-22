@@ -418,7 +418,7 @@
    },
    "nirvana|smellsliketeenspirit": {
     "v": 0,
-    "s": 4,
+    "s": 5,
     "t": "Smells Like Teen Spirit",
     "a": "Nirvana"
    },
@@ -495,8 +495,8 @@
     "a": "XCarme"
    },
    "threedaysgrace|animalihavebecome": {
-    "v": 2,
-    "s": 0,
+    "v": 3,
+    "s": 4,
     "t": "Animal I Have Become",
     "a": "Three Days Grace"
    },
@@ -874,7 +874,7 @@
    },
    "skillet|monster": {
     "v": 1,
-    "s": 145,
+    "s": 152,
     "t": "Monster",
     "a": "Skillet"
    },
@@ -940,7 +940,7 @@
    },
    "gunsnroses|sweetchildomine": {
     "v": 0,
-    "s": 6,
+    "s": 17,
     "t": "Sweet Child O' Mine",
     "a": "Guns N' Roses"
    },
@@ -952,9 +952,15 @@
    },
    "thasup|mimioefke": {
     "v": 0,
-    "s": 8,
-    "t": "mi @mio è f@ke",
+    "s": 17,
+    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
+   },
+   "linkinpark|somewhereibelong": {
+    "v": 0,
+    "s": 1,
+    "t": "Somewhere I Belong",
+    "a": "Linkin Park"
    }
   },
   "Diego": {
