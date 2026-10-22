@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.404";
+  const APP_VERSION = "6.405";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -885,6 +885,20 @@ const PROFILI = [
       _potenziatiCaricati = true;
       try { render(); } catch (e) { }
     } catch (e) { /* senza rete: niente contrassegno, ma la musica va lo stesso */ }
+  }
+
+  /* Quale file suonare per questo brano: quello potenziato se il brano sta
+     in una playlist "gym" e il file potenziato c'e', altrimenti l'originale.
+     Si calcola ADESSO (non quando la libreria e' stata costruita): le
+     playlist arrivano dal servizio dopo, e prima l'app non sapeva ancora
+     quali brani sono della gym -> usava sempre l'originale. */
+  function _urlDelBrano(t) {
+    try {
+      if (t && t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
+        return _doveStaIlBranoConBassi(t.file);
+      }
+    } catch (e) { }
+    return (t && t.url) || "";
   }
 
   function _branoInGym(idBrano) {
@@ -4347,7 +4361,7 @@ function rebuildAudio(autoplay) {
   const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
   if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
   audio = createAudio();
-  audio.src = t.url;
+  audio.src = _urlDelBrano(t);
   _applicaAudio();
   try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
   if (autoplay) doPlay();
@@ -4542,7 +4556,7 @@ function rebuildAudio(autoplay) {
          brano dopo lo scarico per davvero, in silenzio, e lo metto nella
          cache del telefono: cosi' "avanti" parte subito. */
       _preparato.preload = _meglioNonScaricareTutto() ? "metadata" : "auto";
-      _preparato.src = t.url;
+      _preparato.src = _urlDelBrano(t);
       /* se il brano e' gia' in mano la si riusa, altrimenti lo si scorda */
       try { _preparato.load(); } catch (e) { /* noop */ }
       _preparatoId = id;
@@ -5252,7 +5266,7 @@ async function playById(id, autoplay = true) {
     }
     // La pausa generata dal cambio di sorgente non e' una pausa dell'utente.
     audio._mbCambioBrano = true;
-    audio.src = t.url;
+    audio.src = _urlDelBrano(t);
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
