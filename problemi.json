@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792628983704,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
   "t": 1792628986067,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792629902514,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792629904707,
+  "r": "worker /stato: risponde"
  }
 ]
