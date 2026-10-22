@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792633083450,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792633084427,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
- },
- {
-  "t": 1792633085173,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792633085175,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792633087903,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792633088682,
-  "r": "suono: POTENZIATO b-track-257"
- },
- {
   "t": 1792633091858,
   "r": "suono: POTENZIATO b-track-58"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792633138153,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792633138152,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792633138359,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792633139365,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792633139363,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792633139565,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792633145568,
+  "r": "suono: POTENZIATO b-track-56"
  }
 ]
