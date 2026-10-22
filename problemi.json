@@ -1,57 +1,5 @@
 [
  {
-  "t": 1792650058848,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792650058864,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792650058871,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792650058862,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792650061072,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792650161011,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792650167124,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792650167157,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792650167864,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792650167925,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792650169056,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792650205303,
-  "r": "suono: originale b-track-426"
- },
- {
-  "t": 1792652881919,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792652881923,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +106,57 @@
  {
   "t": 1792681891846,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792685721642,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792685721765,
+  "r": "libreria: 236 brani, scartati 203 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792685721779,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792685721763,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792685721779,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792685722005,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792685722661,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792685723163,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792685723418,
+  "r": "visibili 235 su 235 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792685723432,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792685723429,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792685723479,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792685725279,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
