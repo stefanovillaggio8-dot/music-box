@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792627835803,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1792627835793,
   "r": "SPOTIFY: [v6.405] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792627859165,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792627871916,
+  "r": "worker /stato: risponde"
  }
 ]
