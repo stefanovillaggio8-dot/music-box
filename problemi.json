@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792689687324,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792689687323,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792708924616,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792708933876,
+  "r": "worker /stato: risponde"
  }
 ]
