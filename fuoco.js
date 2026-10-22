@@ -44,16 +44,19 @@
     for (var i = 0; i < quante; i++) {
       /* giro lungo il bordo: destra, basso, sinistra, alto */
       var f = i / quante;
-      var x, y, ang;
-      if (f < 0.25) { x = 100; y = (f / 0.25) * 100; ang = 180; }
-      else if (f < 0.5) { x = (1 - (f - 0.25) / 0.25) * 100; y = 100; ang = 90; }
-      else if (f < 0.75) { x = 0; y = (1 - (f - 0.5) / 0.25) * 100; ang = 0; }
-      else { x = ((f - 0.75) / 0.25) * 100; y = 0; ang = -90; }
-      var alt = lato * (0.16 + (i % 3) * 0.05);
+      var x, y;
+      if (f < 0.25) { x = 100; y = (f / 0.25) * 100; }
+      else if (f < 0.5) { x = (1 - (f - 0.25) / 0.25) * 100; y = 100; }
+      else if (f < 0.75) { x = 0; y = (1 - (f - 0.5) / 0.25) * 100; }
+      else { x = ((f - 0.75) / 0.25) * 100; y = 0; }
+      /* tutte le fiamme puntano in SU, come il fuoco vero: ruotate di
+         lato sembravano petali sfocati (Ste: "non sembrano manco
+         fiamme") */
+      var alt = lato * (0.06 + (i % 3) * 0.022);
       h += '<div class="mb-fiamma" style="left:' + x.toFixed(1) + "%;top:" + y.toFixed(1) +
         "%;width:" + (alt * 0.42).toFixed(1) + "px;height:" + alt.toFixed(1) +
         "px;animation-delay:-" + ((i * 0.37) % 2).toFixed(2) +
-        's;transform:translate(-50%,-50%) rotate(' + (ang + 90) + 'deg)">' +
+        's;transform:translate(-50%,-88%) rotate(0deg)">' +
         fiammaSVG() + "</div>";
     }
     contenitore.innerHTML = h;
@@ -85,7 +88,7 @@
         if (caloreTesti) caloreTesti.remove();
         /* le fiamme stanno ai CONFINI dello schermo, non al centro:
            il testo (che sta sopra) non deve essere coperto */
-        fiammeAiConfini(stato.boxTesti, Math.min(r.width, r.height), 22);
+        fiammeAiConfini(stato.boxTesti, Math.min(window.innerWidth || r.width, 430), 44);
         mostraFumo(stato.boxTesti, prog);
         spostaFiamme(stato.boxTesti, a);
         stato.progTesti = prog;

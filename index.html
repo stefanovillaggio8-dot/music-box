@@ -299,11 +299,50 @@
           for (var i = 0; i < p.length; i++) s = s * 60 + (parseFloat(p[i]) || 0);
           return s;
         }
-        /* Ste: "il testo va leggermente piu veloce rispetto alla voce".
-           La correzione che avevo messo qui spostava i tempi nel verso
-           SBAGLIATO (indietro invece che avanti) e per questo il testo
-           scappava in avanti. La tolgo: meglio il dato come e' che uno
-           tarato male. */
+        /* Ste: "la voce e' prima del testo" (il testo e' un po' in
+           ritardo). Misuro da quanto tempo la riga evidenziata e' attiva
+           e lo confronto con meta' della durata media di una riga: la
+           differenza e' lo scarto. Se il testo e' in ritardo lo avanzo, se
+           scappa lo rallento. Correzioni piccole (massimo 1,5 secondi),
+           altrimenti il testo salta e si vede. */
+        var _sommaEta = 0, _quanteEta = 0;
+        function _correzioneTesto() {
+          var attiva = document.querySelector("#lyricsBody .lyr-line.on");
+          if (!attiva) { _sommaEta = 0; _quanteEta = 0; return; }
+          var righe = document.querySelectorAll("#lyricsBody .lyr-line[data-t]");
+          if (righe.length < 4) return;
+          /* quanto dura in media una riga (dal dato stesso) */
+          var somma = 0, quante = 0;
+          for (var i = 0; i < righe.length - 1; i++) {
+            var d = Number(righe[i + 1].getAttribute("data-t")) - Number(righe[i].getAttribute("data-t"));
+            if (d > 0.6 && d < 25) { somma += d; quante++; }
+          }
+          if (!quante) return;
+          var durataRiga = somma / quante;
+          var tOra = _secondi((document.getElementById("curTime") || {}).textContent);
+          var tRiga = Number(attiva.getAttribute("data-t"));
+          if (!tOra || !isFinite(tRiga)) return;
+          _sommaEta += (tOra - tRiga);
+          _quanteEta++;
+          if (_quanteEta < 10) return;   /* aspetto qualche controllo */
+          var mediaEta = _sommaEta / _quanteEta;
+          _sommaEta = 0; _quanteEta = 0;
+          /* scarto positivo = la riga resta attiva troppo = il testo e' in
+             ritardo (va avanzo) */
+          var scarto = mediaEta - durataRiga / 2;
+          if (Math.abs(scarto) < 0.3 || Math.abs(scarto) > 2) return;
+          var correzione = -scarto;
+          for (var j = 0; j < righe.length; j++) {
+            var t = Number(righe[j].getAttribute("data-t"));
+            if (!isFinite(t)) continue;
+            var nuovo = Math.max(0, t + correzione);
+            if (Math.abs(nuovo - t) > 0.15) {
+              righe[j].setAttribute("data-t", String(Math.round(nuovo * 10) / 10));
+            }
+          }
+        }
+        setInterval(_correzioneTesto, 1000);
+
         function _correggiRitardo() { return; }
         function _correggiRitardoVecchia() {
           var corpo = document.getElementById("lyricsBody");
