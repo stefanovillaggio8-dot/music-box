@@ -382,19 +382,19 @@
    },
    "artie5ive|introlabellavita": {
     "v": 1,
-    "s": 127,
+    "s": 128,
     "t": "INTRO (La Bella Vita)",
     "a": "Artie 5ive"
    },
    "artie5ive|davverodavvero": {
-    "v": 35,
-    "s": 555,
+    "v": 36,
+    "s": 560,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
    "artie5ive|fwss25freestyle": {
     "v": 8,
-    "s": 343,
+    "s": 360,
     "t": "FW/SS25 (Freestyle)",
     "a": "Artie 5ive"
    },
@@ -604,7 +604,7 @@
    },
    "lazza|verdineiviola": {
     "v": 1,
-    "s": 9,
+    "s": 14,
     "t": "verdi nei viola",
     "a": "lazza"
    },
@@ -634,7 +634,7 @@
    },
    "adele|setfiretotherainhardstyleremix": {
     "v": 2,
-    "s": 10,
+    "s": 11,
     "t": "Set Fire To The Rain (Hardstyle Remix)",
     "a": "Adele"
    },
@@ -729,8 +729,8 @@
     "a": "Coez"
    },
    "kidyugi|gilgamesh": {
-    "v": 0,
-    "s": 123,
+    "v": 1,
+    "s": 130,
     "t": "Gilgamesh",
     "a": "Kid Yugi"
    },
@@ -904,7 +904,7 @@
    },
    "elleyduhe|middleofthenightdomlivezremix": {
     "v": 1,
-    "s": 145,
+    "s": 150,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
    },
@@ -946,14 +946,14 @@
    },
    "coldsuhou|im20inhonourofwegojimfinale": {
     "v": 0,
-    "s": 3,
+    "s": 4,
     "t": "I'm 20 (In Honour of We Go Jim Finale)",
     "a": "Cold Suhou"
    },
    "thasup|mimioefke": {
     "v": 0,
     "s": 17,
-    "t": "mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ f@ke",
+    "t": "mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "linkinpark|somewhereibelong": {
