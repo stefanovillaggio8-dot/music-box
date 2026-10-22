@@ -213,7 +213,11 @@
               's;animation-delay:-' + ((i * 0.83) % 4).toFixed(2) + 's"></i>';
           }
           v.innerHTML = h;
-          (el.parentNode || document.body).appendChild(v);
+          /* nel body, non dentro il player: dentro il player c'e' una
+             trasformazione (il disco gira) e li' il position:fixed vale
+             come "absolute": il velo finiva sotto lo schermo e il fumo
+             non si vedeva affatto (Ste: "il fumo non va verso l'alto") */
+          document.body.appendChild(v);
           return v;
         }
         function _progresso() {

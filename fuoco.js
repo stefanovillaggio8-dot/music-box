@@ -300,6 +300,9 @@
         '<div class="mb-bragia"></div>' +
         '<div class="mb-fumo"></div>' +
       '</div>';
+    /* l'overlay sta FUORI dal disco: il disco gira (e' un vinile) e
+       dentro un elemento che gira il position:fixed dei figli vale come
+       "absolute": il fuoco finiva nel posto sbagliato e girava con lui */
     document.body.appendChild(box);
     return box;
   }
@@ -324,42 +327,11 @@
     return box;
   }
 
-  /* Il disco del player gira quando suona (6 secondi un giro). Il fuoco
-     invece sta fermo: gli oppongo lo stesso giro al contrario.
-     Lo faccio con un'animazione e non con il JavaScript a ogni
-     fotogramma: altrimenti il telefono scatta e il fuoco pulsa. */
-  var gira = null;
-  var osservaGiro = null;
+  /* Il disco del player gira quando suona (e' un vinile). Il fuoco non
+     sta piu' dentro il disco, ma e' un overlay a parte: cosi' il disco
+     gira libero e il fuoco resta fermo e dritto, senza contro-giri e
+     senza che il telefono scatti. */
 
-  function allineaGiro(art, box) {
-    if (!box) return;
-    var dentro = box.querySelector(".mb-dentro");
-    if (!dentro) return;
-    var suona = art.classList.contains("playing");
-    if (suona && !gira) {
-      try {
-        gira = dentro.animate(
-          [{ transform: "rotate(0deg)" }, { transform: "rotate(-360deg)" }],
-          { duration: 6000, iterations: Infinity, easing: "linear" }
-        );
-      } catch (e) { gira = null; }
-    } else if (!suona && gira) {
-      try { gira.cancel(); } catch (e) { /* noop */ }
-      gira = null;
-      dentro.style.transform = "";
-    }
-  }
-
-  function guardaGiro(art) {
-    if (osservaGiro || !art) return;
-    try {
-      osservaGiro = new MutationObserver(function () { allineaGiro(art, stato.box); });
-      osservaGiro.observe(art, { attributes: true, attributeFilter: ["class"] });
-    } catch (e) { /* noop */ }
-  }
-
-  /* Il disco del player gira quando suona: il fuoco invece sta fermo,
-     quindi gli oppongo la stessa rotazione. */
   function angoloGiro(el) {
     try {
       var m = getComputedStyle(el).transform;
@@ -583,8 +555,6 @@
         stato.fiamme = [];
         stato.progChar = -1;
         stato.x = -1; stato.y = -1; stato.lato = -1; stato.altezza = -1;
-        guardaGiro(art);
-        allineaGiro(art, stato.box);
       }
 
       /* La posizione si mette con un transform: left/top farebbero
