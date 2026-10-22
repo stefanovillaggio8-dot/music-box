@@ -33,6 +33,32 @@
 (function () {
   "use strict";
 
+  /* Le fiamme AI CONFINI DEL TELEFONO (Ste: "il fuoco nel testo fallo
+     che si vede ai confini del telefono"). Vanno lungo il bordo dello
+     schermo e non coprono mai il testo, che sta sopra. */
+  function fiammeAiConfini(box, lato, quante) {
+    var contenitore = box.querySelector(".mb-fiamme");
+    if (!contenitore) return;
+    if (contenitore.childNodes.length) return;
+    var h = "";
+    for (var i = 0; i < quante; i++) {
+      /* giro lungo il bordo: destra, basso, sinistra, alto */
+      var f = i / quante;
+      var x, y, ang;
+      if (f < 0.25) { x = 100; y = (f / 0.25) * 100; ang = 180; }
+      else if (f < 0.5) { x = (1 - (f - 0.25) / 0.25) * 100; y = 100; ang = 90; }
+      else if (f < 0.75) { x = 0; y = (1 - (f - 0.5) / 0.25) * 100; ang = 0; }
+      else { x = ((f - 0.75) / 0.25) * 100; y = 0; ang = -90; }
+      var alt = lato * (0.16 + (i % 3) * 0.05);
+      h += '<div class="mb-fiamma" style="left:' + x.toFixed(1) + "%;top:" + y.toFixed(1) +
+        "%;width:" + (alt * 0.42).toFixed(1) + "px;height:" + alt.toFixed(1) +
+        "px;animation-delay:-" + ((i * 0.37) % 2).toFixed(2) +
+        's;transform:translate(-50%,-50%) rotate(' + (ang + 90) + 'deg)">' +
+        fiammaSVG() + "</div>";
+    }
+    contenitore.innerHTML = h;
+  }
+
   /* Lo sfondo della schermata dei testi: stessa copertina, stesso
      bruciato. */
   function aggiornaTesti(a, prog) {
@@ -57,9 +83,9 @@
         disegnaChar(stato.boxTesti, a, "");
         var caloreTesti = stato.boxTesti.querySelector(".mb-calore");
         if (caloreTesti) caloreTesti.remove();
-        if (!stato.boxTesti._fiamme || !stato.boxTesti._fiamme.length) {
-          preparaFiamme(stato.boxTesti, a, latoFiamme);
-        }
+        /* le fiamme stanno ai CONFINI dello schermo, non al centro:
+           il testo (che sta sopra) non deve essere coperto */
+        fiammeAiConfini(stato.boxTesti, Math.min(r.width, r.height), 22);
         mostraFumo(stato.boxTesti, prog);
         spostaFiamme(stato.boxTesti, a);
         stato.progTesti = prog;
@@ -537,6 +563,18 @@
          chiamo PRIMA di qualsiasi ritorno, cosi' la schermata dei testi
          ha il fuoco anche quando non sta suonando niente */
       aggiornaTesti(arte(prog, stato.seme), prog);
+      /* quando i testi sono aperti il disco in basso a sinistro NON deve
+         mostrare il cerchio infuocato: ci sono gia' le fiamme ai
+         confini dello schermo (Ste) */
+      var pannelloAperto = false;
+      try {
+        var pnl = document.getElementById("lyricsPanel");
+        pannelloAperto = !!(pnl && !pnl.hidden);
+      } catch (e) { }
+      if (stato.box) {
+        stato.box.style.opacity = pannelloAperto ? "0" : "";
+        stato.box.style.pointerEvents = pannelloAperto ? "none" : "";
+      }
 
       if (prog !== stato.progVisto) {
         stato.progVisto = prog;

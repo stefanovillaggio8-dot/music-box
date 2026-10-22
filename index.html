@@ -299,11 +299,13 @@
           for (var i = 0; i < p.length; i++) s = s * 60 + (parseFloat(p[i]) || 0);
           return s;
         }
-        /* I tempi ORIGINALI delle righe: la correzione si misura sempre su
-           questi, non sui tempi gia' corretti (altrimenti la correzione
-           "scappa" e i tempi vanno a zero). */
-        var _tempiOriginali = null;
-        function _correggiRitardo() {
+        /* Ste: "il testo va leggermente piu veloce rispetto alla voce".
+           La correzione che avevo messo qui spostava i tempi nel verso
+           SBAGLIATO (indietro invece che avanti) e per questo il testo
+           scappava in avanti. La tolgo: meglio il dato come e' che uno
+           tarato male. */
+        function _correggiRitardo() { return; }
+        function _correggiRitardoVecchia() {
           var corpo = document.getElementById("lyricsBody");
           if (!corpo) return;
           var righe = corpo.querySelectorAll(".lyr-line[data-t]");
@@ -332,7 +334,7 @@
             }
           }
         }
-        setInterval(_correggiRitardo, 1500);
+        /* non gira piu': era il verso sbagliato */
       })();
       </script>
       <script>
