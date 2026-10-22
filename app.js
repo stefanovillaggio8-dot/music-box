@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.406";
+  const APP_VERSION = "6.407";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -915,7 +915,12 @@ const PROFILI = [
     const soloNome = nome.replace(/^.*\//, "");
     const qui = location.hostname;
     const inLocale = qui === "localhost" || qui === "127.0.0.1" || qui === "::1" ||
-      qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net");
+      qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net") ||
+      /* La rete di casa: quando il telefono e' sul WiFi di casa (192.168.x)
+         i brani arrivano dal computer, che e' veloce, invece che da
+         internet: prima non lo riconoscevo e le canzoni ci mettevano un
+         sacco ad avviarsi. */
+      /^192\.168\./.test(qui) || /^10\./.test(qui) || /^172\.(1[6-9]|2\d|3[01])\./.test(qui);
     if (inLocale) return "songs/bassi/" + soloNome;
     return BRANI_ONLINE + "songs/bassi/" + soloNome;
   }
@@ -926,7 +931,12 @@ const PROFILI = [
     /* pagina locale: i brani sono sul disco, nessun bisogno di andare online */
     const qui = location.hostname;
     const inLocale = qui === "localhost" || qui === "127.0.0.1" || qui === "::1" ||
-      qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net");
+      qui.endsWith(".local") || /^100\./.test(qui) || qui.endsWith(".ts.net") ||
+      /* La rete di casa: quando il telefono e' sul WiFi di casa (192.168.x)
+         i brani arrivano dal computer, che e' veloce, invece che da
+         internet: prima non lo riconoscevo e le canzoni ci mettevano un
+         sacco ad avviarsi. */
+      /^192\.168\./.test(qui) || /^10\./.test(qui) || /^172\.(1[6-9]|2\d|3[01])\./.test(qui);
     if (inLocale) return nome;
     /* online: prendo il brano dal deposito della musica.
        ATTENZIONE: qui il nome va tenuto COME E', con la cartella
