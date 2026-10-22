@@ -330,7 +330,11 @@
   /* Il disco del player gira quando suona (e' un vinile). Il fuoco non
      sta piu' dentro il disco, ma e' un overlay a parte: cosi' il disco
      gira libero e il fuoco resta fermo e dritto, senza contro-giri e
-     senza che il telefono scatti. */
+     senza che il telefono scatti.
+
+     Il marchesino dice alla pagina che il contro-giro non le serve
+     (finche' l'app non si aggiorna, e' lei a farlo). */
+  window.__mbControGiro = "fatto";
 
   function angoloGiro(el) {
     try {
