@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792637507233,
-  "r": "SPOTIFY: [v6.411] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792637507493,
-  "r": "SPOTIFY: [v6.411] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792637508366,
-  "r": "SPOTIFY: [v6.411] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792637508601,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792637508782,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792637508786,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792637508813,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792637533318,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792637533522,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792637534520,
+  "r": "visibili 59 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792637534523,
+  "r": "FINALE: visibili 59 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate si | eliminati 31 | da stefanovillaggi"
+ },
+ {
+  "t": 1792637534734,
+  "r": "FINALE: visibili 59 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate si | eliminati 31 | da stefanovillaggi"
+ },
+ {
+  "t": 1792637552291,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792637552283,
+  "r": "worker /stato: risponde"
  }
 ]
