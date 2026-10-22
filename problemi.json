@@ -1,53 +1,5 @@
 [
  {
-  "t": 1792633510683,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792633510905,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792633511865,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792633540655,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792633540780,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633540669,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792633541909,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792633541910,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792633541981,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
- },
- {
-  "t": 1792633573350,
-  "r": "suono: originale b-track-244"
- },
- {
-  "t": 1792633573354,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792633600945,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792633600937,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +110,53 @@
  {
   "t": 1792634044995,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792634045058,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792634045228,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792634045279,
+  "r": "SPOTIFY: [v6.410] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792634045578,
+  "r": "SPOTIFY: [v6.410] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792634046180,
+  "r": "SPOTIFY: [v6.410] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792634046495,
+  "r": "SPOTIFY: [v6.410] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792634046495,
+  "r": "SPOTIFY: [v6.410] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792634047196,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792634047317,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792634047332,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792634047312,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792634047595,
+  "r": "suono: originale b-track-135"
  }
 ]
