@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792635645618,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1792635645700,
   "r": "SPOTIFY: [v6.410] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792635706472,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792635907148,
+  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
  }
 ]
