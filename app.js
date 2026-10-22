@@ -646,7 +646,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.407";
+  const APP_VERSION = "6.408";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5283,7 +5283,7 @@ async function playById(id, autoplay = true) {
     /* Ste: "il boost sembra che non sia cambiato nulla". Metto in traccia
        l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
        potenziato, se c'e' "songs/" e' l'originale. */
-    try { _segna("suono: " + (String(_url).indexOf("/bassi/") >= 0 ? "POTENZIATO" : "originale") + " " + t.id); } catch (e) { }
+    try { _diChe("suono: " + (String(_url).indexOf("/bassi/") >= 0 ? "POTENZIATO" : "originale") + " " + t.id); } catch (e) { }
     audio.src = _url;
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
@@ -5883,7 +5883,7 @@ if (!sceltaCopia) updateProfileButton();
       const last = st.last ? tracks.find((t) => t.id === st.last) : null;
       if (last) {
         currentId = last.id;
-        audio.src = last.url;
+        audio.src = _urlDelBrano(last);
         // anche cambiando profilo il brano riparte dall'inizio
         const pos = 0;
         audio.addEventListener("loadedmetadata", () => {
@@ -13168,7 +13168,7 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
           ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s" +
           (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :
             (quando ? ", ascoltata " + Math.round(passate / 60000) + " minuti fa" : "")));
-        audio.src = lastTrack.url;
+        audio.src = _urlDelBrano(lastTrack);
         setHud();
         updateProgressUI(0, 0);
       }
