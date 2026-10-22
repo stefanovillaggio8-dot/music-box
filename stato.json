@@ -214,7 +214,7 @@
    },
    "madame|lanima": {
     "v": 1,
-    "s": 364,
+    "s": 374,
     "t": "l'anima",
     "a": "madame"
    },
@@ -304,7 +304,7 @@
    },
    "samuraijayvitosalamarca|adrenalina": {
     "v": 1,
-    "s": 13,
+    "s": 36,
     "t": "ADRENALINA",
     "a": "Samurai Jay, Vito Salamarca"
    },
@@ -382,7 +382,7 @@
    },
    "artie5ive|introlabellavita": {
     "v": 1,
-    "s": 115,
+    "s": 127,
     "t": "INTRO (La Bella Vita)",
     "a": "Artie 5ive"
    },
@@ -953,7 +953,7 @@
    "thasup|mimioefke": {
     "v": 0,
     "s": 17,
-    "t": "mi @mio Ã¨ f@ke",
+    "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "linkinpark|somewhereibelong": {
@@ -961,6 +961,30 @@
     "s": 1,
     "t": "Somewhere I Belong",
     "a": "Linkin Park"
+   },
+   "thasup|sr": {
+    "v": 0,
+    "s": 20,
+    "t": "s!r!",
+    "a": "thasup"
+   },
+   "tonypitony|mipiaccionolenere": {
+    "v": 0,
+    "s": 2,
+    "t": "MI PIACCIONO LE NERE",
+    "a": "TonyPitony"
+   },
+   "thasuplazzasferaebbasta|slrl": {
+    "v": 0,
+    "s": 3,
+    "t": "slrl",
+    "a": "thasup, Lazza, Sfera Ebbasta"
+   },
+   "thasup|sillycup": {
+    "v": 0,
+    "s": 22,
+    "t": "siLLy cUp",
+    "a": "thasup"
    }
   },
   "Diego": {
