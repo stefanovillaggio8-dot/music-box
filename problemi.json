@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792632137375,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792632138038,
-  "r": "suono: originale b-track-244"
- },
- {
-  "t": 1792632139514,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792632139514,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792632139861,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792632139860,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792632139906,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
- },
- {
-  "t": 1792632141378,
-  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillaggio8-d"
- },
- {
   "t": 1792632141376,
   "r": "suono: POTENZIATO b-track-257"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792632547956,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792632548052,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792632548132,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792632548199,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792632548199,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792632548220,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 31"
+ },
+ {
+  "t": 1792632549152,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 55 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792632549520,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 31 | da stefanovillagg"
+ },
+ {
+  "t": 1792632550423,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  }
 ]
