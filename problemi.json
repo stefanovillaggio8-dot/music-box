@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792627664731,
-  "r": "SPOTIFY: [v6.405] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792627664930,
-  "r": "SPOTIFY: [v6.405] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792627665655,
-  "r": "SPOTIFY: [v6.405] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792627666023,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792627758465,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792627760422,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792627765998,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792627784676,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
