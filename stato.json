@@ -304,7 +304,7 @@
    },
    "samuraijayvitosalamarca|adrenalina": {
     "v": 1,
-    "s": 36,
+    "s": 43,
     "t": "ADRENALINA",
     "a": "Samurai Jay, Vito Salamarca"
    },
@@ -985,6 +985,12 @@
     "s": 22,
     "t": "siLLy cUp",
     "a": "thasup"
+   },
+   "nayt|scrivendo": {
+    "v": 0,
+    "s": 41,
+    "t": "Scrivendo",
+    "a": "nayt"
    }
   },
   "Diego": {
