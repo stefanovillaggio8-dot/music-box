@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792630109467,
-  "r": "SPOTIFY: [v6.349] prova traccia (text/plain)"
- },
- {
-  "t": 1792630415742,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1792630415707,
   "r": "SPOTIFY: [v6.407] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792630433226,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792630437559,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792630439126,
+  "r": "worker /stato: risponde"
  }
 ]
