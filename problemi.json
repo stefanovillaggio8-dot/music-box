@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792734368235,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792734368234,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792734368436,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792737428255,
   "r": "suono: originale b-track-384"
+ },
+ {
+  "t": 1792741839564,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792741839563,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
