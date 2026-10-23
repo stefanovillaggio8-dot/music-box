@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792763140743,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792763149521,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763149531,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763149527,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763150734,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792763150735,
-  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792763164537,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763164628,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763164620,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792763165833,
   "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792763260746,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792763260770,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792763260860,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763260915,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792763261274,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792763261819,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792763262180,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792763262746,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763262972,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763262977,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
