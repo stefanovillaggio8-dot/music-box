@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792725695293,
-  "r": "suono: originale b-track-292"
- },
- {
-  "t": 1792725872932,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792725872939,
-  "r": "suono: originale b-track-487"
- },
- {
-  "t": 1792726040331,
-  "r": "suono: originale b-track-378"
- },
- {
   "t": 1792726040322,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792734085700,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792734085760,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792734086920,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792734091216,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792734091256,
+  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
  }
 ]
