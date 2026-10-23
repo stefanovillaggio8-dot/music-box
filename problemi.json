@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792759728024,
-  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792759728021,
-  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792759786928,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792759787007,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792760183805,
-  "r": "visibili 0 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1792760183801,
   "r": "filtro canzoni scaricate: si"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792763136145,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763136156,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792763136132,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763136071,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763137351,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763138130,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  }
 ]
