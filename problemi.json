@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792715170431,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792715170422,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792715170452,
-  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
   "t": 1792715170533,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -157,6 +145,18 @@
  },
  {
   "t": 1792715656925,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792715658130,
+  "r": "FINALE: visibili 30 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
+ },
+ {
+  "t": 1792715671860,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792715671861,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
