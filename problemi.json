@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792763256350,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763256343,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763256414,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763257555,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763257558,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763257620,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763314711,
-  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763316250,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763316304,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763316307,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792763317455,
   "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
  },
@@ -157,6 +117,46 @@
  },
  {
   "t": 1792763335979,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792763336204,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792763341263,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792763341264,
+  "r": "suono: POTENZIATO b-track-253"
+ },
+ {
+  "t": 1792763342624,
+  "r": "suono: POTENZIATO b-track-260"
+ },
+ {
+  "t": 1792763342922,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792763342922,
+  "r": "suono: POTENZIATO b-track-260"
+ },
+ {
+  "t": 1792763349993,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763349997,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763350118,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763351202,
   "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
  }
 ]
