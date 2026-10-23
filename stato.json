@@ -136,7 +136,7 @@
   "Ste": {
    "evanescence|bringmetolife": {
     "v": 1,
-    "s": 168,
+    "s": 180,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -418,7 +418,7 @@
    },
    "nirvana|smellsliketeenspirit": {
     "v": 2,
-    "s": 25,
+    "s": 30,
     "t": "Smells Like Teen Spirit",
     "a": "Nirvana"
    },
@@ -874,7 +874,7 @@
    },
    "skillet|monster": {
     "v": 1,
-    "s": 152,
+    "s": 161,
     "t": "Monster",
     "a": "Skillet"
    },
