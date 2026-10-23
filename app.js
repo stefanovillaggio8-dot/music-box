@@ -514,6 +514,8 @@
     { title: "Disfruto - Carla Morrison", file: "songs/track-514.mp3", artist: "Carla Morrison", profile: "Ste" },
     { title: "Jovanotti - A Te", file: "songs/track-515.mp3", artist: "le tasche piene di sassi", profile: "Ste" },
     { title: "non avere paura", file: "songs/track-516.mp3", artist: "tommaso paradiso", profile: "Ste" },
+    { title: "Senza armi", file: "songs/youtube-tRuyFtXGNQA.mp3", artist: "nayt", profile: "Ste", cover: "copertine/senza-armi-farfalla.jpg" },
+    { title: "Senza armi", file: "songs/youtube-tRuyFtXGNQA.mp3", artist: "nayt", profile: "Diego", cover: "copertine/senza-armi-farfalla.jpg" },
 ];
 
   const PALETTE = [
