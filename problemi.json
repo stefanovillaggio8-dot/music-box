@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792715658130,
-  "r": "FINALE: visibili 30 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
- },
- {
   "t": 1792715671860,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792717321372,
   "r": "suono: originale b-track-338"
+ },
+ {
+  "t": 1792717505744,
+  "r": "suono: originale b-track-506"
  }
 ]
