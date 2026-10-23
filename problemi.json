@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792734699529,
-  "r": "suono: originale b-track-284"
- },
- {
-  "t": 1792734706764,
-  "r": "suono: originale b-track-510"
- },
- {
-  "t": 1792734902280,
-  "r": "suono: originale b-track-295"
- },
- {
-  "t": 1792735025188,
-  "r": "suono: originale b-track-384"
- },
- {
-  "t": 1792735196061,
-  "r": "suono: originale b-track-285"
- },
- {
-  "t": 1792735381330,
-  "r": "suono: originale b-track-359"
- },
- {
-  "t": 1792735549298,
-  "r": "suono: originale b-track-433"
- },
- {
-  "t": 1792735699567,
-  "r": "suono: originale b-track-274"
- },
- {
-  "t": 1792735856277,
-  "r": "suono: originale b-track-286"
- },
- {
   "t": 1792735961058,
   "r": "suono: originale b-track-297"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792741853474,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792741853702,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792741853702,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792741853704,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792741854130,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792741854628,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792741855044,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792741855034,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792741855504,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792741855762,
+  "r": "worker /stato: risponde"
  }
 ]
