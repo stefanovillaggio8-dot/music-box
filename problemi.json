@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792741899489,
-  "r": "suono: POTENZIATO b-track-58"
- },
- {
-  "t": 1792741899490,
-  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792741914202,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792741955152,
-  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
-  "t": 1792741955149,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792741955157,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792741955154,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792757601238,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792757601442,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792757602467,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792757602454,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792757602662,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792757616128,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792757616120,
+  "r": "worker /stato: risponde"
  }
 ]
