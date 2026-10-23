@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792734368436,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792734369457,
-  "r": "FINALE: visibili 0 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggio"
- },
- {
-  "t": 1792734369637,
-  "r": "FINALE: visibili 13 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
- },
- {
-  "t": 1792734383197,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792734383196,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792734383408,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792734384407,
-  "r": "FINALE: visibili 13 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
- },
- {
-  "t": 1792734384617,
-  "r": "FINALE: visibili 13 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
- },
- {
-  "t": 1792734413554,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792734413553,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792734413755,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792734414767,
   "r": "FINALE: visibili 13 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792741839563,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792741839564,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792741839783,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792741839564,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792741840125,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792741840640,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792741840713,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792741841299,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792741841274,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792741841307,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792741841316,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792741841615,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  }
 ]
