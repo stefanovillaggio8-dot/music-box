@@ -12074,6 +12074,22 @@ function _unisciPlaylistCondivise(arrivate) {
           gia.nascosta = true;
           gia.nascostaDa = String(p.nascostaDa || "");
         }
+      const nomeP = String((gia && gia.name) || (p && p.name) || "").trim().toLowerCase();
+      /* Ste: "non accorciare mai la gym". Se arriva dal server più corta della
+         nostra, teniamo la nostra e la rimandiamo. Se arriva più lunga, invece
+         aggiorniamo (per coprire il caso in cui è stata aggiunta altrove). */
+      if (nomeP === "gym") {
+        const suoiGym = Array.isArray(gia && gia.tracks) ? gia.tracks : [];
+        const arrivatiGym = (Array.isArray(p.tracks) ? p.tracks : [])
+          .filter((t) => /^b-track-\d+$/.test(String(t)));
+        if (arrivatiGym.length > suoiGym.length) {
+          gia.tracks = arrivatiGym;
+          if (!gia.id) gia.id = String(p.id || "pl-gym");
+          nuove++;
+        }
+        /* Se arrivatiGym.length <= suoiGym.length: ignoriamo, non accorciamo. */
+        continue;
+      }
       /* Una playlist che qui e' VUOTA e' una voce rimasta a meta', non una
          scelta di Ste: senza questo la lista non si riempiva mai e gym
          restava invisibile per sempre. Se invece ha gia' dei brani la lascio
