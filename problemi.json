@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792734353681,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792734353854,
   "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792735381330,
   "r": "suono: originale b-track-359"
+ },
+ {
+  "t": 1792735549298,
+  "r": "suono: originale b-track-433"
  }
 ]
