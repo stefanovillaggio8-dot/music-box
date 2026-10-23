@@ -743,6 +743,8 @@ document.addEventListener("visibilitychange", () => {
     try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
     _segna("app nel secondo piano", "salvo la posizione a " +
     Math.round((audio && audio.currentTime) || 0) + "s");
+    /* Teniamo la notifica visibile anche in background. */
+    try { updateMediaSession(); setPlaybackState(audio && !audio.paused ? "playing" : "paused"); } catch (e) { /* noop */ }
   } else {
     _visibileIl = Date.now();
     _segna("tornato in primo piano");
@@ -5490,6 +5492,9 @@ function playNext() {
     if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
     _nascondiAiuto();
     syncPlayUI();
+    /* Teniamo attiva la notifica anche quando la musica e' fermata,
+       cosi' resta visibile finche' non chiudi l'app dal background. */
+    try { updateMediaSession(); } catch (e) { /* noop */ }
   }
 
   /* Ste: "riapro l'app e si ferma la canzone, senza che io tocchi nulla".
