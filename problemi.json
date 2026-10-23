@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792771595574,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792771810398,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792771810398,
-  "r": "suono: originale b-track-490"
- },
- {
-  "t": 1792771953246,
-  "r": "suono: originale b-track-357"
- },
- {
-  "t": 1792771957540,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792771957618,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1792771978176,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792771978364,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792771979357,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792771979356,
+  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792771979552,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792771993015,
   "r": "worker /stato: risponde"
  }
 ]
