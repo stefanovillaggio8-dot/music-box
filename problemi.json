@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792783337958,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792783339077,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792783339177,
-  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
   "t": 1792783339159,
   "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792783545336,
   "r": "suono: originale b-track-296"
+ },
+ {
+  "t": 1792797653987,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792797653876,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792797654096,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
  }
 ]
