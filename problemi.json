@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792763284288,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763284342,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763284340,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763285074,
-  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792763285072,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792763285547,
-  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
   "t": 1792763285555,
   "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792763379266,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792763379870,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792763380165,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792763380777,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763381074,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763381074,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763381078,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
