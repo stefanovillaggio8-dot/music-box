@@ -1362,7 +1362,7 @@
    },
    "nayt3d|starequi": {
     "v": 0,
-    "s": 92,
+    "s": 164,
     "t": "Stare qui",
     "a": "nayt, 3D"
    },
@@ -1992,7 +1992,7 @@
    },
    "nayt3d|fuori": {
     "v": 0,
-    "s": 386,
+    "s": 449,
     "t": "Fuori",
     "a": "nayt, 3D"
    },
