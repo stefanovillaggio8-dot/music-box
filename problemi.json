@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792759682975,
-  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792759683004,
-  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792759696921,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792759696925,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792759696911,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792759698121,
-  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792759698124,
-  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
   "t": 1792759698144,
   "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -157,6 +129,34 @@
  },
  {
   "t": 1792760605918,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792760605994,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792760605975,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792760607171,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792760607206,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792760607173,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792760620861,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792760620857,
   "r": "worker /stato: risponde"
  }
 ]
