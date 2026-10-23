@@ -135,8 +135,8 @@
  "statistiche": {
   "Ste": {
    "evanescence|bringmetolife": {
-    "v": 1,
-    "s": 181,
+    "v": 2,
+    "s": 183,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -994,7 +994,7 @@
    },
    "linkinpark|numb": {
     "v": 0,
-    "s": 19,
+    "s": 52,
     "t": "Numb",
     "a": "Linkin Park"
    }
