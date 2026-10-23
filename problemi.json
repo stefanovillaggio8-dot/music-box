@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792715146334,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792715146431,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792715155198,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792715155191,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792715643503,
   "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792715643502,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792715644722,
+  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792715647124,
+  "r": "worker /stato: risponde"
  }
 ]
