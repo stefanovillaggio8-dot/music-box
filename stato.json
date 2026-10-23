@@ -1356,7 +1356,7 @@
    },
    "nayt|puntodincontro": {
     "v": 0,
-    "s": 454,
+    "s": 549,
     "t": "Punto d'incontro",
     "a": "nayt"
    },
@@ -1872,7 +1872,7 @@
    },
    "nayt3d|comefare": {
     "v": 0,
-    "s": 525,
+    "s": 565,
     "t": "Come fare",
     "a": "nayt, 3D"
    },
