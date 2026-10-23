@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792783336188,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792783336733,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792783336749,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792783336776,
-  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
-  "t": 1792783336757,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792783337958,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792783459732,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792783459732,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792783459974,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792783460960,
+  "r": "FINALE: visibili 13 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
+ },
+ {
+  "t": 1792783461196,
+  "r": "FINALE: visibili 13 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
+ },
+ {
+  "t": 1792783545336,
+  "r": "suono: originale b-track-296"
  }
 ]
