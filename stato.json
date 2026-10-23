@@ -1662,7 +1662,7 @@
    },
    "shiva|soldipuliti": {
     "v": 0,
-    "s": 530,
+    "s": 564,
     "t": "Soldi Puliti",
     "a": "Shiva"
    },
@@ -2003,8 +2003,8 @@
     "a": "traparentesi"
    },
    "rancore|sanguedidrago": {
-    "v": 0,
-    "s": 516,
+    "v": 1,
+    "s": 517,
     "t": "Sangue di drago",
     "a": "Rancore"
    },
@@ -2034,7 +2034,7 @@
    },
    "promessadonjoe|paradiso": {
     "v": 0,
-    "s": 297,
+    "s": 381,
     "t": "PARADISO",
     "a": "Promessa, Don Joe"
    },
