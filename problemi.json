@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792736931318,
-  "r": "suono: originale b-track-295"
- },
- {
-  "t": 1792737046356,
-  "r": "suono: originale b-track-475"
- },
- {
-  "t": 1792737226815,
-  "r": "suono: originale b-track-284"
- },
- {
-  "t": 1792737428255,
-  "r": "suono: originale b-track-384"
- },
- {
-  "t": 1792741839564,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792741839563,
   "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1792741859157,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792741859320,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792741860359,
+  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792741860524,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792741860358,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792741869038,
   "r": "worker /stato: risponde"
  }
 ]
