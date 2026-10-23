@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792760183801,
-  "r": "filtro canzoni scaricate: si"
- },
- {
-  "t": 1792760184681,
-  "r": "filtro canzoni scaricate: no"
- },
- {
-  "t": 1792763123037,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763123042,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792763123027,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792763138130,
   "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763139546,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763139539,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763139545,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763140754,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  }
 ]
