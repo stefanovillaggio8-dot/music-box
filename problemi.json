@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792734352829,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792734352861,
   "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792734699529,
   "r": "suono: originale b-track-284"
+ },
+ {
+  "t": 1792734706764,
+  "r": "suono: originale b-track-510"
  }
 ]
