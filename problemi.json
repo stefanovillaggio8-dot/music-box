@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792783294099,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792783294100,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792783294419,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792783350259,
   "r": "suono: originale b-track-510"
+ },
+ {
+  "t": 1792783354745,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792783354745,
+  "r": "worker /stato: risponde"
  }
 ]
