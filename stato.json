@@ -2003,7 +2003,7 @@
     "a": "traparentesi"
    },
    "rancore|sanguedidrago": {
-    "v": 1,
+    "v": 2,
     "s": 517,
     "t": "Sangue di drago",
     "a": "Rancore"
@@ -2033,8 +2033,8 @@
     "a": "Mostro, Sercho"
    },
    "promessadonjoe|paradiso": {
-    "v": 0,
-    "s": 381,
+    "v": 1,
+    "s": 388,
     "t": "PARADISO",
     "a": "Promessa, Don Joe"
    },
