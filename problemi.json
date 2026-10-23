@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792689732158,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792689732333,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792689733369,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792689733371,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792689733539,
   "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792708978414,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792715131935,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792715131938,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792715131938,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792715132052,
+  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
  }
 ]
