@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792763334803,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763334951,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763335977,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763335979,
-  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763336204,
-  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763341263,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763341264,
-  "r": "suono: POTENZIATO b-track-253"
- },
- {
-  "t": 1792763342624,
-  "r": "suono: POTENZIATO b-track-260"
- },
- {
-  "t": 1792763342922,
-  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
   "t": 1792763342922,
   "r": "suono: POTENZIATO b-track-260"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792763397510,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792763397721,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792763398406,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792763398809,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792763398809,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763398851,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792763398808,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763400030,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 52 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792763402341,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763402346,
+  "r": "worker /stato: risponde"
  }
 ]
