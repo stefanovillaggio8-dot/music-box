@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792741859157,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792741859320,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792741860359,
   "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792741957793,
   "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 40 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792757586036,
+  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792757586030,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
