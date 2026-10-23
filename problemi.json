@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792758703833,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792758762760,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792758762764,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792759009938,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792759010659,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792759010966,
   "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1792759696925,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792759696911,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792759698121,
+  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792759698124,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792759698144,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792759726819,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
