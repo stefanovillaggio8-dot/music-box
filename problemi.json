@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792734353356,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792734353681,
   "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792735196061,
   "r": "suono: originale b-track-285"
+ },
+ {
+  "t": 1792735381330,
+  "r": "suono: originale b-track-359"
  }
 ]
