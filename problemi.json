@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792734354252,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792734354847,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792735699567,
   "r": "suono: originale b-track-274"
+ },
+ {
+  "t": 1792735856277,
+  "r": "suono: originale b-track-286"
  }
 ]
