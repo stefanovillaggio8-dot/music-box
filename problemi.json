@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792741895146,
-  "r": "suono: POTENZIATO b-track-60"
- },
- {
-  "t": 1792741895148,
-  "r": "visibili 12 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792741899489,
   "r": "suono: POTENZIATO b-track-58"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792757593037,
   "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792757601218,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792757601238,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
