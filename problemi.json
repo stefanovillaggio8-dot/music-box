@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792715155191,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792715155262,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792715156467,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792715156468,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792715156484,
-  "r": "FINALE: visibili 204 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792715165351,
-  "r": "suono: originale b-track-268"
- },
- {
-  "t": 1792715165351,
-  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792715170431,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792715647124,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792715647150,
+  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792715647149,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792715647220,
+  "r": "visibili 204 su 204 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792715648362,
+  "r": "FINALE: visibili 30 su 204 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillaggi"
+ },
+ {
+  "t": 1792715656910,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792715656910,
+  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792715656925,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
