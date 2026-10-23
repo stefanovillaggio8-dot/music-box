@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792735961058,
-  "r": "suono: originale b-track-297"
- },
- {
-  "t": 1792736094359,
-  "r": "suono: originale b-track-296"
- },
- {
-  "t": 1792736266561,
-  "r": "suono: originale b-track-475"
- },
- {
-  "t": 1792736446517,
-  "r": "suono: originale b-track-288"
- },
- {
-  "t": 1792736605831,
-  "r": "suono: originale b-track-359"
- },
- {
-  "t": 1792736774595,
-  "r": "suono: originale b-track-433"
- },
- {
   "t": 1792736931318,
   "r": "suono: originale b-track-295"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1792741855762,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792741855779,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792741855889,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792741855788,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792741856973,
+  "r": "FINALE: visibili 12 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792741859157,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792741859157,
   "r": "worker /stato: risponde"
  }
 ]
