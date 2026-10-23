@@ -1,162 +1,162 @@
 [
  {
-  "t": 1792763179394,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+  "t": 1792763140743,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
  {
-  "t": 1792763179417,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792763179558,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792763188184,
+  "t": 1792763149521,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792763195759,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+  "t": 1792763149531,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792763195777,
+  "t": 1792763149527,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763150734,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763150735,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763164537,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763164628,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763164620,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763165833,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763165829,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763165830,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763194631,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792763194651,
+  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792763194646,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792763194743,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763195847,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763252884,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
  {
-  "t": 1792763195766,
+  "t": 1792763252908,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
  {
-  "t": 1792763195815,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+  "t": 1792763253002,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
  {
-  "t": 1792763195998,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792763196587,
+  "t": 1792763253036,
   "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
  {
-  "t": 1792763196877,
+  "t": 1792763253154,
   "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
  },
  {
-  "t": 1792763197076,
+  "t": 1792763253581,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
  {
-  "t": 1792763197822,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+  "t": 1792763253946,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
  {
-  "t": 1792763197945,
-  "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
+  "t": 1792763254060,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
  },
  {
-  "t": 1792763197968,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763198049,
+  "t": 1792763254490,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
  {
-  "t": 1792763197931,
-  "r": "worker /stato: risponde"
+  "t": 1792763254926,
+  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
  {
-  "t": 1792763199146,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763201410,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763201413,
+  "t": 1792763255025,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792763201774,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763202608,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763202609,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763202958,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763211559,
+  "t": 1792763255021,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792763211561,
+  "t": 1792763255034,
   "r": "libreria: 245 brani, scartati 194 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
  {
-  "t": 1792763211556,
+  "t": 1792763255359,
+  "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792763255662,
+  "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792763256230,
+  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792763258282,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792763211651,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792763212754,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763226295,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763226296,
+  "t": 1792763258266,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792763226444,
+  "t": 1792763258280,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792763227514,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
+  "t": 1792763259485,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
  {
-  "t": 1792763227531,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+  "t": 1792763259486,
+  "r": "FINALE: visibili 24 su 238 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
  {
-  "t": 1792763227647,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
+  "t": 1792763259481,
+  "r": "visibili 24 su 238 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
  {
-  "t": 1792763256350,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763256343,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792763256414,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792763257555,
-  "r": "FINALE: visibili 211 su 238 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792763257558,
-  "r": "visibili 211 su 238 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+  "t": 1792763260746,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
