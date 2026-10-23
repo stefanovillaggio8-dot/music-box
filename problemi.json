@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792734354907,
-  "r": "libreria: 204 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
   "t": 1792734354905,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792735961058,
   "r": "suono: originale b-track-297"
+ },
+ {
+  "t": 1792736094359,
+  "r": "suono: originale b-track-296"
  }
 ]
