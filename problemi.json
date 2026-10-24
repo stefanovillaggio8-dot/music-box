@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792856570892,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792856571072,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792856604045,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792856605773,
+  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
