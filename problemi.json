@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792857632716,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792857632761,
-  "r": "suono: originale b-track-244"
- },
- {
   "t": 1792857632936,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792857658470,
   "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792857658464,
+  "r": "suono: POTENZIATO b-track-257"
+ },
+ {
+  "t": 1792857661271,
+  "r": "worker /stato: risponde"
  }
 ]
