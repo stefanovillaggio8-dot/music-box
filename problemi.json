@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792853932344,
-  "r": "suono: originale b-youtube-kopi-luwak"
- },
- {
-  "t": 1792853933612,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853936116,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853939710,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853939710,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853939805,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853941051,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792853941054,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792854030326,
   "r": "suono: originale b-track-450"
+ },
+ {
+  "t": 1792854030618,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792854030611,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792854030686,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792854030636,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792854031056,
+  "r": "suono: originale b-youtube-kopi-luwak"
+ },
+ {
+  "t": 1792854031833,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792854150741,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
