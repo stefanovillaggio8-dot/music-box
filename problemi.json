@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792857252407,
-  "r": "suono: POTENZIATO b-track-257"
- },
- {
-  "t": 1792857254554,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792857254584,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792857334935,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792857355286,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792857355287,
+  "r": "worker /stato: risponde"
  }
 ]
