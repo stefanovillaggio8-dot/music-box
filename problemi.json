@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792805721221,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805721220,
-  "r": "suono: originale b-youtube-falene"
- },
- {
   "t": 1792805727940,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792805830943,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805830976,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805836580,
+  "r": "visibili 209 su 209 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  }
 ]
