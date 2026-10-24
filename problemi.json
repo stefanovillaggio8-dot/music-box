@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792853571503,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792853573440,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792853573432,
-  "r": "suono: originale b-youtube-kopi-luwak"
- },
- {
-  "t": 1792853573596,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853573595,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792853573633,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792853659257,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853659258,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792853660447,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792853662849,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853662851,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792853662863,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  }
 ]
