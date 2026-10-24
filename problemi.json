@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792857955024,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792857955019,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792859837304,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792859842725,
+  "r": "FINALE: visibili 2 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
  }
 ]
