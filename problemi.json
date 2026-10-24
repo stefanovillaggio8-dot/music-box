@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792808394314,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792808395561,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792808395561,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792808409275,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792808409275,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792808452499,
   "r": "suono: originale b-youtube-falene"
+ },
+ {
+  "t": 1792808453486,
+  "r": "suono: originale b-youtube-ultimo-banco"
+ },
+ {
+  "t": 1792808454076,
+  "r": "suono: originale b-youtube-dimmi-chi-sei"
+ },
+ {
+  "t": 1792808454076,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792808454570,
+  "r": "suono: originale b-youtube-un-uomo"
  }
 ]
