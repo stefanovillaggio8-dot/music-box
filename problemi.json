@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792805699516,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805699536,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792805700720,
-  "r": "FINALE: visibili 3 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805702814,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792805702900,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805702894,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805703028,
-  "r": "suono: originale b-youtube-tRuyFtXGNQA"
- },
- {
-  "t": 1792805704107,
-  "r": "FINALE: visibili 2 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805704097,
-  "r": "FINALE: visibili 2 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805709861,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
   "t": 1792805712708,
   "r": "worker /stato: risponde"
  },
@@ -157,6 +117,46 @@
  },
  {
   "t": 1792805816385,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805816385,
+  "r": "suono: originale b-youtube-ultimo-banco"
+ },
+ {
+  "t": 1792805816523,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792805816570,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792805816619,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805816625,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792805817265,
+  "r": "suono: originale b-youtube-ultimo-banco"
+ },
+ {
+  "t": 1792805817818,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805817885,
+  "r": "suono: originale b-youtube-dimmi-chi-sei"
+ },
+ {
+  "t": 1792805818729,
+  "r": "suono: originale b-youtube-ultimo-banco"
+ },
+ {
+  "t": 1792805818730,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  }
 ]
