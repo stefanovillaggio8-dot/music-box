@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792856580416,
-  "r": "suono: originale b-track-244"
- },
- {
-  "t": 1792856580419,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792856593018,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792856600616,
   "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792856660462,
   "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792856660697,
+  "r": "suono: POTENZIATO b-track-263"
+ },
+ {
+  "t": 1792856665121,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792856665136,
+  "r": "worker /stato: risponde"
  }
 ]
