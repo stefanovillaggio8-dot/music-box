@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792806226355,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792806227178,
-  "r": "suono: originale b-youtube-dimmi-chi-sei"
- },
- {
-  "t": 1792806227179,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1792806228742,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792806250740,
   "r": "suono: originale b-track-512"
+ },
+ {
+  "t": 1792806252265,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792806252261,
+  "r": "suono: originale b-track-510"
+ },
+ {
+  "t": 1792806253292,
+  "r": "suono: originale b-track-508"
  }
 ]
