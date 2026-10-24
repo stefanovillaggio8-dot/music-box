@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792805521951,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805523067,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805536815,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792805537002,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792805536997,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792805702894,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805703028,
+  "r": "suono: originale b-youtube-tRuyFtXGNQA"
+ },
+ {
+  "t": 1792805704107,
+  "r": "FINALE: visibili 2 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805704097,
+  "r": "FINALE: visibili 2 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805709861,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  }
 ]
