@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792851812517,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792851813560,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792851858700,
   "r": "suono: originale b-youtube-kopi-luwak"
+ },
+ {
+  "t": 1792851921777,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  }
 ]
