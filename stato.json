@@ -376,7 +376,7 @@
    },
    "linkinpark|crawling": {
     "v": 2,
-    "s": 17,
+    "s": 20,
     "t": "Crawling",
     "a": "Linkin Park"
    },
@@ -997,6 +997,12 @@
     "s": 52,
     "t": "Numb",
     "a": "Linkin Park"
+   },
+   "nayt|senzaarmi": {
+    "v": 0,
+    "s": 1,
+    "t": "Senza armi",
+    "a": "nayt"
    }
   },
   "Diego": {
@@ -2459,7 +2465,7 @@
     "a": "Pepe, MUERO"
    },
    "22simbanevia|ultimobanco": {
-    "v": 1,
+    "v": 2,
     "s": 0,
     "t": "Ultimo Banco",
     "a": "22simba, Nevia"
