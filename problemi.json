@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792808417044,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1792808417039,
   "r": "suono: originale b-youtube-falene"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792808489607,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792808499801,
+  "r": "worker /stato: risponde"
  }
 ]
