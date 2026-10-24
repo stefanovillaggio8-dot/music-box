@@ -1,53 +1,5 @@
 [
  {
-  "t": 1792853148241,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792853150269,
-  "r": "suono: originale b-track-470"
- },
- {
-  "t": 1792853150270,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792853151593,
-  "r": "suono: originale b-youtube-kopi-luwak"
- },
- {
-  "t": 1792853157056,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853157057,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853157368,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853158257,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792853158260,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792853158574,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792853161487,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853161500,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792853161503,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +110,53 @@
  {
   "t": 1792853262116,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853262152,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792853262182,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792853263346,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792853263386,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792853263493,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792853432408,
+  "r": "visibili 236 su 236 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792853432398,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792853432418,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792853432431,
+  "r": "libreria: 237 brani, scartati 209 per eliminazione, profilo Ste, chiavi eliminate 0"
+ },
+ {
+  "t": 1792853432588,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792853432940,
+  "r": "SPOTIFY: [v6.412] ricarico: il worker del servizio e' cambiato"
+ },
+ {
+  "t": 1792853433481,
+  "r": "libreria: 237 brani, scartati 209 per eliminazione, profilo Ste, chiavi eliminate 0"
  }
 ]
