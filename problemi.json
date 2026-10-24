@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792886076802,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792886077072,
-  "r": "SPOTIFY: [v6.414] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792886077475,
-  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792886077967,
   "r": "SPOTIFY: [v6.414] il worker aveva il permesso pronto: lo prendo"
  },
@@ -157,6 +145,18 @@
  },
  {
   "t": 1792886126183,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792886126366,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792886127391,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792886135784,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
