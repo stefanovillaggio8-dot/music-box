@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792805712708,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792805712747,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805712749,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805713306,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805713949,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805713956,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
   "t": 1792805717165,
   "r": "suono: originale b-youtube-ultimo-banco"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792805818730,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805820098,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792805820164,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805820153,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805821396,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805821402,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805821402,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  }
 ]
