@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792854190538,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792854190679,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792854190987,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792854191410,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792854191599,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792854191613,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792854191640,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
-  "t": 1792854191595,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792854192837,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
   "t": 1792854195281,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792856465976,
   "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792856465894,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792856465873,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792856466498,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792856466575,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792856466867,
+  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792856467486,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792856467584,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792856467869,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792856467896,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
