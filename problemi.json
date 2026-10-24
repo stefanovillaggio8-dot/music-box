@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792846769403,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792846769814,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
   "t": 1792846770216,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792846821226,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792846821227,
+  "r": "suono: originale b-track-300"
+ },
+ {
+  "t": 1792846828895,
+  "r": "worker /stato: risponde"
  }
 ]
