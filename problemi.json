@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792847843019,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792847843059,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792847843115,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792847843113,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792847843110,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792847843775,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792847844309,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792847844403,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792847844455,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792847844517,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792847844598,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
   "t": 1792847845123,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792847853876,
   "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792847854128,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792847854130,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792847855083,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792847856989,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792847857030,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792847857263,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792847857659,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792847857695,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792847857749,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792847857759,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792847858489,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
