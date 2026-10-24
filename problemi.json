@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792857590663,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792857590918,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
   "t": 1792857591338,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792857648828,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792857650955,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792857650956,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
