@@ -1176,7 +1176,7 @@
    },
    "blanco|bruciasseilcielo": {
     "v": 5,
-    "s": 1691,
+    "s": 1692,
     "t": "Bruciasse Il Cielo",
     "a": "BLANCO"
    },
@@ -1374,7 +1374,7 @@
    },
    "nayt3d|unasola": {
     "v": 0,
-    "s": 131,
+    "s": 267,
     "t": "Una sola",
     "a": "nayt, 3D"
    },
@@ -2471,14 +2471,14 @@
     "a": "22simba, Nevia"
    },
    "22simbanevia|falene": {
-    "v": 4,
+    "v": 3,
     "s": 0,
     "t": "Falene",
     "a": "22simba, Nevia"
    },
    "22simba|dimmichisei": {
     "v": 3,
-    "s": 2,
+    "s": 0,
     "t": "Dimmi Chi Sei",
     "a": "22simba"
    },
