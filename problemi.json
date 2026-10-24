@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792851789405,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
   "t": 1792851789409,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1792851832873,
+  "r": "FINALE: visibili 1 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
+ },
+ {
+  "t": 1792851835405,
   "r": "FINALE: visibili 1 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
  }
 ]
