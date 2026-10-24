@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792803325237,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792803325651,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792803325985,
-  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792803326021,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792803326032,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792803326021,
-  "r": "libreria: 205 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
   "t": 1792803327227,
   "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792803361876,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792803361876,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792803361900,
+  "r": "libreria: 205 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792803361967,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792803363076,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792803371893,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792803371909,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
