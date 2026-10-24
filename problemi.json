@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792807461530,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792807461536,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792807461689,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792807462471,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792807462590,
   "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792808380990,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792808380991,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792808381029,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792808382196,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792808384078,
+  "r": "suono: originale b-youtube-ultimo-banco"
  }
 ]
