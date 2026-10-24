@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792853811200,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792853813404,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853813419,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853813430,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853813771,
-  "r": "suono: originale b-youtube-kopi-luwak"
- },
- {
-  "t": 1792853813776,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1792853814631,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792853896950,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853896952,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792853896960,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792853897733,
+  "r": "suono: originale b-track-450"
+ },
+ {
+  "t": 1792853898141,
+  "r": "suono: originale b-youtube-kopi-luwak"
+ },
+ {
+  "t": 1792853898171,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792853900338,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  }
 ]
