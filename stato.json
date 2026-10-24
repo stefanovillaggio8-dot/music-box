@@ -2399,7 +2399,7 @@
     "a": "Frah Quintale"
    },
    "tropiconayt|cancellarefeatnayt": {
-    "v": 0,
+    "v": 1,
     "s": 346,
     "t": "Cancellare (feat. nayt)",
     "a": "TROPICO, nayt"
@@ -2454,7 +2454,7 @@
    },
    "nayt|senzaarmi": {
     "v": 1,
-    "s": 3,
+    "s": 5,
     "t": "Senza armi",
     "a": "nayt"
    },
