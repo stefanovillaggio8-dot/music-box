@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792808427316,
-  "r": "suono: originale b-track-508"
- },
- {
-  "t": 1792808428623,
-  "r": "suono: originale b-track-507"
- },
- {
-  "t": 1792808428625,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1792808429614,
   "r": "suono: originale b-youtube-tRuyFtXGNQA"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792808859212,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792808859213,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792808861235,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792808861241,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
