@@ -2269,6 +2269,17 @@ li.appena-aggiunto {
   .vol-row .ctl { width: 30px; height: 30px; min-height: 30px; }
   .seek-row { padding: 2px 4px 0; }
 
+  /* Il titolo del brano nel player non si vedeva: i tasti prendevano tutta la
+     riga e al titolo restavano 0 pixel (e l'orario "0:00 / 0:00" andava a capo
+     una cifra per riga). Ora, sui telefoni, copertina + titolo/orario + i tre
+     tasti principali stanno sulla stessa riga, e sotto c'e' la riga dei tasti
+     piccoli. L'altezza del player non aumenta. */
+  @media (max-width: 640px) {
+    .player-body { flex-wrap: wrap; row-gap: 2px; }
+    .player-controls { display: contents; }
+    .player-meta { flex: 1 1 0; min-width: 64px; }
+  }
+
   /* Il player e' piu' basso, quindi anche gli spazi che gli stanno sopra
      (la lista dei brani, il tondo +) possono stare piu' in basso. */
   :root { --player-h: 110px; }
