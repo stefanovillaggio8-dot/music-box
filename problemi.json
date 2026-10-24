@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792853896950,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853896952,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792853896960,
   "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792853936116,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853939710,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853939710,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
