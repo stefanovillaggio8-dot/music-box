@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792853205219,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1792853251857,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792853444103,
   "r": "suono: originale b-youtube-kopi-luwak"
+ },
+ {
+  "t": 1792853449363,
+  "r": "worker /stato: risponde"
  }
 ]
