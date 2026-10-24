@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792805484172,
-  "r": "suono: originale b-youtube-falene"
- },
- {
-  "t": 1792805484537,
-  "r": "suono: originale b-youtube-falene"
- },
- {
   "t": 1792805492835,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792805543968,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805543968,
+  "r": "suono: originale b-track-510"
+ },
+ {
+  "t": 1792805567100,
+  "r": "worker /stato: risponde"
  }
 ]
