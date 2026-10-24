@@ -653,7 +653,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.412";
+  const APP_VERSION = "6.414";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2354,17 +2354,8 @@ function _devoVedereBrano(eMio, b) {
   let eliminati = {};
   try { eliminati = LS.get("mb.eliminati", null) || {}; } catch (e) { eliminati = {}; }
 
-  /* La chiave di un brano eliminato porta con se' il profilo.
-     Ste: "se elimino dei brani dalla mia libreria, nella libreria di Diego
-     devono restare se presenti". Prima la lista era globale: quello che
-     eliminavo io spariva anche a Diego. E capita anche il contrario: brani
-     che spariscono a caso, perche' la lista globale si mescolava.
-
-     Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
-     elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
-  function _chiaveEliminato(id, profilo) {
-    return String(profilo || profile || "Ste") + "." + String(id || "");
-  }
+    /* _chiaveEliminato() sta al livello principale (vicino a checkForNewSongs): da qui dentro
+       non si vedeva da _eliminaBrano e dalle altre, e dava errore. */
   const builtin = BUILTIN
   .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
@@ -2721,7 +2712,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
   ];
   function copertinaNonAffidabile(artist, title) {
     for (const x of COPERTINE_NON_AFFIDABILI) {
-      if (titoloDaProvare(artist, title).some((t) => titleMatch(t, x.titolo).score >= 60) &&
+      if (titoliDaProvare(artist, title).some((t) => titleMatch(t, x.titolo).score >= 60) &&
           artistaSimile(artist, x.artista)) return true;
     }
     return false;
@@ -3941,12 +3932,6 @@ function _eliminatiRimossiDaMandareSvuota() {
     const total = visibleAll.length;
     const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const n = list.length;
-function _quantiEliminati() {
-  try {
-    const el = LS.get("mb.eliminati", null) || {};
-    return Object.keys(el).length;
-  } catch (e) { return 0; }
-}
 
   /* Ste: "togli completamente sta cosa dei nascosti". */
   let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
@@ -3968,7 +3953,7 @@ function _quantiEliminati() {
         const condivisi = tracks.filter((t) => t.builtin).length;
         segnalaErrore("libreria: " + tracks.length + " brani in tutto = " + condivisi + " condivisi + " +
           (tracks.length - condivisi) + " privati; visibili " + visibleAll.length +
-          "; nascosti a mano " + nascosti + "; duplicati nascosti " + _ultimiDuplicati +
+          "; duplicati nascosti " + _ultimiDuplicati +
           "; brani senza file " + _ultimiSenzaFile);
       } catch (e) { /* noop */ }
     }
@@ -10452,6 +10437,71 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
 let _firmaLibreria = "";
 let _ultimoControllo = 0;
 
+/* ---- Funzioni e contatori usati da piu' parti dell'app ----
+   Prima stavano dentro altre funzioni (loadAll, render, init): da fuori non si
+   vedevano, quindi ogni chiamata dava errore, e l'errore finiva in un "catch"
+   vuoto. Effetti: l'eliminazione di un brano non veniva ricordata, "rimetti il
+   brano" nemmeno, il controllo delle canzoni nuove non aggiornava la libreria
+   e la lista non tornava dov'eri. Qui stanno al livello principale. */
+let _quantiBraniOnline = 0;
+
+/* La chiave di un brano eliminato porta con se' il profilo.
+   Ste: "se elimino dei brani dalla mia libreria, nella libreria di Diego
+   devono restare se presenti". Prima la lista era globale: quello che
+   eliminavo io spariva anche a Diego. E capita anche il contrario: brani
+   che spariscono a caso, perche' la lista globale si mescolava.
+
+   Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
+   elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
+function _chiaveEliminato(id, profilo) {
+  return String(profilo || profile || "Ste") + "." + String(id || "");
+}
+
+function _quantiEliminati() {
+  try {
+    const el = LS.get("mb.eliminati", null) || {};
+    return Object.keys(el).length;
+  } catch (e) { return 0; }
+}
+
+/* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
+   qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
+   ricaricamento torni esattamente dove eri. */
+function _salvaPuntoLibreria() {
+  try {
+    const el = $("playlist");
+    if (!el) return;
+    LS.set("mb.punto", {
+      scorrimento: el.scrollTop,
+      brano: (current && current.id) || "",
+      profilo: profile
+    });
+  } catch (e) { /* noop */ }
+}
+
+/* Rimette la lista al punto in cui l'avevi lasciata. */
+function _ripristinaPuntoLibreria() {
+  try {
+    const p = LS.get("mb.punto", null);
+    if (!p || !p.scorrimento) return;
+    if (p.profilo && p.profilo !== profile) return;
+    const el = $("playlist");
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollTop = p.scorrimento;
+      /* Se il brano che stavi ascoltando e' ancora in lista, lo metto in
+         evidenza: cosi' lo ritrovi subito senza doverlo cercare. */
+      if (p.brano) {
+        try {
+          const riga = el.querySelector('[data-id="' + p.brano + '"]');
+          if (riga) riga.classList.add("punto-ripreso");
+        } catch (e) { /* noop */ }
+      }
+    });
+  } catch (e) { /* noop */ }
+}
+
+
 /* Ste: "si continua ad aggiornare" senza sapere cosa. Questo me lo dice:
    ogni volta che la libreria viene davvero ricostruita, il numero della
    versione mostra quando e' successo. Se resta fermo, la libreria non si
@@ -13274,42 +13324,8 @@ await loadAll();
   setTimeout(() => { _caricaStatoCondiviso(); }, 60000);
   setTimeout(() => { _caricaStatoCondiviso(); }, 120000);
   _avviaStatistiche();
-  /* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
-   qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
-   ricaricamento torni esattamente dove eri. */
-function _salvaPuntoLibreria() {
-  try {
-    const el = $("playlist");
-    if (!el) return;
-    LS.set("mb.punto", {
-      scorrimento: el.scrollTop,
-      brano: (current && current.id) || "",
-      profilo: profile
-    });
-  } catch (e) { /* noop */ }
-}
-
-/* Rimette la lista al punto in cui l'avevi lasciata. */
-function _ripristinaPuntoLibreria() {
-  try {
-    const p = LS.get("mb.punto", null);
-    if (!p || !p.scorrimento) return;
-    if (p.profilo && p.profilo !== profile) return;
-    const el = $("playlist");
-    if (!el) return;
-    requestAnimationFrame(() => {
-      el.scrollTop = p.scorrimento;
-      /* Se il brano che stavi ascoltando e' ancora in lista, lo metto in
-         evidenza: cosi' lo ritrovi subito senza doverlo cercare. */
-      if (p.brano) {
-        try {
-          const riga = el.querySelector('[data-id="' + p.brano + '"]');
-          if (riga) riga.classList.add("punto-ripreso");
-        } catch (e) { /* noop */ }
-      }
-    });
-  } catch (e) { /* noop */ }
-}
+    /* _salvaPuntoLibreria() e _ripristinaPuntoLibreria() stanno al livello principale
+       (vicino a checkForNewSongs): da qui dentro le altre funzioni non le vedevano. */
 
   /* Il numero della versione sempre visibile in alto: e' successo piu' volte
      che il browser restava su una versione vecchia e sembrava che gli
@@ -13478,7 +13494,6 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
       try { if (anteprimaAudio && !anteprimaAudio.paused) return true; } catch (e3) { /* noop */ }
       return false;
     }
-    let _quantiBraniOnline = 0;
 function numeroBraniOnline(testo) {
       return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
     }
