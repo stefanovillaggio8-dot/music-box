@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792805873062,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805875762,
-  "r": "suono: originale b-youtube-ultimo-banco"
- },
- {
-  "t": 1792805875762,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805876363,
-  "r": "suono: originale b-youtube-falene"
- },
- {
-  "t": 1792805884220,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792805884526,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792805887133,
   "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1792805946015,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805946017,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805946013,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792805947597,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805947598,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805976392,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805976401,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
