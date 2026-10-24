@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792806231981,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792806232352,
   "r": "suono: originale b-youtube-ultimo-banco"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792806265137,
   "r": "suono: originale b-youtube-dimmi-chi-sei"
+ },
+ {
+  "t": 1792806269513,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  }
 ]
