@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792884712473,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792884712489,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792884712491,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [?v=6413], memoria: [])"
- },
- {
-  "t": 1792884712606,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792884712988,
-  "r": "suono: originale b-track-361"
- },
- {
   "t": 1792884713205,
   "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [?v=6413], memoria: [])"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1792886078899,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792886078920,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792886079148,
+  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792886079422,
+  "r": "suono: originale b-track-244"
+ },
+ {
+  "t": 1792886080108,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792886082244,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
