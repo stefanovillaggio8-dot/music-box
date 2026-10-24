@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792853432408,
-  "r": "visibili 236 su 236 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792853432398,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1792853432418,
   "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792853517019,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853526009,
+  "r": "suono: originale b-youtube-kopi-luwak"
+ },
+ {
+  "t": 1792853526008,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
