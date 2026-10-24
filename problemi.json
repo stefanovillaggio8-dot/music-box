@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792856600616,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792856600775,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792856600948,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792856601288,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792856601392,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792856601508,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792856601729,
-  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792856601846,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792856602385,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792856602656,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792856818038,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792856818067,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792856818252,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792856818683,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792856818932,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792856819166,
+  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792856819355,
+  "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792856819828,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792856819879,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792856819946,
+  "r": "worker /stato: risponde"
  }
 ]
