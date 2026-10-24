@@ -2448,7 +2448,7 @@
    },
    "nayt|senzaarmi": {
     "v": 1,
-    "s": 0,
+    "s": 1,
     "t": "Senza armi",
     "a": "nayt"
    },
@@ -2457,6 +2457,12 @@
     "s": 122,
     "t": "CAZZO DI KILO (feat. MUERO)",
     "a": "Pepe, MUERO"
+   },
+   "22simbanevia|ultimobanco": {
+    "v": 1,
+    "s": 0,
+    "t": "Ultimo Banco",
+    "a": "22simba, Nevia"
    }
   }
  }
