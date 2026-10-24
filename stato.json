@@ -393,7 +393,7 @@
     "a": "Artie 5ive"
    },
    "artie5ive|fwss25freestyle": {
-    "v": 12,
+    "v": 13,
     "s": 435,
     "t": "FW/SS25 (Freestyle)",
     "a": "Artie 5ive"
@@ -621,7 +621,7 @@
     "a": ""
    },
    "fabriziodeandre|boccadirosa": {
-    "v": 0,
+    "v": 1,
     "s": 40,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
@@ -1003,6 +1003,12 @@
     "s": 1,
     "t": "Senza armi",
     "a": "nayt"
+   },
+   "fabriziodeandre|laguerradipiero": {
+    "v": 1,
+    "s": 0,
+    "t": "La guerra di Piero",
+    "a": "Fabrizio De André"
    }
   },
   "Diego": {
