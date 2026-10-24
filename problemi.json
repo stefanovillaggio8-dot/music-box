@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792871331286,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792871331307,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792871331457,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792884718721,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792884720675,
+  "r": "suono: originale b-track-296"
+ },
+ {
+  "t": 1792884720677,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
