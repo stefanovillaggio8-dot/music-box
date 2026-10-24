@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792884717525,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792884717508,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792884717589,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792884718721,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792884720675,
-  "r": "suono: originale b-track-296"
- },
- {
-  "t": 1792884720677,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792884727542,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792884727546,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792884727736,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792886120219,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792886120462,
+  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792886120451,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792886121102,
+  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792886121337,
+  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792886122049,
+  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792886122395,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792886122501,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792886122501,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
