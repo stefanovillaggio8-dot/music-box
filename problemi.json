@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792859787632,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792859787683,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792859789319,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792859789315,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792859797756,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792859797909,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792859799040,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1792862227126,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792862227399,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792862227397,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792862227435,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792862228468,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792862237015,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792862237013,
   "r": "worker /stato: risponde"
  }
 ]
