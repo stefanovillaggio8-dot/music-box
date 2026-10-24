@@ -2466,19 +2466,19 @@
    },
    "22simbanevia|ultimobanco": {
     "v": 6,
-    "s": 0,
+    "s": 5,
     "t": "Ultimo Banco",
     "a": "22simba, Nevia"
    },
    "22simbanevia|falene": {
-    "v": 3,
+    "v": 4,
     "s": 0,
     "t": "Falene",
     "a": "22simba, Nevia"
    },
    "22simba|dimmichisei": {
     "v": 3,
-    "s": 0,
+    "s": 2,
     "t": "Dimmi Chi Sei",
     "a": "22simba"
    },
