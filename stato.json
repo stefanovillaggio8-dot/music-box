@@ -1842,7 +1842,7 @@
    },
    "giomontana|soleamezzanotte": {
     "v": 0,
-    "s": 95,
+    "s": 130,
     "t": "Sole a mezzanotte",
     "a": "Gio Montana"
    },
@@ -2406,7 +2406,7 @@
    },
    "nayt|addioxx": {
     "v": 0,
-    "s": 397,
+    "s": 501,
     "t": "Addio xx",
     "a": "nayt"
    },
