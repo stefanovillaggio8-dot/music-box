@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792803457645,
-  "r": "libreria: 205 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
- },
- {
-  "t": 1792803457629,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792803457639,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792803665748,
   "r": "suono: originale b-track-512"
+ },
+ {
+  "t": 1792803815948,
+  "r": "suono: originale b-youtube-tRuyFtXGNQA"
+ },
+ {
+  "t": 1792803815941,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
