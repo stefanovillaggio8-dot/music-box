@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792803919986,
-  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
   "t": 1792803978617,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792807073513,
   "r": "suono: originale b-track-347"
+ },
+ {
+  "t": 1792807192097,
+  "r": "suono: originale b-track-357"
  }
 ]
