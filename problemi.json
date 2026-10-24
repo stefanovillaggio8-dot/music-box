@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792856833369,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792856833379,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792856983443,
   "r": "suono: POTENZIATO b-track-257"
+ },
+ {
+  "t": 1792856997223,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
