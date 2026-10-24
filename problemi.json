@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792806223220,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792806223355,
   "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792806237042,
   "r": "suono: originale b-track-507"
+ },
+ {
+  "t": 1792806245227,
+  "r": "worker /stato: risponde"
  }
 ]
