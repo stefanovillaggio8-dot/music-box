@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792806259854,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792806260219,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792806260219,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792806260249,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792806261425,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792806261424,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792806261451,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792806262482,
-  "r": "suono: originale b-youtube-un-uomo"
- },
- {
   "t": 1792806263791,
   "r": "suono: originale b-youtube-kopi-luwak"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792807473743,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792807473753,
+  "r": "suono: originale b-youtube-falene"
+ },
+ {
+  "t": 1792807473753,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792807474532,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792807474542,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792807474575,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792807475153,
+  "r": "suono: originale b-youtube-ultimo-banco"
+ },
+ {
+  "t": 1792807475156,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792807475777,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  }
 ]
