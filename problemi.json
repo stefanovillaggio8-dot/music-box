@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792805820164,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805820153,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805821396,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805821402,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805826276,
-  "r": "visibili 209 su 209 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805830880,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792805830943,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805830976,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792805836580,
   "r": "visibili 209 su 209 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792805866289,
   "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792805866397,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805866454,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792805866953,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792805867348,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792805867511,
+  "r": "suono: originale b-youtube-dimmi-chi-sei"
+ },
+ {
+  "t": 1792805867856,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792805868270,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805868264,
+  "r": "suono: originale b-youtube-ultimo-banco"
  }
 ]
