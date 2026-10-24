@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792853536352,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792853538028,
-  "r": "suono: originale b-youtube-kopi-luwak"
- },
- {
-  "t": 1792853538030,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792853538650,
-  "r": "suono: originale b-track-450"
- },
- {
-  "t": 1792853538698,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792853538691,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792853538730,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792853539887,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792853539890,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -157,6 +125,38 @@
  },
  {
   "t": 1792853583773,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792853583756,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853583820,
+  "r": "suono: originale b-track-450"
+ },
+ {
+  "t": 1792853583823,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792853583968,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792853584949,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792853585310,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792853598742,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792853598784,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
