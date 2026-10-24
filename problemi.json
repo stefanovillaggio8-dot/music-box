@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792854159150,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792854159149,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792854216233,
   "r": "suono: originale b-youtube-falene"
+ },
+ {
+  "t": 1792854220064,
+  "r": "worker /stato: risponde"
  }
 ]
