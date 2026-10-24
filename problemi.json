@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792856571072,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792856571055,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792856571391,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792856571734,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792856571781,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792856571955,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792856572670,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792856573350,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792856605773,
   "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792856606111,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792856606096,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792856606249,
+  "r": "suono: POTENZIATO b-track-257"
+ },
+ {
+  "t": 1792856606303,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792856607335,
+  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792856607332,
+  "r": "FINALE: visibili 24 su 239 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
+ },
+ {
+  "t": 1792856607515,
+  "r": "FINALE: visibili 24 su 239 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
  }
 ]
