@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792803337228,
-  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792803337228,
-  "r": "suono: originale b-youtube-tRuyFtXGNQA"
- },
- {
   "t": 1792803339416,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792803378344,
   "r": "suono: originale b-track-510"
+ },
+ {
+  "t": 1792803386994,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792803386994,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
