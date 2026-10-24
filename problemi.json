@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792857319889,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792857319932,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792857319933,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792857319939,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792857321170,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792857321451,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792857321450,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792857321672,
-  "r": "suono: originale b-track-244"
- },
- {
-  "t": 1792857323287,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792857323305,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792857323296,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792857323422,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -157,6 +113,50 @@
  },
  {
   "t": 1792857631621,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792857631820,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792857631839,
+  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792857632491,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792857632716,
+  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792857632761,
+  "r": "suono: originale b-track-244"
+ },
+ {
+  "t": 1792857632936,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792857633721,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792857633821,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792857633838,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792857633854,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792857633852,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
