@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792853659257,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792853659258,
   "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792853701716,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792853730043,
+  "r": "worker /stato: risponde"
  }
 ]
