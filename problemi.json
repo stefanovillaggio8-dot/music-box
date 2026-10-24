@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792803517376,
-  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792803576073,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792803576066,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792803576166,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792803577293,
-  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792803577295,
-  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
-  "t": 1792803577375,
-  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
- },
- {
   "t": 1792803665747,
   "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -157,6 +129,34 @@
  },
  {
   "t": 1792803888797,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792803888722,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792803889950,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792803889950,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792803890013,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792803918587,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792803918572,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792803918760,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
