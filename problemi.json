@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792847859518,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792847860338,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792847860889,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792847861156,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792847861155,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792851176713,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792851176688,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792851176713,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792851177917,
+  "r": "FINALE: visibili 4 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
+ },
+ {
+  "t": 1792851182514,
+  "r": "suono: originale b-youtube-tRuyFtXGNQA"
  }
 ]
