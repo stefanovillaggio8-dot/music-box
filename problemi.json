@@ -1,162 +1,162 @@
 [
  {
-  "t": 1792805887586,
-  "r": "suono: originale b-youtube-ultimo-banco"
+  "t": 1792803888728,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792805897913,
-  "r": "visibili 209 su 209 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+  "t": 1792803888797,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792805897912,
-  "r": "suono: originale b-youtube-dimmi-chi-sei"
- },
- {
-  "t": 1792805903699,
-  "r": "visibili 208 su 208 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805905355,
-  "r": "visibili 208 su 208 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805905352,
-  "r": "suono: originale b-youtube-un-uomo"
- },
- {
-  "t": 1792805909598,
-  "r": "visibili 208 su 208 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805915392,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1792805915428,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792805915504,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805915560,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792805916178,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792805916465,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792805917085,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792805917449,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805917646,
+  "t": 1792803888722,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792805917682,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792803889950,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
  {
-  "t": 1792805917687,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+  "t": 1792803889950,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792805918883,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+  "t": 1792803890013,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
  {
-  "t": 1792805920950,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805920945,
+  "t": 1792803918587,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792805920955,
+  "t": 1792803918572,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792805922591,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+  "t": 1792803918760,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792805922591,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+  "t": 1792803919801,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792805931161,
+  "t": 1792803919801,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792803919986,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792803978617,
   "r": "worker /stato: risponde"
  },
  {
-  "t": 1792805931161,
+  "t": 1792803978615,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792805932594,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805932593,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805932593,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805946015,
+  "t": 1792803978809,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1792805946017,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792803979811,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
  {
-  "t": 1792805946013,
-  "r": "worker /stato: risponde"
+  "t": 1792803979820,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792805947597,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+  "t": 1792803980032,
+  "r": "FINALE: visibili 205 su 205 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
  },
  {
-  "t": 1792805947598,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+  "t": 1792804053212,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792805976392,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792804053213,
+  "r": "suono: originale b-track-489"
  },
  {
-  "t": 1792805976401,
-  "r": "ENTRO: stato dal sito, nascosti -1"
+  "t": 1792804286288,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792805976348,
-  "r": "worker /stato: risponde"
+  "t": 1792804286288,
+  "r": "suono: originale b-track-391"
  },
  {
-  "t": 1792805978593,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+  "t": 1792804419377,
+  "r": "suono: originale b-track-308"
  },
  {
-  "t": 1792805978592,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+  "t": 1792804783001,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792806035981,
-  "r": "worker /stato: risponde"
+  "t": 1792804782993,
+  "r": "suono: originale b-track-482"
+ },
+ {
+  "t": 1792804939299,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792804939290,
+  "r": "suono: originale b-track-475"
+ },
+ {
+  "t": 1792805118997,
+  "r": "suono: originale b-track-349"
+ },
+ {
+  "t": 1792805118986,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792805291187,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792805291201,
+  "r": "suono: originale b-track-433"
+ },
+ {
+  "t": 1792805441697,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792805441706,
+  "r": "suono: originale b-track-300"
+ },
+ {
+  "t": 1792805642223,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792805642227,
+  "r": "suono: originale b-track-444"
+ },
+ {
+  "t": 1792805883563,
+  "r": "suono: originale b-track-361"
+ },
+ {
+  "t": 1792805883558,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792806012993,
+  "r": "suono: originale b-track-381"
+ },
+ {
+  "t": 1792806012999,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792806128060,
+  "r": "visibili 205 su 205 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
