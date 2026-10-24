@@ -387,7 +387,7 @@
     "a": "Artie 5ive"
    },
    "artie5ive|davverodavvero": {
-    "v": 52,
+    "v": 53,
     "s": 937,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
@@ -897,8 +897,8 @@
     "a": "nayt"
    },
    "ultimo|ilgiornocheaspettavo": {
-    "v": 0,
-    "s": 10,
+    "v": 1,
+    "s": 28,
     "t": "IL GIORNO CHE ASPETTAVO",
     "a": "Ultimo"
    },
@@ -999,7 +999,7 @@
     "a": "Linkin Park"
    },
    "nayt|senzaarmi": {
-    "v": 0,
+    "v": 1,
     "s": 1,
     "t": "Senza armi",
     "a": "nayt"
