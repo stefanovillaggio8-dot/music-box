@@ -862,7 +862,7 @@ const PROFILI = [
 
      La pagina che apri dal computer (quella locale) invece continua a
      leggere i brani dal disco, perche' li ha gia' li'. */
-  const BRANI_ONLINE = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/";
+  const BRANI_ONLINE = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/";
   /* Ste: i brani delle playlist "gym" suonano con i bassi gia' alzati.
      Le versioni con i bassi le prepara il computer (music-auto/prepara-bassi-gym.mjs)
      e stanno nella cartella "songs/bassi" del deposito dei brani. */
