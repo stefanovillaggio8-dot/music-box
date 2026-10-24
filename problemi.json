@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792805861625,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805861754,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805862908,
-  "r": "suono: originale b-youtube-falene"
- },
- {
   "t": 1792805864004,
   "r": "suono: originale b-youtube-ultimo-banco"
  },
@@ -157,6 +145,18 @@
  },
  {
   "t": 1792805903699,
+  "r": "visibili 208 su 208 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805905355,
+  "r": "visibili 208 su 208 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805905352,
+  "r": "suono: originale b-youtube-un-uomo"
+ },
+ {
+  "t": 1792805909598,
   "r": "visibili 208 su 208 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  }
 ]
