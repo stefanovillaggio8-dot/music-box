@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792805476579,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792805476461,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805477777,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805478451,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1792805478451,
-  "r": "suono: originale b-youtube-dimmi-chi-sei"
- },
- {
-  "t": 1792805479455,
-  "r": "suono: originale b-youtube-falene"
- },
- {
   "t": 1792805480045,
   "r": "worker /stato: risponde"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1792805511703,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792805511817,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805511810,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792805513014,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805513018,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805513024,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1792805521714,
   "r": "worker /stato: risponde"
  }
 ]
