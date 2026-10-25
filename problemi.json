@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792955776115,
-  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792955776360,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792955776463,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792955777120,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792955777138,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792955777243,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792955777308,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792955777443,
-  "r": "SPOTIFY: [v6.426] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792955777934,
-  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792955778202,
   "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792955791434,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955791433,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792955791614,
+  "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792955792777,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792955794836,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792955794842,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955795012,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955889538,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955889463,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792955889462,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
  }
 ]
