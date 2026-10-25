@@ -146,11 +146,11 @@
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
-    ".mb-fuoco .mb-fumo{position:absolute;inset:-48% -24% -12%;pointer-events:none;z-index:6;opacity:0;overflow:visible;",
+    ".mb-fuoco .mb-fumo{position:absolute;inset:-48% -24% 0;pointer-events:none;z-index:6;opacity:0;overflow:visible;",
     "  transition:opacity 1.4s ease;mix-blend-mode:screen;isolation:isolate}",
     ".mb-fuoco .mb-fumo.on{opacity:1}",
     "/* Fumo a volute: ogni particella ha dimensione, densita' e deriva differenti. */",
-    ".mb-fuoco .mb-fumo i{position:absolute;bottom:var(--mb-bottom,-18%);left:var(--mb-left,50%);",
+    ".mb-fuoco .mb-fumo i{position:absolute;bottom:calc(var(--mb-bottom,-18%) + 25%);left:var(--mb-left,50%);",
     "  display:block;width:var(--mb-width,34%);height:var(--mb-height,48%);border-radius:48% 52% 43% 57%;",
     "  opacity:0;filter:blur(var(--mb-blur,10px));",
     "  background:radial-gradient(ellipse at 42% 72%,rgba(236,237,244,.34) 0%,rgba(196,198,211,.27) 28%,rgba(143,148,165,.18) 53%,rgba(80,85,102,0) 78%);",
@@ -178,7 +178,7 @@
     ".mb-fuoco.mb-fuoco-finale{z-index:63}",
     ".mb-fuoco.mb-fuoco-finale .mb-strato-char,.mb-fuoco.mb-fuoco-finale .mb-calore,.mb-fuoco.mb-fuoco-finale .mb-brasa,.mb-fuoco.mb-fuoco-finale .mb-fiamme,.mb-fuoco.mb-fuoco-finale .mb-bragia{opacity:0!important;transition:opacity .35s ease}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo{overflow:visible;opacity:1!important}",
-    ".mb-fuoco.mb-fuoco-finale .mb-fumo i{animation-duration:4.8s;opacity:.45}",
+    ".mb-fuoco.mb-fuoco-finale .mb-fumo i{animation-duration:7.2s;opacity:.52}",
     ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:62!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 4.2s cubic-bezier(.22,.58,.28,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
     "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}24%{opacity:1;filter:blur(.3px)}65%{opacity:.78;filter:blur(2px)}100%{opacity:0;filter:blur(12px);transform:translate3d(var(--mb-rise-x,0px),-210px,0) rotate(var(--mb-rotation,8deg)) scale(.28)}}",
     ".mb-cover-burnt{opacity:0!important}",
@@ -620,7 +620,7 @@
       var frammenti=document.querySelectorAll(".mb-cover-frammento");
       for(var i=0;i<frammenti.length;i++) frammenti[i].remove();
       if(stato.box===box){if(box)box.remove();stato.box=null;stato.fiamme=[];}
-    },1650);
+    },4500);
   }
 
   function pulisciDissolvenza(art) {
