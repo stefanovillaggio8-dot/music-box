@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792969347864,
-  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792969348379,
-  "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792969348592,
-  "r": "SPOTIFY: [v6.436] ricarico: il worker del servizio e' cambiato"
- },
- {
-  "t": 1792969349085,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792969349064,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792969349070,
-  "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792969349224,
-  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
   "t": 1792969349741,
   "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792969470617,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792969470625,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792969470788,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792969471788,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792969471878,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792969471935,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792969471999,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792969477641,
+  "r": "sessione media aggiornata senza player audio fantasma"
  }
 ]
