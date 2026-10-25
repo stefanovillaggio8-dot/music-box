@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792956268691,
-  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792956269200,
-  "r": "SPOTIFY: [v6.432] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792956269973,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792956269991,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792956270085,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792956270122,
-  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792956270366,
-  "r": "SPOTIFY: [v6.432] ricarico: il worker del servizio e' cambiato"
- },
- {
-  "t": 1792956270846,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
   "t": 1792956270861,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792956279255,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792956279255,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792956279286,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792956280480,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792956280986,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792956280988,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792956281047,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792956281114,
+  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [?forza=6433&utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792956281809,
+  "r": "SPOTIFY: [v6.432] Spotify ha risposto 401: Missing/invalid/expired access token"
  }
 ]
