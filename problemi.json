@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792906337573,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792906338584,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792906370186,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792906370192,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792906370349,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792906370522,
-  "r": "SPOTIFY: [v6.420] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792906371212,
-  "r": "SPOTIFY: [v6.420] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792906371411,
   "r": "SPOTIFY: [v6.420] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -157,6 +129,34 @@
  },
  {
   "t": 1792933871902,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792933871901,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792933872011,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792933874046,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792933874064,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792933874058,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792933884438,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792933884435,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
