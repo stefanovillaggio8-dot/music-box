@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792959027302,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792959027304,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792959027345,
-  "r": "SPOTIFY: [v6.434] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792959030717,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792959030716,
   "r": "suono: originale b-track-244"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792959048857,
   "r": "SPOTIFY: [v6.434] da Spotify: 0 playlist (errore 401)"
+ },
+ {
+  "t": 1792959049651,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792959049644,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792959049750,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792959050843,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  }
 ]
