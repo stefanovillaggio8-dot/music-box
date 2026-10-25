@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792935822316,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792935822394,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792935831983,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792935832032,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792935832006,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792935832031,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792935832033,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792935832095,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792935835183,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792935835206,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792935835204,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +118,45 @@
  {
   "t": 1792937048906,
   "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792937048949,
+  "r": "libreria: 211 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792937049096,
+  "r": "visibili 211 su 211 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792937049188,
+  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792937049301,
+  "r": "SPOTIFY: [v6.426] sto chiedendo a Spotify le tue playlist"
+ },
+ {
+  "t": 1792937049529,
+  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792937050081,
+  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792937050207,
+  "r": "SPOTIFY: [v6.426] sto chiedendo a Spotify le tue playlist"
+ },
+ {
+  "t": 1792937050428,
+  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792937050978,
+  "r": "visibili 211 su 211 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792937051166,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
