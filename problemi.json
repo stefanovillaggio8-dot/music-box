@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792969343915,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792969343978,
-  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792969347728,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792969347754,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792969347807,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792969347864,
   "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1792969410382,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792969410383,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792969410538,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792969412000,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792969412002,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792969470617,
   "r": "worker /stato: risponde"
  }
 ]
