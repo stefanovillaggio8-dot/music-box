@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792963425232,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792963425297,
-  "r": "SPOTIFY: [v6.436] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792963425945,
-  "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792963426074,
-  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792963426194,
-  "r": "suono: originale b-youtube-dimmi-chi-sei"
- },
- {
   "t": 1792963426225,
   "r": "SPOTIFY: [v6.436] il worker aveva il permesso pronto: lo prendo"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792963441979,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792963442201,
+  "r": "suono: originale b-track-370"
+ },
+ {
+  "t": 1792963443762,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792963443761,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792963455513,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792963455512,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
