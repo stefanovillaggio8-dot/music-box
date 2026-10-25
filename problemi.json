@@ -1,61 +1,5 @@
 [
  {
-  "t": 1792963440781,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792963441783,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792963441782,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792963442110,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792963442113,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792963441979,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792963442201,
-  "r": "suono: originale b-track-370"
- },
- {
-  "t": 1792963443762,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792963443761,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792963455513,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792963455512,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792963455558,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792963456714,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792963456713,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792963456752,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +102,61 @@
  {
   "t": 1792968937504,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968937503,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968937501,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968938108,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792968938114,
+  "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968938135,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792968938266,
+  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792968939168,
+  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792968938796,
+  "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792968939681,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968939680,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968939681,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792968939681,
+  "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968939689,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792968939818,
+  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
  }
 ]
