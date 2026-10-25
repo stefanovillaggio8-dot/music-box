@@ -2460,7 +2460,7 @@
    },
    "nayt|senzaarmi": {
     "v": 3,
-    "s": 10,
+    "s": 12,
     "t": "Senza armi",
     "a": "nayt"
    },
@@ -2472,19 +2472,19 @@
    },
    "22simbanevia|ultimobanco": {
     "v": 6,
-    "s": 17,
+    "s": 19,
     "t": "Ultimo Banco",
     "a": "22simba, Nevia"
    },
    "22simbanevia|falene": {
     "v": 7,
-    "s": 0,
+    "s": 2,
     "t": "Falene",
     "a": "22simba, Nevia"
    },
    "22simba|dimmichisei": {
     "v": 3,
-    "s": 2,
+    "s": 3,
     "t": "Dimmi Chi Sei",
     "a": "22simba"
    },
