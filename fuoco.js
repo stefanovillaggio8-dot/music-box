@@ -134,10 +134,10 @@
     "  background:radial-gradient(circle,rgba(255,120,10,.45) 0%,rgba(255,60,0,.22) 52%,rgba(255,40,0,0) 74%)}",
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
-    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,180,35,.95)) drop-shadow(0 0 13px rgba(255,85,8,.72)) drop-shadow(0 0 24px rgba(255,55,0,.38));}",
+    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:none!important;animation:none!important;transition:none!important;}",
     /* v6443: blocco assoluto delle pulsazioni delle fiamme, anche se regole esterne provano ad animarle. */
     ".mb-fuoco .mb-fiamma,.mb-fuoco .mb-fiamma *{animation:none!important;transition:none!important;}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:none!important;}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:none!important;filter:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:none!important;}",
@@ -316,7 +316,7 @@
       '<feTurbulence type="fractalNoise" baseFrequency=".025 .055" numOctaves="2" seed="' + (n + 21) + '" result="noise"/>' +
       '<feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>' +
       '</defs>' +
-      '<path class="mb-fiamma-esterna" d="' + outer[n] + '" fill="url(#' + id + 'outer)" filter="url(#' + id + 'warp)"/>' +
+      '<path class="mb-fiamma-esterna" d="' + outer[n] + '" fill="url(#' + id + 'outer)"/>' +
       '<path class="mb-fiamma-interna" d="' + inner[n] + '" fill="url(#' + id + 'inner)" opacity=".96"/>' +
       '<path class="mb-fiamma-cuore" d="M29 149 C27 141 30 133 29 125 C28 117 31 111 32 105 C36 119 32 128 34 137 C33 143 31 147 29 149 Z" fill="#fffdf0" opacity=".94"/>' +
       '<path class="mb-fiamma-lampo" d="M30 149 C28 143 31 139 30 134 C33 140 32 145 30 149 Z" fill="#ffffff"/>' +
