@@ -4339,6 +4339,8 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       }
     } catch (e) { }
     a.addEventListener("play", () => {
+    if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
+    _indiceRiprove = 0;
     _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
     a._mbCambioBrano = false;
@@ -4624,6 +4626,7 @@ function rebuildAudio(autoplay) {
 
   let _timerRiprove = null;
   let _timerAiuto = null;
+  let _indiceRiprove = 0;
   /* --- "voglio sentire" e "sto sentendo" ---
      _vuoleSuonare: l'utente (o il cambio brano automatico) vuole la musica.
        Si spegne SOLO quando l'utente mette in pausa di proposito.
@@ -4673,37 +4676,35 @@ function rebuildAudio(autoplay) {
      Adesso insisto per qualche minuto: e' l'unica cosa che posso fare da
      solo, senza che Ste debba toccare il telefono. */
   function _riprovaPiuTardi() {
-    if (_timerRiprove) clearTimeout(_timerRiprove);
+    /* Non riavvio il conto alla rovescia ogni volta che il controllo
+       periodico richiama questa funzione: altrimenti i tentativi lunghi
+       venivano continuamente cancellati e ripartivano sempre da 1,5 s. */
+    if (!_vuoleSuonare || !currentId || !audio || _timerRiprove) return;
     const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
-    let i = 0;
     const riprova = () => {
-      if (i >= attesa.length) return;
-      const quando = attesa[i++];
+      if (!_vuoleSuonare || !currentId || !audio) return;
+      const quando = attesa[Math.min(_indiceRiprove, attesa.length - 1)];
+      _indiceRiprove = Math.min(_indiceRiprove + 1, attesa.length - 1);
       _timerRiprove = setTimeout(() => {
+        _timerRiprove = null;
+        if (!_vuoleSuonare || !currentId || !audio) return;
         try {
-          /* riprovo SOLO se la musica deve davvero suonare e il brano non e'
-             gia' partito: altrimenti lo disturberei */
-          if (_vuoleSuonare && currentId && audio && audio.paused) {
+          if (audio.paused) {
             _ultimoScorrimento = Date.now();
             audio.play().catch(() => riprova());
             return;
           }
-          if (_vuoleSuonare && currentId && audio && !audio.paused) {
-            /* "partito" ma forse muto: lo nota _controllaCheSuoni */
-            _controllaCheSuoni();
-            return;
-          }
-          if (!_vuoleSuonare && audio && !audio.paused) return;
-        } catch (e) { /* noop */ }
-        riprova();
+          /* Se risulta già in riproduzione, lascio al controllo principale
+             il compito di capire se il tempo sta avanzando davvero. */
+          _controllaCheSuoni();
+        } catch (e) {
+          riprova();
+        }
       }, quando);
     };
     riprova();
-    /* Se proprio non va, non insisto all'infinito: dopo 3 secondi mostro
-       un bottone grande. Meglio un tocco tu che restare fermo in silenzio.
-       Prima aspettavo 12 secondi, ma l'utente vede subito che la musica
-       e' partita a meta' e non sa che c'e' un bottone. */
-    clearTimeout(_timerAiuto);
+    /* Se proprio non va, mostro un aiuto senza creare timer duplicati. */
+    if (_timerAiuto) clearTimeout(_timerAiuto);
     _timerAiuto = setTimeout(() => {
       if (_vuoleSuonare && currentId && audio && audio.paused) {
         _mostraAiuto("La musica non e' partita: tocca Continua");
@@ -4846,6 +4847,7 @@ function rebuildAudio(autoplay) {
     /* sto cambiando brano: azzero il conto delle riprove */
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
+    _indiceRiprove = 0;
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
@@ -6554,6 +6556,7 @@ if (r.ok && j && j.ok) {
   const OCR_SRC = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
 
   let ocrWorker = null;
+  let ocrWorkerPromise = null;
   let importList = [];
   let importActive = null;
   let libKeys = new Set();
@@ -6883,17 +6886,32 @@ if (r.ok && j && j.ok) {
   }
 
   async function getOcrWorker(onProgress) {
+    /* Un solo avvio alla volta: se l'utente preme due volte importa,
+       non scarico/inizializzo due motori OCR in parallelo. */
     if (ocrWorker) return ocrWorker;
-    if (!window.Tesseract) await loadScript(OCR_SRC);
-    ocrWorker = await window.Tesseract.createWorker(["ita", "eng"], 1, {
-      logger: (m) => {
-        if (m && m.status && typeof m.progress === "number") onProgress(ocrLabel(m.status), m.progress);
-      }
-    });
+    if (ocrWorkerPromise) return ocrWorkerPromise;
+    ocrWorkerPromise = (async () => {
+      if (!window.Tesseract) await loadScript(OCR_SRC);
+      const worker = await window.Tesseract.createWorker(["ita", "eng"], 1, {
+        logger: (m) => {
+          if (m && m.status && typeof m.progress === "number") {
+            try { onProgress(ocrLabel(m.status), m.progress); } catch (e) { /* UI chiusa */ }
+          }
+        }
+      });
+      try {
+        await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
+      } catch (e) { /* parametri non supportati: tengo il motore */ }
+      ocrWorker = worker;
+      return worker;
+    })();
     try {
-      await ocrWorker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
-    } catch (e) { /* noop */ }
-    return ocrWorker;
+      return await ocrWorkerPromise;
+    } catch (e) {
+      /* Se il download fallisce, permetto un nuovo tentativo alla prossima importazione. */
+      ocrWorkerPromise = null;
+      throw e;
+    }
   }
 
   async function runOcr(file, onProgress) {
