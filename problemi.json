@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792956077803,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792956077804,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792956078864,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792956078876,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792956078976,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792956079048,
   "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1792956119119,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792956119149,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792956119118,
+  "r": "libreria: 211 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792956120202,
+  "r": "FINALE: visibili 211 su 211 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 11 | da stefanovillagg"
+ },
+ {
+  "t": 1792956120209,
+  "r": "visibili 211 su 211 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792956122031,
   "r": "worker /stato: risponde"
  }
 ]
