@@ -2704,3 +2704,157 @@ button:disabled { cursor: not-allowed; }
   background-clip: padding-box;
 }
 @media (prefers-reduced-motion: reduce) { button { transition: none; } }
+
+
+/* ===== Rifinitura UI v6416: contrasto, gerarchia e usabilità ===== */
+:root {
+  --line: rgba(255,255,255,.085);
+  --glass: rgba(25,25,34,.84);
+  --accent-soft: rgba(176,107,255,.14);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(ellipse at 12% -12%, rgba(128,74,194,.16), transparent 38rem),
+    radial-gradient(ellipse at 100% 28%, rgba(48,135,180,.08), transparent 34rem),
+    var(--bg);
+}
+
+.topbar {
+  background: linear-gradient(180deg, rgba(15,15,20,.97), rgba(15,15,20,.88) 76%, rgba(15,15,20,0));
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+.topbar-head, .search-wrap { max-width: 900px; margin-left: auto; margin-right: auto; }
+main { width: 100%; max-width: 900px; margin-inline: auto; }
+.logo { text-shadow: 0 2px 24px rgba(176,107,255,.12); }
+.logo-refresh {
+  border-color: var(--line);
+  background: linear-gradient(145deg, rgba(40,40,53,.94), rgba(26,26,34,.94));
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, color .16s ease;
+}
+.logo-refresh:hover { border-color: rgba(176,107,255,.42); color: var(--txt); }
+.logo-refresh:focus-visible, .track button:focus-visible, .ctl:focus-visible,
+.fab:focus-visible, .lyr-btn:focus-visible, .btn-mini:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 3px;
+}
+#search {
+  min-height: 44px;
+  border-color: rgba(255,255,255,.065);
+  background: rgba(31,31,42,.88);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+#search:focus {
+  border-color: rgba(176,107,255,.78);
+  background: rgba(35,34,47,.98);
+  box-shadow: 0 0 0 3px rgba(176,107,255,.12);
+}
+
+.hud {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: linear-gradient(115deg, rgba(39,34,52,.96), rgba(26,26,34,.96) 65%);
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+}
+.hud::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -48px;
+  top: -62px;
+  border-radius: 50%;
+  background: rgba(176,107,255,.11);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.hud-art { box-shadow: 0 5px 18px rgba(176,107,255,.18); }
+.hud-info { min-width: 0; position: relative; z-index: 1; }
+.hud-title, .hud-sub { overflow-wrap: anywhere; }
+
+.track {
+  border-color: rgba(255,255,255,.045);
+  background: linear-gradient(115deg, rgba(29,29,39,.98), rgba(25,25,33,.98));
+  box-shadow: 0 3px 10px rgba(0,0,0,.07);
+  transition: background .18s ease, border-color .18s ease, transform .16s ease, box-shadow .18s ease;
+}
+.track:hover {
+  border-color: rgba(176,107,255,.22);
+  background: linear-gradient(115deg, rgba(36,33,47,.98), rgba(27,28,39,.98));
+}
+.track.active {
+  border-color: rgba(176,107,255,.72);
+  background: linear-gradient(110deg, rgba(75,48,105,.4), rgba(31,34,47,.98) 75%);
+  box-shadow: inset 3px 0 0 var(--accent), 0 4px 18px rgba(176,107,255,.08);
+}
+.track-art { box-shadow: inset 0 0 0 1px rgba(255,255,255,.09); }
+.track-fav, .track-del { transition: color .16s ease, background .16s ease, transform .16s ease; }
+.track-fav:hover { background: rgba(255,92,122,.1); }
+.track-del:hover { background: rgba(255,92,122,.14); }
+
+.track-ordine { padding: 2px 0 4px; }
+.track-ordine .logo-refresh { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+.ordine-bt { min-height: 34px; border-radius: 10px; }
+.pl-ling { transition: background .16s ease, color .16s ease, border-color .16s ease; }
+.pl-ling.attiva { box-shadow: 0 3px 12px rgba(176,107,255,.13); }
+
+.player {
+  background: rgba(20,20,28,.92);
+  border-top-color: rgba(176,107,255,.2);
+  box-shadow: 0 -12px 36px rgba(0,0,0,.24);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  backdrop-filter: blur(22px) saturate(1.2);
+}
+.seek-row, .player-body { max-width: 900px; margin-left: auto; margin-right: auto; }
+.player-progress { height: 5px; background: rgba(255,255,255,.12); }
+.player-progress .fill { box-shadow: 0 0 12px rgba(176,107,255,.28); }
+.player-progress .knob { background: #fff; }
+.player-art { box-shadow: 0 3px 14px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.08); }
+.ctl { transition: color .16s ease, background .16s ease, transform .14s ease, box-shadow .16s ease; }
+.ctl:hover { color: var(--txt); background: rgba(255,255,255,.055); }
+.ctl-big {
+  box-shadow: 0 4px 16px rgba(176,107,255,.24);
+}
+.ctl-big:hover { box-shadow: 0 5px 22px rgba(176,107,255,.34); }
+.fab {
+  box-shadow: 0 8px 24px rgba(176,107,255,.3), inset 0 1px 0 rgba(255,255,255,.24);
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+.fab:hover { filter: brightness(1.08); box-shadow: 0 10px 28px rgba(176,107,255,.38); }
+
+.quick-card, .profile-card, .confirm-card, .import-card, .lyrics-card, .fab-menu-card {
+  border-color: rgba(255,255,255,.1);
+  box-shadow: 0 22px 70px rgba(0,0,0,.42);
+}
+.toast { box-shadow: 0 8px 28px rgba(0,0,0,.32); }
+button, input, textarea, select { font-family: inherit; }
+button { touch-action: manipulation; }
+input, textarea, select { accent-color: var(--accent); }
+[hidden] { display: none !important; }
+
+@media (min-width: 900px) {
+  .topbar { padding-left: 24px; padding-right: 24px; }
+  main { padding-left: 24px; padding-right: 24px; }
+  .track { padding: 12px 14px; }
+  .track:hover { transform: translateY(-1px); }
+}
+@media (max-width: 560px) {
+  .topbar { padding-left: 12px; padding-right: 12px; }
+  main { padding-left: 12px; padding-right: 12px; }
+  .hud { padding: 11px; gap: 10px; }
+  .track { gap: 10px; padding: 9px 10px; border-radius: 14px; }
+  .track-art { width: 44px; height: 44px; flex-basis: 44px; }
+  .player { padding-left: 9px; padding-right: 9px; }
+  .player-body { gap: 9px; }
+  .player-art { width: 46px; height: 46px; flex-basis: 46px; border-radius: 10px; }
+  .player-title { font-size: 13px; }
+  .ctl:focus-visible, .logo-refresh:focus-visible { outline-offset: 1px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
