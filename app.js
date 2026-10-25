@@ -11085,6 +11085,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
     const v = String((inp && inp.value) || "").trim();
     if (!v) { if (stato) stato.textContent = "Scrivi prima la chiave."; return; }
     LS.set("mb.chiave", v);
+    CHIAVE_PUBBLICA = v;
     /* riprovo subito con la chiave nuova: se il servizio non la accetta,
        lo dico subito invece di lasciare l'utente a scoprircelo dopo */
     try {
@@ -11096,6 +11097,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
       if (r.status === 401) {
         if (stato) stato.textContent = "Chiave sbagliata: copiala di nuovo.";
         LS.set("mb.chiave", "");
+        CHIAVE_PUBBLICA = "";
         return;
       }
       if (inp) inp.value = "";
@@ -11668,7 +11670,7 @@ if (sicura) {
       return true;
     } catch (e) { return false; }
   }
-  const CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
+  let CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
 
   /* Il brano arriva sul sito da solo, senza che il computer sia acceso.
      Restituisce l'indirizzo del brano cosi' l'app lo suona subito. */
