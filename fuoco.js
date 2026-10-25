@@ -135,7 +135,7 @@
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,180,35,.95)) drop-shadow(0 0 13px rgba(255,85,8,.72)) drop-shadow(0 0 24px rgba(255,55,0,.38));}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento 1.05s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento var(--mb-wind-duration,1.05s) ease-in-out var(--mb-wind-delay,0s) infinite alternate;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:none!important;}",
@@ -535,6 +535,12 @@
       el.className = "mb-fiamma";
       el.innerHTML = fiammaSVG();
       el.style.animationDelay = "-" + f.attesa.toFixed(2) + "s";
+      /* Ogni lingua ha un vento indipendente: niente oscillazione in coro e niente sincronizzazione con la musica. */
+      var svgFiamma = el.querySelector("svg");
+      if (svgFiamma) {
+        svgFiamma.style.setProperty("--mb-wind-duration", (0.72 + ((k * 7) % 9) * 0.13).toFixed(2) + "s");
+        svgFiamma.style.setProperty("--mb-wind-delay", "-" + ((k * 0.41) % 1.7).toFixed(2) + "s");
+      }
       contenitore.appendChild(el);
       f.el = el;
     }
