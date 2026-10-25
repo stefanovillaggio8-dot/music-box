@@ -496,6 +496,7 @@
     fiamme: [],         /* le fiamme vive: non le ricreo piu' */
     ultimoArtwork: "",
     outroInCorso: false,
+    outroInizio: 0,
     outroFatto: ""
   };
 
@@ -678,6 +679,7 @@
         var eraFineBrano=!!stato.ultimoTitolo;
         pulisciDissolvenza(art);
         stato.outroInCorso=false;
+        stato.outroInizio=0;
         stato.outroFatto="";
         stato.ultimoTitolo=chiaveBrano;
         stato.progVisto=0;
@@ -730,6 +732,7 @@
       if ((prog >= 0.999 || (audio && audio.ended)) && stato.outroFatto !== chiaveBrano) {
         stato.outroFatto=chiaveBrano;
         stato.outroInCorso=true;
+        stato.outroInizio=Date.now();
         if(stato.box)avviaDissolvenza(art,stato.box);
         else {pulisciDissolvenza(art);art.classList.add("mb-cover-burnt");}
         stato.progVisto=0;stato.progChar=-1;stato.progFiamme=-1;
@@ -919,11 +922,59 @@
 
   function copertinaCheBrucia(prog) {
     if (!imgCopertina || !ctxTela) return "";
-    var t = Date.now() / 1000;
+    var now = Date.now();
+    var t = now / 1000;
     var L = tela.width;
     var a = arte(prog, stato.seme);
     try {
       ctxTela.clearRect(0, 0, L, L);
+      /* La notifica usa lo stesso finale della copertina: 16 frammenti
+         si staccano, salgono e si dissolvono nel fumo. */
+      if (stato.outroInCorso) {
+        var elapsed = Math.max(0, now - (stato.outroInizio || now));
+        var p = Math.min(1, elapsed / 4200);
+        var cell = L / 4;
+        for (var sy = 0; sy < 4; sy++) {
+          for (var sx = 0; sx < 4; sx++) {
+            var id = sy * 4 + sx;
+            var seed = id + 17;
+            var delay = (rnd(seed) * 0.22);
+            var q = Math.max(0, Math.min(1, (p - delay) / (1 - delay)));
+            var rise = q * (38 + rnd(seed + 2) * 66);
+            var drift = (rnd(seed + 4) - 0.5) * 44 * q;
+            var rot = (rnd(seed + 6) - 0.5) * 1.4 * q;
+            var alpha = q < 0.56 ? 1 : Math.max(0, 1 - (q - 0.56) / 0.44);
+            ctxTela.save();
+            ctxTela.globalAlpha = alpha;
+            ctxTela.translate(sx * cell + cell / 2 + drift, sy * cell + cell / 2 - rise);
+            ctxTela.rotate(rot);
+            ctxTela.drawImage(imgCopertina,
+              sx * imgCopertina.naturalWidth / 4, sy * imgCopertina.naturalHeight / 4,
+              imgCopertina.naturalWidth / 4, imgCopertina.naturalHeight / 4,
+              -cell / 2, -cell / 2, cell, cell);
+            ctxTela.restore();
+          }
+        }
+        /* Volute di fumo grigio che salgono sopra i frammenti. */
+        for (var sm = 0; sm < 13; sm++) {
+          var r1 = rnd(sm * 8.7 + 3);
+          var r2 = rnd(sm * 8.7 + 9);
+          var cycle = (t * (7 + r1 * 4) + sm * 13) % 100;
+          var fx = (18 + r2 * 64) / 100 * L + Math.sin(t * 0.22 + sm) * 4;
+          var fy = L * (0.86 - cycle / 100 * 1.05);
+          var fr = L * (0.07 + r1 * 0.12) * (0.7 + p * 0.8);
+          var grad = ctxTela.createRadialGradient(fx, fy, 0, fx, fy, fr);
+          var opacity = (0.12 + 0.11 * p) * (1 - cycle / 115);
+          grad.addColorStop(0, "rgba(218,220,230," + Math.max(0, opacity).toFixed(3) + ")");
+          grad.addColorStop(0.55, "rgba(153,159,174," + Math.max(0, opacity * 0.55).toFixed(3) + ")");
+          grad.addColorStop(1, "rgba(105,111,128,0)");
+          ctxTela.fillStyle = grad;
+          ctxTela.beginPath();
+          ctxTela.arc(fx, fy, fr, 0, Math.PI * 2);
+          ctxTela.fill();
+        }
+        return tela.toDataURL("image/jpeg", 0.82);
+      }
       /* la copertina */
       var w = imgCopertina.naturalWidth || L, h = imgCopertina.naturalHeight || L;
       var lato = Math.max(w, h);
@@ -1127,7 +1178,10 @@
        il telefono si ferma su un quadrato vuoto (e iOS non lo cambia
        piu'). */
     if (!imgCopertina) return;
-    if (!suona) return;
+    if (!suona && !stato.outroInCorso) return;
+    /* Durante il finale aggiorno per 4,2 secondi anche se il brano e' finito,
+       cosi' la notifica mostra i frammenti che salgono nel fumo. */
+    if (stato.outroInCorso && Date.now() - (stato.outroInizio || 0) > 4500) return;
     /* non troppo spesso: il blocco schermo non ha bisogno di 60 fotogrammi
        al secondo, e il telefono si scalda */
     var adesso = Date.now();
