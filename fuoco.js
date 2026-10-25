@@ -136,6 +136,16 @@
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 3px rgba(255,105,8,.35));}",
     ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbSfarfalla .72s ease-in-out infinite alternate;animation-delay:inherit;will-change:transform,opacity,filter}",
+    ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:mbAuraViva 1.35s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:mbLinguaLunga .82s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:mbLinguaInterna .54s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-cuore{transform-origin:30px 148px;animation:mbCuoreVivo .38s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-lampo{transform-origin:30px 148px;animation:mbScintillaViva .31s ease-in-out infinite alternate;}",
+    "@keyframes mbAuraViva{from{opacity:.12;transform:scale(.72,.78)}to{opacity:.48;transform:scale(1.2,1.14)}}",
+    "@keyframes mbLinguaLunga{0%{transform:skewX(-5deg) scaleX(.88) scaleY(.92)}45%{transform:skewX(4deg) scaleX(1.08) scaleY(1.08)}100%{transform:skewX(-2deg) scaleX(.94) scaleY(1.16)}}",
+    "@keyframes mbLinguaInterna{0%{transform:translateX(-2px) scaleX(.82) scaleY(.88);opacity:.68}100%{transform:translateX(2px) scaleX(1.16) scaleY(1.12);opacity:1}}",
+    "@keyframes mbCuoreVivo{from{opacity:.65;transform:scale(.82,.9)}to{opacity:1;transform:scale(1.14,1.12)}}",
+    "@keyframes mbScintillaViva{from{opacity:.35;transform:translateY(2px) scale(.7)}to{opacity:1;transform:translateY(-3px) scale(1.15)}}",
     /* Ogni fiamma eredita il suo ritardo: prima tutte lampeggiavano insieme perche il delay era sul contenitore, non sull SVG animato. */
     "@keyframes mbSfarfalla{0%{opacity:.74;transform:rotate(-3deg) scaleX(.78) scaleY(.94);filter:brightness(.9)}",
     "34%{opacity:.96;transform:rotate(1.5deg) scaleX(1.08) scaleY(1.04);filter:brightness(1.12)}",
@@ -174,7 +184,7 @@
     (document.head || document.documentElement).appendChild(st);
   }
 
-  /* I filtri e i gradienti del fuoco (identici a quelli della prova). */
+  /* I filtri e i gradienti del nuovo fuoco stratificato. */
   var DEFS = '<svg class="mb-fuoco-defs" aria-hidden="true"><defs>' +
     '<filter id="mbGrana" x="-5%" y="-5%" width="110%" height="110%">' +
       '<feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="4" seed="9" result="n"/>' +
@@ -254,12 +264,27 @@
     "</svg>";
   }
 
+  /* Ogni lingua di fuoco ha una sagoma diversa: niente piu' stampini
+     identici. Le tre forme si sovrappongono e si deformano a ritmi diversi. */
+  var _mbFiammaIndice = 0;
+  var PERCORSI_FIAMME = [
+    "M29 2 C34 17 22 25 18 42 C12 60 9 79 15 104 C18 122 25 139 30 148 C36 137 43 121 45 101 C49 80 45 59 40 42 C36 27 24 19 29 2 Z",
+    "M32 4 C42 19 29 32 24 46 C17 64 17 80 20 96 C22 117 26 135 30 148 C38 132 48 119 47 96 C48 75 38 61 42 44 C45 28 34 20 32 4 Z",
+    "M27 3 C24 20 12 29 14 48 C7 67 13 87 16 105 C19 124 24 138 30 148 C32 133 40 121 42 101 C48 80 44 65 36 47 C31 34 35 19 27 3 Z",
+    "M31 2 C35 20 17 29 20 47 C10 66 13 89 19 108 C22 126 27 139 30 148 C35 137 47 122 44 99 C43 80 51 62 39 43 C34 29 26 18 31 2 Z"
+  ];
   function fiammaSVG() {
+    var n = _mbFiammaIndice++ % PERCORSI_FIAMME.length;
+    var sagoma = PERCORSI_FIAMME[n];
     return '<svg viewBox="0 0 60 160" preserveAspectRatio="xMidYMax meet">' +
-      '<g filter="url(#mbBagliore)">' +
-      '<path d="' + PERCORSO_FIAMMA + '" fill="url(#mbFiamma)"/>' +
-      '<path d="' + PERCORSO_CUORE + '" fill="url(#mbCuore)"/>' +
-      "</g></svg>";
+      '<ellipse class="mb-aura-fiamma" cx="30" cy="119" rx="20" ry="30" fill="#ff4b00" opacity=".28"/>' +
+      '<g class="mb-fiamma-esterna" filter="url(#mbBagliore)">' +
+      '<path d="' + sagoma + '" fill="url(#mbFiamma)"/>' +
+      '</g>' +
+      '<path class="mb-fiamma-interna" d="M30 148 C21 130 22 111 27 94 C30 82 28 72 32 60 C42 80 40 91 39 104 C39 123 35 138 30 148 Z" fill="#ff8a08" opacity=".95"/>' +
+      '<path class="mb-fiamma-cuore" d="M30 145 C25 130 27 116 30 105 C34 116 36 130 30 145 Z" fill="#fff5c8"/>' +
+      '<path class="mb-fiamma-lampo" d="M30 140 C27 128 29 119 31 113 C34 126 33 133 30 140 Z" fill="#fff" opacity=".88"/>' +
+      '</svg>';
   }
 
   function stratoCalore(a) {
