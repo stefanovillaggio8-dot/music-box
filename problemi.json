@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792954774290,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792954774283,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792954774284,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792954776237,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792954776240,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792954776282,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792955466540,
   "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792955467183,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955467169,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792955467166,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955467225,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792955468370,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  }
 ]
