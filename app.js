@@ -621,7 +621,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.418";
+  const APP_VERSION = "6.419";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4336,6 +4336,7 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       }
     } catch (e) { }
     a.addEventListener("play", () => {
+    _spegniSilenzio();
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     _indiceRiprove = 0;
     _segna("brano in riproduzione");
@@ -5511,6 +5512,7 @@ function playNext() {
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
     if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
+    _accendiSilenzio();
     _nascondiAiuto();
     syncPlayUI();
     /* Teniamo attiva la notifica anche quando la musica e' fermata,
@@ -5579,6 +5581,7 @@ function playNext() {
   }
 
   function _riproduciVolontaria() {
+    _spegniSilenzio();
     _segna("riproduzione VOLUTARIA");
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);
