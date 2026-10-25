@@ -134,15 +134,15 @@
     "  background:radial-gradient(circle,rgba(255,120,10,.45) 0%,rgba(255,60,0,.22) 52%,rgba(255,40,0,0) 74%)}",
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
-    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 4px rgba(255,105,8,.65)) drop-shadow(0 0 10px rgba(255,58,0,.4));}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento 1.1s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,105,8,.9)) drop-shadow(0 0 13px rgba(255,30,60,.55)) drop-shadow(0 0 20px rgba(155,35,255,.25));}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento .62s ease-in-out infinite alternate;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-cuore{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-lampo{transform-origin:30px 148px;animation:none!important;}",
     /* Movimento da convezione: solo inclinazione laterale, mai pulsazioni di scala o luminosita. */
-    "@keyframes mbVento{from{transform:rotate(-2.2deg) skewX(-1deg)}to{transform:rotate(2.2deg) skewX(1deg)}}",
+    "@keyframes mbVento{from{transform:rotate(-4deg) skewX(-2deg)}to{transform:rotate(4deg) skewX(2deg)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
@@ -276,18 +276,22 @@
     ];
     return '<svg viewBox="0 0 60 160" preserveAspectRatio="xMidYMax meet">' +
       '<defs>' +
-      '<linearGradient id="' + id + 'g" x1="0" y1="1" x2=".15" y2="0">' +
-      '<stop offset="0" stop-color="#fff9d5"/><stop offset=".18" stop-color="#ffe56a"/>' +
-      '<stop offset=".42" stop-color="#ff9d22"/><stop offset=".72" stop-color="#ff3c08" stop-opacity=".94"/>' +
-      '<stop offset="1" stop-color="#9d1000" stop-opacity="0"/></linearGradient>' +
-      '<filter id="' + id + 'f" x="-40%" y="-25%" width="180%" height="155%">' +
-      '<feTurbulence type="fractalNoise" baseFrequency=".025 .065" numOctaves="2" seed="' + (n + 5) + '" result="noise"/>' +
-      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>' +
-      '</filter></defs>' +
-      '<path d="' + sagoma + '" fill="url(#' + id + 'g)" opacity=".9" filter="url(#' + id + 'f)"/>' +
-      '<path d="' + lingue[n % lingue.length] + '" fill="url(#' + id + 'g)" opacity=".92"/>' +
-      '<path d="M29 149 C23 136 27 124 29 115 C31 106 29 98 33 89 C39 104 36 115 35 124 C35 135 32 143 29 149 Z" fill="#ffbd36" opacity=".96"/>' +
-      '<path d="M29 148 C27 138 30 131 30 123 C33 132 33 140 29 148 Z" fill="#fff8df" opacity=".98"/>' +
+      '<linearGradient id="' + id + 'outer" x1="0" y1="1" x2=".2" y2="0">' +
+      '<stop offset="0" stop-color="#fff6b0"/><stop offset=".14" stop-color="#ffdf4a"/>' +
+      '<stop offset=".36" stop-color="#ff8a18"/><stop offset=".62" stop-color="#ff3b12"/>' +
+      '<stop offset=".84" stop-color="#ed174c"/><stop offset="1" stop-color="#8d20ff" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="' + id + 'inner" x1="0" y1="1" x2="0" y2="0">' +
+      '<stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#fff5a0"/>' +
+      '<stop offset=".7" stop-color="#ffb52e"/><stop offset="1" stop-color="#ff5417" stop-opacity="0"/></linearGradient>' +
+      '<filter id="' + id + 'warp" x="-45%" y="-30%" width="190%" height="170%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency=".018 .045" numOctaves="2" seed="' + (n + 12) + '" result="noise"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>' +
+      '<filter id="' + id + 'glow" x="-80%" y="-50%" width="260%" height="220%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+      '</defs>' +
+      '<path class="mb-fiamma-esterna" d="' + sagoma + '" fill="url(#' + id + 'outer)" filter="url(#' + id + 'warp)"/>' +
+      '<path class="mb-fiamma-interna" d="' + lingue[n % lingue.length] + '" fill="url(#' + id + 'inner)" opacity=".96"/>' +
+      '<path class="mb-fiamma-cuore" d="M29 149 C22 136 29 125 28 113 C27 102 31 94 33 87 C40 104 34 118 35 128 C36 137 32 145 29 149 Z" fill="#fff9e7" opacity=".98"/>' +
+      '<path class="mb-fiamma-lampo" d="M30 148 C28 141 31 135 30 129 C34 136 33 143 30 148 Z" fill="#ffffff"/>' +
       '</svg>';
   }
 
