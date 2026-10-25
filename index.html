@@ -174,123 +174,8 @@
         setInterval(_controllaBrano, 700);
       })();
       </script>
-      <script>
-      (function () {
-        /* Ste: "non lo vedo comunque il fumo".
-           Il fumo dentro l'app sta in fuoco.js, che sul telefono resta in
-           cache: arriva solo dopo che l'app si aggiorna. Per non aspettare
-           lo metto anche qui, nella pagina (che arriva sempre dalla
-           rete): un velo di fumo sopra il disco del player e sopra lo
-           sfondo grande della schermata dei testi, che si accende
-           quando la copertina e' quasi bruciata. */
-        var STILE_FUMO =
-          /* niente overflow nascosto: il fumo deve poter salire FUORI dal
-             disco, altrimenti sul disco piccolo sembra fermo in basso */
-          ".mb-fumo-p{position:fixed;pointer-events:none;z-index:61;opacity:0;" +
-          "transition:opacity .5s ease}" +
-          ".mb-fumo-p.on{opacity:1}" +
-          ".mb-fumo-p i{position:absolute;bottom:-16%;width:30%;height:30%;border-radius:50%;" +
-          "background:radial-gradient(circle,rgba(205,203,212,.4) 0%,rgba(160,160,170,0) 68%);" +
-          "animation:mbSaleFumoP 3.6s linear infinite}" +
-          "@keyframes mbSaleFumoP{0%{transform:translateY(18%) scale(.45);opacity:0}" +
-          "14%{opacity:.95}70%{opacity:.55}100%{transform:translateY(-300%) scale(1.7);opacity:0}}" +
-          /* l'aria calda che esce dalla linea di bruciatura */
-          ".mb-fumo-p::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-8%;height:38%;" +
-          "background:radial-gradient(ellipse at 50% 100%,rgba(200,198,206,.5) 0%,rgba(150,150,160,0) 72%);" +
-          "filter:blur(6px)}";
-        function _stile() {
-          if (document.getElementById("mb-stile-fumo")) return;
-          var st = document.createElement("style");
-          st.id = "mb-stile-fumo";
-          st.textContent = STILE_FUMO;
-          (document.head || document.documentElement).appendChild(st);
-        }
-        function _fumoSu(el) {
-          if (!el) return null;
-          /* lo cerco per ID: il velo sta nel body, quindi cercarlo dentro
-             il player non lo trovava mai e ne creavo uno nuovo a ogni
-             controllo (nove veli sovrapposti: il fumo era "troppo" e
-             restava anche quando cominciava un'altra canzone) */
-          var id = "mb-fumo-" + (el.id || "sconosciuto");
-          var v = document.getElementById(id);
-          if (v) return v;
-          v = document.createElement("div");
-          v.id = id;
-          v.className = "mb-fumo-p";
-          var h = "";
-          for (var i = 0; i < 5; i++) {
-            var sinistra = 8 + ((i * 23) % 84);
-            var durata = 3 + ((i * 7) % 5) * 0.45;
-            h += '<i style="left:' + sinistra + '%;animation-duration:' + durata.toFixed(2) +
-              's;animation-delay:-' + ((i * 0.83) % 4).toFixed(2) + 's"></i>';
-          }
-          v.innerHTML = h;
-          /* nel body, non dentro il player: dentro il player c'e' una
-             trasformazione (il disco gira) e li' il position:fixed vale
-             come "absolute": il velo finiva sotto lo schermo e il fumo
-             non si vedeva affatto (Ste: "il fumo non va verso l'alto") */
-          document.body.appendChild(v);
-          return v;
-        }
-        function _progresso() {
-          var barra = document.getElementById("playerProgress");
-          var fill = barra ? barra.querySelector(".fill") : null;
-          if (!fill || !barra || !barra.offsetWidth) return 0;
-          return Math.max(0, Math.min(1, fill.offsetWidth / barra.offsetWidth));
-        }
-        function _mettiFumo(velo, el, acceso) {
-          if (!velo || !el) return;
-          var r = el.getBoundingClientRect();
-          velo.style.left = r.left + "px";
-          velo.style.top = r.top + "px";
-          velo.style.width = r.width + "px";
-          velo.style.height = r.height + "px";
-          velo.style.borderRadius = getComputedStyle(el).borderRadius;
-          if (acceso) velo.classList.add("on");
-          else if (velo.classList.contains("on")) velo.classList.remove("on");
-        }
-        var _branoDelFumo = "";
-        /* Il disco gira e il fuoco pulsava con lui. Finche' l'app non si
-           aggiorna (e quindi non ha ancora il contro-giro), lo correggo
-           da qui. */
-        var _gira = null;
-        function _controGiro() {
-          if (window.__mbControGiro) return;   /* l'app gia' lo fa */
-          var dentro = document.querySelector("#playerArt .mb-dentro");
-          if (!dentro) { if (_gira) { try { _gira.cancel(); } catch (e) { } _gira = null; } return; }
-          if (_gira) return;
-          try {
-            _gira = dentro.animate(
-              [{ transform: "rotate(0deg)" }, { transform: "rotate(-360deg)" }],
-              { duration: 6000, iterations: Infinity, easing: "linear" }
-            );
-          } catch (e) { _gira = null; }
-        }
-        setInterval(_controGiro, 1000);
-
-        function _controllaFumo() {
-          _stile();
-          /* quando comincia una canzone nuova il fumo della precedente se
-             ne va subito: non deve restare li' */
-          var titolo = (document.getElementById("playerTitle") || {}).textContent || "";
-          if (titolo !== _branoDelFumo) {
-            _branoDelFumo = titolo;
-            var vecchi = document.querySelectorAll(".mb-fumo-p.on");
-            for (var q = 0; q < vecchi.length; q++) vecchi[q].classList.remove("on");
-          }
-          var prog = _progresso();
-          var acceso = prog > 0.5;
-          var disco = document.getElementById("playerArt");
-          _mettiFumo(_fumoSu(disco), disco, acceso);
-          var pannello = document.getElementById("lyricsPanel");
-          var sfondo = document.getElementById("lyricsSfondo");
-          if (pannello && !pannello.hidden && sfondo) {
-            _mettiFumo(_fumoSu(sfondo), sfondo, acceso);
-          }
-        }
-        setInterval(_controllaFumo, 1200);
-      })();
-      </script>
+      <!-- Il fumo e la dissolvenza della copertina sono gestiti da fuoco.js: niente overlay duplicati sincronizzati col progresso. -->
+ript>
       <script>
       (function () {
         /* Ste: "il testo va in ritardo anche senza premere niente".
@@ -1118,7 +1003,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6437"></script>
+<script src="fuoco.js?v=6438"></script>
 <script src="app.js?v=6436"></script>
 </body>
 </html>
