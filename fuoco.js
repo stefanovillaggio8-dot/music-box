@@ -135,12 +135,12 @@
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 3px rgba(255,105,8,.45)) drop-shadow(0 0 8px rgba(255,58,0,.28));}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento .95s ease-in-out infinite alternate;animation-delay:inherit;will-change:transform;}",
-    ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;}",
-    ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;}",
-    ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;}",
-    ".mb-fuoco .mb-fiamma .mb-fiamma-cuore{transform-origin:30px 148px;}",
-    ".mb-fuoco .mb-fiamma .mb-fiamma-lampo{transform-origin:30px 148px;}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:none!important;}",
+    ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:none!important;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-cuore{transform-origin:30px 148px;animation:none!important;}",
+    ".mb-fuoco .mb-fiamma .mb-fiamma-lampo{transform-origin:30px 148px;animation:none!important;}",
     /* Movimento da convezione: solo inclinazione laterale, mai pulsazioni di scala o luminosita. */
     "@keyframes mbVento{from{transform:rotate(-2.2deg) skewX(-1deg)}to{transform:rotate(2.2deg) skewX(1deg)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
@@ -302,9 +302,9 @@
     })(a.seme + 7);
     var out = [];
     var N = a.punti.length;
-    var ogni = Math.max(1, Math.round(N / 13));
+    var ogni = Math.max(1, Math.round(N / 24));
     for (var i = 0; i < N; i += ogni) {
-      var alt = lato * (0.11 + r() * 0.13) + lato * 0.07 * a.prog;
+      var alt = lato * (0.075 + r() * 0.095) + lato * 0.045 * a.prog;
       if (r() < 0.18) alt = alt * 1.6;
       /* il ritardo e' distribuito col numero d'oro: le fiamme non si
          muovono a gruppi */
