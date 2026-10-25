@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792956084368,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792956084365,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792956150462,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792956157138,
+  "r": "sessione media aggiornata senza player audio fantasma"
  }
 ]
