@@ -2907,8 +2907,8 @@ input, textarea, select { accent-color: var(--accent); }
 .lyr-loading { padding: 32px 8px; color: rgba(255,255,255,.75); text-align: center; font-size: 15px; line-height: 1.7; }
 .lyrics-nav { transition: transform .18s ease, background .18s ease, box-shadow .18s ease; }
 .lyrics-nav:active { transform: scale(.94); }
-.mb-fuoco .mb-fiamma svg { filter: drop-shadow(0 0 5px rgba(255,105,8,.42)); }
-.mb-fuoco .mb-fiamma { mix-blend-mode: screen; }
+.mb-fuoco .mb-fiamma svg { filter: none !important; animation: none !important; transition: none !important; }
+.mb-fuoco .mb-fiamma { mix-blend-mode: normal !important; filter: none !important; animation: none !important; transition: none !important; }
 @media (max-width: 560px) { .lyrics-body { padding-inline: 18px; } .lyr-line, .lyr-plain { font-size: clamp(22px, 6.2vw, 29px); line-height: 1.24; } }
 @media (prefers-reduced-motion: reduce) { .lyr-line, .lyrics-nav { transition: none !important; } }
 
