@@ -146,25 +146,33 @@
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
-    ".mb-fuoco .mb-fumo{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;",
-    "  transition:opacity 1.2s ease}",
+    ".mb-fuoco .mb-fumo{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;overflow:hidden;",
+    "  transition:opacity 1.4s ease;mix-blend-mode:screen}",
     ".mb-fuoco .mb-fumo.on{opacity:1}",
-    ".mb-fuoco .mb-fumo i{position:absolute;bottom:-20%;width:52%;height:52%;border-radius:50%;",
-    "  background:radial-gradient(circle,rgba(210,208,216,.6) 0%,rgba(160,160,170,0) 70%);",
-    "  animation:mbSaleFumo 3.6s linear infinite}",
-    "@keyframes mbSaleFumo{0%{transform:translateY(18%) scale(.45);opacity:0}",
-    "  14%{opacity:.95}70%{opacity:.55}100%{transform:translateY(-300%) scale(1.7);opacity:0}",
-    "  }",
-    "  /* l'aria calda che esce dalla linea di bruciatura */",
-    "  .mb-fuoco .mb-fumo::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-8%;height:38%;",
-    "    background:radial-gradient(ellipse at 50% 100%,rgba(200,198,206,.5) 0%,rgba(150,150,160,0) 72%);",
-    "    filter:blur(6px)}",
+    "/* Fumo a volute: ogni particella ha dimensione, densita' e deriva differenti. */",
+    ".mb-fuoco .mb-fumo i{position:absolute;bottom:var(--mb-bottom,-18%);left:var(--mb-left,50%);",
+    "  display:block;width:var(--mb-width,34%);height:var(--mb-height,48%);border-radius:48% 52% 43% 57%;",
+    "  opacity:0;filter:blur(var(--mb-blur,10px));",
+    "  background:radial-gradient(ellipse at 42% 72%,rgba(224,224,232,.24) 0%,rgba(174,177,190,.17) 28%,rgba(116,121,137,.10) 53%,rgba(70,74,88,0) 76%);",
+    "  box-shadow:inset 10px 0 22px rgba(226,226,236,.045);",
+    "  animation:mbSaleFumo var(--mb-duration,5.8s) ease-out var(--mb-delay,0s) infinite}",
+    ".mb-fuoco .mb-fumo i::before,.mb-fuoco .mb-fumo i::after{content:'';position:absolute;inset:12% -8% 8%;",
+    "  border-radius:55% 45% 60% 40%;background:radial-gradient(ellipse,rgba(206,207,218,.17),rgba(112,116,132,0) 70%);}",
+    ".mb-fuoco .mb-fumo i::after{inset:30% 12% -5% -16%;opacity:.75;transform:rotate(-18deg)}",
+    "@keyframes mbSaleFumo{0%{transform:translate3d(0,12%,0) scale(.42) rotate(-9deg);opacity:0}",
+    "  12%{opacity:.42}38%{transform:translate3d(var(--mb-drift,18px),-78%,0) scale(.95) rotate(7deg);opacity:.27}",
+    "  72%{opacity:.16}100%{transform:translate3d(var(--mb-drift2,-15px),-250%,0) scale(1.65) rotate(-12deg);opacity:0}}",
+    ".mb-fuoco .mb-fumo::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-8%;height:42%;",
+    "  background:radial-gradient(ellipse at 50% 100%,rgba(219,190,164,.26) 0%,rgba(150,150,165,.15) 35%,rgba(100,100,115,0) 73%);",
+    "  filter:blur(10px)}",
+    "/* Braci e scintille: puntini incandescenti di dimensioni diverse, con alone caldo. */",
     ".mb-fuoco .mb-bragia i{position:absolute;border-radius:50%;",
-    "  background:radial-gradient(circle,#ffe6a0 0%,#ff7a10 50%,rgba(255,80,0,0) 100%);",
-    "  animation:mbBragiaSale 3.4s linear infinite}",
-    "@keyframes mbBragiaSale{0%{transform:translate(0,0) scale(1);opacity:0}",
-    "  12%{opacity:.95}72%{opacity:.7}",
-    "  100%{transform:translate(var(--mbdx,8px),-42px) scale(.15);opacity:0}}",
+    "  background:radial-gradient(circle,#fff9d4 0%,#ffd36a 23%,#ff7914 54%,rgba(255,64,0,0) 100%);",
+    "  box-shadow:0 0 3px rgba(255,183,61,.9),0 0 8px rgba(255,90,12,.55);",
+    "  animation:mbBragiaSale var(--mb-duration,3.4s) linear var(--mb-delay,0s) infinite;will-change:transform,opacity}",
+    "@keyframes mbBragiaSale{0%{transform:translate3d(0,0,0) scale(.45);opacity:0}",
+    "  10%{opacity:.95}55%{opacity:.78}",
+    "  100%{transform:translate3d(var(--mbdx,8px),var(--mbdy,-55px),0) scale(.08);opacity:0}}",
     ".mb-fuoco-defs{position:absolute;width:0;height:0;overflow:hidden}"
   ].join("\n");
 
@@ -342,13 +350,17 @@
 
   function stratoBragia(lato, misura) {
     var h = "";
-    var d = misura || Math.max(2, lato * 0.075);
-    for (var i = 0; i < 15; i++) {
-      var dx = (i % 2 === 0 ? 1 : -1) * (6 + (i * 7) % 16);
-      h += '<i style="left:' + (4 + (i * 13) % 92).toFixed(0) + "%;top:" + (14 + (i * 17) % 76).toFixed(0) +
-        "%;width:" + d.toFixed(1) + "px;height:" + d.toFixed(1) + "px;--mbdx:" + dx +
-        "px;animation-duration:" + (2.6 + (i % 6) * 0.35).toFixed(2) + "s;animation-delay:" +
-        (((i * 0.6180339887) % 1) * 3.4).toFixed(2) + 's"></i>';
+    /* 34 scintille: distribuzione irregolare, taglie miste e traiettorie diverse. */
+    for (var i = 0; i < 34; i++) {
+      var seed = (i * 37 + 11) % 101;
+      var x = 3 + ((i * 29 + 17) % 94);
+      var y = 12 + ((i * 43 + 7) % 82);
+      var d = misura ? misura * (0.35 + (i % 5) * 0.22) : 1.5 + (i % 5) * 0.7;
+      var dx = (i % 2 === 0 ? 1 : -1) * (5 + (i * 11) % 29);
+      var dy = -(28 + (i * 17) % 54);
+      h += '<i style="left:' + x + '%;top:' + y + '%;width:' + d.toFixed(1) + 'px;height:' + (d * (0.8 + (i % 3) * 0.45)).toFixed(1) +
+        'px;--mbdx:' + dx + 'px;--mbdy:' + dy + 'px;--mb-duration:' + (2.1 + (i % 7) * 0.31).toFixed(2) +
+        's;--mb-delay:-' + (((i * 0.6180339887) % 1) * 3.4).toFixed(2) + 's;opacity:' + (0.65 + (seed % 30) / 100).toFixed(2) + '"></i>';
     }
     return h;
   }
@@ -522,11 +534,20 @@
     if (!contenitore) return;
     if (contenitore.childNodes.length) return;
     var h = "";
-    for (var i = 0; i < 10; i++) {
-      var sinistra = 4 + ((i * 23) % 92);
-      var durata = 3 + ((i * 7) % 5) * 0.45;
-      h += '<i style="left:' + sinistra + '%;animation-duration:' + durata.toFixed(2) +
-        's;animation-delay:-' + ((i * 0.83) % 4).toFixed(2) + 's"></i>';
+    /* Volute sovrapposte, non bolle uniformi: il fumo si apre e si disperde lentamente. */
+    for (var i = 0; i < 22; i++) {
+      var sinistra = 3 + ((i * 17 + 9) % 94);
+      var durata = 5.1 + ((i * 7) % 8) * 0.43;
+      var larghezza = 22 + ((i * 13) % 34);
+      var altezza = 35 + ((i * 19) % 42);
+      var fondo = -12 - ((i * 11) % 32);
+      var deriva = (i % 2 ? 1 : -1) * (10 + ((i * 7) % 30));
+      var deriva2 = (i % 2 ? -1 : 1) * (12 + ((i * 5) % 28));
+      var sfocatura = 7 + ((i * 3) % 9);
+      h += '<i style="--mb-left:' + sinistra + '%;--mb-width:' + larghezza + '%;--mb-height:' + altezza +
+        '%;--mb-bottom:' + fondo + '%;--mb-duration:' + durata.toFixed(2) + 's;--mb-delay:-' +
+        ((i * 0.73) % 9).toFixed(2) + 's;--mb-drift:' + deriva + 'px;--mb-drift2:' + deriva2 +
+        'px;--mb-blur:' + sfocatura + 'px"></i>';
     }
     contenitore.innerHTML = h;
   }
