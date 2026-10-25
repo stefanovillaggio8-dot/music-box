@@ -44,7 +44,7 @@
       try {
         if (!_silenzio) {
           const url = _creaUrlSilenzio(); if (!url) return;
-          _silenzio = new Audio(url); _silenzio.loop = true; _silenzio.volume = 0.001;
+          _silenzio = new Audio(url); _silenzio._mbSilenzio = true; _silenzio.loop = true; _silenzio.volume = 0.001;
           _silenzio.preload = "auto"; _silenzio.setAttribute("playsinline", "");
         }
         if (!_silenzio.paused) return;
@@ -656,7 +656,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.419";
+  const APP_VERSION = "6.420";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
