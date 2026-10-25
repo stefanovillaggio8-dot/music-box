@@ -391,7 +391,7 @@
     var suonante = null;
     for (var i = catalogAudio.length - 1; i >= 0; i--) {
       var a = catalogAudio[i];
-      if (!a) continue;
+      if (!a || a._mbSilenzio) continue;
       var t, d, suona;
       try {
         if (!a.src) continue;
