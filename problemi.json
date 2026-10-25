@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792956075591,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792956075728,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792956075893,
-  "r": "SPOTIFY: [v6.431] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792956076059,
-  "r": "SPOTIFY: [v6.431] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792956076656,
-  "r": "SPOTIFY: [v6.431] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792956076791,
-  "r": "SPOTIFY: [v6.431] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792956076957,
-  "r": "SPOTIFY: [v6.431] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792956077551,
-  "r": "SPOTIFY: [v6.431] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792956077668,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792956077802,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792956077803,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +118,45 @@
  {
   "t": 1792956116989,
   "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792956117027,
+  "r": "libreria: 211 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 11"
+ },
+ {
+  "t": 1792956117002,
+  "r": "visibili 211 su 211 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792956116996,
+  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792956117152,
+  "r": "SPOTIFY: [v6.432] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792956117645,
+  "r": "SPOTIFY: [v6.432] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792956117662,
+  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792956118075,
+  "r": "SPOTIFY: [v6.432] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792956118283,
+  "r": "visibili 211 su 211 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792956118508,
+  "r": "SPOTIFY: [v6.432] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792956119119,
+  "r": "worker /stato: risponde"
  }
 ]
