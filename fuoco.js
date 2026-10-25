@@ -268,14 +268,29 @@
   function fiammaSVG() {
     var n = _mbFiammaIndice++ % PERCORSI_FIAMME.length;
     var sagoma = PERCORSI_FIAMME[n];
+    /* Fiamma organica: lingue irregolari sovrapposte, base quasi bianca,
+       centro giallo e bordi rossi trasparenti. Niente goccia simmetrica. */
+    var lingue = [
+      'M28 149 C18 133 12 119 17 103 C20 91 27 83 24 69 C38 83 34 99 31 108 C29 122 34 137 28 149 Z',
+      'M31 149 C39 132 35 119 42 105 C49 91 45 79 40 65 C58 83 51 99 48 112 C46 128 39 141 31 149 Z',
+      'M27 149 C22 136 23 125 17 115 C9 101 14 88 19 79 C17 96 30 100 29 115 C31 130 30 141 27 149 Z'
+    ];
+    var l = lingue[n % lingue.length];
     return '<svg viewBox="0 0 60 160" preserveAspectRatio="xMidYMax meet">' +
-      '<ellipse class="mb-aura-fiamma" cx="30" cy="119" rx="20" ry="30" fill="#ff4b00" opacity=".28"/>' +
-      '<g class="mb-fiamma-esterna" filter="url(#mbBagliore)">' +
-      '<path d="' + sagoma + '" fill="url(#mbFiamma)"/>' +
-      '</g>' +
-      '<path class="mb-fiamma-interna" d="M30 148 C21 130 22 111 27 94 C30 82 28 72 32 60 C42 80 40 91 39 104 C39 123 35 138 30 148 Z" fill="#ff8a08" opacity=".95"/>' +
-      '<path class="mb-fiamma-cuore" d="M30 145 C25 130 27 116 30 105 C34 116 36 130 30 145 Z" fill="#fff5c8"/>' +
-      '<path class="mb-fiamma-lampo" d="M30 140 C27 128 29 119 31 113 C34 126 33 133 30 140 Z" fill="#fff" opacity=".88"/>' +
+      '<defs><radialGradient id="mbFondoFiamma' + n + '" cx="50%" cy="82%" r="72%">' +
+      '<stop offset="0" stop-color="#fff7c9"/><stop offset=".22" stop-color="#ffd45a"/>' +
+      '<stop offset=".53" stop-color="#ff7418"/><stop offset=".82" stop-color="#c91e06" stop-opacity=".65"/>' +
+      '<stop offset="1" stop-color="#8d1000" stop-opacity="0"/></radialGradient>' +
+      '<filter id="mbFuocoDistorto' + n + '" x="-35%" y="-20%" width="170%" height="145%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency=".035 .075" numOctaves="2" seed="' + (n + 3) + '" result="rumore"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="rumore" scale="4" xChannelSelector="R" yChannelSelector="G"/>' +
+      '</filter></defs>' +
+      '<ellipse cx="30" cy="128" rx="18" ry="24" fill="#ff3b05" opacity=".26" filter="url(#mbBagliore)"/>' +
+      '<path d="' + sagoma + '" fill="url(#mbFiamma)" opacity=".88" filter="url(#mbFuocoDistorto' + n + ')"/>' +
+      '<path d="' + l + '" fill="url(#mbFondoFiamma' + n + ')" opacity=".97"/>' +
+      '<path d="M29 148 C23 136 27 124 29 115 C31 106 29 98 33 89 C39 104 36 115 35 124 C35 135 32 143 29 148 Z" fill="#ffbd36" opacity=".95"/>' +
+      '<path d="M29 148 C27 138 30 131 30 123 C33 132 33 140 29 148 Z" fill="#fff7db" opacity=".96"/>' +
+      '<path d="M18 123 C15 112 20 105 22 99 M42 129 C47 118 45 109 43 103" fill="none" stroke="#ff8a25" stroke-width="1.5" stroke-linecap="round" opacity=".75"/>' +
       '</svg>';
   }
 
