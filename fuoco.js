@@ -327,7 +327,7 @@
     var lato = (a.R * 2 + 16).toFixed(1);
     return '<div class="mb-calore" style="width:' + lato + "%;height:" + lato + "%;left:" +
       (a.cx - lato / 2).toFixed(1) + "%;top:" + (a.cy - lato / 2).toFixed(1) +
-      '%;opacity:' + (0.14 + 0.22 * Math.min(1, a.prog * 1.4)).toFixed(2) + '"></div>' +
+      '%;opacity:' + "0.22" + '"></div>' +
       '<svg class="mb-brasa" viewBox="0 0 100 100" preserveAspectRatio="none">' +
       '<path d="' + a.path + '" fill="none" stroke="#a8470a" stroke-width="3.5"' +
         ' stroke-linejoin="round" filter="url(#mbCalore)" opacity=".45"/>' +
@@ -351,7 +351,7 @@
       /* Il fuoco visibile sul player: lingue molto piu' alte e irregolari.
          Questa e' la funzione usata dalla copertina principale (non quella
          dei bordi della schermata testi). */
-      var alt = lato * (0.15 + r() * 0.17) + lato * 0.065 * a.prog;
+      var alt = lato * (0.15 + r() * 0.17);
       if (r() < 0.24) alt = alt * (1.25 + r() * 0.38);
       /* il ritardo e' distribuito col numero d'oro: le fiamme non si
          muovono a gruppi */
