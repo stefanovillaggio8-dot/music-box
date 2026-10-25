@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792904610072,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792904610665,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792904612698,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792904612704,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792904646842,
   "r": "suono: originale b-track-244"
+ },
+ {
+  "t": 1792904659373,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792904659384,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792904659460,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
