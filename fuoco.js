@@ -786,16 +786,24 @@
          layout + ridisegno a ogni fotogramma e il telefono scattava
          (il fuoco sembrava battere). */
       var r = art.getBoundingClientRect();
-      if (stato.lato !== r.width || stato.altezza !== r.height) {
-        stato.lato = r.width;
-        stato.altezza = r.height;
-        stato.box.style.width = r.width + "px";
-        stato.box.style.height = r.height + "px";
+      /* playerArt ruota con vinylSpin: il suo bounding box visibile cambia
+         larghezza/altezza e posizione a ogni angolo. Usarlo per dimensionare
+         l'overlay fa pulsare e saltare il fuoco. offsetWidth/Height sono le
+         dimensioni reali, non trasformate; il centro del rect resta stabile. */
+      var fireWidth = art.offsetWidth || r.width;
+      var fireHeight = art.offsetHeight || r.height;
+      var fireLeft = r.left + r.width / 2 - fireWidth / 2;
+      var fireTop = r.top + r.height / 2 - fireHeight / 2;
+      if (stato.lato !== fireWidth || stato.altezza !== fireHeight) {
+        stato.lato = fireWidth;
+        stato.altezza = fireHeight;
+        stato.box.style.width = fireWidth + "px";
+        stato.box.style.height = fireHeight + "px";
       }
-      if (stato.x !== r.left || stato.y !== r.top) {
-        stato.x = r.left;
-        stato.y = r.top;
-        stato.box.style.transform = "translate(" + r.left.toFixed(1) + "px," + r.top.toFixed(1) + "px)";
+      if (stato.x !== fireLeft || stato.y !== fireTop) {
+        stato.x = fireLeft;
+        stato.y = fireTop;
+        stato.box.style.transform = "translate(" + fireLeft.toFixed(1) + "px," + fireTop.toFixed(1) + "px)";
       }
 
       var a = arte(prog, stato.seme);
@@ -812,7 +820,7 @@
         disegnaChar(stato.box, a, raggio);
         stato.progChar = prog;
       }
-      if (!stato.box._fiamme || !stato.box._fiamme.length) preparaFiamme(stato.box, a, r.width);
+      if (!stato.box._fiamme || !stato.box._fiamme.length) preparaFiamme(stato.box, a, fireWidth);
       mostraFumo(stato.box, prog);
       if (stato.progFiamme < 0) {
         spostaFiamme(stato.box, a);
@@ -820,7 +828,7 @@
       }
 
       if (!stato.box.querySelector(".mb-bragia").childNodes.length) {
-        stato.box.querySelector(".mb-bragia").innerHTML = stratoBragia(r.width);
+        stato.box.querySelector(".mb-bragia").innerHTML = stratoBragia(fireWidth);
       }
 
   /* Ste: "appena la musica e' praticamente finita ed e' tutto nero, togli le
