@@ -6149,11 +6149,9 @@ function openProfile() {
 
   function tickLyrics() {
     if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
-    /* I timestamp dei testi online spesso arrivano leggermente in ritardo
-       rispetto alla voce reale. Anticipo l'evidenziazione di 0,65 secondi,
-       mantenendo invariati i timestamp usati quando si tocca una riga. */
-    const ANTICIPO_TESTO = 0.65;
-    const idx = activeLineIndex((audio.currentTime || 0) + ANTICIPO_TESTO);
+    /* Uso il tempo reale dell'audio: non applico anticipi artificiali,
+       cosi' l'evidenziazione resta allineata ai timestamp del brano. */
+    const idx = activeLineIndex(audio.currentTime || 0);
     if (idx === lyricActive) return;
     if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
     if (idx >= 0) {
@@ -6164,6 +6162,15 @@ function openProfile() {
     }
     lyricActive = idx;
   }
+
+  /* Alcuni browser inviano l'evento timeupdate a intervalli irregolari.
+     Quando il pannello testi e' aperto, ricontrollo spesso la posizione
+     dell'audio: tickLyrics modifica il DOM solo quando cambia la riga,
+     quindi non ricostruisce il testo e non altera la riproduzione. */
+  setInterval(() => {
+    if (document.hidden || !audio || audio.paused || $("lyricsPanel").hidden) return;
+    tickLyrics();
+  }, 100);
 
   function _renderLyricsContent(l) {
     const body = $("lyricsBody");
