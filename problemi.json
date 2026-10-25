@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792955012888,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792955012889,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792955016797,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792955016793,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792955482201,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792955484159,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955484158,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792955484387,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
