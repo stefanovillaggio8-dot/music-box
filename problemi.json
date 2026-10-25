@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792957317495,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792957318109,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792957318170,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792957318276,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792957318337,
   "r": "SPOTIFY: [v6.433] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -157,6 +141,22 @@
  },
  {
   "t": 1792957347618,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792957348132,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792957348134,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792957348139,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792957349341,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
