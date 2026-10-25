@@ -82,7 +82,7 @@
       /* le fiamme sullo sfondo grande sono piu' piccole: la schermata e'
          molto piu' grande del disco del player */
       var latoFiamme = lato * 0.27;
-      if (stato.progTesti !== prog) {
+      if (stato.progTesti < 0 || Math.abs(prog - stato.progTesti) > 0.003) {
         disegnaChar(stato.boxTesti, a, "");
         var caloreTesti = stato.boxTesti.querySelector(".mb-calore");
         if (caloreTesti) caloreTesti.remove();
@@ -512,16 +512,32 @@
       try { sc.style.borderRadius = raggio; } catch (e) { /* noop */ }
     }
 
-    var vecchioCalore = box.querySelector(".mb-calore");
-    if (vecchioCalore) vecchioCalore.remove();
-    var vecchiaBrasa = box.querySelector(".mb-brasa");
-    if (vecchiaBrasa) vecchiaBrasa.remove();
-    var temp = document.createElement("div");
-    temp.innerHTML = stratoCalore(a);
-    /* il calore e la brasa vanno dentro .mb-dentro, davanti alle fiamme */
-    var dentro = box.querySelector(".mb-dentro") || box;
-    var rif = dentro.querySelector(".mb-fiamme");
-    while (temp.firstChild) dentro.insertBefore(temp.firstChild, rif);
+    /* Aggiorno il calore e il bordo luminoso IN PLACE: rimuoverli e
+       ricrearli a ogni aggiornamento del bruciato faceva lampeggiare il fuoco. */
+    var lato = a.R * 2 + 16;
+    var calore = box.querySelector(".mb-calore");
+    if (calore) {
+      calore.style.width = lato.toFixed(1) + "%";
+      calore.style.height = lato.toFixed(1) + "%";
+      calore.style.left = (a.cx - lato / 2).toFixed(1) + "%";
+      calore.style.top = (a.cy - lato / 2).toFixed(1) + "%";
+      calore.style.opacity = "0.22";
+    }
+
+    var brasa = box.querySelector(".mb-brasa");
+    if (brasa) {
+      var bordo = brasa.querySelector("path");
+      if (!bordo) {
+        bordo = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        bordo.setAttribute("fill", "none");
+        bordo.setAttribute("stroke", "#a8470a");
+        bordo.setAttribute("stroke-width", "3.5");
+        bordo.setAttribute("stroke-linejoin", "round");
+        bordo.setAttribute("opacity", ".45");
+        brasa.appendChild(bordo);
+      }
+      bordo.setAttribute("d", a.path);
+    }
   }
 
   /* Le fiamme: si creano una volta sola e poi si spostano. Se le
@@ -792,7 +808,10 @@
          i passi sono troppo piccoli per vedersi, l'animazione gira
          liscia. */
       var cambiato = Math.abs(prog - stato.progChar) > 0.003;
-      if (cambiato) disegnaChar(stato.box, a, raggio);
+      if (cambiato) {
+        disegnaChar(stato.box, a, raggio);
+        stato.progChar = prog;
+      }
       if (!stato.box._fiamme || !stato.box._fiamme.length) preparaFiamme(stato.box, a, r.width);
       mostraFumo(stato.box, prog);
       if (stato.progFiamme < 0) {
