@@ -173,6 +173,17 @@
     "@keyframes mbBragiaSale{0%{transform:translate3d(0,0,0) scale(.45);opacity:0}",
     "  10%{opacity:.95}55%{opacity:.78}",
     "  100%{transform:translate3d(var(--mbdx,8px),var(--mbdy,-55px),0) scale(.08);opacity:0}}",
+    ".mb-fuoco .mb-fumo.on{will-change:opacity}",
+    "/* Dissoluzione cinematografica: frammenti della copertina che salgono e diventano fumo. */",
+    ".mb-fuoco.mb-fuoco-finale{z-index:63}",
+    ".mb-fuoco.mb-fuoco-finale .mb-strato-char,.mb-fuoco.mb-fuoco-finale .mb-calore,.mb-fuoco.mb-fuoco-finale .mb-brasa,.mb-fuoco.mb-fuoco-finale .mb-fiamme,.mb-fuoco.mb-fuoco-finale .mb-bragia{opacity:0!important;transition:opacity .35s ease}",
+    ".mb-fuoco.mb-fuoco-finale .mb-fumo{overflow:visible;opacity:1!important}",
+    ".mb-fuoco.mb-fuoco-finale .mb-fumo i{animation-duration:4.8s;opacity:.45}",
+    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:62!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 1.45s cubic-bezier(.18,.62,.32,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
+    "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}35%{opacity:.92;filter:blur(1px)}100%{opacity:0;filter:blur(9px);transform:translate3d(var(--mb-rise-x,0px),-145px,0) rotate(var(--mb-rotation,8deg)) scale(.52)}}",
+    ".mb-cover-burnt{opacity:0!important}",
+    ".mb-cover-reappear{animation:mbCoverReappear .72s ease-out both!important}",
+    "@keyframes mbCoverReappear{0%{opacity:0;filter:blur(9px)}65%{opacity:.8;filter:blur(2px)}100%{opacity:1;filter:blur(0)}}",
     ".mb-fuoco-defs{position:absolute;width:0;height:0;overflow:hidden}"
   ].join("\n");
 
@@ -227,8 +238,8 @@
      -------------------------------------------------------------------------- */
   function arte(prog, seme) {
     var R = 45 * Math.pow(Math.max(0, 1 - prog), 1.15);
-    var cx = 50 + Math.sin(prog * 3.1) * 1.2;
-    var cy = 50 + Math.cos(prog * 2.3) * 1.2;
+    var cx = 50;
+    var cy = 50;
     var N = 120;
     var punti = [];
     var testo = "";
@@ -483,7 +494,9 @@
     tPrecedente: 0,
     seme: 7,
     fiamme: [],         /* le fiamme vive: non le ricreo piu' */
-    ultimoArtwork: ""
+    ultimoArtwork: "",
+    outroInCorso: false,
+    outroFatto: ""
   };
 
   /* La crosta (il nero che morde la copertina) */
@@ -556,11 +569,62 @@
     if (!box) return;
     var contenitore = box.querySelector(".mb-fumo");
     if (!contenitore) return;
-    if (prog > 0.5) {
+    /* Fumo continuo e autonomo: non si accende a meta' canzone e non segue il ritmo. */
+    preparaFumo(box);
+    if (!contenitore.classList.contains("on")) contenitore.classList.add("on");
+  }
+
+  function frammentiCopertina(art) {
+    if (!art || !art.parentNode) return;
+    var r = art.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+    var cols = 4, rows = 3;
+    for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
+      var clone = art.cloneNode(true);
+      clone.removeAttribute("id");
+      clone.classList.add("mb-cover-frammento");
+      var descendants = clone.querySelectorAll("[id]");
+      for (var d = 0; d < descendants.length; d++) descendants[d].removeAttribute("id");
+      var x0=x*25, x1=(x+1)*25, y0=y*(100/3), y1=(y+1)*(100/3);
+      var n1=((x*13+y*7)%5)+2, n2=((x*5+y*11)%5)+2;
+      Object.assign(clone.style,{position:"fixed",left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",margin:"0",opacity:"1",transform:"none",animation:"none",pointerEvents:"none",borderRadius:getComputedStyle(art).borderRadius});
+      clone.style.clipPath="polygon("+(x0+n1)+"% "+y0+"%, "+(x1-n2)+"% "+y0+"%, "+x1+"% "+(y0+8)+"%, "+x1+"% "+(y1-7)+"%, "+(x1-n1)+"% "+y1+"%, "+(x0+n2)+"% "+y1+"%, "+x0+"% "+(y1-8)+"%, "+x0+"% "+(y0+6)+"%)";
+      clone.style.setProperty("--mb-fragment-delay",(((x+y*cols)%5)*.035)+"s");
+      clone.style.setProperty("--mb-rise-x",((x-1.5)*17+(y%2?9:-7))+"px");
+      clone.style.setProperty("--mb-rotation",((x+y)%2?1:-1)*(9+x*3+y*2)+"deg");
+      document.body.appendChild(clone);
+    }
+  }
+
+  function avviaDissolvenza(art, box) {
+    if (!art || art.dataset.mbOutro === "1") return;
+    art.dataset.mbOutro = "1";
+    frammentiCopertina(art);
+    art.classList.add("mb-cover-burnt");
+    if (box) {
       preparaFumo(box);
-      if (!contenitore.classList.contains("on")) contenitore.classList.add("on");
-    } else if (contenitore.classList.contains("on")) {
-      contenitore.classList.remove("on");
+      var fumo=box.querySelector(".mb-fumo");
+      if (fumo) fumo.classList.add("on");
+      box.classList.add("mb-fuoco-finale");
+      var fiamme=box.querySelector(".mb-fiamme"), char=box.querySelector(".mb-strato-char");
+      if (fiamme) fiamme.style.opacity="0";
+      if (char) char.style.opacity="0";
+    }
+    window.setTimeout(function(){
+      var frammenti=document.querySelectorAll(".mb-cover-frammento");
+      for(var i=0;i<frammenti.length;i++) frammenti[i].remove();
+      if(stato.box===box){if(box)box.remove();stato.box=null;stato.fiamme=[];}
+    },1650);
+  }
+
+  function pulisciDissolvenza(art) {
+    var frammenti=document.querySelectorAll(".mb-cover-frammento");
+    for(var i=0;i<frammenti.length;i++)frammenti[i].remove();
+    if(art){
+      art.classList.remove("mb-cover-burnt","mb-cover-reappear");
+      if(art.dataset)delete art.dataset.mbOutro;
+      art.style.opacity="";
+      art.style.filter="";
     }
   }
 
@@ -605,15 +669,24 @@
       var sorgenteOra = audio ? String(audio.currentSrc || audio.src || "") : "";
       var chiaveBrano = titoloOra + "|" + sorgenteOra;
       if (chiaveBrano !== stato.ultimoTitolo) {
-        stato.ultimoTitolo = chiaveBrano;
-        stato.progVisto = 0;
-        stato.progChar = -1;
-        stato.progFiamme = -1;
-        stato.progNotifica = -1;
-        stato.tPrecedente = 0;
-        if (stato.box) { stato.box.remove(); stato.box = null; }
-        stato.fiamme = [];
-        stato.seme = (stato.seme * 7 + 13) % 997;
+        var eraFineBrano=!!stato.ultimoTitolo;
+        pulisciDissolvenza(art);
+        stato.outroInCorso=false;
+        stato.outroFatto="";
+        stato.ultimoTitolo=chiaveBrano;
+        stato.progVisto=0;
+        stato.progChar=-1;
+        stato.progFiamme=-1;
+        stato.progNotifica=-1;
+        stato.tPrecedente=0;
+        if(stato.box){stato.box.remove();stato.box=null;}
+        stato.fiamme=[];
+        stato.seme=(stato.seme*7+13)%997;
+        if(eraFineBrano){
+          art.classList.remove("mb-cover-burnt");
+          art.classList.add("mb-cover-reappear");
+          window.setTimeout(function(){art.classList.remove("mb-cover-reappear");},800);
+        }
       }
 
       var suona = audio ? (!audio.paused && !audio.ended) : art.classList.contains("playing");
@@ -647,11 +720,19 @@
       }
 
       if (prog !== stato.progVisto) stato.progVisto = prog;
-      /* Fine combustione: scompare la copertina e il brano successivo riparte pulito. */
-      if (prog >= 0.999 || (audio && audio.ended)) {
-        if (stato.box) { stato.box.remove(); stato.box = null; stato.fiamme = []; }
-        stato.progVisto = 0; stato.progChar = -1; stato.progFiamme = -1;
-        aggiornaNotifica(1, false);
+      /* Fine brano: una sola dissolvenza, poi il fumo sale senza seguire il ritmo. */
+      if ((prog >= 0.999 || (audio && audio.ended)) && stato.outroFatto !== chiaveBrano) {
+        stato.outroFatto=chiaveBrano;
+        stato.outroInCorso=true;
+        if(stato.box)avviaDissolvenza(art,stato.box);
+        else {pulisciDissolvenza(art);art.classList.add("mb-cover-burnt");}
+        stato.progVisto=0;stato.progChar=-1;stato.progFiamme=-1;
+        aggiornaNotifica(1,false);
+        requestAnimationFrame(ciclo);
+        return;
+      }
+      if(stato.outroInCorso){
+        aggiornaNotifica(1,false);
         requestAnimationFrame(ciclo);
         return;
       }
