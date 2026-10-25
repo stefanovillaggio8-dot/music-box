@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792955497189,
-  "r": "SPOTIFY: [v6.426] ricarico: il worker del servizio e' cambiato"
- },
- {
-  "t": 1792955497822,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792955497839,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792955497946,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792955498016,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792955498593,
-  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792955498910,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792955499487,
-  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792955499877,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792955500105,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792955500116,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792955500108,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792955518355,
   "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792955518369,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792955518453,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955518537,
+  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792955518916,
+  "r": "suono: originale b-track-288"
+ },
+ {
+  "t": 1792955519069,
+  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792955519400,
+  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792955519967,
+  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792955520086,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955520251,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955520259,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792955520445,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
