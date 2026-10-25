@@ -535,21 +535,23 @@
       var tot = document.getElementById("totTime");
       if (!art || !cur || !tot) { requestAnimationFrame(ciclo); return; }
 
-      /* la copertina cambia -> il bruciato ricomincia */
       var titoloOra = titolo ? titolo.textContent : "";
-      if (titoloOra !== stato.ultimoTitolo) {
-        stato.ultimoTitolo = titoloOra;
+      var tDom = secondi(cur.textContent);
+      var dur = secondi(tot.textContent);
+      var audio = scegliAudio(tDom);
+      if (audio) stato.audio = audio;
+      var sorgenteOra = audio ? String(audio.currentSrc || audio.src || "") : "";
+      var chiaveBrano = titoloOra + "|" + sorgenteOra;
+      if (chiaveBrano !== stato.ultimoTitolo) {
+        stato.ultimoTitolo = chiaveBrano;
         stato.progVisto = -1;
         stato.progChar = -1;
+        stato.progFiamme = -1;
         stato.progNotifica = -1;
         stato.tPrecedente = 0;
         stato.seme = (stato.seme * 7 + 13) % 997;
       }
 
-      var tDom = secondi(cur.textContent);
-      var dur = secondi(tot.textContent);
-      var audio = scegliAudio(tDom);
-      if (audio) stato.audio = audio;
       var suona = audio ? (!audio.paused && !audio.ended) : art.classList.contains("playing");
       var t = tDom;
       if (audio && isFinite(audio.currentTime)) t = audio.currentTime;

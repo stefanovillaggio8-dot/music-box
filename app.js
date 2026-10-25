@@ -653,7 +653,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.416";
+  const APP_VERSION = "6.417";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -862,7 +862,7 @@ const PROFILI = [
 
      La pagina che apri dal computer (quella locale) invece continua a
      leggere i brani dal disco, perche' li ha gia' li'. */
-  const BRANI_ONLINE = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/";
+  const BRANI_ONLINE = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/";
   /* Ste: i brani delle playlist "gym" suonano con i bassi gia' alzati.
      Le versioni con i bassi le prepara il computer (music-auto/prepara-bassi-gym.mjs)
      e stanno nella cartella "songs/bassi" del deposito dei brani. */
@@ -2666,12 +2666,31 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
   }
 
   function recuperaCopertineMancanti() {
-    const senza = tracks.filter((t) => !t.cover);
+    const senza = tracks.filter((t) => !t || !t.cover);
     if (!senza.length) return;
+    const builtinMancanti = senza.filter((t) => t && t.builtin);
+    if (builtinMancanti.length) {
+      (async () => {
+        for (const t of builtinMancanti) {
+          try {
+            const ora = tracks.find((x) => x.id === t.id);
+            if (!ora || ora.cover) continue;
+            const c = await findCoverLocal(ora.artist, ora.title);
+            if (c && c.cover) {
+              ora.cover = c.cover;
+              if (!ora.album) ora.album = c.album || "";
+              try {
+                await dbPutCover({ id: ora.id, cover: c.cover, album: c.album || "", title: ora.title, artist: ora.artist || "" });
+              } catch (e) { /* resta visibile nella sessione corrente */ }
+              render();
+            }
+          } catch (e) { /* una copertina mancante non blocca le altre */ }
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+      })().catch(() => { /* noop */ });
+    }
     for (const t of senza) {
       if (!t.builtin) {
-        // ritrovo la copertina e ridisegno quando arriva, altrimenti
-        // l'immagine resta vuota anche se poi e' stata trovata
         Promise.resolve(enrichTrack(t.id)).then((fatto) => {
           if (fatto) {
             const ora = tracks.find((x) => x.id === t.id);
@@ -3992,11 +4011,21 @@ emptyEl.textContent = !total
            le copertine arrivano man mano che si scorre. */
         art.loading = "lazy";
         art.decoding = "async";
-        art.src = t.cover;
+        art.src = _urlCopertina(t.cover);
+        art.addEventListener("error", () => {
+          const fallback = document.createElement("div");
+          fallback.className = "track-art track-art-placeholder art-placeholder";
+          fallback.style.background = t.gradient || "linear-gradient(135deg,#36264e,#182d45)";
+          fallback.textContent = _inizialiCopertina(t);
+          fallback.setAttribute("aria-label", "Copertina non disponibile: " + (t.title || "Brano"));
+          art.replaceWith(fallback);
+        }, { once: true });
       } else {
         art = document.createElement("div");
-        art.className = "track-art";
-        art.style.background = t.gradient;
+        art.className = "track-art track-art-placeholder art-placeholder";
+        art.style.background = t.gradient || "linear-gradient(135deg,#36264e,#182d45)";
+        art.textContent = _inizialiCopertina(t);
+        art.setAttribute("aria-label", "Copertina provvisoria: " + (t.title || "Brano"));
       }
 
       const info = document.createElement("div");
@@ -5253,16 +5282,42 @@ box.innerHTML = "";
     return tracks.find((t) => t.id === currentId) || null;
   }
 
+  const _copertineBlobURL = new WeakMap();
+  function _urlCopertina(valore) {
+    if (typeof valore === "string") return valore.trim();
+    if (valore && typeof valore === "object" && typeof valore.size === "number") {
+      try {
+        if (_copertineBlobURL.has(valore)) return _copertineBlobURL.get(valore);
+        const url = URL.createObjectURL(valore);
+        _copertineBlobURL.set(valore, url);
+        return url;
+      } catch (e) { return ""; }
+    }
+    return "";
+  }
+
+  function _inizialiCopertina(t) {
+    const artista = String(t && t.artist || "").trim().split(/\s+/).filter(Boolean)[0] || "";
+    const titolo = String(t && t.title || "").trim().split(/\s+/).filter(Boolean)[0] || "";
+    return ((artista.charAt(0) || "♪") + (titolo.charAt(0) || "♫")).toLocaleUpperCase("it-IT");
+  }
+
   function setArt(el, t) {
     if (!el) return;
-    const cover = t && t.cover ? String(t.cover).replace(/["'()]/g, "") : "";
+    const cover = _urlCopertina(t && t.cover);
     if (cover) {
-      el.style.backgroundImage = 'url("' + cover + '")';
+      el.style.backgroundImage = 'url("' + cover.replace(/["'()]/g, "") + '")';
       el.style.backgroundSize = "cover";
       el.style.backgroundPosition = "center";
+      el.classList.remove("art-placeholder");
+      el.textContent = "";
+      el.setAttribute("aria-label", (t.title || "Brano") + (t.artist ? " — " + t.artist : ""));
     } else {
       el.style.backgroundImage = "";
-      el.style.background = t ? t.gradient : "linear-gradient(135deg,#333,#222)";
+      el.style.background = t ? (t.gradient || "linear-gradient(135deg,#36264e,#182d45)") : "linear-gradient(135deg,#36264e,#182d45)";
+      el.classList.add("art-placeholder");
+      el.textContent = t ? _inizialiCopertina(t) : "♫";
+      el.setAttribute("aria-label", t ? "Copertina provvisoria: " + t.title : "Music Box");
     }
   }
 
@@ -5287,13 +5342,17 @@ box.innerHTML = "";
   }
 
   function updateLyricsButton() {
-    $("btnLyrics").hidden = !currentLyrics();
+    $("btnLyrics").hidden = !currentId;
   }
 
   function currentLyrics() {
     if (!currentId) return null;
-    if (lyricsData[currentId] && lyricsData[currentId].text) return lyricsData[currentId];
-    if (localLyrics[currentId] && localLyrics[currentId].text) return localLyrics[currentId];
+    const locale = localLyrics[currentId];
+    const incluso = lyricsData[currentId];
+    if (locale && locale.synced && parseSynced(locale.synced).length) return locale;
+    if (incluso && incluso.synced && parseSynced(incluso.synced).length) return incluso;
+    if (incluso && incluso.text) return incluso;
+    if (locale && locale.text) return locale;
     return null;
   }
 
@@ -6061,24 +6120,20 @@ function openProfile() {
     lyricActive = idx;
   }
 
-  function openLyrics() {
-    const l = currentLyrics();
-    if (!l) return;
-    $("lyricsTitle").textContent = l.title;
-    $("lyricsSub").textContent = l.artist || "";
+  function _renderLyricsContent(l) {
     const body = $("lyricsBody");
     body.innerHTML = "";
     lyricLines = [];
     lyricActive = -1;
     lyricsUserScrollAt = 0;
+    if (!l) {
+      const p = document.createElement("p");
+      p.className = "lyr-loading";
+      p.textContent = "Non ho trovato il testo per questo brano. Puoi riprovare più tardi.";
+      body.appendChild(p);
+      return;
+    }
     const synced = parseSynced(l.synced);
-    /* Ste: "il testo va in ritardo anche senza premere niente".
-       Ho confrontato i tempi con la durata vera di tutti i mp3: per 51 brani
-       su 350 i tempi sono di una versione diversa (piu' corta o piu'
-       lunga), e le righe arrivano con troppo ritardo (o troppo presto).
-       Se l'ultima riga finisce dopo la fine del brano, ri-scalo i tempi
-       sulla durata vera: e' un'approssimazione, ma toglie decine di
-       secondi di scarto. */
     try {
       const dur = totalDuration();
       if (dur > 20 && synced.length) {
@@ -6090,6 +6145,7 @@ function openProfile() {
       }
     } catch (e) { /* noop */ }
     if (synced.length) {
+      body.classList.add("lyrics-synchronized");
       for (const line of synced) {
         const p = document.createElement("p");
         p.className = "lyr-line";
@@ -6098,20 +6154,64 @@ function openProfile() {
         body.appendChild(p);
         lyricLines.push(p);
       }
+      const badge = document.createElement("div");
+      badge.className = "lyrics-sync-badge";
+      badge.textContent = "● TESTO SINCRONIZZATO";
+      body.insertBefore(badge, body.firstChild);
     } else {
-      String(l.text || "").split("\n").forEach((line) => {
+      body.classList.remove("lyrics-synchronized");
+      String(l.text || "").split("\\n").forEach((line) => {
         const p = document.createElement("p");
         p.textContent = line;
         const trim = line.trim();
-        if (/^\[.*\]$/.test(trim)) p.className = "lyr-sec";
+        if (/^\\[.*\\]$/.test(trim)) p.className = "lyr-sec";
         else if (!trim) p.className = "lyr-gap";
+        else p.className = "lyr-plain";
         body.appendChild(p);
       });
+      const badge = document.createElement("div");
+      badge.className = "lyrics-sync-badge lyrics-sync-missing";
+      badge.textContent = "TESTO NON SINCRONIZZATO";
+      body.insertBefore(badge, body.firstChild);
     }
-    $("lyricsPanel").hidden = false;
+    tickLyrics();
+  }
+
+  async function openLyrics() {
+    const t = current();
+    const id = currentId;
+    if (!t || !id) return;
+    const panel = $("lyricsPanel");
+    panel.hidden = false;
     document.body.classList.add("no-scroll");
+    $("lyricsTitle").textContent = t.title || "Testo";
+    $("lyricsSub").textContent = t.artist || "";
     _aggiornaSfondoTesti();
     _aggiornaComandiTesti();
+    let l = currentLyrics();
+    _renderLyricsContent(l);
+    if (!l || !parseSynced(l.synced).length) {
+      if (!l) $("lyricsBody").innerHTML = '<p class="lyr-loading">Cerco il testo sincronizzato…</p>';
+      try {
+        const trovato = await findSyncedLyrics(t.artist || "", t.title || "");
+        if (currentId !== id || panel.hidden) return;
+        if (trovato && trovato.synced) {
+          const base = currentLyrics() || {};
+          localLyrics[id] = Object.assign({}, base, trovato, { title: t.title, artist: t.artist || trovato.artist || "" });
+          try {
+            await dbPutLyrics({ id: id, title: t.title, artist: t.artist || "", text: localLyrics[id].text, synced: localLyrics[id].synced, source: localLyrics[id].source });
+          } catch (e) { /* resta disponibile nella sessione corrente */ }
+          l = currentLyrics();
+          _renderLyricsContent(l);
+          updateLyricsButton();
+          $("lyricsSub").textContent = (t.artist || "") + " · sincronizzato";
+        } else if (!l) {
+          _renderLyricsContent(null);
+        }
+      } catch (e) {
+        if (!l && currentId === id && !panel.hidden) _renderLyricsContent(null);
+      }
+    }
     tickLyrics();
   }
 
@@ -6481,6 +6581,41 @@ if (r.ok && j && j.ok) {
         }
       }
     } catch (e) { /* noop */ }
+    return null;
+  }
+
+  async function findSyncedLyrics(artist, title) {
+    const safeArtist = encodeURIComponent(artist || "");
+    const safeTitle = encodeURIComponent(stripVariants(title || ""));
+    const valida = (j) => {
+      if (!j || !j.syncedLyrics || !String(j.syncedLyrics).trim()) return false;
+      if (j.trackName && !titleCompatible(title, j.trackName)) return false;
+      if (artist && j.artistName && tokenOverlap(artist, j.artistName) < 0.45) return false;
+      return true;
+    };
+    try {
+      const r = await fetch("https://lrclib.net/api/get?artist_name=" + safeArtist + "&track_name=" + safeTitle);
+      if (r.ok) {
+        const j = await r.json();
+        if (valida(j)) {
+          const synced = String(j.syncedLyrics);
+          return { title: title, artist: artist || j.artistName || "", text: syncedToText(synced), synced: synced, source: "LRCLIB (sincronizzato)" };
+        }
+      }
+    } catch (e) { /* provo la ricerca più ampia */ }
+    try {
+      const r = await fetch("https://lrclib.net/api/search?artist_name=" + safeArtist + "&track_name=" + safeTitle);
+      if (r.ok) {
+        const risultati = await r.json();
+        if (Array.isArray(risultati)) {
+          const candidato = risultati.find(valida);
+          if (candidato) {
+            const synced = String(candidato.syncedLyrics);
+            return { title: title, artist: artist || candidato.artistName || "", text: syncedToText(synced), synced: synced, source: "LRCLIB (sincronizzato)" };
+          }
+        }
+      }
+    } catch (e) { /* questo brano potrebbe non avere un testo sincronizzato */ }
     return null;
   }
 
