@@ -134,15 +134,13 @@
     "  background:radial-gradient(circle,rgba(255,120,10,.45) 0%,rgba(255,60,0,.22) 52%,rgba(255,40,0,0) 74%)}",
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
-    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;",
-    "  animation:mbSfarfalla .38s linear infinite alternate}",
-    /* La fiamma NON cambia dimensione: se cresce e si rimpicciolisce, con
-       tutte le fiamme vicine si vede un "battito" (Ste: "anche pulsa il
-       fuoco"). Ora ondeggia solo di luminosita', come il fuoco vero. */
-    "@keyframes mbSfarfalla{0%{opacity:.78}",
-    "  50%{opacity:1}",
-    "  100%{opacity:.88}}",
+    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 3px rgba(255,105,8,.35));}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbSfarfalla .72s ease-in-out infinite alternate;animation-delay:inherit;will-change:transform,opacity,filter}",
+    /* Ogni fiamma eredita il suo ritardo: prima tutte lampeggiavano insieme perche il delay era sul contenitore, non sull SVG animato. */
+    "@keyframes mbSfarfalla{0%{opacity:.74;transform:rotate(-3deg) scaleX(.78) scaleY(.94);filter:brightness(.9)}",
+    "34%{opacity:.96;transform:rotate(1.5deg) scaleX(1.08) scaleY(1.04);filter:brightness(1.12)}",
+    "68%{opacity:1;transform:rotate(-1deg) scaleX(.9) scaleY(1.09);filter:brightness(1.2)}",
+    "100%{opacity:.82;transform:rotate(3deg) scaleX(.82) scaleY(.97);filter:brightness(1)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
