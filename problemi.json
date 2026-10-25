@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792968940360,
-  "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792968940722,
-  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792968941267,
-  "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792968941352,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792968941797,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792968941794,
   "r": "worker /stato: risponde"
  },
@@ -156,7 +136,27 @@
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
  {
-  "t": 1792968958785,
+  "t": 1792968960795,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968960796,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968962744,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968962743,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968964798,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792968964799,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
