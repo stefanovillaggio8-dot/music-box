@@ -18,7 +18,42 @@
        telefono sa che la sessione audio e' di MusicBox, il tasto delle
        cuffie riparte la musica di MusicBox e la notifica in alto resta
        finche' l'app e' aperta. */
-    /* Niente player silenzioso parallelo: su iOS competeva con l'audio reale e rendeva incoerenti i controlli delle cuffie. */
+    /* Player silenzioso SOLO durante la pausa volontaria: mantiene viva la sessione media
+       senza sovrapporsi alla musica. Quando si riparte viene fermato prima del brano vero. */
+    let _silenzio = null;
+    let _urlSilenzio = null;
+    function _creaUrlSilenzio() {
+      if (_urlSilenzio) return _urlSilenzio;
+      try {
+        const frequenza = 8000, secondi = 8, dati = frequenza * secondi;
+        const b = new Uint8Array(44 + dati);
+        const v = new DataView(b.buffer);
+        function testo(pos, s) { for (let i = 0; i < s.length; i++) b[pos + i] = s.charCodeAt(i); }
+        testo(0, "RIFF"); v.setUint32(4, 36 + dati, true); testo(8, "WAVE"); testo(12, "fmt ");
+        v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+        v.setUint32(24, frequenza, true); v.setUint32(28, frequenza, true);
+        v.setUint16(32, 1, true); v.setUint16(34, 8, true); testo(36, "data");
+        v.setUint32(40, dati, true); b.fill(128, 44);
+        let bin = "";
+        for (let i = 0; i < b.length; i += 8192) bin += String.fromCharCode.apply(null, b.subarray(i, i + 8192));
+        _urlSilenzio = "data:audio/wav;base64," + btoa(bin);
+      } catch (e) { return ""; }
+      return _urlSilenzio;
+    }
+    function _accendiSilenzio() {
+      try {
+        if (!_silenzio) {
+          const url = _creaUrlSilenzio(); if (!url) return;
+          _silenzio = new Audio(url); _silenzio.loop = true; _silenzio.volume = 0.001;
+          _silenzio.preload = "auto"; _silenzio.setAttribute("playsinline", "");
+        }
+        if (!_silenzio.paused) return;
+        const p = _silenzio.play(); if (p && p.catch) p.catch(() => {});
+      } catch (e) { /* il player reale deve continuare a funzionare anche senza questo supporto */ }
+    }
+    function _spegniSilenzio() {
+      try { if (_silenzio) { _silenzio.pause(); _silenzio.currentTime = 0; } } catch (e) { /* noop */ }
+    }
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
   /* Sta nella memoria della scheda (non in una variabile): cosi' se la
