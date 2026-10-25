@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792904755053,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792904755092,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792904755062,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792904755263,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792904756389,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792905170639,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792905170644,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792905170711,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -157,6 +129,34 @@
  },
  {
   "t": 1792905408377,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792905408376,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792905408496,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792905409589,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792905409580,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
+ },
+ {
+  "t": 1792905409710,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792905418290,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792905418301,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
