@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792956065229,
-  "r": "SPOTIFY: [v6.431] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1792956065450,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792956065785,
-  "r": "SPOTIFY: [v6.431] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792956066066,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792956066102,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792956081061,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792956081054,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792956082260,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792956082975,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792956082978,
+  "r": "suono: originale b-track-244"
  }
 ]
