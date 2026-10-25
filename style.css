@@ -2677,3 +2677,30 @@ li.appena-aggiunto {
   color: #ffd166;
   border-color: #ffd166;
 }
+
+/* Rifinitura visiva e accessibilità: mantiene la palette esistente. */
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 3px;
+}
+button {
+  transition: background-color .16s ease, border-color .16s ease,
+    color .16s ease, transform .12s ease, box-shadow .16s ease;
+}
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { cursor: not-allowed; }
+::selection { color: #fff; background: rgba(176, 107, 255, .42); }
+* { scrollbar-width: thin; scrollbar-color: rgba(176, 107, 255, .45) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(176, 107, 255, .36);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(176, 107, 255, .65);
+  background-clip: padding-box;
+}
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
