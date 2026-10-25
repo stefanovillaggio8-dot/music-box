@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6434";
+const CACHE = "spotifynonavraiimieisoldi-v6435";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -26,9 +26,9 @@ let activeProfile = "Ste";  /* profilo di default, l'app lo sovrascrive via mess
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6434",
-  "./fuoco.js?v=6434",
-  "./app.js?v=6434",
+  "./style.css?v=6435",
+  "./fuoco.js?v=6435",
+  "./app.js?v=6435",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
