@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792970725629,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792970725629,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792970725801,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792970727032,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792970727031,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792970727030,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792971210213,
   "r": "SPOTIFY: [v6.437] ricarico: il worker del servizio e' cambiato"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1792971246289,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792971246469,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792971248118,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792971248118,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792971248116,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792971276767,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792971276766,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
