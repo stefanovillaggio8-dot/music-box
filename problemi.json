@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792954983467,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792954983454,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792954984127,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792954984150,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792954984264,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792954984318,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792954984943,
-  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792954985229,
   "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792955006757,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955006747,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792955006916,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955007956,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792955007954,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955008125,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792955008526,
+  "r": "suono: originale b-track-244"
+ },
+ {
+  "t": 1792955010571,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
