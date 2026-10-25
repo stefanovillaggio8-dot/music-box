@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792956075580,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
   "t": 1792956075591,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792956109560,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792956116989,
+  "r": "sessione media aggiornata senza player audio fantasma"
  }
 ]
