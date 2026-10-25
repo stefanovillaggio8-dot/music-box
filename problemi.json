@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792956068545,
-  "r": "suono: originale b-track-135"
- },
- {
-  "t": 1792956069455,
-  "r": "suono: originale b-track-244"
- },
- {
   "t": 1792956069610,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792956085591,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792956094512,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792956094511,
+  "r": "worker /stato: risponde"
  }
 ]
