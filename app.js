@@ -4847,6 +4847,7 @@ function rebuildAudio(autoplay) {
     /* sto cambiando brano: azzero il conto delle riprove */
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
+    _indiceRiprove = 0;
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
