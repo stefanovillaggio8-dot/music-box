@@ -142,7 +142,7 @@
     ".mb-fuoco .mb-fiamma .mb-fiamma-cuore{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-lampo{transform-origin:30px 148px;animation:none!important;}",
     /* Movimento da convezione: solo inclinazione laterale, mai pulsazioni di scala o luminosita. */
-    "@keyframes mbVento{from{transform:rotate(-7deg) skewX(-3deg)}to{transform:rotate(7deg) skewX(3deg)}}",
+    "@keyframes mbVento{from{transform:rotate(-4deg) skewX(-1.5deg)}to{transform:rotate(4deg) skewX(1.5deg)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
@@ -538,7 +538,7 @@
       /* Ogni lingua ha un vento indipendente: niente oscillazione in coro e niente sincronizzazione con la musica. */
       var svgFiamma = el.querySelector("svg");
       if (svgFiamma) {
-        svgFiamma.style.setProperty("--mb-wind-duration", (0.72 + ((k * 7) % 9) * 0.13).toFixed(2) + "s");
+        svgFiamma.style.setProperty("--mb-wind-duration", (2.1 + ((k * 7) % 9) * 0.21).toFixed(2) + "s");
         svgFiamma.style.setProperty("--mb-wind-delay", "-" + ((k * 0.41) % 1.7).toFixed(2) + "s");
       }
       contenitore.appendChild(el);
