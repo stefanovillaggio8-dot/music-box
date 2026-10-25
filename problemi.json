@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792970275650,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792970276294,
-  "r": "suono: originale b-track-113"
- },
- {
   "t": 1792970276846,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792970342337,
   "r": "suono: originale b-track-88"
+ },
+ {
+  "t": 1792970343418,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792970345482,
+  "r": "worker /stato: risponde"
  }
 ]
