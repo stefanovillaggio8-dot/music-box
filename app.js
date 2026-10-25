@@ -11693,6 +11693,7 @@ if (sicura) {
       const k = String((j && j.chiave) || "").trim();
       if (!k) return false;
       LS.set("mb.chiave", k);
+      CHIAVE_PUBBLICA = k; // aggiorna anche la chiave usata dalla coda cloud in questa sessione
       segnalaErrore("chiave presa dal computer di casa");
       return true;
     } catch (e) { return false; }
