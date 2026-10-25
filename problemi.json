@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792962798411,
-  "r": "SPOTIFY: [v6.435] ritorno: nessun codice (indirimento: [?v=6435&utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792962798548,
-  "r": "SPOTIFY: [v6.435] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792962798790,
-  "r": "SPOTIFY: [v6.435] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792962799055,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792962799605,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792962799569,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792962799568,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792962799730,
-  "r": "SPOTIFY: [v6.435] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792962800767,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792962800792,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792962801135,
-  "r": "suono: originale b-track-288"
- },
- {
   "t": 1792962802882,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792962918428,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792962918410,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792962918590,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792962920005,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792962920003,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792962920013,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792963230028,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792963229996,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792963229987,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792963230094,
+  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?v=6436&utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792963230342,
+  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [?v=6436&utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792963230213,
+  "r": "SPOTIFY: [v6.436] il server aveva il permesso: lo prendo"
  }
 ]
