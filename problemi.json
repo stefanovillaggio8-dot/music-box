@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792957407238,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792957407239,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1792957407278,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792959039296,
   "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1792959045048,
+  "r": "SPOTIFY: [v6.434] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792959045060,
+  "r": "sessione media aggiornata senza player audio fantasma"
  }
 ]
