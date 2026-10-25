@@ -135,6 +135,8 @@
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,180,35,.95)) drop-shadow(0 0 13px rgba(255,85,8,.72)) drop-shadow(0 0 24px rgba(255,55,0,.38));}",
+    /* v6443: blocco assoluto delle pulsazioni delle fiamme, anche se regole esterne provano ad animarle. */
+    ".mb-fuoco .mb-fiamma,.mb-fuoco .mb-fiamma *{animation:none!important;transition:none!important;}",
     ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
