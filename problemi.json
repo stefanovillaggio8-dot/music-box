@@ -1,17 +1,5 @@
 [
  {
-  "t": 1792902785411,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792902793751,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792902793753,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792902793949,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1792902877868,
   "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792902878020,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792902886777,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792902886782,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
