@@ -134,8 +134,8 @@
     "  background:radial-gradient(circle,rgba(255,120,10,.45) 0%,rgba(255,60,0,.22) 52%,rgba(255,40,0,0) 74%)}",
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
-    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 3px rgba(255,105,8,.35));}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbSfarfalla .72s ease-in-out infinite alternate;animation-delay:inherit;will-change:transform,opacity,filter}",
+    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 3px rgba(255,105,8,.45)) drop-shadow(0 0 8px rgba(255,58,0,.28));}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbSfarfalla .58s ease-in-out infinite alternate;animation-delay:inherit;will-change:transform,opacity,filter;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:mbAuraViva 1.35s ease-in-out infinite alternate;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:mbLinguaLunga .82s ease-in-out infinite alternate;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:mbLinguaInterna .54s ease-in-out infinite alternate;}",
@@ -147,10 +147,10 @@
     "@keyframes mbCuoreVivo{from{opacity:.65;transform:scale(.82,.9)}to{opacity:1;transform:scale(1.14,1.12)}}",
     "@keyframes mbScintillaViva{from{opacity:.35;transform:translateY(2px) scale(.7)}to{opacity:1;transform:translateY(-3px) scale(1.15)}}",
     /* Ogni fiamma eredita il suo ritardo: prima tutte lampeggiavano insieme perche il delay era sul contenitore, non sull SVG animato. */
-    "@keyframes mbSfarfalla{0%{opacity:.74;transform:rotate(-3deg) scaleX(.78) scaleY(.94);filter:brightness(.9)}",
-    "34%{opacity:.96;transform:rotate(1.5deg) scaleX(1.08) scaleY(1.04);filter:brightness(1.12)}",
-    "68%{opacity:1;transform:rotate(-1deg) scaleX(.9) scaleY(1.09);filter:brightness(1.2)}",
-    "100%{opacity:.82;transform:rotate(3deg) scaleX(.82) scaleY(.97);filter:brightness(1)}}",
+    "@keyframes mbSfarfalla{0%{opacity:.78;transform:rotate(-5deg) skewX(-2deg) scaleX(.72) scaleY(.88);filter:brightness(.88) saturate(1.05)}",
+    "34%{opacity:1;transform:rotate(3deg) skewX(3deg) scaleX(1.12) scaleY(1.13);filter:brightness(1.18) saturate(1.25)}",
+    "68%{opacity:.94;transform:rotate(-3deg) skewX(-2deg) scaleX(.84) scaleY(1.2);filter:brightness(1.3) saturate(1.18)}",
+    "100%{opacity:.84;transform:rotate(5deg) skewX(2deg) scaleX(.78) scaleY(.96);filter:brightness(1.02) saturate(1.08)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
