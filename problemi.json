@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792935643948,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792935650304,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
   "t": 1792935650303,
   "r": "sessione media aggiornata senza player audio fantasma"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792935704509,
   "r": "SPOTIFY: [v6.425] X premuta"
+ },
+ {
+  "t": 1792935712325,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792935712299,
+  "r": "worker /stato: risponde"
  }
 ]
