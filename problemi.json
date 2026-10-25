@@ -1,21 +1,5 @@
 [
  {
-  "t": 1792935402825,
-  "r": "SPOTIFY: [v6.420] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792935403069,
-  "r": "SPOTIFY: [v6.420] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792935403686,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792935403922,
-  "r": "SPOTIFY: [v6.420] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792935403999,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1792935523575,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792935620379,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792935620282,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792935620418,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792935620763,
+  "r": "SPOTIFY: [v6.420] il worker aveva il permesso pronto: lo prendo"
  }
 ]
