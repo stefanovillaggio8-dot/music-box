@@ -135,7 +135,7 @@
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
     ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,180,35,.95)) drop-shadow(0 0 13px rgba(255,85,8,.72)) drop-shadow(0 0 24px rgba(255,55,0,.38));}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento var(--mb-wind-duration,1.05s) ease-in-out var(--mb-wind-delay,0s) infinite alternate;}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:none!important;}",
@@ -951,13 +951,8 @@
         ux /= lun; uy /= lun;
         var vx = ux * 0.38, vy = uy * 0.38 - 1.0;
         var ang = Math.atan2(vx, -vy) * 180 / Math.PI;
-        /* Ogni fiamma ondeggia in modo CONTINUO (una sinusoide): se il
-           disegno cambia a caso, fra un'immagine e l'altra il fuoco
-           salta e nella notifica si vede "a scatti" (Ste, 20/10/2026). */
-        var f = n * 1.7;
-        var sballo = 0.5 + 0.5 * Math.sin(t * 1.15 + f);
-        ang += Math.sin(t * 0.85 + f * 1.3) * 9;
-        var alt = L * (0.12 + 0.07 * sballo) + L * 0.05 * a.prog;
+        /* Altezza e inclinazione stabili: niente pulsazioni nella notifica. */
+        var alt = L * 0.155 + L * 0.05 * a.prog;
         fiammaCanvas(p.x / 100 * L, p.y / 100 * L, alt, ang);
         n++;
       }
