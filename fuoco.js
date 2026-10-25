@@ -146,22 +146,22 @@
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
-    ".mb-fuoco .mb-fumo{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;overflow:hidden;",
-    "  transition:opacity 1.4s ease;mix-blend-mode:screen}",
+    ".mb-fuoco .mb-fumo{position:absolute;inset:-48% -24% -12%;pointer-events:none;z-index:6;opacity:0;overflow:visible;",
+    "  transition:opacity 1.4s ease;mix-blend-mode:screen;isolation:isolate}",
     ".mb-fuoco .mb-fumo.on{opacity:1}",
     "/* Fumo a volute: ogni particella ha dimensione, densita' e deriva differenti. */",
     ".mb-fuoco .mb-fumo i{position:absolute;bottom:var(--mb-bottom,-18%);left:var(--mb-left,50%);",
     "  display:block;width:var(--mb-width,34%);height:var(--mb-height,48%);border-radius:48% 52% 43% 57%;",
     "  opacity:0;filter:blur(var(--mb-blur,10px));",
-    "  background:radial-gradient(ellipse at 42% 72%,rgba(224,224,232,.24) 0%,rgba(174,177,190,.17) 28%,rgba(116,121,137,.10) 53%,rgba(70,74,88,0) 76%);",
-    "  box-shadow:inset 10px 0 22px rgba(226,226,236,.045);",
+    "  background:radial-gradient(ellipse at 42% 72%,rgba(236,237,244,.34) 0%,rgba(196,198,211,.27) 28%,rgba(143,148,165,.18) 53%,rgba(80,85,102,0) 78%);",
+    "  box-shadow:inset 10px 0 22px rgba(226,226,236,.08);",
     "  animation:mbSaleFumo var(--mb-duration,5.8s) ease-out var(--mb-delay,0s) infinite}",
     ".mb-fuoco .mb-fumo i::before,.mb-fuoco .mb-fumo i::after{content:'';position:absolute;inset:12% -8% 8%;",
     "  border-radius:55% 45% 60% 40%;background:radial-gradient(ellipse,rgba(206,207,218,.17),rgba(112,116,132,0) 70%);}",
     ".mb-fuoco .mb-fumo i::after{inset:30% 12% -5% -16%;opacity:.75;transform:rotate(-18deg)}",
-    "@keyframes mbSaleFumo{0%{transform:translate3d(0,12%,0) scale(.42) rotate(-9deg);opacity:0}",
-    "  12%{opacity:.42}38%{transform:translate3d(var(--mb-drift,18px),-78%,0) scale(.95) rotate(7deg);opacity:.27}",
-    "  72%{opacity:.16}100%{transform:translate3d(var(--mb-drift2,-15px),-250%,0) scale(1.65) rotate(-12deg);opacity:0}}",
+    "@keyframes mbSaleFumo{0%{transform:translate3d(0,8%,0) scale(.55) rotate(-9deg);opacity:0}",
+    "  12%{opacity:.56}38%{transform:translate3d(var(--mb-drift,18px),-78%,0) scale(1.08) rotate(7deg);opacity:.42}",
+    "  72%{opacity:.24}100%{transform:translate3d(var(--mb-drift2,-15px),-250%,0) scale(1.75) rotate(-12deg);opacity:0}}",
     ".mb-fuoco .mb-fumo::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-8%;height:42%;",
     "  background:radial-gradient(ellipse at 50% 100%,rgba(219,190,164,.26) 0%,rgba(150,150,165,.15) 35%,rgba(100,100,115,0) 73%);",
     "  filter:blur(10px)}",
@@ -179,8 +179,8 @@
     ".mb-fuoco.mb-fuoco-finale .mb-strato-char,.mb-fuoco.mb-fuoco-finale .mb-calore,.mb-fuoco.mb-fuoco-finale .mb-brasa,.mb-fuoco.mb-fuoco-finale .mb-fiamme,.mb-fuoco.mb-fuoco-finale .mb-bragia{opacity:0!important;transition:opacity .35s ease}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo{overflow:visible;opacity:1!important}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo i{animation-duration:4.8s;opacity:.45}",
-    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:62!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 1.45s cubic-bezier(.18,.62,.32,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
-    "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}35%{opacity:.92;filter:blur(1px)}100%{opacity:0;filter:blur(9px);transform:translate3d(var(--mb-rise-x,0px),-145px,0) rotate(var(--mb-rotation,8deg)) scale(.52)}}",
+    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:62!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 4.2s cubic-bezier(.22,.58,.28,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
+    "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}24%{opacity:1;filter:blur(.3px)}65%{opacity:.78;filter:blur(2px)}100%{opacity:0;filter:blur(12px);transform:translate3d(var(--mb-rise-x,0px),-210px,0) rotate(var(--mb-rotation,8deg)) scale(.28)}}",
     ".mb-cover-burnt{opacity:0!important}",
     ".mb-cover-reappear{animation:mbCoverReappear .72s ease-out both!important}",
     "@keyframes mbCoverReappear{0%{opacity:0;filter:blur(9px)}65%{opacity:.8;filter:blur(2px)}100%{opacity:1;filter:blur(0)}}",
@@ -555,10 +555,10 @@
     var h = "";
     /* Volute sovrapposte, non bolle uniformi: il fumo si apre e si disperde lentamente. */
     for (var i = 0; i < 22; i++) {
-      var sinistra = 3 + ((i * 17 + 9) % 94);
+      var sinistra = 18 + ((i * 29 + 11) % 66);
       var durata = 5.1 + ((i * 7) % 8) * 0.43;
-      var larghezza = 22 + ((i * 13) % 34);
-      var altezza = 35 + ((i * 19) % 42);
+      var larghezza = 28 + ((i * 13) % 38);
+      var altezza = 42 + ((i * 19) % 42);
       var fondo = -12 - ((i * 11) % 32);
       var deriva = (i % 2 ? 1 : -1) * (10 + ((i * 7) % 30));
       var deriva2 = (i % 2 ? -1 : 1) * (12 + ((i * 5) % 28));
@@ -584,7 +584,7 @@
     if (!art || !art.parentNode) return;
     var r = art.getBoundingClientRect();
     if (!r.width || !r.height) return;
-    var cols = 4, rows = 3;
+    var cols = 4, rows = 4;
     for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
       var clone = art.cloneNode(true);
       clone.removeAttribute("id");
@@ -786,11 +786,11 @@
          battesse"). Le muovo solo quando il bruciato e' cambiato un po':
          i passi sono troppo piccoli per vedersi, l'animazione gira
          liscia. */
-      var cambiato = Math.abs(prog - stato.progChar) > 0.02;
+      var cambiato = Math.abs(prog - stato.progChar) > 0.003;
       if (cambiato) disegnaChar(stato.box, a, raggio);
       if (!stato.box._fiamme || !stato.box._fiamme.length) preparaFiamme(stato.box, a, r.width);
       mostraFumo(stato.box, prog);
-      if (cambiato || stato.progFiamme < 0) {
+      if (stato.progFiamme < 0) {
         spostaFiamme(stato.box, a);
         stato.progFiamme = prog;
       }
