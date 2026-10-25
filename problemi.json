@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792956277225,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792956277247,
-  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792956277786,
-  "r": "SPOTIFY: [v6.432] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792956278147,
-  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792956278695,
-  "r": "SPOTIFY: [v6.432] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792956279152,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792956279255,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792956279255,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792956279286,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792957301678,
   "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792957301713,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792957301803,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792957301832,
+  "r": "SPOTIFY: [v6.433] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792957302076,
+  "r": "SPOTIFY: [v6.433] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792957302733,
+  "r": "SPOTIFY: [v6.433] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792957302976,
+  "r": "SPOTIFY: [v6.433] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792957303702,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792957303769,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
