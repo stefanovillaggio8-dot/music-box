@@ -388,7 +388,7 @@
    },
    "artie5ive|davverodavvero": {
     "v": 65,
-    "s": 1031,
+    "s": 1046,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1009,6 +1009,12 @@
     "s": 0,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
+   },
+   "calcuttatakagiketra|oroscopo": {
+    "v": 0,
+    "s": 4,
+    "t": "Oroscopo",
+    "a": "Calcutta, Takagi & Ketra"
    }
   },
   "Diego": {
