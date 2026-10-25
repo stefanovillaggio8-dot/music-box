@@ -52,9 +52,9 @@
       /* tutte le fiamme puntano in SU, come il fuoco vero: ruotate di
          lato sembravano petali sfocati (Ste: "non sembrano manco
          fiamme") */
-      var alt = lato * (0.06 + (i % 3) * 0.022);
+      var alt = lato * (0.13 + (i % 4) * 0.035);
       h += '<div class="mb-fiamma" style="left:' + x.toFixed(1) + "%;top:" + y.toFixed(1) +
-        "%;width:" + (alt * 0.42).toFixed(1) + "px;height:" + alt.toFixed(1) +
+        "%;width:" + (alt * (0.38 + (i % 3) * 0.045)).toFixed(1) + "px;height:" + alt.toFixed(1) +
         "px;animation-delay:-" + ((i * 0.37) % 2).toFixed(2) +
         's;transform:translate(-50%,-88%) rotate(0deg)">' +
         fiammaSVG() + "</div>";
@@ -134,15 +134,15 @@
     "  background:radial-gradient(circle,rgba(255,120,10,.45) 0%,rgba(255,60,0,.22) 52%,rgba(255,40,0,0) 74%)}",
     ".mb-fuoco .mb-brasa{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4;opacity:.9}",
     ".mb-fuoco .mb-fiamme{position:absolute;inset:0;pointer-events:none;z-index:5}",
-    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,105,8,.9)) drop-shadow(0 0 13px rgba(255,30,60,.55)) drop-shadow(0 0 20px rgba(155,35,255,.25));}",
-    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento .62s ease-in-out infinite alternate;}",
+    ".mb-fuoco .mb-fiamma{position:absolute;pointer-events:none;transform-origin:50% 100%;filter:drop-shadow(0 0 5px rgba(255,180,35,.95)) drop-shadow(0 0 13px rgba(255,85,8,.72)) drop-shadow(0 0 24px rgba(255,55,0,.38));}",
+    ".mb-fuoco .mb-fiamma svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 100%;animation:mbVento 1.05s ease-in-out infinite alternate;}",
     ".mb-fuoco .mb-fiamma .mb-aura-fiamma{transform-origin:50% 100%;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-esterna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-interna{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-cuore{transform-origin:30px 148px;animation:none!important;}",
     ".mb-fuoco .mb-fiamma .mb-fiamma-lampo{transform-origin:30px 148px;animation:none!important;}",
     /* Movimento da convezione: solo inclinazione laterale, mai pulsazioni di scala o luminosita. */
-    "@keyframes mbVento{from{transform:rotate(-4deg) skewX(-2deg)}to{transform:rotate(4deg) skewX(2deg)}}",
+    "@keyframes mbVento{from{transform:rotate(-7deg) skewX(-3deg)}to{transform:rotate(7deg) skewX(3deg)}}",
     ".mb-fuoco .mb-bragia{position:absolute;inset:0;pointer-events:none;z-index:5}",
     /* il fumo: alla fine, quando la copertina e' bruciata, quello che
        resta e' fumo che sale e si disperde */
@@ -267,31 +267,38 @@
   ];
   function fiammaSVG() {
     var n = _mbFiammaIndice++ % PERCORSI_FIAMME.length;
-    var id = "mbFiammaLive" + n + "_" + Math.floor(Math.random() * 1000000);
-    var sagoma = PERCORSI_FIAMME[n];
-    var lingue = [
-      'M28 149 C18 132 12 119 17 103 C20 91 27 83 24 69 C38 83 34 99 31 108 C29 122 34 137 28 149 Z',
-      'M31 149 C39 132 35 119 42 105 C49 91 45 79 40 65 C58 83 51 99 48 112 C46 128 39 141 31 149 Z',
-      'M27 149 C22 136 23 125 17 115 C9 101 14 88 19 79 C17 96 30 100 29 115 C31 130 30 141 27 149 Z'
+    var id = "mbFiammaReal" + n + "_" + Math.floor(Math.random() * 1000000);
+    /* Fiamme organiche: base luminosa, corpo arancio e punte sottili.
+       Palette da fuoco reale, senza viola/rosa e senza sagome simmetriche. */
+    var outer = [
+      "M30 151 C24 140 17 132 18 116 C10 101 14 87 19 74 C20 61 16 50 23 36 C25 53 33 57 30 74 C38 63 36 48 40 34 C49 52 43 68 46 82 C54 101 46 121 39 135 C36 143 34 148 30 151 Z",
+      "M30 151 C20 137 17 126 21 111 C13 96 19 80 23 66 C26 53 21 43 28 27 C30 46 38 54 34 71 C43 59 42 43 46 37 C52 56 43 70 47 89 C52 108 42 132 30 151 Z",
+      "M30 151 C25 139 15 128 19 111 C11 95 16 82 22 70 C26 56 23 45 27 32 C34 49 31 61 34 74 C42 62 39 49 45 40 C49 60 43 76 47 91 C49 113 39 137 30 151 Z",
+      "M30 151 C21 140 19 129 17 117 C12 99 20 84 22 71 C24 58 19 48 26 35 C32 52 35 63 31 77 C40 67 41 53 43 42 C51 61 44 78 48 94 C50 114 40 137 30 151 Z"
+    ];
+    var inner = [
+      "M30 149 C24 136 23 124 27 113 C21 101 27 88 29 77 C32 90 37 96 34 108 C40 120 35 138 30 149 Z",
+      "M30 149 C25 137 27 124 30 114 C25 103 31 91 33 82 C39 96 35 106 38 116 C39 130 34 141 30 149 Z",
+      "M30 149 C25 137 25 126 29 115 C24 105 29 93 31 84 C36 99 34 109 36 120 C36 133 33 142 30 149 Z",
+      "M30 149 C24 137 25 125 28 114 C24 102 30 91 32 80 C38 98 34 109 37 119 C37 133 33 143 30 149 Z"
     ];
     return '<svg viewBox="0 0 60 160" preserveAspectRatio="xMidYMax meet">' +
       '<defs>' +
-      '<linearGradient id="' + id + 'outer" x1="0" y1="1" x2=".2" y2="0">' +
-      '<stop offset="0" stop-color="#fff6b0"/><stop offset=".14" stop-color="#ffdf4a"/>' +
-      '<stop offset=".36" stop-color="#ff8a18"/><stop offset=".62" stop-color="#ff3b12"/>' +
-      '<stop offset=".84" stop-color="#ed174c"/><stop offset="1" stop-color="#8d20ff" stop-opacity="0"/></linearGradient>' +
-      '<linearGradient id="' + id + 'inner" x1="0" y1="1" x2="0" y2="0">' +
-      '<stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#fff5a0"/>' +
-      '<stop offset=".7" stop-color="#ffb52e"/><stop offset="1" stop-color="#ff5417" stop-opacity="0"/></linearGradient>' +
-      '<filter id="' + id + 'warp" x="-45%" y="-30%" width="190%" height="170%">' +
-      '<feTurbulence type="fractalNoise" baseFrequency=".018 .045" numOctaves="2" seed="' + (n + 12) + '" result="noise"/>' +
-      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter>' +
-      '<filter id="' + id + 'glow" x="-80%" y="-50%" width="260%" height="220%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+      '<linearGradient id="' + id + 'outer" x1="0" y1="1" x2=".12" y2="0">' +
+      '<stop offset="0" stop-color="#fff8dc"/><stop offset=".12" stop-color="#fff0a0"/>' +
+      '<stop offset=".30" stop-color="#ffc12c"/><stop offset=".52" stop-color="#ff7916"/>' +
+      '<stop offset=".76" stop-color="#ed3b08"/><stop offset="1" stop-color="#b51b00" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="' + id + 'inner" x1="0" y1="1" x2=".1" y2="0">' +
+      '<stop offset="0" stop-color="#fffef2"/><stop offset=".35" stop-color="#fff0a0"/>' +
+      '<stop offset=".7" stop-color="#ffc02b"/><stop offset="1" stop-color="#ff6a12" stop-opacity="0"/></linearGradient>' +
+      '<filter id="' + id + 'warp" x="-35%" y="-25%" width="170%" height="155%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency=".025 .055" numOctaves="2" seed="' + (n + 21) + '" result="noise"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>' +
       '</defs>' +
-      '<path class="mb-fiamma-esterna" d="' + sagoma + '" fill="url(#' + id + 'outer)" filter="url(#' + id + 'warp)"/>' +
-      '<path class="mb-fiamma-interna" d="' + lingue[n % lingue.length] + '" fill="url(#' + id + 'inner)" opacity=".96"/>' +
-      '<path class="mb-fiamma-cuore" d="M29 149 C22 136 29 125 28 113 C27 102 31 94 33 87 C40 104 34 118 35 128 C36 137 32 145 29 149 Z" fill="#fff9e7" opacity=".98"/>' +
-      '<path class="mb-fiamma-lampo" d="M30 148 C28 141 31 135 30 129 C34 136 33 143 30 148 Z" fill="#ffffff"/>' +
+      '<path class="mb-fiamma-esterna" d="' + outer[n] + '" fill="url(#' + id + 'outer)" filter="url(#' + id + 'warp)"/>' +
+      '<path class="mb-fiamma-interna" d="' + inner[n] + '" fill="url(#' + id + 'inner)" opacity=".96"/>' +
+      '<path class="mb-fiamma-cuore" d="M29 149 C27 141 30 133 29 125 C28 117 31 111 32 105 C36 119 32 128 34 137 C33 143 31 147 29 149 Z" fill="#fffdf0" opacity=".94"/>' +
+      '<path class="mb-fiamma-lampo" d="M30 149 C28 143 31 139 30 134 C33 140 32 145 30 149 Z" fill="#ffffff"/>' +
       '</svg>';
   }
 
