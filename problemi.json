@@ -1,45 +1,5 @@
 [
  {
-  "t": 1792903588733,
-  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792903590876,
-  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792903592715,
-  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792903594682,
-  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792903598753,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792903598748,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792903598833,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792903599962,
-  "r": "FINALE: visibili 24 su 239 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
- },
- {
-  "t": 1792903599961,
-  "r": "visibili 24 su 239 | nascosti 0 | playlist attiva gym | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792903600042,
-  "r": "FINALE: visibili 24 su 239 | nascosti 0 | soloPlaylist 27 | playlist gym | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio8-d"
- },
- {
   "t": 1792903603547,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +118,45 @@
  {
   "t": 1792903863020,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792903863016,
+  "r": "suono: originale b-track-113"
+ },
+ {
+  "t": 1792904594760,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792904594759,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792904594843,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792904595041,
+  "r": "SPOTIFY: [v6.420] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792904595174,
+  "r": "SPOTIFY: [v6.420] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792904595939,
+  "r": "SPOTIFY: [v6.420] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792904596070,
+  "r": "SPOTIFY: [v6.420] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1792904596211,
+  "r": "SPOTIFY: [v6.420] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792904596768,
+  "r": "sessione media aggiornata senza player audio fantasma"
  }
 ]
