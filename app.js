@@ -656,7 +656,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.420";
+  const APP_VERSION = "6.425";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6120,13 +6120,21 @@ function openProfile() {
 
   function parseSynced(synced) {
     const out = [];
-    const re = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]\s*([^\n]*)/g;
-    const s = String(synced || "");
-    let m;
-    while ((m = re.exec(s))) {
-      const sec = Number(m[1]) * 60 + Number(m[2]) + (m[3] ? Number("0." + m[3]) : 0);
-      out.push({ t: sec, text: m[4] });
+    const tag = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
+    for (const raw of String(synced || "").split(/\r?\n/)) {
+      const tempi = [];
+      let m;
+      while ((m = tag.exec(raw))) {
+        const frazione = m[3] || "";
+        const decimali = frazione ? Number(frazione) / Math.pow(10, frazione.length) : 0;
+        tempi.push(Number(m[1]) * 60 + Number(m[2]) + decimali);
+      }
+      tag.lastIndex = 0;
+      if (!tempi.length) continue;
+      const testo = raw.replace(tag, "").trim();
+      for (const t of tempi) out.push({ t, text: testo });
     }
+    out.sort((a, b) => a.t - b.t);
     return out;
   }
 
@@ -6166,17 +6174,10 @@ function openProfile() {
       body.appendChild(p);
       return;
     }
+    /* I timestamp LRC sono gia' riferiti all'audio: scalarli in base alla
+       durata totale (che puo' essere diversa o non ancora caricata) sposta
+       tutte le righe e rende il testo sempre piu' fuori sincrono. */
     const synced = parseSynced(l.synced);
-    try {
-      const dur = totalDuration();
-      if (dur > 20 && synced.length) {
-        const ultimo = synced[synced.length - 1].t;
-        if (ultimo > dur + 5) {
-          const fattore = (dur - 2) / ultimo;
-          for (const riga of synced) riga.t = Math.round(riga.t * fattore * 10) / 10;
-        }
-      }
-    } catch (e) { /* noop */ }
     if (synced.length) {
       body.classList.add("lyrics-synchronized");
       for (const line of synced) {
@@ -6184,6 +6185,26 @@ function openProfile() {
         p.className = "lyr-line";
         p.textContent = line.text;
         p.dataset.t = String(line.t);
+        p.title = "Tocca per andare a questo punto della canzone";
+        p.setAttribute("role", "button");
+        p.tabIndex = 0;
+        const saltaAllaRiga = () => {
+          if (!audio || !isFinite(line.t)) return;
+          try {
+            audio.currentTime = Math.max(0, line.t);
+            savePos();
+            lyricsUserScrollAt = Date.now();
+            p.scrollIntoView({ block: "center", behavior: "smooth" });
+            tickLyrics();
+          } catch (e) { /* il testo resta leggibile anche se il seek non riesce */ }
+        };
+        p.addEventListener("click", saltaAllaRiga);
+        p.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            saltaAllaRiga();
+          }
+        });
         body.appendChild(p);
         lyricLines.push(p);
       }
