@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792886127391,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792886135784,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792886135784,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792886135945,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792886136991,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792886137010,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792886137151,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792886150961,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792886150967,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792886151006,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792886152169,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792886152209,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +114,49 @@
  {
   "t": 1792901665118,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1792901665128,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792901665179,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792901665230,
+  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [?v=6413], memoria: [])"
+ },
+ {
+  "t": 1792901665931,
+  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792901666141,
+  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [?v=6413], memoria: [])"
+ },
+ {
+  "t": 1792901666839,
+  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792901667143,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792901667309,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792901667317,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792901667310,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792901668518,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  }
 ]
