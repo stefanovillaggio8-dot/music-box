@@ -327,12 +327,15 @@
     var N = a.punti.length;
     var ogni = Math.max(1, Math.round(N / 24));
     for (var i = 0; i < N; i += ogni) {
-      var alt = lato * (0.075 + r() * 0.095) + lato * 0.045 * a.prog;
-      if (r() < 0.18) alt = alt * 1.6;
+      /* Il fuoco visibile sul player: lingue molto piu' alte e irregolari.
+         Questa e' la funzione usata dalla copertina principale (non quella
+         dei bordi della schermata testi). */
+      var alt = lato * (0.15 + r() * 0.17) + lato * 0.065 * a.prog;
+      if (r() < 0.24) alt = alt * (1.25 + r() * 0.38);
       /* il ritardo e' distribuito col numero d'oro: le fiamme non si
          muovono a gruppi */
       var k = out.length;
-      out.push({ i: i, alt: alt, larg: alt * (0.40 + r() * 0.16), attesa: ((k * 0.6180339887) % 1) * 0.9 });
+      out.push({ i: i, alt: alt, larg: alt * (0.34 + r() * 0.22), attesa: ((k * 0.6180339887) % 1) * 0.9 });
     }
     return out;
   }
