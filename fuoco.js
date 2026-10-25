@@ -559,11 +559,13 @@
       var chiaveBrano = titoloOra + "|" + sorgenteOra;
       if (chiaveBrano !== stato.ultimoTitolo) {
         stato.ultimoTitolo = chiaveBrano;
-        stato.progVisto = -1;
+        stato.progVisto = 0;
         stato.progChar = -1;
         stato.progFiamme = -1;
         stato.progNotifica = -1;
         stato.tPrecedente = 0;
+        if (stato.box) { stato.box.remove(); stato.box = null; }
+        stato.fiamme = [];
         stato.seme = (stato.seme * 7 + 13) % 997;
       }
 
@@ -576,7 +578,8 @@
       stato.tPrecedente = t;
 
       var prog = stato.progVisto;
-      if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
+      if (audio && audio.ended) prog = 1;
+      else if (suona && dur > 0) prog = Math.max(0, Math.min(1, t / dur));
       else if (prog < 0) prog = 0;
 
       /* lo sfondo grande della schermata dei testi brucia insieme: lo
@@ -596,14 +599,19 @@
         stato.box.style.pointerEvents = pannelloAperto ? "none" : "";
       }
 
-      if (prog !== stato.progVisto) {
-        stato.progVisto = prog;
-        /* se e' sparito tutto, la copertina non c'e' piu': niente fuoco */
-        if (prog <= 0.001) {
-          if (stato.box) { stato.box.remove(); stato.box = null; stato.fiamme = []; }
-          requestAnimationFrame(ciclo);
-          return;
-        }
+      if (prog !== stato.progVisto) stato.progVisto = prog;
+      /* Fine combustione: scompare la copertina e il brano successivo riparte pulito. */
+      if (prog >= 0.999 || (audio && audio.ended)) {
+        if (stato.box) { stato.box.remove(); stato.box = null; stato.fiamme = []; }
+        stato.progVisto = 0; stato.progChar = -1; stato.progFiamme = -1;
+        aggiornaNotifica(1, false);
+        requestAnimationFrame(ciclo);
+        return;
+      }
+      if (prog <= 0.001 && !suona) {
+        if (stato.box) { stato.box.remove(); stato.box = null; stato.fiamme = []; }
+        requestAnimationFrame(ciclo);
+        return;
       }
 
       if (!stato.box) {
