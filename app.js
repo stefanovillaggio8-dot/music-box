@@ -656,7 +656,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.425";
+  const APP_VERSION = "6.426";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6149,7 +6149,11 @@ function openProfile() {
 
   function tickLyrics() {
     if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
-    const idx = activeLineIndex(audio.currentTime || 0);
+    /* I timestamp dei testi online spesso arrivano leggermente in ritardo
+       rispetto alla voce reale. Anticipo l'evidenziazione di 0,65 secondi,
+       mantenendo invariati i timestamp usati quando si tocca una riga. */
+    const ANTICIPO_TESTO = 0.65;
+    const idx = activeLineIndex((audio.currentTime || 0) + ANTICIPO_TESTO);
     if (idx === lyricActive) return;
     if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
     if (idx >= 0) {
