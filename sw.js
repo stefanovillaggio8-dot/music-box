@@ -27,7 +27,7 @@ const CORE = [
   "./",
   "./index.html",
   "./style.css",
-  "./fuoco.js?v=6421",
+  "./fuoco.js?v=6431",
   "./app.js",
   "./manifest.json",
   "./lyrics.json",
