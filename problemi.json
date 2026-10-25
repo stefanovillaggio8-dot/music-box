@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792901550077,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792901550104,
-  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792901551004,
-  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792901551436,
-  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792901552004,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792901552227,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792901681050,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792901681050,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792901681089,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792901682384,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792901682380,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792901695748,
+  "r": "worker /stato: risponde"
  }
 ]
