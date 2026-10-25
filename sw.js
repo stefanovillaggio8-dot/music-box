@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6440";
+const CACHE = "spotifynonavraiimieisoldi-v6441";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -27,7 +27,7 @@ const CORE = [
   "./",
   "./index.html",
   "./style.css?v=6436",
-  "./fuoco.js?v=6440",
+  "./fuoco.js?v=6441",
   "./app.js?v=6436",
   "./manifest.json",
   "./lyrics.json",
