@@ -6709,8 +6709,10 @@ if (r.ok && j && j.ok) {
       }
       await loadAll();
       if (currentId === rec.id) setHud();
+      return true; // comunica al recupero copertine che l'arricchimento e' terminato
     } catch (e) {
       console.warn("Completamento automatico fallito", e);
+      return false;
     }
   }
 
