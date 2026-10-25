@@ -1,41 +1,5 @@
 [
  {
-  "t": 1792955495005,
-  "r": "SPOTIFY: [v6.426] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792955495563,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792955495566,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792955495602,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792955495589,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792955496838,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792955496852,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792955496940,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792955496977,
-  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1792955497189,
   "r": "SPOTIFY: [v6.426] ricarico: il worker del servizio e' cambiato"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1792955510131,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792955510127,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792955510247,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955511330,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792955517172,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792955517210,
+  "r": "SPOTIFY: [v6.426] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792955517180,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792955517199,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792955517825,
+  "r": "SPOTIFY: [v6.426] ricarico: il worker del servizio e' cambiato"
+ },
+ {
+  "t": 1792955518355,
+  "r": "sessione media aggiornata senza player audio fantasma"
  }
 ]
