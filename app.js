@@ -3579,15 +3579,42 @@ async function condividiBraniLocali(forzato) {
       }
       const online = await ponteOnline();
       if (!online) {
-        /* Il PC non c'e': non e' un errore, lascio i brani qui e riprovo
-           al prossimo avvio. Non disturbo l'utente con un avviso. */
+        /* UNIFICA TELEFONO + PC: fuori casa la pagina GitHub non puo' chiamare
+           direttamente il PC di casa. In quel caso mando i brani alla coda
+           cloud condivisa; il PC li recupera quando torna acceso/online.
+           Se manca la chiave, non segno nulla come condiviso: resta sul
+           telefono e potra' essere ritentato dopo aver attivato il servizio. */
         if (ind) ind.hidden = true;
-        /* Se pero' ho appena aggiunto un brano adesso, dico dove sta: prima
-           l'utente lo cercava nella libreria (sul computer) e non lo
-           trovava, perche' intanto era rimasto solo qui. */
-        if (daMandare.length && _recentementeAggiunto) {
+        if (SERVIZIO_PUBBLICA && CHIAVE_PUBBLICA) {
+          let inviatiCloud = 0;
+          let fallitiCloud = 0;
+          for (const r of daMandare) {
+            try {
+              await _pubblicaSulSito(r);
+              r.condiviso = true;
+              _condivisioneHaCambiato = true;
+              try { await dbPut(r); } catch (e2) { /* l'invio e' gia' riuscito */ }
+              inviatiCloud++;
+            } catch (eCloud) {
+              fallitiCloud++;
+              segnalaErrore("coda cloud non riuscita (" + String(r.title || "brano").slice(0, 40) + "): " +
+                String((eCloud && (eCloud.message || eCloud)) || "errore").slice(0, 100));
+            }
+          }
           _recentementeAggiunto = false;
-          toast("Brano aggiunto solo a questo telefono: il computer non risponde, quindi non e' andato nella libreria");
+          if (inviatiCloud) {
+            toast(inviatiCloud + (inviatiCloud === 1
+              ? " brano inviato alla coda condivisa: il PC lo recuperera' quando e' acceso"
+              : " brani inviati alla coda condivisa: il PC li recuperera' quando e' acceso"), 6500);
+          }
+          if (fallitiCloud) {
+            toast(fallitiCloud + (fallitiCloud === 1
+              ? " brano non inviato: controlla la chiave del servizio"
+              : " brani non inviati: controlla la chiave del servizio"), 6500);
+          }
+        } else if (daMandare.length && _recentementeAggiunto) {
+          _recentementeAggiunto = false;
+          toast("Brano salvato solo su questo telefono: per unirlo al PC attiva la chiave del servizio una volta", 6500);
         }
         return;
       }
