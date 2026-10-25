@@ -1,57 +1,5 @@
 [
  {
-  "t": 1792935622598,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792935622724,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792935622724,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792935623792,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792935625416,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792935625476,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792935625651,
-  "r": "SPOTIFY: [v6.420] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792935625671,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792935626208,
-  "r": "SPOTIFY: [v6.420] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792935626546,
-  "r": "SPOTIFY: [v6.420] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792935627042,
-  "r": "SPOTIFY: [v6.420] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792935627603,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792935627794,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792935627795,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +106,57 @@
  {
   "t": 1792935642016,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792935642820,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792935642821,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792935642675,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792935643875,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792935643922,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792935643948,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792935650304,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792935650303,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792935650382,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792935650485,
+  "r": "SPOTIFY: [v6.425] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1792935651682,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792935651741,
+  "r": "SPOTIFY: [v6.425] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1792935651769,
+  "r": "SPOTIFY: [v6.425] ritorno: nessun codice (indirimento: [], memoria: [])"
  }
 ]
