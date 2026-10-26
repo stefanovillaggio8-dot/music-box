@@ -1564,45 +1564,59 @@ button.btn-mini-file {
 .ordine-bt { cursor: pointer; }
 
 
-/* Finestra delle statistiche */
+/* Statistiche: riepilogo ordinato, confronto leggibile e dettagli tecnici richiudibili. */
+#statsCorpo { padding-bottom: 4px; }
+.stats-intro {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin:0 0 14px; padding:2px 0 12px; border-bottom:1px solid var(--line);
+}
+.stats-intro h3 { margin:3px 0 0; font-size:21px; line-height:1.2; letter-spacing:-.35px; }
+.stats-kicker { color:var(--accent2); font-size:10px; font-weight:800; letter-spacing:1.25px; }
+.stats-profile-chip {
+  flex-shrink:0; padding:6px 10px; border:1px solid rgba(176,107,255,.35);
+  border-radius:999px; background:rgba(176,107,255,.11); color:#e1c9ff;
+  font-size:12px; font-weight:750;
+}
 #statsCorpo h4 {
-  margin: 18px 0 8px;
-  font-size: 13px;
-  letter-spacing: .3px;
-  color: var(--accent2);
+  display:flex; align-items:center; gap:8px; margin:21px 0 9px; padding-bottom:8px;
+  border-bottom:1px solid var(--line); font-size:13px; letter-spacing:.15px; color:var(--accent2);
 }
-.stat-griglia {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
-}
+.stat-griglia { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
 .stat-riga {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--card);
+  display:flex; flex-direction:column; justify-content:center; gap:5px; min-width:0;
+  padding:13px 12px; border:1px solid var(--line); border-radius:14px;
+  background:linear-gradient(145deg,rgba(176,107,255,.095),var(--card) 68%);
+  box-shadow:0 4px 16px rgba(0,0,0,.12);
 }
-.stat-riga b { font-size: 20px; font-weight: 800; }
-.stat-riga span { font-size: 12px; color: var(--muted); }
-.stat-riga i { font-style: normal; opacity: .8; }
-.stat-lista { display: flex; flex-direction: column; gap: 6px; }
+.stat-riga b { font-size:clamp(18px,4.5vw,25px); line-height:1.15; font-weight:850; overflow-wrap:anywhere; }
+.stat-riga:nth-child(2n) b { color:var(--accent2); }
+.stat-riga span { font-size:11px; line-height:1.35; color:var(--muted); }
+.stat-riga i { font-style:normal; opacity:.8; }
+.stat-lista { display:flex; flex-direction:column; gap:7px; }
 .stat-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 9px 12px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--card);
-  font-size: 13px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px; min-width:0;
+  padding:10px 12px; border:1px solid var(--line); border-radius:11px;
+  background:var(--card); font-size:13px; transition:border-color .15s ease,background .15s ease;
 }
-.stat-item b { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.stat-item.io { border-color: var(--accent2); }
-.stat-item span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stat-item b { flex-shrink:0; font-size:11px; line-height:1.35; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.stat-item.io { border-color:rgba(79,195,255,.6); background:rgba(79,195,255,.055); }
+.stat-item span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.35; }
+.stats-me {
+  display:inline-block; margin-left:5px; padding:2px 6px; border-radius:5px;
+  background:rgba(79,195,255,.14); color:var(--accent2); font-size:9px;
+  font-style:normal; font-weight:850; vertical-align:1px;
+}
+.stats-empty { margin:10px 0 0; padding:12px; border:1px dashed var(--line); border-radius:12px; }
+.stat-diagnostica { margin-top:20px; padding:11px 12px; border:1px solid var(--line); border-radius:12px; background:rgba(255,255,255,.025); }
+.stat-diagnostica summary { cursor:pointer; color:var(--muted); font-size:12px; font-weight:700; list-style-position:inside; }
+.stat-diagnostica[open] summary { margin-bottom:10px; color:var(--accent2); }
+.stat-diagnostica .stat-lista { margin-top:8px; }
+@media (max-width:360px) {
+  .stat-griglia { gap:7px; }
+  .stat-riga { padding:11px 9px; }
+  .stat-item { gap:7px; padding:9px; font-size:12px; }
+  .stat-item b { font-size:10px; }
+}
 
 /* Numero della versione in alto a destra: serve a capire subito se il
    browser sta usando una copia vecchia della pagina. */
