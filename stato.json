@@ -142,7 +142,7 @@
    },
    "blanco|sottogonna": {
     "v": 9,
-    "s": 81,
+    "s": 84,
     "t": "SOTTOGONNA",
     "a": "BLANCO"
    },
@@ -388,7 +388,7 @@
    },
    "artie5ive|davverodavvero": {
     "v": 66,
-    "s": 1060,
+    "s": 1071,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -915,8 +915,8 @@
     "a": "Carla Morrison"
    },
    "blakeeldiablo|odietamo": {
-    "v": 0,
-    "s": 27,
+    "v": 1,
+    "s": 28,
     "t": "Odi et Amo",
     "a": "Blake el Diablo"
    },
