@@ -646,23 +646,15 @@ async function migrateOfflineSongsAndCleanup() {
 self.addEventListener("message", (event) => {
   const dati = event && event.data ? event.data : null;
   if (!dati || dati.type !== "SVUOTA-CANZONI") return;
-  event.waitUntil(
-    Promise.all([
-      caches.delete(cacheStreamName(activeProfile)),
-      caches.delete(cachePrefetchName(activeProfile))
-    ]).catch(() => {})
-  );
+  /* Non cancellare le cache audio: gli aggiornamenti dell'app non devono
+     eliminare download offline. Il messaggio legacy viene ignorato. */
 });
 
 self.addEventListener("activate", (event) => {
-  /* I brani scaricati in anticipo stanno in una cache a parte per profilo e non devono
-     accumularsi: a ogni nuova versione la svuoto (cosi' il telefono non si
-     riempie e non si scarica 100 MB di file in una volta). */
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k.startsWith(CACHE_PREFIX + "-prefetch-")).map(k => caches.delete(k))
-    ).catch(() => {}))
-  );
+  /* v6.466: non cancellare le cache audio al cambio versione.
+     Anche le cache prefetch possono contenere brani gia' ascoltati e l'utente
+     potrebbe averle considerate disponibili offline. La pulizia non va fatta
+     automaticamente durante un aggiornamento dell'app. */
   event.waitUntil(
     migrateOfflineSongsAndCleanup().catch((error) => {
       /* In caso di problema, meglio conservare i dati delle versioni precedenti. */
