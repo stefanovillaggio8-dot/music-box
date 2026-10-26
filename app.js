@@ -664,14 +664,13 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.461";
+  const APP_VERSION = "6.462";
 
-  /* La pagina locale carica il codice principale da GitHub per non restare
-     indietro di decine di versioni. Se non c'e' rete usa i file locali. */
+  /* I file locali app.js/versione.json contengono anche il catalogo dei brani
+     generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
+     della libreria deve continuare a leggere questi file locali. */
   function _urlCodiceFile(nome, cacheBust) {
-    const remoto = typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github";
-    const base = remoto ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" : "";
-    return base + nome + (cacheBust !== undefined && cacheBust !== null
+    return nome + (cacheBust !== undefined && cacheBust !== null
       ? "?t=" + encodeURIComponent(String(cacheBust)) : "");
   }
 
@@ -13805,7 +13804,10 @@ function _segnalaBarraVersione() {
    copia vecchia, quindi l'aggiornamento riesce al primo tocco. */
 function _controllaSeSonoVecchio() {
     try {
-      fetch(_urlCodiceFile("versione.json", Date.now()), { cache: "no-store" })
+      const urlVersione = (typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github")
+        ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/versione.json?t=" + Date.now()
+        : _urlCodiceFile("versione.json", Date.now());
+      fetch(urlVersione, { cache: "no-store" })
         .then((r) => (r && r.ok ? r.json() : null))
         .then((d) => {
           if (!d || !d.versione) return;
