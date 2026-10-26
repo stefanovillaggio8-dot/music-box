@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792978738195,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1792978738490,
-  "r": "SPOTIFY: [v6.412] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1792978738498,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792978739392,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792978739486,
-  "r": "visibili 217 su 244 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 192.168.1.40:8788"
- },
- {
-  "t": 1792978739519,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792978739499,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792978739576,
-  "r": "libreria: 254 brani, scartati 197 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792978740730,
-  "r": "FINALE: visibili 220 su 247 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1792978742971,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792978742976,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792978742990,
   "r": "libreria: 254 brani, scartati 197 per eliminazione, profilo Ste, chiavi eliminate 16"
  },
@@ -157,6 +113,50 @@
  },
  {
   "t": 1793045171629,
+  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1793045172105,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793045172194,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793045172539,
+  "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1793045173092,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793045173228,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793045173255,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793045173267,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793045173277,
+  "r": "libreria: 210 brani, scartati 241 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1793045174472,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793045175983,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793045176009,
   "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
  }
 ]
