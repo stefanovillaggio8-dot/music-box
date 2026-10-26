@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792978457677,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792978457695,
-  "r": "libreria: 210 brani, scartati 241 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
   "t": 1792978458345,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792978739576,
   "r": "libreria: 254 brani, scartati 197 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792978740730,
+  "r": "FINALE: visibili 220 su 247 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
+ },
+ {
+  "t": 1792978742971,
+  "r": "worker /stato: risponde"
  }
 ]
