@@ -188,8 +188,8 @@
     ".mb-fuoco.mb-fuoco-finale .mb-strato-char,.mb-fuoco.mb-fuoco-finale .mb-calore,.mb-fuoco.mb-fuoco-finale .mb-brasa,.mb-fuoco.mb-fuoco-finale .mb-fiamme,.mb-fuoco.mb-fuoco-finale .mb-bragia{opacity:0!important;transition:opacity .35s ease}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo{overflow:visible;opacity:1!important}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo i{animation-duration:7.2s;opacity:.52}",
-    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:62!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 4.8s cubic-bezier(.22,.58,.28,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
-    "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}24%{opacity:1;filter:blur(.3px)}65%{opacity:.78;filter:blur(2px)}100%{opacity:0;filter:blur(12px);transform:translate3d(var(--mb-rise-x,0px),-210px,0) rotate(var(--mb-rotation,8deg)) scale(.28)}}",
+    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:9999!important;margin:0!important;transform-origin:50% 50%;border:1px solid rgba(255,210,145,.58)!important;box-shadow:0 0 10px rgba(255,120,35,.32),inset 0 0 8px rgba(255,225,180,.22)!important;animation:mbCoverFragmentRise 5.1s cubic-bezier(.18,.62,.26,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter;backface-visibility:hidden}",
+    "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:brightness(1.3) saturate(1.25) blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}12%{opacity:1;filter:brightness(1.45) saturate(1.35) blur(.2px)}38%{opacity:.96;filter:brightness(1.2) saturate(1.2) blur(.7px)}68%{opacity:.66;filter:brightness(.9) saturate(.9) blur(2.5px)}100%{opacity:0;filter:brightness(.65) blur(11px);transform:translate3d(var(--mb-rise-x,0px),-260px,0) rotate(var(--mb-rotation,8deg)) scale(.16)}}",
     ".mb-cover-burnt{opacity:0!important}",
     ".mb-cover-reappear{animation:mbCoverReappear .72s ease-out both!important}",
     "@keyframes mbCoverReappear{0%{opacity:0;filter:blur(9px)}65%{opacity:.8;filter:blur(2px)}100%{opacity:1;filter:blur(0)}}",
@@ -623,7 +623,7 @@
     var r = art.getBoundingClientRect();
     if (!r.width || !r.height) return [];
     var creati = [];
-    var cols = 4, rows = 4;
+    var cols = 5, rows = 5;
     for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
       var clone = art.cloneNode(true);
       clone.removeAttribute("id");
@@ -637,9 +637,9 @@
       var n1=((x*13+y*7)%5)+2, n2=((x*5+y*11)%5)+2;
       Object.assign(clone.style,{position:"fixed",left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",margin:"0",opacity:"1",transform:"none",animation:"none",pointerEvents:"none",borderRadius:getComputedStyle(art).borderRadius});
       clone.style.clipPath="polygon("+(x0+n1)+"% "+y0+"%, "+(x1-n2)+"% "+y0+"%, "+x1+"% "+(y0+8)+"%, "+x1+"% "+(y1-7)+"%, "+(x1-n1)+"% "+y1+"%, "+(x0+n2)+"% "+y1+"%, "+x0+"% "+(y1-8)+"%, "+x0+"% "+(y0+6)+"%)";
-      clone.style.setProperty("--mb-fragment-delay",(((x+y*cols)%5)*.035)+"s");
-      clone.style.setProperty("--mb-rise-x",((x-1.5)*17+(y%2?9:-7))+"px");
-      clone.style.setProperty("--mb-rotation",((x+y)%2?1:-1)*(9+x*3+y*2)+"deg");
+      clone.style.setProperty("--mb-fragment-delay",(((x*3+y*2)%9)*.045)+"s");
+      clone.style.setProperty("--mb-rise-x",((x-(cols-1)/2)*23+(y%2?13:-11))+"px");
+      clone.style.setProperty("--mb-rotation",((x+y)%2?1:-1)*(14+x*3+y*2)+"deg");
       document.body.appendChild(clone);
       creati.push(clone);
     }
@@ -1067,15 +1067,15 @@
           }
         }
         /* Volute di fumo grigio che salgono sopra i frammenti. */
-        for (var sm = 0; sm < 13; sm++) {
+        for (var sm = 0; sm < 19; sm++) {
           var r1 = rnd(sm * 8.7 + 3);
           var r2 = rnd(sm * 8.7 + 9);
           var cycle = (t * (7 + r1 * 4) + sm * 13) % 100;
           var fx = (18 + r2 * 64) / 100 * L + Math.sin(t * 0.22 + sm) * 4;
           var fy = L * (0.86 - cycle / 100 * 1.05);
-          var fr = L * (0.07 + r1 * 0.12) * (0.7 + p * 0.8);
+          var fr = L * (0.075 + r1 * 0.14) * (0.8 + p * 0.9);
           var grad = ctxTela.createRadialGradient(fx, fy, 0, fx, fy, fr);
-          var opacity = (0.12 + 0.11 * p) * (1 - cycle / 115);
+          var opacity = (0.17 + 0.15 * p) * (1 - cycle / 118);
           grad.addColorStop(0, "rgba(218,220,230," + Math.max(0, opacity).toFixed(3) + ")");
           grad.addColorStop(0.55, "rgba(153,159,174," + Math.max(0, opacity * 0.55).toFixed(3) + ")");
           grad.addColorStop(1, "rgba(105,111,128,0)");
