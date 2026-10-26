@@ -621,7 +621,12 @@
   function frammentiCopertina(art) {
     if (!art || !art.parentNode) return [];
     var r = art.getBoundingClientRect();
-    if (!r.width || !r.height) return [];
+    if (!r.width || !r.height) {
+      var w = art.offsetWidth || parseFloat(getComputedStyle(art).width) || 0;
+      var h = art.offsetHeight || parseFloat(getComputedStyle(art).height) || 0;
+      if (!w || !h) return [];
+      r = { left: r.left || 0, top: r.top || 0, width: w, height: h };
+    }
     var creati = [];
     var cols = 5, rows = 5;
     for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
@@ -714,7 +719,15 @@
 
   function gestisciFineAudio(audioFinito) {
     try {
-      if (stato.audio && stato.audio !== audioFinito) return;
+      if (!audioFinito || !audioFinito.ended) return;
+      /* L'istanza Audio selezionata dal ciclo può cambiare appena finisce
+         il brano. Controllo la sorgente del brano visualizzato, non l'identità
+         dell'oggetto, così l'evento ended non viene scartato per errore. */
+      var sorgenteFinita = String(audioFinito.currentSrc || audioFinito.src || "");
+      var chiaveAttuale = String(stato.ultimoTitolo || "");
+      var separatore = chiaveAttuale.indexOf("|");
+      var sorgenteAttesa = separatore >= 0 ? chiaveAttuale.slice(separatore + 1) : "";
+      if (sorgenteAttesa && sorgenteFinita && sorgenteAttesa !== sorgenteFinita) return;
       var art = document.getElementById("playerArt");
       if (!art) return;
       var chiave = stato.ultimoTitolo;
