@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.463";
+  const APP_VERSION = "6.464";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -1507,7 +1507,7 @@ async function _apriDiagnostica() {
     }
     qs.push('<div class="diag-sep">versione</div>');
     qs.push('<div class="diag-riga"><b>in uso</b><span class="diag-ok">' + APP_VERSION + "</span></div>");
-    const schermo = $("verBadge");
+    const schermo = $("appVer");
     if (schermo) qs.push('<div class="diag-riga"><b>numero in alto</b><span>' + (schermo.textContent || "?") + "</span></div>");
 
     qs.push('<div class="diag-sep">i nomi che ho cambiato</div>');
@@ -10803,7 +10803,7 @@ function _ripristinaPuntoLibreria() {
    e' mossa e quello che vedi e' un'altra cosa. */
 function _aggiornaEtichettaControllo(che) {
   try {
-    const vb = $("verBadge");
+    const vb = $("appVer");
     if (!vb) return;
     const quando = new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     vb.dataset.aggiornato = quando;
@@ -13651,9 +13651,9 @@ await loadAll();
      che il browser restava su una versione vecchia e sembrava che gli
      aggiornamenti non funzionassero. Con questo numero lo vedo subito. */
   try {
-    const vf = $("verBadge");
+    const vf = $("appVer");
     if (vf) {
-      vf.textContent = String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
+      vf.textContent = "v" + String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
       vf.title = "Versione in uso: " + APP_VERSION + "\nTocca per aggiornare subito";
       /* Ste: "se tocco la versione non fa niente". Ricaricare da solo non
          bastava: il worker vecchio continuava a servire il vecchio app.js.
@@ -13753,7 +13753,7 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
         refreshing = true;
         _salvaPuntoLibreria();
         try {
-          const vb = $("verBadge");
+          const vb = $("appVer");
           if (vb) {
             vb.classList.add("ha-aggiornamento");
             vb.title = "C'è un aggiornamento: tocca qui per prenderlo";
@@ -13787,7 +13787,7 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
                  stai usando: era quello che faceva sparire i brani e ti
                  rimandava la lista in cima). Quindi qui devo dirti cosa
                  fare davvero, altrimenti resta in attesa per sempre. */
-              const vb = $("verBadge");
+              const vb = $("appVer");
               if (vb) vb.classList.add("ha-aggiornamento");
               toast("Aggiornamento pronto: chiudi del tutto l'app e la riapri", 7000);
               segnalaErrore("aggiornamento pronto: chiudere del tutto l'app per prenderlo");
@@ -13836,13 +13836,13 @@ function _nascondiBarraAggiornamento() {
    aggiornare: cosi' sai che e' lui il posto da toccare. */
 function _chiudiBarraVersione() {
     try {
-      const vb = $("verBadge");
+      const vb = $("appVer");
       if (vb) vb.classList.remove("ha-aggiornamento");
     } catch (e) { /* noop */ }
 }
 function _segnalaBarraVersione() {
     try {
-      const vb = $("verBadge");
+      const vb = $("appVer");
       if (vb) {
         vb.classList.add("ha-aggiornamento");
         vb.title = "C'è un aggiornamento: tocca qui per prenderlo subito";

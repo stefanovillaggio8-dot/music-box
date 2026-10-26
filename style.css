@@ -158,6 +158,18 @@ body {
 
 .logo-wrap { display: flex; align-items: baseline; gap: 7px; }
 .ver { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .5px; }
+#appVer {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:22px; padding:3px 7px; margin-left:5px;
+  border:1px solid var(--line); border-radius:7px;
+  cursor:pointer; user-select:none; white-space:nowrap;
+  transition:color .15s ease,background .15s ease,border-color .15s ease;
+}
+#appVer:active { color:var(--accent2); }
+#appVer.ha-aggiornamento {
+  color:#ffdf9a; border-color:#d9a743; background:rgba(255,190,70,.13);
+  box-shadow:0 0 0 1px rgba(255,190,70,.08);
+}
 
 .search-wrap { position: relative; }
 /* Ste: la X per cancellare la ricerca, a destra del campo */
