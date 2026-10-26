@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.474";
+  const APP_VERSION = "6.475";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -10017,6 +10017,8 @@ $("fabMenu").addEventListener("click", (e) => {
     try { cached = !!(await cache.match(t.url)) || !!(await cache.match(absUrl(t.url))); } catch (e) { cached = false; }
     rows.push({
       title: t.title,
+      url: t.url,
+      id: t.id,
       state: cached ? "ok" : "todo",
       label: cached ? "pronta" : "da scaricare",
       el: null,
@@ -10201,7 +10203,7 @@ $("fabMenu").addEventListener("click", (e) => {
       } else {
         blob = await res.blob();
       }
-      await cache.put(url, new Response(blob, {
+      await cache.put(absUrl(url), new Response(blob, {
         status: 200,
         headers: {
           "Content-Type": blob.type || "audio/mpeg",
