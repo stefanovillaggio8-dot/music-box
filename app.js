@@ -14035,25 +14035,9 @@ const che = [];
              volte per la stessa versione: il ciclo non puo' tornare. */
           const _versioneDaPrendere = m ? String(m[1]) : "";
 
-          /* Ste: "col volume basso non cambia nulla". Motivo: il telefono aveva
-
-             in cache il brano potenziato VECCHIO (quasi uguale all'originale)
-
-             e la rivalidazione aspettava un'ora. Ora, quando c'e' una versione
-
-             nuova, dico al service worker di svuotare le cache dei brani: la
-
-             prima canzone dopo arriva nuova. */
-
-          try {
-
-            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-
-              navigator.serviceWorker.controller.postMessage({ type: "SVUOTA-CANZONI" });
-
-            }
-
-          } catch (e) { /* noop */ }
+          /* v6.466: un aggiornamento del codice NON deve cancellare le canzoni
+             scaricate per l'ascolto offline. Il service worker aggiorna solo
+             i file dell'app; le cache audio esistenti restano intatte. */
           /* l'ultimo momento in cui Ste ha toccato lo schermo: serve per non
    ricaricare l'app mentre la sta usando */
 let _ultimoTocco = Date.now();
