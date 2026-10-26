@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793045172105,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793045172194,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793045206675,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793045208793,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  }
 ]
