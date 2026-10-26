@@ -1,65 +1,5 @@
 [
  {
-  "t": 1792973449022,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792973449030,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792973449050,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792973760662,
-  "r": "sessione media aggiornata senza player audio fantasma"
- },
- {
-  "t": 1792973760755,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792973760672,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792973760896,
-  "r": "SPOTIFY: [v6.439] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792973761750,
-  "r": "SPOTIFY: [v6.439] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792973761796,
-  "r": "SPOTIFY: [v6.439] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792973762646,
-  "r": "SPOTIFY: [v6.439] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792973762705,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792973762868,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792973762870,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792973762907,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792973764079,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1792973764106,
   "r": "suono: originale b-track-135"
  },
@@ -158,5 +98,65 @@
  {
   "t": 1792973881612,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792973881604,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792973881762,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792973883013,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792973883014,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792973883016,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792973895949,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792973895927,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792973896056,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792973896133,
+  "r": "SPOTIFY: [v6.440] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792973896794,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792973896821,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792973896797,
+  "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792973897055,
+  "r": "SPOTIFY: [v6.440] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792973897471,
+  "r": "suono: originale b-track-90"
+ },
+ {
+  "t": 1792973897581,
+  "r": "SPOTIFY: [v6.440] Spotify ha risposto 401: Missing/invalid/expired access token"
  }
 ]
