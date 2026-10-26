@@ -6420,12 +6420,7 @@ async function addFiles(fileList) {
       const condivisiGiaPresenti = fresh.filter(t => eGiaCondiviso({ title: t.title, artist: t.artist })).length;
       const nuovi = ok - condivisiGiaPresenti;
       if (nuovi > 0) parti.push(nuovi === 1 ? "1 brano aggiunto" : nuovi + " brani aggiunti");
-      if (giaInLista > 0) {
-        parti.push(giaInLista === 1
-          ? "1 era gia nella libreria, non l'ho ripetuto"
-          : giaInLista + " erano gia nella libreria, non li ho ripetuti");
-      }
-      if (giaInLista > 0) parti.push(giaInLista + " duplicati saltati");
+      if (giaInLista > 0) parti.push(giaInLista + " duplicati saltati perché già presenti");
       if (errors.length) parti.push(errors.length + " file non letti");
       toast((parti.length ? parti.join(" e ") : "Nessun nuovo brano") + ": solo per " + profile);
       /* vado subito al brano nuovo, cosi lo vede: prima finiva in fondo alla
@@ -6456,6 +6451,7 @@ try { _recentementeAggiunto = true; condividiBraniLocali(true); } catch (e) { /*
            qui e basta. */
         _chiediDoveMandare(fresh);
       }
+    if (!ok && giaInLista > 0) toast(giaInLista + " duplicati saltati perché già presenti: non ho aggiunto nessuna copia.");
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
 
