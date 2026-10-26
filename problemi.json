@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792974809647,
-  "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
   "t": 1792974810140,
   "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792974931026,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792974933027,
+  "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
