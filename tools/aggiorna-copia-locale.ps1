@@ -16,6 +16,9 @@ $Files = @("index.html", "app.js", "fuoco.js", "style.css", "sw.js", "versione.j
 $Stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $Stage = Join-Path $Root (".musicbox-update-" + $Stamp)
 $Backup = Join-Path $Root (".musicbox-backup-" + $Stamp)
+$BackupComplete = $false
+$Replacing = $false
+$UpdateComplete = $false
 New-Item -ItemType Directory -Path $Stage | Out-Null
 
 try {
@@ -44,11 +47,14 @@ try {
             Copy-Item -LiteralPath $Old -Destination (Join-Path $Backup $Name)
         }
     }
+    $BackupComplete = $true
 
+    $Replacing = $true
     foreach ($Name in $Files) {
         Move-Item -LiteralPath (Join-Path $Stage $Name) -Destination (Join-Path $Root $Name) -Force
     }
 
+    $UpdateComplete = $true
     Write-Host ""
     Write-Host ("Music Box aggiornato alla versione " + $VersionInfo.versione) -ForegroundColor Green
     Write-Host ("Backup dei file precedenti: " + $Backup)
@@ -56,7 +62,18 @@ try {
     Write-Host "Ora ricarica la pagina /app/ con Ctrl+F5."
 }
 catch {
-    throw ("Aggiornamento annullato: " + $_.Exception.Message + ". I file originali non sono stati sostituiti.")
+    if ($BackupComplete -and $Replacing -and -not $UpdateComplete) {
+        foreach ($Name in $Files) {
+            $Target = Join-Path $Root $Name
+            $Saved = Join-Path $Backup $Name
+            if (Test-Path $Saved -PathType Leaf) {
+                Copy-Item -LiteralPath $Saved -Destination $Target -Force
+            } elseif (Test-Path $Target -PathType Leaf) {
+                Remove-Item -LiteralPath $Target -Force
+            }
+        }
+    }
+    throw ("Aggiornamento annullato: " + $_.Exception.Message + ". Se la sostituzione era già iniziata, ho ripristinato i file dal backup.")
 }
 finally {
     if (Test-Path $Stage) {
