@@ -10140,25 +10140,33 @@ $("fabMenu").addEventListener("click", (e) => {
      sul PC di casa (quando il collegamento e' configurato). La cache usa
      comunque l'URL pubblico originale, cosi' il player lo ritrova dopo. */
   async function _fetchBranoDaScaricare(track, url, options) {
-    let risposta = null;
-    try { risposta = await fetch(url, options); } catch (e) { /* provo il PC */ }
-    if (risposta && risposta.ok) return risposta;
+    const tentativi = [];
+    const aggiungi = (indirizzo) => {
+      if (indirizzo && !tentativi.includes(indirizzo)) tentativi.push(indirizzo);
+    };
+    aggiungi(url);
     const file = String((track && track.file) || "").replace(/^\\/+/, "");
     if (file) {
+      /* Provo sia il PC di casa sia il deposito online: i brani nuovi
+         possono essere già su GitHub ma non ancora sincronizzati sul PC. */
       try {
         const casa = _collegamentoDiCasa();
-        if (casa) {
-          const locale = casa.replace(/\\/+$/, "") + "/app/" + file;
-          if (locale !== url) {
-            const alternativa = await fetch(locale, options);
-            if (alternativa && alternativa.ok) return alternativa;
-            if (!risposta && alternativa) risposta = alternativa;
-          }
-        }
-      } catch (e) { /* nessuna copia raggiungibile sul PC */ }
+        if (casa) aggiungi(casa.replace(/\\/+$/, "") + "/app/" + file);
+      } catch (e) { /* provo comunque online */ }
+      aggiungi(BRANI_ONLINE + file);
     }
-    if (risposta) return risposta;
-    throw new Error("File non raggiungibile online né dal PC di casa");
+    let ultimoErrore = "";
+    for (const indirizzo of tentativi) {
+      try {
+        const risposta = await fetch(indirizzo, options);
+        if (risposta && risposta.ok) return risposta;
+        ultimoErrore = "HTTP " + (risposta ? risposta.status : "nessuna risposta");
+      } catch (e) {
+        if (e && e.name === "AbortError") throw e;
+        ultimoErrore = String((e && e.message) || "rete non disponibile");
+      }
+    }
+    throw new Error("Download fallito da PC e deposito online: " + ultimoErrore);
   }
 
   async function cacheTrack(row, cache) {
