@@ -1,37 +1,5 @@
 [
  {
-  "t": 1792974619855,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792974621307,
-  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792974621385,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792974641849,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792974641848,
-  "r": "suono: originale b-track-489"
- },
- {
-  "t": 1792974648127,
-  "r": "libreria: 406 brani, scartati 235 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1792974648309,
-  "r": "visibili 209 su 209 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792974648680,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1792974648680,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1792974809468,
   "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974809453,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792974809482,
+  "r": "libreria: 210 brani, scartati 236 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1792974809647,
+  "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792974810140,
+  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792974810547,
+  "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792974811033,
+  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792974811193,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974811609,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
