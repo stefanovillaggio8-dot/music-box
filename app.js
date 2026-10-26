@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.464";
+  const APP_VERSION = "6.465";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -2381,12 +2381,12 @@ function _devoVedereBrano(eMio, b) {
     /* _chiaveEliminato() sta al livello principale (vicino a checkForNewSongs): da qui dentro
        non si vedeva da _eliminaBrano e dalle altre, e dava errore. */
   const builtin = BUILTIN
-  .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
+  .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b), b.profile || DEFAULT_PROFILE)])
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
      Metto una traccia: quante canzoni ho scartato e con che chiave, cosi'
      vedo dal computer se la chiave e' quella giusta. */
   .filter(function (b) {
-    const k = _chiaveEliminato(_idBranoStabile(b));
+    const k = _chiaveEliminato(_idBranoStabile(b), b.profile || DEFAULT_PROFILE);
     if (!eliminati[k]) return true;
     return false;
   })
@@ -10893,8 +10893,9 @@ async function checkForNewSongs() {
         BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
       }
       for (const t of localBuiltin) {
-        if (remoteFiles.indexOf(t.url) < 0 && confermate.indexOf(t.url) < 0) {
-          BUILTIN.push({ title: t.title, file: t.url, artist: t.artist, profile: profile });
+        const fileLocale = t.file || t.url;
+        if (remoteFiles.indexOf(fileLocale) < 0 && confermate.indexOf(fileLocale) < 0) {
+          BUILTIN.push({ title: t.title, file: fileLocale, artist: t.artist, profile: t.profile || profile });
         }
       }
       await loadCovers();
