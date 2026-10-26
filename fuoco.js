@@ -770,7 +770,24 @@
       if (audio && isFinite(audio.currentTime)) t = audio.currentTime;
 
       /* il tempo e' tornato indietro: brano nuovo o riavvolto */
-      if (t < stato.tPrecedente - 1.5) { stato.progVisto = -1; stato.progChar = -1; }
+      if (t < stato.tPrecedente - 1.5) {
+        /* Se riparti dall'inizio dello stesso brano, riabilito il finale:
+           l'evento ended precedente non deve impedire lo sgretolamento al
+           prossimo ascolto. */
+        if (stato.outroInCorso || (art.dataset && art.dataset.mbOutro === "1")) {
+          pulisciDissolvenza(art);
+          if (stato.box && stato.box.classList.contains("mb-fuoco-finale")) {
+            stato.box.remove();
+            stato.box = null;
+            stato.fiamme = [];
+          }
+          stato.outroInCorso = false;
+          stato.outroInizio = 0;
+          stato.outroFatto = "";
+        }
+        stato.progVisto = -1;
+        stato.progChar = -1;
+      }
       stato.tPrecedente = t;
 
       var prog = stato.progVisto;
