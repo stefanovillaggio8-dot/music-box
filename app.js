@@ -666,6 +666,15 @@
   const APP_NAME = "spotifynonavraiimieisoldi";
   const APP_VERSION = "6.460";
 
+  /* La pagina locale carica il codice principale da GitHub per non restare
+     indietro di decine di versioni. Se non c'e' rete usa i file locali. */
+  function _urlCodiceFile(nome, cacheBust) {
+    const remoto = typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github";
+    const base = remoto ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" : "";
+    return base + nome + (cacheBust !== undefined && cacheBust !== null
+      ? "?t=" + encodeURIComponent(String(cacheBust)) : "");
+  }
+
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
      Ste: il telefono perde i dati a ogni riavvio, e ho scoperto perche':
@@ -10775,7 +10784,7 @@ async function checkForNewSongs() {
       /* Primo il file leggero: se la versione e' quella che ho gia', ho
          finito e non scarico nient'altro. */
       try {
-        const risposta = await fetch("versione.json?t=" + ora, { cache: "no-store" });
+        const risposta = await fetch(_urlCodiceFile("versione.json", ora), { cache: "no-store" });
         if (risposta.ok) {
           const piccolo = await risposta.json();
           const mia = String(typeof APP_VERSION !== "undefined" ? APP_VERSION : "");
@@ -10790,7 +10799,7 @@ async function checkForNewSongs() {
           }
         }
       } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
-      const res = await fetch("app.js", { cache: "no-store" });
+      const res = await fetch(_urlCodiceFile("app.js", ora), { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
@@ -13796,7 +13805,7 @@ function _segnalaBarraVersione() {
    copia vecchia, quindi l'aggiornamento riesce al primo tocco. */
 function _controllaSeSonoVecchio() {
     try {
-      fetch("./versione.json", { cache: "no-store" })
+      fetch(_urlCodiceFile("versione.json", Date.now()), { cache: "no-store" })
         .then((r) => (r && r.ok ? r.json() : null))
         .then((d) => {
           if (!d || !d.versione) return;
