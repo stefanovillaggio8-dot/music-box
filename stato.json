@@ -145,7 +145,7 @@
    },
    "blanco|sottogonna": {
     "v": 10,
-    "s": 103,
+    "s": 104,
     "t": "SOTTOGONNA",
     "a": "BLANCO"
    },
@@ -1030,6 +1030,12 @@
     "s": 12,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
+   },
+   "moda|passionemaledetta": {
+    "v": 0,
+    "s": 1,
+    "t": "Passione maledetta",
+    "a": "Modà"
    }
   },
   "Diego": {
