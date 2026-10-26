@@ -14760,42 +14760,64 @@ async function _spotifyCompletaAccesso(code, stato) {
    mi serve (l'audio poi lo cerco su YouTube). */
   async function _spotifyBrani(playlistId) {
     const brani = [];
-    /* Prima la strada del sito (senza Premium). */
+    let totaleAtteso = 0;
+    let timer = null;
+    /* Prima provo il servizio pubblico: funziona anche senza collegare l'account. */
     try {
-      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/brani?id=" + encodeURIComponent(playlistId), { cache: "no-store" });
+      const ctl = new AbortController();
+      timer = setTimeout(() => ctl.abort(), 12000);
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/brani?id=" + encodeURIComponent(playlistId), {
+        cache: "no-store",
+        signal: ctl.signal
+      });
+      if (!r.ok) throw new Error("Il servizio Spotify ha risposto HTTP " + r.status);
       const j = await r.json();
-      if (j && j.ok && j.brani && j.brani.length) {
-        _spotifyTraccia("i brani sono arrivati dal sito di Spotify (" + j.brani.length + ")");
+      if (j && j.ok && Array.isArray(j.brani) && j.brani.length) {
         for (const b of j.brani) {
-          const nome = String((b && b.titolo) || "").replace(/\s+/g, " ").trim();
-          const chi = String((b && b.artista) || "").replace(/\s+/g, " ").trim();
+          const nome = String((b && (b.titolo || b.title || b.name)) || "").replace(/\s+/g, " ").trim();
+          const chi = String((b && (b.artista || b.artist)) || "").replace(/\s+/g, " ").trim();
           if (!nome || !chi) continue;
           brani.push(nome + "|" + chi);
         }
-        /* Se il servizio conosce il totale e ne ha restituiti meno, provo
-           anche l'API Spotify per recuperare gli eventuali brani mancanti.
-           Se non conosce il totale, mantengo il comportamento rapido di prima. */
-        const totaleServizio = Number(j.totale || j.total || (j.tracks && j.tracks.total) || 0);
-        /* Se il totale non è dichiarato, provo comunque l'API Spotify e unisco
-           i risultati: il servizio può aver restituito una playlist parziale. */
-        if (brani.length && totaleServizio > 0 && brani.length >= totaleServizio) return brani;
+        totaleAtteso = Number(j.totale || j.total || (j.tracks && j.tracks.total) || 0);
+        _spotifyTraccia("servizio pubblico: " + brani.length + " brani su " + (totaleAtteso || "?"));
+        if (brani.length && totaleAtteso > 0 && brani.length >= totaleAtteso) return brani;
       }
-    } catch (e) { /* il server non risponde: uso le API */ }
-    let url = "/playlists/" + playlistId + "/tracks?limit=100";
-  for (let pagina = 0; pagina < 12 && url; pagina++) {
-    const j = await _spotifyApi(url);
-    if (!j) break;
-    for (const it of (j.items || [])) {
-      const t = it.track;
-      if (!t || !t.name || t.is_local) continue;
-      const chi = (t.artists || []).map((a) => a.name).filter(Boolean).join(", ");
-      if (!chi) continue;
-      brani.push(t.name.replace(/\s+/g, " ").trim() + "|" + chi.replace(/\s+/g, " ").trim());
+    } catch (e) {
+      _spotifyTraccia("lettura servizio pubblico non riuscita: " + String((e && e.message) || e).slice(0, 160));
+    } finally {
+      if (timer) clearTimeout(timer);
     }
-    url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
+
+    /* Se la prima fonte ha dato solo una parte, provo a completare con l'API Spotify. */
+    let url = "/playlists/" + playlistId + "/tracks?limit=100";
+    for (let pagina = 0; pagina < 12 && url; pagina++) {
+      const j = await _spotifyApi(url);
+      if (!j) break;
+      for (const it of (j.items || [])) {
+        const t = it.track;
+        if (!t || !t.name || t.is_local) continue;
+        const chi = (t.artists || []).map((a) => a.name).filter(Boolean).join(", ");
+        if (!chi) continue;
+        brani.push(t.name.replace(/\s+/g, " ").trim() + "|" + chi.replace(/\s+/g, " ").trim());
+      }
+      url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
+    }
+
+    /* Evito di presentare le prime 5 canzoni come se fossero la playlist intera. */
+    const distinti = [];
+    for (const riga of brani) {
+      const candidato = _spotifyRigaOggetto(riga);
+      if (candidato.title && !distinti.some((x) => stessoBrano(candidato, x))) distinti.push(candidato);
+    }
+    if (totaleAtteso > 0 && distinti.length < totaleAtteso) {
+      const motivo = "Spotify ha restituito solo " + distinti.length + " brani su " + totaleAtteso +
+        ". Non ho importato una playlist incompleta. Premi «Accedi con Spotify», autorizza l'accesso e poi riprova il link.";
+      _spotifyTraccia("importazione interrotta: playlist parziale (" + distinti.length + "/" + totaleAtteso + ")");
+      throw new Error(motivo);
+    }
+    return brani;
   }
-  return brani;
-}
 
 /* ============================================================
    Da qui in poi c'era il file spotify-ui.js, ora dentro questo.
@@ -15210,55 +15232,71 @@ async function _spotifyFiltraDoppioni(lista) {
 }
 
 async function _spotifyImporta(playlistId) {
-  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Prendo i titoli...</p>');
-  const brani = await _spotifyBrani(playlistId);
-  if (!brani.length) {
-    _spotifyPnl("Playlist", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Riprova o controlla l'accesso a Spotify.</p>');
-    return;
+  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Leggo i brani e controllo i duplicati...</p>');
+  try {
+    const brani = await _spotifyBrani(playlistId);
+    if (!brani.length) {
+      _spotifyPnl("Nessuna canzone letta", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Prova ad accedere con Spotify e poi ripeti l\'importazione.</p>' +
+        '<button class="btn-main" id="spotifyLeggiAccedi">Accedi con Spotify</button>' +
+        '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Chiudi</button>');
+      const accedi = $("spotifyLeggiAccedi");
+      if (accedi) accedi.addEventListener("click", () => { _spotifyChiudi(); _spotifyMenu(); });
+      const chiudi = $("spotifyAnnulla");
+      if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
+      return;
+    }
+    const filtro = await _spotifyFiltraDoppioni(brani);
+    const uniche = filtro.lista;
+    const profilo = profile;
+    if (!uniche.length) {
+      _spotifyPnl("Playlist già presente", "0 nuovi brani",
+        '<p class="step-hint">Ho controllato ' + brani.length + ' brani: erano già in libreria oppure duplicati tra loro. Non ho aggiunto copie.</p>' +
+        '<button class="btn-main" id="spotifyAnnulla">Chiudi</button>');
+      $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
+      return;
+    }
+
+    /* Un clic deve bastare: «Importa questa playlist» avvia subito l'invio al PC. */
+    _spotifyTraccia("playlist pronta: " + uniche.length + " nuove, " + filtro.duplicati + " duplicati saltati; avvio invio al PC");
+    await _spotifyMandaLista(uniche, profilo, filtro.duplicati);
+  } catch (e) {
+    const motivo = String((e && e.message) || "errore sconosciuto")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    _spotifyTraccia("importazione link fallita: " + motivo.slice(0, 180));
+    _spotifyPnl("Playlist non importata", "Non ho aggiunto canzoni", '<p class="step-hint">' + motivo + '</p>' +
+      '<button class="btn-main" id="spotifyErroreAccedi">Accedi con Spotify</button>' +
+      '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Chiudi</button>');
+    const accedi = $("spotifyErroreAccedi");
+    if (accedi) accedi.addEventListener("click", () => { _spotifyChiudi(); _spotifyMenu(); });
+    const chiudi = $("spotifyAnnulla");
+    if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
   }
-  const filtro = await _spotifyFiltraDoppioni(brani);
-  const uniche = filtro.lista;
-  const profilo = profile;
-  if (!uniche.length) {
-    _spotifyPnl("Playlist già presente", "0 nuovi brani",
-      '<p class="step-hint">Tutti i ' + brani.length + ' brani sono già in libreria oppure duplicati tra loro. Non ho aggiunto niente.</p>' +
-      '<button class="btn-main" id="spotifyAnnulla">Chiudi</button>');
-    $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
-    return;
-  }
-  let riga = '<p class="step-hint"><b>' + uniche.length + ' nuovi brani</b> da ' + profilo + '.</p>';
-  if (filtro.duplicati) riga += '<p class="step-hint">' + filtro.duplicati + ' saltati: erano già in libreria o duplicati nella playlist.</p>';
-  riga += '<p class="step-hint">Se il PC non è raggiungibile, la lista resta in coda sul telefono e viene ritentata automaticamente.</p>' +
-    '<button class="btn-main" id="spotifyManda">Scarica ' + uniche.length + ' brani</button>' +
-    '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Annulla</button>';
-  _spotifyPnl("Playlist pronta", uniche.length + " nuovi · " + filtro.duplicati + " saltati", riga);
-  $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
-  $("spotifyManda").addEventListener("click", () => { _spotifyMandaLista(uniche, profilo); });
 }
 
 /* Il passaggio vero: se il computer c'e' gliele mando subito, altrimenti le
    metto da parte e riprovo piu' tardi da sola. */
-async function _spotifyMandaLista(lista, profilo) {
+async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
   const filtro = await _spotifyFiltraDoppioni(lista);
+  const duplicatiTotali = Math.max(0, Number(duplicatiGiaSaltati) || 0) + (filtro.duplicati || 0);
   lista = filtro.lista;
   if (!lista.length) {
     _spotifyChiudi();
-    toast("Non ho aggiunto brani: erano tutti già in libreria o duplicati.", 6500);
+    toast("Non ho aggiunto brani: erano tutti già in libreria o duplicati. Duplicati saltati: " + duplicatiTotali + ".", 7000);
     return;
   }
-  if (filtro.duplicati) toast("Aggiungerò " + lista.length + " brani; " + filtro.duplicati + " duplicati saltati.", 6000);
+
   const chiave = "mb.codaSpotify";
-  /* Se il PC non risponde o la richiesta cade, non perdo la playlist:
-     la salvo sul telefono e la riprovo quando il ponte torna disponibile. */
   let giunto = false;
   try { giunto = await ponteOnline(); } catch (e) { giunto = false; }
   if (!giunto) {
     try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
     _spotifyChiudi();
-    toast("Computer non raggiungibile: " + lista.length + " canzoni in coda sul telefono, le invierò quando torna online", 7000);
+    toast("PC non raggiungibile dal programma: " + lista.length + " canzoni in coda; " + duplicatiTotali + " duplicati saltati. Riproverò quando il ponte sarà raggiungibile.", 8500);
     return;
   }
-  _spotifyPnl("Sto mandando al computer", lista.length + " canzoni", '<p class="step-hint">Un attimo...</p>');
+
+  _spotifyPnl("Sto mandando al computer", lista.length + " nuove · " + duplicatiTotali + " duplicati saltati",
+    '<p class="step-hint">L\'invio è partito. Il computer scarica i brani e li aggiunge alla libreria in background.</p>');
   try {
     const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
     const r = await fetch(base + "/spotify-lista", {
@@ -15270,24 +15308,27 @@ async function _spotifyMandaLista(lista, profilo) {
     let j = {};
     try { j = JSON.parse(testoRisposta || "{}"); } catch (e) { j = {}; }
     if (!r.ok || !j.ok || !j.id) {
-      /* Anche se il PC risponde con errore, non butto via la playlist:
-         la conservo e riprovo automaticamente, mostrando l'errore reale. */
       try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
-      const motivo = String((j && j.errore) || ("Il computer non ha accettato la lista (HTTP " + r.status + ").")).replace(/</g, "&lt;");
+      const motivo = String((j && j.errore) || ("Il computer non ha accettato la lista (HTTP " + r.status + ")."))
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       _spotifyPnl("Importazione non confermata", "", '<p class="step-hint">' + motivo +
-        '</p><p class="step-hint">Ho salvato ' + lista.length + ' brani in coda sul telefono e riproverò automaticamente. Se il programma sul PC è acceso ma non risponde, il collegamento al servizio non è attivo.</p>' +
-        '<button class="btn-main" id="spotifyChiudiCoda">Va bene</button>');
+        '</p><p class="step-hint">Ho salvato ' + lista.length + ' brani in coda. Duplicati saltati: ' + duplicatiTotali +
+        '. Riproverò quando il ponte sul PC risponderà.</p>' +
+        '<button class="btn-main" id="spotifyChiudiCoda">Chiudi</button>');
       const chiudiCoda = $("spotifyChiudiCoda");
       if (chiudiCoda) chiudiCoda.addEventListener("click", _spotifyChiudi);
       return;
     }
     _spotifyChiudi();
-    toast("Inviate " + lista.length + " canzoni al computer. L'importazione continua in background.", 6000);
+    toast("Inviate al PC " + lista.length + " canzoni; " + duplicatiTotali + " duplicati saltati. Controllo il download…", 7000);
     _spotifyControllaLavoro(j.id, lista.length);
   } catch (e) {
     try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e2) {}
-    _spotifyPnl("Lista salvata in coda", "", '<p class="step-hint">' +
-      lista.length + " canzoni salvate sul telefono. Non sono state perse: riproverò quando il computer sarà raggiungibile.</p>" +
+    const motivo = String((e && e.message) || "il programma ponte non risponde")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    _spotifyPnl("Lista salvata in coda", "", '<p class="step-hint">' + lista.length + " canzoni salvate in coda. " +
+      duplicatiTotali + " duplicati saltati. Errore: " + motivo +
+      ". Non sono perse: riproverò quando il computer sarà raggiungibile.</p>" +
       '<button class="btn-main" id="spotifyChiudiCoda">Va bene</button>');
     const chiudiCoda = $("spotifyChiudiCoda");
     if (chiudiCoda) chiudiCoda.addEventListener("click", _spotifyChiudi);
