@@ -188,7 +188,7 @@
     ".mb-fuoco.mb-fuoco-finale .mb-strato-char,.mb-fuoco.mb-fuoco-finale .mb-calore,.mb-fuoco.mb-fuoco-finale .mb-brasa,.mb-fuoco.mb-fuoco-finale .mb-fiamme,.mb-fuoco.mb-fuoco-finale .mb-bragia{opacity:0!important;transition:opacity .35s ease}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo{overflow:visible;opacity:1!important}",
     ".mb-fuoco.mb-fuoco-finale .mb-fumo i{animation-duration:7.2s;opacity:.52}",
-    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:62!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 4.8s cubic-bezier(.22,.58,.28,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
+    ".mb-cover-frammento{position:fixed!important;pointer-events:none!important;z-index:10000!important;margin:0!important;transform-origin:50% 50%;animation:mbCoverFragmentRise 4.8s cubic-bezier(.22,.58,.28,1) var(--mb-fragment-delay,0s) forwards!important;will-change:transform,opacity,filter}",
     "@keyframes mbCoverFragmentRise{0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) rotate(0) scale(1)}24%{opacity:1;filter:blur(.3px)}65%{opacity:.78;filter:blur(2px)}100%{opacity:0;filter:blur(12px);transform:translate3d(var(--mb-rise-x,0px),-210px,0) rotate(var(--mb-rotation,8deg)) scale(.28)}}",
     ".mb-cover-burnt{opacity:0!important}",
     ".mb-cover-reappear{animation:mbCoverReappear .72s ease-out both!important}",
@@ -648,6 +648,9 @@
 
   function avviaDissolvenza(art, box) {
     if (!art || art.dataset.mbOutro === "1") return;
+    /* La fine del brano puo' arrivare prima della creazione dell'overlay:
+       carico qui lo stile, altrimenti i frammenti esistono ma restano senza animazione. */
+    mettiStile();
     art.dataset.mbOutro = "1";
     var frammenti = frammentiCopertina(art);
     art.classList.add("mb-cover-burnt");
