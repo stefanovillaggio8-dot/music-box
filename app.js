@@ -10096,7 +10096,7 @@ $("fabMenu").addEventListener("click", (e) => {
       const controller = new AbortController();
       offlineAbort = controller;
       try {
-        await cacheTrack({ track: { url: brano.url }, state: "todo", label: "0%", el: null }, cache);
+        await cacheTrack({ track: brano, state: "todo", label: "0%", el: null }, cache);
       } finally {
         offlineAbort = mio;
       }
