@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.478";
+  const APP_VERSION = "6.479";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -14348,7 +14348,7 @@ const SPOTIFY_REDIRECT = "https://stefanovillaggio8-dot.github.io/music-box/";
      permesso. Chiedo quindi il pacchetto completo di quelli che servono
      per leggere le playlist (private, collaborative e il profilo), cosi'
      non dipende da cosa era stato concesso tanto tempo fa. */
-  const SPOTIFY_SCOPI = "playlist-read-private playlist-read-collaborative user-read-private user-read-email";
+  const SPOTIFY_SCOPI = "playlist-read-private playlist-read-collaborative user-read-private user-read-email user-library-read";
 
 let _spotifyAccess = null;
 /* All'avvio l'app controlla se il permesso di Spotify e' valido, ma non deve
@@ -14933,6 +14933,48 @@ async function _spotifyCompletaAccesso(code, stato) {
 /* I titoli veri della playlist: qui Spotify dà i nomi, che è quello che
    mi serve (l'audio poi lo cerco su YouTube). */
   async function _spotifyBrani(playlistId) {
+    /* I Brani che ti piacciono non sono una playlist: leggo la libreria
+       personale direttamente dall'endpoint Spotify, a pagine da 50. */
+    if (String(playlistId) === "__liked_tracks__") {
+      const braniSalvati = [];
+      let url = "/me/tracks?limit=50";
+      let totaleAtteso = null;
+      let vociRicevute = 0;
+      let pagina = 0;
+      while (url && pagina < 100) {
+        pagina++;
+        const j = await _spotifyApi(url);
+        if (!j) {
+          const dettaglio = _spotifyErrore === 403
+            ? "Spotify ha negato l'accesso ai Brani che ti piacciono. Ricollega Spotify e autorizza l'accesso ai contenuti salvati. " + String(_spotifyMotivo || "")
+            : "Non sono riuscito a leggere tutta la libreria Spotify (errore " + String(_spotifyErrore || "sconosciuto") + ").";
+          throw new Error(dettaglio.trim());
+        }
+        if (totaleAtteso === null) totaleAtteso = Number(j.total || 0);
+        const voci = Array.isArray(j.items) ? j.items : [];
+        vociRicevute += voci.length;
+        for (const it of voci) {
+          const t = it && it.track;
+          if (!t || !t.name || t.is_local) continue;
+          const chi = (t.artists || []).map((a) => a && a.name).filter(Boolean).join(", ");
+          if (!chi) continue;
+          braniSalvati.push(
+            t.name.replace(/\s+/g, " ").trim() + "|" +
+            chi.replace(/\s+/g, " ").trim()
+          );
+        }
+        url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
+      }
+      if (url) {
+        throw new Error("La libreria Spotify supera il limite di sicurezza di 5.000 voci. Non ho importato un elenco incompleto.");
+      }
+      if (totaleAtteso !== null && vociRicevute < totaleAtteso) {
+        throw new Error("Spotify ha restituito " + vociRicevute + " voci su " + totaleAtteso + ". Non ho avviato un'importazione incompleta.");
+      }
+      _spotifyTraccia("Brani che ti piacciono: lette " + vociRicevute + " voci, " + braniSalvati.length + " brani riconosciuti");
+      return braniSalvati;
+    }
+
     const brani = [];
     let totaleAtteso = 0;
     let timer = null;
@@ -15286,7 +15328,7 @@ function _spotifyParla(variabile, testo) {
     _spotifyTraccia("sto chiedendo a Spotify le tue playlist");
     const tutte = await _spotifyPlaylist();
     _spotifyTraccia("da Spotify: " + tutte.length + " playlist (errore " + _spotifyErrore + ")");
-    if (!tutte.length) {
+    if (!tutte.length && !_spotifyToken()) {
       /* Se mentre leggevo il token e' sparito (401 o 403), torno al
          collegamento invece di dare un avviso che non aiuta. */
       if (!_spotifyToken()) {
@@ -15339,20 +15381,21 @@ function _spotifyParla(variabile, testo) {
         '</p>');
       return;
     }
-  let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
-    'che hai gia\' non vengono copiate due volte.</p><div class="spotify-lista">';
-  for (const p of tutte) {
-    html += '<button class="spotify-riga" data-id="' + p.id + '">' +
-      '<span class="spotify-nome">' + p.nome + "</span>" +
-      '<span class="spotify-quante">' + p.canzoni + " canzoni" +
-      (p.privata ? " · privata" : "") + "</span></button>";
+  let html = '<p class="step-hint">Tocca i Brani che ti piacciono oppure una playlist da importare. I duplicati dentro la selezione vengono saltati.</p><div class="spotify-lista">';
+  const vociImportabili = [{ id: "__liked_tracks__", nome: "Brani che ti piacciono", personale: true }].concat(tutte);
+  for (const p of vociImportabili) {
+    html += '<button class="spotify-riga" data-id="' + _spotifySicuro(p.id) + '">' +
+      '<span class="spotify-nome">' + _spotifySicuro(p.nome) + "</span>" +
+      '<span class="spotify-quante">' +
+      (p.personale ? "Tutti i brani salvati nel tuo account" : p.canzoni + " canzoni" + (p.privata ? " · privata" : "")) +
+      "</span></button>";
   }
   html += "</div>" +
     '<button class="btn-main" id="spotifyEsci" style="margin-top:12px">Chiudi</button>' +
     '<p class="step-hint" style="margin-top:14px">Se Spotify continua a dire che l\'accesso non basta, stacca l\'app: ' +
     '<button class="btn-link" id="spotifyStacca" type="button">stacca Spotify da questo telefono</button>' +
     ' (e poi su Spotify: Account &gt; Privacy e sicurezza &gt; App &gt; MusicBox &gt; Rimuovi accesso).</p>';
-  _spotifyPnl("Le tue playlist", tutte.length + " playlist", html);
+  _spotifyPnl("Le tue playlist", tutte.length + " playlist · anche i Brani che ti piacciono", html);
 
   for (const b of document.querySelectorAll(".spotify-riga")) {
     b.addEventListener("click", () => { _spotifyImporta(b.getAttribute("data-id")); });
@@ -15419,7 +15462,8 @@ async function _spotifyFiltraDoppioni(lista, profiloControllo = profile) {
 }
 
 async function _spotifyImporta(playlistId) {
-  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Leggo tutti i brani e controllo i duplicati...</p>');
+  const fromLiked = String(playlistId) === "__liked_tracks__";
+  _spotifyPnl(fromLiked ? "Sto leggendo i Brani che ti piacciono" : "Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Leggo tutti i brani e controllo i duplicati...</p>');
   try {
     const brani = await _spotifyBrani(playlistId);
     if (!brani.length) {
@@ -15435,12 +15479,15 @@ async function _spotifyImporta(playlistId) {
 
     /* Prima di inviare mostro chiaramente la destinazione: cartella sul PC e profilo.
        Così non finisce in un profilo diverso da quello che l'utente sta guardando. */
+    const profiloPreferito = fromLiked
+      ? ((PROFILI.find((p) => /emanuele/i.test(String(p.nome))) || {}).nome || profile)
+      : profile;
     const opzioni = PROFILI.map((p) => {
-      const scelto = p.nome === profile ? " selected" : "";
+      const scelto = p.nome === profiloPreferito ? " selected" : "";
       return '<option value="' + p.nome + '"' + scelto + '>' + p.nome + ' — cartella ' + p.cartella + '</option>';
     }).join("");
     const pannello =
-      '<p class="step-hint">Ho letto ' + brani.length + ' voci dalla playlist. Scegli il profilo in cui salvare i brani sul PC: i duplicati saranno saltati.</p>' +
+      '<p class="step-hint">Ho letto ' + brani.length + ' voci ' + (fromLiked ? 'dai Brani che ti piacciono' : 'dalla playlist') + '. Scegli il profilo in cui salvare i brani sul PC: i duplicati saranno saltati.</p>' +
       '<label for="spotifyDestinazione" style="display:block;margin:12px 0 6px;font-weight:700">Dove salvarle?</label>' +
       '<select id="spotifyDestinazione" class="spotify-link-campo">' + opzioni + '</select>' +
       '<p id="spotifyImportaRiepilogo" class="step-hint" style="margin-top:10px">Controllo i duplicati...</p>' +
