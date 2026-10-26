@@ -15176,10 +15176,25 @@ function _spotifyRigaOggetto(riga) {
   const parti = String(riga || "").split("|");
   return { title: String(parti.shift() || "").trim(), artist: String(parti.join("|") || "").trim() };
 }
-function _spotifyFiltraDoppioni(lista) {
+async function _spotifyFiltraDoppioni(lista) {
   const tenuti = [];
   let duplicati = 0;
-  const giaPresenti = Array.isArray(tracks) ? tracks.filter(t => t && t.title) : [];
+  /* Controllo tutte le fonti, non solo le righe gia' disegnate a schermo:
+     IndexedDB puo' contenere brani appena importati che loadAll() non ha
+     ancora aggiunto a tracks. */
+  const giaPresenti = Array.isArray(tracks) ? tracks.filter(t => t && t.title).slice() : [];
+  try {
+    const locali = await dbAll();
+    for (const r of (locali || [])) {
+      if (!r || !r.title || (r.profile || DEFAULT_PROFILE) !== profile) continue;
+      if (!giaPresenti.some(t => stessoBrano(r, t))) giaPresenti.push(r);
+    }
+  } catch (e) { /* se IndexedDB non e' disponibile, uso la libreria visibile */ }
+  try {
+    for (const b of (BUILTIN || [])) {
+      if (b && b.title && !giaPresenti.some(t => stessoBrano(b, t))) giaPresenti.push(b);
+    }
+  } catch (e) { /* noop */ }
   for (const riga of (lista || [])) {
     const candidato = _spotifyRigaOggetto(riga);
     if (!candidato.title) continue;
@@ -15187,6 +15202,9 @@ function _spotifyFiltraDoppioni(lista) {
     const doppioNellaLista = tenuti.some(r => stessoBrano(candidato, _spotifyRigaOggetto(r)));
     if (doppioInLibreria || doppioNellaLista) { duplicati++; continue; }
     tenuti.push(candidato.title + "|" + candidato.artist);
+    /* Evita duplicati anche fra import ravvicinati mentre la libreria si
+       aggiorna: i brani selezionati entrano subito nell'insieme controllato. */
+    giaPresenti.push(candidato);
   }
   return { lista: tenuti, duplicati: duplicati };
 }
@@ -15198,7 +15216,7 @@ async function _spotifyImporta(playlistId) {
     _spotifyPnl("Playlist", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Riprova o controlla l'accesso a Spotify.</p>');
     return;
   }
-  const filtro = _spotifyFiltraDoppioni(brani);
+  const filtro = await _spotifyFiltraDoppioni(brani);
   const uniche = filtro.lista;
   const profilo = profile;
   if (!uniche.length) {
@@ -15221,7 +15239,7 @@ async function _spotifyImporta(playlistId) {
 /* Il passaggio vero: se il computer c'e' gliele mando subito, altrimenti le
    metto da parte e riprovo piu' tardi da sola. */
 async function _spotifyMandaLista(lista, profilo) {
-  const filtro = _spotifyFiltraDoppioni(lista);
+  const filtro = await _spotifyFiltraDoppioni(lista);
   lista = filtro.lista;
   if (!lista.length) {
     _spotifyChiudi();
