@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.477";
+  const APP_VERSION = "6.478";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -10811,6 +10811,7 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
 
 let _firmaLibreria = "";
 let _ultimoControllo = 0;
+let _ultimoControlloShaApp = 0;
 
 /* ---- Funzioni e contatori usati da piu' parti dell'app ----
    Prima stavano dentro altre funzioni (loadAll, render, init): da fuori non si
@@ -10903,6 +10904,7 @@ async function checkForNewSongs() {
     const ora = Date.now();
     if (ora - _ultimoControllo < 20000) return;
     _ultimoControllo = ora;
+    let firmaRemotaApp = "";
     checkingSongs = true;
     try {
       const catalogoLocaleAggiornato = await _aggiornaCatalogoLocaleDaDisco();
@@ -10923,8 +10925,28 @@ async function checkForNewSongs() {
              a ogni controllo. Se invece il conteggio dei brani e' diverso,
              c'e' davvero qualcosa di nuovo e voglio accorgermene subito. */
           if (stessi && Number(piccolo.brani || 0) === _quantiBraniOnline) {
-            _aggiornaEtichettaControllo();
-            return;
+            /* L'aggiunta di un brano modifica app.js ma, in passato, non sempre
+               aggiornava versione.json: il controllo leggero pensava che non
+               fosse cambiato nulla e non leggeva mai il nuovo catalogo.
+               Controllo l'hash dell'ultimo commit di app.js ogni 3 minuti:
+               se cambia, rileggo il catalogo anche con lo stesso conteggio. */
+            if (ora - _ultimoControlloShaApp < 180000) {
+              _aggiornaEtichettaControllo();
+              return;
+            }
+            try {
+              const meta = await fetch("https://api.github.com/repos/stefanovillaggio8-dot/music-box/commits?path=app.js&per_page=1", { cache: "no-store" });
+              if (meta.ok) {
+                const lista = await meta.json();
+                firmaRemotaApp = lista && lista[0] && lista[0].sha ? String(lista[0].sha) : "";
+                _ultimoControlloShaApp = ora;
+                const firmaVista = String(LS.get("mb.shaAppRemota", "") || "");
+                if (firmaRemotaApp && firmaRemotaApp === firmaVista) {
+                  _aggiornaEtichettaControllo();
+                  return;
+                }
+              }
+            } catch (e) { /* se GitHub API non risponde, controllo comunque app.js */ }
           }
         }
       } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
@@ -10933,6 +10955,9 @@ async function checkForNewSongs() {
       const text = await res.text();
       const canonico = parseBuiltinFrom(text);
       if (!canonico || !canonico.length) return;
+      if (firmaRemotaApp) {
+        try { LS.set("mb.shaAppRemota", firmaRemotaApp); } catch (e) {}
+      }
       const parsed = canonico.slice();
       const presentiNelRemoto = new Set(parsed.map(_chiaveCatalogoBrano));
       for (const b of (_catalogoLocaleCache || [])) {
