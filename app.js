@@ -6382,6 +6382,8 @@ async function addFiles(fileList) {
     let ok = 0;
     let giaInLista = 0;
     const errors = [];
+    const nuoviId = [];
+    const candidatiAggiunti = [];
     for (const file of Array.from(fileList)) {
       const rec = {
         id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
@@ -6391,16 +6393,23 @@ async function addFiles(fileList) {
         blob: file,
         size: file.size
       };
+      /* Controllo la libreria e anche i file selezionati insieme: niente copie. */
+      if (giaInLibreria(rec) || candidatiAggiunti.some(t => stessoBrano(rec, t))) {
+        giaInLista++;
+        continue;
+      }
       try {
         await dbPut(rec);
         ok++;
+        nuoviId.push(rec.id);
+        candidatiAggiunti.push(rec);
       } catch (e) {
         errors.push(file.name);
       }
     }
     if (ok) {
       await loadAll();
-      const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
+      const fresh = tracks.filter((t) => nuoviId.includes(t.id));
       /* Se il brano era gia' nella libreria condivisa non lo metto due volte
          (la riga condivisa basta). Ma allora lo dico: prima non diceva niente
          e sembrava che il file si fosse perso. */
@@ -6408,14 +6417,17 @@ async function addFiles(fileList) {
         if (eGiaCondiviso({ title: t.title, artist: t.artist })) giaInLista++;
       }
       const parti = [];
-      const nuovi = ok - giaInLista;
+      const condivisiGiaPresenti = fresh.filter(t => eGiaCondiviso({ title: t.title, artist: t.artist })).length;
+      const nuovi = ok - condivisiGiaPresenti;
       if (nuovi > 0) parti.push(nuovi === 1 ? "1 brano aggiunto" : nuovi + " brani aggiunti");
       if (giaInLista > 0) {
         parti.push(giaInLista === 1
           ? "1 era gia nella libreria, non l'ho ripetuto"
           : giaInLista + " erano gia nella libreria, non li ho ripetuti");
       }
-      toast(parti.join(" e ") + ": solo per " + profile);
+      if (giaInLista > 0) parti.push(giaInLista + " duplicati saltati");
+      if (errors.length) parti.push(errors.length + " file non letti");
+      toast((parti.length ? parti.join(" e ") : "Nessun nuovo brano") + ": solo per " + profile);
       /* vado subito al brano nuovo, cosi lo vede: prima finiva in fondo alla
          lista e sembrava non comparire. */
       const daMostrare = fresh.find((t) => !eGiaCondiviso({ title: t.title, artist: t.artist }));
@@ -13557,7 +13569,7 @@ await loadAll();
       setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _caricaStatoCondiviso(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
-  setInterval(() => { _aggiornaCoda(); }, 120000);
+  setInterval(() => { _aggiornaCoda(); _spotifyRiprovaCoda(); }, 15000);
   /* Rileggo lo stato condiviso un paio di volte dopo l'avvio: il sito puo'
      essere indietro di qualche minuto, e un nome salvato adesso sul PC o sul
      telefono deve comparire senza aspettare il riavvio. */
@@ -14768,7 +14780,9 @@ async function _spotifyCompletaAccesso(code, stato) {
            anche l'API Spotify per recuperare gli eventuali brani mancanti.
            Se non conosce il totale, mantengo il comportamento rapido di prima. */
         const totaleServizio = Number(j.totale || j.total || (j.tracks && j.tracks.total) || 0);
-        if (brani.length && (!totaleServizio || brani.length >= totaleServizio)) return brani;
+        /* Se il totale non è dichiarato, provo comunque l'API Spotify e unisco
+           i risultati: il servizio può aver restituito una playlist parziale. */
+        if (brani.length && totaleServizio > 0 && brani.length >= totaleServizio) return brani;
       }
     } catch (e) { /* il server non risponde: uso le API */ }
     let url = "/playlists/" + playlistId + "/tracks?limit=100";
@@ -15162,30 +15176,48 @@ function _spotifyParla(variabile, testo) {
 }
 
 /* Leggo la lista e la mando al computer. */
+function _spotifyRigaOggetto(riga) {
+  const parti = String(riga || "").split("|");
+  return { title: String(parti.shift() || "").trim(), artist: String(parti.join("|") || "").trim() };
+}
+function _spotifyFiltraDoppioni(lista) {
+  const tenuti = [];
+  let duplicati = 0;
+  const giaPresenti = Array.isArray(tracks) ? tracks.filter(t => t && t.title) : [];
+  for (const riga of (lista || [])) {
+    const candidato = _spotifyRigaOggetto(riga);
+    if (!candidato.title) continue;
+    const doppioInLibreria = giaPresenti.some(t => stessoBrano(candidato, t));
+    const doppioNellaLista = tenuti.some(r => stessoBrano(candidato, _spotifyRigaOggetto(r)));
+    if (doppioInLibreria || doppioNellaLista) { duplicati++; continue; }
+    tenuti.push(candidato.title + "|" + candidato.artist);
+  }
+  return { lista: tenuti, duplicati: duplicati };
+}
+
 async function _spotifyImporta(playlistId) {
   _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Prendo i titoli...</p>');
   const brani = await _spotifyBrani(playlistId);
   if (!brani.length) {
-    _spotifyPnl("Playlist", "", '<p class="step-hint">Questa playlist non ha brani che posso usare.</p>');
+    _spotifyPnl("Playlist", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Riprova o controlla l'accesso a Spotify.</p>');
     return;
   }
-  /* Tolgo subito i doppioni interni: due brani uguali nella stessa lista non
-     mi servono due volte. */
-  const visti = new Set();
-  const uniche = [];
-  for (const b of brani) {
-    const k = b.toLowerCase();
-    if (visti.has(k)) continue;
-    visti.add(k);
-    uniche.push(b);
-  }
+  const filtro = _spotifyFiltraDoppioni(brani);
+  const uniche = filtro.lista;
   const profilo = profile;
-  const riga = '<p class="step-hint"><b>' + uniche.length + " canzoni</b> da " +
-    profilo + ".</p><p class=\"step-hint\">Se il computer e' spento non e' un " +
-    "problema: restano in coda e partono quando lo accendi.</p>" +
-    '<button class="btn-main" id="spotifyManda">Scarica ora</button>' +
+  if (!uniche.length) {
+    _spotifyPnl("Playlist già presente", "0 nuovi brani",
+      '<p class="step-hint">Tutti i ' + brani.length + ' brani sono già in libreria oppure duplicati tra loro. Non ho aggiunto niente.</p>' +
+      '<button class="btn-main" id="spotifyAnnulla">Chiudi</button>');
+    $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
+    return;
+  }
+  let riga = '<p class="step-hint"><b>' + uniche.length + ' nuovi brani</b> da ' + profilo + '.</p>';
+  if (filtro.duplicati) riga += '<p class="step-hint">' + filtro.duplicati + ' saltati: erano già in libreria o duplicati nella playlist.</p>';
+  riga += '<p class="step-hint">Se il PC non è raggiungibile, la lista resta in coda sul telefono e viene ritentata automaticamente.</p>' +
+    '<button class="btn-main" id="spotifyManda">Scarica ' + uniche.length + ' brani</button>' +
     '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Annulla</button>';
-  _spotifyPnl("Playlist pronta", uniche.length + " canzoni", riga);
+  _spotifyPnl("Playlist pronta", uniche.length + " nuovi · " + filtro.duplicati + " saltati", riga);
   $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
   $("spotifyManda").addEventListener("click", () => { _spotifyMandaLista(uniche, profilo); });
 }
@@ -15193,6 +15225,14 @@ async function _spotifyImporta(playlistId) {
 /* Il passaggio vero: se il computer c'e' gliele mando subito, altrimenti le
    metto da parte e riprovo piu' tardi da sola. */
 async function _spotifyMandaLista(lista, profilo) {
+  const filtro = _spotifyFiltraDoppioni(lista);
+  lista = filtro.lista;
+  if (!lista.length) {
+    _spotifyChiudi();
+    toast("Non ho aggiunto brani: erano tutti già in libreria o duplicati.", 6500);
+    return;
+  }
+  if (filtro.duplicati) toast("Aggiungerò " + lista.length + " brani; " + filtro.duplicati + " duplicati saltati.", 6000);
   const chiave = "mb.codaSpotify";
   /* Se il PC non risponde o la richiesta cade, non perdo la playlist:
      la salvo sul telefono e la riprovo quando il ponte torna disponibile. */
@@ -15234,25 +15274,36 @@ async function _spotifyMandaLista(lista, profilo) {
 }
 
 /* Se il computer era spento, quando si accende riprovo da sola. */
+let _spotifyInvioCodaInCorso = false;
 async function _spotifyRiprovaCoda() {
+  if (_spotifyInvioCodaInCorso) return;
   let coda = null;
   try { coda = LS.get("mb.codaSpotify", null); } catch (e) {}
   if (!coda || !coda.lista || !coda.lista.length) return;
-  if (!(await ponteOnline())) return;
+  _spotifyInvioCodaInCorso = true;
   try {
-    const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+    if (!(await ponteOnline())) return;
+    const base = await trovaPonte();
+    if (!base) return;
     const r = await fetch(base + "/spotify-lista", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ profilo: coda.profilo, lista: coda.lista })
     });
-    if (r.ok) {
-      const j = await r.json();
+    const testo = await r.text();
+    let j = {};
+    try { j = JSON.parse(testo || "{}"); } catch (e) {}
+    /* Non svuoto la coda se il servizio risponde HTTP 200 ma non accetta
+       davvero la lista: altrimenti i brani spariscono senza essere importati. */
+    if (r.ok && j && j.ok && j.id) {
       LS.remove("mb.codaSpotify");
-      toast("Ripresa la lista che aspettava: " + coda.lista.length + " canzoni", 6000);
+      toast("Lista inviata al PC: " + coda.lista.length + " brani. Controllo l'importazione…", 6000);
       _spotifyControllaLavoro(j.id, coda.lista.length);
+    } else if (r.ok && j && j.errore) {
+      segnalaErrore("Spotify lista in coda: " + String(j.errore).slice(0, 140));
     }
-  } catch (e) { /* noop */ }
+  } catch (e) { /* la coda resta salvata: ritento più tardi */ }
+  finally { _spotifyInvioCodaInCorso = false; }
 }
 
 /* Chiedo come sta andando, cosi' Ste non resta a pensare che sia finito. */
