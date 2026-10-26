@@ -1,14 +1,35 @@
 $ErrorActionPreference = "Stop"
 
-# Aggiorna solo i file del programma. Non modifica songs/, playlist.json,
-# covers.json, lyrics.json, stato.json o altri dati personali.
+# Aggiorna il codice dalla versione comune e mantiene anche le canzoni
+# registrate SOLO nel catalogo del PC. Non tocca i file audio o i dati personali.
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $Root = (Get-Location).Path
+$NL = [Environment]::NewLine
 $Required = @("index.html", "app.js")
 foreach ($Name in $Required) {
     if (-not (Test-Path (Join-Path $Root $Name) -PathType Leaf)) {
         throw "Cartella sbagliata: apri PowerShell nella cartella /app che contiene index.html e app.js. Cartella attuale: $Root"
     }
+}
+
+function Get-TrackEntries([string]$Source) {
+    $Start = $Source.IndexOf("const BUILTIN = [")
+    if ($Start -lt 0) { return @() }
+    $End = $Source.IndexOf("];", $Start)
+    if ($End -lt 0) { return @() }
+    $Block = $Source.Substring($Start, $End - $Start)
+    $Pattern = '\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs/track-\d+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"(?:,\s*profile:\s*"((?:[^"\\]|\\.)*)")?\s*\}'
+    $Found = [regex]::Matches($Block, $Pattern)
+    $Items = New-Object System.Collections.Generic.List[object]
+    foreach ($Match in $Found) {
+        $Profile = $Match.Groups[4].Value
+        if ([string]::IsNullOrWhiteSpace($Profile)) { $Profile = "Ste" }
+        $Items.Add([pscustomobject]@{
+            Text = $Match.Value
+            Key = ($Profile + "|" + $Match.Groups[2].Value)
+        })
+    }
+    return $Items.ToArray()
 }
 
 $Base = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main"
@@ -33,12 +54,46 @@ try {
         }
     }
 
-    $VersionInfo = Get-Content (Join-Path $Stage "versione.json") -Raw | ConvertFrom-Json
-    $AppSource = Get-Content (Join-Path $Stage "app.js") -Raw
+    $AppPath = Join-Path $Stage "app.js"
+    $AppSource = Get-Content $AppPath -Raw
+    $VersionPath = Join-Path $Stage "versione.json"
+    $VersionInfo = Get-Content $VersionPath -Raw | ConvertFrom-Json
     $VersionMatch = [regex]::Match($AppSource, 'const APP_VERSION = "([^"]+)"')
     if (-not $VersionMatch.Success -or $VersionMatch.Groups[1].Value -ne [string]$VersionInfo.versione) {
         throw "Le versioni di app.js e versione.json non coincidono. Non ho sostituito i file."
     }
+
+    # Unisco il catalogo remoto con quello già presente sul PC.
+    # Le voci remote vincono se lo stesso profilo/file esiste in entrambe le copie;
+    # le canzoni solo locali vengono conservate.
+    $RemoteEntries = @(Get-TrackEntries $AppSource)
+    $LocalSource = Get-Content (Join-Path $Root "app.js") -Raw
+    $LocalEntries = @(Get-TrackEntries $LocalSource)
+    if ($RemoteEntries.Count -eq 0) {
+        throw "Non riesco a leggere il catalogo dei brani dal codice nuovo. Non ho sostituito i file."
+    }
+
+    $Seen = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
+    $Combined = New-Object System.Collections.Generic.List[string]
+    foreach ($Entry in (@($RemoteEntries) + @($LocalEntries))) {
+        if ($Seen.Add([string]$Entry.Key)) { $Combined.Add([string]$Entry.Text) }
+    }
+
+    $CatalogStart = $AppSource.IndexOf("const BUILTIN = [")
+    $CatalogEnd = $AppSource.IndexOf("];", $CatalogStart)
+    if ($CatalogStart -lt 0 -or $CatalogEnd -lt 0) {
+        throw "Non riesco a trovare il catalogo nel codice nuovo. Non ho sostituito i file."
+    }
+    $NewCatalog = "const BUILTIN = [" + $NL + "  " + ($Combined -join ("," + $NL + "  ")) + $NL + "  ];"
+    $AppSource = $AppSource.Substring(0, $CatalogStart) + $NewCatalog + $AppSource.Substring($CatalogEnd + 2)
+    [System.IO.File]::WriteAllText($AppPath, $AppSource, [System.Text.UTF8Encoding]::new($false))
+
+    # Il contatore include le canzoni conservate dal catalogo locale,
+    # così l'app le rileva appena si riapre.
+    $VersionInfo.brani = $Combined.Count
+    $VersionInfo.aggiornato = [DateTime]::UtcNow.ToString("o")
+    $VersionContent = ($VersionInfo | ConvertTo-Json -Depth 10) + $NL
+    [System.IO.File]::WriteAllText($VersionPath, $VersionContent, [System.Text.UTF8Encoding]::new($false))
 
     New-Item -ItemType Directory -Path $Backup | Out-Null
     foreach ($Name in $Files) {
@@ -55,10 +110,12 @@ try {
     }
 
     $UpdateComplete = $true
+    $LocalOnly = $Combined.Count - $RemoteEntries.Count
     Write-Host ""
     Write-Host ("Music Box aggiornato alla versione " + $VersionInfo.versione) -ForegroundColor Green
+    Write-Host ("Catalogo finale: " + $Combined.Count + " brani; voci conservate solo dal PC: " + $LocalOnly)
     Write-Host ("Backup dei file precedenti: " + $Backup)
-    Write-Host "Non ho modificato brani, playlist, copertine o dati personali."
+    Write-Host "Non ho modificato songs/, playlist.json, covers.json, lyrics.json, stato.json o altri dati personali."
     Write-Host "Ora ricarica la pagina /app/ con Ctrl+F5."
 }
 catch {
