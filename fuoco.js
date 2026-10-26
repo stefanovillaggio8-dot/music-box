@@ -269,7 +269,8 @@
   function stratoChar(a) {
     return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">' +
       '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + a.path + '" fill="#1b1611" filter="url(#mbGrana)"/>' +
-      '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + a.path + '" fill="#080707" opacity=".72"/>' +
+      /* Maschera nera completamente opaca: nessun bordo della copertina deve trasparire. */
+      '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + a.path + '" fill="#080707" opacity="1"/>' +
       '<path d="' + a.path + '" fill="none" stroke="#6b5847" stroke-width="3.4"' +
         ' stroke-linejoin="round" filter="url(#mbCenere)" opacity=".55"/>' +
       '<path d="' + a.path + '" fill="none" stroke="#191411" stroke-width="1.1"' +
