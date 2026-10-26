@@ -15642,6 +15642,65 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
   }
 }
 
+
+/* Importa il file YourLibrary.json scaricato da Spotify.
+   Usa il ponte esistente sul PC, quindi non richiede le API Spotify né Premium. */
+async function _spotifyImportaEsportazioneFile(file) {
+  if (!file) return;
+  try { _spotifySilenzioso = false; } catch (e) {}
+  _spotifyPnl("Leggo l'esportazione Spotify", file.name || "YourLibrary.json",
+    '<p class="step-hint">Sto leggendo la libreria esportata...</p>');
+  try {
+    const dati = JSON.parse(await file.text());
+    const possibiliListe = [
+      dati && dati.tracks,
+      dati && dati.saved_tracks,
+      dati && dati.savedTracks,
+      dati && dati.YourLibrary && dati.YourLibrary.tracks,
+      dati && dati.yourLibrary && dati.yourLibrary.tracks,
+      Array.isArray(dati) ? dati : null
+    ];
+    const sorgente = possibiliListe.find(Array.isArray);
+    if (!sorgente) {
+      throw new Error("Questo file non contiene una lista di brani riconosciuta. Scegli YourLibrary.json estratto dall'esportazione Spotify.");
+    }
+    const righe = [];
+    for (const voce of sorgente) {
+      if (!voce || typeof voce !== "object") continue;
+      const traccia = voce.track && typeof voce.track === "object" ? voce.track : voce;
+      const titolo = String(
+        (typeof voce.track === "string" ? voce.track : "") ||
+        traccia.name || traccia.title || voce.title || voce.track_name || ""
+      ).replace(/\\s+/g, " ").trim();
+      let artisti = voce.artist || voce.artists || traccia.artist || traccia.artists || voce.creator || "";
+      if (Array.isArray(artisti)) {
+        artisti = artisti.map((a) => typeof a === "string" ? a : (a && (a.name || a.artist)) || "").filter(Boolean).join(", ");
+      } else if (artisti && typeof artisti === "object") {
+        artisti = String(artisti.name || artisti.artist || "");
+      }
+      artisti = String(artisti || "").replace(/\\s+/g, " ").trim();
+      if (titolo && artisti) righe.push(titolo + "|" + artisti);
+    }
+    if (!righe.length) {
+      throw new Error("Non ho trovato brani con titolo e artista. Usa YourLibrary.json, non la cronologia degli ascolti.");
+    }
+    const destinazione = (PROFILI.find((p) => /emanuele/i.test(String(p.nome))) || {}).nome;
+    if (!destinazione) throw new Error("Non trovo il profilo Emanuele nella configurazione della Music Box.");
+    _spotifyTraccia("JSON Spotify letto: " + righe.length + " brani; avvio l'importazione verso " + destinazione);
+    _spotifyPnl("Importo la libreria Spotify", righe.length + " righe lette",
+      '<p class="step-hint">Destinazione: Emanuele. Controllo i doppioni e invio i brani al computer.</p>');
+    await _spotifyMandaLista(righe, destinazione, 0);
+  } catch (e) {
+    const motivo = String((e && e.message) || e || "errore sconosciuto")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    _spotifyPnl("Esportazione non importata", "",
+      '<p class="step-hint">' + motivo + '</p><button class="btn-main" id="spotifyJsonChiudi">Chiudi</button>');
+    const chiudi = $("spotifyJsonChiudi");
+    if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
+  }
+}
+try { window._spotifyImportaEsportazioneFile = _spotifyImportaEsportazioneFile; } catch (e) {}
+
 /* Se il computer era spento, quando si accende riprovo da sola. */
 let _spotifyInvioCodaInCorso = false;
 async function _spotifyRiprovaCoda() {
