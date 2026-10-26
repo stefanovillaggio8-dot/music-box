@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.476";
+  const APP_VERSION = "6.477";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -10003,39 +10003,44 @@ $("fabMenu").addEventListener("click", (e) => {
       return [];
     }
     const rows = [];
-  /* Dopo gli aggiornamenti i brani possono stare nelle cache precedenti. */
-  let chiaviCache = [];
-  try { chiaviCache = await caches.keys(); } catch (e) {}
-  const cacheDisponibili = [cache];
-  for (const chiave of chiaviCache) {
-    if (chiave === cacheBraniName()) continue;
-    try { cacheDisponibili.push(await caches.open(chiave)); } catch (e) {}
-  }
-  for (const t of tracks) {
-    if (!t.url) {
-      rows.push({ title: t.title, state: "err", label: "URL mancante", el: null, track: t });
-      continue;
+    const cacheDisponibili = [cache];
+    try { cacheDisponibili.push(await streamCache()); } catch (e) {}
+    /* La cache storica globale appartiene solo al profilo principale. */
+    if (profile === DEFAULT_PROFILE) {
+      for (const nome of [CACHE_PREFIX + "-brani", CACHE_PREFIX + "-stream"]) {
+        try { cacheDisponibili.push(await caches.open(nome)); } catch (e) {}
+      }
     }
-    let cached = false;
-    const indirizzi = [t.url, absUrl(t.url)];
-    try {
+    for (const t of tracks) {
+      if (!t || !t.url) {
+        rows.push({ title: t && t.title || "Brano senza nome", state: "err", label: "URL mancante", el: null, track: t });
+        continue;
+      }
+      /* I brani importati sono già conservati in IndexedDB: il loro URL blob
+         è locale e non va riscaricato né segnato come mancante. */
+      if (/^blob:/i.test(String(t.url))) {
+        rows.push({ title: t.title, url: t.url, id: t.id, state: "ok", label: "pronta", el: null, track: t });
+        continue;
+      }
+      let cached = false;
+      const indirizzi = [t.url, absUrl(t.url)];
       for (const c of cacheDisponibili) {
+        if (!c) continue;
         for (const indirizzo of indirizzi) {
-          if (await c.match(indirizzo)) { cached = true; break; }
+          try { if (await c.match(indirizzo)) { cached = true; break; } } catch (e) {}
         }
         if (cached) break;
       }
-    } catch (e) { cached = false; }
-    rows.push({
-      title: t.title,
-      url: t.url,
-      id: t.id,
-      state: cached ? "ok" : "todo",
-      label: cached ? "pronta" : "da scaricare",
-      el: null,
-      track: t
-    });
-  }
+      rows.push({
+        title: t.title,
+        url: t.url,
+        id: t.id,
+        state: cached ? "ok" : "todo",
+        label: cached ? "pronta" : "da scaricare",
+        el: null,
+        track: t
+      });
+    }
     renderOfflineRows(rows);
     const mancanti = rows.filter((r) => r.state === "todo").length;
     $("offlineSub").textContent = mancanti
@@ -10072,7 +10077,7 @@ $("fabMenu").addEventListener("click", (e) => {
       if (suiDati) return;
       const cache = await appCache();
       if (!cache) return;
-      const gia = await cache.match(brano.url);
+      const gia = await cache.match(absUrl(brano.url)) || await cache.match(brano.url);
       if (gia) return;
       /* Non supero il tetto di spazio. */
       const tetto = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
@@ -10110,6 +10115,7 @@ $("fabMenu").addEventListener("click", (e) => {
       offlineAbort = controller;
       try {
         await cacheTrack({ track: brano, state: "todo", label: "0%", el: null }, cache);
+        await refreshCachedSongs();
       } finally {
         offlineAbort = mio;
       }
@@ -10475,6 +10481,7 @@ $("fabMenu").addEventListener("click", (e) => {
     } else {
       toast("Fatto: " + fatto + " canzoni pronte offline");
     }
+    await refreshCachedSongs();
     await scanOffline();
   }
 
@@ -10563,32 +10570,41 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
 
   async function refreshCachedSongs() {
-    /* Ste: "diego aveva scaricato le canzoni, ha chiuso l'app e una volta
-       riaperta doveva di nuovo scaricarle".
-
-       Motivo: qui guardavo solo la cache della versione corrente. Ma le
-       canzoni scaricate possono stare in una cache vecchia (per esempio
-       se l'aggiornamento e' appena successo e il service worker non ha
-       ancora migrato i brani), e allora l'app non le vedeva e le
-       ridownloadava.
-
-       Adesso guardo TUTTE le cache, come fa il service worker quando
-       serve un brano. */
+    /* Il filtro deve usare SOLO i download del profilo aperto.
+       Prima leggeva tutte le cache del telefono: i brani di altri account
+       facevano risultare scaricata tutta la libreria. */
     const set = new Set();
+    const cacheDaControllare = [];
     try {
-      const chiavi = await caches.keys();
-      for (const chiave of chiavi) {
-        let cache = null;
-        try { cache = await caches.open(chiave); } catch (e) { continue; }
-        let reqs = [];
-        try { reqs = await cache.keys(); } catch (e) { continue; }
-        for (const r of reqs) {
-          let nome = "";
-          try { nome = new URL(r.url).pathname; } catch (e) { nome = r.url; }
-          if (/\.mp3$/i.test(nome)) set.add(r.url);
+      if (!("caches" in window)) { cachedSongs = set; render(); return; }
+      cacheDaControllare.push(await caches.open(cacheBraniName()));
+      cacheDaControllare.push(await caches.open(cacheStreamName()));
+      /* Migrazione compatibile: la vecchia cache globale vale solo per Ste. */
+      if (profile === DEFAULT_PROFILE) {
+        for (const nome of [CACHE_PREFIX + "-brani", CACHE_PREFIX + "-stream"]) {
+          try { cacheDaControllare.push(await caches.open(nome)); } catch (e) {}
         }
       }
-    } catch (e) { /* niente cache: pazienza */ }
+      for (const t of tracks) {
+        if (!t || !t.url) continue;
+        if (/^blob:/i.test(String(t.url))) {
+          set.add(t.url);
+          continue;
+        }
+        const indirizzi = [t.url, absUrl(t.url)];
+        let trovato = false;
+        for (const cache of cacheDaControllare) {
+          for (const indirizzo of indirizzi) {
+            try { if (await cache.match(indirizzo)) { trovato = true; break; } } catch (e) {}
+          }
+          if (trovato) break;
+        }
+        if (trovato) {
+          set.add(t.url);
+          set.add(absUrl(t.url));
+        }
+      }
+    } catch (e) { /* nessuna cache leggibile */ }
     cachedSongs = set;
     render();
   }
