@@ -15388,7 +15388,7 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
     let j = {};
     try { j = JSON.parse(testoRisposta || "{}"); } catch (e) { j = {}; }
     if (!r.ok || !j.ok || !j.id) {
-      try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
+      try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e) {}
       const motivo = String((j && j.errore) || ("Il computer non ha accettato la lista (HTTP " + r.status + ")."))
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       _spotifyPnl("Importazione non confermata", "", '<p class="step-hint">' + motivo +
@@ -15406,7 +15406,7 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
       " già presenti/duplicati saltati. Controllo il download…", 7500);
     _spotifyControllaLavoro(j.id, lista.length, duplicatiTotali, profilo);
   } catch (e) {
-    try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e2) {}
+    try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e2) {}
     const motivo = String((e && e.message) || "il programma ponte non risponde")
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     _spotifyPnl("Lista salvata in coda", "", '<p class="step-hint">' + lista.length + " canzoni salvate in coda. " +
