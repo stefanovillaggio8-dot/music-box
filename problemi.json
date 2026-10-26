@@ -1,25 +1,5 @@
 [
  {
-  "t": 1793047085447,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793047099040,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793047099047,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793047099046,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793047100265,
-  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
   "t": 1793047100266,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
@@ -156,7 +136,27 @@
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
  {
-  "t": 1793048910255,
+  "t": 1793048910220,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793048911777,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793048911777,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793048911774,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793048940627,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793048940606,
+  "r": "worker /stato: risponde"
  }
 ]
