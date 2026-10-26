@@ -6380,8 +6380,7 @@ async function _chiediDoveMandare(fresh) {
 
 async function addFiles(fileList) {
     let ok = 0;
-    let duplicatiSaltati = 0;
-    let giaCondivisi = 0;
+    let giaInLista = 0;
     const errors = [];
     const nuoviId = [];
     const candidatiAggiunti = [];
@@ -6396,7 +6395,7 @@ async function addFiles(fileList) {
       };
       /* Controllo la libreria e anche i file selezionati insieme: niente copie. */
       if (giaInLibreria(rec) || candidatiAggiunti.some(t => stessoBrano(rec, t))) {
-        duplicatiSaltati++;
+        giaInLista++;
         continue;
       }
       try {
@@ -6408,13 +6407,29 @@ async function addFiles(fileList) {
         errors.push(file.name);
       }
     }
-    let fresh = [];
     if (ok) {
       await loadAll();
-      fresh = tracks.filter((t) => nuoviId.includes(t.id));
+      const fresh = tracks.filter((t) => nuoviId.includes(t.id));
+      /* Se il brano era gia' nella libreria condivisa non lo metto due volte
+         (la riga condivisa basta). Ma allora lo dico: prima non diceva niente
+         e sembrava che il file si fosse perso. */
       for (const t of fresh) {
-        if (eGiaCondiviso({ title: t.title, artist: t.artist })) giaCondivisi++;
+        if (eGiaCondiviso({ title: t.title, artist: t.artist })) giaInLista++;
       }
+      const parti = [];
+      const condivisiGiaPresenti = fresh.filter(t => eGiaCondiviso({ title: t.title, artist: t.artist })).length;
+      const nuovi = ok - condivisiGiaPresenti;
+      if (nuovi > 0) parti.push(nuovi === 1 ? "1 brano aggiunto" : nuovi + " brani aggiunti");
+      if (giaInLista > 0) {
+        parti.push(giaInLista === 1
+          ? "1 era gia nella libreria, non l'ho ripetuto"
+          : giaInLista + " erano gia nella libreria, non li ho ripetuti");
+      }
+      if (giaInLista > 0) parti.push(giaInLista + " duplicati saltati");
+      if (errors.length) parti.push(errors.length + " file non letti");
+      toast((parti.length ? parti.join(" e ") : "Nessun nuovo brano") + ": solo per " + profile);
+      /* vado subito al brano nuovo, cosi lo vede: prima finiva in fondo alla
+         lista e sembrava non comparire. */
       const daMostrare = fresh.find((t) => !eGiaCondiviso({ title: t.title, artist: t.artist }));
       if (daMostrare) {
         setTimeout(() => {
@@ -6429,17 +6444,172 @@ async function addFiles(fileList) {
           } catch (e) { /* pazienza */ }
         }, 300);
       }
-      for (const t of fresh) enrichTrack(t.id);
-      try { _recentementeAggiunto = true; condividiBraniLocali(true); } catch (e) { /* non blocca l'aggiunta */ }
+for (const t of fresh) enrichTrack(t.id);
+      /* Segno che sto condividendo un brano appena aggiunto: se il computer
+         non risponde l'app lo dice, altrimenti l'utente cerca il brano nella
+         libreria (che e' sul computer) e non lo trova mai. */
+try { _recentementeAggiunto = true; condividiBraniLocali(true); } catch (e) { /* non blocca l'aggiunta */ }
+        /* Ste: dopo aver aggiunto un file non compariva piu' la scelta
+           "manda al computer / manda al servizio", e restava con la musica
+           solo sul telefono senza saperlo. Gliela chiedo, con tre uscite:
+           col computer, col servizio (funziona anche a PC spento), o lasciare
+           qui e basta. */
+        _chiediDoveMandare(fresh);
+      }
+    if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
+  }
+
+
+/* Toglie dalla memoria del telefono tutto quello che riguarda un brano:
+     il file audio, l'import, i testi, la copertina che avevo cercato, la
+     coda. Serve dopo aver eliminato un brano, cosi' non resta niente. */
+async function _dimenticaBranoOvunque(id) {
+  const uri = "songs/track-" + String(id).replace(/^b-track-/, "") + ".mp3";
+  try { await dbDel(id); } catch (e) { /* noop */ }
+  try { await dbDelImport(id); } catch (e) { /* noop */ }
+  try {
+    const tx = db.transaction(DB_LYRICS, "readwrite");
+    tx.objectStore(DB_LYRICS).delete(id);
+  } catch (e) { /* noop */ }
+  try {
+    const tx = db.transaction(DB_COVERS, "readwrite");
+    tx.objectStore(DB_COVERS).delete(id);
+  } catch (e) { /* noop */ }
+  delete localLyrics[id];
+  const i = queue.indexOf(id);
+  if (i >= 0) queue.splice(i, 1);
+  /* e dalla copia che il telefono tiene per quando non c'e' rete */
+  try {
+    const chiavi = await caches.keys();
+    for (const k of chiavi) {
+      const c = await caches.open(k);
+      await c.delete(new URL(uri, location.href).href);
+      await c.delete(location.origin + "/" + uri);
+      await c.delete(location.origin + "/music-box/" + uri);
     }
-    const nuovi = ok - giaCondivisi;
-    const parti = [];
-    if (nuovi > 0) parti.push(nuovi === 1 ? "1 brano aggiunto" : nuovi + " brani aggiunti");
-    const saltatiTotali = duplicatiSaltati + giaCondivisi;
-    if (saltatiTotali > 0) parti.push(saltatiTotali + " duplicati saltati perché già presenti");
-    if (errors.length) parti.push(errors.length + " file non letti");
-    toast((parti.length ? parti.join("; ") : "Nessun nuovo brano") + ": solo per " + profile);
+  } catch (e) { /* noop */ }
 }
+
+async function removeTrack(id) {
+  const t = tracks.find((x) => x.id === id);
+  if (!t) return;
+  const cheCartella = cartellaDi(profile);
+  /* Prima provo a farlo davvero sul computer: cancellare il file e
+     toglierlo dal sito. Se il computer non e' raggiungibile non fingono
+     niente: dico che il file resta e lascio decidere a te. */
+  let fattoSulPc = false;
+  let motivo = "";
+  const collegato = await ponteOnline();
+  if (collegato && cheCartella && t.url && /^songs\/track-\d+\.mp3$/.test(t.url)) {
+    try {
+      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
+      const r = await fetch(base + "/elimina", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file: t.url, cartella: cheCartella, pubblica: true })
+      });
+      const j = await r.json().catch(() => ({}));
+if (r.ok && j && j.ok) {
+          fattoSulPc = true;
+          /* Il computer puo' aver tolto il brano dal sito ma non quello
+             nella cartella (se non ha trovato un file sicuramente identico).
+             In quel caso l'utente deve saperlo, altrimenti crede che
+             l'eliminazione sia a posto e il brano ricompare. */
+          if (j.avviso) motivo = String(j.avviso);
+        } else motivo = String((j && j.errore) || "non sono riuscito");
+    } catch (e) {
+      motivo = "il computer non ha risposto";
+    }
+  } else if (!collegato) {
+    motivo = "il computer non e' raggiungibile";
+  }
+
+  if (!fattoSulPc) {
+    const si = await askConfirm(
+      "Non posso cancellare il file",
+      "Il programma sul computer " + (motivo || "non e' raggiungibile") + ".\n\n" +
+      "Posso togliere il brano dalla libreria di questo telefono, ma il file mp3 resta sul computer.\n\n" +
+      "La canzone pero' NON tornera': l'ho segnata come eliminata, e questa segnalazione va su tutti i link.\n\n" +
+      "Vuoi toglierlo comunque?",
+      "Togli comunque"
+    );
+    /* Ste: "se premo annulla lo elimina lo stesso".
+       Prima questo "return" non diceva niente a chi aveva chiamato, che
+       continuava a toglierlo. Ora dico chiaramente: non ho fatto niente. */
+    if (!si) return false;
+  } else {
+    /* Se il brano e' anche in una playlist, chiedo dove toglierlo: solo
+       dalla libreria (l'bagno per davvero rimane nelle playlist? no: allora
+       niente), solo dalle playlist, o da entrambe. */
+    const nellePlaylist = _playlistCheContengono(id);
+    if (nellePlaylist.length) {
+      const scelta = await _scegliCosaTogliere(id, t.title || "", true);
+      if (!scelta) return;
+      if (scelta === "playlist") {
+        for (const nome of nellePlaylist) {
+          const pl = _playlistCercata(nome);
+          if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+        }
+        saveCurrentState();
+        _salvaPlaylistCondivise();
+        renderPlaylist();
+        _aggiornaBadgePlaylist();
+        toast("Tolto dalle playlist, ma resta nella libreria e sul sito");
+        return true;
+      }
+      /* sia "libreria" che "entrambe": le playlist si svuotano comunque,
+         altrimenti resterebbero con un brano che non esiste piu' */
+      for (const nome of nellePlaylist) {
+        const pl = _playlistCercata(nome);
+        if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
+      }
+      saveCurrentState();
+      _salvaPlaylistCondivise();
+    }
+    const si = await askConfirm(
+      "Eliminare per sempre?",
+      "\"" + (t.title || "") + "\" verra' cancellato:\n" +
+      "- il file mp3 dal computer\n" +
+      "- il brano dalla libreria di questo computer\n" +
+      "- il brano dal sito, quindi sparisce anche dagli altri dispositivi\n\n" +
+      "Non si puo' piu' recuperare. Il testo e la copertina spariscono con lui.",
+      "Elimina per sempre"
+    );
+    if (!si) return false;
+  }
+
+  if (currentId === id) {
+    try { audio.pause(); } catch (e) { /* noop */ }
+    closeLyrics();
+    currentId = null;
+    setHud();
+  }
+  await _dimenticaBranoOvunque(id);
+  /* anche dai preferiti, dai nascosti e dalle statistiche */
+  try {
+    const st = profileState(profile);
+    const patch = {};
+    if (Array.isArray(st.favs)) patch.favs = st.favs.filter((x) => x !== id);
+    if (Array.isArray(st.hidden)) patch.hidden = st.hidden.filter((x) => x !== id);
+      try { favorites.delete(id); } catch (e) { /* noop */ }
+      try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
+      writeProfileState(profile, patch);
+      /* Anche "rimettili in lista" va sul sito, altrimenti dall'altra
+         scorciatoia il brano resterebbe nascosto. */
+      _salvaStatoCondiviso();
+    const st2 = statisticheProfilo();
+    const c = _chiaveStats(t);
+    if (c && st2[c]) {
+      delete st2[c];
+      _salvaStatistiche();
+    }
+  } catch (e) { /* noop */ }
+  await loadAll();
+  render();
+  toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefono");
+  return true;
+}
+
   function stripVariants(s) {
     return normText(s)
       .replace(/\b(live|remastered|remaster|explicit|version|edit|remix|cover|instrumental|acoustic|medley|karaoke|strumentale)\b/g, " ")
