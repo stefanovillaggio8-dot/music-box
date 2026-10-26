@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793045175983,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793045176009,
   "r": "SPOTIFY: [v6.412] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793045238787,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793045296305,
+  "r": "worker /stato: risponde"
  }
 ]
