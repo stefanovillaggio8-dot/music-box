@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.473";
+  const APP_VERSION = "6.474";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -10151,7 +10151,7 @@ $("fabMenu").addEventListener("click", (e) => {
          possono essere già su GitHub ma non ancora sincronizzati sul PC. */
       try {
         const casa = _collegamentoDiCasa();
-        if (casa) aggiungi(casa.replace(/\\/+$/, "") + "/app/" + file);
+        if (casa) aggiungi(casa.replace(/\/+$/, "") + "/app/" + file);
       } catch (e) { /* provo comunque online */ }
       aggiungi(BRANI_ONLINE + file);
     }
