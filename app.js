@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.466";
+  const APP_VERSION = "6.467";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -10136,6 +10136,31 @@ $("fabMenu").addEventListener("click", (e) => {
     } catch (e) { return 0; }
   }
 
+  /* Se il file nuovo non e' ancora nel deposito online, prova la copia
+     sul PC di casa (quando il collegamento e' configurato). La cache usa
+     comunque l'URL pubblico originale, cosi' il player lo ritrova dopo. */
+  async function _fetchBranoDaScaricare(track, url, options) {
+    let risposta = null;
+    try { risposta = await fetch(url, options); } catch (e) { /* provo il PC */ }
+    if (risposta && risposta.ok) return risposta;
+    const file = String((track && track.file) || "").replace(/^\\/+/, "");
+    if (file) {
+      try {
+        const casa = _collegamentoDiCasa();
+        if (casa) {
+          const locale = casa.replace(/\\/+$/, "") + "/app/" + file;
+          if (locale !== url) {
+            const alternativa = await fetch(locale, options);
+            if (alternativa && alternativa.ok) return alternativa;
+            if (!risposta && alternativa) risposta = alternativa;
+          }
+        }
+      } catch (e) { /* nessuna copia raggiungibile sul PC */ }
+    }
+    if (risposta) return risposta;
+    throw new Error("File non raggiungibile online né dal PC di casa");
+  }
+
   async function cacheTrack(row, cache) {
     const url = row.track.url;
     row.state = "run";
@@ -10145,7 +10170,7 @@ $("fabMenu").addEventListener("click", (e) => {
       row.el.state.textContent = "0%";
     }
     try {
-      const res = await fetch(url, { signal: offlineAbort.signal });
+      const res = await _fetchBranoDaScaricare(row.track, url, { signal: offlineAbort.signal });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const total = Number(res.headers.get("content-length") || 0);
       let blob;
