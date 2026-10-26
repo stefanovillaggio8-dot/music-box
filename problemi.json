@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792974703391,
-  "r": "visibili 209 su 209 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792974708477,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792974708477,
   "r": "worker /stato: risponde"
  },
@@ -157,6 +149,14 @@
  },
  {
   "t": 1792974816592,
+  "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974816595,
+  "r": "FINALE: visibili 215 su 242 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792974818596,
   "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
