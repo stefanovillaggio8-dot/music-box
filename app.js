@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.460";
+  const APP_VERSION = "6.461";
 
   /* La pagina locale carica il codice principale da GitHub per non restare
      indietro di decine di versioni. Se non c'e' rete usa i file locali. */
@@ -15233,7 +15233,10 @@ async function _spotifyFiltraDoppioni(lista, profiloControllo = profile) {
   } catch (e) { /* continuo con la libreria online e il contenuto incluso */ }
   try {
     for (const b of (BUILTIN || [])) {
-      if (b && b.title && !giaPresenti.some(t => stessoBrano(b, t))) giaPresenti.push(b);
+      /* I brani degli altri profili non sono duplicati per la destinazione scelta:
+         Ste può avere una canzone e Ari può volerla aggiungere anche nella sua cartella. */
+      if (!b || !b.title || (b.profile || DEFAULT_PROFILE) !== destinazione) continue;
+      if (!giaPresenti.some(t => stessoBrano(b, t))) giaPresenti.push(b);
     }
   } catch (e) { /* noop */ }
   for (const riga of (lista || [])) {
