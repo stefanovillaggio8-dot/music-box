@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.470";
+  const APP_VERSION = "6.471";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -13624,7 +13624,13 @@ const st = $("statoSpotify");
     try { loadLyrics(); } catch (e) { /* i testi non sono indispensabili */ }
     try { loadCovers(); } catch (e) { /* neanche le copertine */ }
     if (db) await loadLocalLyrics();
-await loadAll();
+/* Non lasciare bloccato TUTTO l'avvio se una richiesta online resta appesa.
+       loadAll continua in background: il limite serve solo a far installare
+       subito i gestori dei pulsanti. Se termina tardi, aggiorna comunque la libreria. */
+    await Promise.race([
+      loadAll(),
+      new Promise((resolve) => setTimeout(resolve, 7000))
+    ]);
     /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente
        dove l'avevo lasciata. */
     _ripristinaPuntoLibreria();
