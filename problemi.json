@@ -1,9 +1,5 @@
 [
  {
-  "t": 1792974582910,
-  "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792974583110,
   "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1792974615388,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974618489,
+  "r": "worker /stato: risponde"
  }
 ]
