@@ -15598,55 +15598,114 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
 
 /* Importa il file YourLibrary.json scaricato da Spotify.
    Usa il ponte esistente sul PC, quindi non richiede le API Spotify né Premium. */
+function _spotifyParseCSV(testo) {
+  const testoPulito = String(testo || "").replace(/^\uFEFF/, "");
+  const primaRiga = (testoPulito.split(/\r?\n/).find((r) => r.trim()) || "");
+  const virgole = (primaRiga.match(/,/g) || []).length;
+  const puntiEVirgola = (primaRiga.match(/;/g) || []).length;
+  const separatore = puntiEVirgola > virgole ? ";" : ",";
+  const righe = [];
+  let riga = [];
+  let campo = "";
+  let inVirgolette = false;
+  for (let i = 0; i < testoPulito.length; i++) {
+    const ch = testoPulito[i];
+    if (ch === '"') {
+      if (inVirgolette && testoPulito[i + 1] === '"') {
+        campo += '"';
+        i++;
+      } else {
+        inVirgolette = !inVirgolette;
+      }
+    } else if (ch === separatore && !inVirgolette) {
+      riga.push(campo); campo = "";
+    } else if ((ch === "\n" || ch === "\r") && !inVirgolette) {
+      if (ch === "\r" && testoPulito[i + 1] === "\n") i++;
+      riga.push(campo);
+      if (riga.some((x) => String(x || "").trim())) righe.push(riga);
+      riga = []; campo = "";
+    } else {
+      campo += ch;
+    }
+  }
+  if (campo.length || riga.length) {
+    riga.push(campo);
+    if (riga.some((x) => String(x || "").trim())) righe.push(riga);
+  }
+  return righe;
+}
+function _spotifyNormalizzaIntestazioneCSV(valore) {
+  return String(valore || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
 async function _spotifyImportaEsportazioneFile(file) {
   if (!file) return;
   try { _spotifySilenzioso = false; } catch (e) {}
-  _spotifyPnl("Leggo l'esportazione Spotify", file.name || "YourLibrary.json",
+  _spotifyPnl("Leggo l'esportazione", file.name || "file Spotify",
     '<p class="step-hint">Sto leggendo la libreria esportata...</p>');
   try {
-    const dati = JSON.parse(await file.text());
-    const possibiliListe = [
-      dati && dati.tracks,
-      dati && dati.saved_tracks,
-      dati && dati.savedTracks,
-      dati && dati.YourLibrary && dati.YourLibrary.tracks,
-      dati && dati.yourLibrary && dati.yourLibrary.tracks,
-      Array.isArray(dati) ? dati : null
-    ];
-    const sorgente = possibiliListe.find(Array.isArray);
-    if (!sorgente) {
-      throw new Error("Questo file non contiene una lista di brani riconosciuta. Scegli YourLibrary.json estratto dall'esportazione Spotify.");
-    }
+    const testo = await file.text();
     const righe = [];
-    for (const voce of sorgente) {
-      if (!voce || typeof voce !== "object") continue;
-      const traccia = voce.track && typeof voce.track === "object" ? voce.track : voce;
-      const titolo = String(
-        (typeof voce.track === "string" ? voce.track : "") ||
-        traccia.name || traccia.title || voce.title || voce.track_name || ""
-      ).replace(/\s+/g, " ").trim();
-      let artisti = voce.artist || voce.artists || traccia.artist || traccia.artists || voce.creator || "";
-      if (Array.isArray(artisti)) {
-        artisti = artisti.map((a) => typeof a === "string" ? a : (a && (a.name || a.artist)) || "").filter(Boolean).join(", ");
-      } else if (artisti && typeof artisti === "object") {
-        artisti = String(artisti.name || artisti.artist || "");
+    const isCSV = /\.csv$/i.test(String(file.name || "")) || /text\/csv/i.test(String(file.type || ""));
+    if (isCSV) {
+      const tabella = _spotifyParseCSV(testo);
+      if (tabella.length < 2) throw new Error("Il CSV non contiene righe di brani.");
+      const intestazioni = tabella[0].map(_spotifyNormalizzaIntestazioneCSV);
+      const trovaColonna = (nomi) => intestazioni.findIndex((n) => nomi.includes(n));
+      const colTitolo = trovaColonna(["track name", "track", "title", "song name", "song", "name"]);
+      const colArtista = trovaColonna(["artist name s", "artist names", "artists names", "artist name", "artist", "artists", "artist s"]);
+      if (colTitolo < 0 || colArtista < 0) {
+        throw new Error("Non riconosco le colonne titolo e artista. Usa il CSV esportato da Spotify/Exportify.");
       }
-      artisti = String(artisti || "").replace(/\s+/g, " ").trim();
-      if (titolo && artisti) righe.push(titolo + "|" + artisti);
+      for (let i = 1; i < tabella.length; i++) {
+        const titolo = String(tabella[i][colTitolo] || "").replace(/\s+/g, " ").trim();
+        const artista = String(tabella[i][colArtista] || "").replace(/\s+/g, " ").trim();
+        if (titolo && artista) righe.push(titolo + "|" + artista);
+      }
+    } else {
+      const dati = JSON.parse(testo);
+      const possibiliListe = [
+        dati && dati.tracks,
+        dati && dati.saved_tracks,
+        dati && dati.savedTracks,
+        dati && dati.YourLibrary && dati.YourLibrary.tracks,
+        dati && dati.yourLibrary && dati.yourLibrary.tracks,
+        Array.isArray(dati) ? dati : null
+      ];
+      const sorgente = possibiliListe.find(Array.isArray);
+      if (!sorgente) {
+        throw new Error("Il JSON non contiene una lista di brani riconosciuta. Scegli YourLibrary.json oppure un CSV con titolo e artista.");
+      }
+      for (const voce of sorgente) {
+        if (!voce || typeof voce !== "object") continue;
+        const traccia = voce.track && typeof voce.track === "object" ? voce.track : voce;
+        const titolo = String(
+          (typeof voce.track === "string" ? voce.track : "") ||
+          traccia.name || traccia.title || voce.title || voce.track_name || ""
+        ).replace(/\s+/g, " ").trim();
+        let artisti = voce.artist || voce.artists || traccia.artist || traccia.artists || voce.creator || "";
+        if (Array.isArray(artisti)) {
+          artisti = artisti.map((a) => typeof a === "string" ? a : (a && (a.name || a.artist)) || "").filter(Boolean).join(", ");
+        } else if (artisti && typeof artisti === "object") {
+          artisti = String(artisti.name || artisti.artist || "");
+        }
+        artisti = String(artisti || "").replace(/\s+/g, " ").trim();
+        if (titolo && artisti) righe.push(titolo + "|" + artisti);
+      }
     }
     if (!righe.length) {
-      throw new Error("Non ho trovato brani con titolo e artista. Usa YourLibrary.json, non la cronologia degli ascolti.");
+      throw new Error("Non ho trovato brani con titolo e artista. Controlla di aver scelto il file giusto.");
     }
     const destinazione = (PROFILI.find((p) => /emanuele/i.test(String(p.nome))) || {}).nome;
     if (!destinazione) throw new Error("Non trovo il profilo Emanuele nella configurazione della Music Box.");
-    _spotifyTraccia("JSON Spotify letto: " + righe.length + " brani; avvio l'importazione verso " + destinazione);
-    _spotifyPnl("Importo la libreria Spotify", righe.length + " righe lette",
+    _spotifyTraccia("Esportazione letta: " + righe.length + " brani; invio verso " + destinazione);
+    _spotifyPnl("Importo la libreria", righe.length + " brani letti",
       '<p class="step-hint">Destinazione: Emanuele. Controllo i doppioni e invio i brani al computer.</p>');
     await _spotifyMandaLista(righe, destinazione, 0);
   } catch (e) {
     const motivo = String((e && e.message) || e || "errore sconosciuto")
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    _spotifyPnl("Esportazione non importata", "",
+    _spotifyPnl("File non importato", "",
       '<p class="step-hint">' + motivo + '</p><button class="btn-main" id="spotifyJsonChiudi">Chiudi</button>');
     const chiudi = $("spotifyJsonChiudi");
     if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
