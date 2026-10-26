@@ -664,7 +664,16 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.443";
+  const APP_VERSION = "6.460";
+
+  /* La pagina locale carica il codice principale da GitHub per non restare
+     indietro di decine di versioni. Se non c'e' rete usa i file locali. */
+  function _urlCodiceFile(nome, cacheBust) {
+    const remoto = typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github";
+    const base = remoto ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" : "";
+    return base + nome + (cacheBust !== undefined && cacheBust !== null
+      ? "?t=" + encodeURIComponent(String(cacheBust)) : "");
+  }
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -10775,7 +10784,7 @@ async function checkForNewSongs() {
       /* Primo il file leggero: se la versione e' quella che ho gia', ho
          finito e non scarico nient'altro. */
       try {
-        const risposta = await fetch("versione.json?t=" + ora, { cache: "no-store" });
+        const risposta = await fetch(_urlCodiceFile("versione.json", ora), { cache: "no-store" });
         if (risposta.ok) {
           const piccolo = await risposta.json();
           const mia = String(typeof APP_VERSION !== "undefined" ? APP_VERSION : "");
@@ -10790,7 +10799,7 @@ async function checkForNewSongs() {
           }
         }
       } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
-      const res = await fetch("app.js", { cache: "no-store" });
+      const res = await fetch(_urlCodiceFile("app.js", ora), { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
@@ -13796,7 +13805,7 @@ function _segnalaBarraVersione() {
    copia vecchia, quindi l'aggiornamento riesce al primo tocco. */
 function _controllaSeSonoVecchio() {
     try {
-      fetch("./versione.json", { cache: "no-store" })
+      fetch(_urlCodiceFile("versione.json", Date.now()), { cache: "no-store" })
         .then((r) => (r && r.ok ? r.json() : null))
         .then((d) => {
           if (!d || !d.versione) return;
@@ -15208,20 +15217,20 @@ function _spotifyRigaOggetto(riga) {
   const parti = String(riga || "").split("|");
   return { title: String(parti.shift() || "").trim(), artist: String(parti.join("|") || "").trim() };
 }
-async function _spotifyFiltraDoppioni(lista) {
+async function _spotifyFiltraDoppioni(lista, profiloControllo = profile) {
   const tenuti = [];
   let duplicati = 0;
-  /* Controllo tutte le fonti, non solo le righe gia' disegnate a schermo:
-     IndexedDB puo' contenere brani appena importati che loadAll() non ha
-     ancora aggiunto a tracks. */
-  const giaPresenti = Array.isArray(tracks) ? tracks.filter(t => t && t.title).slice() : [];
+  const destinazione = String(profiloControllo || profile || DEFAULT_PROFILE);
+  /* La destinazione conta: non devo scartare un brano perché esiste nel
+     profilo attualmente aperto, se l'utente ha scelto un altro profilo. */
+  const giaPresenti = [];
   try {
     const locali = await dbAll();
     for (const r of (locali || [])) {
-      if (!r || !r.title || (r.profile || DEFAULT_PROFILE) !== profile) continue;
+      if (!r || !r.title || (r.profile || DEFAULT_PROFILE) !== destinazione) continue;
       if (!giaPresenti.some(t => stessoBrano(r, t))) giaPresenti.push(r);
     }
-  } catch (e) { /* se IndexedDB non e' disponibile, uso la libreria visibile */ }
+  } catch (e) { /* continuo con la libreria online e il contenuto incluso */ }
   try {
     for (const b of (BUILTIN || [])) {
       if (b && b.title && !giaPresenti.some(t => stessoBrano(b, t))) giaPresenti.push(b);
@@ -15230,19 +15239,19 @@ async function _spotifyFiltraDoppioni(lista) {
   for (const riga of (lista || [])) {
     const candidato = _spotifyRigaOggetto(riga);
     if (!candidato.title) continue;
-    const doppioInLibreria = giaPresenti.some(t => stessoBrano(candidato, t));
-    const doppioNellaLista = tenuti.some(r => stessoBrano(candidato, _spotifyRigaOggetto(r)));
-    if (doppioInLibreria || doppioNellaLista) { duplicati++; continue; }
+    const doppio = giaPresenti.some(t => stessoBrano(candidato, t)) ||
+      tenuti.some(r => stessoBrano(candidato, _spotifyRigaOggetto(r)));
+    if (doppio) { duplicati++; continue; }
     tenuti.push(candidato.title + "|" + candidato.artist);
-    /* Evita duplicati anche fra import ravvicinati mentre la libreria si
-       aggiorna: i brani selezionati entrano subito nell'insieme controllato. */
+    /* Aggiungo subito al set virtuale: due righe uguali della stessa playlist
+       non possono passare entrambe prima che la libreria venga aggiornata. */
     giaPresenti.push(candidato);
   }
   return { lista: tenuti, duplicati: duplicati };
 }
 
 async function _spotifyImporta(playlistId) {
-  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Leggo i brani e controllo i duplicati...</p>');
+  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Leggo tutti i brani e controllo i duplicati...</p>');
   try {
     const brani = await _spotifyBrani(playlistId);
     if (!brani.length) {
@@ -15255,20 +15264,87 @@ async function _spotifyImporta(playlistId) {
       if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
       return;
     }
-    const filtro = await _spotifyFiltraDoppioni(brani);
-    const uniche = filtro.lista;
-    const profilo = profile;
-    if (!uniche.length) {
-      _spotifyPnl("Playlist già presente", "0 nuovi brani",
-        '<p class="step-hint">Ho controllato ' + brani.length + ' brani: erano già in libreria oppure duplicati tra loro. Non ho aggiunto copie.</p>' +
-        '<button class="btn-main" id="spotifyAnnulla">Chiudi</button>');
-      $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
+
+    /* Prima di inviare mostro chiaramente la destinazione: cartella sul PC e profilo.
+       Così non finisce in un profilo diverso da quello che l'utente sta guardando. */
+    const opzioni = PROFILI.map((p) => {
+      const scelto = p.nome === profile ? " selected" : "";
+      return '<option value="' + p.nome + '"' + scelto + '>' + p.nome + ' — cartella ' + p.cartella + '</option>';
+    }).join("");
+    const pannello =
+      '<p class="step-hint">Ho letto ' + brani.length + ' voci dalla playlist. Scegli il profilo in cui salvare i brani sul PC: i duplicati saranno saltati.</p>' +
+      '<label for="spotifyDestinazione" style="display:block;margin:12px 0 6px;font-weight:700">Dove salvarle?</label>' +
+      '<select id="spotifyDestinazione" class="spotify-link-campo">' + opzioni + '</select>' +
+      '<p id="spotifyImportaRiepilogo" class="step-hint" style="margin-top:10px">Controllo i duplicati...</p>' +
+      '<p class="step-hint">I brani compariranno nella libreria del profilo scelto. Se poi stai guardando un altro profilo, cambialo dalla libreria.</p>' +
+      '<button class="btn-main" id="spotifyConfermaImport" disabled>Controllo in corso...</button>' +
+      '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Annulla</button>';
+    _spotifyPnl("Scegli dove salvare", brani.length + " brani letti", pannello);
+
+    const selettore = $("spotifyDestinazione");
+    const riepilogo = $("spotifyImportaRiepilogo");
+    const conferma = $("spotifyConfermaImport");
+    const annulla = $("spotifyAnnulla");
+    if (annulla) annulla.addEventListener("click", _spotifyChiudi);
+    if (!selettore || !riepilogo || !conferma) {
+      _spotifyPnl("Errore importazione", "", '<p class="step-hint">Non riesco a mostrare la scelta della cartella. Ricarica la pagina e riprova.</p>');
       return;
     }
 
-    /* Un clic deve bastare: «Importa questa playlist» avvia subito l'invio al PC. */
-    _spotifyTraccia("playlist pronta: " + uniche.length + " nuove, " + filtro.duplicati + " duplicati saltati; avvio invio al PC");
-    await _spotifyMandaLista(uniche, profilo, filtro.duplicati);
+    let revisione = 0;
+    let invioInCorso = false;
+    async function aggiornaRiepilogo() {
+      const questaRevisione = ++revisione;
+      conferma.disabled = true;
+      riepilogo.textContent = "Controllo i brani già presenti...";
+      try {
+        const filtro = await _spotifyFiltraDoppioni(brani, selettore.value);
+        if (questaRevisione !== revisione) return;
+        const destinazione = PROFILI.find(p => p.nome === selettore.value);
+        const cartella = destinazione ? destinazione.cartella : selettore.value;
+        riepilogo.textContent = brani.length + " voci lette · " + filtro.lista.length +
+          " nuove per " + selettore.value + " (cartella " + cartella + ") · " +
+          filtro.duplicati + " già presenti o duplicati saltati.";
+        conferma.textContent = filtro.lista.length
+          ? "Importa " + filtro.lista.length + " canzoni in " + selettore.value
+          : "Nessuna canzone nuova per " + selettore.value;
+        conferma.disabled = filtro.lista.length === 0;
+      } catch (e) {
+        if (questaRevisione !== revisione) return;
+        riepilogo.textContent = "Non sono riuscito a controllare i duplicati. " + String((e && e.message) || e);
+        conferma.textContent = "Riprova il controllo";
+        conferma.disabled = false;
+      }
+    }
+    selettore.addEventListener("change", () => { aggiornaRiepilogo(); });
+    conferma.addEventListener("click", async () => {
+      if (invioInCorso) return;
+      invioInCorso = true;
+      conferma.disabled = true;
+      selettore.disabled = true;
+      conferma.textContent = "Preparo l'importazione...";
+      try {
+        const destinazione = selettore.value;
+        const filtro = await _spotifyFiltraDoppioni(brani, destinazione);
+        if (!filtro.lista.length) {
+          invioInCorso = false;
+          selettore.disabled = false;
+          await aggiornaRiepilogo();
+          return;
+        }
+        _spotifyTraccia("conferma playlist: " + filtro.lista.length + " nuove, " +
+          filtro.duplicati + " saltate, profilo " + destinazione);
+        await _spotifyMandaLista(filtro.lista, destinazione, filtro.duplicati);
+      } catch (e) {
+        invioInCorso = false;
+        selettore.disabled = false;
+        const motivo = String((e && e.message) || "errore sconosciuto");
+        riepilogo.textContent = "Non ho inviato le canzoni: " + motivo;
+        conferma.disabled = false;
+        conferma.textContent = "Riprova";
+      }
+    });
+    await aggiornaRiepilogo();
   } catch (e) {
     const motivo = String((e && e.message) || "errore sconosciuto")
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -15286,7 +15362,7 @@ async function _spotifyImporta(playlistId) {
 /* Il passaggio vero: se il computer c'e' gliele mando subito, altrimenti le
    metto da parte e riprovo piu' tardi da sola. */
 async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
-  const filtro = await _spotifyFiltraDoppioni(lista);
+  const filtro = await _spotifyFiltraDoppioni(lista, profilo);
   const duplicatiTotali = Math.max(0, Number(duplicatiGiaSaltati) || 0) + (filtro.duplicati || 0);
   lista = filtro.lista;
   if (!lista.length) {
@@ -15299,9 +15375,12 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
   let giunto = false;
   try { giunto = await ponteOnline(); } catch (e) { giunto = false; }
   if (!giunto) {
-    try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
+    try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e) {}
     _spotifyChiudi();
-    toast("PC non raggiungibile dal programma: " + lista.length + " canzoni in coda; " + duplicatiTotali + " duplicati saltati. Riproverò quando il ponte sarà raggiungibile.", 8500);
+    const dest = PROFILI.find(p => p.nome === profilo);
+    toast("PC non raggiungibile: " + lista.length + " canzoni in coda per " + profilo +
+      " (cartella " + (dest ? dest.cartella : profilo) + "); " + duplicatiTotali +
+      " già presenti/duplicati saltati. Riproverò quando il PC risponde.", 8500);
     return;
   }
 
@@ -15318,7 +15397,7 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
     let j = {};
     try { j = JSON.parse(testoRisposta || "{}"); } catch (e) { j = {}; }
     if (!r.ok || !j.ok || !j.id) {
-      try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
+      try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e) {}
       const motivo = String((j && j.errore) || ("Il computer non ha accettato la lista (HTTP " + r.status + ")."))
         .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       _spotifyPnl("Importazione non confermata", "", '<p class="step-hint">' + motivo +
@@ -15330,10 +15409,13 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
       return;
     }
     _spotifyChiudi();
-    toast("Inviate al PC " + lista.length + " canzoni; " + duplicatiTotali + " duplicati saltati. Controllo il download…", 7000);
-    _spotifyControllaLavoro(j.id, lista.length);
+    const dest = PROFILI.find(p => p.nome === profilo);
+    toast("Inviate al PC " + lista.length + " canzoni per " + profilo + " (cartella " +
+      (dest ? dest.cartella : profilo) + "); " + duplicatiTotali +
+      " già presenti/duplicati saltati. Controllo il download…", 7500);
+    _spotifyControllaLavoro(j.id, lista.length, duplicatiTotali, profilo);
   } catch (e) {
-    try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e2) {}
+    try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e2) {}
     const motivo = String((e && e.message) || "il programma ponte non risponde")
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     _spotifyPnl("Lista salvata in coda", "", '<p class="step-hint">' + lista.length + " canzoni salvate in coda. " +
@@ -15369,8 +15451,11 @@ async function _spotifyRiprovaCoda() {
        davvero la lista: altrimenti i brani spariscono senza essere importati. */
     if (r.ok && j && j.ok && j.id) {
       LS.remove("mb.codaSpotify");
-      toast("Lista inviata al PC: " + coda.lista.length + " brani. Controllo l'importazione…", 6000);
-      _spotifyControllaLavoro(j.id, coda.lista.length);
+      const dest = PROFILI.find(p => p.nome === coda.profilo);
+      toast("Lista inviata al PC: " + coda.lista.length + " canzoni per " +
+        (coda.profilo || "profilo predefinito") + " (cartella " + (dest ? dest.cartella : (coda.profilo || "?")) +
+        "). " + (Number(coda.duplicati) || 0) + " già presenti/duplicati saltati. Controllo il download…", 7000);
+      _spotifyControllaLavoro(j.id, coda.lista.length, Number(coda.duplicati) || 0, coda.profilo);
     } else if (r.ok && j && j.errore) {
       segnalaErrore("Spotify lista in coda: " + String(j.errore).slice(0, 140));
     }
@@ -15379,8 +15464,13 @@ async function _spotifyRiprovaCoda() {
 }
 
 /* Chiedo come sta andando, cosi' Ste non resta a pensare che sia finito. */
-async function _spotifyControllaLavoro(id, totale) {
+async function _spotifyControllaLavoro(id, totale, duplicatiSaltati = 0, profilo = profile) {
   let tentativi = 0;
+  const destinazione = PROFILI.find(p => p.nome === profilo);
+  const cartella = destinazione ? destinazione.cartella : String(profilo || "?");
+  const notaDuplicati = Number(duplicatiSaltati) > 0
+    ? " " + Number(duplicatiSaltati) + " brani saltati perché già presenti o duplicati."
+    : "";
   const guarda = async () => {
     if (tentativi++ > 400) return;
     let j = null;
@@ -15392,14 +15482,21 @@ async function _spotifyControllaLavoro(id, totale) {
     if (!j) { setTimeout(guarda, 4000); return; }
     const fatto = Number(j.fatto || 0);
     if (j.stati === "fatto") {
-      toast("Fatto: " + fatto + " canzoni scaricate e messe in libreria", 8000);
+      let messaggio = "Importazione finita: " + fatto + " canzoni scaricate nella cartella " +
+        cartella + " (profilo " + profilo + ")." + notaDuplicati;
+      if (fatto < Number(totale || 0)) {
+        messaggio += " Attenzione: " + (Number(totale) - fatto) +
+          " canzoni nuove non risultano scaricate; controlla gli errori del programma sul PC.";
+      }
+      toast(messaggio, 10000);
       return;
     }
     if (j.stati && String(j.stati).indexOf("errore") === 0) {
-      toast("Il computer ha avuto un problema: " + j.stati, 8000);
+      toast("Il computer ha avuto un problema: " + j.stati + notaDuplicati, 9000);
       return;
     }
-    if (fatto > 0) toast("Scaricate " + fatto + " di " + (totale || j.totale || "?") + "…", 2500);
+    if (fatto > 0) toast("Scaricate " + fatto + " di " + (totale || j.totale || "?") +
+      " in " + cartella + "…" + notaDuplicati, 3500);
     setTimeout(guarda, 5000);
   };
   setTimeout(guarda, 3000);
