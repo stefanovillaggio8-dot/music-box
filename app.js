@@ -15624,14 +15624,14 @@ async function _spotifyImportaEsportazioneFile(file) {
       const titolo = String(
         (typeof voce.track === "string" ? voce.track : "") ||
         traccia.name || traccia.title || voce.title || voce.track_name || ""
-      ).replace(/\\s+/g, " ").trim();
+      ).replace(/\s+/g, " ").trim();
       let artisti = voce.artist || voce.artists || traccia.artist || traccia.artists || voce.creator || "";
       if (Array.isArray(artisti)) {
         artisti = artisti.map((a) => typeof a === "string" ? a : (a && (a.name || a.artist)) || "").filter(Boolean).join(", ");
       } else if (artisti && typeof artisti === "object") {
         artisti = String(artisti.name || artisti.artist || "");
       }
-      artisti = String(artisti || "").replace(/\\s+/g, " ").trim();
+      artisti = String(artisti || "").replace(/\s+/g, " ").trim();
       if (titolo && artisti) righe.push(titolo + "|" + artisti);
     }
     if (!righe.length) {
