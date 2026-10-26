@@ -268,13 +268,14 @@
     return { path: "M" + testo + "Z", punti: punti, R: R, cx: cx, cy: cy, seme: seme, prog: prog };
   }
 
-  function stratoChar(a) {
-    /* La finestra trasparente è volutamente più piccola del bordo di
-       combustione: lascia una corona nera di sicurezza, così la copertina
-       rotante non può spuntare dai bordi quando il foro si restringe. */
+  function stratoChar(a, fattoreApertura) {
+    /* Nella copertina del player l'overlay è leggermente più grande
+       dell'immagine: la finestra si ridimensiona per mantenere la stessa
+       apertura utile e coprire del tutto i bordi sottostanti. */
+    var fattore = (typeof fattoreApertura === "number") ? fattoreApertura : 0.78;
     var apertura = a.punti.map(function (p) {
-      return (50 + (p.x - 50) * 0.78).toFixed(1) + "," +
-             (50 + (p.y - 50) * 0.78).toFixed(1);
+      return (50 + (p.x - 50) * fattore).toFixed(1) + "," +
+             (50 + (p.y - 50) * fattore).toFixed(1);
     }).join(" ");
     var foro = "M" + apertura + " Z";
     return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">' +
@@ -515,7 +516,10 @@
   /* La crosta (il nero che morde la copertina) */
   function disegnaChar(box, a, raggio) {
     var sc = box.querySelector(".mb-strato-char");
-    sc.innerHTML = stratoChar(a);
+    /* Sul player l'overlay deborda di 4px per lato, quindi compensa la scala.
+       Nello sfondo dei testi mantengo la finestra originale. */
+    var fattoreApertura = box.classList.contains("mb-fuoco-dentro") ? 0.78 : 0.67;
+    sc.innerHTML = stratoChar(a, fattoreApertura);
     /* il nero deve avere la stessa forma della copertina (rotonda quando
        suona il disco, quadrata quando no) */
     if (raggio) {
@@ -800,8 +804,13 @@
          larghezza/altezza e posizione a ogni angolo. Usarlo per dimensionare
          l'overlay fa pulsare e saltare il fuoco. offsetWidth/Height sono le
          dimensioni reali, non trasformate; il centro del rect resta stabile. */
-      var fireWidth = art.offsetWidth || r.width;
-      var fireHeight = art.offsetHeight || r.height;
+      var artWidth = art.offsetWidth || r.width;
+      var artHeight = art.offsetHeight || r.height;
+      /* La maschera deborda di 4px per lato: copre anche il bordo reale
+         della copertina durante il fuoco, senza lasciare filetti scoperti.
+         Il centro resta esattamente quello dell'artwork. */
+      var fireWidth = artWidth + 8;
+      var fireHeight = artHeight + 8;
       var fireLeft = r.left + r.width / 2 - fireWidth / 2;
       var fireTop = r.top + r.height / 2 - fireHeight / 2;
       if (stato.lato !== fireWidth || stato.altezza !== fireHeight) {
