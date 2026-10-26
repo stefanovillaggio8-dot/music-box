@@ -61,6 +61,8 @@
    "b-track-349",
    "b-track-390",
    "b-track-406",
+   "b-track-440",
+   "b-track-457",
    "b-track-466",
    "b-track-483",
    "b-track-485",
@@ -856,8 +858,8 @@
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
    "tommasoparadiso|nonaverepaura": {
-    "v": 1,
-    "s": 35,
+    "v": 2,
+    "s": 60,
     "t": "non avere paura",
     "a": "tommaso paradiso"
    },
@@ -1022,6 +1024,12 @@
     "s": 9,
     "t": "Sintetico",
     "a": "Kid Yugi"
+   },
+   "lelfofunkymann|funghiinsalsarosa": {
+    "v": 1,
+    "s": 2,
+    "t": "Funghi in salsa rosa",
+    "a": "L'Elfo, Funkymann"
    }
   },
   "Diego": {
@@ -1801,7 +1809,7 @@
    },
    "plainwhitets|heytheredelilah": {
     "v": 0,
-    "s": 827,
+    "s": 844,
     "t": "Hey There Delilah",
     "a": "Plain White T's"
    },
