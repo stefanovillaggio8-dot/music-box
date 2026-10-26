@@ -628,8 +628,16 @@
   }
 
 
+  function _tracciaRemotaAttiva() {
+    try { return new URLSearchParams(String(window.location.search || "")).has("traccia"); }
+    catch (e) { return false; }
+  }
+
   function _diChe(riga) {
     try {
+      /* Le tracce remote sono diagnostica: non devono creare commit a
+         ogni aggiornamento di libreria. Si attivano solo con ?traccia. */
+      if (!_tracciaRemotaAttiva()) return;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       const ora = Date.now();
@@ -656,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.442";
+  const APP_VERSION = "6.443";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12026,6 +12034,7 @@ $("btnTimer").addEventListener("click", () => {
    Il segno e' una lista di nomi rimossi, tenuta sul telefono. Quando
    invece nascondi un brano di nuovo, il segno sparisce: la scelta piu'
    recente vince sempre. */
+  let _ultimoStatoCondivisoInviato = "";
   function _salvaStatoCondiviso() {
     _statoDaSalvare = true;
     _quanteRiprove = 0;
@@ -12086,6 +12095,11 @@ rinomini: (function () {
       try { return _soloInPlaylistRimossiDaMandare(); } catch (e) { return []; }
     })()
   });
+      /* Evito POST identici: non devono creare commit senza modifiche. */
+      if (corpo === _ultimoStatoCondivisoInviato) {
+        _statoDaSalvare = false;
+        return;
+      }
       /* Adesso scrivo SOLO sul Worker. Prima scrivevo prima sul computer e,
          se andava, non scrivevo piu' da nessuna parte: ma il computer salva
          con "git push" e riscrive stato.json usando solo cinque chiavi,
@@ -12108,7 +12122,7 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
+        if (r.ok) { _ultimoStatoCondivisoInviato = corpo; _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -12483,10 +12497,13 @@ if (SERVIZIO_PUBBLICA) {
   }
 }
 
+let _gymUltimoPayload = "";
+let _gymUltimoInvio = 0;
 async function _mandaGymAlServizio() {
   /* Manda al servizio i brani della playlist "gym": il computer li prepara
      potenziati (bassi, voce avanti, volume piu' forte).
-     Non serve la chiave segreta: qui si scrive solo quella lista. */
+     I tentativi ripetuti riusano la stessa lista: la rimando solo se cambia
+     o dopo 2 minuti, così un servizio appena riavviato può recuperarla. */
   try {
     if (!SERVIZIO_PUBBLICA) return;
     const gym = [];
@@ -12495,11 +12512,14 @@ async function _mandaGymAlServizio() {
       for (const t of (p.tracks || [])) gym.push(String(t));
     }
     if (!gym.length) return;
+    const corpoGym = JSON.stringify({ tracks: gym });
+    if (corpoGym === _gymUltimoPayload && Date.now() - _gymUltimoInvio < 120000) return;
     const r = await fetch(SERVIZIO_PUBBLICA + "/gym", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ tracks: gym })
+      body: corpoGym
     });
+    if (r && r.ok) { _gymUltimoPayload = corpoGym; _gymUltimoInvio = Date.now(); }
     try {
       if (r && r.ok) segnalaErrore("gym: " + gym.length + " brani mandati al computer");
       else segnalaErrore("gym: il servizio non ha accettato la lista (" + (r ? r.status : "?") + ")");
@@ -12561,14 +12581,20 @@ async function _tieniSpazioSottoIlTetto() {
   } catch (e) { /* pazienza */ }
 }
 
+let _playlistCondiviseUltimoBody = "";
 async function _salvaPlaylistCondivise() {
     if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
     try {
-      await fetch(SERVIZIO_PUBBLICA + "/playlist", {
+      const body = JSON.stringify({ playlist: playlists });
+      /* Il recupero iniziale richiama questa funzione più volte. Non
+         riscrivo al Worker la stessa identica playlist a ogni retry. */
+      if (body === _playlistCondiviseUltimoBody) return;
+      const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
         method: "POST",
         headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
-        body: JSON.stringify({ playlist: playlists })
+        body: body
       });
+      if (r && r.ok) _playlistCondiviseUltimoBody = body;
     } catch (e) { /* senza rete le playlist restano pero' nel telefono */ }
   }
 
@@ -14843,9 +14869,12 @@ function _spotifyPnl(titolo, sotto, html) {
   let _tracciaSpotifyUltimo = 0;
   function _spotifyTracciaManda(testo) {
     try {
-      if (_tracciaSpotifyInviate >= 60) return;
+      /* Anche le tracce Spotify vanno al Worker solo in modalità
+         diagnostica esplicita (?traccia), mai durante l'uso normale. */
+      if (!_tracciaRemotaAttiva()) return;
+      if (_tracciaSpotifyInviate >= 12) return;
       const ora = Date.now();
-      if (ora - _tracciaSpotifyUltimo < 120) return;
+      if (ora - _tracciaSpotifyUltimo < 1500) return;
       _tracciaSpotifyUltimo = ora;
       _tracciaSpotifyInviate++;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
