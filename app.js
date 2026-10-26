@@ -14764,7 +14764,11 @@ async function _spotifyCompletaAccesso(code, stato) {
           if (!nome || !chi) continue;
           brani.push(nome + "|" + chi);
         }
-        if (brani.length) return brani;
+        /* Se il servizio conosce il totale e ne ha restituiti meno, provo
+           anche l'API Spotify per recuperare gli eventuali brani mancanti.
+           Se non conosce il totale, mantengo il comportamento rapido di prima. */
+        const totaleServizio = Number(j.totale || j.total || (j.tracks && j.tracks.total) || 0);
+        if (brani.length && (!totaleServizio || brani.length >= totaleServizio)) return brani;
       }
     } catch (e) { /* il server non risponde: uso le API */ }
     let url = "/playlists/" + playlistId + "/tracks?limit=100";
@@ -15190,11 +15194,14 @@ async function _spotifyImporta(playlistId) {
    metto da parte e riprovo piu' tardi da sola. */
 async function _spotifyMandaLista(lista, profilo) {
   const chiave = "mb.codaSpotify";
-  const giunto = await ponteOnline();
+  /* Se il PC non risponde o la richiesta cade, non perdo la playlist:
+     la salvo sul telefono e la riprovo quando il ponte torna disponibile. */
+  let giunto = false;
+  try { giunto = await ponteOnline(); } catch (e) { giunto = false; }
   if (!giunto) {
     try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
     _spotifyChiudi();
-    toast("Computer spento: le " + lista.length + " canzoni aspettano che lo accenda", 6000);
+    toast("Computer non raggiungibile: " + lista.length + " canzoni in coda sul telefono, le invierò quando torna online", 7000);
     return;
   }
   _spotifyPnl("Sto mandando al computer", lista.length + " canzoni", '<p class="step-hint">Un attimo...</p>');
@@ -15205,17 +15212,24 @@ async function _spotifyMandaLista(lista, profilo) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ profilo: profilo, lista: lista })
     });
-    const j = await r.json();
+    const testoRisposta = await r.text();
+    let j = {};
+    try { j = JSON.parse(testoRisposta || "{}"); } catch (e) { j = {}; }
     if (!r.ok || !j.ok) {
       _spotifyPnl("Non e' andata", "", '<p class="step-hint">' +
-        (j && j.errore ? j.errore : "il computer non ha accettato la lista") + "</p>");
+        (j && j.errore ? String(j.errore) : "Il computer non ha accettato la lista (HTTP " + r.status + ").") + "</p>");
       return;
     }
     _spotifyChiudi();
-    toast("Fatto: il computer scarica " + lista.length + " canzoni. Ci mette un po'.", 6000);
+    toast("Inviate " + lista.length + " canzoni al computer. L'importazione continua in background.", 6000);
     _spotifyControllaLavoro(j.id, lista.length);
   } catch (e) {
-    _spotifyPnl("Non e' andata", "", '<p class="step-hint">Non riesco a parlare con il computer.</p>');
+    try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e2) {}
+    _spotifyPnl("Lista salvata in coda", "", '<p class="step-hint">' +
+      lista.length + " canzoni salvate sul telefono. Non sono state perse: riproverò quando il computer sarà raggiungibile.</p>" +
+      '<button class="btn-main" id="spotifyChiudiCoda">Va bene</button>');
+    const chiudiCoda = $("spotifyChiudiCoda");
+    if (chiudiCoda) chiudiCoda.addEventListener("click", _spotifyChiudi);
   }
 }
 

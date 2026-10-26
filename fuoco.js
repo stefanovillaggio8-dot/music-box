@@ -622,6 +622,10 @@
       var clone = art.cloneNode(true);
       clone.removeAttribute("id");
       clone.classList.add("mb-cover-frammento");
+      /* Il player può essere già nascosto dalla fase di bruciatura (opacity:0!important).
+         I frammenti devono invece partire visibili, altrimenti lo sgretolamento sparisce. */
+      clone.classList.remove("mb-cover-burnt", "mb-cover-reappear");
+      clone.style.setProperty("opacity", "1", "important");
       var descendants = clone.querySelectorAll("[id]");
       for (var d = 0; d < descendants.length; d++) descendants[d].removeAttribute("id");
       var x0=x*25, x1=(x+1)*25, y0=y*(100/3), y1=(y+1)*(100/3);
