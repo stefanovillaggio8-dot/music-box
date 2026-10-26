@@ -187,7 +187,7 @@
    },
    "lilpeep|nuts": {
     "v": 0,
-    "s": 4,
+    "s": 6,
     "t": "nuts",
     "a": "Lil Peep"
    },
@@ -1033,9 +1033,15 @@
    },
    "moda|passionemaledetta": {
     "v": 0,
-    "s": 1,
+    "s": 24,
     "t": "Passione maledetta",
-    "a": "Modà"
+    "a": "ModÃ "
+   },
+   "negromaro|laprimavolta": {
+    "v": 0,
+    "s": 3,
+    "t": "La prima volta",
+    "a": "Negromaro"
    }
   },
   "Diego": {
