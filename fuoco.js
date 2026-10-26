@@ -129,6 +129,8 @@
     /* il fuoco dentro la schermata dei testi: non e' "fixed", sta li' */
     ".mb-fuoco-dentro{position:absolute;inset:0;z-index:0}",
     ".mb-fuoco .mb-strato-char{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}",
+    ".mb-fuoco .mb-strato-char.mb-fuoco-nero{background:#080707!important;}",
+    ".mb-fuoco .mb-strato-char.mb-fuoco-nero svg{visibility:hidden!important;}",
     ".mb-fuoco .mb-strato-char svg{width:100%;height:100%;display:block}",
     ".mb-fuoco .mb-calore{position:absolute;pointer-events:none;z-index:3;border-radius:50%;",
     "  background:radial-gradient(circle,rgba(255,120,10,.45) 0%,rgba(255,60,0,.22) 52%,rgba(255,40,0,0) 74%)}",
@@ -839,6 +841,17 @@
   bruciato e' quasi finito, le fiamme spariscono (con una sfumatura lenta,
   non di colpo) e resta solo la bragia: le particelle che salgono. */
   var quasiFinita = prog > 0.90;
+  /* A copertina quasi bruciata, chiudo anche l'apertura centrale: cosi'
+     nessun bordo dell'immagine rotante puo' riapparire nella fase finale. */
+  var copertinaNera = prog > 0.88;
+  var stratoNero = stato.box.querySelector(".mb-strato-char");
+  if (copertinaNera) {
+    art.classList.add("mb-cover-burnt");
+    if (stratoNero) stratoNero.classList.add("mb-fuoco-nero");
+  } else {
+    art.classList.remove("mb-cover-burnt");
+    if (stratoNero) stratoNero.classList.remove("mb-fuoco-nero");
+  }
   var contFiamme = stato.box.querySelector(".mb-fiamme");
   var calore = stato.box.querySelector(".mb-calore");
   var bragia = stato.box.querySelector(".mb-bragia");
