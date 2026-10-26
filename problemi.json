@@ -1,25 +1,5 @@
 [
  {
-  "t": 1792974184010,
-  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792974184279,
-  "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792974184915,
-  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792974185250,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792974185510,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792974185510,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1792974210344,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974210413,
+  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792974211874,
+  "r": "SPOTIFY: [v6.441] importo la playlist dal link: 61GcdXTWv9b5XtO4BCFaQ2"
+ },
+ {
+  "t": 1792974212130,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974212717,
+  "r": "SPOTIFY: [v6.441] i brani sono arrivati dal sito di Spotify (6)"
+ },
+ {
+  "t": 1792974212783,
+  "r": "SPOTIFY: [v6.441] importo la playlist dal link: 61GcdXTWv9b5XtO4BCFaQ2"
  }
 ]
