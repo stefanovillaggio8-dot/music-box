@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792974808110,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792974808188,
-  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1792974808480,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792974855108,
   "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974870013,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792974870015,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
