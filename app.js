@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.475";
+  const APP_VERSION = "6.476";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -10003,18 +10003,29 @@ $("fabMenu").addEventListener("click", (e) => {
       return [];
     }
     const rows = [];
+  /* Dopo gli aggiornamenti i brani possono stare nelle cache precedenti. */
+  let chiaviCache = [];
+  try { chiaviCache = await caches.keys(); } catch (e) {}
+  const cacheDisponibili = [cache];
+  for (const chiave of chiaviCache) {
+    if (chiave === cacheBraniName()) continue;
+    try { cacheDisponibili.push(await caches.open(chiave)); } catch (e) {}
+  }
   for (const t of tracks) {
-    /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
-       ascoltare senza connessione". Prima, per un brano che non era
-       "builtin", scrivevo "sul telefono" e lo davo per gia' scaricato:
-       ma non era mai stato scaricato, e senza rete non si sentiva niente.
-       Ora guardo davvero in cache, per tutti i brani. */
     if (!t.url) {
-      rows.push({ title: t.title, state: "ok", label: "non scaricabile", el: null, track: t });
+      rows.push({ title: t.title, state: "err", label: "URL mancante", el: null, track: t });
       continue;
     }
     let cached = false;
-    try { cached = !!(await cache.match(t.url)) || !!(await cache.match(absUrl(t.url))); } catch (e) { cached = false; }
+    const indirizzi = [t.url, absUrl(t.url)];
+    try {
+      for (const c of cacheDisponibili) {
+        for (const indirizzo of indirizzi) {
+          if (await c.match(indirizzo)) { cached = true; break; }
+        }
+        if (cached) break;
+      }
+    } catch (e) { cached = false; }
     rows.push({
       title: t.title,
       url: t.url,
@@ -10676,9 +10687,16 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
          vecchio (calcolato all'avvio, prima che l'app sapesse del
          collegamento di casa) e manderebbe il download su internet. */
       const dove = (typeof _urlDelBrano === "function") ? _urlDelBrano(t) : t.url;
-      await fetchToCache(dove || t.url, cache, (ratio) => {
-        if (el) el.style.background = ratio ? "var(--accent2)" : "";
-      });
+      const risposta = await _fetchBranoDaScaricare(t, dove || t.url, {});
+      if (!risposta || !risposta.ok) throw new Error("file non trovato online");
+      const blob = await risposta.blob();
+      if (!blob.size) throw new Error("il file scaricato è vuoto");
+      const salva = async (indirizzo) => cache.put(indirizzo, new Response(blob, {
+        status: 200,
+        headers: { "Content-Type": blob.type || "audio/mpeg", "Content-Length": String(blob.size) }
+      }));
+      await salva(absUrl(t.url));
+      if (dove && absUrl(dove) !== absUrl(t.url)) await salva(absUrl(dove));
       if (el) {
         el.classList.remove("run");
         el.classList.add("ok");
