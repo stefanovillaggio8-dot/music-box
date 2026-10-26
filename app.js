@@ -15236,7 +15236,7 @@ async function _spotifyImporta(playlistId) {
   try {
     const brani = await _spotifyBrani(playlistId);
     if (!brani.length) {
-      _spotifyPnl("Nessuna canzone letta", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Prova ad accedere con Spotify e poi ripeti l\\'importazione.</p>' +
+      _spotifyPnl("Nessuna canzone letta", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Prova ad accedere con Spotify e poi ripeti l\'importazione.</p>' +
         '<button class="btn-main" id="spotifyLeggiAccedi">Accedi con Spotify</button>' +
         '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Chiudi</button>');
       const accedi = $("spotifyLeggiAccedi");
@@ -15296,7 +15296,7 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
   }
 
   _spotifyPnl("Sto mandando al computer", lista.length + " nuove · " + duplicatiTotali + " duplicati saltati",
-    '<p class="step-hint">L\\'invio è partito. Il computer scarica i brani e li aggiunge alla libreria in background.</p>');
+    '<p class="step-hint">L\'invio è partito. Il computer scarica i brani e li aggiunge alla libreria in background.</p>');
   try {
     const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
     const r = await fetch(base + "/spotify-lista", {
