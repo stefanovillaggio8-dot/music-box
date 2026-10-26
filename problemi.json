@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793047068979,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793047069592,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793047069877,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793047070644,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793047070645,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793047070647,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793047070725,
   "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1793048881766,
   "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793048882130,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793048882174,
+  "r": "libreria: 210 brani, scartati 241 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1793048882154,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793048882161,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793048883381,
+  "r": "FINALE: visibili 210 su 210 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793048885432,
+  "r": "worker /stato: risponde"
  }
 ]
