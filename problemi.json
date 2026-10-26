@@ -1,29 +1,5 @@
 [
  {
-  "t": 1792971248118,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792971248116,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792971276767,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792971276766,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792971277014,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792971278066,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792971278072,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1792973325036,
   "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792973325146,
+  "r": "SPOTIFY: [v6.439] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792973326115,
+  "r": "SPOTIFY: [v6.439] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792973326163,
+  "r": "SPOTIFY: [v6.439] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792973327015,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792973327066,
+  "r": "SPOTIFY: [v6.439] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792973327146,
+  "r": "worker /stato: risponde"
  }
 ]
