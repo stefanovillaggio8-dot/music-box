@@ -1,49 +1,5 @@
 [
  {
-  "t": 1792973897055,
-  "r": "SPOTIFY: [v6.440] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792973897471,
-  "r": "suono: originale b-track-90"
- },
- {
-  "t": 1792973897581,
-  "r": "SPOTIFY: [v6.440] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792973897912,
-  "r": "SPOTIFY: [v6.440] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
- },
- {
-  "t": 1792973898479,
-  "r": "SPOTIFY: [v6.440] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1792973898876,
-  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1792973898940,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792973898940,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792973898945,
-  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1792973900140,
-  "r": "suono: originale b-track-1"
- },
- {
-  "t": 1792973900186,
-  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1792973902340,
   "r": "worker /stato: risponde"
  },
@@ -157,6 +113,50 @@
  },
  {
   "t": 1792974137390,
+  "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792974137503,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974137601,
+  "r": "SPOTIFY: [v6.440] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792974137738,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974138328,
+  "r": "SPOTIFY: [v6.440] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792974138505,
+  "r": "SPOTIFY: [v6.440] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792974139251,
+  "r": "SPOTIFY: [v6.440] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792974139372,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974139469,
+  "r": "visibili 212 su 239 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792974139634,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1792974139619,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1792974139651,
   "r": "libreria: 246 brani, scartati 200 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
