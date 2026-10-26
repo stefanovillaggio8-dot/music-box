@@ -1,13 +1,5 @@
 [
  {
-  "t": 1792973821390,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792973821396,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1792973821562,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1792973913888,
   "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792973914044,
+  "r": "FINALE: visibili 212 su 239 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1792973927410,
+  "r": "worker /stato: risponde"
  }
 ]
