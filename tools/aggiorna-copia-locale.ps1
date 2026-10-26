@@ -18,11 +18,17 @@ function Get-TrackEntries([string]$Source) {
     $End = $Source.IndexOf("];", $Start)
     if ($End -lt 0) { return @() }
     $Block = $Source.Substring($Start, $End - $Start)
-    $Pattern = '\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs/track-\d+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"(?:,\s*profile:\s*"((?:[^"\\]|\\.)*)")?\s*\}'
+    # Togli le voci di esempio/commentate: non devono diventare brani reali.
+    $Block = [regex]::Replace($Block, '(?s)/\*.*?\*/', '')
+    $Block = [regex]::Replace($Block, '(?m)^\s*//.*(?:\r?\n|$)', '')
+    # Prendo tutti i file MP3 in songs/ e conservo le proprietà dopo artist.
+    $Pattern = '\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs/[^"]+?\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"([^}]*)\}'
     $Found = [regex]::Matches($Block, $Pattern)
     $Items = New-Object System.Collections.Generic.List[object]
     foreach ($Match in $Found) {
-        $Profile = $Match.Groups[4].Value
+        $Tail = $Match.Groups[4].Value
+        $ProfileMatch = [regex]::Match($Tail, 'profile:\s*"((?:[^"\\]|\\.)*)"')
+        $Profile = $ProfileMatch.Groups[1].Value
         if ([string]::IsNullOrWhiteSpace($Profile)) { $Profile = "Ste" }
         $Items.Add([pscustomobject]@{
             Text = $Match.Value

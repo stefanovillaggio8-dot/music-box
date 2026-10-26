@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.462";
+  const APP_VERSION = "6.463";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -786,6 +786,7 @@ try {
   });
 } catch (e) { /* noop */ }
   let tracks = [];
+  let _registriLocaliStats = [];
   let currentId = null;
   let shuffle = false;
   let repeat = false;
@@ -2087,38 +2088,52 @@ function _salvaStatistiche() {
     return ore + (ore === 1 ? " ora" : " ore") + (min ? " e " + min + (min === 1 ? " minuto" : " minuti") : "");
   }
 
+  function _listaStatisticheProfilo(nome) {
+    const risultato = new Map();
+    let eliminatiLocale = {};
+    try { eliminatiLocale = LS.get("mb.eliminati", {}) || {}; } catch (e) { eliminatiLocale = {}; }
+    const copiati = (typeof _mieiCopiatiDi === "function") ? _mieiCopiatiDi(nome) : new Set();
+    for (const b of BUILTIN) {
+      if (!b || !b.file) continue;
+      const id = _idBranoStabile(b), proprietario = b.profile || DEFAULT_PROFILE;
+      if (proprietario !== nome && !copiati.has(id)) continue;
+      if (eliminatiLocale[_chiaveEliminato(id, nome)]) continue;
+      risultato.set(id, { id, title:b.title||"", artist:b.artist||"", profile:nome, builtin:proprietario===nome });
+    }
+    for (const r of (_registriLocaliStats || [])) {
+      if (!r || !r.id || !r.blob || (r.profile || DEFAULT_PROFILE) !== nome) continue;
+      if (eliminatiLocale[_chiaveEliminato(r.id, nome)]) continue;
+      try { if (eGiaCondiviso({ title:r.title, artist:r.artist })) continue; } catch (e) {}
+      risultato.set(r.id, { id:r.id, title:r.title||"", artist:r.artist||"", profile:nome, builtin:false });
+    }
+    return Array.from(risultato.values());
+  }
   function _numeriProfilo(nome) {
-    const lista = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === nome);
-    const st = profileState(nome);
-    const stats = (st && st.stats) || {};
+    const lista = _listaStatisticheProfilo(nome);
+    const st = profileState(nome), stats = (st && st.stats) || {};
     let volte = 0, secondi = 0;
-    const perArtista = new Map();
-    const perBrano = [];
+    const perArtista = new Map(), perBrano = [];
     for (const k in stats) {
       const r = stats[k] || {};
-      volte += r.v || 0;
-      secondi += r.s || 0;
+      const ascolti = Math.max(0, Number(r.v) || 0), durata = Math.max(0, Number(r.s) || 0);
+      volte += ascolti; secondi += durata;
       const nomeArtista = (r.a || "").trim() || "senza artista";
-      perArtista.set(nomeArtista, (perArtista.get(nomeArtista) || 0) + (r.v || 0));
-      if ((r.s || 0) > 0) perBrano.push({ titolo: r.t || "", artista: r.a || "", s: r.s || 0 });
+      perArtista.set(nomeArtista, (perArtista.get(nomeArtista) || 0) + ascolti);
+      if (durata > 0) perBrano.push({ titolo:r.t||"", artista:r.a||"", s:durata });
     }
-    const topArtisti = [...perArtista.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
-    const topBrani = perBrano.sort((a, b) => b.s - a.s).slice(0, 5);
-    return {
-      nome: nome,
-      brani: lista.length,
-      artisti: _artistiDi(lista),
-      tuoi: lista.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length,
-      volte: volte,
-      secondi: secondi,
-      topArtisti: topArtisti,
-      topBrani: topBrani
-    };
+    const topArtisti = [...perArtista.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
+    const topBrani = perBrano.sort((a,b)=>b.s-a.s).slice(0,5);
+    return { nome, brani:lista.length, artisti:_artistiDi(lista),
+      tuoi:lista.filter(t=>!t.builtin).length, volte, secondi, topArtisti, topBrani };
   }
 
+  function _statEsc(valore) {
+    return String(valore == null ? "" : valore).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
   function _rigaStat(numero, testo, nota) {
-    return '<div class="stat-riga"><b>' + numero + "</b><span>" + testo +
-      (nota ? ' <i>' + nota + "</i>" : "") + "</span></div>";
+    return '<div class="stat-riga"><b>' + _statEsc(numero) + "</b><span>" + _statEsc(testo) +
+      (nota ? ' <i>' + _statEsc(nota) + "</i>" : "") + "</span></div>";
   }
 
   function apriStatistiche() {
@@ -2136,62 +2151,52 @@ function _salvaStatistiche() {
     const pannello = $("statsPanel");
     if (!pannello) return;
     const n = _numeriProfilo(profile);
-    $("statsSub").textContent = "Profilo " + profile;
-    let html = "";
+    $("statsSub").textContent = profile + " · riepilogo personale";
+    let html = '<div class="stats-intro"><div><span class="stats-kicker">IL TUO MUSIC BOX</span>' +
+      '<h3>La tua musica</h3></div><span class="stats-profile-chip">' + _statEsc(profile) + '</span></div>';
     html += '<div class="stat-griglia">';
-    html += _rigaStat(n.brani, n.brani === 1 ? "brano" : "brani");
+    html += _rigaStat(n.brani, n.brani === 1 ? "brano in libreria" : "brani in libreria");
     html += _rigaStat(n.artisti, n.artisti === 1 ? "artista" : "artisti");
-    html += _rigaStat(_tempoTesto(n.secondi), "di musica ascoltata");
+    html += _rigaStat(_tempoTesto(n.secondi), "musica ascoltata");
     html += _rigaStat(n.volte, n.volte === 1 ? "ascolto" : "ascolti");
     if (n.tuoi) html += _rigaStat(n.tuoi, "brani aggiunti da te");
     html += "</div>";
-
     if (n.topArtisti.length) {
       html += "<h4>Artisti più ascoltati</h4><div class=\"stat-lista\">";
-      for (const [a, v] of n.topArtisti) {
-        html += '<div class="stat-item"><span>' + a + "</span><b>" + v + "</b></div>";
-      }
+      for (const [a,v] of n.topArtisti)
+        html += '<div class="stat-item"><span>' + _statEsc(a) + "</span><b>" +
+          _statEsc(v + (v === 1 ? " ascolto" : " ascolti")) + "</b></div>";
       html += "</div>";
-    } else {
-      html += '<p class="step-hint">Non hai ancora ascoltato niente con questo profilo: ascolta una canzone e i numeri si riempiono da soli.</p>';
-    }
+    } else html += '<p class="step-hint stats-empty">Non hai ancora ascoltato niente con questo profilo. Appena parte la musica, le statistiche si aggiornano da sole.</p>';
     if (n.topBrani.length) {
-      html += "<h4>Brani più ascoltati</h4><div class=\"stat-lista\">";
+      html += "<h4>Brani ascoltati più a lungo</h4><div class=\"stat-lista\">";
       for (const b of n.topBrani) {
-        html += '<div class="stat-item"><span>' + (b.artista ? b.artista + " — " : "") + b.titolo +
-          "</span><b>" + _tempoTesto(b.s) + "</b></div>";
+        const titolo = (b.artista ? b.artista + " — " : "") + b.titolo;
+        html += '<div class="stat-item"><span>' + _statEsc(titolo) + "</span><b>" +
+          _statEsc(_tempoTesto(b.s)) + "</b></div>";
       }
       html += "</div>";
     }
-
-    /* Gli altri profili: utile per capire se la libreria e' quella giusta */
-    html += "<h4>Come sono gli altri profili</h4><div class=\"stat-lista\">";
-    for (const pr of PROFILI) {
-      const m = _numeriProfilo(pr.nome);
-      const chi = pr.nome === profile ? " (sei tu)" : "";
-      html += '<div class="stat-item' + (pr.nome === profile ? " io" : "") + '"><span>' + pr.nome + chi +
-        "</span><b>" + m.brani + " brani · " + m.volte + " ascolti</b></div>";
+    html += "<h4>Le librerie dei profili</h4><div class=\"stat-lista\">";
+    const nomiProfili = (typeof profileList === "function") ? [...new Set(profileList())] : PROFILI.map(pr=>pr.nome);
+    for (const nome of nomiProfili) {
+      const m = _numeriProfilo(nome), mio = nome === profile;
+      html += '<div class="stat-item stats-profile-row' + (mio ? " io" : "") + '"><span>' +
+        _statEsc(nome) + (mio ? ' <i class="stats-me">TU</i>' : "") + '</span><b>' +
+        _statEsc(m.brani + (m.brani === 1 ? " brano" : " brani")) + " · " +
+        _statEsc(m.volte) + (m.volte === 1 ? " ascolto" : " ascolti") + "</b></div>";
     }
     html += "</div>";
-    html += '<p class="step-hint">I minuti ascoltati valgono su tutti i dispositivi e su tutti i link: vengono salvati insieme al resto.</p>';
-
-    /* Diagnostica visibile: sul telefono non posso leggere cosa succede
-       (il browser vieta al sito di scrivere sul computer), quindi qui dentro
-       mostriamo quello che la pagina crede di sapere. Se i secondi non
-       salgono, qui si vede perche'. */
-html += "<h4>Come sta andando l'ascolto</h4>";
     const suonaOra = !!(audio && !audio.paused && !audio.ended);
-    const brano = current();
-    const chiave = brano ? _chiaveStats(brano) : "";
+    const brano = current(), chiave = brano ? _chiaveStats(brano) : "";
     const salvati = chiave ? ((statisticheProfilo()[chiave] || {}).s || 0) : 0;
-    html += '<div class="stat-lista">';
-    html += '<div class="stat-item"><span>Música sta suonando</span><b>' + (suonaOra ? "sì" : "no") + "</b></div>";
-    html += '<div class="stat-item"><span>Dove e\' la canzone</span><b>' + _posizioneMusica().toFixed(1) + "s</b></div>";
-    html += '<div class="stat-item"><span>Secondi di questo brano</span><b>' + Math.round(salvati) + "s</b></div>";
-    html += '<div class="stat-item"><span>Timer di riserva</span><b>' + (_statsCronometro ? "attivo" : "non parte") + "</b></div>";
-    html += '<div class="stat-item"><span>Versione della pagina</span><b>' + APP_VERSION + "</b></div>";
-    html += "</div>";
-
+    html += '<details class="stat-diagnostica"><summary>Dettagli tecnici</summary><div class="stat-lista">';
+    html += '<div class="stat-item"><span>La musica sta suonando</span><b>' + (suonaOra ? "sì" : "no") + "</b></div>";
+    html += '<div class="stat-item"><span>Posizione del brano</span><b>' + _posizioneMusica().toFixed(1) + " s</b></div>";
+    html += '<div class="stat-item"><span>Secondi contati per questo brano</span><b>' + Math.round(Number(salvati)||0) + " s</b></div>";
+    html += '<div class="stat-item"><span>Timer statistiche</span><b>' + (_statsCronometro ? "attivo" : "fermo") + "</b></div>";
+    html += '<div class="stat-item"><span>Versione app</span><b>' + _statEsc(APP_VERSION) + "</b></div>";
+    html += "</div></details>";
     $("statsCorpo").innerHTML = html;
     pannello.hidden = false;
     syncNoScroll();
@@ -2430,6 +2435,7 @@ function _devoVedereBrano(eMio, b) {
   let doppioni = 0;
   try {
     const records = (await dbAll()).filter((r) => r && r.id && r.blob);
+    _registriLocaliStats = records.slice();
     added = records
   .filter((r) => (r.profile || DEFAULT_PROFILE) === profile)
   /* Se il brano esiste gia' nella libreria condivisa non lo mostro due volte:
@@ -10656,26 +10662,71 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
 
   let checkingSongs = false;
-  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/track-\d+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"(?:,\s*profile:\s*"((?:[^"\\]|\\.)*)")?\s*\}/g;
-
+  /* Catalogo completo: supporta anche songs/youtube-*.mp3 e metadati extra. */
+  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/[^"]+?\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"([^}]*)\}/g;
   function parseBuiltinFrom(text) {
     const start = text.indexOf("const BUILTIN = [");
     if (start < 0) return null;
     const end = text.indexOf("];", start);
     if (end < 0) return null;
-    const block = text.slice(start, end);
-    const out = [];
+    let block = text.slice(start, end).replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    const out = new Map();
     const re = new RegExp(BUILTIN_RE.source, "g");
     let m;
     while ((m = re.exec(block))) {
-      out.push({
-        title: JSON.parse('"' + m[1] + '"'),
-        file: m[2],
-        artist: JSON.parse('"' + m[3] + '"'),
-        profile: m[4] ? JSON.parse('"' + m[4] + '"') : DEFAULT_PROFILE
-      });
+      try {
+        const extra = m[4] || "";
+        const profilo = /\bprofile:\s*"((?:[^"\\]|\\.)*)"/.exec(extra);
+        const cover = /\bcover:\s*"((?:[^"\\]|\\.)*)"/.exec(extra);
+        const item = {
+          title: JSON.parse('"' + m[1] + '"'),
+          file: m[2],
+          artist: JSON.parse('"' + m[3] + '"'),
+          profile: profilo ? JSON.parse('"' + profilo[1] + '"') : DEFAULT_PROFILE
+        };
+        if (cover) item.cover = JSON.parse('"' + cover[1] + '"');
+        out.set(item.profile + "|" + item.file, item);
+      } catch (e) { /* una voce malformata non blocca il resto */ }
     }
-    return out;
+    return Array.from(out.values());
+  }
+  function _chiaveCatalogoBrano(b) {
+    return String((b && b.profile) || DEFAULT_PROFILE) + "|" + String((b && b.file) || "");
+  }
+  let _catalogoLocaleCache = [];
+  let _firmaCatalogoLocale = "";
+  let _catalogoLocaleCaricato = false;
+  function _aggiungiVociSoloLocali() {
+    const presenti = new Set(BUILTIN.map(_chiaveCatalogoBrano));
+    let aggiunti = 0;
+    for (const b of _catalogoLocaleCache) {
+      const k = _chiaveCatalogoBrano(b);
+      if (!b || !b.file || presenti.has(k)) continue;
+      BUILTIN.push(b); presenti.add(k); aggiunti++;
+    }
+    return aggiunti > 0;
+  }
+  async function _aggiornaCatalogoLocaleDaDisco() {
+    try {
+      if (typeof window === "undefined" || window.__MB_APP_CODE_SOURCE !== "github") return false;
+      let firma = "";
+      try {
+        const vr = await fetch(_urlCodiceFile("versione.json", Date.now()), { cache: "no-store" });
+        if (vr.ok) {
+          const v = await vr.json();
+          firma = String(v.versione || "") + "|" + String(Number(v.brani) || 0);
+        }
+      } catch (e) { }
+      if (_catalogoLocaleCaricato && firma && firma === _firmaCatalogoLocale) return _aggiungiVociSoloLocali();
+      const rr = await fetch(_urlCodiceFile("app.js", Date.now()), { cache: "no-store" });
+      if (!rr.ok) return false;
+      const parsed = parseBuiltinFrom(await rr.text());
+      if (!Array.isArray(parsed) || !parsed.length) return false;
+      _catalogoLocaleCache = parsed;
+      _catalogoLocaleCaricato = true;
+      _firmaCatalogoLocale = firma;
+      return _aggiungiVociSoloLocali();
+    } catch (e) { return false; }
   }
 
 let _firmaLibreria = "";
@@ -10687,7 +10738,7 @@ let _ultimoControllo = 0;
    vuoto. Effetti: l'eliminazione di un brano non veniva ricordata, "rimetti il
    brano" nemmeno, il controllo delle canzoni nuove non aggiornava la libreria
    e la lista non tornava dov'eri. Qui stanno al livello principale. */
-let _quantiBraniOnline = 0;
+let _quantiBraniOnline = Array.isArray(BUILTIN) ? BUILTIN.length : 0;
 
 /* La chiave di un brano eliminato porta con se' il profilo.
    Ste: "se elimino dei brani dalla mia libreria, nella libreria di Diego
@@ -10765,25 +10816,24 @@ function _aggiornaEtichettaControllo(che) {
 
 async function checkForNewSongs() {
     if (checkingSongs) return;
-    /* Quanti brani ho davanti in questa copia dell'app: serve per il confronto
-       veloce con versione.json. */
-    try { _quantiBraniOnline = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { /* noop */ }
-    /* Ste: "puoi velocizzare il tempo in cui ci mette a inserire le canzoni".
-       Prima aspettavo almeno 2 minuti prima di guardare, e poi scaricavo
-       tutto app.js (400 KB) ogni volta. Ora:
-         - guardo un file minuscolo (versione.json, poche decine di byte)
-           ogni volta, quindi posso farlo spesso senza costare nulla;
-         - scarico i 400 KB di app.js SOLO se quel file mi dice che c'e'
-           qualcosa di nuovo. */
+    const fonteGitHub = typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github";
+    const urlFonte = (nome, stamp) => fonteGitHub
+      ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" + nome + "?t=" + encodeURIComponent(String(stamp))
+      : _urlCodiceFile(nome, stamp);
     const ora = Date.now();
     if (ora - _ultimoControllo < 20000) return;
     _ultimoControllo = ora;
     checkingSongs = true;
     try {
+      const catalogoLocaleAggiornato = await _aggiornaCatalogoLocaleDaDisco();
+      if (catalogoLocaleAggiornato) {
+        try { await loadCovers(); } catch (e) {}
+        await loadAll();
+      }
       /* Primo il file leggero: se la versione e' quella che ho gia', ho
          finito e non scarico nient'altro. */
       try {
-        const risposta = await fetch(_urlCodiceFile("versione.json", ora), { cache: "no-store" });
+        const risposta = await fetch(urlFonte("versione.json", ora), { cache: "no-store" });
         if (risposta.ok) {
           const piccolo = await risposta.json();
           const mia = String(typeof APP_VERSION !== "undefined" ? APP_VERSION : "");
@@ -10798,11 +10848,17 @@ async function checkForNewSongs() {
           }
         }
       } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
-      const res = await fetch(_urlCodiceFile("app.js", ora), { cache: "no-store" });
+      const res = await fetch(urlFonte("app.js", ora), { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
-      const parsed = parseBuiltinFrom(text);
-      if (!parsed || !parsed.length) return;
+      const canonico = parseBuiltinFrom(text);
+      if (!canonico || !canonico.length) return;
+      const parsed = canonico.slice();
+      const presentiNelRemoto = new Set(parsed.map(_chiaveCatalogoBrano));
+      for (const b of (_catalogoLocaleCache || [])) {
+        const k = _chiaveCatalogoBrano(b);
+        if (b && b.file && !presentiNelRemoto.has(k)) { parsed.push(b); presentiNelRemoto.add(k); }
+      }
       /* Confronto col sito solo per i brani che SONO nella mia libreria (i miei piu'
          quelli che ho copiato dagli altri). Se guardassi tutti i brani del
          sito, le canzoni degli altri sembrerebbero sparite e potrei essere
@@ -10810,7 +10866,7 @@ async function checkForNewSongs() {
       const mine = parsed.filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b));
       const remoteFiles = mine.map((b) => b.file);
       const localBuiltin = tracks.filter((t) => t.builtin);
-      const localFiles = localBuiltin.map((t) => t.url);
+      const localFiles = localBuiltin.map((t) => t.file || t.url);
       const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
       const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
       /* Una canzone che manca al sito puo' sparire solo a meta' di un aggiornamento:
@@ -10821,13 +10877,13 @@ async function checkForNewSongs() {
       if (tolte.length) LS.set("mb.senza", tolte);
       else LS.remove("mb.senza");
       if (confermate.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
-      if (!aggiunte.length && !confermate.length) { _quantiBraniOnline = parsed.length; _aggiornaEtichettaControllo(); return; }
+      if (!aggiunte.length && !confermate.length) { _quantiBraniOnline = canonico.length; _aggiornaEtichettaControllo(); return; }
       /* Firma di quello che ho davanti: se combacia, e' la stessa libreria e
          non la ridisegno (e' quello che faceva saltare gli schermi). */
       const firma = (mine.map((b) => b.file).sort().join("|") + "#" + confermate.length);
       if (firma === _firmaLibreria) { _aggiornaEtichettaControllo(); return; }
       _firmaLibreria = firma;
-      _quantiBraniOnline = parsed.length;
+      _quantiBraniOnline = canonico.length;
       /* Prima di ridisegnare, mi segno dove eri: cosi' la lista non ti
          rimanda in cima mentre ti muovi. */
       _salvaPuntoLibreria();
@@ -13759,7 +13815,8 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
       return false;
     }
 function numeroBraniOnline(testo) {
-      return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
+      const parsed = parseBuiltinFrom(String(testo || ""));
+      return Array.isArray(parsed) ? parsed.length : 0;
     }
 let _timerBarraAggiornamento = null;
 let _barraAggiornamentoMostrata = false;
@@ -13907,8 +13964,11 @@ avviso = document.createElement("div");
       if (!navigator.onLine) return;
       _stoControllando = true;
       let miei = 0;
-      try { miei = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { miei = 0; }
-      fetch("app.js?t=" + Date.now(), { cache: "no-store" })
+      try { miei = Number(_quantiBraniOnline) || ((typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0); } catch (e) { miei = 0; }
+      const urlAppAggiornamento = (typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github")
+        ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/app.js?t=" + Date.now()
+        : "app.js?t=" + Date.now();
+      fetch(urlAppAggiornamento, { cache: "no-store" })
         .then((r) => r.ok ? r.text() : "")
         .then((txt) => {
           _stoControllando = false;

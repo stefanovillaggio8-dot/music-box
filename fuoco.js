@@ -112,6 +112,11 @@
     var AudioOriginale = window.Audio;
     function AudioAgganciato(src) {
       var a = new AudioOriginale(src);
+      /* Il listener del finale viene agganciato quando nasce l'audio, prima
+         del listener del player che può passare subito alla canzone dopo. */
+      a.addEventListener("ended", function () {
+        try { gestisciFineAudio(a); } catch (e) { /* l'effetto non deve bloccare la musica */ }
+      });
       catalogAudio.push(a);
       if (catalogAudio.length > 10) catalogAudio.shift();
       return a;
@@ -614,9 +619,10 @@
   }
 
   function frammentiCopertina(art) {
-    if (!art || !art.parentNode) return;
+    if (!art || !art.parentNode) return [];
     var r = art.getBoundingClientRect();
-    if (!r.width || !r.height) return;
+    if (!r.width || !r.height) return [];
+    var creati = [];
     var cols = 4, rows = 4;
     for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
       var clone = art.cloneNode(true);
@@ -625,10 +631,9 @@
       /* Il player può essere già nascosto dalla fase di bruciatura (opacity:0!important).
          I frammenti devono invece partire visibili, altrimenti lo sgretolamento sparisce. */
       clone.classList.remove("mb-cover-burnt", "mb-cover-reappear");
-      clone.style.setProperty("opacity", "1", "important");
       var descendants = clone.querySelectorAll("[id]");
       for (var d = 0; d < descendants.length; d++) descendants[d].removeAttribute("id");
-      var x0=x*25, x1=(x+1)*25, y0=y*(100/3), y1=(y+1)*(100/3);
+      var x0=x*(100/cols), x1=(x+1)*(100/cols), y0=y*(100/rows), y1=(y+1)*(100/rows);
       var n1=((x*13+y*7)%5)+2, n2=((x*5+y*11)%5)+2;
       Object.assign(clone.style,{position:"fixed",left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",margin:"0",opacity:"1",transform:"none",animation:"none",pointerEvents:"none",borderRadius:getComputedStyle(art).borderRadius});
       clone.style.clipPath="polygon("+(x0+n1)+"% "+y0+"%, "+(x1-n2)+"% "+y0+"%, "+x1+"% "+(y0+8)+"%, "+x1+"% "+(y1-7)+"%, "+(x1-n1)+"% "+y1+"%, "+(x0+n2)+"% "+y1+"%, "+x0+"% "+(y1-8)+"%, "+x0+"% "+(y0+6)+"%)";
@@ -636,13 +641,15 @@
       clone.style.setProperty("--mb-rise-x",((x-1.5)*17+(y%2?9:-7))+"px");
       clone.style.setProperty("--mb-rotation",((x+y)%2?1:-1)*(9+x*3+y*2)+"deg");
       document.body.appendChild(clone);
+      creati.push(clone);
     }
+    return creati;
   }
 
   function avviaDissolvenza(art, box) {
     if (!art || art.dataset.mbOutro === "1") return;
     art.dataset.mbOutro = "1";
-    frammentiCopertina(art);
+    var frammenti = frammentiCopertina(art);
     art.classList.add("mb-cover-burnt");
     if (box) {
       preparaFumo(box);
@@ -654,15 +661,24 @@
       if (char) char.style.opacity="0";
     }
     window.setTimeout(function(){
-      var frammenti=document.querySelectorAll(".mb-cover-frammento");
-      for(var i=0;i<frammenti.length;i++) frammenti[i].remove();
-      if(stato.box===box){if(box)box.remove();stato.box=null;stato.fiamme=[];}
+      /* Ogni brano rimuove soltanto i propri pezzi: una transizione rapida
+         non deve cancellare quelli della copertina appena finita. */
+      for (var i = 0; i < frammenti.length; i++) {
+        if (frammenti[i] && frammenti[i].parentNode) frammenti[i].remove();
+      }
+      if (stato.box === box) {
+        if (box) box.remove();
+        stato.box = null;
+        stato.fiamme = [];
+      }
     },5350);
   }
 
-  function pulisciDissolvenza(art) {
-    var frammenti=document.querySelectorAll(".mb-cover-frammento");
-    for(var i=0;i<frammenti.length;i++)frammenti[i].remove();
+  function pulisciDissolvenza(art, rimuoviFrammenti) {
+    if (rimuoviFrammenti !== false) {
+      var vecchi = document.querySelectorAll(".mb-cover-frammento");
+      for (var i = 0; i < vecchi.length; i++) vecchi[i].remove();
+    }
     if(art){
       art.classList.remove("mb-cover-burnt","mb-cover-reappear");
       if(art.dataset)delete art.dataset.mbOutro;
@@ -696,6 +712,21 @@
     }
   }
 
+  function gestisciFineAudio(audioFinito) {
+    try {
+      if (stato.audio && stato.audio !== audioFinito) return;
+      var art = document.getElementById("playerArt");
+      if (!art) return;
+      var chiave = stato.ultimoTitolo;
+      if (!chiave || stato.outroFatto === chiave) return;
+      stato.outroFatto = chiave;
+      stato.outroInCorso = true;
+      stato.outroInizio = Date.now();
+      avviaDissolvenza(art, stato.box);
+      aggiornaNotifica(1, false);
+    } catch (e) { /* non interferire con l'audio */ }
+  }
+
   function ciclo() {
     try {
       var art = document.getElementById("playerArt");
@@ -713,7 +744,8 @@
       var chiaveBrano = titoloOra + "|" + sorgenteOra;
       if (chiaveBrano !== stato.ultimoTitolo) {
         var eraFineBrano=!!stato.ultimoTitolo;
-        pulisciDissolvenza(art);
+        var conservaFrammenti = stato.outroInCorso && (Date.now() - (stato.outroInizio || 0) < 5350);
+        pulisciDissolvenza(art, !conservaFrammenti);
         stato.outroInCorso=false;
         stato.outroInizio=0;
         stato.outroFatto="";
@@ -738,7 +770,24 @@
       if (audio && isFinite(audio.currentTime)) t = audio.currentTime;
 
       /* il tempo e' tornato indietro: brano nuovo o riavvolto */
-      if (t < stato.tPrecedente - 1.5) { stato.progVisto = -1; stato.progChar = -1; }
+      if (t < stato.tPrecedente - 1.5) {
+        /* Se riparti dall'inizio dello stesso brano, riabilito il finale:
+           l'evento ended precedente non deve impedire lo sgretolamento al
+           prossimo ascolto. */
+        if (stato.outroInCorso || (art.dataset && art.dataset.mbOutro === "1")) {
+          pulisciDissolvenza(art);
+          if (stato.box && stato.box.classList.contains("mb-fuoco-finale")) {
+            stato.box.remove();
+            stato.box = null;
+            stato.fiamme = [];
+          }
+          stato.outroInCorso = false;
+          stato.outroInizio = 0;
+          stato.outroFatto = "";
+        }
+        stato.progVisto = -1;
+        stato.progChar = -1;
+      }
       stato.tPrecedente = t;
 
       var prog = stato.progVisto;
@@ -769,8 +818,7 @@
         stato.outroFatto=chiaveBrano;
         stato.outroInCorso=true;
         stato.outroInizio=Date.now();
-        if(stato.box)avviaDissolvenza(art,stato.box);
-        else {pulisciDissolvenza(art);art.classList.add("mb-cover-burnt");}
+        avviaDissolvenza(art, stato.box);
         stato.progVisto=0;stato.progChar=-1;stato.progFiamme=-1;
         aggiornaNotifica(1,false);
         requestAnimationFrame(ciclo);
