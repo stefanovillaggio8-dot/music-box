@@ -15546,8 +15546,7 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
     try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e) {}
     _spotifyChiudi();
     const dest = PROFILI.find(p => p.nome === profilo);
-    toast("PC non raggiungibile: " + lista.length + " canzoni in coda per " + profilo +
-      " (cartella " + (dest ? dest.cartella : profilo) + "); " + duplicatiTotali +
+    toast("Music Box è aperta da GitHub, ma non riesce a contattare il programma locale del PC (porta 8788). Il PC acceso da solo non basta: avvia il ponte Music Box e verifica http://127.0.0.1:8788/ping. " + lista.length + " brani restano in coda per " + profilo + "; " + duplicatiTotali + " duplicati saltati. Non devi selezionare di nuovo il CSV.", 11000); " + duplicatiTotali +
       " già presenti/duplicati saltati. Riproverò quando il PC risponde.", 8500);
     return;
   }
