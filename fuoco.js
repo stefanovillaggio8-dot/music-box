@@ -269,13 +269,20 @@
   }
 
   function stratoChar(a) {
+    /* La finestra trasparente è volutamente più piccola del bordo di
+       combustione: lascia una corona nera di sicurezza, così la copertina
+       rotante non può spuntare dai bordi quando il foro si restringe. */
+    var apertura = a.punti.map(function (p) {
+      return (50 + (p.x - 50) * 0.78).toFixed(1) + "," +
+             (50 + (p.y - 50) * 0.78).toFixed(1);
+    }).join(" ");
+    var foro = "M" + apertura + " Z";
     return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">' +
-      '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + a.path + '" fill="#1b1611" filter="url(#mbGrana)"/>' +
-      /* Maschera nera completamente opaca: nessun bordo della copertina deve trasparire. */
-      '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + a.path + '" fill="#080707" opacity="1"/>' +
-      '<path d="' + a.path + '" fill="none" stroke="#6b5847" stroke-width="3.4"' +
+      '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + foro + '" fill="#1b1611" filter="url(#mbGrana)"/>' +
+      '<path fill-rule="evenodd" d="M0 0 H100 V100 H0 Z ' + foro + '" fill="#080707" opacity="1"/>' +
+      '<path d="' + foro + '" fill="none" stroke="#6b5847" stroke-width="3.4"' +
         ' stroke-linejoin="round" filter="url(#mbCenere)" opacity=".55"/>' +
-      '<path d="' + a.path + '" fill="none" stroke="#191411" stroke-width="1.1"' +
+      '<path d="' + foro + '" fill="none" stroke="#191411" stroke-width="1.1"' +
         ' stroke-linejoin="round" opacity=".8"/>' +
     "</svg>";
   }
