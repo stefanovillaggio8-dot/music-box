@@ -15251,9 +15251,16 @@ async function _spotifyMandaLista(lista, profilo) {
     const testoRisposta = await r.text();
     let j = {};
     try { j = JSON.parse(testoRisposta || "{}"); } catch (e) { j = {}; }
-    if (!r.ok || !j.ok) {
-      _spotifyPnl("Non e' andata", "", '<p class="step-hint">' +
-        (j && j.errore ? String(j.errore) : "Il computer non ha accettato la lista (HTTP " + r.status + ").") + "</p>");
+    if (!r.ok || !j.ok || !j.id) {
+      /* Anche se il PC risponde con errore, non butto via la playlist:
+         la conservo e riprovo automaticamente, mostrando l'errore reale. */
+      try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
+      const motivo = String((j && j.errore) || ("Il computer non ha accettato la lista (HTTP " + r.status + ").")).replace(/</g, "&lt;");
+      _spotifyPnl("Importazione non confermata", "", '<p class="step-hint">' + motivo +
+        '</p><p class="step-hint">Ho salvato ' + lista.length + ' brani in coda sul telefono e riproverò automaticamente. Se il programma sul PC è acceso ma non risponde, il collegamento al servizio non è attivo.</p>' +
+        '<button class="btn-main" id="spotifyChiudiCoda">Va bene</button>');
+      const chiudiCoda = $("spotifyChiudiCoda");
+      if (chiudiCoda) chiudiCoda.addEventListener("click", _spotifyChiudi);
       return;
     }
     _spotifyChiudi();
