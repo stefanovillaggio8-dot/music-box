@@ -14789,7 +14789,9 @@ async function _spotifyCompletaAccesso(code, stato) {
       if (timer) clearTimeout(timer);
     }
 
-    /* Se la prima fonte ha dato solo una parte, provo a completare con l'API Spotify. */
+    /* Tengo separati i risultati del servizio e quelli dell'API: spesso si sovrappongono. */
+    const braniServizio = brani.slice();
+    const braniApi = [];
     let url = "/playlists/" + playlistId + "/tracks?limit=100";
     for (let pagina = 0; pagina < 12 && url; pagina++) {
       const j = await _spotifyApi(url);
@@ -14799,21 +14801,29 @@ async function _spotifyCompletaAccesso(code, stato) {
         if (!t || !t.name || t.is_local) continue;
         const chi = (t.artists || []).map((a) => a.name).filter(Boolean).join(", ");
         if (!chi) continue;
-        brani.push(t.name.replace(/\s+/g, " ").trim() + "|" + chi.replace(/\s+/g, " ").trim());
+        const riga = t.name.replace(/\s+/g, " ").trim() + "|" + chi.replace(/\s+/g, " ").trim();
+        braniApi.push(riga);
+        brani.push(riga);
       }
       url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
     }
 
-    /* Evito di presentare le prime 5 canzoni come se fossero la playlist intera. */
-    const distinti = [];
-    for (const riga of brani) {
+    /* Il conteggio distingue i doppioni realmente presenti nella playlist dalle
+       righe duplicate perché arrivate da entrambe le fonti. Per ogni brano
+       considero il numero massimo di occorrenze visto in una singola fonte. */
+    const coperti = braniServizio.slice();
+    const giaVistiApi = [];
+    for (const riga of braniApi) {
       const candidato = _spotifyRigaOggetto(riga);
-      if (candidato.title && !distinti.some((x) => stessoBrano(candidato, x))) distinti.push(candidato);
+      const occorrenzeServizio = braniServizio.filter((x) => stessoBrano(candidato, _spotifyRigaOggetto(x))).length;
+      const occorrenzeApiPrecedenti = giaVistiApi.filter((x) => stessoBrano(candidato, x)).length;
+      giaVistiApi.push(candidato);
+      if (occorrenzeApiPrecedenti >= occorrenzeServizio) coperti.push(riga);
     }
-    if (totaleAtteso > 0 && distinti.length < totaleAtteso) {
-      const motivo = "Spotify ha restituito solo " + distinti.length + " brani su " + totaleAtteso +
+    if (totaleAtteso > 0 && coperti.length < totaleAtteso) {
+      const motivo = "Spotify ha restituito solo " + coperti.length + " brani su " + totaleAtteso +
         ". Non ho importato una playlist incompleta. Premi «Accedi con Spotify», autorizza l'accesso e poi riprova il link.";
-      _spotifyTraccia("importazione interrotta: playlist parziale (" + distinti.length + "/" + totaleAtteso + ")");
+      _spotifyTraccia("importazione interrotta: playlist parziale (" + coperti.length + "/" + totaleAtteso + ")");
       throw new Error(motivo);
     }
     return brani;
