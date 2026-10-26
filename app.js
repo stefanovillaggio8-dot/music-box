@@ -664,7 +664,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.465";
+  const APP_VERSION = "6.466";
 
   /* I file locali app.js/versione.json contengono anche il catalogo dei brani
      generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
@@ -2103,7 +2103,18 @@ function _salvaStatistiche() {
     for (const r of (_registriLocaliStats || [])) {
       if (!r || !r.id || !r.blob || (r.profile || DEFAULT_PROFILE) !== nome) continue;
       if (eliminatiLocale[_chiaveEliminato(r.id, nome)]) continue;
-      try { if (eGiaCondiviso({ title:r.title, artist:r.artist })) continue; } catch (e) {}
+      /* eGiaCondiviso() usa il profilo aperto: qui stiamo contando anche gli altri. */
+      const titoloNorm = String(r.title || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+      const artistaNorm = String(r.artist || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+      let duplicato = false;
+      if (titoloNorm) {
+        for (const già of risultato.values()) {
+          const t = String(già.title || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+          const a = String(già.artist || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+          if (t === titoloNorm && (!artistaNorm || !a || a === artistaNorm)) { duplicato = true; break; }
+        }
+      }
+      if (duplicato) continue;
       risultato.set(r.id, { id:r.id, title:r.title||"", artist:r.artist||"", profile:nome, builtin:false });
     }
     return Array.from(risultato.values());
@@ -10866,9 +10877,16 @@ async function checkForNewSongs() {
       const mine = parsed.filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b));
       const remoteFiles = mine.map((b) => b.file);
       const localBuiltin = tracks.filter((t) => t.builtin);
-      const localFiles = localBuiltin.map((t) => t.file || t.url);
-      const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
-      const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
+      const normalizzaPercorsoBrano = (v) => {
+        let s = String(v || "").split("?")[0].split("#")[0];
+        const i = s.lastIndexOf("songs/");
+        if (i >= 0) s = s.slice(i);
+        return s.replace(/^\.\//, "");
+      };
+      const localFiles = localBuiltin.map((t) => normalizzaPercorsoBrano(t.file || t.url));
+      const remoteFilesNorm = remoteFiles.map(normalizzaPercorsoBrano);
+      const aggiunte = mine.filter((b) => !localFiles.includes(normalizzaPercorsoBrano(b.file)));
+      const tolte = localFiles.filter((f) => !remoteFilesNorm.includes(f));
       /* Una canzone che manca al sito puo' sparire solo a meta' di un aggiornamento:
          la tolgo solo se la vedo assente DUE controlli di fila (piu' o meno 2 minuti),
          cosi' un aggiornamento o una copia vecchia non cancella mai brani validi. */
@@ -10893,8 +10911,9 @@ async function checkForNewSongs() {
         BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
       }
       for (const t of localBuiltin) {
-        if (remoteFiles.indexOf(t.url) < 0 && confermate.indexOf(t.url) < 0) {
-          BUILTIN.push({ title: t.title, file: t.url, artist: t.artist, profile: profile });
+        const percorso = normalizzaPercorsoBrano(t.file || t.url);
+        if (!remoteFilesNorm.includes(percorso) && !confermate.some((f) => normalizzaPercorsoBrano(f) === percorso)) {
+          BUILTIN.push({ title: t.title, file: percorso, artist: t.artist, profile: profile });
         }
       }
       await loadCovers();
