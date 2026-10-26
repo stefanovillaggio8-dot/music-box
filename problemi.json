@@ -1,41 +1,5 @@
 [
  {
-  "t": 1793047053452,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793047054018,
-  "r": "libreria: 210 brani, scartati 241 per eliminazione, profilo Diego, chiavi eliminate 16"
- },
- {
-  "t": 1793047054006,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793047054172,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793047054092,
-  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793047054398,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793047055041,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793047055300,
-  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793047055727,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
   "t": 1793047055744,
   "r": "libreria: 210 brani, scartati 241 per eliminazione, profilo Diego, chiavi eliminate 16"
  },
@@ -158,5 +122,41 @@
  {
   "t": 1793047068566,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793047068574,
+  "r": "libreria: 210 brani, scartati 241 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1793047068649,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793047068698,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793047068979,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793047069592,
+  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793047069877,
+  "r": "SPOTIFY: [v6.412] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793047070644,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793047070645,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793047070647,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
