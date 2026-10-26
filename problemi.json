@@ -1,33 +1,5 @@
 [
  {
-  "t": 1792975067121,
-  "r": "FINALE: visibili 215 su 242 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1792975076046,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1792975076046,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792975076074,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1792975077250,
-  "r": "FINALE: visibili 0 su 242 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
- },
- {
-  "t": 1792975077277,
-  "r": "FINALE: visibili 0 su 242 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
- },
- {
-  "t": 1792975077920,
-  "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
   "t": 1792975081301,
   "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1792975108241,
   "r": "libreria: 249 brani, scartati 197 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1792975108259,
+  "r": "sessione media aggiornata senza player audio fantasma"
+ },
+ {
+  "t": 1792975108362,
+  "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1792975108410,
+  "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792975108924,
+  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792975110035,
+  "r": "SPOTIFY: [v6.441] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1792975110026,
+  "r": "SPOTIFY: [v6.441] ritorno: nessun codice (indirimento: [?utm_source=chatgpt.com], memoria: [])"
+ },
+ {
+  "t": 1792975110384,
+  "r": "visibili 215 su 242 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  }
 ]
