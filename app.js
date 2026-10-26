@@ -15407,13 +15407,15 @@ async function _spotifyFiltraDoppioni(lista, profiloControllo = profile) {
   for (const riga of (lista || [])) {
     const candidato = _spotifyRigaOggetto(riga);
     if (!candidato.title) continue;
-    const doppio = giaPresenti.some(t => stessoBrano(candidato, t)) ||
-      tenuti.some(r => stessoBrano(candidato, _spotifyRigaOggetto(r)));
+    /* In una lista sorgente (soprattutto un CSV esportato) non scarto una riga
+       solo perché titolo e artista coincidono con una riga precedente.
+       Due uscite/versioni possono condividere questi metadati; il CSV non
+       contiene l'ID Spotify e non permette di dichiararle lo stesso brano.
+       Confronto quindi con la libreria di destinazione, ma conservo ogni
+       occorrenza della lista ricevuta. */
+    const doppio = giaPresenti.some(t => stessoBrano(candidato, t));
     if (doppio) { duplicati++; continue; }
     tenuti.push(candidato.title + "|" + candidato.artist);
-    /* Aggiungo subito al set virtuale: due righe uguali della stessa playlist
-       non possono passare entrambe prima che la libreria venga aggiornata. */
-    giaPresenti.push(candidato);
   }
   return { lista: tenuti, duplicati: duplicati };
 }
