@@ -1035,7 +1035,7 @@
     "v": 0,
     "s": 24,
     "t": "Passione maledetta",
-    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "negromaro|laprimavolta": {
     "v": 0,
@@ -1077,7 +1077,7 @@
    },
    "marracashcoez|quellichenonpensanoilcervello": {
     "v": 1,
-    "s": 711,
+    "s": 856,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
@@ -1190,8 +1190,8 @@
     "a": "22simba"
    },
    "3dnayt|vitedasognofeatnayt": {
-    "v": 2,
-    "s": 755,
+    "v": 3,
+    "s": 758,
     "t": "Vite da sogno (feat. nayt)",
     "a": "3D, nayt"
    },
@@ -1335,7 +1335,7 @@
    },
    "kidyugi|perilsangueversato": {
     "v": 0,
-    "s": 788,
+    "s": 947,
     "t": "Per il Sangue Versato",
     "a": "Kid Yugi"
    },
@@ -1389,7 +1389,7 @@
    },
    "nayt3d|fuorifapaura": {
     "v": 0,
-    "s": 262,
+    "s": 350,
     "t": "Fuori fa paura",
     "a": "nayt, 3D"
    },
@@ -1455,7 +1455,7 @@
    },
    "sferaebbasta|ricchixsempre": {
     "v": 1,
-    "s": 331,
+    "s": 498,
     "t": "Ricchi x Sempre",
     "a": "Sfera Ebbasta"
    },
@@ -1485,7 +1485,7 @@
    },
    "thasupgemitaizmadman|pers0na2featgemitaizmadman": {
     "v": 0,
-    "s": 584,
+    "s": 774,
     "t": "pers0na2 (feat. Gemitaiz, MadMan)",
     "a": "thasup, Gemitaiz, MadMan"
    },
@@ -1521,7 +1521,7 @@
    },
    "tonyboy|stanza": {
     "v": 0,
-    "s": 311,
+    "s": 410,
     "t": "Stanza",
     "a": "Tony Boy"
    },
@@ -1563,7 +1563,7 @@
    },
    "iltre|zerorimorsi": {
     "v": 0,
-    "s": 574,
+    "s": 687,
     "t": "Zero rimorsi",
     "a": "Il Tre"
    },
@@ -1581,7 +1581,7 @@
    },
    "thasuprkomi|rockrollafeatrkomi": {
     "v": 0,
-    "s": 339,
+    "s": 475,
     "t": "rock & rolla (feat. Rkomi)",
     "a": "thasup, Rkomi"
    },
@@ -1593,7 +1593,7 @@
    },
    "gemellogemitaiz|stanotte": {
     "v": 0,
-    "s": 506,
+    "s": 680,
     "t": "Stanotte",
     "a": "Gemello, Gemitaiz"
    },
@@ -1719,7 +1719,7 @@
    },
    "salmo|90min": {
     "v": 0,
-    "s": 288,
+    "s": 296,
     "t": "90MIN",
     "a": "Salmo"
    },
@@ -1743,7 +1743,7 @@
    },
    "maneskin|morirodare": {
     "v": 0,
-    "s": 675,
+    "s": 818,
     "t": "MorirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
@@ -1767,7 +1767,7 @@
    },
    "kidyugi|exangelooriginalversion": {
     "v": 0,
-    "s": 477,
+    "s": 628,
     "t": "Ex Angelo - Original Version",
     "a": "Kid Yugi"
    },
@@ -1821,7 +1821,7 @@
    },
    "plainwhitets|heytheredelilah": {
     "v": 0,
-    "s": 844,
+    "s": 1023,
     "t": "Hey There Delilah",
     "a": "Plain White T's"
    },
@@ -1839,7 +1839,7 @@
    },
    "sadturskiidastropapavsickluke|nonaverepaurafeatastropapavsickluke": {
     "v": 0,
-    "s": 495,
+    "s": 615,
     "t": "non avere paura (feat. Astro, Papa V, Sick Luke)",
     "a": "Sadturs, KIID, Astro, Papa V, Sick Luke"
    },
@@ -1875,7 +1875,7 @@
    },
    "gemitaizcoez|davidefeatcoez": {
     "v": 0,
-    "s": 482,
+    "s": 616,
     "t": "Davide (feat. Coez)",
     "a": "Gemitaiz, Coez"
    },
@@ -1893,7 +1893,7 @@
    },
    "rkomichiello|cancellidimezzanotteconchiello": {
     "v": 0,
-    "s": 469,
+    "s": 633,
     "t": "CANCELLI DI MEZZANOTTE (con CHIELLO)",
     "a": "Rkomi, chiello"
    },
@@ -1923,7 +1923,7 @@
    },
    "nayt3d|tuttappo": {
     "v": 0,
-    "s": 151,
+    "s": 170,
     "t": "TUTTAPPO'",
     "a": "nayt, 3D"
    },
@@ -1988,8 +1988,8 @@
     "a": "Danien & Thee"
    },
    "22simba|nevalelapenaversion1": {
-    "v": 6,
-    "s": 2171,
+    "v": 7,
+    "s": 2462,
     "t": "Ne vale la pena (Version 1)",
     "a": "22simba"
    },
@@ -2007,7 +2007,7 @@
    },
    "drast|granfinale": {
     "v": 0,
-    "s": 130,
+    "s": 256,
     "t": "Gran Finale",
     "a": "Drast"
    },
@@ -2019,7 +2019,7 @@
    },
    "franco126tommasoparadiso|stanzasingolafeattommasoparadiso": {
     "v": 0,
-    "s": 296,
+    "s": 446,
     "t": "Stanza Singola (feat. Tommaso Paradiso)",
     "a": "Franco126, Tommaso Paradiso"
    },
@@ -2139,7 +2139,7 @@
    },
    "adele|skyfall": {
     "v": 0,
-    "s": 464,
+    "s": 467,
     "t": "Skyfall",
     "a": "Adele"
    },
@@ -2157,7 +2157,7 @@
    },
    "nayt3d|peresserevivi": {
     "v": 0,
-    "s": 442,
+    "s": 525,
     "t": "Per essere vivi",
     "a": "nayt, 3D"
    },
@@ -2169,7 +2169,7 @@
    },
    "nayt3d|provarequalcosa": {
     "v": 0,
-    "s": 622,
+    "s": 749,
     "t": "provare qualcosa",
     "a": "nayt, 3D"
    },
@@ -2235,7 +2235,7 @@
    },
    "22simba|freedom": {
     "v": 1,
-    "s": 418,
+    "s": 558,
     "t": "Freedom",
     "a": "22simba"
    },
@@ -2253,7 +2253,7 @@
    },
    "kidyugi|tristanoeisotta": {
     "v": 0,
-    "s": 501,
+    "s": 664,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -2271,7 +2271,7 @@
    },
    "nayt|ieri": {
     "v": 0,
-    "s": 450,
+    "s": 568,
     "t": "Ieri",
     "a": "nayt"
    },
@@ -2319,7 +2319,7 @@
    },
    "lilpeep|starshopping": {
     "v": 0,
-    "s": 223,
+    "s": 336,
     "t": "Star Shopping",
     "a": "Lil Peep"
    },
@@ -2379,7 +2379,7 @@
    },
    "tonyboysickluke|rocknroll": {
     "v": 0,
-    "s": 208,
+    "s": 325,
     "t": "Rock'n'roll",
     "a": "Tony Boy, Sick Luke"
    },
@@ -2409,13 +2409,13 @@
    },
    "nayt|lagrandefuga": {
     "v": 0,
-    "s": 322,
+    "s": 323,
     "t": "La grande fuga",
     "a": "nayt"
    },
    "silentbobsickbudd|morireeniente": {
     "v": 0,
-    "s": 478,
+    "s": 629,
     "t": "Morire ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "Silent Bob, Sick Budd"
    },
@@ -2469,7 +2469,7 @@
    },
    "22simbasayf|nevalelapenafeatsayf": {
     "v": 1,
-    "s": 446,
+    "s": 712,
     "t": "Ne vale la pena (feat. Sayf)",
     "a": "22simba, Sayf"
    },
@@ -2487,7 +2487,7 @@
    },
    "chiello|vulcano": {
     "v": 0,
-    "s": 308,
+    "s": 467,
     "t": "Vulcano",
     "a": "chiello"
    },
