@@ -212,7 +212,10 @@
            regolo: basta cambiare _SPOSTAMENTO_TESTO. */
         /* Ste: "ancora il testo e' poco indietro rispetto alla voce":
            mezzo secondo non bastava, quindi ora ne metto uno. */
-        var _SPOSTAMENTO_TESTO = 1.0;
+        /* Non anticipare globalmente i testi: molte canzoni hanno intro
+           strumentali e spostare ogni riga di un secondo fa partire il testo
+           prima della voce. I timestamp originali restano quelli di LRCLIB. */
+        var _SPOSTAMENTO_TESTO = 0.0;
         function _spostaTesto() {
           var righe = document.querySelectorAll("#lyricsBody .lyr-line[data-t]");
           if (!righe.length) return;
