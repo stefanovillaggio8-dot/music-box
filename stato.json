@@ -385,7 +385,7 @@
    },
    "artie5ive|introlabellavita": {
     "v": 3,
-    "s": 205,
+    "s": 207,
     "t": "INTRO (La Bella Vita)",
     "a": "Artie 5ive"
    },
@@ -553,7 +553,7 @@
    },
    "coez|qualcosadigrande": {
     "v": 0,
-    "s": 95,
+    "s": 96,
     "t": "Qualcosa di grande",
     "a": "Coez"
    },
@@ -1045,9 +1045,51 @@
    },
    "nayt3d|doom": {
     "v": 0,
-    "s": 0,
+    "s": 1,
     "t": "Doom",
     "a": "nayt, 3D"
+   },
+   "kidyugisferaebbastashablo|exangelo": {
+    "v": 0,
+    "s": 0,
+    "t": "Ex Angelo",
+    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
+   },
+   "kidyugi|jolly": {
+    "v": 0,
+    "s": 2,
+    "t": "Jolly",
+    "a": "Kid Yugi"
+   },
+   "moda|quellicomeme": {
+    "v": 0,
+    "s": 3,
+    "t": "Quelli come me",
+    "a": "Modà"
+   },
+   "thasupmarasattei|occhimei": {
+    "v": 0,
+    "s": 0,
+    "t": "OCCHI MEI",
+    "a": "thasup, Mara Sattei"
+   },
+   "nayt3d|unidea": {
+    "v": 0,
+    "s": 1,
+    "t": "un'idea",
+    "a": "nayt, 3D"
+   },
+   "dominicfike|babydoll": {
+    "v": 0,
+    "s": 123,
+    "t": "Babydoll",
+    "a": "Dominic Fike"
+   },
+   "donpero|babymama": {
+    "v": 0,
+    "s": 0,
+    "t": "Baby Mama",
+    "a": "Don Pero"
    }
   },
   "Diego": {
