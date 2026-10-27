@@ -673,7 +673,7 @@
    },
    "moda|nontidimentico": {
     "v": 1,
-    "s": 211,
+    "s": 272,
     "t": "Non ti dimentico",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
@@ -1102,6 +1102,12 @@
     "s": 89,
     "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
     "a": "THYNA, Nuova Scena"
+   },
+   "tizianoferro|tiscatterounafoto": {
+    "v": 0,
+    "s": 0,
+    "t": "Tiscatterò una foto",
+    "a": "Tiziano Ferro"
    }
   },
   "Diego": {
