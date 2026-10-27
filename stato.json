@@ -457,7 +457,7 @@
    },
    "luckytwice|imsoluckyhardstyle": {
     "v": 1,
-    "s": 2,
+    "s": 8,
     "t": "I'm So Lucky (Hardstyle)",
     "a": "Lucky Twice"
    },
@@ -1106,8 +1106,14 @@
    "tizianoferro|tiscatterounafoto": {
     "v": 0,
     "s": 0,
-    "t": "TiscatterÃÂ² una foto",
+    "t": "TiscatterÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
+   },
+   "coez|leparolepiugrandi": {
+    "v": 1,
+    "s": 0,
+    "t": "Le parole più grandi",
+    "a": "Coez"
    }
   },
   "Diego": {
