@@ -157,7 +157,7 @@
    },
    "frahquintale|haivistomai": {
     "v": 0,
-    "s": 162,
+    "s": 185,
     "t": "Hai visto mai",
     "a": "Frah Quintale"
    },
@@ -295,7 +295,7 @@
    },
    "lelfo|carusidosud": {
     "v": 0,
-    "s": 28,
+    "s": 31,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
@@ -709,7 +709,7 @@
    },
    "moda|salvami": {
     "v": 0,
-    "s": 352,
+    "s": 438,
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
@@ -1106,13 +1106,13 @@
    "tizianoferro|tiscatterounafoto": {
     "v": 0,
     "s": 0,
-    "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
+    "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
    "coez|leparolepiugrandi": {
     "v": 1,
     "s": 173,
-    "t": "Le parole piÃÂ¹ grandi",
+    "t": "Le parole piÃÂÃÂ¹ grandi",
     "a": "Coez"
    }
   },
