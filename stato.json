@@ -456,8 +456,8 @@
     "a": "Katy Perry, Zyzz"
    },
    "luckytwice|imsoluckyhardstyle": {
-    "v": 0,
-    "s": 0,
+    "v": 1,
+    "s": 2,
     "t": "I'm So Lucky (Hardstyle)",
     "a": "Lucky Twice"
    },
@@ -865,7 +865,7 @@
    },
    "tommasoparadiso|romantici": {
     "v": 0,
-    "s": 88,
+    "s": 163,
     "t": "romantici",
     "a": "Tommaso Paradiso"
    },
@@ -1106,7 +1106,7 @@
    "tizianoferro|tiscatterounafoto": {
     "v": 0,
     "s": 0,
-    "t": "TiscatterÃ² una foto",
+    "t": "TiscatterÃÂ² una foto",
     "a": "Tiziano Ferro"
    }
   },
