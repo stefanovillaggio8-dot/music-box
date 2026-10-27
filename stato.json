@@ -355,7 +355,7 @@
    },
    "nayt3d|dimenticare": {
     "v": 1,
-    "s": 133,
+    "s": 135,
     "t": "Dimenticare",
     "a": "nayt, 3D"
    },
@@ -528,8 +528,8 @@
     "a": "Kid Yugi"
    },
    "kidyugi|perilsangueversato": {
-    "v": 0,
-    "s": 163,
+    "v": 1,
+    "s": 164,
     "t": "Per il Sangue Versato",
     "a": "Kid Yugi"
    },
@@ -1090,6 +1090,18 @@
     "s": 49,
     "t": "Baby Mama",
     "a": "Don Pero"
+   },
+   "nayt3d|noidue": {
+    "v": 0,
+    "s": 0,
+    "t": "Noi due",
+    "a": "nayt, 3D"
+   },
+   "thynanuovascena|puttafromthenetflixrapshownuovascena": {
+    "v": 0,
+    "s": 89,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    }
   },
   "Diego": {
