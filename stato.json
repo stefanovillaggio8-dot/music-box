@@ -138,7 +138,7 @@
  "statistiche": {
   "Ste": {
    "evanescence|bringmetolife": {
-    "v": 2,
+    "v": 3,
     "s": 867,
     "t": "Bring Me To Life",
     "a": "Evanescence"
@@ -427,7 +427,7 @@
    },
    "iggyazalearitaora|blackwidowhardstyleremix": {
     "v": 2,
-    "s": 24,
+    "s": 25,
     "t": "Black Widow (Hardstyle Remix)",
     "a": "Iggy Azalea, Rita Ora"
    },
@@ -907,7 +907,7 @@
    },
    "elleyduhe|middleofthenightdomlivezremix": {
     "v": 6,
-    "s": 354,
+    "s": 398,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
    },
