@@ -139,7 +139,7 @@
   "Ste": {
    "evanescence|bringmetolife": {
     "v": 2,
-    "s": 807,
+    "s": 812,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -390,14 +390,14 @@
     "a": "Artie 5ive"
    },
    "artie5ive|davverodavvero": {
-    "v": 68,
-    "s": 1098,
+    "v": 69,
+    "s": 1112,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
    "artie5ive|fwss25freestyle": {
     "v": 26,
-    "s": 809,
+    "s": 817,
     "t": "FW/SS25 (Freestyle)",
     "a": "Artie 5ive"
    },
@@ -888,7 +888,7 @@
     "a": "Calcutta"
    },
    "calcutta|frosinone": {
-    "v": 0,
+    "v": 1,
     "s": 155,
     "t": "Frosinone",
     "a": "Calcutta"
@@ -1042,6 +1042,12 @@
     "s": 3,
     "t": "La prima volta",
     "a": "Negromaro"
+   },
+   "nayt3d|doom": {
+    "v": 0,
+    "s": 0,
+    "t": "Doom",
+    "a": "nayt, 3D"
    }
   },
   "Diego": {
