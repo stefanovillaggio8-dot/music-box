@@ -295,7 +295,7 @@
    },
    "lelfo|carusidosud": {
     "v": 0,
-    "s": 31,
+    "s": 160,
     "t": "carusi do sud",
     "a": "l'elfo"
    },
@@ -906,7 +906,7 @@
     "a": "Ultimo"
    },
    "elleyduhe|middleofthenightdomlivezremix": {
-    "v": 6,
+    "v": 7,
     "s": 398,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
@@ -1027,7 +1027,7 @@
    },
    "lelfofunkymann|funghiinsalsarosa": {
     "v": 1,
-    "s": 12,
+    "s": 15,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
    },
@@ -1106,13 +1106,13 @@
    "tizianoferro|tiscatterounafoto": {
     "v": 0,
     "s": 0,
-    "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
+    "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
    "coez|leparolepiugrandi": {
     "v": 1,
     "s": 173,
-    "t": "Le parole piÃÂÃÂ¹ grandi",
+    "t": "Le parole piÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    }
   },
