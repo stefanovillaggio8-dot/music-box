@@ -16,7 +16,7 @@ const songs = vm.runInNewContext("["+app.slice(start+marker.length,end)+"]", {},
 const version = json("versione.json");
 const spotify = json("covers-spotify.json");
 const generic = json("covers.json");
-json("lyrics.json");
+const lyrics = json("lyrics.json");
 const karaoke = json("karaoke-index.json");
 if(!Array.isArray(songs) || songs.length!==version.brani) fail.push("Numero brani incoerente con versione.json");
 const seen = new Set(), counts = {},missingSpotify = [], brokenCoverPaths=[];
@@ -44,7 +44,10 @@ for(const [key,v] of Object.entries(karaoke)){
 if(missingSpotify.length)fail.push("Copertine Spotify mancanti: "+missingSpotify.slice(0,10).join(", "));
 console.log(JSON.stringify({version:version.versione,total:songs.length,
   profiles:counts,spotifyIDs:Object.keys(spotify).length,
-  genericCovers:Object.keys(generic).length,karaokeIndexed:Object.keys(karaoke).length,
+  genericCovers:Object.keys(generic).length,
+  existingLyrics:Object.keys(lyrics).length,
+  synchronizedLyrics:Object.values(lyrics).filter(x => x && typeof x==="object" && x.synced).length,
+  karaokeIndexed:Object.keys(karaoke).length,
   missingLocalCoverPaths:brokenCoverPaths,
   errors:fail},null,2));
 if(fail.length)process.exitCode=1;
