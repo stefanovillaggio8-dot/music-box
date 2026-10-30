@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793397239209,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793397239200,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793397239236,
-  "r": "libreria: 620 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793397240579,
-  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
- },
- {
-  "t": 1793397240580,
-  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
-  "t": 1793397242074,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793397242083,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793397242084,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793397243581,
   "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1793397265210,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793397265418,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793397266432,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793397266417,
+  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793397266619,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793397266929,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793397266928,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793397266941,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793397267225,
+  "r": "libreria: 254 brani, scartati 817 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
