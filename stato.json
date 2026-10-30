@@ -1117,7 +1117,7 @@
    },
    "[\"davverodavvero\",\"artie 5ive\"]": {
     "v": 1,
-    "s": 2,
+    "s": 9,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1125,13 +1125,13 @@
     "v": 0,
     "s": 1,
     "t": "Nessuna",
-    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "fabriziodeandre|lacanzonedellamoreperduto": {
     "v": 0,
     "s": 163,
     "t": "La Canzone Dell'Amore Perduto",
-    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "nayt|forte": {
     "v": 0,
@@ -1145,10 +1145,22 @@
     "t": "Davide e Golia",
     "a": "Kid Yugi"
    },
-   "[\"ventanni\",\"måneskin\"]": {
+   "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 1,
     "t": "VENTANNI",
+    "a": "MÃ¥neskin"
+   },
+   "[\"ventanni\",\"måneskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "Måneskin"
+   },
+   "[\"morirò da re\",\"måneskin\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "Morirò da Re",
     "a": "Måneskin"
    }
   },
@@ -2661,16 +2673,16 @@
     "t": "Perdonami (feat. Neima Ezza)",
     "a": "2nd Roof, Neima Ezza, ToTheMoon"
    },
-   "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
+   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 3,
-    "t": "Con Te PartirÃÂ²",
+    "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
+   "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 13,
-    "t": "Con Te PartirÃ²",
+    "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
@@ -2708,6 +2720,12 @@
     "s": 13,
     "t": "Fenomeno",
     "a": "Fabri Fibra"
+   },
+   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
     "v": 1,
