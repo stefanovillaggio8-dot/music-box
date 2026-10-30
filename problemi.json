@@ -1,13 +1,5 @@
 [
  {
-  "t": 1793331022116,
-  "r": "libreria: 613 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793331022701,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1793331022815,
   "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1793331056552,
   "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793331085103,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793331085088,
+  "r": "worker /stato: risponde"
  }
 ]
