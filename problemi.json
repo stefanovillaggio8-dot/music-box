@@ -1,33 +1,5 @@
 [
  {
-  "t": 1793400159999,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793400160045,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793400161209,
-  "r": "FINALE: visibili 0 su 620 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
- },
- {
-  "t": 1793400161261,
-  "r": "FINALE: visibili 0 su 620 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillaggio"
- },
- {
-  "t": 1793400168536,
-  "r": "visibili 620 su 620 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793400169736,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793400169793,
-  "r": "libreria: 620 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
   "t": 1793400169891,
   "r": "visibili 620 su 620 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1793400182851,
   "r": "libreria: 620 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793400182831,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793400182955,
+  "r": "visibili 620 su 620 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793400184049,
+  "r": "FINALE: visibili 620 su 620 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793400184656,
+  "r": "visibili 620 su 620 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793400192856,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793400192856,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793400192903,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
