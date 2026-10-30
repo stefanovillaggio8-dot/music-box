@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793333675126,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793333675127,
-  "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1793333688503,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793333688507,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793333688501,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793333690121,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1793333690126,
   "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1793392511338,
   "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793392511612,
+  "r": "visibili 599 su 599 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392511676,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793392511680,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793392511748,
+  "r": "libreria: 619 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793392512879,
+  "r": "FINALE: visibili 599 su 599 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392514964,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
