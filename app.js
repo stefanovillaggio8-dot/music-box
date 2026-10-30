@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.428";
+  const APP_VERSION = "6.429";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3738,7 +3738,14 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       coverKey(artist, title),
       normKey((artist || "") + " " + (title || "")),
       chiaveSemplice((artist || "") + " " + (title || "")),
-      chiaveSemplice((artist || "") + " " + senzaArtista)
+      chiaveSemplice((artist || "") + " " + senzaArtista),
+      /* Il recuperatore server salva le ricerche senza "(feat. ...)".
+         Prima il player non cercava questa variante: la copertina esisteva
+         in covers.json ma in app restava invisibile. */
+      chiaveSemplice((artist || "") + " " +
+        String(senzaArtista || "").replace(/\s*\((?:feat|ft)\\.?\s+[^)]*\)/gi, "").trim()),
+      normKey((artist || "") + " " +
+        String(senzaArtista || "").replace(/\s*\((?:feat|ft)\\.?\s+[^)]*\)/gi, "").trim())
     ];
     for (const k of varianti) {
       if (k && buona(coversData[k])) return coversData[k];
