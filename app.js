@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.420";
+  const APP_VERSION = "6.421";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3192,6 +3192,7 @@ function _devoVedereBrano(eMio, b) {
        libreria: non lo riprovo piu' e lo tolgo dalla lista */
 try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
     try { _programmaRicercaCopertine(); } catch (e) { /* noop */ }
+    try { _programmaTestiKaraoke(); } catch (e) { /* noop */ }
       try { _aggiornaBadgeFalliti(); } catch (e) { /* noop */ }
       /* Ste: "mi sono scomparse tutte le canzoni". Metto qui il numero vero
          dei brani caricati: se la libreria e' vuota lo vedo subito nel
@@ -3210,6 +3211,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       if (!res.ok) throw new Error("HTTP " + res.status);
       lyricsData = await res.json();
       try { updateLyricsButton(); } catch (e) { /* noop */ }
+      try { _programmaTestiKaraoke(); } catch (e) { /* noop */ }
     } catch (e) {
       console.warn("Testi non disponibili", e);
       lyricsData = {};
@@ -6073,38 +6075,101 @@ box.innerHTML = "";
 
   function currentLyrics() {
     if (!currentId) return null;
-    if (lyricsData[currentId] && lyricsData[currentId].text) return lyricsData[currentId];
-    if (localLyrics[currentId] && localLyrics[currentId].text) return localLyrics[currentId];
+    const builtin = lyricsData[currentId];
+    const saved = localLyrics[currentId];
+    if (saved && saved.synced && parseSynced(saved.synced).length >= 3) return saved;
+    if (builtin && builtin.synced && parseSynced(builtin.synced).length >= 3) return builtin;
+    if (saved && saved.text) return saved;
+    if (builtin && builtin.text) return builtin;
     return null;
   }
 
-  /* Cerca i testi mancanti durante l'ascolto anche per i brani BUILTIN.
-     Convalida titolo/artista tramite findLyrics e salva in IndexedDB. */
+  /* Recupero graduale mentre la pagina e' aperta: testi sincronizzati
+     prioritari, senza sovrascrivere i testi gia' funzionanti. */
   const _testiInRicerca = new Set();
   const _testiTentati = new Set();
-  async function _completaTestoInAscolto(t) {
+  let _testiPrefetchAttivo = false;
+  let _testiPrefetchPrevisto = false;
+
+  async function _completaTestoInAscolto(t, syncedOnly = false) {
     if (!t || !t.id || !t.title || !t.artist) return;
-    if ((lyricsData[t.id] && lyricsData[t.id].text) ||
-        (localLyrics[t.id] && localLyrics[t.id].text)) return;
+    const preesistente = localLyrics[t.id] || lyricsData[t.id] || null;
+    if (preesistente && preesistente.synced &&
+        parseSynced(preesistente.synced).length >= 3) return;
     if (_testiInRicerca.has(t.id) || _testiTentati.has(t.id)) return;
-    _testiTentati.add(t.id);
+    if (Date.now() < _lrclibNonPrimaDi && syncedOnly) return;
     _testiInRicerca.add(t.id);
     try {
-      const risultato = await findLyrics(t.artist, t.title);
-      if (!risultato || !risultato.text || risultato.text.length < 120) return;
-      const entry = { id: t.id, title: t.title, artist: t.artist,
-        text: risultato.text, synced: risultato.synced || "", source: risultato.source || "" };
+      const risultato = await findLyrics(t.artist, t.title, {
+        syncedOnly, album: t.spotifyAlbum || t.album || "",
+        durationMs: t.spotifyDurationMs || 0
+      });
+      if (!risultato || !risultato.text) {
+        if (Date.now() >= _lrclibNonPrimaDi) _testiTentati.add(t.id);
+        return;
+      }
+      const tieneUnTesto = preesistente && preesistente.text;
+      const conTempi = risultato.synced && parseSynced(risultato.synced).length >= 3;
+      if (!conTempi && tieneUnTesto) {
+        _testiTentati.add(t.id);
+        return;
+      }
+      const entry = {
+        id: t.id, title: t.title, artist: t.artist,
+        text: risultato.text, synced: risultato.synced || "",
+        source: risultato.source || ""
+      };
       localLyrics[t.id] = entry;
-      try { if (db) await dbPutLyrics(entry); } catch (e) { /* noop */ }
+      _testiTentati.add(t.id);
+      try { if (db) await dbPutLyrics(entry); } catch (e) { /* Conservato almeno nella sessione. */ }
       if (currentId === t.id) {
         updateLyricsButton();
         const sub = $("hudSub");
-        if (sub) sub.textContent = "Testo disponibile";
+        if (sub) sub.textContent = conTempi ? "Testo karaoke disponibile" : "Testo disponibile";
         if (!$("lyricsPanel").hidden) openLyrics();
       }
-    } catch (e) { /* Testo non disponibile: non bloccare il player. */ }
+    } catch (e) { /* Nessuna richiesta di testo deve fermare la musica. */ }
     finally { _testiInRicerca.delete(t.id); }
   }
+
+  function _programmaTestiKaraoke() {
+    if (_testiPrefetchAttivo || _testiPrefetchPrevisto || !db || document.hidden) return;
+    _testiPrefetchPrevisto = true;
+    setTimeout(async () => {
+      _testiPrefetchPrevisto = false;
+      if (_testiPrefetchAttivo || document.hidden) return;
+      if (Date.now() < _lrclibNonPrimaDi) {
+        setTimeout(_programmaTestiKaraoke, 25000);
+        return;
+      }
+      _testiPrefetchAttivo = true;
+      const profiloIniziale = profile;
+      let scansioni = 0;
+      try {
+        for (const t of tracks.slice()) {
+          if (profile !== profiloIniziale || document.hidden || scansioni >= 8) break;
+          if (!t || !t.id || !t.artist || _testiTentati.has(t.id) || _testiInRicerca.has(t.id)) continue;
+          const attuale = localLyrics[t.id] || lyricsData[t.id];
+          if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) continue;
+          if (Date.now() < _lrclibNonPrimaDi) break;
+          scansioni++;
+          await _completaTestoInAscolto(t, true);
+          await new Promise((resolve) => setTimeout(resolve, 650));
+        }
+      } finally { _testiPrefetchAttivo = false; }
+      if (profile === profiloIniziale && !document.hidden &&
+          tracks.some(t => t && t.artist && !_testiTentati.has(t.id) &&
+            !(localLyrics[t.id] && localLyrics[t.id].synced) &&
+            !(lyricsData[t.id] && lyricsData[t.id].synced))) {
+        setTimeout(_programmaTestiKaraoke, 12000);
+      }
+    }, 4500);
+  }
+  try {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _programmaTestiKaraoke();
+    });
+  } catch (e) { /* noop */ }
 
 async function playById(id, autoplay = true) {
       const t = tracks.find((x) => x.id === id);
@@ -7262,35 +7327,73 @@ if (r.ok && j && j.ok) {
     return Math.max(a, b) >= 0.7;
   }
 
-  async function findLyrics(artist, title) {
-    const safeArtist = encodeURIComponent(artist || "Unknown");
-    const safeTitle = encodeURIComponent(stripVariants(title));
+  /* LRCLIB: i testi LRC con timestamp hanno precedenza sui testi normali.
+     Endpoint aperto con CORS; non si inventano mai parole o timestamp. */
+  let _lrclibNonPrimaDi = 0;
+  async function findLyrics(artist, title, options = {}) {
+    const name = stripVariants(title);
+    const duration = Number(options.durationMs || 0) / 1000;
+    const validate = (j) => {
+      if (!j || j.instrumental || !j.trackName || !titleCompatible(name, j.trackName)) return false;
+      if (artist && j.artistName &&
+          tokenOverlap(artist, j.artistName) < 0.38 &&
+          !artistaSimile(artist, j.artistName)) return false;
+      if (duration > 0 && Number(j.duration) > 0 &&
+          Math.abs(Number(j.duration) - duration) > 16) return false;
+      return !!(j.syncedLyrics || j.plainLyrics);
+    };
+    const choose = (arr) => {
+      const matched = arr.filter(validate);
+      const timed = matched.find(j => j.syncedLyrics && parseSynced(j.syncedLyrics).length >= 3);
+      return timed || (!options.syncedOnly ? matched.find(j => j.plainLyrics) : null);
+    };
+    if (Date.now() >= _lrclibNonPrimaDi) {
+      const endpoint = "https://lrclib.net";
+      const queries = [
+        endpoint + "/api/get?track_name=" + encodeURIComponent(name) +
+          "&artist_name=" + encodeURIComponent(artist || "") +
+          (options.album ? "&album_name=" + encodeURIComponent(options.album) : "") +
+          (duration >= 1 && duration <= 3600 ? "&duration=" + Math.round(duration) : ""),
+        endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
+          "&artist_name=" + encodeURIComponent(artist || "")
+      ];
+      const header = { "Lrclib-Client": "MusicBox/6.421 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      for (const url of queries) {
+        if (Date.now() < _lrclibNonPrimaDi) break;
+        try {
+          const r = await fetchConScadenza(url, 12000, { headers: header });
+          if (r.status === 429) {
+            const retry = Math.max(5, Math.min(300, Number(r.headers.get("Retry-After")) || 30));
+            _lrclibNonPrimaDi = Date.now() + retry * 1000;
+            break;
+          }
+          if (!r.ok) continue;
+          const j = await r.json();
+          const selected = choose(Array.isArray(j) ? j : [j]);
+          if (selected) {
+            const sync = selected.syncedLyrics || "";
+            const plain = selected.plainLyrics || syncedToText(sync);
+            return { text: String(plain || "").trim(), synced: sync,
+              source: sync ? "LRCLIB (karaoke sincronizzato)" : "LRCLIB" };
+          }
+        } catch (e) { /* Provider temporaneamente non raggiungibile. */ }
+      }
+    }
+    if (options.syncedOnly) return null;
+    /* Un testo non sincronizzato e' utile solo se non esiste gia'
+       una versione karaoke affidabile. */
     try {
-      const r1 = await fetch("https://api.lyrics.ovh/v1/" + safeArtist + "/" + safeTitle);
-      if (r1.ok) {
-        const j = await r1.json();
-        if (j && j.lyrics && j.lyrics.length > 120 &&
-            (!j.title || titleCompatible(title, j.title))) {
-          return { text: String(j.lyrics).replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").trim(), source: "lyrics.ovh" };
+      const url = "https://api.lyrics.ovh/v1/" +
+        encodeURIComponent(artist || "Unknown") + "/" + encodeURIComponent(name);
+      const r = await fetchConScadenza(url, 12000);
+      if (r.ok) {
+        const j = await r.json();
+        if (j && typeof j.lyrics === "string" && j.lyrics.length > 120 &&
+            (!j.title || titleCompatible(name, j.title))) {
+          return { text: j.lyrics.replace(/\r/g, "").trim(), synced: "", source: "lyrics.ovh" };
         }
       }
-    } catch (e) { /* noop */ }
-    try {
-      const r2 = await fetch("https://lrclib.net/api/get?artist_name=" + safeArtist + "&track_name=" + safeTitle);
-      if (r2.ok) {
-        const j = await r2.json();
-        const synced = j && j.syncedLyrics ? String(j.syncedLyrics) : "";
-        const text = j && (j.plainLyrics || syncedToText(synced));
-        if (text && text.length > 120 &&
-            (!j.trackName || titleCompatible(title, j.trackName))) {
-          return {
-            text: text.replace(/\n{3,}/g, "\n\n").trim(),
-            synced: synced,
-            source: "LRCLIB" + (synced ? " (sincronizzato)" : "")
-          };
-        }
-      }
-    } catch (e) { /* noop */ }
+    } catch (e) { /* Nessun testo trovato. */ }
     return null;
   }
 
