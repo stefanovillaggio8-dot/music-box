@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.429";
+  const APP_VERSION = "6.430";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3194,6 +3194,7 @@ function _devoVedereBrano(eMio, b) {
        libreria: non lo riprovo piu' e lo tolgo dalla lista */
 try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
     try { _programmaRicercaCopertine(); } catch (e) { /* noop */ }
+    try { _riparaCopertineNonPubblicate().catch(() => {}); } catch (e) { /* noop */ }
     try { _programmaTestiKaraoke(); } catch (e) { /* noop */ }
       try { _aggiornaBadgeFalliti(); } catch (e) { /* noop */ }
       /* Ste: "mi sono scomparse tutte le canzoni". Metto qui il numero vero
@@ -3382,6 +3383,40 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
   /* Una richiesta fallita non deve impedire nuove ricerche per tutta
      la sessione: riprova dopo 45 minuti, senza tempestare i provider. */
   const _ricercaCopertineTentate = new Map();
+  const _copertineLocaliSulWeb = new Map();
+  async function _riparaCopertineNonPubblicate() {
+    /* Il PC può avere copertine locali che non sono nel deploy GitHub:
+       non modificare i percorsi sul server di casa. */
+    if (!/\.github\.io$/i.test(location.hostname)) return;
+    let cambia = false;
+    const daVerificare = tracks.filter(t => t && t.builtin && !t.userCover &&
+      /^copertine\/.+\.(?:png|jpe?g|webp)$/i.test(String(t.cover || "")));
+    for (const t of daVerificare) {
+      const path = t.cover;
+      let disponibile = _copertineLocaliSulWeb.get(path);
+      if (disponibile === undefined) {
+        try {
+          const r = await fetch(path, {method:"HEAD",cache:"no-store"});
+          if (r.ok) disponibile = true;
+          else if (r.status === 404 || r.status === 410) disponibile = false;
+          else continue;
+          _copertineLocaliSulWeb.set(path, disponibile);
+        } catch (e) { continue; }
+      }
+      if (disponibile || t.cover !== path) continue;
+      const sicura = coverInfo(t.artist, t.title);
+      t.cover = sicura && /^https:\/\//i.test(String(sicura.cover || ""))
+        ? sicura.cover : "";
+      if (t.cover && !t.album) t.album = sicura.album || "";
+      _ricercaCopertineTentate.delete(t.id);
+      cambia = true;
+    }
+    if (cambia) {
+      render();
+      _programmaRicercaCopertine();
+    }
+  }
+
   function _copertinaTentataDiRecente(id) {
     const at = _ricercaCopertineTentate.get(id) || 0;
     return at > 0 && Date.now() - at < 45 * 60 * 1000;
