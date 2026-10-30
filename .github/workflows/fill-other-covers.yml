@@ -1,0 +1,35 @@
+name: Completa copertine non Spotify
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tools/fill-other-covers.cjs
+      - .github/workflows/fill-other-covers.yml
+permissions:
+  contents: write
+concurrency:
+  group: additional-artwork-enrichment
+  cancel-in-progress: false
+jobs:
+  covers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cerca copertine con verifica titolo e artista
+        run: node tools/fill-other-covers.cjs
+      - name: Pubblica le copertine verificate
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add covers.json
+          if git diff --staged --quiet; then
+            echo "Nessuna copertina nuova"; exit 0
+          fi
+          git commit -m "Completa copertine mancanti non Spotify"
+          git pull --rebase origin main
+          git push origin HEAD:main

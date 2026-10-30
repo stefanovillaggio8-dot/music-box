@@ -1154,7 +1154,7 @@
     { title: "Italiana", file: "songs/track-1141.mp3", artist: "J-AX, Fedez", profile: "Emanuele", spotifyId: "0ptaq4BSl6jrXfGyLzJjYE", spotifyAlbum: "Italiana", spotifyDurationMs: 174000 },
     { title: "Cupido (feat. Quavo)", file: "songs/track-1031.mp3", artist: "Sfera Ebbasta, Quavo", profile: "Emanuele", spotifyId: "0dLToDou8YHYJpQltj3Ijy", spotifyAlbum: "Rockstar", spotifyDurationMs: 210000 },
     { title: "Sciroppo (feat. DrefGold)", file: "songs/track-1032.mp3", artist: "Sfera Ebbasta, DrefGold", profile: "Emanuele", spotifyId: "4VVG3HBGaqSNZqIpmewIA6", spotifyAlbum: "Rockstar", spotifyDurationMs: 205000 },
-    { title: "Stratos", file: "songs/track-1187.mp3", artist: "Kid Yugi", profile: "Emanuele" },
+    { title: "Stratos", file: "songs/track-1187.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyAlbum: "Anche gli Eroi Muoiono Post Mortem" },
 ];
 
   const PALETTE = [
@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.422";
+  const APP_VERSION = "6.423";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3484,6 +3484,17 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       _applicaCopertineAlCatalogo();
     } catch (e) { /* Compatibile con le copie non ancora aggiornate. */ }
   }
+  /* Aggiorna l'archivio quando rientri nell'app, senza cancellare le cache
+     offline. Il primo caricamento continua ad avvenire in loadCovers(). */
+  try {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _caricaCopertineSpotify().catch(() => {});
+    });
+    setInterval(() => {
+      if (!document.hidden) _caricaCopertineSpotify().catch(() => {});
+    }, 300000);
+  } catch (e) { /* Il recupero copertine e' opzionale. */ }
+
   /* Un'immagine scelta dall'utente rimane prioritaria; gli ID Spotify
      esatti sostituiscono solo le copertine trovate per approssimazione. */
   function _applicaCopertineAlCatalogo() {
