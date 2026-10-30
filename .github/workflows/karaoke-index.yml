@@ -24,8 +24,22 @@ jobs:
         env:
           MAX_KARAOKE_LOOKUP: "1050"
         run: node tools/build-karaoke-index.cjs
-      - name: Pubblica indice metadati
+      - name: Pubblica indice metadati senza perdere modifiche concorrenti
         run: |
+          # Un'altra pubblicazione può avvenire mentre la scansione è in corso.
+          # Conserva il nuovo indice, riparti dal main più recente e unisci.
+          cp karaoke-index.json "$RUNNER_TEMP/musicbox-karaoke-new.json"
+          git fetch origin main
+          git reset --hard origin/main
+          node - <<'NODE'
+          const fs = require('fs');
+          let published = {};
+          try { published = JSON.parse(fs.readFileSync('karaoke-index.json','utf8')); } catch (_) {}
+          const found = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+'/musicbox-karaoke-new.json','utf8'));
+          const merged = {...published, ...found};
+          fs.writeFileSync('karaoke-index.json',JSON.stringify(Object.fromEntries(Object.entries(merged).sort()),null,2)+'\n');
+          console.log('Karaoke ID pubblicabili:',Object.keys(merged).length);
+          NODE
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add karaoke-index.json
@@ -33,5 +47,4 @@ jobs:
             echo "Nessun nuovo ID LRCLIB"; exit 0
           fi
           git commit -m "Indicizza testi karaoke tramite ID LRCLIB"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          git push origin HEAD:main || { git pull --rebase origin main && git push origin HEAD:main; }
