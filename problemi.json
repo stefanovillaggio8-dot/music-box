@@ -1,13 +1,5 @@
 [
  {
-  "t": 1793393560709,
-  "r": "visibili 224 su 251 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793393560705,
-  "r": "suono: originale b-track-135"
- },
- {
   "t": 1793393605273,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1793393639166,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793393640369,
+  "r": "FINALE: visibili 225 su 252 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
+ },
+ {
+  "t": 1793393641978,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  }
 ]
