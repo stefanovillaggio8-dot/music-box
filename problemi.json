@@ -1,33 +1,5 @@
 [
  {
-  "t": 1793329671968,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793329672538,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793329672643,
-  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793329672880,
-  "r": "SPOTIFY: [v6.413] ricarico: il worker del servizio e' cambiato"
- },
- {
-  "t": 1793329673357,
-  "r": "libreria: 613 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793329673336,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793329673928,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
   "t": 1793329674011,
   "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1793329696499,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793329696500,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793329698101,
+  "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793329698112,
+  "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793329698098,
+  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793329711623,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793329711622,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793329711622,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
