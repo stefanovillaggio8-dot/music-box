@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793400754724,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793400754835,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793400754813,
-  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793400755592,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793400755762,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793400755789,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793400756019,
-  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793400756019,
-  "r": "SPOTIFY: [v6.418] il worker aveva il permesso pronto: lo prendo"
- },
- {
   "t": 1793400756535,
   "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1793400764351,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793400764302,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793400764463,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793400764568,
+  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793400764683,
+  "r": "SPOTIFY: [v6.418] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1793400765408,
+  "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793400765450,
+  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793400765590,
+  "r": "SPOTIFY: [v6.418] il worker aveva il permesso pronto: lo prendo"
+ },
+ {
+  "t": 1793400767883,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
