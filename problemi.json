@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793392872260,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793392872261,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793392872265,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393457226,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793393457235,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793393457667,
-  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793393457795,
-  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793393458701,
-  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793393458922,
   "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1793393484646,
   "r": "visibili 224 su 251 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793393484695,
+  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793393485325,
+  "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793393485590,
+  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793393486216,
+  "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793393486659,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793393486659,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793393486604,
+  "r": "visibili 224 su 251 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793393486698,
+  "r": "libreria: 254 brani, scartati 818 per eliminazione, profilo Ste, chiavi eliminate 16"
  }
 ]
