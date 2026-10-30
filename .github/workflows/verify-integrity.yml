@@ -1,0 +1,38 @@
+name: Verifica integrita Music Box
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - app.js
+      - sw.js
+      - spotify.js
+      - spotify-ui.js
+      - fuoco.js
+      - versione.json
+      - covers.json
+      - covers-spotify.json
+      - lyrics.json
+      - karaoke-index.json
+      - tools/audit-catalog.cjs
+      - .github/workflows/verify-integrity.yml
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Controlla JavaScript
+        run: |
+          node --check app.js
+          node --check sw.js
+          node --check spotify.js
+          node --check spotify-ui.js
+          node --check fuoco.js
+      - name: Verifica cataloghi, profili, immagini e indice karaoke
+        run: node tools/audit-catalog.cjs
