@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793399350570,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793399350597,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793399350598,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793399351779,
-  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1793399351754,
-  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793399351857,
-  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1793399365781,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1793399801085,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793399801093,
+  "r": "libreria: 620 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793399801211,
+  "r": "visibili 620 su 620 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793399802282,
+  "r": "FINALE: visibili 620 su 620 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793399802979,
+  "r": "visibili 620 su 620 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793399811208,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793399811206,
+  "r": "worker /stato: risponde"
  }
 ]
