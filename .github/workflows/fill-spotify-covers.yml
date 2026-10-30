@@ -1,0 +1,40 @@
+name: Completa copertine Spotify
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - tools/fill-spotify-covers.mjs
+      - .github/workflows/fill-spotify-covers.yml
+permissions:
+  contents: write
+concurrency:
+  group: spotify-artwork-enrichment
+  cancel-in-progress: false
+jobs:
+  covers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cerca copertine usando Spotify oEmbed e ID esatti
+        env:
+          MAX_SPOTIFY_COVERS: "1250"
+        run: node tools/fill-spotify-covers.mjs
+      - name: Pubblica solo i metadati delle copertine nuove
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add covers-spotify.json
+          if git diff --staged --quiet; then
+            echo "Nessuna copertina nuova"
+            exit 0
+          fi
+          git commit -m "Aggiorna copertine Spotify per ID verificati"
+          git pull --rebase origin main
+          git push origin HEAD:main
