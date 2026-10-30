@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.424";
+  const APP_VERSION = "6.425";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1734,6 +1734,8 @@ window.addEventListener("storage", (e) => {
   };
 
   let lyricsData = {};
+  /* Solo ID LRCLIB e metadati, non testi protetti da copyright. */
+  let karaokeIndex = {};
   let coversData = {};
   let spotifyCoversData = {}; /* Copertine per ID Spotify univoco. */
   let localLyrics = {};
@@ -3205,11 +3207,48 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       render();
   }
 
+  /* L'indice pubblicato contiene solo gli ID LRCLIB (non testi).
+     I testi vengono richiesti al provider quando servono e salvati nel DB
+     del browser dell'utente, non redistribuiti in GitHub. */
+  let _karaokeIndexAggiornato = "";
+  async function _caricaIndiceKaraoke() {
+    try {
+      const resp = await fetch("karaoke-index.json?v=" + APP_VERSION, { cache: "no-store" });
+      if (!resp.ok) return;
+      const json = await resp.json();
+      if (!json || typeof json !== "object" || Array.isArray(json)) return;
+      const valid = {};
+      for (const [id, meta] of Object.entries(json)) {
+        if (/^b-[a-zA-Z0-9_-]+$/.test(id) &&
+            meta && Number.isSafeInteger(meta.lrclibId) && meta.lrclibId > 0 &&
+            meta.synced === true) valid[id] = meta;
+      }
+      const signature = Object.keys(valid).length + ":" +
+        Object.entries(valid).slice(0, 8).map(([id, v]) => id + ":" + v.lrclibId).join("|");
+      if (signature === _karaokeIndexAggiornato) return;
+      karaokeIndex = valid;
+      _karaokeIndexAggiornato = signature;
+      try {
+        for (const id of Object.keys(valid)) _testiTentati.delete(id);
+        _programmaTestiKaraoke();
+      } catch (e) { /* Se il player non e' ancora inizializzato riprova dopo. */ }
+    } catch (e) { /* Il karaoke tradizionale continua a funzionare. */ }
+  }
+  try {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _caricaIndiceKaraoke().catch(() => {});
+    });
+    setInterval(() => {
+      if (!document.hidden) _caricaIndiceKaraoke().catch(() => {});
+    }, 300000);
+  } catch (e) { /* noop */ }
+
   async function loadLyrics() {
     try {
       const res = await fetch("lyrics.json");
       if (!res.ok) throw new Error("HTTP " + res.status);
       lyricsData = await res.json();
+      await _caricaIndiceKaraoke();
       try { updateLyricsButton(); } catch (e) { /* noop */ }
       try { _programmaTestiKaraoke(); } catch (e) { /* noop */ }
     } catch (e) {
@@ -6126,7 +6165,7 @@ box.innerHTML = "";
     try {
       const risultato = await findLyrics(t.artist, t.title, {
         syncedOnly, album: t.spotifyAlbum || t.album || "",
-        durationMs: t.spotifyDurationMs || 0
+        durationMs: t.spotifyDurationMs || 0, trackId: t.id
       });
       if (!risultato || !risultato.text) {
         if (Date.now() >= _lrclibNonPrimaDi) _registraTentativoTesto(t.id, syncedOnly, false);
@@ -7371,9 +7410,14 @@ if (r.ok && j && j.ok) {
     const duration = Number(options.durationMs || 0) / 1000;
     const validate = (j) => {
       if (!j || j.instrumental || !j.trackName || !titleCompatible(name, j.trackName)) return false;
-      if (artist && j.artistName &&
-          tokenOverlap(artist, j.artistName) < 0.38 &&
-          !artistaSimile(artist, j.artistName)) return false;
+      /* Per i feat Spotify elenca piu' artisti, mentre LRCLIB puo'
+         riportare solo quello principale. Accetta un match verificato
+         sul primo artista, non un artista completamente diverso. */
+      const mainArtist = String(artist || "").split(/,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim();
+      if (mainArtist && j.artistName &&
+          tokenOverlap(mainArtist, j.artistName) < 0.48 &&
+          !artistaSimile(mainArtist, j.artistName) &&
+          !normKey(j.artistName).includes(normKey(mainArtist))) return false;
       if (duration > 0 && Number(j.duration) > 0 &&
           Math.abs(Number(j.duration) - duration) > 16) return false;
       return !!(j.syncedLyrics || j.plainLyrics);
@@ -7383,6 +7427,26 @@ if (r.ok && j && j.ok) {
       const timed = matched.find(j => j.syncedLyrics && parseSynced(j.syncedLyrics).length >= 3);
       return timed || (!options.syncedOnly ? matched.find(j => j.plainLyrics) : null);
     };
+    /* Lookup immediato della registrazione sincronizzata gia' riconosciuta
+       nell'indice: evita ricerche ripetute e ambiguita' fra versioni. */
+    const ref = options.trackId && karaokeIndex[options.trackId];
+    if (ref && Date.now() >= _lrclibNonPrimaDi) {
+      try {
+        const url = "https://lrclib.net/api/get/" + ref.lrclibId;
+        const r = await fetchConScadenza(url, 12000);
+        if (r.status === 429) {
+          const retry = Math.max(5, Math.min(300, Number(r.headers.get("Retry-After")) || 30));
+          _lrclibNonPrimaDi = Date.now() + retry * 1000;
+        } else if (r.ok) {
+          const j = await r.json();
+          const rows = j && j.syncedLyrics && parseSynced(j.syncedLyrics);
+          if (validate(j) && rows && rows.length >= 3) {
+            return { text: String(j.plainLyrics || syncedToText(j.syncedLyrics)).trim(),
+              synced: j.syncedLyrics, source: "LRCLIB (karaoke identificato)" };
+          }
+        }
+      } catch (e) { /* Fallback alla ricerca per titolo e artista. */ }
+    }
     if (Date.now() >= _lrclibNonPrimaDi) {
       const endpoint = "https://lrclib.net";
       const queries = [
