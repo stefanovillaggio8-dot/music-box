@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793397249834,
-  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793397250421,
   "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793397281806,
   "r": "FINALE: visibili 224 su 251 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793397297107,
+  "r": "worker /stato: risponde"
  }
 ]
