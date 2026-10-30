@@ -18,41 +18,38 @@
        telefono sa che la sessione audio e' di MusicBox, il tasto delle
        cuffie riparte la musica di MusicBox e la notifica in alto resta
        finche' l'app e' aperta. */
-    /* Player silenzioso SOLO durante la pausa volontaria: mantiene viva la sessione media
-       senza sovrapporsi alla musica. Quando si riparte viene fermato prima del brano vero. */
     let _silenzio = null;
-    let _urlSilenzio = null;
-    function _creaUrlSilenzio() {
-      if (_urlSilenzio) return _urlSilenzio;
-      try {
-        const frequenza = 8000, secondi = 8, dati = frequenza * secondi;
-        const b = new Uint8Array(44 + dati);
-        const v = new DataView(b.buffer);
-        function testo(pos, s) { for (let i = 0; i < s.length; i++) b[pos + i] = s.charCodeAt(i); }
-        testo(0, "RIFF"); v.setUint32(4, 36 + dati, true); testo(8, "WAVE"); testo(12, "fmt ");
-        v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
-        v.setUint32(24, frequenza, true); v.setUint32(28, frequenza, true);
-        v.setUint16(32, 1, true); v.setUint16(34, 8, true); testo(36, "data");
-        v.setUint32(40, dati, true); b.fill(128, 44);
-        let bin = "";
-        for (let i = 0; i < b.length; i += 8192) bin += String.fromCharCode.apply(null, b.subarray(i, i + 8192));
-        _urlSilenzio = "data:audio/wav;base64," + btoa(bin);
-      } catch (e) { return ""; }
-      return _urlSilenzio;
-    }
     function _accendiSilenzio() {
       try {
-        if (!_silenzio) {
-          const url = _creaUrlSilenzio(); if (!url) return;
-          _silenzio = new Audio(url); _silenzio._mbSilenzio = true; _silenzio.loop = true; _silenzio.volume = 0.001;
-          _silenzio.preload = "auto"; _silenzio.setAttribute("playsinline", "");
-        }
-        if (!_silenzio.paused) return;
-        const p = _silenzio.play(); if (p && p.catch) p.catch(() => {});
-      } catch (e) { /* il player reale deve continuare a funzionare anche senza questo supporto */ }
-    }
-    function _spegniSilenzio() {
-      try { if (_silenzio) { _silenzio.pause(); _silenzio.currentTime = 0; } } catch (e) { /* noop */ }
+        if (_silenzio) return;
+        if (!window.Audio) return;
+        /* WAV di 0,1 secondi di silenzio (generato sul computer). */
+        const silenzio = "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+        /* Prima il file vero (silenzio.mp3, 3 minuti): continua a suonare
+           anche quando iPhone congela il JavaScript dell'app in secondo
+           piano, e quindi la sessione audio resta viva (e con lei la
+           notifica e i tasti delle cuffie). Il peccato di 0,1 secondi
+           resta come piano B, se il file non si riesce a caricare. */
+        const a = new Audio("silenzio.mp3");
+        a.loop = true;
+        a.volume = 0.01;
+        a.setAttribute("playsinline", "");
+        a.addEventListener("error", function () {
+          /* Il file non si e' caricato: uso il peccato di sempre. */
+          try {
+            const b = new Audio(silenzio);
+            b.loop = true;
+            b.volume = 0.01;
+            b.setAttribute("playsinline", "");
+            const p2 = b.play();
+            if (p2 && p2.catch) p2.catch(() => { });
+            _silenzio = b;
+          } catch (e) { }
+        });
+        _silenzio = a;
+        const prova = a.play();
+        if (prova && prova.catch) prova.catch(() => { });
+      } catch (e) { /* noop */ }
     }
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
@@ -65,6 +62,158 @@
   function _segnaAccessoQui() {
     try { sessionStorage.setItem("mb.spotifyAccessoQui", "1"); } catch (e) { /* noop */ }
   }
+  /* Riferimenti conservati per revisione: nessun file o metadato viene cancellato. */
+  const RECOVERY_REVIEW = {
+    Emanuele: {
+        "songs/track-69.mp3": "needs-review: Durata molto diversa: 518s nel file contro 245s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-443.mp3": "needs-review: Durata molto diversa: 247s nel file contro 199s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-444.mp3": "wrong-source: Fonte dichiarata Official Live Performance; richiesta priva di indicazione live.",
+        "songs/track-565.mp3": "needs-review: Durata molto diversa: 223s nel file contro 177s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-619.mp3": "needs-review: Durata molto diversa: 290s nel file contro 243s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-637.mp3": "needs-review: Durata molto diversa: 299s nel file contro 258s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-640.mp3": "wrong-source: Richiesta Acoustic Version; fonte selezionata dichiarata KARAOKE.",
+        "songs/track-661.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-663.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-746.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-754.mp3": "needs-review: Durata molto diversa: 308s nel file contro 217s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-759.mp3": "needs-review: Durata molto diversa: 267s nel file contro 221s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-784.mp3": "needs-review: Durata molto diversa: 95s nel file contro 144s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-817.mp3": "needs-review: Durata molto diversa: 226s nel file contro 170s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-834.mp3": "wrong-source: Titolo richiesto 10 miliardi; fonte 7 MILIARDI.",
+        "songs/track-843.mp3": "needs-review: Durata molto diversa: 223s nel file contro 182s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-852.mp3": "needs-review: Durata molto diversa: 162s nel file contro 116s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-868.mp3": "needs-review: Durata molto diversa: 178s nel file contro 133s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-870.mp3": "needs-review: Durata molto diversa: 323s nel file contro 244s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-877.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-894.mp3": "needs-review: Durata molto diversa: 190s nel file contro 137s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-901.mp3": "needs-review: Durata molto diversa: 239s nel file contro 198s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-916.mp3": "needs-review: Il titolo del video fonte non conferma che sia il Remix di Ransom con Juice WRLD.",
+        "songs/track-919.mp3": "needs-review: Durata molto diversa: 174s nel file contro 131s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-929.mp3": "wrong-source: Richiesto Baby Gang di 167 Gang e Baby Gang; fonte Bimbi Soldato con Sacky.",
+        "songs/track-939.mp3": "needs-review: Durata molto diversa: 271s nel file contro 202s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-952.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-963.mp3": "needs-review: Durata molto diversa: 202s nel file contro 144s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-967.mp3": "needs-review: Durata molto diversa: 199s nel file contro 155s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-968.mp3": "needs-review: Durata molto diversa: 279s nel file contro 231s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-981.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-995.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-1012.mp3": "wrong-version: Il video fonte e' etichettato [8D AUDIO]: audio spazializzato, non la versione originale.",
+        "songs/track-1019.mp3": "needs-review: Durata molto diversa: 254s nel file contro 208s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-1021.mp3": "needs-review: Durata molto diversa: 248s nel file contro 172s su Spotify. Possibile versione diversa, da riascoltare.",
+        "songs/track-1033.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-1034.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1035.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1036.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1037.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1038.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1039.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1040.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1041.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1042.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1043.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1044.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1045.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1046.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1047.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1048.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1049.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1050.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1051.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1052.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1053.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1054.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1055.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1056.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1057.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1058.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1059.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1060.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1061.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1062.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1063.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1064.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1065.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1066.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1067.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1068.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1069.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1070.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1071.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1072.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1073.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1074.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1075.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1076.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1077.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1078.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1079.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1080.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1081.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1082.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1083.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1084.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1085.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1086.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1087.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1088.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1089.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1090.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1091.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1092.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1093.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1094.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1095.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1096.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1097.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1098.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1099.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1100.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1101.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1102.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1103.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1104.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1105.mp3": "needs-review: Fonte audio dichiara Clean Version: verificare che sia la stessa edizione Spotify di X 1 MEX (feat. Dani Faiv).",
+        "songs/track-1106.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1107.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1108.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1109.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1110.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1111.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1112.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1113.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1114.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1115.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1116.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1117.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1118.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1119.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1120.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1121.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1122.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1123.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1124.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1125.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1126.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1127.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1128.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1129.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1130.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1131.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1132.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1133.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1134.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1135.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1136.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1137.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1138.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1139.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1140.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1141.mp3": "needs-review: Audio importato automaticamente (YouTube candidato da verificare); verificare la registrazione Spotify prima di considerarla validata.",
+        "songs/track-1154.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+        "songs/track-1157.mp3": "needs-review: La fonte YouTube non conferma il titolo Spotify: da riascoltare.",
+    }
+  };
+
   const BUILTIN = [
   { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
 
@@ -524,6 +673,632 @@
     { title: "Dimmi Chi Sei", file: "songs/youtube-dimmi-chi-sei.mp3", artist: "22simba", profile: "Diego", cover: "copertine/dimmi-chi-sei.jpg" },
     { title: "Ultimo Banco", file: "songs/youtube-ultimo-banco.mp3", artist: "22simba, Nevia", profile: "Diego", cover: "copertine/ultimo-banco.jpg" },
     { title: "Falene", file: "songs/youtube-falene.mp3", artist: "22simba, Nevia", profile: "Diego", cover: "copertine/falene.jpg" },
+    { title: "Torna a casa", file: "songs/track-517.mp3", artist: "Måneskin", profile: "Ste" },
+    { title: "CORALINE", file: "songs/track-518.mp3", artist: "Måneskin", profile: "Ste" },
+    { title: "VENT'ANNI", file: "songs/track-478.mp3", artist: "Måneskin", profile: "Ste" },
+    { title: "ZITTI E BUONI", file: "songs/track-520.mp3", artist: "Måneskin", profile: "Ste" },
+    { title: "Morirò da Re", file: "songs/track-309.mp3", artist: "Måneskin", profile: "Ste" },
+    { title: "Paradise Now", file: "songs/track-521.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "0zzXc6flRgi6n8uPFNMUJE", spotifyAlbum: "The Globe", spotifyDurationMs: 200000 },
+    { title: "PUGNO DI FERRO (Red Bull 64 Bars)", file: "songs/track-308.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "1ZBUgZQjNcn367VktdxdAB", spotifyAlbum: "PUGNO DI FERRO (Red Bull 64 Bars)", spotifyDurationMs: 191000 },
+    { title: "Kabuki", file: "songs/track-522.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "1RfsHQhszTo9j8fGHcWvGX", spotifyAlbum: "The Globe", spotifyDurationMs: 180000 },
+    { title: "Parole Vuote (La Solitudine) (feat. Capo Plaza)", file: "songs/track-523.mp3", artist: "Tedua, Capo Plaza", profile: "Emanuele", spotifyId: "5pfoywYsOxTlXNjwwwHCFJ", spotifyAlbum: "La Divina Commedia (Deluxe)", spotifyDurationMs: 251000 },
+    { title: "Back n' Forth (feat. Kira)", file: "songs/track-524.mp3", artist: "Kid Yugi, Kira", profile: "Emanuele", spotifyId: "4zwZzOI3HZif5LmgfvUpdl", spotifyAlbum: "The Globe", spotifyDurationMs: 145000 },
+    { title: "Yung 3p 3", file: "songs/track-525.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "59GG4S5hoVOrufgOnruEcI", spotifyAlbum: "The Globe", spotifyDurationMs: 117000 },
+    { title: "Denaro (feat. Simba La Rue)", file: "songs/track-526.mp3", artist: "Kid Yugi, Simba La Rue", profile: "Emanuele", spotifyId: "6eAoICZcgE2M9XTAFh8WJZ", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 143000 },
+    { title: "L'Anticristo", file: "songs/track-527.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "04BlUntBERmCH6FjsfaYry", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 138000 },
+    { title: "Il Ferro di Čechov", file: "songs/track-528.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "0fNKABHyuS6JHqmQyZv3fM", spotifyAlbum: "The Globe", spotifyDurationMs: 191000 },
+    { title: "Tristano e Isotta", file: "songs/track-39.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "7dFfkSJrAHnUdKM5jaUOLt", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 217000 },
+    { title: "Ferite", file: "songs/track-529.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "2Io79aod9PA58xWjpPrHUr", spotifyAlbum: "FERITE", spotifyDurationMs: 179000 },
+    { title: "Tutta La Night", file: "songs/track-530.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "0CUNOGNzjQY5vHgliB7on6", spotifyAlbum: "FERITE", spotifyDurationMs: 167000 },
+    { title: "Bene", file: "songs/track-531.mp3", artist: "Gemitaiz", profile: "Emanuele", spotifyId: "4T6EStVuHmV4ptryelTnDv", spotifyAlbum: "Nonostante Tutto", spotifyDurationMs: 237000 },
+    { title: "Toradol", file: "songs/track-532.mp3", artist: "Gemitaiz", profile: "Emanuele", spotifyId: "5pxKeRwX7PrGMp5ByUh9lq", spotifyAlbum: "QVC8 (Singles)", spotifyDurationMs: 136000 },
+    { title: "Fuori E Dentro", file: "songs/track-533.mp3", artist: "MadMan, Gemitaiz, tha Supreme", profile: "Emanuele", spotifyId: "0BvXGedSWzDnD64xNLl0rs", spotifyAlbum: "Scatola Nera", spotifyDurationMs: 170000 },
+    { title: "Minaccia", file: "songs/track-534.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "0RbhNJIb0vOtLbFlcBN3lx", spotifyAlbum: "Minaccia", spotifyDurationMs: 161000 },
+    { title: "Baghdad (feat. Kid Yugi)", file: "songs/track-535.mp3", artist: "Young Hash, Mothz, Ksub, Kid Yugi", profile: "Emanuele", spotifyId: "2Q4mwPVCB1mtFDnH0R6YqH", spotifyAlbum: "Adaver", spotifyDurationMs: 151000 },
+    { title: "Djadja (feat. Maluma) - Remix", file: "songs/track-1034.mp3", artist: "Aya Nakamura, Maluma", profile: "Emanuele", spotifyId: "6ijnJfMVsQaW9Pk9Zljzn6", spotifyAlbum: "NAKAMURA (Deluxe Edition)", spotifyDurationMs: 166000 },
+    { title: "Hola Señorita", file: "songs/track-537.mp3", artist: "GIMS, Maluma", profile: "Emanuele", spotifyId: "5V02xs2x8SvZKmg3WygwiZ", spotifyAlbum: "Ceinture noire (Transcendance)", spotifyDurationMs: 218000 },
+    { title: "Non sei tu", file: "songs/track-1035.mp3", artist: "Gazzelle", profile: "Emanuele", spotifyId: "0Slz6GAiiaz3zTlmj538P3", spotifyAlbum: "Superbattito", spotifyDurationMs: 199000 },
+    { title: "Non era vero", file: "songs/track-539.mp3", artist: "Emis Killa", profile: "Emanuele", spotifyId: "4Xd6MuMMX41dQbavX4Rq1q", spotifyAlbum: "Terza Stagione", spotifyDurationMs: 228000 },
+    { title: "GRAMMELOT", file: "songs/track-540.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "0QZYznuUxIPXs7gY8CPvS4", spotifyAlbum: "The Globe", spotifyDurationMs: 96000 },
+    { title: "RAY LIOTTA - goodfellas", file: "songs/track-541.mp3", artist: "Emis Killa, Capo Plaza, Jake La Furia, Baby Gang", profile: "Emanuele", spotifyId: "2ghK72VHQzKy3olZWsrwQ7", spotifyAlbum: "Effetto notte (L'alba)", spotifyDurationMs: 184000 },
+    { title: "Trap Phone (feat. Capo Plaza)", file: "songs/track-542.mp3", artist: "Guè, Capo Plaza", profile: "Emanuele", spotifyId: "4dcMymOM4uDaH0NrwdktgN", spotifyAlbum: "Sinatra", spotifyDurationMs: 200000 },
+    { title: "Balaclava (feat. Capo Plaza)", file: "songs/track-543.mp3", artist: "Tony Effe, Capo Plaza", profile: "Emanuele", spotifyId: "4zYatWHWblyRliSYAtpsut", spotifyAlbum: "Untouchable", spotifyDurationMs: 187000 },
+    { title: "No Stress (feat. A Boogie wit da Hoodie)", file: "songs/track-544.mp3", artist: "Capo Plaza, A Boogie Wit da Hoodie", profile: "Emanuele", spotifyId: "1g2CMj45LJZWxGQYoBye0X", spotifyAlbum: "PLAZA", spotifyDurationMs: 180000 },
+    { title: "Day ‘n’ Nite", file: "songs/track-545.mp3", artist: "Kid Cudi", profile: "Emanuele", spotifyId: "2P9HugRjZqZ2v3Sm9JBnIO", spotifyAlbum: "A Kid Named Cudi", spotifyDurationMs: 168000 },
+    { title: "ANELLI E COLLANE (feat. ANNA)", file: "songs/track-546.mp3", artist: "Artie 5ive, ANNA", profile: "Emanuele", spotifyId: "0YI32qkEhhUjoGVMGXDm8b", spotifyAlbum: "ASPETTANDO LA BELLA VITA", spotifyDurationMs: 189000 },
+    { title: "HOT", file: "songs/track-547.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "0QwWAqI4UglxEiVObWCKvh", spotifyAlbum: "LOCURA", spotifyDurationMs: 216000 },
+    { title: "MEZZE VERITÀ (feat. Kid Yugi)", file: "songs/track-548.mp3", artist: "Lazza, Kid Yugi", profile: "Emanuele", spotifyId: "0zrcO7oLJv5hF5nodDbMkw", spotifyAlbum: "LOCURA", spotifyDurationMs: 203000 },
+    { title: "CERTE COSE", file: "songs/track-549.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "1Oq3J5blhz3N6IiWJVZRgm", spotifyAlbum: "LOCURA", spotifyDurationMs: 218000 },
+    { title: "BUIO DAVANTI", file: "songs/track-550.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "0P0P6DBCa9f5xwBEwwQxZ0", spotifyAlbum: "LOCURA", spotifyDurationMs: 189000 },
+    { title: "Dormiamo Insieme", file: "songs/track-551.mp3", artist: "Luchè", profile: "Emanuele", spotifyId: "6lxx9CITx1pYMqSWcf4XmR", spotifyAlbum: "Potere", spotifyDurationMs: 277000 },
+    { title: "BUIO DAVANTI", file: "songs/track-1160.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "5MJc4IVIt17xEt6angtZcq", spotifyAlbum: "LOCURA", spotifyDurationMs: 189000 },
+    { title: "Vibe", file: "songs/track-122.mp3", artist: "Guè", profile: "Emanuele", spotifyId: "6cGhVnQAJRxGVsltCU06vF", spotifyAlbum: "Tropico Del Capricorno", spotifyDurationMs: 151000 },
+    { title: "Male", file: "songs/track-553.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "1Dl5iWa6lWEZpkQDZNuVnO", spotifyAlbum: "Famoso", spotifyDurationMs: 161000 },
+    { title: "Lilith", file: "songs/track-33.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "6YB8rH5Lr340A4ps8eV7hw", spotifyAlbum: "I Nomi del Diavolo", spotifyDurationMs: 164000 },
+    { title: "PENSIERI SCOMODI (feat. Tony Boy)", file: "songs/track-555.mp3", artist: "IRBIS, Tony Boy", profile: "Emanuele", spotifyId: "0nlenaWsxZML1PawHuiEE2", spotifyAlbum: "PENSIERI SCOMODI (feat. Tony Boy)", spotifyDurationMs: 165000 },
+    { title: "64 BARRE DI TERRORE (Red Bull 64 Bars)", file: "songs/track-556.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "3mBdOTUyDnayURcWfUgrXH", spotifyAlbum: "64 BARRE DI TERRORE (Red Bull 64 Bars)", spotifyDurationMs: 189000 },
+    { title: "Mossa Strepitosa (feat. Kid Yugi)", file: "songs/track-557.mp3", artist: "Papa V, Night Skinny, Kid Yugi", profile: "Emanuele", spotifyId: "4IthW8rks6srjJB5YxXV7n", spotifyAlbum: "Latte in Polvere", spotifyDurationMs: 141000 },
+    { title: "OLÈ (feat. Kid Yugi)", file: "songs/track-1036.mp3", artist: "Geolier, Kid Yugi", profile: "Emanuele", spotifyId: "5AfrJgP5zXuc4zKF67uOXE", spotifyAlbum: "TUTTO È POSSIBILE", spotifyDurationMs: 185000 },
+    { title: "Serpenti A Sonagli", file: "songs/track-558.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "5Z0Mx6SeUAFA2rgZB9t1Nu", spotifyAlbum: "Rockstar", spotifyDurationMs: 194000 },
+    { title: "Visiera A Becco", file: "songs/track-559.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "4ySxBjhmdnkeFUqhKxW3cY", spotifyAlbum: "Sfera Ebbasta", spotifyDurationMs: 187000 },
+    { title: "Jump (feat. Lazza)", file: "songs/track-560.mp3", artist: "Lele Blade, Lazza", profile: "Emanuele", spotifyId: "2wqYVzWlHrIkEoI8YgkyOP", spotifyAlbum: "AMBIZIONE", spotifyDurationMs: 163000 },
+    { title: "Callaita", file: "songs/track-561.mp3", artist: "Bad Bunny, Tainy", profile: "Emanuele", spotifyId: "71wFwRo8xGc4lrcyKwsvba", spotifyAlbum: "Un Verano Sin Ti", spotifyDurationMs: 250000 },
+    { title: "Blue Sky", file: "songs/track-1037.mp3", artist: "Gemitaiz, MadMan", profile: "Emanuele", spotifyId: "7GVXgE7tWg7NocqdJ2KVos", spotifyAlbum: "Kepler", spotifyDurationMs: 187000 },
+    { title: "EL RITMO QUE NOS UNE - feat. Selección Colombia", file: "songs/track-562.mp3", artist: "Ryan Castro, SOG", profile: "Emanuele", spotifyId: "79IBoMfFn67UI15YkP1FSp", spotifyAlbum: "EL RITMO QUE NOS UNE (feat. Selección Colombia)", spotifyDurationMs: 189000 },
+    { title: "CHROME HEARTS (feat. Nerissima Serpe)", file: "songs/track-563.mp3", artist: "Astro, Nerissima Serpe", profile: "Emanuele", spotifyId: "6bOwCTgqiUIEuGNdwTDpi5", spotifyAlbum: "WAR", spotifyDurationMs: 164000 },
+    { title: "Take 161", file: "songs/track-564.mp3", artist: "Bosca, Real Talk, Lazza", profile: "Emanuele", spotifyId: "4C3mJzyfd6p8qXViu4EQp7", spotifyAlbum: "REAL TALK - LAZZA (1/6 - EP)", spotifyDurationMs: 216000 },
+    { title: "Mediterranea", file: "songs/track-565.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "2Up8QSKRV7WnZxZAQasEUq", spotifyAlbum: "Crepe", spotifyDurationMs: 177000 },
+    { title: "Mediterranea (feat. De La Ghetto)", file: "songs/track-566.mp3", artist: "Irama, De La Ghetto", profile: "Emanuele", spotifyId: "3LX8i6D8LaqI4QkplaST9d", spotifyAlbum: "Crepe", spotifyDurationMs: 177000 },
+    { title: "Giovani Re", file: "songs/track-567.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "1YxG9XcjtJgxTN6OenRh1V", spotifyAlbum: "Famoso", spotifyDurationMs: 168000 },
+    { title: "DAL TACCO", file: "songs/track-568.mp3", artist: "RRARI DAL TACCO", profile: "Emanuele", spotifyId: "1zrEskyOLXViiYdZgggiUI", spotifyAlbum: "DAL TACCO", spotifyDurationMs: 147000 },
+    { title: "Milionario", file: "songs/track-569.mp3", artist: "Guè, El Micha", profile: "Emanuele", spotifyId: "2JLIQ02OfpuTbkJoiLY6iO", spotifyAlbum: "Gentleman", spotifyDurationMs: 201000 },
+    { title: "Goyard", file: "songs/track-570.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "2oyQBfUUcTvMb0ziJU8Z8u", spotifyAlbum: "Hustle Mixtape", spotifyDurationMs: 164000 },
+    { title: "MARLBORO", file: "songs/track-571.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "26ZTzjbHlWzob52zEWTTnS", spotifyAlbum: "BIG 5", spotifyDurationMs: 163000 },
+    { title: "STUPIDA (feat. Artie 5ive)", file: "songs/track-1038.mp3", artist: "Niky Savage, Blssd, Artie 5ive", profile: "Emanuele", spotifyId: "0wqZcZXczBKh5wbYUet7vV", spotifyAlbum: "RAPPER", spotifyDurationMs: 208000 },
+    { title: "38 (feat. RRARI DAL TACCO, Artie 5ive)", file: "songs/track-572.mp3", artist: "Sadturs, KIID, RRARI DAL TACCO, Artie 5ive", profile: "Emanuele", spotifyId: "2KK5IaJLPoQADUmLPME9so", spotifyAlbum: "NO REGULAR MUSIC 2", spotifyDurationMs: 164000 },
+    { title: "Tocco Pitocco", file: "songs/track-573.mp3", artist: "RRARI DAL TACCO", profile: "Emanuele", spotifyId: "0gYffd4envdyCft10iF45g", spotifyAlbum: "Tocco Pitocco", spotifyDurationMs: 163000 },
+    { title: "A Lei", file: "songs/track-574.mp3", artist: "Papa V, Nerissima Serpe, Fritu", profile: "Emanuele", spotifyId: "50uGP4Bs22S1iPNn1hTo3R", spotifyAlbum: "Mafia Slime 2", spotifyDurationMs: 185000 },
+    { title: "Tessera sanitaria (feat. Nerissima Serpe & Papa V)", file: "songs/track-575.mp3", artist: "Night Skinny, Nerissima Serpe, Papa V", profile: "Emanuele", spotifyId: "5JgTIfS7FfSE9tuebzX8HC", spotifyAlbum: "Containers", spotifyDurationMs: 204000 },
+    { title: "Armato (feat. Kid Yugi)", file: "songs/track-576.mp3", artist: "Nerissima Serpe, Kid Yugi, Fritu", profile: "Emanuele", spotifyId: "6fgLw0VwPmQtjSmvfCVC6u", spotifyAlbum: "Nerissima", spotifyDurationMs: 205000 },
+    { title: "Denti Da Squalo (Red Bull 64 Bars)", file: "songs/track-577.mp3", artist: "Nerissima Serpe, Fritu", profile: "Emanuele", spotifyId: "3e0P1kGICbYGsMshkGSUXK", spotifyAlbum: "Denti Da Squalo (Red Bull 64 Bars)", spotifyDurationMs: 181000 },
+    { title: "MONOPOLIO (feat. Kid Yugi, Nerissima Serpe)", file: "songs/track-578.mp3", artist: "TY1, Kid Yugi, Nerissima Serpe", profile: "Emanuele", spotifyId: "7KTseTI8UdMT4WUIOmjTQC", spotifyAlbum: "DJUNGLE UNCHAINED", spotifyDurationMs: 162000 },
+    { title: "Tip Tap", file: "songs/track-579.mp3", artist: "Papa V, Nerissima Serpe, Fritu", profile: "Emanuele", spotifyId: "1u9C89v58yfZkMgFe7rBS1", spotifyAlbum: "Mafia Slime 2", spotifyDurationMs: 129000 },
+    { title: "Pura Purissima (feat. Nerissima Serpe)", file: "songs/track-1039.mp3", artist: "Papa V, Night Skinny, Nerissima Serpe", profile: "Emanuele", spotifyId: "6pqk8bMGRl6xWCrH9JnYeL", spotifyAlbum: "Latte in Polvere", spotifyDurationMs: 153000 },
+    { title: "Wop Wop (feat. Shiva)", file: "songs/track-580.mp3", artist: "Papa V, Nerissima Serpe, Shiva, Night Skinny, Fritu", profile: "Emanuele", spotifyId: "7LjhTVncMxoH9X6KMWECgq", spotifyAlbum: "Mafia Slime 2", spotifyDurationMs: 183000 },
+    { title: "PARANOIA", file: "songs/track-581.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "4reJhriuxVQ3bl1YmstMen", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 226000 },
+    { title: "Polvere Rosa", file: "songs/track-582.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "0fR79MubHtwcEiGJzUw8Au", spotifyAlbum: "Vangelo", spotifyDurationMs: 215000 },
+    { title: "NEON", file: "songs/track-48.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "0jkAr7eZsvWDLYiQCfaxak", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 226000 },
+    { title: "Take 5", file: "songs/track-584.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "3sdvDRHwSpuKUehwVYxHcG", spotifyAlbum: "Milano Angels", spotifyDurationMs: 191000 },
+    { title: "Take 6", file: "songs/track-587.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "0j4gmizuiIh5k7F62XISiF", spotifyAlbum: "Take 6", spotifyDurationMs: 164000 },
+    { title: "7ELEVEN", file: "songs/track-588.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "27teXnNekA5jBFLCcsCFoq", spotifyAlbum: "BIG 5", spotifyDurationMs: 127000 },
+    { title: "BIANCA (feat. Kid Yugi)", file: "songs/track-589.mp3", artist: "RRARI DAL TACCO, Kid Yugi", profile: "Emanuele", spotifyId: "420QMNPnHsbAqkkxBt2ifJ", spotifyAlbum: "BIANCA (feat. Kid Yugi)", spotifyDurationMs: 160000 },
+    { title: "Porto il Commerciale (feat. Artie 5ive)", file: "songs/track-45.mp3", artist: "Kid Yugi, Night Skinny, Artie 5ive", profile: "Emanuele", spotifyId: "6MQYhSIrh9vwztmM6mwkzQ", spotifyAlbum: "Quarto di Bue", spotifyDurationMs: 144000 },
+    { title: "Massafghanistan", file: "songs/track-303.mp3", artist: "Kid Yugi, Night Skinny", profile: "Emanuele", spotifyId: "2z8mWFWbz1dyBqbLWbmPWi", spotifyAlbum: "Quarto di Bue", spotifyDurationMs: 152000 },
+    { title: "Ex Angelo (feat. Sfera Ebbasta)", file: "songs/track-591.mp3", artist: "Kid Yugi, Sfera Ebbasta, Shablo", profile: "Emanuele", spotifyId: "3hWOkzOabM7YUsJVa66Uvc", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 178000 },
+    { title: "Terr1 (feat. Geolier)", file: "songs/track-29.mp3", artist: "Kid Yugi, Geolier", profile: "Emanuele", spotifyId: "7jTgA81ZcPWchUvhYBfXB6", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 185000 },
+    { title: "Eva", file: "songs/track-34.mp3", artist: "Kid Yugi, Tedua, Junior K", profile: "Emanuele", spotifyId: "1N9cKjay4DTN4XpRqIuQTZ", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 160000 },
+    { title: "Lilith", file: "songs/track-1161.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "4BNnPQTtYTa5sFDp68R2wt", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 164000 },
+    { title: "Il Signore delle Mosche", file: "songs/track-593.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "5rdf1VexuwEmBo6I31ZEFP", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 193000 },
+    { title: "Ex Angelo - Original Version", file: "songs/track-467.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "5Ac0RG0vnlsy3e5eeYEryB", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 203000 },
+    { title: "64 BARRE DA CENSURA (Red Bull 64 Bars)", file: "songs/track-595.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "0UZOc8qRo3ZlYA2ypR8kZq", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 194000 },
+    { title: "Capra a tre Teste (feat. Tony Boy, Artie 5ive)", file: "songs/track-596.mp3", artist: "Kid Yugi, Tony Boy, Artie 5ive", profile: "Emanuele", spotifyId: "4HlGLsk34YNeWVq9sKiRON", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 196000 },
+    { title: "Donna", file: "songs/track-40.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "5EeDZPNPIjEtEZsHMkX1m7", spotifyAlbum: "Tutti i Nomi del Diavolo", spotifyDurationMs: 179000 },
+    { title: "Push It (feat. ANNA)", file: "songs/track-598.mp3", artist: "Kid Yugi, ANNA", profile: "Emanuele", spotifyId: "3uExyCdMa9XfVuXpuYhod4", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 175000 },
+    { title: "Stone Island", file: "songs/track-599.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "7aVQYjayOjDOMUq5ObfflS", spotifyAlbum: "Hustle Mixtape", spotifyDurationMs: 177000 },
+    { title: "NewJeans", file: "songs/track-600.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "1C8KgGduDWKvwbFiqARcFq", spotifyAlbum: "20 (Deluxe Edition)", spotifyDurationMs: 159000 },
+    { title: "Ultimo Banco", file: "songs/track-601.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "1ze5en56wmbhb7hsiJMXXa", spotifyAlbum: "PLAZA", spotifyDurationMs: 177000 },
+    { title: "Billets (feat. Ninho)", file: "songs/track-602.mp3", artist: "Capo Plaza, Ninho", profile: "Emanuele", spotifyId: "2aD5ESGyEhXnXdoOsZvsR0", spotifyAlbum: "20 (Deluxe Edition)", spotifyDurationMs: 198000 },
+    { title: "Coupé", file: "songs/track-603.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "0X6TgBHcxe20tNvWuwXEpn", spotifyAlbum: "20 (Deluxe Edition)", spotifyDurationMs: 176000 },
+    { title: "Vabbene", file: "songs/track-604.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "5n9Ss9tXZEy5Z18BxYm8KW", spotifyAlbum: "20", spotifyDurationMs: 195000 },
+    { title: "Nuovo Inizio (feat. Shiva)", file: "songs/track-605.mp3", artist: "Capo Plaza, Shiva", profile: "Emanuele", spotifyId: "3Fg8eOwcv5ctsjYYajBzFk", spotifyAlbum: "FERITE (Deluxe Edition)", spotifyDurationMs: 171000 },
+    { title: "Borse Hermès", file: "songs/track-606.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "1MRDqKrcGYLw883LuVmDjy", spotifyAlbum: "Borse Hermès", spotifyDurationMs: 160000 },
+    { title: "Ne è valsa la pena (feat. Ghali)", file: "songs/track-607.mp3", artist: "Capo Plaza, Ghali", profile: "Emanuele", spotifyId: "6GTCOWvhjvdk4pwlfrSjNO", spotifyAlbum: "20", spotifyDurationMs: 234000 },
+    { title: "Tesla (feat. Sfera Ebbasta & DrefGold)", file: "songs/track-608.mp3", artist: "Capo Plaza, Sfera Ebbasta, DrefGold", profile: "Emanuele", spotifyId: "093RgZ7RXHZwIrxZhZYX4Q", spotifyAlbum: "20", spotifyDurationMs: 185000 },
+    { title: "Capri Sun", file: "songs/track-609.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "1XpmMe95dk9jh3zuOMpeU2", spotifyAlbum: "Hustle Mixtape", spotifyDurationMs: 199000 },
+    { title: "Giovane Fuoriclasse", file: "songs/track-610.mp3", artist: "Capo Plaza, AVA", profile: "Emanuele", spotifyId: "7GFCOl2gVEv9d6gwdY5Fvb", spotifyAlbum: "Giovane Fuoriclasse", spotifyDurationMs: 221000 },
+    { title: "Mi Riempi Di Chiamate", file: "songs/track-611.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "2wTMDCt0LWSPp0UlXXxlWS", spotifyAlbum: "FERITE", spotifyDurationMs: 192000 },
+    { title: "MAYDAY (feat. Capo Plaza)", file: "songs/track-612.mp3", artist: "Sick Luke, Capo Plaza", profile: "Emanuele", spotifyId: "7Eey0kKPfatUEQeldGmxAj", spotifyAlbum: "DOPAMINA", spotifyDurationMs: 174000 },
+    { title: "SERPE (feat. Capo Plaza)", file: "songs/track-613.mp3", artist: "Emis Killa, Capo Plaza", profile: "Emanuele", spotifyId: "3RTX4i5PxUEWuXgi9n0CqO", spotifyAlbum: "Musica Triste", spotifyDurationMs: 178000 },
+    { title: "Floyd Mayweather (feat. Papa V e Nerissima Serpe)", file: "songs/track-614.mp3", artist: "Capo Plaza, Papa V, Nerissima Serpe", profile: "Emanuele", spotifyId: "3xrtjStNBOWioe7CN7YMDy", spotifyAlbum: "Hustle Mixtape Vol. 2", spotifyDurationMs: 183000 },
+    { title: "Larry Hoover", file: "songs/track-615.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "5GiisuLYC3uSKRWROIQGGp", spotifyAlbum: "Hustle Mixtape Vol. 2", spotifyDurationMs: 155000 },
+    { title: "Grazie a Dio", file: "songs/track-616.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "2PrWyTk78yOfXaqn4u3OjU", spotifyAlbum: "Hustle Mixtape Vol. 2", spotifyDurationMs: 171000 },
+    { title: "Moncler", file: "songs/track-617.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "4UIfhpUA5n6MTHWP7oBPGp", spotifyAlbum: "Hustle Mixtape Vol. 2", spotifyDurationMs: 186000 },
+    { title: "Caramel", file: "songs/track-618.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "4DnymAVWXHJVtC27FQDDrq", spotifyAlbum: "Hustle Mixtape Vol. 2", spotifyDurationMs: 180000 },
+    { title: "Tití Me Preguntó", file: "songs/track-619.mp3", artist: "Bad Bunny", profile: "Emanuele", spotifyId: "1IHWl5LamUGEuP4ozKQSXZ", spotifyAlbum: "Un Verano Sin Ti", spotifyDurationMs: 243000 },
+    { title: "E.T.A. (feat. J Balvin & Geolier)", file: "songs/track-1040.mp3", artist: "Dani Faiv, J Balvin, Geolier, Strage", profile: "Emanuele", spotifyId: "5MM97FmbSq9I2azOWBvXAY", spotifyAlbum: "Ultimo piano", spotifyDurationMs: 175000 },
+    { title: "Morto Mai", file: "songs/track-621.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "2Ri0436JKFUsd3B3xa2jCe", spotifyAlbum: "Re Mida", spotifyDurationMs: 145000 },
+    { title: "Chuck Norris (feat. Papa V, RRARI DAL TACCO, Nerissima Serpe)", file: "songs/track-622.mp3", artist: "Kid Yugi, Papa V, RRARI DAL TACCO, Nerissima Serpe", profile: "Emanuele", spotifyId: "70EgvEXDIgHUQ4JD6FRhqC", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 203000 },
+    { title: "La violenza Necessaria (feat. Shiva)", file: "songs/track-37.mp3", artist: "Kid Yugi, Shiva", profile: "Emanuele", spotifyId: "4gYOPsRynx7hXQm5q47o04", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 163000 },
+    { title: "Gilgamesh", file: "songs/track-38.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "09wmUkefYD7B2IWpHP6v3P", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 160000 },
+    { title: "Bullet Ballet (feat. Artie 5ive)", file: "songs/track-87.mp3", artist: "Kid Yugi, Artie 5ive", profile: "Emanuele", spotifyId: "1ljOXO8cgSa8qntDVlP9uu", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 211000 },
+    { title: "Non Lo So (feat. chiello)", file: "songs/track-625.mp3", artist: "Guè, chiello", profile: "Emanuele", spotifyId: "5mOazYGaNJnv1zxMyNH6Rc", spotifyAlbum: "Tropico Del Capricorno", spotifyDurationMs: 174000 },
+    { title: "NULLA ACCADE (feat. Capo Plaza)", file: "songs/track-626.mp3", artist: "Artie 5ive, Rondodasosa, Capo Plaza", profile: "Emanuele", spotifyId: "7aE74PfRukjvuBqte3f0hs", spotifyAlbum: "MOTIVATION 4 THE STREETZ", spotifyDurationMs: 174000 },
+    { title: "SWAG MUSIC", file: "songs/track-627.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "3QGY1Tr2MePboAxYtsdbn4", spotifyAlbum: "SWAG MUSIC", spotifyDurationMs: 172000 },
+    { title: "Babyface", file: "songs/track-628.mp3", artist: "Shiva, Kid Yugi", profile: "Emanuele", spotifyId: "5LN0gLSxSEaigog3VjCci3", spotifyAlbum: "Vangelo", spotifyDurationMs: 177000 },
+    { title: "Dio Esiste", file: "songs/track-629.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "6ErRedGqcOC4HmUEfUneiY", spotifyAlbum: "Vangelo", spotifyDurationMs: 411000 },
+    { title: "Cup", file: "songs/track-630.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "5tZLWsGOFHRBxZ96ZRe67z", spotifyAlbum: "Milano Demons", spotifyDurationMs: 167000 },
+    { title: "Mogio", file: "songs/track-631.mp3", artist: "18K, 4997, Kid Yugi", profile: "Emanuele", spotifyId: "3K0FEa9zjp9kicaNEhyM1S", spotifyAlbum: "GROTTO INFERNO", spotifyDurationMs: 190000 },
+    { title: "EGLI È IL RE", file: "songs/track-1041.mp3", artist: "tha Supreme, Mara Sattei", profile: "Emanuele", spotifyId: "3H2YC5rbsKV4MDmt7JmuA7", spotifyAlbum: "CASA GOSPEL", spotifyDurationMs: 177000 },
+    { title: "Paranoie (BIT) [feat. Koba LaD]", file: "songs/track-632.mp3", artist: "Capo Plaza, Koba LaD", profile: "Emanuele", spotifyId: "1sliopGDRjAJDn0KrfvcdA", spotifyAlbum: "Hustle Mixtape", spotifyDurationMs: 233000 },
+    { title: "Smooth Criminal - 2012 Remaster", file: "songs/track-1042.mp3", artist: "Michael Jackson", profile: "Emanuele", spotifyId: "5T7ywazdGIydr6JCW6t02j", spotifyAlbum: "Bad (Remastered)", spotifyDurationMs: 257000 },
+    { title: "Bad", file: "songs/track-634.mp3", artist: "Michael Jackson", profile: "Emanuele", spotifyId: "3tS8q8SXxtrYSN8UgeQt6q", spotifyAlbum: "Number Ones", spotifyDurationMs: 247000 },
+    { title: "Thriller", file: "songs/track-1185.mp3", artist: "Michael Jackson", profile: "Emanuele", spotifyId: "2LlQb7Uoj1kKyGhlkBf9aC", spotifyAlbum: "Thriller", spotifyDurationMs: 358000 },
+    { title: "Billie Jean", file: "songs/track-636.mp3", artist: "Michael Jackson", profile: "Emanuele", spotifyId: "7J1uxwnxfQLu4APicE5Rnj", spotifyAlbum: "Thriller", spotifyDurationMs: 293000 },
+    { title: "Beat It", file: "songs/track-637.mp3", artist: "Michael Jackson", profile: "Emanuele", spotifyId: "3BovdzfaX4jb5KFQwoPfAw", spotifyAlbum: "Thriller", spotifyDurationMs: 258000 },
+    { title: "They Don't Care About Us", file: "songs/track-638.mp3", artist: "Michael Jackson", profile: "Emanuele", spotifyId: "3wuCCNCnBhJlwkIJTBZFiv", spotifyAlbum: "HIStory - PAST, PRESENT AND FUTURE - BOOK I", spotifyDurationMs: 284000 },
+    { title: "Las Muñequitas", file: "songs/track-639.mp3", artist: "Mr Plata, El Americano 4KT", profile: "Emanuele", spotifyId: "3yidFe42tke37g3KP7wzZr", spotifyAlbum: "Las Muñequitas", spotifyDurationMs: 199000 },
+    { title: "CERTE COSE", file: "songs/track-1162.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "6dXMNTe1ztrLn3Ej1ZR7Ha", spotifyAlbum: "LOCURA", spotifyDurationMs: 218000 },
+    { title: "DONNE RICCHE - Acoustic Version", file: "songs/track-640.mp3", artist: "TonyPitony", profile: "Emanuele", spotifyId: "6gG8GZAscnEI9fqHvcu1QN", spotifyAlbum: "PECCATO PER I TESTI (Acoustic Version)", spotifyDurationMs: 172000 },
+    { title: "Taki Taki (feat. Selena Gomez, Ozuna & Cardi B)", file: "songs/track-641.mp3", artist: "DJ Snake, Selena Gomez, Ozuna, Cardi B", profile: "Emanuele", spotifyId: "0KoiMHhqKLoL4xM54rcWYY", spotifyAlbum: "Carte Blanche", spotifyDurationMs: 212000 },
+    { title: "Loco Contigo (feat. J. Balvin & Tyga)", file: "songs/track-642.mp3", artist: "DJ Snake, J Balvin, Tyga", profile: "Emanuele", spotifyId: "6osaMSJh9NguagEDQcZaKx", spotifyAlbum: "Carte Blanche", spotifyDurationMs: 185000 },
+    { title: "Davide (feat. Coez)", file: "songs/track-397.mp3", artist: "Gemitaiz, Coez", profile: "Emanuele", spotifyId: "7eJV1g6HtmMVuAHLi6yFqe", spotifyAlbum: "Davide", spotifyDurationMs: 206000 },
+    { title: "Cascare nei tuoi occhi", file: "songs/track-643.mp3", artist: "Ultimo", profile: "Emanuele", spotifyId: "2Jh2ElHIfT9Qy4OMCpccuz", spotifyAlbum: "Peter Pan", spotifyDurationMs: 226000 },
+    { title: "Eye of the Tiger", file: "songs/track-644.mp3", artist: "Survivor", profile: "Emanuele", spotifyId: "2KH16WveTQWT6KOG9Rg6e2", spotifyAlbum: "Rocky IV", spotifyDurationMs: 245000 },
+    { title: "$€ Freestyle", file: "songs/track-645.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "1CUmDIdhiRGCVFNWDAZ4uo", spotifyAlbum: "Famoso", spotifyDurationMs: 164000 },
+    { title: "HO SOLO 64 BARRE (Red Bull 64 Bars)", file: "songs/track-646.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "5o57KIwHBjPTUUezWuYVY2", spotifyAlbum: "HO SOLO 64 BARRE (Red Bull 64 Bars)", spotifyDurationMs: 240000 },
+    { title: "ZERI IN PIÙ (LOCURA) (feat. Laura Pausini)", file: "songs/track-647.mp3", artist: "Lazza, Laura Pausini", profile: "Emanuele", spotifyId: "3pU6HEylYwJhz6JmOlilRj", spotifyAlbum: "LOCURA", spotifyDurationMs: 247000 },
+    { title: "ABITUDINE", file: "songs/track-648.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "31jwlUykpZwTlrwBNVX2X8", spotifyAlbum: "LOCURA", spotifyDurationMs: 189000 },
+    { title: "VERDI NEI VIOLA", file: "songs/track-509.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "1tJ53CZZdkyirTLrc31NzJ", spotifyAlbum: "LOCURA", spotifyDurationMs: 183000 },
+    { title: "FENTANYL (feat. Sfera Ebbasta)", file: "songs/track-650.mp3", artist: "Lazza, Sfera Ebbasta", profile: "Emanuele", spotifyId: "5lJZ4urLI5JEVGM8tKRSNj", spotifyAlbum: "LOCURA", spotifyDurationMs: 188000 },
+    { title: "Baby Girl", file: "songs/track-651.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "35JHeT2zURSbrhwZW4cPry", spotifyAlbum: "FERITE", spotifyDurationMs: 137000 },
+    { title: "Non Fare Così", file: "songs/track-652.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "769M2rTiAoL7x2lKDHLjRa", spotifyAlbum: "PLAZA", spotifyDurationMs: 192000 },
+    { title: "Giovane fuoriclasse", file: "songs/track-653.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "60muwbD6E61lEYQSnEYlLc", spotifyAlbum: "20", spotifyDurationMs: 221000 },
+    { title: "NON METTERCI BECCO", file: "songs/track-1043.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "0xruiSHt6TaFZvQuGdDlJV", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 182000 },
+    { title: "COME SE NON FOSSI NEI GUAI", file: "songs/track-655.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "46w75NfLpau9juuoeiY3ZM", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 209000 },
+    { title: "OVER (demo)", file: "songs/track-656.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "1OPMzw2D1v6mVqL7wwQ92t", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 209000 },
+    { title: "D&G", file: "songs/track-657.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "0luviSdchM1B0rrTmb4P0A", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 232000 },
+    { title: "Che Dio Mi Benedica", file: "songs/track-658.mp3", artist: "Luchè", profile: "Emanuele", spotifyId: "7ohj51SSBsOPh2phOZkn9d", spotifyAlbum: "Malammore", spotifyDurationMs: 218000 },
+    { title: "64 BARRE DA CENSURA (Red Bull 64 Bars)", file: "songs/track-1163.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "1cyes3Q6UBIIZukTDA4ExV", spotifyAlbum: "I Nomi del Diavolo", spotifyDurationMs: 187000 },
+    { title: "Nuovo Canada", file: "songs/track-659.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "3RnOMqo1mAh4yRbLzKx5iO", spotifyAlbum: "PLAZA (Deluxe Edition)", spotifyDurationMs: 184000 },
+    { title: "Albachiara", file: "songs/track-69.mp3", artist: "Vasco Rossi", profile: "Emanuele", spotifyId: "53MYtv4tzLYg1hbu13Qbc0", spotifyAlbum: "Albachiara", spotifyDurationMs: 245000 },
+    { title: "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)", file: "songs/track-661.mp3", artist: "Adriano Celentano", profile: "Emanuele", spotifyId: "6QDbrhZDKku58X7iv7cKKr", spotifyAlbum: "Io Non So Parlar D'Amore", spotifyDurationMs: 249000 },
+    { title: "Cinque giorni", file: "songs/track-662.mp3", artist: "Michele Zarrillo", profile: "Emanuele", spotifyId: "5zB92i6HcCHvVcX5NvGFQb", spotifyAlbum: "Come Uomo Tra Gli Uomini", spotifyDurationMs: 249000 },
+    { title: "Mu'Ammar Gheddafi (feat. Simba La Rue)", file: "songs/track-305.mp3", artist: "Kid Yugi, Simba La Rue, FT Kings", profile: "Emanuele", spotifyId: "6Nr1XULPuJgumCyXBEfcgx", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 149000 },
+    { title: "Con il nastro rosa - Remastered", file: "songs/track-663.mp3", artist: "Lucio Battisti", profile: "Emanuele", spotifyId: "2g3wyAWIAvmjfZ8K6Jb4Zn", spotifyAlbum: "Una giornata uggiosa", spotifyDurationMs: 321000 },
+    { title: "Poetica", file: "songs/track-664.mp3", artist: "Cesare Cremonini", profile: "Emanuele", spotifyId: "07qo9gnLM488CUr0EtgIA1", spotifyAlbum: "Possibili Scenari", spotifyDurationMs: 293000 },
+    { title: "UNDERDOG", file: "songs/track-665.mp3", artist: "IvanBi", profile: "Emanuele", spotifyId: "2wbYng1DQu7Rexd0CBIEoc", spotifyAlbum: "UNDERDOG", spotifyDurationMs: 194000 },
+    { title: "Samsung (feat. Artie 5ive)", file: "songs/track-666.mp3", artist: "Papa V, Nerissima Serpe, Artie 5ive, Fritu", profile: "Emanuele", spotifyId: "3f1jFXeKXlRPhW1S8yEgmj", spotifyAlbum: "Mafia Slime 2", spotifyDurationMs: 195000 },
+    { title: "L'astronauta", file: "songs/track-23.mp3", artist: "nayt", profile: "Emanuele", spotifyId: "5SKziDfyRfyHgqjvDFWcJ9", spotifyAlbum: "io Individuo", spotifyDurationMs: 200000 },
+    { title: "Battle Royale", file: "songs/track-1044.mp3", artist: "Hell Raton, Bassi Maestro, Rasty Kilo, MadMan, En?gma, Noyz Narcos, Jack The Smoker, Salmo, Rocco Hunt, Gemitaiz", profile: "Emanuele", spotifyId: "2Dy8UvEAQSzHUivMvPR7hx", spotifyAlbum: "Machete Mixtape, Vol. 3", spotifyDurationMs: 516000 },
+    { title: "00", file: "songs/track-1143.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "3Z1N6PnBejFsiMWrhorGhw", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 134000 },
+    { title: "LITORALE (feat. Guè)", file: "songs/track-668.mp3", artist: "Artie 5ive, Guè", profile: "Emanuele", spotifyId: "24nrhZIVZFCjiRfmY44YKe", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 232000 },
+    { title: "BETTY BOOP (feat. Artie 5ive)", file: "songs/track-669.mp3", artist: "LILCR, Artie 5ive", profile: "Emanuele", spotifyId: "2rNxRLShYAjeIUUYA89wUQ", spotifyAlbum: "PROGETTO X DELUXE", spotifyDurationMs: 150000 },
+    { title: "Con Te Partirò", file: "songs/track-670.mp3", artist: "Andrea Bocelli", profile: "Emanuele", spotifyId: "7s8xAb9nzBQbB0z3QZPmKK", spotifyAlbum: "Bocelli (Remastered)", spotifyDurationMs: 250000 },
+    { title: "SEI PERSA", file: "songs/track-671.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "3smgQO8B4MQK6bbBrfHEX6", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 178000 },
+    { title: "Push It (feat. ANNA)", file: "songs/track-1164.mp3", artist: "Kid Yugi, ANNA", profile: "Emanuele", spotifyId: "5FLxKWv8HEFI67uKzSX27K", spotifyAlbum: "Push It (feat. ANNA)", spotifyDurationMs: 175000 },
+    { title: "Stavo Pensando A Te", file: "songs/track-672.mp3", artist: "Fabri Fibra", profile: "Emanuele", spotifyId: "3UPigmZoN3ahvBgQdU9VK5", spotifyAlbum: "Fenomeno", spotifyDurationMs: 264000 },
+    { title: "Tipo Nino Vs Kabrinha", file: "songs/track-673.mp3", artist: "DJ Biel Divulga, DJ Dozabri, Mc Lekão", profile: "Emanuele", spotifyId: "1jxQFCC0ukN7AaUwXWK0N8", spotifyAlbum: "Tipo Nino Vs Kabrinha", spotifyDurationMs: 201000 },
+    { title: "MAYBACH", file: "songs/track-674.mp3", artist: "Sfera Ebbasta, Shiva", profile: "Emanuele", spotifyId: "6WjDjQJ5JpUqPJpDCQmHqa", spotifyAlbum: "SANTANA MONEY GANG", spotifyDurationMs: 163000 },
+    { title: "Stato Di Ebbrezza", file: "songs/track-675.mp3", artist: "Silent Bob, Sick Budd", profile: "Emanuele", spotifyId: "5nMnEELMA1BMl0lQrHPtry", spotifyAlbum: "Piano B", spotifyDurationMs: 189000 },
+    { title: "Leggenda", file: "songs/track-676.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "17bXwlGLFeAGCaIMBwjq5k", spotifyAlbum: "Rockstar", spotifyDurationMs: 189000 },
+    { title: "Avvoltoi", file: "songs/track-677.mp3", artist: "Eddie Brock", profile: "Emanuele", spotifyId: "3ByNcS81LqRYUvJjpWhZ7T", spotifyAlbum: "Avvoltoi", spotifyDurationMs: 165000 },
+    { title: "se ne va", file: "songs/track-180.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "3zWXAQuZ2cgRb2p0xqAORS", spotifyAlbum: "HABITAT", spotifyDurationMs: 163000 },
+    { title: "FERRARI", file: "songs/track-679.mp3", artist: "LILCR", profile: "Emanuele", spotifyId: "2ZLKmvV33uhWyEqZ54Wb2B", spotifyAlbum: "PROGETTO X", spotifyDurationMs: 100000 },
+    { title: "PAROLE (Sono solo parole) (feat. Noemi, Lazza & Tedua)", file: "songs/track-1045.mp3", artist: "Drillionaire, Noemi, Lazza, Tedua", profile: "Emanuele", spotifyId: "1mblCC44D31Yu2o3DhrvbJ", spotifyAlbum: "10", spotifyDurationMs: 256000 },
+    { title: "DARKMONEY (feat. Sfera Ebbasta)", file: "songs/track-449.mp3", artist: "Pyrex, Sfera Ebbasta", profile: "Emanuele", spotifyId: "1SWUq0qtTSDRGrDtgq7POw", spotifyAlbum: "KING OF DARK", spotifyDurationMs: 166000 },
+    { title: "Como Te Llamas (feat. Willy William)", file: "songs/track-681.mp3", artist: "Irama, Willy William", profile: "Emanuele", spotifyId: "0xYIPUmglTa2xlUZmOpa5e", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 165000 },
+    { title: "Baila Baila Baila - Remix", file: "songs/track-682.mp3", artist: "Ozuna, Daddy Yankee, J Balvin, Farruko, Anuel AA", profile: "Emanuele", spotifyId: "7mWFF4gPADjTQjC97CgFVt", spotifyAlbum: "Baila Baila Baila (Remix) [feat. Farruko, Anuel Aa]", spotifyDurationMs: 235000 },
+    { title: "Bailando - Spanish Version", file: "songs/track-1046.mp3", artist: "Enrique Iglesias, Descemer Bueno, Gente De Zona", profile: "Emanuele", spotifyId: "6PSKhwo0mVcOdjUOhVJd5p", spotifyAlbum: "SEX AND LOVE", spotifyDurationMs: 242000 },
+    { title: "Me Rehúso", file: "songs/track-684.mp3", artist: "Danny Ocean", profile: "Emanuele", spotifyId: "6De0lHrwBfPfrhorm9q1Xl", spotifyAlbum: "Me Rehúso", spotifyDurationMs: 205000 },
+    { title: "PHANTOM (feat. 50 Cent)", file: "songs/track-685.mp3", artist: "Geolier, 50 Cent", profile: "Emanuele", spotifyId: "435NOlfzITSEghoaUNRle3", spotifyAlbum: "PHANTOM (feat. 50 Cent)", spotifyDurationMs: 172000 },
+    { title: "Fino All'Alba", file: "songs/track-686.mp3", artist: "Capo Plaza, Takagi & Ketra", profile: "Emanuele", spotifyId: "5nvVV6XRIWs4DNVAQfxElX", spotifyAlbum: "Fino All'Alba", spotifyDurationMs: 157000 },
+    { title: "Soldi Arrotolati (feat. ANNA)", file: "songs/track-687.mp3", artist: "Capo Plaza, ANNA", profile: "Emanuele", spotifyId: "1zp4TEQ9zaNGXTjY6fsz1p", spotifyAlbum: "FERITE", spotifyDurationMs: 151000 },
+    { title: "I Miss U (feat. Tony Boy)", file: "songs/track-688.mp3", artist: "Capo Plaza, Tony Boy", profile: "Emanuele", spotifyId: "52vA7mR6kKFJTaMzRUKMmk", spotifyAlbum: "FERITE", spotifyDurationMs: 183000 },
+    { title: "Lo So Che", file: "songs/track-120.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "3w73qvCSGWPCx7w1UMIh6e", spotifyAlbum: "FERITE (Deluxe Edition)", spotifyDurationMs: 181000 },
+    { title: "Oh Amore", file: "songs/track-689.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "0QEI2IrwYKZNppR1W62jXj", spotifyAlbum: "FERITE", spotifyDurationMs: 225000 },
+    { title: "Busy", file: "songs/track-690.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "3WyrKzgCeGQQcUtW8ZwLMP", spotifyAlbum: "FERITE", spotifyDurationMs: 160000 },
+    { title: "Non C'è Love", file: "songs/track-691.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "6SbD3zpxiqS9F4YHtaGEC1", spotifyAlbum: "FERITE", spotifyDurationMs: 167000 },
+    { title: "Acqua Passata", file: "songs/track-692.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "0wTUTktrrCdXAzPVlodP72", spotifyAlbum: "FERITE", spotifyDurationMs: 189000 },
+    { title: "Patek Philippe (feat. Lazza)", file: "songs/track-693.mp3", artist: "Lacrim, Lazza", profile: "Emanuele", spotifyId: "6sukW44PrvVzeko9KZlqen", spotifyAlbum: "Cipriani", spotifyDurationMs: 216000 },
+    { title: "OGNI AMICO MIO", file: "songs/track-694.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "3zgyiQGgT3OyBa2gsds6UV", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 179000 },
+    { title: "Warzone (feat. Artie 5ive, Capo Plaza & Nerissima Serpe)", file: "songs/track-695.mp3", artist: "Nko, Artie 5ive, Capo Plaza, Nerissima Serpe", profile: "Emanuele", spotifyId: "6iFfFjKnr615pD7aL5Z2Cx", spotifyAlbum: "Warzone (feat. Artie 5ive, Capo Plaza & Nerissima Serpe)", spotifyDurationMs: 146000 },
+    { title: "Easy (feat. Fivio Foreign)", file: "songs/track-696.mp3", artist: "Sfera Ebbasta, Rvssian, Fivio Foreign", profile: "Emanuele", spotifyId: "0DpTRR4HyiDJH4Waoj9hXU", spotifyAlbum: "Italiano", spotifyDurationMs: 206000 },
+    { title: "Forte e chiaro", file: "songs/track-697.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "0SHcPBePTpLy22XVvVmYqu", spotifyAlbum: "20", spotifyDurationMs: 219000 },
+    { title: "Il Filmografo", file: "songs/track-27.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "5nqOdSrqurNq8ejE7Ujc9l", spotifyAlbum: "The Globe", spotifyDurationMs: 146000 },
+    { title: "Amelie", file: "songs/track-205.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "0O5KcmgOeEgublW6ySQ6Vc", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 184000 },
+    { title: "Jolly", file: "songs/track-213.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "6R13pKWNdELuiJKy47pWtB", spotifyAlbum: "Anche gli Eroi Muoiono", spotifyDurationMs: 173000 },
+    { title: "FIGLIO UNICO (feat. Kid Yugi, Ernia)", file: "songs/track-698.mp3", artist: "Irama, Rkomi, Ernia, Kid Yugi", profile: "Emanuele", spotifyId: "096BYC8tm5zUgfM4ohTcdD", spotifyAlbum: "NO STRESS", spotifyDurationMs: 245000 },
+    { title: "OLÈ (feat. Kid Yugi)", file: "songs/track-1165.mp3", artist: "Geolier, Kid Yugi", profile: "Emanuele", spotifyId: "0FZtlHn0k4BDCLd2s38PIU", spotifyAlbum: "TUTTO È POSSIBILE", spotifyDurationMs: 185000 },
+    { title: "Strada facendo", file: "songs/track-699.mp3", artist: "Claudio Baglioni", profile: "Emanuele", spotifyId: "1HVMNGm6RhLKbqRl0cQa3A", spotifyAlbum: "Tutti Qui", spotifyDurationMs: 334000 },
+    { title: "E tu...", file: "songs/track-700.mp3", artist: "Claudio Baglioni", profile: "Emanuele", spotifyId: "7GrkHS3TW3AlcIqpi6LSRw", spotifyAlbum: "E Tu...", spotifyDurationMs: 287000 },
+    { title: "Avrai", file: "songs/track-701.mp3", artist: "Claudio Baglioni", profile: "Emanuele", spotifyId: "6Hw9oznjBKnobCRieldN4e", spotifyAlbum: "Tutti Qui", spotifyDurationMs: 320000 },
+    { title: "FLIP FLOP", file: "songs/track-1153.mp3", artist: "IvanBi", profile: "Emanuele", spotifyId: "65HCij9McdqrHcBn0Z3kMP", spotifyAlbum: "FLIP FLOP", spotifyDurationMs: 148000 },
+    { title: "G&V", file: "songs/track-79.mp3", artist: "IvanBi", profile: "Emanuele", spotifyId: "6poK4dgWF5wQmmB7i92mhh", spotifyAlbum: "G&V", spotifyDurationMs: 112000 },
+    { title: "L'Anticristo", file: "songs/track-1166.mp3", artist: "Kid Yugi", profile: "Emanuele", spotifyId: "7CWoRDIMfhEbfYzdD9noJm", spotifyAlbum: "I Nomi del Diavolo", spotifyDurationMs: 138000 },
+    { title: "Arai (feat. Capo Plaza)", file: "songs/track-703.mp3", artist: "Medy, Capo Plaza", profile: "Emanuele", spotifyId: "1la73rdzbQGNRFJyO9E71c", spotifyAlbum: "Nove Chiamate", spotifyDurationMs: 181000 },
+    { title: "DEM (feat. Artie 5ive & Tony Boy)", file: "songs/track-704.mp3", artist: "Kid Yugi, Artie 5ive, Tony Boy", profile: "Emanuele", spotifyId: "1r2uK7MHJbvR8ygrTIsUrX", spotifyAlbum: "The Globe", spotifyDurationMs: 212000 },
+    { title: "End of Beginning", file: "songs/track-705.mp3", artist: "Djo", profile: "Emanuele", spotifyId: "3qhlB30KknSejmIvZZLjOD", spotifyAlbum: "DECIDE", spotifyDurationMs: 159000 },
+    { title: "Uber", file: "songs/track-706.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "4oZhBLWGhtIyBckervj3sb", spotifyAlbum: "Rockstar", spotifyDurationMs: 187000 },
+    { title: "Dolce E Amara", file: "songs/track-707.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "04kfXkgDvjb8LApZyOfS2Y", spotifyAlbum: "FERITE (Deluxe Edition)", spotifyDurationMs: 183000 },
+    { title: "Ballon d'Or (feat. Nayt)", file: "songs/track-95.mp3", artist: "Gemitaiz, nayt", profile: "Emanuele", spotifyId: "5aVUDn1F4x26UkHFVgWsiE", spotifyAlbum: "QVC 10 - Quello Che Vi Consiglio Vol. 10", spotifyDurationMs: 185000 },
+    { title: "Diavolo magro", file: "songs/track-1144.mp3", artist: "Mostro", profile: "Emanuele", spotifyId: "45MKRQEdcAa8bIN9Yh4jz0", spotifyAlbum: "The Illest, Vol. 2", spotifyDurationMs: 160000 },
+    { title: "Purosangue (feat. Shiva)", file: "songs/track-709.mp3", artist: "Luchè, Shiva", profile: "Emanuele", spotifyId: "5ZzDWDMYnWK8qwcOjVyoPv", spotifyAlbum: "Purosangue (feat. Shiva)", spotifyDurationMs: 170000 },
+    { title: "Le Pietre Non Volano (feat. Marracash)", file: "songs/track-710.mp3", artist: "Luchè, Marracash", profile: "Emanuele", spotifyId: "5hjMhdi5EBlwpcthmhUgOD", spotifyAlbum: "Dove Volano Le Aquile", spotifyDurationMs: 299000 },
+    { title: "Nessuna", file: "songs/track-117.mp3", artist: "Luchè", profile: "Emanuele", spotifyId: "5bhYjElbPmm2FyB0PxP8Wd", spotifyAlbum: "Il mio lato peggiore", spotifyDurationMs: 223000 },
+    { title: "Ti Amo", file: "songs/track-221.mp3", artist: "Luchè", profile: "Emanuele", spotifyId: "1pq4fzp7UvGPLGzueOKaEf", spotifyAlbum: "Malammore", spotifyDurationMs: 265000 },
+    { title: "Torna Da Me", file: "songs/track-226.mp3", artist: "Luchè", profile: "Emanuele", spotifyId: "5iSHLCuc0K3pUW16b7sSP4", spotifyAlbum: "Potere", spotifyDurationMs: 180000 },
+    { title: "Iside (feat. Luchè)", file: "songs/track-711.mp3", artist: "Lazza, Luchè", profile: "Emanuele", spotifyId: "6BNMAb82xLiPv1ZngMQOBK", spotifyAlbum: "Re Mida", spotifyDurationMs: 152000 },
+    { title: "DUBBI", file: "songs/track-712.mp3", artist: "Marracash", profile: "Emanuele", spotifyId: "4gxRyOZefp95AXZFaztdtO", spotifyAlbum: "NOI, LORO, GLI ALTRI", spotifyDurationMs: 234000 },
+    { title: "MADAME - L'anima (feat. Madame)", file: "songs/track-713.mp3", artist: "Marracash, Madame", profile: "Emanuele", spotifyId: "3go5ZuMoFTKl5ugai8nAKi", spotifyAlbum: "Persona", spotifyDurationMs: 221000 },
+    { title: "Nati Bastardi (feat. Tony Effe)", file: "songs/track-719.mp3", artist: "Capo Plaza, Tony Effe, Sick Luke", profile: "Emanuele", spotifyId: "3KjhBp5a2tFcmN9YSPR5r3", spotifyAlbum: "FERITE (Deluxe Edition)", spotifyDurationMs: 151000 },
+    { title: "MONTECARLO", file: "songs/track-720.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "0V780obZeM832e7Rx5rAui", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 165000 },
+    { title: "SOGNO AMERICANO", file: "songs/track-88.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "7i0zYckMTyvLyKAFxfOKIS", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 176000 },
+    { title: "ARE U CRAZY? (feat. Capo Plaza)", file: "songs/track-721.mp3", artist: "Artie 5ive, Capo Plaza", profile: "Emanuele", spotifyId: "76WVRLJz4mvh7PaXkl0dW1", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 207000 },
+    { title: "INTRO (La Bella Vita)", file: "songs/track-113.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "1lslS1hUsIvAScXvWVTLt2", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 211000 },
+    { title: "DAVVERODAVVERO", file: "songs/track-722.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "6bdTp8Jkp3IAU15rVPWFuJ", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 165000 },
+    { title: "64 BARRE IN FACCIA (Red Bull 64 Bars)", file: "songs/track-386.mp3", artist: "Artie 5ive, Ddusi, Sadturs, KIID", profile: "Emanuele", spotifyId: "1oBM9JTuD0wqfVQ8iuLjLQ", spotifyAlbum: "64 BARRE IN FACCIA (Red Bull 64 Bars)", spotifyDurationMs: 175000 },
+    { title: "Angela", file: "songs/track-724.mp3", artist: "Checco Zalone, Mitili Ignoti", profile: "Emanuele", spotifyId: "4AMwEGVsLR0ApxAhtN4ZQa", spotifyAlbum: "Cado dalle nubi - world edition (Colonna sonora originale del film)", spotifyDurationMs: 194000 },
+    { title: "DODGE DURANGO", file: "songs/track-725.mp3", artist: "Artie 5ive", profile: "Emanuele", spotifyId: "0M1uXmHvF2wvoICQ4LsFEK", spotifyAlbum: "LA BELLAVITA", spotifyDurationMs: 170000 },
+    { title: "Funghi in salsa rosa", file: "songs/track-726.mp3", artist: "L'Elfo, Funkyman", profile: "Emanuele", spotifyId: "5aJRZw3YTPh0uiRo5MOM0e", spotifyAlbum: "Funghi in salsa rosa", spotifyDurationMs: 175000 },
+    { title: "Campioni In Italia (Red Bull 64 Bars)", file: "songs/track-1047.mp3", artist: "Geolier, Dat Boi Dee, Poison Beatz", profile: "Emanuele", spotifyId: "0lmmsw2Z7uN1e5q93AHXbd", spotifyAlbum: "Campioni In Italia (Red Bull 64 Bars)", spotifyDurationMs: 234000 },
+    { title: "Pura Purissima (feat. Nerissima Serpe)", file: "songs/track-1167.mp3", artist: "Papa V, Night Skinny, Nerissima Serpe", profile: "Emanuele", spotifyId: "7aED3khDoMw7bgL8wNMVy3", spotifyAlbum: "Pura Purissima (feat. Nerissima Serpe)", spotifyDurationMs: 153000 },
+    { title: "CHIAMA (feat. Capo Plaza & Salmo)", file: "songs/track-1048.mp3", artist: "Drillionaire, Salmo, Capo Plaza", profile: "Emanuele", spotifyId: "2SW4aQekoeJjjVfZYsczPs", spotifyAlbum: "10", spotifyDurationMs: 170000 },
+    { title: "Berserker", file: "songs/track-1049.mp3", artist: "Kid Yugi, Ill Santo, FT Kings", profile: "Emanuele", spotifyId: "0a9Gi8DA7tzR3HV46V1Ppv", spotifyAlbum: "Berserker", spotifyDurationMs: 132000 },
+    { title: "Parado no Bailão", file: "songs/track-1050.mp3", artist: "MC L da Vinte, MC Gury, DJ Swat", profile: "Emanuele", spotifyId: "3Hb9kUdm4yf839Fle4RIdT", spotifyAlbum: "Parado no Bailão", spotifyDurationMs: 171000 },
+    { title: "HAY LUPITA", file: "songs/track-1051.mp3", artist: "Lomiiel", profile: "Emanuele", spotifyId: "5jFA0f4ZDGLbQP4nxzL8D4", spotifyAlbum: "HAY LUPITA", spotifyDurationMs: 105000 },
+    { title: "Olha A Explosão", file: "songs/track-1052.mp3", artist: "MC Kevinho", profile: "Emanuele", spotifyId: "6Q4foUefrAyCt8VxJFML56", spotifyAlbum: "Olha a Explosão", spotifyDurationMs: 162000 },
+    { title: "Blah Blah Blah (with Capo Plaza, Peppe Soks & Christian Revo)", file: "songs/track-1053.mp3", artist: "Dj Klonh, Capo Plaza, Peppe Soks, Christian Revo", profile: "Emanuele", spotifyId: "6qEFjwPOr8Kwmoxz7rwApM", spotifyAlbum: "Blah Blah Blah", spotifyDurationMs: 284000 },
+    { title: "DETOX / REHAB", file: "songs/track-731.mp3", artist: "Marracash", profile: "Emanuele", spotifyId: "3bQBpGIlToMHfyKtKZwOyN", spotifyAlbum: "È FINITA LA PACE", spotifyDurationMs: 236000 },
+    { title: "Caramel", file: "songs/track-1168.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "1qd3VDzfheygZf4m7lygoV", spotifyAlbum: "Caramel", spotifyDurationMs: 180000 },
+    { title: "MI PIACCIONO LE ARMI", file: "songs/track-732.mp3", artist: "Simba La Rue, FT Kings, Sick Luke", profile: "Emanuele", spotifyId: "3yFgWoossjlaJ919XDCG4C", spotifyAlbum: "ESCI DAL TUNNEL", spotifyDurationMs: 129000 },
+    { title: "Miami Vice (feat. Sfera Ebbasta, Simba La Rue)", file: "songs/track-222.mp3", artist: "Luchè, Sfera Ebbasta, Simba La Rue", profile: "Emanuele", spotifyId: "2aJW4z2EoahGBpU3asFclE", spotifyAlbum: "Il mio lato peggiore", spotifyDurationMs: 245000 },
+    { title: "Trappala", file: "songs/track-1054.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "41A3UzjnfsiDSuhZ4dhMtw", spotifyAlbum: "Hustle Mixtape Vol. 2", spotifyDurationMs: 157000 },
+    { title: "Soul", file: "songs/track-733.mp3", artist: "Watsebha", profile: "Emanuele", spotifyId: "65q2KzDHo9ioFvcmlo0yEp", spotifyAlbum: "Soul", spotifyDurationMs: 156000 },
+    { title: "Curazao", file: "songs/track-1055.mp3", artist: "El Alfa, Farruko", profile: "Emanuele", spotifyId: "4VO6rhOKPyH6RogCTPeQqO", spotifyAlbum: "SAGITARIO", spotifyDurationMs: 244000 },
+    { title: "La coca", file: "songs/track-1056.mp3", artist: "Babaman", profile: "Emanuele", spotifyId: "4WeOhTrYpugO1d0xzDenvM", spotifyAlbum: "Raggasonico", spotifyDurationMs: 214000 },
+    { title: "Mirándote", file: "songs/track-1057.mp3", artist: "Rvfv", profile: "Emanuele", spotifyId: "0gxbA4bZN8KyNHsCUfNvyr", spotifyAlbum: "Mirándote", spotifyDurationMs: 135000 },
+    { title: "BRATZ", file: "songs/track-1058.mp3", artist: "Lefar", profile: "Emanuele", spotifyId: "5I3FJAEbsA6wHrCoNb5fhs", spotifyAlbum: "BRATZ", spotifyDurationMs: 132000 },
+    { title: "La Morocha", file: "songs/track-738.mp3", artist: "Luck Ra, BM", profile: "Emanuele", spotifyId: "7aPsseax6rNFyipHn9A5CR", spotifyAlbum: "La Morocha", spotifyDurationMs: 134000 },
+    { title: "LIFE IS LIFE (feat. Nerissima Serpe & Papa V)", file: "songs/track-739.mp3", artist: "Artie 5ive, Nerissima Serpe, Papa V", profile: "Emanuele", spotifyId: "0XvfITMZy29MKaVWjpeg9X", spotifyAlbum: "BIG 5", spotifyDurationMs: 184000 },
+    { title: "Plaza", file: "songs/track-740.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "7wnKS5lo0w9V04E6yXzhxV", spotifyAlbum: "PLAZA", spotifyDurationMs: 210000 },
+    { title: "Pookie (feat. Capo Plaza) - Remix", file: "songs/track-1059.mp3", artist: "Aya Nakamura, Capo Plaza", profile: "Emanuele", spotifyId: "1MtmXPxXP4ntSjfF5xnOyM", spotifyAlbum: "Pookie (feat. Capo Plaza) [Remix]", spotifyDurationMs: 188000 },
+    { title: "Vidrado Em Você", file: "songs/track-742.mp3", artist: "Dj Guuga, Mc Livinho", profile: "Emanuele", spotifyId: "1HJU78CRk4vxvjE5Cs1BCt", spotifyAlbum: "Vidrado Em Você", spotifyDurationMs: 134000 },
+    { title: "RATATA", file: "songs/track-743.mp3", artist: "Capo Plaza", profile: "Emanuele", spotifyId: "3QjM7blH1a157YfP8G33TA", spotifyAlbum: "20 (Deluxe Edition)", spotifyDurationMs: 214000 },
+    { title: "Non mollare mai 2024 (feat. Guè, Clementino & Geolier)", file: "songs/track-744.mp3", artist: "Gigi D'Alessio, Guè, Clementino, Geolier", profile: "Emanuele", spotifyId: "5z88X065FKTZDIXFYW0cfc", spotifyAlbum: "Fra", spotifyDurationMs: 231000 },
+    { title: "Hope (feat. Izi, Joshua)", file: "songs/track-1145.mp3", artist: "Shablo, Izi, Joshua", profile: "Emanuele", spotifyId: "4pbwPGtJ1nPTxzncaCmNRM", spotifyAlbum: "Hope (feat. Izi, Joshua)", spotifyDurationMs: 171000 },
+    { title: "Sintetico (feat. Tony Boy)", file: "songs/track-30.mp3", artist: "Kid Yugi, Night Skinny, Tony Boy", profile: "Emanuele", spotifyId: "3NLdcu14EPntcZIn3mxSR7", spotifyAlbum: "Quarto di Bue", spotifyDurationMs: 151000 },
+    { title: "Un nuovo bacio", file: "songs/track-745.mp3", artist: "Gigi D'Alessio, Anna Tatangelo", profile: "Emanuele", spotifyId: "3vjaynqkptcF4eLYpK6rnd", spotifyAlbum: "Uno Come Te", spotifyDurationMs: 256000 },
+    { title: "Est-ce que tu m'aimes ? - Pilule bleue", file: "songs/track-746.mp3", artist: "GIMS", profile: "Emanuele", spotifyId: "3a9TMd2Yrza6HXqqlfMtfy", spotifyAlbum: "Mon coeur avait raison", spotifyDurationMs: 237000 },
+    { title: "Gata Only", file: "songs/track-747.mp3", artist: "FloyyMenor, Cris MJ", profile: "Emanuele", spotifyId: "2esZG2XFtuoWWA9AfDvSxy", spotifyAlbum: "EL COMIENZO", spotifyDurationMs: 222000 },
+    { title: "Milano Shotta Freestyle", file: "songs/track-748.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "24l60WaetPKefjFyZbkw9d", spotifyAlbum: "Milano Angels", spotifyDurationMs: 153000 },
+    { title: "Milano Angels", file: "songs/track-749.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "5kQwHYmtLVJaBwh6NqD4JW", spotifyAlbum: "Milano Angels", spotifyDurationMs: 187000 },
+    { title: "Don't Cry No More (feat. Geolier)", file: "songs/track-750.mp3", artist: "Shiva, Geolier", profile: "Emanuele", spotifyId: "2vxtac8KET2UTMfT0d0awA", spotifyAlbum: "Milano Angels", spotifyDurationMs: 195000 },
+    { title: "Gotham (feat. Kid Yugi)", file: "songs/track-751.mp3", artist: "Shiva, Kid Yugi", profile: "Emanuele", spotifyId: "2ceJa7d62wQ3eRBK589ALG", spotifyAlbum: "Milano Angels", spotifyDurationMs: 207000 },
+    { title: "Momenti No", file: "songs/track-752.mp3", artist: "Sfera Ebbasta, Tedua", profile: "Emanuele", spotifyId: "4IxM8LopMS2014C2LTJEYu", spotifyAlbum: "X2VR", spotifyDurationMs: 192000 },
+    { title: "ALTALENE (feat. Mara Sattei & Coez)", file: "songs/track-753.mp3", artist: "BLOODY VINYL, Slait, tha Supreme, Mara Sattei, Coez", profile: "Emanuele", spotifyId: "6oNJqGeekJO8rADd2Mktvi", spotifyAlbum: "BV3", spotifyDurationMs: 186000 },
+    { title: "Je Nun Me Fido", file: "songs/track-754.mp3", artist: "Priore", profile: "Emanuele", spotifyId: "4rrlvKBGESWQARCUgCs8j1", spotifyAlbum: "Je Nun Me Fido", spotifyDurationMs: 217000 },
+    { title: "CVLT (feat. Kid Yugi)", file: "songs/track-755.mp3", artist: "Salmo, Noyz Narcos, Kid Yugi", profile: "Emanuele", spotifyId: "6hANXZUS2wryG1zSocof7J", spotifyAlbum: "CVLT", spotifyDurationMs: 226000 },
+    { title: "Gol", file: "songs/track-1060.mp3", artist: "Sfera Ebbasta, Guè", profile: "Emanuele", spotifyId: "1F4ARcz5U9kgtcjpcYNzTH", spotifyAlbum: "X2VR", spotifyDurationMs: 217000 },
+    { title: "Anche Stasera", file: "songs/track-757.mp3", artist: "Sfera Ebbasta, Elodie", profile: "Emanuele", spotifyId: "5WssaPhjCCUFBMk9PpnHYj", spotifyAlbum: "X2VR", spotifyDurationMs: 217000 },
+    { title: "15 Piani", file: "songs/track-115.mp3", artist: "Sfera Ebbasta, Marracash", profile: "Emanuele", spotifyId: "05wb6MEyJeG2z1MVCIXxC8", spotifyAlbum: "X2VR", spotifyDurationMs: 206000 },
+    { title: "VDLC", file: "songs/track-758.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "242NmD3BqOefyiOZQy2MT2", spotifyAlbum: "X2VR", spotifyDurationMs: 198000 },
+    { title: "Se Tornerai (feat. Neffa)", file: "songs/track-759.mp3", artist: "Rocco Hunt, Neffa", profile: "Emanuele", spotifyId: "3fTvFZyr41XvhCtk4ohywa", spotifyAlbum: "Libertà", spotifyDurationMs: 221000 },
+    { title: "G63", file: "songs/track-760.mp3", artist: "Sfera Ebbasta, Lazza, Shiva", profile: "Emanuele", spotifyId: "0lqGKcPzUX4RO4PYysoLes", spotifyAlbum: "X2VR", spotifyDurationMs: 229000 },
+    { title: "Calcolatrici", file: "songs/track-761.mp3", artist: "Sfera Ebbasta, Geolier, Simba La Rue, Baby Gang", profile: "Emanuele", spotifyId: "6bN41HjY008ggroMFxNLaa", spotifyAlbum: "X2VR", spotifyDurationMs: 205000 },
+    { title: "Lovebars", file: "songs/track-762.mp3", artist: "Coez, Frah Quintale", profile: "Emanuele", spotifyId: "6O7pAOsUm3d9R37vYdQnG5", spotifyAlbum: "Lovebars", spotifyDurationMs: 165000 },
+    { title: "Mortale", file: "songs/track-190.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "4Kp2OEKh3cVUPC1WeYPAn6", spotifyAlbum: "DOOM", spotifyDurationMs: 186000 },
+    { title: "guerra dentro", file: "songs/track-97.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "2aPz4c03AsOhTgbuSnfrCs", spotifyAlbum: "HABITAT", spotifyDurationMs: 178000 },
+    { title: "Ultima confessione", file: "songs/track-765.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "1vcluwUZ3IZYtRwULczDTl", spotifyAlbum: "DOOM", spotifyDurationMs: 168000 },
+    { title: "BLOODY BARS - DRILLUMINAZIONE (feat. Charlie KDM, Hell Raton & Lazza)", file: "songs/track-766.mp3", artist: "BLOODY VINYL, Slait, MILES, tha Supreme, Low Kidd, Charlie KDM, Hell Raton, Lazza", profile: "Emanuele", spotifyId: "0e16hLAkJH4yP5lNBMcken", spotifyAlbum: "BV3", spotifyDurationMs: 335000 },
+    { title: "SENZA RUMORE", file: "songs/track-767.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "2Z7sJKCxTH94KCRxJTd4O7", spotifyAlbum: "SIRIO", spotifyDurationMs: 229000 },
+    { title: "Gucci Ski Mask (feat. Guè)", file: "songs/track-768.mp3", artist: "Lazza, Guè", profile: "Emanuele", spotifyId: "1zsnUOfuMirWoprylSMuTZ", spotifyAlbum: "Re Mida", spotifyDurationMs: 205000 },
+    { title: "Notti", file: "songs/track-769.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "25J3gcZhNjzBwcaDfZjQli", spotifyAlbum: "Sfera Ebbasta", spotifyDurationMs: 170000 },
+    { title: "Netflix", file: "songs/track-770.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "1XiF40UZiMZstIl37DdRaC", spotifyAlbum: "Re Mida", spotifyDurationMs: 153000 },
+    { title: "El Perdón (with Enrique Iglesias)", file: "songs/track-771.mp3", artist: "Nicky Jam, Enrique Iglesias", profile: "Emanuele", spotifyId: "7qCAVkHWZkF44OzOUKf8Cr", spotifyAlbum: "Fénix", spotifyDurationMs: 205000 },
+    { title: "Stylist (feat. Guè)", file: "songs/track-1061.mp3", artist: "Slings, Guè", profile: "Emanuele", spotifyId: "7IGBoOaXAd5IbNZLv5rZFT", spotifyAlbum: "Stylist (feat. Guè)", spotifyDurationMs: 139000 },
+    { title: "Téléphone", file: "songs/track-773.mp3", artist: "Booba, Sfera Ebbasta", profile: "Emanuele", spotifyId: "76YfUp0DTnERvtZokyU6jm", spotifyAlbum: "Téléphone", spotifyDurationMs: 212000 },
+    { title: "Cella 4", file: "songs/track-774.mp3", artist: "Baby Gang, 2nd Roof", profile: "Emanuele", spotifyId: "0szf0BqOX6XXa2sHb8HtvC", spotifyAlbum: "INNOCENTE", spotifyDurationMs: 186000 },
+    { title: "2 SECONDI", file: "songs/track-775.mp3", artist: "Geolier", profile: "Emanuele", spotifyId: "5EL2pGymrFM9jpVjBbsZhn", spotifyAlbum: "IL CORAGGIO DEI BAMBINI - ATTO II", spotifyDurationMs: 149000 },
+    { title: "IL MALE CHE MI FAI (feat. Marracash)", file: "songs/track-776.mp3", artist: "Geolier, Marracash", profile: "Emanuele", spotifyId: "7Da5kjy5GByLHE5OPQ4tpg", spotifyAlbum: "IL CORAGGIO DEI BAMBINI - ATTO II", spotifyDurationMs: 167000 },
+    { title: "SO FLY", file: "songs/track-777.mp3", artist: "Geolier", profile: "Emanuele", spotifyId: "2Xzauj0gFhELmQ8KgoYiUS", spotifyAlbum: "IL CORAGGIO DEI BAMBINI - ATTO II", spotifyDurationMs: 138000 },
+    { title: "ZONDA", file: "songs/track-1062.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "28Q3CFgOA5EM2bmKaB9d53", spotifyAlbum: "ZONDA", spotifyDurationMs: 217000 },
+    { title: "MONEY", file: "songs/track-779.mp3", artist: "Geolier", profile: "Emanuele", spotifyId: "1EOTrGOcrCwTG1nhUnp0dV", spotifyAlbum: "MONEY", spotifyDurationMs: 165000 },
+    { title: "MARADONA", file: "songs/track-780.mp3", artist: "Geolier", profile: "Emanuele", spotifyId: "1Bf3WnU7Y6YGP0k4RbbErB", spotifyAlbum: "IL CORAGGIO DEI BAMBINI", spotifyDurationMs: 162000 },
+    { title: "LET GO", file: "songs/track-781.mp3", artist: "Central Cee", profile: "Emanuele", spotifyId: "3zkyus0njMCL6phZmNNEeN", spotifyAlbum: "LET GO", spotifyDurationMs: 174000 },
+    { title: "X CASO (feat. Sfera Ebbasta)", file: "songs/track-782.mp3", artist: "Geolier, Sfera Ebbasta", profile: "Emanuele", spotifyId: "2E32Pv8w20r6ZH4oFecxOf", spotifyAlbum: "IL CORAGGIO DEI BAMBINI", spotifyDurationMs: 215000 },
+    { title: "Fuck the police", file: "songs/track-1063.mp3", artist: "Martz Da Marte", profile: "Emanuele", spotifyId: "1Z2XAqRcMcfI2DfwaPHEmN", spotifyAlbum: "Fuck the police", spotifyDurationMs: 156000 },
+    { title: "REPLAY", file: "songs/track-783.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "66b96Q6ljSGILgrtgqvPMH", spotifyAlbum: "SIRIO", spotifyDurationMs: 191000 },
+    { title: "MARYLEAN (feat. Marracash) - prod. Low Kidd", file: "songs/track-784.mp3", artist: "MACHETE, Salmo, Nitro, Marracash", profile: "Emanuele", spotifyId: "28fRkU3vhqAJdl9i9458pQ", spotifyAlbum: "MACHETE MIXTAPE 4", spotifyDurationMs: 144000 },
+    { title: "L'IMPOSTORE", file: "songs/track-785.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "3rpOUa8tpX9M5s3ZOfbJfx", spotifyAlbum: "IO NON HO PAURA", spotifyDurationMs: 203000 },
+    { title: "IL MIO NOME", file: "songs/track-786.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "50BtIqilFzXVUMVC6ddTDa", spotifyAlbum: "IO NON HO PAURA", spotifyDurationMs: 198000 },
+    { title: "ACQUA TONICA (feat. Geolier & Junior K)", file: "songs/track-787.mp3", artist: "Ernia, Geolier, Junior K", profile: "Emanuele", spotifyId: "3WVXxfB3B76CkG2wglKotj", spotifyAlbum: "IO NON HO PAURA", spotifyDurationMs: 182000 },
+    { title: "Fenomeno", file: "songs/track-1064.mp3", artist: "Ernia, Izi, Moses Sangare", profile: "Emanuele", spotifyId: "2JmjKK6dN0ThjgcgMTEIcE", spotifyAlbum: "Fenomeno", spotifyDurationMs: 242000 },
+    { title: "TUTTI HANNO PAURA (feat. Marco Mengoni)", file: "songs/track-1065.mp3", artist: "Ernia, Marco Mengoni", profile: "Emanuele", spotifyId: "2pG4kMJDVW0QekxjrQeYiZ", spotifyAlbum: "IO NON HO PAURA", spotifyDurationMs: 212000 },
+    { title: "BELLA FREGATURA", file: "songs/track-1066.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "11H6R8nu1QxB1yGWHgzKl7", spotifyAlbum: "IO NON HO PAURA", spotifyDurationMs: 174000 },
+    { title: "CATTIVE INTENZIONI (feat. Salmo)", file: "songs/track-1067.mp3", artist: "Ernia, Salmo", profile: "Emanuele", spotifyId: "0OmnpUgUBVcCnKdS7o9P03", spotifyAlbum: "IO NON HO PAURA", spotifyDurationMs: 168000 },
+    { title: "Perdonami (feat. Neima Ezza)", file: "songs/track-1068.mp3", artist: "2nd Roof, Neima Ezza, ToTheMoon", profile: "Emanuele", spotifyId: "5FDcvMV87UABSO1cgwT3e7", spotifyAlbum: "Perdonami (feat. Neima Ezza)", spotifyDurationMs: 148000 },
+    { title: "SUI MURI", file: "songs/track-1069.mp3", artist: "PSICOLOGI", profile: "Emanuele", spotifyId: "5M3SYjElWjKlD3jgONFw4w", spotifyAlbum: "SUI MURI", spotifyDurationMs: 181000 },
+    { title: "Guerra E Pace", file: "songs/track-1070.mp3", artist: "PSICOLOGI", profile: "Emanuele", spotifyId: "2puGJHRifrmNO7gTAeWm0z", spotifyAlbum: "2001", spotifyDurationMs: 165000 },
+    { title: "FANTASMA", file: "songs/track-1071.mp3", artist: "PSICOLOGI", profile: "Emanuele", spotifyId: "1c0XKg0gts8BOyvwYcH3wa", spotifyAlbum: "MILLENNIUM BUG", spotifyDurationMs: 167000 },
+    { title: "TATUAGGI (feat. ARIETE)", file: "songs/track-794.mp3", artist: "PSICOLOGI, ARIETE", profile: "Emanuele", spotifyId: "15WIkk29b7NqOK2poTRnOU", spotifyAlbum: "MILLENNIUM BUG", spotifyDurationMs: 185000 },
+    { title: "Yo Quiero Amarte", file: "songs/track-795.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "3yzEcIwGDhreQoMfO6RXB9", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 176000 },
+    { title: "Una Cosa Sola (feat. Shablo)", file: "songs/track-796.mp3", artist: "Irama, Shablo", profile: "Emanuele", spotifyId: "4TNVpkVnqjkOXhGEWNigss", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 178000 },
+    { title: "A L I", file: "songs/track-1072.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "2i2KQ1gfaIRoExBoYuVjiY", spotifyAlbum: "Il giorno in cui ho smesso di pensare (Deluxe Edition)", spotifyDurationMs: 188000 },
+    { title: "5 Gocce (feat. Rkomi)", file: "songs/track-798.mp3", artist: "Irama, Rkomi", profile: "Emanuele", spotifyId: "3z0GeNGWyVduziP1cQ0mFN", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 160000 },
+    { title: "Cose che non vuoi sentirti dire", file: "songs/track-187.mp3", artist: "nayt", profile: "Emanuele", spotifyId: "6OMnIqBYSBEOIMuXkiHT2a", spotifyAlbum: "DOOM", spotifyDurationMs: 167000 },
+    { title: "Musica Ovunque", file: "songs/track-394.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "5cUwl3Zf7TJDsZypvxSrti", spotifyAlbum: "MOOD", spotifyDurationMs: 254000 },
+    { title: "Mi manchi", file: "songs/track-513.mp3", artist: "Paky", profile: "Emanuele", spotifyId: "7Jgi200kgCNvAuZw2W8Nxq", spotifyAlbum: "Salvatore", spotifyDurationMs: 186000 },
+    { title: "Storia di un defunto artista", file: "songs/track-802.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "1csiTxDSvzHB5Nwd2dxC3u", spotifyAlbum: "Suicidol", spotifyDurationMs: 246000 },
+    { title: "Take 4", file: "songs/track-803.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "627uLUtgdlY5xVEtjJgKy6", spotifyAlbum: "Take 4", spotifyDurationMs: 170000 },
+    { title: "Vorrei (feat. Lazza)", file: "songs/track-804.mp3", artist: "Shiva, Lazza", profile: "Emanuele", spotifyId: "5IbrGxWxB427KJEDrphgRN", spotifyAlbum: "Milano Demons", spotifyDurationMs: 191000 },
+    { title: "PIOVE (feat. Sfera Ebbasta)", file: "songs/track-805.mp3", artist: "Lazza, Sfera Ebbasta", profile: "Emanuele", spotifyId: "6BUueuMQR4k7CuoMEsnGou", spotifyAlbum: "SIRIO", spotifyDurationMs: 155000 },
+    { title: "NESSUNO (feat. Geolier)", file: "songs/track-806.mp3", artist: "Lazza, Geolier", profile: "Emanuele", spotifyId: "0HdrGJfHWYG5A0cNhiMDG4", spotifyAlbum: "SIRIO", spotifyDurationMs: 148000 },
+    { title: "USCITO DI GALERA", file: "songs/track-807.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "01DXwNf1GzEJkYTbXgL0eb", spotifyAlbum: "SIRIO", spotifyDurationMs: 172000 },
+    { title: "OK BOOMER (feat. Rosa Chemical) - prod. B-dope & Young Miles", file: "songs/track-1073.mp3", artist: "Nitro, Rosa Chemical", profile: "Emanuele", spotifyId: "6sjK4ubJ4EnZo8gl8906bY", spotifyAlbum: "GarbAge Evilution", spotifyDurationMs: 200000 },
+    { title: "Baby Mama", file: "songs/track-119.mp3", artist: "Don Pero", profile: "Emanuele", spotifyId: "4Y60H8heDsEpQ2hin2g6V5", spotifyAlbum: "Baby Mama", spotifyDurationMs: 151000 },
+    { title: "Believer", file: "songs/track-808.mp3", artist: "Imagine Dragons", profile: "Emanuele", spotifyId: "0pqnGHJpmpxLKifKRmU6WP", spotifyAlbum: "Evolve", spotifyDurationMs: 204000 },
+    { title: "Obsessed With You", file: "songs/track-809.mp3", artist: "Central Cee", profile: "Emanuele", spotifyId: "4oxGI8yyghLuMV7ybRG3kg", spotifyAlbum: "23", spotifyDurationMs: 108000 },
+    { title: "Vertigini", file: "songs/track-810.mp3", artist: "Tedua, Chris Nolan", profile: "Emanuele", spotifyId: "1Oou7m2VuxCDSOdqsu07TU", spotifyAlbum: "Mowgli", spotifyDurationMs: 203000 },
+    { title: "Milano Demons", file: "songs/track-811.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "2OOtjHSaaYvKkcaXB2iwhc", spotifyAlbum: "Milano Demons", spotifyDurationMs: 163000 },
+    { title: "Neve", file: "songs/track-1074.mp3", artist: "Ernia, neezyboy", profile: "Emanuele", spotifyId: "6cBH5hLQFzmsuyU2iOdVA2", spotifyAlbum: "No Hooks", spotifyDurationMs: 192000 },
+    { title: "Quella foto di noi due", file: "songs/track-812.mp3", artist: "Emis Killa", profile: "Emanuele", spotifyId: "10hc6GvyWhe2E48PAfQrdD", spotifyAlbum: "Supereroe", spotifyDurationMs: 194000 },
+    { title: "Caramba", file: "songs/track-813.mp3", artist: "Baby Gang", profile: "Emanuele", spotifyId: "0JxlMKdfoQKuB09keMmALe", spotifyAlbum: "Caramba", spotifyDurationMs: 183000 },
+    { title: "SOGNI D'ORO", file: "songs/track-814.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "2tKH7kT40eTSp8SCf6VKeH", spotifyAlbum: "SIRIO", spotifyDurationMs: 157000 },
+    { title: "OUV3RTURE", file: "songs/track-1075.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "7r9hUF9vWuuTPqGK3YS6Oy", spotifyAlbum: "SIRIO", spotifyDurationMs: 172000 },
+    { title: "Amici", file: "songs/track-1154.mp3", artist: "Massimo Pericolo", profile: "Emanuele", spotifyId: "7aVX95NjONZszSeb8vJZF3", spotifyAlbum: "Scialla Semper", spotifyDurationMs: 180000 },
+    { title: "Pose (feat. Lil Uzi Vert)", file: "songs/track-817.mp3", artist: "Yo Gotti, Lil Uzi Vert", profile: "Emanuele", spotifyId: "6e9biVAugkOfydEN8OiJpi", spotifyAlbum: "Pose (feat. Lil Uzi Vert)", spotifyDurationMs: 170000 },
+    { title: "Masked friends", file: "songs/track-818.mp3", artist: "JAB32", profile: "Emanuele", spotifyId: "7lBPWaKE76eOPSaa7ZQUR9", spotifyAlbum: "Masked friends", spotifyDurationMs: 134000 },
+    { title: "SUITE HOTEL", file: "songs/track-819.mp3", artist: "Simba La Rue, Bobo", profile: "Emanuele", spotifyId: "1NRnu8LjiJM3cHcPYy6rs9", spotifyAlbum: "CRIMI", spotifyDurationMs: 139000 },
+    { title: "Marocchino", file: "songs/track-820.mp3", artist: "Baby Gang", profile: "Emanuele", spotifyId: "0f2wkDmAlLAo90gE5d1yPU", spotifyAlbum: "EP1", spotifyDurationMs: 133000 },
+    { title: "QUATTERI #2", file: "songs/track-821.mp3", artist: "Skinny", profile: "Emanuele", spotifyId: "2mhjSMEAbReJIguSuAUP0Y", spotifyAlbum: "QUATTERI #2", spotifyDurationMs: 98000 },
+    { title: "Stamm Fort (feat. Sfera Ebbasta)", file: "songs/track-822.mp3", artist: "Luchè, Sfera Ebbasta", profile: "Emanuele", spotifyId: "7iTTQvztpfrDneVSX9IGBD", spotifyAlbum: "Potere", spotifyDurationMs: 171000 },
+    { title: "Pi tutti i carusi", file: "songs/track-823.mp3", artist: "L'Elfo, Funkyman", profile: "Emanuele", spotifyId: "3SYB2f8qy1IBKuVWNKwovE", spotifyAlbum: "Pi tutti i carusi", spotifyDurationMs: 293000 },
+    { title: "QUATTERI FREESTYLE", file: "songs/track-824.mp3", artist: "Skinny", profile: "Emanuele", spotifyId: "2M6uR3cbNum7B1boPyDkEC", spotifyAlbum: "QUATTERI FREESTYLE", spotifyDurationMs: 90000 },
+    { title: "Ferrari - Remix", file: "songs/track-825.mp3", artist: "James Hype, Miggy Dela Rosa, Lazza", profile: "Emanuele", spotifyId: "3XucsgiwXb8KPn9Csf9Zmu", spotifyAlbum: "Ferrari (Remix)", spotifyDurationMs: 172000 },
+    { title: "Mrs", file: "songs/track-826.mp3", artist: "Central Cee", profile: "Emanuele", spotifyId: "0yRsHuqDYOeug4ACp38Rjt", spotifyAlbum: "23", spotifyDurationMs: 148000 },
+    { title: "Obsessed With You", file: "songs/track-1169.mp3", artist: "Central Cee", profile: "Emanuele", spotifyId: "4PYfFHKfjYz6dwAtZhBy1z", spotifyAlbum: "Obsessed With You", spotifyDurationMs: 108000 },
+    { title: "Loading", file: "songs/track-827.mp3", artist: "Central Cee", profile: "Emanuele", spotifyId: "4vzJrkfHbCGaodPA5RY5BV", spotifyAlbum: "Wild West", spotifyDurationMs: 173000 },
+    { title: "Fendi belt", file: "songs/track-828.mp3", artist: "Shiva, Paky", profile: "Emanuele", spotifyId: "3mYQaVTYv6suVMD1MjPBlR", spotifyAlbum: "Dolce vita", spotifyDurationMs: 148000 },
+    { title: "Mon Fre - feat. Emis Killa", file: "songs/track-1076.mp3", artist: "Shiva, Emis Killa", profile: "Emanuele", spotifyId: "4dDMgEj5GpBTI1lvVlYPu7", spotifyAlbum: "Mon Fre (feat. Emis Killa)", spotifyDurationMs: 224000 },
+    { title: "Wild Bandana (feat. Tedua & Vaz Tè)", file: "songs/track-830.mp3", artist: "Izi, Vaz Tè, Tedua", profile: "Emanuele", spotifyId: "4I0zrlR1lT6aHYiu79MzWy", spotifyAlbum: "Pizzicato", spotifyDurationMs: 309000 },
+    { title: "3 Stick Freestyle", file: "songs/track-1077.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "6YX9c3sbZbGFHylgZq5djZ", spotifyAlbum: "3 Stick Freestyle", spotifyDurationMs: 149000 },
+    { title: "Oltre", file: "songs/track-832.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "1BbCOFBOYAfUlT41nQYYmC", spotifyAlbum: "ALI", spotifyDurationMs: 183000 },
+    { title: "Counting Stars", file: "songs/track-833.mp3", artist: "OneRepublic", profile: "Emanuele", spotifyId: "2tpWsVSb9UEmDRxAl1zhX1", spotifyAlbum: "Native", spotifyDurationMs: 257000 },
+    { title: "7 miliardi", file: "songs/track-834.mp3", artist: "Massimo Pericolo", profile: "Emanuele", spotifyId: "67vjEOTkBppbVLUUq5mEJz", spotifyAlbum: "Scialla Semper", spotifyDurationMs: 167000 },
+    { title: "CAZZO CULO (feat. Salmo)", file: "songs/track-1146.mp3", artist: "Massimo Pericolo, Crookers, Salmo, Nic Sarno", profile: "Emanuele", spotifyId: "20t66ReqDDum1dvDSlpZzk", spotifyAlbum: "SOLO TUTTO", spotifyDurationMs: 233000 },
+    { title: "STUPIDO", file: "songs/track-75.mp3", artist: "Massimo Pericolo, Crookers", profile: "Emanuele", spotifyId: "6HVRRlc2sBlkcKEkhlsp86", spotifyAlbum: "SOLO TUTTO", spotifyDurationMs: 187000 },
+    { title: "Non è Easy", file: "songs/track-836.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "2SdYuBGvuX0L7KbWiFhLzg", spotifyAlbum: "Non è Easy", spotifyDurationMs: 164000 },
+    { title: "BREBBIA 2012", file: "songs/track-837.mp3", artist: "Massimo Pericolo, Crookers, Nic Sarno", profile: "Emanuele", spotifyId: "0he7EfF5m73DQmTZ3mteJR", spotifyAlbum: "SOLO TUTTO", spotifyDurationMs: 168000 },
+    { title: "PULL UP (feat. Big P)", file: "songs/track-1147.mp3", artist: "Touché, BIG P, Miller", profile: "Emanuele", spotifyId: "5rGNMvZh5oLw20vjMaf8VW", spotifyAlbum: "IL MINORENNE + BASTARDO", spotifyDurationMs: 166000 },
+    { title: "PAMPAMPAMPAMPAMPAMPAMPAM", file: "songs/track-838.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "0AO2RPbzoaNRlNmnk70oRt", spotifyAlbum: "PAMPAMPAMPAMPAMPAMPAMPAM", spotifyDurationMs: 158000 },
+    { title: "Lei (feat. Bené)", file: "songs/track-839.mp3", artist: "Baby Gang, Bené", profile: "Emanuele", spotifyId: "1fdL0yW2DHzcOOUF0fZFv8", spotifyAlbum: "EP2", spotifyDurationMs: 212000 },
+    { title: "È Trap", file: "songs/track-840.mp3", artist: "Tony Effe", profile: "Emanuele", spotifyId: "6ndHrlHQjOEaIGaY9o6W5O", spotifyAlbum: "Untouchable", spotifyDurationMs: 149000 },
+    { title: "Effe", file: "songs/track-1078.mp3", artist: "Tony Effe", profile: "Emanuele", spotifyId: "56nvQibJaC1V84wVMqA3Ck", spotifyAlbum: "Untouchable", spotifyDurationMs: 151000 },
+    { title: "Niente da perdere", file: "songs/track-842.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "3HiQ6Tn1mWVgYDLgeaxjS5", spotifyAlbum: "Niente da perdere", spotifyDurationMs: 166000 },
+    { title: "Paranoia", file: "songs/track-843.mp3", artist: "Baby Gang, Bobo", profile: "Emanuele", spotifyId: "4ZPmb48JaAysD1OdQEt5LL", spotifyAlbum: "Paranoia", spotifyDurationMs: 182000 },
+    { title: "Chic", file: "songs/track-100.mp3", artist: "Izi", profile: "Emanuele", spotifyId: "7jUJ2RmT4PFHHq4goMWqm3", spotifyAlbum: "Fenice", spotifyDurationMs: 212000 },
+    { title: "Born For This", file: "songs/track-845.mp3", artist: "The Score", profile: "Emanuele", spotifyId: "7uCBGNn991AM68fR4tSDco", spotifyAlbum: "Carry On", spotifyDurationMs: 237000 },
+    { title: "The Search", file: "songs/track-1079.mp3", artist: "NF", profile: "Emanuele", spotifyId: "3oLe5ZILASG8vU5dxIMfLY", spotifyAlbum: "The Search", spotifyDurationMs: 248000 },
+    { title: "SPLASH (feat. Enzo Dong)", file: "songs/track-847.mp3", artist: "MV Killa, Yung Snapp, Enzo Dong", profile: "Emanuele", spotifyId: "0CjTQ01ADXx3BMO07LxpKx", spotifyAlbum: "HOURS", spotifyDurationMs: 172000 },
+    { title: "Fa' o' Brav' (feat. Emis Killa, Yung Snapp, MV Killa, Lele Blade)", file: "songs/track-848.mp3", artist: "Rocco Hunt, Emis Killa, Yung Snapp, MV Killa, Lele Blade", profile: "Emanuele", spotifyId: "209vinNF5EXSNq4S8faeIw", spotifyAlbum: "Rivoluzione", spotifyDurationMs: 227000 },
+    { title: "Una Cosa Sola (feat. Shablo)", file: "songs/track-1170.mp3", artist: "Irama, Shablo", profile: "Emanuele", spotifyId: "0OkvsNAnCij983B5DDYXxO", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 178000 },
+    { title: "LA CANZONE NOSTRA ⟁ (con BLANCO & Salmo)", file: "songs/track-1080.mp3", artist: "MACE, BLANCO, Salmo", profile: "Emanuele", spotifyId: "0aQi1JGO1oKWEmKGfvf8TF", spotifyAlbum: "LA CANZONE NOSTRA ⟁ (con BLANCO & Salmo)", spotifyDurationMs: 237000 },
+    { title: "Estate", file: "songs/track-1155.mp3", artist: "Will", profile: "Emanuele", spotifyId: "7AKMq2HTg8FQs9LE0v9uoy", spotifyAlbum: "Estate", spotifyDurationMs: 186000 },
+    { title: "Goodbye", file: "songs/track-851.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "7psOD6F6QbssQoC9U2OJCL", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 169000 },
+    { title: "Oroka", file: "songs/track-1081.mp3", artist: "YTD", profile: "Emanuele", spotifyId: "2yyQvu0FFNghJJkYiF2uhL", spotifyAlbum: "TheLeavesTurnToAshesWhenTheDevilCalls", spotifyDurationMs: 106000 },
+    { title: "MustBeARealDragWakingUpAndBeingYou", file: "songs/track-852.mp3", artist: "BONES", profile: "Emanuele", spotifyId: "4eaXSrScP9VdnF4G0KaeDh", spotifyAlbum: "UNRENDERED", spotifyDurationMs: 116000 },
+    { title: "Eurovision (feat. Rondodasosa, Baby Gang, A2 Anti, Morad, Beny Jr, Ashe 22 & Freeze corleone)", file: "songs/track-853.mp3", artist: "Central Cee, Rondodasosa, Freeze corleone, Baby Gang, A2ANTI, Morad, Beny Jr, ASHE 22", profile: "Emanuele", spotifyId: "4f5TKGvkD4TkTjr61GKNAG", spotifyAlbum: "23", spotifyDurationMs: 243000 },
+    { title: "Yo Quiero Amarte", file: "songs/track-1171.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "4jrC7qsMuRAcnxQ4iiQpb1", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 176000 },
+    { title: "Ovunque Sarai", file: "songs/track-854.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "75mCCeBwjfoZtfAPE0SxwO", spotifyAlbum: "Il giorno in cui ho smesso di pensare", spotifyDurationMs: 200000 },
+    { title: "Superclassico", file: "songs/track-855.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "6Ahg1hncxUdK0ICqU03BCu", spotifyAlbum: "Gemelli", spotifyDurationMs: 172000 },
+    { title: "QQQ", file: "songs/track-1082.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "7nxWTXsWF0i3KHUzNZmxoB", spotifyAlbum: "68 (Till The End)", spotifyDurationMs: 186000 },
+    { title: "Ferma A Guardare (feat. Pinguini Tattici Nucleari)", file: "songs/track-857.mp3", artist: "Ernia, Pinguini Tattici Nucleari", profile: "Emanuele", spotifyId: "1eDC4NiUYgQSKpKDIvXxi4", spotifyAlbum: "Gemelli", spotifyDurationMs: 213000 },
+    { title: "Gotham", file: "songs/track-858.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "30qcU0IsKJFVTgKQSFcOXb", spotifyAlbum: "Come Uccidere Un Usignolo", spotifyDurationMs: 178000 },
+    { title: "Jungle", file: "songs/track-1148.mp3", artist: "Rhove", profile: "Emanuele", spotifyId: "5KlQHwczFD9jrAGKxLaG4A", spotifyAlbum: "Jungle", spotifyDurationMs: 184000 },
+    { title: "LAPROVINCE #1", file: "songs/track-860.mp3", artist: "Rhove", profile: "Emanuele", spotifyId: "2Z9uQAn8v8m6ZPFh4bsqY4", spotifyAlbum: "LAPROVINCE #1", spotifyDurationMs: 158000 },
+    { title: "Pensando a lei", file: "songs/track-861.mp3", artist: "Shiva", profile: "Emanuele", spotifyId: "4Yi4RRhp3nfKR1FDbXlHBp", spotifyAlbum: "Pensando a lei", spotifyDurationMs: 176000 },
+    { title: "BABY GODDAMN", file: "songs/track-862.mp3", artist: "Tananai", profile: "Emanuele", spotifyId: "3yWHQ4n4ARLDfYTuT2NhnN", spotifyAlbum: "BABY GODDAMN", spotifyDurationMs: 149000 },
+    { title: "La genesi del tuo colore", file: "songs/track-863.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "0HyDNYQmQ3obfA81D3y9tG", spotifyAlbum: "La genesi del tuo colore", spotifyDurationMs: 228000 },
+    { title: "LUNA PIENA (con IRAMA)", file: "songs/track-864.mp3", artist: "Rkomi, Irama, Shablo", profile: "Emanuele", spotifyId: "6z7tGTD6yvyloEm6K2H8EX", spotifyAlbum: "TAXI DRIVER", spotifyDurationMs: 166000 },
+    { title: "Certi Giorni (feat. Nitro)", file: "songs/track-865.mp3", artist: "Ernia, Nitro", profile: "Emanuele", spotifyId: "4nvsA575k8HrEjdQ78Ymvi", spotifyAlbum: "68 (Till The End)", spotifyDurationMs: 194000 },
+    { title: "Phi", file: "songs/track-866.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "0E5bmLyxyiHsmc82D5gsiY", spotifyAlbum: "68 (Till The End)", spotifyDurationMs: 174000 },
+    { title: "Ma il cielo è sempre più blu", file: "songs/track-240.mp3", artist: "Rino Gaetano", profile: "Emanuele", spotifyId: "1L9m2l2lhXgQ3GwmmCx3OK", spotifyAlbum: "La Storia", spotifyDurationMs: 272000 },
+    { title: "Dark Horse", file: "songs/track-867.mp3", artist: "Katy Perry, Juicy J", profile: "Emanuele", spotifyId: "5jrdCoLpJSvHHorevXBATy", spotifyAlbum: "PRISM (Deluxe)", spotifyDurationMs: 215000 },
+    { title: "WALLAH", file: "songs/track-868.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "39CXkMn8AAFu3qwnZHJCNo", spotifyAlbum: "WALLAH", spotifyDurationMs: 133000 },
+    { title: "Cazzo Mene", file: "songs/track-1149.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "21h2N6UKUYc5UzqSCbWJal", spotifyAlbum: "Lunga Vita a Sto", spotifyDurationMs: 222000 },
+    { title: "Habibi", file: "songs/track-869.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "2dyQYsU8cJLSGpVsbOy0CO", spotifyAlbum: "Album", spotifyDurationMs: 184000 },
+    { title: "Cara Italia", file: "songs/track-870.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "3atDsUhlUgDlQQrI0XFh7I", spotifyAlbum: "Cara Italia", spotifyDurationMs: 244000 },
+    { title: "Veleno 8 (feat. Gemitaiz)", file: "songs/track-1083.mp3", artist: "MadMan, Gemitaiz", profile: "Emanuele", spotifyId: "06OBAy97uVyHCZvonvgfE2", spotifyAlbum: "MM Vol. 4", spotifyDurationMs: 182000 },
+    { title: "MEGLIO DEL CINEMA", file: "songs/track-1084.mp3", artist: "Fedez", profile: "Emanuele", spotifyId: "6byHOsfSzBH0R5WQ6QRv54", spotifyAlbum: "MEGLIO DEL CINEMA", spotifyDurationMs: 188000 },
+    { title: "Bye Bye", file: "songs/track-1085.mp3", artist: "Samurai Jay, Dani", profile: "Emanuele", spotifyId: "0DHxikaj0fk6gKkOwd2sMo", spotifyAlbum: "Bye Bye", spotifyDurationMs: 138000 },
+    { title: "IN TRAPPOLA", file: "songs/track-1086.mp3", artist: "Salmo", profile: "Emanuele", spotifyId: "25zlvKhD4wtNyjWQ91APzB", spotifyAlbum: "FLOP", spotifyDurationMs: 112000 },
+    { title: "Cali", file: "songs/track-1087.mp3", artist: "Vale Pain, La Luna Nera", profile: "Emanuele", spotifyId: "2Dlll94x7rzrrw2mN0PGjE", spotifyAlbum: "2020", spotifyDurationMs: 198000 },
+    { title: "That's What I Like", file: "songs/track-1088.mp3", artist: "Bruno Mars", profile: "Emanuele", spotifyId: "0KKkJNfGyhkQ5aFogxQAPU", spotifyAlbum: "24K Magic", spotifyDurationMs: 206000 },
+    { title: "Ora o mai più", file: "songs/track-1089.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "6MgjsSUoBTgFEd2gY8WVbD", spotifyAlbum: "ALI - ULTIMA NOTTE", spotifyDurationMs: 153000 },
+    { title: "Warzone", file: "songs/track-1090.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "7FVcxWVUtjihWtQBW0W5Pm", spotifyAlbum: "ALI - ULTIMA NOTTE", spotifyDurationMs: 193000 },
+    { title: "Il tuo nome", file: "songs/track-1091.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "2RVdq0QXC4JxU0X51ZQYaH", spotifyAlbum: "ALI", spotifyDurationMs: 170000 },
+    { title: "Lobalo", file: "songs/track-1092.mp3", artist: "Flaco Mamba", profile: "Emanuele", spotifyId: "0UB1ts6o3I6DpM0BK9j2BO", spotifyAlbum: "Lobalo", spotifyDurationMs: 202000 },
+    { title: "MI SENTO BENE", file: "songs/track-872.mp3", artist: "Salmo", profile: "Emanuele", spotifyId: "2v4kWcQ7LWML8TEQmLDAEO", spotifyAlbum: "FLOP", spotifyDurationMs: 183000 },
+    { title: "Woo Baby (feat. Chris Brown)", file: "songs/track-873.mp3", artist: "Pop Smoke, Chris Brown", profile: "Emanuele", spotifyId: "58T4yPLn4NjBYXfRxeweyM", spotifyAlbum: "Faith", spotifyDurationMs: 156000 },
+    { title: "Take Me To Church", file: "songs/track-874.mp3", artist: "Hozier", profile: "Emanuele", spotifyId: "3dYD57lRAUcMHufyqn9GcI", spotifyAlbum: "Hozier", spotifyDurationMs: 241000 },
+    { title: "Blue Sky", file: "songs/track-1172.mp3", artist: "Gemitaiz, MadMan", profile: "Emanuele", spotifyId: "1WOeWKKfUxx8hlH8RSRjfV", spotifyAlbum: "Kepler", spotifyDurationMs: 187000 },
+    { title: "Sole a mezzanotte", file: "songs/track-345.mp3", artist: "Gio Montana", profile: "Emanuele", spotifyId: "41wB7yyQG8YR284muocSv0", spotifyAlbum: "Sole a mezzanotte", spotifyDurationMs: 134000 },
+    { title: "ANTIPATICO", file: "songs/track-875.mp3", artist: "Salmo", profile: "Emanuele", spotifyId: "5mJDKaEsF02C8BOZoJ14rl", spotifyAlbum: "FLOP", spotifyDurationMs: 117000 },
+    { title: "KUMITE", file: "songs/track-876.mp3", artist: "Salmo", profile: "Emanuele", spotifyId: "6yaNNYWPjkWHbh1jADEyJO", spotifyAlbum: "FLOP", spotifyDurationMs: 170000 },
+    { title: "FUORI DI TESTA - feat. Par-T-One", file: "songs/track-877.mp3", artist: "Salmo, Par-T-One", profile: "Emanuele", spotifyId: "2et2A0W3In3OYaRdJrY6m9", spotifyAlbum: "FLOP", spotifyDurationMs: 185000 },
+    { title: "Ipernova", file: "songs/track-878.mp3", artist: "Mr.Rain", profile: "Emanuele", spotifyId: "1TaSkLG2bXx84YuKmJvncw", spotifyAlbum: "Butterfly Effect", spotifyDurationMs: 177000 },
+    { title: "I Grandi Non Piangono Mai", file: "songs/track-879.mp3", artist: "Mr.Rain", profile: "Emanuele", spotifyId: "051yIUwgzFc5v7ed3SYmTl", spotifyAlbum: "Butterfly Effect", spotifyDurationMs: 226000 },
+    { title: "Chiasso", file: "songs/track-880.mp3", artist: "Random", profile: "Emanuele", spotifyId: "4UJoAdTMnqxQHKWKLLQpvK", spotifyAlbum: "Chiasso", spotifyDurationMs: 182000 },
+    { title: "Sono un bravo ragazzo un po' fuori di testa", file: "songs/track-881.mp3", artist: "Random", profile: "Emanuele", spotifyId: "4fllTuc6KM95uB3ZqqiGYd", spotifyAlbum: "Sono un bravo ragazzo un po' fuori di testa", spotifyDurationMs: 170000 },
+    { title: "Safe And Sound", file: "songs/track-1183.mp3", artist: "Unread, Rakan", profile: "Emanuele", spotifyId: "6e7TWYrIgtqZugZyjRbWHj", spotifyAlbum: "Safe and Sound", spotifyDurationMs: 144000 },
+    { title: "DNA", file: "songs/track-1093.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "2NflMHziVSclCuF3WGcXKb", spotifyAlbum: "DNA", spotifyDurationMs: 200000 },
+    { title: "Shake That", file: "songs/track-1094.mp3", artist: "Elmatadormc7, Lil Dig, INCE, Gumma Vybz", profile: "Emanuele", spotifyId: "3Jtuwv93YozzbVlL9EExWk", spotifyAlbum: "Shake That", spotifyDurationMs: 136000 },
+    { title: "The Real Slim Shady", file: "songs/track-884.mp3", artist: "Eminem", profile: "Emanuele", spotifyId: "3yfqSUWxFvZELEM4PmlwIR", spotifyAlbum: "The Marshall Mathers LP", spotifyDurationMs: 284000 },
+    { title: "Topless", file: "songs/track-1150.mp3", artist: "Geeno, Luchè, CoCo", profile: "Emanuele", spotifyId: "2HjM0ufsJtI0zBBeFIpEog", spotifyAlbum: "Topless", spotifyDurationMs: 180000 },
+    { title: "Davide (feat. Coez)", file: "songs/track-1173.mp3", artist: "Gemitaiz, Coez", profile: "Emanuele", spotifyId: "1Lq5ApqhIWUXzlryFX2K6J", spotifyAlbum: "Davide", spotifyDurationMs: 206000 },
+    { title: "Ibiza", file: "songs/track-885.mp3", artist: "Tyga", profile: "Emanuele", spotifyId: "01sApbVbtNG0WpMQKieOwm", spotifyAlbum: "Ibiza", spotifyDurationMs: 180000 },
+    { title: "Il cielo si tinge di blu", file: "songs/track-886.mp3", artist: "Nessuno, Urano", profile: "Emanuele", spotifyId: "3QpmPJHkO6xLu5d0Pwz5gs", spotifyAlbum: "Il cielo si tinge di blu", spotifyDurationMs: 139000 },
+    { title: "Nuovi Amici No", file: "songs/track-887.mp3", artist: "Skinny", profile: "Emanuele", spotifyId: "4DTyaDA9ZwWUUqGUh1JOlj", spotifyAlbum: "Nuovi Amici No", spotifyDurationMs: 130000 },
+    { title: "I Miss You", file: "songs/track-888.mp3", artist: "GELO", profile: "Emanuele", spotifyId: "4lgfhjnm922y6kGBAqKhaU", spotifyAlbum: "I Miss You", spotifyDurationMs: 177000 },
+    { title: "Oh Jesus", file: "songs/track-889.mp3", artist: "Silent Bob, Sick Budd", profile: "Emanuele", spotifyId: "5KN3FPKo2iOJlNp1wE4qZO", spotifyAlbum: "Piano B", spotifyDurationMs: 168000 },
+    { title: "Hangover", file: "songs/track-890.mp3", artist: "Gemitaiz", profile: "Emanuele", spotifyId: "1PqFDUw5Wgm4IhKkKRH3I0", spotifyAlbum: "Nonostante Tutto (Inediti, Rarità, Live E Remix)", spotifyDurationMs: 250000 },
+    { title: "Su Di Te", file: "songs/track-891.mp3", artist: "Simone Panetti, G.bit, Mike Lennon, Rooler", profile: "Emanuele", spotifyId: "6eCIYNIasTRya5UYBWjxSE", spotifyAlbum: "Su Di Te", spotifyDurationMs: 188000 },
+    { title: "MINACCIA", file: "songs/track-892.mp3", artist: "Radical, Mothz", profile: "Emanuele", spotifyId: "6vGgYuVaajzlfPK3i7ursd", spotifyAlbum: "TRASHBIN, Vol. 3", spotifyDurationMs: 76000 },
+    { title: "Replay", file: "songs/track-1095.mp3", artist: "Iyaz", profile: "Emanuele", spotifyId: "4E5P1XyAFtrjpiIxkydly4", spotifyAlbum: "Replay", spotifyDurationMs: 182000 },
+    { title: "MONTERO (Call Me By Your Name)", file: "songs/track-894.mp3", artist: "Lil Nas X", profile: "Emanuele", spotifyId: "67BtfxlNbhBmCDR2L2l8qd", spotifyAlbum: "MONTERO (Call Me By Your Name)", spotifyDurationMs: 137000 },
+    { title: "#THOTMILANODM", file: "songs/track-895.mp3", artist: "Radical, Thelonious B., Rosa Chemical", profile: "Emanuele", spotifyId: "4wz9be3iTHln8swogVIAwR", spotifyAlbum: "TRASHBIN, Vol. 3", spotifyDurationMs: 186000 },
+    { title: "YOSHI (feat. Fabri Fibra) - prod. Strage", file: "songs/track-896.mp3", artist: "MACHETE, Dani Faiv, tha Supreme, Fabri Fibra", profile: "Emanuele", spotifyId: "3Hh0ZcGIqIkSiJVZGLcVLx", spotifyAlbum: "MACHETE MIXTAPE 4", spotifyDurationMs: 211000 },
+    { title: "IL CIELO NELLA STANZA (feat. NSTASIA)", file: "songs/track-1096.mp3", artist: "Salmo, NSTASIA", profile: "Emanuele", spotifyId: "2fkVZYFv9hOejIsLzZy8ad", spotifyAlbum: "Playlist", spotifyDurationMs: 186000 },
+    { title: "INDUSTRY BABY (feat. Jack Harlow)", file: "songs/track-1097.mp3", artist: "Lil Nas X, Jack Harlow", profile: "Emanuele", spotifyId: "27NovPIUIRrOZoCHxABJwK", spotifyAlbum: "INDUSTRY BABY (feat. Jack Harlow)", spotifyDurationMs: 212000 },
+    { title: "Pleasantville", file: "songs/track-1098.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "4T7nI6RllPyFPXJtIAtC7l", spotifyAlbum: "Suicidol", spotifyDurationMs: 349000 },
+    { title: "Baba Jaga", file: "songs/track-1099.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "7noTHZbdwMkmOazuDteqmH", spotifyAlbum: "Suicidol", spotifyDurationMs: 147000 },
+    { title: "Satisfya", file: "songs/track-1100.mp3", artist: "Imran Khan", profile: "Emanuele", spotifyId: "6HGoVbCUr63SgU3TjxEVj6", spotifyAlbum: "Satisfya", spotifyDurationMs: 180000 },
+    { title: "Everybody Dies In Their Nightmares", file: "songs/track-1101.mp3", artist: "XXXTENTACION", profile: "Emanuele", spotifyId: "3GVkPk8mqxz0itaAriG1L7", spotifyAlbum: "17", spotifyDurationMs: 95000 },
+    { title: "Pioggia", file: "songs/track-1102.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "3D1qKYxa1vLw1JwGoDUnvG", spotifyAlbum: "ALI", spotifyDurationMs: 170000 },
+    { title: "Ninna Nanna", file: "songs/track-1103.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "1bJn4Hfj4xa58Jse9bQrN1", spotifyAlbum: "Album", spotifyDurationMs: 237000 },
+    { title: "Danza Kuduro", file: "songs/track-901.mp3", artist: "Don Omar, Lucenzo", profile: "Emanuele", spotifyId: "4sCSUQnWQ6HJsOMjfPicdn", spotifyAlbum: "Emigrante Del Mundo (Remastered)", spotifyDurationMs: 198000 },
+    { title: "Ego - Radio Edit", file: "songs/track-1114.mp3", artist: "Willy William", profile: "Emanuele", spotifyId: "3qoXUh7xT2nq8txSrsA9rZ", spotifyAlbum: "Une seule vie", spotifyDurationMs: 207000 },
+    { title: "Buonanotte Amò", file: "songs/track-1104.mp3", artist: "Rocco Hunt", profile: "Emanuele", spotifyId: "0G9rMKBc4l9Knfd1Sw1cdi", spotifyAlbum: "Libertà", spotifyDurationMs: 162000 },
+    { title: "Love Me", file: "songs/track-903.mp3", artist: "Lil Tecca", profile: "Emanuele", spotifyId: "4e0FYxSROat25pH16zMTZI", spotifyAlbum: "We Love You Tecca", spotifyDurationMs: 117000 },
+    { title: "Love Me Again", file: "songs/track-904.mp3", artist: "John Newman", profile: "Emanuele", spotifyId: "5TbzAWWc5eJaANpA9kfGCd", spotifyAlbum: "Tribute", spotifyDurationMs: 239000 },
+    { title: "Moonlight", file: "songs/track-905.mp3", artist: "XXXTENTACION", profile: "Emanuele", spotifyId: "0JP9xo3adEtGSdUEISiszL", spotifyAlbum: "?", spotifyDurationMs: 135000 },
+    { title: "Look At Me!", file: "songs/track-906.mp3", artist: "XXXTENTACION", profile: "Emanuele", spotifyId: "7floNISpH8VF4z4459Qo18", spotifyAlbum: "Look At Me!", spotifyDurationMs: 126000 },
+    { title: "X 1 MEX (feat. Dani Faiv)", file: "songs/track-1105.mp3", artist: "BLOODY VINYL, Slait, tha Supreme, MILES, Dani Faiv", profile: "Emanuele", spotifyId: "5gouWBHeO3hLhCUr9gSvV5", spotifyAlbum: "BV3", spotifyDurationMs: 174000 },
+    { title: "X", file: "songs/track-907.mp3", artist: "Nicky Jam, J Balvin", profile: "Emanuele", spotifyId: "5YUyW9opqNsMSEzzecZih1", spotifyAlbum: "Intimo", spotifyDurationMs: 172000 },
+    { title: "Goddamn (feat. A Boogie wit da Hoodie)", file: "songs/track-908.mp3", artist: "Tyga, A Boogie Wit da Hoodie", profile: "Emanuele", spotifyId: "0Zl4G9qcdXV5hVhdOirNHG", spotifyAlbum: "Goddamn (feat. A Boogie wit da Hoodie)", spotifyDurationMs: 211000 },
+    { title: "I Like It", file: "songs/track-909.mp3", artist: "Cardi B, Bad Bunny, J Balvin", profile: "Emanuele", spotifyId: "58q2HKrzhC3ozto2nDdN4z", spotifyAlbum: "Invasion of Privacy", spotifyDurationMs: 253000 },
+    { title: "El Party", file: "songs/track-910.mp3", artist: "Jake La Furia, Alessio La Profunda Melodia", profile: "Emanuele", spotifyId: "19LRRuiMQ8a9jhqSf8jVip", spotifyAlbum: "El Party", spotifyDurationMs: 211000 },
+    { title: "P.E.S.", file: "songs/track-1106.mp3", artist: "Club Dogo, Giuliano Palma", profile: "Emanuele", spotifyId: "4M8filny20Mwlc2gnvtcgU", spotifyAlbum: "Noi Siamo Il Club (Reloaded Edition)", spotifyDurationMs: 228000 },
+    { title: "Psycho (feat. Rose Villain)", file: "songs/track-912.mp3", artist: "Emis Killa, Rose Villain", profile: "Emanuele", spotifyId: "1T0Yxsej1IIwR9Zxx676da", spotifyAlbum: "Keta Music, Vol. 3", spotifyDurationMs: 142000 },
+    { title: "Piede in strada (feat. Mera)", file: "songs/track-913.mp3", artist: "Emis Killa, Mera", profile: "Emanuele", spotifyId: "58oeJn3WUNbOBwaDFLgYL3", spotifyAlbum: "Keta Music, Vol. 3", spotifyDurationMs: 159000 },
+    { title: "Qualche sasso", file: "songs/track-914.mp3", artist: "Emis Killa", profile: "Emanuele", spotifyId: "0ON7cT98E4H7Rh4dzfvKCa", spotifyAlbum: "Keta Music, Vol. 3", spotifyDurationMs: 127000 },
+    { title: "Notti In Bianco", file: "songs/track-915.mp3", artist: "BLANCO", profile: "Emanuele", spotifyId: "38UoVEHcZ85EGBo6k79643", spotifyAlbum: "Notti In Bianco", spotifyDurationMs: 176000 },
+    { title: "Ransom (with Juice WRLD) - Remix", file: "songs/track-916.mp3", artist: "Lil Tecca, Juice WRLD", profile: "Emanuele", spotifyId: "2WsuSYJNXGKXVYkHPnq2yp", spotifyAlbum: "We Love You Tecca", spotifyDurationMs: 171000 },
+    { title: "Stunting", file: "songs/track-917.mp3", artist: "DJ Kiss", profile: "Emanuele", spotifyId: "2YJEjwjMC7kLRLDMoP91qc", spotifyAlbum: "Play Money", spotifyDurationMs: 120000 },
+    { title: "Heavy Metal", file: "songs/track-918.mp3", artist: "Mostro", profile: "Emanuele", spotifyId: "13XBWnwKT0rMZoHfv5l0Es", spotifyAlbum: "Ogni maledetto giorno (Deluxe Edition)", spotifyDurationMs: 84000 },
+    { title: "In Da Getto", file: "songs/track-919.mp3", artist: "J Balvin, Skrillex", profile: "Emanuele", spotifyId: "63aj87TQG6F3RVO5nbG2VQ", spotifyAlbum: "In Da Getto", spotifyDurationMs: 131000 },
+    { title: "Dinero", file: "songs/track-920.mp3", artist: "Trinidad Cardona", profile: "Emanuele", spotifyId: "3ggtU1ZOKO8ZNiqPNyXGcm", spotifyAlbum: "Dinero", spotifyDurationMs: 160000 },
+    { title: "Senza Cura", file: "songs/track-921.mp3", artist: "Silent Bob, Sick Budd", profile: "Emanuele", spotifyId: "4ilFOAeIWe05BlCyQ3syDK", spotifyAlbum: "Senza Cura", spotifyDurationMs: 138000 },
+    { title: "Angeli", file: "songs/track-922.mp3", artist: "Close Listen, Icy Subzero, Ayden Lau", profile: "Emanuele", spotifyId: "1jrOa5WRrJkQcKaHSsazuE", spotifyAlbum: "Angeli", spotifyDurationMs: 122000 },
+    { title: "Tu sei", file: "songs/track-1107.mp3", artist: "Giovane Miska, 17 Bronx", profile: "Emanuele", spotifyId: "4RfRjiIatYzjaaOtFtaFUi", spotifyAlbum: "CHIAMATE PERSE", spotifyDurationMs: 129000 },
+    { title: "Knock Knock", file: "songs/track-1108.mp3", artist: "SoFaygo", profile: "Emanuele", spotifyId: "6aHoPULNO7pSL2ZfUY0bU8", spotifyAlbum: "Angelic 7", spotifyDurationMs: 139000 },
+    { title: "Vien cu me", file: "songs/track-1033.mp3", artist: "Christian Revo, Geolier", profile: "Emanuele", spotifyId: "3HCAGeuTGRJCCG1Dowouho", spotifyAlbum: "Talento Sprecato", spotifyDurationMs: 177000 },
+    { title: "ONLYFANS (feat. MamboLosco)", file: "songs/track-1151.mp3", artist: "Slings, MamboLosco", profile: "Emanuele", spotifyId: "2RrldylvtjefqddhIONP7x", spotifyAlbum: "ONLYFANS (feat. MamboLosco)", spotifyDurationMs: 143000 },
+    { title: "Hello (feat. A Boogie Wit da Hoodie)", file: "songs/track-1109.mp3", artist: "Pop Smoke, A Boogie Wit da Hoodie", profile: "Emanuele", spotifyId: "2r6OAV3WsYtXuXjvJ1lIDi", spotifyAlbum: "Shoot For The Stars Aim For The Moon (Deluxe)", spotifyDurationMs: 190000 },
+    { title: "SWISH", file: "songs/track-1110.mp3", artist: "Tyga", profile: "Emanuele", spotifyId: "55GiOwtxNajXVbpjjIzMnD", spotifyAlbum: "SWISH", spotifyDurationMs: 194000 },
+    { title: "Come Get Her", file: "songs/track-1111.mp3", artist: "Rae Sremmurd", profile: "Emanuele", spotifyId: "1Ser4X0TKttOvo8bgdytTP", spotifyAlbum: "SremmLife", spotifyDurationMs: 212000 },
+    { title: "The Hills", file: "songs/track-1112.mp3", artist: "The Weeknd", profile: "Emanuele", spotifyId: "7fBv7CLKzipRk6EC6TWHOB", spotifyAlbum: "Beauty Behind The Madness", spotifyDurationMs: 242000 },
+    { title: "Via Libetta", file: "songs/track-925.mp3", artist: "Shangai Blood, Naver, Sayanbull, Wave DB, Suburbio, Chris Bomaye", profile: "Emanuele", spotifyId: "6qVTkX2V6SaCQolLqWNBuM", spotifyAlbum: "Via Libetta", spotifyDurationMs: 230000 },
+    { title: "Vida Loca", file: "songs/track-1140.mp3", artist: "Ye$hua", profile: "Emanuele", spotifyId: "3uI5JbhnAaHTuGaxMSug7m", spotifyAlbum: "Vida Loca", spotifyDurationMs: 197000 },
+    { title: "Godzilla (feat. Juice WRLD)", file: "songs/track-927.mp3", artist: "Eminem, Juice WRLD", profile: "Emanuele", spotifyId: "7FIWs0pqAYbP91WWM0vlTQ", spotifyAlbum: "Music To Be Murdered By", spotifyDurationMs: 210000 },
+    { title: "Just For Fun (feat. Yung Snapp)", file: "songs/track-928.mp3", artist: "Lele Blade, Yung Snapp", profile: "Emanuele", spotifyId: "6kGOv3rx5RqSI2X8pQVxsS", spotifyAlbum: "Just For Fun (feat. Yung Snapp)", spotifyDurationMs: 137000 },
+    { title: "Baby Gang", file: "songs/track-929.mp3", artist: "167 Gang, Baby Gang", profile: "Emanuele", spotifyId: "4wGzKzVWDPIr13qK2i2JP0", spotifyAlbum: "Baby Gang", spotifyDurationMs: 187000 },
+    { title: "Favole", file: "songs/track-930.mp3", artist: "Fraespo", profile: "Emanuele", spotifyId: "03OG1l3nH7rQgJDtM6YDb8", spotifyAlbum: "Favole", spotifyDurationMs: 102000 },
+    { title: "Candy", file: "songs/track-931.mp3", artist: "VillaBanks, Vale Pain, Linch, Bovychulo", profile: "Emanuele", spotifyId: "3a3EzSxWvDno8RpTMv7Xch", spotifyAlbum: "Non Lo So", spotifyDurationMs: 142000 },
+    { title: "SUPREME - L'ego (feat. thasup & Sfera Ebbasta)", file: "songs/track-932.mp3", artist: "Marracash, tha Supreme, Sfera Ebbasta", profile: "Emanuele", spotifyId: "5EpBEqf5bnKeJ3p4zA1Sod", spotifyAlbum: "Persona", spotifyDurationMs: 223000 },
+    { title: "Regular Everyday Normal Motherfucker", file: "songs/track-1186.mp3", artist: "Hairy Potter", profile: "Emanuele", spotifyId: "5rKfXD2DzJLfkE0VGsKMQk", spotifyAlbum: "Regular Everyday Normal Motherfucker", spotifyDurationMs: 193000 },
+    { title: "Ricordi Bui", file: "songs/track-933.mp3", artist: "Leon Faun, Duffy", profile: "Emanuele", spotifyId: "6TTJKILWeUNRT12yfxaXWH", spotifyAlbum: "C'era una volta", spotifyDurationMs: 80000 },
+    { title: "Body (Remix) [feat. Capo Plaza & Rondodasosa]", file: "songs/track-934.mp3", artist: "Tion Wayne, Russ Millions, Capo Plaza, Rondodasosa", profile: "Emanuele", spotifyId: "1JAkXiY10vwLhSbcsiimrp", spotifyAlbum: "Body (Remix) [feat. Capo Plaza & Rondodasosa]", spotifyDurationMs: 205000 },
+    { title: "Non Abbiamo Età", file: "songs/track-110.mp3", artist: "Luchè", profile: "Emanuele", spotifyId: "0NwuXciw6eQc4edjwSBnV3", spotifyAlbum: "Potere", spotifyDurationMs: 181000 },
+    { title: "C'era una volta", file: "songs/track-936.mp3", artist: "KAYLER, DOD", profile: "Emanuele", spotifyId: "2FofcSBjpvG1VevyabKPOq", spotifyAlbum: "C'era una volta", spotifyDurationMs: 126000 },
+    { title: "La follia non ha età RMX (feat. Dani Faiv)", file: "songs/track-937.mp3", artist: "Leon Faun, Duffy, Dani Faiv", profile: "Emanuele", spotifyId: "0COmugdfmCITil997mvPHd", spotifyAlbum: "C'era una volta", spotifyDurationMs: 170000 },
+    { title: "C'era una volta", file: "songs/track-938.mp3", artist: "Leon Faun, Duffy", profile: "Emanuele", spotifyId: "5CVxRagSP0mygbq68883fH", spotifyAlbum: "C'era una volta", spotifyDurationMs: 177000 },
+    { title: "Barking", file: "songs/track-939.mp3", artist: "Ramz", profile: "Emanuele", spotifyId: "2U5cq89GCnsR1yixKkC8d5", spotifyAlbum: "Barking", spotifyDurationMs: 202000 },
+    { title: "Jordan Manchás", file: "songs/track-940.mp3", artist: "Skinny Flex, Elpatron970", profile: "Emanuele", spotifyId: "16fcpqTCRdFkI15jyI5ePK", spotifyAlbum: "Jordan Manchás", spotifyDurationMs: 153000 },
+    { title: "Faded", file: "songs/track-941.mp3", artist: "Arc North, Cour, New Beat Order, Lunis", profile: "Emanuele", spotifyId: "3d93zfyq9SPAETUMiVK3dP", spotifyAlbum: "Faded", spotifyDurationMs: 146000 },
+    { title: "Cupid Shuffle", file: "songs/track-942.mp3", artist: "Cupid", profile: "Emanuele", spotifyId: "07Tx168RSsUS1HqkDIOZbH", spotifyAlbum: "Time for a Change", spotifyDurationMs: 231000 },
+    { title: "Panamera", file: "songs/track-943.mp3", artist: "NDG", profile: "Emanuele", spotifyId: "0LL9AQsHR1z1PaCsFL1HOO", spotifyAlbum: "Panamera", spotifyDurationMs: 172000 },
+    { title: "Sono Siciliano", file: "songs/track-944.mp3", artist: "BLACK PRINCE, L'Elfo", profile: "Emanuele", spotifyId: "16SxYzsCFy1qmiwOSCGCoh", spotifyAlbum: "Sono Siciliano", spotifyDurationMs: 183000 },
+    { title: "Big Gangsta", file: "songs/track-945.mp3", artist: "Kevin Gates", profile: "Emanuele", spotifyId: "2HYvkdq6lpFXkVz9Tfqi8r", spotifyAlbum: "Only the Generals Gon Understand", spotifyDurationMs: 243000 },
+    { title: "Panda", file: "songs/track-946.mp3", artist: "Desiigner", profile: "Emanuele", spotifyId: "5YEOzOojehCqxGQCcQiyR4", spotifyAlbum: "New English", spotifyDurationMs: 246000 },
+    { title: "Ramenez la coupe à la maison", file: "songs/track-947.mp3", artist: "Vegedream", profile: "Emanuele", spotifyId: "1m0UFnuTktOkksvjbF9z0m", spotifyAlbum: "Marchand de sable", spotifyDurationMs: 235000 },
+    { title: "Il soffitto viene giù (feat. Salmo)", file: "songs/track-948.mp3", artist: "BLOODY VINYL, MACHETE, Slait, Salmo", profile: "Emanuele", spotifyId: "1XWKkbjE6qDAWQOTkINOjN", spotifyAlbum: "BV2", spotifyDurationMs: 156000 },
+    { title: "Il Rap Nel Mio Paese", file: "songs/track-949.mp3", artist: "Fabri Fibra", profile: "Emanuele", spotifyId: "2Oe5GP3iudJ0LuV03ZIT34", spotifyAlbum: "Squallor", spotifyDurationMs: 276000 },
+    { title: "Malibu", file: "songs/track-950.mp3", artist: "Vegas Jones", profile: "Emanuele", spotifyId: "08AN0HMXNr3DGGDCOWsTAw", spotifyAlbum: "Bellaria", spotifyDurationMs: 211000 },
+    { title: "Tokyo Drift", file: "songs/track-951.mp3", artist: "KVSH", profile: "Emanuele", spotifyId: "20WcuVfTh0QFkIsJUncdON", spotifyAlbum: "Tokyo Drift (Remix)", spotifyDurationMs: 222000 },
+    { title: "Can't Hold Us - SFG Remix", file: "songs/track-952.mp3", artist: "D-Sane", profile: "Emanuele", spotifyId: "1GVENedXn5WboFUZBBXRp9", spotifyAlbum: "Can't Hold Us (SFG Remix)", spotifyDurationMs: 337000 },
+    { title: "Life Is Life", file: "songs/track-953.mp3", artist: "80s Super Hits", profile: "Emanuele", spotifyId: "2nYUvkyGnWuIJUTHPdvY0O", spotifyAlbum: "Ultimate 80s Hit Songs: The Best 80s Playlist", spotifyDurationMs: 250000 },
+    { title: "Diavolo magro", file: "songs/track-1174.mp3", artist: "Mostro", profile: "Emanuele", spotifyId: "2vTH6m88GfrQHkCREtcDFC", spotifyAlbum: "The Illest, Vol. 2", spotifyDurationMs: 160000 },
+    { title: "Buon Viaggio (Share The Love)", file: "songs/track-954.mp3", artist: "Cesare Cremonini", profile: "Emanuele", spotifyId: "7LSBkEm5LQSkhe6yqqqBPs", spotifyAlbum: "Più Che Logico", spotifyDurationMs: 207000 },
+    { title: "SCACCIACANI - feat. Massimo Pericolo - prod. Crookers & Nic Sarno", file: "songs/track-955.mp3", artist: "Ketama126, Massimo Pericolo", profile: "Emanuele", spotifyId: "2665YLaM0dLaIhkjpUHT7k", spotifyAlbum: "SCACCIACANI (feat. Massimo Pericolo - prod. Crookers & Nic Sarno)", spotifyDurationMs: 219000 },
+    { title: "Bailar (feat. Elvis Crespo) - Radio Edit", file: "songs/track-1113.mp3", artist: "Deorro, Elvis Crespo", profile: "Emanuele", spotifyId: "45sGyAtAxD6efaN0bJAFgh", spotifyAlbum: "Bailar (feat. Elvis Crespo) [Radio Edit]", spotifyDurationMs: 137000 },
+    { title: "Talk Dirty (feat. 2 Chainz)", file: "songs/track-956.mp3", artist: "Jason Derulo, 2 Chainz", profile: "Emanuele", spotifyId: "5l3CML2OnzfNs5RfVgbcLt", spotifyAlbum: "Talk Dirty", spotifyDurationMs: 177000 },
+    { title: "Ego - Radio Edit", file: "songs/track-1175.mp3", artist: "Willy William", profile: "Emanuele", spotifyId: "1JifHg9Xly5nIU0TA5W7E7", spotifyAlbum: "Une seule vie", spotifyDurationMs: 207000 },
+    { title: "No Lie", file: "songs/track-957.mp3", artist: "Sean Paul, Dua Lipa", profile: "Emanuele", spotifyId: "48QmG1dfvMuYLxMPt7KSRA", spotifyAlbum: "Mad Love The Prequel", spotifyDurationMs: 221000 },
+    { title: "Take 343 (feat. Massimo Pericolo, LGND)", file: "songs/track-1115.mp3", artist: "Real Talk, Massimo Pericolo, LGND", profile: "Emanuele", spotifyId: "2V0CvYeBkrl09P6rpWXVux", spotifyAlbum: "REAL TALK - MASSIMO PERICOLO (4/2 - EP)", spotifyDurationMs: 144000 },
+    { title: "Take 342 (feat. Massimo Pericolo, TwentyTwo)", file: "songs/track-1156.mp3", artist: "Real Talk, Massimo Pericolo, TwentyTwo", profile: "Emanuele", spotifyId: "7kzlCym9xPDAodtc3ztk6i", spotifyAlbum: "REAL TALK - MASSIMO PERICOLO (4/2 - EP)", spotifyDurationMs: 115000 },
+    { title: "Take 341 (feat. Massimo Pericolo, Bosca)", file: "songs/track-1116.mp3", artist: "Real Talk, Massimo Pericolo, Bosca", profile: "Emanuele", spotifyId: "7cwqjYcwTVs7LAuvitiYQ6", spotifyAlbum: "REAL TALK - MASSIMO PERICOLO (4/2 - EP)", spotifyDurationMs: 219000 },
+    { title: "Soldati", file: "songs/track-958.mp3", artist: "Massimo Pericolo", profile: "Emanuele", spotifyId: "4wjJAbrMPIUOafFK7VaZdC", spotifyAlbum: "Scialla Semper", spotifyDurationMs: 147000 },
+    { title: "Bimbi Soldato", file: "songs/track-959.mp3", artist: "Baby Gang, Sacky", profile: "Emanuele", spotifyId: "0vIRBxBzL7ejCluhb6ec2Z", spotifyAlbum: "Bimbi Soldato", spotifyDurationMs: 149000 },
+    { title: "Cella 2", file: "songs/track-1117.mp3", artist: "Baby Gang, Higashi", profile: "Emanuele", spotifyId: "2LmVlMGBKvJSjzGs0zmjEX", spotifyAlbum: "Cella 2", spotifyDurationMs: 142000 },
+    { title: "Cella 1", file: "songs/track-1118.mp3", artist: "Baby Gang", profile: "Emanuele", spotifyId: "6CiB4YlbfoFZku2tRzSdRO", spotifyAlbum: "Cella 1", spotifyDurationMs: 154000 },
+    { title: "F.N", file: "songs/track-1119.mp3", artist: "Lil Tjay", profile: "Emanuele", spotifyId: "0RLLvYBopDwooCyvnTwgYu", spotifyAlbum: "True 2 Myself", spotifyDurationMs: 224000 },
+    { title: "Senza Pagare VS T-Pain (feat. T-Pain)", file: "songs/track-962.mp3", artist: "J-AX, Fedez, T-Pain", profile: "Emanuele", spotifyId: "1ATWiuxpIc287Cynakx59C", spotifyAlbum: "Senza Pagare VS T-Pain (feat. T-Pain)", spotifyDurationMs: 210000 },
+    { title: "Occhi Lucidi", file: "songs/track-963.mp3", artist: "Leon Faun, Duffy", profile: "Emanuele", spotifyId: "7dYgzrhdIIjTQTvUjlrWxa", spotifyAlbum: "Occhi Lucidi", spotifyDurationMs: 144000 },
+    { title: "Primavera", file: "songs/track-964.mp3", artist: "Leon Faun, Duffy", profile: "Emanuele", spotifyId: "5v7MZptpFvqNqIbk0T674i", spotifyAlbum: "Primavera", spotifyDurationMs: 129000 },
+    { title: "Apollo 13 (feat. Vegas Jones)", file: "songs/track-965.mp3", artist: "Il Tre, Vegas Jones", profile: "Emanuele", spotifyId: "6HppxkBehKYGzBjZNPTQ4H", spotifyAlbum: "ALI", spotifyDurationMs: 223000 },
+    { title: "Freestyle 21", file: "songs/track-966.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "6ImM6kLDk60tbBiRTTvwp5", spotifyAlbum: "Raptus 2", spotifyDurationMs: 111000 },
+    { title: "23 coltellate", file: "songs/track-967.mp3", artist: "Highsnob, MamboLosco, Andry The Hitmaker", profile: "Emanuele", spotifyId: "5RlrdqMMNm42rKgYq64a3T", spotifyAlbum: "23 coltellate", spotifyDurationMs: 155000 },
+    { title: "Payphone", file: "songs/track-968.mp3", artist: "Maroon 5, Wiz Khalifa", profile: "Emanuele", spotifyId: "1XGmzt0PVuFgQYYnV2It7A", spotifyAlbum: "Overexposed Track By Track", spotifyDurationMs: 231000 },
+    { title: "Pioggia - Single Version", file: "songs/track-1176.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "3Jxv90Ey423ZApqYfqSNue", spotifyAlbum: "ALI", spotifyDurationMs: 170000 },
+    { title: "Take 2102 (feat. Nayt, Bosca)", file: "songs/track-1120.mp3", artist: "Real Talk, nayt, Bosca", profile: "Emanuele", spotifyId: "7GLa2BBe6XdRsnJdrNSAzw", spotifyAlbum: "REAL TALK - NAYT (2/10 EP)", spotifyDurationMs: 119000 },
+    { title: "Take 2103 (feat. Nayt, LGND)", file: "songs/track-1121.mp3", artist: "Real Talk, nayt, LGND", profile: "Emanuele", spotifyId: "6X1la01hVCfQz0gg5nw38p", spotifyAlbum: "REAL TALK - NAYT (2/10 EP)", spotifyDurationMs: 174000 },
+    { title: "Non Me Ne Frega Un Cazzo (feat. Fabri Fibra)", file: "songs/track-969.mp3", artist: "Ernia, Fabri Fibra", profile: "Emanuele", spotifyId: "3QGKwtZ2jRvI9AXzIQ2AhP", spotifyAlbum: "Gemelli", spotifyDurationMs: 209000 },
+    { title: "Louboutin", file: "songs/track-970.mp3", artist: "Vale Pain, Rondodasosa", profile: "Emanuele", spotifyId: "7fzaDe7qR6IX2w275uX4Th", spotifyAlbum: "Louboutin", spotifyDurationMs: 240000 },
+    { title: "TUTTAPPO'", file: "songs/track-1122.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "0Jgad5naDLh5Wshmzdzyxz", spotifyAlbum: "MOOD", spotifyDurationMs: 156000 },
+    { title: "Musica Ovunque", file: "songs/track-1177.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "31m7HX5tiLNouPjN4OB8ng", spotifyAlbum: "MOOD", spotifyDurationMs: 253000 },
+    { title: "Fame (feat. Madman)", file: "songs/track-376.mp3", artist: "nayt, 3D, MadMan", profile: "Emanuele", spotifyId: "5Jny3m9XarSYHvxCldiYdE", spotifyAlbum: "Raptus 3", spotifyDurationMs: 222000 },
+    { title: "Inferno", file: "songs/track-1123.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "0tKOZoVkaV3ZSYyp8dyaCe", spotifyAlbum: "Raptus 3", spotifyDurationMs: 181000 },
+    { title: "Animal", file: "songs/track-974.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "6DuaLPP9WpaRObuVdZ8Kcs", spotifyAlbum: "Raptus 3", spotifyDurationMs: 127000 },
+    { title: "Brutti sogni", file: "songs/track-975.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "3uRsF8kteU4tahegykQL73", spotifyAlbum: "Raptus 3", spotifyDurationMs: 177000 },
+    { title: "La mia voce", file: "songs/track-382.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "6tgQxjeSlrP4J6jjYfjb7R", spotifyAlbum: "Raptus 3", spotifyDurationMs: 176000 },
+    { title: "oh 9od - feat. Nayt", file: "songs/track-977.mp3", artist: "tha Supreme, nayt", profile: "Emanuele", spotifyId: "5Qy9jtZdxUnFXmgPp3u5VZ", spotifyAlbum: "23 6451", spotifyDurationMs: 204000 },
+    { title: "Gli occhi della tigre", file: "songs/track-1124.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "5pL8J6weoydzXglhsoJ6Vw", spotifyAlbum: "Raptus 3", spotifyDurationMs: 166000 },
+    { title: "Matrix (feat. Nayt)", file: "songs/track-979.mp3", artist: "Izi, nayt", profile: "Emanuele", spotifyId: "4B2INUH3nWgyrOeUIqr5Hj", spotifyAlbum: "RIOT", spotifyDurationMs: 175000 },
+    { title: "Flop (feat. Leon Faun)", file: "songs/track-1157.mp3", artist: "Izi, Leon Faun", profile: "Emanuele", spotifyId: "0DCLd1GJKAsESFs6yQ3TjW", spotifyAlbum: "RIOT", spotifyDurationMs: 132000 },
+    { title: "MACHETE SATELLITE (feat. Salmo & Taxi B)", file: "songs/track-981.mp3", artist: "BLOODY VINYL, Slait, MILES, Salmo, Taxi B", profile: "Emanuele", spotifyId: "3CHiuPXn9ufDJhVy1xI4Jf", spotifyAlbum: "BV3", spotifyDurationMs: 146000 },
+    { title: "Amo Ma Chi T Sap (feat. MV Killa & Guè)", file: "songs/track-982.mp3", artist: "Geolier, MV Killa, Guè", profile: "Emanuele", spotifyId: "57Ae6GvuVqepP8iTqWjzep", spotifyAlbum: "Emanuele", spotifyDurationMs: 209000 },
+    { title: "Soldi in Nero - feat. Sfera Ebbasta", file: "songs/track-983.mp3", artist: "Shiva, Sfera Ebbasta", profile: "Emanuele", spotifyId: "1Xm2e1vDwOMeJJioWuG1s7", spotifyAlbum: "Soldi in Nero (feat. Sfera Ebbasta)", spotifyDurationMs: 183000 },
+    { title: "PAROLA - feat. Lazza, Emis Killa", file: "songs/track-984.mp3", artist: "Giaime, Lazza, Emis Killa, Andry The Hitmaker", profile: "Emanuele", spotifyId: "2tQ7vPjN88wkQl5hSNSbVF", spotifyAlbum: "MULA", spotifyDurationMs: 203000 },
+    { title: "Boogieman (feat. Salmo)", file: "songs/track-985.mp3", artist: "Ghali, Salmo", profile: "Emanuele", spotifyId: "10Q5VqDAAbwExYkNha3VKH", spotifyAlbum: "DNA", spotifyDurationMs: 159000 },
+    { title: "Solo", file: "songs/track-1125.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "6IvS6osbMlIlHsHtME4Ds7", spotifyAlbum: "Real Talk", spotifyDurationMs: 128000 },
+    { title: "Soldiers", file: "songs/track-1184.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "3pZqdGiFPRxPVPwxZszkdx", spotifyAlbum: "Real Talk", spotifyDurationMs: 145000 },
+    { title: "Skechers", file: "songs/track-988.mp3", artist: "DripReport", profile: "Emanuele", spotifyId: "2alc8VZAzDgdAsL2QMk3hu", spotifyAlbum: "Skechers", spotifyDurationMs: 106000 },
+    { title: "Danger", file: "songs/track-989.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "0hNL8JT6oX3oDvkkqBw3l1", spotifyAlbum: "Danger", spotifyDurationMs: 194000 },
+    { title: "Stronzo (feat. DJ MS)", file: "songs/track-990.mp3", artist: "Nitro, Dj MS", profile: "Emanuele", spotifyId: "0PeLjkHFc90ROcnoLRwA3Z", spotifyAlbum: "Suicidol", spotifyDurationMs: 200000 },
+    { title: "0", file: "songs/track-1181.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "2PldrXU4dp3Og28cWt1Kwl", spotifyAlbum: "Danger", spotifyDurationMs: 134000 },
+    { title: "Lucifero (prod. Yazee)", file: "songs/track-991.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "7gY3qneACKqhzMD5jBo6Zq", spotifyAlbum: "Lucifero (prod. Yazee)", spotifyDurationMs: 180000 },
+    { title: "Narcos", file: "songs/track-992.mp3", artist: "Geolier", profile: "Emanuele", spotifyId: "1BdmcsFAODQR4x7eiOuRVf", spotifyAlbum: "Emanuele", spotifyDurationMs: 196000 },
+    { title: "Mister (feat. Lazza & Jake La Furia)", file: "songs/track-993.mp3", artist: "Jack The Smoker, Lazza, Jake La Furia", profile: "Emanuele", spotifyId: "3TWEaGqDJ4pZn8CZG4XjQF", spotifyAlbum: "Ho Fatto Tardi", spotifyDurationMs: 283000 },
+    { title: "fuck 3x", file: "songs/track-484.mp3", artist: "tha Supreme", profile: "Emanuele", spotifyId: "5YxP1CkunbhUQVvctFOHa7", spotifyAlbum: "23 6451", spotifyDurationMs: 161000 },
+    { title: "2 TIRI (feat. tha Supreme)", file: "songs/track-994.mp3", artist: "Lazza, tha Supreme", profile: "Emanuele", spotifyId: "3YMG87pTNliEHwbrYfGpiL", spotifyAlbum: "J", spotifyDurationMs: 162000 },
+    { title: "Cacao (feat. Pyrex)", file: "songs/track-995.mp3", artist: "Ghali, Pyrex", profile: "Emanuele", spotifyId: "6l53oE417B7CeVgT9AFBYN", spotifyAlbum: "DNA", spotifyDurationMs: 113000 },
+    { title: "Cyborg (feat. Geolier)", file: "songs/track-996.mp3", artist: "Guè, Geolier", profile: "Emanuele", spotifyId: "54wRUYPMEHLttFdLImOlAt", spotifyAlbum: "Mr. Fini", spotifyDurationMs: 205000 },
+    { title: "Simba", file: "songs/track-997.mp3", artist: "Ernia", profile: "Emanuele", spotifyId: "69d3X2Nv5AWHUeTktfOqpV", spotifyAlbum: "68", spotifyDurationMs: 199000 },
+    { title: "0ffline (feat. bbno$)", file: "songs/track-998.mp3", artist: "tha Supreme, bbno$", profile: "Emanuele", spotifyId: "6ZWsKJdmoYu1oFJbzCmtK9", spotifyAlbum: "23 6451", spotifyDurationMs: 201000 },
+    { title: "Thrift Shop (feat. Wanz)", file: "songs/track-1126.mp3", artist: "Macklemore & Ryan Lewis, Wanz", profile: "Emanuele", spotifyId: "4YMqbFcDIFiCBd02PzUBcM", spotifyAlbum: "The Heist", spotifyDurationMs: 235000 },
+    { title: "Vendetta", file: "songs/track-1127.mp3", artist: "Skinny", profile: "Emanuele", spotifyId: "1TUAnO9lhKKySN8WT3vvHY", spotifyAlbum: "Vendetta", spotifyDurationMs: 171000 },
+    { title: "Blue Bandana", file: "songs/track-1128.mp3", artist: "Skinny", profile: "Emanuele", spotifyId: "55Soh2lcLeN0ysLou2P7XP", spotifyAlbum: "Blue Bandana", spotifyDurationMs: 166000 },
+    { title: "Te lo prometto", file: "songs/track-1129.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "72aqCNAdOo6H4nrPyAivSV", spotifyAlbum: "Te lo prometto", spotifyDurationMs: 184000 },
+    { title: "CHARLES MANSON (BUON NATALE2) (feat. Lazza)", file: "songs/track-1152.mp3", artist: "Salmo, Dani Faiv, Nitro, Lazza", profile: "Emanuele", spotifyId: "4z6l90HzhLLCd0hWddzbrh", spotifyAlbum: "Playlist Live", spotifyDurationMs: 258000 },
+    { title: "RAP SHIT (feat. tha Supreme & Gemitaiz) - prod. STABBER", file: "songs/track-1130.mp3", artist: "Nitro, tha Supreme, Gemitaiz", profile: "Emanuele", spotifyId: "2Fbj0y0HEUKCZkUsI71PUx", spotifyAlbum: "GarbAge", spotifyDurationMs: 212000 },
+    { title: "oh 9od", file: "songs/track-93.mp3", artist: "tha Supreme, nayt", profile: "Emanuele", spotifyId: "0UuqwLM3UFmwcXSJgfFHvr", spotifyAlbum: "oh 9od", spotifyDurationMs: 205000 },
+    { title: "Pregiudicati", file: "songs/track-1131.mp3", artist: "Skinny", profile: "Emanuele", spotifyId: "5PXOuBwrUgqxn8njY4xrfw", spotifyAlbum: "Pregiudicati", spotifyDurationMs: 196000 },
+    { title: "blun7 a swishland", file: "songs/track-1003.mp3", artist: "tha Supreme", profile: "Emanuele", spotifyId: "7HwvPmK74MBRDhCIyMXReP", spotifyAlbum: "23 6451", spotifyDurationMs: 167000 },
+    { title: "Desperado (Piano Solo)", file: "songs/track-1132.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "22yob3Jawi4xYiyfyH1VS3", spotifyAlbum: "Re Mida (Aurum)", spotifyDurationMs: 168000 },
+    { title: "MAMMASTOMALE (feat. Salmo) - prod. Dade", file: "songs/track-1005.mp3", artist: "MACHETE, Gemitaiz, Izi, Salmo", profile: "Emanuele", spotifyId: "5nFX29WZIulql4m4ic0KRw", spotifyAlbum: "MACHETE MIXTAPE 4", spotifyDurationMs: 154000 },
+    { title: "YOSHI (feat. tha Supreme, Fabri Fibra & Capo Plaza) - prod. Strage [Remix]", file: "songs/track-1133.mp3", artist: "MACHETE, Dani Faiv, J Balvin, tha Supreme, Fabri Fibra, Capo Plaza", profile: "Emanuele", spotifyId: "0VU34EBWTAlHVIZE3aWlZA", spotifyAlbum: "YOSHI (feat. tha Supreme, Fabri Fibra & Capo Plaza) [prod. Strage [Remix]]", spotifyDurationMs: 293000 },
+    { title: "Porto Cervo", file: "songs/track-1007.mp3", artist: "Lazza", profile: "Emanuele", spotifyId: "0TAt3c8KXb1D3sWT8ENar8", spotifyAlbum: "Porto Cervo", spotifyDurationMs: 235000 },
+    { title: "Rotten", file: "songs/track-1158.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "41FusdKMoGstfNPq7TXjXX", spotifyAlbum: "Suicidol", spotifyDurationMs: 238000 },
+    { title: "Keanu Reeves (feat. Achille Lauro)", file: "songs/track-1009.mp3", artist: "Gemitaiz, Achille Lauro", profile: "Emanuele", spotifyId: "1MGXWglFoINJdrcp2W0U0w", spotifyAlbum: "Davide", spotifyDurationMs: 209000 },
+    { title: "Il Passo (feat. Samurai Jay)", file: "songs/track-1010.mp3", artist: "MamboLosco, Nardi, Samurai Jay", profile: "Emanuele", spotifyId: "5DeyCr1ZPOLBYFwHOqn6Lv", spotifyAlbum: "Il Passo (feat. Samurai Jay)", spotifyDurationMs: 165000 },
+    { title: "Nena (feat. Geolier & Andry The Hitmaker)", file: "songs/track-1011.mp3", artist: "Boro, Geolier, Andry The Hitmaker", profile: "Emanuele", spotifyId: "6TEPwGCSq4XGWu3hnZkC5m", spotifyAlbum: "Nena (feat. Geolier & Andry The Hitmaker)", spotifyDurationMs: 149000 },
+    { title: "Cioilflow (feat. Salmo) - prod. Strage", file: "songs/track-1012.mp3", artist: "Dani Faiv, Salmo", profile: "Emanuele", spotifyId: "5ChFLb70vqPgcH5zRbQ6h3", spotifyAlbum: "Cioilflow (feat. Salmo) [prod. Strage]", spotifyDurationMs: 186000 },
+    { title: "Twerk (con Boro)", file: "songs/track-1134.mp3", artist: "MamboLosco, Boro", profile: "Emanuele", spotifyId: "4jiCUUfjuJoG03gnw3jj1r", spotifyAlbum: "Arte", spotifyDurationMs: 152000 },
+    { title: "In peggio - prod. Strage", file: "songs/track-1013.mp3", artist: "Dani Faiv", profile: "Emanuele", spotifyId: "1ebQQD5Ws1eog2GRD5Zkpg", spotifyAlbum: "In peggio (prod. Strage)", spotifyDurationMs: 164000 },
+    { title: "GarbAge - prod. Strage & STABBER", file: "songs/track-1014.mp3", artist: "Nitro", profile: "Emanuele", spotifyId: "4zZ1KLUmzKY3rqlOlq68hW", spotifyAlbum: "GarbAge", spotifyDurationMs: 197000 },
+    { title: "Rozzi", file: "songs/track-1135.mp3", artist: "Paky", profile: "Emanuele", spotifyId: "3Y00k9cPoW8BnJesUEFoWn", spotifyAlbum: "Rozzi", spotifyDurationMs: 163000 },
+    { title: "FIGHT! (feat. Nayt)", file: "songs/track-1015.mp3", artist: "Il Tre, nayt", profile: "Emanuele", spotifyId: "3NiLpavKgcemrAlBKX275X", spotifyAlbum: "FIGHT! (feat. Nayt)", spotifyDurationMs: 168000 },
+    { title: "90MIN", file: "songs/track-444.mp3", artist: "Salmo", profile: "Emanuele", spotifyId: "3Ls9yKzshQye18Tx2AvOb6", spotifyAlbum: "Playlist", spotifyDurationMs: 231000 },
+    { title: "Mademoiselle", file: "songs/track-1016.mp3", artist: "Sfera Ebbasta", profile: "Emanuele", spotifyId: "2aPnpV1hT7l3eP10uSGK6c", spotifyAlbum: "Mademoiselle", spotifyDurationMs: 189000 },
+    { title: "Lento", file: "songs/track-1017.mp3", artist: "Boro, Don Joe, MamboLosco", profile: "Emanuele", spotifyId: "0iRKVjfQzpr41T3WsU7shl", spotifyAlbum: "Lento", spotifyDurationMs: 162000 },
+    { title: "Rollercoaster", file: "songs/track-1018.mp3", artist: "Emis Killa, Don Joe", profile: "Emanuele", spotifyId: "2Qe5XpRwGHFmMkZim0gRye", spotifyAlbum: "Rollercoaster", spotifyDurationMs: 207000 },
+    { title: "Ti volevo dedicare (feat. J-AX & Boomdabash)", file: "songs/track-1019.mp3", artist: "Rocco Hunt, J-AX, Boomdabash", profile: "Emanuele", spotifyId: "00GxbkrW4m1Tac5xySEJ4M", spotifyAlbum: "Libertà", spotifyDurationMs: 208000 },
+    { title: "Calipso (with Dardust) (feat. Sfera Ebbasta, Mahmood & Fabri Fibra)", file: "songs/track-1020.mp3", artist: "Charlie Charles, Sfera Ebbasta, Mahmood, Fabri Fibra", profile: "Emanuele", spotifyId: "45zJRuzK9e6AO527NOW7Fy", spotifyAlbum: "Calipso (with Dardust) (feat. Sfera Ebbasta, Mahmood & Fabri Fibra)", spotifyDurationMs: 190000 },
+    { title: "Ostia Lido", file: "songs/track-1021.mp3", artist: "J-AX", profile: "Emanuele", spotifyId: "2J9TGb5CRT4omfAgnKmXn5", spotifyAlbum: "Ostia Lido", spotifyDurationMs: 172000 },
+    { title: "Una volta ancora (feat. Ana Mena)", file: "songs/track-1022.mp3", artist: "Fred De Palma, Ana Mena", profile: "Emanuele", spotifyId: "6gaeewGjNiQhWOUkWRSLTa", spotifyAlbum: "Uebe", spotifyDurationMs: 174000 },
+    { title: "Good Times", file: "songs/track-1023.mp3", artist: "Ghali", profile: "Emanuele", spotifyId: "6GpvHaqp0Yybx9P6YnodRD", spotifyAlbum: "DNA", spotifyDurationMs: 163000 },
+    { title: "Veleno 8", file: "songs/track-1159.mp3", artist: "Canesecco", profile: "Emanuele", spotifyId: "3WX0wDniCCSSvQYkhO33fZ", spotifyAlbum: "Veleno 8", spotifyDurationMs: 176000 },
+    { title: "SAD!", file: "songs/track-1136.mp3", artist: "XXXTENTACION", profile: "Emanuele", spotifyId: "3ee8Jmje8o58CHK66QrVC2", spotifyAlbum: "?", spotifyDurationMs: 166000 },
+    { title: "rockstar (feat. 21 Savage)", file: "songs/track-1137.mp3", artist: "Post Malone, 21 Savage", profile: "Emanuele", spotifyId: "0e7ipj03S05BNilyu5bRzt", spotifyAlbum: "beerbongs & bentleys", spotifyDurationMs: 218000 },
+    { title: "Cracovia, Pt. 3", file: "songs/track-360.mp3", artist: "Il Tre", profile: "Emanuele", spotifyId: "18dt6tNw8hpNUdthOJf0lI", spotifyAlbum: "Cracovia, Pt. 3", spotifyDurationMs: 174000 },
+    { title: "Veleno 7", file: "songs/track-1138.mp3", artist: "Gemitaiz, MadMan", profile: "Emanuele", spotifyId: "2jkIbZ43eH3rM1yro2Ojzh", spotifyAlbum: "Scatola Nera", spotifyDurationMs: 173000 },
+    { title: "Fuori E Dentro (feat. thasup)", file: "songs/track-1178.mp3", artist: "Gemitaiz, MadMan, tha Supreme", profile: "Emanuele", spotifyId: "34UHhwlly3SHryWuVfMOJm", spotifyAlbum: "Scatola Nera", spotifyDurationMs: 170000 },
+    { title: "Bolla Papale Freestyle", file: "songs/track-1142.mp3", artist: "MadMan", profile: "Emanuele", spotifyId: "5wAArpW8e8QelgrJ8QyY3E", spotifyAlbum: "MM Vol. 2", spotifyDurationMs: 126000 },
+    { title: "Gli occhi della tigre", file: "songs/track-1179.mp3", artist: "nayt, 3D", profile: "Emanuele", spotifyId: "0eczHniJguffShMNltOqMo", spotifyAlbum: "Raptus 3", spotifyDurationMs: 166000 },
+    { title: "Veleno 6", file: "songs/track-1024.mp3", artist: "MadMan, Gemitaiz", profile: "Emanuele", spotifyId: "7GfXjqXD9aBvDoBdZ7EwPH", spotifyAlbum: "MM Vol. 2", spotifyDurationMs: 205000 },
+    { title: "Fenomeno", file: "songs/track-443.mp3", artist: "Fabri Fibra", profile: "Emanuele", spotifyId: "6F0xxEWmHIiC9Qnij5hVCr", spotifyAlbum: "Fenomeno", spotifyDurationMs: 199000 },
+    { title: "Che Ne Sanno I 2000 (feat. Danti)", file: "songs/track-1139.mp3", artist: "Gabry Ponte, Danti", profile: "Emanuele", spotifyId: "4KxShgbINUXGOEzHORBvYA", spotifyAlbum: "Che Ne Sanno I 2000 (feat. Danti)", spotifyDurationMs: 234000 },
+    { title: "Nera", file: "songs/track-1026.mp3", artist: "Irama", profile: "Emanuele", spotifyId: "6Lc0La3OwOmAouQjbID4uX", spotifyAlbum: "Plume", spotifyDurationMs: 174000 },
+    { title: "Serio (feat. Capo Plaza)", file: "songs/track-1027.mp3", artist: "Emis Killa, Capo Plaza", profile: "Emanuele", spotifyId: "2Cm9pUNjLYpLo2gjIiTBPa", spotifyAlbum: "Serio", spotifyDurationMs: 218000 },
+    { title: "Malibu", file: "songs/track-1180.mp3", artist: "Vegas Jones", profile: "Emanuele", spotifyId: "2uEqIGEHBfrx41k2rWnBxG", spotifyAlbum: "Malibu", spotifyDurationMs: 211000 },
+    { title: "Allenamento #3", file: "songs/track-1028.mp3", artist: "Capo Plaza, AVA, Mojobeatz", profile: "Emanuele", spotifyId: "6QZqTHoe5BSdOTMllulIv1", spotifyAlbum: "Allenamento #3", spotifyDurationMs: 166000 },
+    { title: "Vida Loca", file: "songs/track-926.mp3", artist: "Ye$hua", profile: "Emanuele", spotifyId: "4E5eGrcc38O3SnR9COugsX", spotifyAlbum: "Vida Loca", spotifyDurationMs: 194000 },
+    { title: "Trankilo", file: "songs/track-1029.mp3", artist: "Vegas Jones, Nitro", profile: "Emanuele", spotifyId: "4hwwDxMDxwNbCyUJuI5sLa", spotifyAlbum: "Chic Nisello", spotifyDurationMs: 240000 },
+    { title: "Italiana", file: "songs/track-1141.mp3", artist: "J-AX, Fedez", profile: "Emanuele", spotifyId: "0ptaq4BSl6jrXfGyLzJjYE", spotifyAlbum: "Italiana", spotifyDurationMs: 174000 },
+    { title: "Cupido (feat. Quavo)", file: "songs/track-1031.mp3", artist: "Sfera Ebbasta, Quavo", profile: "Emanuele", spotifyId: "0dLToDou8YHYJpQltj3Ijy", spotifyAlbum: "Rockstar", spotifyDurationMs: 210000 },
+    { title: "Sciroppo (feat. DrefGold)", file: "songs/track-1032.mp3", artist: "Sfera Ebbasta, DrefGold", profile: "Emanuele", spotifyId: "4VVG3HBGaqSNZqIpmewIA6", spotifyAlbum: "Rockstar", spotifyDurationMs: 205000 },
+    { title: "Stratos", file: "songs/track-1187.mp3", artist: "Kid Yugi", profile: "Emanuele" },
 ];
 
   const PALETTE = [
@@ -628,16 +1403,8 @@
   }
 
 
-  function _tracciaRemotaAttiva() {
-    try { return new URLSearchParams(String(window.location.search || "")).has("traccia"); }
-    catch (e) { return false; }
-  }
-
   function _diChe(riga) {
     try {
-      /* Le tracce remote sono diagnostica: non devono creare commit a
-         ogni aggiornamento di libreria. Si attivano solo con ?traccia. */
-      if (!_tracciaRemotaAttiva()) return;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       const ora = Date.now();
@@ -664,15 +1431,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.485";
-
-  /* I file locali app.js/versione.json contengono anche il catalogo dei brani
-     generato dal PC. Il codice eseguito può arrivare da GitHub, ma il controllo
-     della libreria deve continuare a leggere questi file locali. */
-  function _urlCodiceFile(nome, cacheBust) {
-    return nome + (cacheBust !== undefined && cacheBust !== null
-      ? "?t=" + encodeURIComponent(String(cacheBust)) : "");
-  }
+  const APP_VERSION = "6.413";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -786,7 +1545,6 @@ try {
   });
 } catch (e) { /* noop */ }
   let tracks = [];
-  let _registriLocaliStats = [];
   let currentId = null;
   let shuffle = false;
   let repeat = false;
@@ -1507,7 +2265,7 @@ async function _apriDiagnostica() {
     }
     qs.push('<div class="diag-sep">versione</div>');
     qs.push('<div class="diag-riga"><b>in uso</b><span class="diag-ok">' + APP_VERSION + "</span></div>");
-    const schermo = $("appVer");
+    const schermo = $("verBadge");
     if (schermo) qs.push('<div class="diag-riga"><b>numero in alto</b><span>' + (schermo.textContent || "?") + "</span></div>");
 
     qs.push('<div class="diag-sep">i nomi che ho cambiato</div>');
@@ -2088,63 +2846,38 @@ function _salvaStatistiche() {
     return ore + (ore === 1 ? " ora" : " ore") + (min ? " e " + min + (min === 1 ? " minuto" : " minuti") : "");
   }
 
-  function _listaStatisticheProfilo(nome) {
-    const risultato = new Map();
-    let eliminatiLocale = {};
-    try { eliminatiLocale = LS.get("mb.eliminati", {}) || {}; } catch (e) { eliminatiLocale = {}; }
-    const copiati = (typeof _mieiCopiatiDi === "function") ? _mieiCopiatiDi(nome) : new Set();
-    for (const b of BUILTIN) {
-      if (!b || !b.file) continue;
-      const id = _idBranoStabile(b), proprietario = b.profile || DEFAULT_PROFILE;
-      if (proprietario !== nome && !copiati.has(id)) continue;
-      if (eliminatiLocale[_chiaveEliminato(id, nome)]) continue;
-      risultato.set(id, { id, title:b.title||"", artist:b.artist||"", profile:nome, builtin:proprietario===nome });
-    }
-    for (const r of (_registriLocaliStats || [])) {
-      if (!r || !r.id || !r.blob || (r.profile || DEFAULT_PROFILE) !== nome) continue;
-      if (eliminatiLocale[_chiaveEliminato(r.id, nome)]) continue;
-      /* eGiaCondiviso() usa il profilo aperto: qui stiamo contando anche gli altri. */
-      const titoloNorm = String(r.title || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-      const artistaNorm = String(r.artist || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-      let duplicato = false;
-      if (titoloNorm) {
-        for (const già of risultato.values()) {
-          const t = String(già.title || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-          const a = String(già.artist || "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
-          if (t === titoloNorm && (!artistaNorm || !a || a === artistaNorm)) { duplicato = true; break; }
-        }
-      }
-      if (duplicato) continue;
-      risultato.set(r.id, { id:r.id, title:r.title||"", artist:r.artist||"", profile:nome, builtin:false });
-    }
-    return Array.from(risultato.values());
-  }
   function _numeriProfilo(nome) {
-    const lista = _listaStatisticheProfilo(nome);
-    const st = profileState(nome), stats = (st && st.stats) || {};
+    const lista = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === nome);
+    const st = profileState(nome);
+    const stats = (st && st.stats) || {};
     let volte = 0, secondi = 0;
-    const perArtista = new Map(), perBrano = [];
+    const perArtista = new Map();
+    const perBrano = [];
     for (const k in stats) {
       const r = stats[k] || {};
-      const ascolti = Math.max(0, Number(r.v) || 0), durata = Math.max(0, Number(r.s) || 0);
-      volte += ascolti; secondi += durata;
+      volte += r.v || 0;
+      secondi += r.s || 0;
       const nomeArtista = (r.a || "").trim() || "senza artista";
-      perArtista.set(nomeArtista, (perArtista.get(nomeArtista) || 0) + ascolti);
-      if (durata > 0) perBrano.push({ titolo:r.t||"", artista:r.a||"", s:durata });
+      perArtista.set(nomeArtista, (perArtista.get(nomeArtista) || 0) + (r.v || 0));
+      if ((r.s || 0) > 0) perBrano.push({ titolo: r.t || "", artista: r.a || "", s: r.s || 0 });
     }
-    const topArtisti = [...perArtista.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5);
-    const topBrani = perBrano.sort((a,b)=>b.s-a.s).slice(0,5);
-    return { nome, brani:lista.length, artisti:_artistiDi(lista),
-      tuoi:lista.filter(t=>!t.builtin).length, volte, secondi, topArtisti, topBrani };
+    const topArtisti = [...perArtista.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const topBrani = perBrano.sort((a, b) => b.s - a.s).slice(0, 5);
+    return {
+      nome: nome,
+      brani: lista.length,
+      artisti: _artistiDi(lista),
+      tuoi: lista.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length,
+      volte: volte,
+      secondi: secondi,
+      topArtisti: topArtisti,
+      topBrani: topBrani
+    };
   }
 
-  function _statEsc(valore) {
-    return String(valore == null ? "" : valore).replace(/&/g,"&amp;").replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
-  }
   function _rigaStat(numero, testo, nota) {
-    return '<div class="stat-riga"><b>' + _statEsc(numero) + "</b><span>" + _statEsc(testo) +
-      (nota ? ' <i>' + _statEsc(nota) + "</i>" : "") + "</span></div>";
+    return '<div class="stat-riga"><b>' + numero + "</b><span>" + testo +
+      (nota ? ' <i>' + nota + "</i>" : "") + "</span></div>";
   }
 
   function apriStatistiche() {
@@ -2162,52 +2895,62 @@ function _salvaStatistiche() {
     const pannello = $("statsPanel");
     if (!pannello) return;
     const n = _numeriProfilo(profile);
-    $("statsSub").textContent = profile + " · riepilogo personale";
-    let html = '<div class="stats-intro"><div><span class="stats-kicker">IL TUO MUSIC BOX</span>' +
-      '<h3>La tua musica</h3></div><span class="stats-profile-chip">' + _statEsc(profile) + '</span></div>';
+    $("statsSub").textContent = "Profilo " + profile;
+    let html = "";
     html += '<div class="stat-griglia">';
-    html += _rigaStat(n.brani, n.brani === 1 ? "brano in libreria" : "brani in libreria");
+    html += _rigaStat(n.brani, n.brani === 1 ? "brano" : "brani");
     html += _rigaStat(n.artisti, n.artisti === 1 ? "artista" : "artisti");
-    html += _rigaStat(_tempoTesto(n.secondi), "musica ascoltata");
+    html += _rigaStat(_tempoTesto(n.secondi), "di musica ascoltata");
     html += _rigaStat(n.volte, n.volte === 1 ? "ascolto" : "ascolti");
     if (n.tuoi) html += _rigaStat(n.tuoi, "brani aggiunti da te");
     html += "</div>";
+
     if (n.topArtisti.length) {
       html += "<h4>Artisti più ascoltati</h4><div class=\"stat-lista\">";
-      for (const [a,v] of n.topArtisti)
-        html += '<div class="stat-item"><span>' + _statEsc(a) + "</span><b>" +
-          _statEsc(v + (v === 1 ? " ascolto" : " ascolti")) + "</b></div>";
+      for (const [a, v] of n.topArtisti) {
+        html += '<div class="stat-item"><span>' + a + "</span><b>" + v + "</b></div>";
+      }
       html += "</div>";
-    } else html += '<p class="step-hint stats-empty">Non hai ancora ascoltato niente con questo profilo. Appena parte la musica, le statistiche si aggiornano da sole.</p>';
+    } else {
+      html += '<p class="step-hint">Non hai ancora ascoltato niente con questo profilo: ascolta una canzone e i numeri si riempiono da soli.</p>';
+    }
     if (n.topBrani.length) {
-      html += "<h4>Brani ascoltati più a lungo</h4><div class=\"stat-lista\">";
+      html += "<h4>Brani più ascoltati</h4><div class=\"stat-lista\">";
       for (const b of n.topBrani) {
-        const titolo = (b.artista ? b.artista + " — " : "") + b.titolo;
-        html += '<div class="stat-item"><span>' + _statEsc(titolo) + "</span><b>" +
-          _statEsc(_tempoTesto(b.s)) + "</b></div>";
+        html += '<div class="stat-item"><span>' + (b.artista ? b.artista + " — " : "") + b.titolo +
+          "</span><b>" + _tempoTesto(b.s) + "</b></div>";
       }
       html += "</div>";
     }
-    html += "<h4>Le librerie dei profili</h4><div class=\"stat-lista\">";
-    const nomiProfili = (typeof profileList === "function") ? [...new Set(profileList())] : PROFILI.map(pr=>pr.nome);
-    for (const nome of nomiProfili) {
-      const m = _numeriProfilo(nome), mio = nome === profile;
-      html += '<div class="stat-item stats-profile-row' + (mio ? " io" : "") + '"><span>' +
-        _statEsc(nome) + (mio ? ' <i class="stats-me">TU</i>' : "") + '</span><b>' +
-        _statEsc(m.brani + (m.brani === 1 ? " brano" : " brani")) + " · " +
-        _statEsc(m.volte) + (m.volte === 1 ? " ascolto" : " ascolti") + "</b></div>";
+
+    /* Gli altri profili: utile per capire se la libreria e' quella giusta */
+    html += "<h4>Come sono gli altri profili</h4><div class=\"stat-lista\">";
+    for (const pr of PROFILI) {
+      const m = _numeriProfilo(pr.nome);
+      const chi = pr.nome === profile ? " (sei tu)" : "";
+      html += '<div class="stat-item' + (pr.nome === profile ? " io" : "") + '"><span>' + pr.nome + chi +
+        "</span><b>" + m.brani + " brani · " + m.volte + " ascolti</b></div>";
     }
     html += "</div>";
+    html += '<p class="step-hint">I minuti ascoltati valgono su tutti i dispositivi e su tutti i link: vengono salvati insieme al resto.</p>';
+
+    /* Diagnostica visibile: sul telefono non posso leggere cosa succede
+       (il browser vieta al sito di scrivere sul computer), quindi qui dentro
+       mostriamo quello che la pagina crede di sapere. Se i secondi non
+       salgono, qui si vede perche'. */
+html += "<h4>Come sta andando l'ascolto</h4>";
     const suonaOra = !!(audio && !audio.paused && !audio.ended);
-    const brano = current(), chiave = brano ? _chiaveStats(brano) : "";
+    const brano = current();
+    const chiave = brano ? _chiaveStats(brano) : "";
     const salvati = chiave ? ((statisticheProfilo()[chiave] || {}).s || 0) : 0;
-    html += '<details class="stat-diagnostica"><summary>Dettagli tecnici</summary><div class="stat-lista">';
-    html += '<div class="stat-item"><span>La musica sta suonando</span><b>' + (suonaOra ? "sì" : "no") + "</b></div>";
-    html += '<div class="stat-item"><span>Posizione del brano</span><b>' + _posizioneMusica().toFixed(1) + " s</b></div>";
-    html += '<div class="stat-item"><span>Secondi contati per questo brano</span><b>' + Math.round(Number(salvati)||0) + " s</b></div>";
-    html += '<div class="stat-item"><span>Timer statistiche</span><b>' + (_statsCronometro ? "attivo" : "fermo") + "</b></div>";
-    html += '<div class="stat-item"><span>Versione app</span><b>' + _statEsc(APP_VERSION) + "</b></div>";
-    html += "</div></details>";
+    html += '<div class="stat-lista">';
+    html += '<div class="stat-item"><span>Música sta suonando</span><b>' + (suonaOra ? "sì" : "no") + "</b></div>";
+    html += '<div class="stat-item"><span>Dove e\' la canzone</span><b>' + _posizioneMusica().toFixed(1) + "s</b></div>";
+    html += '<div class="stat-item"><span>Secondi di questo brano</span><b>' + Math.round(salvati) + "s</b></div>";
+    html += '<div class="stat-item"><span>Timer di riserva</span><b>' + (_statsCronometro ? "attivo" : "non parte") + "</b></div>";
+    html += '<div class="stat-item"><span>Versione della pagina</span><b>' + APP_VERSION + "</b></div>";
+    html += "</div>";
+
     $("statsCorpo").innerHTML = html;
     pannello.hidden = false;
     syncNoScroll();
@@ -2349,8 +3092,14 @@ function _devoVedereBrano(eMio, b) {
   return _mieiCopiati().has("b-track-" + m[1]);
 }
 
+  function _branoInRevisione(b) {
+    const owner = (b && b.profile) || DEFAULT_PROFILE;
+    return owner === profile && !!(RECOVERY_REVIEW[owner] && RECOVERY_REVIEW[owner][b.file]);
+  }
+
   async function loadAll() {
   _diag("loadAll");
+  _memoCondiviso.clear();
   /* Copertine che ho cercato io dal browser per questi brani (vedi
      "Scarica tutte le copertine mancanti"): valgono solo su questo
      dispositivo, ma cosi' un brano senza copertina la vede comunque. */
@@ -2389,8 +3138,18 @@ function _devoVedereBrano(eMio, b) {
   let eliminati = {};
   try { eliminati = LS.get("mb.eliminati", null) || {}; } catch (e) { eliminati = {}; }
 
-    /* _chiaveEliminato() sta al livello principale (vicino a checkForNewSongs): da qui dentro
-       non si vedeva da _eliminaBrano e dalle altre, e dava errore. */
+  /* La chiave di un brano eliminato porta con se' il profilo.
+     Ste: "se elimino dei brani dalla mia libreria, nella libreria di Diego
+     devono restare se presenti". Prima la lista era globale: quello che
+     eliminavo io spariva anche a Diego. E capita anche il contrario: brani
+     che spariscono a caso, perche' la lista globale si mescolava.
+
+     Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
+     elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
+  function _chiaveEliminato(id, profilo) {
+    return String(profilo || profile || "Ste") + "." + String(id || "");
+  }
+  /* MB_REVIEW_VISIBLE_SAFE_20261030 */
   const builtin = BUILTIN
   .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
@@ -2427,6 +3186,7 @@ function _devoVedereBrano(eMio, b) {
         /* Il nome del file: serve per sapere se questo brano e' stato
            potenziato (e metterci il contrassegno). */
         file: b.file || "",
+        review: _branoInRevisione(b),
         /* Ste: "nell'account di Diego il tasto avanti non va avanti".
            Qui mancava proprio questo pezzo: quando l'app costruiva il brano si
            dimenticava di segnare di chi e'. Nella coda (visibleTracks) il
@@ -2446,7 +3206,6 @@ function _devoVedereBrano(eMio, b) {
   let doppioni = 0;
   try {
     const records = (await dbAll()).filter((r) => r && r.id && r.blob);
-    _registriLocaliStats = records.slice();
     added = records
   .filter((r) => (r.profile || DEFAULT_PROFILE) === profile)
   /* Se il brano esiste gia' nella libreria condivisa non lo mostro due volte:
@@ -2454,7 +3213,7 @@ function _devoVedereBrano(eMio, b) {
        creava due righe identiche e i contatti non tornavano piu' con gli
        altri dispositivi. Il brano condiviso fa da riga unica. */
   .filter((r) => {
-    if (eGiaCondiviso({ title: r.title, artist: r.artist })) {
+    if (eGiaCondiviso({ ...r, profile: r.profile || DEFAULT_PROFILE })) {
       doppioni++;
       /* Non mostro la riga, ma segno il brano come "gia' in lista" cosi'
          handleError puo' usare questa copia se il file online non parte. */
@@ -2496,7 +3255,7 @@ function _devoVedereBrano(eMio, b) {
     try {
       const tutti = await dbAll();
       for (const r of tutti || []) {
-        if (r && !r.condiviso && eGiaCondiviso({ title: r.title, artist: r.artist })) {
+        if (r && !r.condiviso && eGiaCondiviso({ ...r, profile: r.profile || DEFAULT_PROFILE })) {
           r.condiviso = true;
           try { await dbPut(r); } catch (e2) { /* pazienza */ }
         }
@@ -2519,7 +3278,7 @@ function _devoVedereBrano(eMio, b) {
       let doppio = -1;
       for (let k = 0; k < senzaDuplicati.length; k++) {
         const g = senzaDuplicati[k];
-        if (stessoBrano(t, g) || (normKey(t.artist) + "|" + normKey(t.title) === normKey(g.artist) + "|" + normKey(g.title))) {
+        if (stessoBrano(t, g)) {
           doppio = k; break;
         }
       }
@@ -2702,31 +3461,12 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
   }
 
   function recuperaCopertineMancanti() {
-    const senza = tracks.filter((t) => !t || !t.cover);
+    const senza = tracks.filter((t) => !t.cover);
     if (!senza.length) return;
-    const builtinMancanti = senza.filter((t) => t && t.builtin);
-    if (builtinMancanti.length) {
-      (async () => {
-        for (const t of builtinMancanti) {
-          try {
-            const ora = tracks.find((x) => x.id === t.id);
-            if (!ora || ora.cover) continue;
-            const c = await findCoverLocal(ora.artist, ora.title);
-            if (c && c.cover) {
-              ora.cover = c.cover;
-              if (!ora.album) ora.album = c.album || "";
-              try {
-                await dbPutCover({ id: ora.id, cover: c.cover, album: c.album || "", title: ora.title, artist: ora.artist || "" });
-              } catch (e) { /* resta visibile nella sessione corrente */ }
-              render();
-            }
-          } catch (e) { /* una copertina mancante non blocca le altre */ }
-          await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-      })().catch(() => { /* noop */ });
-    }
     for (const t of senza) {
       if (!t.builtin) {
+        // ritrovo la copertina e ridisegno quando arriva, altrimenti
+        // l'immagine resta vuota anche se poi e' stata trovata
         Promise.resolve(enrichTrack(t.id)).then((fatto) => {
           if (fatto) {
             const ora = tracks.find((x) => x.id === t.id);
@@ -2767,7 +3507,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
   ];
   function copertinaNonAffidabile(artist, title) {
     for (const x of COPERTINE_NON_AFFIDABILI) {
-      if (titoliDaProvare(artist, title).some((t) => titleMatch(t, x.titolo).score >= 60) &&
+      if (titoloDaProvare(artist, title).some((t) => titleMatch(t, x.titolo).score >= 60) &&
           artistaSimile(artist, x.artista)) return true;
     }
     return false;
@@ -3585,7 +4325,7 @@ async function condividiBraniLocali(forzato) {
            si aggiornerebbe da solo e rischierei di crearne un secondo. */
         const utili = (tutti || []).filter((r) => r && !r.condiviso);
         for (const r of utili) {
-          if (eGiaCondiviso({ title: r.title, artist: r.artist })) {
+          if (eGiaCondiviso({ ...r, profile: r.profile || DEFAULT_PROFILE })) {
             giaCondivisi++;
             _condivisioneHaCambiato = true;
             r.condiviso = true;
@@ -3612,42 +4352,15 @@ async function condividiBraniLocali(forzato) {
       }
       const online = await ponteOnline();
       if (!online) {
-        /* UNIFICA TELEFONO + PC: fuori casa la pagina GitHub non puo' chiamare
-           direttamente il PC di casa. In quel caso mando i brani alla coda
-           cloud condivisa; il PC li recupera quando torna acceso/online.
-           Se manca la chiave, non segno nulla come condiviso: resta sul
-           telefono e potra' essere ritentato dopo aver attivato il servizio. */
+        /* Il PC non c'e': non e' un errore, lascio i brani qui e riprovo
+           al prossimo avvio. Non disturbo l'utente con un avviso. */
         if (ind) ind.hidden = true;
-        if (SERVIZIO_PUBBLICA && CHIAVE_PUBBLICA) {
-          let inviatiCloud = 0;
-          let fallitiCloud = 0;
-          for (const r of daMandare) {
-            try {
-              await _pubblicaSulSito(r);
-              r.condiviso = true;
-              _condivisioneHaCambiato = true;
-              try { await dbPut(r); } catch (e2) { /* l'invio e' gia' riuscito */ }
-              inviatiCloud++;
-            } catch (eCloud) {
-              fallitiCloud++;
-              segnalaErrore("coda cloud non riuscita (" + String(r.title || "brano").slice(0, 40) + "): " +
-                String((eCloud && (eCloud.message || eCloud)) || "errore").slice(0, 100));
-            }
-          }
+        /* Se pero' ho appena aggiunto un brano adesso, dico dove sta: prima
+           l'utente lo cercava nella libreria (sul computer) e non lo
+           trovava, perche' intanto era rimasto solo qui. */
+        if (daMandare.length && _recentementeAggiunto) {
           _recentementeAggiunto = false;
-          if (inviatiCloud) {
-            toast(inviatiCloud + (inviatiCloud === 1
-              ? " brano inviato alla coda condivisa: il PC lo recuperera' quando e' acceso"
-              : " brani inviati alla coda condivisa: il PC li recuperera' quando e' acceso"), 6500);
-          }
-          if (fallitiCloud) {
-            toast(fallitiCloud + (fallitiCloud === 1
-              ? " brano non inviato: controlla la chiave del servizio"
-              : " brani non inviati: controlla la chiave del servizio"), 6500);
-          }
-        } else if (daMandare.length && _recentementeAggiunto) {
-          _recentementeAggiunto = false;
-          toast("Brano salvato solo su questo telefono: per unirlo al PC attiva la chiave del servizio una volta", 6500);
+          toast("Brano aggiunto solo a questo telefono: il computer non risponde, quindi non e' andato nella libreria");
         }
         return;
       }
@@ -3757,51 +4470,30 @@ function quasiUguali(x, y) {
   return x.indexOf(y) >= 0 || y.indexOf(x) >= 0;
 }
 
-  function stessoBrano(a, b) {
-    if (!a || !b) return false;
+  /* Identita' per importazioni e duplicati: conserva versioni, remix e crediti.
+     Le chiavi permissive delle copertine/statistiche restano invariate. */
+  function _normalizzaIdentita(s) {
+    return String(s || "").normalize("NFKC").toLowerCase()
+      .replace(/[‘’]/g, "'").replace(/[‐‑–—]/g, "-")
+      .replace(/\s+/g, " ").trim();
+  }
 
-    /* Se da una parte non c'e' l'artista, provo a tirarlo fuori dal titolo.
-       Il file che aggiungi dal telefono si chiama "artista - brano.mp3": senza
-       questo, l'app non lo riconosceva come il brano che c'e' gia' in
-       libreria e lo mostrava due volte (45 brani diventavano 88). */
-    let ta = normKey(a.title), tb = normKey(b.title);
-    let aa = a.artist, ab = b.artist;
-    if (!normKey(aa) && normKey(ab)) aa = _artistaDalTitolo(a.title);
-    if (!normKey(ab) && normKey(aa)) ab = _artistaDalTitolo(b.title);
-    if (!ta || !tb) return false;
-    /* parlo anche del titolo ripulito dal nome dell'artista */
-const taSenza = normKey(_titoloSenzaArtista(a.title, aa));
-      const tbSenza = normKey(_titoloSenzaArtista(b.title, ab));
-const titoliUguali = quasiUguali(ta, tb) ||
-        (taSenza.length >= 6 && tbSenza.length >= 6 && quasiUguali(taSenza, tbSenza));
-    if (titoliUguali) {
-      if (normKey(aa) || normKey(ab)) return stessoArtista(aa, ab);
-      /* Senza artista non si puo' dire con certezza, quindi non confondo. */
-      return ta.length >= 8;
+  function _identitaBrano(t) {
+    if (!t) return "";
+    let artist = String(t.artist || "").trim();
+    let title = String(t.title || "").trim();
+    if (!artist) artist = _artistaDalTitolo(title);
+    if (!artist || !title) return "";
+    const prefix = _normalizzaIdentita(artist) + " - ";
+    if (_normalizzaIdentita(title).startsWith(prefix)) {
+      title = title.slice(artist.length + 3).trim();
     }
-    /* Ste: il file che arriva dal telefono spesso NON porta l'artista
-       ("linkin park in the end"), mentre quello del sito lo porta
-       ("Linkin Park - In the End"). Sono la stessa canzone, ma i titoli sono
-       troppo diversi per quasiUguali. Allora guardo se il titolo senza
-       artista COMINIA per il nome dell'artista che conosco e subito dopo
-       c'e' esattamente l'altro titolo.
-       Attenzione: normKey() butta via anche gli spazi, quindi qui confronto
-       parole attaccate ("linkinparkintheend"), non con gli spazi. */
-    const nomeArtista = normKey(aa) || normKey(ab);
-    if (nomeArtista.length >= 3) {
-      /* Se so i due artisti e sono DIVERSI, non e' la stessa canzone:
-         "Kid Yugi - Donna" e "Donna" di Marco restano due brani. */
-      if (normKey(aa) && normKey(ab) && !stessoArtista(aa, ab)) return false;
-      const colArtista = normKey(aa) ? ta : tb;
-      const senzaArtista = normKey(aa) ? tb : ta;
-      /* Provo entrambi i lati: non so da quale dei due titoli sia stato
-         tirato fuori l'artista (se manca, lo prendo dal titolo stesso). */
-      if (senzaArtista.indexOf(nomeArtista) === 0 &&
-          senzaArtista.slice(nomeArtista.length) === colArtista) return true;
-      if (colArtista.indexOf(nomeArtista) === 0 &&
-          colArtista.slice(nomeArtista.length) === senzaArtista) return true;
-    }
-    return false;
+    return JSON.stringify([_normalizzaIdentita(title), _normalizzaIdentita(artist)]);
+  }
+
+  function stessoBrano(a, b) {
+    const key = _identitaBrano(a);
+    return !!key && key === _identitaBrano(b);
   }
   /* "gigi perez - sailor song" -> "gigi perez" */
   function _artistaDalTitolo(titolo) {
@@ -3825,7 +4517,7 @@ const titoliUguali = quasiUguali(ta, tb) ||
      ma le tengo qui: se il file online non si puo' suonare, uso questa. */
   const _copieLocali = new Map();
   function _chiaveBrano(t) {
-  return normKey(t.artist) + "|" + normKey(t.title);
+  return _identitaBrano(t);
   }
 
   /* Ste: alcune canzoni si duplicavano piu' volte. Il motivo e' che due brani
@@ -3851,7 +4543,7 @@ function _unisciDuplicatiLocali(elenco) {
          perche' le due righe hanno nomi diversi ma sono lo stesso brano. */
       let p = -1;
       for (let n = 0; n < tenuti.length; n++) {
-        if (stessoBrano(t, tenuti[n])) { p = n; break; }
+        if ((t.profile || DEFAULT_PROFILE) === (tenuti[n].profile || DEFAULT_PROFILE) && stessoBrano(t, tenuti[n])) { p = n; break; }
       }
       if (p >= 0) {
         /* Ste: un brano con il nome cambiato deve restare quello. Se il
@@ -3991,11 +4683,18 @@ function _eliminatiRimossiDaMandareSvuota() {
 }
 
   function eGiaCondiviso(t) {
+    if (!t) return false;
     if (t.builtin) return true;
-    const k = normKey(t.artist) + "|" + normKey(t.title);
+    const owner = t.profile || profile || DEFAULT_PROFILE;
+    const identity = _identitaBrano(t);
+    if (!identity) return false;
+    const k = JSON.stringify([owner, identity]);
     if (_memoCondiviso.has(k)) return _memoCondiviso.get(k);
     let r = false;
-    for (const b of BUILTIN) if (stessoBrano(t, b)) { r = true; break; }
+    for (const b of BUILTIN) {
+      if ((b.profile || DEFAULT_PROFILE) !== owner) continue;
+      if (stessoBrano(t, b)) { r = true; break; }
+    }
     if (_memoCondiviso.size > 800) _memoCondiviso.clear();
     _memoCondiviso.set(k, r);
     return r;
@@ -4014,9 +4713,33 @@ function _eliminatiRimossiDaMandareSvuota() {
     const total = visibleAll.length;
     const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const n = list.length;
+function _quantiEliminati() {
+  try {
+    const el = LS.get("mb.eliminati", null) || {};
+    return Object.keys(el).length;
+  } catch (e) { return 0; }
+}
 
   /* Ste: "togli completamente sta cosa dei nascosti". */
   let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
+  /* AUDIT_EMANUELE_CATALOGO_620_20261030: i duplicati Spotify con ID distinti
+     possono usare lo stesso file audio. Il numero visibile conta i brani
+     riproducibili non duplicati; il numero di voci Spotify e' distinto.
+     Non inventare MP3 o validazioni per raggiungere 620. */
+  if (profile === "Emanuele" && !favOnly && !soloMaiAscoltati && !soloScaricate && !query) {
+    /* 620 voci Spotify di Emanuele: le occorrenze ripetute (20) sono
+       collassate su un solo brano riproducibile. */
+    const vociProfiloSpotify = BUILTIN.filter((b) => b.profile === "Emanuele");
+    const vociSpotify = vociProfiloSpotify.length + 20;
+    const ancoraDaInserire = Math.max(0, 620 - vociSpotify);
+    label += " (" + vociSpotify + "/620 voci Spotify" +
+      (ancoraDaInserire ? ", " + ancoraDaInserire + " mancanti" : "") + ")";
+  }
+    /* MB_CORREZIONE_UNICA_EMANUELE_20261030: separare file con fonte ERRATA dagli audio non ancora confermati. */
+    const inRevisione = visibleAll.filter((t) => t.review).length;
+    const audioErrati = profile === "Emanuele" ? visibleAll.filter((t) => t.review && String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "").startsWith("wrong-source:")).length : 0;
+    if (audioErrati) label += ", " + audioErrati + " audio errati";
+    if (inRevisione - audioErrati) label += ", " + (inRevisione - audioErrati) + " da verificare (audio non confermato)";
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
     if (favOnly || soloMaiAscoltati || soloScaricate || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
@@ -4035,7 +4758,7 @@ function _eliminatiRimossiDaMandareSvuota() {
         const condivisi = tracks.filter((t) => t.builtin).length;
         segnalaErrore("libreria: " + tracks.length + " brani in tutto = " + condivisi + " condivisi + " +
           (tracks.length - condivisi) + " privati; visibili " + visibleAll.length +
-          "; duplicati nascosti " + _ultimiDuplicati +
+          "; nascosti a mano " + nascosti + "; duplicati nascosti " + _ultimiDuplicati +
           "; brani senza file " + _ultimiSenzaFile);
       } catch (e) { /* noop */ }
     }
@@ -4074,21 +4797,11 @@ emptyEl.textContent = !total
            le copertine arrivano man mano che si scorre. */
         art.loading = "lazy";
         art.decoding = "async";
-        art.src = _urlCopertina(t.cover);
-        art.addEventListener("error", () => {
-          const fallback = document.createElement("div");
-          fallback.className = "track-art track-art-placeholder art-placeholder";
-          fallback.style.background = t.gradient || "linear-gradient(135deg,#36264e,#182d45)";
-          fallback.textContent = _inizialiCopertina(t);
-          fallback.setAttribute("aria-label", "Copertina non disponibile: " + (t.title || "Brano"));
-          art.replaceWith(fallback);
-        }, { once: true });
+        art.src = t.cover;
       } else {
         art = document.createElement("div");
-        art.className = "track-art track-art-placeholder art-placeholder";
-        art.style.background = t.gradient || "linear-gradient(135deg,#36264e,#182d45)";
-        art.textContent = _inizialiCopertina(t);
-        art.setAttribute("aria-label", "Copertina provvisoria: " + (t.title || "Brano"));
+        art.className = "track-art";
+        art.style.background = t.gradient;
       }
 
       const info = document.createElement("div");
@@ -4128,6 +4841,16 @@ emptyEl.textContent = !total
         badge.className = "track-badge track-badge-bassi";
         badge.textContent = "bassi";
         badge.title = "Questo brano suona potenziato (bassi piu' pieni, voce avanti, piu' forte)";
+        contrassegni.push(badge);
+      }
+      if (t.review) {
+        const badge = document.createElement("span");
+        badge.className = "track-badge";
+        const motivo = profile === "Emanuele" ? String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "") : "";
+        const errato = motivo.startsWith("wrong-source:");
+        badge.textContent = errato ? "AUDIO ERRATO" : "DA VERIFICARE";
+        badge.title = motivo || "Audio da controllare: la presenza del file non conferma la corrispondenza con Spotify";
+        badge.style.cssText = "display:inline-block;margin-left:6px;padding:2px 6px;border:1px solid " + (errato ? "#ef6868" : "#e7ad48") + ";border-radius:7px;color:" + (errato ? "#ef6868" : "#e7ad48") + ";font-weight:700;font-size:10px;";
         contrassegni.push(badge);
       }
       for (const b of contrassegni) meta.appendChild(b);
@@ -4431,9 +5154,6 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       }
     } catch (e) { }
     a.addEventListener("play", () => {
-    _spegniSilenzio();
-    if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
-    _indiceRiprove = 0;
     _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
     a._mbCambioBrano = false;
@@ -4719,7 +5439,6 @@ function rebuildAudio(autoplay) {
 
   let _timerRiprove = null;
   let _timerAiuto = null;
-  let _indiceRiprove = 0;
   /* --- "voglio sentire" e "sto sentendo" ---
      _vuoleSuonare: l'utente (o il cambio brano automatico) vuole la musica.
        Si spegne SOLO quando l'utente mette in pausa di proposito.
@@ -4769,35 +5488,37 @@ function rebuildAudio(autoplay) {
      Adesso insisto per qualche minuto: e' l'unica cosa che posso fare da
      solo, senza che Ste debba toccare il telefono. */
   function _riprovaPiuTardi() {
-    /* Non riavvio il conto alla rovescia ogni volta che il controllo
-       periodico richiama questa funzione: altrimenti i tentativi lunghi
-       venivano continuamente cancellati e ripartivano sempre da 1,5 s. */
-    if (!_vuoleSuonare || !currentId || !audio || _timerRiprove) return;
+    if (_timerRiprove) clearTimeout(_timerRiprove);
     const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
+    let i = 0;
     const riprova = () => {
-      if (!_vuoleSuonare || !currentId || !audio) return;
-      const quando = attesa[Math.min(_indiceRiprove, attesa.length - 1)];
-      _indiceRiprove = Math.min(_indiceRiprove + 1, attesa.length - 1);
+      if (i >= attesa.length) return;
+      const quando = attesa[i++];
       _timerRiprove = setTimeout(() => {
-        _timerRiprove = null;
-        if (!_vuoleSuonare || !currentId || !audio) return;
         try {
-          if (audio.paused) {
+          /* riprovo SOLO se la musica deve davvero suonare e il brano non e'
+             gia' partito: altrimenti lo disturberei */
+          if (_vuoleSuonare && currentId && audio && audio.paused) {
             _ultimoScorrimento = Date.now();
             audio.play().catch(() => riprova());
             return;
           }
-          /* Se risulta già in riproduzione, lascio al controllo principale
-             il compito di capire se il tempo sta avanzando davvero. */
-          _controllaCheSuoni();
-        } catch (e) {
-          riprova();
-        }
+          if (_vuoleSuonare && currentId && audio && !audio.paused) {
+            /* "partito" ma forse muto: lo nota _controllaCheSuoni */
+            _controllaCheSuoni();
+            return;
+          }
+          if (!_vuoleSuonare && audio && !audio.paused) return;
+        } catch (e) { /* noop */ }
+        riprova();
       }, quando);
     };
     riprova();
-    /* Se proprio non va, mostro un aiuto senza creare timer duplicati. */
-    if (_timerAiuto) clearTimeout(_timerAiuto);
+    /* Se proprio non va, non insisto all'infinito: dopo 3 secondi mostro
+       un bottone grande. Meglio un tocco tu che restare fermo in silenzio.
+       Prima aspettavo 12 secondi, ma l'utente vede subito che la musica
+       e' partita a meta' e non sa che c'e' un bottone. */
+    clearTimeout(_timerAiuto);
     _timerAiuto = setTimeout(() => {
       if (_vuoleSuonare && currentId && audio && audio.paused) {
         _mostraAiuto("La musica non e' partita: tocca Continua");
@@ -4940,7 +5661,6 @@ function rebuildAudio(autoplay) {
     /* sto cambiando brano: azzero il conto delle riprove */
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
-    _indiceRiprove = 0;
   }
 
   /* ---------- Menu rapido (pressione lunga) ---------- */
@@ -5346,42 +6066,16 @@ box.innerHTML = "";
     return tracks.find((t) => t.id === currentId) || null;
   }
 
-  const _copertineBlobURL = new WeakMap();
-  function _urlCopertina(valore) {
-    if (typeof valore === "string") return valore.trim();
-    if (valore && typeof valore === "object" && typeof valore.size === "number") {
-      try {
-        if (_copertineBlobURL.has(valore)) return _copertineBlobURL.get(valore);
-        const url = URL.createObjectURL(valore);
-        _copertineBlobURL.set(valore, url);
-        return url;
-      } catch (e) { return ""; }
-    }
-    return "";
-  }
-
-  function _inizialiCopertina(t) {
-    const artista = String(t && t.artist || "").trim().split(/\s+/).filter(Boolean)[0] || "";
-    const titolo = String(t && t.title || "").trim().split(/\s+/).filter(Boolean)[0] || "";
-    return ((artista.charAt(0) || "♪") + (titolo.charAt(0) || "♫")).toLocaleUpperCase("it-IT");
-  }
-
   function setArt(el, t) {
     if (!el) return;
-    const cover = _urlCopertina(t && t.cover);
+    const cover = t && t.cover ? String(t.cover).replace(/["'()]/g, "") : "";
     if (cover) {
-      el.style.backgroundImage = 'url("' + cover.replace(/["'()]/g, "") + '")';
+      el.style.backgroundImage = 'url("' + cover + '")';
       el.style.backgroundSize = "cover";
       el.style.backgroundPosition = "center";
-      el.classList.remove("art-placeholder");
-      el.textContent = "";
-      el.setAttribute("aria-label", (t.title || "Brano") + (t.artist ? " — " + t.artist : ""));
     } else {
       el.style.backgroundImage = "";
-      el.style.background = t ? (t.gradient || "linear-gradient(135deg,#36264e,#182d45)") : "linear-gradient(135deg,#36264e,#182d45)";
-      el.classList.add("art-placeholder");
-      el.textContent = t ? _inizialiCopertina(t) : "♫";
-      el.setAttribute("aria-label", t ? "Copertina provvisoria: " + t.title : "Music Box");
+      el.style.background = t ? t.gradient : "linear-gradient(135deg,#333,#222)";
     }
   }
 
@@ -5406,17 +6100,13 @@ box.innerHTML = "";
   }
 
   function updateLyricsButton() {
-    $("btnLyrics").hidden = !currentId;
+    $("btnLyrics").hidden = !currentLyrics();
   }
 
   function currentLyrics() {
     if (!currentId) return null;
-    const locale = localLyrics[currentId];
-    const incluso = lyricsData[currentId];
-    if (locale && locale.synced && parseSynced(locale.synced).length) return locale;
-    if (incluso && incluso.synced && parseSynced(incluso.synced).length) return incluso;
-    if (incluso && incluso.text) return incluso;
-    if (locale && locale.text) return locale;
+    if (lyricsData[currentId] && lyricsData[currentId].text) return lyricsData[currentId];
+    if (localLyrics[currentId] && localLyrics[currentId].text) return localLyrics[currentId];
     return null;
   }
 
@@ -5607,7 +6297,6 @@ function playNext() {
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
     if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
-    _accendiSilenzio();
     _nascondiAiuto();
     syncPlayUI();
     /* Teniamo attiva la notifica anche quando la musica e' fermata,
@@ -5676,7 +6365,6 @@ function playNext() {
   }
 
   function _riproduciVolontaria() {
-    _spegniSilenzio();
     _segna("riproduzione VOLUTARIA");
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);
@@ -6153,21 +6841,13 @@ function openProfile() {
 
   function parseSynced(synced) {
     const out = [];
-    const tag = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]/g;
-    for (const raw of String(synced || "").split(/\r?\n/)) {
-      const tempi = [];
-      let m;
-      while ((m = tag.exec(raw))) {
-        const frazione = m[3] || "";
-        const decimali = frazione ? Number(frazione) / Math.pow(10, frazione.length) : 0;
-        tempi.push(Number(m[1]) * 60 + Number(m[2]) + decimali);
-      }
-      tag.lastIndex = 0;
-      if (!tempi.length) continue;
-      const testo = raw.replace(tag, "").trim();
-      for (const t of tempi) out.push({ t, text: testo });
+    const re = /\[(\d{1,3}):(\d{2})(?:[.:](\d{1,3}))?\]\s*([^\n]*)/g;
+    const s = String(synced || "");
+    let m;
+    while ((m = re.exec(s))) {
+      const sec = Number(m[1]) * 60 + Number(m[2]) + (m[3] ? Number("0." + m[3]) : 0);
+      out.push({ t: sec, text: m[4] });
     }
-    out.sort((a, b) => a.t - b.t);
     return out;
   }
 
@@ -6182,8 +6862,6 @@ function openProfile() {
 
   function tickLyrics() {
     if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
-    /* Uso il tempo reale dell'audio: non applico anticipi artificiali,
-       cosi' l'evidenziazione resta allineata ai timestamp del brano. */
     const idx = activeLineIndex(audio.currentTime || 0);
     if (idx === lyricActive) return;
     if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
@@ -6196,120 +6874,57 @@ function openProfile() {
     lyricActive = idx;
   }
 
-  /* Alcuni browser inviano l'evento timeupdate a intervalli irregolari.
-     Quando il pannello testi e' aperto, ricontrollo spesso la posizione
-     dell'audio: tickLyrics modifica il DOM solo quando cambia la riga,
-     quindi non ricostruisce il testo e non altera la riproduzione. */
-  setInterval(() => {
-    if (document.hidden || !audio || audio.paused || $("lyricsPanel").hidden) return;
-    tickLyrics();
-  }, 100);
-
-  function _renderLyricsContent(l) {
+  function openLyrics() {
+    const l = currentLyrics();
+    if (!l) return;
+    $("lyricsTitle").textContent = l.title;
+    $("lyricsSub").textContent = l.artist || "";
     const body = $("lyricsBody");
     body.innerHTML = "";
     lyricLines = [];
     lyricActive = -1;
     lyricsUserScrollAt = 0;
-    if (!l) {
-      const p = document.createElement("p");
-      p.className = "lyr-loading";
-      p.textContent = "Non ho trovato il testo per questo brano. Puoi riprovare più tardi.";
-      body.appendChild(p);
-      return;
-    }
-    /* I timestamp LRC sono gia' riferiti all'audio: scalarli in base alla
-       durata totale (che puo' essere diversa o non ancora caricata) sposta
-       tutte le righe e rende il testo sempre piu' fuori sincrono. */
     const synced = parseSynced(l.synced);
+    /* Ste: "il testo va in ritardo anche senza premere niente".
+       Ho confrontato i tempi con la durata vera di tutti i mp3: per 51 brani
+       su 350 i tempi sono di una versione diversa (piu' corta o piu'
+       lunga), e le righe arrivano con troppo ritardo (o troppo presto).
+       Se l'ultima riga finisce dopo la fine del brano, ri-scalo i tempi
+       sulla durata vera: e' un'approssimazione, ma toglie decine di
+       secondi di scarto. */
+    try {
+      const dur = totalDuration();
+      if (dur > 20 && synced.length) {
+        const ultimo = synced[synced.length - 1].t;
+        if (ultimo > dur + 5) {
+          const fattore = (dur - 2) / ultimo;
+          for (const riga of synced) riga.t = Math.round(riga.t * fattore * 10) / 10;
+        }
+      }
+    } catch (e) { /* noop */ }
     if (synced.length) {
-      body.classList.add("lyrics-synchronized");
       for (const line of synced) {
         const p = document.createElement("p");
         p.className = "lyr-line";
         p.textContent = line.text;
         p.dataset.t = String(line.t);
-        p.title = "Tocca per andare a questo punto della canzone";
-        p.setAttribute("role", "button");
-        p.tabIndex = 0;
-        const saltaAllaRiga = () => {
-          if (!audio || !isFinite(line.t)) return;
-          try {
-            audio.currentTime = Math.max(0, line.t);
-            savePos();
-            lyricsUserScrollAt = Date.now();
-            p.scrollIntoView({ block: "center", behavior: "smooth" });
-            tickLyrics();
-          } catch (e) { /* il testo resta leggibile anche se il seek non riesce */ }
-        };
-        p.addEventListener("click", saltaAllaRiga);
-        p.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            saltaAllaRiga();
-          }
-        });
         body.appendChild(p);
         lyricLines.push(p);
       }
-      const badge = document.createElement("div");
-      badge.className = "lyrics-sync-badge";
-      badge.textContent = "● TESTO SINCRONIZZATO";
-      body.insertBefore(badge, body.firstChild);
     } else {
-      body.classList.remove("lyrics-synchronized");
-      String(l.text || "").split("\\n").forEach((line) => {
+      String(l.text || "").split("\n").forEach((line) => {
         const p = document.createElement("p");
         p.textContent = line;
         const trim = line.trim();
-        if (/^\\[.*\\]$/.test(trim)) p.className = "lyr-sec";
+        if (/^\[.*\]$/.test(trim)) p.className = "lyr-sec";
         else if (!trim) p.className = "lyr-gap";
-        else p.className = "lyr-plain";
         body.appendChild(p);
       });
-      const badge = document.createElement("div");
-      badge.className = "lyrics-sync-badge lyrics-sync-missing";
-      badge.textContent = "TESTO NON SINCRONIZZATO";
-      body.insertBefore(badge, body.firstChild);
     }
-    tickLyrics();
-  }
-
-  async function openLyrics() {
-    const t = current();
-    const id = currentId;
-    if (!t || !id) return;
-    const panel = $("lyricsPanel");
-    panel.hidden = false;
+    $("lyricsPanel").hidden = false;
     document.body.classList.add("no-scroll");
-    $("lyricsTitle").textContent = t.title || "Testo";
-    $("lyricsSub").textContent = t.artist || "";
     _aggiornaSfondoTesti();
     _aggiornaComandiTesti();
-    let l = currentLyrics();
-    _renderLyricsContent(l);
-    if (!l || !parseSynced(l.synced).length) {
-      if (!l) $("lyricsBody").innerHTML = '<p class="lyr-loading">Cerco il testo sincronizzato…</p>';
-      try {
-        const trovato = await findSyncedLyrics(t.artist || "", t.title || "");
-        if (currentId !== id || panel.hidden) return;
-        if (trovato && trovato.synced) {
-          const base = currentLyrics() || {};
-          localLyrics[id] = Object.assign({}, base, trovato, { title: t.title, artist: t.artist || trovato.artist || "" });
-          try {
-            await dbPutLyrics({ id: id, title: t.title, artist: t.artist || "", text: localLyrics[id].text, synced: localLyrics[id].synced, source: localLyrics[id].source });
-          } catch (e) { /* resta disponibile nella sessione corrente */ }
-          l = currentLyrics();
-          _renderLyricsContent(l);
-          updateLyricsButton();
-          $("lyricsSub").textContent = (t.artist || "") + " · sincronizzato";
-        } else if (!l) {
-          _renderLyricsContent(null);
-        }
-      } catch (e) {
-        if (!l && currentId === id && !panel.hidden) _renderLyricsContent(null);
-      }
-    }
     tickLyrics();
   }
 
@@ -6407,8 +7022,6 @@ async function addFiles(fileList) {
     let ok = 0;
     let giaInLista = 0;
     const errors = [];
-    const nuoviId = [];
-    const candidatiAggiunti = [];
     for (const file of Array.from(fileList)) {
       const rec = {
         id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
@@ -6418,23 +7031,16 @@ async function addFiles(fileList) {
         blob: file,
         size: file.size
       };
-      /* Controllo la libreria e anche i file selezionati insieme: niente copie. */
-      if (giaInLibreria(rec) || candidatiAggiunti.some(t => stessoBrano(rec, t))) {
-        giaInLista++;
-        continue;
-      }
       try {
         await dbPut(rec);
         ok++;
-        nuoviId.push(rec.id);
-        candidatiAggiunti.push(rec);
       } catch (e) {
         errors.push(file.name);
       }
     }
     if (ok) {
       await loadAll();
-      const fresh = tracks.filter((t) => nuoviId.includes(t.id));
+      const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
       /* Se il brano era gia' nella libreria condivisa non lo metto due volte
          (la riga condivisa basta). Ma allora lo dico: prima non diceva niente
          e sembrava che il file si fosse perso. */
@@ -6442,12 +7048,14 @@ async function addFiles(fileList) {
         if (eGiaCondiviso({ title: t.title, artist: t.artist })) giaInLista++;
       }
       const parti = [];
-      const condivisiGiaPresenti = fresh.filter(t => eGiaCondiviso({ title: t.title, artist: t.artist })).length;
-      const nuovi = ok - condivisiGiaPresenti;
+      const nuovi = ok - giaInLista;
       if (nuovi > 0) parti.push(nuovi === 1 ? "1 brano aggiunto" : nuovi + " brani aggiunti");
-      if (giaInLista > 0) parti.push(giaInLista + " duplicati saltati perché già presenti");
-      if (errors.length) parti.push(errors.length + " file non letti");
-      toast((parti.length ? parti.join(" e ") : "Nessun nuovo brano") + ": solo per " + profile);
+      if (giaInLista > 0) {
+        parti.push(giaInLista === 1
+          ? "1 era gia nella libreria, non l'ho ripetuto"
+          : giaInLista + " erano gia nella libreria, non li ho ripetuti");
+      }
+      toast(parti.join(" e ") + ": solo per " + profile);
       /* vado subito al brano nuovo, cosi lo vede: prima finiva in fondo alla
          lista e sembrava non comparire. */
       const daMostrare = fresh.find((t) => !eGiaCondiviso({ title: t.title, artist: t.artist }));
@@ -6476,7 +7084,6 @@ try { _recentementeAggiunto = true; condividiBraniLocali(true); } catch (e) { /*
            qui e basta. */
         _chiediDoveMandare(fresh);
       }
-    if (!ok && giaInLista > 0) toast(giaInLista + " duplicati saltati perché già presenti: non ho aggiunto nessuna copia.");
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
 
@@ -6690,41 +7297,6 @@ if (r.ok && j && j.ok) {
     return null;
   }
 
-  async function findSyncedLyrics(artist, title) {
-    const safeArtist = encodeURIComponent(artist || "");
-    const safeTitle = encodeURIComponent(stripVariants(title || ""));
-    const valida = (j) => {
-      if (!j || !j.syncedLyrics || !String(j.syncedLyrics).trim()) return false;
-      if (j.trackName && !titleCompatible(title, j.trackName)) return false;
-      if (artist && j.artistName && tokenOverlap(artist, j.artistName) < 0.45) return false;
-      return true;
-    };
-    try {
-      const r = await fetch("https://lrclib.net/api/get?artist_name=" + safeArtist + "&track_name=" + safeTitle);
-      if (r.ok) {
-        const j = await r.json();
-        if (valida(j)) {
-          const synced = String(j.syncedLyrics);
-          return { title: title, artist: artist || j.artistName || "", text: syncedToText(synced), synced: synced, source: "LRCLIB (sincronizzato)" };
-        }
-      }
-    } catch (e) { /* provo la ricerca più ampia */ }
-    try {
-      const r = await fetch("https://lrclib.net/api/search?artist_name=" + safeArtist + "&track_name=" + safeTitle);
-      if (r.ok) {
-        const risultati = await r.json();
-        if (Array.isArray(risultati)) {
-          const candidato = risultati.find(valida);
-          if (candidato) {
-            const synced = String(candidato.syncedLyrics);
-            return { title: title, artist: artist || candidato.artistName || "", text: syncedToText(synced), synced: synced, source: "LRCLIB (sincronizzato)" };
-          }
-        }
-      }
-    } catch (e) { /* questo brano potrebbe non avere un testo sincronizzato */ }
-    return null;
-  }
-
   async function findCoverLocal(artist, title) {
     /* Prima guardo covers.json: e' il posto dove le copertine sono gia'
        controllate e funzionanti (per esempio quelle prese da Deezer).
@@ -6782,10 +7354,8 @@ if (r.ok && j && j.ok) {
       }
       await loadAll();
       if (currentId === rec.id) setHud();
-      return true; // comunica al recupero copertine che l'arricchimento e' terminato
     } catch (e) {
       console.warn("Completamento automatico fallito", e);
-      return false;
     }
   }
 
@@ -6799,7 +7369,6 @@ if (r.ok && j && j.ok) {
   const OCR_SRC = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
 
   let ocrWorker = null;
-  let ocrWorkerPromise = null;
   let importList = [];
   let importActive = null;
   let libKeys = new Set();
@@ -6815,21 +7384,16 @@ if (r.ok && j && j.ok) {
   }
 
   function trackKeys(t) {
-    const keys = new Set();
-    const a = normKey(t.artist);
-    let ti = normKey(t.title);
-    if (ti) keys.add(ti);
-    if (a && ti.startsWith(a) && ti.length > a.length) {
-      ti = ti.slice(a.length);
-      keys.add(ti);
-    }
-    if (a && ti) keys.add(a + ti);
-    return keys;
+    const key = _identitaBrano(t);
+    return new Set(key ? [key] : []);
   }
 
   function libraryKeys() {
     const keys = new Set();
-    for (const t of tracks) for (const k of trackKeys(t)) keys.add(k);
+    for (const t of tracks) {
+      if ((t.profile || DEFAULT_PROFILE) !== profile && !_mieiCopiati().has(t.id)) continue;
+      for (const k of trackKeys(t)) keys.add(k);
+    }
     return keys;
   }
 
@@ -7129,32 +7693,17 @@ if (r.ok && j && j.ok) {
   }
 
   async function getOcrWorker(onProgress) {
-    /* Un solo avvio alla volta: se l'utente preme due volte importa,
-       non scarico/inizializzo due motori OCR in parallelo. */
     if (ocrWorker) return ocrWorker;
-    if (ocrWorkerPromise) return ocrWorkerPromise;
-    ocrWorkerPromise = (async () => {
-      if (!window.Tesseract) await loadScript(OCR_SRC);
-      const worker = await window.Tesseract.createWorker(["ita", "eng"], 1, {
-        logger: (m) => {
-          if (m && m.status && typeof m.progress === "number") {
-            try { onProgress(ocrLabel(m.status), m.progress); } catch (e) { /* UI chiusa */ }
-          }
-        }
-      });
-      try {
-        await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
-      } catch (e) { /* parametri non supportati: tengo il motore */ }
-      ocrWorker = worker;
-      return worker;
-    })();
+    if (!window.Tesseract) await loadScript(OCR_SRC);
+    ocrWorker = await window.Tesseract.createWorker(["ita", "eng"], 1, {
+      logger: (m) => {
+        if (m && m.status && typeof m.progress === "number") onProgress(ocrLabel(m.status), m.progress);
+      }
+    });
     try {
-      return await ocrWorkerPromise;
-    } catch (e) {
-      /* Se il download fallisce, permetto un nuovo tentativo alla prossima importazione. */
-      ocrWorkerPromise = null;
-      throw e;
-    }
+      await ocrWorker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1" });
+    } catch (e) { /* noop */ }
+    return ocrWorker;
   }
 
   async function runOcr(file, onProgress) {
@@ -10003,44 +10552,26 @@ $("fabMenu").addEventListener("click", (e) => {
       return [];
     }
     const rows = [];
-    const cacheDisponibili = [cache];
-    try { cacheDisponibili.push(await streamCache()); } catch (e) {}
-    /* La cache storica globale appartiene solo al profilo principale. */
-    if (profile === DEFAULT_PROFILE) {
-      for (const nome of [CACHE_PREFIX + "-brani", CACHE_PREFIX + "-stream"]) {
-        try { cacheDisponibili.push(await caches.open(nome)); } catch (e) {}
-      }
+  for (const t of tracks) {
+    /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
+       ascoltare senza connessione". Prima, per un brano che non era
+       "builtin", scrivevo "sul telefono" e lo davo per gia' scaricato:
+       ma non era mai stato scaricato, e senza rete non si sentiva niente.
+       Ora guardo davvero in cache, per tutti i brani. */
+    if (!t.url) {
+      rows.push({ title: t.title, state: "ok", label: "non scaricabile", el: null, track: t });
+      continue;
     }
-    for (const t of tracks) {
-      if (!t || !t.url) {
-        rows.push({ title: t && t.title || "Brano senza nome", state: "err", label: "URL mancante", el: null, track: t });
-        continue;
-      }
-      /* I brani importati sono già conservati in IndexedDB: il loro URL blob
-         è locale e non va riscaricato né segnato come mancante. */
-      if (/^blob:/i.test(String(t.url))) {
-        rows.push({ title: t.title, url: t.url, id: t.id, state: "ok", label: "pronta", el: null, track: t });
-        continue;
-      }
-      let cached = false;
-      const indirizzi = [t.url, absUrl(t.url)];
-      for (const c of cacheDisponibili) {
-        if (!c) continue;
-        for (const indirizzo of indirizzi) {
-          try { if (await c.match(indirizzo)) { cached = true; break; } } catch (e) {}
-        }
-        if (cached) break;
-      }
-      rows.push({
-        title: t.title,
-        url: t.url,
-        id: t.id,
-        state: cached ? "ok" : "todo",
-        label: cached ? "pronta" : "da scaricare",
-        el: null,
-        track: t
-      });
-    }
+    let cached = false;
+    try { cached = !!(await cache.match(t.url)) || !!(await cache.match(absUrl(t.url))); } catch (e) { cached = false; }
+    rows.push({
+      title: t.title,
+      state: cached ? "ok" : "todo",
+      label: cached ? "pronta" : "da scaricare",
+      el: null,
+      track: t
+    });
+  }
     renderOfflineRows(rows);
     const mancanti = rows.filter((r) => r.state === "todo").length;
     $("offlineSub").textContent = mancanti
@@ -10077,7 +10608,7 @@ $("fabMenu").addEventListener("click", (e) => {
       if (suiDati) return;
       const cache = await appCache();
       if (!cache) return;
-      const gia = await cache.match(absUrl(brano.url)) || await cache.match(brano.url);
+      const gia = await cache.match(brano.url);
       if (gia) return;
       /* Non supero il tetto di spazio. */
       const tetto = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
@@ -10114,8 +10645,7 @@ $("fabMenu").addEventListener("click", (e) => {
       const controller = new AbortController();
       offlineAbort = controller;
       try {
-        await cacheTrack({ track: brano, state: "todo", label: "0%", el: null }, cache);
-        await refreshCachedSongs();
+        await cacheTrack({ track: { url: brano.url }, state: "todo", label: "0%", el: null }, cache);
       } finally {
         offlineAbort = mio;
       }
@@ -10155,39 +10685,6 @@ $("fabMenu").addEventListener("click", (e) => {
     } catch (e) { return 0; }
   }
 
-  /* Se il file nuovo non e' ancora nel deposito online, prova la copia
-     sul PC di casa (quando il collegamento e' configurato). La cache usa
-     comunque l'URL pubblico originale, cosi' il player lo ritrova dopo. */
-  async function _fetchBranoDaScaricare(track, url, options) {
-    const tentativi = [];
-    const aggiungi = (indirizzo) => {
-      if (indirizzo && !tentativi.includes(indirizzo)) tentativi.push(indirizzo);
-    };
-    aggiungi(url);
-    const file = String((track && track.file) || "").replace(/^\/+/, "");
-    if (file) {
-      /* Provo sia il PC di casa sia il deposito online: i brani nuovi
-         possono essere già su GitHub ma non ancora sincronizzati sul PC. */
-      try {
-        const casa = _collegamentoDiCasa();
-        if (casa) aggiungi(casa.replace(/\/+$/, "") + "/app/" + file);
-      } catch (e) { /* provo comunque online */ }
-      aggiungi(BRANI_ONLINE + file);
-    }
-    let ultimoErrore = "";
-    for (const indirizzo of tentativi) {
-      try {
-        const risposta = await fetch(indirizzo, options);
-        if (risposta && risposta.ok) return risposta;
-        ultimoErrore = "HTTP " + (risposta ? risposta.status : "nessuna risposta");
-      } catch (e) {
-        if (e && e.name === "AbortError") throw e;
-        ultimoErrore = String((e && e.message) || "rete non disponibile");
-      }
-    }
-    throw new Error("Download fallito da PC e deposito online: " + ultimoErrore);
-  }
-
   async function cacheTrack(row, cache) {
     const url = row.track.url;
     row.state = "run";
@@ -10197,7 +10694,7 @@ $("fabMenu").addEventListener("click", (e) => {
       row.el.state.textContent = "0%";
     }
     try {
-      const res = await _fetchBranoDaScaricare(row.track, url, { signal: offlineAbort.signal });
+      const res = await fetch(url, { signal: offlineAbort.signal });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const total = Number(res.headers.get("content-length") || 0);
       let blob;
@@ -10220,7 +10717,7 @@ $("fabMenu").addEventListener("click", (e) => {
       } else {
         blob = await res.blob();
       }
-      await cache.put(absUrl(url), new Response(blob, {
+      await cache.put(url, new Response(blob, {
         status: 200,
         headers: {
           "Content-Type": blob.type || "audio/mpeg",
@@ -10338,7 +10835,7 @@ $("fabMenu").addEventListener("click", (e) => {
     for (const b of BUILTIN) {
       if ((b.profile || DEFAULT_PROFILE) !== destinazione) continue;
       if (b.file) idGia.add("b-" + String(b.file).replace(/^.*\//, "").replace(/\.mp3$/i, ""));
-      chiaviGia.add(normKey(b.artist || "") + "|" + normKey(b.title || ""));
+      if (_identitaBrano(b)) chiaviGia.add(_identitaBrano(b));
     }
     for (const id of scelte) {
       const t = tracks.find((x) => x.id === id);
@@ -10346,12 +10843,12 @@ $("fabMenu").addEventListener("click", (e) => {
       const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
       if (!numero) { nonCopiabili.push(t.title); continue; }
       if (idGia.has("b-track-" + numero) ||
-          chiaviGia.has(normKey(t.artist || "") + "|" + normKey(t.title || ""))) {
+          (_identitaBrano(t) && chiaviGia.has(_identitaBrano(t)))) {
         giaPresenti.push(t.title);
         continue;
       }
       const ok = await _portaNellaMiaLibreria(t, destinazione);
-      if (ok) { copiate++; chiaviGia.add(normKey(t.artist || "") + "|" + normKey(t.title || "")); }
+      if (ok) { copiate++; if (_identitaBrano(t)) chiaviGia.add(_identitaBrano(t)); }
       else giaPresenti.push(t.title);
     }
 
@@ -10481,7 +10978,6 @@ $("fabMenu").addEventListener("click", (e) => {
     } else {
       toast("Fatto: " + fatto + " canzoni pronte offline");
     }
-    await refreshCachedSongs();
     await scanOffline();
   }
 
@@ -10570,41 +11066,32 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
 
   async function refreshCachedSongs() {
-    /* Il filtro deve usare SOLO i download del profilo aperto.
-       Prima leggeva tutte le cache del telefono: i brani di altri account
-       facevano risultare scaricata tutta la libreria. */
+    /* Ste: "diego aveva scaricato le canzoni, ha chiuso l'app e una volta
+       riaperta doveva di nuovo scaricarle".
+
+       Motivo: qui guardavo solo la cache della versione corrente. Ma le
+       canzoni scaricate possono stare in una cache vecchia (per esempio
+       se l'aggiornamento e' appena successo e il service worker non ha
+       ancora migrato i brani), e allora l'app non le vedeva e le
+       ridownloadava.
+
+       Adesso guardo TUTTE le cache, come fa il service worker quando
+       serve un brano. */
     const set = new Set();
-    const cacheDaControllare = [];
     try {
-      if (!("caches" in window)) { cachedSongs = set; render(); return; }
-      cacheDaControllare.push(await caches.open(cacheBraniName()));
-      cacheDaControllare.push(await caches.open(cacheStreamName()));
-      /* Migrazione compatibile: la vecchia cache globale vale solo per Ste. */
-      if (profile === DEFAULT_PROFILE) {
-        for (const nome of [CACHE_PREFIX + "-brani", CACHE_PREFIX + "-stream"]) {
-          try { cacheDaControllare.push(await caches.open(nome)); } catch (e) {}
+      const chiavi = await caches.keys();
+      for (const chiave of chiavi) {
+        let cache = null;
+        try { cache = await caches.open(chiave); } catch (e) { continue; }
+        let reqs = [];
+        try { reqs = await cache.keys(); } catch (e) { continue; }
+        for (const r of reqs) {
+          let nome = "";
+          try { nome = new URL(r.url).pathname; } catch (e) { nome = r.url; }
+          if (/\.mp3$/i.test(nome)) set.add(r.url);
         }
       }
-      for (const t of tracks) {
-        if (!t || !t.url) continue;
-        if (/^blob:/i.test(String(t.url))) {
-          set.add(t.url);
-          continue;
-        }
-        const indirizzi = [t.url, absUrl(t.url)];
-        let trovato = false;
-        for (const cache of cacheDaControllare) {
-          for (const indirizzo of indirizzi) {
-            try { if (await cache.match(indirizzo)) { trovato = true; break; } } catch (e) {}
-          }
-          if (trovato) break;
-        }
-        if (trovato) {
-          set.add(t.url);
-          set.add(absUrl(t.url));
-        }
-      }
-    } catch (e) { /* nessuna cache leggibile */ }
+    } catch (e) { /* niente cache: pazienza */ }
     cachedSongs = set;
     render();
   }
@@ -10703,16 +11190,9 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
          vecchio (calcolato all'avvio, prima che l'app sapesse del
          collegamento di casa) e manderebbe il download su internet. */
       const dove = (typeof _urlDelBrano === "function") ? _urlDelBrano(t) : t.url;
-      const risposta = await _fetchBranoDaScaricare(t, dove || t.url, {});
-      if (!risposta || !risposta.ok) throw new Error("file non trovato online");
-      const blob = await risposta.blob();
-      if (!blob.size) throw new Error("il file scaricato è vuoto");
-      const salva = async (indirizzo) => cache.put(indirizzo, new Response(blob, {
-        status: 200,
-        headers: { "Content-Type": blob.type || "audio/mpeg", "Content-Length": String(blob.size) }
-      }));
-      await salva(absUrl(t.url));
-      if (dove && absUrl(dove) !== absUrl(t.url)) await salva(absUrl(dove));
+      await fetchToCache(dove || t.url, cache, (ratio) => {
+        if (el) el.style.background = ratio ? "var(--accent2)" : "";
+      });
       if (el) {
         el.classList.remove("run");
         el.classList.add("ok");
@@ -10742,141 +11222,38 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
 
   let checkingSongs = false;
-  /* Catalogo completo: supporta anche songs/youtube-*.mp3 e metadati extra. */
-  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/[^"]+?\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"([^}]*)\}/g;
+  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/track-\d+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"(?:,\s*profile:\s*"((?:[^"\\]|\\.)*)")?(?:,\s*spotifyId:\s*"((?:[^"\\]|\\.)*)",\s*spotifyAlbum:\s*(null|"(?:[^"\\]|\\.)*"),\s*spotifyDurationMs:\s*(null|\d+),\s*spotifyAddedAt:\s*(null|"(?:[^"\\]|\\.)*"),\s*spotifyAddedDisplay:\s*(null|"(?:[^"\\]|\\.)*"))?\s*\}/g;
+
   function parseBuiltinFrom(text) {
     const start = text.indexOf("const BUILTIN = [");
     if (start < 0) return null;
     const end = text.indexOf("];", start);
     if (end < 0) return null;
-    let block = text.slice(start, end).replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
-    const out = new Map();
+    const block = text.slice(start, end);
+    const out = [];
     const re = new RegExp(BUILTIN_RE.source, "g");
     let m;
     while ((m = re.exec(block))) {
-      try {
-        const extra = m[4] || "";
-        const profilo = /\bprofile:\s*"((?:[^"\\]|\\.)*)"/.exec(extra);
-        const cover = /\bcover:\s*"((?:[^"\\]|\\.)*)"/.exec(extra);
-        const item = {
-          title: JSON.parse('"' + m[1] + '"'),
-          file: m[2],
-          artist: JSON.parse('"' + m[3] + '"'),
-          profile: profilo ? JSON.parse('"' + profilo[1] + '"') : DEFAULT_PROFILE
-        };
-        if (cover) item.cover = JSON.parse('"' + cover[1] + '"');
-        out.set(item.profile + "|" + item.file, item);
-      } catch (e) { /* una voce malformata non blocca il resto */ }
+      const item = {
+        title: JSON.parse('"' + m[1] + '"'),
+        file: m[2],
+        artist: JSON.parse('"' + m[3] + '"'),
+        profile: m[4] ? JSON.parse('"' + m[4] + '"') : DEFAULT_PROFILE
+      };
+      if (m[5]) {
+        item.spotifyId = JSON.parse('"' + m[5] + '"');
+        item.spotifyAlbum = JSON.parse(m[6]);
+        item.spotifyDurationMs = JSON.parse(m[7]);
+        item.spotifyAddedAt = JSON.parse(m[8]);
+        item.spotifyAddedDisplay = JSON.parse(m[9]);
+      }
+      out.push(item);
     }
-    return Array.from(out.values());
-  }
-  function _chiaveCatalogoBrano(b) {
-    return String((b && b.profile) || DEFAULT_PROFILE) + "|" + String((b && b.file) || "");
-  }
-  let _catalogoLocaleCache = [];
-  let _firmaCatalogoLocale = "";
-  let _catalogoLocaleCaricato = false;
-  function _aggiungiVociSoloLocali() {
-    const presenti = new Set(BUILTIN.map(_chiaveCatalogoBrano));
-    let aggiunti = 0;
-    for (const b of _catalogoLocaleCache) {
-      const k = _chiaveCatalogoBrano(b);
-      if (!b || !b.file || presenti.has(k)) continue;
-      BUILTIN.push(b); presenti.add(k); aggiunti++;
-    }
-    return aggiunti > 0;
-  }
-  async function _aggiornaCatalogoLocaleDaDisco() {
-    try {
-      if (typeof window === "undefined" || window.__MB_APP_CODE_SOURCE !== "github") return false;
-      let firma = "";
-      try {
-        const vr = await fetch(_urlCodiceFile("versione.json", Date.now()), { cache: "no-store" });
-        if (vr.ok) {
-          const v = await vr.json();
-          firma = String(v.versione || "") + "|" + String(Number(v.brani) || 0);
-        }
-      } catch (e) { }
-      if (_catalogoLocaleCaricato && firma && firma === _firmaCatalogoLocale) return _aggiungiVociSoloLocali();
-      const rr = await fetch(_urlCodiceFile("app.js", Date.now()), { cache: "no-store" });
-      if (!rr.ok) return false;
-      const parsed = parseBuiltinFrom(await rr.text());
-      if (!Array.isArray(parsed) || !parsed.length) return false;
-      _catalogoLocaleCache = parsed;
-      _catalogoLocaleCaricato = true;
-      _firmaCatalogoLocale = firma;
-      return _aggiungiVociSoloLocali();
-    } catch (e) { return false; }
+    return out;
   }
 
 let _firmaLibreria = "";
 let _ultimoControllo = 0;
-let _ultimoControlloShaApp = 0;
-
-/* ---- Funzioni e contatori usati da piu' parti dell'app ----
-   Prima stavano dentro altre funzioni (loadAll, render, init): da fuori non si
-   vedevano, quindi ogni chiamata dava errore, e l'errore finiva in un "catch"
-   vuoto. Effetti: l'eliminazione di un brano non veniva ricordata, "rimetti il
-   brano" nemmeno, il controllo delle canzoni nuove non aggiornava la libreria
-   e la lista non tornava dov'eri. Qui stanno al livello principale. */
-let _quantiBraniOnline = Array.isArray(BUILTIN) ? BUILTIN.length : 0;
-
-/* La chiave di un brano eliminato porta con se' il profilo.
-   Ste: "se elimino dei brani dalla mia libreria, nella libreria di Diego
-   devono restare se presenti". Prima la lista era globale: quello che
-   eliminavo io spariva anche a Diego. E capita anche il contrario: brani
-   che spariscono a caso, perche' la lista globale si mescolava.
-
-   Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
-   elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
-function _chiaveEliminato(id, profilo) {
-  return String(profilo || profile || "Ste") + "." + String(id || "");
-}
-
-function _quantiEliminati() {
-  try {
-    const el = LS.get("mb.eliminati", null) || {};
-    return Object.keys(el).length;
-  } catch (e) { return 0; }
-}
-
-/* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
-   qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
-   ricaricamento torni esattamente dove eri. */
-function _salvaPuntoLibreria() {
-  try {
-    const el = $("playlist");
-    if (!el) return;
-    LS.set("mb.punto", {
-      scorrimento: el.scrollTop,
-      brano: (current && current.id) || "",
-      profilo: profile
-    });
-  } catch (e) { /* noop */ }
-}
-
-/* Rimette la lista al punto in cui l'avevi lasciata. */
-function _ripristinaPuntoLibreria() {
-  try {
-    const p = LS.get("mb.punto", null);
-    if (!p || !p.scorrimento) return;
-    if (p.profilo && p.profilo !== profile) return;
-    const el = $("playlist");
-    if (!el) return;
-    requestAnimationFrame(() => {
-      el.scrollTop = p.scorrimento;
-      /* Se il brano che stavi ascoltando e' ancora in lista, lo metto in
-         evidenza: cosi' lo ritrovi subito senza doverlo cercare. */
-      if (p.brano) {
-        try {
-          const riga = el.querySelector('[data-id="' + p.brano + '"]');
-          if (riga) riga.classList.add("punto-ripreso");
-        } catch (e) { /* noop */ }
-      }
-    });
-  } catch (e) { /* noop */ }
-}
-
 
 /* Ste: "si continua ad aggiornare" senza sapere cosa. Questo me lo dice:
    ogni volta che la libreria viene davvero ricostruita, il numero della
@@ -10884,7 +11261,7 @@ function _ripristinaPuntoLibreria() {
    e' mossa e quello che vedi e' un'altra cosa. */
 function _aggiornaEtichettaControllo(che) {
   try {
-    const vb = $("appVer");
+    const vb = $("verBadge");
     if (!vb) return;
     const quando = new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     vb.dataset.aggiornato = quando;
@@ -10897,25 +11274,25 @@ function _aggiornaEtichettaControllo(che) {
 
 async function checkForNewSongs() {
     if (checkingSongs) return;
-    const fonteGitHub = typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github";
-    const urlFonte = (nome, stamp) => fonteGitHub
-      ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" + nome + "?t=" + encodeURIComponent(String(stamp))
-      : _urlCodiceFile(nome, stamp);
+    /* Quanti brani ho davanti in questa copia dell'app: serve per il confronto
+       veloce con versione.json. */
+    try { _quantiBraniOnline = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { /* noop */ }
+    /* Ste: "puoi velocizzare il tempo in cui ci mette a inserire le canzoni".
+       Prima aspettavo almeno 2 minuti prima di guardare, e poi scaricavo
+       tutto app.js (400 KB) ogni volta. Ora:
+         - guardo un file minuscolo (versione.json, poche decine di byte)
+           ogni volta, quindi posso farlo spesso senza costare nulla;
+         - scarico i 400 KB di app.js SOLO se quel file mi dice che c'e'
+           qualcosa di nuovo. */
     const ora = Date.now();
     if (ora - _ultimoControllo < 20000) return;
     _ultimoControllo = ora;
-    let firmaRemotaApp = "";
     checkingSongs = true;
     try {
-      const catalogoLocaleAggiornato = await _aggiornaCatalogoLocaleDaDisco();
-      if (catalogoLocaleAggiornato) {
-        try { await loadCovers(); } catch (e) {}
-        await loadAll();
-      }
       /* Primo il file leggero: se la versione e' quella che ho gia', ho
          finito e non scarico nient'altro. */
       try {
-        const risposta = await fetch(urlFonte("versione.json", ora), { cache: "no-store" });
+        const risposta = await fetch("versione.json?t=" + ora, { cache: "no-store" });
         if (risposta.ok) {
           const piccolo = await risposta.json();
           const mia = String(typeof APP_VERSION !== "undefined" ? APP_VERSION : "");
@@ -10925,45 +11302,16 @@ async function checkForNewSongs() {
              a ogni controllo. Se invece il conteggio dei brani e' diverso,
              c'e' davvero qualcosa di nuovo e voglio accorgermene subito. */
           if (stessi && Number(piccolo.brani || 0) === _quantiBraniOnline) {
-            /* L'aggiunta di un brano modifica app.js ma, in passato, non sempre
-               aggiornava versione.json: il controllo leggero pensava che non
-               fosse cambiato nulla e non leggeva mai il nuovo catalogo.
-               Controllo l'hash dell'ultimo commit di app.js ogni 3 minuti:
-               se cambia, rileggo il catalogo anche con lo stesso conteggio. */
-            if (ora - _ultimoControlloShaApp < 180000) {
-              _aggiornaEtichettaControllo();
-              return;
-            }
-            try {
-              const meta = await fetch("https://api.github.com/repos/stefanovillaggio8-dot/music-box/commits?path=app.js&per_page=1", { cache: "no-store" });
-              if (meta.ok) {
-                const lista = await meta.json();
-                firmaRemotaApp = lista && lista[0] && lista[0].sha ? String(lista[0].sha) : "";
-                _ultimoControlloShaApp = ora;
-                const firmaVista = String(LS.get("mb.shaAppRemota", "") || "");
-                if (firmaRemotaApp && firmaRemotaApp === firmaVista) {
-                  _aggiornaEtichettaControllo();
-                  return;
-                }
-              }
-            } catch (e) { /* se GitHub API non risponde, controllo comunque app.js */ }
+            _aggiornaEtichettaControllo();
+            return;
           }
         }
       } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
-      const res = await fetch(urlFonte("app.js", ora), { cache: "no-store" });
+      const res = await fetch("app.js", { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
-      const canonico = parseBuiltinFrom(text);
-      if (!canonico || !canonico.length) return;
-      if (firmaRemotaApp) {
-        try { LS.set("mb.shaAppRemota", firmaRemotaApp); } catch (e) {}
-      }
-      const parsed = canonico.slice();
-      const presentiNelRemoto = new Set(parsed.map(_chiaveCatalogoBrano));
-      for (const b of (_catalogoLocaleCache || [])) {
-        const k = _chiaveCatalogoBrano(b);
-        if (b && b.file && !presentiNelRemoto.has(k)) { parsed.push(b); presentiNelRemoto.add(k); }
-      }
+      const parsed = parseBuiltinFrom(text);
+      if (!parsed || !parsed.length) return;
       /* Confronto col sito solo per i brani che SONO nella mia libreria (i miei piu'
          quelli che ho copiato dagli altri). Se guardassi tutti i brani del
          sito, le canzoni degli altri sembrerebbero sparite e potrei essere
@@ -10971,31 +11319,26 @@ async function checkForNewSongs() {
       const mine = parsed.filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b));
       const remoteFiles = mine.map((b) => b.file);
       const localBuiltin = tracks.filter((t) => t.builtin);
-      const normalizzaPercorsoBrano = (v) => {
-        let s = String(v || "").split("?")[0].split("#")[0];
-        const i = s.lastIndexOf("songs/");
-        if (i >= 0) s = s.slice(i);
-        return s.replace(/^\.\//, "");
-      };
-      const localFiles = localBuiltin.map((t) => normalizzaPercorsoBrano(t.file || t.url));
-      const remoteFilesNorm = remoteFiles.map(normalizzaPercorsoBrano);
-      const aggiunte = mine.filter((b) => !localFiles.includes(normalizzaPercorsoBrano(b.file)));
-      const tolte = localFiles.filter((f) => !remoteFilesNorm.includes(f));
+      const localFiles = localBuiltin.map((t) => t.file || t.url);
+      const aggiunte = mine.filter((b) => localFiles.indexOf(b.file) < 0);
+      const tolte = localFiles.filter((f) => remoteFiles.indexOf(f) < 0);
       /* Una canzone che manca al sito puo' sparire solo a meta' di un aggiornamento:
          la tolgo solo se la vedo assente DUE controlli di fila (piu' o meno 2 minuti),
          cosi' un aggiornamento o una copia vecchia non cancella mai brani validi. */
-      const viste = LS.get("mb.senza", []);
+      const missingKey = "mb.senza." + profile;
+      const viste = LS.get(missingKey, []);
       const confermate = tolte.filter((f) => viste.indexOf(f) >= 0);
-      if (tolte.length) LS.set("mb.senza", tolte);
-      else LS.remove("mb.senza");
-      if (confermate.indexOf(audio && audio.src ? audio.src.replace(location.href, "") : "") >= 0) return;
-      if (!aggiunte.length && !confermate.length) { _quantiBraniOnline = canonico.length; _aggiornaEtichettaControllo(); return; }
+      if (tolte.length) LS.set(missingKey, tolte);
+      else LS.remove(missingKey);
+      const playing = current();
+      if (playing && confermate.includes(playing.file || playing.url)) return;
+      if (!aggiunte.length && !confermate.length) { _quantiBraniOnline = parsed.length; _aggiornaEtichettaControllo(); return; }
       /* Firma di quello che ho davanti: se combacia, e' la stessa libreria e
          non la ridisegno (e' quello che faceva saltare gli schermi). */
-      const firma = (mine.map((b) => b.file).sort().join("|") + "#" + confermate.length);
+      const firma = profile + "#" + (mine.map((b) => JSON.stringify([b.file, b.profile || DEFAULT_PROFILE, b.title, b.artist])).sort().join("|") + "#" + confermate.length);
       if (firma === _firmaLibreria) { _aggiornaEtichettaControllo(); return; }
       _firmaLibreria = firma;
-      _quantiBraniOnline = canonico.length;
+      _quantiBraniOnline = parsed.length;
       /* Prima di ridisegnare, mi segno dove eri: cosi' la lista non ti
          rimanda in cima mentre ti muovi. */
       _salvaPuntoLibreria();
@@ -11005,9 +11348,9 @@ async function checkForNewSongs() {
         BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
       }
       for (const t of localBuiltin) {
-        const percorso = normalizzaPercorsoBrano(t.file || t.url);
-        if (!remoteFilesNorm.includes(percorso) && !confermate.some((f) => normalizzaPercorsoBrano(f) === percorso)) {
-          BUILTIN.push({ title: t.title, file: percorso, artist: t.artist, profile: profile });
+        const file = t.file || t.url;
+        if (remoteFiles.indexOf(file) < 0 && confermate.indexOf(file) < 0) {
+          BUILTIN.push({ title: t.title, file, artist: t.artist, profile: t.profile || DEFAULT_PROFILE });
         }
       }
       await loadCovers();
@@ -11339,7 +11682,6 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
     const v = String((inp && inp.value) || "").trim();
     if (!v) { if (stato) stato.textContent = "Scrivi prima la chiave."; return; }
     LS.set("mb.chiave", v);
-    CHIAVE_PUBBLICA = v;
     /* riprovo subito con la chiave nuova: se il servizio non la accetta,
        lo dico subito invece di lasciare l'utente a scoprircelo dopo */
     try {
@@ -11351,7 +11693,6 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
       if (r.status === 401) {
         if (stato) stato.textContent = "Chiave sbagliata: copiala di nuovo.";
         LS.set("mb.chiave", "");
-        CHIAVE_PUBBLICA = "";
         return;
       }
       if (inp) inp.value = "";
@@ -11850,7 +12191,7 @@ function _aggiornaBadgePlaylist() {
       if (!db) return;
       const tutti = await dbAll();
       const daMandare = (tutti || []).filter((r) => r && r.blob && !r.condiviso &&
-        !eGiaCondiviso({ title: r.title, artist: r.artist }));
+        !eGiaCondiviso({ ...r, profile: r.profile || DEFAULT_PROFILE }));
       _nonCondivisiCache = daMandare.length;
       const b = $("btnCondividi");
       if (b) {
@@ -11920,12 +12261,11 @@ if (sicura) {
       const k = String((j && j.chiave) || "").trim();
       if (!k) return false;
       LS.set("mb.chiave", k);
-      CHIAVE_PUBBLICA = k; // aggiorna anche la chiave usata dalla coda cloud in questa sessione
       segnalaErrore("chiave presa dal computer di casa");
       return true;
     } catch (e) { return false; }
   }
-  let CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
+  const CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
 
   /* Il brano arriva sul sito da solo, senza che il computer sia acceso.
      Restituisce l'indirizzo del brano cosi' l'app lo suona subito. */
@@ -11999,7 +12339,7 @@ if (sicura) {
     try {
       const tutti = await dbAll();
       return (tutti || []).filter((r) => r && r.blob && r.blob.size && !r.condiviso &&
-        !eGiaCondiviso({ title: r.title, artist: r.artist }));
+        !eGiaCondiviso({ ...r, profile: r.profile || DEFAULT_PROFILE }));
     } catch (e) { return []; }
   }
 
@@ -12063,7 +12403,7 @@ document.addEventListener("visibilitychange", () => {
       /* Ste: "i tasti delle cuffie devono ripartire la musica di musicbox".
          Riprendo anche la sessione audio: se nel frattempo l'ha presa
          un'altra app, io la riprendo. */
-      try { if (current()) { updateMediaSession(); setPlaybackState(audio && !audio.paused ? "playing" : "paused"); } } catch (e) { /* noop */ }
+      try { if (current()) { updateMediaSession(); _accendiSilenzio(); setPlaybackState("playing"); } } catch (e) { /* noop */ }
       _disegnaTimer();
     } else if (_bloccoSchermo) {
     /* non lo tengo: il telefono e' gia' spento, e tenerlo occuperebbe
@@ -12219,7 +12559,6 @@ $("btnTimer").addEventListener("click", () => {
    Il segno e' una lista di nomi rimossi, tenuta sul telefono. Quando
    invece nascondi un brano di nuovo, il segno sparisce: la scelta piu'
    recente vince sempre. */
-  let _ultimoStatoCondivisoInviato = "";
   function _salvaStatoCondiviso() {
     _statoDaSalvare = true;
     _quanteRiprove = 0;
@@ -12280,11 +12619,6 @@ rinomini: (function () {
       try { return _soloInPlaylistRimossiDaMandare(); } catch (e) { return []; }
     })()
   });
-      /* Evito POST identici: non devono creare commit senza modifiche. */
-      if (corpo === _ultimoStatoCondivisoInviato) {
-        _statoDaSalvare = false;
-        return;
-      }
       /* Adesso scrivo SOLO sul Worker. Prima scrivevo prima sul computer e,
          se andava, non scrivevo piu' da nessuna parte: ma il computer salva
          con "git push" e riscrive stato.json usando solo cinque chiavi,
@@ -12307,7 +12641,7 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _ultimoStatoCondivisoInviato = corpo; _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
+        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -12682,13 +13016,10 @@ if (SERVIZIO_PUBBLICA) {
   }
 }
 
-let _gymUltimoPayload = "";
-let _gymUltimoInvio = 0;
 async function _mandaGymAlServizio() {
   /* Manda al servizio i brani della playlist "gym": il computer li prepara
      potenziati (bassi, voce avanti, volume piu' forte).
-     I tentativi ripetuti riusano la stessa lista: la rimando solo se cambia
-     o dopo 2 minuti, così un servizio appena riavviato può recuperarla. */
+     Non serve la chiave segreta: qui si scrive solo quella lista. */
   try {
     if (!SERVIZIO_PUBBLICA) return;
     const gym = [];
@@ -12697,14 +13028,11 @@ async function _mandaGymAlServizio() {
       for (const t of (p.tracks || [])) gym.push(String(t));
     }
     if (!gym.length) return;
-    const corpoGym = JSON.stringify({ tracks: gym });
-    if (corpoGym === _gymUltimoPayload && Date.now() - _gymUltimoInvio < 120000) return;
     const r = await fetch(SERVIZIO_PUBBLICA + "/gym", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: corpoGym
+      body: JSON.stringify({ tracks: gym })
     });
-    if (r && r.ok) { _gymUltimoPayload = corpoGym; _gymUltimoInvio = Date.now(); }
     try {
       if (r && r.ok) segnalaErrore("gym: " + gym.length + " brani mandati al computer");
       else segnalaErrore("gym: il servizio non ha accettato la lista (" + (r ? r.status : "?") + ")");
@@ -12766,20 +13094,14 @@ async function _tieniSpazioSottoIlTetto() {
   } catch (e) { /* pazienza */ }
 }
 
-let _playlistCondiviseUltimoBody = "";
 async function _salvaPlaylistCondivise() {
     if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
     try {
-      const body = JSON.stringify({ playlist: playlists });
-      /* Il recupero iniziale richiama questa funzione più volte. Non
-         riscrivo al Worker la stessa identica playlist a ogni retry. */
-      if (body === _playlistCondiviseUltimoBody) return;
-      const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
+      await fetch(SERVIZIO_PUBBLICA + "/playlist", {
         method: "POST",
         headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
-        body: body
+        body: JSON.stringify({ playlist: playlists })
       });
-      if (r && r.ok) _playlistCondiviseUltimoBody = body;
     } catch (e) { /* senza rete le playlist restano pero' nel telefono */ }
   }
 
@@ -13626,8 +13948,9 @@ for (const p of playlists) {
          iOS da' il comando all'ultima app che ha suonato: quello lo
          decide il sistema, non l'app.) */
       updateMediaSession();
-      setPlaybackState(audio && !audio.paused ? "playing" : (current() ? "paused" : "none"));
-      _diChe("sessione media aggiornata senza player audio fantasma");
+      _accendiSilenzio();
+      setPlaybackState("playing");
+      _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
     } catch (e) { /* noop */ }
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
@@ -13685,13 +14008,7 @@ const st = $("statoSpotify");
     try { loadLyrics(); } catch (e) { /* i testi non sono indispensabili */ }
     try { loadCovers(); } catch (e) { /* neanche le copertine */ }
     if (db) await loadLocalLyrics();
-/* Non lasciare bloccato TUTTO l'avvio se una richiesta online resta appesa.
-       loadAll continua in background: il limite serve solo a far installare
-       subito i gestori dei pulsanti. Se termina tardi, aggiorna comunque la libreria. */
-    await Promise.race([
-      loadAll(),
-      new Promise((resolve) => setTimeout(resolve, 7000))
-    ]);
+await loadAll();
     /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente
        dove l'avevo lasciata. */
     _ripristinaPuntoLibreria();
@@ -13748,7 +14065,7 @@ const st = $("statoSpotify");
       setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _caricaStatoCondiviso(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
-  setInterval(() => { _aggiornaCoda(); _spotifyRiprovaCoda(); }, 15000);
+  setInterval(() => { _aggiornaCoda(); }, 120000);
   /* Rileggo lo stato condiviso un paio di volte dopo l'avvio: il sito puo'
      essere indietro di qualche minuto, e un nome salvato adesso sul PC o sul
      telefono deve comparire senza aspettare il riavvio. */
@@ -13763,16 +14080,50 @@ const st = $("statoSpotify");
   setTimeout(() => { _caricaStatoCondiviso(); }, 60000);
   setTimeout(() => { _caricaStatoCondiviso(); }, 120000);
   _avviaStatistiche();
-    /* _salvaPuntoLibreria() e _ripristinaPuntoLibreria() stanno al livello principale
-       (vicino a checkForNewSongs): da qui dentro le altre funzioni non le vedevano. */
+  /* Ste: "mentre scorro mi fa riascire su". Salvo dove si trova' la lista e
+   qual e' il brano che stai ascoltando, cosi' dopo un aggiornamento o un
+   ricaricamento torni esattamente dove eri. */
+function _salvaPuntoLibreria() {
+  try {
+    const el = $("playlist");
+    if (!el) return;
+    LS.set("mb.punto", {
+      scorrimento: el.scrollTop,
+      brano: (current && current.id) || "",
+      profilo: profile
+    });
+  } catch (e) { /* noop */ }
+}
+
+/* Rimette la lista al punto in cui l'avevi lasciata. */
+function _ripristinaPuntoLibreria() {
+  try {
+    const p = LS.get("mb.punto", null);
+    if (!p || !p.scorrimento) return;
+    if (p.profilo && p.profilo !== profile) return;
+    const el = $("playlist");
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollTop = p.scorrimento;
+      /* Se il brano che stavi ascoltando e' ancora in lista, lo metto in
+         evidenza: cosi' lo ritrovi subito senza doverlo cercare. */
+      if (p.brano) {
+        try {
+          const riga = el.querySelector('[data-id="' + p.brano + '"]');
+          if (riga) riga.classList.add("punto-ripreso");
+        } catch (e) { /* noop */ }
+      }
+    });
+  } catch (e) { /* noop */ }
+}
 
   /* Il numero della versione sempre visibile in alto: e' successo piu' volte
      che il browser restava su una versione vecchia e sembrava che gli
      aggiornamenti non funzionassero. Con questo numero lo vedo subito. */
   try {
-    const vf = $("appVer");
+    const vf = $("verBadge");
     if (vf) {
-      vf.textContent = "v" + String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
+      vf.textContent = String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
       vf.title = "Versione in uso: " + APP_VERSION + "\nTocca per aggiornare subito";
       /* Ste: "se tocco la versione non fa niente". Ricaricare da solo non
          bastava: il worker vecchio continuava a servire il vecchio app.js.
@@ -13868,11 +14219,12 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
          (e li ho lasciato anche la posizione della lista, cosi' non perdi
          il punto). */
       navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "SET_PROFILE", profile });
         if (refreshing) return;
         refreshing = true;
         _salvaPuntoLibreria();
         try {
-          const vb = $("appVer");
+          const vb = $("verBadge");
           if (vb) {
             vb.classList.add("ha-aggiornamento");
             vb.title = "C'è un aggiornamento: tocca qui per prenderlo";
@@ -13906,7 +14258,7 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
                  stai usando: era quello che faceva sparire i brani e ti
                  rimandava la lista in cima). Quindi qui devo dirti cosa
                  fare davvero, altrimenti resta in attesa per sempre. */
-              const vb = $("appVer");
+              const vb = $("verBadge");
               if (vb) vb.classList.add("ha-aggiornamento");
               toast("Aggiornamento pronto: chiudi del tutto l'app e la riapri", 7000);
               segnalaErrore("aggiornamento pronto: chiudere del tutto l'app per prenderlo");
@@ -13933,9 +14285,9 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
       try { if (anteprimaAudio && !anteprimaAudio.paused) return true; } catch (e3) { /* noop */ }
       return false;
     }
+    let _quantiBraniOnline = 0;
 function numeroBraniOnline(testo) {
-      const parsed = parseBuiltinFrom(String(testo || ""));
-      return Array.isArray(parsed) ? parsed.length : 0;
+      return (String(testo || "").match(/file:\s*"songs\/track-/g) || []).length;
     }
 let _timerBarraAggiornamento = null;
 let _barraAggiornamentoMostrata = false;
@@ -13955,13 +14307,13 @@ function _nascondiBarraAggiornamento() {
    aggiornare: cosi' sai che e' lui il posto da toccare. */
 function _chiudiBarraVersione() {
     try {
-      const vb = $("appVer");
+      const vb = $("verBadge");
       if (vb) vb.classList.remove("ha-aggiornamento");
     } catch (e) { /* noop */ }
 }
 function _segnalaBarraVersione() {
     try {
-      const vb = $("appVer");
+      const vb = $("verBadge");
       if (vb) {
         vb.classList.add("ha-aggiornamento");
         vb.title = "C'è un aggiornamento: tocca qui per prenderlo subito";
@@ -13980,10 +14332,7 @@ function _segnalaBarraVersione() {
    copia vecchia, quindi l'aggiornamento riesce al primo tocco. */
 function _controllaSeSonoVecchio() {
     try {
-      const urlVersione = (typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github")
-        ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/versione.json?t=" + Date.now()
-        : _urlCodiceFile("versione.json", Date.now());
-      fetch(urlVersione, { cache: "no-store" })
+      fetch("./versione.json", { cache: "no-store" })
         .then((r) => (r && r.ok ? r.json() : null))
         .then((d) => {
           if (!d || !d.versione) return;
@@ -14083,11 +14432,8 @@ avviso = document.createElement("div");
       if (!navigator.onLine) return;
       _stoControllando = true;
       let miei = 0;
-      try { miei = Number(_quantiBraniOnline) || ((typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0); } catch (e) { miei = 0; }
-      const urlAppAggiornamento = (typeof window !== "undefined" && window.__MB_APP_CODE_SOURCE === "github")
-        ? "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/app.js?t=" + Date.now()
-        : "app.js?t=" + Date.now();
-      fetch(urlAppAggiornamento, { cache: "no-store" })
+      try { miei = (typeof BUILTIN !== "undefined" && BUILTIN.length) ? BUILTIN.length : 0; } catch (e) { miei = 0; }
+      fetch("app.js?t=" + Date.now(), { cache: "no-store" })
         .then((r) => r.ok ? r.text() : "")
         .then((txt) => {
           _stoControllando = false;
@@ -14135,9 +14481,25 @@ const che = [];
              volte per la stessa versione: il ciclo non puo' tornare. */
           const _versioneDaPrendere = m ? String(m[1]) : "";
 
-          /* v6.466: un aggiornamento del codice NON deve cancellare le canzoni
-             scaricate per l'ascolto offline. Il service worker aggiorna solo
-             i file dell'app; le cache audio esistenti restano intatte. */
+          /* Ste: "col volume basso non cambia nulla". Motivo: il telefono aveva
+
+             in cache il brano potenziato VECCHIO (quasi uguale all'originale)
+
+             e la rivalidazione aspettava un'ora. Ora, quando c'e' una versione
+
+             nuova, dico al service worker di svuotare le cache dei brani: la
+
+             prima canzone dopo arriva nuova. */
+
+          try {
+
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+
+              navigator.serviceWorker.controller.postMessage({ type: "SVUOTA-CANZONI", profile });
+
+            }
+
+          } catch (e) { /* noop */ }
           /* l'ultimo momento in cui Ste ha toccato lo schermo: serve per non
    ricaricare l'app mentre la sta usando */
 let _ultimoTocco = Date.now();
@@ -14934,74 +15296,42 @@ async function _spotifyCompletaAccesso(code, stato) {
    mi serve (l'audio poi lo cerco su YouTube). */
   async function _spotifyBrani(playlistId) {
     const brani = [];
-    let totaleAtteso = 0;
-    let timer = null;
-    /* Prima provo il servizio pubblico: funziona anche senza collegare l'account. */
+    /* Prima la strada del sito (senza Premium). */
     try {
-      const ctl = new AbortController();
-      timer = setTimeout(() => ctl.abort(), 12000);
-      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/brani?id=" + encodeURIComponent(playlistId), {
-        cache: "no-store",
-        signal: ctl.signal
-      });
-      if (!r.ok) throw new Error("Il servizio Spotify ha risposto HTTP " + r.status);
+      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/brani?id=" + encodeURIComponent(playlistId), { cache: "no-store" });
       const j = await r.json();
-      if (j && j.ok && Array.isArray(j.brani) && j.brani.length) {
+      if (j && j.ok && !j.incompletoPossibile && j.brani && j.brani.length) {
+        _spotifyTraccia("i brani sono arrivati dal sito di Spotify (" + j.brani.length + ")");
         for (const b of j.brani) {
-          const nome = String((b && (b.titolo || b.title || b.name)) || "").replace(/\s+/g, " ").trim();
-          const chi = String((b && (b.artista || b.artist)) || "").replace(/\s+/g, " ").trim();
+          const nome = String((b && b.titolo) || "").replace(/\s+/g, " ").trim();
+          const chi = String((b && b.artista) || "").replace(/\s+/g, " ").trim();
           if (!nome || !chi) continue;
-          brani.push(nome + "|" + chi);
+          brani.push({ spotifyId: String((b && b.spotifyId) || ""), title: nome, artist: chi,
+            artists: (b && b.artisti) || [], album: (b && b.album) || null,
+            durationMs: Number((b && b.durataMs) || 0), addedAt: (b && b.aggiuntoIl) || null });
         }
-        totaleAtteso = Number(j.totale || j.total || (j.tracks && j.tracks.total) || 0);
-        _spotifyTraccia("servizio pubblico: " + brani.length + " brani su " + (totaleAtteso || "?"));
-        if (brani.length && totaleAtteso > 0 && brani.length >= totaleAtteso) return brani;
+        if (brani.length) return brani;
       }
-    } catch (e) {
-      _spotifyTraccia("lettura servizio pubblico non riuscita: " + String((e && e.message) || e).slice(0, 160));
-    } finally {
-      if (timer) clearTimeout(timer);
-    }
-
-    /* Tengo separati i risultati del servizio e quelli dell'API: spesso si sovrappongono. */
-    const braniServizio = brani.slice();
-    const braniApi = [];
+    } catch (e) { /* il server non risponde: uso le API */ }
     let url = "/playlists/" + playlistId + "/tracks?limit=100";
-    for (let pagina = 0; pagina < 12 && url; pagina++) {
-      const j = await _spotifyApi(url);
-      if (!j) break;
-      for (const it of (j.items || [])) {
-        const t = it.track;
-        if (!t || !t.name || t.is_local) continue;
-        const chi = (t.artists || []).map((a) => a.name).filter(Boolean).join(", ");
-        if (!chi) continue;
-        const riga = t.name.replace(/\s+/g, " ").trim() + "|" + chi.replace(/\s+/g, " ").trim();
-        braniApi.push(riga);
-        brani.push(riga);
-      }
-      url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
+  for (let pagina = 0; pagina < 12 && url; pagina++) {
+    const j = await _spotifyApi(url);
+    if (!j) break;
+    for (const it of (j.items || [])) {
+      const t = it.track;
+      if (!t || !t.name || t.is_local) continue;
+      const chi = (t.artists || []).map((a) => a.name).filter(Boolean).join(", ");
+      if (!chi) continue;
+      brani.push({ spotifyId: String(t.id || ""), title: t.name.replace(/\s+/g, " ").trim(),
+        artist: chi.replace(/\s+/g, " ").trim(),
+        artists: (t.artists || []).map(a => ({ id: a.id || null, name: a.name || "" })),
+        album: { id: (t.album || {}).id || null, name: (t.album || {}).name || "" },
+        durationMs: Number(t.duration_ms) || 0, addedAt: it.added_at || null });
     }
-
-    /* Il conteggio distingue i doppioni realmente presenti nella playlist dalle
-       righe duplicate perché arrivate da entrambe le fonti. Per ogni brano
-       considero il numero massimo di occorrenze visto in una singola fonte. */
-    const coperti = braniServizio.slice();
-    const giaVistiApi = [];
-    for (const riga of braniApi) {
-      const candidato = _spotifyRigaOggetto(riga);
-      const occorrenzeServizio = braniServizio.filter((x) => stessoBrano(candidato, _spotifyRigaOggetto(x))).length;
-      const occorrenzeApiPrecedenti = giaVistiApi.filter((x) => stessoBrano(candidato, x)).length;
-      giaVistiApi.push(candidato);
-      if (occorrenzeApiPrecedenti >= occorrenzeServizio) coperti.push(riga);
-    }
-    if (totaleAtteso > 0 && coperti.length < totaleAtteso) {
-      const motivo = "Spotify ha restituito solo " + coperti.length + " brani su " + totaleAtteso +
-        ". Non ho importato una playlist incompleta. Premi «Accedi con Spotify», autorizza l'accesso e poi riprova il link.";
-      _spotifyTraccia("importazione interrotta: playlist parziale (" + coperti.length + "/" + totaleAtteso + ")");
-      throw new Error(motivo);
-    }
-    return brani;
+    url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
   }
+  return brani;
+}
 
 /* ============================================================
    Da qui in poi c'era il file spotify-ui.js, ora dentro questo.
@@ -15089,12 +15419,9 @@ function _spotifyPnl(titolo, sotto, html) {
   let _tracciaSpotifyUltimo = 0;
   function _spotifyTracciaManda(testo) {
     try {
-      /* Anche le tracce Spotify vanno al Worker solo in modalità
-         diagnostica esplicita (?traccia), mai durante l'uso normale. */
-      if (!_tracciaRemotaAttiva()) return;
-      if (_tracciaSpotifyInviate >= 12) return;
+      if (_tracciaSpotifyInviate >= 60) return;
       const ora = Date.now();
-      if (ora - _tracciaSpotifyUltimo < 1500) return;
+      if (ora - _tracciaSpotifyUltimo < 120) return;
       _tracciaSpotifyUltimo = ora;
       _tracciaSpotifyInviate++;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
@@ -15378,182 +15705,46 @@ function _spotifyParla(variabile, testo) {
 }
 
 /* Leggo la lista e la mando al computer. */
-function _spotifyRigaOggetto(riga) {
-  const parti = String(riga || "").split("|");
-  return { title: String(parti.shift() || "").trim(), artist: String(parti.join("|") || "").trim() };
-}
-async function _spotifyFiltraDoppioni(lista, profiloControllo = profile) {
-  const tenuti = [];
-  let duplicati = 0;
-  const destinazione = String(profiloControllo || profile || DEFAULT_PROFILE);
-  /* La destinazione conta: non devo scartare un brano perché esiste nel
-     profilo attualmente aperto, se l'utente ha scelto un altro profilo. */
-  const giaPresenti = [];
-  try {
-    const locali = await dbAll();
-    for (const r of (locali || [])) {
-      if (!r || !r.title || (r.profile || DEFAULT_PROFILE) !== destinazione) continue;
-      if (!giaPresenti.some(t => stessoBrano(r, t))) giaPresenti.push(r);
-    }
-  } catch (e) { /* continuo con la libreria online e il contenuto incluso */ }
-  try {
-    for (const b of (BUILTIN || [])) {
-      /* I brani degli altri profili non sono duplicati per la destinazione scelta:
-         Ste può avere una canzone e Ari può volerla aggiungere anche nella sua cartella. */
-      if (!b || !b.title || (b.profile || DEFAULT_PROFILE) !== destinazione) continue;
-      if (!giaPresenti.some(t => stessoBrano(b, t))) giaPresenti.push(b);
-    }
-  } catch (e) { /* noop */ }
-  for (const riga of (lista || [])) {
-    const candidato = _spotifyRigaOggetto(riga);
-    if (!candidato.title) continue;
-    /* In una lista sorgente (soprattutto un CSV esportato) non scarto una riga
-       solo perché titolo e artista coincidono con una riga precedente.
-       Due uscite/versioni possono condividere questi metadati; il CSV non
-       contiene l'ID Spotify e non permette di dichiararle lo stesso brano.
-       Confronto quindi con la libreria di destinazione, ma conservo ogni
-       occorrenza della lista ricevuta. */
-    const doppio = giaPresenti.some(t => stessoBrano(candidato, t));
-    if (doppio) { duplicati++; continue; }
-    tenuti.push(candidato.title + "|" + candidato.artist);
-  }
-  return { lista: tenuti, duplicati: duplicati };
-}
-
 async function _spotifyImporta(playlistId) {
-  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Leggo tutti i brani e controllo i duplicati...</p>');
-  try {
-    const brani = await _spotifyBrani(playlistId);
-    if (!brani.length) {
-      _spotifyPnl("Nessuna canzone letta", "", '<p class="step-hint">Non sono riuscito a leggere i brani. Prova ad accedere con Spotify e poi ripeti l\'importazione.</p>' +
-        '<button class="btn-main" id="spotifyLeggiAccedi">Accedi con Spotify</button>' +
-        '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Chiudi</button>');
-      const accedi = $("spotifyLeggiAccedi");
-      if (accedi) accedi.addEventListener("click", () => { _spotifyChiudi(); _spotifyMenu(); });
-      const chiudi = $("spotifyAnnulla");
-      if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
-      return;
-    }
-
-    /* Prima di inviare mostro chiaramente la destinazione: cartella sul PC e profilo.
-       Così non finisce in un profilo diverso da quello che l'utente sta guardando. */
-    const opzioni = PROFILI.map((p) => {
-      const scelto = p.nome === profile ? " selected" : "";
-      return '<option value="' + p.nome + '"' + scelto + '>' + p.nome + ' — cartella ' + p.cartella + '</option>';
-    }).join("");
-    const pannello =
-      '<p class="step-hint">Ho letto ' + brani.length + ' voci dalla playlist. Scegli il profilo in cui salvare i brani sul PC: i duplicati saranno saltati.</p>' +
-      '<label for="spotifyDestinazione" style="display:block;margin:12px 0 6px;font-weight:700">Dove salvarle?</label>' +
-      '<select id="spotifyDestinazione" class="spotify-link-campo">' + opzioni + '</select>' +
-      '<p id="spotifyImportaRiepilogo" class="step-hint" style="margin-top:10px">Controllo i duplicati...</p>' +
-      '<p class="step-hint">I brani compariranno nella libreria del profilo scelto. Se poi stai guardando un altro profilo, cambialo dalla libreria.</p>' +
-      '<button class="btn-main" id="spotifyConfermaImport" disabled>Controllo in corso...</button>' +
-      '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Annulla</button>';
-    _spotifyPnl("Scegli dove salvare", brani.length + " brani letti", pannello);
-
-    const selettore = $("spotifyDestinazione");
-    const riepilogo = $("spotifyImportaRiepilogo");
-    const conferma = $("spotifyConfermaImport");
-    const annulla = $("spotifyAnnulla");
-    if (annulla) annulla.addEventListener("click", _spotifyChiudi);
-    if (!selettore || !riepilogo || !conferma) {
-      _spotifyPnl("Errore importazione", "", '<p class="step-hint">Non riesco a mostrare la scelta della cartella. Ricarica la pagina e riprova.</p>');
-      return;
-    }
-
-    let revisione = 0;
-    let invioInCorso = false;
-    async function aggiornaRiepilogo() {
-      const questaRevisione = ++revisione;
-      conferma.disabled = true;
-      riepilogo.textContent = "Controllo i brani già presenti...";
-      try {
-        const filtro = await _spotifyFiltraDoppioni(brani, selettore.value);
-        if (questaRevisione !== revisione) return;
-        const destinazione = PROFILI.find(p => p.nome === selettore.value);
-        const cartella = destinazione ? destinazione.cartella : selettore.value;
-        riepilogo.textContent = brani.length + " voci lette · " + filtro.lista.length +
-          " nuove per " + selettore.value + " (cartella " + cartella + ") · " +
-          filtro.duplicati + " già presenti o duplicati saltati.";
-        conferma.textContent = filtro.lista.length
-          ? "Importa " + filtro.lista.length + " canzoni in " + selettore.value
-          : "Nessuna canzone nuova per " + selettore.value;
-        conferma.disabled = filtro.lista.length === 0;
-      } catch (e) {
-        if (questaRevisione !== revisione) return;
-        riepilogo.textContent = "Non sono riuscito a controllare i duplicati. " + String((e && e.message) || e);
-        conferma.textContent = "Riprova il controllo";
-        conferma.disabled = false;
-      }
-    }
-    selettore.addEventListener("change", () => { aggiornaRiepilogo(); });
-    conferma.addEventListener("click", async () => {
-      if (invioInCorso) return;
-      invioInCorso = true;
-      conferma.disabled = true;
-      selettore.disabled = true;
-      conferma.textContent = "Preparo l'importazione...";
-      try {
-        const destinazione = selettore.value;
-        const filtro = await _spotifyFiltraDoppioni(brani, destinazione);
-        if (!filtro.lista.length) {
-          invioInCorso = false;
-          selettore.disabled = false;
-          await aggiornaRiepilogo();
-          return;
-        }
-        _spotifyTraccia("conferma playlist: " + filtro.lista.length + " nuove, " +
-          filtro.duplicati + " saltate, profilo " + destinazione);
-        await _spotifyMandaLista(filtro.lista, destinazione, filtro.duplicati);
-      } catch (e) {
-        invioInCorso = false;
-        selettore.disabled = false;
-        const motivo = String((e && e.message) || "errore sconosciuto");
-        riepilogo.textContent = "Non ho inviato le canzoni: " + motivo;
-        conferma.disabled = false;
-        conferma.textContent = "Riprova";
-      }
-    });
-    await aggiornaRiepilogo();
-  } catch (e) {
-    const motivo = String((e && e.message) || "errore sconosciuto")
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    _spotifyTraccia("importazione link fallita: " + motivo.slice(0, 180));
-    _spotifyPnl("Playlist non importata", "Non ho aggiunto canzoni", '<p class="step-hint">' + motivo + '</p>' +
-      '<button class="btn-main" id="spotifyErroreAccedi">Accedi con Spotify</button>' +
-      '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Chiudi</button>');
-    const accedi = $("spotifyErroreAccedi");
-    if (accedi) accedi.addEventListener("click", () => { _spotifyChiudi(); _spotifyMenu(); });
-    const chiudi = $("spotifyAnnulla");
-    if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
+  _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Prendo i titoli...</p>');
+  const brani = await _spotifyBrani(playlistId);
+  if (!brani.length) {
+    _spotifyPnl("Playlist", "", '<p class="step-hint">Questa playlist non ha brani che posso usare.</p>');
+    return;
   }
+  /* Solo lo stesso Spotify Track ID e' una duplicazione certa. Titolo e
+     artista uguali possono indicare versioni, album o master differenti. */
+  const visti = new Set();
+  const uniche = [];
+  for (const b of brani) {
+    const k = String((b && b.spotifyId) || "");
+    if (k && visti.has(k)) continue;
+    if (k) visti.add(k);
+    uniche.push(b);
+  }
+  const profilo = profile;
+  const riga = '<p class="step-hint"><b>' + uniche.length + " canzoni</b> da " +
+    profilo + ".</p><p class=\"step-hint\">Se il computer e' spento non e' un " +
+    "problema: restano in coda e partono quando lo accendi.</p>" +
+    '<button class="btn-main" id="spotifyManda">Scarica ora</button>' +
+    '<button class="btn-main" id="spotifyAnnulla" style="margin-top:10px">Annulla</button>';
+  _spotifyPnl("Playlist pronta", uniche.length + " canzoni", riga);
+  $("spotifyAnnulla").addEventListener("click", _spotifyChiudi);
+  $("spotifyManda").addEventListener("click", () => { _spotifyMandaLista(uniche, profilo); });
 }
 
 /* Il passaggio vero: se il computer c'e' gliele mando subito, altrimenti le
    metto da parte e riprovo piu' tardi da sola. */
-async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
-  const filtro = await _spotifyFiltraDoppioni(lista, profilo);
-  const duplicatiTotali = Math.max(0, Number(duplicatiGiaSaltati) || 0) + (filtro.duplicati || 0);
-  lista = filtro.lista;
-  if (!lista.length) {
-    _spotifyChiudi();
-    toast("Non ho aggiunto brani: erano tutti già in libreria o duplicati. Duplicati saltati: " + duplicatiTotali + ".", 7000);
-    return;
-  }
-
+async function _spotifyMandaLista(lista, profilo) {
   const chiave = "mb.codaSpotify";
-  let giunto = false;
-  try { giunto = await ponteOnline(); } catch (e) { giunto = false; }
+  const giunto = await ponteOnline();
   if (!giunto) {
-    try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e) {}
+    try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
     _spotifyChiudi();
-    const dest = PROFILI.find(p => p.nome === profilo);
-    toast("Music Box da GitHub non riesce a contattare il programma locale del PC sulla porta 8788. Il PC acceso non basta: serve il programma ponte. " + lista.length + " brani sono in coda per " + profilo + "; duplicati saltati: " + duplicatiTotali + ". Non ricaricare il CSV.", 11000);
+    toast("Computer spento: le " + lista.length + " canzoni aspettano che lo accenda", 6000);
     return;
   }
-
-  _spotifyPnl("Sto mandando al computer", lista.length + " nuove · " + duplicatiTotali + " duplicati saltati",
-    '<p class="step-hint">L\'invio è partito. Il computer scarica i brani e li aggiunge alla libreria in background.</p>');
+  _spotifyPnl("Sto mandando al computer", lista.length + " canzoni", '<p class="step-hint">Un attimo...</p>');
   try {
     const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
     const r = await fetch(base + "/spotify-lista", {
@@ -15561,220 +15752,45 @@ async function _spotifyMandaLista(lista, profilo, duplicatiGiaSaltati = 0) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ profilo: profilo, lista: lista })
     });
-    const testoRisposta = await r.text();
-    let j = {};
-    try { j = JSON.parse(testoRisposta || "{}"); } catch (e) { j = {}; }
-    if (!r.ok || !j.ok || !j.id) {
-      try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e) {}
-      const motivo = String((j && j.errore) || ("Il computer non ha accettato la lista (HTTP " + r.status + ")."))
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-      _spotifyPnl("Importazione non confermata", "", '<p class="step-hint">' + motivo +
-        '</p><p class="step-hint">Ho salvato ' + lista.length + ' brani in coda. Duplicati saltati: ' + duplicatiTotali +
-        '. Riproverò quando il ponte sul PC risponderà.</p>' +
-        '<button class="btn-main" id="spotifyChiudiCoda">Chiudi</button>');
-      const chiudiCoda = $("spotifyChiudiCoda");
-      if (chiudiCoda) chiudiCoda.addEventListener("click", _spotifyChiudi);
+    const j = await r.json();
+    if (!r.ok || !j.ok) {
+      _spotifyPnl("Non e' andata", "", '<p class="step-hint">' +
+        (j && j.errore ? j.errore : "il computer non ha accettato la lista") + "</p>");
       return;
     }
     _spotifyChiudi();
-    const dest = PROFILI.find(p => p.nome === profilo);
-    toast("Inviate al PC " + lista.length + " canzoni per " + profilo + " (cartella " +
-      (dest ? dest.cartella : profilo) + "); " + duplicatiTotali +
-      " già presenti/duplicati saltati. Controllo il download…", 7500);
-    _spotifyControllaLavoro(j.id, lista.length, duplicatiTotali, profilo);
+    toast("Fatto: il computer scarica " + lista.length + " canzoni. Ci mette un po'.", 6000);
+    _spotifyControllaLavoro(j.id, lista.length);
   } catch (e) {
-    try { LS.set(chiave, { lista: lista, profilo: profilo, duplicati: duplicatiTotali, quando: Date.now() }); } catch (e2) {}
-    const motivo = String((e && e.message) || "il programma ponte non risponde")
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    _spotifyPnl("Lista salvata in coda", "", '<p class="step-hint">' + lista.length + " canzoni salvate in coda. " +
-      duplicatiTotali + " duplicati saltati. Errore: " + motivo +
-      ". Non sono perse: riproverò quando il computer sarà raggiungibile.</p>" +
-      '<button class="btn-main" id="spotifyChiudiCoda">Va bene</button>');
-    const chiudiCoda = $("spotifyChiudiCoda");
-    if (chiudiCoda) chiudiCoda.addEventListener("click", _spotifyChiudi);
+    _spotifyPnl("Non e' andata", "", '<p class="step-hint">Non riesco a parlare con il computer.</p>');
   }
 }
-
-
-/* Importa il file YourLibrary.json scaricato da Spotify.
-   Usa il ponte esistente sul PC, quindi non richiede le API Spotify né Premium. */
-function _spotifyParseCSV(testo) {
-  const testoPulito = String(testo || "").replace(/^\uFEFF/, "");
-  /* Rilevo il separatore nell'intestazione, ignorando quelli tra virgolette. */
-  const primaRiga = (testoPulito.split(/\r?\n/).find((r) => r.trim()) || "");
-  let virgole = 0, puntiEVirgola = 0, citato = false;
-  for (let i = 0; i < primaRiga.length; i++) {
-    const ch = primaRiga[i];
-    if (ch === '"' && citato && primaRiga[i + 1] === '"') { i++; continue; }
-    if (ch === '"') citato = !citato;
-    else if (!citato && ch === ",") virgole++;
-    else if (!citato && ch === ";") puntiEVirgola++;
-  }
-  const separatore = puntiEVirgola > virgole ? ";" : ",";
-  const righe = [];
-  let riga = [], campo = "", inVirgolette = false, inizioCampo = true;
-  for (let i = 0; i < testoPulito.length; i++) {
-    const ch = testoPulito[i];
-    if (ch === '"') {
-      if (inVirgolette && testoPulito[i + 1] === '"') { campo += '"'; i++; }
-      else if (inVirgolette) inVirgolette = false;
-      else if (inizioCampo) { inVirgolette = true; inizioCampo = false; }
-      else throw new Error("CSV non valido: virgolette in posizione inattesa. Riesporta il file da Spotify.");
-    } else if (ch === separatore && !inVirgolette) {
-      riga.push(campo); campo = ""; inizioCampo = true;
-    } else if ((ch === "\n" || ch === "\r") && !inVirgolette) {
-      if (ch === "\r" && testoPulito[i + 1] === "\n") i++;
-      riga.push(campo);
-      if (riga.some((x) => String(x || "").trim())) righe.push(riga);
-      riga = []; campo = ""; inizioCampo = true;
-    } else {
-      campo += ch;
-      if (!/\s/.test(ch)) inizioCampo = false;
-    }
-  }
-  if (inVirgolette) throw new Error("CSV incompleto: una cella è rimasta aperta tra virgolette. Riesporta il file e riprova.");
-  if (campo.length || riga.length) {
-    riga.push(campo);
-    if (riga.some((x) => String(x || "").trim())) righe.push(riga);
-  }
-  return righe;
-}
-function _spotifyNormalizzaIntestazioneCSV(valore) {
-  return String(valore || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-}
-async function _spotifyImportaEsportazioneFile(file) {
-  if (!file) return;
-  try { _spotifySilenzioso = false; } catch (e) {}
-  _spotifyPnl("Leggo l'esportazione", file.name || "file Spotify",
-    '<p class="step-hint">Controllo il file senza inviare ancora nessuna canzone...</p>');
-  try {
-    if (file.size > 50 * 1024 * 1024) throw new Error("Il file supera 50 MB. Esporta soltanto la libreria Spotify e riprova.");
-    const testo = await file.text();
-    if (!testo || !testo.trim()) throw new Error("Il file è vuoto.");
-    const iniziaJSON = /^[\s\uFEFF]*[\[{]/.test(testo);
-    const isCSV = !iniziaJSON && (/\.csv$/i.test(String(file.name || "")) || /text\/csv/i.test(String(file.type || "")) || testo.includes(",") || testo.includes(";"));
-    const righe = [];
-    let righeScartate = 0;
-    if (isCSV) {
-      const tabella = _spotifyParseCSV(testo);
-      if (tabella.length < 2) throw new Error("Il CSV non contiene righe di brani.");
-      const intestazioni = tabella[0].map(_spotifyNormalizzaIntestazioneCSV);
-      const trovaColonna = (nomi) => intestazioni.findIndex((n) => nomi.includes(n));
-      const colTitolo = trovaColonna(["track name", "track", "title", "song name", "song", "name"]);
-      const colArtista = trovaColonna(["artist name s", "artist names", "artists names", "artist name", "artist", "artists", "artist s"]);
-      if (colTitolo < 0 || colArtista < 0) throw new Error("Non riconosco le colonne titolo e artista. Servono Track Name/Titolo e Artist Name(s)/Artista.");
-      for (let i = 1; i < tabella.length; i++) {
-        const titolo = String(tabella[i][colTitolo] || "").replace(/\s+/g, " ").trim();
-        const artista = String(tabella[i][colArtista] || "").replace(/\s+/g, " ").trim();
-        if (titolo && artista) righe.push(titolo + "|" + artista);
-        else righeScartate++;
-      }
-    } else {
-      let dati;
-      try { dati = JSON.parse(testo.replace(/^\uFEFF/, "")); }
-      catch (e) { throw new Error("File non leggibile: usa un CSV con titolo e artista oppure un JSON valido dell'esportazione Spotify."); }
-      const possibiliListe = [dati && dati.tracks, dati && dati.saved_tracks, dati && dati.savedTracks,
-        dati && dati.YourLibrary && dati.YourLibrary.tracks, dati && dati.yourLibrary && dati.yourLibrary.tracks,
-        Array.isArray(dati) ? dati : null];
-      const sorgente = possibiliListe.find(Array.isArray);
-      if (!sorgente) throw new Error("Il JSON non contiene una lista di brani riconosciuta. Scegli YourLibrary.json oppure un CSV con titolo e artista.");
-      for (const voce of sorgente) {
-        if (!voce || typeof voce !== "object") { righeScartate++; continue; }
-        const traccia = voce.track && typeof voce.track === "object" ? voce.track : voce;
-        const titolo = String((typeof voce.track === "string" ? voce.track : "") || traccia.name || traccia.title || voce.title || voce.track_name || "").replace(/\s+/g, " ").trim();
-        let artisti = voce.artist || voce.artists || traccia.artist || traccia.artists || voce.creator || "";
-        if (Array.isArray(artisti)) artisti = artisti.map((a) => typeof a === "string" ? a : (a && (a.name || a.artist)) || "").filter(Boolean).join(", ");
-        else if (artisti && typeof artisti === "object") artisti = String(artisti.name || artisti.artist || "");
-        artisti = String(artisti || "").replace(/\s+/g, " ").trim();
-        if (titolo && artisti) righe.push(titolo + "|" + artisti);
-        else righeScartate++;
-      }
-    }
-    if (!righe.length) throw new Error("Non ho trovato brani con titolo e artista. Controlla di aver scelto il file giusto.");
-    const destinazione = (PROFILI.find((p) => /emanuele/i.test(String(p.nome))) || {}).nome;
-    if (!destinazione) throw new Error("Non trovo il profilo Emanuele nella configurazione della Music Box.");
-    const escapeHTML = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    const anteprima = righe.slice(0, 6).map((r) => {
-      const b = _spotifyRigaOggetto(r);
-      return "<li>" + escapeHTML(b.title) + " — " + escapeHTML(b.artist) + "</li>";
-    }).join("");
-    _spotifyTraccia("Esportazione verificata: " + righe.length + " righe leggibili; " + righeScartate + " incomplete; destinazione " + destinazione);
-    _spotifyPnl("Controlla prima di importare", righe.length + " brani letti",
-      '<p class="step-hint">Destinazione: ' + escapeHTML(destinazione) + '. Non è stato ancora inviato nulla.</p>' +
-      '<p class="step-hint"><strong>' + righe.length + '</strong> brani con titolo e artista' +
-      (righeScartate ? ' · <strong>' + righeScartate + '</strong> righe incomplete ignorate' : '') +
-      '. I doppioni già presenti verranno esclusi automaticamente.</p><ul class="step-hint">' + anteprima + '</ul>' +
-      (righe.length > 6 ? '<p class="step-hint">Anteprima dei primi 6 brani su ' + righe.length + '.</p>' : '') +
-      '<button class="btn-main" id="spotifyConfermaEsportazione">Conferma e importa in Emanuele</button>' +
-      '<button class="btn-main" id="spotifyAnnullaEsportazione" style="margin-top:10px">Annulla</button>');
-    const conferma = $("spotifyConfermaEsportazione"), annulla = $("spotifyAnnullaEsportazione");
-    if (annulla) annulla.addEventListener("click", _spotifyChiudi);
-    if (conferma) conferma.addEventListener("click", async () => {
-      if (conferma.disabled) return;
-      conferma.disabled = true; conferma.textContent = "Controllo i doppioni e invio...";
-      if (annulla) annulla.disabled = true;
-      try { await _spotifyMandaLista(righe, destinazione, 0); }
-      catch (e) {
-        const motivo = String((e && e.message) || e || "errore sconosciuto").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        _spotifyPnl("Importazione non riuscita", "", '<p class="step-hint">' + motivo + '</p><button class="btn-main" id="spotifyErroreImportazioneChiudi">Chiudi</button>');
-        const chiudi = $("spotifyErroreImportazioneChiudi");
-        if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
-      }
-    });
-  } catch (e) {
-    const motivo = String((e && e.message) || e || "errore sconosciuto").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    _spotifyPnl("File non importato", "", '<p class="step-hint">' + motivo + '</p><button class="btn-main" id="spotifyJsonChiudi">Chiudi</button>');
-    const chiudi = $("spotifyJsonChiudi");
-    if (chiudi) chiudi.addEventListener("click", _spotifyChiudi);
-  }
-}
-try { window._spotifyImportaEsportazioneFile = _spotifyImportaEsportazioneFile; } catch (e) {}
 
 /* Se il computer era spento, quando si accende riprovo da sola. */
-let _spotifyInvioCodaInCorso = false;
 async function _spotifyRiprovaCoda() {
-  if (_spotifyInvioCodaInCorso) return;
   let coda = null;
   try { coda = LS.get("mb.codaSpotify", null); } catch (e) {}
   if (!coda || !coda.lista || !coda.lista.length) return;
-  _spotifyInvioCodaInCorso = true;
+  if (!(await ponteOnline())) return;
   try {
-    if (!(await ponteOnline())) return;
-    const base = await trovaPonte();
-    if (!base) return;
+    const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
     const r = await fetch(base + "/spotify-lista", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ profilo: coda.profilo, lista: coda.lista })
     });
-    const testo = await r.text();
-    let j = {};
-    try { j = JSON.parse(testo || "{}"); } catch (e) {}
-    /* Non svuoto la coda se il servizio risponde HTTP 200 ma non accetta
-       davvero la lista: altrimenti i brani spariscono senza essere importati. */
-    if (r.ok && j && j.ok && j.id) {
+    if (r.ok) {
+      const j = await r.json();
       LS.remove("mb.codaSpotify");
-      const dest = PROFILI.find(p => p.nome === coda.profilo);
-      toast("Lista inviata al PC: " + coda.lista.length + " canzoni per " +
-        (coda.profilo || "profilo predefinito") + " (cartella " + (dest ? dest.cartella : (coda.profilo || "?")) +
-        "). " + (Number(coda.duplicati) || 0) + " già presenti/duplicati saltati. Controllo il download…", 7000);
-      _spotifyControllaLavoro(j.id, coda.lista.length, Number(coda.duplicati) || 0, coda.profilo);
-    } else if (r.ok && j && j.errore) {
-      segnalaErrore("Spotify lista in coda: " + String(j.errore).slice(0, 140));
+      toast("Ripresa la lista che aspettava: " + coda.lista.length + " canzoni", 6000);
+      _spotifyControllaLavoro(j.id, coda.lista.length);
     }
-  } catch (e) { /* la coda resta salvata: ritento più tardi */ }
-  finally { _spotifyInvioCodaInCorso = false; }
+  } catch (e) { /* noop */ }
 }
 
 /* Chiedo come sta andando, cosi' Ste non resta a pensare che sia finito. */
-async function _spotifyControllaLavoro(id, totale, duplicatiSaltati = 0, profilo = profile) {
+async function _spotifyControllaLavoro(id, totale) {
   let tentativi = 0;
-  const destinazione = PROFILI.find(p => p.nome === profilo);
-  const cartella = destinazione ? destinazione.cartella : String(profilo || "?");
-  const notaDuplicati = Number(duplicatiSaltati) > 0
-    ? " " + Number(duplicatiSaltati) + " brani saltati perché già presenti o duplicati."
-    : "";
   const guarda = async () => {
     if (tentativi++ > 400) return;
     let j = null;
@@ -15786,21 +15802,14 @@ async function _spotifyControllaLavoro(id, totale, duplicatiSaltati = 0, profilo
     if (!j) { setTimeout(guarda, 4000); return; }
     const fatto = Number(j.fatto || 0);
     if (j.stati === "fatto") {
-      let messaggio = "Importazione finita: " + fatto + " canzoni scaricate nella cartella " +
-        cartella + " (profilo " + profilo + ")." + notaDuplicati;
-      if (fatto < Number(totale || 0)) {
-        messaggio += " Attenzione: " + (Number(totale) - fatto) +
-          " canzoni nuove non risultano scaricate; controlla gli errori del programma sul PC.";
-      }
-      toast(messaggio, 10000);
+      toast("Fatto: " + fatto + " canzoni scaricate e messe in libreria", 8000);
       return;
     }
     if (j.stati && String(j.stati).indexOf("errore") === 0) {
-      toast("Il computer ha avuto un problema: " + j.stati + notaDuplicati, 9000);
+      toast("Il computer ha avuto un problema: " + j.stati, 8000);
       return;
     }
-    if (fatto > 0) toast("Scaricate " + fatto + " di " + (totale || j.totale || "?") +
-      " in " + cartella + "…" + notaDuplicati, 3500);
+    if (fatto > 0) toast("Scaricate " + fatto + " di " + (totale || j.totale || "?") + "…", 2500);
     setTimeout(guarda, 5000);
   };
   setTimeout(guarda, 3000);
