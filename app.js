@@ -80,7 +80,7 @@
       { title: "Star Shopping", file: "songs/track-7.mp3", artist: "Lil Peep", profile: "Ste" },
       { title: "Malpensa", file: "songs/track-8.mp3", artist: "G.Mineiro, Flatpearl, Succo", profile: "Ste" },
       { title: "LA CITTÀ", file: "songs/track-9.mp3", artist: "MOSTRO", profile: "Ste" },
-      { title: "CIGNO NERO RMX", file: "songs/track-10.mp3", artist: "Nayt / Frah Quintale / Tony Boy", profile: "Ste" },
+      { title: "CIGNO NERO RMX", file: "songs/track-10.mp3", artist: "Nayt / Frah Quintale / Tony Boy", profile: "Ste", cover: "copertine/track-10.jpg" },
       { title: "Romantici Terroni", file: "songs/track-11.mp3", artist: "SAITTA", profile: "Ste" },
       { title: "s!r!", file: "songs/track-12.mp3", artist: "thasup", profile: "Ste" },
       { title: "Victoria", file: "songs/track-13.mp3", artist: "Tony Boy", profile: "Ste" },
@@ -135,7 +135,7 @@
           { title: "Wonderwall", file: "songs/track-76.mp3", artist: "Oasis", profile: "Ste" },
           { title: "La Mia Storia Tra Le Dita (Feat. Annalisa)", file: "songs/track-71.mp3", artist: "Gianluca Grignani", profile: "Ste" },
           { title: "HO SBAGLIATO ANCORA", file: "songs/track-72.mp3", artist: "Chiello", profile: "Ste" },
-          { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "thasup", profile: "Ste" },
+          { title: "siLLy cUp", file: "songs/track-68.mp3", artist: "thasup", profile: "Ste", cover: "copertine/sillycup.jpg" },
     { title: "dimmi che ce'", file: "songs/track-64.mp3", artist: "thasup", profile: "Ste" },
     { title: "In the End", file: "songs/track-65.mp3", artist: "Linkin Park", profile: "Ste" },
     /* Ste: qui sotto c'era anche { title: "thasup dimmi che c'", file:
@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.427";
+  const APP_VERSION = "6.428";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3379,7 +3379,17 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
      risultati salvati su IndexedDB per questo dispositivo. */
   let _ricercaCopertineAttiva = false;
   let _ricercaCopertinePrevista = false;
-  const _ricercaCopertineTentate = new Set();
+  /* Una richiesta fallita non deve impedire nuove ricerche per tutta
+     la sessione: riprova dopo 45 minuti, senza tempestare i provider. */
+  const _ricercaCopertineTentate = new Map();
+  function _copertinaTentataDiRecente(id) {
+    const at = _ricercaCopertineTentate.get(id) || 0;
+    return at > 0 && Date.now() - at < 45 * 60 * 1000;
+  }
+  function _copertinaSpotifyGiaPronta(t) {
+    return !!(t && t.spotifyId && spotifyCoversData[t.spotifyId] &&
+      /^https:\/\//.test(String(spotifyCoversData[t.spotifyId].cover || "")));
+  }
   function _programmaRicercaCopertine() {
     if (_ricercaCopertineAttiva || _ricercaCopertinePrevista || !db || document.hidden) return;
     _ricercaCopertinePrevista = true;
@@ -3412,10 +3422,10 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         for (const t of daCercare) {
           if (profile !== profiloIniziale || document.hidden || tentativi >= 12) break;
           if (!t || !t.id || !t.artist || !t.title || t.cover ||
-              salvate.has(t.id) || _ricercaCopertineTentate.has(t.id)) continue;
+              salvate.has(t.id) || _copertinaSpotifyGiaPronta(t) || _copertinaTentataDiRecente(t.id)) continue;
           const esistente = coverInfo(t.artist, t.title);
           if (esistente && esistente.cover) continue;
-          _ricercaCopertineTentate.add(t.id);
+          _ricercaCopertineTentate.set(t.id, Date.now());
           tentativi++;
           try {
             const c = await findCoverLocal(t.artist, t.title, t.spotifyId);
@@ -3434,7 +3444,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         }
         if (nuove) render();
         restanti = daCercare.filter(t => t && t.id && t.artist && t.title &&
-          !t.cover && !salvate.has(t.id) && !_ricercaCopertineTentate.has(t.id) &&
+          !t.cover && !salvate.has(t.id) && !_copertinaSpotifyGiaPronta(t) && !_copertinaTentataDiRecente(t.id) &&
           !(coverInfo(t.artist, t.title) || {}).cover).length;
         /* Le copertine non visibili si caricheranno dal DB quando si apre il profilo. */
       } finally {
@@ -3449,6 +3459,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) _programmaRicercaCopertine();
     });
+    setInterval(() => { if (!document.hidden) _programmaRicercaCopertine(); }, 45 * 60 * 1000);
   } catch (e) { /* noop */ }
 
   function recuperaCopertineMancanti() {
