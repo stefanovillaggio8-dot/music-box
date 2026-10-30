@@ -1,13 +1,5 @@
 [
  {
-  "t": 1793392514964,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793392514985,
-  "r": "libreria: 619 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
   "t": 1793392514986,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1793392540799,
   "r": "suono: originale b-track-661"
+ },
+ {
+  "t": 1793392540798,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392553794,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
