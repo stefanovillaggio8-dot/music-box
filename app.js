@@ -68,7 +68,9 @@
         "songs/track-852.mp3": "wrong-version: Il file è una versione bass boosted (audio modificato), non l'originale di BONES.",
         "songs/track-1012.mp3": "wrong-version: Il video fonte è etichettato [8D AUDIO]: audio spazializzato, non la versione originale.",
     }
-  }; [
+  };
+
+  const BUILTIN = [
   { title: "SOTTOGONNA", file: "songs/track-1.mp3", artist: "BLANCO", profile: "Ste" },
 
       { title: "QUANTO FORTE TI PENSAVO", file: "songs/track-2.mp3", artist: "Madame", profile: "Ste" },
@@ -1284,7 +1286,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.414";
+  const APP_VERSION = "6.415";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
