@@ -10,23 +10,21 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-512.png" />
   <title>spotifynonavraiimieisoldi</title>
-  <!-- Anteprima quando si manda il link (WhatsApp, Telegram, ...). -->
-  <meta name="description" content="Il tuo player musicale personale: libreria, playlist, testi karaoke e ascolto anche senza rete." />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="spotifynonavraiimieisoldi" />
-  <meta property="og:description" content="Il tuo player musicale personale: libreria, playlist, testi karaoke e ascolto anche senza rete." />
-  <meta property="og:image" content="https://stefanovillaggio8-dot.github.io/music-box/icon-512.png" />
-  <link rel="stylesheet" href="style.css?v=6478" />
-  <!-- Anche lo stile usa il sorgente comune; se non c'e' rete resta il CSS locale. -->
   <script>
+    /* Ste (30/10/2026): "premo e non parte" anche aprendo 192.168.1.40:8788/app
+       (senza la barra finale). In quel caso il browser crede di stare nella
+       cartella principale e cerca le canzoni in /songs/... invece che in
+       /app/songs/...: TUTTE le canzoni davano "non trovato". Qui rimetto la
+       barra e ricarico subito: cosi' qualunque indirizzo va bene. */
     (function () {
-      var link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/style.css?live=" + Date.now();
-      link.onerror = function () { try { link.remove(); } catch (e) {} };
-      document.head.appendChild(link);
+      try {
+        if (/\/app$/.test(location.pathname)) {
+          location.replace(location.origin + "/app/" + location.search + location.hash);
+        }
+      } catch (e) { }
     })();
   </script>
+  <link rel="stylesheet" href="style.css?v=6414" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -184,7 +182,123 @@
         setInterval(_controllaBrano, 700);
       })();
       </script>
-      <!-- Il fumo e la dissolvenza della copertina sono gestiti da fuoco.js: niente overlay duplicati sincronizzati col progresso. -->
+      <script>
+      (function () {
+        /* Ste: "non lo vedo comunque il fumo".
+           Il fumo dentro l'app sta in fuoco.js, che sul telefono resta in
+           cache: arriva solo dopo che l'app si aggiorna. Per non aspettare
+           lo metto anche qui, nella pagina (che arriva sempre dalla
+           rete): un velo di fumo sopra il disco del player e sopra lo
+           sfondo grande della schermata dei testi, che si accende
+           quando la copertina e' quasi bruciata. */
+        var STILE_FUMO =
+          /* niente overflow nascosto: il fumo deve poter salire FUORI dal
+             disco, altrimenti sul disco piccolo sembra fermo in basso */
+          ".mb-fumo-p{position:fixed;pointer-events:none;z-index:61;opacity:0;" +
+          "transition:opacity .5s ease}" +
+          ".mb-fumo-p.on{opacity:1}" +
+          ".mb-fumo-p i{position:absolute;bottom:-16%;width:30%;height:30%;border-radius:50%;" +
+          "background:radial-gradient(circle,rgba(205,203,212,.4) 0%,rgba(160,160,170,0) 68%);" +
+          "animation:mbSaleFumoP 3.6s linear infinite}" +
+          "@keyframes mbSaleFumoP{0%{transform:translateY(18%) scale(.45);opacity:0}" +
+          "14%{opacity:.95}70%{opacity:.55}100%{transform:translateY(-300%) scale(1.7);opacity:0}}" +
+          /* l'aria calda che esce dalla linea di bruciatura */
+          ".mb-fumo-p::after{content:'';position:absolute;left:-12%;right:-12%;bottom:-8%;height:38%;" +
+          "background:radial-gradient(ellipse at 50% 100%,rgba(200,198,206,.5) 0%,rgba(150,150,160,0) 72%);" +
+          "filter:blur(6px)}";
+        function _stile() {
+          if (document.getElementById("mb-stile-fumo")) return;
+          var st = document.createElement("style");
+          st.id = "mb-stile-fumo";
+          st.textContent = STILE_FUMO;
+          (document.head || document.documentElement).appendChild(st);
+        }
+        function _fumoSu(el) {
+          if (!el) return null;
+          /* lo cerco per ID: il velo sta nel body, quindi cercarlo dentro
+             il player non lo trovava mai e ne creavo uno nuovo a ogni
+             controllo (nove veli sovrapposti: il fumo era "troppo" e
+             restava anche quando cominciava un'altra canzone) */
+          var id = "mb-fumo-" + (el.id || "sconosciuto");
+          var v = document.getElementById(id);
+          if (v) return v;
+          v = document.createElement("div");
+          v.id = id;
+          v.className = "mb-fumo-p";
+          var h = "";
+          for (var i = 0; i < 5; i++) {
+            var sinistra = 8 + ((i * 23) % 84);
+            var durata = 3 + ((i * 7) % 5) * 0.45;
+            h += '<i style="left:' + sinistra + '%;animation-duration:' + durata.toFixed(2) +
+              's;animation-delay:-' + ((i * 0.83) % 4).toFixed(2) + 's"></i>';
+          }
+          v.innerHTML = h;
+          /* nel body, non dentro il player: dentro il player c'e' una
+             trasformazione (il disco gira) e li' il position:fixed vale
+             come "absolute": il velo finiva sotto lo schermo e il fumo
+             non si vedeva affatto (Ste: "il fumo non va verso l'alto") */
+          document.body.appendChild(v);
+          return v;
+        }
+        function _progresso() {
+          var barra = document.getElementById("playerProgress");
+          var fill = barra ? barra.querySelector(".fill") : null;
+          if (!fill || !barra || !barra.offsetWidth) return 0;
+          return Math.max(0, Math.min(1, fill.offsetWidth / barra.offsetWidth));
+        }
+        function _mettiFumo(velo, el, acceso) {
+          if (!velo || !el) return;
+          var r = el.getBoundingClientRect();
+          velo.style.left = r.left + "px";
+          velo.style.top = r.top + "px";
+          velo.style.width = r.width + "px";
+          velo.style.height = r.height + "px";
+          velo.style.borderRadius = getComputedStyle(el).borderRadius;
+          if (acceso) velo.classList.add("on");
+          else if (velo.classList.contains("on")) velo.classList.remove("on");
+        }
+        var _branoDelFumo = "";
+        /* Il disco gira e il fuoco pulsava con lui. Finche' l'app non si
+           aggiorna (e quindi non ha ancora il contro-giro), lo correggo
+           da qui. */
+        var _gira = null;
+        function _controGiro() {
+          if (window.__mbControGiro) return;   /* l'app gia' lo fa */
+          var dentro = document.querySelector("#playerArt .mb-dentro");
+          if (!dentro) { if (_gira) { try { _gira.cancel(); } catch (e) { } _gira = null; } return; }
+          if (_gira) return;
+          try {
+            _gira = dentro.animate(
+              [{ transform: "rotate(0deg)" }, { transform: "rotate(-360deg)" }],
+              { duration: 6000, iterations: Infinity, easing: "linear" }
+            );
+          } catch (e) { _gira = null; }
+        }
+        setInterval(_controGiro, 1000);
+
+        function _controllaFumo() {
+          _stile();
+          /* quando comincia una canzone nuova il fumo della precedente se
+             ne va subito: non deve restare li' */
+          var titolo = (document.getElementById("playerTitle") || {}).textContent || "";
+          if (titolo !== _branoDelFumo) {
+            _branoDelFumo = titolo;
+            var vecchi = document.querySelectorAll(".mb-fumo-p.on");
+            for (var q = 0; q < vecchi.length; q++) vecchi[q].classList.remove("on");
+          }
+          var prog = _progresso();
+          var acceso = prog > 0.5;
+          var disco = document.getElementById("playerArt");
+          _mettiFumo(_fumoSu(disco), disco, acceso);
+          var pannello = document.getElementById("lyricsPanel");
+          var sfondo = document.getElementById("lyricsSfondo");
+          if (pannello && !pannello.hidden && sfondo) {
+            _mettiFumo(_fumoSu(sfondo), sfondo, acceso);
+          }
+        }
+        setInterval(_controllaFumo, 1200);
+      })();
+      </script>
       <script>
       (function () {
         /* Ste: "il testo va in ritardo anche senza premere niente".
@@ -212,10 +326,7 @@
            regolo: basta cambiare _SPOSTAMENTO_TESTO. */
         /* Ste: "ancora il testo e' poco indietro rispetto alla voce":
            mezzo secondo non bastava, quindi ora ne metto uno. */
-        /* Non anticipare globalmente i testi: molte canzoni hanno intro
-           strumentali e spostare ogni riga di un secondo fa partire il testo
-           prima della voce. I timestamp originali restano quelli di LRCLIB. */
-        var _SPOSTAMENTO_TESTO = 0.0;
+        var _SPOSTAMENTO_TESTO = 1.0;
         function _spostaTesto() {
           var righe = document.querySelectorAll("#lyricsBody .lyr-line[data-t]");
           if (!righe.length) return;
@@ -425,12 +536,6 @@
            private perche' sono sue), poi sceglie la playlist e il computer
            scarica tutto da YouTube. -->
       <button class="menu-altro-voce" id="btnSpotify" type="button" onclick="window._spotifyApri()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.72 1.11.3.18.39.57.21.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.14-9.97-1.17a.78.78 0 0 1-.45-1.49c3.54-1.1 8.15-.57 11.24 1.33a.78.78 0 0 1-.96 1.61Z"/></svg><span class="voce-testo">Importa una playlist da Spotify</span></button>
-      <button class="menu-altro-voce" id="btnSpotifyJson" type="button" onclick="document.getElementById('spotifyJsonInput').click()">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-5 5a1 1 0 0 1-1.4 0l-5-5a1 1 0 1 1 1.4-1.4l3.3 3.3V4a1 1 0 0 1 1-1ZM5 19a1 1 0 0 1 1 1h12a1 1 0 0 1 2 0 2 2 0 0 1-2 2H6a2 2 0 0 1-2-2 1 1 0 0 1 1-1Z"/></svg>
-        <span class="voce-testo">Importa esportazione Spotify (senza Premium)</span>
-      </button>
-      <input id="spotifyJsonInput" type="file" accept=".csv,.json,text/csv,application/json" hidden onchange="window._spotifyImportaEsportazioneFile && window._spotifyImportaEsportazioneFile(this.files && this.files[0]); this.value='';">
-
     <!-- Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del
          '?' dove spieghi bene". Qui sotto spiego come si mettono le canzoni
          online, con il computer acceso e con il computer spento. -->
@@ -1021,72 +1126,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script>
-  /* Diagnostica di emergenza: rende visibile l'errore che altrimenti lascia
-     la schermata presente ma tutti i pulsanti inattivi. */
-  (function () {
-    function mostraErrore(msg) {
-      try {
-        var box = document.getElementById("mbErroreAvvio");
-        if (!box) {
-          box = document.createElement("div");
-          box.id = "mbErroreAvvio";
-          box.style.cssText = "position:fixed;z-index:2147483647;left:8px;right:8px;top:8px;background:#7f1d1d;color:white;padding:14px;border-radius:12px;font:14px/1.4 system-ui;white-space:pre-wrap;overflow-wrap:anywhere;max-height:45vh;overflow:auto";
-          document.body.appendChild(box);
-        }
-        box.textContent = "Music Box: errore di avvio. Inviami questo messaggio: " + msg;
-      } catch (e) {}
-    }
-    window.addEventListener("error", function (e) {
-      mostraErrore((e.message || "errore script") + (e.filename ? " | " + e.filename.split("/").pop() : "") + (e.lineno ? ":" + e.lineno : ""));
-    });
-    window.addEventListener("unhandledrejection", function (e) {
-      var r = e.reason;
-      mostraErrore("richiesta/avvio: " + (r && r.message ? r.message : String(r || "errore sconosciuto")));
-    });
-  })();
-</script>
-<script>
-  (function () {
-    var base = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/";
-    var stamp = Date.now();
-    window.__MB_APP_CODE_SOURCE = "pages";
-
-    function load(src) {
-      return new Promise(function (resolve) {
-        var script = document.createElement("script");
-        script.src = src;
-        script.onload = function () { resolve(true); };
-        script.onerror = function () {
-          try { script.remove(); } catch (e) {}
-          resolve(false);
-        };
-        document.body.appendChild(script);
-      });
-    }
-    function local(name) { return load(name + "?v=6485&t=" + stamp); }
-    function remote(name) { return load(base + name + "?live=" + stamp); }
-
-    /* Carico prima i file dello stesso sito: su iPhone il collegamento a
-       raw.githubusercontent.com puo' fallire o rimanere bloccato. Uso GitHub
-       Raw soltanto come ripiego, senza lasciare l'interfaccia senza codice. */
-    local("fuoco.js").then(function (fuocoOk) {
-      if (!fuocoOk) {
-        window.__MB_APP_CODE_SOURCE = "github";
-        return remote("fuoco.js").then(function () {
-          return remote("app.js");
-        });
-      }
-      return local("app.js").then(function (appOk) {
-        if (appOk) return true;
-        window.__MB_APP_CODE_SOURCE = "github";
-        return remote("app.js");
-      });
-    }).catch(function () {
-      window.__MB_APP_CODE_SOURCE = "github";
-      remote("fuoco.js").then(function () { return remote("app.js"); });
-    });
-  })();
-</script>
+<script src="fuoco.js?v=6414"></script>
+<script src="app.js?v=6414"></script>
 </body>
 </html>
