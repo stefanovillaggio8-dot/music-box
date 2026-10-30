@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793331040040,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793331041247,
   "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793332447123,
   "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793332455241,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
