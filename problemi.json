@@ -1,17 +1,5 @@
 [
  {
-  "t": 1793387970905,
-  "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1793387970904,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793392625345,
-  "r": "suono: originale b-track-901"
- },
- {
   "t": 1793392625327,
   "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1793392753435,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793392753431,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793392754654,
+  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392755857,
+  "r": "suono: originale b-track-929"
  }
 ]
