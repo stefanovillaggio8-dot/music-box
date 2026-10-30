@@ -1,17 +1,5 @@
 [
  {
-  "t": 1793399332551,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793399332747,
-  "r": "libreria: 620 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793399332731,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793399334133,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1793399396679,
   "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793399396877,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793399779409,
+  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793399779392,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
