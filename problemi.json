@@ -1,13 +1,5 @@
 [
  {
-  "t": 1793333663521,
-  "r": "libreria: 613 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793333663512,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793333663506,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1793387969692,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793392509267,
+  "r": "libreria: 619 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793392509246,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
