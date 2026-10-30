@@ -937,7 +937,7 @@
    },
    "frahquintale|8miliardidipersone": {
     "v": 0,
-    "s": 28,
+    "s": 31,
     "t": "8 miliardi di persone",
     "a": "Frah Quintale"
    },
@@ -1120,6 +1120,18 @@
     "s": 2,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
+   },
+   "luche|nessuna": {
+    "v": 0,
+    "s": 1,
+    "t": "Nessuna",
+    "a": "Luchè"
+   },
+   "fabriziodeandre|lacanzonedellamoreperduto": {
+    "v": 0,
+    "s": 47,
+    "t": "La Canzone Dell'Amore Perduto",
+    "a": "Fabrizio De André"
    }
   },
   "Diego": {
