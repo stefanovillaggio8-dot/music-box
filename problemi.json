@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793392521003,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793392521007,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  },
@@ -157,6 +153,10 @@
  },
  {
   "t": 1793392566044,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392572142,
   "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  }
 ]
