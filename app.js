@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.419";
+  const APP_VERSION = "6.420";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1735,6 +1735,7 @@ window.addEventListener("storage", (e) => {
 
   let lyricsData = {};
   let coversData = {};
+  let spotifyCoversData = {}; /* Copertine per ID Spotify univoco. */
   let localLyrics = {};
   let lyricLines = [];
   let lyricActive = -1;
@@ -3037,15 +3038,19 @@ function _devoVedereBrano(eMio, b) {
       if (titoloPulito && titoloPulito !== b.title) {
       _spostaStatistiche(b.title, b.artist || "", titoloPulito, b.artist || "");
       }
-      const info = coverInfo(b.artist, b.title);
+      const info = _copertinaDelBuiltin(b);
       const stabile = _idBranoStabile(b);
       const mia = copertineMie[stabile];
       return {
         id: stabile,
         title: titoloPulito || b.title,
         artist: b.artist || "",
-        album: (info && info.album ? info.album : "") || (mia && mia.album ? mia.album : ""),
-        cover: (info && info.cover ? info.cover : "") || (mia ? mia.cover : ""),
+        album: (mia && mia.album) || (info && info.album) || b.spotifyAlbum || "",
+        cover: (mia && mia.cover) || (info && info.cover) || "",
+        userCover: !!(mia && mia.cover),
+        spotifyId: b.spotifyId || "",
+        spotifyAlbum: b.spotifyAlbum || "",
+        spotifyDurationMs: b.spotifyDurationMs || null,
         url: _branoInGym(stabile)
           ? _doveStaIlBranoConBassi(b.file)
           : _doveStaIlBrano(b.file),
@@ -3303,7 +3308,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
           { totale: daCercare.length, fatte: sistemate, ora: nome });
         let presa = false;
         try {
-          const c = await findCoverLocal(t.artist, t.title);
+          const c = await findCoverLocal(t.artist, t.title, t.spotifyId);
           if (c && c.cover) {
             const ir = await fetch(c.cover);
             if (ir.ok) {
@@ -3350,7 +3355,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
           _ricercaCopertineTentate.add(t.id);
           tentativi++;
           try {
-            const c = await findCoverLocal(t.artist, t.title);
+            const c = await findCoverLocal(t.artist, t.title, t.spotifyId);
             if (!c || !String(c.cover || "").startsWith("https://")) continue;
             const target = tracks.find((x) => x.id === t.id && x.profile === t.profile);
             if (!target || target.cover) continue;
@@ -3459,20 +3464,40 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
     } catch (e) { return 0; }
   }
 
-  /* covers.json arriva dopo la libreria: applica le immagini trovate subito. */
+  /* Cerca la copertina per ID Spotify, non per testo simile. */
+  function _copertinaDelBuiltin(t) {
+    if (t && t.spotifyId) {
+      const exact = spotifyCoversData[t.spotifyId];
+      if (exact && /^https:\/\//.test(String(exact.cover || ""))) return exact;
+    }
+    return coverInfo(t.artist, t.title);
+  }
+  async function _caricaCopertineSpotify() {
+    try {
+      const r = await fetch("covers-spotify.json?v=" + APP_VERSION, { cache: "no-store" });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (!j || typeof j !== "object" || Array.isArray(j)) return;
+      spotifyCoversData = j;
+      _applicaCopertineAlCatalogo();
+    } catch (e) { /* Compatibile con le copie non ancora aggiornate. */ }
+  }
+  /* Un'immagine scelta dall'utente rimane prioritaria; gli ID Spotify
+     esatti sostituiscono solo le copertine trovate per approssimazione. */
   function _applicaCopertineAlCatalogo() {
-    let aggiornate = 0;
+    let n = 0;
     try {
       for (const t of tracks) {
-        if (!t || t.cover) continue;
-        const c = coverInfo(t.artist, t.title);
-        if (!c || !c.cover) continue;
+        if (!t || t.userCover) continue;
+        const sp = t.spotifyId ? spotifyCoversData[t.spotifyId] : null;
+        const c = sp && sp.cover ? sp : (!t.cover ? coverInfo(t.artist, t.title) : null);
+        if (!c || !c.cover || t.cover === c.cover) continue;
         t.cover = c.cover;
         if (!t.album) t.album = c.album || "";
-        aggiornate++;
+        n++;
       }
-      if (aggiornate) render();
-    } catch (e) { /* Una copertina non deve mai bloccare la libreria. */ }
+      if (n) render();
+    } catch (e) { /* Copertine opzionali. */ }
   }
 
   async function loadCovers() {
@@ -3491,6 +3516,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       if (!res.ok) throw new Error("HTTP " + res.status);
       coversData = await res.json();
       _applicaCopertineAlCatalogo();
+      await _caricaCopertineSpotify();
         try { _copertineRilette = JSON.stringify(coversData); } catch (e2) { /* noop */ }
         try {
           setTimeout(async function () {
@@ -3503,6 +3529,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
                 coversData = fresco;
                 _copertineRilette = nuovo2;
                 _applicaCopertineAlCatalogo();
+                await _caricaCopertineSpotify();
                 _segna("copertine aggiornate in secondo piano");
               }
             } catch (e3) { /* noop */ }
@@ -3514,6 +3541,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         if (res.ok) {
           coversData = await res.json();
           _applicaCopertineAlCatalogo();
+          await _caricaCopertineSpotify();
           try { _copertineRilette = JSON.stringify(coversData); } catch (e2) { /* noop */ }
           return;
         }
@@ -7266,7 +7294,25 @@ if (r.ok && j && j.ok) {
     return null;
   }
 
-  async function findCoverLocal(artist, title) {
+  async function findCoverLocal(artist, title, spotifyId) {
+    if (spotifyId && /^[A-Za-z0-9]{22}$/.test(spotifyId)) {
+      const stored = spotifyCoversData[spotifyId];
+      if (stored && stored.cover) return stored;
+      try {
+        const url = "https://open.spotify.com/oembed?url=" +
+          encodeURIComponent("https://open.spotify.com/track/" + spotifyId);
+        const r = await fetchConScadenza(url, 14000);
+        if (r.ok) {
+          const j = await r.json();
+          if (j && j.provider_name === "Spotify" &&
+              String(j.thumbnail_url || "").startsWith("https://")) {
+            const exact = { cover: j.thumbnail_url, title, artist, source: "Spotify oEmbed" };
+            spotifyCoversData[spotifyId] = exact;
+            return exact;
+          }
+        }
+      } catch (e) { /* Fallback all'archivio locale / iTunes. */ }
+    }
     /* Prima guardo covers.json: e' il posto dove le copertine sono gia'
        controllate e funzionanti (per esempio quelle prese da Deezer).
        Prima chiedevo solo a iTunes, e cosi' quei brani restavano senza
