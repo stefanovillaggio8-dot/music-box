@@ -80,8 +80,23 @@ async function main() {
   const songs = vm.runInNewContext("[" + app.slice(start + marker.length, end) + "]", {}, {timeout:5000});
   if (songs.length !== 1072) throw Error("Attesi 1072 brani, trovati " + songs.length);
   const known = JSON.parse(await fs.readFile("covers.json", "utf8"));
-  const miss = songs.filter(t => !t.spotifyId && t.artist && t.title && !t.cover &&
-    !known[norm(t.artist+" "+t.title)]);
+  /* A local image pathname is useful only when the file is published. */
+  async function hasWorkingLocalCover(t) {
+    if (!t.cover) return false;
+    if (/^https:\/\//i.test(t.cover)) return true;
+    try { await fs.access(t.cover); return true; }
+    catch (_) { return false; }
+  }
+  const miss = [];
+  for (const t of songs) {
+    if (t.spotifyId || !t.artist || !t.title) continue;
+    const key = norm(t.artist+" "+t.title);
+    const existing = known[key];
+    if (existing?.cover && correctTitle(t.title, existing.title) &&
+        correctArtist(t.artist, existing.artist)) continue;
+    if (await hasWorkingLocalCover(t)) continue;
+    miss.push(t);
+  }
   const unique = new Map(miss.map(t=>[norm(t.artist+" "+t.title),t]));
   let found=0,notFound=0;
   for(const [key,t] of unique) {
