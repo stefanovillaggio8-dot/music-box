@@ -20,9 +20,18 @@ const lyrics = json("lyrics.json");
 const karaoke = json("karaoke-index.json");
 if(!Array.isArray(songs) || songs.length!==version.brani) fail.push("Numero brani incoerente con versione.json");
 const seen = new Set(), counts = {},missingSpotify = [], brokenCoverPaths=[];
+const lyricCoverage = {}, spotifyArtCoverage = {};
 for(const t of songs){
   const p=t.profile||"Ste";
   counts[p]=(counts[p]||0)+1;
+  const lyricId = "b-" + String(t.file || "").replace(/^.*\//, "").replace(/\.mp3$/i, "");
+  const l = lyrics[lyricId];
+  const lc = lyricCoverage[p] ??= {withText:0, synchronized:0, missing:0};
+  if(l && typeof l === "object" && (l.text || l.synced)) {
+    lc.withText++;
+    if(l.synced && /^\s*\[\d{1,3}:\d{2}[.:]\d{1,3}\]/m.test(l.synced)) lc.synchronized++;
+  } else lc.missing++;
+  if(!spotifyArtCoverage[p])spotifyArtCoverage[p]={spotifyTotal:0,spotifyWithArt:0};
   if(!t.title||typeof t.title!=="string"||typeof t.file!=="string"||!t.file.endsWith(".mp3"))
     fail.push("Metadati brano invalidi: "+JSON.stringify(t).slice(0,200));
   const key=p+"|"+t.file;
@@ -30,6 +39,8 @@ for(const t of songs){
   seen.add(key);
   if(t.spotifyId){
     const meta=spotify[t.spotifyId];
+    spotifyArtCoverage[p].spotifyTotal++;
+    if(meta && /^https:\/\//.test(meta.cover||""))spotifyArtCoverage[p].spotifyWithArt++;
     if(!meta||!/^https:\/\//.test(meta.cover||""))missingSpotify.push(p+" "+t.title);
     else if(meta.title!==t.title||meta.artist!==t.artist)
       fail.push("Metadati copertina Spotify discordanti per "+t.spotifyId);
@@ -43,7 +54,8 @@ for(const [key,v] of Object.entries(karaoke)){
 }
 if(missingSpotify.length)fail.push("Copertine Spotify mancanti: "+missingSpotify.slice(0,10).join(", "));
 console.log(JSON.stringify({version:version.versione,total:songs.length,
-  profiles:counts,spotifyIDs:Object.keys(spotify).length,
+  profiles:counts,lyricsByProfile:lyricCoverage,spotifyCoverByProfile:spotifyArtCoverage,
+  spotifyIDs:Object.keys(spotify).length,
   genericCovers:Object.keys(generic).length,
   existingLyrics:Object.keys(lyrics).length,
   synchronizedLyrics:Object.values(lyrics).filter(x => x && typeof x==="object" && x.synced).length,
