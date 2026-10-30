@@ -6070,7 +6070,7 @@ box.innerHTML = "";
   /* Vero quando la libreria e' arrivata davvero (cosi' la schermata vuota
      non fa credere che non ci sia niente mentre sta caricando). */
   var _libreriaPronta = false;
-  function setHud() {
+  function _segnaRigaAttiva() {
     if (tracks && tracks.length) _libreriaPronta = true;
     const t = current();
     setArt($("playerArt"), t);
@@ -6136,7 +6136,7 @@ async function playById(id, autoplay = true) {
        _scaricaDaSolaSeServe. */
     try { _scaricaDaSolaSeServe(t); } catch (e) { /* noop */ }
     _applicaAudio();
-    setHud();
+    _segnaRigaAttiva();
     /* Se la pagina dei testi e' aperta, il play/pausa e' lo sfondo devono
        seguire il brano nuovo. */
     if (!$("lyricsPanel").hidden) { _aggiornaComandiTesti(); _aggiornaSfondoTesti(); }
@@ -6732,7 +6732,7 @@ if (!sceltaCopia) updateProfileButton();
       await loadLocalLyrics();
       await loadAll();
   /* niente: la finestra dei nascosti e' stata tolta */
-      setHud();
+      _segnaRigaAttiva();
       const last = st.last ? tracks.find((t) => t.id === st.last) : null;
       if (last) {
         currentId = last.id;
@@ -6744,7 +6744,7 @@ if (!sceltaCopia) updateProfileButton();
             try { audio.currentTime = Math.min(pos, Math.max(0, audio.duration - 1)); } catch (e) { /* noop */ }
           }
         }, { once: true });
-        setHud();
+        _segnaRigaAttiva();
       }
       updateMediaSession();
       updateProfileButton();
@@ -7198,7 +7198,7 @@ if (r.ok && j && j.ok) {
     try { audio.pause(); } catch (e) { /* noop */ }
     closeLyrics();
     currentId = null;
-    setHud();
+    _segnaRigaAttiva();
   }
   await _dimenticaBranoOvunque(id);
   /* anche dai preferiti, dai nascosti e dalle statistiche */
@@ -7341,7 +7341,7 @@ if (r.ok && j && j.ok) {
         }
       }
       await loadAll();
-      if (currentId === rec.id) setHud();
+      if (currentId === rec.id) _segnaRigaAttiva();
     } catch (e) {
       console.warn("Completamento automatico fallito", e);
     }
@@ -11242,6 +11242,7 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
 
 let _firmaLibreria = "";
 let _ultimoControllo = 0;
+let _ultimoControlloPesante = 0;  /* guardia: max 2 minuti tra controlli pesanti di nuove canzoni */
 
 /* Ste: "si continua ad aggiornare" senza sapere cosa. Questo me lo dice:
    ogni volta che la libreria viene davvero ricostruita, il numero della
@@ -11295,6 +11296,9 @@ async function checkForNewSongs() {
           }
         }
       } catch (e) { /* il file non c'e': vado col metodo vecchio */ }
+      const oraPesante = Date.now();
+      if (oraPesante - _ultimoControlloPesante < 120000) return;
+      _ultimoControlloPesante = oraPesante;
       const res = await fetch("app.js", { cache: "no-store" });
       if (!res.ok) return;
       const text = await res.text();
@@ -13016,11 +13020,18 @@ async function _mandaGymAlServizio() {
       for (const t of (p.tracks || [])) gym.push(String(t));
     }
     if (!gym.length) return;
-    const r = await fetch(SERVIZIO_PUBBLICA + "/gym", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ tracks: gym })
-    });
+    let r = null;
+    for (let tentativo = 1; tentativo <= 2; tentativo++) {
+      try {
+        const resp = await fetch(SERVIZIO_PUBBLICA + "/gym", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ tracks: gym })
+        });
+        r = resp;
+        break;
+      } catch (e) { /* rete incasinata: secondo tentativo */ }
+    }
     try {
       if (r && r.ok) segnalaErrore("gym: " + gym.length + " brani mandati al computer");
       else segnalaErrore("gym: il servizio non ha accettato la lista (" + (r ? r.status : "?") + ")");
@@ -14187,7 +14198,7 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
           (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :
             (quando ? ", ascoltata " + Math.round(passate / 60000) + " minuti fa" : "")));
         audio.src = _urlDelBrano(lastTrack);
-        setHud();
+        _segnaRigaAttiva();
         updateProgressUI(0, 0);
       }
 
