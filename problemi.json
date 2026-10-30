@@ -1,21 +1,5 @@
 [
  {
-  "t": 1793286480259,
-  "r": "FINALE: visibili 483 su 483 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1793286480802,
-  "r": "FINALE: visibili 483 su 483 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 192.168.1.40:8"
- },
- {
-  "t": 1793286488790,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793321951082,
-  "r": "SPOTIFY: [v6.412] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793321951075,
   "r": "visibili 0 su 0 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1793321984857,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793321984850,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793321984833,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793321987049,
+  "r": "visibili 489 su 489 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793321987052,
+  "r": "FINALE: visibili 489 su 489 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  }
 ]
