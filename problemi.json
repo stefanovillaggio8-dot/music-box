@@ -1,33 +1,5 @@
 [
  {
-  "t": 1793393645213,
-  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1793393653260,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793393653283,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393653280,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393654591,
-  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
- },
- {
-  "t": 1793393654590,
-  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
- },
- {
-  "t": 1793393654576,
-  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
   "t": 1793393659220,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +130,33 @@
  {
   "t": 1793395153340,
   "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1793395153455,
+  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793395154335,
+  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793395154830,
+  "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793395155353,
+  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1793395155628,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793395155624,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793395155644,
+  "r": "libreria: 620 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  }
 ]
