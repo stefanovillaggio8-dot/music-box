@@ -1286,7 +1286,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.416";
+  const APP_VERSION = "6.417";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2952,6 +2952,8 @@ function _devoVedereBrano(eMio, b) {
     return owner === profile && !!(RECOVERY_REVIEW[owner] && RECOVERY_REVIEW[owner][b.file]);
   }
 
+  /* Blob da IndexedDB hanno bisogno di un object URL per apparire come immagini. */
+  const _urlCopertineSalvate = new Map();
   async function loadAll() {
   _diag("loadAll");
   _memoCondiviso.clear();
@@ -2962,7 +2964,15 @@ function _devoVedereBrano(eMio, b) {
   try {
     const salvate = await dbAllCover();
     for (const c of salvate) {
-      if (c && c.id && c.cover) copertineMie[c.id] = c;
+      if (!c || !c.id || !c.cover) continue;
+      let cover = c.cover;
+      if (typeof Blob !== "undefined" && cover instanceof Blob) {
+        if (!_urlCopertineSalvate.has(c.id)) {
+          _urlCopertineSalvate.set(c.id, URL.createObjectURL(cover));
+        }
+        cover = _urlCopertineSalvate.get(c.id);
+      }
+      copertineMie[c.id] = { ...c, cover };
     }
   } catch (e) { /* noop */ }
 
@@ -3175,6 +3185,7 @@ function _devoVedereBrano(eMio, b) {
     /* un brano che avevo segnato come "non scaricato" e' comparso in
        libreria: non lo riprovo piu' e lo tolgo dalla lista */
 try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
+    try { _programmaRicercaCopertine(); } catch (e) { /* noop */ }
       try { _aggiornaBadgeFalliti(); } catch (e) { /* noop */ }
       /* Ste: "mi sono scomparse tutte le canzoni". Metto qui il numero vero
          dei brani caricati: se la libreria e' vuota lo vedo subito nel
@@ -3192,6 +3203,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       const res = await fetch("lyrics.json");
       if (!res.ok) throw new Error("HTTP " + res.status);
       lyricsData = await res.json();
+      try { updateLyricsButton(); } catch (e) { /* noop */ }
     } catch (e) {
       console.warn("Testi non disponibili", e);
       lyricsData = {};
@@ -3315,8 +3327,61 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
     }
   }
 
+  /* Scansione progressiva delle copertine mancanti, anche dei BUILTIN.
+     Ricerca selettiva tramite iTunes/covers.json con controllo titolo/artista;
+     risultati salvati su IndexedDB per questo dispositivo. */
+  let _ricercaCopertineAttiva = false;
+  let _ricercaCopertinePrevista = false;
+  const _ricercaCopertineTentate = new Set();
+  function _programmaRicercaCopertine() {
+    if (_ricercaCopertineAttiva || _ricercaCopertinePrevista || !db || document.hidden) return;
+    _ricercaCopertinePrevista = true;
+    setTimeout(async () => {
+      _ricercaCopertinePrevista = false;
+      if (_ricercaCopertineAttiva || _copertineInCorso || document.hidden) return;
+      _ricercaCopertineAttiva = true;
+      const profiloIniziale = profile;
+      let tentativi = 0, nuove = 0;
+      try {
+        for (const t of tracks.slice()) {
+          if (profile !== profiloIniziale || document.hidden || tentativi >= 12) break;
+          if (!t || t.cover || _ricercaCopertineTentate.has(t.id)) continue;
+          _ricercaCopertineTentate.add(t.id);
+          tentativi++;
+          try {
+            const c = await findCoverLocal(t.artist, t.title);
+            if (!c || !String(c.cover || "").startsWith("https://")) continue;
+            const target = tracks.find((x) => x.id === t.id && x.profile === t.profile);
+            if (!target || target.cover) continue;
+            target.cover = c.cover;
+            if (!target.album) target.album = c.album || "";
+            nuove++;
+            try {
+              await dbPutCover({ id: t.id, cover: c.cover,
+                album: c.album || "", title: t.title, artist: t.artist || "" });
+            } catch (e) { /* Mantiene la copertina della sessione. */ }
+          } catch (e) { /* Non associare immagini se la ricerca non riesce. */ }
+          await new Promise((r) => setTimeout(r, 1400));
+        }
+        if (nuove) render();
+      } finally {
+        _ricercaCopertineAttiva = false;
+      }
+      if (profile === profiloIniziale && !document.hidden &&
+          tracks.some((t) => !t.cover && !_ricercaCopertineTentate.has(t.id))) {
+        setTimeout(_programmaRicercaCopertine, 12000);
+      }
+    }, 5000);
+  }
+  try {
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _programmaRicercaCopertine();
+    });
+  } catch (e) { /* noop */ }
+
   function recuperaCopertineMancanti() {
     const senza = tracks.filter((t) => !t.cover);
+    _programmaRicercaCopertine();
     if (!senza.length) return;
     for (const t of senza) {
       if (!t.builtin) {
@@ -3393,6 +3458,22 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
     } catch (e) { return 0; }
   }
 
+  /* covers.json arriva dopo la libreria: applica le immagini trovate subito. */
+  function _applicaCopertineAlCatalogo() {
+    let aggiornate = 0;
+    try {
+      for (const t of tracks) {
+        if (!t || t.cover) continue;
+        const c = coverInfo(t.artist, t.title);
+        if (!c || !c.cover) continue;
+        t.cover = c.cover;
+        if (!t.album) t.album = c.album || "";
+        aggiornate++;
+      }
+      if (aggiornate) render();
+    } catch (e) { /* Una copertina non deve mai bloccare la libreria. */ }
+  }
+
   async function loadCovers() {
     try {
       /* Aggiungo il tempo alla richiesta: senza, il telefono può servire la
@@ -3408,6 +3489,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       const res = await fetch("covers.json");
       if (!res.ok) throw new Error("HTTP " + res.status);
       coversData = await res.json();
+      _applicaCopertineAlCatalogo();
         try { _copertineRilette = JSON.stringify(coversData); } catch (e2) { /* noop */ }
         try {
           setTimeout(async function () {
@@ -3419,7 +3501,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
               if (nuovo2 && nuovo2 !== _copertineRilette) {
                 coversData = fresco;
                 _copertineRilette = nuovo2;
-                try { render(); } catch (e3) { /* noop */ }
+                _applicaCopertineAlCatalogo();
                 _segna("copertine aggiornate in secondo piano");
               }
             } catch (e3) { /* noop */ }
@@ -3430,6 +3512,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         const res = await fetch("covers.json");
         if (res.ok) {
           coversData = await res.json();
+          _applicaCopertineAlCatalogo();
           try { _copertineRilette = JSON.stringify(coversData); } catch (e2) { /* noop */ }
           return;
         }
@@ -4586,14 +4669,7 @@ function _quantiEliminati() {
 
   /* Ste: "togli completamente sta cosa dei nascosti". */
   let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
-  /* Contatore dal catalogo Spotify reale, senza il vecchio +20
-     che produceva 640/620 e conteggiava due volte le occorrenze ripetute. */
-  if (profile === "Emanuele" && !favOnly && !soloMaiAscoltati && !soloScaricate && !query) {
-    const vociSpotify = BUILTIN.filter((b) => b.profile === "Emanuele").length;
-    const ancoraDaInserire = Math.max(0, 620 - vociSpotify);
-    label += " (" + vociSpotify + "/620 voci Spotify" +
-      (ancoraDaInserire ? ", " + ancoraDaInserire + " mancanti" : "") + ")";
-  }
+  /* Tutti i profili mostrano solo il numero reale dei brani presenti. */
     /* MB_CORREZIONE_UNICA_EMANUELE_20261030: separare file con fonte ERRATA dagli audio non ancora confermati. */
     const inRevisione = visibleAll.filter((t) => t.review).length;
     const notaRevisione = (t) => profile === "Emanuele" ? String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "") : "";
@@ -5973,6 +6049,34 @@ box.innerHTML = "";
     return null;
   }
 
+  /* Cerca i testi mancanti durante l'ascolto anche per i brani BUILTIN.
+     Convalida titolo/artista tramite findLyrics e salva in IndexedDB. */
+  const _testiInRicerca = new Set();
+  const _testiTentati = new Set();
+  async function _completaTestoInAscolto(t) {
+    if (!t || !t.id || !t.title || !t.artist) return;
+    if ((lyricsData[t.id] && lyricsData[t.id].text) ||
+        (localLyrics[t.id] && localLyrics[t.id].text)) return;
+    if (_testiInRicerca.has(t.id) || _testiTentati.has(t.id)) return;
+    _testiTentati.add(t.id);
+    _testiInRicerca.add(t.id);
+    try {
+      const risultato = await findLyrics(t.artist, t.title);
+      if (!risultato || !risultato.text || risultato.text.length < 120) return;
+      const entry = { id: t.id, title: t.title, artist: t.artist,
+        text: risultato.text, synced: risultato.synced || "", source: risultato.source || "" };
+      localLyrics[t.id] = entry;
+      try { if (db) await dbPutLyrics(entry); } catch (e) { /* noop */ }
+      if (currentId === t.id) {
+        updateLyricsButton();
+        const sub = $("hudSub");
+        if (sub) sub.textContent = "Testo disponibile";
+        if (!$("lyricsPanel").hidden) openLyrics();
+      }
+    } catch (e) { /* Testo non disponibile: non bloccare il player. */ }
+    finally { _testiInRicerca.delete(t.id); }
+  }
+
 async function playById(id, autoplay = true) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
@@ -5981,6 +6085,7 @@ async function playById(id, autoplay = true) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      setTimeout(() => { _completaTestoInAscolto(t).catch(() => {}); }, 1800);
       /* Ste: "quando cambia canzone si aggiorna in automatico il testo".
          Prima restavano i testi del brano precedente. */
       try {
