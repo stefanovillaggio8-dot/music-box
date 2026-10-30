@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - app.js
       - tools/fill-other-covers.cjs
       - .github/workflows/fill-other-covers.yml
 permissions:
