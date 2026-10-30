@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.418";
+  const APP_VERSION = "6.419";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4677,7 +4677,7 @@ function _quantiEliminati() {
     const audioErrati = visibleAll.filter((t) => t.review && notaRevisione(t).startsWith("wrong-source:")).length;
     const versioniNonOriginali = visibleAll.filter((t) => t.review && notaRevisione(t).startsWith("wrong-version:")).length;
     if (audioErrati) label += ", " + audioErrati + " audio errati";
-    if (versioniNonOriginali) label += ", " + versioniNonOriginali + " versioni non originali";
+    /* Le versioni non originali restano segnalate sui rispettivi brani, non nel contatore. */
     if (inRevisione - audioErrati - versioniNonOriginali > 0) label += ", " + (inRevisione - audioErrati - versioniNonOriginali) + " da verificare (audio non confermato)";
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
     if (favOnly || soloMaiAscoltati || soloScaricate || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
