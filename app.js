@@ -3390,32 +3390,56 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       const profiloIniziale = profile;
       let tentativi = 0, nuove = 0;
       try {
-        for (const t of tracks.slice()) {
+        /* Tutti i profili: recupera anche i brani BUILTIN non visibili
+           nell'account corrente. I risultati rimangono legati all'ID del brano. */
+        const salvate = new Set();
+        try {
+          for (const x of await dbAllCover()) if (x && x.id && x.cover) salvate.add(x.id);
+        } catch (e) { /* Una cache non accessibile non blocca la ricerca. */ }
+        const catalogo = new Map();
+        for (const b of BUILTIN) {
+          if (!b || !b.file) continue;
+          const id = _idBranoStabile(b);
+          catalogo.set(id, {
+            id, title: stripArtistPrefix(b.artist, b.title),
+            artist: b.artist || "", profile: b.profile || DEFAULT_PROFILE,
+            spotifyId: b.spotifyId || "", builtin: true
+          });
+        }
+        for (const t of tracks) if (t && t.id) catalogo.set(t.id, t);
+        const daCercare = Array.from(catalogo.values()).sort((a, b) =>
+          Number(b.profile === profiloIniziale) - Number(a.profile === profiloIniziale));
+        for (const t of daCercare) {
           if (profile !== profiloIniziale || document.hidden || tentativi >= 12) break;
-          if (!t || t.cover || _ricercaCopertineTentate.has(t.id)) continue;
+          if (!t || !t.id || !t.artist || !t.title || t.cover ||
+              salvate.has(t.id) || _ricercaCopertineTentate.has(t.id)) continue;
+          const esistente = coverInfo(t.artist, t.title);
+          if (esistente && esistente.cover) continue;
           _ricercaCopertineTentate.add(t.id);
           tentativi++;
           try {
             const c = await findCoverLocal(t.artist, t.title, t.spotifyId);
             if (!c || !String(c.cover || "").startsWith("https://")) continue;
             const target = tracks.find((x) => x.id === t.id && x.profile === t.profile);
-            if (!target || target.cover) continue;
-            target.cover = c.cover;
-            if (!target.album) target.album = c.album || "";
-            nuove++;
-            try {
-              await dbPutCover({ id: t.id, cover: c.cover,
-                album: c.album || "", title: t.title, artist: t.artist || "" });
-            } catch (e) { /* Mantiene la copertina della sessione. */ }
+            if (target && !target.cover) {
+              target.cover = c.cover;
+              if (!target.album) target.album = c.album || "";
+              nuove++;
+            }
+            await dbPutCover({ id: t.id, cover: c.cover,
+              album: c.album || "", title: t.title, artist: t.artist || "" });
+            salvate.add(t.id);
           } catch (e) { /* Non associare immagini se la ricerca non riesce. */ }
           await new Promise((r) => setTimeout(r, 1400));
         }
         if (nuove) render();
+        /* Le copertine non visibili si caricheranno dal DB quando si apre il profilo. */
       } finally {
         _ricercaCopertineAttiva = false;
       }
       if (profile === profiloIniziale && !document.hidden &&
-          tracks.some((t) => !t.cover && !_ricercaCopertineTentate.has(t.id))) {
+          (BUILTIN.some(b => b && b.file && !_ricercaCopertineTentate.has(_idBranoStabile(b))) ||
+           tracks.some(t => t && !t.cover && !_ricercaCopertineTentate.has(t.id)))) {
         setTimeout(_programmaRicercaCopertine, 12000);
       }
     }, 5000);
