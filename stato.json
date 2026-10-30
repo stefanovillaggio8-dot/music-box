@@ -1125,13 +1125,13 @@
     "v": 0,
     "s": 1,
     "t": "Nessuna",
-    "a": "LuchÃÂÃÂ¨"
+    "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "fabriziodeandre|lacanzonedellamoreperduto": {
     "v": 0,
     "s": 163,
     "t": "La Canzone Dell'Amore Perduto",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "nayt|forte": {
     "v": 0,
@@ -2650,10 +2650,16 @@
     "a": "18K, 4997, Kid Yugi"
    },
    "[\"perdonami (feat. neima ezza)\",\"2nd roof, neima ezza, tothemoon\"]": {
-    "v": 0,
+    "v": 1,
     "s": 4,
     "t": "Perdonami (feat. Neima Ezza)",
     "a": "2nd Roof, Neima Ezza, ToTheMoon"
+   },
+   "[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
    }
   }
  }
