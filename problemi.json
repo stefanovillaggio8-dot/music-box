@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793333426912,
-  "r": "suono: originale b-track-135"
- },
- {
   "t": 1793333656294,
   "r": "SPOTIFY: [v6.413] ricarico: il worker del servizio e' cambiato"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793333778811,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793387963868,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
