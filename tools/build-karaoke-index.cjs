@@ -33,19 +33,24 @@ function sameArtist(want, got){
   const a=normalize(mainArtist(want)),b=normalize(mainArtist(got));
   return !!a&&!!b&&(a===b||b.startsWith(a+" ")||a.startsWith(b+" "));
 }
-const fetchJSON=async(url)=>{
-  for(let i=0;i<3;i++){
+
+/* Stop on rate limits, never sleep for hours or mark a throttled track as missing. */
+async function fetchJSON(url) {
+  for (let attempt=0;attempt<2;attempt++) {
     try {
-      const r=await fetch(url,{headers:{"User-Agent":"MusicBox-karaoke-index/1.0 (github.com/stefanovillaggio8-dot/music-box)"},
-        signal:AbortSignal.timeout(14000)});
-      if(r.status===429||r.status===503){await sleep(Math.min(15000,3000*(i+1)));continue;}
-      if(!r.ok) return [];
+      const r=await fetch(url,{
+        headers:{"User-Agent":"MusicBox-karaoke-index/2.0 (github.com/stefanovillaggio8-dot/music-box)"},
+        signal:AbortSignal.timeout(8000)
+      });
+      if (r.status===429 || r.status===503) return {blocked:true,items:[]};
+      if (!r.ok) return {blocked:false,items:[]};
       const j=await r.json();
-      return Array.isArray(j)?j:[j];
-    }catch(e){if(i<2)await sleep((i+1)*900);}
+      return {blocked:false,items:Array.isArray(j)?j:[j]};
+    } catch(e) { if(attempt===0)await sleep(650); }
   }
-  return [];
-};
+  return {blocked:true,items:[]};
+}
+
 async function main(){
   const app=await fs.readFile("app.js","utf8"),p="const BUILTIN = [";
   const start=app.indexOf(p),end=app.indexOf("];",start);
@@ -57,26 +62,37 @@ async function main(){
   let index={};
   try{index=JSON.parse(await fs.readFile(indexFile,"utf8"));}
   catch(e){if(e.code!=="ENOENT")throw e;}
-  const playlist=catalog.map(t=>({
-    ...t,
-    stableId:"b-"+String(t.file).replace(/^.*\//,"").replace(/\.mp3$/i,"")
+
+  /* A bounded, resumable scan: a GitHub job never needs to process
+     every song in a single execution. Remember verified misses separately. */
+  const stateFile="karaoke-scan-state.json";
+  let checked={};
+  try { checked=JSON.parse(await fs.readFile(stateFile,"utf8")); }
+  catch(e) { if(e.code!=="ENOENT")throw e; }
+  const list=catalog.map(t=>({
+    ...t,stableId:"b-"+String(t.file).replace(/^.*\//,"").replace(/\.mp3$/i,"")
   })).sort((a,b)=>Number(b.profile==="Emanuele")-Number(a.profile==="Emanuele"));
-  let attempted=0,found=0,missed=0,already=0,existing=0;
-  const max=Number(process.env.MAX_KARAOKE_LOOKUP||1050);
-  for(const t of playlist){
-    if(attempted>=max)break;
+  const started=Date.now(), limit=Math.max(1,Math.min(100,Number(process.env.MAX_KARAOKE_LOOKUP)||80));
+  const maxRuntime=7*60*1000;
+  const staleMs=6*24*60*60*1000;
+  let attempted=0,found=0,missed=0,already=0,existing=0,throttled=false;
+  for(const t of list) {
+    if(attempted>=limit || Date.now()-started>maxRuntime)break;
     const id=t.stableId;
     if(known[id]?.synced){existing++;continue;}
     if(index[id]?.lrclibId){already++;continue;}
-    if(!t.title||!t.artist)continue;
-    attempted++;
+    if(!t.title || !t.artist)continue;
+    if(checked[id] && Date.now()-Date.parse(checked[id])<staleMs)continue;
     const title=cleanTitle(t.title), artist=mainArtist(t.artist);
     const search="https://lrclib.net/api/search?track_name="+encodeURIComponent(title)+
       "&artist_name="+encodeURIComponent(artist);
-    let candidates=await fetchJSON(search);
+    let response=await fetchJSON(search);
+    if(response.blocked){throttled=true;break;}
+    let candidates=response.items;
     if(!candidates.length){
-      const q="https://lrclib.net/api/search?q="+encodeURIComponent(title+" "+artist);
-      candidates=await fetchJSON(q);
+      response=await fetchJSON("https://lrclib.net/api/search?q="+encodeURIComponent(title+" "+artist));
+      if(response.blocked){throttled=true;break;}
+      candidates=response.items;
     }
     const duration=Number(t.spotifyDurationMs||0)/1000;
     const selected=candidates.filter(r=>{
@@ -92,15 +108,21 @@ async function main(){
       if(exactA!==exactB)return exactB-exactA;
       return Math.abs((a.duration||0)-duration)-Math.abs((b.duration||0)-duration);
     })[0];
-    if(selected){
+    attempted++;
+    checked[id]=new Date().toISOString();
+    if(selected) {
       index[id]={lrclibId:selected.id,synced:true,duration:selected.duration||null,
         source:"LRCLIB",indexedAt:new Date().toISOString().slice(0,10)};
+      delete checked[id];
       found++;
     } else missed++;
-    if(attempted%40===0)console.log(JSON.stringify({attempted,found,missed,already,existing}));
-    await sleep(360);
+    if(attempted%10===0)console.log(JSON.stringify({attempted,found,missed,throttled}));
+    await sleep(400);
   }
   await fs.writeFile(indexFile,JSON.stringify(Object.fromEntries(Object.entries(index).sort()),null,2)+"\n");
-  console.log(JSON.stringify({total:catalog.length,attempted,found,missed,already,existing,indexed:Object.keys(index).length},null,2));
+  await fs.writeFile(stateFile,JSON.stringify(Object.fromEntries(Object.entries(checked).sort()),null,2)+"\n");
+  console.log(JSON.stringify({total:catalog.length,attempted,found,missed,already,existing,throttled,
+    indexed:Object.keys(index).length,checked:Object.keys(checked).length},null,2));
+
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});
