@@ -1154,6 +1154,7 @@
     { title: "Italiana", file: "songs/track-1141.mp3", artist: "J-AX, Fedez", profile: "Emanuele", spotifyId: "0ptaq4BSl6jrXfGyLzJjYE", spotifyAlbum: "Italiana", spotifyDurationMs: 174000 },
     { title: "Cupido (feat. Quavo)", file: "songs/track-1031.mp3", artist: "Sfera Ebbasta, Quavo", profile: "Emanuele", spotifyId: "0dLToDou8YHYJpQltj3Ijy", spotifyAlbum: "Rockstar", spotifyDurationMs: 210000 },
     { title: "Sciroppo (feat. DrefGold)", file: "songs/track-1032.mp3", artist: "Sfera Ebbasta, DrefGold", profile: "Emanuele", spotifyId: "4VVG3HBGaqSNZqIpmewIA6", spotifyAlbum: "Rockstar", spotifyDurationMs: 205000 },
+    { title: "Stratos", file: "songs/track-1187.mp3", artist: "Kid Yugi", profile: "Emanuele" },
 ];
 
   const PALETTE = [
@@ -1286,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.417";
+  const APP_VERSION = "6.418";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
