@@ -1,6 +1,8 @@
 name: Indicizza karaoke disponibili (solo ID)
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '23 */3 * * *'
   push:
     branches: [main]
     paths:
@@ -10,41 +12,52 @@ permissions:
   contents: write
 concurrency:
   group: musicbox-karaoke-metadata
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   index:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Cerca testi LRC e salva solo gli ID (non i testi)
+      - name: Cerca karaoke con limiti e checkpoint
         env:
-          MAX_KARAOKE_LOOKUP: "1050"
+          MAX_KARAOKE_LOOKUP: "80"
         run: node tools/build-karaoke-index.cjs
-      - name: Pubblica indice metadati senza perdere modifiche concorrenti
+      - name: Pubblica solo metadati LRCLIB e checkpoint, unendo i commit nuovi
+        shell: bash
         run: |
-          # Un'altra pubblicazione può avvenire mentre la scansione è in corso.
-          # Conserva il nuovo indice, riparti dal main più recente e unisci.
-          cp karaoke-index.json "$RUNNER_TEMP/musicbox-karaoke-new.json"
-          git fetch origin main
-          git reset --hard origin/main
-          node - <<'NODE'
-          const fs = require('fs');
-          let published = {};
-          try { published = JSON.parse(fs.readFileSync('karaoke-index.json','utf8')); } catch (_) {}
-          const found = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+'/musicbox-karaoke-new.json','utf8'));
-          const merged = {...published, ...found};
-          fs.writeFileSync('karaoke-index.json',JSON.stringify(Object.fromEntries(Object.entries(merged).sort()),null,2)+'\n');
-          console.log('Karaoke ID pubblicabili:',Object.keys(merged).length);
+          cp karaoke-index.json "$RUNNER_TEMP/karaoke-index-new.json"
+          cp karaoke-scan-state.json "$RUNNER_TEMP/karaoke-state-new.json"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            node - <<'NODE'
+          const fs = require("node:fs");
+          const paths = [
+            ["karaoke-index.json","karaoke-index-new.json"],
+            ["karaoke-scan-state.json","karaoke-state-new.json"]
+          ];
+          for (const [dest,source] of paths) {
+            let current = {};
+            try { current=JSON.parse(fs.readFileSync(dest,"utf8")); } catch (_) {}
+            const incoming=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/"+source,"utf8"));
+            const merged={...current,...incoming};
+            fs.writeFileSync(dest,JSON.stringify(Object.fromEntries(Object.entries(merged).sort()),null,2)+"\n");
+          }
           NODE
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add karaoke-index.json
-          if git diff --staged --quiet; then
-            echo "Nessun nuovo ID LRCLIB"; exit 0
-          fi
-          git commit -m "Indicizza testi karaoke tramite ID LRCLIB"
-          git push origin HEAD:main || { git pull --rebase origin main && git push origin HEAD:main; }
+            git add karaoke-index.json karaoke-scan-state.json
+            if git diff --staged --quiet; then
+              echo "Indice aggiornato, nessun cambiamento da pubblicare"
+              exit 0
+            fi
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                commit -m "Aggiorna indice karaoke verificato e stato scansione"
+            if git push origin HEAD:main; then exit 0; fi
+            echo "Nuovo commit concorrente: riprovo su main aggiornato"
+          done
+          echo "Impossibile pubblicare dopo 3 tentativi"
+          exit 1
