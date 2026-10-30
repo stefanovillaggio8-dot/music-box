@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793393605273,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793393605334,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393605316,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393606487,
-  "r": "FINALE: visibili 224 su 251 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1793393606487,
-  "r": "visibili 224 su 251 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793393606518,
-  "r": "FINALE: visibili 224 su 251 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1793393609688,
-  "r": "suono: originale b-track-309"
- },
- {
-  "t": 1793393623877,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
   "t": 1793393628091,
   "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1793393641978,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793393642378,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1793393642846,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793393642849,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793393643989,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793393644032,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793393644057,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1793393644067,
+  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
+ },
+ {
+  "t": 1793393644124,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
