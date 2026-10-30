@@ -1,17 +1,5 @@
 [
  {
-  "t": 1793392735266,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793392735658,
-  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793392735739,
-  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793392735862,
   "r": "SPOTIFY: [v6.413] il server aveva il permesso: lo prendo"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1793392766758,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793392767971,
+  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392767969,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392782175,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  }
 ]
