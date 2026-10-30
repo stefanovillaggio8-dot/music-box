@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793329285612,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793329285590,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793329684112,
   "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793329686618,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
