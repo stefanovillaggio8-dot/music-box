@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793387966237,
-  "r": "visibili 609 su 609 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793387966327,
-  "r": "libreria: 613 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793387966319,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793387966316,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793387966845,
-  "r": "SPOTIFY: [v6.414] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793387967604,
-  "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1793387969692,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793387969716,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793387970905,
   "r": "FINALE: visibili 609 su 609 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -157,6 +125,38 @@
  },
  {
   "t": 1793392750876,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793392751326,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392751444,
+  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793392752014,
+  "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793392752344,
+  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793392752915,
+  "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793392753320,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793392753421,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793392753435,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  }
 ]
