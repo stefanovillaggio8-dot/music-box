@@ -3830,5 +3830,29 @@
     "album": "Anche gli Eroi Muoiono Post Mortem",
     "source": "Deezer catalogo, titolo/artista verificati",
     "date": "2026-10-30"
+  },
+  "22simbadimmichisei": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/08525b90b968ce4bd53f046114f20144/500x500-000000-80-0-0.jpg",
+    "title": "Dimmi Chi Sei",
+    "artist": "22simba",
+    "album": "Falene",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-10-30"
+  },
+  "22simbaneviaultimobanco": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/08525b90b968ce4bd53f046114f20144/500x500-000000-80-0-0.jpg",
+    "title": "Ultimo Banco",
+    "artist": "22simba, Nevia",
+    "album": "Falene",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-10-30"
+  },
+  "22simbaneviafalene": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/08525b90b968ce4bd53f046114f20144/500x500-000000-80-0-0.jpg",
+    "title": "Falene",
+    "artist": "22simba, Nevia",
+    "album": "Falene",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-10-30"
   }
 }
