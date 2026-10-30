@@ -1,21 +1,5 @@
 [
  {
-  "t": 1793393479596,
-  "r": "FINALE: visibili 224 su 251 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
-  "t": 1793393481217,
-  "r": "visibili 224 su 251 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793393481706,
-  "r": "libreria: 254 brani, scartati 818 per eliminazione, profilo Ste, chiavi eliminate 16"
- },
- {
-  "t": 1793393481696,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793393481694,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1793393522026,
   "r": "libreria: 210 brani, scartati 862 per eliminazione, profilo Diego, chiavi eliminate 16"
+ },
+ {
+  "t": 1793393522089,
+  "r": "visibili 210 su 210 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793393527252,
+  "r": "libreria: 254 brani, scartati 818 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1793393527318,
+  "r": "visibili 224 su 251 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793393536045,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  }
 ]
