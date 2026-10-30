@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.423";
+  const APP_VERSION = "6.424";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6098,7 +6098,20 @@ box.innerHTML = "";
   /* Recupero graduale mentre la pagina e' aperta: testi sincronizzati
      prioritari, senza sovrascrivere i testi gia' funzionanti. */
   const _testiInRicerca = new Set();
-  const _testiTentati = new Set();
+  /* Ricorda la differenza fra ricerca SOLO karaoke e ricerca completa.
+     Una ricerca karaoke senza esito non deve impedire il testo normale
+     quando si apre il brano. Le ricerche fallite sono ripetibili dopo 1h. */
+  const _testiTentati = new Map();
+  function _ricercaTestoRecente(id, syncedOnly) {
+    const v = _testiTentati.get(id);
+    if (!v) return false;
+    if (!syncedOnly && v.syncedOnly) return false;
+    return Date.now() - v.at < (v.found ? 86400000 : 3600000);
+  }
+  function _registraTentativoTesto(id, syncedOnly, found) {
+    _testiTentati.set(id, { syncedOnly: !!syncedOnly,
+      at: Date.now(), found: !!found });
+  }
   let _testiPrefetchAttivo = false;
   let _testiPrefetchPrevisto = false;
 
@@ -6107,7 +6120,7 @@ box.innerHTML = "";
     const preesistente = localLyrics[t.id] || lyricsData[t.id] || null;
     if (preesistente && preesistente.synced &&
         parseSynced(preesistente.synced).length >= 3) return;
-    if (_testiInRicerca.has(t.id) || _testiTentati.has(t.id)) return;
+    if (_testiInRicerca.has(t.id) || _ricercaTestoRecente(t.id, syncedOnly)) return;
     if (Date.now() < _lrclibNonPrimaDi && syncedOnly) return;
     _testiInRicerca.add(t.id);
     try {
@@ -6116,13 +6129,13 @@ box.innerHTML = "";
         durationMs: t.spotifyDurationMs || 0
       });
       if (!risultato || !risultato.text) {
-        if (Date.now() >= _lrclibNonPrimaDi) _testiTentati.add(t.id);
+        if (Date.now() >= _lrclibNonPrimaDi) _registraTentativoTesto(t.id, syncedOnly, false);
         return;
       }
       const tieneUnTesto = preesistente && preesistente.text;
       const conTempi = risultato.synced && parseSynced(risultato.synced).length >= 3;
       if (!conTempi && tieneUnTesto) {
-        _testiTentati.add(t.id);
+        _registraTentativoTesto(t.id, syncedOnly, true);
         return;
       }
       const entry = {
@@ -6131,7 +6144,7 @@ box.innerHTML = "";
         source: risultato.source || ""
       };
       localLyrics[t.id] = entry;
-      _testiTentati.add(t.id);
+      _registraTentativoTesto(t.id, syncedOnly, true);
       try { if (db) await dbPutLyrics(entry); } catch (e) { /* Conservato almeno nella sessione. */ }
       if (currentId === t.id) {
         updateLyricsButton();
@@ -6167,10 +6180,11 @@ box.innerHTML = "";
           spotifyAlbum: b.spotifyAlbum || "",
           spotifyDurationMs: b.spotifyDurationMs || 0,
           profile: b.profile || DEFAULT_PROFILE
-        })).concat(tracks.filter((t) => !t.builtin));
+        })).concat(tracks.filter((t) => !t.builtin))
+          .sort((a, b) => Number(b.profile === profiloIniziale) - Number(a.profile === profiloIniziale));
         for (const t of elencoDaCompletare) {
           if (profile !== profiloIniziale || document.hidden || scansioni >= 8) break;
-          if (!t || !t.id || !t.artist || _testiTentati.has(t.id) || _testiInRicerca.has(t.id)) continue;
+          if (!t || !t.id || !t.artist || _ricercaTestoRecente(t.id, true) || _testiInRicerca.has(t.id)) continue;
           const attuale = localLyrics[t.id] || lyricsData[t.id];
           if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) continue;
           if (Date.now() < _lrclibNonPrimaDi) break;
@@ -6180,7 +6194,7 @@ box.innerHTML = "";
         }
       } finally { _testiPrefetchAttivo = false; }
       if (profile === profiloIniziale && !document.hidden &&
-          elencoDaCompletare.some(t => t && t.artist && !_testiTentati.has(t.id) &&
+          elencoDaCompletare.some(t => t && t.artist && !_ricercaTestoRecente(t.id, true) &&
             !(localLyrics[t.id] && localLyrics[t.id].synced) &&
             !(lyricsData[t.id] && lyricsData[t.id].synced))) {
         setTimeout(_programmaTestiKaraoke, 12000);
