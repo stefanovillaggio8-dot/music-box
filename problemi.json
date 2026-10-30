@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793393628091,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793393628115,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793393628580,
-  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793393628616,
-  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793393628741,
-  "r": "SPOTIFY: [v6.413] il worker aveva il permesso pronto: lo prendo"
- },
- {
-  "t": 1793393629516,
-  "r": "SPOTIFY: [v6.413] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793393629535,
   "r": "SPOTIFY: [v6.413] Spotify ha risposto 401: Missing/invalid/expired access token"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1793393644124,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793393645202,
+  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793393645245,
+  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793393645213,
+  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793393653260,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793393653283,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793393653280,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
