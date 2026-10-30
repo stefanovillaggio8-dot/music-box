@@ -277,7 +277,7 @@
    },
    "oasis|wonderwall": {
     "v": 1,
-    "s": 93,
+    "s": 222,
     "t": "Wonderwall",
     "a": "Oasis"
    },
@@ -1125,19 +1125,25 @@
     "v": 0,
     "s": 1,
     "t": "Nessuna",
-    "a": "LuchÃÂ¨"
+    "a": "LuchÃÂÃÂ¨"
    },
    "fabriziodeandre|lacanzonedellamoreperduto": {
     "v": 0,
     "s": 163,
     "t": "La Canzone Dell'Amore Perduto",
-    "a": "Fabrizio De AndrÃÂ©"
+    "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "nayt|forte": {
     "v": 0,
     "s": 162,
     "t": "Forte",
     "a": "nayt"
+   },
+   "kidyugi|davideegolia": {
+    "v": 0,
+    "s": 5,
+    "t": "Davide e Golia",
+    "a": "Kid Yugi"
    }
   },
   "Diego": {
