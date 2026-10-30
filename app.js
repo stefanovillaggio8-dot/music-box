@@ -3388,7 +3388,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       if (_ricercaCopertineAttiva || _copertineInCorso || document.hidden) return;
       _ricercaCopertineAttiva = true;
       const profiloIniziale = profile;
-      let tentativi = 0, nuove = 0;
+      let tentativi = 0, nuove = 0, restanti = 0;
       try {
         /* Tutti i profili: recupera anche i brani BUILTIN non visibili
            nell'account corrente. I risultati rimangono legati all'ID del brano. */
@@ -3433,13 +3433,14 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
           await new Promise((r) => setTimeout(r, 1400));
         }
         if (nuove) render();
+        restanti = daCercare.filter(t => t && t.id && t.artist && t.title &&
+          !t.cover && !salvate.has(t.id) && !_ricercaCopertineTentate.has(t.id) &&
+          !(coverInfo(t.artist, t.title) || {}).cover).length;
         /* Le copertine non visibili si caricheranno dal DB quando si apre il profilo. */
       } finally {
         _ricercaCopertineAttiva = false;
       }
-      if (profile === profiloIniziale && !document.hidden &&
-          (BUILTIN.some(b => b && b.file && !_ricercaCopertineTentate.has(_idBranoStabile(b))) ||
-           tracks.some(t => t && !t.cover && !_ricercaCopertineTentate.has(t.id)))) {
+      if (profile === profiloIniziale && !document.hidden && restanti > 0) {
         setTimeout(_programmaRicercaCopertine, 12000);
       }
     }, 5000);
