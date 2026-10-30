@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.421";
+  const APP_VERSION = "6.422";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3046,7 +3046,7 @@ function _devoVedereBrano(eMio, b) {
         title: titoloPulito || b.title,
         artist: b.artist || "",
         album: (mia && mia.album) || (info && info.album) || b.spotifyAlbum || "",
-        cover: (mia && mia.cover) || (info && info.cover) || "",
+        cover: (mia && mia.cover) || (info && info.cover) || b.cover || "",
         userCover: !!(mia && mia.cover),
         spotifyId: b.spotifyId || "",
         spotifyAlbum: b.spotifyAlbum || "",
@@ -6146,7 +6146,18 @@ box.innerHTML = "";
       const profiloIniziale = profile;
       let scansioni = 0;
       try {
-        for (const t of tracks.slice()) {
+        /* Il catalogo completo comprende anche i profili non aperti.
+           I risultati si salvano per ID, senza spostare brani fra account. */
+        const elencoDaCompletare = BUILTIN.map((b) => ({
+          id: _idBranoStabile(b),
+          title: stripArtistPrefix(b.artist, b.title),
+          artist: b.artist || "",
+          album: b.spotifyAlbum || "",
+          spotifyAlbum: b.spotifyAlbum || "",
+          spotifyDurationMs: b.spotifyDurationMs || 0,
+          profile: b.profile || DEFAULT_PROFILE
+        })).concat(tracks.filter((t) => !t.builtin));
+        for (const t of elencoDaCompletare) {
           if (profile !== profiloIniziale || document.hidden || scansioni >= 8) break;
           if (!t || !t.id || !t.artist || _testiTentati.has(t.id) || _testiInRicerca.has(t.id)) continue;
           const attuale = localLyrics[t.id] || lyricsData[t.id];
@@ -6158,7 +6169,7 @@ box.innerHTML = "";
         }
       } finally { _testiPrefetchAttivo = false; }
       if (profile === profiloIniziale && !document.hidden &&
-          tracks.some(t => t && t.artist && !_testiTentati.has(t.id) &&
+          elencoDaCompletare.some(t => t && t.artist && !_testiTentati.has(t.id) &&
             !(localLyrics[t.id] && localLyrics[t.id].synced) &&
             !(lyricsData[t.id] && lyricsData[t.id].synced))) {
         setTimeout(_programmaTestiKaraoke, 12000);
