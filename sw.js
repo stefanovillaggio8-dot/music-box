@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6426";
+const CACHE = "spotifynonavraiimieisoldi-v6427";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -55,6 +55,8 @@ const CORE = [
      vero, cosi' continua a suonare anche con la pagina congelata. */
   "./silenzio.mp3",
   "./covers.json",
+  "./covers-spotify.json",
+  "./karaoke-index.json",
   "./icon-192.png",
   "./icon-512.png",
   "./icon-180.png"
