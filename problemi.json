@@ -1,25 +1,5 @@
 [
  {
-  "t": 1793397252316,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793397252306,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793397252305,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793397253294,
-  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793397253294,
-  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1793397253584,
   "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1793397357183,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793397358580,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
+ },
+ {
+  "t": 1793397358579,
+  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1793397358590,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
+ },
+ {
+  "t": 1793398790007,
+  "r": "SPOTIFY: [v6.414] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793398790112,
+  "r": "SPOTIFY: [v6.414] il worker aveva il permesso pronto: lo prendo"
  }
 ]
