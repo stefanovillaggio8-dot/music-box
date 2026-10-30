@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793321960437,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793321960447,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793321960446,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793321962059,
-  "r": "FINALE: visibili 489 su 489 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
- },
- {
-  "t": 1793321962054,
-  "r": "visibili 489 su 489 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
- },
- {
-  "t": 1793321969635,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793321969637,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793321969645,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793321970849,
   "r": "FINALE: visibili 489 su 489 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
  },
@@ -157,6 +125,38 @@
  },
  {
   "t": 1793323161794,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793323161795,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793323161783,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793323162998,
+  "r": "visibili 489 su 489 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793323162999,
+  "r": "FINALE: visibili 489 su 489 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793323163000,
+  "r": "FINALE: visibili 489 su 489 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8167"
+ },
+ {
+  "t": 1793323172789,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793323172787,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793323172787,
   "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
