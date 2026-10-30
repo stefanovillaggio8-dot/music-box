@@ -1,25 +1,5 @@
 [
  {
-  "t": 1793393669584,
-  "r": "visibili 601 su 601 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
- },
- {
-  "t": 1793393689566,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393689554,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793393689595,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793393690811,
-  "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
- },
- {
   "t": 1793393690790,
   "r": "FINALE: visibili 601 su 601 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
  },
@@ -157,6 +137,26 @@
  },
  {
   "t": 1793395168969,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793395170583,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
+ },
+ {
+  "t": 1793395170600,
+  "r": "FINALE: visibili 600 su 600 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 100.106.211.2:"
+ },
+ {
+  "t": 1793395170580,
+  "r": "visibili 600 su 600 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 100.106.211.2:8167"
+ },
+ {
+  "t": 1793395183983,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793395183967,
   "r": "worker /stato: risponde"
  }
 ]
