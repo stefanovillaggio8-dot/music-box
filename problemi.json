@@ -1,73 +1,5 @@
 [
  {
-  "t": 1793400777463,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793400777658,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793400777662,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793400777673,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793400778502,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793400778633,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793400778667,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793400778817,
-  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793400779267,
-  "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793400779663,
-  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793400780176,
-  "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793400780844,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793400780838,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793400780870,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793400781447,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793400781490,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793400781699,
-  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
   "t": 1793400781601,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +90,73 @@
  {
   "t": 1793400807471,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793400807568,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793400807667,
+  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793400808222,
+  "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793400808570,
+  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793400809122,
+  "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793400809528,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793400809648,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793400809647,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793400809665,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793400810903,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 52 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793400811655,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793400811700,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793400811803,
+  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793400811826,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793400812750,
+  "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793400812848,
+  "r": "SPOTIFY: [v6.418] Spotify ha risposto 401: Missing/invalid/expired access token"
+ },
+ {
+  "t": 1793400813485,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
