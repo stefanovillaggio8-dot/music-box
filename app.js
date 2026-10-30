@@ -1286,7 +1286,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.415";
+  const APP_VERSION = "6.416";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4390,6 +4390,15 @@ function _unisciDuplicatiLocali(elenco) {
     const tenuti = [];
     for (const t of elenco) {
       if (!t) continue;
+      /* Emanuele: ogni riga BUILTIN e' una posizione Spotify distinta.
+         Titoli/artisti uguali con ID e file diversi non sono duplicati:
+         il filtro generico ne nascondeva 20 (600 invece di 620).
+         Questa eccezione non modifica il filtro degli altri profili,
+         ne' le eliminazioni volontarie, applicate prima in loadAll(). */
+      if (profile === "Emanuele" && t.builtin && t.profile === "Emanuele") {
+        tenuti.push(t);
+        continue;
+      }
       /* Un id nella lista dei "da non mostrare" resta nascosto. */
       if (giaNascosti.has(t.id)) continue;
       /* Cerco il gemello confrontando con stessoBrano() (il confronto giusto
@@ -4577,24 +4586,22 @@ function _quantiEliminati() {
 
   /* Ste: "togli completamente sta cosa dei nascosti". */
   let label = profile + ": " + total + (total === 1 ? " brano" : " brani");
-  /* AUDIT_EMANUELE_CATALOGO_620_20261030: i duplicati Spotify con ID distinti
-     possono usare lo stesso file audio. Il numero visibile conta i brani
-     riproducibili non duplicati; il numero di voci Spotify e' distinto.
-     Non inventare MP3 o validazioni per raggiungere 620. */
+  /* Contatore dal catalogo Spotify reale, senza il vecchio +20
+     che produceva 640/620 e conteggiava due volte le occorrenze ripetute. */
   if (profile === "Emanuele" && !favOnly && !soloMaiAscoltati && !soloScaricate && !query) {
-    /* 620 voci Spotify di Emanuele: le occorrenze ripetute (20) sono
-       collassate su un solo brano riproducibile. */
-    const vociProfiloSpotify = BUILTIN.filter((b) => b.profile === "Emanuele");
-    const vociSpotify = vociProfiloSpotify.length + 20;
+    const vociSpotify = BUILTIN.filter((b) => b.profile === "Emanuele").length;
     const ancoraDaInserire = Math.max(0, 620 - vociSpotify);
     label += " (" + vociSpotify + "/620 voci Spotify" +
       (ancoraDaInserire ? ", " + ancoraDaInserire + " mancanti" : "") + ")";
   }
     /* MB_CORREZIONE_UNICA_EMANUELE_20261030: separare file con fonte ERRATA dagli audio non ancora confermati. */
     const inRevisione = visibleAll.filter((t) => t.review).length;
-    const audioErrati = profile === "Emanuele" ? visibleAll.filter((t) => t.review && (String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "").startsWith("wrong-source:") || String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "").startsWith("wrong-version:"))).length : 0;
+    const notaRevisione = (t) => profile === "Emanuele" ? String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "") : "";
+    const audioErrati = visibleAll.filter((t) => t.review && notaRevisione(t).startsWith("wrong-source:")).length;
+    const versioniNonOriginali = visibleAll.filter((t) => t.review && notaRevisione(t).startsWith("wrong-version:")).length;
     if (audioErrati) label += ", " + audioErrati + " audio errati";
-    if (inRevisione - audioErrati) label += ", " + (inRevisione - audioErrati) + " da verificare (audio non confermato)";
+    if (versioniNonOriginali) label += ", " + versioniNonOriginali + " versioni non originali";
+    if (inRevisione - audioErrati - versioniNonOriginali > 0) label += ", " + (inRevisione - audioErrati - versioniNonOriginali) + " da verificare (audio non confermato)";
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
     if (favOnly || soloMaiAscoltati || soloScaricate || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
@@ -4702,8 +4709,9 @@ emptyEl.textContent = !total
         const badge = document.createElement("span");
         badge.className = "track-badge";
         const motivo = profile === "Emanuele" ? String((RECOVERY_REVIEW.Emanuele || {})[t.file] || "") : "";
-        const errato = motivo.startsWith("wrong-source:") || motivo.startsWith("wrong-version:");
-        badge.textContent = errato ? "AUDIO ERRATO" : "DA VERIFICARE";
+        const versioneDiversa = motivo.startsWith("wrong-version:");
+        const errato = motivo.startsWith("wrong-source:") || versioneDiversa;
+        badge.textContent = versioneDiversa ? "VERSIONE NON ORIGINALE" : (errato ? "AUDIO ERRATO" : "DA VERIFICARE");
         badge.title = motivo || "Audio da controllare: la presenza del file non conferma la corrispondenza con Spotify";
         badge.style.cssText = "display:inline-block;margin-left:6px;padding:2px 6px;border:1px solid " + (errato ? "#ef6868" : "#e7ad48") + ";border-radius:7px;color:" + (errato ? "#ef6868" : "#e7ad48") + ";font-weight:700;font-size:10px;";
         contrassegni.push(badge);
