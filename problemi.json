@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793332471477,
-  "r": "libreria: 613 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
   "t": 1793332471476,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793333371129,
   "r": "suono: originale b-track-135"
+ },
+ {
+  "t": 1793333393098,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
  }
 ]
