@@ -1125,13 +1125,19 @@
     "v": 0,
     "s": 1,
     "t": "Nessuna",
-    "a": "Luchè"
+    "a": "LuchÃ¨"
    },
    "fabriziodeandre|lacanzonedellamoreperduto": {
     "v": 0,
-    "s": 47,
+    "s": 163,
     "t": "La Canzone Dell'Amore Perduto",
-    "a": "Fabrizio De André"
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "nayt|forte": {
+    "v": 0,
+    "s": 107,
+    "t": "Forte",
+    "a": "nayt"
    }
   },
   "Diego": {
