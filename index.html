@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6463" />
+  <link rel="stylesheet" href="style.css?v=6464" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -741,11 +741,11 @@
                 </section>
         <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(128,128,128,.25)">
           <strong>Incolla un link: importazione automatica</strong>
-          <p class="step-hint">Una volta confermati i diritti, basta incollare il link: il server prova a pubblicare l’MP3 anche a PC spento. Il brano si ascolta solo dopo la pubblicazione del file.</p>
+          <p class="step-hint">Basta incollare il link una volta: la richiesta parte verso il server, anche a PC spento. Nessun MP3 viene scaricato o salvato sull’iPhone. Se YouTube rifiuta temporaneamente l’accesso, il cloud programma fino a 2 nuovi tentativi distanziati.</p>
         </div>
         <p>Profilo: <strong id="ytOnlineProfile">Ste</strong>. Non servono GitHub né il PC acceso.</p>
         <label for="ytOnlineUrl">Link YouTube</label>
-        <p class="step-hint">Incolla il link: controllo i duplicati e avvio automaticamente la richiesta, senza lettore YouTube.</p>
+        <p class="step-hint">Incolla il link: il server prova a creare e pubblicare l’MP3 online. Puoi chiudere Music Box: non servono spazio sul telefono né il lettore YouTube.</p>
         <input class="edit-input" id="ytOnlineUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://youtu.be/..." />
         <button class="btn-ghost" id="ytOnlinePaste" type="button">Incolla dagli appunti</button>
         <label for="ytOnlineName">Nome (facoltativo)</label>
@@ -761,7 +761,7 @@
         </div>
         <p id="ytOnlineLastStatus" class="step-hint" role="status">Nessuna richiesta recente.</p>
         <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver confermato i diritti, incolla un link e parte la richiesta da sola. Non servono GitHub né il PC acceso.</p>
-        <p class="step-hint">Se YouTube blocca la conversione, la richiesta mostrerà “Importazione fallita” e non farà partire un video al posto della canzone. Puoi usare + → File audio per aggiungere un MP3 che possiedi.</p>
+        <p class="step-hint">Se YouTube blocca definitivamente anche i tentativi successivi, l’app lo segnala senza fingere che la canzone sia pronta. L’accesso ai video dipende comunque dal servizio YouTube.</p>
         <div class="yt-file-fallback" aria-label="Alternativa da file">
           <p>Il server YouTube non scarica? Se hai gia un MP3 nell'app File, puoi aggiungerlo qui senza PC. Il file comparira subito nella libreria del profilo attivo.</p>
           <div class="yt-file-fallback-actions">
@@ -1262,7 +1262,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6463"></script>
-<script src="app.js?v=6463"></script>
+<script src="fuoco.js?v=6464"></script>
+<script src="app.js?v=6464"></script>
 </body>
 </html>
