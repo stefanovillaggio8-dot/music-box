@@ -1261,6 +1261,11 @@
 
   function _diChe(riga) {
     try {
+      /* Su GitHub Pages le tracce diagnostiche possono partire decine di
+         volte all'avvio, occupando connessioni utili per audio e copertine.
+         Con ?diagnostica=1 restano disponibili per il debug. */
+      if (/\.github\.io$/i.test(location.hostname) &&
+          !/[?&]diagnostica=1(?:&|$)/.test(location.search)) return;
       const dove = String(SERVIZIO_PUBBLICA || "").trim();
       if (!dove) return;
       const ora = Date.now();
@@ -1287,7 +1292,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.440";
+  const APP_VERSION = "6.441";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2863,7 +2868,9 @@ html += "<h4>Come sta andando l'ascolto</h4>";
   l'hai aperta e sembrava che il tempo non si contasse. */
   _statsCronometro = setInterval(() => {
     _seguiAscolto(audio);
-    _salvaStatistiche();
+    /* I secondi si contano ancora ogni secondo, ma riscrivere il grande
+       mb.state a ogni tic blocca il thread principale sui telefoni. */
+    if (_tick % 5 === 0) _salvaStatistiche();
     _tick++;
     const pannello = $("statsPanel");
     if (pannello && !pannello.hidden && _tick % 2 === 0) {
@@ -2883,11 +2890,15 @@ html += "<h4>Come sta andando l'ascolto</h4>";
     }
   }, 1000);
     } catch (e) { /* noop */ }
-    window.addEventListener("pagehide", () => { _chiudiAscolto(false); });
+    window.addEventListener("pagehide", () => {
+      _salvaStatistiche();
+      _chiudiAscolto(false);
+    });
     /* Esci dall'app o blocchi il telefono? Se la musica continua a suonare la
        stai sentendo, quindi il tempo si conta lo stesso. Se invece si ferma,
        il conto si chiude e basta. */
     document.addEventListener("visibilitychange", () => {
+      if (document.hidden) _salvaStatistiche();
       _chiudiAscolto(false);
     });
   }
@@ -3465,7 +3476,8 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         const daCercare = Array.from(catalogo.values()).sort((a, b) =>
           Number(b.profile === profiloIniziale) - Number(a.profile === profiloIniziale));
         for (const t of daCercare) {
-          if (profile !== profiloIniziale || document.hidden || tentativi >= 12) break;
+          if (profile !== profiloIniziale || document.hidden ||
+               tentativi >= (/\.github\.io$/i.test(location.hostname) ? 4 : 12)) break;
           if (!t || !t.id || !t.artist || !t.title || t.cover ||
               salvate.has(t.id) || _copertinaSpotifyGiaPronta(t) || _copertinaTentataDiRecente(t.id)) continue;
           const esistente = coverInfo(t.artist, t.title);
@@ -3496,9 +3508,9 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         _ricercaCopertineAttiva = false;
       }
       if (profile === profiloIniziale && !document.hidden && restanti > 0) {
-        setTimeout(_programmaRicercaCopertine, 12000);
+        setTimeout(_programmaRicercaCopertine, /\.github\.io$/i.test(location.hostname) ? 90000 : 12000);
       }
-    }, 5000);
+    }, /\.github\.io$/i.test(location.hostname) ? 18000 : 5000);
   }
   try {
     document.addEventListener("visibilitychange", () => {
@@ -4819,7 +4831,9 @@ function _eliminatiRimossiDaMandareSvuota() {
   function render() {
     _diag("render");
     const list = visibleTracks();
-    playlistEl.innerHTML = "";
+    /* Costruisci tutte le righe fuori dal DOM: inserire centinaia di li
+       uno alla volta forza calcoli di layout sul telefono. */
+    const fragmentBrani = document.createDocumentFragment();
     /* Se ci sono brani tolti dalla lista, la riga per rimetterli e' gia' qui:
        senza, un brano nascosto spariva per sempre e il conto sembrava
        sbagliato senza che si capisse perche'. */
@@ -4872,6 +4886,7 @@ function _quantiEliminati() {
     aggiornaIndicatoreCondivisione();
 
     if (!list.length) {
+      playlistEl.replaceChildren();
       emptyEl.hidden = false;
 emptyEl.textContent = !total
   ? (tracks.length
@@ -5039,8 +5054,9 @@ li.addEventListener("click", () => {
     /* Il segno di spunta sui brani scelti. */
     if (_inSelezione && _scelti.has(t.id)) li.classList.add("selezionato");
     bindLongPress(li, t);
-    playlistEl.appendChild(li);
+    fragmentBrani.appendChild(li);
     });
+    playlistEl.replaceChildren(fragmentBrani);
   }
 
   /* ---------- Audio robusto (fix iOS lock screen) ---------- */
@@ -7595,7 +7611,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.440 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.441 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -9078,6 +9094,11 @@ if (r.ok && j && j.ok) {
   }
 
   function segnalaErrore(testo) {
+    /* Le richieste /log verso un IP privato da GitHub HTTPS vengono bloccate
+       dal browser e rallentano l'avvio. Diagnostica attivabile con
+       ?diagnostica=1 senza cambiare il funzionamento della musica. */
+    if (/\.github\.io$/i.test(location.hostname) &&
+        !/[?&]diagnostica=1(?:&|$)/.test(location.search)) return;
     const msg = "v" + APP_VERSION + " | " + String(testo || "").slice(0, 300);
     try {
       const base = ponteCheRisponde || INDIRIZZI_PONTE[0];
