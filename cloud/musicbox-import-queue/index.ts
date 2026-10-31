@@ -2,6 +2,7 @@
 // Supabase service-role key NEVER leaves this server.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { nextRetry } from "./retry-policy.mjs";
+import { convertQueuedNow, recoverAndProcess, signedAudioUrl } from "./direct-audio.ts";
 
 const PROJECT = "stefanovillaggio8-dot/music-box";
 const ORIGINS = new Set([
@@ -100,6 +101,15 @@ Deno.serve(async req => {
   if(origin && !ORIGINS.has(origin)) return respond({ok:false,error:"Origine non autorizzata"},403,origin);
   try {
     const url = new URL(req.url);
+    // Private audio receives a fresh temporary signed URL on playback.
+    if(req.method==="GET" && url.searchParams.get("action")==="audio") {
+      const id=String(url.searchParams.get("id")||"");
+      if(!uuid(id))return respond({ok:false,error:"Audio non valido"},400,origin);
+      const signed=await signedAudioUrl(id,database,URI,SECRET);
+      if(!signed)return respond({ok:false,error:"MP3 non disponibile"},404,origin);
+      return new Response(null,{status:302,headers:{"location":signed,"cache-control":"no-store",
+        "access-control-allow-origin":ORIGINS.has(origin)?origin:"*"}});
+    }
     // Links already submitted belong to the named Music Box profile.
     // Only safe public playback metadata is returned (never IP hashes or tokens).
     if(req.method==="GET" && url.searchParams.get("action")==="links") {
@@ -107,12 +117,17 @@ Deno.serve(async req => {
       if(!profile || profile.length>40 || !/^[\p{L}\p{N}_. -]+$/u.test(profile))
         return respond({ok:false,error:"Profilo non valido"},400,origin);
       const rows=await database("?profile=eq."+encodeURIComponent(profile)+
-        "&select=id,profile,video_id,requested_title,status,created_at,error_message,retry_after"+
+        "&select=id,profile,video_id,requested_title,status,created_at,error_message,retry_after,result_file"+
         "&order=created_at.desc&limit=60");
+      // Start stranded jobs in the background without depending on GitHub cron.
+      // @ts-ignore EdgeRuntime is provided by Supabase
+      EdgeRuntime.waitUntil(recoverAndProcess(profile,database,URI,SECRET));
       return respond({ok:true,links:rows.map((x:Record<string,unknown>)=>({
         id:x.id,profile:x.profile,video_id:x.video_id,
         title:x.requested_title || "Video YouTube",status:x.status,
-        created_at:x.created_at,error_message:x.error_message,retry_after:x.retry_after
+        created_at:x.created_at,error_message:x.error_message,retry_after:x.retry_after,
+        ready_url:x.status==="completed" && x.result_file==="cloud/youtube-"+x.video_id+".mp3"
+          ? URI+"/functions/v1/musicbox-import-queue?action=audio&id="+x.id : null
       }))},200,origin);
     }
     if(req.method==="GET" && url.searchParams.get("action")==="status") {
@@ -138,6 +153,9 @@ Deno.serve(async req => {
       const seed=new TextEncoder().encode(SECRET+":"+ip);
       const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",seed))).map(x=>x.toString(16).padStart(2,"0")).join("");
       const rows=await database("",{method:"POST",body:JSON.stringify({profile,video_id,requested_title,client_hash:hash})});
+      // Start server work as soon as the link is inserted, independent of cron.
+      // @ts-ignore EdgeRuntime is provided by Supabase
+      EdgeRuntime.waitUntil(convertQueuedNow(String(rows[0].id),database,URI,SECRET));
       return respond({ok:true,id:rows[0].id,status:"queued"},201,origin);
     }
     if(data.action==="claim" || data.action==="finish") {
