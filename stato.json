@@ -1292,6 +1292,18 @@
     "s": 5,
     "t": "Morirò da Re",
     "a": "Måneskin"
+   },
+   "[\"la città\",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÀ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la città\",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÀ",
+    "a": "MOSTRO"
    }
   },
   "Diego": {
