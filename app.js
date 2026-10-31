@@ -4618,10 +4618,11 @@ if (_playlistAttiva) {
       const s = matchScore(query, t);
       if (s >= 0) scored.push({ t, s });
     }
-    /* durante la ricerca l'ordine piu' utile e' quanto somigliano al testo
-       scritto, quindi qui non riordino per artista */
-    scored.sort((a, b) => (b.s - a.s) ||
-      (ordinamento === "aggiunti" ? _confrontaAggiunte(a.t, b.t) : 0));
+    /* Se l'utente ha scelto "Piu' recenti", rispetta l'ordine anche
+       quando la barra di ricerca e' compilata: il titolo cercato filtra,
+       ma non ribalta il criterio di ordinamento scelto. */
+    if (ordinamento === "aggiunti") scored.sort((a, b) => _confrontaAggiunte(a.t, b.t));
+    else scored.sort((a, b) => b.s - a.s);
     return scored.map((x) => x.t);
   }
 
