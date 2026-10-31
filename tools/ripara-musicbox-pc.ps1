@@ -97,7 +97,17 @@ foreach($Link in $Links) {
       $Response=$Request.GetResponse()
       $Type=[string]$Response.ContentType
       $Response.Close()
-      if($Type -match 'html'){ $Usable=$Link; break }
+      if($Type -notmatch 'html'){ continue }
+      # Non basta che l'HTML risponda: il server deve servire l'MP3 reale.
+      $Music=[Net.HttpWebRequest]::Create($Link + "songs/track-521.mp3")
+      $Music.Method="GET"
+      $Music.Timeout=2200
+      $Music.AddRange(0,15)
+      $Stream=$Music.GetResponse()
+      $Mime=[string]$Stream.ContentType
+      $Status=[int]$Stream.StatusCode
+      $Stream.Close()
+      if($Status -in @(200,206) -and $Mime -notmatch 'html'){ $Usable=$Link; break }
     } catch { }
 }
 if (-not $Usable -and $Node) {
