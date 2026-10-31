@@ -1602,7 +1602,8 @@ const PROFILI = [
     if (!nome) return "";
     /* I brani importati con Actions vivono nel repository principale,
        non in music-box-brani, anche quando il PC e\x27 acceso. */
-    if (Array.isArray(_ytOnlineCache) && _ytOnlineCache.some(x => x.file === nome)) {
+    if (typeof _ytOnlineCache !== "undefined" && Array.isArray(_ytOnlineCache) &&
+        _ytOnlineCache.some(x => x.file === nome)) {
       return "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" + nome;
     }
     /* pagina locale: i brani sono sul disco, nessun bisogno di andare online */
