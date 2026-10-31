@@ -11,7 +11,7 @@ for(const id of ["youtubeOnlinePanel","ytOnlineClose","ytOnlineUrl","ytOnlineNam
   "ytOnlineRights","ytOnlineGo","ytOnlineHint"]) {
   assert.equal((html.match(new RegExp('id="'+id+'"',"g"))||[]).length,1,"Missing/duplicate input "+id);
 }
-assert(html.includes("Aggiungi al mio profilo"));
+assert(html.includes("Incolla un link: importazione automatica"));
 assert(html.includes("senza GitHub") || html.includes("senza accesso a GitHub"));
 assert(app.includes('action:"create"') && app.includes('action=status&id='));
 assert(app.includes('LS.set(MB_YT_PENDING,'));
