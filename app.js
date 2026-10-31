@@ -1292,7 +1292,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.442";
+  const APP_VERSION = "6.443";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2671,13 +2671,11 @@ function _salvaStatistiche() {
       const adesso = Date.now();
       const pos = _posizioneMusica();
       if (pos <= 0) {
-        /* ripiego per flussi dove la posizione non si legge */
-        if (!_statsConto) { _statsConto = true; _statsTic = adesso; return; }
-        const passati = (adesso - _statsTic) / 1000;
-        if (passati >= 2) {
-          _statsTic = adesso;
-          _segnaAscolto(current(), passati > _STATI_MAX ? _STATI_MAX : passati, false);
-        }
+        /* Se il player e' rimasto bloccato a 0:00 non invento minuti
+           usando l'orologio. Conto solo quando il brano avanza davvero. */
+        _statsConto = false;
+        _statsPosVisto = 0;
+        _statsTic = adesso;
         return;
       }
       if (!_statsConto) _iniziaAscolto();
@@ -2720,8 +2718,27 @@ function _salvaStatistiche() {
     return ore + (ore === 1 ? " ora" : " ore") + (min ? " e " + min + (min === 1 ? " minuto" : " minuti") : "");
   }
 
+  /* Le statistiche devono contare la libreria di OGNI profilo, non solo
+     quella caricata adesso. tracks contiene unicamente la libreria aperta:
+     consultarlo per Diego mentre si e' su Emanuele dava sempre 0 brani.
+     Ricostruisco i brani condivisi senza cambiare profilo, senza toccare
+     la riproduzione e rispettando le copie e le eliminazioni personali. */
+  function _braniPerStatistiche(nome) {
+    if (nome === profile) return tracks;
+    const copiati = _mieiCopiatiDi(nome);
+    const eliminati = LS.get("mb.eliminati", {}) || {};
+    const risultato = [];
+    for (const b of BUILTIN) {
+      const id = _idBranoStabile(b);
+      if ((b.profile || DEFAULT_PROFILE) !== nome && !copiati.has(id)) continue;
+      if (eliminati[nome + "." + id]) continue;
+      risultato.push({ ...b, id: id, builtin: true });
+    }
+    return risultato;
+  }
+
   function _numeriProfilo(nome) {
-    const lista = tracks.filter((t) => (t.profile || DEFAULT_PROFILE) === nome);
+    const lista = _braniPerStatistiche(nome);
     const st = profileState(nome);
     const stats = (st && st.stats) || {};
     let volte = 0, secondi = 0;
@@ -7673,7 +7690,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.442 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.443 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
