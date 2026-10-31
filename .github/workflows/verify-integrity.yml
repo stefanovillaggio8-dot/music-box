@@ -21,6 +21,7 @@ on:
       - tools/test-recap-annuale.cjs
       - tools/test-background-ios.cjs
       - tools/test-offline-retention.cjs
+      - tools/test-add-music-ui.cjs
       - tools/aggiorna-copia-locale.ps1
       - tools/ripara-musicbox-pc.ps1
       - tools/serve-private-musicbox.cjs
@@ -95,3 +96,5 @@ jobs:
         run: node tools/test-background-ios.cjs
       - name: Verifica conservazione download offline e pausa Safari
         run: node tools/test-offline-retention.cjs
+      - name: Controlla menu aggiunta e guida per iPhone
+        run: node tools/test-add-music-ui.cjs

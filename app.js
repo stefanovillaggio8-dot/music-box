@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.447";
+  const APP_VERSION = "6.448";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7980,7 +7980,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.447 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.448 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -11146,11 +11146,20 @@ function _chiudiFabMenu() {
 function _apriFabMenu() {
   const m = $("fabMenu");
   if (!m) { fileInput.click(); return; }
+  const prof = $("fabProfiloNome");
+  if (prof) prof.textContent = profile || "Ste";
   m.hidden = false;
   syncNoScroll();
 }
 $("fab").addEventListener("click", _apriFabMenu);
 $("fabChiudi").addEventListener("click", _chiudiFabMenu);
+$("fabMenu").addEventListener("click", (e) => {
+  if (e.target === $("fabMenu")) _chiudiFabMenu();
+});
+$("btnAggiungiMusica").addEventListener("click", () => {
+  _chiudiAltro();
+  _apriFabMenu();
+});
 $("fabImporta").addEventListener("click", () => {
   _chiudiFabMenu();
   fileInput.click();
@@ -11170,6 +11179,15 @@ $("fabCercaTitolo").addEventListener("click", () => {
 $("fabYouTube").addEventListener("click", () => {
   _chiudiFabMenu();
   try { _aggiungiDaYouTube(); } catch (e) { /* noop */ }
+});
+$("fabSpotify").addEventListener("click", () => {
+  _chiudiFabMenu();
+  const b = $("btnSpotify");
+  if (b) b.click(); /* stessa funzione del menu Altro */
+});
+$("fabGuide").addEventListener("click", () => {
+  _chiudiFabMenu();
+  _apriAiuto();
 });
 $("fabMenu").addEventListener("click", (e) => {
   if (e.target === $("fabMenu")) _chiudiFabMenu();
