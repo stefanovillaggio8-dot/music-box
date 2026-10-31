@@ -191,10 +191,12 @@ function start(){
    e.preventDefault();e.stopImmediatePropagation();control(cmd);
   },true);
  }
- $("btnPlay").addEventListener("click",()=>{
+ $("btnPlay").addEventListener("click",e=>{
   if(!isActive())return;
-  setTimeout(()=>control(bridge()?.audio()&&!bridge().audio().paused?"play":"pause"),200);
- });
+  e.preventDefault();e.stopImmediatePropagation();
+  if(!localPlay)listen();
+  else playPause();
+ },true);
  try{
   const match=location.hash.match(/^#musicbox-room=([0-9a-f-]{36})\.([0-9a-f]{64})$/i);
   if(match){
