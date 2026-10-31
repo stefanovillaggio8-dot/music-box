@@ -163,7 +163,7 @@
         q.addEventListener("keydown", abilitaScrittura);
         q.addEventListener("focus", abilitaScrittura);
         function pulisciEmail() {
-          if (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(q.value.trim())) {
+          if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(q.value.trim())) {
             q.value = "";
             q.dispatchEvent(new Event("input", { bubbles: true }));
           }
