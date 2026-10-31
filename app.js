@@ -1604,7 +1604,7 @@ const PROFILI = [
        non in music-box-brani, anche quando il PC e\x27 acceso. */
     if (typeof _ytOnlineCache !== "undefined" && Array.isArray(_ytOnlineCache) &&
         _ytOnlineCache.some(x => x.file === nome)) {
-      return "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" + nome;
+      return "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/mobile-audio/" + nome;
     }
     /* pagina locale: i brani sono sul disco, nessun bisogno di andare online */
     const qui = location.hostname;
