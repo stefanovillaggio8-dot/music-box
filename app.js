@@ -1292,7 +1292,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.443";
+  const APP_VERSION = "6.444";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1711,6 +1711,39 @@ window.addEventListener("storage", (e) => {
   try { render(); } catch (x) { /* noop */ }
 });
 
+  /* La scelta fatta dall'utente prevale sui vecchi preferiti del server,
+     anche quando la scelta e' "togli il cuore": il vecchio codice faceva
+     sempre l'unione, facendo ricomparire i preferiti rimossi al riavvio. */
+  function _preferitiConScelte(lista, scelte) {
+    const risultato = new Set(Array.isArray(lista) ? lista : Array.from(lista || []));
+    for (const [id, attivo] of Object.entries(scelte || {})) {
+      if (attivo === true) risultato.add(id);
+      else if (attivo === false) risultato.delete(id);
+    }
+    return risultato;
+  }
+
+  function _unisciPreferitiRemoti(attuali, ricevuti, scelte, idDelProfilo) {
+    const ammessi = idDelProfilo instanceof Set ? idDelProfilo : new Set(idDelProfilo || []);
+    const uniti = new Set(attuali || []);
+    for (const id of (Array.isArray(ricevuti) ? ricevuti : [])) {
+      if (ammessi.has(id)) uniti.add(id);
+    }
+    return _preferitiConScelte(uniti, scelte);
+  }
+
+  function _memorizzaSceltaPreferito(id, attivo) {
+    const st = profileState(profile);
+    const scelte = { ...(st.favOverrides || {}), [id]: !!attivo };
+    const dati = { favs: Array.from(favorites), favOverrides: scelte, favAt: Date.now() };
+    writeProfileState(profile, dati);
+    /* Seconda copia su IndexedDB: su iPhone localStorage a volte si perde
+       mentre il database della musica resta. Non migro il DB e non tocco
+       nessuna canzone: uso una chiave riservata fra le copertine. */
+    if (db) dbPutCover({ id: "__mb_favs__:" + profile, ...dati })
+      .catch(() => { /* la copia nel profilo locale resta disponibile */ });
+  }
+
   function loadProfileState() {
     const st = profileState(profile);
     /* Ste: "togli completamente sta cosa dei nascosti". Non esiste piu'
@@ -1718,7 +1751,7 @@ window.addEventListener("storage", (e) => {
        chiede conferma e lo cancella per sempre. Qui non carico piu'
        niente, e cosi' ogni filtro basato sui nascosti diventa inutile. */
     hiddenTracks = new Set();
-    favorites = new Set(st.favs || []);
+    favorites = _preferitiConScelte(st.favs || [], st.favOverrides || {});
     /* Le playlist stanno qui con il resto. Se il dato non e' un elenco
        (perche' viene da una versione vecchia), parto da vuoto invece di
        farmi fermare. */
@@ -1897,6 +1930,27 @@ window.addEventListener("storage", (e) => {
     tx.oncomplete = resolve;
     tx.onerror = () => reject(tx.error);
   });
+  }
+
+  async function _ripristinaPreferitiDB(nome) {
+    if (!db) return false;
+    try {
+      const salvati = await new Promise((resolve, reject) => {
+        const tx = db.transaction(DB_COVERS, "readonly");
+        const req = tx.objectStore(DB_COVERS).get("__mb_favs__:" + nome);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+      const locale = profileState(nome);
+      if (!salvati || !Array.isArray(salvati.favs) ||
+          !(Number(salvati.favAt) > Number(locale.favAt || 0))) return false;
+      writeProfileState(nome, {
+        favs: salvati.favs,
+        favOverrides: salvati.favOverrides || {},
+        favAt: Number(salvati.favAt)
+      });
+      return true;
+    } catch (e) { return false; }
   }
 
   /* ---------- Caricamento tracce ---------- */
@@ -2640,7 +2694,7 @@ function _salvaStatistiche() {
   let _statsPosVisto = 0;   /* posizione della canzone all'ultimo controllo */
   let _statsTic = 0;        /* orologio all'ultimo controllo */
   let _statsConto = false;  /* il conto e' partito? */
-  const _STATI_MAX = 600;   /* saltino assurdo: non si conta */
+  const _STATI_MAX = 90;    /* massimo blocco contabile: evita salti fantasma */
 
   function _posizioneMusica() {
     try {
@@ -2650,7 +2704,10 @@ function _salvaStatistiche() {
   }
 
   function _staSuonandoOra() {
-    try { return !!(audio && !audio.paused && !audio.ended); } catch (e) { return false; }
+    try {
+      return !!(audio && _vuoleSuonare && !audio.paused && !audio.ended &&
+        !audio.seeking && !audio._mbCambioBrano);
+    } catch (e) { return false; }
   }
 
   function _iniziaAscolto() {
@@ -2684,6 +2741,12 @@ function _salvaStatistiche() {
       _statsPosVisto = pos;
       _statsTic = adesso;
       if (avanti < 0) return;   /* canzone cambiata o riavvolta: riparto pulito */
+      /* Un seek di 30s non e' ascolto: neppure i pochi secondi di orologio
+         trascorsi durante il salto possono diventare statistiche. Alcuni
+         player mobili non inviano seeking/seeked: controllo anche qui. */
+      const velocita = Math.max(0.25, Number(audio.playbackRate) || 1);
+      const limiteReale = Math.max(1.25, passati * velocita + 1.25);
+      if (avanti > limiteReale) return;
       /* Contiamo il PIU' PICCOLO fra il tempo passato e quanto la canzone ha
          davvero fatto avanti.
          - se il telefono si blocca, la canzone resta ferma e non conto troppo;
@@ -5012,6 +5075,7 @@ emptyEl.textContent = !total
           e.stopPropagation();
           if (favorites.has(t.id)) favorites.delete(t.id);
           else favorites.add(t.id);
+          _memorizzaSceltaPreferito(t.id, favorites.has(t.id));
           saveCurrentState();
           _salvaStatoCondiviso();
           render();
@@ -5352,6 +5416,8 @@ a.addEventListener("pause", () => {
     const eDelSistema = document.hidden || dalRitorno < 4000 || (daVisibile >= 0 && daVisibile < 2500);
     _segna("evento PAUSE", "del sistema: " + (eDelSistema ? "si" : "NO (lo tratto come tua)" +
       ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
+    /* Ferma il contatore PRIMA di ogni eventuale return o ripresa iOS. */
+    if (a === audio) _chiudiAscolto(false);
     if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
       return;
@@ -5377,6 +5443,14 @@ a.addEventListener("pause", () => {
       const t = current();
       if (t) { t._mbErroriAudio = 0; t._mbAudioMancante = false; t._mbAudioAvvisato = false; }
     });
+    /* SEEK non e' ASCOLTO: l'evento va intercettato anche con l'app
+       in secondo piano e quando l'iPhone gestisce la barra di sistema. */
+    a.addEventListener("seeking", () => { if (a === audio) _chiudiAscolto(false); });
+    a.addEventListener("seeked", () => {
+      if (a !== audio) return;
+      _chiudiAscolto(false);
+      if (_staSuonandoOra()) _iniziaAscolto();
+    });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
     a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
@@ -5388,7 +5462,7 @@ a.addEventListener("pause", () => {
     a.addEventListener("timeupdate", () => _aggiornaPosizioneSchermo());
     /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
        evento scatta finche' la musica suona, su computer e su telefono. */
-    a.addEventListener("timeupdate", _contaAlMuoversi);
+    a.addEventListener("timeupdate", () => { if (a === audio) _contaAlMuoversi(); });
     a.addEventListener("loadedmetadata", handleMetadata);
     a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
     a.addEventListener("error", handleError);
@@ -6611,6 +6685,7 @@ function playNext() {
     /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
        altrimenti chi aspetta di riavviare la musica mi riaccende. */
     _vuoleSuonare = false;
+    _chiudiAscolto(false);
     _segnaIntenzioneSono(false);
     _silenziDiFila = 0;
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
@@ -6730,6 +6805,7 @@ function playNext() {
         }
         case "seek":
           if (audio && isFinite(Number(detail.time)) && isFinite(audio.duration)) {
+            _chiudiAscolto(false);
             audio.currentTime = Math.max(0, Math.min(Number(detail.time), audio.duration));
             updateProgressUI(audio.currentTime, audio.duration);
             _notificaStatoNativo(true);
@@ -6875,6 +6951,7 @@ function _aggiornaPosizioneSchermo() {
     setHandler("previoustrack", () => playById(idBranoA(prevIndex())));
     setHandler("seekto", (d) => {
       if (d.seekTime != null && audio && isFinite(audio.duration)) {
+        _chiudiAscolto(false);
         audio.currentTime = Math.max(0, Math.min(d.seekTime, audio.duration));
         updateProgressUI(audio.currentTime, audio.duration);
       }
@@ -6902,6 +6979,7 @@ function _aggiornaPosizioneSchermo() {
 
   function seekBy(delta) {
     if (!audio) return;
+    _chiudiAscolto(false);
     const d = totalDuration();
     const attuale = audio.currentTime || 0;
     let t = attuale + delta;
@@ -7063,7 +7141,8 @@ if (!sceltaCopia) updateProfileButton();
         try { audio.pause(); } catch (e) { /* noop */ }
       }
       currentId = null;
-      const st = loadProfileState();
+      let st = loadProfileState();
+      if (await _ripristinaPreferitiDB(profile)) st = loadProfileState();
       await loadLocalLyrics();
       await loadAll();
   /* niente: la finestra dei nascosti e' stata tolta */
@@ -7690,7 +7769,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.443 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.444 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -10710,7 +10789,10 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
     if (!scrubbing) return;
     scrubbing = false;
     progressBar.classList.remove("scrubbing");
-    if (pendingSeek != null && audio) audio.currentTime = pendingSeek;
+    if (pendingSeek != null && audio) {
+      _chiudiAscolto(false);
+      audio.currentTime = pendingSeek;
+    }
     pendingSeek = null;
     savePos();
   }
@@ -13232,9 +13314,18 @@ const j = await r.json();
       }
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
         let cambiati = 0;
-        /* Unisco, non sostituisco: cosi' quello che ho scelto qui non sparisce
-           e diventa solo piu' grande. */
-for (const id of prefs) if (id && !favorites.has(id)) { favorites.add(id); cambiati++; }
+        /* "preferiti" e' un vecchio elenco globale. Non lo posso applicare
+           a canzoni di altri profili, ne' lasciare che annulli un cuore
+           tolto volontariamente da questo dispositivo. */
+        const preferitiAggiornati = _unisciPreferitiRemoti(
+          favorites, prefs, profileState(profile).favOverrides || {},
+          new Set(tracks.map((t) => t.id))
+        );
+        if (preferitiAggiornati.size !== favorites.size ||
+            [...preferitiAggiornati].some((id) => !favorites.has(id))) {
+          favorites = preferitiAggiornati;
+          cambiati++;
+        }
 
         /* Ste: "alcune volte mi vengono nascoste canzoni a caso".
          Lo stato condiviso arriva da altri dispositivi e da altri
@@ -14524,7 +14615,10 @@ const st = $("statoSpotify");
        l'app si usa subito, e i testi arrivano dopo. */
     try { loadLyrics(); } catch (e) { /* i testi non sono indispensabili */ }
     try { loadCovers(); } catch (e) { /* neanche le copertine */ }
-    if (db) await loadLocalLyrics();
+    if (db) {
+      if (await _ripristinaPreferitiDB(profile)) loadProfileState();
+      await loadLocalLyrics();
+    }
 await loadAll();
     /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente
        dove l'avevo lasciata. */

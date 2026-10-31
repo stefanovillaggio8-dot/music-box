@@ -17,6 +17,7 @@ on:
       - tools/audit-catalog.cjs
       - tools/test-audio-routing.cjs
       - tools/test-stats-profiles.cjs
+      - tools/test-favorites-and-listening.cjs
       - tools/aggiorna-copia-locale.ps1
       - tools/ripara-musicbox-pc.ps1
       - tools/serve-private-musicbox.cjs
@@ -83,3 +84,5 @@ jobs:
         run: node tools/audit-catalog.cjs
       - name: Verifica conteggi statistiche tra tutti i profili
         run: node tools/test-stats-profiles.cjs
+      - name: Verifica preferiti persistenti, pause e seek
+        run: node tools/test-favorites-and-listening.cjs
