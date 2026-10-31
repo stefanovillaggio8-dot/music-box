@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.464";
+  const APP_VERSION = "6.465";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3313,7 +3313,7 @@ function _devoVedereBrano(eMio, b) {
   }
   function _ytAggiornaVociLibreria(entries, owner, draw=false) {
     if(owner!==profile || !Array.isArray(entries))return;
-    const old=tracks.filter(t=>t && t.source!=="youtube-link");
+    const old=tracks.filter(t=>t && t.source!=="youtube-link" && t.source!=="cloud-audio");
     const published=new Set(old.filter(t=>t.file).map(t=>t.file));
     const seen=new Set();
     const linked=[];
@@ -3324,16 +3324,20 @@ function _devoVedereBrano(eMio, b) {
       // Quando l'MP3 e' stato pubblicato, usiamo soltanto il vero brano audio.
       if(published.has("songs/youtube-"+id+".mp3"))continue;
       const name=String(row.requested_title||row.title||"").trim();
+      const directURL=String(row.ready_url||"");
+      const readyCloud=row.status==="completed" &&
+        /^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(directURL);
       linked.push({
         id:"yt-"+id, title:name && name!=="Video YouTube" ? name.slice(0,160) : "Video YouTube "+id,
-        artist:"", album:row.status==="failed"?"Importazione fallita":
+        artist:"", album:readyCloud?"MP3 pronto sul cloud":row.status==="failed"?"Importazione fallita":
           row.status==="needs-consent"?"Conferma i diritti per importare":
           row.status==="checking"?"Invio automatico in corso":
           row.status==="completed"?"MP3 in pubblicazione":
           row.status==="running"?"MP3 in preparazione":
           row.status==="queued"&&row.retry_after?"Nuovo tentativo cloud programmato":"In coda per MP3",
         cover:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",
-        url:"", file:"", source:"youtube-link", youtubeId:id,
+        url:readyCloud?directURL:"", file:readyCloud?"cloud/youtube-"+id+".mp3":"",
+        source:readyCloud?"cloud-audio":"youtube-link", youtubeId:readyCloud?null:id,
         profile:owner,builtin:true,gradient:PALETTE[0],
         _ytStatus:String(row.status||"queued"),
         _ytErrore:String(row.error_message||"").slice(0,180)
@@ -12613,7 +12617,7 @@ function _nomePerIlBrano(link, suggerito) {
       _ytLinksMemory[requested]={links:data.links,time:Date.now()};
       // Se l'MP3 e' stato completato su un altro dispositivo, rileggi
       // il manifest prima di promuovere la richiesta a brano riproducibile.
-      if(data.links.some(x=>x.status==="completed" &&
+      if(data.links.some(x=>x.status==="completed" && !x.ready_url &&
         !_ytOnlineCache.some(p=>p.file==="songs/youtube-"+x.video_id+".mp3"))) {
         _ytOnlineFetchedAt=0;
         try {await loadAll();}catch(_){}
@@ -12632,7 +12636,8 @@ function _nomePerIlBrano(link, suggerito) {
         title.textContent=String(track.title||"Video YouTube").slice(0,160);
         const status=document.createElement("div");
         status.style.cssText="font-size:12px;opacity:.8;margin-top:4px";
-        const published=tracks.find(x=>x && x.file==="songs/youtube-"+track.video_id+".mp3" &&
+        const published=tracks.find(x=>x && (x.file==="songs/youtube-"+track.video_id+".mp3" ||
+          x.file==="cloud/youtube-"+track.video_id+".mp3") &&
           (x.profile||DEFAULT_PROFILE)===requested && x.url);
         const retryTime=Date.parse(String(track.retry_after||""));
         status.textContent=published?"MP3 pronto nel player Music Box":
@@ -12715,15 +12720,18 @@ function _nomePerIlBrano(link, suggerito) {
             // sul CDN di GitHub. Non dichiarare il brano pronto in anticipo:
             // altrimenti la PWA smette di controllarlo e non comparira' mai.
             const file=String(payload.job.result_file||"");
-            if(!/^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file)){
+            const isCloud=/^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file);
+            if(!isCloud && !/^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file)){
               remain.push(task);continue;
             }
-            if(!published){
-              _ytOnlineFetchedAt=0;
-              published=await _braniYouTubePubblicati();
-            }
-            if(!published.some(x=>x.file===file&&x.profile===task.profile)){
-              remain.push(task);continue;
+            if(!isCloud){
+              if(!published){
+                _ytOnlineFetchedAt=0;
+                published=await _braniYouTubePubblicati();
+              }
+              if(!published.some(x=>x.file===file&&x.profile===task.profile)){
+                remain.push(task);continue;
+              }
             }
             changed=true;
             const recent=_ytRecent();
