@@ -1,37 +1,5 @@
 [
  {
-  "t": 1793407582267,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793407582270,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793407582584,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793407583473,
-  "r": "FINALE: visibili 225 su 252 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1793407583472,
-  "r": "visibili 225 su 252 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1793407583786,
-  "r": "FINALE: visibili 225 su 252 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1793407592608,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793407592607,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1793407592721,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +126,37 @@
  {
   "t": 1793407747157,
   "r": "suono: originale b-track-631"
+ },
+ {
+  "t": 1793408200549,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793408200599,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408200524,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793408200857,
+  "r": "SPOTIFY: [v6.435] il server aveva il permesso: lo prendo"
+ },
+ {
+  "t": 1793408200741,
+  "r": "SPOTIFY: [v6.435] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793408201863,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793408201895,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793408201946,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
