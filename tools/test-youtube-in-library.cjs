@@ -36,5 +36,5 @@ assert(src.includes('list=list.filter(t=>!t.youtubeId)'));
 assert(src.includes('if (t.builtin && !t.youtubeId && !isCached(t))'));
 assert(src.includes('if(!t.youtubeId) {'));
 assert(!page.includes('id="btnMieiVideoYT"'));
-assert(page.includes('app.js?v=6456'));
+assert(/<script src="app\.js\?v=\d+"><\/script>/.test(page),"App script must be versioned");
 console.log("OK: YouTube appears in the actual library, instantly and after reload; profile isolation, dedupe, playback routing, no fake MP3/offline.");
