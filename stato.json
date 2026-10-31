@@ -1419,15 +1419,27 @@
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
-    "s": 34,
+    "s": 37,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "m:2026-10|[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 1,
-    "s": 34,
+    "s": 37,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
+   },
+   "[\"8 miliardi di persone\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "8 miliardi di persone",
+    "a": "Frah Quintale"
+   },
+   "m:2026-10|[\"8 miliardi di persone\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "8 miliardi di persone",
+    "a": "Frah Quintale"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1489,17 +1501,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"8 miliardi di persone\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 84,
-    "t": "8 miliardi di persone",
-    "a": "Frah Quintale"
+   "[\"essere noi\",\"nayt\"]": {
+    "v": 0,
+    "s": 57,
+    "t": "Essere noi",
+    "a": "nayt"
    },
-   "m:2026-10|[\"8 miliardi di persone\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 84,
-    "t": "8 miliardi di persone",
-    "a": "Frah Quintale"
+   "m:2026-10|[\"essere noi\",\"nayt\"]": {
+    "v": 0,
+    "s": 57,
+    "t": "Essere noi",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1561,17 +1573,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"essere noi\",\"nayt\"]": {
+   "[\"l'universo tranne noi\",\"max pezzali\"]": {
     "v": 0,
-    "s": 57,
-    "t": "Essere noi",
-    "a": "nayt"
+    "s": 65,
+    "t": "L'universo tranne noi",
+    "a": "Max Pezzali"
    },
-   "m:2026-10|[\"essere noi\",\"nayt\"]": {
+   "m:2026-10|[\"l'universo tranne noi\",\"max pezzali\"]": {
     "v": 0,
-    "s": 57,
-    "t": "Essere noi",
-    "a": "nayt"
+    "s": 65,
+    "t": "L'universo tranne noi",
+    "a": "Max Pezzali"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1633,17 +1645,29 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"l'universo tranne noi\",\"max pezzali\"]": {
+   "[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
     "v": 0,
-    "s": 65,
-    "t": "L'universo tranne noi",
-    "a": "Max Pezzali"
+    "s": 1,
+    "t": "la mia storia tra le dita",
+    "a": "gianluca grignani"
    },
-   "m:2026-10|[\"l'universo tranne noi\",\"max pezzali\"]": {
+   "m:2026-10|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
     "v": 0,
-    "s": 65,
-    "t": "L'universo tranne noi",
-    "a": "Max Pezzali"
+    "s": 1,
+    "t": "la mia storia tra le dita",
+    "a": "gianluca grignani"
+   },
+   "[\"una direzione giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃ": {
+    "v": 0,
+    "s": 1,
+    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "thasup"
+   },
+   "m:2026-10|[\"una direzione giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂ": {
+    "v": 0,
+    "s": 1,
+    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1705,28 +1729,40 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
+   "[\"salvami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
     "s": 1,
-    "t": "la mia storia tra le dita",
-    "a": "gianluca grignani"
+    "t": "Salvami",
+    "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-10|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
+   "m:2026-10|[\"salvami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
     "s": 1,
-    "t": "la mia storia tra le dita",
-    "a": "gianluca grignani"
+    "t": "Salvami",
+    "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"una direzione giÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃ": {
+   "[\"futuri possibili\",\"franco126\"]": {
     "v": 0,
-    "s": 1,
+    "s": 80,
+    "t": "Futuri Possibili",
+    "a": "Franco126"
+   },
+   "m:2026-10|[\"futuri possibili\",\"franco126\"]": {
+    "v": 0,
+    "s": 63,
+    "t": "Futuri Possibili",
+    "a": "Franco126"
+   },
+   "[\"una direzione giusta\",\"thasup\"]": {
+    "v": 0,
+    "s": 2,
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
-   "m:2026-10|[\"una direzione giÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+   "m:2026-10|[\"una direzione giusta\",\"thasup\"]": {
     "v": 0,
-    "s": 1,
-    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "s": 2,
+    "t": "uNa DiReZioNe giusta",
     "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
@@ -1801,29 +1837,35 @@
     "t": "Salvami",
     "a": "ModÃÂÃÂ "
    },
-   "[\"futuri possibili\",\"franco126\"]": {
+   "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
     "v": 0,
-    "s": 80,
+    "s": 17,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
-   "m:2026-10|[\"futuri possibili\",\"franco126\"]": {
+   "[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 63,
-    "t": "Futuri Possibili",
-    "a": "Franco126"
+    "s": 10,
+    "t": "Il Tuo Sorriso",
+    "a": "Medy"
    },
-   "[\"una direzione giusta\",\"thasup\"]": {
+   "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 2,
-    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-    "a": "thasup"
+    "s": 10,
+    "t": "Il Tuo Sorriso",
+    "a": "Medy"
    },
-   "m:2026-10|[\"una direzione giusta\",\"thasup\"]": {
+   "[\"lilith\",\"kid yugi\"]": {
     "v": 0,
-    "s": 2,
-    "t": "uNa DiReZioNe giusta",
-    "a": "thasup"
+    "s": 62,
+    "t": "Lilith",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"lilith\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Lilith",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -1897,36 +1939,6 @@
     "t": "Salvami",
     "a": "ModÃÂ "
    },
-   "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
-    "v": 0,
-    "s": 17,
-    "t": "Futuri Possibili",
-    "a": "Franco126"
-   },
-   "[\"il tuo sorriso\",\"medy\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Il Tuo Sorriso",
-    "a": "Medy"
-   },
-   "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Il Tuo Sorriso",
-    "a": "Medy"
-   },
-   "[\"lilith\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 62,
-    "t": "Lilith",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"lilith\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 62,
-    "t": "Lilith",
-    "a": "Kid Yugi"
-   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1998,6 +2010,54 @@
     "s": 1,
     "t": "Salvami",
     "a": "ModÃ "
+   },
+   "[\"una direzione giÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃ": {
+    "v": 0,
+    "s": 1,
+    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "thasup"
+   },
+   "m:2026-10|[\"una direzione giÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+    "v": 0,
+    "s": 1,
+    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "thasup"
+   },
+   "[\"cosa mi manchi a fare\",\"calcutta\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Cosa mi manchi a fare",
+    "a": "Calcutta"
+   },
+   "m:2026-11|[\"cosa mi manchi a fare\",\"calcutta\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Cosa mi manchi a fare",
+    "a": "Calcutta"
+   },
+   "[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
+    "a": "Elisa, Calcutta"
+   },
+   "m:2026-11|[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
+    "a": "Elisa, Calcutta"
+   },
+   "[\"cosa conta davvero\",\"nayt\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "cosa conta davvero",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "cosa conta davvero",
+    "a": "nayt"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -2082,42 +2142,6 @@
     "s": 1,
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
-   },
-   "[\"cosa mi manchi a fare\",\"calcutta\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Cosa mi manchi a fare",
-    "a": "Calcutta"
-   },
-   "m:2026-11|[\"cosa mi manchi a fare\",\"calcutta\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Cosa mi manchi a fare",
-    "a": "Calcutta"
-   },
-   "[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
-    "a": "Elisa, Calcutta"
-   },
-   "m:2026-11|[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
-    "a": "Elisa, Calcutta"
-   },
-   "[\"cosa conta davvero\",\"nayt\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "cosa conta davvero",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "cosa conta davvero",
-    "a": "nayt"
    }
   },
   "Diego": {
