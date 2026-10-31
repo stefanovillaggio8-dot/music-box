@@ -22,6 +22,6 @@ assert(workflow.includes("schedule:") && workflow.includes("*/5 * * * *"));
 assert(workflow.includes("id-token: write") && workflow.includes("tools/cloud-queue-client.cjs claim"));
 assert(workflow.includes("tools/cloud-queue-client.cjs finish"));
 assert(cli.includes("ACTIONS_ID_TOKEN_REQUEST_TOKEN"));
-assert(edge.includes("crypto.subtle.verify") && edge.includes("github.event"));
+assert(edge.includes("crypto.subtle.verify") && edge.includes("claims.event_name"));
 assert(edge.includes("client_hash") && edge.includes("origin"));
 console.log("OK: all profiles, cloud queue, status, no Github login, worker OIDC and rate limits");
