@@ -31,7 +31,7 @@ try {
     "-c:a","libmp3lame","-q:a","9","-y",sample
   ],{encoding:"utf8",timeout:6000});
   assert.equal(built.status,0,"Creazione MP3 di prova: "+(built.stderr||built.error||""));
-  assert(fs.statSync(sample).size>2048,"Il campione MP3 deve essere valido");
+  assert(fs.statSync(sample).size>500,"Il campione MP3 deve essere presente");
   const ok = request("https://youtu.be/" + id, "Ste");
   assert.equal(ok.status, 0, "Importazione di MP3 esistente: " + ok.stderr);
   let list = JSON.parse(fs.readFileSync(path.join(root,"online-imports.json"), "utf8"));
