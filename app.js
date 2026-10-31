@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.439";
+  const APP_VERSION = "6.440";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7595,7 +7595,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.439 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.440 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -7624,13 +7624,21 @@ if (r.ok && j && j.ok) {
        I 404 vengono memorizzati separatamente per 24 ore. */
     const artistaCompleto = String(artist || "Unknown").trim();
     const artistaPrincipale = artistaCompleto.split(/,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim() || artistaCompleto;
-    const nomiArtista = [...new Set([artistaPrincipale, artistaCompleto])].slice(0, 2);
-    for (const nomeArtista of nomiArtista) {
-      const chiaveLyricsOvh = normKey(nomeArtista) + "|" + normKey(name);
+    const ricercheOvh = [];
+    /* Le raccolte possono indicare il nome della compilation al posto
+       dell'interprete. L'originale "Live Is Life" e' degli Opus:
+       e' un'alternativa di RICERCA, non cambia i dati del brano. */
+    if (normKey(name) === "lifeislife" && /80s\s*super\s*hits/i.test(artistaCompleto)) {
+      ricercheOvh.push({ a: "Opus", t: "Live Is Life" });
+    }
+    ricercheOvh.push({ a: artistaPrincipale, t: name });
+    if (artistaCompleto !== artistaPrincipale) ricercheOvh.push({ a: artistaCompleto, t: name });
+    for (const ricerca of ricercheOvh.slice(0, 3)) {
+      const chiaveLyricsOvh = normKey(ricerca.a) + "|" + normKey(ricerca.t);
       if (_lyricsOvhMancante(chiaveLyricsOvh)) continue;
       try {
         const url = "https://api.lyrics.ovh/v1/" +
-          encodeURIComponent(nomeArtista) + "/" + encodeURIComponent(name);
+          encodeURIComponent(ricerca.a) + "/" + encodeURIComponent(ricerca.t);
         const r = await fetchConScadenza(url, 12000);
         if (r.status === 404) {
           _segnaLyricsOvhMancante(chiaveLyricsOvh);
@@ -7640,7 +7648,7 @@ if (r.ok && j && j.ok) {
         if (r.ok) {
           const j = await r.json();
           if (j && typeof j.lyrics === "string" && j.lyrics.length > 120 &&
-              (!j.title || titleCompatible(name, j.title))) {
+              (!j.title || titleCompatible(ricerca.t, j.title))) {
             return { text: j.lyrics.replace(/\r/g, "").trim(), synced: "", source: "lyrics.ovh" };
           }
         }
