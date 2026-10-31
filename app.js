@@ -18,38 +18,12 @@
        telefono sa che la sessione audio e' di MusicBox, il tasto delle
        cuffie riparte la musica di MusicBox e la notifica in alto resta
        finche' l'app e' aperta. */
-    let _silenzio = null;
-    function _accendiSilenzio() {
-      try {
-        if (_silenzio) return;
-        if (!window.Audio) return;
-        /* WAV di 0,1 secondi di silenzio (generato sul computer). */
-        const silenzio = "data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
-        /* Prima il file vero (silenzio.mp3, 3 minuti): continua a suonare
-           anche quando iPhone congela il JavaScript dell'app in secondo
-           piano, e quindi la sessione audio resta viva (e con lei la
-           notifica e i tasti delle cuffie). Il peccato di 0,1 secondi
-           resta come piano B, se il file non si riesce a caricare. */
-        const a = new Audio("silenzio.mp3");
-        a.loop = true;
-        a.volume = 0.01;
-        a.setAttribute("playsinline", "");
-        a.addEventListener("error", function () {
-          /* Il file non si e' caricato: uso il peccato di sempre. */
-          try {
-            const b = new Audio(silenzio);
-            b.loop = true;
-            b.volume = 0.01;
-            b.setAttribute("playsinline", "");
-            const p2 = b.play();
-            if (p2 && p2.catch) p2.catch(() => { });
-            _silenzio = b;
-          } catch (e) { }
-        });
-        _silenzio = a;
-        const prova = a.play();
-        if (prova && prova.catch) prova.catch(() => { });
-      } catch (e) { /* noop */ }
+    /* L'audio silenzioso aggiuntivo poteva rubare a quello reale
+       la MediaSession della schermata di blocco iOS. Usiamo una sola
+       sorgente: il brano che l'utente sta realmente ascoltando. */
+    function _configuraSessioneAudio() {
+      try { if (navigator.audioSession) navigator.audioSession.type = "playback"; }
+      catch (e) { /* AudioSession e' opzionale */ }
     }
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
@@ -1292,7 +1266,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.445";
+  const APP_VERSION = "6.446";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5577,15 +5551,19 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       }
     } catch (e) { }
     a.addEventListener("play", () => {
+    if (a !== audio) return;
+    _configuraSessioneAudio();
     _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
     a._mbCambioBrano = false;
     syncPlayUI();
     updateMediaSession();
+    setPlaybackState("playing");
     _iniziaAscolto();
     _notificaStatoNativo(true);
     });
 a.addEventListener("pause", () => {
+    if (a !== audio) return; /* evento di un vecchio lettore, non quello attuale */
     /*
       Ste: "riapro l'app e si ferma la musica". Il motivo era QUI: questo
       evento scatta anche quando e' il SISTEMA a mettere in pausa (succede
@@ -5623,6 +5601,7 @@ a.addEventListener("pause", () => {
     }
     syncPlayUI();
     updateMediaSession();
+    setPlaybackState("paused");
     savePos();
     _chiudiAscolto(false);
     _notificaStatoNativo(true);
@@ -5703,7 +5682,9 @@ function rebuildAudio(autoplay) {
     if (!audio) audio = createAudio();
     try {
       _applicaAudio();
-      setPlaybackState("playing");
+      _configuraSessioneAudio();
+      /* Lo stato playing viene annunciato soltanto al vero evento play,
+         mai prima di tentare la riproduzione. */
       /* iPhone Safari: play() deve partire nel gesto dell'utente.
          Attendere i metadata prima del play perde l'autorizzazione
          di Safari: il browser gestira' autonomamente il buffering. */
@@ -5904,6 +5885,9 @@ function rebuildAudio(autoplay) {
          Questo giro ogni 3 secondi SEMPRE, quindi copre anche il caso in cui
          il brano e' finito mentre l'app era in primo piano. */
       if (audio.ended) { _finitoSenzaAvanti(); return; }
+      /* iOS ritarda i timeupdate in background, anche con audio udibile:
+         ricreare il player in quel momento fa perdere la sessione media. */
+      if (document.hidden) return;
       if (audio.paused) { _silenziDiFila = 0; _riprovaPiuTardi(); return; }
       if (Date.now() - _ultimoScorrimento < 10000) return;
       /* sta ancora scaricando: non e' un silenzio, e' la rete */
@@ -6881,6 +6865,7 @@ function playNext() {
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
     if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
+    setPlaybackState("paused");
     _nascondiAiuto();
     syncPlayUI();
     /* Teniamo attiva la notifica anche quando la musica e' fermata,
@@ -7120,6 +7105,8 @@ function _aggiornaPosizioneSchermo() {
   function updateMediaSession() {
     if (!("mediaSession" in navigator)) return;
     const t = current();
+    if (!t || !currentId) return;
+    _configuraSessioneAudio();
     const cop = _copertinaPerSchermo(t);
     const meta = new MediaMetadata({
       title: t ? t.title : APP_NAME,
@@ -7135,7 +7122,10 @@ function _aggiornaPosizioneSchermo() {
     /* Tasti del blocco schermo: passano dagli stessi due posti del tasto
        play/pausa dell'app, altrimenti potrebbero dimenticarsi di dire
        "l'utente ha messo pausa" e la musica ripartirebbe da sola. */
-    setHandler("play", () => { _riproduciVolontaria(); });
+    setHandler("play", () => {
+      if (currentId) _riproduciVolontaria();
+      else if (tracks.length) playById(tracks[0].id);
+    });
     setHandler("pause", () => { _pausaVolontaria(); });
     setHandler("nexttrack", () => playNext());
     setHandler("previoustrack", () => playById(idBranoA(prevIndex())));
@@ -7153,7 +7143,7 @@ function _aggiornaPosizioneSchermo() {
        Gli advancedi e i rientri di 15 secondi restano comunque disponibili
        dentro l'app, sulla barra sopra al play. */
     setHandler("stop", () => { _pausaVolontaria(); });
-    setPlaybackState(audio && !audio.paused ? "playing" : "paused");
+    setPlaybackState(audio && !audio.paused && !audio.ended ? "playing" : "paused");
     _notificaStatoNativo(true);
   }
 
@@ -7960,7 +7950,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.445 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.446 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -13162,7 +13152,12 @@ document.addEventListener("visibilitychange", () => {
       /* Ste: "i tasti delle cuffie devono ripartire la musica di musicbox".
          Riprendo anche la sessione audio: se nel frattempo l'ha presa
          un'altra app, io la riprendo. */
-      try { if (current()) { updateMediaSession(); _accendiSilenzio(); setPlaybackState("playing"); } } catch (e) { /* noop */ }
+      try {
+        if (current()) {
+          updateMediaSession();
+          setPlaybackState(audio && !audio.paused && !audio.ended ? "playing" : "paused");
+        }
+      } catch (e) { /* noop */ }
       _disegnaTimer();
     } else if (_bloccoSchermo) {
     /* non lo tengo: il telefono e' gia' spento, e tenerlo occuperebbe
@@ -14740,21 +14735,10 @@ for (const p of playlists) {
        notifica spariva). Adesso, se c'e' una canzone, l'app si prende la
        sessione subito: i tasti delle cuffie tornano a MusicBox e la
        notifica resta finche' l'app e' aperta. */
+    /* Nessun falso audio silenzioso: la sessione passa a Music Box solo
+       quando un vero brano viene riprodotto. */
+    _configuraSessioneAudio();
     setPlaybackState("none");
-    try {
-      /* Ste: "quando dalle cuffie premo il tasto, parte una canzone di
-         soundcloud" e "la notifica deve restare fino quando chiudo l'app".
-         La pista silenziosa parte SEMPRE, appena apri l'app: cosi' il
-         telefono sa che la sessione audio e' di MusicBox, e i tasti
-         delle cuffie tornano a me anche con la musica ferma.
-         (Con l'app chiusa del tutto, invece, la sessione non esiste piu' e
-         iOS da' il comando all'ultima app che ha suonato: quello lo
-         decide il sistema, non l'app.) */
-      updateMediaSession();
-      _accendiSilenzio();
-      setPlaybackState("playing");
-      _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
-    } catch (e) { /* noop */ }
     _resetEmanueleSeNecessario();
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
