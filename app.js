@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.432";
+  const APP_VERSION = "6.433";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6290,10 +6290,11 @@ box.innerHTML = "";
       _testiPrefetchAttivo = true;
       const profiloIniziale = profile;
       let scansioni = 0;
+      let elencoDaCompletare = [];
       try {
         /* Il catalogo completo comprende anche i profili non aperti.
            I risultati si salvano per ID, senza spostare brani fra account. */
-        const elencoDaCompletare = BUILTIN.map((b) => ({
+        elencoDaCompletare = BUILTIN.map((b) => ({
           id: _idBranoStabile(b),
           title: stripArtistPrefix(b.artist, b.title),
           artist: b.artist || "",
@@ -6313,6 +6314,8 @@ box.innerHTML = "";
           await _completaTestoInAscolto(t, true);
           await new Promise((resolve) => setTimeout(resolve, 650));
         }
+      } catch (e) {
+        console.warn("Ricerca karaoke in secondo piano interrotta:", e);
       } finally { _testiPrefetchAttivo = false; }
       if (profile === profiloIniziale && !document.hidden &&
           elencoDaCompletare.some(t => t && t.artist && !_ricercaTestoRecente(t.id, true) &&
@@ -7487,6 +7490,26 @@ if (r.ok && j && j.ok) {
   /* LRCLIB: i testi LRC con timestamp hanno precedenza sui testi normali.
      Endpoint aperto con CORS; non si inventano mai parole o timestamp. */
   let _lrclibNonPrimaDi = 0;
+  let _lrclibErroriTemporanei = 0;
+  function _gestisciPausaLrclib(response) {
+    if (!response) return false;
+    if (response.ok) {
+      _lrclibErroriTemporanei = 0;
+      return false;
+    }
+    if (![429, 502, 503, 504].includes(response.status)) return false;
+    const indicazione = response.headers && response.headers.get("Retry-After");
+    const secondi = Number(indicazione);
+    const dataRetry = Date.parse(indicazione || "");
+    const dalServer = Number.isFinite(secondi) && secondi > 0 ? secondi :
+      Number.isFinite(dataRetry) ? Math.max(0, Math.ceil((dataRetry - Date.now()) / 1000)) : 0;
+    /* Non martellare il provider se il catalogo ha centinaia di brani in attesa. */
+    const base = response.status === 429 ? 30 : 60;
+    const attesa = Math.min(900, Math.max(dalServer, base * Math.pow(2, Math.min(4, _lrclibErroriTemporanei))));
+    _lrclibErroriTemporanei = Math.min(5, _lrclibErroriTemporanei + 1);
+    _lrclibNonPrimaDi = Math.max(_lrclibNonPrimaDi, Date.now() + attesa * 1000);
+    return true;
+  }
   async function findLyrics(artist, title, options = {}) {
     const name = stripVariants(title);
     const duration = Number(options.durationMs || 0) / 1000;
@@ -7516,9 +7539,8 @@ if (r.ok && j && j.ok) {
       try {
         const url = "https://lrclib.net/api/get/" + ref.lrclibId;
         const r = await fetchConScadenza(url, 12000);
-        if (r.status === 429) {
-          const retry = Math.max(5, Math.min(300, Number(r.headers.get("Retry-After")) || 30));
-          _lrclibNonPrimaDi = Date.now() + retry * 1000;
+        if (_gestisciPausaLrclib(r)) {
+          /* Sovraccarico: conserva i testi gia' salvati e rimanda il resto. */
         } else if (r.ok) {
           const j = await r.json();
           const rows = j && j.syncedLyrics && parseSynced(j.syncedLyrics);
@@ -7539,16 +7561,12 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.421 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.433 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
           const r = await fetchConScadenza(url, 12000, { headers: header });
-          if (r.status === 429) {
-            const retry = Math.max(5, Math.min(300, Number(r.headers.get("Retry-After")) || 30));
-            _lrclibNonPrimaDi = Date.now() + retry * 1000;
-            break;
-          }
+          if (_gestisciPausaLrclib(r)) break;
           if (!r.ok) continue;
           const j = await r.json();
           const selected = choose(Array.isArray(j) ? j : [j]);
