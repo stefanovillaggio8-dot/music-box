@@ -192,6 +192,29 @@ async function main() {
   ], 20000).trim());
   if (!Number.isFinite(secondsAudio) || secondsAudio <= 0 || secondsAudio > MAX_SECONDS + 1)
     fail("Verifica MP3 fallita: file audio vuoto, corrotto o troppo lungo.");
+  // Non basta chiamare un file ".mp3": verifica il codec reale.
+  const codec = run("ffprobe",[
+    "-v","error","-select_streams","a:0","-show_entries","stream=codec_name",
+    "-of","default=noprint_wrappers=1:nokey=1",file
+  ],20000).trim();
+  if(codec!=="mp3"){
+    const converted=file+".converted.mp3";
+    try{
+      console.log("Converto audio",clean(codec,40),"in MP3 autentico.");
+      run("ffmpeg",["-nostdin","-hide_banner","-loglevel","error","-y",
+        "-i",file,"-map","0:a:0","-vn","-c:a","libmp3lame","-q:a","5",converted],130000);
+      if(!fs.existsSync(converted) || fs.statSync(converted).size<=0 ||
+        fs.statSync(converted).size>MAX_BYTES)fail("MP3 ricodificato non valido.");
+      fs.renameSync(converted,file);
+    }finally{
+      if(fs.existsSync(converted))fs.rmSync(converted);
+    }
+    const finalCodec=run("ffprobe",[
+      "-v","error","-select_streams","a:0","-show_entries","stream=codec_name",
+      "-of","default=noprint_wrappers=1:nokey=1",file
+    ],20000).trim();
+    if(finalCodec!=="mp3")fail("Codifica MP3 finale non verificata.");
+  }
   let title = clean(details.track || details.title || "Audio YouTube " + id);
   let artist = clean(details.artist || details.creator || details.uploader || "");
   if (requested) {
