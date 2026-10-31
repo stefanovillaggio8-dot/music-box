@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6452" />
+  <link rel="stylesheet" href="style.css?v=6453" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -735,6 +735,11 @@
           <span>Confermo di avere il diritto di importare questo audio.</span>
         </label>
         <button class="btn-main" id="ytOnlineGo" type="button">Aggiungi al mio profilo</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <strong>Stato importazioni</strong>
+          <button type="button" class="btn-ghost" id="ytOnlineCheck">Controlla adesso</button>
+        </div>
+        <p id="ytOnlineLastStatus" class="step-hint" role="status">Nessuna richiesta recente.</p>
         <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver premuto Aggiungi, l'app invia la richiesta al servizio online. Nessun accesso GitHub e nessun PC acceso.</p>
         <p class="step-hint">Il download può non riuscire se il video è protetto, richiede l'accesso o YouTube blocca il server. I video non autorizzati non devono essere importati.</p>
       </div>
@@ -1228,7 +1233,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6452"></script>
-<script src="app.js?v=6452"></script>
+<script src="fuoco.js?v=6453"></script>
+<script src="app.js?v=6453"></script>
 </body>
 </html>
