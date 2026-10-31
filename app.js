@@ -5530,6 +5530,9 @@ li.addEventListener("click", () => {
 
   function handleEnded() {
     try {
+    if (window.MusicBoxRoom?.isActive()) {
+      window.MusicBoxRoom.control("next"); return;
+    }
     if (currentId) LS.set("mb.pos." + currentId, 0);
     /* La coda scelta manualmente ha precedenza anche dentro una playlist,
        esattamente come il tasto Avanti e come mostra il pannello Coda. */
@@ -6326,6 +6329,7 @@ function rebuildAudio(autoplay) {
      Il casuale seleziona la stessa traccia che poi verra' riprodotta:
      NON metterla in queue, altrimenti doppioni e precedenze sbagliate. */
   function _prossimiAutomaticiInCoda() {
+    if (window.MusicBoxRoom?.isActive()) return window.MusicBoxRoom.upcoming(10);
     if (!shuffle || !currentId || queue.length || repeat) return [];
     const lista = (_posizionePlaylist >= 0 && _playlistSuona.length)
       ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
@@ -6339,7 +6343,7 @@ function rebuildAudio(autoplay) {
 
   function renderQueueCount() {
     const auto = _prossimiAutomaticiInCoda();
-    const quanti = queue.length + auto.length;
+    const quanti = (window.MusicBoxRoom?.isActive() ? 0 : queue.length) + auto.length;
     const el = $("quickCount");
     if (el) {
       el.hidden = !quanti;
@@ -6431,15 +6435,17 @@ function rebuildAudio(autoplay) {
     }
 
     const automatici = _prossimiAutomaticiInCoda();
-    if (automatici.length && !queue.length) {
+    const roomActive=!!window.MusicBoxRoom?.isActive();
+    if (automatici.length && (roomActive || !queue.length)) {
       const bar = document.createElement("div");
       bar.className = "queue-auto-actions";
       const label = document.createElement("span");
-      label.textContent = "PROSSIME " + automatici.length + " CANZONI · CASUALE";
+      label.textContent = "PROSSIME " + automatici.length + (roomActive ? " CANZONI · INSIEME" : " CANZONI · CASUALE");
       const shuffleBtn = document.createElement("button");
       shuffleBtn.type = "button";
       shuffleBtn.textContent = "Rimescola";
-      shuffleBtn.addEventListener("click", _rimescolaCasuale);
+      shuffleBtn.addEventListener("click", () => roomActive ?
+        window.MusicBoxRoom.control("reshuffle") : _rimescolaCasuale());
       bar.append(label, shuffleBtn);
       body.appendChild(bar);
     }
@@ -6463,8 +6469,9 @@ function rebuildAudio(autoplay) {
       row.appendChild(info);
       const tag = document.createElement("span");
       tag.className = "queue-auto-tag";
-      tag.textContent = "Casuale";
+      tag.textContent = roomActive ? "Insieme" : "Casuale";
       row.appendChild(tag);
+      if (roomActive) { body.appendChild(row); return; }
       const move = document.createElement("div");
       move.className = "queue-actions";
       const action = (testo, aria, callback, off) => {
@@ -6485,7 +6492,7 @@ function rebuildAudio(autoplay) {
       body.appendChild(row);
     });
 
-    if (!queue.length) {
+    if (roomActive || !queue.length) {
       if (!automatici.length) {
         const e = document.createElement("p");
         e.className = "queue-empty";
@@ -7330,6 +7337,9 @@ function _prossimaCasuale(lista) {
    errore, quello e' il motivo. */
 function playNext() {
     try {
+      if (window.MusicBoxRoom?.isActive()) {
+        window.MusicBoxRoom.control("next");return;
+      }
       if (queue.length) {
         const next = queue.shift();
         persistQueue();
@@ -11423,6 +11433,23 @@ $("btnPrev").addEventListener("click", () => {
 
    Il resto lo fa gia' nextIndex(), che mescola la lista "per suono": dentro
    la libreria quella lista e' la libreria, dentro una playlist e' la playlist. */
+
+/* Bridge ristretto fra il lettore locale e la stanza privata.
+   Nessuna chiave e nessun accesso al database vengono esposti. */
+window.MusicBoxBridge = {
+  profile:()=>profile,
+  playable:()=>_listaPerIlSeguito(),
+  allTracks:()=>tracks,
+  currentId:()=>currentId,
+  audio:()=>audio,
+  play:(id,autoplay)=>playById(id,autoplay),
+  playCurrent:()=>doPlay(),
+  urlForFile:file=>_doveStaIlBrano(file),
+  refreshQueue:()=>renderQueueCount(),
+  closeOther:()=>_chiudiAltro(),
+  syncScroll:()=>syncNoScroll(),
+  toast:message=>toast(message,5000)
+};
 
 function _accendiCasuale(accendi) {
   shuffle = Boolean(accendi);
