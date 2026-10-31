@@ -44,7 +44,7 @@ async function verifyWorker(req:Request):Promise<boolean> {
       claims.aud !== AUDIENCE ||
       claims.repository !== PROJECT ||
       claims.ref !== "refs/heads/main" ||
-      (claims.event_name !== "schedule" && claims.event_name !== "workflow_dispatch") ||
+      !["schedule","workflow_dispatch","push"].includes(claims.event_name) ||
       !String(claims.workflow_ref||"").includes("/.github/workflows/process-mobile-imports.yml@refs/heads/main") ||
       !Number.isFinite(claims.exp) || claims.exp < now ||
       !Number.isFinite(claims.nbf || claims.iat) || (claims.nbf || claims.iat) > now + 30)
