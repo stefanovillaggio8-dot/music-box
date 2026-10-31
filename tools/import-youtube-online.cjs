@@ -9,6 +9,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
+const { resolveLicensedAudio } = require("./resolve-licensed-audio.cjs");
 
 const MAX_BYTES = 24 * 1024 * 1024;
 const MAX_SECONDS = 12 * 60;
@@ -51,7 +52,7 @@ function run(command, args, timeout = 180000) {
 function output(name, value) {
   if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, name + "=" + String(value).replace(/[\r\n]/g, " ") + "\n");
 }
-function main() {
+async function main() {
   const id = videoId(field("YouTube"));
   const profile = clean(field("Profilo"), 40);
   if (!profile || !/^[\p{L}\p{N} _.-]+$/u.test(profile)) fail("Profilo non valido.");
@@ -78,6 +79,22 @@ function main() {
   const url = "https://www.youtube.com/watch?v=" + id;
   const infoFile = "songs/youtube-" + id + ".info.json";
   const previous = entries.find(x => x.file === file && x.title);
+  // Fonte alternativa che non copia stream YouTube: brani autonomamente
+  // pubblicati CC0 e verificati con artista, titolo e file unico.
+  // Quando la corrispondenza non e' rigorosa non si sostituisce l'audio.
+  let licensed=null;
+  if(!fs.existsSync(file)){
+    try {
+      licensed=await resolveLicensedAudio({videoId:id,requestedTitle:requested,file});
+      if(licensed){
+        details={title:licensed.title,artist:licensed.artist};
+        console.log("Audio CC0 verificato:",licensed.sourceUrl);
+      }
+    }catch(e){
+      console.warn("Catalogo CC0 non disponibile:",String(e.message||e).slice(0,130));
+      if(fs.existsSync(file))fs.rmSync(file);
+    }
+  }
   if (fs.existsSync(file)) {
     if (previous) details = { track: previous.title, artist: previous.artist };
     console.log("Riutilizzo MP3 gia' nell'archivio: " + file);
@@ -143,7 +160,9 @@ function main() {
   entries.push({
     title, artist, profile, file,
     cover: "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg",
-    youtubeId: id
+    youtubeId: id,
+    ...(licensed ? {audioSource:licensed.source,
+      sourceUrl:licensed.sourceUrl,license:licensed.license} : {})
   });
   entries.sort((a, b) => String(a.profile).localeCompare(String(b.profile)) ||
     String(a.title).localeCompare(String(b.title)));
@@ -153,7 +172,7 @@ function main() {
   output("status", "added");
   console.log("Pronto per pubblicazione: " + profile + " - " + title);
 }
-try { main(); } catch (e) {
+main().catch(e => {
   const detail = String((e && (e.stderr || e.message)) || e || "Errore sconosciuto");
   const publicError = /sign in to confirm.{0,150}(?:bot|human)|verifica anti-bot|automated requests/i.test(detail)
     ? "YouTube blocca il download dai server GitHub (controllo anti-bot)."
@@ -165,4 +184,4 @@ try { main(); } catch (e) {
   }
   console.error("IMPORTAZIONE FALLITA:", detail);
   process.exitCode = 1;
-}
+});
