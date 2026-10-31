@@ -56,7 +56,7 @@ try {
         Write-Host ("Scarico " + $Name + "...")
         Invoke-WebRequest -Uri $Uri -OutFile $Destination -TimeoutSec 45
 
-        if (-not (Test-Path $Destination -PathType Leaf) -or (Get-Item $Destination).Length -lt $(if ($Name -match "\\.json$") { 2 } else { 40 })) {
+        if (-not (Test-Path $Destination -PathType Leaf) -or (Get-Item $Destination).Length -lt $(if ($Name -match "\.json$") { 2 } else { 40 })) {
             throw ("File scaricato incompleto: " + $Name)
         }
     }
