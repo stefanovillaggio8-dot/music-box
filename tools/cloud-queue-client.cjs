@@ -46,7 +46,9 @@ async function main() {
   const success=process.argv[3]==="success";
   const result=await api(token,{action:"finish",id:job.id,status:success?"completed":"failed",
     file:success?"songs/youtube-"+job.video_id+".mp3":"",
-    error:success?"":"Conversione o pubblicazione non riuscita. Riprova con un video consentito."});
+    error:success?"":(fs.existsSync(path.join(process.env.RUNNER_TEMP||process.cwd(),"musicbox-cloud-error.txt"))
+      ? fs.readFileSync(path.join(process.env.RUNNER_TEMP||process.cwd(),"musicbox-cloud-error.txt"),"utf8").trim().slice(0,170)
+      : "Conversione o pubblicazione non riuscita. Il video potrebbe non essere accessibile.")});
   console.log("Cloud job completed",job.id,result.ok,success);
 }
 main().catch(e=>{console.error(String(e&&e.message||e));process.exitCode=1;});
