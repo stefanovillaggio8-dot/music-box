@@ -1,13 +1,5 @@
 [
  {
-  "t": 1793400787078,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793400787117,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793400787226,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1793400815575,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793406394811,
+  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
+ },
+ {
+  "t": 1793406394865,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  }
 ]
