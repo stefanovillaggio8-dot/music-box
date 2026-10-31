@@ -102,21 +102,42 @@ async function main() {
     fs.mkdirSync("songs", {recursive:true});
     console.log("Preparo MP3 autorizzato " + id + " in un solo passaggio");
     try {
-      run("yt-dlp", [
-        "--ignore-config", "--js-runtimes", "deno", "--no-playlist",
-        "--no-warnings", "--no-progress", "--socket-timeout", "20",
-        "--retries", "3", "--fragment-retries", "3",
-        "--retry-sleep", "http:linear=1:3:1",
-        "--format", "bestaudio/best",
-        "--match-filters", "duration <= 720",
-        "--max-filesize", "24M",
-        "--extract-audio", "--audio-format", "mp3", "--audio-quality", "5",
-        "--write-info-json",
-        "--output", "songs/youtube-" + id + ".%(ext)s",
-        url
-      ], 240000);
+      // Due client di estrazione supportati da yt-dlp: il secondo e' utile
+      // quando i formati del client predefinito non sono disponibili.
+      // Nessun iframe, nessuna registrazione dal lettore, niente credenziali.
+      const clients = [
+        {name:"default", args:[]},
+        {name:"android_vr", args:["--extractor-args","youtube:player_client=android_vr"]}
+      ];
+      let lastError=null;
+      for (const client of clients) {
+        try {
+          console.log("Client yt-dlp:",client.name);
+          run("yt-dlp", [
+            "--ignore-config", "--js-runtimes", "deno", "--no-playlist",
+            "--no-warnings", "--no-progress", "--socket-timeout", "20",
+            "--retries", "2", "--fragment-retries", "2",
+            "--format", "bestaudio/best",
+            "--match-filters", "duration <= 720",
+            "--max-filesize", "24M",
+            "--extract-audio", "--audio-format", "mp3", "--audio-quality", "5",
+            "--write-info-json",
+            "--output", "songs/youtube-" + id + ".%(ext)s",
+            ...client.args, url
+          ], 175000);
+          if (fs.existsSync(file) && fs.statSync(file).size > 0) {
+            lastError=null;
+            break;
+          }
+          lastError=new Error("Il client "+client.name+" non ha creato un MP3.");
+        } catch (error) {
+          lastError=error;
+          if(fs.existsSync(file))fs.rmSync(file);
+        }
+      }
+      if(lastError)throw lastError;
       if (!fs.existsSync(file)) {
-        fail("YouTube non ha fornito un audio valido: verifica durata, accesso e formato.");
+        fail("Nessuno dei client ha fornito un audio valido.");
       }
       if (fs.existsSync(infoFile)) details = JSON.parse(fs.readFileSync(infoFile,"utf8"));
       const seconds = Number(details.duration);
