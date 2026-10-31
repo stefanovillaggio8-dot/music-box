@@ -81,7 +81,7 @@ jobs:
           '{"b-local-only":{"lrclibId":123456789,"synced":true}}' | Set-Content (Join-Path $testRoot "karaoke-index.json")
           '{"b-local-only":{"text":"do not overwrite local text"}}' | Set-Content (Join-Path $testRoot "lyrics.json")
           [IO.File]::WriteAllBytes((Join-Path $testRoot "songs\private-test.mp3"), [byte[]]::new(8192))
-          & ./tools/aggiorna-copia-locale.ps1 -Root $testRoot
+          & ./tools/aggiorna-copia-locale.ps1 -Root $testRoot -SourceRef $env:GITHUB_SHA
           $index = Get-Content (Join-Path $testRoot "karaoke-index.json") -Raw | ConvertFrom-Json
           $version = Get-Content (Join-Path $testRoot "versione.json") -Raw | ConvertFrom-Json
           $lyrics = Get-Content (Join-Path $testRoot "lyrics.json") -Raw
