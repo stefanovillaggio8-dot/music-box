@@ -1,13 +1,5 @@
 [
  {
-  "t": 1793407575753,
-  "r": "visibili 225 su 252 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1793407575872,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1793407575881,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +150,13 @@
  {
   "t": 1793407621810,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793407624754,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793407624743,
+  "r": "suono: originale b-track-631"
  }
 ]
