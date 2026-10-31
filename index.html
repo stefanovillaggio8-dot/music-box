@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6465" />
+  <link rel="stylesheet" href="style.css?v=6466" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -684,7 +684,7 @@
           <span class="fab-option-icon" aria-hidden="true">♫</span>
           <span class="fab-option-content"><strong>File audio dal telefono</strong>
             <small>Scegli un MP3, M4A o altro file dall’app File</small>
-            <span class="fab-option-note">Metodo più semplice se hai già il brano</span>
+            <span class="fab-option-note">Facoltativo: solo per file già presenti sul telefono</span>
           </span>
         </button>
         <button class="fab-option" id="fabCloud" type="button">
@@ -697,7 +697,7 @@
           <span class="fab-option-icon" aria-hidden="true">▶</span>
           <span class="fab-option-content"><strong>Link YouTube</strong>
             <small>Importa un brano da un link</small>
-            <span class="fab-option-note">La richiesta parte senza PC; l’audio dipende dalla conversione</span>
+            <span class="fab-option-note">Samplecut cloud: nessun MP3 da scaricare sul telefono</span>
           </span>
         </button>
         <button class="fab-option" id="fabSpotify" type="button">
@@ -708,10 +708,10 @@
           </span>
         </button>
       </div>
-      <div class="fab-file-walkthrough" aria-label="Dal convertitore alla libreria">
-        <strong>Hai gia un file MP3 nell'iPhone?</strong>
-        <span>Salvalo in File → Download, poi premi <b>File audio dal telefono</b> qui sopra. La canzone viene aggiunta alla tua libreria appena la scegli.</span>
-        <a href="https://cobalt.tools/" target="_blank" rel="noopener noreferrer">Apri Cobalt (sito esterno, facoltativo)</a>
+      <div class="fab-file-walkthrough" aria-label="Importazione cloud senza memoria sul telefono">
+        <strong>☁ Samplecut: importazione automatica online</strong>
+        <span>Premi <b>Link YouTube</b> e incolla il link: Music Box prova prima <b>Samplecut</b> direttamente dal server, poi gli altri motori disponibili. Non devi scaricare MP3 sul telefono né accendere il PC.</span>
+        <span>La canzone compare nel lettore solo se il server riesce a ottenere un file audio valido. Controlla lo stato nel pannello YouTube.</span>
       </div>
       <div class="fab-sheet-bottom">
         <button class="fab-sheet-minor" id="fabCercaTitolo" type="button">⌕ Cerca fra i brani che ho già</button>
@@ -762,13 +762,13 @@
         <p id="ytOnlineLastStatus" class="step-hint" role="status">Nessuna richiesta recente.</p>
         <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver confermato i diritti, incolla un link e parte la richiesta da sola. Non servono GitHub né il PC acceso.</p>
         <p class="step-hint">Se YouTube blocca definitivamente anche i tentativi successivi, l’app lo segnala senza fingere che la canzone sia pronta. L’accesso ai video dipende comunque dal servizio YouTube.</p>
-        <div class="yt-file-fallback" aria-label="Alternativa da file">
-          <p>Il server YouTube non scarica? Se hai gia un MP3 nell'app File, puoi aggiungerlo qui senza PC. Il file comparira subito nella libreria del profilo attivo.</p>
+        <div class="yt-file-fallback" aria-label="Motore cloud Samplecut">
+          <strong>☁ Samplecut — conversione direttamente sul server</strong>
+          <p>Quando incolli un link YouTube, Music Box prova a elaborarlo automaticamente online con <b>Samplecut</b>. Se il servizio non riesce, il worker GitHub puo provare altri motori. Il PC puo restare spento e non devi salvare nessun file nell'app File dell'iPhone.</p>
+          <small>Samplecut e un servizio esterno: non garantisce l'accesso a tutti i video. Se la conversione fallisce vedrai il motivo nello stato sopra; l'audio sara disponibile solo quando il file risultera pronto.</small>
           <div class="yt-file-fallback-actions">
-            <a href="https://cobalt.tools/" target="_blank" rel="noopener noreferrer">Apri Cobalt (sito esterno)</a>
-            <button id="ytImportaFile" type="button">Scegli MP3 da File</button>
+            <button id="ytImportaFile" type="button">Facoltativo: scegli un MP3 che hai gia</button>
           </div>
-          <small>Cobalt e un servizio esterno: puo non funzionare su alcuni video. Music Box non scarica automaticamente da Cobalt.</small>
         </div>
         
       </div>
@@ -1262,7 +1262,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6465"></script>
-<script src="app.js?v=6465"></script>
+<script src="fuoco.js?v=6466"></script>
+<script src="app.js?v=6466"></script>
 </body>
 </html>
