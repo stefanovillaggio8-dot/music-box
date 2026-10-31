@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793407624754,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
   "t": 1793407624743,
   "r": "suono: originale b-track-631"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793408210477,
   "r": "suono: originale b-track-929"
+ },
+ {
+  "t": 1793408217614,
+  "r": "worker /stato: risponde"
  }
 ]
