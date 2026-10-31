@@ -3274,6 +3274,21 @@ function _devoVedereBrano(eMio, b) {
   // Ogni profilo ha i suoi link, sincronizzati sul servizio cloud e memorizzati
   // localmente per evitare che una rete lenta faccia sparire i titoli.
   const _ytLinksMemory = Object.create(null);
+  function _ytFondiBozze(remote, owner){
+    if(!Array.isArray(remote))return [];
+    const key="mb.youtube.links."+owner;
+    const local=LS.get(key,[]);
+    if(!Array.isArray(local))return remote;
+    const result=remote.slice(),now=Date.now();
+    for(const draft of local){
+      if(!draft || !["checking","needs-consent"].includes(draft.status) ||
+         now-Number(draft._ytDraftAt||0)>120000)continue;
+      const index=result.findIndex(x=>x&&x.video_id===draft.video_id);
+      if(index<0)result.unshift(draft);
+      else if(result[index].status==="failed")result[index]=draft;
+    }
+    return result;
+  }
   async function _ytBraniDalCloud(owner) {
     const key = "mb.youtube.links." + owner;
     const cached = _ytLinksMemory[owner];
@@ -3289,7 +3304,7 @@ function _devoVedereBrano(eMio, b) {
       if (!res.ok) throw new Error("Servizio link non disponibile");
       const json=await res.json();
       if (!json.ok || !Array.isArray(json.links)) throw new Error("Formato link non valido");
-      entries=json.links;
+      entries=_ytFondiBozze(json.links,owner);
       LS.set(key,entries);
     } catch (_) { /* fallback locale; non cancella i link gia' presenti */ }
     finally { clearTimeout(timeout); }
@@ -6810,6 +6825,10 @@ async function playById(id, autoplay = true) {
           toast("MP3 non ancora disponibile. Riprova fra poco.",6500);
         } else if (t._ytStatus==="failed") {
           toast(t._ytErrore || "Importazione fallita. Puoi importare un MP3 che possiedi.",8500);
+        } else if(t._ytStatus==="needs-consent"){
+          toast("Conferma i diritti nel pannello Link YouTube per avviare l'importazione.",6500);
+        } else if(t._ytStatus==="checking"){
+          toast("Invio la richiesta al server. L'MP3 non e' ancora disponibile.",6500);
         } else {
           toast("MP3 "+(t._ytStatus==="running"?"in preparazione":"in coda")+
             ". Potrai ascoltarlo dal player quando sara' pronto.",6500);
@@ -12518,6 +12537,8 @@ function _nomePerIlBrano(link, suggerito) {
     if(known && !$("ytOnlineName").value.trim())$("ytOnlineName").value=known;
     const keep=existing&&["queued","running","completed"].includes(existing.status);
     const row={...existing,video_id:id,profile:owner,requested_title:title.slice(0,160),
+      error_message:keep?String(existing.error_message||""):"",
+      _ytDraftAt:keep?Number(existing._ytDraftAt||0):Date.now(),
       status:keep?existing.status:($("ytOnlineRights").checked?"checking":"needs-consent")};
     const next=[row,...rows.filter(x=>x&&x.video_id!==id)];
     LS.set(key,next);
@@ -12580,6 +12601,7 @@ function _nomePerIlBrano(link, suggerito) {
       const data=await resp.json();
       if(!resp.ok||!data.ok||!Array.isArray(data.links))throw Error(data.error||"Servizio non disponibile");
       if(requestId!==_ytLinksFetchId||requested!==String(profile||DEFAULT_PROFILE))return;
+      data.links=_ytFondiBozze(data.links,requested);
       LS.set("mb.youtube.links."+requested,data.links);
       _ytLinksMemory[requested]={links:data.links,time:Date.now()};
       // Se l'MP3 e' stato completato su un altro dispositivo, rileggi
