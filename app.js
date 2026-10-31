@@ -11399,8 +11399,6 @@ $("fabMenu").addEventListener("click", (e) => {
             return;
           }
         }
-      } catch (e) { /* il browser non dice: vado avanti */ }          }
-        }
       } catch (e) { /* il browser non dice: vado avanti */ }
       const mio = offlineAbort;
       const controller = new AbortController();
