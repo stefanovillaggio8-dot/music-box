@@ -103,7 +103,7 @@ Deno.serve(async req => {
     // Only safe public playback metadata is returned (never IP hashes or tokens).
     if(req.method==="GET" && url.searchParams.get("action")==="links") {
       const profile=String(url.searchParams.get("profile")||"").trim();
-      if(!profile || profile.length>40 || !/^[\\p{L}\\p{N}_. -]+$/u.test(profile))
+      if(!profile || profile.length>40 || !/^[\p{L}\p{N}_. -]+$/u.test(profile))
         return respond({ok:false,error:"Profilo non valido"},400,origin);
       const rows=await database("?profile=eq."+encodeURIComponent(profile)+
         "&select=id,profile,video_id,requested_title,status,created_at,error_message"+
