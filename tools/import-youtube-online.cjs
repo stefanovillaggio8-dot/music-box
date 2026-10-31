@@ -13,7 +13,14 @@ const { execFileSync } = require("node:child_process");
 const MAX_BYTES = 24 * 1024 * 1024;
 const MAX_SECONDS = 12 * 60;
 const manifestFile = "online-imports.json";
-const body = String(JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, "utf8")).issue?.body || "");
+const body = process.env.MB_IMPORT_JSON_PATH
+  ? (() => {
+      const task = JSON.parse(fs.readFileSync(process.env.MB_IMPORT_JSON_PATH,"utf8"));
+      if (!task || !/^[A-Za-z0-9_-]{11}$/.test(task.video_id || "")) throw new Error("Invalid cloud job");
+      return "YouTube: https://www.youtube.com/watch?v="+task.video_id+"\n"+
+        "Profilo: "+task.profile+"\nNome: "+(task.requested_title || "")+"\nDiritti: CONFERMO";
+    })()
+  : String(JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, "utf8")).issue?.body || "");
 
 function field(name) {
   const line = body.split(/\r?\n/).find(x => x.startsWith(name + ": "));
