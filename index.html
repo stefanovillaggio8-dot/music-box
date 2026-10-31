@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6451" />
+  <link rel="stylesheet" href="style.css?v=6452" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -696,7 +696,7 @@
           <span class="fab-option-icon" aria-hidden="true">▶</span>
           <span class="fab-option-content"><strong>Link YouTube</strong>
             <small>Copia il link di un video e aggiungilo</small>
-            <span class="fab-option-note">Funziona online tramite GitHub, anche con il PC spento</span>
+            <span class="fab-option-note">Funziona online per tutti i profili, senza GitHub o PC</span>
           </span>
         </button>
         <button class="fab-option" id="fabSpotify" type="button">
@@ -724,7 +724,7 @@
         <button id="ytOnlineClose" class="import-close" type="button" aria-label="Chiudi">×</button>
       </div>
       <div class="profile-body cloud-body">
-        <p>Incolla il link del video. Il lavoro viene eseguito online tramite GitHub Actions e il brano viene pubblicato nel profilo <strong id="ytOnlineProfile">Ste</strong>.</p>
+        <p>Incolla il link del video. Il servizio riceve il link senza accesso a GitHub; l'importazione viene eseguita online nel profilo <strong id="ytOnlineProfile">Ste</strong>.</p>
         <label for="ytOnlineUrl">Link YouTube</label>
         <input class="edit-input" id="ytOnlineUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://youtu.be/..." />
         <button class="btn-ghost" id="ytOnlinePaste" type="button">Incolla dagli appunti</button>
@@ -734,8 +734,8 @@
           <input id="ytOnlineRights" type="checkbox" style="margin-top:4px" />
           <span>Confermo di avere il diritto di importare questo audio.</span>
         </label>
-        <button class="btn-main" id="ytOnlineGo" type="button">Continua su GitHub</button>
-        <p id="ytOnlineHint" class="step-hint" role="status">Su GitHub premi «Submit new issue» per avviare l'importazione. Devi essere collegato al tuo account GitHub. Non serve accendere il PC.</p>
+        <button class="btn-main" id="ytOnlineGo" type="button">Aggiungi al mio profilo</button>
+        <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver premuto Aggiungi, l'app invia la richiesta al servizio online. Nessun accesso GitHub e nessun PC acceso.</p>
         <p class="step-hint">Il download può non riuscire se il video è protetto, richiede l'accesso o YouTube blocca il server. I video non autorizzati non devono essere importati.</p>
       </div>
     </div>
@@ -758,7 +758,7 @@
         <button id="cloudSave" class="cloud-btn" type="button">Salva la chiave</button>
         <p id="cloudStatus" role="status" class="cloud-status"></p>
         <button id="cloudRetry" class="cloud-btn" type="button">Pubblica ora i file rimasti sul telefono</button>
-        <p>Per i link YouTube usa «+ → Link YouTube»: l’importazione avviene su GitHub, senza PC. Questo pannello pubblica i file audio che hai già sul telefono.</p>
+        <p>Per i link YouTube usa «+ → Link YouTube»: il servizio cloud lavora per tutti i profili senza accesso a GitHub e senza PC. Questo pannello pubblica i file audio che hai già sul telefono.</p>
       </div>
     </div>
   </div>
@@ -1228,7 +1228,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6451"></script>
-<script src="app.js?v=6451"></script>
+<script src="fuoco.js?v=6452"></script>
+<script src="app.js?v=6452"></script>
 </body>
 </html>
