@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793408207430,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1793408207435,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793408394920,
   "r": "suono: originale b-track-1068"
+ },
+ {
+  "t": 1793408402686,
+  "r": "worker /stato: risponde"
  }
 ]
