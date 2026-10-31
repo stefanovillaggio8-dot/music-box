@@ -7658,7 +7658,6 @@ for (const t of fresh) enrichTrack(t.id);
       /* Niente due upload concorrenti: solo dopo aver chiesto il consenso. */
       await _chiediDoveMandare(fresh);
       }
-    if (errors.length) toast("Errore con:      }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
 
