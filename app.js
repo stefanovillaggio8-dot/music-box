@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.430";
+  const APP_VERSION = "6.431";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1625,7 +1625,11 @@ const PROFILI = [
       if (casa && casa !== location.origin) {
         const mio = String(location.origin || "");
         const giaLocale = /^https?:\/\/(127\.0\.0\.1|localhost|\[?::1\]?|\d{1,3}(\.\d{1,3}){3})(:\d+)?$/.test(mio);
-        if (!giaLocale && /^\d{1,3}(\.\d{1,3}){3}/.test(casa)) {
+        /* A GitHub Pages (HTTPS) Chrome/Safari block HTTP audio at a
+           private-IP address as mixed content. In that case use the
+           published HTTPS source, preserving the local server on HTTP. */
+        const protocolloCompatibile = location.protocol !== "https:" || /^https:\/\//i.test(casa);
+        if (!giaLocale && protocolloCompatibile && /^\d{1,3}(\.\d{1,3}){3}/.test(casa)) {
           return casa + "/app/" + nome.replace(/^\/+/, "");
         }
       }
