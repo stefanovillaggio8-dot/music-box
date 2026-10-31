@@ -77,6 +77,8 @@ jobs:
           fi
           command -v ffmpeg
           ffmpeg -version | head -n 1
+          yt-dlp --version
+          echo "YouTube audio: client default + android_vr (solo contenuti autorizzati)"
       - name: Riutilizza MP3 gia pubblicato per evitare richieste duplicate
         if: steps.claim.outputs.has_job == 'true'
         shell: bash
