@@ -186,7 +186,7 @@ Deno.serve(async req => {
       // Start server work as soon as the link is inserted, independent of cron.
       // @ts-ignore EdgeRuntime is provided by Supabase
       EdgeRuntime.waitUntil(convertQueuedNow(String(rows[0].id),database,URI,SECRET));
-      return respond({ok:true,id:rows[0].id,status:"queued"},201,origin);
+      return respond({ok:true,id:rows[0].id,status:"queued",artist:artist_name,track_title},201,origin);
     }
     if(data.action==="claim" || data.action==="finish") {
       if(!await verifyWorker(req)) return respond({ok:false,error:"Autenticazione worker negata"},401,origin);
