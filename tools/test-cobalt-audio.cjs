@@ -44,6 +44,11 @@ async function run(){
   global.fetch=async()=>responseJSON({status:"redirect",url:"https://external.example/audio.mp3"});
   await assert.rejects(()=>fetchMP3(id,filename),/non ha restituito un MP3/);
   assert.equal(fs.existsSync(filename),false);
+  // Il codice macchina di Cobalt deve comparire anche con HTTP 400.
+  global.fetch=async()=>new Response(JSON.stringify({status:"error",error:{code:"error.api.youtube.login"}}),
+    {status:400,headers:{"content-type":"application/json"}});
+  await assert.rejects(()=>fetchMP3(id,filename),/Cobalt HTTP 400 [(]error.api.youtube.login[)]/);
+  assert.equal(fs.existsSync(filename),false);
   global.fetch=async()=>responseJSON({status:"tunnel",url:"http://127.0.0.1:9000@evil.example/tunnel"});
   await assert.rejects(()=>fetchMP3(id,filename),/indirizzo non locale/);
   assert.equal(fs.existsSync(filename),false);
