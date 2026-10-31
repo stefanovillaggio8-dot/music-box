@@ -1525,6 +1525,36 @@
     "t": "uNa DiReZioNe giusta",
     "a": "thasup"
    },
+   "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
+    "v": 0,
+    "s": 17,
+    "t": "Futuri Possibili",
+    "a": "Franco126"
+   },
+   "[\"il tuo sorriso\",\"medy\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Il Tuo Sorriso",
+    "a": "Medy"
+   },
+   "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Il Tuo Sorriso",
+    "a": "Medy"
+   },
+   "[\"lilith\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Lilith",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"lilith\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Lilith",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1596,36 +1626,6 @@
     "s": 1,
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
-   },
-   "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
-    "v": 0,
-    "s": 17,
-    "t": "Futuri Possibili",
-    "a": "Franco126"
-   },
-   "[\"il tuo sorriso\",\"medy\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Il Tuo Sorriso",
-    "a": "Medy"
-   },
-   "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Il Tuo Sorriso",
-    "a": "Medy"
-   },
-   "[\"lilith\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 62,
-    "t": "Lilith",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"lilith\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 62,
-    "t": "Lilith",
-    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1699,6 +1699,42 @@
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
+   "[\"cosa mi manchi a fare\",\"calcutta\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Cosa mi manchi a fare",
+    "a": "Calcutta"
+   },
+   "m:2026-11|[\"cosa mi manchi a fare\",\"calcutta\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Cosa mi manchi a fare",
+    "a": "Calcutta"
+   },
+   "[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
+    "a": "Elisa, Calcutta"
+   },
+   "m:2026-11|[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
+    "a": "Elisa, Calcutta"
+   },
+   "[\"cosa conta davvero\",\"nayt\"]": {
+    "v": 0,
+    "s": 66,
+    "t": "cosa conta davvero",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
+    "v": 0,
+    "s": 66,
+    "t": "cosa conta davvero",
+    "a": "nayt"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1770,42 +1806,6 @@
     "s": 1,
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
-   },
-   "[\"cosa mi manchi a fare\",\"calcutta\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Cosa mi manchi a fare",
-    "a": "Calcutta"
-   },
-   "m:2026-11|[\"cosa mi manchi a fare\",\"calcutta\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Cosa mi manchi a fare",
-    "a": "Calcutta"
-   },
-   "[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
-    "a": "Elisa, Calcutta"
-   },
-   "m:2026-11|[\"se piovesse il tuo nome - con calcutta\",\"elisa, calcutta\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Se Piovesse Il Tuo Nome - con Calcutta",
-    "a": "Elisa, Calcutta"
-   },
-   "[\"cosa conta davvero\",\"nayt\"]": {
-    "v": 0,
-    "s": 66,
-    "t": "cosa conta davvero",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
-    "v": 0,
-    "s": 66,
-    "t": "cosa conta davvero",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1890,6 +1890,18 @@
     "s": 1,
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
+   },
+   "[\"ÃÂÃÂÃÂÃÂ¨ sempre bello\",\"coez\"]": {
+    "v": 0,
+    "s": 76,
+    "t": "ÃÂÃÂÃÂÃÂ sempre bello",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"ÃÂÃÂÃÂÃÂ¨ sempre bello\",\"coez\"]": {
+    "v": 0,
+    "s": 76,
+    "t": "ÃÂÃÂÃÂÃÂ sempre bello",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1977,15 +1989,39 @@
    },
    "[\"ÃÂÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 0,
-    "s": 76,
+    "s": 95,
     "t": "ÃÂÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 0,
-    "s": 76,
+    "s": 95,
     "t": "ÃÂÃÂ sempre bello",
     "a": "Coez"
+   },
+   "[\"non ÃÂÃÂ¨ mai abbastanza\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 43,
+    "t": "Non ÃÂÃÂ¨ mai abbastanza",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ÃÂÃÂ¨ mai abbastanza\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 43,
+    "t": "Non ÃÂÃÂ¨ mai abbastanza",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"albachiara\",\"vasco rossi\"]": {
+    "v": 0,
+    "s": 140,
+    "t": "Albachiara",
+    "a": "Vasco Rossi"
+   },
+   "m:2026-11|[\"albachiara\",\"vasco rossi\"]": {
+    "v": 0,
+    "s": 140,
+    "t": "Albachiara",
+    "a": "Vasco Rossi"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -2095,18 +2131,6 @@
     "t": "Non ÃÂ¨ mai abbastanza",
     "a": "ModÃÂ "
    },
-   "[\"albachiara\",\"vasco rossi\"]": {
-    "v": 0,
-    "s": 140,
-    "t": "Albachiara",
-    "a": "Vasco Rossi"
-   },
-   "m:2026-11|[\"albachiara\",\"vasco rossi\"]": {
-    "v": 0,
-    "s": 140,
-    "t": "Albachiara",
-    "a": "Vasco Rossi"
-   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2193,13 +2217,13 @@
    },
    "[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 0,
-    "s": 95,
+    "s": 97,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 0,
-    "s": 95,
+    "s": 97,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
@@ -2301,13 +2325,13 @@
    },
    "[\"è sempre bello\",\"coez\"]": {
     "v": 0,
-    "s": 97,
+    "s": 132,
     "t": "È sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"è sempre bello\",\"coez\"]": {
     "v": 0,
-    "s": 97,
+    "s": 132,
     "t": "È sempre bello",
     "a": "Coez"
    },
@@ -2322,6 +2346,18 @@
     "s": 43,
     "t": "Non è mai abbastanza",
     "a": "Modà"
+   },
+   "[\"domenica\",\"coez\"]": {
+    "v": 0,
+    "s": 48,
+    "t": "Domenica",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"domenica\",\"coez\"]": {
+    "v": 0,
+    "s": 48,
+    "t": "Domenica",
+    "a": "Coez"
    }
   },
   "Diego": {
