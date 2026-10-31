@@ -1,1 +1,23 @@
-{}
+{
+  "b-track-521": {
+    "lrclibId": 5286467,
+    "synced": true,
+    "duration": 200,
+    "source": "LRCLIB",
+    "indexedAt": "2026-10-31"
+  },
+  "b-track-522": {
+    "lrclibId": 14959912,
+    "synced": true,
+    "duration": 180.72,
+    "source": "LRCLIB",
+    "indexedAt": "2026-10-31"
+  },
+  "b-track-523": {
+    "lrclibId": 5286474,
+    "synced": true,
+    "duration": 251,
+    "source": "LRCLIB",
+    "indexedAt": "2026-10-31"
+  }
+}
