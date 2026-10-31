@@ -1268,6 +1268,12 @@
     "s": 5,
     "t": "Morirò da Re",
     "a": "Måneskin"
+   },
+   "[\"sottogonna\",\"blanco\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "SOTTOGONNA",
+    "a": "BLANCO"
    }
   },
   "Diego": {
@@ -2833,12 +2839,6 @@
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 33,
-    "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
-    "a": "Andrea Bocelli"
-   },
    "[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
     "v": 1,
     "s": 3,
@@ -2850,6 +2850,12 @@
     "s": 12,
     "t": "Paradise Now",
     "a": "Kid Yugi"
+   },
+   "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 33,
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
+    "a": "Andrea Bocelli"
    },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
@@ -2869,17 +2875,23 @@
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
+   "[\"faded\",\"arc north, cour, new beat order, lunis\"]": {
+    "v": 0,
+    "s": 2,
+    "t": "Faded",
+    "a": "Arc North, Cour, New Beat Order, Lunis"
+   },
    "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 33,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"faded\",\"arc north, cour, new beat order, lunis\"]": {
+   "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 0,
-    "s": 2,
-    "t": "Faded",
-    "a": "Arc North, Cour, New Beat Order, Lunis"
+    "s": 16,
+    "t": "Torna Da Me",
+    "a": "LuchÃÂ¨"
    },
    "[\"con te partirÃ²\",\"andrea bocelli\"]": {
     "v": 1,
@@ -2889,9 +2901,15 @@
    },
    "[\"torna da me\",\"luchÃ¨\"]": {
     "v": 0,
-    "s": 16,
+    "s": 28,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
+   },
+   "[\"stratos\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 26,
+    "t": "Stratos",
+    "a": "Kid Yugi"
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
     "v": 1,
@@ -2904,12 +2922,6 @@
     "s": 28,
     "t": "Torna Da Me",
     "a": "Luchè"
-   },
-   "[\"stratos\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 22,
-    "t": "Stratos",
-    "a": "Kid Yugi"
    }
   }
  }
