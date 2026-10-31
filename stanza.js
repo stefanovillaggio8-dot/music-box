@@ -11,9 +11,14 @@ function tell(msg){if(bridge()?.toast)bridge().toast(msg);else status(msg);}
 function available(){
  const app=bridge();if(!app)return [];
  const profile=app.profile();
- return app.playable().filter(t=>t && t.url &&
-   /^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(String(t.file||"")))
-   .map(t=>({profile:t.profile||profile,file:t.file,title:t.title,artist:t.artist||""}));
+ return app.playable().filter(t=>{
+   if(!t||!t.url)return false;
+   const f=String(t.file||"");
+   if(/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(f))return true;
+   return /^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(f) &&
+     /^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(String(t.url));
+  }).map(t=>({profile:t.profile||profile,file:t.file,title:t.title,
+     artist:t.artist||"",...(t.source==="cloud-audio"?{url:t.url}:{})}));
 }
 async function request(body){
  const res=await fetch(ENDPOINT,{method:"POST",cache:"no-store",
@@ -28,11 +33,14 @@ function registerTracks(){
  if(!room?.playlist)return;
  const app=bridge(),tracks=app?.allTracks();if(!tracks)return;
  for(const item of room.playlist){
-  if(!/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(String(item.file||"")))continue;
+  const file=String(item.file||"");
+  const cloud=/^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file);
+  if(!cloud&&!/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(file))continue;
+  if(cloud&&!/^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(String(item.url||"")))continue;
   const id=roomTrack(item);if(tracks.some(t=>t.id===id))continue;
   tracks.push({id,file:item.file,profile:app.profile(),title:String(item.title||"Brano"),
-   artist:String(item.artist||""),url:app.urlForFile(item.file),source:"stanza-condivisa",
-   builtin:true,gradient:"linear-gradient(150deg,#623cbd,#1f2135)"});
+   artist:String(item.artist||""),url:cloud?item.url:app.urlForFile(item.file),
+   source:"stanza-condivisa",builtin:true,gradient:"linear-gradient(150deg,#623cbd,#1f2135)"});
  }
 }
 function selected(){
