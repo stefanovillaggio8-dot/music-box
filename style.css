@@ -172,6 +172,10 @@ body {
 }
 
 .search-wrap { position: relative; }
+/* Rimuovi la X integrata dai browser che ancora mostrano il campo search. */
+#search::-webkit-search-cancel-button,
+#search::-webkit-search-decoration { display: none; -webkit-appearance: none; appearance: none; }
+#search::-ms-clear { display: none; }
 /* Ste: la X per cancellare la ricerca, a destra del campo */
 .search-x {
   position: absolute;
