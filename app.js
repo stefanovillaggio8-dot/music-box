@@ -13885,9 +13885,6 @@ async function _tieniSpazioSottoIlTetto() {
   } catch (e) { /* pazienza */ }
 }
 
-let _playlistInvioUltimo  } catch (e) { /* pazienza */ }
-}
-
 let _playlistInvioUltimo = "";
 let _playlistInvioProssimo = 0;
 let _playlistFallimenti = 0;
