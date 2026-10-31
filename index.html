@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6454" />
+  <link rel="stylesheet" href="style.css?v=6455" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -633,6 +633,10 @@
                     aria-label="Crea una playlist" title="Crea una playlist">+</button>
         </div>
         <p class="pl-dove-sono" id="plDoveSono" hidden></p>
+      <div style="padding:8px 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn-ghost" id="btnMieiVideoYT">▶ I miei video YouTube</button>
+        <span style="font-size:12px;opacity:.75">Video salvati, solo online</span>
+      </div>
       <ul class="playlist" id="playlist"></ul>
         <!-- Barra che compare quando sto scegliendo più canzioni. -->
         <div class="selezione-barra" id="selezioneBarra" hidden>
@@ -695,7 +699,7 @@
         <button class="fab-option" id="fabYouTube" type="button">
           <span class="fab-option-icon" aria-hidden="true">▶</span>
           <span class="fab-option-content"><strong>Link YouTube</strong>
-            <small>Copia il link di un video e aggiungilo</small>
+            <small>Guarda i video salvati o aggiungine uno</small>
             <span class="fab-option-note">Funziona online per tutti i profili, senza GitHub o PC</span>
           </span>
         </button>
@@ -724,7 +728,28 @@
         <button id="ytOnlineClose" class="import-close" type="button" aria-label="Chiudi">×</button>
       </div>
       <div class="profile-body cloud-body">
-        <p>Incolla il link del video. Il servizio riceve il link senza accesso a GitHub; l'importazione viene eseguita online nel profilo <strong id="ytOnlineProfile">Ste</strong>.</p>
+        <p style="margin:0 0 10px"><strong>Qui trovi i video YouTube già salvati nel tuo profilo.</strong> Per ascoltarli premi Riproduci: non devi reinserire il link.</p>
+        <section id="ytOnlineLinkedSection" aria-label="Collegamenti YouTube salvati" style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(128,128,128,.25)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <strong>Video YouTube salvati nel profilo</strong>
+            <button class="btn-ghost" id="ytOnlineLinksReload" type="button">Aggiorna elenco</button>
+          </div>
+          <p class="step-hint" id="ytOnlineLinksMessage" role="status">Apro i collegamenti del profilo...</p>
+          <div id="ytOnlineLinksList" style="display:grid;gap:10px;max-height:260px;overflow-y:auto"></div>
+          <div id="ytOnlinePlayerBox" hidden style="margin-top:12px">
+            <p id="ytOnlinePlayerLabel" class="step-hint">Lettore YouTube ufficiale (solo online)</p>
+            <iframe id="ytOnlinePlayer" title="Lettore ufficiale di YouTube" style="display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:12px" loading="lazy" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+              <button class="btn-ghost" id="ytOnlinePlayerStop" type="button">Ferma video</button>
+              <a id="ytOnlinePlayerOriginal" target="_blank" rel="noopener noreferrer">Apri direttamente su YouTube</a>
+            </div>
+          </div>
+        </section>
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(128,128,128,.25)">
+          <strong>Aggiungi un altro video YouTube</strong>
+          <p class="step-hint">Il collegamento si salva subito, mentre l'MP3 può fallire se YouTube blocca il download. Il lettore ufficiale funziona solo con Internet.</p>
+        </div>
+        <p>Profilo: <strong id="ytOnlineProfile">Ste</strong>. Non servono GitHub né il PC acceso.</p>
         <label for="ytOnlineUrl">Link YouTube</label>
         <input class="edit-input" id="ytOnlineUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://youtu.be/..." />
         <button class="btn-ghost" id="ytOnlinePaste" type="button">Incolla dagli appunti</button>
@@ -742,22 +767,7 @@
         <p id="ytOnlineLastStatus" class="step-hint" role="status">Nessuna richiesta recente.</p>
         <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver premuto Aggiungi, l'app invia la richiesta al servizio online. Nessun accesso GitHub e nessun PC acceso.</p>
         <p class="step-hint">La richiesta viene salvata subito nel profilo. Se YouTube blocca la conversione, puoi comunque aprire il video nel lettore ufficiale qui sotto, con Internet. Il lettore YouTube non è un MP3, non funziona offline e non garantisce la riproduzione in background.</p>
-        <section id="ytOnlineLinkedSection" aria-label="Collegamenti YouTube salvati" style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(128,128,128,.25)">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <strong>Video YouTube salvati nel profilo</strong>
-            <button class="btn-ghost" id="ytOnlineLinksReload" type="button">Aggiorna elenco</button>
-          </div>
-          <p class="step-hint" id="ytOnlineLinksMessage" role="status">Apro i collegamenti del profilo...</p>
-          <div id="ytOnlineLinksList" style="display:grid;gap:10px;max-height:260px;overflow-y:auto"></div>
-          <div id="ytOnlinePlayerBox" hidden style="margin-top:12px">
-            <p id="ytOnlinePlayerLabel" class="step-hint">Lettore YouTube ufficiale (solo online)</p>
-            <iframe id="ytOnlinePlayer" title="Lettore ufficiale di YouTube" style="display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:12px" loading="lazy" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-              <button class="btn-ghost" id="ytOnlinePlayerStop" type="button">Ferma video</button>
-              <a id="ytOnlinePlayerOriginal" target="_blank" rel="noopener noreferrer">Apri direttamente su YouTube</a>
-            </div>
-          </div>
-        </section>
+        
       </div>
     </div>
   </div>
@@ -1249,7 +1259,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6454"></script>
-<script src="app.js?v=6454"></script>
+<script src="fuoco.js?v=6455"></script>
+<script src="app.js?v=6455"></script>
 </body>
 </html>
