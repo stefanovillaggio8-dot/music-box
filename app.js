@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.434";
+  const APP_VERSION = "6.435";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1536,6 +1536,9 @@ const PROFILI = [
      playlist arrivano dal servizio dopo, e prima l'app non sapeva ancora
      quali brani sono della gym -> usava sempre l'originale. */
   function _urlDelBrano(t) {
+    /* Il brano Baby Gang e' stato segnalato con audio diverso dal video
+       ufficiale; usa sempre il file originale corretto, mai i bassi vecchi. */
+    if (t && t.file === "songs/track-929.mp3") return _doveStaIlBrano(t.file);
     try {
       if (t && t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
         return _doveStaIlBranoConBassi(t.file);
@@ -1617,7 +1620,10 @@ const PROFILI = [
          internet: prima non lo riconoscevo e le canzoni ci mettevano un
          sacco ad avviarsi. */
       /^192\.168\./.test(qui) || /^10\./.test(qui) || /^172\.(1[6-9]|2\d|3[01])\./.test(qui);
-    if (inLocale) return nome;
+    /* Solo il file corretto: URL diverso per non riprodurre la vecchia
+       versione salvata nel browser, senza svuotare le altre cache offline. */
+    if (inLocale) return nome === "songs/track-929.mp3"
+      ? nome + "?audio-corretto=20261031" : nome;
     /* L'app aperta dal link di GitHub, ma il computer di casa e' vicino:
        i brani li prendo da li', che e' 220 volte piu' veloce. */
     try {
@@ -7561,7 +7567,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.434 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.435 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
