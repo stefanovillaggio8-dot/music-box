@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793408218841,
-  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
   "t": 1793408232369,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793408412225,
   "r": "suono: originale b-track-953"
+ },
+ {
+  "t": 1793408417552,
+  "r": "worker /stato: risponde"
  }
 ]
