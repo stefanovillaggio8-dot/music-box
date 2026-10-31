@@ -7965,12 +7965,106 @@ function openProfile() {
     lyricActive = idx;
   }
 
+  /* Traduzione sempre facoltativa: mai chiamare un servizio remoto senza
+     pressione esplicita del pulsante Traduci. MyMemory riceve solo le righe
+     richieste, non copertine, account o dati di ascolto. */
+  const _testiTradotti = new Map();
+  let _traduzioneInCorso = false;
+  let _traduzioneRichiesta = 0;
+  function _azzeraVistaTraduzione() {
+    _traduzioneRichiesta++;
+    const btn = $("lyricsTraduci");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Traduci";
+      btn.setAttribute("aria-pressed", "false");
+    }
+    const body = $("lyricsBody");
+    if (body) for (const el of body.querySelectorAll(".lyr-traduzione"))
+      el.remove();
+    _traduzioneInCorso = false;
+  }
+  async function _traduciTestiSuRichiesta() {
+    const btn = $("lyricsTraduci"), body = $("lyricsBody");
+    if (!btn || !body || $("lyricsPanel").hidden) return;
+    if (btn.getAttribute("aria-pressed") === "true") {
+      _azzeraVistaTraduzione();
+      return;
+    }
+    if (_traduzioneInCorso) return;
+    const l = currentLyrics();
+    const t = current();
+    if (!l || !t) return;
+    const ling = $("lyricsLingua").value || "en";
+    const lines = [...body.querySelectorAll(".lyr-line, .lyr-plain, .lyr-sec")];
+    const source = lines.length ? lines : [...body.querySelectorAll("p")];
+    const blocchi = source.filter(el => String(el.textContent || "").trim() &&
+       !el.classList.contains("lyr-traduzione"));
+    if (!blocchi.length) { toast("Nessun testo da tradurre"); return; }
+    const generation = ++_traduzioneRichiesta;
+    const key = t.id + "|" + ling + "|it";
+    _traduzioneInCorso = true;
+    btn.disabled = true;
+    btn.textContent = "Traduco...";
+    let done = 0;
+    try {
+      let results = _testiTradotti.get(key);
+      if (!results || results.length !== blocchi.length) {
+        results = [];
+        /* Il servizio pubblico ha limiti: per evitare spam non piu' di
+           60 righe o 4700 caratteri per richiesta. */
+        let budget = 4700;
+        for (const el of blocchi.slice(0,60)) {
+          if (generation !== _traduzioneRichiesta || t.id !== currentId) return;
+          const line = String(el.textContent || "").trim();
+          if (budget < line.length || line.length > 450) break;
+          budget -= line.length;
+          const url = "https://api.mymemory.translated.net/get?q=" +
+            encodeURIComponent(line) + "&langpair=" + encodeURIComponent(ling + "|it");
+          const response = await fetch(url, {cache:"no-store"});
+          if (!response.ok) throw new Error("Servizio non disponibile");
+          const json = await response.json();
+          if (Number(json.responseStatus || 200) >= 400 || !json.responseData ||
+              !json.responseData.translatedText) throw new Error("Traduzione non disponibile");
+          const value = String(json.responseData.translatedText);
+          results.push(value);
+          done++;
+          btn.textContent = "Traduco " + done + "/" + blocchi.length;
+        }
+        if (results.length) _testiTradotti.set(key,results);
+      }
+      if (generation !== _traduzioneRichiesta || t.id !== currentId) return;
+      for (let i=0;i<results.length;i++) {
+        const sub = document.createElement("span");
+        sub.className = "lyr-traduzione";
+        /* MyMemory puo' rispondere con entita' HTML: visualizzarle come
+           testo, mai come markup eseguibile. */
+        sub.textContent = results[i];
+        blocchi[i].appendChild(sub);
+      }
+      if (!results.length) throw new Error("Nessuna riga traducibile");
+      btn.setAttribute("aria-pressed","true");
+      btn.textContent = "Testo originale";
+      if (results.length < blocchi.length)
+        toast("Tradotte " + results.length + " righe: limite del servizio gratuito.",6000);
+    } catch(e) {
+      toast("Traduzione non riuscita: " + String(e && e.message || e),6000);
+      btn.textContent = "Riprova traduzione";
+    } finally {
+      if (generation === _traduzioneRichiesta) {
+        _traduzioneInCorso = false;
+        btn.disabled = false;
+      }
+    }
+  }
+
   function openLyrics() {
     const l = currentLyrics();
     if (!l) return;
     $("lyricsTitle").textContent = l.title;
     $("lyricsSub").textContent = l.artist || "";
     const body = $("lyricsBody");
+    _azzeraVistaTraduzione();
     body.innerHTML = "";
     lyricLines = [];
     lyricActive = -1;
@@ -11389,6 +11483,7 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
   });
 
   $("btnLyrics").addEventListener("click", openLyrics);
+  $("lyricsTraduci").addEventListener("click", _traduciTestiSuRichiesta);
   /* I tre comandi dentro i testi a tutto schermo: riusano le funzioni vere
      del player, cosi' non possono andare discordi con quelli del basso. */
   $("lyricsPlay").addEventListener("click", () => { togglePlay(); _aggiornaComandiTesti(); });
