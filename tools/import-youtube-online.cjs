@@ -121,4 +121,16 @@ function main() {
   output("status", "added");
   console.log("Pronto per pubblicazione: " + profile + " - " + title);
 }
-try { main(); } catch (e) { console.error("IMPORTAZIONE FALLITA:", e.message || e); process.exitCode = 1; }
+try { main(); } catch (e) {
+  const detail = String((e && (e.stderr || e.message)) || e || "Errore sconosciuto");
+  const publicError = /sign in to confirm.{0,100}bot/i.test(detail)
+    ? "YouTube blocca il download dai server GitHub (controllo anti-bot)."
+    : /ffmpeg.*(?:not found|not recognized|not installed)/i.test(detail)
+    ? "Il convertitore audio del server non e' disponibile."
+    : "Importazione fallita: verifica disponibilita', diritti e formato del video.";
+  if (process.env.RUNNER_TEMP) {
+    try { fs.writeFileSync(path.join(process.env.RUNNER_TEMP, "musicbox-cloud-error.txt"), publicError); } catch (_) {}
+  }
+  console.error("IMPORTAZIONE FALLITA:", detail);
+  process.exitCode = 1;
+}
