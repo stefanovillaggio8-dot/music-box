@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.437";
+  const APP_VERSION = "6.438";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7591,7 +7591,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.437 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.438 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -13381,9 +13381,10 @@ let _gymInvioUltimo = "";
 let _gymInvioProssimo = 0;
 let _gymFallimenti = 0;
 async function _mandaGymAlServizio() {
-  /* I 500 dipendono dal server. Non ritentare ogni 20 secondi e non
-     alterare la playlist sul dispositivo quando il Worker non risponde. */
-  if (!SERVIZIO_PUBBLICA) return;
+  /* Il Worker adesso richiede la stessa chiave delle playlist normali.
+     Non inviare richieste anonime: i dati locali restano intatti. */
+  const chiaveGym = String(LS.get("mb.chiave", "") || "").trim();
+  if (!SERVIZIO_PUBBLICA || !chiaveGym) return;
   const gym = [];
   for (const p of (playlists || [])) {
     if (String(p.name || "").trim().toLowerCase() !== "gym") continue;
@@ -13395,7 +13396,7 @@ async function _mandaGymAlServizio() {
   try {
     const r = await fetch(SERVIZIO_PUBBLICA + "/gym", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-chiave": chiaveGym },
       body: payload
     });
     if (r.ok) {
@@ -13472,14 +13473,15 @@ let _playlistInvioUltimo = "";
 let _playlistInvioProssimo = 0;
 let _playlistFallimenti = 0;
 async function _salvaPlaylistCondivise() {
-  if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return false;
+  const chiaveCorrente = String(LS.get("mb.chiave", "") || "").trim();
+  if (!SERVIZIO_PUBBLICA || !chiaveCorrente) return false;
   const payload = JSON.stringify({ playlist: playlists });
   if (payload === _playlistInvioUltimo) return true;
   if (Date.now() < _playlistInvioProssimo) return false;
   try {
     const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
       method: "POST",
-      headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
+      headers: { "content-type": "application/json", "x-chiave": chiaveCorrente },
       body: payload
     });
     if (r.ok) {
