@@ -128,6 +128,11 @@ async function main() {
         {name:"default", args:[]},
         {name:"android_vr", args:["--extractor-args","youtube:player_client=android_vr"]}
       ];
+      // Cookie di sessione facoltativi: SOLO dal secret GitHub, mai dal browser
+      // di chi usa la PWA e mai da credenziali scritte nel repository.
+      const cookiePath=String(process.env.MB_YOUTUBE_COOKIES_PATH||"");
+      const cookieArgs=cookiePath && path.isAbsolute(cookiePath) && fs.existsSync(cookiePath)
+        ? ["--cookies",cookiePath] : [];
       let lastError=null;
       for (const client of clients) {
         try {
@@ -142,7 +147,7 @@ async function main() {
             "--extract-audio", "--audio-format", "mp3", "--audio-quality", "5",
             "--write-info-json",
             "--output", "songs/youtube-" + id + ".%(ext)s",
-            ...client.args, url
+            ...cookieArgs, ...client.args, url
           ], 175000);
           if (fs.existsSync(file) && fs.statSync(file).size > 0) {
             lastError=null;
