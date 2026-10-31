@@ -1,9 +1,5 @@
 [
  {
-  "t": 1793400811700,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
   "t": 1793400811803,
   "r": "SPOTIFY: [v6.418] ritorno: nessun codice (indirimento: [], memoria: [])"
  },
@@ -158,5 +154,9 @@
  {
   "t": 1793406407883,
   "r": "suono: originale b-track-929"
+ },
+ {
+  "t": 1793406410380,
+  "r": "worker /stato: risponde"
  }
 ]
