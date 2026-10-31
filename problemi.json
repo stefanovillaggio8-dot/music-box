@@ -1,25 +1,5 @@
 [
  {
-  "t": 1793409140614,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793409142617,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1793409142852,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793409142856,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793409142851,
-  "r": "worker /stato: risponde"
- },
- {
   "t": 1793409144595,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -158,5 +138,25 @@
  {
   "t": 1793409345602,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793409347577,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793409347653,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793409347656,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793409347661,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793409348861,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
  }
 ]
