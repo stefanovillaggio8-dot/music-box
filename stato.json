@@ -145,7 +145,7 @@
    "artist": "Jovanotti"
   },
   "b-track-74": {
-   "title": "Dimmi che c'Ã¨",
+   "title": "Dimmi che c'ÃÂ¨",
    "artist": "thasup"
   }
  },
@@ -1309,30 +1309,6 @@
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
    },
-   "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"morirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da re\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 5,
-    "t": "MorirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da Re",
-    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"la cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-    "a": "MOSTRO"
-   },
-   "m:2026-10|[\"la cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
-    "a": "MOSTRO"
-   },
    "[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
     "v": 2,
     "s": 10,
@@ -1369,6 +1345,30 @@
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
+   "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"morirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da re\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "MorirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da Re",
+    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"la cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "MOSTRO"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1392,6 +1392,18 @@
     "s": 0,
     "t": "LA CITTÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
+   },
+   "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-10|[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
+    "a": "Andrea Bocelli"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1429,6 +1441,30 @@
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
+   "[\"fix you\",\"coldplay\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Fix You",
+    "a": "Coldplay"
+   },
+   "m:2026-10|[\"fix you\",\"coldplay\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Fix You",
+    "a": "Coldplay"
+   },
+   "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
+   },
+   "m:2026-10|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1465,29 +1501,29 @@
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"fix you\",\"coldplay\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Fix You",
-    "a": "Coldplay"
+   "[\"dimmi che ce'\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "dimmi che ce'",
+    "a": "thasup"
    },
-   "m:2026-10|[\"fix you\",\"coldplay\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Fix You",
-    "a": "Coldplay"
+   "m:2026-10|[\"dimmi che ce'\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "dimmi che ce'",
+    "a": "thasup"
    },
-   "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+   "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 0,
     "s": 1,
-    "t": "Un mondo a parte (Visual)",
-    "a": "Jovanotti"
+    "t": "Dimmi Che C''",
+    "a": "thasup"
    },
-   "m:2026-10|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+   "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 0,
     "s": 1,
-    "t": "Un mondo a parte (Visual)",
-    "a": "Jovanotti"
+    "t": "Dimmi che c'ÃÂ¨",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -1525,29 +1561,29 @@
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
    },
-   "[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "dimmi che ce'",
-    "a": "thasup"
-   },
-   "m:2026-10|[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "dimmi che ce'",
-    "a": "thasup"
-   },
    "[\"dimmi che c'Ã¨\",\"thasup\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Dimmi Che C''",
-    "a": "thasup"
-   },
-   "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
-    "v": 0,
+    "v": 1,
     "s": 1,
     "t": "Dimmi che c'Ã¨",
     "a": "thasup"
+   },
+   "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Dimmi che c'Ã¨",
+    "a": "thasup"
+   },
+   "[\"spettri\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 42,
+    "t": "Spettri",
+    "a": "nayt, 3D"
+   },
+   "m:2026-10|[\"spettri\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 42,
+    "t": "Spettri",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -1586,28 +1622,28 @@
     "a": "Andrea Bocelli"
    },
    "[\"dimmi che c'è\",\"thasup\"]": {
-    "v": 1,
+    "v": 0,
     "s": 1,
-    "t": "Dimmi che c'è",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'è\",\"thasup\"]": {
-    "v": 1,
+    "v": 0,
     "s": 1,
     "t": "Dimmi che c'è",
     "a": "thasup"
    },
-   "[\"spettri\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 42,
-    "t": "Spettri",
-    "a": "nayt, 3D"
+   "[\"tristano e isotta\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Tristano e Isotta",
+    "a": "Kid Yugi"
    },
-   "m:2026-10|[\"spettri\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 42,
-    "t": "Spettri",
-    "a": "nayt, 3D"
+   "m:2026-10|[\"tristano e isotta\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Tristano e Isotta",
+    "a": "Kid Yugi"
    }
   },
   "Diego": {
