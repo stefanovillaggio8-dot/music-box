@@ -99,6 +99,21 @@ Deno.serve(async req => {
   if(origin && !ORIGINS.has(origin)) return respond({ok:false,error:"Origine non autorizzata"},403,origin);
   try {
     const url = new URL(req.url);
+    // Links already submitted belong to the named Music Box profile.
+    // Only safe public playback metadata is returned (never IP hashes or tokens).
+    if(req.method==="GET" && url.searchParams.get("action")==="links") {
+      const profile=String(url.searchParams.get("profile")||"").trim();
+      if(!profile || profile.length>40 || !/^[\\p{L}\\p{N}_. -]+$/u.test(profile))
+        return respond({ok:false,error:"Profilo non valido"},400,origin);
+      const rows=await database("?profile=eq."+encodeURIComponent(profile)+
+        "&select=id,profile,video_id,requested_title,status,created_at,error_message"+
+        "&order=created_at.desc&limit=60");
+      return respond({ok:true,links:rows.map((x:Record<string,unknown>)=>({
+        id:x.id,profile:x.profile,video_id:x.video_id,
+        title:x.requested_title || "Video YouTube",status:x.status,
+        created_at:x.created_at,error_message:x.error_message
+      }))},200,origin);
+    }
     if(req.method==="GET" && url.searchParams.get("action")==="status") {
       const id=url.searchParams.get("id")||"";
       if(!uuid(id)) return respond({ok:false,error:"Codice richiesta non valido"},400,origin);
