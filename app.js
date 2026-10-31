@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.457";
+  const APP_VERSION = "6.458";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12401,6 +12401,7 @@ function _nomePerIlBrano(link, suggerito) {
       const link = await _leggiLinkDagliAppunti();
       if (_videoYouTubePerCloud(link) && box.hidden === false && !url.value.trim()) {
         url.value = _videoYouTubePerCloud(link);
+        _ytProgrammaRicercaLink();
       }
     } catch (_) { /* permesso clipboard non concesso */ }
     try { if (!url.value) url.focus(); } catch (_) {}
@@ -12413,10 +12414,87 @@ function _nomePerIlBrano(link, suggerito) {
     try {
       const link = await navigator.clipboard.readText();
       $("ytOnlineUrl").value = String(link || "").trim();
+      _ytProgrammaRicercaLink();
       $("ytOnlineHint").textContent = "Link incollato: puoi continuare.";
     } catch (_) { $("ytOnlineHint").textContent = "Incolla tenendo premuto nel campo del link."; }
   });
   const MB_YT_CLOUD = "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue";
+
+  // Una canzone gia' presente in Music Box non va riscaricata da YouTube.
+  // L'oEmbed ufficiale identifica il video, poi un confronto rigoroso evita
+  // di riprodurre per sbaglio un altro brano dello stesso artista.
+  function _ytNomePerConfronto(value) {
+    return String(value||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"")
+      .toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim().replace(/\s+/g," ");
+  }
+  function _ytTitoloVideoPulito(value) {
+    return _ytNomePerConfronto(String(value||"")
+      .replace(/\((?:official\s+)?(?:music\s+)?(?:video|audio|lyric(?:s)?|visualizer|hd|hq|4k)(?:\s+video)?\)/ig," ")
+      .replace(/\[(?:official\s+)?(?:music\s+)?(?:video|audio|lyrics?|visualizer|hd|hq|4k)\]/ig," ")
+      .replace(/\s*[-|]\s*(?:official\s+)?(?:music\s+)?(?:video|audio|lyrics?|visualizer)\s*$/ig," "));
+  }
+  function _ytTrovaAudioGiaPresente(meta) {
+    const video=_ytTitoloVideoPulito(meta&&meta.title);
+    const author=_ytNomePerConfronto(meta&&meta.author_name);
+    if(!video)return null;
+    for(const t of tracks) {
+      if(!t || !t.file || !t.url || t.youtubeId || !t.title || !t.artist)continue;
+      const name=_ytNomePerConfronto(t.title);
+      const artist=_ytNomePerConfronto(t.artist.split(/[,;&]/)[0]).replace(/\bfeat\b.*$/,"").trim();
+      if(!name||!artist)continue;
+      const exact=video===artist+" "+name || video===name+" "+artist ||
+        (video===name && (author.includes(artist)||artist.includes(author) && author.length>=6));
+      if(exact)return t;
+    }
+    return null;
+  }
+  async function _ytLeggiTitoloPubblico(link) {
+    const ctrl=new AbortController(), timer=setTimeout(()=>ctrl.abort(),5500);
+    try {
+      const response=await fetch("https://www.youtube.com/oembed?format=json&url="+encodeURIComponent(link),
+        {signal:ctrl.signal,cache:"no-store"});
+      if(!response.ok)return null;
+      const data=await response.json();
+      if(!data||typeof data.title!=="string"||!data.title.trim())return null;
+      return {title:data.title.slice(0,160),author_name:String(data.author_name||"").slice(0,100)};
+    } catch (_) { return null; }
+    finally { clearTimeout(timer); }
+  }
+  let _ytProbeSequence=0,_ytProbeTimeout=0;
+  async function _ytVerificaLinkPerLibreria(link) {
+    const token=++_ytProbeSequence, owner=profile;
+    const meta=await _ytLeggiTitoloPubblico(link);
+    if(token!==_ytProbeSequence||owner!==profile || $("youtubeOnlinePanel").hidden ||
+      _videoYouTubePerCloud($("ytOnlineUrl").value)!==link)return false;
+    if(!meta)return false;
+    const present=_ytTrovaAudioGiaPresente(meta);
+    if(present) {
+      // La stessa traccia e' gia' pronta: nessuna falsa richiesta in coda,
+      // nessun MP3 duplicato, nessun nuovo diritto richiesto.
+      query=""; if(searchEl)searchEl.value="";
+      favOnly=false;soloScaricate=false;soloMaiAscoltati=false;_playlistAttiva="";
+      _chiudiYouTubeOnline();
+      render();
+      toast("Gia' nella libreria, pronta da ascoltare: "+present.title,6500);
+      return true;
+    }
+    const titleInput=$("ytOnlineName");
+    if(titleInput && !titleInput.value.trim()) {
+      titleInput.value=meta.title;
+      $("ytOnlineHint").textContent="Titolo riconosciuto: "+meta.title+
+        ". Non c'e' ancora l'MP3 in libreria. Conferma i diritti e premi Aggiungi per provare il servizio cloud.";
+    }
+    return false;
+  }
+  function _ytProgrammaRicercaLink() {
+    ++_ytProbeSequence;
+    clearTimeout(_ytProbeTimeout);
+    const link=_videoYouTubePerCloud($("ytOnlineUrl").value);
+    if(link)_ytProbeTimeout=setTimeout(()=>_ytVerificaLinkPerLibreria(link),300);
+  }
+  $("ytOnlineUrl").addEventListener("input",_ytProgrammaRicercaLink);
+  $("ytOnlineUrl").addEventListener("change",_ytProgrammaRicercaLink);
+
 
   let _ytLinksFetchId=0;
   async function _ytReloadLinks() {
