@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793406406006,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793406406005,
-  "r": "suono: originale b-track-631"
- },
- {
-  "t": 1793406407883,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
- },
- {
-  "t": 1793406407883,
-  "r": "suono: originale b-track-929"
- },
- {
-  "t": 1793406410380,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793406410399,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
   "t": 1793406410385,
   "r": "ENTRO: stato dal sito, nascosti -1"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1793406468215,
   "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793406468251,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793406469423,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793406469441,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793406469465,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da stefanovillagg"
+ },
+ {
+  "t": 1793406469678,
+  "r": "libreria: 254 brani, scartati 818 per eliminazione, profilo Ste, chiavi eliminate 16"
+ },
+ {
+  "t": 1793406471422,
+  "r": "suono: originale b-track-135"
  }
 ]
