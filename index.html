@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6466" />
+  <link rel="stylesheet" href="style.css?v=6467" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -748,8 +748,11 @@
         <p class="step-hint">Incolla il link: il server prova a creare e pubblicare l’MP3 online. Puoi chiudere Music Box: non servono spazio sul telefono né il lettore YouTube.</p>
         <input class="edit-input" id="ytOnlineUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://youtu.be/..." />
         <button class="btn-ghost" id="ytOnlinePaste" type="button">Incolla dagli appunti</button>
-        <label for="ytOnlineName">Nome (facoltativo)</label>
-        <input class="edit-input" id="ytOnlineName" type="text" autocomplete="off" placeholder="Artista - Titolo (se lo conosci)" />
+        <label for="ytOnlineArtist">Artista <small>(riconosciuto dal link, modificabile)</small></label>
+        <input class="edit-input" id="ytOnlineArtist" type="text" autocomplete="off" placeholder="Riconoscimento automatico..." />
+        <label for="ytOnlineName">Titolo della canzone <small>(riconosciuto dal link, modificabile)</small></label>
+        <input class="edit-input" id="ytOnlineName" type="text" autocomplete="off" placeholder="Riconoscimento automatico..." />
+        <p class="step-hint">Music Box tenta di distinguere artista e titolo dal video; se YouTube non fornisce metadati affidabili, puoi correggerli prima dell’invio.</p>
         <label style="display:flex;align-items:flex-start;gap:10px;line-height:1.5">
           <input id="ytOnlineRights" type="checkbox" style="margin-top:4px" />
           <span>Confermo di avere i diritti sugli audio dei link che inserirò. Ricorda questa scelta e avvia automaticamente le richieste quando incollo.</span>
@@ -1262,7 +1265,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6466"></script>
-<script src="app.js?v=6466"></script>
+<script src="fuoco.js?v=6467"></script>
+<script src="app.js?v=6467"></script>
 </body>
 </html>
