@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.452";
+  const APP_VERSION = "6.453";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12301,6 +12301,7 @@ function _nomePerIlBrano(link, suggerito) {
     $("ytOnlineHint").textContent = "Incolla il link, conferma i diritti e premi Aggiungi. Nessun accesso a GitHub.";
     box.hidden = false;
     syncNoScroll();
+    try { _ytShowRecent(); _ytCheckPending(); } catch (_) {}
     // La lettura appunti e' solo un aiuto: l'utente puo' incollare a mano.
     try {
       const link = await _leggiLinkDagliAppunti();
@@ -12327,6 +12328,25 @@ function _nomePerIlBrano(link, suggerito) {
     const saved=LS.get(MB_YT_PENDING,[]);
     return Array.isArray(saved)?saved.filter(x=>x && x.id && x.profile).slice(-35):[];
   }
+  const MB_YT_RECENT="mb.youtubeRecent";
+  function _ytRecent() {
+    const rows=LS.get(MB_YT_RECENT,[]);
+    return Array.isArray(rows)?rows.filter(x=>x && x.profile && x.status).slice(-20):[];
+  }
+  function _ytShowRecent() {
+    const el=$("ytOnlineLastStatus");
+    if(!el)return;
+    const name=String(profile||DEFAULT_PROFILE);
+    const pending=_ytPending().filter(x=>x.profile===name);
+    const recent=_ytRecent().filter(x=>x.profile===name);
+    if(pending.length) {
+      el.textContent=pending.length+" richiesta/e in coda o in elaborazione. Il server verifica ogni circa 5 minuti, ma GitHub può ritardare l'avvio.";
+    } else if(recent.length) {
+      const last=recent[recent.length-1];
+      el.textContent=(last.status==="completed"?"Completata: ":"Non riuscita: ")+
+        String(last.title||"Brano")+(last.error?" — "+String(last.error).slice(0,150):"");
+    } else el.textContent="Nessuna richiesta recente per questo profilo.";
+  }
   let _ytStatusBusy=false;
   async function _ytCheckPending() {
     if(_ytStatusBusy||!navigator.onLine)return;
@@ -12344,14 +12364,22 @@ function _nomePerIlBrano(link, suggerito) {
           if(!resp.ok||!payload.ok||!payload.job){remain.push(task);continue;}
           if(payload.job.status==="completed") {
             changed=true;
+            const recent=_ytRecent();
+            recent.push({profile:task.profile,title:task.title,status:"completed",at:Date.now()});
+            LS.set(MB_YT_RECENT,recent.slice(-20));
             toast("Importazione YouTube completata: "+(task.title||"brano"),6000);
           } else if(payload.job.status==="failed") {
             changed=true;
-            toast("Importazione non riuscita: "+String(payload.job.error_message||"controlla il video").slice(0,100),8000);
+            const reason=String(payload.job.error_message||"controlla il video").slice(0,170);
+            const recent=_ytRecent();
+            recent.push({profile:task.profile,title:task.title,status:"failed",error:reason,at:Date.now()});
+            LS.set(MB_YT_RECENT,recent.slice(-20));
+            toast("Importazione non riuscita: "+reason.slice(0,100),8000);
           } else remain.push(task);
         } catch (_) { remain.push(task); }
       }
       LS.set(MB_YT_PENDING,remain);
+      _ytShowRecent();
       if(changed) {
         // Ricarico il manifest direttamente da GitHub senza eliminare MP3 offline.
         _ytOnlineFetchedAt=0;
@@ -12359,6 +12387,14 @@ function _nomePerIlBrano(link, suggerito) {
       }
     } finally {_ytStatusBusy=false;}
   }
+  $("ytOnlineCheck").addEventListener("click",async () => {
+    const b=$("ytOnlineCheck");
+    b.disabled=true;
+    try {
+      await _ytCheckPending();
+      _ytShowRecent();
+    } finally { b.disabled=false; }
+  });
   $("ytOnlineGo").addEventListener("click",async () => {
     const url=_videoYouTubePerCloud($("ytOnlineUrl").value);
     if(!url){$("ytOnlineHint").textContent="Incolla il link di un singolo video YouTube.";return;}
@@ -12382,6 +12418,7 @@ function _nomePerIlBrano(link, suggerito) {
       const jobs=_ytPending().filter(x=>x.id!==data.id);
       jobs.push({id:data.id,profile:selected,title:title||url,added:Date.now()});
       LS.set(MB_YT_PENDING,jobs.slice(-35));
+      _ytShowRecent();
       $("ytOnlineHint").textContent="Richiesta accettata! Il server GitHub controlla la coda automaticamente. Il computer puo' rimanere spento. Non devi accedere a GitHub.";
       toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
       $("ytOnlineUrl").value="";
@@ -12392,7 +12429,7 @@ function _nomePerIlBrano(link, suggerito) {
     }finally{btn.disabled=false;}
   });
   // Lo stato si aggiorna anche dopo aver riaperto la PWA dallo stesso telefono.
-  setInterval(_ytCheckPending,45000);
+  setInterval(_ytCheckPending,20000);
   window.addEventListener("online",_ytCheckPending);
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible")_ytCheckPending();
