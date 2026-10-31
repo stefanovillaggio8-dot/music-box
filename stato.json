@@ -1245,6 +1245,18 @@
     "t": "MorirÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"la cittÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃÂÃÂÃÂÃÂ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la cittÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃÂÃÂÃÂÃÂ",
+    "a": "MOSTRO"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1317,6 +1329,18 @@
     "t": "LA CITTÃ",
     "a": "MOSTRO"
    },
+   "[\"sentire la musica (visual)\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "Sentire La Musica (Visual)",
+    "a": "Kid Yugi"
+   },
+   "m:2026-10|[\"sentire la musica (visual)\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "Sentire La Musica (Visual)",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -1341,17 +1365,29 @@
     "t": "LA CITTÀ",
     "a": "MOSTRO"
    },
-   "[\"sentire la musica (visual)\",\"kid yugi\"]": {
+   "[\"romantici terroni\",\"saitta\"]": {
     "v": 1,
-    "s": 1,
-    "t": "Sentire La Musica (Visual)",
-    "a": "Kid Yugi"
+    "s": 3,
+    "t": "Romantici Terroni",
+    "a": "SAITTA"
    },
-   "m:2026-10|[\"sentire la musica (visual)\",\"kid yugi\"]": {
+   "m:2026-10|[\"romantici terroni\",\"saitta\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "Romantici Terroni",
+    "a": "SAITTA"
+   },
+   "[\"white keys\",\"dominic fike\"]": {
     "v": 1,
     "s": 1,
-    "t": "Sentire La Musica (Visual)",
-    "a": "Kid Yugi"
+    "t": "Dominic Fike - WHITE KEYS",
+    "a": ""
+   },
+   "m:2026-10|[\"white keys\",\"dominic fike\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Dominic Fike - WHITE KEYS",
+    "a": ""
    }
   },
   "Diego": {
