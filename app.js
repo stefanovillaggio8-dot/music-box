@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.469";
+  const APP_VERSION = "6.470";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6771,7 +6771,9 @@ box.innerHTML = "";
     if (Date.now() < _lrclibNonPrimaDi && soloTempi) return;
     _testiInRicerca.add(t.id);
     try {
-      const risultato = await findLyrics(t.artist, t.title, {
+      const titoloVerificato = _eAudioYouTubePerTesti(t)
+        ? stripArtistPrefix(t.artist, t.title) : t.title;
+      const risultato = await findLyrics(t.artist, titoloVerificato, {
         syncedOnly: soloTempi,
         // "MP3 pronto sul cloud" e' uno stato, NON il nome dell'album.
         album: _eAudioYouTubePerTesti(t) ? "" : (t.spotifyAlbum || t.album || ""),
@@ -6865,6 +6867,12 @@ box.innerHTML = "";
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) _programmaTestiKaraoke();
     });
+    /* Anche se tutte le ricerche falliscono temporaneamente, il karaoke
+       va ritentato piu' tardi senza aspettare un nuovo click o riavvio.
+       Le regole di cooldown impediscono di stressare LRCLIB. */
+    setInterval(() => {
+      if (!document.hidden) _programmaTestiKaraoke();
+    }, 300000);
   } catch (e) { /* noop */ }
 
 async function playById(id, autoplay = true) {
@@ -8155,7 +8163,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.449 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.470 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
