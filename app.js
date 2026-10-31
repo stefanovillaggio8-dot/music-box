@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.467";
+  const APP_VERSION = "6.468";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3348,7 +3348,12 @@ function _devoVedereBrano(eMio, b) {
       });
     }
     tracks=linked.concat(old);
-    if(draw)render();
+    if(draw){
+      render();
+      // Una nuova canzone YouTube pronta deve cercare i testi senza play.
+      if(linked.some(t=>t.source==="cloud-audio" && t.url))
+        _programmaTestiKaraoke();
+    }
   }
   async function loadAll() {
   _diag("loadAll");
@@ -6721,6 +6726,31 @@ box.innerHTML = "";
   }
   let _testiPrefetchAttivo = false;
   let _testiPrefetchPrevisto = false;
+  let _testiPrefetchDaRipetere = false;
+  function _eAudioYouTubePerTesti(t) {
+    // Solo audio davvero pubblicati: i link in coda non sono ancora brani.
+    return !!(t && t.url && (t.source==="cloud-audio" ||
+      /^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(String(t.file||""))));
+  }
+  function _testiCandidatiAutomatici() {
+    // I video pubblicati come brani BUILTIN venivano scartati da !t.builtin.
+    // Cerca prima i nuovi brani YouTube del profilo attivo, poi gli altri.
+    const youtube=tracks.filter(t=>_eAudioYouTubePerTesti(t) && t.id && t.artist && t.title)
+      .map(t=>({...t,title:stripArtistPrefix(t.artist,t.title)}))
+      .sort((a,b)=>Number((b.profile||DEFAULT_PROFILE)===profile)-
+                     Number((a.profile||DEFAULT_PROFILE)===profile));
+    const catalogo=BUILTIN.map(b=>({
+      id:_idBranoStabile(b),title:stripArtistPrefix(b.artist,b.title),
+      artist:b.artist||"",album:b.spotifyAlbum||"",
+      spotifyAlbum:b.spotifyAlbum||"",spotifyDurationMs:b.spotifyDurationMs||0,
+      profile:b.profile||DEFAULT_PROFILE
+    })).concat(tracks.filter(t=>!t.builtin && !_eAudioYouTubePerTesti(t)));
+    const visti=new Set();
+    return youtube.concat(catalogo).filter(t=>{
+      if(!t || !t.id || visti.has(t.id))return false;
+      visti.add(t.id);return true;
+    });
+  }
 
   async function _completaTestoInAscolto(t, syncedOnly = false) {
     if (!t || !t.id || !t.title || !t.artist) return;
@@ -6732,7 +6762,9 @@ box.innerHTML = "";
     _testiInRicerca.add(t.id);
     try {
       const risultato = await findLyrics(t.artist, t.title, {
-        syncedOnly, album: t.spotifyAlbum || t.album || "",
+        syncedOnly,
+        // "MP3 pronto sul cloud" e' uno stato, NON il nome dell'album.
+        album: _eAudioYouTubePerTesti(t) ? "" : (t.spotifyAlbum || t.album || ""),
         durationMs: t.spotifyDurationMs || 0, trackId: t.id
       });
       if (!risultato || !risultato.text) {
@@ -6764,7 +6796,8 @@ box.innerHTML = "";
   }
 
   function _programmaTestiKaraoke() {
-    if (_testiPrefetchAttivo || _testiPrefetchPrevisto || !db || document.hidden) return;
+    if (_testiPrefetchAttivo) { _testiPrefetchDaRipetere=true;return; }
+    if (_testiPrefetchPrevisto || !db || document.hidden) return;
     _testiPrefetchPrevisto = true;
     setTimeout(async () => {
       _testiPrefetchPrevisto = false;
@@ -6778,33 +6811,34 @@ box.innerHTML = "";
       let scansioni = 0;
       let elencoDaCompletare = [];
       try {
-        /* Il catalogo completo comprende anche i profili non aperti.
-           I risultati si salvano per ID, senza spostare brani fra account. */
-        elencoDaCompletare = BUILTIN.map((b) => ({
-          id: _idBranoStabile(b),
-          title: stripArtistPrefix(b.artist, b.title),
-          artist: b.artist || "",
-          album: b.spotifyAlbum || "",
-          spotifyAlbum: b.spotifyAlbum || "",
-          spotifyDurationMs: b.spotifyDurationMs || 0,
-          profile: b.profile || DEFAULT_PROFILE
-        })).concat(tracks.filter((t) => !t.builtin))
-          .sort((a, b) => Number(b.profile === profiloIniziale) - Number(a.profile === profiloIniziale));
+        /* Include i brani YouTube completati anche quando builtin=true.
+           I brani appena importati hanno priorita' e non richiedono play. */
+        elencoDaCompletare=_testiCandidatiAutomatici();
         for (const t of elencoDaCompletare) {
           if (profile !== profiloIniziale || document.hidden || scansioni >= 2) break;
-          if (!t || !t.id || !t.artist || _ricercaTestoRecente(t.id, true) || _testiInRicerca.has(t.id)) continue;
+          const importato=_eAudioYouTubePerTesti(t);
+          const syncedOnly=!importato;
+          if (!t || !t.id || !t.title || !t.artist ||
+              _ricercaTestoRecente(t.id, syncedOnly) || _testiInRicerca.has(t.id)) continue;
           const attuale = localLyrics[t.id] || lyricsData[t.id];
           if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) continue;
           if (Date.now() < _lrclibNonPrimaDi) break;
           scansioni++;
-          await _completaTestoInAscolto(t, true);
+          // Per i link YouTube: karaoke sincronizzato, oppure testo normale.
+          await _completaTestoInAscolto(t, syncedOnly);
           await new Promise((resolve) => setTimeout(resolve, 6000));
         }
       } catch (e) {
         console.warn("Ricerca karaoke in secondo piano interrotta:", e);
-      } finally { _testiPrefetchAttivo = false; }
+      } finally {
+        _testiPrefetchAttivo = false;
+        if(_testiPrefetchDaRipetere){
+          _testiPrefetchDaRipetere=false;
+          _programmaTestiKaraoke();
+        }
+      }
       if (profile === profiloIniziale && !document.hidden &&
-          elencoDaCompletare.some(t => t && t.artist && !_ricercaTestoRecente(t.id, true) &&
+          elencoDaCompletare.some(t => t && t.artist && !_ricercaTestoRecente(t.id, !_eAudioYouTubePerTesti(t)) &&
             !(localLyrics[t.id] && localLyrics[t.id].synced) &&
             !(lyricsData[t.id] && lyricsData[t.id].synced))) {
         setTimeout(_programmaTestiKaraoke, 120000);
