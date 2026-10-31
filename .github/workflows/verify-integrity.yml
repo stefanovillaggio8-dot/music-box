@@ -16,6 +16,10 @@ on:
       - karaoke-index.json
       - tools/audit-catalog.cjs
       - tools/test-audio-routing.cjs
+      - tools/aggiorna-copia-locale.ps1
+      - tools/ripara-musicbox-pc.ps1
+      - tools/serve-private-musicbox.cjs
+      - tools/test-private-server.cjs
       - .github/workflows/verify-integrity.yml
 permissions:
   contents: read
@@ -35,6 +39,24 @@ jobs:
           node --check spotify.js
           node --check spotify-ui.js
           node --check fuoco.js
+      - name: Verifica server privato e supporto MP3 range
+        run: |
+          node --check tools/serve-private-musicbox.cjs
+          node --check tools/build-karaoke-index.cjs
+          node tools/test-private-server.cjs
+      - name: Verifica sintassi PowerShell senza toccare i brani
+        shell: pwsh
+        run: |
+          $paths = @("tools/aggiorna-copia-locale.ps1", "tools/ripara-musicbox-pc.ps1", "tools/verifica-audio-sul-pc.ps1")
+          foreach ($file in $paths) {
+            $tokens = $null
+            $issues = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file).Path, [ref]$tokens, [ref]$issues)
+            if ($issues.Count -gt 0) {
+              $issues | ForEach-Object { Write-Error $_.Message }
+              throw "PowerShell syntax error in $file"
+            }
+          }
       - name: Testa sorgenti audio PC e GitHub senza contenuti misti HTTP/HTTPS
         run: node tools/test-audio-routing.cjs
       - name: Verifica cataloghi, profili, immagini e indice karaoke
