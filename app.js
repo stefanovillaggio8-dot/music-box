@@ -3326,7 +3326,8 @@ function _devoVedereBrano(eMio, b) {
     return String(profilo || profile || "Ste") + "." + String(id || "");
   }
   /* MB_REVIEW_VISIBLE_SAFE_20261030 */
-  const builtin = BUILTIN.concat(await _braniYouTubePubblicati())
+  const builtin = BUILTIN.concat((await _braniYouTubePubblicati()).filter(x =>
+    !BUILTIN.some(b => b.file === x.file && (b.profile || DEFAULT_PROFILE) === x.profile)))
   .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
      Metto una traccia: quante canzoni ho scartato e con che chiave, cosi'
