@@ -111,6 +111,12 @@ jobs:
         run: node tools/test-add-music-ui.cjs
       - name: Verifica upload cloud dal telefono
         run: node tools/test-cloud-upload-phone.cjs
+      - name: Prepara ffmpeg e ffprobe per test audio reale
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+          fi
       - name: Verifica importazione online YouTube senza PC (test senza rete)
         run: |
           node --check tools/import-youtube-online.cjs
