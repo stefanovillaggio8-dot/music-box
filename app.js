@@ -7996,8 +7996,7 @@ function openProfile() {
     const t = current();
     if (!l || !t) return;
     const ling = $("lyricsLingua").value || "en";
-    const lines = [...body.querySelectorAll(".lyr-line, .lyr-plain, .lyr-sec")];
-    const source = lines.length ? lines : [...body.querySelectorAll("p")];
+    const source = [...body.querySelectorAll("p")];
     const blocchi = source.filter(el => String(el.textContent || "").trim() &&
        !el.classList.contains("lyr-traduzione"));
     if (!blocchi.length) { toast("Nessun testo da tradurre"); return; }
