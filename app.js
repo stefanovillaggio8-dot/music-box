@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.449";
+  const APP_VERSION = "6.450";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3233,6 +3233,33 @@ function _devoVedereBrano(eMio, b) {
 
   /* Blob da IndexedDB hanno bisogno di un object URL per apparire come immagini. */
   const _urlCopertineSalvate = new Map();
+  /* I brani importati da GitHub Actions vengono letti dal manifest sul sito.
+     Rete disattivata: conserva l'ultima lista in memoria; non blocca la PWA. */
+  let _ytOnlineCache = [];
+  let _ytOnlineFetchedAt = 0;
+  async function _braniYouTubePubblicati() {
+    if (Date.now() - _ytOnlineFetchedAt < 45000) return _ytOnlineCache;
+    _ytOnlineFetchedAt = Date.now();
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 3500);
+    try {
+      const res = await fetch(new URL("online-imports.json", document.baseURI).href, {
+        cache: "no-store", signal: ctrl.signal
+      });
+      if (!res.ok) return _ytOnlineCache;
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        _ytOnlineCache = data.filter(x => x && typeof x.title === "string" &&
+          typeof x.file === "string" && /^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(x.file) &&
+          typeof x.profile === "string" && x.profile.length <= 40)
+          .map(x => ({title:x.title, artist:String(x.artist||""),
+            file:x.file, profile:x.profile, cover:String(x.cover||"")}));
+      }
+    } catch (_) { /* offline o manifest non ancora pubblicato */ }
+    finally { clearTimeout(timeout); }
+    return _ytOnlineCache;
+  }
+
   async function loadAll() {
   _diag("loadAll");
   _memoCondiviso.clear();
@@ -3294,7 +3321,7 @@ function _devoVedereBrano(eMio, b) {
     return String(profilo || profile || "Ste") + "." + String(id || "");
   }
   /* MB_REVIEW_VISIBLE_SAFE_20261030 */
-  const builtin = BUILTIN
+  const builtin = BUILTIN.concat(await _braniYouTubePubblicati())
   .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
      Metto una traccia: quante canzoni ho scartato e con che chiave, cosi'
@@ -7385,7 +7412,7 @@ if (!sceltaCopia) updateProfileButton();
   function syncNoScroll() {
     const open = !$("importPanel").hidden || !$("lyricsPanel").hidden ||
       !$("profilePanel").hidden || !$("confirmPanel").hidden || !$("offlinePanel").hidden ||
-      !$("quickPanel").hidden || !$("queuePanel").hidden;
+      !$("quickPanel").hidden || !$("queuePanel").hidden || !$("youtubeOnlinePanel").hidden;
     document.body.classList.toggle("no-scroll", open);
   }
 
@@ -12232,124 +12259,86 @@ function _nomePerIlBrano(link, suggerito) {
     }
     return s.replace(/\s{2,}/g, " ").trim();
   }
+  /*
+   * Importazione dal telefono senza bridge 8788.
+   * Non mettere un token GitHub nel browser pubblico: l'utente conferma la
+   * richiesta sulla pagina Issues autenticata di GitHub, che avvia Actions.
+   */
+  function _videoYouTubePerCloud(raw) {
+    try {
+      const u = new URL(String(raw || "").trim());
+      if (u.protocol !== "https:") return "";
+      let id = "";
+      if (u.hostname === "youtu.be" || u.hostname === "www.youtu.be") {
+        id = u.pathname.split("/")[1] || "";
+      } else if (/^(?:www\.|m\.|music\.)?youtube\.com$/i.test(u.hostname)) {
+        if (u.pathname === "/watch") id = u.searchParams.get("v") || "";
+        else if (/^\/(?:shorts|live)\/[^/]+\/?$/.test(u.pathname)) id = u.pathname.split("/")[2] || "";
+      }
+      return /^[A-Za-z0-9_-]{11}$/.test(id) ? "https://www.youtube.com/watch?v=" + id : "";
+    } catch (_) { return ""; }
+  }
+  function _chiudiYouTubeOnline() {
+    const box = $("youtubeOnlinePanel");
+    if (box) box.hidden = true;
+    syncNoScroll();
+  }
   async function _aggiungiDaYouTube(suggerito) {
-    let link = await _leggiLinkDagliAppunti();
-    if (!/youtu\.be\/|youtube\.com\/(watch|shorts)|[?&]v=/i.test(link)) {
-      try {
-        const scritto = String(prompt("Incolla qui il link di YouTube", link || "") || "").trim();
-        link = scritto;
-      } catch (e) { /* noop */ }
-    }
-    if (!/youtu\.be\/|youtube\.com\/(watch|shorts)|[?&]v=/i.test(link)) {
-      toast("Serve un link di YouTube: su YouTube tocca Condividi e poi Copia link");
+    const box = $("youtubeOnlinePanel");
+    if (!box) { toast("Importazione online non disponibile: aggiorna l'app."); return; }
+    const url = $("ytOnlineUrl"), nome = $("ytOnlineName");
+    if (url) url.value = "";
+    if (nome) nome.value = String(suggerito || "").slice(0, 160);
+    $("ytOnlineRights").checked = false;
+    $("ytOnlineProfile").textContent = String(profile || DEFAULT_PROFILE);
+    $("ytOnlineHint").textContent = "Dopo «Continua su GitHub», premi «Submit new issue» per avviare l'importazione online. Non serve il PC.";
+    box.hidden = false;
+    syncNoScroll();
+    // La lettura appunti e' solo un aiuto: l'utente puo' incollare a mano.
+    try {
+      const link = await _leggiLinkDagliAppunti();
+      if (_videoYouTubePerCloud(link) && box.hidden === false && !url.value.trim()) {
+        url.value = _videoYouTubePerCloud(link);
+      }
+    } catch (_) { /* permesso clipboard non concesso */ }
+    try { if (!url.value) url.focus(); } catch (_) {}
+  }
+  $("ytOnlineClose").addEventListener("click", _chiudiYouTubeOnline);
+  $("youtubeOnlinePanel").addEventListener("click", (event) => {
+    if (event.target === $("youtubeOnlinePanel")) _chiudiYouTubeOnline();
+  });
+  $("ytOnlinePaste").addEventListener("click", async () => {
+    try {
+      const link = await navigator.clipboard.readText();
+      $("ytOnlineUrl").value = String(link || "").trim();
+      $("ytOnlineHint").textContent = "Link incollato: puoi continuare.";
+    } catch (_) { $("ytOnlineHint").textContent = "Incolla tenendo premuto nel campo del link."; }
+  });
+  $("ytOnlineGo").addEventListener("click", () => {
+    const url = _videoYouTubePerCloud($("ytOnlineUrl").value);
+    if (!url) { $("ytOnlineHint").textContent = "Incolla il link di un solo video YouTube valido."; return; }
+    if (!$("ytOnlineRights").checked) {
+      $("ytOnlineHint").textContent = "Per importare l'audio devi confermare di avere i diritti per farlo.";
       return;
     }
-    /* Ste: "diego ha messo una canzone incollando il link di yt ma spunta
-     il link di yt, non il titolo e artista". Prima l'app chiedeva il nome a
-     mano e proponeva l'ultimo nome usato: se non veniva riscritto restava
-     il link (o "brano da YouTube"). Ora chiedo al computer come si chiama
-     davvero quel video e lo propongo gia' scritto: si preme "ok" e via.
-     Se il computer non c'e' o YouTube non risponde, si comporta come prima. */
-  let proposto = suggerito;
-  if (!proposto && (await ponteOnline())) {
-    try {
-      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-      const r = await fetch(base + "/titolo?url=" + encodeURIComponent(link));
-      if (r.ok) {
-        const d = await r.json();
-        if (d && d.titolo) {
-          proposto = _titoloMenoSpazzatura(d.titolo);
-          /* "Artista - Titolo" e' gia' la forma giusta. Se il titolo del
-             video NON ha il trattino allora l'artista non c'e' dentro, e
-             metto il canale. Se pero' il canale e' una sigla tipo "UC123"
-             o un nome generico, meglio lasciare il titolo come e': meglio
-             un titolo imperfetto che un artista sbagliato. */
-          const canale = String(d.canale || "").trim();
-          const canaleSenzaSenso = /^UC[A-Za-z0-9_-]+$/.test(canale) ||
-            /^(VEVO|Topic|Audio|Videos?|Records|Official)$/i.test(canale);
-          if (proposto.indexOf(" - ") < 0 && canale && !canaleSenzaSenso) {
-            proposto = canale + " - " + proposto;
-          }
-        }
-      }
-    } catch (e) { /* nessun problema: si chiede a mano come prima */ }
-  }
-  const nome = _nomePerIlBrano(link, proposto);
-    if (!nome) { toast("Scrivi il nome del brano, altrimenti non lo metto in libreria"); return; }
-    try { LS.set("mb.ultimoNome", nome); } catch (e) { /* noop */ }
-
-    /* Cartella del computer dove mettere il brano scaricato da YouTube.
-
-       Prima era scritta a mano: finiva sempre nella cartella di Ste (o di Ari
-       o Emanuele) anche se stavi ascoltando come un altro nome. Infatti se un
-       amico scaricava una canzone da YouTube, gli finiva nella libreria di
-       Ste. Adesso prendo la cartella del nome aperto, e se questo nome non ha
-       una cartella sul computer uso quella di Ste. */
-    const cartella = cartellaDi(profile) || "ste";
-
-    /* Se il computer e' acceso: scarica subito, e' piu' veloce. */
-    if (await ponteOnline()) {
-      toast("Sto scaricando " + nome + "...");
-      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-      try {
-        const r = await fetch(base + "/convert", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url: link, cartella: cartella, titolo: nome })
-        });
-        if (!r.ok) {
-          let perche = "non riesco a scaricare (" + r.status + ")";
-          try { const j = await r.json(); if (j && j.errore) perche = j.errore; } catch (e) { /* noop */ }
-          toast(perche, 6000);
-          segnalaErrore("aggiunta da youtube fallita: " + perche);
-          return;
-        }
-        /* il PC ha gia' messo il brano nella cartella: non serve tenere
-           l'mp3 qui, occuperebbe spazio e creerebbe un doppione */
-        await r.arrayBuffer();
-        toast("Fatto: " + nome + " e' in libreria. Se non la vedi subito, aspetta un minuto e ricarica");
-        segnalaErrore("aggiunta da youtube riuscita: " + nome);
-        return;
-      } catch (e) {
-        /* il computer si e' spento proprio adesso: passo dalla coda */
-      }
-    }
-
-    /* Computer spento: il link resta in coda e viene scaricato all'accensione. */
-    if (!SERVIZIO_PUBBLICA || !_chiavePubblica()) {
-      _spiegaPercheNonVa();
-      return;
-    }
-    try {
-      const r = await fetch(SERVIZIO_PUBBLICA + "/link", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "x-chiave": _chiavePubblica(),
-          "x-link": link,
-          "x-nome": nome,
-          "x-profilo": cartella
-        }
-      });
-      if (!r.ok) {
-        let perche = "non riesco a mettere in coda (" + r.status + ")";
-        try { const j = await r.json(); if (j && j.errore) perche = j.errore; } catch (e) { /* noop */ }
-        toast(perche, 6000);
-        return;
-      }
-      toast("Messo in coda: " + nome + " entra in libreria quando il computer si accende", 6000);
-      segnalaErrore("link in coda: " + nome);
-    } catch (e) {
-      /* Ste: diceva solo "non riesco a parlare col servizio", che non dice
-         niente. Adesso distinguo i casi: senza rete, senza chiave, oppure
-         il servizio che risponde male. */
-      const perche = e && e.name === "TypeError"
-        ? "Sembra che non ci sia rete: controlla il wifi o i dati."
-        : "Il servizio non ha risposto (" + String((e && e.message) || e).slice(0, 40) + ")";
-      toast("Non riesco a parlare col servizio. " + perche, 8000);
-      segnalaErrore("aggiunta da youtube: " + perche);
-    }
-  }
+    const nome = String($("ytOnlineName").value || "").replace(/[\r\n]/g, " ").trim().slice(0, 160);
+    const profilo = String(profile || DEFAULT_PROFILE).slice(0, 40);
+    const testo = "YouTube: " + url + "\nProfilo: " + profilo +
+      "\nNome: " + nome + "\nDiritti: CONFERMO";
+    const issueUrl = "https://github.com/stefanovillaggio8-dot/music-box/issues/new?" +
+      new URLSearchParams({ title: "[MusicBox] Importa brano YouTube", body: testo }).toString();
+    $("ytOnlineHint").textContent = "Nella pagina GitHub premi «Submit new issue». Quando l'automazione termina, aggiorna Music Box.";
+    const a = document.createElement("a");
+    a.href = issueUrl;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = "Apri GitHub";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast("Conferma su GitHub: premi «Submit new issue» per iniziare.", 7500);
+  });
   /* ---------- La guida (il "?" nel menu Altro) ----------
    Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del
    '?' dove spieghi bene". Spiega come si mettono le canzoni online con il
