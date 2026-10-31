@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.458";
+  const APP_VERSION = "6.459";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12598,6 +12598,7 @@ function _nomePerIlBrano(link, suggerito) {
     _ytStatusBusy=true;
     let changed=false;
     const remain=[];
+    let published=null;
     try {
       for(const task of pending) {
         try {
@@ -12606,11 +12607,25 @@ function _nomePerIlBrano(link, suggerito) {
           const payload=await resp.json();
           if(!resp.ok||!payload.ok||!payload.job){remain.push(task);continue;}
           if(payload.job.status==="completed") {
+            // Il worker puo' finire prima della disponibilita' del manifest
+            // sul CDN di GitHub. Non dichiarare il brano pronto in anticipo:
+            // altrimenti la PWA smette di controllarlo e non comparira' mai.
+            const file=String(payload.job.result_file||"");
+            if(!/^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file)){
+              remain.push(task);continue;
+            }
+            if(!published){
+              _ytOnlineFetchedAt=0;
+              published=await _braniYouTubePubblicati();
+            }
+            if(!published.some(x=>x.file===file&&x.profile===task.profile)){
+              remain.push(task);continue;
+            }
             changed=true;
             const recent=_ytRecent();
             recent.push({profile:task.profile,title:task.title,status:"completed",at:Date.now()});
             LS.set(MB_YT_RECENT,recent.slice(-20));
-            toast("Importazione YouTube completata: "+(task.title||"brano"),6000);
+            toast("Brano pronto in Music Box: "+(task.title||"canzone"),6000);
           } else if(payload.job.status==="failed") {
             changed=true;
             const reason=String(payload.job.error_message||"controlla il video").slice(0,170);
@@ -12625,7 +12640,6 @@ function _nomePerIlBrano(link, suggerito) {
       _ytShowRecent();
       if(changed) {
         if(!$("youtubeOnlinePanel").hidden) _ytReloadLinks();
-        // Ricarico il manifest direttamente da GitHub senza eliminare MP3 offline.
         _ytOnlineFetchedAt=0;
         try {await loadAll();render();}catch(_){}
       }
@@ -12691,7 +12705,26 @@ function _nomePerIlBrano(link, suggerito) {
     }finally{btn.disabled=false;}
   });
   // Lo stato si aggiorna anche dopo aver riaperto la PWA dallo stesso telefono.
-  setInterval(_ytCheckPending,20000);
+  setInterval(_ytCheckPending,15000);
+  // Nuovi MP3 pubblicati da un altro telefono/account devono arrivare
+  // anche senza riaprire la PWA. Massimo un controllo ogni minuto.
+  let _ytSyncBackgroundBusy=false;
+  setInterval(async () => {
+    if(_ytSyncBackgroundBusy||_ytStatusBusy||!navigator.onLine||document.hidden)return;
+    _ytSyncBackgroundBusy=true;
+    const owner=String(profile||DEFAULT_PROFILE);
+    try {
+      const entries=await _ytBraniDalCloud(owner);
+      if(owner!==profile)return;
+      _ytOnlineFetchedAt=0;
+      const published=await _braniYouTubePubblicati();
+      if(owner!==profile)return;
+      const hasNew=published.some(x=>x.profile===owner && !tracks.some(t=>t.file===x.file));
+      if(hasNew) await loadAll();
+      else _ytAggiornaVociLibreria(entries,owner,true);
+    } catch (_) { /* nessun blocco del lettore per un controllo cloud fallito */ }
+    finally {_ytSyncBackgroundBusy=false;}
+  },60000);
   window.addEventListener("online",_ytCheckPending);
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible")_ytCheckPending();
