@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.461";
+  const APP_VERSION = "6.462";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3312,6 +3312,8 @@ function _devoVedereBrano(eMio, b) {
       linked.push({
         id:"yt-"+id, title:name && name!=="Video YouTube" ? name.slice(0,160) : "Video YouTube "+id,
         artist:"", album:row.status==="failed"?"Importazione fallita":
+          row.status==="needs-consent"?"Conferma i diritti per importare":
+          row.status==="checking"?"Invio automatico in corso":
           row.status==="completed"?"MP3 in pubblicazione":
           row.status==="running"?"MP3 in preparazione":"In coda per MP3",
         cover:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",
@@ -12500,11 +12502,48 @@ function _nomePerIlBrano(link, suggerito) {
   }
   let _ytAutoSubmitting=false;
   const _ytAutoSent=new Set();
+  // Una voce appare subito, senza aspettare oEmbed o la rete.
+  // "checking" e' una bozza, NON un MP3 pronto o una coda confermata.
+  function _ytMostraSubitoLink(link){
+    let id="";
+    try{id=new URL(link).searchParams.get("v")||"";}catch(_){return;}
+    if(!/^[A-Za-z0-9_-]{11}$/.test(id))return;
+    const owner=String(profile||DEFAULT_PROFILE),key="mb.youtube.links."+owner;
+    const saved=_ytLinksMemory[owner]?.links||LS.get(key,[]);
+    const rows=Array.isArray(saved)?saved:[];
+    const existing=rows.find(x=>x&&x.video_id===id);
+    const known=id==="75qIYkMUGVE"?"Dominic Fike - WHITE KEYS":"";
+    const title=String($("ytOnlineName").value||"").trim()||
+      (existing&&String(existing.requested_title||"").trim())||known||"Video YouTube "+id;
+    if(known && !$("ytOnlineName").value.trim())$("ytOnlineName").value=known;
+    const keep=existing&&["queued","running","completed"].includes(existing.status);
+    const row={...existing,video_id:id,profile:owner,requested_title:title.slice(0,160),
+      status:keep?existing.status:($("ytOnlineRights").checked?"checking":"needs-consent")};
+    const next=[row,...rows.filter(x=>x&&x.video_id!==id)];
+    LS.set(key,next);
+    _ytLinksMemory[owner]={links:next,time:Date.now()};
+    _ytAggiornaVociLibreria(next,owner,false);
+    // I filtri non devono nascondere la canzone appena incollata.
+    query="";if(searchEl)searchEl.value="";
+    favOnly=false;soloScaricate=false;soloMaiAscoltati=false;
+    _playlistAttiva="";
+    render();
+  }
+  function _ytSegnaErroreInvio(owner,videoId,error){
+    const key="mb.youtube.links."+owner,rows=LS.get(key,[]);
+    if(!Array.isArray(rows))return;
+    const next=rows.map(x=>x&&x.video_id===videoId?
+      {...x,status:"failed",error_message:String(error||"Invio non riuscito").slice(0,160)}:x);
+    LS.set(key,next);
+    _ytLinksMemory[owner]={links:next,time:Date.now()};
+    _ytAggiornaVociLibreria(next,owner,true);
+  }
   function _ytProgrammaRicercaLink() {
     ++_ytProbeSequence;
     clearTimeout(_ytProbeTimeout);
     const link=_videoYouTubePerCloud($("ytOnlineUrl").value);
     if(!link)return;
+    _ytMostraSubitoLink(link);
     const owner=String(profile||DEFAULT_PROFILE),token=_ytProbeSequence;
     _ytProbeTimeout=setTimeout(async()=>{
       const duplicate=await _ytVerificaLinkPerLibreria(link);
@@ -12759,6 +12798,7 @@ function _nomePerIlBrano(link, suggerito) {
       $("ytOnlineName").value="";
     }catch(error){
       _ytAutoSent.delete(identity);
+      _ytSegnaErroreInvio(selected,videoId,error&&error.message||error);
       $("ytOnlineHint").textContent="Problema: "+String(error&&error.message||error).slice(0,160)+". Non ho perso nessun brano.";
     }finally{btn.disabled=false;_ytAutoSubmitting=false;}
   }
