@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.475";
+  const APP_VERSION = "6.476";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6325,17 +6325,21 @@ function rebuildAudio(autoplay) {
   /* Una sola anteprima automatica, distinta dalla coda salvata dall'utente.
      Il casuale seleziona la stessa traccia che poi verra' riprodotta:
      NON metterla in queue, altrimenti doppioni e precedenze sbagliate. */
+  function _prossimiAutomaticiInCoda() {
+    if (!shuffle || !currentId || queue.length || repeat) return [];
+    const lista = (_posizionePlaylist >= 0 && _playlistSuona.length)
+      ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
+    return _listaProssimiCasuali(lista, 10)
+      .map(id => tracks.find(t => t.id === id))
+      .filter(t => t && t.id !== currentId && !t.youtubeId && t.url);
+  }
   function _prossimoAutomaticoInCoda() {
-    if (!shuffle || !currentId || queue.length || repeat) return null;
-    const id = _anteprimaProssimoBrano();
-    const brano = tracks.find((t) => t.id === id);
-    return brano && brano.id !== currentId && !brano.youtubeId && brano.url
-      ? brano : null;
+    return _prossimiAutomaticiInCoda()[0] || null;
   }
 
   function renderQueueCount() {
-    const auto = _prossimoAutomaticoInCoda();
-    const quanti = queue.length + (auto ? 1 : 0);
+    const auto = _prossimiAutomaticiInCoda();
+    const quanti = queue.length + auto.length;
     const el = $("quickCount");
     if (el) {
       el.hidden = !quanti;
@@ -6426,13 +6430,25 @@ function rebuildAudio(autoplay) {
       body.appendChild(head);
     }
 
-    const automatico = _prossimoAutomaticoInCoda();
-    if (automatico) {
+    const automatici = _prossimiAutomaticiInCoda();
+    if (automatici.length && !queue.length) {
+      const bar = document.createElement("div");
+      bar.className = "queue-auto-actions";
+      const label = document.createElement("span");
+      label.textContent = "PROSSIME " + automatici.length + " CANZONI · CASUALE";
+      const shuffleBtn = document.createElement("button");
+      shuffleBtn.type = "button";
+      shuffleBtn.textContent = "Rimescola";
+      shuffleBtn.addEventListener("click", _rimescolaCasuale);
+      bar.append(label, shuffleBtn);
+      body.appendChild(bar);
+    }
+    automatici.forEach((automatico, i) => {
       const row = document.createElement("div");
       row.className = "queue-item queue-auto";
       const num = document.createElement("div");
       num.className = "queue-num";
-      num.textContent = "1";
+      num.textContent = String(i + 1);
       row.appendChild(num);
       const info = document.createElement("div");
       info.className = "queue-info";
@@ -6449,11 +6465,28 @@ function rebuildAudio(autoplay) {
       tag.className = "queue-auto-tag";
       tag.textContent = "Casuale";
       row.appendChild(tag);
+      const move = document.createElement("div");
+      move.className = "queue-actions";
+      const action = (testo, aria, callback, off) => {
+        const b = document.createElement("button");
+        b.className = "qbtn";
+        b.type = "button";
+        b.textContent = testo;
+        b.title = aria;
+        b.setAttribute("aria-label", aria);
+        b.disabled = !!off;
+        b.addEventListener("click", callback);
+        return b;
+      };
+      move.appendChild(action("↑", "Sposta prima", () => _spostaCasuale(i,-1), i === 0));
+      move.appendChild(action("↓", "Sposta dopo", () => _spostaCasuale(i,1), i === automatici.length-1));
+      move.appendChild(action("×", "Salta questo brano", () => _saltaCasuale(i)));
+      row.appendChild(move);
       body.appendChild(row);
-    }
+    });
 
     if (!queue.length) {
-      if (!automatico) {
+      if (!automatici.length) {
         const e = document.createElement("p");
         e.className = "queue-empty";
         e.textContent = "Coda vuota. Tieni premuto su una canzone e scegli \u201cAscolta dopo\u201d o \u201cMetti in coda\u201d.";
@@ -7005,6 +7038,11 @@ async function playById(id, autoplay = true) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      if (_casualeProgrammate.length) {
+        if (_casualeProgrammate[0] === id) _casualeProgrammate.shift();
+        else _casualeProgrammate = [];
+        _casualeEscluse.clear();
+      }
       /* Se torno dal casuale all'ordine della playlist, continua dalla
          posizione del brano realmente in ascolto, non da quella vecchia. */
       if (_posizionePlaylist >= 0 && _playlistSuona.length) {
@@ -7120,12 +7158,90 @@ let _casualeFresche = null;
 let _casualeUniverso = null;
 let _casualeScelto = "";
 let _casualeDa = "";
+let _casualeProgrammate = [];
+let _casualeFirma = "";
+let _casualeEscluse = new Set();
 
 function _azzeraCasuale() {
   _casualeFresche = null;
   _casualeUniverso = null;
   _casualeScelto = "";
   _casualeDa = "";
+  _casualeProgrammate = [];
+  _casualeFirma = "";
+  _casualeEscluse.clear();
+}
+
+function _listaProssimiCasuali(lista, quanti = 10) {
+  if (!shuffle || !currentId || !lista || lista.length < 2) return [];
+  const ids = lista.map(t => t.id);
+  const firma = ids.join("|");
+  if (firma !== _casualeFirma) {
+    _casualeProgrammate = _casualeProgrammate.filter(id => ids.includes(id));
+    _casualeFirma = firma;
+  }
+  const indice = _prossimaCasuale(lista);
+  if (indice < 0) return [];
+  const primo = lista[indice].id;
+  if (_casualeProgrammate[0] !== primo) {
+    _casualeProgrammate = [primo];
+  }
+  /* Pianifica fino a 10 brani: resta la stessa sequenza anche
+     quando l'utente apre e chiude la coda, o l'app precarica l'MP3. */
+  const fresche = new Set(_casualeFresche || ids);
+  fresche.delete(currentId);
+  for (const id of _casualeProgrammate) fresche.delete(id);
+  const limite = Math.min(quanti, ids.length > 1 ? ids.length - 1 : 0);
+  while (_casualeProgrammate.length < limite) {
+    let possibili = ids.filter(id => id !== currentId &&
+      !fresche.has("__none__") && fresche.has(id) && !_casualeProgrammate.includes(id) &&
+      !_casualeEscluse.has(id));
+    if (!possibili.length) {
+      for (const id of ids) if (id !== currentId && !_casualeProgrammate.includes(id) &&
+          !_casualeEscluse.has(id)) fresche.add(id);
+      possibili = ids.filter(id => fresche.has(id) && ! _casualeProgrammate.includes(id) && id !== currentId);
+    }
+    if (!possibili.length) break;
+    const scelto = possibili[Math.floor(Math.random() * possibili.length)];
+    _casualeProgrammate.push(scelto);
+    fresche.delete(scelto);
+  }
+  return _casualeProgrammate.slice(0, limite);
+}
+function _ordineCasualeModificato() {
+  if (_casualeProgrammate.length) {
+    _casualeScelto = _casualeProgrammate[0];
+    _casualeDa = currentId;
+  } else {
+    _casualeScelto = "";
+    _casualeDa = "";
+  }
+  renderQueueCount();
+}
+function _spostaCasuale(i, direzione) {
+  const j = i + direzione;
+  if (i < 0 || j < 0 || j >= _casualeProgrammate.length) return;
+  [_casualeProgrammate[i], _casualeProgrammate[j]] =
+    [_casualeProgrammate[j], _casualeProgrammate[i]];
+  _ordineCasualeModificato();
+}
+function _saltaCasuale(i) {
+  const id = _casualeProgrammate[i];
+  if (!id) return;
+  _casualeEscluse.add(id);
+  _casualeProgrammate.splice(i, 1);
+  _ordineCasualeModificato();
+}
+function _rimescolaCasuale() {
+  const lista = _casualeProgrammate.slice();
+  for (let i = lista.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [lista[i], lista[j]] = [lista[j], lista[i]];
+  }
+  if (lista.length > 1 && lista[0] === _casualeProgrammate[0])
+    [lista[0], lista[1]] = [lista[1], lista[0]];
+  _casualeProgrammate = lista;
+  _ordineCasualeModificato();
 }
 
 function _prossimaCasuale(lista) {
@@ -7150,6 +7266,15 @@ function _prossimaCasuale(lista) {
     _casualeFresche = new Set(disponibili);
     if (disponibili.size > 1) _casualeFresche.delete(currentId);
     _casualeScelto = "";
+  }
+  /* Rispetta la sequenza dei 10 brani visibili nella coda e gli
+     spostamenti manuali. Non cambiare scelta fra anteprima e playback. */
+  const inPiano = _casualeProgrammate[0];
+  if (inPiano && inPiano !== currentId && disponibili.has(inPiano) &&
+      !_casualeEscluse.has(inPiano)) {
+    _casualeScelto = inPiano;
+    _casualeDa = currentId;
+    return lista.findIndex(t => t.id === inPiano);
   }
   /* nextIndex viene chiamato anche dal pre-caricamento del brano successivo.
      Non deve estrarre due risultati diversi prima della riproduzione. */
