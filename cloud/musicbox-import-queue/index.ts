@@ -1,6 +1,7 @@
 // Music Box cloud queue: public submission is rate limited, workers use signed GitHub OIDC.
 // Supabase service-role key NEVER leaves this server.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { nextRetry } from "./retry-policy.mjs";
 
 const PROJECT = "stefanovillaggio8-dot/music-box";
 const ORIGINS = new Set([
@@ -106,18 +107,18 @@ Deno.serve(async req => {
       if(!profile || profile.length>40 || !/^[\p{L}\p{N}_. -]+$/u.test(profile))
         return respond({ok:false,error:"Profilo non valido"},400,origin);
       const rows=await database("?profile=eq."+encodeURIComponent(profile)+
-        "&select=id,profile,video_id,requested_title,status,created_at,error_message"+
+        "&select=id,profile,video_id,requested_title,status,created_at,error_message,retry_after"+
         "&order=created_at.desc&limit=60");
       return respond({ok:true,links:rows.map((x:Record<string,unknown>)=>({
         id:x.id,profile:x.profile,video_id:x.video_id,
         title:x.requested_title || "Video YouTube",status:x.status,
-        created_at:x.created_at,error_message:x.error_message
+        created_at:x.created_at,error_message:x.error_message,retry_after:x.retry_after
       }))},200,origin);
     }
     if(req.method==="GET" && url.searchParams.get("action")==="status") {
       const id=url.searchParams.get("id")||"";
       if(!uuid(id)) return respond({ok:false,error:"Codice richiesta non valido"},400,origin);
-      const rows=await database("?id=eq."+id+"&select=id,status,profile,created_at,finished_at,result_file,error_message&limit=1");
+      const rows=await database("?id=eq."+id+"&select=id,status,profile,created_at,finished_at,result_file,error_message,retry_after,attempts&limit=1");
       if(!rows.length) return respond({ok:false,error:"Richiesta non trovata"},404,origin);
       return respond({ok:true,job:rows[0]},200,origin);
     }
@@ -142,11 +143,18 @@ Deno.serve(async req => {
     if(data.action==="claim" || data.action==="finish") {
       if(!await verifyWorker(req)) return respond({ok:false,error:"Autenticazione worker negata"},401,origin);
       if(data.action==="claim") {
-        const rows=await database("?status=eq.queued&select=id,profile,video_id,requested_title,attempts&order=created_at.asc&limit=1");
+        // Non occupare il worker con retry anticipati: ogni richiesta
+        // rimane in attesa online anche se l'iPhone e' spento.
+        const due="(retry_after.is.null,retry_after.lte."+new Date().toISOString()+")";
+        const rows=await database("?status=eq.queued&or="+encodeURIComponent(due)+
+          "&select=id,profile,video_id,requested_title,attempts&order=created_at.asc&limit=1");
         if(!rows.length) return respond({ok:true,job:null},200,origin);
         const job=rows[0];
-        const claimed=await database("?id=eq."+job.id+"&status=eq.queued",{
-          method:"PATCH",body:JSON.stringify({status:"running",started_at:new Date().toISOString(),attempts:job.attempts+1})
+        const claimed=await database("?id=eq."+job.id+"&status=eq.queued&or="+encodeURIComponent(due),{
+          method:"PATCH",body:JSON.stringify({
+            status:"running",started_at:new Date().toISOString(),
+            retry_after:null,attempts:job.attempts+1
+          })
         });
         return respond({ok:true,job:claimed.length?{...job,status:"running"}:null},200,origin);
       }
@@ -156,9 +164,26 @@ Deno.serve(async req => {
       const result_file=String(data.file||"").slice(0,110);
       if(data.status==="completed" && !/^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(result_file))
         return respond({ok:false,error:"File non valido"},400,origin);
+      if(data.status==="failed") {
+        const current=await database("?id=eq."+id+"&status=eq.running&select=id,attempts&limit=1");
+        if(!current.length) return respond({ok:false,error:"Richiesta non in corso"},409,origin);
+        const retry=nextRetry(current[0].attempts,String(data.error||""));
+        if(retry) {
+          const updated=await database("?id=eq."+id+"&status=eq.running",{
+            method:"PATCH",body:JSON.stringify({
+              status:"queued",finished_at:null,
+              retry_after:retry.retryAfter,result_file:null,
+              error_message:"Il server ha bloccato l'audio. Nuovo tentativo automatico "+
+                retry.nextAttempt+"/"+retry.maxAttempts+" tra circa "+retry.minutes+" minuti."
+            })
+          });
+          return respond({ok:updated.length===1,retry:updated.length===1,
+            retry_after:retry.retryAfter},updated.length?200:409,origin);
+        }
+      }
       const updated=await database("?id=eq."+id+"&status=eq.running", {
         method:"PATCH",body:JSON.stringify({
-          status:data.status,finished_at:new Date().toISOString(),
+          status:data.status,finished_at:new Date().toISOString(),retry_after:null,
           error_message:data.status==="failed"?String(data.error||"Non disponibile").slice(0,180):null,
           result_file:data.status==="completed"?result_file:null
         })
