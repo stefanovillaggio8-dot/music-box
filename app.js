@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.459";
+  const APP_VERSION = "6.460";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3259,7 +3259,10 @@ function _devoVedereBrano(eMio, b) {
           typeof x.file === "string" && /^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(x.file) &&
           typeof x.profile === "string" && x.profile.length <= 40)
           .map(x => ({title:x.title, artist:String(x.artist||""),
-            file:x.file, profile:x.profile, cover:String(x.cover||"")}));
+            file:x.file, profile:x.profile, cover:String(x.cover||""),
+            audioSource:x.audioSource==="Internet Archive"?"Internet Archive":"",
+            license:x.license==="CC0-1.0"?"CC0-1.0":"",
+            sourceUrl:typeof x.sourceUrl==="string" && /^https:\/\/archive\.org\/details\/[\w.-]+$/.test(x.sourceUrl)?x.sourceUrl:""}));
       }
     } catch (_) { /* offline o manifest non ancora pubblicato */ }
     finally { clearTimeout(timeout); }
@@ -3411,7 +3414,9 @@ function _devoVedereBrano(eMio, b) {
         id: stabile,
         title: titoloPulito || b.title,
         artist: b.artist || "",
-        album: (mia && mia.album) || (info && info.album) || b.spotifyAlbum || "",
+        album: b.audioSource==="Internet Archive" && b.license==="CC0-1.0"
+          ? "Archivio CC0 · versione indipendente" :
+          ((mia && mia.album) || (info && info.album) || b.spotifyAlbum || ""),
         cover: (mia && mia.cover) || (info && info.cover) || b.cover || "",
         userCover: !!(mia && mia.cover),
         spotifyId: b.spotifyId || "",
@@ -3433,6 +3438,7 @@ function _devoVedereBrano(eMio, b) {
            fine brano non potevano funzionare. Nel profilo Ste non si notava,
            perche' il fallback tornava per caso giusto. */
         profile: b.profile || DEFAULT_PROFILE,
+        audioSource:b.audioSource||"",license:b.license||"",sourceUrl:b.sourceUrl||"",
         builtin: true,
         gradient: PALETTE[i % PALETTE.length],
         size: null
