@@ -3125,3 +3125,15 @@ input, textarea, select { accent-color: var(--accent); }
   .fab-option{min-height:78px}
 }
 @media(prefers-reduced-motion:reduce){.fab-option{transition:none}}
+
+/* v6.449 - upload cloud dall'iPhone */
+.cloud-body{display:flex;flex-direction:column;gap:12px;padding-bottom:25px}
+.cloud-body p{margin:0;font-size:13px;color:var(--muted);line-height:1.55}
+.cloud-body label{font-weight:850;font-size:13px}
+#cloudKey{width:100%;padding:13px;border-radius:12px;border:1px solid rgba(167,126,232,.4);
+background:rgba(0,0,0,.26);color:var(--txt);font-size:16px}
+.cloud-btn{padding:13px;border-radius:13px;border:1px solid rgba(170,135,243,.38);
+background:linear-gradient(120deg,rgba(114,62,196,.4),rgba(50,94,170,.18));
+color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
+.cloud-btn:disabled{opacity:.55}
+.cloud-status{padding:12px;background:rgba(255,255,255,.06);border-radius:12px;overflow-wrap:anywhere}

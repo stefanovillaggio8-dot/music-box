@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6448" />
+  <link rel="stylesheet" href="style.css?v=6449" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -662,6 +662,12 @@
             <span class="fab-option-note">Metodo più semplice se hai già il brano</span>
           </span>
         </button>
+        <button class="fab-option" id="fabCloud" type="button">
+          <span class="fab-option-icon" aria-hidden="true">☁</span>
+          <span class="fab-option-content"><strong>Pubblica senza PC</strong>
+            <small>Configura il cloud o invia i brani rimasti sul telefono</small>
+            <span class="fab-option-note">Per file audio che hai già sull'iPhone</span></span>
+        </button>
         <button class="fab-option" id="fabYouTube" type="button">
           <span class="fab-option-icon" aria-hidden="true">▶</span>
           <span class="fab-option-content"><strong>Link YouTube</strong>
@@ -680,6 +686,28 @@
       <div class="fab-sheet-bottom">
         <button class="fab-sheet-minor" id="fabCercaTitolo" type="button">⌕ Cerca fra i brani che ho già</button>
         <button class="fab-sheet-minor" id="fabGuide" type="button">? Come funziona e come pubblicare online</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-overlay" id="cloudPanel" hidden>
+    <div class="profile-card" role="dialog" aria-modal="true" aria-label="Pubblica senza PC">
+      <div class="import-head">
+        <div class="import-head-info">
+          <p class="import-title">Pubblica senza PC</p>
+          <p class="import-sub">Carica dal telefono direttamente online</p>
+        </div>
+        <button id="cloudClose" class="import-close" type="button" aria-label="Chiudi">×</button>
+      </div>
+      <div class="profile-body cloud-body">
+        <p>Per nuovi MP3: <b>+ → File audio dal telefono</b> e poi <b>Metto online</b>. Se un invio fallisce, qui puoi riprovare senza perdere il file.</p>
+        <p>Il servizio di pubblicazione richiede una chiave privata. Non inserirla su GitHub e non inviarla in chat.</p>
+        <label for="cloudKey">Chiave del servizio</label>
+        <input id="cloudKey" type="password" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Chiave privata"/>
+        <button id="cloudSave" class="cloud-btn" type="button">Salva la chiave</button>
+        <p id="cloudStatus" role="status" class="cloud-status"></p>
+        <button id="cloudRetry" class="cloud-btn" type="button">Pubblica ora i file rimasti sul telefono</button>
+        <p>Per convertire un link YouTube direttamente online senza PC occorre ancora un servizio di conversione cloud dedicato: questo pannello pubblica file audio già pronti.</p>
       </div>
     </div>
   </div>
@@ -912,7 +940,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
         <ol class="aiuto-lista">
           <li>Salva il file audio nell’app <b>File</b> dell’iPhone, in “Download” o “Sul mio iPhone”.</li>
           <li>In Music Box tocca <b>+ → File audio dal telefono</b> e seleziona il file.</li>
-          <li>Alla domanda <b>“Lo metto online?”</b> scegli <b>Metto online</b> se vuoi inviarlo anche agli altri dispositivi.</li>
+          <li>Alla domanda <b>“Lo metto online?”</b> scegli <b>Metto online</b>. Se non hai configurato la chiave, vai su <b>+ → Pubblica senza PC</b>.</li>
         </ol>
         <p class="aiuto-nota"><b>Importante:</b> il file viene aggiunto prima sul dispositivo. La pubblicazione online riesce solo se il PC di casa è raggiungibile oppure se il servizio remoto e la relativa chiave sono configurati. Controlla il messaggio finale: “salvato qui” non significa “online”.</p>
       </section>
@@ -1149,7 +1177,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6448"></script>
-<script src="app.js?v=6448"></script>
+<script src="fuoco.js?v=6449"></script>
+<script src="app.js?v=6449"></script>
 </body>
 </html>

@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.448";
+  const APP_VERSION = "6.449";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7576,62 +7576,30 @@ function openProfile() {
    saperlo. Prima prova col computer (veloce, e' la strada normale); se il
    computer non risponde uso il servizio, che funziona anche a PC spento. */
 async function _chiediDoveMandare(fresh) {
-    const ids = (fresh || []).filter((t) => !eGiaCondiviso(t)).map((t) => t.id);
-    if (!ids.length) {
-      /* Ste: "non lo chiede". Prima, se il brano era gia' in libreria la
-         domanda semplicemente non compariva e sembrava che l'app si fosse
-         dimenticata. Ora lo dico: e' gia' online, non lo aggiungo due volte. */
-      toast("Questa canzone e' gia' in libreria: non la aggiungo due volte", 5000);
-      return;
-    }
-  const uno = ids.length === 1;
-  const si = await askConfirm(
-    (uno ? "1 brano aggiunto" : ids.length + " brani aggiunti") + ": lo metto online?",
-    "Adesso sono solo su questo telefono.\n\n" +
-      "Provo prima col computer. Se il computer e' spento o non risponde,\n" +
-      "uso il servizio, che funziona anche senza PC acceso.\n\n" +
-      "Se non lo vuoi online, lascialo qui: resta solo su questo telefono.",
-    "Metto online"
-  );
-  if (!si) {
-    toast("Ok: resta solo su questo telefono");
+  const ids=(fresh||[]).filter(t=>t&&!eGiaCondiviso(t)).map(t=>t.id);
+  if(!ids.length)return;
+  const confirmed=await askConfirm(
+    (ids.length===1?"1 file aggiunto":"File aggiunti: "+ids.length)+
+    ". Vuoi pubblicare online dal telefono?",
+    "I file sono gia' salvati su questo dispositivo.\n"+
+    "Con 'Metto online' invio al servizio cloud SENZA usare il computer.\n"+
+    "Se la chiave manca o il servizio non funziona, i file restano sul telefono e puoi riprovare dal tasto +.",
+    "Metto online");
+  if(!confirmed){toast("Salvati sul telefono. Puoi pubblicarli anche dopo.");return;}
+  if(!_chiavePubblica()){
+    toast("Per pubblicare col PC spento, apri + → Pubblica senza PC e salva la chiave del servizio.",8000);
+    _apriCloudSetup();
     return;
   }
-
-  /* Strada 1: il computer. */
-  try {
-    _recentementeAggiunto = true;
-    await condividiBraniLocali(true);
-  } catch (e) { /* il computer non c'e': vado col servizio */ }
-
-  /* Strada 2: il servizio, per quello che il computer non ha preso. */
-  const rimasti = [];
-  for (const id of ids) {
-    const r = await dbGet(id);
-    if (r && !r.condiviso) rimasti.push(r);
-  }
-  if (!rimasti.length) {
-    toast(ids.length === 1 ? "Messo online: lo sentono tutti" : ids.length + " brani online");
-    return;
-  }
-  if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
-    toast("Il computer non ha preso i brani e il servizio non e' attivo: restano qui. Riprova dal menu Altro.", 7000);
-    return;
-  }
-  const fatti = [];
-  for (const r of rimasti) {
-    try { await _pubblicaSulSito(r); fatti.push(r); } catch (e) { /* ne riparo dopo */ }
-  }
-  if (fatti.length) {
-    toast(fatti.length === 1 ? "Messo online col servizio" : fatti.length + " brani online col servizio");
-    await loadAll();
-    render();
-    return;
-  }
-  toast("Non sono riuscito a metterli online. Riprova dal menu Altro.", 6000);
+  const list=[];
+  for(const id of ids){const record=await dbGet(id);if(record&&!record.condiviso)list.push(record);}
+  const r=await _pubblicaDaTelefono(list);
+  if(r.ok){toast(r.ok+" brani accettati dal servizio. Controlla la sincronizzazione.",6000);await _aggiornaNonCondivisi();await loadAll();render();}
+  if(r.errori.length)toast("File non pubblicati: "+r.errori[0]+". Restano sul telefono, puoi riprovare.",9000);
 }
 
 async function addFiles(fileList) {
+    const addedIds = [];
     let ok = 0;
     let giaInLista = 0;
     const errors = [];
@@ -7646,6 +7614,7 @@ async function addFiles(fileList) {
       };
       try {
         await dbPut(rec);
+        addedIds.push(rec.id);
         ok++;
       } catch (e) {
         errors.push(file.name);
@@ -7653,7 +7622,7 @@ async function addFiles(fileList) {
     }
     if (ok) {
       await loadAll();
-      const fresh = tracks.filter((t) => !t.builtin).slice(-ok);
+      const fresh = tracks.filter((t) => addedIds.includes(t.id));
       /* Se il brano era gia' nella libreria condivisa non lo metto due volte
          (la riga condivisa basta). Ma allora lo dico: prima non diceva niente
          e sembrava che il file si fosse perso. */
@@ -7686,17 +7655,10 @@ async function addFiles(fileList) {
         }, 300);
       }
 for (const t of fresh) enrichTrack(t.id);
-      /* Segno che sto condividendo un brano appena aggiunto: se il computer
-         non risponde l'app lo dice, altrimenti l'utente cerca il brano nella
-         libreria (che e' sul computer) e non lo trova mai. */
-try { _recentementeAggiunto = true; condividiBraniLocali(true); } catch (e) { /* non blocca l'aggiunta */ }
-        /* Ste: dopo aver aggiunto un file non compariva piu' la scelta
-           "manda al computer / manda al servizio", e restava con la musica
-           solo sul telefono senza saperlo. Gliela chiedo, con tre uscite:
-           col computer, col servizio (funziona anche a PC spento), o lasciare
-           qui e basta. */
-        _chiediDoveMandare(fresh);
+      /* Niente due upload concorrenti: solo dopo aver chiesto il consenso. */
+      await _chiediDoveMandare(fresh);
       }
+    if (errors.length) toast("Errore con:      }
     if (errors.length) toast("Errore con: " + errors.slice(0, 2).join(", "));
   }
 
@@ -7980,7 +7942,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.448 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.449 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -11189,6 +11151,29 @@ $("fabGuide").addEventListener("click", () => {
   _chiudiFabMenu();
   _apriAiuto();
 });
+
+  function _apriCloudSetup() {
+    _chiudiFabMenu();
+    const el=$("cloudPanel");if(!el)return;
+    el.hidden=false;syncNoScroll();
+    $("cloudKey").value="";
+    $("cloudStatus").textContent=_chiavePubblica()
+      ? "La chiave e' salvata su questo telefono. Puoi caricare gli MP3 senza il PC se il servizio e' raggiungibile."
+      : "Salva qui la chiave privata del servizio online prima di pubblicare.";
+  }
+  function _chiudiCloudSetup(){const el=$("cloudPanel");if(el)el.hidden=true;syncNoScroll();}
+  $("fabCloud").addEventListener("click",_apriCloudSetup);
+  $("cloudClose").addEventListener("click",_chiudiCloudSetup);
+  $("cloudPanel").addEventListener("click",e=>{if(e.target===$("cloudPanel"))_chiudiCloudSetup();});
+  $("cloudSave").addEventListener("click",()=>{
+    const el=$("cloudKey"),v=String(el.value||"").trim();
+    if(!v){$("cloudStatus").textContent="Incolla la chiave privata.";return;}
+    LS.set("mb.chiave",v);
+    el.value="";
+    $("cloudStatus").textContent="Chiave salvata su questo telefono. Viene verificata dal servizio durante l'invio: non occorre riavviare l'app.";
+  });
+  $("cloudRetry").addEventListener("click",_riprendiPubblicazioniCloud);
+
 $("fabMenu").addEventListener("click", (e) => {
   if (e.target === $("fabMenu")) _chiudiFabMenu();
 });
@@ -12332,7 +12317,7 @@ function _nomePerIlBrano(link, suggerito) {
     }
 
     /* Computer spento: il link resta in coda e viene scaricato all'accensione. */
-    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
+    if (!SERVIZIO_PUBBLICA || !_chiavePubblica()) {
       _spiegaPercheNonVa();
       return;
     }
@@ -12341,7 +12326,7 @@ function _nomePerIlBrano(link, suggerito) {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-chiave": CHIAVE_PUBBLICA,
+          "x-chiave": _chiavePubblica(),
           "x-link": link,
           "x-nome": nome,
           "x-profilo": cartella
@@ -12430,10 +12415,10 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
      mostrare niente invece di dare fastidio. */
   let _codaAggiornata = 0;
   async function _aggiornaCoda() {
-    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
+    if (!SERVIZIO_PUBBLICA || !_chiavePubblica()) return;
     try {
       const r = await fetch(SERVIZIO_PUBBLICA + "/coda", {
-        headers: { "x-chiave": CHIAVE_PUBBLICA }, cache: "no-store"
+        headers: { "x-chiave": _chiavePubblica() }, cache: "no-store"
       });
       if (!r.ok) return;
       const j = await r.json();
@@ -12455,41 +12440,19 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
 
   /* La casella per mettere la chiave del servizio. Se la chiave c'e' gia'
      non si vede: e' una cosa da fare una volta sola. */
+
   function _preparaCasellaServizio() {
-    const box = $("casellaServizio");
-    if (!box) return;
-    const gia = !!CHIAVE_PUBBLICA;
-    box.hidden = gia;
-    const inp = $("inChiave");
-    if (inp) inp.value = CHIAVE_PUBBLICA;
+    const box=$("casellaServizio");
+    if(box)box.hidden=true; /* Il pannello configurazione si apre dal tasto +. */
   }
-  $("btnSalvaChiave").addEventListener("click", async () => {
-    const inp = $("inChiave");
-    const stato = $("statoServizio");
-    const v = String((inp && inp.value) || "").trim();
-    if (!v) { if (stato) stato.textContent = "Scrivi prima la chiave."; return; }
-    LS.set("mb.chiave", v);
-    /* riprovo subito con la chiave nuova: se il servizio non la accetta,
-       lo dico subito invece di lasciare l'utente a scoprircelo dopo */
-    try {
-      const r = await fetch(SERVIZIO_PUBBLICA + "/aggiungi", {
-        method: "POST",
-        headers: { "content-type": "audio/mpeg", "x-chiave": v, "x-nome": "prova" },
-        body: new Uint8Array(1024)
-      });
-      if (r.status === 401) {
-        if (stato) stato.textContent = "Chiave sbagliata: copiala di nuovo.";
-        LS.set("mb.chiave", "");
-        return;
-      }
-      if (inp) inp.value = "";
-      _preparaCasellaServizio();
-      toast("Servizio attivato: ora le canzoni si pubblicano anche col computer spento", 5000);
-    } catch (e) {
-      LS.set("mb.chiave", "");
-      if (stato) stato.textContent = "Non riesco a parlare col servizio. Riprova fra poco.";
-    }
+  $("btnSalvaChiave").addEventListener("click",()=>{
+    const inp=$("inChiave"),v=String(inp&&inp.value||"").trim();
+    if(!v)return;
+    LS.set("mb.chiave",v);
+    inp.value="";
+    toast("Chiave salvata. La prossima pubblicazione la usera' subito.");
   });
+
   /* Ste: il tasto in alto delle playlist l'ho tolto, non gli serve piu'.
      Le playlist si aprono dalle linguette sopra la libreria, col "+" per
      crearne una, e dal menu "Altro". Con lui spariva anche quel numero nel
@@ -13056,36 +13019,71 @@ if (sicura) {
       return true;
     } catch (e) { return false; }
   }
-  const CHIAVE_PUBBLICA = LS.get("mb.chiave", "");
+  function _chiavePubblica() { return String(LS.get("mb.chiave", "") || "").trim(); }
 
-  /* Il brano arriva sul sito da solo, senza che il computer sia acceso.
-     Restituisce l'indirizzo del brano cosi' l'app lo suona subito. */
+
+  /* Cloud upload: solo MP3 gia' sul telefono, nessuna dipendenza dal PC. */
   async function _pubblicaSulSito(r) {
-    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) {
-      throw new Error("il servizio non e' attivo su questa pagina");
+    const key=_chiavePubblica();
+    if (!SERVIZIO_PUBBLICA || !key) throw new Error("Configura la chiave del servizio online dal tasto +.");
+    if (!r || !r.blob || !r.blob.size) throw new Error("File audio locale non disponibile.");
+    const nome=[r.artist||"",r.title||""].join(" - ").replace(/^\s*-\s*/,"").trim() || "brano";
+    const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),120000);
+    let response;
+    try {
+      response=await fetch(SERVIZIO_PUBBLICA+"/aggiungi",{
+        method:"POST",signal:ctl.signal,
+        headers:{"content-type":r.blob.type||"audio/mpeg",
+          "x-chiave":key,"x-nome":nome,"x-profilo":String(r.profile||profile||DEFAULT_PROFILE)},
+        body:r.blob
+      });
+    } catch(e) {
+      throw new Error(e&&e.name==="AbortError" ?
+        "Tempo scaduto. Il file e' rimasto sul telefono. Verifica prima di riprovare." :
+        "Servizio cloud non raggiungibile. Il file e' rimasto sul telefono.");
+    } finally { clearTimeout(timer); }
+    let risposta=null;
+    try { risposta=await response.json(); } catch(e) { /* una vecchia versione del Worker potrebbe non mandare JSON */ }
+    if (!response.ok || (risposta && (risposta.ok===false || risposta.errore))) {
+      if (response.status===401 || response.status===403) throw new Error("Chiave del servizio non autorizzata.");
+      throw new Error("Il servizio ha rifiutato il file: " +
+        String((risposta&&(risposta.errore||risposta.error))||("HTTP "+response.status)).slice(0,130));
     }
-    const nome = [(r.artist || ""), (r.title || "")].join(" - ")
-      .replace(/^\s*-\s*/, "").replace(/\s*-\s*$/, "").trim() || "brano";
-    /* I dati vanno nelle intestazioni, non nell'indirizzo: con i parametri
-       nell'indirizzo il caricamento si bloccava (provarlo e' costato una
-       mezz'ora, me lo ricordo). */
-    const risp = await fetch(SERVIZIO_PUBBLICA + "/aggiungi", {
-      method: "POST",
-      headers: {
-        "content-type": "audio/mpeg",
-        "x-chiave": CHIAVE_PUBBLICA,
-        "x-nome": nome,
-        "x-profilo": CARTELLA_PREDEFINITA === "ari" ? "Ari"
-          : (CARTELLA_PREDEFINITA === "emanuela" ? "Emanuele" : "Ste")
-      },
-      body: r.blob
-    });
-    if (!risp.ok) {
-      let perche = "il programma ha risposto " + risp.status;
-      try { const j = await risp.json(); if (j && j.errore) perche = j.errore; } catch (e) { /* noop */ }
-      throw new Error(perche);
+    /* Memorizzo il successo: riaprire l'app non deve reinviare l'MP3. */
+    r.condiviso=true;
+    r.condivisoCloudAt=Date.now();
+    try {await dbPut(r);} catch(e) { /* il server ha gia' risposto OK */ }
+    return risposta||{ok:true};
+  }
+
+  async function _pubblicaDaTelefono(registrazioni) {
+    const risultati={ok:0,total:0,errori:[]};
+    for(const r of registrazioni||[]) {
+      if (!r || !r.blob || r.condiviso) continue;
+      risultati.total++;
+      toast("Caricamento online "+risultati.total+": "+String(r.title||"brano"),4000);
+      try {await _pubblicaSulSito(r);risultati.ok++;}
+      catch(e){risultati.errori.push(String((e&&e.message)||e));}
     }
-    return await risp.json();
+    return risultati;
+  }
+
+  async function _riprendiPubblicazioniCloud() {
+    const btn=$("cloudRetry");
+    if(btn)btn.disabled=true;
+    const out=$("cloudStatus");
+    try {
+      const pendenti=await _braniDaMandare();
+      if(!pendenti.length){if(out)out.textContent="Non ci sono file locali da pubblicare.";return;}
+      if(!_chiavePubblica()){if(out)out.textContent="Prima salva la chiave del servizio.";return;}
+      const r=await _pubblicaDaTelefono(pendenti);
+      if(out)out.textContent=r.ok+"/"+r.total+" file accettati online"+
+        (r.errori.length?". Problema: "+r.errori[0]:"")+
+        ". Controlla la libreria sull'altro dispositivo dopo la sincronizzazione.";
+      await _aggiornaNonCondivisi();
+      if(r.ok){await loadAll();render();}
+    } catch(e){if(out)out.textContent="Non riesco a pubblicare: "+String(e.message||e);}
+    finally{if(btn)btn.disabled=false;}
   }
 
   async function _condividiAdesso() {
@@ -13431,7 +13429,7 @@ rinomini: (function () {
            dal sito, perche' li' il browser per regola non puo' parlare col
            computer di casa e la chiave sul telefono sparisce al riavvio. */
         const intestazioni = { "content-type": "application/json" };
-        if (CHIAVE_PUBBLICA) intestazioni["x-chiave"] = CHIAVE_PUBBLICA;
+        if (_chiavePubblica()) intestazioni["x-chiave"] = _chiavePubblica();
         const r = await fetch(SERVIZIO_PUBBLICA + "/stato", {
           method: "POST",
           headers: intestazioni,
