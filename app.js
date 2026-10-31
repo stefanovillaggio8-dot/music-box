@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.463";
+  const APP_VERSION = "6.464";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3330,7 +3330,8 @@ function _devoVedereBrano(eMio, b) {
           row.status==="needs-consent"?"Conferma i diritti per importare":
           row.status==="checking"?"Invio automatico in corso":
           row.status==="completed"?"MP3 in pubblicazione":
-          row.status==="running"?"MP3 in preparazione":"In coda per MP3",
+          row.status==="running"?"MP3 in preparazione":
+          row.status==="queued"&&row.retry_after?"Nuovo tentativo cloud programmato":"In coda per MP3",
         cover:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",
         url:"", file:"", source:"youtube-link", youtubeId:id,
         profile:owner,builtin:true,gradient:PALETTE[0],
@@ -12633,9 +12634,13 @@ function _nomePerIlBrano(link, suggerito) {
         status.style.cssText="font-size:12px;opacity:.8;margin-top:4px";
         const published=tracks.find(x=>x && x.file==="songs/youtube-"+track.video_id+".mp3" &&
           (x.profile||DEFAULT_PROFILE)===requested && x.url);
+        const retryTime=Date.parse(String(track.retry_after||""));
         status.textContent=published?"MP3 pronto nel player Music Box":
           track.status==="completed"?"MP3 in pubblicazione: aggiorna fra poco":
-          track.status==="queued"?"MP3 in coda sul server":
+          track.status==="queued"&&Number.isFinite(retryTime)&&retryTime>Date.now()?
+            "Il server riprovera automaticamente alle "+new Date(retryTime).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})+
+            " (senza usare il telefono)":
+          track.status==="queued"?"MP3 in coda sul server, nessun download sul telefono":
           track.status==="running"?"MP3 in preparazione sul server":
           "Importazione fallita: "+String(track.error_message||"audio non disponibile").slice(0,160);
         const thumb=document.createElement("img");
