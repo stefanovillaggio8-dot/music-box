@@ -145,7 +145,7 @@
    "artist": "Jovanotti"
   },
   "b-track-74": {
-   "title": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
+   "title": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
    "artist": "thasup"
   }
  },
@@ -1309,6 +1309,30 @@
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Andrea Bocelli"
    },
+   "[\"fix you\",\"coldplay\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Fix You",
+    "a": "Coldplay"
+   },
+   "m:2026-10|[\"fix you\",\"coldplay\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Fix You",
+    "a": "Coldplay"
+   },
+   "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
+   },
+   "m:2026-10|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1345,29 +1369,29 @@
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"fix you\",\"coldplay\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Fix You",
-    "a": "Coldplay"
+   "[\"dimmi che ce'\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "dimmi che ce'",
+    "a": "thasup"
    },
-   "m:2026-10|[\"fix you\",\"coldplay\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Fix You",
-    "a": "Coldplay"
+   "m:2026-10|[\"dimmi che ce'\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "dimmi che ce'",
+    "a": "thasup"
    },
-   "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+   "[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
     "v": 0,
     "s": 1,
-    "t": "Un mondo a parte (Visual)",
-    "a": "Jovanotti"
+    "t": "Dimmi Che C''",
+    "a": "thasup"
    },
-   "m:2026-10|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+   "m:2026-10|[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
     "v": 0,
     "s": 1,
-    "t": "Un mondo a parte (Visual)",
-    "a": "Jovanotti"
+    "t": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1405,29 +1429,29 @@
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "dimmi che ce'",
-    "a": "thasup"
-   },
-   "m:2026-10|[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "dimmi che ce'",
-    "a": "thasup"
-   },
    "[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Dimmi Che C''",
-    "a": "thasup"
-   },
-   "m:2026-10|[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
-    "v": 0,
+    "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "thasup"
+   },
+   "m:2026-10|[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"spettri\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "Spettri",
+    "a": "nayt, 3D"
+   },
+   "m:2026-10|[\"spettri\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "Spettri",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1468,7 +1492,7 @@
    "[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
@@ -1477,17 +1501,17 @@
     "t": "Dimmi che c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "thasup"
    },
-   "[\"spettri\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "Spettri",
-    "a": "nayt, 3D"
+   "[\"tristano e isotta\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 78,
+    "t": "Tristano e Isotta",
+    "a": "Kid Yugi"
    },
-   "m:2026-10|[\"spettri\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "Spettri",
-    "a": "nayt, 3D"
+   "m:2026-10|[\"tristano e isotta\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 78,
+    "t": "Tristano e Isotta",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1528,7 +1552,7 @@
    "[\"dimmi che c'ÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'ÃÂÃÂÃÂÃÂ¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂÃÂÃÂ¨\",\"thasup\"]": {
@@ -1537,17 +1561,17 @@
     "t": "Dimmi che c'ÃÂÃÂÃÂÃÂ¨",
     "a": "thasup"
    },
-   "[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 78,
-    "t": "Tristano e Isotta",
-    "a": "Kid Yugi"
+   "[\"wonderwall\",\"oasis\"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Wonderwall",
+    "a": "Oasis"
    },
-   "m:2026-10|[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 78,
-    "t": "Tristano e Isotta",
-    "a": "Kid Yugi"
+   "m:2026-10|[\"wonderwall\",\"oasis\"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Wonderwall",
+    "a": "Oasis"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1597,17 +1621,17 @@
     "t": "Dimmi che c'ÃÂÃÂ¨",
     "a": "thasup"
    },
-   "[\"wonderwall\",\"oasis\"]": {
+   "[\"l'immenso\",\"negromaro\"]": {
     "v": 0,
-    "s": 8,
-    "t": "Wonderwall",
-    "a": "Oasis"
+    "s": 100,
+    "t": "L'immenso",
+    "a": "Negromaro"
    },
-   "m:2026-10|[\"wonderwall\",\"oasis\"]": {
+   "m:2026-10|[\"l'immenso\",\"negromaro\"]": {
     "v": 0,
-    "s": 8,
-    "t": "Wonderwall",
-    "a": "Oasis"
+    "s": 100,
+    "t": "L'immenso",
+    "a": "Negromaro"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -1657,17 +1681,29 @@
     "t": "Dimmi che c'ÃÂ¨",
     "a": "thasup"
    },
-   "[\"l'immenso\",\"negromaro\"]": {
+   "[\"la mia storia tra le dita (feat. annalisa)\",\"gianluca grignani\"]": {
     "v": 0,
-    "s": 100,
-    "t": "L'immenso",
-    "a": "Negromaro"
+    "s": 21,
+    "t": "La Mia Storia Tra Le Dita (Feat. Annalisa)",
+    "a": "Gianluca Grignani"
    },
-   "m:2026-10|[\"l'immenso\",\"negromaro\"]": {
+   "m:2026-10|[\"la mia storia tra le dita (feat. annalisa)\",\"gianluca grignani\"]": {
     "v": 0,
-    "s": 100,
-    "t": "L'immenso",
-    "a": "Negromaro"
+    "s": 21,
+    "t": "La Mia Storia Tra Le Dita (Feat. Annalisa)",
+    "a": "Gianluca Grignani"
+   },
+   "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 34,
+    "t": "Cuore e vento (feat. Tazenda)",
+    "a": "ModÃÂ "
+   },
+   "m:2026-10|[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 34,
+    "t": "Cuore e vento (feat. Tazenda)",
+    "a": "ModÃÂ "
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -1717,29 +1753,29 @@
     "t": "Dimmi che c'Ã¨",
     "a": "thasup"
    },
-   "[\"la mia storia tra le dita (feat. annalisa)\",\"gianluca grignani\"]": {
-    "v": 0,
-    "s": 21,
-    "t": "La Mia Storia Tra Le Dita (Feat. Annalisa)",
-    "a": "Gianluca Grignani"
-   },
-   "m:2026-10|[\"la mia storia tra le dita (feat. annalisa)\",\"gianluca grignani\"]": {
-    "v": 0,
-    "s": 21,
-    "t": "La Mia Storia Tra Le Dita (Feat. Annalisa)",
-    "a": "Gianluca Grignani"
-   },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
     "v": 1,
-    "s": 34,
+    "s": 37,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃ "
    },
    "m:2026-10|[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
     "v": 1,
-    "s": 34,
+    "s": 37,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃ "
+   },
+   "[\"8 miliardi di persone\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "8 miliardi di persone",
+    "a": "Frah Quintale"
+   },
+   "m:2026-10|[\"8 miliardi di persone\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "8 miliardi di persone",
+    "a": "Frah Quintale"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -1801,17 +1837,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "Modà"
    },
-   "[\"8 miliardi di persone\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 43,
-    "t": "8 miliardi di persone",
-    "a": "Frah Quintale"
+   "[\"essere noi\",\"nayt\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Essere noi",
+    "a": "nayt"
    },
-   "m:2026-10|[\"8 miliardi di persone\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 43,
-    "t": "8 miliardi di persone",
-    "a": "Frah Quintale"
+   "m:2026-10|[\"essere noi\",\"nayt\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Essere noi",
+    "a": "nayt"
    }
   },
   "Diego": {
