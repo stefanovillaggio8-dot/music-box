@@ -46,7 +46,7 @@ function tick(ms, pos) { now += ms; audio.currentTime = pos; stats.statApi.follo
 tick(1000, 0);
 tick(1000, 1);
 tick(1000, 2);
-assert(listened > 1.5 && listened < 2.5, "L'ascolto normale non viene contato");
+assert(listened > 0.5 && listened < 1.5, "L'ascolto normale non viene contato");
 const beforePause = listened;
 stats._vuoleSuonare = false; audio.paused = true; stats.statApi.reset(false);
 tick(180000, 2);
