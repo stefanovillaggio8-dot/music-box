@@ -40,6 +40,13 @@ jobs:
               throw Error("L'API pubblica non ha rifiutato il link esterno: "+JSON.stringify(data));
             }
             console.log("OK: invio senza GitHub login raggiungibile e link estraneo rifiutato");
+            const list=await fetch("https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue?action=links&profile=Ste",{
+              headers:{"origin":"https://stefanovillaggio8-dot.github.io"}
+            });
+            const result=await list.json();
+            if(!list.ok||result.ok!==true||!Array.isArray(result.links))
+              throw Error("Elenco link profilo non disponibile: "+JSON.stringify(result));
+            console.log("OK: elenco link disponibile senza login GitHub, elementi="+result.links.length);
           })().catch(e => {console.error(e);process.exit(1);});
           NODE
       - name: Prendi una richiesta dalla coda Supabase usando OIDC firmato
