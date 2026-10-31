@@ -12661,7 +12661,12 @@ function _nomePerIlBrano(link, suggerito) {
         const info=document.createElement("div");
         info.style.cssText="flex:1;min-width:140px";
         const title=document.createElement("strong");
-        title.textContent=String(track.title||"Video YouTube").slice(0,160);
+        const raw=String(track.title||"Video YouTube").trim();
+        const m=raw.match(/^(.{2,90}?)\s+[-–—]\s+(.+)$/);
+        title.textContent=String(track.track_title||m?.[2]||raw).trim().slice(0,160);
+        const artistLine=document.createElement("div");
+        artistLine.style.cssText="font-size:12px;opacity:.85;margin-top:3px";
+        artistLine.textContent=String(track.artist||m?.[1]||"Artista non identificato").slice(0,100);
         const status=document.createElement("div");
         status.style.cssText="font-size:12px;opacity:.8;margin-top:4px";
         const published=tracks.find(x=>x && (x.file==="songs/youtube-"+track.video_id+".mp3" ||
@@ -12690,7 +12695,7 @@ function _nomePerIlBrano(link, suggerito) {
         const actions=document.createElement("div");
         actions.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap";
         actions.append(btn);
-        info.append(title,status);item.append(thumb,info,actions);list.append(item);
+        info.append(title,artistLine,status);item.append(thumb,info,actions);list.append(item);
         if(count>=60)break;
       }
       hint.textContent=count?count+" richieste salvate. Solo gli MP3 pronti si ascoltano nell'app.":
@@ -12831,10 +12836,12 @@ function _nomePerIlBrano(link, suggerito) {
     btn.disabled=true;
     $("ytOnlineHint").textContent="Invio la richiesta al servizio online...";
     try {
-      const title=String($("ytOnlineName").value||"").trim().slice(0,160);
+      const artist=String($("ytOnlineArtist").value||"").trim().slice(0,100);
+      const trackTitle=String($("ytOnlineName").value||"").trim().slice(0,160);
+      const title=[artist,trackTitle].filter(Boolean).join(" - ").slice(0,160);
       const resp=await fetch(MB_YT_CLOUD,{
         method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({action:"create",link:url,profile:selected,title,rights:true}),
+        body:JSON.stringify({action:"create",link:url,profile:selected,title,artist,trackTitle,rights:true}),
         signal:AbortSignal.timeout(14000)
       });
       const data=await resp.json();
@@ -12850,7 +12857,8 @@ function _nomePerIlBrano(link, suggerito) {
       const entries=LS.get(pKey,[]);
       const previous=Array.isArray(entries)?entries.filter(x=>x.video_id!==id):[];
       previous.unshift({id:data.id,profile:selected,video_id:id,
-        requested_title:title||"Video YouTube "+id,status:"queued",created_at:new Date().toISOString()});
+        requested_title:title||"Video YouTube "+id,artist:String(data.artist||artist),track_title:String(data.track_title||trackTitle),
+        status:"queued",created_at:new Date().toISOString()});
       LS.set(pKey,previous);
       _ytLinksMemory[selected]={links:previous,time:Date.now()};
       _ytAggiornaVociLibreria(previous,selected,true);
@@ -12864,7 +12872,9 @@ function _nomePerIlBrano(link, suggerito) {
       $("ytOnlineHint").textContent="Link salvato nel profilo. Potrai ascoltarlo dal player normale solo dopo la pubblicazione dell'MP3.";
       toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
       $("ytOnlineUrl").value="";
+      $("ytOnlineArtist").value="";
       $("ytOnlineName").value="";
+      _ytLastMetadataLink="";
     }catch(error){
       _ytAutoSent.delete(identity);
       _ytSegnaErroreInvio(selected,videoId,error&&error.message||error);
