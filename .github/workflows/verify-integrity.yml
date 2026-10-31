@@ -26,6 +26,7 @@ on:
       - tools/import-youtube-online.cjs
       - tools/test-online-youtube-import.cjs
       - tools/test-mobile-queue-no-login.cjs
+      - tools/test-youtube-in-library.cjs
       - tools/cloud-queue-client.cjs
       - cloud/musicbox-import-queue/index.ts
       - .github/workflows/process-mobile-imports.yml
@@ -114,3 +115,4 @@ jobs:
           node tools/test-online-youtube-import.cjs
           node --check tools/cloud-queue-client.cjs
           node tools/test-mobile-queue-no-login.cjs
+          node tools/test-youtube-in-library.cjs
