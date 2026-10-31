@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.454";
+  const APP_VERSION = "6.455";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12372,10 +12372,22 @@ function _nomePerIlBrano(link, suggerito) {
           track.status==="queued"?"MP3 in coda; video disponibile online":
           track.status==="running"?"MP3 in elaborazione; video disponibile online":
           "MP3 non disponibile; video solo online";
+        const thumb=document.createElement("img");
+        thumb.src="https://i.ytimg.com/vi/"+track.video_id+"/mqdefault.jpg";
+        thumb.alt="";thumb.loading="lazy";
+        thumb.style.cssText="width:70px;height:42px;object-fit:cover;border-radius:8px;flex-shrink:0";
         const btn=document.createElement("button");
-        btn.type="button";btn.className="btn-ghost";btn.textContent="Riproduci";
+        btn.type="button";btn.className="btn-ghost";btn.textContent="▶ Riproduci";
         btn.addEventListener("click",()=>_ytWatchVideo(track.video_id,title.textContent));
-        info.append(title,status);item.append(info,btn);list.append(item);
+        const direct=document.createElement("a");
+        direct.href="https://www.youtube.com/watch?v="+track.video_id;
+        direct.target="_blank";direct.rel="noopener noreferrer";
+        direct.textContent="YouTube";
+        direct.style.cssText="font-size:12px;text-decoration:underline";
+        const actions=document.createElement("div");
+        actions.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap";
+        actions.append(btn,direct);
+        info.append(title,status);item.append(thumb,info,actions);list.append(item);
         if(count>=60)break;
       }
       hint.textContent=count?count+" video salvati · riproduzione ufficiale YouTube (solo online).":
@@ -12384,6 +12396,7 @@ function _nomePerIlBrano(link, suggerito) {
       if(requestId===_ytLinksFetchId)hint.textContent="Errore nel caricamento: "+String(e.message||e).slice(0,130);
     }
   }
+  $("btnMieiVideoYT").addEventListener("click",() => _aggiungiDaYouTube());
   $("ytOnlineLinksReload").addEventListener("click",_ytReloadLinks);
   $("ytOnlinePlayerStop").addEventListener("click",_ytStopVideo);
   const MB_YT_PENDING = "mb.youtubePending";
