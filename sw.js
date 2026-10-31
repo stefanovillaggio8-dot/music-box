@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6449";
+const CACHE = "spotifynonavraiimieisoldi-v6450";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -57,6 +57,7 @@ const CORE = [
   "./covers.json",
   "./covers-spotify.json",
   "./karaoke-index.json",
+  "./online-imports.json",
   "./icon-192.png",
   "./icon-512.png",
   "./icon-180.png"
@@ -1372,7 +1373,7 @@ self.addEventListener("fetch", (event) => {
        nuova. Servito dalla cache, l'app non vedrebbe mai l'aggiornamento.
      - stato.json: e' il fallback quando il worker non risponde, e deve
        dire le eliminazioni e le playlist giuste. */
-  const sempreFresco = /versione\.json$|stato\.json$/.test(url.pathname);
+  const sempreFresco = /versione\.json$|stato\.json$|online-imports\.json$/.test(url.pathname);
 
   if (isCore && !sempreFresco) {
     /* Ste: "ci sta un sacco di tempo a caricare".
