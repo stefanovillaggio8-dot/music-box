@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.472";
+  const APP_VERSION = "6.473";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5471,20 +5471,18 @@ li.addEventListener("click", () => {
   function handleEnded() {
     try {
     if (currentId) LS.set("mb.pos." + currentId, 0);
-    /* Se sto ascoltando una playlist, il brano dopo e' il SUO, non quello
-       dopo nella libreria: altrimenti la playlist si fermerebbe al primo. */
-    const idDiPlaylist = _avantiInPlaylist();
-    if (idDiPlaylist) { playById(idDiPlaylist); return; }
-    /* Il brano e' finito e sto partendo col successivo: da qui in avanti
-       se il telefono rifiuta di suonare, insisto (vedi _riprovaPiuTardi) */
+    /* La coda scelta manualmente ha precedenza anche dentro una playlist,
+       esattamente come il tasto Avanti e come mostra il pannello Coda. */
     _cominciaBranoNuovo();
     if (queue.length) {
       const next = queue.shift();
       persistQueue();
-      renderQueueCount();
       playById(next);
+      renderQueueCount();
       return;
     }
+    const idDiPlaylist = _avantiInPlaylist();
+    if (idDiPlaylist) { playById(idDiPlaylist); return; }
     if (repeat) {
       audio.currentTime = 0;
       doPlay();
@@ -6264,17 +6262,33 @@ function rebuildAudio(autoplay) {
     LS.set("mb.queue", queue);
   }
 
+  /* Una sola anteprima automatica, distinta dalla coda salvata dall'utente.
+     Il casuale seleziona la stessa traccia che poi verra' riprodotta:
+     NON metterla in queue, altrimenti doppioni e precedenze sbagliate. */
+  function _prossimoAutomaticoInCoda() {
+    if (!shuffle || !currentId || queue.length || repeat) return null;
+    const id = _anteprimaProssimoBrano();
+    const brano = tracks.find((t) => t.id === id);
+    return brano && brano.id !== currentId && !brano.youtubeId && brano.url
+      ? brano : null;
+  }
+
   function renderQueueCount() {
+    const auto = _prossimoAutomaticoInCoda();
+    const quanti = queue.length + (auto ? 1 : 0);
     const el = $("quickCount");
     if (el) {
-      el.hidden = !queue.length;
-      el.textContent = queue.length ? queue.length + (queue.length === 1 ? " brano in coda" : " brani in coda") : "";
+      el.hidden = !quanti;
+      el.textContent = quanti ? quanti + (quanti === 1 ? " brano in coda" : " brani in coda") : "";
     }
     const badge = $("queueBadge");
     if (badge) {
-      badge.hidden = !queue.length;
-      badge.textContent = queue.length ? (queue.length > 9 ? "9+" : queue.length) : "";
+      badge.hidden = !quanti;
+      badge.textContent = quanti ? (quanti > 9 ? "9+" : quanti) : "";
     }
+    /* Se la schermata della coda e' aperta, il prossimo cambia in diretta. */
+    const panel = $("queuePanel");
+    if (panel && !panel.hidden) renderQueueList();
   }
 
   function queueTrack(id, front) {
@@ -6311,14 +6325,6 @@ function rebuildAudio(autoplay) {
     persistQueue();
     renderQueueCount();
     renderQueueList();
-    if (!queue.length) {
-      $("queueHint").hidden = true;
-      const body = $("queueBody");
-      const e = document.createElement("p");
-      e.className = "queue-empty";
-      e.textContent = "Coda vuota. Tieni premuto su una canzone e scegli \u201cAscolta dopo\u201d o \u201cMetti in coda\u201d.";
-      body.appendChild(e);
-    }
   }
 
   function playFromQueue(i) {
@@ -6357,11 +6363,39 @@ function rebuildAudio(autoplay) {
       body.appendChild(head);
     }
 
+    const automatico = _prossimoAutomaticoInCoda();
+    if (automatico) {
+      const row = document.createElement("div");
+      row.className = "queue-item queue-auto";
+      const num = document.createElement("div");
+      num.className = "queue-num";
+      num.textContent = "1";
+      row.appendChild(num);
+      const info = document.createElement("div");
+      info.className = "queue-info";
+      const title = document.createElement("div");
+      title.className = "queue-title";
+      title.textContent = automatico.title;
+      info.appendChild(title);
+      const subtitle = document.createElement("div");
+      subtitle.className = "queue-artist";
+      subtitle.textContent = [automatico.artist, "Prossimo scelto dal casuale"].filter(Boolean).join(" · ");
+      info.appendChild(subtitle);
+      row.appendChild(info);
+      const tag = document.createElement("span");
+      tag.className = "queue-auto-tag";
+      tag.textContent = "Casuale";
+      row.appendChild(tag);
+      body.appendChild(row);
+    }
+
     if (!queue.length) {
-      const e = document.createElement("p");
-      e.className = "queue-empty";
-      e.textContent = "Coda vuota. Tieni premuto su una canzone e scegli \u201cAscolta dopo\u201d o \u201cMetti in coda\u201d.";
-      body.appendChild(e);
+      if (!automatico) {
+        const e = document.createElement("p");
+        e.className = "queue-empty";
+        e.textContent = "Coda vuota. Tieni premuto su una canzone e scegli \u201cAscolta dopo\u201d o \u201cMetti in coda\u201d.";
+        body.appendChild(e);
+      }
       $("queueHint").hidden = true;
       return;
     }
@@ -6924,6 +6958,9 @@ async function playById(id, autoplay = true) {
       try {
         if (!$("lyricsPanel").hidden && typeof openLyrics === "function") openLyrics();
       } catch (e) { /* noop */ }
+    /* Il brano successivo e' gia' scelto: aggiorna subito la coda visibile
+       e il contatore, anche se la riproduzione e' ancora in caricamento. */
+    renderQueueCount();
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
     _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);
@@ -7104,8 +7141,8 @@ function playNext() {
       if (queue.length) {
         const next = queue.shift();
         persistQueue();
-        renderQueueCount();
         playById(next);
+        renderQueueCount();
         return;
       }
       const prossimoPlaylist = _avantiInPlaylist();
@@ -11109,6 +11146,7 @@ function _accendiCasuale(accendi) {
   LS.set("mb.shuffle", shuffle);
   try { $("btnShuffle").classList.toggle("on", shuffle); } catch (e) { /* noop */ }
   try { const b = $("btnCasuale"); if (b) b.classList.toggle("on", shuffle); } catch (e) { /* noop */ }
+  renderQueueCount();
   return shuffle;
 }
 
