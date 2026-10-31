@@ -12298,7 +12298,7 @@ function _nomePerIlBrano(link, suggerito) {
     if (nome) nome.value = String(suggerito || "").slice(0, 160);
     $("ytOnlineRights").checked = false;
     $("ytOnlineProfile").textContent = String(profile || DEFAULT_PROFILE);
-    $("ytOnlineHint").textContent = "Dopo «Continua su GitHub», premi «Submit new issue» per avviare l'importazione online. Non serve il PC.";
+    $("ytOnlineHint").textContent = "Incolla il link, conferma i diritti e premi Aggiungi. Nessun accesso a GitHub.";
     box.hidden = false;
     syncNoScroll();
     // La lettura appunti e' solo un aiuto: l'utente puo' incollare a mano.
@@ -12321,31 +12321,83 @@ function _nomePerIlBrano(link, suggerito) {
       $("ytOnlineHint").textContent = "Link incollato: puoi continuare.";
     } catch (_) { $("ytOnlineHint").textContent = "Incolla tenendo premuto nel campo del link."; }
   });
-  $("ytOnlineGo").addEventListener("click", () => {
-    const url = _videoYouTubePerCloud($("ytOnlineUrl").value);
-    if (!url) { $("ytOnlineHint").textContent = "Incolla il link di un solo video YouTube valido."; return; }
-    if (!$("ytOnlineRights").checked) {
-      $("ytOnlineHint").textContent = "Per importare l'audio devi confermare di avere i diritti per farlo.";
+  const MB_YT_CLOUD = "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue";
+  const MB_YT_PENDING = "mb.youtubePending";
+  function _ytPending() {
+    const saved=LS.get(MB_YT_PENDING,[]);
+    return Array.isArray(saved)?saved.filter(x=>x && x.id && x.profile).slice(-35):[];
+  }
+  let _ytStatusBusy=false;
+  async function _ytCheckPending() {
+    if(_ytStatusBusy||!navigator.onLine)return;
+    const pending=_ytPending();
+    if(!pending.length)return;
+    _ytStatusBusy=true;
+    let changed=false;
+    const remain=[];
+    try {
+      for(const task of pending) {
+        try {
+          const resp=await fetch(MB_YT_CLOUD+"?action=status&id="+encodeURIComponent(task.id),
+            {cache:"no-store",signal:AbortSignal.timeout(7500)});
+          const payload=await resp.json();
+          if(!resp.ok||!payload.ok||!payload.job){remain.push(task);continue;}
+          if(payload.job.status==="completed") {
+            changed=true;
+            toast("Importazione YouTube completata: "+(task.title||"brano"),6000);
+          } else if(payload.job.status==="failed") {
+            changed=true;
+            toast("Importazione non riuscita: "+String(payload.job.error_message||"controlla il video").slice(0,100),8000);
+          } else remain.push(task);
+        } catch (_) { remain.push(task); }
+      }
+      LS.set(MB_YT_PENDING,remain);
+      if(changed) {
+        // Ricarico il manifest direttamente da GitHub senza eliminare MP3 offline.
+        _ytOnlineFetchedAt=0;
+        try {await loadAll();render();}catch(_){}
+      }
+    } finally {_ytStatusBusy=false;}
+  }
+  $("ytOnlineGo").addEventListener("click",async () => {
+    const url=_videoYouTubePerCloud($("ytOnlineUrl").value);
+    if(!url){$("ytOnlineHint").textContent="Incolla il link di un singolo video YouTube.";return;}
+    if(!$("ytOnlineRights").checked){
+      $("ytOnlineHint").textContent="Per aggiungere questo audio devi confermare di avere i diritti.";
       return;
     }
-    const nome = String($("ytOnlineName").value || "").replace(/[\r\n]/g, " ").trim().slice(0, 160);
-    const profilo = String(profile || DEFAULT_PROFILE).slice(0, 40);
-    const testo = "YouTube: " + url + "\nProfilo: " + profilo +
-      "\nNome: " + nome + "\nDiritti: CONFERMO";
-    const issueUrl = "https://github.com/stefanovillaggio8-dot/music-box/issues/new?" +
-      new URLSearchParams({ title: "[MusicBox] Importa brano YouTube", body: testo }).toString();
-    $("ytOnlineHint").textContent = "Nella pagina GitHub premi «Submit new issue». Quando l'automazione termina, aggiorna Music Box.";
-    const a = document.createElement("a");
-    a.href = issueUrl;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.textContent = "Apri GitHub";
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    toast("Conferma su GitHub: premi «Submit new issue» per iniziare.", 7500);
+    const btn=$("ytOnlineGo");
+    btn.disabled=true;
+    $("ytOnlineHint").textContent="Invio la richiesta al servizio online...";
+    try {
+      const title=String($("ytOnlineName").value||"").trim().slice(0,160);
+      const selected=String(profile||DEFAULT_PROFILE);
+      const resp=await fetch(MB_YT_CLOUD,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({action:"create",link:url,profile:selected,title,rights:true}),
+        signal:AbortSignal.timeout(14000)
+      });
+      const data=await resp.json();
+      if(!resp.ok||!data.ok||!data.id)throw new Error(data.error||"Il servizio non ha accettato il brano");
+      const jobs=_ytPending().filter(x=>x.id!==data.id);
+      jobs.push({id:data.id,profile:selected,title:title||url,added:Date.now()});
+      LS.set(MB_YT_PENDING,jobs.slice(-35));
+      $("ytOnlineHint").textContent="Richiesta accettata! Il server GitHub controlla la coda automaticamente. Il computer puo' rimanere spento. Non devi accedere a GitHub.";
+      toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
+      $("ytOnlineUrl").value="";
+      $("ytOnlineName").value="";
+      $("ytOnlineRights").checked=false;
+    }catch(error){
+      $("ytOnlineHint").textContent="Problema: "+String(error&&error.message||error).slice(0,160)+". Non ho perso nessun brano.";
+    }finally{btn.disabled=false;}
   });
+  // Lo stato si aggiorna anche dopo aver riaperto la PWA dallo stesso telefono.
+  setInterval(_ytCheckPending,45000);
+  window.addEventListener("online",_ytCheckPending);
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible")_ytCheckPending();
+  });
+  setTimeout(_ytCheckPending,9000);
   /* ---------- La guida (il "?" nel menu Altro) ----------
    Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del
    '?' dove spieghi bene". Spiega come si mettono le canzoni online con il
