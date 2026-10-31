@@ -57,6 +57,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Installa Deno per supporto YouTube aggiornato
+        if: steps.claim.outputs.has_job == 'true'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
       - name: Installa conversione sul server GitHub
         if: steps.claim.outputs.has_job == 'true'
         run: |
@@ -67,6 +72,20 @@ jobs:
           fi
           command -v ffmpeg
           ffmpeg -version | head -n 1
+      - name: Riutilizza MP3 gia pubblicato per evitare richieste duplicate
+        if: steps.claim.outputs.has_job == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE=$(node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/musicbox-cloud-job.json","utf8"));if(!/^[A-Za-z0-9_-]{11}$/.test(j.video_id))process.exit(1);process.stdout.write("songs/youtube-"+j.video_id+".mp3")')
+          if git fetch --no-tags origin mobile-audio && git cat-file -e "FETCH_HEAD:$FILE" 2>/dev/null; then
+            mkdir -p songs
+            git show "FETCH_HEAD:$FILE" > "$FILE"
+            test -s "$FILE"
+            echo "MP3 gia' pubblicato: riutilizzo il file senza riconvertire"
+          else
+            echo "Nessun MP3 precedente: procedo con conversione autorizzata"
+          fi
       - name: Converti unicamente contenuto autorizzato
         if: steps.claim.outputs.has_job == 'true'
         id: convert
