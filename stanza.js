@@ -79,7 +79,7 @@ async function create(){
  const btn=$("stanzaCrea");btn.disabled=true;
  try{
   const result=await request({action:"create",profile:bridge().profile(),tracks:songs});
-  creds={id:result.id,token:result.hostToken,role:"host"};
+  creds={id:result.id,token:result.hostToken,guestToken:result.guestToken,role:"host"};
   inviteUrl=location.origin+location.pathname+"#musicbox-room="+result.id+"."+result.guestToken;
   invitation=null;localPlay=false;save();await refresh();
   tell("Stanza creata: copia il link e invialo al tuo amico.");
@@ -207,7 +207,10 @@ function start(){
    const raw=localStorage.getItem("mb.stanza.v1");
    const saved=raw?JSON.parse(raw):null;
    if(saved&&/^[0-9a-f-]{36}$/i.test(saved.id||"")&&/^[0-9a-f]{64}$/i.test(saved.token||"")){
-    creds=saved;setTimeout(refresh,1500);
+    creds=saved;
+    if(saved.role==="host"&&/^[0-9a-f]{64}$/i.test(saved.guestToken||""))
+      inviteUrl=location.origin+location.pathname+"#musicbox-room="+saved.id+"."+saved.guestToken;
+    setTimeout(refresh,1500);
    }
   }
  }catch(e){}
