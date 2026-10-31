@@ -3091,6 +3091,21 @@ input, textarea, select { accent-color: var(--accent); }
 .fab-option-content strong{display:block;font-size:15px;line-height:1.3;letter-spacing:-.15px}
 .fab-option-content small{display:block;font-size:12px;line-height:1.4;color:#c5becf;margin-top:4px}
 .fab-option-note{display:block;font-size:10.5px;color:#b2a5cd;line-height:1.4;margin-top:6px}
+.fab-file-walkthrough{display:grid;gap:8px;margin-top:13px;padding:12px 13px;border-radius:12px;
+  border:1px solid rgba(166,136,237,.24);background:rgba(83,69,116,.14)}
+.fab-file-walkthrough strong{font-size:12px;color:#f0e7ff}
+.fab-file-walkthrough span{font-size:11.5px;line-height:1.55;color:#c7c0d5}
+.fab-file-walkthrough a{font-size:11.5px;font-weight:700;color:#c6a1ff;text-decoration:underline;text-underline-offset:3px}
+.yt-file-fallback{display:grid;gap:9px;border:1px solid rgba(166,136,237,.24);border-radius:14px;
+  background:rgba(95,76,130,.13);padding:13px;margin-top:12px}
+.yt-file-fallback p{font-size:12px;line-height:1.55;margin:0}
+.yt-file-fallback small{font-size:10.5px;line-height:1.45;color:#afa7c1}
+.yt-file-fallback-actions{display:flex;flex-wrap:wrap;gap:8px}
+.yt-file-fallback-actions a,.yt-file-fallback-actions button{
+  display:inline-flex;align-items:center;justify-content:center;min-height:40px;flex:1 1 150px;
+  font:inherit;font-size:12px;font-weight:750;text-decoration:none;border:1px solid rgba(186,157,248,.34);
+  border-radius:10px;padding:9px;color:#f3e9ff;background:rgba(137,97,215,.20);cursor:pointer
+}
 .fab-sheet-bottom{display:grid;gap:5px;border-top:1px solid rgba(255,255,255,.10);padding-top:12px;margin-top:15px}
 .fab-sheet-minor{display:block;width:100%;text-align:left;padding:11px;border:0;border-radius:10px;
   background:transparent;color:#d0c8df;font:inherit;font-size:12.5px;cursor:pointer}
