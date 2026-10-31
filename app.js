@@ -12472,7 +12472,7 @@ function _nomePerIlBrano(link, suggerito) {
   }
   let _ytProbeSequence=0,_ytProbeTimeout=0;
   async function _ytVerificaLinkPerLibreria(link) {
-    const token=++_ytProbeSequence, owner=profile;
+    const token=_ytProbeSequence, owner=profile;
     const meta=await _ytLeggiTitoloPubblico(link);
     if(token!==_ytProbeSequence||owner!==profile || $("youtubeOnlinePanel").hidden ||
       _videoYouTubePerCloud($("ytOnlineUrl").value)!==link)return false;
