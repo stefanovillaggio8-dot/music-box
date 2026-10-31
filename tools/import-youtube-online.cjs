@@ -243,8 +243,13 @@ async function main() {
 }
 main().catch(e => {
   const detail = String((e && (e.stderr || e.message)) || e || "Errore sconosciuto");
-  const publicError = /sign in to confirm.{0,150}(?:bot|human)|verifica anti-bot|automated requests/i.test(detail)
-    ? "YouTube blocca il download dai server GitHub (controllo anti-bot)."
+  // Mostra il codice diagnostico di Cobalt, che arriva dopo quello di yt-dlp.
+  // Il servizio cloud salva al massimo 180 caratteri del messaggio.
+  const cobalt = /[|] Cobalt: (Cobalt HTTP [0-9]{3} [(][A-Za-z0-9_.-]+[)])/.exec(detail);
+  const publicError = cobalt
+    ? "Audio non ottenuto: yt-dlp bloccato da YouTube; "+cobalt[1]+"."
+    : /sign in to confirm.{0,150}(?:bot|human)|verifica anti-bot|automated requests/i.test(detail)
+    ? "YouTube richiede una verifica anti-bot al server GitHub."
     : /ffmpeg.*(?:not found|not recognized|not installed)/i.test(detail)
     ? "Il convertitore audio del server non e' disponibile."
     : "Importazione fallita: verifica disponibilita', diritti e formato del video.";
