@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.453";
+  const APP_VERSION = "6.454";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12288,6 +12288,8 @@ function _nomePerIlBrano(link, suggerito) {
   function _chiudiYouTubeOnline() {
     const box = $("youtubeOnlinePanel");
     if (box) box.hidden = true;
+    const frame=$("ytOnlinePlayer"); if(frame)frame.removeAttribute("src");
+    const pane=$("ytOnlinePlayerBox"); if(pane)pane.hidden=true;
     syncNoScroll();
   }
   async function _aggiungiDaYouTube(suggerito) {
@@ -12301,7 +12303,7 @@ function _nomePerIlBrano(link, suggerito) {
     $("ytOnlineHint").textContent = "Incolla il link, conferma i diritti e premi Aggiungi. Nessun accesso a GitHub.";
     box.hidden = false;
     syncNoScroll();
-    try { _ytShowRecent(); _ytCheckPending(); } catch (_) {}
+    try { _ytShowRecent(); _ytCheckPending(); _ytReloadLinks(); } catch (_) {}
     // La lettura appunti e' solo un aiuto: l'utente puo' incollare a mano.
     try {
       const link = await _leggiLinkDagliAppunti();
@@ -12323,6 +12325,67 @@ function _nomePerIlBrano(link, suggerito) {
     } catch (_) { $("ytOnlineHint").textContent = "Incolla tenendo premuto nel campo del link."; }
   });
   const MB_YT_CLOUD = "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue";
+
+  let _ytLinksFetchId=0;
+  function _ytStopVideo() {
+    const iframe=$("ytOnlinePlayer"), container=$("ytOnlinePlayerBox");
+    if(iframe)iframe.removeAttribute("src");
+    if(container)container.hidden=true;
+  }
+  function _ytWatchVideo(id,title) {
+    if(!/^[a-zA-Z0-9_-]{11}$/.test(String(id)))return;
+    try {if(audio && typeof audio.pause==="function")audio.pause();}catch(_){}
+    const box=$("ytOnlinePlayerBox"),frame=$("ytOnlinePlayer");
+    if(!box || !frame)return;
+    box.hidden=false;
+    frame.src="https://www.youtube-nocookie.com/embed/"+id+"?playsinline=1";
+    $("ytOnlinePlayerLabel").textContent="YouTube online: "+String(title||"Video").slice(0,120);
+    $("ytOnlinePlayerOriginal").href="https://www.youtube.com/watch?v="+id;
+    try {box.scrollIntoView({block:"nearest",behavior:"smooth"});}catch(_){}
+  }
+  async function _ytReloadLinks() {
+    const list=$("ytOnlineLinksList"),hint=$("ytOnlineLinksMessage");
+    if(!list||!hint)return;
+    const requested=String(profile||DEFAULT_PROFILE),requestId=++_ytLinksFetchId;
+    hint.textContent="Carico i video salvati per "+requested+"...";
+    try {
+      const resp=await fetch(MB_YT_CLOUD+"?action=links&profile="+encodeURIComponent(requested),{
+        cache:"no-store",signal:AbortSignal.timeout(12000)
+      });
+      const data=await resp.json();
+      if(!resp.ok||!data.ok||!Array.isArray(data.links))throw Error(data.error||"Servizio non disponibile");
+      if(requestId!==_ytLinksFetchId||requested!==String(profile||DEFAULT_PROFILE))return;
+      list.replaceChildren();
+      let count=0;
+      for(const track of data.links) {
+        if(!/^[A-Za-z0-9_-]{11}$/.test(String(track.video_id||"")))continue;
+        count++;
+        const item=document.createElement("div");
+        item.style.cssText="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px;border:1px solid rgba(128,128,128,.3);border-radius:12px";
+        const info=document.createElement("div");
+        info.style.cssText="flex:1;min-width:140px";
+        const title=document.createElement("strong");
+        title.textContent=String(track.title||"Video YouTube").slice(0,160);
+        const status=document.createElement("div");
+        status.style.cssText="font-size:12px;opacity:.8;margin-top:4px";
+        status.textContent=track.status==="completed"?"MP3 disponibile nella libreria":
+          track.status==="queued"?"MP3 in coda; video disponibile online":
+          track.status==="running"?"MP3 in elaborazione; video disponibile online":
+          "MP3 non disponibile; video solo online";
+        const btn=document.createElement("button");
+        btn.type="button";btn.className="btn-ghost";btn.textContent="Riproduci";
+        btn.addEventListener("click",()=>_ytWatchVideo(track.video_id,title.textContent));
+        info.append(title,status);item.append(info,btn);list.append(item);
+        if(count>=60)break;
+      }
+      hint.textContent=count?count+" video salvati · riproduzione ufficiale YouTube (solo online).":
+        "Nessun link YouTube salvato in questo profilo.";
+    }catch(e){
+      if(requestId===_ytLinksFetchId)hint.textContent="Errore nel caricamento: "+String(e.message||e).slice(0,130);
+    }
+  }
+  $("ytOnlineLinksReload").addEventListener("click",_ytReloadLinks);
+  $("ytOnlinePlayerStop").addEventListener("click",_ytStopVideo);
   const MB_YT_PENDING = "mb.youtubePending";
   function _ytPending() {
     const saved=LS.get(MB_YT_PENDING,[]);
@@ -12381,6 +12444,7 @@ function _nomePerIlBrano(link, suggerito) {
       LS.set(MB_YT_PENDING,remain);
       _ytShowRecent();
       if(changed) {
+        if(!$("youtubeOnlinePanel").hidden) _ytReloadLinks();
         // Ricarico il manifest direttamente da GitHub senza eliminare MP3 offline.
         _ytOnlineFetchedAt=0;
         try {await loadAll();render();}catch(_){}
@@ -12419,7 +12483,8 @@ function _nomePerIlBrano(link, suggerito) {
       jobs.push({id:data.id,profile:selected,title:title||url,added:Date.now()});
       LS.set(MB_YT_PENDING,jobs.slice(-35));
       _ytShowRecent();
-      $("ytOnlineHint").textContent="Richiesta accettata! Il server GitHub controlla la coda automaticamente. Il computer puo' rimanere spento. Non devi accedere a GitHub.";
+      _ytReloadLinks();
+      $("ytOnlineHint").textContent="Link salvato nel profilo! La riproduzione YouTube online e disponibile qui sotto. L'MP3 potrebbe fallire se YouTube blocca la conversione.";
       toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
       $("ytOnlineUrl").value="";
       $("ytOnlineName").value="";
