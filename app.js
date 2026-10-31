@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.456";
+  const APP_VERSION = "6.457";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3296,6 +3296,7 @@ function _devoVedereBrano(eMio, b) {
   function _ytAggiornaVociLibreria(entries, owner, draw=false) {
     if(owner!==profile || !Array.isArray(entries))return;
     const old=tracks.filter(t=>t && t.source!=="youtube-link");
+    const published=new Set(old.filter(t=>t.file).map(t=>t.file));
     const seen=new Set();
     const linked=[];
     for(const row of entries) {
@@ -3303,15 +3304,18 @@ function _devoVedereBrano(eMio, b) {
       if(!/^[A-Za-z0-9_-]{11}$/.test(id)||seen.has(id))continue;
       seen.add(id);
       // Quando l'MP3 e' stato pubblicato, usiamo soltanto il vero brano audio.
-      if(row.status==="completed" && old.some(t=>t.file==="songs/youtube-"+id+".mp3"))continue;
+      if(published.has("songs/youtube-"+id+".mp3"))continue;
       const name=String(row.requested_title||row.title||"").trim();
       linked.push({
         id:"yt-"+id, title:name && name!=="Video YouTube" ? name.slice(0,160) : "Video YouTube "+id,
-        artist:"", album:"YouTube · solo online",
+        artist:"", album:row.status==="failed"?"Importazione fallita":
+          row.status==="completed"?"MP3 in pubblicazione":
+          row.status==="running"?"MP3 in preparazione":"In coda per MP3",
         cover:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",
         url:"", file:"", source:"youtube-link", youtubeId:id,
         profile:owner,builtin:true,gradient:PALETTE[0],
-        _ytStatus:String(row.status||"queued")
+        _ytStatus:String(row.status||"queued"),
+        _ytErrore:String(row.error_message||"").slice(0,180)
       });
     }
     tracks=linked.concat(old);
@@ -5291,7 +5295,7 @@ emptyEl.textContent = !total
       if (t.artist) bits.push(t.artist);
       if (t.album) bits.push(t.album);
       if (t.preview) bits.push("anteprima 30s");
-      if (t.youtubeId) bits.push("YouTube · solo online");
+      // Una richiesta YouTube non viene spacciata per un audio disponibile.
       if (t.builtin) meta.textContent = bits.join(" ");
       else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
       /* I contrassegni stanno QUI, non nel titolo: la riga del titolo viene
@@ -5307,8 +5311,10 @@ emptyEl.textContent = !total
       if (t.youtubeId) {
         const ytBadge=document.createElement("span");
         ytBadge.className="track-badge";
-        ytBadge.textContent="YOUTUBE · ONLINE";
-        ytBadge.title="Link video YouTube. Per ascoltarlo serve Internet; non e' un MP3 offline.";
+        ytBadge.textContent=t._ytStatus==="failed"?"AUDIO NON DISPONIBILE":
+          t._ytStatus==="completed"?"IN PUBBLICAZIONE":
+          t._ytStatus==="running"?"IN PREPARAZIONE":"IN CODA";
+        ytBadge.title=t._ytErrore || "Sara' riproducibile solo dopo la pubblicazione dell'MP3.";
         contrassegni.push(ytBadge);
       }
       if (t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
@@ -6782,20 +6788,27 @@ box.innerHTML = "";
 async function playById(id, autoplay = true) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
-      // Le voci YouTube sono collegamenti online: non passarle al motore MP3.
+      // I link non sono file audio: non aprire YouTube al posto del player.
       if (t.source==="youtube-link" && t.youtubeId) {
-        const pane=$("youtubeOnlinePanel");
-        if(pane) {
-          $("ytOnlineProfile").textContent=String(profile||DEFAULT_PROFILE);
-          pane.hidden=false;
-          syncNoScroll();
-          _ytWatchVideo(t.youtubeId,t.title);
-          _ytReloadLinks().catch(()=>{});
+        if (t._ytStatus==="completed") {
+          toast("Controllo se l'MP3 e' stato pubblicato...",3500);
+          _ytOnlineFetchedAt=0;
+          try {
+            await loadAll();
+            const ready=tracks.find(x=>x && x.file==="songs/youtube-"+t.youtubeId+".mp3" &&
+              (x.profile||DEFAULT_PROFILE)===(t.profile||DEFAULT_PROFILE) && x.url);
+            if(ready) return playById(ready.id,autoplay);
+          } catch (_) { /* il brano rimane in lista, senza inventare audio */ }
+          toast("MP3 non ancora disponibile. Riprova fra poco.",6500);
+        } else if (t._ytStatus==="failed") {
+          toast(t._ytErrore || "Importazione fallita. Puoi importare un MP3 che possiedi.",8500);
         } else {
-          window.open("https://www.youtube.com/watch?v="+t.youtubeId,"_blank","noopener,noreferrer");
+          toast("MP3 "+(t._ytStatus==="running"?"in preparazione":"in coda")+
+            ". Potrai ascoltarlo dal player quando sara' pronto.",6500);
         }
         return;
       }
+
       /* Prima di cambiare: metto in cronologia il brano che sto lasciando,
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
@@ -12369,8 +12382,6 @@ function _nomePerIlBrano(link, suggerito) {
   function _chiudiYouTubeOnline() {
     const box = $("youtubeOnlinePanel");
     if (box) box.hidden = true;
-    const frame=$("ytOnlinePlayer"); if(frame)frame.removeAttribute("src");
-    const pane=$("ytOnlinePlayerBox"); if(pane)pane.hidden=true;
     syncNoScroll();
   }
   async function _aggiungiDaYouTube(suggerito) {
@@ -12408,22 +12419,6 @@ function _nomePerIlBrano(link, suggerito) {
   const MB_YT_CLOUD = "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue";
 
   let _ytLinksFetchId=0;
-  function _ytStopVideo() {
-    const iframe=$("ytOnlinePlayer"), container=$("ytOnlinePlayerBox");
-    if(iframe)iframe.removeAttribute("src");
-    if(container)container.hidden=true;
-  }
-  function _ytWatchVideo(id,title) {
-    if(!/^[a-zA-Z0-9_-]{11}$/.test(String(id)))return;
-    try {if(audio && typeof audio.pause==="function")audio.pause();}catch(_){}
-    const box=$("ytOnlinePlayerBox"),frame=$("ytOnlinePlayer");
-    if(!box || !frame)return;
-    box.hidden=false;
-    frame.src="https://www.youtube-nocookie.com/embed/"+id+"?playsinline=1";
-    $("ytOnlinePlayerLabel").textContent="YouTube online: "+String(title||"Video").slice(0,120);
-    $("ytOnlinePlayerOriginal").href="https://www.youtube.com/watch?v="+id;
-    try {box.scrollIntoView({block:"nearest",behavior:"smooth"});}catch(_){}
-  }
   async function _ytReloadLinks() {
     const list=$("ytOnlineLinksList"),hint=$("ytOnlineLinksMessage");
     if(!list||!hint)return;
@@ -12438,6 +12433,13 @@ function _nomePerIlBrano(link, suggerito) {
       if(requestId!==_ytLinksFetchId||requested!==String(profile||DEFAULT_PROFILE))return;
       LS.set("mb.youtube.links."+requested,data.links);
       _ytLinksMemory[requested]={links:data.links,time:Date.now()};
+      // Se l'MP3 e' stato completato su un altro dispositivo, rileggi
+      // il manifest prima di promuovere la richiesta a brano riproducibile.
+      if(data.links.some(x=>x.status==="completed" &&
+        !_ytOnlineCache.some(p=>p.file==="songs/youtube-"+x.video_id+".mp3"))) {
+        _ytOnlineFetchedAt=0;
+        try {await loadAll();}catch(_){}
+      }
       _ytAggiornaVociLibreria(data.links,requested,true);
       list.replaceChildren();
       let count=0;
@@ -12452,29 +12454,31 @@ function _nomePerIlBrano(link, suggerito) {
         title.textContent=String(track.title||"Video YouTube").slice(0,160);
         const status=document.createElement("div");
         status.style.cssText="font-size:12px;opacity:.8;margin-top:4px";
-        status.textContent=track.status==="completed"?"MP3 disponibile nella libreria":
-          track.status==="queued"?"MP3 in coda; video disponibile online":
-          track.status==="running"?"MP3 in elaborazione; video disponibile online":
-          "MP3 non disponibile; video solo online";
+        const published=tracks.find(x=>x && x.file==="songs/youtube-"+track.video_id+".mp3" &&
+          (x.profile||DEFAULT_PROFILE)===requested && x.url);
+        status.textContent=published?"MP3 pronto nel player Music Box":
+          track.status==="completed"?"MP3 in pubblicazione: aggiorna fra poco":
+          track.status==="queued"?"MP3 in coda sul server":
+          track.status==="running"?"MP3 in preparazione sul server":
+          "Importazione fallita: "+String(track.error_message||"audio non disponibile").slice(0,160);
         const thumb=document.createElement("img");
         thumb.src="https://i.ytimg.com/vi/"+track.video_id+"/mqdefault.jpg";
         thumb.alt="";thumb.loading="lazy";
         thumb.style.cssText="width:70px;height:42px;object-fit:cover;border-radius:8px;flex-shrink:0";
         const btn=document.createElement("button");
-        btn.type="button";btn.className="btn-ghost";btn.textContent="▶ Riproduci";
-        btn.addEventListener("click",()=>_ytWatchVideo(track.video_id,title.textContent));
-        const direct=document.createElement("a");
-        direct.href="https://www.youtube.com/watch?v="+track.video_id;
-        direct.target="_blank";direct.rel="noopener noreferrer";
-        direct.textContent="YouTube";
-        direct.style.cssText="font-size:12px;text-decoration:underline";
+        btn.type="button";btn.className="btn-ghost";
+        btn.textContent=published?"▶ Ascolta in Music Box":"Aggiorna stato";
+        btn.addEventListener("click",()=>{
+          if(published) { _chiudiYouTubeOnline(); playById(published.id,true); }
+          else { _ytOnlineFetchedAt=0; _ytReloadLinks(); }
+        });
         const actions=document.createElement("div");
         actions.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap";
-        actions.append(btn,direct);
+        actions.append(btn);
         info.append(title,status);item.append(thumb,info,actions);list.append(item);
         if(count>=60)break;
       }
-      hint.textContent=count?count+" video salvati · riproduzione ufficiale YouTube (solo online).":
+      hint.textContent=count?count+" richieste salvate. Solo gli MP3 pronti si ascoltano nell'app.":
         "Nessun link YouTube salvato in questo profilo.";
     }catch(e){
       if(requestId===_ytLinksFetchId)hint.textContent="Errore nel caricamento: "+String(e.message||e).slice(0,130);
@@ -12484,7 +12488,6 @@ function _nomePerIlBrano(link, suggerito) {
   const _ytOldButton=$("btnMieiVideoYT");
   if(_ytOldButton)_ytOldButton.addEventListener("click",()=>_aggiungiDaYouTube());
   $("ytOnlineLinksReload").addEventListener("click",_ytReloadLinks);
-  $("ytOnlinePlayerStop").addEventListener("click",_ytStopVideo);
   const MB_YT_PENDING = "mb.youtubePending";
   function _ytPending() {
     const saved=LS.get(MB_YT_PENDING,[]);
@@ -12600,7 +12603,7 @@ function _nomePerIlBrano(link, suggerito) {
       _chiudiYouTubeOnline();
       render();
       _ytReloadLinks();
-      $("ytOnlineHint").textContent="Link salvato nel profilo! La riproduzione YouTube online e disponibile qui sotto. L'MP3 potrebbe fallire se YouTube blocca la conversione.";
+      $("ytOnlineHint").textContent="Link salvato nel profilo. Potrai ascoltarlo dal player normale solo dopo la pubblicazione dell'MP3.";
       toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
       $("ytOnlineUrl").value="";
       $("ytOnlineName").value="";
