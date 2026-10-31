@@ -25,6 +25,10 @@ on:
       - tools/test-cloud-upload-phone.cjs
       - tools/import-youtube-online.cjs
       - tools/test-online-youtube-import.cjs
+      - tools/test-mobile-queue-no-login.cjs
+      - tools/cloud-queue-client.cjs
+      - cloud/musicbox-import-queue/index.ts
+      - .github/workflows/process-mobile-imports.yml
       - online-imports.json
       - tools/aggiorna-copia-locale.ps1
       - tools/ripara-musicbox-pc.ps1
@@ -108,3 +112,5 @@ jobs:
         run: |
           node --check tools/import-youtube-online.cjs
           node tools/test-online-youtube-import.cjs
+          node --check tools/cloud-queue-client.cjs
+          node tools/test-mobile-queue-no-login.cjs
