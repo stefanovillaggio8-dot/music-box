@@ -2,7 +2,13 @@
 const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/strict");
 const code=fs.readFileSync("app.js","utf8");
 const state=JSON.parse(fs.readFileSync("stato.json","utf8"));
-assert.deepEqual(state.statistiche.Emanuele,{}, "Emanuele deve essere azzerato nel file");
+/* Il reset e' avvenuto il 31/10/2026. I nuovi ascolti di Emanuele
+   devono continuare ad accumularsi: il test precedente li rifiutava
+   per errore ad ogni nuova riproduzione. */
+const chiaviEmanuele = Object.keys(state.statistiche.Emanuele || {});
+assert(chiaviEmanuele.every(k => k.startsWith("e-reset-20261031|") ||
+  /^m:\\d{4}-\\d{2}\\|e-reset-20261031\\|/.test(k)),
+  "Emanuele ha recuperato chiavi vecchie precedenti al reset");
 assert(Object.keys(state.statistiche.Ste).length>20,"Ste non deve essere modificato");
 assert(Object.keys(state.statistiche.Diego).length>20,"Diego non deve essere modificato");
 assert(/_resetEmanueleSeNecessario\(\);/.test(code),"Reset automatico mancante");
