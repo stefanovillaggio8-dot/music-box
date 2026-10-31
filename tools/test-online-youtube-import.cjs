@@ -23,7 +23,15 @@ try {
   const noRights = request("https://youtu.be/" + id, "Ste", "NO");
   assert.notEqual(noRights.status, 0, "Serve il consenso ai diritti");
   fs.mkdirSync(path.join(root,"songs"));
-  fs.writeFileSync(path.join(root,"songs","youtube-"+id+".mp3"), Buffer.from("fixture"));
+  // Un vero MP3 sintetico evita falsi fallimenti: ffprobe verifica il codec reale.
+  const sample=path.join(root,"songs","youtube-"+id+".mp3");
+  const built=spawnSync("ffmpeg",[
+    "-nostdin","-hide_banner","-loglevel","error","-f","lavfi",
+    "-i","anullsrc=r=44100:cl=mono","-t","0.3",
+    "-c:a","libmp3lame","-q:a","9","-y",sample
+  ],{encoding:"utf8",timeout:6000});
+  assert.equal(built.status,0,"Creazione MP3 di prova: "+(built.stderr||built.error||""));
+  assert(fs.statSync(sample).size>2048,"Il campione MP3 deve essere valido");
   const ok = request("https://youtu.be/" + id, "Ste");
   assert.equal(ok.status, 0, "Importazione di MP3 esistente: " + ok.stderr);
   let list = JSON.parse(fs.readFileSync(path.join(root,"online-imports.json"), "utf8"));
