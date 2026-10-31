@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.462";
+  const APP_VERSION = "6.463";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12437,6 +12437,12 @@ function _nomePerIlBrano(link, suggerito) {
     } catch (_) { /* permesso clipboard non concesso */ }
     try { if (!url.value) url.focus(); } catch (_) {}
   }
+  $("ytImportaFile").addEventListener("click", () => {
+    // Scelta esplicita dell'utente: Safari/iOS non permette di leggere File
+    // automaticamente. Il picker importa subito il file nella libreria locale.
+    _chiudiYouTubeOnline();
+    fileInput.click();
+  });
   $("ytOnlineClose").addEventListener("click", _chiudiYouTubeOnline);
   $("youtubeOnlinePanel").addEventListener("click", (event) => {
     if (event.target === $("youtubeOnlinePanel")) _chiudiYouTubeOnline();
