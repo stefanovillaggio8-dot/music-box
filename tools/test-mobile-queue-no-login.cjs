@@ -18,7 +18,7 @@ assert(app.includes('LS.set(MB_YT_PENDING,'));
 assert(app.includes("_braniYouTubePubblicati()"));
 assert(app.includes("musicbox-import-queue") && !app.slice(app.indexOf('async function _aggiungiDaYouTube('),
   app.indexOf('/* ---------- La guida (il')).includes("issues/new"));
-assert(workflow.includes("schedule:") && workflow.includes("*/5 * * * *"));
+assert(workflow.includes("schedule:") && workflow.includes("2-59/5 * * * *"));
 assert(workflow.includes("id-token: write") && workflow.includes("tools/cloud-queue-client.cjs claim"));
 assert(workflow.includes("tools/cloud-queue-client.cjs finish"));
 assert(cli.includes("ACTIONS_ID_TOKEN_REQUEST_TOKEN"));
