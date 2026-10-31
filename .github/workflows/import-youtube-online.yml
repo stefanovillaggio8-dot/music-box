@@ -41,7 +41,8 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- online-imports.json "${{ steps.import.outputs.file }}"
+          git add -- online-imports.json
+          git add -f -- "${{ steps.import.outputs.file }}"
           git commit -m 'Music Box: aggiungi audio autorizzato da YouTube'
           git pull --rebase origin main
           git push origin HEAD:main
