@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.435";
+  const APP_VERSION = "6.436";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1623,7 +1623,7 @@ const PROFILI = [
     /* Solo il file corretto: URL diverso per non riprodurre la vecchia
        versione salvata nel browser, senza svuotare le altre cache offline. */
     if (inLocale) return nome === "songs/track-929.mp3"
-      ? nome + "?audio-corretto=20261031" : nome;
+      ? nome + "?audio-corretto=20261031-33s" : nome;
     /* L'app aperta dal link di GitHub, ma il computer di casa e' vicino:
        i brani li prendo da li', che e' 220 volte piu' veloce. */
     try {
@@ -7567,7 +7567,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.435 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.436 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
