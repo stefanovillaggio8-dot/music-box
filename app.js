@@ -11459,6 +11459,35 @@ function _toggleCasuale() {
 }
 
 $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale(); });
+async function _attivaPalestraMusicBox(avvia) {
+  let pl = _playlistCercata("gym");
+  if (pl && Array.isArray(pl.tracks) && pl.tracks.length) {
+    _playlistAttiva = pl.name;
+    _accendiCasuale(true);
+    _disegnaLinguettePlaylist();
+    render();
+    if (avvia) _suonaPlaylist(pl);
+    else toast("Modalità palestra: Gym pronta. Premi Play per ascoltare.",5000);
+    return;
+  }
+  /* Le playlist del servizio potrebbero non essere ancora caricate. */
+  await _caricaPlaylistCondivise();
+  pl = _playlistCercata("gym");
+  if (!pl || !pl.tracks || !pl.tracks.length) {
+    toast("Playlist Gym non ancora disponibile. Controlla la connessione.",6000);
+    return;
+  }
+  _playlistAttiva = pl.name;
+  _accendiCasuale(true);
+  _disegnaLinguettePlaylist();
+  render();
+  toast("Gym caricata. Tocca un brano per avviare l'audio.",5000);
+}
+$("btnModalitaGym").addEventListener("click", () => {
+  _chiudiAltro();
+  _attivaPalestraMusicBox(true).catch(e => toast("Gym: "+String(e.message||e)));
+});
+
 
 /* Ste: "non ho capito ma cos'e'? e la riproduzione casuale non e' la stessa
      cosa?". Sono la STESSA cosa, e prima c'erano due tasti che la accendevano
@@ -15830,6 +15859,12 @@ const st = $("statoSpotify");
       await loadLocalLyrics();
     }
 await loadAll();
+    /* Collegamento dalla PWA palestra: seleziona Gym senza forzare
+       autoplay, che Safari/iOS blocca finche' non tocchi Play. */
+    try {
+      if (new URL(location.href).searchParams.get("modo")==="gym")
+        _attivaPalestraMusicBox(false).catch(() => {});
+    } catch(e) {}
     setTimeout(_mostraRecapAutomatico, 4500);
     setInterval(() => {if (!document.hidden) _mostraRecapAutomatico();}, 3600000);
     /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente
