@@ -39,21 +39,34 @@ jobs:
         env:
           MB_IMPORT_JSON_PATH: ${{ runner.temp }}/musicbox-cloud-job.json
         run: node tools/import-youtube-online.cjs
-      - name: Pubblica il nuovo MP3 e indice su main
+      - name: Pubblica MP3 in archivio separato e aggiorna indice su main
         if: steps.claim.outputs.has_job == 'true' && steps.convert.outcome == 'success'
         id: publish
         shell: bash
         run: |
+          set -euo pipefail
+          FILE=$(node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/musicbox-cloud-job.json","utf8"));if(!/^[A-Za-z0-9_-]{11}$/.test(j.video_id))process.exit(1);process.stdout.write("songs/youtube-"+j.video_id+".mp3")')
+          test -s "$FILE"
+          git fetch origin mobile-audio
+          git worktree add -B mobile-audio "$RUNNER_TEMP/mb-audio" origin/mobile-audio
+          mkdir -p "$RUNNER_TEMP/mb-audio/songs"
+          cp "$FILE" "$RUNNER_TEMP/mb-audio/$FILE"
+          (
+            cd "$RUNNER_TEMP/mb-audio"
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -f -- "$FILE"
+            if ! git diff --cached --quiet; then
+              git commit -m "Music Box: aggiungi MP3 autorizzato in archivio audio"
+              git pull --rebase origin mobile-audio
+              git push origin HEAD:mobile-audio
+            fi
+          )
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- online-imports.json
-          node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/musicbox-cloud-job.json")); if(!/^[A-Za-z0-9_-]{11}$/.test(j.video_id))process.exit(1);fs.appendFileSync(process.env.GITHUB_ENV,"MUSICBOX_NEW_FILE=songs/youtube-"+j.video_id+".mp3\n")'
-          source /dev/stdin <<< "true"
-          git add -f -- "$(node -e 'const j=require(process.env.RUNNER_TEMP+"/musicbox-cloud-job.json");process.stdout.write("songs/youtube-"+j.video_id+".mp3")')"
-          if git diff --staged --quiet; then
-            echo "Already published"
-          else
-            git commit -m 'Music Box: pubblica importazione autorizzata da telefono'
+          if ! git diff --cached --quiet; then
+            git commit -m "Music Box: aggiorna indice per importazione da telefono"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
