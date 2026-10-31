@@ -55,6 +55,7 @@ jobs:
           node --check tools/resolve-licensed-audio.cjs
           node --check tools/cobalt-audio-fallback.cjs
           node tools/test-cobalt-audio.cjs
+          echo "Music Box: conversione cloud con yt-dlp e fallback Cobalt pronti"
           node tools/test-licensed-audio.cjs
       - name: Prendi una richiesta dalla coda Supabase usando OIDC firmato
         id: claim
