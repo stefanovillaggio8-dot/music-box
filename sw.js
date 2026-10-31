@@ -1063,7 +1063,7 @@ self.addEventListener("install", (event) => {
 function isMusicBoxSong(url) {
   return url.hostname === "raw.githubusercontent.com" &&
     (url.pathname.startsWith("/stefanovillaggio8-dot/music-box-brani/main/songs/") ||
-     /^\/stefanovillaggio8-dot\/music-box\/main\/songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(url.pathname)) &&
+     /^\/stefanovillaggio8-dot\/music-box\/mobile-audio\/songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(url.pathname)) &&
     /\.mp3$/i.test(url.pathname);
 }
 
