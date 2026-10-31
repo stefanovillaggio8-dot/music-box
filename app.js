@@ -12409,7 +12409,9 @@ function _nomePerIlBrano(link, suggerito) {
       const link = await _leggiLinkDagliAppunti();
       if (_videoYouTubePerCloud(link) && box.hidden === false && !url.value.trim()) {
         url.value = _videoYouTubePerCloud(link);
-        _ytProgrammaRicercaLink();
+        // Non inviare automaticamente solo per aver aperto il pannello.
+        // L'invio parte da una vera azione dell'utente: incolla o modifica.
+        $("ytOnlineHint").textContent="Link trovato negli appunti: usa Incolla o modifica il campo per inviarlo.";
       }
     } catch (_) { /* permesso clipboard non concesso */ }
     try { if (!url.value) url.focus(); } catch (_) {}
@@ -12658,6 +12660,7 @@ function _nomePerIlBrano(link, suggerito) {
             toast("Brano pronto in Music Box: "+(task.title||"canzone"),6000);
           } else if(payload.job.status==="failed") {
             changed=true;
+            if(task.videoId)_ytAutoSent.delete(task.profile+":"+task.videoId);
             const reason=String(payload.job.error_message||"controlla il video").slice(0,170);
             const recent=_ytRecent();
             recent.push({profile:task.profile,title:task.title,status:"failed",error:reason,at:Date.now()});
@@ -12718,7 +12721,7 @@ function _nomePerIlBrano(link, suggerito) {
       const data=await resp.json();
       if(!resp.ok||!data.ok||!data.id)throw new Error(data.error||"Il servizio non ha accettato il brano");
       const jobs=_ytPending().filter(x=>x.id!==data.id);
-      jobs.push({id:data.id,profile:selected,title:title||url,added:Date.now()});
+      jobs.push({id:data.id,profile:selected,videoId,title:title||url,added:Date.now()});
       LS.set(MB_YT_PENDING,jobs.slice(-35));
       _ytShowRecent();
       // Aggiunta ottimistica: il nuovo video appare nella libreria immediatamente,
