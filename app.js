@@ -1292,7 +1292,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.441";
+  const APP_VERSION = "6.442";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5183,14 +5183,42 @@ function handleMetadata() {
 updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
 
+  function _avvisaBranoNonDisponibile(t) {
+    if (!t || t._mbAudioAvvisato) return;
+    t._mbAudioAvvisato = true;
+    const id = t.id, url = _urlDelBrano(t);
+    /* Un HEAD solo dopo l'errore: identifica i 404 dei brani non
+       pubblicati, senza rallentare il primo tentativo di ascolto. */
+    if (/\.github\.io$/i.test(location.hostname) && /^https:\/\//i.test(url)) {
+      fetch(url, { method: "HEAD", cache: "no-store" }).then((res) => {
+        if (currentId !== id) return;
+        if (res.status === 404 || res.status === 410)
+          toast("Questo MP3 non e' ancora pubblicato online. Usa la copia sul PC.", 8500);
+        else toast("Audio non disponibile: controlla la connessione oppure prova un altro brano.", 7500);
+      }).catch(() => {
+        if (currentId === id) toast("Audio non raggiungibile: verifica la connessione.", 7500);
+      });
+    } else toast("Audio non disponibile. Prova un altro brano o il PC di casa.", 7500);
+  }
+
   function handleError() {
   console.warn("Errore audio, provo a recuperare");
   const t = current();
+  if (!t) return;
+  t._mbErroriAudio = (Number(t._mbErroriAudio) || 0) + 1;
+  if (t._mbErroriAudio > 2) {
+    _vuoleSuonare = false;
+    _avvisaBranoNonDisponibile(t);
+    return;
+  }
   if (t && t.builtin && !t._provatoLocale) {
     /* Il brano viene dal sito e non si vuole: uso la copia nel browser. */
     t._provatoLocale = true;
     usaCopiaLocale(t).then((blob) => {
       if (!blob) {
+        t._mbAudioMancante = true;
+        _vuoleSuonare = false;
+        _avvisaBranoNonDisponibile(t);
         segnalaErrore("brano non riproducibile e senza copia locale: " +
           String((t.artist || "") + " " + (t.title || "")).slice(0, 60));
         return;
@@ -5326,6 +5354,12 @@ a.addEventListener("pause", () => {
     _chiudiAscolto(false);
     _notificaStatoNativo(true);
   });
+    a.addEventListener("playing", () => {
+      /* Un successo effettivo resetta i contatori dei tentativi falliti. */
+      if (a !== audio) return;
+      const t = current();
+      if (t) { t._mbErroriAudio = 0; t._mbAudioMancante = false; t._mbAudioAvvisato = false; }
+    });
     a.addEventListener("ended", handleEnded);
     a.addEventListener("timeupdate", handleTime);
     a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
@@ -5389,7 +5423,9 @@ function rebuildAudio(autoplay) {
     try {
       _applicaAudio();
       setPlaybackState("playing");
-      await _prontaARiprodurre();
+      /* iPhone Safari: play() deve partire nel gesto dell'utente.
+         Attendere i metadata prima del play perde l'autorizzazione
+         di Safari: il browser gestira' autonomamente il buffering. */
       await audio.play();
       /* NON azzero l'intento di sentire qui: con lo schermo spento il
          telefono risponde "partito" ma l'audio resta muto. Se dicessi
@@ -5424,6 +5460,7 @@ function rebuildAudio(autoplay) {
           }
         } catch (e) { /* noop */ }
       }
+      if (current() && current()._mbAudioMancante) return false;
       if (!hoGiaRiprovato && !rifiutoDelTelefono) {
         rebuildAudio(false);
         return doPlay(true);
@@ -6361,6 +6398,10 @@ async function playById(id, autoplay = true) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      t._mbErroriAudio = 0;
+      t._mbAudioMancante = false;
+      t._mbAudioAvvisato = false;
+      t._provatoLocale = false;
       setTimeout(() => { _completaTestoInAscolto(t).catch(() => {}); }, 1800);
       /* Ste: "quando cambia canzone si aggiorna in automatico il testo".
          Prima restavano i testi del brano precedente. */
@@ -6390,7 +6431,17 @@ async function playById(id, autoplay = true) {
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
-    try { _scaricaDaSolaSeServe(t); } catch (e) { /* noop */ }
+    try {
+      if (/\.github\.io$/i.test(location.hostname)) {
+        /* Su GitHub lascia la connessione libera mentre parte lo
+           streaming: il download offline si avvia dopo, se gia' suona. */
+        setTimeout(() => {
+          if (currentId === id && audio && !audio.paused && !document.hidden) {
+            _scaricaDaSolaSeServe(t).catch(() => {});
+          }
+        }, 10000);
+      } else _scaricaDaSolaSeServe(t);
+    } catch (e) { /* noop */ }
     _applicaAudio();
     _segnaRigaAttiva();
     /* Se la pagina dei testi e' aperta, il play/pausa e' lo sfondo devono
@@ -6402,7 +6453,14 @@ async function playById(id, autoplay = true) {
     updateMediaSession();
     if (autoplay) await doPlay();
     /* tengo pronto il brano dopo, cosi' quando questo finisce parte subito */
-    if (autoplay) _preparaIlSuccessivo(queue.length ? queue[0] : idBranoA(nextIndex()));
+    if (autoplay && audio && !audio.paused) {
+      const prossimo = queue.length ? queue[0] : idBranoA(nextIndex());
+      if (/\.github\.io$/i.test(location.hostname)) {
+        setTimeout(() => {
+          if (currentId === id && audio && !audio.paused) _preparaIlSuccessivo(prossimo);
+        }, 9000);
+      } else _preparaIlSuccessivo(prossimo);
+    }
   }
 
   /* Il brano in una certa posizione, ma SENZA far esplodere niente.
@@ -6620,8 +6678,12 @@ function playNext() {
   }
 
   async function togglePlay() {
-    if (!currentId && tracks.length) await playById(tracks[0].id);
-    /* l'utente preme play quando e' fermo, e pause quando sta suonando */
+    if (!currentId && tracks.length) {
+      /* Il primo tocco avvia gia' playById: NON mettere in pausa
+         automaticamente il brano appena e' riuscito a partire. */
+      await playById(tracks[0].id);
+      return;
+    }
     if (audio.paused) _riproduciVolontaria();
     else _pausaVolontaria();
   }
@@ -7611,7 +7673,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.441 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.442 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
