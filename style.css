@@ -3152,3 +3152,101 @@ background:linear-gradient(120deg,rgba(114,62,196,.4),rgba(50,94,170,.18));
 color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .cloud-btn:disabled{opacity:.55}
 .cloud-status{padding:12px;background:rgba(255,255,255,.06);border-radius:12px;overflow-wrap:anywhere}
+
+
+/* v6.469 — Menu laterale: sezioni essenziali, strumenti avanzati richiudibili. */
+.menu-altro {
+  display:flex;
+  flex-direction:column;
+  width:min(92vw,390px);
+  height:100dvh;
+  max-height:100dvh;
+  padding:0;
+  overflow:hidden;
+  background:linear-gradient(155deg,#1b1928 0%,#111019 68%,#0d0d14 100%);
+  box-shadow:-24px 0 70px rgba(0,0,0,.64);
+  border-left:1px solid rgba(179,144,255,.18);
+  color:#f4f2fa;
+}
+.menu-altro::before { content:none; display:none; }
+.menu-altro-top {
+  flex:0 0 auto;
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + 26px) 22px 21px;
+  border-bottom:1px solid rgba(255,255,255,.075);
+  background:radial-gradient(ellipse at 100% 0,rgba(168,96,255,.13),transparent 65%);
+}
+.menu-altro-eyebrow {
+  display:block; margin-bottom:7px; color:#ba96ff;
+  font-size:10px; letter-spacing:.18em; font-weight:800;
+}
+.menu-altro-top h2 {margin:0; font-size:23px;line-height:1.1;font-weight:850;letter-spacing:-.6px;}
+.menu-altro-top p {font-size:12px;line-height:1.45;color:#aaa7ba;margin:9px 0 0;}
+.menu-altro-close {
+  flex:0 0 36px; display:grid;place-items:center; width:36px;height:36px;
+  border:1px solid rgba(255,255,255,.13);border-radius:12px;
+  background:rgba(255,255,255,.06);color:#eae6f4;font-size:25px;
+  cursor:pointer;transition:background .18s ease;
+}
+.menu-altro-close:hover {background:rgba(255,255,255,.12);}
+.menu-altro-scroll {
+  flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding:20px 16px calc(26px + env(safe-area-inset-bottom));
+}
+.menu-altro-scroll::-webkit-scrollbar {width:5px;}
+.menu-altro-scroll::-webkit-scrollbar-thumb {background:rgba(180,159,213,.3);border-radius:8px;}
+.menu-altro-gruppo {margin:0 0 22px;padding:0;}
+.menu-altro-sezione {
+  margin:0 7px 10px;color:#9993af;font-size:10px;letter-spacing:.15em;
+  font-weight:850;
+}
+.menu-altro .menu-altro-voce {
+  min-height:47px;margin:0 0 6px;padding:10px 12px;
+  display:flex;align-items:center;gap:11px;
+  border:1px solid rgba(255,255,255,.06);border-radius:12px;
+  background:rgba(255,255,255,.035);box-shadow:none;
+  color:#efedf5;font-size:13.5px;font-weight:650;
+  transition:border-color .16s ease,background .16s ease,transform .16s ease;
+}
+.menu-altro .menu-altro-voce:hover {
+  background:rgba(177,115,255,.10);border-color:rgba(190,150,255,.25);
+}
+.menu-altro .menu-altro-voce svg {width:19px;height:19px;color:#ae86f6;opacity:1;}
+.menu-altro .menu-altro-voce .voce-testo {flex:1;min-width:0;line-height:1.3;}
+.menu-altro .menu-altro-voce small {font-weight:450;color:#b7a9cf;margin-top:3px;}
+.menu-altro .menu-altro-primary {
+  background:linear-gradient(105deg,rgba(150,87,248,.32),rgba(99,83,198,.15));
+  border-color:rgba(178,127,255,.32);
+  min-height:61px;
+}
+.menu-altro .menu-altro-primary svg {width:22px;height:22px;color:#e1c8ff;}
+.menu-altro-advanced {
+  margin-top:5px;border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;background:rgba(255,255,255,.025);overflow:hidden;
+}
+.menu-altro-advanced summary {
+  list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+  color:#c7c0d7;font-size:13.5px;font-weight:700;padding:17px 16px;
+}
+.menu-altro-advanced summary::-webkit-details-marker{display:none;}
+.menu-altro-advanced summary svg {width:18px;height:18px;transition:transform .2s ease;color:#a792c7;}
+.menu-altro-advanced[open] summary svg {transform:rotate(180deg);}
+.menu-altro-advanced[open] summary {border-bottom:1px solid rgba(255,255,255,.08);}
+.menu-altro-advanced-body {padding:10px;}
+.menu-altro-advanced-body .menu-altro-voce {font-weight:550;}
+.menu-altro-close:focus-visible,.menu-altro-advanced summary:focus-visible {
+  outline:2px solid #bf90ff;outline-offset:-2px;
+}
+.menu-altro-velo {background:rgba(3,2,8,.7);backdrop-filter:blur(5px);}
+@media (max-width:420px) {
+  .menu-altro {width:min(94vw,370px);}
+  .menu-altro-top {padding-left:18px;padding-right:17px;}
+  .menu-altro-scroll {padding-left:12px;padding-right:12px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .menu-altro-close,.menu-altro-advanced summary svg {transition:none;}
+}
