@@ -1,4 +1,4 @@
-param([string]$Root = "")
+param([string]$Root = "", [string]$SourceRef = "main")
 $ErrorActionPreference = "Stop"
 
 # Aggiorna il codice dalla versione comune e mantiene anche le canzoni
@@ -39,7 +39,8 @@ function Get-TrackEntries([string]$Source) {
     return $Items.ToArray()
 }
 
-$Base = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main"
+if ($SourceRef -notmatch "^(main|[a-f0-9]{40})$") { throw "SourceRef non valido" }
+$Base = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/$SourceRef"
 $Files = @("index.html", "app.js", "fuoco.js", "style.css", "sw.js", "versione.json", "karaoke-index.json", "karaoke-scan-state.json")
 $Stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $Stage = Join-Path $Root (".musicbox-update-" + $Stamp)
