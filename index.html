@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6449" />
+  <link rel="stylesheet" href="style.css?v=6450" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -696,7 +696,7 @@
           <span class="fab-option-icon" aria-hidden="true">▶</span>
           <span class="fab-option-content"><strong>Link YouTube</strong>
             <small>Copia il link di un video e aggiungilo</small>
-            <span class="fab-option-note">Serve il programma sul PC, anche per la coda</span>
+            <span class="fab-option-note">Funziona online tramite GitHub, anche con il PC spento</span>
           </span>
         </button>
         <button class="fab-option" id="fabSpotify" type="button">
@@ -710,6 +710,33 @@
       <div class="fab-sheet-bottom">
         <button class="fab-sheet-minor" id="fabCercaTitolo" type="button">⌕ Cerca fra i brani che ho già</button>
         <button class="fab-sheet-minor" id="fabGuide" type="button">? Come funziona e come pubblicare online</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-overlay" id="youtubeOnlinePanel" hidden>
+    <div class="profile-card" role="dialog" aria-modal="true" aria-label="Importa YouTube senza PC">
+      <div class="import-head">
+        <div class="import-head-info">
+          <p class="import-title">Aggiungi da YouTube</p>
+          <p class="import-sub">Da telefono, con il PC spento</p>
+        </div>
+        <button id="ytOnlineClose" class="import-close" type="button" aria-label="Chiudi">×</button>
+      </div>
+      <div class="profile-body cloud-body">
+        <p>Incolla il link del video. Il lavoro viene eseguito online tramite GitHub Actions e il brano viene pubblicato nel profilo <strong id="ytOnlineProfile">Ste</strong>.</p>
+        <label for="ytOnlineUrl">Link YouTube</label>
+        <input class="edit-input" id="ytOnlineUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://youtu.be/..." />
+        <button class="btn-ghost" id="ytOnlinePaste" type="button">Incolla dagli appunti</button>
+        <label for="ytOnlineName">Nome (facoltativo)</label>
+        <input class="edit-input" id="ytOnlineName" type="text" autocomplete="off" placeholder="Artista - Titolo (se lo conosci)" />
+        <label style="display:flex;align-items:flex-start;gap:10px;line-height:1.5">
+          <input id="ytOnlineRights" type="checkbox" style="margin-top:4px" />
+          <span>Confermo di avere il diritto di importare questo audio.</span>
+        </label>
+        <button class="btn-main" id="ytOnlineGo" type="button">Continua su GitHub</button>
+        <p id="ytOnlineHint" class="step-hint" role="status">Su GitHub premi «Submit new issue» per avviare l'importazione. Devi essere collegato al tuo account GitHub. Non serve accendere il PC.</p>
+        <p class="step-hint">Il download può non riuscire se il video è protetto, richiede l'accesso o YouTube blocca il server. I video non autorizzati non devono essere importati.</p>
       </div>
     </div>
   </div>
@@ -731,7 +758,7 @@
         <button id="cloudSave" class="cloud-btn" type="button">Salva la chiave</button>
         <p id="cloudStatus" role="status" class="cloud-status"></p>
         <button id="cloudRetry" class="cloud-btn" type="button">Pubblica ora i file rimasti sul telefono</button>
-        <p>Per convertire un link YouTube direttamente online senza PC occorre ancora un servizio di conversione cloud dedicato: questo pannello pubblica file audio già pronti.</p>
+        <p>Per i link YouTube usa «+ → Link YouTube»: l’importazione avviene su GitHub, senza PC. Questo pannello pubblica i file audio che hai già sul telefono.</p>
       </div>
     </div>
   </div>
@@ -1201,7 +1228,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6449"></script>
-<script src="app.js?v=6449"></script>
+<script src="fuoco.js?v=6450"></script>
+<script src="app.js?v=6450"></script>
 </body>
 </html>
