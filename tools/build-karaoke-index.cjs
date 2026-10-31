@@ -74,7 +74,7 @@ async function main(){
   const start=app.indexOf(p),end=app.indexOf("];",start);
   if(start<0||end<start)throw Error("Catalogo non trovato");
   const catalog=vm.runInNewContext("["+app.slice(start+p.length,end)+"]",{}, {timeout:5000});
-  if(catalog.length!==1072)throw Error("Numero brani cambiato: "+catalog.length);
+  if(catalog.length<1072)throw Error("Catalogo incompleto: "+catalog.length);
   const known=JSON.parse(await fs.readFile("lyrics.json","utf8"));
   const indexFile="karaoke-index.json";
   let index={};
