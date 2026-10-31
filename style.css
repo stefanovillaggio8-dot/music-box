@@ -3271,3 +3271,27 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media(max-width:420px) {
   .queue-auto-tag {font-size:10px;padding:4px 7px;}
 }
+
+/* v6.475: badge coda automatico sempre leggibile sopra l'icona. */
+#btnQueue { position: relative; overflow: visible; }
+#btnQueue #queueBadge:not([hidden]) {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  z-index: 3;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 1px solid var(--bg, #101016);
+  color: #fff;
+  opacity: 1;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 2px 7px rgba(0,0,0,.35);
+}
