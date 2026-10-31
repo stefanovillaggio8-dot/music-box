@@ -3309,3 +3309,15 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .lyr-traduzione {display:block;margin-top:5px;font-size:.64em;line-height:1.4;font-weight:500;color:#d6bbff;opacity:.9;}
 .lyrics-body .lyr-line.on .lyr-traduzione {opacity:1;color:#fff;}
 @media(max-width:430px){.lyrics-head{flex-wrap:wrap;}.lyrics-translate-actions{order:3;width:100%;justify-content:flex-start;margin-top:7px;}.queue-auto-tag{display:none;}}
+
+/* v6.476: stanza musica privata a due partecipanti. */
+.stanza-card{max-width:530px;width:min(94vw,530px);margin:auto;max-height:87dvh;overflow-y:auto;}
+.stanza-card .import-body{padding:16px 20px 24px;}
+.stanza-buttons{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0;}
+.stanza-buttons button{flex:1 1 120px;min-height:42px;padding:9px 12px;border-radius:11px;
+  border:1px solid rgba(177,123,255,.3);background:rgba(124,80,216,.16);color:#eee2ff;
+  font-size:13px;font-weight:750;cursor:pointer;}
+.stanza-buttons button:first-child{background:linear-gradient(135deg,#7044c3,#4d37a2);color:white;}
+.stanza-buttons button[hidden]{display:none;}
+.stanza-buttons button:disabled{opacity:.45;cursor:wait;}
+#stanzaStato{padding:10px 12px;border-radius:12px;background:rgba(183,139,250,.09);word-break:break-word;}
