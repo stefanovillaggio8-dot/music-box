@@ -1,21 +1,5 @@
 [
  {
-  "t": 1793406437296,
-  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
- },
- {
-  "t": 1793406437363,
-  "r": "SPOTIFY: [v6.432] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793406437381,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793406437632,
-  "r": "SPOTIFY: [v6.432] il worker aveva il permesso pronto: lo prendo"
- },
- {
   "t": 1793406437511,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
  },
@@ -158,5 +142,21 @@
  {
   "t": 1793406492286,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793406492389,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793406494026,
+  "r": "suono: originale b-track-670"
+ },
+ {
+  "t": 1793406494028,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da stefanovillaggio8-dot.github.io"
+ },
+ {
+  "t": 1793406498011,
+  "r": "ENTRO: stato dal sito, nascosti -1"
  }
 ]
