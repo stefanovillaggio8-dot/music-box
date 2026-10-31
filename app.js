@@ -11511,6 +11511,20 @@ async function _attivaPalestraMusicBox(avvia) {
   render();
   toast("Gym caricata. Tocca un brano per avviare l'audio.",5000);
 }
+/* Apertura diretta dalla Palestra: seleziona Gym senza avviare audio
+   involontariamente. iOS richiede un gesto esplicito per il Play. */
+if (new URLSearchParams(location.search).get("gym") === "1") {
+  window.addEventListener("load", () => {
+    let tentativi = 0;
+    const timer = setInterval(async () => {
+      if (++tentativi > 12) { clearInterval(timer); return; }
+      if (!tracks || !tracks.length) return;
+      clearInterval(timer);
+      try { await _attivaPalestraMusicBox(false); }
+      catch (_) { /* il pulsante Gym resta utilizzabile */ }
+    }, 900);
+  }, { once: true });
+}
 $("btnModalitaGym").addEventListener("click", () => {
   _chiudiAltro();
   _attivaPalestraMusicBox(true).catch(e => toast("Gym: "+String(e.message||e)));
