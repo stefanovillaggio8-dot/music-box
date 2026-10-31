@@ -38,7 +38,7 @@ export function parseMusicMetadata(rawTitle,rawChannel=""){
 export function mergeMusicMetadata(requested,videoTitle,channel=""){
   const requestedParsed=parseMusicMetadata(requested);
   const observed=parseMusicMetadata(videoTitle,channel);
-  if(observed.confident) return observed;
   if(requestedParsed.confident)return requestedParsed;
+  if(observed.confident) return observed;
   return observed.title?observed:requestedParsed;
 }
