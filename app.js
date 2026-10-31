@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.460";
+  const APP_VERSION = "6.461";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12396,9 +12396,11 @@ function _nomePerIlBrano(link, suggerito) {
     const url = $("ytOnlineUrl"), nome = $("ytOnlineName");
     if (url) url.value = "";
     if (nome) nome.value = String(suggerito || "").slice(0, 160);
-    $("ytOnlineRights").checked = false;
+    $("ytOnlineRights").checked = LS.get("mb.youtube.autoRightsConsent",false)===true;
     $("ytOnlineProfile").textContent = String(profile || DEFAULT_PROFILE);
-    $("ytOnlineHint").textContent = "Incolla il link, conferma i diritti e premi Aggiungi. Nessun accesso a GitHub.";
+    $("ytOnlineHint").textContent = $("ytOnlineRights").checked
+      ? "Incolla un link: richiesta automatica al cloud, senza clic aggiuntivi."
+      : "Conferma i diritti sui contenuti che importerai: poi incolli e parte automaticamente.";
     box.hidden = false;
     syncNoScroll();
     try { _ytShowRecent(); _ytCheckPending(); _ytReloadLinks(); } catch (_) {}
@@ -12421,7 +12423,9 @@ function _nomePerIlBrano(link, suggerito) {
       const link = await navigator.clipboard.readText();
       $("ytOnlineUrl").value = String(link || "").trim();
       _ytProgrammaRicercaLink();
-      $("ytOnlineHint").textContent = "Link incollato: puoi continuare.";
+      $("ytOnlineHint").textContent = $("ytOnlineRights").checked
+        ? "Link ricevuto: controllo duplicati e invio sul cloud."
+        : "Link ricevuto: conferma i diritti per attivare l'importazione automatica.";
     } catch (_) { $("ytOnlineHint").textContent = "Incolla tenendo premuto nel campo del link."; }
   });
   const MB_YT_CLOUD = "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue";
@@ -12488,18 +12492,38 @@ function _nomePerIlBrano(link, suggerito) {
     if(titleInput && !titleInput.value.trim()) {
       titleInput.value=meta.title;
       $("ytOnlineHint").textContent="Titolo riconosciuto: "+meta.title+
-        ". Non c'e' ancora l'MP3 in libreria. Conferma i diritti e premi Aggiungi per provare il servizio cloud.";
+        ". Non c'e' ancora l'MP3 in libreria. Se hai confermato i diritti, il server prova a importare automaticamente.";
     }
     return false;
   }
+  let _ytAutoSubmitting=false;
+  const _ytAutoSent=new Set();
   function _ytProgrammaRicercaLink() {
     ++_ytProbeSequence;
     clearTimeout(_ytProbeTimeout);
     const link=_videoYouTubePerCloud($("ytOnlineUrl").value);
-    if(link)_ytProbeTimeout=setTimeout(()=>_ytVerificaLinkPerLibreria(link),300);
+    if(!link)return;
+    const owner=String(profile||DEFAULT_PROFILE),token=_ytProbeSequence;
+    _ytProbeTimeout=setTimeout(async()=>{
+      const duplicate=await _ytVerificaLinkPerLibreria(link);
+      if(duplicate || $("youtubeOnlinePanel").hidden || _ytProbeSequence!==token ||
+         String(profile||DEFAULT_PROFILE)!==owner ||
+         _videoYouTubePerCloud($("ytOnlineUrl").value)!==link)return;
+      if(!$("ytOnlineRights").checked){
+        $("ytOnlineHint").textContent="Conferma i diritti sui tuoi contenuti una volta: i prossimi link partono da soli.";
+        return;
+      }
+      await _ytInviaLink();
+    },650);
   }
   $("ytOnlineUrl").addEventListener("input",_ytProgrammaRicercaLink);
   $("ytOnlineUrl").addEventListener("change",_ytProgrammaRicercaLink);
+  $("ytOnlineRights").addEventListener("change",()=>{
+    const consent=$("ytOnlineRights").checked===true;
+    LS.set("mb.youtube.autoRightsConsent",consent);
+    if(consent)_ytProgrammaRicercaLink();
+    else $("ytOnlineHint").textContent="Importazione automatica disattivata.";
+  });
 
 
   let _ytLinksFetchId=0;
@@ -12659,19 +12683,33 @@ function _nomePerIlBrano(link, suggerito) {
       _ytShowRecent();
     } finally { b.disabled=false; }
   });
-  $("ytOnlineGo").addEventListener("click",async () => {
+  async function _ytInviaLink() {
+    if(_ytAutoSubmitting)return;
+    _ytAutoSubmitting=true;
     const url=_videoYouTubePerCloud($("ytOnlineUrl").value);
-    if(!url){$("ytOnlineHint").textContent="Incolla il link di un singolo video YouTube.";return;}
+    if(!url){
+      $("ytOnlineHint").textContent="Incolla il link di un singolo video YouTube.";
+      _ytAutoSubmitting=false;return;
+    }
     if(!$("ytOnlineRights").checked){
       $("ytOnlineHint").textContent="Per aggiungere questo audio devi confermare di avere i diritti.";
-      return;
+      _ytAutoSubmitting=false;return;
     }
+    const selected=String(profile||DEFAULT_PROFILE);
+    const videoId=new URL(url).searchParams.get("v");
+    const identity=selected+":"+videoId;
+    const entries=LS.get("mb.youtube.links."+selected,[]);
+    if(_ytAutoSent.has(identity) || (Array.isArray(entries) && entries.some(x=>
+      x.video_id===videoId && ["queued","running","completed"].includes(x.status)))){
+      $("ytOnlineHint").textContent="Link gia' presente o in elaborazione: nessun duplicato.";
+      _ytAutoSubmitting=false;return;
+    }
+    _ytAutoSent.add(identity);
     const btn=$("ytOnlineGo");
     btn.disabled=true;
     $("ytOnlineHint").textContent="Invio la richiesta al servizio online...";
     try {
       const title=String($("ytOnlineName").value||"").trim().slice(0,160);
-      const selected=String(profile||DEFAULT_PROFILE);
       const resp=await fetch(MB_YT_CLOUD,{
         method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({action:"create",link:url,profile:selected,title,rights:true}),
@@ -12705,11 +12743,12 @@ function _nomePerIlBrano(link, suggerito) {
       toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
       $("ytOnlineUrl").value="";
       $("ytOnlineName").value="";
-      $("ytOnlineRights").checked=false;
     }catch(error){
+      _ytAutoSent.delete(identity);
       $("ytOnlineHint").textContent="Problema: "+String(error&&error.message||error).slice(0,160)+". Non ho perso nessun brano.";
-    }finally{btn.disabled=false;}
-  });
+    }finally{btn.disabled=false;_ytAutoSubmitting=false;}
+  }
+  $("ytOnlineGo").addEventListener("click",_ytInviaLink);
   // Lo stato si aggiorna anche dopo aver riaperto la PWA dallo stesso telefono.
   setInterval(_ytCheckPending,15000);
   // Nuovi MP3 pubblicati da un altro telefono/account devono arrivare
