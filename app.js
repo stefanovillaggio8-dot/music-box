@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.436";
+  const APP_VERSION = "6.437";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7495,8 +7495,14 @@ if (r.ok && j && j.ok) {
 
   /* LRCLIB: i testi LRC con timestamp hanno precedenza sui testi normali.
      Endpoint aperto con CORS; non si inventano mai parole o timestamp. */
-  let _lrclibNonPrimaDi = 0;
+  /* Memorizza l'attesa anche se la pagina viene ricaricata.
+     I 503 non si risolvono aprendo altre connessioni al provider. */
+  let _lrclibNonPrimaDi = Math.max(0, Number(LS.get("mb.lrclibAttesaFino", 0)) || 0);
   let _lrclibErroriTemporanei = 0;
+  function _attendiLrclib(ms) {
+    _lrclibNonPrimaDi = Math.max(_lrclibNonPrimaDi, Date.now() + ms);
+    LS.set("mb.lrclibAttesaFino", _lrclibNonPrimaDi);
+  }
   function _gestisciPausaLrclib(response) {
     if (!response) return false;
     if (response.ok) {
@@ -7513,8 +7519,23 @@ if (r.ok && j && j.ok) {
     const base = response.status === 429 ? 30 : 60;
     const attesa = Math.min(900, Math.max(dalServer, base * Math.pow(2, Math.min(4, _lrclibErroriTemporanei))));
     _lrclibErroriTemporanei = Math.min(5, _lrclibErroriTemporanei + 1);
-    _lrclibNonPrimaDi = Math.max(_lrclibNonPrimaDi, Date.now() + attesa * 1000);
+    _attendiLrclib(attesa * 1000);
     return true;
+  }
+  /* Un 404 di lyrics.ovh e' un testo assente, non un crash dell'app.
+     Ricorda per 24 ore gli esiti negativi e preserva i testi gia' salvati. */
+  const _lyricsOvh404 = LS.get("mb.lyricsOvh404", {}) || {};
+  function _lyricsOvhMancante(chiave) {
+    return Number(_lyricsOvh404[chiave] || 0) > Date.now();
+  }
+  function _segnaLyricsOvhMancante(chiave) {
+    _lyricsOvh404[chiave] = Date.now() + 24 * 3600000;
+    const keys = Object.keys(_lyricsOvh404);
+    if (keys.length > 500) {
+      keys.sort((a, b) => Number(_lyricsOvh404[a] || 0) - Number(_lyricsOvh404[b] || 0));
+      for (const k of keys.slice(0, keys.length - 350)) delete _lyricsOvh404[k];
+    }
+    LS.set("mb.lyricsOvh404", _lyricsOvh404);
   }
   async function findLyrics(artist, title, options = {}) {
     const name = stripVariants(title);
@@ -7555,7 +7576,10 @@ if (r.ok && j && j.ok) {
               synced: j.syncedLyrics, source: "LRCLIB (karaoke identificato)" };
           }
         }
-      } catch (e) { /* Fallback alla ricerca per titolo e artista. */ }
+      } catch (e) {
+        /* Un 503 senza CORS puo' manifestarsi come TypeError. */
+        _attendiLrclib(60000);
+      }
     }
     if (Date.now() >= _lrclibNonPrimaDi) {
       const endpoint = "https://lrclib.net";
@@ -7567,7 +7591,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.436 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.437 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -7582,16 +7606,25 @@ if (r.ok && j && j.ok) {
             return { text: String(plain || "").trim(), synced: sync,
               source: sync ? "LRCLIB (karaoke sincronizzato)" : "LRCLIB" };
           }
-        } catch (e) { /* Provider temporaneamente non raggiungibile. */ }
+        } catch (e) {
+          _attendiLrclib(60000);
+          break;
+        }
       }
     }
     if (options.syncedOnly) return null;
     /* Un testo non sincronizzato e' utile solo se non esiste gia'
        una versione karaoke affidabile. */
+    const chiaveLyricsOvh = normKey(artist || "Unknown") + "|" + normKey(name);
+    if (_lyricsOvhMancante(chiaveLyricsOvh)) return null;
     try {
       const url = "https://api.lyrics.ovh/v1/" +
         encodeURIComponent(artist || "Unknown") + "/" + encodeURIComponent(name);
       const r = await fetchConScadenza(url, 12000);
+      if (r.status === 404) {
+        _segnaLyricsOvhMancante(chiaveLyricsOvh);
+        return null;
+      }
       if (r.ok) {
         const j = await r.json();
         if (j && typeof j.lyrics === "string" && j.lyrics.length > 120 &&
@@ -15533,7 +15566,7 @@ async function _spotifyCompletaAccesso(code, stato) {
   }
   /* Non ripetere chiamate con un token che Spotify ha appena rifiutato. */
   const _spotifyTokenRifiutati = new Set();
-  async function _spotifyApi(percorso) {
+  async function _spotifyApi(percorso, giaRinnovato = false) {
       let token = _spotifyToken();
       if (!token) {
         /* Il permesso e' scaduto, ma quello lungo c'e': me lo rinnova e
@@ -15548,6 +15581,15 @@ async function _spotifyCompletaAccesso(code, stato) {
       const r = await fetch("https://api.spotify.com/v1" + percorso, {
         headers: { Authorization: "Bearer " + token }
       });
+      if (r.status === 401 && !giaRinnovato) {
+        /* Il refresh token puo' essere ancora valido anche se l'access token e' 401.
+           Un unico rinnovo e' sicuro; mai un ciclo di tentativi infiniti. */
+        _spotifyTokenRifiutati.add(token);
+        if (await _spotifyRinnova()) {
+          const nuovo = _spotifyToken();
+          if (nuovo && nuovo !== token) return _spotifyApi(percorso, true);
+        }
+      }
       if (r.status === 401 || r.status === 403) {
         /* Ste: "non sono riuscito a leggere le tue playlist" e non
            compariva piu' "Accedi con Spotify".
@@ -16212,6 +16254,17 @@ async function _spotifyRientro() {
     } catch (e) { /* noop */ }
   }
     if (!code && !errore) {
+    /* Una normale apertura della pagina NON e' un ritorno OAuth.
+       Non prendere dal Worker un token vecchio e non fare GET /me/playlists
+       finche' l'utente non avvia un nuovo accesso. */
+    let richiestaRecente = false;
+    try {
+      const quando = Number(sessionStorage.getItem("mb.spotifyScambioQuando") || 0);
+      richiestaRecente = quando > 0 && Date.now() - quando < 120000 &&
+        (!!sessionStorage.getItem("mb.spotifyScambio") ||
+         !!sessionStorage.getItem("mb.spotifyBiglietto"));
+    } catch (e) { }
+    if (!richiestaRecente) return;
     _spotifyTraccia("ritorno: nessun codice (indirimento: [" + String((window.location && window.location.search) || "").slice(0, 70) + "], memoria: [" + String(sessionStorage.getItem("mb.spotifyRitorno") || "").slice(0, 40) + "])");
     /* Ste: "appena premo apri spotify mi spunta di dare il consenso, poi si
        apre music box ma c'e' scritto che l'accesso e' scaduto".
