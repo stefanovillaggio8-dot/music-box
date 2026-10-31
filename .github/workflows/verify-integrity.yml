@@ -18,6 +18,7 @@ on:
       - tools/test-audio-routing.cjs
       - tools/test-stats-profiles.cjs
       - tools/test-favorites-and-listening.cjs
+      - tools/test-recap-annuale.cjs
       - tools/aggiorna-copia-locale.ps1
       - tools/ripara-musicbox-pc.ps1
       - tools/serve-private-musicbox.cjs
@@ -86,3 +87,5 @@ jobs:
         run: node tools/test-stats-profiles.cjs
       - name: Verifica preferiti persistenti, pause e seek
         run: node tools/test-favorites-and-listening.cjs
+      - name: Verifica recap 12 mesi, totale annuale e reset selettivo
+        run: node tools/test-recap-annuale.cjs

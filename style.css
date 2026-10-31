@@ -3002,3 +3002,53 @@ input, textarea, select { accent-color: var(--accent); }
   .stat-item { align-items:flex-start; flex-direction:column; gap:5px; }
   .stat-item b { white-space:normal; text-align:left; }
 }
+
+
+/* Music Box Recap: design proprio, mobile-first e scroll indipendente. */
+.recap-open {display:block;width:100%;margin:0 0 16px;padding:14px;border:1px solid rgba(176,107,255,.5);
+  border-radius:14px;background:linear-gradient(100deg,rgba(176,107,255,.24),rgba(79,195,255,.10));
+  color:#f4eaff;font-size:15px;font-weight:800;cursor:pointer;text-align:center}
+.recap-card {max-width:710px}
+.recap-card .profile-body {max-height:calc(100dvh - 130px);overflow-y:auto;padding-bottom:28px}
+.recap-year-label {display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;
+  font-size:13px;color:#c5b9de;font-weight:700}
+#recapSelectYear {background:#242032;border:1px solid #68517e;border-radius:10px;
+  color:#fff;padding:9px 12px;font-size:15px;font-weight:750}
+.recap-hero {position:relative;overflow:hidden;padding:30px 22px;border-radius:22px;
+  background:radial-gradient(ellipse at 90% 5%,rgba(156,109,255,.82),transparent 56%),
+    linear-gradient(142deg,#29114e,#14192e 66%,#0b2730);border:1px solid #7652a7}
+.recap-eyebrow {letter-spacing:2.5px;color:#d8b7fc;font-size:11px;font-weight:900}
+.recap-hero-name {font-size:clamp(21px,5vw,36px);font-weight:900;letter-spacing:-.8px;
+  line-height:1.15;margin:14px 0 20px}
+.recap-hero-total {font-size:clamp(34px,8vw,64px);font-weight:950;line-height:1.15}
+.recap-hero-total small {font-size:.32em;font-weight:750;color:#ddd1f3}
+.recap-hero>p {color:#ded4ec;margin:7px 0 16px;font-size:13px}
+.recap-pills {display:flex;gap:7px;flex-wrap:wrap}
+.recap-pills span {padding:7px 11px;border-radius:99px;background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);font-size:11px;font-weight:700}
+.recap-nota {padding:11px 13px;margin:12px 0;border:1px solid rgba(79,195,255,.19);
+  background:rgba(79,195,255,.07);border-radius:12px;font-size:12px;line-height:1.5;color:#b8cddc}
+.recap-box {margin:18px 0;padding:18px 15px;border:1px solid #3d344e;border-radius:18px;background:#211c2d}
+.recap-box h3,.recap-mesi-titolo {font-size:21px;font-weight:900;margin:0 0 12px}
+.recap-box h4,.recap-mese h4 {font-size:12px;letter-spacing:.5px;text-transform:uppercase;
+  margin:18px 0 8px;color:#c4aff5}
+.recap-classifica {padding:0;list-style:none}
+.recap-classifica li {display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);
+  min-height:53px;padding:9px 0}
+.recap-classifica li:last-child {border-bottom:0}
+.recap-num {font-size:21px;font-weight:900;color:#a889ef;min-width:24px}
+.recap-brano {display:block;flex:1;min-width:0}
+.recap-brano strong,.recap-brano small {display:block;word-break:break-word}
+.recap-brano strong {font-size:13px;font-weight:750}
+.recap-brano small {font-size:11px;color:#aaa3b9;margin-top:4px}
+.recap-tempo {font-size:11px;color:#b7d4dc;text-align:right;flex-shrink:0}
+.recap-record {margin-top:15px;color:#d9c9ee;font-size:13px}
+.recap-mesi {display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.recap-mese {background:#1c1a29;border:1px solid #3c3650;border-radius:16px;padding:16px;min-width:0}
+.recap-mese-head {display:flex;align-items:center;justify-content:space-between;gap:10px}
+.recap-mese-head strong {font-size:17px;font-weight:850}
+.recap-mese-head span {color:#caaffc;font-size:13px;font-weight:750;text-align:right}
+.recap-mese>p {font-size:11px;color:#aaa3b9;margin-top:7px}
+.recap-vuoto,.recap-footer {font-size:12px;line-height:1.5;color:#aaa3b9}
+.recap-footer {margin:16px 3px}
+@media(max-width:500px) {.recap-mesi {grid-template-columns:1fr}.recap-hero {padding:26px 18px}}

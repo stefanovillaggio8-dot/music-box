@@ -1292,7 +1292,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.444";
+  const APP_VERSION = "6.445";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2424,8 +2424,8 @@ if (t) {
      di un brano. Se il brano torna col nome vero, il percorso e' inverso. */
   function _spostaStatistiche(titoloDa, artistaDa, titoloA, artistaA) {
     try {
-      const da = _chiaveBrano({ title: titoloDa, artist: artistaDa });
-      const a = _chiaveBrano({ title: titoloA, artist: artistaA });
+      const da = _chiaveStats({ title: titoloDa, artist: artistaDa });
+      const a = _chiaveStats({ title: titoloA, artist: artistaA });
       if (!da || !a || da === a) return;
       const st = statisticheProfilo();
       const vecchia = st[da];
@@ -2436,6 +2436,16 @@ if (t) {
       if (!nuova.t) { nuova.t = vecchia.t || ""; nuova.a = vecchia.a || ""; }
       st[a] = nuova;
       delete st[da];
+      /* Anche i mesi restano attaccati al nuovo titolo dell'utente. */
+      for (const k of Object.keys(st)) {
+        if (!k.startsWith("m:") || !k.endsWith("|" + da)) continue;
+        const destinazione = k.slice(0, -da.length) + a;
+        const precedente = st[destinazione] || {v:0,s:0};
+        const mosso = st[k] || {};
+        st[destinazione] = {v:(precedente.v||0)+(mosso.v||0),
+          s:(precedente.s||0)+(mosso.s||0),t:titoloA,a:artistaA};
+        delete st[k];
+      }
       _salvaStatistiche();
     } catch (e) { /* noop */ }
   }
@@ -2537,6 +2547,29 @@ if (t) {
    Conta quante volte e quanto tempo ho ascoltato ogni brano. I dati sono
    per profilo: le statistiche di Emanuele stanno separate da quelle di Ste,
    anche se la libreria e' la stessa. */
+  /* Il reset del 31/10/2026 riguarda SOLO Emanuele. Le vecchie chiavi
+     nel Worker possono ricomparire dopo la lettura remota: i nuovi ascolti
+     hanno un prefisso che le rende inconfrontabili coi numeri vecchi. */
+  const _EPOCH_EMANUELE = "e-reset-20261031|";
+  const _RESET_EMANUELE_ID = "2026-10-31-v1";
+  function _resetEmanueleSeNecessario() {
+    const st = profileState("Emanuele");
+    if (st.statsResetId === _RESET_EMANUELE_ID) return false;
+    writeProfileState("Emanuele", { stats: {}, statsResetId: _RESET_EMANUELE_ID });
+    return true;
+  }
+
+  function _chiaveStatVisibile(nome, chiave) {
+    if (String(chiave).startsWith("m:")) return false;
+    if (nome === "Emanuele") return String(chiave).startsWith(_EPOCH_EMANUELE);
+    return !String(chiave).startsWith(_EPOCH_EMANUELE);
+  }
+
+  function _chiaveMensile(chiave, adesso) {
+    return "m:" + adesso.getFullYear() + "-" +
+      String(adesso.getMonth() + 1).padStart(2, "0") + "|" + chiave;
+  }
+
   function statisticheProfilo(nome) {
     const st = profileState(nome || profile);
     if (!st.stats || typeof st.stats !== "object") st.stats = {};
@@ -2544,7 +2577,8 @@ if (t) {
   }
 
   function _chiaveStats(t) {
-    return _chiaveBrano(t);
+    const id = _chiaveBrano(t);
+    return profile === "Emanuele" ? _EPOCH_EMANUELE + id : id;
   }
 
   let _statsUltimoTempo = 0;
@@ -2568,6 +2602,12 @@ if (nuovo) r.v = (r.v || 0) + 1;
       r.t = t.title || "";
       r.a = t.artist || "";
       st[chiave] = r;
+      const meseKey = _chiaveMensile(chiave, new Date());
+      const mensile = st[meseKey] || {v:0,s:0,t:"",a:""};
+      if (nuovo) mensile.v += 1;
+      mensile.s += Math.max(0, Number(secondi) || 0);
+      mensile.t = r.t; mensile.a = r.a;
+      st[meseKey] = mensile;
       const ora = Date.now();
       if (ora - _statsUltimoSalvataggio > 15000) {
         _statsUltimoSalvataggio = ora;
@@ -2601,6 +2641,11 @@ function _unisciStatistiche(remote) {
         const copia = JSON.parse(JSON.stringify(profileState(nome) || {}));
         if (!copia.stats || typeof copia.stats !== "object") copia.stats = {};
         for (const k of Object.keys(arrivo)) {
+          /* La vecchia statistica di Emanuele e' stata azzerata.
+             Le chiavi storiche del Worker NON possono ripristinarla. */
+          if (nome === "Emanuele" &&
+              !(k.startsWith(_EPOCH_EMANUELE) ||
+                (k.startsWith("m:") && k.includes("|" + _EPOCH_EMANUELE)))) continue;
           const a = arrivo[k] || {};
           const b = copia.stats[k] || { v: 0, s: 0 };
           const v = Math.max(Number(b.v) || 0, Number(a.v) || 0);
@@ -2623,6 +2668,9 @@ function _unisciStatistiche(remote) {
       if (st && st.stats && typeof st.stats === "object" && Object.keys(st.stats).length) {
         fuori[nome] = {};
         for (const k of Object.keys(st.stats)) {
+          if (nome === "Emanuele" &&
+              !(k.startsWith(_EPOCH_EMANUELE) ||
+                (k.startsWith("m:") && k.includes("|" + _EPOCH_EMANUELE)))) continue;
           const r = st.stats[k] || {};
           fuori[nome][k] = { v: r.v || 0, s: r.s || 0, t: r.t || "", a: r.a || "" };
         }
@@ -2781,6 +2829,145 @@ function _salvaStatistiche() {
     return ore + (ore === 1 ? " ora" : " ore") + (min ? " e " + min + (min === 1 ? " minuto" : " minuti") : "");
   }
 
+
+  /* MUSIC BOX RECAP: dati mensili per profilo; anno completo e 12 mesi.
+     I mesi precedenti a questa funzione non sono deducibili dal totale
+     storico: mai inventare i numeri. */
+  function _riepilogoAnnoDaStats(stats, anno, nome) {
+    const mesi = Array.from({length:12}, (_,i) =>
+      ({numero:i+1,secondi:0,ascolti:0,brani:new Map(),artisti:new Map()}));
+    const tuttiBrani = new Map(), tuttiArtisti = new Map();
+    const aggiornamento = (mappa, id, t, a, s, v) => {
+      const r = mappa.get(id) || {titolo:t,artista:a,secondi:0,ascolti:0};
+      r.secondi += s; r.ascolti += v;
+      if (t) r.titolo = t;
+      if (a) r.artista = a;
+      mappa.set(id,r);
+    };
+    for (const [k,r] of Object.entries(stats || {})) {
+      const match = /^m:(\d{4})-(\d{2})\|(.+)$/.exec(k);
+      if (!match || Number(match[1]) !== anno) continue;
+      const indice = Number(match[2])-1, identificatore = match[3];
+      if (indice < 0 || indice >= 12) continue;
+      if (nome === "Emanuele" && !identificatore.startsWith(_EPOCH_EMANUELE)) continue;
+      const s = Math.max(0,Number(r.s)||0), v = Math.max(0,Number(r.v)||0);
+      if (!(s || v)) continue;
+      const t = String(r.t || "Brano senza titolo");
+      const a = String(r.a || "Artista sconosciuto");
+      const mese = mesi[indice];
+      mese.secondi += s; mese.ascolti += v;
+      aggiornamento(mese.brani,identificatore,t,a,s,v);
+      aggiornamento(mese.artisti,a,a,a,s,v);
+      aggiornamento(tuttiBrani,identificatore,t,a,s,v);
+      aggiornamento(tuttiArtisti,a,a,a,s,v);
+    }
+    const top = (mappa, limite=5) => [...mappa.values()]
+      .sort((a,b)=>b.secondi-a.secondi || b.ascolti-a.ascolti ||
+        a.titolo.localeCompare(b.titolo)).slice(0,limite);
+    const ogniMese = mesi.map(m=>({
+      numero:m.numero,secondi:m.secondi,ascolti:m.ascolti,
+      braniDistinti:m.brani.size,artistiDistinti:m.artisti.size,
+      topBrani:top(m.brani,3),topArtisti:top(m.artisti,2)
+    }));
+    const preferito = ogniMese.slice().sort((a,b)=>b.secondi-a.secondi)[0];
+    return {
+      anno, nome, mesi:ogniMese, secondi:ogniMese.reduce((sum,m)=>sum+m.secondi,0),
+      ascolti:ogniMese.reduce((sum,m)=>sum+m.ascolti,0),
+      braniDistinti:tuttiBrani.size,artistiDistinti:tuttiArtisti.size,
+      topBrani:top(tuttiBrani),topArtisti:top(tuttiArtisti),
+      mesePiuAscoltato:preferito && preferito.secondi>0?preferito:null
+    };
+  }
+
+  const _RECAP_MESI = ["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
+    "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+  function _sicuroRecap(t) {
+    return String(t == null ? "" : t).replace(/[&<>"']/g, c =>
+      ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function _recapTestoTop(arr, tipo) {
+    if (!arr.length) return '<p class="recap-vuoto">Nessun ascolto registrato.</p>';
+    return '<ol class="recap-classifica">' + arr.map((v,i) =>
+      '<li><span class="recap-num">'+(i+1)+'</span><span class="recap-brano">' +
+      '<strong>'+_sicuroRecap(v.titolo)+'</strong>'+
+      (tipo==="brano"?'<small>'+_sicuroRecap(v.artista)+'</small>':'')+
+      '</span><span class="recap-tempo">'+_tempoTesto(v.secondi)+'</span></li>').join("")+
+      '</ol>';
+  }
+  function _recapStatsDelProfilo(nome,anno) {
+    return _riepilogoAnnoDaStats(statisticheProfilo(nome),anno,nome);
+  }
+  function _renderRecap(anno) {
+    const annoAttuale = new Date().getFullYear();
+    const annoValido = Math.max(2026,Math.min(annoAttuale,Number(anno)||annoAttuale));
+    const d = _recapStatsDelProfilo(profile,annoValido);
+    const corpo = $("recapBody");
+    if (!corpo) return;
+    const inCorso = annoValido === annoAttuale;
+    $("recapSub").textContent = profile+" · "+annoValido+
+      (inCorso?" · anteprima in corso":" · il tuo anno musicale");
+    const ore = Math.floor(d.secondi/3600);
+    const minuti = Math.floor((d.secondi%3600)/60);
+    let html = '<section class="recap-hero">'+
+      '<div class="recap-eyebrow">MUSIC BOX · RECAP '+annoValido+'</div>'+
+      '<div class="recap-hero-name">'+_sicuroRecap(profile)+', questo è il tuo anno.</div>'+
+      '<div class="recap-hero-total">'+ore+'<small> ore</small> '+minuti+'<small> min</small></div>'+
+      '<p>Tempo totale di musica ascoltata '+(inCorso?"finora":"nell’anno")+'</p>'+
+      '<div class="recap-pills"><span>'+d.ascolti+' ascolti</span>'+
+      '<span>'+d.braniDistinti+' brani diversi</span>'+
+      '<span>'+d.artistiDistinti+' artisti</span></div></section>';
+    if (annoValido===2026)
+      html += '<p class="recap-nota">I dati divisi per mese iniziano con la versione di Music Box che introduce il recap (ottobre 2026). I mesi precedenti non sono misurabili retroattivamente.</p>';
+    if (!d.secondi && !d.ascolti)
+      html += '<p class="recap-nota">Non ci sono ancora ascolti mensili registrati per questo anno. L’app li raccoglierà da adesso in poi.</p>';
+    html += '<div class="recap-box"><h3>La colonna sonora dell’anno</h3>'+
+      '<h4>Top 5 canzoni</h4>'+_recapTestoTop(d.topBrani,"brano")+
+      '<h4>Top 5 artisti</h4>'+_recapTestoTop(d.topArtisti,"artista")+
+      (d.mesePiuAscoltato?'<p class="recap-record">Il tuo mese record: <b>'+
+        _RECAP_MESI[d.mesePiuAscoltato.numero-1]+'</b> · '+
+        _tempoTesto(d.mesePiuAscoltato.secondi)+'</p>':'')+'</div>';
+    html += '<h3 class="recap-mesi-titolo">Mese dopo mese</h3><div class="recap-mesi">';
+    for (const m of d.mesi) {
+      html += '<article class="recap-mese"><div class="recap-mese-head">'+
+        '<strong>'+_RECAP_MESI[m.numero-1]+'</strong>'+
+        '<span>'+_tempoTesto(m.secondi)+'</span></div>'+
+        '<p>'+m.ascolti+' ascolti · '+m.braniDistinti+' brani diversi</p>'+
+        (m.topBrani.length?'<h4>Più ascoltate</h4>'+_recapTestoTop(m.topBrani,"brano"):
+          '<p class="recap-vuoto">Nessun dato mensile disponibile.</p>')+
+        '</article>';
+    }
+    html+='</div><p class="recap-footer">Solo ascolto effettivo: pause e salti non si sommano. Il recap è separato per ogni profilo.</p>';
+    corpo.innerHTML = html;
+    const sel = $("recapSelectYear");
+    if (sel) {sel.innerHTML = Array.from({length:annoAttuale-2026+1},(_,i)=>2026+i)
+      .reverse().map(y=>'<option value="'+y+'">'+y+'</option>').join("");
+      sel.value = String(annoValido);}
+  }
+  function _apriRecap(anno) {
+    const el=$("recapPanel");
+    if (!el) return;
+    _renderRecap(anno);
+    el.hidden=false;
+    syncNoScroll();
+  }
+  function _chiudiRecap() {
+    const el=$("recapPanel");
+    if (el) el.hidden=true;
+    syncNoScroll();
+  }
+  function _mostraRecapAutomatico() {
+    const oggi=new Date();
+    if (oggi.getFullYear()<=2026) return;
+    const anno=oggi.getFullYear()-1;
+    const key="mb.recap.visto."+profile+"."+anno;
+    if (LS.get(key,false)) return;
+    const dati=_recapStatsDelProfilo(profile,anno);
+    if (!dati.secondi && !dati.ascolti) return;
+    if ($("recapPanel") && !$("recapPanel").hidden) return;
+    LS.set(key,true);
+    _apriRecap(anno);
+  }
+
   /* Le statistiche devono contare la libreria di OGNI profilo, non solo
      quella caricata adesso. tracks contiene unicamente la libreria aperta:
      consultarlo per Diego mentre si e' su Emanuele dava sempre 0 brani.
@@ -2808,6 +2995,7 @@ function _salvaStatistiche() {
     const perArtista = new Map();
     const perBrano = [];
     for (const k in stats) {
+      if (!_chiaveStatVisibile(nome, k)) continue;
       const r = stats[k] || {};
       volte += r.v || 0;
       secondi += r.s || 0;
@@ -2850,6 +3038,8 @@ function _salvaStatistiche() {
     if (!pannello) return;
     const n = _numeriProfilo(profile);
     $("statsSub").textContent = "Profilo " + profile;
+    const bRecap=$("btnApriRecap");
+    if (bRecap) bRecap.textContent="✦ Il mio Recap "+(new Date().getFullYear());
     let html = "";
     html += '<div class="stat-griglia">';
     html += _rigaStat(n.brani, n.brani === 1 ? "brano" : "brani");
@@ -3985,7 +4175,7 @@ const ORDINAMENTI = [
       if (!t) return { v: 0, s: 0 };
       const c = _chiaveStats(t);
       if (!c) return { v: 0, s: 0 };
-      const r = statisticheProfilo()[c];
+      const r = statisticheProfilo()[profile === "Emanuele" ? _EPOCH_EMANUELE + c : c];
       return { v: (r && r.v) || 0, s: (r && r.s) || 0 };
     } catch (e) { return { v: 0, s: 0 }; }
   }
@@ -7145,6 +7335,7 @@ if (!sceltaCopia) updateProfileButton();
       if (await _ripristinaPreferitiDB(profile)) st = loadProfileState();
       await loadLocalLyrics();
       await loadAll();
+      setTimeout(_mostraRecapAutomatico, 1500);
   /* niente: la finestra dei nascosti e' stata tolta */
       _segnaRigaAttiva();
       const last = st.last ? tracks.find((t) => t.id === st.last) : null;
@@ -7769,7 +7960,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.444 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.445 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -12279,6 +12470,10 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
     if (m && m.hidden) _apriAltro(); else _chiudiAltro();
   });
     $("statsClose").addEventListener("click", chiudiStatistiche);
+    $("btnApriRecap").addEventListener("click", () => _apriRecap(new Date().getFullYear()));
+    $("recapClose").addEventListener("click", _chiudiRecap);
+    $("recapPanel").addEventListener("click", e => {if(e.target===$("recapPanel")) _chiudiRecap();});
+    $("recapSelectYear").addEventListener("change", e => _renderRecap(Number(e.target.value)));
       $("statsPanel").addEventListener("click", (e) => {
       if (e.target === $("statsPanel")) chiudiStatistiche();
       });
@@ -14560,6 +14755,7 @@ for (const p of playlists) {
       setPlaybackState("playing");
       _diChe("prendo la sessione audio (i tasti delle cuffie tornano a me)");
     } catch (e) { /* noop */ }
+    _resetEmanueleSeNecessario();
     profile = LS.get("mb.profile", DEFAULT_PROFILE) || DEFAULT_PROFILE;
     if (profile === "Fratello") profile = OTHER_PROFILE;
     profiles = LS.get("mb.profiles", [DEFAULT_PROFILE]);
@@ -14620,6 +14816,8 @@ const st = $("statoSpotify");
       await loadLocalLyrics();
     }
 await loadAll();
+    setTimeout(_mostraRecapAutomatico, 4500);
+    setInterval(() => {if (!document.hidden) _mostraRecapAutomatico();}, 3600000);
     /* Ste: "mentre scorro mi fa riascire su". Riprendo la lista esattamente
        dove l'avevo lasciata. */
     _ripristinaPuntoLibreria();
