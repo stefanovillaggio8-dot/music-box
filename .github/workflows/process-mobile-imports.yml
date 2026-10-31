@@ -100,6 +100,7 @@ jobs:
           for i in $(seq 1 12); do
             if curl --silent --fail --max-time 3 http://127.0.0.1:9000/ >/dev/null; then
               echo "Cobalt locale pronto"
+              node -e 'fetch("http://127.0.0.1:9000/").then(x=>x.json()).then(x=>console.log("Cobalt supporta YouTube:",Array.isArray(x.cobalt?.services)&&x.cobalt.services.includes("youtube"))).catch(()=>console.log("Cobalt: stato servizi non disponibile"))'
               break
             fi
             sleep 2
