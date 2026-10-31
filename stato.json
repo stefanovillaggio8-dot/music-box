@@ -1217,6 +1217,12 @@
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
+   "[\"set fire to the rain (hardstyle remix)\",\"adele\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Set Fire To The Rain (Hardstyle Remix)",
+    "a": "Adele"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1228,12 +1234,6 @@
     "s": 5,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
-   },
-   "[\"set fire to the rain (hardstyle remix)\",\"adele\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Set Fire To The Rain (Hardstyle Remix)",
-    "a": "Adele"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -2837,7 +2837,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 13,
+    "s": 33,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -2859,12 +2859,6 @@
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
    },
-   "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 33,
-    "t": "Con Te Partirò",
-    "a": "Andrea Bocelli"
-   },
    "[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
     "v": 1,
     "s": 3,
@@ -2873,9 +2867,15 @@
    },
    "[\"paradise now\",\"kid yugi\"]": {
     "v": 1,
-    "s": 8,
+    "s": 10,
     "t": "Paradise Now",
     "a": "Kid Yugi"
+   },
+   "[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 33,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
    }
   }
  }
