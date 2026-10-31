@@ -1,53 +1,5 @@
 [
  {
-  "t": 1793408388156,
-  "r": "SPOTIFY: [v6.436] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793408388284,
-  "r": "suono: originale b-track-929"
- },
- {
-  "t": 1793408388285,
-  "r": "SPOTIFY: [v6.436] il server aveva il permesso: lo prendo"
- },
- {
-  "t": 1793408388865,
-  "r": "SPOTIFY: [v6.436] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793408389089,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1793408389346,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793408389344,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793408389354,
-  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
- },
- {
-  "t": 1793408390555,
-  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1793408392740,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793408392738,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793408392870,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
   "t": 1793408393941,
   "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  },
@@ -158,5 +110,53 @@
  {
   "t": 1793408507924,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793408507924,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793408508014,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793408509352,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408509368,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408509366,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408766224,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793408766184,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793408766292,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408767145,
+  "r": "SPOTIFY: [v6.437] ricarico: il worker del servizio e' cambiato"
+ },
+ {
+  "t": 1793408767627,
+  "r": "prendo la sessione audio (i tasti delle cuffie tornano a me)"
+ },
+ {
+  "t": 1793408767658,
+  "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793408767721,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
  }
 ]
