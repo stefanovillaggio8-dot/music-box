@@ -31,6 +31,7 @@ on:
       - tools/test-online-youtube-import.cjs
       - tools/test-mobile-queue-no-login.cjs
       - tools/test-youtube-in-library.cjs
+      - tools/test-youtube-auto-karaoke.cjs
       - tools/cloud-queue-client.cjs
       - cloud/musicbox-import-queue/index.ts
       - cloud/musicbox-import-queue/retry-policy.mjs
@@ -131,4 +132,5 @@ jobs:
           node tools/test-mobile-queue-no-login.cjs
           node tools/test-cloud-import-retry.cjs
           node tools/test-youtube-in-library.cjs
+          node tools/test-youtube-auto-karaoke.cjs
           node tools/test-youtube-track-metadata.mjs
