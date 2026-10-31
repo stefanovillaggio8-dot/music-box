@@ -24,6 +24,8 @@ on:
       - tools/test-add-music-ui.cjs
       - tools/test-cloud-upload-phone.cjs
       - tools/import-youtube-online.cjs
+      - tools/youtube-import-errors.cjs
+      - tools/test-youtube-import-errors.cjs
       - tools/test-online-youtube-import.cjs
       - tools/test-mobile-queue-no-login.cjs
       - tools/test-youtube-in-library.cjs
@@ -113,6 +115,8 @@ jobs:
         run: |
           node --check tools/import-youtube-online.cjs
           node tools/test-online-youtube-import.cjs
+          node --check tools/youtube-import-errors.cjs
+          node tools/test-youtube-import-errors.cjs
           node --check tools/cloud-queue-client.cjs
           node tools/test-mobile-queue-no-login.cjs
           node tools/test-youtube-in-library.cjs
