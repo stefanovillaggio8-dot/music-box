@@ -10,6 +10,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { resolveLicensedAudio } = require("./resolve-licensed-audio.cjs");
+const { fetchMP3 } = require("./cobalt-audio-fallback.cjs");
 
 const MAX_BYTES = 24 * 1024 * 1024;
 const MAX_SECONDS = 12 * 60;
@@ -135,11 +136,35 @@ async function main() {
           if(fs.existsSync(file))fs.rmSync(file);
         }
       }
+      if(lastError && !fs.existsSync(file)){
+        // Cobalt viene eseguito solo localmente dal runner. Non usiamo
+        // convertitori pubblici o pagine con popup e non apriamo YouTube.
+        try{
+          console.log("yt-dlp senza MP3: provo Cobalt locale");
+          await fetchMP3(id,file);
+          lastError=null;
+          console.log("Cobalt ha prodotto un file MP3.");
+        }catch(cobaltError){
+          console.error("Cobalt fallito:",String(cobaltError.message||cobaltError).slice(0,180));
+          throw new Error("Nessuno dei convertitori ha ottenuto audio. yt-dlp: "+
+            String(lastError?.stderr||lastError?.message||lastError||"").slice(-350)+
+            " | Cobalt: "+String(cobaltError.message||cobaltError).slice(0,180));
+        }
+      }
       if(lastError)throw lastError;
       if (!fs.existsSync(file)) {
-        fail("Nessuno dei client ha fornito un audio valido.");
+        fail("Nessuno dei convertitori ha prodotto un MP3.");
       }
       if (fs.existsSync(infoFile)) details = JSON.parse(fs.readFileSync(infoFile,"utf8"));
+      // Cobalt non produce il file metadati di yt-dlp. La durata va
+      // verificata direttamente dall'audio, senza rifiutare i file validi.
+      if(!Number.isFinite(Number(details.duration))){
+        const ffprobe=run("ffprobe",[
+          "-v","error","-show_entries","format=duration",
+          "-of","default=noprint_wrappers=1:nokey=1",file
+        ],20000).trim();
+        details.duration=Number(ffprobe);
+      }
       const seconds = Number(details.duration);
       if (!Number.isFinite(seconds) || seconds <= 0 || seconds > MAX_SECONDS ||
           details.is_live || details.live_status === "is_live") {
