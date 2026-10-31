@@ -12497,14 +12497,30 @@ function _nomePerIlBrano(link, suggerito) {
     return null;
   }
   async function _ytLeggiTitoloPubblico(link) {
-    const ctrl=new AbortController(), timer=setTimeout(()=>ctrl.abort(),5500);
+    // Let Supabase query YouTube metadata: Safari's cross-origin calls may fail.
+    try {
+      const resp=await fetch(MB_YT_CLOUD+"?action=metadata&link="+encodeURIComponent(link),
+        {cache:"no-store",signal:AbortSignal.timeout(6800)});
+      const json=await resp.json();
+      if(resp.ok&&json.ok&&json.found&&json.video_title) {
+        return {title:String(json.video_title).slice(0,160),
+          author_name:"",artist:String(json.artist||"").slice(0,100),
+          track_title:String(json.track_title||"").slice(0,160)};
+      }
+    }catch(_){}
+    // Fallback for browsers able to read oEmbed directly.
+    const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),4500);
     try {
       const response=await fetch("https://www.youtube.com/oembed?format=json&url="+encodeURIComponent(link),
         {signal:ctrl.signal,cache:"no-store"});
       if(!response.ok)return null;
       const data=await response.json();
       if(!data||typeof data.title!=="string"||!data.title.trim())return null;
-      return {title:data.title.slice(0,160),author_name:String(data.author_name||"").slice(0,100)};
+      const m=data.title.match(/^(.{2,90}?)\s+[-–—]\s+(.+)$/);
+      const title=String(m?.[2]||data.title)
+        .replace(/\s*[\[(]\s*(?:official\s+)?(?:(?:music|lyric)\s+)?(?:video|visualizer|visual|audio|lyrics?)(?:\s*video)?\s*[\])]\s*$/i,"").trim();
+      return {title:String(data.title).slice(0,160),author_name:String(data.author_name||"").slice(0,100),
+        artist:String(m?.[1]||"").trim().slice(0,100),track_title:title.slice(0,160)};
     } catch (_) { return null; }
     finally { clearTimeout(timer); }
   }
@@ -12526,12 +12542,12 @@ function _nomePerIlBrano(link, suggerito) {
       toast("Gia' nella libreria, pronta da ascoltare: "+present.title,6500);
       return true;
     }
-    const titleInput=$("ytOnlineName");
-    if(titleInput && !titleInput.value.trim()) {
-      titleInput.value=meta.title;
-      $("ytOnlineHint").textContent="Titolo riconosciuto: "+meta.title+
-        ". Non c'e' ancora l'MP3 in libreria. Se hai confermato i diritti, il server prova a importare automaticamente.";
-    }
+    const artistInput=$("ytOnlineArtist"),titleInput=$("ytOnlineName");
+    if(artistInput && !artistInput.value.trim() && meta.artist)artistInput.value=meta.artist;
+    if(titleInput && !titleInput.value.trim())titleInput.value=meta.track_title||meta.title;
+    $("ytOnlineHint").textContent=meta.artist
+      ? "Riconosciuti: "+meta.artist+" — "+(meta.track_title||meta.title)+"."
+      : "Titolo riconosciuto, artista non certo: puoi correggerlo prima dell'invio.";
     return false;
   }
   let _ytAutoSubmitting=false;
