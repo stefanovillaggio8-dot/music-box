@@ -1600,6 +1600,11 @@ const PROFILI = [
   function _doveStaIlBrano(file) {
     const nome = String(file || "");
     if (!nome) return "";
+    /* I brani importati con Actions vivono nel repository principale,
+       non in music-box-brani, anche quando il PC e\x27 acceso. */
+    if (Array.isArray(_ytOnlineCache) && _ytOnlineCache.some(x => x.file === nome)) {
+      return "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/" + nome;
+    }
     /* pagina locale: i brani sono sul disco, nessun bisogno di andare online */
     const qui = location.hostname;
     const inLocale = qui === "localhost" || qui === "127.0.0.1" || qui === "::1" ||
@@ -3243,7 +3248,7 @@ function _devoVedereBrano(eMio, b) {
     const ctrl = new AbortController();
     const timeout = setTimeout(() => ctrl.abort(), 3500);
     try {
-      const res = await fetch(new URL("online-imports.json", document.baseURI).href, {
+      const res = await fetch("https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/online-imports.json?ts=" + Date.now(), {
         cache: "no-store", signal: ctrl.signal
       });
       if (!res.ok) return _ytOnlineCache;
