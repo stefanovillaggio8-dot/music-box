@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6470" />
+  <link rel="stylesheet" href="style.css?v=6471" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -506,11 +506,8 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8V3Z"/></svg>
       <span class="voce-testo"><b>Aggiungi canzoni</b><small>File, YouTube e Spotify</small></span>
     </button>
-        <button class="menu-altro-voce" id="btnDaYouTube" type="button">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 15.5v-7l6 3.5-6 3.5Z"/><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
-        <span class="voce-testo">Aggiungi da YouTube</span>
-      </button>
-        <button class="menu-altro-voce" id="btnSpotify" type="button" onclick="window._spotifyApri()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.72 1.11.3.18.39.57.21.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.14-9.97-1.17a.78.78 0 0 1-.45-1.49c3.54-1.1 8.15-.57 11.24 1.33a.78.78 0 0 1-.96 1.61Z"/></svg><span class="voce-testo">Importa una playlist da Spotify</span></button>
+        
+        
       </section>
       <section class="menu-altro-gruppo" aria-label="Ascolto">
         <p class="menu-altro-sezione">ASCOLTO</p>
@@ -518,9 +515,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h3c4 0 6 10 10 10h3m-4-4 4 4-4 4M4 17h3c1.4 0 2.5-.8 3.6-2.1M15 7h5m-4-4 4 4-4 4"/></svg>
   
   <span class="voce-testo">Riproduzione casuale</span></button>
-        <button class="menu-altro-voce" id="btnBassiVolume" type="button">
-    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 10h4v4H4v-4Zm6 0h4v4h-4v-4Zm6 0h4v4h-4v-4ZM3 8h2v8H3V8Zm7 0h2v8h-2V8Zm7 0h2v8h-2V8ZM10 3h2v18h-2V3Z"/></svg>
-    <span class="voce-testo">Bassi e volume</span></button>
+        
       </section>
       <section class="menu-altro-gruppo" aria-label="Download offline">
         <p class="menu-altro-sezione">OFFLINE</p>
@@ -582,6 +577,14 @@
       </details>
     </div>
     <div class="menu-altro-legacy" hidden>
+      <button tabindex="-1" data-hidden-menu-control="true" class="menu-altro-voce" id="btnDaYouTube" type="button">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 15.5v-7l6 3.5-6 3.5Z"/><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
+        <span class="voce-testo">Aggiungi da YouTube</span>
+      </button>
+      <button tabindex="-1" data-hidden-menu-control="true" class="menu-altro-voce" id="btnSpotify" type="button" onclick="window._spotifyApri()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.72 1.11.3.18.39.57.21.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.14-9.97-1.17a.78.78 0 0 1-.45-1.49c3.54-1.1 8.15-.57 11.24 1.33a.78.78 0 0 1-.96 1.61Z"/></svg><span class="voce-testo">Importa una playlist da Spotify</span></button>
+      <button tabindex="-1" data-hidden-menu-control="true" class="menu-altro-voce" id="btnBassiVolume" type="button">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 10h4v4H4v-4Zm6 0h4v4h-4v-4Zm6 0h4v4h-4v-4ZM3 8h2v8H3V8Zm7 0h2v8h-2V8Zm7 0h2v8h-2V8ZM10 3h2v18h-2V3Z"/></svg>
+    <span class="voce-testo">Bassi e volume</span></button>
       <button class="menu-altro-voce" id="btnCreaPlaylist" type="button">
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z"/></svg>
       <span class="voce-testo">Crea playlist</span>
@@ -1269,7 +1272,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6470"></script>
-<script src="app.js?v=6470"></script>
+<script src="fuoco.js?v=6471"></script>
+<script src="app.js?v=6471"></script>
 </body>
 </html>
