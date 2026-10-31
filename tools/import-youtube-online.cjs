@@ -69,7 +69,7 @@ function main() {
   const url = "https://www.youtube.com/watch?v=" + id;
   if (!fs.existsSync(file)) {
     console.log("Leggo metadati del video " + id);
-    details = JSON.parse(run("yt-dlp", ["--no-playlist", "--no-warnings", "--skip-download", "--dump-single-json",
+    details = JSON.parse(run("yt-dlp", ["--js-runtimes", "node", "--no-playlist", "--no-warnings", "--skip-download", "--dump-single-json",
       "--socket-timeout", "20", url], 110000));
     const seconds = Number(details.duration);
     if (!Number.isFinite(seconds) || seconds <= 0 || seconds > MAX_SECONDS || details.is_live) {
@@ -77,7 +77,7 @@ function main() {
     }
     console.log("Preparo MP3: " + clean(details.title));
     try {
-      run("yt-dlp", ["--no-playlist", "--no-warnings", "--no-progress", "--socket-timeout", "20",
+      run("yt-dlp", ["--js-runtimes", "node", "--no-playlist", "--no-warnings", "--no-progress", "--socket-timeout", "20",
         "--max-filesize", "24M", "--extract-audio", "--audio-format", "mp3", "--audio-quality", "5",
         "--output", "songs/youtube-" + id + ".%(ext)s", url], 200000);
     } catch (e) {
