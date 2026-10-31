@@ -53,6 +53,7 @@ jobs:
         run: |
           node --check tools/import-youtube-online.cjs
           node --check tools/resolve-licensed-audio.cjs
+          node --check tools/cobalt-audio-fallback.cjs
           node tools/test-licensed-audio.cjs
       - name: Prendi una richiesta dalla coda Supabase usando OIDC firmato
         id: claim
@@ -79,6 +80,28 @@ jobs:
           ffmpeg -version | head -n 1
           yt-dlp --version
           echo "YouTube audio: client default + android_vr (solo contenuti autorizzati)"
+      - name: Avvia convertitore Cobalt isolato sul runner
+        if: steps.claim.outputs.has_job == 'true'
+        shell: bash
+        run: |
+          # Servizio accessibile SOLO da questo runner, non da internet.
+          # Se l'immagine non parte, rimane disponibile il motore yt-dlp.
+          if docker run --detach --rm --name musicbox-cobalt \
+               --publish 127.0.0.1:9000:9000 \
+               --env API_URL=http://127.0.0.1:9000/ \
+               --env DURATION_LIMIT=720 \
+               ghcr.io/imputnet/cobalt:11; then
+            echo "Cobalt avviato sul runner"
+          else
+            echo "Cobalt non disponibile; usero' yt-dlp"
+          fi
+          for i in $(seq 1 12); do
+            if curl --silent --fail --max-time 3 http://127.0.0.1:9000/ >/dev/null; then
+              echo "Cobalt locale pronto"
+              break
+            fi
+            sleep 2
+          done
       - name: Riutilizza MP3 gia pubblicato per evitare richieste duplicate
         if: steps.claim.outputs.has_job == 'true'
         shell: bash
@@ -151,6 +174,9 @@ jobs:
           }
           console.log('MP3 e indice verificati su GitHub per',job.profile,target);
           NODE
+      - name: Arresta convertitore isolato
+        if: always() && steps.claim.outputs.has_job == 'true'
+        run: docker rm -f musicbox-cobalt >/dev/null 2>&1 || true
       - name: Comunica risultato al servizio cloud
         if: always() && steps.claim.outputs.has_job == 'true'
         run: |
