@@ -1181,6 +1181,12 @@
     "t": "MorirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"set fire to the rain (hardstyle remix)\",\"adele\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Set Fire To The Rain (Hardstyle Remix)",
+    "a": "Adele"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1192,12 +1198,6 @@
     "s": 5,
     "t": "MorirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"set fire to the rain (hardstyle remix)\",\"adele\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Set Fire To The Rain (Hardstyle Remix)",
-    "a": "Adele"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2753,19 +2753,19 @@
   "Emanuele": {
    "[\"baby gang\",\"167 gang, baby gang\"]": {
     "v": 10,
-    "s": 149,
+    "s": 153,
     "t": "Baby Gang",
     "a": "167 Gang, Baby Gang"
    },
    "[\"mogio\",\"18k, 4997, kid yugi\"]": {
-    "v": 3,
+    "v": 4,
     "s": 17,
     "t": "Mogio",
     "a": "18K, 4997, Kid Yugi"
    },
    "[\"perdonami (feat. neima ezza)\",\"2nd roof, neima ezza, tothemoon\"]": {
     "v": 1,
-    "s": 23,
+    "s": 24,
     "t": "Perdonami (feat. Neima Ezza)",
     "a": "2nd Roof, Neima Ezza, ToTheMoon"
    },
@@ -2777,7 +2777,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 0,
-    "s": 17,
+    "s": 75,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2819,7 +2819,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 13,
+    "s": 33,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -2841,12 +2841,6 @@
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 33,
-    "t": "Con Te PartirÃÂÃÂ²",
-    "a": "Andrea Bocelli"
-   },
    "[\"pugno di ferro (red bull 64 bars)\",\"artie 5ive\"]": {
     "v": 1,
     "s": 3,
@@ -2858,6 +2852,12 @@
     "s": 10,
     "t": "Paradise Now",
     "a": "Kid Yugi"
+   },
+   "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 33,
+    "t": "Con Te PartirÃÂÃÂ²",
+    "a": "Andrea Bocelli"
    },
    "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
@@ -2876,6 +2876,12 @@
     "s": 33,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
+   },
+   "[\"faded\",\"arc north, cour, new beat order, lunis\"]": {
+    "v": 0,
+    "s": 2,
+    "t": "Faded",
+    "a": "Arc North, Cour, New Beat Order, Lunis"
    }
   }
  }
