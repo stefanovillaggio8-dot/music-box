@@ -1145,10 +1145,22 @@
     "t": "Davide e Golia",
     "a": "Kid Yugi"
    },
-   "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+   "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 1,
     "t": "VENTANNI",
+    "a": "MÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂ¥neskin"
+   },
+   "[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
@@ -2680,7 +2692,7 @@
   },
   "Emanuele": {
    "[\"baby gang\",\"167 gang, baby gang\"]": {
-    "v": 2,
+    "v": 3,
     "s": 88,
     "t": "Baby Gang",
     "a": "167 Gang, Baby Gang"
@@ -2697,16 +2709,16 @@
     "t": "Perdonami (feat. Neima Ezza)",
     "a": "2nd Roof, Neima Ezza, ToTheMoon"
    },
-   "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+   "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 3,
-    "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+   "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
     "s": 13,
-    "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
@@ -2744,6 +2756,12 @@
     "s": 13,
     "t": "Fenomeno",
     "a": "Fabri Fibra"
+   },
+   "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
+    "a": "Andrea Bocelli"
    },
    "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
