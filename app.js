@@ -4566,6 +4566,7 @@ function visibleTracks(perSuono) {
          nessun filtro sui brani nascosti. Quello che resta e' quello dei
          brani "solo nelle playlist" (una scelta diversa, che resta). */
       let list = tracks.filter((t) =>
+        t && t.source !== "stanza-condivisa" &&
         (!inPlaylistDi(t.id) || Boolean(_playlistAttiva)));
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
 if (perLaCoda) {
