@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.468";
+  const APP_VERSION = "6.469";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3635,7 +3635,10 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
       karaokeIndex = valid;
       _karaokeIndexAggiornato = signature;
       try {
-        for (const id of Object.keys(valid)) _testiTentati.delete(id);
+        for (const id of Object.keys(valid)) {
+          _testiTentati.delete(_chiaveTentativoTesto(id, true));
+          _testiTentati.delete(_chiaveTentativoTesto(id, false));
+        }
         _programmaTestiKaraoke();
       } catch (e) { /* Se il player non e' ancora inizializzato riprova dopo. */ }
     } catch (e) { /* Il karaoke tradizionale continua a funzionare. */ }
@@ -6714,23 +6717,27 @@ box.innerHTML = "";
      Una ricerca karaoke senza esito non deve impedire il testo normale
      quando si apre il brano. Le ricerche fallite sono ripetibili dopo 1h. */
   const _testiTentati = new Map();
+  function _chiaveTentativoTesto(id, syncedOnly) {
+    /* Un testo normale non deve bloccare il recupero del karaoke. */
+    return String(id) + (syncedOnly ? "|karaoke" : "|testo");
+  }
   function _ricercaTestoRecente(id, syncedOnly) {
-    const v = _testiTentati.get(id);
+    const v = _testiTentati.get(_chiaveTentativoTesto(id, syncedOnly));
     if (!v) return false;
-    if (!syncedOnly && v.syncedOnly) return false;
-    return Date.now() - v.at < 86400000;
+    /* Il karaoke mancante si ritenta dopo un'ora, il testo dopo 24 ore. */
+    return Date.now() - v.at < (syncedOnly ? 3600000 : 86400000);
   }
   function _registraTentativoTesto(id, syncedOnly, found) {
-    _testiTentati.set(id, { syncedOnly: !!syncedOnly,
-      at: Date.now(), found: !!found });
+    _testiTentati.set(_chiaveTentativoTesto(id, syncedOnly),
+      { at: Date.now(), found: !!found });
   }
   let _testiPrefetchAttivo = false;
   let _testiPrefetchPrevisto = false;
   let _testiPrefetchDaRipetere = false;
   function _eAudioYouTubePerTesti(t) {
-    // Solo audio davvero pubblicati: i link in coda non sono ancora brani.
-    return !!(t && t.url && (t.source==="cloud-audio" ||
-      /^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(String(t.file||""))));
+    // Anche i YouTube gia' pubblicati senza t.url; mai i link in coda.
+    return !!(t && ((t.source === "cloud-audio" && t.url) ||
+      /^songs\/youtube-[A-Za-z0-9_-]+\.mp3$/i.test(String(t.file || ""))));
   }
   function _testiCandidatiAutomatici() {
     // I video pubblicati come brani BUILTIN venivano scartati da !t.builtin.
@@ -6757,24 +6764,27 @@ box.innerHTML = "";
     const preesistente = localLyrics[t.id] || lyricsData[t.id] || null;
     if (preesistente && preesistente.synced &&
         parseSynced(preesistente.synced).length >= 3) return;
-    if (_testiInRicerca.has(t.id) || _ricercaTestoRecente(t.id, syncedOnly)) return;
-    if (Date.now() < _lrclibNonPrimaDi && syncedOnly) return;
+    /* Se e' gia' presente il testo normale, recupera esclusivamente
+       una versione sincronizzata invece di riscaricare le parole. */
+    const soloTempi = !!(syncedOnly || (preesistente && preesistente.text));
+    if (_testiInRicerca.has(t.id) || _ricercaTestoRecente(t.id, soloTempi)) return;
+    if (Date.now() < _lrclibNonPrimaDi && soloTempi) return;
     _testiInRicerca.add(t.id);
     try {
       const risultato = await findLyrics(t.artist, t.title, {
-        syncedOnly,
+        syncedOnly: soloTempi,
         // "MP3 pronto sul cloud" e' uno stato, NON il nome dell'album.
         album: _eAudioYouTubePerTesti(t) ? "" : (t.spotifyAlbum || t.album || ""),
         durationMs: t.spotifyDurationMs || 0, trackId: t.id
       });
       if (!risultato || !risultato.text) {
-        if (Date.now() >= _lrclibNonPrimaDi) _registraTentativoTesto(t.id, syncedOnly, false);
+        if (Date.now() >= _lrclibNonPrimaDi) _registraTentativoTesto(t.id, soloTempi, false);
         return;
       }
       const tieneUnTesto = preesistente && preesistente.text;
       const conTempi = risultato.synced && parseSynced(risultato.synced).length >= 3;
       if (!conTempi && tieneUnTesto) {
-        _registraTentativoTesto(t.id, syncedOnly, true);
+        _registraTentativoTesto(t.id, soloTempi, true);
         return;
       }
       const entry = {
@@ -6783,7 +6793,7 @@ box.innerHTML = "";
         source: risultato.source || ""
       };
       localLyrics[t.id] = entry;
-      _registraTentativoTesto(t.id, syncedOnly, true);
+      _registraTentativoTesto(t.id, soloTempi, true);
       try { if (db) await dbPutLyrics(entry); } catch (e) { /* Conservato almeno nella sessione. */ }
       if (currentId === t.id) {
         updateLyricsButton();
@@ -6816,12 +6826,14 @@ box.innerHTML = "";
         elencoDaCompletare=_testiCandidatiAutomatici();
         for (const t of elencoDaCompletare) {
           if (profile !== profiloIniziale || document.hidden || scansioni >= 2) break;
+          if (!t || !t.id || !t.title || !t.artist) continue;
           const importato=_eAudioYouTubePerTesti(t);
-          const syncedOnly=!importato;
-          if (!t || !t.id || !t.title || !t.artist ||
-              _ricercaTestoRecente(t.id, syncedOnly) || _testiInRicerca.has(t.id)) continue;
           const attuale = localLyrics[t.id] || lyricsData[t.id];
           if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) continue;
+          /* Prima recupera anche il testo semplice per i brani YouTube;
+             appena c'e', il giro seguente tenta solo il karaoke. */
+          const syncedOnly = !importato || !!(attuale && attuale.text);
+          if (_ricercaTestoRecente(t.id, syncedOnly) || _testiInRicerca.has(t.id)) continue;
           if (Date.now() < _lrclibNonPrimaDi) break;
           scansioni++;
           // Per i link YouTube: karaoke sincronizzato, oppure testo normale.
@@ -6838,9 +6850,13 @@ box.innerHTML = "";
         }
       }
       if (profile === profiloIniziale && !document.hidden &&
-          elencoDaCompletare.some(t => t && t.artist && !_ricercaTestoRecente(t.id, !_eAudioYouTubePerTesti(t)) &&
-            !(localLyrics[t.id] && localLyrics[t.id].synced) &&
-            !(lyricsData[t.id] && lyricsData[t.id].synced))) {
+          elencoDaCompletare.some(t => {
+            if (!t || !t.artist) return false;
+            const attuale = localLyrics[t.id] || lyricsData[t.id];
+            if (attuale && attuale.synced && parseSynced(attuale.synced).length >= 3) return false;
+            const syncedOnly = !_eAudioYouTubePerTesti(t) || !!(attuale && attuale.text);
+            return !_ricercaTestoRecente(t.id, syncedOnly);
+          })) {
         setTimeout(_programmaTestiKaraoke, 120000);
       }
     }, 4500);
@@ -10991,6 +11007,9 @@ function toast(msg, durata) {
       b.classList.remove("on");
     }
   }
+  /* Chiusura del nuovo menu laterale, anche con tastiera e screen reader. */
+  const _btnChiudiMenuAltro = $("btnChiudiAltro");
+  if (_btnChiudiMenuAltro) _btnChiudiMenuAltro.addEventListener("click", _chiudiAltro);
   function _apriAltro() {
     const m = $("menuAltro");
     if (!m) return;
