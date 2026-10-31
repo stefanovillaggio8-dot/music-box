@@ -7194,7 +7194,7 @@ function _listaProssimiCasuali(lista, quanti = 10) {
   const limite = Math.min(quanti, ids.length > 1 ? ids.length - 1 : 0);
   while (_casualeProgrammate.length < limite) {
     let possibili = ids.filter(id => id !== currentId &&
-      !fresche.has("__none__") && fresche.has(id) && !_casualeProgrammate.includes(id) &&
+      fresche.has(id) && !_casualeProgrammate.includes(id) &&
       !_casualeEscluse.has(id));
     if (!possibili.length) {
       for (const id of ids) if (id !== currentId && !_casualeProgrammate.includes(id) &&
@@ -7279,11 +7279,12 @@ function _prossimaCasuale(lista) {
   /* nextIndex viene chiamato anche dal pre-caricamento del brano successivo.
      Non deve estrarre due risultati diversi prima della riproduzione. */
   if (_casualeDa === currentId && _casualeScelto &&
+      !_casualeEscluse.has(_casualeScelto) &&
       _casualeFresche.has(_casualeScelto)) {
     const i = lista.findIndex((t) => t.id === _casualeScelto);
     if (i >= 0) return i;
   }
-  const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
+  const rimaste = lista.filter((t) => _casualeFresche.has(t.id) && !_casualeEscluse.has(t.id));
   if (!rimaste.length) return -1;
   const scelta = rimaste[Math.floor(Math.random() * rimaste.length)];
   _casualeScelto = scelta.id;
