@@ -127,4 +127,5 @@ jobs:
           node tools/test-youtube-import-errors.cjs
           node --check tools/cloud-queue-client.cjs
           node tools/test-mobile-queue-no-login.cjs
+          node tools/test-cloud-import-retry.cjs
           node tools/test-youtube-in-library.cjs
