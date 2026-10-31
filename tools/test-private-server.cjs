@@ -23,7 +23,7 @@ async function main(){
     assert.ok(ready,"Local private server did not start: "+err);
     const html=await fetch(base+"index.html");
     assert.equal(html.status,200);
-    assert.match(html.headers.get("content-type")||"","text/html");
+    assert.match(html.headers.get("content-type")||"",/text\/html/);
     const song=fs.statSync(path.join(root,"silenzio.mp3"));
     assert.ok(song.size>50);
     const audio=await fetch(base+"silenzio.mp3",{headers:{Range:"bytes=0-15"}});
