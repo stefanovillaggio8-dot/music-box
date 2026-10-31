@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6462" />
+  <link rel="stylesheet" href="style.css?v=6463" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -708,6 +708,11 @@
           </span>
         </button>
       </div>
+      <div class="fab-file-walkthrough" aria-label="Dal convertitore alla libreria">
+        <strong>Hai gia un file MP3 nell'iPhone?</strong>
+        <span>Salvalo in File → Download, poi premi <b>File audio dal telefono</b> qui sopra. La canzone viene aggiunta alla tua libreria appena la scegli.</span>
+        <a href="https://cobalt.tools/" target="_blank" rel="noopener noreferrer">Apri Cobalt (sito esterno, facoltativo)</a>
+      </div>
       <div class="fab-sheet-bottom">
         <button class="fab-sheet-minor" id="fabCercaTitolo" type="button">⌕ Cerca fra i brani che ho già</button>
         <button class="fab-sheet-minor" id="fabGuide" type="button">? Come funziona e come pubblicare online</button>
@@ -757,6 +762,14 @@
         <p id="ytOnlineLastStatus" class="step-hint" role="status">Nessuna richiesta recente.</p>
         <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver confermato i diritti, incolla un link e parte la richiesta da sola. Non servono GitHub né il PC acceso.</p>
         <p class="step-hint">Se YouTube blocca la conversione, la richiesta mostrerà “Importazione fallita” e non farà partire un video al posto della canzone. Puoi usare + → File audio per aggiungere un MP3 che possiedi.</p>
+        <div class="yt-file-fallback" aria-label="Alternativa da file">
+          <p>Il server YouTube non scarica? Se hai gia un MP3 nell'app File, puoi aggiungerlo qui senza PC. Il file comparira subito nella libreria del profilo attivo.</p>
+          <div class="yt-file-fallback-actions">
+            <a href="https://cobalt.tools/" target="_blank" rel="noopener noreferrer">Apri Cobalt (sito esterno)</a>
+            <button id="ytImportaFile" type="button">Scegli MP3 da File</button>
+          </div>
+          <small>Cobalt e un servizio esterno: puo non funzionare su alcuni video. Music Box non scarica automaticamente da Cobalt.</small>
+        </div>
         
       </div>
     </div>
@@ -1249,7 +1262,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6462"></script>
-<script src="app.js?v=6462"></script>
+<script src="fuoco.js?v=6463"></script>
+<script src="app.js?v=6463"></script>
 </body>
 </html>
