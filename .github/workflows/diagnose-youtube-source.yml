@@ -1,0 +1,59 @@
+name: Music Box - diagnostica YouTube cloud senza MP3
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/diagnose-youtube-source.yml"]
+permissions:
+  contents: read
+jobs:
+  check-access:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Prepara client e PO Token provider
+        shell: bash
+        run: |
+          python -m pip install --upgrade "yt-dlp[default]" "bgutil-ytdlp-pot-provider==2.0.2"
+          docker run --detach --rm --init --name musicbox-diagnostic-bgutil \
+            -p 127.0.0.1:4416:4416 brainicism/bgutil-ytdlp-pot-provider:2.0.2
+          for i in $(seq 1 12); do
+            if curl --silent --max-time 2 --output /dev/null http://127.0.0.1:4416/; then
+              echo "Provider risponde in locale"
+              break
+            fi
+            sleep 2
+          done
+      - name: Verifica accesso ai formati senza scaricare contenuto
+        shell: bash
+        run: |
+          # Il test interroga solo metadati pubblici (nessuna copia MP3).
+          URL="https://www.youtube.com/watch?v=75qIYkMUGVE"
+          for CLIENT in mweb web_safari android_vr; do
+            echo "=== Client $CLIENT: metadati, download disattivato ==="
+            set +e
+            OUTPUT=$(timeout 50s yt-dlp --ignore-config --js-runtimes deno \
+              --no-playlist --skip-download --no-progress \
+              --extractor-args "youtube:player_client=$CLIENT" \
+              --format "bestaudio/best" \
+              --print "%(id)s | %(title)s" "$URL" 2>&1)
+            RC=$?
+            set -e
+            if [ "$RC" -eq 0 ]; then
+              echo "RISULTATO: metadati audio disponibili"
+            else
+              echo "RISULTATO: metadati non disponibili (codice $RC)"
+            fi
+            printf '%s\n' "$OUTPUT" | tail -n 8
+          done
+          echo "Diagnostica conclusa: nessun MP3 scaricato o pubblicato."
+      - name: Ferma provider locale
+        if: always()
+        run: docker rm -f musicbox-diagnostic-bgutil >/dev/null 2>&1 || true
