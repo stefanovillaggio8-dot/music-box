@@ -521,6 +521,13 @@
           <span class="voce-testo">Modalità palestra <small>Playlist Gym · collega Palestra</small></span>
         </button>
       </section>
+      <section class="menu-altro-gruppo" aria-label="Amici">
+        <p class="menu-altro-sezione">CON GLI AMICI</p>
+        <button class="menu-altro-voce" id="btnAscoltoCondiviso" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm8 0a4 4 0 1 0-4-4 4 4 0 0 0 4 4ZM1 20v-3c0-2 3-4 7-4s7 2 7 4v3Zm15 0v-3a5 5 0 0 0-1.5-3.5c4-1 8 1 8 4V20Z"/></svg>
+          <span class="voce-testo">Ascolta insieme <small>Due librerie, una coda condivisa</small></span>
+        </button>
+      </section>
       <section class="menu-altro-gruppo" aria-label="Download offline">
         <p class="menu-altro-sezione">OFFLINE</p>
         <button class="menu-altro-voce" id="btnOffline" type="button">
@@ -1275,6 +1282,31 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
     </div>
   </div>
 
+<div class="import-overlay" id="stanzaPanel" hidden role="dialog" aria-label="Ascolto insieme">
+  <div class="import-card stanza-card">
+    <div class="import-head">
+      <div class="import-head-info"><p class="import-title">Ascolta insieme</p><p class="import-sub">Due persone · librerie unite · coda condivisa</p></div>
+      <button class="import-close" id="stanzaClose" type="button" aria-label="Chiudi">×</button>
+    </div>
+    <div class="import-body">
+      <p id="stanzaInfo" class="step-hint">Crea una stanza e invia il link a un amico. Ognuno porta le canzoni pubblicate del proprio account.</p>
+      <div class="stanza-buttons">
+        <button id="stanzaCrea" type="button">Crea stanza</button>
+        <button id="stanzaEntra" type="button" hidden>Entra con l'invito</button>
+        <button id="stanzaCopia" type="button" hidden>Copia invito</button>
+      </div>
+      <p id="stanzaStato" class="step-hint" role="status"></p>
+      <div class="stanza-buttons">
+        <button id="stanzaAscolta" type="button" hidden>▶ Ascolta insieme</button>
+        <button id="stanzaPlay" type="button" hidden>Play / Pausa</button>
+        <button id="stanzaNext" type="button" hidden>Successiva</button>
+        <button id="stanzaRimescola" type="button" hidden>Rimescola per entrambi</button>
+        <button id="stanzaEsci" type="button" hidden>Esci dalla stanza</button>
+      </div>
+      <p class="step-hint">Per l'audio su iPhone tocca “Ascolta insieme”. La sincronizzazione richiede internet e può avere un piccolo ritardo; non condivide file privati o password.</p>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status"></div>
 <!-- La diagnostica: dice dove sono finiti i dati, senza indovinare.
      Ste: "se cambio l'artista e riavvio il sito torna di prima" e non si capiva
