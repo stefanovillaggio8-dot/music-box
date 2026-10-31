@@ -1209,6 +1209,12 @@
     "t": "MorirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"sottogonna\",\"blanco\"]": {
+    "v": 2,
+    "s": 3,
+    "t": "SOTTOGONNA",
+    "a": "BLANCO"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1220,24 +1226,6 @@
     "s": 5,
     "t": "MorirÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"sottogonna\",\"blanco\"]": {
-    "v": 2,
-    "s": 3,
-    "t": "SOTTOGONNA",
-    "a": "BLANCO"
-   },
-   "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "MÃÂÃÂ¥neskin"
-   },
-   "[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 5,
-    "t": "MorirÃÂÃÂ² da Re",
-    "a": "MÃÂÃÂ¥neskin"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 1,
@@ -1251,6 +1239,18 @@
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
+   "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂ¥neskin"
+   },
+   "[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "MorirÃÂÃÂ² da Re",
+    "a": "MÃÂÃÂ¥neskin"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1263,6 +1263,12 @@
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
+   "m:2026-10|[\"sottogonna\",\"blanco\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "SOTTOGONNA",
+    "a": "BLANCO"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1274,12 +1280,6 @@
     "s": 5,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
-   },
-   "m:2026-10|[\"sottogonna\",\"blanco\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "SOTTOGONNA",
-    "a": "BLANCO"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -2797,16 +2797,16 @@
     "t": "Paradise Now",
     "a": "Kid Yugi"
    },
-   "e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+   "e-reset-20261031|[\"vidrado em vocÃª\",\"dj guuga, mc livinho\"]": {
     "v": 0,
     "s": 7,
-    "t": "Vidrado Em Você",
+    "t": "Vidrado Em VocÃª",
     "a": "Dj Guuga, Mc Livinho"
    },
-   "m:2026-10|e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+   "m:2026-10|e-reset-20261031|[\"vidrado em vocÃª\",\"dj guuga, mc livinho\"]": {
     "v": 0,
     "s": 7,
-    "t": "Vidrado Em Você",
+    "t": "Vidrado Em VocÃª",
     "a": "Dj Guuga, Mc Livinho"
    },
    "e-reset-20261031|[\"mogio\",\"18k, 4997, kid yugi\"]": {
@@ -2832,6 +2832,18 @@
     "s": 20,
     "t": "Life Is Life",
     "a": "80s Super Hits"
+   },
+   "e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em Você",
+    "a": "Dj Guuga, Mc Livinho"
+   },
+   "m:2026-10|e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em Você",
+    "a": "Dj Guuga, Mc Livinho"
    }
   }
  }
