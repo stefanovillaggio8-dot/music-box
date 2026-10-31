@@ -238,15 +238,13 @@ async function main() {
     ],20000).trim();
     if(finalCodec!=="mp3")fail("Codifica MP3 finale non verificata.");
   }
-  let title = clean(details.track || details.title || "Audio YouTube " + id);
-  let artist = clean(details.artist || details.creator || details.uploader || "");
-  if (requested) {
-    const split = requested.indexOf(" - ");
-    if (split > 0) {
-      artist = clean(requested.slice(0, split));
-      title = clean(requested.slice(split + 3));
-    } else title = requested;
-  }
+  const { mergeMusicMetadata }=await import("../cloud/musicbox-import-queue/track-metadata.mjs");
+  // Same parser as Supabase and the PWA: remove video-only labels
+  // while preserving actual song versions (feat., Remix, Acoustic Version).
+  const parsed=mergeMusicMetadata(requested,details.track||details.title||"",
+    details.artist||details.creator||details.uploader||"");
+  let title=clean(parsed.title||details.track||details.title||"Audio YouTube "+id);
+  let artist=clean(parsed.artist||details.artist||details.creator||"");
   if (!title) fail("Titolo non disponibile.");
   entries = entries.filter(x => !(x.file === file && x.profile === profile));
   entries.push({
