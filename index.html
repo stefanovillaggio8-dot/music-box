@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6456" />
+  <link rel="stylesheet" href="style.css?v=6457" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -696,8 +696,8 @@
         <button class="fab-option" id="fabYouTube" type="button">
           <span class="fab-option-icon" aria-hidden="true">▶</span>
           <span class="fab-option-content"><strong>Link YouTube</strong>
-            <small>Guarda i video salvati o aggiungine uno</small>
-            <span class="fab-option-note">Funziona online per tutti i profili, senza GitHub o PC</span>
+            <small>Importa un brano da un link</small>
+            <span class="fab-option-note">La richiesta parte senza PC; l’audio dipende dalla conversione</span>
           </span>
         </button>
         <button class="fab-option" id="fabSpotify" type="button">
@@ -725,26 +725,18 @@
         <button id="ytOnlineClose" class="import-close" type="button" aria-label="Chiudi">×</button>
       </div>
       <div class="profile-body cloud-body">
-        <p style="margin:0 0 10px"><strong>Qui trovi i video YouTube già salvati nel tuo profilo.</strong> Per ascoltarli premi Riproduci: non devi reinserire il link.</p>
+        <p style="margin:0 0 10px"><strong>Qui trovi le richieste di importazione del tuo profilo.</strong> Quando l’MP3 è pronto compare come una normale canzone nella libreria e parte con il lettore Music Box.</p>
         <section id="ytOnlineLinkedSection" aria-label="Collegamenti YouTube salvati" style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(128,128,128,.25)">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <strong>Video YouTube salvati nel profilo</strong>
+            <strong>Stato importazioni YouTube del profilo</strong>
             <button class="btn-ghost" id="ytOnlineLinksReload" type="button">Aggiorna elenco</button>
           </div>
-          <p class="step-hint" id="ytOnlineLinksMessage" role="status">Apro i collegamenti del profilo...</p>
+          <p class="step-hint" id="ytOnlineLinksMessage" role="status">Controllo le richieste del profilo...</p>
           <div id="ytOnlineLinksList" style="display:grid;gap:10px;max-height:260px;overflow-y:auto"></div>
-          <div id="ytOnlinePlayerBox" hidden style="margin-top:12px">
-            <p id="ytOnlinePlayerLabel" class="step-hint">Lettore YouTube ufficiale (solo online)</p>
-            <iframe id="ytOnlinePlayer" title="Lettore ufficiale di YouTube" style="display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:12px" loading="lazy" allow="autoplay;encrypted-media;picture-in-picture;fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-              <button class="btn-ghost" id="ytOnlinePlayerStop" type="button">Ferma video</button>
-              <a id="ytOnlinePlayerOriginal" target="_blank" rel="noopener noreferrer">Apri direttamente su YouTube</a>
-            </div>
-          </div>
-        </section>
+                </section>
         <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(128,128,128,.25)">
           <strong>Aggiungi un altro video YouTube</strong>
-          <p class="step-hint">Il collegamento si salva subito, mentre l'MP3 può fallire se YouTube blocca il download. Il lettore ufficiale funziona solo con Internet.</p>
+          <p class="step-hint">La richiesta si salva subito e il server prova a pubblicare l’MP3 senza usare il tuo PC. Solo quando il file è pronto puoi ascoltarlo dal player normale, in background o offline se lo scarichi.</p>
         </div>
         <p>Profilo: <strong id="ytOnlineProfile">Ste</strong>. Non servono GitHub né il PC acceso.</p>
         <label for="ytOnlineUrl">Link YouTube</label>
@@ -763,7 +755,7 @@
         </div>
         <p id="ytOnlineLastStatus" class="step-hint" role="status">Nessuna richiesta recente.</p>
         <p id="ytOnlineHint" class="step-hint" role="status">Dopo aver premuto Aggiungi, l'app invia la richiesta al servizio online. Nessun accesso GitHub e nessun PC acceso.</p>
-        <p class="step-hint">La richiesta viene salvata subito nel profilo. Se YouTube blocca la conversione, puoi comunque aprire il video nel lettore ufficiale qui sotto, con Internet. Il lettore YouTube non è un MP3, non funziona offline e non garantisce la riproduzione in background.</p>
+        <p class="step-hint">Se YouTube blocca la conversione, la richiesta mostrerà “Importazione fallita” e non farà partire un video al posto della canzone. Puoi usare + → File audio per aggiungere un MP3 che possiedi.</p>
         
       </div>
     </div>
@@ -1028,7 +1020,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
         <ol class="aiuto-lista">
           <li>Da YouTube premi <b>Condividi → Copia link</b>.</li>
           <li>Torna in Music Box e scegli <b>+ → Link YouTube</b>.</li>
-          <li>Con il programma sul PC acceso, Music Box tenta la conversione e l’aggiunta. Con il PC spento e il servizio attivo, può mettere il link in coda per quando il PC torna disponibile.</li>
+          <li>Music Box mette la richiesta in coda al server online, anche col PC spento. Quando l’MP3 viene pubblicato compare nella libreria e si suona dal player standard. Se YouTube blocca il download, compare un errore.</li>
         </ol>
         <p class="aiuto-nota">Un link messo in coda <b>non è ancora un MP3 scaricato</b>. Se il programma sul PC o il servizio di coda non sono disponibili, l’importazione non si completa.</p>
       </section>
@@ -1044,7 +1036,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
         <div class="aiuto-metodo-head"><span class="aiuto-num">04</span><div><h3>Con il computer spento?</h3><p>Dipende da cosa stai importando</p></div></div>
         <ul class="aiuto-lista">
           <li><b>File MP3 già presente sull’iPhone:</b> si può aggiungere subito alla libreria locale. Per metterlo online serve il servizio di pubblicazione con chiave, se il PC non è raggiungibile.</li>
-          <li><b>Link YouTube:</b> può andare in coda, ma l’audio viene elaborato quando il programma sul PC è disponibile.</li>
+          <li><b>Link YouTube:</b> la richiesta va in coda sul server; un MP3 compare solo dopo una conversione e pubblicazione riuscite.</li>
           <li><b>Solo offline:</b> usa <b>Altro → Scarica per offline</b> per conservare sul telefono le canzoni che sono già nella libreria.</li>
         </ul>
       </section>
@@ -1256,7 +1248,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6456"></script>
-<script src="app.js?v=6456"></script>
+<script src="fuoco.js?v=6457"></script>
+<script src="app.js?v=6457"></script>
 </body>
 </html>
