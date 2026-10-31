@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.474";
+  const APP_VERSION = "6.475";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5516,6 +5516,9 @@ li.addEventListener("click", () => {
     fragmentBrani.appendChild(li);
     });
     playlistEl.replaceChildren(fragmentBrani);
+    /* Se arriva un nuovo MP3 (anche YouTube) o cambiano i filtri,
+       allinea la coda automatica e il badge senza modificare queue. */
+    renderQueueCount();
   }
 
   /* ---------- Audio robusto (fix iOS lock screen) ---------- */
@@ -6357,6 +6360,9 @@ function rebuildAudio(autoplay) {
   }
 
   function openQueue() {
+    /* La lista calcolava il prossimo casuale anche quando il badge era
+       rimasto nascosto: aggiorna sempre prima il contatore sul player. */
+    renderQueueCount();
     renderQueueList();
     $("queuePanel").hidden = false;
     syncNoScroll();
@@ -7071,6 +7077,9 @@ async function playById(id, autoplay = true) {
         }, 9000);
       } else _preparaIlSuccessivo(prossimo);
     }
+    /* doPlay() e il caricamento audio sono asincroni: aggiorna nuovamente
+       il numerino dopo che il brano e' stato effettivamente avviato. */
+    renderQueueCount();
   }
 
   /* Il brano in una certa posizione, ma SENZA far esplodere niente.
@@ -11250,6 +11259,7 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
     repeat = !repeat;
     LS.set("mb.repeat", repeat);
     $("btnRepeat").classList.toggle("on", repeat);
+    renderQueueCount();
   });
 
   $("btnLyrics").addEventListener("click", openLyrics);
