@@ -6908,6 +6908,12 @@ async function playById(id, autoplay = true) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      /* Se torno dal casuale all'ordine della playlist, continua dalla
+         posizione del brano realmente in ascolto, non da quella vecchia. */
+      if (_posizionePlaylist >= 0 && _playlistSuona.length) {
+        const p = _playlistSuona.indexOf(id);
+        if (p >= 0) _posizionePlaylist = p;
+      }
       t._mbErroriAudio = 0;
       t._mbAudioMancante = false;
       t._mbAudioAvvisato = false;
