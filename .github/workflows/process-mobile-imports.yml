@@ -1,6 +1,9 @@
 name: Music Box - importa da telefono senza account GitHub
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/process-mobile-imports.yml"]
   schedule:
     - cron: '*/5 * * * *'
 permissions:
