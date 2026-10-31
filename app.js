@@ -12396,7 +12396,7 @@ function _nomePerIlBrano(link, suggerito) {
     const url = $("ytOnlineUrl"), nome = $("ytOnlineName");
     if (url) url.value = "";
     if (nome) nome.value = String(suggerito || "").slice(0, 160);
-    $("ytOnlineRights").checked = LS.get("mb.youtube.autoRightsConsent",false)===true;
+    $("ytOnlineRights").checked = LS.get("mb.youtube.autoRightsConsent."+String(profile||DEFAULT_PROFILE),false)===true;
     $("ytOnlineProfile").textContent = String(profile || DEFAULT_PROFILE);
     $("ytOnlineHint").textContent = $("ytOnlineRights").checked
       ? "Incolla un link: richiesta automatica al cloud, senza clic aggiuntivi."
@@ -12522,7 +12522,7 @@ function _nomePerIlBrano(link, suggerito) {
   $("ytOnlineUrl").addEventListener("change",_ytProgrammaRicercaLink);
   $("ytOnlineRights").addEventListener("change",()=>{
     const consent=$("ytOnlineRights").checked===true;
-    LS.set("mb.youtube.autoRightsConsent",consent);
+    LS.set("mb.youtube.autoRightsConsent."+String(profile||DEFAULT_PROFILE),consent);
     if(consent)_ytProgrammaRicercaLink();
     else $("ytOnlineHint").textContent="Importazione automatica disattivata.";
   });
@@ -12660,7 +12660,18 @@ function _nomePerIlBrano(link, suggerito) {
             toast("Brano pronto in Music Box: "+(task.title||"canzone"),6000);
           } else if(payload.job.status==="failed") {
             changed=true;
-            if(task.videoId)_ytAutoSent.delete(task.profile+":"+task.videoId);
+            if(task.videoId){
+              _ytAutoSent.delete(task.profile+":"+task.videoId);
+              const key="mb.youtube.links."+task.profile;
+              const cachedLinks=LS.get(key,[]);
+              if(Array.isArray(cachedLinks)){
+                const updated=cachedLinks.map(x=>
+                  x.video_id===task.videoId ? {...x,status:"failed",
+                    error_message:String(payload.job.error_message||"importazione non riuscita")} : x);
+                LS.set(key,updated);
+                _ytLinksMemory[task.profile]={links:updated,time:Date.now()};
+              }
+            }
             const reason=String(payload.job.error_message||"controlla il video").slice(0,170);
             const recent=_ytRecent();
             recent.push({profile:task.profile,title:task.title,status:"failed",error:reason,at:Date.now()});
