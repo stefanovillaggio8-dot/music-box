@@ -1,0 +1,59 @@
+name: Music Box - importa YouTube online (PC spento)
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  group: musicbox-youtube-online-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      github.event.issue.title == '[MusicBox] Importa brano YouTube'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Scarica repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installazione convertitore sulla macchina GitHub, non sul PC
+        run: |
+          python -m pip install --user --upgrade yt-dlp
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          ffmpeg -version | head -n 1
+      - name: Importa solo il video autorizzato
+        id: import
+        run: node tools/import-youtube-online.cjs
+      - name: Pubblica audio e indice condiviso
+        if: success() && steps.import.outputs.status == 'added'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- online-imports.json "${{ steps.import.outputs.file }}"
+          git commit -m 'Music Box: aggiungi audio autorizzato da YouTube'
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Comunica il risultato nell'issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          JOB_STATUS: ${{ job.status }}
+          SONG_TITLE: ${{ steps.import.outputs.title }}
+        shell: bash
+        run: |
+          if [ "$JOB_STATUS" = 'success' ]; then
+            gh issue comment "$ISSUE_URL" --body "Importazione completata per **$SONG_TITLE**. Attendi la pubblicazione di GitHub Pages, poi aggiorna Music Box. Il PC non e' stato utilizzato."
+            gh issue close "$ISSUE_URL" --reason completed
+          else
+            gh issue comment "$ISSUE_URL" --body "Importazione non riuscita. Apri la scheda **Actions** di questo repository per leggere l'errore. Se il video non e' accessibile a YouTube senza login o non e' autorizzato, nessun audio viene pubblicato."
+          fi
