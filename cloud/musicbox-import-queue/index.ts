@@ -3,6 +3,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { nextRetry } from "./retry-policy.mjs";
 import { convertQueuedNow, recoverAndProcess, signedAudioUrl } from "./direct-audio.ts";
+import { cleanTrackText, mergeMusicMetadata, parseMusicMetadata } from "./track-metadata.mjs";
 
 const PROJECT = "stefanovillaggio8-dot/music-box";
 const ORIGINS = new Set([
@@ -95,12 +96,33 @@ function extractVideo(link:string) {
   } catch { return ""; }
 }
 const uuid = (s:string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+async function readVideoMetadata(videoId:string) {
+  if(!/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
+  try{
+    const address="https://www.youtube.com/oembed?format=json&url="+
+      encodeURIComponent("https://www.youtube.com/watch?v="+videoId);
+    const res=await fetch(address,{signal:AbortSignal.timeout(4500)});
+    if(!res.ok)return null;
+    const json=await res.json();
+    if(typeof json.title!=="string" || !json.title.trim())return null;
+    return {title:cleanTrackText(json.title),author:cleanTrackText(json.author_name,100)};
+  }catch(_){return null;}
+}
 Deno.serve(async req => {
   const origin = req.headers.get("origin")||"";
   if(req.method==="OPTIONS") return respond({},200,origin);
   if(origin && !ORIGINS.has(origin)) return respond({ok:false,error:"Origine non autorizzata"},403,origin);
   try {
     const url = new URL(req.url);
+    if(req.method==="GET" && url.searchParams.get("action")==="metadata") {
+      const id=extractVideo(String(url.searchParams.get("link")||""));
+      if(!id)return respond({ok:false,error:"Link YouTube non valido"},400,origin);
+      const original=await readVideoMetadata(id);
+      const parsed=original?parseMusicMetadata(original.title,original.author):null;
+      return respond({ok:true,found:!!original,artist:parsed?.artist||"",
+        track_title:parsed?.title||"",video_title:original?.title||"",
+        confident:parsed?.confident===true},200,origin);
+    }
     // Private audio receives a fresh temporary signed URL on playback.
     if(req.method==="GET" && url.searchParams.get("action")==="audio") {
       const id=String(url.searchParams.get("id")||"");
@@ -117,14 +139,14 @@ Deno.serve(async req => {
       if(!profile || profile.length>40 || !/^[\p{L}\p{N}_. -]+$/u.test(profile))
         return respond({ok:false,error:"Profilo non valido"},400,origin);
       const rows=await database("?profile=eq."+encodeURIComponent(profile)+
-        "&select=id,profile,video_id,requested_title,status,created_at,error_message,retry_after,result_file"+
+        "&select=id,profile,video_id,requested_title,artist_name,track_title,status,created_at,error_message,retry_after,result_file"+
         "&order=created_at.desc&limit=60");
       // Start stranded jobs in the background without depending on GitHub cron.
       // @ts-ignore EdgeRuntime is provided by Supabase
       EdgeRuntime.waitUntil(recoverAndProcess(profile,database,URI,SECRET));
       return respond({ok:true,links:rows.map((x:Record<string,unknown>)=>({
         id:x.id,profile:x.profile,video_id:x.video_id,
-        title:x.requested_title || "Video YouTube",status:x.status,
+        title:x.requested_title || "Video YouTube",artist:x.artist_name||"",track_title:x.track_title||"",status:x.status,
         created_at:x.created_at,error_message:x.error_message,retry_after:x.retry_after,
         ready_url:x.status==="completed" && x.result_file==="cloud/youtube-"+x.video_id+".mp3"
           ? URI+"/functions/v1/musicbox-import-queue?action=audio&id="+x.id : null
@@ -149,10 +171,18 @@ Deno.serve(async req => {
       const requested_title=String(data.title||"").trim().slice(0,161);
       if(!video_id || !profile || profile.length>40 || !/^[\p{L}\p{N}_. -]+$/u.test(profile) || requested_title.length>160)
         return respond({ok:false,error:"Link, nome o profilo non valido"},400,origin);
+      // Separate artist and title even if the client cannot read YouTube.
+      const providedArtist=cleanTrackText(data.artist,100);
+      const providedTrack=cleanTrackText(data.trackTitle,160);
+      const videoMeta=(!providedArtist||!providedTrack)?await readVideoMetadata(video_id):null;
+      const recognized=mergeMusicMetadata(requested_title,videoMeta?.title||"",videoMeta?.author||"");
+      const artist_name=providedArtist||recognized.artist;
+      const track_title=providedTrack||recognized.title||
+        (requested_title&&!/^Video YouTube [A-Za-z0-9_-]{11}$/.test(requested_title)?requested_title:"");
       const ip=(req.headers.get("cf-connecting-ip")||req.headers.get("x-forwarded-for")||"unidentified").split(",")[0].trim().slice(0,100);
       const seed=new TextEncoder().encode(SECRET+":"+ip);
       const hash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",seed))).map(x=>x.toString(16).padStart(2,"0")).join("");
-      const rows=await database("",{method:"POST",body:JSON.stringify({profile,video_id,requested_title,client_hash:hash})});
+      const rows=await database("",{method:"POST",body:JSON.stringify({profile,video_id,requested_title:requested_title||[artist_name,track_title].filter(Boolean).join(" - "),artist_name,track_title,client_hash:hash})});
       // Start server work as soon as the link is inserted, independent of cron.
       // @ts-ignore EdgeRuntime is provided by Supabase
       EdgeRuntime.waitUntil(convertQueuedNow(String(rows[0].id),database,URI,SECRET));
