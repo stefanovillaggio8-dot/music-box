@@ -31,6 +31,8 @@ on:
       - tools/test-youtube-in-library.cjs
       - tools/cloud-queue-client.cjs
       - cloud/musicbox-import-queue/index.ts
+      - cloud/musicbox-import-queue/retry-policy.mjs
+      - tools/test-cloud-import-retry.cjs
       - .github/workflows/process-mobile-imports.yml
       - online-imports.json
       - tools/aggiorna-copia-locale.ps1
