@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.471";
+  const APP_VERSION = "6.472";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6964,7 +6964,7 @@ async function playById(id, autoplay = true) {
     if (autoplay) await doPlay();
     /* tengo pronto il brano dopo, cosi' quando questo finisce parte subito */
     if (autoplay && audio && !audio.paused) {
-      const prossimo = queue.length ? queue[0] : idBranoA(nextIndex());
+      const prossimo = queue.length ? queue[0] : _anteprimaProssimoBrano();
       if (/\.github\.io$/i.test(location.hostname)) {
         setTimeout(() => {
           if (currentId === id && audio && !audio.paused) _preparaIlSuccessivo(prossimo);
@@ -7008,35 +7008,54 @@ async function playById(id, autoplay = true) {
    non ne rimangono di fresche, ricomincio da capo (e quindi ricominciano anche
    le ripetizioni, altrimenti la musica resterebbe ferma). */
 let _casualeFresche = null;
+let _casualeUniverso = null;
+let _casualeScelto = "";
+let _casualeDa = "";
 
-function _azzeraCasuale() { _casualeFresche = null; }
+function _azzeraCasuale() {
+  _casualeFresche = null;
+  _casualeUniverso = null;
+  _casualeScelto = "";
+  _casualeDa = "";
+}
 
 function _prossimaCasuale(lista) {
-  if (!_casualeFresche || _casualeFresche.size === 0) {
-    _casualeFresche = new Set(lista.map((t) => t.id));
-  }
-  /* Se sono finite le fresche, ricomincio il giro. */
-  if (_casualeFresche.size >= lista.length) {
-    _casualeFresche = new Set(lista.map((t) => t.id));
-  }
-  /* La canzone che sta suonando non e' piu' "fresca". */
-  if (currentId) _casualeFresche.delete(currentId);
-const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
-    if (!rimaste.length) {
-      _casualeFresche = new Set(lista.map((t) => t.id));
-      return Math.floor(Math.random() * lista.length);
+  if (!Array.isArray(lista) || !lista.length) return -1;
+  const disponibili = new Set(lista.map((t) => t.id));
+  if (!_casualeFresche) {
+    _casualeFresche = new Set(disponibili);
+  } else {
+    /* La libreria cambia mentre suona: rimuovi gli eliminati e aggiungi
+       i brani appena importati (compresi YouTube con MP3 cloud pronto). */
+    for (const id of _casualeFresche) {
+      if (!disponibili.has(id)) _casualeFresche.delete(id);
     }
-    /* Ste: "lo shuffle funziona?". Qui c'era un difetto: il numero casuale
-       stava DENTRO la ricerca, quindi veniva rilanciato a ogni canzone
-       esaminata e il confronto era sempre con un candidato diverso. Quando
-       non capitava nessuna uguaglianza la ricerca dava -1, e la riproduzione
-       casuale ripartiva sempre dall'inizio: si sentiva la stessa canzone
-       oppure sembrava che non funzionasse.
-
-       Ora il brano lo scelgo una volta sola, e poi cerco quello. */
-    const scelto = rimaste[Math.floor(Math.random() * rimaste.length)];
-    return lista.findIndex((t) => t.id === scelto.id);
+    for (const id of disponibili) {
+      if (!_casualeUniverso || !_casualeUniverso.has(id)) _casualeFresche.add(id);
+    }
   }
+  _casualeUniverso = disponibili;
+  if (currentId) _casualeFresche.delete(currentId);
+  if (!_casualeFresche.size) {
+    /* Giro concluso: rimescola senza ripetere subito il brano attuale. */
+    _casualeFresche = new Set(disponibili);
+    if (disponibili.size > 1) _casualeFresche.delete(currentId);
+    _casualeScelto = "";
+  }
+  /* nextIndex viene chiamato anche dal pre-caricamento del brano successivo.
+     Non deve estrarre due risultati diversi prima della riproduzione. */
+  if (_casualeDa === currentId && _casualeScelto &&
+      _casualeFresche.has(_casualeScelto)) {
+    const i = lista.findIndex((t) => t.id === _casualeScelto);
+    if (i >= 0) return i;
+  }
+  const rimaste = lista.filter((t) => _casualeFresche.has(t.id));
+  if (!rimaste.length) return -1;
+  const scelta = rimaste[Math.floor(Math.random() * rimaste.length)];
+  _casualeScelto = scelta.id;
+  _casualeDa = currentId;
+  return lista.findIndex((t) => t.id === scelta.id);
+}
 
   function nextIndex() {
     const lista = _listaPerIlSeguito();
@@ -7083,6 +7102,8 @@ function playNext() {
         playById(next);
         return;
       }
+      const prossimoPlaylist = _avantiInPlaylist();
+      if (prossimoPlaylist) { playById(prossimoPlaylist); return; }
       playById(idBranoA(nextIndex()));
     } catch (e) {
       /* Non lascio che un errore qui fermi tutto. */
@@ -11093,12 +11114,14 @@ function _toggleCasuale() {
   }
   /* Appena acceso, salto subito a una canzone a caso: cosi' si sente subito
      che non sta andando piu' in ordine. */
-  const lista = _listaPerIlSeguito();
-  if (lista.length > 1) {
-    const id = lista[Math.floor(Math.random() * lista.length)].id;
-    if (id && id !== currentId) playById(id);
+  const lista = (_posizionePlaylist >= 0 && _playlistSuona.length)
+    ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
+  const alternative = lista.filter((t) => t.id !== currentId);
+  if (alternative.length) {
+    const id = alternative[Math.floor(Math.random() * alternative.length)].id;
+    if (id) playById(id);
   }
-  if (_playlistAttiva) {
+  if (_playlistAttiva || (_posizionePlaylist >= 0 && _playlistSuona.length)) {
     toast('Casuale: suonano solo le canzoni di "' + _playlistAttiva + '", in ordine sparso');
   } else {
     toast("Casuale: suonano solo le canzoni della libreria, in ordine sparso");
@@ -13331,16 +13354,43 @@ function _aggiornaBadgePlaylist() {
   let _playlistSuona = [];
   let _posizionePlaylist = -1;
   function _suonaPlaylist(pl) {
-    const brani = (pl.tracks || []).map((id) => tracks.find((t) => t.id === id)).filter(Boolean);
-    if (!brani.length) { toast("Playlist \"" + pl.name + "\": non c'e' nessun brano"); return; }
+    const brani = (pl.tracks || [])
+      .map((id) => tracks.find((t) => t.id === id))
+      .filter((t) => t && !t.youtubeId && t.url);
+    if (!brani.length) { toast("Playlist \"" + pl.name + "\": nessun audio pronto da riprodurre"); return; }
     _playlistSuona = brani.map((t) => t.id);
-    _posizionePlaylist = 0;
+    const primo = shuffle ? brani[Math.floor(Math.random() * brani.length)].id : _playlistSuona[0];
+    _posizionePlaylist = _playlistSuona.indexOf(primo);
+    _azzeraCasuale();
     chiudiPanelPlaylist();
-    playById(_playlistSuona[0]);
+    playById(primo);
   }
-  /* Va al brano dopo della playlist; se e' finita, torna alla libreria. */
+  function _braniPlaylistInRiproduzione() {
+    return _playlistSuona.map((id) => tracks.find((t) => t.id === id))
+      .filter((t) => t && !t.youtubeId && t.url);
+  }
+  /* Mantiene la playlist selezionata anche in casuale, senza usare i brani
+     della libreria generale e senza ripetizioni finche' ce ne sono. */
+  function _anteprimaProssimoBrano() {
+    if (_posizionePlaylist >= 0 && _playlistSuona.length) {
+      if (shuffle) {
+        const candidati = _braniPlaylistInRiproduzione();
+        const i = _prossimaCasuale(candidati);
+        return (i >= 0 && candidati[i]) ? candidati[i].id : "";
+      }
+      return _playlistSuona[_posizionePlaylist + 1] || "";
+    }
+    return idBranoA(nextIndex());
+  }
   function _avantiInPlaylist() {
     if (_posizionePlaylist < 0 || !_playlistSuona.length) return "";
+    if (shuffle) {
+      const candidati = _braniPlaylistInRiproduzione();
+      const i = _prossimaCasuale(candidati);
+      const id = (i >= 0 && candidati[i]) ? candidati[i].id : "";
+      if (id) _posizionePlaylist = _playlistSuona.indexOf(id);
+      return id;
+    }
     _posizionePlaylist++;
     if (_posizionePlaylist >= _playlistSuona.length) {
       _posizionePlaylist = -1;
