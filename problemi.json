@@ -1,17 +1,5 @@
 [
  {
-  "t": 1793408202624,
-  "r": "SPOTIFY: [v6.435] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
-  "t": 1793408202978,
-  "r": "SPOTIFY: [v6.435] ritorno: nessun codice (indirimento: [], memoria: [])"
- },
- {
-  "t": 1793408203517,
-  "r": "SPOTIFY: [v6.435] Spotify ha risposto 401: Missing/invalid/expired access token"
- },
- {
   "t": 1793408204033,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
  },
@@ -158,5 +146,17 @@
  {
   "t": 1793408389354,
   "r": "libreria: 621 brani, scartati 451 per eliminazione, profilo Emanuele, chiavi eliminate 16"
+ },
+ {
+  "t": 1793408390555,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408392740,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793408392738,
+  "r": "worker /stato: risponde"
  }
 ]
