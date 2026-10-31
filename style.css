@@ -3250,3 +3250,24 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media (prefers-reduced-motion:reduce) {
   .menu-altro-close,.menu-altro-advanced summary svg {transition:none;}
 }
+
+/* v6.473: Prossimo scelto dal casuale, distinto dalla coda manuale. */
+.queue-auto {
+  border:1px solid rgba(173,121,255,.28);
+  background:linear-gradient(120deg,rgba(149,92,246,.13),rgba(116,73,164,.045));
+}
+.queue-auto .queue-num {color:#b88aff;font-weight:800;}
+.queue-auto-tag {
+  flex:0 0 auto;
+  border:1px solid rgba(173,121,255,.29);
+  border-radius:999px;
+  background:rgba(155,95,245,.13);
+  color:#d6b9ff;
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:.01em;
+  padding:5px 9px;
+}
+@media(max-width:420px) {
+  .queue-auto-tag {font-size:10px;padding:4px 7px;}
+}
