@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.433";
+  const APP_VERSION = "6.434";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7561,7 +7561,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.433 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.434 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -13338,38 +13338,44 @@ if (SERVIZIO_PUBBLICA) {
   }
 }
 
+let _gymInvioUltimo = "";
+let _gymInvioProssimo = 0;
+let _gymFallimenti = 0;
 async function _mandaGymAlServizio() {
-  /* Manda al servizio i brani della playlist "gym": il computer li prepara
-     potenziati (bassi, voce avanti, volume piu' forte).
-     Non serve la chiave segreta: qui si scrive solo quella lista. */
+  /* I 500 dipendono dal server. Non ritentare ogni 20 secondi e non
+     alterare la playlist sul dispositivo quando il Worker non risponde. */
+  if (!SERVIZIO_PUBBLICA) return;
+  const gym = [];
+  for (const p of (playlists || [])) {
+    if (String(p.name || "").trim().toLowerCase() !== "gym") continue;
+    for (const id of (p.tracks || [])) gym.push(String(id));
+  }
+  if (!gym.length) return;
+  const payload = JSON.stringify({ tracks: [...new Set(gym)] });
+  if (payload === _gymInvioUltimo || Date.now() < _gymInvioProssimo) return;
   try {
-    if (!SERVIZIO_PUBBLICA) return;
-    const gym = [];
-    for (const p of (playlists || [])) {
-      if (String(p.name || "").trim().toLowerCase() !== "gym") continue;
-      for (const t of (p.tracks || [])) gym.push(String(t));
+    const r = await fetch(SERVIZIO_PUBBLICA + "/gym", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: payload
+    });
+    if (r.ok) {
+      _gymInvioUltimo = payload;
+      _gymFallimenti = 0;
+      _gymInvioProssimo = 0;
+      return;
     }
-    if (!gym.length) return;
-    let r = null;
-    for (let tentativo = 1; tentativo <= 2; tentativo++) {
-      try {
-        const resp = await fetch(SERVIZIO_PUBBLICA + "/gym", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ tracks: gym })
-        });
-        r = resp;
-        break;
-      } catch (e) { /* rete incasinata: secondo tentativo */ }
-    }
-    try {
-      if (r && r.ok) segnalaErrore("gym: " + gym.length + " brani mandati al computer");
-      else segnalaErrore("gym: il servizio non ha accettato la lista (" + (r ? r.status : "?") + ")");
-    } catch (e) { }
-  } catch (e) { /* senza rete: la lista arriva al prossimo giro */ }
+    _gymFallimenti++;
+    _gymInvioProssimo = Date.now() + Math.min(15 * 60000, 60000 * Math.pow(2, Math.min(4, _gymFallimenti - 1)));
+    console.warn("Music Box: salvataggio gym sul Worker non riuscito (HTTP " + r.status +
+      "); playlist mantenuta nel browser. Il servizio Cloudflare richiede verifica.");
+  } catch (e) {
+    _gymInvioProssimo = Date.now() + 60000;
+    console.warn("Music Box: Worker gym non raggiungibile; dati locali conservati.");
+  }
 }
 
-/* Tiene sotto il tetto ("Quanto tenere offline") lo spazio delle canzoni.
+  /* Tiene sotto il tetto ("Quanto tenere offline") lo spazio delle canzoni.
    Prima non c'era nessun tetto: quando il telefono era pieno, il browser
    buttava via le voci piu' vecchie delle cache, e se ne buttava via anche
    le download di Ste ("i download che faccio vengono resettati").
@@ -13423,16 +13429,36 @@ async function _tieniSpazioSottoIlTetto() {
   } catch (e) { /* pazienza */ }
 }
 
+let _playlistInvioUltimo = "";
+let _playlistInvioProssimo = 0;
+let _playlistFallimenti = 0;
 async function _salvaPlaylistCondivise() {
-    if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return;
-    try {
-      await fetch(SERVIZIO_PUBBLICA + "/playlist", {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
-        body: JSON.stringify({ playlist: playlists })
-      });
-    } catch (e) { /* senza rete le playlist restano pero' nel telefono */ }
+  if (!SERVIZIO_PUBBLICA || !CHIAVE_PUBBLICA) return false;
+  const payload = JSON.stringify({ playlist: playlists });
+  if (payload === _playlistInvioUltimo) return true;
+  if (Date.now() < _playlistInvioProssimo) return false;
+  try {
+    const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-chiave": CHIAVE_PUBBLICA },
+      body: payload
+    });
+    if (r.ok) {
+      _playlistInvioUltimo = payload;
+      _playlistFallimenti = 0;
+      _playlistInvioProssimo = 0;
+      return true;
+    }
+    _playlistFallimenti++;
+    _playlistInvioProssimo = Date.now() + Math.min(15 * 60000, 60000 * Math.pow(2, Math.min(4, _playlistFallimenti - 1)));
+    console.warn("Music Box: il Worker non ha salvato la playlist (HTTP " + r.status +
+      "); dati mantenuti nel browser. Controllare i log Cloudflare.");
+  } catch (e) {
+    _playlistInvioProssimo = Date.now() + 60000;
+    console.warn("Music Box: Worker playlist irraggiungibile; dati locali conservati.");
   }
+  return false;
+}
 
   /* ---------- Cosa togliere, quando il brano e' anche in una playlist ----------
      Prima: un si'/no e basta. Se nascondevi un brano che era in "gym", il
@@ -15499,6 +15525,8 @@ async function _spotifyCompletaAccesso(code, stato) {
       return true;
     } catch (e) { return false; }
   }
+  /* Non ripetere chiamate con un token che Spotify ha appena rifiutato. */
+  const _spotifyTokenRifiutati = new Set();
   async function _spotifyApi(percorso) {
       let token = _spotifyToken();
       if (!token) {
@@ -15509,6 +15537,7 @@ async function _spotifyCompletaAccesso(code, stato) {
         token = _spotifyToken();
         if (!token) return null;
       }
+    if (_spotifyTokenRifiutati.has(token)) return null;
     try {
       const r = await fetch("https://api.spotify.com/v1" + percorso, {
         headers: { Authorization: "Bearer " + token }
@@ -15557,6 +15586,7 @@ async function _spotifyCompletaAccesso(code, stato) {
     _spotifyTraccia("Spotify ha risposto " + r.status + " (non riesco a leggere la spiegazione)");
         }
         if (r.status === 401) {
+          _spotifyTokenRifiutati.add(token);
           try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
           try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
         } else if (r.status === 403) {
@@ -15582,7 +15612,14 @@ async function _spotifyCompletaAccesso(code, stato) {
   }
 
 /* Le playlist, anche le private: per queste serve l'accesso. */
+  let _spotifyLetturaPlaylist = null;
   async function _spotifyPlaylist() {
+    if (_spotifyLetturaPlaylist) return _spotifyLetturaPlaylist;
+    _spotifyLetturaPlaylist = _spotifyPlaylistInterna();
+    try { return await _spotifyLetturaPlaylist; }
+    finally { _spotifyLetturaPlaylist = null; }
+  }
+  async function _spotifyPlaylistInterna() {
     const tutte = [];
     /* Prima la strada del sito di Spotify: le API normali chiedono
        l'abbonamento Premium, il sito no. Se il server risponde, uso la sua
