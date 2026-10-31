@@ -125,10 +125,31 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+      - name: Verifica file MP3 e indice su GitHub dopo la pubblicazione
+        if: steps.claim.outputs.has_job == 'true' && steps.publish.outcome == 'success'
+        id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE=$(node -e 'const fs=require("fs");const j=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/musicbox-cloud-job.json","utf8"));if(!/^[A-Za-z0-9_-]{11}$/.test(j.video_id))process.exit(1);process.stdout.write("songs/youtube-"+j.video_id+".mp3")')
+          git fetch --no-tags origin '+refs/heads/mobile-audio:refs/remotes/origin/mobile-audio' '+refs/heads/main:refs/remotes/origin/main'
+          git cat-file -e "refs/remotes/origin/mobile-audio:$FILE"
+          FILE="$FILE" node <<'NODE'
+          const fs = require('node:fs');
+          const { execFileSync } = require('node:child_process');
+          const target = process.env.FILE;
+          const job = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + '/musicbox-cloud-job.json','utf8'));
+          const raw = execFileSync('git',['show','refs/remotes/origin/main:online-imports.json'],{encoding:'utf8'});
+          const data = JSON.parse(raw);
+          if (!Array.isArray(data) || !data.some(x=>x.file===target && x.profile===job.profile)) {
+            throw Error('Indice online mancante per ' + target + ' e profilo ' + job.profile);
+          }
+          console.log('MP3 e indice verificati su GitHub per',job.profile,target);
+          NODE
       - name: Comunica risultato al servizio cloud
         if: always() && steps.claim.outputs.has_job == 'true'
         run: |
-          if [ "${{ steps.convert.outcome }}" = 'success' ] && [ "${{ steps.publish.outcome }}" = 'success' ]; then
+          if [ "${{ steps.convert.outcome }}" = 'success' ] && [ "${{ steps.publish.outcome }}" = 'success' ] && [ "${{ steps.verify.outcome }}" = 'success' ]; then
             node tools/cloud-queue-client.cjs finish success
           else
             node tools/cloud-queue-client.cjs finish failed
