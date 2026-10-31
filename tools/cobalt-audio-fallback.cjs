@@ -27,12 +27,14 @@ async function fetchMP3(videoId,outfile){
       localProcessing:"disabled"}),
     signal:AbortSignal.timeout(50000)
   });
-  if(!response.ok)throw Error("Cobalt HTTP "+response.status);
-  const result=await response.json();
-  if(!result||result.status!=="tunnel"){
-    const code=String(result?.error?.code||result?.status||"unknown").slice(0,130);
+  // Cobalt restituisce il codice della causa nel JSON anche con HTTP 400.
+  // Salviamo solo il codice macchina: non includiamo URL o dati personali.
+  const result=await response.json().catch(()=>null);
+  const code=String(result?.error?.code||result?.status||"unknown")
+    .replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,130);
+  if(!response.ok)throw Error("Cobalt HTTP "+response.status+" ("+code+")");
+  if(!result||result.status!=="tunnel")
     throw Error("Cobalt non ha restituito un MP3: "+code);
-  }
   const url=requireLocalTunnel(result.url);
   const stream=await fetch(url,{redirect:"manual",signal:AbortSignal.timeout(115000)});
   if(!stream.ok || stream.status!==200 || !stream.body)
