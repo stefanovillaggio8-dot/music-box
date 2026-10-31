@@ -140,7 +140,8 @@ async function refresh(){
 async function control(command,extra){
  if(!creds||!room?.joined)return;
  try{
-  const response=await request({action:"control",command,id:creds.id,token:creds.token,...(extra||{})});
+  const response=await request({action:"control",command,id:creds.id,token:creds.token,
+    expectedRevision:room.revision,...(extra||{})});
   if(response.room){room=response.room;lastRevision=0;}
   await refresh();
  }catch(e){tell("Sincronizzazione: "+e.message);await refresh()}
