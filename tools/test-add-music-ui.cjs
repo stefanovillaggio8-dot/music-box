@@ -7,6 +7,12 @@ for (const id of ["fab","fabMenu","fabChiudi","fabImporta","fabYouTube","fabSpot
   assert.equal((html.match(new RegExp('id="' + id + '"',"g"))||[]).length,1,id + " assente o duplicato");
 }
 assert(html.includes("File audio dal telefono"),"File non distinguibile");
+assert(html.includes('id="ytImportaFile"'),"Manca importazione diretta da File nel pannello YouTube");
+assert(html.includes('https://cobalt.tools/') && html.includes('sito esterno'),"Link convertitore non etichettato");
+assert(html.includes('File → Download'),"Istruzioni iPhone mancanti");
+assert(app.includes('$("ytImportaFile").addEventListener("click"') && app.includes("fileInput.click();"),"Scelta file non collegata");
+assert(css.includes(".yt-file-fallback-actions") && css.includes(".fab-file-walkthrough"),"Stili non presenti");
+
 assert(html.includes("Riconosci titoli da uno screenshot"),"Screenshot confuso con MP3");
 assert(html.includes("La pubblicazione online riesce solo") || html.includes("La pubblicazione online riesce solo"),
   "Manca avviso sulla pubblicazione");
