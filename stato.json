@@ -1593,13 +1593,13 @@
    },
    "[\"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 97,
+    "s": 132,
     "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 97,
+    "s": 132,
     "t": "ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Coez"
    },
@@ -1626,6 +1626,18 @@
     "s": 140,
     "t": "Albachiara",
     "a": "Vasco Rossi"
+   },
+   "[\"domenica\",\"coez\"]": {
+    "v": 0,
+    "s": 91,
+    "t": "Domenica",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"domenica\",\"coez\"]": {
+    "v": 0,
+    "s": 91,
+    "t": "Domenica",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1723,17 +1735,17 @@
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"domenica\",\"coez\"]": {
+   "[\"baby mama\",\"don pero\"]": {
     "v": 0,
-    "s": 91,
-    "t": "Domenica",
-    "a": "Coez"
+    "s": 65,
+    "t": "Baby Mama",
+    "a": "Don Pero"
    },
-   "m:2026-11|[\"domenica\",\"coez\"]": {
+   "m:2026-11|[\"baby mama\",\"don pero\"]": {
     "v": 0,
-    "s": 91,
-    "t": "Domenica",
-    "a": "Coez"
+    "s": 65,
+    "t": "Baby Mama",
+    "a": "Don Pero"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1831,17 +1843,17 @@
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"baby mama\",\"don pero\"]": {
+   "[\"ballon d'or\",\"gemitaiz, nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "Baby Mama",
-    "a": "Don Pero"
+    "s": 71,
+    "t": "Ballon d'Or",
+    "a": "Gemitaiz, nayt"
    },
-   "m:2026-11|[\"baby mama\",\"don pero\"]": {
+   "m:2026-11|[\"ballon d'or\",\"gemitaiz, nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "Baby Mama",
-    "a": "Don Pero"
+    "s": 71,
+    "t": "Ballon d'Or",
+    "a": "Gemitaiz, nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1939,17 +1951,11 @@
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"ballon d'or\",\"gemitaiz, nayt\"]": {
+   "m:2026-11|[\"davverodavvero\",\"artie 5ive\"]": {
     "v": 0,
-    "s": 71,
-    "t": "Ballon d'Or",
-    "a": "Gemitaiz, nayt"
-   },
-   "m:2026-11|[\"ballon d'or\",\"gemitaiz, nayt\"]": {
-    "v": 0,
-    "s": 71,
-    "t": "Ballon d'Or",
-    "a": "Gemitaiz, nayt"
+    "s": 75,
+    "t": "DAVVERODAVVERO",
+    "a": "Artie 5ive"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2059,11 +2065,17 @@
     "t": "Non ÃÂÃÂÃÂÃÂ¨ mai abbastanza",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"davverodavvero\",\"artie 5ive\"]": {
+   "[\"marte\",\"thasup\"]": {
     "v": 0,
-    "s": 75,
-    "t": "DAVVERODAVVERO",
-    "a": "Artie 5ive"
+    "s": 71,
+    "t": "marte",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"marte\",\"thasup\"]": {
+    "v": 0,
+    "s": 71,
+    "t": "marte",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2173,17 +2185,17 @@
     "t": "Non ÃÂÃÂ¨ mai abbastanza",
     "a": "ModÃÂÃÂ "
    },
-   "[\"marte\",\"thasup\"]": {
+   "[\"lastronauta (visual)\",\"nayt\"]": {
     "v": 0,
-    "s": 71,
-    "t": "marte",
-    "a": "thasup"
+    "s": 79,
+    "t": "Lastronauta (Visual)",
+    "a": "nayt"
    },
-   "m:2026-11|[\"marte\",\"thasup\"]": {
+   "m:2026-11|[\"lastronauta (visual)\",\"nayt\"]": {
     "v": 0,
-    "s": 71,
-    "t": "marte",
-    "a": "thasup"
+    "s": 79,
+    "t": "Lastronauta (Visual)",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -2293,17 +2305,17 @@
     "t": "Non ÃÂ¨ mai abbastanza",
     "a": "ModÃÂ "
    },
-   "[\"lastronauta (visual)\",\"nayt\"]": {
+   "[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
     "v": 0,
-    "s": 79,
-    "t": "Lastronauta (Visual)",
-    "a": "nayt"
+    "s": 77,
+    "t": "Kid Yugi x Nuts - Lil Peep",
+    "a": "Ferro di checov"
    },
-   "m:2026-11|[\"lastronauta (visual)\",\"nayt\"]": {
+   "m:2026-11|[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
     "v": 0,
-    "s": 79,
-    "t": "Lastronauta (Visual)",
-    "a": "nayt"
+    "s": 77,
+    "t": "Kid Yugi x Nuts - Lil Peep",
+    "a": "Ferro di checov"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -2413,17 +2425,17 @@
     "t": "Non Ã¨ mai abbastanza",
     "a": "ModÃ "
    },
-   "[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
+   "[\"lasciami\",\"modÃ \"]": {
     "v": 0,
-    "s": 77,
-    "t": "Kid Yugi x Nuts - Lil Peep",
-    "a": "Ferro di checov"
+    "s": 56,
+    "t": "Lasciami",
+    "a": "ModÃ "
    },
-   "m:2026-11|[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
+   "m:2026-11|[\"lasciami\",\"modÃ \"]": {
     "v": 0,
-    "s": 77,
-    "t": "Kid Yugi x Nuts - Lil Peep",
-    "a": "Ferro di checov"
+    "s": 56,
+    "t": "Lasciami",
+    "a": "ModÃ "
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -2535,15 +2547,27 @@
    },
    "[\"lasciami\",\"modà\"]": {
     "v": 0,
-    "s": 56,
+    "s": 100,
     "t": "Lasciami",
     "a": "Modà"
    },
    "m:2026-11|[\"lasciami\",\"modà\"]": {
     "v": 0,
-    "s": 56,
+    "s": 100,
     "t": "Lasciami",
     "a": "Modà"
+   },
+   "[\"stupido\",\"massimo pericolo\"]": {
+    "v": 0,
+    "s": 26,
+    "t": "stupido",
+    "a": "massimo pericolo"
+   },
+   "m:2026-11|[\"stupido\",\"massimo pericolo\"]": {
+    "v": 0,
+    "s": 26,
+    "t": "stupido",
+    "a": "massimo pericolo"
    }
   },
   "Diego": {
