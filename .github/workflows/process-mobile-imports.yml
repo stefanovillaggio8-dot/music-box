@@ -23,6 +23,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Prova pubblica dal telefono senza login (solo link non valido)
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          node <<'NODE'
+          (async () => {
+            const r = await fetch("https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue", {
+              method: "POST",
+              headers: {"content-type":"application/json","origin":"https://stefanovillaggio8-dot.github.io"},
+              body: JSON.stringify({action:"create",link:"https://example.org/invalid",
+                profile:"TestNoLogin",title:"non reale",rights:true})
+            });
+            const data = await r.json();
+            if (r.status!==400 || data.ok!==false) {
+              throw Error("L'API pubblica non ha rifiutato il link esterno: "+JSON.stringify(data));
+            }
+            console.log("OK: invio senza GitHub login raggiungibile e link estraneo rifiutato");
+          })().catch(e => {console.error(e);process.exit(1);});
+          NODE
       - name: Prendi una richiesta dalla coda Supabase usando OIDC firmato
         id: claim
         run: node tools/cloud-queue-client.cjs claim
