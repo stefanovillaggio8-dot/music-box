@@ -24,10 +24,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Python per il convertitore cloud
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Installazione convertitore sulla macchina GitHub, non sul PC
         run: |
-          python -m pip install --user --upgrade yt-dlp
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          python -m pip install --upgrade yt-dlp
           ffmpeg -version | head -n 1
       - name: Importa solo il video autorizzato
         id: import
@@ -52,7 +55,7 @@ jobs:
         shell: bash
         run: |
           if [ "$JOB_STATUS" = 'success' ]; then
-            gh issue comment "$ISSUE_URL" --body "Importazione completata per **$SONG_TITLE**. Attendi la pubblicazione di GitHub Pages, poi aggiorna Music Box. Il PC non e' stato utilizzato."
+            gh issue comment "$ISSUE_URL" --body "Importazione completata per **$SONG_TITLE**. Il brano viene letto direttamente da GitHub: aggiorna Music Box dopo alcuni secondi. Il PC non e' stato utilizzato."
             gh issue close "$ISSUE_URL" --reason completed
           else
             gh issue comment "$ISSUE_URL" --body "Importazione non riuscita. Apri la scheda **Actions** di questo repository per leggere l'errore. Se il video non e' accessibile a YouTube senza login o non e' autorizzato, nessun audio viene pubblicato."
