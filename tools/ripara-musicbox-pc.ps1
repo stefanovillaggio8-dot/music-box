@@ -54,32 +54,7 @@ Write-Host ("MP3 mancanti su GitHub ma PRESENTI sul PC: " + $Found) -ForegroundC
 Write-Host ("MP3 mancanti anche sul PC: " + $Missing.Count) -ForegroundColor $(if ($Missing.Count -eq 0) {"Green"} else {"Yellow"})
 Write-Host "Il controllo verifica presenza e dimensione, non identita' esatta del brano."
 
-# Indicizza un piccolo lotto karaoke dal PC: puo' funzionare anche se
-# LRCLIB limita temporaneamente gli indirizzi IP di GitHub Actions.
 $Node = Get-Command node -ErrorAction SilentlyContinue
-if ($Node) {
-    try {
-        $Tools = Join-Path $Root "tools"
-        if (-not (Test-Path -LiteralPath $Tools -PathType Container)) {
-            New-Item -ItemType Directory -Path $Tools | Out-Null
-        }
-        $Scanner = Join-Path $Tools "build-karaoke-index.cjs"
-        $ScannerURL = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/tools/build-karaoke-index.cjs"
-        Invoke-WebRequest -Uri ($ScannerURL+"?refresh="+[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()) -OutFile $Scanner -TimeoutSec 60 -UseBasicParsing
-        Write-Host "Cerco un lotto di karaoke sincronizzati dal PC..."
-        $PreviousMax = $env:MAX_KARAOKE_LOOKUP
-        $env:MAX_KARAOKE_LOOKUP = "25"
-        Push-Location $Root
-        try { & $Node.Source $Scanner }
-        finally {
-            Pop-Location
-            $env:MAX_KARAOKE_LOOKUP = $PreviousMax
-        }
-        if($LASTEXITCODE -ne 0){ Write-Warning "Ricerca karaoke rimandata, i testi esistenti sono intatti." }
-    } catch { Write-Warning ("Karaoke rimandato: "+$_.Exception.Message) }
-} else {
-    Write-Host "Node.js non installato: i karaoke continueranno a essere cercati dall'app/GitHub."
-}
 
 # Individua l'indirizzo del server musicale gia' avviato.
 $Links = @(
@@ -137,3 +112,30 @@ if ($Usable) {
     Write-Host "Avvia il server musicale abituale per ascoltare i file dal PC."
 }
 Write-Host "Non ho caricato alcun MP3 su GitHub o su altri server."
+
+# Indicizza un piccolo lotto karaoke dal PC: puo' funzionare anche se
+# LRCLIB limita temporaneamente gli indirizzi IP di GitHub Actions.
+if ($Node) {
+    try {
+        $Tools = Join-Path $Root "tools"
+        if (-not (Test-Path -LiteralPath $Tools -PathType Container)) {
+            New-Item -ItemType Directory -Path $Tools | Out-Null
+        }
+        $Scanner = Join-Path $Tools "build-karaoke-index.cjs"
+        $ScannerURL = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/tools/build-karaoke-index.cjs"
+        Invoke-WebRequest -Uri ($ScannerURL+"?refresh="+[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()) -OutFile $Scanner -TimeoutSec 60 -UseBasicParsing
+        Write-Host "Cerco un lotto di karaoke sincronizzati dal PC..."
+        $PreviousMax = $env:MAX_KARAOKE_LOOKUP
+        $env:MAX_KARAOKE_LOOKUP = "25"
+        Push-Location $Root
+        try { & $Node.Source $Scanner }
+        finally {
+            Pop-Location
+            $env:MAX_KARAOKE_LOOKUP = $PreviousMax
+        }
+        if($LASTEXITCODE -ne 0){ Write-Warning "Ricerca karaoke rimandata, i testi esistenti sono intatti." }
+    } catch { Write-Warning ("Karaoke rimandato: "+$_.Exception.Message) }
+} else {
+    Write-Host "Node.js non installato: i karaoke continueranno a essere cercati dall'app/GitHub."
+}
+
