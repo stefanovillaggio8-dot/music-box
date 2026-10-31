@@ -1241,17 +1241,11 @@
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
-   "[\"ventanni\",\"måneskin\"]": {
+   "[\"set fire to the rain (hardstyle remix)\",\"adele\"]": {
     "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "Måneskin"
-   },
-   "[\"morirò da re\",\"måneskin\"]": {
-    "v": 1,
-    "s": 5,
-    "t": "Morirò da Re",
-    "a": "Måneskin"
+    "s": 2,
+    "t": "Set Fire To The Rain (Hardstyle Remix)",
+    "a": "Adele"
    }
   },
   "Diego": {
@@ -2843,7 +2837,7 @@
    },
    "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 13,
+    "s": 33,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -2851,12 +2845,6 @@
     "v": 1,
     "s": 33,
     "t": "Con Te PartirÃ²",
-    "a": "Andrea Bocelli"
-   },
-   "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 33,
-    "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    }
   }
