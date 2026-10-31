@@ -23,6 +23,9 @@ on:
       - tools/test-offline-retention.cjs
       - tools/test-add-music-ui.cjs
       - tools/test-cloud-upload-phone.cjs
+      - tools/import-youtube-online.cjs
+      - tools/test-online-youtube-import.cjs
+      - online-imports.json
       - tools/aggiorna-copia-locale.ps1
       - tools/ripara-musicbox-pc.ps1
       - tools/serve-private-musicbox.cjs
@@ -101,3 +104,7 @@ jobs:
         run: node tools/test-add-music-ui.cjs
       - name: Verifica upload cloud dal telefono
         run: node tools/test-cloud-upload-phone.cjs
+      - name: Verifica importazione online YouTube senza PC (test senza rete)
+        run: |
+          node --check tools/import-youtube-online.cjs
+          node tools/test-online-youtube-import.cjs
