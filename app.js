@@ -12545,6 +12545,7 @@ function _nomePerIlBrano(link, suggerito) {
     const artistInput=$("ytOnlineArtist"),titleInput=$("ytOnlineName");
     if(artistInput && !artistInput.value.trim() && meta.artist)artistInput.value=meta.artist;
     if(titleInput && !titleInput.value.trim())titleInput.value=meta.track_title||meta.title;
+    _ytMostraSubitoLink(link);
     $("ytOnlineHint").textContent=meta.artist
       ? "Riconosciuti: "+meta.artist+" — "+(meta.track_title||meta.title)+"."
       : "Titolo riconosciuto, artista non certo: puoi correggerlo prima dell'invio.";
@@ -12562,12 +12563,13 @@ function _nomePerIlBrano(link, suggerito) {
     const saved=_ytLinksMemory[owner]?.links||LS.get(key,[]);
     const rows=Array.isArray(saved)?saved:[];
     const existing=rows.find(x=>x&&x.video_id===id);
-    const known=id==="75qIYkMUGVE"?"Dominic Fike - WHITE KEYS":"";
-    const title=String($("ytOnlineName").value||"").trim()||
-      (existing&&String(existing.requested_title||"").trim())||known||"Video YouTube "+id;
-    if(known && !$("ytOnlineName").value.trim())$("ytOnlineName").value=known;
+    const artist=String($("ytOnlineArtist").value||existing?.artist||existing?.artist_name||"").trim();
+    const trackTitle=String($("ytOnlineName").value||existing?.track_title||"").trim();
+    const composed=[artist,trackTitle].filter(Boolean).join(" - ");
+    const title=composed||String(existing?.requested_title||"").trim()||"Video YouTube "+id;
     const keep=existing&&["queued","running","completed"].includes(existing.status);
     const row={...existing,video_id:id,profile:owner,requested_title:title.slice(0,160),
+      artist,track_title:trackTitle,
       error_message:keep?String(existing.error_message||""):"",
       _ytDraftAt:keep?Number(existing._ytDraftAt||0):Date.now(),
       status:keep?existing.status:($("ytOnlineRights").checked?"checking":"needs-consent")};
@@ -12590,11 +12592,17 @@ function _nomePerIlBrano(link, suggerito) {
     _ytLinksMemory[owner]={links:next,time:Date.now()};
     _ytAggiornaVociLibreria(next,owner,true);
   }
+  let _ytLastMetadataLink="";
   function _ytProgrammaRicercaLink() {
     ++_ytProbeSequence;
     clearTimeout(_ytProbeTimeout);
     const link=_videoYouTubePerCloud($("ytOnlineUrl").value);
     if(!link)return;
+    if(_ytLastMetadataLink!==link){
+      _ytLastMetadataLink=link;
+      $("ytOnlineArtist").value="";
+      $("ytOnlineName").value="";
+    }
     _ytMostraSubitoLink(link);
     const owner=String(profile||DEFAULT_PROFILE),token=_ytProbeSequence;
     _ytProbeTimeout=setTimeout(async()=>{
