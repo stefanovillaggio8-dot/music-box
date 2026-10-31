@@ -1,0 +1,43 @@
+name: Music Box - verifica Samplecut API cloud
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/probe-samplecut-cloud.yml"]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verifica API gratuita con breve clip NASA (nessun MP3 pubblicato)
+        run: |
+          node <<'NODE'
+          (async () => {
+            const url='https://api.samplecut.app/v1/downloads';
+            // NASA eClips e' una sorgente istituzionale; solo 2s in memoria
+            // lato servizio. Questa verifica non scarica, non salva ne' pubblica audio.
+            const response=await fetch(url,{
+              method:'POST',
+              headers:{'content-type':'application/json','x-client-name':'musicbox-cloud-probe'},
+              body:JSON.stringify({url:'https://www.youtube.com/watch?v=0j_Dzxqhs6k',start_sec:0,end_sec:2,format:'mp3'}),
+              signal:AbortSignal.timeout(125000)
+            });
+            const data=await response.json().catch(()=>({}));
+            const result={
+              status:response.status,
+              ok:response.ok,
+              error_code:data.error?.code||null,
+              error_message:String(data.error?.message||'').slice(0,180),
+              returned_https_audio_url:typeof data.download_url==='string'&&data.download_url.startsWith('https://api.samplecut.app/'),
+              track_duration_sec:data.track_duration_sec||null
+            };
+            console.log('API verification result:',JSON.stringify(result));
+            if(!response.ok||!result.returned_https_audio_url) process.exitCode=1;
+          })().catch(e=>{console.error('API verification error:',String(e?.message||e));process.exitCode=1;});
+          NODE
