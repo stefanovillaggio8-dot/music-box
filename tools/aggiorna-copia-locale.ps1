@@ -1,9 +1,10 @@
+param([string]$Root = "")
 $ErrorActionPreference = "Stop"
 
 # Aggiorna il codice dalla versione comune e mantiene anche le canzoni
 # registrate SOLO nel catalogo del PC. Non tocca i file audio o i dati personali.
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$Root = (Get-Location).Path
+$Root = if ($Root) { $Root } else { (Get-Location).Path }
 $NL = [Environment]::NewLine
 $Required = @("index.html", "app.js")
 foreach ($Name in $Required) {
@@ -39,7 +40,7 @@ function Get-TrackEntries([string]$Source) {
 }
 
 $Base = "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main"
-$Files = @("index.html", "app.js", "fuoco.js", "style.css", "sw.js", "versione.json")
+$Files = @("index.html", "app.js", "fuoco.js", "style.css", "sw.js", "versione.json", "karaoke-index.json", "karaoke-scan-state.json")
 $Stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $Stage = Join-Path $Root (".musicbox-update-" + $Stamp)
 $Backup = Join-Path $Root (".musicbox-backup-" + $Stamp)
@@ -55,9 +56,31 @@ try {
         Write-Host ("Scarico " + $Name + "...")
         Invoke-WebRequest -Uri $Uri -OutFile $Destination -TimeoutSec 45
 
-        if (-not (Test-Path $Destination -PathType Leaf) -or (Get-Item $Destination).Length -lt 40) {
+        if (-not (Test-Path $Destination -PathType Leaf) -or (Get-Item $Destination).Length -lt $(if ($Name -match "\\.json$") { 2 } else { 40 })) {
             throw ("File scaricato incompleto: " + $Name)
         }
+    }
+
+    # Unisci gli ID karaoke pubblicati con quelli gia' recuperati sul PC:
+    # nessun testo utente, profilo o MP3 viene sostituito.
+    foreach ($JsonName in @("karaoke-index.json", "karaoke-scan-state.json")) {
+        $JsonRemote = Join-Path $Stage $JsonName
+        $JsonLocal = Join-Path $Root $JsonName
+        $RemoteObj = Get-Content -LiteralPath $JsonRemote -Raw | ConvertFrom-Json
+        $Merged = [ordered]@{}
+        if (Test-Path -LiteralPath $JsonLocal -PathType Leaf) {
+            $LocalObj = Get-Content -LiteralPath $JsonLocal -Raw | ConvertFrom-Json
+            foreach ($Entry in $LocalObj.PSObject.Properties) {
+                $Merged[$Entry.Name] = $Entry.Value
+            }
+        }
+        foreach ($Entry in $RemoteObj.PSObject.Properties) {
+            if (-not $Merged.Contains($Entry.Name)) {
+                $Merged[$Entry.Name] = $Entry.Value
+            }
+        }
+        $JSON = ConvertTo-Json -InputObject $Merged -Depth 20
+        [IO.File]::WriteAllText($JsonRemote, $JSON + $NL, [Text.UTF8Encoding]::new($false))
     }
 
     $AppPath = Join-Path $Stage "app.js"
@@ -121,6 +144,7 @@ try {
     Write-Host ("Music Box aggiornato alla versione " + $VersionInfo.versione) -ForegroundColor Green
     Write-Host ("Catalogo finale: " + $Combined.Count + " brani; voci conservate solo dal PC: " + $LocalOnly)
     Write-Host ("Backup dei file precedenti: " + $Backup)
+    Write-Host "Aggiornati anche gli ID karaoke senza cancellare quelli gia' recuperati." 
     Write-Host "Non ho modificato songs/, playlist.json, covers.json, lyrics.json, stato.json o altri dati personali."
     Write-Host "Ora ricarica la pagina /app/ con Ctrl+F5."
 }
