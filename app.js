@@ -1287,7 +1287,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.431";
+  const APP_VERSION = "6.432";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1629,7 +1629,7 @@ const PROFILI = [
            private-IP address as mixed content. In that case use the
            published HTTPS source, preserving the local server on HTTP. */
         const protocolloCompatibile = location.protocol !== "https:" || /^https:\/\//i.test(casa);
-        if (!giaLocale && protocolloCompatibile && /^\d{1,3}(\.\d{1,3}){3}/.test(casa)) {
+        if (!giaLocale && protocolloCompatibile && /^https?:\/\/\d{1,3}(\.\d{1,3}){3}(?::\d+)?$/i.test(casa)) {
           return casa + "/app/" + nome.replace(/^\/+/, "");
         }
       }
