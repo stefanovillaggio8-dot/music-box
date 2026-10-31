@@ -1233,6 +1233,12 @@
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
+   "[\"sottogonna\",\"blanco\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "SOTTOGONNA",
+    "a": "BLANCO"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1245,11 +1251,17 @@
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
-   "[\"sottogonna\",\"blanco\"]": {
+   "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 1,
-    "s": 0,
-    "t": "SOTTOGONNA",
-    "a": "BLANCO"
+    "s": 4,
+    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
+    "a": "Adriano Celentano"
+   },
+   "m:2026-10|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
+    "a": "Adriano Celentano"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -1262,18 +1274,6 @@
     "s": 5,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
-   },
-   "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 1,
-    "s": 4,
-    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
-    "a": "Adriano Celentano"
-   },
-   "m:2026-10|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
-    "a": "Adriano Celentano"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
