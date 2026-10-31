@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6446";
+const CACHE = "spotifynonavraiimieisoldi-v6447";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1201,6 +1201,20 @@ async function findCachedMusic(url, profile) {
       const cache = await caches.open(key);
       const response = await cache.match(new Request(url));
       if (response && response.status === 200) return response;
+      /* GitHub / PC / Tailscale possono cambiare l'host dello stesso
+         track-ID: un MP3 gia' scaricato deve suonare anche senza rete. */
+      const path = new URL(url).pathname;
+      const song = /\/songs\/(track-\d+\.mp3)$/i.exec(path);
+      if (song) {
+        for (const candidate of await cache.keys()) {
+          const oldPath = new URL(candidate.url).pathname;
+          const oldSong = /\/songs\/(track-\d+\.mp3)$/i.exec(oldPath);
+          if (oldSong && oldSong[1].toLowerCase() === song[1].toLowerCase()) {
+            const alternative = await cache.match(candidate);
+            if (alternative && alternative.status === 200) return alternative;
+          }
+        }
+      }
     } catch (_) { /* provo la cache successiva */ }
   }
   return null;

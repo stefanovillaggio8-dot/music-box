@@ -25,6 +25,13 @@
       try { if (navigator.audioSession) navigator.audioSession.type = "playback"; }
       catch (e) { /* AudioSession e' opzionale */ }
     }
+    /* I controlli standard del lettore iOS non richiedono che JavaScript
+       resti attivo mentre Safari e' sospeso in background. */
+    function _usaControlliNativiIos() {
+      const ua = String(navigator.userAgent || "");
+      return /iPhone|iPad|iPod/i.test(ua) && /Safari/i.test(ua) &&
+        !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);
+    }
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
   /* Sta nella memoria della scheda (non in una variabile): cosi' se la
@@ -1266,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.446";
+  const APP_VERSION = "6.447";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1364,7 +1371,10 @@ document.addEventListener("visibilitychange", () => {
     _segna("app nel secondo piano", "salvo la posizione a " +
     Math.round((audio && audio.currentTime) || 0) + "s");
     /* Teniamo la notifica visibile anche in background. */
-    try { updateMediaSession(); setPlaybackState(audio && !audio.paused ? "playing" : "paused"); } catch (e) { /* noop */ }
+    try {
+      if (!_usaControlliNativiIos()) updateMediaSession();
+      setPlaybackState(audio && !audio.paused && !audio.ended ? "playing" : "paused");
+    } catch (e) { /* noop */ }
   } else {
     _visibileIl = Date.now();
     _segna("tornato in primo piano");
@@ -5552,6 +5562,10 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     } catch (e) { }
     a.addEventListener("play", () => {
     if (a !== audio) return;
+    if (_usaControlliNativiIos()) {
+      _vuoleSuonare = true;
+      _segnaIntenzioneSono(true);
+    }
     _configuraSessioneAudio();
     _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
@@ -5586,6 +5600,15 @@ a.addEventListener("pause", () => {
       ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
     /* Ferma il contatore PRIMA di ogni eventuale return o ripresa iOS. */
     if (a === audio) _chiudiAscolto(false);
+    if (_usaControlliNativiIos() && !a.ended && !a._mbCambioBrano) {
+      /* La pausa delle cuffie non va interpretata come sospensione
+         involontaria. I secondi di pausa non sono ascolto. */
+      _vuoleSuonare = false;
+      _segnaIntenzioneSono(false);
+      _silenziDiFila = 0;
+      if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
+      if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
+    }
     if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
       return;
@@ -5600,7 +5623,7 @@ a.addEventListener("pause", () => {
       try { setTimeout(() => _riprendiSeInAttesa(), 400); } catch (e) { /* noop */ }
     }
     syncPlayUI();
-    updateMediaSession();
+    if (!_usaControlliNativiIos()) updateMediaSession();
     setPlaybackState("paused");
     savePos();
     _chiudiAscolto(false);
@@ -6870,7 +6893,7 @@ function playNext() {
     syncPlayUI();
     /* Teniamo attiva la notifica anche quando la musica e' fermata,
        cosi' resta visibile finche' non chiudi l'app dal background. */
-    try { updateMediaSession(); } catch (e) { /* noop */ }
+    try { if (!_usaControlliNativiIos()) updateMediaSession(); } catch (e) { /* noop */ }
   }
 
   /* Ste: "riapro l'app e si ferma la canzone, senza che io tocchi nulla".
@@ -7122,11 +7145,18 @@ function _aggiornaPosizioneSchermo() {
     /* Tasti del blocco schermo: passano dagli stessi due posti del tasto
        play/pausa dell'app, altrimenti potrebbero dimenticarsi di dire
        "l'utente ha messo pausa" e la musica ripartirebbe da sola. */
-    setHandler("play", () => {
-      if (currentId) _riproduciVolontaria();
-      else if (tracks.length) playById(tracks[0].id);
-    });
-    setHandler("pause", () => { _pausaVolontaria(); });
+    if (_usaControlliNativiIos()) {
+      /* Rimuovi l'intercettazione JS su Safari: i pulsanti di sistema
+         comandano direttamente l'elemento audio anche in background. */
+      setHandler("play", null);
+      setHandler("pause", null);
+    } else {
+      setHandler("play", () => {
+        if (currentId) _riproduciVolontaria();
+        else if (tracks.length) playById(tracks[0].id);
+      });
+      setHandler("pause", () => { _pausaVolontaria(); });
+    }
     setHandler("nexttrack", () => playNext());
     setHandler("previoustrack", () => playById(idBranoA(prevIndex())));
     setHandler("seekto", (d) => {
@@ -7950,7 +7980,7 @@ if (r.ok && j && j.ok) {
         endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
           "&artist_name=" + encodeURIComponent(artist || "")
       ];
-      const header = { "Lrclib-Client": "MusicBox/6.446 (https://github.com/stefanovillaggio8-dot/music-box)" };
+      const header = { "Lrclib-Client": "MusicBox/6.447 (https://github.com/stefanovillaggio8-dot/music-box)" };
       for (const url of queries) {
         if (Date.now() < _lrclibNonPrimaDi) break;
         try {
@@ -11212,21 +11242,22 @@ $("fabMenu").addEventListener("click", (e) => {
      prima. Prima non c'era, ed e' per questo che l'app sembrava
      "incastrata" su una versione vecchia. */
   $("btnRefresh").addEventListener("click", async () => {
-    toast("Aggiorno l'app, aspetta un secondo...");
+    /* Aggiornare l'app NON autorizza la cancellazione delle cache degli MP3. */
+    if (offlineBusy) {
+      toast("Termina lo scaricamento prima di aggiornare.");
+      return;
+    }
+    toast("Aggiorno Music Box conservando le canzoni offline...");
     try {
       if ("serviceWorker" in navigator) {
         const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
+        for (const reg of regs) {
+          await reg.update().catch(() => {});
+          if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
       }
-    } catch (e) { /* noop */ }
-    try {
-      if (swReg) await swReg.update();
-    } catch (e) { /* noop */ }
-    try {
-      const keys = await caches.keys();
-      await Promise.all(keys.map((k) => caches.delete(k)));
-    } catch (e) { /* noop */ }
-    setTimeout(() => window.location.reload(), 400);
+    } catch (e) { /* la cache dei brani non va mai svuotata */ }
+    setTimeout(() => location.reload(), 1000);
   });
 
   let offlineBusy = false;
@@ -11293,6 +11324,7 @@ $("fabMenu").addEventListener("click", (e) => {
       return [];
     }
     const rows = [];
+    cachedSongs = await _elencoOfflineDelProfilo();
   for (const t of tracks) {
     /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
        ascoltare senza connessione". Prima, per un brano che non era
@@ -11303,8 +11335,7 @@ $("fabMenu").addEventListener("click", (e) => {
       rows.push({ title: t.title, state: "ok", label: "non scaricabile", el: null, track: t });
       continue;
     }
-    let cached = false;
-    try { cached = !!(await cache.match(t.url)) || !!(await cache.match(absUrl(t.url))); } catch (e) { cached = false; }
+    const cached = isCached(t);
     rows.push({
       title: t.title,
       state: cached ? "ok" : "todo",
@@ -11347,10 +11378,11 @@ $("fabMenu").addEventListener("click", (e) => {
       const suiDati = /^(cellular|2g|3g|4g)$/i.test(String(tipo)) ||
         (connessione && connessione.saveData === true);
       if (suiDati) return;
-      const cache = await appCache();
+      /* Automatico = cache temporanea. Download manuale = cache protetta. */
+      const cache = await streamCache();
       if (!cache) return;
-      const gia = await cache.match(brano.url);
-      if (gia) return;
+      const manuale = await appCache();
+      if ((manuale && await manuale.match(brano.url)) || await cache.match(brano.url)) return;
       /* Non supero il tetto di spazio. */
       const tetto = Number(LS.get("mb.tettoScarica-" + profile, "500")) || 500;
       try {
@@ -11358,28 +11390,16 @@ $("fabMenu").addEventListener("click", (e) => {
           const stima = await navigator.storage.estimate();
           const usato = Number((stima && stima.usage) || 0) / (1024 * 1024);
           if (usato >= tetto) {
-            /* Ste: "i download dopo un po' si liberano e devo reinstallarli".
-               Prima l'app smetteva di scaricare e basta: ma il telefono
-               restava pieno, e allora iOS liberava lo spazio come gli
-               pareva (e si portava via anche le canzoni appena scaricate).
-               Adesso libero io le canzoni PIU' VECCHIE e poi continuo a
-               scaricare: il telefono resta sotto il tetto e non si
-               libera piu' niente all'improvviso. */
-            const liberato = await _liberaCanzoniVecchie(cache, usato - tetto * 0.9);
-            if (liberato > 0) {
-              if (!_avvisoTetto) {
-                _avvisoTetto = true;
-                toast("Ho liberato " + Math.round(liberato) + " MB di canzoni vecchie " +
-                  "per restare sotto il tetto di " + Math.round(tetto) + " MB.", 6000);
-              }
-            } else if (!_avvisoTetto) {
+            /* Non eliminare download manuali per fare spazio a quelli
+               automatici: fermo invece il download temporaneo. */
+            if (!_avvisoTetto) {
               _avvisoTetto = true;
-              toast("Lo spazio e' arrivato a " + Math.round(usato) + " MB: ho smesso di " +
-                "scaricare da solo. Puoi cambiare il tetto o liberare spazio " +
-                "dal menu Altro.", 8000);
-              return;
+              toast("Spazio offline al limite: fermo i download automatici, ma conservo quelli scelti da te.", 7000);
             }
+            return;
           }
+        }
+      } catch (e) { /* il browser non dice: vado avanti */ }          }
         }
       } catch (e) { /* il browser non dice: vado avanti */ }
       const mio = offlineAbort;
@@ -11806,45 +11826,50 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
     try { return new URL(u, location.href).href; } catch (e) { return u; }
   }
 
-  async function refreshCachedSongs() {
-    /* Ste: "diego aveva scaricato le canzoni, ha chiuso l'app e una volta
-       riaperta doveva di nuovo scaricarle".
-
-       Motivo: qui guardavo solo la cache della versione corrente. Ma le
-       canzoni scaricate possono stare in una cache vecchia (per esempio
-       se l'aggiornamento e' appena successo e il service worker non ha
-       ancora migrato i brani), e allora l'app non le vedeva e le
-       ridownloadava.
-
-       Adesso guardo TUTTE le cache, come fa il service worker quando
-       serve un brano. */
-    const set = new Set();
+  function _chiaveFileOffline(url) {
     try {
-      const chiavi = await caches.keys();
-      for (const chiave of chiavi) {
-        let cache = null;
-        try { cache = await caches.open(chiave); } catch (e) { continue; }
-        let reqs = [];
-        try { reqs = await cache.keys(); } catch (e) { continue; }
-        for (const r of reqs) {
-          let nome = "";
-          try { nome = new URL(r.url).pathname; } catch (e) { nome = r.url; }
-          if (/\.mp3$/i.test(nome)) set.add(r.url);
+      const u = new URL(String(url || ""), location.href);
+      const m = /\/songs\/(track-\d+\.mp3)$/i.exec(u.pathname);
+      return m ? "musicbox:" + m[1].toLowerCase() : "";
+    } catch (e) { return ""; }
+  }
+
+  /* La lista e' di un profilo, non di tutto il telefono. Non includere
+     prefetch: quei file vengono volutamente rimossi a ogni update. */
+  async function _elencoOfflineDelProfilo() {
+    const set = new Set();
+    if (!("caches" in window)) return set;
+    const allowed = new Set([cacheBraniName(),cacheStreamName(),
+      CACHE_PREFIX + "-brani"]);
+    for (const nome of await caches.keys()) {
+      if (!allowed.has(nome)) continue;
+      try {
+        const cache = await caches.open(nome);
+        for (const req of await cache.keys()) {
+          const url = String(req.url || "");
+          if (!/\.mp3(?:[?#]|$)/i.test(url)) continue;
+          set.add(url);
+          const key = _chiaveFileOffline(url);
+          if (key) set.add(key);
         }
-      }
-    } catch (e) { /* niente cache: pazienza */ }
-    cachedSongs = set;
+      } catch (e) { /* una cache non blocca le altre */ }
+    }
+    return set;
+  }
+
+  async function refreshCachedSongs() {
+    try { cachedSongs = await _elencoOfflineDelProfilo(); }
+    catch (e) { cachedSongs = new Set(); }
     render();
   }
 
   function isCached(t) {
-    if (!t) return true;
-    /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva ascoltare
-       senza connessione". Prima qui, per un brano che non era "builtin"
-       (quello di Diego e' condiviso, non e' dell'app), rispondevo sempre
-       "gia' salvata": cosi' l'app credeva che fosse tutto pronto e non
-       scaricava mai niente. Ora guardo davvero in cache, come per gli altri. */
-    return cachedSongs.has(absUrl(t.url)) || cachedSongs.has(t.url);
+    if (!t) return false;
+    if (!t.url) return true;
+    const url = absUrl(t.url);
+    const key = _chiaveFileOffline(url);
+    return cachedSongs.has(url) || cachedSongs.has(t.url) ||
+      (!!key && cachedSongs.has(key));
   }
 
   async function fetchToCache(url, cache, onProgress) {
@@ -11900,7 +11925,7 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
       if (perc >= 80) {
         toast("Attenzione: spazio offline al " + Math.round(perc) + "% (" +
           Math.round(usato / 1024 / 1024) + " MB su " + tettoMb + " MB). " +
-          "Le canzoni più vecchie verranno rimosse automaticamente.", 8000);
+          "Solo le copie temporanee possono essere liberate; non elimino quelle salvate da te.", 8000);
         /* Pulizia automatica proattiva */
         await _tieniSpazioSottoIlTetto();
         return true;
@@ -11940,6 +11965,7 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
         el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9.6 16.6 5 12l1.4-1.4 3.2 3.2 8-8L19 7.2l-9.4 9.4Z"/></svg>';
       }
       toast(t.title + " pronta per offline");
+      refreshCachedSongs().catch(() => {});
     } catch (e) {
       if (el) {
         el.classList.remove("run");
@@ -13856,19 +13882,12 @@ async function _tieniSpazioSottoIlTetto() {
         tot -= sz;
       } catch (e) { }
     }
-    /* Poi, se serve davvero, le download del profilo: le piu' vecchie */
-    if (tot + mie > tetto) {
-      for (const req of await miei.keys()) {
-        if (tot + mie <= tetto) break;
-        try {
-          const r = await miei.match(req);
-          const sz = r ? (Number(r.headers.get("content-length") || 0) || 0) : 0;
-          await miei.delete(req);
-          mie -= sz;
-        } catch (e) { }
-      }
-    }
+    /* Se rimane pieno, fermiamo le aggiunte automatiche:
+       i file offline salvati manualmente non vengono MAI cancellati qui. */
   } catch (e) { /* pazienza */ }
+}
+
+let _playlistInvioUltimo  } catch (e) { /* pazienza */ }
 }
 
 let _playlistInvioUltimo = "";
