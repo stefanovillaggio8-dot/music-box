@@ -120,7 +120,7 @@ try {
     # Il contatore include le canzoni conservate dal catalogo locale,
     # così l'app le rileva appena si riapre.
     $VersionInfo.brani = $Combined.Count
-    $VersionInfo.aggiornato = [DateTime]::UtcNow.ToString("o")
+    $VersionInfo | Add-Member -NotePropertyName aggiornato -NotePropertyValue ([DateTime]::UtcNow.ToString("o")) -Force
     $VersionContent = ($VersionInfo | ConvertTo-Json -Depth 10) + $NL
     [System.IO.File]::WriteAllText($VersionPath, $VersionContent, [System.Text.UTF8Encoding]::new($false))
 
