@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.466";
+  const APP_VERSION = "6.467";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3324,12 +3324,16 @@ function _devoVedereBrano(eMio, b) {
       // Quando l'MP3 e' stato pubblicato, usiamo soltanto il vero brano audio.
       if(published.has("songs/youtube-"+id+".mp3"))continue;
       const name=String(row.requested_title||row.title||"").trim();
+      const splitName=name.match(/^(.{2,90}?)\s+[-–—]\s+(.+)$/);
+      const artistName=String(row.artist||row.artist_name||splitName?.[1]||"").trim().slice(0,100);
+      const rawSong=String(row.track_title||splitName?.[2]||name).trim();
+      const songName=rawSong.replace(/\s*[\[(]\s*(?:official\s+)?(?:(?:music|lyric)\s+)?(?:video|visualizer|visual|audio|lyrics?)(?:\s*video)?\s*[\])]\s*$/i,"").trim()||rawSong;
       const directURL=String(row.ready_url||"");
       const readyCloud=row.status==="completed" &&
         /^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(directURL);
       linked.push({
-        id:"yt-"+id, title:name && name!=="Video YouTube" ? name.slice(0,160) : "Video YouTube "+id,
-        artist:"", album:readyCloud?"MP3 pronto sul cloud":row.status==="failed"?"Importazione fallita":
+        id:"yt-"+id, title:songName && songName!=="Video YouTube" ? songName.slice(0,160) : "Video YouTube "+id,
+        artist:artistName, album:readyCloud?"MP3 pronto sul cloud":row.status==="failed"?"Importazione fallita":
           row.status==="needs-consent"?"Conferma i diritti per importare":
           row.status==="checking"?"Invio automatico in corso":
           row.status==="completed"?"MP3 in pubblicazione":
