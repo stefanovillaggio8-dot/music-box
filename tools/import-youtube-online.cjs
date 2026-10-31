@@ -72,31 +72,63 @@ function main() {
     output("status", "already");
     return;
   }
+  // Un solo passaggio yt-dlp evita doppie richieste per lo stesso video.
+  // Non si aggirano login, verifiche anti-bot o controlli sui diritti.
   let details = {};
   const url = "https://www.youtube.com/watch?v=" + id;
-  if (!fs.existsSync(file)) {
-    console.log("Leggo metadati del video " + id);
-    details = JSON.parse(run("yt-dlp", ["--js-runtimes", "node", "--no-playlist", "--no-warnings", "--skip-download", "--dump-single-json",
-      "--socket-timeout", "20", url], 110000));
-    const seconds = Number(details.duration);
-    if (!Number.isFinite(seconds) || seconds <= 0 || seconds > MAX_SECONDS || details.is_live) {
-      fail("Video live, durata sconosciuta o superiore a 12 minuti.");
-    }
-    console.log("Preparo MP3: " + clean(details.title));
+  const infoFile = "songs/youtube-" + id + ".info.json";
+  const previous = entries.find(x => x.file === file && x.title);
+  if (fs.existsSync(file)) {
+    if (previous) details = { track: previous.title, artist: previous.artist };
+    console.log("Riutilizzo MP3 gia' nell'archivio: " + file);
+  } else {
+    fs.mkdirSync("songs", {recursive:true});
+    console.log("Preparo MP3 autorizzato " + id + " in un solo passaggio");
     try {
-      run("yt-dlp", ["--js-runtimes", "node", "--no-playlist", "--no-warnings", "--no-progress", "--socket-timeout", "20",
-        "--max-filesize", "24M", "--extract-audio", "--audio-format", "mp3", "--audio-quality", "5",
-        "--output", "songs/youtube-" + id + ".%(ext)s", url], 200000);
+      run("yt-dlp", [
+        "--ignore-config", "--js-runtimes", "deno", "--no-playlist",
+        "--no-warnings", "--no-progress", "--socket-timeout", "20",
+        "--retries", "3", "--fragment-retries", "3",
+        "--retry-sleep", "http:linear=1:3:1",
+        "--format", "bestaudio/best",
+        "--match-filters", "duration <= 720",
+        "--max-filesize", "24M",
+        "--extract-audio", "--audio-format", "mp3", "--audio-quality", "5",
+        "--write-info-json",
+        "--output", "songs/youtube-" + id + ".%(ext)s",
+        url
+      ], 240000);
+      if (!fs.existsSync(file)) {
+        fail("YouTube non ha fornito un audio valido: verifica durata, accesso e formato.");
+      }
+      if (fs.existsSync(infoFile)) details = JSON.parse(fs.readFileSync(infoFile,"utf8"));
+      const seconds = Number(details.duration);
+      if (!Number.isFinite(seconds) || seconds <= 0 || seconds > MAX_SECONDS ||
+          details.is_live || details.live_status === "is_live") {
+        fail("Video live, durata sconosciuta o superiore a 12 minuti.");
+      }
     } catch (e) {
       if (fs.existsSync(file)) fs.rmSync(file);
-      throw new Error("Audio non disponibile da YouTube: " + clean(String(e.stderr || e.message).split("\n").filter(Boolean).slice(-1)[0], 190));
-    }
-    if (!fs.existsSync(file) || fs.statSync(file).size <= 0) fail("Non e' stato prodotto un MP3 valido.");
-    if (fs.statSync(file).size > MAX_BYTES) {
-      fs.rmSync(file);
-      fail("MP3 superiore a 24 MB. Nessun file pubblicato.");
+      const detail = String((e && (e.stderr || e.message)) || e);
+      if (/sign in to confirm.{0,150}(?:bot|human)|not a bot|automated requests/i.test(detail)) {
+        fail("YouTube richiede una verifica anti-bot al server: non e' stato possibile ottenere l'audio.");
+      }
+      throw e;
+    } finally {
+      try { if (fs.existsSync(infoFile)) fs.rmSync(infoFile); } catch (_) {}
     }
   }
+  if (!fs.existsSync(file) || fs.statSync(file).size <= 0) fail("Nessun MP3 valido prodotto.");
+  if (fs.statSync(file).size > MAX_BYTES) {
+    fs.rmSync(file);
+    fail("MP3 superiore a 24 MB. Nessun file pubblicato.");
+  }
+  const secondsAudio = Number(run("ffprobe", [
+    "-v", "error", "-show_entries", "format=duration",
+    "-of", "default=noprint_wrappers=1:nokey=1", file
+  ], 20000).trim());
+  if (!Number.isFinite(secondsAudio) || secondsAudio <= 0 || secondsAudio > MAX_SECONDS + 1)
+    fail("Verifica MP3 fallita: file audio vuoto, corrotto o troppo lungo.");
   let title = clean(details.track || details.title || "Audio YouTube " + id);
   let artist = clean(details.artist || details.creator || details.uploader || "");
   if (requested) {
@@ -123,7 +155,7 @@ function main() {
 }
 try { main(); } catch (e) {
   const detail = String((e && (e.stderr || e.message)) || e || "Errore sconosciuto");
-  const publicError = /sign in to confirm.{0,100}bot/i.test(detail)
+  const publicError = /sign in to confirm.{0,150}(?:bot|human)|verifica anti-bot|automated requests/i.test(detail)
     ? "YouTube blocca il download dai server GitHub (controllo anti-bot)."
     : /ffmpeg.*(?:not found|not recognized|not installed)/i.test(detail)
     ? "Il convertitore audio del server non e' disponibile."
