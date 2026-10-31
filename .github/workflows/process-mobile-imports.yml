@@ -49,8 +49,11 @@ jobs:
             console.log("OK: elenco link disponibile senza login GitHub, elementi="+result.links.length);
           })().catch(e => {console.error(e);process.exit(1);});
           NODE
-      - name: Controlla la sintassi del convertitore prima di elaborare la coda
-        run: node --check tools/import-youtube-online.cjs
+      - name: Controlla convertitore e sorgente CC0
+        run: |
+          node --check tools/import-youtube-online.cjs
+          node --check tools/resolve-licensed-audio.cjs
+          node tools/test-licensed-audio.cjs
       - name: Prendi una richiesta dalla coda Supabase usando OIDC firmato
         id: claim
         run: node tools/cloud-queue-client.cjs claim
