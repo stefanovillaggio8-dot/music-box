@@ -15,6 +15,7 @@ on:
       - lyrics.json
       - karaoke-index.json
       - tools/audit-catalog.cjs
+      - tools/test-audio-routing.cjs
       - .github/workflows/verify-integrity.yml
 permissions:
   contents: read
@@ -34,5 +35,7 @@ jobs:
           node --check spotify.js
           node --check spotify-ui.js
           node --check fuoco.js
+      - name: Testa sorgenti audio PC e GitHub senza contenuti misti HTTP/HTTPS
+        run: node tools/test-audio-routing.cjs
       - name: Verifica cataloghi, profili, immagini e indice karaoke
         run: node tools/audit-catalog.cjs
