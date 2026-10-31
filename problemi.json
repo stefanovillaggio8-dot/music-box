@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793408412225,
-  "r": "suono: originale b-track-953"
- },
- {
-  "t": 1793408417552,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793408417558,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793408417663,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793408418756,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1793408418764,
-  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
   "t": 1793408418867,
   "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
  },
@@ -157,6 +133,30 @@
  },
  {
   "t": 1793408783957,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793408784051,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793408785184,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408785190,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408785265,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793408799374,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793408799366,
   "r": "worker /stato: risponde"
  }
 ]
