@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.455";
+  const APP_VERSION = "6.456";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3266,6 +3266,57 @@ function _devoVedereBrano(eMio, b) {
     return _ytOnlineCache;
   }
 
+
+  // Per i link YouTube mostriamo voci nella libreria senza fingere che siano MP3.
+  // Ogni profilo ha i suoi link, sincronizzati sul servizio cloud e memorizzati
+  // localmente per evitare che una rete lenta faccia sparire i titoli.
+  const _ytLinksMemory = Object.create(null);
+  async function _ytBraniDalCloud(owner) {
+    const key = "mb.youtube.links." + owner;
+    const cached = _ytLinksMemory[owner];
+    if (cached && Date.now()-cached.time < 25000) return cached.links;
+    let entries = LS.get(key, []);
+    if (!Array.isArray(entries)) entries=[];
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 4500);
+    try {
+      const res = await fetch(
+        "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue?action=links&profile="
+        + encodeURIComponent(owner), {cache:"no-store",signal:ctrl.signal});
+      if (!res.ok) throw new Error("Servizio link non disponibile");
+      const json=await res.json();
+      if (!json.ok || !Array.isArray(json.links)) throw new Error("Formato link non valido");
+      entries=json.links;
+      LS.set(key,entries);
+    } catch (_) { /* fallback locale; non cancella i link gia' presenti */ }
+    finally { clearTimeout(timeout); }
+    _ytLinksMemory[owner]={links:entries,time:Date.now()};
+    return entries;
+  }
+  function _ytAggiornaVociLibreria(entries, owner, draw=false) {
+    if(owner!==profile || !Array.isArray(entries))return;
+    const old=tracks.filter(t=>t && t.source!=="youtube-link");
+    const seen=new Set();
+    const linked=[];
+    for(const row of entries) {
+      const id=String((row&&row.video_id)||"");
+      if(!/^[A-Za-z0-9_-]{11}$/.test(id)||seen.has(id))continue;
+      seen.add(id);
+      // Quando l'MP3 e' stato pubblicato, usiamo soltanto il vero brano audio.
+      if(row.status==="completed" && old.some(t=>t.file==="songs/youtube-"+id+".mp3"))continue;
+      const name=String(row.requested_title||row.title||"").trim();
+      linked.push({
+        id:"yt-"+id, title:name && name!=="Video YouTube" ? name.slice(0,160) : "Video YouTube "+id,
+        artist:"", album:"YouTube · solo online",
+        cover:"https://i.ytimg.com/vi/"+id+"/mqdefault.jpg",
+        url:"", file:"", source:"youtube-link", youtubeId:id,
+        profile:owner,builtin:true,gradient:PALETTE[0],
+        _ytStatus:String(row.status||"queued")
+      });
+    }
+    tracks=linked.concat(old);
+    if(draw)render();
+  }
   async function loadAll() {
   _diag("loadAll");
   _memoCondiviso.clear();
@@ -3499,6 +3550,10 @@ function _devoVedereBrano(eMio, b) {
        veniva buttata via, e al riavvio il brano tornava col nome
        originale. */
     applicaRinomine();
+    try {
+      const _nomeYT=String(profile||DEFAULT_PROFILE);
+      _ytAggiornaVociLibreria(await _ytBraniDalCloud(_nomeYT),_nomeYT,false);
+    } catch (_) { /* il caricamento dei link non deve fermare gli MP3 */ }
     /* un brano che avevo segnato come "non scaricato" e' comparso in
        libreria: non lo riprovo piu' e lo tolgo dalla lista */
 try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
@@ -4415,6 +4470,8 @@ function visibleTracks(perSuono) {
         (!inPlaylistDi(t.id) || Boolean(_playlistAttiva)));
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
 if (perLaCoda) {
+      // I link video non sono sorgenti audio per riproduzione continua/auto-next.
+      list=list.filter(t=>!t.youtubeId);
       /* Per la coda contano le canzoni del profilo aperto e quelle che ho
          copiato nella mia libreria. Ste ha tolto l'interruttore "fai suonare
          anche le canzoni degli altri": non serve piu', perche' le canzoni di
@@ -5234,6 +5291,7 @@ emptyEl.textContent = !total
       if (t.artist) bits.push(t.artist);
       if (t.album) bits.push(t.album);
       if (t.preview) bits.push("anteprima 30s");
+      if (t.youtubeId) bits.push("YouTube · solo online");
       if (t.builtin) meta.textContent = bits.join(" ");
       else meta.textContent = bits.length ? bits.join(" · ") + " · solo tua" : "solo tua";
       /* I contrassegni stanno QUI, non nel titolo: la riga del titolo viene
@@ -5246,6 +5304,13 @@ emptyEl.textContent = !total
       /* Ste: "fai che si capisca quali sono state boostate e quali no".
          Il contrassegno "BASSI" vuol dire: questo brano suona con la versione
          potenziata (bassi piu' pieni, voce avanti, piu' forte). */
+      if (t.youtubeId) {
+        const ytBadge=document.createElement("span");
+        ytBadge.className="track-badge";
+        ytBadge.textContent="YOUTUBE · ONLINE";
+        ytBadge.title="Link video YouTube. Per ascoltarlo serve Internet; non e' un MP3 offline.";
+        contrassegni.push(ytBadge);
+      }
       if (t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
         const badge = document.createElement("span");
         badge.className = "track-badge track-badge-bassi";
@@ -5290,7 +5355,7 @@ emptyEl.textContent = !total
         });
       li.appendChild(favBtn);
 
-      if (t.builtin && !isCached(t)) {
+      if (t.builtin && !t.youtubeId && !isCached(t)) {
         const cloud = document.createElement("button");
         cloud.className = "track-cloud";
         cloud.setAttribute("aria-label", "Scarica " + t.title + " per offline");
@@ -5316,6 +5381,7 @@ emptyEl.textContent = !total
         li.appendChild(share);
       }
 
+      if(!t.youtubeId) {
       const del = document.createElement("button");
       del.className = "track-del";
       /* Ste: "togli completamente sta cosa dei nascosti... quando elimino
@@ -5330,6 +5396,7 @@ emptyEl.textContent = !total
         _eliminaBrano(t.id);
       });
       li.appendChild(del);
+      }
 
 li.addEventListener("click", () => {
     if (suppressClick) {
@@ -6715,6 +6782,20 @@ box.innerHTML = "";
 async function playById(id, autoplay = true) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
+      // Le voci YouTube sono collegamenti online: non passarle al motore MP3.
+      if (t.source==="youtube-link" && t.youtubeId) {
+        const pane=$("youtubeOnlinePanel");
+        if(pane) {
+          $("ytOnlineProfile").textContent=String(profile||DEFAULT_PROFILE);
+          pane.hidden=false;
+          syncNoScroll();
+          _ytWatchVideo(t.youtubeId,t.title);
+          _ytReloadLinks().catch(()=>{});
+        } else {
+          window.open("https://www.youtube.com/watch?v="+t.youtubeId,"_blank","noopener,noreferrer");
+        }
+        return;
+      }
       /* Prima di cambiare: metto in cronologia il brano che sto lasciando,
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
@@ -12355,6 +12436,9 @@ function _nomePerIlBrano(link, suggerito) {
       const data=await resp.json();
       if(!resp.ok||!data.ok||!Array.isArray(data.links))throw Error(data.error||"Servizio non disponibile");
       if(requestId!==_ytLinksFetchId||requested!==String(profile||DEFAULT_PROFILE))return;
+      LS.set("mb.youtube.links."+requested,data.links);
+      _ytLinksMemory[requested]={links:data.links,time:Date.now()};
+      _ytAggiornaVociLibreria(data.links,requested,true);
       list.replaceChildren();
       let count=0;
       for(const track of data.links) {
@@ -12396,7 +12480,9 @@ function _nomePerIlBrano(link, suggerito) {
       if(requestId===_ytLinksFetchId)hint.textContent="Errore nel caricamento: "+String(e.message||e).slice(0,130);
     }
   }
-  $("btnMieiVideoYT").addEventListener("click",() => _aggiungiDaYouTube());
+  // Il vecchio pulsante secondario non e' più necessario: i video sono nella libreria.
+  const _ytOldButton=$("btnMieiVideoYT");
+  if(_ytOldButton)_ytOldButton.addEventListener("click",()=>_aggiungiDaYouTube());
   $("ytOnlineLinksReload").addEventListener("click",_ytReloadLinks);
   $("ytOnlinePlayerStop").addEventListener("click",_ytStopVideo);
   const MB_YT_PENDING = "mb.youtubePending";
@@ -12496,6 +12582,23 @@ function _nomePerIlBrano(link, suggerito) {
       jobs.push({id:data.id,profile:selected,title:title||url,added:Date.now()});
       LS.set(MB_YT_PENDING,jobs.slice(-35));
       _ytShowRecent();
+      // Aggiunta ottimistica: il nuovo video appare nella libreria immediatamente,
+      // senza aspettare GitHub Actions o la conversione MP3.
+      const id=new URL(url).searchParams.get("v");
+      const pKey="mb.youtube.links."+selected;
+      const entries=LS.get(pKey,[]);
+      const previous=Array.isArray(entries)?entries.filter(x=>x.video_id!==id):[];
+      previous.unshift({id:data.id,profile:selected,video_id:id,
+        requested_title:title||"Video YouTube "+id,status:"queued",created_at:new Date().toISOString()});
+      LS.set(pKey,previous);
+      _ytLinksMemory[selected]={links:previous,time:Date.now()};
+      _ytAggiornaVociLibreria(previous,selected,true);
+      // Nuovo brano: mostra la libreria normale senza filtri che lo nascondono.
+      query="";if(searchEl)searchEl.value="";
+      favOnly=false;soloScaricate=false;soloMaiAscoltati=false;
+      _playlistAttiva="";
+      _chiudiYouTubeOnline();
+      render();
       _ytReloadLinks();
       $("ytOnlineHint").textContent="Link salvato nel profilo! La riproduzione YouTube online e disponibile qui sotto. L'MP3 potrebbe fallire se YouTube blocca la conversione.";
       toast("In coda per "+selected+": controllo automaticamente quando il brano e' pronto.",7000);
