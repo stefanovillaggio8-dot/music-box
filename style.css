@@ -3295,3 +3295,17 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
   line-height: 1;
   box-shadow: 0 2px 7px rgba(0,0,0,.35);
 }
+
+/* v6.476: coda casuale estesa e traduzioni su esplicita richiesta. */
+.queue-auto-actions {display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0 10px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.06em;}
+.queue-auto-actions button,.lyrics-traduci {border:1px solid rgba(175,116,255,.4);border-radius:10px;padding:7px 11px;background:rgba(144,86,239,.18);color:#e9d9ff;font-weight:750;cursor:pointer;}
+.queue-auto-actions button:active,.lyrics-traduci:active {transform:scale(.97);}
+.queue-auto .queue-actions {display:flex;gap:2px;}
+.queue-auto .qbtn {min-width:25px;font-size:15px;font-weight:800;}
+.lyrics-translate-actions {display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+#lyricsLingua {max-width:100px;border:1px solid rgba(255,255,255,.17);border-radius:9px;background:#282133;color:#f7efff;padding:8px 5px;font-size:11px;}
+.lyrics-traduci {font-size:11px;padding:8px 9px;}
+.lyrics-traduci[aria-pressed="true"] {background:rgba(160,112,248,.4);}
+.lyr-traduzione {display:block;margin-top:5px;font-size:.64em;line-height:1.4;font-weight:500;color:#d6bbff;opacity:.9;}
+.lyrics-body .lyr-line.on .lyr-traduzione {opacity:1;color:#fff;}
+@media(max-width:430px){.lyrics-head{flex-wrap:wrap;}.lyrics-translate-actions{order:3;width:100%;justify-content:flex-start;margin-top:7px;}.queue-auto-tag{display:none;}}
