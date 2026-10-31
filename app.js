@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.473";
+  const APP_VERSION = "6.474";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3315,6 +3315,17 @@ function _devoVedereBrano(eMio, b) {
     if(owner!==profile || !Array.isArray(entries))return;
     const old=tracks.filter(t=>t && t.source!=="youtube-link" && t.source!=="cloud-audio");
     const published=new Set(old.filter(t=>t.file).map(t=>t.file));
+    /* Anche gli MP3 YouTube gia' pubblicati ricevono la data originale
+       del link, quando il cloud la restituisce: non la data di refresh. */
+    for (const row of entries) {
+      const id = String(row && row.video_id || "");
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) continue;
+      const t = old.find(x => x.file === "songs/youtube-" + id + ".mp3");
+      if (t) {
+        const quando = _dataAggiuntaBrano(row.created_at || row.added_at || row.requested_at || row._ytDraftAt);
+        if (quando) t.aggiunto = quando;
+      }
+    }
     const seen=new Set();
     const linked=[];
     for(const row of entries) {
@@ -3343,6 +3354,8 @@ function _devoVedereBrano(eMio, b) {
         url:readyCloud?directURL:"", file:readyCloud?"cloud/youtube-"+id+".mp3":"",
         source:readyCloud?"cloud-audio":"youtube-link", youtubeId:readyCloud?null:id,
         profile:owner,builtin:true,gradient:PALETTE[0],
+        aggiunto: _dataAggiuntaBrano(row.created_at || row.added_at || row.requested_at || row._ytDraftAt),
+        ordineAggiunta: BUILTIN.length + linked.length + 1,
         _ytStatus:String(row.status||"queued"),
         _ytErrore:String(row.error_message||"").slice(0,180)
       });
@@ -3453,6 +3466,10 @@ function _devoVedereBrano(eMio, b) {
         spotifyId: b.spotifyId || "",
         spotifyAlbum: b.spotifyAlbum || "",
         spotifyDurationMs: b.spotifyDurationMs || null,
+        /* L'ordine del catalogo resta stabile anche per le vecchie canzoni
+           senza una data d'importazione: le ultime inserite stanno sopra. */
+        aggiunto: _dataAggiuntaBrano(b.aggiunto || b.created_at || b.addedAt),
+        ordineAggiunta: i + 1,
         url: _branoInGym(stabile)
           ? _doveStaIlBranoConBassi(b.file)
           : _doveStaIlBrano(b.file),
@@ -3496,8 +3513,11 @@ function _devoVedereBrano(eMio, b) {
     }
     return true;
   })
-  .map((r) => ({
+  .map((r, i) => ({
   id: r.id,
+  aggiunto: _dataAggiuntaBrano(r.aggiunto || r.created_at || r.addedAt || r.date) ||
+    _dataAggiuntaBrano(Number((/^u-(\d{13})-/.exec(String(r.id || "")) || [])[1] || 0)),
+  ordineAggiunta: builtin.length + i + 1,
   title: r.title,
   artist: r.artist || "",
   album: r.album || "",
@@ -4296,12 +4316,47 @@ const ORDINAMENTI = [
       return { v: (r && r.v) || 0, s: (r && r.s) || 0 };
     } catch (e) { return { v: 0, s: 0 }; }
   }
+  /* Il vecchio filtro confrontava t.aggiunto, ma quel campo non veniva
+     assegnato ai brani: tutte le date erano 0 e non cambiava niente.
+     Usa le vere date d'importazione dove ci sono, mai la data di uscita
+     del brano o il momento dell'ultimo aggiornamento della pagina. */
+  function _dataAggiuntaBrano(value) {
+    if (value == null || value === "") return 0;
+    let ms = 0;
+    if (typeof value === "number") ms = value < 100000000000 ? value * 1000 : value;
+    else if (typeof value === "string") {
+      const v = value.trim();
+      ms = /^\d{10,13}$/.test(v) ? Number(v) * (v.length === 10 ? 1000 : 1) : Date.parse(v);
+    } else if (value instanceof Date) ms = value.getTime();
+    /* Evita che date inventate o malformate spingano un brano in cima. */
+    return Number.isFinite(ms) && ms >= 1262304000000 && ms < Date.now() + 86400000 ? ms : 0;
+  }
+  function _ordineRecente(t) {
+    if (!t) return 0;
+    const esplicito = _dataAggiuntaBrano(t.aggiunto || t.created_at || t.addedAt || t.dataAggiunta);
+    if (esplicito) return esplicito;
+    /* I file aggiunti dal telefono hanno un ID con il timestamp iniziale.
+       I vecchi record possono non averlo come campo dedicato. */
+    const m = /^u-(\d{13})-/.exec(String(t.id || ""));
+    if (m) return _dataAggiuntaBrano(Number(m[1]));
+    return 0;
+  }
+  function _confrontaAggiunte(a, b) {
+    const dataA = _ordineRecente(a), dataB = _ordineRecente(b);
+    if (dataA !== dataB) return dataB - dataA;
+    /* Per il catalogo storico, dove la data non e' stata salvata,
+       l'ordine di ingresso nel catalogo e' il migliore indizio disponibile. */
+    const ordineA = Number(a && a.ordineAggiunta) || 0;
+    const ordineB = Number(b && b.ordineAggiunta) || 0;
+    if (ordineA !== ordineB) return ordineB - ordineA;
+    return String(a && a.id || "").localeCompare(String(b && b.id || ""));
+  }
   function ordinaLista(lista) {
     if (ordinamento === "titolo") {
       return lista.slice().sort((a, b) => titoloOrdinato(a) < titoloOrdinato(b) ? -1 : 1);
     }
     if (ordinamento === "aggiunti") {
-      return lista.slice().sort((a, b) => (b.aggiunto || 0) - (a.aggiunto || 0));
+      return lista.slice().sort(_confrontaAggiunte);
     }
     /* Ordinamento per ascolto: nel primo i piu' sentiti in cima, nel
        secondo i meno sentiti in cima. Chi non hai ancora ascoltato va
@@ -4565,7 +4620,8 @@ if (_playlistAttiva) {
     }
     /* durante la ricerca l'ordine piu' utile e' quanto somigliano al testo
        scritto, quindi qui non riordino per artista */
-    scored.sort((a, b) => b.s - a.s);
+    scored.sort((a, b) => (b.s - a.s) ||
+      (ordinamento === "aggiunti" ? _confrontaAggiunte(a.t, b.t) : 0));
     return scored.map((x) => x.t);
   }
 
@@ -7892,6 +7948,7 @@ async function addFiles(fileList) {
     for (const file of Array.from(fileList)) {
       const rec = {
         id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+        aggiunto: Date.now(),
         title: file.name.replace(/\.[^.]+$/, ""),
         artist: "",
         profile: profile,
