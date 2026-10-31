@@ -1235,14 +1235,26 @@
    },
    "[\"white keys\",\"dominic fike\"]": {
     "v": 2,
-    "s": 1,
+    "s": 10,
     "t": "Dominic Fike - WHITE KEYS",
-    "a": ""
+    "a": "Dominic Fike"
    },
    "m:2026-10|[\"white keys\",\"dominic fike\"]": {
     "v": 2,
-    "s": 1,
+    "s": 10,
     "t": "Dominic Fike - WHITE KEYS",
+    "a": "Dominic Fike"
+   },
+   "[\"fix you (official video)\",\"coldplay\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Coldplay - Fix You (Official Video)",
+    "a": ""
+   },
+   "m:2026-10|[\"fix you (official video)\",\"coldplay\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Coldplay - Fix You (Official Video)",
     "a": ""
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
@@ -1268,18 +1280,6 @@
     "s": 0,
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
-   },
-   "[\"fix you (official video)\",\"coldplay\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Coldplay - Fix You (Official Video)",
-    "a": ""
-   },
-   "m:2026-10|[\"fix you (official video)\",\"coldplay\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Coldplay - Fix You (Official Video)",
-    "a": ""
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1377,41 +1377,17 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
-   "[\"ventanni\",\"mÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "MÃÂ¥neskin"
-   },
-   "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 5,
-    "t": "MorirÃÂ² da Re",
-    "a": "MÃÂ¥neskin"
-   },
-   "[\"la cittÃÂ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃÂ",
-    "a": "MOSTRO"
-   },
-   "m:2026-10|[\"la cittÃÂ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃÂ",
-    "a": "MOSTRO"
-   },
    "[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
     "v": 2,
-    "s": 2,
+    "s": 10,
     "t": "Antonello Venditti - Alta marea (Don't Dream It's Over) [Testo]",
-    "a": ""
+    "a": "Antonello Venditti"
    },
    "m:2026-10|[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
     "v": 2,
-    "s": 2,
+    "s": 10,
     "t": "Antonello Venditti - Alta marea (Don't Dream It's Over) [Testo]",
-    "a": ""
+    "a": "Antonello Venditti"
    },
    "[\"middle of the night (dom livez remix)\",\"elley duhe\"]": {
     "v": 0,
@@ -1437,6 +1413,30 @@
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
+   "[\"ventanni\",\"mÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "MÃÂ¥neskin"
+   },
+   "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "MorirÃÂ² da Re",
+    "a": "MÃÂ¥neskin"
+   },
+   "[\"la cittÃÂ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃÂ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la cittÃÂ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃÂ",
+    "a": "MOSTRO"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1460,6 +1460,18 @@
     "s": 0,
     "t": "LA CITTÃ",
     "a": "MOSTRO"
+   },
+   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-10|[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -1496,6 +1508,30 @@
     "s": 2,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
+   },
+   "[\"fix you\",\"coldplay\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Fix You",
+    "a": "Coldplay"
+   },
+   "m:2026-10|[\"fix you\",\"coldplay\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Fix You",
+    "a": "Coldplay"
+   },
+   "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
+   },
+   "m:2026-10|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
    }
   },
   "Diego": {
