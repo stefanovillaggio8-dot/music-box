@@ -57,6 +57,25 @@ jobs:
               throw "PowerShell syntax error in $file"
             }
           }
+      - name: Prova aggiornamento locale su cartella isolata senza toccare musica
+        shell: pwsh
+        run: |
+          $testRoot = Join-Path $env:RUNNER_TEMP "musicbox-test-local"
+          New-Item -ItemType Directory -Path $testRoot -Force | Out-Null
+          New-Item -ItemType Directory -Path (Join-Path $testRoot "songs") -Force | Out-Null
+          Copy-Item app.js, index.html -Destination $testRoot
+          '{"b-local-only":{"lrclibId":123456789,"synced":true}}' | Set-Content (Join-Path $testRoot "karaoke-index.json")
+          '{"b-local-only":{"text":"do not overwrite local text"}}' | Set-Content (Join-Path $testRoot "lyrics.json")
+          [IO.File]::WriteAllBytes((Join-Path $testRoot "songs\private-test.mp3"), [byte[]]::new(8192))
+          & ./tools/aggiorna-copia-locale.ps1 -Root $testRoot
+          $index = Get-Content (Join-Path $testRoot "karaoke-index.json") -Raw | ConvertFrom-Json
+          $version = Get-Content (Join-Path $testRoot "versione.json") -Raw | ConvertFrom-Json
+          $lyrics = Get-Content (Join-Path $testRoot "lyrics.json") -Raw
+          if (-not $index.'b-local-only'.synced) { throw "ID karaoke locale perso" }
+          if ($version.brani -lt 1072) { throw "Catalogo incompleto" }
+          if ($lyrics -notmatch 'do not overwrite local text') { throw "Testi locali sovrascritti" }
+          if (-not (Test-Path (Join-Path $testRoot "songs\private-test.mp3"))) { throw "Audio privato perso" }
+          Write-Host "Aggiornamento locale testato senza perdere audio, testi o ID karaoke"
       - name: Testa sorgenti audio PC e GitHub senza contenuti misti HTTP/HTTPS
         run: node tools/test-audio-routing.cjs
       - name: Verifica cataloghi, profili, immagini e indice karaoke
