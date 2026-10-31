@@ -1269,6 +1269,18 @@
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
    },
+   "[\"fix you (official video)\",\"coldplay\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Coldplay - Fix You (Official Video)",
+    "a": ""
+   },
+   "m:2026-10|[\"fix you (official video)\",\"coldplay\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Coldplay - Fix You (Official Video)",
+    "a": ""
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1292,18 +1304,6 @@
     "s": 0,
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
-   },
-   "[\"fix you (official video)\",\"coldplay\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Coldplay - Fix You (Official Video)",
-    "a": ""
-   },
-   "m:2026-10|[\"fix you (official video)\",\"coldplay\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Coldplay - Fix You (Official Video)",
-    "a": ""
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1401,38 +1401,14 @@
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
-   "[\"ventanni\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "MÃ¥neskin"
-   },
-   "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 5,
-    "t": "MorirÃ² da Re",
-    "a": "MÃ¥neskin"
-   },
-   "[\"la cittÃ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃ",
-    "a": "MOSTRO"
-   },
-   "m:2026-10|[\"la cittÃ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃ",
-    "a": "MOSTRO"
-   },
    "[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
-    "v": 1,
+    "v": 2,
     "s": 2,
     "t": "Antonello Venditti - Alta marea (Don't Dream It's Over) [Testo]",
     "a": ""
    },
    "m:2026-10|[\"alta marea (don't dream it's over) [testo]\",\"antonello venditti\"]": {
-    "v": 1,
+    "v": 2,
     "s": 2,
     "t": "Antonello Venditti - Alta marea (Don't Dream It's Over) [Testo]",
     "a": ""
@@ -1461,6 +1437,30 @@
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
+   "[\"ventanni\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "MÃ¥neskin"
+   },
+   "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 5,
+    "t": "MorirÃ² da Re",
+    "a": "MÃ¥neskin"
+   },
+   "[\"la cittÃ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la cittÃ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃ",
+    "a": "MOSTRO"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -1484,6 +1484,18 @@
     "s": 0,
     "t": "LA CITTÀ",
     "a": "MOSTRO"
+   },
+   "[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-10|[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
    }
   },
   "Diego": {
