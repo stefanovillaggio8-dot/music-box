@@ -11,6 +11,7 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { resolveLicensedAudio } = require("./resolve-licensed-audio.cjs");
 const { fetchMP3 } = require("./cobalt-audio-fallback.cjs");
+const { downloadFromSamplecut } = require("./samplecut-audio-fallback.cjs");
 const { classifyImportFailure } = require("./youtube-import-errors.cjs");
 
 const MAX_BYTES = 24 * 1024 * 1024;
@@ -94,6 +95,19 @@ async function main() {
       }
     }catch(e){
       console.warn("Catalogo CC0 non disponibile:",String(e.message||e).slice(0,130));
+      if(fs.existsSync(file))fs.rmSync(file);
+    }
+  }
+  // Prima verifica il servizio esterno gratuito: esegue tutto sul proprio server.
+  // Fallimenti e limiti temporanei NON disabilitano yt-dlp e Cobalt come fallback.
+  if(!fs.existsSync(file)){
+    try{
+      console.log("Verifico Samplecut: sorgente esterna, nessuno spazio iPhone utilizzato");
+      const sample=await downloadFromSamplecut(id,file);
+      details={title:sample.title};
+      console.log("Samplecut MP3 ottenuto; bytes:",sample.bytes);
+    }catch(e){
+      console.warn("Samplecut non disponibile:",String(e.message||e).slice(0,160));
       if(fs.existsSync(file))fs.rmSync(file);
     }
   }
