@@ -54,6 +54,7 @@ jobs:
           node --check tools/import-youtube-online.cjs
           node --check tools/resolve-licensed-audio.cjs
           node --check tools/cobalt-audio-fallback.cjs
+          node tools/test-cobalt-audio.cjs
           node tools/test-licensed-audio.cjs
       - name: Prendi una richiesta dalla coda Supabase usando OIDC firmato
         id: claim
