@@ -1,29 +1,5 @@
 [
  {
-  "t": 1793408829195,
-  "r": "worker /stato: risponde"
- },
- {
-  "t": 1793408829191,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793408829325,
-  "r": "ENTRO: stato dal sito, nascosti -1"
- },
- {
-  "t": 1793408830577,
-  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
-  "t": 1793408830572,
-  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
- },
- {
-  "t": 1793408830575,
-  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
- },
- {
   "t": 1793408889113,
   "r": "worker /stato: risponde"
  },
@@ -158,5 +134,29 @@
  {
   "t": 1793409201983,
   "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793409201978,
+  "r": "worker /stato: risponde"
+ },
+ {
+  "t": 1793409202096,
+  "r": "ENTRO: stato dal sito, nascosti -1"
+ },
+ {
+  "t": 1793409203582,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793409203583,
+  "r": "FINALE: visibili 621 su 621 | nascosti 0 | soloPlaylist 27 | playlist nessuna | preferiti no | maiascoltati no | scaricate no | eliminati 16 | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793409203575,
+  "r": "visibili 621 su 621 | nascosti 0 | playlist attiva nessuna | solo preferiti no | mai ascoltati no | da 127.0.0.1:8788"
+ },
+ {
+  "t": 1793409261916,
+  "r": "worker /stato: risponde"
  }
 ]
