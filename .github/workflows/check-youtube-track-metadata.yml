@@ -1,0 +1,39 @@
+name: Music Box - verifica riconoscimento artista YouTube
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/check-youtube-track-metadata.yml"]
+permissions:
+  contents: read
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prova il parser con titoli reali senza scaricare audio
+        run: node tools/test-youtube-track-metadata.mjs
+      - name: Verifica servizio metadata da GitHub (sola lettura)
+        run: |
+          node <<'NODE'
+          (async()=>{
+            const videos=[
+              ["S8oUoa0pwpo","Kid Yugi","Sentire La Musica"],
+              ["75qIYkMUGVE","Dominic Fike","WHITE KEYS"]
+            ];
+            for(const [id,artist,title] of videos){
+              const uri="https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue?action=metadata&link="+encodeURIComponent("https://www.youtube.com/watch?v="+id);
+              const r=await fetch(uri,{signal:AbortSignal.timeout(12000)});
+              const body=await r.json();
+              console.log("Metadata",id,JSON.stringify(body));
+              if(!r.ok||body.ok!==true)throw Error("Metadata endpoint not reachable for "+id);
+              if(body.found===true){
+                if(body.artist.toLowerCase()!==artist.toLowerCase()||body.track_title.toLowerCase()!==title.toLowerCase())
+                  throw Error("Unexpected parsed artist/title for "+id);
+              }else{
+                console.log("YouTube did not return oEmbed metadata for",id,"- fallback manual fields available");
+              }
+            }
+          })().catch(e=>{console.error(e);process.exitCode=1;});
+          NODE
