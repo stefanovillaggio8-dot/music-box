@@ -37,21 +37,33 @@ function sameArtist(want, got){
 /* Stop on rate limits, never sleep for hours or mark a throttled track as missing. */
 async function fetchJSON(url) {
   let lastError="";
-  for (let attempt=0;attempt<2;attempt++) {
+  for (let attempt=0;attempt<3;attempt++) {
     try {
       const r=await fetch(url,{
-        headers:{"User-Agent":"MusicBox-karaoke-index/2.1 (github.com/stefanovillaggio8-dot/music-box)",
-          "Lrclib-Client":"MusicBox/6.430 (https://github.com/stefanovillaggio8-dot/music-box)"},
-        signal:AbortSignal.timeout(9000)
+        headers:{"User-Agent":"MusicBox-karaoke-index/2.2 (https://github.com/stefanovillaggio8-dot/music-box)",
+          "Lrclib-Client":"MusicBox/6.432 (https://github.com/stefanovillaggio8-dot/music-box)"},
+        signal:AbortSignal.timeout(10000)
       });
-      if(r.status===429||r.status===503||r.status===403||r.status>=500)
-        return {blocked:true,reason:"HTTP "+r.status,items:[]};
+      /* LRCLIB documents 503 as temporary ServerOverloaded, not a
+         permanent absence of lyrics. Respect Retry-After and retry briefly.
+         Never retry 429 without its full rate-limit cooldown. */
+      if(r.status===503){
+        const waitSeconds=Math.min(8,Math.max(1,Number(r.headers.get("Retry-After"))||2));
+        lastError="HTTP 503 overloaded, Retry-After "+waitSeconds+"s";
+        if(attempt<2){await sleep(waitSeconds*1000);continue;}
+        return {blocked:true,reason:lastError,items:[]};
+      }
+      if(r.status===429) {
+        const after=Math.max(1,Number(r.headers.get("Retry-After"))||60);
+        return {blocked:true,reason:"HTTP 429 rate limited; retry after "+after+"s",items:[]};
+      }
+      if(r.status===403||r.status>=500) return {blocked:true,reason:"HTTP "+r.status,items:[]};
       if(!r.ok) return {blocked:false,reason:"HTTP "+r.status,items:[]};
       const j=await r.json();
       return {blocked:false,reason:"",items:Array.isArray(j)?j:[j]};
     } catch(e) {
       lastError=String(e && e.message || e).slice(0,180);
-      if(attempt===0)await sleep(800);
+      if(attempt<2)await sleep(1100*(attempt+1));
     }
   }
   return {blocked:true,reason:"network: "+lastError,items:[]};
