@@ -147,7 +147,31 @@
     </div>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
-      <input type="text" id="search" role="searchbox" inputmode="search" enterkeyhint="search" aria-label="Cerca brani" placeholder="Cerca..." autocomplete="off" />
+      <input type="search" id="search" name="musicbox_track_query" role="searchbox" inputmode="search" enterkeyhint="search" aria-label="Cerca brani" placeholder="Cerca..." autocomplete="new-password" autocapitalize="off" spellcheck="false" />
+      <script>
+      (function () {
+        // Prevent browser/password manager email autofill from hiding the entire library.
+        var q = document.getElementById("search");
+        if (!q) return;
+        var interacted = false;
+        function clearUnexpectedEmail() {
+          if (interacted || document.activeElement === q) return;
+          if (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(q.value.trim())) {
+            q.value = "";
+            q.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+        }
+        q.addEventListener("focus", function () { interacted = true; });
+        q.addEventListener("input", function (ev) {
+          if (ev.isTrusted && document.activeElement === q) interacted = true;
+        });
+        window.addEventListener("pageshow", clearUnexpectedEmail);
+        document.addEventListener("DOMContentLoaded", clearUnexpectedEmail);
+        setTimeout(clearUnexpectedEmail, 100);
+        setTimeout(clearUnexpectedEmail, 700);
+        setTimeout(clearUnexpectedEmail, 1800);
+      })();
+      </script>
       <!-- Ste: una X a destra che cancella quello che c'e' scritto nella
            ricerca e riporta alla libreria. Il comportamento sta qui, non in
            app.js: cosi' funziona anche se il telefono ha ancora il vecchio
