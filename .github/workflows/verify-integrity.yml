@@ -24,6 +24,8 @@ on:
       - tools/test-add-music-ui.cjs
       - tools/test-cloud-upload-phone.cjs
       - tools/import-youtube-online.cjs
+      - cloud/musicbox-import-queue/track-metadata.mjs
+      - tools/test-youtube-track-metadata.mjs
       - tools/youtube-import-errors.cjs
       - tools/test-youtube-import-errors.cjs
       - tools/test-online-youtube-import.cjs
@@ -129,3 +131,4 @@ jobs:
           node tools/test-mobile-queue-no-login.cjs
           node tools/test-cloud-import-retry.cjs
           node tools/test-youtube-in-library.cjs
+          node tools/test-youtube-track-metadata.mjs
