@@ -1281,6 +1281,18 @@
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
+   "[\"la cittÃ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la cittÃ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃ",
+    "a": "MOSTRO"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
