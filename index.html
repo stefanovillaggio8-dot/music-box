@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6468" />
+  <link rel="stylesheet" href="style.css?v=6469" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -147,29 +147,36 @@
     </div>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 1 0 4.05 11.53l4.96 4.96a1 1 0 0 0 1.41-1.41l-4.95-4.96A6.5 6.5 0 0 0 9.5 3Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
-      <input type="search" id="search" name="musicbox_track_query" role="searchbox" inputmode="search" enterkeyhint="search" aria-label="Cerca brani" placeholder="Cerca..." autocomplete="new-password" autocapitalize="off" spellcheck="false" />
+      <input type="search" id="search" role="searchbox" inputmode="search" enterkeyhint="search"
+        aria-label="Cerca brani" placeholder="Cerca..." autocomplete="off"
+        data-lpignore="true" data-1p-ignore="true" data-bwignore="true"
+        autocapitalize="off" autocorrect="off" spellcheck="false" readonly />
       <script>
       (function () {
-        // Prevent browser/password manager email autofill from hiding the entire library.
+        /* La ricerca non e' un campo email o password: ignora il completamento
+           automatico del browser anche quando viene applicato dopo il caricamento. */
         var q = document.getElementById("search");
         if (!q) return;
-        var interacted = false;
-        function clearUnexpectedEmail() {
-          if (interacted || document.activeElement === q) return;
+        function abilitaScrittura() { q.readOnly = false; }
+        q.addEventListener("pointerdown", abilitaScrittura);
+        q.addEventListener("touchstart", abilitaScrittura, { passive: true });
+        q.addEventListener("keydown", abilitaScrittura);
+        q.addEventListener("focus", abilitaScrittura);
+        function pulisciEmail() {
           if (/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(q.value.trim())) {
             q.value = "";
             q.dispatchEvent(new Event("input", { bubbles: true }));
           }
         }
-        q.addEventListener("focus", function () { interacted = true; });
-        q.addEventListener("input", function (ev) {
-          if (ev.isTrusted && document.activeElement === q) interacted = true;
-        });
-        window.addEventListener("pageshow", clearUnexpectedEmail);
-        document.addEventListener("DOMContentLoaded", clearUnexpectedEmail);
-        setTimeout(clearUnexpectedEmail, 100);
-        setTimeout(clearUnexpectedEmail, 700);
-        setTimeout(clearUnexpectedEmail, 1800);
+        q.addEventListener("input", pulisciEmail);
+        q.addEventListener("change", pulisciEmail);
+        window.addEventListener("pageshow", pulisciEmail);
+        document.addEventListener("DOMContentLoaded", pulisciEmail);
+        document.addEventListener("visibilitychange", function () { if (!document.hidden) pulisciEmail(); });
+        setTimeout(pulisciEmail, 100);
+        setTimeout(pulisciEmail, 800);
+        setTimeout(pulisciEmail, 2000);
+        setInterval(function () { if (!document.hidden) pulisciEmail(); }, 1800);
       })();
       </script>
       <!-- Ste: una X a destra che cancella quello che c'e' scritto nella
@@ -487,103 +494,99 @@
 
   <!-- Cio' che non si usa ogni giorno: sta in un menu, cosi' la barra in alto
        non deve scorrere di lato sul telefono. -->
-  <div class="menu-altro" id="menuAltro" hidden>
-    <p class="menu-aggiungi-intestazione">LA TUA MUSICA</p>
-    <button class="menu-altro-voce menu-aggiungi-voce" id="btnAggiungiMusica" type="button">
+  <div class="menu-altro" id="menuAltro" hidden role="dialog" aria-label="Menu Music Box">
+    <div class="menu-altro-top">
+      <div><span class="menu-altro-eyebrow">MUSIC BOX</span><h2>La tua musica</h2><p>Una cosa alla volta, tutto a portata di mano.</p></div>
+      <button class="menu-altro-close" id="btnChiudiAltro" aria-label="Chiudi menu" type="button">&times;</button>
+    </div>
+    <div class="menu-altro-scroll">
+      <section class="menu-altro-gruppo" aria-label="Aggiungi musica">
+        <p class="menu-altro-sezione">AGGIUNGI MUSICA</p>
+        <button class="menu-altro-voce menu-altro-primary menu-aggiungi-voce" id="btnAggiungiMusica" type="button">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8V3Z"/></svg>
       <span class="voce-testo"><b>Aggiungi canzoni</b><small>File, YouTube e Spotify</small></span>
     </button>
-    <button class="menu-altro-voce" id="btnCasuale" type="button">
+        <button class="menu-altro-voce" id="btnDaYouTube" type="button">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 15.5v-7l6 3.5-6 3.5Z"/><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
+        <span class="voce-testo">Aggiungi da YouTube</span>
+      </button>
+        <button class="menu-altro-voce" id="btnSpotify" type="button" onclick="window._spotifyApri()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.72 1.11.3.18.39.57.21.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.14-9.97-1.17a.78.78 0 0 1-.45-1.49c3.54-1.1 8.15-.57 11.24 1.33a.78.78 0 0 1-.96 1.61Z"/></svg><span class="voce-testo">Importa una playlist da Spotify</span></button>
+      </section>
+      <section class="menu-altro-gruppo" aria-label="Ascolto">
+        <p class="menu-altro-sezione">ASCOLTO</p>
+        <button class="menu-altro-voce" id="btnCasuale" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a8 8 0 1 0 8 8h-2a6 6 0 1 1-6-6v3l5-4-5-4v3Z"/></svg>
+  
   <span class="voce-testo">Riproduzione casuale</span></button>
-  <button class="menu-altro-voce" id="btnCopertine" type="button">
-      
-      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 5v14H5V5h14m0-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8.5 6.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-4.5 8h14l-3.75-5-3 4-2.25-3L6 19.5Z"/></svg>
-      
-    <span class="voce-testo">Copertine mancanti</span></button>
-    <button class="menu-altro-voce" id="btnOffline" type="button">
+        <button class="menu-altro-voce" id="btnBassiVolume" type="button">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 10h4v4H4v-4Zm6 0h4v4h-4v-4Zm6 0h4v4h-4v-4ZM3 8h2v8H3V8Zm7 0h2v8h-2V8Zm7 0h2v8h-2V8ZM10 3h2v18h-2V3Z"/></svg>
+    <span class="voce-testo">Bassi e volume</span></button>
+      </section>
+      <section class="menu-altro-gruppo" aria-label="Download offline">
+        <p class="menu-altro-sezione">OFFLINE</p>
+        <button class="menu-altro-voce" id="btnOffline" type="button">
       
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M5 15a1 1 0 0 1 1 1v1.5A1.5 1.5 0 0 0 7.5 19h9a1.5 1.5 0 0 0 1.5-1.5V16a1 1 0 1 1 2 0v1.5A3.5 3.5 0 0 1 16.5 21h-9A3.5 3.5 0 0 1 4 17.5V16a1 1 0 0 1 1-1Z"/></svg>
       
     <span class="voce-testo">Scarica per offline</span></button>
-<button class="menu-altro-voce" id="btnScaricaDaSolo" type="button">
-  <span class="voce-testo">Scarica da solo le canzoni nuove</span></button>
-    <!-- Ste: "in teoria ho scaricato tutte le canzoni ma la nuvoletta c'e'
-         ancora". Motivo: lo scaricamento automatico aveva un tetto di 500 MB
-         e la libreria sono oltre 400 canzoni, e il tetto non era
-         regolabile da nessuna parte. Qui si sceglie quanto tenere offline. -->
-    <button class="menu-altro-voce" id="btnBassiVolume" type="button">
-    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 10h4v4H4v-4Zm6 0h4v4h-4v-4Zm6 0h4v4h-4v-4ZM3 8h2v8H3V8Zm7 0h2v8h-2V8Zm7 0h2v8h-2V8ZM10 3h2v18h-2V3Z"/></svg>
-    <span class="voce-testo">Bassi e volume</span></button>
-  <button class="menu-altro-voce" id="btnTettoScarica" type="button">
-  <span class="voce-testo">Quanto tenere offline</span></button>
-    <button class="menu-altro-voce" id="btnImport" type="button">
+        <button class="menu-altro-voce" id="btnScaricaDaSolo" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a8 8 0 1 0 8 8h-2a6 6 0 1 1-6-6v3l5-4-5-4v3Z"/></svg>
+  
+  <span class="voce-testo">Scarica automaticamente</span></button>
+        <button class="menu-altro-voce" id="btnTettoScarica" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4a8 8 0 1 0 8 8h-2a6 6 0 1 1-6-6v3l5-4-5-4v3Z"/></svg>
+  
+  <span class="voce-testo">Gestisci spazio offline</span></button>
+      </section>
+      <details class="menu-altro-advanced">
+        <summary><span>Strumenti e assistenza</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="menu-altro-advanced-body">
+          <button class="menu-altro-voce" id="btnCopertine" type="button">
+      
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 5v14H5V5h14m0-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8.5 6.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-4.5 8h14l-3.75-5-3 4-2.25-3L6 19.5Z"/></svg>
+      
+    <span class="voce-testo">Completa le copertine</span></button>
+          <button class="menu-altro-voce" id="btnImport" type="button">
       
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.5a1 1 0 0 1-1-1V12l-3.3 3.3a1 1 0 0 1-1.4-1.4l5-5a1 1 0 0 1 1.4 0l5 5a1 1 0 0 1-1.4 1.4L13 12v8.5a1 1 0 0 1-1 1Z"/><path fill="currentColor" d="M4 15a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2a1 1 0 1 1 2 0v2a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-2a1 1 0 0 1 1-1Z"/></svg>
       
-    <span class="voce-testo">Riconosci titoli da uno screenshot</span></button>
-<button class="menu-altro-voce" id="btnFalliti" type="button">
+    <span class="voce-testo">Importa da screenshot</span></button>
+          <button class="menu-altro-voce" id="btnFalliti" type="button">
       
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z"/></svg>
       <span class="logo-badge" id="fallitiBadge" hidden>0</span>
       
-    <span class="voce-testo">Brani non scaricati</span></button>
-    <!-- Canzoni con lo stesso nome: vicino a "Brani non scaricati", che e'
-         quello a cui serve accanto. Prima stava in fondo alla lista e non si
-         vedeva senza scorrere (e non si scorre: il menu e' fatto cosi'). -->
-    <button class="menu-altro-voce" id="btnSimili" type="button">
+    <span class="voce-testo">Download da completare</span></button>
+          <button class="menu-altro-voce" id="btnSimili" type="button">
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm10 10a4 4 0 1 1 0 8 4 4 0 0 1 0-8ZM9 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm10-10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
       <span class="logo-badge" id="similiBadge" hidden>0</span>
-      <span class="voce-testo">Canzoni con lo stesso nome</span></button>
-<button class="menu-altro-voce" id="btnDiagnostica" type="button">
+      <span class="voce-testo">Brani con nomi uguali</span></button>
+          <button class="menu-altro-voce" id="btnDiagnostica" type="button">
   <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm2 0v4h6V5Zm8 0v4h6V5Zm0 6v4h6v-4Zm-8 0v4h6v-4Zm-8 0v4h6v-4Zm0 6v2h14v-2Zm8 0v2h6v-2Z"/></svg>
   <span class="voce-testo">Diagnostica</span></button>
-    <button class="menu-altro-voce" id="btnRefresh" type="button">
+          <button class="menu-altro-voce" id="btnRefresh" type="button">
       
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4a8 8 0 1 1-7.1 4.2 1 1 0 1 1 1.74-1A6 6 0 1 0 12 6a1 1 0 0 1-1-1V3.5L8.4 5.1a1 1 0 0 0 0 1.4L11 8.5V7a1 1 0 0 1 1-1Z"/><path fill="currentColor" d="M12.7 9.3a1 1 0 0 1 1.4 0l2.2 2.2a1 1 0 0 1 0 1.4l-2.2 2.2a1 1 0 1 1-1.4-1.4l.5-.5h-2.7a1 1 0 1 1 0-2h2.7l-.5-.5a1 1 0 0 1 0-1.4Z"/></svg>
       
-    <span class="voce-testo">Aggiorna la pagina</span></button>
-    <button class="menu-altro-voce" id="btnCreaPlaylist" type="button">
+    <span class="voce-testo">Controlla aggiornamenti</span></button>
+          <button class="menu-altro-voce" id="btnAiuto" type="button">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 18h2v-2h-2v2Zm1-16a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm-1-11h2V4h-2v1Z"/></svg>
+      <span class="voce-testo">Guida e assistenza</span>
+    </button>
+        </div>
+      </details>
+    </div>
+    <div class="menu-altro-legacy" hidden>
+      <button class="menu-altro-voce" id="btnCreaPlaylist" type="button">
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 6h12v2H3V6Zm0 5h12v2H3v-2Zm0 5h12v2H3v-2ZM17 9v3h-2v3h-2v-3h-3V9h3V6h2v3h2Z"/></svg>
       <span class="voce-testo">Crea playlist</span>
     </button>
-<button class="menu-altro-voce" id="btnCondividi" type="button" hidden>
+      <button class="menu-altro-voce" id="btnCondividi" type="button" hidden>
       <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1Z"/></svg>
       <span class="voce-testo">Manda al computer i brani che ho solo qui</span>
       <span class="logo-badge" id="condividiBadge">0</span>
     </button>
-
-    <!-- Aggiunge una canzone partendo dal link di YouTube: il computer scarica
-         e pubblica. Se il computer e' spento, il link va in coda e viene
-         scaricato quando si accende. -->
-<button class="menu-altro-voce" id="btnDaYouTube" type="button">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 15.5v-7l6 3.5-6 3.5Z"/><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"/></svg>
-        <span class="voce-testo">Aggiungi da YouTube</span>
-      </button>
-      <!-- Ste: "posso mettere il link della mia playlist di spotify e in
-           automatico importa le canzoni?". Si: gli si chiede l'accesso una
-           volta sola (serve per vedere anche le playlist private, che sono
-           private perche' sono sue), poi sceglie la playlist e il computer
-           scarica tutto da YouTube. -->
-      <button class="menu-altro-voce" id="btnSpotify" type="button" onclick="window._spotifyApri()"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.35-1.44-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.22c3.81-.87 7.08-.5 9.72 1.11.3.18.39.57.21.86Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.14-9.97-1.17a.78.78 0 0 1-.45-1.49c3.54-1.1 8.15-.57 11.24 1.33a.78.78 0 0 1-.96 1.61Z"/></svg><span class="voce-testo">Importa una playlist da Spotify</span></button>
-    <!-- Ste: "aggiungi anche nell'app una sezione nei 3 puntini con un'icona del
-         '?' dove spieghi bene". Qui sotto spiego come si mettono le canzoni
-         online, con il computer acceso e con il computer spento. -->
-    <button class="menu-altro-voce" id="btnAiuto" type="button">
-      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 18h2v-2h-2v2Zm1-16a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 14a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm-1-11h2V4h-2v1Z"/></svg>
-      <span class="voce-testo">Guida per aggiungere musica</span>
-    </button>
-
-    <!-- Ste: il pulsante con la freccia giratoria l'avevo messo in alto,
-         nella testata, e mi ha schiacciato via il numero della versione.
-         Poi l'ho spostato nel menu, ma li' c'era gia' "Aggiorna la pagina":
-         due voci identiche con lo stesso id, e una delle due non avrebbe
-         mai potuto funzionare. Quella che c'era gia' resta una sola, e con
-         il codice giusto sotto: chiude i service worker (il worker vecchio
-         altrimenti torna su), pulisce le cache e riapre. -->
-
-    <!-- La chiave del servizio che pubblica le canzoni col computer spento.
-         Si mette una volta sola e resta nel telefono: serve a non lasciare
-         aperto a tutti il servizio che scrive sul sito. -->
+    </div>
     <div class="menu-altro-casella" id="casellaServizio" hidden>
       <p class="menu-altro-titolo">Pubblica col computer spento</p>
       <p class="menu-altro-testo">Incolla qui la chiave per usare il servizio che mette le canzoni sul sito anche quando il computer è spento.</p>
@@ -1265,7 +1268,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6468"></script>
-<script src="app.js?v=6468"></script>
+<script src="fuoco.js?v=6469"></script>
+<script src="app.js?v=6469"></script>
 </body>
 </html>
