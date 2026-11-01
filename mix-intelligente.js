@@ -173,7 +173,7 @@ async function decode(track){
     if(decoded.duration<35)return null;
     const frame=analyzeFrames(decoded);
     const harmonies=isIOS?null:chroma(decoded);
-    const result={...frame,chroma:harmonies,duration:decoded.duration};
+    const result={...frame,level:Math.min(1,Math.max(.001,frame.peak*.6)),chroma:harmonies,duration:decoded.duration};
     cache.set(key,result);
     if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
@@ -187,30 +187,61 @@ async function decode(track){
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26)return null;
- const confident=!!(a?.confidentTail && a.last<dur-2.0);
- const audibleEnd=confident?Math.min(dur,a.last):dur;
- // L'ultimo istante udibile conta più della fine del file.
- // Conserva 0.2s di margine se il brano ha una coda musicale reale.
- const end=clamp(audibleEnd-(confident?.15:1.2),13,dur-1.2);
- const bpm=Number(a?.bpm)||120;
- const fit=!!(b?.bpm&&Math.abs(Math.log2(bpm/b.bpm))<.16);
- const harmony=a?.chroma&&b?.chroma?compatibility(a,b):null;
- const bars=fit&&harmony>.76?3:2;
- const fade=clamp(bars*4*60/bpm,3.5,7);
+ const trim=!!(a?.confidentTail&&a.last<dur-2);
+ const audibleEnd=trim?Math.min(dur,a.last):dur;
+ const end=clamp(audibleEnd-(trim?.22:1.15),13,dur-1.15);
+ const bpm=Number(a?.bpm)||120,ratio=b?.bpm?bpm/b.bpm:1;
+ const tempoClose=!!(a?.beatConfidence>.07&&b?.beatConfidence>.07&&ratio>=.92&&ratio<=1.08);
+ const harmonic=a?.chroma&&b?.chroma?compatibility(a,b):null;
+ const beatFriendly=tempoClose&&(harmonic===null||harmonic>.68);
+ const autoStyle=beatFriendly?"beat":
+  (harmonic!==null&&harmonic<.55?"fade":"rise");
+ const kind=style==="auto"?autoStyle:style;
+ const bars=beatFriendly&&kind==="beat"?4:2;
+ const autoSeconds=beatFriendly?clamp(bars*4*60/bpm,4.5,9):3.7;
+ const requested=style==="auto"?autoSeconds:mixSeconds;
+ const fade=clamp(requested,2.8,Math.min(12,end-8));
  let begin=end-fade;
- // Se la battuta è riconoscibile, il punto di ingresso è leggermente
- // riallineato al beat; non spostare il mix verso una coda già silenziosa.
- if(a?.beatAnchor && a?.bpm){
-  const beat=60/a.bpm;
-  const nearest=a.beatAnchor+Math.round((begin-a.beatAnchor)/beat)*beat;
-  begin+=clamp(nearest-begin,-.22,.22);
+ // Usa la griglia ritmica rilevata nel brano in uscita.
+ if(a?.beatAnchor&&a?.beatConfidence>.07){
+  const period=60/bpm;
+  const beatStart=a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period;
+  begin+=clamp(beatStart-begin,-.23,.23);
  }
- begin=clamp(begin,9,end-1.4);
- return {begin,end,fade:end-begin,
-  entry:b?.leading>=.65?clamp(b.first-.08,0,35):0,
-  score:harmony===null?null:Math.round(harmony*100),
-  silenceTrim:confident,
-  trailing:confident?Math.max(0,dur-audibleEnd):0};
+ // Piccole valli di volume nei pressi della battuta ideale evitano
+ // sovrapposizioni inutilmente brusche tra due voci soliste.
+ if(a?.tailEnergy?.length && kind==="fade"){
+  const options=a.tailEnergy.filter(p=>Math.abs(p.at-begin)<1.3);
+  if(options.length){
+   const best=options.reduce((acc,p)=>p.energy<acc.energy?p:acc,options[0]);
+   begin+=clamp(best.at-begin,-.35,.35);
+  }
+ }
+ begin=clamp(begin,8,end-1.5);
+ // Allinea il primo attacco ritmico del brano entrante. Se la traccia
+ // contiene un'introduzione udibile non tagliarla automaticamente.
+ let entry=b?.leading>=.65?clamp(b.first-.08,0,40):0;
+ if(tempoClose && b?.introBeat>entry+.2 && b.introBeat<entry+3.5)
+   entry=clamp(b.introBeat-.06,0,40);
+ const tempo=tempoClose&&kind==="beat"?clamp(ratio,.97,1.03):1;
+ const gain=a?.level&&b?.level?clamp(a.level/b.level,.87,1.13):1;
+ return {begin,end,fade:end-begin,entry,tempo,kind,gain,
+  score:harmonic===null?null:Math.round(harmonic*100),
+  silenceTrim:trim,trailing:trim?Math.max(0,dur-audibleEnd):0};
+}
+function keyGuess(ch){
+ if(!Array.isArray(ch)||ch.length!==12)return null;
+ // Correlazione con i profili maggiori/minori: è solo una stima,
+ // non una tonalità certificata come quella disponibile a Spotify.
+ const major=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
+ const minor=[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+ let top={score:-Infinity};
+ for(let k=0;k<12;k++)for(const [label,profile] of [["maggiore",major],["minore",minor]]){
+  let score=0;
+  for(let j=0;j<12;j++)score+=ch[(j+k)%12]*profile[j];
+  if(score>top.score)top={score,name:KEY_NAMES[k]+" "+label};
+ }
+ return top.name;
 }
 let prepared=null;
 function dropPrepared(){
