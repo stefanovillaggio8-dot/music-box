@@ -395,24 +395,81 @@ function tick(){
  }
 }
 
+function updateDetails(a,b){
+ const el=$("mixDetail");if(!el)return;
+ if(!a&&!b){
+  el.textContent="Analisi automatica dei brani quando la musica è in riproduzione.";
+  return;
+ }
+ const fmt=(obj)=>obj?
+  [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
+    keyGuess(obj.chroma)||"tonalità da verificare"].join(" · "):
+  "analisi non disponibile";
+ const description=plan?.silenceTrim?
+   " · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
+ el.textContent="Ora: "+fmt(a)+"  |  Dopo: "+fmt(b)+description+
+   (plan?" · transizione "+(plan.kind||"auto")+" "+plan.fade.toFixed(1)+" s":"");
+}
 function draw(){
- const btn=$("btnMixIntelligente");if(!btn)return;
- btn.setAttribute("aria-pressed",String(enabled));
- const label=btn.querySelector(".voce-testo");
- if(label)label.innerHTML=(enabled?"Mix intelligente: attivo":"Mix intelligente: spento")+
-  (isIOS?" <small>iPhone: passaggio normale protetto</small>":" <small>BPM · tonalità · attacchi · crossfade</small>");
+ const btn=$("btnMixIntelligente");
+ if(btn){
+  btn.setAttribute("aria-pressed",String(enabled));
+  const label=btn.querySelector(".voce-testo");
+  if(label)label.innerHTML=(enabled?"Mix intelligente: attivo":"Mix intelligente: spento")+
+   (isIOS?
+    " <small>iPhone: riduzione dei silenzi · riproduzione protetta</small>":
+    " <small>Automix · BPM · tonalità · transizioni adattive</small>");
+ }
+ const styleEl=$("mixStyle");
+ if(styleEl&&styleEl.value!==style)styleEl.value=style;
+ const secs=$("mixSeconds");
+ if(secs&&Number(secs.value)!==mixSeconds)secs.value=String(mixSeconds);
+ const value=$("mixSecondsValue");if(value)value.textContent=mixSeconds+" s";
+ const note=$("mixDeviceNote");
+ if(note)note.textContent=isIOS?
+   "Su iPhone il lettore conserva un solo flusso audio per non compromettere l'ascolto a schermo bloccato: prova a saltare le code mute quando l'analisi è disponibile. Il crossfade DJ è disponibile su PC.":
+   "Su PC la prossima traccia viene precaricata: Automix cerca la battuta, la tonalità e il punto di uscita migliore. Le preferenze restano salvate.";
+ const activeLabel=$("mixToggleLabel");
+ if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
+}
+function settingsChanged(){
+ try{
+  localStorage.setItem("mb.mixStyle",style);
+  localStorage.setItem("mb.mixSeconds",String(mixSeconds));
+ }catch(e){}
+ if(!mixing){plan=null;plannedFor="";dropPrepared()}
+ draw();
 }
 function start(){
  const btn=$("btnMixIntelligente");
  btn?.addEventListener("click",()=>{
   enabled=!enabled;
   try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
-  if(!enabled)cancel();else{previousId="";plannedFor="";}
-  draw();toast(enabled?(isIOS?"Mix attivo: su iPhone resta il passaggio normale per proteggere l'audio.":"Mix intelligente attivato. Analizzo i brani in riproduzione."):"Mix intelligente disattivato.");
+  if(!enabled)cancel();else{previousId="";plannedFor=""}
+  draw();
+  toast(enabled?(isIOS?
+   "Mix attivato: salto i finali muti quando posso analizzarli, senza bloccare l'iPhone.":
+   "Automix attivato: preparo i brani e sincronizzo le transizioni."):"Mix disattivato.");
  });
+ const panel=$("mixPanel");
+ $("btnMixSettings")?.addEventListener("click",()=>{
+  try{bridge()?.closeOther?.()}catch(e){}
+  if(panel)panel.hidden=false;
+  draw();updateDetails(null,null);
+ });
+ $("mixClose")?.addEventListener("click",()=>{if(panel)panel.hidden=true});
+ panel?.addEventListener("click",e=>{if(e.target===panel)panel.hidden=true});
+ $("mixStyle")?.addEventListener("change",e=>{
+  if(allowedStyles.has(e.target.value)){style=e.target.value;settingsChanged()}
+ });
+ $("mixSeconds")?.addEventListener("input",e=>{
+  mixSeconds=clamp(Math.round(Number(e.target.value)||6),3,12);
+  settingsChanged();
+ });
+ $("mixToggle")?.addEventListener("click",()=>btn?.click());
  draw();
- setInterval(()=>{tick().catch(()=>{})},650);
+ setInterval(()=>{try{tick()}catch(e){}},500);
 }
-window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel};
+window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,openSettings:()=>{const p=$("mixPanel");if(p)p.hidden=false}};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
