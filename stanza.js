@@ -632,8 +632,17 @@ function start(){
  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&creds)refresh()});
  draw();
 }
+// Share the existing room only after the host approves a specific request.
+function joinFromLink(link){
+ if(creds)return false;
+ let url;try{url=new URL(link,location.href)}catch(e){return false}
+ const match=url.hash.match(/^#musicbox-room=([0-9a-f-]{36})\.([0-9a-f]{64})$/i);
+ if(!match)return false;
+ invitation={id:match[1],token:match[2]};open();return true;
+}
+function getInviteLink(){return creds?.role==="host"&&inviteUrl?inviteUrl:"";}
 window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave,enqueue,queueAction,
- shouldPlay,hasSession:()=>!!creds,remainingCount:()=>nextItems().length};
+ shouldPlay,hasSession:()=>!!creds,remainingCount:()=>nextItems().length,getInviteLink,joinFromLink};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});
 else start();
 })();
