@@ -9,7 +9,7 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=5;
+const ANALYSIS_VERSION=6;
 let analysisDbPromise=null;
 function analysisDatabase(){
  if(analysisDbPromise)return analysisDbPromise;
@@ -337,7 +337,12 @@ async function decode(track){
     if(decoded.duration<35)return null;
     const frame=analyzeFrames(decoded);
     const harmonies=isIOS?null:chroma(decoded);
-    const result={...frame,chroma:harmonies,duration:decoded.duration};
+    const expected=Number(track.spotifyDurationMs||0)/1000||
+     Number(track.expectedDurationSec||0);
+    const durationMismatch=expected>20&&
+     Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
+    const result={...frame,chroma:harmonies,duration:decoded.duration,
+     durationMismatch};
     cache.set(key,result);
     saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
@@ -383,7 +388,7 @@ function transition(a,b,actualDuration){
    kind:"soft",gain:1,score:null,silenceTrim:trim,
    trailing:trim?Math.max(0,dur-musicalEnd):0};
  };
- if(!a||!b)return fallback();
+ if(!a||!b||a.durationMismatch||b.durationMismatch)return fallback();
  const bpm=Number(a.bpm)||120;
  const ratios=b.bpm?[.5,1,2].map(mult=>bpm/(b.bpm*mult)):[1];
  const ratio=ratios.reduce((best,r)=>
@@ -770,7 +775,7 @@ function maybeReorderShuffle(app,audio,id){
 }
 
 function smartScore(a,b){
- if(!a||!b)return -Infinity;
+ if(!a||!b||a.durationMismatch||b.durationMismatch)return -Infinity;
  // BPM 70%, armonia 20%, energia 10%. Un BPM doppio può significare
  // la medesima pulsazione percepita (half-time/double-time).
  const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
@@ -870,10 +875,10 @@ async function suggestSmartOrder(){
 }
 
 let checkingCurrentAudio=false;
-async function verifyCurrentAudio(){
+async function verifyCurrentAudio(targetId=null){
  const button=$("mixVerifyCurrent"),status=$("mixVerifyStatus");
  if(checkingCurrentAudio)return;
- const app=bridge(),song=app?.allTracks()?.find(t=>t.id===app.currentId());
+ const app=bridge(),song=app?.allTracks()?.find(t=>t.id===(targetId||app.currentId()));
  if(!song){
   if(status)status.textContent="Riproduci prima il brano che vuoi controllare.";
   return;
@@ -929,14 +934,17 @@ async function verifyCurrentAudio(){
   if(!Number.isFinite(decoded.duration)||decoded.duration<5)
    throw Error("Durata audio non valida dopo la decodifica");
   const analysis=analyzeFrames(decoded);
-  const expected=Number(song.spotifyDurationMs||0)/1000;
+  const expected=Number(song.spotifyDurationMs||0)/1000||Number(song.expectedDurationSec||0);
   const mismatch=expected>20&&Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
   const recorded=Number(song._mbUltimoErroreAudio||0);
   const report=name+" · "+(data.length/1e6).toFixed(2)+" MB"+
    " · durata "+decoded.duration.toFixed(1)+" s"+
    (expected>20?" (catalogo "+expected.toFixed(1)+" s)":"")+
-   ". "+(mismatch?"ATTENZIONE: la durata non corrisponde al catalogo. ":
-   "Decodifica riuscita. ")+
+   ". "+(mismatch?
+    "ATTENZIONE: MP3 probabilmente incompleto o versione sbagliata: "+
+    Math.round(Math.abs(decoded.duration-expected))+
+    " secondi di differenza. Non considerarlo verificato; sostituisci il file con una copia corretta. ":
+    "Decodifica riuscita; non sono emerse discrepanze di durata note. ")+
    (analysis.confidentTail?
     "Finale poco musicale o muto rilevato: "+analysis.trailing.toFixed(1)+" s. ":"")+
    (recorded===3?"Il player ha segnalato un errore di decodifica. ":"")+
@@ -1009,6 +1017,16 @@ function start(){
  setInterval(()=>{try{tick()}catch(e){}},500);
 }
 window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
+ verifyTrack:(id)=>{
+  const app=bridge(),exists=app?.allTracks()?.some(t=>t.id===id);
+  const panel=$("mixPanel");
+  if(!exists||!panel)return false;
+  try{app.closeOther?.()}catch(e){}
+  panel.hidden=false;
+  try{app.syncScroll?.()}catch(e){}
+  verifyCurrentAudio(id).catch(()=>{});
+  return true;
+ },
   // Taglia SOLO un'introduzione effettivamente muta già verificata.
   // Non aspettare la fine della precedente se il player ne ha i dati pronti.
   introStart:(id)=>{
