@@ -275,16 +275,25 @@ async function apply(){
  let changed=false;
  applying=true;
  try{
-  if(app.currentId()!==id){suppress();changed=true;await app.play(id,!!room.playing)}
+  const activeId=creds.id,activeToken=creds.token;
+  if(app.currentId()!==id){
+   suppress();changed=true;
+   await app.play(id,!!room.playing,secondsAt());
+  }
+  if(creds?.id!==activeId||creds?.token!==activeToken||!room?.joined)return;
   const a=app.audio();attachAudio();if(!a)return;
   if(a.readyState>=1){
    if(Math.abs((a.currentTime||0)-secondsAt())>2.3){
     suppress();changed=true;
     try{a.currentTime=secondsAt()}catch(e){}
    }
-  }else{
+  }else if(a._mbRoomMetadataSeekFor!==id){
+   a._mbRoomMetadataSeekFor=id;
    a.addEventListener("loadedmetadata",()=>{
-    if(app.currentId()===id)try{a.currentTime=secondsAt()}catch(e){}
+    a._mbRoomMetadataSeekFor="";
+    if(!isActive()||app.currentId()!==id||roomTrack(selected()||{})!==id)return;
+    suppress();
+    try{a.currentTime=secondsAt()}catch(e){}
    },{once:true});
   }
   if(!room.playing&&!a.paused){suppress();changed=true;a.pause()}
