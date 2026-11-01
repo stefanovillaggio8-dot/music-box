@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.498";
+  const APP_VERSION = "6.499";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5770,6 +5770,14 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     } catch (e) { }
     a.addEventListener("play", () => {
     if (a !== audio) return;
+    // Gli autoripristini del player NON devono riaccendere una stanza
+    // che l'host o l'amico hanno messo in pausa.
+    if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.()){
+      _vuoleSuonare=false;
+      _segnaIntenzioneSono(false);
+      try{a.pause()}catch(e){}
+      return;
+    }
     // Qualsiasi browser, non solo il wrapper iOS, deve ricordare che
     // stava effettivamente suonando prima di un refresh.
     _vuoleSuonare = true;
@@ -5910,6 +5918,8 @@ function rebuildAudio(autoplay) {
      Happenede soprattutto con lo schermo spento e con il tasto "avanti"
      dalla schermata di blocco, dove il browser blocca play(). */
   async function doPlay(hoGiaRiprovato) {
+    if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())
+      return false;
     if (!audio) audio = createAudio();
     try {
       _applicaAudio();
@@ -6145,6 +6155,7 @@ function rebuildAudio(autoplay) {
      Adesso insisto per qualche minuto: e' l'unica cosa che posso fare da
      solo, senza che Ste debba toccare il telefono. */
   function _riprovaPiuTardi() {
+    if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())return;
     if (_timerRiprove) clearTimeout(_timerRiprove);
     const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
     let i = 0;
@@ -6155,7 +6166,8 @@ function rebuildAudio(autoplay) {
         try {
           /* riprovo SOLO se la musica deve davvero suonare e il brano non e'
              gia' partito: altrimenti lo disturberei */
-          if (_vuoleSuonare && currentId && audio && audio.paused) {
+          if (_vuoleSuonare && (!window.MusicBoxRoom?.isActive()||
+              window.MusicBoxRoom.shouldPlay?.()) && currentId && audio && audio.paused) {
             _ultimoScorrimento = Date.now();
             audio.play().catch(() => riprova());
             return;
@@ -6280,6 +6292,7 @@ function rebuildAudio(autoplay) {
      tocca qualcosa, riprendo: e' il momento in cui il browser permette
      di nuovo la riproduzione. */
   function _riprendiSeInAttesa() {
+        if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())return;
         /* Torno in primo piano o l'utente tocca: se la musica DOVE suonare,
            riprovo. Prima guardavo solo l'intento vecchio, ma il telefono con lo
            schermo spento l'aveva già azzerato: quindi riaprendo l'app non
@@ -7463,6 +7476,9 @@ function playNext() {
      ripartiva piu'. Adesso insisto per un po': aspetto i brani e poi riparto. */
   let _ripresaGiaRiuscita = false;
   function _riprendiDopoRicarica() {
+    // Una stanza ripristinata ha uno stato cloud: non avviare da soli il
+    // vecchio brano personale prima che quel dato venga caricato.
+    if(window.MusicBoxRoom?.hasSession?.())return;
     if (_ripresaGiaRiuscita) return;
     if (!_avevoIntesoDiAscoltare()) return;
     let tentativi = 0;
@@ -7515,7 +7531,7 @@ function playNext() {
 
   async function togglePlay() {
     if(window.MusicBoxRoom?.isActive()){
-      window.MusicBoxRoom.control(audio?.paused?"play":"pause");return;
+      window.MusicBoxRoom.control(window.MusicBoxRoom.shouldPlay()?"pause":"play");return;
     }
     if (!currentId && tracks.length) {
       /* Il primo tocco avvia gia' playById: NON mettere in pausa
@@ -11451,6 +11467,21 @@ window.MusicBoxBridge = {
     return playById(id,true,startAt);
   },
   playCurrent:()=>doPlay(),
+  setRoomPlaybackIntent:(playing)=>{
+    // Stato del player coerente con il server e con i controlli cuffie.
+    // Se Pausa arriva dal cloud, disattiva i retry invece di risuonare.
+    _vuoleSuonare=Boolean(playing);
+    _segnaIntenzioneSono(Boolean(playing));
+    if(!playing){
+      _silenziDiFila=0;
+      if(_timerRiprove){clearTimeout(_timerRiprove);_timerRiprove=null;}
+      if(_timerAiuto){clearTimeout(_timerAiuto);_timerAiuto=null;}
+      _nascondiAiuto();
+      _chiudiAscolto(false);
+    }
+    syncPlayUI();
+    try{updateMediaSession()}catch(e){}
+  },
   urlForFile:file=>_doveStaIlBrano(file),
   refreshQueue:()=>renderQueueCount(),
   closeOther:()=>_chiudiAltro(),
