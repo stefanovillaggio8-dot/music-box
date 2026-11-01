@@ -6,7 +6,7 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
   (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
-const cache=new Map(),pending=new Map(),mixFailures=new Map();
+const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
 let analysisDbPromise=null;
@@ -227,9 +227,13 @@ function compatibility(a,b){
 }
 async function decode(track){
  if(!enabled||!track)return null;
+ const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+ if(connection?.saveData||/^(slow-)?2g$|^3g$/i.test(String(connection?.effectiveType||"")))
+   return null;
  const source=bridge()?.mixUrl?.(track)||track.url;
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
+ if(Date.now()<(unavailableAnalysis.get(key)||0))return null;
  if(cache.has(key))return cache.get(key);
  if(pending.has(key))return pending.get(key);
  const saved=await savedAnalysis(key);
@@ -276,7 +280,15 @@ async function decode(track){
   finally{clearTimeout(timeout)}
  })();
  pending.set(key,job);
- try{return await job}finally{pending.delete(key)}
+ try{
+  const data=await job;
+  if(!data){
+   unavailableAnalysis.set(key,Date.now()+300000);
+   if(unavailableAnalysis.size>64)
+    unavailableAnalysis.delete(unavailableAnalysis.keys().next().value);
+  }else unavailableAnalysis.delete(key);
+  return data;
+ }finally{pending.delete(key)}
 }
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
