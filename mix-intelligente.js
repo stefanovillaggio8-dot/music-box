@@ -310,6 +310,8 @@ async function handoff(){
     app.currentId()===act.track.id&&!old.seeking;
   let maxWait=0;
   while(active===act&&!ready()&&maxWait<45){
+   if(app.wantsPlayback?.()===false){cancel();return}
+   if(app.currentId()!==act.track.id){cancel();return}
    await new Promise(resolve=>setTimeout(resolve,100));
    maxWait++;
   }
@@ -335,7 +337,7 @@ async function handoff(){
    // Passaggio finale breve ma continuo: elimina il salto del lettore
    // precedente dopo il crossfade musicale principale.
    const t0=performance.now();
-   while(active===act&&performance.now()-t0<280){
+   while(active===act&&app.wantsPlayback?.()!==false&&performance.now()-t0<280){
     const p=clamp((performance.now()-t0)/280,0,1);
     old.volume=volume*p;
     preview.volume=volume*(1-p);
@@ -345,6 +347,7 @@ async function handoff(){
    // Timeout: non tenere due stream vivi indefinitamente.
    // Il lettore principale resta quello ufficiale con volume ripristinato.
    try{old.volume=volume}catch(e){}
+   toast("Il lettore ha impiegato troppo a preparare il brano successivo.");
   }
  }catch(e){
   try{old.volume=volume}catch(_){}
@@ -574,6 +577,10 @@ function start(){
  draw();
  setInterval(()=>{try{tick()}catch(e){}},500);
 }
-window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,openSettings:()=>{const p=$("mixPanel");if(p)p.hidden=false}};
+window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
+ onTrackChange:(id)=>{
+  if(active&&!(active.handingOff&&active.track.id===id))cancel();
+ },
+ openSettings:()=>{const p=$("mixPanel");if(p)p.hidden=false}};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
