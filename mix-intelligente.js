@@ -9,7 +9,9 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=6;
+const ANALYSIS_VERSION=7;
+// Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
+let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
 function analysisDatabase(){
  if(analysisDbPromise)return analysisDbPromise;
@@ -267,9 +269,10 @@ function chroma(buf){
  const data=buf.getChannelData(0),rate=buf.sampleRate,N=4096,hist=new Float64Array(12);
  if(data.length<N)return [...hist];
  const duration=buf.duration;
- // 24 finestre distribuite tra introduzione, corpo e finale.
- for(let w=0;w<24;w++){
-  const second=clamp((w+.5)/24*duration,0,duration-N/rate);
+ // Fewer windows on iPhone: enough for harmonic ranking, less CPU/RAM.
+ const windows=isIOS?12:24;
+ for(let w=0;w<windows;w++){
+  const second=clamp((w+.5)/windows*duration,0,duration-N/rate);
   const start=Math.floor(second*rate),re=new Float32Array(N),im=new Float32Array(N);
   for(let i=0;i<N;i++)re[i]=data[start+i]*(.5-.5*Math.cos(2*Math.PI*i/(N-1)));
   fft(re,im);
@@ -307,8 +310,8 @@ async function decode(track){
  const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
  if(connection?.saveData||/^(slow-)?2g$|^3g$/i.test(String(connection?.effectiveType||"")))
    return null;
- const job=(async()=>{
-  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),22000);
+ const operation=async()=>{
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),isIOS?35000:22000);
   try{
    const response=await fetch(source,{mode:"cors",cache:"force-cache",signal:controller.signal});
    // 6.5MB escludeva molti MP3 su iPhone: mancava l'analisi delle code mute.
@@ -329,14 +332,20 @@ async function decode(track){
     const ab=await response.arrayBuffer();if(ab.byteLength>maxBytes)return null;
     bytes=new Uint8Array(ab);
    }
+   // OfflineAudioContext decodes without opening a second playback session.
+   // The old live AudioContext could disturb MediaSession on iOS and fail
+   // when Safari suspends output audio contexts.
+   const OfflineContext=window.OfflineAudioContext||window.webkitOfflineAudioContext;
    const AudioContext=window.AudioContext||window.webkitAudioContext;
-   if(!AudioContext)return null;
-   const ctx=new AudioContext();
+   let ctx=null;
+   if(isIOS&&OfflineContext)try{ctx=new OfflineContext(1,1,44100)}catch(e){}
+   if(!ctx&&AudioContext)ctx=new AudioContext();
+   if(!ctx)return null;
    try{
     const decoded=await ctx.decodeAudioData(bytes.buffer.slice(0));
     if(decoded.duration<35)return null;
     const frame=analyzeFrames(decoded);
-    const harmonies=isIOS?null:chroma(decoded);
+    const harmonies=chroma(decoded);
     const expected=Number(track.spotifyDurationMs||0)/1000||
      Number(track.expectedDurationSec||0);
     const durationMismatch=expected>20&&
@@ -347,10 +356,11 @@ async function decode(track){
     saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
-   }finally{await ctx.close().catch(()=>{})}
+   }finally{if(typeof ctx.close==="function")await ctx.close().catch(()=>{})}
   }catch(e){return null}
   finally{clearTimeout(timeout)}
- })();
+ };
+ const job=isIOS?(mobileDecodeQueue=mobileDecodeQueue.catch(()=>{}).then(operation)):operation();
  pending.set(key,job);
  try{
   const data=await job;
@@ -442,6 +452,16 @@ function keyGuess(ch){
  }
  return top.name;
 }
+// A single HTMLAudioElement remains the output on iOS, including lock screen.
+let mobileFadeTrack="",mobileFading=false;
+function resetMobileFade(){
+ if(mobileFading){
+  const app=bridge(),audio=app?.audio();
+  if(audio && app?.currentId()===mobileFadeTrack)
+   try{audio.volume=app.volume?.()??1}catch(e){}
+ }
+ mobileFadeTrack="";mobileFading=false;
+}
 let prepared=null;
 function dropPrepared(){
  if(!prepared)return;
@@ -449,6 +469,7 @@ function dropPrepared(){
  try{p.audio.pause();p.audio.removeAttribute("src");p.audio.load()}catch(e){}
 }
 function cancel(){
+ resetMobileFade();
  if(active){
   const act=active;active=null;
   if(act.timer)clearTimeout(act.timer);
@@ -616,7 +637,7 @@ function tick(){
   audio.addEventListener("timeupdate",()=>{try{tick()}catch(e){}});
  }
  if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<26){
-  if(active||prepared)cancel();
+  if(active||prepared||mobileFading)cancel();
   return;
  }
  if(active&&(active.original!==audio||active.fromId!==id||active.track.id!==next.id)){
@@ -647,7 +668,18 @@ function tick(){
   decode(now).then(value=>{a=value;update()}).catch(()=>{});
   decode(next).then(value=>{b=value;update()}).catch(()=>{});
  }
- if(!plan)return;
+ if(!plan){resetMobileFade();return;}
+ // iOS foreground: fade the confirmed tail without opening another player.
+ // This is a single-stream smart handoff, not overlapping two audio sources.
+ if(isIOS){
+  const trimOk=Boolean(plan.silenceTrim&&plan.trailing>=1.65);
+  const fadeAt=plan.end-1.1;
+  if(trimOk&&!document.hidden&&audio.currentTime>=fadeAt&&audio.currentTime<plan.end){
+   const volume=app.volume?.()??1;
+   const fraction=clamp((plan.end-audio.currentTime)/1.1,.15,1);
+   try{audio.volume=volume*fraction;mobileFadeTrack=id;mobileFading=true}catch(e){}
+  }else if(mobileFading)resetMobileFade();
+ }
  // Inizia il buffer prima del punto di mix: mai aspettare la battuta finale
  // per scaricare i metadati del prossimo MP3.
  const preloadAt=Math.min(plan.begin-12,Math.max(0,audio.duration-25));
@@ -712,7 +744,7 @@ function draw(){
   const label=btn.querySelector(".voce-testo");
   if(label)label.innerHTML=(enabled?"Mix intelligente: attivo":"Mix intelligente: spento")+
    (isIOS?
-    " <small>iPhone: riduzione dei silenzi · riproduzione protetta</small>":
+    " <small>iPhone: analisi BPM e tonalità · finali muti ridotti</small>":
     " <small>Automix automatico: mixa solo quando i brani sono compatibili</small>");
  }
  const styleEl=$("mixStyle");
@@ -726,7 +758,7 @@ function draw(){
  const value=$("mixSecondsValue");if(value)value.textContent=mixSeconds+" s";
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
-   "Su iPhone il lettore conserva un solo flusso audio per non compromettere l'ascolto a schermo bloccato: prova a saltare le code mute quando l'analisi è disponibile. Il crossfade DJ è disponibile su PC.":
+   "Su iPhone analizza BPM, tonalità e silenzi e migliora l'ordine casuale. Sui finali muti certi sfuma e passa al brano successivo senza aspettare il silenzio. Il vero crossfade con due brani sovrapposti rimane disponibile solo su PC per proteggere i controlli audio a schermo bloccato.":
    "Su PC Automix analizza ritmo, armonia e volume finale: mixa solo quando la combinazione è convincente. Negli altri casi lascia il passaggio normale oppure salta una coda muta accertata. Non devi impostare nulla.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
@@ -761,8 +793,8 @@ async function intelligentShuffle(app,audio,fromId){
  }).sort((a,b)=>b.score-a.score);
  const original=ranking.find(x=>x.id===initialFirst),winner=ranking[0];
  // Modifica solo una coda casuale AUTOMATICA se il miglioramento è netto.
- if(winner&&winner.id!==initialFirst&&winner.score>=.82&&
-    (!original||winner.score-original.score>=.07)){
+ if(winner&&winner.id!==initialFirst&&winner.score>=(isIOS?.70:.82)&&
+    (!original||winner.score-original.score>=(isIOS?.04:.07))){
   app.mixSelectShuffle({fromId,initialFirst,pickId:winner.id});
  }
 }
@@ -1018,6 +1050,11 @@ function start(){
  });
  draw();
  setInterval(()=>{try{tick()}catch(e){}},500);
+ document.addEventListener("visibilitychange",()=>{
+  if(document.hidden)resetMobileFade();
+  else if(enabled){plannedFor="";try{tick()}catch(e){}}
+ });
+ window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
 window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
  verifyTrack:(id)=>{
