@@ -2101,6 +2101,18 @@
     "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
+   "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2275,18 +2287,6 @@
     "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 0,
-    "s": 46,
-    "t": "Miami Vice",
-    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
-   },
-   "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 0,
-    "s": 46,
-    "t": "Miami Vice",
-    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2460,6 +2460,30 @@
     "s": 4,
     "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "[\"torna a casa\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 21,
+    "t": "Torna a casa",
+    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "m:2026-11|[\"torna a casa\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 21,
+    "t": "Torna a casa",
+    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2661,13 +2685,13 @@
    },
    "[\"torna a casa\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 21,
+    "s": 104,
     "t": "Torna a casa",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"torna a casa\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 21,
+    "s": 104,
     "t": "Torna a casa",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -2871,14 +2895,26 @@
    },
    "[\"torna a casa\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 104,
+    "s": 112,
     "t": "Torna a casa",
     "a": "MÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"torna a casa\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 104,
+    "s": 112,
     "t": "Torna a casa",
+    "a": "MÃÂÃÂ¥neskin"
+   },
+   "[\"zitti e buoni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "ZITTI E BUONI",
+    "a": "MÃÂÃÂ¥neskin"
+   },
+   "m:2026-11|[\"zitti e buoni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "ZITTI E BUONI",
     "a": "MÃÂÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
@@ -3093,13 +3129,13 @@
    },
    "[\"zitti e buoni\",\"mÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 60,
+    "s": 81,
     "t": "ZITTI E BUONI",
     "a": "MÃÂ¥neskin"
    },
    "m:2026-11|[\"zitti e buoni\",\"mÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 60,
+    "s": 81,
     "t": "ZITTI E BUONI",
     "a": "MÃÂ¥neskin"
    },
@@ -3325,6 +3361,18 @@
     "t": "ZITTI E BUONI",
     "a": "MÃ¥neskin"
    },
+   "[\"her\",\"jvke\"]": {
+    "v": 0,
+    "s": 66,
+    "t": "her",
+    "a": "JVKE"
+   },
+   "m:2026-11|[\"her\",\"jvke\"]": {
+    "v": 0,
+    "s": 66,
+    "t": "her",
+    "a": "JVKE"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -3547,17 +3595,29 @@
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
-   "[\"her\",\"jvke\"]": {
+   "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 40,
-    "t": "her",
-    "a": "JVKE"
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
-   "m:2026-11|[\"her\",\"jvke\"]": {
+   "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 40,
-    "t": "her",
-    "a": "JVKE"
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "[\"disfruto - carla morrison\",\"carla morrison\"]": {
+    "v": 1,
+    "s": 9,
+    "t": "Disfruto - Carla Morrison",
+    "a": "Carla Morrison"
+   },
+   "m:2026-11|[\"disfruto - carla morrison\",\"carla morrison\"]": {
+    "v": 1,
+    "s": 9,
+    "t": "Disfruto - Carla Morrison",
+    "a": "Carla Morrison"
    }
   },
   "Diego": {
@@ -5123,18 +5183,6 @@
     "t": "Vidrado Em VocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª",
     "a": "Dj Guuga, Mc Livinho"
    },
-   "e-reset-20261031|[\"vidrado em vocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em VocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª",
-    "a": "Dj Guuga, Mc Livinho"
-   },
-   "m:2026-10|e-reset-20261031|[\"vidrado em vocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em VocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª",
-    "a": "Dj Guuga, Mc Livinho"
-   },
    "e-reset-20261031|[\"nena (feat. geolier & andry the hitmaker)\",\"boro, geolier, andry the hitmaker\"]": {
     "v": 1,
     "s": 0,
@@ -5146,6 +5194,18 @@
     "s": 0,
     "t": "Nena (feat. Geolier & Andry The Hitmaker)",
     "a": "Boro, Geolier, Andry The Hitmaker"
+   },
+   "e-reset-20261031|[\"vidrado em vocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em VocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª",
+    "a": "Dj Guuga, Mc Livinho"
+   },
+   "m:2026-10|e-reset-20261031|[\"vidrado em vocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em VocÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂª",
+    "a": "Dj Guuga, Mc Livinho"
    },
    "e-reset-20261031|[\"vidrado em vocÃÂÃÂÃÂÃÂª\",\"dj guuga, mc livinho\"]": {
     "v": 0,
