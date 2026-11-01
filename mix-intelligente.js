@@ -9,7 +9,7 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=8;
+const ANALYSIS_VERSION=9;
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -144,12 +144,18 @@ function estimateMusicalEnd(data,rate,blocks,typical,duration,audibleEnd){
 }
 function analyzeFrames(buf){
  const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
+ // Detect energy on both stereo channels: a quiet left channel must not
+ // make an audible right-channel vocal or instrumental ending disappear.
+ const right=buf.numberOfChannels>1?buf.getChannelData(1):null;
  const hop=Math.max(1,Math.round(rate*step)),energy=[];
  // Analisi del segnale reale: non ci fidiamo della durata dell'MP3, che
  // può contenere molti secondi di silenzio iniziale e finale.
  for(let pos=0;pos<ch.length;pos+=hop){
   let sum=0,n=0;const end=Math.min(ch.length,pos+hop);
-  for(let i=pos;i<end;i+=4){sum+=ch[i]*ch[i];n++}
+  for(let i=pos;i<end;i+=4){
+   sum+=right?(ch[i]*ch[i]+right[i]*right[i])*.5:ch[i]*ch[i];
+   n++;
+  }
   energy.push(Math.sqrt(sum/Math.max(1,n)));
  }
  // Finestre da 200ms: ignorano singoli clic, transienti o fruscii isolati.
