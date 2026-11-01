@@ -56,7 +56,7 @@ function analyzeFrames(buf){
  const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
  let best={bpm:120,score:-Infinity};
  // Autocorrelazione delle variazioni d'energia tra 72 e 180 BPM.
- for(let lag=Math.round(60/(180*step));lag<=Math.round(60/(72*step));lag++){
+ for(let lag=Math.round(60/(210*step));lag<=Math.round(60/(55*step));lag++){
   let corr=0,denom=0;
   for(let i=lag;i<diff.length;i+=2){corr+=diff[i]*diff[i-lag];denom+=diff[i]*diff[i]}
   const score=corr/(denom+1e-8);
