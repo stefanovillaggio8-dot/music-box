@@ -444,9 +444,9 @@ function transition(a,b,actualDuration){
   Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best,ratios[0]);
  const beatClose=a.beatConfidence>=.13&&b.beatConfidence>=.13&&
   ratio>=.94&&ratio<=1.06;
- const reliable=hasReliableHarmony(a.chroma)&&hasReliableHarmony(b.chroma);
  const tailHarmony=a.outroChroma||a.chroma;
  const headHarmony=b.introChroma||b.chroma;
+ const reliable=hasReliableHarmony(tailHarmony)&&hasReliableHarmony(headHarmony);
  const harmonic=reliable?compatibility({chroma:tailHarmony},{chroma:headHarmony}):null;
  const compatible=beatClose&&harmonic!==null&&harmonic>=.75;
  const earlyNextVoice=Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8;
@@ -467,7 +467,14 @@ function transition(a,b,actualDuration){
  const finalKind=kind==="beat"&&effectiveFade<3.5?"soft":kind;
  const tempo=beatClose&&finalKind==="beat"?clamp(ratio,.97,1.03):1;
  const gain=a.level&&b.level?clamp(a.level/b.level,.87,1.13):1;
+ // Beat phase and tempo are distinct: align using a tiny playback delay
+ // rather than seeking forward and losing the next song's opening notes.
+ const beatPeriod=finalKind==="beat"&&a.beatConfidence>=.2&&
+  b.beatConfidence>=.2?60/bpm:null;
+ const beatAnchor=beatPeriod&&Number.isFinite(a.beatAnchor)?a.beatAnchor:null;
+ const nextBeat=beatPeriod&&Number.isFinite(b.introBeat)?b.introBeat-entry:null;
  return {...common,begin,end,fade:effectiveFade,kind:finalKind,tempo,gain,
+  beatPeriod,beatAnchor,nextBeat,
   score:harmonic===null?null:Math.round(harmonic*100)};
 }
 function keyGuess(ch){
@@ -601,7 +608,7 @@ async function beginMix(song,proposed){
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
-  at:0,fade,timer:null};
+  at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
   if(proposed.entry>0&&upcoming.readyState>=1){
@@ -617,8 +624,21 @@ async function beginMix(song,proposed){
   if(act.tempo!==1){
    try{upcoming.preservesPitch=true;upcoming.playbackRate=act.tempo}catch(e){}
   }
+  // Match beat phase without ever skipping a musical introduction.
+  if(proposed.kind==="beat"&&Number.isFinite(proposed.beatPeriod)&&
+     Number.isFinite(proposed.beatAnchor)&&Number.isFinite(proposed.nextBeat)){
+   const period=proposed.beatPeriod;
+   const phase=((proposed.beatAnchor-old.currentTime-proposed.nextBeat)%period+period)%period;
+   if(phase>.045&&phase<Math.min(.42,period*.8)&&
+      old.currentTime+phase<proposed.end-2.2)
+    await new Promise(resolve=>setTimeout(resolve,Math.round(phase*1000)));
+  }
+  if(active!==act||old.paused||app.currentId()!==id||
+     old.currentTime>=proposed.end-1.2){cancel();return}
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
+  if(old.paused){cancel();return}
+  act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.12),.8,12);
   act.at=performance.now();
   function fadeStep(){
    if(active!==act)return;
@@ -634,10 +654,12 @@ async function beginMix(song,proposed){
     outGain=1-Math.pow(time,1.4);
     inGain=Math.pow(time,1.7);
    }
+   // Reduce the combined gain near the crossover to avoid a sudden peak.
+   const guard=act.kind==="beat"?1-.12*Math.sin(Math.PI*time):1;
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
-    old.volume=clamp(vol*outGain,0,1);
-    upcoming.volume=clamp(vol*inGain*correction,0,1);
+    old.volume=clamp(vol*outGain*guard,0,1);
+    upcoming.volume=clamp(vol*inGain*correction*guard,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
     if(act.tempo!==1)upcoming.playbackRate=1+(act.tempo-1)*(1-time);
