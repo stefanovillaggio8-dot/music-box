@@ -676,6 +676,12 @@ async function beginMix(song,proposed){
  }
 }
 function tick(){
+ // iOS suspends/limits JS timers behind the lock screen. Leave the native
+ // single HTML audio uninterrupted until Safari restores this page.
+ if(isIOS&&document.hidden){
+  if(active||prepared||mobileFading)cancel();
+  return;
+ }
  if(!enabled||window.MusicBoxRoom?.isActive()){
   if(active||prepared)cancel();
   return;
@@ -883,7 +889,8 @@ function smartScore(a,b){
  const delta=Math.min(...[.5,1,2].map(scale=>
   Math.abs(Math.log2(bpmA/(bpmB*scale)))));
  const beat=clamp(1-delta/.4,0,1);
- const harmony=a.chroma&&b.chroma?compatibility(a,b):.55;
+ const tail=a.outroChroma||a.chroma,head=b.introChroma||b.chroma;
+ const harmony=tail&&head?compatibility({chroma:tail},{chroma:head}):.55;
  const level=a.level&&b.level?clamp(1-Math.abs(Math.log2(a.level/b.level))/3,0,1):.5;
  return beat*.7+harmony*.2+level*.1;
 }
