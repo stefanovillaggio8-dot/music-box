@@ -141,6 +141,11 @@
 #mixPanel output{float:right;color:#74e5c4}
 #mixPanel .mix-setting-hint,#mixPanel #mixDetail{font-size:12px;line-height:1.6;color:#aebbd0;margin:0}
 #mixPanel #mixDetail{color:#deebff;overflow-wrap:anywhere}
+#mixPanel .mix-wave-caption{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#9fb4cd}
+#mixPanel .mix-wave-duo{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:47px;align-items:center}
+#mixPanel .mix-wave{min-width:0;display:flex;align-items:center;justify-content:center;gap:1px;height:46px;border-radius:8px;background:rgba(5,10,20,.35);overflow:hidden;padding:2px}
+#mixPanel .mix-wave-bar{flex:1;min-width:1px;border-radius:3px;background:#48d6b0}
+#mixPanel #mixWaveIn .mix-wave-bar{background:#749de9}
 </style>
 </head>
 <body>
@@ -1329,6 +1334,12 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
     <div class="mix-setting-section">
       <strong>Analisi della transizione</strong>
       <p id="mixDetail" aria-live="polite">Analisi automatica durante la riproduzione.</p>
+      <div class="mix-wave-caption"><span>Finale attuale</span><span>Inizio successivo</span></div>
+      <div class="mix-wave-duo">
+        <div class="mix-wave" id="mixWaveOut" aria-label="Forma d'onda finale della prima canzone"></div>
+        <div class="mix-wave" id="mixWaveIn" aria-label="Forma d'onda iniziale della seconda canzone"></div>
+      </div>
+      <p class="mix-setting-hint">Le barre mostrano l'intensità dell'audio analizzato. Quando sono vuote o non disponibili, il player usa un passaggio normale.</p>
     </div>
     <p id="mixDeviceNote" class="mix-setting-hint"></p>
   </div>
