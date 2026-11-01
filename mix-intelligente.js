@@ -277,7 +277,7 @@ async function handoff(){
  const act=active;if(!act)return;
  const app=bridge();
  if(!app||window.MusicBoxRoom?.isActive()||app.audio()!==act.original||
-    app.currentId()!==act.fromId){cancel();return}
+    app.currentId()!==act.fromId||app.mixNext()?.id!==act.track.id){cancel();return}
  const at=Math.max(0,act.upcoming.currentTime||act.entry);
  try{await app.mixHandoff(act.track.id,at)}
  catch(e){/* Il lettore normale gestisce eventuali problemi di rete. */}
@@ -293,6 +293,7 @@ async function beginMix(song,proposed){
  const upcoming=p.audio;
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,8);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
+  tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   at:0,fade,timer:null};
  active=act;
  try{
@@ -305,6 +306,9 @@ async function beginMix(song,proposed){
    }
   }
   if(active!==act||old.paused||app.currentId()!==id){cancel();return}
+  if(act.tempo!==1){
+   try{upcoming.preservesPitch=true;upcoming.playbackRate=act.tempo}catch(e){}
+  }
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
   act.at=performance.now();
@@ -314,9 +318,21 @@ async function beginMix(song,proposed){
       window.MusicBoxRoom?.isActive()){cancel();return}
    const time=clamp((performance.now()-act.at)/(act.fade*1000),0,1);
    const vol=app.volume();
+   // Tre curve: Auto/Beat (equal power), Fade (lineare), Rise (entrata
+   // graduale e uscita netta). Evita picchi quando il volume è alto.
+   let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
+   if(act.kind==="fade"){outGain=1-time;inGain=time}
+   else if(act.kind==="rise"){
+    outGain=1-Math.pow(time,1.4);
+    inGain=Math.pow(time,1.7);
+   }
+   const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
-    old.volume=vol*Math.cos(time*Math.PI/2);
-    upcoming.volume=vol*Math.sin(time*Math.PI/2);
+    old.volume=clamp(vol*outGain,0,1);
+    upcoming.volume=clamp(vol*inGain*correction,0,1);
+    // Micro-beatmatching massimo ±3%; termina a velocità normale
+    // per evitare uno scatto udibile quando subentra il lettore principale.
+    if(act.tempo!==1)upcoming.playbackRate=1+(act.tempo-1)*(1-time);
    }catch(e){cancel();return}
    if(time>=1){handoff();return}
    act.timer=setTimeout(fadeStep,50);
@@ -325,7 +341,7 @@ async function beginMix(song,proposed){
  }catch(e){cancel()}
 }
 function tick(){
- if(!enabled||isIOS||window.MusicBoxRoom?.isActive()){
+ if(!enabled||window.MusicBoxRoom?.isActive()){
   if(active||prepared)cancel();
   return;
  }
@@ -350,6 +366,7 @@ function tick(){
       app.mixNext()?.id!==target||mixing)return;
    const candidate=transition(a,b,audio.duration);
    if(candidate)plan=candidate;
+   updateDetails(a,b);
   };
   plan=transition(null,null,duration);
   const now=app.allTracks()?.find(t=>t.id===id);
@@ -360,17 +377,19 @@ function tick(){
  // Inizia il buffer prima del punto di mix: mai aspettare la battuta finale
  // per scaricare i metadati del prossimo MP3.
  const preloadAt=Math.min(plan.begin-12,Math.max(0,audio.duration-25));
- if(audio.currentTime>=Math.max(0,preloadAt) &&
+ if(!isIOS&&audio.currentTime>=Math.max(0,preloadAt) &&
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
  // Se l'analisi certifica una lunga coda muta e il punto di mix è già
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
  if(plan.silenceTrim&&audio.currentTime>=plan.end+.15){
   const target=next.id,entry=plan.entry;
   cancel();plannedFor=target;plan=null;
+  // Su iPhone un solo audio alla volta preserva i controlli nella
+  // schermata di blocco; dove possibile elimina comunque la coda muta.
   Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});
   return;
  }
- if(prepared?.ready && audio.currentTime>=plan.begin &&
+ if(!isIOS&&prepared?.ready && audio.currentTime>=plan.begin &&
     audio.currentTime<plan.end-.55){
   beginMix(next,plan).catch(()=>cancel());
  }
