@@ -1855,6 +1855,18 @@
     "t": "Runaway",
     "a": "Linkin Park"
    },
+   "[\"numb\",\"linkin park\"]": {
+    "v": 1,
+    "s": 4,
+    "t": "Numb",
+    "a": "Linkin Park"
+   },
+   "m:2026-11|[\"numb\",\"linkin park\"]": {
+    "v": 1,
+    "s": 4,
+    "t": "Numb",
+    "a": "Linkin Park"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2017,18 +2029,6 @@
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"numb\",\"linkin park\"]": {
-    "v": 1,
-    "s": 4,
-    "t": "Numb",
-    "a": "Linkin Park"
-   },
-   "m:2026-11|[\"numb\",\"linkin park\"]": {
-    "v": 1,
-    "s": 4,
-    "t": "Numb",
-    "a": "Linkin Park"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2190,6 +2190,66 @@
     "s": 0,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
+   },
+   "[\"e non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 4,
+    "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"e non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 4,
+    "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"estate\",\"negromaro\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Estate",
+    "a": "Negromaro"
+   },
+   "m:2026-11|[\"estate\",\"negromaro\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Estate",
+    "a": "Negromaro"
+   },
+   "[\"tuttok\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Tuttok",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"tuttok\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Tuttok",
+    "a": "nayt, 3D"
+   },
+   "[\"mortale\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Mortale",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"mortale\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Mortale",
+    "a": "nayt, 3D"
+   },
+   "[\"lullu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Lullu - Acoustic Version",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"lullu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Lullu - Acoustic Version",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2364,54 +2424,6 @@
     "s": 4,
     "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
-   },
-   "[\"estate\",\"negromaro\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Estate",
-    "a": "Negromaro"
-   },
-   "m:2026-11|[\"estate\",\"negromaro\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Estate",
-    "a": "Negromaro"
-   },
-   "[\"tuttok\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Tuttok",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"tuttok\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Tuttok",
-    "a": "nayt, 3D"
-   },
-   "[\"mortale\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Mortale",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"mortale\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Mortale",
-    "a": "nayt, 3D"
-   },
-   "[\"lullu - acoustic version\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Lullu - Acoustic Version",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"lullu - acoustic version\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Lullu - Acoustic Version",
-    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2599,6 +2611,18 @@
     "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
+   "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2785,18 +2809,6 @@
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
-   "[\"miami vice\",\"luchÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 0,
-    "s": 46,
-    "t": "Miami Vice",
-    "a": "LuchÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
-   },
-   "m:2026-11|[\"miami vice\",\"luchÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 0,
-    "s": 46,
-    "t": "Miami Vice",
-    "a": "LuchÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
-   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2982,6 +2994,30 @@
     "s": 4,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
+   },
+   "[\"miami vice\",\"luchÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Miami Vice",
+    "a": "LuchÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "m:2026-11|[\"miami vice\",\"luchÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Miami Vice",
+    "a": "LuchÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "[\"torna a casa\",\"mÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 21,
+    "t": "Torna a casa",
+    "a": "MÃÂ¥neskin"
+   },
+   "m:2026-11|[\"torna a casa\",\"mÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 21,
+    "t": "Torna a casa",
+    "a": "MÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -3183,13 +3219,13 @@
    },
    "[\"torna a casa\",\"mÃ¥neskin\"]": {
     "v": 0,
-    "s": 21,
+    "s": 104,
     "t": "Torna a casa",
     "a": "MÃ¥neskin"
    },
    "m:2026-11|[\"torna a casa\",\"mÃ¥neskin\"]": {
     "v": 0,
-    "s": 21,
+    "s": 104,
     "t": "Torna a casa",
     "a": "MÃ¥neskin"
    },
@@ -3393,14 +3429,26 @@
    },
    "[\"torna a casa\",\"måneskin\"]": {
     "v": 0,
-    "s": 104,
+    "s": 112,
     "t": "Torna a casa",
     "a": "Måneskin"
    },
    "m:2026-11|[\"torna a casa\",\"måneskin\"]": {
     "v": 0,
-    "s": 104,
+    "s": 112,
     "t": "Torna a casa",
+    "a": "Måneskin"
+   },
+   "[\"zitti e buoni\",\"måneskin\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "ZITTI E BUONI",
+    "a": "Måneskin"
+   },
+   "m:2026-11|[\"zitti e buoni\",\"måneskin\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "ZITTI E BUONI",
     "a": "Måneskin"
    }
   },
@@ -5003,18 +5051,6 @@
     "t": "Vidrado Em VocÃÂÃÂª",
     "a": "Dj Guuga, Mc Livinho"
    },
-   "e-reset-20261031|[\"vidrado em vocÃÂª\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em VocÃÂª",
-    "a": "Dj Guuga, Mc Livinho"
-   },
-   "m:2026-10|e-reset-20261031|[\"vidrado em vocÃÂª\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em VocÃÂª",
-    "a": "Dj Guuga, Mc Livinho"
-   },
    "e-reset-20261031|[\"nena (feat. geolier & andry the hitmaker)\",\"boro, geolier, andry the hitmaker\"]": {
     "v": 1,
     "s": 0,
@@ -5026,6 +5062,18 @@
     "s": 0,
     "t": "Nena (feat. Geolier & Andry The Hitmaker)",
     "a": "Boro, Geolier, Andry The Hitmaker"
+   },
+   "e-reset-20261031|[\"vidrado em vocÃÂª\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em VocÃÂª",
+    "a": "Dj Guuga, Mc Livinho"
+   },
+   "m:2026-10|e-reset-20261031|[\"vidrado em vocÃÂª\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em VocÃÂª",
+    "a": "Dj Guuga, Mc Livinho"
    },
    "e-reset-20261031|[\"vidrado em vocÃª\",\"dj guuga, mc livinho\"]": {
     "v": 0,
