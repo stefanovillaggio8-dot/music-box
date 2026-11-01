@@ -1219,6 +1219,22 @@
     return "b-" + String((b && b.file) || ("builtin-" + BUILTIN.indexOf(b)))
       .replace(/^.*\//, "").replace(/\.mp3$/i, "");
   }
+  // Queste funzioni devono essere accessibili anche fuori da loadAll:
+  // prima "Elimina" le invocava da uno scope dove non esistevano.
+  function _chiaveEliminato(id, owner) {
+    return String(owner || profile || DEFAULT_PROFILE) + "." + String(id || "");
+  }
+  function _idsEliminatiEquivalenti(id) {
+    const stable=String(id||"");
+    const match=/^(?:yt-|b-youtube-)([A-Za-z0-9_-]{11})$/.exec(stable);
+    return match?[stable,"yt-"+match[1],"b-youtube-"+match[1]]:[stable];
+  }
+  function _branoEliminato(id, owner, tombstones) {
+    const records=tombstones && typeof tombstones==="object"
+      ? tombstones : (LS.get("mb.eliminati",null)||{});
+    return _idsEliminatiEquivalenti(id).some(trackId=>
+      Boolean(records[_chiaveEliminato(trackId,owner)]));
+  }
   let _diUltimoInvio4 = 0;
   let _diUltimoInvio3 = 0;
   let _diUltimoInvio2 = 0;
@@ -1273,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.491";
+  const APP_VERSION = "6.492";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3313,7 +3329,8 @@ function _devoVedereBrano(eMio, b) {
   }
   function _ytAggiornaVociLibreria(entries, owner, draw=false) {
     if(owner!==profile || !Array.isArray(entries))return;
-    const old=tracks.filter(t=>t && t.source!=="youtube-link" && t.source!=="cloud-audio");
+    const old=tracks.filter(t=>t && t.source!=="youtube-link" && t.source!=="cloud-audio" &&
+      !_branoEliminato(t.id,owner));
     const published=new Set(old.filter(t=>t.file).map(t=>t.file));
     /* Anche gli MP3 YouTube gia' pubblicati ricevono la data originale
        del link, quando il cloud la restituisce: non la data di refresh. */
@@ -3331,6 +3348,8 @@ function _devoVedereBrano(eMio, b) {
     for(const row of entries) {
       const id=String((row&&row.video_id)||"");
       if(!/^[A-Za-z0-9_-]{11}$/.test(id)||seen.has(id))continue;
+      // Non resuscitare un link eliminato dopo la sincronizzazione cloud.
+      if(_branoEliminato("yt-"+id,owner))continue;
       seen.add(id);
       // Quando l'MP3 e' stato pubblicato, usiamo soltanto il vero brano audio.
       if(published.has("songs/youtube-"+id+".mp3"))continue;
@@ -3425,19 +3444,16 @@ function _devoVedereBrano(eMio, b) {
 
      Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
      elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
-  function _chiaveEliminato(id, profilo) {
-    return String(profilo || profile || "Ste") + "." + String(id || "");
-  }
   /* MB_REVIEW_VISIBLE_SAFE_20261030 */
   const builtin = BUILTIN.concat((await _braniYouTubePubblicati()).filter(x =>
     !BUILTIN.some(b => b.file === x.file && (b.profile || DEFAULT_PROFILE) === x.profile)))
-  .filter((b) => !eliminati[_chiaveEliminato(_idBranoStabile(b))])
+  .filter((b) => !_branoEliminato(_idBranoStabile(b),profile,eliminati))
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
      Metto una traccia: quante canzoni ho scartato e con che chiave, cosi'
      vedo dal computer se la chiave e' quella giusta. */
   .filter(function (b) {
     const k = _chiaveEliminato(_idBranoStabile(b));
-    if (!eliminati[k]) return true;
+    if (!_branoEliminato(_idBranoStabile(b),profile,eliminati)) return true;
     return false;
   })
   .filter((b) => _devoVedereBrano((b.profile || DEFAULT_PROFILE) === profile, b))
@@ -3499,6 +3515,7 @@ function _devoVedereBrano(eMio, b) {
     const records = (await dbAll()).filter((r) => r && r.id && r.blob);
     added = records
   .filter((r) => (r.profile || DEFAULT_PROFILE) === profile)
+  .filter((r) => !_branoEliminato(r.id,profile,eliminati))
   /* Se il brano esiste gia' nella libreria condivisa non lo mostro due volte:
        la copia nel browser serve per non riscaricarlo, ma elencarla
        creava due righe identiche e i contatti non tornavano piu' con gli
@@ -4732,9 +4749,13 @@ async function _eliminaBrano(id) {
      cancellera' il computer stesso quando si rimette in contatto. */
   try {
     const el = LS.get("mb.eliminati", null) || {};
-    el[_chiaveEliminato(id)] = Date.now();
+    // Lo stesso video cambia ID quando passa da link a MP3 pubblicato.
+    for(const stableId of new Set(_idsEliminatiEquivalenti(id))){
+      const key=_chiaveEliminato(stableId);
+      el[key]=Date.now();
+      _eliminatiDaMandareSegna(key);
+    }
     LS.set("mb.eliminati", el);
-    _eliminatiDaMandareSegna(_chiaveEliminato(id));
     _diChe("ELIMINO: " + _chiaveEliminato(id) + " (elenco ora " + Object.keys(el).length + ")");
   } catch (e) { /* noop */ }
 
@@ -14689,6 +14710,7 @@ const j = await r.json();
        se lo mangiava in silenzio e io non vedevo niente. */
     try { _diChe("ENTRO: stato dal sito, nascosti " + (Array.isArray(j && j.nascosti) ? j.nascosti.length : -1)); } catch (e) { /* noop */ }
     try {
+        let cambiati = 0;
         const nasco = Array.isArray(j && j.nascosti) ? j.nascosti : [];
 
       /* PRIMA di tutto: la lista dei brani rimessi la prendo dal Worker.
@@ -14722,9 +14744,9 @@ const j = await r.json();
               ? DEFAULT_PROFILE + "." + String(id)
               : String(id || "");
             if (!chiave || chiave.indexOf(profile + ".") !== 0) continue;
-            if (!el[chiave]) { el[chiave] = 0; nuovi++; }
+            if (!el[chiave]) { el[chiave] = Date.now(); nuovi++; }
           }
-          if (nuovi) LS.set("mb.eliminati", el);
+          if (nuovi) { LS.set("mb.eliminati", el); cambiati++; }
         } catch (e) { /* noop */ }
       }
 
@@ -14736,15 +14758,16 @@ const j = await r.json();
         try {
           const el = LS.get("mb.eliminati", null) || {};
           let tolti = 0;
+          const pendingDeletes=new Set(_eliminatiDaMandare());
           for (const chiave of j.eliminatiRimossi) {
             if (!chiave || String(chiave).indexOf(profile + ".") !== 0) continue;
+            if(pendingDeletes.has(chiave))continue;
             if (el[chiave]) { delete el[chiave]; tolti++; }
           }
           if (tolti) { LS.set("mb.eliminati", el); cambiati++; }
         } catch (e) { /* noop */ }
       }
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
-        let cambiati = 0;
         /* "preferiti" e' un vecchio elenco globale. Non lo posso applicare
            a canzoni di altri profili, ne' lasciare che annulli un cuore
            tolto volontariamente da questo dispositivo. */
