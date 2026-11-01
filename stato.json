@@ -4284,18 +4284,6 @@
     "s": 2,
     "t": "Star",
     "a": "Luchè"
-   },
-   "[\"voglio di più\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Voglio di più",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"voglio di più\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Voglio di più",
-    "a": "nayt, 3D"
    }
   },
   "Diego": {
@@ -5786,6 +5774,18 @@
     "s": 32,
     "t": "KOPI LUWAK (feat. Kid Yugi)",
     "a": "TYi, Kid Yugi, Marracash"
+   },
+   "[\"voglio di più\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Voglio di più",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"voglio di più\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Voglio di più",
+    "a": "nayt, 3D"
    }
   },
   "Emanuele": {
