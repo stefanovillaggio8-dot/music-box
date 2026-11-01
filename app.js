@@ -17259,6 +17259,17 @@ async function _spotifyCompletaAccesso(code, stato) {
       const r = await fetch("https://api.spotify.com/v1" + percorso, {
         headers: { Authorization: "Bearer " + token }
       });
+      if(r.status===429){
+        // A retry-after is a server rate limit, not an expired login.
+        const seconds=Number(r.headers?.get?.("retry-after")||0);
+        if(!giaRinnovato && Number.isFinite(seconds) && seconds>=0 && seconds<=3){
+          await new Promise(done=>setTimeout(done,Math.max(500,seconds*1000)));
+          return _spotifyApi(percorso,true);
+        }
+        _spotifyErrore=429;
+        _spotifyMotivo="Troppe richieste a Spotify. Riprova tra poco.";
+        return null;
+      }
       if (r.status === 401 && !giaRinnovato) {
         /* Il refresh token puo' essere ancora valido anche se l'access token e' 401.
            Un unico rinnovo e' sicuro; mai un ciclo di tentativi infiniti. */
@@ -17316,23 +17327,22 @@ async function _spotifyCompletaAccesso(code, stato) {
           try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
           try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
         } else if (r.status === 403) {
-          /* Ste: "Spotify ha risposto 403", e non va avanti.
-             Il 403 vuol dire "accesso non sufficiente": il token c'e' ma non
-             ha i permessi giusti. E il permesso LUNGO (quello che serve per
-             rinnovare) porta con se' gli stessi permessi vecchi: quindi
-             rinnovarlo non risolve niente e si resta sempre fermi li'.
-             Per questo, sul 403 butto via ANCHE il permesso lungo: l'app
-             chiede un accesso NUOVO, con i permessi giusti, e l'utente
-             approva una volta sola. */
-          try { LS.remove("mb.spotify"); } catch (e) { /* noop */ }
-          try { sessionStorage.removeItem("mb.spotify"); } catch (e) { /* noop */ }
-          _spotifyTraccia("permesso senza i permessi giusti: lo butto via, serve un accesso nuovo");
+          // A 403 may be missing OAuth scopes, an inaccessible playlist,
+          // or Spotify's developer-account restrictions. Re-authorizing
+          // cannot fix every 403; do not discard a valid refresh token.
+          if(/insufficient client scope|missing scope|invalid scope/i.test(_spotifyMotivo)){
+            try { LS.remove("mb.spotify"); } catch (e) {}
+            try { sessionStorage.removeItem("mb.spotify"); } catch (e) {}
+            _spotifyTraccia("Permessi Spotify insufficienti: serve nuovo consenso.");
+          }else{
+            _spotifyTraccia("Spotify ha negato la lettura: conservo l'accesso e spiego il motivo.");
+          }
         }
         _spotifyErrore = r.status;
         return null;
       }
-      if (!r.ok) { _spotifyErrore = r.status; return null; }
-      _spotifyErrore = 0;
+      if (!r.ok) { _spotifyErrore = r.status;_spotifyMotivo="Errore Spotify HTTP "+r.status; return null; }
+      _spotifyErrore = 0;_spotifyMotivo="";
       return await r.json();
     } catch (e) { _spotifyErrore = -1; return null; }
   }
