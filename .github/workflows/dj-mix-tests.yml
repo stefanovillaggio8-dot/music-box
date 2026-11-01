@@ -1,0 +1,30 @@
+name: DJ Mix regression tests
+on:
+  push:
+    paths:
+      - 'mix-intelligente.js'
+      - 'app.js'
+      - 'tests/dj-mix.test.cjs'
+      - '.github/workflows/dj-mix-tests.yml'
+  pull_request:
+    paths:
+      - 'mix-intelligente.js'
+      - 'app.js'
+      - 'tests/dj-mix.test.cjs'
+      - '.github/workflows/dj-mix-tests.yml'
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript syntax
+        run: |
+          node --check app.js
+          node --check mix-intelligente.js
+      - name: Test DJ transition safety
+        run: node --test tests/dj-mix.test.cjs
