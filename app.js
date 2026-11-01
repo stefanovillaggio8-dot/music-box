@@ -5660,6 +5660,11 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     if (!t || t._mbAudioAvvisato) return;
     t._mbAudioAvvisato = true;
     const id = t.id, url = _urlDelBrano(t);
+    if(t._mbUltimoErroreAudio===3){
+      toast("MP3 non decodificabile: "+String(t.artist||"")+" - "+String(t.title||"")+
+        ". Una copia audio difettosa deve essere sostituita.",9500);
+      return;
+    }
     /* Un HEAD solo dopo l'errore: identifica i 404 dei brani non
        pubblicati, senza rallentare il primo tentativo di ascolto. */
     if (/\.github\.io$/i.test(location.hostname) && /^https:\/\//i.test(url)) {
@@ -5675,10 +5680,30 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
 
   function handleError() {
-  console.warn("Errore audio, provo a recuperare");
   const t = current();
   if (!t) return;
+  const errorCode=Number(audio?.error?.code||0);
+  t._mbUltimoErroreAudio=errorCode;
+  console.warn("Errore audio", {id:t.id,file:t.file,profile:t.profile||profile,
+    code:errorCode,message:String(audio?.error?.message||"").slice(0,160)});
   t._mbErroriAudio = (Number(t._mbErroriAudio) || 0) + 1;
+  // Un MP3 può essere integro sul sito ma corrotto in una vecchia cache.
+  // In caso di errore di decodifica, prova una singola richiesta nuova,
+  // senza alterare il file originale o la cache offline.
+  if((errorCode===3||errorCode===4)&&!t._mbRicaricaMp3Provata){
+    const source=String(_urlDelBrano(t)||"");
+    if(/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box-brani\/main\/songs\//i.test(source)){
+      t._mbRicaricaMp3Provata=true;
+      try{
+        const url=new URL(source);
+        url.searchParams.set("mb-retry",String(Date.now()));
+        audio.src=url.href;
+        audio.load();
+        doPlay().catch(()=>{});
+        return;
+      }catch(_){/* La gestione esistente resta disponibile. */}
+    }
+  }
   if (t._mbErroriAudio > 2) {
     _vuoleSuonare = false;
     _avvisaBranoNonDisponibile(t);
@@ -5875,7 +5900,7 @@ a.addEventListener("pause", () => {
     a.addEventListener("timeupdate", () => { if (a === audio) _contaAlMuoversi(); });
     a.addEventListener("loadedmetadata", handleMetadata);
     a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
-    a.addEventListener("error", handleError);
+    a.addEventListener("error", () => { if(a===audio)handleError(); });
     return a;
   }
 
@@ -7070,6 +7095,8 @@ async function playById(id, autoplay = true, startAt = 0) {
         if (p >= 0) _posizionePlaylist = p;
       }
       t._mbErroriAudio = 0;
+      t._mbRicaricaMp3Provata = false;
+      t._mbUltimoErroreAudio = 0;
       t._mbAudioMancante = false;
       t._mbAudioAvvisato = false;
       t._provatoLocale = false;
