@@ -1193,8 +1193,8 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 4,
-    "s": 120,
+    "v": 5,
+    "s": 121,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1829,8 +1829,8 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 3,
-    "s": 112,
+    "v": 4,
+    "s": 113,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -3058,6 +3058,36 @@
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "Alta marea",
+    "a": "Antonello Venditti"
+   },
+   "[\"distrutto\",\"carla morrison\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Distrutto",
+    "a": "Carla Morrison"
+   },
+   "m:2026-11|[\"distrutto\",\"carla morrison\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Distrutto",
+    "a": "Carla Morrison"
+   },
+   "[\"le mie colpe\",\"glocky\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "le mie colpe",
+    "a": "glocky"
+   },
+   "m:2026-11|[\"le mie colpe\",\"glocky\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "le mie colpe",
+    "a": "glocky"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3453,36 +3483,6 @@
     "s": 73,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "Alta marea",
-    "a": "Antonello Venditti"
-   },
-   "[\"distrutto\",\"carla morrison\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Distrutto",
-    "a": "Carla Morrison"
-   },
-   "m:2026-11|[\"distrutto\",\"carla morrison\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Distrutto",
-    "a": "Carla Morrison"
-   },
-   "[\"le mie colpe\",\"glocky\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "le mie colpe",
-    "a": "glocky"
-   },
-   "m:2026-11|[\"le mie colpe\",\"glocky\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "le mie colpe",
-    "a": "glocky"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4327,13 +4327,25 @@
    "[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂ \"]": {
@@ -4600,27 +4612,15 @@
     "t": "Voglio di piÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 119,
+    "s": 121,
     "t": "Ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 119,
+    "s": 121,
     "t": "Ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -5022,13 +5022,13 @@
    },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 121,
+    "s": 123,
     "t": "Ma il cielo ÃÂ¨ sempre piÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 121,
+    "s": 123,
     "t": "Ma il cielo ÃÂ¨ sempre piÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -5104,6 +5104,12 @@
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -5143,25 +5149,13 @@
    "[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'Ã¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'Ã¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
@@ -5428,15 +5422,27 @@
     "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 119,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 119,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -5511,12 +5517,6 @@
     "s": 73,
     "t": "Tutti il resto Ã¨ noi",
     "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Un mondo a parte (Visual)",
-    "a": "Jovanotti"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -7512,18 +7512,6 @@
     "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
-    "a": "nayt, 3D"
-   },
    "[\"le mie colpe\",\"glocky\"]": {
     "v": 1,
     "s": 9,
@@ -7535,6 +7523,18 @@
     "s": 9,
     "t": "le mie colpe",
     "a": "glocky"
+   },
+   "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
+    "a": "nayt, 3D"
    },
    "[\"voglio di piÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
