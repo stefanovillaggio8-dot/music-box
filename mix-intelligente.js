@@ -168,13 +168,14 @@ async function handoff(){
 async function beginMix(song,proposed){
  const app=bridge(),old=app?.audio();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
+ if(old.currentTime>=proposed.end-1.6)return;
  mixing=true;
  const upcoming=new Audio();
  upcoming.preload="auto";
  upcoming.src=app.mixUrl?.(song)||song.url;
  upcoming.volume=0;
  // Mantieni la riproducibilita\u0027 degli MP3 senza richiedere CORS al media element.
- const act={original:old,upcoming,track:song,entry:proposed.entry,at:performance.now(),fade:proposed.fade};
+ const act={original:old,upcoming,track:song,entry:proposed.entry,at:performance.now(),fade:Math.min(proposed.fade,Math.max(1.3,proposed.end-old.currentTime-.25))};
  active=act;
  try{
   await new Promise((resolve,reject)=>{
@@ -210,8 +211,13 @@ async function tick(){
   plannedFor=next.id;plan=null;
   const now=app.allTracks()?.find(t=>t.id===id);
   Promise.all([decode(now),decode(next)]).then(([a,b])=>{
-   if(app.currentId()!==id||app.mixNext()?.id!==next.id||!a||!b)return;
-   plan=transition(a,b,audio.duration);
+   if(app.currentId()!==id||app.mixNext()?.id!==next.id)return;
+   // Se il provider non lascia analizzare il file, resta un crossfade prudente
+   // basato sulla durata: non inventiamo BPM o tonalita' inesistenti.
+   plan=(a&&b)?transition(a,b,audio.duration):
+    {begin:Math.max(20,audio.duration-5.8),end:audio.duration-.3,
+     fade:5.5,entry:0,score:null};
+
   }).catch(()=>{});
  }
  if(plan&&audio.currentTime>=plan.begin&&audio.currentTime<plan.end-.6)
