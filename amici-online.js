@@ -82,6 +82,8 @@ function nowSong(){
 async function pulse(force=false){
  stateForProfile();
  if(!visible||!currentProfile||!navigator.onLine)return;
+ // Do not appear online while the app is hidden and music is paused.
+ if(document.hidden&&!nowSong().playing)return;
  if(!force&&Date.now()-lastPulse<12000)return;
  const id=identity();
  if(!id.deviceId)return;
@@ -247,8 +249,10 @@ function start(){
  $("amiciRefresh").addEventListener("click",refresh);
  setInterval(()=>{
    stateForProfile();
-   if(visible) pulse();
-   if(!$("amiciPanel").hidden&&Date.now()-lastList>=9000)refresh();
+   if(visible&&document.hidden&&!nowSong().playing){
+     if(registered)enqueueOffline();
+   } else if(visible) pulse();
+   if(!document.hidden&&!$("amiciPanel").hidden&&Date.now()-lastList>=9000)refresh();
  },5000);
  document.addEventListener("visibilitychange",()=>{
    if(!document.hidden){lastPulse=0;pulse(true);if(!$("amiciPanel").hidden)refresh();}
