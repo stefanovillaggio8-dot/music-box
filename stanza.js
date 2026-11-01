@@ -54,6 +54,117 @@ function selected(){
  if(!room||!room.joined||!Array.isArray(room.playlist))return null;
  return room.playlist[Number(room.currentIndex)||0]||null;
 }
+
+/* Coda collaborativa della stanza: usa sempre le chiavi autorizzate dal server. */
+let catalog=[],catalogFor="",catalogBusy=false,drawnRevision=-1;
+function nextItems(){
+ if(!room?.joined||!room.playlist?.length)return [];
+ const i=Number(room.currentIndex)||0;
+ return [...room.playlist.slice(i+1),...room.playlist.slice(0,i)];
+}
+function snapshot(){
+ const app=bridge(),a=app?.audio(),t=app?.allTracks()?.find(t=>t.id===app.currentId());
+ return {currentKey:t?.file?String(t.profile||app.profile())+":"+String(t.file):"",
+  playing:!!a&&!a.paused&&!a.ended,seconds:Math.max(0,Number(a?.currentTime)||0)};
+}
+async function hostSync(){
+ if(creds?.role!=="host"||room?.joined)return;
+ const x=snapshot(),t=room?.playlist?.[Number(room.currentIndex)||0];
+ if(!x.currentKey||!room.playlist.some(t=>t.key===x.currentKey))return;
+ const at=(Number(room.offset)||0)+(room.playing&&room.startedAt?
+   Math.max(0,(Date.now()-Date.parse(room.startedAt))/1000):0);
+ if(t?.key===x.currentKey&&!!room.playing===x.playing&&Math.abs(at-x.seconds)<3.5)return;
+ try{
+  const res=await request({action:"host-sync",id:creds.id,token:creds.token,...x});
+  if(res.room&&Number(res.room.revision)>=Number(room.revision)){room=res.room;lastRevision=0;}
+ }catch(e){if(!/Room changed/.test(e.message))console.warn("Stanza:",e.message)}
+}
+async function fetchCatalog(){
+ if(!creds||!room?.joined)return;
+ const marker=creds.id+":"+room.guestProfile;
+ if(catalogFor===marker||catalogBusy)return;
+ catalogBusy=true;
+ try{
+  const result=await request({action:"catalog",id:creds.id,token:creds.token});
+  if(!creds||!room?.joined)return;
+  catalog=Array.isArray(result.catalog)?result.catalog:[];
+  catalogFor=marker;drawnRevision=-1;draw();
+ }catch(e){status("Catalogo stanza: "+e.message)}
+ finally{catalogBusy=false}
+}
+function findKey(id){
+ const item=room?.playlist?.find(t=>roomTrack(t)===id);
+ if(item)return item.key;
+ const t=bridge()?.allTracks()?.find(t=>t.id===id);
+ if(!t)return "";
+ const key=String(t.profile||bridge().profile())+":"+String(t.file||"");
+ return catalog.some(t=>t.key===key)||room?.playlist?.some(t=>t.key===key)?key:"";
+}
+function enqueue(id,front=false){
+ if(!isActive())return false;
+ const key=findKey(id);
+ if(!key){tell("Questo brano non è nel catalogo della stanza.");return true;}
+ control("queue-add",{key,position:front?"next":"end"});return true;
+}
+function queueAction(id,action){
+ if(!isActive())return false;
+ const key=findKey(id);if(!key)return false;
+ if(action==="remove")control("queue-remove",{key});
+ if(action==="up"||action==="down")control("queue-move",{key,delta:action==="up"?-1:1});
+ return true;
+}
+function button(label,description,fn){
+ const el=document.createElement("button");el.type="button";el.textContent=label;
+ el.title=description;el.setAttribute("aria-label",description);el.addEventListener("click",fn);
+ return el;
+}
+function songRow(t,actions,number){
+ const row=document.createElement("div");row.className="stanza-queue-row";
+ const info=document.createElement("span");info.className="stanza-song";
+ const title=document.createElement("strong");title.textContent=(number?number+". ":"")+(t.title||"Brano");
+ const meta=document.createElement("small");meta.textContent=[t.artist,t.profile].filter(Boolean).join(" · ");
+ info.append(title,meta);row.append(info,actions);return row;
+}
+function searchSongs(){
+ const container=$("stanzaRisultati");if(!container||!room?.joined)return;
+ container.replaceChildren();
+ const term=String($("stanzaCercaBrano")?.value||"").trim().toLocaleLowerCase("it");
+ if(!term){container.textContent="Cerca un brano delle due librerie per aggiungerlo alla coda.";return;}
+ const matches=catalog.filter(t=>[t.title,t.artist,t.profile].join(" ").toLocaleLowerCase("it").includes(term));
+ for(const t of matches.slice(0,14)){
+  const actions=document.createElement("span");actions.className="stanza-queue-actions";
+  actions.append(button("Dopo","Aggiungi dopo questo brano",()=>control("queue-add",{key:t.key,position:"next"})),
+   button("+ Coda","Aggiungi in fondo alla coda",()=>control("queue-add",{key:t.key,position:"end"})));
+  container.append(songRow(t,actions));
+ }
+ if(!matches.length)container.textContent=catalogBusy?"Sto caricando le librerie...":"Nessun risultato nella stanza.";
+ if(matches.length>14){const hint=document.createElement("p");hint.className="stanza-hint";
+  hint.textContent="Altri risultati: rendi la ricerca più specifica.";container.append(hint);}
+}
+function drawSharedQueue(){
+ const area=$("stanzaQueueArea");if(!area)return;
+ area.hidden=!isActive();
+ if(!isActive()||$("stanzaPanel")?.hidden)return;
+ if(drawnRevision===Number(room.revision))return;
+ drawnRevision=Number(room.revision);
+ const list=$("stanzaCodaLista");if(!list)return;list.replaceChildren();
+ const now=selected();
+ if(now){const el=document.createElement("div");el.className="stanza-now";
+  el.textContent="♫ Ora: "+now.title+" · "+(now.artist||now.profile);list.append(el);}
+ const next=nextItems();
+ for(const [i,t] of next.slice(0,18).entries()){
+  const actions=document.createElement("span");actions.className="stanza-queue-actions";
+  const up=button("↑","Sposta prima",()=>control("queue-move",{key:t.key,delta:-1}));
+  const down=button("↓","Sposta dopo",()=>control("queue-move",{key:t.key,delta:1}));
+  up.disabled=i===0;down.disabled=i===next.length-1;
+  actions.append(up,down,button("×","Rimuovi dalla coda",()=>control("queue-remove",{key:t.key})));
+  list.append(songRow(t,actions,i+1));
+ }
+ if(next.length>18){const info=document.createElement("p");info.className="stanza-hint";
+  info.textContent="Mostrati 18 brani su "+next.length+" in attesa.";list.append(info);}
+ searchSongs();
+}
+
 function upcoming(limit=10){
  if(!creds||!room?.joined||!room.playlist?.length)return [];
  registerTracks();
