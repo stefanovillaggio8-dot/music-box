@@ -6,7 +6,7 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
   (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
-const cache=new Map(),pending=new Map();
+const cache=new Map(),pending=new Map(),mixFailures=new Map();
 const allowedStyles=new Set(["auto","fade","rise"]);
 let style="auto",mixSeconds=6;
 try{
@@ -410,7 +410,12 @@ async function beginMix(song,proposed){
    act.timer=setTimeout(fadeStep,50);
   }
   fadeStep();
- }catch(e){cancel()}
+ }catch(e){
+  // Un browser può bloccare un secondo audio avviato fuori dal gesto
+  // dell'utente: non riprovarlo ogni mezzo secondo.
+  mixFailures.set(id+"|"+song.id,Date.now()+60000);
+  cancel();
+ }
 }
 function tick(){
  if(!enabled||window.MusicBoxRoom?.isActive()){
@@ -457,7 +462,9 @@ function tick(){
  // Inizia il buffer prima del punto di mix: mai aspettare la battuta finale
  // per scaricare i metadati del prossimo MP3.
  const preloadAt=Math.min(plan.begin-12,Math.max(0,audio.duration-25));
- if(!isIOS&&audio.currentTime>=Math.max(0,preloadAt) &&
+ const blockedUntil=mixFailures.get(id+"|"+next.id)||0;
+ const previewAllowed=Date.now()>blockedUntil;
+ if(previewAllowed&&!isIOS&&audio.currentTime>=Math.max(0,preloadAt) &&
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
  // Se l'analisi certifica una lunga coda muta e il punto di mix è già
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
@@ -469,7 +476,7 @@ function tick(){
   Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});
   return;
  }
- if(!isIOS&&prepared?.ready && audio.currentTime>=plan.begin &&
+ if(previewAllowed&&!isIOS&&prepared?.ready && audio.currentTime>=plan.begin &&
     audio.currentTime<plan.end-.55){
   beginMix(next,plan).catch(()=>cancel());
  }
