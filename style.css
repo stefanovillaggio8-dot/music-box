@@ -3404,3 +3404,8 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media(max-height:690px) and (max-width:740px){.im-cover{max-width:138px}.im-head{margin-bottom:4px}.im-art-zone{padding:3px}.im-main{gap:5px}.im-karaoke{min-height:60px}.im-visualizer{margin-top:6px}.im-controls .im-main-play{width:52px;height:52px}}
 @media(max-width:440px){.im-entry span{font-size:10px}.im-entry{padding:6px 7px}.im-mode{display:none}}
 @media(prefers-reduced-motion:reduce){.im-atmosphere i,.im-cover,.im-visualizer span{animation:none!important}}
+
+/* Nomi completi degli account, mai troncati nella coda condivisa. */
+.stanza-card .stanza-song small{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.4}
+.stanza-card .stanza-queue-row{align-items:flex-start}
+.stanza-card .stanza-queue-actions{padding-top:4px}
