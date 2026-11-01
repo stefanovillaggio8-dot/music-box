@@ -12197,7 +12197,11 @@ $("fabMenu").addEventListener("click", (e) => {
     try {
       const res = await fetch(url, { signal: offlineAbort.signal });
       if (!res.ok) throw new Error("HTTP " + res.status);
+      const contentType=String(res.headers.get("content-type")||"").toLowerCase();
+      if(contentType.includes("text/html")||contentType.includes("application/json"))
+        throw new Error("Il server ha restituito una pagina invece dell'MP3");
       const total = Number(res.headers.get("content-length") || 0);
+      if(total>40*1024*1024)throw new Error("Audio troppo grande per la cache offline");
       let blob;
       if (res.body) {
         const reader = res.body.getReader();
@@ -12218,6 +12222,8 @@ $("fabMenu").addEventListener("click", (e) => {
       } else {
         blob = await res.blob();
       }
+      if(blob.size<4096||total&&blob.size<total*.98)
+        throw new Error("Download incompleto: non salvo un MP3 danneggiato");
       await cache.put(url, new Response(blob, {
         status: 200,
         headers: {
