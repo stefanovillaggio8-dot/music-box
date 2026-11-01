@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6503";
+const CACHE = "spotifynonavraiimieisoldi-v6504";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1020,30 +1020,52 @@ self.addEventListener("message", (event) => {
     }
     return;
   }
-  /* Ste: "fai in modo che i download partono anche in background".
-     Il worker del servizio vive un po' piu' a lungo della pagina, quindi
-     e' lui che puo' portare avanti lo scaricamento anche se l'app viene
-     sospesa (schermo spento). */
+  /* A short, validated batch may continue after screen lock where the
+     browser permits it. iOS can kill service workers at any time, so the
+     page also persists its remaining queue and resumes it on next open. */
   if (tipo === "SCARICA" && Array.isArray(data.url)) {
-    event.waitUntil(profileForEvent(event).then((name) => {
-      if (name) return scaricaPerContoMio(data.url, cacheBraniName(name));
-    }));
+    const audioUrls=data.url.slice(0,3).filter(offlineDownloadAllowed);
+    if(!audioUrls.length)return;
+    event.waitUntil(profileForEvent(event).then(name=>
+      name?scaricaPerContoMio(audioUrls,cacheBraniName(name)):undefined).catch(()=>{}));
   }
 });
 
-/* Scarica una lista di brani e li mette in cache. */
-async function scaricaPerContoMio(url, nomeCache) {
-  try {
-    const cache = await caches.open(nomeCache);
-    for (const u of url) {
-      try {
-        const richiesta = new Request(u);
-        if (await cache.match(richiesta)) continue;
-        const r = await fetch(richiesta);
-        if (r && r.status === 200) await cache.put(richiesta, r.clone());
-      } catch (e) { /* un brano che non va non ferma gli altri */ }
-    }
-  } catch (e) { /* noop */ }
+/* Ignore arbitrary web requests from postMessage; cache only Music Box MP3s. */
+function offlineDownloadAllowed(raw) {
+ try {
+  if(typeof raw!=="string"||raw.length>1024)return false;
+  const u=new URL(raw);
+  if(!["http:","https:"].includes(u.protocol)||u.username||u.password)return false;
+  if(u.hostname==="adnteitlhopehllutlua.supabase.co")
+   return /^\/functions\/v1\/musicbox-import-queue$/.test(u.pathname)&&
+     u.searchParams.get("action")==="audio"&&
+     /^[0-9a-f-]{36}$/i.test(u.searchParams.get("id")||"");
+  if(isMusicBoxSong(u))return true;
+  // LAN/desktop Music Box serves /app/songs/*.mp3 over the current host.
+  return u.origin===self.location.origin&&
+    /^\/(?:app\/)?songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/i.test(u.pathname);
+ }catch(e){return false}
+}
+/* Never accept unbounded queues or partial media as successfully offline. */
+async function scaricaPerContoMio(urls,nomeCache) {
+ try {
+  const cache=await caches.open(nomeCache);
+  for(const url of urls.slice(0,3)){
+   if(!offlineDownloadAllowed(url))continue;
+   try{
+    const request=new Request(url,{credentials:"omit"});
+    if(await cache.match(request))continue;
+    const response=await fetch(request);
+    if(!response||response.status!==200||!response.ok)continue;
+    const size=Number(response.headers.get("content-length")||0);
+    if(size>40*1024*1024)continue;
+    const type=String(response.headers.get("content-type")||"").toLowerCase();
+    if(type.includes("text/html")||type.includes("application/json"))continue;
+    await cache.put(request,response);
+   }catch(e){/* Remaining entries resume in the page, never delete old songs. */}
+  }
+ }catch(e){}
 }
 
 self.addEventListener("install", (event) => {
