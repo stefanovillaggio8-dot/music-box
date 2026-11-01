@@ -865,6 +865,91 @@ async function suggestSmartOrder(){
  }
  if(add)add.disabled=false;
 }
+
+let checkingCurrentAudio=false;
+async function verifyCurrentAudio(){
+ const button=$("mixVerifyCurrent"),status=$("mixVerifyStatus");
+ if(checkingCurrentAudio)return;
+ const app=bridge(),song=app?.allTracks()?.find(t=>t.id===app.currentId());
+ if(!song){
+  if(status)status.textContent="Riproduci prima il brano che vuoi controllare.";
+  return;
+ }
+ const url=app.mixUrl?.(song)||song.url;
+ if(!url){
+  if(status)status.textContent="Questo brano non ha una sorgente MP3 verificabile.";
+  return;
+ }
+ const name=String(song.title||"Brano");
+ checkingCurrentAudio=true;
+ if(button)button.disabled=true;
+ if(status)status.textContent="Verifico "+name+": download e decodifica senza avviare la musica…";
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),30000);
+ let ctx=null;
+ try{
+  const maxSize=isIOS?16000000:32000000;
+  // Un download di prova indipendente non sostituisce o modifica le cache
+  // offline di Music Box; evita risultati vecchi quando esiste un MP3 online.
+  const fetched=new URL(url,location.href);
+  if(fetched.protocol!=="https:"&&fetched.protocol!=="http:")throw Error("Indirizzo MP3 non supportato");
+  const trusted=fetched.hostname==="raw.githubusercontent.com"&&
+   fetched.pathname.startsWith("/stefanovillaggio8-dot/music-box-brani/");
+  if(trusted)fetched.searchParams.set("mb-check","1");
+  const response=await fetch(fetched.href,{cache:"no-store",signal:controller.signal});
+  if(!response.ok)throw Error("Risposta HTTP "+response.status+": file non disponibile o non raggiungibile");
+  const declared=Number(response.headers.get("content-length")||0);
+  if(declared>maxSize)throw Error("File troppo grande per il controllo sul dispositivo; non significa che sia corrotto");
+  let data;
+  if(response.body?.getReader){
+   const reader=response.body.getReader(),pieces=[];let total=0;
+   while(true){
+    const part=await reader.read();
+    if(part.done)break;
+    total+=part.value.length;
+    if(total>maxSize){await reader.cancel();throw Error("File troppo grande per la memoria disponibile per il controllo")}
+    pieces.push(part.value);
+   }
+   data=new Uint8Array(total);let offset=0;
+   for(const piece of pieces){data.set(piece,offset);offset+=piece.length}
+  }else{
+   const buffer=await response.arrayBuffer();
+   if(buffer.byteLength>maxSize)throw Error("File troppo grande per il controllo");
+   data=new Uint8Array(buffer);
+  }
+  if(data.length<4096)throw Error("File troppo corto: MP3 incompleto o vuoto");
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx)throw Error("Il browser non permette la verifica della decodifica");
+  ctx=new Ctx();
+  let decoded;
+  try{decoded=await ctx.decodeAudioData(data.buffer.slice(0))}
+  catch(_){throw Error("Decodifica fallita: possibile MP3 corrotto, incompleto o formato non supportato")}
+  if(!Number.isFinite(decoded.duration)||decoded.duration<5)
+   throw Error("Durata audio non valida dopo la decodifica");
+  const analysis=analyzeFrames(decoded);
+  const expected=Number(song.spotifyDurationMs||0)/1000;
+  const mismatch=expected>20&&Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
+  const recorded=Number(song._mbUltimoErroreAudio||0);
+  const report=name+" · "+(data.length/1e6).toFixed(2)+" MB"+
+   " · durata "+decoded.duration.toFixed(1)+" s"+
+   (expected>20?" (catalogo "+expected.toFixed(1)+" s)":"")+
+   ". "+(mismatch?"ATTENZIONE: la durata non corrisponde al catalogo. ":
+   "Decodifica riuscita. ")+
+   (analysis.confidentTail?
+    "Finale poco musicale o muto rilevato: "+analysis.trailing.toFixed(1)+" s. ":"")+
+   (recorded===3?"Il player ha segnalato un errore di decodifica. ":"")+
+   "La decodifica da sola non conferma che la registrazione sia quella giusta.";
+  if(status)status.textContent=report;
+ }catch(error){
+  if(status)status.textContent=name+" · verifica non riuscita: "+
+   String(error?.message||error||"errore sconosciuto")+
+   ". Non sostituire automaticamente l'MP3: controlla la sorgente.";
+ }finally{
+  clearTimeout(timeout);
+  if(ctx)try{await ctx.close()}catch(_){}
+  checkingCurrentAudio=false;
+  if(button)button.disabled=false;
+ }
+}
 function settingsChanged(){
  try{
   localStorage.setItem("mb.mixStyle",style);
@@ -900,6 +985,7 @@ function start(){
   settingsChanged();
  });
  $("mixToggle")?.addEventListener("click",()=>btn?.click());
+ $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio().catch(()=>{});});
  $("mixSmartOrder")?.addEventListener("click",()=>{
   suggestSmartOrder().catch(e=>{
    const status=$("mixSmartStatus");
