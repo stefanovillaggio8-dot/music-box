@@ -2358,13 +2358,13 @@
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 0,
-    "s": 73,
+    "s": 128,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 0,
-    "s": 73,
+    "s": 128,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -2818,6 +2818,18 @@
     "t": "CULO",
     "a": "TonyPitony"
    },
+   "[\"m@star\",\"thasup\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "m@star",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"m@star\",\"thasup\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "m@star",
+    "a": "thasup"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 96,
@@ -2830,17 +2842,11 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"m@star\",\"thasup\"]": {
+   "m:2026-11|[\"white keys\",\"dominic fike\"]": {
     "v": 0,
-    "s": 83,
-    "t": "m@star",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"m@star\",\"thasup\"]": {
-    "v": 0,
-    "s": 83,
-    "t": "m@star",
-    "a": "thasup"
+    "s": 65,
+    "t": "WHITE KEYS",
+    "a": "Dominic Fike"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3286,11 +3292,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"white keys\",\"dominic fike\"]": {
+   "[\"voodoo\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 65,
-    "t": "WHITE KEYS",
-    "a": "Dominic Fike"
+    "s": 62,
+    "t": "Voodoo",
+    "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"voodoo\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Voodoo",
+    "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3738,15 +3750,27 @@
    },
    "[\"voodoo\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 62,
+    "s": 79,
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 62,
+    "s": 79,
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+   },
+   "[\"il ferro di echov\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4204,17 +4228,17 @@
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"il ferro di echov\",\"kid yugi\"]": {
+   "[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
     "v": 0,
-    "s": 85,
-    "t": "Il Ferro di Echov",
-    "a": "Kid Yugi"
+    "s": 63,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    },
-   "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
+   "m:2026-11|[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
     "v": 0,
-    "s": 85,
-    "t": "Il Ferro di Echov",
-    "a": "Kid Yugi"
+    "s": 63,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4684,17 +4708,17 @@
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
+   "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 63,
-    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
-    "a": "THYNA, Nuova Scena"
+    "s": 48,
+    "t": "G&V",
+    "a": "ivanBÃÂÃÂÃÂÃÂ¬"
    },
-   "m:2026-11|[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
+   "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 63,
-    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
-    "a": "THYNA, Nuova Scena"
+    "s": 48,
+    "t": "G&V",
+    "a": "ivanBÃÂÃÂÃÂÃÂ¬"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5538,13 +5562,13 @@
    },
    "[\"favola\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 162,
+    "s": 201,
     "t": "Favola",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 162,
+    "s": 201,
     "t": "Favola",
     "a": "ModÃÂ "
    },
@@ -6018,13 +6042,13 @@
    },
    "[\"favola\",\"modÃ \"]": {
     "v": 0,
-    "s": 201,
+    "s": 217,
     "t": "Favola",
     "a": "ModÃ "
    },
    "m:2026-11|[\"favola\",\"modÃ \"]": {
     "v": 0,
-    "s": 201,
+    "s": 217,
     "t": "Favola",
     "a": "ModÃ "
    },
@@ -6135,6 +6159,18 @@
     "s": 48,
     "t": "G&V",
     "a": "ivanBÃ¬"
+   },
+   "[\"bullet ballet\",\"kid yugi, artie 5ive\"]": {
+    "v": 0,
+    "s": 78,
+    "t": "Bullet Ballet",
+    "a": "Kid Yugi, Artie 5ive"
+   },
+   "m:2026-11|[\"bullet ballet\",\"kid yugi, artie 5ive\"]": {
+    "v": 0,
+    "s": 78,
+    "t": "Bullet Ballet",
+    "a": "Kid Yugi, Artie 5ive"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -6615,18 +6651,6 @@
     "s": 48,
     "t": "G&V",
     "a": "ivanBì"
-   },
-   "[\"bullet ballet\",\"kid yugi, artie 5ive\"]": {
-    "v": 0,
-    "s": 55,
-    "t": "Bullet Ballet",
-    "a": "Kid Yugi, Artie 5ive"
-   },
-   "m:2026-11|[\"bullet ballet\",\"kid yugi, artie 5ive\"]": {
-    "v": 0,
-    "s": 55,
-    "t": "Bullet Ballet",
-    "a": "Kid Yugi, Artie 5ive"
    }
   },
   "Diego": {
