@@ -11434,6 +11434,17 @@ window.MusicBoxBridge = {
   volume:()=>Math.min(1,Math.max(0,(Number(volumePct)||0)/100)),
   wantsPlayback:()=>Boolean(_vuoleSuonare),
   mixUrl:(t)=>_urlDelBrano(t),
+  // Only timestamps, never lyric text, leave the lyrics store.
+  // They help the DJ protect a final sung phrase when timed LRC exists.
+  mixLyricCues:(id)=>{
+    const candidate=localLyrics[id]||lyricsData[id];
+    if(!candidate?.synced)return null;
+    const rows=parseSynced(candidate.synced).filter(row=>
+      Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
+    if(rows.length<3)return null;
+    return {first:rows[0].t,last:rows[rows.length-1].t};
+  },
+
   mixCandidates:()=>{
     if (window.MusicBoxRoom?.isActive()) return [];
     const list=(_posizionePlaylist>=0&&_playlistSuona.length)
