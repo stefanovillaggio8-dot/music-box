@@ -3763,13 +3763,67 @@
    "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂ¨",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"tristano e isotta\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tristano e Isotta",
+    "a": "Kid Yugi"
+   },
+   "[\"ventanni\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "MÃ¥neskin"
+   },
+   "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 85,
+    "t": "MorirÃ² da Re",
+    "a": "MÃ¥neskin"
+   },
+   "[\"la cittÃ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la cittÃ \",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÃ",
+    "a": "MOSTRO"
+   },
+   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-10|[\"con te partirÃ²\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te PartirÃ²",
+    "a": "Andrea Bocelli"
+   },
+   "[\"dimmi che c'Ã¨\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Dimmi Che C''",
+    "a": "thasup"
+   },
+   "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Dimmi che c'Ã¨",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
@@ -4036,106 +4090,16 @@
     "t": "Voglio di piÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"ventanni\",\"mÃ¥neskin\"]": {
+   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "MÃ¥neskin"
-   },
-   "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 84,
-    "t": "MorirÃ² da Re",
-    "a": "MÃ¥neskin"
-   },
-   "[\"la cittÃ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃ",
-    "a": "MOSTRO"
-   },
-   "m:2026-10|[\"la cittÃ \",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÃ",
-    "a": "MOSTRO"
-   },
-   "[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "Con Te PartirÃ²",
-    "a": "Andrea Bocelli"
-   },
-   "m:2026-10|[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Con Te PartirÃ²",
-    "a": "Andrea Bocelli"
-   },
-   "[\"dimmi che c'Ã¨\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Dimmi Che C''",
+    "s": 8,
+    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
-   "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
+   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 1,
-    "t": "Dimmi che c'Ã¨",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tristano e Isotta",
-    "a": "Kid Yugi"
-   },
-   "[\"ventanni\",\"måneskin\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "VENTANNI",
-    "a": "Måneskin"
-   },
-   "[\"morirò da re\",\"måneskin\"]": {
-    "v": 1,
-    "s": 85,
-    "t": "Morirò da Re",
-    "a": "Måneskin"
-   },
-   "[\"la città\",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÀ",
-    "a": "MOSTRO"
-   },
-   "m:2026-10|[\"la città\",\"mostro\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "LA CITTÀ",
-    "a": "MOSTRO"
-   },
-   "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "Con Te Partirò",
-    "a": "Andrea Bocelli"
-   },
-   "m:2026-10|[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Con Te Partirò",
-    "a": "Andrea Bocelli"
-   },
-   "[\"dimmi che c'è\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Dimmi Che C''",
-    "a": "thasup"
-   },
-   "m:2026-10|[\"dimmi che c'è\",\"thasup\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Dimmi che c'è",
+    "s": 8,
+    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
@@ -4338,7 +4302,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 0,
-    "s": 79,
+    "s": 80,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -4402,16 +4366,64 @@
     "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio è f@ke\",\"thasup\"]": {
+   "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
+    "a": "Rino Gaetano"
+   },
+   "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
+    "a": "Rino Gaetano"
+   },
+   "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
-    "s": 8,
-    "t": "mi @mio è f@ke",
+    "s": 3,
+    "t": "VENTANNI",
+    "a": "Måneskin"
+   },
+   "[\"morirò da re\",\"måneskin\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "Morirò da Re",
+    "a": "Måneskin"
+   },
+   "[\"la città\",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÀ",
+    "a": "MOSTRO"
+   },
+   "m:2026-10|[\"la città\",\"mostro\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "LA CITTÀ",
+    "a": "MOSTRO"
+   },
+   "[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
+   },
+   "m:2026-10|[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
+   },
+   "[\"dimmi che c'è\",\"thasup\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Dimmi che c'è",
     "a": "thasup"
    },
-   "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
+   "m:2026-10|[\"dimmi che c'è\",\"thasup\"]": {
     "v": 1,
-    "s": 8,
-    "t": "mi @mio è f@ke",
+    "s": 1,
+    "t": "Dimmi che c'è",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modà\"]": {
@@ -4614,7 +4626,7 @@
    },
    "m:2026-11|[\"morirò da re\",\"måneskin\"]": {
     "v": 0,
-    "s": 80,
+    "s": 79,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
@@ -4665,30 +4677,6 @@
     "s": 2,
     "t": "Star",
     "a": "Luchè"
-   },
-   "[\"voglio di più\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Voglio di più",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"voglio di più\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 2,
-    "t": "Voglio di più",
-    "a": "nayt, 3D"
-   },
-   "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Ma il cielo è sempre più blu",
-    "a": "Rino Gaetano"
-   },
-   "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Ma il cielo è sempre più blu",
-    "a": "Rino Gaetano"
    }
   },
   "Diego": {
@@ -6302,15 +6290,39 @@
    },
    "[\"voglio di più\",\"nayt, 3d\"]": {
     "v": 1,
-    "s": 2,
+    "s": 6,
     "t": "Voglio di più",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"voglio di più\",\"nayt, 3d\"]": {
     "v": 1,
-    "s": 2,
+    "s": 6,
     "t": "Voglio di più",
     "a": "nayt, 3D"
+   },
+   "[\"mostro (visual)\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Mostro (Visual)",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"mostro (visual)\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Mostro (Visual)",
+    "a": "Kid Yugi"
+   },
+   "[\"certe bugie\",\"nayt\"]": {
+    "v": 1,
+    "s": 7,
+    "t": "Certe bugie",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"certe bugie\",\"nayt\"]": {
+    "v": 1,
+    "s": 7,
+    "t": "Certe bugie",
+    "a": "nayt"
    }
   },
   "Emanuele": {
