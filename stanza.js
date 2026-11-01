@@ -59,12 +59,16 @@ function registerTracks(){
   const id=roomTrack(item);
   if(known.has(id)){
    const track=known.get(id);
-   if(track?.source==="stanza-condivisa")track.addedBy=String(item.addedBy||item.profile||"");
+   if(track?.source==="stanza-condivisa"){
+    track.addedBy=String(item.addedBy||item.profile||"");
+    track.ownerAccounts=Array.isArray(item.ownerAccounts)?item.ownerAccounts:[item.profile];
+   }
    continue;
   }
   known.set(id,null);
   tracks.push({id,file:item.file,profile:item.profile||app.profile(),title:String(item.title||"Brano"),
    artist:String(item.artist||""),addedBy:String(item.addedBy||item.profile||""),
+   ownerAccounts:Array.isArray(item.ownerAccounts)?item.ownerAccounts:[item.profile],
    url:cloud?item.url:app.urlForFile(item.file),
    source:"stanza-condivisa",builtin:true,gradient:"linear-gradient(150deg,#623cbd,#1f2135)"});
  }
@@ -154,19 +158,55 @@ function button(label,description,fn){
  el.title=description;el.setAttribute("aria-label",description);el.addEventListener("click",fn);
  return el;
 }
+function ownerLabel(t){
+ const accounts=[...new Set((Array.isArray(t.ownerAccounts)?t.ownerAccounts:[])
+   .concat(t.profile||[]).map(x=>String(x||"").trim()).filter(Boolean))];
+ return "Account: "+(accounts.length?accounts.join(", "):"non indicato");
+}
 function songRow(t,actions,number){
  const row=document.createElement("div");row.className="stanza-queue-row";
  const info=document.createElement("span");info.className="stanza-song";
  const title=document.createElement("strong");title.textContent=(number?number+". ":"")+(t.title||"Brano");
  const meta=document.createElement("small");
- meta.textContent=[t.artist,t.profile,t.addedBy?"Aggiunta da "+t.addedBy:""].filter(Boolean).join(" · ");
+ meta.textContent=[t.artist,ownerLabel(t),t.addedBy?"Aggiunta da "+t.addedBy:""].filter(Boolean).join(" · ");
  info.append(title,meta);row.append(info,actions);return row;
+}
+function activityText(event){
+ const act=String(event.action||"");
+ const name=String(event.actor||"Partecipante");
+ const track=event.title?(' “'+event.title+'”'):"";
+ const verbs={
+  create:"ha creato la stanza",join:"è entrato nella stanza",
+  leave:"è uscito dalla stanza",play:"ha premuto Play",
+  pause:"ha messo in Pausa",next:"è passato alla successiva",
+  previous:"è tornato alla precedente",seek:"ha spostato la riproduzione",
+  reshuffle:"ha rimescolato la coda",select:"ha scelto il brano"+track,
+  "queue-add":"ha aggiunto in coda"+track,
+  "queue-remove":"ha rimosso dalla coda"+track,
+  "queue-move":"ha spostato nella coda"+track
+ };
+ return name+" "+(verbs[act]||"ha eseguito "+act);
+}
+function renderActivity(){
+ const root=$("stanzaActivityList");if(!root)return;
+ root.replaceChildren();
+ const items=Array.isArray(room?.activity)?room.activity:[];
+ if(!items.length){root.textContent="Le azioni recenti del gruppo appariranno qui.";return;}
+ for(const ev of [...items].reverse().slice(0,30)){
+  const row=document.createElement("div");row.className="stanza-activity-item";
+  const line=document.createElement("span");line.textContent=activityText(ev);
+  const time=document.createElement("time");
+  const parsed=Date.parse(ev.at);
+  time.textContent=Number.isFinite(parsed)?new Date(parsed).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"}):"";
+  if(ev.at)time.dateTime=ev.at;
+  row.append(line,time);root.append(row);
+ }
 }
 function searchSongs(){
  const container=$("stanzaRisultati");if(!container||!room?.joined)return;
  container.replaceChildren();
  const term=String($("stanzaCercaBrano")?.value||"").trim().toLocaleLowerCase("it");
- if(!term){container.textContent="Cerca un brano delle due librerie per aggiungerlo alla coda.";return;}
+ if(!term){container.textContent="Cerca un brano nelle librerie del gruppo per aggiungerlo alla coda.";return;}
  const matches=catalog.filter(t=>[t.title,t.artist,t.profile].join(" ").toLocaleLowerCase("it").includes(term));
  for(const t of matches.slice(0,14)){
   const actions=document.createElement("span");actions.className="stanza-queue-actions";
@@ -188,7 +228,7 @@ function drawSharedQueue(){
  const now=selected();
  if(now){const el=document.createElement("div");el.className="stanza-now";
   el.textContent="♫ Ora: "+now.title+" · "+(now.artist||now.profile)+
-   (now.addedBy?" · Aggiunta da "+now.addedBy:"");list.append(el);}
+   " · "+ownerLabel(now)+(now.addedBy?" · Aggiunta da "+now.addedBy:"");list.append(el);}
  const next=nextItems();
  for(const [i,t] of next.slice(0,18).entries()){
   const actions=document.createElement("span");actions.className="stanza-queue-actions";
@@ -201,6 +241,7 @@ function drawSharedQueue(){
  if(next.length>18){const info=document.createElement("p");info.className="stanza-hint";
   info.textContent="Mostrati 18 brani su "+next.length+" in attesa.";list.append(info);}
  searchSongs();
+ renderActivity();
 }
 
 function upcoming(limit=10){
@@ -389,8 +430,10 @@ async function refresh(){
   if(stillHere()&&!$("stanzaPanel").hidden)draw();
  }catch(e){
   if(!stillHere())return;
-  if(/Room not found or expired/i.test(String(e.message||""))){
-   leave();
+  if(/Room not found or expired|Invitation not authorized/i.test(String(e.message||""))){
+   // Il token personale puo' essere stato revocato dopo l'uscita;
+   // non inviare un'altra notifica di leave con quel token.
+   creds=null;room=null;pendingPlayback=null;save();draw();
    status("Stanza scaduta (12 ore). Creane una nuova e manda un nuovo invito.");
   }else if(!$("stanzaPanel").hidden)status("Connessione: "+e.message);
  }finally{busy=false}
@@ -494,6 +537,11 @@ function interceptTrack(id){
 }
 
 function leave(){
+ // Informa gli altri membri e aggiorna i partecipanti sul server.
+ // La richiesta non deve bloccare l'uscita locale.
+ if(creds?.token&&room?.id){
+  request({action:"leave",id:creds.id,token:creds.token}).catch(()=>{});
+ }
  creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;
  pendingPlayback=null;playbackSequence++;
  catalog=[];catalogFor="";drawnRevision=-1;save();
