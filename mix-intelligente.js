@@ -9,6 +9,7 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
+const ANALYSIS_VERSION=2;
 let analysisDbPromise=null;
 function analysisDatabase(){
  if(analysisDbPromise)return analysisDbPromise;
@@ -44,7 +45,7 @@ async function savedAnalysis(source){
    const req=db.transaction("records","readonly").objectStore("records").get(source);
    req.onsuccess=()=>{
     const item=req.result;
-    if(!item||Date.now()-item.when>7*86400000||!item.data||
+    if(!item||item.version!==ANALYSIS_VERSION||Date.now()-item.when>7*86400000||!item.data||
        !Number.isFinite(item.data.bpm)||!Number.isFinite(item.data.duration))
       return resolve(null);
     resolve(item.data);
@@ -59,7 +60,7 @@ async function saveAnalysis(source,data){
  try{
   const tx=db.transaction("records","readwrite");
   const store=tx.objectStore("records");
-  store.put({url:source,when:Date.now(),data});
+  store.put({url:source,when:Date.now(),version:ANALYSIS_VERSION,data});
   // Limit the cache by age to avoid consuming significant device storage.
   const count=store.count();
   count.onsuccess=()=>{
@@ -173,7 +174,12 @@ function analyzeFrames(buf){
   for(let i=firstIndex;i<lastIndex;i++)e+=energy[i]*energy[i];
   tailEnergy.push({at:t,energy:Math.sqrt(e/Math.max(1,lastIndex-firstIndex))});
  }
- return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,
+ // Non sovrapporre due ritornelli: l'automix accetta il beatmatch soltanto
+ // quando gli ultimi secondi si sono davvero abbassati di intensità.
+ const tailSlice=tailEnergy.filter(p=>p.at>=audibleEnd-3.5);
+ const tailLevel=tailSlice.length?tailSlice.reduce((sum,p)=>sum+p.energy,0)/tailSlice.length:level;
+ const quietTail=hasAudio&&level>.0012&&tailSlice.length>=2&&tailLevel<level*.58;
+ return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -297,34 +303,38 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26)return null;
  const trim=!!(a?.confidentTail&&a.last<dur-2);
  const audibleEnd=trim?Math.min(dur,a.last):dur;
+ // Un MP3 non analizzabile non è una prova che due pezzi si possano mixare.
+ // Se una coda muta è confermata, la saltiamo; altrimenti lasciamo la
+ // riproduzione normale, senza sovrapporre casualmente voci o ritornelli.
+ const cleanCut=()=>trim?{
+  begin:audibleEnd-.12,end:audibleEnd-.12,fade:0,entry:0,tempo:1,
+  kind:"cut",gain:1,score:null,silenceTrim:true,
+  trailing:Math.max(0,dur-audibleEnd)}:null;
+ if(!a||!b)return cleanCut();
+ const bpm=Number(a.bpm)||120;
+ const ratios=b.bpm?[.5,1,2].map(mult=>bpm/(b.bpm*mult)):[1];
+ const ratio=ratios.reduce((best,r)=>
+  Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best,ratios[0]);
+ const beatClose=a.beatConfidence>=.12&&b.beatConfidence>=.12&&
+  ratio>=.94&&ratio<=1.06;
+ const harmonic=a.chroma&&b.chroma?compatibility(a,b):null;
+ // Le stime sono indicative, non confondere un BPM indovinato con un
+ // mix affidabile. Senza stima armonica evitiamo il DJ, non inventiamo dati.
+ const musicallyCompatible=beatClose&&harmonic!==null&&harmonic>=.72;
+ const autoCompatible=musicallyCompatible&&a.quietTail===true;
+ const kind=style==="auto"?(autoCompatible?"beat":"cut"):style;
+ if(kind==="cut")return cleanCut();
  const end=clamp(audibleEnd-(trim?.22:1.15),13,dur-1.15);
- const bpm=Number(a?.bpm)||120;
- // Un brano in half-time e uno in double-time possono condividere la
- // stessa pulsazione: non scartare una buona coppia per un fattore 2.
- const tempoRatios=b?.bpm?[.5,1,2].map(mult=>bpm/(b.bpm*mult)):[1];
- const ratio=tempoRatios.reduce((best,r)=>
-  Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best,tempoRatios[0]);
- const tempoClose=!!(a?.beatConfidence>.07&&b?.beatConfidence>.07&&
-  ratio>=.92&&ratio<=1.08);
- const harmonic=a?.chroma&&b?.chroma?compatibility(a,b):null;
- const beatFriendly=tempoClose&&(harmonic===null||harmonic>.68);
- const autoStyle=beatFriendly?"beat":
-  (harmonic!==null&&harmonic<.55?"fade":"rise");
- const kind=style==="auto"?autoStyle:style;
- const bars=beatFriendly&&kind==="beat"?4:2;
- const autoSeconds=beatFriendly?clamp(bars*4*60/bpm,4.5,9):3.7;
- const requested=style==="auto"?autoSeconds:mixSeconds;
+ const bars=kind==="beat"?4:2;
+ const automaticSeconds=clamp(bars*4*60/bpm,3.2,7.5);
+ const requested=style==="auto"?automaticSeconds:mixSeconds;
  const fade=clamp(requested,2.8,Math.min(12,end-8));
  let begin=end-fade;
- // Usa la griglia ritmica rilevata nel brano in uscita.
- if(a?.beatAnchor&&a?.beatConfidence>.07){
+ if(a.beatAnchor&&a.beatConfidence>=.12){
   const period=60/bpm;
-  const beatStart=a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period;
-  begin+=clamp(beatStart-begin,-.23,.23);
+  begin+=clamp(a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period-begin,-.23,.23);
  }
- // Piccole valli di volume nei pressi della battuta ideale evitano
- // sovrapposizioni inutilmente brusche tra due voci soliste.
- if(a?.tailEnergy?.length && kind==="fade"){
+ if(a.tailEnergy?.length&&kind==="fade"){
   const options=a.tailEnergy.filter(p=>Math.abs(p.at-begin)<1.3);
   if(options.length){
    const best=options.reduce((acc,p)=>p.energy<acc.energy?p:acc,options[0]);
@@ -332,13 +342,11 @@ function transition(a,b,actualDuration){
   }
  }
  begin=clamp(begin,8,end-1.5);
- // Allinea il primo attacco ritmico del brano entrante. Se la traccia
- // contiene un'introduzione udibile non tagliarla automaticamente.
- let entry=b?.leading>=.65?clamp(b.first-.08,0,40):0;
- if(tempoClose && b?.leading>=.65 && b?.introBeat>entry+.2 && b.introBeat<entry+3.5)
-   entry=clamp(b.introBeat-.06,0,40);
- const tempo=tempoClose&&kind==="beat"?clamp(ratio,.97,1.03):1;
- const gain=a?.level&&b?.level?clamp(a.level/b.level,.87,1.13):1;
+ let entry=b.leading>=.65?clamp(b.first-.08,0,40):0;
+ if(beatClose&&b.leading>=.65&&b.introBeat>entry+.2&&b.introBeat<entry+3.5)
+  entry=clamp(b.introBeat-.06,0,40);
+ const tempo=beatClose&&kind==="beat"?clamp(ratio,.97,1.03):1;
+ const gain=a.level&&b.level?clamp(a.level/b.level,.87,1.13):1;
  return {begin,end,fade:end-begin,entry,tempo,kind,gain,
   score:harmonic===null?null:Math.round(harmonic*100),
   silenceTrim:trim,trailing:trim?Math.max(0,dur-audibleEnd):0};
@@ -562,7 +570,7 @@ function tick(){
  const preloadAt=Math.min(plan.begin-12,Math.max(0,audio.duration-25));
  const blockedUntil=mixFailures.get(id+"|"+next.id)||0;
  const previewAllowed=Date.now()>blockedUntil;
- if(previewAllowed&&!isIOS&&audio.currentTime>=Math.max(0,preloadAt) &&
+ if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&audio.currentTime>=Math.max(0,preloadAt) &&
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
  // Se l'analisi certifica una lunga coda muta e il punto di mix è già
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
@@ -574,7 +582,7 @@ function tick(){
   Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});
   return;
  }
- if(previewAllowed&&!isIOS&&prepared?.ready && audio.currentTime>=plan.begin &&
+ if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
     audio.currentTime<plan.end-.55){
   beginMix(next,plan).catch(()=>cancel());
  }
@@ -608,7 +616,9 @@ function updateDetails(a,b){
  const description=plan?.silenceTrim?
    " · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
  el.textContent="Ora: "+fmt(a)+"  |  Dopo: "+fmt(b)+description+
-   (plan?" · transizione "+(plan.kind||"auto")+" "+plan.fade.toFixed(1)+" s":"");
+   (plan?.kind==="cut"?" · passaggio diretto (niente sovrapposizione)":
+     plan?" · mix "+(plan.kind||"auto")+" "+plan.fade.toFixed(1)+" s":
+     " · passaggio normale, senza mix forzato");
 }
 function draw(){
  const btn=$("btnMixIntelligente");
@@ -618,7 +628,7 @@ function draw(){
   if(label)label.innerHTML=(enabled?"Mix intelligente: attivo":"Mix intelligente: spento")+
    (isIOS?
     " <small>iPhone: riduzione dei silenzi · riproduzione protetta</small>":
-    " <small>Automix · BPM · tonalità · transizioni adattive</small>");
+    " <small>Automix automatico: mixa solo quando i brani sono compatibili</small>");
  }
  const styleEl=$("mixStyle");
  if(styleEl&&styleEl.value!==style)styleEl.value=style;
@@ -632,7 +642,7 @@ function draw(){
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
    "Su iPhone il lettore conserva un solo flusso audio per non compromettere l'ascolto a schermo bloccato: prova a saltare le code mute quando l'analisi è disponibile. Il crossfade DJ è disponibile su PC.":
-   "Su PC la prossima traccia viene precaricata: Automix cerca la battuta, la tonalità e il punto di uscita migliore. Le preferenze restano salvate.";
+   "Su PC Automix analizza ritmo, armonia e volume finale: mixa solo quando la combinazione è convincente. Negli altri casi lascia il passaggio normale oppure salta una coda muta accertata. Non devi impostare nulla.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
 }
@@ -753,7 +763,7 @@ function start(){
   draw();
   toast(enabled?(isIOS?
    "Mix attivato: salto i finali muti quando posso analizzarli, senza bloccare l'iPhone.":
-   "Automix attivato: preparo i brani e sincronizzo le transizioni."):"Mix disattivato.");
+   "Automix attivato: mix solo quando è adatto, altrimenti passo normalmente."):"Mix disattivato.");
  });
  const panel=$("mixPanel");
  $("btnMixSettings")?.addEventListener("click",()=>{
