@@ -75,6 +75,23 @@ function analyzeFrames(buf){
  }
  const hasAudio=typical>.0012;
  const beatConfidence=clamp(best.score,0,1);
+ // Forma d'onda compressa per il pannello delle transizioni; calcolata
+ // dagli stessi frame usati per individuare i silenzi. Nessun upload.
+ function waveform(from,to){
+  const bars=[];
+  const start=Math.max(0,from),stop=Math.min(duration,to);
+  const len=Math.max(.5,stop-start);
+  for(let k=0;k<48;k++){
+   const left=Math.floor((start+(k/48)*len)/step);
+   const right=Math.min(energy.length,Math.max(left+1,Math.ceil((start+(k+1)/48*len)/step)));
+   let peak=0;
+   for(let i=left;i<right;i++)peak=Math.max(peak,energy[i]||0);
+   bars.push(clamp(peak/(typical||.1),0,1));
+  }
+  return bars;
+ }
+ const introWave=waveform(audibleStart,audibleStart+16);
+ const outroWave=waveform(audibleEnd-16,audibleEnd);
  // Finestra di 1s nei secondi conclusivi: una valle d'energia facilita
  // un incrocio di battute senza troncare un ritornello.
  const tailEnergy=[];
@@ -85,7 +102,7 @@ function analyzeFrames(buf){
   for(let i=firstIndex;i<lastIndex;i++)e+=energy[i]*energy[i];
   tailEnergy.push({at:t,energy:Math.sqrt(e/Math.max(1,lastIndex-firstIndex))});
  }
- return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,
+ return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -458,7 +475,21 @@ function tick(){
  }
 }
 
+function paintWave(id,bars){
+ const element=$(id);
+ if(!element||!Array.isArray(bars)||!bars.length)return;
+ const fragment=document.createDocumentFragment();
+ for(const value of bars){
+  const bar=document.createElement("span");
+  bar.className="mix-wave-bar";
+  bar.style.height=Math.round(4+26*Math.pow(clamp(value,0,1),.6))+"px";
+  fragment.appendChild(bar);
+ }
+ element.replaceChildren(fragment);
+}
 function updateDetails(a,b){
+ if(a?.outroWave)paintWave("mixWaveOut",a.outroWave);
+ if(b?.introWave)paintWave("mixWaveIn",b.introWave);
  const el=$("mixDetail");if(!el)return;
  if(!a&&!b){
   el.textContent="Analisi automatica dei brani quando la musica è in riproduzione.";
