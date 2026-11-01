@@ -17907,9 +17907,9 @@ async function _spotifyMandaLista(lista, profilo) {
       body: JSON.stringify({ profilo: profilo, lista: lista })
     });
     const j = await r.json();
-    if (!r.ok || !j.ok) {
-      _spotifyPnl("Non e' andata", "", '<p class="step-hint">' +
-        (j && j.errore ? j.errore : "il computer non ha accettato la lista") + "</p>");
+    if (!r.ok || !j?.ok || !j.id) {
+      _spotifyPnl("Invio non confermato", "", '<p class="step-hint">' +
+        _spotifyEscapeHTML(j?.errore||"Il computer non ha confermato la lista. Riprova senza importarla due volte.") + "</p>");
       return;
     }
     _spotifyChiudi();
@@ -17935,9 +17935,15 @@ async function _spotifyRiprovaCoda() {
     });
     if (r.ok) {
       const j = await r.json();
-      LS.remove("mb.codaSpotify");
-      toast("Ripresa la lista che aspettava: " + coda.lista.length + " canzoni", 6000);
-      _spotifyControllaLavoro(j.id, coda.lista.length);
+      // HTTP 200 can still contain {ok:false}. Keep the queued playlist
+      // unless the PC explicitly confirms it accepted the job.
+      if(j?.ok===true&&j.id){
+        LS.remove("mb.codaSpotify");
+        toast("Il computer ha accettato la lista in attesa (" + coda.lista.length + " canzoni)",6000);
+        _spotifyControllaLavoro(j.id,coda.lista.length);
+      }else{
+        _spotifyTraccia("La coda Spotify è rimasta salvata: il server non ha confermato il lavoro.");
+      }
     }
   } catch (e) { /* noop */ }
 }
