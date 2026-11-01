@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.499";
+  const APP_VERSION = "6.500";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6481,7 +6481,7 @@ function rebuildAudio(autoplay) {
       info.appendChild(title);
       const subtitle = document.createElement("div");
       subtitle.className = "queue-artist";
-      subtitle.textContent = [automatico.artist, "Prossimo scelto dal casuale"].filter(Boolean).join(" · ");
+      subtitle.textContent = roomActive ? [automatico.artist,"Aggiunta da "+(automatico.addedBy||automatico.profile||"Partecipante")].filter(Boolean).join(" · ") : [automatico.artist, "Prossimo scelto dal casuale"].filter(Boolean).join(" · ");
       info.appendChild(subtitle);
       row.appendChild(info);
       const tag = document.createElement("span");
