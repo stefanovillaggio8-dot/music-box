@@ -17345,85 +17345,123 @@ async function _spotifyCompletaAccesso(code, stato) {
     try { return await _spotifyLetturaPlaylist; }
     finally { _spotifyLetturaPlaylist = null; }
   }
+  // Spotify migrated playlist tracks->items in 2026. All metadata reads
+  // below are read-only; no Spotify audio is downloaded by these functions.
+  const _spotifyPlaylistIdValido = v => /^[A-Za-z0-9]{22}$/.test(String(v||""));
+  function _spotifyNextPath(next) {
+    if(!next)return "";
+    try{
+      const u=new URL(String(next),"https://api.spotify.com");
+      if(u.origin!=="https://api.spotify.com"||!u.pathname.startsWith("/v1/"))return "";
+      return u.pathname.slice(3)+u.search;
+    }catch(e){return ""}
+  }
+  function _spotifyRigaBrano(t,addedAt){
+    if(!t||t.type==="episode"||t.is_local||!t.name)return null;
+    const people=Array.isArray(t.artists)?t.artists:[];
+    const names=people.map(a=>String(a?.name||"").trim()).filter(Boolean);
+    if(!names.length)return null;
+    const name=String(t.name).replace(/\s+/g," ").trim();
+    if(!name)return null;
+    return {spotifyId:String(t.id||""),title:name,artist:names.join(", "),
+      artists:people.map(a=>({id:a?.id||null,name:String(a?.name||"")})),
+      album:{id:t.album?.id||null,name:String(t.album?.name||"")},
+      durationMs:Number(t.duration_ms)||0,addedAt:addedAt||null};
+  }
   async function _spotifyPlaylistInterna() {
-    const tutte = [];
-    /* Prima la strada del sito di Spotify: le API normali chiedono
-       l'abbonamento Premium, il sito no. Se il server risponde, uso la sua
-       lista; se no, provo con le API (per chi ha Premium). */
-    try {
-      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/playlist", { cache: "no-store" });
-      const j = await r.json();
-      if (j && j.ok && j.voci && j.voci.length) {
-        _spotifyTraccia("le playlist sono arrivate dal sito di Spotify (" + j.voci.length + ")");
-        for (const p of j.voci) {
-          const info = p || {};
-          tutte.push({
-            id: String(info.id || info.uri || "").split(":").pop(),
-            nome: String(info.name || ""),
-            privata: info.public === false || /private/i.test(String(info.privacy || "")),
-            canzoni: Number((info.tracks && info.tracks.total) || (info.trackCount || 0) || 0)
-          });
+    const all=[];
+    // The external metadata adapter may provide public playlists where the
+    // current user's API token cannot read the contents. Validate its rows.
+    try{
+      const r=await fetch(String(SERVIZIO_PUBBLICA||"")+"/spotify/playlist",{cache:"no-store"});
+      const j=await r.json();
+      if(r.ok&&j?.ok&&Array.isArray(j.voci)&&j.voci.length){
+        for(const p of j.voci){
+          const id=String(p?.id||p?.uri||"").split(":").pop();
+          if(!_spotifyPlaylistIdValido(id))continue;
+          all.push({id,nome:String(p?.name||"Playlist").trim().slice(0,160),
+            privata:p?.public===false||/private/i.test(String(p?.privacy||"")),
+            canzoni:Math.max(0,Number(p?.items?.total??p?.tracks?.total??p?.trackCount??0)||0)});
         }
-        return tutte;
+        if(all.length)return all;
       }
-    } catch (e) { /* il server non risponde: uso le API */ }
-    let url = "/me/playlists?limit=50";
-  for (let pagina = 0; pagina < 4 && url; pagina++) {
-    const j = await _spotifyApi(url);
-    if (!j) break;
-    for (const p of (j.items || [])) {
-      tutte.push({
-        id: p.id,
-        nome: p.name,
-        privata: p.public === false,
-        canzoni: Number((p.tracks && p.tracks.total) || 0)
-      });
+    }catch(e){/* The authenticated API may still work. */}
+    const found=[];
+    let url="/me/playlists?limit=50",pages=0;
+    const visited=new Set();
+    while(url&&pages++<30){
+      if(visited.has(url)){_spotifyErrore=-2;_spotifyMotivo="Paginazione Spotify ripetuta";return []}
+      visited.add(url);
+      const j=await _spotifyApi(url);
+      if(!j)return [];
+      for(const p of (Array.isArray(j.items)?j.items:[])){
+        if(!_spotifyPlaylistIdValido(p?.id))continue;
+        found.push({id:p.id,nome:String(p.name||"Playlist").slice(0,160),
+          privata:p.public===false,
+          canzoni:Math.max(0,Number(p.items?.total??p.tracks?.total??0)||0)});
+      }
+      url=_spotifyNextPath(j.next);
     }
-    url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
+    if(url){_spotifyErrore=-2;_spotifyMotivo="Troppe playlist: elenco non completo";return []}
+    return found.filter((p,i)=>found.findIndex(x=>x.id===p.id)===i);
   }
-  return tutte;
-}
 
-/* I titoli veri della playlist: qui Spotify dà i nomi, che è quello che
-   mi serve (l'audio poi lo cerco su YouTube). */
   async function _spotifyBrani(playlistId) {
-    const brani = [];
-    /* Prima la strada del sito (senza Premium). */
-    try {
-      const r = await fetch(String(SERVIZIO_PUBBLICA || "") + "/spotify/brani?id=" + encodeURIComponent(playlistId), { cache: "no-store" });
-      const j = await r.json();
-      if (j && j.ok && !j.incompletoPossibile && j.brani && j.brani.length) {
-        _spotifyTraccia("i brani sono arrivati dal sito di Spotify (" + j.brani.length + ")");
-        for (const b of j.brani) {
-          const nome = String((b && b.titolo) || "").replace(/\s+/g, " ").trim();
-          const chi = String((b && b.artista) || "").replace(/\s+/g, " ").trim();
-          if (!nome || !chi) continue;
-          brani.push({ spotifyId: String((b && b.spotifyId) || ""), title: nome, artist: chi,
-            artists: (b && b.artisti) || [], album: (b && b.album) || null,
-            durationMs: Number((b && b.durataMs) || 0), addedAt: (b && b.aggiuntoIl) || null });
-        }
-        if (brani.length) return brani;
-      }
-    } catch (e) { /* il server non risponde: uso le API */ }
-    let url = "/playlists/" + playlistId + "/tracks?limit=100";
-  for (let pagina = 0; pagina < 12 && url; pagina++) {
-    const j = await _spotifyApi(url);
-    if (!j) break;
-    for (const it of (j.items || [])) {
-      const t = it.track;
-      if (!t || !t.name || t.is_local) continue;
-      const chi = (t.artists || []).map((a) => a.name).filter(Boolean).join(", ");
-      if (!chi) continue;
-      brani.push({ spotifyId: String(t.id || ""), title: t.name.replace(/\s+/g, " ").trim(),
-        artist: chi.replace(/\s+/g, " ").trim(),
-        artists: (t.artists || []).map(a => ({ id: a.id || null, name: a.name || "" })),
-        album: { id: (t.album || {}).id || null, name: (t.album || {}).name || "" },
-        durationMs: Number(t.duration_ms) || 0, addedAt: it.added_at || null });
+    if(!_spotifyPlaylistIdValido(playlistId)){
+      _spotifyErrore=-2;_spotifyMotivo="Link della playlist non valido";
+      return [];
     }
-    url = j.next ? j.next.replace("https://api.spotify.com/v1", "") : "";
+    // Public metadata first; if marked incomplete, NEVER pretend the list
+    // is complete or send only its first page for import.
+    try{
+      const r=await fetch(String(SERVIZIO_PUBBLICA||"")+"/spotify/brani?id="+
+        encodeURIComponent(playlistId),{cache:"no-store"});
+      const j=await r.json();
+      if(r.ok&&j?.ok&&Array.isArray(j.brani)&&!j.incompletoPossibile){
+        const out=[];
+        for(const b of j.brani){
+          const title=String(b?.titolo||"").replace(/\s+/g," ").trim();
+          const artist=String(b?.artista||"").replace(/\s+/g," ").trim();
+          if(!title||!artist)continue;
+          out.push({spotifyId:String(b?.spotifyId||""),title,artist,
+            artists:b?.artisti||[],album:b?.album||null,
+            durationMs:Number(b?.durataMs)||0,addedAt:b?.aggiuntoIl||null});
+        }
+        const reported=Number(j.totale??j.total??0);
+        if(out.length && (!reported||out.length>=reported)){
+          _spotifyErrore=0;_spotifyMotivo="";
+          return out;
+        }
+      }
+    }catch(e){/* Authenticated API fallback. */}
+    const tracks=[];
+    let url="/playlists/"+playlistId+"/items?limit=50",pages=0;
+    const visited=new Set();
+    while(url&&pages++<35){
+      if(visited.has(url)){
+        _spotifyErrore=-2;_spotifyMotivo="Paginazione della playlist ripetuta";
+        return [];
+      }
+      visited.add(url);
+      const j=await _spotifyApi(url);
+      if(!j)return [];
+      for(const it of (Array.isArray(j.items)?j.items:[])){
+        // February 2026: PlaylistTrackObject.item (legacy .track).
+        const t=it?.item||it?.track;
+        const row=_spotifyRigaBrano(t,it?.added_at);
+        if(row)tracks.push(row);
+      }
+      const next=_spotifyNextPath(j.next);
+      if(j.next&&!next){
+        _spotifyErrore=-2;_spotifyMotivo="Indirizzo della pagina Spotify non valido";
+        return [];
+      }
+      url=next;
+    }
+    if(url){_spotifyErrore=-2;_spotifyMotivo="Playlist troppo lunga per una lettura completa";return []}
+    _spotifyErrore=0;_spotifyMotivo="";
+    return tracks;
   }
-  return brani;
-}
 
 /* ============================================================
    Da qui in poi c'era il file spotify-ui.js, ora dentro questo.
