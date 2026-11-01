@@ -549,7 +549,12 @@ function leave(){
  // Informa gli altri membri e aggiorna i partecipanti sul server.
  // La richiesta non deve bloccare l'uscita locale.
  if(creds?.token&&room?.id){
-  request({action:"leave",id:creds.id,token:creds.token}).catch(()=>{});
+  const req={action:"leave",id:creds.id,token:creds.token};
+  request(req).catch(e=>{
+   // Se due persone cambiano brano nello stesso istante, il database
+   // risponde 409: riprova una volta, senza bloccare l'uscita locale.
+   if(/Room changed/.test(String(e.message||"")))request(req).catch(()=>{});
+  });
  }
  creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;
  pendingPlayback=null;playbackSequence++;
