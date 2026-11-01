@@ -651,8 +651,7 @@ function tick(){
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
  if((plan.silenceTrim||plan.kind==="soft")&&
     audio.currentTime>=plan.end+.08&&
-    !active&&
-    (isIOS||!prepared?.ready||Date.now()<=blockedUntil)){
+    !active&&!mixing){
   const target=next.id,entry=plan.entry;
   cancel();plannedFor=target;plan=null;
   // Su iPhone un solo audio alla volta preserva i controlli nella
