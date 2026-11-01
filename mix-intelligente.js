@@ -306,11 +306,12 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26)return null;
  const trim=!!(a?.confidentTail&&a.last<dur-2);
  const audibleEnd=trim?Math.min(dur,a.last):dur;
+ const introEntry=b?.leading>=1.8?clamp(b.first-.10,0,18):0;
  // Un MP3 non analizzabile non è una prova che due pezzi si possano mixare.
  // Se una coda muta è confermata, la saltiamo; altrimenti lasciamo la
  // riproduzione normale, senza sovrapporre casualmente voci o ritornelli.
  const cleanCut=()=>trim?{
-  begin:audibleEnd-.12,end:audibleEnd-.12,fade:0,entry:0,tempo:1,
+  begin:audibleEnd-.12,end:audibleEnd-.12,fade:0,entry:introEntry,tempo:1,
   kind:"cut",gain:1,score:null,silenceTrim:true,
   trailing:Math.max(0,dur-audibleEnd)}:null;
  if(!a||!b)return cleanCut();
@@ -852,6 +853,15 @@ function start(){
  setInterval(()=>{try{tick()}catch(e){}},500);
 }
 window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
+  // Taglia SOLO un'introduzione effettivamente muta già verificata.
+  // Non aspettare la fine della precedente se il player ne ha i dati pronti.
+  introStart:(id)=>{
+   const app=bridge(),track=app?.allTracks()?.find(t=>t.id===id);
+   if(!track)return 0;
+   const source=app.mixUrl?.(track)||track.url;
+   const measured=cache.get(String(source));
+   return measured?.leading>=1.8?clamp(measured.first-.10,0,18):0;
+  },
  onTrackChange:(id)=>{
   if(active&&!(active.handingOff&&active.track.id===id))cancel();
  },
