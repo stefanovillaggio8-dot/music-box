@@ -121,7 +121,9 @@ function analyzeFrames(buf){
   if(activity.slice(Math.max(0,i-2),i+1).filter(Boolean).length>=2){last=i;break}
  }
  const duration=buf.duration||ch.length/rate;
- const audibleStart=Math.max(0,first*group*step-.12);
+ // 'first' anticipa di una finestra la coppia di blocchi attivi:
+ // riportala vicino all'attacco reale per non lasciare 0.3-0.5s di vuoto.
+ const audibleStart=Math.max(0,(first+1)*group*step-.10);
  const audibleEnd=Math.min(duration,(last+1)*group*step);
  const leading=Math.max(0,audibleStart),trailing=Math.max(0,duration-audibleEnd);
  const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
