@@ -7019,6 +7019,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
+      try { window.MusicBoxMix?.onTrackChange?.(id); } catch (_) {}
       // I link non sono file audio: non aprire YouTube al posto del player.
       if (t.source==="youtube-link" && t.youtubeId) {
         if (t._ytStatus==="completed") {
@@ -7379,6 +7380,7 @@ function playNext() {
      Ora: il tasto play, il tasto pausa del telefono e quello del blocco
      schermo passano tutti di qui, quindi non possono piu' discordare. */
   function _pausaVolontaria() {
+    try { window.MusicBoxMix?.cancel?.(); } catch (_) {}
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
       window.MusicBoxRoom.control("pause");return;
     }
@@ -11483,7 +11485,26 @@ window.MusicBoxBridge = {
     return tracks.find(t=>t.id===id && t.url && !t.youtubeId)||null;
   },
   volume:()=>Math.min(1,Math.max(0,(Number(volumePct)||0)/100)),
+  wantsPlayback:()=>Boolean(_vuoleSuonare),
   mixUrl:(t)=>_urlDelBrano(t),
+  mixCandidates:()=>{
+    if (window.MusicBoxRoom?.isActive()) return [];
+    const list=(_posizionePlaylist>=0&&_playlistSuona.length)
+      ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
+    return list.filter(t=>t&&t.url&&!t.youtubeId&&t.id!==currentId&&
+      !queue.includes(t.id)).slice(0,80);
+  },
+  mixEnqueue:(ids)=>{
+    if(window.MusicBoxRoom?.isActive()||!Array.isArray(ids))return 0;
+    const valid=new Set(window.MusicBoxBridge.mixCandidates().map(t=>t.id));
+    let added=0;
+    for(const id of ids.slice(0,10)){
+      if(!valid.has(id)||queue.includes(id))continue;
+      queue.push(id);valid.delete(id);added++;
+    }
+    if(added){persistQueue();renderQueueCount()}
+    return added;
+  },
   mixHandoff:(id,startAt)=>{
     if(queue[0]===id){queue.shift();persistQueue()}
     return playById(id,true,startAt);
