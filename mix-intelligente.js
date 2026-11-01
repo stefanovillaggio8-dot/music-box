@@ -412,11 +412,22 @@ function transition(a,b,actualDuration){
  const kind=style==="auto"?(autoCompatible?"beat":"soft"):style;
  if(style==="auto"&&!autoCompatible)return fallback();
  const end=clamp(musicalEnd-(trim?.20:.65),13,dur-.8);
- const bars=kind==="beat"?3:2;
- const autoSeconds=clamp(bars*4*60/bpm,3,6);
+ // Give compatible tracks room to combine rhythmically instead of
+ // sounding like a last-second crossfade. Never force an incompatible mix.
+ const bars=kind==="beat"?4:2;
+ const autoSeconds=clamp(bars*4*60/bpm,4.5,9);
  const requested=style==="auto"?autoSeconds:mixSeconds;
  const fade=clamp(requested,2,Math.min(10,end-8));
  let begin=end-fade;
+ // Prefer a softer musical entry point within the final phrase.
+ if(kind==="beat"&&Array.isArray(a.tailEnergy)&&a.tailEnergy.length){
+  const candidates=a.tailEnergy.filter(p=>p.at>=begin-2.5&&p.at<=begin+1.0&&
+    p.at>=end-11&&p.at<=end-2.0);
+  if(candidates.length){
+   const low=candidates.reduce((best,p)=>p.energy<best.energy?p:best,candidates[0]);
+   if(low.energy<=Math.max(.002,a.level*.8))begin+=clamp(low.at-begin,-2.5,1);
+  }
+ }
  if(a.beatAnchor&&a.beatConfidence>=.13){
   const period=60/bpm;
   begin+=clamp(a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period-begin,-.23,.23);
