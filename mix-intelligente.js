@@ -110,7 +110,7 @@ function spectrumAt(data,rate,at){
 }
 function estimateMusicalEnd(data,rate,blocks,typical,duration,audibleEnd){
  const blockSeconds=.2,limit=Math.max(20,duration-16);
- const quiet=clamp(typical*.22,.0025,.04);
+ const quiet=clamp(typical*.055,.0007,.012); // Keep truly quiet notes and vocals
  let i=blocks.length-1;
  while(i>=0&&(blocks[i]||0)<=quiet)i--;
  const quietStart=(i+1)*blockSeconds;
