@@ -3409,3 +3409,39 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .stanza-card .stanza-song small{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.4}
 .stanza-card .stanza-queue-row{align-items:flex-start}
 .stanza-card .stanza-queue-actions{padding-top:4px}
+
+
+/* v6.503 · Amici online: compact, accessible, privacy-first UI. */
+.amici-card{width:min(94vw,560px);max-height:87dvh;overflow-y:auto;margin:auto;}
+.amici-card .import-body{padding:14px 17px 24px;}
+.amici-online-pill{display:inline-flex;align-items:center;margin-left:8px;vertical-align:middle;border-radius:30px;padding:4px 9px;font-size:11px;line-height:1.4;background:rgba(72,214,152,.14);border:1px solid rgba(72,214,152,.32);color:#82e8b8;}
+.amici-settings{display:grid;gap:8px;background:rgba(155,121,213,.08);border:1px solid rgba(175,144,229,.17);border-radius:15px;padding:10px 13px;}
+.amici-option{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:52px;cursor:pointer;}
+.amici-option+ .amici-option{border-top:1px solid rgba(255,255,255,.08);padding-top:8px;}
+.amici-option span{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.amici-option b{font-size:13px;color:#f3ecff;}
+.amici-option small{font-size:11px;line-height:1.4;color:#b6a6c8;}
+.amici-option input{flex:0 0 auto;width:21px;height:21px;accent-color:#a77aff;cursor:pointer;}
+.amici-option input:disabled{opacity:.36;}
+.amici-status{font-size:11px;line-height:1.4;color:#b8a1cd;margin:12px 2px;}
+.amici-heading{display:flex;justify-content:space-between;gap:8px;align-items:center;margin:17px 0 9px;}
+.amici-heading h3,.amici-requests-title{font-size:14px;font-weight:800;color:#f3ecff;}
+.amici-heading button{color:#d1affc;background:rgba(147,97,210,.13);border:1px solid rgba(170,119,236,.22);border-radius:10px;padding:7px 12px;font:inherit;font-size:11px;cursor:pointer;}
+.amici-users,.amici-requests{display:flex;flex-direction:column;gap:8px;}
+.amici-user{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:linear-gradient(115deg,rgba(115,76,154,.18),rgba(42,42,58,.55));border:1px solid rgba(170,141,227,.15);border-radius:14px;padding:11px;}
+.amici-avatar{height:40px;width:40px;flex:0 0 40px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#9d61e9,#543c94);font-size:19px;font-weight:850;color:white;}
+.amici-user-info{flex:1 1 155px;min-width:0;display:flex;flex-direction:column;gap:5px;}
+.amici-user-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.amici-name{font-size:14px;font-weight:800;}
+.amici-indicator{font-size:10px;font-weight:700;color:#75e3ae;}
+.amici-track{font-size:11px;color:#bdb0d1;overflow-wrap:anywhere;}
+.amici-user-actions{display:flex;justify-content:flex-end;flex:1 1 110px;min-width:0;}
+.amici-user-actions button,.amici-request-actions button,.amici-request>button{border:1px solid rgba(177,133,236,.35);border-radius:10px;background:rgba(107,67,191,.25);color:#f0e5ff;padding:8px 10px;font-size:11px;font-weight:750;cursor:pointer;min-height:35px;}
+.amici-user-actions button:disabled,.amici-request-actions button:disabled{opacity:.4;cursor:default;}
+.amici-empty{display:block;color:#a79bac;font-size:12px;line-height:1.5;padding:12px 10px;border:1px dashed rgba(180,135,220,.15);border-radius:12px;}
+.amici-requests-title{margin:20px 0 10px;}
+.amici-request{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:11px;border:1px solid rgba(165,139,198,.2);border-radius:12px;background:rgba(134,110,170,.08);}
+.amici-request-text{font-size:12px;line-height:1.4;flex:1 1 130px;}
+.amici-request-actions{display:flex;gap:6px;}
+.amici-disclaimer{margin-top:14px;color:#91859f;font-size:10px;line-height:1.5;}
+@media(max-width:430px){.amici-card .import-body{padding:12px 13px 22px}.amici-user{padding:9px}.amici-user-actions{flex-basis:100%;justify-content:stretch}.amici-user-actions button{width:100%;}}
