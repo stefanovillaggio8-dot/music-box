@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.493";
+  const APP_VERSION = "6.494";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4710,10 +4710,10 @@ async function _eliminaBrano(id) {
 
   /* La conferma finale deve dire ESATTAMENTE quello che succede. */
   const cosa = ancheDallePlaylist
-    ? "Il brano sparisce dalla libreria E dalle playlist, viene cancellato dal sito e non si recupera piu'."
+    ? "Il brano sparisce dalla libreria e dalle playlist di QUESTO account. Gli altri account e il file MP3 condiviso non vengono toccati."
     : (nellePlaylist.length
-      ? "Il brano sparisce dalla libreria, ma RESTA nelle playlist e nel sito."
-      : "Il brano sparisce dalla libreria, viene cancellato dal sito e non si recupera piu'.");
+      ? "Il brano sparisce dalla libreria di QUESTO account, ma RESTA nelle sue playlist. Gli altri account non vengono toccati."
+      : "Il brano sparisce dalla libreria di QUESTO account e dagli altri suoi dispositivi. Gli altri account e il file MP3 condiviso non vengono toccati.");
   if (!confirm("Vuoi davvero ELIMINARE:\n\n" + testo +
     "\n\n" + cosa + "\n\nVuoi continuare?")) return;
 
@@ -4766,40 +4766,13 @@ async function _eliminaBrano(id) {
     _diChe("ELIMINO: " + _chiaveEliminato(id) + " (elenco ora " + Object.keys(el).length + ")");
   } catch (e) { /* noop */ }
 
-  /* E se il computer e' acceso, provo a cancellare anche il file mp3: e' la
-     cancellazione vera, non solo "non lo vedo piu'".
-     Se il computer non risponde, NON e' un errore: la canzone sparisce
-     lo stesso, e il file resta li' fino a che il computer si rimette in
-     contatto. Prima qui usciva un avviso spaventoso e la cancellazione
-     non veniva fatta. */
-  let fileCancellato = false;
-  let computerRaggiunto = false;
-  try {
-    computerRaggiunto = await ponteOnline();
-  } catch (e) { computerRaggiunto = false; }
-  if (computerRaggiunto) {
-    try {
-      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-      const cheCartella = cartellaDi(profile) || "ste";
-      const t = tracks.find((x) => x && x.id === id);
-      const url = (t && t.file) ? String(t.file) : ("songs/track-" + String(id).replace(/^b-track-/, "") + ".mp3");
-      const r = await fetch(base + "/elimina", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: url, cartella: cheCartella, pubblica: true })
-      });
-      fileCancellato = !!(r && r.ok);
-    } catch (e) { fileCancellato = false; }
-  }
-  /* Se il file non l'ho potuto cancellare adesso, lo metto in lista e lo
-     riprovo quando il computer si rimette in contatto. */
-  if (!fileCancellato) {
-    try {
-      const t = tracks.find((x) => x && x.id === id);
-      const url = (t && t.file) ? String(t.file) : ("songs/track-" + String(id).replace(/^b-track-/, "") + ".mp3");
-      _pendenteCancellazioneAggiungi(url, cartellaDi(profile) || "ste");
-    } catch (e) { /* noop */ }
-  }
+  /* La rimozione riguarda SEMPRE il profilo corrente, non il file sorgente.
+     Lo stesso MP3 puo' essere usato da Ste, Diego ed Emanuele: inviare
+     /elimina con pubblica:true lo toglierebbe dal catalogo condiviso e
+     romperebbe la riproduzione degli altri. Per questo NON cancelliamo
+     il file fisico e NON mettiamo cancellazioni fisiche in coda.
+     La tombstone profilo.id, gia' salvata sopra, si sincronizza tramite
+     _salvaStatoCondiviso e resta valida su tutti i dispositivi del profilo. */
 
   /* Tolgo il brano dalla libreria e dalle playlist. */
   try {
@@ -4820,60 +4793,19 @@ async function _eliminaBrano(id) {
   try { saveCurrentState(); } catch (e) { /* noop */ }
   try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
   try { render(); } catch (e) { /* noop */ }
-  /* Il messaggio dice quello che e' successo davvero. */
-  try {
-    toast(fileCancellato
-      ? "Eliminato per sempre: " + nome + " (file e brano)"
-      : (computerRaggiunto
-        ? "Brano eliminato: " + nome + ". Il file sul computer non l'ho potuto cancellare"
-        : "Brano eliminato: " + nome + ". Il computer non era raggiungibile, quindi il file mp3 resta li' ma la canzone non torna piu'"), 7000);
-  } catch (e) { /* noop */ }
+  /* Non promettere di aver cancellato il file sorgente di altri profili. */
+  try { toast("Rimosso da " + profile + ": " + nome +
+    ". Gli altri account conservano la loro copia.", 6000); }
+  catch (e) { /* noop */ }
 }
 
-  /* Le cancellazioni che non sono riuscite perché il computer non c'era.
-     Ste: "il programma sul computer non e' raggiungibile... il file mp3
-     resta sul computer". Ora la canzone sparisce comunque, ma il file
-     no: e' giusto aspettare che il computer si rimetta in contatto per
-     cancellare anche quello. Però se non lo faccio, il file resta li' per
-     sempre. Quindi lo metto in una lista e lo riprovo. */
-  function _pendentiCancellazione() {
-    try {
-      const v = LS.get("mb.pendentiCancellazione", null);
-      return Array.isArray(v) ? v : [];
-    } catch (e) { return []; }
-  }
-  function _pendenteCancellazioneAggiungi(file, cartella) {
-    try {
-      if (!file) return;
-      const m = _pendentiCancellazione();
-      const gia = m.some((x) => x && x.file === file && x.cartella === cartella);
-      if (!gia) m.push({ file: String(file), cartella: String(cartella || "ste"), quando: Date.now() });
-      LS.set("mb.pendentiCancellazione", m);
-    } catch (e) { /* noop */ }
-  }
+  /* Migrazione di sicurezza: le vecchie versioni accodavano eliminazioni
+     fisiche mentre il PC era spento. Quelle richieste NON devono essere
+     eseguite al ritorno online, perche' lo stesso MP3 potrebbe ancora
+     appartenere ad altri account. Elimina solo la coda di richieste, mai
+     un file audio. */
   async function _provaCancellazioniPendenti() {
-    const m = _pendentiCancellazione();
-    if (!m.length) return;
-    let base = "";
-    try { base = (await trovaPonte()) || INDIRIZZI_PONTE[0]; } catch (e) { return; }
-    if (!base) return;
-    const rimaste = [];
-    for (const p of m) {
-      let ok = false;
-      try {
-        const r = await fetch(base + "/elimina", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ file: p.file, cartella: p.cartella, pubblica: true })
-        });
-        ok = !!(r && r.ok);
-      } catch (e) { ok = false; }
-      if (!ok) rimaste.push(p);
-    }
-    try { LS.set("mb.pendentiCancellazione", rimaste); } catch (e) { /* noop */ }
-    if (m.length !== rimaste.length) {
-      try { toast("Cancellati " + (m.length - rimaste.length) + " file che erano rimasti sul computer"); } catch (e) {}
-    }
+    try { LS.remove("mb.pendentiCancellazione"); } catch (e) { /* noop */ }
   }
 
   /* Rende pubblici i brani che esistono solo su questo dispositivo, e lo fa
@@ -8395,124 +8327,10 @@ async function _dimenticaBranoOvunque(id) {
   } catch (e) { /* noop */ }
 }
 
+/* Compatibilita': nessuna vecchia scorciatoia deve piu' poter cancellare
+   il MP3 pubblicato, bypassando la rimozione per profilo. */
 async function removeTrack(id) {
-  const t = tracks.find((x) => x.id === id);
-  if (!t) return;
-  const cheCartella = cartellaDi(profile);
-  /* Prima provo a farlo davvero sul computer: cancellare il file e
-     toglierlo dal sito. Se il computer non e' raggiungibile non fingono
-     niente: dico che il file resta e lascio decidere a te. */
-  let fattoSulPc = false;
-  let motivo = "";
-  const collegato = await ponteOnline();
-  if (collegato && cheCartella && t.url && /^songs\/track-\d+\.mp3$/.test(t.url)) {
-    try {
-      const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-      const r = await fetch(base + "/elimina", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: t.url, cartella: cheCartella, pubblica: true })
-      });
-      const j = await r.json().catch(() => ({}));
-if (r.ok && j && j.ok) {
-          fattoSulPc = true;
-          /* Il computer puo' aver tolto il brano dal sito ma non quello
-             nella cartella (se non ha trovato un file sicuramente identico).
-             In quel caso l'utente deve saperlo, altrimenti crede che
-             l'eliminazione sia a posto e il brano ricompare. */
-          if (j.avviso) motivo = String(j.avviso);
-        } else motivo = String((j && j.errore) || "non sono riuscito");
-    } catch (e) {
-      motivo = "il computer non ha risposto";
-    }
-  } else if (!collegato) {
-    motivo = "il computer non e' raggiungibile";
-  }
-
-  if (!fattoSulPc) {
-    const si = await askConfirm(
-      "Non posso cancellare il file",
-      "Il programma sul computer " + (motivo || "non e' raggiungibile") + ".\n\n" +
-      "Posso togliere il brano dalla libreria di questo telefono, ma il file mp3 resta sul computer.\n\n" +
-      "La canzone pero' NON tornera': l'ho segnata come eliminata, e questa segnalazione va su tutti i link.\n\n" +
-      "Vuoi toglierlo comunque?",
-      "Togli comunque"
-    );
-    /* Ste: "se premo annulla lo elimina lo stesso".
-       Prima questo "return" non diceva niente a chi aveva chiamato, che
-       continuava a toglierlo. Ora dico chiaramente: non ho fatto niente. */
-    if (!si) return false;
-  } else {
-    /* Se il brano e' anche in una playlist, chiedo dove toglierlo: solo
-       dalla libreria (l'bagno per davvero rimane nelle playlist? no: allora
-       niente), solo dalle playlist, o da entrambe. */
-    const nellePlaylist = _playlistCheContengono(id);
-    if (nellePlaylist.length) {
-      const scelta = await _scegliCosaTogliere(id, t.title || "", true);
-      if (!scelta) return;
-      if (scelta === "playlist") {
-        for (const nome of nellePlaylist) {
-          const pl = _playlistCercata(nome);
-          if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
-        }
-        saveCurrentState();
-        _salvaPlaylistCondivise();
-        renderPlaylist();
-        _aggiornaBadgePlaylist();
-        toast("Tolto dalle playlist, ma resta nella libreria e sul sito");
-        return true;
-      }
-      /* sia "libreria" che "entrambe": le playlist si svuotano comunque,
-         altrimenti resterebbero con un brano che non esiste piu' */
-      for (const nome of nellePlaylist) {
-        const pl = _playlistCercata(nome);
-        if (pl) pl.tracks = (pl.tracks || []).filter((x) => x !== id);
-      }
-      saveCurrentState();
-      _salvaPlaylistCondivise();
-    }
-    const si = await askConfirm(
-      "Eliminare per sempre?",
-      "\"" + (t.title || "") + "\" verra' cancellato:\n" +
-      "- il file mp3 dal computer\n" +
-      "- il brano dalla libreria di questo computer\n" +
-      "- il brano dal sito, quindi sparisce anche dagli altri dispositivi\n\n" +
-      "Non si puo' piu' recuperare. Il testo e la copertina spariscono con lui.",
-      "Elimina per sempre"
-    );
-    if (!si) return false;
-  }
-
-  if (currentId === id) {
-    try { audio.pause(); } catch (e) { /* noop */ }
-    closeLyrics();
-    currentId = null;
-    _segnaRigaAttiva();
-  }
-  await _dimenticaBranoOvunque(id);
-  /* anche dai preferiti, dai nascosti e dalle statistiche */
-  try {
-    const st = profileState(profile);
-    const patch = {};
-    if (Array.isArray(st.favs)) patch.favs = st.favs.filter((x) => x !== id);
-    if (Array.isArray(st.hidden)) patch.hidden = st.hidden.filter((x) => x !== id);
-      try { favorites.delete(id); } catch (e) { /* noop */ }
-      try { hiddenTracks.delete(id); } catch (e) { /* noop */ }
-      writeProfileState(profile, patch);
-      /* Anche "rimettili in lista" va sul sito, altrimenti dall'altra
-         scorciatoia il brano resterebbe nascosto. */
-      _salvaStatoCondiviso();
-    const st2 = statisticheProfilo();
-    const c = _chiaveStats(t);
-    if (c && st2[c]) {
-      delete st2[c];
-      _salvaStatistiche();
-    }
-  } catch (e) { /* noop */ }
-  await loadAll();
-  render();
-  toast(fattoSulPc ? "Brano eliminato per sempre" : "Brano tolto da questo telefono");
-  return true;
+  return _eliminaBrano(id);
 }
 
   function stripVariants(s) {
@@ -15589,10 +15407,9 @@ async function _selezionaElimina() {
   if (!ids.length) { toast("Prima scegli almeno una canzone"); return; }
   const si = await askConfirm(
     "Eliminare " + ids.length + (ids.length === 1 ? " canzone?" : " canzoni?"),
-    "Le canzoni scelte spariscono davvero, dal sito e da ogni dispositivo.\n\n" +
-      "Se le vuoi tenere ma solo toglierle dalla libreria, usa\n" +
-      "\"Togli dalla libreria\" invece di questo.\n\n" +
-      "Questa cosa non si può annullare.",
+    "Le canzoni scelte spariscono dalla libreria di QUESTO account, su tutti i suoi dispositivi.\n\n" +
+      "Gli altri account e i file MP3 condivisi non vengono toccati.\n\n" +
+      "Per mantenerle in una playlist usa \"Togli dalla libreria\".",
     "Elimina per sempre"
   );
   if (!si) return;
