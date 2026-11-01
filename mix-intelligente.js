@@ -9,7 +9,7 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=3;
+const ANALYSIS_VERSION=5;
 let analysisDbPromise=null;
 function analysisDatabase(){
  if(analysisDbPromise)return analysisDbPromise;
@@ -89,6 +89,57 @@ let active=null,previousId="",plan=null,plannedFor="",mixing=false,boundAudio=nu
 function bridge(){return window.MusicBoxBridge}
 function toast(m){bridge()?.toast?.(m)}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+
+function spectrumAt(data,rate,at){
+ const N=2048,from=Math.floor(at*rate-N/2);
+ if(from<0||from+N>data.length)return null;
+ const re=new Float32Array(N),im=new Float32Array(N);
+ for(let i=0;i<N;i++)re[i]=data[from+i]*(.5-.5*Math.cos(2*Math.PI*i/(N-1)));
+ fft(re,im);
+ let total=0,logs=0,bass=0,n=0;
+ const hi=Math.min(N/2,Math.ceil(5000*N/rate));
+ for(let k=Math.max(2,Math.ceil(45*N/rate));k<hi;k++){
+  const power=re[k]*re[k]+im[k]*im[k]+1e-16;
+  total+=power;logs+=Math.log(power);n++;
+  if(k*rate/N<=250)bass+=power;
+ }
+ if(!n||total<1e-8)return null;
+ return {flat:Math.exp(logs/n)/(total/n),bass:bass/total};
+}
+function estimateMusicalEnd(data,rate,blocks,typical,duration,audibleEnd){
+ const blockSeconds=.2,limit=Math.max(20,duration-16);
+ const quiet=clamp(typical*.22,.0025,.04);
+ let i=blocks.length-1;
+ while(i>=0&&(blocks[i]||0)<=quiet)i--;
+ const quietStart=(i+1)*blockSeconds;
+ let end=audibleEnd,why="silence";
+ if(duration-quietStart>=1.9&&quietStart>limit)
+  end=Math.min(end,quietStart+.12);
+ // A rumbling, low-pitched or broadband tail with little energy is often
+ // ambient noise, rather than music. Require a sustained tail.
+ const samples=[];
+ for(let t=Math.max(limit,.5);t<duration-.1;t+=.5){
+  const pos=Math.max(0,Math.floor((t-.25)/blockSeconds));
+  const nearby=blocks.slice(pos,Math.min(blocks.length,pos+3));
+  const rms=nearby.length?Math.sqrt(nearby.reduce((a,x)=>a+x*x,0)/nearby.length):0;
+  const spec=spectrumAt(data,rate,t);
+  samples.push({t,rms,flat:spec?.flat??0,bass:spec?.bass??0});
+ }
+ let from=duration;
+ for(let j=samples.length-1;j>=0;j--){
+  const x=samples[j],silent=x.rms<=quiet;
+  const noisy=x.rms<typical*.62&&(x.flat>.50||(x.bass>.80&&x.flat>.095));
+  if(!silent&&!noisy)break;
+  from=x.t;
+ }
+ if(duration-from>=2.5&&from>limit&&from<end){
+  end=Math.min(end,from+.15);why="ambience";
+ }
+ // Never skip a long central interlude or more than 14 seconds.
+ if(end<Math.max(duration-14,duration*.55,18))
+  return {end:audibleEnd,reason:"none"};
+ return {end,reason:end<audibleEnd-.5?why:"silence"};
+}
 function analyzeFrames(buf){
  const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
  const hop=Math.max(1,Math.round(rate*step)),energy=[];
