@@ -76,7 +76,10 @@ function selected(){
 function sameProfile(){
  if(!creds||!room)return true;
  const expected=creds.profile||(creds.role==="host"?room.hostProfile:room.guestProfile);
- const present=!Array.isArray(room.participants)||room.participants.includes(expected);
+ const roster=Array.isArray(room.participants)?room.participants:[];
+ const profiles=Array.isArray(room.participantProfiles)?room.participantProfiles:[];
+ const present=!roster.length||(creds.memberName?
+   roster.includes(creds.memberName):profiles.length?profiles.includes(expected):true);
  return present&&(!expected||String(expected)===String(bridge()?.profile()||""));
 }
 
@@ -265,7 +268,8 @@ async function join(){
   try{result=await request(payload)}
   catch(e){if(!/Room changed/.test(e.message))throw e;result=await request(payload)}
   creds={...invitation,token:result.memberToken||invitation.token,
-    role:result.memberToken?"member":"guest",profile:bridge().profile()};
+    role:result.memberToken?"member":"guest",profile:bridge().profile(),
+    memberName:result.memberName||bridge().profile()};
   invitation=null;room=result.room;
   localPlay=true;needsGesture=false;catalog=[];catalogFor="";drawnRevision=-1;save();lastRevision=0;await refresh();
   tell("Sei nel gruppo ("+(room?.participants?.length||2)+"/8)! Coda e musica sincronizzate.");
@@ -538,7 +542,17 @@ function start(){
  try{
   const match=location.hash.match(/^#musicbox-room=([0-9a-f-]{36})\.([0-9a-f]{64})$/i);
   if(match){
-   invitation={id:match[1],token:match[2]};
+   // Aprendo nuovamente lo stesso link sullo stesso telefono non creo una
+   // seconda persona per sbaglio: riutilizzo la sessione personale salvata.
+   let saved=null;
+   try{saved=JSON.parse(localStorage.getItem("mb.stanza.v1")||"null")}catch(e){}
+   if(saved?.id===match[1]&&/^[0-9a-f]{64}$/i.test(saved.token||"")&&
+      (!saved.profile||saved.profile===bridge()?.profile())){
+    creds=saved;
+    if(saved.role==="host"&&/^[0-9a-f]{64}$/i.test(saved.guestToken||""))
+     inviteUrl=location.origin+location.pathname+"#musicbox-room="+saved.id+"."+saved.guestToken;
+    setTimeout(refresh,500);
+   }else invitation={id:match[1],token:match[2]};
    history.replaceState({}, "",location.pathname+location.search);
    setTimeout(open,1000);
   }else{
