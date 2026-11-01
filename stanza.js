@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id);
 const bridge=()=>window.MusicBoxBridge;
 let creds=null,room=null,invitation=null,inviteUrl="",busy=false,localPlay=false,lastRevision=0;
 let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false,commandBusy=false;
-const suppress=()=>{suppressEventsUntil=Date.now()+1800;};
+const suppress=()=>{suppressEventsUntil=Date.now()+650;};
 const isApplying=()=>applying||Date.now()<suppressEventsUntil;
 function status(msg){const el=$("stanzaStato");if(el)el.textContent=msg;}
 function tell(msg){if(bridge()?.toast)bridge().toast(msg);else status(msg);}
@@ -146,12 +146,14 @@ async function apply(){
    seconds+=Math.max(0,(Date.now()-Date.parse(room.startedAt))/1000);
   return seconds;
  };
- applying=true;suppress();
+ let changed=false;
+ applying=true;
  try{
-  if(app.currentId()!==id)await app.play(id,!!room.playing);
+  if(app.currentId()!==id){suppress();changed=true;await app.play(id,!!room.playing)}
   const a=app.audio();attachAudio();if(!a)return;
   if(a.readyState>=1){
    if(Math.abs((a.currentTime||0)-secondsAt())>2.3){
+    suppress();changed=true;
     try{a.currentTime=secondsAt()}catch(e){}
    }
   }else{
@@ -159,8 +161,9 @@ async function apply(){
     if(app.currentId()===id)try{a.currentTime=secondsAt()}catch(e){}
    },{once:true});
   }
-  if(!room.playing&&!a.paused)a.pause();
+  if(!room.playing&&!a.paused){suppress();changed=true;a.pause()}
   else if(room.playing&&a.paused){
+   suppress();changed=true;
    try{
     await app.playCurrent();
     // Alcuni player gestiscono internamente NotAllowedError.
@@ -168,7 +171,7 @@ async function apply(){
     else needsGesture=false;
    }catch(e){reportPlaybackFailure();}
   }else if(room.playing&&!a.paused)needsGesture=false;
- }finally{applying=false;suppress();draw();}
+ }finally{applying=false;if(changed)suppress();draw();}
 }
 
 async function refresh(){
