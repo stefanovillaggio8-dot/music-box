@@ -85,3 +85,40 @@ test("speculative iPhone early cut has been removed",()=>{
  assert.equal(source.includes("mobileSmartCut"),false);
  assert.ok(source.includes("plan.silenceTrim&&plan.trailing>=1.65"));
 });
+
+test("beat phase metadata is available without skipping the next intro",()=>{
+ const withBeat={...current,safeOutroAt:172,beatAnchor:168.5,beatConfidence:.8};
+ const withIntro={...next,introBeat:1.5,beatConfidence:.8,safeIntroAt:0};
+ const plan=transition(withBeat,withIntro,180);
+ assert.equal(plan.kind,"beat");
+ assert.ok(plan.beatPeriod>0.25&&plan.beatPeriod<1);
+ assert.equal(plan.beatAnchor,168.5);
+ assert.equal(plan.nextBeat,1.5);
+ assert.equal(plan.entry,0);
+});
+test("unmeasured beat phase does not invent alignment",()=>{
+ const plan=transition({...current,safeOutroAt:172,beatConfidence:.15},next,180);
+ assert.equal(plan.kind,"beat");
+ assert.equal(plan.beatPeriod,null);
+});
+test("incompatible local opening and outro favor discreet fade",()=>{
+ const flat=[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.90];
+ const plan=transition({...current,safeOutroAt:172,outroChroma:flat},next,180);
+ assert.ok(plan&&plan.kind==="soft");
+});
+test("a late vocal cue protects the song even with a quiet ending",()=>{
+ for(const timestamp of [173,175,178]){
+  assert.equal(transition({...current,safeOutroAt:172,lastLyricAt:timestamp},next,180),null);
+ }
+});
+test("the engine does not seek into low volume opening notes",()=>{
+ assert.equal(source.includes("measured?.leading>=1.8"),false);
+ assert.ok(source.includes("measured?.safeIntroAt"));
+});
+test("iPhone leaves playback alone while app is in the background",()=>{
+ assert.ok(source.includes("if(isIOS&&document.hidden)"));
+ assert.ok(!source.includes("mobileSmartCut"));
+});
+test("local harmony is used for automatic queue order",()=>{
+ assert.ok(source.includes("const tail=a.outroChroma||a.chroma,head=b.introChroma||b.chroma;"));
+});
