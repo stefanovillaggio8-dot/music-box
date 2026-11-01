@@ -11967,6 +11967,40 @@ $("fabMenu").addEventListener("click", (e) => {
 
   let offlineBusy = false;
   let offlineAbort = null;
+  let offlineStopRequested = false;
+  let offlineResumeBusy = false;
+  // The pending download queue belongs to the selected account, not to an
+  // update-specific service worker cache. Completed tracks are never queued.
+  function _offlineQueueKey(p) { return "mb.codaOffline.v2." + String(p || profile); }
+  function _pendingOfflineUrls(p) {
+    try {
+      const saved = JSON.parse(LS.get(_offlineQueueKey(p), "") || "null");
+      return Array.isArray(saved?.urls) ?
+        saved.urls.filter(u => typeof u === "string" && /^https?:\/\//i.test(u)).slice(0,2500) : [];
+    } catch (e) { return []; }
+  }
+  function _persistPendingOffline(p, rows) {
+    if (p !== profile) return; // Do not mix another account's cache.
+    const urls = [...new Set(rows.filter(r => r.track?.url &&
+      r.state !== "ok").map(r => r.track.url))];
+    try {
+      LS.set(_offlineQueueKey(p), urls.length ?
+        JSON.stringify({ when: Date.now(), urls }) : "");
+    } catch (e) {}
+  }
+  function _clearPendingOffline(p) {
+    try { LS.set(_offlineQueueKey(p), ""); } catch (e) {}
+  }
+  // A bounded worker batch may finish if Safari suspends the page, but iOS
+  // does not guarantee background fetch. All remaining work is saved locally.
+  function _workerOfflineBatch(p) {
+    if (!offlineBusy || offlineStopRequested || p !== profile) return;
+    try {
+      const urls = _pendingOfflineUrls(p).slice(0,3);
+      if (urls.length && navigator.serviceWorker?.controller)
+        navigator.serviceWorker.controller.postMessage({type:"SCARICA",url:urls});
+    } catch (e) {}
+  }
 
   /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
      Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
@@ -12229,34 +12263,14 @@ $("fabMenu").addEventListener("click", (e) => {
    questo, e scarica SOLO quelle che hai scelto. */
   async function _scaricaSelezionati() {
     if (!_inSelezione || !_quantiScelti()) return;
-    const cache = await appCache();
-    if (!cache) { toast("Offline non disponibile qui"); return; }
-    const scelte = [..._scelti];
-    const righe = (await scanOffline()).filter((r) => scelte.indexOf(r.id) >= 0 && r.state !== "pronto");
-    if (!righe.length) { toast("Le canzoni che hai scelto sono gia' pronte offline"); return; }
-    if (offlineBusy) { if (offlineAbort) offlineAbort.abort(); offlineBusy = false; }
-    offlineBusy = true;
-    offlineAbort = new AbortController();
-    toast("Scarico " + righe.length + (righe.length === 1 ? " canzone" : " canzoni") + "…", 4000);
-    let fatto = 0;
-    let idx = 0;
-    const worker = async () => {
-      for (;;) {
-        const i = idx++;
-        if (i >= righe.length) return;
-        await cacheTrack(righe[i], cache);
-        fatto++;
-        _aggiornaBadgeFalliti();
-      }
-    };
-    const n = Math.min(2, righe.length);
-    const runners = [];
-    for (let k = 0; k < n; k++) runners.push(worker());
-    await Promise.all(runners);
-    offlineBusy = false;
-    offlineAbort = null;
-    const errori = righe.filter((r) => r.state === "err").length;
-    toast(errori ? "Fatto con " + errori + " errori" : "Fatto: " + fatto + " canzoni pronte offline");
+    const selected = new Set(_scelti);
+    const righe = (await scanOffline()).filter(r =>
+      selected.has(r.track?.id) && r.state === "todo" && r.track?.url);
+    if (!righe.length) {
+      toast("I brani selezionati sono già pronti offline o non scaricabili"); return;
+    }
+    // The same resumable pipeline handles selection and Download All.
+    await downloadAllOffline(righe.map(r => r.track.url));
     render();
   }
   /* Porto nella mia libreria tutte le canzoni che ho scelto.
@@ -12374,75 +12388,78 @@ $("fabMenu").addEventListener("click", (e) => {
       : "Queste canzoni non erano in nessuna playlist");
   }
 
-  async function downloadAllOffline() {
+  async function downloadAllOffline(selectedUrls) {
     if (offlineBusy) {
-      if (offlineAbort) offlineAbort.abort();
-      offlineBusy = false;
-      $("btnOfflineAll").textContent = "Scarica tutte";
-      toast("Scaricamento fermato");
+      // Do not mark a running batch as complete before its fetches settle.
+      offlineStopRequested = true;
+      offlineAbort?.abort();
+      _clearPendingOffline(profile);
+      $("offlineSub").textContent = "Interruzione dei download in corso…";
+      toast("Interrompo lo scaricamento; i brani già pronti restano salvati.");
       return;
     }
-    const cache = await appCache();
-    if (!cache) {
-      toast("Offline non disponibile qui");
-      return;
-    }
-    const rows = (await scanOffline()).filter((r) => r.state === "todo");
+    const owner=profile;
+    const cache=await appCache(owner);
+    if (!cache) { toast("Offline non disponibile qui"); return; }
+    const chosen=Array.isArray(selectedUrls)?new Set(selectedUrls):null;
+    const rows=(await scanOffline()).filter(r=>r.state==="todo" &&
+      r.track?.url && (!chosen || chosen.has(r.track.url)));
     if (!rows.length) {
-      toast("Sono gia' tutte pronte");
-      return;
+      if(chosen)_clearPendingOffline(owner);
+      toast("Le canzoni richieste sono già pronte offline"); return;
     }
-    offlineBusy = true;
-    offlineAbort = new AbortController();
-    $("btnOfflineAll").textContent = "Ferma";
-    let idx = 0;
-    let fatto = 0;
-    const worker = async () => {
-      for (;;) {
-        const i = idx++;
-        if (i >= rows.length) return;
-        await cacheTrack(rows[i], cache);
-        fatto++;
-        const rimaste = rows.length - fatto;
-        $("offlineSub").textContent = "Scarico " + fatto + "/" + rows.length + (rimaste ? " (restano " + rimaste + ")" : "");
+    offlineBusy=true;offlineStopRequested=false;
+    const controller=new AbortController();
+    offlineAbort=controller;
+    $("btnOfflineAll").textContent="Ferma";
+    let idx=0,completed=0;
+    _persistPendingOffline(owner,rows);
+    $("offlineSub").textContent="Scarico 0/"+rows.length+
+      " · Se iOS sospende Music Box, i brani mancanti riprenderanno alla riapertura.";
+    const worker=async()=>{
+      for(;;){
+        if(offlineStopRequested || controller.signal.aborted || owner!==profile)return;
+        const i=idx++;
+        if(i>=rows.length)return;
+        await cacheTrack(rows[i],cache);
+        completed++;
+        if(offlineStopRequested || owner!==profile)return;
+        _persistPendingOffline(owner,rows);
+        const done=rows.filter(r=>r.state==="ok").length;
+        $("offlineSub").textContent="Scaricate "+done+"/"+rows.length+
+          (rows.length-done?" · Mancanti "+(rows.length-done):"");
       }
     };
-    /* Salvo la lista di quello che resta da scaricare: se il telefono
-       sospende l'app (schermo spento) la coda non si perde, e quando
-       riapro l'app riprende da dove si era fermata. */
-    try {
-      LS.set("mb.codaOffline", JSON.stringify({
-        quando: Date.now(),
-        brani: rows.filter((r) => r.state === "todo").map((r) => ({ url: r.url, titolo: r.title }))
-      }));
-    } catch (e) { /* noop */ }
-    /* Chiedo al worker del servizio di scaricare per conto suo: lui vive un
-       po' piu' a lungo della pagina, quindi lo scaricamento va avanti
-       anche se l'app viene sospesa. */
-    try {
-      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        const daScaricare = rows.filter((r) => r.state === "todo").map((r) => r.url).filter(Boolean);
-        if (daScaricare.length) {
-          navigator.serviceWorker.controller.postMessage({ type: "SCARICA", url: daScaricare, cache: cacheBraniName() });
-          _diChe("chiedo al worker di scaricare " + daScaricare.length + " brani");
-        }
-      }
-    } catch (e) { /* noop */ }
-    const n = Math.min(2, rows.length);
-    const runners = [];
-    for (let k = 0; k < n; k++) runners.push(worker());
-    await Promise.all(runners);
-    offlineBusy = false;
-    offlineAbort = null;
-    $("btnOfflineAll").textContent = "Scarica tutte";
-    const errori = rows.filter((r) => r.state === "err");
-    if (errori.length) {
-      const primi = errori.slice(0, 2).map((r) => (r.title || "canzone") + " (" + (r.motivo || "errore") + ")");
-      toast("Fatto con " + errori.length + " errori: " + primi.join(", "), 9000);
-    } else {
-      toast("Fatto: " + fatto + " canzoni pronte offline");
+    try{
+      await Promise.all(Array.from({length:Math.min(2,rows.length)},()=>worker()));
+    }finally{
+      const cancelled=offlineStopRequested||controller.signal.aborted;
+      if(cancelled) _clearPendingOffline(owner);
+      else _persistPendingOffline(owner,rows);
+      if(offlineAbort===controller)offlineAbort=null;
+      offlineBusy=false;offlineStopRequested=false;
+      $("btnOfflineAll").textContent="Scarica tutte";
+      const ok=rows.filter(r=>r.state==="ok").length;
+      const errors=rows.filter(r=>r.state==="err");
+      if(cancelled)toast("Download interrotti. "+ok+" brani salvati.");
+      else if(errors.length) {
+        const missing=errors.length;
+        toast(ok+" brani scaricati. "+missing+" non riusciti: riprovo i mancanti quando riapri Music Box.",8000);
+      } else toast(ok+" brani salvati offline.");
+      if(owner===profile)await scanOffline();
     }
-    await scanOffline();
+  }
+
+  async function _resumeOfflineDownloads() {
+    if(offlineBusy||offlineResumeBusy||!navigator.onLine||document.hidden)return;
+    const owner=profile,urls=_pendingOfflineUrls(owner);
+    if(!urls.length)return;
+    offlineResumeBusy=true;
+    try{
+      // Re-scan cache: the service worker may have completed the first
+      // tracks while the screen was locked. Never fetch saved MP3s again.
+      await downloadAllOffline(urls);
+    }finally{offlineResumeBusy=false}
   }
 
   async function offlineSpaceInfo() {
@@ -12851,10 +12868,7 @@ async function checkForNewSongs() {
   }
 
   function closeOffline() {
-    if (offlineBusy && offlineAbort) {
-      offlineAbort.abort();
-      offlineBusy = false;
-    }
+    // Closing the dialog doesn't cancel an intentionally started batch.
     $("offlinePanel").hidden = true;
     syncNoScroll();
   }
@@ -13579,6 +13593,14 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
+  document.addEventListener("visibilitychange", () => {
+    if(document.hidden) _workerOfflineBatch(profile);
+    else setTimeout(()=>_resumeOfflineDownloads().catch(()=>{}),700);
+  });
+  window.addEventListener("pagehide",()=>_workerOfflineBatch(profile));
+  window.addEventListener("pageshow",()=>setTimeout(()=>_resumeOfflineDownloads().catch(()=>{}),1200));
+  window.addEventListener("online",()=>_resumeOfflineDownloads().catch(()=>{}));
+  setTimeout(()=>_resumeOfflineDownloads().catch(()=>{}),3000);
   $("btnSeleziona").addEventListener("click", () => {
   if (_inSelezione) _chiudiSelezione();
   else _apriSelezione();
