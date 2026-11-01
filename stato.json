@@ -1791,15 +1791,21 @@
    },
    "[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 72,
+    "s": 99,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 72,
+    "s": 99,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Coez"
+   },
+   "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
+    "v": 0,
+    "s": 76,
+    "t": "dimmi che ce'",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1957,11 +1963,53 @@
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
-   "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
+   "[\"i'm so lucky (hardstyle)\",\"lucky twice\"]": {
     "v": 0,
-    "s": 76,
-    "t": "dimmi che ce'",
-    "a": "thasup"
+    "s": 1,
+    "t": "I'm So Lucky (Hardstyle)",
+    "a": "Lucky Twice"
+   },
+   "m:2026-11|[\"i'm so lucky (hardstyle)\",\"lucky twice\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "I'm So Lucky (Hardstyle)",
+    "a": "Lucky Twice"
+   },
+   "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
+    "v": 1,
+    "s": 106,
+    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
+    "a": "Adriano Celentano"
+   },
+   "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
+    "a": "Andrea Bocelli"
+   },
+   "[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
+    "a": "Kaskade"
+   },
+   "m:2026-11|[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
+    "a": "Kaskade"
+   },
+   "[\"runaway\",\"linkin park\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Runaway",
+    "a": "Linkin Park"
+   },
+   "m:2026-11|[\"runaway\",\"linkin park\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Runaway",
+    "a": "Linkin Park"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2119,52 +2167,22 @@
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
-   "[\"i'm so lucky (hardstyle)\",\"lucky twice\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "I'm So Lucky (Hardstyle)",
-    "a": "Lucky Twice"
-   },
-   "m:2026-11|[\"i'm so lucky (hardstyle)\",\"lucky twice\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "I'm So Lucky (Hardstyle)",
-    "a": "Lucky Twice"
-   },
-   "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 1,
-    "s": 106,
-    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
-    "a": "Adriano Celentano"
-   },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 0,
     "s": 0,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
-   "[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
-    "a": "Kaskade"
-   },
-   "m:2026-11|[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
-    "a": "Kaskade"
-   },
-   "[\"runaway\",\"linkin park\"]": {
+   "[\"numb\",\"linkin park\"]": {
     "v": 1,
-    "s": 0,
-    "t": "Runaway",
+    "s": 4,
+    "t": "Numb",
     "a": "Linkin Park"
    },
-   "m:2026-11|[\"runaway\",\"linkin park\"]": {
+   "m:2026-11|[\"numb\",\"linkin park\"]": {
     "v": 1,
-    "s": 0,
-    "t": "Runaway",
+    "s": 4,
+    "t": "Numb",
     "a": "Linkin Park"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
@@ -2328,18 +2346,6 @@
     "s": 0,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
-   },
-   "[\"numb\",\"linkin park\"]": {
-    "v": 1,
-    "s": 4,
-    "t": "Numb",
-    "a": "Linkin Park"
-   },
-   "m:2026-11|[\"numb\",\"linkin park\"]": {
-    "v": 1,
-    "s": 4,
-    "t": "Numb",
-    "a": "Linkin Park"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2514,6 +2520,66 @@
     "s": 0,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
+   },
+   "[\"e non c'ÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 4,
+    "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"e non c'ÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 4,
+    "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "[\"estate\",\"negromaro\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Estate",
+    "a": "Negromaro"
+   },
+   "m:2026-11|[\"estate\",\"negromaro\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Estate",
+    "a": "Negromaro"
+   },
+   "[\"tuttok\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Tuttok",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"tuttok\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Tuttok",
+    "a": "nayt, 3D"
+   },
+   "[\"mortale\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Mortale",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"mortale\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Mortale",
+    "a": "nayt, 3D"
+   },
+   "[\"lullu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Lullu - Acoustic Version",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"lullu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Lullu - Acoustic Version",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2701,54 +2767,6 @@
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
-   "[\"estate\",\"negromaro\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Estate",
-    "a": "Negromaro"
-   },
-   "m:2026-11|[\"estate\",\"negromaro\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Estate",
-    "a": "Negromaro"
-   },
-   "[\"tuttok\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Tuttok",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"tuttok\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Tuttok",
-    "a": "nayt, 3D"
-   },
-   "[\"mortale\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Mortale",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"mortale\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Mortale",
-    "a": "nayt, 3D"
-   },
-   "[\"lullu - acoustic version\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Lullu - Acoustic Version",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"lullu - acoustic version\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Lullu - Acoustic Version",
-    "a": "nayt, 3D"
-   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2934,6 +2952,18 @@
     "s": 4,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
+   },
+   "[\"miami vice\",\"luchÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂ¨, Sfera Ebbasta, Simba La Rue"
+   },
+   "m:2026-11|[\"miami vice\",\"luchÃÂ¨, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 46,
+    "t": "Miami Vice",
+    "a": "LuchÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -3121,18 +3151,6 @@
     "t": "E non c'Ã¨ mai una fine",
     "a": "ModÃ "
    },
-   "[\"miami vice\",\"luchÃ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 0,
-    "s": 46,
-    "t": "Miami Vice",
-    "a": "LuchÃ¨, Sfera Ebbasta, Simba La Rue"
-   },
-   "m:2026-11|[\"miami vice\",\"luchÃ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 0,
-    "s": 46,
-    "t": "Miami Vice",
-    "a": "LuchÃ¨, Sfera Ebbasta, Simba La Rue"
-   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -3318,6 +3336,30 @@
     "s": 4,
     "t": "E non c'è mai una fine",
     "a": "Modà"
+   },
+   "[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Miami Vice",
+    "a": "Luchè, Sfera Ebbasta, Simba La Rue"
+   },
+   "m:2026-11|[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Miami Vice",
+    "a": "Luchè, Sfera Ebbasta, Simba La Rue"
+   },
+   "[\"torna a casa\",\"måneskin\"]": {
+    "v": 0,
+    "s": 21,
+    "t": "Torna a casa",
+    "a": "Måneskin"
+   },
+   "m:2026-11|[\"torna a casa\",\"måneskin\"]": {
+    "v": 0,
+    "s": 21,
+    "t": "Torna a casa",
+    "a": "Måneskin"
    }
   },
   "Diego": {
@@ -4943,18 +4985,6 @@
     "t": "Vidrado Em VocÃª",
     "a": "Dj Guuga, Mc Livinho"
    },
-   "e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em Você",
-    "a": "Dj Guuga, Mc Livinho"
-   },
-   "m:2026-10|e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em Você",
-    "a": "Dj Guuga, Mc Livinho"
-   },
    "e-reset-20261031|[\"nena (feat. geolier & andry the hitmaker)\",\"boro, geolier, andry the hitmaker\"]": {
     "v": 1,
     "s": 0,
@@ -4966,6 +4996,18 @@
     "s": 0,
     "t": "Nena (feat. Geolier & Andry The Hitmaker)",
     "a": "Boro, Geolier, Andry The Hitmaker"
+   },
+   "e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em Você",
+    "a": "Dj Guuga, Mc Livinho"
+   },
+   "m:2026-10|e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em Você",
+    "a": "Dj Guuga, Mc Livinho"
    }
   }
  }
