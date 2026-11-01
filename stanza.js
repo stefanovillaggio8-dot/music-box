@@ -189,7 +189,12 @@ async function refresh(){
   room=response.room;registerTracks();attachAudio();
   if(lastRevision!==room.revision){lastRevision=room.revision;bridge()?.refreshQueue();}
   await apply();if(!$("stanzaPanel").hidden)draw();
- }catch(e){if(!$("stanzaPanel").hidden)status("Connessione: "+e.message)}
+ }catch(e){
+  if(/Room not found or expired/i.test(String(e.message||""))){
+   leave();
+   status("Stanza scaduta (12 ore). Creane una nuova e manda un nuovo invito.");
+  }else if(!$("stanzaPanel").hidden)status("Connessione: "+e.message);
+ }
  finally{busy=false}
 }
 function control(command,extra){
