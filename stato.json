@@ -1752,13 +1752,13 @@
    },
    "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
     "v": 0,
-    "s": 127,
+    "s": 176,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
    "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
     "v": 0,
-    "s": 127,
+    "s": 176,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
@@ -2674,6 +2674,18 @@
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
+   "[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 75,
+    "t": "Favola",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 75,
+    "t": "Favola",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3024,13 +3036,13 @@
    },
    "[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 75,
+    "s": 160,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 75,
+    "s": 160,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -3084,7 +3096,7 @@
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 37,
+    "s": 101,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -3384,14 +3396,20 @@
    },
    "[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 160,
+    "s": 162,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 160,
+    "s": 162,
     "t": "Favola",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 64,
+    "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
@@ -3444,7 +3462,7 @@
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 101,
+    "s": 99,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -3768,9 +3786,21 @@
    },
    "m:2026-11|[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 64,
+    "s": 62,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "[\"ragazza magica\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 95,
+    "t": "Ragazza Magica",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"ragazza magica\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 95,
+    "t": "Ragazza Magica",
+    "a": "Jovanotti"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4150,17 +4180,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂ "
    },
-   "[\"ragazza magica\",\"jovanotti\"]": {
+   "[\"solo 3 min\",\"negromaro\"]": {
     "v": 0,
-    "s": 95,
-    "t": "Ragazza Magica",
-    "a": "Jovanotti"
+    "s": 92,
+    "t": "Solo 3 min",
+    "a": "Negromaro"
    },
-   "m:2026-11|[\"ragazza magica\",\"jovanotti\"]": {
+   "m:2026-11|[\"solo 3 min\",\"negromaro\"]": {
     "v": 0,
-    "s": 95,
-    "t": "Ragazza Magica",
-    "a": "Jovanotti"
+    "s": 92,
+    "t": "Solo 3 min",
+    "a": "Negromaro"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -4540,17 +4570,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂ "
    },
-   "[\"solo 3 min\",\"negromaro\"]": {
+   "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 0,
-    "s": 92,
-    "t": "Solo 3 min",
-    "a": "Negromaro"
+    "s": 73,
+    "t": "HO SBAGLIATO ANCORA",
+    "a": "Chiello"
    },
-   "m:2026-11|[\"solo 3 min\",\"negromaro\"]": {
+   "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 0,
-    "s": 92,
-    "t": "Solo 3 min",
-    "a": "Negromaro"
+    "s": 73,
+    "t": "HO SBAGLIATO ANCORA",
+    "a": "Chiello"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -4930,18 +4960,6 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃ "
    },
-   "[\"ho sbagliato ancora\",\"chiello\"]": {
-    "v": 0,
-    "s": 73,
-    "t": "HO SBAGLIATO ANCORA",
-    "a": "Chiello"
-   },
-   "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
-    "v": 0,
-    "s": 73,
-    "t": "HO SBAGLIATO ANCORA",
-    "a": "Chiello"
-   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -5319,6 +5337,18 @@
     "s": 62,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "Modà"
+   },
+   "[\"memoria di uno sconfitto, pt. 2\",\"mostro\"]": {
+    "v": 0,
+    "s": 29,
+    "t": "Memoria di uno sconfitto, pt. 2",
+    "a": "Mostro"
+   },
+   "m:2026-11|[\"memoria di uno sconfitto, pt. 2\",\"mostro\"]": {
+    "v": 0,
+    "s": 29,
+    "t": "Memoria di uno sconfitto, pt. 2",
+    "a": "Mostro"
    }
   },
   "Diego": {
