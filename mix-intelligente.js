@@ -4,7 +4,8 @@
 const $=id=>document.getElementById(id);
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
   (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
-let enabled=localStorage.getItem("mb.djmix")!=="off";
+let enabled=true;
+try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map();
 let active=null,previousId="",plan=null,plannedFor="",mixing=false;
 function bridge(){return window.MusicBoxBridge}
@@ -35,7 +36,7 @@ function analyzeFrames(buf){
  candidates.sort((a,b)=>b.score-a.score);
  const bpm=candidates[0]?.bpm||120;
  // Trova un attacco ritmico forte negli ultimi 20 secondi.
- const minIndex=Math.max(0,last-400);
+ const minIndex=Math.max(0,last-800);
  let beatAnchor=last;
  let maxNovelty=0;
  for(let i=minIndex;i<=last;i++){
@@ -151,6 +152,7 @@ function transition(a,b,actualDuration){
 }
 function cancel(){
  if(!active)return;
+ if(active.timer)clearTimeout(active.timer);
  try{active.upcoming.pause();active.upcoming.removeAttribute("src");active.upcoming.load()}catch(e){}
  try{if(active.original)active.original.volume=bridge()?.volume?.()??1}catch(e){}
  active=null;mixing=false;
@@ -158,7 +160,7 @@ function cancel(){
 async function handoff(){
  const act=active;if(!act)return;
  const app=bridge(),next=act.track;
- if(!app||window.MusicBoxRoom?.isActive()||app.audio()!==act.original){cancel();return}
+ if(!app||window.MusicBoxRoom?.isActive()||app.audio()!==act.original||app.currentId()!==act.fromId){cancel();return}
  const at=Math.max(0,act.upcoming.currentTime||act.entry);
  try{
   // L'audio di anteprima continua finche' il lettore ufficiale e' avviato.
@@ -175,7 +177,7 @@ async function beginMix(song,proposed){
  upcoming.src=app.mixUrl?.(song)||song.url;
  upcoming.volume=0;
  // Mantieni la riproducibilita\u0027 degli MP3 senza richiedere CORS al media element.
- const act={original:old,upcoming,track:song,entry:proposed.entry,at:performance.now(),fade:Math.min(proposed.fade,Math.max(1.3,proposed.end-old.currentTime-.25))};
+ const act={original:old,fromId:app.currentId(),upcoming,track:song,entry:proposed.entry,at:performance.now(),fade:Math.min(proposed.fade,Math.max(1.3,proposed.end-old.currentTime-.25))};
  active=act;
  try{
   await new Promise((resolve,reject)=>{
@@ -186,14 +188,14 @@ async function beginMix(song,proposed){
    upcoming.addEventListener("error",err,{once:true});
    const timer=setTimeout(()=>{cleanup();reject(Error("timeout"))},4000);
   });
-  if(active!==act||old.paused){cancel();return}
+  if(active!==act||old.paused||app.currentId()!==act.fromId){cancel();return}
   upcoming.currentTime=proposed.entry;
   await upcoming.play();
   act.at=performance.now();
   // Fade equal-power. Non usa WebAudio: rispetta il player e la catena dei bassi.
   function fade(){
    if(active!==act)return;
-   if(old.paused||app.audio()!==old||window.MusicBoxRoom?.isActive()){cancel();return}
+   if(old.paused||app.audio()!==old||app.currentId()!==act.fromId||window.MusicBoxRoom?.isActive()){cancel();return}
    const p=clamp((performance.now()-act.at)/(act.fade*1000),0,1),volume=app.volume();
    try{old.volume=volume*Math.cos(p*Math.PI/2);upcoming.volume=volume*Math.sin(p*Math.PI/2)}catch(e){cancel();return}
    if(p>=1){handoff();return}
@@ -233,7 +235,8 @@ function draw(){
 function start(){
  const btn=$("btnMixIntelligente");
  btn?.addEventListener("click",()=>{
-  enabled=!enabled;localStorage.setItem("mb.djmix",enabled?"on":"off");
+  enabled=!enabled;
+  try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
   if(!enabled)cancel();else{previousId="";plannedFor="";}
   draw();toast(enabled?(isIOS?"Mix attivo: su iPhone resta il passaggio normale per proteggere l'audio.":"Mix intelligente attivato. Analizzo i brani in riproduzione."):"Mix intelligente disattivato.");
  });
