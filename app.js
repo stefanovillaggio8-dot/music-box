@@ -7013,9 +7013,10 @@ box.innerHTML = "";
     }, 300000);
   } catch (e) { /* noop */ }
 
-async function playById(id, autoplay = true) {
+async function playById(id, autoplay = true, startAt = 0) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
+      if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
       // I link non sono file audio: non aprire YouTube al posto del player.
       if (t.source==="youtube-link" && t.youtubeId) {
         if (t._ytStatus==="completed") {
@@ -7090,6 +7091,15 @@ async function playById(id, autoplay = true) {
        potenziato, se c'e' "songs/" e' l'originale. */
     try { _diChe("suono: " + (String(_url).indexOf("/bassi/") >= 0 ? "POTENZIATO" : "originale") + " " + t.id); } catch (e) { }
     audio.src = _url;
+    if (startAt > 0 && Number.isFinite(startAt)) {
+      const target = audio;
+      const at = () => {
+        if (audio !== target || currentId !== id) return;
+        try { target.currentTime = Math.max(0, Math.min(startAt, Number(target.duration || Infinity)-0.5)); } catch (_) {}
+      };
+      if (target.readyState >= 1) at();
+      else target.addEventListener("loadedmetadata", at, { once: true });
+    }
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
@@ -7367,6 +7377,9 @@ function playNext() {
      Ora: il tasto play, il tasto pausa del telefono e quello del blocco
      schermo passano tutti di qui, quindi non possono piu' discordare. */
   function _pausaVolontaria() {
+    if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
+      window.MusicBoxRoom.control("pause");return;
+    }
     _segna("pausa VOLUTARIA (premi tu o il play del telefono)");
     /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
        altrimenti chi aspetta di riavviare la musica mi riaccende. */
@@ -7446,6 +7459,9 @@ function playNext() {
   }
 
   function _riproduciVolontaria() {
+    if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
+      window.MusicBoxRoom.control("play");return;
+    }
     _segna("riproduzione VOLUTARIA");
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);
@@ -7457,6 +7473,9 @@ function playNext() {
   }
 
   async function togglePlay() {
+    if(window.MusicBoxRoom?.isActive()){
+      window.MusicBoxRoom.control(audio?.paused?"play":"pause");return;
+    }
     if (!currentId && tracks.length) {
       /* Il primo tocco avvia gia' playById: NON mettere in pausa
          automaticamente il brano appena e' riuscito a partire. */
@@ -7486,11 +7505,15 @@ function playNext() {
           playNext();
           break;
         case "previous": {
+          if(window.MusicBoxRoom?.isActive()) { window.MusicBoxRoom.control("previous"); break; }
           const id = idBranoA(prevIndex());
           if (id) playById(id);
           break;
         }
         case "seek":
+          if (window.MusicBoxRoom?.isActive()) {
+            window.MusicBoxRoom.control("seek",{seconds:Number(detail.time)||0});break;
+          }
           if (audio && isFinite(Number(detail.time)) && isFinite(audio.duration)) {
             _chiudiAscolto(false);
             audio.currentTime = Math.max(0, Math.min(Number(detail.time), audio.duration));
@@ -7647,10 +7670,16 @@ function _aggiornaPosizioneSchermo() {
       setHandler("pause", () => { _pausaVolontaria(); });
     }
     setHandler("nexttrack", () => playNext());
-    setHandler("previoustrack", () => playById(idBranoA(prevIndex())));
+    setHandler("previoustrack", () => {
+      if(window.MusicBoxRoom?.isActive())window.MusicBoxRoom.control("previous");
+      else playById(idBranoA(prevIndex()));
+    });
     setHandler("seekto", (d) => {
       if (d.seekTime != null && audio && isFinite(audio.duration)) {
         _chiudiAscolto(false);
+        if(window.MusicBoxRoom?.isActive()){
+          window.MusicBoxRoom.control("seek",{seconds:d.seekTime});return;
+        }
         audio.currentTime = Math.max(0, Math.min(d.seekTime, audio.duration));
         updateProgressUI(audio.currentTime, audio.duration);
       }
@@ -7691,6 +7720,8 @@ function _aggiornaPosizioneSchermo() {
     }
     updateProgressUI(audio.currentTime, d);
     savePos();
+    if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying())
+      window.MusicBoxRoom.control("seek",{seconds:t});
   }
 
   async function exportTrack(t) {
@@ -11443,7 +11474,13 @@ window.MusicBoxBridge = {
   allTracks:()=>tracks,
   currentId:()=>currentId,
   audio:()=>audio,
-  play:(id,autoplay)=>playById(id,autoplay),
+  play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
+  mixNext:()=> {
+    if (window.MusicBoxRoom?.isActive() || repeat || !currentId) return null;
+    const id=queue[0] || _anteprimaProssimoBrano() || idBranoA(nextIndex());
+    return tracks.find(t=>t.id===id && t.url && !t.youtubeId)||null;
+  },
+  volume:()=>Math.min(1,Math.max(0,(Number(volumePct)||0)/100)),
   playCurrent:()=>doPlay(),
   urlForFile:file=>_doveStaIlBrano(file),
   refreshQueue:()=>renderQueueCount(),
