@@ -122,3 +122,14 @@ test("iPhone leaves playback alone while app is in the background",()=>{
 test("local harmony is used for automatic queue order",()=>{
  assert.ok(source.includes("const tail=a.outroChroma||a.chroma,head=b.introChroma||b.chroma;"));
 });
+
+test("stereo song with audio only on right channel keeps full ending",()=>{
+ const right=synthetic("loud").getChannelData(0);
+ const left=new Float32Array(right.length);
+ const b={sampleRate:8000,duration:64,numberOfChannels:2,
+  getChannelData:channel=>channel?right:left};
+ const info=analyzeFrames(b);
+ assert.equal(info.confidentTail,false);
+ assert.equal(info.safeOutroAt,null);
+ assert.ok(info.last>63.5);
+});
