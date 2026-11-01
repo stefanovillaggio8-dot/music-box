@@ -297,7 +297,6 @@ async function handoff(){
     app.currentId()!==act.fromId||app.mixNext()?.id!==act.track.id){cancel();return}
  const old=act.original,preview=act.upcoming,volume=app.volume();
  act.handingOff=true;
- let done=false;
  // Non togliere il lettore già udibile mentre il lettore principale sta
  // ancora facendo fetch, decode e seek del nuovo MP3.
  const timeAtHandoff=Math.max(0,preview.currentTime||act.entry);
@@ -342,7 +341,6 @@ async function handoff(){
     preview.volume=volume*(1-p);
     await new Promise(resolve=>setTimeout(resolve,35));
    }
-   done=true;
   }else{
    // Timeout: non tenere due stream vivi indefinitamente.
    // Il lettore principale resta quello ufficiale con volume ripristinato.
@@ -484,7 +482,8 @@ function tick(){
 
 function paintWave(id,bars){
  const element=$(id);
- if(!element||!Array.isArray(bars)||!bars.length)return;
+ if(!element)return;
+ if(!Array.isArray(bars)||!bars.length){element.replaceChildren();return}
  const fragment=document.createDocumentFragment();
  for(const value of bars){
   const bar=document.createElement("span");
@@ -495,8 +494,8 @@ function paintWave(id,bars){
  element.replaceChildren(fragment);
 }
 function updateDetails(a,b){
- if(a?.outroWave)paintWave("mixWaveOut",a.outroWave);
- if(b?.introWave)paintWave("mixWaveIn",b.introWave);
+ paintWave("mixWaveOut",a?.outroWave);
+ paintWave("mixWaveIn",b?.introWave);
  const el=$("mixDetail");if(!el)return;
  if(!a&&!b){
   el.textContent="Analisi automatica dei brani quando la musica è in riproduzione.";
@@ -524,7 +523,11 @@ function draw(){
  const styleEl=$("mixStyle");
  if(styleEl&&styleEl.value!==style)styleEl.value=style;
  const secs=$("mixSeconds");
- if(secs&&Number(secs.value)!==mixSeconds)secs.value=String(mixSeconds);
+ if(secs){
+  if(Number(secs.value)!==mixSeconds)secs.value=String(mixSeconds);
+  secs.disabled=style==="auto";
+  secs.title=style==="auto"?"Automix sceglie da solo la durata per ogni coppia di brani":"Durata manuale della transizione";
+ }
  const value=$("mixSecondsValue");if(value)value.textContent=mixSeconds+" s";
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
