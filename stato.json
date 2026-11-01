@@ -2428,6 +2428,18 @@
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
+   "[\"babydoll\",\"dominic fike\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "Babydoll",
+    "a": "Dominic Fike"
+   },
+   "m:2026-11|[\"babydoll\",\"dominic fike\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "Babydoll",
+    "a": "Dominic Fike"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 4,
@@ -2440,17 +2452,17 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"babydoll\",\"dominic fike\"]": {
+   "[\"mi fido di te\",\"jovanotti\"]": {
     "v": 0,
-    "s": 60,
-    "t": "Babydoll",
-    "a": "Dominic Fike"
+    "s": 120,
+    "t": "Mi Fido Di Te",
+    "a": "Jovanotti"
    },
-   "m:2026-11|[\"babydoll\",\"dominic fike\"]": {
+   "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
     "v": 0,
-    "s": 60,
-    "t": "Babydoll",
-    "a": "Dominic Fike"
+    "s": 120,
+    "t": "Mi Fido Di Te",
+    "a": "Jovanotti"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2818,18 +2830,6 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"mi fido di te\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 120,
-    "t": "Mi Fido Di Te",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 120,
-    "t": "Mi Fido Di Te",
-    "a": "Jovanotti"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3194,6 +3194,30 @@
     "v": 0,
     "s": 62,
     "t": "Cuore e vento (feat. Tazenda)",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"sintetico\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 55,
+    "t": "Sintetico",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"sintetico\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 55,
+    "t": "Sintetico",
+    "a": "Kid Yugi"
+   },
+   "[\"sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
@@ -3562,27 +3586,15 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"sintetico\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 55,
-    "t": "Sintetico",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"sintetico\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 55,
-    "t": "Sintetico",
-    "a": "Kid Yugi"
-   },
    "[\"sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 8,
+    "s": 76,
     "t": "Sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 8,
+    "s": 76,
     "t": "Sono giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ  solo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -3648,7 +3660,7 @@
    },
    "[\"salvami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 1,
+    "s": 86,
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -3966,14 +3978,20 @@
    },
    "[\"sono giÃÂÃÂÃÂÃÂ  solo\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 76,
+    "s": 74,
     "t": "Sono giÃÂÃÂÃÂÃÂ  solo",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"sono giÃÂÃÂÃÂÃÂ  solo\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 76,
+    "s": 74,
     "t": "Sono giÃÂÃÂÃÂÃÂ  solo",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"salvami\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
@@ -4038,7 +4056,7 @@
    },
    "[\"salvami\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 86,
+    "s": 120,
     "t": "Salvami",
     "a": "ModÃÂÃÂ "
    },
@@ -4290,13 +4308,13 @@
    },
    "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 8,
+    "s": 56,
     "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 8,
+    "s": 56,
     "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
@@ -4368,7 +4386,7 @@
    },
    "m:2026-11|[\"salvami\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 85,
+    "s": 119,
     "t": "Salvami",
     "a": "ModÃÂÃÂ "
    },
@@ -4686,13 +4704,13 @@
    },
    "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 56,
+    "s": 66,
     "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 56,
+    "s": 66,
     "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
@@ -4767,6 +4785,18 @@
     "s": 119,
     "t": "Salvami",
     "a": "ModÃÂ "
+   },
+   "[\"we fell in love in october\",\"girl in red\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "we fell in love in october",
+    "a": "girl in red"
+   },
+   "m:2026-11|[\"we fell in love in october\",\"girl in red\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "we fell in love in october",
+    "a": "girl in red"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -5164,17 +5194,29 @@
     "t": "Salvami",
     "a": "ModÃ "
    },
-   "[\"we fell in love in october\",\"girl in red\"]": {
+   "[\"paraguai\",\"nayt, canova\"]": {
     "v": 0,
-    "s": 72,
-    "t": "we fell in love in october",
-    "a": "girl in red"
+    "s": 65,
+    "t": "Paraguai",
+    "a": "nayt, Canova"
    },
-   "m:2026-11|[\"we fell in love in october\",\"girl in red\"]": {
+   "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
     "v": 0,
-    "s": 72,
-    "t": "we fell in love in october",
-    "a": "girl in red"
+    "s": 65,
+    "t": "Paraguai",
+    "a": "nayt, Canova"
+   },
+   "[\"crudelia - i nervi\",\"marracash\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "CRUDELIA - I nervi",
+    "a": "Marracash"
+   },
+   "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "CRUDELIA - I nervi",
+    "a": "Marracash"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -5571,30 +5613,6 @@
     "s": 119,
     "t": "Salvami",
     "a": "Modà"
-   },
-   "[\"paraguai\",\"nayt, canova\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "Paraguai",
-    "a": "nayt, Canova"
-   },
-   "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "Paraguai",
-    "a": "nayt, Canova"
-   },
-   "[\"crudelia - i nervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "CRUDELIA - I nervi",
-    "a": "Marracash"
-   },
-   "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "CRUDELIA - I nervi",
-    "a": "Marracash"
    }
   },
   "Diego": {
