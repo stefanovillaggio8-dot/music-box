@@ -175,7 +175,9 @@ function analyzeFrames(buf){
  // 'first' anticipa di una finestra la coppia di blocchi attivi:
  // riportala vicino all'attacco reale per non lasciare 0.3-0.5s di vuoto.
  const audibleStart=Math.max(0,(first+1)*group*step-.10);
- const audibleEnd=Math.min(duration,(last+1)*group*step);
+ const signalEnd=Math.min(duration,(last+1)*group*step);
+ const assessed=estimateMusicalEnd(ch,rate,blocks,typical,duration,signalEnd);
+ const audibleEnd=Math.min(signalEnd,assessed.end);
  const leading=Math.max(0,audibleStart),trailing=Math.max(0,duration-audibleEnd);
  const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
  let best={bpm:120,score:-Infinity};
@@ -233,12 +235,13 @@ function analyzeFrames(buf){
  // quando gli ultimi secondi si sono davvero abbassati di intensità.
  const tailSlice=tailEnergy.filter(p=>p.at>=audibleEnd-3.5);
  const tailLevel=tailSlice.length?tailSlice.reduce((sum,p)=>sum+p.energy,0)/tailSlice.length:level;
- const quietTail=hasAudio&&level>.0012&&tailSlice.length>=2&&tailLevel<level*.58;
+ const quietTail=hasAudio&&level>.0012&&tailSlice.length>=2&&tailLevel<level*.72;
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
+  outroReason:assessed.reason,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
-  confidentTail:hasAudio&&trailing>=1.5&&audibleEnd>Math.max(20,duration*.35)};
+  confidentTail:hasAudio&&trailing>=1.65&&audibleEnd>Math.max(20,duration*.55)};
 }
 function fft(re,im){
  const n=re.length;
