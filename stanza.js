@@ -197,6 +197,7 @@ function draw(){
    "Stanza creata, in attesa del secondo partecipante.");
  else if(invitation)status("Controlla il profilo attivo, poi premi Entra.");
  else status("La sessione parte solo quando premi Crea.");
+ drawSharedQueue();
 }
 function open(){const el=$("stanzaPanel");if(!el)return;el.hidden=false;bridge()?.syncScroll?.();draw();}
 function close(){if(!$("stanzaPanel"))return;$("stanzaPanel").hidden=true;bridge()?.syncScroll?.();}
@@ -205,10 +206,10 @@ async function create(){
  if(!songs.length){tell("Questa libreria non contiene MP3 online da condividere");return;}
  const btn=$("stanzaCrea");btn.disabled=true;
  try{
-  const result=await request({action:"create",profile:bridge().profile(),tracks:songs});
+  const result=await request({action:"create",profile:bridge().profile(),tracks:songs,...snapshot()});
   creds={id:result.id,token:result.hostToken,guestToken:result.guestToken,role:"host"};
   inviteUrl=location.origin+location.pathname+"#musicbox-room="+result.id+"."+result.guestToken;
-  invitation=null;localPlay=true;needsGesture=false;save();await refresh();
+  invitation=null;localPlay=true;needsGesture=false;catalog=[];catalogFor="";drawnRevision=-1;save();await refresh();
   tell("Stanza creata: copia il link e invialo al tuo amico.");
  }catch(e){tell("Stanza: "+e.message)}
  finally{btn.disabled=false;draw()}
@@ -219,11 +220,13 @@ async function join(){
  if(!songs.length){tell("Seleziona un account con MP3 pubblicati");return;}
  const b=$("stanzaEntra");b.disabled=true;
  try{
-  const result=await request({action:"join",id:invitation.id,token:invitation.token,
-     profile:bridge().profile(),tracks:songs});
+  const payload={action:"join",id:invitation.id,token:invitation.token,profile:bridge().profile(),tracks:songs};
+  let result;
+  try{result=await request(payload)}
+  catch(e){if(!/Room changed/.test(e.message))throw e;result=await request(payload)}
   creds={...invitation,role:"guest"};invitation=null;room=result.room;
-  localPlay=true;needsGesture=false;save();lastRevision=0;await refresh();
-  tell("Librerie unite. Play, pausa e brani si sincronizzano automaticamente.");
+  localPlay=true;needsGesture=false;catalog=[];catalogFor="";drawnRevision=-1;save();lastRevision=0;await refresh();
+  tell("Sei entrato: brano, posizione e coda si sincronizzano automaticamente.");
  }catch(e){tell("Invito: "+e.message)}
  finally{b.disabled=false;draw()}
 }
@@ -298,8 +301,10 @@ async function refresh(){
   // confermato dal server (salto indietro / doppia canzone).
   if(room && Number(response.room.revision)<Number(room.revision))return;
   room=response.room;registerTracks();attachAudio();
+  if(!room.joined)await hostSync();
   if(lastRevision!==room.revision){lastRevision=room.revision;bridge()?.refreshQueue();}
-  await apply();if(!$("stanzaPanel").hidden)draw();
+  await apply();if(room.joined)await fetchCatalog();
+  if(!$("stanzaPanel").hidden)draw();
  }catch(e){
   if(/Room not found or expired/i.test(String(e.message||""))){
    leave();
@@ -315,10 +320,16 @@ function control(command,extra){
  const action=async()=>{
   if(!creds||!room?.joined)return;
   try{
-   const response=await request({action:"control",command,id:creds.id,token:creds.token,
-     expectedRevision:room.revision,...(extra||{})});
+   const payload={action:"control",command,id:creds.id,token:creds.token,expectedRevision:room.revision,...(extra||{})};
+   let response;
+   try{response=await request(payload)}
+   catch(e){
+    if(!command.startsWith("queue-")||!/Queue changed/.test(e.message))throw e;
+    const state=await request({action:"state",id:creds.id,token:creds.token});
+    room=state.room;payload.expectedRevision=room.revision;response=await request(payload);
+   }
    if(response.room && (!room||Number(response.room.revision)>=Number(room.revision))){
-     room=response.room;lastRevision=0;
+     room=response.room;lastRevision=0;drawnRevision=-1;bridge()?.refreshQueue();draw();
    }
    await refresh();
   }catch(e){
@@ -363,7 +374,8 @@ function interceptTrack(id){
 }
 
 function leave(){
- creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;save();
+ creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;
+ catalog=[];catalogFor="";drawnRevision=-1;save();
  bridge()?.refreshQueue();draw();tell("Hai lasciato la stanza");
 }
 function isActive(){return !!(creds&&room?.joined)}
@@ -388,7 +400,8 @@ function start(){
  $("stanzaPlay").addEventListener("click",playPause);
  $("stanzaNext").addEventListener("click",()=>control("next"));
  $("stanzaRimescola").addEventListener("click",()=>control("reshuffle"));
- $("stanzaEsci").addEventListener("click",leave);
+  $("stanzaCercaBrano")?.addEventListener("input",searchSongs);
+  $("stanzaEsci").addEventListener("click",leave);
  // Capture intercetta i controlli principali mentre la stanza e' aperta,
  // per impedire che partano due canzoni diverse sui due dispositivi.
  for(const [id,cmd] of [["btnNext","next"],["btnPrev","previous"],
@@ -420,11 +433,11 @@ function start(){
    }
   }
  }catch(e){}
- setInterval(()=>{if(creds&&!document.hidden)refresh()},2600);
+ setInterval(()=>{if(creds&&!document.hidden)refresh()},1800);
  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&creds)refresh()});
  draw();
 }
-window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave};
+window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave,enqueue,queueAction};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});
 else start();
 })();
