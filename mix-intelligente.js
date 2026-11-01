@@ -12,37 +12,57 @@ function bridge(){return window.MusicBoxBridge}
 function toast(m){bridge()?.toast?.(m)}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function analyzeFrames(buf){
- const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025,hop=Math.max(1,Math.round(rate*step));
- const e=[],count=Math.ceil(ch.length/hop),stride=4;
- for(let i=0;i<count;i++){
-  let sum=0,n=0,end=Math.min(ch.length,(i+1)*hop);
-  for(let j=i*hop;j<end;j+=stride){sum+=ch[j]*ch[j];n++}
-  e.push(Math.sqrt(sum/Math.max(1,n)));
+ const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
+ const hop=Math.max(1,Math.round(rate*step)),energy=[];
+ // Analisi del segnale reale: non ci fidiamo della durata dell'MP3, che
+ // può contenere molti secondi di silenzio iniziale e finale.
+ for(let pos=0;pos<ch.length;pos+=hop){
+  let sum=0,n=0;const end=Math.min(ch.length,pos+hop);
+  for(let i=pos;i<end;i+=4){sum+=ch[i]*ch[i];n++}
+  energy.push(Math.sqrt(sum/Math.max(1,n)));
  }
- let peak=0;for(const x of e)peak=Math.max(peak,x);
- let first=0,last=e.length-1;
- // Entrate e uscite musicali, non semplice durata dell'MP3.
- const threshold=Math.max(.007,peak*.19);
- for(let i=0;i<e.length;i++)if(e[i]>threshold){first=i;break}
- for(let i=e.length-1;i>=0;i--)if(e[i]>threshold){last=i;break}
- const diff=e.map((v,i)=>i?Math.max(0,v-e[i-1]):0);
- const candidates=[];
+ // Finestre da 200ms: ignorano singoli clic, transienti o fruscii isolati.
+ const group=8,blocks=[];
+ for(let i=0;i<energy.length;i+=group){
+  let sum=0,n=0;
+  for(let j=i;j<Math.min(i+group,energy.length);j++){sum+=energy[j]*energy[j];n++}
+  blocks.push(Math.sqrt(sum/Math.max(1,n)));
+ }
+ const ordered=blocks.slice().sort((a,b)=>a-b);
+ const typical=ordered[Math.floor(ordered.length*.9)]||0;
+ const gate=clamp(typical*.035,.0012,.015);
+ const activity=blocks.map(v=>v>gate);
+ // Due finestre attive in tre: una pausa interna non deve chiudere il brano.
+ let first=0,last=Math.max(0,blocks.length-1);
+ for(let i=0;i<activity.length;i++){
+  if(activity.slice(i,i+3).filter(Boolean).length>=2){first=i;break}
+ }
+ for(let i=activity.length-1;i>=0;i--){
+  if(activity.slice(Math.max(0,i-2),i+1).filter(Boolean).length>=2){last=i;break}
+ }
+ const duration=buf.duration||ch.length/rate;
+ const audibleStart=Math.max(0,first*group*step-.12);
+ const audibleEnd=Math.min(duration,(last+1)*group*step);
+ const leading=Math.max(0,audibleStart),trailing=Math.max(0,duration-audibleEnd);
+ const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
+ let best={bpm:120,score:-Infinity};
+ // Autocorrelazione delle variazioni d'energia tra 72 e 180 BPM.
  for(let lag=Math.round(60/(180*step));lag<=Math.round(60/(72*step));lag++){
-  const bpm=Math.round(60/(lag*step));
-  let corr=0,energy=0;
-  for(let i=lag;i<diff.length;i+=2){corr+=diff[i]*diff[i-lag];energy+=diff[i]*diff[i]}
-  candidates.push({bpm,score:corr/(energy+1e-8)});
+  let corr=0,denom=0;
+  for(let i=lag;i<diff.length;i+=2){corr+=diff[i]*diff[i-lag];denom+=diff[i]*diff[i]}
+  const score=corr/(denom+1e-8);
+  if(score>best.score)best={bpm:Math.round(60/(lag*step)),score};
  }
- candidates.sort((a,b)=>b.score-a.score);
- const bpm=candidates[0]?.bpm||120;
- // Trova un attacco ritmico forte negli ultimi 20 secondi.
- const minIndex=Math.max(0,last-800);
- let beatAnchor=last;
- let maxNovelty=0;
- for(let i=minIndex;i<=last;i++){
-  if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i}
+ let beatAnchor=audibleEnd,maxNovelty=0;
+ const finalStart=Math.max(0,Math.round(audibleEnd/step)-800);
+ for(let i=finalStart;i<Math.min(diff.length,Math.ceil(audibleEnd/step));i++){
+  if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i*step}
  }
- return {bpm,first:first*step,last:last*step,beatAnchor:beatAnchor*step,peak};
+ const hasAudio=typical>.0012;
+ return {bpm:best.bpm,first:hasAudio?audibleStart:0,
+  last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
+  trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
+  confidentTail:hasAudio&&trailing>=2.0&&audibleEnd>Math.max(10,duration*.28)};
 }
 function fft(re,im){
  const n=re.length;
@@ -134,99 +154,166 @@ async function decode(track){
  try{return await job}finally{pending.delete(key)}
 }
 function transition(a,b,actualDuration){
- const dur=Math.min(actualDuration,a?.duration||actualDuration);
- if(!a||!b||!Number.isFinite(dur)||dur<40)return null;
- const tempoFit=Math.abs(Math.log2(a.bpm/b.bpm));
- const harmonic=compatibility(a,b);
- // Durata legata alle battute; transizioni lunghe solo per BPM e tonalita' compatibili.
- const bars=(tempoFit<.15&&harmonic>.75)?4:2;
- const secondsPerBeat=60/a.bpm,fade=clamp(bars*4*secondsPerBeat,3.0,8.5);
- // Termina il mix prima dell'ultimo secondo: il lettore ufficiale deve
- // poter aprire il nuovo MP3 senza farsi anticipare dall'evento ended.
- const end=clamp(Math.min(dur-1.5,a.last+.4),25,dur-1.5);
- const anchor=a.beatAnchor||end;
+ const dur=Number(actualDuration);
+ if(!Number.isFinite(dur)||dur<26)return null;
+ const confident=!!(a?.confidentTail && a.last<dur-2.0);
+ const audibleEnd=confident?Math.min(dur,a.last):dur;
+ // L'ultimo istante udibile conta più della fine del file.
+ // Conserva 0.2s di margine se il brano ha una coda musicale reale.
+ const end=clamp(audibleEnd-(confident?.15:1.2),13,dur-1.2);
+ const bpm=Number(a?.bpm)||120;
+ const fit=!!(b?.bpm&&Math.abs(Math.log2(bpm/b.bpm))<.16);
+ const harmony=a?.chroma&&b?.chroma?compatibility(a,b):null;
+ const bars=fit&&harmony>.76?3:2;
+ const fade=clamp(bars*4*60/bpm,3.5,7);
  let begin=end-fade;
- const period=60/a.bpm;
- const nearest=anchor+Math.round((begin-anchor)/period)*period;
- begin+=clamp(nearest-begin,-period*.5,period*.5);
- begin=clamp(begin,18,end-2.0);
- return {begin,end,fade:end-begin,entry:clamp(b.first||0,0,9),score:Math.round((harmonic*100))};
+ // Se la battuta è riconoscibile, il punto di ingresso è leggermente
+ // riallineato al beat; non spostare il mix verso una coda già silenziosa.
+ if(a?.beatAnchor && a?.bpm){
+  const beat=60/a.bpm;
+  const nearest=a.beatAnchor+Math.round((begin-a.beatAnchor)/beat)*beat;
+  begin+=clamp(nearest-begin,-.22,.22);
+ }
+ begin=clamp(begin,9,end-1.4);
+ return {begin,end,fade:end-begin,
+  entry:b?.leading>=.65?clamp(b.first-.08,0,35):0,
+  score:harmony===null?null:Math.round(harmony*100),
+  silenceTrim:confident,
+  trailing:confident?Math.max(0,dur-audibleEnd):0};
+}
+let prepared=null;
+function dropPrepared(){
+ if(!prepared)return;
+ const p=prepared;prepared=null;
+ try{p.audio.pause();p.audio.removeAttribute("src");p.audio.load()}catch(e){}
 }
 function cancel(){
- if(!active)return;
- if(active.timer)clearTimeout(active.timer);
- try{active.upcoming.pause();active.upcoming.removeAttribute("src");active.upcoming.load()}catch(e){}
- try{if(active.original)active.original.volume=bridge()?.volume?.()??1}catch(e){}
- active=null;mixing=false;
+ if(active){
+  const act=active;active=null;
+  if(act.timer)clearTimeout(act.timer);
+  try{act.upcoming.pause();act.upcoming.removeAttribute("src");act.upcoming.load()}catch(e){}
+  try{act.original.volume=bridge()?.volume?.()??1}catch(e){}
+ }
+ dropPrepared();
+ mixing=false;
+}
+function prepare(song,fromId,app){
+ const url=app.mixUrl?.(song)||song.url;
+ if(!url)return;
+ if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url)return;
+ dropPrepared();
+ const upcoming=new Audio();upcoming.preload="auto";upcoming.volume=0;
+ const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false};
+ prepared=p;
+ upcoming.addEventListener("canplay",()=>{if(prepared===p)p.ready=true},{once:true});
+ upcoming.addEventListener("error",()=>{if(prepared===p)p.failed=true},{once:true});
+ upcoming.src=url;
+ try{upcoming.load()}catch(e){p.failed=true}
+ if(upcoming.readyState>=2)p.ready=true;
 }
 async function handoff(){
  const act=active;if(!act)return;
- const app=bridge(),next=act.track;
- if(!app||window.MusicBoxRoom?.isActive()||app.audio()!==act.original||app.currentId()!==act.fromId){cancel();return}
+ const app=bridge();
+ if(!app||window.MusicBoxRoom?.isActive()||app.audio()!==act.original||
+    app.currentId()!==act.fromId){cancel();return}
  const at=Math.max(0,act.upcoming.currentTime||act.entry);
- try{
-  // L'audio di anteprima continua finche' il lettore ufficiale e' avviato.
-  await app.mixHandoff(next.id,at);
- }finally{cancel()}
+ try{await app.mixHandoff(act.track.id,at)}
+ catch(e){/* Il lettore normale gestisce eventuali problemi di rete. */}
+ finally{cancel()}
 }
 async function beginMix(song,proposed){
- const app=bridge(),old=app?.audio();
+ const app=bridge(),old=app?.audio(),id=app?.currentId();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
- if(old.currentTime>=proposed.end-1.6)return;
- mixing=true;
- const upcoming=new Audio();
- upcoming.preload="auto";
- upcoming.src=app.mixUrl?.(song)||song.url;
- upcoming.volume=0;
- // Mantieni la riproducibilita\u0027 degli MP3 senza richiedere CORS al media element.
- const act={original:old,fromId:app.currentId(),upcoming,track:song,entry:proposed.entry,at:performance.now(),fade:Math.min(proposed.fade,Math.max(1.3,proposed.end-old.currentTime-.25))};
+ const p=prepared;
+ if(!p||p.failed||!p.ready||p.id!==song.id||p.fromId!==id)return;
+ if(old.currentTime>proposed.end-.55)return;
+ mixing=true;prepared=null;
+ const upcoming=p.audio;
+ const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,8);
+ const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
+  at:0,fade,timer:null};
  active=act;
  try{
-  await new Promise((resolve,reject)=>{
-   if(upcoming.readyState>=1)return resolve();
-   const ok=()=>{cleanup();resolve()},err=()=>{cleanup();reject(Error("metadata"))};
-   const cleanup=()=>{clearTimeout(timer);upcoming.removeEventListener("loadedmetadata",ok);upcoming.removeEventListener("error",err)};
-   upcoming.addEventListener("loadedmetadata",ok,{once:true});
-   upcoming.addEventListener("error",err,{once:true});
-   const timer=setTimeout(()=>{cleanup();reject(Error("timeout"))},4000);
-  });
-  if(active!==act||old.paused||app.currentId()!==act.fromId){cancel();return}
-  upcoming.currentTime=proposed.entry;
-  await upcoming.play();
-  act.at=performance.now();
-  // Fade equal-power. Non usa WebAudio: rispetta il player e la catena dei bassi.
-  function fade(){
-   if(active!==act)return;
-   if(old.paused||app.audio()!==old||app.currentId()!==act.fromId||window.MusicBoxRoom?.isActive()){cancel();return}
-   const p=clamp((performance.now()-act.at)/(act.fade*1000),0,1),volume=app.volume();
-   try{old.volume=volume*Math.cos(p*Math.PI/2);upcoming.volume=volume*Math.sin(p*Math.PI/2)}catch(e){cancel();return}
-   if(p>=1){handoff();return}
-   act.timer=setTimeout(fade,50);
+  if(proposed.entry>0&&upcoming.seekable?.length){
+   upcoming.currentTime=Math.min(proposed.entry,Math.max(0,(upcoming.duration||Infinity)-1));
+   if(upcoming.seeking){
+    await Promise.race([new Promise(resolve=>
+      upcoming.addEventListener("seeked",resolve,{once:true})),
+      new Promise(resolve=>setTimeout(resolve,1400))]);
+   }
   }
-  fade();
+  if(active!==act||old.paused||app.currentId()!==id){cancel();return}
+  await upcoming.play();
+  if(active!==act||app.currentId()!==id){cancel();return}
+  act.at=performance.now();
+  function fadeStep(){
+   if(active!==act)return;
+   if(old.paused||app.audio()!==old||app.currentId()!==id||
+      window.MusicBoxRoom?.isActive()){cancel();return}
+   const time=clamp((performance.now()-act.at)/(act.fade*1000),0,1);
+   const vol=app.volume();
+   try{
+    old.volume=vol*Math.cos(time*Math.PI/2);
+    upcoming.volume=vol*Math.sin(time*Math.PI/2);
+   }catch(e){cancel();return}
+   if(time>=1){handoff();return}
+   act.timer=setTimeout(fadeStep,50);
+  }
+  fadeStep();
  }catch(e){cancel()}
 }
-async function tick(){
- if(!enabled||isIOS||mixing||document.hidden||window.MusicBoxRoom?.isActive()){if(active)cancel();return}
- const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
- if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<40)return;
- if(previousId!==id){previousId=id;plan=null;plannedFor="";}
- if(plannedFor!==next.id){
-  plannedFor=next.id;plan=null;
-  const now=app.allTracks()?.find(t=>t.id===id);
-  Promise.all([decode(now),decode(next)]).then(([a,b])=>{
-   if(app.currentId()!==id||app.mixNext()?.id!==next.id)return;
-   // Se il provider non lascia analizzare il file, resta un crossfade prudente
-   // basato sulla durata: non inventiamo BPM o tonalita' inesistenti.
-   plan=(a&&b)?transition(a,b,audio.duration):
-    {begin:Math.max(20,audio.duration-7),end:audio.duration-1.5,
-     fade:5.5,entry:0,score:null};
-
-  }).catch(()=>{});
+function tick(){
+ if(!enabled||isIOS||document.hidden||window.MusicBoxRoom?.isActive()){
+  if(active||prepared)cancel();
+  return;
  }
- if(plan&&audio.currentTime>=plan.begin&&audio.currentTime<plan.end-.6)
-  beginMix(next,plan);
+ const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<26){
+  if(active||prepared)cancel();
+  return;
+ }
+ if(active&&(active.original!==audio||active.fromId!==id||active.track.id!==next.id)){
+  cancel();
+ }
+ if(mixing)return;
+ if(previousId!==id){
+  cancel();previousId=id;plannedFor="";plan=null;
+ }
+ if(plannedFor!==next.id){
+  cancel();plannedFor=next.id;
+  const fromId=id,target=next.id,duration=audio.duration;
+  let a=null,b=null;
+  const update=()=>{
+   if(previousId!==fromId||plannedFor!==target||app.currentId()!==fromId||
+      app.mixNext()?.id!==target||mixing)return;
+   const candidate=transition(a,b,audio.duration);
+   if(candidate)plan=candidate;
+  };
+  plan=transition(null,null,duration);
+  const now=app.allTracks()?.find(t=>t.id===id);
+  decode(now).then(value=>{a=value;update()}).catch(()=>{});
+  decode(next).then(value=>{b=value;update()}).catch(()=>{});
+ }
+ if(!plan)return;
+ // Inizia il buffer prima del punto di mix: mai aspettare la battuta finale
+ // per scaricare i metadati del prossimo MP3.
+ const preloadAt=Math.min(plan.begin-12,Math.max(0,audio.duration-25));
+ if(audio.currentTime>=Math.max(0,preloadAt) &&
+    (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
+ // Se l'analisi certifica una lunga coda muta e il punto di mix è già
+ // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
+ if(plan.silenceTrim&&audio.currentTime>=plan.end+.15){
+  const target=next.id,entry=plan.entry;
+  cancel();plannedFor=target;plan=null;
+  Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});
+  return;
+ }
+ if(prepared?.ready && audio.currentTime>=plan.begin &&
+    audio.currentTime<plan.end-.55){
+  beginMix(next,plan).catch(()=>cancel());
+ }
 }
+
 function draw(){
  const btn=$("btnMixIntelligente");if(!btn)return;
  btn.setAttribute("aria-pressed",String(enabled));
