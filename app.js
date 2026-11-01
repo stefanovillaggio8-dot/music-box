@@ -11534,7 +11534,7 @@ $("btnCasuale").addEventListener("click", () => { _chiudiAltro(); _toggleCasuale
 async function _attivaPalestraMusicBox(avvia) {
   let pl = _playlistCercata("gym");
   if (pl && Array.isArray(pl.tracks) && pl.tracks.length) {
-    _playlistAttiva = pl.name;
+    _cambiaContestoPlaylist(pl.name);
     _accendiCasuale(true);
     _disegnaLinguettePlaylist();
     render();
@@ -11549,7 +11549,7 @@ async function _attivaPalestraMusicBox(avvia) {
     toast("Playlist Gym non ancora disponibile. Controlla la connessione.",6000);
     return;
   }
-  _playlistAttiva = pl.name;
+  _cambiaContestoPlaylist(pl.name);
   _accendiCasuale(true);
   _disegnaLinguettePlaylist();
   render();
@@ -12856,7 +12856,7 @@ async function checkForNewSongs() {
   $("btnCreaPlaylist").addEventListener("click", () => { _chiudiAltro(); creaPlaylist(); });
   /* Le linguette: "Tutte" riporta alla libreria intera, il "+" crea. */
   $("plLingTutte").addEventListener("click", () => {
-    _playlistAttiva = "";
+    _cambiaContestoPlaylist("");
     _disegnaLinguettePlaylist();
     render();
   });
@@ -15204,6 +15204,27 @@ pericolo: perDavvero
      nuovo tutta la libreria. */
 
   let _playlistAttiva = "";
+  /* Cambiare linguetta cambia anche la sorgente dei prossimi brani.
+     Prima 'Tutte' cambiava soltanto la vista: _playlistSuona continuava
+     a puntare su Gym e la coda rimaneva quella anche fuori dalla playlist. */
+  function _cambiaContestoPlaylist(nome) {
+    const nuova = String(nome || "");
+    if (_playlistAttiva === nuova) return;
+    _playlistAttiva = nuova;
+    _playlistSuona = [];
+    _posizionePlaylist = -1;
+    _azzeraCasuale();
+    /* La coda esplicita apparteneva al contesto precedente. Quando l'utente
+       cambia libreria/playlist, non trasciniamo brani della vecchia selezione. */
+    if (queue.length) {
+      queue = [];
+      persistQueue();
+    }
+    /* Il DJ potrebbe aver gia' avviato una sfumatura di un brano Gym. */
+    try { window.MusicBoxMix?.cancel?.(); } catch (_) {}
+    renderQueueCount();
+  }
+
   let _lingScrollMemoria = 0;
 
   /* Tenere premuto, come sui brani: se scorre col dito non succede niente,
@@ -15472,7 +15493,7 @@ for (const p of playlists) {
       b.textContent = n ? p.name + " · " + n : p.name;
       b.title = n ? p.name + ": " + n + (n === 1 ? " brano" : " brani") : p.name + ": vuota";
       b.addEventListener("click", () => {
-        _playlistAttiva = (_playlistAttiva === p.name ? "" : p.name);
+        _cambiaContestoPlaylist(_playlistAttiva === p.name ? "" : p.name);
         _disegnaLinguettePlaylist();
         render();
       });
@@ -15494,7 +15515,7 @@ for (const p of playlists) {
           (n === 1 ? " brano" : " brani") + ". <span class=\"pl-torna\">Torna a tutta la libreria</span>";
         const torna = dove.querySelector(".pl-torna");
         if (torna) torna.addEventListener("click", () => {
-          _playlistAttiva = "";
+          _cambiaContestoPlaylist("");
           _disegnaLinguettePlaylist();
           render();
         });
@@ -15508,7 +15529,7 @@ for (const p of playlists) {
     }
     /* Se la playlist scelta e' sparita (l'ho eliminata altrove) torno su Tutte */
     if (_playlistAttiva && !_playlistCercata(_playlistAttiva)) {
-      _playlistAttiva = "";
+      _cambiaContestoPlaylist("");
       render();
     }
     return ceNeSonno;
