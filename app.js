@@ -6699,7 +6699,7 @@ box.innerHTML = "";
         );
         if (!si) return;
         _mettiSoloInPlaylist(t.id);
-        _playlistAttiva = inChePlaylist[0];
+        _cambiaContestoPlaylist(inChePlaylist[0]);
         _disegnaLinguettePlaylist();
         render();
         toast('"' + t.title + '" ora si vede solo dentro "' + inChePlaylist[0] + '"');
@@ -13750,7 +13750,7 @@ $("btnProfile").addEventListener("click", openProfile);
       /* Adesso le playlist stanno nella libreria, con le linguette sopra:
          non apro piu' la finestra a parte, mostro la libreria con la nuova
          playlist gia' selezionata. */
-      _playlistAttiva = pl.name;
+      _cambiaContestoPlaylist(pl.name);
       _disegnaLinguettePlaylist();
       render();
       return pl;
@@ -14008,7 +14008,7 @@ function _aggiornaBadgePlaylist() {
     /* Se sto guardando proprio questa playlist e l'ho eliminata, torno
        alla libreria intera: altrimenti la lista resterebbe vuota senza
        capire perche'. */
-    if (_playlistAttiva === pl.name) _playlistAttiva = "";
+    if (_playlistAttiva === pl.name) _cambiaContestoPlaylist("");
     _disegnaLinguettePlaylist();
     render();
     toast('Playlist "' + pl.name + '" eliminata');
@@ -15276,7 +15276,7 @@ pericolo: perDavvero
     playlists = playlists.filter((x) => x.id !== p.id);
     saveCurrentState();
     _salvaPlaylistCondivise();
-    if (_playlistAttiva === p.name) _playlistAttiva = "";
+    if (_playlistAttiva === p.name) _cambiaContestoPlaylist("");
     _disegnaLinguettePlaylist();
     render();
     toast('Playlist "' + p.name + '" eliminata');
