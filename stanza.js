@@ -44,12 +44,16 @@ function roomTrack(item){return "stanza-"+String(item.key||item.file||"").replac
 function registerTracks(){
  if(!room?.playlist)return;
  const app=bridge(),tracks=app?.allTracks();if(!tracks)return;
+ // Evita O(braniStanza × braniLibreria) ad ogni polling: con 2000 brani
+ // il vecchio tracks.some() ripeteva milioni di confronti.
+ const known=new Set(tracks.map(t=>t.id));
  for(const item of room.playlist){
   const file=String(item.file||"");
   const cloud=/^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file);
   if(!cloud&&!/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(file))continue;
   if(cloud&&!/^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(String(item.url||"")))continue;
-  const id=roomTrack(item);if(tracks.some(t=>t.id===id))continue;
+  const id=roomTrack(item);if(known.has(id))continue;
+   known.add(id);
   tracks.push({id,file:item.file,profile:item.profile||app.profile(),title:String(item.title||"Brano"),
    artist:String(item.artist||""),url:cloud?item.url:app.urlForFile(item.file),
    source:"stanza-condivisa",builtin:true,gradient:"linear-gradient(150deg,#623cbd,#1f2135)"});
