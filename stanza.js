@@ -18,7 +18,12 @@ function tell(msg){if(bridge()?.toast)bridge().toast(msg);else status(msg);}
 function available(){
  const app=bridge();if(!app)return [];
  const profile=app.profile();
- return app.playable().filter(t=>{
+ // Un filtro o una playlist possono escludere il brano che l'host sta
+ // ascoltando: includilo, altrimenti il guest partirebbe su un altro brano.
+ const playing=app.allTracks()?.find(t=>t?.id===app.currentId()&&t.source!=="stanza-condivisa");
+ const list=[...(app.playable()||[])];
+ if(playing&&!list.some(t=>t.id===playing.id))list.push(playing);
+ return list.filter(t=>{
    if(!t||!t.url)return false;
    const f=String(t.file||"");
    if(/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(f))return true;
@@ -64,7 +69,10 @@ function nextItems(){
 }
 function snapshot(){
  const app=bridge(),a=app?.audio(),t=app?.allTracks()?.find(t=>t.id===app.currentId());
- return {currentKey:t?.file?String(t.profile||app.profile())+":"+String(t.file):"",
+ const isSource=!!t&&t.source!=="stanza-condivisa"&&
+  (/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(String(t.file||""))||
+   /^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(String(t.file||"")));
+ return {currentKey:isSource?String(t.profile||app.profile())+":"+String(t.file):"",
   playing:!!a&&!a.paused&&!a.ended,seconds:Math.max(0,Number(a?.currentTime)||0)};
 }
 async function hostSync(){
@@ -86,7 +94,7 @@ async function fetchCatalog(){
  catalogBusy=true;
  try{
   const result=await request({action:"catalog",id:creds.id,token:creds.token});
-  if(!creds||!room?.joined)return;
+  if(!creds||!room?.joined||creds.id+":"+room.guestProfile!==marker)return;
   catalog=Array.isArray(result.catalog)?result.catalog:[];
   catalogFor=marker;drawnRevision=-1;draw();
  }catch(e){status("Catalogo stanza: "+e.message)}
@@ -199,7 +207,7 @@ function draw(){
  else status("La sessione parte solo quando premi Crea.");
  drawSharedQueue();
 }
-function open(){const el=$("stanzaPanel");if(!el)return;el.hidden=false;bridge()?.syncScroll?.();draw();}
+function open(){const el=$("stanzaPanel");if(!el)return;el.hidden=false;drawnRevision=-1;bridge()?.syncScroll?.();draw();}
 function close(){if(!$("stanzaPanel"))return;$("stanzaPanel").hidden=true;bridge()?.syncScroll?.();}
 async function create(){
  const songs=available();
@@ -294,24 +302,36 @@ async function apply(){
 
 async function refresh(){
  if(!creds||busy)return;
+ const activeId=creds.id,activeToken=creds.token;
+ const stillHere=()=>creds?.id===activeId&&creds?.token===activeToken;
  busy=true;
  try{
-  const response=await request({action:"state",id:creds.id,token:creds.token});
-  // Evita che una risposta di polling vecchia sovrascriva un comando appena
-  // confermato dal server (salto indietro / doppia canzone).
-  if(room && Number(response.room.revision)<Number(room.revision))return;
-  room=response.room;registerTracks();attachAudio();
+  // Risposta leggera quando la coda non e' cambiata: niente megabyte inutili.
+  const response=await request({action:"state",id:activeId,token:activeToken,
+    knownRevision:room?.id===activeId?Number(room.revision)||0:0});
+  if(!stillHere())return;
+  if(!response.unchanged){
+   if(!response.room)return;
+   // Una risposta di polling vecchia non puo' annullare un comando recente.
+   if(room&&room.id===activeId&&Number(response.room.revision)<Number(room.revision))return;
+   room=response.room;
+  }
+  if(!room||room.id!==activeId)return;
+  registerTracks();attachAudio();
   if(!room.joined)await hostSync();
+  if(!stillHere())return;
   if(lastRevision!==room.revision){lastRevision=room.revision;bridge()?.refreshQueue();}
-  await apply();if(room.joined)await fetchCatalog();
-  if(!$("stanzaPanel").hidden)draw();
+  await apply();
+  if(!stillHere())return;
+  if(room.joined)await fetchCatalog();
+  if(stillHere()&&!$("stanzaPanel").hidden)draw();
  }catch(e){
+  if(!stillHere())return;
   if(/Room not found or expired/i.test(String(e.message||""))){
    leave();
    status("Stanza scaduta (12 ore). Creane una nuova e manda un nuovo invito.");
   }else if(!$("stanzaPanel").hidden)status("Connessione: "+e.message);
- }
- finally{busy=false}
+ }finally{busy=false}
 }
 function control(command,extra){
  if(!creds||!room?.joined)return Promise.resolve();
@@ -319,20 +339,26 @@ function control(command,extra){
  // I seek durante lo scorrimento sono frequenti: il comando più recente basta.
  const action=async()=>{
   if(!creds||!room?.joined)return;
+  const activeId=creds.id,activeToken=creds.token;
+  const stillHere=()=>creds?.id===activeId&&creds?.token===activeToken;
   try{
-   const payload={action:"control",command,id:creds.id,token:creds.token,expectedRevision:room.revision,...(extra||{})};
+   const payload={action:"control",command,id:activeId,token:activeToken,expectedRevision:room.revision,...(extra||{})};
    let response;
    try{response=await request(payload)}
    catch(e){
     if(!command.startsWith("queue-")||!/Queue changed/.test(e.message))throw e;
-    const state=await request({action:"state",id:creds.id,token:creds.token});
+    const state=await request({action:"state",id:activeId,token:activeToken});
+    if(!stillHere())return;
+    if(!state.room)return;
     room=state.room;payload.expectedRevision=room.revision;response=await request(payload);
    }
+   if(!stillHere())return;
    if(response.room && (!room||Number(response.room.revision)>=Number(room.revision))){
      room=response.room;lastRevision=0;drawnRevision=-1;bridge()?.refreshQueue();draw();
    }
    await refresh();
   }catch(e){
+   if(!stillHere())return;
    tell("Sincronizzazione: "+e.message);
    await refresh();
   }
@@ -376,6 +402,8 @@ function interceptTrack(id){
 function leave(){
  creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;
  catalog=[];catalogFor="";drawnRevision=-1;save();
+ // La riproduzione deve restare autonoma; nessuna risposta tardiva deve
+ // ripristinare la stanza appena lasciata.
  bridge()?.refreshQueue();draw();tell("Hai lasciato la stanza");
 }
 function isActive(){return !!(creds&&room?.joined)}
@@ -437,7 +465,8 @@ function start(){
  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&creds)refresh()});
  draw();
 }
-window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave,enqueue,queueAction};
+window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave,enqueue,queueAction,
+ remainingCount:()=>nextItems().length};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});
 else start();
 })();
