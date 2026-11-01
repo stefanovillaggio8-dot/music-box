@@ -12392,6 +12392,11 @@ $("fabMenu").addEventListener("click", (e) => {
   }
 
   async function downloadAllOffline(selectedUrls) {
+    if(!Array.isArray(selectedUrls)) {
+      // Best effort: ask the browser to retain offline data without
+      // touching or purging any existing music caches.
+      try { navigator.storage?.persist?.().catch(()=>{}); } catch(e) {}
+    }
     if (offlineBusy) {
       // Do not mark a running batch as complete before its fetches settle.
       offlineStopRequested = true;
@@ -12434,7 +12439,10 @@ $("fabMenu").addEventListener("click", (e) => {
       }
     };
     try{
-      await Promise.all(Array.from({length:Math.min(2,rows.length)},()=>worker()));
+      // Safari on iPhone is memory-constrained: only one MP3 at a time.
+      // A second simultaneous blob could trigger a WebKit page reload.
+      const concurrency=/iPhone|iPad|iPod/i.test(navigator.userAgent)?1:2;
+      await Promise.all(Array.from({length:Math.min(concurrency,rows.length)},()=>worker()));
     }finally{
       const cancelled=offlineStopRequested||controller.signal.aborted;
       const switched=owner!==profile;
