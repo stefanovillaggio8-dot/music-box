@@ -141,7 +141,9 @@ function transition(a,b,actualDuration){
  // Durata legata alle battute; transizioni lunghe solo per BPM e tonalita' compatibili.
  const bars=(tempoFit<.15&&harmonic>.75)?4:2;
  const secondsPerBeat=60/a.bpm,fade=clamp(bars*4*secondsPerBeat,3.0,8.5);
- const end=clamp(Math.min(dur-.35,a.last+.4),25,dur-.35);
+ // Termina il mix prima dell'ultimo secondo: il lettore ufficiale deve
+ // poter aprire il nuovo MP3 senza farsi anticipare dall'evento ended.
+ const end=clamp(Math.min(dur-1.5,a.last+.4),25,dur-1.5);
  const anchor=a.beatAnchor||end;
  let begin=end-fade;
  const period=60/a.bpm;
@@ -217,7 +219,7 @@ async function tick(){
    // Se il provider non lascia analizzare il file, resta un crossfade prudente
    // basato sulla durata: non inventiamo BPM o tonalita' inesistenti.
    plan=(a&&b)?transition(a,b,audio.duration):
-    {begin:Math.max(20,audio.duration-5.8),end:audio.duration-.3,
+    {begin:Math.max(20,audio.duration-7),end:audio.duration-1.5,
      fade:5.5,entry:0,score:null};
 
   }).catch(()=>{});
