@@ -85,6 +85,8 @@ Deno.serve(async(req)=>{
       /* Once someone has joined the slot is bound to their chosen profile. */
       if(room.guest_profile&&room.guest_profile!==profile)
         return json({ok:false,error:"Room already has a different guest profile"},409);
+      // Riaprire lo stesso invito non deve rimescolare la coda o fermare l\u0027audio.
+      if(room.guest_profile===profile)return json({ok:true,role,room:present(room)});
       const list=randomOrder(merge(room.host_tracks,tracks));
       const updates={guest_profile:profile,guest_tracks:tracks,playlist:list,
         current_index:0,playing:false,offset_seconds:0,started_at:null,
