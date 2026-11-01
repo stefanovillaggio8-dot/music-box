@@ -11481,6 +11481,11 @@ window.MusicBoxBridge = {
     return tracks.find(t=>t.id===id && t.url && !t.youtubeId)||null;
   },
   volume:()=>Math.min(1,Math.max(0,(Number(volumePct)||0)/100)),
+  mixUrl:(t)=>_urlDelBrano(t),
+  mixHandoff:(id,startAt)=>{
+    if(queue[0]===id){queue.shift();persistQueue()}
+    return playById(id,true,startAt);
+  },
   playCurrent:()=>doPlay(),
   urlForFile:file=>_doveStaIlBrano(file),
   refreshQueue:()=>renderQueueCount(),
