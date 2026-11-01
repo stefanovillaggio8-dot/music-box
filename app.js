@@ -3598,6 +3598,9 @@ function _devoVedereBrano(eMio, b) {
       if ((t.size || 0) > (senzaDuplicati[doppio].size || 0)) senzaDuplicati[doppio] = t;
     }
   tracks = builtin.concat(senzaDuplicati);
+    // Un'importazione cloud può finire mentre l'utente elimina un brano:
+    // ricontrollo i tombstone dal localStorage immediatamente prima del render.
+    tracks=tracks.filter(t=>t&&!_branoEliminato(t.id,profile));
     try {
       _diChe("libreria: " + tracks.length + " brani, scartati " +
         (BUILTIN.length - builtin.length) + " per eliminazione, profilo " + profile +
