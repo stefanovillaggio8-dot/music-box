@@ -130,7 +130,7 @@ function estimateMusicalEnd(data,rate,blocks,typical,duration,audibleEnd){
  let from=duration;
  for(let j=samples.length-1;j>=0;j--){
   const x=samples[j],silent=x.rms<=quiet;
-  const noisy=x.rms<typical*.62&&(x.flat>.50||(x.bass>.80&&x.flat>.095));
+  const noisy=x.rms<typical*.30&&x.flat>.68; // Bass and tonal fade-outs are real music
   if(!silent&&!noisy)break;
   from=x.t;
  }
@@ -382,7 +382,7 @@ async function decode(track){
      Number(track.expectedDurationSec||0);
     const durationMismatch=expected>20&&
      Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
-    const outroFrom=Math.max(0,(frame.safeOutroAt??frame.last)-.4);
+    const outroFrom=Math.max(0,frame.safeOutroAt??frame.last-10);
     const introTo=Math.min(decoded.duration,Math.max(9,frame.first+12));
     const result={...frame,chroma:harmonies,
      introChroma:chroma(decoded,0,introTo),
