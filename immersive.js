@@ -2,8 +2,8 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
-let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,gestureY=null,focusBefore=null,lockBefore=false;
-const fmt=n=>{const s=Math.max(0,Math.floor(Number(n)||0));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
+const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
 function safeCover(t){
  const value=t?.cover;
  if(typeof value!=="string"||!value.trim())return "";
@@ -36,6 +36,7 @@ function renderLyrics(force){
  if(lastLyricsId!==id||force){
   lastLyricsId=id;
   lastLyrics=b.lyricsData?.()||null;
+  lastLyricsRefreshAt=Date.now();
   lastLine=-1;
  }
  const lines=Array.isArray(lastLyrics?.synced)?lastLyrics.synced:[];
@@ -70,7 +71,8 @@ function paint(){
  if(!opened)return;
  const b=api(),a=b?.audio?.(),t=b?.allTracks?.()?.find(x=>x.id===b.currentId?.());
  if((b?.currentId?.()||"")!==lastId){lastId=b?.currentId?.()||"";fillCurrent()}
- const length=Math.max(0,Number(a?.duration)||0),position=Math.max(0,Number(a?.currentTime)||0);
+ const length=Number.isFinite(a?.duration)?Math.max(0,Number(a.duration)):0;
+ const position=Number.isFinite(a?.currentTime)?Math.max(0,Number(a.currentTime)):0;
  const seek=$("imSeek");
  if(!seek.matches(":active")&&document.activeElement!==seek){
   seek.value=length?String(Math.min(1000,Math.round(position/length*1000))):"0";
@@ -81,8 +83,9 @@ function paint(){
  $("imToggle").setAttribute("aria-label",a?.paused?"Riprendi":"Metti in pausa");
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
- renderLyrics(false);
- anim=window.requestAnimationFrame(paint);
+ if(Date.now()-lastLyricsRefreshAt>3500)renderLyrics(true);
+ else renderLyrics(false);
+ anim=window.setTimeout(paint,120);
 }
 function open(){
  if(opened||!api()?.audio?.())return;
@@ -99,7 +102,7 @@ function open(){
 function close(){
  if(!opened)return;
  opened=false;
- if(anim)cancelAnimationFrame(anim);anim=0;
+ if(anim)clearTimeout(anim);anim=0;
  $("immersivePanel").hidden=true;
  $("btnImmersive")?.setAttribute("aria-expanded","false");
  if(!lockBefore)document.body.classList.remove("no-scroll");
