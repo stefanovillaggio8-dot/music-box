@@ -2544,13 +2544,13 @@
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 93,
+    "s": 144,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 93,
+    "s": 144,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "nayt, 3D"
    },
@@ -2781,6 +2781,18 @@
     "s": 96,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "[\"silly cup\",\"thasup\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "siLLy cUp",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"silly cup\",\"thasup\"]": {
+    "v": 0,
+    "s": 60,
+    "t": "siLLy cUp",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3226,16 +3238,16 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"silly cup\",\"thasup\"]": {
+   "[\"grazie a dio\",\"thasup\"]": {
     "v": 0,
-    "s": 60,
-    "t": "siLLy cUp",
+    "s": 61,
+    "t": "gRAZie A Dio",
     "a": "thasup"
    },
-   "m:2026-11|[\"silly cup\",\"thasup\"]": {
+   "m:2026-11|[\"grazie a dio\",\"thasup\"]": {
     "v": 0,
-    "s": 60,
-    "t": "siLLy cUp",
+    "s": 61,
+    "t": "gRAZie A Dio",
     "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
@@ -3682,17 +3694,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"grazie a dio\",\"thasup\"]": {
+   "[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
     "v": 0,
-    "s": 61,
-    "t": "gRAZie A Dio",
-    "a": "thasup"
+    "s": 83,
+    "t": "Senza Di Me (feat. Venerus & Franco126)",
+    "a": "Gemitaiz, Venerus, Franco126"
    },
-   "m:2026-11|[\"grazie a dio\",\"thasup\"]": {
+   "m:2026-11|[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
     "v": 0,
-    "s": 61,
-    "t": "gRAZie A Dio",
-    "a": "thasup"
+    "s": 83,
+    "t": "Senza Di Me (feat. Venerus & Franco126)",
+    "a": "Gemitaiz, Venerus, Franco126"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4138,17 +4150,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
+   "[\"culo\",\"tonypitony\"]": {
     "v": 0,
-    "s": 83,
-    "t": "Senza Di Me (feat. Venerus & Franco126)",
-    "a": "Gemitaiz, Venerus, Franco126"
+    "s": 73,
+    "t": "CULO",
+    "a": "TonyPitony"
    },
-   "m:2026-11|[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
+   "m:2026-11|[\"culo\",\"tonypitony\"]": {
     "v": 0,
-    "s": 83,
-    "t": "Senza Di Me (feat. Venerus & Franco126)",
-    "a": "Gemitaiz, Venerus, Franco126"
+    "s": 73,
+    "t": "CULO",
+    "a": "TonyPitony"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4606,17 +4618,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"culo\",\"tonypitony\"]": {
+   "[\"m@star\",\"thasup\"]": {
     "v": 0,
-    "s": 73,
-    "t": "CULO",
-    "a": "TonyPitony"
+    "s": 83,
+    "t": "m@star",
+    "a": "thasup"
    },
-   "m:2026-11|[\"culo\",\"tonypitony\"]": {
+   "m:2026-11|[\"m@star\",\"thasup\"]": {
     "v": 0,
-    "s": 73,
-    "t": "CULO",
-    "a": "TonyPitony"
+    "s": 83,
+    "t": "m@star",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5074,17 +5086,11 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
-   "[\"m@star\",\"thasup\"]": {
+   "m:2026-11|[\"white keys\",\"dominic fike\"]": {
     "v": 0,
-    "s": 83,
-    "t": "m@star",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"m@star\",\"thasup\"]": {
-    "v": 0,
-    "s": 83,
-    "t": "m@star",
-    "a": "thasup"
+    "s": 65,
+    "t": "WHITE KEYS",
+    "a": "Dominic Fike"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -5542,11 +5548,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
-   "m:2026-11|[\"white keys\",\"dominic fike\"]": {
+   "[\"voodoo\",\"guÃÂ¨\"]": {
     "v": 0,
-    "s": 65,
-    "t": "WHITE KEYS",
-    "a": "Dominic Fike"
+    "s": 62,
+    "t": "Voodoo",
+    "a": "GuÃÂ¨"
+   },
+   "m:2026-11|[\"voodoo\",\"guÃÂ¨\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Voodoo",
+    "a": "GuÃÂ¨"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -6006,15 +6018,27 @@
    },
    "[\"voodoo\",\"guÃ¨\"]": {
     "v": 0,
-    "s": 62,
+    "s": 79,
     "t": "Voodoo",
     "a": "GuÃ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃ¨\"]": {
     "v": 0,
-    "s": 62,
+    "s": 79,
     "t": "Voodoo",
     "a": "GuÃ¨"
+   },
+   "[\"il ferro di echov\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -6484,17 +6508,17 @@
     "t": "Voodoo",
     "a": "Guè"
    },
-   "[\"il ferro di echov\",\"kid yugi\"]": {
+   "[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
     "v": 0,
-    "s": 63,
-    "t": "Il Ferro di Echov",
-    "a": "Kid Yugi"
+    "s": 60,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    },
-   "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
+   "m:2026-11|[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
     "v": 0,
-    "s": 63,
-    "t": "Il Ferro di Echov",
-    "a": "Kid Yugi"
+    "s": 60,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    }
   },
   "Diego": {
