@@ -227,9 +227,6 @@ function compatibility(a,b){
 }
 async function decode(track){
  if(!enabled||!track)return null;
- const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- if(connection?.saveData||/^(slow-)?2g$|^3g$/i.test(String(connection?.effectiveType||"")))
-   return null;
  const source=bridge()?.mixUrl?.(track)||track.url;
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
@@ -241,6 +238,11 @@ async function decode(track){
  // A second caller may have begun the same analysis while IndexedDB loaded.
  if(cache.has(key))return cache.get(key);
  if(pending.has(key))return pending.get(key);
+ // Offline/saved analyses still work in data-saving mode. Only network
+ // downloads are suppressed.
+ const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+ if(connection?.saveData||/^(slow-)?2g$|^3g$/i.test(String(connection?.effectiveType||"")))
+   return null;
  const job=(async()=>{
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14000);
   try{
