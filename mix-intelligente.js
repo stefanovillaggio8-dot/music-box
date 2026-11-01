@@ -144,7 +144,8 @@ function transition(a,b,actualDuration){
  const anchor=a.beatAnchor||end;
  let begin=end-fade;
  const period=60/a.bpm;
- begin+=clamp(Math.round((anchor-begin)/period)*period+begin-begin,-period*.5,period*.5);
+ const nearest=anchor+Math.round((begin-anchor)/period)*period;
+ begin+=clamp(nearest-begin,-period*.5,period*.5);
  begin=clamp(begin,18,end-2.0);
  return {begin,end,fade:end-begin,entry:clamp(b.first||0,0,9),score:Math.round((harmonic*100))};
 }
@@ -172,17 +173,17 @@ async function beginMix(song,proposed){
  upcoming.preload="auto";
  upcoming.src=app.mixUrl?.(song)||song.url;
  upcoming.volume=0;
- upcoming.crossOrigin="anonymous";
+ // Mantieni la riproducibilita\u0027 degli MP3 senza richiedere CORS al media element.
  const act={original:old,upcoming,track:song,entry:proposed.entry,at:performance.now(),fade:proposed.fade};
  active=act;
  try{
   await new Promise((resolve,reject)=>{
    if(upcoming.readyState>=1)return resolve();
    const ok=()=>{cleanup();resolve()},err=()=>{cleanup();reject(Error("metadata"))};
-   const cleanup=()=>{upcoming.removeEventListener("loadedmetadata",ok);upcoming.removeEventListener("error",err)};
+   const cleanup=()=>{clearTimeout(timer);upcoming.removeEventListener("loadedmetadata",ok);upcoming.removeEventListener("error",err)};
    upcoming.addEventListener("loadedmetadata",ok,{once:true});
    upcoming.addEventListener("error",err,{once:true});
-   setTimeout(()=>{cleanup();reject(Error("timeout"))},4000);
+   const timer=setTimeout(()=>{cleanup();reject(Error("timeout"))},4000);
   });
   if(active!==act||old.paused){cancel();return}
   upcoming.currentTime=proposed.entry;
