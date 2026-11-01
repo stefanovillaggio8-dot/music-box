@@ -124,7 +124,25 @@
         } catch (x) { }
       })();
     </script>
-  </head>
+  <style>
+#mixPanel[hidden]{display:none!important}
+#mixPanel{position:fixed;inset:0;z-index:99990;display:grid;place-items:center;padding:16px;background:rgba(6,10,20,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#mixPanel .mix-setting-card{width:min(100%,480px);max-height:90dvh;overflow-y:auto;background:linear-gradient(145deg,#1d2435,#111723);border:1px solid rgba(185,199,227,.2);border-radius:22px;padding:22px;color:#f7f8fb;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+#mixPanel .mix-setting-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+#mixPanel .mix-setting-eyebrow{display:block;font-size:10px;letter-spacing:.17em;color:#91acd0;font-weight:750}
+#mixPanel h2{font-size:22px;line-height:1.25;margin:7px 0 0;color:#fff}
+#mixPanel #mixClose{border:none;background:rgba(255,255,255,.09);color:inherit;border-radius:12px;width:35px;height:35px;font-size:26px;cursor:pointer;flex-shrink:0}
+#mixPanel .mix-setting-section{display:grid;gap:12px;margin:15px 0;padding:15px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:14px}
+#mixPanel .mix-setting-line{display:flex;justify-content:space-between;align-items:center}
+#mixPanel .mix-setting-toggle{background:#208f73;color:white;border:0;padding:9px 15px;border-radius:30px;font-weight:650}
+#mixPanel label{font-size:13px;font-weight:650;color:#cbd5e4}
+#mixPanel select{width:100%;background:#0f1520;border:1px solid #45566f;color:white;border-radius:9px;padding:12px;font:inherit}
+#mixPanel #mixSeconds{width:100%;accent-color:#57d9b5}
+#mixPanel output{float:right;color:#74e5c4}
+#mixPanel .mix-setting-hint,#mixPanel #mixDetail{font-size:12px;line-height:1.6;color:#aebbd0;margin:0}
+#mixPanel #mixDetail{color:#deebff;overflow-wrap:anywhere}
+</style>
+</head>
 <body>
   <header class="topbar">
     <div class="topbar-head">
@@ -523,6 +541,10 @@
         <button class="menu-altro-voce" id="btnMixIntelligente" type="button" aria-pressed="true">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M2 14h3l2-8 4 13 3-10 2 5h6"/></svg>
           <span class="voce-testo">Mix intelligente: attivo <small>BPM · tonalità · attacchi · crossfade</small></span>
+        </button>
+        <button class="menu-altro-voce" id="btnMixSettings" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16M9 5v4M16 10v4M11 15v4"/></svg>
+          <span class="voce-testo">Regola le transizioni <small>Auto · Fade · Rise · durata · BPM</small></span>
         </button>
       </section>
       <section class="menu-altro-gruppo" aria-label="Amici">
@@ -1286,6 +1308,31 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
     </div>
   </div>
 
+<div id="mixPanel" hidden role="dialog" aria-modal="true" aria-label="Regola il mix intelligente">
+  <div class="mix-setting-card">
+    <div class="mix-setting-head">
+      <div><span class="mix-setting-eyebrow">MUSIC BOX · DJ MIX</span><h2>Transizioni tra brani</h2></div>
+      <button id="mixClose" type="button" aria-label="Chiudi le impostazioni mix">×</button>
+    </div>
+    <div class="mix-setting-section">
+      <div class="mix-setting-line"><strong>Mix intelligente</strong><button type="button" id="mixToggle" class="mix-setting-toggle"><span id="mixToggleLabel">Attivo</span></button></div>
+      <label for="mixStyle">Stile di transizione</label>
+      <select id="mixStyle">
+        <option value="auto">Automix — sceglie ogni passaggio</option>
+        <option value="fade">Fade — dissolvenza uniforme</option>
+        <option value="rise">Rise — entrata progressiva</option>
+      </select>
+      <label for="mixSeconds">Durata transizioni manuali <output id="mixSecondsValue" for="mixSeconds">6 s</output></label>
+      <input id="mixSeconds" type="range" min="3" max="12" step="1" value="6">
+      <p class="mix-setting-hint">Automix regola autonomamente la lunghezza; per Fade e Rise scegli da 3 a 12 secondi.</p>
+    </div>
+    <div class="mix-setting-section">
+      <strong>Analisi della transizione</strong>
+      <p id="mixDetail" aria-live="polite">Analisi automatica durante la riproduzione.</p>
+    </div>
+    <p id="mixDeviceNote" class="mix-setting-hint"></p>
+  </div>
+</div>
 <div class="import-overlay" id="stanzaPanel" hidden role="dialog" aria-label="Ascolto insieme">
   <div class="import-card stanza-card">
     <div class="import-head">
