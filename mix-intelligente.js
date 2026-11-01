@@ -1123,7 +1123,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    if(!track)return 0;
    const source=app.mixUrl?.(track)||track.url;
    const measured=cache.get(String(source));
-   return measured?.leading>=1.8?clamp(measured.first-.10,0,18):0;
+   // Skip only verified digital silence; preserve low-volume instruments.
+   return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
  onTrackChange:(id)=>{
   if(active&&!(active.handingOff&&active.track.id===id))cancel();
