@@ -2230,6 +2230,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
+    "v": 0,
+    "s": 80,
+    "t": "CORALINE",
+    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
+   },
+   "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+    "v": 0,
+    "s": 80,
+    "t": "CORALINE",
+    "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2556,15 +2568,27 @@
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 80,
+    "s": 129,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 80,
+    "s": 129,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"so solo che la vita\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 126,
+    "t": "So solo che la vita",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"so solo che la vita\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 126,
+    "t": "So solo che la vita",
+    "a": "Jovanotti"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2902,18 +2926,6 @@
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
-   "[\"so solo che la vita\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 126,
-    "t": "So solo che la vita",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"so solo che la vita\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 126,
-    "t": "So solo che la vita",
-    "a": "Jovanotti"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3249,6 +3261,18 @@
     "s": 129,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"intro (la bella vita)\",\"artie 5ive\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "INTRO (La Bella Vita)",
+    "a": "Artie 5ive"
+   },
+   "m:2026-11|[\"intro (la bella vita)\",\"artie 5ive\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "INTRO (La Bella Vita)",
+    "a": "Artie 5ive"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3598,18 +3622,6 @@
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
-   "[\"intro (la bella vita)\",\"artie 5ive\"]": {
-    "v": 0,
-    "s": 83,
-    "t": "INTRO (La Bella Vita)",
-    "a": "Artie 5ive"
-   },
-   "m:2026-11|[\"intro (la bella vita)\",\"artie 5ive\"]": {
-    "v": 0,
-    "s": 83,
-    "t": "INTRO (La Bella Vita)",
-    "a": "Artie 5ive"
-   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3957,6 +3969,30 @@
     "s": 129,
     "t": "CORALINE",
     "a": "MÃÂÃÂ¥neskin"
+   },
+   "[\"nuts\",\"lil peep\"]": {
+    "v": 0,
+    "s": 34,
+    "t": "nuts",
+    "a": "Lil Peep"
+   },
+   "m:2026-11|[\"nuts\",\"lil peep\"]": {
+    "v": 0,
+    "s": 34,
+    "t": "nuts",
+    "a": "Lil Peep"
+   },
+   "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂ , bianca atzei\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Ti amo ma non posso dirlo",
+    "a": "ModÃÂÃÂ , Bianca Atzei"
+   },
+   "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂ , bianca atzei\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Ti amo ma non posso dirlo",
+    "a": "ModÃÂÃÂ , Bianca Atzei"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -4306,27 +4342,15 @@
     "t": "CORALINE",
     "a": "MÃÂ¥neskin"
    },
-   "[\"nuts\",\"lil peep\"]": {
-    "v": 0,
-    "s": 34,
-    "t": "nuts",
-    "a": "Lil Peep"
-   },
-   "m:2026-11|[\"nuts\",\"lil peep\"]": {
-    "v": 0,
-    "s": 34,
-    "t": "nuts",
-    "a": "Lil Peep"
-   },
    "[\"ti amo ma non posso dirlo\",\"modÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 6,
+    "s": 85,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 6,
+    "s": 85,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
@@ -4656,13 +4680,13 @@
    },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 10,
+    "s": 85,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 10,
+    "s": 85,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -4680,13 +4704,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃ , bianca atzei\"]": {
     "v": 0,
-    "s": 85,
+    "s": 84,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃ , bianca atzei\"]": {
     "v": 0,
-    "s": 85,
+    "s": 84,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃ , Bianca Atzei"
    },
@@ -5016,13 +5040,13 @@
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 85,
+    "s": 119,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 85,
+    "s": 119,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
@@ -5049,6 +5073,18 @@
     "s": 84,
     "t": "Ti amo ma non posso dirlo",
     "a": "Modà, Bianca Atzei"
+   },
+   "[\"bad vibes\",\"nayt\"]": {
+    "v": 0,
+    "s": 45,
+    "t": "Bad vibes",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"bad vibes\",\"nayt\"]": {
+    "v": 0,
+    "s": 45,
+    "t": "Bad vibes",
+    "a": "nayt"
    }
   },
   "Diego": {
