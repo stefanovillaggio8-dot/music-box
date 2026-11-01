@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6502" />
+  <link rel="stylesheet" href="style.css?v=6503" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -562,7 +562,11 @@
       </section>
       <section class="menu-altro-gruppo" aria-label="Amici">
         <p class="menu-altro-sezione">CON GLI AMICI</p>
-        <button class="menu-altro-voce" id="btnAscoltoCondiviso" type="button">
+        <button class="menu-altro-voce" id="btnAmiciOnline" type="button">
+           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 1 0-2.2-7.35M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-7 2.2-7 5v2h14v-2c0-2.8-3-5-7-5Zm9-1c2.8.3 5 2.2 5 4.5V21h-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+           <span class="voce-testo">Amici online <small>Vedi chi ascolta musica · richieste per le stanze</small></span>
+         </button>
+         <button class="menu-altro-voce" id="btnAscoltoCondiviso" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm8 0a4 4 0 1 0-4-4 4 4 0 0 0 4 4ZM1 20v-3c0-2 3-4 7-4s7 2 7 4v3Zm15 0v-3a5 5 0 0 0-1.5-3.5c4-1 8 1 8 4V20Z"/></svg>
           <span class="voce-testo">Ascolta insieme <small>Fino a 8 persone, attività e coda condivise</small></span>
         </button>
@@ -1408,6 +1412,29 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
     <p id="mixDeviceNote" class="mix-setting-hint"></p>
   </div>
 </div>
+<div class="import-overlay" id="amiciPanel" hidden role="dialog" aria-label="Amici online">
+  <div class="import-card amici-card">
+    <div class="import-head">
+      <div class="import-head-info">
+        <p class="import-title">Amici online <span class="amici-online-pill"><span id="amiciOnlineCount">0</span> online</span></p>
+        <p class="import-sub">Ste · Diego · Emanuele</p>
+      </div>
+      <button class="import-close" id="amiciClose" type="button" aria-label="Chiudi amici">×</button>
+    </div>
+    <div class="import-body">
+      <section class="amici-settings" aria-label="Impostazioni privacy">
+        <label class="amici-option"><span><b>Mostrami online</b><small>Disattivato all'inizio. Puoi diventare invisibile quando vuoi.</small></span><input id="amiciVisible" type="checkbox"/></label>
+        <label class="amici-option"><span><b>Mostra cosa ascolto</b><small>Se disattivato, gli amici vedono solo che sei online.</small></span><input id="amiciSong" type="checkbox"/></label>
+      </section>
+      <p id="amiciStatus" class="amici-status" role="status">La tua attività è privata.</p>
+      <div class="amici-heading"><h3>Amici connessi</h3><button id="amiciRefresh" type="button">Aggiorna ↻</button></div>
+      <div id="amiciList" class="amici-users" aria-live="off"></div>
+      <h3 class="amici-requests-title">Richieste per le stanze</h3>
+      <div id="amiciRequests" class="amici-requests"></div>
+      <p class="amici-disclaimer">La presenza è approssimativa: su iPhone può diventare offline quando il browser sospende l'app. I profili Music Box non sono account autenticati, quindi i nomi non certificano l'identità della persona.</p>
+    </div>
+  </div>
+</div>
 <div class="import-overlay" id="stanzaPanel" hidden role="dialog" aria-label="Ascolto insieme">
   <div class="import-card stanza-card">
     <div class="import-head">
@@ -1456,10 +1483,11 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6502"></script>
-<script src="app.js?v=6502"></script>
-<script src="stanza.js?v=6502"></script>
-<script src="mix-intelligente.js?v=6502"></script>
-<script src="immersive.js?v=6502"></script>
+<script src="fuoco.js?v=6503"></script>
+<script src="app.js?v=6503"></script>
+<script src="stanza.js?v=6503"></script>
+<script src="amici-online.js?v=6503"></script>
+<script src="mix-intelligente.js?v=6503"></script>
+<script src="immersive.js?v=6503"></script>
 </body>
 </html>
