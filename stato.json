@@ -1331,8 +1331,8 @@
     "a": "Coldplay"
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 1,
+    "v": 1,
+    "s": 2,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -3850,6 +3850,36 @@
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
+    "v": 1,
+    "s": 3,
+    "t": "Alta marea",
+    "a": "Antonello Venditti"
+   },
+   "[\"distrutto\",\"carla morrison\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Distrutto",
+    "a": "Carla Morrison"
+   },
+   "m:2026-11|[\"distrutto\",\"carla morrison\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Distrutto",
+    "a": "Carla Morrison"
+   },
+   "[\"le mie colpe\",\"glocky\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "le mie colpe",
+    "a": "glocky"
+   },
+   "m:2026-11|[\"le mie colpe\",\"glocky\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "le mie colpe",
+    "a": "glocky"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4257,36 +4287,6 @@
     "s": 73,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
-    "v": 1,
-    "s": 3,
-    "t": "Alta marea",
-    "a": "Antonello Venditti"
-   },
-   "[\"distrutto\",\"carla morrison\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Distrutto",
-    "a": "Carla Morrison"
-   },
-   "m:2026-11|[\"distrutto\",\"carla morrison\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Distrutto",
-    "a": "Carla Morrison"
-   },
-   "[\"le mie colpe\",\"glocky\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "le mie colpe",
-    "a": "glocky"
-   },
-   "m:2026-11|[\"le mie colpe\",\"glocky\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "le mie colpe",
-    "a": "glocky"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5143,13 +5143,25 @@
    "[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'Ã¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'Ã¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
@@ -5416,27 +5428,15 @@
     "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 119,
+    "s": 121,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 119,
+    "s": 121,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -5838,13 +5838,13 @@
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 121,
+    "s": 123,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 121,
+    "s": 123,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
@@ -5919,6 +5919,12 @@
     "s": 73,
     "t": "Tutti il resto è noi",
     "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Un mondo a parte (Visual)",
+    "a": "Jovanotti"
    }
   },
   "Diego": {
@@ -7482,18 +7488,6 @@
     "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
-    "a": "nayt, 3D"
-   },
    "[\"ne vale la pena (version 1)\",\"22simba\"]": {
     "v": 0,
     "s": 7,
@@ -7505,6 +7499,18 @@
     "s": 7,
     "t": "Ne vale la pena (Version 1)",
     "a": "22simba"
+   },
+   "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹",
+    "a": "nayt, 3D"
    },
    "[\"voglio di piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
@@ -7530,18 +7536,6 @@
     "t": "Voglio di piÃÂÃÂÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"voglio di piÃÂÃÂ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Voglio di piÃÂÃÂ¹",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"voglio di piÃÂÃÂ¹\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 6,
-    "t": "Voglio di piÃÂÃÂ¹",
-    "a": "nayt, 3D"
-   },
    "[\"le mie colpe\",\"glocky\"]": {
     "v": 1,
     "s": 9,
@@ -7553,6 +7547,18 @@
     "s": 9,
     "t": "le mie colpe",
     "a": "glocky"
+   },
+   "[\"voglio di piÃÂÃÂ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Voglio di piÃÂÃÂ¹",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"voglio di piÃÂÃÂ¹\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 6,
+    "t": "Voglio di piÃÂÃÂ¹",
+    "a": "nayt, 3D"
    },
    "[\"voglio di piÃÂ¹\",\"nayt, 3d\"]": {
     "v": 1,
