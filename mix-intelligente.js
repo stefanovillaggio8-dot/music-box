@@ -274,14 +274,68 @@ function prepare(song,fromId,app){
  if(upcoming.readyState>=2)p.ready=true;
 }
 async function handoff(){
- const act=active;if(!act)return;
+ const act=active;if(!act||act.handingOff)return;
  const app=bridge();
  if(!app||window.MusicBoxRoom?.isActive()||app.audio()!==act.original||
     app.currentId()!==act.fromId||app.mixNext()?.id!==act.track.id){cancel();return}
- const at=Math.max(0,act.upcoming.currentTime||act.entry);
- try{await app.mixHandoff(act.track.id,at)}
- catch(e){/* Il lettore normale gestisce eventuali problemi di rete. */}
- finally{cancel()}
+ const old=act.original,preview=act.upcoming,volume=app.volume();
+ act.handingOff=true;
+ let done=false;
+ // Non togliere il lettore già udibile mentre il lettore principale sta
+ // ancora facendo fetch, decode e seek del nuovo MP3.
+ const timeAtHandoff=Math.max(0,preview.currentTime||act.entry);
+ let playJob;
+ try{
+  playJob=Promise.resolve(app.mixHandoff(act.track.id,timeAtHandoff));
+  // Il player originale reimposta il volume in _applicaAudio(): riportalo
+  // a zero finché non ha realmente un frame pronto da riprodurre.
+  old.volume=0;
+  const ready=()=>!old.paused&&old.readyState>=2&&
+    app.currentId()===act.track.id&&!old.seeking;
+  let maxWait=0;
+  while(active===act&&!ready()&&maxWait<45){
+   await new Promise(resolve=>setTimeout(resolve,100));
+   maxWait++;
+  }
+  if(active!==act||app.currentId()!==act.track.id)return;
+  if(!ready()){
+   // Se il nuovo player non parte, non inventare una transizione conclusa.
+   // Lascia il preview udibile finché il browser lo consente.
+   await Promise.race([playJob.catch(()=>{}),new Promise(r=>setTimeout(r,600))]);
+  }
+  if(ready()){
+   // Sincronizza il nuovo player alla traccia che l'utente sta già sentendo.
+   // Esegue il seek soltanto se non è già allineato e se il file è seekable.
+   try{
+    if(old.seekable?.length&&Math.abs(old.currentTime-preview.currentTime)>.35)
+      old.currentTime=Math.min(preview.currentTime,Math.max(0,(old.duration||Infinity)-.5));
+   }catch(e){}
+   if(old.seeking){
+    await Promise.race([new Promise(resolve=>
+      old.addEventListener("seeked",resolve,{once:true})),
+      new Promise(resolve=>setTimeout(resolve,1000))]);
+   }
+   if(active!==act||app.currentId()!==act.track.id)return;
+   // Passaggio finale breve ma continuo: elimina il salto del lettore
+   // precedente dopo il crossfade musicale principale.
+   const t0=performance.now();
+   while(active===act&&performance.now()-t0<280){
+    const p=clamp((performance.now()-t0)/280,0,1);
+    old.volume=volume*p;
+    preview.volume=volume*(1-p);
+    await new Promise(resolve=>setTimeout(resolve,35));
+   }
+   done=true;
+  }else{
+   // Timeout: non tenere due stream vivi indefinitamente.
+   // Il lettore principale resta quello ufficiale con volume ripristinato.
+   try{old.volume=volume}catch(e){}
+  }
+ }catch(e){
+  try{old.volume=volume}catch(_){}
+ }finally{
+  if(active===act)cancel();
+ }
 }
 async function beginMix(song,proposed){
  const app=bridge(),old=app?.audio(),id=app?.currentId();
@@ -347,6 +401,10 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ if(active?.handingOff){
+  if(id===active.track.id)return;
+  cancel();return;
+ }
  if(isIOS&&audio&&boundAudio!==audio){
   boundAudio=audio;
   audio.addEventListener("timeupdate",()=>{try{tick()}catch(e){}});
