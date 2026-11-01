@@ -357,40 +357,46 @@ async function decode(track){
   return data;
  }finally{pending.delete(key)}
 }
+
+function hasReliableHarmony(ch){
+ if(!Array.isArray(ch)||ch.length!==12)return false;
+ const v=ch.slice().sort((a,b)=>b-a);
+ return v[0]>=.117&&v.slice(0,4).reduce((a,b)=>a+b,0)>=.435;
+}
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26)return null;
- const trim=!!(a?.confidentTail&&a.last<dur-2);
- const audibleEnd=trim?Math.min(dur,a.last):dur;
+ const trim=!!(a?.confidentTail&&a.last<dur-1.65);
+ const musicalEnd=trim?Math.min(dur,a.last):dur;
  const introEntry=b?.leading>=1.8?clamp(b.first-.10,0,18):0;
- // Un MP3 non analizzabile non è una prova che due pezzi si possano mixare.
- // Se una coda muta è confermata, la saltiamo; altrimenti lasciamo la
- // riproduzione normale, senza sovrapporre casualmente voci o ritornelli.
- const cleanCut=()=>trim?{
-  begin:audibleEnd-.12,end:audibleEnd-.12,fade:0,entry:introEntry,tempo:1,
-  kind:"cut",gain:1,score:null,silenceTrim:true,
-  trailing:Math.max(0,dur-audibleEnd)}:null;
- if(!a||!b)return cleanCut();
+ const fallback=()=>{
+  if(!trim&&!a?.quietTail)return null;
+  const end=clamp(musicalEnd-(trim?.10:.28),12,dur-.2);
+  const fade=clamp(trim?1.7:1.15,.75,Math.min(2.1,end-10));
+  return {begin:end-fade,end,fade,entry:introEntry,tempo:1,
+   kind:"soft",gain:1,score:null,silenceTrim:trim,
+   trailing:trim?Math.max(0,dur-musicalEnd):0};
+ };
+ if(!a||!b)return fallback();
  const bpm=Number(a.bpm)||120;
  const ratios=b.bpm?[.5,1,2].map(mult=>bpm/(b.bpm*mult)):[1];
  const ratio=ratios.reduce((best,r)=>
   Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best,ratios[0]);
- const beatClose=a.beatConfidence>=.12&&b.beatConfidence>=.12&&
+ const beatClose=a.beatConfidence>=.13&&b.beatConfidence>=.13&&
   ratio>=.94&&ratio<=1.06;
- const harmonic=a.chroma&&b.chroma?compatibility(a,b):null;
- // Le stime sono indicative, non confondere un BPM indovinato con un
- // mix affidabile. Senza stima armonica evitiamo il DJ, non inventiamo dati.
- const musicallyCompatible=beatClose&&harmonic!==null&&harmonic>=.72;
- const autoCompatible=musicallyCompatible&&a.quietTail===true;
- const kind=style==="auto"?(autoCompatible?"beat":"cut"):style;
- if(kind==="cut")return cleanCut();
- const end=clamp(audibleEnd-(trim?.22:1.15),13,dur-1.15);
- const bars=kind==="beat"?4:2;
- const automaticSeconds=clamp(bars*4*60/bpm,3.2,7.5);
- const requested=style==="auto"?automaticSeconds:mixSeconds;
- const fade=clamp(requested,2.8,Math.min(12,end-8));
+ const reliable=hasReliableHarmony(a.chroma)&&hasReliableHarmony(b.chroma);
+ const harmonic=reliable?compatibility(a,b):null;
+ const musicallyCompatible=beatClose&&harmonic!==null&&harmonic>=.75;
+ const autoCompatible=musicallyCompatible&&(a.quietTail||trim);
+ const kind=style==="auto"?(autoCompatible?"beat":"soft"):style;
+ if(style==="auto"&&!autoCompatible)return fallback();
+ const end=clamp(musicalEnd-(trim?.20:.65),13,dur-.8);
+ const bars=kind==="beat"?3:2;
+ const autoSeconds=clamp(bars*4*60/bpm,3,6);
+ const requested=style==="auto"?autoSeconds:mixSeconds;
+ const fade=clamp(requested,2,Math.min(10,end-8));
  let begin=end-fade;
- if(a.beatAnchor&&a.beatConfidence>=.12){
+ if(a.beatAnchor&&a.beatConfidence>=.13){
   const period=60/bpm;
   begin+=clamp(a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period-begin,-.23,.23);
  }
@@ -402,14 +408,14 @@ function transition(a,b,actualDuration){
   }
  }
  begin=clamp(begin,8,end-1.5);
- let entry=b.leading>=.65?clamp(b.first-.08,0,40):0;
+ let entry=b.leading>=.65?clamp(b.first-.08,0,30):0;
  if(beatClose&&b.leading>=.65&&b.introBeat>entry+.2&&b.introBeat<entry+3.5)
-  entry=clamp(b.introBeat-.06,0,40);
+  entry=clamp(b.introBeat-.06,0,30);
  const tempo=beatClose&&kind==="beat"?clamp(ratio,.97,1.03):1;
  const gain=a.level&&b.level?clamp(a.level/b.level,.87,1.13):1;
  return {begin,end,fade:end-begin,entry,tempo,kind,gain,
   score:harmonic===null?null:Math.round(harmonic*100),
-  silenceTrim:trim,trailing:trim?Math.max(0,dur-audibleEnd):0};
+  silenceTrim:trim,trailing:trim?Math.max(0,dur-musicalEnd):0};
 }
 function keyGuess(ch){
  if(!Array.isArray(ch)||ch.length!==12)return null;
@@ -559,7 +565,7 @@ async function beginMix(song,proposed){
    // Tre curve: Auto/Beat (equal power), Fade (lineare), Rise (entrata
    // graduale e uscita netta). Evita picchi quando il volume è alto.
    let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
-   if(act.kind==="fade"){outGain=1-time;inGain=time}
+   if(act.kind==="fade"||act.kind==="soft"){outGain=1-time;inGain=time}
    else if(act.kind==="rise"){
     outGain=1-Math.pow(time,1.4);
     inGain=Math.pow(time,1.7);
@@ -640,7 +646,8 @@ function tick(){
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
  // Se l'analisi certifica una lunga coda muta e il punto di mix è già
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
- if(plan.silenceTrim&&audio.currentTime>=plan.end+.15){
+ if(plan.silenceTrim&&audio.currentTime>=plan.end+.15&&
+    (isIOS||(!active&&(!prepared||!prepared.ready||plan.kind==="cut")))){
   const target=next.id,entry=plan.entry;
   cancel();plannedFor=target;plan=null;
   // Su iPhone un solo audio alla volta preserva i controlli nella
