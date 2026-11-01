@@ -12188,6 +12188,14 @@ $("fabMenu").addEventListener("click", (e) => {
 
   async function cacheTrack(row, cache) {
     const url = row.track.url;
+    // A request suspended by iOS must not block the whole offline queue
+    // forever after the screen wakes. The timeout covers the full stream.
+    const parentSignal=offlineAbort?.signal;
+    const requestController=new AbortController();
+    const abortRequest=()=>requestController.abort();
+    if(parentSignal?.aborted)abortRequest();
+    parentSignal?.addEventListener("abort",abortRequest,{once:true});
+    const requestTimer=setTimeout(abortRequest,45000);
     row.state = "run";
     row.label = "0%";
     if (row.el) {
@@ -12195,7 +12203,7 @@ $("fabMenu").addEventListener("click", (e) => {
       row.el.state.textContent = "0%";
     }
     try {
-      const res = await fetch(url, { signal: offlineAbort.signal });
+      const res = await fetch(url, { signal: requestController.signal });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const contentType=String(res.headers.get("content-type")||"").toLowerCase();
       if(contentType.includes("text/html")||contentType.includes("application/json"))
@@ -12262,6 +12270,9 @@ $("fabMenu").addEventListener("click", (e) => {
         row.el.state.textContent = "errore";
         row.el.state.title = row.motivo;
       }
+    } finally {
+      clearTimeout(requestTimer);
+      parentSignal?.removeEventListener("abort",abortRequest);
     }
   }
 
