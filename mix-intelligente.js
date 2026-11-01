@@ -532,10 +532,7 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
- // Analizza le alternative prima di arrivare alla transizione.
- if(app&&audio&&id&&!audio.paused&&Number.isFinite(audio.duration)&&
-    audio.duration-audio.currentTime>25)
-   maybeReorderShuffle(app,audio,id);
+
  if(active?.handingOff){
   if(id===active.track.id)return;
   cancel();return;
@@ -555,6 +552,11 @@ function tick(){
  if(previousId!==id){
   cancel();previousId=id;plannedFor="";plan=null;shuffleRunFor="";
  }
+ // Solo dopo aver registrato il brano corrente: una singola ottimizzazione
+ // per traccia, anche quando il timer chiama tick ogni mezzo secondo.
+ if(app&&audio&&!audio.paused&&Number.isFinite(audio.duration)&&
+    audio.duration-audio.currentTime>25)
+   maybeReorderShuffle(app,audio,id);
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
   const fromId=id,target=next.id,duration=audio.duration;
