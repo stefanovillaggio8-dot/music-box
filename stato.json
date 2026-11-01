@@ -1185,7 +1185,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 1,
-    "s": 8,
+    "s": 9,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1335,7 +1335,7 @@
    },
    "[\"dimmi che ce'\",\"thasup\"]": {
     "v": 1,
-    "s": 53,
+    "s": 77,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -1731,13 +1731,13 @@
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 33,
+    "s": 114,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 33,
+    "s": 114,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
@@ -1851,15 +1851,27 @@
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 114,
+    "s": 149,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 114,
+    "s": 149,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "CIGNO NERO RMX",
+    "a": "Nayt / Frah Quintale / Tony Boy"
+   },
+   "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "CIGNO NERO RMX",
+    "a": "Nayt / Frah Quintale / Tony Boy"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1981,17 +1993,17 @@
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+   "[\"se si potesse non morire\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 83,
-    "t": "CIGNO NERO RMX",
-    "a": "Nayt / Frah Quintale / Tony Boy"
+    "s": 32,
+    "t": "Se si potesse non morire",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+   "m:2026-11|[\"se si potesse non morire\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 83,
-    "t": "CIGNO NERO RMX",
-    "a": "Nayt / Frah Quintale / Tony Boy"
+    "s": 32,
+    "t": "Se si potesse non morire",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2115,15 +2127,27 @@
    },
    "[\"se si potesse non morire\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 32,
+    "s": 104,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 32,
+    "s": 104,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"morto mai (piano solo)\",\"lazza\"]": {
+    "v": 0,
+    "s": 73,
+    "t": "Morto Mai (Piano Solo)",
+    "a": "Lazza"
+   },
+   "m:2026-11|[\"morto mai (piano solo)\",\"lazza\"]": {
+    "v": 0,
+    "s": 73,
+    "t": "Morto Mai (Piano Solo)",
+    "a": "Lazza"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2269,17 +2293,17 @@
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"morto mai (piano solo)\",\"lazza\"]": {
+   "[\"dove ÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 73,
-    "t": "Morto Mai (Piano Solo)",
-    "a": "Lazza"
+    "s": 17,
+    "t": "Dove ÃÂÃÂÃÂÃÂ¨ sempre sole",
+    "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"morto mai (piano solo)\",\"lazza\"]": {
+   "m:2026-11|[\"dove ÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 73,
-    "t": "Morto Mai (Piano Solo)",
-    "a": "Lazza"
+    "s": 17,
+    "t": "Dove ÃÂÃÂÃÂÃÂ¨ sempre sole",
+    "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2427,13 +2451,13 @@
    },
    "[\"dove ÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 17,
+    "s": 91,
     "t": "Dove ÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"dove ÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 17,
+    "s": 91,
     "t": "Dove ÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂ "
    },
@@ -2583,15 +2607,27 @@
    },
    "[\"dove ÃÂ¨ sempre sole\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 91,
+    "s": 98,
     "t": "Dove ÃÂ¨ sempre sole",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"dove ÃÂ¨ sempre sole\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 91,
+    "s": 98,
     "t": "Dove ÃÂ¨ sempre sole",
     "a": "ModÃÂ "
+   },
+   "[\"la musica non c'ÃÂ¨\",\"coez\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "La musica non c'ÃÂ¨",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"la musica non c'ÃÂ¨\",\"coez\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "La musica non c'ÃÂ¨",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -2751,15 +2787,21 @@
    },
    "[\"la musica non c'Ã¨\",\"coez\"]": {
     "v": 0,
-    "s": 72,
+    "s": 99,
     "t": "La musica non c'Ã¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'Ã¨\",\"coez\"]": {
     "v": 0,
-    "s": 72,
+    "s": 99,
     "t": "La musica non c'Ã¨",
     "a": "Coez"
+   },
+   "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
+    "v": 0,
+    "s": 76,
+    "t": "dimmi che ce'",
+    "a": "thasup"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -2929,11 +2971,53 @@
     "t": "La musica non c'è",
     "a": "Coez"
    },
-   "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
+   "[\"i'm so lucky (hardstyle)\",\"lucky twice\"]": {
     "v": 0,
-    "s": 52,
-    "t": "dimmi che ce'",
-    "a": "thasup"
+    "s": 1,
+    "t": "I'm So Lucky (Hardstyle)",
+    "a": "Lucky Twice"
+   },
+   "m:2026-11|[\"i'm so lucky (hardstyle)\",\"lucky twice\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "I'm So Lucky (Hardstyle)",
+    "a": "Lucky Twice"
+   },
+   "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
+    "a": "Adriano Celentano"
+   },
+   "m:2026-11|[\"con te partirò\",\"andrea bocelli\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Con Te Partirò",
+    "a": "Andrea Bocelli"
+   },
+   "[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
+    "a": "Kaskade"
+   },
+   "m:2026-11|[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
+    "a": "Kaskade"
+   },
+   "[\"runaway\",\"linkin park\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Runaway",
+    "a": "Linkin Park"
+   },
+   "m:2026-11|[\"runaway\",\"linkin park\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Runaway",
+    "a": "Linkin Park"
    }
   },
   "Diego": {
