@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.492";
+  const APP_VERSION = "6.493";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3380,6 +3380,10 @@ function _devoVedereBrano(eMio, b) {
       });
     }
     tracks=linked.concat(old);
+    // Il caricamento dei link YouTube avviene DOPO la costruzione della
+    // libreria: applica anche a queste voci i titoli/artisti personalizzati.
+    // In caso contrario al refresh sembrano tornare ai nomi originali.
+    try { applicaRinomine(); } catch (e) { /* mantieni la libreria */ }
     if(draw){
       render();
       // Una nuova canzone YouTube pronta deve cercare i testi senza play.
@@ -5608,16 +5612,21 @@ li.addEventListener("click", () => {
   }
 
   function savePos() {
-    if (currentId && audio && isFinite(audio.currentTime)) {
-      const sec = Math.floor(audio.currentTime);
-      /* Salvo ANCHE quando l'ho ascoltata per davvero. Ste: "voglio che dopo
-         6 ore si resetti". Se la posizione e' vecchia di qualche ora, al
-         ritorno la canzone ricomincia dall'inizio invece di tornare a meta'
-         di una canzone che hai smesso di ascoltare sei ore fa. */
-      writeProfileState(profile, { last: currentId, time: sec, quando: Date.now() });
-      LS.set("mb.pos." + currentId, sec);
-      try { LS.set("mb.pos.quando." + currentId, Date.now()); } catch (e) { /* noop */ }
-    }
+    if (!currentId || !audio || !isFinite(audio.currentTime)) return;
+    const sec = Math.max(0, Math.floor(audio.currentTime));
+    // Durante un refresh il browser puo' riportare currentTime a zero PRIMA
+    // di pagehide. Non sovrascrivere una posizione valida mentre i metadati
+    // del brano devono ancora caricarsi.
+    if (!sec && audio.readyState < 1 &&
+        profileState(profile).last === currentId &&
+        Number(profileState(profile).time || 0) > 0) return;
+    const quando = Date.now();
+    writeProfileState(profile, { last: currentId, time: sec, quando });
+    LS.set("mb.pos." + currentId, sec);
+    LS.set("mb.pos.quando." + currentId, quando);
+    // Copia per profilo separata dallo stato generale: resiste anche
+    // alla ricostruzione della libreria e agli aggiornamenti automatici.
+    LS.set("mb.playback." + profile, { id: currentId, time: sec, quando });
   }
 
   function updatePlayerHeight() {
@@ -5829,10 +5838,10 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     } catch (e) { }
     a.addEventListener("play", () => {
     if (a !== audio) return;
-    if (_usaControlliNativiIos()) {
-      _vuoleSuonare = true;
-      _segnaIntenzioneSono(true);
-    }
+    // Qualsiasi browser, non solo il wrapper iOS, deve ricordare che
+    // stava effettivamente suonando prima di un refresh.
+    _vuoleSuonare = true;
+    _segnaIntenzioneSono(true);
     _configuraSessioneAudio();
     _segna("brano in riproduzione");
     // Un play reale conferma che il cambio sorgente e' terminato.
@@ -7144,7 +7153,12 @@ async function playById(id, autoplay = true, startAt = 0) {
     _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);
     _iniziaAscolto();
-    writeProfileState(profile, { last: id, time: 0 });
+    // Una selezione nuova deve sostituire la vecchia posizione salvata,
+    // altrimenti un reload immediato puo' riprendere il brano precedente.
+    const inizio = Number.isFinite(startAt) && startAt > 0 ? Math.floor(startAt) : 0;
+    const avviatoIl = Date.now();
+    writeProfileState(profile, { last: id, time: inizio, quando: avviatoIl });
+    LS.set("mb.playback." + profile, { id, time: inizio, quando: avviatoIl });
     if (!audio) audio = createAudio();
     if (autoplay) {
       _cominciaBranoNuovo();
@@ -16266,7 +16280,22 @@ function _ripristinaPuntoLibreria() {
     $("btnShuffle").classList.toggle("on", shuffle);
     $("btnRepeat").classList.toggle("on", repeat);
 
-const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
+const precedente = LS.get("mb.playback." + profile, null);
+      const valido = precedente && typeof precedente.id === "string" &&
+        Number.isFinite(Number(precedente.quando)) &&
+        Date.now() >= Number(precedente.quando) &&
+        Date.now() - Number(precedente.quando) < 6 * 60 * 60 * 1000;
+      const idSalvato = valido && Number(precedente.quando) >= Number(st.quando || 0)
+        ? precedente.id : st.last;
+      let lastTrack = idSalvato ? tracks.find((t) => t.id === idSalvato) : null;
+      // Un link YouTube che nel frattempo e' diventato un MP3 puo' cambiare
+      // identificativo: ritrovalo tramite l'ID del video originale.
+      if (!lastTrack && /^yt-[A-Za-z0-9_-]{11}$/.test(idSalvato || "")) {
+        lastTrack = tracks.find(t => t.file === "songs/youtube-" + idSalvato.slice(3) + ".mp3") || null;
+      }
+      if (!lastTrack && st.last && st.last !== idSalvato) {
+        lastTrack = tracks.find(t => t.id === st.last) || null;
+      }
       if (lastTrack) {
         currentId = lastTrack.id;
         /* Ste: "se la riapro mi riparte da zero la canzone". Qui la posizione
@@ -16274,15 +16303,22 @@ const lastTrack = st.last ? tracks.find((t) => t.id === st.last) : null;
            ricominciava SEMPRE dall'inizio. Adesso riprendo davvero da dove
            era rimasta. Se pero' era ferma nei primi secondi, o se il brano e'
            gia' finito, meglio partire dall'inizio. */
-        let salvato = Number(st.time != null ? st.time : 0) || 0;
-        if (!salvato) salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
+        let salvato = idSalvato === st.last ? (Number(st.time) || 0) : 0;
+        if (valido && precedente.id === idSalvato &&
+            Number(precedente.quando) >= Number(st.quando || 0)) {
+          salvato = Math.max(0, Number(precedente.time) || 0);
+        }
+        if (!salvato && lastTrack.id === st.last)
+          salvato = Number(LS.get("mb.pos." + lastTrack.id, 0)) || 0;
         /* Ste: "voglio che dopo 6 ore si resetti". Se l'ultima volta che ho
            ascoltato questa canzone e' piu' vecchia di SEI ORE, non ti rimetto
            a meta' di una canzone che hai lasciato sei ore fa: ricomincio
            dall'inizio. Prima non c'era nessun orario, quindi la posizione
            vecchia sembrava sempre appena salvata. */
         const LIMITE_VECCHIA = 6 * 60 * 60 * 1000;
-        let quando = Number(st.quando || 0) || 0;
+        let quando = valido && precedente.id === idSalvato &&
+          Number(precedente.quando) >= Number(st.quando || 0)
+          ? Number(precedente.quando) : (Number(st.quando || 0) || 0);
         if (!quando) quando = Number(LS.get("mb.pos.quando." + lastTrack.id, 0)) || 0;
         const passate = quando ? (Date.now() - quando) : 0;
         const troppoVecchia = quando > 0 && passate > LIMITE_VECCHIA;
