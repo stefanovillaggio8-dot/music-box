@@ -9,7 +9,7 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=2;
+const ANALYSIS_VERSION=3;
 let analysisDbPromise=null;
 function analysisDatabase(){
  if(analysisDbPromise)return analysisDbPromise;
@@ -108,7 +108,9 @@ function analyzeFrames(buf){
  }
  const ordered=blocks.slice().sort((a,b)=>a-b);
  const typical=ordered[Math.floor(ordered.length*.9)]||0;
- const gate=clamp(typical*.035,.0012,.015);
+ // I finali possono contenere rumore tenue o riverbero: confronta con
+ // il livello tipico del brano, senza richiedere silenzio digitale assoluto.
+ const gate=clamp(typical*.075,.0015,.02);
  const activity=blocks.map(v=>v>gate);
  // Due finestre attive in tre: una pausa interna non deve chiudere il brano.
  let first=0,last=Math.max(0,blocks.length-1);
@@ -183,7 +185,7 @@ function analyzeFrames(buf){
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
-  confidentTail:hasAudio&&trailing>=2.0&&audibleEnd>Math.max(10,duration*.28)};
+  confidentTail:hasAudio&&trailing>=1.5&&audibleEnd>Math.max(20,duration*.35)};
 }
 function fft(re,im){
  const n=re.length;
@@ -250,10 +252,11 @@ async function decode(track){
  if(connection?.saveData||/^(slow-)?2g$|^3g$/i.test(String(connection?.effectiveType||"")))
    return null;
  const job=(async()=>{
-  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14000);
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),22000);
   try{
    const response=await fetch(source,{mode:"cors",cache:"force-cache",signal:controller.signal});
-   const maxBytes=isIOS?6500000:18000000;
+   // 6.5MB escludeva molti MP3 su iPhone: mancava l'analisi delle code mute.
+   const maxBytes=isIOS?12000000:25000000;
    if(!response.ok||Number(response.headers.get("content-length")||0)>maxBytes)return null;
    let bytes;
    if(response.body&&response.body.getReader){
@@ -529,6 +532,10 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ // Analizza le alternative prima di arrivare alla transizione.
+ if(app&&audio&&id&&!audio.paused&&Number.isFinite(audio.duration)&&
+    audio.duration-audio.currentTime>25)
+   maybeReorderShuffle(app,audio,id);
  if(active?.handingOff){
   if(id===active.track.id)return;
   cancel();return;
@@ -546,7 +553,7 @@ function tick(){
  }
  if(mixing)return;
  if(previousId!==id){
-  cancel();previousId=id;plannedFor="";plan=null;
+  cancel();previousId=id;plannedFor="";plan=null;shuffleRunFor="";
  }
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
@@ -556,7 +563,7 @@ function tick(){
    if(previousId!==fromId||plannedFor!==target||app.currentId()!==fromId||
       app.mixNext()?.id!==target||mixing)return;
    const candidate=transition(a,b,audio.duration);
-   if(candidate)plan=candidate;
+   plan=candidate; // Non mantenere una transizione smentita dalle analisi.
    updateDetails(a,b);
   };
   plan=transition(null,null,duration);
@@ -646,7 +653,49 @@ function draw(){
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
 }
-let smartSuggested=[],smartRun=0;
+let smartSuggested=[],smartRun=0,shuffleRunFor="";
+async function intelligentShuffle(app,audio,fromId){
+ if(!enabled||window.MusicBoxRoom?.isActive()||
+    !app.mixShuffleCandidates||!app.mixSelectShuffle)return;
+ const sequence=app.mixShuffleCandidates();
+ if(sequence.length<2)return;
+ const initialFirst=sequence[0].id,from=app.allTracks()?.find(t=>t.id===fromId);
+ if(!from)return;
+ const info=await decode(from);
+ if(!info||!enabled||app.currentId()!==fromId)return;
+ // Analisi limitata ai primi brani casuali; l'ordine manuale resta intatto.
+ // Decode sequenziale per evitare picchi di RAM e connessioni concorrenti.
+ const measured=[];
+ for(const track of sequence.slice(0,isIOS?3:5)){
+  if(!enabled||app.currentId()!==fromId||window.MusicBoxRoom?.isActive())return;
+  const data=await decode(track);
+  if(data)measured.push({track,data});
+ }
+ if(!measured.length||app.currentId()!==fromId||
+    audio.duration-audio.currentTime<25)return;
+ const ranking=measured.map(({track,data})=>{
+  const sameArtist=Boolean(from.artist&&track.artist&&
+   String(from.artist).trim().toLowerCase()===String(track.artist).trim().toLowerCase());
+  const sameAlbum=Boolean(from.spotifyAlbum&&track.spotifyAlbum&&
+   from.spotifyAlbum===track.spotifyAlbum);
+  const score=smartScore(info,data)+(sameArtist?.10:0)+(sameAlbum?.05:0);
+  return {id:track.id,score};
+ }).sort((a,b)=>b.score-a.score);
+ const original=ranking.find(x=>x.id===initialFirst),winner=ranking[0];
+ // Modifica solo una coda casuale AUTOMATICA se il miglioramento è netto.
+ if(winner&&winner.id!==initialFirst&&winner.score>=.82&&
+    (!original||winner.score-original.score>=.07)){
+  app.mixSelectShuffle({fromId,initialFirst,pickId:winner.id});
+ }
+}
+function maybeReorderShuffle(app,audio,id){
+ if(!enabled||shuffleRunFor===id)return;
+ const list=app.mixShuffleCandidates?.();
+ if(!list||list.length<2)return;
+ shuffleRunFor=id;
+ intelligentShuffle(app,audio,id).catch(()=>{});
+}
+
 function smartScore(a,b){
  if(!a||!b)return -Infinity;
  // BPM 70%, armonia 20%, energia 10%. Un BPM doppio può significare
