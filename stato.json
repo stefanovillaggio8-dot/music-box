@@ -2392,6 +2392,18 @@
     "t": "La prima volta",
     "a": "Negromaro"
    },
+   "[\"se ne va\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 70,
+    "t": "se ne va",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"se ne va\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 70,
+    "t": "se ne va",
+    "a": "nayt, 3D"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 4,
@@ -2404,17 +2416,17 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"se ne va\",\"nayt, 3d\"]": {
+   "[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
     "v": 0,
-    "s": 70,
-    "t": "se ne va",
-    "a": "nayt, 3D"
+    "s": 87,
+    "t": "Buon Viaggio (Share The Love)",
+    "a": "Cesare Cremonini"
    },
-   "m:2026-11|[\"se ne va\",\"nayt, 3d\"]": {
+   "m:2026-11|[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
     "v": 0,
-    "s": 70,
-    "t": "se ne va",
-    "a": "nayt, 3D"
+    "s": 87,
+    "t": "Buon Viaggio (Share The Love)",
+    "a": "Cesare Cremonini"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2782,17 +2794,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
+   "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 0,
-    "s": 87,
-    "t": "Buon Viaggio (Share The Love)",
-    "a": "Cesare Cremonini"
+    "s": 65,
+    "t": "A Lei",
+    "a": "Papa V, Nerissima Serpe, Fritu"
    },
-   "m:2026-11|[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
+   "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 0,
-    "s": 87,
-    "t": "Buon Viaggio (Share The Love)",
-    "a": "Cesare Cremonini"
+    "s": 65,
+    "t": "A Lei",
+    "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3160,17 +3172,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
+   "[\"babydoll\",\"dominic fike\"]": {
     "v": 0,
-    "s": 65,
-    "t": "A Lei",
-    "a": "Papa V, Nerissima Serpe, Fritu"
+    "s": 60,
+    "t": "Babydoll",
+    "a": "Dominic Fike"
    },
-   "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
+   "m:2026-11|[\"babydoll\",\"dominic fike\"]": {
     "v": 0,
-    "s": 65,
-    "t": "A Lei",
-    "a": "Papa V, Nerissima Serpe, Fritu"
+    "s": 60,
+    "t": "Babydoll",
+    "a": "Dominic Fike"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3538,17 +3550,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"babydoll\",\"dominic fike\"]": {
+   "[\"mi fido di te\",\"jovanotti\"]": {
     "v": 0,
-    "s": 60,
-    "t": "Babydoll",
-    "a": "Dominic Fike"
+    "s": 120,
+    "t": "Mi Fido Di Te",
+    "a": "Jovanotti"
    },
-   "m:2026-11|[\"babydoll\",\"dominic fike\"]": {
+   "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
     "v": 0,
-    "s": 60,
-    "t": "Babydoll",
-    "a": "Dominic Fike"
+    "s": 120,
+    "t": "Mi Fido Di Te",
+    "a": "Jovanotti"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3928,18 +3940,6 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"mi fido di te\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 120,
-    "t": "Mi Fido Di Te",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 120,
-    "t": "Mi Fido Di Te",
-    "a": "Jovanotti"
-   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4316,6 +4316,30 @@
     "v": 0,
     "s": 62,
     "t": "Cuore e vento (feat. Tazenda)",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"sintetico\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 55,
+    "t": "Sintetico",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"sintetico\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 55,
+    "t": "Sintetico",
+    "a": "Kid Yugi"
+   },
+   "[\"sono giÃÂÃÂ  solo\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Sono giÃÂÃÂ  solo",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"sono giÃÂÃÂ  solo\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Sono giÃÂÃÂ  solo",
     "a": "ModÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
@@ -4696,27 +4720,15 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂ "
    },
-   "[\"sintetico\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 55,
-    "t": "Sintetico",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"sintetico\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 55,
-    "t": "Sintetico",
-    "a": "Kid Yugi"
-   },
    "[\"sono giÃÂ  solo\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 8,
+    "s": 76,
     "t": "Sono giÃÂ  solo",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"sono giÃÂ  solo\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 8,
+    "s": 76,
     "t": "Sono giÃÂ  solo",
     "a": "ModÃÂ "
    },
@@ -4782,7 +4794,7 @@
    },
    "[\"salvami\",\"modÃ \"]": {
     "v": 0,
-    "s": 1,
+    "s": 86,
     "t": "Salvami",
     "a": "ModÃ "
    },
@@ -5100,14 +5112,20 @@
    },
    "[\"sono giÃ  solo\",\"modÃ \"]": {
     "v": 0,
-    "s": 76,
+    "s": 74,
     "t": "Sono giÃ  solo",
     "a": "ModÃ "
    },
    "m:2026-11|[\"sono giÃ  solo\",\"modÃ \"]": {
     "v": 0,
-    "s": 76,
+    "s": 74,
     "t": "Sono giÃ  solo",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"salvami\",\"modÃ \"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Salvami",
     "a": "ModÃ "
    },
    "[\"ventanni\",\"måneskin\"]": {
@@ -5172,7 +5190,7 @@
    },
    "[\"salvami\",\"modà\"]": {
     "v": 0,
-    "s": 86,
+    "s": 120,
     "t": "Salvami",
     "a": "Modà"
    },
@@ -5424,13 +5442,13 @@
    },
    "[\"mi @mio è f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 8,
+    "s": 56,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 8,
+    "s": 56,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
@@ -5502,7 +5520,7 @@
    },
    "m:2026-11|[\"salvami\",\"modà\"]": {
     "v": 0,
-    "s": 85,
+    "s": 119,
     "t": "Salvami",
     "a": "Modà"
    }
