@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.501";
+  const APP_VERSION = "6.502";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6481,7 +6481,12 @@ function rebuildAudio(autoplay) {
       info.appendChild(title);
       const subtitle = document.createElement("div");
       subtitle.className = "queue-artist";
-      subtitle.textContent = roomActive ? [automatico.artist,"Aggiunta da "+(automatico.addedBy||automatico.profile||"Partecipante")].filter(Boolean).join(" · ") : [automatico.artist, "Prossimo scelto dal casuale"].filter(Boolean).join(" · ");
+      subtitle.textContent = roomActive ?
+          [automatico.artist,
+           "Account: "+([...(new Set((automatico.ownerAccounts||[automatico.profile]).filter(Boolean)))].join(", ")||automatico.profile||""),
+           "Aggiunta da "+(automatico.addedBy||automatico.profile||"Partecipante")
+          ].filter(Boolean).join(" · "):
+          [automatico.artist,"Prossimo scelto dal casuale"].filter(Boolean).join(" · ");
       info.appendChild(subtitle);
       row.appendChild(info);
       const tag = document.createElement("span");
@@ -11467,6 +11472,16 @@ window.MusicBoxBridge = {
     return playById(id,true,startAt);
   },
   playCurrent:()=>doPlay(),
+  togglePlayback:()=>togglePlay(),
+  next:()=>playNext(),
+  previous:()=>playById(idBranoA(prevIndex())),
+  lyricsData:()=>{
+    const l=currentLyrics();
+    if(!l)return null;
+    return {text:String(l.text||""),synced:parseSynced(l.synced).map(row=>({
+      t:row.t,text:row.text
+    }))};
+  },
   setRoomPlaybackIntent:(playing)=>{
     // Stato del player coerente con il server e con i controlli cuffie.
     // Se Pausa arriva dal cloud, disattiva i retry invece di risuonare.
