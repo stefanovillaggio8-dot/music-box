@@ -50,7 +50,7 @@ function registerTracks(){
  const app=bridge(),tracks=app?.allTracks();if(!tracks)return;
  // Evita O(braniStanza × braniLibreria) ad ogni polling: con 2000 brani
  // il vecchio tracks.some() ripeteva milioni di confronti.
- const known=new Set(tracks.map(t=>t.id));
+ const known=new Map(tracks.map(t=>[t.id,t]));
  for(const item of room.playlist){
   const file=String(item.file||"");
   const cloud=/^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file);
@@ -58,11 +58,11 @@ function registerTracks(){
   if(cloud&&!/^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(String(item.url||"")))continue;
   const id=roomTrack(item);
   if(known.has(id)){
-   const track=tracks.find(t=>t.id===id);
+   const track=known.get(id);
    if(track?.source==="stanza-condivisa")track.addedBy=String(item.addedBy||item.profile||"");
    continue;
   }
-  known.add(id);
+  known.set(id,null);
   tracks.push({id,file:item.file,profile:item.profile||app.profile(),title:String(item.title||"Brano"),
    artist:String(item.artist||""),addedBy:String(item.addedBy||item.profile||""),
    url:cloud?item.url:app.urlForFile(item.file),
