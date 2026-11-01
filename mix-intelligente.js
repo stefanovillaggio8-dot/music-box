@@ -11,7 +11,7 @@ function bridge(){return window.MusicBoxBridge}
 function toast(m){bridge()?.toast?.(m)}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 function analyzeFrames(buf){
- const ch=buf.getChannelData(0),rate=buf.sampleRate,hop=Math.max(1,Math.round(rate*.05));
+ const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025,hop=Math.max(1,Math.round(rate*step));
  const e=[],count=Math.ceil(ch.length/hop),stride=4;
  for(let i=0;i<count;i++){
   let sum=0,n=0,end=Math.min(ch.length,(i+1)*hop);
@@ -26,8 +26,8 @@ function analyzeFrames(buf){
  for(let i=e.length-1;i>=0;i--)if(e[i]>threshold){last=i;break}
  const diff=e.map((v,i)=>i?Math.max(0,v-e[i-1]):0);
  const candidates=[];
- for(let bpm=72;bpm<=180;bpm++){
-  const lag=Math.round(60/(bpm*.05));
+ for(let lag=Math.round(60/(180*step));lag<=Math.round(60/(72*step));lag++){
+  const bpm=Math.round(60/(lag*step));
   let corr=0,energy=0;
   for(let i=lag;i<diff.length;i+=2){corr+=diff[i]*diff[i-lag];energy+=diff[i]*diff[i]}
   candidates.push({bpm,score:corr/(energy+1e-8)});
@@ -41,7 +41,7 @@ function analyzeFrames(buf){
  for(let i=minIndex;i<=last;i++){
   if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i}
  }
- return {bpm,first:first*.05,last:last*.05,beatAnchor:beatAnchor*.05,peak};
+ return {bpm,first:first*step,last:last*step,beatAnchor:beatAnchor*step,peak};
 }
 function fft(re,im){
  const n=re.length;
