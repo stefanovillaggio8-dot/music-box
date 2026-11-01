@@ -2314,6 +2314,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"gli occhi della tigre\",\"nayt\"]": {
+    "v": 0,
+    "s": 68,
+    "t": "Gli occhi della tigre",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"gli occhi della tigre\",\"nayt\"]": {
+    "v": 0,
+    "s": 68,
+    "t": "Gli occhi della tigre",
+    "a": "nayt"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -2661,18 +2673,6 @@
     "s": 84,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
-   },
-   "[\"gli occhi della tigre\",\"nayt\"]": {
-    "v": 0,
-    "s": 68,
-    "t": "Gli occhi della tigre",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"gli occhi della tigre\",\"nayt\"]": {
-    "v": 0,
-    "s": 68,
-    "t": "Gli occhi della tigre",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3730,6 +3730,18 @@
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
+   "[\"favola\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 75,
+    "t": "Favola",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"favola\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 75,
+    "t": "Favola",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4092,13 +4104,13 @@
    },
    "[\"favola\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 75,
+    "s": 160,
     "t": "Favola",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 75,
+    "s": 160,
     "t": "Favola",
     "a": "ModÃÂÃÂ "
    },
@@ -4152,7 +4164,7 @@
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 37,
+    "s": 101,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂ "
    },
@@ -4464,14 +4476,20 @@
    },
    "[\"favola\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 160,
+    "s": 162,
     "t": "Favola",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 160,
+    "s": 162,
     "t": "Favola",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 64,
+    "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃÂ "
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
@@ -4524,7 +4542,7 @@
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
     "v": 1,
-    "s": 101,
+    "s": 99,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃ "
    },
@@ -4848,9 +4866,21 @@
    },
    "m:2026-11|[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
     "v": 0,
-    "s": 64,
+    "s": 62,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "ModÃ "
+   },
+   "[\"ragazza magica\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 95,
+    "t": "Ragazza Magica",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"ragazza magica\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 95,
+    "t": "Ragazza Magica",
+    "a": "Jovanotti"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -5230,17 +5260,17 @@
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "Modà"
    },
-   "[\"ragazza magica\",\"jovanotti\"]": {
+   "[\"solo 3 min\",\"negromaro\"]": {
     "v": 0,
-    "s": 74,
-    "t": "Ragazza Magica",
-    "a": "Jovanotti"
+    "s": 60,
+    "t": "Solo 3 min",
+    "a": "Negromaro"
    },
-   "m:2026-11|[\"ragazza magica\",\"jovanotti\"]": {
+   "m:2026-11|[\"solo 3 min\",\"negromaro\"]": {
     "v": 0,
-    "s": 74,
-    "t": "Ragazza Magica",
-    "a": "Jovanotti"
+    "s": 60,
+    "t": "Solo 3 min",
+    "a": "Negromaro"
    }
   },
   "Diego": {
