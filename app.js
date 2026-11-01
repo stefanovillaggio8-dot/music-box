@@ -17917,7 +17917,11 @@ function _spotifyAccodaLista(lista,profilo){
   const items=_spotifyCodeInAttesa();
   const identita=x=>String(x.profilo)+"|"+
     x.lista.map(b=>String(b?.spotifyId||"")+"@"+String(b?.title||"")).join("\u0001");
-  const nuova={lista,profilo,quando:Date.now()};
+  // Strictly monotonic IDs prevent two rapid imports on the same
+  // millisecond from being mistaken for one another during acknowledgement.
+  const now=Date.now();
+  const last=Math.max(0,...items.map(x=>Number(x.quando)||0));
+  const nuova={lista,profilo,quando:Math.max(now,last+1)};
   if(items.some(x=>identita(x)===identita(nuova)))return true;
   if(items.length>=8){toast("Ci sono già 8 playlist in attesa. Collega il PC prima di aggiungerne altre.",7500);return false}
   items.push(nuova);
