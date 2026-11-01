@@ -7,6 +7,15 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map();
+const allowedStyles=new Set(["auto","fade","rise"]);
+let style="auto",mixSeconds=6;
+try{
+ const stored=localStorage.getItem("mb.mixStyle");
+ if(allowedStyles.has(stored))style=stored;
+ const secs=Number(localStorage.getItem("mb.mixSeconds"));
+ if(Number.isFinite(secs)&&secs>=3&&secs<=12)mixSeconds=secs;
+}catch(e){}
+const KEY_NAMES=["Do","Do♯","Re","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"];
 let active=null,previousId="",plan=null,plannedFor="",mixing=false;
 function bridge(){return window.MusicBoxBridge}
 function toast(m){bridge()?.toast?.(m)}
@@ -54,12 +63,30 @@ function analyzeFrames(buf){
   if(score>best.score)best={bpm:Math.round(60/(lag*step)),score};
  }
  let beatAnchor=audibleEnd,maxNovelty=0;
+ let introBeat=audibleStart,introPeak=0;
+ const introStart=Math.max(0,Math.round(audibleStart/step));
+ const introEnd=Math.min(diff.length,introStart+Math.round(16/step));
+ for(let i=introStart;i<introEnd;i++){
+  if(diff[i]>introPeak){introPeak=diff[i];introBeat=i*step}
+ }
  const finalStart=Math.max(0,Math.round(audibleEnd/step)-800);
  for(let i=finalStart;i<Math.min(diff.length,Math.ceil(audibleEnd/step));i++){
   if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i*step}
  }
  const hasAudio=typical>.0012;
- return {bpm:best.bpm,first:hasAudio?audibleStart:0,
+ const beatConfidence=clamp(best.score,0,1);
+ // Finestra di 1s nei secondi conclusivi: una valle d'energia facilita
+ // un incrocio di battute senza troncare un ritornello.
+ const tailEnergy=[];
+ for(let t=Math.max(0,audibleEnd-17);t<audibleEnd;t+=1){
+  const firstIndex=Math.max(0,Math.floor(t/step));
+  const lastIndex=Math.min(energy.length,firstIndex+Math.round(1/step));
+  let e=0;
+  for(let i=firstIndex;i<lastIndex;i++)e+=energy[i]*energy[i];
+  tailEnergy.push({at:t,energy:Math.sqrt(e/Math.max(1,lastIndex-firstIndex))});
+ }
+ return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,
+  first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
   confidentTail:hasAudio&&trailing>=2.0&&audibleEnd>Math.max(10,duration*.28)};
@@ -111,7 +138,7 @@ function compatibility(a,b){
  return dot/Math.sqrt((aa||1)*(bb||1));
 }
 async function decode(track){
- if(isIOS||!enabled||!track)return null;
+ if(!enabled||!track)return null;
  const source=bridge()?.mixUrl?.(track)||track.url;
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
@@ -121,20 +148,21 @@ async function decode(track){
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14000);
   try{
    const response=await fetch(source,{mode:"cors",cache:"force-cache",signal:controller.signal});
-   if(!response.ok||Number(response.headers.get("content-length")||0)>18000000)return null;
+   const maxBytes=isIOS?6500000:18000000;
+   if(!response.ok||Number(response.headers.get("content-length")||0)>maxBytes)return null;
    let bytes;
    if(response.body&&response.body.getReader){
     const reader=response.body.getReader(),parts=[];let total=0;
     while(true){
      const {done,value}=await reader.read();if(done)break;
      total+=value.length;
-     if(total>18000000){await reader.cancel();return null}
+     if(total>maxBytes){await reader.cancel();return null}
      parts.push(value);
     }
     bytes=new Uint8Array(total);let offset=0;
     for(const p of parts){bytes.set(p,offset);offset+=p.length}
    }else{
-    const ab=await response.arrayBuffer();if(ab.byteLength>18000000)return null;
+    const ab=await response.arrayBuffer();if(ab.byteLength>maxBytes)return null;
     bytes=new Uint8Array(ab);
    }
    const AudioContext=window.AudioContext||window.webkitAudioContext;
@@ -143,10 +171,11 @@ async function decode(track){
    try{
     const decoded=await ctx.decodeAudioData(bytes.buffer.slice(0));
     if(decoded.duration<35)return null;
-    const frame=analyzeFrames(decoded),harmonies=chroma(decoded);
+    const frame=analyzeFrames(decoded);
+    const harmonies=isIOS?null:chroma(decoded);
     const result={...frame,chroma:harmonies,duration:decoded.duration};
     cache.set(key,result);
-    if(cache.size>6)cache.delete(cache.keys().next().value);
+    if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
    }finally{await ctx.close().catch(()=>{})}
   }catch(e){return null}
