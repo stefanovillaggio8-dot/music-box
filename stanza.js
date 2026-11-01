@@ -6,6 +6,8 @@ const ENDPOINT="https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-l
 const $=id=>document.getElementById(id);
 const bridge=()=>window.MusicBoxBridge;
 let creds=null,room=null,invitation=null,inviteUrl="",busy=false,localPlay=false,lastRevision=0;
+// Invalidate late network replies whenever the user exits.
+let roomSessionGeneration=0;
 let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false;
 let commandChain=Promise.resolve();
 // L'ultimo comando Play/Pausa prevale immediatamente sul polling.
@@ -224,12 +226,22 @@ function searchSongs(){
  if(matches.length>14){const hint=document.createElement("p");hint.className="stanza-hint";
   hint.textContent="Altri risultati: rendi la ricerca più specifica.";container.append(hint);}
 }
+function clearRoomPanels(){
+ for(const id of ["stanzaCodaLista","stanzaRisultati","stanzaActivityList"])
+   $(id)?.replaceChildren();
+ const search=$("stanzaCercaBrano");if(search)search.value="";
+ const queue=$("stanzaQueueArea");if(queue)queue.hidden=true;
+ const activity=$("stanzaActivity");if(activity)activity.hidden=true;
+ drawnRevision=-1;
+}
 function drawSharedQueue(){
  const area=$("stanzaQueueArea");if(!area)return;
- area.hidden=!isActive();
+ const active=isActive();
+ area.hidden=!active;
  const activity=$("stanzaActivity");
- if(activity)activity.hidden=!isActive();
- if(!isActive()||$("stanzaPanel")?.hidden)return;
+ if(activity)activity.hidden=!active;
+ if(!active){clearRoomPanels();return;}
+ if($("stanzaPanel")?.hidden)return;
  if(drawnRevision===Number(room.revision))return;
  drawnRevision=Number(room.revision);
  const list=$("stanzaCodaLista");if(!list)return;list.replaceChildren();
@@ -266,16 +278,22 @@ function upcoming(limit=10){
 }
 function draw(){
  if(!$("stanzaPanel"))return;
- const active=!!creds,joined=!!room?.joined;
+ const active=!!creds,joined=isActive();
  $("stanzaCrea").hidden=active||!!invitation;
  $("stanzaEntra").hidden=active||!invitation;
  $("stanzaCopia").hidden=!active||!inviteUrl;
  $("stanzaEsci").hidden=!active;
+ const topExit=$("stanzaEsciTop");if(topExit)topExit.hidden=!active;
+ const closeBtn=$("stanzaClose");
+ if(closeBtn){
+  closeBtn.title=active?"Chiudi il pannello (resti nella stanza)":"Chiudi il pannello";
+  closeBtn.setAttribute("aria-label",closeBtn.title);
+ }
  $("stanzaAscolta").hidden=!joined||!needsGesture;
  $("stanzaPlay").textContent=shouldPlay()?"Pausa per entrambi":"Riprendi per entrambi";
  for(const id of ["stanzaPlay","stanzaNext","stanzaRimescola"])
   $(id).hidden=!joined;
- const people=room?.participants||[room?.hostProfile,room?.guestProfile].filter(Boolean);
+ const people=active?(room?.participants||[room?.hostProfile,room?.guestProfile].filter(Boolean)):[];
  const count=Array.isArray(people)?people.length:0;
  const limit=Number(room?.maxParticipants)||8;
  const activity=$("stanzaActivity");if(activity)activity.hidden=!joined;
@@ -294,11 +312,13 @@ function draw(){
 function open(){const el=$("stanzaPanel");if(!el)return;el.hidden=false;drawnRevision=-1;bridge()?.syncScroll?.();draw();}
 function close(){if(!$("stanzaPanel"))return;$("stanzaPanel").hidden=true;bridge()?.syncScroll?.();}
 async function create(){
+ const sessionGeneration=roomSessionGeneration;
  const songs=available();
  if(!songs.length){tell("Questa libreria non contiene MP3 online da condividere");return;}
  const btn=$("stanzaCrea");btn.disabled=true;
  try{
   const result=await request({action:"create",profile:bridge().profile(),tracks:songs,...snapshot()});
+  if(sessionGeneration!==roomSessionGeneration)return;
   creds={id:result.id,token:result.hostToken,guestToken:result.guestToken,
     role:"host",profile:bridge().profile()};
   inviteUrl=location.origin+location.pathname+"#musicbox-room="+result.id+"."+result.guestToken;
@@ -309,6 +329,7 @@ async function create(){
 }
 async function join(){
  if(!invitation)return;
+ const sessionGeneration=roomSessionGeneration;
  const songs=available();
  if(!songs.length){tell("Seleziona un account con MP3 pubblicati");return;}
  const b=$("stanzaEntra");b.disabled=true;
@@ -317,6 +338,7 @@ async function join(){
   let result;
   try{result=await request(payload)}
   catch(e){if(!/Room changed/.test(e.message))throw e;result=await request(payload)}
+  if(sessionGeneration!==roomSessionGeneration)return;
   creds={...invitation,token:result.memberToken||invitation.token,
     role:result.memberToken?"member":"guest",profile:bridge().profile(),
     memberName:result.memberName||bridge().profile()};
@@ -442,7 +464,7 @@ async function refresh(){
   if(/Room not found or expired|Invitation not authorized/i.test(String(e.message||""))){
    // Il token personale puo' essere stato revocato dopo l'uscita;
    // non inviare un'altra notifica di leave con quel token.
-   creds=null;room=null;pendingPlayback=null;save();draw();
+   resetRoomLocally();
    status("Stanza scaduta (12 ore). Creane una nuova e manda un nuovo invito.");
   }else if(!$("stanzaPanel").hidden)status("Connessione: "+e.message);
  }finally{busy=false}
@@ -545,23 +567,24 @@ function interceptTrack(id){
  control("select",{index});return true;
 }
 
+function resetRoomLocally(){
+ roomSessionGeneration++;
+ creds=null;room=null;invitation=null;inviteUrl="";
+ localPlay=false;needsGesture=false;lastRevision=0;
+ pendingPlayback=null;playbackSequence++;
+ catalog=[];catalogFor="";catalogBusy=false;drawnRevision=-1;
+ // A deleted session must never keep an old playlist or activity rendered.
+ clearRoomPanels();save();bridge()?.refreshQueue();draw();
+}
 function leave(){
- // Informa gli altri membri e aggiorna i partecipanti sul server.
- // La richiesta non deve bloccare l'uscita locale.
  if(creds?.token&&room?.id){
   const req={action:"leave",id:creds.id,token:creds.token};
   request(req).catch(e=>{
-   // Se due persone cambiano brano nello stesso istante, il database
-   // risponde 409: riprova una volta, senza bloccare l'uscita locale.
    if(/Room changed/.test(String(e.message||"")))request(req).catch(()=>{});
   });
  }
- creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;
- pendingPlayback=null;playbackSequence++;
- catalog=[];catalogFor="";drawnRevision=-1;save();
- // La riproduzione deve restare autonoma; nessuna risposta tardiva deve
- // ripristinare la stanza appena lasciata.
- bridge()?.refreshQueue();draw();tell("Hai lasciato la stanza");
+ resetRoomLocally();
+ tell("Sei uscito dalla stanza. Ora ascolti per conto tuo.");
 }
 function isActive(){return !!(creds&&room?.joined)}
 function playPause(){
@@ -587,6 +610,7 @@ function start(){
  $("stanzaRimescola").addEventListener("click",()=>control("reshuffle"));
   $("stanzaCercaBrano")?.addEventListener("input",searchSongs);
   $("stanzaEsci").addEventListener("click",leave);
+  $("stanzaEsciTop")?.addEventListener("click",leave);
  // Capture intercetta i controlli principali mentre la stanza e' aperta,
  // per impedire che partano due canzoni diverse sui due dispositivi.
  for(const [id,cmd] of [["btnNext","next"],["btnPrev","previous"],
