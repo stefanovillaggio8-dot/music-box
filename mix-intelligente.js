@@ -370,9 +370,12 @@ function transition(a,b,actualDuration){
  const musicalEnd=trim?Math.min(dur,a.last):dur;
  const introEntry=b?.leading>=1.8?clamp(b.first-.10,0,18):0;
  const fallback=()=>{
-  if(!trim&&!a?.quietTail)return null;
-  const end=clamp(musicalEnd-(trim?.10:.28),12,dur-.2);
-  const fade=clamp(trim?1.7:1.15,.75,Math.min(2.1,end-10));
+  // Quando il brano è analizzabile ma non armonicamente compatibile,
+  // una dissolvenza breve negli ultimissimi secondi è più naturale
+  // di attendere il silenzio dopo la fine del file.
+  if(!a)return null;
+  const end=clamp(musicalEnd-(trim?.10:a.quietTail?.28:.18),12,dur-.12);
+  const fade=clamp(trim?1.7:a.quietTail?1.15:.75,.6,Math.min(2.1,end-10));
   return {begin:end-fade,end,fade,entry:introEntry,tempo:1,
    kind:"soft",gain:1,score:null,silenceTrim:trim,
    trailing:trim?Math.max(0,dur-musicalEnd):0};
@@ -646,8 +649,10 @@ function tick(){
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
  // Se l'analisi certifica una lunga coda muta e il punto di mix è già
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
- if(plan.silenceTrim&&audio.currentTime>=plan.end+.15&&
-    (isIOS||(!active&&(!prepared||!prepared.ready||plan.kind==="cut")))){
+ if((plan.silenceTrim||plan.kind==="soft")&&
+    audio.currentTime>=plan.end+.08&&
+    !active&&
+    (isIOS||!prepared?.ready||Date.now()<=blockedUntil)){
   const target=next.id,entry=plan.entry;
   cancel();plannedFor=target;plan=null;
   // Su iPhone un solo audio alla volta preserva i controlli nella
