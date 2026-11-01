@@ -5531,6 +5531,13 @@ li.addEventListener("click", () => {
     }
   }
 
+  function _riproduciSenzaIntro(id) {
+    // Se l'analisi è già disponibile, evita i primi secondi confermati muti
+    // del nuovo MP3. In mancanza di dati avvia normalmente dall'inizio.
+    const at=window.MusicBoxMix?.introStart?.(id)||0;
+    return playById(id,true,at);
+  }
+
   function handleEnded() {
     try {
     if (window.MusicBoxRoom?.isActive()) {
@@ -5543,17 +5550,17 @@ li.addEventListener("click", () => {
     if (queue.length) {
       const next = queue.shift();
       persistQueue();
-      playById(next);
+      _riproduciSenzaIntro(next);
       renderQueueCount();
       return;
     }
     const idDiPlaylist = _avantiInPlaylist();
-    if (idDiPlaylist) { playById(idDiPlaylist); return; }
+    if (idDiPlaylist) { _riproduciSenzaIntro(idDiPlaylist); return; }
     if (repeat) {
       audio.currentTime = 0;
       doPlay();
     } else {
-      playById(idBranoA(nextIndex()));
+      _riproduciSenzaIntro(idBranoA(nextIndex()));
     }
     } catch (e) {
       /* Non lasciare che un errore qui fermi tutto: una volta un errore in
@@ -7363,13 +7370,13 @@ function playNext() {
       if (queue.length) {
         const next = queue.shift();
         persistQueue();
-        playById(next);
+        _riproduciSenzaIntro(next);
         renderQueueCount();
         return;
       }
       const prossimoPlaylist = _avantiInPlaylist();
-      if (prossimoPlaylist) { playById(prossimoPlaylist); return; }
-      playById(idBranoA(nextIndex()));
+      if (prossimoPlaylist) { _riproduciSenzaIntro(prossimoPlaylist); return; }
+      _riproduciSenzaIntro(idBranoA(nextIndex()));
     } catch (e) {
       /* Non lascio che un errore qui fermi tutto. */
       console.warn("tasto avanti: errore", e);
