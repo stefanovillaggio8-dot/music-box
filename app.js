@@ -14657,7 +14657,21 @@ rinomini: (function () {
           headers: intestazioni,
           body: corpo
         });
-        if (r.ok) { _statoCondivisoOk = true; _statoDaSalvare = false; _rinominiDaMandareSvuota(); _eliminatiDaMandareSvuota(); _eliminatiRimossiDaMandareSvuota(); _soloInPlaylistDaMandareSvuota(); _soloInPlaylistRimossiSvuota(); }
+        if(r.ok){
+          _statoCondivisoOk=true;
+          const sent=JSON.parse(corpo);
+          // Do not erase deletions performed while the previous request
+          // was already in flight. Clear only IDs acknowledged in this POST.
+          const acknowledged=new Set(Array.isArray(sent.eliminati)?sent.eliminati:[]);
+          const acknowledgedRestores=new Set(Array.isArray(sent.eliminatiRimossi)?sent.eliminatiRimossi:[]);
+          LS.set("mb.eliminatiDaMandare",_eliminatiDaMandare().filter(x=>!acknowledged.has(x)));
+          LS.set("mb.eliminatiRimossiDaMandare",_eliminatiRimossiDaMandare().filter(x=>!acknowledgedRestores.has(x)));
+          _rinominiDaMandareSvuota();
+          _soloInPlaylistDaMandareSvuota();
+          _soloInPlaylistRimossiSvuota();
+          _statoDaSalvare=_eliminatiDaMandare().length>0||
+            _eliminatiRimossiDaMandare().length>0;
+        }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
@@ -16137,6 +16151,13 @@ await loadAll();
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
       setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _caricaStatoCondiviso(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
+  // If the user refreshed immediately after deleting a song, the local
+  // tombstone survived but the delayed cloud POST might not have started.
+  // Resume unsent changes at launch, without resubmitting confirmed ones.
+  setTimeout(()=>{
+    if(_eliminatiDaMandare().length||_eliminatiRimossiDaMandare().length)
+      _salvaStatoCondiviso();
+  },5500);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
      cosi' l'utente vede che il brano e' entrato e non deve chiedere. */
   setInterval(() => { _aggiornaCoda(); }, 120000);
