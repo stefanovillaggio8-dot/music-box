@@ -11437,7 +11437,7 @@ window.MusicBoxBridge = {
   // Only timestamps, never lyric text, leave the lyrics store.
   // They help the DJ protect a final sung phrase when timed LRC exists.
   mixLyricCues:(id)=>{
-    const candidate=localLyrics[id]||lyricsData[id];
+    const candidate=(localLyrics[id]?.synced?localLyrics[id]:lyricsData[id])||null;
     if(!candidate?.synced)return null;
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
