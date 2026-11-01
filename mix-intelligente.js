@@ -9,7 +9,7 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=7;
+const ANALYSIS_VERSION=8;
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -238,12 +238,41 @@ function analyzeFrames(buf){
  const tailSlice=tailEnergy.filter(p=>p.at>=audibleEnd-3.5);
  const tailLevel=tailSlice.length?tailSlice.reduce((sum,p)=>sum+p.energy,0)/tailSlice.length:level;
  const quietTail=hasAudio&&level>.0012&&tailSlice.length>=2&&tailLevel<level*.72;
+ // Conservative phrase-safe cue: only after the last high-energy event.
+ // Audio energy cannot prove there are no vocals; uncertain endings play on.
+ let safeOutroAt=null;
+ if(hasAudio&&level>.004){
+  const blockSeconds=group*step;
+  const from=Math.max(0,Math.floor((audibleEnd-16)/blockSeconds));
+  const to=Math.min(blocks.length-1,Math.ceil(audibleEnd/blockSeconds)-1);
+  const strong=Math.max(gate*1.5,level*.52);
+  let lastStrong=-1;
+  for(let j=from;j<=to;j++)if(blocks[j]>=strong)lastStrong=j;
+  if(lastStrong>=from){
+   const start=(lastStrong+1)*blockSeconds;
+   const tail=blocks.slice(lastStrong+1,to+1);
+   const seconds=audibleEnd-start;
+   const average=tail.reduce((sum,v)=>sum+v,0)/Math.max(1,tail.length);
+   const maximum=tail.reduce((max,v)=>Math.max(max,v),0);
+   if(seconds>=2.8&&seconds<=12&&tail.length>=10&&
+      maximum<=level*.52&&average<=level*.30)
+    safeOutroAt=Math.max(0,start-.05);
+  }
+ }
+ // Only skip initial silence verified at an extremely low signal level.
+ const introBlocks=blocks.slice(0,Math.max(0,Math.floor(audibleStart/(group*step))));
+ const safeIntroAt=hasAudio&&audibleStart>=.85&&introBlocks.length>=4&&
+  introBlocks.every(v=>v<=Math.max(.0007,typical*.018))?
+   Math.max(0,audibleStart-.12):0;
+ const silentTail=blocks.slice(Math.ceil(audibleEnd/(group*step)));
+ const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
+  silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
-  confidentTail:hasAudio&&trailing>=1.65&&audibleEnd>Math.max(20,duration*.55)};
+  confidentTail:verifiedSilence&&audibleEnd>Math.max(20,duration*.55)};
 }
 function fft(re,im){
  const n=re.length;
@@ -265,14 +294,17 @@ function fft(re,im){
   }
  }
 }
-function chroma(buf){
+function chroma(buf,from=0,to=buf.duration){
  const data=buf.getChannelData(0),rate=buf.sampleRate,N=4096,hist=new Float64Array(12);
  if(data.length<N)return [...hist];
  const duration=buf.duration;
+ const rangeStart=clamp(Number(from)||0,0,Math.max(0,duration-N/rate));
+ const rangeEnd=clamp(Number(to)||duration,rangeStart+N/rate,duration);
  // Fewer windows on iPhone: enough for harmonic ranking, less CPU/RAM.
  const windows=isIOS?12:24;
  for(let w=0;w<windows;w++){
-  const second=clamp((w+.5)/windows*duration,0,duration-N/rate);
+  const second=clamp(rangeStart+(w+.5)/windows*(rangeEnd-rangeStart),
+   rangeStart,Math.max(rangeStart,rangeEnd-N/rate));
   const start=Math.floor(second*rate),re=new Float32Array(N),im=new Float32Array(N);
   for(let i=0;i<N;i++)re[i]=data[start+i]*(.5-.5*Math.cos(2*Math.PI*i/(N-1)));
   fft(re,im);
@@ -350,8 +382,12 @@ async function decode(track){
      Number(track.expectedDurationSec||0);
     const durationMismatch=expected>20&&
      Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
-    const result={...frame,chroma:harmonies,duration:decoded.duration,
-     durationMismatch};
+    const outroFrom=Math.max(0,(frame.safeOutroAt??frame.last)-.4);
+    const introTo=Math.min(decoded.duration,Math.max(9,frame.first+12));
+    const result={...frame,chroma:harmonies,
+     introChroma:chroma(decoded,0,introTo),
+     outroChroma:chroma(decoded,outroFrom,Math.min(decoded.duration,frame.last)),
+     duration:decoded.duration,durationMismatch};
     cache.set(key,result);
     saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
