@@ -449,7 +449,7 @@ function transition(a,b,actualDuration){
  const headHarmony=b.introChroma||b.chroma;
  const harmonic=reliable?compatibility({chroma:tailHarmony},{chroma:headHarmony}):null;
  const compatible=beatClose&&harmonic!==null&&harmonic>=.75;
- const earlyNextVoice=Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<4.5;
+ const earlyNextVoice=Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8;
  const longMix=compatible&&available>=4.4&&!earlyNextVoice;
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
  const kind=style==="auto"?(longMix?"beat":"soft"):style;
