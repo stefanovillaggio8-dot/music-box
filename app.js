@@ -17360,11 +17360,13 @@ async function _spotifyCompletaAccesso(code, stato) {
   const _spotifyPlaylistIdValido = v => /^[A-Za-z0-9]{22}$/.test(String(v||""));
   function _spotifyNextPath(next) {
     if(!next)return "";
-    try{
-      const u=new URL(String(next),"https://api.spotify.com");
-      if(u.origin!=="https://api.spotify.com"||!u.pathname.startsWith("/v1/"))return "";
-      return u.pathname.slice(3)+u.search;
-    }catch(e){return ""}
+    const prefix="https://api.spotify.com/v1/";
+    const value=String(next);
+    if(!value.startsWith(prefix))return "";
+    const rest=value.slice(prefix.length);
+    // Never accept an unexpected host or URL in the page cursor.
+    if(!rest||rest.startsWith("/")||/[\\#]/.test(rest))return "";
+    return "/"+rest;
   }
   function _spotifyRigaBrano(t,addedAt){
     if(!t||t.type==="episode"||t.is_local||!t.name)return null;
