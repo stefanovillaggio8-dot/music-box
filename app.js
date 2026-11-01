@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.495";
+  const APP_VERSION = "6.496";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6485,7 +6485,10 @@ function rebuildAudio(autoplay) {
         };
         const up=roomButton("↑","Sposta prima nella stanza","up");
         const down=roomButton("↓","Sposta dopo nella stanza","down");
-        up.disabled=i===0;down.disabled=i===automatici.length-1;
+        up.disabled=i===0;
+        // Il player mostra solo i primi dieci, ma in stanza la coda puo'
+        // avere altri centinaia di brani: il decimo deve poter scendere.
+        down.disabled=i>=window.MusicBoxRoom.remainingCount()-1;
         actions.append(up,down,roomButton("×","Rimuovi dalla coda condivisa","remove"));
         row.appendChild(actions);body.appendChild(row);return;
       }
