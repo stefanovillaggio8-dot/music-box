@@ -406,7 +406,7 @@
     { title: "RONALDINHO", file: "songs/track-388.mp3", artist: "Astro, Tony Boy", profile: "Diego" },
     { title: "in tilt", file: "songs/track-389.mp3", artist: "Sedici", profile: "Diego" },
     { title: "Lividi (feat. MezzoSangue)", file: "songs/track-392.mp3", artist: "nayt, 3D, Mezzosangue", profile: "Diego" },
-    { title: "Il blocco dello scrittore", file: "songs/track-393.mp3", artist: "nayt, 3D", profile: "Diego" },
+    { title: "Il blocco dello scrittore", file: "songs/track-393.mp3", artist: "nayt, 3D", profile: "Diego", expectedDurationSec: 202 },
     { title: "Musica Ovunque", file: "songs/track-394.mp3", artist: "nayt, 3D", profile: "Diego" },
     { title: "TUTTAPPO'", file: "songs/track-395.mp3", artist: "nayt, 3D", profile: "Diego" },
     { title: "Cartine Cartier", file: "songs/track-396.mp3", artist: "SCH, Sfera Ebbasta", profile: "Diego" },
@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.490";
+  const APP_VERSION = "6.491";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6638,6 +6638,7 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
   const ICON_HIDE = "M3.3 2 2 3.3l2.4 2.4C2.5 7 1.4 8.7 1 9c1.1 2.3 4 5 7 6l2 2 1.3-1.3 15.4 15.4 1.3-1.3L3.3 2ZM12 5c4.4 0 8 4 8 4-.5 1-1.6 2.4-3.1 3.5l-1.5-1.5c1-.9 1.6-1.9 1.9-2.6-.6-.8-2.6-2.4-5.3-2.4-.4 0-.8 0-1.2.1L9.6 4.9c.8-.1 1.6-.1 2.4-.1Z";
   const ICON_SHARE = "M18 16a3 3 0 0 0-2.4 1.2l-6.9-4a3 3 0 0 0 0-1.4l7-4.1A3 3 0 1 0 15 6c0 .2 0 .4.1.6l-7 4.1a3 3 0 1 0 0 6.6l6.9 4A3 3 0 1 0 18 16Z";
   const ICON_OFFLINE = "M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4l2.3 2.3V4a1 1 0 0 1 1-1Z";
+  const ICON_VERIFY_AUDIO = "M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9Zm0 2a7 7 0 1 1-7 7 7 7 0 0 1 7-7Zm-1 3h2v5h-2Zm0 7h2v2h-2Z";
 
   /* Porto un brano nella mia libreria.
 
@@ -6706,6 +6707,12 @@ box.innerHTML = "";
       /* La playlist e' una mia scelta, quindi la scelgo da qui: tengo questa
          voce nel menu del brano per decidere in che playlist metterlo. */
       box.appendChild(quickAction("Aggiungi alla playlist", ICON_PLAYLIST, () => aggiungiAPlaylist(t.id)));
+      if(t.url){
+        box.appendChild(quickAction("Verifica MP3", ICON_VERIFY_AUDIO, () => {
+          if(!window.MusicBoxMix?.verifyTrack?.(t.id))
+            toast("Controllo MP3 non disponibile: aggiorna Music Box.");
+        }));
+      }
 
   /* "Solo nella playlist": sparisce dalla libreria ma resta suonabile
      dentro la playlist. Serve a chi ha brani da usare in un momento
