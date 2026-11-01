@@ -21,7 +21,7 @@ function stateForProfile(){
  const name=validProfile();
  if(name===currentProfile)return;
  const oldVisible=visible;
- currentProfile=name;
+ currentProfile=name;lastPulse=0;registered=false;
  visible=!!name && localStorage.getItem(KEY+name)==="1";
  shareSong=!!name && localStorage.getItem(SONGKEY+name)!=="0";
  $("amiciVisible").checked=visible;
@@ -198,8 +198,9 @@ async function askToJoin(friend){
 async function answer(requestId,accept){
  try{
   const raw=room()?.getInviteLink?.()||"";
-  const inviteUrl=accept?raw.replace(/^https?:\/\/[^/]+\/(?:app\/)?(?:music-box\/)?/i,
-     "https://stefanovillaggio8-dot.github.io/music-box/"):"";
+  const match=raw.match(/#musicbox-room=([0-9a-f-]{36})\.([0-9a-f]{64})$/i);
+  const inviteUrl=accept&&match?
+    "https://stefanovillaggio8-dot.github.io/music-box/#musicbox-room="+match[1]+"."+match[2]:"";
   await request({action:"respond",...identity(),requestId,accept,inviteUrl});
   tell(accept?"Invito inviato in privato":"Richiesta rifiutata");
   refresh();
