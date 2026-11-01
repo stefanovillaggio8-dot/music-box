@@ -56,10 +56,16 @@ function registerTracks(){
   const cloud=/^cloud\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(file);
   if(!cloud&&!/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(file))continue;
   if(cloud&&!/^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(String(item.url||"")))continue;
-  const id=roomTrack(item);if(known.has(id))continue;
-   known.add(id);
+  const id=roomTrack(item);
+  if(known.has(id)){
+   const track=tracks.find(t=>t.id===id);
+   if(track?.source==="stanza-condivisa")track.addedBy=String(item.addedBy||item.profile||"");
+   continue;
+  }
+  known.add(id);
   tracks.push({id,file:item.file,profile:item.profile||app.profile(),title:String(item.title||"Brano"),
-   artist:String(item.artist||""),url:cloud?item.url:app.urlForFile(item.file),
+   artist:String(item.artist||""),addedBy:String(item.addedBy||item.profile||""),
+   url:cloud?item.url:app.urlForFile(item.file),
    source:"stanza-condivisa",builtin:true,gradient:"linear-gradient(150deg,#623cbd,#1f2135)"});
  }
 }
@@ -69,8 +75,9 @@ function selected(){
 }
 function sameProfile(){
  if(!creds||!room)return true;
- const expected=creds.role==="host"?room.hostProfile:room.guestProfile;
- return !expected||String(expected)===String(bridge()?.profile()||"");
+ const expected=creds.profile||(creds.role==="host"?room.hostProfile:room.guestProfile);
+ const present=!Array.isArray(room.participants)||room.participants.includes(expected);
+ return present&&(!expected||String(expected)===String(bridge()?.profile()||""));
 }
 
 /* Coda collaborativa della stanza: usa sempre le chiavi autorizzate dal server. */
@@ -106,12 +113,13 @@ async function hostSync(){
 }
 async function fetchCatalog(){
  if(!creds||!room?.joined)return;
- const marker=creds.id+":"+room.guestProfile;
+ const marker=creds.id+":"+(room.participants||[room.hostProfile,room.guestProfile]).join("|");
  if(catalogFor===marker||catalogBusy)return;
  catalogBusy=true;
  try{
   const result=await request({action:"catalog",id:creds.id,token:creds.token});
-  if(!creds||!room?.joined||creds.id+":"+room.guestProfile!==marker)return;
+  if(!creds||!room?.joined||
+      creds.id+":"+(room.participants||[room.hostProfile,room.guestProfile]).join("|")!==marker)return;
   catalog=Array.isArray(result.catalog)?result.catalog:[];
   catalogFor=marker;drawnRevision=-1;draw();
  }catch(e){status("Catalogo stanza: "+e.message)}
@@ -147,7 +155,8 @@ function songRow(t,actions,number){
  const row=document.createElement("div");row.className="stanza-queue-row";
  const info=document.createElement("span");info.className="stanza-song";
  const title=document.createElement("strong");title.textContent=(number?number+". ":"")+(t.title||"Brano");
- const meta=document.createElement("small");meta.textContent=[t.artist,t.profile].filter(Boolean).join(" · ");
+ const meta=document.createElement("small");
+ meta.textContent=[t.artist,t.profile,t.addedBy?"Aggiunta da "+t.addedBy:""].filter(Boolean).join(" · ");
  info.append(title,meta);row.append(info,actions);return row;
 }
 function searchSongs(){
@@ -175,7 +184,8 @@ function drawSharedQueue(){
  const list=$("stanzaCodaLista");if(!list)return;list.replaceChildren();
  const now=selected();
  if(now){const el=document.createElement("div");el.className="stanza-now";
-  el.textContent="♫ Ora: "+now.title+" · "+(now.artist||now.profile);list.append(el);}
+  el.textContent="♫ Ora: "+now.title+" · "+(now.artist||now.profile)+
+   (now.addedBy?" · Aggiunta da "+now.addedBy:"");list.append(el);}
  const next=nextItems();
  for(const [i,t] of next.slice(0,18).entries()){
   const actions=document.createElement("span");actions.className="stanza-queue-actions";
@@ -213,12 +223,15 @@ function draw(){
  $("stanzaPlay").textContent=shouldPlay()?"Pausa per entrambi":"Riprendi per entrambi";
  for(const id of ["stanzaPlay","stanzaNext","stanzaRimescola"])
   $(id).hidden=!joined;
+ const people=room?.participants||[room?.hostProfile,room?.guestProfile].filter(Boolean);
+ const count=Array.isArray(people)?people.length:0;
+ const limit=Number(room?.maxParticipants)||8;
  $("stanzaInfo").textContent=invitation&&!active?
-   "Hai ricevuto un invito. Entrando unisci i brani pubblicati della tua libreria con quelli del tuo amico.":
-   active?"Stanza: "+(room?.hostProfile||"Host")+" + "+(room?.guestProfile||"in attesa")+
-      ". Ogni partecipante ascolta i propri MP3 e quelli dell'altro.":
-   "Crea una stanza privata e invia il link. Ogni persona contribuisce con la propria libreria o playlist selezionata.";
- if(active)status(joined?"Connessi: "+(room.playlist?.length||0)+" brani · "+
+   "Invito a una stanza di gruppo. Entrando aggiungi i tuoi MP3 pubblicati e ti sincronizzi con gli altri.":
+   active?"Stanza di gruppo ("+count+"/"+limit+"): "+(people.length?people.join(" · "):"in attesa")+
+      ". Puoi inviare lo stesso link ad altri amici.":
+   "Crea una stanza privata per massimo 8 persone. Tutti possono contribuire alla coda collaborativa.";
+ if(active)status(joined?count+" partecipanti · "+(room.playlist?.length||0)+" brani · "+
    (needsGesture?"tocca Attiva audio una volta sul dispositivo":"sincronizzazione automatica attiva"):
    "Stanza creata, in attesa del secondo partecipante.");
  else if(invitation)status("Controlla il profilo attivo, poi premi Entra.");
@@ -251,9 +264,11 @@ async function join(){
   let result;
   try{result=await request(payload)}
   catch(e){if(!/Room changed/.test(e.message))throw e;result=await request(payload)}
-  creds={...invitation,role:"guest",profile:bridge().profile()};invitation=null;room=result.room;
+  creds={...invitation,token:result.memberToken||invitation.token,
+    role:result.memberToken?"member":"guest",profile:bridge().profile()};
+  invitation=null;room=result.room;
   localPlay=true;needsGesture=false;catalog=[];catalogFor="";drawnRevision=-1;save();lastRevision=0;await refresh();
-  tell("Sei entrato: brano, posizione e coda si sincronizzano automaticamente.");
+  tell("Sei nel gruppo ("+(room?.participants?.length||2)+"/8)! Coda e musica sincronizzate.");
  }catch(e){tell("Invito: "+e.message)}
  finally{b.disabled=false;draw()}
 }
