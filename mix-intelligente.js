@@ -111,14 +111,16 @@ function compatibility(a,b){
  return dot/Math.sqrt((aa||1)*(bb||1));
 }
 async function decode(track){
- if(isIOS||!enabled||!track?.url||!/^https?:|^blob:/i.test(track.url))return null;
- const key=String(track.file||track.id||track.url);
+ if(isIOS||!enabled||!track)return null;
+ const source=bridge()?.mixUrl?.(track)||track.url;
+ if(!source||/^(javascript:|data:)/i.test(source))return null;
+ const key=String(source);
  if(cache.has(key))return cache.get(key);
  if(pending.has(key))return pending.get(key);
  const job=(async()=>{
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14000);
   try{
-   const response=await fetch(track.url,{mode:"cors",cache:"force-cache",signal:controller.signal});
+   const response=await fetch(source,{mode:"cors",cache:"force-cache",signal:controller.signal});
    if(!response.ok||Number(response.headers.get("content-length")||0)>18000000)return null;
    let bytes;
    if(response.body&&response.body.getReader){
@@ -263,7 +265,7 @@ async function beginMix(song,proposed){
  }catch(e){cancel()}
 }
 function tick(){
- if(!enabled||isIOS||document.hidden||window.MusicBoxRoom?.isActive()){
+ if(!enabled||isIOS||window.MusicBoxRoom?.isActive()){
   if(active||prepared)cancel();
   return;
  }
