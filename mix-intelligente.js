@@ -539,6 +539,106 @@ function draw(){
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
 }
+let smartSuggested=[],smartRun=0;
+function smartScore(a,b){
+ if(!a||!b)return -Infinity;
+ // BPM 70%, armonia 20%, energia 10%. Un BPM doppio può significare
+ // la medesima pulsazione percepita (half-time/double-time).
+ const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
+ if(!bpmA||!bpmB)return -Infinity;
+ const delta=Math.min(...[.5,1,2].map(scale=>
+  Math.abs(Math.log2(bpmA/(bpmB*scale)))));
+ const beat=clamp(1-delta/.4,0,1);
+ const harmony=a.chroma&&b.chroma?compatibility(a,b):.55;
+ const level=a.level&&b.level?clamp(1-Math.abs(Math.log2(a.level/b.level))/3,0,1):.5;
+ return beat*.7+harmony*.2+level*.1;
+}
+async function suggestSmartOrder(){
+ const app=bridge(),state=$("mixSmartStatus"),list=$("mixSmartList"),add=$("mixSmartAdd");
+ if(!app?.mixCandidates||window.MusicBoxRoom?.isActive()){
+  if(state)state.textContent="Esci dall'ascolto condiviso prima di creare una sequenza.";
+  return;
+ }
+ if(navigator.connection?.saveData||
+    /^(slow-)?2g$|^3g$/i.test(String(navigator.connection?.effectiveType||""))){
+  if(state)state.textContent="Risparmio dati o connessione lenta: analisi rimandata per non consumare traffico.";
+  return;
+ }
+ const generation=++smartRun;
+ smartSuggested=[];if(add)add.disabled=true;
+ if(list)list.replaceChildren();
+ const currentId=app.currentId(),current=app.allTracks()?.find(t=>t.id===currentId);
+ const candidates=app.mixCandidates().filter(t=>t?.id&&t.url);
+ if(!current||!candidates.length){
+  if(state)state.textContent="Avvia una canzone e apri una playlist con altri brani disponibili.";
+  return;
+ }
+ // Un campione di tutta la selezione, non soltanto i primi artisti
+ // dell'ordinamento alfabetico. Al massimo 8 MP3 da analizzare su PC.
+ const max=isIOS?4:8,count=Math.min(max,candidates.length),picked=[];
+ for(let k=0;k<count;k++){
+  const at=Math.min(candidates.length-1,Math.floor((k+.5)*candidates.length/count));
+  const track=candidates[at];
+  if(track&&!picked.some(x=>x.id===track.id))picked.push(track);
+ }
+ if(state)state.textContent="Analisi musicale in corso · 0/"+picked.length+" canzoni…";
+ let analysed=0;
+ const currentInfo=await decode(current);
+ if(generation!==smartRun)return;
+ if(!currentInfo){
+  if(state)state.textContent="Impossibile analizzare l'MP3 attuale: non invento una compatibilità musicale.";
+  return;
+ }
+ const entries=[];
+ // 2 richieste parallele al massimo: evita di saturare la connessione
+ // o la RAM del browser quando l'utente possiede centinaia di canzoni.
+ let position=0;
+ const worker=async()=>{
+  while(position<picked.length&&generation===smartRun){
+   const index=position++,track=picked[index];
+   const info=await decode(track);
+   if(generation!==smartRun)return;
+   analysed++;
+   if(info)entries.push({track,info});
+   if(state)state.textContent="Analisi musicale in corso · "+analysed+"/"+picked.length+" canzoni…";
+  }
+ };
+ await Promise.all([worker(),worker()]);
+ if(generation!==smartRun)return;
+ if(!entries.length){
+  if(state)state.textContent="Questi MP3 non permettono l'analisi: la coda originale resta invariata.";
+  return;
+ }
+ const ranked=[],remaining=entries.slice();
+ let previous=currentInfo;
+ while(remaining.length&&ranked.length<3){
+  remaining.sort((x,y)=>smartScore(previous,y.info)-smartScore(previous,x.info));
+  const chosen=remaining.shift();
+  ranked.push({...chosen,score:smartScore(previous,chosen.info)});
+  previous=chosen.info;
+ }
+ // Se l'utente ha cambiato canzone o playlist, non proporgli una coda vecchia.
+ if(app.currentId()!==currentId || window.MusicBoxRoom?.isActive()){
+  if(state)state.textContent="La riproduzione è cambiata: premi di nuovo per ricalcolare.";
+  return;
+ }
+ smartSuggested=ranked.map(x=>x.track.id);
+ if(state)state.textContent="Sequenza consigliata · "+entries.length+" audio analizzati (stima). Nessun cambiamento ancora applicato.";
+ if(list){
+  const fragment=document.createDocumentFragment();
+  ranked.forEach((x,i)=>{
+   const row=document.createElement("li");
+   const name=document.createElement("strong");
+   name.textContent=(i+1)+". "+String(x.track.title||"Brano");
+   const details=document.createElement("small");
+   details.textContent=(x.track.artist?x.track.artist+" · ":"")+
+     x.info.bpm+" BPM · "+(keyGuess(x.info.chroma)||"tonalità non disponibile");
+   row.append(name,details);fragment.appendChild(row);
+  });
+  list.replaceChildren(fragment);
+ }
+ if(add)add.disabled=false;
+}
 function settingsChanged(){
  try{
   localStorage.setItem("mb.mixStyle",style);
@@ -574,6 +674,22 @@ function start(){
   settingsChanged();
  });
  $("mixToggle")?.addEventListener("click",()=>btn?.click());
+ $("mixSmartOrder")?.addEventListener("click",()=>{
+  suggestSmartOrder().catch(e=>{
+   const status=$("mixSmartStatus");
+   if(status)status.textContent="Analisi non disponibile. La coda non è stata cambiata.";
+  });
+ });
+ $("mixSmartAdd")?.addEventListener("click",()=>{
+  const added=bridge()?.mixEnqueue?.(smartSuggested)||0;
+  if(added){
+   const status=$("mixSmartStatus");
+   if(status)status.textContent=added+" brani aggiunti in fondo alla coda. Playlist originale invariata.";
+   smartSuggested=[];
+   const btn=$("mixSmartAdd");if(btn)btn.disabled=true;
+   toast("Aggiunti "+added+" brani alla coda in ordine armonico.");
+  }
+ });
  draw();
  setInterval(()=>{try{tick()}catch(e){}},500);
 }
