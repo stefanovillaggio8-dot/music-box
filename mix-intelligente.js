@@ -16,7 +16,7 @@ try{
  if(Number.isFinite(secs)&&secs>=3&&secs<=12)mixSeconds=secs;
 }catch(e){}
 const KEY_NAMES=["Do","Do♯","Re","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"];
-let active=null,previousId="",plan=null,plannedFor="",mixing=false;
+let active=null,previousId="",plan=null,plannedFor="",mixing=false,boundAudio=null;
 function bridge(){return window.MusicBoxBridge}
 function toast(m){bridge()?.toast?.(m)}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
@@ -291,14 +291,15 @@ async function beginMix(song,proposed){
  if(old.currentTime>proposed.end-.55)return;
  mixing=true;prepared=null;
  const upcoming=p.audio;
- const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,8);
+ const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   at:0,fade,timer:null};
  active=act;
  try{
-  if(proposed.entry>0&&upcoming.seekable?.length){
-   upcoming.currentTime=Math.min(proposed.entry,Math.max(0,(upcoming.duration||Infinity)-1));
+  if(proposed.entry>0&&upcoming.readyState>=1){
+   try{upcoming.currentTime=Math.min(proposed.entry,Math.max(0,(upcoming.duration||Infinity)-1))}
+   catch(e){/* Se il provider non consente il seek, mantiene l'inizio */}
    if(upcoming.seeking){
     await Promise.race([new Promise(resolve=>
       upcoming.addEventListener("seeked",resolve,{once:true})),
@@ -346,6 +347,10 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ if(isIOS&&audio&&boundAudio!==audio){
+  boundAudio=audio;
+  audio.addEventListener("timeupdate",()=>{try{tick()}catch(e){}});
+ }
  if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<26){
   if(active||prepared)cancel();
   return;
