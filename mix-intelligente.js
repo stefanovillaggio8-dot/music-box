@@ -373,7 +373,10 @@ function transition(a,b,actualDuration){
   // Quando il brano è analizzabile ma non armonicamente compatibile,
   // una dissolvenza breve negli ultimissimi secondi è più naturale
   // di attendere il silenzio dopo la fine del file.
-  if(!a)return null;
+  // Audio non analizzabile: un incrocio di soli 0.7 secondi previene
+  // il buco a fine MP3 senza fingere una compatibilità musicale.
+  if(!a)return {begin:dur-1.02,end:dur-.20,fade:.82,entry:introEntry,
+   tempo:1,kind:"soft",gain:1,score:null,silenceTrim:false,trailing:0};
   const end=clamp(musicalEnd-(trim?.10:a.quietTail?.28:.18),12,dur-.12);
   const fade=clamp(trim?1.7:a.quietTail?1.15:.75,.6,Math.min(2.1,end-10));
   return {begin:end-fade,end,fade,entry:introEntry,tempo:1,
