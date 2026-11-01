@@ -1693,6 +1693,18 @@
     "t": "Lastronauta (Visual)",
     "a": "nayt"
    },
+   "[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
+    "v": 0,
+    "s": 77,
+    "t": "Kid Yugi x Nuts - Lil Peep",
+    "a": "Ferro di checov"
+   },
+   "m:2026-11|[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
+    "v": 0,
+    "s": 77,
+    "t": "Kid Yugi x Nuts - Lil Peep",
+    "a": "Ferro di checov"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -1789,17 +1801,17 @@
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
+   "[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 77,
-    "t": "Kid Yugi x Nuts - Lil Peep",
-    "a": "Ferro di checov"
+    "s": 56,
+    "t": "Lasciami",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"kid yugi x nuts - lil peep\",\"ferro di checov\"]": {
+   "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 77,
-    "t": "Kid Yugi x Nuts - Lil Peep",
-    "a": "Ferro di checov"
+    "s": 56,
+    "t": "Lasciami",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -1899,15 +1911,27 @@
    },
    "[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 56,
+    "s": 100,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 56,
+    "s": 100,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"stupido\",\"massimo pericolo\"]": {
+    "v": 0,
+    "s": 70,
+    "t": "stupido",
+    "a": "massimo pericolo"
+   },
+   "m:2026-11|[\"stupido\",\"massimo pericolo\"]": {
+    "v": 0,
+    "s": 70,
+    "t": "stupido",
+    "a": "massimo pericolo"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2017,17 +2041,17 @@
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"stupido\",\"massimo pericolo\"]": {
+   "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 70,
-    "t": "stupido",
-    "a": "massimo pericolo"
+    "s": 33,
+    "t": "Quel sorriso in volto",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"stupido\",\"massimo pericolo\"]": {
+   "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 70,
-    "t": "stupido",
-    "a": "massimo pericolo"
+    "s": 33,
+    "t": "Quel sorriso in volto",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2151,13 +2175,13 @@
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 33,
+    "s": 114,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 33,
+    "s": 114,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -2283,15 +2307,27 @@
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 114,
+    "s": 149,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 114,
+    "s": 149,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂ "
+   },
+   "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "CIGNO NERO RMX",
+    "a": "Nayt / Frah Quintale / Tony Boy"
+   },
+   "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "CIGNO NERO RMX",
+    "a": "Nayt / Frah Quintale / Tony Boy"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -2425,17 +2461,17 @@
     "t": "Quel sorriso in volto",
     "a": "ModÃÂ "
    },
-   "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+   "[\"se si potesse non morire\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 83,
-    "t": "CIGNO NERO RMX",
-    "a": "Nayt / Frah Quintale / Tony Boy"
+    "s": 32,
+    "t": "Se si potesse non morire",
+    "a": "ModÃÂ "
    },
-   "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
+   "m:2026-11|[\"se si potesse non morire\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 83,
-    "t": "CIGNO NERO RMX",
-    "a": "Nayt / Frah Quintale / Tony Boy"
+    "s": 32,
+    "t": "Se si potesse non morire",
+    "a": "ModÃÂ "
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -2571,15 +2607,27 @@
    },
    "[\"se si potesse non morire\",\"modÃ \"]": {
     "v": 0,
-    "s": 32,
+    "s": 104,
     "t": "Se si potesse non morire",
     "a": "ModÃ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃ \"]": {
     "v": 0,
-    "s": 32,
+    "s": 104,
     "t": "Se si potesse non morire",
     "a": "ModÃ "
+   },
+   "[\"morto mai (piano solo)\",\"lazza\"]": {
+    "v": 0,
+    "s": 73,
+    "t": "Morto Mai (Piano Solo)",
+    "a": "Lazza"
+   },
+   "m:2026-11|[\"morto mai (piano solo)\",\"lazza\"]": {
+    "v": 0,
+    "s": 73,
+    "t": "Morto Mai (Piano Solo)",
+    "a": "Lazza"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -2725,17 +2773,17 @@
     "t": "Se si potesse non morire",
     "a": "Modà"
    },
-   "[\"morto mai (piano solo)\",\"lazza\"]": {
+   "[\"dove è sempre sole\",\"modà\"]": {
     "v": 0,
-    "s": 10,
-    "t": "Morto Mai (Piano Solo)",
-    "a": "Lazza"
+    "s": 17,
+    "t": "Dove è sempre sole",
+    "a": "Modà"
    },
-   "m:2026-11|[\"morto mai (piano solo)\",\"lazza\"]": {
+   "m:2026-11|[\"dove è sempre sole\",\"modà\"]": {
     "v": 0,
-    "s": 10,
-    "t": "Morto Mai (Piano Solo)",
-    "a": "Lazza"
+    "s": 17,
+    "t": "Dove è sempre sole",
+    "a": "Modà"
    }
   },
   "Diego": {
