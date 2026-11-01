@@ -12,8 +12,11 @@ let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false;
 let commandChain=Promise.resolve();
 // L'ultimo comando Play/Pausa prevale immediatamente sul polling.
 let pendingPlayback=null,playbackSequence=0;
-const shouldPlay=()=>pendingPlayback?.id===creds?.id?
-  pendingPlayback.playing:Boolean(room?.playing);
+// When both state objects are null, optional-chained ids would both be
+// undefined: undefined===undefined must NEVER try pendingPlayback.playing.
+// This was aborting draw() halfway through room departure.
+const shouldPlay=()=>Boolean(pendingPlayback&&creds&&pendingPlayback.id===creds.id)?
+  Boolean(pendingPlayback.playing):Boolean(room?.playing);
 const suppress=()=>{suppressEventsUntil=Date.now()+650;};
 // I comandi intenzionali non devono essere bloccati dalla breve protezione
 // contro gli eventi echo (play/seek) prodotti dal server.
