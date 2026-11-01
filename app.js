@@ -5286,7 +5286,9 @@ function _eliminatiRimossiDaMandareSvuota() {
        sbagliato senza che si capisse perche'. */
     try { /* i brani nascosti non esistono piu' */ } catch (e) { /* noop */ }
 
-    const visibleAll = tracks.slice();
+    // I brani provvisori della stanza sono player interni, non nuove
+    // canzoni nella libreria: non gonfiare il contatore del profilo.
+    const visibleAll = tracks.filter(t => t && t.source !== "stanza-condivisa");
     const total = visibleAll.length;
     const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
     const n = list.length;
