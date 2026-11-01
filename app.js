@@ -1273,7 +1273,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.486";
+  const APP_VERSION = "6.487";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7050,6 +7050,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      _casualeModificaUtente = false; // Nuovo brano, nuova scelta intelligente consentita.
       if (_casualeProgrammate.length) {
         if (_casualeProgrammate[0] === id) _casualeProgrammate.shift();
         else _casualeProgrammate = [];
@@ -7182,6 +7183,7 @@ let _casualeDa = "";
 let _casualeProgrammate = [];
 let _casualeFirma = "";
 let _casualeEscluse = new Set();
+let _casualeModificaUtente = false;
 
 function _azzeraCasuale() {
   _casualeFresche = null;
@@ -7191,6 +7193,7 @@ function _azzeraCasuale() {
   _casualeProgrammate = [];
   _casualeFirma = "";
   _casualeEscluse.clear();
+  _casualeModificaUtente = false;
 }
 
 function _listaProssimiCasuali(lista, quanti = 10) {
@@ -7240,6 +7243,7 @@ function _ordineCasualeModificato() {
   renderQueueCount();
 }
 function _spostaCasuale(i, direzione) {
+  _casualeModificaUtente = true;
   const j = i + direzione;
   if (i < 0 || j < 0 || j >= _casualeProgrammate.length) return;
   [_casualeProgrammate[i], _casualeProgrammate[j]] =
@@ -7247,6 +7251,7 @@ function _spostaCasuale(i, direzione) {
   _ordineCasualeModificato();
 }
 function _saltaCasuale(i) {
+  _casualeModificaUtente = true;
   const id = _casualeProgrammate[i];
   if (!id) return;
   _casualeEscluse.add(id);
@@ -7254,6 +7259,7 @@ function _saltaCasuale(i) {
   _ordineCasualeModificato();
 }
 function _rimescolaCasuale() {
+  _casualeModificaUtente = true;
   const lista = _casualeProgrammate.slice();
   for (let i = lista.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -11504,6 +11510,24 @@ window.MusicBoxBridge = {
     }
     if(added){persistQueue();renderQueueCount()}
     return added;
+  },
+  // Espone SOLTANTO il casuale generato automaticamente, mai la coda
+  // selezionata manualmente o quella condivisa con un altro ascoltatore.
+  mixShuffleCandidates:()=>{
+    if(!shuffle||queue.length||repeat||!currentId||
+       window.MusicBoxRoom?.isActive()||_casualeModificaUtente)return [];
+    return _prossimiAutomaticiInCoda();
+  },
+  mixSelectShuffle:({fromId,initialFirst,pickId})=>{
+    if(!shuffle||queue.length||repeat||_casualeModificaUtente||
+       window.MusicBoxRoom?.isActive()||currentId!==fromId||
+       _casualeProgrammate[0]!==initialFirst)return false;
+    const idx=_casualeProgrammate.indexOf(pickId);
+    if(idx<1)return false;
+    _casualeProgrammate.splice(idx,1);
+    _casualeProgrammate.unshift(pickId);
+    _ordineCasualeModificato();
+    return true;
   },
   mixHandoff:(id,startAt)=>{
     if(queue[0]===id){queue.shift();persistQueue()}
