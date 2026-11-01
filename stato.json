@@ -1650,13 +1650,13 @@
    },
    "[\"baby mama\",\"don pero\"]": {
     "v": 0,
-    "s": 93,
+    "s": 133,
     "t": "Baby Mama",
     "a": "Don Pero"
    },
    "m:2026-11|[\"baby mama\",\"don pero\"]": {
     "v": 0,
-    "s": 93,
+    "s": 133,
     "t": "Baby Mama",
     "a": "Don Pero"
    },
@@ -2794,6 +2794,18 @@
     "t": "gRAZie A Dio",
     "a": "thasup"
    },
+   "[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "Senza Di Me (feat. Venerus & Franco126)",
+    "a": "Gemitaiz, Venerus, Franco126"
+   },
+   "m:2026-11|[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "Senza Di Me (feat. Venerus & Franco126)",
+    "a": "Gemitaiz, Venerus, Franco126"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 96,
@@ -2806,17 +2818,17 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
+   "[\"culo\",\"tonypitony\"]": {
     "v": 0,
-    "s": 83,
-    "t": "Senza Di Me (feat. Venerus & Franco126)",
-    "a": "Gemitaiz, Venerus, Franco126"
+    "s": 73,
+    "t": "CULO",
+    "a": "TonyPitony"
    },
-   "m:2026-11|[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
+   "m:2026-11|[\"culo\",\"tonypitony\"]": {
     "v": 0,
-    "s": 83,
-    "t": "Senza Di Me (feat. Venerus & Franco126)",
-    "a": "Gemitaiz, Venerus, Franco126"
+    "s": 73,
+    "t": "CULO",
+    "a": "TonyPitony"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3262,17 +3274,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"culo\",\"tonypitony\"]": {
+   "[\"m@star\",\"thasup\"]": {
     "v": 0,
-    "s": 73,
-    "t": "CULO",
-    "a": "TonyPitony"
+    "s": 83,
+    "t": "m@star",
+    "a": "thasup"
    },
-   "m:2026-11|[\"culo\",\"tonypitony\"]": {
+   "m:2026-11|[\"m@star\",\"thasup\"]": {
     "v": 0,
-    "s": 73,
-    "t": "CULO",
-    "a": "TonyPitony"
+    "s": 83,
+    "t": "m@star",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3718,17 +3730,11 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"m@star\",\"thasup\"]": {
+   "m:2026-11|[\"white keys\",\"dominic fike\"]": {
     "v": 0,
-    "s": 83,
-    "t": "m@star",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"m@star\",\"thasup\"]": {
-    "v": 0,
-    "s": 83,
-    "t": "m@star",
-    "a": "thasup"
+    "s": 65,
+    "t": "WHITE KEYS",
+    "a": "Dominic Fike"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4174,11 +4180,17 @@
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "m:2026-11|[\"white keys\",\"dominic fike\"]": {
+   "[\"voodoo\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 65,
-    "t": "WHITE KEYS",
-    "a": "Dominic Fike"
+    "s": 62,
+    "t": "Voodoo",
+    "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"voodoo\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Voodoo",
+    "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4638,15 +4650,27 @@
    },
    "[\"voodoo\",\"guÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 62,
+    "s": 79,
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 62,
+    "s": 79,
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
+   },
+   "[\"il ferro di echov\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "Il Ferro di Echov",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5116,17 +5140,17 @@
     "t": "Voodoo",
     "a": "GuÃÂÃÂ¨"
    },
-   "[\"il ferro di echov\",\"kid yugi\"]": {
+   "[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
     "v": 0,
-    "s": 85,
-    "t": "Il Ferro di Echov",
-    "a": "Kid Yugi"
+    "s": 63,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    },
-   "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
+   "m:2026-11|[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
     "v": 0,
-    "s": 85,
-    "t": "Il Ferro di Echov",
-    "a": "Kid Yugi"
+    "s": 63,
+    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
+    "a": "THYNA, Nuova Scena"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -5596,17 +5620,17 @@
     "t": "Voodoo",
     "a": "GuÃÂ¨"
    },
-   "[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
+   "[\"g&v\",\"ivanbÃÂ¬\"]": {
     "v": 0,
-    "s": 63,
-    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
-    "a": "THYNA, Nuova Scena"
+    "s": 48,
+    "t": "G&V",
+    "a": "ivanBÃÂ¬"
    },
-   "m:2026-11|[\"putt**a (from the netflix rap show \\\"nuova scena\\\")\",\"thyna, nuova scena\"]": {
+   "m:2026-11|[\"g&v\",\"ivanbÃÂ¬\"]": {
     "v": 0,
-    "s": 63,
-    "t": "PUTT**A (From the Netflix Rap Show \"Nuova Scena\")",
-    "a": "THYNA, Nuova Scena"
+    "s": 48,
+    "t": "G&V",
+    "a": "ivanBÃÂ¬"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -6450,13 +6474,13 @@
    },
    "[\"favola\",\"modà\"]": {
     "v": 0,
-    "s": 162,
+    "s": 201,
     "t": "Favola",
     "a": "Modà"
    },
    "m:2026-11|[\"favola\",\"modà\"]": {
     "v": 0,
-    "s": 162,
+    "s": 201,
     "t": "Favola",
     "a": "Modà"
    },
