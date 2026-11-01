@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6501" />
+  <link rel="stylesheet" href="style.css?v=6502" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -564,7 +564,7 @@
         <p class="menu-altro-sezione">CON GLI AMICI</p>
         <button class="menu-altro-voce" id="btnAscoltoCondiviso" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm8 0a4 4 0 1 0-4-4 4 4 0 0 0 4 4ZM1 20v-3c0-2 3-4 7-4s7 2 7 4v3Zm15 0v-3a5 5 0 0 0-1.5-3.5c4-1 8 1 8 4V20Z"/></svg>
-          <span class="voce-testo">Ascolta insieme <small>Due librerie, una coda condivisa</small></span>
+          <span class="voce-testo">Ascolta insieme <small>Fino a 8 persone, attività e coda condivise</small></span>
         </button>
       </section>
       <section class="menu-altro-gruppo" aria-label="Download offline">
@@ -659,8 +659,9 @@
         <p class="hud-sub" id="hudSub">Aggiungi musica per iniziare</p>
       </div>
       <button class="lyr-btn" id="btnLyrics" hidden aria-label="Mostra testo" title="Testo">
-        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 5a1 1 0 0 0 0 2h16a1 1 0 1 0 0-2H4Zm0 5a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2H4Zm0 5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H4Zm16.5 1.1 1.9 2.1a1 1 0 0 1-1.5 1.3l-1.8-1.9c-.9.6-2 .9-3.1.9-2.4 0-4-1.6-4-3.9s1.6-3.9 4-3.9 4 1.6 4 3.9v-.4c0-.2 0-.3 0-.5-.5-.3-1.1-.5-1.7-.5-1.4 0-2.4 1-2.4 2.4s1 2.4 2.4 2.4c.6 0 1.2-.2 1.7-.5v.2Z"/></svg>
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 5a1 1 0 0 0 0 2h16a1 1 0 1 0 0-2H4Zm0 5a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2H4Zm0 5a1 1 0 1 0 0 2h10a1 1 0 1 0 0-2H4Zm16.5 1.1 1.9 2.1a1 1 0 0 1-1.5 1.3l-1.8-1.9c-.9.6-2 .9-3.1.9-2.4 0-4-1.6-4-3.9s1.6-3.9 4-3.9 4 1.6 4 3.9v-.4c0-.2 0-.3 0-.5-.5-.3-1.1-.5-1.7-.5v.2Z"/></svg>
       </button>
+      <button type="button" class="im-entry" id="btnImmersive" hidden aria-label="Apri Immersive Mode" title="Immersive Mode" aria-haspopup="dialog">✦ <span>Immersive Mode</span></button>
     </section>
 
       <p class="track-count" id="trackCount"></p>
@@ -946,7 +947,48 @@
     </div>
   </footer>
 
-  <div class="lyrics-overlay" id="lyricsPanel" hidden>
+  
+<div id="immersivePanel" class="im-root" hidden role="dialog" aria-modal="true" aria-label="Immersive Mode: player cinematografico">
+  <div id="imBackdrop" class="im-backdrop" aria-hidden="true"></div>
+  <div class="im-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="im-shell">
+    <header class="im-head">
+      <span class="im-brand">✦ MUSIC BOX <span>CINEMA</span></span>
+      <span class="im-mode">IMMERSIVE MODE</span>
+      <button id="imClose" type="button" class="im-close" aria-label="Chiudi Immersive Mode">×</button>
+    </header>
+    <section class="im-main">
+      <div class="im-art-zone">
+        <div id="imCover" class="im-cover im-no-cover" role="img" aria-label="Copertina della canzone in riproduzione"><span>✦</span></div>
+        <div class="im-art-reflection"></div>
+      </div>
+      <div class="im-player">
+        <p class="im-eyebrow" id="imState">ORA IN RIPRODUZIONE</p>
+        <h2 id="imTitle">Music Box</h2>
+        <p id="imArtist" class="im-artist"></p>
+        <div id="imKaraoke" class="im-karaoke" aria-live="off"><p class="im-line active">Musica, luci e atmosfera.</p></div>
+        <div class="im-timeline">
+          <input id="imSeek" type="range" min="0" max="1000" step="1" value="0" aria-label="Posizione nella canzone" />
+          <div class="im-times"><span id="imCurrent">0:00</span><span id="imDuration">0:00</span></div>
+        </div>
+        <div class="im-controls">
+          <button id="imPrev" type="button" aria-label="Canzone precedente">⏮</button>
+          <button id="imToggle" type="button" class="im-main-play" aria-label="Play o pausa">▶</button>
+          <button id="imNext" type="button" aria-label="Canzone successiva">⏭</button>
+        </div>
+        <button id="imLyrics" type="button" class="im-lyrics-btn">♫ Testo completo / Traduci</button>
+      </div>
+    </section>
+    <div class="im-visualizer" id="imVisualizer" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p class="im-footer">AMBIENT LIGHTING · MUSIC BOX</p>
+  </div>
+</div>
+
+<div class="lyrics-overlay" id="lyricsPanel" hidden>
     <div class="lyrics-sfondo" id="lyricsSfondo"></div>
     <div class="lyrics-card">
       <div class="lyrics-head">
@@ -1387,6 +1429,10 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
         <button id="stanzaRimescola" type="button" hidden>Rimescola per entrambi</button>
         <button id="stanzaEsci" type="button" hidden>Esci dalla stanza</button>
       </div>
+      <section id="stanzaActivity" class="stanza-activity-area" hidden aria-label="Attività del gruppo">
+        <div class="stanza-activity-head"><h3>Attività stanza</h3><span>Ultime azioni</span></div>
+        <div id="stanzaActivityList" class="stanza-activity-list" role="log" aria-live="off"></div>
+      </section>
       <section id="stanzaQueueArea" class="stanza-queue-area" hidden aria-label="Coda musicale condivisa">
         <h3>Coda collaborativa</h3>
         <p class="stanza-hint">Tutti i partecipanti possono aggiungere, spostare e rimuovere le prossime canzoni. Accanto a ogni brano vedi chi lo ha aggiunto.</p>
@@ -1410,9 +1456,10 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6501"></script>
-<script src="app.js?v=6501"></script>
-<script src="stanza.js?v=6501"></script>
-<script src="mix-intelligente.js?v=6501"></script>
+<script src="fuoco.js?v=6502"></script>
+<script src="app.js?v=6502"></script>
+<script src="stanza.js?v=6502"></script>
+<script src="mix-intelligente.js?v=6502"></script>
+<script src="immersive.js?v=6502"></script>
 </body>
 </html>
