@@ -660,6 +660,15 @@ function tick(){
    if(previousId!==fromId||plannedFor!==target||app.currentId()!==fromId||
       app.mixNext()?.id!==target||mixing)return;
    const candidate=transition(a,b,audio.duration);
+   // On iOS, a quiet musical outro can be handed off early even if it has
+   // no digital silence. Require BOTH measured songs and plausible musical
+   // compatibility, never skip the loud part of an unverified track.
+   if(isIOS&&candidate&&!candidate.silenceTrim&&a&&b&&
+      !a.durationMismatch&&!b.durationMismatch&&a.quietTail&&
+      a.beatConfidence>=.13&&smartScore(a,b)>=.72){
+     candidate.mobileSmartCut=true;
+     candidate.mobileCutAt=Math.min(candidate.end,audio.duration-.15);
+   }
    plan=candidate; // Non mantenere una transizione smentita dalle analisi.
    updateDetails(a,b);
   };
@@ -672,11 +681,12 @@ function tick(){
  // iOS foreground: fade the confirmed tail without opening another player.
  // This is a single-stream smart handoff, not overlapping two audio sources.
  if(isIOS){
-  const trimOk=Boolean(plan.silenceTrim&&plan.trailing>=1.65);
-  const fadeAt=plan.end-1.1;
-  if(trimOk&&!document.hidden&&audio.currentTime>=fadeAt&&audio.currentTime<plan.end){
+  const trimOk=Boolean((plan.silenceTrim&&plan.trailing>=1.65)||plan.mobileSmartCut);
+  const mobileEnd=plan.mobileSmartCut?plan.mobileCutAt:plan.end;
+  const fadeAt=mobileEnd-1.1;
+  if(trimOk&&!document.hidden&&audio.currentTime>=fadeAt&&audio.currentTime<mobileEnd){
    const volume=app.volume?.()??1;
-   const fraction=clamp((plan.end-audio.currentTime)/1.1,.15,1);
+   const fraction=clamp((mobileEnd-audio.currentTime)/1.1,.15,1);
    try{audio.volume=volume*fraction;mobileFadeTrack=id;mobileFading=true}catch(e){}
   }else if(mobileFading)resetMobileFade();
  }
@@ -689,8 +699,8 @@ function tick(){
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
  // Se l'analisi certifica una lunga coda muta e il punto di mix è già
  // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
- if((plan.silenceTrim||plan.kind==="soft")&&
-    audio.currentTime>=plan.end+.08&&
+ if((plan.silenceTrim||plan.mobileSmartCut||plan.kind==="soft")&&
+    audio.currentTime>=(isIOS&&plan.mobileSmartCut?plan.mobileCutAt:plan.end)+.08&&
     !active&&!mixing){
   const target=next.id,entry=plan.entry;
   cancel();plannedFor=target;plan=null;
