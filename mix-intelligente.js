@@ -7,6 +7,74 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map(),mixFailures=new Map();
+// Persist only lightweight analysis measurements (never MP3 data). Keep the
+// storage separate from Music Box audio caches and tolerate private browsing.
+let analysisDbPromise=null;
+function analysisDatabase(){
+ if(analysisDbPromise)return analysisDbPromise;
+ if(typeof indexedDB==="undefined")return Promise.resolve(null);
+ analysisDbPromise=new Promise(resolve=>{
+  try{
+   const req=indexedDB.open("musicbox-dj-analysis",1);
+   req.onupgradeneeded=()=>{
+    const db=req.result;
+    if(!db.objectStoreNames.contains("records")){
+     const store=db.createObjectStore("records",{keyPath:"url"});
+     store.createIndex("when","when");
+    }
+   };
+   req.onsuccess=()=>resolve(req.result);
+   req.onerror=()=>resolve(null);
+   req.onblocked=()=>resolve(null);
+  }catch(e){resolve(null)}
+ });
+ return analysisDbPromise;
+}
+function canSaveAnalysis(source){
+ // No tokens, signed URLs, local connection credentials or cloud sessions.
+ return typeof source==="string"&&source.length<1024&&
+   (source.startsWith("https://raw.githubusercontent.com/stefanovillaggio8-dot/") ||
+    /^songs\/[a-z0-9_-]+\.mp3$/i.test(source));
+}
+async function savedAnalysis(source){
+ if(!canSaveAnalysis(source))return null;
+ const db=await analysisDatabase();if(!db)return null;
+ return new Promise(resolve=>{
+  try{
+   const req=db.transaction("records","readonly").objectStore("records").get(source);
+   req.onsuccess=()=>{
+    const item=req.result;
+    if(!item||Date.now()-item.when>7*86400000||!item.data||
+       !Number.isFinite(item.data.bpm)||!Number.isFinite(item.data.duration))
+      return resolve(null);
+    resolve(item.data);
+   };
+   req.onerror=()=>resolve(null);
+  }catch(e){resolve(null)}
+ });
+}
+async function saveAnalysis(source,data){
+ if(!canSaveAnalysis(source))return;
+ const db=await analysisDatabase();if(!db)return;
+ try{
+  const tx=db.transaction("records","readwrite");
+  const store=tx.objectStore("records");
+  store.put({url:source,when:Date.now(),data});
+  // Limit the cache by age to avoid consuming significant device storage.
+  const count=store.count();
+  count.onsuccess=()=>{
+   let excess=Math.max(0,count.result-60);
+   if(!excess)return;
+   const cursor=store.index("when").openCursor();
+   cursor.onsuccess=()=>{
+    const item=cursor.result;
+    if(!item||excess<=0)return;
+    item.delete();excess--;item.continue();
+   };
+  };
+ }catch(e){/* Quota or storage denied: in-memory analysis still works */}
+}
+
 const allowedStyles=new Set(["auto","fade","rise"]);
 let style="auto",mixSeconds=6;
 try{
@@ -164,6 +232,11 @@ async function decode(track){
  const key=String(source);
  if(cache.has(key))return cache.get(key);
  if(pending.has(key))return pending.get(key);
+ const saved=await savedAnalysis(key);
+ if(saved){cache.set(key,saved);return saved}
+ // A second caller may have begun the same analysis while IndexedDB loaded.
+ if(cache.has(key))return cache.get(key);
+ if(pending.has(key))return pending.get(key);
  const job=(async()=>{
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14000);
   try{
@@ -195,6 +268,7 @@ async function decode(track){
     const harmonies=isIOS?null:chroma(decoded);
     const result={...frame,chroma:harmonies,duration:decoded.duration};
     cache.set(key,result);
+    saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
    }finally{await ctx.close().catch(()=>{})}
