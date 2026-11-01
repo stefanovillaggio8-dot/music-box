@@ -2196,13 +2196,13 @@
    },
    "[\"mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 1,
-    "s": 56,
+    "s": 66,
     "t": "mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
-    "s": 56,
+    "s": 66,
     "t": "mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
@@ -2493,6 +2493,18 @@
     "s": 4,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "[\"we fell in love in october\",\"girl in red\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "we fell in love in october",
+    "a": "girl in red"
+   },
+   "m:2026-11|[\"we fell in love in october\",\"girl in red\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "we fell in love in october",
+    "a": "girl in red"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2878,17 +2890,29 @@
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"we fell in love in october\",\"girl in red\"]": {
+   "[\"paraguai\",\"nayt, canova\"]": {
     "v": 0,
-    "s": 72,
-    "t": "we fell in love in october",
-    "a": "girl in red"
+    "s": 65,
+    "t": "Paraguai",
+    "a": "nayt, Canova"
    },
-   "m:2026-11|[\"we fell in love in october\",\"girl in red\"]": {
+   "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
     "v": 0,
-    "s": 72,
-    "t": "we fell in love in october",
-    "a": "girl in red"
+    "s": 65,
+    "t": "Paraguai",
+    "a": "nayt, Canova"
+   },
+   "[\"crudelia - i nervi\",\"marracash\"]": {
+    "v": 0,
+    "s": 99,
+    "t": "CRUDELIA - I nervi",
+    "a": "Marracash"
+   },
+   "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
+    "v": 0,
+    "s": 99,
+    "t": "CRUDELIA - I nervi",
+    "a": "Marracash"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3274,30 +3298,6 @@
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"paraguai\",\"nayt, canova\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "Paraguai",
-    "a": "nayt, Canova"
-   },
-   "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "Paraguai",
-    "a": "nayt, Canova"
-   },
-   "[\"crudelia - i nervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 99,
-    "t": "CRUDELIA - I nervi",
-    "a": "Marracash"
-   },
-   "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 99,
-    "t": "CRUDELIA - I nervi",
-    "a": "Marracash"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3681,6 +3681,18 @@
     "s": 119,
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"occhi lucidi\",\"leon faun, duffy\"]": {
+    "v": 0,
+    "s": 78,
+    "t": "Occhi Lucidi",
+    "a": "Leon Faun, Duffy"
+   },
+   "m:2026-11|[\"occhi lucidi\",\"leon faun, duffy\"]": {
+    "v": 0,
+    "s": 78,
+    "t": "Occhi Lucidi",
+    "a": "Leon Faun, Duffy"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4078,17 +4090,17 @@
     "t": "Salvami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"occhi lucidi\",\"leon faun, duffy\"]": {
+   "[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 0,
-    "s": 78,
-    "t": "Occhi Lucidi",
-    "a": "Leon Faun, Duffy"
+    "s": 85,
+    "t": "TUTTO FUORI CONTROLLO",
+    "a": "MACE, Kid Yugi, IzI, Franco126"
    },
-   "m:2026-11|[\"occhi lucidi\",\"leon faun, duffy\"]": {
+   "m:2026-11|[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 0,
-    "s": 78,
-    "t": "Occhi Lucidi",
-    "a": "Leon Faun, Duffy"
+    "s": 85,
+    "t": "TUTTO FUORI CONTROLLO",
+    "a": "MACE, Kid Yugi, IzI, Franco126"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4486,17 +4498,17 @@
     "t": "Salvami",
     "a": "ModÃÂÃÂ "
    },
-   "[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
+   "[\"tutti il resto ÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 85,
-    "t": "TUTTO FUORI CONTROLLO",
-    "a": "MACE, Kid Yugi, IzI, Franco126"
+    "s": 53,
+    "t": "Tutti il resto ÃÂÃÂ¨ noi",
+    "a": "nayt, 3D"
    },
-   "m:2026-11|[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
+   "m:2026-11|[\"tutti il resto ÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 85,
-    "t": "TUTTO FUORI CONTROLLO",
-    "a": "MACE, Kid Yugi, IzI, Franco126"
+    "s": 53,
+    "t": "Tutti il resto ÃÂÃÂ¨ noi",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -4896,15 +4908,39 @@
    },
    "[\"tutti il resto ÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 53,
+    "s": 73,
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 53,
+    "s": 73,
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
+   },
+   "[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
+    "v": 0,
+    "s": 47,
+    "t": "Malpensa",
+    "a": "G.Mineiro, Flatpearl, Succo"
+   },
+   "m:2026-11|[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
+    "v": 0,
+    "s": 47,
+    "t": "Malpensa",
+    "a": "G.Mineiro, Flatpearl, Succo"
+   },
+   "[\"la tua canzone\",\"coez\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "La tua canzone",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"la tua canzone\",\"coez\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "La tua canzone",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -5314,29 +5350,17 @@
     "t": "Tutti il resto Ã¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
+   "[\"da zero\",\"nayt\"]": {
     "v": 0,
-    "s": 47,
-    "t": "Malpensa",
-    "a": "G.Mineiro, Flatpearl, Succo"
+    "s": 67,
+    "t": "Da zero",
+    "a": "nayt"
    },
-   "m:2026-11|[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
+   "m:2026-11|[\"da zero\",\"nayt\"]": {
     "v": 0,
-    "s": 47,
-    "t": "Malpensa",
-    "a": "G.Mineiro, Flatpearl, Succo"
-   },
-   "[\"la tua canzone\",\"coez\"]": {
-    "v": 0,
-    "s": 72,
-    "t": "La tua canzone",
-    "a": "Coez"
-   },
-   "m:2026-11|[\"la tua canzone\",\"coez\"]": {
-    "v": 0,
-    "s": 72,
-    "t": "La tua canzone",
-    "a": "Coez"
+    "s": 67,
+    "t": "Da zero",
+    "a": "nayt"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -5746,17 +5770,17 @@
     "t": "Tutti il resto è noi",
     "a": "nayt, 3D"
    },
-   "[\"da zero\",\"nayt\"]": {
+   "[\"autoritratto\",\"charlie charles, nayt\"]": {
     "v": 0,
-    "s": 4,
-    "t": "Da zero",
-    "a": "nayt"
+    "s": 24,
+    "t": "Autoritratto",
+    "a": "Charlie Charles, nayt"
    },
-   "m:2026-11|[\"da zero\",\"nayt\"]": {
+   "m:2026-11|[\"autoritratto\",\"charlie charles, nayt\"]": {
     "v": 0,
-    "s": 4,
-    "t": "Da zero",
-    "a": "nayt"
+    "s": 24,
+    "t": "Autoritratto",
+    "a": "Charlie Charles, nayt"
    }
   },
   "Diego": {
