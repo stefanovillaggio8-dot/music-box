@@ -213,7 +213,7 @@ function searchSongs(){
  container.replaceChildren();
  const term=String($("stanzaCercaBrano")?.value||"").trim().toLocaleLowerCase("it");
  if(!term){container.textContent="Cerca un brano nelle librerie del gruppo per aggiungerlo alla coda.";return;}
- const matches=catalog.filter(t=>[t.title,t.artist,t.profile].join(" ").toLocaleLowerCase("it").includes(term));
+ const matches=catalog.filter(t=>[t.title,t.artist,t.profile,t.addedBy,...(t.ownerAccounts||[])].join(" ").toLocaleLowerCase("it").includes(term));
  for(const t of matches.slice(0,14)){
   const actions=document.createElement("span");actions.className="stanza-queue-actions";
   actions.append(button("Dopo","Aggiungi dopo questo brano",()=>control("queue-add",{key:t.key,position:"next"})),
