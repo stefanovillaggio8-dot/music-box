@@ -77,6 +77,7 @@ function snapshot(){
 }
 async function hostSync(){
  if(creds?.role!=="host"||room?.joined)return;
+ const activeId=creds.id,activeToken=creds.token;
  const x=snapshot(),t=room?.playlist?.[Number(room.currentIndex)||0];
  if(!x.currentKey||!room.playlist.some(t=>t.key===x.currentKey))return;
  const at=(Number(room.offset)||0)+(room.playing&&room.startedAt?
@@ -84,7 +85,10 @@ async function hostSync(){
  if(t?.key===x.currentKey&&!!room.playing===x.playing&&Math.abs(at-x.seconds)<3.5)return;
  try{
   const res=await request({action:"host-sync",id:creds.id,token:creds.token,...x});
-  if(res.room&&Number(res.room.revision)>=Number(room.revision)){room=res.room;lastRevision=0;}
+  if(creds?.id===activeId&&creds?.token===activeToken&&room?.id===activeId&&
+      res.room&&Number(res.room.revision)>=Number(room.revision)){
+   room=res.room;lastRevision=0;
+  }
  }catch(e){if(!/Room changed/.test(e.message))console.warn("Stanza:",e.message)}
 }
 async function fetchCatalog(){
