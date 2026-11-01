@@ -1185,7 +1185,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 2,
-    "s": 114,
+    "s": 117,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1821,7 +1821,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 1,
-    "s": 106,
+    "s": 109,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1986,6 +1986,18 @@
     "s": 77,
     "t": "Disfruto - Carla Morrison",
     "a": "Carla Morrison"
+   },
+   "[\"tutti\",\"calcutta\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Tutti",
+    "a": "Calcutta"
+   },
+   "m:2026-11|[\"tutti\",\"calcutta\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "Tutti",
+    "a": "Calcutta"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2197,17 +2209,29 @@
     "t": "ZITTI E BUONI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
-   "[\"tutti\",\"calcutta\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Tutti",
-    "a": "Calcutta"
+   "[\"alta marea\",\"antonello venditti\"]": {
+    "v": 4,
+    "s": 20,
+    "t": "Alta marea (Don't Dream It's Over) [Testo]",
+    "a": "Antonello Venditti"
    },
-   "m:2026-11|[\"tutti\",\"calcutta\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Tutti",
-    "a": "Calcutta"
+   "m:2026-10|[\"alta marea\",\"antonello venditti\"]": {
+    "v": 4,
+    "s": 20,
+    "t": "Alta marea",
+    "a": "Antonello Venditti"
+   },
+   "[\"labirinto\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 23,
+    "t": "Labirinto",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"labirinto\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 23,
+    "t": "Labirinto",
+    "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2419,29 +2443,29 @@
     "t": "ZITTI E BUONI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
-   "[\"alta marea\",\"antonello venditti\"]": {
-    "v": 4,
-    "s": 20,
-    "t": "Alta marea (Don't Dream It's Over) [Testo]",
-    "a": "Antonello Venditti"
-   },
-   "m:2026-10|[\"alta marea\",\"antonello venditti\"]": {
-    "v": 4,
-    "s": 20,
-    "t": "Alta marea",
-    "a": "Antonello Venditti"
-   },
    "[\"labirinto\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 23,
+    "s": 105,
     "t": "Labirinto",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"labirinto\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 23,
+    "s": 105,
     "t": "Labirinto",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
+   },
+   "[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande",
+    "a": "Tiziano Ferro"
+   },
+   "m:2026-11|[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande",
+    "a": "Tiziano Ferro"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2667,13 +2691,13 @@
    },
    "[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 4,
+    "s": 80,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 4,
+    "s": 80,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
@@ -2685,7 +2709,7 @@
    },
    "[\"morirÃÂÃÂÃÂÃÂ² da re\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 5,
+    "s": 54,
     "t": "MorirÃÂÃÂÃÂÃÂ² da Re",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -2913,15 +2937,21 @@
    },
    "[\"il regalo piÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 80,
+    "s": 107,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 80,
+    "s": 107,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂ¹ Grande",
     "a": "Tiziano Ferro"
+   },
+   "m:2026-11|[\"morirÃÂÃÂÃÂÃÂ² da re\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 49,
+    "t": "MorirÃÂÃÂÃÂÃÂ² da Re",
+    "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2931,7 +2961,7 @@
    },
    "[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 54,
+    "s": 84,
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -2949,7 +2979,7 @@
    },
    "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 2,
+    "s": 3,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -3093,7 +3123,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 0,
-    "s": 0,
+    "s": 1,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -3171,9 +3201,33 @@
    },
    "m:2026-11|[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 49,
+    "s": 79,
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
+   },
+   "[\"tutto fuori controllo ÃÂ¢ÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "TUTTO FUORI CONTROLLO ÃÂ¢ÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "m:2026-11|[\"tutto fuori controllo ÃÂ¢ÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "TUTTO FUORI CONTROLLO ÃÂ¢ÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "[\"ti amo\",\"luchÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Ti Amo",
+    "a": "LuchÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"ti amo\",\"luchÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Ti Amo",
+    "a": "LuchÃÂÃÂ¨"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -3441,15 +3495,21 @@
    },
    "[\"ti amo\",\"luchÃÂ¨\"]": {
     "v": 0,
-    "s": 3,
+    "s": 6,
     "t": "Ti Amo",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"ti amo\",\"luchÃÂ¨\"]": {
     "v": 0,
-    "s": 3,
+    "s": 6,
     "t": "Ti Amo",
     "a": "LuchÃÂ¨"
+   },
+   "m:2026-11|[\"romantici terroni\",\"saitta\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Romantici Terroni",
+    "a": "SAITTA"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -3726,12 +3786,6 @@
     "s": 6,
     "t": "Ti Amo",
     "a": "LuchÃ¨"
-   },
-   "m:2026-11|[\"romantici terroni\",\"saitta\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Romantici Terroni",
-    "a": "SAITTA"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
