@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6489" />
+  <link rel="stylesheet" href="style.css?v=6490" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -1350,6 +1350,12 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
       <p class="mix-setting-hint">Le barre mostrano l'intensità dell'audio analizzato. Quando sono vuote o non disponibili, il player usa un passaggio normale.</p>
     </div>
     <div class="mix-setting-section">
+      <strong>Verifica MP3 corrente</strong>
+      <p class="mix-setting-hint">Se un brano di Diego o di un altro account sembra difettoso, avvialo e premi qui: controllo il download, la decodifica e la durata, senza modificare il file.</p>
+      <button id="mixVerifyCurrent" type="button" class="mix-action-btn">Verifica il brano in ascolto</button>
+      <p id="mixVerifyStatus" role="status" class="mix-setting-hint">Non sono stati eseguiti controlli.</p>
+    </div>
+    <div class="mix-setting-section">
       <strong>Sequenza armonica <span class="mix-setting-mini">ispirata a Smart Reorder</span></strong>
       <p class="mix-setting-hint">Confronta fino a 8 brani della libreria o della playlist selezionata. Suggerisce tre canzoni in base al ritmo e alla tonalità stimata; non modifica l'ordine originale.</p>
       <button id="mixSmartOrder" type="button" class="mix-action-btn">Analizza e suggerisci</button>
@@ -1396,9 +1402,9 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6489"></script>
-<script src="app.js?v=6489"></script>
-<script src="stanza.js?v=6489"></script>
-<script src="mix-intelligente.js?v=6489"></script>
+<script src="fuoco.js?v=6490"></script>
+<script src="app.js?v=6490"></script>
+<script src="stanza.js?v=6490"></script>
+<script src="mix-intelligente.js?v=6490"></script>
 </body>
 </html>
