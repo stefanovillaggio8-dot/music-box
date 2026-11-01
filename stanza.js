@@ -6,6 +6,9 @@ const ENDPOINT="https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-l
 const $=id=>document.getElementById(id);
 const bridge=()=>window.MusicBoxBridge;
 let creds=null,room=null,invitation=null,inviteUrl="",busy=false,localPlay=false,lastRevision=0;
+let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false,commandBusy=false;
+const suppress=()=>{suppressEventsUntil=Date.now()+1800;};
+const isApplying=()=>applying||Date.now()<suppressEventsUntil;
 function status(msg){const el=$("stanzaStato");if(el)el.textContent=msg;}
 function tell(msg){if(bridge()?.toast)bridge().toast(msg);else status(msg);}
 function available(){
@@ -66,7 +69,8 @@ function draw(){
  $("stanzaEntra").hidden=active||!invitation;
  $("stanzaCopia").hidden=!active||!inviteUrl;
  $("stanzaEsci").hidden=!active;
- for(const id of ["stanzaAscolta","stanzaPlay","stanzaNext","stanzaRimescola"])
+ $("stanzaAscolta").hidden=!joined||!needsGesture;
+ for(const id of ["stanzaPlay","stanzaNext","stanzaRimescola"])
   $(id).hidden=!joined;
  $("stanzaInfo").textContent=invitation&&!active?
    "Hai ricevuto un invito. Entrando unisci i brani pubblicati della tua libreria con quelli del tuo amico.":
@@ -74,7 +78,7 @@ function draw(){
       ". Ogni partecipante ascolta i propri MP3 e quelli dell'altro.":
    "Crea una stanza privata e invia il link. Ogni persona contribuisce con la propria libreria o playlist selezionata.";
  if(active)status(joined?"Connessi: "+(room.playlist?.length||0)+" brani · "+
-   (localPlay?"riproduzione sincronizzata attiva":"tocca Ascolta insieme su questo dispositivo"):
+   (needsGesture?"tocca Attiva audio una volta sul dispositivo":"sincronizzazione automatica attiva"):
    "Stanza creata, in attesa del secondo partecipante.");
  else if(invitation)status("Controlla il profilo attivo, poi premi Entra.");
  else status("La sessione parte solo quando premi Crea.");
@@ -89,7 +93,7 @@ async function create(){
   const result=await request({action:"create",profile:bridge().profile(),tracks:songs});
   creds={id:result.id,token:result.hostToken,guestToken:result.guestToken,role:"host"};
   inviteUrl=location.origin+location.pathname+"#musicbox-room="+result.id+"."+result.guestToken;
-  invitation=null;localPlay=false;save();await refresh();
+  invitation=null;localPlay=true;needsGesture=false;save();await refresh();
   tell("Stanza creata: copia il link e invialo al tuo amico.");
  }catch(e){tell("Stanza: "+e.message)}
  finally{btn.disabled=false;draw()}
@@ -103,43 +107,76 @@ async function join(){
   const result=await request({action:"join",id:invitation.id,token:invitation.token,
      profile:bridge().profile(),tracks:songs});
   creds={...invitation,role:"guest"};invitation=null;room=result.room;
-  localPlay=false;save();lastRevision=0;await refresh();
-  tell("Librerie unite. Premi Ascolta insieme per iniziare.");
+  localPlay=true;needsGesture=false;save();lastRevision=0;await refresh();
+  tell("Librerie unite. Play, pausa e brani si sincronizzano automaticamente.");
  }catch(e){tell("Invito: "+e.message)}
  finally{b.disabled=false;draw()}
 }
+function reportPlaybackFailure(){
+ if(!room?.playing)return;
+ needsGesture=true;draw();
+ status("Il browser ha bloccato l'avvio audio: tocca Attiva audio una sola volta.");
+}
+function attachAudio(){
+ const a=bridge()?.audio();
+ if(!a||a===attachedAudio)return;
+ attachedAudio=a;
+ a.addEventListener("play",()=>{
+  if(!isActive()||isApplying()||!room?.joined)return;
+  needsGesture=false;
+  if(!room.playing)control("play");
+ });
+ a.addEventListener("pause",()=>{
+  if(!isActive()||isApplying()||document.hidden||a._mbCambioBrano||a.ended)return;
+  if(room.playing)control("pause");
+ });
+ a.addEventListener("seeked",()=>{
+  if(!isActive()||isApplying()||!room?.joined||!a.seekable?.length)return;
+  if(room.playing||room.offset>0)control("seek",{seconds:Math.max(0,a.currentTime||0)});
+ });
+}
 async function apply(){
  if(!creds||!room?.joined)return;
- registerTracks();if(!localPlay)return;
- const t=selected();if(!t)return;
- const app=bridge();if(!app)return;
+ registerTracks();
+ const t=selected(),app=bridge();if(!t||!app)return;
  const id=roomTrack(t);
- let seconds=Math.max(0,Number(room.offset)||0);
- if(room.playing&&room.startedAt)
-  seconds+=Math.max(0,(Date.now()-Date.parse(room.startedAt))/1000);
- if(app.currentId()!==id) {
-  await app.play(id,!!room.playing);
-  const audio=app.audio();
-  if(audio){
-   if(audio.readyState>=1){try{audio.currentTime=seconds}catch(e){}}
-   else audio.addEventListener("loadedmetadata",function(){if(app.currentId()===id)
-     try{audio.currentTime=seconds}catch(e){}},{once:true});
+ const secondsAt=()=>{
+  let seconds=Math.max(0,Number(room.offset)||0);
+  if(room.playing&&room.startedAt)
+   seconds+=Math.max(0,(Date.now()-Date.parse(room.startedAt))/1000);
+  return seconds;
+ };
+ applying=true;suppress();
+ try{
+  if(app.currentId()!==id)await app.play(id,!!room.playing);
+  const a=app.audio();attachAudio();if(!a)return;
+  if(a.readyState>=1){
+   if(Math.abs((a.currentTime||0)-secondsAt())>2.3){
+    try{a.currentTime=secondsAt()}catch(e){}
+   }
+  }else{
+   a.addEventListener("loadedmetadata",()=>{
+    if(app.currentId()===id)try{a.currentTime=secondsAt()}catch(e){}
+   },{once:true});
   }
- }else {
-  const audio=app.audio();
-  if(!audio)return;
-  if(audio.readyState>=1&&Math.abs((audio.currentTime||0)-seconds)>3)
-   try{audio.currentTime=seconds}catch(e){}
-  if(!room.playing&&!audio.paused)audio.pause();
-  else if(room.playing&&audio.paused)app.playCurrent();
- }
+  if(!room.playing&&!a.paused)a.pause();
+  else if(room.playing&&a.paused){
+   try{
+    await app.playCurrent();
+    // Alcuni player gestiscono internamente NotAllowedError.
+    if(a.paused)setTimeout(()=>{if(isActive()&&room?.playing&&app.audio()===a&&a.paused)reportPlaybackFailure()},800);
+    else needsGesture=false;
+   }catch(e){reportPlaybackFailure();}
+  }else if(room.playing&&!a.paused)needsGesture=false;
+ }finally{applying=false;suppress();draw();}
 }
+
 async function refresh(){
  if(!creds||busy)return;
  busy=true;
  try{
   const response=await request({action:"state",id:creds.id,token:creds.token});
-  room=response.room;registerTracks();
+  room=response.room;registerTracks();attachAudio();
   if(lastRevision!==room.revision){lastRevision=room.revision;bridge()?.refreshQueue();}
   await apply();if(!$("stanzaPanel").hidden)draw();
  }catch(e){if(!$("stanzaPanel").hidden)status("Connessione: "+e.message)}
@@ -147,26 +184,38 @@ async function refresh(){
 }
 async function control(command,extra){
  if(!creds||!room?.joined)return;
+ if(commandBusy)return;
+ commandBusy=true;
  try{
   const response=await request({action:"control",command,id:creds.id,token:creds.token,
     expectedRevision:room.revision,...(extra||{})});
   if(response.room){room=response.room;lastRevision=0;}
   await refresh();
  }catch(e){tell("Sincronizzazione: "+e.message);await refresh()}
+ finally{commandBusy=false}
 }
 function listen(){
  if(!room?.joined)return;
- localPlay=true;registerTracks();
- const t=selected();
- if(t){
-  // Avvio locale prima dell'attesa di rete, necessario al gesto Safari.
-  bridge()?.play(roomTrack(t),true);
-  control("play");
- }
+ // Solo recupero blocco autoplay iOS. Non e' necessario a ogni partecipante.
+ const app=bridge();const t=selected();if(!app||!t)return;
+ needsGesture=false;
+ if(room.playing){
+  applying=true;
+  Promise.resolve(app.play(roomTrack(t),true)).then(()=>{
+   if(app.audio()?.paused)reportPlaybackFailure();
+  }).catch(reportPlaybackFailure).finally(()=>{applying=false;suppress();draw()});
+ }else{control("play")}
  draw();
 }
+function interceptTrack(id){
+ if(!isActive()||isApplying())return false;
+ const index=(room.playlist||[]).findIndex(t=>roomTrack(t)===id);
+ if(index<0){tell("Per ascoltare insieme scegli un brano della coda condivisa.");return true;}
+ control("select",{index});return true;
+}
+
 function leave(){
- creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;lastRevision=0;save();
+ creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;save();
  bridge()?.refreshQueue();draw();tell("Hai lasciato la stanza");
 }
 function isActive(){return !!(creds&&room?.joined)}
@@ -186,6 +235,7 @@ function start(){
   try{await navigator.clipboard.writeText(inviteUrl);tell("Invito copiato")}
   catch(e){window.prompt("Copia questo link",inviteUrl)}
  });
+ $("stanzaAscolta").textContent="▶ Attiva audio sul dispositivo";
  $("stanzaAscolta").addEventListener("click",listen);
  $("stanzaPlay").addEventListener("click",playPause);
  $("stanzaNext").addEventListener("click",()=>control("next"));
@@ -203,8 +253,7 @@ function start(){
  $("btnPlay").addEventListener("click",e=>{
   if(!isActive())return;
   e.preventDefault();e.stopImmediatePropagation();
-  if(!localPlay)listen();
-  else playPause();
+  playPause();
  },true);
  try{
   const match=location.hash.match(/^#musicbox-room=([0-9a-f-]{36})\.([0-9a-f]{64})$/i);
@@ -227,7 +276,7 @@ function start(){
  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&creds)refresh()});
  draw();
 }
-window.MusicBoxRoom={open,isActive,upcoming,control,refresh,leave};
+window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});
 else start();
 })();
