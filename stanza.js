@@ -8,6 +8,10 @@ const bridge=()=>window.MusicBoxBridge;
 let creds=null,room=null,invitation=null,inviteUrl="",busy=false,localPlay=false,lastRevision=0;
 let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false;
 let commandChain=Promise.resolve();
+// L'ultimo comando Play/Pausa prevale immediatamente sul polling.
+let pendingPlayback=null,playbackSequence=0;
+const shouldPlay=()=>pendingPlayback?.id===creds?.id?
+  pendingPlayback.playing:Boolean(room?.playing);
 const suppress=()=>{suppressEventsUntil=Date.now()+650;};
 // I comandi intenzionali non devono essere bloccati dalla breve protezione
 // contro gli eventi echo (play/seek) prodotti dal server.
@@ -206,6 +210,7 @@ function draw(){
  $("stanzaCopia").hidden=!active||!inviteUrl;
  $("stanzaEsci").hidden=!active;
  $("stanzaAscolta").hidden=!joined||!needsGesture;
+ $("stanzaPlay").textContent=shouldPlay()?"Pausa per entrambi":"Riprendi per entrambi";
  for(const id of ["stanzaPlay","stanzaNext","stanzaRimescola"])
   $(id).hidden=!joined;
  $("stanzaInfo").textContent=invitation&&!active?
@@ -253,7 +258,7 @@ async function join(){
  finally{b.disabled=false;draw()}
 }
 function reportPlaybackFailure(){
- if(!room?.playing)return;
+ if(!shouldPlay())return;
  needsGesture=true;draw();
  status("Il browser ha bloccato l'avvio audio: tocca Attiva audio una sola volta.");
 }
@@ -262,17 +267,23 @@ function attachAudio(){
  if(!a||a===attachedAudio)return;
  attachedAudio=a;
  a.addEventListener("play",()=>{
-  if(!isActive()||isRemoteEvent()||!room?.joined)return;
+  if(!isActive()||!room?.joined)return;
+  // Il retry locale non deve annullare la pausa dell'intera stanza.
+  if(!shouldPlay()){
+   suppress();bridge()?.setRoomPlaybackIntent?.(false);
+   try{a.pause()}catch(e){}
+   return;
+  }
+  if(isRemoteEvent())return;
   needsGesture=false;
-  if(!room.playing)control("play");
  });
  a.addEventListener("pause",()=>{
   if(!isActive()||isRemoteEvent()||document.hidden||a._mbCambioBrano||a.ended)return;
-  if(room.playing)control("pause");
+  if(shouldPlay())control("pause");
  });
  a.addEventListener("seeked",()=>{
   if(!isActive()||isRemoteEvent()||!room?.joined||!a.seekable?.length)return;
-  if(room.playing||room.offset>0)control("seek",{seconds:Math.max(0,a.currentTime||0)});
+  if(shouldPlay()||room.offset>0)control("seek",{seconds:Math.max(0,a.currentTime||0)});
  });
 }
 async function apply(){
@@ -281,8 +292,10 @@ async function apply(){
  const t=selected(),app=bridge();if(!t||!app)return;
  const id=roomTrack(t);
  const secondsAt=()=>{
+  if(pendingPlayback?.id===creds?.id&&!pendingPlayback.playing)
+   return pendingPlayback.seconds;
   let seconds=Math.max(0,Number(room.offset)||0);
-  if(room.playing&&room.startedAt)
+  if(shouldPlay()&&room.startedAt)
    seconds+=Math.max(0,(Date.now()-Date.parse(room.startedAt))/1000);
   return seconds;
  };
@@ -290,9 +303,11 @@ async function apply(){
  applying=true;
  try{
   const activeId=creds.id,activeToken=creds.token;
+  const want=shouldPlay();
+  app.setRoomPlaybackIntent?.(want);
   if(app.currentId()!==id){
    suppress();changed=true;
-   await app.play(id,!!room.playing,secondsAt());
+   await app.play(id,want,secondsAt());
   }
   if(creds?.id!==activeId||creds?.token!==activeToken||!room?.joined)return;
   const a=app.audio();attachAudio();if(!a)return;
@@ -310,16 +325,16 @@ async function apply(){
     try{a.currentTime=secondsAt()}catch(e){}
    },{once:true});
   }
-  if(!room.playing&&!a.paused){suppress();changed=true;a.pause()}
-  else if(room.playing&&a.paused){
+  if(!want&&!a.paused){suppress();changed=true;a.pause()}
+  else if(want&&a.paused){
    suppress();changed=true;
    try{
     await app.playCurrent();
     // Alcuni player gestiscono internamente NotAllowedError.
-    if(a.paused)setTimeout(()=>{if(isActive()&&room?.playing&&app.audio()===a&&a.paused)reportPlaybackFailure()},800);
+    if(a.paused)setTimeout(()=>{if(isActive()&&shouldPlay()&&app.audio()===a&&a.paused)reportPlaybackFailure()},800);
     else needsGesture=false;
    }catch(e){reportPlaybackFailure();}
-  }else if(room.playing&&!a.paused)needsGesture=false;
+  }else if(want&&!a.paused)needsGesture=false;
  }finally{applying=false;if(changed)suppress();draw();}
 }
 
@@ -363,15 +378,32 @@ async function refresh(){
 }
 function control(command,extra){
  if(!creds||!room?.joined)return Promise.resolve();
- // Metti in coda le pressioni veloci, invece di perderle con commandBusy.
- // I seek durante lo scorrimento sono frequenti: il comando più recente basta.
+ const isPlayback=command==="pause"||command==="play";
+ let seq=0;
+ if(isPlayback){
+  const want=command==="play",a=bridge()?.audio();
+  seq=++playbackSequence;
+  pendingPlayback={id:creds.id,seq,playing:want,
+   seconds:Math.max(0,Number(a?.currentTime)||Number(room.offset)||0)};
+  // L'effetto e' immediato, mentre il server conferma in seguito.
+  bridge()?.setRoomPlaybackIntent?.(want);
+  suppress();
+  if(!want){
+   if(a&&!a.paused)try{a.pause()}catch(e){}
+  }else if(a?.paused&&bridge()?.currentId?.()===roomTrack(selected()||{})){
+   // Play nello stesso gesto: necessario per Safari iOS.
+   Promise.resolve(bridge()?.playCurrent?.()).catch(()=>{});
+  }
+  draw();
+ }
  const action=async()=>{
   if(!creds||!room?.joined)return;
   if(!sameProfile()){leave();return;}
   const activeId=creds.id,activeToken=creds.token;
   const stillHere=()=>creds?.id===activeId&&creds?.token===activeToken;
   try{
-   const payload={action:"control",command,id:activeId,token:activeToken,expectedRevision:room.revision,...(extra||{})};
+   const payload={action:"control",command,id:activeId,token:activeToken,
+     expectedRevision:room.revision,...(extra||{})};
    let response;
    try{response=await request(payload)}
    catch(e){
@@ -382,12 +414,22 @@ function control(command,extra){
     room=state.room;payload.expectedRevision=room.revision;response=await request(payload);
    }
    if(!stillHere())return;
-   if(response.room && (!room||Number(response.room.revision)>=Number(room.revision))){
-     room=response.room;lastRevision=0;drawnRevision=-1;bridge()?.refreshQueue();draw();
+   if(response.room&&(!room||Number(response.room.revision)>=Number(room.revision))){
+    room=response.room;lastRevision=0;drawnRevision=-1;
+    bridge()?.refreshQueue();draw();
+   }
+   // L'ACK precedente non deve interrompere il comando piu' recente.
+   if(isPlayback&&pendingPlayback?.id===activeId&&pendingPlayback.seq===seq){
+    pendingPlayback=null;
+    bridge()?.setRoomPlaybackIntent?.(Boolean(room?.playing));
    }
    await refresh();
   }catch(e){
    if(!stillHere())return;
+   if(isPlayback&&pendingPlayback?.id===activeId&&pendingPlayback.seq===seq){
+    pendingPlayback=null;
+    bridge()?.setRoomPlaybackIntent?.(Boolean(room?.playing));
+   }
    tell("Sincronizzazione: "+e.message);
    await refresh();
   }
@@ -395,15 +437,19 @@ function control(command,extra){
  commandChain=commandChain.then(action,action);
  return commandChain;
 }
-
 function listen(){
  if(!room?.joined)return;
  const app=bridge(),t=selected();if(!app||!t)return;
  // Il play() locale avviene durante il gesto dell'utente, prima di qualsiasi
  // richiesta asincrona. Safari iOS può rifiutare un play solo dopo la rete.
  needsGesture=false;applying=true;
- const action=Promise.resolve(app.play(roomTrack(t),true));
- if(!room.playing)control("play");
+ const id=roomTrack(t),wasPlaying=shouldPlay();
+ if(!wasPlaying)control("play");
+ const elapsed=(Number(room.offset)||0)+(room.playing&&room.startedAt?
+   Math.max(0,(Date.now()-Date.parse(room.startedAt))/1000):0);
+ // Se il brano e' gia' caricato, non ricominciare da 0:00.
+ const action=Promise.resolve(app.currentId()===id?
+   (wasPlaying?app.playCurrent():null):app.play(id,true,elapsed));
  action.then(()=>{
   const a=app.audio();
   if(a?.paused)reportPlaybackFailure();
@@ -430,6 +476,7 @@ function interceptTrack(id){
 
 function leave(){
  creds=null;room=null;invitation=null;inviteUrl="";localPlay=false;needsGesture=false;lastRevision=0;
+ pendingPlayback=null;playbackSequence++;
  catalog=[];catalogFor="";drawnRevision=-1;save();
  // La riproduzione deve restare autonoma; nessuna risposta tardiva deve
  // ripristinare la stanza appena lasciata.
@@ -438,7 +485,7 @@ function leave(){
 function isActive(){return !!(creds&&room?.joined)}
 function playPause(){
  if(!isActive())return;
- control(room.playing?"pause":"play");
+ control(shouldPlay()?"pause":"play");
 }
 function start(){
  if(!$("btnAscoltoCondiviso"))return;
@@ -495,7 +542,7 @@ function start(){
  draw();
 }
 window.MusicBoxRoom={open,isActive,isApplying,interceptTrack,upcoming,control,refresh,leave,enqueue,queueAction,
- remainingCount:()=>nextItems().length};
+ shouldPlay,hasSession:()=>!!creds,remainingCount:()=>nextItems().length};
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});
 else start();
 })();
