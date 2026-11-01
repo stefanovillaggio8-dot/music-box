@@ -37,10 +37,16 @@ function getSession(){
      session=old;return session;
    }
  }catch(e){}
- if(!crypto?.randomUUID||!crypto.getRandomValues)return null;
+ if(!window.crypto?.getRandomValues)return null;
  const token=Array.from(crypto.getRandomValues(new Uint8Array(32)))
     .map(n=>n.toString(16).padStart(2,"0")).join("");
- session={deviceId:crypto.randomUUID(),token};
+ // crypto.randomUUID is unavailable on some HTTP LAN URLs. WebCrypto random
+ // bytes remain available there; create a compliant v4 UUID ourselves.
+ const bytes=crypto.getRandomValues(new Uint8Array(16));
+ bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+ const h=Array.from(bytes).map(n=>n.toString(16).padStart(2,"0")).join("");
+ const deviceId=h.slice(0,8)+"-"+h.slice(8,12)+"-"+h.slice(12,16)+"-"+h.slice(16,20)+"-"+h.slice(20);
+ session={deviceId,token};
  try{localStorage.setItem("mb.amici.device.v1",JSON.stringify(session))}catch(e){}
  return session;
 }
