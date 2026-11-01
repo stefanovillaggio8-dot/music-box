@@ -416,25 +416,23 @@ function hasReliableHarmony(ch){
 }
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
- if(!Number.isFinite(dur)||dur<26)return null;
- const trim=!!(a?.confidentTail&&a.last<dur-1.65);
+ if(!Number.isFinite(dur)||dur<26||!a||!b||
+    a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5)return null;
+ const trim=Boolean(a.confidentTail&&a.last<dur-1.65);
  const musicalEnd=trim?Math.min(dur,a.last):dur;
- const introEntry=b?.leading>=1.8?clamp(b.first-.10,0,18):0;
- const fallback=()=>{
-  // Quando il brano è analizzabile ma non armonicamente compatibile,
-  // una dissolvenza breve negli ultimissimi secondi è più naturale
-  // di attendere il silenzio dopo la fine del file.
-  // Audio non analizzabile: un incrocio di soli 0.7 secondi previene
-  // il buco a fine MP3 senza fingere una compatibilità musicale.
-  if(!a)return {begin:dur-1.02,end:dur-.20,fade:.82,entry:introEntry,
-   tempo:1,kind:"soft",gain:1,score:null,silenceTrim:false,trailing:0};
-  const end=clamp(musicalEnd-(trim?.10:a.quietTail?.28:.18),12,dur-.12);
-  const fade=clamp(trim?1.7:a.quietTail?1.15:.75,.6,Math.min(2.1,end-10));
-  return {begin:end-fade,end,fade,entry:introEntry,tempo:1,
-   kind:"soft",gain:1,score:null,silenceTrim:trim,
-   trailing:trim?Math.max(0,dur-musicalEnd):0};
- };
- if(!a||!b||a.durationMismatch||b.durationMismatch)return fallback();
+ // Never jump ahead into a quiet, real introduction.
+ const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+ const end=clamp(musicalEnd+(trim?.07:-.04),13,dur-.025);
+ const safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):null;
+ const available=safe===null?0:end-safe;
+ const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
+   trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe};
+ // Leave the actual song intact if we cannot prove there is a safe outro.
+ // Verified silence can be skipped only AFTER the last audible part.
+ if(available<1.75){
+  return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
+ }
  const bpm=Number(a.bpm)||120;
  const ratios=b.bpm?[.5,1,2].map(mult=>bpm/(b.bpm*mult)):[1];
  const ratio=ratios.reduce((best,r)=>
@@ -442,48 +440,29 @@ function transition(a,b,actualDuration){
  const beatClose=a.beatConfidence>=.13&&b.beatConfidence>=.13&&
   ratio>=.94&&ratio<=1.06;
  const reliable=hasReliableHarmony(a.chroma)&&hasReliableHarmony(b.chroma);
- const harmonic=reliable?compatibility(a,b):null;
- const musicallyCompatible=beatClose&&harmonic!==null&&harmonic>=.75;
- const autoCompatible=musicallyCompatible&&(a.quietTail||trim);
- const kind=style==="auto"?(autoCompatible?"beat":"soft"):style;
- if(style==="auto"&&!autoCompatible)return fallback();
- const end=clamp(musicalEnd-(trim?.20:.65),13,dur-.8);
- // Give compatible tracks room to combine rhythmically instead of
- // sounding like a last-second crossfade. Never force an incompatible mix.
- const bars=kind==="beat"?4:2;
- const autoSeconds=clamp(bars*4*60/bpm,4.5,9);
- const requested=style==="auto"?autoSeconds:mixSeconds;
- const fade=clamp(requested,2,Math.min(10,end-8));
+ const tailHarmony=a.outroChroma||a.chroma;
+ const headHarmony=b.introChroma||b.chroma;
+ const harmonic=reliable?compatibility({chroma:tailHarmony},{chroma:headHarmony}):null;
+ const compatible=beatClose&&harmonic!==null&&harmonic>=.75;
+ const longMix=compatible&&available>=4.4;
+ // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
+ const kind=style==="auto"?(longMix?"beat":"soft"):style;
+ const requested=kind==="beat"?
+  clamp(4*4*60/bpm,4.5,8):style==="auto"?1.8:mixSeconds;
+ const fade=clamp(Math.min(requested,available-.08),1.5,Math.min(10,end-8));
+ if(fade<1.6)return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  let begin=end-fade;
- // Prefer a softer musical entry point within the final phrase.
- if(kind==="beat"&&Array.isArray(a.tailEnergy)&&a.tailEnergy.length){
-  const candidates=a.tailEnergy.filter(p=>p.at>=begin-2.5&&p.at<=begin+1.0&&
-    p.at>=end-11&&p.at<=end-2.0);
-  if(candidates.length){
-   const low=candidates.reduce((best,p)=>p.energy<best.energy?p:best,candidates[0]);
-   if(low.energy<=Math.max(.002,a.level*.8))begin+=clamp(low.at-begin,-2.5,1);
-  }
- }
- if(a.beatAnchor&&a.beatConfidence>=.13){
+ if(kind==="beat"&&a.beatAnchor&&a.beatConfidence>=.13){
   const period=60/bpm;
-  begin+=clamp(a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period-begin,-.23,.23);
+  begin+=clamp(a.beatAnchor+Math.round((begin-a.beatAnchor)/period)*period-begin,-.20,.20);
  }
- if(a.tailEnergy?.length&&kind==="fade"){
-  const options=a.tailEnergy.filter(p=>Math.abs(p.at-begin)<1.3);
-  if(options.length){
-   const best=options.reduce((acc,p)=>p.energy<acc.energy?p:acc,options[0]);
-   begin+=clamp(best.at-begin,-.35,.35);
-  }
- }
- begin=clamp(begin,8,end-1.5);
- let entry=b.leading>=.65?clamp(b.first-.08,0,30):0;
- if(beatClose&&b.leading>=.65&&b.introBeat>entry+.2&&b.introBeat<entry+3.5)
-  entry=clamp(b.introBeat-.06,0,30);
- const tempo=beatClose&&kind==="beat"?clamp(ratio,.97,1.03):1;
+ begin=clamp(begin,safe,end-1.5);
+ const effectiveFade=end-begin;
+ const finalKind=kind==="beat"&&effectiveFade<3.5?"soft":kind;
+ const tempo=beatClose&&finalKind==="beat"?clamp(ratio,.97,1.03):1;
  const gain=a.level&&b.level?clamp(a.level/b.level,.87,1.13):1;
- return {begin,end,fade:end-begin,entry,tempo,kind,gain,
-  score:harmonic===null?null:Math.round(harmonic*100),
-  silenceTrim:trim,trailing:trim?Math.max(0,dur-musicalEnd):0};
+ return {...common,begin,end,fade:effectiveFade,kind:finalKind,tempo,gain,
+  score:harmonic===null?null:Math.round(harmonic*100)};
 }
 function keyGuess(ch){
  if(!Array.isArray(ch)||ch.length!==12)return null;
