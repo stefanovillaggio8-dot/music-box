@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.504";
+  const APP_VERSION = "6.505";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12456,9 +12456,9 @@ $("fabMenu").addEventListener("click", (e) => {
       }
     };
     try{
-      // Safari on iPhone is memory-constrained: only one MP3 at a time.
-      // A second simultaneous blob could trigger a WebKit page reload.
-      const concurrency=/iPhone|iPad|iPod/i.test(navigator.userAgent)?1:2;
+      // User choice: download two different MP3s at once, including iPhone.
+      // Each request is separately checked and failed files stay queued.
+      const concurrency=2;
       await Promise.all(Array.from({length:Math.min(concurrency,rows.length)},()=>worker()));
     }finally{
       const cancelled=offlineStopRequested||controller.signal.aborted;
