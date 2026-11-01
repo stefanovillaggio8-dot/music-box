@@ -17487,6 +17487,12 @@ async function _spotifyCompletaAccesso(code, stato) {
     niente e l'app funziona come è ora".
    E: se il computer è spento, la lista si mette in coda e parte quando si
    accende. */
+// Never interpolate Spotify-supplied playlist names into innerHTML raw.
+function _spotifyEscapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,ch=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[ch]);
+}
 function _spotifyPnl(titolo, sotto, html) {
   const p = $("spotifyPanel");
   if (!p) return;
@@ -17797,20 +17803,22 @@ function _spotifyParla(variabile, testo) {
           }
         }
       } catch (e) { /* il server non risponde: pazienza */ }
-      const servePremium = /Premium/.test(_spotifyMotivo || "");
-      _spotifyPnl("Playlist", "",
-        '<p class="step-hint">' +
-        (servePremium
-          ? "Per leggere le playlist, Spotify chiede che l'account con cui e' stata registrata questa app (il tuo) abbia l'abbonamento Premium. Non e' un permesso scaduto: e' una regola di Spotify. Con l'abbonamento attivo funziona tutto senza rifare niente."
-          : ("Non sono riuscito a leggere le tue playlist. " + perche + " Prova a collegare Spotify di nuovo.")) +
-        '</p>');
+      // Give a useful alternative instead of dead-ending on an API 403.
+      // Premium restrictions are on the developer app, not necessarily
+      // on the person importing the playlist.
+      const reason=_spotifyErrore===403?
+        "Spotify ha negato l'accesso (403). Potrebbero mancare permessi, la playlist potrebbe essere privata, oppure l'app dello sviluppatore potrebbe essere soggetta ai requisiti Premium.":
+        (_spotifyErrore===429?"Spotify sta limitando le richieste: riprova tra poco.":
+          (_spotifyMotivo||perche||"L'elenco non è disponibile."));
+      _spotifyChiediAccesso(_spotifyEscapeHTML(reason)+
+        " Puoi anche incollare sopra il link di una playlist pubblica.");
       return;
     }
   let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
     'che hai gia\' non vengono copiate due volte.</p><div class="spotify-lista">';
   for (const p of tutte) {
     html += '<button class="spotify-riga" data-id="' + p.id + '">' +
-      '<span class="spotify-nome">' + p.nome + "</span>" +
+      '<span class="spotify-nome">' + _spotifyEscapeHTML(p.nome) + "</span>" +
       '<span class="spotify-quante">' + p.canzoni + " canzoni" +
       (p.privata ? " · privata" : "") + "</span></button>";
   }
@@ -17849,7 +17857,13 @@ async function _spotifyImporta(playlistId) {
   _spotifyPnl("Sto leggendo la playlist", "un attimo...", '<p class="step-hint">Prendo i titoli...</p>');
   const brani = await _spotifyBrani(playlistId);
   if (!brani.length) {
-    _spotifyPnl("Playlist", "", '<p class="step-hint">Questa playlist non ha brani che posso usare.</p>');
+    const why=_spotifyErrore?
+      ("Non sono riuscito a leggere tutta la playlist ("+
+        (_spotifyErrore===403?"accesso Spotify negato":_spotifyErrore===429?
+          "troppe richieste a Spotify":_spotifyMotivo||("errore "+_spotifyErrore))+
+        "). Verifica il link o riprova; non importerò una lista incompleta."):
+      "Questa playlist non contiene brani musicali disponibili.";
+    _spotifyPnl("Playlist non importata","",'<p class="step-hint">'+_spotifyEscapeHTML(why)+'</p>');
     return;
   }
   /* Solo lo stesso Spotify Track ID e' una duplicazione certa. Titolo e
