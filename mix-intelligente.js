@@ -424,7 +424,12 @@ function transition(a,b,actualDuration){
  // Never jump ahead into a quiet, real introduction.
  const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
  const end=clamp(musicalEnd+(trim?.07:-.04),13,dur-.025);
- const safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):null;
+ let safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):null;
+ // A last lyric in the final 11 seconds protects the full final phrase.
+ if(safe!==null&&Number.isFinite(a.lastLyricAt)){
+  if(end-a.lastLyricAt<11)safe=end;
+  else safe=Math.min(end,Math.max(safe,a.lastLyricAt+6));
+ }
  const available=safe===null?0:end-safe;
  const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
    trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe};
@@ -444,7 +449,8 @@ function transition(a,b,actualDuration){
  const headHarmony=b.introChroma||b.chroma;
  const harmonic=reliable?compatibility({chroma:tailHarmony},{chroma:headHarmony}):null;
  const compatible=beatClose&&harmonic!==null&&harmonic>=.75;
- const longMix=compatible&&available>=4.4;
+ const earlyNextVoice=Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<4.5;
+ const longMix=compatible&&available>=4.4&&!earlyNextVoice;
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
  const kind=style==="auto"?(longMix?"beat":"soft"):style;
  const requested=kind==="beat"?
@@ -685,7 +691,10 @@ function tick(){
   const update=()=>{
    if(previousId!==fromId||plannedFor!==target||app.currentId()!==fromId||
       app.mixNext()?.id!==target||mixing)return;
-   const candidate=transition(a,b,audio.duration);
+   const lyricA=app.mixLyricCues?.(fromId),lyricB=app.mixLyricCues?.(target);
+   const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
+   const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
+   const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
    // iPhone uses a single stream: never cut an audible vocal outro
    // merely because the next track matches harmonically.
    plan=candidate; // Non mantenere una transizione smentita dalle analisi.
@@ -697,6 +706,13 @@ function tick(){
   decode(next).then(value=>{b=value;update()}).catch(()=>{});
  }
  if(!plan){resetMobileFade();return;}
+ // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
+ const lastKnownLyric=app.mixLyricCues?.(id)?.last;
+ if(!mixing&&Number.isFinite(lastKnownLyric)&&
+    plan.begin<lastKnownLyric+6&&audio.duration-lastKnownLyric<16){
+  if(plan.silenceTrim)plan={...plan,begin:plan.end,fade:0,kind:"cut"};
+  else {dropPrepared();plan=null;resetMobileFade();return}
+ }
  // iOS foreground: fade the confirmed tail without opening another player.
  // This is a single-stream smart handoff, not overlapping two audio sources.
  if(isIOS){
