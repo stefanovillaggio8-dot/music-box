@@ -1227,7 +1227,7 @@
   function _idsEliminatiEquivalenti(id) {
     const stable=String(id||"");
     const match=/^(?:yt-|b-youtube-)([A-Za-z0-9_-]{11})$/.exec(stable);
-    return match?[stable,"yt-"+match[1],"b-youtube-"+match[1]]:[stable];
+    return match?[...new Set([stable,"yt-"+match[1],"b-youtube-"+match[1]])]:[stable];
   }
   function _branoEliminato(id, owner, tombstones) {
     const records=tombstones && typeof tombstones==="object"
