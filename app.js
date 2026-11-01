@@ -11425,9 +11425,6 @@ window.MusicBoxBridge = {
   allTracks:()=>tracks,
   currentId:()=>currentId,
   audio:()=>audio,
-  // Read-only existing audio context, already unlocked by the user's gesture.
-  // The iPhone DJ overlay never rewires the native HTMLAudioElement.
-  mixContext:()=>_ctx&&_ctx.state==="running"?_ctx:null,
   play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
   mixNext:()=> {
     if (window.MusicBoxRoom?.isActive() || repeat || !currentId) return null;
