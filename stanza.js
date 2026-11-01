@@ -6,7 +6,8 @@ const ENDPOINT="https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-l
 const $=id=>document.getElementById(id);
 const bridge=()=>window.MusicBoxBridge;
 let creds=null,room=null,invitation=null,inviteUrl="",busy=false,localPlay=false,lastRevision=0;
-let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false,commandBusy=false;
+let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false;
+let commandChain=Promise.resolve();
 const suppress=()=>{suppressEventsUntil=Date.now()+650;};
 // I comandi intenzionali non devono essere bloccati dalla breve protezione
 // contro gli eventi echo (play/seek) prodotti dal server.
@@ -182,24 +183,37 @@ async function refresh(){
  busy=true;
  try{
   const response=await request({action:"state",id:creds.id,token:creds.token});
+  // Evita che una risposta di polling vecchia sovrascriva un comando appena
+  // confermato dal server (salto indietro / doppia canzone).
+  if(room && Number(response.room.revision)<Number(room.revision))return;
   room=response.room;registerTracks();attachAudio();
   if(lastRevision!==room.revision){lastRevision=room.revision;bridge()?.refreshQueue();}
   await apply();if(!$("stanzaPanel").hidden)draw();
  }catch(e){if(!$("stanzaPanel").hidden)status("Connessione: "+e.message)}
  finally{busy=false}
 }
-async function control(command,extra){
- if(!creds||!room?.joined)return;
- if(commandBusy)return;
- commandBusy=true;
- try{
-  const response=await request({action:"control",command,id:creds.id,token:creds.token,
-    expectedRevision:room.revision,...(extra||{})});
-  if(response.room){room=response.room;lastRevision=0;}
-  await refresh();
- }catch(e){tell("Sincronizzazione: "+e.message);await refresh()}
- finally{commandBusy=false}
+function control(command,extra){
+ if(!creds||!room?.joined)return Promise.resolve();
+ // Metti in coda le pressioni veloci, invece di perderle con commandBusy.
+ // I seek durante lo scorrimento sono frequenti: il comando più recente basta.
+ const action=async()=>{
+  if(!creds||!room?.joined)return;
+  try{
+   const response=await request({action:"control",command,id:creds.id,token:creds.token,
+     expectedRevision:room.revision,...(extra||{})});
+   if(response.room && (!room||Number(response.room.revision)>=Number(room.revision))){
+     room=response.room;lastRevision=0;
+   }
+   await refresh();
+  }catch(e){
+   tell("Sincronizzazione: "+e.message);
+   await refresh();
+  }
+ };
+ commandChain=commandChain.then(action,action);
+ return commandChain;
 }
+
 function listen(){
  if(!room?.joined)return;
  const app=bridge(),t=selected();if(!app||!t)return;
