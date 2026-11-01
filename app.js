@@ -17811,8 +17811,9 @@ function _spotifyParla(variabile, testo) {
           _spotifyTraccia("il server aveva un permesso buono: riprovo le playlist");
           const altre = await _spotifyPlaylist();
           if (altre.length) {
-            _spotifyPnl("Le tue playlist", altre.length + " playlist",
-              '<p class="step-hint">Tocca la playlist da importare.</p>');
+            // A newly renewed token needs actual clickable playlist rows.
+            // Before this only rendered a heading, trapping the user here.
+            _spotifyDisegnaPlaylist(altre);
             return;
           }
         }
@@ -17828,6 +17829,9 @@ function _spotifyParla(variabile, testo) {
         " Puoi anche incollare sopra il link di una playlist pubblica.");
       return;
     }
+  _spotifyDisegnaPlaylist(tutte);
+}
+function _spotifyDisegnaPlaylist(tutte) {
   let html = '<p class="step-hint">Tocca la playlist da importare. Le canzoni ' +
     'che hai gia\' non vengono copiate due volte.</p><div class="spotify-lista">';
   for (const p of tutte) {
