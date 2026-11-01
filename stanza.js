@@ -185,7 +185,13 @@ function activityText(event){
   "queue-remove":"ha rimosso dalla coda"+track,
   "queue-move":"ha spostato nella coda"+track
  };
- return name+" "+(verbs[act]||"ha eseguito "+act);
+ const isSongAction=["queue-add","queue-remove","queue-move","select","next","previous"].includes(act);
+ const owners=Array.isArray(event.ownerAccounts)?event.ownerAccounts.filter(Boolean):[];
+ const origin=event.source?String(event.source):"";
+ const details=isSongAction&&event.title?
+  " · Origine: "+(origin||"non indicata")+
+  (owners.length?" · Account: "+owners.join(", "):""):"";
+ return name+" "+(verbs[act]||"ha eseguito "+act)+details;
 }
 function renderActivity(){
  const root=$("stanzaActivityList");if(!root)return;
@@ -221,6 +227,8 @@ function searchSongs(){
 function drawSharedQueue(){
  const area=$("stanzaQueueArea");if(!area)return;
  area.hidden=!isActive();
+ const activity=$("stanzaActivity");
+ if(activity)activity.hidden=!isActive();
  if(!isActive()||$("stanzaPanel")?.hidden)return;
  if(drawnRevision===Number(room.revision))return;
  drawnRevision=Number(room.revision);
@@ -270,6 +278,7 @@ function draw(){
  const people=room?.participants||[room?.hostProfile,room?.guestProfile].filter(Boolean);
  const count=Array.isArray(people)?people.length:0;
  const limit=Number(room?.maxParticipants)||8;
+ const activity=$("stanzaActivity");if(activity)activity.hidden=!joined;
  $("stanzaInfo").textContent=invitation&&!active?
    "Invito a una stanza di gruppo. Entrando aggiungi i tuoi MP3 pubblicati e ti sincronizzi con gli altri.":
    active?"Stanza di gruppo ("+count+"/"+limit+"): "+(people.length?people.join(" · "):"in attesa")+
