@@ -17905,15 +17905,35 @@ async function _spotifyImporta(playlistId) {
   $("spotifyManda").addEventListener("click", () => { _spotifyMandaLista(uniche, profilo); });
 }
 
-/* Il passaggio vero: se il computer c'e' gliele mando subito, altrimenti le
-   metto da parte e riprovo piu' tardi da sola. */
+/* Pending imports survive a PC outage. Multiple playlists do not overwrite
+   each other, and the old single-entry queue is still readable. */
+function _spotifyCodeInAttesa(){
+  const raw=LS.get("mb.codaSpotify",null);
+  const items=Array.isArray(raw)?raw:raw?.lista?.length?[raw]:[];
+  return items.filter(x=>x&&Array.isArray(x.lista)&&x.lista.length&&x.profilo);
+}
+function _spotifyAccodaLista(lista,profilo){
+  if(!Array.isArray(lista)||!lista.length)return false;
+  const items=_spotifyCodeInAttesa();
+  const identita=x=>String(x.profilo)+"|"+
+    x.lista.map(b=>String(b?.spotifyId||"")+"@"+String(b?.title||"")).join("\u0001");
+  const nuova={lista,profilo,quando:Date.now()};
+  if(items.some(x=>identita(x)===identita(nuova)))return true;
+  if(items.length>=8){toast("Ci sono già 8 playlist in attesa. Collega il PC prima di aggiungerne altre.",7500);return false}
+  items.push(nuova);
+  LS.set("mb.codaSpotify",items);
+  return true;
+}
+/* Il passaggio vero: il PC può ricevere i soli metadati dei brani.
+   La presenza nella coda non equivale a un audio scaricato. */
 async function _spotifyMandaLista(lista, profilo) {
   const chiave = "mb.codaSpotify";
   const giunto = await ponteOnline();
   if (!giunto) {
-    try { LS.set(chiave, { lista: lista, profilo: profilo, quando: Date.now() }); } catch (e) {}
+    const queued=_spotifyAccodaLista(lista,profilo);
+    if(!queued)return;
     _spotifyChiudi();
-    toast("Computer spento: le " + lista.length + " canzoni aspettano che lo accenda", 6000);
+    toast("Playlist salvata in coda: "+lista.length+" titoli. Il PC dovrà essere online per elaborarla.",6000);
     return;
   }
   _spotifyPnl("Sto mandando al computer", lista.length + " canzoni", '<p class="step-hint">Un attimo...</p>');
@@ -17939,31 +17959,40 @@ async function _spotifyMandaLista(lista, profilo) {
 }
 
 /* Se il computer era spento, quando si accende riprovo da sola. */
-async function _spotifyRiprovaCoda() {
-  let coda = null;
-  try { coda = LS.get("mb.codaSpotify", null); } catch (e) {}
-  if (!coda || !coda.lista || !coda.lista.length) return;
-  if (!(await ponteOnline())) return;
-  try {
-    const base = (await trovaPonte()) || INDIRIZZI_PONTE[0];
-    const r = await fetch(base + "/spotify-lista", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ profilo: coda.profilo, lista: coda.lista })
-    });
-    if (r.ok) {
-      const j = await r.json();
-      // HTTP 200 can still contain {ok:false}. Keep the queued playlist
-      // unless the PC explicitly confirms it accepted the job.
-      if(j?.ok===true&&j.id){
-        LS.remove("mb.codaSpotify");
-        toast("Il computer ha accettato la lista in attesa (" + coda.lista.length + " canzoni)",6000);
-        _spotifyControllaLavoro(j.id,coda.lista.length);
-      }else{
-        _spotifyTraccia("La coda Spotify è rimasta salvata: il server non ha confermato il lavoro.");
-      }
+let _spotifyCodaInInvio=false;
+async function _spotifyRiprovaCoda(){
+  if(_spotifyCodaInInvio)return;
+  let queue=_spotifyCodeInAttesa();
+  if(!queue.length)return;
+  _spotifyCodaInInvio=true;
+  try{
+    if(!(await ponteOnline()))return;
+    const base=(await trovaPonte())||INDIRIZZI_PONTE[0];
+    for(const job of queue){
+      const pending=_spotifyCodeInAttesa();
+      if(!pending.some(x=>x.quando===job.quando&&x.profilo===job.profilo))continue;
+      try{
+        const controller=new AbortController();
+        const timeout=setTimeout(()=>controller.abort(),18000);
+        let res;
+        try{
+          res=await fetch(base+"/spotify-lista",{
+            method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({profilo:job.profilo,lista:job.lista}),signal:controller.signal});
+        }finally{clearTimeout(timeout)}
+        if(!res.ok)break;
+        const ack=await res.json();
+        if(!ack?.ok||!ack.id)break;
+        // Never delete newly queued work while awaiting the network.
+        queue=_spotifyCodeInAttesa().filter(x=>
+          !(x.quando===job.quando&&x.profilo===job.profilo));
+        if(queue.length)LS.set("mb.codaSpotify",queue);
+        else LS.remove("mb.codaSpotify");
+        toast("Il PC ha accettato "+job.lista.length+" titoli della playlist in attesa.",5500);
+        _spotifyControllaLavoro(ack.id,job.lista.length);
+      }catch(e){break}
     }
-  } catch (e) { /* noop */ }
+  }finally{_spotifyCodaInInvio=false}
 }
 
 /* Chiedo come sta andando, cosi' Ste non resta a pensare che sia finito. */
