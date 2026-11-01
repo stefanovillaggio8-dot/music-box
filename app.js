@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.494";
+  const APP_VERSION = "6.495";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6360,6 +6360,10 @@ function rebuildAudio(autoplay) {
   }
 
   function queueTrack(id, front) {
+    if (window.MusicBoxRoom?.isActive()) {
+      window.MusicBoxRoom.enqueue(id,!!front);
+      return;
+    }
     if (front) queue.unshift(id);
     else queue.push(id);
     persistQueue();
@@ -6471,7 +6475,20 @@ function rebuildAudio(autoplay) {
       tag.className = "queue-auto-tag";
       tag.textContent = roomActive ? "Insieme" : "Casuale";
       row.appendChild(tag);
-      if (roomActive) { body.appendChild(row); return; }
+      if (roomActive) {
+        const actions=document.createElement("div");actions.className="queue-actions";
+        const roomButton=(label,title,action)=>{
+          const btn=document.createElement("button");btn.type="button";btn.className="qbtn";
+          btn.textContent=label;btn.title=title;btn.setAttribute("aria-label",title);
+          btn.addEventListener("click",()=>window.MusicBoxRoom.queueAction(automatico.id,action));
+          return btn;
+        };
+        const up=roomButton("↑","Sposta prima nella stanza","up");
+        const down=roomButton("↓","Sposta dopo nella stanza","down");
+        up.disabled=i===0;down.disabled=i===automatici.length-1;
+        actions.append(up,down,roomButton("×","Rimuovi dalla coda condivisa","remove"));
+        row.appendChild(actions);body.appendChild(row);return;
+      }
       const move = document.createElement("div");
       move.className = "queue-actions";
       const action = (testo, aria, callback, off) => {
