@@ -17385,7 +17385,7 @@ async function _spotifyCompletaAccesso(code, stato) {
     try{
       const r=await fetch(String(SERVIZIO_PUBBLICA||"")+"/spotify/playlist",{cache:"no-store"});
       const j=await r.json();
-      if(r.ok&&j?.ok&&Array.isArray(j.voci)&&j.voci.length){
+      if(r.ok&&j?.ok&&!j.incompletoPossibile&&Array.isArray(j.voci)&&j.voci.length){
         for(const p of j.voci){
           const id=String(p?.id||p?.uri||"").split(":").pop();
           if(!_spotifyPlaylistIdValido(id))continue;
@@ -17397,14 +17397,17 @@ async function _spotifyCompletaAccesso(code, stato) {
       }
     }catch(e){/* The authenticated API may still work. */}
     const found=[];
-    let url="/me/playlists?limit=50",pages=0;
+    let url="/me/playlists?limit=50",pages=0,rowsReceived=0,rowsExpected=0;
     const visited=new Set();
     while(url&&pages++<30){
       if(visited.has(url)){_spotifyErrore=-2;_spotifyMotivo="Paginazione Spotify ripetuta";return []}
       visited.add(url);
       const j=await _spotifyApi(url);
       if(!j)return [];
-      for(const p of (Array.isArray(j.items)?j.items:[])){
+      const entries=Array.isArray(j.items)?j.items:[];
+      rowsReceived+=entries.length;
+      rowsExpected=Math.max(rowsExpected,Number(j.total)||0);
+      for(const p of entries){
         if(!_spotifyPlaylistIdValido(p?.id))continue;
         found.push({id:p.id,nome:String(p.name||"Playlist").slice(0,160),
           privata:p.public===false,
@@ -17412,7 +17415,9 @@ async function _spotifyCompletaAccesso(code, stato) {
       }
       url=_spotifyNextPath(j.next);
     }
-    if(url){_spotifyErrore=-2;_spotifyMotivo="Troppe playlist: elenco non completo";return []}
+    if(url||rowsExpected>rowsReceived){
+      _spotifyErrore=-2;_spotifyMotivo="Elenco delle playlist incompleto: riprova";return [];
+    }
     return found.filter((p,i)=>found.findIndex(x=>x.id===p.id)===i);
   }
 
@@ -17445,7 +17450,7 @@ async function _spotifyCompletaAccesso(code, stato) {
       }
     }catch(e){/* Authenticated API fallback. */}
     const tracks=[];
-    let url="/playlists/"+playlistId+"/items?limit=50",pages=0;
+    let url="/playlists/"+playlistId+"/items?limit=50",pages=0,rowsReceived=0,rowsExpected=0;
     const visited=new Set();
     while(url&&pages++<35){
       if(visited.has(url)){
@@ -17455,7 +17460,10 @@ async function _spotifyCompletaAccesso(code, stato) {
       visited.add(url);
       const j=await _spotifyApi(url);
       if(!j)return [];
-      for(const it of (Array.isArray(j.items)?j.items:[])){
+      const entries=Array.isArray(j.items)?j.items:[];
+      rowsReceived+=entries.length;
+      rowsExpected=Math.max(rowsExpected,Number(j.total)||0);
+      for(const it of entries){
         // February 2026: PlaylistTrackObject.item (legacy .track).
         const t=it?.item||it?.track;
         const row=_spotifyRigaBrano(t,it?.added_at);
@@ -17468,7 +17476,11 @@ async function _spotifyCompletaAccesso(code, stato) {
       }
       url=next;
     }
-    if(url){_spotifyErrore=-2;_spotifyMotivo="Playlist troppo lunga per una lettura completa";return []}
+    if(url||rowsExpected>rowsReceived){
+      _spotifyErrore=-2;
+      _spotifyMotivo="La playlist non è stata letta per intero";
+      return [];
+    }
     _spotifyErrore=0;_spotifyMotivo="";
     return tracks;
   }
