@@ -74,6 +74,9 @@ function analyzeFrames(buf){
   if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i*step}
  }
  const hasAudio=typical>.0012;
+ const activeRms=blocks.filter(x=>x>gate).sort((x,y)=>x-y);
+ const level=activeRms.length?
+  activeRms[Math.floor(activeRms.length*.65)]:0;
  const beatConfidence=clamp(best.score,0,1);
  // Forma d'onda compressa per il pannello delle transizioni; calcolata
  // dagli stessi frame usati per individuare i silenzi. Nessun upload.
@@ -102,7 +105,7 @@ function analyzeFrames(buf){
   for(let i=firstIndex;i<lastIndex;i++)e+=energy[i]*energy[i];
   tailEnergy.push({at:t,energy:Math.sqrt(e/Math.max(1,lastIndex-firstIndex))});
  }
- return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,
+ return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -190,7 +193,7 @@ async function decode(track){
     if(decoded.duration<35)return null;
     const frame=analyzeFrames(decoded);
     const harmonies=isIOS?null:chroma(decoded);
-    const result={...frame,level:Math.min(1,Math.max(.001,frame.peak*.6)),chroma:harmonies,duration:decoded.duration};
+    const result={...frame,chroma:harmonies,duration:decoded.duration};
     cache.set(key,result);
     if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
@@ -207,8 +210,14 @@ function transition(a,b,actualDuration){
  const trim=!!(a?.confidentTail&&a.last<dur-2);
  const audibleEnd=trim?Math.min(dur,a.last):dur;
  const end=clamp(audibleEnd-(trim?.22:1.15),13,dur-1.15);
- const bpm=Number(a?.bpm)||120,ratio=b?.bpm?bpm/b.bpm:1;
- const tempoClose=!!(a?.beatConfidence>.07&&b?.beatConfidence>.07&&ratio>=.92&&ratio<=1.08);
+ const bpm=Number(a?.bpm)||120;
+ // Un brano in half-time e uno in double-time possono condividere la
+ // stessa pulsazione: non scartare una buona coppia per un fattore 2.
+ const tempoRatios=b?.bpm?[.5,1,2].map(mult=>bpm/(b.bpm*mult)):[1];
+ const ratio=tempoRatios.reduce((best,r)=>
+  Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best,tempoRatios[0]);
+ const tempoClose=!!(a?.beatConfidence>.07&&b?.beatConfidence>.07&&
+  ratio>=.92&&ratio<=1.08);
  const harmonic=a?.chroma&&b?.chroma?compatibility(a,b):null;
  const beatFriendly=tempoClose&&(harmonic===null||harmonic>.68);
  const autoStyle=beatFriendly?"beat":
@@ -238,7 +247,7 @@ function transition(a,b,actualDuration){
  // Allinea il primo attacco ritmico del brano entrante. Se la traccia
  // contiene un'introduzione udibile non tagliarla automaticamente.
  let entry=b?.leading>=.65?clamp(b.first-.08,0,40):0;
- if(tempoClose && b?.introBeat>entry+.2 && b.introBeat<entry+3.5)
+ if(tempoClose && b?.leading>=.65 && b?.introBeat>entry+.2 && b.introBeat<entry+3.5)
    entry=clamp(b.introBeat-.06,0,40);
  const tempo=tempoClose&&kind==="beat"?clamp(ratio,.97,1.03):1;
  const gain=a?.level&&b?.level?clamp(a.level/b.level,.87,1.13):1;
