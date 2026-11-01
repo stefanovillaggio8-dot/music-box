@@ -2278,6 +2278,18 @@
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
+   "[\"bad vibes\",\"nayt\"]": {
+    "v": 0,
+    "s": 69,
+    "t": "Bad vibes",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"bad vibes\",\"nayt\"]": {
+    "v": 0,
+    "s": 69,
+    "t": "Bad vibes",
+    "a": "nayt"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 4,
@@ -2290,17 +2302,17 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"bad vibes\",\"nayt\"]": {
+   "[\"crudelia - inervi\",\"marracash\"]": {
     "v": 0,
-    "s": 69,
-    "t": "Bad vibes",
-    "a": "nayt"
+    "s": 93,
+    "t": "CRUDELIA - Inervi",
+    "a": "Marracash"
    },
-   "m:2026-11|[\"bad vibes\",\"nayt\"]": {
+   "m:2026-11|[\"crudelia - inervi\",\"marracash\"]": {
     "v": 0,
-    "s": 69,
-    "t": "Bad vibes",
-    "a": "nayt"
+    "s": 93,
+    "t": "CRUDELIA - Inervi",
+    "a": "Marracash"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -2650,18 +2662,6 @@
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
-   "[\"crudelia - inervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 93,
-    "t": "CRUDELIA - Inervi",
-    "a": "Marracash"
-   },
-   "m:2026-11|[\"crudelia - inervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 93,
-    "t": "CRUDELIA - Inervi",
-    "a": "Marracash"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3010,6 +3010,18 @@
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
+   "[\"gli occhi della tigre\",\"nayt\"]": {
+    "v": 0,
+    "s": 68,
+    "t": "Gli occhi della tigre",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"gli occhi della tigre\",\"nayt\"]": {
+    "v": 0,
+    "s": 68,
+    "t": "Gli occhi della tigre",
+    "a": "nayt"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3357,18 +3369,6 @@
     "s": 84,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
-   },
-   "[\"gli occhi della tigre\",\"nayt\"]": {
-    "v": 0,
-    "s": 68,
-    "t": "Gli occhi della tigre",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"gli occhi della tigre\",\"nayt\"]": {
-    "v": 0,
-    "s": 68,
-    "t": "Gli occhi della tigre",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4450,6 +4450,18 @@
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
+   "[\"favola\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 75,
+    "t": "Favola",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"favola\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 75,
+    "t": "Favola",
+    "a": "ModÃÂ "
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4812,13 +4824,13 @@
    },
    "[\"favola\",\"modÃ \"]": {
     "v": 0,
-    "s": 75,
+    "s": 160,
     "t": "Favola",
     "a": "ModÃ "
    },
    "m:2026-11|[\"favola\",\"modÃ \"]": {
     "v": 0,
-    "s": 75,
+    "s": 160,
     "t": "Favola",
     "a": "ModÃ "
    },
@@ -4872,7 +4884,7 @@
    },
    "[\"cuore e vento (feat. tazenda)\",\"modà\"]": {
     "v": 1,
-    "s": 37,
+    "s": 101,
     "t": "Cuore e vento (feat. Tazenda)",
     "a": "Modà"
    },
@@ -5184,14 +5196,20 @@
    },
    "[\"favola\",\"modà\"]": {
     "v": 0,
-    "s": 160,
+    "s": 162,
     "t": "Favola",
     "a": "Modà"
    },
    "m:2026-11|[\"favola\",\"modà\"]": {
     "v": 0,
-    "s": 160,
+    "s": 162,
     "t": "Favola",
+    "a": "Modà"
+   },
+   "m:2026-11|[\"cuore e vento (feat. tazenda)\",\"modà\"]": {
+    "v": 0,
+    "s": 64,
+    "t": "Cuore e vento (feat. Tazenda)",
     "a": "Modà"
    }
   },
