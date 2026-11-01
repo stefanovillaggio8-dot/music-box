@@ -7921,6 +7921,9 @@ if (!sceltaCopia) updateProfileButton();
     }
     switching = true;
     try {
+      // Stop the old profile's in-flight fetch, but keep its saved queue so
+      // it can resume when that account is selected again.
+      if(offlineBusy&&offlineAbort)offlineAbort.abort();
       saveCurrentState();
       profile = name;
       LS.set("mb.profile", name);
@@ -12434,14 +12437,19 @@ $("fabMenu").addEventListener("click", (e) => {
       await Promise.all(Array.from({length:Math.min(2,rows.length)},()=>worker()));
     }finally{
       const cancelled=offlineStopRequested||controller.signal.aborted;
-      if(cancelled) _clearPendingOffline(owner);
+      const switched=owner!==profile;
+      if(switched) {
+        // Do not erase another account's resume list.
+      } else if(cancelled) _clearPendingOffline(owner);
       else _persistPendingOffline(owner,rows);
       if(offlineAbort===controller)offlineAbort=null;
       offlineBusy=false;offlineStopRequested=false;
       $("btnOfflineAll").textContent="Scarica tutte";
       const ok=rows.filter(r=>r.state==="ok").length;
       const errors=rows.filter(r=>r.state==="err");
-      if(cancelled)toast("Download interrotti. "+ok+" brani salvati.");
+      if(switched) {
+        // The old profile will resume from its own queue, not the new one.
+      } else if(cancelled)toast("Download interrotti. "+ok+" brani salvati.");
       else if(errors.length) {
         const missing=errors.length;
         toast(ok+" brani scaricati. "+missing+" non riusciti: riprovo i mancanti quando riapri Music Box.",8000);
