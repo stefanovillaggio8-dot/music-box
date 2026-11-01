@@ -146,6 +146,14 @@
 #mixPanel .mix-wave{min-width:0;display:flex;align-items:center;justify-content:center;gap:1px;height:46px;border-radius:8px;background:rgba(5,10,20,.35);overflow:hidden;padding:2px}
 #mixPanel .mix-wave-bar{flex:1;min-width:1px;border-radius:3px;background:#48d6b0}
 #mixPanel #mixWaveIn .mix-wave-bar{background:#749de9}
+#mixPanel .mix-setting-mini{font-size:10px;color:#8cb4dc;font-weight:500}
+#mixPanel .mix-action-btn{border:1px solid rgba(145,178,206,.3);background:#29364a;color:#f3f8ff;border-radius:12px;padding:11px 14px;font-size:13px;font-weight:650;text-align:center;cursor:pointer}
+#mixPanel .mix-action-accent{background:#1b866e;border-color:#32b997}
+#mixPanel .mix-action-btn:disabled{opacity:.43;cursor:not-allowed}
+#mixPanel .mix-smart-list{display:grid;gap:9px;margin:0;padding-left:0;list-style:none}
+#mixPanel .mix-smart-list li{display:grid;gap:3px;border-radius:9px;background:rgba(0,0,0,.17);padding:10px;font-size:12px}
+#mixPanel .mix-smart-list strong{font-weight:650;color:#f8f9ff}
+#mixPanel .mix-smart-list small{font-size:11px;color:#a9bfdc}
 </style>
 </head>
 <body>
@@ -1340,6 +1348,14 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
         <div class="mix-wave" id="mixWaveIn" aria-label="Forma d'onda iniziale della seconda canzone"></div>
       </div>
       <p class="mix-setting-hint">Le barre mostrano l'intensità dell'audio analizzato. Quando sono vuote o non disponibili, il player usa un passaggio normale.</p>
+    </div>
+    <div class="mix-setting-section">
+      <strong>Sequenza armonica <span class="mix-setting-mini">ispirata a Smart Reorder</span></strong>
+      <p class="mix-setting-hint">Confronta fino a 8 brani della libreria o della playlist selezionata. Suggerisce tre canzoni in base al ritmo e alla tonalità stimata; non modifica l'ordine originale.</p>
+      <button id="mixSmartOrder" type="button" class="mix-action-btn">Analizza e suggerisci</button>
+      <p id="mixSmartStatus" role="status" class="mix-setting-hint">Premi Analizza per ottenere una sequenza.</p>
+      <ol id="mixSmartList" class="mix-smart-list"></ol>
+      <button id="mixSmartAdd" type="button" class="mix-action-btn mix-action-accent" disabled>Aggiungi le 3 consigliate alla coda</button>
     </div>
     <p id="mixDeviceNote" class="mix-setting-hint"></p>
   </div>
