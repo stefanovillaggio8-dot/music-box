@@ -13067,7 +13067,7 @@ function _nomePerIlBrano(link, suggerito) {
       // La stessa traccia e' gia' pronta: nessuna falsa richiesta in coda,
       // nessun MP3 duplicato, nessun nuovo diritto richiesto.
       query=""; if(searchEl)searchEl.value="";
-      favOnly=false;soloScaricate=false;soloMaiAscoltati=false;_playlistAttiva="";
+      favOnly=false;soloScaricate=false;soloMaiAscoltati=false;_cambiaContestoPlaylist("");
       _chiudiYouTubeOnline();
       render();
       toast("Gia' nella libreria, pronta da ascoltare: "+present.title,6500);
@@ -13111,7 +13111,7 @@ function _nomePerIlBrano(link, suggerito) {
     // I filtri non devono nascondere la canzone appena incollata.
     query="";if(searchEl)searchEl.value="";
     favOnly=false;soloScaricate=false;soloMaiAscoltati=false;
-    _playlistAttiva="";
+    _cambiaContestoPlaylist("");
     render();
   }
   function _ytSegnaErroreInvio(owner,videoId,error){
@@ -13396,7 +13396,7 @@ function _nomePerIlBrano(link, suggerito) {
       // Nuovo brano: mostra la libreria normale senza filtri che lo nascondono.
       query="";if(searchEl)searchEl.value="";
       favOnly=false;soloScaricate=false;soloMaiAscoltati=false;
-      _playlistAttiva="";
+      _cambiaContestoPlaylist("");
       _chiudiYouTubeOnline();
       render();
       _ytReloadLinks();
