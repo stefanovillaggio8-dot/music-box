@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6494" />
+  <link rel="stylesheet" href="style.css?v=6495" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -1387,6 +1387,14 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
         <button id="stanzaRimescola" type="button" hidden>Rimescola per entrambi</button>
         <button id="stanzaEsci" type="button" hidden>Esci dalla stanza</button>
       </div>
+      <section id="stanzaQueueArea" class="stanza-queue-area" hidden aria-label="Coda musicale condivisa">
+        <h3>Coda collaborativa</h3>
+        <p class="stanza-hint">Entrambi potete aggiungere, spostare e rimuovere le prossime canzoni. Le modifiche si sincronizzano sui due dispositivi.</p>
+        <div id="stanzaCodaLista" class="stanza-queue-list"></div>
+        <label for="stanzaCercaBrano" class="stanza-search-label">Aggiungi un brano delle due librerie</label>
+        <input id="stanzaCercaBrano" type="search" placeholder="Cerca titolo, artista o account..." autocomplete="off" />
+        <div id="stanzaRisultati" class="stanza-queue-list" aria-live="polite"></div>
+      </section>
       <p class="step-hint">Se il browser blocca il primo avvio, premi “Attiva audio” una sola volta. La sincronizzazione richiede internet e può avere un piccolo ritardo; non condivide file privati o password.</p>
     </div>
   </div>
@@ -1402,9 +1410,9 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6494"></script>
-<script src="app.js?v=6494"></script>
-<script src="stanza.js?v=6494"></script>
-<script src="mix-intelligente.js?v=6494"></script>
+<script src="fuoco.js?v=6495"></script>
+<script src="app.js?v=6495"></script>
+<script src="stanza.js?v=6495"></script>
+<script src="mix-intelligente.js?v=6495"></script>
 </body>
 </html>
