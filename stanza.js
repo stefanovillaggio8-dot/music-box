@@ -8,7 +8,10 @@ const bridge=()=>window.MusicBoxBridge;
 let creds=null,room=null,invitation=null,inviteUrl="",busy=false,localPlay=false,lastRevision=0;
 let applying=false,suppressEventsUntil=0,attachedAudio=null,needsGesture=false,commandBusy=false;
 const suppress=()=>{suppressEventsUntil=Date.now()+650;};
-const isApplying=()=>applying||Date.now()<suppressEventsUntil;
+// I comandi intenzionali non devono essere bloccati dalla breve protezione
+// contro gli eventi echo (play/seek) prodotti dal server.
+const isApplying=()=>applying;
+const isRemoteEvent=()=>applying||Date.now()<suppressEventsUntil;
 function status(msg){const el=$("stanzaStato");if(el)el.textContent=msg;}
 function tell(msg){if(bridge()?.toast)bridge().toast(msg);else status(msg);}
 function available(){
@@ -41,7 +44,7 @@ function registerTracks(){
   if(!cloud&&!/^songs\/(?:track-\d+|youtube-[A-Za-z0-9_-]{11})\.mp3$/.test(file))continue;
   if(cloud&&!/^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i.test(String(item.url||"")))continue;
   const id=roomTrack(item);if(tracks.some(t=>t.id===id))continue;
-  tracks.push({id,file:item.file,profile:app.profile(),title:String(item.title||"Brano"),
+  tracks.push({id,file:item.file,profile:item.profile||app.profile(),title:String(item.title||"Brano"),
    artist:String(item.artist||""),url:cloud?item.url:app.urlForFile(item.file),
    source:"stanza-condivisa",builtin:true,gradient:"linear-gradient(150deg,#623cbd,#1f2135)"});
  }
@@ -122,16 +125,16 @@ function attachAudio(){
  if(!a||a===attachedAudio)return;
  attachedAudio=a;
  a.addEventListener("play",()=>{
-  if(!isActive()||isApplying()||!room?.joined)return;
+  if(!isActive()||isRemoteEvent()||!room?.joined)return;
   needsGesture=false;
   if(!room.playing)control("play");
  });
  a.addEventListener("pause",()=>{
-  if(!isActive()||isApplying()||document.hidden||a._mbCambioBrano||a.ended)return;
+  if(!isActive()||isRemoteEvent()||document.hidden||a._mbCambioBrano||a.ended)return;
   if(room.playing)control("pause");
  });
  a.addEventListener("seeked",()=>{
-  if(!isActive()||isApplying()||!room?.joined||!a.seekable?.length)return;
+  if(!isActive()||isRemoteEvent()||!room?.joined||!a.seekable?.length)return;
   if(room.playing||room.offset>0)control("seek",{seconds:Math.max(0,a.currentTime||0)});
  });
 }
@@ -199,21 +202,33 @@ async function control(command,extra){
 }
 function listen(){
  if(!room?.joined)return;
- // Solo recupero blocco autoplay iOS. Non e' necessario a ogni partecipante.
- const app=bridge();const t=selected();if(!app||!t)return;
- needsGesture=false;
- if(room.playing){
-  applying=true;
-  Promise.resolve(app.play(roomTrack(t),true)).then(()=>{
-   if(app.audio()?.paused)reportPlaybackFailure();
-  }).catch(reportPlaybackFailure).finally(()=>{applying=false;suppress();draw()});
- }else{control("play")}
+ const app=bridge(),t=selected();if(!app||!t)return;
+ // Il play() locale avviene durante il gesto dell'utente, prima di qualsiasi
+ // richiesta asincrona. Safari iOS può rifiutare un play solo dopo la rete.
+ needsGesture=false;applying=true;
+ const action=Promise.resolve(app.play(roomTrack(t),true));
+ if(!room.playing)control("play");
+ action.then(()=>{
+  const a=app.audio();
+  if(a?.paused)reportPlaybackFailure();
+ }).catch(reportPlaybackFailure).finally(()=>{applying=false;suppress();draw()});
  draw();
 }
 function interceptTrack(id){
  if(!isActive()||isApplying())return false;
- const index=(room.playlist||[]).findIndex(t=>roomTrack(t)===id);
- if(index<0){tell("Per ascoltare insieme scegli un brano della coda condivisa.");return true;}
+ const list=room.playlist||[];
+ let index=list.findIndex(t=>roomTrack(t)===id);
+ if(index<0){
+  // Cliccare un brano nella libreria normale deve scegliere anche il brano
+  // equivalente della stanza, non essere rifiutato perché l'id è sintetico.
+  const track=bridge()?.allTracks()?.find(t=>t.id===id);
+  if(track){
+   index=list.findIndex(t=>String(t.file)===String(track.file)&&
+    String(t.profile)===String(track.profile));
+   if(index<0)index=list.findIndex(t=>String(t.file)===String(track.file));
+  }
+ }
+ if(index<0){tell("Questo brano non è nella libreria condivisa.");return true;}
  control("select",{index});return true;
 }
 
