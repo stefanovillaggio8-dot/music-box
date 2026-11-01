@@ -874,7 +874,7 @@ async function suggestSmartOrder(){
  if(add)add.disabled=false;
 }
 
-let checkingCurrentAudio=false;
+let checkingCurrentAudio=false,verifyRequestedTrackId=null;
 async function verifyCurrentAudio(targetId=null){
  const button=$("mixVerifyCurrent"),status=$("mixVerifyStatus");
  if(checkingCurrentAudio)return;
@@ -982,6 +982,9 @@ function start(){
  });
  const panel=$("mixPanel");
  $("btnMixSettings")?.addEventListener("click",()=>{
+  verifyRequestedTrackId=null;
+  const verifyButton=$("mixVerifyCurrent");
+  if(verifyButton)verifyButton.textContent="Verifica il brano in ascolto";
   try{bridge()?.closeOther?.()}catch(e){}
   if(panel)panel.hidden=false;
   draw();updateDetails(null,null);
@@ -996,7 +999,7 @@ function start(){
   settingsChanged();
  });
  $("mixToggle")?.addEventListener("click",()=>btn?.click());
- $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio().catch(()=>{});});
+ $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio(verifyRequestedTrackId).catch(()=>{});});
  $("mixSmartOrder")?.addEventListener("click",()=>{
   suggestSmartOrder().catch(e=>{
    const status=$("mixSmartStatus");
@@ -1021,6 +1024,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
   const app=bridge(),exists=app?.allTracks()?.some(t=>t.id===id);
   const panel=$("mixPanel");
   if(!exists||!panel)return false;
+  verifyRequestedTrackId=id;
+  const verifyButton=$("mixVerifyCurrent");
+  if(verifyButton)verifyButton.textContent="Ripeti verifica MP3 selezionato";
   try{app.closeOther?.()}catch(e){}
   panel.hidden=false;
   try{app.syncScroll?.()}catch(e){}
