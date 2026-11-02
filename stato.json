@@ -1194,7 +1194,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 7,
-    "s": 244,
+    "s": 278,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1830,7 +1830,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 6,
-    "s": 236,
+    "s": 270,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -3160,6 +3160,12 @@
     "t": "Eva",
     "a": "Kid Yugi, Tedua & Junior K"
    },
+   "m:2026-11|[\"l'immenso\",\"negromaro\"]": {
+    "v": 0,
+    "s": 11,
+    "t": "L'immenso",
+    "a": "Negromaro"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 96,
@@ -3171,12 +3177,6 @@
     "s": 96,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
-   "m:2026-11|[\"l'immenso\",\"negromaro\"]": {
-    "v": 0,
-    "s": 11,
-    "t": "L'immenso",
-    "a": "Negromaro"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5874,13 +5874,13 @@
    },
    "[\"sono giÃÂÃÂ  solo\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 74,
+    "s": 81,
     "t": "Sono giÃÂÃÂ  solo",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"sono giÃÂÃÂ  solo\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 74,
+    "s": 81,
     "t": "Sono giÃÂÃÂ  solo",
     "a": "ModÃÂÃÂ "
    },
@@ -6082,6 +6082,42 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
+   "[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "QUELLI CHE NON PENSANO - Il cervello",
+    "a": "Marracash, Coez"
+   },
+   "m:2026-11|[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "QUELLI CHE NON PENSANO - Il cervello",
+    "a": "Marracash, Coez"
+   },
+   "[\"airforce\",\"massimo pericolo, crookers, madame\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "AIRFORCE",
+    "a": "Massimo Pericolo, Crookers, Madame"
+   },
+   "m:2026-11|[\"airforce\",\"massimo pericolo, crookers, madame\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "AIRFORCE",
+    "a": "Massimo Pericolo, Crookers, Madame"
+   },
+   "[\"per te che lotto\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Per te che Lotto",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"per te che lotto\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Per te che Lotto",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6121,13 +6157,25 @@
    "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
@@ -6394,18 +6442,6 @@
     "t": "Voglio di piÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
     "s": 123,
@@ -6490,6 +6526,30 @@
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "[\"niente canzoni d'amore\",\"elodie\"]": {
+    "v": 0,
+    "s": 2,
+    "t": "Niente Canzoni D'Amore",
+    "a": "Elodie"
+   },
+   "m:2026-11|[\"niente canzoni d'amore\",\"elodie\"]": {
+    "v": 0,
+    "s": 2,
+    "t": "Niente Canzoni D'Amore",
+    "a": "Elodie"
+   },
+   "[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 0,
     "s": 94,
@@ -6524,18 +6584,6 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃÂ ",
-    "a": "ModÃÂ "
-   },
-   "[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "[\"voodoo\",\"guÃÂ¨\"]": {
@@ -6670,42 +6718,6 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
-   "[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "QUELLI CHE NON PENSANO - Il cervello",
-    "a": "Marracash, Coez"
-   },
-   "m:2026-11|[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "QUELLI CHE NON PENSANO - Il cervello",
-    "a": "Marracash, Coez"
-   },
-   "[\"airforce\",\"massimo pericolo, crookers, madame\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "AIRFORCE",
-    "a": "Massimo Pericolo, Crookers, Madame"
-   },
-   "m:2026-11|[\"airforce\",\"massimo pericolo, crookers, madame\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "AIRFORCE",
-    "a": "Massimo Pericolo, Crookers, Madame"
-   },
-   "[\"per te che lotto\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Per te che Lotto",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"per te che lotto\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Per te che Lotto",
-    "a": "Kid Yugi"
-   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6745,25 +6757,13 @@
    "[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'Ã¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'Ã¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 66,
-    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
@@ -7030,6 +7030,18 @@
     "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
     "s": 123,
@@ -7114,30 +7126,6 @@
     "t": "Tutti il resto Ã¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"niente canzoni d'amore\",\"elodie\"]": {
-    "v": 0,
-    "s": 2,
-    "t": "Niente Canzoni D'Amore",
-    "a": "Elodie"
-   },
-   "m:2026-11|[\"niente canzoni d'amore\",\"elodie\"]": {
-    "v": 0,
-    "s": 2,
-    "t": "Niente Canzoni D'Amore",
-    "a": "Elodie"
-   },
-   "[\"passione maledetta\",\"modÃ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "ModÃ "
-   },
    "[\"torna da me\",\"luchÃ¨\"]": {
     "v": 0,
     "s": 94,
@@ -7172,6 +7160,18 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃ ",
+    "a": "ModÃ "
+   },
+   "[\"passione maledetta\",\"modÃ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
     "a": "ModÃ "
    },
    "[\"voodoo\",\"guÃ¨\"]": {
@@ -7632,13 +7632,13 @@
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 119,
+    "s": 123,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 119,
+    "s": 123,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
@@ -7728,13 +7728,13 @@
    },
    "[\"non abbiamo età\",\"luchè\"]": {
     "v": 0,
-    "s": 71,
+    "s": 90,
     "t": "Non Abbiamo Età",
     "a": "Luchè"
    },
    "m:2026-11|[\"non abbiamo età\",\"luchè\"]": {
     "v": 0,
-    "s": 71,
+    "s": 90,
     "t": "Non Abbiamo Età",
     "a": "Luchè"
    },
