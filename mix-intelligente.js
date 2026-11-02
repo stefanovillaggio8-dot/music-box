@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=22; // musical-release detection and intro energy, revised safe cues
+const ANALYSIS_VERSION=23; // protect full-strength final beat, skip empty-intro blends
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -421,6 +421,12 @@ function analyzeFrames(buf){
  // the incoming musical attack instead of pairing two empty sections.
  const dropRelease=findDropRelease(blocks,level,audibleEnd,duration);
  const beatConfidence=clamp(best.score,0,1);
+ // A forceful last bar is part of the song, not a free transition slot.
+ // Even perfectly matched keys should not erase a final drum fill/drop.
+ const closing=blocks.slice(Math.max(0,Math.floor((audibleEnd-2.2)/.2)),
+   Math.min(blocks.length,Math.ceil(audibleEnd/.2)));
+ const protectedEnding=level>.006&&closing.length>=7&&
+   closing.filter(x=>x>=level*.62).length>=closing.length*.36;
  // Forma d'onda compressa per il pannello delle transizioni; calcolata
  // dagli stessi frame usati per individuare i silenzi. Nessun upload.
  function waveform(from,to){
@@ -496,7 +502,7 @@ function analyzeFrames(buf){
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,outroBreak,dropRelease,introDrive,introGroove,outroGroove,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,protectedEnding,softOutro,outroGap,outroBreak,dropRelease,introDrive,introGroove,outroGroove,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -1014,6 +1020,10 @@ function transition(a,b,actualDuration){
    // Only overlay when the audio analysis itself found a settled quiet outro.
    quietCertified:Number.isFinite(safe)&&(Number.isFinite(a.safeOutroAt)||soft),
     softTailTrim:soft};
+ // Reject silence-versus-silence even in the legacy crossfade paths.
+ // The opening may be soft music: preserve it without an overlap.
+ if(Number.isFinite(b.introDrive)&&b.introDrive<.30)
+  return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  // Leave the actual song intact if we cannot prove there is a safe outro.
  // Verified silence can be skipped only AFTER the last audible part.
  if(available<1.75){
@@ -1033,7 +1043,9 @@ function transition(a,b,actualDuration){
   const key=camelotMatch(a,b);
   const rhythmProof=(groove&&groove.score>=.70)||
     (notes.alignment?.matches&&notes.alignment.score>=.84);
-  const canBridge=(b.introDrive===undefined||b.introDrive>=.30)&&a.outroFinalNotes&&b.introAttackNotes&&
+  const canBridge=a.protectedEnding!==true&&
+   (b.introDrive===undefined||b.introDrive>=.30)&&
+   a.outroFinalNotes&&b.introAttackNotes&&
    a.beatConfidence>=.20&&b.beatConfidence>=.20&&
    harmonicProof&&rhythmProof&&(!key.weight||key.score>=.55)&&
    tempoDelta<=.07&&!vocalLate&&!nextStartsVocal;

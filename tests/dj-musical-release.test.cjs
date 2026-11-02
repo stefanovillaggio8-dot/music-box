@@ -81,6 +81,23 @@ test("iPhone refuses an unverified overlapping release, but uses timed safe outr
  const verified=e.transition({...outgoing,lastLyricAt:80},incoming,100);
  assert.ok(verified?.dropReleaseBridge&&verified.quietCertified);
 });
+test("high-impact full-volume finale is flagged as protected",()=>{
+ const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.ok(source.includes("a.protectedEnding!==true"));
+ const analysis=source.slice(source.indexOf("function clamp("),source.indexOf("async function decode("));
+ const fx=new Function(analysis+"return analyzeFrames;")();
+ const rate=8000,duration=64,arr=new Float32Array(rate*duration);
+ for(let i=0;i<arr.length;i++){const t=i/rate;arr[i]=.3*Math.sin(2*Math.PI*220*t);}
+ const info=fx({sampleRate:rate,duration,getChannelData:()=>arr});
+ assert.equal(info.protectedEnding,true);
+ assert.equal(info.safeOutroAt,null);
+});
+test("legacy fade paths do not blend two near-silent intros",()=>{
+ const {e,outgoing,incoming}=fixture();
+ const plan=e.transition({...outgoing,dropRelease:null,safeOutroAt:87},
+  {...incoming,introDrive:.05},100);
+ assert.ok(plan===null||plan.kind==="cut");
+});
 test("wrong MP3 duration cannot trigger speculative drop skip",()=>{
  const {e,outgoing,incoming}=fixture();
  assert.equal(e.transition({...outgoing,duration:85},incoming,100),null);
