@@ -28,7 +28,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=9;
+const ANALYSIS_VERSION=10;
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -414,7 +414,7 @@ async function decode(track,needClip=false){
      introChroma:chroma(decoded,0,introTo),
      outroChroma:chroma(decoded,outroFrom,Math.min(decoded.duration,frame.last)),
      duration:decoded.duration,durationMismatch};
-    if(needClip&&!document.hidden)rememberMobileClip(key,decoded,frame);
+    if(isIOS&&!document.hidden)rememberMobileClip(key,decoded,frame);
     cache.set(key,result);
     saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
@@ -490,7 +490,7 @@ function transition(a,b,actualDuration){
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
  const kind=style==="auto"?(longMix?"beat":"soft"):style;
  const requested=kind==="beat"?
-  clamp(4*4*60/bpm,4.5,8):style==="auto"?1.8:mixSeconds;
+  clamp(4*4*60/bpm,4.5,8):style==="auto"?2.8:mixSeconds;
  const fade=clamp(Math.min(requested,available-.08),1.5,Math.min(10,end-8));
  if(fade<1.6)return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  let begin=end-fade;
@@ -565,7 +565,9 @@ function stopMobileMix(fadeSeconds=0){
 }
 function startMobileMix(song,p,app,old){
  if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
-    p.kind!=="beat"||p.fade<3.5||!p.quietCertified||!Number.isFinite(p.safeOutroAt)||
+    (p.kind!=="beat"&&p.kind!=="soft")||
+    p.fade<(p.kind==="beat"?3.5:2.35)||
+    !p.quietCertified||!Number.isFinite(p.safeOutroAt)||
     old.currentTime<p.safeOutroAt-.1)return false;
  const ctx=app.mixRunningContext?.();
  const url=app.mixUrl?.(song)||song.url;
@@ -924,9 +926,16 @@ function tick(){
   };
   plan=null; // Wait for analyzed tracks; no speculative cue.
   const now=app.allTracks()?.find(t=>t.id===id);
-  decode(now).then(value=>{a=value;update()}).catch(()=>{});
-  decode(next,isIOS&&!document.hidden&&Boolean(app.mixRunningContext?.()))
-   .then(value=>{b=value;update()}).catch(()=>{});
+  // Safari decodes one song at a time: get the next intro ready first.
+  // Do not wait for the entire current track before preparing the next.
+  if(isIOS){
+   decode(next,mobileOverlayEnabled&&!document.hidden)
+    .then(value=>{b=value;update()}).catch(()=>{});
+   decode(now).then(value=>{a=value;update()}).catch(()=>{});
+  }else{
+   decode(now).then(value=>{a=value;update()}).catch(()=>{});
+   decode(next).then(value=>{b=value;update()}).catch(()=>{});
+  }
  }
  if(!plan){resetMobileFade();return;}
  // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
@@ -969,8 +978,9 @@ function tick(){
   return;
  }
  if(isIOS&&!document.hidden&&!mobileActive&&
-    audio.currentTime>=plan.begin&&audio.currentTime<plan.end-1.8&&
-    plan.kind==="beat"&&plan.fade>=3.5)
+    audio.currentTime>=plan.begin&&audio.currentTime<plan.end-2.0&&
+    (plan.kind==="beat"||plan.kind==="soft")&&
+    plan.fade>=(plan.kind==="beat"?3.5:2.35))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
     audio.currentTime<plan.end-.55){
