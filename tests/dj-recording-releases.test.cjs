@@ -48,7 +48,8 @@ test("missing or muted audio capture cannot approve a false musical release",()=
 });
 test("reject incoming music that enters late despite high four-second average",()=>{
  assert.equal(immediate({introDrive:.85,first:3.5,safeIntroAt:0}),false);
- assert.equal(immediate({introDrive:.43,first:0,introBeat:8.5}),false);
+ assert.equal(immediate({introDrive:.43,first:0,introBeat:8.5}),true,
+  "Strongest onset at 8s is not evidence that the first musical beat is at 8s");
 });
 test("verified digital silence at the start can be skipped without deleting music",()=>{
  assert.equal(immediate({introDrive:.85,first:3.5,safeIntroAt:3.25,introBeat:3.8}),true);
