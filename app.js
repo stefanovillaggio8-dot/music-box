@@ -2209,7 +2209,7 @@ async function _apriDiagnostica() {
     }
     qs.push('<div class="diag-sep">versione</div>');
     qs.push('<div class="diag-riga"><b>in uso</b><span class="diag-ok">' + APP_VERSION + "</span></div>");
-    const schermo = $("verBadge");
+    const schermo = $("appVer");
     if (schermo) qs.push('<div class="diag-riga"><b>numero in alto</b><span>' + (schermo.textContent || "?") + "</span></div>");
 
     qs.push('<div class="diag-sep">i nomi che ho cambiato</div>');
@@ -12145,24 +12145,71 @@ $("fabMenu").addEventListener("click", (e) => {
      worker vecchio torna su al prossimo riavvio e siamo al punto di
      prima. Prima non c'era, ed e' per questo che l'app sembrava
      "incastrata" su una versione vecchia. */
-  $("btnRefresh").addEventListener("click", async () => {
-    /* Aggiornare l'app NON autorizza la cancellazione delle cache degli MP3. */
+  let _aggiornaDaVersioneBusy = false;
+  async function _aggiornaMusicBoxDaVersione() {
+    if (_aggiornaDaVersioneBusy) return;
+    /* Un aggiornamento non deve mai cancellare Cache Storage, IndexedDB,
+       i preferiti, le playlist o gli MP3 gia' scaricati per l'offline. */
     if (offlineBusy) {
       toast("Termina lo scaricamento prima di aggiornare.");
       return;
     }
-    toast("Aggiorno Music Box conservando le canzoni offline...");
+    _aggiornaDaVersioneBusy = true;
+    const badge = $("appVer");
+    if (badge) {
+      badge.disabled = true;
+      badge.title = "Controllo aggiornamenti in corso...";
+    }
+    try { _salvaPuntoLibreria(); savePos(); } catch (e) {}
+    toast("Controllo la nuova versione e aggiorno Music Box...");
     try {
       if ("serviceWorker" in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        for (const reg of regs) {
-          await reg.update().catch(() => {});
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) {
+          // Update the registration BEFORE navigating to the new page.
+          await Promise.race([
+            reg.update().catch(() => {}),
+            new Promise(resolve => setTimeout(resolve, 5000))
+          ]);
+          // An installing worker needs to reach 'installed' before waiting
+          // becomes available. Never block the user's refresh indefinitely.
+          if (reg.installing && !reg.waiting) {
+            const installing = reg.installing;
+            await Promise.race([
+              new Promise(resolve => {
+                if (installing.state === "installed" || installing.state === "activated" ||
+                    installing.state === "redundant") return resolve();
+                installing.addEventListener("statechange", function changed() {
+                  if (["installed","activated","redundant"].includes(installing.state)) {
+                    installing.removeEventListener("statechange", changed);
+                    resolve();
+                  }
+                });
+              }),
+              new Promise(resolve => setTimeout(resolve, 3500))
+            ]);
+          }
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
         }
       }
-    } catch (e) { /* la cache dei brani non va mai svuotata */ }
-    setTimeout(() => location.reload(), 1000);
-  });
+    } catch (e) {
+      console.warn("[Music Box] Aggiornamento service worker non riuscito:", e);
+    }
+    // Navigation requests are network-first in the worker; the unique
+    // address prevents an old HTML document from being reused. No wipe.
+    const url = new URL("./index.html", window.location.href);
+    url.searchParams.set("forza", String(Date.now()));
+    try { window.location.assign(url.href); }
+    catch (e) {
+      _aggiornaDaVersioneBusy = false;
+      if (badge) {
+        badge.disabled = false;
+        badge.title = "Tocca per aggiornare Music Box";
+      }
+      try { window.location.reload(); } catch (_) {}
+    }
+  }
+  $("btnRefresh").addEventListener("click", _aggiornaMusicBoxDaVersione);
 
   let offlineBusy = false;
   let offlineAbort = null;
@@ -13012,7 +13059,7 @@ let _ultimoControlloPesante = 0;  /* guardia: max 2 minuti tra controlli pesanti
    e' mossa e quello che vedi e' un'altra cosa. */
 function _aggiornaEtichettaControllo(che) {
   try {
-    const vb = $("verBadge");
+    const vb = $("appVer");
     if (!vb) return;
     const quando = new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
     vb.dataset.aggiornato = quando;
@@ -16423,26 +16470,13 @@ function _ripristinaPuntoLibreria() {
      che il browser restava su una versione vecchia e sembrava che gli
      aggiornamenti non funzionassero. Con questo numero lo vedo subito. */
   try {
-    const vf = $("verBadge");
+    const vf = $("appVer");
     if (vf) {
-      vf.textContent = String(APP_VERSION).replace(/^6\.(\d+).*$/, "6.$1");
+      vf.textContent = "v" + APP_VERSION;
       vf.title = "Versione in uso: " + APP_VERSION + "\nTocca per aggiornare subito";
-      /* Ste: "se tocco la versione non fa niente". Ricaricare da solo non
-         bastava: il worker vecchio continuava a servire il vecchio app.js.
-         Ora se c'e' un aggiornamento in attesa gli dico di attivarsi subito,
-         e quando e' attivo ricarico davvero. */
-      vf.onclick = () => {
-        try {
-          /* Ste: "la versione non si aggiorna". Con il solo ricaricamento non
-             bastava: il telefono teneva la copia vecchia. Adesso il numero
-             apre direttamente una pagina "nuova" (indirizzo mai visto, quindi
-             niente copia vecchia) e da li' in poi l'app si aggiorna da sola. */
-          const nuovoIndirizzo = "./index.html?forza=" + Date.now();
-          window.location.replace(nuovoIndirizzo);
-        } catch (e) {
-          window.location.reload(true);
-        }
-      };
+      // Use the SAME updater as the menu refresh command. The actual
+      // badge is #appVer, not the removed #verBadge.
+      vf.addEventListener("click", _aggiornaMusicBoxDaVersione);
     }
   } catch (e) { /* noop */ }
 
@@ -16548,7 +16582,7 @@ const precedente = LS.get("mb.playback." + profile, null);
         refreshing = true;
         _salvaPuntoLibreria();
         try {
-          const vb = $("verBadge");
+          const vb = $("appVer");
           if (vb) {
             vb.classList.add("ha-aggiornamento");
             vb.title = "C'è un aggiornamento: tocca qui per prenderlo";
@@ -16582,7 +16616,7 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
                  stai usando: era quello che faceva sparire i brani e ti
                  rimandava la lista in cima). Quindi qui devo dirti cosa
                  fare davvero, altrimenti resta in attesa per sempre. */
-              const vb = $("verBadge");
+              const vb = $("appVer");
               if (vb) vb.classList.add("ha-aggiornamento");
               toast("Aggiornamento pronto: chiudi del tutto l'app e la riapri", 7000);
               segnalaErrore("aggiornamento pronto: chiudere del tutto l'app per prenderlo");
@@ -16631,13 +16665,13 @@ function _nascondiBarraAggiornamento() {
    aggiornare: cosi' sai che e' lui il posto da toccare. */
 function _chiudiBarraVersione() {
     try {
-      const vb = $("verBadge");
+      const vb = $("appVer");
       if (vb) vb.classList.remove("ha-aggiornamento");
     } catch (e) { /* noop */ }
 }
 function _segnalaBarraVersione() {
     try {
-      const vb = $("verBadge");
+      const vb = $("appVer");
       if (vb) {
         vb.classList.add("ha-aggiornamento");
         vb.title = "C'è un aggiornamento: tocca qui per prenderlo subito";
