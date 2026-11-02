@@ -447,8 +447,12 @@ async function decode(track,needClip=false){
        const app=bridge();
        if(app?.currentId()===track.id||
           app?.mixNext?.()?.id===track.id){
-        // Cancel a plan if later vocal evidence makes it unsafe.
-        if(active||mobileActive)cancel();
+        // New vocal detections may make an active transition unsafe.
+        // A negative ML result must never interrupt an existing mix.
+        const voiceRisk=(app.currentId()===track.id&&
+          Number.isFinite(v.lastVoiceAt))||
+          (app.mixNext?.()?.id===track.id&&Number.isFinite(v.firstVoiceAt));
+        if(voiceRisk&&(active||mobileActive))cancel();
         plannedFor="";plan=null;
        }
       }).catch(()=>{}).finally(()=>{if(voiceJobs.get(key)===job)voiceJobs.delete(key)});
