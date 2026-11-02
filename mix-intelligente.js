@@ -576,7 +576,7 @@ function stopMobileMix(fadeSeconds=0){
 }
 function startMobileMix(song,p,app,old){
  if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
-    (p.kind!=="beat"&&p.kind!=="soft")||
+    !["beat","soft","fade","rise"].includes(p.kind)||
     p.fade<(p.kind==="beat"?3.5:2.35)||
     !p.quietCertified||!Number.isFinite(p.safeOutroAt)||
     old.currentTime<p.safeOutroAt-.1)return false;
@@ -619,7 +619,21 @@ function startMobileMix(song,p,app,old){
   const ramp=Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
   const target=clamp(app.volume?.()??1,0,1)*.86;
-  gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
+  // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
+  // start. If the iOS WebAudio implementation lacks curves, fall back
+  // to a simple safe linear ramp.
+  if(typeof gain.gain.setValueCurveAtTime==="function"){
+   try{
+    const shape=new Float32Array(48);
+    for(let i=0;i<shape.length;i++){
+     const u=i/(shape.length-1);
+     const proportion=p.kind==="rise"?Math.pow(u,1.7):
+       p.kind==="beat"?Math.sin(u*Math.PI/2):u;
+     shape[i]=target*proportion;
+    }
+    gain.gain.setValueCurveAtTime(shape,startedAt,ramp);
+   }catch(e){gain.gain.linearRampToValueAtTime(target,startedAt+ramp)}
+  }else gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
   source.start(startedAt,offset);
   const onPause=()=>{
    if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
@@ -1013,7 +1027,7 @@ function tick(){
  }
  if(isIOS&&!document.hidden&&!mobileActive&&
     audio.currentTime>=plan.begin&&audio.currentTime<plan.end-2.0&&
-    (plan.kind==="beat"||plan.kind==="soft")&&
+    ["beat","soft","fade","rise"].includes(plan.kind)&&
     plan.fade>=(plan.kind==="beat"?3.5:2.35))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
@@ -1072,7 +1086,7 @@ function updateMobileStatus(){
  else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
  else if(!clip)status="Preparo l'introduzione del prossimo MP3. Se l'analisi non riesce, il brano continuerà normalmente.";
  else if(!plan)status="Intro pronta: controllo che il finale precedente sia sicuro per la sovrapposizione.";
- else if(!plan.quietCertified||!(plan.kind==="beat"||plan.kind==="soft"))
+ else if(!plan.quietCertified||!["beat","soft","fade","rise"].includes(plan.kind))
   status="Finale non sicuro per una sovrapposizione su iPhone: passaggio normale.";
  else status="Introduzione pronta · "+(plan.kind==="beat"?"mix ritmico":"sfumatura")+
    " previsto a "+Math.max(0,Math.round(plan.begin))+" s.";
