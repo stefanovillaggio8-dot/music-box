@@ -1012,7 +1012,11 @@ function transition(a,b,actualDuration){
    release.score>=.76;
  const vocalLate=Number.isFinite(a.lastLyricAt)&&
    a.lastLyricAt>=decayEnd-12;
- if(decayVerified&&vocalLate&&(b.introDrive===undefined||b.introDrive>=.33)){
+ if(decayVerified&&vocalLate&&
+    a.lastLyricAt<=release.releaseAt+.5&&
+    (!Number.isFinite(a.lastVoiceAt)||
+      a.lastVoiceAt<=release.releaseAt+.6)&&
+    (b.introDrive===undefined||b.introDrive>=.33)){
   // Four seconds after the last LRC onset leaves room for the whole
   // sung phrase; a model-detected voice end needs its own 1.8s margin.
   const begin=Math.max(release.releaseAt+1.5,
