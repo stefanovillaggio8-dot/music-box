@@ -96,7 +96,10 @@ def analyze(mp3):
                      "score":round(float(1-np.mean(quiet)/level),4)}
     closing=rms[max(0,int((last-2.2)/.1)):min(len(rms),int(last/.1))]
     protected=bool(closing.size>=14 and np.mean(closing>=level*.62)>=.36)
-    after=rms[min(len(rms),int(last/.1)):]
+    # Exclude one short boundary frame from the strict digital-silence
+    # certificate; the last audible frame may overlap the 100ms RMS bin.
+    # Still verify all remaining frames, including any later comeback.
+    after=rms[min(len(rms),int((last+.20)/.1)):]
     confident=bool(trailing>=1.65 and after.size>=12 and np.max(after)<=max(.0009,typical*.025))
     pre=rms[:int(first/.1)]
     safe_intro=max(0,first-.12) if first>=.85 and pre.size>=5 and np.max(pre)<=max(.0007,typical*.018) else 0.
@@ -118,9 +121,12 @@ def analyze(mp3):
         return round(float(times[np.argmax(onset[ids])]),3)
     firstbeat=peak_at(start_hit)
     beat_anchor=peak_at(end_hit)
-    outro_start=max(first,last-10)
+    # Chord and groove signatures must precede the SILENT OUTRO: the
+    # listener expects matching music, not two matching empty sections.
+    musical_edge=release["releaseAt"] if release else last
+    outro_start=max(first,musical_edge-10)
     to=min(duration,first+12)
-    end_note=last
+    end_note=musical_edge
     c=chroma(y)
     out={"duration":round(duration,3),"first":round(first,3),"last":round(last,3),
       "trailing":round(trailing,3),"leading":round(leading,3),
@@ -135,7 +141,7 @@ def analyze(mp3):
       "introTimeline":timeline(y,first,min(duration,first+9)),
       "outroTimeline":timeline(y,max(0,last-9),last,True),
       "introGroove":groove(rms,bpm,safe_intro),
-      "outroGroove":groove(rms,bpm,last,True),
+      "outroGroove":groove(rms,bpm,musical_edge,True),
       "introDrive":round(drive,4),"dropRelease":release,
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
