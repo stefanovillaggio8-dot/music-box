@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=12; // ML singing/voice guard // end-note/start-note signature
+const ANALYSIS_VERSION=13; // no audible last-note cut; improved voice detection
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -545,13 +545,10 @@ function transition(a,b,actualDuration){
   safe=Math.min(end,safe);
  }
  const notes=similarNotes(a,b);
- // Final note starts after the proven quiet tail and well after last vocals.
- const note=Number(a.lastNoteAt);
- const safeNote=Number.isFinite(a.lastNoteAt)&&safe!==null&&
-  note>=safe+2.8&&note<=end-.30&&end-note<=2.3&&
-  (!Number.isFinite(a.lastLyricAt)||note>=a.lastLyricAt+8)&&
-  (!Number.isFinite(a.lastVoiceAt)||note>=a.lastVoiceAt+6);
- if(notes.matches&&safeNote)end=Math.min(end,note-.10);
+ // A transient alone does NOT prove that a final note, reverb tail or
+ // syllable can be cut. Keep the entire audible ending. Blend only inside
+ // a verified quiet tail; cut only verified digital silence (trim below).
+ // lastNoteAt remains useful as harmonic onset metadata.
  const available=safe===null?0:end-safe;
  const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
    trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe,
