@@ -6731,6 +6731,25 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
      anche mentre sto guardando la libreria di un amico. Prima, se aprivo il
      profilo di Diego e copiavo una canzone, finiva nella lista di Diego e non
      nella mia: la copia non me la ritrovavo. */
+  function _ripristinaCopiaCancellata(id,destinazione){
+    const ids=_idsEliminatiEquivalenti(id);
+    const keys=new Set(ids.map(key=>_chiaveEliminato(key,destinazione)));
+    try {
+      const eliminati=LS.get("mb.eliminati",null)||{};
+      let changed=false;
+      for(const key of keys)if(eliminati[key]){delete eliminati[key];changed=true}
+      if(changed)LS.set("mb.eliminati",eliminati);
+      // A delete queued on this device must not overtake the new copy.
+      const pending=_eliminatiDaMandare();
+      if(pending.some(key=>keys.has(key)))
+        LS.set("mb.eliminatiDaMandare",pending.filter(key=>!keys.has(key)));
+      // Explicit restore also handles tombstones that currently exist
+      // only on the shared server and have not reached this device yet.
+      const restore=new Set(_eliminatiRimossiDaMandare());
+      for(const key of keys)restore.add(key);
+      LS.set("mb.eliminatiRimossiDaMandare",[...restore]);
+    }catch(_){/* keep copying, even if a browser blocks persistence */}
+  }
   async function _portaNellaMiaLibreria(t, profiloDestinazione) {
     if (!t) return false;
     const id=_idPerCopia(t);
@@ -6758,6 +6777,7 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
       miei[destinazione] = [...new Set([...gia, id])].sort();
       LS.set(LS_MIEI, JSON.stringify(miei));
     } catch (e) { /* noop */ }
+    _ripristinaCopiaCancellata(id,destinazione);
     try { await loadAll(); } catch (e) { /* noop */ }
     render();
     toast('"' + t.title + '" ora e\' anche nella tua libreria (a ' + (t.profile || "?") + ' resta)');
