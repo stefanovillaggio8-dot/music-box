@@ -1208,7 +1208,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 28,
-    "s": 792,
+    "s": 838,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1844,7 +1844,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 27,
-    "s": 784,
+    "s": 830,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2306,13 +2306,13 @@
    },
    "[\"crudelia - inervi\",\"marracash\"]": {
     "v": 0,
-    "s": 93,
+    "s": 108,
     "t": "CRUDELIA - Inervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - inervi\",\"marracash\"]": {
     "v": 0,
-    "s": 93,
+    "s": 108,
     "t": "CRUDELIA - Inervi",
     "a": "Marracash"
    },
@@ -4766,13 +4766,13 @@
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 144,
+    "s": 208,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 144,
+    "s": 208,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
@@ -5438,13 +5438,13 @@
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 208,
+    "s": 227,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 208,
+    "s": 227,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
@@ -6392,13 +6392,13 @@
    },
    "[\"una direzione giÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃ": {
     "v": 0,
-    "s": 21,
+    "s": 23,
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
    "m:2026-11|[\"una direzione giÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 21,
+    "s": 23,
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
@@ -7080,6 +7080,18 @@
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
+   "[\"una direzione giusta\",\"tha supreme\"]": {
+    "v": 1,
+    "s": 12,
+    "t": "uNa DiReZioNe giUsTa",
+    "a": "tha supreme"
+   },
+   "m:2026-11|[\"una direzione giusta\",\"tha supreme\"]": {
+    "v": 1,
+    "s": 12,
+    "t": "uNa DiReZioNe giUsTa",
+    "a": "tha supreme"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -7106,7 +7118,7 @@
    },
    "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 2,
-    "s": 17,
+    "s": 24,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7244,7 +7256,7 @@
    },
    "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 14,
+    "s": 22,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7520,13 +7532,13 @@
    },
    "[\"passione maledetta\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 101,
+    "s": 103,
     "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 101,
+    "s": 103,
     "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
@@ -7758,17 +7770,23 @@
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
-   "[\"una direzione giusta\",\"tha supreme\"]": {
-    "v": 1,
-    "s": 12,
-    "t": "uNa DiReZioNe giUsTa",
-    "a": "tha supreme"
+   "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
+    "a": "nayt"
    },
-   "m:2026-11|[\"una direzione giusta\",\"tha supreme\"]": {
-    "v": 1,
-    "s": 12,
-    "t": "uNa DiReZioNe giUsTa",
-    "a": "tha supreme"
+   "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "la mia storia tra le dita",
+    "a": "gianluca grignani"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -7862,13 +7880,13 @@
    },
    "[\"non Ã¨ mai abbastanza\",\"modÃ \"]": {
     "v": 0,
-    "s": 43,
+    "s": 49,
     "t": "Non Ã¨ mai abbastanza",
     "a": "ModÃ "
    },
    "m:2026-11|[\"non Ã¨ mai abbastanza\",\"modÃ \"]": {
     "v": 0,
-    "s": 43,
+    "s": 49,
     "t": "Non Ã¨ mai abbastanza",
     "a": "ModÃ "
    },
@@ -8448,23 +8466,17 @@
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
-   "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
-    "a": "nayt"
+   "[\"fragile\",\"modÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "fragile",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
-   "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 0,
-    "s": 13,
-    "t": "la mia storia tra le dita",
-    "a": "gianluca grignani"
+   "m:2026-11|[\"fragile\",\"modÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£ÂÃ¢ÂÃ£\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "fragile",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -9155,6 +9167,18 @@
     "s": 1,
     "t": "fragile",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
+   },
+   "[\"di abbattere le mura (18 donne)\",\"nayt\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Di abbattere le mura (18 Donne)",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"di abbattere le mura (18 donne)\",\"nayt\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Di abbattere le mura (18 Donne)",
+    "a": "nayt"
    }
   },
   "Diego": {
