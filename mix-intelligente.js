@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=13; // no audible last-note cut; improved voice detection
+const ANALYSIS_VERSION=14; // local harmonic boundary signatures and guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -421,11 +421,19 @@ async function decode(track,needClip=false){
      Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
     const outroFrom=Math.max(0,frame.safeOutroAt??frame.last-10);
     const introTo=Math.min(decoded.duration,Math.max(9,frame.first+12));
+    const firstSound=Math.max(0,frame.first);
+    const lastSound=Math.min(decoded.duration,frame.last);
     const result={...frame,chroma:harmonies,
      introChroma:chroma(decoded,0,introTo),
-     outroChroma:chroma(decoded,outroFrom,Math.min(decoded.duration,frame.last)),
-      introNotes:chroma(decoded,frame.first,Math.min(decoded.duration,frame.first+5)),
-      outroNotes:chroma(decoded,Math.max(0,frame.last-5),Math.min(decoded.duration,frame.last)),
+     outroChroma:chroma(decoded,outroFrom,lastSound),
+     introNotes:chroma(decoded,firstSound,Math.min(decoded.duration,firstSound+5)),
+     outroNotes:chroma(decoded,Math.max(0,lastSound-5),lastSound),
+     // 2-second boundary notes (including the final sung pitch) are
+     // more decisive than the overall song key.
+     introAttackNotes:chroma(decoded,firstSound,Math.min(decoded.duration,firstSound+2.3)),
+     introPhraseNotes:chroma(decoded,firstSound,Math.min(decoded.duration,firstSound+6)),
+     outroFinalNotes:chroma(decoded,Math.max(0,lastSound-2.5),lastSound),
+     outroPhraseNotes:chroma(decoded,Math.max(0,lastSound-7),Math.max(0,lastSound-2)),
      duration:decoded.duration,durationMismatch};
     // Keep the NEXT intro, not every analyzed shuffle candidate in RAM.
      if(isIOS&&!document.hidden&&(needClip||bridge()?.mixNext?.()?.id===track.id))
@@ -500,19 +508,33 @@ function hasReliableHarmony(ch){
  const v=ch.slice().sort((a,b)=>b-a);
  return v[0]>=.117&&v.slice(0,4).reduce((a,b)=>a+b,0)>=.435;
 }
+function focusedChroma(ch){
+ const floor=1/12*.82;
+ return ch.map(value=>Math.max(0,value-floor));
+}
+function focusedCompatibility(a,b){
+ return compatibility({chroma:focusedChroma(a)},{chroma:focusedChroma(b)});
+}
 function similarNotes(a,b){
- const tail=a?.outroNotes||a?.outroChroma||a?.chroma;
- const intro=b?.introNotes||b?.introChroma||b?.chroma;
- if(!hasReliableHarmony(tail)||!hasReliableHarmony(intro))
-  return {matches:false,score:null,reason:"uncertain"};
- const score=compatibility({chroma:tail},{chroma:intro});
+ const tail=a?.outroFinalNotes||a?.outroNotes||a?.outroChroma||a?.chroma;
+ const head=b?.introAttackNotes||b?.introNotes||b?.introChroma||b?.chroma;
+ if(!hasReliableHarmony(tail)||!hasReliableHarmony(head))
+  return {matches:false,score:null,focused:null,reason:"uncertain"};
+ const broad=compatibility({chroma:tail},{chroma:head});
+ const focused=focusedCompatibility(tail,head);
  const ranked=arr=>arr.map((value,n)=>({value,n})).sort((x,y)=>y.value-x.value);
- const ta=ranked(tail),tb=ranked(intro);
+ const ta=ranked(tail),tb=ranked(head);
  const shared=ta.slice(0,3).some(x=>tb.slice(0,3).some(y=>y.n===x.n));
  const fifth=ta.slice(0,2).some(x=>tb.slice(0,2).some(y=>
   [5,7].includes((x.n-y.n+12)%12)));
- const matches=score>=.78&&(shared||(fifth&&score>=.88));
- return {matches,score,reason:matches?"similar":"different"};
+ const phraseA=a?.outroPhraseNotes||a?.outroNotes||a?.outroChroma||tail;
+ const phraseB=b?.introPhraseNotes||b?.introNotes||b?.introChroma||head;
+ const phrase=hasReliableHarmony(phraseA)&&hasReliableHarmony(phraseB)?
+  focusedCompatibility(phraseA,phraseB):focused;
+ const matches=broad>=.74&&focused>=.69&&
+  (shared||(fifth&&focused>=.82))&&phrase>=.42;
+ return {matches,score:focused*.64+phrase*.26+broad*.10,
+  focused,phrase,reason:matches?"similar":"different"};
 }
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
@@ -558,6 +580,28 @@ function transition(a,b,actualDuration){
  // Leave the actual song intact if we cannot prove there is a safe outro.
  // Verified silence can be skipped only AFTER the last audible part.
  if(available<1.75){
+  // A protected full-tail bridge on desktop: play the next harmonic intro
+  // quietly underneath the last chord without cutting the original early.
+  // Never trigger if timed lyrics or the voice detector report late singing.
+  const bpmA=Number(a.bpm)||120,bpmB=Number(b.bpm)||120;
+  const tempoDelta=Math.min(...[.5,1,2].map(scale=>
+   Math.abs(Math.log2(bpmA/(bpmB*scale)))));
+  const vocalLate=(Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-5)||
+   (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-6);
+  const nextStartsVocal=(Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<3.5)||
+   (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<3.5);
+  const canBridge=!isIOS&&style==="auto"&&
+   a.outroFinalNotes&&b.introAttackNotes&&
+   a.beatConfidence>=.20&&b.beatConfidence>=.20&&
+   notes.matches&&notes.focused>=.78&&notes.phrase>=.61&&
+   tempoDelta<=.11&&!vocalLate&&!nextStartsVocal;
+  if(canBridge){
+   const seconds=clamp(4*60/bpmA,2.2,3.4);
+   return {...common,begin:end-seconds,end,fade:seconds,kind:"phrase",
+    quietCertified:false,score:Math.round(notes.score*100),
+    beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
+    nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+  }
   return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  }
  const bpm=Number(a.bpm)||120;
@@ -952,13 +996,20 @@ async function beginMix(song,proposed){
    // Tre curve: Auto/Beat (equal power), Fade (lineare), Rise (entrata
    // graduale e uscita netta). Evita picchi quando il volume è alto.
    let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
-   if(act.kind==="fade"||act.kind==="soft"){outGain=1-time;inGain=time}
+   if(act.kind==="phrase"){
+    // Keep outgoing vocals fully audible until the actual final chord.
+    // The new music grows quietly beneath it, then rises at the boundary.
+    const late=clamp((time-.72)/.28,0,1);
+    outGain=Math.cos(late*Math.PI/2);
+    inGain=.34*Math.sin(Math.min(1,time/.72)*Math.PI/2)+.66*late;
+   }else if(act.kind==="fade"||act.kind==="soft"){outGain=1-time;inGain=time}
    else if(act.kind==="rise"){
     outGain=1-Math.pow(time,1.4);
     inGain=Math.pow(time,1.7);
    }
    // Reduce the combined gain near the crossover to avoid a sudden peak.
-   const guard=act.kind==="beat"?1-.12*Math.sin(Math.PI*time):1;
+   const guard=act.kind==="beat"?1-.12*Math.sin(Math.PI*time):
+    act.kind==="phrase"?.93:1;
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     old.volume=clamp(vol*outGain*guard,0,1);
