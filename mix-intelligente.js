@@ -988,11 +988,67 @@ function similarNotes(a,b){
  return {matches,score,focused,phrase,alignment,
   reason:matches?"similar":alignment?"phrase-mismatch":"different"};
 }
+// Permit a rhythmic overlap while the outgoing instrumental beat is
+// still audible. Previously protected loud endings were always rejected,
+// even with matched chords, groove and tempo. Never infer vocal safety
+// merely from an absent detection.
+function strongInstrumentalBeatBridge(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.bpm<55||a.bpm>210||b.bpm<55||b.bpm>210||
+    a.beatConfidence<.30||b.beatConfidence<.30||
+    !Number.isFinite(b.introDrive)||b.introDrive<.43||
+    !a.outroFinalNotes||!b.introAttackNotes)return null;
+ if(a.protectedEnding!==true&&a.dropRelease)return null;
+ const end=clamp((Number.isFinite(a.last)?a.last:dur)+.06,25,dur-.035);
+ if(dur-end>13)return null;
+ const notes=similarNotes(a,b),groove=grooveAgreement(a,b);
+ const ratio=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale))
+  .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
+ if(!notes.matches||Number(notes.focused)<.78||
+    Number(notes.phrase)<.69||!groove||
+    !Number.isFinite(groove.score)||groove.score<.81||
+    ratio<.965||ratio>1.035||
+    (notes.alignment&&notes.alignment.score>0&&!notes.alignment.matches))
+  return null;
+ const approxBar=4*60/a.bpm;
+ const fade=clamp(notes.alignment?.matches&&Number.isFinite(notes.alignment.fade)?
+  notes.alignment.fade:approxBar*1.5,3.5,5.1);
+ const begin=end-fade;
+ if(begin<14)return null;
+ // A karaoke timestamp marks the START of a line. Otherwise require
+ // the vocal classifier to have genuinely scanned through the end.
+ const lyricEndKnown=Number.isFinite(a.lastLyricAt)&&
+  a.lastLyricAt<=begin-5.5;
+ const scannedVoiceEnd=Boolean(a.voiceModel&&
+  Number.isFinite(a.voiceScannedEnd)&&a.voiceScannedEnd>=end-1&&
+  (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=begin-2.5));
+ if(!lyricEndKnown&&!scannedVoiceEnd)return null;
+ if((Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>begin-5.5)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>begin-2.5)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2.6)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2.6))return null;
+ const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+ return {entry,begin,end,fade,kind:"beat",
+  tempo:clamp(ratio,.97,1.03),
+  gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+  score:Math.round(notes.score*100),grooveScore:groove.score,
+  silenceTrim:!!(a.confidentTail&&a.last<dur-1.65),
+  softTailTrim:false,quietCertified:scannedVoiceEnd||lyricEndKnown,
+  safeOutroAt:begin,trailing:Math.max(0,dur-end),
+  strongBeatBridge:true,instrumentalBeatBridge:true,
+  beatPeriod:60/a.bpm,
+  beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
+  nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+}
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5)return null;
+ const activeBeat=strongInstrumentalBeatBridge(a,b,dur);
+ if(activeBeat)return activeBeat;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
  // protected, the remaining release is genuinely quiet, and the next
  // track starts with music rather than another quiet passage.
@@ -2155,7 +2211,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.lateInstrumentalBreak?
+ const description=plan?.instrumentalBeatBridge?
+   " · beat finale e iniziale compatibili: mix anticipato senza silenzio":
+   plan?.lateInstrumentalBreak?
    " · pausa lunga prima dell'ultimo strumentale: passaggio protetto":
    plan?.strongBeatBridge?
    " · beat finale e iniziale compatibili: sovrapposizione anche senza silenzio"+
@@ -2612,6 +2670,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    dropRelease:a?.dropRelease||null,softOutro:a?.softOutro||null,
    confidentTail:!!a?.confidentTail,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
+   instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
    previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
    previewMatches:!!(prepared&&prepared.id===next?.id&&prepared.fromId===id),
    liveSampleCount:points.length,liveContext:liveOutro?.ctx?.state||"unsupported",
