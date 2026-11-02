@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=26; // refreshed singing detector windows and safety
+const ANALYSIS_VERSION=27; // earlier verified beat-decay cues
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -415,7 +415,7 @@ function grooveAgreement(a,b){
 // loud closing beat, last sung phrase, or re-attack as expendable.
 function findDropRelease(blocks,level,musicalEnd,duration){
  if(!Array.isArray(blocks)||!Number.isFinite(level)||level<.006||
-    !Number.isFinite(musicalEnd)||musicalEnd<26||duration-musicalEnd<1.4)return null;
+    !Number.isFinite(musicalEnd)||musicalEnd<26)return null;
  const step=.2,lo=Math.max(0,Math.floor((musicalEnd-17)/step));
  const hi=Math.min(blocks.length-1,Math.ceil(musicalEnd/step)-1);
  let lastStrong=-1;
@@ -998,7 +998,7 @@ function transition(a,b,actualDuration){
  // track starts with music rather than another quiet passage.
  // It is better to leave a track intact than manufacture a bad transition.
  const release=a.dropRelease;
- if(a.confidentTail&&release&&release.releaseAt<a.last-2.1&&
+ if(release&&release.releaseAt<a.last-2.1&&a.protectedEnding!==true&&
     b.introDrive>=.33&&a.beatConfidence>=.17&&b.beatConfidence>=.17){
   const lateSinging=(Number.isFinite(a.lastLyricAt)&&
       a.lastLyricAt>=release.releaseAt-3)||
@@ -1018,24 +1018,32 @@ function transition(a,b,actualDuration){
   // real final beat groove, not just an approximate global key.
   const compatible=ratio>=.95&&ratio<=1.05&&
     groove?.score>=.73&&harmonyStrong;
-  const instrumentalTailProven=(Number.isFinite(a.lastLyricAt)&&
-    a.lastLyricAt<=release.releaseAt-3);
-  if(compatible&&!lateSinging&&!nextVocal&&(!isIOS||instrumentalTailProven)){
+  // A decay measured on the genuine audio allows the next intro to enter
+  // *during the musical release*, even without encoded digital silence.
+  // Never truncate the outgoing song's last audible samples.
+  const instrumentalTailProven=Number.isFinite(a.lastLyricAt)&&
+    a.lastLyricAt<=release.releaseAt-3;
+  const measuredQuiet=Number.isFinite(release.quietLevel)&&
+    release.quietLevel<=.23&&release.score>=.67&&
+    a.protectedEnding!==true;
+  if(compatible&&!lateSinging&&!nextVocal&&
+     (!isIOS||instrumentalTailProven||measuredQuiet)){
    const end=clamp(a.last+.07,13,dur-.025);
-   // Keep the impact and a portion of its decay. The old track is never
-   // stopped before its last audible frame, only faded during its release.
    const begin=Math.max(release.releaseAt,
-     release.lastImpactAt+1.05,end-5);
+     release.lastImpactAt+1.05,end-5.7);
    const fade=end-begin;
-   if(fade>=2.05&&fade<=6){
+   if(fade>=2.35&&fade<=6.3){
     const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
-    return {entry,begin,end,fade,kind:"beat",tempo:clamp(ratio,.97,1.03),
+    const kind=fade<3.5?"soft":"beat";
+    const trim=Boolean(a.confidentTail&&a.last<dur-1.65);
+    return {entry,begin,end,fade,kind,
+      tempo:kind==="beat"?clamp(ratio,.97,1.03):1,
       gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
       score:Math.round((notes.score??.8)*100),grooveScore:groove.score,
-      silenceTrim:true,softTailTrim:false,
-      quietCertified:instrumentalTailProven,safeOutroAt:begin,
-      trailing:Math.max(0,dur-end),dropReleaseBridge:true,
-      beatPeriod:60/bpmA,beatAnchor:release.lastImpactAt,
+      silenceTrim:trim,softTailTrim:false,
+      quietCertified:instrumentalTailProven||measuredQuiet,safeOutroAt:begin,
+      trailing:trim?Math.max(0,dur-a.last):0,dropReleaseBridge:true,
+      beatPeriod:kind==="beat"?60/bpmA:null,beatAnchor:release.lastImpactAt,
       nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
    }
   }
