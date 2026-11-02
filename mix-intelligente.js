@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=15; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=16; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -462,7 +462,10 @@ async function decode(track,needClip=false){
      outroPhraseNotes:chroma(decoded,Math.max(0,lastSound-7),Math.max(0,lastSound-2)),
      introTimeline:harmonicTimeline(decoded,firstSound,Math.min(decoded.duration,firstSound+9),false),
      outroTimeline:harmonicTimeline(decoded,Math.max(0,lastSound-9),lastSound,true),
-     duration:decoded.duration,durationMismatch};
+     duration:decoded.duration,durationMismatch,
+      camelot:/^(?:[1-9]|1[0-2])[AB]$/.test(String(track.camelot||track.camelotKey||"").toUpperCase())?
+       {code:String(track.camelot||track.camelotKey).toUpperCase(),confidence:1}:
+       camelotEstimate(harmonies)};
     // Keep the NEXT intro, not every analyzed shuffle candidate in RAM.
      if(isIOS&&!document.hidden&&(needClip||bridge()?.mixNext?.()?.id===track.id))
       rememberMobileClip(key,decoded,frame);
@@ -755,22 +758,60 @@ function transition(a,b,actualDuration){
   beatPeriod,beatAnchor,nextBeat,
   score:notes.score===null?null:Math.round(notes.score*100)};
 }
-function keyGuess(ch){
- if(!Array.isArray(ch)||ch.length!==12)return null;
- // Correlazione con i profili maggiori/minori: è solo una stima,
- // non una tonalità certificata come quella disponibile a Spotify.
- const major=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88];
- const minor=[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
- let top={score:-Infinity};
- for(let k=0;k<12;k++)for(const [label,profile] of [["maggiore",major],["minore",minor]]){
-  let score=0;
-  for(let j=0;j<12;j++)score+=ch[(j+k)%12]*profile[j];
-  if(score>top.score)top={score,name:KEY_NAMES[k]+" "+label};
+// Circle of fifths/Camelot: minor A, major B.
+const CAM_A=[5,12,7,2,9,4,11,6,1,8,3,10],CAM_B=[8,3,10,5,12,7,2,9,4,11,6,1];
+function camelotEstimate(ch){
+ if(!Array.isArray(ch)||ch.length!==12||ch.some(v=>!Number.isFinite(v)))return null;
+ const avg=ch.reduce((s,v)=>s+v,0)/12;
+ const norm=Math.hypot(...ch.map(v=>v-avg));
+ if(norm<.014)return null;
+ const profiles=[
+  ["B",[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88]],
+  ["A",[6.33,2.68,3.52,5.38,2.60,3.53,2.54,4.75,3.98,2.69,3.34,3.17]]];
+ const guesses=[];
+ for(const [mode,p] of profiles){
+  const mean=p.reduce((s,v)=>s+v,0)/12;
+  const denom=norm*Math.hypot(...p.map(v=>v-mean));
+  for(let pitch=0;pitch<12;pitch++){
+   let score=0;
+   for(let j=0;j<12;j++)score+=(ch[(j+pitch)%12]-avg)*(p[j]-mean);
+   guesses.push({mode,pitch,score:score/(denom||1)});
+  }
  }
- return top.name;
+ guesses.sort((a,b)=>b.score-a.score);
+ const best=guesses[0],second=guesses[1];
+ if(best.score<.25)return null;
+ const confidence=clamp((best.score-.18)*1.15+(best.score-second.score)*1.4,0,1);
+ return {code:String((best.mode==="A"?CAM_A:CAM_B)[best.pitch])+best.mode,
+  mode:best.mode,pitch:best.pitch,confidence};
 }
-// A single HTMLAudioElement remains the output on iOS, including lock screen.
-let mobileFadeTrack="",mobileFading=false;
+function keyGuess(ch){
+ const k=camelotEstimate(ch);
+ return k?KEY_NAMES[k.pitch]+(k.mode==="A"?" minore":" maggiore")+
+  " · "+k.code+" (stima)":null;
+}
+function camelotMatch(a,b){
+ const key=x=>{
+  const v=x?.camelot;
+  if(typeof v==="string"&&/^(?:[1-9]|1[0-2])[AB]$/.test(v))
+   return {code:v,confidence:1};
+  if(v?.code&&/^(?:[1-9]|1[0-2])[AB]$/.test(v.code))return v;
+  return camelotEstimate(x?.chroma);
+ };
+ const ka=key(a),kb=key(b);
+ if(!ka||!kb)return {score:.5,weight:0};
+ const delta=Math.abs(parseInt(ka.code,10)-parseInt(kb.code,10));
+ const distance=Math.min(delta,12-delta),same=ka.code.slice(-1)===kb.code.slice(-1);
+ const score=distance===0?(same?1:.97):distance===1?(same?.92:.55):
+  distance===2?(same?.40:.24):.05;
+ return {score,weight:.23*Math.min(clamp(ka.confidence??1,0,1),clamp(kb.confidence??1,0,1))};
+}
+function bpmGap(a,b){
+ const bpmA=Number(a?.bpm),bpmB=Number(b?.bpm);
+ if(!(bpmA>0&&bpmB>0))return Infinity;
+ return Math.min(...[.5,1,2].map(scale=>Math.abs(bpmA-bpmB*scale)));
+}
+
 function resetMobileFade(){
  if(mobileFading){
   const app=bridge(),audio=app?.audio();
@@ -1412,7 +1453,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Analisi limitata ai primi brani casuali; l'ordine manuale resta intatto.
  // Decode sequenziale per evitare picchi di RAM e connessioni concorrenti.
  const measured=[];
- for(const track of sequence.slice(0,isIOS?3:5)){
+ for(const track of sequence.slice(0,isIOS?3:7)){
   if(!enabled||app.currentId()!==fromId||window.MusicBoxRoom?.isActive())return;
   const data=await decode(track);
   if(data)measured.push({track,data});
@@ -1429,8 +1470,8 @@ async function intelligentShuffle(app,audio,fromId){
  }).sort((a,b)=>b.score-a.score);
  const original=ranking.find(x=>x.id===initialFirst),winner=ranking[0];
  // Modifica solo una coda casuale AUTOMATICA se il miglioramento è netto.
- if(winner&&winner.id!==initialFirst&&winner.score>=(isIOS?.70:.82)&&
-    (!original||winner.score-original.score>=(isIOS?.04:.07))){
+ if(winner&&winner.id!==initialFirst&&winner.score>=(isIOS?.68:.76)&&
+    (!original||winner.score-original.score>=(isIOS?.05:.065))){
   app.mixSelectShuffle({fromId,initialFirst,pickId:winner.id});
  }
 }
@@ -1444,19 +1485,18 @@ function maybeReorderShuffle(app,audio,id){
 
 function smartScore(a,b){
  if(!a||!b||a.durationMismatch||b.durationMismatch)return -Infinity;
- // BPM 35%, armonia locale 55%, energia 10%. Un BPM doppio può significare
- // la medesima pulsazione percepita (half-time/double-time).
- const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
- if(!bpmA||!bpmB)return -Infinity;
- const delta=Math.min(...[.5,1,2].map(scale=>
-  Math.abs(Math.log2(bpmA/(bpmB*scale)))));
- const beat=clamp(1-delta/.4,0,1);
- const tail=a.outroChroma||a.chroma,head=b.introChroma||b.chroma;
+ // Half-time and double-time are the same pulse, but not identical BPM.
+ const gap=bpmGap(a,b);
+ if(!Number.isFinite(gap))return -Infinity;
+ const beat=clamp(1-gap/19,0,1);
  const notes=similarNotes(a,b);
- const harmony=notes.matches?notes.score:0;
+ const harmony=notes.matches?clamp(notes.score??0,0,1):0;
  const level=a.level&&b.level?clamp(1-Math.abs(Math.log2(a.level/b.level))/3,0,1):.5;
- return beat*.35+harmony*.55+level*.1;
+ const key=camelotMatch(a,b);
+ const base=beat*.34+harmony*.56+level*.10;
+ return clamp(base*(1-key.weight)+key.score*key.weight,0,1);
 }
+
 async function suggestSmartOrder(){
  const app=bridge(),state=$("mixSmartStatus"),list=$("mixSmartList"),add=$("mixSmartAdd");
  if(!app?.mixCandidates||window.MusicBoxRoom?.isActive()){
@@ -1517,8 +1557,11 @@ async function suggestSmartOrder(){
  let previous=currentInfo;
  while(remaining.length&&ranked.length<3){
   remaining.sort((x,y)=>smartScore(previous,y.info)-smartScore(previous,x.info));
-  const chosen=remaining.shift();
-  ranked.push({...chosen,score:smartScore(previous,chosen.info)});
+  const chosen=remaining.shift(),score=smartScore(previous,chosen.info);
+  // Avoid recommending incompatible pairs simply to fill three slots.
+  if(!Number.isFinite(score)||score<.59)break;
+  ranked.push({...chosen,score});
+  previous=chosen.info;
   previous=chosen.info;
  }
  // Se l'utente ha cambiato canzone o playlist, non proporgli una coda vecchia.
