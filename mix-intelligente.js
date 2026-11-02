@@ -607,6 +607,7 @@ function dropPrepared(){
  try{p.audio.pause();p.audio.removeAttribute("src");p.audio.load()}catch(e){}
 }
 function cancel(){
+ stopMobileMix();
  resetMobileFade();
  if(active){
   const act=active;active=null;
@@ -786,7 +787,17 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
-
+ if(mobileActive){
+  if(document.hidden){stopMobileMix();return}
+  if(mobileActive.handingOff){finishMobileMix(app);return}
+  if(!audio||audio!==mobileActive.old||audio.paused||
+     id!==mobileActive.fromId||next?.id!==mobileActive.track.id){
+   stopMobileMix();
+  }else{
+   if(audio.currentTime>=mobileActive.end-.10)handoffMobileMix(app);
+   return;
+  }
+ }
  if(active?.handingOff){
   if(id===active.track.id)return;
   cancel();return;
@@ -873,6 +884,10 @@ function tick(){
   Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});
   return;
  }
+ if(isIOS&&!document.hidden&&!mobileActive&&
+    audio.currentTime>=plan.begin&&audio.currentTime<plan.end-1.8&&
+    plan.kind==="beat"&&plan.fade>=3.5)
+  startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
     audio.currentTime<plan.end-.55){
   beginMix(next,plan).catch(()=>cancel());
@@ -1256,6 +1271,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
  onTrackChange:(id)=>{
+  if(mobileActive&&!(mobileActive.handingOff&&mobileActive.track.id===id))stopMobileMix();
   if(active&&!(active.handingOff&&active.track.id===id))cancel();
  },
  openSettings:()=>{const p=$("mixPanel");if(p)p.hidden=false}};
