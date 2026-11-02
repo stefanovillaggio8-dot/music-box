@@ -98,6 +98,24 @@ test("legacy fade paths do not blend two near-silent intros",()=>{
   {...incoming,introDrive:.05},100);
  assert.ok(plan===null||plan.kind==="cut");
 });
+test("natural decaying final beat is matched before the silence, not after",()=>{
+ const engine=engineForDecay();
+ const blocks=Array.from({length:200},(_,i)=>{
+  const time=i*.2;
+  if(time<31)return .20;
+  if(time<37)return .20*Math.exp(-(time-31)*.55);
+  return 0;
+ });
+ const cue=engine.findDropRelease(blocks,.20,38,40);
+ assert.ok(cue,"last beat release must be detected");
+ assert.ok(cue.lastImpactAt<33&&cue.releaseAt<34);
+ assert.ok(cue.releaseAt<38-2.1,"new song can enter during the release");
+});
+function engineForDecay(){return engine(false)}
+test("outgoing harmony/groove are analyzed before the detected silence",()=>{
+ assert.ok(source.includes("frame.dropRelease.lastImpactAt+.20"));
+ assert.ok(source.includes("dropRelease.lastImpactAt+.20"));
+});
 test("wrong MP3 duration cannot trigger speculative drop skip",()=>{
  const {e,outgoing,incoming}=fixture();
  assert.equal(e.transition({...outgoing,duration:85},incoming,100),null);

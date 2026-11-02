@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=24; // deep real audio metadata and safe endings
+const ANALYSIS_VERSION=25; // decaying final hits, revised melodic cues and cloud v2
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -67,7 +67,7 @@ function deepLookup(track){
    ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
-  if(value?.status==="ok"&&value.analyzer==="librosa-onsets-chroma-rms-v1"&&
+  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return value;
  }
@@ -89,7 +89,7 @@ function loadDeepIndex(force=false){
    const resp=await fetch("dj-deep-analysis.json",{cache:"no-store",signal:ctrl.signal});
    if(!resp.ok)throw Error("Indice DJ non disponibile");
    const json=await resp.json();
-   if(json?.version!==1||!json.entries||typeof json.entries!=="object")
+   if(![1,2].includes(json?.version)||!json.entries||typeof json.entries!=="object")
     throw Error("Schema DJ non valido");
    deepIndex=json;
    if(enabled&&!mixing){plannedFor="";plan=null;}
@@ -342,30 +342,30 @@ function grooveAgreement(a,b){
 // loud closing beat, last sung phrase, or re-attack as expendable.
 function findDropRelease(blocks,level,musicalEnd,duration){
  if(!Array.isArray(blocks)||!Number.isFinite(level)||level<.006||
-    !Number.isFinite(musicalEnd)||musicalEnd<30||duration-musicalEnd<1.4)return null;
+    !Number.isFinite(musicalEnd)||musicalEnd<26||duration-musicalEnd<1.4)return null;
  const step=.2,lo=Math.max(0,Math.floor((musicalEnd-17)/step));
  const hi=Math.min(blocks.length-1,Math.ceil(musicalEnd/step)-1);
  let lastStrong=-1;
  const strong=Math.max(.004,level*.61);
  for(let i=lo;i<=hi;i++)if((blocks[i]||0)>=strong)lastStrong=i;
  if(lastStrong<lo)return null;
- // Require at least 2.2 seconds of actual musical release, after the
- // last full-energy beat. If it stays loud through the end, no early mix.
- const afterStart=lastStrong+1,releaseAt=afterStart*step+.30;
+ const afterStart=lastStrong+1,releaseAt=afterStart*step+.35;
  const tail=blocks.slice(afterStart,hi+1);
  const seconds=musicalEnd-releaseAt;
  if(seconds<2.15||seconds>12||tail.length<10)return null;
- const peak=tail.reduce((v,x)=>Math.max(v,x),0);
- const avg=tail.reduce((v,x)=>v+x,0)/tail.length;
- if(peak>level*.48||avg>level*.29)return null;
- // Three different 0.6s slices must remain settled; a brief valley
- // before a drum/drop returns is NOT a safe outgoing release.
- for(let i=0;i+3<=tail.length;i+=3){
-  const maximum=Math.max(...tail.slice(i,i+3));
-  if(maximum>level*.46)return null;
- }
- return {lastImpactAt:lastStrong*step,releaseAt,
-  seconds,quietLevel:avg/Math.max(level,.001),score:Math.max(0,1-avg/level)};
+ const average=x=>x.reduce((a,b)=>a+b,0)/Math.max(1,x.length);
+ const third=Math.max(3,Math.floor(tail.length/3));
+ const firstAvg=average(tail.slice(0,third));
+ const lastAvg=average(tail.slice(-third));
+ const finalAvg=average(tail.slice(-Math.min(5,tail.length)));
+ const peak=Math.max(...tail),mean=average(tail);
+ // A decreasing musical release is useful even if it has audible reverb.
+ // Reject loud re-attacks, sustained singers and non-decreasing endings.
+ if(!(firstAvg>.001&&lastAvg<=firstAvg*.59&&
+      finalAvg<=level*.16&&lastAvg<=level*.24&&
+      peak<=level*.70&&mean<=level*.40))return null;
+ return {lastImpactAt:lastStrong*step,releaseAt,seconds,
+  quietLevel:mean/Math.max(level,.001),score:Math.max(0,1-mean/level)};
 }
 function drivenIntro(blocks,level,first){
  if(!Array.isArray(blocks)||!Number.isFinite(level)||level<.003)return 0;
@@ -455,9 +455,6 @@ function analyzeFrames(buf){
    if(diff[i]>peak){peak=diff[i];anchor=i*step}
   early.beatAnchor=anchor;
  }
- const grooveEdge=outroGap||outroBreak?
-  Math.max(8,(outroGap||outroBreak).start):audibleEnd;
- const outroGroove=beatEnergySignature(blocks,best.bpm,grooveEdge,true);
  const introGroove=beatEnergySignature(blocks,best.bpm,audibleStart,false);
  const hasAudio=typical>.0012;
  const activeRms=blocks.filter(x=>x>gate).sort((x,y)=>x-y);
@@ -466,6 +463,10 @@ function analyzeFrames(buf){
  // Find the final strong beat and the release AFTER it; compare against
  // the incoming musical attack instead of pairing two empty sections.
  const dropRelease=findDropRelease(blocks,level,audibleEnd,duration);
+ const grooveEdge=outroGap||outroBreak?
+  Math.max(8,(outroGap||outroBreak).start):
+  dropRelease?Math.max(8,dropRelease.lastImpactAt+.20):audibleEnd;
+ const outroGroove=beatEnergySignature(blocks,best.bpm,grooveEdge,true);
  const beatConfidence=clamp(best.score,0,1);
  // A forceful last bar is part of the song, not a free transition slot.
  // Even perfectly matched keys should not erase a final drum fill/drop.
@@ -698,10 +699,11 @@ async function decode(track,needClip=false){
      Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
     const earlyBoundary=frame.outroGap||frame.outroBreak;
     const outroFrom=earlyBoundary?Math.max(0,earlyBoundary.start-10):
-     Math.max(0,frame.safeOutroAt??frame.last-10);
+     Math.max(0,(frame.dropRelease?.lastImpactAt??frame.last)-10);
     const introTo=Math.min(decoded.duration,Math.max(9,frame.first+12));
     const firstSound=Math.max(0,frame.first);
     const lastSound=earlyBoundary?Math.max(2,earlyBoundary.start-.18):
+     frame.dropRelease?Math.max(2,frame.dropRelease.lastImpactAt+.20):
      Math.min(decoded.duration,frame.last);
     const result={...frame,chroma:harmonies,
      introChroma:chroma(decoded,0,introTo),
