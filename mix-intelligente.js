@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=19; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=20; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -219,6 +219,42 @@ function lateOutroGap(blocks,typical,duration){
  }
  return null;
 }
+// Energy rhythm signature sampled on the BPM grid. We compare the last
+// eight beats of A with the first eight beats of B, allowing cyclic phase
+// shifts. This is a timbral/rhythmic match, not a silent-tail detector.
+function beatEnergySignature(blocks,bpm,at,endAligned=false){
+ if(!Array.isArray(blocks)||!(bpm>=55&&bpm<=210))return null;
+ const beat=60/bpm,span=beat*8;
+ const begin=endAligned?at-span:at;
+ if(begin<0||begin+span>blocks.length*.2+.15)return null;
+ const values=[];
+ for(let i=0;i<32;i++){
+  const time=begin+(i+.5)*span/32;
+  const pos=Math.max(0,Math.min(blocks.length-1,Math.floor(time/.2)));
+  values.push(blocks[pos]||0);
+ }
+ const mean=values.reduce((sum,v)=>sum+v,0)/32;
+ const variance=values.reduce((sum,v)=>sum+(v-mean)**2,0)/32;
+ const sd=Math.sqrt(variance);
+ if(mean<.003||sd<mean*.13)return null;
+ return values.map(v=>clamp((v-mean)/sd,-3,3));
+}
+function grooveAgreement(a,b){
+ const tail=a?.outroGroove,head=b?.introGroove;
+ if(!Array.isArray(tail)||!Array.isArray(head)||
+    tail.length!==32||head.length!==32)return null;
+ let high=-1,phase=0;
+ for(let shift=0;shift<8;shift++){
+  let dot=0,aa=0,bb=0;
+  for(let i=0;i<32;i++){
+   const x=tail[i],y=head[(i+shift)%32];
+   dot+=x*y;aa+=x*x;bb+=y*y;
+  }
+  const corr=dot/Math.sqrt(Math.max(1e-8,aa*bb));
+  if(corr>high){high=corr;phase=shift}
+ }
+ return {score:clamp((high+1)/2,0,1),phase,correlation:high};
+}
 function analyzeFrames(buf){
  const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
  // Detect energy on both stereo channels: a quiet left channel must not
@@ -295,6 +331,9 @@ function analyzeFrames(buf){
    if(diff[i]>peak){peak=diff[i];anchor=i*step}
   outroGap.beatAnchor=anchor;
  }
+ const grooveEdge=outroGap?Math.max(8,outroGap.start):audibleEnd;
+ const outroGroove=beatEnergySignature(blocks,best.bpm,grooveEdge,true);
+ const introGroove=beatEnergySignature(blocks,best.bpm,audibleStart,false);
  const hasAudio=typical>.0012;
  const activeRms=blocks.filter(x=>x>gate).sort((x,y)=>x-y);
  const level=activeRms.length?
@@ -371,7 +410,7 @@ function analyzeFrames(buf){
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,introGroove,outroGroove,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
