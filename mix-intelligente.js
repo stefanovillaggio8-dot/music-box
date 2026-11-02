@@ -465,7 +465,10 @@ function transition(a,b,actualDuration){
  }
  const available=safe===null?0:end-safe;
  const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
-   trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe};
+   trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe,
+   // Unlike desktop, the iPhone cannot reliably attenuate native playback.
+   // Only overlay when the audio analysis itself found a settled quiet outro.
+   quietCertified:Number.isFinite(a.safeOutroAt)};
  // Leave the actual song intact if we cannot prove there is a safe outro.
  // Verified silence can be skipped only AFTER the last audible part.
  if(available<1.75){
@@ -562,7 +565,7 @@ function stopMobileMix(fadeSeconds=0){
 }
 function startMobileMix(song,p,app,old){
  if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
-    p.kind!=="beat"||p.fade<3.5||!Number.isFinite(p.safeOutroAt)||
+    p.kind!=="beat"||p.fade<3.5||!p.quietCertified||!Number.isFinite(p.safeOutroAt)||
     old.currentTime<p.safeOutroAt-.1)return false;
  const ctx=app.mixRunningContext?.();
  const url=app.mixUrl?.(song)||song.url;
