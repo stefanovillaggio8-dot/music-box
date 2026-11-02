@@ -142,7 +142,7 @@ function createMobileMixFixture(){
  const engine=new Function("schedule",
   'const isIOS=true,document={hidden:false};let mobileOverlayEnabled=true;'+
   'const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));'+
-  'const mobileIntroClips=new Map();\n'+block+
+  'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map();\n'+block+
   '\nreturn {startMobileMix,stopMobileMix,handoffMobileMix,finishMobileMix,'+
   'clips:mobileIntroClips,active:()=>mobileActive,'+
   'enabled:v=>mobileOverlayEnabled=v,hidden:v=>document.hidden=v};'
