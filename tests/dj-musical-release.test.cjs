@@ -351,7 +351,7 @@ test("screen recording 19:46:33: never log a fake mix repeatedly after preview e
   "Report a crossfade only after the second player actually starts");
  assert.match(source,/p\.failed=true;p\.ready=false/);
  assert.match(source,/quietHandoffFor===pair/);
- assert.match(source,/duration-now>6\|\|duration-now<2\.2/);
+ assert.match(source,/duration-now>8\|\|duration-now<2\.2/);
 });
 
 test("intermittent MP3 failures: one original-track fallback, fresh retry, no stale-track override",()=>{
@@ -462,6 +462,7 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
   "const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
   "const grooveAgreement=()=>({score:.9});"+
   "const similarNotes=()=>({focused:.8,phrase:.8});"+
+  "const hasImmediateMusicalIntro=()=>true;"+
   "let fromAnalysis={duration:200,bpm:120,beatConfidence:.82};"+
   "const deepLookup=t=>({id:t.id,duration:200,bpm:120,"+
   "beatConfidence:.8,introDrive:.8});"+
