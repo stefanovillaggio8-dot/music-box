@@ -1929,6 +1929,16 @@ function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  if(recent.at(-1).rms>recent[0].rms*1.35+baseline*.008)return false;
  return true;
 }
+// A planned soft fade may miss its prebuffer window. The live measured
+// outro must remain eligible: otherwise the browser waits until the MP3 is
+// nearly finished despite having verified a real, already-decaying ending.
+// For beat/phrase plans, only downgrade after their cue was MISSED because
+// the preview is unavailable. A running beat bridge is never interrupted.
+function needsLiveQuietRecovery(p,now,ready){
+ if(!p||p.kind==="cut"||p.kind==="soft")return true;
+ return ["beat","phrase","fade","rise"].includes(p.kind)&&
+   Number.isFinite(p.begin)&&now>=p.begin+.75&&!ready;
+}
 function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  if(isIOS||active||mobileActive||mixing||!next||
     quietHandoffFor===id+"|"+next.id||
@@ -2095,7 +2105,9 @@ function tick(){
     Date.now()>(mixFailures.get(id+"|"+next.id)||0)&&
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))
   prepare(next,id,app);
- if(!plan||plan.kind==="cut"){
+ const mixReady=Boolean(prepared?.ready&&!prepared?.failed&&
+  prepared?.audio?.readyState>=2&&prepared.id===next.id&&prepared.fromId===id);
+ if(needsLiveQuietRecovery(plan,audio.currentTime,mixReady)){
   const currentTrack=app.allTracks?.()?.find(t=>t.id===id);
   const url=currentTrack&&(app.mixUrl?.(currentTrack)||currentTrack.url);
   const analysis=url&&(cache.get(String(url))||deepLookup(currentTrack));
