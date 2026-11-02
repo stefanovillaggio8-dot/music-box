@@ -25,47 +25,65 @@ function vocalConfidence(output){
  }
  return score;
 }
-function monoWindow(buffer,at,seconds=.96){
- const rate=buffer.sampleRate,length=Math.floor(seconds*rate);
- const first=Math.floor(at*rate);
- if(first<0||first+length>buffer.length)return null;
+function monoSegment(buffer,from,seconds){
+ const rate=buffer.sampleRate;
+ const at=Math.max(0,Math.floor(from*rate));
+ const n=Math.min(buffer.length-at,Math.floor(seconds*rate));
+ if(n<rate*.9)return null;
  const left=buffer.getChannelData(0);
  const right=buffer.numberOfChannels>1?buffer.getChannelData(1):null;
- const samples=new Float32Array(length);
- for(let i=0;i<length;i++)samples[i]=right?(left[first+i]+right[first+i])*.5:left[first+i];
- return samples;
+ const samples=new Float32Array(n);
+ for(let i=0;i<n;i++)
+  samples[i]=right?(left[at+i]+right[at+i])*.5:left[at+i];
+ return {at:at/rate,samples};
 }
-function evaluate(buffer,classifier,info){
- const duration=Number(buffer?.duration)||0;
- if(!Number.isFinite(duration)||duration<24||
-    !classifier||typeof classifier.classify!=="function")return null;
+function prepare(buffer,info){
+ const duration=Number(buffer?.duration)||0,rate=buffer?.sampleRate;
+ if(!Number.isFinite(duration)||duration<24||!Number.isFinite(rate))return null;
  const end=Math.min(duration,Number.isFinite(info?.last)?info.last:duration);
- const segments=[],step=1.4,clip=.96;
- const classifyRange=(from,to,kind)=>{
-  for(let t=Math.max(0,from);t+clip<=Math.min(duration,to)+.00001;t+=step){
-   const samples=monoWindow(buffer,t,clip);
-   if(!samples)break;
+ // Copy under ~33 seconds of samples. The complete decoded MP3 can now
+ // be freed while the model is downloading, especially important on iOS.
+ const head=monoSegment(buffer,0,10.5);
+ const tail=monoSegment(buffer,Math.max(0,end-23),23);
+ if(!head||!tail)return null;
+ return {head,tail,rate,end};
+}
+function evaluatePrepared(data,classifier){
+ if(!data||!classifier||typeof classifier.classify!=="function")return null;
+ const found=[],step=1.3,seconds=.96;
+ const classify=(segment,kind)=>{
+  const n=Math.floor(data.rate*seconds),buf=segment.samples;
+  for(let offset=0;offset+n<=buf.length;offset+=Math.round(step*data.rate)){
+   const t=segment.at+offset/data.rate;
+   const slice=buf.subarray(offset,offset+n);
    let score=0;
-   try{score=vocalConfidence(classifier.classify(samples,buffer.sampleRate))}
+   try{score=vocalConfidence(classifier.classify(slice,data.rate))}
    catch(e){return false}
-   // Singing may score lower than isolated speech over full accompaniment.
-   // False positives only make mixing *more conservative*.
-   if(score>=.20)
-    segments.push({at:Math.round(t*100)/100,end:Math.round((t+clip)*100)/100,
-     score:Math.round(score*1000)/1000,kind});
+   if(score>=.22)found.push({at:t,end:t+seconds,score,kind});
+  }
+  // Cover the very last available second, even when not on the stride.
+  if(buf.length>=n&&buf.length>n){
+   const t=segment.at+(buf.length-n)/data.rate;
+   let score=0;
+   try{score=vocalConfidence(classifier.classify(buf.subarray(buf.length-n),data.rate))}
+   catch(e){return false}
+   if(score>=.22)found.push({at:t,end:t+seconds,score,kind});
   }
   return true;
  };
- const outroFrom=Math.max(0,end-22);
- const lastStart=Math.max(0,end-clip);
- if(!classifyRange(0,Math.min(duration,10),"intro") ||
-    !classifyRange(outroFrom,lastStart+clip,"outro"))return null;
- const outro=segments.filter(s=>s.kind==="outro");
- const intro=segments.filter(s=>s.kind==="intro");
- const lastVoiceAt=outro.length?Math.max(...outro.map(s=>s.end)):null;
- const firstVoiceAt=intro.length?Math.min(...intro.map(s=>s.at)):null;
+ if(!classify(data.head,"intro")||!classify(data.tail,"outro"))return null;
+ const outro=found.filter(v=>v.kind==="outro"&&v.at<=data.end);
+ const intro=found.filter(v=>v.kind==="intro");
+ // Last vocal detected within the ending guard window. Never interpret
+ // missing detections as confirmation that vocals are absent.
+ const lastVoiceAt=outro.length?
+  Math.min(data.end,Math.max(...outro.map(v=>v.end))):null;
+ const firstVoiceAt=intro.length?Math.min(...intro.map(v=>v.at)):null;
  return {source:"yamnet",lastVoiceAt,firstVoiceAt,
-  scannedEnd:end,scannedFrom:outroFrom,modelVersion:1};
+  scannedEnd:data.end,scannedFrom:data.tail.at,modelVersion:1};
+}
+function evaluate(buffer,classifier,info){
+ return evaluatePrepared(prepare(buffer,info),classifier);
 }
 async function loadModel(){
  if(Date.now()<modelCooldown||typeof window==="undefined"||
@@ -86,15 +104,18 @@ async function loadModel(){
  if(!result)modelPromise=null;
  return result;
 }
-async function analyze(buffer,info){
- // Never start an expensive model download while the screen is locked,
- // in data saver, or when the DJ feature is disabled.
- if(typeof document!=="undefined"&&document.hidden)return null;
+function analyze(buffer,info){
+ if(typeof document!=="undefined"&&document.hidden)return Promise.resolve(null);
  const net=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- if(net?.saveData||/^(slow-)?2g$|^3g$/i.test(String(net?.effectiveType||"")))return null;
- const model=await loadModel();
- if(!model)return null;
- try{return evaluate(buffer,model,info)}catch(e){return null}
+ if(net?.saveData||/^(slow-)?2g$|^3g$/i.test(String(net?.effectiveType||"")))
+  return Promise.resolve(null);
+ const data=prepare(buffer,info);
+ if(!data)return Promise.resolve(null);
+ // No full-song PCM kept across model download and no user audio uploaded.
+ return loadModel().then(model=>{
+  if(!model||document.hidden)return null;
+  try{return evaluatePrepared(data,model)}catch(e){return null}
+ }).catch(()=>null);
 }
 window.MusicBoxVocal={analyze,modelReady:()=>Boolean(modelPromise),
  // Pure evaluator exposed so project regression tests can use a mock model.
