@@ -1108,10 +1108,10 @@ function hasImmediateMusicalIntro(b){
   const later=mean(groove.slice(8,24));
   if(early<-.85&&later-early>.85)return false;
  }
- // introBeat is the LOUDEST attack among 12 seconds, not necessarily
- // the first one. Only treat a late peak as evidence when intro is weak.
- if(Number.isFinite(b.introBeat)&&b.introBeat-entry>5.2&&
-    b.introDrive<.57)return false;
+ // introBeat is the STRONGEST onset within 12 seconds, not the
+ // first musical sound. Its timing must not veto an opening that is
+ // already audible and rhythmically driven from its first measure.
+ // Genuine pre-music gaps are rejected above using 'first' and groove.
  return true;
 }
 function transition(a,b,actualDuration){
