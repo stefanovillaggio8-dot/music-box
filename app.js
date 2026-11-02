@@ -6750,7 +6750,7 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
       LS.set("mb.eliminatiRimossiDaMandare",[...restore]);
     }catch(_){/* keep copying, even if a browser blocks persistence */}
   }
-  async function _portaNellaMiaLibreria(t, profiloDestinazione) {
+  async function _portaNellaMiaLibreria(t, profiloDestinazione, inLotto=false) {
     if (!t) return false;
     const id=_idPerCopia(t);
     if (!id) {
@@ -6771,9 +6771,9 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
       // tombstone. In that case "copy again" means restore, not duplicate.
       if(_branoEliminato(id,destinazione)){
         _ripristinaCopiaCancellata(id,destinazione);
-        try{if(destinazione===profile)await loadAll()}catch(_){}
+        try{if(!inLotto&&destinazione===profile)await loadAll()}catch(_){}
         _salvaStatoCondiviso();
-        toast('"'+t.title+'" ripristinata in '+destinazione);
+        if(!inLotto)toast('"'+t.title+'" ripristinata in '+destinazione);
         return true;
       }
       toast('"' + t.title + '" e\' gia\' nella tua libreria');
@@ -6787,9 +6787,13 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
       LS.set(LS_MIEI, JSON.stringify(miei));
     } catch (e) { /* noop */ }
     _ripristinaCopiaCancellata(id,destinazione);
-    try { await loadAll(); } catch (e) { /* noop */ }
-    render();
-    toast('"' + t.title + '" ora e\' anche nella tua libreria (a ' + (t.profile || "?") + ' resta)');
+    // Bulk copies used to rebuild a 1000-song library once PER track,
+    // blocking iPhone for minutes. Reload only once after the whole batch.
+    if(!inLotto){
+      try { if(destinazione===profile)await loadAll(); } catch (e) { /* noop */ }
+      render();
+      toast('"' + t.title + '" ora e\' anche nella tua libreria (a ' + (t.profile || "?") + ' resta)');
+    }
     /* Poi sul sito, cosi' la ritrovo su questo e sull'altro dispositivo. */
     _salvaStatoCondiviso();
     return true;
@@ -12478,11 +12482,14 @@ $("fabMenu").addEventListener("click", (e) => {
         giaPresenti.push(t.title);
         continue;
       }
-      const ok = await _portaNellaMiaLibreria(t, destinazione);
+      const ok = await _portaNellaMiaLibreria(t, destinazione, true);
       if (ok) { copiate++; idGia.add(copyId); if (_identitaBrano(t)) chiaviGia.add(_identitaBrano(t)); }
       else giaPresenti.push(t.title);
     }
 
+    if(copiate && destinazione===profile){
+      try{await loadAll()}catch(_){}
+    }else if(copiate)render();
     /* Adesso riaccendo il pannello come prima, con il suo sottotitolo. */
     const sottotitolo = $("profileSub");
     if (sottotitolo) sottotitolo.textContent = "Scegli il tuo nome";
