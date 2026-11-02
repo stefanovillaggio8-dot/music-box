@@ -239,3 +239,23 @@ test("iPhone audio-clock drift blocks a corrupted seek into the next song",()=>{
  assert.equal(f.calls.length,0);
  assert.equal(f.engine.active(),null);
 });
+
+test("iPhone EQ lowers incoming bass first and restores it progressively",()=>{
+ const f=createMobileMixFixture();
+ const frequency={initial:0,final:0,setValueAtTime(v){this.initial=v},
+  exponentialRampToValueAtTime(v){this.final=v}};
+ f.ctx.createBiquadFilter=()=>({type:"",frequency,connect(){},disconnect(){}});
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ assert.equal(f.engine.active().filter.type,"highpass");
+ assert.equal(frequency.initial,155);
+ assert.equal(frequency.final,42);
+ f.engine.stopMobileMix();
+});
+test("iPhone EQ unavailability must not stop the native audio or the safe overlay",()=>{
+ const f=createMobileMixFixture();
+ f.ctx.createBiquadFilter=()=>{throw Error("filter unavailable")};
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ assert.ok(f.engine.active());
+ assert.equal(f.old.src,undefined);
+ f.engine.stopMobileMix();
+});
