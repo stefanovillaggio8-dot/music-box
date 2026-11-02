@@ -160,6 +160,10 @@
   "b-track-351": {
    "title": "BOP BOP",
    "artist": "Artie 5ive"
+  },
+  "b-track-201": {
+   "title": "Lulu - Acoustic Version",
+   "artist": "nayt, 3D"
   }
  },
  "statistiche": {
@@ -1348,7 +1352,7 @@
    },
    "[\"dimmi che ce'\",\"thasup\"]": {
     "v": 1,
-    "s": 77,
+    "s": 78,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -1816,7 +1820,7 @@
    },
    "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
     "v": 0,
-    "s": 76,
+    "s": 77,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -1894,13 +1898,13 @@
    },
    "[\"estate\",\"negromaro\"]": {
     "v": 0,
-    "s": 15,
+    "s": 19,
     "t": "Estate",
     "a": "Negromaro"
    },
    "m:2026-11|[\"estate\",\"negromaro\"]": {
     "v": 0,
-    "s": 15,
+    "s": 19,
     "t": "Estate",
     "a": "Negromaro"
    },
@@ -1918,13 +1922,13 @@
    },
    "[\"mortale\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 158,
+    "s": 176,
     "t": "Mortale",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"mortale\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 158,
+    "s": 176,
     "t": "Mortale",
     "a": "nayt, 3D"
    },
@@ -2536,13 +2540,13 @@
    },
    "[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 0,
-    "s": 174,
+    "s": 181,
     "t": "TUTTO FUORI CONTROLLO",
     "a": "MACE, Kid Yugi, IzI, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 0,
-    "s": 174,
+    "s": 181,
     "t": "TUTTO FUORI CONTROLLO",
     "a": "MACE, Kid Yugi, IzI, Franco126"
    },
@@ -2752,13 +2756,13 @@
    },
    "[\"sentire la musica\",\"kid yugi\"]": {
     "v": 0,
-    "s": 88,
+    "s": 94,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"sentire la musica\",\"kid yugi\"]": {
     "v": 0,
-    "s": 88,
+    "s": 94,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
@@ -4994,6 +4998,18 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
+   "[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
+   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -5582,17 +5598,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"taciturno\",\"coez, gemello\"]": {
+   "[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
-   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+   "m:2026-11|[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6182,17 +6198,29 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
-   "[\"end of beginning\",\"djo\"]": {
+   "[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
    },
-   "m:2026-11|[\"end of beginning\",\"djo\"]": {
+   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
+   },
+   "[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -6520,13 +6548,13 @@
    },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo ÃÂ¨ sempre piÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo ÃÂ¨ sempre piÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -6782,29 +6810,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
-   "[\"qualcosa di grande\",\"coez\"]": {
+   "[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
-   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
+   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
-   },
-   "[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
-   },
-   "m:2026-11|[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -7132,13 +7148,13 @@
    },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 126,
+    "s": 132,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 126,
+    "s": 132,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -7394,18 +7410,6 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
    },
-   "[\"scrivendo\",\"nayt\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Scrivendo",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Scrivendo",
-    "a": "nayt"
-   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -7594,13 +7598,13 @@
    },
    "[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 110,
+    "s": 126,
     "t": "Miami Vice",
     "a": "Luchè, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 110,
+    "s": 126,
     "t": "Miami Vice",
     "a": "Luchè, Sfera Ebbasta, Simba La Rue"
    },
@@ -7732,13 +7736,13 @@
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 132,
+    "s": 136,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 132,
+    "s": 136,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
@@ -7993,6 +7997,42 @@
     "s": 6,
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
+   },
+   "[\"il giorno che aspettavo\",\"ultimo\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "IL GIORNO CHE ASPETTAVO",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "IL GIORNO CHE ASPETTAVO",
+    "a": "Ultimo"
+   },
+   "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Lulu - Acoustic Version",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Lulu - Acoustic Version",
+    "a": "nayt, 3D"
    }
   },
   "Diego": {
