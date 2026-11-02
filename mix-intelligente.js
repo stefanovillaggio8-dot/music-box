@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=27; // earlier verified beat-decay cues
+const ANALYSIS_VERSION=28; // neutral fade for measured quiet release even when chords differ
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -1237,12 +1237,25 @@ function transition(a,b,actualDuration){
  const compatible=beatClose&&notes.matches&&harmonic!==null&&harmonic>=.75;
  // Similar BPM alone is not enough to overlap mismatched notes.
  if(!notes.matches){
-  // Keep an already working quiet-outro mix. When the old song has truly
-  // settled, a short neutral fade is safe even without harmonic matching.
-  // Never use this fallback on a loud or vocal ending.
-  if((a.quietTail===true||soft)&&(b.introDrive===undefined||b.introDrive>=.30)&&Number.isFinite(safe)&&available>=2.6){
-   const duration=Math.min(2.6,available-.1);
-   return {...common,begin:end-duration,end,fade:duration,kind:"soft"};
+  // An incompatible chord boundary should not create a long two-key mix.
+  // But a *measured* decaying outro is already too quiet to warrant
+  // waiting through the entire encoded MP3. Let the next song enter with
+  // a short neutral fade after the final impact, never a fake beatmatch.
+  // The outgoing song is still played through its last audible samples.
+  const release=a.dropRelease;
+  const measuredSettledRelease=Boolean(release&&
+   Number.isFinite(release.quietLevel)&&release.quietLevel<=.23&&
+   release.score>=.67&&a.protectedEnding!==true&&
+   Number.isFinite(safe)&&safe>=release.releaseAt-.2&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=safe-1.5)&&
+   (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=safe-1.5));
+  const quiet=measuredSettledRelease||a.quietTail===true||soft;
+  if(quiet&&(b.introDrive===undefined||b.introDrive>=.30)&&
+     Number.isFinite(safe)&&available>=2.6){
+   const duration=Math.min(measuredSettledRelease?3.2:2.6,available-.12);
+   return {...common,begin:end-duration,end,fade:duration,kind:"soft",
+    quietCertified:common.quietCertified||measuredSettledRelease,
+    neutralRelease:measuredSettledRelease};
   }
   return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  }
