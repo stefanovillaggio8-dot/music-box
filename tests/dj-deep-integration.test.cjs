@@ -31,3 +31,71 @@ test("index analyzed asynchronously, unindexed songs retain local analysis",()=>
  assert.ok(text.includes('const saved=await savedAnalysis(key)'));
  assert.ok(text.includes('decode(next,mobileOverlayEnabled&&!document.hidden)'));
 });
+
+test("deep index voice scan is restricted to active and next tracks",()=>{
+ assert.ok(text.includes("scheduleDeepVoice(track,key,merged)"));
+ assert.ok(text.includes("scheduleDeepVoice(track,key,deep)"));
+ assert.ok(text.includes("if(!merged.voiceModel)scheduleDeepVoice"));
+ assert.ok(text.includes("voiceModelVersion:stored.voiceModelVersion"));
+});
+function vocalFixture(){
+ const start=text.indexOf("const voiceRetry=new Map();");
+ const end=text.indexOf("function toast(m)",start);
+ assert.ok(start>0&&end>start);
+ const app={currentId:()=>1,mixNext:()=>({id:2})};
+ const window={
+  MusicBoxVocal:{analyze:async()=>({
+   source:"yamnet",modelVersion:3,firstVoiceAt:0,lastVoiceAt:98,
+   firstVoiceConfidence:.74,lastVoiceConfidence:.91,
+   voiceIntervals:[{at:95,end:98,confidence:.91}],
+   scannedFrom:70,scannedEnd:100
+  })},
+  OfflineAudioContext:class{
+   async decodeAudioData(){return {duration:100}}
+   async close(){}
+  }
+ };
+ let fetched=0,persisted=0;
+ const env={
+  app,window,doc:{hidden:false},
+  fetch:async()=>{fetched++;return {
+   ok:true,headers:{get:()=>"40"},arrayBuffer:async()=>new ArrayBuffer(40)
+  }},
+  saved:async()=>{persisted++}
+ };
+ const runner=new Function("env",[
+  "const window=env.window,document=env.doc,navigator={connection:{effectiveType:'4g'}},isIOS=false,enabled=true;",
+  "const bridge=()=>env.app,fetch=env.fetch,saveAnalysis=env.saved;",
+  "const cache=new Map(),voiceJobs=new Map();",
+  "let active=null,mobileActive=null,plan=null,mixing=false,plannedFor='old';",
+  "const voiceThreatensPlan=()=>false,cancel=()=>{};",
+  text.slice(start,end),
+  "return {cache,voiceJobs,scheduleDeepVoice,voiceIsRelevant};"
+ ].join("\n"))(env);
+ return {...runner,count:()=>fetched,saved:()=>persisted};
+}
+test("deep-index vocal scan enriches only the current song without sending PCM",async()=>{
+ const f=vocalFixture(),key="https://example.test/audio.mp3",data={duration:100,last:100};
+ f.cache.set(key,data);
+ f.scheduleDeepVoice({id:99},key,data);
+ assert.equal(f.count(),0);
+ f.scheduleDeepVoice({id:1},key,data);
+ const job=f.voiceJobs.get(key);
+ assert.ok(job);
+ await job;
+ assert.equal(f.count(),1);
+ assert.equal(f.saved(),1);
+ assert.equal(f.cache.get(key).voiceModel,"yamnet");
+ assert.equal(f.cache.get(key).voiceModelVersion,3);
+ assert.equal(f.cache.get(key).lastVoiceAt,98);
+ assert.equal(f.cache.get(key).voiceIntervals[0].at,95);
+});
+test("deep-index enrichment refuses audio durations that disagree",async()=>{
+ const f=vocalFixture(),key="https://example.test/audio.mp3",data={duration:170,last:170};
+ f.cache.set(key,data);
+ f.scheduleDeepVoice({id:1},key,data);
+ const job=f.voiceJobs.get(key);assert.ok(job);
+ await job;
+ assert.equal(f.cache.get(key).voiceModel,undefined);
+ assert.equal(f.saved(),0);
+});
