@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=14; // local harmonic boundary signatures and guarded phrase bridge
+const ANALYSIS_VERSION=15; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -355,6 +355,19 @@ function chroma(buf,from=0,to=buf.duration){
  const total=hist.reduce((a,b)=>a+b,0)||1;
  return [...hist].map(v=>v/total);
 }
+// Consecutive harmonic snapshots near the genuine first/last audible
+// notes. Average track keys cannot prove two phrases fit musically.
+function harmonicTimeline(buf,first,last,fromEnd){
+ if(!buf||last-first<3)return [];
+ const offsets=isIOS?[.65,1.85,3.15,4.55]:[.65,1.65,2.65,3.65,4.65,5.65];
+ const timeline=[];
+ for(const offset of offsets){
+  const center=fromEnd?last-offset:first+offset;
+  if(center-.60<first||center+.60>last)continue;
+  timeline.push({offset,notes:chroma(buf,center-.60,center+.60)});
+ }
+ return timeline;
+}
 function compatibility(a,b){
  if(!a?.chroma||!b?.chroma)return 0;
  let dot=0,aa=0,bb=0;
@@ -434,6 +447,8 @@ async function decode(track,needClip=false){
      introPhraseNotes:chroma(decoded,firstSound,Math.min(decoded.duration,firstSound+6)),
      outroFinalNotes:chroma(decoded,Math.max(0,lastSound-2.5),lastSound),
      outroPhraseNotes:chroma(decoded,Math.max(0,lastSound-7),Math.max(0,lastSound-2)),
+     introTimeline:harmonicTimeline(decoded,firstSound,Math.min(decoded.duration,firstSound+9),false),
+     outroTimeline:harmonicTimeline(decoded,Math.max(0,lastSound-9),lastSound,true),
      duration:decoded.duration,durationMismatch};
     // Keep the NEXT intro, not every analyzed shuffle candidate in RAM.
      if(isIOS&&!document.hidden&&(needClip||bridge()?.mixNext?.()?.id===track.id))
