@@ -527,6 +527,79 @@ function resetMobileFade(){
  }
  mobileFadeTrack="";mobileFading=false;
 }
+let mobileActive=null;
+function stopMobileMix(){
+ const act=mobileActive;mobileActive=null;
+ if(!act)return;
+ try{act.source.onended=null;act.source.stop()}catch(e){}
+ try{act.source.disconnect()}catch(e){}
+ try{act.gain.disconnect()}catch(e){}
+}
+function startMobileMix(song,p,app,old){
+ if(!isIOS||document.hidden||mobileActive||!p||
+    p.kind!=="beat"||p.fade<3.5||!Number.isFinite(p.safeOutroAt)||
+    old.currentTime<p.safeOutroAt-.1)return false;
+ const ctx=app.mixRunningContext?.();
+ const url=app.mixUrl?.(song)||song.url;
+ const clip=mobileIntroClips.get(String(url));
+ if(!ctx||ctx.state!=="running"||!clip)return false;
+ try{
+  const offset=Math.max(0,p.entry-clip.start);
+  const frames=clip.channels[0].length;
+  if((frames/clip.rate-offset)<p.fade+1.5)return false;
+  const buf=ctx.createBuffer(clip.channels.length,frames,clip.rate);
+  for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
+  const source=ctx.createBufferSource(),gain=ctx.createGain();
+  source.buffer=buf;source.connect(gain);gain.connect(ctx.destination);
+  gain.gain.setValueAtTime(0,ctx.currentTime);
+  const target=clamp(app.volume?.()??1,0,1)*.78;
+  gain.gain.linearRampToValueAtTime(target,ctx.currentTime+Math.max(2,p.fade*.8));
+  source.start(ctx.currentTime,offset);
+  mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
+   entry:p.entry,started:ctx.currentTime,end:p.end,old,handingOff:false,
+   handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset};
+  return true;
+ }catch(e){stopMobileMix();return false}
+}
+function finishMobileMix(app){
+ const act=mobileActive;
+ if(!act||!act.handingOff)return;
+ const audio=app?.audio?.();
+ if(!audio||app.currentId()!==act.track.id){
+  if(Date.now()-act.handoffAt>8000)stopMobileMix();
+  return;
+ }
+ if(!audio.paused&&audio.readyState>=2&&!audio.seeking){
+  const elapsed=act.ctx.currentTime-act.started;
+  const heard=act.entry+Math.max(0,elapsed);
+  try{
+   if(audio.seekable?.length&&Number.isFinite(heard)&&
+      Math.abs(audio.currentTime-heard)>.45)
+    audio.currentTime=Math.min(heard,Math.max(0,(audio.duration||Infinity)-.5));
+  }catch(e){}
+  if(!audio.seeking){
+   try{
+    const now=act.ctx.currentTime;
+    act.gain.gain.cancelScheduledValues(now);
+    act.gain.gain.setValueAtTime(act.gain.gain.value,now);
+    act.gain.gain.linearRampToValueAtTime(0,now+.15);
+   }catch(e){}
+   // Native media has taken over. Never keep the overlay indefinitely.
+   stopMobileMix();
+  }
+ }else if(Date.now()-act.handoffAt>8000||
+          act.ctx.currentTime>act.clipEnd-.5)stopMobileMix();
+}
+function handoffMobileMix(app){
+ const act=mobileActive;
+ if(!act||act.handingOff)return;
+ if(!app||app.currentId()!==act.fromId||
+    app.mixNext()?.id!==act.track.id){stopMobileMix();return}
+ act.handingOff=true;act.handoffAt=Date.now();
+ const position=act.entry+Math.max(0,act.ctx.currentTime-act.started);
+ Promise.resolve(app.mixHandoff(act.track.id,position))
+  .catch(()=>stopMobileMix());
+}
 let prepared=null;
 function dropPrepared(){
  if(!prepared)return;
