@@ -311,3 +311,41 @@ test("Safari can resume an audio context on later user gestures",()=>{
  assert.ok(appSource.includes('_audioProno && _ctx?.state === "running"'));
  assert.ok(appSource.includes('window.addEventListener(ev, _preparaAudio, { passive: true })'));
 });
+
+test("manual Fade and Rise on iPhone both produce a real overlay on a safe ending",()=>{
+ for(const kind of ["fade","rise"]){
+  const f=createMobileMixFixture();
+  const plan={...f.plan,kind,fade:6};
+  assert.equal(f.engine.startMobileMix(f.song,plan,f.app,f.old),true,kind);
+  assert.ok(f.engine.active());
+  f.engine.stopMobileMix();
+ }
+});
+test("iPhone Rise fades in slower than Fade and both reach the requested target",()=>{
+ function measure(kind){
+  const f=createMobileMixFixture();
+  let recorded=null;
+  const param={value:0,setValueAtTime(v){this.value=v},
+   linearRampToValueAtTime(v){this.value=v},cancelScheduledValues(){},
+   setValueCurveAtTime(shape){recorded=[...shape]}};
+  f.ctx.createGain=()=>({gain:param,connect(){},disconnect(){}});
+  assert.equal(f.engine.startMobileMix(f.song,{...f.plan,kind},f.app,f.old),true);
+  assert.ok(recorded&&recorded.length===48);
+  f.engine.stopMobileMix();
+  return recorded;
+ }
+ const fade=measure("fade"),rise=measure("rise"),beat=measure("beat");
+ assert.ok(rise[12]<fade[12]);
+ assert.ok(beat[12]>fade[12]);
+ assert.ok(Math.abs(rise[47]-fade[47])<1e-5);
+});
+test("short safe soft transitions now get at least two seconds to be heard",()=>{
+ const plan=transition({...current,safeOutroAt:177},next,180);
+ assert.equal(plan.kind,"soft");
+ assert.ok(plan.fade>=2.35);
+});
+test("do not allow a phone fade over an unverified sung ending",()=>{
+ const f=createMobileMixFixture();
+ const bad={...f.plan,kind:"fade",quietCertified:false};
+ assert.equal(f.engine.startMobileMix(f.song,bad,f.app,f.old),false);
+});
