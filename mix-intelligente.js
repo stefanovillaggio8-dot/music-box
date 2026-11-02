@@ -1078,10 +1078,11 @@ function strongInstrumentalBeatBridge(a,b,dur){
   const safe=Boolean((Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=end-9)||
      (a.voiceModel&&a.voiceScannedEnd>=end-1&&
       (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-6.5)));
-  const fade=safe?3.95:2.85,begin=end-fade;
+  const snapFade=clamp(1.22*60/a.bpm,.48,.84);
+  const fade=safe?3.95:snapFade,begin=end-fade;
   const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
   const trim=Boolean(a.confidentTail&&dur-a.last>=1.65);
-  return {entry,begin,end,fade,kind:"beat",tempo:clamp(ratio,.97,1.03),
+  return {entry,begin,end,fade,kind:safe?"beat":"snap",tempo:clamp(ratio,.97,1.03),
    gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
    score:Math.round((notes.score||notes.focused)*100),
    grooveScore:groove.score,measuredBeatBridge:true,
@@ -1502,7 +1503,7 @@ let mobileActive=null;
 function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
  if(!act)return;
- if(act.strongBeatBridge)resetMobileFade();
+ if(act.strongBeatBridge||act.snap)resetMobileFade();
  const release=()=>{
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
@@ -1527,10 +1528,10 @@ function stopMobileMix(fadeSeconds=0){
 }
 function startMobileMix(song,p,app,old){
  if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
-    !["beat","soft","fade","rise"].includes(p.kind)||
-    p.fade<(p.kind==="beat"?3.5:2.35)||
-    !p.quietCertified||!Number.isFinite(p.safeOutroAt)||
-    old.currentTime<p.safeOutroAt-.1)return false;
+    !["beat","snap","soft","fade","rise"].includes(p.kind)||
+    p.fade<(p.kind==="snap"?.46:p.kind==="beat"?3.5:2.35)||
+    (p.kind!=="snap"&&(!p.quietCertified||!Number.isFinite(p.safeOutroAt)||old.currentTime<p.safeOutroAt-.1))||
+    (p.kind==="snap"&&!p.measuredBeatBridge))return false;
  const ctx=app.mixRunningContext?.();
  const url=app.mixUrl?.(song)||song.url;
  const pair=app.currentId()+"|"+song.id;
@@ -1543,7 +1544,7 @@ function startMobileMix(song,p,app,old){
   const frames=clip.channels[0].length;
   const secondsLeft=p.end-old.currentTime;
   // Do not start a crossfade so late that it would cut the next song.
-  if(secondsLeft<2.15||(frames/clip.rate-offset)<secondsLeft+.3)return false;
+  if(secondsLeft<(p.kind==="snap"?.30:2.15)||(frames/clip.rate-offset)<secondsLeft+.3)return false;
   const buf=ctx.createBuffer(clip.channels.length,frames,clip.rate);
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
   source=ctx.createBufferSource();gain=ctx.createGain();
@@ -1567,9 +1568,10 @@ function startMobileMix(song,p,app,old){
     ((p.beatAnchor-old.currentTime-p.nextBeat)%period+period)%period:0;
   const delay=phase>0&&phase<=.23&&secondsLeft>3?phase:0;
   const startedAt=ctx.currentTime+delay;
-  const ramp=Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
+  const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
+   Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
-  const target=clamp(app.volume?.()??1,0,1)*(p.strongBeatBridge ? .60 : .86);
+  const target=clamp(app.volume?.()??1,0,1)*(p.kind==="snap"?.84:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
   // to a simple safe linear ramp.
@@ -1595,7 +1597,7 @@ function startMobileMix(song,p,app,old){
   };
   const onProgress=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff&&
-      old.currentTime>=mobileActive.end-.40)handoffMobileMix(app);
+      old.currentTime>=mobileActive.end-(mobileActive.snap?.09:.40))handoffMobileMix(app);
   };
   const onSeek=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
@@ -1605,7 +1607,7 @@ function startMobileMix(song,p,app,old){
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
    handoffAt:0,clipEnd:startedAt+frames/clip.rate-offset,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
-   strongBeatBridge:!!p.strongBeatBridge};
+   strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap"};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   old.addEventListener?.("timeupdate",onProgress);
@@ -1821,10 +1823,10 @@ async function beginMix(song,proposed){
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
  const p=prepared;
  if(!p||p.failed||!p.ready||p.id!==song.id||p.fromId!==id)return;
- if(old.currentTime>proposed.end-.55)return;
+ if(old.currentTime>proposed.end-(proposed.kind==="snap"?.14:.55))return;
  mixing=true;prepared=null;
  const upcoming=p.audio;
- const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,12);
+ const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
@@ -1854,7 +1856,7 @@ async function beginMix(song,proposed){
     await new Promise(resolve=>setTimeout(resolve,Math.round(phase*1000)));
   }
   if(active!==act||old.paused||app.currentId()!==id||
-     old.currentTime>=proposed.end-1.2){cancel();return}
+     old.currentTime>=proposed.end-(proposed.kind==="snap"?.12:1.2)){cancel();return}
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
   if(proposed.liveQuietCertified)
@@ -1862,7 +1864,7 @@ async function beginMix(song,proposed){
     {outgoing:id,incoming:song.id,entry:proposed.entry,
      seconds:act.fade.toFixed(2)});
   if(old.paused){cancel();return}
-  act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.12),.8,12);
+  act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),proposed.kind==="snap"?.18:.8,12);
   act.at=performance.now();
   function fadeStep(){
    if(active!==act)return;
@@ -1874,7 +1876,7 @@ async function beginMix(song,proposed){
    // fraction, and the second song enters quietly beneath matching notes.
    let {outGain,inGain}=mixCurve(act.kind,time,act.softTail);
    if(act.preserveTail){
-    const late=clamp((time-.55)/.45,0,1);
+    const late=clamp((time-(act.kind==="snap"?.20:.55))/(act.kind==="snap"?.80:.45),0,1);
     outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
     inGain=Math.sin(Math.pow(time,.95)*Math.PI/2);
    }
@@ -2070,17 +2072,17 @@ function tick(){
    }
    mobileActive.lastAudioTime=audio.currentTime;
    mobileActive.lastCtxTime=mobileActive.ctx.currentTime;
-   if(mobileActive.strongBeatBridge){
+   if(mobileActive.strongBeatBridge||mobileActive.snap){
     // Duck the native outgoing beat where supported; Safari may
     // ignore media-element volume, so the incoming gain stays limited.
     const progress=clamp((audio.currentTime-mobileActive.audioStartedAt)/
       Math.max(.5,mobileActive.end-mobileActive.audioStartedAt),0,1);
     try{
-     audio.volume=(app.volume?.()??1)*(1-.65*progress);
+     audio.volume=(app.volume?.()??1)*(1-(mobileActive.snap?.38:.65)*progress);
      mobileFadeTrack=id;mobileFading=true;
     }catch(_){}
    }
-   if(audio.currentTime>=mobileActive.end-.40)handoffMobileMix(app);
+   if(audio.currentTime>=mobileActive.end-(mobileActive.snap?.09:.40))handoffMobileMix(app);
    return;
   }
  }
@@ -2249,12 +2251,13 @@ function tick(){
   return;
  }
  if(isIOS&&!document.hidden&&!mobileActive&&
-    audio.currentTime>=plan.begin&&audio.currentTime<plan.end-2.0&&
-    ["beat","soft","fade","rise"].includes(plan.kind)&&
-    plan.fade>=(plan.kind==="beat"?3.5:2.35))
+    audio.currentTime>=plan.begin&&
+    audio.currentTime<plan.end-(plan.kind==="snap"?.22:2.0)&&
+    ["beat","snap","soft","fade","rise"].includes(plan.kind)&&
+    plan.fade>=(plan.kind==="snap"?.46:plan.kind==="beat"?3.5:2.35))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
-    audio.currentTime<plan.end-.55){
+    audio.currentTime<plan.end-(plan.kind==="snap"?.14:.55)){
   beginMix(next,plan).catch(()=>cancel());
  }
 }
@@ -2285,6 +2288,7 @@ function updateDetails(a,b){
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
  const description=plan?.measuredBeatBridge?
+   plan.kind==="snap"?" · stacco corto sulla battuta, senza aspettare silenzi":
    " · beat reali compatibili: mix anticipato":
    plan?.instrumentalBeatBridge?
    " · beat finale e iniziale compatibili: mix anticipato senza silenzio":
@@ -2469,7 +2473,8 @@ async function intelligentShuffle(app,audio,fromId){
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   const cue=transition(old,next,audio.duration);
-  const verified=Boolean(cue&&cue.kind==="beat"&&cue.fade>=2.7&&
+  const verified=Boolean(cue&&((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.fade>=.46)||
+    (cue.kind==="beat"&&cue.fade>=2.7))&&
     (cue.instrumentalBeatBridge||cue.dropReleaseBridge||
      cue.strongBeatBridge||cue.measuredBeatBridge||cue.grooveScore>=.78));
   if(!verified){
