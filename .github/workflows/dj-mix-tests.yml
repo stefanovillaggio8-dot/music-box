@@ -3,12 +3,16 @@ on:
   push:
     paths:
       - 'mix-intelligente.js'
+      - 'voice-analysis.js'
+      - 'tests/voice-analysis.test.cjs'
       - 'app.js'
       - 'tests/dj-mix.test.cjs'
       - '.github/workflows/dj-mix-tests.yml'
   pull_request:
     paths:
       - 'mix-intelligente.js'
+      - 'voice-analysis.js'
+      - 'tests/voice-analysis.test.cjs'
       - 'app.js'
       - 'tests/dj-mix.test.cjs'
       - '.github/workflows/dj-mix-tests.yml'
@@ -26,5 +30,6 @@ jobs:
         run: |
           node --check app.js
           node --check mix-intelligente.js
+          node --check voice-analysis.js
       - name: Test DJ transition safety
-        run: node --test tests/dj-mix.test.cjs
+        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs
