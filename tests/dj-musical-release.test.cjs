@@ -10,6 +10,7 @@ function engine(ios=false,notesMatch=true){
   "function clamp(x,a,b){return Math.max(a,Math.min(b,x))}"+
   "function similarNotes(){return {matches:"+String(notesMatch)+",focused:.91,phrase:.88,score:.92,alignment:{matches:"+String(notesMatch)+",fade:4.2,score:.95}}}"+
   "function grooveAgreement(){return {score:.87}}"+
+  "function hasReliableHarmony(){return false}"+
   "function bpmGap(){return 0}"+
   "function camelotMatch(){return {weight:0,score:1}}"+
   helpers+transitionSource+
