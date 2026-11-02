@@ -161,3 +161,24 @@ test("new broad crossfade curve changes smoothly without a final sudden swap",()
   previous=gains;
  }
 });
+
+test("a verified genuinely quiet outro still blends when keys are incompatible",()=>{
+ const {a,b}=metadata(cMajor,fSharp);
+ const old={...a,safeOutroAt:52,quietTail:true};
+ const next=transition(old,b,60);
+ assert.equal(next?.kind,"soft");
+ assert.ok(next.fade>=2&&next.begin>=52);
+});
+test("loud incompatible music cannot use the quiet-outro fallback",()=>{
+ const {a,b}=metadata(cMajor,fSharp);
+ assert.equal(transition({...a,safeOutroAt:52,quietTail:false},b,60),null);
+});
+test("manual fade mode still permits compatible melodic phrase transitions",()=>{
+ const st=source.slice(source.indexOf("function clamp("),source.indexOf("async function decode("));
+ const p=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function keyGuess("));
+ const alt=new Function('const isIOS=false,style="fade",mixSeconds=6;\n'+st+'\n'+p+
+  '\nreturn {transition};')();
+ const {a,b}=metadata(cMajor,cMajor);
+ const result=alt.transition(a,b,60);
+ assert.ok(result&&result.kind==="fade"&&result.fade>=2);
+});
