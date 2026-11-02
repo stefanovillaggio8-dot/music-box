@@ -839,23 +839,38 @@ function transition(a,b,actualDuration){
    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-6);
   const nextStartsVocal=(Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<3.5)||
    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<3.5);
-  const canBridge=!isIOS&&
-   a.outroFinalNotes&&b.introAttackNotes&&
+  const groove=grooveAgreement(a,b);
+  const harmonicProof=notes.matches&&notes.focused>=.80&&
+    notes.phrase>=.68&&(!notes.alignment||notes.alignment.matches);
+  const key=camelotMatch(a,b);
+  const rhythmProof=(groove&&groove.score>=.70)||
+    (notes.alignment?.matches&&notes.alignment.score>=.84);
+  const canBridge=a.outroFinalNotes&&b.introAttackNotes&&
    a.beatConfidence>=.20&&b.beatConfidence>=.20&&
-   notes.matches&&notes.focused>=.78&&notes.phrase>=.61&&
-   tempoDelta<=.11&&!vocalLate&&!nextStartsVocal;
+   harmonicProof&&rhythmProof&&(!key.weight||key.score>=.55)&&
+   tempoDelta<=.07&&!vocalLate&&!nextStartsVocal;
   if(canBridge){
    const seconds=notes.alignment?.matches?
-    clamp(notes.alignment.fade,2.2,4.6):
-    clamp(4*60/bpmA,2.2,3.4);
+    clamp(notes.alignment.fade,3.0,5.2):
+    clamp(8*60/bpmA,3.0,4.7);
    const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
-   return {...common,begin:end-seconds,end,fade:seconds,
-    kind:style==="auto"?"phrase":style,
-    tempo:clamp(tempoRatio,.97,1.03),
-    quietCertified:false,score:Math.round(notes.score*100),
-    beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
-    nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+   // A loud beat bridge on iPhone is only safe when karaoke or a vocal
+   // classifier has verified that the singing ended before this section.
+   const verifiedInstrumentalEnd=(Number.isFinite(a.lastLyricAt)&&
+     a.lastLyricAt<=end-seconds-2)||
+     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt<=end-seconds-2);
+   const mobileSafe=Boolean(verifiedInstrumentalEnd&&groove?.score>=.80);
+   if(!isIOS||mobileSafe){
+    return {...common,begin:end-seconds,end,fade:seconds,
+     kind:style==="auto"?"beat":style,
+     tempo:clamp(tempoRatio,.97,1.03),
+     quietCertified:mobileSafe,strongBeatBridge:true,
+     softTailTrim:false,score:Math.round(notes.score*100),
+     grooveScore:groove?.score??null,
+     beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
+     nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+   }
   }
   return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  }
@@ -1045,7 +1060,7 @@ function startMobileMix(song,p,app,old){
   const startedAt=ctx.currentTime+delay;
   const ramp=Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
-  const target=clamp(app.volume?.()??1,0,1)*.86;
+  const target=clamp(app.volume?.()??1,0,1)*(p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
   // to a simple safe linear ramp.
