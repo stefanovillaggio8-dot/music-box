@@ -1092,11 +1092,33 @@ function strongInstrumentalBeatBridge(a,b,dur){
    beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
    nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
  }
+// A four-second average can claim a strong intro even when its FIRST
+// bars are nearly silent. Such a preview creates the audible hole seen
+// in the 22:30 screen recordings. Certify the point where we actually play.
+function hasImmediateMusicalIntro(b){
+ if(!b||(Number.isFinite(b.introDrive)&&b.introDrive<.33))return false;
+ const entry=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
+ // A verified digital-silence trim is fine; a quiet atmospheric passage
+ // before the first real note must NOT be mistaken for the opening beat.
+ if(Number.isFinite(b.first)&&b.first-entry>1.3)return false;
+ const groove=b.introGroove;
+ if(Array.isArray(groove)&&groove.length===32){
+  const mean=arr=>arr.reduce((s,v)=>s+v,0)/arr.length;
+  const early=mean(groove.slice(0,8));
+  const later=mean(groove.slice(8,24));
+  if(early<-.85&&later-early>.85)return false;
+ }
+ // introBeat is the LOUDEST attack among 12 seconds, not necessarily
+ // the first one. Only treat a late peak as evidence when intro is weak.
+ if(Number.isFinite(b.introBeat)&&b.introBeat-entry>5.2&&
+    b.introDrive<.57)return false;
+ return true;
+}
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
-    Math.abs(a.duration-dur)>1.5)return null;
+    Math.abs(a.duration-dur)>1.5||!hasImmediateMusicalIntro(b))return null;
  const activeBeat=strongInstrumentalBeatBridge(a,b,dur);
  if(activeBeat)return activeBeat;
  const measured=measuredBeatBridge(a,b,dur);
@@ -1993,7 +2015,7 @@ function sampleLiveOutro(audio){
 }
 function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  if(!Array.isArray(samples)||!Number.isFinite(duration)||!Number.isFinite(now)||
-    duration-now>6||duration-now<2.2)return false;
+    duration-now>8||duration-now<2.2)return false;
  if(Number.isFinite(lastLyricAt)&&now-lastLyricAt<4.5)return false;
  if(Number.isFinite(lastVoiceAt)&&now-lastVoiceAt<2.5)return false;
  const earlier=samples.filter(p=>p.at>=now-19&&p.at<=now-3.3);
@@ -2006,13 +2028,19 @@ function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  // Real music must have been playing; a CORS-muted capture stream
  // cannot be used as evidence that the song's outro is silent.
  if(earlier.filter(p=>p.rms>=baseline*.55).length<7)return false;
- // Confirm nearly inaudible audio for >0.85s, with no new attack.
- // Start a verified decaying outro while there is still time for the next
- // song to rise; the previous 11.5% threshold fired only after the audio
- // was practically silent in the 19:32 screen recording.
- if(recent.some(p=>p.rms>baseline*.24))return false;
- if(recent.at(-1).rms>recent[0].rms*1.35+baseline*.008)return false;
- return true;
+ // Two safe entry points: (a) already-quiet tail, or (b) a measured
+ // monotonically declining musical release BEFORE it becomes silent.
+ // The old absolute 24% threshold waited until the outgoing audio was
+ // effectively gone and left an audible gap on the supplied recordings.
+ const quiet=recent.every(p=>p.rms<=baseline*.24)&&
+  recent.at(-1).rms<=recent[0].rms*1.35+baseline*.008;
+ const average=recent.reduce((sum,p)=>sum+p.rms,0)/recent.length;
+ const falling=recent[0].rms>=baseline*.20&&
+  average<=baseline*.57&&recent.at(-1).rms<=baseline*.49&&
+  recent.at(-1).rms<=recent[0].rms*.72&&
+  recent.every(p=>p.rms<=baseline*.73)&&
+  recent.slice(1).filter((p,i)=>p.rms>recent[i].rms*1.45+baseline*.035).length===0;
+ return quiet||falling;
 }
 // A planned soft fade may miss its prebuffer window. The live measured
 // outro must remain eligible: otherwise the browser waits until the MP3 is
@@ -2030,11 +2058,28 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
     Date.now()<(mixFailures.get(id+"|"+next.id)||0)||
     !liveQuietOutroReady(liveOutro?.audio===audio?liveOutro.samples:null,
       audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
+ // The submitted 22:30 recording contains a quiet passage followed by a
+ // genuine musical comeback. A live energy drop alone cannot predict the
+ // future: only a release measured against the WHOLE MP3 is eligible.
+ const durationMatches=Number.isFinite(analysis?.duration)&&
+  Math.abs(analysis.duration-audio.duration)<1.5;
+ const release=analysis?.dropRelease;
+ const futureCertified=durationMatches&&release&&
+  Number.isFinite(release.releaseAt)&&
+  audio.currentTime>=release.releaseAt-.15&&
+  release.score>=.67&&release.quietLevel<=.25&&
+  analysis.protectedEnding!==true;
+ const tailCertified=durationMatches&&analysis?.confidentTail===true&&
+  Number.isFinite(analysis.last)&&
+  audio.duration-analysis.last>=1.65&&
+  audio.currentTime>=analysis.last-.1;
+ if(!futureCertified&&!tailCertified)return false;
  const remaining=audio.duration-audio.currentTime;
  const fade=clamp(Math.min(3.7,remaining-.55),1.5,3.7);
  if(fade<1.7)return false;
  const nextSource=app.mixUrl?.(next)||next?.url;
  const nextAnalysis=nextSource&&(cache.get(String(nextSource))||deepLookup(next));
+ if(nextAnalysis&&!hasImmediateMusicalIntro(nextAnalysis))return false;
  const verifiedIntro=Number.isFinite(nextAnalysis?.safeIntroAt)&&
    Number.isFinite(nextAnalysis?.duration)&&
    Number.isFinite(prepared?.audio?.duration)&&
@@ -2479,7 +2524,7 @@ async function intelligentShuffle(app,audio,fromId){
  for(const {track,info} of measured){
   if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
      !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
-     !Number.isFinite(info.introDrive)||info.introDrive<.30){
+     !hasImmediateMusicalIntro(info)){
    rejected.weakIntro++;continue;
   }
   const bpmA=Number(old.bpm),bpmB=Number(info.bpm);
@@ -2509,7 +2554,8 @@ async function intelligentShuffle(app,audio,fromId){
    // Never silently count this as a verified beat or shorten a vocal.
    const safeSoft=Boolean(cue&&cue.kind==="soft"&&cue.fade>=2.35&&
     cue.quietCertified===true&&info.introDrive>=.43&&
-    (cue.neutralRelease||cue.verifiedDecayAfterLyrics||cue.dropReleaseBridge)&&
+    (cue.neutralRelease||cue.verifiedDecayAfterLyrics||cue.dropReleaseBridge||
+     (Number.isFinite(cue.safeOutroAt)&&cue.safeOutroAt<=cue.begin+.25))&&
     (!Number.isFinite(old.lastVoiceAt)||old.lastVoiceAt<=cue.begin-1.3)&&
     (!Number.isFinite(old.lastLyricAt)||old.lastLyricAt<=cue.begin-4)&&
     (!Number.isFinite(next.firstVoiceAt)||next.firstVoiceAt>=3)&&

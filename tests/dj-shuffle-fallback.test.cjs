@@ -35,6 +35,7 @@ function fixture(options={}){
   "const cache=new Map(),deepLookup=t=>t?.analysis||null;",
   "const decode=async t=>t?.analysis||null;",
   "const grooveAgreement=()=>({score:.85});",
+  "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
   "const similarNotes=()=>({focused:.82,phrase:.81});",
   "const transition=(old,next)=>next.cue||null;",
   "let shuffleLastDecision=null;",
