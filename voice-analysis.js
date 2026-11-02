@@ -13,7 +13,7 @@ let modelPromise=null,modelCooldown=0;
 // This is a positive-event detector; a low score is not proof of instrumentals.
 function vocalCategory(name){
  const n=String(name||"").toLowerCase().trim();
- return /^(speech|singing|male singing|female singing|child singing|synthetic singing|rapping|rap|vocal music|choir|humming|whispering|chant|chanting|mantra|yodeling|screaming|shout|shouting|yell|spoken word|narration(?:, monologue)?|conversation|child speech, kid speaking|male speech, man speaking|female speech, woman speaking|speech synthesizer|babbling|whisper|groan|singing bowl)$/.test(n);
+ return /^(speech|singing|male singing|female singing|child singing|synthetic singing|rapping|rap|vocal music|choir|humming|whispering|chant|chanting|mantra|yodeling|screaming|shout|shouting|yell|spoken word|narration(?:, monologue)?|conversation|child speech, kid speaking|male speech, man speaking|female speech, woman speaking|speech synthesizer|babbling|whisper|groan)$/.test(n);
 }
 function vocalConfidence(output){
  let score=0;
