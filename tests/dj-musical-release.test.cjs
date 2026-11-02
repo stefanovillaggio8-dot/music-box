@@ -289,3 +289,18 @@ test("desktop fallback prebuffers even if harmonic plan is null or direct-cut",(
  assert.ok(!source.includes("source.connect(ctx.destination)"),
   "Do not reroute original playback through the analysis context");
 });
+
+test("real-time capture keeps browser audio on native path and uses selective CORS",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.match(app,/function _assegnaAudioSorgente\(a,source\)/);
+ assert.match(app,/u\.hostname==="raw\.githubusercontent\.com"/);
+ assert.match(app,/else a\.removeAttribute\("crossorigin"\)/);
+ assert.match(app,/_assegnaAudioSorgente\(audio,_urlDelBrano\(t\)\)/);
+ assert.match(source,/function closeLiveOutro\(\)/);
+ assert.match(source,/if\(liveOutro&&liveOutro\.audio!==audio\)closeLiveOutro\(\)/);
+});
+test("GitHub Pages fire artwork avoids 405 POST and HTTP bridge mixed content",()=>{
+ const fire=fs.readFileSync(path.join(__dirname,"..","fuoco.js"),"utf8");
+ assert.ok(fire.includes('location.protocol === "https:" && /\\.github\\.io$/i.test(location.hostname)'));
+ assert.ok(fire.includes("mettiArtwork(bruciata);\\n      return;"));
+});
