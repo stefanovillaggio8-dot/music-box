@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - app.js
+      - index.html
       - sw.js
       - spotify.js
       - spotify-ui.js
