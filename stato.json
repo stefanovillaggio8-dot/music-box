@@ -6,6 +6,7 @@
   "Ste.b-track-1",
   "Ste.b-track-183",
   "Ste.b-track-219",
+  "Ste.b-track-231",
   "Ste.b-track-24",
   "Ste.b-track-254",
   "Ste.b-track-258",
@@ -1202,7 +1203,7 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 13,
+    "v": 14,
     "s": 519,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -1838,7 +1839,7 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 12,
+    "v": 13,
     "s": 511,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -2517,13 +2518,13 @@
    },
    "[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 0,
-    "s": 191,
+    "s": 192,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 0,
-    "s": 191,
+    "s": 192,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
@@ -3499,18 +3500,6 @@
     "t": "Poetica",
     "a": "Cesare Cremonini"
    },
-   "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
-    "v": 1,
-    "s": 96,
-    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
-    "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
-   "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
-    "v": 1,
-    "s": 96,
-    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
-    "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
    "[\"scale\",\"night skinny, luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
     "s": 4,
@@ -3522,6 +3511,18 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
+   },
+   "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+    "v": 1,
+    "s": 96,
+    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
+    "v": 1,
+    "s": 96,
+    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6607,6 +6608,12 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂ¨"
    },
+   "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "L'universo tranne noi",
+    "a": "Max Pezzali"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6861,13 +6868,13 @@
    },
    "[\"tutto fuori controllo Ã¢ÂÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 1,
-    "s": 96,
+    "s": 110,
     "t": "TUTTO FUORI CONTROLLO Ã¢ÂÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo Ã¢ÂÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 1,
-    "s": 96,
+    "s": 110,
     "t": "TUTTO FUORI CONTROLLO Ã¢ÂÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -7230,12 +7237,6 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂ¨"
-   },
-   "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "L'universo tranne noi",
-    "a": "Max Pezzali"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -7861,6 +7862,18 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃ¨"
    },
+   "[\"victoria\",\"tony boy\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Victoria",
+    "a": "Tony Boy"
+   },
+   "m:2026-11|[\"victoria\",\"tony boy\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Victoria",
+    "a": "Tony Boy"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -8175,13 +8188,13 @@
    },
    "[\"mi @mio è f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 66,
+    "s": 67,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 66,
+    "s": 67,
     "t": "mi @mio è f@ke",
     "a": "thasup"
    },
@@ -8485,17 +8498,17 @@
     "t": "Scale",
     "a": "Night Skinny, Luchè"
    },
-   "[\"victoria\",\"tony boy\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Victoria",
-    "a": "Tony Boy"
+   "[\"paracetamolo\",\"calcutta\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Paracetamolo",
+    "a": "Calcutta"
    },
-   "m:2026-11|[\"victoria\",\"tony boy\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Victoria",
-    "a": "Tony Boy"
+   "m:2026-11|[\"paracetamolo\",\"calcutta\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Paracetamolo",
+    "a": "Calcutta"
    }
   },
   "Diego": {
