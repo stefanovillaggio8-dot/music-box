@@ -1746,11 +1746,11 @@ async function beginMix(song,proposed){
   if(active!==act||old.paused||app.currentId()!==id||
      old.currentTime>=proposed.end-1.2){cancel();return}
   await upcoming.play();
+  if(active!==act||app.currentId()!==id){cancel();return}
   if(proposed.liveQuietCertified)
    console.info("[Music Box DJ] Sovrapposizione audio avviata",
     {outgoing:id,incoming:song.id,entry:proposed.entry,
      seconds:act.fade.toFixed(2)});
-  if(active!==act||app.currentId()!==id){cancel();return}
   if(old.paused){cancel();return}
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.12),.8,12);
   act.at=performance.now();
