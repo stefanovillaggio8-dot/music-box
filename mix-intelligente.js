@@ -296,7 +296,7 @@ function analyzeFrames(buf){
  let lastNoteAt=null;
  const onsetFrom=Math.max(1,Math.ceil((audibleEnd-2.3)/step));
  const onsetUntil=Math.min(diff.length-2,Math.floor((audibleEnd-.38)/step));
- const threshold=Math.max(.003,level*.13);
+ const threshold=Math.max(.0015,level*.045);
  for(let i=onsetFrom;i<=onsetUntil;i++)
   if(diff[i]>threshold&&energy[i]>gate*.85&&
      diff[i]>=Math.max(diff[i-1]||0,diff[i+1]||0))
@@ -1148,7 +1148,7 @@ function updateMobileStatus(){
  else if(!next)status="Nessun prossimo brano nella coda.";
  else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
  else if(!clip)status="Preparo l'introduzione del prossimo MP3. Se l'analisi non riesce, il brano continuerà normalmente.";
- else if(!plan)status="Intro pronta: controllo che il finale precedente sia sicuro per la sovrapposizione.";
+ else if(!plan)status="Intro pronta: controllo note e finale. Se non combaciano, passaggio normale.";
  else if(!plan.quietCertified||!["beat","soft","fade","rise"].includes(plan.kind))
   status="Finale non sicuro per una sovrapposizione su iPhone: passaggio normale.";
  else status="Introduzione pronta · "+(plan.kind==="beat"?"mix ritmico":"sfumatura")+
