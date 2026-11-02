@@ -15896,9 +15896,18 @@ for (const p of playlists) {
   }
   function updateVolumeUI() {
     const s = $("volSlider");
-    if (s) s.value = String(volumePct);
+    // The slider is always 1-100%; only the speaker icon can mute to 0%.
+    if (s) {
+      s.value = String(Math.max(1, volumePct));
+      s.setAttribute("aria-valuetext", volumePct === 0 ? "Muto" : volumePct + "%");
+    }
+    const exact = $("volExact");
+    if (exact && document.activeElement !== exact) exact.value = String(volumePct);
     const b = $("btnVolIcon");
-    if (b) b.classList.toggle("muted", volumePct === 0);
+    if (b) {
+      b.classList.toggle("muted", volumePct === 0);
+      b.setAttribute("aria-label", volumePct === 0 ? "Riattiva audio" : "Disattiva audio");
+    }
   }
   function setVolume(v) {
     /* Il massimo e' il 100%: oltre serve la catena Web Audio, che su
@@ -15909,7 +15918,18 @@ for (const p of playlists) {
     updateVolumeUI();
     _applicaAudio();
   }
-  $("volSlider").addEventListener("input", (e) => setVolume(e.target.value));
+  $("volSlider").addEventListener("input", (e) => setVolume(Math.max(1, Number(e.target.value))));
+  // On a short mobile slider a finger may jump several percent. The exact
+  // field and +/- buttons always allow 1% increments, without touch jitter.
+  $("volMinus")?.addEventListener("click", () => setVolume(Math.max(1, volumePct - 1)));
+  $("volPlus")?.addEventListener("click", () => setVolume(Math.min(100, volumePct + 1)));
+  $("volExact")?.addEventListener("change", (e) => {
+    const val = Number(e.target.value);
+    if (e.target.value.trim() !== "" && Number.isFinite(val))
+      setVolume(Math.max(1, Math.min(100, Math.round(val))));
+    e.target.value = String(volumePct);
+  });
+  $("volExact")?.addEventListener("blur", () => { updateVolumeUI(); });
   try { $("btnBassiVolume").addEventListener("click", apriBassiVolume); } catch (e) { /* noop */ }
   $("btnVolIcon").addEventListener("click", () => {
     if (volumePct > 0) setVolume(0);
