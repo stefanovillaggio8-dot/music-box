@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'tools/dj-deep-shard.py'
+      - 'tools/dj-deep-index.py'
+      - 'tools/test-dj-deep-index.py'
       - 'tools/dj-deep-merge.py'
       - '.github/workflows/dj-deep-full-scan.yml'
 permissions:
