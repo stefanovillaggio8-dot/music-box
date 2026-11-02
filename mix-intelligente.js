@@ -1711,7 +1711,7 @@ function smartScore(a,b){
  // the outgoing eight-beat pattern, not just a nearby BPM/key.
  // When either file cannot be analyzed, keep the earlier scoring method.
  const base=groove?
-  beat*.28+harmony*.48+level*.08+groove.score*.16:
+  beat*.26+harmony*.39+level*.08+groove.score*.27:
   beat*.34+harmony*.56+level*.10;
  const matchedBeatBonus=groove?.score>=.80&&notes.matches&&gap<=8?.035:0;
  return clamp(base*(1-key.weight)+key.score*key.weight+matchedBeatBonus,0,1);
