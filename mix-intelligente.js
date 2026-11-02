@@ -286,6 +286,15 @@ function analyzeFrames(buf){
  for(let i=finalStart;i<Math.min(diff.length,Math.ceil(audibleEnd/step));i++){
   if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i*step}
  }
+ // Preserve the beat phase of the music BEFORE an ending pause.
+ if(outroGap){
+  let peak=0,anchor=null;
+  const lo=Math.max(0,Math.floor((outroGap.start-7)/step));
+  const hi=Math.min(diff.length-1,Math.floor((outroGap.start-.3)/step));
+  for(let i=lo;i<=hi;i++)
+   if(diff[i]>peak){peak=diff[i];anchor=i*step}
+  outroGap.beatAnchor=anchor;
+ }
  const hasAudio=typical>.0012;
  const activeRms=blocks.filter(x=>x>gate).sort((x,y)=>x-y);
  const level=activeRms.length?
@@ -695,6 +704,45 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5)return null;
+ // If the final passage contains a long quiet valley followed only by
+ // very subdued audio, hand off near the START of the valley, not at
+ // the end of the encoded MP3. This path requires BPM AND harmony.
+ const gap=a.outroGap;
+ if(gap&&gap.end<dur-1.5){
+  const protectedVoice=Number.isFinite(a.lastVoiceAt)&&
+    a.lastVoiceAt>=gap.start-3.5;
+  const protectedLyrics=Number.isFinite(a.lastLyricAt)&&
+    a.lastLyricAt>=gap.start-3.5;
+  const beatDistance=bpmGap(a,b);
+  const notes=similarNotes(a,b);
+  const keys=camelotMatch(a,b);
+  const matching=notes.matches||
+    (notes.focused>=.78&&notes.phrase>=.68&&keys.score>=.90);
+  if(!protectedVoice&&!protectedLyrics&&matching&&beatDistance<=10&&
+     a.beatConfidence>=.12&&b.beatConfidence>=.12){
+   const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
+   const ratios=[.5,1,2].map(scale=>bpmA/(bpmB*scale));
+   const ratio=ratios.reduce((best,r)=>
+    Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best,ratios[0]);
+   const beatMix=ratio>=.94&&ratio<=1.06;
+   const end=clamp(gap.end,18,dur-1.0);
+   const begin=clamp(gap.fadeStart,0,end-3);
+   const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+   return {entry,begin,end,fade:end-begin,
+    kind:beatMix?"beat":"soft",
+    tempo:beatMix?clamp(ratio,.97,1.03):1,
+    gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+    score:Math.round((notes.score??.8)*100),
+    // The quiet interval begins *after* the musical release; keep
+    // the preview audible while the old outro settles.
+    silenceTrim:true,softTailTrim:true,quietCertified:true,
+    safeOutroAt:begin,trailing:dur-end,
+    beatPeriod:beatMix?60/bpmA:null,
+    beatAnchor:beatMix?gap.beatAnchor:null,
+    nextBeat:beatMix?(Number.isFinite(b.introBeat)?b.introBeat-entry:null):null,
+    outroGapStart:gap.start};
+  }
+ }
  const digital=Boolean(a.confidentTail&&a.last<dur-1.65);
  const weak=a.softOutro;
  const protectedTail=weak&&(
