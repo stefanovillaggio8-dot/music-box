@@ -159,7 +159,7 @@ function createMobileMixFixture(){
   addEventListener(event,callback){this.handlers[event]=callback},
   removeEventListener(event){delete this.handlers[event]}};
  const song={id:"next",url:"sample.mp3"};
- const plan={kind:"beat",fade:6,entry:0,safeOutroAt:172,end:180};
+ const plan={kind:"beat",fade:6,entry:0,safeOutroAt:172,end:180,quietCertified:true};
  let id="previous",native=old;const calls=[];
  const app={currentId:()=>id,mixNext:()=>song,mixRunningContext:()=>ctx,
   mixUrl:track=>track.url,volume:()=>.8,audio:()=>native,
@@ -258,4 +258,16 @@ test("iPhone EQ unavailability must not stop the native audio or the safe overla
  assert.ok(f.engine.active());
  assert.equal(f.old.src,undefined);
  f.engine.stopMobileMix();
+});
+
+test("iPhone refuses an energetic outro even if lyrics end early",()=>{
+ const f=createMobileMixFixture();
+ const loud={...f.plan,quietCertified:false};
+ assert.equal(f.engine.startMobileMix(f.song,loud,f.app,f.old),false);
+ assert.equal(f.engine.active(),null);
+});
+test("desktop still may mix a lyric-certified energetic instrumental ending",()=>{
+ const planned=transition({...current,safeOutroAt:null,lastLyricAt:151},next,180);
+ assert.equal(planned.kind,"beat");
+ assert.equal(planned.quietCertified,false);
 });
