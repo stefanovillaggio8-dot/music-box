@@ -4,11 +4,11 @@ const fs=require("node:fs"),path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
 const helpers=source.slice(source.indexOf("function findDropRelease("),source.indexOf("function analyzeFrames("));
 const transitionSource=source.slice(source.indexOf("function transition("),source.indexOf("// Circle of fifths/Camelot:"));
-function engine(ios=false){
+function engine(ios=false,notesMatch=true){
  return new Function(
   "const isIOS="+String(ios)+",style='auto';"+
   "function clamp(x,a,b){return Math.max(a,Math.min(b,x))}"+
-  "function similarNotes(){return {matches:true,focused:.91,phrase:.88,score:.92,alignment:{matches:true,fade:4.2,score:.95}}}"+
+  "function similarNotes(){return {matches:"+String(notesMatch)+",focused:.91,phrase:.88,score:.92,alignment:{matches:"+String(notesMatch)+",fade:4.2,score:.95}}}"+
   "function grooveAgreement(){return {score:.87}}"+
   "function bpmGap(){return 0}"+
   "function camelotMatch(){return {weight:0,score:1}}"+
@@ -168,4 +168,41 @@ test("real PCM ending still audible to the last frame can produce a musical rele
  });
  const cue=release(blocks,.20,100,100);
  assert.ok(cue && cue.releaseAt<93.5,"Detect genuine audible decay without zero-valued tail");
+});
+
+test("incompatible next song can start a neutral fade before recorded silence",()=>{
+ const e=engine(false,false);
+ const a={duration:100,last:100,confidentTail:false,protectedEnding:false,
+  safeOutroAt:91.6,dropRelease:{lastImpactAt:90.3,releaseAt:91.6,
+   quietLevel:.11,score:.88},level:.2,bpm:120,beatConfidence:.75};
+ const b={duration:140,bpm:120,beatConfidence:.75,introDrive:.80,
+  safeIntroAt:0,introBeat:0,level:.2};
+ const plan=e.transition(a,b,100);
+ assert.ok(plan,"A low-energy release deserves a gentle handoff");
+ assert.equal(plan.kind,"soft","Incompatible harmony must not be beat-matched");
+ assert.ok(plan.neutralRelease);
+ assert.ok(plan.begin<97&&plan.fade>=3,"Do not wait for the last second");
+ assert.ok(plan.end>=99.9,"Never cut remaining audible notes");
+ assert.equal(plan.silenceTrim,false);
+});
+test("neutral pre-silence fade keeps spoken or sung final phrase intact",()=>{
+ const e=engine(false,false);
+ const a={duration:100,last:100,confidentTail:false,protectedEnding:false,
+  safeOutroAt:91.6,dropRelease:{lastImpactAt:90.3,releaseAt:91.6,
+   quietLevel:.11,score:.88},level:.2,bpm:120,beatConfidence:.75,
+  lastVoiceAt:96};
+ const b={duration:140,bpm:120,beatConfidence:.75,introDrive:.8,
+  safeIntroAt:0,introBeat:0,level:.2};
+ assert.equal(e.transition(a,b,100),null,"Do not fade across late singing");
+});
+test("neutral release rejects quiet opening and untrusted outgoing decay",()=>{
+ const e=engine(false,false);
+ const a={duration:100,last:100,confidentTail:false,protectedEnding:false,
+  safeOutroAt:91.6,dropRelease:{lastImpactAt:90.3,releaseAt:91.6,
+   quietLevel:.11,score:.88},level:.2,bpm:120,beatConfidence:.75};
+ const b={duration:140,bpm:120,beatConfidence:.75,introDrive:.08,
+  safeIntroAt:0,introBeat:0,level:.2};
+ assert.equal(e.transition(a,b,100),null,"A near-silent intro is not a musical drop");
+ assert.equal(e.transition({...a,dropRelease:{...a.dropRelease,quietLevel:.8,score:.1}},
+  {...b,introDrive:.8},100),null,"A still-loud tail cannot be treated as quiet");
 });
