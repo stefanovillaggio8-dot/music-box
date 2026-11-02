@@ -545,6 +545,7 @@ function stopMobileMix(fadeSeconds=0){
   try{act.old?.removeEventListener?.("seeking",act.onSeek)}catch(e){}
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
+  try{act.filter?.disconnect()}catch(e){}
   try{act.gain.disconnect()}catch(e){}
  };
  if(fadeSeconds>0&&act.ctx.state==="running"){
@@ -569,7 +570,7 @@ function startMobileMix(song,p,app,old){
  if(Date.now()<(mobileOverlayFailures.get(pair)||0))return false;
  const clip=mobileIntroClips.get(String(url));
  if(!ctx||ctx.state!=="running"||!clip)return false;
- let source=null,gain=null;
+ let source=null,gain=null,filter=null;
  try{
   const offset=Math.max(0,p.entry-clip.start);
   const frames=clip.channels[0].length;
@@ -577,7 +578,18 @@ function startMobileMix(song,p,app,old){
   const buf=ctx.createBuffer(clip.channels.length,frames,clip.rate);
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
   source=ctx.createBufferSource();gain=ctx.createGain();
-  source.buffer=buf;source.connect(gain);gain.connect(ctx.destination);
+  source.buffer=buf;
+  // Ease the new bass into the old outro instead of doubling both kicks.
+  // If a filter is unsupported, use the ordinary gain-only path.
+  if(typeof ctx.createBiquadFilter==="function"){
+   try{
+    filter=ctx.createBiquadFilter();filter.type="highpass";
+    filter.frequency.setValueAtTime(155,ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(42,ctx.currentTime+Math.max(2,p.fade*.8));
+    source.connect(filter);filter.connect(gain);
+   }catch(e){try{filter?.disconnect()}catch(_){}filter=null;source.connect(gain)}
+  }else source.connect(gain);
+  gain.connect(ctx.destination);
   gain.gain.setValueAtTime(0,ctx.currentTime);
   const target=clamp(app.volume?.()??1,0,1)*.78;
   gain.gain.linearRampToValueAtTime(target,ctx.currentTime+Math.max(2,p.fade*.8));
@@ -595,7 +607,7 @@ function startMobileMix(song,p,app,old){
   const onSeek=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
-  mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
+  mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
    entry:p.entry,started:ctx.currentTime,audioStartedAt:old.currentTime,
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
    handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset,
@@ -612,6 +624,7 @@ function startMobileMix(song,p,app,old){
   mobileOverlayFailures.set(pair,Date.now()+60000);
   try{source?.stop()}catch(_){}
   try{source?.disconnect()}catch(_){}
+  try{filter?.disconnect()}catch(_){}
   try{gain?.disconnect()}catch(_){}
   stopMobileMix();
   return false;
