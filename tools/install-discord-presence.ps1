@@ -1,6 +1,6 @@
 # Music Box / Discord Rich Presence
 # One-time per-user installer: hidden background bridge at Windows login.
-param([switch]$Remove)
+param([switch]$Remove,[switch]$Startup)
 $ErrorActionPreference = "Stop"
 $base = Join-Path $env:LOCALAPPDATA "MusicBox\Discord"
 $scriptPath = Join-Path $base "discord-presence-bridge.cjs"
@@ -27,6 +27,42 @@ if ($Remove) {
   exit 0
 }
 
+
+# La voce Esecuzione automatica richiama questo script in modalità nascosta.
+# Aggiorna il piccolo ponte se necessario, altrimenti riusa la copia locale
+# anche senza Internet. Non apre finestre e non serve alcun privilegio admin.
+if ($Startup) {
+  $nodeCmd = Get-Command node.exe -ErrorAction SilentlyContinue
+  if (-not $nodeCmd) { exit 0 }
+  New-Item -ItemType Directory -Path $base -Force | Out-Null
+  $tempScript = Join-Path $base ("discord-update-" + [Guid]::NewGuid().ToString("N") + ".tmp.cjs")
+  try {
+    Invoke-WebRequest -UseBasicParsing -Uri $sourceUrl -OutFile $tempScript -TimeoutSec 10
+    & $nodeCmd.Source --check $tempScript | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Versione remota non valida" }
+    $changed = -not (Test-Path $scriptPath)
+    if (-not $changed) {
+      $changed = ((Get-FileHash -Algorithm SHA256 $tempScript).Hash -ne (Get-FileHash -Algorithm SHA256 $scriptPath).Hash)
+    }
+    if ($changed) {
+      Stop-MusicBoxBridges
+      Move-Item $tempScript $scriptPath -Force
+    }
+  } catch {
+    # Se la connessione non va, usa l'ultima versione locale funzionante.
+  } finally {
+    if (Test-Path $tempScript) { Remove-Item $tempScript -Force }
+  }
+  if (-not (Test-Path $scriptPath)) { exit 0 }
+  # Evita due ponti sulla stessa porta (anche se si avvia due volte lo script).
+  try {
+    $status = Invoke-RestMethod "http://127.0.0.1:8792/health" -TimeoutSec 1
+    if ($status.ok) { exit 0 }
+  } catch {}
+  Start-Process -FilePath $nodeCmd.Source -ArgumentList ('"' + $scriptPath + '"') -WindowStyle Hidden
+  exit 0
+}
+
 if (-not $startupFolder -or -not (Test-Path $startupFolder)) {
   throw "Cartella Esecuzione automatica di Windows non trovata."
 }
@@ -46,7 +82,7 @@ try {
   if (Test-Path $tempScript) { Remove-Item $tempScript -Force }
 }
 # VBScript windowStyle 0 hides the node.exe console window.
-$commandLine = ('"' + $nodePath + '" "' + $scriptPath + '"')
+$commandLine = ('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File "' + $PSCommandPath + '" -Startup')
 $nl = [Environment]::NewLine
 $vbs = 'Set sh = CreateObject("WScript.Shell")' + $nl +
   'sh.Run "' + $commandLine.Replace('"','""') + '", 0, False' + $nl

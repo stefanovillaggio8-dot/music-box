@@ -7,6 +7,18 @@ const paths=process.env.MUSICBOX_TEST_IPC?[process.env.MUSICBOX_TEST_IPC]:Array.
 let socket=null,ready=false,busy=false,appId="",buffer=Buffer.alloc(0),serial=0,lastError="Discord non connesso",item=null,lastSeen=0,lastSent=0,sent="";
 const validId=id=>typeof id==="string"&&/^[0-9]{17,21}$/.test(id);
 const clean=(x,n=120)=>String(x||"").replace(/[\x00-\x1f\x7f]/g," ").trim().slice(0,n);
+function safeCoverURL(value){
+ if(typeof value!=="string"||!value.trim())return "";
+ try{
+  const url=new URL(value);
+  if(url.protocol!=="https:"||url.username||url.password||url.port||url.href.length>300)return "";
+  const host=url.hostname.toLowerCase();
+  if(host==="localhost"||host.endsWith(".localhost")||host.endsWith(".local")||
+     host==="0.0.0.0"||host==="::1"||/^(\d{1,3}\.){3}\d{1,3}$/.test(host)||
+     host.startsWith("10.")||host.startsWith("192.168.")||host.startsWith("172."))return "";
+  return url.href;
+ }catch(_){return "";}
+}
 function packet(op,value){const data=Buffer.from(JSON.stringify(value));const header=Buffer.alloc(8);header.writeUInt32LE(op,0);header.writeUInt32LE(data.length,4);return Buffer.concat([header,data]);}
 function reset(){const old=socket;socket=null;ready=false;busy=false;buffer=Buffer.alloc(0);sent="";serial++;if(old)old.destroy();}
 function send(force=false){
@@ -20,7 +32,7 @@ function send(force=false){
    if(item.duration>0)args.activity.timestamps.end=start+item.duration;
    // Album artwork when available; otherwise show Music Box's own icon, never a "?".
    // Preserve the existing Discord application name (spotifynonavraiimieisoldi).
-   const logo="https://stefanovillaggio8-dot.github.io/music-box/icon-512.png";
+   const logo="https://stefanovillaggio8-dot.github.io/music-box/discord-fallback.webp";
    args.activity.assets={
      large_image:item.cover||logo,
      large_text:item.cover?item.title:"Music Box"
@@ -74,8 +86,7 @@ function playback(data){
  if(!data||data.playing!==true)return null;
  const title=clean(data.title),artist=clean(data.artist),position=Number(data.position),duration=Number(data.duration);
  if(!title||!Number.isFinite(position)||position<0||position>86400)return null;
- let cover="";
- try{const u=new URL(String(data.cover||""));if(u.protocol==="https:"&&u.href.length<320&&(u.hostname==="stefanovillaggio8-dot.github.io"||u.hostname==="i.scdn.co"||u.hostname.endsWith(".scdn.co")))cover=u.href;}catch(e){}
+ const cover=safeCoverURL(data.cover);
  return {title,artist,position:Math.floor(position),duration:Number.isFinite(duration)&&duration>0&&duration<86400?Math.ceil(duration):0,cover};
 }
 function response(req,res,status,data){
@@ -109,4 +120,4 @@ if(require.main===module){
  function stop(){item=null;send(true);server.close();setTimeout(()=>process.exit(0),200).unref();}
  process.on("SIGINT",stop);process.on("SIGTERM",stop);
 }
-module.exports={server,packet,playback,validId,ORIGINS};
+module.exports={server,packet,playback,validId,safeCoverURL,ORIGINS};

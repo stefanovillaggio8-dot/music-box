@@ -16,6 +16,42 @@ function status(message){
  lastStatus=message;
  if($("discordRpcStatus"))$("discordRpcStatus").textContent=message;
 }
+// Discord can proxy public HTTPS album artwork, including Deezer and Spotify CDN.
+// Never send blob:, data:, localhost or URLs with credentials to the Discord client.
+function publicArtwork(value){
+ if(typeof value!=="string"||!value.trim())return "";
+ try{
+  const url=new URL(value.trim(),document.baseURI);
+  if(url.protocol!=="https:"||url.username||url.password||url.port||url.href.length>300)return "";
+  const host=url.hostname.toLowerCase();
+  if(host==="localhost"||host.endsWith(".localhost")||host.endsWith(".local")||
+     host==="0.0.0.0"||host==="::1"||/^(\d{1,3}\.){3}\d{1,3}$/.test(host)||
+     host.startsWith("10.")||host.startsWith("192.168.")||host.startsWith("172."))return "";
+  return url.href;
+ }catch(_){return "";}
+}
+function coverFromPlayer(track){
+ // Actual player artwork is authoritative, not a fallback icon or unrelated
+ // image from another track in the library.
+ const candidates=[track?.cover,track?.coverUrl,track?.artwork,track?.albumArt];
+ try{
+  const el=document.getElementById("playerArt");
+  const bg=el&&(el.style.backgroundImage||getComputedStyle(el).backgroundImage)||"";
+  const match=bg.match(/^url\(["']?(.*?)["']?\)$/i);
+  if(match)candidates.push(match[1]);
+ }catch(_){}
+ try{
+  const meta=navigator.mediaSession?.metadata;
+  if(meta&&meta.title===track?.title&&Array.isArray(meta.artwork))
+   for(const art of meta.artwork)candidates.push(art?.src);
+ }catch(_){}
+ for(const candidate of candidates){
+  const url=publicArtwork(candidate);
+  if(url&&!/\/(?:icon-(?:180|192|512)|discord-fallback)\.(?:png|webp)(?:[?#]|$)/i.test(url))return url;
+ }
+ return "";
+}
+
 function trackInfo(){
  const bridge=window.MusicBoxBridge;
  if(!bridge)return {playing:false};
@@ -23,17 +59,7 @@ function trackInfo(){
  const t=bridge.allTracks?.()?.find?.(x=>x.id===bridge.currentId?.());
  if(!audio||!t||audio.paused||audio.ended)return {playing:false};
  const duration=Number(audio.duration),pos=Number(audio.currentTime);
- // Share the same cover used by the player when it has a public HTTPS URL.
- // The desktop helper uses the Music Box icon when artwork is missing/local-only.
- let cover="";
- try{
-  const raw=t.cover||"";
-  if(typeof raw==="string"&&raw){
-   const u=new URL(raw,location.href);
-   if(u.protocol==="https:"&&u.href.length<320&&
-      (u.hostname==="stefanovillaggio8-dot.github.io"||u.hostname==="i.scdn.co"||u.hostname.endsWith(".scdn.co")))cover=u.href;
-  }
- }catch(_){}
+ const cover=coverFromPlayer(t);
  return {playing:true,title:String(t.title||"").slice(0,120),artist:String(t.artist||"").slice(0,120),
   position:Number.isFinite(pos)?Math.max(0,pos):0,
   duration:Number.isFinite(duration)?Math.max(0,duration):0,cover};

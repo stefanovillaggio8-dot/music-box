@@ -47,3 +47,23 @@ l'opzione **-Remove** per fermarlo e rimuovere l'avvio automatico.
 Il ponte resta necessario sul PC: Windows non permette al sito web di
 avviare un programma locale da solo senza la tua installazione iniziale.
 Su iPhone con PC spento questo metodo non è supportato.
+
+
+## Versione con copertine reali e aggiornamenti automatici
+
+Dopo il primo avvio nascosto, il ponte controlla gli aggiornamenti del codice
+nel repository Music Box ad ogni accesso a Windows: niente nuove finestre
+e niente installazione manuale a ogni piccola modifica. Se il PC è offline,
+continua a usare la copia locale. Non cambia il nome dell'app Discord:
+**spotifynonavraiimieisoldi** rimane quello scelto.
+
+La copertina proviene dal player Music Box e può essere un file pubblico
+della cartella copertine, oppure un'immagine HTTPS di Spotify, Deezer,
+Apple Music o un altro servizio. Non vengono condivise copertine private
+(blob/data URL). Il fallback è un'immagine viola Music Box dedicata.
+Discord può impiegare del tempo a ricaricare una copertina già in cache.
+
+**Nota sulla versione già installata:** se hai installato il ponte prima
+di questa funzione di aggiornamento automatico, avvia UNA VOLTA la versione
+più recente di avvia-discord-presence.bat. Questo aggiorna la copia installata
+e attiva l'aggiornamento autonomo ai successivi avvii di Windows.

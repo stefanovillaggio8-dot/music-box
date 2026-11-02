@@ -18,3 +18,5 @@ jobs:
       - run: node --check tools/discord-presence-bridge.cjs
       - run: node --check tools/test-discord-presence.cjs
       - run: node tools/test-discord-presence.cjs
+      - run: node --check discord-presence.js
+      - run: node tools/test-discord-cover.cjs
