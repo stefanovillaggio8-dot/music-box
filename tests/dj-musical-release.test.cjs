@@ -333,3 +333,38 @@ test("screen recording 19:32:45: verified soft release gets a head start without
  assert.equal(curve("quiet",0).inGain,0);
  assert.ok(Math.abs(curve("quiet",1).inGain-1)<1e-12);
 });
+
+test("screen recording 19:46:33: never log a fake mix repeatedly after preview error",()=>{
+ const quiet=source.slice(source.indexOf("function tryLiveQuietMix("),
+  source.indexOf("function tick(){"));
+ const fade=source.slice(source.indexOf("async function beginMix("),
+  source.indexOf("// Even when the next MP3"));
+ assert.match(quiet,/prepared\.ready&&!prepared\.failed/);
+ assert.match(quiet,/prepared\.audio\?\.readyState>=2/);
+ assert.match(quiet,/quietDirectHandoff\(app,audio,id,next,entry/);
+ assert.ok(!quiet.includes("console.info("),
+  "Do not claim a successful overlap from the decision function");
+ assert.ok(fade.indexOf("await upcoming.play()")>=0);
+ assert.ok(fade.indexOf("await upcoming.play()")<
+  fade.indexOf("Sovrapposizione audio avviata"),
+  "Report a crossfade only after the second player actually starts");
+ assert.match(source,/p\.failed=true;p\.ready=false/);
+ assert.match(source,/quietHandoffFor===pair/);
+ assert.match(source,/duration-now>6\|\|duration-now<2\.2/);
+});
+
+test("intermittent MP3 failures: one original-track fallback, fresh retry, no stale-track override",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const create=app.slice(app.indexOf("function createAudio()"),
+  app.indexOf("function rebuildAudio("));
+ const error=app.slice(app.indexOf("function handleError()"),
+  app.indexOf("async function usaCopiaLocale("));
+ assert.ok(!create.includes('a.addEventListener("error", function ()'),
+  "Two simultaneous media-error listeners must not race");
+ assert.match(error,/!t\._mbNormalFallbackTried/);
+ assert.match(error,/original=String\(audio\.currentSrc\|\|audio\.src\)\.replace\("\/bassi\/","\/"\)/);
+ assert.match(error,/errorCode===2\|\|errorCode===3\|\|errorCode===4/);
+ assert.match(error,/!t\._mbRicaricaMp3Provata/);
+ assert.match(error,/currentId!==failingId\|\|audio!==failingAudio/);
+ assert.match(app,/_mbNormalFallbackTried = false/);
+});
