@@ -2433,17 +2433,24 @@ async function intelligentShuffle(app,audio,fromId){
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
  const scored=[];
+ const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  for(const {track,info} of measured){
   if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
      !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
-     !Number.isFinite(info.introDrive)||info.introDrive<.30)continue;
+     !Number.isFinite(info.introDrive)||info.introDrive<.30){
+   rejected.weakIntro++;continue;
+  }
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   const cue=transition(old,next,audio.duration);
   const verified=Boolean(cue&&cue.kind==="beat"&&cue.fade>=2.7&&
     (cue.instrumentalBeatBridge||cue.dropReleaseBridge||
      cue.strongBeatBridge||cue.measuredBeatBridge||cue.grooveScore>=.78));
-  if(!verified)continue;
+  if(!verified){
+   if(!cue)rejected.noMusicalBridge++;
+   else rejected.onlyQuiet++;
+   continue;
+  }
   // Real source measurements and valid cue outweigh global BPM similarity.
   const score=1+(Number(cue.grooveScore)||0)*.22+
    (Number(cue.score)||0)/100*.15+
@@ -2458,7 +2465,7 @@ async function intelligentShuffle(app,audio,fromId){
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
-    beatCandidates:scored.length,chosen:best.track.id,reason:"beat certificato"};
+    beatCandidates:scored.length,rejected,chosen:best.track.id,reason:"beat certificato"};
    console.info("[Music Box DJ] Scelta automatica: beat verificato in libreria",
     {outgoing:fromId,incoming:best.track.id,fade:best.cue.fade.toFixed(1),
      checked:measured.length,available:pool.length});
@@ -2468,7 +2475,7 @@ async function intelligentShuffle(app,audio,fromId){
  // If analysis coverage is incomplete, retry later once more metadata
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
-  beatCandidates:scored.length,chosen:current?.track.id||null,
+  beatCandidates:scored.length,rejected,chosen:current?.track.id||null,
   reason:noMatch?"nessun beat verificato nei brani analizzati":"brano in coda gia compatibile"};
  console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision);
  return {retry:unknown.length>picked.length&&!scored.length,
