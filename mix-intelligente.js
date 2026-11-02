@@ -999,7 +999,8 @@ function strongInstrumentalBeatBridge(a,b,dur){
     a.bpm<55||a.bpm>210||b.bpm<55||b.bpm>210||
     a.beatConfidence<.30||b.beatConfidence<.30||
     !Number.isFinite(b.introDrive)||b.introDrive<.43||
-    !a.outroFinalNotes||!b.introAttackNotes)return null;
+    !(a.outroFinalNotes||a.outroNotes||a.outroChroma)||
+    !(b.introAttackNotes||b.introNotes||b.introChroma))return null;
  if(a.protectedEnding!==true&&a.dropRelease)return null;
  const end=clamp((Number.isFinite(a.last)?a.last:dur)+.06,25,dur-.035);
  if(dur-end>13)return null;
