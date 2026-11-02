@@ -9,12 +9,11 @@ const PACKAGE="0.10.35";
 const CDN="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@"+PACKAGE;
 const MODEL="https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/1/yamnet.tflite";
 let modelPromise=null,modelCooldown=0;
+// The 521 AudioSet labels include more than just "Singing" and "Speech".
+// This is a positive-event detector; a low score is not proof of instrumentals.
 function vocalCategory(name){
  const n=String(name||"").toLowerCase().trim();
- // AudioSet/YAMNet class map uses labels such as "Child speech, kid
- // speaking" and "Narration, monologue", not only the short class names.
- // Catch the actual 521-class vocabulary, including vocalizations in rap.
- return /^(speech|singing|male singing|female singing|child singing|synthetic singing|rapping|rap|vocal music|choir|humming|whispering|chant|chanting|mantra|yodeling|screaming|shout|shouting|yell|spoken word|narration(?:, monologue)?|conversation|child speech, kid speaking|male speech, man speaking|female speech, woman speaking|speech synthesizer|babbling)$/.test(n);
+ return /^(speech|singing|male singing|female singing|child singing|synthetic singing|rapping|rap|vocal music|choir|humming|whispering|chant|chanting|mantra|yodeling|screaming|shout|shouting|yell|spoken word|narration(?:, monologue)?|conversation|child speech, kid speaking|male speech, man speaking|female speech, woman speaking|speech synthesizer|babbling|whisper|groan|singing bowl)$/.test(n);
 }
 function vocalConfidence(output){
  let score=0;
@@ -28,103 +27,139 @@ function vocalConfidence(output){
  }
  return score;
 }
+// Music videos are usually 44.1/48kHz stereo. Compress the *working* vocal
+// windows to 16kHz with a box-filter anti-alias pass. The original decoded
+// buffer is not changed and can be freed while the model downloads.
 function monoSegment(buffer,from,seconds){
- const rate=buffer.sampleRate;
- const at=Math.max(0,Math.floor(from*rate));
- const n=Math.min(buffer.length-at,Math.floor(seconds*rate));
- if(n<rate*.9)return null;
+ const inputRate=buffer.sampleRate,rate=Math.min(16000,inputRate);
+ const at=Math.max(0,Math.floor(from*inputRate));
+ const length=Math.min(buffer.length-at,Math.floor(seconds*inputRate));
+ if(length<inputRate*.99)return null;
  const left=buffer.getChannelData(0);
  const right=buffer.numberOfChannels>1?buffer.getChannelData(1):null;
- const samples=new Float32Array(n);
- for(let i=0;i<n;i++)
-  samples[i]=right?(left[at+i]+right[at+i])*.5:left[at+i];
- return {at:at/rate,samples};
+ const n=Math.floor(length*rate/inputRate),samples=new Float32Array(n);
+ const inputStep=inputRate/rate;
+ const group=Math.max(1,Math.floor(rate*.4));
+ for(let first=0;first<n;first+=group){
+  const last=Math.min(n,first+group);
+  let lp=0,rp=0,mp=0;
+  if(right){
+   const stride=Math.max(1,Math.floor((last-first)/90));
+   for(let i=first;i<last;i+=stride){
+    const p=Math.min(buffer.length-1,at+Math.floor(i*inputStep));
+    const l=left[p],r=right[p];
+    lp+=l*l;rp+=r*r;mp+=(l+r)*(l+r)*.25;
+   }
+  }
+  // Prefer the loudest real channel only when the two channels almost
+  // cancel. Never discard phase-opposed sung vocals by averaging L and R.
+  const channel=right&&mp<Math.max(lp,rp)*.20?(lp>=rp?0:1):-1;
+  for(let i=first;i<last;i++){
+   const begin=at+Math.floor(i*inputStep);
+   const end=Math.min(buffer.length,at+Math.max(Math.floor((i+1)*inputStep),Math.floor(i*inputStep)+1));
+   let sum=0;
+   for(let p=begin;p<end;p++)
+    sum+=channel===0?left[p]:channel===1?right[p]:
+     right?(left[p]+right[p])*.5:left[p];
+   samples[i]=sum/Math.max(1,end-begin);
+  }
+ }
+ return {at:at/inputRate,samples,rate};
 }
 function prepare(buffer,info){
- const duration=Number(buffer?.duration)||0,rate=buffer?.sampleRate;
- if(!Number.isFinite(duration)||duration<24||!Number.isFinite(rate))return null;
+ const duration=Number(buffer?.duration)||0,rate=Number(buffer?.sampleRate);
+ if(!Number.isFinite(duration)||duration<24||!Number.isFinite(rate)||rate<1000)return null;
  const end=Math.min(duration,Number.isFinite(info?.last)?info.last:duration);
- // Copy under ~33 seconds of samples. The complete decoded MP3 can now
- // be freed while the model is downloading, especially important on iOS.
- const head=monoSegment(buffer,0,10.5);
- const tail=monoSegment(buffer,Math.max(0,end-23),23);
+ // Sample more of the outro than before, so vocals around late breakdowns
+ // don't go unnoticed. At 16kHz these ~44s occupy under 3MB in mono PCM.
+ const head=monoSegment(buffer,0,11.5);
+ const tail=monoSegment(buffer,Math.max(0,end-32),32);
  if(!head||!tail)return null;
- return {head,tail,rate,end};
+ return {head,tail,rate:head.rate,end};
 }
-function evaluatePrepared(data,classifier){
- if(!data||!classifier||typeof classifier.classify!=="function")return null;
- const found=[],step=1.3,seconds=.96;
- const classify=(segment,kind)=>{
-  const n=Math.floor(data.rate*seconds),buf=segment.samples;
-  for(let offset=0;offset+n<=buf.length;offset+=Math.round(step*data.rate)){
-   const t=segment.at+offset/data.rate;
-   const slice=buf.subarray(offset,offset+n);
-   let score=0;
-   try{score=vocalConfidence(classifier.classify(slice,data.rate))}
-   catch(e){return false}
-   if(score>=.22)found.push({at:t,end:t+seconds,score,kind});
-  }
-  // Cover the very last available second, even when not on the stride.
-  if(buf.length>=n&&buf.length>n){
-   const t=segment.at+(buf.length-n)/data.rate;
-   let score=0;
-   try{score=vocalConfidence(classifier.classify(buf.subarray(buf.length-n),data.rate))}
-   catch(e){return false}
-   if(score>=.22)found.push({at:t,end:t+seconds,score,kind});
-  }
-  return true;
- };
- if(!classify(data.head,"intro")||!classify(data.tail,"outro"))return null;
- const outro=found.filter(v=>v.kind==="outro"&&v.at<=data.end);
- const intro=found.filter(v=>v.kind==="intro");
- // Last vocal detected within the ending guard window. Never interpret
- // missing detections as confirmation that vocals are absent.
- const lastVoiceAt=outro.length?
-  Math.min(data.end,Math.max(...outro.map(v=>v.end))):null;
- const firstVoiceAt=intro.length?Math.min(...intro.map(v=>v.at)):null;
- return {source:"yamnet",lastVoiceAt,firstVoiceAt,
-  scannedEnd:data.end,scannedFrom:data.tail.at,modelVersion:1};
-}
-function evaluate(buffer,classifier,info){
- return evaluatePrepared(prepare(buffer,info),classifier);
-}
-// The MediaPipe classifier is synchronous. Running 20-30 inferences in
-// one uninterrupted task can freeze the browser's DJ timers. Schedule a
-// maximum of two inferences per turn and let the audio player breathe.
+// YAMNet's TFLite input represents 15,600 samples at 16kHz (975ms).
+// Previous 960ms chunks could be shorter than one valid inference frame.
+const WINDOW_SECONDS=1.02,STEP_SECONDS=.67;
 function* framesFor(data){
- const n=Math.floor(data.rate*.96),step=Math.max(1,Math.round(data.rate*1.3));
+ const n=Math.floor(data.rate*WINDOW_SECONDS),step=Math.max(1,Math.round(data.rate*STEP_SECONDS));
  for(const [kind,segment] of [["intro",data.head],["outro",data.tail]]){
-  const buf=segment.samples;
-  let last=-1;
+  const buf=segment.samples;let last=-1;
   for(let offset=0;offset+n<=buf.length;offset+=step){
    last=offset;
    yield {at:segment.at+offset/data.rate,kind,samples:buf.subarray(offset,offset+n)};
   }
-  const end=Math.max(0,buf.length-n);
-  if(end>last&&buf.length>=n)
-   yield {at:segment.at+end/data.rate,kind,samples:buf.subarray(end,end+n)};
+  const final=Math.max(0,buf.length-n);
+  if(final>last&&buf.length>=n)
+   yield {at:segment.at+final/data.rate,kind,samples:buf.subarray(final,final+n)};
  }
 }
-function summarizeFrames(data,found){
- const outro=found.filter(x=>x.kind==="outro"&&x.at<=data.end);
- const intro=found.filter(x=>x.kind==="intro");
- return {source:"yamnet",
-  lastVoiceAt:outro.length?Math.min(data.end,Math.max(...outro.map(v=>v.end))):null,
-  firstVoiceAt:intro.length?Math.min(...intro.map(v=>v.at)):null,
-  scannedEnd:data.end,scannedFrom:data.tail.at,modelVersion:2};
+// A strong single-frame voice event counts. Lower-confidence singing/rap
+// requires adjacent supporting windows to avoid reacting to one drum hit.
+function summarizeFrames(data,frames){
+ const signals=[];
+ for(let i=0;i<frames.length;i++){
+  const frame=frames[i],score=frame.score;
+  if(score>=.42){
+   signals.push({...frame,confidence:score});
+   continue;
+  }
+  if(score<.155)continue;
+  const before=frames[i-1],after=frames[i+1];
+  const near=v=>v&&v.kind===frame.kind&&Math.abs(v.at-frame.at)<1.5&&v.score>=.12;
+  if(near(before)||near(after))
+   signals.push({...frame,confidence:score});
+ }
+ function intervals(kind){
+  const events=signals.filter(x=>x.kind===kind).sort((a,b)=>a.at-b.at);
+  const spans=[];
+  for(const event of events){
+   const right=Math.min(data.end,event.at+WINDOW_SECONDS);
+   const last=spans[spans.length-1];
+   if(last&&event.at-last.end<=.82){
+    last.end=Math.max(last.end,right);
+    last.confidence=Math.max(last.confidence,event.confidence);
+   }else spans.push({at:event.at,end:right,confidence:event.confidence});
+  }
+  return spans;
+ }
+ const head=intervals("intro"),tail=intervals("outro");
+ return {source:"yamnet",modelVersion:3,
+  firstVoiceAt:head.length?head[0].at:null,
+  lastVoiceAt:tail.length?tail[tail.length-1].end:null,
+  firstVoiceConfidence:head.length?head[0].confidence:null,
+  lastVoiceConfidence:tail.length?tail[tail.length-1].confidence:null,
+  voiceIntervals:tail.slice(-12),
+  scannedEnd:data.end,scannedFrom:data.tail.at,
+  // Coverage indicates *where* the model ran, never verified vocal absence.
+  scannedFrames:frames.length};
 }
+function evaluatePrepared(data,classifier){
+ if(!data||!classifier||typeof classifier.classify!=="function")return null;
+ const frames=[];
+ for(const frame of framesFor(data)){
+  let score;
+  try{score=vocalConfidence(classifier.classify(frame.samples,data.rate))}
+  catch(e){return null}
+  frames.push({at:frame.at,kind:frame.kind,score});
+ }
+ return summarizeFrames(data,frames);
+}
+// Limit synchronous MediaPipe inference to two calls per event-loop turn.
 async function evaluatePreparedAsync(data,classifier){
  if(!data||!classifier||typeof classifier.classify!=="function")return null;
- const found=[];let n=0;
+ const frames=[];let n=0;
  for(const frame of framesFor(data)){
   if(typeof document!=="undefined"&&document.hidden)return null;
   let score;
   try{score=vocalConfidence(classifier.classify(frame.samples,data.rate))}
   catch(e){return null}
-  if(score>=.22)found.push({at:frame.at,end:frame.at+.96,score,kind:frame.kind});
+  frames.push({at:frame.at,kind:frame.kind,score});
   if(++n%2===0)await new Promise(resolve=>setTimeout(resolve,0));
  }
- return summarizeFrames(data,found);
+ return summarizeFrames(data,frames);
+}
+function evaluate(buffer,classifier,info){
+ return evaluatePrepared(prepare(buffer,info),classifier);
 }
 let classificationQueue=Promise.resolve();
 async function loadModel(){
