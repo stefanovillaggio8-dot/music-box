@@ -730,11 +730,18 @@ function similarNotes(a,b){
  const alignment=bestHarmonicAlignment(a,b);
  const staticMatch=broad>=.74&&focused>=.69&&
   (shared||(fifth&&focused>=.82))&&phrase>=.42;
- // When available, the REAL progression vetoes misleading global keys.
- const matches=alignment?
-  alignment.matches&&(staticMatch||alignment.score>=.89):staticMatch;
- const score=alignment?alignment.score*.82+focused*.18:
-  focused*.64+phrase*.26+broad*.10;
+ // Measured chord progressions veto misleading global-key matches.
+ // A few intros contain too few reliable harmonic frames for a full
+ // three-point comparison. In that case only an exceptionally strong
+ // boundary match PLUS a matching beat pattern may act as a fallback.
+ const reliableProgression=alignment&&alignment.score>0;
+ const groove=grooveAgreement(a,b);
+ const fallback=staticMatch&&broad>=.87&&focused>=.88&&
+  phrase>=.84&&groove?.score>=.86;
+ const matches=reliableProgression?
+  alignment.matches&&(staticMatch||alignment.score>=.89):fallback;
+ const score=reliableProgression?alignment.score*.82+focused*.18:
+  focused*.54+phrase*.30+broad*.16;
  return {matches,score,focused,phrase,alignment,
   reason:matches?"similar":alignment?"phrase-mismatch":"different"};
 }
