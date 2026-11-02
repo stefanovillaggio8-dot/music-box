@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=18; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=19; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -179,6 +179,46 @@ function weakOutro(blocks,level,duration){
  if(before.filter(v=>v>level*.33).length<before.length*.4)return null;
  return {start,fadeStart:start+2.1,end:Math.min(duration-.2,start+6)};
 }
+// A long near-silent *gap* near the end is different from a silent
+// ending: a faint ambient outro can resume after the gap. Detect it from
+// the whole song and require the later section to remain much quieter
+// than the earlier music. Strong returns are always protected.
+function lateOutroGap(blocks,typical,duration){
+ if(duration<65||typical<.008||!Array.isArray(blocks))return null;
+ const step=.2,startIndex=Math.floor(Math.max(35,duration-43)/step);
+ const limit=Math.min(blocks.length,Math.floor((duration-5)/step));
+ const threshold=Math.max(.00065,typical*.19);
+ const runs=[];let begin=-1;
+ for(let i=startIndex;i<=limit;i++){
+  const quiet=i<limit&&(blocks[i]||0)<threshold;
+  if(quiet&&begin<0)begin=i;
+  if(!quiet&&begin>=0){
+   if(i-begin>=35)runs.push({from:begin,to:i});
+   begin=-1;
+  }
+ }
+ for(const gap of runs.reverse()){
+  const start=gap.from*step,quietEnd=gap.to*step;
+  const before=blocks.slice(Math.max(0,gap.from-32),gap.from);
+  if(before.length<18||
+     before.filter(v=>v>typical*.43).length<Math.ceil(before.length*.48))continue;
+  const remaining=duration-quietEnd;
+  if(remaining<1.5||remaining>20)continue;
+  const after=blocks.slice(gap.to);
+  if(!after.length)continue;
+  const sorted=after.slice().sort((a,b)=>a-b);
+  const upper=sorted[Math.floor(sorted.length*.89)]||0;
+  const average=after.reduce((sum,v)=>sum+v,0)/after.length;
+  // Don't suppress a returned verse, drop or chorus.
+  if(upper>typical*.50||average>typical*.33||
+     after.filter(v=>v>typical*.44).length>after.length*.12)continue;
+  const fadeStart=Math.max(0,start-1.3);
+  const end=Math.min(duration-1.0,start+3.2);
+  if(end-fadeStart<3.1)continue;
+  return {start,quietEnd,fadeStart,end,lateMean:average/typical};
+ }
+ return null;
+}
 function analyzeFrames(buf){
  const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
  // Detect energy on both stereo channels: a quiet left channel must not
@@ -223,6 +263,7 @@ function analyzeFrames(buf){
  const signalEnd=Math.min(duration,(last+1)*group*step);
  const assessed=estimateMusicalEnd(ch,rate,blocks,typical,duration,signalEnd);
  const softOutro=weakOutro(blocks,typical,duration);
+ const outroGap=lateOutroGap(blocks,typical,duration);
  const audibleEnd=Math.min(signalEnd,assessed.end);
  const leading=Math.max(0,audibleStart),trailing=Math.max(0,duration-audibleEnd);
  const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
@@ -321,7 +362,7 @@ function analyzeFrames(buf){
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -462,10 +503,12 @@ async function decode(track,needClip=false){
      Number(track.expectedDurationSec||0);
     const durationMismatch=expected>20&&
      Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
-    const outroFrom=Math.max(0,frame.safeOutroAt??frame.last-10);
+    const outroFrom=frame.outroGap?Math.max(0,frame.outroGap.start-10):
+     Math.max(0,frame.safeOutroAt??frame.last-10);
     const introTo=Math.min(decoded.duration,Math.max(9,frame.first+12));
     const firstSound=Math.max(0,frame.first);
-    const lastSound=Math.min(decoded.duration,frame.last);
+    const lastSound=frame.outroGap?Math.max(2,frame.outroGap.start-.18):
+     Math.min(decoded.duration,frame.last);
     const result={...frame,chroma:harmonies,
      introChroma:chroma(decoded,0,introTo),
      outroChroma:chroma(decoded,outroFrom,lastSound),
