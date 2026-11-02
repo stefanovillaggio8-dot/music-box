@@ -452,3 +452,60 @@ test("20:19:15 recording: a planned soft mix may recover during measured decay",
   "Do not skip a matching beat before its cue arrives");
  assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\)/);
 });
+
+test("20:33:52: beat match searches beyond ten queued songs and works again on next track",async()=>{
+ const src=source.slice(source.indexOf("async function intelligentShuffle("),
+  source.indexOf("function smartScore("));
+ const create=new Function("const enabled=true,isIOS=false;"+
+  "const window={MusicBoxRoom:{isActive:()=>false}};"+
+  "const cache=new Map(),shuffleRunFor='',noop=0;"+
+  "const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  "let fromAnalysis={duration:200,bpm:120,beatConfidence:.82};"+
+  "const deepLookup=t=>({id:t.id,duration:200,bpm:120,"+
+  "beatConfidence:.8,introDrive:.8});"+
+  "const decode=async t=>t.id.startsWith('current')?fromAnalysis:deepLookup(t);"+
+  "const transition=(a,b)=>b.id.startsWith('winner')?"+
+  "{kind:'beat',fade:4.2,grooveScore:.91,score:93,"+
+  "instrumentalBeatBridge:true}:null;"+
+  "let shuffleGeneration=0;"+
+  src+"return {intelligentShuffle};");
+ const engine=create(),pool=Array.from({length:65},(_,i)=>({
+  id:i===42?"winner-1":i===53?"winner-2":"other-"+i,url:"songs/"+i+".mp3"
+ }));
+ let current="current-1",chosen=[];
+ const app={
+  currentId:()=>current,
+  allTracks:()=>[{id:current},...pool],
+  mixShuffleCandidates:()=>pool.slice(0,10),
+  mixShufflePool:()=>pool,
+  mixSelectShuffle:selection=>{chosen.push(selection);return true},
+  mixLyricCues:()=>({first:4,last:90})
+ };
+ const audio={duration:200,currentTime:20};
+ let result=await engine.intelligentShuffle(app,audio,current);
+ assert.ok(result.selected);
+ assert.equal(chosen[0].pickId,"winner-1",
+  "First song must discover a real beat candidate beyond the first ten");
+ current="current-2";
+ // A next-song cycle must be able to select a fresh candidate, too.
+ const newPool=pool.filter(t=>t.id!=="winner-1");
+ app.mixShufflePool=()=>newPool;
+ app.mixShuffleCandidates=()=>newPool.slice(0,10);
+ result=await engine.intelligentShuffle(app,audio,current);
+ assert.ok(result.selected);
+ assert.equal(chosen[1].pickId,"winner-2",
+  "Do not become a one-shot DJ after the first handoff");
+ assert.match(source,/shuffleGeneration\+\+;shuffleBusy=false/);
+ assert.match(source,/generation===shuffleGeneration\)shuffleBusy=false/);
+ assert.match(source,/failedAt=Date\.now\(\)/);
+});
+test("beat search preserves manually selected queue and never chooses a soft match over actual beat",async()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.match(app,/mixShufflePool:\(\)=>\{/);
+ assert.match(app,/if\(!shuffle\|\|queue\.length\|\|repeat\|\|!currentId/);
+ assert.match(app,/fresh\.has\(t\.id\)/);
+ assert.match(app,/const pool=window\.MusicBoxBridge\.mixShufflePool\(\)/);
+ assert.match(source,/cue\.instrumentalBeatBridge\|\|cue\.dropReleaseBridge/);
+ assert.match(source,/if\(!verified\)continue/);
+ assert.match(source,/return \{retry:unknown\.length>picked\.length&&!scored\.length/);
+});
