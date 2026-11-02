@@ -238,3 +238,17 @@ test("recording regression: late vocals and a new lyric line still veto fade",()
   assert.ok(!plan||plan.verifiedDecayAfterLyrics!==true,"No fake karaoke safety after a later vocal/re-attack");
  }
 });
+
+test("when prebuffer is unavailable, only digitally verified end silence can be skipped",()=>{
+ const marker=source.slice(source.indexOf("function certifiedTailSkip("),source.indexOf("function tick(){"));
+ assert.ok(marker.startsWith("function certifiedTailSkip("));
+ const canSkip=new Function(marker+"return certifiedTailSkip")();
+ const a={duration:100,last:96,confidentTail:true,
+  lastVoiceAt:90,lastLyricAt:88};
+ assert.equal(canSkip(a,100,96.3,88),true);
+ assert.equal(canSkip(a,100,95.8,88),false,"Musical samples cannot be skipped");
+ assert.equal(canSkip({...a,confidentTail:false},100,97,88),false);
+ assert.equal(canSkip({...a,duration:93},100,97,88),false);
+ assert.equal(canSkip({...a,lastVoiceAt:95.9},100,97,88),false);
+ assert.equal(canSkip(a,100,97,95.8),false,"Last karaoke cue vetoes early skip");
+});
