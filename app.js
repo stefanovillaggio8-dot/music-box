@@ -15779,7 +15779,9 @@ for (const p of playlists) {
      li' in poi l'audio e' sveglio e i bassi si accendono subito. */
   let _audioProno = false;
   function _preparaAudio() {
-    if (_audioProno) return;
+    // Safari may suspend this context after a lock/unlock cycle.
+    // A later real user tap must be able to unlock it again.
+    if (_audioProno && _ctx?.state === "running") return;
     _audioProno = true;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -15790,7 +15792,7 @@ for (const p of playlists) {
   }
   try {
     ["pointerdown", "touchstart", "click", "keydown"].forEach(function (ev) {
-      window.addEventListener(ev, _preparaAudio, { once: true, passive: true });
+      window.addEventListener(ev, _preparaAudio, { passive: true });
     });
   } catch (e) { }
   function _collegaElemento() {
