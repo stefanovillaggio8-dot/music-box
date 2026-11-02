@@ -1542,13 +1542,13 @@
    },
    "[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 10,
+    "s": 17,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
    },
    "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 10,
+    "s": 17,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
    },
@@ -1638,13 +1638,13 @@
    },
    "[\"domenica\",\"coez\"]": {
     "v": 0,
-    "s": 91,
+    "s": 99,
     "t": "Domenica",
     "a": "Coez"
    },
    "m:2026-11|[\"domenica\",\"coez\"]": {
     "v": 0,
-    "s": 91,
+    "s": 99,
     "t": "Domenica",
     "a": "Coez"
    },
@@ -1890,13 +1890,13 @@
    },
    "[\"estate\",\"negromaro\"]": {
     "v": 0,
-    "s": 4,
+    "s": 9,
     "t": "Estate",
     "a": "Negromaro"
    },
    "m:2026-11|[\"estate\",\"negromaro\"]": {
     "v": 0,
-    "s": 4,
+    "s": 9,
     "t": "Estate",
     "a": "Negromaro"
    },
@@ -2094,13 +2094,13 @@
    },
    "[\"a mano a mano\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 2,
+    "s": 8,
     "t": "A mano a mano",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"a mano a mano\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 2,
+    "s": 8,
     "t": "A mano a mano",
     "a": "Rino Gaetano"
    },
@@ -2304,13 +2304,13 @@
    },
    "[\"gli occhi della tigre\",\"nayt\"]": {
     "v": 0,
-    "s": 68,
+    "s": 73,
     "t": "Gli occhi della tigre",
     "a": "nayt"
    },
    "m:2026-11|[\"gli occhi della tigre\",\"nayt\"]": {
     "v": 0,
-    "s": 68,
+    "s": 73,
     "t": "Gli occhi della tigre",
     "a": "nayt"
    },
@@ -2850,13 +2850,13 @@
    },
    "[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 0,
-    "s": 85,
+    "s": 91,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 0,
-    "s": 85,
+    "s": 91,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
@@ -2898,13 +2898,13 @@
    },
    "[\"faccio un casino\",\"coez\"]": {
     "v": 0,
-    "s": 83,
+    "s": 87,
     "t": "Faccio un casino",
     "a": "Coez"
    },
    "m:2026-11|[\"faccio un casino\",\"coez\"]": {
     "v": 0,
-    "s": 83,
+    "s": 87,
     "t": "Faccio un casino",
     "a": "Coez"
    },
@@ -3604,6 +3604,18 @@
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
+   "[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 78,
+    "t": "Stella Cadente",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 78,
+    "t": "Stella Cadente",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4146,15 +4158,27 @@
    },
    "[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 78,
+    "s": 129,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 78,
+    "s": 129,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"cose che non vuoi sentirti dire\",\"nayt\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Cose che non vuoi sentirti dire",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"cose che non vuoi sentirti dire\",\"nayt\"]": {
+    "v": 0,
+    "s": 62,
+    "t": "Cose che non vuoi sentirti dire",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4302,13 +4326,13 @@
    },
    "[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
     "v": 0,
-    "s": 99,
+    "s": 138,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
     "v": 0,
-    "s": 99,
+    "s": 138,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
@@ -4708,18 +4732,6 @@
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"cose che non vuoi sentirti dire\",\"nayt\"]": {
-    "v": 0,
-    "s": 62,
-    "t": "Cose che non vuoi sentirti dire",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"cose che non vuoi sentirti dire\",\"nayt\"]": {
-    "v": 0,
-    "s": 62,
-    "t": "Cose che non vuoi sentirti dire",
-    "a": "nayt"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4878,13 +4890,13 @@
    },
    "[\"la musica non c'ÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
     "v": 0,
-    "s": 138,
+    "s": 195,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
     "v": 0,
-    "s": 138,
+    "s": 195,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
@@ -6412,6 +6424,30 @@
     "t": "Stella Cadente",
     "a": "ModÃÂ "
    },
+   "[\"15 piani\",\"sfera ebbasta, marracash\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "15 Piani",
+    "a": "Sfera Ebbasta, Marracash"
+   },
+   "m:2026-11|[\"15 piani\",\"sfera ebbasta, marracash\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "15 Piani",
+    "a": "Sfera Ebbasta, Marracash"
+   },
+   "[\"le luci della cittÃÂ \",\"coez\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Le luci della cittÃÂ ",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"le luci della cittÃÂ \",\"coez\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Le luci della cittÃÂ ",
+    "a": "Coez"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6976,18 +7012,6 @@
     "t": "Stella Cadente",
     "a": "ModÃ "
    },
-   "[\"15 piani\",\"sfera ebbasta, marracash\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "15 Piani",
-    "a": "Sfera Ebbasta, Marracash"
-   },
-   "m:2026-11|[\"15 piani\",\"sfera ebbasta, marracash\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "15 Piani",
-    "a": "Sfera Ebbasta, Marracash"
-   },
    "[\"le luci della cittÃ \",\"coez\"]": {
     "v": 0,
     "s": 7,
@@ -7530,13 +7554,13 @@
    },
    "[\"tiscatterò una foto\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 109,
+    "s": 115,
     "t": "Tiscatterò una foto",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"tiscatterò una foto\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 109,
+    "s": 115,
     "t": "Tiscatterò una foto",
     "a": "Tiziano Ferro"
    },
@@ -7575,6 +7599,42 @@
     "s": 7,
     "t": "Le luci della città",
     "a": "Coez"
+   },
+   "[\"jolly\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "Jolly",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"jolly\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "Jolly",
+    "a": "Kid Yugi"
+   },
+   "[\"che dio mi benedica\",\"luchè\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Che Dio Mi Benedica",
+    "a": "Luchè"
+   },
+   "m:2026-11|[\"che dio mi benedica\",\"luchè\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Che Dio Mi Benedica",
+    "a": "Luchè"
+   },
+   "[\"donna\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Donna",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"donna\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Donna",
+    "a": "Kid Yugi"
    }
   },
   "Diego": {
