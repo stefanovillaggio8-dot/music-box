@@ -1202,8 +1202,8 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 11,
-    "s": 447,
+    "v": 12,
+    "s": 481,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1599,13 +1599,13 @@
    },
    "[\"cosa conta davvero\",\"nayt\"]": {
     "v": 0,
-    "s": 66,
+    "s": 68,
     "t": "cosa conta davvero",
     "a": "nayt"
    },
    "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
     "v": 0,
-    "s": 66,
+    "s": 68,
     "t": "cosa conta davvero",
     "a": "nayt"
    },
@@ -1838,8 +1838,8 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 10,
-    "s": 439,
+    "v": 11,
+    "s": 473,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -4087,6 +4087,18 @@
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
+   "[\"mi piacciono le nere\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 9,
+    "t": "MI PIACCIONO LE NERE",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"mi piacciono le nere\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 9,
+    "t": "MI PIACCIONO LE NERE",
+    "a": "TonyPitony"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4687,18 +4699,6 @@
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"mi piacciono le nere\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 9,
-    "t": "MI PIACCIONO LE NERE",
-    "a": "TonyPitony"
-   },
-   "m:2026-11|[\"mi piacciono le nere\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 9,
-    "t": "MI PIACCIONO LE NERE",
-    "a": "TonyPitony"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -5181,13 +5181,13 @@
    },
    "[\"quelli come me\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 89,
+    "s": 107,
     "t": "Quelli come me",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"quelli come me\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 89,
+    "s": 107,
     "t": "Quelli come me",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -5298,6 +5298,18 @@
     "s": 6,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"poetica\",\"cesare cremonini\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Poetica",
+    "a": "Cesare Cremonini"
+   },
+   "m:2026-11|[\"poetica\",\"cesare cremonini\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Poetica",
+    "a": "Cesare Cremonini"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5911,18 +5923,6 @@
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
-   "[\"poetica\",\"cesare cremonini\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Poetica",
-    "a": "Cesare Cremonini"
-   },
-   "m:2026-11|[\"poetica\",\"cesare cremonini\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Poetica",
-    "a": "Cesare Cremonini"
-   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6534,6 +6534,18 @@
     "s": 6,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂ "
+   },
+   "[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Scale",
+    "a": "Night Skinny, LuchÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Scale",
+    "a": "Night Skinny, LuchÃÂÃÂ¨"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
