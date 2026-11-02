@@ -998,6 +998,40 @@ function transition(a,b,actualDuration){
  // track starts with music rather than another quiet passage.
  // It is better to leave a track intact than manufacture a bad transition.
  const release=a.dropRelease;
+ // The last karaoke timestamp is the *start* of a lyric line, not the
+ // end of the singer's voice. An absolute "12 seconds from last lyric"
+ // veto used to reject a genuine settled fade (recording 2026-11-02).
+ // After the final measured beat has clearly decayed, allow only a short,
+ // neutral overlap. Never seek over the old ending or mix across a new
+ // late vocal detection.
+ const decayEnd=clamp(Number(a.last)+.07,13,dur-.025);
+ const decayVerified=release&&a.protectedEnding!==true&&
+   Number.isFinite(release.releaseAt)&&
+   release.releaseAt<=decayEnd-3.4&&
+   Number.isFinite(release.quietLevel)&&release.quietLevel<=.20&&
+   release.score>=.76;
+ const vocalLate=Number.isFinite(a.lastLyricAt)&&
+   a.lastLyricAt>=decayEnd-12;
+ if(decayVerified&&vocalLate&&(b.introDrive===undefined||b.introDrive>=.33)){
+  // Four seconds after the last LRC onset leaves room for the whole
+  // sung phrase; a model-detected voice end needs its own 1.8s margin.
+  const begin=Math.max(release.releaseAt+1.5,
+    a.lastLyricAt+4,
+    Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt+1.8:0,
+    decayEnd-5.5);
+  const fade=decayEnd-begin;
+  if(fade>=2.5&&fade<=5.5){
+   const trim=Boolean(a.confidentTail&&a.last<dur-1.65);
+   return {entry:Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0,
+    begin,end:decayEnd,fade,kind:"soft",tempo:1,gain:1,
+    silenceTrim:trim,softTailTrim:false,
+    trailing:trim?Math.max(0,dur-a.last):0,
+    safeOutroAt:begin,quietCertified:true,
+    neutralRelease:true,verifiedDecayAfterLyrics:true,
+    decayReleaseAt:release.releaseAt,dropReleaseBridge:false,
+    score:null};
+  }
+ }
  if(release&&release.releaseAt<a.last-2.1&&a.protectedEnding!==true&&
     b.introDrive>=.33&&a.beatConfidence>=.17&&b.beatConfidence>=.17){
   const lateSinging=(Number.isFinite(a.lastLyricAt)&&
@@ -1845,8 +1879,14 @@ function tick(){
     lastKnownLyric>=plan.outroGapStart-3.5){
   dropPrepared();plan=null;resetMobileFade();return;
  }
+ const verifiedQuietLyricExit=Boolean(plan.verifiedDecayAfterLyrics&&
+    plan.quietCertified&&plan.kind==="soft"&&
+    Number.isFinite(plan.decayReleaseAt)&&
+    lastKnownLyric<=plan.decayReleaseAt+.5&&
+    plan.begin>=lastKnownLyric+4);
  if(!mixing&&Number.isFinite(lastKnownLyric)&&
-    plan.begin<lastKnownLyric+6&&audio.duration-lastKnownLyric<16){
+    plan.begin<lastKnownLyric+6&&audio.duration-lastKnownLyric<16&&
+    !verifiedQuietLyricExit){
   if(plan.silenceTrim)plan={...plan,begin:plan.end,fade:0,kind:"cut"};
   else {dropPrepared();plan=null;resetMobileFade();return}
  }
