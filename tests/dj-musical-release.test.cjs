@@ -460,6 +460,8 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
   "const window={MusicBoxRoom:{isActive:()=>false}},console={info(){}};"+
   "const cache=new Map(),shuffleRunFor='',noop=0;"+
   "const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  "const grooveAgreement=()=>({score:.9});"+
+  "const similarNotes=()=>({focused:.8,phrase:.8});"+
   "let fromAnalysis={duration:200,bpm:120,beatConfidence:.82};"+
   "const deepLookup=t=>({id:t.id,duration:200,bpm:120,"+
   "beatConfidence:.8,introDrive:.8});"+
@@ -505,8 +507,10 @@ test("beat search preserves manually selected queue and never chooses a soft mat
  assert.match(app,/fresh\.has\(t\.id\)/);
  assert.match(app,/const pool=window\.MusicBoxBridge\.mixShufflePool\(\)/);
  assert.match(source,/cue\.instrumentalBeatBridge\|\|cue\.dropReleaseBridge/);
- assert.match(source,/if\(!verified\)continue/);
- assert.match(source,/return \{retry:unknown\.length>picked\.length&&!scored\.length/);
+ assert.match(source,/if\(!verified\)\{/);
+ assert.match(source,/const choicePool=scored\.length\?scored:softScored/);
+ assert.match(source,/cue\.quietCertified===true/);
+ assert.match(source,/return \{retry:unknown\.length>picked\.length&&noMatch/);
 });
 
 test("version badge uses the real header button, updates worker before reload, preserves MP3 caches",()=>{
