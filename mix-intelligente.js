@@ -92,7 +92,7 @@ function loadDeepIndex(force=false){
    if(![1,2].includes(json?.version)||!json.entries||typeof json.entries!=="object")
     throw Error("Schema DJ non valido");
    deepIndex=json;
-   if(enabled&&!mixing){plannedFor="";plan=null;}
+   if(enabled&&!mixing){plannedFor="";plan=null;shuffleRunFor="";shuffleRetryAt=0;}
   }catch(e){/* Keep the last successfully loaded index when offline. */}
   finally{clearTimeout(timeout);deepStatus()}
   return deepIndex;
@@ -2045,7 +2045,8 @@ function tick(){
  }
  if(mixing)return;
  if(previousId!==id){
-  cancel();previousId=id;plannedFor="";plan=null;shuffleRunFor="";quietHandoffFor="";
+  cancel();previousId=id;plannedFor="";plan=null;
+   shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;quietHandoffFor="";
  }
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
@@ -2319,61 +2320,116 @@ function draw(){
  updateMobileStatus();
 }
 let smartSuggested=[],smartRun=0,shuffleRunFor="";
+// The shuffle picker is continuously re-armed for EACH outgoing song.
+// Inspect the measured metadata from the whole eligible library, rather
+// than treating the first ten randomly picked songs as the only options.
+// It never downloads the whole catalog and never changes a manual queue.
 async function intelligentShuffle(app,audio,fromId){
  if(!enabled||window.MusicBoxRoom?.isActive()||
-    !app.mixShuffleCandidates||!app.mixSelectShuffle)return;
+    !app.mixShuffleCandidates||!app.mixSelectShuffle)return {retry:false};
  const sequence=app.mixShuffleCandidates();
- if(sequence.length<2)return;
+ const pool=app.mixShufflePool?.()||sequence;
+ if(!sequence.length||pool.length<2)return {retry:false};
  const initialFirst=sequence[0].id,from=app.allTracks()?.find(t=>t.id===fromId);
- if(!from)return;
- const info=await decode(from);
- if(!info||!enabled||app.currentId()!==fromId)return;
- // Analisi limitata ai primi brani casuali; l'ordine manuale resta intatto.
- // Decode sequenziale per evitare picchi di RAM e connessioni concorrenti.
- const measured=[];
- // The metadata index makes wider candidate searches cheap. Without it,
- // retain the small legacy budget to protect battery and network on iPhone.
- const scanLimit=deepIndex?.analyzed>=100?Math.min(28,sequence.length):
-  (isIOS?4:9);
- for(const track of sequence.slice(0,scanLimit)){
-  if(!enabled||app.currentId()!==fromId||window.MusicBoxRoom?.isActive())return;
-  if(audio.duration-audio.currentTime<(isIOS?65:45))break;
-  const data=await decode(track);
-  if(data)measured.push({track,data});
+ if(!from)return {retry:false};
+ const fromInfo=await decode(from);
+ if(!fromInfo||!enabled||app.currentId()!==fromId)return {retry:app.currentId()===fromId};
+ const lastLyric=app.mixLyricCues?.(fromId)?.last;
+ const old=Number.isFinite(lastLyric)?{...fromInfo,lastLyricAt:lastLyric}:fromInfo;
+ const source=t=>String(app.mixUrl?.(t)||t.url||"");
+ // Indexed real-audio measurements: cheap and synchronous even for hundreds
+ // of candidates. A missing analysis is NOT proof of matching beat.
+ const indexed=[],unknown=[];
+ for(const t of pool.slice(0,1800)){
+  if(!t?.id||t.id===fromId)continue;
+  const info=cache.get(source(t))||deepLookup(t);
+  if(info)indexed.push({track:t,info});
+  else unknown.push(t);
  }
- if(!measured.length||app.currentId()!==fromId||
-    audio.duration-audio.currentTime<25)return;
- const ranking=measured.map(({track,data})=>{
-  const sameArtist=Boolean(from.artist&&track.artist&&
-   String(from.artist).trim().toLowerCase()===String(track.artist).trim().toLowerCase());
-  const sameAlbum=Boolean(from.spotifyAlbum&&track.spotifyAlbum&&
-   from.spotifyAlbum===track.spotifyAlbum);
-  const proposed=transition(info,data,info.duration);
-  const musical=proposed&&proposed.kind!=="cut"&&data.introDrive>=.30;
-  const strong=musical&&(proposed.dropReleaseBridge||proposed.strongBeatBridge||
-    (proposed.kind==="beat"&&proposed.grooveScore>=.78));
-  // Prioritize an actual beat-compatible handoff above genre similarity.
-  // When a release cue is known, an unsuitable next track loses points.
-  const score=smartScore(info,data)+(strong?.18:musical?.07:0)-
-    (info.dropRelease&&!musical?.13:0)+
-    (sameArtist?.06:0)+(sameAlbum?.035:0);
-  return {id:track.id,score};
- }).sort((a,b)=>b.score-a.score);
- const original=ranking.find(x=>x.id===initialFirst),winner=ranking[0];
- // Modifica solo una coda casuale AUTOMATICA se il miglioramento è netto.
- if(winner&&winner.id!==initialFirst&&winner.score>=(isIOS?.68:.76)&&
-    (!original||winner.score-original.score>=(isIOS?.05:.065))){
-  app.mixSelectShuffle({fromId,initialFirst,pickId:winner.id});
+ // When the deep index hasn't covered the library, decode only a bounded,
+ // distributed sample. Prefer the already scheduled next songs and spread
+ // the remainder across the playlist rather than just alphabetic entries.
+ const extra=unknown.length?Math.min(isIOS?3:8,unknown.length):0;
+ const picked=[];
+ for(const t of sequence.slice(0,3)){
+  if(unknown.some(x=>x.id===t.id)&&!picked.some(x=>x.id===t.id))picked.push(t);
  }
+ for(let i=0;picked.length<extra&&i<extra*3;i++){
+  const at=Math.min(unknown.length-1,Math.floor((i+.5)*unknown.length/(extra*3)));
+  const t=unknown[at];
+  if(t&&!picked.some(x=>x.id===t.id))picked.push(t);
+ }
+ const measured=indexed.slice();
+ // At most two extra MP3 decodes concurrently. This is optional;
+ // a fully indexed library never needs a bulk fetch.
+ let cursor=0;
+ async function worker(){
+  while(cursor<picked.length){
+   const t=picked[cursor++];
+   if(!enabled||app.currentId()!==fromId||
+      audio.duration-audio.currentTime<25)return;
+   const info=await decode(t);
+   if(info)measured.push({track:t,info});
+  }
+ }
+ if(picked.length)await Promise.all([worker(),worker()]);
+ if(!enabled||app.currentId()!==fromId||
+    window.MusicBoxRoom?.isActive()||
+    audio.duration-audio.currentTime<22)return {retry:false};
+ // Count only physically justified BEAT plans, not a similarly keyed
+ // song with a random groove. No candidate -> keep current order and
+ // the verified quiet/silence fallback.
+ const scored=[];
+ for(const {track,info} of measured){
+  if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
+     !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
+     !Number.isFinite(info.introDrive)||info.introDrive<.30)continue;
+  const firstLyric=app.mixLyricCues?.(track.id)?.first;
+  const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
+  const cue=transition(old,next,audio.duration);
+  const verified=Boolean(cue&&cue.kind==="beat"&&cue.fade>=3.4&&
+    (cue.instrumentalBeatBridge||cue.dropReleaseBridge||
+     cue.strongBeatBridge||cue.grooveScore>=.78));
+  if(!verified)continue;
+  // Real source measurements and valid cue outweigh global BPM similarity.
+  const score=1+(Number(cue.grooveScore)||0)*.22+
+   (Number(cue.score)||0)/100*.15+
+   Math.min(.12,Math.max(0,cue.fade)/45);
+  scored.push({track,cue,score});
+ }
+ scored.sort((a,b)=>b.score-a.score);
+ const best=scored[0],current=scored.find(x=>x.track.id===initialFirst);
+ const noMatch=!best;
+ if(best&&best.track.id!==initialFirst&&
+    (!current||best.score>current.score+.045)){
+  const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
+  if(selected){
+   console.info("[Music Box DJ] Scelta automatica: beat verificato in libreria",
+    {outgoing:fromId,incoming:best.track.id,fade:best.cue.fade.toFixed(1),
+     checked:measured.length,available:pool.length});
+   return {retry:false,selected:true};
+  }
+ }
+ // If analysis coverage is incomplete, retry later once more metadata
+ // becomes available, instead of permanently locking the song to silence.
+ return {retry:unknown.length>picked.length&&!scored.length,
+  checked:measured.length,missing:unknown.length,noMatch};
 }
+let shuffleBusy=false,shuffleRetryAt=0,shuffleAttempts=0;
 function maybeReorderShuffle(app,audio,id){
- if(!enabled||shuffleRunFor===id)return;
+ if(!enabled||shuffleBusy||shuffleRunFor===id||
+    Date.now()<shuffleRetryAt||shuffleAttempts>=4)return;
  const list=app.mixShuffleCandidates?.();
- if(!list||list.length<2)return;
- shuffleRunFor=id;
- intelligentShuffle(app,audio,id).catch(()=>{});
+ if(!list?.length)return;
+ shuffleBusy=true;shuffleAttempts++;
+ intelligentShuffle(app,audio,id).then(result=>{
+  if(app.currentId()!==id)return;
+  if(result?.selected||!result?.retry)shuffleRunFor=id;
+  else shuffleRetryAt=Date.now()+Math.min(20000,6000*shuffleAttempts);
+ }).catch(error=>{
+  if(app.currentId()===id)shuffleRetryAt=Date.now()+12000;
+ }).finally(()=>{shuffleBusy=false});
 }
-
 function smartScore(a,b){
  if(!a||!b||a.durationMismatch||b.durationMismatch)return -Infinity;
  // Half-time and double-time are the same pulse, but not identical BPM.
