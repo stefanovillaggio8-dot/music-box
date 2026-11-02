@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=10;
+const ANALYSIS_VERSION=11; // end-note/start-note signature
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -292,11 +292,20 @@ function analyzeFrames(buf){
  const safeIntroAt=hasAudio&&audibleStart>=.85&&introBlocks.length>=4&&
   introBlocks.every(v=>v<=Math.max(.0007,typical*.018))?
    Math.max(0,audibleStart-.12):0;
+ // Final attack is a tentative note position, never a reason to cut speech.
+ let lastNoteAt=null;
+ const onsetFrom=Math.max(1,Math.ceil((audibleEnd-2.3)/step));
+ const onsetUntil=Math.min(diff.length-2,Math.floor((audibleEnd-.38)/step));
+ const threshold=Math.max(.003,level*.13);
+ for(let i=onsetFrom;i<=onsetUntil;i++)
+  if(diff[i]>threshold&&energy[i]>gate*.85&&
+     diff[i]>=Math.max(diff[i-1]||0,diff[i+1]||0))
+   lastNoteAt=i*step;
  const silentTail=blocks.slice(Math.ceil(audibleEnd/(group*step)));
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -415,6 +424,8 @@ async function decode(track,needClip=false){
     const result={...frame,chroma:harmonies,
      introChroma:chroma(decoded,0,introTo),
      outroChroma:chroma(decoded,outroFrom,Math.min(decoded.duration,frame.last)),
+      introNotes:chroma(decoded,frame.first,Math.min(decoded.duration,frame.first+5)),
+      outroNotes:chroma(decoded,Math.max(0,frame.last-5),Math.min(decoded.duration,frame.last)),
      duration:decoded.duration,durationMismatch};
     // Keep the NEXT intro, not every analyzed shuffle candidate in RAM.
      if(isIOS&&!document.hidden&&(needClip||bridge()?.mixNext?.()?.id===track.id))
@@ -463,6 +474,20 @@ function hasReliableHarmony(ch){
  const v=ch.slice().sort((a,b)=>b-a);
  return v[0]>=.117&&v.slice(0,4).reduce((a,b)=>a+b,0)>=.435;
 }
+function similarNotes(a,b){
+ const tail=a?.outroNotes||a?.outroChroma||a?.chroma;
+ const intro=b?.introNotes||b?.introChroma||b?.chroma;
+ if(!hasReliableHarmony(tail)||!hasReliableHarmony(intro))
+  return {matches:false,score:null,reason:"uncertain"};
+ const score=compatibility({chroma:tail},{chroma:intro});
+ const ranked=arr=>arr.map((value,n)=>({value,n})).sort((x,y)=>y.value-x.value);
+ const ta=ranked(tail),tb=ranked(intro);
+ const shared=ta.slice(0,3).some(x=>tb.slice(0,3).some(y=>y.n===x.n));
+ const fifth=ta.slice(0,2).some(x=>tb.slice(0,2).some(y=>
+  [5,7].includes((x.n-y.n+12)%12)));
+ const matches=score>=.78&&(shared||(fifth&&score>=.88));
+ return {matches,score,reason:matches?"similar":"different"};
+}
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
@@ -472,7 +497,7 @@ function transition(a,b,actualDuration){
  const musicalEnd=trim?Math.min(dur,a.last):dur;
  // Never jump ahead into a quiet, real introduction.
  const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
- const end=clamp(musicalEnd+(trim?.07:-.04),13,dur-.025);
+ let end=clamp(musicalEnd+(trim?.07:-.04),13,dur-.025);
  let safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):null;
  // Timed karaoke can reveal a full instrumental outro even when its
  // drums remain loud. Keep a generous 8-second margin after the last lyric.
@@ -485,6 +510,13 @@ function transition(a,b,actualDuration){
   }else if(safe!==null)safe=Math.max(safe,a.lastLyricAt+8);
   if(safe!==null)safe=Math.min(end,safe);
  }
+ const notes=similarNotes(a,b);
+ // Final note starts after the proven quiet tail and well after last vocals.
+ const note=Number(a.lastNoteAt);
+ const safeNote=Number.isFinite(a.lastNoteAt)&&safe!==null&&
+  note>=safe+2.8&&note<=end-.30&&end-note<=2.3&&
+  (!Number.isFinite(a.lastLyricAt)||note>=a.lastLyricAt+8);
+ if(notes.matches&&safeNote)end=Math.min(end,note-.10);
  const available=safe===null?0:end-safe;
  const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
    trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe,
@@ -506,7 +538,9 @@ function transition(a,b,actualDuration){
  const headHarmony=b.introChroma||b.chroma;
  const reliable=hasReliableHarmony(tailHarmony)&&hasReliableHarmony(headHarmony);
  const harmonic=reliable?compatibility({chroma:tailHarmony},{chroma:headHarmony}):null;
- const compatible=beatClose&&harmonic!==null&&harmonic>=.75;
+ const compatible=beatClose&&notes.matches&&harmonic!==null&&harmonic>=.75;
+ // Similar BPM alone is not enough to overlap mismatched notes.
+ if(!notes.matches)return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  const earlyNextVoice=Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8;
  const longMix=compatible&&available>=4.4&&!earlyNextVoice;
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
@@ -533,7 +567,7 @@ function transition(a,b,actualDuration){
  const nextBeat=beatPeriod&&Number.isFinite(b.introBeat)?b.introBeat-entry:null;
  return {...common,begin,end,fade:effectiveFade,kind:finalKind,tempo,gain,
   beatPeriod,beatAnchor,nextBeat,
-  score:harmonic===null?null:Math.round(harmonic*100)};
+  score:notes.score===null?null:Math.round(notes.score*100)};
 }
 function keyGuess(ch){
  if(!Array.isArray(ch)||ch.length!==12)return null;
@@ -1207,9 +1241,10 @@ function smartScore(a,b){
   Math.abs(Math.log2(bpmA/(bpmB*scale)))));
  const beat=clamp(1-delta/.4,0,1);
  const tail=a.outroChroma||a.chroma,head=b.introChroma||b.chroma;
- const harmony=tail&&head?compatibility({chroma:tail},{chroma:head}):.55;
+ const notes=similarNotes(a,b);
+ const harmony=notes.matches?notes.score:0;
  const level=a.level&&b.level?clamp(1-Math.abs(Math.log2(a.level/b.level))/3,0,1):.5;
- return beat*.7+harmony*.2+level*.1;
+ return beat*.35+harmony*.55+level*.1;
 }
 async function suggestSmartOrder(){
  const app=bridge(),state=$("mixSmartStatus"),list=$("mixSmartList"),add=$("mixSmartAdd");
