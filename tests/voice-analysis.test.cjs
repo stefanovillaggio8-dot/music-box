@@ -60,3 +60,26 @@ test("real YAMNet voice classes include narrated and child speech",()=>{
  const out=moduleInstance().evaluate(fakeBuffer(),model,{last:80});
  assert.ok(out.lastVoiceAt>=79);
 });
+
+test("async on-device voice scan yields between synchronous model batches",async()=>{
+ const model=moduleInstance();
+ let calls=0,yielded=false;
+ const originalSetTimeout=globalThis.setTimeout;
+ // The classifier must see microtask/timer yields rather than block the
+ // whole analysis continuously on the music player's UI thread.
+ const task=model.evaluateAsync(fakeBuffer(),{classify(samples){
+  calls++;
+  return [{classifications:[{categories:[
+   {categoryName:"Singing",score:samples[0]>.2?.81:.02}
+  ]}]}];
+ }},{last:80});
+ await new Promise(resolve=>setTimeout(()=>{yielded=calls>0;resolve()},0));
+ const result=await task;
+ assert.ok(yielded&&calls>5&&result?.lastVoiceAt>=78);
+});
+test("async classifier errors do not stop the music player",async()=>{
+ const out=await moduleInstance().evaluateAsync(fakeBuffer(),{
+  classify(){throw Error("model busy")}
+ },{last:80});
+ assert.equal(out,null);
+});
