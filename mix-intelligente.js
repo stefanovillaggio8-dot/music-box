@@ -925,11 +925,6 @@ function tick(){
  if(previousId!==id){
   cancel();previousId=id;plannedFor="";plan=null;shuffleRunFor="";
  }
- // Solo dopo aver registrato il brano corrente: una singola ottimizzazione
- // per traccia, anche quando il timer chiama tick ogni mezzo secondo.
- if(app&&audio&&!audio.paused&&Number.isFinite(audio.duration)&&
-    audio.duration-audio.currentTime>25)
-   maybeReorderShuffle(app,audio,id);
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
   const fromId=id,target=next.id,duration=audio.duration;
@@ -968,6 +963,13 @@ function tick(){
    decode(next).then(value=>{b=value;update()}).catch(()=>{});
   }
  }
+ // Don't allow shuffle candidate downloads to monopolize Safari's
+ // single decoder while the next track has not been prepared for the mix.
+ const nextSource=app.mixUrl?.(next)||next.url;
+ const canReorder=!isIOS||mobileIntroClips.has(String(nextSource))||
+   (!mobileOverlayEnabled&&cache.has(String(nextSource)));
+ if(canReorder&&audio.duration-audio.currentTime>(isIOS?60:25))
+  maybeReorderShuffle(app,audio,id);
  if(!plan){resetMobileFade();return;}
  // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
  const lastKnownLyric=app.mixLyricCues?.(id)?.last;
@@ -1376,7 +1378,7 @@ function start(){
   }
  });
  draw();
- setInterval(()=>{try{tick()}catch(e){}},500);
+ setInterval(()=>{try{tick()}catch(e){}},isIOS?220:350);
  document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
    // This event still fires when foreground timers are suspended.
