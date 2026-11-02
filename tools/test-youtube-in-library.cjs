@@ -46,7 +46,8 @@ assert(src.includes("const ownLinks=await _ytBraniDalCloud(_nomeYT);") &&
 assert(src.includes('_ytAggiornaVociLibreria(previous,selected,true)'));
 assert(src.includes('if (t.source==="youtube-link" && t.youtubeId)'));
 assert(src.includes('list=list.filter(t=>!t.youtubeId)'));
-assert(src.includes('if (t.builtin && !t.youtubeId && !isCached(t))'));
+assert(src.includes('if (t.url && !t.youtubeId && !t.preview && !isCached(t) &&'),
+       'Playable non-YouTube audio must retain its caching safeguard');
 assert(src.includes('if(!t.youtubeId) {'));
 assert(!page.includes('id="btnMieiVideoYT"'));
 assert(/<script src="app\.js\?v=\d+"><\/script>/.test(page),"App script must be versioned");
