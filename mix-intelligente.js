@@ -98,10 +98,11 @@ async function saveAnalysis(source,data){
 }
 
 const allowedStyles=new Set(["auto","fade","rise"]);
-let style="auto",mixSeconds=6;
+let style="auto",mixSeconds=6,mobileOverlayEnabled=true;
 try{
  const stored=localStorage.getItem("mb.mixStyle");
  if(allowedStyles.has(stored))style=stored;
+ mobileOverlayEnabled=localStorage.getItem("mb.mixIphone")!=="off";
  const secs=Number(localStorage.getItem("mb.mixSeconds"));
  if(Number.isFinite(secs)&&secs>=3&&secs<=12)mixSeconds=secs;
 }catch(e){}
@@ -536,7 +537,7 @@ function stopMobileMix(){
  try{act.gain.disconnect()}catch(e){}
 }
 function startMobileMix(song,p,app,old){
- if(!isIOS||document.hidden||mobileActive||!p||
+ if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
     p.kind!=="beat"||p.fade<3.5||!Number.isFinite(p.safeOutroAt)||
     old.currentTime<p.safeOutroAt-.1)return false;
  const ctx=app.mixRunningContext?.();
@@ -779,6 +780,7 @@ function tick(){
  // iOS suspends/limits JS timers behind the lock screen. Leave the native
  // single HTML audio uninterrupted until Safari restores this page.
  if(isIOS&&document.hidden){
+  if(mobileActive)stopMobileMix();
   if(active||prepared||mobileFading)cancel();
   return;
  }
@@ -791,6 +793,7 @@ function tick(){
   if(document.hidden){stopMobileMix();return}
   if(mobileActive.handingOff){finishMobileMix(app);return}
   if(!audio||audio!==mobileActive.old||audio.paused||
+     mobileActive.ctx.state!=="running"||
      id!==mobileActive.fromId||next?.id!==mobileActive.track.id){
    stopMobileMix();
   }else{
@@ -927,6 +930,12 @@ function updateDetails(a,b){
      " · passaggio normale, senza mix forzato");
 }
 function draw(){
+ const row=$("mixIphoneRow"),toggle=$("mixIphoneToggle");
+ if(row)row.hidden=!isIOS;
+ if(toggle){
+  toggle.textContent=mobileOverlayEnabled?"Attivo":"Spento";
+  toggle.setAttribute("aria-pressed",String(mobileOverlayEnabled));
+ }
  const btn=$("btnMixIntelligente");
  if(btn){
   btn.setAttribute("aria-pressed",String(enabled));
@@ -1221,6 +1230,12 @@ function start(){
   settingsChanged();
  });
  $("mixToggle")?.addEventListener("click",()=>btn?.click());
+ $("mixIphoneToggle")?.addEventListener("click",()=>{
+  mobileOverlayEnabled=!mobileOverlayEnabled;
+  try{localStorage.setItem("mb.mixIphone",mobileOverlayEnabled?"on":"off")}catch(e){}
+  if(!mobileOverlayEnabled)stopMobileMix();
+  draw();
+ });
  $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio(verifyRequestedTrackId).catch(()=>{});});
  $("mixSmartOrder")?.addEventListener("click",()=>{
   suggestSmartOrder().catch(e=>{
