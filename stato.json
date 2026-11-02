@@ -4844,13 +4844,13 @@
    },
    "[\"lo stesso viso\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, da blonde\"]": {
     "v": 0,
-    "s": 87,
+    "s": 100,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, da blonde\"]": {
     "v": 0,
-    "s": 87,
+    "s": 100,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
@@ -4973,6 +4973,18 @@
     "s": 1,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
+   },
+   "[\"nei treni la notte\",\"frah quintale\"]": {
+    "v": 0,
+    "s": 70,
+    "t": "nei treni la notte",
+    "a": "frah quintale"
+   },
+   "m:2026-11|[\"nei treni la notte\",\"frah quintale\"]": {
+    "v": 0,
+    "s": 70,
+    "t": "nei treni la notte",
+    "a": "frah quintale"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5633,18 +5645,6 @@
     "s": 1,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
-   },
-   "[\"nei treni la notte\",\"frah quintale\"]": {
-    "v": 0,
-    "s": 70,
-    "t": "nei treni la notte",
-    "a": "frah quintale"
-   },
-   "m:2026-11|[\"nei treni la notte\",\"frah quintale\"]": {
-    "v": 0,
-    "s": 70,
-    "t": "nei treni la notte",
-    "a": "frah quintale"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6990,6 +6990,18 @@
     "t": "Le parole piÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
+   "[\"un'idea\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 52,
+    "t": "un'idea",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"un'idea\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 52,
+    "t": "un'idea",
+    "a": "nayt, 3D"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -7661,18 +7673,6 @@
     "s": 1,
     "t": "Le parole piÃÂ¹ grandi",
     "a": "Coez"
-   },
-   "[\"un'idea\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 52,
-    "t": "un'idea",
-    "a": "nayt, 3D"
-   },
-   "m:2026-11|[\"un'idea\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 52,
-    "t": "un'idea",
-    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -8346,6 +8346,18 @@
     "t": "Le parole piÃ¹ grandi",
     "a": "Coez"
    },
+   "[\"mentre tutto score\",\"negromaro\"]": {
+    "v": 0,
+    "s": 81,
+    "t": "Mentre Tutto Score",
+    "a": "Negromaro"
+   },
+   "m:2026-11|[\"mentre tutto score\",\"negromaro\"]": {
+    "v": 0,
+    "s": 81,
+    "t": "Mentre Tutto Score",
+    "a": "Negromaro"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -9018,17 +9030,17 @@
     "t": "Le parole più grandi",
     "a": "Coez"
    },
-   "[\"mentre tutto score\",\"negromaro\"]": {
+   "[\"una direzione giãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâ\",\"thasup\"]": {
     "v": 0,
-    "s": 20,
-    "t": "Mentre Tutto Score",
-    "a": "Negromaro"
+    "s": 21,
+    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "thasup"
    },
-   "m:2026-11|[\"mentre tutto score\",\"negromaro\"]": {
+   "m:2026-11|[\"una direzione giãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâãâ\",\"thasup\"]": {
     "v": 0,
-    "s": 20,
-    "t": "Mentre Tutto Score",
-    "a": "Negromaro"
+    "s": 21,
+    "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
+    "a": "thasup"
    }
   },
   "Diego": {
