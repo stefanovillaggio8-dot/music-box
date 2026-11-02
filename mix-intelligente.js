@@ -1997,6 +1997,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
   // Taglia SOLO un'introduzione effettivamente muta già verificata.
   // Non aspettare la fine della precedente se il player ne ha i dati pronti.
   introStart:(id)=>{
+   // Turning DJ Mix OFF must also disable previously measured intro skips.
+   // Otherwise the player still behaved like Mix was active on iPhone.
+   if(!enabled)return 0;
    const app=bridge(),track=app?.allTracks()?.find(t=>t.id===id);
    if(!track)return 0;
    const source=app.mixUrl?.(track)||track.url;
