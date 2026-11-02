@@ -5764,7 +5764,7 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   // Do not retry forever, and never modify offline audio files.
   if((errorCode===2||errorCode===3||errorCode===4)&&
      !t._mbRicaricaMp3Provata){
-    const source=String(_urlDelBrano(t)||"");
+    const source=String(audio?.currentSrc||audio?.src||_urlDelBrano(t)||"");
     if(/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box-brani\/main\/songs\//i.test(source)){
       t._mbRicaricaMp3Provata=true;
       try{
@@ -6001,7 +6001,9 @@ function rebuildAudio(autoplay) {
   const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
   if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
   audio = createAudio();
-  _assegnaAudioSorgente(audio,_urlDelBrano(t));
+  const replacement=String(_urlDelBrano(t)||"");
+  _assegnaAudioSorgente(audio,t._mbNormalFallbackTried?
+    replacement.replace("/bassi/","/"):replacement);
   _applicaAudio();
   try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
   if (autoplay) doPlay();
