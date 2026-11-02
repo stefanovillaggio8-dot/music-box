@@ -15,7 +15,8 @@ function rememberMobileClip(key,decoded,info){
   const rate=decoded.sampleRate;
   const start=Math.max(0,(info.safeIntroAt||0)-.2);
   const offset=Math.floor(start*rate);
-  const count=Math.min(Math.floor(14*rate),decoded.length-offset);
+  // Longer bounded preview covers delayed Safari startup.
+   const count=Math.min(Math.floor(21*rate),decoded.length-offset);
   if(count<rate*4)return;
   const channels=[];
   for(let c=0;c<Math.min(2,decoded.numberOfChannels);c++)
@@ -415,7 +416,9 @@ async function decode(track,needClip=false){
      introChroma:chroma(decoded,0,introTo),
      outroChroma:chroma(decoded,outroFrom,Math.min(decoded.duration,frame.last)),
      duration:decoded.duration,durationMismatch};
-    if(isIOS&&!document.hidden)rememberMobileClip(key,decoded,frame);
+    // Keep the NEXT intro, not every analyzed shuffle candidate in RAM.
+     if(isIOS&&!document.hidden&&(needClip||bridge()?.mixNext?.()?.id===track.id))
+      rememberMobileClip(key,decoded,frame);
     cache.set(key,result);
     saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
@@ -680,29 +683,40 @@ function startMobileMix(song,p,app,old){
  }
 }
 function finishMobileMix(app){
- const act=mobileActive;
- if(!act||!act.handingOff)return;
- const audio=app?.audio?.();
- if(!audio||app.currentId()!==act.track.id){
-  if(Date.now()-act.handoffAt>8000)stopMobileMix();
-  return;
- }
- if(!audio.paused&&audio.readyState>=2&&!audio.seeking){
-  const elapsed=act.ctx.currentTime-act.started;
-  const heard=act.entry+Math.max(0,elapsed);
-  try{
-   if(audio.seekable?.length&&Number.isFinite(heard)&&
-      Math.abs(audio.currentTime-heard)>.45)
-    audio.currentTime=Math.min(heard,Math.max(0,(audio.duration||Infinity)-.5));
-  }catch(e){}
-  if(!audio.seeking){
-   // Native media has taken over; cleanly fade the short preview.
-   stopMobileMix(.16);
+  const act=mobileActive;
+  if(!act||!act.handingOff)return;
+  const audio=app?.audio?.();
+  if(!audio||app.currentId()!==act.track.id){
+   if(Date.now()>=act.timeoutAt)stopMobileMix();
+   return;
   }
- }else if(Date.now()-act.handoffAt>8000||
-          act.ctx.currentTime>act.clipEnd-.5)stopMobileMix();
-}
-function handoffMobileMix(app){
+  // A ready audio element can still be stalled on Safari. Do not remove
+  // the audible preview until the native clock demonstrably advances.
+  if(!audio.paused&&audio.readyState>=2&&!audio.seeking){
+   const heard=act.entry+Math.max(0,act.ctx.currentTime-act.started);
+   if(!act.nativeSyncDone){
+    try{
+     if(audio.seekable?.length&&Number.isFinite(heard)&&
+        Math.abs(audio.currentTime-heard)>.45)
+      audio.currentTime=Math.min(heard,Math.max(0,(audio.duration||Infinity)-.5));
+    }catch(e){}
+    act.nativeSyncDone=true;
+    act.nativeSyncAt=Date.now();
+    act.nativeSyncTime=audio.currentTime;
+    return;
+   }
+   if(Date.now()-act.nativeSyncAt>=100&&
+      audio.currentTime-act.nativeSyncTime>=.085){
+    stopMobileMix(.20);
+    return;
+   }
+  }
+  // The fallback stays bounded by the real decoded buffer, not an
+  // arbitrary eight seconds which could cause a silent handoff.
+  if(Date.now()>=act.timeoutAt||
+     act.ctx.currentTime>=act.clipEnd-.35)stopMobileMix();
+ }
+ function handoffMobileMix(app){
  const act=mobileActive;
  if(!act||act.handingOff)return;
  if(!app||app.currentId()!==act.fromId||
@@ -715,7 +729,10 @@ function handoffMobileMix(app){
   stopMobileMix();return;
  }
  act.handingOff=true;act.handoffAt=Date.now();
- const position=act.entry+Math.max(0,act.ctx.currentTime-act.started);
+  act.timeoutAt=Date.now()+Math.max(1000,Math.min(15000,
+   (act.clipEnd-act.ctx.currentTime-.4)*1000));
+  act.nativeSyncDone=false;
+  const position=act.entry+Math.max(0,act.ctx.currentTime-act.started);
  Promise.resolve(app.mixHandoff(act.track.id,position))
   .catch(()=>stopMobileMix());
 }
@@ -993,7 +1010,11 @@ function tick(){
    (!mobileOverlayEnabled&&cache.has(String(nextSource)));
  if(canReorder&&audio.duration-audio.currentTime>(isIOS?60:25))
   maybeReorderShuffle(app,audio,id);
- if(!plan){resetMobileFade();return;}
+ if(isIOS&&!document.hidden&&mobileOverlayEnabled&&
+     audio.duration-audio.currentTime>16&&
+     !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
+   decode(next,true).catch(()=>{});
+  if(!plan){resetMobileFade();return;}
  // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
  const lastKnownLyric=app.mixLyricCues?.(id)?.last;
  if(!mixing&&Number.isFinite(lastKnownLyric)&&
