@@ -550,7 +550,10 @@ async function cachedMobileAnalysis(track){
 function hasReliableHarmony(ch){
  if(!Array.isArray(ch)||ch.length!==12)return false;
  const v=ch.slice().sort((a,b)=>b-a);
- return v[0]>=.117&&v.slice(0,4).reduce((a,b)=>a+b,0)>=.435;
+ // A continuous hum or a single sustained pitch is not evidence that
+ // two arrangements harmonize. Require more than one meaningful tone.
+ return v[0]>=.117&&v[0]<.64&&v[1]>=.105&&
+  v.slice(0,4).reduce((a,b)=>a+b,0)>=.435;
 }
 function focusedChroma(ch){
  const floor=1/12*.82;
