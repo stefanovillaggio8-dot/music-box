@@ -2968,6 +2968,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"ci nasci, ci muori\",\"nayt\"]": {
+    "v": 0,
+    "s": 94,
+    "t": "Ci nasci, ci muori",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
+    "v": 0,
+    "s": 94,
+    "t": "Ci nasci, ci muori",
+    "a": "nayt"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3484,18 +3496,6 @@
     "t": "BALÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
-   "[\"ci nasci, ci muori\",\"nayt\"]": {
-    "v": 0,
-    "s": 94,
-    "t": "Ci nasci, ci muori",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
-    "v": 0,
-    "s": 94,
-    "t": "Ci nasci, ci muori",
-    "a": "nayt"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4011,6 +4011,18 @@
     "s": 72,
     "t": "BALÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
+   },
+   "[\"tiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
+    "v": 0,
+    "s": 75,
+    "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
+    "a": "Tiziano Ferro"
+   },
+   "m:2026-11|[\"tiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
+    "v": 0,
+    "s": 75,
+    "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
+    "a": "Tiziano Ferro"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4530,13 +4542,13 @@
    },
    "[\"tiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 75,
+    "s": 109,
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"tiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 75,
+    "s": 109,
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
@@ -5080,6 +5092,18 @@
     "t": "TiscatterÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
+   "[\"forte\",\"nayt\"]": {
+    "v": 0,
+    "s": 96,
+    "t": "Forte",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"forte\",\"nayt\"]": {
+    "v": 0,
+    "s": 96,
+    "t": "Forte",
+    "a": "nayt"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -5619,18 +5643,6 @@
     "s": 109,
     "t": "TiscatterÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
-   },
-   "[\"forte\",\"nayt\"]": {
-    "v": 0,
-    "s": 96,
-    "t": "Forte",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"forte\",\"nayt\"]": {
-    "v": 0,
-    "s": 96,
-    "t": "Forte",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -6408,13 +6420,13 @@
    },
    "[\"il regalo piÃ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 110,
+    "s": 124,
     "t": "Il Regalo PiÃ¹ Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 110,
+    "s": 124,
     "t": "Il Regalo PiÃ¹ Grande",
     "a": "Tiziano Ferro"
    },
@@ -6948,13 +6960,13 @@
    },
    "[\"il regalo più grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 124,
+    "s": 162,
     "t": "Il Regalo Più Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo più grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 124,
+    "s": 162,
     "t": "Il Regalo Più Grande",
     "a": "Tiziano Ferro"
    },
@@ -7251,6 +7263,18 @@
     "s": 109,
     "t": "Tiscatterò una foto",
     "a": "Tiziano Ferro"
+   },
+   "[\"ex angelo\",\"kid yugi, sfera ebbasta, shablo\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Ex Angelo",
+    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
+   },
+   "m:2026-11|[\"ex angelo\",\"kid yugi, sfera ebbasta, shablo\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Ex Angelo",
+    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
    }
   },
   "Diego": {
