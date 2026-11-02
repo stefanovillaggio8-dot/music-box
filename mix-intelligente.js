@@ -1060,12 +1060,13 @@ function strongInstrumentalBeatBridge(a,b,dur){
   // A real end/start can share the same pulse and musical phrase without
   // having an identical 3-point chord progression. Insist on either
   // convincing progression OR a particularly strong boundary/phrase match.
-  const progressionOk=(notes.alignment?.score||0)>=.56;
-  // Sustained matching notes plus a strong rhythm can certify the real
-  // boundary even if a fixed-offset chord progression slightly differs.
-  const boundaryOk=notes.focused>=.69&&notes.phrase>=.60&&
-   groove?.score>=.73;
-  if(!groove||groove.score<.68||notes.focused<.70||notes.phrase<.50||
+  // A subsecond beat junction needn't have identical chords at three
+  // widely spaced moments; a long overlap still uses the stricter tests
+  // above. Require both credible phrase notes and compatible percussion.
+  const progressionOk=(notes.alignment?.score||0)>=.50;
+  const boundaryOk=notes.focused>=.73&&notes.phrase>=.56&&
+   groove?.score>=.68;
+  if(!groove||groove.score<.64||notes.focused<.66||notes.phrase<.44||
      (!progressionOk&&!boundaryOk))return null;
   const key=camelotMatch(a,b);
   if(key.weight>.14&&key.score<.25)return null;
