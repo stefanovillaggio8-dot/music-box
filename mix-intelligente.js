@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=23; // protect full-strength final beat, skip empty-intro blends
+const ANALYSIS_VERSION=24; // deep real audio metadata and safe endings
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -54,6 +54,51 @@ function analysisDatabase(){
  });
  return analysisDbPromise;
 }
+// Deep DJ index measures real MP3 audio in bounded cloud batches.
+// New or offline songs still fall back to local waveform analysis.
+let deepIndex=null,deepIndexPromise=null;
+function deepLookup(track){
+ if(!deepIndex||!track)return null;
+ const raw=String(track.file||track.url||"");
+ const path=raw.match(/(?:^|\/)(songs\/[A-Za-z0-9/_-]+\.mp3)(?:[?#]|$)/i)?.[1];
+ if(!path)return null;
+ const keys=/\/music-box\/(?:mobile-audio|refs\/heads\/mobile-audio)\//.test(raw)?
+   ["mobile/"+path,"audio/"+path,"app/"+path]:
+   ["audio/"+path,"mobile/"+path,"app/"+path];
+ for(const key of keys){
+  const value=deepIndex.entries?.[key];
+  if(value?.status==="ok"&&value.analyzer==="librosa-onsets-chroma-rms-v1"&&
+     Number.isFinite(value.duration)&&value.duration>=26&&
+     Array.isArray(value.chroma)&&value.chroma.length===12)return value;
+ }
+ return null;
+}
+function deepStatus(){
+ const count=Number(deepIndex?.analyzed)||0,total=Number(deepIndex?.sourceCount)||0;
+ const el=$("mixDeepStatus");
+ if(el)el.textContent=total?
+   "Audio reale analizzato: "+count+"/"+total+" brani. I nuovi MP3 vengono elaborati progressivamente; gli altri usano il controllo locale.":
+   "Indice audio avanzato in preparazione. Intanto Music Box analizza localmente le transizioni.";
+}
+function loadDeepIndex(){
+ if(deepIndexPromise)return deepIndexPromise;
+ deepIndexPromise=(async()=>{
+  const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),6000);
+  try{
+   const resp=await fetch("dj-deep-analysis.json",{cache:"no-store",signal:ctrl.signal});
+   if(!resp.ok)throw Error("Indice DJ non disponibile");
+   const json=await resp.json();
+   if(json?.version!==1||!json.entries||typeof json.entries!=="object")
+    throw Error("Schema DJ non valido");
+   deepIndex=json;
+   if(enabled&&!mixing){plannedFor="";plan=null;}
+  }catch(e){deepIndex=null}
+  finally{clearTimeout(timeout);deepStatus()}
+  return deepIndex;
+ })();
+ return deepIndexPromise;
+}
+
 function canSaveAnalysis(source){
  // No tokens, signed URLs, local connection credentials or cloud sessions.
  return typeof source==="string"&&source.length<1024&&
@@ -590,6 +635,13 @@ async function decode(track,needClip=false){
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
  if(Date.now()<(unavailableAnalysis.get(key)||0))return null;
+ // Prefer measured audio features over older local cached estimates.
+ // iPhone still decodes real audio for a short native preview if needed.
+ if(!deepIndex)await loadDeepIndex();
+ const deep=deepLookup(track);
+ if(deep&&(!needClip||mobileIntroClips.has(key))){
+  cache.set(key,deep);return deep;
+ }
  if(cache.has(key)&&(!needClip||mobileIntroClips.has(key)))return cache.get(key);
  if(pending.has(key))return pending.get(key);
  const saved=await savedAnalysis(key);
@@ -746,6 +798,8 @@ async function cachedMobileAnalysis(track){
  const source=bridge()?.mixUrl?.(track)||track?.url;
  if(!source)return null;
  const key=String(source);
+ const deep=deepLookup(track);
+ if(deep){cache.set(key,deep);return deep;}
  if(cache.has(key))return cache.get(key);
  const stored=await savedAnalysis(key);
  if(stored){cache.set(key,stored);return stored}
@@ -2127,6 +2181,7 @@ function setMixEnabled(value){
  toast(enabled?"Mix intelligente attivato.":"Mix intelligente disattivato.");
 }
 function start(){
+ loadDeepIndex().catch(()=>{});
  const btn=$("btnMixIntelligente");
  btn?.addEventListener("click",()=>setMixEnabled(!enabled));
  const panel=$("mixPanel");
@@ -2188,6 +2243,7 @@ function start(){
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
 window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
+ deepProgress:()=>({analyzed:deepIndex?.analyzed||0,total:deepIndex?.sourceCount||0}),
  verifyTrack:(id)=>{
   const app=bridge(),exists=app?.allTracks()?.some(t=>t.id===id);
   const panel=$("mixPanel");
