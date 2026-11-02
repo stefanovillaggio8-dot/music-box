@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=21; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=22; // musical-release detection and intro energy, revised safe cues
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -291,6 +291,46 @@ function grooveAgreement(a,b){
  }
  return {score:clamp((high+1)/2,0,1),phase,correlation:high};
 }
+// Find a *musical* release following the final substantial hit. This is
+// deliberately different from matching the two silent ends. Never treat a
+// loud closing beat, last sung phrase, or re-attack as expendable.
+function findDropRelease(blocks,level,musicalEnd,duration){
+ if(!Array.isArray(blocks)||!Number.isFinite(level)||level<.006||
+    !Number.isFinite(musicalEnd)||musicalEnd<30||duration-musicalEnd<1.4)return null;
+ const step=.2,lo=Math.max(0,Math.floor((musicalEnd-17)/step));
+ const hi=Math.min(blocks.length-1,Math.ceil(musicalEnd/step)-1);
+ let lastStrong=-1;
+ const strong=Math.max(.004,level*.61);
+ for(let i=lo;i<=hi;i++)if((blocks[i]||0)>=strong)lastStrong=i;
+ if(lastStrong<lo)return null;
+ // Require at least 2.2 seconds of actual musical release, after the
+ // last full-energy beat. If it stays loud through the end, no early mix.
+ const afterStart=lastStrong+1,releaseAt=afterStart*step+.30;
+ const tail=blocks.slice(afterStart,hi+1);
+ const seconds=musicalEnd-releaseAt;
+ if(seconds<2.15||seconds>12||tail.length<10)return null;
+ const peak=tail.reduce((v,x)=>Math.max(v,x),0);
+ const avg=tail.reduce((v,x)=>v+x,0)/tail.length;
+ if(peak>level*.48||avg>level*.29)return null;
+ // Three different 0.6s slices must remain settled; a brief valley
+ // before a drum/drop returns is NOT a safe outgoing release.
+ for(let i=0;i+3<=tail.length;i+=3){
+  const maximum=Math.max(...tail.slice(i,i+3));
+  if(maximum>level*.46)return null;
+ }
+ return {lastImpactAt:lastStrong*step,releaseAt,
+  seconds,quietLevel:avg/Math.max(level,.001),score:Math.max(0,1-avg/level)};
+}
+function drivenIntro(blocks,level,first){
+ if(!Array.isArray(blocks)||!Number.isFinite(level)||level<.003)return 0;
+ const lo=Math.max(0,Math.floor(first/.2)),hi=Math.min(blocks.length,lo+23);
+ const slice=blocks.slice(lo,hi);
+ if(slice.length<8)return 0;
+ const average=slice.reduce((s,x)=>s+x,0)/slice.length;
+ const active=slice.filter(x=>x>=level*.28).length/slice.length;
+ return clamp((average/level)*.60+active*.40,0,1);
+}
+
 function analyzeFrames(buf){
  const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
  // Detect energy on both stereo channels: a quiet left channel must not
@@ -377,6 +417,9 @@ function analyzeFrames(buf){
  const activeRms=blocks.filter(x=>x>gate).sort((x,y)=>x-y);
  const level=activeRms.length?
   activeRms[Math.floor(activeRms.length*.65)]:0;
+ // Find the final strong beat and the release AFTER it; compare against
+ // the incoming musical attack instead of pairing two empty sections.
+ const dropRelease=findDropRelease(blocks,level,audibleEnd,duration);
  const beatConfidence=clamp(best.score,0,1);
  // Forma d'onda compressa per il pannello delle transizioni; calcolata
  // dagli stessi frame usati per individuare i silenzi. Nessun upload.
@@ -436,6 +479,10 @@ function analyzeFrames(buf){
  const safeIntroAt=hasAudio&&audibleStart>=.85&&introBlocks.length>=4&&
   introBlocks.every(v=>v<=Math.max(.0007,typical*.018))?
    Math.max(0,audibleStart-.12):0;
+ // The incoming opening must be MUSICAL at the actual playback entry:
+ // only confirmed digital silence may be skipped. A quiet ambient intro
+ // preceding the first beat is not a compatible beat-mix attack.
+ const introDrive=drivenIntro(blocks,level,safeIntroAt||0);
  // Final attack is a tentative note position, never a reason to cut speech.
  let lastNoteAt=null;
  const onsetFrom=Math.max(1,Math.ceil((audibleEnd-2.3)/step));
@@ -449,7 +496,7 @@ function analyzeFrames(buf){
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,outroBreak,introGroove,outroGroove,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,outroBreak,dropRelease,introDrive,introGroove,outroGroove,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -791,6 +838,54 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5)return null;
+ // First try a MUSICAL phrase bridge: last significant drop/beat is
+ // protected, the remaining release is genuinely quiet, and the next
+ // track starts with music rather than another quiet passage.
+ // It is better to leave a track intact than manufacture a bad transition.
+ const release=a.dropRelease;
+ if(a.confidentTail&&release&&release.releaseAt<a.last-2.1&&
+    b.introDrive>=.33&&a.beatConfidence>=.17&&b.beatConfidence>=.17){
+  const lateSinging=(Number.isFinite(a.lastLyricAt)&&
+      a.lastLyricAt>=release.releaseAt-3)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=release.releaseAt-3);
+  const nextVocal=(Number.isFinite(b.firstLyricAt)&&
+     b.firstLyricAt<=2.6)||(Number.isFinite(b.firstVoiceAt)&&
+     b.firstVoiceAt<=2.6);
+  const notes=similarNotes(a,b),groove=grooveAgreement(a,b);
+  const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
+  const ratios=[.5,1,2].map(scale=>bpmA/(bpmB*scale));
+  const ratio=ratios.reduce((best,r)=>Math.abs(Math.log2(r))<
+    Math.abs(Math.log2(best))?r:best,ratios[0]);
+  const harmonyStrong=notes.matches&&Number(notes.focused)>=.74&&
+    Number(notes.phrase)>=.55&&
+    (!notes.alignment||notes.alignment.matches);
+  // No "silence vs silence" match. Require a driven beginning and the
+  // real final beat groove, not just an approximate global key.
+  const compatible=ratio>=.95&&ratio<=1.05&&
+    groove?.score>=.73&&harmonyStrong;
+  const instrumentalTailProven=(Number.isFinite(a.lastLyricAt)&&
+    a.lastLyricAt<=release.releaseAt-3)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt<=release.releaseAt-3);
+  if(compatible&&!lateSinging&&!nextVocal&&(!isIOS||instrumentalTailProven)){
+   const end=clamp(a.last+.07,13,dur-.025);
+   // Keep the impact and a portion of its decay. The old track is never
+   // stopped before its last audible frame, only faded during its release.
+   const begin=Math.max(release.releaseAt,
+     release.lastImpactAt+1.05,end-5);
+   const fade=end-begin;
+   if(fade>=2.05&&fade<=6){
+    const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+    return {entry,begin,end,fade,kind:"beat",tempo:clamp(ratio,.97,1.03),
+      gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+      score:Math.round((notes.score??.8)*100),grooveScore:groove.score,
+      silenceTrim:true,softTailTrim:false,
+      quietCertified:instrumentalTailProven,safeOutroAt:begin,
+      trailing:Math.max(0,dur-end),dropReleaseBridge:true,
+      beatPeriod:60/bpmA,beatAnchor:release.lastImpactAt,
+      nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+   }
+  }
+ }
  // A long quiet break with a brief LOUD return is a different case.
  // Do not mistake the returning music for safe silence. Only an ending
  // already verified as instrumental (timed last lyric or a full vocal
@@ -816,7 +911,7 @@ function transition(a,b,actualDuration){
    .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best):1;
   // A matched beat and a matched chord boundary are required. These
   // conditions distinguish a useful DJ handoff from merely skipping audio.
-  if((lyricSafe||gapVoiceFree)&&!lateVoice&&
+  if((lyricSafe||gapVoiceFree)&&!lateVoice&&(b.introDrive===undefined||b.introDrive>=.32)&&
      harmony.matches&&harmony.focused>=.77&&rhythm?.score>=.79&&
      a.beatConfidence>=.2&&b.beatConfidence>=.2&&
      speed>=.96&&speed<=1.04){
@@ -850,7 +945,7 @@ function transition(a,b,actualDuration){
   const keys=camelotMatch(a,b);
   const matching=notes.matches||
     (notes.focused>=.78&&notes.phrase>=.68&&keys.score>=.90);
-  if(!protectedVoice&&!protectedLyrics&&matching&&beatDistance<=10&&
+  if(!protectedVoice&&!protectedLyrics&&(b.introDrive===undefined||b.introDrive>=.32)&&matching&&beatDistance<=10&&
      a.beatConfidence>=.12&&b.beatConfidence>=.12){
    const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
    const ratios=[.5,1,2].map(scale=>bpmA/(bpmB*scale));
@@ -938,7 +1033,7 @@ function transition(a,b,actualDuration){
   const key=camelotMatch(a,b);
   const rhythmProof=(groove&&groove.score>=.70)||
     (notes.alignment?.matches&&notes.alignment.score>=.84);
-  const canBridge=a.outroFinalNotes&&b.introAttackNotes&&
+  const canBridge=(b.introDrive===undefined||b.introDrive>=.30)&&a.outroFinalNotes&&b.introAttackNotes&&
    a.beatConfidence>=.20&&b.beatConfidence>=.20&&
    harmonicProof&&rhythmProof&&(!key.weight||key.score>=.55)&&
    tempoDelta<=.07&&!vocalLate&&!nextStartsVocal;
@@ -984,7 +1079,7 @@ function transition(a,b,actualDuration){
   // Keep an already working quiet-outro mix. When the old song has truly
   // settled, a short neutral fade is safe even without harmonic matching.
   // Never use this fallback on a loud or vocal ending.
-  if((a.quietTail===true||soft)&&Number.isFinite(safe)&&available>=2.6){
+  if((a.quietTail===true||soft)&&(b.introDrive===undefined||b.introDrive>=.30)&&Number.isFinite(safe)&&available>=2.6){
    const duration=Math.min(2.6,available-.1);
    return {...common,begin:end-duration,end,fade:duration,kind:"soft"};
   }
@@ -992,7 +1087,7 @@ function transition(a,b,actualDuration){
  }
  const earlyNextVoice=(Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8)||
   (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<8);
- const longMix=compatible&&available>=4.4&&!earlyNextVoice;
+ const longMix=compatible&&(b.introDrive===undefined||b.introDrive>=.30)&&available>=4.4&&!earlyNextVoice;
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
  const kind=style==="auto"?(longMix?"beat":"soft"):style;
  const requestedBase=kind==="beat"?
@@ -1761,8 +1856,9 @@ async function intelligentShuffle(app,audio,fromId){
  // Analisi limitata ai primi brani casuali; l'ordine manuale resta intatto.
  // Decode sequenziale per evitare picchi di RAM e connessioni concorrenti.
  const measured=[];
- for(const track of sequence.slice(0,isIOS?3:7)){
+ for(const track of sequence.slice(0,isIOS?4:9)){
   if(!enabled||app.currentId()!==fromId||window.MusicBoxRoom?.isActive())return;
+  if(audio.duration-audio.currentTime<(isIOS?65:45))break;
   const data=await decode(track);
   if(data)measured.push({track,data});
  }
@@ -1773,7 +1869,10 @@ async function intelligentShuffle(app,audio,fromId){
    String(from.artist).trim().toLowerCase()===String(track.artist).trim().toLowerCase());
   const sameAlbum=Boolean(from.spotifyAlbum&&track.spotifyAlbum&&
    from.spotifyAlbum===track.spotifyAlbum);
-  const score=smartScore(info,data)+(sameArtist?.10:0)+(sameAlbum?.05:0);
+  const proposed=transition(info,data,info.duration);
+  const musical=proposed&&proposed.kind!=="cut"&&data.introDrive>=.30;
+  const score=smartScore(info,data)+(musical?.12:0)+
+    (sameArtist?.08:0)+(sameAlbum?.04:0);
   return {id:track.id,score};
  }).sort((a,b)=>b.score-a.score);
  const original=ranking.find(x=>x.id===initialFirst),winner=ranking[0];
@@ -1809,7 +1908,8 @@ function smartScore(a,b){
   beat*.26+harmony*.39+level*.08+groove.score*.27:
   beat*.34+harmony*.56+level*.10;
  const matchedBeatBonus=groove?.score>=.80&&notes.matches&&gap<=8?.035:0;
- return clamp(base*(1-key.weight)+key.score*key.weight+matchedBeatBonus,0,1);
+ return clamp((base*(1-key.weight)+key.score*key.weight+matchedBeatBonus)*
+  ((b.introDrive===undefined||b.introDrive>=.32)?1:.73),0,1);
 }
 
 async function suggestSmartOrder(){
