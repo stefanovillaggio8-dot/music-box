@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=16; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=17; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -441,6 +441,7 @@ async function decode(track,needClip=false){
     if(decoded.duration<35)return null;
     const frame=analyzeFrames(decoded);
     const harmonies=chroma(decoded);
+     const tonal=chroma(decoded,0,decoded.duration,true);
     const expected=Number(track.spotifyDurationMs||0)/1000||
      Number(track.expectedDurationSec||0);
     const durationMismatch=expected>20&&
@@ -465,7 +466,7 @@ async function decode(track,needClip=false){
      duration:decoded.duration,durationMismatch,
       camelot:/^(?:[1-9]|1[0-2])[AB]$/.test(String(track.camelot||track.camelotKey||"").toUpperCase())?
        {code:String(track.camelot||track.camelotKey).toUpperCase(),confidence:1}:
-       camelotEstimate(harmonies)};
+       (camelotEstimate(tonal)||camelotEstimate(harmonies))};
     // Keep the NEXT intro, not every analyzed shuffle candidate in RAM.
      if(isIOS&&!document.hidden&&(needClip||bridge()?.mixNext?.()?.id===track.id))
       rememberMobileClip(key,decoded,frame);
@@ -1364,7 +1365,7 @@ function updateDetails(a,b){
  }
  const fmt=(obj)=>obj?
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
-    keyGuess(obj.chroma)||"tonalità da verificare"].join(" · "):
+    (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
  const description=plan?.silenceTrim?
    " · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
@@ -1562,7 +1563,6 @@ async function suggestSmartOrder(){
   if(!Number.isFinite(score)||score<.59)break;
   ranked.push({...chosen,score});
   previous=chosen.info;
-  previous=chosen.info;
  }
  // Se l'utente ha cambiato canzone o playlist, non proporgli una coda vecchia.
  if(app.currentId()!==currentId || window.MusicBoxRoom?.isActive()){
@@ -1570,7 +1570,13 @@ async function suggestSmartOrder(){
   return;
  }
  smartSuggested=ranked.map(x=>x.track.id);
- if(state)state.textContent="Sequenza consigliata · "+entries.length+" audio analizzati (stima). Nessun cambiamento ancora applicato.";
+ if(!ranked.length){
+  if(state)state.textContent="Nessuna coppia sufficientemente armonica in questo gruppo. La coda resta invariata.";
+  if(add)add.disabled=true;
+  return;
+ }
+ if(state)state.textContent="Sequenza consigliata · "+entries.length+
+  " brani analizzati confrontando tempo, Camelot e note reali (stime).";
  if(list){
   const fragment=document.createDocumentFragment();
   ranked.forEach((x,i)=>{
@@ -1579,7 +1585,7 @@ async function suggestSmartOrder(){
    name.textContent=(i+1)+". "+String(x.track.title||"Brano");
    const details=document.createElement("small");
    details.textContent=(x.track.artist?x.track.artist+" · ":"")+
-     x.info.bpm+" BPM · "+(keyGuess(x.info.chroma)||"tonalità non disponibile");
+     x.info.bpm+" BPM · "+((x.info.camelot?.code?"Camelot "+x.info.camelot.code+" (stima)":keyGuess(x.info.chroma))||"tonalità non disponibile");
    row.append(name,details);fragment.appendChild(row);
   });
   list.replaceChildren(fragment);
