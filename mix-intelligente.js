@@ -1043,6 +1043,45 @@ function strongInstrumentalBeatBridge(a,b,dur){
   beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
 }
+
+ // A measured late-bar bridge: no absolute silence is needed.
+ // Real librosa confidence clusters around .24; .30 filtered almost everything.
+ function measuredBeatBridge(a,b,dur){
+  if(!a||!b||a.durationMismatch||b.durationMismatch||
+     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+     a.beatConfidence<.18||b.beatConfidence<.18||
+     b.introDrive<.30||a.protectedEnding===true||
+     !hasReliableHarmony(a.outroFinalNotes)||!hasReliableHarmony(b.introAttackNotes))
+   return null;
+  const speeds=[.5,1,2].map(k=>a.bpm/(b.bpm*k));
+  const ratio=speeds.reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+  if(!Number.isFinite(ratio)||ratio<.955||ratio>1.045)return null;
+  const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
+  if(!groove||groove.score<.72||notes.focused<.70||notes.phrase<.50||
+     (notes.alignment?.score>0&&notes.alignment.score<.57))return null;
+  const key=camelotMatch(a,b);
+  if(key.weight>.14&&key.score<.25)return null;
+  const end=clamp((Number.isFinite(a.last)?a.last:dur)+.055,25,dur-.035);
+  if(end<26||dur-end>13||
+     (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-7)||
+     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-4.6)||
+     (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2.6)||
+     (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2.6))return null;
+  const safe=Boolean((Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=end-9)||
+     (a.voiceModel&&a.voiceScannedEnd>=end-1&&
+      (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-6.5)));
+  const fade=safe?3.95:2.85,begin=end-fade;
+  const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+  const trim=Boolean(a.confidentTail&&dur-a.last>=1.65);
+  return {entry,begin,end,fade,kind:"beat",tempo:clamp(ratio,.97,1.03),
+   gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+   score:Math.round((notes.score||notes.focused)*100),
+   grooveScore:groove.score,measuredBeatBridge:true,
+   preserveTail:!safe,quietCertified:safe,safeOutroAt:safe?begin:null,
+   silenceTrim:trim,softTailTrim:false,trailing:trim?dur-end:0,
+   beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
+   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+ }
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
@@ -1050,6 +1089,8 @@ function transition(a,b,actualDuration){
     Math.abs(a.duration-dur)>1.5)return null;
  const activeBeat=strongInstrumentalBeatBridge(a,b,dur);
  if(activeBeat)return activeBeat;
+ const measured=measuredBeatBridge(a,b,dur);
+ if(measured)return measured;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
  // protected, the remaining release is genuinely quiet, and the next
  // track starts with music rather than another quiet passage.
@@ -1778,7 +1819,7 @@ async function beginMix(song,proposed){
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
-  softTail:!!proposed.softTailTrim,
+  softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
@@ -1823,7 +1864,12 @@ async function beginMix(song,proposed){
    const vol=app.volume();
    // Dedicated curve: the first track stays audible until its last
    // fraction, and the second song enters quietly beneath matching notes.
-   const {outGain,inGain}=mixCurve(act.kind,time,act.softTail);
+   let {outGain,inGain}=mixCurve(act.kind,time,act.softTail);
+   if(act.preserveTail){
+    const late=clamp((time-.55)/.45,0,1);
+    outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
+    inGain=Math.sin(Math.pow(time,.95)*Math.PI/2);
+   }
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     old.volume=clamp(vol*outGain,0,1);
@@ -2230,7 +2276,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.instrumentalBeatBridge?
+ const description=plan?.measuredBeatBridge?
+   " · beat reali compatibili: mix anticipato":
+   plan?.instrumentalBeatBridge?
    " · beat finale e iniziale compatibili: mix anticipato senza silenzio":
    plan?.lateInstrumentalBreak?
    " · pausa lunga prima dell'ultimo strumentale: passaggio protetto":
@@ -2392,9 +2440,9 @@ async function intelligentShuffle(app,audio,fromId){
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   const cue=transition(old,next,audio.duration);
-  const verified=Boolean(cue&&cue.kind==="beat"&&cue.fade>=3.4&&
+  const verified=Boolean(cue&&cue.kind==="beat"&&cue.fade>=2.7&&
     (cue.instrumentalBeatBridge||cue.dropReleaseBridge||
-     cue.strongBeatBridge||cue.grooveScore>=.78));
+     cue.strongBeatBridge||cue.measuredBeatBridge||cue.grooveScore>=.78));
   if(!verified)continue;
   // Real source measurements and valid cue outweigh global BPM similarity.
   const score=1+(Number(cue.grooveScore)||0)*.22+
@@ -2758,6 +2806,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    confidentTail:!!a?.confidentTail,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
    instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
+   measuredBeatBridge:!!plan?.measuredBeatBridge,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,
    shuffleBusy,
