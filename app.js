@@ -6766,6 +6766,13 @@ box.innerHTML = "";
         }));
       }
 
+  // Copy an existing MP3 or a YouTube cloud audio reference into any
+  // chosen account, without reuploading or importing the video twice.
+  if (_idPerCopia(t)) {
+    box.appendChild(quickAction("Copia in un altro account", ICON_LIBRARY, () => {
+      _chiediAccountPerCopia([t.id]);
+    }));
+  }
   /* "Solo nella playlist": sparisce dalla libreria ma resta suonabile
      dentro la playlist. Serve a chi ha brani da usare in un momento
      preciso (allenamento) e non li vuole mischiati con gli altri. */
