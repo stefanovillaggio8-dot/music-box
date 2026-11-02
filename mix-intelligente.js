@@ -1064,7 +1064,7 @@ function strongInstrumentalBeatBridge(a,b,dur){
   // Sustained matching notes plus a strong rhythm can certify the real
   // boundary even if a fixed-offset chord progression slightly differs.
   const boundaryOk=notes.focused>=.69&&notes.phrase>=.60&&
-   groove.score>=.73;
+   groove?.score>=.73;
   if(!groove||groove.score<.68||notes.focused<.70||notes.phrase<.50||
      (!progressionOk&&!boundaryOk))return null;
   const key=camelotMatch(a,b);
