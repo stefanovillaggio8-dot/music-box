@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.551";
+  const APP_VERSION = "6.552";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12164,32 +12164,17 @@ $("fabMenu").addEventListener("click", (e) => {
     toast("Controllo la nuova versione e aggiorno Music Box...");
     try {
       if ("serviceWorker" in navigator) {
-        const reg = await navigator.serviceWorker.getRegistration();
+        // The version badge is a direct user refresh request. Waiting for an
+        // installing worker used to delay navigation for up to 8.5 seconds,
+        // making the button appear inert. Update worker asynchronously;
+        // navigation uses a cache-busting URL and network-first HTML.
+        const reg = await Promise.race([
+          navigator.serviceWorker.getRegistration(),
+          new Promise(resolve => setTimeout(() => resolve(null), 750))
+        ]);
         if (reg) {
-          // Update the registration BEFORE navigating to the new page.
-          await Promise.race([
-            reg.update().catch(() => {}),
-            new Promise(resolve => setTimeout(resolve, 5000))
-          ]);
-          // An installing worker needs to reach 'installed' before waiting
-          // becomes available. Never block the user's refresh indefinitely.
-          if (reg.installing && !reg.waiting) {
-            const installing = reg.installing;
-            await Promise.race([
-              new Promise(resolve => {
-                if (installing.state === "installed" || installing.state === "activated" ||
-                    installing.state === "redundant") return resolve();
-                installing.addEventListener("statechange", function changed() {
-                  if (["installed","activated","redundant"].includes(installing.state)) {
-                    installing.removeEventListener("statechange", changed);
-                    resolve();
-                  }
-                });
-              }),
-              new Promise(resolve => setTimeout(resolve, 3500))
-            ]);
-          }
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          reg.update().catch(() => {});
         }
       }
     } catch (e) {
