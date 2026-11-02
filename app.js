@@ -6743,7 +6743,7 @@ function rebuildAudio(autoplay) {
   const ICON_QUEUE = "M3 6h18v2H3V6Zm0 5h11v2H3v-2Zm0 5h11v2H3v-2Zm13-6 4 3-4 3v-6Z";
   /* Libreria: la usano i comandi "solo nella playlist" / "torna in
      libreria", cosi' si distinguono da quelli delle playlist. */
-  const ICON_LIBRARY = "M4 4h4v16H4V4Zm6 0h4v16h-4V4Zm7.2.4 1.4 14.4-4.2 1.4-14.4Z";
+  const ICON_LIBRARY = "M4 4h4v16H4V4Zm6 0h4v16h-4V4ZM17 4l4 15-3.8 1-4-15Z";
 const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83Z";
   const ICON_NEXT = "M6 5l9 7-9 7V5Zm10 0h2v14h-2V5Z";
   const ICON_HIDE = "M3.3 2 2 3.3l2.4 2.4C2.5 7 1.4 8.7 1 9c1.1 2.3 4 5 7 6l2 2 1.3-1.3 15.4 15.4 1.3-1.3L3.3 2ZM12 5c4.4 0 8 4 8 4-.5 1-1.6 2.4-3.1 3.5l-1.5-1.5c1-.9 1.6-1.9 1.9-2.6-.6-.8-2.6-2.4-5.3-2.4-.4 0-.8 0-1.2.1L9.6 4.9c.8-.1 1.6-.1 2.4-.1Z";
