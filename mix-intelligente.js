@@ -542,6 +542,7 @@ function stopMobileMix(fadeSeconds=0){
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
   try{act.old?.removeEventListener?.("timeupdate",act.onProgress)}catch(e){}
+  try{act.old?.removeEventListener?.("seeking",act.onSeek)}catch(e){}
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
   try{act.gain.disconnect()}catch(e){}
@@ -591,13 +592,18 @@ function startMobileMix(song,p,app,old){
    if(mobileActive?.source===source&&!mobileActive.handingOff&&
       old.currentTime>=mobileActive.end-.40)handoffMobileMix(app);
   };
+  const onSeek=()=>{
+   if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
+  };
   mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
-   entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,onPlaying,onProgress,handingOff:false,
+   entry:p.entry,started:ctx.currentTime,audioStartedAt:old.currentTime,
+   end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
    handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   old.addEventListener?.("timeupdate",onProgress);
+  old.addEventListener?.("seeking",onSeek);
   source.onended=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
@@ -639,6 +645,13 @@ function handoffMobileMix(app){
  if(!act||act.handingOff)return;
  if(!app||app.currentId()!==act.fromId||
     app.mixNext()?.id!==act.track.id){stopMobileMix();return}
+ // If WebAudio stopped progressing while the HTML player continued, never
+ // hand off based on a stale preview position.
+ const mediaElapsed=act.old.currentTime-act.audioStartedAt;
+ const overlayElapsed=act.ctx.currentTime-act.started;
+ if(act.ctx.state!=="running"||Math.abs(mediaElapsed-overlayElapsed)>.85){
+  stopMobileMix();return;
+ }
  act.handingOff=true;act.handoffAt=Date.now();
  const position=act.entry+Math.max(0,act.ctx.currentTime-act.started);
  Promise.resolve(app.mixHandoff(act.track.id,position))
