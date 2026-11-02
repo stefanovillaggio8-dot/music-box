@@ -304,3 +304,32 @@ test("GitHub Pages fire artwork avoids 405 POST and HTTP bridge mixed content",(
  assert.ok(fire.includes('location.protocol === "https:" && /\\.github\\.io$/i.test(location.hostname)'));
  assert.ok(fire.includes("mettiArtwork(bruciata);\n      return;"));
 });
+
+test("screen recording 19:32:45: verified soft release gets a head start without losing musical intros",()=>{
+ const live=source.slice(source.indexOf("function liveQuietOutroReady("),
+  source.indexOf("function tryLiveQuietMix("));
+ const eligible=new Function(live+"return liveQuietOutroReady")();
+ const samples=[];
+ for(let t=72;t<93;t+=.25)samples.push({at:t,rms:t<91?.015:.006});
+ for(let t=93;t<=97;t+=.25)
+  samples.push({at:t,rms:.0048*Math.exp(-(t-93)*.42)});
+ assert.equal(eligible(samples,101,96,88,89),true,
+  "The measured fading end qualifies with five seconds left");
+ assert.equal(eligible(samples,101,96,94.5,89),false,
+  "Do not overlap a new sung line");
+ assert.equal(eligible(samples.map(x=>x.at>95.5?{...x,rms:.018}:x),
+  101,96,88,89),false,"Do not interrupt a returning beat");
+ assert.equal(eligible(samples.map(x=>({...x,rms:0})),
+  101,96,88,89),false,"A muted capture is not musical evidence");
+ assert.match(source,/kind:"quiet",silenceTrim:false/);
+ assert.match(source,/Math\.abs\(nextAnalysis\.duration-prepared\.audio\.duration\)<1\.5/);
+ assert.match(source,/const entry=verifiedIntro\?clamp\(nextAnalysis\.safeIntroAt,0,18\):0/);
+ const curveSource=source.slice(source.indexOf("function mixCurve("),
+  source.indexOf("async function beginMix("));
+ const curve=new Function("const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  curveSource+"return mixCurve")();
+ assert.ok(curve("quiet",.2).inGain>curve("soft",.2).inGain,
+  "The incoming song should rise earlier than the old linear fade");
+ assert.equal(curve("quiet",0).inGain,0);
+ assert.ok(Math.abs(curve("quiet",1).inGain-1)<1e-12);
+});
