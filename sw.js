@@ -1087,6 +1087,14 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// Same stable endpoint used by the app for imported YouTube cloud MP3s.
+function isCloudMusicBoxAudio(url) {
+  return url.protocol === "https:" &&
+    url.hostname === "adnteitlhopehllutlua.supabase.co" &&
+    url.pathname === "/functions/v1/musicbox-import-queue" &&
+    url.searchParams.get("action") === "audio" &&
+    /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(url.searchParams.get("id") || "");
+}
 function isMusicBoxSong(url) {
   return url.hostname === "raw.githubusercontent.com" &&
     (url.pathname.startsWith("/stefanovillaggio8-dot/music-box-brani/main/songs/") ||
@@ -1335,7 +1343,9 @@ async function cachedMusicResponse(event) {
   try {
     const response = await fetch(event.request);
     /* Salvo solo risposte complete (200), mai un pezzo audio (206). */
-    if (profile && response && response.status === 200 && !range && response.type !== "opaque") {
+    if (profile && response && response.status === 200 && !range &&
+        response.type !== "opaque" &&
+        !/text\/html|application\/json/i.test(response.headers.get("content-type") || "")) {
       event.waitUntil(
         caches.open(cacheStreamName(profile)).then((cache) => cache.put(new Request(event.request.url), response.clone()))
           .catch(() => {})
@@ -1367,7 +1377,8 @@ self.addEventListener("fetch", (event) => {
      dal computer di casa, e quelli non finivano mai in cache: scaricati si',
      ma senza rete non suonavano.
      Adesso vale per ogni canzone (.mp3), da qualunque origine. */
-  if (isMusicBoxSong(url) || (url.origin === self.location.origin && /\.mp3$/i.test(url.pathname))) {
+  if (isCloudMusicBoxAudio(url) || isMusicBoxSong(url) ||
+      (url.origin === self.location.origin && /\.mp3$/i.test(url.pathname))) {
     event.respondWith(cachedMusicResponse(event));
     return;
   }
