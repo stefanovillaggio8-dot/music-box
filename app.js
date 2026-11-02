@@ -6767,6 +6767,15 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
       gia = new Set(Array.isArray(miei[destinazione]) ? miei[destinazione] : []);
     } catch (e) { gia = new Set(); }
     if (gia.has(id)) {
+      // An existing copy can still be hidden by an older deletion
+      // tombstone. In that case "copy again" means restore, not duplicate.
+      if(_branoEliminato(id,destinazione)){
+        _ripristinaCopiaCancellata(id,destinazione);
+        try{if(destinazione===profile)await loadAll()}catch(_){}
+        _salvaStatoCondiviso();
+        toast('"'+t.title+'" ripristinata in '+destinazione);
+        return true;
+      }
       toast('"' + t.title + '" e\' gia\' nella tua libreria');
       return false;
     }
@@ -12463,8 +12472,9 @@ $("fabMenu").addEventListener("click", (e) => {
       if (!t) { nonCopiabili.push(id); continue; }
       const copyId=_idPerCopia(t);
       if (!copyId) { nonCopiabili.push(t.title); continue; }
-      if (idGia.has(copyId) ||
-          (_identitaBrano(t) && chiaviGia.has(_identitaBrano(t)))) {
+      const removedInDestination=_branoEliminato(copyId,destinazione);
+      if (!removedInDestination && (idGia.has(copyId) ||
+          (_identitaBrano(t) && chiaviGia.has(_identitaBrano(t))))) {
         giaPresenti.push(t.title);
         continue;
       }
