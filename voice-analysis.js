@@ -88,6 +88,45 @@ function evaluatePrepared(data,classifier){
 function evaluate(buffer,classifier,info){
  return evaluatePrepared(prepare(buffer,info),classifier);
 }
+// The MediaPipe classifier is synchronous. Running 20-30 inferences in
+// one uninterrupted task can freeze the browser's DJ timers. Schedule a
+// maximum of two inferences per turn and let the audio player breathe.
+function* framesFor(data){
+ const n=Math.floor(data.rate*.96),step=Math.max(1,Math.round(data.rate*1.3));
+ for(const [kind,segment] of [["intro",data.head],["outro",data.tail]]){
+  const buf=segment.samples;
+  let last=-1;
+  for(let offset=0;offset+n<=buf.length;offset+=step){
+   last=offset;
+   yield {at:segment.at+offset/data.rate,kind,samples:buf.subarray(offset,offset+n)};
+  }
+  const end=Math.max(0,buf.length-n);
+  if(end>last&&buf.length>=n)
+   yield {at:segment.at+end/data.rate,kind,samples:buf.subarray(end,end+n)};
+ }
+}
+function summarizeFrames(data,found){
+ const outro=found.filter(x=>x.kind==="outro"&&x.at<=data.end);
+ const intro=found.filter(x=>x.kind==="intro");
+ return {source:"yamnet",
+  lastVoiceAt:outro.length?Math.min(data.end,Math.max(...outro.map(v=>v.end))):null,
+  firstVoiceAt:intro.length?Math.min(...intro.map(v=>v.at)):null,
+  scannedEnd:data.end,scannedFrom:data.tail.at,modelVersion:2};
+}
+async function evaluatePreparedAsync(data,classifier){
+ if(!data||!classifier||typeof classifier.classify!=="function")return null;
+ const found=[];let n=0;
+ for(const frame of framesFor(data)){
+  if(typeof document!=="undefined"&&document.hidden)return null;
+  let score;
+  try{score=vocalConfidence(classifier.classify(frame.samples,data.rate))}
+  catch(e){return null}
+  if(score>=.22)found.push({at:frame.at,end:frame.at+.96,score,kind:frame.kind});
+  if(++n%2===0)await new Promise(resolve=>setTimeout(resolve,0));
+ }
+ return summarizeFrames(data,found);
+}
+let classificationQueue=Promise.resolve();
 async function loadModel(){
  if(Date.now()<modelCooldown||typeof window==="undefined"||
     !window.WebAssembly)return null;
@@ -117,10 +156,14 @@ function analyze(buffer,info){
  // No full-song PCM kept across model download and no user audio uploaded.
  return loadModel().then(model=>{
   if(!model||document.hidden)return null;
-  try{return evaluatePrepared(data,model)}catch(e){return null}
+  const next=classificationQueue.catch(()=>{}).then(()=>
+   evaluatePreparedAsync(data,model));
+  classificationQueue=next.catch(()=>{});
+  return next;
  }).catch(()=>null);
 }
 window.MusicBoxVocal={analyze,modelReady:()=>Boolean(modelPromise),
- // Pure evaluator exposed so project regression tests can use a mock model.
- evaluate};
+ // Pure evaluators exposed for deterministic regressions.
+ evaluate,evaluateAsync:(buffer,classifier,info)=>
+  evaluatePreparedAsync(prepare(buffer,info),classifier)};
 })();
