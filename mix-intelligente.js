@@ -1788,6 +1788,9 @@ function closeLiveOutro(){
  try{state.ctx.close()?.catch(()=>{})}catch(_){}
 }
 function sampleLiveOutro(audio){
+ // A finished song may be followed by a much longer new one. Disconnect
+ // immediately instead of keeping the old MediaStream/AudioContext alive.
+ if(liveOutro&&liveOutro.audio!==audio)closeLiveOutro();
  if(isIOS||!audio||audio.paused||
     !Number.isFinite(audio.duration)||audio.duration-audio.currentTime>38)return;
  if(liveOutro?.audio!==audio){
@@ -2544,6 +2547,31 @@ function start(){
 }
 window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
  deepProgress:()=>({analyzed:deepIndex?.analyzed||0,total:deepIndex?.sourceCount||0}),
+ diagnostics:()=>{
+  const app=bridge(),audio=app?.audio?.(),id=app?.currentId?.(),next=app?.mixNext?.();
+  const track=app?.allTracks?.()?.find(t=>t.id===id);
+  const url=track&&(app?.mixUrl?.(track)||track.url);
+  const a=url&&(cache.get(String(url))||deepLookup(track));
+  const points=liveOutro?.audio===audio?liveOutro.samples:[];
+  return {
+   enabled,isIOS,current:id,next:next?.id||null,
+   remaining:Number.isFinite(audio?.duration)?Math.round((audio.duration-audio.currentTime)*10)/10:null,
+   analysisReady:!!a,deepIndexed:!!deepLookup(track),
+   analysisDuration:a?.duration??null,lastAudible:a?.last??null,
+   lastLyricAt:app?.mixLyricCues?.(id)?.last??null,
+   lastVoiceAt:a?.lastVoiceAt??null,
+   dropRelease:a?.dropRelease||null,softOutro:a?.softOutro||null,
+   confidentTail:!!a?.confidentTail,
+   plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
+   previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
+   previewMatches:!!(prepared&&prepared.id===next?.id&&prepared.fromId===id),
+   liveSampleCount:points.length,liveContext:liveOutro?.ctx?.state||"unsupported",
+   liveRms:points.at(-1)?.rms??null,
+   liveQuietEligible:liveQuietOutroReady(points,
+    audio?.duration,audio?.currentTime,app?.mixLyricCues?.(id)?.last,a?.lastVoiceAt)
+  };
+ },
+
  verifyTrack:(id)=>{
   const app=bridge(),exists=app?.allTracks()?.some(t=>t.id===id);
   const panel=$("mixPanel");
