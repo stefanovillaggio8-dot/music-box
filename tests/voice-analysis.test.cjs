@@ -52,3 +52,11 @@ test("no voice recording or lyrics are sent by this feature",()=>{
  assert.equal(source.includes("upload"),true); // descriptive prohibition
  assert.ok(source.includes("getChannelData"));
 });
+
+test("real YAMNet voice classes include narrated and child speech",()=>{
+ const model={classify(){return [{classifications:[{categories:[
+  {categoryName:"Child speech, kid speaking",score:.8}
+ ]}]}]}};
+ const out=moduleInstance().evaluate(fakeBuffer(),model,{last:80});
+ assert.ok(out.lastVoiceAt>=79);
+});
