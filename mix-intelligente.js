@@ -2409,6 +2409,8 @@ async function intelligentShuffle(app,audio,fromId){
     (!current||best.score>current.score+.045)){
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
+   shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
+    beatCandidates:scored.length,chosen:best.track.id,reason:"beat certificato"};
    console.info("[Music Box DJ] Scelta automatica: beat verificato in libreria",
     {outgoing:fromId,incoming:best.track.id,fade:best.cue.fade.toFixed(1),
      checked:measured.length,available:pool.length});
@@ -2417,10 +2419,15 @@ async function intelligentShuffle(app,audio,fromId){
  }
  // If analysis coverage is incomplete, retry later once more metadata
  // becomes available, instead of permanently locking the song to silence.
+ shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
+  beatCandidates:scored.length,chosen:current?.track.id||null,
+  reason:noMatch?"nessun beat verificato nei brani analizzati":"brano in coda gia compatibile"};
+ console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision);
  return {retry:unknown.length>picked.length&&!scored.length,
   checked:measured.length,missing:unknown.length,noMatch};
 }
 let shuffleBusy=false,shuffleRetryAt=0,shuffleAttempts=0,shuffleGeneration=0;
+let shuffleLastDecision=null;
 function maybeReorderShuffle(app,audio,id){
  if(!enabled||shuffleBusy||shuffleRunFor===id||
     Date.now()<shuffleRetryAt||shuffleAttempts>=4)return;
@@ -2751,6 +2758,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    confidentTail:!!a?.confidentTail,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
    instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
+   shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
+    shuffleLastDecision:null,
+   shuffleBusy,
    previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
    previewMatches:!!(prepared&&prepared.id===next?.id&&prepared.fromId===id),
    liveSampleCount:points.length,liveContext:liveOutro?.ctx?.state||"unsupported",
@@ -2790,7 +2800,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
   // Immediately invalidate pending shuffle work on EACH song change.
   // A previous catalog fetch must not disable the next DJ transition.
   shuffleGeneration++;shuffleBusy=false;shuffleRetryAt=0;shuffleAttempts=0;
-  shuffleRunFor="";quietHandoffFor="";plannedFor="";plan=null;
+  shuffleRunFor="";shuffleLastDecision=null;
+  quietHandoffFor="";plannedFor="";plan=null;
   if(mobileActive&&!(mobileActive.handingOff&&mobileActive.track.id===id))stopMobileMix();
   if(active&&!(active.handingOff&&active.track.id===id))cancel();
  },
