@@ -75,11 +75,16 @@ test("new vocal on incoming attack blocks double vocals",()=>{
  const plan=e.transition(outgoing,{...incoming,firstVoiceAt:.7},100);
  assert.ok(!plan?.dropReleaseBridge);
 });
-test("iPhone refuses an unverified overlapping release, but uses timed safe outro",()=>{
+test("iPhone protects energetic unverified tails but allows settled measured releases",()=>{
  const {e,outgoing,incoming}=fixture(true);
- assert.ok(!e.transition(outgoing,incoming,100)?.dropReleaseBridge);
- const verified=e.transition({...outgoing,lastLyricAt:80},incoming,100);
+ const uncertain={...outgoing,dropRelease:{
+  ...outgoing.dropRelease,quietLevel:.55,score:.38
+ }};
+ assert.ok(!e.transition(uncertain,incoming,100)?.dropReleaseBridge);
+ const verified=e.transition({...uncertain,lastLyricAt:80},incoming,100);
  assert.ok(verified?.dropReleaseBridge&&verified.quietCertified);
+ const measured=e.transition(outgoing,incoming,100);
+ assert.ok(measured?.dropReleaseBridge&&measured.quietCertified);
 });
 test("high-impact full-volume finale is flagged as protected",()=>{
  const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
