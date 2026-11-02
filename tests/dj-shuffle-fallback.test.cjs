@@ -40,7 +40,7 @@ function fixture(options={}){
   "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
   "const similarNotes=()=>({focused:.82,phrase:.81});",
   "const transition=(old,next)=>next.cue||null;",
-  "let shuffleLastDecision=null;",
+  "let shuffleLastDecision=null,deepIndex=null;",
   source.slice(source.indexOf("function withValidatedVoice("),
     source.indexOf("function deepStatus(){",source.indexOf("function withValidatedVoice("))),
   source.slice(start,end),
