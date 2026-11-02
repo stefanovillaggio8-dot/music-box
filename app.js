@@ -3239,6 +3239,19 @@ function _salvaMieiCopiati(lista) {
    l'interruttore ne' la chiave in memoria. */
 
 /* Chiamato per ogni brano mentre carico la libreria. */
+// Stable identifiers are shared across profiles, including YouTube imports.
+// A copied entry refers to the existing MP3; no re-upload or duplicate
+// YouTube conversion is necessary.
+function _idPerCopia(t) {
+  if (!t) return "";
+  const file=String(t.file||"");
+  const legacy=/songs\/track-(\d+)\.mp3$/i.exec(file);
+  if(legacy)return "b-track-"+legacy[1];
+  const youtube=/(?:^|\/)(?:youtube-)([A-Za-z0-9_-]{11})\.mp3$/i.exec(file)||
+    /^(?:yt-|b-youtube-)([A-Za-z0-9_-]{11})$/.exec(String(t.id||""));
+  if(youtube)return "b-youtube-"+youtube[1];
+  return "";
+}
 function _devoVedereBrano(eMio, b) {
   /* Ste: "togli l'interruttore, se voglio vedere le canzoni degli altri basta
      che vado nel suo profilo". Quindi qui NON c'e' piu' nessuna via per farle
@@ -3246,9 +3259,8 @@ function _devoVedereBrano(eMio, b) {
      libreria (che ormai sono mie a tutti gli effetti). */
   if (eMio) return true;
   /* l'id del brano e' b-track-<numero>, come lo chiama tutto il resto */
-  const m = /songs\/track-(\d+)\.mp3$/.exec(String((b && b.file) || ""));
-  if (!m) return false;
-  return _mieiCopiati().has("b-track-" + m[1]);
+  const id=_idPerCopia(b);
+  return !!id && _mieiCopiati().has(id);
 }
 
   function _branoInRevisione(b) {
@@ -6668,12 +6680,11 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
      nella mia: la copia non me la ritrovavo. */
   async function _portaNellaMiaLibreria(t, profiloDestinazione) {
     if (!t) return false;
-    const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
-    if (!numero) {
-      toast("Non posso copiare questo brano: non so qual e' il suo numero");
+    const id=_idPerCopia(t);
+    if (!id) {
+      toast("Questa canzone non ha ancora un MP3 condivisibile");
       return false;
     }
-    const id = "b-track-" + numero;
     const destinazione = String(profiloDestinazione || DEFAULT_PROFILE);
     /* La lista va letta e scritta sul profilo di destinazione, non su quello
        aperto: altrimenti copierei sempre nella lista di chi sto guardando. */
@@ -12355,23 +12366,30 @@ $("fabMenu").addEventListener("click", (e) => {
        possono essere la stessa canzone. */
     const idGia = new Set(_mieiCopiatiDi(destinazione));
     const chiaviGia = new Set();
-    for (const b of BUILTIN) {
+    for (const b of BUILTIN.concat(_ytOnlineCache)) {
       if ((b.profile || DEFAULT_PROFILE) !== destinazione) continue;
-      if (b.file) idGia.add("b-" + String(b.file).replace(/^.*\//, "").replace(/\.mp3$/i, ""));
+      const key=_idPerCopia(b);
+      if(key)idGia.add(key);
       if (_identitaBrano(b)) chiaviGia.add(_identitaBrano(b));
+    }
+    // Already copied or uploaded in the current destination's cloud list.
+    const destLinks=await _ytBraniDalCloud(destinazione);
+    for(const link of destLinks){
+      if(/^[A-Za-z0-9_-]{11}$/.test(String(link.video_id||"")))
+        idGia.add("b-youtube-"+link.video_id);
     }
     for (const id of scelte) {
       const t = tracks.find((x) => x.id === id);
       if (!t) { nonCopiabili.push(id); continue; }
-      const numero = (/^track-(\d+)\.mp3$/.exec(String(t.url || "").replace(/^.*\//, "")) || [])[1];
-      if (!numero) { nonCopiabili.push(t.title); continue; }
-      if (idGia.has("b-track-" + numero) ||
+      const copyId=_idPerCopia(t);
+      if (!copyId) { nonCopiabili.push(t.title); continue; }
+      if (idGia.has(copyId) ||
           (_identitaBrano(t) && chiaviGia.has(_identitaBrano(t)))) {
         giaPresenti.push(t.title);
         continue;
       }
       const ok = await _portaNellaMiaLibreria(t, destinazione);
-      if (ok) { copiate++; if (_identitaBrano(t)) chiaviGia.add(_identitaBrano(t)); }
+      if (ok) { copiate++; idGia.add(copyId); if (_identitaBrano(t)) chiaviGia.add(_identitaBrano(t)); }
       else giaPresenti.push(t.title);
     }
 
