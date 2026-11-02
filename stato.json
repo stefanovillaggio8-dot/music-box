@@ -2034,13 +2034,13 @@
    },
    "[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 110,
+    "s": 124,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 110,
+    "s": 124,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "Tiziano Ferro"
    },
@@ -2346,13 +2346,13 @@
    },
    "[\"solo 3 min\",\"negromaro\"]": {
     "v": 0,
-    "s": 187,
+    "s": 268,
     "t": "Solo 3 min",
     "a": "Negromaro"
    },
    "m:2026-11|[\"solo 3 min\",\"negromaro\"]": {
     "v": 0,
-    "s": 187,
+    "s": 268,
     "t": "Solo 3 min",
     "a": "Negromaro"
    },
@@ -3228,13 +3228,13 @@
    },
    "[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 124,
+    "s": 162,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 124,
+    "s": 162,
     "t": "Il Regalo PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
@@ -3532,6 +3532,18 @@
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
+   "[\"ex angelo\",\"kid yugi, sfera ebbasta, shablo\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Ex Angelo",
+    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
+   },
+   "m:2026-11|[\"ex angelo\",\"kid yugi, sfera ebbasta, shablo\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Ex Angelo",
+    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3708,13 +3720,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 107,
+    "s": 110,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 107,
+    "s": 110,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -4060,17 +4072,17 @@
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
-   "[\"ex angelo\",\"kid yugi, sfera ebbasta, shablo\"]": {
+   "[\"addio xx\",\"nayt\"]": {
     "v": 0,
-    "s": 3,
-    "t": "Ex Angelo",
-    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
+    "s": 66,
+    "t": "Addio xx",
+    "a": "nayt"
    },
-   "m:2026-11|[\"ex angelo\",\"kid yugi, sfera ebbasta, shablo\"]": {
+   "m:2026-11|[\"addio xx\",\"nayt\"]": {
     "v": 0,
-    "s": 3,
-    "t": "Ex Angelo",
-    "a": "Kid Yugi, Sfera Ebbasta, Shablo"
+    "s": 66,
+    "t": "Addio xx",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4170,13 +4182,13 @@
    },
    "[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 100,
+    "s": 133,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 100,
+    "s": 133,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -4600,17 +4612,17 @@
     "t": "TiscatterÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
-   "[\"addio xx\",\"nayt\"]": {
+   "[\"eroina\",\"kid yugi & tutti fenomeni\"]": {
     "v": 0,
-    "s": 66,
-    "t": "Addio xx",
-    "a": "nayt"
+    "s": 73,
+    "t": "Eroina",
+    "a": "Kid Yugi & Tutti Fenomeni"
    },
-   "m:2026-11|[\"addio xx\",\"nayt\"]": {
+   "m:2026-11|[\"eroina\",\"kid yugi & tutti fenomeni\"]": {
     "v": 0,
-    "s": 66,
-    "t": "Addio xx",
-    "a": "nayt"
+    "s": 73,
+    "t": "Eroina",
+    "a": "Kid Yugi & Tutti Fenomeni"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4722,13 +4734,13 @@
    },
    "[\"lasciami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 133,
+    "s": 190,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 133,
+    "s": 190,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -5152,17 +5164,17 @@
     "t": "TiscatterÃÂÃÂÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
-   "[\"eroina\",\"kid yugi & tutti fenomeni\"]": {
+   "[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 0,
-    "s": 73,
-    "t": "Eroina",
-    "a": "Kid Yugi & Tutti Fenomeni"
+    "s": 70,
+    "t": "La Violenza Necessaria",
+    "a": "Kid Yugi & Shiva"
    },
-   "m:2026-11|[\"eroina\",\"kid yugi & tutti fenomeni\"]": {
+   "m:2026-11|[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 0,
-    "s": 73,
-    "t": "Eroina",
-    "a": "Kid Yugi & Tutti Fenomeni"
+    "s": 70,
+    "t": "La Violenza Necessaria",
+    "a": "Kid Yugi & Shiva"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5704,17 +5716,17 @@
     "t": "TiscatterÃÂÃÂ² una foto",
     "a": "Tiziano Ferro"
    },
-   "[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
+   "[\"lo stesso viso\",\"luchÃÂÃÂ¨, da blonde\"]": {
     "v": 0,
-    "s": 70,
-    "t": "La Violenza Necessaria",
-    "a": "Kid Yugi & Shiva"
+    "s": 24,
+    "t": "Lo Stesso Viso",
+    "a": "LuchÃÂÃÂ¨, Da Blonde"
    },
-   "m:2026-11|[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
+   "m:2026-11|[\"lo stesso viso\",\"luchÃÂÃÂ¨, da blonde\"]": {
     "v": 0,
-    "s": 70,
-    "t": "La Violenza Necessaria",
-    "a": "Kid Yugi & Shiva"
+    "s": 24,
+    "t": "Lo Stesso Viso",
+    "a": "LuchÃÂÃÂ¨, Da Blonde"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -6258,13 +6270,13 @@
    },
    "[\"lo stesso viso\",\"luchÃÂ¨, da blonde\"]": {
     "v": 0,
-    "s": 24,
+    "s": 87,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂ¨, da blonde\"]": {
     "v": 0,
-    "s": 24,
+    "s": 87,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂ¨, Da Blonde"
    },
