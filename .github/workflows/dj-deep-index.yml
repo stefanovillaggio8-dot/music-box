@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'tools/dj-deep-index.py'
+      - 'tools/dj-deep-reconcile.py'
       - 'tools/test-dj-deep-index.py'
       - '.github/workflows/dj-deep-index.yml'
       - 'online-imports.json'
@@ -43,9 +44,21 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- dj-deep-analysis.json
-          if ! git diff --cached --quiet; then
+          cp dj-deep-analysis.json "$RUNNER_TEMP/dj-analyzed-batch.json"
+          for attempt in $(seq 1 10); do
+            git fetch origin main
+            git reset --hard origin/main
+            python tools/dj-deep-reconcile.py "$RUNNER_TEMP/dj-analyzed-batch.json" dj-deep-analysis.json
+            git add -- dj-deep-analysis.json
+            if git diff --cached --quiet; then
+              echo "Deep DJ index already up to date"
+              exit 0
+            fi
             git commit -m "Music Box DJ: analisi MP3 reale, aggiornamento progressivo"
-            git pull --rebase origin main
-            git push origin HEAD:main
-          fi
+            if git push origin HEAD:main; then
+              echo "Incremental DJ features published"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
