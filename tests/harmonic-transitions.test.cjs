@@ -182,3 +182,10 @@ test("manual fade mode still permits compatible melodic phrase transitions",()=>
  const result=alt.transition(a,b,60);
  assert.ok(result&&result.kind==="fade"&&result.fade>=2);
 });
+
+test("a single persistent hum cannot masquerade as matching musical chords",()=>{
+ const hum=song([220,440]); // Same pitch class in two octaves, not a chord.
+ const {a,b}=metadata(hum,hum);
+ assert.equal(similarNotes(a,b).matches,false);
+ assert.equal(transition(a,b,60),null);
+});
