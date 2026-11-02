@@ -597,7 +597,10 @@ function transition(a,b,actualDuration){
    tempoDelta<=.11&&!vocalLate&&!nextStartsVocal;
   if(canBridge){
    const seconds=clamp(4*60/bpmA,2.2,3.4);
+   const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
+    .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
    return {...common,begin:end-seconds,end,fade:seconds,kind:"phrase",
+    tempo:clamp(tempoRatio,.97,1.03),
     quietCertified:false,score:Math.round(notes.score*100),
     beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
     nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
@@ -972,7 +975,7 @@ async function beginMix(song,proposed){
    try{upcoming.preservesPitch=true;upcoming.playbackRate=act.tempo}catch(e){}
   }
   // Match beat phase without ever skipping a musical introduction.
-  if(proposed.kind==="beat"&&Number.isFinite(proposed.beatPeriod)&&
+  if((proposed.kind==="beat"||proposed.kind==="phrase")&&Number.isFinite(proposed.beatPeriod)&&
      Number.isFinite(proposed.beatAnchor)&&Number.isFinite(proposed.nextBeat)){
    const period=proposed.beatPeriod;
    const phase=((proposed.beatAnchor-old.currentTime-proposed.nextBeat)%period+period)%period;
