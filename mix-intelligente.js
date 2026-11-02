@@ -1650,15 +1650,19 @@ function cancel(){
 function prepare(song,fromId,app){
  const url=app.mixUrl?.(song)||song.url;
  if(!url)return;
- if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url)return;
+ if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url){
+  // A failed previous preview is not permanently "prepared".
+  // Try again once after a short cooldown if the connection recovered.
+  if(!prepared.failed||Date.now()-(prepared.failedAt||Date.now())<11000)return;
+ }
  dropPrepared();
  const upcoming=new Audio();upcoming.preload="auto";upcoming.volume=0;
  const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false};
  prepared=p;
  upcoming.addEventListener("canplay",()=>{if(prepared===p)p.ready=true},{once:true});
- upcoming.addEventListener("error",()=>{if(prepared===p){p.failed=true;p.ready=false;}},{once:true});
+ upcoming.addEventListener("error",()=>{if(prepared===p){p.failed=true;p.ready=false;p.failedAt=Date.now();}},{once:true});
  upcoming.src=url;
- try{upcoming.load()}catch(e){p.failed=true}
+ try{upcoming.load()}catch(e){p.failed=true;p.failedAt=Date.now()}
  if(upcoming.readyState>=2)p.ready=true;
 }
 async function handoff(){
@@ -2046,6 +2050,7 @@ function tick(){
  if(mixing)return;
  if(previousId!==id){
   cancel();previousId=id;plannedFor="";plan=null;
+   shuffleGeneration++;shuffleBusy=false;
    shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;quietHandoffFor="";
  }
  if(plannedFor!==next.id){
@@ -2415,20 +2420,26 @@ async function intelligentShuffle(app,audio,fromId){
  return {retry:unknown.length>picked.length&&!scored.length,
   checked:measured.length,missing:unknown.length,noMatch};
 }
-let shuffleBusy=false,shuffleRetryAt=0,shuffleAttempts=0;
+let shuffleBusy=false,shuffleRetryAt=0,shuffleAttempts=0,shuffleGeneration=0;
 function maybeReorderShuffle(app,audio,id){
  if(!enabled||shuffleBusy||shuffleRunFor===id||
     Date.now()<shuffleRetryAt||shuffleAttempts>=4)return;
  const list=app.mixShuffleCandidates?.();
  if(!list?.length)return;
  shuffleBusy=true;shuffleAttempts++;
+ const generation=shuffleGeneration;
  intelligentShuffle(app,audio,id).then(result=>{
-  if(app.currentId()!==id)return;
+  if(generation!==shuffleGeneration||app.currentId()!==id)return;
   if(result?.selected||!result?.retry)shuffleRunFor=id;
   else shuffleRetryAt=Date.now()+Math.min(20000,6000*shuffleAttempts);
  }).catch(error=>{
-  if(app.currentId()===id)shuffleRetryAt=Date.now()+12000;
- }).finally(()=>{shuffleBusy=false});
+  if(generation===shuffleGeneration&&app.currentId()===id)
+   shuffleRetryAt=Date.now()+12000;
+ }).finally(()=>{
+  // A stale download from the previous song cannot unlock, relock or
+  // postpone the new song's candidate search.
+  if(generation===shuffleGeneration)shuffleBusy=false;
+ });
 }
 function smartScore(a,b){
  if(!a||!b||a.durationMismatch||b.durationMismatch)return -Infinity;
@@ -2776,6 +2787,10 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
  onTrackChange:(id)=>{
+  // Immediately invalidate pending shuffle work on EACH song change.
+  // A previous catalog fetch must not disable the next DJ transition.
+  shuffleGeneration++;shuffleBusy=false;shuffleRetryAt=0;shuffleAttempts=0;
+  shuffleRunFor="";quietHandoffFor="";plannedFor="";plan=null;
   if(mobileActive&&!(mobileActive.handingOff&&mobileActive.track.id===id))stopMobileMix();
   if(active&&!(active.handingOff&&active.track.id===id))cancel();
  },
