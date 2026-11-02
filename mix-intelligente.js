@@ -1706,8 +1706,15 @@ function smartScore(a,b){
  const harmony=notes.matches?clamp(notes.score??0,0,1):0;
  const level=a.level&&b.level?clamp(1-Math.abs(Math.log2(a.level/b.level))/3,0,1):.5;
  const key=camelotMatch(a,b);
- const base=beat*.34+harmony*.56+level*.10;
- return clamp(base*(1-key.weight)+key.score*key.weight,0,1);
+ const groove=grooveAgreement(a,b);
+ // For shuffle, prefer the next song whose opening drums actually fit
+ // the outgoing eight-beat pattern, not just a nearby BPM/key.
+ // When either file cannot be analyzed, keep the earlier scoring method.
+ const base=groove?
+  beat*.28+harmony*.48+level*.08+groove.score*.16:
+  beat*.34+harmony*.56+level*.10;
+ const matchedBeatBonus=groove?.score>=.80&&notes.matches&&gap<=8?.035:0;
+ return clamp(base*(1-key.weight)+key.score*key.weight+matchedBeatBonus,0,1);
 }
 
 async function suggestSmartOrder(){
