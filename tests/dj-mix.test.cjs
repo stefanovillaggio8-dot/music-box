@@ -206,3 +206,18 @@ test("iPhone lock screen cleanup is hooked directly to visibilitychange",()=>{
  assert.ok(source.includes('if(document.hidden){\n   // This event still fires'));
  assert.ok(source.includes('stopMobileMix();\n   resetMobileFade();'));
 });
+
+test("timed lyrics allow a full-volume instrumental outro if final vocals ended well before",()=>{
+ const plan=transition({...current,safeOutroAt:null,lastLyricAt:151},next,180);
+ assert.ok(plan);
+ assert.equal(plan.kind,"beat");
+ assert.ok(plan.begin>=171&&plan.end>=179);
+});
+test("sustained near-end karaoke remains protected",()=>{
+ const plan=transition({...current,safeOutroAt:null,lastLyricAt:171},next,180);
+ assert.equal(plan,null);
+});
+test("mobile DJ failed-start cooldown is installed",()=>{
+ assert.ok(source.includes("mobileOverlayFailures.set(pair,Date.now()+60000)"));
+ assert.ok(source.includes("clockStep<.025"));
+});
