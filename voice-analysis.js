@@ -5,7 +5,7 @@
    No audio recordings or transcript are uploaded by this module. */
 (function(){
 "use strict";
-const PACKAGE="0.10.22";
+const PACKAGE="0.10.35";
 const CDN="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-audio@"+PACKAGE;
 const MODEL="https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/1/yamnet.tflite";
 let modelPromise=null,modelCooldown=0;
