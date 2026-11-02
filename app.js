@@ -5752,7 +5752,7 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       try{
         const url=new URL(source);
         url.searchParams.set("mb-retry",String(Date.now()));
-        audio.src=url.href;
+        _assegnaAudioSorgente(audio,url.href);
         audio.load();
         doPlay().catch(()=>{});
         return;
@@ -5777,7 +5777,7 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
         return;
       }
       audio = createAudio();
-      audio.src = URL.createObjectURL(blob);
+      _assegnaAudioSorgente(audio,URL.createObjectURL(blob));
       _applicaAudio();
       segnalaErrore("uso la copia locale per: " +
         String((t.artist || "") + " " + (t.title || "")).slice(0, 60));
@@ -5833,6 +5833,21 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   // Punto d'ingresso invocato dal wrapper nativo dopo il caricamento della pagina.
   window.__musicBoxNativeReady = () => _notificaStatoNativo(true);
 
+  // CaptureStream in Chrome may mute a cross-origin track unless the
+  // original HTMLAudioElement was loaded in CORS mode. Configure CORS ONLY
+  // for same-origin and GitHub raw MP3 URLs; other hosting services can lack
+  // CORS headers, and enabling it for them would break playback entirely.
+  function _assegnaAudioSorgente(a,source) {
+    const target=String(source||"");
+    try {
+      const u=new URL(target,location.href);
+      const safe=u.origin===location.origin||
+        (u.protocol==="https:"&&u.hostname==="raw.githubusercontent.com");
+      if(safe)a.crossOrigin="anonymous";
+      else a.removeAttribute("crossorigin");
+    }catch(_) {try{a.removeAttribute("crossorigin")}catch(_){}}
+    a.src=target;
+  }
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
@@ -5844,7 +5859,7 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
         if (a.src && a.src.indexOf("/bassi/") >= 0) {
           const normale = a.src.replace("/bassi/", "/");
           if (normale && normale !== a.src) {
-            a.src = normale;
+            _assegnaAudioSorgente(a,normale);
             try { a.play(); } catch (e) { }
           }
         }
@@ -5976,7 +5991,7 @@ function rebuildAudio(autoplay) {
   const time = (audio && isFinite(audio.currentTime) && audio.currentTime) || 0;
   if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
   audio = createAudio();
-  audio.src = _urlDelBrano(t);
+  _assegnaAudioSorgente(audio,_urlDelBrano(t));
   _applicaAudio();
   try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
   if (autoplay) doPlay();
@@ -7275,7 +7290,7 @@ async function playById(id, autoplay = true, startAt = 0) {
        l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
        potenziato, se c'e' "songs/" e' l'originale. */
     try { _diChe("suono: " + (String(_url).indexOf("/bassi/") >= 0 ? "POTENZIATO" : "originale") + " " + t.id); } catch (e) { }
-    audio.src = _url;
+    _assegnaAudioSorgente(audio,_url);
     if (startAt > 0 && Number.isFinite(startAt)) {
       const target = audio;
       const at = () => {
@@ -8078,7 +8093,7 @@ if (!sceltaCopia) updateProfileButton();
       const last = st.last ? tracks.find((t) => t.id === st.last) : null;
       if (last) {
         currentId = last.id;
-        audio.src = _urlDelBrano(last);
+        _assegnaAudioSorgente(audio,_urlDelBrano(last));
         // anche cambiando profilo il brano riparte dall'inizio
         const pos = 0;
         audio.addEventListener("loadedmetadata", () => {
@@ -16470,7 +16485,7 @@ const precedente = LS.get("mb.playback." + profile, null);
           ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s" +
           (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :
             (quando ? ", ascoltata " + Math.round(passate / 60000) + " minuti fa" : "")));
-        audio.src = _urlDelBrano(lastTrack);
+        _assegnaAudioSorgente(audio,_urlDelBrano(lastTrack));
         _segnaRigaAttiva();
         updateProgressUI(0, 0);
       }
