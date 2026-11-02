@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=20; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=21; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -219,6 +219,42 @@ function lateOutroGap(blocks,typical,duration){
  }
  return null;
 }
+// Some songs go quiet for 10-25 seconds and then return briefly with
+// strong audio. Record the pause as a CANDIDATE, never automatically skip it:
+// its last passage is protected until karaoke/voice analysis confirms that
+// the returning section has no singing to preserve.
+function lateOutroBreak(blocks,typical,duration){
+ if(duration<65||typical<.008||!Array.isArray(blocks))return null;
+ const step=.2,from=Math.floor(Math.max(40,duration-44)/step);
+ const until=Math.min(blocks.length,Math.floor((duration-4)/step));
+ const threshold=Math.max(.00065,typical*.18);
+ let begin=-1;const gaps=[];
+ for(let i=from;i<=until;i++){
+  const quiet=i<until&&(blocks[i]||0)<threshold;
+  if(quiet&&begin<0)begin=i;
+  else if(!quiet&&begin>=0){
+   if(i-begin>=45)gaps.push({start:begin*step,quietEnd:i*step,index:begin,finish:i});
+   begin=-1;
+  }
+ }
+ for(const gap of gaps.reverse()){
+  const remaining=duration-gap.quietEnd;
+  if(remaining<4||remaining>13.5)continue;
+  const before=blocks.slice(Math.max(0,gap.index-32),gap.index);
+  if(before.length<18||
+     before.filter(v=>v>typical*.44).length<before.length*.47)continue;
+  const after=blocks.slice(gap.finish);
+  const loud=after.filter(v=>v>typical*.44).length;
+  // This is a genuine strong comeback, not the softer outro already
+  // handled by lateOutroGap. Voice/lyrics must approve any skipping.
+  if(loud<after.length*.33)continue;
+  return {start:gap.start,quietEnd:gap.quietEnd,
+    fadeStart:Math.max(0,gap.start-1.3),
+    end:Math.min(duration-1,gap.start+3.2),
+    resumedSeconds:remaining};
+ }
+ return null;
+}
 // Energy rhythm signature sampled on the BPM grid. We compare the last
 // eight beats of A with the first eight beats of B, allowing cyclic phase
 // shifts. This is a timbral/rhythmic match, not a silent-tail detector.
@@ -300,6 +336,7 @@ function analyzeFrames(buf){
  const assessed=estimateMusicalEnd(ch,rate,blocks,typical,duration,signalEnd);
  const softOutro=weakOutro(blocks,typical,duration);
  const outroGap=lateOutroGap(blocks,typical,duration);
+ const outroBreak=outroGap?null:lateOutroBreak(blocks,typical,duration);
  const audibleEnd=Math.min(signalEnd,assessed.end);
  const leading=Math.max(0,audibleStart),trailing=Math.max(0,duration-audibleEnd);
  const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
@@ -323,15 +360,17 @@ function analyzeFrames(buf){
   if(diff[i]>maxNovelty){maxNovelty=diff[i];beatAnchor=i*step}
  }
  // Preserve the beat phase of the music BEFORE an ending pause.
- if(outroGap){
+ if(outroGap||outroBreak){
+  const early=(outroGap||outroBreak);
   let peak=0,anchor=null;
-  const lo=Math.max(0,Math.floor((outroGap.start-7)/step));
-  const hi=Math.min(diff.length-1,Math.floor((outroGap.start-.3)/step));
+  const lo=Math.max(0,Math.floor((early.start-7)/step));
+  const hi=Math.min(diff.length-1,Math.floor((early.start-.3)/step));
   for(let i=lo;i<=hi;i++)
    if(diff[i]>peak){peak=diff[i];anchor=i*step}
-  outroGap.beatAnchor=anchor;
+  early.beatAnchor=anchor;
  }
- const grooveEdge=outroGap?Math.max(8,outroGap.start):audibleEnd;
+ const grooveEdge=outroGap||outroBreak?
+  Math.max(8,(outroGap||outroBreak).start):audibleEnd;
  const outroGroove=beatEnergySignature(blocks,best.bpm,grooveEdge,true);
  const introGroove=beatEnergySignature(blocks,best.bpm,audibleStart,false);
  const hasAudio=typical>.0012;
@@ -410,7 +449,7 @@ function analyzeFrames(buf){
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,introGroove,outroGroove,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,outroGap,outroBreak,introGroove,outroGroove,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
@@ -551,11 +590,12 @@ async function decode(track,needClip=false){
      Number(track.expectedDurationSec||0);
     const durationMismatch=expected>20&&
      Math.abs(decoded.duration-expected)>Math.max(7,expected*.07);
-    const outroFrom=frame.outroGap?Math.max(0,frame.outroGap.start-10):
+    const earlyBoundary=frame.outroGap||frame.outroBreak;
+    const outroFrom=earlyBoundary?Math.max(0,earlyBoundary.start-10):
      Math.max(0,frame.safeOutroAt??frame.last-10);
     const introTo=Math.min(decoded.duration,Math.max(9,frame.first+12));
     const firstSound=Math.max(0,frame.first);
-    const lastSound=frame.outroGap?Math.max(2,frame.outroGap.start-.18):
+    const lastSound=earlyBoundary?Math.max(2,earlyBoundary.start-.18):
      Math.min(decoded.duration,frame.last);
     const result={...frame,chroma:harmonies,
      introChroma:chroma(decoded,0,introTo),
@@ -589,7 +629,7 @@ async function decode(track,needClip=false){
        if(!v||cache.get(key)!==result)return;
        Object.assign(result,{lastVoiceAt:v.lastVoiceAt,
         firstVoiceAt:v.firstVoiceAt,voiceModel:v.source,
-        voiceScannedEnd:v.scannedEnd});
+        voiceScannedEnd:v.scannedEnd,voiceScannedFrom:v.scannedFrom});
        saveAnalysis(key,result).catch(()=>{});
        const app=bridge();
        if(app?.currentId()===track.id||
