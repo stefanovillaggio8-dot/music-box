@@ -133,3 +133,76 @@ test("stereo song with audio only on right channel keeps full ending",()=>{
  assert.equal(info.safeOutroAt,null);
  assert.ok(info.last>63.5);
 });
+
+function createMobileMixFixture(){
+ const a=source.indexOf("let mobileActive=null;");
+ const b=source.indexOf("let prepared=null;",a);
+ assert.ok(a>=0&&b>a);
+ const block=source.slice(a,b);
+ const engine=new Function("schedule",
+  'const isIOS=true,document={hidden:false};let mobileOverlayEnabled=true;'+
+  'const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));'+
+  'const mobileIntroClips=new Map();\n'+block+
+  '\nreturn {startMobileMix,stopMobileMix,handoffMobileMix,finishMobileMix,'+
+  'clips:mobileIntroClips,active:()=>mobileActive,'+
+  'enabled:v=>mobileOverlayEnabled=v,hidden:v=>document.hidden=v};'
+ )(()=>{});
+ const gainValue={value:0,setValueAtTime(v){this.value=v},
+  linearRampToValueAtTime(v){this.value=v},cancelScheduledValues(){}};
+ let stopped=false;
+ const sourceNode={connect(){},start(){},stop(){stopped=true},disconnect(){}};
+ const gainNode={gain:gainValue,connect(){},disconnect(){}};
+ const ctx={currentTime:100,state:"running",destination:{},
+  createBuffer:()=>({copyToChannel(){}}),
+  createBufferSource:()=>sourceNode,createGain:()=>gainNode};
+ const old={currentTime:174,paused:false,handlers:{},
+  addEventListener(event,callback){this.handlers[event]=callback},
+  removeEventListener(event){delete this.handlers[event]}};
+ const song={id:"next",url:"sample.mp3"};
+ const plan={kind:"beat",fade:6,entry:0,safeOutroAt:172,end:180};
+ let id="previous",native=old;const calls=[];
+ const app={currentId:()=>id,mixNext:()=>song,mixRunningContext:()=>ctx,
+  mixUrl:track=>track.url,volume:()=>.8,audio:()=>native,
+  mixHandoff:(trackId,at)=>{calls.push({trackId,at});return Promise.resolve()}};
+ engine.clips.set(song.url,{start:0,rate:100,channels:[new Float32Array(1400)]});
+ return {engine,ctx,old,song,plan,app,calls,
+  setCurrent:v=>id=v,setNative:v=>native=v,isStopped:()=>stopped};
+}
+test("iPhone overlay uses an independent, bounded intro buffer",()=>{
+ const f=createMobileMixFixture();
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ assert.equal(f.old.src,undefined);
+ assert.ok(f.engine.active());
+ assert.equal(typeof f.old.handlers.pause,"function");
+ f.old.handlers.pause();
+ assert.equal(f.engine.active(),null);
+ assert.equal(f.isStopped(),true);
+});
+test("iPhone mixing falls back when context suspended, feature off or hidden",()=>{
+ const f=createMobileMixFixture();
+ f.ctx.state="suspended";
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),false);
+ f.ctx.state="running";f.engine.enabled(false);
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),false);
+ f.engine.enabled(true);f.engine.hidden(true);
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),false);
+});
+test("iPhone preview hands off at the current second, never song start",()=>{
+ const f=createMobileMixFixture();
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ f.ctx.currentTime=106;
+ f.engine.handoffMobileMix(f.app);
+ assert.equal(f.calls.length,1);
+ assert.ok(f.calls[0].at>5.5&&f.calls[0].at<6.5);
+ const nextAudio={paused:false,readyState:3,seeking:false,
+  currentTime:0,seekable:{length:1},duration:180};
+ f.setCurrent("next");f.setNative(nextAudio);
+ f.engine.finishMobileMix(f.app);
+ assert.ok(nextAudio.currentTime>5.5);
+ assert.equal(f.engine.active(),null);
+});
+test("iPhone lock screen cleanup is hooked directly to visibilitychange",()=>{
+ assert.ok(source.includes('document.addEventListener("visibilitychange"'));
+ assert.ok(source.includes('if(document.hidden){\n   // This event still fires'));
+ assert.ok(source.includes('stopMobileMix();\n   resetMobileFade();'));
+});
