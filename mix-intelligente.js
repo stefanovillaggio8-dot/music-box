@@ -541,6 +541,7 @@ function stopMobileMix(fadeSeconds=0){
  const release=()=>{
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
+  try{act.old?.removeEventListener?.("timeupdate",act.onProgress)}catch(e){}
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
   try{act.gain.disconnect()}catch(e){}
@@ -586,12 +587,17 @@ function startMobileMix(song,p,app,old){
   const onPlaying=()=>{
    if(mobileActive?.handingOff)finishMobileMix(app);
   };
+  const onProgress=()=>{
+   if(mobileActive?.source===source&&!mobileActive.handingOff&&
+      old.currentTime>=mobileActive.end-.40)handoffMobileMix(app);
+  };
   mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
-   entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,onPlaying,handingOff:false,
+   entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,onPlaying,onProgress,handingOff:false,
    handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
+  old.addEventListener?.("timeupdate",onProgress);
   source.onended=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
@@ -843,7 +849,7 @@ function tick(){
    }
    mobileActive.lastAudioTime=audio.currentTime;
    mobileActive.lastCtxTime=mobileActive.ctx.currentTime;
-   if(audio.currentTime>=mobileActive.end-.10)handoffMobileMix(app);
+   if(audio.currentTime>=mobileActive.end-.40)handoffMobileMix(app);
    return;
   }
  }
