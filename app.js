@@ -16578,7 +16578,9 @@ const precedente = LS.get("mb.playback." + profile, null);
          il punto). */
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage({ type: "SET_PROFILE", profile });
-        if (refreshing) return;
+        // An explicit press on the version is already performing the
+        // network-first navigation. Do not race it with a second reload.
+        if (_aggiornaDaVersioneBusy || refreshing) return;
         refreshing = true;
         _salvaPuntoLibreria();
         try {
