@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=17; // aligned harmonic chord progression + guarded phrase bridge
+const ANALYSIS_VERSION=18; // aligned harmonic chord progression + guarded phrase bridge
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -164,6 +164,21 @@ function estimateMusicalEnd(data,rate,blocks,typical,duration,audibleEnd){
   return {end:audibleEnd,reason:"none"};
  return {end,reason:end<audibleEnd-.5?why:"silence"};
 }
+function weakOutro(blocks,level,duration){
+ if(duration<34||level<.009)return null;
+ const step=.2,cut=Math.floor((duration-7.5)/step);
+ let last=-1;
+ for(let i=Math.floor(Math.max(18,duration-32)/step);i<cut;i++)
+  if(blocks[i]>level*.35)last=i;
+ if(last<0)return null;
+ const start=(last+1)*step,tail=blocks.slice(last+1);
+ if(duration-start<7.5||duration-start>31||tail.length<30)return null;
+ const avg=tail.reduce((a,b)=>a+b,0)/tail.length;
+ if(avg>level*.09||Math.max(...tail)>level*.17)return null;
+ const before=blocks.slice(Math.max(0,last-30),last+1);
+ if(before.filter(v=>v>level*.33).length<before.length*.4)return null;
+ return {start,fadeStart:start+2.1,end:Math.min(duration-.2,start+6)};
+}
 function analyzeFrames(buf){
  const ch=buf.getChannelData(0),rate=buf.sampleRate,step=.025;
  // Detect energy on both stereo channels: a quiet left channel must not
@@ -207,6 +222,7 @@ function analyzeFrames(buf){
  const audibleStart=Math.max(0,(first+1)*group*step-.10);
  const signalEnd=Math.min(duration,(last+1)*group*step);
  const assessed=estimateMusicalEnd(ch,rate,blocks,typical,duration,signalEnd);
+ const softOutro=weakOutro(blocks,typical,duration);
  const audibleEnd=Math.min(signalEnd,assessed.end);
  const leading=Math.max(0,audibleStart),trailing=Math.max(0,duration-audibleEnd);
  const diff=energy.map((v,i)=>i?Math.max(0,v-energy[i-1]):0);
@@ -305,7 +321,7 @@ function analyzeFrames(buf){
  const verifiedSilence=hasAudio&&trailing>=1.65&&silentTail.length>=7&&
   silentTail.every(v=>v<=Math.max(.0009,typical*.025));
  return {bpm:best.bpm,beatConfidence,introBeat,tailEnergy,introWave,outroWave,level,quietTail,
-  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,
+  outroReason:assessed.reason,safeOutroAt,safeIntroAt,lastNoteAt,softOutro,
   first:hasAudio?audibleStart:0,
   last:hasAudio?audibleEnd:duration,beatAnchor,peak:ordered.at(-1)||0,
   trailing:hasAudio?trailing:0,leading:hasAudio?leading:0,
