@@ -456,7 +456,9 @@ test("20:19:15 recording: a planned soft mix may recover during measured decay",
 test("20:33:52: beat match searches beyond ten queued songs and works again on next track",async()=>{
  const src=source.slice(source.indexOf("async function intelligentShuffle("),
   source.indexOf("function smartScore("));
- const create=new Function("const enabled=true,isIOS=false;"+
+ const vocalMerge=source.slice(source.indexOf("function withValidatedVoice("),
+  source.indexOf("function deepStatus(){",source.indexOf("function withValidatedVoice(")));
+ const create=new Function(vocalMerge+"const enabled=true,isIOS=false;"+
   "const window={MusicBoxRoom:{isActive:()=>false}},console={info(){}};"+
   "const cache=new Map(),shuffleRunFor='',noop=0;"+
   "const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+

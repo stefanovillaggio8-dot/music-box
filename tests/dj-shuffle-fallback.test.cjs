@@ -41,6 +41,8 @@ function fixture(options={}){
   "const similarNotes=()=>({focused:.82,phrase:.81});",
   "const transition=(old,next)=>next.cue||null;",
   "let shuffleLastDecision=null;",
+  source.slice(source.indexOf("function withValidatedVoice("),
+    source.indexOf("function deepStatus(){",source.indexOf("function withValidatedVoice("))),
   source.slice(start,end),
   "return {run:()=>intelligentShuffle(ctx.app,{duration:100,currentTime:0},1),",
   "decision:()=>shuffleLastDecision};"
