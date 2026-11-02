@@ -1880,13 +1880,13 @@
    },
    "[\"numb\",\"linkin park\"]": {
     "v": 1,
-    "s": 4,
+    "s": 7,
     "t": "Numb",
     "a": "Linkin Park"
    },
    "m:2026-11|[\"numb\",\"linkin park\"]": {
     "v": 1,
-    "s": 4,
+    "s": 7,
     "t": "Numb",
     "a": "Linkin Park"
    },
@@ -4878,6 +4878,18 @@
     "t": "fragile",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
+   "[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tappeto di fragole",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tappeto di fragole",
+    "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6211,7 +6223,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 1,
+    "v": 2,
     "s": 17,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -6355,7 +6367,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 0,
+    "v": 1,
     "s": 14,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -6845,6 +6857,42 @@
     "s": 3,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂ "
+   },
+   "[\"meraviglioso\",\"negromaro\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "Meraviglioso",
+    "a": "Negromaro"
+   },
+   "m:2026-11|[\"meraviglioso\",\"negromaro\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "Meraviglioso",
+    "a": "Negromaro"
+   },
+   "[\"exit\",\"nayt\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Exit",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"exit\",\"nayt\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Exit",
+    "a": "nayt"
+   },
+   "[\"le parole piÃÂÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂÃÂ¹ grandi",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"le parole piÃÂÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂÃÂ¹ grandi",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -7506,30 +7554,6 @@
     "t": "Tappeto di fragole",
     "a": "ModÃÂ "
    },
-   "[\"meraviglioso\",\"negromaro\"]": {
-    "v": 0,
-    "s": 13,
-    "t": "Meraviglioso",
-    "a": "Negromaro"
-   },
-   "m:2026-11|[\"meraviglioso\",\"negromaro\"]": {
-    "v": 0,
-    "s": 13,
-    "t": "Meraviglioso",
-    "a": "Negromaro"
-   },
-   "[\"exit\",\"nayt\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Exit",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"exit\",\"nayt\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Exit",
-    "a": "nayt"
-   },
    "[\"le parole piÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
     "s": 1,
@@ -7568,7 +7592,7 @@
    },
    "[\"con te partirÃ²\",\"andrea bocelli\"]": {
     "v": 2,
-    "s": 17,
+    "s": 14,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
    },
@@ -7712,7 +7736,7 @@
    },
    "m:2026-11|[\"con te partirÃ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 14,
+    "s": 12,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
    },
@@ -8222,7 +8246,7 @@
    },
    "[\"morirò da re\",\"måneskin\"]": {
     "v": 1,
-    "s": 117,
+    "s": 116,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
@@ -8239,8 +8263,8 @@
     "a": "MOSTRO"
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 2,
-    "s": 14,
+    "v": 1,
+    "s": 3,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    },
@@ -8253,13 +8277,25 @@
    "[\"dimmi che c'è\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'è",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'è\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'è",
+    "a": "thasup"
+   },
+   "[\"mi @mio è f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio è f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 66,
+    "t": "mi @mio è f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modà\"]": {
@@ -8383,8 +8419,8 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 1,
-    "s": 12,
+    "v": 0,
+    "s": 1,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    },
@@ -8402,13 +8438,13 @@
    },
    "[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 126,
+    "s": 110,
     "t": "Miami Vice",
     "a": "Luchè, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 126,
+    "s": 110,
     "t": "Miami Vice",
     "a": "Luchè, Sfera Ebbasta, Simba La Rue"
    },
@@ -8462,19 +8498,19 @@
    },
    "m:2026-11|[\"morirò da re\",\"måneskin\"]": {
     "v": 0,
-    "s": 112,
+    "s": 111,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
    "[\"tutto fuori controllo ∞ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 1,
-    "s": 110,
+    "s": 96,
     "t": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo ∞ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 1,
-    "s": 110,
+    "s": 96,
     "t": "TUTTO FUORI CONTROLLO ∞ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -8526,39 +8562,27 @@
     "t": "Voglio di più",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio è f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio è f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio è f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 136,
+    "s": 123,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 136,
+    "s": 123,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "[\"coraline\",\"måneskin\"]": {
     "v": 0,
-    "s": 146,
+    "s": 129,
     "t": "CORALINE",
     "a": "Måneskin"
    },
    "m:2026-11|[\"coraline\",\"måneskin\"]": {
     "v": 0,
-    "s": 146,
+    "s": 129,
     "t": "CORALINE",
     "a": "Måneskin"
    },
@@ -8622,6 +8646,18 @@
     "t": "Tutti il resto è noi",
     "a": "nayt, 3D"
    },
+   "[\"passione maledetta\",\"modà\"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "Modà"
+   },
+   "m:2026-11|[\"passione maledetta\",\"modà\"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "Modà"
+   },
    "[\"torna da me\",\"luchè\"]": {
     "v": 0,
     "s": 94,
@@ -8658,18 +8694,6 @@
     "t": "Arriverà",
     "a": "Modà"
    },
-   "[\"passione maledetta\",\"modà\"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "Modà"
-   },
-   "m:2026-11|[\"passione maledetta\",\"modà\"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "Modà"
-   },
    "[\"voodoo\",\"guè\"]": {
     "v": 0,
     "s": 79,
@@ -8684,13 +8708,13 @@
    },
    "[\"g&v\",\"ivanbì\"]": {
     "v": 0,
-    "s": 73,
+    "s": 48,
     "t": "G&V",
     "a": "ivanBì"
    },
    "m:2026-11|[\"g&v\",\"ivanbì\"]": {
     "v": 0,
-    "s": 73,
+    "s": 48,
     "t": "G&V",
     "a": "ivanBì"
    },
@@ -8708,13 +8732,13 @@
    },
    "[\"quelli come me\",\"modà\"]": {
     "v": 0,
-    "s": 107,
+    "s": 89,
     "t": "Quelli come me",
     "a": "Modà"
    },
    "m:2026-11|[\"quelli come me\",\"modà\"]": {
     "v": 0,
-    "s": 107,
+    "s": 89,
     "t": "Quelli come me",
     "a": "Modà"
    },
@@ -8801,90 +8825,6 @@
     "s": 6,
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
-   },
-   "[\"esistere (più di me)\",\"nayt\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Esistere (più di me)",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"esistere (più di me)\",\"nayt\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Esistere (più di me)",
-    "a": "nayt"
-   },
-   "[\"per una notte insieme\",\"modà\"]": {
-    "v": 0,
-    "s": 6,
-    "t": "Per una notte insieme",
-    "a": "Modà"
-   },
-   "m:2026-11|[\"per una notte insieme\",\"modà\"]": {
-    "v": 0,
-    "s": 6,
-    "t": "Per una notte insieme",
-    "a": "Modà"
-   },
-   "[\"scale\",\"night skinny, luchè\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Scale",
-    "a": "Night Skinny, Luchè"
-   },
-   "m:2026-11|[\"scale\",\"night skinny, luchè\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Scale",
-    "a": "Night Skinny, Luchè"
-   },
-   "[\"la notte\",\"modà\"]": {
-    "v": 1,
-    "s": 37,
-    "t": "La notte",
-    "a": "Modà"
-   },
-   "m:2026-11|[\"la notte\",\"modà\"]": {
-    "v": 1,
-    "s": 37,
-    "t": "La notte",
-    "a": "Modà"
-   },
-   "[\"fragile\",\"modà\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Quello che non ti ho detto",
-    "a": "Modà"
-   },
-   "m:2026-11|[\"fragile\",\"modà\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "fragile",
-    "a": "Modà"
-   },
-   "[\"tappeto di fragole\",\"modà\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tappeto di fragole",
-    "a": "Modà"
-   },
-   "m:2026-11|[\"tappeto di fragole\",\"modà\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tappeto di fragole",
-    "a": "Modà"
-   },
-   "[\"le parole più grandi\",\"coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Le parole più grandi",
-    "a": "Coez"
-   },
-   "m:2026-11|[\"le parole più grandi\",\"coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Le parole più grandi",
-    "a": "Coez"
    }
   },
   "Diego": {
