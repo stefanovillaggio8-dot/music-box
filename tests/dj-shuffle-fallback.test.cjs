@@ -258,3 +258,25 @@ test("a large BPM mismatch is not allowed to masquerade as a verified DJ bridge"
  assert.equal(f.decision().beatCandidates,0);
  assert.equal(f.selected(),null);
 });
+
+test("when no certified beat/soft/strict harmonic match exists, choose a measured rhythm-only sequence",async()=>{
+ const f=fixture({pool:[
+  {analysis:{bpm:160},cue:null},
+  {analysis:{bpm:120},cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().softCandidates,0);
+ assert.ok(f.decision().nearCandidates+f.decision().sequenceCandidates>=1);
+});
+test("a weak boundary or uncertain BPM must not manufacture an audio beat mix",async()=>{
+ const f=fixture({pool:[
+  {analysis:{bpm:200,introDrive:.10},cue:null},
+  {analysis:{bpm:200},cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().softCandidates,0);
+ assert.equal(f.selected(),null);
+});
