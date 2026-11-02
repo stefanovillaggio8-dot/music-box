@@ -1,5 +1,5 @@
 /* Music Box · Amici online v6.503
-   Presence opt-in, no Spotify/GitHub account required. Device identity is
+   Presence enabled by default with per-profile opt-out; no Spotify/GitHub account required. Device identity is
    local-only (not real account authentication). Invites remain private. */
 (function () {
 "use strict";
@@ -22,7 +22,7 @@ function stateForProfile(){
  if(name===currentProfile)return;
  const oldVisible=visible;
  currentProfile=name;lastPulse=0;registered=false;
- visible=!!name && localStorage.getItem(KEY+name)==="1";
+ visible=!!name && localStorage.getItem(KEY+name)!=="0";
  shareSong=!!name && localStorage.getItem(SONGKEY+name)!=="0";
  $("amiciVisible").checked=visible;
  $("amiciSong").checked=shareSong;
