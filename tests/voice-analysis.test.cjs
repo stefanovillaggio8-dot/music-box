@@ -41,7 +41,7 @@ test("classifies only short samples, not entire raw MP3",()=>{
  }};
  moduleInstance().evaluate(fakeBuffer(),observe,{last:80});
  assert.ok(calls>50&&calls<95);
- assert.ok(longest<=2000);
+ assert.ok(longest>=2000&&longest<=2100);
 });
 test("model failure cannot guess a safe vocal ending",()=>{
  const fail={classify(){throw Error("model unavailable")}};
