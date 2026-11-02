@@ -534,6 +534,7 @@ function stopMobileMix(fadeSeconds=0){
  if(!act)return;
  const release=()=>{
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
+  try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
   try{act.gain.disconnect()}catch(e){}
@@ -573,10 +574,14 @@ function startMobileMix(song,p,app,old){
   const onPause=()=>{
    if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
   };
+  const onPlaying=()=>{
+   if(mobileActive?.handingOff)finishMobileMix(app);
+  };
   mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
-   entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,handingOff:false,
+   entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,onPlaying,handingOff:false,
    handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset};
   old.addEventListener?.("pause",onPause);
+  old.addEventListener?.("playing",onPlaying);
   source.onended=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
