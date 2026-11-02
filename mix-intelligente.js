@@ -739,7 +739,8 @@ function similarNotes(a,b){
  const fallback=staticMatch&&broad>=.87&&focused>=.88&&
   phrase>=.84&&groove?.score>=.86;
  const matches=reliableProgression?
-  alignment.matches&&(staticMatch||alignment.score>=.89):fallback;
+  alignment.matches&&(staticMatch||alignment.score>=.89):
+  alignment?fallback:staticMatch;
  const score=reliableProgression?alignment.score*.82+focused*.18:
   focused*.54+phrase*.30+broad*.16;
  return {matches,score,focused,phrase,alignment,
