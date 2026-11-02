@@ -43,7 +43,7 @@ assert(out.some(t=>t.id==="b-own"),"Non escludere gli MP3 locali");
 const worker=src.slice(src.indexOf("  function _programmaTestiKaraoke() {"),
   src.indexOf("async function playById(",src.indexOf("  function _programmaTestiKaraoke() {")));
 assert(worker.includes("elencoDaCompletare=_testiCandidatiAutomatici()"),"Scanner non usa i candidati YouTube");
-assert(worker.includes("const syncedOnly=!importato;"),"Per YouTube deve cercare anche testo non sincronizzato");
+assert(worker.includes("const syncedOnly = !importato || !!(attuale && attuale.text);"),"Per YouTube deve cercare anche testo non sincronizzato e poi il karaoke");
 assert(worker.includes("_completaTestoInAscolto(t, syncedOnly)"),"Scanner non chiama il recupero dei testi");
 assert(src.includes('album: _eAudioYouTubePerTesti(t) ? ""'),"Stato cloud non deve essere confuso con il titolo album");
 assert(src.includes("if(linked.some(t=>t.source===\"cloud-audio\" && t.url))"),"La conversione conclusa non avvia la ricerca");
