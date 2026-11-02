@@ -372,3 +372,9 @@ test("200 variable-length outro transitions never start before certified safe mu
    assert.equal(plan.kind,"cut");
  }
 });
+
+test("obsolete iPhone preparation never blacklists a valid MP3",()=>{
+ assert.ok(source.includes('const STALE_MOBILE_PREVIEW=Symbol('));
+ assert.ok(source.includes('if(needClip&&bridge()?.mixNext?.()?.id!==track.id)'));
+ assert.ok(source.includes('if(data===STALE_MOBILE_PREVIEW)return null'));
+});
