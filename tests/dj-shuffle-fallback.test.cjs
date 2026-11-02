@@ -160,3 +160,26 @@ test("voice completion rearms a previously locked shuffle search exactly when sa
  assert.match(source,/rearmShuffleAfterVocalScan\(id\)/);
  assert.match(source,/runGeneration!==null&&runGeneration!==shuffleGeneration/);
 });
+
+
+test("late full-audio index invalidates stale DJ picks and resets exhausted retries",async()=>{
+ const begin=source.indexOf("function loadDeepIndex(force=false){");
+ const end=source.indexOf("function canSaveAnalysis(",begin);
+ assert.ok(begin>=0&&end>begin,"complete deep index loader exists");
+ const harness=new Function(
+  "const enabled=true,mixing=false;"+
+  "let plannedFor='previous',plan={kind:'cut'},shuffleGeneration=5,"+
+  "shuffleBusy=true,shuffleRunFor='outgoing',shuffleRetryAt=9999,shuffleAttempts=4;"+
+  "let deepIndex=null,deepIndexPromise=null;"+
+  "const deepStatus=()=>{};"+
+  "const fetch=async()=>({ok:true,json:async()=>({version:2,entries:{}})});"+
+  source.slice(begin,end)+
+  "return {run:loadDeepIndex,state:()=>({plannedFor,plan,shuffleGeneration,"+
+  "shuffleBusy,shuffleRunFor,shuffleRetryAt,shuffleAttempts,hasIndex:!!deepIndex})};"
+ )();
+ await harness.run();
+ assert.deepEqual(harness.state(),{
+  plannedFor:"",plan:null,shuffleGeneration:6,shuffleBusy:false,
+  shuffleRunFor:"",shuffleRetryAt:0,shuffleAttempts:0,hasIndex:true
+ });
+});

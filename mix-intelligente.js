@@ -92,7 +92,13 @@ function loadDeepIndex(force=false){
    if(![1,2].includes(json?.version)||!json.entries||typeof json.entries!=="object")
     throw Error("Schema DJ non valido");
    deepIndex=json;
-   if(enabled&&!mixing){plannedFor="";plan=null;shuffleRunFor="";shuffleRetryAt=0;}
+   if(enabled&&!mixing){
+    // A late deep index invalidates searches that saw only partial audio
+    // metadata. Do not leave the exhausted attempt counter in place.
+    plannedFor="";plan=null;
+    shuffleGeneration++;shuffleBusy=false;
+    shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;
+   }
   }catch(e){/* Keep the last successfully loaded index when offline. */}
   finally{clearTimeout(timeout);deepStatus()}
   return deepIndex;
