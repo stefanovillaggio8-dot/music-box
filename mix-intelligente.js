@@ -157,6 +157,79 @@ try{
 const KEY_NAMES=["Do","Do♯","Re","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"];
 let active=null,previousId="",plan=null,plannedFor="",mixing=false,boundAudio=null;
 function bridge(){return window.MusicBoxBridge}
+
+// Precomputed librosa features do not contain speech detections. Analyze
+// ONLY the currently playing / queued song in the browser, never the full
+// shuffle catalog. This is a separate, bounded and cancellable task.
+const voiceRetry=new Map();
+function voiceIsRelevant(track){
+ const app=bridge();
+ return track?.id!=null&&app&&
+  (app.currentId?.()===track.id||app.mixNext?.()?.id===track.id);
+}
+function scheduleDeepVoice(track,key,data){
+ const voice=window.MusicBoxVocal,net=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+ if(!enabled||!voice?.analyze||!voiceIsRelevant(track)||document.hidden||
+   voiceJobs.has(key)||voiceJobs.size>=2||Date.now()<(voiceRetry.get(key)||0)||
+   net?.saveData||/^(slow-)?2g$|^3g$/i.test(String(net?.effectiveType||"")))return;
+ const job=(async()=>{
+  const abort=new AbortController(),timeout=setTimeout(()=>abort.abort(),isIOS?28000:35000);
+  let context=null;
+  try{
+   const response=await fetch(key,{mode:"cors",cache:"force-cache",signal:abort.signal});
+   const limit=isIOS?12000000:25000000;
+   if(!response.ok||Number(response.headers.get("content-length")||0)>limit)return;
+   let bytes;
+   if(response.body?.getReader){
+    const reader=response.body.getReader(),chunks=[];let length=0;
+    while(true){
+     const part=await reader.read();if(part.done)break;
+     length+=part.value.length;
+     if(length>limit){await reader.cancel();return}
+     chunks.push(part.value);
+    }
+    bytes=new Uint8Array(length);let off=0;
+    for(const part of chunks){bytes.set(part,off);off+=part.length}
+   }else{
+    const raw=await response.arrayBuffer();if(raw.byteLength>limit)return;
+    bytes=new Uint8Array(raw);
+   }
+   if(document.hidden||!voiceIsRelevant(track))return;
+   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+   const Live=window.AudioContext||window.webkitAudioContext;
+   if(Offline)try{context=new Offline(1,1,44100)}catch(e){}
+   if(!context&&Live)context=new Live();
+   if(!context)return;
+   const decoded=await context.decodeAudioData(bytes.buffer);
+   if(Math.abs(decoded.duration-data.duration)>Math.max(5,data.duration*.045))return;
+   const found=await voice.analyze(decoded,{last:data.last});
+   if(!found||document.hidden)return;
+   const previous=cache.get(key);
+   if(!previous||Math.abs(previous.duration-data.duration)>1)return;
+   const enriched={...previous,
+    lastVoiceAt:found.lastVoiceAt,firstVoiceAt:found.firstVoiceAt,
+    lastVoiceConfidence:found.lastVoiceConfidence,
+    firstVoiceConfidence:found.firstVoiceConfidence,
+    voiceIntervals:found.voiceIntervals,
+    voiceModel:found.source,voiceModelVersion:found.modelVersion,
+    voiceScannedEnd:found.scannedEnd,voiceScannedFrom:found.scannedFrom};
+   cache.set(key,enriched);saveAnalysis(key,enriched).catch(()=>{});
+   const app=bridge(),current=app?.currentId?.()===track.id,
+     next=app?.mixNext?.()?.id===track.id;
+   if(voiceThreatensPlan(found,current,next,plan)&&(active||mobileActive))cancel();
+   if((current||next)&&!mixing&&!active&&!mobileActive){plannedFor="";plan=null;}
+  }catch(e){/* Optional vocal scan must never interrupt native playback */}
+  finally{
+   clearTimeout(timeout);
+   if(context?.close)try{await context.close()}catch(e){}
+   voiceRetry.set(key,Date.now()+8*60000);
+   if(voiceRetry.size>40)voiceRetry.delete(voiceRetry.keys().next().value);
+  }
+ })();
+ voiceJobs.set(key,job);
+ job.finally(()=>{if(voiceJobs.get(key)===job)voiceJobs.delete(key)}).catch(()=>{});
+}
+
 function toast(m){bridge()?.toast?.(m)}
 function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 
@@ -642,7 +715,19 @@ async function decode(track,needClip=false){
  if(!deepIndex)await loadDeepIndex();
  const deep=deepLookup(track);
  if(deep&&(!needClip||mobileIntroClips.has(key))){
-  cache.set(key,deep);return deep;
+  const current=cache.get(key);
+  if(current?.voiceModel&&Math.abs(current.duration-deep.duration)<1)return current;
+  const stored=await savedAnalysis(key);
+  const merged=stored?.voiceModel&&Math.abs(stored.duration-deep.duration)<1?
+   {...deep,lastVoiceAt:stored.lastVoiceAt,firstVoiceAt:stored.firstVoiceAt,
+    voiceModel:stored.voiceModel,voiceModelVersion:stored.voiceModelVersion,
+    lastVoiceConfidence:stored.lastVoiceConfidence,
+    firstVoiceConfidence:stored.firstVoiceConfidence,
+    voiceIntervals:stored.voiceIntervals,
+    voiceScannedFrom:stored.voiceScannedFrom,voiceScannedEnd:stored.voiceScannedEnd}:deep;
+  cache.set(key,merged);
+  if(!merged.voiceModel)scheduleDeepVoice(track,key,merged);
+  return merged;
  }
  if(cache.has(key)&&(!needClip||mobileIntroClips.has(key)))return cache.get(key);
  if(pending.has(key))return pending.get(key);
@@ -805,7 +890,11 @@ async function cachedMobileAnalysis(track){
  if(!source)return null;
  const key=String(source);
  const deep=deepLookup(track);
- if(deep){cache.set(key,deep);return deep;}
+ if(deep){
+  const current=cache.get(key);
+  if(current?.voiceModel&&Math.abs(current.duration-deep.duration)<1)return current;
+  cache.set(key,deep);scheduleDeepVoice(track,key,deep);return deep;
+ }
  if(cache.has(key))return cache.get(key);
  const stored=await savedAnalysis(key);
  if(stored){cache.set(key,stored);return stored}
