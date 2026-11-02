@@ -5,6 +5,7 @@ on:
       - 'mix-intelligente.js'
       - 'voice-analysis.js'
       - 'tests/voice-analysis.test.cjs'
+      - 'tests/harmonic-transitions.test.cjs'
       - 'app.js'
       - 'tests/dj-mix.test.cjs'
       - '.github/workflows/dj-mix-tests.yml'
@@ -13,6 +14,7 @@ on:
       - 'mix-intelligente.js'
       - 'voice-analysis.js'
       - 'tests/voice-analysis.test.cjs'
+      - 'tests/harmonic-transitions.test.cjs'
       - 'app.js'
       - 'tests/dj-mix.test.cjs'
       - '.github/workflows/dj-mix-tests.yml'
@@ -32,4 +34,4 @@ jobs:
           node --check mix-intelligente.js
           node --check voice-analysis.js
       - name: Test DJ transition safety
-        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs
+        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs tests/harmonic-transitions.test.cjs
