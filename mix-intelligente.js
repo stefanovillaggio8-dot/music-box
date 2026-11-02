@@ -947,6 +947,23 @@ async function handoff(){
   if(active===act)cancel();
  }
 }
+function mixCurve(kind,t){
+ const time=clamp(t,0,1);
+ let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
+ if(kind==="phrase"){
+  // The outgoing singer stays audible until the last part of the song.
+  // The incoming music is present in the mix before the official handoff.
+  const late=clamp((time-.72)/.28,0,1);
+  outGain=Math.cos(late*Math.PI/2);
+  inGain=.34*Math.sin(Math.min(1,time/.72)*Math.PI/2)+.66*late;
+ }else if(kind==="fade"||kind==="soft"){outGain=1-time;inGain=time}
+ else if(kind==="rise"){
+  outGain=1-Math.pow(time,1.4);
+  inGain=Math.pow(time,1.7);
+ }
+ const guard=kind==="beat"?1-.12*Math.sin(Math.PI*time):kind==="phrase"?.93:1;
+ return {outGain:outGain*guard,inGain:inGain*guard};
+}
 async function beginMix(song,proposed){
  const app=bridge(),old=app?.audio(),id=app?.currentId();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
@@ -996,27 +1013,13 @@ async function beginMix(song,proposed){
       window.MusicBoxRoom?.isActive()){cancel();return}
    const time=clamp((performance.now()-act.at)/(act.fade*1000),0,1);
    const vol=app.volume();
-   // Tre curve: Auto/Beat (equal power), Fade (lineare), Rise (entrata
-   // graduale e uscita netta). Evita picchi quando il volume è alto.
-   let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
-   if(act.kind==="phrase"){
-    // Keep outgoing vocals fully audible until the actual final chord.
-    // The new music grows quietly beneath it, then rises at the boundary.
-    const late=clamp((time-.72)/.28,0,1);
-    outGain=Math.cos(late*Math.PI/2);
-    inGain=.34*Math.sin(Math.min(1,time/.72)*Math.PI/2)+.66*late;
-   }else if(act.kind==="fade"||act.kind==="soft"){outGain=1-time;inGain=time}
-   else if(act.kind==="rise"){
-    outGain=1-Math.pow(time,1.4);
-    inGain=Math.pow(time,1.7);
-   }
-   // Reduce the combined gain near the crossover to avoid a sudden peak.
-   const guard=act.kind==="beat"?1-.12*Math.sin(Math.PI*time):
-    act.kind==="phrase"?.93:1;
+   // Dedicated curve: the first track stays audible until its last
+   // fraction, and the second song enters quietly beneath matching notes.
+   const {outGain,inGain}=mixCurve(act.kind,time);
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
-    old.volume=clamp(vol*outGain*guard,0,1);
-    upcoming.volume=clamp(vol*inGain*correction*guard,0,1);
+    old.volume=clamp(vol*outGain,0,1);
+    upcoming.volume=clamp(vol*inGain*correction,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
     if(act.tempo!==1)upcoming.playbackRate=1+(act.tempo-1)*(1-time);
