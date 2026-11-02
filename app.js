@@ -12093,7 +12093,9 @@ $("fabMenu").addEventListener("click", (e) => {
        ma non era mai stato scaricato, e senza rete non si sentiva niente.
        Ora guardo davvero in cache, per tutti i brani. */
     if (!t.url) {
-      rows.push({ title: t.title, state: "ok", label: "non scaricabile", el: null, track: t });
+      rows.push({ title: t.title, state: "pending",
+        label: t.youtubeId ? "MP3 non ancora pronto" : "non scaricabile",
+        el: null, track: t });
       continue;
     }
     const cached = isCached(t);
@@ -12107,9 +12109,13 @@ $("fabMenu").addEventListener("click", (e) => {
   }
     renderOfflineRows(rows);
     const mancanti = rows.filter((r) => r.state === "todo").length;
+    const nonPronti = rows.filter((r) => r.state === "pending" && r.track?.youtubeId).length;
     $("offlineSub").textContent = mancanti
-      ? mancanti + (mancanti === 1 ? " canzone da scaricare" : " canzoni da scaricare")
-      : "Tutte le canzoni sono gia' pronte per offline";
+      ? mancanti + (mancanti === 1 ? " canzone da scaricare" : " canzoni da scaricare") +
+        (nonPronti ? " · " + nonPronti + " link YouTube ancora senza MP3" : "")
+      : nonPronti ? "Gli MP3 disponibili sono pronti · " + nonPronti +
+        " link YouTube ancora senza MP3" :
+        "Tutte le canzoni disponibili sono gia' pronte per offline";
     return rows;
   }
 
