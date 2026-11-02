@@ -455,13 +455,22 @@ async function decode(track,needClip=false){
        const app=bridge();
        if(app?.currentId()===track.id||
           app?.mixNext?.()?.id===track.id){
-        // New vocal detections may make an active transition unsafe.
-        // A negative ML result must never interrupt an existing mix.
-        const voiceRisk=(app.currentId()===track.id&&
-          Number.isFinite(v.lastVoiceAt))||
-          (app.mixNext?.()?.id===track.id&&Number.isFinite(v.firstVoiceAt));
-        if(voiceRisk&&(active||mobileActive))cancel();
-        plannedFor="";plan=null;
+        // A singing classifier often finds vocals anywhere in a song.
+        // Only vocals NEAR THE MIX POINT can invalidate an active blend.
+        // v6.519 cancelled on *any* vocal detection, even 60s earlier.
+        const currentTrack=app.currentId()===track.id;
+        const nextTrack=app.mixNext?.()?.id===track.id;
+        const dangerousOutro=currentTrack&&
+         Number.isFinite(v.lastVoiceAt)&&Number.isFinite(plan?.begin)&&
+         v.lastVoiceAt>=plan.begin-5;
+        const dangerousIntro=nextTrack&&
+         Number.isFinite(v.firstVoiceAt)&&v.firstVoiceAt<7;
+        if((dangerousOutro||dangerousIntro)&&(active||mobileActive))cancel();
+        // Never restart the planning loop during an already running
+        // handoff or change the player based on non-dangerous vocals.
+        if(!mixing&&!active&&!mobileActive){
+         plannedFor="";plan=null;
+        }
        }
       }).catch(()=>{}).finally(()=>{if(voiceJobs.get(key)===job)voiceJobs.delete(key)});
      voiceJobs.set(key,job);
