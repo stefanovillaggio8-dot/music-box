@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=25; // decaying final hits, revised melodic cues and cloud v2
+const ANALYSIS_VERSION=26; // refreshed singing detector windows and safety
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -737,6 +737,9 @@ async function decode(track,needClip=false){
        if(!v||cache.get(key)!==result)return;
        Object.assign(result,{lastVoiceAt:v.lastVoiceAt,
         firstVoiceAt:v.firstVoiceAt,voiceModel:v.source,
+        voiceModelVersion:v.modelVersion,voiceIntervals:v.voiceIntervals,
+        firstVoiceConfidence:v.firstVoiceConfidence,
+        lastVoiceConfidence:v.lastVoiceConfidence,
         voiceScannedEnd:v.scannedEnd,voiceScannedFrom:v.scannedFrom});
        saveAnalysis(key,result).catch(()=>{});
        const app=bridge();
@@ -927,8 +930,7 @@ function transition(a,b,actualDuration){
   const compatible=ratio>=.95&&ratio<=1.05&&
     groove?.score>=.73&&harmonyStrong;
   const instrumentalTailProven=(Number.isFinite(a.lastLyricAt)&&
-    a.lastLyricAt<=release.releaseAt-3)||
-    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt<=release.releaseAt-3);
+    a.lastLyricAt<=release.releaseAt-3);
   if(compatible&&!lateSinging&&!nextVocal&&(!isIOS||instrumentalTailProven)){
    const end=clamp(a.last+.07,13,dur-.025);
    // Keep the impact and a portion of its decay. The old track is never
@@ -957,16 +959,10 @@ function transition(a,b,actualDuration){
  if(lateBreak&&lateBreak.end<dur-1){
   const lyricSafe=Number.isFinite(a.lastLyricAt)&&
    a.lastLyricAt<=lateBreak.start-4.5;
-  const scanComplete=a.voiceModel==="yamnet"&&
-   Number.isFinite(a.voiceScannedFrom)&&
-   a.voiceScannedFrom<=lateBreak.quietEnd-1&&
-   Number.isFinite(a.voiceScannedEnd)&&
-   a.voiceScannedEnd>=dur-.75;
   const lateVoice=Number.isFinite(a.lastVoiceAt)&&
    a.lastVoiceAt>=lateBreak.start-4.5;
-  const gapVoiceFree=scanComplete&&
-   (!Number.isFinite(a.lastVoiceAt)||
-    a.lastVoiceAt<=lateBreak.start-4.5);
+  // A missed voice event is never proof of an instrumental outro.
+  const gapVoiceFree=false;
   const harmony=similarNotes(a,b),rhythm=grooveAgreement(a,b);
   const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
   const speed=bpmA>0&&bpmB>0?
@@ -1115,8 +1111,7 @@ function transition(a,b,actualDuration){
    // A loud beat bridge on iPhone is only safe when karaoke or a vocal
    // classifier has verified that the singing ended before this section.
    const verifiedInstrumentalEnd=(Number.isFinite(a.lastLyricAt)&&
-     a.lastLyricAt<=end-seconds-2)||
-     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt<=end-seconds-2);
+     a.lastLyricAt<=end-seconds-2);
    const mobileSafe=Boolean(verifiedInstrumentalEnd&&groove?.score>=.80);
    if(!isIOS||mobileSafe){
     return {...common,begin:end-seconds,end,fade:seconds,
