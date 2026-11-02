@@ -42,6 +42,14 @@ async function post(obj,origin="https://stefanovillaggio8-dot.github.io"){
   assert.equal(activity.type,2);
   assert.equal(activity.state,"Artista");
   assert.ok(activity.timestamps.end>activity.timestamps.start);
+  assert.equal(activity.assets.large_image,"https://stefanovillaggio8-dot.github.io/music-box/icon-512.png");
+  assert.equal(activity.assets.small_image,undefined);
+  const album="https://stefanovillaggio8-dot.github.io/music-box/copertine/track-10.jpg";
+  assert.equal(await post({applicationId:"123456789012345678",playing:true,title:"Album",artist:"Autore",position:12,duration:170,cover:album}),200);
+  await waitFor(()=>sent.some(x=>x.args?.activity?.details==="Album"));
+  const albumActivity=sent.find(x=>x.args?.activity?.details==="Album").args.activity;
+  assert.equal(albumActivity.assets.large_image,album);
+  assert.equal(albumActivity.assets.small_image,"https://stefanovillaggio8-dot.github.io/music-box/icon-512.png");
   assert.equal(await post({applicationId:"123456789012345678",playing:false}),200);
   await waitFor(()=>sent.some(x=>x.args?.activity===null));
   assert.equal(await post({applicationId:"123456789012345678",playing:true,title:"No",position:0},"https://evil.example"),403);
