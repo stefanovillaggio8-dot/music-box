@@ -508,3 +508,27 @@ test("beat search preserves manually selected queue and never chooses a soft mat
  assert.match(source,/if\(!verified\)continue/);
  assert.match(source,/return \{retry:unknown\.length>picked\.length&&!scored\.length/);
 });
+
+test("version badge uses the real header button, updates worker before reload, preserves MP3 caches",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
+ assert.match(html,/<button class="ver" id="appVer" type="button"/);
+ assert.ok(!html.includes('id="verBadge"'),"Obsolete version badge must not exist");
+ assert.ok(!app.includes('$("verBadge")'),"Do not bind to a missing element");
+ assert.match(app,/vf\.addEventListener\("click", _aggiornaMusicBoxDaVersione\)/);
+ assert.match(app,/\$\("btnRefresh"\)\.addEventListener\("click", _aggiornaMusicBoxDaVersione\)/);
+ const first=app.indexOf("async function _aggiornaMusicBoxDaVersione(");
+ const last=app.indexOf('  $("btnRefresh").addEventListener("click"',first);
+ const updater=app.slice(first,last);
+ assert.ok(first>=0&&last>first,"Updater must be available to both refresh buttons");
+ assert.match(updater,/getRegistration\(\)/);
+ assert.match(updater,/reg\.update\(\)/);
+ assert.match(updater,/reg\.waiting\) reg\.waiting\.postMessage\(\{ type: "SKIP_WAITING" \}/);
+ assert.match(updater,/searchParams\.set\("forza", String\(Date\.now\(\)\)\)/);
+ assert.match(updater,/window\.location\.assign\(url\.href\)/);
+ assert.ok(!/caches\.delete\(|indexedDB\.deleteDatabase\(|unregister\(\)/.test(updater),
+  "Never clear offline caches or databases when refreshing the app");
+ assert.match(css,/#appVer:focus-visible/);
+ assert.match(css,/#appVer:disabled/);
+});
