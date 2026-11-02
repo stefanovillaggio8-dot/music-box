@@ -302,5 +302,5 @@ test("real-time capture keeps browser audio on native path and uses selective CO
 test("GitHub Pages fire artwork avoids 405 POST and HTTP bridge mixed content",()=>{
  const fire=fs.readFileSync(path.join(__dirname,"..","fuoco.js"),"utf8");
  assert.ok(fire.includes('location.protocol === "https:" && /\\.github\\.io$/i.test(location.hostname)'));
- assert.ok(fire.includes("mettiArtwork(bruciata);\\n      return;"));
+ assert.ok(fire.includes("mettiArtwork(bruciata);\n      return;"));
 });
