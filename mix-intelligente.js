@@ -7,6 +7,25 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
+const mobileIntroClips=new Map();
+function rememberMobileClip(key,decoded,info){
+ if(!isIOS||!decoded||!info)return;
+ try{
+  const rate=decoded.sampleRate;
+  const start=Math.max(0,(info.safeIntroAt||0)-.2);
+  const offset=Math.floor(start*rate);
+  const count=Math.min(Math.floor(14*rate),decoded.length-offset);
+  if(count<rate*4)return;
+  const channels=[];
+  for(let c=0;c<Math.min(2,decoded.numberOfChannels);c++)
+   channels.push(new Float32Array(decoded.getChannelData(c).subarray(offset,offset+count)));
+  if(!channels.length)return;
+  mobileIntroClips.delete(key);
+  mobileIntroClips.set(key,{start,rate,channels});
+  while(mobileIntroClips.size>2)mobileIntroClips.delete(mobileIntroClips.keys().next().value);
+ }catch(e){} // Do not compromise the normal player
+}
+
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
 const ANALYSIS_VERSION=9;
