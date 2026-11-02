@@ -580,7 +580,9 @@ function bestHarmonicAlignment(a,b){
   if(!best||Number(matches)>Number(best.matches)||
      (matches===best.matches&&score>best.score))best=candidate;
  }
- return best;
+ // If all three aligned checkpoints are untrustworthy, do NOT
+ // silently fall back to a misleading whole-song chord average.
+ return best||{fade:null,score:0,weakest:0,matches:false};
 }
 function similarNotes(a,b){
  const tail=a?.outroFinalNotes||a?.outroNotes||a?.outroChroma||a?.chroma;
@@ -1028,11 +1030,13 @@ function mixCurve(kind,t){
  const time=clamp(t,0,1);
  let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
  if(kind==="phrase"){
-  // The outgoing singer stays audible until the last part of the song.
-  // The incoming music is present in the mix before the official handoff.
-  const late=clamp((time-.72)/.28,0,1);
-  outGain=Math.cos(late*Math.PI/2);
-  inGain=.34*Math.sin(Math.min(1,time/.72)*Math.PI/2)+.66*late;
+  // The old release kept the outgoing song at full volume until 72% and
+  // then dropped it in ~0.7s: a perceptibly abrupt swap on busy outros.
+  // This smooth, broad harmonic envelope lets the instruments exchange
+  // energy over the matched measures, without a sudden amplitude step.
+  const smooth=x=>{const v=clamp(x,0,1);return v*v*(3-2*v)};
+  outGain=Math.cos(smooth((time-.25)/.75)*Math.PI/2);
+  inGain=Math.sin(smooth(time)*Math.PI/2);
  }else if(kind==="fade"||kind==="soft"){outGain=1-time;inGain=time}
  else if(kind==="rise"){
   outGain=1-Math.pow(time,1.4);
