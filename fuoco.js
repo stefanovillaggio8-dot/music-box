@@ -1253,6 +1253,14 @@
     if (!imgCopertina || !ctxTela) return;
     var bruciata = copertinaCheBrucia(prog);
     if (!bruciata) return;
+    // GitHub Pages is static HTTPS hosting: POST /app/fuoco-notifica.png
+    // always returns 405. Retrying private HTTP bridge IPs then generates
+    // hundreds of Mixed Content warnings. On HTTPS use the existing
+    // in-memory artwork directly; preserve the local PC bridge on HTTP.
+    if (location.protocol === "https:" && /\.github\.io$/i.test(location.hostname)) {
+      mettiArtwork(bruciata);
+      return;
+    }
     try {
       if (tela.toBlob) {
         tela.toBlob(function (blob) {
