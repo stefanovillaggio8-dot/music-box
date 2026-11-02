@@ -1680,6 +1680,10 @@ function mixCurve(kind,t,softTail=false){
   const smooth=x=>{const v=clamp(x,0,1);return v*v*(3-2*v)};
   outGain=Math.cos(smooth((time-.25)/.75)*Math.PI/2);
   inGain=Math.sin(smooth(time)*Math.PI/2);
+ }else if(kind==="quiet"){
+  // A verified soft outro is already low: lift the next music earlier
+  // instead of applying a linear fade to two near-silent signals.
+  inGain=Math.sin(Math.pow(time,.58)*Math.PI/2);
  }else if(kind==="fade"||kind==="soft"){outGain=1-time;inGain=time}
  else if(kind==="rise"){
   outGain=1-Math.pow(time,1.4);
@@ -1842,7 +1846,10 @@ function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  // cannot be used as evidence that the song's outro is silent.
  if(earlier.filter(p=>p.rms>=baseline*.55).length<7)return false;
  // Confirm nearly inaudible audio for >0.85s, with no new attack.
- if(recent.some(p=>p.rms>baseline*.115))return false;
+ // Start a verified decaying outro while there is still time for the next
+ // song to rise; the previous 11.5% threshold fired only after the audio
+ // was practically silent in the 19:32 screen recording.
+ if(recent.some(p=>p.rms>baseline*.24))return false;
  if(recent.at(-1).rms>recent[0].rms*1.35+baseline*.008)return false;
  return true;
 }
@@ -1853,14 +1860,23 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
     !liveQuietOutroReady(liveOutro?.audio===audio?liveOutro.samples:null,
       audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
  const remaining=audio.duration-audio.currentTime;
- const fade=clamp(Math.min(2.6,remaining-.75),1.3,2.6);
- if(fade<1.5)return false;
- const p={entry:0,begin:audio.currentTime,end:audio.currentTime+fade+.2,
-  fade,tempo:1,gain:1,kind:"soft",silenceTrim:false,
+ const fade=clamp(Math.min(3.7,remaining-.55),1.5,3.7);
+ if(fade<1.7)return false;
+ // Skip only a proven digitally silent opening of exactly the next MP3.
+ // Otherwise keep the original musical intro (including quiet notes).
+ const nextSource=app.mixUrl?.(next)||next?.url;
+ const nextAnalysis=nextSource&&(cache.get(String(nextSource))||deepLookup(next));
+ const verifiedIntro=Number.isFinite(nextAnalysis?.safeIntroAt)&&
+   Number.isFinite(nextAnalysis?.duration)&&
+   Number.isFinite(prepared?.audio?.duration)&&
+   Math.abs(nextAnalysis.duration-prepared.audio.duration)<1.5;
+ const entry=verifiedIntro?clamp(nextAnalysis.safeIntroAt,0,18):0;
+ const p={entry,begin:audio.currentTime,end:audio.currentTime+fade+.2,
+  fade,tempo:1,gain:1,kind:"quiet",silenceTrim:false,
   liveQuietCertified:true,quietCertified:true};
- console.info("[Music Box DJ] Dissolvenza reale confermata, entro con un mix neutro",
+ console.info("[Music Box DJ] Finale in dissolvenza: sovrapposizione dolce anticipata",
   {outgoing:id,incoming:next.id,remaining:remaining.toFixed(2),
-   measuredRms:liveOutro.samples.at(-1)?.rms?.toFixed(5)});
+   entry,measuredRms:liveOutro.samples.at(-1)?.rms?.toFixed(5)});
  beginMix(next,p).catch(()=>cancel());
  return true;
 }
