@@ -791,6 +791,49 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5)return null;
+ // A long quiet break with a brief LOUD return is a different case.
+ // Do not mistake the returning music for safe silence. Only an ending
+ // already verified as instrumental (timed last lyric or a full vocal
+ // scan with no late vocal detection) may be abbreviated.
+ const lateBreak=a.outroBreak;
+ if(lateBreak&&lateBreak.end<dur-1){
+  const lyricSafe=Number.isFinite(a.lastLyricAt)&&
+   a.lastLyricAt<=lateBreak.start-4.5;
+  const scanComplete=a.voiceModel==="yamnet"&&
+   Number.isFinite(a.voiceScannedFrom)&&
+   a.voiceScannedFrom<=lateBreak.quietEnd-1&&
+   Number.isFinite(a.voiceScannedEnd)&&
+   a.voiceScannedEnd>=dur-.75;
+  const lateVoice=Number.isFinite(a.lastVoiceAt)&&
+   a.lastVoiceAt>=lateBreak.start-4.5;
+  const gapVoiceFree=scanComplete&&!Number.isFinite(a.lastVoiceAt);
+  const harmony=similarNotes(a,b),rhythm=grooveAgreement(a,b);
+  const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
+  const speed=bpmA>0&&bpmB>0?
+   [.5,1,2].map(scale=>bpmA/(bpmB*scale))
+   .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best):1;
+  // A matched beat and a matched chord boundary are required. These
+  // conditions distinguish a useful DJ handoff from merely skipping audio.
+  if((lyricSafe||gapVoiceFree)&&!lateVoice&&
+     harmony.matches&&harmony.focused>=.77&&rhythm?.score>=.79&&
+     a.beatConfidence>=.2&&b.beatConfidence>=.2&&
+     speed>=.96&&speed<=1.04){
+   const start=lateBreak.start,end=lateBreak.end;
+   const begin=lateBreak.fadeStart,entry=
+    Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+   return {entry,begin,end,fade:end-begin,
+    kind:style==="auto"?"beat":style,
+    tempo:clamp(speed,.97,1.03),
+    gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+    score:Math.round((harmony.score??.8)*100),
+    grooveScore:rhythm.score,
+    silenceTrim:true,softTailTrim:true,
+    quietCertified:true,safeOutroAt:begin,trailing:dur-end,
+    lateInstrumentalBreak:true,outroGapStart:start,
+    beatPeriod:60/bpmA,beatAnchor:lateBreak.beatAnchor,
+    nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+  }
+ }
  // If the final passage contains a long quiet valley followed only by
  // very subdued audio, hand off near the START of the valley, not at
  // the end of the encoded MP3. This path requires BPM AND harmony.
@@ -1611,7 +1654,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.strongBeatBridge?
+ const description=plan?.lateInstrumentalBreak?
+   " · pausa lunga prima dell'ultimo strumentale: passaggio protetto":
+   plan?.strongBeatBridge?
    " · beat finale e iniziale compatibili: sovrapposizione anche senza silenzio"+
    (Number.isFinite(plan.grooveScore)?" · ritmo "+Math.round(plan.grooveScore*100)+"%":""):
    Number.isFinite(plan?.outroGapStart)?
