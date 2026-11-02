@@ -369,3 +369,20 @@ test("intermittent MP3 failures: one original-track fallback, fresh retry, no st
  assert.match(error,/currentId!==failingId\|\|audio!==failingAudio/);
  assert.match(app,/_mbNormalFallbackTried = false/);
 });
+
+test("release version is identical in player, metadata, HTML assets and service worker",()=>{
+ const root=name=>fs.readFileSync(path.join(__dirname,"..",name),"utf8");
+ const app=root("app.js"),html=root("index.html"),
+  sw=root("sw.js"),meta=JSON.parse(root("versione.json"));
+ const match=/const APP_VERSION = "([0-9]+\.[0-9]+)";/.exec(app);
+ assert.ok(match,"Application version constant must be present");
+ assert.equal(match[1],meta.versione,
+  "Player version must match the online metadata: no more stale version badges");
+ const token=match[1].replace(/\./g,"");
+ assert.ok(html.includes('app.js?v='+token+'"'),
+  "HTML must request the updated player script");
+ assert.ok(html.includes('mix-intelligente.js?v='+token+'"'),
+  "HTML must request the same release of DJ Mix");
+ assert.ok(sw.includes('spotifynonavraiimieisoldi-v'+token+'"'),
+  "Offline worker version must match the player");
+});
