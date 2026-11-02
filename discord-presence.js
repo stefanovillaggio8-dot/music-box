@@ -23,11 +23,16 @@ function trackInfo(){
  const t=bridge.allTracks?.()?.find?.(x=>x.id===bridge.currentId?.());
  if(!audio||!t||audio.paused||audio.ended)return {playing:false};
  const duration=Number(audio.duration),pos=Number(audio.currentTime);
+ // Share the same cover used by the player when it has a public HTTPS URL.
+ // The desktop helper uses the Music Box icon when artwork is missing/local-only.
  let cover="";
  try{
   const raw=t.cover||"";
-  if(raw){const u=new URL(raw,location.href);if(u.protocol==="https:"&&
-    (u.hostname==="stefanovillaggio8-dot.github.io"||u.hostname==="i.scdn.co"||u.hostname.endsWith(".scdn.co")))cover=u.href;}
+  if(typeof raw==="string"&&raw){
+   const u=new URL(raw,location.href);
+   if(u.protocol==="https:"&&u.href.length<320&&
+      (u.hostname==="stefanovillaggio8-dot.github.io"||u.hostname==="i.scdn.co"||u.hostname.endsWith(".scdn.co")))cover=u.href;
+  }
  }catch(_){}
  return {playing:true,title:String(t.title||"").slice(0,120),artist:String(t.artist||"").slice(0,120),
   position:Number.isFinite(pos)?Math.max(0,pos):0,
