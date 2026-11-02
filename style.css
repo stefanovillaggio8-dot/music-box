@@ -3515,3 +3515,16 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .stanza-exit-top:hover{background:rgba(170,55,90,.35)}
 @media(max-width:390px){.stanza-exit-top{padding:7px 8px;font-size:10px}
   .stanza-head-actions{gap:4px}.stanza-card .import-head{gap:5px}}
+
+/* Discord Rich Presence: secondary settings inside Amici online. */
+.discord-presence-settings{margin:13px 0 0;gap:10px;background:rgba(88,101,242,.085);border-color:rgba(126,135,255,.27)}
+.discord-presence-heading{display:flex;align-items:center;gap:9px;font-size:13px;color:#e0e3ff}
+.discord-logo-mini{display:grid;place-items:center;width:27px;height:27px;border-radius:9px;background:#5865f2;color:white;font-weight:900}
+.discord-presence-input-label{font-size:11px;font-weight:750;color:#c6cafc}
+.discord-presence-field{display:flex;gap:8px;align-items:stretch;min-width:0}
+.discord-presence-field input{background:#171725;color:#f9f7ff;min-width:0;flex:1;padding:10px;border:1px solid rgba(157,159,222,.3);border-radius:10px;font:inherit;font-size:12px}
+.discord-presence-field button{flex:0 0 auto;max-width:90px;border:1px solid rgba(137,146,252,.55);border-radius:10px;background:rgba(88,101,242,.28);color:#eceeff;font-weight:750;padding:8px 11px;cursor:pointer}
+.discord-presence-note{font-size:11px;line-height:1.5;color:#c1bcd0;margin:0;overflow-wrap:anywhere}
+.discord-presence-note a{color:#bbc5ff;text-decoration:underline;text-underline-offset:2px}
+.discord-presence-settings .amici-status{margin:2px 0}
+@media(max-width:390px){.discord-presence-field{flex-wrap:wrap}.discord-presence-field button{width:100%;max-width:none}}

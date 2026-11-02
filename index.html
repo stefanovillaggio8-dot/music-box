@@ -24,7 +24,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6531" />
+  <link rel="stylesheet" href="style.css?v=6532" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -1438,10 +1438,22 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
     </div>
     <div class="import-body">
       <section class="amici-settings" aria-label="Impostazioni privacy">
-        <label class="amici-option"><span><b>Mostrami online</b><small>Disattivato all'inizio. Puoi diventare invisibile quando vuoi.</small></span><input id="amiciVisible" type="checkbox"/></label>
+        <label class="amici-option"><span><b>Mostrami online</b><small>Attivo all'inizio. Puoi diventare invisibile quando vuoi.</small></span><input id="amiciVisible" type="checkbox"/></label>
         <label class="amici-option"><span><b>Mostra cosa ascolto</b><small>Se disattivato, gli amici vedono solo che sei online.</small></span><input id="amiciSong" type="checkbox"/></label>
       </section>
-      <p id="amiciStatus" class="amici-status" role="status">La tua attività è privata.</p>
+      <section class="amici-settings discord-presence-settings" aria-label="Discord Rich Presence">
+        <div class="discord-presence-heading"><span class="discord-logo-mini">◉</span><b>Discord · Music Box (PC)</b></div>
+        <label class="amici-option"><span><b>Mostra su Discord</b><small>Mostra automaticamente titolo, artista e avanzamento del brano nel Discord Desktop che hai già aperto.</small></span><input id="discordRpcEnabled" type="checkbox" /></label>
+        <label class="discord-presence-input-label" for="discordRpcId">Discord Application ID</label>
+        <div class="discord-presence-field">
+          <input id="discordRpcId" type="text" inputmode="numeric" autocomplete="off" placeholder="Incolla l'ID numerico dell'app Music Box" maxlength="21" />
+          <button id="discordRpcCheck" type="button">Verifica</button>
+        </div>
+        <p class="discord-presence-note">Prima volta? <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer">Crea Music Box su Discord Developer Portal</a>, copia l'Application ID e avvia il ponte Windows sul PC.</p>
+        <p class="discord-presence-note"><a href="https://github.com/stefanovillaggio8-dot/music-box/blob/main/tools/DISCORD-RICH-PRESENCE.md" target="_blank" rel="noopener noreferrer">Guida e avvio del ponte Discord per Windows</a></p>
+        <p id="discordRpcStatus" class="amici-status" role="status">Configurazione Discord in attesa.</p>
+      </section>
+      <p id="amiciStatus" class="amici-status" role="status">Presenza amici disponibile.</p>
       <div class="amici-heading"><h3>Amici connessi</h3><button id="amiciRefresh" type="button">Aggiorna ↻</button></div>
       <div id="amiciList" class="amici-users" aria-live="off"></div>
       <h3 class="amici-requests-title">Richieste per le stanze</h3>
@@ -1501,12 +1513,13 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 <div class="diag-body" id="diagBody">Sto guardando...</div>
 </div>
 </div>
-<script src="fuoco.js?v=6531"></script>
-<script src="app.js?v=6531"></script>
-<script src="stanza.js?v=6531"></script>
-<script src="amici-online.js?v=6531"></script>
-<script src="voice-analysis.js?v=6531"></script>
-<script src="mix-intelligente.js?v=6531"></script>
-<script src="immersive.js?v=6531"></script>
+<script src="fuoco.js?v=6532"></script>
+<script src="app.js?v=6532"></script>
+<script src="stanza.js?v=6532"></script>
+<script src="amici-online.js?v=6532"></script>
+<script src="discord-presence.js?v=6532"></script>
+<script src="voice-analysis.js?v=6532"></script>
+<script src="mix-intelligente.js?v=6532"></script>
+<script src="immersive.js?v=6532"></script>
 </body>
 </html>
