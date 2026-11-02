@@ -119,3 +119,35 @@ test("inspect music actually responsible for repeated zero beatCandidates in con
    counts,examples:best.slice(0,4)}));
  }
 });
+
+
+test("screen recording 00:41:03: diagnose musical candidates for track-1197 and track-129",()=>{
+ for(const target of ["track-1197.mp3","track-129.mp3"]){
+  const from=tracks.find(t=>t.key==="audio/songs/"+target)||
+   tracks.find(t=>t.key.endsWith("/"+target));
+  if(!from){console.info("[DJ USER VIDEO]",JSON.stringify({target,missing:true}));continue;}
+  const a=from.data,counts={library:0,tempo:0,groove:0,boundary:0,
+   nearUnknownKey:0},examples=[];
+  for(const {key,data:b} of tracks){
+   if(key===from.key||!(b.introDrive>=.33)||b.first-(b.safeIntroAt||0)>1.3)continue;
+   counts.library++;
+   const ratio=[.5,1,2].map(k=>a.bpm/(b.bpm*k))
+     .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+   if(ratio<.945||ratio>1.055)continue;
+   counts.tempo++;
+   const g=engine.grooveAgreement(a,b);
+   if(!g||g.score<.60)continue;
+   counts.groove++;
+   const n=engine.similarNotes(a,b);
+   if(Number.isFinite(n.focused)&&n.focused>=.65&&
+      Number.isFinite(n.phrase)&&n.phrase>=.48)counts.boundary++;
+   if(g.score>=.76&&n.focused>=.71&&n.phrase>=.48){
+    counts.nearUnknownKey++;
+    examples.push({key,groove:+g.score.toFixed(2),
+     focused:+n.focused.toFixed(2),phrase:+n.phrase.toFixed(2)});
+   }
+  }
+  console.info("[DJ USER VIDEO]",JSON.stringify({target,counts,
+   top:examples.slice(0,4)}));
+ }
+});
