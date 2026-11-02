@@ -36,7 +36,7 @@ finally:file.unlink(missing_ok=True)
 # A gradually decaying beat can be bridged before the digital silence.
 # Do not call the decaying music "silence": retain its actual waveform.
 envelope=(.26+.13*pulse)*np.sin(2*math.pi*220*time)
-envelope[time>=52]*=np.exp(-(time[time>=52]-52)*.6)
+envelope[time>=52]*=np.exp(-(time[time>=52]-52)*.35)
 envelope[time>=60]=0
 file=write_audio(envelope)
 try:
