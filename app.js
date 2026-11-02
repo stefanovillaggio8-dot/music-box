@@ -1543,6 +1543,13 @@ const PROFILI = [
   function _urlDelBrano(t) {
     // URL stabile del file cloud: non trasformarlo in un percorso GitHub.
     if (t && t.source === "cloud-audio" && t.url) return t.url;
+    // An old saved home-bridge URL cannot play on HTTPS GitHub Pages.
+    // For repository tracks reuse their canonical, secure public MP3
+    // instead of repeatedly making blocked http:// requests.
+    if (t && t.file && t.source !== "cloud-audio" &&
+        location.protocol === "https:" && /^http:\/\//i.test(String(t.url||"")) &&
+        /^songs\/[A-Za-z0-9/_-]+\.mp3$/i.test(String(t.file)))
+      return _doveStaIlBrano(t.file);
     /* Il brano Baby Gang e' stato segnalato con audio diverso dal video
        ufficiale; usa sempre il file originale corretto, mai i bassi vecchi. */
     if (t && t.file === "songs/track-929.mp3") return _doveStaIlBrano(t.file);
@@ -5718,8 +5725,22 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   if (!t) return;
   const errorCode=Number(audio?.error?.code||0);
   t._mbUltimoErroreAudio=errorCode;
-  console.warn("Errore audio", {id:t.id,file:t.file,profile:t.profile||profile,
-    code:errorCode,message:String(audio?.error?.message||"").slice(0,160)});
+  // Make the cause visible without expanding "Object" in DevTools.
+  // Log only URL protocol/hostname, never signed URL tokens or queries.
+  let sourceLabel="sorgente sconosciuta",insecure=false;
+  try{
+    const u=new URL(String(audio?.currentSrc||audio?.src||_urlDelBrano(t)||""),location.href);
+    sourceLabel=u.protocol+"//"+u.hostname+"/"+String(t.file||"").split("/").pop();
+    insecure=location.protocol==="https:"&&u.protocol==="http:";
+  }catch(_){}
+  const audioCause={1:"interrotto",2:"rete",3:"decodifica MP3",4:"sorgente non supportata"}[errorCode]||"sconosciuto";
+  console.warn("[Music Box] Errore audio "+errorCode+" ("+audioCause+")"+
+    " · "+String(t.artist||"").slice(0,45)+" - "+String(t.title||"").slice(0,70)+
+    " · id="+String(t.id)+" · fonte="+sourceLabel+
+    (insecure?" · HTTP BLOCCATO SU HTTPS (Mixed Content)":"")+
+    " · readyState="+Number(audio?.readyState??-1)+
+    " · networkState="+Number(audio?.networkState??-1)+
+    " · dettaglio="+String(audio?.error?.message||"").slice(0,140));
   t._mbErroriAudio = (Number(t._mbErroriAudio) || 0) + 1;
   // Un MP3 può essere integro sul sito ma corrotto in una vecchia cache.
   // In caso di errore di decodifica, prova una singola richiesta nuova,
