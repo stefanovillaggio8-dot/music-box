@@ -828,6 +828,15 @@ function tick(){
      id!==mobileActive.fromId||next?.id!==mobileActive.track.id){
    stopMobileMix();
   }else{
+   // A running AudioContext may nevertheless stop advancing on Safari.
+   // Detect a stalled preview clock and let the native song finish.
+   const audioStep=audio.currentTime-mobileActive.lastAudioTime;
+   const clockStep=mobileActive.ctx.currentTime-mobileActive.lastCtxTime;
+   if(audioStep>.30&&clockStep<.025){
+    stopMobileMix();return;
+   }
+   mobileActive.lastAudioTime=audio.currentTime;
+   mobileActive.lastCtxTime=mobileActive.ctx.currentTime;
    if(audio.currentTime>=mobileActive.end-.10)handoffMobileMix(app);
    return;
   }
