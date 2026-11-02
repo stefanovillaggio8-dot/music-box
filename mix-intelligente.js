@@ -436,6 +436,17 @@ async function decode(track,needClip=false){
  }finally{pending.delete(key)}
 }
 
+// Read lightweight saved analysis first, without waiting for a whole MP3 to
+// be decoded again just to build a small iPhone playback preview.
+async function cachedMobileAnalysis(track){
+ const source=bridge()?.mixUrl?.(track)||track?.url;
+ if(!source)return null;
+ const key=String(source);
+ if(cache.has(key))return cache.get(key);
+ const stored=await savedAnalysis(key);
+ if(stored){cache.set(key,stored);return stored}
+ return null;
+}
 function hasReliableHarmony(ch){
  if(!Array.isArray(ch)||ch.length!==12)return false;
  const v=ch.slice().sort((a,b)=>b-a);
@@ -929,9 +940,18 @@ function tick(){
   // Safari decodes one song at a time: get the next intro ready first.
   // Do not wait for the entire current track before preparing the next.
   if(isIOS){
+   // Fast-path: an indexed analysis is enough to choose the cue now;
+   // regenerate the short preview in parallel, without delaying planning.
+   cachedMobileAnalysis(next).then(value=>{
+    if(value){b=value;update()}
+   }).catch(()=>{});
+   cachedMobileAnalysis(now).then(value=>{
+    if(value){a=value;update()}
+   }).catch(()=>{});
+   // Prioritize preparing the next song on Safari's serial decoder.
    decode(next,mobileOverlayEnabled&&!document.hidden)
-    .then(value=>{b=value;update()}).catch(()=>{});
-   decode(now).then(value=>{a=value;update()}).catch(()=>{});
+    .then(value=>{if(value){b=value;update()}}).catch(()=>{});
+   decode(now).then(value=>{if(value){a=value;update()}}).catch(()=>{});
   }else{
    decode(now).then(value=>{a=value;update()}).catch(()=>{});
    decode(next).then(value=>{b=value;update()}).catch(()=>{});
