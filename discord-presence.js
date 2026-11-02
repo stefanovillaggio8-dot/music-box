@@ -70,7 +70,7 @@ async function push(body){
   if(j.connected)status(body.playing?"Su Discord: "+(body.title||"Music Box"):"Discord collegato · in pausa");
   else status(j.error&&j.error!=="Collegamento a Discord..."?j.error:"Collegamento a Discord in corso...");
  }catch(e){
-  status("Ponte Discord non raggiungibile. Avvia il file Windows nel progetto (porta 8792).");
+  status("Ponte Discord non raggiungibile. Installa una sola volta il ponte per Windows.");
  }finally{clearTimeout(timer);busy=false;}
 }
 function setup(){
