@@ -101,10 +101,10 @@ test("unmeasured beat phase does not invent alignment",()=>{
  assert.equal(plan.kind,"beat");
  assert.equal(plan.beatPeriod,null);
 });
-test("incompatible local opening and outro favor discreet fade",()=>{
+test("incompatible intro/outro notes never force a crossfade",()=>{
  const flat=[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.90];
  const plan=transition({...current,safeOutroAt:172,outroChroma:flat},next,180);
- assert.ok(plan&&plan.kind==="soft");
+ assert.equal(plan,null);
 });
 test("a late vocal cue protects the song even with a quiet ending",()=>{
  for(const timestamp of [173,175,178]){
@@ -200,6 +200,10 @@ test("iPhone preview hands off at the current second, never song start",()=>{
  f.setCurrent("next");f.setNative(nextAudio);
  f.engine.finishMobileMix(f.app);
  assert.ok(nextAudio.currentTime>5.5);
+ assert.ok(f.engine.active()); // native loadeddata can still be stalled
+ f.engine.active().nativeSyncAt=Date.now()-160;
+ nextAudio.currentTime+=.2;
+ f.engine.finishMobileMix(f.app);
  assert.equal(f.engine.active(),null);
 });
 test("iPhone lock screen cleanup is hooked directly to visibilitychange",()=>{
@@ -377,4 +381,24 @@ test("obsolete iPhone preparation never blacklists a valid MP3",()=>{
  assert.ok(source.includes('const STALE_MOBILE_PREVIEW=Symbol('));
  assert.ok(source.includes('if(needClip&&bridge()?.mixNext?.()?.id!==track.id)'));
  assert.ok(source.includes('if(data===STALE_MOBILE_PREVIEW)return null'));
+});
+
+test("notes shared between last and first measures can cue before last note",()=>{
+ const h=[.24,.16,.12,.11,.08,.08,.06,.04,.03,.03,.025,.025];
+ const a={...current,safeOutroAt:172,outroNotes:h,lastNoteAt:178};
+ const b={...next,introNotes:h};
+ const plan=transition(a,b,180);
+ assert.ok(plan&&plan.kind==="beat"&&plan.end>177.5&&plan.end<178);
+});
+test("different dominant note signatures prevent a distracting crossfade",()=>{
+ const h=[.24,.16,.12,.11,.08,.08,.06,.04,.03,.03,.025,.025];
+ const d=[.02,.03,.01,.02,.02,.03,.01,.08,.02,.02,.70,.04];
+ assert.equal(transition({...current,safeOutroAt:172,outroNotes:h},
+  {...next,introNotes:d},180),null);
+});
+test("lyrics continuing into a final note are never cut mid phrase",()=>{
+ assert.equal(transition({...current,safeOutroAt:172,lastNoteAt:178,lastLyricAt:174},next,180),null);
+});
+test("an uncertified loud ending cannot be chopped before last note",()=>{
+ assert.equal(transition({...current,safeOutroAt:null,lastNoteAt:178},next,180),null);
 });
