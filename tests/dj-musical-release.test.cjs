@@ -252,3 +252,40 @@ test("when prebuffer is unavailable, only digitally verified end silence can be 
  assert.equal(canSkip({...a,lastVoiceAt:95.9},100,97,88),false);
  assert.equal(canSkip(a,100,97,95.8),false,"Last karaoke cue vetoes early skip");
 });
+
+test("screen recording 19:08:34: real audible decay triggers an overlap BEFORE the silent end",()=>{
+ const live=source.slice(source.indexOf("function liveQuietOutroReady("),
+  source.indexOf("function tryLiveQuietMix("));
+ const eligible=new Function(live+"return liveQuietOutroReady")();
+ // Relative 0.25s RMS values from the user's screen recording, not
+ // audio samples: copyright-safe regression data.
+ const late=[.005886,.004836,.004393,.003759,.003287,.002886,.002453,.002064,
+  .001657,.001310,.001112,.000835,.000668,.000512,.000364,.000236,
+  .000124,.000060,.000028,.000004];
+ const samples=[];
+ for(let t=0;t<26;t+=.25)
+  samples.push({at:216+t,rms:.011+.007*Math.abs(Math.sin(t*1.79))});
+ late.forEach((r,i)=>samples.push({at:216+26+i*.25,rms:r}));
+ const at=216+29.75;
+ assert.ok(eligible(samples,249,at,216+20,216+21),
+  "The quiet, measured musical release should trigger 3+ seconds before the encoded end");
+ assert.equal(eligible(samples,249,216+26,216+20,216+21),false,
+  "Do not treat still-audible outro music as silence");
+ assert.equal(eligible(samples,249,at,216+28,216+21),false,
+  "A late vocal lyric must not be interrupted");
+ assert.equal(eligible(samples,249,at,216+20,216+29),false,
+  "Model-detected late singing must veto the handoff");
+ assert.equal(eligible(samples.map(x=>({...x,rms:0})),249,at),false,
+  "CORS-muted capture is not evidence of silence");
+ const comeback=samples.map(x=>({...x}));
+ for(const x of comeback)if(x.at>216+29)x.rms=.010;
+ assert.equal(eligible(comeback,249,at),false,
+  "A new beat or chorus makes the tail ineligible");
+});
+test("desktop fallback prebuffers even if harmonic plan is null or direct-cut",()=>{
+ assert.match(source,/if\(!isIOS&&\(plan===null\|\|plan.kind==="cut"\)/);
+ assert.match(source,/if\(tryLiveQuietMix\(app,audio,id,next,lastLyric,analysis\)\)return/);
+ assert.match(source,/source\.connect\(analyser\); \/\/ No destination/);
+ assert.ok(!source.includes("source.connect(ctx.destination)"),
+  "Do not reroute original playback through the analysis context");
+});
