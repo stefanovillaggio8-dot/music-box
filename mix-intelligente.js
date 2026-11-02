@@ -590,7 +590,9 @@ function startMobileMix(song,p,app,old){
  try{
   const offset=Math.max(0,p.entry-clip.start);
   const frames=clip.channels[0].length;
-  if((frames/clip.rate-offset)<p.fade+1.5)return false;
+  const secondsLeft=p.end-old.currentTime;
+  // Do not start a crossfade so late that it would cut the next song.
+  if(secondsLeft<2.15||(frames/clip.rate-offset)<secondsLeft+.3)return false;
   const buf=ctx.createBuffer(clip.channels.length,frames,clip.rate);
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
   source=ctx.createBufferSource();gain=ctx.createGain();
@@ -600,16 +602,25 @@ function startMobileMix(song,p,app,old){
   if(typeof ctx.createBiquadFilter==="function"){
    try{
     filter=ctx.createBiquadFilter();filter.type="highpass";
-    filter.frequency.setValueAtTime(155,ctx.currentTime);
-    filter.frequency.exponentialRampToValueAtTime(42,ctx.currentTime+Math.max(2,p.fade*.8));
+    filter.frequency.setValueAtTime(135,ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(40,ctx.currentTime+Math.max(1.2,p.fade*.72));
     source.connect(filter);filter.connect(gain);
    }catch(e){try{filter?.disconnect()}catch(_){}filter=null;source.connect(gain)}
   }else source.connect(gain);
   gain.connect(ctx.destination);
+  // Schedule at a measured beat phase if it costs less than 230 ms.
+  // Never seek into the incoming song to fake musical alignment.
+  const period=Number(p.beatPeriod);
+  const phase=Number.isFinite(period)&&period>.20&&
+    Number.isFinite(p.beatAnchor)&&Number.isFinite(p.nextBeat)?
+    ((p.beatAnchor-old.currentTime-p.nextBeat)%period+period)%period:0;
+  const delay=phase>0&&phase<=.23&&secondsLeft>3?phase:0;
+  const startedAt=ctx.currentTime+delay;
+  const ramp=Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
-  const target=clamp(app.volume?.()??1,0,1)*.78;
-  gain.gain.linearRampToValueAtTime(target,ctx.currentTime+Math.max(2,p.fade*.8));
-  source.start(ctx.currentTime,offset);
+  const target=clamp(app.volume?.()??1,0,1)*.86;
+  gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
+  source.start(startedAt,offset);
   const onPause=()=>{
    if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
   };
@@ -624,9 +635,9 @@ function startMobileMix(song,p,app,old){
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
   mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
-   entry:p.entry,started:ctx.currentTime,audioStartedAt:old.currentTime,
+   entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
-   handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset,
+   handoffAt:0,clipEnd:startedAt+frames/clip.rate-offset,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
