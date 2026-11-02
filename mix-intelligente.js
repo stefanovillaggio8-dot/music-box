@@ -1774,6 +1774,93 @@ function certifiedTailSkip(a,duration,now,lastLyricAt){
  if(Number.isFinite(lyric)&&lyric>=a.last-.6)return false;
  return true;
 }
+// Desktop-only safety net for verified near-silent real-audio fade-outs.
+// Unlike PCM pre-analysis, this observes the currently *playing* stream.
+// It NEVER changes the original element's audio routing or connects to
+// speakers. It works even if the deep index or second-track analysis failed.
+// Media capture may be unavailable or CORS-silent: then simply do nothing.
+let liveOutro=null,liveReportFor="";
+function closeLiveOutro(){
+ const state=liveOutro;liveOutro=null;
+ if(!state)return;
+ try{state.source.disconnect()}catch(_){}
+ try{state.analyser.disconnect()}catch(_){}
+ try{state.ctx.close()?.catch(()=>{})}catch(_){}
+}
+function sampleLiveOutro(audio){
+ if(isIOS||!audio||audio.paused||
+    !Number.isFinite(audio.duration)||audio.duration-audio.currentTime>38)return;
+ if(liveOutro?.audio!==audio){
+  closeLiveOutro();
+  if(typeof audio.captureStream!=="function")return;
+  try{
+   const stream=audio.captureStream();
+   if(!stream.getAudioTracks().length)return;
+   const AC=window.AudioContext||window.webkitAudioContext;
+   if(!AC)return;
+   const ctx=new AC(),source=ctx.createMediaStreamSource(stream);
+   const analyser=ctx.createAnalyser();
+   analyser.fftSize=2048;
+   source.connect(analyser); // No destination: keep native playback untouched.
+   liveOutro={audio,ctx,source,analyser,buffer:new Float32Array(2048),
+    samples:[],lastAt:-1};
+   if(ctx.state==="suspended")ctx.resume().catch(()=>{});
+  }catch(_){closeLiveOutro();return}
+ }
+ const state=liveOutro;
+ if(!state||state.ctx.state!=="running"||audio.seeking)return;
+ const now=audio.currentTime;
+ if(now-state.lastAt<.23)return;
+ // A seek or replay invalidates the baseline, but a late 0s outro
+ // does not count as music unless the last 18s really contained music.
+ if(now<state.lastAt-.3||now-state.lastAt>3)state.samples=[];
+ state.lastAt=now;
+ try{
+  state.analyser.getFloatTimeDomainData(state.buffer);
+  let power=0;
+  for(let i=0;i<state.buffer.length;i++)power+=state.buffer[i]*state.buffer[i];
+  state.samples.push({at:now,rms:Math.sqrt(power/state.buffer.length)});
+  if(state.samples.length>115)state.samples.shift();
+ }catch(_){}
+}
+function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
+ if(!Array.isArray(samples)||!Number.isFinite(duration)||!Number.isFinite(now)||
+    duration-now>10||duration-now<2.2)return false;
+ if(Number.isFinite(lastLyricAt)&&now-lastLyricAt<4.5)return false;
+ if(Number.isFinite(lastVoiceAt)&&now-lastVoiceAt<2.5)return false;
+ const earlier=samples.filter(p=>p.at>=now-19&&p.at<=now-3.3);
+ const recent=samples.filter(p=>p.at>=now-1.25&&p.at<=now+.03);
+ if(earlier.length<12||recent.length<4||
+    recent.at(-1).at-recent[0].at<.85)return false;
+ const values=earlier.map(p=>p.rms).sort((a,b)=>a-b);
+ const baseline=values[Math.floor(values.length*.74)];
+ if(!Number.isFinite(baseline)||baseline<.001)return false;
+ // Real music must have been playing; a CORS-muted capture stream
+ // cannot be used as evidence that the song's outro is silent.
+ if(earlier.filter(p=>p.rms>=baseline*.55).length<7)return false;
+ // Confirm nearly inaudible audio for >0.85s, with no new attack.
+ if(recent.some(p=>p.rms>baseline*.115))return false;
+ if(recent.at(-1).rms>recent[0].rms*1.35+baseline*.008)return false;
+ return true;
+}
+function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
+ if(isIOS||active||mobileActive||mixing||!prepared?.ready||
+    prepared.id!==next?.id||prepared.fromId!==id||
+    Date.now()<(mixFailures.get(id+"|"+next.id)||0)||
+    !liveQuietOutroReady(liveOutro?.audio===audio?liveOutro.samples:null,
+      audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
+ const remaining=audio.duration-audio.currentTime;
+ const fade=clamp(Math.min(2.6,remaining-.75),1.3,2.6);
+ if(fade<1.5)return false;
+ const p={entry:0,begin:audio.currentTime,end:audio.currentTime+fade+.2,
+  fade,tempo:1,gain:1,kind:"soft",silenceTrim:false,
+  liveQuietCertified:true,quietCertified:true};
+ console.info("[Music Box DJ] Dissolvenza reale confermata, entro con un mix neutro",
+  {outgoing:id,incoming:next.id,remaining:remaining.toFixed(2),
+   measuredRms:liveOutro.samples.at(-1)?.rms?.toFixed(5)});
+ beginMix(next,p).catch(()=>cancel());
+ return true;
+}
 function tick(){
  // iOS suspends/limits JS timers behind the lock screen. Leave the native
  // single HTML audio uninterrupted until Safari restores this page.
@@ -1784,6 +1871,7 @@ function tick(){
  }
  if(!enabled||window.MusicBoxRoom?.isActive()){
   if(active||prepared||mobileActive||mobileFading)cancel();
+  closeLiveOutro();
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
@@ -1829,8 +1917,10 @@ function tick(){
  }
  if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<26){
   if(active||prepared||mobileFading)cancel();
+  if(!audio||audio!==liveOutro?.audio)closeLiveOutro();
   return;
  }
+ if(!isIOS)sampleLiveOutro(audio);
  if(active&&(active.original!==audio||active.fromId!==id||active.track.id!==next.id)){
   cancel();
  }
@@ -1887,6 +1977,22 @@ function tick(){
      audio.duration-audio.currentTime>16&&
      !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
    decode(next,true).catch(()=>{});
+ // A soft transition needs the next MP3 buffered before the fade.
+ // A missing/incompatible musical plan must not leave a 3-5s silent tail.
+ // Preload just one future track on desktop; leave iPhone unchanged.
+ if(!isIOS&&(plan===null||plan.kind==="cut")&&
+    audio.duration-audio.currentTime<=25&&
+    audio.duration-audio.currentTime>2.2&&
+    Date.now()>(mixFailures.get(id+"|"+next.id)||0)&&
+    (!prepared||prepared.id!==next.id||prepared.fromId!==id))
+  prepare(next,id,app);
+ if(!plan||plan.kind==="cut"){
+  const currentTrack=app.allTracks?.()?.find(t=>t.id===id);
+  const url=currentTrack&&(app.mixUrl?.(currentTrack)||currentTrack.url);
+  const analysis=url&&(cache.get(String(url))||deepLookup(currentTrack));
+  const lastLyric=app.mixLyricCues?.(id)?.last;
+  if(tryLiveQuietMix(app,audio,id,next,lastLyric,analysis))return;
+ }
   if(!plan){
   const currentTrack=app.allTracks?.()?.find(t=>t.id===id);
   const url=currentTrack&&(app.mixUrl?.(currentTrack)||currentTrack.url);
