@@ -8,6 +8,7 @@ let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 const mobileIntroClips=new Map(),mobileOverlayFailures=new Map();
+const STALE_MOBILE_PREVIEW=Symbol("stale mobile intro request");
 function rememberMobileClip(key,decoded,info){
  if(!isIOS||!decoded||!info)return;
  try{
@@ -423,10 +424,17 @@ async function decode(track,needClip=false){
   }catch(e){return null}
   finally{clearTimeout(timeout)}
  };
- const job=isIOS?(mobileDecodeQueue=mobileDecodeQueue.catch(()=>{}).then(operation)):operation();
+ const job=isIOS?(mobileDecodeQueue=mobileDecodeQueue.catch(()=>{}).then(()=>{
+  // The queue may change while Safari decodes another long MP3.
+  // Don't waste the next decode slot on an obsolete intro.
+  if(needClip&&bridge()?.mixNext?.()?.id!==track.id)
+   return STALE_MOBILE_PREVIEW;
+  return operation();
+ })):operation();
  pending.set(key,job);
  try{
   const data=await job;
+  if(data===STALE_MOBILE_PREVIEW)return null; // Not a broken MP3.
   if(!data){
    unavailableAnalysis.set(key,Date.now()+300000);
    if(unavailableAnalysis.size>64)
