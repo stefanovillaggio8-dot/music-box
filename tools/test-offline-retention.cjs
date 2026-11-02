@@ -2,8 +2,13 @@
 const fs=require("node:fs"),assert=require("node:assert/strict"),vm=require("node:vm");
 const app=fs.readFileSync("app.js","utf8"),sw=fs.readFileSync("sw.js","utf8");
 const section=(code,a,b)=>{const i=code.indexOf(a),j=code.indexOf(b,i+a.length);assert(i>=0&&j>i,"Missing "+a);return code.slice(i,j)};
-const refresh=section(app,'  $("btnRefresh").addEventListener("click", async () => {','  let offlineBusy = false;');
-assert(!refresh.includes("caches.delete(")&&!refresh.includes(".unregister("),"Refresh deleted offline songs");
+const refresh=section(app,'  async function _aggiornaMusicBoxDaVersione() {','  let offlineBusy = false;');
+assert(refresh.includes('$("btnRefresh").addEventListener("click", _aggiornaMusicBoxDaVersione);'),"Refresh button is not bound to updater");
+assert(refresh.includes('navigator.serviceWorker.getRegistration()')&&refresh.includes('reg.update()'),"Refresh must request new service worker without blocking playback");
+assert(refresh.includes('url.searchParams.set("forza"')&&refresh.includes('window.location.assign(url.href)'),"Refresh must navigate to the latest app with a fresh URL");
+assert(!refresh.includes("caches.delete(")&&!refresh.includes(".unregister(")&&
+ !refresh.includes("indexedDB.deleteDatabase(")&&!refresh.includes('"SVUOTA-CANZONI"'),
+ "Manual refresh must not delete downloaded audio, caches or databases");
 const auto=section(app,"  async function _scaricaDaSolaSeServe(brano) {","  let _avvisoTetto = false;");
 assert(auto.includes("const cache = await streamCache();"),"Automatic audio must be temporary");
 assert(!auto.includes("_liberaCanzoniVecchie("),"Auto may not remove manually saved MP3s");
