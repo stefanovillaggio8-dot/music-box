@@ -7,9 +7,10 @@ per Windows. Non richiede bot, password, token o Spotify Premium.
 2. Installa Node.js LTS da https://nodejs.org se non è già presente.
 3. Apri https://discord.com/developers/applications, premi New Application,
    chiamala Music Box e copia il suo Application ID (NON il client secret).
-4. Apri la cartella del progetto Music Box sul PC e fai doppio clic su
-   tools/avvia-discord-presence.bat (o esegui dal progetto
-   node tools/discord-presence-bridge.cjs).
+4. Scarica e apri il file tools/avvia-discord-presence.bat su Windows.
+   Funziona anche se scarichi soltanto questo file: recupera il piccolo
+   ponte dal repository ufficiale Music Box. Se hai la cartella del
+   progetto aggiornata, usa direttamente il .bat al suo interno.
 5. Nel sito Music Box, apri Amici online > Discord, lascia attivo
    Mostra su Discord e incolla l'Application ID.
 6. Avvia un brano. In Discord verifica Impostazioni utente >
