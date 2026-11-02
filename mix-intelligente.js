@@ -529,12 +529,25 @@ function resetMobileFade(){
  mobileFadeTrack="";mobileFading=false;
 }
 let mobileActive=null;
-function stopMobileMix(){
+function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
  if(!act)return;
- try{act.source.onended=null;act.source.stop()}catch(e){}
- try{act.source.disconnect()}catch(e){}
- try{act.gain.disconnect()}catch(e){}
+ const release=()=>{
+  try{act.source.onended=null;act.source.stop()}catch(e){}
+  try{act.source.disconnect()}catch(e){}
+  try{act.gain.disconnect()}catch(e){}
+ };
+ if(fadeSeconds>0&&act.ctx.state==="running"){
+  try{
+   const now=act.ctx.currentTime;
+   act.gain.gain.cancelScheduledValues(now);
+   act.gain.gain.setValueAtTime(act.gain.gain.value,now);
+   act.gain.gain.linearRampToValueAtTime(0,now+fadeSeconds);
+   setTimeout(release,Math.ceil(fadeSeconds*1000)+35);
+   return;
+  }catch(e){}
+ }
+ release();
 }
 function startMobileMix(song,p,app,old){
  if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
@@ -579,14 +592,8 @@ function finishMobileMix(app){
     audio.currentTime=Math.min(heard,Math.max(0,(audio.duration||Infinity)-.5));
   }catch(e){}
   if(!audio.seeking){
-   try{
-    const now=act.ctx.currentTime;
-    act.gain.gain.cancelScheduledValues(now);
-    act.gain.gain.setValueAtTime(act.gain.gain.value,now);
-    act.gain.gain.linearRampToValueAtTime(0,now+.15);
-   }catch(e){}
-   // Native media has taken over. Never keep the overlay indefinitely.
-   stopMobileMix();
+   // Native media has taken over; cleanly fade the short preview.
+   stopMobileMix(.16);
   }
  }else if(Date.now()-act.handoffAt>8000||
           act.ctx.currentTime>act.clipEnd-.5)stopMobileMix();
@@ -785,7 +792,7 @@ function tick(){
   return;
  }
  if(!enabled||window.MusicBoxRoom?.isActive()){
-  if(active||prepared)cancel();
+  if(active||prepared||mobileActive||mobileFading)cancel();
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
@@ -956,7 +963,7 @@ function draw(){
  const value=$("mixSecondsValue");if(value)value.textContent=mixSeconds+" s";
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
-   "Su iPhone protegge i finali: salta soltanto code mute verificate. Il mix con due brani sovrapposti resta disponibile su PC per preservare i controlli a schermo bloccato.":
+   "Su iPhone, a schermo acceso, può sovrapporre gradualmente il prossimo brano sulla coda già tranquilla. Se Safari non lo permette passa normalmente; a schermo bloccato preserva il lettore nativo, senza mix Web Audio.":
    "Su PC analizza BPM, tonalità locale e coda musicale: mixa soltanto quando trova una zona finale sufficientemente tranquilla. Se il finale è incerto, lascia finire il brano. Riconoscimento vocale non garantito.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
