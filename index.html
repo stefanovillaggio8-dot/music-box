@@ -1384,6 +1384,14 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
       <label for="mixSeconds">Durata transizioni manuali <output id="mixSecondsValue" for="mixSeconds">6 s</output></label>
       <input id="mixSeconds" type="range" min="3" max="12" step="1" value="6">
       <p class="mix-setting-hint">Automix sceglie da solo se mixare: quando due brani non sono adatti, evita sovrapposizioni forzate. Fade e Rise sono opzioni manuali, non necessarie.</p>
+      <div id="mixIphoneRow" hidden>
+        <div class="mix-setting-line">
+          <strong>Mix su iPhone (schermo acceso)</strong>
+          <button type="button" id="mixIphoneToggle" class="mix-setting-toggle" aria-pressed="true">Attivo</button>
+        </div>
+        <p class="mix-setting-hint">Sovrappone l'introduzione successiva solo sui finali sicuri, usando un buffer breve. Quando blocchi lo schermo mantiene il lettore normale. Disattivalo se Safari interrompe l'audio.</p>
+      </div>
+
     </div>
     <div class="mix-setting-section">
       <strong>Analisi della transizione</strong>
