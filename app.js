@@ -11631,14 +11631,38 @@ window.MusicBoxBridge = {
        window.MusicBoxRoom?.isActive()||_casualeModificaUtente)return [];
     return _prossimiAutomaticiInCoda();
   },
+  // Read-only pool from the current library/playlist, not just the ten
+  // randomly displayed next tracks. The DJ looks up existing measurements
+  // and NEVER fetches hundreds of MP3s to choose an automatic successor.
+  // Played/excluded tracks and all manually managed queues stay untouched.
+  mixShufflePool:()=>{
+    if(!shuffle||queue.length||repeat||!currentId||
+       window.MusicBoxRoom?.isActive()||_casualeModificaUtente)return [];
+    const available=(_posizionePlaylist>=0&&_playlistSuona.length)
+      ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
+    _prossimiAutomaticiInCoda(); // Ensure _casualeFresche is initialized.
+    const fresh=_casualeFresche;
+    if(!fresh)return [];
+    return available.filter(t=>t&&t.id!==currentId&&t.url&&!t.youtubeId&&
+      fresh.has(t.id)&&!_casualeEscluse.has(t.id));
+  },
   mixSelectShuffle:({fromId,initialFirst,pickId})=>{
     if(!shuffle||queue.length||repeat||_casualeModificaUtente||
        window.MusicBoxRoom?.isActive()||currentId!==fromId||
        _casualeProgrammate[0]!==initialFirst)return false;
     const idx=_casualeProgrammate.indexOf(pickId);
-    if(idx<1)return false;
-    _casualeProgrammate.splice(idx,1);
-    _casualeProgrammate.unshift(pickId);
+    if(idx===0)return false;
+    if(idx<0){
+      // This song can be outside the ten preselected shuffle items.
+      // Only a fresh, playable member of the CURRENT playlist is eligible.
+      const pool=window.MusicBoxBridge.mixShufflePool();
+      if(!pool.some(t=>t.id===pickId))return false;
+      _casualeProgrammate.unshift(pickId);
+      if(_casualeProgrammate.length>10)_casualeProgrammate.pop();
+    }else{
+      _casualeProgrammate.splice(idx,1);
+      _casualeProgrammate.unshift(pickId);
+    }
     _ordineCasualeModificato();
     return true;
   },
