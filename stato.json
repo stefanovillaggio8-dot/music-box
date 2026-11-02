@@ -1353,7 +1353,7 @@
     "a": "Jovanotti"
    },
    "[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 1,
+    "v": 2,
     "s": 78,
     "t": "dimmi che ce'",
     "a": "thasup"
@@ -1821,7 +1821,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 0,
+    "v": 1,
     "s": 77,
     "t": "dimmi che ce'",
     "a": "thasup"
@@ -2428,13 +2428,13 @@
    },
    "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 0,
-    "s": 65,
+    "s": 75,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 0,
-    "s": 65,
+    "s": 75,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
@@ -2794,13 +2794,13 @@
    },
    "[\"grazie a dio\",\"thasup\"]": {
     "v": 0,
-    "s": 61,
+    "s": 71,
     "t": "gRAZie A Dio",
     "a": "thasup"
    },
    "m:2026-11|[\"grazie a dio\",\"thasup\"]": {
     "v": 0,
-    "s": 61,
+    "s": 71,
     "t": "gRAZie A Dio",
     "a": "thasup"
    },
@@ -4748,6 +4748,12 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
+   "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "L'universo tranne noi",
+    "a": "Max Pezzali"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4990,13 +4996,13 @@
    },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 1,
-    "s": 96,
+    "s": 110,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 1,
-    "s": 96,
+    "s": 110,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -5359,12 +5365,6 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
-   },
-   "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "L'universo tranne noi",
-    "a": "Max Pezzali"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5990,6 +5990,18 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂ¨"
    },
+   "[\"victoria\",\"tony boy\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Victoria",
+    "a": "Tony Boy"
+   },
+   "m:2026-11|[\"victoria\",\"tony boy\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Victoria",
+    "a": "Tony Boy"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6304,13 +6316,13 @@
    },
    "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 66,
+    "s": 67,
     "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 66,
+    "s": 67,
     "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
@@ -6614,17 +6626,17 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂ¨"
    },
-   "[\"victoria\",\"tony boy\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Victoria",
-    "a": "Tony Boy"
+   "[\"paracetamolo\",\"calcutta\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Paracetamolo",
+    "a": "Calcutta"
    },
-   "m:2026-11|[\"victoria\",\"tony boy\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Victoria",
-    "a": "Tony Boy"
+   "m:2026-11|[\"paracetamolo\",\"calcutta\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Paracetamolo",
+    "a": "Calcutta"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -6652,7 +6664,7 @@
    },
    "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 3,
+    "s": 5,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -6796,7 +6808,7 @@
    },
    "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 0,
-    "s": 1,
+    "s": 3,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7249,18 +7261,6 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂ¨"
-   },
-   "[\"paracetamolo\",\"calcutta\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Paracetamolo",
-    "a": "Calcutta"
-   },
-   "m:2026-11|[\"paracetamolo\",\"calcutta\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Paracetamolo",
-    "a": "Calcutta"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
