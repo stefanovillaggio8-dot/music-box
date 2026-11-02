@@ -11425,6 +11425,7 @@ window.MusicBoxBridge = {
   allTracks:()=>tracks,
   currentId:()=>currentId,
   audio:()=>audio,
+  mixRunningContext:()=>_ctx&&_ctx.state==="running"?_ctx:null,
   play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
   mixNext:()=> {
     if (window.MusicBoxRoom?.isActive() || repeat || !currentId) return null;
