@@ -7,7 +7,7 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
-const mobileIntroClips=new Map();
+const mobileIntroClips=new Map(),mobileOverlayFailures=new Map();
 function rememberMobileClip(key,decoded,info){
  if(!isIOS||!decoded||!info)return;
  try{
@@ -557,15 +557,18 @@ function startMobileMix(song,p,app,old){
     old.currentTime<p.safeOutroAt-.1)return false;
  const ctx=app.mixRunningContext?.();
  const url=app.mixUrl?.(song)||song.url;
+ const pair=app.currentId()+"|"+song.id;
+ if(Date.now()<(mobileOverlayFailures.get(pair)||0))return false;
  const clip=mobileIntroClips.get(String(url));
  if(!ctx||ctx.state!=="running"||!clip)return false;
+ let source=null,gain=null;
  try{
   const offset=Math.max(0,p.entry-clip.start);
   const frames=clip.channels[0].length;
   if((frames/clip.rate-offset)<p.fade+1.5)return false;
   const buf=ctx.createBuffer(clip.channels.length,frames,clip.rate);
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
-  const source=ctx.createBufferSource(),gain=ctx.createGain();
+  source=ctx.createBufferSource();gain=ctx.createGain();
   source.buffer=buf;source.connect(gain);gain.connect(ctx.destination);
   gain.gain.setValueAtTime(0,ctx.currentTime);
   const target=clamp(app.volume?.()??1,0,1)*.78;
@@ -579,14 +582,22 @@ function startMobileMix(song,p,app,old){
   };
   mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
    entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,onPlaying,handingOff:false,
-   handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset};
+   handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset,
+   lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   source.onended=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
   return true;
- }catch(e){stopMobileMix();return false}
+ }catch(e){
+  mobileOverlayFailures.set(pair,Date.now()+60000);
+  try{source?.stop()}catch(_){}
+  try{source?.disconnect()}catch(_){}
+  try{gain?.disconnect()}catch(_){}
+  stopMobileMix();
+  return false;
+ }
 }
 function finishMobileMix(app){
  const act=mobileActive;
