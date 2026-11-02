@@ -349,3 +349,26 @@ test("do not allow a phone fade over an unverified sung ending",()=>{
  const bad={...f.plan,kind:"fade",quietCertified:false};
  assert.equal(f.engine.startMobileMix(f.song,bad,f.app,f.old),false);
 });
+
+test("200 variable-length outro transitions never start before certified safe music",()=>{
+ let seed=123456789;
+ const rand=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296};
+ for(let i=0;i<200;i++){
+  const duration=75+Math.floor(rand()*280);
+  const safe=duration-2.5-rand()*13;
+  const bpm=65+Math.floor(rand()*140);
+  const lastLyricAt=i%3===0?duration-3-rand()*20:undefined;
+  const a={...current,duration,last:duration,safeOutroAt:safe,bpm,lastLyricAt,
+   beatAnchor:duration-5};
+  const b={...next,bpm:bpm*(i%2===0?1:1.08)};
+  const plan=transition(a,b,duration);
+  if(!plan)continue;
+  assert.ok(Number.isFinite(plan.begin)&&Number.isFinite(plan.end));
+  assert.ok(plan.begin>=safe-.001);
+  assert.ok(plan.end<=duration+.001);
+  assert.ok(plan.begin<=plan.end);
+  assert.ok(plan.entry>=0&&plan.entry<=18);
+  if(Number.isFinite(lastLyricAt)&&duration-lastLyricAt<12)
+   assert.equal(plan.kind,"cut");
+ }
+});
