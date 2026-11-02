@@ -120,3 +120,47 @@ test("wrong MP3 duration cannot trigger speculative drop skip",()=>{
  const {e,outgoing,incoming}=fixture();
  assert.equal(e.transition({...outgoing,duration:85},incoming,100),null);
 });
+
+test("compatible final beat can blend BEFORE the end without encoded digital silence",()=>{
+ const {e,outgoing,incoming}=fixture();
+ const music={...outgoing,confidentTail:false,protectedEnding:false,last:100,
+  duration:100,dropRelease:{lastImpactAt:90.5,releaseAt:91.8,
+   quietLevel:.12,score:.89},safeOutroAt:91.8};
+ const plan=e.transition(music,incoming,100);
+ assert.ok(plan?.dropReleaseBridge,"A measured quiet release should be eligible");
+ assert.ok(plan.begin<96,"The next song enters several seconds before the end");
+ assert.ok(plan.end>=99.9,"Do not truncate the outgoing musical ending");
+ assert.equal(plan.silenceTrim,false,"No fake digital silence should be claimed");
+});
+test("no encoded silence does NOT permit cutting late vocals",()=>{
+ const {e,outgoing,incoming}=fixture();
+ const cue={lastImpactAt:90,releaseAt:91.5,quietLevel:.1,score:.92};
+ const a={...outgoing,last:100,duration:100,confidentTail:false,
+  protectedEnding:false,dropRelease:cue,lastVoiceAt:95};
+ assert.equal(e.transition(a,incoming,100),null);
+});
+test("measured quiet release permits a safe iPhone overlap without timed lyrics",()=>{
+ const {e,outgoing,incoming}=fixture(true);
+ const tail={...outgoing,duration:100,last:100,confidentTail:false,
+  protectedEnding:false,dropRelease:{lastImpactAt:90.1,releaseAt:91.5,quietLevel:.12,score:.88}};
+ const plan=e.transition(tail,incoming,100);
+ assert.ok(plan?.dropReleaseBridge);
+ assert.equal(plan.quietCertified,true);
+ assert.ok(plan.begin<=96 && plan.fade>=3.5);
+});
+test("continuous full-volume music cannot be reclassified as a final release",()=>{
+ const e=engine(),blocks=Array.from({length:500},()=>.24);
+ assert.equal(e.findDropRelease(blocks,.24,100,100),null);
+});
+test("real PCM ending still audible to the last frame can produce a musical release",()=>{
+ const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const helper=source.slice(source.indexOf("function findDropRelease("),source.indexOf("function drivenIntro("));
+ const release=new Function(helper+"return findDropRelease")();
+ const blocks=Array.from({length:500},(_,i)=>{
+  if(i<452)return .2;
+  const t=(i-452)*.2;
+  return .1*Math.exp(-t*.47)+.002;
+ });
+ const cue=release(blocks,.20,100,100);
+ assert.ok(cue && cue.releaseAt<93.5,"Detect genuine audible decay without zero-valued tail");
+});
