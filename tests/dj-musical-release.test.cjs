@@ -284,7 +284,7 @@ test("screen recording 19:08:34: real audible decay triggers an overlap BEFORE t
 });
 test("desktop fallback prebuffers even if harmonic plan is null or direct-cut",()=>{
  assert.match(source,/if\(!isIOS&&\(plan===null\|\|plan.kind==="cut"\)/);
- assert.match(source,/if\(tryLiveQuietMix\(app,audio,id,next,lastLyric,analysis\)\)return/);
+ assert.match(source,/if\(tryLiveQuietMix\(app,audio,id,next,finalLyric,measuredEnding\)\)return/);
  assert.match(source,/source\.connect\(analyser\); \/\/ No destination/);
  assert.ok(!source.includes("source.connect(ctx.destination)"),
   "Do not reroute original playback through the analysis context");
@@ -450,7 +450,7 @@ test("20:19:15 recording: a planned soft mix may recover during measured decay",
   "Do not downgrade an executable beat-to-beat transition");
  assert.equal(tools.needsLiveQuietRecovery({kind:"beat",begin:26.3},now,false),false,
   "Do not skip a matching beat before its cue arrives");
- assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\)/);
+ assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\|\|plannedLate\)/);
 });
 
 test("20:33:52: beat match searches beyond ten queued songs and works again on next track",async()=>{
