@@ -402,3 +402,24 @@ test("lyrics continuing into a final note are never cut mid phrase",()=>{
 test("an uncertified loud ending cannot be chopped before last note",()=>{
  assert.equal(transition({...current,safeOutroAt:null,lastNoteAt:178},next,180),null);
 });
+
+test("dedicated singing detection prevents cutting an ongoing vocal phrase",()=>{
+ const plan=transition({...current,safeOutroAt:172,lastVoiceAt:175},next,180);
+ assert.equal(plan,null);
+});
+test("an early vocal detection on the following track rules out long beat overlaps",()=>{
+ const plan=transition({...current,safeOutroAt:172},{...next,firstVoiceAt:0},180);
+ assert.equal(plan.kind,"soft");
+});
+test("an earlier finished vocal is compatible with a confirmed instrumental outro",()=>{
+ const plan=transition({...current,safeOutroAt:172,lastVoiceAt:140},next,180);
+ assert.ok(plan&&plan.kind==="beat");
+});
+test("a detected vocal near a last note prevents cutting just ahead of that note",()=>{
+ const plan=transition({...current,safeOutroAt:172,lastVoiceAt:176,lastNoteAt:178},next,180);
+ assert.equal(plan,null);
+});
+test("dedicated model is asynchronous so audio decoding is not delayed by model download",()=>{
+ assert.ok(source.includes("Promise.resolve().then(()=>voice.analyze(decoded,frame))"));
+ assert.ok(source.includes("plannedFor=\"\";plan=null;"));
+});
