@@ -12,7 +12,7 @@ DEST = ROOT / "dj-deep-analysis.json"
 SOURCES = [("stefanovillaggio8-dot/music-box-brani", "main"),
            ("stefanovillaggio8-dot/music-box", "mobile-audio"),
            ("stefanovillaggio8-dot/music-box", "main")]
-VERSION = 1
+VERSION = 2
 SR = 11025
 HOP = 512
 def fetch(url, timeout=45):
@@ -88,12 +88,26 @@ def analyze(mp3):
     last_strong=next((i for i in range(hi-1,lo-1,-1) if rms[i]>=max(.004,level*.61)),None)
     release=None
     if last_strong is not None:
-        quiet=rms[last_strong+1:hi]
-        start=(last_strong+1)*.1+.30
-        if 2.15<=last-start<=12 and quiet.size>=20 and np.max(quiet)<=level*.48 and np.mean(quiet)<=level*.29:
-            release={"lastImpactAt":round(last_strong*.1,3),"releaseAt":round(start,3),
-                     "seconds":round(last-start,3),"quietLevel":round(float(np.mean(quiet)/level),4),
-                     "score":round(float(1-np.mean(quiet)/level),4)}
+        tail=rms[last_strong+1:hi]
+        start=(last_strong+1)*.1+.35
+        # A natural reverb/beat decay is NOT instant silence. Detect a
+        # sustained falling envelope; reject drops that rebound later.
+        if 2.15<=last-start<=12 and tail.size>=20:
+            third=max(4,tail.size//3)
+            first_avg=float(np.mean(tail[:third]))
+            last_avg=float(np.mean(tail[-third:]))
+            final_avg=float(np.mean(tail[-min(10,tail.size):]))
+            peak=float(np.max(tail))
+            mean=float(np.mean(tail))
+            descending=first_avg>.001 and last_avg<=first_avg*.59
+            settled=final_avg<=level*.16 and last_avg<=level*.24
+            no_return=peak<=level*.70 and mean<=level*.40
+            if descending and settled and no_return:
+                release={"lastImpactAt":round(last_strong*.1,3),
+                         "releaseAt":round(start,3),
+                         "seconds":round(last-start,3),
+                         "quietLevel":round(mean/level,4),
+                         "score":round(float(1-mean/level),4)}
     closing=rms[max(0,int((last-2.2)/.1)):min(len(rms),int(last/.1))]
     protected=bool(closing.size>=14 and np.mean(closing>=level*.62)>=.36)
     # Exclude one short boundary frame from the strict digital-silence
@@ -123,7 +137,7 @@ def analyze(mp3):
     beat_anchor=peak_at(end_hit)
     # Chord and groove signatures must precede the SILENT OUTRO: the
     # listener expects matching music, not two matching empty sections.
-    musical_edge=release["releaseAt"] if release else last
+    musical_edge=min(last,release["lastImpactAt"]+.20) if release else last
     outro_start=max(first,musical_edge-10)
     to=min(duration,first+12)
     end_note=musical_edge
@@ -135,18 +149,18 @@ def analyze(mp3):
       "chroma":c,"introChroma":chroma(y[:int(to*SR)]),
       "outroChroma":chroma(y[int(outro_start*SR):int(end_note*SR)]),
       "introAttackNotes":chroma(y[int(first*SR):int(min(duration,first+2.3)*SR)]),
-      "outroFinalNotes":chroma(y[int(max(0,last-2.5)*SR):int(last*SR)]),
+      "outroFinalNotes":chroma(y[int(max(0,musical_edge-2.5)*SR):int(musical_edge*SR)]),
       "introPhraseNotes":chroma(y[int(first*SR):int(min(duration,first+6)*SR)]),
-      "outroPhraseNotes":chroma(y[int(max(0,last-7)*SR):int(max(0,last-2)*SR)]),
+      "outroPhraseNotes":chroma(y[int(max(0,musical_edge-7)*SR):int(max(0,musical_edge-2)*SR)]),
       "introTimeline":timeline(y,first,min(duration,first+9)),
-      "outroTimeline":timeline(y,max(0,last-9),last,True),
+      "outroTimeline":timeline(y,max(0,musical_edge-9),musical_edge,True),
       "introGroove":groove(rms,bpm,safe_intro),
       "outroGroove":groove(rms,bpm,musical_edge,True),
       "introDrive":round(drive,4),"dropRelease":release,
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v1"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v2"}
     return out
 def main():
     ap=argparse.ArgumentParser()
