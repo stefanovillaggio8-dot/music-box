@@ -3,7 +3,9 @@ const assert=require("node:assert/strict"),net=require("node:net"),os=require("n
 const win=process.platform==="win32",ipc=win?"\\\\.\\pipe\\mb-discord-test-"+process.pid:path.join(os.tmpdir(),"mb-discord-test-"+process.pid+".sock");
 process.env.MUSICBOX_TEST_IPC=ipc;
 const bridge=require("./discord-presence-bridge.cjs"),sent=[];
+const sockets=new Set();
 const fake=net.createServer(socket=>{
+ sockets.add(socket);socket.on("close",()=>sockets.delete(socket));
  let buffer=Buffer.alloc(0);
  socket.on("data",buf=>{
   buffer=Buffer.concat([buffer,buf]);
@@ -47,6 +49,7 @@ async function post(obj,origin="https://stefanovillaggio8-dot.github.io"){
   console.log("PASS: handshake, musica, durata, pausa, origin e ID.");
  } finally {
   await new Promise(ok=>bridge.server.close(ok));
+  for(const socket of sockets)socket.destroy();
   fake.close();
   if(!win)try{fs.unlinkSync(ipc)}catch(e){}
  }
