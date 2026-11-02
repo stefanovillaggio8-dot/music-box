@@ -1409,6 +1409,12 @@ function tick(){
   if(!plan){resetMobileFade();return;}
  // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
  const lastKnownLyric=app.mixLyricCues?.(id)?.last;
+ // A karaoke cue can arrive AFTER analysis. Never skip a newly
+ // discovered final phrase, even if it precedes a 20-second quiet gap.
+ if(!mixing&&plan.outroGapStart&&Number.isFinite(lastKnownLyric)&&
+    lastKnownLyric>=plan.outroGapStart-3.5){
+  dropPrepared();plan=null;resetMobileFade();return;
+ }
  if(!mixing&&Number.isFinite(lastKnownLyric)&&
     plan.begin<lastKnownLyric+6&&audio.duration-lastKnownLyric<16){
   if(plan.silenceTrim)plan={...plan,begin:plan.end,fade:0,kind:"cut"};
@@ -1437,11 +1443,15 @@ function tick(){
  const previewAllowed=Date.now()>blockedUntil;
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&audio.currentTime>=Math.max(0,preloadAt) &&
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
- // Se l'analisi certifica una lunga coda muta e il punto di mix è già
- // passato (es. analisi arrivata tardi), evita ulteriori secondi di silenzio.
- if((plan.silenceTrim||plan.kind==="soft")&&
-    audio.currentTime>=plan.end+.08&&
-    !active&&!mixing){
+ // If the crossfade couldn't start (not enough buffering or suspended
+ // iPhone WebAudio), hand off shortly AFTER a verified long quiet pause
+ // begins. Do not leave the listener in silence for 20 more seconds.
+ // If the preview is playing, mobileActive / active protects its handoff.
+ const gapFallback=Number.isFinite(plan.outroGapStart)&&
+  audio.currentTime>=plan.outroGapStart+.75;
+ const ordinaryFallback=(plan.silenceTrim||plan.kind==="soft")&&
+  audio.currentTime>=plan.end+.08;
+ if((gapFallback||ordinaryFallback)&&!active&&!mobileActive&&!mixing){
   const target=next.id,entry=plan.entry;
   cancel();plannedFor=target;plan=null;
   // Su iPhone un solo audio alla volta preserva i controlli nella
@@ -1485,7 +1495,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.softTailTrim?
+ const description=Number.isFinite(plan?.outroGapStart)?
+   " · pausa finale lunga riconosciuta: entrata prima del silenzio":
+   plan?.softTailTrim?
    " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
    plan?.silenceTrim?" · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
  const vocal=a?.voiceModel?(Number.isFinite(a.lastVoiceAt)?
