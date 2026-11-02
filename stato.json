@@ -169,7 +169,7 @@
   },
   "b-track-170": {
    "title": "fragile",
-   "artist": "ModÃÂ"
+   "artist": "ModÃÂÃÂ"
   }
  },
  "statistiche": {
@@ -1208,7 +1208,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 21,
-    "s": 631,
+    "s": 646,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1844,7 +1844,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 20,
-    "s": 623,
+    "s": 638,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2420,13 +2420,13 @@
    },
    "[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
     "v": 0,
-    "s": 90,
+    "s": 147,
     "t": "Buon Viaggio (Share The Love)",
     "a": "Cesare Cremonini"
    },
    "m:2026-11|[\"buon viaggio (share the love)\",\"cesare cremonini\"]": {
     "v": 0,
-    "s": 90,
+    "s": 147,
     "t": "Buon Viaggio (Share The Love)",
     "a": "Cesare Cremonini"
    },
@@ -3570,6 +3570,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"sailor song\",\"gigi perez\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "sailor song",
+    "a": "gigi perez"
+   },
+   "m:2026-11|[\"sailor song\",\"gigi perez\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "sailor song",
+    "a": "gigi perez"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4194,18 +4206,6 @@
     "t": "La notte",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
-   "[\"sailor song\",\"gigi perez\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "sailor song",
-    "a": "gigi perez"
-   },
-   "m:2026-11|[\"sailor song\",\"gigi perez\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "sailor song",
-    "a": "gigi perez"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4232,7 +4232,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 5,
+    "s": 17,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -4364,7 +4364,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 0,
-    "s": 3,
+    "s": 14,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -6090,6 +6090,18 @@
     "t": "La notte",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
+   "[\"fragile\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 14,
+    "t": "fragile",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
+   "m:2026-11|[\"fragile\",\"modÃÂÃÂÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 14,
+    "t": "fragile",
+    "a": "ModÃÂÃÂÃÂÃÂ "
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6729,7 +6741,7 @@
    "[\"fragile\",\"modÃÂÃÂ \"]": {
     "v": 0,
     "s": 14,
-    "t": "fragile",
+    "t": "Quello che non ti ho detto",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"fragile\",\"modÃÂÃÂ \"]": {
@@ -6737,6 +6749,18 @@
     "s": 14,
     "t": "fragile",
     "a": "ModÃÂÃÂ "
+   },
+   "[\"e yo mamma\",\"coez\"]": {
+    "v": 0,
+    "s": 16,
+    "t": "E yo mamma",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"e yo mamma\",\"coez\"]": {
+    "v": 0,
+    "s": 16,
+    "t": "E yo mamma",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -7385,18 +7409,6 @@
     "s": 14,
     "t": "fragile",
     "a": "ModÃÂ "
-   },
-   "[\"e yo mamma\",\"coez\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "E yo mamma",
-    "a": "Coez"
-   },
-   "m:2026-11|[\"e yo mamma\",\"coez\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "E yo mamma",
-    "a": "Coez"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
