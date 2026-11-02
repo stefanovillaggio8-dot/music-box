@@ -331,25 +331,38 @@ function fft(re,im){
   }
  }
 }
-function chroma(buf,from=0,to=buf.duration){
- const data=buf.getChannelData(0),rate=buf.sampleRate,N=4096,hist=new Float64Array(12);
+function chroma(buf,from=0,to=buf.duration,tonalOnly=false){
+ const data=buf.getChannelData(0),rate=buf.sampleRate,
+  right=buf.numberOfChannels>1?buf.getChannelData(1):null,
+  N=tonalOnly&&!isIOS?8192:4096,hist=new Float64Array(12);
  if(data.length<N)return [...hist];
  const duration=buf.duration;
  const rangeStart=clamp(Number(from)||0,0,Math.max(0,duration-N/rate));
  const rangeEnd=clamp(Number(to)||duration,rangeStart+N/rate,duration);
  // Fewer windows on iPhone: enough for harmonic ranking, less CPU/RAM.
- const windows=isIOS?12:24;
+ const windows=tonalOnly?(isIOS?8:12):(isIOS?12:24);
  for(let w=0;w<windows;w++){
   const second=clamp(rangeStart+(w+.5)/windows*(rangeEnd-rangeStart),
    rangeStart,Math.max(rangeStart,rangeEnd-N/rate));
   const start=Math.floor(second*rate),re=new Float32Array(N),im=new Float32Array(N);
-  for(let i=0;i<N;i++)re[i]=data[start+i]*(.5-.5*Math.cos(2*Math.PI*i/(N-1)));
+  for(let i=0;i<N;i++){
+   const sample=right?(data[start+i]+right[start+i])*.5:data[start+i];
+   re[i]=sample*(.5-.5*Math.cos(2*Math.PI*i/(N-1)));
+  }
   fft(re,im);
   for(let bin=Math.ceil(80*N/rate);bin<Math.min(N/2,Math.floor(1600*N/rate));bin++){
    const freq=bin*rate/N, midi=69+12*Math.log2(freq/440);
    const pitch=((Math.round(midi)%12)+12)%12;
    const mag=Math.hypot(re[bin],im[bin]);
-   hist[pitch]+=Math.sqrt(mag);
+   if(tonalOnly){
+    // Ignore broad-band percussion/noise: a pitched spectral peak should
+    // stand above its neighbors, not just have some energy in each bin.
+    if(bin<=2||bin>=N/2-2)continue;
+    const before=Math.hypot(re[bin-1],im[bin-1]);
+    const after=Math.hypot(re[bin+1],im[bin+1]);
+    if(mag<before*.94||mag<after*.94)continue;
+   }
+   hist[pitch]+=Math.sqrt(mag)*(tonalOnly?Math.pow(180/freq,.10):1);
   }
  }
  const total=hist.reduce((a,b)=>a+b,0)||1;
@@ -364,7 +377,7 @@ function harmonicTimeline(buf,first,last,fromEnd){
  for(const offset of offsets){
   const center=fromEnd?last-offset:first+offset;
   if(center-.60<first||center+.60>last)continue;
-  timeline.push({offset,notes:chroma(buf,center-.60,center+.60)});
+  timeline.push({offset,notes:chroma(buf,center-.60,center+.60,true)});
  }
  return timeline;
 }
