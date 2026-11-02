@@ -422,3 +422,33 @@ test("energetic beat does not overpower late singing, uncertain detection or inc
  assert.ok(iphone?.instrumentalBeatBridge && iphone.quietCertified,
   "Allow explicitly vocal-safe rhythmic overlay on iPhone foreground");
 });
+
+test("20:19:15 recording: a planned soft mix may recover during measured decay",()=>{
+ const marker=source.slice(source.indexOf("function liveQuietOutroReady("),
+  source.indexOf("function tryLiveQuietMix("));
+ const tools=new Function(marker+
+  "return {liveQuietOutroReady,needsLiveQuietRecovery}")();
+ const samples=[];
+ // Representative relative RMS envelope from the screen recording:
+ // audible music -> decaying tail -> encoded silence; no audio embedded.
+ for(let t=7;t<=22;t+=.25)
+  samples.push({at:t,rms:.011+.003*Math.abs(Math.sin(t*2.1))});
+ for(let t=22.25;t<=27;t+=.25)
+  samples.push({at:t,rms:.014*Math.exp(-(t-22.25)*.7)});
+ const now=26.5,duration=32;
+ assert.equal(tools.liveQuietOutroReady(samples,duration,now,18,18),true,
+  "The fade is real before the final silence starts");
+ assert.equal(tools.liveQuietOutroReady(samples,duration,23,18,18),false,
+  "Do not interrupt the still-strong final beat");
+ assert.equal(tools.liveQuietOutroReady(samples,duration,now,25,18),false,
+  "A newly sung line must veto the overlap");
+ assert.equal(tools.needsLiveQuietRecovery({kind:"soft",begin:25},now,true),true,
+  "Existing soft plan must not disable verified live-outro detection");
+ assert.equal(tools.needsLiveQuietRecovery({kind:"beat",begin:24},now,false),true,
+  "A beat preview that never loaded may fall back after its musical cue");
+ assert.equal(tools.needsLiveQuietRecovery({kind:"beat",begin:24},now,true),false,
+  "Do not downgrade an executable beat-to-beat transition");
+ assert.equal(tools.needsLiveQuietRecovery({kind:"beat",begin:26.3},now,false),false,
+  "Do not skip a matching beat before its cue arrives");
+ assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\)/);
+});
