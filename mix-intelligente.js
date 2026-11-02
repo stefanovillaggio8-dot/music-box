@@ -1599,7 +1599,7 @@ function prepare(song,fromId,app){
  const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false};
  prepared=p;
  upcoming.addEventListener("canplay",()=>{if(prepared===p)p.ready=true},{once:true});
- upcoming.addEventListener("error",()=>{if(prepared===p)p.failed=true},{once:true});
+ upcoming.addEventListener("error",()=>{if(prepared===p){p.failed=true;p.ready=false;}},{once:true});
  upcoming.src=url;
  try{upcoming.load()}catch(e){p.failed=true}
  if(upcoming.readyState>=2)p.ready=true;
@@ -1693,6 +1693,19 @@ function mixCurve(kind,t,softTail=false){
  const guard=kind==="beat"?1-.12*Math.sin(Math.PI*time):kind==="phrase"?.93:1;
  return {outGain:outGain*guard,inGain:inGain*guard};
 }
+function quietDirectHandoff(app,audio,id,next,entry,reason){
+ const pair=id+"|"+next?.id;
+ if(!app||!next||!audio||audio.paused||
+    app.currentId()!==id||quietHandoffFor===pair||
+    window.MusicBoxRoom?.isActive())return false;
+ quietHandoffFor=pair;
+ cancel();plannedFor=next.id;plan=null;
+ console.info("[Music Box DJ] Finale misurato: avvio diretto del prossimo brano",
+  {outgoing:id,incoming:next.id,reason});
+ Promise.resolve().then(()=>app.mixHandoff(next.id,entry))
+  .catch(error=>console.warn("[Music Box DJ] Passaggio diretto non riuscito",String(error?.message||error)));
+ return true;
+}
 async function beginMix(song,proposed){
  const app=bridge(),old=app?.audio(),id=app?.currentId();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
@@ -1733,6 +1746,10 @@ async function beginMix(song,proposed){
   if(active!==act||old.paused||app.currentId()!==id||
      old.currentTime>=proposed.end-1.2){cancel();return}
   await upcoming.play();
+  if(proposed.liveQuietCertified)
+   console.info("[Music Box DJ] Sovrapposizione audio avviata",
+    {outgoing:id,incoming:song.id,entry:proposed.entry,
+     seconds:act.fade.toFixed(2)});
   if(active!==act||app.currentId()!==id){cancel();return}
   if(old.paused){cancel();return}
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.12),.8,12);
@@ -1763,6 +1780,8 @@ async function beginMix(song,proposed){
   // dell'utente: non riprovarlo ogni mezzo secondo.
   mixFailures.set(id+"|"+song.id,Date.now()+60000);
   cancel();
+  if(proposed?.liveQuietCertified&&app?.currentId?.()===id&&!old.paused)
+   quietDirectHandoff(app,old,id,song,proposed.entry||0,"lettore secondario non avviato");
  }
 }
 // Even when the next MP3 cannot be analyzed (or its intro is unsuitable),
@@ -1783,7 +1802,7 @@ function certifiedTailSkip(a,duration,now,lastLyricAt){
 // It NEVER changes the original element's audio routing or connects to
 // speakers. It works even if the deep index or second-track analysis failed.
 // Media capture may be unavailable or CORS-silent: then simply do nothing.
-let liveOutro=null,liveReportFor="";
+let liveOutro=null,liveReportFor="",quietHandoffFor="";
 function closeLiveOutro(){
  const state=liveOutro;liveOutro=null;
  if(!state)return;
@@ -1854,16 +1873,14 @@ function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  return true;
 }
 function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
- if(isIOS||active||mobileActive||mixing||!prepared?.ready||
-    prepared.id!==next?.id||prepared.fromId!==id||
+ if(isIOS||active||mobileActive||mixing||!next||
+    quietHandoffFor===id+"|"+next.id||
     Date.now()<(mixFailures.get(id+"|"+next.id)||0)||
     !liveQuietOutroReady(liveOutro?.audio===audio?liveOutro.samples:null,
       audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
  const remaining=audio.duration-audio.currentTime;
  const fade=clamp(Math.min(3.7,remaining-.55),1.5,3.7);
  if(fade<1.7)return false;
- // Skip only a proven digitally silent opening of exactly the next MP3.
- // Otherwise keep the original musical intro (including quiet notes).
  const nextSource=app.mixUrl?.(next)||next?.url;
  const nextAnalysis=nextSource&&(cache.get(String(nextSource))||deepLookup(next));
  const verifiedIntro=Number.isFinite(nextAnalysis?.safeIntroAt)&&
@@ -1871,13 +1888,29 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
    Number.isFinite(prepared?.audio?.duration)&&
    Math.abs(nextAnalysis.duration-prepared.audio.duration)<1.5;
  const entry=verifiedIntro?clamp(nextAnalysis.safeIntroAt,0,18):0;
+ const previewMatches=prepared?.id===next.id&&prepared.fromId===id;
+ const previewReady=previewMatches&&prepared.ready&&!prepared.failed&&
+   !prepared.audio?.error&&prepared.audio?.readyState>=2;
+ // The 19:46 recording revealed a real failure: ready could remain true
+ // after the preview failed, so the mixer logged "starting" every 350ms
+ // without ever entering beginMix. Never claim a mix before it plays.
+ // Start the native next track directly if a verified fade is almost over.
+ if(!previewReady){
+  const previewFailed=previewMatches&&
+    (prepared.failed||!!prepared.audio?.error);
+  if(previewFailed||remaining<=3.3)
+   return quietDirectHandoff(app,audio,id,next,entry,
+     previewFailed?"anteprima audio non disponibile":"anteprima non pronta");
+  return false;
+ }
  const p={entry,begin:audio.currentTime,end:audio.currentTime+fade+.2,
   fade,tempo:1,gain:1,kind:"quiet",silenceTrim:false,
   liveQuietCertified:true,quietCertified:true};
- console.info("[Music Box DJ] Finale in dissolvenza: sovrapposizione dolce anticipata",
-  {outgoing:id,incoming:next.id,remaining:remaining.toFixed(2),
-   entry,measuredRms:liveOutro.samples.at(-1)?.rms?.toFixed(5)});
- beginMix(next,p).catch(()=>cancel());
+ beginMix(next,p).catch(error=>{
+  mixFailures.set(id+"|"+next.id,Date.now()+60000);
+  quietDirectHandoff(app,audio,id,next,entry,
+   "errore nell'avvio del secondo lettore");
+ });
  return true;
 }
 function tick(){
@@ -1945,7 +1978,7 @@ function tick(){
  }
  if(mixing)return;
  if(previousId!==id){
-  cancel();previousId=id;plannedFor="";plan=null;shuffleRunFor="";
+  cancel();previousId=id;plannedFor="";plan=null;shuffleRunFor="";quietHandoffFor="";
  }
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
