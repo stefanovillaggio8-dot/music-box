@@ -5713,7 +5713,9 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
         if (currentId !== id) return;
         if (res.status === 404 || res.status === 410)
           toast("Questo MP3 non e' ancora pubblicato online. Usa la copia sul PC.", 8500);
-        else toast("Audio non disponibile: controlla la connessione oppure prova un altro brano.", 7500);
+        else if(res.ok)
+          toast("Il file audio risponde, ma la riproduzione non e' riuscita. Riprova il brano.",7500);
+        else toast("Audio non disponibile (HTTP "+res.status+"). Riprova fra poco.",7500);
       }).catch(() => {
         if (currentId === id) toast("Audio non raggiungibile: verifica la connessione.", 7500);
       });
@@ -5724,6 +5726,20 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   const t = current();
   if (!t) return;
   const errorCode=Number(audio?.error?.code||0);
+  // If the boosted edition is missing or temporarily fails, keep the
+  // same track and try its original file once. Do not let two independent
+  // error handlers race to replace the media source.
+  if(String(audio?.currentSrc||audio?.src||"").includes("/bassi/")&&
+     !t._mbNormalFallbackTried){
+    t._mbNormalFallbackTried=true;
+    try{
+      const original=String(audio.currentSrc||audio.src).replace("/bassi/","/");
+      _assegnaAudioSorgente(audio,original);
+      audio.load();
+      if(_vuoleSuonare)doPlay().catch(()=>{});
+      return;
+    }catch(_){/* Continue through the regular recovery path. */}
+  }
   t._mbUltimoErroreAudio=errorCode;
   // Make the cause visible without expanding "Object" in DevTools.
   // Log only URL protocol/hostname, never signed URL tokens or queries.
@@ -5743,9 +5759,11 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     " · dettaglio="+String(audio?.error?.message||"").slice(0,140));
   t._mbErroriAudio = (Number(t._mbErroriAudio) || 0) + 1;
   // Un MP3 può essere integro sul sito ma corrotto in una vecchia cache.
-  // In caso di errore di decodifica, prova una singola richiesta nuova,
-  // senza alterare il file originale o la cache offline.
-  if((errorCode===3||errorCode===4)&&!t._mbRicaricaMp3Provata){
+  // Network failures can be temporary too (including stale HTTP caches).
+  // Retry one fresh public MP3 URL, not just corrupt/unsupported decodes.
+  // Do not retry forever, and never modify offline audio files.
+  if((errorCode===2||errorCode===3||errorCode===4)&&
+     !t._mbRicaricaMp3Provata){
     const source=String(_urlDelBrano(t)||"");
     if(/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box-brani\/main\/songs\//i.test(source)){
       t._mbRicaricaMp3Provata=true;
@@ -5765,9 +5783,12 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     return;
   }
   if (t && t.builtin && !t._provatoLocale) {
-    /* Il brano viene dal sito e non si vuole: uso la copia nel browser. */
+    /* A previous async fallback must never stop the NEW track selected
+       while its IndexedDB lookup is pending. */
     t._provatoLocale = true;
+    const failingId=currentId,failingAudio=audio;
     usaCopiaLocale(t).then((blob) => {
+      if(currentId!==failingId||audio!==failingAudio)return;
       if (!blob) {
         t._mbAudioMancante = true;
         _vuoleSuonare = false;
@@ -5851,20 +5872,9 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
-    /* Se il brano con i bassi non esiste ancora (il computer non l'ha
-       preparato), il brano non parte: in quel caso riprovo con il file
-       normale, cosi' si sente lo stesso. */
-    a.addEventListener("error", function () {
-      try {
-        if (a.src && a.src.indexOf("/bassi/") >= 0) {
-          const normale = a.src.replace("/bassi/", "/");
-          if (normale && normale !== a.src) {
-            _assegnaAudioSorgente(a,normale);
-            try { a.play(); } catch (e) { }
-          }
-        }
-      } catch (e) { }
-    });
+    // Boosted-file failure is handled only by handleError. A second
+    // independent error listener used to swap /bassi/ while handleError
+    // simultaneously rebuilt the player, interrupting a valid fallback.
     /* Se la catena dei bassi e' accesa, l'elemento nuovo va ricollegato a
        lei: altrimenti la musica uscirebbe dalle cuffie senza i bassi (e,
        peggio, con la catena mezza staccata). */
@@ -7257,6 +7267,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       t._mbAudioMancante = false;
       t._mbAudioAvvisato = false;
       t._provatoLocale = false;
+      t._mbNormalFallbackTried = false;
       setTimeout(() => { _completaTestoInAscolto(t).catch(() => {}); }, 1800);
       /* Ste: "quando cambia canzone si aggiorna in automatico il testo".
          Prima restavano i testi del brano precedente. */
