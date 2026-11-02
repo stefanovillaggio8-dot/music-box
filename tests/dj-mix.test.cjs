@@ -190,8 +190,9 @@ test("iPhone mixing falls back when context suspended, feature off or hidden",()
 test("iPhone preview hands off at the current second, never song start",()=>{
  const f=createMobileMixFixture();
  assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
- f.ctx.currentTime=106;
- f.engine.handoffMobileMix(f.app);
+ f.ctx.currentTime=105.6;
+ f.old.currentTime=179.6;
+ f.old.handlers.timeupdate();
  assert.equal(f.calls.length,1);
  assert.ok(f.calls[0].at>5.5&&f.calls[0].at<6.5);
  const nextAudio={paused:false,readyState:3,seeking:false,
@@ -220,4 +221,21 @@ test("sustained near-end karaoke remains protected",()=>{
 test("mobile DJ failed-start cooldown is installed",()=>{
  assert.ok(source.includes("mobileOverlayFailures.set(pair,Date.now()+60000)"));
  assert.ok(source.includes("clockStep<.025"));
+});
+
+test("iPhone foreground seeking cancels overlay without touching native source",()=>{
+ const f=createMobileMixFixture();
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ f.old.handlers.seeking();
+ assert.equal(f.engine.active(),null);
+ assert.equal(f.old.src,undefined);
+});
+test("iPhone audio-clock drift blocks a corrupted seek into the next song",()=>{
+ const f=createMobileMixFixture();
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ f.ctx.currentTime=101;
+ f.old.currentTime=179.6;
+ f.old.handlers.timeupdate();
+ assert.equal(f.calls.length,0);
+ assert.equal(f.engine.active(),null);
 });
