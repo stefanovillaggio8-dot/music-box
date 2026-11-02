@@ -806,7 +806,9 @@ function transition(a,b,actualDuration){
    a.voiceScannedEnd>=dur-.75;
   const lateVoice=Number.isFinite(a.lastVoiceAt)&&
    a.lastVoiceAt>=lateBreak.start-4.5;
-  const gapVoiceFree=scanComplete&&!Number.isFinite(a.lastVoiceAt);
+  const gapVoiceFree=scanComplete&&
+   (!Number.isFinite(a.lastVoiceAt)||
+    a.lastVoiceAt<=lateBreak.start-4.5);
   const harmony=similarNotes(a,b),rhythm=grooveAgreement(a,b);
   const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
   const speed=bpmA>0&&bpmB>0?
