@@ -61,20 +61,24 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- dj-deep-analysis.json
-          if ! git diff --cached --quiet; then
+          # Rebuild from the newest remote index each attempt. Rebase cannot
+          # safely resolve simultaneous updates to this single JSON file.
+          # Shard artifacts live outside the checkout and remain untouched.
+          for attempt in $(seq 1 12); do
+            git fetch origin main
+            git reset --hard origin/main
+            python tools/dj-deep-merge.py --directory "${{ runner.temp }}/dj-shards"
+            git add -- dj-deep-analysis.json
+            if git diff --cached --quiet; then
+              echo "DJ index already current"
+              exit 0
+            fi
             git commit -m "Music Box DJ: complete parallel audio analysis index"
-            # Other Music Box workflows may publish a new app version
-            # while the analysis runs. Retry without discarding any MP3 work.
-            for attempt in $(seq 1 12); do
-              git pull --rebase origin main
-              if git push origin HEAD:main; then
-                echo "Audio DJ index published successfully"
-                exit 0
-              fi
-              echo "Repository advanced during publish; retry $attempt/12"
-              sleep 3
-            done
-            echo "Unable to publish DJ index after retries"
-            exit 1
-          fi
+            if git push origin HEAD:main; then
+              echo "Audio DJ index published"
+              exit 0
+            fi
+            echo "Concurrent change, retrying from current main $attempt/12"
+            sleep 3
+          done
+          exit 1
