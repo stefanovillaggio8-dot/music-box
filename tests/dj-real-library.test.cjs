@@ -58,3 +58,64 @@ test("actual precomputed music library: sample real beat/soft/cut decisions and 
  assert.ok(pairs>5000,"Need broad music-library coverage");
  assert.ok(candidateRhythm>0,"Expected at least some physically close BPM candidates");
 });
+
+test("inspect music actually responsible for repeated zero beatCandidates in console",()=>{
+ const targets=["track-160.mp3","track-161.mp3","track-112.mp3","track-138.mp3"];
+ for(const target of targets){
+  const outgoing=tracks.find(t=>t.key==="audio/songs/"+target)||
+   tracks.find(t=>t.key.endsWith("/"+target));
+  if(!outgoing){console.info("[DJ ZERO DIAGNOSTIC]",JSON.stringify({target,missing:true}));continue;}
+  const a=outgoing.data;
+  const counts={total:0,introRejected:0,beatConfidence18:0,nearBpm:0,
+   groove60:0,harmonicFocused60:0,phrase45:0,match:0,
+   anyBeat:0,anySnap:0,anySoft:0,anyCut:0,anyOther:0};
+  let best=[];
+  for(const incoming of tracks){
+   if(incoming.key===outgoing.key)continue;
+   counts.total++;
+   const b=incoming.data;
+   if(b.introDrive<.33||b.first-(b.safeIntroAt||0)>1.3){counts.introRejected++;continue}
+   if(a.beatConfidence>=.18&&b.beatConfidence>=.18)counts.beatConfidence18++;
+   const bpmA=a.bpm,bpmB=b.bpm;
+   const ratio=[.5,1,2].map(n=>bpmA/(bpmB*n))
+    .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+   if(ratio<.94||ratio>1.06)continue;
+   counts.nearBpm++;
+   const g=engine.grooveAgreement(a,b);
+   if((g?.score||0)<.60)continue;
+   counts.groove60++;
+   const n=engine.similarNotes(a,b);
+   if((n.focused||0)>=.60)counts.harmonicFocused60++;
+   if((n.phrase||0)>=.45)counts.phrase45++;
+   if(n.matches)counts.match++;
+   const cue=engine.transition(a,b,a.duration);
+   // Only a diagnostic upper bound: assume the actual vocal scanner later
+   // proves the final 12s instrumental. NEVER treat this as existing proof.
+   const hypotheticallyScanned={...a,voiceModel:"TEST_ONLY",
+    voiceScannedEnd:a.last+.1,lastVoiceAt:Math.max(0,a.last-12)};
+   const hypothetical=engine.transition(hypotheticallyScanned,b,a.duration);
+   if(hypothetical?.voiceVerifiedMicroBridge)
+    counts.possibleWithActualVocalProof=(counts.possibleWithActualVocalProof||0)+1;
+   if(cue){
+    if(cue.kind==="beat")counts.anyBeat++;
+    else if(cue.kind==="snap")counts.anySnap++;
+    else if(cue.kind==="soft")counts.anySoft++;
+    else if(cue.kind==="cut")counts.anyCut++;
+    else counts.anyOther++;
+   }
+   best.push({id:incoming.key,groove:+g.score.toFixed(3),
+    focused:+Number(n.focused||0).toFixed(3),phrase:+Number(n.phrase||0).toFixed(3),
+    align:+Number(n.alignment?.score||0).toFixed(3),matched:n.matches,
+    bpm:b.bpm,kind:cue?.kind||null});
+  }
+  best.sort((x,y)=>((Number(y.matched)-Number(x.matched))*.8+
+    y.focused*.2+y.groove*.3)-((Number(x.matched)-Number(y.matched))*.8+
+    x.focused*.2+x.groove*.3));
+  console.info("[DJ ZERO DIAGNOSTIC]",JSON.stringify({
+   target,analysis:{duration:a.duration,last:a.last,trailing:a.trailing,
+    bpm:a.bpm,confidence:a.beatConfidence,
+    dropRelease:a.dropRelease,protectedEnding:a.protectedEnding,
+    confidentTail:a.confidentTail,voiceModel:a.voiceModel||null},
+   counts,examples:best.slice(0,4)}));
+ }
+});

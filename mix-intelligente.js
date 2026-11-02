@@ -218,6 +218,7 @@ function scheduleDeepVoice(track,key,data){
      next=app?.mixNext?.()?.id===track.id;
    if(voiceThreatensPlan(found,current,next,plan)&&(active||mobileActive))cancel();
    if((current||next)&&!mixing&&!active&&!mobileActive){plannedFor="";plan=null;}
+   if(current)rearmShuffleAfterVocalScan(track.id);
   }catch(e){/* Optional vocal scan must never interrupt native playback */}
   finally{
    clearTimeout(timeout);
@@ -842,6 +843,7 @@ async function decode(track,needClip=false){
         if(!mixing&&!active&&!mobileActive){
          plannedFor="";plan=null;
         }
+        if(currentTrack)rearmShuffleAfterVocalScan(track.id);
        }
       }).catch(()=>{}).finally(()=>{if(voiceJobs.get(key)===job)voiceJobs.delete(key)});
      voiceJobs.set(key,job);
@@ -1044,6 +1046,46 @@ function strongInstrumentalBeatBridge(a,b,dur){
   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
 }
 
+// After a full REAL vocal scan, a short beat join is possible even when
+// the long-form chord progression is not a perfect match. Preserve the
+// outgoing final note; a missing voice measurement is never proof of safety.
+function verifiedInstrumentalSnap(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !a.voiceModel||!Number.isFinite(a.voiceScannedEnd)||
+    !Number.isFinite(a.last)||!Number.isFinite(a.bpm)||
+    !Number.isFinite(b.bpm)||a.beatConfidence<.17||b.beatConfidence<.17||
+    b.introDrive<.43||!hasReliableHarmony(a.outroFinalNotes)||
+    !hasReliableHarmony(b.introAttackNotes))return null;
+ const end=clamp(a.last+.045,26,dur-.035);
+ if(end<26||dur-end>13||a.voiceScannedEnd<end-.75)return null;
+ if((Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-5)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<1.5)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<1.5))return null;
+ const ratio=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale))
+  .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
+ if(ratio<.965||ratio>1.035)return null;
+ const notes=similarNotes(a,b),groove=grooveAgreement(a,b);
+ if(!groove||groove.score<.65||notes.focused<.78||
+    notes.phrase<.68||
+    (!notes.matches&&(notes.alignment?.score||0)<.68))return null;
+ const key=camelotMatch(a,b);
+ if(key.weight>.14&&key.score<.30)return null;
+ const fade=clamp(1.3*60/a.bpm,.52,.79),begin=end-fade;
+ if(begin<20)return null;
+ const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+ return {kind:"snap",begin,end,entry,fade,tempo:clamp(ratio,.97,1.03),
+  gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+  score:Math.round((notes.score??notes.focused)*100),
+  grooveScore:groove.score,measuredBeatBridge:true,
+  voiceVerifiedMicroBridge:true,preserveTail:true,
+  quietCertified:false,softTailTrim:false,
+  silenceTrim:!!(a.confidentTail&&dur-a.last>=1.65),
+  trailing:Math.max(0,dur-end),safeOutroAt:null,
+  beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
+  nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+}
  // A measured late-bar bridge: no absolute silence is needed.
  // Real librosa confidence clusters around .24; .30 filtered almost everything.
  function measuredBeatBridge(a,b,dur){
@@ -1123,6 +1165,8 @@ function transition(a,b,actualDuration){
  if(activeBeat)return activeBeat;
  const measured=measuredBeatBridge(a,b,dur);
  if(measured)return measured;
+ const scannedSnap=verifiedInstrumentalSnap(a,b,dur);
+ if(scannedSnap)return scannedSnap;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
  // protected, the remaining release is genuinely quiet, and the next
  // track starts with music rather than another quiet passage.
@@ -2210,6 +2254,7 @@ function tick(){
   cancel();previousId=id;plannedFor="";plan=null;
    shuffleGeneration++;shuffleBusy=false;
    shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;quietHandoffFor="";
+   shuffleLastLyricFor="";shuffleLastLyric=null;
  }
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
@@ -2248,6 +2293,15 @@ function tick(){
    decode(now).then(value=>{a=value;update()}).catch(()=>{});
    decode(next).then(value=>{b=value;update()}).catch(()=>{});
   }
+ }
+ // Newly fetched karaoke timing can certify a formerly unknown vocal outro.
+ const lyricForSearch=app.mixLyricCues?.(id)?.last;
+ if(shuffleLastLyricFor!==id){
+  shuffleLastLyricFor=id;
+  shuffleLastLyric=Number.isFinite(lyricForSearch)?lyricForSearch:null;
+ }else if(Number.isFinite(lyricForSearch)&&lyricForSearch!==shuffleLastLyric){
+  shuffleLastLyric=lyricForSearch;
+  rearmShuffleAfterVocalScan(id);
  }
  // Don't allow shuffle candidate downloads to monopolize Safari's
  // single decoder while the next track has not been prepared for the mix.
@@ -2500,6 +2554,7 @@ let smartSuggested=[],smartRun=0,shuffleRunFor="";
 // than treating the first ten randomly picked songs as the only options.
 // It never downloads the whole catalog and never changes a manual queue.
 async function intelligentShuffle(app,audio,fromId){
+ const runGeneration=typeof shuffleGeneration==="number"?shuffleGeneration:null;
  if(!enabled||window.MusicBoxRoom?.isActive()||
     !app.mixShuffleCandidates||!app.mixSelectShuffle)return {retry:false};
  const sequence=app.mixShuffleCandidates();
@@ -2622,6 +2677,7 @@ async function intelligentShuffle(app,audio,fromId){
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
     (!current||best.score>current.score+.045)){
+  if(runGeneration!==null&&runGeneration!==shuffleGeneration)return {retry:false};
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
@@ -2635,11 +2691,18 @@ async function intelligentShuffle(app,audio,fromId){
    return {retry:false,selected:true};
   }
  }
+ // Obsolete vocal evidence must not overwrite a fresh selection.
+ if(runGeneration!==null&&runGeneration!==shuffleGeneration)return {retry:false};
  // If analysis coverage is incomplete, retry later once more metadata
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
   rhythmCandidates,harmonicCandidates,rejected,chosen:current?.track.id||null,
+   vocalModelReady:!!old.voiceModel,
+   outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
+    Number.isFinite(old.voiceScannedEnd)&&Number.isFinite(old.last)&&
+    old.voiceScannedEnd>=old.last-1),
+   protectedEnding:old.protectedEnding===true,dropReleaseVerified:!!old.dropRelease,
   reason:noMatch?"nessuna transizione sicura nei brani analizzati":
    scored.length?"brano in coda gia compatibile con il beat":
    "brano in coda gia compatibile con la sfumatura"};
@@ -2648,7 +2711,16 @@ async function intelligentShuffle(app,audio,fromId){
   checked:measured.length,missing:unknown.length,noMatch};
 }
 let shuffleBusy=false,shuffleRetryAt=0,shuffleAttempts=0,shuffleGeneration=0;
-let shuffleLastDecision=null;
+let shuffleLastDecision=null,shuffleLastLyricFor="",shuffleLastLyric=null;
+function rearmShuffleAfterVocalScan(id){
+ const app=bridge(),audio=app?.audio?.();
+ if(!enabled||mixing||active||mobileActive||app?.currentId?.()!==id||
+    !audio||!Number.isFinite(audio.duration)||
+    audio.duration-audio.currentTime<25)return false;
+ shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
+ shuffleRetryAt=0;shuffleAttempts=0;
+ return true;
+}
 function maybeReorderShuffle(app,audio,id){
  if(!enabled||shuffleBusy||shuffleRunFor===id||
     Date.now()<shuffleRetryAt||shuffleAttempts>=4)return;
