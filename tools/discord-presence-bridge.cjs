@@ -18,7 +18,17 @@ function send(force=false){
    const start=Math.floor(now/1000-item.position);
    args.activity={type:2,details:item.title,state:item.artist||"Music Box",timestamps:{start}};
    if(item.duration>0)args.activity.timestamps.end=start+item.duration;
-   if(item.cover)args.activity.assets={large_image:item.cover,large_text:item.title};
+   // Album artwork when available; otherwise show Music Box's own icon, never a "?".
+   // Preserve the existing Discord application name (spotifynonavraiimieisoldi).
+   const logo="https://stefanovillaggio8-dot.github.io/music-box/icon-512.png";
+   args.activity.assets={
+     large_image:item.cover||logo,
+     large_text:item.cover?item.title:"Music Box"
+   };
+   if(item.cover){
+     args.activity.assets.small_image=logo;
+     args.activity.assets.small_text="Music Box";
+   }
  }
  try{socket.write(packet(1,{cmd:"SET_ACTIVITY",args,nonce:crypto.randomUUID()}));sent=s;lastSent=now;}
  catch(e){lastError=clean(e.message);reset();}
