@@ -452,10 +452,16 @@ function transition(a,b,actualDuration){
  const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
  const end=clamp(musicalEnd+(trim?.07:-.04),13,dur-.025);
  let safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):null;
- // A last lyric in the final 11 seconds protects the full final phrase.
- if(safe!==null&&Number.isFinite(a.lastLyricAt)){
-  if(end-a.lastLyricAt<11)safe=end;
-  else safe=Math.min(end,Math.max(safe,a.lastLyricAt+6));
+ // Timed karaoke can reveal a full instrumental outro even when its
+ // drums remain loud. Keep a generous 8-second margin after the last lyric.
+ // If the last phrase is too near the end, don't overlap it at all.
+ if(Number.isFinite(a.lastLyricAt)){
+  if(end-a.lastLyricAt<12)safe=end;
+  else if(end-a.lastLyricAt>=18){
+   const lyricalExit=Math.max(a.lastLyricAt+8,end-8);
+   safe=safe===null?lyricalExit:Math.max(safe,lyricalExit);
+  }else if(safe!==null)safe=Math.max(safe,a.lastLyricAt+8);
+  if(safe!==null)safe=Math.min(end,safe);
  }
  const available=safe===null?0:end-safe;
  const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
