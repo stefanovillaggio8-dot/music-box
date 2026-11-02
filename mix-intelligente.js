@@ -652,12 +652,19 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5)return null;
- const trim=Boolean(a.confidentTail&&a.last<dur-1.65);
- const musicalEnd=trim?Math.min(dur,a.last):dur;
+ const digital=Boolean(a.confidentTail&&a.last<dur-1.65);
+ const weak=a.softOutro;
+ const protectedTail=weak&&(
+  (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=weak.start-2)||
+  (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=weak.start-2));
+ const soft=Boolean(!digital&&weak&&!protectedTail&&weak.end<dur-1.65);
+ const trim=digital||soft;
+ const musicalEnd=digital?Math.min(dur,a.last):soft?weak.end:dur;
  // Never jump ahead into a quiet, real introduction.
  const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
  let end=clamp(musicalEnd+(trim?.07:-.04),13,dur-.025);
- let safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):null;
+ let safe=Number.isFinite(a.safeOutroAt)?clamp(a.safeOutroAt,0,end):
+  soft?clamp(weak.fadeStart,0,end):null;
  // Timed karaoke can reveal a full instrumental outro even when its
  // drums remain loud. Keep a generous 8-second margin after the last lyric.
  // If the last phrase is too near the end, don't overlap it at all.
@@ -687,7 +694,8 @@ function transition(a,b,actualDuration){
    trailing:trim?Math.max(0,dur-musicalEnd):0,safeOutroAt:safe,
    // Unlike desktop, the iPhone cannot reliably attenuate native playback.
    // Only overlay when the audio analysis itself found a settled quiet outro.
-   quietCertified:Number.isFinite(a.safeOutroAt)};
+   quietCertified:Number.isFinite(safe)&&(Number.isFinite(a.safeOutroAt)||soft),
+    softTailTrim:soft};
  // Leave the actual song intact if we cannot prove there is a safe outro.
  // Verified silence can be skipped only AFTER the last audible part.
  if(available<1.75){
@@ -737,7 +745,7 @@ function transition(a,b,actualDuration){
   // Keep an already working quiet-outro mix. When the old song has truly
   // settled, a short neutral fade is safe even without harmonic matching.
   // Never use this fallback on a loud or vocal ending.
-  if(a.quietTail===true&&Number.isFinite(a.safeOutroAt)&&available>=2.6){
+  if((a.quietTail===true||soft)&&Number.isFinite(safe)&&available>=2.6){
    const duration=Math.min(2.6,available-.1);
    return {...common,begin:end-duration,end,fade:duration,kind:"soft"};
   }
