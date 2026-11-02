@@ -3,7 +3,7 @@ const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs"),path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
 const helpers=source.slice(source.indexOf("function findDropRelease("),source.indexOf("function analyzeFrames("));
-const transitionSource=source.slice(source.indexOf("function transition("),source.indexOf("// Circle of fifths/Camelot:"));
+const transitionSource=source.slice(source.indexOf("function strongInstrumentalBeatBridge("),source.indexOf("// Circle of fifths/Camelot:"));
 function engine(ios=false,notesMatch=true){
  return new Function(
   "const isIOS="+String(ios)+",style='auto';"+
@@ -385,4 +385,40 @@ test("release version is identical in player, metadata, HTML assets and service 
   "HTML must request the same release of DJ Mix");
  assert.ok(sw.includes('spotifynonavraiimieisoldi-v'+token+'"'),
   "Offline worker version must match the player");
+});
+
+test("20:03 and 20:05 recordings: matched energetic instrumental ending mixes before silence",()=>{
+ const e=engine(false,true);
+ const a={duration:100,last:100,bpm:120,beatConfidence:.75,level:.2,
+  protectedEnding:true,confidentTail:false,outroFinalNotes:[.2,.3],
+  lastLyricAt:75,beatAnchor:98};
+ const b={duration:136,bpm:121,beatConfidence:.76,level:.21,
+  introDrive:.82,introAttackNotes:[.3,.2],introBeat:0,safeIntroAt:0};
+ const plan=e.transition(a,b,100);
+ assert.ok(plan?.strongBeatBridge && plan.instrumentalBeatBridge,
+  "Do not mistake a loud matched instrumental beat for a protected silence-only tail");
+ assert.equal(plan.kind,"beat");
+ assert.ok(plan.begin<=96.5 && plan.fade>=3.5);
+ assert.equal(plan.silenceTrim,false);
+ assert.equal(plan.entry,0);
+ assert.ok(plan.end>=99.9,"Preserve the last old beat during the handoff");
+});
+test("energetic beat does not overpower late singing, uncertain detection or incompatible intros",()=>{
+ const e=engine(false,true),mismatch=engine(false,false);
+ const a={duration:100,last:100,bpm:120,beatConfidence:.8,level:.2,
+  protectedEnding:true,outroFinalNotes:[.3,.2],lastLyricAt:75};
+ const b={duration:120,bpm:121,beatConfidence:.82,level:.2,
+  introDrive:.8,introAttackNotes:[.2,.3],safeIntroAt:0};
+ for(const update of [{lastLyricAt:97},{lastLyricAt:undefined},
+   {lastVoiceAt:98},{beatConfidence:.12}]){
+  assert.ok(!e.transition({...a,...update},b,100)?.instrumentalBeatBridge,
+   "Do not mix over unknown/late vocal, untrusted beat or unsafe finish");
+ }
+ assert.ok(!e.transition(a,{...b,firstVoiceAt:.5},100)?.instrumentalBeatBridge);
+ assert.ok(!e.transition(a,{...b,introDrive:.09},100)?.instrumentalBeatBridge);
+ assert.ok(!mismatch.transition(a,b,100)?.instrumentalBeatBridge,
+  "Do not assert an exact match from similar BPM alone");
+ const iphone=engine(true,true).transition(a,b,100);
+ assert.ok(iphone?.instrumentalBeatBridge && iphone.quietCertified,
+  "Allow explicitly vocal-safe rhythmic overlay on iPhone foreground");
 });
