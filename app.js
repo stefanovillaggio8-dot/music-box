@@ -6062,7 +6062,7 @@ function rebuildAudio(autoplay) {
          pieno, si portano via le tue). */
       if (!("caches" in window)) return;
       let cache = null;
-      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch"); } catch (e) { cache = null; }
+      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch-" + profile); } catch (e) { cache = null; }
       if (!cache) return;
       _precaricaInCorso = true;
       try { await fetchToCache(_urlDelBrano(t), cache, null); } catch (e) { }
