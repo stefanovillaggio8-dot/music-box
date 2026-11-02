@@ -1400,7 +1400,7 @@
    },
    "[\"wonderwall\",\"oasis\"]": {
     "v": 0,
-    "s": 8,
+    "s": 26,
     "t": "Wonderwall",
     "a": "Oasis"
    },
@@ -2660,7 +2660,7 @@
    },
    "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
     "v": 2,
-    "s": 155,
+    "s": 156,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -4422,6 +4422,18 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
+   "[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
+   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4998,17 +5010,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"taciturno\",\"coez, gemello\"]": {
+   "[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
-   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+   "m:2026-11|[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5598,17 +5610,29 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"end of beginning\",\"djo\"]": {
+   "[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
    },
-   "m:2026-11|[\"end of beginning\",\"djo\"]": {
+   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
+   },
+   "[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5936,13 +5960,13 @@
    },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -6198,29 +6222,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
-   "[\"qualcosa di grande\",\"coez\"]": {
+   "[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
-   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
+   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
-   },
-   "[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
-   },
-   "m:2026-11|[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -6548,13 +6560,13 @@
    },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 126,
+    "s": 132,
     "t": "Ma il cielo ÃÂ¨ sempre piÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 126,
+    "s": 132,
     "t": "Ma il cielo ÃÂ¨ sempre piÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -6810,18 +6822,6 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
-   "[\"scrivendo\",\"nayt\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Scrivendo",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Scrivendo",
-    "a": "nayt"
-   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -7010,13 +7010,13 @@
    },
    "[\"miami vice\",\"luchÃ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 110,
+    "s": 126,
     "t": "Miami Vice",
     "a": "LuchÃ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 110,
+    "s": 126,
     "t": "Miami Vice",
     "a": "LuchÃ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -7148,13 +7148,13 @@
    },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 132,
+    "s": 136,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 132,
+    "s": 136,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -7409,6 +7409,42 @@
     "s": 6,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
+   },
+   "[\"il giorno che aspettavo\",\"ultimo\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "IL GIORNO CHE ASPETTAVO",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "IL GIORNO CHE ASPETTAVO",
+    "a": "Ultimo"
+   },
+   "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Lulu - Acoustic Version",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Lulu - Acoustic Version",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -7998,40 +8034,58 @@
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
    },
-   "[\"il giorno che aspettavo\",\"ultimo\"]": {
+   "[\"odi et amo\",\"blake el diablo\"]": {
     "v": 0,
-    "s": 4,
-    "t": "IL GIORNO CHE ASPETTAVO",
-    "a": "Ultimo"
+    "s": 15,
+    "t": "Odi et Amo",
+    "a": "Blake el Diablo"
    },
-   "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
+   "m:2026-11|[\"odi et amo\",\"blake el diablo\"]": {
     "v": 0,
-    "s": 4,
-    "t": "IL GIORNO CHE ASPETTAVO",
-    "a": "Ultimo"
+    "s": 15,
+    "t": "Odi et Amo",
+    "a": "Blake el Diablo"
    },
-   "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+   "m:2026-11|[\"wonderwall\",\"oasis\"]": {
     "v": 0,
-    "s": 7,
-    "t": "STANOTTE",
-    "a": "TY1, Coez, Massimo Pericolo"
+    "s": 18,
+    "t": "Wonderwall",
+    "a": "Oasis"
    },
-   "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+   "[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
     "v": 0,
-    "s": 7,
-    "t": "STANOTTE",
-    "a": "TY1, Coez, Massimo Pericolo"
+    "s": 12,
+    "t": "Funghi in salsa rosa",
+    "a": "L'Elfo, Funkymann"
    },
-   "[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+   "m:2026-11|[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
     "v": 0,
-    "s": 6,
-    "t": "Lulu - Acoustic Version",
+    "s": 12,
+    "t": "Funghi in salsa rosa",
+    "a": "L'Elfo, Funkymann"
+   },
+   "[\"esistere (più di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (più di me)",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"esistere (più di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (più di me)",
+    "a": "nayt"
+   },
+   "[\"dimenticare\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 8,
+    "t": "Dimenticare",
     "a": "nayt, 3D"
    },
-   "m:2026-11|[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+   "m:2026-11|[\"dimenticare\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 6,
-    "t": "Lulu - Acoustic Version",
+    "s": 8,
+    "t": "Dimenticare",
     "a": "nayt, 3D"
    }
   },
