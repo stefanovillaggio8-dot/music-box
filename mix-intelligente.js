@@ -1563,7 +1563,10 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=Number.isFinite(plan?.outroGapStart)?
+ const description=plan?.strongBeatBridge?
+   " · beat finale e iniziale compatibili: sovrapposizione anche senza silenzio"+
+   (Number.isFinite(plan.grooveScore)?" · ritmo "+Math.round(plan.grooveScore*100)+"%":""):
+   Number.isFinite(plan?.outroGapStart)?
    " · pausa finale lunga riconosciuta: entrata prima del silenzio":
    plan?.softTailTrim?
    " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
@@ -1634,7 +1637,7 @@ function draw(){
  const value=$("mixSecondsValue");if(value)value.textContent=mixSeconds+" s";
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
-   "Su iPhone, a schermo acceso, può sovrapporre gradualmente il prossimo brano sulla coda già tranquilla. Se Safari non lo permette passa normalmente; a schermo bloccato preserva il lettore nativo, senza mix Web Audio.":
+   "Su iPhone, a schermo acceso, mixa anche beat finali e iniziali compatibili quando l'assenza di voce è verificata; riconosce inoltre i finali silenziosi. Safari può limitare le sovrapposizioni: a schermo bloccato riproduzione normale protetta.":
    "Analizza BPM, note e chiusura musicale. Quando il modello vocale IA è disponibile, controlla canto e parlato prima del taglio; i casi incerti non vengono forzati.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
