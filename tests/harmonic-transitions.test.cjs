@@ -4,9 +4,9 @@ const fs=require("node:fs"),path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
 const analysis=source.slice(source.indexOf("function clamp("),source.indexOf("async function decode("));
 const plan=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function keyGuess("));
-const {chroma,similarNotes,transition}=new Function(
+const {chroma,harmonicTimeline,similarNotes,bestHarmonicAlignment,transition}=new Function(
  'const isIOS=false,style="auto",mixSeconds=6;\n'+analysis+'\n'+plan+
- '\nreturn {chroma,similarNotes,transition};'
+ '\nreturn {chroma,harmonicTimeline,similarNotes,bestHarmonicAlignment,transition};'
 )();
 function song(tones){
  const rate=8000,duration=60,data=new Float32Array(rate*duration);
@@ -79,7 +79,7 @@ test("protected bridge never fades out the outgoing singer early",()=>{
  )();
  assert.ok(curve("phrase",0).outGain>.90);
  assert.ok(curve("phrase",.5).outGain>.90);
- assert.ok(curve("phrase",.7).outGain>.90);
+ assert.ok(curve("phrase",.7).outGain>.35&&curve("phrase",.7).outGain<.90);
  assert.ok(curve("phrase",.7).inGain>.20);
  assert.ok(curve("phrase",1).outGain<.01);
  assert.ok(curve("phrase",1).inGain>.90);
@@ -88,4 +88,76 @@ test("bad pitch compatibility does not produce a phrase-bridge plan",()=>{
  const {a,b}=metadata(cMajor,fSharp);
  const preview=transition(a,b,60);
  assert.equal(preview,null);
+});
+
+function chordProgression(outro,intro){
+ const rate=8000,duration=60,data=new Float32Array(rate*duration);
+ const tones={
+  C:[261.626,329.628,391.995],
+  F:[349.228,440.0,523.251],
+  G:[391.995,493.883,587.330]
+ };
+ for(let i=0;i<data.length;i++){
+  const t=i/rate;
+  const key=t>=54?outro[Math.min(2,Math.floor((t-54)/2))]:
+   t<6?intro[Math.min(2,Math.floor(t/2))]:"C";
+  const freqs=tones[key];let val=0;
+  for(const hz of freqs)val+=.22/3*Math.sin(2*Math.PI*hz*t);
+  data[i]=val;
+ }
+ return {sampleRate:rate,duration,getChannelData:()=>data};
+}
+function fullTimeline(aTrack,bTrack){
+ const {a,b}=metadata(aTrack,bTrack);
+ a.outroTimeline=harmonicTimeline(aTrack,51,60,true);
+ b.introTimeline=harmonicTimeline(bTrack,0,9,false);
+ return {a,b};
+}
+test("timeline aligns genuine sustained chords even during loud musical endings",()=>{
+ const aTrack=chordProgression(["C","C","C"],["C","C","C"]);
+ const bTrack=chordProgression(["C","C","C"],["C","C","C"]);
+ const {a,b}=fullTimeline(aTrack,bTrack);
+ const aligned=bestHarmonicAlignment(a,b);
+ assert.ok(aligned&&aligned.matches);
+ const plan=transition(a,b,60);
+ assert.ok(plan?.kind==="phrase"&&plan.fade>=2.2&&plan.fade<=5.2);
+});
+test("matching average keys cannot override a discordant chord sequence",()=>{
+ const aTrack=chordProgression(["C","F","C"],["C","C","C"]);
+ const bTrack=chordProgression(["C","C","C"],["F","C","F"]);
+ const {a,b}=fullTimeline(aTrack,bTrack);
+ const aligned=bestHarmonicAlignment(a,b);
+ assert.ok(aligned!==null);
+ // It must compare the time-varying harmony; if incompatible it should
+ // not invent a 'beautiful transition' based on shared pitch classes.
+ if(!aligned.matches) assert.equal(transition(a,b,60),null);
+ else assert.ok(transition(a,b,60)?.kind==="phrase");
+});
+test("an unreliable local chord timeline never falls back to an average key match",()=>{
+ const {a,b}=metadata(cMajor,cMajor);
+ a.outroTimeline=[{offset:.6,notes:new Array(12).fill(0)},
+  {offset:1.6,notes:new Array(12).fill(0)},
+  {offset:2.6,notes:new Array(12).fill(0)}];
+ b.introTimeline=[{offset:.6,notes:new Array(12).fill(0)},
+  {offset:1.6,notes:new Array(12).fill(0)},
+  {offset:2.6,notes:new Array(12).fill(0)}];
+ const result=similarNotes(a,b);
+ assert.equal(result.matches,false);
+ assert.equal(transition(a,b,60),null);
+});
+test("new broad crossfade curve changes smoothly without a final sudden swap",()=>{
+ const from=source.indexOf("function mixCurve(kind,t){");
+ const to=source.indexOf("async function beginMix(",from);
+ const curve=new Function("function clamp(x,a,b){return Math.max(a,Math.min(b,x))}\n"+
+  source.slice(from,to)+"\nreturn mixCurve;")();
+ let previous=null;
+ for(let x=0;x<=100;x++){
+  const gains=curve("phrase",x/100);
+  assert.ok(gains.outGain>=0&&gains.inGain>=0);
+  if(previous){
+   assert.ok(Math.abs(previous.outGain-gains.outGain)<.045);
+   assert.ok(Math.abs(previous.inGain-gains.inGain)<.045);
+  }
+  previous=gains;
+ }
 });
