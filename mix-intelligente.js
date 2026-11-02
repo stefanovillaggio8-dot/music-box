@@ -349,18 +349,18 @@ function compatibility(a,b){
  for(let i=0;i<12;i++){dot+=a.chroma[i]*b.chroma[i];aa+=a.chroma[i]**2;bb+=b.chroma[i]**2}
  return dot/Math.sqrt((aa||1)*(bb||1));
 }
-async function decode(track){
+async function decode(track,needClip=false){
  if(!enabled||!track)return null;
  const source=bridge()?.mixUrl?.(track)||track.url;
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
  if(Date.now()<(unavailableAnalysis.get(key)||0))return null;
- if(cache.has(key))return cache.get(key);
+ if(cache.has(key)&&(!needClip||mobileIntroClips.has(key)))return cache.get(key);
  if(pending.has(key))return pending.get(key);
  const saved=await savedAnalysis(key);
- if(saved){cache.set(key,saved);return saved}
+ if(saved&&(!needClip||mobileIntroClips.has(key))){cache.set(key,saved);return saved}
  // A second caller may have begun the same analysis while IndexedDB loaded.
- if(cache.has(key))return cache.get(key);
+ if(cache.has(key)&&(!needClip||mobileIntroClips.has(key)))return cache.get(key);
  if(pending.has(key))return pending.get(key);
  // Offline/saved analyses still work in data-saving mode. Only network
  // downloads are suppressed.
@@ -413,6 +413,7 @@ async function decode(track){
      introChroma:chroma(decoded,0,introTo),
      outroChroma:chroma(decoded,outroFrom,Math.min(decoded.duration,frame.last)),
      duration:decoded.duration,durationMismatch};
+    if(needClip&&!document.hidden)rememberMobileClip(key,decoded,frame);
     cache.set(key,result);
     saveAnalysis(key,result).catch(()=>{});
     if(cache.size>8)cache.delete(cache.keys().next().value);
@@ -756,7 +757,8 @@ function tick(){
   plan=null; // Wait for analyzed tracks; no speculative cue.
   const now=app.allTracks()?.find(t=>t.id===id);
   decode(now).then(value=>{a=value;update()}).catch(()=>{});
-  decode(next).then(value=>{b=value;update()}).catch(()=>{});
+  decode(next,isIOS&&!document.hidden&&Boolean(app.mixRunningContext?.()))
+   .then(value=>{b=value;update()}).catch(()=>{});
  }
  if(!plan){resetMobileFade();return;}
  // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
