@@ -3,7 +3,7 @@ const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs"),path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
 const analysis=source.slice(source.indexOf("function clamp("),source.indexOf("async function decode("));
-const plan=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function keyGuess("));
+const plan=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function resetMobileFade("));
 const {chroma,harmonicTimeline,similarNotes,bestHarmonicAlignment,transition}=new Function(
  'const isIOS=false,style="auto",mixSeconds=6;\n'+analysis+'\n'+plan+
  '\nreturn {chroma,harmonicTimeline,similarNotes,bestHarmonicAlignment,transition};'
@@ -29,13 +29,13 @@ function metadata(tail,head){
   introPhraseNotes:chroma(head,0,6),introChroma:chroma(head,0,9),safeIntroAt:0,first:0};
  return {a,b};
 }
-test("same REAL synthesized chords at exit/entry enable a phrase bridge",()=>{
+test("matching real chord notes may blend once a safe outro is verified",()=>{
  const {a,b}=metadata(cMajor,cMajor);
  const notes=similarNotes(a,b);
  assert.ok(notes.matches&&notes.focused>.90);
- const result=transition(a,b,60);
- assert.ok(result&&result.kind==="phrase"&&result.end>59.9);
- assert.ok(result.fade>=2&&result.fade<=3.5);
+ const result=transition({...a,safeOutroAt:52},b,60);
+ assert.ok(result&&result.kind==="beat"&&result.end>59.9);
+ assert.ok(result.fade>=4&&result.fade<=8);
 });
 test("different REAL synthesized chords do not overlap",()=>{
  const {a,b}=metadata(cMajor,fSharp);
@@ -60,7 +60,7 @@ test("large tempo mismatch prevents an otherwise harmonic phrase transition",()=
 });
 test("harmonically matching intro preserves its first real note",()=>{
  const {a,b}=metadata(cMajor,cMajor);
- const result=transition(a,b,60);
+ const result=transition({...a,safeOutroAt:52},b,60);
  assert.equal(result.entry,0);
 });
 test("if a quiet outro is verified, choose stronger beat mix instead",()=>{
@@ -70,7 +70,7 @@ test("if a quiet outro is verified, choose stronger beat mix instead",()=>{
 });
 
 test("protected bridge never fades out the outgoing singer early",()=>{
- const from=source.indexOf("function mixCurve(kind,t){");
+ const from=source.indexOf("function mixCurve(kind,t");
  const to=source.indexOf("async function beginMix(",from);
  assert.ok(from>0&&to>from);
  const curve=new Function(
@@ -119,8 +119,10 @@ test("timeline aligns genuine sustained chords even during loud musical endings"
  const {a,b}=fullTimeline(aTrack,bTrack);
  const aligned=bestHarmonicAlignment(a,b);
  assert.ok(aligned&&aligned.matches);
- const plan=transition(a,b,60);
- assert.ok(plan?.kind==="phrase"&&plan.fade>=2.2&&plan.fade<=5.2);
+ const plan=transition({...a,protectedEnding:true},b,60);
+ // A measured strong final beat must veto the otherwise convincing
+ // harmonic/rhythmic handoff, so the original ending plays to completion.
+ assert.equal(plan,null);
 });
 test("matching average keys cannot override a discordant chord sequence",()=>{
  const aTrack=chordProgression(["C","F","C"],["C","C","C"]);
@@ -146,7 +148,7 @@ test("an unreliable local chord timeline never falls back to an average key matc
  assert.equal(transition(a,b,60),null);
 });
 test("new broad crossfade curve changes smoothly without a final sudden swap",()=>{
- const from=source.indexOf("function mixCurve(kind,t){");
+ const from=source.indexOf("function mixCurve(kind,t");
  const to=source.indexOf("async function beginMix(",from);
  const curve=new Function("function clamp(x,a,b){return Math.max(a,Math.min(b,x))}\n"+
   source.slice(from,to)+"\nreturn mixCurve;")();
@@ -175,11 +177,11 @@ test("loud incompatible music cannot use the quiet-outro fallback",()=>{
 });
 test("manual fade mode still permits compatible melodic phrase transitions",()=>{
  const st=source.slice(source.indexOf("function clamp("),source.indexOf("async function decode("));
- const p=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function keyGuess("));
+ const p=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function resetMobileFade("));
  const alt=new Function('const isIOS=false,style="fade",mixSeconds=6;\n'+st+'\n'+p+
   '\nreturn {transition};')();
  const {a,b}=metadata(cMajor,cMajor);
- const result=alt.transition(a,b,60);
+ const result=alt.transition({...a,safeOutroAt:52},b,60);
  assert.ok(result&&result.kind==="fade"&&result.fade>=2);
 });
 

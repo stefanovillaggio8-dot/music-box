@@ -5,7 +5,7 @@ const fs=require("node:fs");
 const path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
 const first=source.slice(source.indexOf("function clamp("),source.indexOf("async function decode("));
-const second=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function keyGuess("));
+const second=source.slice(source.indexOf("function hasReliableHarmony("),source.indexOf("function resetMobileFade("));
 assert.ok(first.includes("function analyzeFrames("));
 assert.ok(second.includes("function transition("));
 const {analyzeFrames,transition}=new Function(
@@ -120,7 +120,8 @@ test("iPhone leaves playback alone while app is in the background",()=>{
  assert.ok(!source.includes("mobileSmartCut"));
 });
 test("local harmony is used for automatic queue order",()=>{
- assert.ok(source.includes("const tail=a.outroChroma||a.chroma,head=b.introChroma||b.chroma;"));
+ assert.ok(source.includes("const notes=similarNotes(a,b);"));
+ assert.ok(source.includes("const groove=grooveAgreement(a,b);"));
 });
 
 test("stereo song with audio only on right channel keeps full ending",()=>{
