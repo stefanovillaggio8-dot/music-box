@@ -1851,7 +1851,7 @@ function sampleLiveOutro(audio){
 }
 function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  if(!Array.isArray(samples)||!Number.isFinite(duration)||!Number.isFinite(now)||
-    duration-now>10||duration-now<2.2)return false;
+    duration-now>6||duration-now<2.2)return false;
  if(Number.isFinite(lastLyricAt)&&now-lastLyricAt<4.5)return false;
  if(Number.isFinite(lastVoiceAt)&&now-lastVoiceAt<2.5)return false;
  const earlier=samples.filter(p=>p.at>=now-19&&p.at<=now-3.3);
@@ -1898,7 +1898,7 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  if(!previewReady){
   const previewFailed=previewMatches&&
     (prepared.failed||!!prepared.audio?.error);
-  if(previewFailed||remaining<=3.3)
+  if((previewFailed&&remaining<=4.5)||remaining<=3.3)
    return quietDirectHandoff(app,audio,id,next,entry,
      previewFailed?"anteprima audio non disponibile":"anteprima non pronta");
   return false;
