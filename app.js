@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.559";
+  const APP_VERSION = "6.560";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1552,6 +1552,7 @@ const PROFILI = [
       return _doveStaIlBrano(t.file);
     /* Il brano Baby Gang e' stato segnalato con audio diverso dal video
        ufficiale; usa sempre il file originale corretto, mai i bassi vecchi. */
+    if (t && t.file === "songs/track-245.mp3") return _doveStaIlBrano(t.file);
     if (t && t.file === "songs/track-929.mp3") return _doveStaIlBrano(t.file);
     try {
       if (t && t.file && _potenziatiCaricati && _branoInGym(t.id) && _ePotenziato(t.file)) {
@@ -1667,7 +1668,8 @@ const PROFILI = [
        cartella, e l'app chiedeva "track-1.mp3" invece di
        "songs/track-1.mp3": il brano non partiva (404) e sembrava che
        l'app fosse rotta. */
-    return BRANI_ONLINE + nome.replace(/^\/+/, "");
+    return BRANI_ONLINE + nome.replace(/^\/+/, "") +
+      (nome === "songs/track-245.mp3" ? "?audio-normalizzato=20261102-lufs14" : "");
   }
 
   let profiles = [DEFAULT_PROFILE];

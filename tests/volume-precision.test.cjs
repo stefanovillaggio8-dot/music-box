@@ -58,3 +58,16 @@ test("mute remains separate from 1-100 slider and restores previous percentage",
  icon.listeners.click();assert.equal(x.getValue(),37);
  assert.ok(x.stored.some(([k,v])=>k==="mb.vol"&&v===37));
 });
+
+test("normalized Mentre Tutto Score uses a new URL only for its own MP3",()=>{
+ assert.match(app,/t\.file === "songs\/track-245\.mp3"\) return _doveStaIlBrano\(t\.file\)/);
+ assert.match(app,/nome === "songs\/track-245\.mp3" \? "\?audio-normalizzato=20261102-lufs14" : ""/);
+ const p=app.indexOf("function _doveStaIlBrano(file)");
+ const q=app.indexOf("let profiles",p);
+ assert.ok(p>=0&&q>p);
+ const resolver=app.slice(p,q);
+ assert.ok(resolver.includes('if (inLocale) return nome === "songs/track-929.mp3"'),
+  "Local server URLs must remain unchanged");
+ assert.ok(resolver.includes('return BRANI_ONLINE + nome.replace'),
+  "Cache-busting must happen only on the cloud audio URL");
+});
