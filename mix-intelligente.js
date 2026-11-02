@@ -460,12 +460,8 @@ async function decode(track,needClip=false){
         // v6.519 cancelled on *any* vocal detection, even 60s earlier.
         const currentTrack=app.currentId()===track.id;
         const nextTrack=app.mixNext?.()?.id===track.id;
-        const dangerousOutro=currentTrack&&
-         Number.isFinite(v.lastVoiceAt)&&Number.isFinite(plan?.begin)&&
-         v.lastVoiceAt>=plan.begin-5;
-        const dangerousIntro=nextTrack&&
-         Number.isFinite(v.firstVoiceAt)&&v.firstVoiceAt<7;
-        if((dangerousOutro||dangerousIntro)&&(active||mobileActive))cancel();
+        if(voiceThreatensPlan(v,currentTrack,nextTrack,plan)&&
+           (active||mobileActive))cancel();
         // Never restart the planning loop during an already running
         // handoff or change the player based on non-dangerous vocals.
         if(!mixing&&!active&&!mobileActive){
@@ -499,6 +495,17 @@ async function decode(track,needClip=false){
   }else unavailableAnalysis.delete(key);
   return data;
  }finally{pending.delete(key)}
+}
+
+// Singing is common in music; only a vocal overlapping the specific
+// transition window can invalidate an already audible mix.
+function voiceThreatensPlan(voice,isCurrent,isNext,currentPlan){
+ if(!currentPlan)return false;
+ return Boolean(
+  (isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
+   Number.isFinite(currentPlan.begin)&&voice.lastVoiceAt>=currentPlan.begin-5)||
+  (isNext&&Number.isFinite(voice?.firstVoiceAt)&&voice.firstVoiceAt<7)
+ );
 }
 
 // Read lightweight saved analysis first, without waiting for a whole MP3 to
@@ -1170,7 +1177,10 @@ function tick(){
  }
  // Inizia il buffer prima del punto di mix: mai aspettare la battuta finale
  // per scaricare i metadati del prossimo MP3.
- const preloadAt=Math.min(plan.begin-12,Math.max(0,audio.duration-25));
+ // Prebuffer early on PC: waiting until 12s before the boundary could
+  // leave the next MP3 at readyState 0, so the crossfade never started.
+  const preloadAt=isIOS?Math.min(plan.begin-12,Math.max(0,audio.duration-25)):
+    Math.max(0,Math.min(plan.begin-28,audio.duration-45));
  const blockedUntil=mixFailures.get(id+"|"+next.id)||0;
  const previewAllowed=Date.now()>blockedUntil;
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&audio.currentTime>=Math.max(0,preloadAt) &&
