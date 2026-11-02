@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=28; // neutral fade for measured quiet release even when chords differ
+const ANALYSIS_VERSION=29; // start mismatched neutral fades at measured release, not near playback end
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -1252,7 +1252,7 @@ function transition(a,b,actualDuration){
   const quiet=measuredSettledRelease||a.quietTail===true||soft;
   if(quiet&&(b.introDrive===undefined||b.introDrive>=.30)&&
      Number.isFinite(safe)&&available>=2.6){
-   const duration=Math.min(measuredSettledRelease?3.2:2.6,available-.12);
+   const duration=Math.min(measuredSettledRelease?5.0:2.6,available-.12);
    return {...common,begin:end-duration,end,fade:duration,kind:"soft",
     quietCertified:common.quietCertified||measuredSettledRelease,
     neutralRelease:measuredSettledRelease};
