@@ -160,11 +160,14 @@ body {
 .ver { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: .5px; }
 #appVer {
   display:inline-flex; align-items:center; justify-content:center;
-  min-height:22px; padding:3px 7px; margin-left:5px;
+  min-height:32px; padding:5px 8px; margin-left:5px;
   border:1px solid var(--line); border-radius:7px;
-  cursor:pointer; user-select:none; white-space:nowrap;
+  background:transparent; color:var(--muted); font-family:inherit;
+  cursor:pointer; user-select:none; white-space:nowrap; touch-action:manipulation;
   transition:color .15s ease,background .15s ease,border-color .15s ease;
 }
+#appVer:focus-visible { outline:2px solid var(--accent2); outline-offset:2px; }
+#appVer:disabled { opacity:.65; cursor:progress; }
 #appVer:active { color:var(--accent2); }
 #appVer.ha-aggiornamento {
   color:#ffdf9a; border-color:#d9a743; background:rgba(255,190,70,.13);
