@@ -1,0 +1,67 @@
+name: Music Box - Scansione DJ completa in parallelo
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/dj-deep-shard.py'
+      - 'tools/dj-deep-merge.py'
+      - '.github/workflows/dj-deep-full-scan.yml'
+permissions:
+  contents: write
+concurrency:
+  group: musicbox-dj-deep-analysis
+  cancel-in-progress: false
+jobs:
+  shards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the local music-signal analyzer
+        run: |
+          python -m pip install "numpy>=1.26,<3" "librosa==0.11.0"
+          python -m py_compile tools/dj-deep-index.py tools/dj-deep-shard.py
+      - name: Analyze actual MP3 waveform from authorized catalog
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/dj-deep-shard.py --shard ${{ matrix.shard }} --parts 12 --output "dj-shard-${{ matrix.shard }}.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dj-shard-${{ matrix.shard }}
+          path: dj-shard-${{ matrix.shard }}.json
+          retention-days: 2
+  merge:
+    needs: shards
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dj-shard-*
+          path: "${{ runner.temp }}/dj-shards"
+          merge-multiple: true
+      - name: Merge all twelve independent real-audio scans
+        run: python tools/dj-deep-merge.py --directory "${{ runner.temp }}/dj-shards"
+      - name: Publish only compact musical features (never audio)
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- dj-deep-analysis.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Music Box DJ: complete parallel audio analysis index"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
