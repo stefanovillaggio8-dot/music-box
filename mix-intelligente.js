@@ -851,8 +851,8 @@ function transition(a,b,actualDuration){
    tempoDelta<=.07&&!vocalLate&&!nextStartsVocal;
   if(canBridge){
    const seconds=notes.alignment?.matches?
-    clamp(notes.alignment.fade,3.0,5.2):
-    clamp(8*60/bpmA,3.0,4.7);
+    clamp(notes.alignment.fade,3.65,5.2):
+    clamp(8*60/bpmA,3.65,4.7);
    const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
    // A loud beat bridge on iPhone is only safe when karaoke or a vocal
@@ -866,6 +866,7 @@ function transition(a,b,actualDuration){
      kind:style==="auto"?"beat":style,
      tempo:clamp(tempoRatio,.97,1.03),
      quietCertified:mobileSafe,strongBeatBridge:true,
+     safeOutroAt:end-seconds,
      softTailTrim:false,score:Math.round(notes.score*100),
      grooveScore:groove?.score??null,
      beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
@@ -994,6 +995,7 @@ let mobileActive=null;
 function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
  if(!act)return;
+ if(act.strongBeatBridge)resetMobileFade();
  const release=()=>{
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
@@ -1060,7 +1062,7 @@ function startMobileMix(song,p,app,old){
   const startedAt=ctx.currentTime+delay;
   const ramp=Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
-  const target=clamp(app.volume?.()??1,0,1)*(p.strongBeatBridge?.60:.86);
+  const target=clamp(app.volume?.()??1,0,1)*(p.strongBeatBridge ? .60 : .86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
   // to a simple safe linear ramp.
@@ -1095,7 +1097,8 @@ function startMobileMix(song,p,app,old){
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
    handoffAt:0,clipEnd:startedAt+frames/clip.rate-offset,
-   lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime};
+   lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
+   strongBeatBridge:!!p.strongBeatBridge};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   old.addEventListener?.("timeupdate",onProgress);
@@ -1388,6 +1391,16 @@ function tick(){
    }
    mobileActive.lastAudioTime=audio.currentTime;
    mobileActive.lastCtxTime=mobileActive.ctx.currentTime;
+   if(mobileActive.strongBeatBridge){
+    // Duck the native outgoing beat where supported; Safari may
+    // ignore media-element volume, so the incoming gain stays limited.
+    const progress=clamp((audio.currentTime-mobileActive.audioStartedAt)/
+      Math.max(.5,mobileActive.end-mobileActive.audioStartedAt),0,1);
+    try{
+     audio.volume=(app.volume?.()??1)*(1-.65*progress);
+     mobileFadeTrack=id;mobileFading=true;
+    }catch(_){}
+   }
    if(audio.currentTime>=mobileActive.end-.40)handoffMobileMix(app);
    return;
   }
