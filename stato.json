@@ -2522,13 +2522,13 @@
    },
    "[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 0,
-    "s": 192,
+    "s": 194,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 0,
-    "s": 192,
+    "s": 194,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
@@ -2810,13 +2810,13 @@
    },
    "[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
     "v": 0,
-    "s": 88,
+    "s": 102,
     "t": "Senza Di Me (feat. Venerus & Franco126)",
     "a": "Gemitaiz, Venerus, Franco126"
    },
    "m:2026-11|[\"senza di me (feat. venerus & franco126)\",\"gemitaiz, venerus, franco126\"]": {
     "v": 0,
-    "s": 88,
+    "s": 102,
     "t": "Senza Di Me (feat. Venerus & Franco126)",
     "a": "Gemitaiz, Venerus, Franco126"
    },
@@ -3404,13 +3404,13 @@
    },
    "[\"dimenticare\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 18,
+    "s": 20,
     "t": "Dimenticare",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"dimenticare\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 18,
+    "s": 20,
     "t": "Dimenticare",
     "a": "nayt, 3D"
    },
@@ -3594,18 +3594,6 @@
     "t": "E yo mamma",
     "a": "Coez"
    },
-   "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
-    "v": 1,
-    "s": 110,
-    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
-    "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
-   "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
-    "v": 1,
-    "s": 110,
-    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
-    "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
    "[\"tappeto di fragole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
     "s": 3,
@@ -3617,6 +3605,18 @@
     "s": 3,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
+   },
+   "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+    "v": 1,
+    "s": 110,
+    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
+    "v": 1,
+    "s": 110,
+    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4291,7 +4291,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 1,
+    "v": 2,
     "s": 17,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -4423,7 +4423,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 0,
+    "v": 1,
     "s": 14,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -4913,6 +4913,42 @@
     "s": 3,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
+   },
+   "[\"meraviglioso\",\"negromaro\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "Meraviglioso",
+    "a": "Negromaro"
+   },
+   "m:2026-11|[\"meraviglioso\",\"negromaro\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "Meraviglioso",
+    "a": "Negromaro"
+   },
+   "[\"exit\",\"nayt\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Exit",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"exit\",\"nayt\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Exit",
+    "a": "nayt"
+   },
+   "[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5561,30 +5597,6 @@
     "s": 3,
     "t": "Tappeto di fragole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
-   },
-   "[\"meraviglioso\",\"negromaro\"]": {
-    "v": 0,
-    "s": 13,
-    "t": "Meraviglioso",
-    "a": "Negromaro"
-   },
-   "m:2026-11|[\"meraviglioso\",\"negromaro\"]": {
-    "v": 0,
-    "s": 13,
-    "t": "Meraviglioso",
-    "a": "Negromaro"
-   },
-   "[\"exit\",\"nayt\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Exit",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"exit\",\"nayt\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Exit",
-    "a": "nayt"
    },
    "[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
@@ -6309,13 +6321,25 @@
    "[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂ \"]": {
@@ -6582,18 +6606,6 @@
     "t": "Voglio di piÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
     "s": 136,
@@ -6678,6 +6690,18 @@
     "t": "Tutti il resto ÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "ModÃÂÃÂ "
+   },
    "[\"torna da me\",\"luchÃÂÃÂ¨\"]": {
     "v": 0,
     "s": 94,
@@ -6712,18 +6736,6 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃÂÃÂ ",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "[\"voodoo\",\"guÃÂÃÂ¨\"]": {
@@ -6858,90 +6870,6 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
-   "[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Esistere (piÃÂÃÂ¹ di me)",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Esistere (piÃÂÃÂ¹ di me)",
-    "a": "nayt"
-   },
-   "[\"per una notte insieme\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 6,
-    "t": "Per una notte insieme",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"per una notte insieme\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 6,
-    "t": "Per una notte insieme",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Scale",
-    "a": "Night Skinny, LuchÃÂÃÂ¨"
-   },
-   "m:2026-11|[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Scale",
-    "a": "Night Skinny, LuchÃÂÃÂ¨"
-   },
-   "[\"la notte\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 37,
-    "t": "La notte",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"la notte\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 37,
-    "t": "La notte",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"fragile\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Quello che non ti ho detto",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"fragile\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 14,
-    "t": "fragile",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"tappeto di fragole\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tappeto di fragole",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"tappeto di fragole\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tappeto di fragole",
-    "a": "ModÃÂÃÂ "
-   },
-   "[\"le parole piÃÂÃÂ¹ grandi\",\"coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Le parole piÃÂÃÂ¹ grandi",
-    "a": "Coez"
-   },
-   "m:2026-11|[\"le parole piÃÂÃÂ¹ grandi\",\"coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Le parole piÃÂÃÂ¹ grandi",
-    "a": "Coez"
-   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6981,25 +6909,13 @@
    "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'ÃÂ¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂ¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
@@ -7266,6 +7182,18 @@
     "t": "Voglio di piÃÂ¹",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
     "s": 136,
@@ -7350,18 +7278,6 @@
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 0,
     "s": 94,
@@ -7396,6 +7312,18 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃÂ ",
+    "a": "ModÃÂ "
+   },
+   "[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "[\"voodoo\",\"guÃÂ¨\"]": {
@@ -7529,6 +7457,174 @@
     "s": 6,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
+   },
+   "[\"esistere (piÃÂ¹ di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (piÃÂ¹ di me)",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"esistere (piÃÂ¹ di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (piÃÂ¹ di me)",
+    "a": "nayt"
+   },
+   "[\"per una notte insieme\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Per una notte insieme",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"per una notte insieme\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Per una notte insieme",
+    "a": "ModÃÂ "
+   },
+   "[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (piÃÂÃÂ¹ di me)",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (piÃÂÃÂ¹ di me)",
+    "a": "nayt"
+   },
+   "[\"per una notte insieme\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Per una notte insieme",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"per una notte insieme\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Per una notte insieme",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"scale\",\"night skinny, luchÃÂ¨\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Scale",
+    "a": "Night Skinny, LuchÃÂ¨"
+   },
+   "m:2026-11|[\"scale\",\"night skinny, luchÃÂ¨\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Scale",
+    "a": "Night Skinny, LuchÃÂ¨"
+   },
+   "[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Scale",
+    "a": "Night Skinny, LuchÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "Scale",
+    "a": "Night Skinny, LuchÃÂÃÂ¨"
+   },
+   "[\"la notte\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 37,
+    "t": "La notte",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"la notte\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 37,
+    "t": "La notte",
+    "a": "ModÃÂ "
+   },
+   "[\"la notte\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 37,
+    "t": "La notte",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"la notte\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 37,
+    "t": "La notte",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"fragile\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Quello che non ti ho detto",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"fragile\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 14,
+    "t": "fragile",
+    "a": "ModÃÂ "
+   },
+   "[\"fragile\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 14,
+    "t": "fragile",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"fragile\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 14,
+    "t": "fragile",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"tappeto di fragole\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tappeto di fragole",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"tappeto di fragole\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tappeto di fragole",
+    "a": "ModÃÂ "
+   },
+   "[\"tappeto di fragole\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tappeto di fragole",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"tappeto di fragole\",\"modÃÂÃÂ \"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Tappeto di fragole",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"le parole piÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂ¹ grandi",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"le parole piÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂ¹ grandi",
+    "a": "Coez"
+   },
+   "[\"le parole piÃÂÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂÃÂ¹ grandi",
+    "a": "Coez"
+   },
+   "m:2026-11|[\"le parole piÃÂÃÂ¹ grandi\",\"coez\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Le parole piÃÂÃÂ¹ grandi",
+    "a": "Coez"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -7856,13 +7952,13 @@
    },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 136,
+    "s": 145,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 136,
+    "s": 145,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -8142,30 +8238,6 @@
     "t": "Per una notte insieme",
     "a": "ModÃ "
    },
-   "[\"esistere (piÃÂ¹ di me)\",\"nayt\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Esistere (piÃÂ¹ di me)",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"esistere (piÃÂ¹ di me)\",\"nayt\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Esistere (piÃÂ¹ di me)",
-    "a": "nayt"
-   },
-   "[\"per una notte insieme\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 6,
-    "t": "Per una notte insieme",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"per una notte insieme\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 6,
-    "t": "Per una notte insieme",
-    "a": "ModÃÂ "
-   },
    "[\"scale\",\"night skinny, luchÃ¨\"]": {
     "v": 0,
     "s": 4,
@@ -8177,18 +8249,6 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃ¨"
-   },
-   "[\"scale\",\"night skinny, luchÃÂ¨\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Scale",
-    "a": "Night Skinny, LuchÃÂ¨"
-   },
-   "m:2026-11|[\"scale\",\"night skinny, luchÃÂ¨\"]": {
-    "v": 0,
-    "s": 4,
-    "t": "Scale",
-    "a": "Night Skinny, LuchÃÂ¨"
    },
    "[\"la notte\",\"modÃ \"]": {
     "v": 1,
@@ -8202,18 +8262,6 @@
     "t": "La notte",
     "a": "ModÃ "
    },
-   "[\"la notte\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 37,
-    "t": "La notte",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"la notte\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 37,
-    "t": "La notte",
-    "a": "ModÃÂ "
-   },
    "[\"fragile\",\"modÃ \"]": {
     "v": 0,
     "s": 14,
@@ -8225,18 +8273,6 @@
     "s": 14,
     "t": "fragile",
     "a": "ModÃ "
-   },
-   "[\"fragile\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 14,
-    "t": "fragile",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"fragile\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 14,
-    "t": "fragile",
-    "a": "ModÃÂ "
    },
    "[\"tappeto di fragole\",\"modÃ \"]": {
     "v": 0,
@@ -8250,18 +8286,6 @@
     "t": "Tappeto di fragole",
     "a": "ModÃ "
    },
-   "[\"tappeto di fragole\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tappeto di fragole",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"tappeto di fragole\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Tappeto di fragole",
-    "a": "ModÃÂ "
-   },
    "[\"le parole piÃ¹ grandi\",\"coez\"]": {
     "v": 0,
     "s": 1,
@@ -8272,18 +8296,6 @@
     "v": 0,
     "s": 1,
     "t": "Le parole piÃ¹ grandi",
-    "a": "Coez"
-   },
-   "[\"le parole piÃÂ¹ grandi\",\"coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Le parole piÃÂ¹ grandi",
-    "a": "Coez"
-   },
-   "m:2026-11|[\"le parole piÃÂ¹ grandi\",\"coez\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "Le parole piÃÂ¹ grandi",
     "a": "Coez"
    },
    "[\"ventanni\",\"måneskin\"]": {
