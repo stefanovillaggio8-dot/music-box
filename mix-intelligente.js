@@ -1096,7 +1096,7 @@ function strongInstrumentalBeatBridge(a,b,dur){
 // bars are nearly silent. Such a preview creates the audible hole seen
 // in the 22:30 screen recordings. Certify the point where we actually play.
 function hasImmediateMusicalIntro(b){
- if(!b||!Number.isFinite(b.introDrive)||b.introDrive<.33)return false;
+ if(!b||(Number.isFinite(b.introDrive)&&b.introDrive<.33))return false;
  const entry=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
  // A verified digital-silence trim is fine; a quiet atmospheric passage
  // before the first real note must NOT be mistaken for the opening beat.
@@ -2058,6 +2058,22 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
     Date.now()<(mixFailures.get(id+"|"+next.id)||0)||
     !liveQuietOutroReady(liveOutro?.audio===audio?liveOutro.samples:null,
       audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
+ // The submitted 22:30 recording contains a quiet passage followed by a
+ // genuine musical comeback. A live energy drop alone cannot predict the
+ // future: only a release measured against the WHOLE MP3 is eligible.
+ const durationMatches=Number.isFinite(analysis?.duration)&&
+  Math.abs(analysis.duration-audio.duration)<1.5;
+ const release=analysis?.dropRelease;
+ const futureCertified=durationMatches&&release&&
+  Number.isFinite(release.releaseAt)&&
+  audio.currentTime>=release.releaseAt-.15&&
+  release.score>=.67&&release.quietLevel<=.25&&
+  analysis.protectedEnding!==true;
+ const tailCertified=durationMatches&&analysis?.confidentTail===true&&
+  Number.isFinite(analysis.last)&&
+  audio.duration-analysis.last>=1.65&&
+  audio.currentTime>=analysis.last-.1;
+ if(!futureCertified&&!tailCertified)return false;
  const remaining=audio.duration-audio.currentTime;
  const fade=clamp(Math.min(3.7,remaining-.55),1.5,3.7);
  if(fade<1.7)return false;
