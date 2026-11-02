@@ -546,6 +546,42 @@ function focusedChroma(ch){
 function focusedCompatibility(a,b){
  return compatibility({chroma:focusedChroma(a)},{chroma:focusedChroma(b)});
 }
+// Compare the actual chord sequence at synchronized points of the blend.
+// One common note in two averaged spectra is NOT enough for a transition.
+function bestHarmonicAlignment(a,b){
+ const tail=a?.outroTimeline,head=b?.introTimeline;
+ if(!Array.isArray(tail)||!Array.isArray(head)||
+    tail.length<3||head.length<3)return null;
+ const closest=(items,offset)=>{
+  let best=null,dist=Infinity;
+  for(const x of items){const d=Math.abs(x.offset-offset);if(d<dist){best=x;dist=d}}
+  return dist<=.92?best?.notes:null;
+ };
+ let best=null;
+ for(const fade of [2.4,3.1,3.8,4.5,5.2]){
+  const checks=[];
+  for(const fraction of [.22,.50,.78]){
+   const old=closest(tail,fade*(1-fraction));
+   const next=closest(head,fade*fraction);
+   if(!hasReliableHarmony(old)||!hasReliableHarmony(next))continue;
+   const focus=focusedCompatibility(old,next);
+   const top=ch=>ch.map((value,pitch)=>({value,pitch}))
+    .sort((x,y)=>y.value-x.value).slice(0,3);
+   const shared=top(old).filter(x=>top(next).some(y=>y.pitch===x.pitch)).length;
+   checks.push({focus,passing:focus>=.60&&shared>=2});
+  }
+  if(checks.length!==3)continue;
+  const average=checks.reduce((sum,x)=>sum+x.focus,0)/3;
+  const weakest=Math.min(...checks.map(x=>x.focus));
+  const matches=average>=.78&&weakest>=.48&&
+   checks.filter(x=>x.passing).length>=2;
+  const score=average*.75+weakest*.25;
+  const candidate={fade,score,weakest,matches};
+  if(!best||Number(matches)>Number(best.matches)||
+     (matches===best.matches&&score>best.score))best=candidate;
+ }
+ return best;
+}
 function similarNotes(a,b){
  const tail=a?.outroFinalNotes||a?.outroNotes||a?.outroChroma||a?.chroma;
  const head=b?.introAttackNotes||b?.introNotes||b?.introChroma||b?.chroma;
@@ -562,10 +598,15 @@ function similarNotes(a,b){
  const phraseB=b?.introPhraseNotes||b?.introNotes||b?.introChroma||head;
  const phrase=hasReliableHarmony(phraseA)&&hasReliableHarmony(phraseB)?
   focusedCompatibility(phraseA,phraseB):focused;
- const matches=broad>=.74&&focused>=.69&&
+ const alignment=bestHarmonicAlignment(a,b);
+ const staticMatch=broad>=.74&&focused>=.69&&
   (shared||(fifth&&focused>=.82))&&phrase>=.42;
- return {matches,score:focused*.64+phrase*.26+broad*.10,
-  focused,phrase,reason:matches?"similar":"different"};
+ // When available, the REAL progression vetoes misleading global keys.
+ const matches=alignment?alignment.matches&&staticMatch:staticMatch;
+ const score=alignment?alignment.score*.82+focused*.18:
+  focused*.64+phrase*.26+broad*.10;
+ return {matches,score,focused,phrase,alignment,
+  reason:matches?"similar":alignment?"phrase-mismatch":"different"};
 }
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
@@ -627,7 +668,9 @@ function transition(a,b,actualDuration){
    notes.matches&&notes.focused>=.78&&notes.phrase>=.61&&
    tempoDelta<=.11&&!vocalLate&&!nextStartsVocal;
   if(canBridge){
-   const seconds=clamp(4*60/bpmA,2.2,3.4);
+   const seconds=notes.alignment?.matches?
+    clamp(notes.alignment.fade,2.2,4.6):
+    clamp(4*60/bpmA,2.2,3.4);
    const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
    return {...common,begin:end-seconds,end,fade:seconds,kind:"phrase",
@@ -656,8 +699,11 @@ function transition(a,b,actualDuration){
  const longMix=compatible&&available>=4.4&&!earlyNextVoice;
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
  const kind=style==="auto"?(longMix?"beat":"soft"):style;
- const requested=kind==="beat"?
+ const requestedBase=kind==="beat"?
   clamp(4*4*60/bpm,4.5,8):style==="auto"?2.8:mixSeconds;
+ // Limit the fade to the region whose harmony was checked.
+ const requested=notes.alignment?.matches?
+  Math.min(requestedBase,notes.alignment.fade+.35):requestedBase;
  const fade=clamp(Math.min(requested,available-.08),1.5,Math.min(10,end-8));
  if(fade<1.6)return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  let begin=end-fade;
