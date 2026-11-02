@@ -1216,9 +1216,16 @@ function updateDetails(a,b){
  const vocal=a?.voiceModel?(Number.isFinite(a.lastVoiceAt)?
   " · voce rilevata fino a "+a.lastVoiceAt.toFixed(1)+" s":
   " · analisi vocale IA eseguita"):"";
- el.textContent="Ora: "+fmt(a)+"  |  Dopo: "+fmt(b)+description+vocal+
+ const boundary=a&&b?similarNotes(a,b):null;
+ const harmonic=boundary?(boundary.score===null?
+  " · note al confine non distinguibili":
+  " · note finale/inizio "+Math.round(boundary.score*100)+"%"+
+    (boundary.matches?" (compatibili)":" (non compatibili)")):"";
+ const transitionName=plan?.kind==="phrase"?"ponte armonico":
+   plan?.kind==="beat"?"mix a tempo":(plan?.kind||"auto");
+ el.textContent="Ora: "+fmt(a)+"  |  Dopo: "+fmt(b)+description+vocal+harmonic+
    (plan?.kind==="cut"?" · passaggio diretto (niente sovrapposizione)":
-     plan?" · mix "+(plan.kind||"auto")+" "+plan.fade.toFixed(1)+" s":
+     plan?" · "+transitionName+" "+plan.fade.toFixed(1)+" s":
      " · passaggio normale, senza mix forzato");
 }
 function updateMobileStatus(){
@@ -1323,7 +1330,7 @@ function maybeReorderShuffle(app,audio,id){
 
 function smartScore(a,b){
  if(!a||!b||a.durationMismatch||b.durationMismatch)return -Infinity;
- // BPM 70%, armonia 20%, energia 10%. Un BPM doppio può significare
+ // BPM 35%, armonia locale 55%, energia 10%. Un BPM doppio può significare
  // la medesima pulsazione percepita (half-time/double-time).
  const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
  if(!bpmA||!bpmB)return -Infinity;
