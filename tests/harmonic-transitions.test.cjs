@@ -68,3 +68,24 @@ test("if a quiet outro is verified, choose stronger beat mix instead",()=>{
  const result=transition({...a,safeOutroAt:52},b,60);
  assert.ok(result&&result.kind==="beat"&&result.fade>=4);
 });
+
+test("protected bridge never fades out the outgoing singer early",()=>{
+ const from=source.indexOf("function mixCurve(kind,t){");
+ const to=source.indexOf("async function beginMix(",from);
+ assert.ok(from>0&&to>from);
+ const curve=new Function(
+  "function clamp(x,a,b){return Math.max(a,Math.min(b,x))}\n"+
+  source.slice(from,to)+"\nreturn mixCurve;"
+ )();
+ assert.ok(curve("phrase",0).outGain>.90);
+ assert.ok(curve("phrase",.5).outGain>.90);
+ assert.ok(curve("phrase",.7).outGain>.90);
+ assert.ok(curve("phrase",.7).inGain>.20);
+ assert.ok(curve("phrase",1).outGain<.01);
+ assert.ok(curve("phrase",1).inGain>.90);
+});
+test("bad pitch compatibility does not produce a phrase-bridge plan",()=>{
+ const {a,b}=metadata(cMajor,fSharp);
+ const preview=transition(a,b,60);
+ assert.equal(preview,null);
+});
