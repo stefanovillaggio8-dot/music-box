@@ -947,7 +947,13 @@
       <button id="btnVolIcon" class="ctl" aria-label="Muto" title="Volume">
         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M4 9v6h4l5 5h2V4h-2l-5 5H4Z"/></svg>
       </button>
-      <input type="range" id="volSlider" min="0" max="100" step="1" value="100" aria-label="Volume del brano" />
+      <button id="volMinus" class="vol-step" type="button" aria-label="Abbassa il volume dell'1%" title="−1%">−</button>
+      <input type="range" id="volSlider" min="1" max="100" step="1" value="100" aria-label="Volume del brano da 1 a 100%" />
+      <button id="volPlus" class="vol-step" type="button" aria-label="Alza il volume dell'1%" title="+1%">+</button>
+      <label class="vol-precise" aria-label="Imposta volume esatto in percentuale">
+        <input id="volExact" type="number" min="1" max="100" step="1" value="100" inputmode="numeric" aria-label="Volume esatto da 1 a 100%" />
+        <span aria-hidden="true">%</span>
+      </label>
     </div>
   </footer>
 
