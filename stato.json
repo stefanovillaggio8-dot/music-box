@@ -2138,13 +2138,13 @@
    },
    "[\"molecole (interlude)\",\"thasup\"]": {
     "v": 0,
-    "s": 55,
+    "s": 109,
     "t": "molecole (interlude)",
     "a": "thasup"
    },
    "m:2026-11|[\"molecole (interlude)\",\"thasup\"]": {
     "v": 0,
-    "s": 55,
+    "s": 109,
     "t": "molecole (interlude)",
     "a": "thasup"
    },
@@ -2966,13 +2966,13 @@
    },
    "[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 0,
-    "s": 151,
+    "s": 177,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
    "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 0,
-    "s": 151,
+    "s": 177,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
@@ -3258,6 +3258,18 @@
     "t": "Lo So Che",
     "a": "Capo Plaza"
    },
+   "[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
+   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
     "s": 96,
@@ -3270,17 +3282,17 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"taciturno\",\"coez, gemello\"]": {
+   "[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
-   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+   "m:2026-11|[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -3858,17 +3870,29 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"end of beginning\",\"djo\"]": {
+   "[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
    },
-   "m:2026-11|[\"end of beginning\",\"djo\"]": {
+   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
+   },
+   "[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4184,13 +4208,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -4446,29 +4470,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"qualcosa di grande\",\"coez\"]": {
+   "[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
-   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
+   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
-   },
-   "[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
-   },
-   "m:2026-11|[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4784,13 +4796,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 126,
+    "s": 132,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 126,
+    "s": 132,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -5046,18 +5058,6 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"scrivendo\",\"nayt\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Scrivendo",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
-    "v": 0,
-    "s": 14,
-    "t": "Scrivendo",
-    "a": "nayt"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -5246,13 +5246,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 110,
+    "s": 126,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 110,
+    "s": 126,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -5384,13 +5384,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 132,
+    "s": 136,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 132,
+    "s": 136,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -5645,6 +5645,42 @@
     "s": 6,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
+   },
+   "[\"il giorno che aspettavo\",\"ultimo\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "IL GIORNO CHE ASPETTAVO",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
+    "v": 0,
+    "s": 4,
+    "t": "IL GIORNO CHE ASPETTAVO",
+    "a": "Ultimo"
+   },
+   "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "STANOTTE",
+    "a": "TY1, Coez, Massimo Pericolo"
+   },
+   "[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Lulu - Acoustic Version",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Lulu - Acoustic Version",
+    "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6234,40 +6270,58 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
-   "[\"il giorno che aspettavo\",\"ultimo\"]": {
+   "[\"odi et amo\",\"blake el diablo\"]": {
     "v": 0,
-    "s": 4,
-    "t": "IL GIORNO CHE ASPETTAVO",
-    "a": "Ultimo"
+    "s": 15,
+    "t": "Odi et Amo",
+    "a": "Blake el Diablo"
    },
-   "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
+   "m:2026-11|[\"odi et amo\",\"blake el diablo\"]": {
     "v": 0,
-    "s": 4,
-    "t": "IL GIORNO CHE ASPETTAVO",
-    "a": "Ultimo"
+    "s": 15,
+    "t": "Odi et Amo",
+    "a": "Blake el Diablo"
    },
-   "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+   "m:2026-11|[\"wonderwall\",\"oasis\"]": {
     "v": 0,
-    "s": 7,
-    "t": "STANOTTE",
-    "a": "TY1, Coez, Massimo Pericolo"
+    "s": 18,
+    "t": "Wonderwall",
+    "a": "Oasis"
    },
-   "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
+   "[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
     "v": 0,
-    "s": 7,
-    "t": "STANOTTE",
-    "a": "TY1, Coez, Massimo Pericolo"
+    "s": 12,
+    "t": "Funghi in salsa rosa",
+    "a": "L'Elfo, Funkymann"
    },
-   "[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+   "m:2026-11|[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
     "v": 0,
-    "s": 6,
-    "t": "Lulu - Acoustic Version",
+    "s": 12,
+    "t": "Funghi in salsa rosa",
+    "a": "L'Elfo, Funkymann"
+   },
+   "[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (piÃÂÃÂ¹ di me)",
+    "a": "nayt"
+   },
+   "m:2026-11|[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Esistere (piÃÂÃÂ¹ di me)",
+    "a": "nayt"
+   },
+   "[\"dimenticare\",\"nayt, 3d\"]": {
+    "v": 0,
+    "s": 10,
+    "t": "Dimenticare",
     "a": "nayt, 3D"
    },
-   "m:2026-11|[\"lulu - acoustic version\",\"nayt, 3d\"]": {
+   "m:2026-11|[\"dimenticare\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 6,
-    "t": "Lulu - Acoustic Version",
+    "s": 10,
+    "t": "Dimenticare",
     "a": "nayt, 3D"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
@@ -6278,7 +6332,7 @@
    },
    "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 116,
+    "s": 117,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -6518,7 +6572,7 @@
    },
    "m:2026-11|[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 111,
+    "s": 112,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -6858,36 +6912,6 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
-   "[\"odi et amo\",\"blake el diablo\"]": {
-    "v": 0,
-    "s": 15,
-    "t": "Odi et Amo",
-    "a": "Blake el Diablo"
-   },
-   "m:2026-11|[\"odi et amo\",\"blake el diablo\"]": {
-    "v": 0,
-    "s": 15,
-    "t": "Odi et Amo",
-    "a": "Blake el Diablo"
-   },
-   "m:2026-11|[\"wonderwall\",\"oasis\"]": {
-    "v": 0,
-    "s": 18,
-    "t": "Wonderwall",
-    "a": "Oasis"
-   },
-   "[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Funghi in salsa rosa",
-    "a": "L'Elfo, Funkymann"
-   },
-   "m:2026-11|[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Funghi in salsa rosa",
-    "a": "L'Elfo, Funkymann"
-   },
    "[\"esistere (piÃÂ¹ di me)\",\"nayt\"]": {
     "v": 0,
     "s": 0,
@@ -6900,17 +6924,59 @@
     "t": "Esistere (piÃÂ¹ di me)",
     "a": "nayt"
    },
-   "[\"dimenticare\",\"nayt, 3d\"]": {
+   "[\"per una notte insieme\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 10,
-    "t": "Dimenticare",
-    "a": "nayt, 3D"
+    "s": 6,
+    "t": "Per una notte insieme",
+    "a": "ModÃÂ "
    },
-   "m:2026-11|[\"dimenticare\",\"nayt, 3d\"]": {
+   "m:2026-11|[\"per una notte insieme\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 6,
+    "t": "Per una notte insieme",
+    "a": "ModÃÂ "
+   },
+   "[\"striscia\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Striscia",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"striscia\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Striscia",
+    "a": "TonyPitony"
+   },
+   "[\"quanto forte ti pensavo\",\"madame\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "QUANTO FORTE TI PENSAVO",
+    "a": "Madame"
+   },
+   "m:2026-11|[\"quanto forte ti pensavo\",\"madame\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "QUANTO FORTE TI PENSAVO",
+    "a": "Madame"
+   },
+   "[\"star shopping\",\"lil peep\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Star Shopping",
+    "a": "Lil Peep"
+   },
+   "m:2026-11|[\"star shopping\",\"lil peep\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Star Shopping",
+    "a": "Lil Peep"
+   },
+   "m:2026-11|[\"essere noi\",\"nayt\"]": {
     "v": 0,
     "s": 10,
-    "t": "Dimenticare",
-    "a": "nayt, 3D"
+    "t": "Essere noi",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -7524,47 +7590,17 @@
     "t": "Per una notte insieme",
     "a": "ModÃ "
    },
-   "[\"striscia\",\"tonypitony\"]": {
+   "[\"gilgamesh\",\"kid yugi\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Striscia",
-    "a": "TonyPitony"
+    "s": 9,
+    "t": "Gilgamesh",
+    "a": "Kid Yugi"
    },
-   "m:2026-11|[\"striscia\",\"tonypitony\"]": {
+   "m:2026-11|[\"gilgamesh\",\"kid yugi\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Striscia",
-    "a": "TonyPitony"
-   },
-   "[\"quanto forte ti pensavo\",\"madame\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "QUANTO FORTE TI PENSAVO",
-    "a": "Madame"
-   },
-   "m:2026-11|[\"quanto forte ti pensavo\",\"madame\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "QUANTO FORTE TI PENSAVO",
-    "a": "Madame"
-   },
-   "[\"star shopping\",\"lil peep\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Star Shopping",
-    "a": "Lil Peep"
-   },
-   "m:2026-11|[\"star shopping\",\"lil peep\"]": {
-    "v": 0,
-    "s": 0,
-    "t": "Star Shopping",
-    "a": "Lil Peep"
-   },
-   "m:2026-11|[\"essere noi\",\"nayt\"]": {
-    "v": 0,
-    "s": 10,
-    "t": "Essere noi",
-    "a": "nayt"
+    "s": 9,
+    "t": "Gilgamesh",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -8177,18 +8213,6 @@
     "s": 6,
     "t": "Per una notte insieme",
     "a": "Modà"
-   },
-   "[\"gilgamesh\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 9,
-    "t": "Gilgamesh",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"gilgamesh\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 9,
-    "t": "Gilgamesh",
-    "a": "Kid Yugi"
    }
   },
   "Diego": {
