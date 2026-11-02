@@ -89,6 +89,13 @@ test("inspect music actually responsible for repeated zero beatCandidates in con
    if((n.phrase||0)>=.45)counts.phrase45++;
    if(n.matches)counts.match++;
    const cue=engine.transition(a,b,a.duration);
+   // Only a diagnostic upper bound: assume the actual vocal scanner later
+   // proves the final 12s instrumental. NEVER treat this as existing proof.
+   const hypotheticallyScanned={...a,voiceModel:"TEST_ONLY",
+    voiceScannedEnd:a.last+.1,lastVoiceAt:Math.max(0,a.last-12)};
+   const hypothetical=engine.transition(hypotheticallyScanned,b,a.duration);
+   if(hypothetical?.voiceVerifiedMicroBridge)
+    counts.possibleWithActualVocalProof=(counts.possibleWithActualVocalProof||0)+1;
    if(cue){
     if(cue.kind==="beat")counts.anyBeat++;
     else if(cue.kind==="snap")counts.anySnap++;
