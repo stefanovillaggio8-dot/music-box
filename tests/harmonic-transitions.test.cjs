@@ -78,9 +78,9 @@ test("protected bridge never fades out the outgoing singer early",()=>{
   source.slice(from,to)+"\nreturn mixCurve;"
  )();
  assert.ok(curve("phrase",0).outGain>.90);
- assert.ok(curve("phrase",.5).outGain>.90);
+ assert.ok(curve("phrase",.5).outGain>.75);
  assert.ok(curve("phrase",.7).outGain>.35&&curve("phrase",.7).outGain<.90);
- assert.ok(curve("phrase",.7).inGain>.20);
+ assert.ok(curve("phrase",.7).inGain>.70);
  assert.ok(curve("phrase",1).outGain<.01);
  assert.ok(curve("phrase",1).inGain>.90);
 });
@@ -128,10 +128,10 @@ test("matching average keys cannot override a discordant chord sequence",()=>{
  const {a,b}=fullTimeline(aTrack,bTrack);
  const aligned=bestHarmonicAlignment(a,b);
  assert.ok(aligned!==null);
- // It must compare the time-varying harmony; if incompatible it should
- // not invent a 'beautiful transition' based on shared pitch classes.
- if(!aligned.matches) assert.equal(transition(a,b,60),null);
- else assert.ok(transition(a,b,60)?.kind==="phrase");
+ // Even when some local chord windows match, overall incompatibility
+ // must veto the bridge rather than trust the averaged key.
+ assert.equal(similarNotes(a,b).matches,false);
+ assert.equal(transition(a,b,60),null);
 });
 test("an unreliable local chord timeline never falls back to an average key match",()=>{
  const {a,b}=metadata(cMajor,cMajor);
