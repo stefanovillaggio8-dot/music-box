@@ -991,6 +991,7 @@ function resetMobileFade(){
  }
  mobileFadeTrack="";mobileFading=false;
 }
+let mobileFading=false, mobileFadeTrack="";
 let mobileActive=null;
 function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
