@@ -7,7 +7,7 @@ const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent) ||
 let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
-const mobileIntroClips=new Map(),mobileOverlayFailures=new Map();
+const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),voiceJobs=new Map();
 const STALE_MOBILE_PREVIEW=Symbol("stale mobile intro request");
 function rememberMobileClip(key,decoded,info){
  if(!isIOS||!decoded||!info)return;
@@ -30,7 +30,7 @@ function rememberMobileClip(key,decoded,info){
 
 // Persist only lightweight analysis measurements (never MP3 data). Keep the
 // storage separate from Music Box audio caches and tolerate private browsing.
-const ANALYSIS_VERSION=11; // end-note/start-note signature
+const ANALYSIS_VERSION=12; // ML singing/voice guard // end-note/start-note signature
 // Serial decoding keeps Safari from allocating multiple full-song PCM buffers.
 let mobileDecodeQueue=Promise.resolve();
 let analysisDbPromise=null;
@@ -432,6 +432,28 @@ async function decode(track,needClip=false){
       rememberMobileClip(key,decoded,frame);
     cache.set(key,result);
     saveAnalysis(key,result).catch(()=>{});
+    // Analyze singing and speech separately without delaying the native
+    // playback or blocking the next-track preload on iPhone.
+    const voice=window.MusicBoxVocal;
+    if(voice?.analyze&&!voiceJobs.has(key)&&!document.hidden){
+     let job=null;
+     job=Promise.resolve().then(()=>voice.analyze(decoded,frame))
+      .then(v=>{
+       if(!v||cache.get(key)!==result)return;
+       Object.assign(result,{lastVoiceAt:v.lastVoiceAt,
+        firstVoiceAt:v.firstVoiceAt,voiceModel:v.source,
+        voiceScannedEnd:v.scannedEnd});
+       saveAnalysis(key,result).catch(()=>{});
+       const app=bridge();
+       if(app?.currentId()===track.id||
+          app?.mixNext?.()?.id===track.id){
+        // Cancel a plan if later vocal evidence makes it unsafe.
+        if(active||mobileActive)cancel();
+        plannedFor="";plan=null;
+       }
+      }).catch(()=>{}).finally(()=>{if(voiceJobs.get(key)===job)voiceJobs.delete(key)});
+     voiceJobs.set(key,job);
+    }
     if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
    }finally{if(typeof ctx.close==="function")await ctx.close().catch(()=>{})}
@@ -510,12 +532,21 @@ function transition(a,b,actualDuration){
   }else if(safe!==null)safe=Math.max(safe,a.lastLyricAt+8);
   if(safe!==null)safe=Math.min(end,safe);
  }
+ // Model detections are a safety veto. No detection is NOT evidence of no vocals.
+ if(Number.isFinite(a.lastVoiceAt)){
+  const voiceEnd=clamp(a.lastVoiceAt,0,end);
+  if(end-voiceEnd<12)safe=end;
+  else safe=safe===null?Math.max(voiceEnd+6,end-8):
+   Math.max(safe,voiceEnd+6);
+  safe=Math.min(end,safe);
+ }
  const notes=similarNotes(a,b);
  // Final note starts after the proven quiet tail and well after last vocals.
  const note=Number(a.lastNoteAt);
  const safeNote=Number.isFinite(a.lastNoteAt)&&safe!==null&&
   note>=safe+2.8&&note<=end-.30&&end-note<=2.3&&
-  (!Number.isFinite(a.lastLyricAt)||note>=a.lastLyricAt+8);
+  (!Number.isFinite(a.lastLyricAt)||note>=a.lastLyricAt+8)&&
+  (!Number.isFinite(a.lastVoiceAt)||note>=a.lastVoiceAt+6);
  if(notes.matches&&safeNote)end=Math.min(end,note-.10);
  const available=safe===null?0:end-safe;
  const common={entry,tempo:1,gain:1,score:null,silenceTrim:trim,
@@ -541,7 +572,8 @@ function transition(a,b,actualDuration){
  const compatible=beatClose&&notes.matches&&harmonic!==null&&harmonic>=.75;
  // Similar BPM alone is not enough to overlap mismatched notes.
  if(!notes.matches)return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
- const earlyNextVoice=Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8;
+ const earlyNextVoice=(Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8)||
+  (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<8);
  const longMix=compatible&&available>=4.4&&!earlyNextVoice;
  // Incompatible tracks: at most a discreet fade in a confirmed quiet tail.
  const kind=style==="auto"?(longMix?"beat":"soft"):style;
@@ -1126,7 +1158,10 @@ function updateDetails(a,b){
   "analisi non disponibile";
  const description=plan?.silenceTrim?
    " · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
- el.textContent="Ora: "+fmt(a)+"  |  Dopo: "+fmt(b)+description+
+ const vocal=a?.voiceModel?(Number.isFinite(a.lastVoiceAt)?
+  " · voce rilevata fino a "+a.lastVoiceAt.toFixed(1)+" s":
+  " · analisi vocale IA eseguita"):"";
+ el.textContent="Ora: "+fmt(a)+"  |  Dopo: "+fmt(b)+description+vocal+
    (plan?.kind==="cut"?" · passaggio diretto (niente sovrapposizione)":
      plan?" · mix "+(plan.kind||"auto")+" "+plan.fade.toFixed(1)+" s":
      " · passaggio normale, senza mix forzato");
@@ -1183,7 +1218,7 @@ function draw(){
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
    "Su iPhone, a schermo acceso, può sovrapporre gradualmente il prossimo brano sulla coda già tranquilla. Se Safari non lo permette passa normalmente; a schermo bloccato preserva il lettore nativo, senza mix Web Audio.":
-   "Su PC analizza BPM, tonalità locale e coda musicale: mixa soltanto quando trova una zona finale sufficientemente tranquilla. Se il finale è incerto, lascia finire il brano. Riconoscimento vocale non garantito.";
+   "Analizza BPM, note e chiusura musicale. Quando il modello vocale IA è disponibile, controlla canto e parlato prima del taglio; i casi incerti non vengono forzati.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
  updateMobileStatus();
