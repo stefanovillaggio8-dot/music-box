@@ -239,3 +239,20 @@ test("vocal-verified short beat join accepts strong drums and compatible key wit
  assert.equal(join({...a,voiceScannedEnd:92},b,100),null);
  assert.equal(join(a,{...b,bpm:91},100),null);
 });
+
+test("a measured rhythm and chord-boundary match can be queued without a certain Camelot label",async()=>{
+ const f=fixture({pool:[{analysis:{bpm:155},cue:null},
+  {analysis:{bpm:120},cue:null}]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().nearCandidates,1);
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().softCandidates,0);
+});
+test("a large BPM mismatch is not allowed to masquerade as a verified DJ bridge",async()=>{
+ const f=fixture({pool:[{analysis:{bpm:120},cue:null},
+  {analysis:{bpm:176},cue:null}]});
+ await f.run();
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.selected(),null);
+});

@@ -73,6 +73,19 @@ function deepLookup(track){
  }
  return null;
 }
+// The full real-audio index provides comparable beat/harmony measurements.
+// Carry only vocal safety data from an older local decoded copy.
+function withValidatedVoice(deep,local){
+ if(!deep)return local||null;
+ if(!local?.voiceModel||!Number.isFinite(local.duration)||
+    Math.abs(local.duration-deep.duration)>=1)return deep;
+ return {...deep,lastVoiceAt:local.lastVoiceAt,firstVoiceAt:local.firstVoiceAt,
+  voiceModel:local.voiceModel,voiceModelVersion:local.voiceModelVersion,
+  lastVoiceConfidence:local.lastVoiceConfidence,
+  firstVoiceConfidence:local.firstVoiceConfidence,
+  voiceIntervals:local.voiceIntervals,
+  voiceScannedFrom:local.voiceScannedFrom,voiceScannedEnd:local.voiceScannedEnd};
+}
 function deepStatus(){
  const count=Number(deepIndex?.analyzed)||0,total=Number(deepIndex?.sourceCount)||0;
  const el=$("mixDeepStatus");
@@ -723,15 +736,9 @@ async function decode(track,needClip=false){
  const deep=deepLookup(track);
  if(deep&&(!needClip||mobileIntroClips.has(key))){
   const current=cache.get(key);
-  if(current?.voiceModel&&Math.abs(current.duration-deep.duration)<1)return current;
-  const stored=await savedAnalysis(key);
-  const merged=stored?.voiceModel&&Math.abs(stored.duration-deep.duration)<1?
-   {...deep,lastVoiceAt:stored.lastVoiceAt,firstVoiceAt:stored.firstVoiceAt,
-    voiceModel:stored.voiceModel,voiceModelVersion:stored.voiceModelVersion,
-    lastVoiceConfidence:stored.lastVoiceConfidence,
-    firstVoiceConfidence:stored.firstVoiceConfidence,
-    voiceIntervals:stored.voiceIntervals,
-    voiceScannedFrom:stored.voiceScannedFrom,voiceScannedEnd:stored.voiceScannedEnd}:deep;
+  // A local vocal scan can be valid even when its BPM estimate is stale.
+  const stored=current?.voiceModel?current:await savedAnalysis(key);
+  const merged=withValidatedVoice(deep,stored);
   cache.set(key,merged);
   if(!merged.voiceModel)scheduleDeepVoice(track,key,merged);
   return merged;
@@ -2589,7 +2596,8 @@ async function intelligentShuffle(app,audio,fromId){
  const indexed=[],unknown=[];
  for(const t of pool.slice(0,1800)){
   if(!t?.id||t.id===fromId)continue;
-  const info=cache.get(source(t))||deepLookup(t);
+  const local=cache.get(source(t));
+  const info=withValidatedVoice(deepLookup(t),local);
   if(info)indexed.push({track:t,info});
   else unknown.push(t);
  }
@@ -2654,11 +2662,20 @@ async function intelligentShuffle(app,audio,fromId){
      // measured drums and key rather than an unrelated random track.
      // This never gives permission to crossfade an unverified vocal outro.
      const key=typeof camelotMatch==="function"?camelotMatch(old,info):null;
-     if(ratio>=.96&&ratio<=1.04&&rhythm.score>=.76&&
-        harmony.focused>=.69&&harmony.phrase>=.53&&
-        key?.weight>=.14&&key.score>=.90){
+     // A low-confidence key estimate is not grounds to reject an
+     // otherwise measured rhythmic match. This tier changes the NEXT
+     // song only; it never certifies an audio overlap or a vocal cut.
+     const reliableKey=(key?.weight||0)>=.14;
+     const boundaryStrong=Number.isFinite(harmony.focused)&&
+      Number.isFinite(harmony.phrase)&&
+      harmony.focused>=.65&&harmony.phrase>=.48;
+     const keyCompatible=!reliableKey||key.score>=.55;
+     const musicalProof=boundaryStrong&&
+      (reliableKey?rhythm.score>=.69:
+       rhythm.score>=.76&&harmony.focused>=.71);
+     if(ratio>=.945&&ratio<=1.055&&keyCompatible&&musicalProof){
       const quality=harmony.focused*.42+harmony.phrase*.22+
-       rhythm.score*.24+key.score*.12-
+       rhythm.score*.27+(reliableKey?key.score*.09:.045)-
        Math.abs(Math.log2(ratio))*.65;
       nearScored.push({track,score:quality});
      }
@@ -2739,10 +2756,13 @@ async function intelligentShuffle(app,audio,fromId){
     Number.isFinite(old.voiceScannedEnd)&&Number.isFinite(old.last)&&
     old.voiceScannedEnd>=old.last-1),
    protectedEnding:old.protectedEnding===true,dropReleaseVerified:!!old.dropRelease,
-  reason:noMatch?"nessuna transizione sicura nei brani analizzati":
+  reason:noMatch?"nessuna sovrapposizione o sequenza affidabile nei brani analizzati":
    scored.length?"brano in coda gia compatibile con il beat":
    softScored.length?"brano in coda gia compatibile con la sfumatura":
-   "brano in coda gia simile per BPM, groove e tonalita"};
+   "brano in coda gia simile per BPM, groove e note",
+  indexAudioReady:!!deepIndex,
+  lastKnownVocal:Number.isFinite(old.lastVoiceAt)?old.lastVoiceAt:null,
+  lastLyric:Number.isFinite(old.lastLyricAt)?old.lastLyricAt:null};
  console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision);
  return {retry:unknown.length>picked.length&&noMatch,
   checked:measured.length,missing:unknown.length,noMatch};

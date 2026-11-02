@@ -36,7 +36,7 @@ test("deep index voice scan is restricted to active and next tracks",()=>{
  assert.ok(text.includes("scheduleDeepVoice(track,key,merged)"));
  assert.ok(text.includes("scheduleDeepVoice(track,key,deep)"));
  assert.ok(text.includes("if(!merged.voiceModel)scheduleDeepVoice"));
- assert.ok(text.includes("voiceModelVersion:stored.voiceModelVersion"));
+ assert.ok(text.includes("voiceModelVersion:local.voiceModelVersion"));
 });
 function vocalFixture(){
  const start=text.indexOf("const voiceRetry=new Map();");
@@ -98,4 +98,22 @@ test("deep-index enrichment refuses audio durations that disagree",async()=>{
  await job;
  assert.equal(f.cache.get(key).voiceModel,undefined);
  assert.equal(f.saved(),0);
+});
+
+test("deep audio always wins over stale local beat analysis; vocal veto remains",()=>{
+ const begin=text.indexOf("function withValidatedVoice(");
+ const end=text.indexOf("function deepStatus(){",begin);
+ assert.ok(begin>0&&end>begin);
+ const merge=new Function(text.slice(begin,end)+"return withValidatedVoice")();
+ const deep={duration:180,bpm:126,beatConfidence:.24,
+  outroFinalNotes:Array(12).fill(.12)};
+ const local={duration:180,bpm:95,voiceModel:"YAMNet",
+  voiceModelVersion:4,lastVoiceAt:156,voiceScannedEnd:177};
+ const result=merge(deep,local);
+ assert.equal(result.bpm,126);
+ assert.deepEqual(result.outroFinalNotes,deep.outroFinalNotes);
+ assert.equal(result.lastVoiceAt,156);
+ assert.equal(result.voiceModel,"YAMNet");
+ assert.equal(merge(deep,{...local,duration:173}).voiceModel,undefined);
+ assert.match(text,/withValidatedVoice\(deepLookup\(t\),local\)/);
 });
