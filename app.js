@@ -3325,7 +3325,10 @@ function _devoVedereBrano(eMio, b) {
     // If cloud refresh is interrupted, keep previously found copied links.
     const old=_ytForeignCopiesByOwner[owner]||[];
     for(const row of old){
-      if(!merged.some(x=>x.video_id===row.video_id))merged.push(row);
+      // A previously copied track may have been deliberately removed.
+      // Keeping it despite losing its copy key resurrected deleted songs.
+      if(wanted.has("b-youtube-"+String(row.video_id||"")) &&
+         !merged.some(x=>x.video_id===row.video_id))merged.push(row);
     }
     _ytForeignCopiesByOwner[owner]=merged;
     return merged;
@@ -3371,7 +3374,26 @@ function _devoVedereBrano(eMio, b) {
     if(owner!==profile || !Array.isArray(entries))return;
     // Keep copied audio visible after periodic refreshes of the destination
     // account (which otherwise deliver only that account's own YouTube jobs).
-    entries=entries.concat(_ytForeignCopiesByOwner[owner]||[]);
+    // One YouTube video can exist in multiple source profiles. Prefer a
+    // completed MP3 over a failed/queued entry regardless of which profile
+    // was queried first, or the destination may show an unplayable link
+    // even though another profile has the ready audio.
+    const incoming=entries.concat(_ytForeignCopiesByOwner[owner]||[]);
+    const byVideo=new Map();
+    for(const row of incoming){
+      const id=String(row?.video_id||"");
+      if(!/^[A-Za-z0-9_-]{11}$/.test(id))continue;
+      const playable=row.status==="completed"&&
+        /^https:\/\/adnteitlhopehllutlua\.supabase\.co\/functions\/v1\/musicbox-import-queue\?action=audio&id=[0-9a-f-]{36}$/i
+          .test(String(row.ready_url||""));
+      const score=playable?50:row.status==="completed"?40:
+        row.status==="running"?30:row.status==="queued"?20:
+        row.status==="checking"?15:row.status==="needs-consent"?10:0;
+      const previous=byVideo.get(id);
+      if(!previous||score>previous.score)
+        byVideo.set(id,{row,score});
+    }
+    entries=[...byVideo.values()].map(item=>item.row);
     const old=tracks.filter(t=>t && t.source!=="youtube-link" && t.source!=="cloud-audio" &&
       !_branoEliminato(t.id,owner));
     const published=new Set(old.filter(t=>t.file).map(t=>t.file));
