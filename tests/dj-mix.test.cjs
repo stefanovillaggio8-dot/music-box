@@ -247,8 +247,8 @@ test("iPhone EQ lowers incoming bass first and restores it progressively",()=>{
  f.ctx.createBiquadFilter=()=>({type:"",frequency,connect(){},disconnect(){}});
  assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
  assert.equal(f.engine.active().filter.type,"highpass");
- assert.equal(frequency.initial,155);
- assert.equal(frequency.final,42);
+ assert.equal(frequency.initial,135);
+ assert.equal(frequency.final,40);
  f.engine.stopMobileMix();
 });
 test("iPhone EQ unavailability must not stop the native audio or the safe overlay",()=>{
@@ -270,4 +270,44 @@ test("desktop still may mix a lyric-certified energetic instrumental ending",()=
  const planned=transition({...current,safeOutroAt:null,lastLyricAt:151},next,180);
  assert.equal(planned.kind,"beat");
  assert.equal(planned.quietCertified,false);
+});
+
+test("a safe short 2.8-second blend can start on iPhone",()=>{
+ const f=createMobileMixFixture();
+ const soft={...f.plan,kind:"soft",fade:2.8};
+ f.old.currentTime=177.2;
+ assert.equal(f.engine.startMobileMix(f.song,soft,f.app,f.old),true);
+ assert.ok(f.engine.active());
+ f.engine.stopMobileMix();
+});
+test("a late mobile mix cannot start with less than two seconds remaining",()=>{
+ const f=createMobileMixFixture();
+ f.old.currentTime=178.9;
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),false);
+ assert.equal(f.engine.active(),null);
+});
+test("beat phase scheduling is capped to less than one-quarter second",()=>{
+ const f=createMobileMixFixture();
+ const p={...f.plan,beatPeriod:.5,beatAnchor:175.17,nextBeat:0};
+ assert.equal(f.engine.startMobileMix(f.song,p,f.app,f.old),true);
+ assert.ok(f.engine.active().started>=100);
+ assert.ok(f.engine.active().started<=100.23);
+ assert.ok(f.engine.active().started>100.1);
+ f.engine.stopMobileMix();
+});
+test("iPhone prioritizes the incoming intro before shuffle candidates",()=>{
+ const decoding=source.indexOf('decode(next,mobileOverlayEnabled&&!document.hidden)');
+ const shuffle=source.indexOf('maybeReorderShuffle(app,audio,id);');
+ assert.ok(decoding>=0&&shuffle>decoding);
+ assert.ok(source.includes('cachedMobileAnalysis(next).then(value=>'));
+});
+test("iPhone readiness indicators distinguish preparing from an unsafe outro",()=>{
+ assert.ok(source.includes('function updateMobileStatus()'));
+ assert.ok(source.includes("Preparo l'introduzione del prossimo MP3."));
+ assert.ok(source.includes("Finale non sicuro per una sovrapposizione su iPhone"));
+});
+test("Safari can resume an audio context on later user gestures",()=>{
+ const appSource=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.ok(appSource.includes('_audioProno && _ctx?.state === "running"'));
+ assert.ok(appSource.includes('window.addEventListener(ev, _preparaAudio, { passive: true })'));
 });
