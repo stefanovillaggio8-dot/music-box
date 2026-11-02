@@ -6065,7 +6065,7 @@ function rebuildAudio(autoplay) {
       try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch"); } catch (e) { cache = null; }
       if (!cache) return;
       _precaricaInCorso = true;
-      try { await fetchToCache(t.url, cache, null); } catch (e) { }
+      try { await fetchToCache(_urlDelBrano(t), cache, null); } catch (e) { }
       _precaricaInCorso = false;
     } catch (e) { _precaricaInCorso = false; }
   }
@@ -6094,7 +6094,10 @@ function rebuildAudio(autoplay) {
          lenta blocca tutto (Ste: "le canzoni ci stanno un sacco ad
          avviarsi"). */
       try {
-        if (!_meglioNonScaricareTutto() && _reteAbbastanzaVeloce()) {
+        if (!_meglioNonScaricareTutto() && _reteAbbastanzaVeloce() &&
+            // The DJ engine may already be fetching this entire MP3 for a
+            // decoded iPhone intro: avoid competing full-song downloads.
+            !window.MusicBoxMix?.isAnalyzing?.()) {
           _precaricaInCache(t);
         }
       } catch (e) { }
@@ -7183,7 +7186,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       if (/\.github\.io$/i.test(location.hostname)) {
         setTimeout(() => {
           if (currentId === id && audio && !audio.paused) _preparaIlSuccessivo(prossimo);
-        }, 9000);
+        }, 1800);
       } else _preparaIlSuccessivo(prossimo);
     }
     /* doPlay() e il caricamento audio sono asincroni: aggiorna nuovamente
