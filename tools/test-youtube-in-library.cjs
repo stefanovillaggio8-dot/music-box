@@ -39,7 +39,10 @@ mapper([{video_id:"S8oUoa0pwpo",requested_title:"Kid Yugi - Sentire La Musica (V
 assert.equal(ctx.tracks[0].artist,"Kid Yugi","Must keep artist separate from title");
 assert.equal(ctx.tracks[0].title,"Sentire La Musica","Must remove Visual suffix in library");
 assert(!ctx.tracks[0].title.includes("Kid Yugi"),"No artist duplication in the title");
-assert(src.includes("_ytAggiornaVociLibreria(await _ytBraniDalCloud(_nomeYT)"));
+assert(src.includes("const ownLinks=await _ytBraniDalCloud(_nomeYT);") &&
+       src.includes("await _ytCopieDaAltriProfili(_nomeYT);") &&
+       src.includes("_ytAggiornaVociLibreria(ownLinks,_nomeYT,false)"),
+       "The own and copied YouTube songs must be merged during profile load");
 assert(src.includes('_ytAggiornaVociLibreria(previous,selected,true)'));
 assert(src.includes('if (t.source==="youtube-link" && t.youtubeId)'));
 assert(src.includes('list=list.filter(t=>!t.youtubeId)'));
