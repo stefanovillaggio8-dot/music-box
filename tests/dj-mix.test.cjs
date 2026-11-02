@@ -428,3 +428,16 @@ test("a last-note onset is never permission to truncate a track",()=>{
  const plan=transition({...current,safeOutroAt:172,lastNoteAt:179},next,180);
  assert.ok(plan&&plan.end>179.9);
 });
+
+test("iPhone next-song preload cache matches service worker's per-profile cache",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ assert.ok(app.includes('caches.open("spotifynonavraiimieisoldi-prefetch-" + profile)'));
+ assert.ok(sw.includes('function cachePrefetchName(p) { return CACHE_PREFIX + "-prefetch-" + p; }'));
+ assert.ok(sw.includes("allowed.add(cachePrefetchName(profile))"));
+});
+test("iPhone lock-screen fallback keeps native music rather than forcing WebAudio",()=>{
+ assert.ok(source.includes("if(isIOS&&document.hidden){"));
+ assert.ok(source.includes("if(mobileActive)stopMobileMix();"));
+ assert.ok(source.includes("Leave the native"));
+});
