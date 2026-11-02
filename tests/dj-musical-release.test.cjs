@@ -351,7 +351,7 @@ test("screen recording 19:46:33: never log a fake mix repeatedly after preview e
   "Report a crossfade only after the second player actually starts");
  assert.match(source,/p\.failed=true;p\.ready=false/);
  assert.match(source,/quietHandoffFor===pair/);
- assert.match(source,/duration-now>8\|\|duration-now<2\.2/);
+ assert.match(source,/duration-now>13\.5\|\|duration-now<2\.2/);
 });
 
 test("intermittent MP3 failures: one original-track fallback, fresh retry, no stale-track override",()=>{
