@@ -924,7 +924,8 @@ function startMobileMix(song,p,app,old){
     const shape=new Float32Array(48);
     for(let i=0;i<shape.length;i++){
      const u=i/(shape.length-1);
-     const proportion=p.kind==="rise"?Math.pow(u,1.7):
+     const proportion=p.softTailTrim?Math.sin(Math.pow(u,.65)*Math.PI/2):
+       p.kind==="rise"?Math.pow(u,1.7):
        p.kind==="beat"?Math.sin(u*Math.PI/2):u;
      shape[i]=target*proportion;
     }
@@ -1119,7 +1120,7 @@ async function handoff(){
   if(active===act)cancel();
  }
 }
-function mixCurve(kind,t){
+function mixCurve(kind,t,softTail=false){
  const time=clamp(t,0,1);
  let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
  if(kind==="phrase"){
@@ -1135,6 +1136,7 @@ function mixCurve(kind,t){
   outGain=1-Math.pow(time,1.4);
   inGain=Math.pow(time,1.7);
  }
+ if(softTail){outGain=1-time;inGain=Math.sin(Math.pow(time,.65)*Math.PI/2)}
  const guard=kind==="beat"?1-.12*Math.sin(Math.PI*time):kind==="phrase"?.93:1;
  return {outGain:outGain*guard,inGain:inGain*guard};
 }
@@ -1149,6 +1151,7 @@ async function beginMix(song,proposed){
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.2),.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
+  softTail:!!proposed.softTailTrim,
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
@@ -1189,7 +1192,7 @@ async function beginMix(song,proposed){
    const vol=app.volume();
    // Dedicated curve: the first track stays audible until its last
    // fraction, and the second song enters quietly beneath matching notes.
-   const {outGain,inGain}=mixCurve(act.kind,time);
+   const {outGain,inGain}=mixCurve(act.kind,time,act.softTail);
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     old.volume=clamp(vol*outGain,0,1);
@@ -1391,8 +1394,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.silenceTrim?
-   " · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
+ const description=plan?.softTailTrim?
+   " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
+   plan?.silenceTrim?" · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
  const vocal=a?.voiceModel?(Number.isFinite(a.lastVoiceAt)?
   " · voce rilevata fino a "+a.lastVoiceAt.toFixed(1)+" s":
   " · analisi vocale IA eseguita"):"";
