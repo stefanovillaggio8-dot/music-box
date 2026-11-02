@@ -23,9 +23,10 @@ function metadata(tail,head){
  const a={duration:60,last:60,bpm:120,beatConfidence:.8,beatAnchor:56,
   level:.24,safeOutroAt:null,confidentTail:false,
   outroFinalNotes:chroma(tail,57.5,60),
-  outroPhraseNotes:chroma(tail,53,58)};
+  outroPhraseNotes:chroma(tail,53,58),
+  outroChroma:chroma(tail,52,60)};
  const b={...a,introAttackNotes:chroma(head,0,2.3),
-  introPhraseNotes:chroma(head,0,6),safeIntroAt:0,first:0};
+  introPhraseNotes:chroma(head,0,6),introChroma:chroma(head,0,9),safeIntroAt:0,first:0};
  return {a,b};
 }
 test("same REAL synthesized chords at exit/entry enable a phrase bridge",()=>{
