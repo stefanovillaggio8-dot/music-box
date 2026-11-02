@@ -80,7 +80,8 @@ function deepStatus(){
    "Audio reale analizzato: "+count+"/"+total+" brani. I nuovi MP3 vengono elaborati progressivamente; gli altri usano il controllo locale.":
    "Indice audio avanzato in preparazione. Intanto Music Box analizza localmente le transizioni.";
 }
-function loadDeepIndex(){
+function loadDeepIndex(force=false){
+ if(force)deepIndexPromise=null;
  if(deepIndexPromise)return deepIndexPromise;
  deepIndexPromise=(async()=>{
   const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),6000);
@@ -92,7 +93,7 @@ function loadDeepIndex(){
     throw Error("Schema DJ non valido");
    deepIndex=json;
    if(enabled&&!mixing){plannedFor="";plan=null;}
-  }catch(e){deepIndex=null}
+  }catch(e){/* Keep the last successfully loaded index when offline. */}
   finally{clearTimeout(timeout);deepStatus()}
   return deepIndex;
  })();
@@ -1922,7 +1923,11 @@ async function intelligentShuffle(app,audio,fromId){
  // Analisi limitata ai primi brani casuali; l'ordine manuale resta intatto.
  // Decode sequenziale per evitare picchi di RAM e connessioni concorrenti.
  const measured=[];
- for(const track of sequence.slice(0,isIOS?4:9)){
+ // The metadata index makes wider candidate searches cheap. Without it,
+ // retain the small legacy budget to protect battery and network on iPhone.
+ const scanLimit=deepIndex?.analyzed>=100?Math.min(28,sequence.length):
+  (isIOS?4:9);
+ for(const track of sequence.slice(0,scanLimit)){
   if(!enabled||app.currentId()!==fromId||window.MusicBoxRoom?.isActive())return;
   if(audio.duration-audio.currentTime<(isIOS?65:45))break;
   const data=await decode(track);
@@ -1937,8 +1942,13 @@ async function intelligentShuffle(app,audio,fromId){
    from.spotifyAlbum===track.spotifyAlbum);
   const proposed=transition(info,data,info.duration);
   const musical=proposed&&proposed.kind!=="cut"&&data.introDrive>=.30;
-  const score=smartScore(info,data)+(musical?.12:0)+
-    (sameArtist?.08:0)+(sameAlbum?.04:0);
+  const strong=musical&&(proposed.dropReleaseBridge||proposed.strongBeatBridge||
+    (proposed.kind==="beat"&&proposed.grooveScore>=.78));
+  // Prioritize an actual beat-compatible handoff above genre similarity.
+  // When a release cue is known, an unsuitable next track loses points.
+  const score=smartScore(info,data)+(strong?.18:musical?.07:0)-
+    (info.dropRelease&&!musical?.13:0)+
+    (sameArtist?.06:0)+(sameAlbum?.035:0);
   return {id:track.id,score};
  }).sort((a,b)=>b.score-a.score);
  const original=ranking.find(x=>x.id===initialFirst),winner=ranking[0];
@@ -2182,6 +2192,11 @@ function setMixEnabled(value){
 }
 function start(){
  loadDeepIndex().catch(()=>{});
+ // The cloud batch index grows while music is playing: adopt new analyzed
+ // tracks automatically, without reloading the tab or re-downloading MP3s.
+ setInterval(()=>{
+  if(enabled&&!document.hidden)loadDeepIndex(true).catch(()=>{});
+ },15*60*1000);
  const btn=$("btnMixIntelligente");
  btn?.addEventListener("click",()=>setMixEnabled(!enabled));
  const panel=$("mixPanel");
