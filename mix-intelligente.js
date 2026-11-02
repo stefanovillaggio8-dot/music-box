@@ -885,6 +885,7 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ if(isIOS)updateMobileStatus();
  if(mobileActive){
   if(document.hidden){stopMobileMix();return}
   if(mobileActive.handingOff){finishMobileMix(app);return}
@@ -1053,6 +1054,30 @@ function updateDetails(a,b){
      plan?" · mix "+(plan.kind||"auto")+" "+plan.fade.toFixed(1)+" s":
      " · passaggio normale, senza mix forzato");
 }
+function updateMobileStatus(){
+ if(!isIOS)return;
+ const el=$("mixIphoneStatus");
+ if(!el||$("mixPanel")?.hidden)return;
+ const app=bridge(),next=app?.mixNext?.(),audio=app?.audio?.();
+ const url=next&&(app.mixUrl?.(next)||next.url);
+ const clip=url&&mobileIntroClips.has(String(url));
+ const context=app?.mixRunningContext?.();
+ let status;
+ if(!enabled||!mobileOverlayEnabled)status="Mix su iPhone disattivato.";
+ else if(document.hidden)status="Schermo bloccato: riproduzione normale protetta.";
+ else if(mobileActive?.handingOff)status="Mix eseguito: passo al lettore normale.";
+ else if(mobileActive)status="Transizione in corso: introduzione sovrapposta.";
+ else if(!audio||audio.paused)status="Avvia una canzone per preparare il mix.";
+ else if(!next)status="Nessun prossimo brano nella coda.";
+ else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
+ else if(!clip)status="Preparo l'introduzione del prossimo MP3. Se l'analisi non riesce, il brano continuerà normalmente.";
+ else if(!plan)status="Intro pronta: controllo che il finale precedente sia sicuro per la sovrapposizione.";
+ else if(!plan.quietCertified||!(plan.kind==="beat"||plan.kind==="soft"))
+  status="Finale non sicuro per una sovrapposizione su iPhone: passaggio normale.";
+ else status="Introduzione pronta · "+(plan.kind==="beat"?"mix ritmico":"sfumatura")+
+   " previsto a "+Math.max(0,Math.round(plan.begin))+" s.";
+ if(el.textContent!==status)el.textContent=status;
+}
 function draw(){
  const row=$("mixIphoneRow"),toggle=$("mixIphoneToggle");
  if(row)row.hidden=!isIOS;
@@ -1084,6 +1109,7 @@ function draw(){
    "Su PC analizza BPM, tonalità locale e coda musicale: mixa soltanto quando trova una zona finale sufficientemente tranquilla. Se il finale è incerto, lascia finire il brano. Riconoscimento vocale non garantito.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
+ updateMobileStatus();
 }
 let smartSuggested=[],smartRun=0,shuffleRunFor="";
 async function intelligentShuffle(app,audio,fromId){
