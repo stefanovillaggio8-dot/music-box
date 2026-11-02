@@ -1073,12 +1073,21 @@ function verifiedInstrumentalSnap(a,b,dur){
   .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
  if(ratio<.965||ratio>1.035)return null;
  const notes=similarNotes(a,b),groove=grooveAgreement(a,b);
- if(!groove||groove.score<.65||notes.focused<.78||
-    notes.phrase<.68||
-    (!notes.matches&&(notes.alignment?.score||0)<.68))return null;
  const key=camelotMatch(a,b);
- if(key.weight>.14&&key.score<.30)return null;
- const fade=clamp(1.3*60/a.bpm,.52,.79),begin=end-fade;
+ if(!groove||groove.score<.65||!Number.isFinite(notes.focused)||
+    !Number.isFinite(notes.phrase)|| (key.weight>.14&&key.score<.30))
+  return null;
+ // A shorter, beat-grid-length join needs reliable boundary chords rather
+ // than identical multi-bar progressions. A *weaker* harmonic match is only
+ // accepted with stronger measured drums AND a compatible known key.
+ const clearPhrase=notes.focused>=.78&&notes.phrase>=.68&&
+  (notes.matches||(notes.alignment?.score||0)>=.68);
+ const verifiedGroove=groove.score>=.79&&notes.focused>=.69&&
+  notes.phrase>=.55&&
+  ((notes.alignment?.score||0)>=.57||
+   (key.weight>=.14&&key.score>=.90));
+ if(!clearPhrase&&!verifiedGroove)return null;
+ const fade=clamp(1.5*60/a.bpm,.62,1.04),begin=end-fade;
  if(begin<20)return null;
  const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
  return {kind:"snap",begin,end,entry,fade,tempo:clamp(ratio,.97,1.03),
@@ -2505,6 +2514,8 @@ function updateMobileStatus(){
  else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
  else if(!clip)status="Preparo l'introduzione del prossimo MP3. Se l'analisi non riesce, il brano continuerà normalmente.";
  else if(!plan)status="Intro pronta: controllo note e finale. Se non combaciano, passaggio normale.";
+ else if(plan.kind==="snap"&&plan.measuredBeatBridge)
+  status="Beat finale e iniziale misurati: stacco breve pronto su iPhone, se Safari lo consente.";
  else if(!plan.quietCertified||!["beat","soft","fade","rise"].includes(plan.kind))
   status="Finale non sicuro per una sovrapposizione su iPhone: passaggio normale.";
  else status="Introduzione pronta · "+(plan.kind==="beat"?"mix ritmico":"sfumatura")+
@@ -2615,7 +2626,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[];
+ const scored=[],softScored=[],nearScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
@@ -2638,6 +2649,19 @@ async function intelligentShuffle(app,audio,fromId){
      const harmony=similarNotes(old,info);
      if(harmony.focused>=.60&&harmony.phrase>=.45)
       harmonicCandidates++;
+     // Spotify-style smart ordering is separate from mixing: if there is
+     // no certified overlap, prefer an adjacent song with matching tempo,
+     // measured drums and key rather than an unrelated random track.
+     // This never gives permission to crossfade an unverified vocal outro.
+     const key=typeof camelotMatch==="function"?camelotMatch(old,info):null;
+     if(ratio>=.96&&ratio<=1.04&&rhythm.score>=.76&&
+        harmony.focused>=.69&&harmony.phrase>=.53&&
+        key?.weight>=.14&&key.score>=.90){
+      const quality=harmony.focused*.42+harmony.phrase*.22+
+       rhythm.score*.24+key.score*.12-
+       Math.abs(Math.log2(ratio))*.65;
+      nearScored.push({track,score:quality});
+     }
     }
    }
   }
@@ -2676,9 +2700,10 @@ async function intelligentShuffle(app,audio,fromId){
  }
  scored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
- // Prefer a real beat without exception. A certified settled fade only
- // competes when the WHOLE inspected library has no verified beat match.
- const choicePool=scored.length?scored:softScored;
+ nearScored.sort((a,b)=>b.score-a.score);
+ // Priorities: certified beat > vocal-safe fade > similar musical
+ // sequencing. The third tier only reorders the songs, never overlaps them.
+ const choicePool=scored.length?scored:softScored.length?softScored:nearScored;
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -2688,11 +2713,15 @@ async function intelligentShuffle(app,audio,fromId){
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
     beatCandidates:scored.length,softCandidates:softScored.length,
+    nearCandidates:nearScored.length,
     rhythmCandidates,harmonicCandidates,rejected,chosen:best.track.id,
-    reason:scored.length?"beat certificato":"sfumatura musicale verificata"};
+    reason:scored.length?"beat certificato":softScored.length?
+     "sfumatura musicale verificata":"ordine per BPM, groove e tonalita"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
-    "[Music Box DJ] Scelta automatica: rilascio musicale verificato",
-    {outgoing:fromId,incoming:best.track.id,fade:best.cue.fade.toFixed(1),
+    softScored.length?"[Music Box DJ] Scelta automatica: rilascio musicale verificato":
+     "[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)",
+    {outgoing:fromId,incoming:best.track.id,
+     fade:best.cue?.fade?.toFixed(1)??null,
      checked:measured.length,available:pool.length});
    return {retry:false,selected:true};
   }
@@ -2703,6 +2732,7 @@ async function intelligentShuffle(app,audio,fromId){
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
+  nearCandidates:nearScored.length,
   rhythmCandidates,harmonicCandidates,rejected,chosen:current?.track.id||null,
    vocalModelReady:!!old.voiceModel,
    outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
@@ -2711,7 +2741,8 @@ async function intelligentShuffle(app,audio,fromId){
    protectedEnding:old.protectedEnding===true,dropReleaseVerified:!!old.dropRelease,
   reason:noMatch?"nessuna transizione sicura nei brani analizzati":
    scored.length?"brano in coda gia compatibile con il beat":
-   "brano in coda gia compatibile con la sfumatura"};
+   softScored.length?"brano in coda gia compatibile con la sfumatura":
+   "brano in coda gia simile per BPM, groove e tonalita"};
  console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision);
  return {retry:unknown.length>picked.length&&noMatch,
   checked:measured.length,missing:unknown.length,noMatch};

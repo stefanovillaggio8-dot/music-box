@@ -35,6 +35,8 @@ function fixture(options={}){
   "const cache=new Map(),deepLookup=t=>t?.analysis||null;",
   "const decode=async t=>t?.analysis||null;",
   "const grooveAgreement=()=>({score:.85});",
+  "const camelotMatch=()=>({score:"+(options.keyMatch?".97":".05")+
+    ",weight:"+(options.keyMatch?".20":"0")+"});",
   "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
   "const similarNotes=()=>({focused:.82,phrase:.81});",
   "const transition=(old,next)=>next.cue||null;",
@@ -124,7 +126,7 @@ test("a final instrumental beat bridge requires a genuinely complete vocal scan"
   introAttackNotes:Array(12).fill(.14),safeIntroAt:0};
  const cue=bridge(a,b,100);
  assert.equal(cue?.kind,"snap","a vocal-certified protected ending may still have an instrumental final beat");
- assert.ok(cue.fade>=.52&&cue.fade<=.79,"micro-bridge protects the complete outgoing note");
+ assert.ok(cue.fade>=.62&&cue.fade<=1.04,"micro-bridge protects the complete outgoing note");
  assert.equal(cue.voiceVerifiedMicroBridge,true);
  assert.equal(bridge({...a,voiceModel:null},b,100),null);
  assert.equal(bridge({...a,voiceScannedEnd:90},b,100),null);
@@ -182,4 +184,58 @@ test("late full-audio index invalidates stale DJ picks and resets exhausted retr
   plannedFor:"",plan:null,shuffleGeneration:6,shuffleBusy:false,
   shuffleRunFor:"",shuffleRetryAt:0,shuffleAttempts:0,hasIndex:true
  });
+});
+
+
+test("if no overlap can be certified, sequence only strongly matched tempo, drums and key",async()=>{
+ const f=fixture({keyMatch:true,pool:[
+  {analysis:{bpm:140},cue:null},
+  {analysis:{bpm:120},cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().softCandidates,0);
+ assert.equal(f.decision().nearCandidates,1);
+ assert.equal(f.decision().reason,"ordine per BPM, groove e tonalita");
+});
+
+test("a near-rhythm match never claims to be a beat overlap",async()=>{
+ const f=fixture({keyMatch:true,pool:[
+  {analysis:{bpm:120},cue:null},
+  {analysis:{bpm:145},cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().nearCandidates,1);
+ assert.equal(f.selected(),null,"keep an already compatible next song");
+});
+
+test("vocal-verified short beat join accepts strong drums and compatible key without inventing an unscanned voice",()=>{
+ const start=source.indexOf("function verifiedInstrumentalSnap(");
+ const end=source.indexOf(" // A measured late-bar bridge:",start);
+ assert.ok(start>=0&&end>start);
+ const join=new Function(
+  "const clamp=(x,a,b)=>Math.min(Math.max(x,a),b);"+
+  "const hasReliableHarmony=()=>true;"+
+  "const similarNotes=()=>({matches:false,score:.73,focused:.72,phrase:.60,"+
+    "alignment:{score:.59}});"+
+  "const grooveAgreement=()=>({score:.83});"+
+  "const camelotMatch=()=>({weight:.20,score:.92});"+
+  source.slice(start,end)+"return verifiedInstrumentalSnap;"
+ )();
+ const a={duration:100,last:98.1,bpm:116,beatConfidence:.27,
+  outroFinalNotes:Array(12).fill(.12),voiceModel:"YAMNet",
+  voiceScannedEnd:98.2,lastVoiceAt:83,protectedEnding:true};
+ const b={bpm:117,beatConfidence:.26,introDrive:.83,
+  introAttackNotes:Array(12).fill(.12),safeIntroAt:0};
+ const cue=join(a,b,100);
+ assert.equal(cue?.kind,"snap");
+ assert.ok(cue.fade>=.62&&cue.fade<=1.04);
+ assert.equal(cue.preserveTail,true);
+ assert.equal(join({...a,voiceModel:null},b,100),null);
+ assert.equal(join({...a,lastVoiceAt:96.5},b,100),null);
+ assert.equal(join({...a,lastLyricAt:96},b,100),null);
+ assert.equal(join({...a,voiceScannedEnd:92},b,100),null);
+ assert.equal(join(a,{...b,bpm:91},100),null);
 });
