@@ -457,7 +457,7 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
  const src=source.slice(source.indexOf("async function intelligentShuffle("),
   source.indexOf("function smartScore("));
  const create=new Function("const enabled=true,isIOS=false;"+
-  "const window={MusicBoxRoom:{isActive:()=>false}};"+
+  "const window={MusicBoxRoom:{isActive:()=>false}},console={info(){}};"+
   "const cache=new Map(),shuffleRunFor='',noop=0;"+
   "const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
   "let fromAnalysis={duration:200,bpm:120,beatConfidence:.82};"+
