@@ -467,7 +467,6 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
   "const transition=(a,b)=>b.id.startsWith('winner')?"+
   "{kind:'beat',fade:4.2,grooveScore:.91,score:93,"+
   "instrumentalBeatBridge:true}:null;"+
-  "let shuffleGeneration=0;"+
   src+"return {intelligentShuffle};");
  const engine=create(),pool=Array.from({length:65},(_,i)=>({
   id:i===42?"winner-1":i===53?"winner-2":"other-"+i,url:"songs/"+i+".mp3"
