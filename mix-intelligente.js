@@ -1761,6 +1761,19 @@ async function beginMix(song,proposed){
   cancel();
  }
 }
+// Even when the next MP3 cannot be analyzed (or its intro is unsuitable),
+// never wait through *proven digital silence* in the current track.
+// Only a fully measured, duration-matched tail is eligible: no guesswork.
+function certifiedTailSkip(a,duration,now,lastLyricAt){
+ if(!a?.confidentTail||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-duration)>1.5||
+    !Number.isFinite(a.last)||a.last<26||
+    duration-a.last<1.65||now<a.last+.25||now>duration-.2)return false;
+ if(Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-.6)return false;
+ const lyric=Number.isFinite(lastLyricAt)?lastLyricAt:a.lastLyricAt;
+ if(Number.isFinite(lyric)&&lyric>=a.last-.6)return false;
+ return true;
+}
 function tick(){
  // iOS suspends/limits JS timers behind the lock screen. Leave the native
  // single HTML audio uninterrupted until Safari restores this page.
@@ -1874,7 +1887,22 @@ function tick(){
      audio.duration-audio.currentTime>16&&
      !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
    decode(next,true).catch(()=>{});
-  if(!plan){resetMobileFade();return;}
+  if(!plan){
+  const currentTrack=app.allTracks?.()?.find(t=>t.id===id);
+  const url=currentTrack&&(app.mixUrl?.(currentTrack)||currentTrack.url);
+  const analysis=url&&(cache.get(String(url))||deepLookup(currentTrack));
+  const lastLyric=app.mixLyricCues?.(id)?.last;
+  if(certifiedTailSkip(analysis,audio.duration,audio.currentTime,lastLyric)){
+   const nextInfo=cache.get(String(nextSource))||deepLookup(next);
+   const entry=Number.isFinite(nextInfo?.safeIntroAt)?
+    clamp(nextInfo.safeIntroAt,0,18):0;
+   const target=next.id;
+   cancel();plannedFor=target;plan=null;
+   Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});
+   return;
+  }
+  resetMobileFade();return;
+ }
  // Karaoke may load after the audio analysis. Cancel a now unsafe cue.
  const lastKnownLyric=app.mixLyricCues?.(id)?.last;
  // A karaoke cue can arrive AFTER analysis. Never skip a newly
