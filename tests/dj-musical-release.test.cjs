@@ -295,7 +295,8 @@ test("real-time capture keeps browser audio on native path and uses selective CO
  assert.match(app,/function _assegnaAudioSorgente\(a,source\)/);
  assert.match(app,/u\.hostname==="raw\.githubusercontent\.com"/);
  assert.match(app,/else a\.removeAttribute\("crossorigin"\)/);
- assert.match(app,/_assegnaAudioSorgente\(audio,_urlDelBrano\(t\)\)/);
+ assert.match(app,/_assegnaAudioSorgente\(audio,t\._mbNormalFallbackTried\?/);
+ assert.match(app,/_assegnaAudioSorgente\(audio,_url\)/);
  assert.match(source,/function closeLiveOutro\(\)/);
  assert.match(source,/if\(liveOutro&&liveOutro\.audio!==audio\)closeLiveOutro\(\)/);
 });
