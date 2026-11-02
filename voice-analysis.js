@@ -11,7 +11,10 @@ const MODEL="https://storage.googleapis.com/mediapipe-models/audio_classifier/ya
 let modelPromise=null,modelCooldown=0;
 function vocalCategory(name){
  const n=String(name||"").toLowerCase().trim();
- return /^(speech|singing|rapping|rap|vocal music|choir|humming|whispering|chant|chanting|yodeling|screaming|shout|shouting|spoken word|narration|conversation)$/.test(n);
+ // AudioSet/YAMNet class map uses labels such as "Child speech, kid
+ // speaking" and "Narration, monologue", not only the short class names.
+ // Catch the actual 521-class vocabulary, including vocalizations in rap.
+ return /^(speech|singing|male singing|female singing|child singing|synthetic singing|rapping|rap|vocal music|choir|humming|whispering|chant|chanting|mantra|yodeling|screaming|shout|shouting|yell|spoken word|narration(?:, monologue)?|conversation|child speech, kid speaking|male speech, man speaking|female speech, woman speaking|speech synthesizer|babbling)$/.test(n);
 }
 function vocalConfidence(output){
  let score=0;
