@@ -3305,6 +3305,31 @@ function _devoVedereBrano(eMio, b) {
   // Ogni profilo ha i suoi link, sincronizzati sul servizio cloud e memorizzati
   // localmente per evitare che una rete lenta faccia sparire i titoli.
   const _ytLinksMemory = Object.create(null);
+  // Copied YouTube audio belongs to the receiving profile's library but
+  // references the original cloud job. These rows are never submitted again.
+  const _ytForeignCopiesByOwner=Object.create(null);
+  async function _ytCopieDaAltriProfili(owner){
+    const copied=_mieiCopiatiDi(owner);
+    const wanted=new Set([...copied].filter(id=>/^b-youtube-[A-Za-z0-9_-]{11}$/.test(id)));
+    if(!wanted.size){_ytForeignCopiesByOwner[owner]=[];return [];}
+    const sources=profileList().filter(n=>n!==owner);
+    const gathered=await Promise.all(sources.map(async name=>{
+      try {
+        const rows=await _ytBraniDalCloud(name);
+        return rows.filter(row=>row&&
+          wanted.has("b-youtube-"+String(row.video_id||"")))
+          .map(row=>({...row,_ytSourceProfile:name}));
+      }catch(_){return []}
+    }));
+    const merged=gathered.flat();
+    // If cloud refresh is interrupted, keep previously found copied links.
+    const old=_ytForeignCopiesByOwner[owner]||[];
+    for(const row of old){
+      if(!merged.some(x=>x.video_id===row.video_id))merged.push(row);
+    }
+    _ytForeignCopiesByOwner[owner]=merged;
+    return merged;
+  }
   function _ytFondiBozze(remote, owner){
     if(!Array.isArray(remote))return [];
     const key="mb.youtube.links."+owner;
@@ -3344,6 +3369,9 @@ function _devoVedereBrano(eMio, b) {
   }
   function _ytAggiornaVociLibreria(entries, owner, draw=false) {
     if(owner!==profile || !Array.isArray(entries))return;
+    // Keep copied audio visible after periodic refreshes of the destination
+    // account (which otherwise deliver only that account's own YouTube jobs).
+    entries=entries.concat(_ytForeignCopiesByOwner[owner]||[]);
     const old=tracks.filter(t=>t && t.source!=="youtube-link" && t.source!=="cloud-audio" &&
       !_branoEliminato(t.id,owner));
     const published=new Set(old.filter(t=>t.file).map(t=>t.file));
@@ -3388,6 +3416,7 @@ function _devoVedereBrano(eMio, b) {
         url:readyCloud?directURL:"", file:readyCloud?"cloud/youtube-"+id+".mp3":"",
         source:readyCloud?"cloud-audio":"youtube-link", youtubeId:readyCloud?null:id,
         profile:owner,builtin:true,gradient:PALETTE[0],
+        copiedFrom:row._ytSourceProfile||"",
         aggiunto: _dataAggiuntaBrano(row.created_at || row.added_at || row.requested_at || row._ytDraftAt),
         ordineAggiunta: BUILTIN.length + linked.length + 1,
         _ytStatus:String(row.status||"queued"),
@@ -3652,7 +3681,9 @@ function _devoVedereBrano(eMio, b) {
     applicaRinomine();
     try {
       const _nomeYT=String(profile||DEFAULT_PROFILE);
-      _ytAggiornaVociLibreria(await _ytBraniDalCloud(_nomeYT),_nomeYT,false);
+      const ownLinks=await _ytBraniDalCloud(_nomeYT);
+      await _ytCopieDaAltriProfili(_nomeYT);
+      if(_nomeYT===profile)_ytAggiornaVociLibreria(ownLinks,_nomeYT,false);
     } catch (_) { /* il caricamento dei link non deve fermare gli MP3 */ }
     /* un brano che avevo segnato come "non scaricato" e' comparso in
        libreria: non lo riprovo piu' e lo tolgo dalla lista */
