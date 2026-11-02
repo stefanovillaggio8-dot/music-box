@@ -533,6 +533,7 @@ function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
  if(!act)return;
  const release=()=>{
+  try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
   try{act.gain.disconnect()}catch(e){}
@@ -569,9 +570,16 @@ function startMobileMix(song,p,app,old){
   const target=clamp(app.volume?.()??1,0,1)*.78;
   gain.gain.linearRampToValueAtTime(target,ctx.currentTime+Math.max(2,p.fade*.8));
   source.start(ctx.currentTime,offset);
+  const onPause=()=>{
+   if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
+  };
   mobileActive={source,gain,ctx,fromId:app.currentId(),track:song,
-   entry:p.entry,started:ctx.currentTime,end:p.end,old,handingOff:false,
+   entry:p.entry,started:ctx.currentTime,end:p.end,old,onPause,handingOff:false,
    handoffAt:0,clipEnd:ctx.currentTime+frames/clip.rate-offset};
+  old.addEventListener?.("pause",onPause);
+  source.onended=()=>{
+   if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
+  };
   return true;
  }catch(e){stopMobileMix();return false}
 }
@@ -949,7 +957,7 @@ function draw(){
   const label=btn.querySelector(".voce-testo");
   if(label)label.innerHTML=(enabled?"Mix intelligente: attivo":"Mix intelligente: spento")+
    (isIOS?
-    " <small>iPhone: analisi BPM e tonalità · finali muti ridotti</small>":
+    " <small>iPhone: mix a schermo acceso se supportato · ripiego normale al blocco</small>":
     " <small>Automix automatico: mixa solo quando i brani sono compatibili</small>");
  }
  const styleEl=$("mixStyle");
