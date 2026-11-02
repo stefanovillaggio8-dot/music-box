@@ -1570,6 +1570,16 @@ function draw(){
    "Analizza BPM, note e chiusura musicale. Quando il modello vocale IA è disponibile, controlla canto e parlato prima del taglio; i casi incerti non vengono forzati.";
  const activeLabel=$("mixToggleLabel");
  if(activeLabel)activeLabel.textContent=enabled?"Attivo":"Disattivato";
+ const directToggle=$("mixToggle");
+ if(directToggle){
+  directToggle.setAttribute("aria-pressed",String(enabled));
+  directToggle.setAttribute("aria-label",enabled?
+   "Disattiva Mix intelligente":"Attiva Mix intelligente");
+  directToggle.style.background=enabled?"#208f73":"#4c5468";
+ }
+ // Draw on every open, also after backgrounding Safari.
+ const panelStatus=$("mixIphoneStatus");
+ if(!enabled&&panelStatus)panelStatus.textContent="Mix intelligente disattivato.";
  updateMobileStatus();
 }
 let smartSuggested=[],smartRun=0,shuffleRunFor="";
@@ -1819,17 +1829,21 @@ function settingsChanged(){
  if(!mixing){plan=null;plannedFor="";dropPrepared()}
  draw();
 }
+// Both switches call the same state setter. On iPhone the menu button
+// may be disabled/hidden, and programmatically clicking it was a no-op.
+function setMixEnabled(value){
+ const requested=Boolean(value);
+ if(enabled===requested){draw();return}
+ enabled=requested;
+ try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
+ if(!enabled){cancel();plannedFor="";plan=null;resetMobileFade()}
+ else {previousId="";plannedFor=""}
+ draw();
+ toast(enabled?"Mix intelligente attivato.":"Mix intelligente disattivato.");
+}
 function start(){
  const btn=$("btnMixIntelligente");
- btn?.addEventListener("click",()=>{
-  enabled=!enabled;
-  try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
-  if(!enabled)cancel();else{previousId="";plannedFor=""}
-  draw();
-  toast(enabled?(isIOS?
-   "Mix attivato: salto i finali muti quando posso analizzarli, senza bloccare l'iPhone.":
-   "Automix attivato: mix solo quando è adatto, altrimenti passo normalmente."):"Mix disattivato.");
- });
+ btn?.addEventListener("click",()=>setMixEnabled(!enabled));
  const panel=$("mixPanel");
  $("btnMixSettings")?.addEventListener("click",()=>{
   verifyRequestedTrackId=null;
@@ -1848,7 +1862,11 @@ function start(){
   mixSeconds=clamp(Math.round(Number(e.target.value)||6),3,12);
   settingsChanged();
  });
- $("mixToggle")?.addEventListener("click",()=>btn?.click());
+ $("mixToggle")?.addEventListener("click",event=>{
+  event.preventDefault();
+  event.stopPropagation();
+  setMixEnabled(!enabled);
+ });
  $("mixIphoneToggle")?.addEventListener("click",()=>{
   mobileOverlayEnabled=!mobileOverlayEnabled;
   try{localStorage.setItem("mb.mixIphone",mobileOverlayEnabled?"on":"off")}catch(e){}
