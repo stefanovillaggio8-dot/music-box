@@ -40,7 +40,7 @@ test("classifies only short samples, not entire raw MP3",()=>{
   return [{classifications:[{categories:[{categoryName:"Music",score:.99}]}]}];
  }};
  moduleInstance().evaluate(fakeBuffer(),observe,{last:80});
- assert.ok(calls>15&&calls<50);
+ assert.ok(calls>50&&calls<95);
  assert.ok(longest<=2000);
 });
 test("model failure cannot guess a safe vocal ending",()=>{
@@ -82,4 +82,59 @@ test("async classifier errors do not stop the music player",async()=>{
   classify(){throw Error("model busy")}
  },{last:80});
  assert.equal(out,null);
+});
+
+test("YAMNet receives enough audio per window even at 16kHz",()=>{
+ const pcm=new Float32Array(48000*54);
+ for(let i=0;i<pcm.length;i++)pcm[i]=.3*Math.sin(i*.02);
+ const buffer={sampleRate:48000,duration:54,length:pcm.length,
+  numberOfChannels:1,getChannelData:()=>pcm};
+ let minLength=Infinity,maxLength=0,rates=new Set();
+ const out=moduleInstance().evaluate(buffer,{classify(samples,rate){
+  minLength=Math.min(minLength,samples.length);
+  maxLength=Math.max(maxLength,samples.length);
+  rates.add(rate);
+  return [{classifications:[{categories:[{categoryName:"Music",score:.99}]}]}];
+ }},{last:54});
+ assert.equal(out.modelVersion,3);
+ assert.ok(minLength>=15600 && maxLength<=16500,{minLength,maxLength});
+ assert.deepEqual([...rates],[16000]);
+});
+test("antiphase stereo singing does not cancel out in the mono detector",()=>{
+ const mono=fakeBuffer(),right=new Float32Array(mono.getChannelData(0).length);
+ const left=mono.getChannelData(0);
+ for(let i=0;i<right.length;i++)right[i]=-left[i];
+ const stereo={...mono,numberOfChannels:2,
+  getChannelData:ch=>ch?right:left};
+ const result=moduleInstance().evaluate(stereo,classifier,{last:80});
+ assert.ok(result.lastVoiceAt>=79);
+});
+test("isolated weak voice-like sound is not enough to invent singing",()=>{
+ let call=0;
+ const result=moduleInstance().evaluate(fakeBuffer("instrumental"),{
+  classify(){const score=call++===6?.22:.02;
+   return [{classifications:[{categories:[{categoryName:"Singing",score}]}]}];
+  }
+ },{last:80});
+ assert.equal(result.firstVoiceAt,null);
+ assert.equal(result.lastVoiceAt,null);
+});
+test("adjacent quiet rap frames form a protected vocal phrase",()=>{
+ let call=0;
+ const result=moduleInstance().evaluate(fakeBuffer("instrumental"),{
+  classify(){
+   const score=(call>=58&&call<=61)?.20:.01;call++;
+   return [{classifications:[{categories:[{categoryName:"Rapping",score}]}]}];
+  }
+ },{last:80});
+ assert.ok(result.lastVoiceAt>=70,result);
+ assert.equal(result.firstVoiceAt,null);
+ assert.ok(result.voiceIntervals.length>=1);
+});
+test("real sound event detection stays a safety veto, not a silence certificate",()=>{
+ const out=moduleInstance().evaluate(fakeBuffer("instrumental"),classifier,{last:80});
+ assert.equal(out.lastVoiceAt,null);
+ assert.equal(out.source,"yamnet");
+ assert.ok(out.scannedFrames>50);
+ assert.equal("instrumentalConfirmed" in out,false);
 });
