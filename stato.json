@@ -2397,14 +2397,14 @@
     "a": "Negromaro"
    },
    "[\"se ne va\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 70,
+    "v": 3,
+    "s": 81,
     "t": "se ne va",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"se ne va\",\"nayt, 3d\"]": {
-    "v": 0,
-    "s": 70,
+    "v": 3,
+    "s": 81,
     "t": "se ne va",
     "a": "nayt, 3D"
    },
@@ -3130,13 +3130,13 @@
    },
    "[\"donna\",\"kid yugi\"]": {
     "v": 0,
-    "s": 37,
+    "s": 51,
     "t": "Donna",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"donna\",\"kid yugi\"]": {
     "v": 0,
-    "s": 37,
+    "s": 51,
     "t": "Donna",
     "a": "Kid Yugi"
    },
@@ -6170,6 +6170,18 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂ¨"
    },
+   "[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
+   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+    "v": 0,
+    "s": 14,
+    "t": "Taciturno",
+    "a": "Coez, Gemello"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -6758,17 +6770,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂ¨"
    },
-   "[\"taciturno\",\"coez, gemello\"]": {
+   "[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
-   "m:2026-11|[\"taciturno\",\"coez, gemello\"]": {
+   "m:2026-11|[\"end of beginning\",\"djo\"]": {
     "v": 0,
-    "s": 14,
-    "t": "Taciturno",
-    "a": "Coez, Gemello"
+    "s": 78,
+    "t": "End of Beginning",
+    "a": "Djo"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -7358,17 +7370,29 @@
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
    },
-   "[\"end of beginning\",\"djo\"]": {
+   "[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
    },
-   "m:2026-11|[\"end of beginning\",\"djo\"]": {
+   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
     "v": 0,
-    "s": 78,
-    "t": "End of Beginning",
-    "a": "Djo"
+    "s": 50,
+    "t": "Qualcosa di grande",
+    "a": "Coez"
+   },
+   "[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
+   },
+   "m:2026-11|[\"romantica\",\"ultimo\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "ROMANTICA",
+    "a": "Ultimo"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -7696,13 +7720,13 @@
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 123,
+    "s": 126,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
@@ -7958,29 +7982,17 @@
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
    },
-   "[\"qualcosa di grande\",\"coez\"]": {
+   "[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    },
-   "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
+   "m:2026-11|[\"scrivendo\",\"nayt\"]": {
     "v": 0,
-    "s": 50,
-    "t": "Qualcosa di grande",
-    "a": "Coez"
-   },
-   "[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
-   },
-   "m:2026-11|[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "ROMANTICA",
-    "a": "Ultimo"
+    "s": 14,
+    "t": "Scrivendo",
+    "a": "nayt"
    }
   },
   "Diego": {
