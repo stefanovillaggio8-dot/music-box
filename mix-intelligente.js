@@ -1276,8 +1276,12 @@ function start(){
  draw();
  setInterval(()=>{try{tick()}catch(e){}},500);
  document.addEventListener("visibilitychange",()=>{
-  if(document.hidden)resetMobileFade();
-  else if(enabled){plannedFor="";try{tick()}catch(e){}}
+  if(document.hidden){
+   // This event still fires when foreground timers are suspended.
+   // Restore the native player's uninterrupted background playback.
+   stopMobileMix();
+   resetMobileFade();
+  }else if(enabled){plannedFor="";try{tick()}catch(e){}}
  });
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
