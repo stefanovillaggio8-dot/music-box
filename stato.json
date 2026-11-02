@@ -1203,8 +1203,8 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 16,
-    "s": 591,
+    "v": 17,
+    "s": 592,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1600,13 +1600,13 @@
    },
    "[\"cosa conta davvero\",\"nayt\"]": {
     "v": 0,
-    "s": 68,
+    "s": 76,
     "t": "cosa conta davvero",
     "a": "nayt"
    },
    "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
     "v": 0,
-    "s": 68,
+    "s": 76,
     "t": "cosa conta davvero",
     "a": "nayt"
    },
@@ -1839,8 +1839,8 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 15,
-    "s": 583,
+    "v": 16,
+    "s": 584,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2758,13 +2758,13 @@
    },
    "[\"sentire la musica\",\"kid yugi\"]": {
     "v": 0,
-    "s": 176,
+    "s": 195,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"sentire la musica\",\"kid yugi\"]": {
     "v": 0,
-    "s": 176,
+    "s": 195,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
@@ -3524,6 +3524,12 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
+    "v": 1,
+    "s": 1,
+    "t": "L'universo tranne noi",
+    "a": "Max Pezzali"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -3766,13 +3772,13 @@
    },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
-    "s": 96,
+    "s": 110,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 1,
-    "s": 96,
+    "s": 110,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -4135,12 +4141,6 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
-   },
-   "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "L'universo tranne noi",
-    "a": "Max Pezzali"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4754,6 +4754,18 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
+   "[\"victoria\",\"tony boy\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Victoria",
+    "a": "Tony Boy"
+   },
+   "m:2026-11|[\"victoria\",\"tony boy\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Victoria",
+    "a": "Tony Boy"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -5056,13 +5068,13 @@
    },
    "[\"mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 66,
+    "s": 67,
     "t": "mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 1,
-    "s": 66,
+    "s": 67,
     "t": "mi @mio ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
@@ -5366,17 +5378,17 @@
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
-   "[\"victoria\",\"tony boy\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Victoria",
-    "a": "Tony Boy"
+   "[\"paracetamolo\",\"calcutta\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Paracetamolo",
+    "a": "Calcutta"
    },
-   "m:2026-11|[\"victoria\",\"tony boy\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Victoria",
-    "a": "Tony Boy"
+   "m:2026-11|[\"paracetamolo\",\"calcutta\"]": {
+    "v": 0,
+    "s": 12,
+    "t": "Paracetamolo",
+    "a": "Calcutta"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5404,7 +5416,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 1,
-    "s": 3,
+    "s": 5,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -5548,7 +5560,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 0,
-    "s": 1,
+    "s": 3,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -6001,18 +6013,6 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂ¨"
-   },
-   "[\"paracetamolo\",\"calcutta\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Paracetamolo",
-    "a": "Calcutta"
-   },
-   "m:2026-11|[\"paracetamolo\",\"calcutta\"]": {
-    "v": 0,
-    "s": 12,
-    "t": "Paracetamolo",
-    "a": "Calcutta"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7885,6 +7885,18 @@
     "s": 4,
     "t": "Scale",
     "a": "Night Skinny, LuchÃ¨"
+   },
+   "[\"la notte\",\"modÃ \"]": {
+    "v": 1,
+    "s": 37,
+    "t": "La notte",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"la notte\",\"modÃ \"]": {
+    "v": 1,
+    "s": 37,
+    "t": "La notte",
+    "a": "ModÃ "
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
