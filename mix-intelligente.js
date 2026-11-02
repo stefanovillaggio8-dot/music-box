@@ -1681,12 +1681,36 @@ function finishMobileMix(app){
   .catch(()=>stopMobileMix());
 }
 let prepared=null;
+// 350ms ticks can miss sub-second junctions. Run the fast clock only
+// when a beat-compatible junction is imminent and the page is visible.
+let snapPrecisionTimer=null;
+function stopSnapPrecision(){
+ if(snapPrecisionTimer!==null){clearInterval(snapPrecisionTimer);snapPrecisionTimer=null}
+}
+function armSnapPrecision(audio,id){
+ if(!plan||plan.kind!=="snap"||mixing||
+    !audio||audio.paused||document.hidden||
+    audio.currentTime<plan.begin-3||audio.currentTime>=plan.end){
+  stopSnapPrecision();return;
+ }
+ if(snapPrecisionTimer!==null)return;
+ snapPrecisionTimer=setInterval(()=>{
+  const app=bridge(),a=app?.audio?.();
+  if(!enabled||!a||a!==audio||app?.currentId?.()!==id||
+     !plan||plan.kind!=="snap"||a.paused||
+     a.currentTime>=plan.end||document.hidden||mixing){
+   stopSnapPrecision();return;
+  }
+  try{tick()}catch(_){stopSnapPrecision()}
+ },85);
+}
 function dropPrepared(){
  if(!prepared)return;
  const p=prepared;prepared=null;
  try{p.audio.pause();p.audio.removeAttribute("src");p.audio.load()}catch(e){}
 }
 function cancel(){
+ stopSnapPrecision();
  stopMobileMix();
  resetMobileFade();
  if(active){
@@ -1823,8 +1847,8 @@ async function beginMix(song,proposed){
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
  const p=prepared;
  if(!p||p.failed||!p.ready||p.id!==song.id||p.fromId!==id)return;
- if(old.currentTime>proposed.end-(proposed.kind==="snap"?.14:.55))return;
- mixing=true;prepared=null;
+ if(old.currentTime>proposed.end-(proposed.kind==="snap"?.25:.55))return;
+ mixing=true;stopSnapPrecision();prepared=null;
  const upcoming=p.audio;
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
@@ -1856,7 +1880,7 @@ async function beginMix(song,proposed){
     await new Promise(resolve=>setTimeout(resolve,Math.round(phase*1000)));
   }
   if(active!==act||old.paused||app.currentId()!==id||
-     old.currentTime>=proposed.end-(proposed.kind==="snap"?.12:1.2)){cancel();return}
+     old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:1.2)){cancel();return}
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
   if(proposed.liveQuietCertified)
@@ -2103,7 +2127,7 @@ function tick(){
  if(active&&(active.original!==audio||active.fromId!==id||active.track.id!==next.id)){
   cancel();
  }
- if(mixing)return;
+ if(mixing){stopSnapPrecision();return}
  if(previousId!==id){
   cancel();previousId=id;plannedFor="";plan=null;
    shuffleGeneration++;shuffleBusy=false;
@@ -2224,6 +2248,7 @@ function tick(){
    try{audio.volume=volume*fraction;mobileFadeTrack=id;mobileFading=true}catch(e){}
   }else if(mobileFading)resetMobileFade();
  }
+ armSnapPrecision(audio,id);
  // Inizia il buffer prima del punto di mix: mai aspettare la battuta finale
  // per scaricare i metadati del prossimo MP3.
  // Prebuffer early on PC: waiting until 12s before the boundary could
@@ -2257,7 +2282,7 @@ function tick(){
     plan.fade>=(plan.kind==="snap"?.46:plan.kind==="beat"?3.5:2.35))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
-    audio.currentTime<plan.end-(plan.kind==="snap"?.14:.55)){
+    audio.currentTime<plan.end-(plan.kind==="snap"?.25:.55)){
   beginMix(next,plan).catch(()=>cancel());
  }
 }
