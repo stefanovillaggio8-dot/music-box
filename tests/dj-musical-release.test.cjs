@@ -207,3 +207,34 @@ test("neutral release rejects quiet opening and untrusted outgoing decay",()=>{
  assert.equal(e.transition({...a,dropRelease:{...a.dropRelease,quietLevel:.8,score:.1}},
   {...b,introDrive:.8},100),null,"A still-loud tail cannot be treated as quiet");
 });
+
+test("recording regression: last lyric starts near the end but beat decays afterward",()=>{
+ const e=engine(false,false);
+ // A timestamp is a lyric LINE ONSET, not proof the voice continues to
+ // the MP3's final frame. A separate 4s guard and the measured falling
+ // envelope must both succeed before an early soft transition.
+ const a={duration:100,last:100,confidentTail:false,protectedEnding:false,
+  dropRelease:{lastImpactAt:91,releaseAt:92,quietLevel:.09,score:.91},
+  safeOutroAt:92,lastLyricAt:91,beatConfidence:.55,level:.19,bpm:90};
+ const b={duration:150,bpm:123,beatConfidence:.58,introDrive:.8,
+  safeIntroAt:0,level:.2};
+ const plan=e.transition(a,b,100);
+ assert.ok(plan,"Confirmed beat-decay after a final lyric must allow a safe fade");
+ assert.equal(plan.kind,"soft","Dissonant tracks must not be beatmatched");
+ assert.equal(plan.verifiedDecayAfterLyrics,true);
+ assert.ok(plan.begin>=95&&plan.begin<=96,"Wait for the lyric to finish, but enter well before the end");
+ assert.ok(plan.fade>=3.9&&plan.end>=99.9,"Preserve the previous song through the audible tail");
+ assert.equal(plan.silenceTrim,false);
+ assert.ok(source.includes("const verifiedQuietLyricExit="));
+});
+test("recording regression: late vocals and a new lyric line still veto fade",()=>{
+ const e=engine(false,false);
+ const a={duration:100,last:100,confidentTail:false,protectedEnding:false,
+  dropRelease:{lastImpactAt:91,releaseAt:92,quietLevel:.09,score:.91},
+  safeOutroAt:92,lastLyricAt:91,beatConfidence:.55,level:.19,bpm:90};
+ const b={duration:150,bpm:123,beatConfidence:.58,introDrive:.8,safeIntroAt:0};
+ for(const patch of [{lastLyricAt:93},{lastVoiceAt:94},{protectedEnding:true}]){
+  const plan=e.transition({...a,...patch},b,100);
+  assert.ok(!plan||plan.verifiedDecayAfterLyrics!==true,"No fake karaoke safety after a later vocal/re-attack");
+ }
+});
