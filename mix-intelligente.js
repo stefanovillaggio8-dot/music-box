@@ -1044,6 +1044,46 @@ function strongInstrumentalBeatBridge(a,b,dur){
   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
 }
 
+// After a full REAL vocal scan, a short beat join is possible even when
+// the long-form chord progression is not a perfect match. Preserve the
+// outgoing final note; a missing voice measurement is never proof of safety.
+function verifiedInstrumentalSnap(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !a.voiceModel||!Number.isFinite(a.voiceScannedEnd)||
+    !Number.isFinite(a.last)||!Number.isFinite(a.bpm)||
+    !Number.isFinite(b.bpm)||a.beatConfidence<.17||b.beatConfidence<.17||
+    b.introDrive<.43||!hasReliableHarmony(a.outroFinalNotes)||
+    !hasReliableHarmony(b.introAttackNotes))return null;
+ const end=clamp(a.last+.045,26,dur-.035);
+ if(end<26||dur-end>13||a.voiceScannedEnd<end-.75)return null;
+ if((Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-5)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<1.5)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<1.5))return null;
+ const ratio=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale))
+  .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
+ if(ratio<.965||ratio>1.035)return null;
+ const notes=similarNotes(a,b),groove=grooveAgreement(a,b);
+ if(!groove||groove.score<.65||notes.focused<.78||
+    notes.phrase<.68||
+    (!notes.matches&&(notes.alignment?.score||0)<.68))return null;
+ const key=camelotMatch(a,b);
+ if(key.weight>.14&&key.score<.30)return null;
+ const fade=clamp(1.3*60/a.bpm,.52,.79),begin=end-fade;
+ if(begin<20)return null;
+ const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+ return {kind:"snap",begin,end,entry,fade,tempo:clamp(ratio,.97,1.03),
+  gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+  score:Math.round((notes.score??notes.focused)*100),
+  grooveScore:groove.score,measuredBeatBridge:true,
+  voiceVerifiedMicroBridge:true,preserveTail:true,
+  quietCertified:false,softTailTrim:false,
+  silenceTrim:!!(a.confidentTail&&dur-a.last>=1.65),
+  trailing:Math.max(0,dur-end),safeOutroAt:null,
+  beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
+  nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+}
  // A measured late-bar bridge: no absolute silence is needed.
  // Real librosa confidence clusters around .24; .30 filtered almost everything.
  function measuredBeatBridge(a,b,dur){
@@ -1123,6 +1163,8 @@ function transition(a,b,actualDuration){
  if(activeBeat)return activeBeat;
  const measured=measuredBeatBridge(a,b,dur);
  if(measured)return measured;
+ const scannedSnap=verifiedInstrumentalSnap(a,b,dur);
+ if(scannedSnap)return scannedSnap;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
  // protected, the remaining release is genuinely quiet, and the next
  // track starts with music rather than another quiet passage.
