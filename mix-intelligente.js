@@ -1057,8 +1057,13 @@ function strongInstrumentalBeatBridge(a,b,dur){
   const ratio=speeds.reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
   if(!Number.isFinite(ratio)||ratio<.955||ratio>1.045)return null;
   const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
-  if(!groove||groove.score<.72||notes.focused<.70||notes.phrase<.50||
-     (notes.alignment?.score>0&&notes.alignment.score<.57))return null;
+  // A real end/start can share the same pulse and musical phrase without
+  // having an identical 3-point chord progression. Insist on either
+  // convincing progression OR a particularly strong boundary/phrase match.
+  const progressionOk=(notes.alignment?.score||0)>=.56;
+  const boundaryOk=notes.focused>=.72&&notes.phrase>=.62;
+  if(!groove||groove.score<.68||notes.focused<.70||notes.phrase<.50||
+     (!progressionOk&&!boundaryOk))return null;
   const key=camelotMatch(a,b);
   if(key.weight>.14&&key.score<.25)return null;
   const end=clamp((Number.isFinite(a.last)?a.last:dur)+.055,25,dur-.035);
@@ -2434,11 +2439,29 @@ async function intelligentShuffle(app,audio,fromId){
  // the verified quiet/silence fallback.
  const scored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
+ // These are near matches, not certified playback candidates. Showing both
+ // numbers prevents 'beatCandidates: 0' from falsely implying the library
+ // has no songs with similar tempo or real beat patterns.
+ let rhythmCandidates=0,harmonicCandidates=0;
  for(const {track,info} of measured){
   if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
      !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
      !Number.isFinite(info.introDrive)||info.introDrive<.30){
    rejected.weakIntro++;continue;
+  }
+  const bpmA=Number(old.bpm),bpmB=Number(info.bpm);
+  if(bpmA>0&&bpmB>0&&old.beatConfidence>=.16){
+   const ratio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
+    .reduce((best,value)=>Math.abs(Math.log2(value))<Math.abs(Math.log2(best))?value:best);
+   if(ratio>=.94&&ratio<=1.06){
+    const rhythm=grooveAgreement(old,info);
+    if(rhythm?.score>=.60){
+     rhythmCandidates++;
+     const harmony=similarNotes(old,info);
+     if(harmony.focused>=.60&&harmony.phrase>=.45)
+      harmonicCandidates++;
+    }
+   }
   }
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
@@ -2465,7 +2488,7 @@ async function intelligentShuffle(app,audio,fromId){
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
-    beatCandidates:scored.length,rejected,chosen:best.track.id,reason:"beat certificato"};
+    beatCandidates:scored.length,rhythmCandidates,harmonicCandidates,rejected,chosen:best.track.id,reason:"beat certificato"};
    console.info("[Music Box DJ] Scelta automatica: beat verificato in libreria",
     {outgoing:fromId,incoming:best.track.id,fade:best.cue.fade.toFixed(1),
      checked:measured.length,available:pool.length});
@@ -2475,7 +2498,7 @@ async function intelligentShuffle(app,audio,fromId){
  // If analysis coverage is incomplete, retry later once more metadata
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
-  beatCandidates:scored.length,rejected,chosen:current?.track.id||null,
+  beatCandidates:scored.length,rhythmCandidates,harmonicCandidates,rejected,chosen:current?.track.id||null,
   reason:noMatch?"nessun beat verificato nei brani analizzati":"brano in coda gia compatibile"};
  console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision);
  return {retry:unknown.length>picked.length&&!scored.length,
