@@ -50,7 +50,7 @@ $commandLine = ('"' + $nodePath + '" "' + $scriptPath + '"')
 $nl = [Environment]::NewLine
 $vbs = 'Set sh = CreateObject("WScript.Shell")' + $nl +
   'sh.Run "' + $commandLine.Replace('"','""') + '", 0, False' + $nl
-[System.IO.File]::WriteAllText($startupFile, $vbs, (New-Object System.Text.UTF8Encoding($false)))
+[System.IO.File]::WriteAllText($startupFile, $vbs, ([System.Text.Encoding]::Unicode))
 Write-Host "Avvio automatico nascosto attivato per questo utente Windows."
 Start-Process -FilePath (Join-Path $env:WINDIR "System32\wscript.exe") -ArgumentList ('"' + $startupFile + '"') -WindowStyle Hidden
 Start-Sleep -Milliseconds 1300
