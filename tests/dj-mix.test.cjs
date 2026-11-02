@@ -441,3 +441,25 @@ test("iPhone lock-screen fallback keeps native music rather than forcing WebAudi
  assert.ok(source.includes("if(mobileActive)stopMobileMix();"));
  assert.ok(source.includes("Leave the native"));
 });
+
+test("voice detected earlier in song must not cancel an active desktop mix",()=>{
+ const start=source.indexOf("function voiceThreatensPlan(");
+ const stop=source.indexOf("// Read lightweight saved analysis",start);
+ assert.ok(start>=0&&stop>start);
+ const risk=new Function(source.slice(start,stop)+"\nreturn voiceThreatensPlan")();
+ const plan={begin:176,end:179.9,kind:"phrase"};
+ assert.equal(risk({lastVoiceAt:140},true,false,plan),false);
+ assert.equal(risk({lastVoiceAt:null},true,false,plan),false);
+ assert.equal(risk({lastVoiceAt:178},true,false,plan),true);
+ assert.equal(risk({firstVoiceAt:24},false,true,plan),false);
+ assert.equal(risk({firstVoiceAt:0.5},false,true,plan),true);
+ assert.equal(risk({lastVoiceAt:178},true,false,null),false);
+});
+test("PC preloads the next MP3 early rather than missing the mixing window",()=>{
+ assert.ok(source.includes("Math.min(plan.begin-28,audio.duration-45)"));
+ assert.ok(source.includes("if(previewAllowed&&!isIOS&&plan.kind!==\"cut\""));
+});
+test("late vocal model result does not forcibly reset an in-progress handoff",()=>{
+ assert.ok(source.includes("if(!mixing&&!active&&!mobileActive){"));
+ assert.ok(source.includes("if(voiceThreatensPlan(v,currentTrack,nextTrack,plan)&&"));
+});
