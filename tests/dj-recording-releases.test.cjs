@@ -67,3 +67,39 @@ test("do not modify source music, offline caches, or disable vocal protections",
  assert.match(source,/if\(Number\.isFinite\(lastVoiceAt\)&&now-lastVoiceAt<2\.5\)return false/);
  assert.match(source,/source\.connect\(analyser\); \/\/ No destination/);
 });
+
+// 23:18:26 screen recording: first track passes through a real quiet
+// passage, then the final beat release is around 11-12 seconds before EOF.
+// Never act on the temporary valley; act only on a certified final release.
+const earlyText=source.slice(source.indexOf("function certifiedEarlyReleaseReady("),
+ source.indexOf("function tryLiveQuietMix("));
+const early=new Function(earlyText+"return certifiedEarlyReleaseReady")();
+const outgoing={duration:206,last:201,dropRelease:{lastImpactAt:193.8,
+ releaseAt:194.2,score:.88,quietLevel:.12},protectedEnding:false};
+test("23:18 recording: certified final impact is eligible with 11+ seconds left",()=>{
+ assert.equal(early(outgoing,206,194.4,186),true);
+ assert.equal(early(outgoing,206,190,186),false,
+  "The earlier pause is not the final musical release");
+ assert.equal(early(outgoing,206,194.4,192.4),false,
+  "Never bury a last lyric overlapping the release");
+ assert.equal(early({...outgoing,lastVoiceAt:193.6},206,194.4,186),false);
+});
+test("never mistake a temporary volume valley or renewed last chorus for a final release",()=>{
+ assert.equal(early({...outgoing,dropRelease:null},206,194.4,186),false);
+ assert.equal(early({...outgoing,protectedEnding:true},206,194.4,186),false);
+ assert.equal(early({...outgoing,duration:192},206,194.4,186),false);
+ assert.equal(early({...outgoing,dropRelease:{...outgoing.dropRelease,score:.4}},206,194.4,186),false);
+ assert.equal(early({...outgoing,dropRelease:{...outgoing.dropRelease,quietLevel:.38}},206,194.4,186),false);
+});
+test("23:18 recording: early verified impact can preempt a later silent-tail cue",()=>{
+ assert.match(source,/const plannedLate=earlyRelease&&\(!plan\|\|plan.kind==="cut"\|\|/);
+ assert.match(source,/plan.begin>audio.currentTime\+1\.2/);
+ assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\|\|plannedLate\)/);
+ assert.match(source,/if\(!earlyCertified&&!liveQuietOutroReady\(/);
+ assert.match(source,/if\(!nextAnalysis\|\|!hasImmediateMusicalIntro\(nextAnalysis\)\)return false/);
+});
+test("the mixer logs its actual start, not only a selected library candidate",()=>{
+ assert.match(source,/console.info\("\[Music Box DJ\] Sovrapposizione audio avviata"/);
+ assert.match(source,/actualAt:Number\(old.currentTime.toFixed\(2\)\)/);
+ assert.match(source,/remaining:Number\(\(old.duration-old.currentTime\).toFixed\(2\)\)/);
+});

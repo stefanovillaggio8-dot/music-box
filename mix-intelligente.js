@@ -1906,10 +1906,12 @@ async function beginMix(song,proposed){
      old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:1.2)){cancel();return}
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
-  if(proposed.liveQuietCertified)
-   console.info("[Music Box DJ] Sovrapposizione audio avviata",
-    {outgoing:id,incoming:song.id,entry:proposed.entry,
-     seconds:act.fade.toFixed(2)});
+  console.info("[Music Box DJ] Sovrapposizione audio avviata",
+   {outgoing:id,incoming:song.id,kind:proposed.kind,
+    cueAt:Number(proposed.begin.toFixed(2)),actualAt:Number(old.currentTime.toFixed(2)),
+    remaining:Number((old.duration-old.currentTime).toFixed(2)),
+    entry:proposed.entry,seconds:act.fade.toFixed(2),
+    certifiedRelease:!!proposed.liveQuietCertified});
   if(old.paused){cancel();return}
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),proposed.kind==="snap"?.18:.8,12);
   act.at=performance.now();
@@ -2015,7 +2017,7 @@ function sampleLiveOutro(audio){
 }
 function liveQuietOutroReady(samples,duration,now,lastLyricAt,lastVoiceAt){
  if(!Array.isArray(samples)||!Number.isFinite(duration)||!Number.isFinite(now)||
-    duration-now>8||duration-now<2.2)return false;
+    duration-now>13.5||duration-now<2.2)return false;
  if(Number.isFinite(lastLyricAt)&&now-lastLyricAt<4.5)return false;
  if(Number.isFinite(lastVoiceAt)&&now-lastVoiceAt<2.5)return false;
  const earlier=samples.filter(p=>p.at>=now-19&&p.at<=now-3.3);
@@ -2052,12 +2054,36 @@ function needsLiveQuietRecovery(p,now,ready){
  return ["beat","phrase","fade","rise"].includes(p.kind)&&
    Number.isFinite(p.begin)&&now>=p.begin+.75&&!ready;
 }
+// A precomputed full-track scan is allowed to certify the actual final
+// impact before the stream has decayed into silence. An ordinary volume
+// valley, even 12 seconds from the end, never satisfies this certificate.
+function certifiedEarlyReleaseReady(a,dur,now,lastLyricAt){
+ const release=a?.dropRelease;
+ if(!a||!release||a.durationMismatch||a.protectedEnding===true||
+    !Number.isFinite(dur)||!Number.isFinite(now)||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    dur-now>16||dur-now<2.2||
+    !Number.isFinite(release.releaseAt)||
+    !Number.isFinite(release.lastImpactAt)||
+    now<release.releaseAt-.1||now>release.releaseAt+6.4||
+    release.score<.76||release.quietLevel>.20||
+    release.releaseAt<release.lastImpactAt||
+    !Number.isFinite(a.last)||a.last-release.releaseAt<2.1||
+    a.last-release.releaseAt>12)return false;
+ const lyric=Number.isFinite(lastLyricAt)?lastLyricAt:a.lastLyricAt;
+ if(Number.isFinite(lyric)&&lyric>release.releaseAt-4.5)return false;
+ if(Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>release.releaseAt-2.5)return false;
+ return true;
+}
 function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  if(isIOS||active||mobileActive||mixing||!next||
     quietHandoffFor===id+"|"+next.id||
-    Date.now()<(mixFailures.get(id+"|"+next.id)||0)||
-    !liveQuietOutroReady(liveOutro?.audio===audio?liveOutro.samples:null,
-      audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
+    Date.now()<(mixFailures.get(id+"|"+next.id)||0))return false;
+ const earlyCertified=certifiedEarlyReleaseReady(analysis,
+  audio.duration,audio.currentTime,lastLyricAt);
+ if(!earlyCertified&&!liveQuietOutroReady(
+   liveOutro?.audio===audio?liveOutro.samples:null,
+   audio.duration,audio.currentTime,lastLyricAt,analysis?.lastVoiceAt))return false;
  // The submitted 22:30 recording contains a quiet passage followed by a
  // genuine musical comeback. A live energy drop alone cannot predict the
  // future: only a release measured against the WHOLE MP3 is eligible.
@@ -2079,7 +2105,7 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  if(fade<1.7)return false;
  const nextSource=app.mixUrl?.(next)||next?.url;
  const nextAnalysis=nextSource&&(cache.get(String(nextSource))||deepLookup(next));
- if(nextAnalysis&&!hasImmediateMusicalIntro(nextAnalysis))return false;
+ if(!nextAnalysis||!hasImmediateMusicalIntro(nextAnalysis))return false;
  const verifiedIntro=Number.isFinite(nextAnalysis?.safeIntroAt)&&
    Number.isFinite(nextAnalysis?.duration)&&
    Number.isFinite(prepared?.audio?.duration)&&
@@ -2095,9 +2121,15 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  if(!previewReady){
   const previewFailed=previewMatches&&
     (prepared.failed||!!prepared.audio?.error);
-  if((previewFailed&&remaining<=4.5)||remaining<=3.3)
+  // When the full MP3 proves that its FINAL impact has already passed,
+  // a failed second player must not leave several seconds of dead air.
+  // Prefer native playback over waiting for an impossible crossfade.
+  if((earlyCertified&&previewFailed)||
+     (earlyCertified&&audio.currentTime>=release.releaseAt+1.6)||
+     (previewFailed&&remaining<=4.5)||remaining<=3.3)
    return quietDirectHandoff(app,audio,id,next,entry,
-     previewFailed?"anteprima audio non disponibile":"anteprima non pronta");
+     previewFailed?"anteprima audio non disponibile":
+      earlyCertified?"rilascio musicale conclusivo, anteprima lenta":"anteprima non pronta");
   return false;
  }
  const p={entry,begin:audio.currentTime,end:audio.currentTime+fade+.2,
@@ -2239,12 +2271,19 @@ function tick(){
   prepare(next,id,app);
  const mixReady=Boolean(prepared?.ready&&!prepared?.failed&&
   prepared?.audio?.readyState>=2&&prepared.id===next.id&&prepared.fromId===id);
- if(needsLiveQuietRecovery(plan,audio.currentTime,mixReady)){
-  const currentTrack=app.allTracks?.()?.find(t=>t.id===id);
-  const url=currentTrack&&(app.mixUrl?.(currentTrack)||currentTrack.url);
-  const analysis=url&&(cache.get(String(url))||deepLookup(currentTrack));
-  const lastLyric=app.mixLyricCues?.(id)?.last;
-  if(tryLiveQuietMix(app,audio,id,next,lastLyric,analysis))return;
+ // A full-track musical-release certificate beats a cue scheduled in
+ // the almost-silent tail. A genuine beat already imminent keeps priority.
+ const currentSong=app.allTracks?.()?.find(t=>t.id===id);
+ const currentSource=currentSong&&(app.mixUrl?.(currentSong)||currentSong.url);
+ const measuredEnding=currentSource&&
+   (cache.get(String(currentSource))||deepLookup(currentSong));
+ const finalLyric=app.mixLyricCues?.(id)?.last;
+ const earlyRelease=certifiedEarlyReleaseReady(measuredEnding,
+  audio.duration,audio.currentTime,finalLyric);
+ const plannedLate=earlyRelease&&(!plan||plan.kind==="cut"||
+  !Number.isFinite(plan.begin)||plan.begin>audio.currentTime+1.2);
+ if(needsLiveQuietRecovery(plan,audio.currentTime,mixReady)||plannedLate){
+  if(tryLiveQuietMix(app,audio,id,next,finalLyric,measuredEnding))return;
  }
   if(!plan){
   const currentTrack=app.allTracks?.()?.find(t=>t.id===id);
