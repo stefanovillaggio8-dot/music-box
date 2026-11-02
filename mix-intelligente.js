@@ -1064,8 +1064,8 @@ function strongInstrumentalBeatBridge(a,b,dur){
   // widely spaced moments; a long overlap still uses the stricter tests
   // above. Require both credible phrase notes and compatible percussion.
   const progressionOk=(notes.alignment?.score||0)>=.50;
-  const boundaryOk=notes.focused>=.73&&notes.phrase>=.56&&
-   groove?.score>=.68;
+  const boundaryOk=notes.focused>=.70&&notes.phrase>=.57&&
+   groove?.score>=.70;
   if(!groove||groove.score<.64||notes.focused<.66||notes.phrase<.44||
      (!progressionOk&&!boundaryOk))return null;
   const key=camelotMatch(a,b);
