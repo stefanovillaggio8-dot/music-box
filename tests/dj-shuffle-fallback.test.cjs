@@ -103,3 +103,60 @@ test("honest diagnostics preserve near-rhythm counts without labelling a fade as
  assert.equal(d.softCandidates,1);
  assert.equal(d.checked,2);
 });
+
+test("a final instrumental beat bridge requires a genuinely complete vocal scan",()=>{
+ const start=source.indexOf("function verifiedInstrumentalSnap(");
+ const end=source.indexOf(" // A measured late-bar bridge:",start);
+ assert.ok(start>0&&end>start,"vocal-safe beat snap exists");
+ const bridge=new Function(
+  "const clamp=(x,a,b)=>Math.min(Math.max(x,a),b);"+
+  "const hasReliableHarmony=()=>true;"+
+  "const similarNotes=()=>({matches:false,score:.84,focused:.84,phrase:.78,alignment:{score:.72}});"+
+  "const grooveAgreement=()=>({score:.78});"+
+  "const camelotMatch=()=>({weight:0,score:1});"+
+  source.slice(start,end)+
+  "return verifiedInstrumentalSnap;"
+ )();
+ const a={duration:100,last:98,bpm:120,beatConfidence:.24,level:.22,
+  outroFinalNotes:Array(12).fill(.13),voiceModel:"audio-vocal-ai",
+  voiceScannedEnd:98.4,lastVoiceAt:85,protectedEnding:true};
+ const b={duration:100,bpm:120,beatConfidence:.24,introDrive:.9,
+  introAttackNotes:Array(12).fill(.14),safeIntroAt:0};
+ const cue=bridge(a,b,100);
+ assert.equal(cue?.kind,"snap","a vocal-certified protected ending may still have an instrumental final beat");
+ assert.ok(cue.fade>=.52&&cue.fade<=.79,"micro-bridge protects the complete outgoing note");
+ assert.equal(cue.voiceVerifiedMicroBridge,true);
+ assert.equal(bridge({...a,voiceModel:null},b,100),null);
+ assert.equal(bridge({...a,voiceScannedEnd:90},b,100),null);
+ assert.equal(bridge({...a,lastVoiceAt:97},b,100),null);
+ assert.equal(bridge({...a,lastLyricAt:95},b,100),null);
+ assert.equal(bridge({...a,duration:96},b,100),null);
+ assert.equal(bridge(a,{...b,introDrive:.08},100),null);
+});
+
+test("voice completion rearms a previously locked shuffle search exactly when safe",()=>{
+ const begin=source.indexOf("function rearmShuffleAfterVocalScan(");
+ const end=source.indexOf("function maybeReorderShuffle(",begin);
+ assert.ok(begin>0&&end>begin);
+ const make=new Function("app","state",
+  "const enabled=true,mixing=false,active=null,mobileActive=null;"+
+  "const bridge=()=>app;"+
+  "let shuffleGeneration=3,shuffleBusy=true,shuffleRunFor='b-track-160',"+
+  "shuffleRetryAt=60000,shuffleAttempts=4;"+
+  source.slice(begin,end)+
+  "return {run:()=>rearmShuffleAfterVocalScan('b-track-160'),"+
+  "state:()=>({shuffleGeneration,shuffleBusy,shuffleRunFor,shuffleRetryAt,shuffleAttempts})};");
+ let currentTime=15;
+ const app={currentId:()=> "b-track-160",audio:()=>({duration:100,currentTime})};
+ const x=make(app,{});
+ assert.equal(x.run(),true);
+ assert.deepEqual(x.state(),{shuffleGeneration:4,shuffleBusy:false,
+  shuffleRunFor:"",shuffleRetryAt:0,shuffleAttempts:0});
+ currentTime=80;
+ assert.equal(x.run(),false,"too late to safely restart a long library search");
+ assert.equal(x.state().shuffleGeneration,4);
+ assert.match(source,/if\(current\)rearmShuffleAfterVocalScan\(track.id\)/);
+ assert.match(source,/if\(currentTrack\)rearmShuffleAfterVocalScan\(track.id\)/);
+ assert.match(source,/rearmShuffleAfterVocalScan\(id\)/);
+ assert.match(source,/runGeneration!==null&&runGeneration!==shuffleGeneration/);
+});
