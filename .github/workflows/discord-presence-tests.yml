@@ -1,0 +1,20 @@
+name: Music Box Discord Rich Presence tests
+on:
+  push:
+    paths:
+      - 'tools/discord-presence-bridge.cjs'
+      - 'tools/test-discord-presence.cjs'
+      - '.github/workflows/discord-presence-tests.yml'
+  workflow_dispatch:
+jobs:
+  discord-presence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check tools/discord-presence-bridge.cjs
+      - run: node --check tools/test-discord-presence.cjs
+      - run: node tools/test-discord-presence.cjs
