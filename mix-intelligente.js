@@ -617,7 +617,8 @@ function similarNotes(a,b){
  const staticMatch=broad>=.74&&focused>=.69&&
   (shared||(fifth&&focused>=.82))&&phrase>=.42;
  // When available, the REAL progression vetoes misleading global keys.
- const matches=alignment?alignment.matches&&staticMatch:staticMatch;
+ const matches=alignment?
+  alignment.matches&&(staticMatch||alignment.score>=.89):staticMatch;
  const score=alignment?alignment.score*.82+focused*.18:
   focused*.64+phrase*.26+broad*.10;
  return {matches,score,focused,phrase,alignment,
@@ -677,7 +678,7 @@ function transition(a,b,actualDuration){
    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-6);
   const nextStartsVocal=(Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<3.5)||
    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<3.5);
-  const canBridge=!isIOS&&style==="auto"&&
+  const canBridge=!isIOS&&
    a.outroFinalNotes&&b.introAttackNotes&&
    a.beatConfidence>=.20&&b.beatConfidence>=.20&&
    notes.matches&&notes.focused>=.78&&notes.phrase>=.61&&
@@ -688,7 +689,8 @@ function transition(a,b,actualDuration){
     clamp(4*60/bpmA,2.2,3.4);
    const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
-   return {...common,begin:end-seconds,end,fade:seconds,kind:"phrase",
+   return {...common,begin:end-seconds,end,fade:seconds,
+    kind:style==="auto"?"phrase":style,
     tempo:clamp(tempoRatio,.97,1.03),
     quietCertified:false,score:Math.round(notes.score*100),
     beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
@@ -708,7 +710,16 @@ function transition(a,b,actualDuration){
  const harmonic=reliable?compatibility({chroma:tailHarmony},{chroma:headHarmony}):null;
  const compatible=beatClose&&notes.matches&&harmonic!==null&&harmonic>=.75;
  // Similar BPM alone is not enough to overlap mismatched notes.
- if(!notes.matches)return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
+ if(!notes.matches){
+  // Keep an already working quiet-outro mix. When the old song has truly
+  // settled, a short neutral fade is safe even without harmonic matching.
+  // Never use this fallback on a loud or vocal ending.
+  if(a.quietTail===true&&Number.isFinite(a.safeOutroAt)&&available>=2.6){
+   const duration=Math.min(2.6,available-.1);
+   return {...common,begin:end-duration,end,fade:duration,kind:"soft"};
+  }
+  return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
+ }
  const earlyNextVoice=(Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<8)||
   (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<8);
  const longMix=compatible&&available>=4.4&&!earlyNextVoice;
