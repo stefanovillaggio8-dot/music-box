@@ -1,0 +1,30 @@
+name: Volume precision tests
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'style.css'
+      - 'tests/volume-precision.test.cjs'
+      - '.github/workflows/volume-precision.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'style.css'
+      - 'tests/volume-precision.test.cjs'
+      - '.github/workflows/volume-precision.yml'
+jobs:
+  volume-precision:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax
+        run: node --check app.js
+      - name: Volume 1%-100% regressions
+        run: node --test tests/volume-precision.test.cjs
