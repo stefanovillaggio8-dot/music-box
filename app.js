@@ -1541,6 +1541,8 @@ const PROFILI = [
      playlist arrivano dal servizio dopo, e prima l'app non sapeva ancora
      quali brani sono della gym -> usava sempre l'originale. */
   function _urlDelBrano(t) {
+    // URL stabile del file cloud: non trasformarlo in un percorso GitHub.
+    if (t && t.source === "cloud-audio" && t.url) return t.url;
     /* Il brano Baby Gang e' stato segnalato con audio diverso dal video
        ufficiale; usa sempre il file originale corretto, mai i bassi vecchi. */
     if (t && t.file === "songs/track-929.mp3") return _doveStaIlBrano(t.file);
@@ -1607,7 +1609,8 @@ const PROFILI = [
   function _ricalcolaIndirizzi() {
     try {
       for (const t of tracks) {
-        if (t && t.file) t.url = _doveStaIlBrano(t.file);
+        if (t && t.file && t.source !== "cloud-audio")
+          t.url = _doveStaIlBrano(t.file);
       }
       try { render(); } catch (e) { }
     } catch (e) { }
@@ -5421,7 +5424,8 @@ emptyEl.textContent = !total
         });
       li.appendChild(favBtn);
 
-      if (t.builtin && !t.youtubeId && !isCached(t)) {
+      if (t.url && !t.youtubeId && !t.preview && !isCached(t) &&
+          /^(?:https?:\/\/|songs\/)/i.test(String(t.url))) {
         const cloud = document.createElement("button");
         cloud.className = "track-cloud";
         cloud.setAttribute("aria-label", "Scarica " + t.title + " per offline");
@@ -12604,6 +12608,18 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
 
   /* La lista e' di un profilo, non di tutto il telefono. Non includere
      prefetch: quei file vengono volutamente rimossi a ogni update. */
+  // Gli audio cloud usano una URL "?action=audio&id=UUID", non ".mp3".
+  function _eUrlAudioOffline(url) {
+    try {
+      const u = new URL(String(url || ""), location.href);
+      if (/\.mp3$/i.test(u.pathname)) return true;
+      return u.protocol === "https:" &&
+        u.hostname === "adnteitlhopehllutlua.supabase.co" &&
+        u.pathname === "/functions/v1/musicbox-import-queue" &&
+        u.searchParams.get("action") === "audio" &&
+        /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(u.searchParams.get("id") || "");
+    } catch (_) { return false; }
+  }
   async function _elencoOfflineDelProfilo() {
     const set = new Set();
     if (!("caches" in window)) return set;
@@ -12615,7 +12631,7 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
         const cache = await caches.open(nome);
         for (const req of await cache.keys()) {
           const url = String(req.url || "");
-          if (!/\.mp3(?:[?#]|$)/i.test(url)) continue;
+          if (!_eUrlAudioOffline(url)) continue;
           set.add(url);
           const key = _chiaveFileOffline(url);
           if (key) set.add(key);
@@ -12633,7 +12649,7 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
 
   function isCached(t) {
     if (!t) return false;
-    if (!t.url) return true;
+    if (!t.url) return false;
     const url = absUrl(t.url);
     const key = _chiaveFileOffline(url);
     return cachedSongs.has(url) || cachedSongs.has(t.url) ||
@@ -12643,6 +12659,9 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   async function fetchToCache(url, cache, onProgress) {
     const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
+    const mime = String(res.headers.get("content-type") || "").toLowerCase();
+    if (/text\/html|application\/json/.test(mime))
+      throw new Error("Il server non ha restituito un file audio");
     const total = Number(res.headers.get("content-length") || 0);
     let blob;
     if (res.body) {
@@ -12660,6 +12679,8 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
     } else {
       blob = await res.blob();
     }
+    if (blob.size < 4096 || (total && blob.size < total * .98))
+      throw new Error("Download incompleto: il file non e' stato salvato");
     await cache.put(url, new Response(blob, {
       status: 200,
       headers: { "Content-Type": blob.type || "audio/mpeg", "Content-Length": String(blob.size) }
