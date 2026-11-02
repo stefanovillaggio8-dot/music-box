@@ -164,6 +164,10 @@ def main():
                 if (now-when).days<7:continue
             except (ValueError,KeyError):pass
         todo.append((key,item))
+    if not todo and index.get("sourceCount")==len(sources):
+        print(json.dumps({"sources":len(sources),"analyzed":len(sources),
+                          "processedNow":0,"failuresNow":0,"remaining":0}),flush=True)
+        return
     done=errors=0
     for key,item in todo[:max(1,min(75,args.batch))]:
         url=f'https://raw.githubusercontent.com/{item["repo"]}/{item["branch"]}/'+urllib.parse.quote(item["path"])
