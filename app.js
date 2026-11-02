@@ -6038,6 +6038,8 @@ function rebuildAudio(autoplay) {
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())
       return false;
     if (!audio) audio = createAudio();
+    const requestedAudio = audio;
+    const requestedId = currentId;
     try {
       _applicaAudio();
       _configuraSessioneAudio();
@@ -6046,7 +6048,10 @@ function rebuildAudio(autoplay) {
       /* iPhone Safari: play() deve partire nel gesto dell'utente.
          Attendere i metadata prima del play perde l'autorizzazione
          di Safari: il browser gestira' autonomamente il buffering. */
-      await audio.play();
+      await requestedAudio.play();
+      // A delayed play() resolution may belong to an obsolete player.
+      // Do not report success or touch volume of the next song.
+      if (audio !== requestedAudio || currentId !== requestedId) return false;
       /* NON azzero l'intento di sentire qui: con lo schermo spento il
          telefono risponde "partito" ma l'audio resta muto. Se dicessi
          "ha suonato", l'app smetterebbe di insistere e resterebbe muta
@@ -6059,6 +6064,16 @@ function rebuildAudio(autoplay) {
       return true;
     } catch (e) {
       const nome = String((e && e.name) || "");
+      // AbortError is routine when the user skips or pauses during an
+      // outstanding play(), or the DJ swaps the source. Recreating the
+      // player here causes another pause/load race and a playback loop.
+      if (audio !== requestedAudio || currentId !== requestedId) return false;
+      if (nome === "AbortError") {
+        if (_vuoleSuonare && !requestedAudio._mbCambioBrano)
+          _riprovaPiuTardi();
+        return false;
+      }
+      if (!_vuoleSuonare) return false;
       console.warn("Play bloccato" + (hoGiaRiprovato ? " (anche dopo aver ricreato il lettore)" : ""), e);
       /* Se il telefono rifiuta perche' non c'e' stata una pressione (il caso
          dello schermo spento), ricreare il lettore e' la cosa PEGGIORE: un
