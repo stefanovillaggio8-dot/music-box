@@ -383,12 +383,12 @@ test("obsolete iPhone preparation never blacklists a valid MP3",()=>{
  assert.ok(source.includes('if(data===STALE_MOBILE_PREVIEW)return null'));
 });
 
-test("notes shared between last and first measures can cue before last note",()=>{
+test("last audible musical note is preserved even if pitches match",()=>{
  const h=[.24,.16,.12,.11,.08,.08,.06,.04,.03,.03,.025,.025];
  const a={...current,safeOutroAt:172,outroNotes:h,lastNoteAt:178};
  const b={...next,introNotes:h};
  const plan=transition(a,b,180);
- assert.ok(plan&&plan.kind==="beat"&&plan.end>177.5&&plan.end<178);
+ assert.ok(plan&&plan.kind==="beat"&&plan.end>=179.9);
 });
 test("different dominant note signatures prevent a distracting crossfade",()=>{
  const h=[.24,.16,.12,.11,.08,.08,.06,.04,.03,.03,.025,.025];
@@ -422,4 +422,9 @@ test("a detected vocal near a last note prevents cutting just ahead of that note
 test("dedicated model is asynchronous so audio decoding is not delayed by model download",()=>{
  assert.ok(source.includes("Promise.resolve().then(()=>voice.analyze(decoded,frame))"));
  assert.ok(source.includes("plannedFor=\"\";plan=null;"));
+});
+
+test("a last-note onset is never permission to truncate a track",()=>{
+ const plan=transition({...current,safeOutroAt:172,lastNoteAt:179},next,180);
+ assert.ok(plan&&plan.end>179.9);
 });
