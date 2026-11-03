@@ -112,7 +112,7 @@ test("iPhone DJ loads bounded intro range and refuses a full file response",asyn
  const runtime={
   fetch:async(url,options)=>{
    requested={url,options};
-   return {status:mode,
+   return {ok:true,status:mode,
     headers:new Headers(mode===206?(exposedRange?{"content-range":"bytes 0-19999/100000","content-length":"20000"}:{"content-length":"20000"}):{}),
     body:{cancel:async()=>{cancelled++}},
     arrayBuffer:async()=>new ArrayBuffer(20000)};
@@ -165,7 +165,7 @@ test("iPhone DJ stops an unexpectedly oversized streaming response before decodi
  const code=excerpt(mix,"async function decodeMobileIntroRange(","async function decode(track,needClip=false)");
  let reads=0,cancels=0,decoded=0;
  const runtime={
-  fetch:async()=>({status:206,headers:new Headers(),
+  fetch:async()=>({ok:true,status:206,headers:new Headers(),
    body:{getReader:()=>({read:async()=>{reads++;return {done:false,value:new Uint8Array(300000)}},
     cancel:async()=>{cancels++}})}}),
   Offline:class {async decodeAudioData(){decoded++;return {duration:10}}}
