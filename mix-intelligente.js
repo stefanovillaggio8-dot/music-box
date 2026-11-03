@@ -795,7 +795,22 @@ function compatibility(a,b){
     return null; // Never accept a full 200 response as a DJ preview.
    }
    if(Number(response.headers.get("content-length")||0)>786432)return null;
-   const bytes=await response.arrayBuffer();
+   // Read at most 768 KiB even when a proxy omits Content-Length.
+   // Stop the stream before an unexpected oversized payload can stall music.
+   let bytes;
+   if(response.body?.getReader){
+    const reader=response.body.getReader(),parts=[];let total=0;
+    while(true){
+     const {done,value}=await reader.read();
+     if(done)break;
+     total+=value.byteLength;
+     if(total>786432){await reader.cancel();return null}
+     parts.push(value);
+    }
+    const combined=new Uint8Array(total);let offset=0;
+    for(const part of parts){combined.set(part,offset);offset+=part.byteLength}
+    bytes=combined.buffer;
+   }else bytes=await response.arrayBuffer();
    if(bytes.byteLength<16384||bytes.byteLength>786432||ctrl.signal.aborted||
       epoch!==djPlaybackEpoch||document.hidden)return null;
    const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
