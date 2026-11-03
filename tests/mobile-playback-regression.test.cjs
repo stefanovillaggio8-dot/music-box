@@ -105,12 +105,12 @@ test("cached MP3 Range responses reuse one bounded Blob on repeated seeks",async
 test("iPhone DJ loads bounded intro range and refuses a full file response",async()=>{
  const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
  const code=excerpt(mix,"async function decodeMobileIntroRange(","async function decode(track,needClip=false)");
- let requested=null,decoded=0,cancelled=0,mode=206;
+ let requested=null,decoded=0,cancelled=0,mode=206,exposedRange=true;
  const runtime={
   fetch:async(url,options)=>{
    requested={url,options};
    return {status:mode,
-    headers:new Headers(mode===206?{"content-range":"bytes 0-19999/100000","content-length":"20000"}:{}),
+    headers:new Headers(mode===206?(exposedRange?{"content-range":"bytes 0-19999/100000","content-length":"20000"}:{"content-length":"20000"}):{}),
     body:{cancel:async()=>{cancelled++}},
     arrayBuffer:async()=>new ArrayBuffer(20000)};
   },
@@ -128,8 +128,11 @@ test("iPhone DJ loads bounded intro range and refuses a full file response",asyn
  assert.equal(await load("https://example.com/song.mp3","s",deep,0),deep);
  assert.equal(requested.options.headers.Range,"bytes=0-786431");
  assert.equal(decoded,1);
+ exposedRange=false; // Browser CORS hides response Content-Range, but 206 is still valid.
+ assert.equal(await load("https://example.com/song-noexpose.mp3","s3",deep,0),deep);
+ assert.equal(decoded,2);
  mode=200;
  assert.equal(await load("https://example.com/song2.mp3","s2",deep,0),null);
- assert.equal(decoded,1);
+ assert.equal(decoded,2);
  assert.equal(cancelled,1);
 });
