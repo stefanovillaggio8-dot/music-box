@@ -74,3 +74,62 @@ test("new versions preserve user-downloaded MP3 caches",()=>{
  assert.ok(!activation.includes("caches.delete(cacheStreamName"));
  assert.ok(sw.includes("findCachedMusic(event.request.url, profile, true)"));
 });
+
+
+test("Safari seeking interrupts optional DJ work and preserves offline cache",()=>{
+ assert.ok(app.includes('window.MusicBoxMix?.onSeek?.()'));
+ assert.ok(app.includes('const pausaPerSeek = a.seeking ||'));
+ assert.ok(app.includes('if (_vuoleSuonare && a.paused && !a.ended'));
+ assert.ok(app.includes('if (_usaControlliNativiIos() && _vuoleSuonare) return;'));
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.ok(mix.includes('headers:{"Range":"bytes=0-786431"}'));
+ assert.ok(mix.includes("if(response.status!==206"));
+ assert.ok(mix.includes("onSeek:()=>{"));
+});
+test("cached MP3 Range responses reuse one bounded Blob on repeated seeks",async()=>{
+ const code=excerpt(sw,"let _rangeBlobMemo=null;","let _ultimaRivalidazione");
+ const rangeFn=new Function("Response","Date",code+"return rispostaDallaCache;")(Response,Date);
+ let reads=0;
+ const cached={blob:async()=>{reads++;return new Blob([new Uint8Array(1000)],{type:"audio/mpeg"})}};
+ const url="https://raw.githubusercontent.com/example/songs/track-1.mp3";
+ const a=await rangeFn(cached,"bytes=100-199",url);
+ const b=await rangeFn(cached,"bytes=300-399",url);
+ assert.equal(a.status,206);assert.equal(b.status,206);
+ assert.equal(a.headers.get("Content-Range"),"bytes 100-199/1000");
+ assert.equal(b.headers.get("Content-Range"),"bytes 300-399/1000");
+ assert.equal((await a.blob()).size,100);
+ assert.equal(reads,1);
+ const c=await rangeFn(cached,"bytes=0-9",url+"?different=1");
+ assert.equal(c.status,206);assert.equal(reads,2);
+});
+test("iPhone DJ loads bounded intro range and refuses a full file response",async()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const code=excerpt(mix,"async function decodeMobileIntroRange(","async function decode(track,needClip=false)");
+ let requested=null,decoded=0,cancelled=0,mode=206;
+ const runtime={
+  fetch:async(url,options)=>{
+   requested={url,options};
+   return {status:mode,
+    headers:new Headers(mode===206?{"content-range":"bytes 0-19999/100000","content-length":"20000"}:{}),
+    body:{cancel:async()=>{cancelled++}},
+    arrayBuffer:async()=>new ArrayBuffer(20000)};
+  },
+  Offline:class {async decodeAudioData(){decoded++;return {duration:7}}}
+ };
+ const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
+  "const cache=new Map(),mobileIntroClips=new Map();"+
+  "const mobileDJMayWork=()=>true;"+
+  "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
+  "const withValidatedVoice=(v)=>v;"+
+  "const fetch=(...args)=>r.fetch(...args);"+
+  "const window={OfflineAudioContext:r.Offline};";
+ const load=new Function("r",init+code+"return decodeMobileIntroRange;")(runtime);
+ const deep={bpm:120};
+ assert.equal(await load("https://example.com/song.mp3","s",deep,0),deep);
+ assert.equal(requested.options.headers.Range,"bytes=0-786431");
+ assert.equal(decoded,1);
+ mode=200;
+ assert.equal(await load("https://example.com/song2.mp3","s2",deep,0),null);
+ assert.equal(decoded,1);
+ assert.equal(cancelled,1);
+});
