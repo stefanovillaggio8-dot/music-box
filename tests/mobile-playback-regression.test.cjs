@@ -136,3 +136,43 @@ test("iPhone DJ loads bounded intro range and refuses a full file response",asyn
  assert.equal(decoded,2);
  assert.equal(cancelled,1);
 });
+
+
+test("1000 rapid offline iPhone seeks keep valid HTTP 206 ranges and one cached Blob",async()=>{
+ const code=excerpt(sw,"let _rangeBlobMemo=null;","let _ultimaRivalidazione");
+ const rangeFn=new Function("Response","Date",code+"return rispostaDallaCache;")(Response,Date);
+ let reads=0;
+ const cached={blob:async()=>{reads++;return new Blob([new Uint8Array(200000)],{type:"audio/mpeg"})}};
+ const url="https://raw.githubusercontent.com/example/rapid.mp3";
+ for(let i=0;i<1000;i++){
+  const start=(i*1013)%199000,end=Math.min(199999,start+511);
+  const res=await rangeFn(cached,"bytes="+start+"-"+end,url);
+  assert.equal(res.status,206);
+  assert.equal(res.headers.get("Content-Range"),"bytes "+start+"-"+end+"/200000");
+  assert.equal(Number(res.headers.get("Content-Length")),end-start+1);
+ }
+ assert.equal(reads,1,"rapid scrubbing must not re-read a large cached MP3");
+ const impossible=await rangeFn(cached,"bytes=300000-350000",url);
+ assert.equal(impossible.status,416);
+});
+test("iPhone DJ stops an unexpectedly oversized streaming response before decoding",async()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const code=excerpt(mix,"async function decodeMobileIntroRange(","async function decode(track,needClip=false)");
+ let reads=0,cancels=0,decoded=0;
+ const runtime={
+  fetch:async()=>({status:206,headers:new Headers(),
+   body:{getReader:()=>({read:async()=>{reads++;return {done:false,value:new Uint8Array(300000)}},
+    cancel:async()=>{cancels++}})}}),
+  Offline:class {async decodeAudioData(){decoded++;return {duration:10}}}
+ };
+ const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
+  "const cache=new Map(),mobileIntroClips=new Map();"+
+  "const mobileDJMayWork=()=>true;"+
+  "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
+  "const withValidatedVoice=(v)=>v;"+
+  "const fetch=(...args)=>r.fetch(...args);"+
+  "const window={OfflineAudioContext:r.Offline};";
+ const load=new Function("r",init+code+"return decodeMobileIntroRange;")(runtime);
+ assert.equal(await load("https://example.com/oversize.mp3","x",{bpm:120},0),null);
+ assert.equal(reads,3);assert.equal(cancels,1);assert.equal(decoded,0);
+});
