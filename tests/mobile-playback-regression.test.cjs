@@ -325,7 +325,7 @@ test("foreground recovery seeks the HTMLAudioElement and does not autoplay pause
  assert.match(app,/a\.addEventListener\("canplay",\s*\(\) =>/);
  assert.match(app,/const pending=_ripristinoPausaAtteso/);
  assert.match(app,/_memorizzaPausaCorrente\(\);\s*_annullaBloccoRipresaAudio\(\);\s*setPlaybackState\("paused"\)/);
- assert.match(app,/if\(audio\?\.paused&&!_vuoleSuonare\)_riallineaPausaReale\(\)/);
+ assert.match(app,/if\(\(audio\?\.paused&&!_vuoleSuonare\)\|\|_bloccoRipresaAudio\)/);
  assert.match(app,/const sec=Math\.max\(0,Math\.round/);
 });
 
