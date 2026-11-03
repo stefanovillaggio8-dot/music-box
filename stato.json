@@ -2160,13 +2160,13 @@
    },
    "[\"crudelia - inervi\",\"marracash\"]": {
     "v": 1,
-    "s": 178,
+    "s": 198,
     "t": "CRUDELIA - Inervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - inervi\",\"marracash\"]": {
     "v": 1,
-    "s": 178,
+    "s": 198,
     "t": "CRUDELIA - Inervi",
     "a": "Marracash"
    },
@@ -3191,14 +3191,14 @@
     "a": "Ultimo"
    },
    "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
-    "v": 0,
-    "s": 80,
+    "v": 1,
+    "s": 120,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
    "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
-    "v": 0,
-    "s": 80,
+    "v": 1,
+    "s": 120,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
@@ -6611,7 +6611,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 6,
+    "v": 7,
     "s": 87,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -6761,7 +6761,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 5,
+    "v": 6,
     "s": 85,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
