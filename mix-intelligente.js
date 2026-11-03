@@ -3201,7 +3201,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    const app=bridge(),track=app?.allTracks()?.find(t=>t.id===id);
    if(!track)return 0;
    const source=app.mixUrl?.(track)||track.url;
-   const measured=cache.get(String(source));
+   const measured=deepLookup(track)||cache.get(String(source));
    // Skip only verified digital silence; preserve low-volume instruments.
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },

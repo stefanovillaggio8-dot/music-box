@@ -158,3 +158,10 @@ test("Safari previews reuse index features and never run whole-track vocal ML",(
  assert.match(worker,/migrateOfflineSongsAndCleanup\(\)/);
  assert.doesNotMatch(text,/caches\.delete\(/);
 });
+
+test("skipping rapidly never starts stale lyrics searches or skips unmeasured musical intros",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.match(app,/setTimeout\(\(\) => \{ if\(currentId===id&&!document\.hidden\) _completaTestoInAscolto\(t\)/);
+ assert.match(text,/const measured=deepLookup\(track\)\|\|cache\.get\(String\(source\)\)/);
+ assert.match(text,/return Number\.isFinite\(measured\?\.safeIntroAt\)\?clamp/);
+});

@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.567";
+  const APP_VERSION = "6.568";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7312,7 +7312,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       t._mbAudioAvvisato = false;
       t._provatoLocale = false;
       t._mbNormalFallbackTried = false;
-      setTimeout(() => { _completaTestoInAscolto(t).catch(() => {}); }, 1800);
+      setTimeout(() => { if(currentId===id&&!document.hidden) _completaTestoInAscolto(t).catch(() => {}); }, 1800);
       /* Ste: "quando cambia canzone si aggiorna in automatico il testo".
          Prima restavano i testi del brano precedente. */
       try {
