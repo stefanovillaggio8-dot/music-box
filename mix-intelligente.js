@@ -971,9 +971,14 @@ async function decode(track,needClip=false){
     // Analyze singing and speech separately without delaying the native
     // playback or blocking the next-track preload on iPhone.
     const voice=window.MusicBoxVocal;
-    if(!isIOS&&voice?.analyze&&!voiceJobs.has(key)&&!document.hidden){
+    if(!isIOS&&voice?.analyze&&mayScanDesktopVoice(bridge(),track)&&
+       voiceJobs.size===0&&!voiceJobs.has(key)&&!document.hidden){
      let job=null;
-     job=Promise.resolve().then(()=>voice.analyze(decoded,frame))
+     job=Promise.resolve().then(async()=>{
+      await new Promise(resolve=>setTimeout(resolve,4500));
+      if(!enabled||document.hidden||!mayScanDesktopVoice(bridge(),track))return null;
+      return voice.analyze(decoded,frame);
+     })
       .then(v=>{
        if(!v||cache.get(key)!==result)return;
        Object.assign(result,{lastVoiceAt:v.lastVoiceAt,
@@ -1303,9 +1308,59 @@ function verifiedInstrumentalSnap(a,b,dur){
 // A four-second average can claim a strong intro even when its FIRST
 // bars are nearly silent. Such a preview creates the audible hole seen
 // in the 22:30 screen recordings. Certify the point where we actually play.
+
+function musicalIntroEntry(b){
+ const saved=Number.isFinite(b?.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
+ // A measurable driven intro after digital silence deserves an accurate cue.
+ if(!b||!Number.isFinite(b.first)||b.first-saved<=1.3||
+    b.first>12.5||Number(b.introDrive)<.43||
+    Number(b.beatConfidence)<.16||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<b.first-.2)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<b.first-.2))return saved;
+ return clamp(b.first-.12,saved,18);
+}
+// This is a short two-pulse overlap, not a claim of identical full phrases.
+// The incoming music enters under the complete outgoing audio boundary.
+function rhythmicFullTailJoin(a,b,dur){
+ if(isIOS||!a||!b||a.protectedEnding===true||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||a.last<dur-1.6||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.beatConfidence<.16||b.beatConfidence<.16||
+    b.introDrive<.43||
+    !hasReliableHarmony(a.outroFinalNotes)||
+    !hasReliableHarmony(b.introAttackNotes)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=dur-5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=dur-6)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2))return null;
+ const speeds=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale));
+ const ratio=speeds.reduce((best,v)=>Math.abs(Math.log2(v))<
+  Math.abs(Math.log2(best))?v:best);
+ if(!Number.isFinite(ratio)||ratio<.94||ratio>1.06)return null;
+ const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
+ if(!groove||groove.score<.77||
+    !Number.isFinite(notes.focused)||notes.focused<.50||
+    !Number.isFinite(notes.phrase)||notes.phrase<.35)return null;
+ const key=camelotMatch(a,b);
+ if(key.weight>=.14&&key.score<.40)return null;
+ const end=dur-.035,fade=clamp(1.8*60/a.bpm,.62,1.05),begin=end-fade;
+ if(begin<25)return null;
+ const entry=musicalIntroEntry(b);
+ return {kind:"snap",begin,end,fade,entry,
+  tempo:clamp(ratio,.97,1.03),
+  gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+  score:Math.round(notes.focused*100),grooveScore:groove.score,
+  rhythmicUnderlay:true,measuredBeatBridge:true,preserveTail:true,
+  silenceTrim:false,softTailTrim:false,quietCertified:false,
+  trailing:0,safeOutroAt:null,
+  beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?
+   a.beatAnchor:end,nextBeat:Number.isFinite(b.introBeat)?
+   b.introBeat-entry:null};
+}
 function hasImmediateMusicalIntro(b){
  if(!b||(Number.isFinite(b.introDrive)&&b.introDrive<.33))return false;
- const entry=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
+ const entry=musicalIntroEntry(b);
  // A verified digital-silence trim is fine; a quiet atmospheric passage
  // before the first real note must NOT be mistaken for the opening beat.
  if(Number.isFinite(b.first)&&b.first-entry>1.3)return false;
@@ -1327,6 +1382,9 @@ function transition(a,b,actualDuration){
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5||!hasImmediateMusicalIntro(b))return null;
+ const openingEntry=musicalIntroEntry(b);
+ if(openingEntry!==(Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0))
+  b={...b,safeIntroAt:openingEntry};
  const activeBeat=strongInstrumentalBeatBridge(a,b,dur);
  if(activeBeat)return activeBeat;
  const measured=measuredBeatBridge(a,b,dur);
@@ -1600,6 +1658,8 @@ function transition(a,b,actualDuration){
      nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
    }
   }
+  const shortJoin=rhythmicFullTailJoin(a,b,dur);
+  if(shortJoin)return shortJoin;
   return trim?{...common,begin:end,end,fade:0,kind:"cut"}:null;
  }
  const bpm=Number(a.bpm)||120;
@@ -2917,7 +2977,9 @@ async function intelligentShuffle(app,audio,fromId){
     beatCandidates:scored.length,softCandidates:softScored.length,
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rejected,chosen:best.track.id,
-    reason:scored.length?"beat certificato":softScored.length?
+    shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
+    reason:scored.length?(best.cue?.rhythmicUnderlay?
+     "raccordo ritmico breve, finale preservato":"beat certificato"):softScored.length?
      "sfumatura musicale verificata":nearScored.length?
       "ordine per BPM, groove e tonalita":"ordine ritmico prudente (nessun mix forzato)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":

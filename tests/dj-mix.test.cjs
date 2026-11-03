@@ -471,3 +471,38 @@ test("late vocal model result does not forcibly reset an in-progress handoff",()
  assert.ok(source.includes("if(!mixing&&!active&&!mobileActive){"));
  assert.ok(source.includes("if(voiceThreatensPlan(v,currentTrack,nextTrack,plan)&&"));
 });
+
+test("analyzes the real first musical onset instead of a long dead intro",()=>{
+ const code=source.slice(source.indexOf("function musicalIntroEntry("),
+  source.indexOf("function rhythmicFullTailJoin("));
+ const entry=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+code+
+  "return musicalIntroEntry;")();
+ assert.ok(Math.abs(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25})-5.38)<.001);
+ assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.12,beatConfidence:.25}),0);
+ assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25,firstLyricAt:2}),0);
+});
+test("late vocals and protected endings veto the short full-tail beat bridge",()=>{
+ const code=source.slice(source.indexOf("function rhythmicFullTailJoin("),
+  source.indexOf("function hasImmediateMusicalIntro("));
+ const run=new Function("const isIOS=false,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+  "const hasReliableHarmony=a=>Array.isArray(a)&&a.length===12;"+
+  "const grooveAgreement=()=>({score:.82});"+
+  "const similarNotes=()=>({focused:.56,phrase:.42});"+
+  "const camelotMatch=()=>({weight:.1,score:.5});"+
+  "const musicalIntroEntry=()=>0;"+code+"return rhythmicFullTailJoin;")();
+ const notes=Array(12).fill(.10);
+ const a={duration:180,last:179.9,bpm:120,beatConfidence:.23,
+  protectedEnding:false,outroFinalNotes:notes};
+ const b={bpm:122,beatConfidence:.22,introDrive:.8,introAttackNotes:notes};
+ const p=run(a,b,180);
+ assert.equal(p.kind,"snap");assert.ok(p.rhythmicUnderlay);
+ assert.ok(p.end>=179.9&&p.end<=180&&p.fade<=1.05);
+ assert.equal(run({...a,lastLyricAt:178},b,180),null);
+ assert.equal(run({...a,lastVoiceAt:179},b,180),null);
+ assert.equal(run({...a,protectedEnding:true},b,180),null);
+ assert.equal(run(a,{...b,firstVoiceAt:.3},180),null);
+});
+test("optional vocal ML is not started for every shuffled preview",()=>{
+ assert.ok(source.includes("voice?.analyze&&mayScanDesktopVoice(bridge(),track)"));
+ assert.ok(source.includes("voiceJobs.size===0&&!voiceJobs.has(key)"));
+});

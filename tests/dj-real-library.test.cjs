@@ -213,3 +213,22 @@ test("large-library randomized DJ transitions respect real audio boundaries and 
  assert.ok(pairs>30000,"large sample should cover the whole collection");
  assert.ok(plans>0,"must include feasible real audio transitions");
 });
+
+test("real audio index audits one-beat blends without trimming protected endings",()=>{
+ let checked=0,blended=0;
+ const outgoing=tracks.filter((_,i)=>i%14===0).slice(0,90);
+ const incoming=tracks.filter((_,i)=>i%7===0).slice(0,180);
+ for(const a of outgoing)for(const b of incoming){
+  if(a.key===b.key)continue;
+  checked++;
+  const p=engine.transition(a.data,b.data,a.data.duration);
+  if(!p?.rhythmicUnderlay)continue;
+  blended++;
+  assert.ok(p.end>=a.data.duration-.1&&p.end<=a.data.duration);
+  assert.ok(p.fade<=1.05&&a.data.protectedEnding!==true);
+  const guarded={...a.data,lastLyricAt:a.data.duration-.4,lastVoiceAt:a.data.duration-.4};
+  assert.ok(!engine.transition(guarded,b.data,guarded.duration)?.rhythmicUnderlay);
+ }
+ console.info("[DJ REAL RHYTHM BRIDGES]",JSON.stringify({checked,blended}));
+ assert.ok(checked>5000);
+});
