@@ -59,6 +59,46 @@ test("actual precomputed music library: sample real beat/soft/cut decisions and 
  assert.ok(candidateRhythm>0,"Expected at least some physically close BPM candidates");
 });
 
+test("measure WHY the current playlist has zero playable beat candidates",()=>{
+ const targets=["153","170","203","161"];
+ for(const n of targets){
+  const from=tracks.find(x=>x.key==="audio/songs/track-"+n+".mp3");
+  if(!from)continue;
+  const a=from.data,candidates=[];
+  let tested=0,tempo=0,drums=0,harmonic=0,near=0,ready=0;
+  for(const other of tracks){
+   if(other.key===from.key)continue;
+   const b=other.data;
+   if(!engine.hasImmediateMusicalIntro(b))continue;
+   tested++;
+   const ratio=[.5,1,2].map(k=>a.bpm/(b.bpm*k))
+    .reduce((p,q)=>Math.abs(Math.log2(p))<Math.abs(Math.log2(q))?p:q);
+   if(!Number.isFinite(ratio)||ratio<.95||ratio>1.05)continue;
+   tempo++;
+   const g=engine.grooveAgreement(a,b),notes=engine.similarNotes(a,b),
+    key=engine.camelotMatch(a,b);
+   if(g?.score>=.72)drums++;
+   if(notes.focused>=.70&&notes.phrase>=.57)harmonic++;
+   const plausible=g?.score>=.74&&notes.focused>=.71&&
+    notes.phrase>=.60&&(!key.weight||key.weight<.1||key.score>=.55);
+   if(!plausible)continue;
+   near++;
+   if(a.duration-a.last<=1||a.confidentTail)ready++;
+   const score=g.score*.45+notes.focused*.30+notes.phrase*.25;
+   candidates.push({id:other.key,score:+score.toFixed(3),g:+g.score.toFixed(3),
+     f:+notes.focused.toFixed(3),p:+notes.phrase.toFixed(3),
+     align:+Number(notes.alignment?.score||0).toFixed(3),
+     matches:notes.alignment?.matches===true,key:+key.score.toFixed(2),
+     keyWeight:+key.weight.toFixed(2)});
+  }
+  candidates.sort((x,y)=>y.score-x.score);
+  console.info("[DJ VIDEO MATCH COVERAGE]",JSON.stringify({n,
+   duration:a.duration,last:a.last,trailing:a.duration-a.last,
+   confidentTail:a.confidentTail,protectedEnding:a.protectedEnding,
+   tested,tempo,drums,harmonic,near,ready,top:candidates.slice(0,5)}));
+ }
+});
+
 test("audit verified audible beat candidates after the 17:05 regression video",()=>{
  const selected=tracks.filter(x=>/audio\/songs\/track-(153|170|203|161)\.mp3$/.test(x.key));
  const results=[];

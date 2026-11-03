@@ -584,7 +584,7 @@ test("continuity overlay is audible before EOF while preserving outgoing vocal",
  assert.ok(curve(1).outGain<.001&&curve(1).inGain>.99);
 });
 test("the DJ preplans continuity and retries failed desktop previews",()=>{
- assert.ok(source.includes("plan=candidate||continuityFallback(currentAnalysis,nextAnalysis,audio.duration)"));
+ assert.match(source,/plan=candidate\|\|\(currentAnalysis&&nextAnalysis\?/);;
  assert.ok(source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
  assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
 });
