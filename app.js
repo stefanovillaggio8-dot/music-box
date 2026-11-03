@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.597";
+  const APP_VERSION = "6.598";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6790,9 +6790,10 @@ function rebuildAudio(autoplay) {
   ["visibilitychange", "focus", "pageshow"].forEach((ev) => {
     document.addEventListener(ev, _riprendiSeInAttesa);
   });
-  ["pointerdown", "touchstart", "keydown"].forEach((ev) => {
-    window.addEventListener(ev, _riprendiSeInAttesa, { passive: true });
-  });
+  // Do NOT autoplay the OLD song in a global touch/pointer handler.
+  // The same tap is used to select a new song; native Safari would race
+  // two play() calls and often leave both silent at 0:00.
+  // Explicit Play / MediaSession actions still use _riproduciVolontaria().
 
   function _cominciaBranoNuovo() {
     /* sto cambiando brano: azzero il conto delle riprove */
@@ -7567,6 +7568,9 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
+      // Any new song selection wins over the initial page-reload recovery.
+      // Otherwise a pending retry can restart the stale player mid-tap.
+      if (autoplay) _ripresaGiaRiuscita = true;
       try { window.MusicBoxMix?.onTrackChange?.(id); } catch (_) {}
       // I link non sono file audio: non aprire YouTube al posto del player.
       if (t.source==="youtube-link" && t.youtubeId) {
@@ -8077,18 +8081,9 @@ function playNext() {
       }
     };
     setTimeout(prova, 500);
-    /* Appena arriva un tocco riparto sicuramente: il telefono vieta l'avvio
-       da solo, quindi se l'ha vietato aspetto che Ste tocchi qualcosa. */
-    try {
-      ["pointerdown", "touchstart", "keydown"].forEach((ev) => {
-        window.addEventListener(ev, () => {
-          if (currentId && audio && audio.paused && _avevoIntesoDiAscoltare() && !_ripresaGiaRiuscita) {
-            _riproduciVolontaria();
-            _ripresaGiaRiuscita = true;
-          }
-        }, { passive: true });
-      });
-    } catch (e) { /* noop */ }
+    // Do not steal an unrelated touch to resume the previous track.
+    // Automatic restoration keeps its timed retries; a deliberate Play
+    // button or headphone command has its own user-activated path.
   }
 
   function _riproduciVolontaria() {
