@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.572";
+  const APP_VERSION = "6.573";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5312,6 +5312,8 @@ function _eliminatiRimossiDaMandareSvuota() {
     return r;
   }
 
+  // Avoid replacing hundreds of rows when only the playing track changes.
+  let _renderRowsSource=null,_renderRowsSignature="";
   function render() {
     _diag("render");
     const list = visibleTracks();
@@ -5372,6 +5374,8 @@ function _quantiEliminati() {
     aggiornaIndicatoreCondivisione();
 
     if (!list.length) {
+      _renderRowsSource=null;
+      _renderRowsSignature="";
       playlistEl.replaceChildren();
       emptyEl.hidden = false;
 emptyEl.textContent = !total
@@ -5389,6 +5393,26 @@ emptyEl.textContent = !total
     emptyEl.hidden = true;
     avvisaProfiloVuoto();
 
+    // A song skip previously destroyed/recreated every row and lazy image,
+    // causing iPhone flicker and long blank scroll areas.
+    const rowsSignature=profile+"|"+Number(_inSelezione)+"|"+
+      Number(_potenziatiCaricati)+"|"+list.map(t=>[
+        t.id,t.title,t.artist,t.album,t.cover,t.gradient,t.url,t.file,
+        t.review,t._ytStatus,t._ytErrore,t.builtin,t.preview,
+        favorites.has(t.id),_scelti.has(t.id),isCached(t),
+        _branoInGym(t.id)
+      ].join("\u001f")).join("\u001e");
+    if(_renderRowsSource===tracks && _renderRowsSignature===rowsSignature &&
+       playlistEl.childElementCount===list.length){
+      const old=playlistEl.querySelector(".track.active");
+      if(old)old.classList.remove("active");
+      const activeIndex=list.findIndex(t=>t.id===currentId);
+      if(activeIndex>=0)playlistEl.children[activeIndex]?.classList.add("active");
+      renderQueueCount();
+      return;
+    }
+    _renderRowsSource=tracks;
+    _renderRowsSignature=rowsSignature;
     list.forEach((t) => {
       const li = document.createElement("li");
       li.className = "track" + (t.id === currentId ? " active" : "");
@@ -5654,6 +5678,7 @@ li.addEventListener("click", () => {
   }
 
 let _ultimoAudioTracciato = null, _ultimaPosizioneAvanzata = 0;
+let _ultimoAvanzamentoReale=Date.now();
   function _registraAvanzamentoAudio(player) {
     if (player !== audio || !Number.isFinite(player.currentTime)) return false;
     const posizione = player.currentTime;
@@ -5661,12 +5686,14 @@ let _ultimoAudioTracciato = null, _ultimaPosizioneAvanzata = 0;
       _ultimoAudioTracciato = player;
       _ultimaPosizioneAvanzata = posizione;
       _ultimoScorrimento = Date.now();
+      _ultimoAvanzamentoReale=Date.now();
       return true;
     }
     // A repeating timeupdate with an unchanged playhead is NOT playback.
     if (Math.abs(posizione - _ultimaPosizioneAvanzata) < .13) return false;
     _ultimaPosizioneAvanzata = posizione;
     _ultimoScorrimento = Date.now();
+    _ultimoAvanzamentoReale=Date.now();
     _silenziDiFila = 0;
     return true;
   }
@@ -6000,12 +6027,14 @@ a.addEventListener("pause", () => {
       if (a !== audio) return;
       _ultimoSeekUtente=Date.now();
       _ultimoScorrimento=Date.now();
+      _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
       try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
     });
     a.addEventListener("seeked", () => {
       if (a !== audio) return;
       _ultimoScorrimento=Date.now();
+      _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
       if (_staSuonandoOra()) _iniziaAscolto();
       if (_vuoleSuonare && a.paused && !a.ended && !a._mbCambioBrano)
@@ -6043,7 +6072,17 @@ function rebuildAudio(autoplay) {
   _assegnaAudioSorgente(audio,t._mbNormalFallbackTried?
     replacement.replace("/bassi/","/"):replacement);
   _applicaAudio();
-  try { if (time) audio.currentTime = time; } catch (e) { /* noop */ }
+  _ultimoAvanzamentoReale=Date.now();
+  if(time>0){
+    const target=audio, expectedId=currentId;
+    const restore=()=>{
+      if(audio!==target||currentId!==expectedId)return;
+      try {target.currentTime=Math.min(time,Math.max(0,Number(target.duration||time+1)-.5));}
+      catch(_) {}
+    };
+    target.addEventListener("loadedmetadata",restore,{once:true});
+    if(target.readyState>=1)restore();
+  }
   if (autoplay) doPlay();
   }
 
@@ -6303,7 +6342,12 @@ function rebuildAudio(autoplay) {
       /* Il brano e' finito ma l'evento non e' arrivato: lo recupero qui.
          Questo giro ogni 3 secondi SEMPRE, quindi copre anche il caso in cui
          il brano e' finito mentre l'app era in primo piano. */
-      if (audio.ended) { _finitoSenzaAvanti(); return; }
+      // Safari can stall at 4:08/4:09 without ever firing 'ended'.
+      if (audio.ended || (Number.isFinite(audio.duration) &&
+          audio.duration>20 && audio.currentTime>=audio.duration-1.35 &&
+          Date.now()-_ultimoAvanzamentoReale>=6500)) {
+        _finitoSenzaAvanti();return;
+      }
       /* iOS ritarda i timeupdate in background, anche con audio udibile:
          ricreare il player in quel momento fa perdere la sessione media. */
       if (document.hidden) return;
@@ -7310,6 +7354,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      _ultimoAvanzamentoReale=Date.now();
       _casualeModificaUtente = false; // Nuovo brano, nuova scelta intelligente consentita.
       if (_casualeProgrammate.length) {
         if (_casualeProgrammate[0] === id) _casualeProgrammate.shift();
@@ -12335,7 +12380,7 @@ $("fabMenu").addEventListener("click", (e) => {
 
   function renderOfflineRows(rows) {
     const box = $("offlineList");
-    box.innerHTML = "";
+    const fragment=document.createDocumentFragment();
     for (const r of rows) {
       const row = document.createElement("div");
       row.className = "off-row";
@@ -12352,9 +12397,10 @@ $("fabMenu").addEventListener("click", (e) => {
       row.appendChild(name);
       row.appendChild(bar);
       row.appendChild(state);
-      box.appendChild(row);
+      fragment.appendChild(row);
       r.el = { fill, state, bar };
     }
+    box.replaceChildren(fragment);
   }
 
   async function scanOffline() {
@@ -12502,7 +12548,13 @@ $("fabMenu").addEventListener("click", (e) => {
     const abortRequest=()=>requestController.abort();
     if(parentSignal?.aborted)abortRequest();
     parentSignal?.addEventListener("abort",abortRequest,{once:true});
-    const requestTimer=setTimeout(abortRequest,45000);
+    let idleTimer=null;
+    const resetIdle=()=>{
+      clearTimeout(idleTimer);
+      idleTimer=setTimeout(abortRequest,25000);
+    };
+    resetIdle();
+    const hardTimer=setTimeout(abortRequest,5*60*1000);
     row.state = "run";
     row.label = "0%";
     if (row.el) {
@@ -12511,12 +12563,16 @@ $("fabMenu").addEventListener("click", (e) => {
     }
     try {
       const res = await fetch(url, { signal: requestController.signal });
-      if (!res.ok) throw new Error("HTTP " + res.status);
+      // Never store incomplete HTTP 206 byte ranges as offline MP3s.
+      if (!res.ok || res.status!==200)
+        throw new Error("Download completo non disponibile: HTTP "+res.status);
       const contentType=String(res.headers.get("content-type")||"").toLowerCase();
       if(contentType.includes("text/html")||contentType.includes("application/json"))
         throw new Error("Il server ha restituito una pagina invece dell'MP3");
       const total = Number(res.headers.get("content-length") || 0);
       if(total>40*1024*1024)throw new Error("Audio troppo grande per la cache offline");
+      const started=Date.now();
+      let lastPaint=0;
       let blob;
       if (res.body) {
         const reader = res.body.getReader();
@@ -12527,15 +12583,25 @@ $("fabMenu").addEventListener("click", (e) => {
           if (part.done) break;
           chunks.push(part.value);
           got += part.value.byteLength;
-          const pct = total ? Math.min(99, Math.round((got / total) * 100)) : 0;
-          if (row.el) {
-            row.el.fill.style.width = pct + "%";
-            row.el.state.textContent = total ? pct + "%" : fmtBytes(got);
+          if(got>40*1024*1024){
+            await reader.cancel();
+            throw new Error("Audio oltre il limite offline di 40 MB");
+          }
+          resetIdle(); // Slow but progressing downloads keep running.
+          const now=Date.now();
+          const pct=total ? Math.min(99,Math.round((got/total)*100)) : 0;
+          if(row.el && (now-lastPaint>=220 || (total && got>=total))){
+            lastPaint=now;
+            const rate=(got/1048576)/Math.max(.3,(now-started)/1000);
+            row.el.fill.style.width=pct+"%";
+            row.el.state.textContent=(total?pct+"%":fmtBytes(got))+
+              " · "+rate.toFixed(1)+" MB/s";
           }
         }
         blob = new Blob(chunks, { type: res.headers.get("content-type") || "audio/mpeg" });
       } else {
         blob = await res.blob();
+        resetIdle();
       }
       if(blob.size<4096||total&&blob.size<total*.98)
         throw new Error("Download incompleto: non salvo un MP3 danneggiato");
@@ -12557,12 +12623,14 @@ $("fabMenu").addEventListener("click", (e) => {
       }
     } catch (e) {
       if (e && e.name === "AbortError") {
-        row.state = "todo";
-        row.label = "da scaricare";
-        if (row.el) {
-          row.el.fill.style.width = "0%";
-          row.el.state.className = "off-state";
-          row.el.state.textContent = "da scaricare";
+        const voluntary=offlineStopRequested || !!parentSignal?.aborted;
+        row.state=voluntary?"todo":"err";
+        row.label=voluntary?"da scaricare":"connessione lenta: da riprovare";
+        if(!voluntary)row.motivo="Il server non ha inviato nuovi dati per 25 secondi";
+        if(row.el){
+          row.el.fill.style.width="0%";
+          row.el.state.className="off-state"+(voluntary?"":" err");
+          row.el.state.textContent=row.label;
         }
         return;
       }
@@ -12578,7 +12646,8 @@ $("fabMenu").addEventListener("click", (e) => {
         row.el.state.title = row.motivo;
       }
     } finally {
-      clearTimeout(requestTimer);
+      clearTimeout(idleTimer);
+      clearTimeout(hardTimer);
       parentSignal?.removeEventListener("abort",abortRequest);
     }
   }
@@ -13053,7 +13122,6 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
         el.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9.6 16.6 5 12l1.4-1.4 3.2 3.2 8-8L19 7.2l-9.4 9.4Z"/></svg>';
       }
       toast(t.title + " pronta per offline");
-      refreshCachedSongs().catch(() => {});
     } catch (e) {
       if (el) {
         el.classList.remove("run");
@@ -16035,10 +16103,16 @@ for (const p of playlists) {
     try {
       if (_stoRecuperando) return;
       if (!_vuoleSuonare || !currentId || !audio) return;
-      if (!audio.ended) return;
-      /* Non e' davvero finito: siamo ancora agli ultimi secondi */
-      if (isFinite(audio.duration) && audio.duration > 0 &&
-          audio.currentTime < audio.duration - 0.6) return;
+      const duration=Number(audio.duration);
+      const nearEndStall=!document.hidden&&!audio.seeking&&!audio.paused &&
+        Number.isFinite(duration)&&duration>20 &&
+        audio.currentTime>=duration-1.35 &&
+        Date.now()-_ultimoAvanzamentoReale>=6500;
+      if(!audio.ended&&!nearEndStall)return;
+      // The usual ended event is still checked; only a verified frozen
+      // playhead can trigger early at the very end of a track.
+      if(audio.ended&&Number.isFinite(duration)&&duration>0 &&
+          audio.currentTime<duration-0.6)return;
       _stoRecuperando = true;
       try {
         handleEnded();

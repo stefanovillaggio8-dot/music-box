@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6572";
+const CACHE = "spotifynonavraiimieisoldi-v6573";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1233,8 +1233,15 @@ async function findCachedMusic(url, profile, allowLegacyHostLookup = false) {
   const preferred = profile ?
     [cacheBraniName(profile),CACHE_BRANI,cachePrefetchName(profile),
      cacheStreamName(profile),CACHE] : [CACHE_BRANI,CACHE];
-  const existing = new Set(await caches.keys());
-  const keys = preferred.filter(key => existing.has(key));
+  // One cache-name lookup shared by concurrent Safari Range requests.
+  // Cache contents and the user's offline MP3s are never deleted.
+  const now=Date.now();
+  if(!findCachedMusic._names || now-findCachedMusic._names.at>1200){
+    const promise=caches.keys().then(names=>new Set(names)).catch(()=>new Set());
+    findCachedMusic._names={at:now,promise};
+  }
+  const existing=await findCachedMusic._names.promise;
+  const keys=preferred.filter(key=>existing.has(key));
   for (const key of keys) {
     try {
       const cache = await caches.open(key);
@@ -1349,13 +1356,13 @@ async function cachedMusicResponse(event) {
       if (!range && /\/bassi\//.test(event.request.url)) {
         try { event.waitUntil(_rivalidaBrano(event.request.url, profile)); } catch (e) { }
       }
-      return await rispostaDallaCache(gia, range, event.request.url);
+      return await rispostaDallaCache(gia, range, String(profile||"")+"|"+event.request.url);
     } catch (e) { /* se non riesco, vado in rete */ }
   }
   try {
     const response = await fetch(event.request);
     /* Salvo solo risposte complete (200), mai un pezzo audio (206). */
-    if (profile && response && response.status === 200 && !range &&
+    if (profile && event.request.destination === "audio" && response && response.status === 200 && !range &&
         response.type !== "opaque" &&
         !/text\/html|application\/json/i.test(response.headers.get("content-type") || "")) {
       event.waitUntil(
@@ -1367,7 +1374,7 @@ async function cachedMusicResponse(event) {
   } catch (error) {
     // Only when truly offline, search the download's former host address.
     const legacy = await findCachedMusic(event.request.url, profile, true);
-    if (legacy) return await rispostaDallaCache(legacy, range, event.request.url);
+    if (legacy) return await rispostaDallaCache(legacy, range, String(profile||"")+"|"+event.request.url);
     return new Response("Brano non disponibile offline", {
       status: 503,
       headers: { "Content-Type": "text/plain; charset=utf-8" }
