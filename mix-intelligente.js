@@ -2080,6 +2080,31 @@ async function handoff(){
     app.currentId()!==act.fromId||app.mixNext()?.id!==act.track.id){cancel();return}
  const old=act.original,preview=act.upcoming,volume=app.volume();
  act.handingOff=true;
+ // Desktop: hand the already playing, prebuffered audio to Music Box.
+ // Re-loading and seeking that same MP3 is what caused a 1-3s pause.
+ const canAdopt=Boolean(!isIOS&&typeof app.mixAdoptHandoff==="function"&&
+    !preview.paused&&!preview.seeking&&preview.readyState>=2&&
+    Number.isFinite(preview.currentTime)&&preview.currentTime>=act.entry+.10);
+ if(canAdopt){
+  try{
+   const adopted=app.mixAdoptHandoff(act.track.id,preview);
+   if(adopted&&app.currentId()===act.track.id&&app.audio()===preview){
+    active=null;mixing=false;stopSnapPrecision();
+    if(act.timer)clearTimeout(act.timer);
+    try{old.pause()}catch(_){}
+    try{old.removeAttribute("src");old.load()}catch(_){}
+    // No cancel(): that would pause/remove src from the NEW main player.
+    Promise.resolve(adopted).catch(error=>console.warn(
+     "[Music Box DJ] Errore dopo adozione audio",String(error?.message||error)));
+    console.info("[Music Box DJ] Cambio continuo: riutilizzo del lettore gia in riproduzione",
+     {outgoing:act.fromId,incoming:act.track.id,at:preview.currentTime});
+    return;
+   }
+  }catch(error){
+   console.warn("[Music Box DJ] Adozione audio non riuscita",String(error?.message||error));
+  }
+ }
+ // Legacy fallback, if adoption is not possible.
  // Non togliere il lettore già udibile mentre il lettore principale sta
  // ancora facendo fetch, decode e seek del nuovo MP3.
  const timeAtHandoff=Math.max(0,preview.currentTime||act.entry);
@@ -3500,7 +3525,14 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    // Skip only verified digital silence; preserve low-volume instruments.
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
- onSeek:()=>{
+ onSeek:(reason)=>{
+  // Metadata/loading/resync can trigger seeking on the newly selected
+  // song. It is NOT a user's scrub: keep the audible preview alive until
+  // the main audio clock has actually resumed.
+  const target=bridge()?.currentId?.();
+  if(reason!=="user"&&
+    ((active?.handingOff&&active.track.id===target)||
+     (mobileActive?.handingOff&&mobileActive.track.id===target)))return;
   abortObsoleteDJWork();cancel();plan=null;plannedFor="";previousId="";
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
  },

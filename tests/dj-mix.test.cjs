@@ -554,3 +554,73 @@ test("the DJ preplans continuity and retries failed desktop previews",()=>{
  assert.ok(source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
  assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
 });
+
+test("DJ handoff keeps its already playing decoded audio instead of loading same MP3 again",async()=>{
+ const start=source.indexOf("async function handoff(){");
+ const end=source.indexOf("function mixCurve(",start);
+ assert.ok(start>0&&end>start);
+ const old={paused:false,volume:0,pauseCount:0,
+  pause(){this.paused=true;this.pauseCount++},
+  removeAttribute(){this.srcRemoved=true},load(){this.cleared=true}};
+ const live={paused:false,seeking:false,readyState:4,currentTime:3.4,
+  src:"https://example.com/song.mp3"};
+ const act={original:old,fromId:"out",upcoming:live,
+  track:{id:"next"},entry:0,fade:2.55,timer:null};
+ let current="out",main=old,adopted=0,ordinary=0,stoppedPrecision=0;
+ const app={audio:()=>main,currentId:()=>current,
+  mixNext:()=>({id:"next"}),volume:()=>.25,
+  mixAdoptHandoff:(id,elem)=>{
+   adopted++;current=id;main=elem;return Promise.resolve(true);
+  },
+  mixHandoff:()=>{ordinary++;throw new Error("refetch would interrupt audio")}};
+ const harness=new Function("app","act","stopSnapPrecision",
+  "let active=act,mixing=true;const isIOS=false;"+
+  "const window={MusicBoxRoom:{isActive:()=>false}};"+
+  "const bridge=()=>app;const cancel=()=>{throw Error('must not cancel adopted preview')};"+
+  source.slice(start,end)+
+  "return {handoff,state:()=>({active,mixing})};"
+ )(app,act,()=>stoppedPrecision++);
+ await harness.handoff();
+ assert.equal(adopted,1,"adopt preloaded audio instead of downloading again");
+ assert.equal(ordinary,0);
+ assert.equal(main,live,"live, already playing preview must become main audio");
+ assert.equal(live.paused,false,"the audible source must not be paused");
+ assert.equal(live.currentTime,3.4,"no second seek");
+ assert.equal(old.pauseCount,1,"old song should be discarded only after adoption");
+ assert.ok(old.cleared);
+ assert.equal(harness.state().active,null);
+ assert.equal(harness.state().mixing,false);
+ assert.equal(stoppedPrecision,1);
+});
+test("automatic handoff seek does not cancel audible preview; manual seeking does",()=>{
+ const beg=source.indexOf("onSeek:(reason)=>");
+ const end=source.indexOf("onTrackChange:(id)=>",beg);
+ assert.ok(beg>0&&end>beg);
+ const snippet=source.slice(beg,end).trim().replace(/,\s*$/,"");
+ const counters={canceled:0,aborted:0};
+ const active={handingOff:true,track:{id:"next"}};
+ const fn=new Function("counters","active",
+  "const mobileActive=null,bridge=()=>({currentId:()=>\"next\"});"+
+  "let plan={},plannedFor='next',previousId='old';"+
+  "let shuffleGeneration=0,shuffleBusy=true,shuffleRunFor='old';"+
+  "const abortObsoleteDJWork=()=>{counters.aborted++};"+
+  "const cancel=()=>{counters.canceled++};"+
+  "return ({"+snippet+"}).onSeek;"
+ )(counters,active);
+ fn("media");
+ assert.equal(counters.canceled,0);
+ assert.equal(counters.aborted,0);
+ fn("user");
+ assert.equal(counters.canceled,1);
+ assert.equal(counters.aborted,1);
+});
+test("Music Box app hands the prebuffered MP3 to its ordinary player without a fresh source or seek",()=>{
+ const code=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.ok(code.includes("function createAudio(existing = null)"));
+ assert.ok(code.includes("audio = createAudio(liveDjAudio)"));
+ assert.ok(code.includes("if (!_adottaDj) _assegnaAudioSorgente(audio,_url)"));
+ assert.ok(code.includes("if (!_adottaDj && startAt > 0 && Number.isFinite(startAt))"));
+ assert.ok(code.includes("mixAdoptHandoff:(id,liveAudio)=>"));
+ assert.ok(code.includes('window.MusicBoxMix?.onSeek?.("media")'));
+ assert.equal((code.match(/window\.MusicBoxMix\?\.onSeek\?\.\("user"\)/g)||[]).length,2);
+});
