@@ -75,7 +75,9 @@ function rememberMobileClip(key,decoded,info){
  if(!isIOS||!decoded||!info)return;
  try{
   const rate=decoded.sampleRate;
-  const start=Math.max(0,(info.safeIntroAt||0)-.2);
+  // The actual first musical beat can be later than the digital silence.
+  // Keep it within the bounded decoded preview.
+  const start=Math.max(0,musicalIntroEntry(info)-.2);
   const offset=Math.floor(start*rate);
   // Longer bounded preview covers delayed Safari startup.
    const count=Math.min(Math.floor(14*rate),decoded.length-offset);
@@ -2793,7 +2795,10 @@ function tick(){
  const nowUrl=nowTrack&&(app.mixUrl?.(nowTrack)||nowTrack.url);
  const nowInfo=nowTrack&&
   (cache.get(String(nowUrl))||deepLookup(nowTrack));
- if(isIOS&&mobileOverlayEnabled&&plan&&
+ if(isIOS&&mobileOverlayEnabled&&
+    // Don't fetch full previews when the iPhone AudioContext is suspended.
+    // It cannot mix audio in that state, even if native playback is fine.
+    app.mixRunningContext?.()?.state==="running"&&plan&&
     mobileMixAllowed(plan,nowInfo,app.mixLyricCues?.(id)?.last)&&
     mobileClipWindow(audio)&&
     !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
