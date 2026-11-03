@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.593";
+  const APP_VERSION = "6.594";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5712,16 +5712,56 @@ li.addEventListener("click", () => {
     const fallback=state?.id===currentId?Number(state.time)||0:0;
     // If Safari has already reset the element during suspension, don't
     // replace the real position with 0 on a late pause callback.
-    const target=Number.isFinite(real)&&real>.15?real:
-      (Number(existing?.time)||fallback);
+    // If the decoder is still seeking, the 0:00 preview is not the
+    // point the user paused at. Never overwrite a good checkpoint.
+    const gate=_bloccoRipresaAudio;
+    const target=gate?.player===audio&&gate.id===currentId?
+      Number(gate.target):
+      (Number.isFinite(real)&&real>.15?real:
+       (Number(existing?.time)||fallback));
     const time=Math.max(0,Math.round(target*1000)/1000);
     _pausaCheckpoint={id:currentId,time,quando:Date.now()};
     LS.set("mb.pausaPos."+profile,_pausaCheckpoint);
     savePos();
   }
+  // Safari can show 2:05 while its real audio decoder is at 0:00.
+  // Honour the Play gesture, but silence a new decoder until the restored
+  // seek is confirmed. No intro audio behind a stale progress bar.
+  let _bloccoRipresaAudio=null;
+  function _preparaRipresaAudio() {
+    if(!_usaControlliNativiIos()||!audio||!currentId)return false;
+    const checkpoint=_pausaSalvata(),target=Number(checkpoint?.time);
+    if(!checkpoint||!Number.isFinite(target)||target<.1)return false;
+    if(audio.readyState>=2&&!audio.seeking&&
+       Math.abs(Number(audio.currentTime)-target)<.6)return false;
+    if(_bloccoRipresaAudio?.player===audio&&
+       _bloccoRipresaAudio.id===currentId)return true;
+    _bloccoRipresaAudio={player:audio,id:currentId,target,
+      wasMuted:!!audio.muted};
+    try{audio.muted=true}catch(_){}
+    return true;
+  }
+  function _confermaRipresaAudio() {
+    const gate=_bloccoRipresaAudio;
+    if(!gate||gate.player!==audio||gate.id!==currentId)return false;
+    const pos=Number(audio.currentTime);
+    if(audio.readyState<2||audio.seeking||!Number.isFinite(pos)||
+       pos<gate.target-.65||pos>gate.target+12)return false;
+    _bloccoRipresaAudio=null;
+    _ripristinoPausaAtteso=null;
+    try{audio.muted=gate.wasMuted}catch(_){}
+    return true;
+  }
+  function _annullaBloccoRipresaAudio() {
+    const gate=_bloccoRipresaAudio;
+    _bloccoRipresaAudio=null;
+    if(gate?.player){try{gate.player.muted=gate.wasMuted}catch(_){}}
+  }
   let _ripristinoPausaAtteso=null;
   function _riallineaPausaReale() {
-    if(!audio||!currentId||!audio.paused||_vuoleSuonare)return false;
+    if(!audio||!currentId||
+       (!audio.paused&&!_bloccoRipresaAudio)||
+       (_vuoleSuonare&&!_bloccoRipresaAudio))return false;
     const checkpoint=_pausaSalvata();
     if(!checkpoint||audio.readyState<1)return false;
     const duration=Number(audio.duration);
@@ -5806,6 +5846,10 @@ let _ultimoAvanzamentoReale=Date.now();
     return true;
   }
 function handleTime() {
+    if(_bloccoRipresaAudio){
+      if(!_confermaRipresaAudio()&&audio?.readyState>=1)
+        _riallineaPausaReale();
+    }
     /* Segno che l'audio sta DAVVERO scorrendo. Sul telefono con lo schermo
        spento Safari dice "e' partito" ma il brano resta muto e fermo: e'
        successo, e l'app ci credeva e non riprovava piu'. Qui guardo il tempo
@@ -5842,7 +5886,9 @@ function handleMetadata() {
         // not be discarded just because loadedmetadata fired.
       }
     }
-    if(audio?.paused&&!_vuoleSuonare)_riallineaPausaReale();
+    if((audio?.paused&&!_vuoleSuonare)||_bloccoRipresaAudio)
+      _riallineaPausaReale();
+    _confermaRipresaAudio();
     updateProgressUI(audio?Number(audio.currentTime)||0:0,totalDuration());
   }
 
@@ -6131,6 +6177,7 @@ a.addEventListener("pause", () => {
     _notificaStatoNativo(true);
   });
     a.addEventListener("playing", () => {
+      _confermaRipresaAudio();
       /* Un successo effettivo resetta i contatori dei tentativi falliti. */
       if (a !== audio) return;
       const t = current();
@@ -6151,7 +6198,7 @@ a.addEventListener("pause", () => {
       const pending=_ripristinoPausaAtteso;
       if(pending?.player===a&&pending.id===currentId){
         if(Math.abs(Number(a.currentTime)-pending.time)>.65&&
-           pending.retries<1&&!_vuoleSuonare){
+           pending.retries<1&&(!_vuoleSuonare||_bloccoRipresaAudio)){
           pending.retries++;
           pending.when=Date.now();
           try{a.currentTime=pending.time}catch(_){}
@@ -6166,6 +6213,7 @@ a.addEventListener("pause", () => {
         LS.set("mb.pausaPos."+profile,_pausaCheckpoint);
         savePos();
       }
+      _confermaRipresaAudio();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
@@ -6190,7 +6238,9 @@ a.addEventListener("pause", () => {
     a.addEventListener("canplay", () => {
       if(a!==audio)return;
       if(resumeAt>.01)handleMetadata();
-      else if(a.paused&&!_vuoleSuonare)_riallineaPausaReale();
+      else if((a.paused&&!_vuoleSuonare)||_bloccoRipresaAudio)
+        _riallineaPausaReale();
+      _confermaRipresaAudio();
     });
     a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
     a.addEventListener("error", () => { if(a===audio)handleError(); });
@@ -7500,6 +7550,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       currentId = id;
       // An explicit new selection must not inherit the old song's
       // paused playhead (even if the same track is selected again).
+      _annullaBloccoRipresaAudio();
       _pausaCheckpoint=null;
       _ripristinoPausaAtteso=null;
       LS.remove("mb.pausaPos."+profile);
@@ -7891,6 +7942,7 @@ function playNext() {
     // Save on the actual button/headphone command, before iOS suspends
     // pending pause/timeupdate events. 3s periodic saves are not enough.
     _memorizzaPausaCorrente();
+    _annullaBloccoRipresaAudio();
     setPlaybackState("paused");
     _nascondiAiuto();
     syncPlayUI();
@@ -7976,8 +8028,12 @@ function playNext() {
       window.MusicBoxRoom.control("play");return;
     }
     _segna("riproduzione VOLUTARIA");
-    // Restore the real decoder first, while still paused, before play().
-    if(audio?.paused&&!_vuoleSuonare)_riallineaPausaReale();
+    // Preserve iOS's immediate Play gesture, but suppress the stale
+    // decoder's first samples until the saved seek is really in place.
+    if(audio?.paused&&!_vuoleSuonare){
+      _preparaRipresaAudio();
+      _riallineaPausaReale();
+    }
     _pausaEsplicita = false;
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);

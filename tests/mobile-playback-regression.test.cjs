@@ -327,3 +327,67 @@ test("foreground recovery seeks the HTMLAudioElement and does not autoplay pause
  assert.match(app,/if\(audio\?\.paused&&!_vuoleSuonare\)_riallineaPausaReale\(\)/);
  assert.match(app,/const sec=Math\.max\(0,Math\.round/);
 });
+
+test("resume-before-metadata: iOS remains silent until the saved decoder seek",()=>{
+ const code=excerpt(app,"function _pausaSalvata()","function updatePlayerHeight()");
+ const state=new Map([["mb.pausaPos.Ste",{id:"b-track-55",time:125.375}]]);
+ const env={audio:{currentTime:0,paused:true,readyState:0,duration:240,
+  seeking:false,muted:false},state};
+ const run=new Function("e",
+  "let audio=e.audio,currentId='b-track-55',profile='Ste';"+
+  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;"+
+  "const LS={get:(k,d)=>e.state.has(k)?e.state.get(k):d,"+
+   "set:(k,v)=>e.state.set(k,v)};"+
+  "const _usaControlliNativiIos=()=>true;"+
+  "const totalDuration=()=>audio.duration;"+
+  "const updateProgressUI=(t,d)=>{e.display=t};"+
+  "const profileState=()=>({last:currentId,time:125.375});"+
+  "const writeProfileState=()=>{};"+
+  code+
+  "return {gate:_preparaRipresaAudio,seek:_riallineaPausaReale,"+
+   "release:_confermaRipresaAudio,inspect:()=>_bloccoRipresaAudio};"
+ )(env);
+ assert.equal(run.gate(),true);
+ assert.equal(env.audio.muted,true);
+ assert.equal(run.seek(),false,"no metadata: cannot seek yet");
+ env.audio.readyState=2;
+ assert.equal(run.seek(),true);
+ assert.equal(env.audio.currentTime,125.375);
+ assert.equal(run.release(),true);
+ assert.equal(env.audio.muted,false);
+ assert.equal(run.inspect(),null);
+ assert.equal(env.display,125.375);
+});
+test("iPhone pause during delayed decoder restore retains original timestamp",()=>{
+ const code=excerpt(app,"function _pausaSalvata()","function updatePlayerHeight()");
+ const map=new Map([["mb.pausaPos.Ste",{id:"b-track-8",time:62.4}]]);
+ const env={audio:{currentTime:.4,paused:true,readyState:0,
+   seeking:false,muted:false,duration:180},map,writes:[]};
+ const run=new Function("e",
+  "let audio=e.audio,currentId='b-track-8',profile='Ste';"+
+  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;"+
+  "const LS={get:(k,d)=>e.map.has(k)?e.map.get(k):d,"+
+   "set:(k,v)=>e.map.set(k,v)};"+
+  "const _usaControlliNativiIos=()=>true;"+
+  "const totalDuration=()=>audio.duration;"+
+  "const updateProgressUI=()=>{};"+
+  "const profileState=()=>({last:currentId,time:62.4});"+
+  "const writeProfileState=(p,v)=>e.writes.push(v);"+
+  code+
+  "return {start:_preparaRipresaAudio,pause:_memorizzaPausaCorrente,"+
+   "stop:_annullaBloccoRipresaAudio};"
+ )(env);
+ run.start();assert.equal(env.audio.muted,true);
+ run.pause();run.stop();
+ assert.equal(env.audio.muted,false);
+ assert.equal(map.get("mb.pausaPos.Ste").time,62.4);
+ assert.equal(map.get("mb.playback.Ste").time,62.4);
+});
+test("iOS canplay, seeked and changing songs settle outstanding restore",()=>{
+ assert.match(app,/else if\(\(a\.paused&&!_vuoleSuonare\)\|\|_bloccoRipresaAudio\)/);
+ assert.match(app,/a\.addEventListener\("canplay",\s*\(\) =>/);
+ assert.match(app,/if\(audio\.readyState<2\|\|audio\.seeking/);
+ assert.match(app,/_annullaBloccoRipresaAudio\(\);\s*_pausaCheckpoint=null/);
+ assert.match(app,/_memorizzaPausaCorrente\(\);\s*_annullaBloccoRipresaAudio\(\)/);
+ assert.match(app,/_preparaRipresaAudio\(\);\s*_riallineaPausaReale\(\)/);
+});
