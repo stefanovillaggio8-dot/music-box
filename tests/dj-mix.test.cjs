@@ -587,7 +587,7 @@ test("continuity overlay is audible before EOF while preserving outgoing vocal",
  assert.ok(curve(1).outGain<.001&&curve(1).inGain>.99);
 });
 test("the DJ preplans continuity and retries failed desktop previews",()=>{
- assert.match(source,/plan=candidate\|\|\(currentAnalysis&&nextAnalysis\?/);;
+ assert.ok(source.includes("const weakIphoneMatch=isIOS&&candidate&&"));\n assert.ok(source.includes("plan=weakIphoneMatch?null:"));\n assert.ok(source.includes("continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null"));
  assert.ok(source.includes("plan=null;"),"unmeasured outro must not trigger a speculative fade");
  assert.ok(!source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
  assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
