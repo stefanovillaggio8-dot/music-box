@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.591";
+  const APP_VERSION = "6.592";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5964,6 +5964,12 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   // A native pause during iOS hide/show is a system interruption.
   // A deliberate foreground headphone/lockscreen pause still wins.
   let _ultimoSeekUtente = 0;
+  function _pausaDuranteCambioVisibilita(nascosta, nascostaIl, visibileIl, ora) {
+    // An iPhone locked for more than a moment is background audio, not
+    // a fresh system interruption. The headphones may pause it any time.
+    return (nascosta&&nascostaIl>0&&ora-nascostaIl>=0&&ora-nascostaIl<1500)||
+      (!nascosta&&visibileIl>0&&ora-visibileIl>=0&&ora-visibileIl<2000);
+  }
   function _pausaNativaVolontaria(player, pausaSistema) {
     return _usaControlliNativiIos() && !pausaSistema &&
       !player.ended && !player._mbCambioBrano;
@@ -5993,6 +5999,12 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
       _vuoleSuonare=false;
       _segnaIntenzioneSono(false);
       try{a.pause()}catch(e){}
+      return;
+    }
+    // Ignore stale playback events from outstanding autoplay/retry work
+    // after the user explicitly paused via headphones or the lock screen.
+    if(_pausaEsplicita&&!_vuoleSuonare){
+      try{a.pause()}catch(_){}
       return;
     }
     // Qualsiasi browser, non solo il wrapper iOS, deve ricordare che
@@ -6028,7 +6040,8 @@ a.addEventListener("pause", () => {
        nell'istante esatto in cui la riapri. Per questo guardo DUE momenti: da
        quanto e' nascosta e da quanto e' visibile. Prima guardavo solo il primo,
        e percio' funzionava solo se tornavi entro pochi secondi. */
-    const eDelSistema = document.hidden || dalRitorno < 4000 || (daVisibile >= 0 && daVisibile < 2500);
+    const eDelSistema=_pausaDuranteCambioVisibilita(
+      document.hidden,_nascostoIl,_visibileIl,Date.now());
     _segna("evento PAUSE", "del sistema: " + (eDelSistema ? "si" : "NO (lo tratto come tua)" +
       ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
     /* Ferma il contatore PRIMA di ogni eventuale return o ripresa iOS. */
@@ -6038,11 +6051,7 @@ a.addEventListener("pause", () => {
     if (_pausaNativaVolontaria(a,eDelSistema || pausaPerSeek)) {
       /* La pausa delle cuffie non va interpretata come sospensione
          involontaria. I secondi di pausa non sono ascolto. */
-      _vuoleSuonare = false;
-      _segnaIntenzioneSono(false);
-      _silenziDiFila = 0;
-      if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
-      if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
+      _pausaVolontaria();
     }
     if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
       _pausaVolontaria();
@@ -6161,6 +6170,7 @@ function rebuildAudio(autoplay) {
      Happenede soprattutto con lo schermo spento e con il tasto "avanti"
      dalla schermata di blocco, dove il browser blocca play(). */
   async function doPlay(hoGiaRiprovato) {
+    if(_pausaEsplicita&&!_vuoleSuonare)return false;
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())
       return false;
     if (!audio) audio = createAudio();
@@ -6379,6 +6389,7 @@ function rebuildAudio(autoplay) {
        andato avanti. Se la musica e' "partita" ma il tempo resta fermo,
        l'audio e' muto: e li' devo intervenire. */
   let _vuoleSuonare = false;
+  let _pausaEsplicita = false; // Beats every old retry or delayed play event.
   let _ultimoScorrimento = 0;
 
   /* Controllo ogni 3 secondi: la musica deve camminare.
@@ -6430,6 +6441,7 @@ function rebuildAudio(autoplay) {
      Adesso insisto per qualche minuto: e' l'unica cosa che posso fare da
      solo, senza che Ste debba toccare il telefono. */
   function _riprovaPiuTardi() {
+    if(_pausaEsplicita||!_vuoleSuonare)return;
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())return;
     if (_timerRiprove) clearTimeout(_timerRiprove);
     const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
@@ -7448,6 +7460,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
     if (!audio) audio = createAudio();
     if (autoplay) {
       _cominciaBranoNuovo();
+      _pausaEsplicita = false;
       /* sto cambiando brano da solo: da qui la musica DEVE suonare */
       _vuoleSuonare = true;
       _ultimoScorrimento = Date.now();
@@ -7783,6 +7796,7 @@ function playNext() {
     /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
        altrimenti chi aspetta di riavviare la musica mi riaccende. */
     _vuoleSuonare = false;
+    _pausaEsplicita = true;
     _chiudiAscolto(false);
     _segnaIntenzioneSono(false);
     _silenziDiFila = 0;
@@ -7824,11 +7838,11 @@ function playNext() {
     // Una stanza ripristinata ha uno stato cloud: non avviare da soli il
     // vecchio brano personale prima che quel dato venga caricato.
     if(window.MusicBoxRoom?.hasSession?.())return;
-    if (_ripresaGiaRiuscita) return;
+    if (_ripresaGiaRiuscita||_pausaEsplicita) return;
     if (!_avevoIntesoDiAscoltare()) return;
     let tentativi = 0;
     const prova = () => {
-      if (_ripresaGiaRiuscita) return;
+      if (_ripresaGiaRiuscita||_pausaEsplicita) return;
       if (!_avevoIntesoDiAscoltare()) return;
       /* La libreria non e' ancora pronta: non e' un errore, riprovo dopo. */
       if (!currentId || !audio || !tracks.length) {
@@ -7837,12 +7851,21 @@ function playNext() {
       }
       if (!audio.paused) { _ripresaGiaRiuscita = true; return; }
       if (tentativi++ < 20) {
+        const resumeAudio=audio;
         audio.play().then(() => {
+          if(audio!==resumeAudio||_pausaEsplicita||
+             !_avevoIntesoDiAscoltare()){
+            try{resumeAudio.pause()}catch(_){}
+            return;
+          }
           _ripresaGiaRiuscita = true;
           _vuoleSuonare = true;
           syncPlayUI();
           updateMediaSession();
-        }).catch(() => { setTimeout(prova, 1000); });
+        }).catch(() => {
+          if(!_pausaEsplicita&&_avevoIntesoDiAscoltare())
+            setTimeout(prova, 1000);
+        });
       }
     };
     setTimeout(prova, 500);
@@ -7865,6 +7888,7 @@ function playNext() {
       window.MusicBoxRoom.control("play");return;
     }
     _segna("riproduzione VOLUTARIA");
+    _pausaEsplicita = false;
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);
     _ultimoScorrimento = Date.now();
@@ -8059,18 +8083,14 @@ function _aggiornaPosizioneSchermo() {
     /* Tasti del blocco schermo: passano dagli stessi due posti del tasto
        play/pausa dell'app, altrimenti potrebbero dimenticarsi di dire
        "l'utente ha messo pausa" e la musica ripartirebbe da sola. */
-    if (_usaControlliNativiIos()) {
-      /* Rimuovi l'intercettazione JS su Safari: i pulsanti di sistema
-         comandano direttamente l'elemento audio anche in background. */
-      setHandler("play", null);
-      setHandler("pause", null);
-    } else {
-      setHandler("play", () => {
-        if (currentId) _riproduciVolontaria();
-        else if (tracks.length) playById(tracks[0].id);
-      });
-      setHandler("pause", () => { _pausaVolontaria(); });
-    }
+    // Safari can deliver hardware/headset/lockscreen media commands
+    // through MediaSession even while document.hidden. Never unregister
+    // the PAUSE action: it must clear the autorecovery intent.
+    setHandler("play", () => {
+      if(currentId) _riproduciVolontaria();
+      else if(tracks.length) playById(tracks[0].id);
+    });
+    setHandler("pause", () => { _pausaVolontaria(); });
     setHandler("nexttrack", () => playNext());
     setHandler("previoustrack", () => {
       if(window.MusicBoxRoom?.isActive())window.MusicBoxRoom.control("previous");

@@ -179,3 +179,66 @@ test("iPhone DJ stops an unexpectedly oversized streaming response before decodi
  assert.equal(await load("https://example.com/oversize.mp3","x",{bpm:120},0),null);
  assert.equal(reads,3);assert.equal(cancels,1);assert.equal(decoded,0);
 });
+
+test("locked iPhone headphone pause after several seconds is intentional",()=>{
+ const classify=new Function(
+  excerpt(app,"function _pausaDuranteCambioVisibilita(",
+    "function _pausaNativaVolontaria(")+
+  "return _pausaDuranteCambioVisibilita;")();
+ assert.equal(classify(true,1000,0,1650),true,
+  "a simultaneous hide/pause may be system interruption");
+ assert.equal(classify(true,1000,0,5500),false,
+  "headphone pause 4.5s after lock must be deliberate");
+ assert.equal(classify(true,1000,0,45000),false,
+  "headphone pause while long backgrounded must be deliberate");
+ assert.equal(classify(false,1000,30000,30800),true,
+  "iOS foreground transition interruption is still protected");
+ assert.equal(classify(false,1000,30000,35000),false);
+});
+test("iOS MediaSession play/pause handlers must be registered, never null",()=>{
+ const session=excerpt(app,"function updateMediaSession()","function totalDuration()");
+ assert.ok(session.includes('setHandler("pause", () => { _pausaVolontaria(); });'));
+ assert.ok(session.includes('setHandler("play", () => {'));
+ assert.ok(!session.includes('setHandler("pause", null)'));
+ assert.ok(!session.includes('setHandler("play", null)'));
+});
+test("headphone pause cancels all retry work and persists paused intent",()=>{
+ const pauseSource=excerpt(app,"function _pausaVolontaria()",
+  "/* Ste: \"riapro l'app e si ferma la canzone");
+ const observed={paused:false,cancels:0,intent:true,stats:0};
+ const build=new Function("o",
+  "const window={MusicBoxMix:{cancel:()=>o.cancels++}};"+
+  "let _vuoleSuonare=true,_pausaEsplicita=false;"+
+  "let _silenziDiFila=3,_timerRiprove=null,_timerAiuto=null;"+
+  "const audio={pause:()=>{o.paused=true}};"+
+  "const _segna=()=>{},_chiudiAscolto=()=>{o.stats++};"+
+  "const _segnaIntenzioneSono=v=>{o.intent=v};"+
+  "const setPlaybackState=()=>{},_nascondiAiuto=()=>{},"+
+   "syncPlayUI=()=>{},_usaControlliNativiIos=()=>true,"+
+   "updateMediaSession=()=>{};"+
+  pauseSource+
+  "return {pause:_pausaVolontaria,state:()=>({want:_vuoleSuonare,explicit:_pausaEsplicita})};"
+ )(observed);
+ build.pause();
+ assert.equal(observed.paused,true);
+ assert.equal(observed.intent,false);
+ assert.equal(observed.cancels,1);
+ assert.equal(observed.stats,1);
+ assert.deepEqual(build.state(),{want:false,explicit:true});
+});
+test("delayed play, retry and resume cannot resurrect an explicit iPhone pause",()=>{
+ const player=excerpt(app,"function createAudio()","function rebuildAudio(");
+ const recovery=excerpt(app,"function _riprendiDopoRicarica()",
+  "function _riproduciVolontaria()");
+ const retry=excerpt(app,"function _riprovaPiuTardi(",
+  "/* L'intestazione esce");
+ const voluntary=excerpt(app,"function _riproduciVolontaria(",
+  "async function togglePlay()");
+ assert.ok(player.includes('if(_pausaEsplicita&&!_vuoleSuonare){'));
+ assert.ok(player.includes('try{a.pause()}catch(_){}'));
+ assert.ok(recovery.includes('if(audio!==resumeAudio||_pausaEsplicita||'));
+ assert.ok(recovery.includes('!_avevoIntesoDiAscoltare()'));
+ assert.ok(retry.includes('if(_pausaEsplicita||!_vuoleSuonare)return;'));
+ assert.ok(voluntary.includes('_pausaEsplicita = false;'));
+ assert.ok(app.includes('if(_pausaEsplicita&&!_vuoleSuonare)return false;'));
+});
