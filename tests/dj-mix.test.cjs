@@ -141,9 +141,12 @@ function createMobileMixFixture(){
  assert.ok(a>=0&&b>a);
  const block=source.slice(a,b);
  const engine=new Function("schedule",
-  'const isIOS=true,document={hidden:false};let mobileOverlayEnabled=true;'+
+  'const isIOS=true,document={hidden:false};let enabled=true,mobileOverlayEnabled=true;'+
   'const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));'+
-  'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map();\n'+block+
+  'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),cache=new Map();'+
+  'const deepLookup=()=>null;'+
+  source.slice(source.indexOf("function mobileMixAllowed("),
+   source.indexOf("function rememberMobileClip("))+ '\n'+block+
   '\nreturn {startMobileMix,stopMobileMix,handoffMobileMix,finishMobileMix,'+
   'clips:mobileIntroClips,active:()=>mobileActive,'+
   'enabled:v=>mobileOverlayEnabled=v,hidden:v=>document.hidden=v};'
@@ -301,14 +304,18 @@ test("beat phase scheduling is capped to less than one-quarter second",()=>{
  f.engine.stopMobileMix();
 });
 test("iPhone prioritizes the incoming intro before shuffle candidates",()=>{
- const decoding=source.indexOf('decode(next,mobileOverlayEnabled&&!document.hidden)');
+ const decoding=source.indexOf('decode(next,true).catch(()=>{})');
  const shuffle=source.indexOf('maybeReorderShuffle(app,audio,id);');
- assert.ok(decoding>=0&&shuffle>decoding);
+ // The optional MP3 decode now follows queue planning and is gated by
+ // stable Safari buffering rather than racing the very first play().
+ assert.ok(shuffle>=0&&decoding>shuffle);
+ assert.ok(source.includes('mobileMixAllowed(plan,nowInfo'));
+ assert.ok(source.includes('mobileClipWindow(audio)'));
  assert.ok(source.includes('cachedMobileAnalysis(next).then(value=>'));
 });
 test("iPhone readiness indicators distinguish preparing from an unsafe outro",()=>{
  assert.ok(source.includes('function updateMobileStatus()'));
- assert.ok(source.includes("Preparo l'introduzione del prossimo MP3."));
+ assert.ok(source.includes("Intro non ancora preparata: evito di rallentare il brano corrente"));
  assert.ok(source.includes("Finale non sicuro per una sovrapposizione su iPhone"));
 });
 test("Safari can resume an audio context on later user gestures",()=>{

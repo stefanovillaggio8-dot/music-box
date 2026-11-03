@@ -29,7 +29,8 @@ test("index analyzed asynchronously, unindexed songs retain local analysis",()=>
  assert.ok(text.includes('fetch("dj-deep-analysis.json"'));
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
  assert.ok(text.includes('const saved=await savedAnalysis(key)'));
- assert.ok(text.includes('decode(next,mobileOverlayEnabled&&!document.hidden)'));
+ assert.ok(text.includes('decode(next,true).catch(()=>{})'));
+ assert.ok(text.includes('mobileClipWindow(audio)'));
 });
 
 test("deep index voice scan is restricted to active and next tracks",()=>{
@@ -139,7 +140,7 @@ test("iPhone skip aborts stale optional MP3 work but never touches playback or o
  assert.equal(x.status().epoch,1);
  assert.equal(x.status().active,0);
  assert.equal(x.mobileDJMayWork(),false,"skip takes priority over analysis");
- now+=4600;
+ now+=6000;
  assert.equal(x.mobileDJMayWork(),true);
  hidden=true;
  assert.equal(x.mobileDJMayWork(),false);
