@@ -6112,6 +6112,10 @@ function handleMetadata() {
       else if(safe)a.crossOrigin="anonymous";
       else a.removeAttribute("crossorigin");
     }catch(_) {try{a.removeAttribute("crossorigin")}catch(_){}}
+    // Replacing the source on the live player (boost/offline fallback)
+    // can emit a delayed native pause. It is NOT a headphone command.
+    // The real play event clears this guard on successful restart.
+    if(a===audio)a._mbCambioBrano=true;
     a.src=target;
   }
   // A native pause during iOS hide/show is a system interruption.
@@ -6385,7 +6389,11 @@ function rebuildAudio(autoplay) {
       // player here causes another pause/load race and a playback loop.
       if (audio !== requestedAudio || currentId !== requestedId) return false;
       if (nome === "AbortError") {
-        if (_vuoleSuonare && !requestedAudio._mbCambioBrano)
+        // The identity check above already ignores obsolete song changes.
+        // Safari may abort its very FIRST play() while creating the media
+        // pipeline, while _mbCambioBrano is still true. Without this retry
+        // the newly tapped song stays paused forever.
+        if (_vuoleSuonare && requestedAudio.paused && !requestedAudio.ended)
           _riprovaPiuTardi();
         return false;
       }
