@@ -3672,13 +3672,13 @@
    },
    "[\"ily\",\"thasup, coez\"]": {
     "v": 0,
-    "s": 4,
+    "s": 48,
     "t": "ily",
     "a": "thasup, Coez"
    },
    "m:2026-11|[\"ily\",\"thasup, coez\"]": {
     "v": 0,
-    "s": 4,
+    "s": 48,
     "t": "ily",
     "a": "thasup, Coez"
    },
@@ -5903,7 +5903,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 6,
+    "v": 7,
     "s": 87,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -6053,7 +6053,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
-    "v": 5,
+    "v": 6,
     "s": 85,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
@@ -8027,7 +8027,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 7,
+    "v": 6,
     "s": 87,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
@@ -8177,7 +8177,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 6,
+    "v": 5,
     "s": 85,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
@@ -8735,7 +8735,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 6,
+    "v": 5,
     "s": 87,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
@@ -8749,25 +8749,13 @@
    "[\"dimmi che c'è\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'è",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'è\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'è",
-    "a": "thasup"
-   },
-   "[\"mi @mio è f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio è f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio è f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modà\"]": {
@@ -8885,7 +8873,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 5,
+    "v": 4,
     "s": 85,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
@@ -9028,6 +9016,18 @@
     "t": "Voglio di più",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio è f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio è f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio è f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio è f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
     "s": 145,
@@ -9112,18 +9112,6 @@
     "t": "Tutti il resto è noi",
     "a": "nayt, 3D"
    },
-   "[\"passione maledetta\",\"modà\"]": {
-    "v": 0,
-    "s": 103,
-    "t": "Passione maledetta",
-    "a": "Modà"
-   },
-   "m:2026-11|[\"passione maledetta\",\"modà\"]": {
-    "v": 0,
-    "s": 103,
-    "t": "Passione maledetta",
-    "a": "Modà"
-   },
    "[\"torna da me\",\"luchè\"]": {
     "v": 0,
     "s": 94,
@@ -9158,6 +9146,18 @@
     "v": 0,
     "s": 95,
     "t": "Arriverà",
+    "a": "Modà"
+   },
+   "[\"passione maledetta\",\"modà\"]": {
+    "v": 0,
+    "s": 103,
+    "t": "Passione maledetta",
+    "a": "Modà"
+   },
+   "m:2026-11|[\"passione maledetta\",\"modà\"]": {
+    "v": 0,
+    "s": 103,
+    "t": "Passione maledetta",
     "a": "Modà"
    },
    "[\"voodoo\",\"guè\"]": {
