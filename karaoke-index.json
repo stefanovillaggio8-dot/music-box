@@ -54,5 +54,26 @@
     "duration": 191,
     "source": "LRCLIB",
     "indexedAt": "2026-11-03"
+  },
+  "b-track-529": {
+    "lrclibId": 26107449,
+    "synced": true,
+    "duration": 179.608,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-03"
+  },
+  "b-track-530": {
+    "lrclibId": 15494977,
+    "synced": true,
+    "duration": 168,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-03"
+  },
+  "b-track-531": {
+    "lrclibId": 32672064,
+    "synced": true,
+    "duration": 237,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-03"
   }
 }
