@@ -24,7 +24,7 @@ function mobileDJMayWork(){
 // optional Safari overlay can decode a whole MP3 and must NOT run while
 // a freshly selected native song is buffering.
 function mobileClipWindow(audio) {
- if(!audio||audio.paused||document.hidden||audio.readyState<3||
+ if(!audio||audio.paused||audio.seeking||document.hidden||audio.readyState<3||
     !mobileDJMayWork())return false;
  const remaining=audio.duration-audio.currentTime;
  if(!Number.isFinite(remaining)||remaining>75||remaining<6)return false;
@@ -773,6 +773,40 @@ function compatibility(a,b){
  for(let i=0;i<12;i++){dot+=a.chroma[i]*b.chroma[i];aa+=a.chroma[i]**2;bb+=b.chroma[i]**2}
  return dot/Math.sqrt((aa||1)*(bb||1));
 }
+
+ // The index already contains the measurements. On iPhone, load ONLY
+ // an MP3 intro byte range for an optional WebAudio overlap, never a full song.
+ async function decodeMobileIntroRange(source,key,deep,epoch){
+  if(!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
+  const ctrl=new AbortController();djFetchControllers.add(ctrl);
+  const timeout=setTimeout(()=>ctrl.abort(),12000);
+  try{
+   const response=await fetch(source,{
+    mode:"cors",cache:"no-store",signal:ctrl.signal,
+    headers:{"Range":"bytes=0-786431"}
+   });
+   const contentRange=response.headers.get("content-range")||"";
+   if(response.status!==206||!/^bytes\s+0-\d+\/\d+$/i.test(contentRange)){
+    try{await response.body?.cancel()}catch(_){}
+    return null; // Do not download a whole file when Range is unsupported.
+   }
+   if(Number(response.headers.get("content-length")||0)>786432)return null;
+   const bytes=await response.arrayBuffer();
+   if(bytes.byteLength<16384||bytes.byteLength>786432||ctrl.signal.aborted||
+      epoch!==djPlaybackEpoch||document.hidden)return null;
+   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+   if(!Offline)return null;
+   const ctx=new Offline(1,1,44100);
+   // Safari may refuse decoding an incomplete MP3: the native song never stops.
+   const decoded=await ctx.decodeAudioData(bytes.slice(0));
+   if(ctrl.signal.aborted||epoch!==djPlaybackEpoch||document.hidden)return null;
+   rememberMobileClip(key,decoded,deep);
+   if(!mobileIntroClips.has(key))return null;
+   const merged=withValidatedVoice(deep,cache.get(key));
+   cache.set(key,merged);return merged;
+  }catch(_){return null}
+  finally{clearTimeout(timeout);djFetchControllers.delete(ctrl)}
+ }
 async function decode(track,needClip=false){
  if(!enabled||!track)return null;
  const epoch=djPlaybackEpoch;
@@ -780,10 +814,22 @@ async function decode(track,needClip=false){
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
  if(Date.now()<(unavailableAnalysis.get(key)||0))return null;
- // Prefer measured audio features over older local cached estimates.
- // iPhone still decodes real audio for a short native preview if needed.
+ // Never decode a full MP3 or download the giant index just to play an
+ // optional Safari intro. The native song is always highest priority.
+ if(isIOS&&needClip&&!deepIndex)return null;
+ if(isIOS&&!needClip&&bridge()?.audio?.()&&!bridge().audio().paused)
+  return deepLookup(track)||cache.get(key)||null;
  if(!deepIndex)await loadDeepIndex();
  const deep=deepLookup(track);
+ if(isIOS&&needClip){
+  if(!deep)return null;
+  if(mobileIntroClips.has(key))return cache.get(key)||deep;
+  if(pending.has(key))return pending.get(key);
+  const job=(mobileDecodeQueue=mobileDecodeQueue.catch(()=>{}).then(()=>
+    decodeMobileIntroRange(source,key,deep,epoch)));
+  pending.set(key,job);
+  try{return await job}finally{if(pending.get(key)===job)pending.delete(key)}
+ }
  if(deep&&(!needClip||mobileIntroClips.has(key))){
   const current=cache.get(key);
   // A local vocal scan can be valid even when its BPM estimate is stale.
@@ -2340,6 +2386,11 @@ function tick(){
    try{tick()}catch(e){}
   });
  }
+ // Do not run music analysis while iOS is seeking/buffering.
+ if(isIOS&&audio&&(audio.seeking||audio.readyState<3)){
+  if(mobileActive)stopMobileMix();
+  return;
+ }
  if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<26){
   if(active||prepared||mobileFading)cancel();
   if(!audio||audio!==liveOutro?.audio)closeLiveOutro();
@@ -3278,6 +3329,10 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    // Skip only verified digital silence; preserve low-volume instruments.
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
+ onSeek:()=>{
+  abortObsoleteDJWork();cancel();plan=null;plannedFor="";previousId="";
+  shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
+ },
  onTrackChange:(id)=>{
   abortObsoleteDJWork();
   // Immediately invalidate pending shuffle work on EACH song change.
