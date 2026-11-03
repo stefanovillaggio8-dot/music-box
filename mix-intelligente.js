@@ -18,7 +18,45 @@ function abortObsoleteDJWork(){
  djFetchControllers.clear();
 }
 function mobileDJMayWork(){
- return !isIOS||(!document.hidden&&Date.now()-lastDJTrackChange>=4500);
+ return !isIOS||(!document.hidden&&Date.now()-lastDJTrackChange>=5500);
+}
+// The deep DJ index supplies beat/harmonic cues instantly. Preparing an
+// optional Safari overlay can decode a whole MP3 and must NOT run while
+// a freshly selected native song is buffering.
+function mobileClipWindow(audio) {
+ if(!audio||audio.paused||document.hidden||audio.readyState<3||
+    !mobileDJMayWork())return false;
+ const remaining=audio.duration-audio.currentTime;
+ if(!Number.isFinite(remaining)||remaining>75||remaining<6)return false;
+ let ahead=0;
+ try{
+  for(let i=0;i<audio.buffered.length;i++){
+   if(audio.buffered.start(i)<=audio.currentTime+.5&&
+      audio.buffered.end(i)>=audio.currentTime)
+    ahead=Math.max(ahead,audio.buffered.end(i)-audio.currentTime);
+  }
+ }catch(_){}
+ return audio.readyState>=4||ahead>=5;
+}
+// A certified 3-5s blend requires the existing vocal/quiet constraints.
+// A short matched drum junction without vocal proof is only a subdued
+// preview: the native original remains audible to its measured end.
+function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
+    plan.end<=plan.begin)return false;
+ if(plan.kind==="snap"){
+  if(!plan.measuredBeatBridge||plan.fade<.46)return false;
+  if(plan.voiceVerifiedMicroBridge)return true;
+  return plan.fade<=.86&&plan.preserveTail===true&&
+   plan.grooveScore>=.76&&plan.score>=70&&
+   !!ending&&ending.protectedEnding!==true&&
+   (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
+   (!Number.isFinite(ending.lastVoiceAt)||
+     ending.lastVoiceAt<=plan.begin-2.5);
+ }
+ return ["beat","soft","fade","rise"].includes(plan.kind)&&
+  plan.fade>=(plan.kind==="beat"?3.5:2.35)&&
+  plan.quietCertified===true&&Number.isFinite(plan.safeOutroAt);
 }
 function rememberMobileClip(key,decoded,info){
  if(!isIOS||!decoded||!info)return;
@@ -1645,11 +1683,13 @@ function stopMobileMix(fadeSeconds=0){
  release();
 }
 function startMobileMix(song,p,app,old){
- if(!isIOS||!mobileOverlayEnabled||document.hidden||mobileActive||!p||
-    !["beat","snap","soft","fade","rise"].includes(p.kind)||
-    p.fade<(p.kind==="snap"?.46:p.kind==="beat"?3.5:2.35)||
-    (p.kind!=="snap"&&(!p.quietCertified||!Number.isFinite(p.safeOutroAt)||old.currentTime<p.safeOutroAt-.1))||
-    (p.kind==="snap"&&!p.measuredBeatBridge))return false;
+ const current=app?.allTracks?.()?.find(t=>t.id===app.currentId?.());
+ const urlCurrent=current&&(app.mixUrl?.(current)||current.url);
+ const ending=current&&(cache.get(String(urlCurrent))||deepLookup(current));
+ const lastLyricAt=app?.mixLyricCues?.(app.currentId?.())?.last;
+ if(!isIOS||!enabled||!mobileOverlayEnabled||document.hidden||
+    mobileActive||!mobileMixAllowed(p,ending,lastLyricAt)||
+    (p.kind!=="snap"&&old.currentTime<p.safeOutroAt-.1))return false;
  const ctx=app.mixRunningContext?.();
  const url=app.mixUrl?.(song)||song.url;
  const pair=app.currentId()+"|"+song.id;
@@ -1689,7 +1729,11 @@ function startMobileMix(song,p,app,old){
   const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
    Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
-  const target=clamp(app.volume?.()??1,0,1)*(p.kind==="snap"?.84:p.strongBeatBridge?.60:.86);
+  // If the outgoing vocal was not scanned, NEVER duck the old song.
+  // Keep the matched subsecond drum preview quiet instead.
+  const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
+  const target=clamp(app.volume?.()??1,0,1)*
+   (lowPreview?.32:p.kind==="snap"?.84:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
   // to a simple safe linear ramp.
@@ -1725,7 +1769,8 @@ function startMobileMix(song,p,app,old){
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
    handoffAt:0,clipEnd:startedAt+frames/clip.rate-offset,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
-   strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap"};
+   strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
+   vocalSafe:!lowPreview};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   old.addEventListener?.("timeupdate",onProgress);
@@ -2269,7 +2314,7 @@ function tick(){
    }
    mobileActive.lastAudioTime=audio.currentTime;
    mobileActive.lastCtxTime=mobileActive.ctx.currentTime;
-   if(mobileActive.strongBeatBridge||mobileActive.snap){
+   if((mobileActive.strongBeatBridge||mobileActive.snap)&&mobileActive.vocalSafe){
     // Duck the native outgoing beat where supported; Safari may
     // ignore media-element volume, so the incoming gain stays limited.
     const progress=clamp((audio.currentTime-mobileActive.audioStartedAt)/
@@ -2340,15 +2385,9 @@ function tick(){
    cachedMobileAnalysis(now).then(value=>{
     if(value){a=value;update()}
    }).catch(()=>{});
-   // Use the tiny precomputed index first; no full-song decoding while
-   // skipping or during the first part of playback.
-   if(audio.duration-audio.currentTime<=42&&mobileDJMayWork()){
-    decode(next,mobileOverlayEnabled&&!document.hidden)
-     .then(value=>{if(value&&value!==STALE_MOBILE_PREVIEW){b=value;update()}}).catch(()=>{});
-    if(!a)decode(now).then(value=>{
-     if(value&&value!==STALE_MOBILE_PREVIEW){a=value;update()}
-    }).catch(()=>{});
-   }
+   // DO NOT launch full MP3 decoding at song selection time. We obtain
+   // indexed cues without touching the native Safari audio pipeline.
+   // Any optional short overlay is prepared only in the final 75s below.
   }else{
    decode(now).then(value=>{a=value;update()}).catch(()=>{});
    decode(next).then(value=>{b=value;update()}).catch(()=>{});
@@ -2372,9 +2411,15 @@ function tick(){
     mobileDJMayWork());
  if(canReorder&&audio.duration-audio.currentTime>(isIOS?60:25))
   maybeReorderShuffle(app,audio,id);
- if(isIOS&&!document.hidden&&mobileOverlayEnabled&&mobileDJMayWork()&&
-     audio.duration-audio.currentTime<=42&&audio.duration-audio.currentTime>16&&
-     !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
+ // A single late decoded preview is optional. The current song must be
+ // buffering safely and a musically compatible cue must already exist.
+ const nowUrl=nowTrack&&(app.mixUrl?.(nowTrack)||nowTrack.url);
+ const nowInfo=nowTrack&&
+  (cache.get(String(nowUrl))||deepLookup(nowTrack));
+ if(isIOS&&mobileOverlayEnabled&&plan&&
+    mobileMixAllowed(plan,nowInfo,app.mixLyricCues?.(id)?.last)&&
+    mobileClipWindow(audio)&&
+    !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
    decode(next,true).catch(()=>{});
  // A soft transition needs the next MP3 buffered before the fade.
  // A missing/incompatible musical plan must not leave a 3-5s silent tail.
@@ -2479,8 +2524,7 @@ function tick(){
  if(isIOS&&!document.hidden&&!mobileActive&&
     audio.currentTime>=plan.begin&&
     audio.currentTime<plan.end-(plan.kind==="snap"?.22:2.0)&&
-    ["beat","snap","soft","fade","rise"].includes(plan.kind)&&
-    plan.fade>=(plan.kind==="snap"?.46:plan.kind==="beat"?3.5:2.35))
+    mobileMixAllowed(plan,measuredEnding,lastKnownLyric))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
     audio.currentTime<plan.end-(plan.kind==="snap"?.25:.55)){
@@ -2559,10 +2603,10 @@ function updateMobileStatus(){
  else if(!audio||audio.paused)status="Avvia una canzone per preparare il mix.";
  else if(!next)status="Nessun prossimo brano nella coda.";
  else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
- else if(!clip)status="Preparo l'introduzione del prossimo MP3. Se l'analisi non riesce, il brano continuerà normalmente.";
+ else if(!clip)status="Intro non ancora preparata: evito di rallentare il brano corrente; preparo il mix vicino al finale, se sicuro.";
  else if(!plan)status="Intro pronta: controllo note e finale. Se non combaciano, passaggio normale.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
-  status="Beat finale e iniziale misurati: stacco breve pronto su iPhone, se Safari lo consente.";
+  status="Beat compatibili misurati: anteprima ritmica breve e prudente, se Safari la consente.";
  else if(!plan.quietCertified||!["beat","soft","fade","rise"].includes(plan.kind))
   status="Finale non sicuro per una sovrapposizione su iPhone: passaggio normale.";
  else status="Introduzione pronta · "+(plan.kind==="beat"?"mix ritmico":"sfumatura")+
@@ -3076,7 +3120,12 @@ function setMixEnabled(value){
  enabled=requested;
  try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
  if(!enabled){cancel();plannedFor="";plan=null;resetMobileFade()}
- else {previousId="";plannedFor=""}
+ else {
+  previousId="";plannedFor="";
+  // Toggling mix is a real user action, so it can unlock the WebAudio
+  // preview context before Safari rejects autoplay at the outgoing beat.
+  if(isIOS&&mobileOverlayEnabled)bridge()?.mixEnableAudio?.();
+ }
  draw();
  toast(enabled?"Mix intelligente attivato.":"Mix intelligente disattivato.");
 }
@@ -3116,6 +3165,7 @@ function start(){
   mobileOverlayEnabled=!mobileOverlayEnabled;
   try{localStorage.setItem("mb.mixIphone",mobileOverlayEnabled?"on":"off")}catch(e){}
   if(!mobileOverlayEnabled)stopMobileMix();
+  else if(enabled)bridge()?.mixEnableAudio?.();
   draw();
  });
  $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio(verifyRequestedTrackId).catch(()=>{});});
@@ -3147,7 +3197,9 @@ function start(){
  });
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
-window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
+window.MusicBoxMix={isEnabled:()=>enabled,
+ needsAudioContext:()=>enabled&&mobileOverlayEnabled,
+ isAnalyzing:()=>pending.size>0,cancel,
  deepProgress:()=>({analyzed:deepIndex?.analyzed||0,total:deepIndex?.sourceCount||0}),
  diagnostics:()=>{
   const app=bridge(),audio=app?.audio?.(),id=app?.currentId?.(),next=app?.mixNext?.();
