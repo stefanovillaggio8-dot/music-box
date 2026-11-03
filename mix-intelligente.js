@@ -786,9 +786,13 @@ function compatibility(a,b){
     headers:{"Range":"bytes=0-786431"}
    });
    const contentRange=response.headers.get("content-range")||"";
-   if(response.status!==206||!/^bytes\s+0-\d+\/\d+$/i.test(contentRange)){
+   // Cross-origin responses may hide Content-Range unless CORS exposes it.
+   // HTTP 206 confirms the server supplied a partial response; verify its
+   // origin when the header is visible and always enforce the byte cap below.
+   if(response.status!==206||
+      (contentRange&&!/^bytes\s+0-\d+\/\d+$/i.test(contentRange))){
     try{await response.body?.cancel()}catch(_){}
-    return null; // Do not download a whole file when Range is unsupported.
+    return null; // Never accept a full 200 response as a DJ preview.
    }
    if(Number(response.headers.get("content-length")||0)>786432)return null;
    const bytes=await response.arrayBuffer();
