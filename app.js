@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.582";
+  const APP_VERSION = "6.583";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5921,9 +5921,10 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     return _usaControlliNativiIos() && !pausaSistema &&
       !player.ended && !player._mbCambioBrano;
   }
-  function createAudio() {
-    const a = new Audio();
-    a.preload = _usaControlliNativiIos() ? "auto" : "metadata";
+  function createAudio(existing = null) {
+    // Attach normal app events to the DJ's prebuffered, ALREADY PLAYING audio.
+    const a = existing || new Audio();
+    if (!existing) a.preload = _usaControlliNativiIos() ? "auto" : "metadata";
     // Boosted-file failure is handled only by handleError. A second
     // independent error listener used to swap /bassi/ while handleError
     // simultaneously rebuilt the player, interrupting a valid fallback.
@@ -6028,7 +6029,7 @@ a.addEventListener("pause", () => {
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
-      try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
+      try { window.MusicBoxMix?.onSeek?.("media"); } catch (_) {}
     });
     a.addEventListener("seeked", () => {
       if (a !== audio) return;
@@ -7321,7 +7322,7 @@ box.innerHTML = "";
     }, 300000);
   } catch (e) { /* noop */ }
 
-async function playById(id, autoplay = true, startAt = 0) {
+async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
@@ -7402,15 +7403,33 @@ async function playById(id, autoplay = true, startAt = 0) {
       _vuoleSuonare = true;
       _ultimoScorrimento = Date.now();
     }
-    // La pausa generata dal cambio di sorgente non e' una pausa dell'utente.
-    audio._mbCambioBrano = true;
     const _url = _urlDelBrano(t);
+    // The DJ audio is already decoded/playing. Do NOT start it over with
+    // a second HTTP request or seek; adopt it into Music Box directly.
+    const _adottaDj = Boolean(liveDjAudio && !_usaControlliNativiIos() &&
+      !liveDjAudio.paused && !liveDjAudio.seeking &&
+      liveDjAudio.readyState >= 2 && liveDjAudio.currentTime >= 0 &&
+      (() => {
+        try {
+          return new URL(liveDjAudio.currentSrc || liveDjAudio.src, location.href).href ===
+            new URL(_url, location.href).href;
+        } catch (_) { return false; }
+      })());
+    if (_adottaDj) {
+      const previous = audio;
+      audio = createAudio(liveDjAudio);
+      // After swapping the active reference, old pause events are inert.
+      if (previous && previous !== audio) {
+        try { previous.pause(); } catch (_) {}
+      }
+    }
+    audio._mbCambioBrano = !_adottaDj;
     /* Ste: "il boost sembra che non sia cambiato nulla". Metto in traccia
        l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
        potenziato, se c'e' "songs/" e' l'originale. */
     try { _diChe("suono: " + (String(_url).indexOf("/bassi/") >= 0 ? "POTENZIATO" : "originale") + " " + t.id); } catch (e) { }
-    _assegnaAudioSorgente(audio,_url);
-    if (startAt > 0 && Number.isFinite(startAt)) {
+    if (!_adottaDj) _assegnaAudioSorgente(audio,_url);
+    if (!_adottaDj && startAt > 0 && Number.isFinite(startAt)) {
       const target = audio;
       const at = () => {
         if (audio !== target || currentId !== id) return;
@@ -8042,7 +8061,7 @@ function _aggiornaPosizioneSchermo() {
   function seekBy(delta) {
     if (!audio) return;
     _ultimoSeekUtente=Date.now();
-    try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
+    try { window.MusicBoxMix?.onSeek?.("user"); } catch (_) {}
     _chiudiAscolto(false);
     const d = totalDuration();
     const attuale = audio.currentTime || 0;
@@ -11785,6 +11804,19 @@ window.MusicBoxBridge = {
     if(queue[0]===id){queue.shift();persistQueue()}
     return playById(id,true,startAt);
   },
+  mixAdoptHandoff:(id,liveAudio)=>{
+    if(!liveAudio||_usaControlliNativiIos())return null;
+    const t=tracks.find(x=>x.id===id);
+    if(!t||!t.url||liveAudio.paused||liveAudio.seeking||liveAudio.readyState<2)
+      return null;
+    const source=_urlDelBrano(t);
+    try{
+      if(new URL(liveAudio.currentSrc||liveAudio.src,location.href).href!==
+         new URL(source,location.href).href)return null;
+    }catch(_){return null}
+    if(queue[0]===id){queue.shift();persistQueue()}
+    return playById(id,true,liveAudio.currentTime,liveAudio);
+  },
   playCurrent:()=>doPlay(),
   togglePlayback:()=>togglePlay(),
   next:()=>playNext(),
@@ -11980,7 +12012,7 @@ $("btnModalitaGym").addEventListener("click", () => {
     progressBar.classList.remove("scrubbing");
     if (pendingSeek != null && audio) {
       _ultimoSeekUtente=Date.now();
-      try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
+      try { window.MusicBoxMix?.onSeek?.("user"); } catch (_) {}
       _chiudiAscolto(false);
       try { audio.currentTime = pendingSeek; } catch (_) {}
     }

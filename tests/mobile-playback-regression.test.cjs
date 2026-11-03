@@ -84,7 +84,9 @@ test("Safari seeking interrupts optional DJ work and preserves offline cache",()
  const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
  assert.ok(mix.includes('headers:{"Range":"bytes=0-786431"}'));
  assert.ok(mix.includes("if(response.status!==206"));
- assert.ok(mix.includes("onSeek:()=>{"));
+ assert.ok(mix.includes("onSeek:(reason)=>{"));
+ assert.ok(mix.includes('reason!=="user"'));
+ assert.ok(mix.includes("active?.handingOff&&active.track.id===target"));
 });
 test("cached MP3 Range responses reuse one bounded Blob on repeated seeks",async()=>{
  const code=excerpt(sw,"let _rangeBlobMemo=null;","let _ultimaRivalidazione");
