@@ -1259,8 +1259,8 @@
     "a": "Oasis"
    },
    "[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 81,
+    "v": 2,
+    "s": 111,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -2057,8 +2057,8 @@
     "a": "Antonello Venditti"
    },
    "m:2026-11|[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 3,
+    "v": 1,
+    "s": 33,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -3060,13 +3060,13 @@
    },
    "[\"per te che lotto\",\"kid yugi\"]": {
     "v": 0,
-    "s": 38,
+    "s": 88,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"per te che lotto\",\"kid yugi\"]": {
     "v": 0,
-    "s": 38,
+    "s": 88,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
@@ -8002,6 +8002,18 @@
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
+   "[\"terr1\",\"kid yugi, geology\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "Terr1",
+    "a": "Kid Yugi, Geology"
+   },
+   "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "Terr1",
+    "a": "Kid Yugi, Geology"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -8709,18 +8721,6 @@
     "s": 110,
     "t": "LA CITTÃ",
     "a": "MOSTRO"
-   },
-   "[\"terr1\",\"kid yugi, geology\"]": {
-    "v": 0,
-    "s": 72,
-    "t": "Terr1",
-    "a": "Kid Yugi, Geology"
-   },
-   "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
-    "v": 0,
-    "s": 72,
-    "t": "Terr1",
-    "a": "Kid Yugi, Geology"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
