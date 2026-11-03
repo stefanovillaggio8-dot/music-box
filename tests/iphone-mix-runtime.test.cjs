@@ -96,7 +96,8 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
 });
 
 test("iPhone shuffle only promotes tracks its actual mixer can play",()=>{
- assert.ok(source.includes("const mobilePlayable=!isIOS||mobileMixAllowed(cue,old,lastLyric);"));
+ assert.ok(source.includes("const mobilePlayable=!isIOS||"));
+ assert.ok(source.includes("iphoneBeatPairCertified(old,next,cue)"));
  assert.ok(source.includes("const verified=Boolean(mobilePlayable&&cue"));
  assert.ok(source.includes("const safeSoft=Boolean(mobilePlayable&&cue"));
 });
@@ -146,4 +147,43 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
 test("continue button never cancels playback intention while audio already plays",()=>{
  assert.ok(app.includes("if (audio && !audio.paused) { _nascondiAiuto(); return; }"));
  assert.ok(!app.includes("if (audio && !audio.paused) { _vuoleSuonare = false; return; }"));
+});
+
+test("iPhone rejects false beat matches even when BPM is similar",()=>{
+ const verify=new Function(
+  "const similarNotes=(a,b)=>b.notes;"+
+  "const grooveAgreement=(a,b)=>b.drums;"+
+  "const camelotMatch=(a,b)=>b.key;"+
+  excerpt("function iphoneBeatPairCertified(","function mobileMixAllowed(")+
+  "return iphoneBeatPairCertified;"
+ )();
+ const from={bpm:126,beatConfidence:.5};
+ const to={bpm:128,beatConfidence:.55,
+  notes:{matches:true,focused:.86,phrase:.77,
+   alignment:{matches:true,score:.84}},
+  drums:{score:.87,correlation:.74},key:{weight:.2,score:.9}};
+ const cue={kind:"snap",measuredBeatBridge:true};
+ assert.equal(verify(from,to,cue),true);
+ assert.equal(verify(from,{...to,notes:{...to.notes,matches:false}},cue),false);
+ assert.equal(verify(from,{...to,drums:{score:.72,correlation:.44}},cue),false);
+ assert.equal(verify(from,{...to,notes:{...to.notes,alignment:{matches:false}}},cue),false);
+ assert.equal(verify(from,{...to,bpm:142},cue),false);
+ assert.equal(verify(from,null,cue),false);
+ assert.equal(verify(from,to,{kind:"soft"}),true);
+});
+test("Safari handoff verifies native progress and never seeks twice",()=>{
+ const fn=source.slice(source.indexOf("function finishMobileMix("),
+  source.indexOf("function handoffMobileMix("));
+ assert.ok(fn.includes("!act.nativeRepairAttempted"));
+ assert.ok(fn.includes("act.nativeRepairAttempted=true"));
+ assert.ok(fn.includes("audio.currentTime-act.nativeSyncTime>=.15"));
+ assert.ok(fn.includes("Math.abs(heard-audio.currentTime)<=1.5"));
+});
+test("iPhone seeks are not treated as deliberate pauses",()=>{
+ const start=app.indexOf('a.addEventListener("pause", () => {');
+ const stop=app.indexOf('a.addEventListener("playing", () => {',start);
+ const fn=app.slice(start,stop);
+ assert.ok(fn.includes("!eDelSistema && !pausaPerSeek"));
+ assert.ok(fn.includes("_vuoleSuonare&&!a.ended&&pausaPerSeek"));
+ assert.ok(app.includes("if(!a.seeking&&a.readyState>=3)a._mbCambioBrano=false"));
 });

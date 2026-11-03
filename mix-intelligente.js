@@ -43,6 +43,33 @@ function mobileClipWindow(audio) {
 // A certified 3-5s blend requires the existing vocal/quiet constraints.
 // A short matched drum junction without vocal proof is only a subdued
 // preview: the native original remains audible to its measured end.
+// An iPhone beat overlap must match measured DRUMS and CHORDS, not BPM alone.
+function iphoneBeatPairCertified(a,b,cue){
+ if(!cue)return false;
+ const beatLike=cue.kind==="snap"||cue.kind==="beat"||
+  cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
+ if(!beatLike)return true; // neutral quiet fade, not a claimed beat match
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.beatConfidence<.20||b.beatConfidence<.20)return false;
+ const ratios=[.5,1,2].map(k=>a.bpm/(b.bpm*k));
+ const tempo=ratios.reduce((best,r)=>
+  Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
+ if(tempo<.965||tempo>1.035)return false;
+ const harmony=similarNotes(a,b),drums=grooveAgreement(a,b);
+ if(harmony?.matches!==true||!Number.isFinite(harmony.focused)||
+    harmony.focused<.79||!Number.isFinite(harmony.phrase)||
+    harmony.phrase<.68||
+    !(harmony.alignment?.matches===true||
+      (!harmony.alignment&&harmony.focused>=.92&&harmony.phrase>=.86)))
+  return false;
+ if(!drums||drums.score<.82||
+    !Number.isFinite(drums.correlation)||drums.correlation<.64)
+  return false;
+ const key=camelotMatch(a,b);
+ if(key.weight>=.14&&key.score<.54)return false;
+ return true;
+}
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
     plan.end<=plan.begin)return false;
@@ -2138,23 +2165,36 @@ function finishMobileMix(app){
    if(Date.now()>=act.timeoutAt)stopMobileMix();
    return;
   }
-  // A ready audio element can still be stalled on Safari. Do not remove
-  // the audible preview until the native clock demonstrably advances.
+  // A second forced seek before Safari has really decoded the native MP3
+  // caused buffering pauses and rewinds to 0:00. Keep the audible preview
+  // until the new native clock is verified to be moving at the right place.
   if(!audio.paused&&audio.readyState>=2&&!audio.seeking){
    const heard=act.entry+mobilePlayedSeconds(act);
    if(!act.nativeSyncDone){
-    try{
-     if(audio.seekable?.length&&Number.isFinite(heard)&&
-        Math.abs(audio.currentTime-heard)>.45)
-      audio.currentTime=Math.min(heard,Math.max(0,(audio.duration||Infinity)-.5));
-    }catch(e){}
+    const drift=heard-audio.currentTime;
+    if(!Number.isFinite(drift))return;
+    if(Math.abs(drift)>.85){
+     // Correct at most once, and only after the source is seekable and
+     // playable; never seek repeatedly across waiting/timeupdate events.
+     if(!act.nativeRepairAttempted&&audio.readyState>=3&&
+        audio.seekable?.length){
+      act.nativeRepairAttempted=true;
+      try{audio.currentTime=Math.min(heard,
+        Math.max(0,(audio.duration||Infinity)-.5))}catch(_){}
+     }
+     return;
+    }
     act.nativeSyncDone=true;
     act.nativeSyncAt=Date.now();
     act.nativeSyncTime=audio.currentTime;
     return;
    }
-   if(Date.now()-act.nativeSyncAt>=100&&
-      audio.currentTime-act.nativeSyncTime>=.085){
+   if(audio.currentTime<act.nativeSyncTime-.7){
+    act.nativeSyncDone=false;return;
+   }
+   if(Date.now()-act.nativeSyncAt>=250&&
+      audio.currentTime-act.nativeSyncTime>=.15&&
+      Math.abs(heard-audio.currentTime)<=1.5){
     stopMobileMix(.20);
     return;
    }
@@ -2800,8 +2840,13 @@ function tick(){
    const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
    // iPhone uses a single stream: never cut an audible vocal outro
    // merely because the next track matches harmonically.
-   plan=candidate||(currentAnalysis&&nextAnalysis?
-     continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null);
+   const weakIphoneMatch=isIOS&&candidate&&
+     !iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate);
+   // If outro/intro drums or harmonic frames don't agree, preserve the
+   // full original and use native progression instead of a false beat cut.
+   plan=weakIphoneMatch?null:
+     (candidate||(currentAnalysis&&nextAnalysis?
+       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null));
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
@@ -3241,7 +3286,8 @@ async function intelligentShuffle(app,audio,fromId){
   const cue=transition(old,next,audio.duration);
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
-  const mobilePlayable=!isIOS||mobileMixAllowed(cue,old,lastLyric);
+  const mobilePlayable=!isIOS||
+   (mobileMixAllowed(cue,old,lastLyric)&&iphoneBeatPairCertified(old,next,cue));
   // Only a musically verified bridge earns the "beat" tier. A weak
   // rhythmic resemblance must NEVER outrank a safe next song.
   const verified=Boolean(mobilePlayable&&cue&&

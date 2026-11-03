@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.604";
+  const APP_VERSION = "6.605";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6172,8 +6172,8 @@ function handleMetadata() {
     _segnaIntenzioneSono(true);
     _configuraSessioneAudio();
     _segna("brano in riproduzione");
-    // Un play reale conferma che il cambio sorgente e' terminato.
-    a._mbCambioBrano = false;
+    // Safari's "play" event can fire before its first MP3 Range seek.
+    // Clear the source-change guard only after actual "playing".
     syncPlayUI();
     updateMediaSession();
     setPlaybackState("playing");
@@ -6212,10 +6212,14 @@ a.addEventListener("pause", () => {
          involontaria. I secondi di pausa non sono ascolto. */
       _pausaVolontaria();
     }
-    if (a === audio && _vuoleSuonare && !a.ended && !a._mbCambioBrano && !eDelSistema) {
+    if (a === audio && _vuoleSuonare && !a.ended &&
+        !a._mbCambioBrano && !eDelSistema && !pausaPerSeek) {
       _pausaVolontaria();
       return;
     }
+    // A temporary pause during a Safari Range seek is not a user command.
+    if(a===audio&&_vuoleSuonare&&!a.ended&&pausaPerSeek)
+      _riprovaPiuTardi();
     /* Ste: "adesso non si riapre piu' da zero ma si blocca soltanto la canzone".
        Qui c'era una corsa: al ritorno l'app controllava se la musica stesse
        suonando (e in quel momento stava ancora suonando, perche' il telefono
@@ -6236,6 +6240,7 @@ a.addEventListener("pause", () => {
       _confermaRipresaAudio();
       /* Un successo effettivo resetta i contatori dei tentativi falliti. */
       if (a !== audio) return;
+      if(!a.seeking&&a.readyState>=3)a._mbCambioBrano=false;
       const t = current();
       if (t) { t._mbErroriAudio = 0; t._mbAudioMancante = false; t._mbAudioAvvisato = false; }
     });

@@ -235,9 +235,12 @@ test("iPhone preview hands off at the current second, never song start",()=>{
  f.setCurrent("next");f.setNative(nextAudio);
  f.engine.finishMobileMix(f.app);
  assert.ok(nextAudio.currentTime>5.5);
- assert.ok(f.engine.active()); // native loadeddata can still be stalled
- f.engine.active().nativeSyncAt=Date.now()-160;
- nextAudio.currentTime+=.2;
+ assert.ok(f.engine.active()); // seek must settle
+ f.engine.finishMobileMix(f.app); // verify current position
+ assert.ok(f.engine.active()?.nativeSyncDone);
+ f.engine.active().nativeSyncAt=Date.now()-400;
+ nextAudio.currentTime+=.3;
+ f.ctx.currentTime+=.3;
  f.engine.finishMobileMix(f.app);
  assert.equal(f.engine.active(),null);
 });
