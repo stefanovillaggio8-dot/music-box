@@ -1207,8 +1207,8 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 33,
-    "s": 937,
+    "v": 34,
+    "s": 938,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1843,8 +1843,8 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 32,
-    "s": 929,
+    "v": 33,
+    "s": 930,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -7334,7 +7334,7 @@
    },
    "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 117,
+    "s": 118,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -7568,7 +7568,7 @@
    },
    "m:2026-11|[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 112,
+    "s": 113,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -8034,6 +8034,18 @@
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
+   "[\"verdi nei viola\",\"lazza\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
+   "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -8042,7 +8054,7 @@
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 1,
-    "s": 118,
+    "s": 123,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -8276,7 +8288,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 0,
-    "s": 113,
+    "s": 118,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -8741,18 +8753,6 @@
     "s": 110,
     "t": "LA CITTÃ",
     "a": "MOSTRO"
-   },
-   "[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "verdi nei viola",
-    "a": "lazza"
-   },
-   "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "verdi nei viola",
-    "a": "lazza"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
