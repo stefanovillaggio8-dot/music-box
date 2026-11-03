@@ -2131,6 +2131,46 @@ function prepare(song,fromId,app){
  try{upcoming.load()}catch(e){p.failed=true;p.failedAt=Date.now()}
  if(upcoming.readyState>=2)p.ready=true;
 }
+// No verified musical match: use the ALREADY buffered next audio exactly
+// at native EOF. Do not fade out the last kick or download the same MP3
+// again. If prebuffer is absent, let the original ended handler run.
+function naturalEndHandoff(){
+ if(!enabled||isIOS||mixing||active||
+    window.MusicBoxRoom?.isActive())return false;
+ const app=bridge(),old=app?.audio?.(),fromId=app?.currentId?.();
+ const next=app?.mixNext?.(),p=prepared;
+ if(!old?.ended||!fromId||!next||!p||p.fromId!==fromId||
+    p.id!==next.id||!p.ready||p.failed||p.audio?.error||
+    p.audio?.readyState<2)return false;
+ // Detach the preview BEFORE playById/onTrackChange removes prepared
+ // media nodes. The browser's loaded MP3 is the new native player.
+ const incoming=p.audio;
+ prepared=null;
+ (async()=>{
+  try{
+   if(app.currentId?.()!==fromId||app.mixNext?.()?.id!==next.id)return;
+   incoming.volume=clamp(app.volume?.()??1,0,1);
+   await incoming.play();
+   if(app.currentId?.()!==fromId||app.mixNext?.()?.id!==next.id){
+    try{incoming.pause()}catch(_){}
+    return;
+   }
+   const adopted=app.mixAdoptHandoff?.(next.id,incoming);
+   if(!adopted)throw Error("Buffered player could not be adopted");
+   await adopted;
+   console.info("[Music Box DJ] Fine naturale: prossimo MP3 già pronto, nessun beat tagliato",
+    {outgoing:fromId,incoming:next.id});
+  }catch(error){
+   try{incoming.pause()}catch(_){}
+   // Revert to standard native progression if autoplay/adoption fails.
+   if(app.currentId?.()===fromId)
+    Promise.resolve().then(()=>app.mixHandoff(next.id,0))
+     .catch(e=>console.warn("[Music Box DJ] Fine naturale: ripiego fallito",e));
+  }
+ })();
+ return true;
+}
+
 async function handoff(){
  const act=active;if(!act||act.handingOff)return;
  const app=bridge();
@@ -3535,7 +3575,7 @@ function start(){
 }
 window.MusicBoxMix={isEnabled:()=>enabled,
  needsAudioContext:()=>enabled&&mobileOverlayEnabled,
- isAnalyzing:()=>pending.size>0,cancel,
+ isAnalyzing:()=>pending.size>0,cancel,naturalEndHandoff,
  deepProgress:()=>({analyzed:deepIndex?.analyzed||0,total:deepIndex?.sourceCount||0}),
  diagnostics:()=>{
   const app=bridge(),audio=app?.audio?.(),id=app?.currentId?.(),next=app?.mixNext?.();

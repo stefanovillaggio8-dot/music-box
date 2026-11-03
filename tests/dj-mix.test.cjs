@@ -585,8 +585,45 @@ test("continuity overlay is audible before EOF while preserving outgoing vocal",
 });
 test("the DJ preplans continuity and retries failed desktop previews",()=>{
  assert.match(source,/plan=candidate\|\|\(currentAnalysis&&nextAnalysis\?/);;
- assert.ok(source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
+ assert.ok(source.includes("plan=null;"),"unmeasured outro must not trigger a speculative fade");
+ assert.ok(!source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
  assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
+});
+
+
+test("natural EOF switches to the prebuffered MP3 without losing the last beat",async()=>{
+ const begin=source.indexOf("function naturalEndHandoff(");
+ const end=source.indexOf("async function handoff(){",begin);
+ assert.ok(begin>0&&end>begin,"DJ natural-finish bridge missing");
+ let playing=0,adopted=0,fallback=0,current="old";
+ const preview={readyState:4,paused:true,play:async()=>{
+   preview.paused=false;playing++;
+ },pause:()=>{preview.paused=true}};
+ const old={ended:true};
+ const app={audio:()=>old,currentId:()=>current,mixNext:()=>({id:"next"}),
+  volume:()=>.8,mixAdoptHandoff:(id,a)=>{
+   assert.equal(id,"next");assert.equal(a,preview);adopted++;current="next";
+   return Promise.resolve(true);
+  },mixHandoff:()=>{fallback++}};
+ const fixture=new Function("app","preview",
+  "let prepared={id:'next',fromId:'old',audio:preview,ready:true,failed:false};"+
+  "const enabled=true,isIOS=false,mixing=false,active=null,"+
+   "window={MusicBoxRoom:{isActive:()=>false}};"+
+  "const bridge=()=>app,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+  source.slice(begin,end)+
+  "return {run:naturalEndHandoff,prepared:()=>prepared};"
+ )(app,preview);
+ assert.equal(fixture.run(),true);
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(playing,1);assert.equal(adopted,1);assert.equal(fallback,0);
+ assert.equal(fixture.prepared(),null);
+ assert.equal(preview.volume,.8);
+});
+test("native EOF remains available when no next preview is ready",()=>{
+ assert.match(source,/if\\s*\\(window\\.MusicBoxMix\\?\\.naturalEndHandoff\\?\\.\\(\\)\\) return/);
+ assert.match(source,/p\\.audio\\?\\.readyState<2\\)return false/);
+ assert.ok(source.includes("try{incoming.pause()}catch(_){}"));
+ assert.ok(!source.includes("caches.delete("));
 });
 
 test("DJ handoff keeps its already playing decoded audio instead of loading same MP3 again",async()=>{

@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.588";
+  const APP_VERSION = "6.589";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5604,6 +5604,9 @@ li.addEventListener("click", () => {
     if (window.MusicBoxRoom?.isActive()) {
       window.MusicBoxRoom.control("next"); return;
     }
+    // When the next MP3 is already buffered, adopt it at the natural end.
+    // No guessed beat and no early fade; ordinary playback is the fallback.
+    if (window.MusicBoxMix?.naturalEndHandoff?.()) return;
     if (currentId) LS.set("mb.pos." + currentId, 0);
     /* La coda scelta manualmente ha precedenza anche dentro una playlist,
        esattamente come il tasto Avanti e come mostra il pannello Coda. */
