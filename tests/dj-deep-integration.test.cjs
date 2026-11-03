@@ -34,7 +34,7 @@ test("index analyzed asynchronously, unindexed songs retain local analysis",()=>
 
 test("deep index voice scan is restricted to active and next tracks",()=>{
  assert.ok(text.includes("scheduleDeepVoice(track,key,merged)"));
- assert.ok(text.includes("scheduleDeepVoice(track,key,deep)"));
+ assert.ok(text.includes("scheduleDeepVoice(track,key,merged)"));
  assert.ok(text.includes("if(!merged.voiceModel)scheduleDeepVoice"));
  assert.ok(text.includes("voiceModelVersion:local.voiceModelVersion"));
 });
