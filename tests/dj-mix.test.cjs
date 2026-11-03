@@ -163,7 +163,7 @@ function createMobileMixFixture(){
   addEventListener(event,callback){this.handlers[event]=callback},
   removeEventListener(event){delete this.handlers[event]}};
  const song={id:"next",url:"sample.mp3"};
- const plan={kind:"beat",fade:6,entry:0,safeOutroAt:172,end:180,quietCertified:true};
+ const plan={kind:"beat",begin:172,fade:6,entry:0,safeOutroAt:172,end:180,quietCertified:true};
  let id="previous",native=old;const calls=[];
  const app={currentId:()=>id,mixNext:()=>song,mixRunningContext:()=>ctx,
   mixUrl:track=>track.url,volume:()=>.8,audio:()=>native,
