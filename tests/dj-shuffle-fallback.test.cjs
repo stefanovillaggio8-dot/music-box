@@ -55,7 +55,7 @@ const soft=(fade,patch={})=>({
  ...patch
 });
 const beat=(fade,patch={})=>({
- kind:"beat",fade,measuredBeatBridge:true,grooveScore:.84,score:88,
+ kind:"beat",fade,measuredBeatBridge:true,verifiedHarmonicBridge:true,grooveScore:.84,score:88,
  ...patch
 });
 test("selects a certified musical fade instead of a random next song when beat matches are absent",async()=>{

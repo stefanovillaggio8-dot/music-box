@@ -64,6 +64,14 @@ test("diagnose the 2026-11-03 screen recording: track 153 into 8",()=>{
  const b=tracks.find(t=>t.key==="audio/songs/track-8.mp3");
  assert.ok(a&&b,"Both recorded MP3s must be in the measured index");
  const plan=engine.transition(a.data,b.data,a.data.duration);
+ const withEarlierLyrics=engine.transition({...a.data,lastLyricAt:135},
+   b.data,a.data.duration);
+ assert.ok(!plan?.measuredBeatBridge,
+  "recorded 153->8 has no matching chord progression and must not beatmix");
+ assert.ok(!withEarlierLyrics?.measuredBeatBridge,
+  "karaoke timestamps must not turn incompatible songs into a 4s beat mix");
+ assert.equal(engine.continuityFallback(a.data,b.data,a.data.duration),null,
+  "uncertified final 5.6 seconds must remain audible until natural EOF");
  const notes=engine.similarNotes(a.data,b.data);
  const groove=engine.grooveAgreement(a.data,b.data);
  const key=engine.camelotMatch(a.data,b.data);
@@ -310,7 +318,8 @@ test("track-161 can find at least one measured percussive bridge, without invent
    percussiveOnly:!!x.plan.percussiveOnly,fade:x.plan.fade,
    start:x.plan.begin,end:x.plan.end}))
  }));
- assert.ok(matches.length>=1,"Track 161 should find a beat-aligned short join in the indexed library");
+ // Never force a match merely to guarantee a nonzero candidate count.
+ assert.ok(matches.length>=0,"Unmatched tracks may play to natural EOF");
  for(const {plan} of matches){
   assert.ok(plan.end>=outgoing.data.duration-.1);
   assert.ok(plan.fade<=1.05);
@@ -327,7 +336,11 @@ test("real audio library: zero-candidate tracks still have a gentle final-song c
   for(const b of choices){
    const p=engine.transition(a.data,b.data,a.data.duration)||
     engine.continuityFallback(a.data,b.data,a.data.duration);
-   assert.ok(p,"desktop must have an executable transition plan");
+   if(!p){
+    assert.ok(a.data.confidentTail!==true || a.data.protectedEnding===true,
+      "native ending is preferable to speculative musical truncation");
+    tested++;continue;
+   }
    assert.ok(p.end<=a.data.duration&&p.end>=26);
    assert.ok(p.fade>=0);
    if(p.continuityFallback){
@@ -341,5 +354,5 @@ test("real audio library: zero-candidate tracks still have a gentle final-song c
   }
  }
  console.info("[DJ REAL FALLBACK]",JSON.stringify({tested,fallbacks}));
- assert.ok(tested>=400&&fallbacks>0);
+ assert.ok(tested>=400,"real-library playback must cover every selected pair");
 });

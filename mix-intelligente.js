@@ -1163,6 +1163,16 @@ function similarNotes(a,b){
  return {matches,score,focused,phrase,alignment,
   reason:matches?"similar":alignment?"phrase-mismatch":"different"};
 }
+// A low-energy frame is not necessarily the end of the song. The DJ
+// can move its handoff ahead of EOF only when actual DIGITAL silence was
+// measured after the last audible frame, never from 'last' alone.
+function certifiedMixBoundary(a,dur,end){
+ if(!a||!Number.isFinite(dur)||!Number.isFinite(end))return false;
+ if(dur-end<=.72)return true;
+ return a.confidentTail===true&&Number.isFinite(a.last)&&
+  dur-a.last>=1.65&&dur-a.last<=12&&Math.abs(end-a.last)<=.25;
+}
+
 // Permit a rhythmic overlap while the outgoing instrumental beat is
 // still audible. Previously protected loud endings were always rejected,
 // even with matched chords, groove and tempo. Never infer vocal safety
@@ -1178,7 +1188,7 @@ function strongInstrumentalBeatBridge(a,b,dur){
     !(b.introAttackNotes||b.introNotes||b.introChroma))return null;
  if(a.protectedEnding!==true&&a.dropRelease)return null;
  const end=clamp((Number.isFinite(a.last)?a.last:dur)+.06,25,dur-.035);
- if(dur-end>13)return null;
+ if(dur-end>13||!certifiedMixBoundary(a,dur,end))return null;
  const notes=similarNotes(a,b),groove=grooveAgreement(a,b);
  const ratio=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale))
   .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
@@ -1214,6 +1224,7 @@ function strongInstrumentalBeatBridge(a,b,dur){
   softTailTrim:false,quietCertified:scannedVoiceEnd||lyricEndKnown,
   safeOutroAt:begin,trailing:Math.max(0,dur-end),
   strongBeatBridge:true,instrumentalBeatBridge:true,
+  verifiedHarmonicBridge:true,preserveTail:true,
   beatPeriod:60/a.bpm,
   beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
@@ -1231,7 +1242,8 @@ function verifiedInstrumentalSnap(a,b,dur){
     b.introDrive<.43||!hasReliableHarmony(a.outroFinalNotes)||
     !hasReliableHarmony(b.introAttackNotes))return null;
  const end=clamp(a.last+.045,26,dur-.035);
- if(end<26||dur-end>13||a.voiceScannedEnd<end-.75)return null;
+ if(end<26||dur-end>13||!certifiedMixBoundary(a,dur,end)||
+    a.voiceScannedEnd<end-.75)return null;
  if((Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-5)||
     (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-5)||
     (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<1.5)||
@@ -1262,6 +1274,7 @@ function verifiedInstrumentalSnap(a,b,dur){
   score:Math.round((notes.score??notes.focused)*100),
   grooveScore:groove.score,measuredBeatBridge:true,
   voiceVerifiedMicroBridge:true,preserveTail:true,
+  verifiedMicroBeat:clearPhrase||verifiedGroove,
   quietCertified:false,softTailTrim:false,
   silenceTrim:!!(a.confidentTail&&dur-a.last>=1.65),
   trailing:Math.max(0,dur-end),safeOutroAt:null,
@@ -1281,28 +1294,34 @@ function verifiedInstrumentalSnap(a,b,dur){
   const ratio=speeds.reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
   if(!Number.isFinite(ratio)||ratio<.955||ratio>1.045)return null;
   const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
-  // A real end/start can share the same pulse and musical phrase without
-  // having an identical 3-point chord progression. Insist on either
-  // convincing progression OR a particularly strong boundary/phrase match.
-  // A subsecond beat junction needn't have identical chords at three
-  // widely spaced moments; a long overlap still uses the stricter tests
-  // above. Require both credible phrase notes and compatible percussion.
-  const progressionOk=(notes.alignment?.score||0)>=.50;
-  const boundaryOk=notes.focused>=.70&&notes.phrase>=.57&&
-   groove?.score>=.70;
-  if(!groove||groove.score<.64||notes.focused<.66||notes.phrase<.44||
-     (!progressionOk&&!boundaryOk))return null;
+  // A matching BPM or a moderate chord-similarity score is NOT a DJ
+  // match. On the Nov 3 video, 153->8 had the same BPM but conflicting
+  // chords: alignment.matches=false, phrase=.46, groove=.74. Reject it.
   const key=camelotMatch(a,b);
-  if(key.weight>.14&&key.score<.25)return null;
+  const keyCompatible=key.weight<.10||key.score>=.52;
+  const chordSequence=notes.alignment?.matches===true;
+  const staticException=!notes.alignment&&notes.matches===true&&
+   notes.focused>=.91&&notes.phrase>=.87;
+  const longMusicalMatch=Boolean(keyCompatible&&groove?.score>=.80&&
+   notes.matches===true&&notes.focused>=.79&&notes.phrase>=.68&&
+   (chordSequence||staticException));
+  const exceptionallyStrongBoundary=notes.focused>=.92&&
+   notes.phrase>=.87&&groove?.score>=.89;
+  const shortMusicalMatch=Boolean(keyCompatible&&groove?.score>=.83&&
+   notes.focused>=.76&&notes.phrase>=.63&&
+   (notes.matches||chordSequence||exceptionallyStrongBoundary)&&
+   (!notes.alignment||notes.alignment.matches||exceptionallyStrongBoundary));
+  if(!longMusicalMatch&&!shortMusicalMatch)return null;
   const end=clamp((Number.isFinite(a.last)?a.last:dur)+.055,25,dur-.035);
-  if(end<26||dur-end>13||
+  if(end<26||dur-end>13||!certifiedMixBoundary(a,dur,end)||
      (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-7)||
      (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-4.6)||
      (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2.6)||
      (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2.6))return null;
-  const safe=Boolean((Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=end-9)||
+  const voiceProof=Boolean((Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=end-9)||
      (a.voiceModel&&a.voiceScannedEnd>=end-1&&
       (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-6.5)));
+  const safe=voiceProof&&longMusicalMatch;
   const snapFade=clamp(1.22*60/a.bpm,.48,.84);
   const fade=safe?3.95:snapFade,begin=end-fade;
   const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
@@ -1311,7 +1330,8 @@ function verifiedInstrumentalSnap(a,b,dur){
    gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
    score:Math.round((notes.score||notes.focused)*100),
    grooveScore:groove.score,measuredBeatBridge:true,
-   preserveTail:!safe,quietCertified:safe,safeOutroAt:safe?begin:null,
+   preserveTail:true,quietCertified:safe,safeOutroAt:safe?begin:null,
+   verifiedHarmonicBridge:longMusicalMatch,verifiedMicroBeat:shortMusicalMatch,
    silenceTrim:trim,softTailTrim:false,trailing:trim?dur-end:0,
    beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
    nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
@@ -1358,8 +1378,11 @@ function rhythmicFullTailJoin(a,b,dur){
     !Number.isFinite(notes.phrase)||notes.phrase<.35)return null;
  const key=camelotMatch(a,b);
  const percussiveOnly=key.weight>=.14&&key.score<.40;
- if(percussiveOnly&&!(groove.score>=.80&&notes.focused>=.52&&
-   notes.phrase>=.36))return null;
+ if(percussiveOnly&&!(groove.score>=.89&&notes.focused>=.76&&
+   notes.phrase>=.64))return null;
+ if(!notes.matches&&!(groove.score>=.85&&notes.focused>=.72&&
+    notes.phrase>=.60&&(!notes.alignment||notes.alignment.matches||
+      (notes.focused>=.91&&notes.phrase>=.86))))return null;
  const trimmed=Boolean(a.confidentTail===true&&
     dur-a.last>=1.65&&dur-a.last<=12);
  const end=trimmed?Math.min(dur-.035,a.last+.07):dur-.035;
@@ -1383,7 +1406,8 @@ function rhythmicFullTailJoin(a,b,dur){
    gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
    score:Math.round(notes.focused*100),grooveScore:groove.score,
    rhythmicUnderlay:true,percussiveOnly,measuredBeatBridge:true,preserveTail:true,
-   vocalVerifiedBeat:verified,
+   vocalVerifiedBeat:verified,verifiedMicroBeat:true,
+   verifiedHarmonicBridge:verified&&notes.matches===true,
    silenceTrim:trimmed,softTailTrim:false,quietCertified:false,
    trailing:trimmed?dur-end:0,safeOutroAt:null,
    beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
@@ -1397,6 +1421,12 @@ function continuityFallback(a,b,actualDuration){
  if(isIOS||!Number.isFinite(dur)||dur<26||
     a?.durationMismatch===true||
     (Number.isFinite(a?.duration)&&Math.abs(a.duration-dur)>1.5))return null;
+ // An indexed song whose ending is NOT certified silent must keep
+ // playing through its native onended event, rather than fade over an
+ // unrelated intro and silently discard its last notes.
+ if(a&&Number.isFinite(a.duration)&&
+    !(a.confidentTail===true&&Number.isFinite(a.last)&&
+      dur-a.last>=1.65&&dur-a.last<=12))return null;
  const last=Number(a?.last);
  const trimmed=Boolean(a?.confidentTail===true&&Number.isFinite(last)&&
     dur-last>=1.65&&dur-last<=12&&a?.protectedEnding!==true&&
@@ -3042,10 +3072,14 @@ async function intelligentShuffle(app,audio,fromId){
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
   const mobilePlayable=!isIOS||mobileMixAllowed(cue,old,lastLyric);
-  const verified=Boolean(mobilePlayable&&cue&&((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.fade>=.46)||
-    (cue.kind==="beat"&&cue.fade>=2.7))&&
-    (cue.instrumentalBeatBridge||cue.dropReleaseBridge||
-     cue.strongBeatBridge||cue.measuredBeatBridge||cue.grooveScore>=.78));
+  // Only a musically verified bridge earns the "beat" tier. A weak
+  // rhythmic resemblance must NEVER outrank a safe next song.
+  const verified=Boolean(mobilePlayable&&cue&&
+    ((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.verifiedMicroBeat===true&&
+      cue.fade>=.46)||
+     (cue.kind==="beat"&&cue.fade>=2.7&&
+      (cue.verifiedHarmonicBridge===true||cue.dropReleaseBridge===true||
+       cue.instrumentalBeatBridge===true))));
   if(!verified){
    // Only as a SECOND choice: a measured musical decay may permit a
    // short, audible overlap even when no two percussion patterns match.
