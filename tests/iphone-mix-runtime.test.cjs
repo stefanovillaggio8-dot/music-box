@@ -106,3 +106,44 @@ test("DJ index does not compete with native iPhone startup or play while disable
  assert.ok(source.includes("mobileOverlayEnabled=true;\n   try{localStorage.setItem"));
  assert.ok(source.includes("bridge()?.mixEnableAudio?.();"));
 });
+
+test("large Safari DJ index retries after a slow/failed fetch without a reload",async()=>{
+ const begin=source.indexOf("let deepIndex=null,deepIndexPromise=null");
+ const end=source.indexOf("function canSaveAnalysis(",begin);
+ assert.ok(begin>=0&&end>begin);
+ const code=source.slice(begin,end);
+ const clock={now:100000},queued=[];
+ let requests=0;
+ const fetch=async()=>{
+  requests++;
+  if(requests===1)throw Error("slow network");
+  return {ok:true,json:async()=>({version:2,entries:{}})};
+ };
+ const api=new Function("fetch","clock","queued",
+  "const isIOS=true,document={hidden:false};"+
+  "const Date={now:()=>clock.now};"+
+  "const setTimeout=(fn,delay)=>{queued.push({fn,delay});return queued.length};"+
+  "const clearTimeout=()=>{};"+
+  "const AbortController=globalThis.AbortController;"+
+  "let enabled=true,mixing=false,plannedFor='',plan=null,"+
+  "shuffleGeneration=0,shuffleBusy=false,shuffleRunFor='',shuffleRetryAt=0,shuffleAttempts=0;"+
+  "const deepStatus=()=>{};"+
+  code+
+  "return {loadDeepIndex,stat:()=>({retryAfter:deepRetryAfter,loaded:!!deepIndex})};"
+ )(fetch,clock,queued);
+ assert.equal(await api.loadDeepIndex(),null);
+ assert.equal(requests,1);
+ assert.ok(api.stat().retryAfter>clock.now);
+ assert.equal(await api.loadDeepIndex(),null,"do not retry every audio tick");
+ assert.equal(requests,1);
+ clock.now=api.stat().retryAfter+1;
+ assert.equal((await api.loadDeepIndex()).version,2);
+ assert.equal(requests,2);
+ assert.equal(api.stat().loaded,true);
+ assert.equal((await api.loadDeepIndex()).version,2);
+ assert.equal(requests,2,"successful index is reused");
+});
+test("continue button never cancels playback intention while audio already plays",()=>{
+ assert.ok(app.includes("if (audio && !audio.paused) { _nascondiAiuto(); return; }"));
+ assert.ok(!app.includes("if (audio && !audio.paused) { _vuoleSuonare = false; return; }"));
+});

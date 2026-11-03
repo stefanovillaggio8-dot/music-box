@@ -120,7 +120,7 @@ function analysisDatabase(){
 }
 // Deep DJ index measures real MP3 audio in bounded cloud batches.
 // New or offline songs still fall back to local waveform analysis.
-let deepIndex=null,deepIndexPromise=null;
+let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;
 function deepLookup(track){
  if(!deepIndex||!track)return null;
  const raw=String(track.file||track.url||"");
@@ -157,30 +157,60 @@ function deepStatus(){
    "Audio reale analizzato: "+count+"/"+total+" brani. I nuovi MP3 vengono elaborati progressivamente; gli altri usano il controllo locale.":
    "Indice audio avanzato in preparazione. Intanto Music Box analizza localmente le transizioni.";
 }
+// A large real-audio index must survive slow Safari connections and retry
+// independently of the native HTML audio player's buffering.
+function scheduleDeepIndexRetry(delay){
+ if(deepRetryTimer!==null)return;
+ deepRetryTimer=setTimeout(()=>{
+  deepRetryTimer=null;
+  if(!enabled)return;
+  if(document.hidden){scheduleDeepIndexRetry(15000);return}
+  loadDeepIndex().catch(()=>{});
+ },Math.max(1000,delay));
+}
 function loadDeepIndex(force=false){
- if(force)deepIndexPromise=null;
  if(deepIndexPromise)return deepIndexPromise;
- deepIndexPromise=(async()=>{
-  const ctrl=new AbortController(),timeout=setTimeout(()=>ctrl.abort(),6000);
+ if(deepIndex&&!force)return Promise.resolve(deepIndex);
+ if(!force&&Date.now()<deepRetryAfter)return Promise.resolve(deepIndex);
+ const job=(async()=>{
+  // The index is several megabytes: six seconds is not enough on mobile.
+  // Revalidate cached metadata, rather than forcing another complete
+  // download every fifteen minutes when nothing changed.
+  const ctrl=new AbortController();
+  const timeout=setTimeout(()=>ctrl.abort(),isIOS?25000:14000);
   try{
-   const resp=await fetch("dj-deep-analysis.json",{cache:"no-store",signal:ctrl.signal});
+   const resp=await fetch("dj-deep-analysis.json",{
+    cache:"no-cache",signal:ctrl.signal
+   });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
    const json=await resp.json();
-   if(![1,2].includes(json?.version)||!json.entries||typeof json.entries!=="object")
+   if(![1,2].includes(json?.version)||!json.entries||
+      typeof json.entries!=="object")
     throw Error("Schema DJ non valido");
    deepIndex=json;
+   deepLoadFailures=0;deepRetryAfter=0;
+   if(deepRetryTimer!==null){
+    clearTimeout(deepRetryTimer);deepRetryTimer=null;
+   }
    if(enabled&&!mixing){
-    // A late deep index invalidates searches that saw only partial audio
-    // metadata. Do not leave the exhausted attempt counter in place.
+    // A late index must reopen a search that previously had no candidates.
     plannedFor="";plan=null;
     shuffleGeneration++;shuffleBusy=false;
     shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;
    }
-  }catch(e){/* Keep the last successfully loaded index when offline. */}
-  finally{clearTimeout(timeout);deepStatus()}
+  }catch(error){
+   deepLoadFailures++;
+   const delay=Math.min(120000,15000*Math.pow(2,
+    Math.min(3,deepLoadFailures-1)));
+   deepRetryAfter=Date.now()+delay;
+   if(!deepIndex&&enabled)scheduleDeepIndexRetry(delay+250);
+  }finally{clearTimeout(timeout);deepStatus()}
   return deepIndex;
  })();
- return deepIndexPromise;
+ deepIndexPromise=job;
+ job.finally(()=>{if(deepIndexPromise===job)deepIndexPromise=null})
+    .catch(()=>{});
+ return job;
 }
 
 function canSaveAnalysis(source){

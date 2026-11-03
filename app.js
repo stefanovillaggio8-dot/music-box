@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.602";
+  const APP_VERSION = "6.603";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6451,7 +6451,7 @@ function rebuildAudio(autoplay) {
              tocco e' un "permesso" dell'utente, quindi stavolta l'iPhone
              lascia passare play(). */
           _vuoleSuonare = true;
-          if (audio && !audio.paused) { _vuoleSuonare = false; return; }
+          if (audio && !audio.paused) { _nascondiAiuto(); return; }
           doPlay().then((va) => { if (va) _nascondiAiuto(); });
         });
       }
