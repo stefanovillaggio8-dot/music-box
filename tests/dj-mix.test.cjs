@@ -620,8 +620,9 @@ test("natural EOF switches to the prebuffered MP3 without losing the last beat",
  assert.equal(preview.volume,.8);
 });
 test("native EOF remains available when no next preview is ready",()=>{
- assert.match(source,/if\\s*\\(window\\.MusicBoxMix\\?\\.naturalEndHandoff\\?\\.\\(\\)\\) return/);
- assert.match(source,/p\\.audio\\?\\.readyState<2\\)return false/);
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.ok(app.includes("if (window.MusicBoxMix?.naturalEndHandoff?.()) return;"));
+ assert.ok(source.includes("p.audio?.readyState<2)return false"));
  assert.ok(source.includes("try{incoming.pause()}catch(_){}"));
  assert.ok(!source.includes("caches.delete("));
 });
