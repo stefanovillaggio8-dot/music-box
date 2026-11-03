@@ -1074,7 +1074,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 38,
-    "s": 982,
+    "s": 1002,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1151,8 +1151,8 @@
     "a": ""
    },
    "[\"middle of the night (dom livez remix)\",\"elley duhe\"]": {
-    "v": 4,
-    "s": 121,
+    "v": 5,
+    "s": 130,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
    },
@@ -1698,7 +1698,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 37,
-    "s": 974,
+    "s": 994,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2159,14 +2159,14 @@
     "a": "nayt"
    },
    "[\"crudelia - inervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 108,
+    "v": 1,
+    "s": 109,
     "t": "CRUDELIA - Inervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - inervi\",\"marracash\"]": {
-    "v": 0,
-    "s": 108,
+    "v": 1,
+    "s": 109,
     "t": "CRUDELIA - Inervi",
     "a": "Marracash"
    },
@@ -3281,14 +3281,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"striscia\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 14,
+    "v": 1,
+    "s": 23,
     "t": "Striscia",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"striscia\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 14,
+    "v": 1,
+    "s": 23,
     "t": "Striscia",
     "a": "TonyPitony"
    },
@@ -3701,8 +3701,8 @@
     "a": "Evanescence"
    },
    "m:2026-11|[\"middle of the night (dom livez remix)\",\"elley duhe\"]": {
-    "v": 4,
-    "s": 120,
+    "v": 5,
+    "s": 129,
     "t": "Middle of the Night (Dom Livez Remix)",
     "a": "Elley Duhe"
    },
@@ -8027,7 +8027,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 6,
+    "v": 7,
     "s": 87,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
@@ -8177,7 +8177,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirÃ²\",\"andrea bocelli\"]": {
-    "v": 5,
+    "v": 6,
     "s": 85,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
@@ -8735,7 +8735,7 @@
     "a": "MOSTRO"
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 7,
+    "v": 6,
     "s": 87,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
@@ -8885,7 +8885,7 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 6,
+    "v": 5,
     "s": 85,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
