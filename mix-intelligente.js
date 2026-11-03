@@ -2034,6 +2034,21 @@ function startMobileMix(song,p,app,old){
     gain.gain.setValueCurveAtTime(shape,startedAt,ramp);
    }catch(e){gain.gain.linearRampToValueAtTime(target,startedAt+ramp)}
   }else gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
+  // Make the measured BPM adjustment actually audible on iPhone.
+  // The last beat of the preview is always back to original speed,
+  // so the native handoff has no permanent pitch/rate discontinuity.
+  let rateSpeed=1,rateRamp=0;
+  const rate=source.playbackRate;
+  if(rate&&typeof rate.setValueAtTime==="function"&&
+     typeof rate.linearRampToValueAtTime==="function"){
+   const requested=clamp(Number(p.tempo)||1,.97,1.03);
+   if(Math.abs(requested-1)>.002){
+    rateSpeed=requested;
+    rateRamp=clamp(secondsLeft*.60,.45,2.6);
+    rate.setValueAtTime(requested,startedAt);
+    rate.linearRampToValueAtTime(1,startedAt+rateRamp);
+   }
+  }
   source.start(startedAt,offset);
   const onPause=()=>{
    if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
@@ -2051,7 +2066,8 @@ function startMobileMix(song,p,app,old){
   mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
-   handoffAt:0,clipEnd:startedAt+frames/clip.rate-offset,
+   handoffAt:0,rateSpeed,rateRamp,
+   clipEnd:startedAt+frames/clip.rate-offset-(rateSpeed-1)*rateRamp/2,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
    strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
    vocalSafe:!lowPreview};
@@ -2073,6 +2089,17 @@ function startMobileMix(song,p,app,old){
   return false;
  }
 }
+// Convert the WebAudio wall-clock to actual MP3 playhead seconds.
+// During a small BPM match the preview starts at up to +/-3% speed and
+// returns smoothly to 1x before the native iPhone player takes over.
+function mobilePlayedSeconds(act){
+ const elapsed=Math.max(0,act.ctx.currentTime-act.started);
+ const speed=Number(act.rateSpeed)||1,ramp=Number(act.rateRamp)||0;
+ if(ramp<=0||speed===1)return elapsed;
+ if(elapsed<=ramp)return speed*elapsed+
+  (1-speed)*elapsed*elapsed/(2*ramp);
+ return elapsed+(speed-1)*ramp/2;
+}
 function finishMobileMix(app){
   const act=mobileActive;
   if(!act||!act.handingOff)return;
@@ -2084,7 +2111,7 @@ function finishMobileMix(app){
   // A ready audio element can still be stalled on Safari. Do not remove
   // the audible preview until the native clock demonstrably advances.
   if(!audio.paused&&audio.readyState>=2&&!audio.seeking){
-   const heard=act.entry+Math.max(0,act.ctx.currentTime-act.started);
+   const heard=act.entry+mobilePlayedSeconds(act);
    if(!act.nativeSyncDone){
     try{
      if(audio.seekable?.length&&Number.isFinite(heard)&&
@@ -2123,7 +2150,7 @@ function finishMobileMix(app){
   act.timeoutAt=Date.now()+Math.max(1000,Math.min(15000,
    (act.clipEnd-act.ctx.currentTime-.4)*1000));
   act.nativeSyncDone=false;
-  const position=act.entry+Math.max(0,act.ctx.currentTime-act.started);
+  const position=act.entry+mobilePlayedSeconds(act);
  Promise.resolve(app.mixHandoff(act.track.id,position))
   .catch(()=>stopMobileMix());
 }
