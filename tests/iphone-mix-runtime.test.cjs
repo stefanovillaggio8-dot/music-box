@@ -127,7 +127,7 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
   "const AbortController=globalThis.AbortController;"+
   "let enabled=true,mixing=false,plannedFor='',plan=null,"+
   "shuffleGeneration=0,shuffleBusy=false,shuffleRunFor='',shuffleRetryAt=0,shuffleAttempts=0;"+
-  "const deepStatus=()=>{};"+
+  "const $=()=>null;"+
   code+
   "return {loadDeepIndex,stat:()=>({retryAfter:deepRetryAfter,loaded:!!deepIndex})};"
  )(fetch,clock,queued);

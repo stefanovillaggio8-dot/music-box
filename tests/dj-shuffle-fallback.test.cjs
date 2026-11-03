@@ -167,14 +167,15 @@ test("voice completion rearms a previously locked shuffle search exactly when sa
 
 
 test("late full-audio index invalidates stale DJ picks and resets exhausted retries",async()=>{
- const begin=source.indexOf("function loadDeepIndex(force=false){");
+ const begin=source.indexOf("function scheduleDeepIndexRetry(delay){");
  const end=source.indexOf("function canSaveAnalysis(",begin);
  assert.ok(begin>=0&&end>begin,"complete deep index loader exists");
  const harness=new Function(
   "const enabled=true,mixing=false;"+
   "let plannedFor='previous',plan={kind:'cut'},shuffleGeneration=5,"+
   "shuffleBusy=true,shuffleRunFor='outgoing',shuffleRetryAt=9999,shuffleAttempts=4;"+
-  "let deepIndex=null,deepIndexPromise=null;"+
+  "let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;"+
+  "const isIOS=false,document={hidden:false};"+
   "const deepStatus=()=>{};"+
   "const fetch=async()=>({ok:true,json:async()=>({version:2,entries:{}})});"+
   source.slice(begin,end)+

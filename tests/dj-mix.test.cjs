@@ -346,7 +346,7 @@ test("iPhone prioritizes the incoming intro before shuffle candidates",()=>{
 });
 test("iPhone readiness indicators distinguish preparing from an unsafe outro",()=>{
  assert.ok(source.includes('function updateMobileStatus()'));
- assert.ok(source.includes("Intro non ancora preparata: evito di rallentare il brano corrente"));
+ assert.ok(source.includes("Preparo l'intro del prossimo brano senza fermare la canzone."));
  assert.ok(source.includes("Finale non sicuro per una sovrapposizione su iPhone"));
 });
 test("Safari can resume an audio context on later user gestures",()=>{

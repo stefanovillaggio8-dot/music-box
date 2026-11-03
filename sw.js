@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6603";
+const CACHE = "spotifynonavraiimieisoldi-v6604";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1429,6 +1429,28 @@ self.addEventListener("fetch", (event) => {
             headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" }
           })))
     );
+    return;
+  }
+
+  // The DJ index grows in real-audio batches. Generic stale-while-revalidate
+  // JSON responses must not hide new measured transitions from Safari.
+  if (/\/dj-deep-analysis\.json$/i.test(url.pathname)) {
+    let persistence=Promise.resolve();
+    const fresh=fetch(new Request(event.request.url,{
+      cache:"no-cache",credentials:"same-origin"
+    })).then(response=>{
+      if(response && response.ok && response.status===200){
+        persistence=caches.open(CACHE).then(c=>
+          c.put(event.request,response.clone())).catch(()=>{});
+      }
+      return response;
+    }).catch(async()=>{
+      const cached=await caches.open(CACHE)
+        .then(c=>c.match(event.request)).catch(()=>null);
+      return cached||new Response("",{status:504});
+    });
+    event.respondWith(fresh);
+    event.waitUntil(fresh.then(()=>persistence).catch(()=>{}));
     return;
   }
 

@@ -120,7 +120,9 @@ test("iPhone DJ loads bounded intro range and refuses a full file response",asyn
   Offline:class {async decodeAudioData(){decoded++;return {duration:7}}}
  };
  const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
-  "const cache=new Map(),mobileIntroClips=new Map();"+
+  "const cache=new Map(),mobileIntroClips=new Map(),mobileClipRetryAt=new Map();"+
+  "const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:\'\',lastError:\'\'};"+
+  "let mobileClipFailure=null;const bridge=()=>null;"+
   "const mobileDJMayWork=()=>true;"+
   "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
   "const withValidatedVoice=(v)=>v;"+
@@ -135,9 +137,9 @@ test("iPhone DJ loads bounded intro range and refuses a full file response",asyn
  assert.equal(await load("https://example.com/song-noexpose.mp3","s3",deep,0),deep);
  assert.equal(decoded,2);
  mode=200;
- assert.equal(await load("https://example.com/song2.mp3","s2",deep,0),null);
- assert.equal(decoded,2);
- assert.equal(cancelled,1);
+ assert.equal(await load("https://example.com/song2.mp3","s2",deep,0),deep);
+ assert.equal(decoded,3,"bounded full MP3 is a valid Safari fallback");
+ assert.equal(cancelled,0);
 });
 
 
@@ -169,7 +171,9 @@ test("iPhone DJ stops an unexpectedly oversized streaming response before decodi
   Offline:class {async decodeAudioData(){decoded++;return {duration:10}}}
  };
  const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
-  "const cache=new Map(),mobileIntroClips=new Map();"+
+  "const cache=new Map(),mobileIntroClips=new Map(),mobileClipRetryAt=new Map();"+
+  "const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:\'\',lastError:\'\'};"+
+  "let mobileClipFailure=null;const bridge=()=>null;"+
   "const mobileDJMayWork=()=>true;"+
   "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
   "const withValidatedVoice=(v)=>v;"+
@@ -431,4 +435,12 @@ test("iOS seek gate expires harmlessly without muting when Safari never complete
  assert.match(source,/_annullaBloccoRipresaAudio\(\)/);
  assert.match(source,/resumeAt=target/);
  assert.match(app,/const _avvioImmediato = autoplay \? doPlay\(\) : null/);
+});
+
+test("DJ index bypasses stale JSON cache while preserving music cache",()=>{
+ const fresh=sw.indexOf("if (/\\/dj-deep-analysis\\.json$/i.test(url.pathname))");
+ const generic=sw.indexOf("const isCore = CORE_EXT.some");
+ assert.ok(fresh>=0&&fresh<generic);
+ assert.ok(sw.includes('cache:"no-cache",credentials:"same-origin"'));
+ assert.ok(sw.includes("event.waitUntil(fresh.then(()=>persistence)"));
 });
