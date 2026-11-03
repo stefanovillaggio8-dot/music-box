@@ -235,13 +235,25 @@ function voiceIsRelevant(track){
  return track?.id!=null&&app&&
   (app.currentId?.()===track.id||app.mixNext?.()?.id===track.id);
 }
+// Optional speech inference is not allowed to compete with the timed mix.
+function mayScanDesktopVoice(app,track){
+ const audio=app?.audio?.();
+ return Boolean(app?.currentId?.()===track?.id&&audio&&
+  !audio.paused&&!audio.seeking&&Number.isFinite(audio.duration)&&
+  audio.duration-audio.currentTime>75&&!mixing&&!active);
+}
 function scheduleDeepVoice(track,key,data){
+ const app=bridge();
  const voice=window.MusicBoxVocal,net=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
  if(!enabled||isIOS||!voice?.analyze||!voiceIsRelevant(track)||document.hidden||
-   voiceJobs.has(key)||voiceJobs.size>=2||Date.now()<(voiceRetry.get(key)||0)||
+   !mayScanDesktopVoice(app,track)||
+   voiceJobs.has(key)||voiceJobs.size>=1||Date.now()<(voiceRetry.get(key)||0)||
    net?.saveData||/^(slow-)?2g$|^3g$/i.test(String(net?.effectiveType||"")))return;
  const job=(async()=>{
-  const abort=new AbortController(),timeout=setTimeout(()=>abort.abort(),isIOS?28000:35000);
+  // A new track receives time to start playback and plan its transition.
+  await new Promise(resolve=>setTimeout(resolve,4500));
+  if(!enabled||document.hidden||!mayScanDesktopVoice(bridge(),track))return;
+  const abort=new AbortController(),timeout=setTimeout(()=>abort.abort(),35000);
   let context=null;
   try{
    const response=await fetch(key,{mode:"cors",cache:"force-cache",signal:abort.signal});
@@ -2795,8 +2807,8 @@ async function intelligentShuffle(app,audio,fromId){
  // has no songs with similar tempo or real beat patterns.
  let rhythmCandidates=0,harmonicCandidates=0,batchCount=0;
  for(const {track,info} of measured){
-  // Yield every few pairs to let iPhone controls and audio advance.
-  if(isIOS&&++batchCount%24===0){
+  // Also yield on PC: large library comparisons must not block audio events.
+  if(++batchCount%24===0){
    await new Promise(resolve=>setTimeout(resolve,0));
    if(runGeneration!==shuffleGeneration||app.currentId()!==fromId||
       document.hidden)return {retry:false};
@@ -2938,7 +2950,11 @@ async function intelligentShuffle(app,audio,fromId){
   indexAudioReady:!!deepIndex,
   lastKnownVocal:Number.isFinite(old.lastVoiceAt)?old.lastVoiceAt:null,
   lastLyric:Number.isFinite(old.lastLyricAt)?old.lastLyricAt:null};
- console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision);
+ console.info("[Music Box DJ] Ricerca beat in libreria: "+
+  scored.length+" beat verificati, "+softScored.length+" sfumature, "+
+  nearScored.length+" brani affini, "+rhythmCandidates+
+  " ritmi compatibili su "+measured.length+" analizzati. "+
+  shuffleLastDecision.reason);
  return {retry:unknown.length>picked.length&&noMatch,
   checked:measured.length,missing:unknown.length,noMatch};
 }
