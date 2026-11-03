@@ -27,7 +27,11 @@ assert(match.includes("cacheBraniName(),cacheStreamName()"),"Profile cache suppo
 assert(!match.includes("cachePrefetchName()"),"Do not mark ephemeral prefetch as downloaded");
 assert(sw.includes("oldSong[1].toLowerCase() === song[1].toLowerCase()"),"Worker lacks host-alias cache lookup");
 const media=section(app,"  function updateMediaSession() {","  function totalDuration()");
-assert(media.includes('setHandler("play", null)')&&media.includes('setHandler("pause", null)'),"Safari native control not enabled");
+assert(media.includes('setHandler("play", () => {')&&
+ media.includes('setHandler("pause", () => { _pausaVolontaria(); });'),
+ "Safari headset and lockscreen actions must reach intentional play/pause");
+assert(!media.includes('setHandler("pause", null)'),
+ "Do not unregister the Safari pause handler: background pauses must stick");
 const events=section(app,"  function createAudio() {","/* Ricreo il lettore audio.");
 assert(events.includes("_usaControlliNativiIos()")&&events.includes("_segnaIntenzioneSono(false)"),"Safari pause counted or auto-resumed");
 console.log("OK: update keeps offline storage; auto cache isolation; per-profile reporting; GitHub/PC alias; Safari controls");
