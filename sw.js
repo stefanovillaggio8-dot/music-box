@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6566";
+const CACHE = "spotifynonavraiimieisoldi-v6567";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1227,14 +1227,14 @@ senza connessione.</p>
 <button onclick="location.reload()">Riprova</button>
 </div></body></html>`;
 
-async function findCachedMusic(url, profile) {
-  const allowed = new Set([CACHE_BRANI, CACHE]);
-  if (profile) {
-    allowed.add(cacheBraniName(profile));
-    allowed.add(cacheStreamName(profile));
-    allowed.add(cachePrefetchName(profile));
-  }
-  const keys = (await caches.keys()).filter((key) => allowed.has(key)).slice().reverse();
+async function findCachedMusic(url, profile, allowLegacyHostLookup = false) {
+  // Direct cache matches avoid enumerating thousands of downloaded MP3s
+  // on each iOS range request. The expensive host-alias scan is offline-only.
+  const preferred = profile ?
+    [cacheBraniName(profile),CACHE_BRANI,cachePrefetchName(profile),
+     cacheStreamName(profile),CACHE] : [CACHE_BRANI,CACHE];
+  const existing = new Set(await caches.keys());
+  const keys = preferred.filter(key => existing.has(key));
   for (const key of keys) {
     try {
       const cache = await caches.open(key);
@@ -1242,6 +1242,7 @@ async function findCachedMusic(url, profile) {
       if (response && response.status === 200) return response;
       /* GitHub / PC / Tailscale possono cambiare l'host dello stesso
          track-ID: un MP3 gia' scaricato deve suonare anche senza rete. */
+      if (!allowLegacyHostLookup) continue;
       const path = new URL(url).pathname;
       const song = /\/songs\/(track-\d+\.mp3)$/i.exec(path);
       if (song) {
@@ -1355,13 +1356,13 @@ async function cachedMusicResponse(event) {
     }
     return response;
   } catch (error) {
-    if (!gia) {
-      return new Response("Brano non disponibile offline", {
-        status: 503,
-        headers: { "Content-Type": "text/plain; charset=utf-8" }
-      });
-    }
-    return await rispostaDallaCache(gia, range);
+    // Only when truly offline, search the download's former host address.
+    const legacy = await findCachedMusic(event.request.url, profile, true);
+    if (legacy) return await rispostaDallaCache(legacy, range);
+    return new Response("Brano non disponibile offline", {
+      status: 503,
+      headers: { "Content-Type": "text/plain; charset=utf-8" }
+    });
   }
 }
 

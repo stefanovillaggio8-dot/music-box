@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.566";
+  const APP_VERSION = "6.567";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5653,12 +5653,29 @@ li.addEventListener("click", () => {
     savePos();
   }
 
+let _ultimoAudioTracciato = null, _ultimaPosizioneAvanzata = 0;
+  function _registraAvanzamentoAudio(player) {
+    if (player !== audio || !Number.isFinite(player.currentTime)) return false;
+    const posizione = player.currentTime;
+    if (_ultimoAudioTracciato !== player) {
+      _ultimoAudioTracciato = player;
+      _ultimaPosizioneAvanzata = posizione;
+      _ultimoScorrimento = Date.now();
+      return true;
+    }
+    // A repeating timeupdate with an unchanged playhead is NOT playback.
+    if (Math.abs(posizione - _ultimaPosizioneAvanzata) < .13) return false;
+    _ultimaPosizioneAvanzata = posizione;
+    _ultimoScorrimento = Date.now();
+    _silenziDiFila = 0;
+    return true;
+  }
 function handleTime() {
     /* Segno che l'audio sta DAVVERO scorrendo. Sul telefono con lo schermo
        spento Safari dice "e' partito" ma il brano resta muto e fermo: e'
        successo, e l'app ci credeva e non riprovava piu'. Qui guardo il tempo
        che passa davvero, e se non passa riparo. */
-    _ultimoScorrimento = Date.now();
+    _registraAvanzamentoAudio(audio);
     if (!scrubbing) {
     const t = audio.currentTime;
     updateProgressUI(t, totalDuration());
@@ -5871,6 +5888,12 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     }catch(_) {try{a.removeAttribute("crossorigin")}catch(_){}}
     a.src=target;
   }
+  // A native pause during iOS hide/show is a system interruption.
+  // A deliberate foreground headphone/lockscreen pause still wins.
+  function _pausaNativaVolontaria(player, pausaSistema) {
+    return _usaControlliNativiIos() && !pausaSistema &&
+      !player.ended && !player._mbCambioBrano;
+  }
   function createAudio() {
     const a = new Audio();
     a.preload = "metadata";
@@ -5933,7 +5956,7 @@ a.addEventListener("pause", () => {
       ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
     /* Ferma il contatore PRIMA di ogni eventuale return o ripresa iOS. */
     if (a === audio) _chiudiAscolto(false);
-    if (_usaControlliNativiIos() && !a.ended && !a._mbCambioBrano) {
+    if (_pausaNativaVolontaria(a,eDelSistema)) {
       /* La pausa delle cuffie non va interpretata come sospensione
          involontaria. I secondi di pausa non sono ascolto. */
       _vuoleSuonare = false;
@@ -5976,8 +5999,9 @@ a.addEventListener("pause", () => {
       _chiudiAscolto(false);
       if (_staSuonandoOra()) _iniziaAscolto();
     });
-    a.addEventListener("ended", handleEnded);
-    a.addEventListener("timeupdate", handleTime);
+    // Ignore stale events from the previous media element after a skip.
+    a.addEventListener("ended", () => { if (a === audio) handleEnded(); });
+    a.addEventListener("timeupdate", () => { if (a === audio) handleTime(); });
     a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
     /* Ste: "funziona anche nella schermata di blocco, dalla notifica della
        canzone". Motivo: la barra del brano nella schermata di blocco
@@ -5988,7 +6012,7 @@ a.addEventListener("pause", () => {
     /* Il conteggio del tempo ascoltato: qui si conta davvero, perche' questo
        evento scatta finche' la musica suona, su computer e su telefono. */
     a.addEventListener("timeupdate", () => { if (a === audio) _contaAlMuoversi(); });
-    a.addEventListener("loadedmetadata", handleMetadata);
+    a.addEventListener("loadedmetadata", () => { if (a === audio) handleMetadata(); });
     a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
     a.addEventListener("error", () => { if(a===audio)handleError(); });
     return a;
@@ -6268,10 +6292,11 @@ function rebuildAudio(autoplay) {
       if (document.hidden) return;
       if (audio.paused) { _silenziDiFila = 0; _riprovaPiuTardi(); return; }
       if (Date.now() - _ultimoScorrimento < 10000) return;
-      /* sta ancora scaricando: non e' un silenzio, e' la rete */
-      if (audio.readyState < 3) { _ultimoScorrimento = Date.now(); return; }
+      /* A slow network can recover, but a stalled 0:00 must not keep
+         resetting its watchdog for hours. Only the playhead may do that. */
+      if (audio.readyState < 3 &&
+          Date.now() - _ultimoScorrimento < 18000) return;
       _nascondiAiuto();
-      _ultimoScorrimento = Date.now();
       _silenziDiFila++;
       const t = current();
       if (!t) return;
