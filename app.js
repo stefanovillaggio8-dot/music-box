@@ -6229,6 +6229,11 @@ function rebuildAudio(autoplay) {
   }
 
   function _preparaIlSuccessivo(id) {
+    // iPhone uses a single native media pipeline. A second hidden
+    // HTMLAudio metadata fetch can stall the currently playing MP3.
+    // Keep the offline downloads and let the optional DJ prepare only
+    // its short preview near the last verified musical bars.
+    if (_usaControlliNativiIos()) return;
     const t = tracks.find((x) => x.id === id);
     if (!t || !t.url || _preparatoId === id) return;
     try {
@@ -7320,7 +7325,7 @@ async function playById(id, autoplay = true, startAt = 0) {
       } catch (e) { /* noop */ }
     /* Il brano successivo e' gia' scelto: aggiorna subito la coda visibile
        e il contatore, anche se la riproduzione e' ancora in caricamento. */
-    renderQueueCount();
+    if (!_usaControlliNativiIos()) renderQueueCount();
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
     _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);
@@ -7355,6 +7360,10 @@ async function playById(id, autoplay = true, startAt = 0) {
       if (target.readyState >= 1) at();
       else target.addEventListener("loadedmetadata", at, { once: true });
     }
+    // Start play() from the original tap / MediaSession gesture BEFORE
+    // painting the heavy song list and calculating the random queue.
+    // The promise is consumed below after UI bookkeeping.
+    const _avvioImmediato = autoplay ? doPlay() : null;
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
@@ -7378,7 +7387,7 @@ async function playById(id, autoplay = true, startAt = 0) {
     const activeEl = playlistEl.querySelector(".track.active");
     if (activeEl) activeEl.scrollIntoView({ block: "nearest" });
     updateMediaSession();
-    if (autoplay) await doPlay();
+    if (_avvioImmediato) await _avvioImmediato;
     /* tengo pronto il brano dopo, cosi' quando questo finisce parte subito */
     if (autoplay && audio && !audio.paused) {
       const prossimo = queue.length ? queue[0] : _anteprimaProssimoBrano();
@@ -7388,9 +7397,11 @@ async function playById(id, autoplay = true, startAt = 0) {
         }, 1800);
       } else _preparaIlSuccessivo(prossimo);
     }
-    /* doPlay() e il caricamento audio sono asincroni: aggiorna nuovamente
-       il numerino dopo che il brano e' stato effettivamente avviato. */
-    renderQueueCount();
+    /* The queue is visual only. On Safari it must not monopolize the
+       critical path to the new song's first audio frame. */
+    if (_usaControlliNativiIos())
+      setTimeout(() => { if (currentId === id) renderQueueCount(); }, 70);
+    else renderQueueCount();
   }
 
   /* Il brano in una certa posizione, ma SENZA far esplodere niente.
@@ -11628,6 +11639,7 @@ window.MusicBoxBridge = {
   currentId:()=>currentId,
   audio:()=>audio,
   mixRunningContext:()=>_ctx&&_ctx.state==="running"?_ctx:null,
+  mixEnableAudio:()=>_preparaAudio(),
   play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
   mixNext:()=> {
     if (window.MusicBoxRoom?.isActive() || repeat || !currentId) return null;
@@ -16071,6 +16083,9 @@ for (const p of playlists) {
      li' in poi l'audio e' sveglio e i bassi si accendono subito. */
   let _audioProno = false;
   function _preparaAudio() {
+    // Never spin up WebAudio for native iPhone playback with DJ off.
+    // On Safari an unused context can still steal audio resources.
+    if (_usaControlliNativiIos() && !window.MusicBoxMix?.needsAudioContext?.()) return;
     // Safari may suspend this context after a lock/unlock cycle.
     // A later real user tap must be able to unlock it again.
     if (_audioProno && _ctx?.state === "running") return;
