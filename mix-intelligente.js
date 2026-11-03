@@ -44,6 +44,17 @@ function mobileClipWindow(audio) {
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
     plan.end<=plan.begin)return false;
+ if(plan.rhythmicUnderlay&&plan.measuredBeatBridge&&plan.preserveTail){
+  // Low-volume unverified overlay: never duck the native Safari player.
+  return !!ending&&Number.isFinite(ending.duration)&&
+   Math.abs(ending.duration-plan.end)<13&&
+   plan.grooveScore>=.78&&plan.score>=62&&
+   (plan.kind==="snap"?plan.fade>=1.05&&plan.fade<=1.9:
+    plan.kind==="beat"&&plan.vocalVerifiedBeat===true)&&
+   (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
+   (!Number.isFinite(ending.lastVoiceAt)||
+    ending.lastVoiceAt<=plan.begin-2.5);
+ }
  if(plan.kind==="snap"){
   if(!plan.measuredBeatBridge||plan.fade<.46)return false;
   if(plan.voiceVerifiedMicroBridge)return true;
@@ -1321,8 +1332,11 @@ function musicalIntroEntry(b){
 }
 // This is a short two-pulse overlap, not a claim of identical full phrases.
 // The incoming music enters under the complete outgoing audio boundary.
+// The closing instrumental beat can be mixed WHILE audible. Protected
+// endings are preserved, not treated as digital silence to be skipped.
+// Missing vocal metadata NEVER implies a voice-free finale.
 function rhythmicFullTailJoin(a,b,dur){
- if(isIOS||!a||!b||a.protectedEnding===true||
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||
     (a.last<dur-1.6&&!(a.confidentTail===true&&dur-a.last<=12))||
@@ -1331,43 +1345,49 @@ function rhythmicFullTailJoin(a,b,dur){
     b.introDrive<.43||
     !hasReliableHarmony(a.outroFinalNotes)||
     !hasReliableHarmony(b.introAttackNotes)||
-    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=dur-5)||
-    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=dur-6)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-6)||
     (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2)||
     (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2))return null;
- const speeds=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale));
- const ratio=speeds.reduce((best,v)=>Math.abs(Math.log2(v))<
-  Math.abs(Math.log2(best))?v:best);
- if(!Number.isFinite(ratio)||ratio<.94||ratio>1.06)return null;
+ const ratio=[.5,1,2].map(k=>a.bpm/(b.bpm*k)).reduce(
+  (best,v)=>Math.abs(Math.log2(v))<Math.abs(Math.log2(best))?v:best);
+ if(!Number.isFinite(ratio)||ratio<.95||ratio>1.05)return null;
  const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
- if(!groove||groove.score<.77||
-    !Number.isFinite(notes.focused)||notes.focused<.50||
-    !Number.isFinite(notes.phrase)||notes.phrase<.35)return null;
+ if(!groove||groove.score<.78||
+    !Number.isFinite(notes.focused)||notes.focused<.62||
+    !Number.isFinite(notes.phrase)||notes.phrase<.47)return null;
  const key=camelotMatch(a,b);
- const keyMismatch=key.weight>=.14&&key.score<.40;
- // A short drum-to-drum join may still work without matching full chords.
- // Keep the blend under one beat and do not cut a measured vocal.
- if(keyMismatch&&!(groove.score>=.80&&notes.focused>=.52&&
-    notes.phrase>=.36))return null;
- const confirmedSilence=Boolean(a.confidentTail===true&&dur-a.last>=1.65&&
-    dur-a.last<=12);
- const end=confirmedSilence?Math.min(dur-.035,a.last+.07):dur-.035;
- const fade=keyMismatch?clamp(1.3*60/a.bpm,.54,.72):
-    clamp(1.8*60/a.bpm,.62,1.05);
+ if((key.weight>=.14&&key.score<.37)||
+    ((notes.alignment?.score||0)>.25&&!notes.alignment.matches&&
+      notes.focused<.82))return null;
+ const trimmed=Boolean(a.confidentTail===true&&
+    dur-a.last>=1.65&&dur-a.last<=12);
+ const end=trimmed?Math.min(dur-.035,a.last+.07):dur-.035;
+ const lyricSafe=Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=end-9;
+ const scanned=Boolean(a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+    a.voiceScannedEnd>=end-.8&&
+    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-6));
+ const verified=Boolean((lyricSafe||scanned)&&groove.score>=.82&&
+    notes.focused>=.72&&notes.phrase>=.56&&
+    (!key.weight||key.score>=.48));
+ // Longer beat-to-beat crossfade only for a certified instrumental outro.
+ // Otherwise the next kick enters at low volume over just 2-3 beats,
+ // with the outgoing music fully audible until very close to its ending.
+ const fade=verified?clamp(7*60/a.bpm,3.1,4.5):
+    clamp(3*60/a.bpm,1.05,1.85);
  const begin=end-fade;
  if(begin<25)return null;
  const entry=musicalIntroEntry(b);
- return {kind:"snap",begin,end,fade,entry,
-  tempo:clamp(ratio,.97,1.03),
-  gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
-  score:Math.round(notes.focused*100),grooveScore:groove.score,
-  rhythmicUnderlay:true,percussiveOnly:keyMismatch,
-  measuredBeatBridge:true,preserveTail:true,
-  silenceTrim:confirmedSilence,softTailTrim:false,quietCertified:false,
-  trailing:confirmedSilence?dur-end:0,safeOutroAt:null,
-  beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?
-   a.beatAnchor:end,nextBeat:Number.isFinite(b.introBeat)?
-   b.introBeat-entry:null};
+ return {kind:verified?"beat":"snap",begin,end,fade,entry,
+   tempo:clamp(ratio,.97,1.03),
+   gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
+   score:Math.round(notes.focused*100),grooveScore:groove.score,
+   rhythmicUnderlay:true,measuredBeatBridge:true,preserveTail:true,
+   vocalVerifiedBeat:verified,
+   silenceTrim:trimmed,softTailTrim:false,quietCertified:false,
+   trailing:trimmed?dur-end:0,safeOutroAt:null,
+   beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?a.beatAnchor:end,
+   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
 }
 // Desktop continuity when a strict musical match is unavailable.
 // Never claim this as a matched beat; keep the outgoing song audible
@@ -2213,6 +2233,7 @@ async function beginMix(song,proposed){
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
+  vocalVerifiedBeat:!!proposed.vocalVerifiedBeat,
   continuityFallback:!!proposed.continuityFallback,
   at:0,fade,end:proposed.end,timer:null};
  active=act;
@@ -2231,12 +2252,12 @@ async function beginMix(song,proposed){
    try{upcoming.preservesPitch=true;upcoming.playbackRate=act.tempo}catch(e){}
   }
   // Match beat phase without ever skipping a musical introduction.
-  if((proposed.kind==="beat"||proposed.kind==="phrase")&&Number.isFinite(proposed.beatPeriod)&&
+  if((proposed.kind==="beat"||proposed.kind==="phrase"||proposed.kind==="snap")&&Number.isFinite(proposed.beatPeriod)&&
      Number.isFinite(proposed.beatAnchor)&&Number.isFinite(proposed.nextBeat)){
    const period=proposed.beatPeriod;
    const phase=((proposed.beatAnchor-old.currentTime-proposed.nextBeat)%period+period)%period;
-   if(phase>.045&&phase<Math.min(.42,period*.8)&&
-      old.currentTime+phase<proposed.end-2.2)
+   if(phase>.045&&phase<Math.min(proposed.kind==="snap"?.16:.42,period*.8)&&
+      old.currentTime+phase<proposed.end-(proposed.kind==="snap"?.35:2.2))
     await new Promise(resolve=>setTimeout(resolve,Math.round(phase*1000)));
   }
   if(active!==act||old.paused||app.currentId()!==id||
@@ -2269,9 +2290,10 @@ async function beginMix(song,proposed){
    }
    // Underlay remains quiet until the very end to limit key clashes.
    if(act.rhythmicUnderlay){
-    const late=clamp((time-.24)/.76,0,1);
-    outGain=Math.cos(Math.pow(late,1.45)*Math.PI/2);
-    inGain=Math.sin(Math.pow(time,1.75)*Math.PI/2);
+    const lateStart=act.vocalVerifiedBeat ? .34 : .79;
+    const late=clamp((time-lateStart)/(1-lateStart),0,1);
+    outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
+    inGain=Math.sin(Math.pow(time,act.vocalVerifiedBeat?1.18:1.85)*Math.PI/2);
    }
    if(act.continuityFallback){
     // Avoid cutting a late vocal: the original holds at full volume
