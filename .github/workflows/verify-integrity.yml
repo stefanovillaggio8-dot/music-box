@@ -22,6 +22,7 @@ on:
       - tools/test-recap-annuale.cjs
       - tools/test-background-ios.cjs
       - tools/test-offline-retention.cjs
+      - tests/offline-saved-vs-temp.test.cjs
       - tools/test-add-music-ui.cjs
       - tools/test-cloud-upload-phone.cjs
       - tools/import-youtube-online.cjs
@@ -112,7 +113,9 @@ jobs:
       - name: Verifica gestione audio e MediaSession iOS
         run: node tools/test-background-ios.cjs
       - name: Verifica conservazione download offline e pausa Safari
-        run: node tools/test-offline-retention.cjs
+        run: |
+          node tools/test-offline-retention.cjs
+          node --test tests/offline-saved-vs-temp.test.cjs
       - name: Controlla menu aggiunta e guida per iPhone
         run: node tools/test-add-music-ui.cjs
       - name: Verifica upload cloud dal telefono

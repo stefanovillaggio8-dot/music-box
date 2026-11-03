@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.574";
+  const APP_VERSION = "6.575";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12410,6 +12410,8 @@ $("fabMenu").addEventListener("click", (e) => {
     }
     const rows = [];
     cachedSongs = await _elencoOfflineDelProfilo();
+    // A streaming cache copy is playable now, but not a manual offline save.
+    const savedOffline = await _elencoOfflineDelProfilo(true);
   for (const t of tracks) {
     /* Ste: "diego aveva scaricato le canzoni ma non gliele faceva
        ascoltare senza connessione". Prima, per un brano che non era
@@ -12423,10 +12425,11 @@ $("fabMenu").addEventListener("click", (e) => {
       continue;
     }
     const cached = isCached(t);
+    const saved = _branoInElencoOffline(savedOffline,t);
     rows.push({
       title: t.title,
-      state: cached ? "ok" : "todo",
-      label: cached ? "pronta" : "da scaricare",
+      state: saved ? "ok" : "todo",
+      label: saved ? "pronta" : cached ? "solo temporanea · salva offline" : "da scaricare",
       el: null,
       track: t
     });
@@ -12460,7 +12463,7 @@ $("fabMenu").addEventListener("click", (e) => {
       // Avoid a full auto-download competing with active iPhone streaming.
       // Manual offline downloads and their caches remain untouched.
       if (_usaControlliNativiIos() && _vuoleSuonare) return;
-      if (offlineBusy) return;
+      if (offlineBusy || offlineAbort) return;
       /* Ste: "ma cosi' non occupa spazio nel telefono?". Si', e per questo
          adesso si puo' spegnere del tutto, e comunque non si passa oltre un
          tetto: ogni canzone e' circa 4-5 MB, e con il tetto sotto si ferma
@@ -12538,7 +12541,7 @@ $("fabMenu").addEventListener("click", (e) => {
     } catch (e) { return 0; }
   }
 
-  async function cacheTrack(row, cache) {
+  async function cacheTrack(row, cache, owner=profile) {
     const url = row.track.url;
     // A request suspended by iOS must not block the whole offline queue
     // forever after the screen wakes. The timeout covers the full stream.
@@ -12561,6 +12564,16 @@ $("fabMenu").addEventListener("click", (e) => {
       row.el.state.textContent = "0%";
     }
     try {
+      if(requestController.signal.aborted)throw new DOMException("Interrotto","AbortError");
+      // A song heard already may exist in the temporary streaming cache.
+      // Save it permanently without downloading those same bytes twice.
+      const already=await cache.match(url);
+      if(already?.status===200 ||
+         await _promuoviCachePerOffline(cache,url,owner)){
+        _offlinePronto(row);
+        return;
+      }
+      if(requestController.signal.aborted)throw new DOMException("Interrotto","AbortError");
       const res = await fetch(url, { signal: requestController.signal });
       // Never store incomplete HTTP 206 byte ranges as offline MP3s.
       if (!res.ok || res.status!==200)
@@ -12613,13 +12626,7 @@ $("fabMenu").addEventListener("click", (e) => {
           "X-Scaricato": String(Date.now())
         }
       }));
-      row.state = "ok";
-      row.label = "pronta";
-      if (row.el) {
-        row.el.fill.style.width = "100%";
-        row.el.state.className = "off-state ok";
-        row.el.state.textContent = "pronta";
-      }
+      _offlinePronto(row);
     } catch (e) {
       if (e && e.name === "AbortError") {
         const voluntary=offlineStopRequested || !!parentSignal?.aborted;
@@ -12832,7 +12839,7 @@ $("fabMenu").addEventListener("click", (e) => {
         if(offlineStopRequested || controller.signal.aborted || owner!==profile)return;
         const i=idx++;
         if(i>=rows.length)return;
-        await cacheTrack(rows[i],cache);
+        await cacheTrack(rows[i],cache,owner);
         completed++;
         if(offlineStopRequested || owner!==profile)return;
         _persistPendingOffline(owner,rows);
@@ -12987,11 +12994,12 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
         /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(u.searchParams.get("id") || "");
     } catch (_) { return false; }
   }
-  async function _elencoOfflineDelProfilo() {
+  async function _elencoOfflineDelProfilo(soloSalvati = false) {
     const set = new Set();
     if (!("caches" in window)) return set;
-    const allowed = new Set([cacheBraniName(),cacheStreamName(),
-      CACHE_PREFIX + "-brani"]);
+    const allowed = soloSalvati
+      ? new Set([cacheBraniName(),CACHE_PREFIX + "-brani"])
+      : new Set([cacheBraniName(),cacheStreamName(),CACHE_PREFIX + "-brani"]);
     for (const nome of await caches.keys()) {
       if (!allowed.has(nome)) continue;
       try {
@@ -13014,13 +13022,46 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
     render();
   }
 
+  function _branoInElencoOffline(set,t) {
+    if (!t?.url || !set) return false;
+    const url=absUrl(t.url),key=_chiaveFileOffline(url);
+    return set.has(url) || set.has(t.url) || (!!key && set.has(key));
+  }
   function isCached(t) {
-    if (!t) return false;
-    if (!t.url) return false;
-    const url = absUrl(t.url);
-    const key = _chiaveFileOffline(url);
-    return cachedSongs.has(url) || cachedSongs.has(t.url) ||
-      (!!key && cachedSongs.has(key));
+    return _branoInElencoOffline(cachedSongs,t);
+  }
+  
+  // A complete MP3 already in temporary streaming cache can be promoted to
+  // user-selected offline storage locally, without a second network download.
+  // Neither cache is cleared or renamed, and unfinished 206 ranges are rejected.
+  async function _promuoviCachePerOffline(dest,url,owner) {
+    try {
+      const old=await (await streamCache(owner))?.match(url);
+      if(!old||old.status!==200)return false;
+      const kind=String(old.headers.get("content-type")||"").toLowerCase();
+      if(/text\/html|application\/json/.test(kind))return false;
+      const len=Number(old.headers.get("content-length")||0);
+      if(len>40*1024*1024)return false;
+      const blob=await old.blob();
+      if(blob.size<4096||blob.size>40*1024*1024||
+         (len&&blob.size<len*.98))return false;
+      await dest.put(url,new Response(blob,{
+        status:200,headers:{
+          "Content-Type":blob.type||"audio/mpeg",
+          "Content-Length":String(blob.size),
+          "X-Scaricato":String(Date.now())
+        }
+      }));
+      return true;
+    }catch(_){return false}
+  }
+  function _offlinePronto(row) {
+    row.state="ok";row.label="pronta";
+    if(row.el){
+      row.el.fill.style.width="100%";
+      row.el.state.className="off-state ok";
+      row.el.state.textContent="pronta";
+    }
   }
 
   async function fetchToCache(url, cache, onProgress) {
@@ -13112,7 +13153,10 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
          vecchio (calcolato all'avvio, prima che l'app sapesse del
          collegamento di casa) e manderebbe il download su internet. */
       const dove = (typeof _urlDelBrano === "function") ? _urlDelBrano(t) : t.url;
-      await fetchToCache(dove || t.url, cache, (ratio) => {
+      const file=dove||t.url;
+      const promoted=await _promuoviCachePerOffline(cache,file,profile) ||
+        (file!==t.url && await _promuoviCachePerOffline(cache,t.url,profile));
+      if(!promoted)await fetchToCache(file, cache, (ratio) => {
         if (el) el.style.background = ratio ? "var(--accent2)" : "";
       });
       if (el) {
@@ -16732,7 +16776,8 @@ const precedente = LS.get("mb.playback." + profile, null);
              il worker cambia, la pagina si ricarica e prende i file nuovi. */
           _segna("il worker del servizio e' cambiato: ricarico per prendere i file nuovi");
           _spotifyTraccia("ricarico: il worker del servizio e' cambiato");
-          try { setTimeout(function () { window.location.reload(); }, 400); } catch (e) { /* noop */ }
+          // Never reload while a song plays or the library is being scrolled.
+          // The existing version badge lets the listener update deliberately.
         });
 navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
       swReg = reg;
