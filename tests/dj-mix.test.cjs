@@ -482,7 +482,7 @@ test("analyzes the real first musical onset instead of a long dead intro",()=>{
  assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.12,beatConfidence:.25}),0);
  assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25,firstLyricAt:2}),0);
 });
-test("late vocals and protected endings veto the short full-tail beat bridge",()=>{
+test("late vocals veto the join; matched protected endings keep every audible beat",()=>{
  const code=source.slice(source.indexOf("function rhythmicFullTailJoin("),
   source.indexOf("function hasImmediateMusicalIntro("));
  const run=new Function("const isIOS=false,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
@@ -500,7 +500,10 @@ test("late vocals and protected endings veto the short full-tail beat bridge",()
  assert.ok(p.end>=179.9&&p.end<=180&&p.fade<=1.05);
  assert.equal(run({...a,lastLyricAt:178},b,180),null);
  assert.equal(run({...a,lastVoiceAt:179},b,180),null);
- assert.equal(run({...a,protectedEnding:true},b,180),null);
+ const protectedPlan=run({...a,protectedEnding:true},b,180);
+ assert.equal(protectedPlan?.kind,"snap");
+ assert.ok(protectedPlan.preserveTail&&!protectedPlan.silenceTrim);
+ assert.ok(protectedPlan.end>=179.9,"loud final drum must play through");
  assert.equal(run(a,{...b,firstVoiceAt:.3},180),null);
 });
 test("optional vocal ML is not started for every shuffled preview",()=>{

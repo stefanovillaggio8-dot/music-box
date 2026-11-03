@@ -48,8 +48,8 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
   // Low-volume unverified overlay: never duck the native Safari player.
   return !!ending&&Number.isFinite(ending.duration)&&
    Math.abs(ending.duration-plan.end)<13&&
-   plan.grooveScore>=.78&&plan.score>=62&&
-   (plan.kind==="snap"?plan.fade>=1.05&&plan.fade<=1.9:
+   plan.grooveScore>=.77&&plan.score>=50&&
+   (plan.kind==="snap"?plan.fade>=.60&&plan.fade<=1.06:
     plan.kind==="beat"&&plan.vocalVerifiedBeat===true)&&
    (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
    (!Number.isFinite(ending.lastVoiceAt)||
@@ -1353,13 +1353,13 @@ function rhythmicFullTailJoin(a,b,dur){
   (best,v)=>Math.abs(Math.log2(v))<Math.abs(Math.log2(best))?v:best);
  if(!Number.isFinite(ratio)||ratio<.95||ratio>1.05)return null;
  const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
- if(!groove||groove.score<.78||
-    !Number.isFinite(notes.focused)||notes.focused<.62||
-    !Number.isFinite(notes.phrase)||notes.phrase<.47)return null;
+ if(!groove||groove.score<.77||
+    !Number.isFinite(notes.focused)||notes.focused<.50||
+    !Number.isFinite(notes.phrase)||notes.phrase<.35)return null;
  const key=camelotMatch(a,b);
- if((key.weight>=.14&&key.score<.37)||
-    ((notes.alignment?.score||0)>.25&&!notes.alignment.matches&&
-      notes.focused<.82))return null;
+ const percussiveOnly=key.weight>=.14&&key.score<.40;
+ if(percussiveOnly&&!(groove.score>=.80&&notes.focused>=.52&&
+   notes.phrase>=.36))return null;
  const trimmed=Boolean(a.confidentTail===true&&
     dur-a.last>=1.65&&dur-a.last<=12);
  const end=trimmed?Math.min(dur-.035,a.last+.07):dur-.035;
@@ -1374,7 +1374,7 @@ function rhythmicFullTailJoin(a,b,dur){
  // Otherwise the next kick enters at low volume over just 2-3 beats,
  // with the outgoing music fully audible until very close to its ending.
  const fade=verified?clamp(7*60/a.bpm,3.1,4.5):
-    clamp(3*60/a.bpm,1.05,1.85);
+    clamp(1.8*60/a.bpm,.62,1.05);
  const begin=end-fade;
  if(begin<25)return null;
  const entry=musicalIntroEntry(b);
@@ -1382,7 +1382,7 @@ function rhythmicFullTailJoin(a,b,dur){
    tempo:clamp(ratio,.97,1.03),
    gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
    score:Math.round(notes.focused*100),grooveScore:groove.score,
-   rhythmicUnderlay:true,measuredBeatBridge:true,preserveTail:true,
+   rhythmicUnderlay:true,percussiveOnly,measuredBeatBridge:true,preserveTail:true,
    vocalVerifiedBeat:verified,
    silenceTrim:trimmed,softTailTrim:false,quietCertified:false,
    trailing:trimmed?dur-end:0,safeOutroAt:null,
