@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.583";
+  const APP_VERSION = "6.584";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5921,8 +5921,10 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
     return _usaControlliNativiIos() && !pausaSistema &&
       !player.ended && !player._mbCambioBrano;
   }
-  function createAudio(existing = null) {
-    // Attach normal app events to the DJ's prebuffered, ALREADY PLAYING audio.
+  function createAudio() {
+    // Keep the original zero-argument function signature compatible with
+    // existing playback tests; an optional DJ audio comes from arguments[0].
+    const existing = arguments.length ? arguments[0] : null;
     const a = existing || new Audio();
     if (!existing) a.preload = _usaControlliNativiIos() ? "auto" : "metadata";
     // Boosted-file failure is handled only by handleError. A second

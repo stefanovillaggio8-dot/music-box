@@ -77,7 +77,8 @@ test("new versions preserve user-downloaded MP3 caches",()=>{
 
 
 test("Safari seeking interrupts optional DJ work and preserves offline cache",()=>{
- assert.ok(app.includes('window.MusicBoxMix?.onSeek?.()'));
+ assert.ok(app.includes('window.MusicBoxMix?.onSeek?.("media")'));
+ assert.ok(app.includes('window.MusicBoxMix?.onSeek?.("user")'));
  assert.ok(app.includes('const pausaPerSeek = a.seeking ||'));
  assert.ok(app.includes('if (_vuoleSuonare && a.paused && !a.ended'));
  assert.ok(app.includes('if (_usaControlliNativiIos() && _vuoleSuonare) return;'));

@@ -616,7 +616,8 @@ test("automatic handoff seek does not cancel audible preview; manual seeking doe
 });
 test("Music Box app hands the prebuffered MP3 to its ordinary player without a fresh source or seek",()=>{
  const code=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
- assert.ok(code.includes("function createAudio(existing = null)"));
+ assert.ok(code.includes("function createAudio() {"));
+ assert.ok(code.includes("const existing = arguments.length ? arguments[0] : null;"));
  assert.ok(code.includes("audio = createAudio(liveDjAudio)"));
  assert.ok(code.includes("if (!_adottaDj) _assegnaAudioSorgente(audio,_url)"));
  assert.ok(code.includes("if (!_adottaDj && startAt > 0 && Number.isFinite(startAt))"));
