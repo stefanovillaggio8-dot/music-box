@@ -212,6 +212,7 @@ test("headphone pause cancels all retry work and persists paused intent",()=>{
   "let _silenziDiFila=3,_timerRiprove=null,_timerAiuto=null;"+
   "const audio={pause:()=>{o.paused=true}};"+
   "const _segna=()=>{},_chiudiAscolto=()=>{o.stats++};"+
+  "const _memorizzaPausaCorrente=()=>{};"+
   "const _segnaIntenzioneSono=v=>{o.intent=v};"+
   "const setPlaybackState=()=>{},_nascondiAiuto=()=>{},"+
    "syncPlayUI=()=>{},_usaControlliNativiIos=()=>true,"+
@@ -265,7 +266,7 @@ test("background pause saves the precise decoder time, not just a painted progre
    "restore:_riallineaPausaReale,reset:(a)=>{audio=a},stored:()=>_pausaCheckpoint};"
  )(env);
  make.checkpoint();
- assert.equal(LS.get("mb.pausePos.Ste").time,143.658);
+ assert.equal(LS.get("mb.pausaPos.Ste").time,143.658);
  assert.equal(LS.get("mb.playback.Ste").time,143.658);
  // Safari discards the decoded playback position while suspended.
  track.currentTime=0;
