@@ -2783,7 +2783,10 @@ async function intelligentShuffle(app,audio,fromId){
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   const cue=transition(old,next,audio.duration);
-  const verified=Boolean(cue&&((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.fade>=.46)||
+  // Never declare a "beat winner" on Safari if its actual mobile
+  // overlay constraints would reject it at playback time.
+  const mobilePlayable=!isIOS||mobileMixAllowed(cue,old,lastLyric);
+  const verified=Boolean(mobilePlayable&&cue&&((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.fade>=.46)||
     (cue.kind==="beat"&&cue.fade>=2.7))&&
     (cue.instrumentalBeatBridge||cue.dropReleaseBridge||
      cue.strongBeatBridge||cue.measuredBeatBridge||cue.grooveScore>=.78));
@@ -2791,7 +2794,7 @@ async function intelligentShuffle(app,audio,fromId){
    // Only as a SECOND choice: a measured musical decay may permit a
    // short, audible overlap even when no two percussion patterns match.
    // Never silently count this as a verified beat or shorten a vocal.
-   const safeSoft=Boolean(cue&&cue.kind==="soft"&&cue.fade>=2.35&&
+   const safeSoft=Boolean(mobilePlayable&&cue&&cue.kind==="soft"&&cue.fade>=2.35&&
     cue.quietCertified===true&&info.introDrive>=.43&&
     (cue.neutralRelease||cue.verifiedDecayAfterLyrics||cue.dropReleaseBridge||
      (Number.isFinite(cue.safeOutroAt)&&cue.safeOutroAt<=cue.begin+.25))&&
@@ -3122,15 +3125,28 @@ function setMixEnabled(value){
  if(!enabled){cancel();plannedFor="";plan=null;resetMobileFade()}
  else {
   previousId="";plannedFor="";
-  // Toggling mix is a real user action, so it can unlock the WebAudio
-  // preview context before Safari rejects autoplay at the outgoing beat.
-  if(isIOS&&mobileOverlayEnabled)bridge()?.mixEnableAudio?.();
+  // Turning the primary Mix switch on also enables iPhone mixing. The
+  // separate iPhone toggle remains available for disabling overlays.
+  if(isIOS){
+   mobileOverlayEnabled=true;
+   try{localStorage.setItem("mb.mixIphone","on")}catch(_){}
+   bridge()?.mixEnableAudio?.();
+  }
+  // Do not pull a multi-megabyte harmonic index in the same tap as play.
+  if(!deepIndex)setTimeout(()=>{if(enabled&&!document.hidden)
+   loadDeepIndex().catch(()=>{})},isIOS?2200:0);
  }
  draw();
  toast(enabled?"Mix intelligente attivato.":"Mix intelligente disattivato.");
 }
 function start(){
- loadDeepIndex().catch(()=>{});
+ // A disabled DJ must not download the entire musical index. Safari's
+ // native first MP3 has priority over index parsing and network requests.
+ if(enabled){
+  if(isIOS)setTimeout(()=>{if(enabled&&!document.hidden)
+   loadDeepIndex().catch(()=>{})},3500);
+  else loadDeepIndex().catch(()=>{});
+ }
  // The cloud batch index grows while music is playing: adopt new analyzed
  // tracks automatically, without reloading the tab or re-downloading MP3s.
  setInterval(()=>{
@@ -3193,7 +3209,12 @@ function start(){
    // Restore the native player's uninterrupted background playback.
    stopMobileMix();
    resetMobileFade();
-  }else if(enabled){plannedFor="";try{tick()}catch(e){}}
+  }else if(enabled){
+   plannedFor="";
+   if(isIOS&&!deepIndex)setTimeout(()=>{if(enabled&&!document.hidden)
+    loadDeepIndex().catch(()=>{})},2200);
+   try{tick()}catch(e){}
+  }
  });
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
