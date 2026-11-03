@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6573";
+const CACHE = "spotifynonavraiimieisoldi-v6574";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1027,7 +1027,7 @@ self.addEventListener("message", (event) => {
      browser permits it. iOS can kill service workers at any time, so the
      page also persists its remaining queue and resumes it on next open. */
   if (tipo === "SCARICA" && Array.isArray(data.url)) {
-    const audioUrls=data.url.slice(0,3).filter(offlineDownloadAllowed);
+    const audioUrls=data.url.slice(0,2).filter(offlineDownloadAllowed);
     if(!audioUrls.length)return;
     event.waitUntil(profileForEvent(event).then(name=>
       name?scaricaPerContoMio(audioUrls,cacheBraniName(name)):undefined).catch(()=>{}));
@@ -1054,7 +1054,7 @@ function offlineDownloadAllowed(raw) {
 async function scaricaPerContoMio(urls,nomeCache) {
  try {
   const cache=await caches.open(nomeCache);
-  for(const url of urls.slice(0,3)){
+  for(const url of urls.slice(0,2)){
    if(!offlineDownloadAllowed(url))continue;
    try{
     const request=new Request(url,{credentials:"omit"});

@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.573";
+  const APP_VERSION = "6.574";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5313,7 +5313,7 @@ function _eliminatiRimossiDaMandareSvuota() {
   }
 
   // Avoid replacing hundreds of rows when only the playing track changes.
-  let _renderRowsSource=null,_renderRowsSignature="";
+  let _renderRowsSignature="";
   function render() {
     _diag("render");
     const list = visibleTracks();
@@ -5374,7 +5374,6 @@ function _quantiEliminati() {
     aggiornaIndicatoreCondivisione();
 
     if (!list.length) {
-      _renderRowsSource=null;
       _renderRowsSignature="";
       playlistEl.replaceChildren();
       emptyEl.hidden = false;
@@ -5398,11 +5397,12 @@ emptyEl.textContent = !total
     const rowsSignature=profile+"|"+Number(_inSelezione)+"|"+
       Number(_potenziatiCaricati)+"|"+list.map(t=>[
         t.id,t.title,t.artist,t.album,t.cover,t.gradient,t.url,t.file,
-        t.review,t._ytStatus,t._ytErrore,t.builtin,t.preview,
+        t.review,t._ytStatus,t._ytErrore,t.source,t.youtubeId,
+        t.builtin,t.preview,
         favorites.has(t.id),_scelti.has(t.id),isCached(t),
         _branoInGym(t.id)
       ].join("\u001f")).join("\u001e");
-    if(_renderRowsSource===tracks && _renderRowsSignature===rowsSignature &&
+    if(_renderRowsSignature===rowsSignature &&
        playlistEl.childElementCount===list.length){
       const old=playlistEl.querySelector(".track.active");
       if(old)old.classList.remove("active");
@@ -5411,7 +5411,6 @@ emptyEl.textContent = !total
       renderQueueCount();
       return;
     }
-    _renderRowsSource=tracks;
     _renderRowsSignature=rowsSignature;
     list.forEach((t) => {
       const li = document.createElement("li");
@@ -12342,7 +12341,7 @@ $("fabMenu").addEventListener("click", (e) => {
   function _workerOfflineBatch(p) {
     if (!offlineBusy || offlineStopRequested || p !== profile) return;
     try {
-      const urls = _pendingOfflineUrls(p).slice(0,3);
+      const urls = _pendingOfflineUrls(p).slice(0,2);
       if (urls.length && navigator.serviceWorker?.controller)
         navigator.serviceWorker.controller.postMessage({type:"SCARICA",url:urls});
     } catch (e) {}
