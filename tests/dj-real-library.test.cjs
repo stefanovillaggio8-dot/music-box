@@ -177,3 +177,39 @@ test("extended 50k+ measured DJ transitions: end boundaries, sync metadata, safe
  console.info("[DJ FULL STRESS]",JSON.stringify({
   indexed:tracks.length,pairs,beat,snap,soft,cut,other,none:missing}));
 });
+
+
+test("large-library randomized DJ transitions respect real audio boundaries and voice guards",()=>{
+ let pairs=0,plans=0,beat=0,snap=0,protectedCount=0;
+ for(let i=0;i<tracks.length;i+=11){
+  const a=tracks[i].data;
+  for(let j=0;j<tracks.length;j+=2){
+   if(i===j)continue;
+   const b=tracks[j].data;
+   const cue=engine.transition(a,b,a.duration);
+   pairs++;
+   if(!cue)continue;
+   plans++;
+   assert.ok(Number.isFinite(cue.begin)&&Number.isFinite(cue.end),
+    "nonfinite DJ cue "+tracks[i].key+" -> "+tracks[j].key);
+   assert.ok(cue.begin>=0&&cue.end<=a.duration+.05&&cue.end>=cue.begin,
+    "invalid transition boundary "+tracks[i].key+" -> "+tracks[j].key);
+   assert.ok(Number.isFinite(cue.entry)&&cue.entry>=0&&cue.entry<=18.01,
+    "next music entrance must not jump ahead");
+   if(cue.kind==="beat")beat++;
+   if(cue.kind==="snap")snap++;
+   if((cue.kind==="beat"||cue.kind==="snap")&&plans%7===0){
+    // Newly discovered late vocals must not permit this early beat join.
+    const guarded=engine.transition({...a,lastLyricAt:cue.end-.1,
+     lastVoiceAt:cue.end-.1},b,a.duration);
+    assert.ok(guarded?.kind!=="beat"&&guarded?.kind!=="snap",
+      "unsafe beat crossing late vocal "+tracks[i].key+" -> "+tracks[j].key);
+    protectedCount++;
+   }
+  }
+ }
+ console.info("[DJ MASS LOAD]",JSON.stringify({tracks:tracks.length,
+  pairs,plans,beat,snap,protectedCount}));
+ assert.ok(pairs>30000,"large sample should cover the whole collection");
+ assert.ok(plans>0,"must include feasible real audio transitions");
+});
