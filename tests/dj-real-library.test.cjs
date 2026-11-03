@@ -59,6 +59,27 @@ test("actual precomputed music library: sample real beat/soft/cut decisions and 
  assert.ok(candidateRhythm>0,"Expected at least some physically close BPM candidates");
 });
 
+test("diagnose the 2026-11-03 screen recording: track 153 into 8",()=>{
+ const a=tracks.find(t=>t.key==="audio/songs/track-153.mp3");
+ const b=tracks.find(t=>t.key==="audio/songs/track-8.mp3");
+ assert.ok(a&&b,"Both recorded MP3s must be in the measured index");
+ const plan=engine.transition(a.data,b.data,a.data.duration);
+ const notes=engine.similarNotes(a.data,b.data);
+ const groove=engine.grooveAgreement(a.data,b.data);
+ const key=engine.camelotMatch(a.data,b.data);
+ console.info("[DJ RECORDING 153 TO 8]",JSON.stringify({
+  from:{key:a.key,bpm:a.data.bpm,confidence:a.data.beatConfidence,
+    duration:a.data.duration,last:a.data.last,protectedEnding:a.data.protectedEnding,
+    confidentTail:a.data.confidentTail,lastLyricAt:a.data.lastLyricAt,
+    lastVoiceAt:a.data.lastVoiceAt,dropRelease:a.data.dropRelease},
+  to:{key:b.key,bpm:b.data.bpm,confidence:b.data.beatConfidence,
+    introDrive:b.data.introDrive,first:b.data.first,firstLyricAt:b.data.firstLyricAt},
+  notes:{matches:notes.matches,focused:notes.focused,phrase:notes.phrase,
+    alignment:notes.alignment,reason:notes.reason},
+  groove,key,plan
+ }));
+});
+
 test("inspect music actually responsible for repeated zero beatCandidates in console",()=>{
  const targets=["track-160.mp3","track-161.mp3","track-112.mp3","track-138.mp3"];
  for(const target of targets){
