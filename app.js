@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.570";
+  const APP_VERSION = "6.571";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5890,13 +5890,14 @@ updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
   }
   // A native pause during iOS hide/show is a system interruption.
   // A deliberate foreground headphone/lockscreen pause still wins.
+  let _ultimoSeekUtente = 0;
   function _pausaNativaVolontaria(player, pausaSistema) {
     return _usaControlliNativiIos() && !pausaSistema &&
       !player.ended && !player._mbCambioBrano;
   }
   function createAudio() {
     const a = new Audio();
-    a.preload = "metadata";
+    a.preload = _usaControlliNativiIos() ? "auto" : "metadata";
     // Boosted-file failure is handled only by handleError. A second
     // independent error listener used to swap /bassi/ while handleError
     // simultaneously rebuilt the player, interrupting a valid fallback.
@@ -5956,7 +5957,9 @@ a.addEventListener("pause", () => {
       ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
     /* Ferma il contatore PRIMA di ogni eventuale return o ripresa iOS. */
     if (a === audio) _chiudiAscolto(false);
-    if (_pausaNativaVolontaria(a,eDelSistema)) {
+    // Buffering after a seek is not an intentional iPhone pause.
+    const pausaPerSeek = a.seeking || (Date.now()-_ultimoSeekUtente < 2500 && a.readyState < 3);
+    if (_pausaNativaVolontaria(a,eDelSistema || pausaPerSeek)) {
       /* La pausa delle cuffie non va interpretata come sospensione
          involontaria. I secondi di pausa non sono ascolto. */
       _vuoleSuonare = false;
@@ -5993,11 +5996,20 @@ a.addEventListener("pause", () => {
     });
     /* SEEK non e' ASCOLTO: l'evento va intercettato anche con l'app
        in secondo piano e quando l'iPhone gestisce la barra di sistema. */
-    a.addEventListener("seeking", () => { if (a === audio) _chiudiAscolto(false); });
+    a.addEventListener("seeking", () => {
+      if (a !== audio) return;
+      _ultimoSeekUtente=Date.now();
+      _ultimoScorrimento=Date.now();
+      _chiudiAscolto(false);
+      try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
+    });
     a.addEventListener("seeked", () => {
       if (a !== audio) return;
+      _ultimoScorrimento=Date.now();
       _chiudiAscolto(false);
       if (_staSuonandoOra()) _iniziaAscolto();
+      if (_vuoleSuonare && a.paused && !a.ended && !a._mbCambioBrano)
+        doPlay(true).catch(() => _riprovaPiuTardi());
     });
     // Ignore stale events from the previous media element after a skip.
     a.addEventListener("ended", () => { if (a === audio) handleEnded(); });
@@ -7982,6 +7994,8 @@ function _aggiornaPosizioneSchermo() {
 
   function seekBy(delta) {
     if (!audio) return;
+    _ultimoSeekUtente=Date.now();
+    try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
     _chiudiAscolto(false);
     const d = totalDuration();
     const attuale = audio.currentTime || 0;
@@ -11918,8 +11932,10 @@ $("btnModalitaGym").addEventListener("click", () => {
     scrubbing = false;
     progressBar.classList.remove("scrubbing");
     if (pendingSeek != null && audio) {
+      _ultimoSeekUtente=Date.now();
+      try { window.MusicBoxMix?.onSeek?.(); } catch (_) {}
       _chiudiAscolto(false);
-      audio.currentTime = pendingSeek;
+      try { audio.currentTime = pendingSeek; } catch (_) {}
     }
     pendingSeek = null;
     savePos();
@@ -12396,6 +12412,9 @@ $("fabMenu").addEventListener("click", (e) => {
   async function _scaricaDaSolaSeServe(brano) {
     try {
       if (!brano || !brano.url || !("caches" in window)) return;
+      // Avoid a full auto-download competing with active iPhone streaming.
+      // Manual offline downloads and their caches remain untouched.
+      if (_usaControlliNativiIos() && _vuoleSuonare) return;
       if (offlineBusy) return;
       /* Ste: "ma cosi' non occupa spazio nel telefono?". Si', e per questo
          adesso si puo' spegnere del tutto, e comunque non si passa oltre un
