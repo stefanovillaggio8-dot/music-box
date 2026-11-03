@@ -1208,7 +1208,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 34,
-    "s": 938,
+    "s": 945,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1844,7 +1844,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 33,
-    "s": 930,
+    "s": 937,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -2570,13 +2570,13 @@
    },
    "[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 48,
+    "s": 50,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
    "m:2026-11|[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 48,
+    "s": 50,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
@@ -6626,7 +6626,7 @@
    },
    "[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 117,
+    "s": 118,
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -6860,7 +6860,7 @@
    },
    "m:2026-11|[\"morirÃÂÃÂ² da re\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 112,
+    "s": 113,
     "t": "MorirÃÂÃÂ² da Re",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -7326,6 +7326,18 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
+   "[\"verdi nei viola\",\"lazza\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
+   "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -7334,7 +7346,7 @@
    },
    "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 118,
+    "s": 123,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -7568,7 +7580,7 @@
    },
    "m:2026-11|[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 0,
-    "s": 113,
+    "s": 118,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -8033,18 +8045,6 @@
     "s": 110,
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
-   },
-   "[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "verdi nei viola",
-    "a": "lazza"
-   },
-   "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "verdi nei viola",
-    "a": "lazza"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -9314,13 +9314,13 @@
    },
    "[\"le luci della città\",\"coez\"]": {
     "v": 0,
-    "s": 11,
+    "s": 20,
     "t": "Le luci della città",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della città\",\"coez\"]": {
     "v": 0,
-    "s": 11,
+    "s": 20,
     "t": "Le luci della città",
     "a": "Coez"
    },
