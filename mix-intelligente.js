@@ -1324,7 +1324,8 @@ function musicalIntroEntry(b){
 function rhythmicFullTailJoin(a,b,dur){
  if(isIOS||!a||!b||a.protectedEnding===true||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
-    !Number.isFinite(a.last)||a.last<dur-1.6||
+    !Number.isFinite(a.last)||
+    (a.last<dur-1.6&&!(a.confidentTail===true&&dur-a.last<=12))||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.beatConfidence<.16||b.beatConfidence<.16||
     b.introDrive<.43||
@@ -1343,17 +1344,27 @@ function rhythmicFullTailJoin(a,b,dur){
     !Number.isFinite(notes.focused)||notes.focused<.50||
     !Number.isFinite(notes.phrase)||notes.phrase<.35)return null;
  const key=camelotMatch(a,b);
- if(key.weight>=.14&&key.score<.40)return null;
- const end=dur-.035,fade=clamp(1.8*60/a.bpm,.62,1.05),begin=end-fade;
+ const keyMismatch=key.weight>=.14&&key.score<.40;
+ // A short drum-to-drum join may still work without matching full chords.
+ // Keep the blend under one beat and do not cut a measured vocal.
+ if(keyMismatch&&!(groove.score>=.80&&notes.focused>=.52&&
+    notes.phrase>=.36))return null;
+ const confirmedSilence=Boolean(a.confidentTail===true&&dur-a.last>=1.65&&
+    dur-a.last<=12);
+ const end=confirmedSilence?Math.min(dur-.035,a.last+.07):dur-.035;
+ const fade=keyMismatch?clamp(1.3*60/a.bpm,.54,.72):
+    clamp(1.8*60/a.bpm,.62,1.05);
+ const begin=end-fade;
  if(begin<25)return null;
  const entry=musicalIntroEntry(b);
  return {kind:"snap",begin,end,fade,entry,
   tempo:clamp(ratio,.97,1.03),
   gain:a.level&&b.level?clamp(a.level/b.level,.87,1.13):1,
   score:Math.round(notes.focused*100),grooveScore:groove.score,
-  rhythmicUnderlay:true,measuredBeatBridge:true,preserveTail:true,
-  silenceTrim:false,softTailTrim:false,quietCertified:false,
-  trailing:0,safeOutroAt:null,
+  rhythmicUnderlay:true,percussiveOnly:keyMismatch,
+  measuredBeatBridge:true,preserveTail:true,
+  silenceTrim:confirmedSilence,softTailTrim:false,quietCertified:false,
+  trailing:confirmedSilence?dur-end:0,safeOutroAt:null,
   beatPeriod:60/a.bpm,beatAnchor:Number.isFinite(a.beatAnchor)?
    a.beatAnchor:end,nextBeat:Number.isFinite(b.introBeat)?
    b.introBeat-entry:null};
@@ -2154,6 +2165,7 @@ async function beginMix(song,proposed){
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
+  rhythmicUnderlay:!!proposed.rhythmicUnderlay,
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
@@ -2205,6 +2217,12 @@ async function beginMix(song,proposed){
     const late=clamp((time-(act.kind==="snap"?.20:.55))/(act.kind==="snap"?.80:.45),0,1);
     outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
     inGain=Math.sin(Math.pow(time,.95)*Math.PI/2);
+   }
+   // Underlay remains quiet until the very end to limit key clashes.
+   if(act.rhythmicUnderlay){
+    const late=clamp((time-.24)/.76,0,1);
+    outGain=Math.cos(Math.pow(late,1.45)*Math.PI/2);
+    inGain=Math.sin(Math.pow(time,1.75)*Math.PI/2);
    }
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{

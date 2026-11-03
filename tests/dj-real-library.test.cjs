@@ -269,3 +269,22 @@ test("diagnose why observed zero-candidate tracks reject short rhythmic joins",(
    sample:examples.slice(0,4)}));
  }
 });
+
+test("track-161 can find at least one measured percussive bridge, without inventing key harmony",()=>{
+ const outgoing=tracks.find(x=>x.key==="audio/songs/track-161.mp3");
+ assert.ok(outgoing,"real playback regression track-161 must be indexed");
+ const matches=tracks.filter(t=>t.key!==outgoing.key).map(next=>({
+  next,plan:engine.transition(outgoing.data,next.data,outgoing.data.duration)
+ })).filter(x=>x.plan?.rhythmicUnderlay);
+ console.info("[DJ TRACK 161 BRIDGES]",JSON.stringify({
+  count:matches.length,
+  candidates:matches.slice(0,5).map(x=>({id:x.next.key,
+   percussiveOnly:!!x.plan.percussiveOnly,fade:x.plan.fade,
+   start:x.plan.begin,end:x.plan.end}))
+ }));
+ assert.ok(matches.length>=1,"Track 161 should find a beat-aligned short join in the indexed library");
+ for(const {plan} of matches){
+  assert.ok(plan.end>=outgoing.data.duration-.1);
+  assert.ok(plan.fade<=1.05);
+ }
+});
