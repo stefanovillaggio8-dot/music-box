@@ -8,6 +8,8 @@ let enabled=true;
 try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccato */}
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),voiceJobs=new Map();
+const mobileClipRetryAt=new Map();let mobileClipFailure=null;
+const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:"",lastError:""};
 const STALE_MOBILE_PREVIEW=Symbol("stale mobile intro request");
 // Optional DJ work must never delay a real song change or touch offline caches.
 let djPlaybackEpoch=0,lastDJTrackChange=0;
@@ -800,55 +802,107 @@ function compatibility(a,b){
  // The index already contains the measurements. On iPhone, load ONLY
  // an MP3 intro byte range for an optional WebAudio overlap, never a full song.
  async function decodeMobileIntroRange(source,key,deep,epoch){
-  if(!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
-  const ctrl=new AbortController();djFetchControllers.add(ctrl);
-  const timeout=setTimeout(()=>ctrl.abort(),12000);
-  try{
-   const response=await fetch(source,{
-    mode:"cors",cache:"no-store",signal:ctrl.signal,
-    headers:{"Range":"bytes=0-786431"}
-   });
-   const contentRange=response.headers.get("content-range")||"";
-   // Cross-origin responses may hide Content-Range unless CORS exposes it.
-   // HTTP 206 confirms the server supplied a partial response; verify its
-   // origin when the header is visible and always enforce the byte cap below.
-   if(response.status!==206||
-      (contentRange&&!/^bytes\s+0-\d+\/\d+$/i.test(contentRange))){
-    try{await response.body?.cancel()}catch(_){}
-    return null; // Never accept a full 200 response as a DJ preview.
-   }
-   if(Number(response.headers.get("content-length")||0)>786432)return null;
-   // Read at most 768 KiB even when a proxy omits Content-Length.
-   // Stop the stream before an unexpected oversized payload can stall music.
-   let bytes;
-   if(response.body?.getReader){
-    const reader=response.body.getReader(),parts=[];let total=0;
+ if(!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
+ if(Date.now()<(mobileClipRetryAt.get(key)||0))return null;
+ const ctrl=new AbortController();djFetchControllers.add(ctrl);
+ const timer=setTimeout(()=>ctrl.abort(),22000);
+ const stale=()=>ctrl.signal.aborted||epoch!==djPlaybackEpoch||document.hidden;
+ async function readLimited(response,limit){
+  if(!response.ok)throw Error("HTTP "+response.status);
+  if(Number(response.headers.get("content-length")||0)>limit)
+   throw Error("File troppo grande per il mix");
+  if(response.body?.getReader){
+   const reader=response.body.getReader(),parts=[];let total=0;
+   try{
     while(true){
-     const {done,value}=await reader.read();
-     if(done)break;
+     const {done,value}=await reader.read();if(done)break;
+     if(stale())throw Error("Operazione annullata");
      total+=value.byteLength;
-     if(total>786432){await reader.cancel();return null}
+     if(total>limit)throw Error("Limite memoria anteprima raggiunto");
      parts.push(value);
     }
-    const combined=new Uint8Array(total);let offset=0;
-    for(const part of parts){combined.set(part,offset);offset+=part.byteLength}
-    bytes=combined.buffer;
-   }else bytes=await response.arrayBuffer();
-   if(bytes.byteLength<16384||bytes.byteLength>786432||ctrl.signal.aborted||
-      epoch!==djPlaybackEpoch||document.hidden)return null;
-   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
-   if(!Offline)return null;
-   const ctx=new Offline(1,1,44100);
-   // Safari may refuse decoding an incomplete MP3: the native song never stops.
-   const decoded=await ctx.decodeAudioData(bytes.slice(0));
-   if(ctrl.signal.aborted||epoch!==djPlaybackEpoch||document.hidden)return null;
-   rememberMobileClip(key,decoded,deep);
-   if(!mobileIntroClips.has(key))return null;
-   const merged=withValidatedVoice(deep,cache.get(key));
-   cache.set(key,merged);return merged;
-  }catch(_){return null}
-  finally{clearTimeout(timeout);djFetchControllers.delete(ctrl)}
+   }catch(err){try{await reader.cancel()}catch(_){}throw err}
+   const bytes=new Uint8Array(total);let off=0;
+   for(const p of parts){bytes.set(p,off);off+=p.byteLength}
+   return bytes.buffer;
+  }
+  const buf=await response.arrayBuffer();
+  if(buf.byteLength>limit)throw Error("Limite memoria anteprima raggiunto");
+  return buf;
  }
+ async function clipFromBytes(bytes,complete){
+  if(stale()||bytes.byteLength<16384)return null;
+  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  if(!Offline)throw Error("Decodifica Web Audio non disponibile");
+  const ctx=new Offline(1,1,44100);
+  const decoded=await ctx.decodeAudioData(bytes.slice(0));
+  if(stale())return null;
+  if(complete&&Math.abs(decoded.duration-deep.duration)>1.5)
+   throw Error("MP3 diverso dall'analisi musicale");
+  rememberMobileClip(key,decoded,deep);
+  if(!mobileIntroClips.has(key))throw Error("Introduzione MP3 non decodificabile");
+  const merged=withValidatedVoice(deep,cache.get(key));
+  cache.set(key,merged);
+  mobileClipRetryAt.delete(key);mobileClipFailure=null;
+  return merged;
+ }
+ try{
+  mobileClipMetrics.ranges++;
+  const response=await fetch(source,{mode:"cors",cache:"no-store",
+   signal:ctrl.signal,headers:{"Range":"bytes=0-786431"}});
+  if(stale())return null;
+  if(response.status!==206&&response.status!==200)
+   throw Error("Anteprima MP3 non disponibile: HTTP "+response.status);
+  const complete=response.status===200,cr=response.headers.get("content-range")||"";
+  if(!complete&&cr&&!/^bytes\s+0-\d+\/\d+$/i.test(cr))
+   throw Error("Intervallo MP3 non valido");
+  const bytes=await readLimited(response,complete?7*1024*1024:786432);
+  if(stale())return null;
+  if(complete){
+   mobileClipMetrics.fullFetches++;
+   const result=await clipFromBytes(bytes,true);
+   if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 200";}
+   return result;
+  }
+  try{
+   const result=await clipFromBytes(bytes,false);
+   if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 206";return result;}
+  }catch(_){/* Safari can reject a valid but incomplete MP3 */ }
+  if(stale())return null;
+  // The complete-file fallback is allowed only while the current native
+  // song has adequate buffered audio; it must never stall playback.
+  const playing=bridge()?.audio?.();
+  let ahead=0;
+  try{for(let i=0;i<playing.buffered.length;i++)
+   if(playing.buffered.start(i)<=playing.currentTime+.5&&
+      playing.buffered.end(i)>=playing.currentTime)
+    ahead=Math.max(ahead,playing.buffered.end(i)-playing.currentTime)
+  }catch(_){}
+  const conn=navigator.connection||navigator.webkitConnection;
+  if(!playing||playing.paused||playing.seeking||playing.readyState<3||
+     (playing.readyState<4&&ahead<12)||conn?.saveData||
+     /^(slow-)?2g$|^3g$/i.test(String(conn?.effectiveType||""))){
+   mobileClipRetryAt.set(key,Date.now()+18000);
+   mobileClipFailure={source:key,reason:"Attendo più audio già caricato"};
+   return null;
+  }
+  mobileClipMetrics.fullFetches++;
+  const full=await fetch(source,{mode:"cors",cache:"force-cache",signal:ctrl.signal});
+  if(full.status!==200)throw Error("MP3 completo non disponibile");
+  const completeBytes=await readLimited(full,7*1024*1024);
+  const result=await clipFromBytes(completeBytes,true);
+  if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="MP3 completo";}
+  return result;
+ }catch(e){
+  if(stale())return null;
+  const reason=String(e?.message||e||"Decodifica non disponibile");
+  mobileClipFailure={source:key,reason};
+  // Stop Safari from redownloading the same undecodable MP3 every 650 ms.
+  mobileClipRetryAt.set(key,Date.now()+90000);
+  mobileClipMetrics.errors++;mobileClipMetrics.lastError=reason;
+  return null;
+ }finally{clearTimeout(timer);djFetchControllers.delete(ctrl)}
+}
 async function decode(track,needClip=false){
  if(!enabled||!track)return null;
  const epoch=djPlaybackEpoch;
@@ -864,7 +918,7 @@ async function decode(track,needClip=false){
  if(!deepIndex)await loadDeepIndex();
  const deep=deepLookup(track);
  if(isIOS&&needClip){
-  if(!deep)return null;
+  if(!deep||Date.now()<(mobileClipRetryAt.get(key)||0))return null;
   if(mobileIntroClips.has(key))return cache.get(key)||deep;
   if(pending.has(key))return pending.get(key);
   const job=(mobileDecodeQueue=mobileDecodeQueue.catch(()=>{}).then(()=>
@@ -2930,7 +2984,9 @@ function updateMobileStatus(){
  else if(!audio||audio.paused)status="Avvia una canzone per preparare il mix.";
  else if(!next)status="Nessun prossimo brano nella coda.";
  else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
- else if(!clip)status="Intro non ancora preparata: evito di rallentare il brano corrente; preparo il mix vicino al finale, se sicuro.";
+ else if(!clip&&mobileClipFailure?.source===String(url))status=
+  "Intro non pronta: "+mobileClipFailure.reason+". La musica normale continua.";
+ else if(!clip)status="Preparo l'intro del prossimo brano senza fermare la canzone.";
  else if(!plan)status="Intro pronta: controllo note e finale. Se non combaciano, passaggio normale.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
   status="Beat compatibili misurati: anteprima ritmica breve e prudente, se Safari la consente.";
@@ -3599,6 +3655,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     shuffleLastDecision:null,
    shuffleBusy,
    previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
+   mobileClipReady:!!(next&&mobileIntroClips.has(String(app?.mixUrl?.(next)||next.url))),
+   mobileClipFailure:mobileClipFailure?.source===String(app?.mixUrl?.(next)||next?.url)?
+    mobileClipFailure.reason:null,mobileClipMetrics:{...mobileClipMetrics},
    previewMatches:!!(prepared&&prepared.id===next?.id&&prepared.fromId===id),
    liveSampleCount:points.length,liveContext:liveOutro?.ctx?.state||"unsupported",
    liveRms:points.at(-1)?.rms??null,
