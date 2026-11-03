@@ -225,7 +225,14 @@ test("real audio index audits one-beat blends without trimming protected endings
   if(!p?.rhythmicUnderlay)continue;
   blended++;
   assert.ok(p.end>=a.data.duration-.1&&p.end<=a.data.duration);
-  assert.ok(p.fade<=1.05&&a.data.protectedEnding!==true);
+  // A protected LOUD ending may have a genuine compatible beat.
+  // It must remain audible through the handoff, never be treated as silence.
+  assert.ok(p.preserveTail===true,"matched final music must be preserved");
+  assert.ok(p.fade<=1.05 ||
+   (p.kind==="beat"&&p.vocalVerifiedBeat===true&&p.fade<=4.5),
+   "long blends need measured voice safety");
+  if(a.data.protectedEnding===true)
+   assert.equal(p.silenceTrim,false,"a loud final kick cannot be trimmed");
   const guarded={...a.data,lastLyricAt:a.data.duration-.4,lastVoiceAt:a.data.duration-.4};
   assert.ok(!engine.transition(guarded,b.data,guarded.duration)?.rhythmicUnderlay);
  }
