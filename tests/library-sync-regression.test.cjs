@@ -71,7 +71,7 @@ test("worker playlist snapshots may shrink the gym without losing custom IDs",()
    "let playlists=env.playlists,profile='Ste';"+
    "const _playlistDaSincronizzare=env.pending;"+
    "const _playlistCercata=n=>playlists.find(p=>p.name===n);"+
-   "const _soloInPlaylist=new Set();"+
+   "let _soloInPlaylist=new Set();"+
    "const _ricalcolaSoloInPlaylist=()=>new Set();"+
    "const saveCurrentState=()=>{env.changes++};"+
    "const _disegnaLinguettePlaylist=()=>{},render=()=>{},"+
