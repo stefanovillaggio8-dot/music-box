@@ -329,7 +329,7 @@ test("foreground recovery seeks the HTMLAudioElement and does not autoplay pause
  assert.match(app,/const sec=Math\.max\(0,Math\.round/);
 });
 
-test("resume-before-metadata: iOS remains silent until the saved decoder seek",()=>{
+test("resume-before-metadata: iOS does not go silent while waiting for decoder seek",()=>{
  const code=excerpt(app,"function _pausaSalvata()","function updatePlayerHeight()");
  const state=new Map([["mb.pausaPos.Ste",{id:"b-track-55",time:125.375}]]);
  const env={audio:{currentTime:0,paused:true,readyState:0,duration:240,
@@ -349,7 +349,7 @@ test("resume-before-metadata: iOS remains silent until the saved decoder seek",(
    "release:_confermaRipresaAudio,inspect:()=>_bloccoRipresaAudio};"
  )(env);
  assert.equal(run.gate(),true);
- assert.equal(env.audio.muted,true);
+ assert.equal(env.audio.muted,false,"never silence the iPhone decoder during a seek");
  assert.equal(run.seek(),false,"no metadata: cannot seek yet");
  env.audio.readyState=2;
  assert.equal(run.seek(),true);
@@ -378,7 +378,7 @@ test("iPhone pause during delayed decoder restore retains original timestamp",()
   "return {start:_preparaRipresaAudio,pause:_memorizzaPausaCorrente,"+
    "stop:_annullaBloccoRipresaAudio};"
  )(env);
- run.start();assert.equal(env.audio.muted,true);
+ run.start();assert.equal(env.audio.muted,false);
  run.pause();run.stop();
  assert.equal(env.audio.muted,false);
  assert.equal(map.get("mb.pausaPos.Ste").time,62.4);
@@ -391,4 +391,44 @@ test("iOS canplay, seeked and changing songs settle outstanding restore",()=>{
  assert.match(app,/_annullaBloccoRipresaAudio\(\);\s*_pausaCheckpoint=null/);
  assert.match(app,/_memorizzaPausaCorrente\(\);\s*_annullaBloccoRipresaAudio\(\)/);
  assert.match(app,/_preparaRipresaAudio\(\);\s*_riallineaPausaReale\(\)/);
+});
+
+test("restoring a paused iPhone song never traps audio output muted",()=>{
+ const code=excerpt(app,"function _pausaSalvata()","function updatePlayerHeight()");
+ const state=new Map([["mb.pausaPos.Ste",{id:"b-track-22",time:82.625}]]);
+ const player={currentTime:0,paused:true,readyState:0,duration:200,
+   seeking:false,muted:false};
+ const context={player,state};
+ const runtime=new Function("e",
+  "let audio=e.player,currentId='b-track-22',profile='Ste',resumeAt=0;"+
+  "let _pausaCheckpoint=null,_vuoleSuonare=false,_pausaEsplicita=true;"+
+  "const LS={get:(k,d)=>e.state.has(k)?e.state.get(k):d,"+
+   "set:(k,v)=>e.state.set(k,v)};"+
+  "const _usaControlliNativiIos=()=>true;"+
+  "const totalDuration=()=>audio.duration,updateProgressUI=()=>{};"+
+  "const profileState=()=>({last:currentId,time:82.625});"+
+  "const writeProfileState=()=>{};"+
+  code+
+  "return {start:_preparaRipresaAudio,confirm:_confermaRipresaAudio,"+
+   "gate:()=>_bloccoRipresaAudio,resume:()=>resumeAt};"
+ )(context);
+ assert.equal(runtime.start(),true);
+ assert.equal(player.muted,false,"missing metadata must not make ALL playback silent");
+ assert.equal(runtime.resume(),82.625,"seek must be retried when metadata arrives");
+ assert.equal(runtime.confirm(),false);
+ assert.equal(player.muted,false);
+ player.readyState=2;
+ player.currentTime=82.625;
+ assert.equal(runtime.confirm(),true);
+ assert.equal(player.muted,false);
+ assert.equal(runtime.gate(),null);
+});
+test("iOS seek gate expires harmlessly without muting when Safari never completes range load",()=>{
+ const source=excerpt(app,"function _preparaRipresaAudio()",
+   "let _ripristinoPausaAtteso=null");
+ assert.doesNotMatch(source,/audio\.muted=true/);
+ assert.match(source,/Date\.now\(\)-Number\(gate\.started\|\|0\)>6500/);
+ assert.match(source,/_annullaBloccoRipresaAudio\(\)/);
+ assert.match(source,/resumeAt=target/);
+ assert.match(app,/const _avvioImmediato = autoplay \? doPlay\(\) : null/);
 });

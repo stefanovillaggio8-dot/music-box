@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.594";
+  const APP_VERSION = "6.595";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5737,8 +5737,12 @@ li.addEventListener("click", () => {
     if(_bloccoRipresaAudio?.player===audio&&
        _bloccoRipresaAudio.id===currentId)return true;
     _bloccoRipresaAudio={player:audio,id:currentId,target,
-      wasMuted:!!audio.muted};
-    try{audio.muted=true}catch(_){}
+      wasMuted:!!audio.muted,started:Date.now()};
+    // Safari may NEVER send canplay/seeked for a remote MP3 while in
+    // background. Muting here could strand all playback indefinitely.
+    // Preserve the real audio output and request the seek via metadata.
+    // If seek stalls, hearing the song is preferable to permanent silence.
+    resumeAt=target;
     return true;
   }
   function _confermaRipresaAudio() {
@@ -5746,7 +5750,14 @@ li.addEventListener("click", () => {
     if(!gate||gate.player!==audio||gate.id!==currentId)return false;
     const pos=Number(audio.currentTime);
     if(audio.readyState<2||audio.seeking||!Number.isFinite(pos)||
-       pos<gate.target-.65||pos>gate.target+12)return false;
+       pos<gate.target-.65||pos>gate.target+12){
+      // Fail open: never trap an iPhone on a stale seek; leave Play usable.
+      if(Date.now()-Number(gate.started||0)>6500){
+        _annullaBloccoRipresaAudio();
+        return false;
+      }
+      return false;
+    }
     _bloccoRipresaAudio=null;
     _ripristinoPausaAtteso=null;
     try{audio.muted=gate.wasMuted}catch(_){}
