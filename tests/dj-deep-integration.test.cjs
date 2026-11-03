@@ -117,3 +117,44 @@ test("deep audio always wins over stale local beat analysis; vocal veto remains"
  assert.equal(merge(deep,{...local,duration:173}).voiceModel,undefined);
  assert.match(text,/withValidatedVoice\(deepLookup\(t\),local\)/);
 });
+
+test("iPhone skip aborts stale optional MP3 work but never touches playback or offline downloads",()=>{
+ const start=text.indexOf("let djPlaybackEpoch=0,");
+ const end=text.indexOf("function rememberMobileClip(",start);
+ assert.ok(start>0&&end>start);
+ let now=20000,hidden=false;
+ const clock={now:()=>now},doc={get hidden(){return hidden}};
+ const x=new Function("clock","doc",
+  "const isIOS=true,Date={now:()=>clock.now()},document=doc;"+
+  text.slice(start,end)+
+  "return {abortObsoleteDJWork,mobileDJMayWork,"+
+  "add:c=>djFetchControllers.add(c),"+
+  "status:()=>({epoch:djPlaybackEpoch,active:djFetchControllers.size})};"
+ )(clock,doc);
+ let aborts=0;
+ x.add({abort:()=>{aborts++}});
+ assert.equal(x.status().active,1);
+ x.abortObsoleteDJWork();
+ assert.equal(aborts,1);
+ assert.equal(x.status().epoch,1);
+ assert.equal(x.status().active,0);
+ assert.equal(x.mobileDJMayWork(),false,"skip takes priority over analysis");
+ now+=4600;
+ assert.equal(x.mobileDJMayWork(),true);
+ hidden=true;
+ assert.equal(x.mobileDJMayWork(),false);
+ const skip=text.slice(text.indexOf("function abortObsoleteDJWork("),
+  text.indexOf("function mobileDJMayWork("));
+ assert.doesNotMatch(skip,/caches\.|indexedDB\.|localStorage\.|audio\.pause/);
+});
+test("Safari previews reuse index features and never run whole-track vocal ML",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const worker=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ assert.match(text,/if\(isIOS&&deep&&Math\.abs\(decoded\.duration-deep\.duration\)<1\.5\)/);
+ assert.match(text,/if\(!isIOS&&voice\?\.analyze/);
+ assert.match(text,/if\(!enabled\|\|isIOS\|\|!voice\?\.analyze/);
+ assert.match(app,/_preparato\.preload = \(_usaControlliNativiIos\(\)\|\|_meglioNonScaricareTutto\(\)\)/);
+ assert.match(worker,/function cacheBraniName\(p\)/);
+ assert.match(worker,/migrateOfflineSongsAndCleanup\(\)/);
+ assert.doesNotMatch(text,/caches\.delete\(/);
+});

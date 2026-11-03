@@ -151,3 +151,29 @@ test("screen recording 00:41:03: diagnose musical candidates for track-1197 and 
    top:examples.slice(0,4)}));
  }
 });
+
+test("extended 50k+ measured DJ transitions: end boundaries, sync metadata, safe fallback",()=>{
+ const out=tracks.filter((_,i)=>i%Math.max(1,Math.floor(tracks.length/250))===0).slice(0,250);
+ const ins=tracks.filter((_,i)=>i%Math.max(1,Math.floor(tracks.length/235))===0).slice(0,235);
+ let pairs=0,beat=0,snap=0,soft=0,cut=0,other=0,missing=0;
+ for(const a of out)for(const b of ins){
+  if(a.key===b.key)continue;
+  pairs++;
+  const cue=engine.transition(a.data,b.data,a.data.duration);
+  if(!cue){missing++;continue}
+  assert.ok(Number.isFinite(cue.begin)&&Number.isFinite(cue.end));
+  assert.ok(cue.begin>=0&&cue.end>=cue.begin);
+  assert.ok(cue.end<=a.data.duration+.03);
+  assert.ok(Number.isFinite(cue.entry)&&cue.entry>=0);
+  assert.ok(Number.isFinite(cue.fade)&&cue.fade>=0);
+  assert.ok(!a.data.durationMismatch,"duration-mismatched source was matched");
+  if(cue.kind==="beat")beat++;
+  else if(cue.kind==="snap")snap++;
+  else if(cue.kind==="soft")soft++;
+  else if(cue.kind==="cut")cut++;
+  else other++;
+ }
+ assert.ok(pairs>=30000,"stress test must include 30k+ real-song pairs");
+ console.info("[DJ FULL STRESS]",JSON.stringify({
+  indexed:tracks.length,pairs,beat,snap,soft,cut,other,none:missing}));
+});
