@@ -74,8 +74,9 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
   excerpt("function grooveAgreement(","// Find a *musical* release")+
   excerpt("function compatibility(","async function decode(")+
   excerpt("function hasReliableHarmony(","function resetMobileFade(")+
-  "return {transition};")(false,"auto");
- let total=0,plans=0,allowed=0,lowPreview=0;
+  excerpt("function iphoneBeatPairCertified(","function mobileMixAllowed(")+
+  "return {transition,iphoneBeatPairCertified};")(false,"auto");
+ let total=0,plans=0,allowed=0,lowPreview=0,strict=0,weak=0;
  for(let i=0;i<tracks.length;i+=11)
   for(let j=0;j<tracks.length;j+=2){
    if(i===j)continue;
@@ -86,13 +87,15 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
    plans++;
    if(allow(p,a,null)){
     allowed++;if(p.kind==="snap"&&!p.voiceVerifiedMicroBridge)lowPreview++;
+    if(engine.iphoneBeatPairCertified(a,b,p))strict++;else weak++;
     assert.ok(p.end<=a.duration+.04&&p.begin>=0);
    }
   }
  console.info("[iPhone DJ REAL]",JSON.stringify({indexed:tracks.length,total,
-  plans,allowed,lowPreview}));
+  plans,allowed,lowPreview,strict,weak}));
  assert.ok(total>=25000);
  assert.ok(allowed>=1,"at least one real beat/quiet overlap should be eligible");
+ assert.ok(weak>0,"real library must reject false-positive beat claims");
 });
 
 test("iPhone shuffle only promotes tracks its actual mixer can play",()=>{
