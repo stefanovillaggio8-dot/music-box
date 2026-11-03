@@ -212,7 +212,7 @@ test("headphone pause cancels all retry work and persists paused intent",()=>{
   "let _silenziDiFila=3,_timerRiprove=null,_timerAiuto=null;"+
   "const audio={pause:()=>{o.paused=true}};"+
   "const _segna=()=>{},_chiudiAscolto=()=>{o.stats++};"+
-  "const _memorizzaPausaCorrente=()=>{};"+
+  "const _memorizzaPausaCorrente=()=>{},_annullaBloccoRipresaAudio=()=>{};"+
   "const _segnaIntenzioneSono=v=>{o.intent=v};"+
   "const setPlaybackState=()=>{},_nascondiAiuto=()=>{},"+
    "syncPlayUI=()=>{},_usaControlliNativiIos=()=>true,"+
@@ -307,7 +307,8 @@ test("the resume event keeps paused near-end timestamps, short positions and sta
   "const totalDuration=()=>audio.duration;"+
   "const LS={get:()=> 'no'};const _pausaEsplicita=true;"+
   "const _pausaSalvata=()=>({id:'b-track-1',time:199.45});"+
-  "const _riallineaPausaReale=()=>true;const _vuoleSuonare=false;"+
+  "const _riallineaPausaReale=()=>true,_confermaRipresaAudio=()=>false;"+
+  "const _bloccoRipresaAudio=null,_vuoleSuonare=false;"+
   "const updateProgressUI=(p,d)=>env.display={p,d};"+
   metadata+"return {run:handleMetadata,resume:()=>resumeAt};"
  )(env);
@@ -323,7 +324,7 @@ test("foreground recovery seeks the HTMLAudioElement and does not autoplay pause
  assert.match(app,/if\(typeof _riallineaPausaReale==="function"\)\s*_riallineaPausaReale\(\)/);
  assert.match(app,/a\.addEventListener\("canplay",\s*\(\) =>/);
  assert.match(app,/const pending=_ripristinoPausaAtteso/);
- assert.match(app,/_memorizzaPausaCorrente\(\);\s*setPlaybackState\("paused"\)/);
+ assert.match(app,/_memorizzaPausaCorrente\(\);\s*_annullaBloccoRipresaAudio\(\);\s*setPlaybackState\("paused"\)/);
  assert.match(app,/if\(audio\?\.paused&&!_vuoleSuonare\)_riallineaPausaReale\(\)/);
  assert.match(app,/const sec=Math\.max\(0,Math\.round/);
 });
