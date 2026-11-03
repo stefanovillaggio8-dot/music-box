@@ -2460,13 +2460,13 @@
    },
    "[\"autoritratto\",\"charlie charles, nayt\"]": {
     "v": 0,
-    "s": 147,
+    "s": 194,
     "t": "Autoritratto",
     "a": "Charlie Charles, nayt"
    },
    "m:2026-11|[\"autoritratto\",\"charlie charles, nayt\"]": {
     "v": 0,
-    "s": 147,
+    "s": 194,
     "t": "Autoritratto",
     "a": "Charlie Charles, nayt"
    },
@@ -9417,6 +9417,18 @@
     "s": 110,
     "t": "LA CITTÀ",
     "a": "MOSTRO"
+   },
+   "[\"terr1\",\"kid yugi, geology\"]": {
+    "v": 0,
+    "s": 32,
+    "t": "Terr1",
+    "a": "Kid Yugi, Geology"
+   },
+   "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
+    "v": 0,
+    "s": 32,
+    "t": "Terr1",
+    "a": "Kid Yugi, Geology"
    }
   },
   "Diego": {
