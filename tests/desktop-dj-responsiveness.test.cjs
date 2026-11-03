@@ -29,7 +29,8 @@ test("desktop library beat search yields event loop during large candidate compa
 });
 test("normal desktop preloader never duplicates the active DJ audio preview",()=>{
  const code=section(app,"function _preparaIlSuccessivo(id) {","let _timerRiprove = null;");
- assert.ok(code.includes("if (_usaControlliNativiIos() || window.MusicBoxMix?.isEnabled?.()) return;"));
+ assert.ok(code.includes("if (_usaControlliNativiIos()) return;"));
+ assert.ok(code.includes("if (window.MusicBoxMix?.isEnabled?.()) return;"));
 });
 test("console explains matching outcomes with explicit candidate counts",()=>{
  assert.ok(dj.includes('scored.length+" beat verificati'));

@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.577";
+  const APP_VERSION = "6.578";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6279,13 +6279,14 @@ function rebuildAudio(autoplay) {
   }
 
   function _preparaIlSuccessivo(id) {
+    if (_usaControlliNativiIos()) return;
     // iPhone uses a single native media pipeline. A second hidden
     // HTMLAudio metadata fetch can stall the currently playing MP3.
     // Keep the offline downloads and let the optional DJ prepare only
     // its short preview near the last verified musical bars.
     // The PC DJ already prepares its own timed preview. Avoid an extra
     // full-MP3 preloader consuming bandwidth while it crossfades.
-    if (_usaControlliNativiIos() || window.MusicBoxMix?.isEnabled?.()) return;
+    if (window.MusicBoxMix?.isEnabled?.()) return;
     const t = tracks.find((x) => x.id === id);
     if (!t || !t.url || _preparatoId === id) return;
     try {

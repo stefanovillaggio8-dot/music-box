@@ -284,7 +284,7 @@ test("a weak boundary or uncertain BPM must not manufacture an audio beat mix",a
 test("shuffle analysis yields between chunks on iPhone and rechecks playback generation",()=>{
  const body=source.slice(source.indexOf("async function intelligentShuffle("),
   source.indexOf("let shuffleBusy=",source.indexOf("async function intelligentShuffle(")));
- assert.match(body,/if\(isIOS&&\+\+batchCount%24===0\)/);
+ assert.match(body,/if\(\+\+batchCount%24===0\)/);
  assert.match(body,/await new Promise\(resolve=>setTimeout\(resolve,0\)\)/);
  assert.match(body,/runGeneration!==shuffleGeneration\|\|app\.currentId\(\)!==fromId/);
  assert.match(source,/setInterval\(\(\)=>\{try\{tick\(\)\}catch\(e\)\{\}\},isIOS\?650:350\)/);

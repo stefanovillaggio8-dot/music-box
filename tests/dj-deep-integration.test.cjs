@@ -43,7 +43,8 @@ function vocalFixture(){
  const start=text.indexOf("const voiceRetry=new Map();");
  const end=text.indexOf("function toast(m)",start);
  assert.ok(start>0&&end>start);
- const app={currentId:()=>1,mixNext:()=>({id:2})};
+ const app={currentId:()=>1,mixNext:()=>({id:2}),
+  audio:()=>({duration:210,currentTime:15,paused:false,seeking:false})};
  const window={
   MusicBoxVocal:{analyze:async()=>({
    source:"yamnet",modelVersion:3,firstVoiceAt:0,lastVoiceAt:98,
@@ -66,7 +67,8 @@ function vocalFixture(){
  };
  const runner=new Function("env",[
   "const window=env.window,document=env.doc,navigator={connection:{effectiveType:'4g'}},isIOS=false,enabled=true;",
-  "const bridge=()=>env.app,fetch=env.fetch,saveAnalysis=env.saved;",
+  "const bridge=()=>env.app,fetch=env.fetch,saveAnalysis=env.saved;"+
+  "const setTimeout=(fn,ms)=>ms===4500?(queueMicrotask(fn),0):globalThis.setTimeout(fn,ms);",
   "const cache=new Map(),voiceJobs=new Map();",
   "let active=null,mobileActive=null,plan=null,mixing=false,plannedFor='old';",
   "const voiceThreatensPlan=()=>false,cancel=()=>{};",

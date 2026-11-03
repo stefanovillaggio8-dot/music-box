@@ -2811,7 +2811,7 @@ async function intelligentShuffle(app,audio,fromId){
   if(++batchCount%24===0){
    await new Promise(resolve=>setTimeout(resolve,0));
    if(runGeneration!==shuffleGeneration||app.currentId()!==fromId||
-      document.hidden)return {retry:false};
+      (typeof document!=="undefined"&&document.hidden))return {retry:false};
   }
   if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
      !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
