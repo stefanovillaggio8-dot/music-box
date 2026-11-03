@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.590";
+  const APP_VERSION = "6.591";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4529,8 +4529,9 @@ const ORDINAMENTI = [
   function _nascostiDallePlaylist() {
     const fuori = new Set();
     for (const pl of (playlists || [])) {
-      if (!pl || pl.nascosta !== true) continue;
-      for (const id of (pl.tracks || [])) fuori.add(id);
+      if(!pl||pl.nascosta!==true)continue;
+      if(pl.nascostaDa&&pl.nascostaDa!==profile)continue;
+      for(const id of (pl.tracks||[]))fuori.add(id);
     }
     return fuori;
   }
@@ -5338,8 +5339,15 @@ function _eliminatiRimossiDaMandareSvuota() {
     // I brani provvisori della stanza sono player interni, non nuove
     // canzoni nella libreria: non gonfiare il contatore del profilo.
     const visibleAll = tracks.filter(t => t && t.source !== "stanza-condivisa");
-    const total = visibleAll.length;
-    const mine = visibleAll.filter((t) => !t.builtin && !t.preview && !eGiaCondiviso(t)).length;
+    // The library count must exclude playlist-only songs, too.
+    // Earlier it displayed the entire catalog and made a hidden song
+    // look as though it had returned to the iPhone's library.
+    const libraryAll=visibleAll.filter(t=>
+      !_soloInPlaylist.has(_chiaveSoloInPlaylist(t.id))&&
+      !(profile===DEFAULT_PROFILE&&_soloInPlaylist.has(t.id)));
+    const total=(_playlistAttiva?visibleAll:libraryAll).length;
+    const mine=(_playlistAttiva?visibleAll:libraryAll)
+      .filter(t=>!t.builtin&&!t.preview&&!eGiaCondiviso(t)).length;
     const n = list.length;
 function _quantiEliminati() {
   try {
@@ -5385,6 +5393,7 @@ function _quantiEliminati() {
 
     if (!list.length) {
       _renderRowsSignature="";
+      if(_mobileRowsObserver){_mobileRowsObserver.disconnect();_mobileRowsObserver=null}
       playlistEl.replaceChildren();
       emptyEl.hidden = false;
 emptyEl.textContent = !total
@@ -15446,8 +15455,8 @@ function _unisciPlaylistCondivise(arrivate,daWorker=false) {
         // playlist, even if it is shorter. A deletion must remain deleted.
         // A locally edited playlist awaiting POST is preserved instead.
         const newIds=[...new Set(
-          (Array.isArray(p.tracks)?p.tracks:[]).map(String)
-            .filter(x=>/^(?:b-track-\d+|b-youtube-[A-Za-z0-9_-]+|yt-[A-Za-z0-9_-]+)$/.test(x)))];
+          (Array.isArray(p.tracks)?p.tracks:[])
+            .filter(x=>typeof x==="string"&&x.length>0&&x.length<=160))];
         const oldIds=Array.isArray(gia.tracks)?gia.tracks:[];
         if(oldIds.length!==newIds.length||
            oldIds.some((id,i)=>id!==newIds[i])||
@@ -15687,7 +15696,11 @@ async function _salvaPlaylistCondivise() {
   const chiaveCorrente = String(LS.get("mb.chiave", "") || "").trim();
   if (!SERVIZIO_PUBBLICA || !chiaveCorrente) return false;
   const payload = JSON.stringify({ playlist: playlists });
-  if (payload === _playlistInvioUltimo) return true;
+  if (payload === _playlistInvioUltimo) {
+    _playlistDaSincronizzare=false;
+    LS.set("mb.playlistDaSincronizzare",false);
+    return true;
+  }
   if (Date.now() < _playlistInvioProssimo) return false;
   try {
     const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", {

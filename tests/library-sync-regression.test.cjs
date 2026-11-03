@@ -19,7 +19,11 @@ test("removing only from library does not send contradictory playlist markers",(
 });
 test("worker state is authoritative even when its data is unchanged",()=>{
  const loader=excerpt("async function _caricaStatoCondiviso(", "async function _applicaStatoCondiviso(");
- assert.match(loader,/await _applicaStatoCondiviso\(jw.stato\);\s*return;/);
+ assert.ok(loader.includes("await _applicaStatoCondiviso(jw.stato);"));
+ assert.ok(loader.includes("return;"));
+ const segment=loader.slice(loader.indexOf("await _applicaStatoCondiviso(jw.stato);"),
+   loader.indexOf("} catch (e)",loader.indexOf("await _applicaStatoCondiviso(jw.stato);")));
+ assert.ok(segment.includes("return;"),"skip stale fallback on an unchanged Worker response");
  assert.doesNotMatch(loader,/if \(await _applicaStatoCondiviso\(jw.stato\)\) return/);
 });
 test("pending phone-only playlist choices survive a stale cloud response",()=>{
@@ -55,4 +59,42 @@ test("mobile phone library pages stay bounded, and all tracks remain searchable"
  assert.match(src,/Carica altri brani/);
  assert.match(src,/list\.length-displayed\.length/);
  assert.doesNotMatch(worker,/caches\.delete\(cacheBraniName\(\)\)/);
+});
+
+test("worker playlist snapshots may shrink the gym without losing custom IDs",()=>{
+ const code=excerpt("function _unisciPlaylistCondivise(",
+  "async function _caricaPlaylistCondivise(");
+ const make=(pending=false)=>{
+  let playlists=[{name:"gym",id:"pl-gym",nascosta:true,nascostaDa:"Ste",
+   tracks:["b-track-1","yt-abc123","b-track-2"]}],changes=0;
+  const fn=new Function("env",
+   "let playlists=env.playlists,profile='Ste';"+
+   "const _playlistDaSincronizzare=env.pending;"+
+   "const _playlistCercata=n=>playlists.find(p=>p.name===n);"+
+   "const _soloInPlaylist=new Set();"+
+   "const _ricalcolaSoloInPlaylist=()=>new Set();"+
+   "const saveCurrentState=()=>{env.changes++};"+
+   "const _disegnaLinguettePlaylist=()=>{},render=()=>{},"+
+   "_aggiornaBadgePlaylist=()=>{};"+
+   code+"return _unisciPlaylistCondivise;")({playlists,pending,changes});
+  return {fn,playlists};
+ };
+ const fresh=make(false);
+ fresh.fn([{name:"gym",id:"pl-gym",nascosta:true,nascostaDa:"Ste",
+  tracks:["yt-abc123","b-track-2"]}],true);
+ assert.deepEqual(fresh.playlists[0].tracks,["yt-abc123","b-track-2"],
+  "a deleted song must not come back from the longer local playlist");
+ const dirty=make(true);
+ dirty.fn([{name:"gym",id:"pl-gym",nascosta:true,
+  tracks:["b-track-2"]}],true);
+ assert.deepEqual(dirty.playlists[0].tracks,
+  ["b-track-1","yt-abc123","b-track-2"],
+  "unsynced local changes must not be discarded by the remote GET");
+});
+test("local-only playlist changes persist across refresh without extra cloud writes",()=>{
+ assert.match(src,/if \(payload === _playlistInvioUltimo\) \{\s*_playlistDaSincronizzare=false/);
+ assert.match(src,/LS\.set\("mb\.playlistDaSincronizzare",false\)/);
+ assert.match(src,/pl\.nascostaDa&&pl\.nascostaDa!==profile/);
+ assert.match(src,/const libraryAll=visibleAll\.filter/);
+ assert.match(src,/if\(_mobileRowsObserver\)\{_mobileRowsObserver\.disconnect/);
 });
