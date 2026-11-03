@@ -14,7 +14,7 @@ const engine=new Function("isIOS","style",
  excerpt("function grooveAgreement(","// Find a *musical* release")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,similarNotes,grooveAgreement};"
+ "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro};"
 )(false,"auto");
 const tracks=Object.entries(index.entries||{})
  .filter(([key,v])=>v?.status==="ok"&&Number.isFinite(v.duration)&&v.duration>=26&&
@@ -231,4 +231,41 @@ test("real audio index audits one-beat blends without trimming protected endings
  }
  console.info("[DJ REAL RHYTHM BRIDGES]",JSON.stringify({checked,blended}));
  assert.ok(checked>5000);
+});
+
+test("diagnose why observed zero-candidate tracks reject short rhythmic joins",()=>{
+ const targets=["track-160.mp3","track-161.mp3","track-112.mp3","track-138.mp3"];
+ for(const target of targets){
+  const current=tracks.find(t=>t.key==="audio/songs/"+target);
+  if(!current)continue;
+  const a=current.data;let cnt={tempo:0,drums:0,notes:0,key:0,eligible:0};
+  const examples=[];
+  for(const incoming of tracks){
+   if(incoming.key===current.key)continue;
+   const b=incoming.data;
+   if(!engine.hasImmediateMusicalIntro(b))continue;
+   const ratio=[.5,1,2].map(scale=>a.bpm/(b.bpm*scale)).reduce((p,q)=>
+    Math.abs(Math.log2(p))<Math.abs(Math.log2(q))?p:q);
+   if(!Number.isFinite(ratio)||ratio<.94||ratio>1.06)continue;
+   cnt.tempo++;
+   const g=engine.grooveAgreement(a,b);
+   if(!g||g.score<.77)continue;
+   cnt.drums++;
+   const n=engine.similarNotes(a,b);
+   if(!(n.focused>=.5&&n.phrase>=.35))continue;
+   cnt.notes++;
+   const k=engine.camelotMatch(a,b);
+   if(k.weight>=.14&&k.score<.4)continue;
+   cnt.key++;
+   const cue=engine.transition(a,b,a.duration);
+   if(cue?.rhythmicUnderlay)cnt.eligible++;
+   examples.push({id:incoming.key,groove:+g.score.toFixed(2),
+    focused:+n.focused.toFixed(2),phrase:+n.phrase.toFixed(2),
+    key:k.score,weight:k.weight,
+    confidence:b.beatConfidence,drive:b.introDrive,kind:cue?.kind||null});
+  }
+  console.info("[DJ ACTUAL ZERO FILTERS]",JSON.stringify({target,protected:a.protectedEnding,
+   last:a.last,duration:a.duration,confidence:a.beatConfidence,counts:cnt,
+   sample:examples.slice(0,4)}));
+ }
 });

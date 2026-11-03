@@ -1314,7 +1314,7 @@ function musicalIntroEntry(b){
  // A measurable driven intro after digital silence deserves an accurate cue.
  if(!b||!Number.isFinite(b.first)||b.first-saved<=1.3||
     b.first>12.5||Number(b.introDrive)<.43||
-    Number(b.beatConfidence)<.16||
+    !(Number(b.beatConfidence)>=.16)||
     (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<b.first-.2)||
     (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<b.first-.2))return saved;
  return clamp(b.first-.12,saved,18);

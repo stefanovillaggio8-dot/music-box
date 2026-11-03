@@ -428,7 +428,8 @@ test("a detected vocal near a last note prevents cutting just ahead of that note
  assert.equal(plan,null);
 });
 test("dedicated model is asynchronous so audio decoding is not delayed by model download",()=>{
- assert.ok(source.includes("Promise.resolve().then(()=>voice.analyze(decoded,frame))"));
+ assert.ok(source.includes("voice?.analyze&&mayScanDesktopVoice(bridge(),track)"));
+ assert.ok(source.includes("await new Promise(resolve=>setTimeout(resolve,4500))"));
  assert.ok(source.includes("plannedFor=\"\";plan=null;"));
 });
 

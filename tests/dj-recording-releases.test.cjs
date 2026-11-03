@@ -2,10 +2,13 @@
 const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs"),path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+const introHelpers=source.slice(source.indexOf("function musicalIntroEntry("),
+ source.indexOf("function hasImmediateMusicalIntro("));
 const introText=source.slice(source.indexOf("function hasImmediateMusicalIntro("),
  source.indexOf("function transition(",source.indexOf("function hasImmediateMusicalIntro(")));
 assert.match(introText,/function hasImmediateMusicalIntro\(/);
-const immediate=new Function(introText+"return hasImmediateMusicalIntro")();
+const immediate=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+ introHelpers+introText+"return hasImmediateMusicalIntro")();
 const liveText=source.slice(source.indexOf("function liveQuietOutroReady("),
  source.indexOf("function needsLiveQuietRecovery("));
 const ready=new Function(liveText+"return liveQuietOutroReady")();
