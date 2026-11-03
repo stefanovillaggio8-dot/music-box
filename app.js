@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.589";
+  const APP_VERSION = "6.590";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4661,7 +4661,7 @@ function visibleTracks(perSuono) {
         return inPlaylist.has(_chiaveSoloInPlaylist(id)) ||
           /* le chiavi vecchie (senza profilo) erano globali: le metto con
              l'account principale, cosi' non toccano gli altri. */
-          (inPlaylist.has(id) && !String(id).indexOf(".") && id);
+          (profile===DEFAULT_PROFILE&&inPlaylist.has(id));
       };
       /* Ste: "togli completamente sta cosa dei nascosti": non c'e' piu'
          nessun filtro sui brani nascosti. Quello che resta e' quello dei
@@ -4798,18 +4798,10 @@ async function _eliminaBrano(id) {
      libreria e basta. */
   if (!ancheDallePlaylist && nellePlaylist.length) {
     try {
+      // _mettiSoloInPlaylist also persists the pending ADD and cancels
+      // a previous pending REMOVE. Never queue both directions for a
+      // single user action: iPhone was restoring the song on next refresh.
       _mettiSoloInPlaylist(id);
-      _salvaSoloInPlaylist();
-      /* Ste: "le ho fatte restare solo nella playlist gym, sono scomparse
-         ma sono tornate".
-         Motivo: qui chiamavo una funzione che non esisteva
-         ("_salvaSoloInPlaylistDaMandare"). L'errore finiva nel catch e il
-         brano non veniva messo nella lista dei "solo in playlist": quindi
-         tornava in libreria.
-         Quella che esiste e' _soloInPlaylistSegna, che segna il brano da
-         mandare al server. */
-      _soloInPlaylistSegna(id, true);
-      _soloInPlaylistRimossaSegna(id);
       _salvaStatoCondiviso();
       saveCurrentState();
       render();
@@ -5312,11 +5304,29 @@ function _eliminatiRimossiDaMandareSvuota() {
     return r;
   }
 
+  // Building 600+ DOM rows with several buttons per song freezes
+  // Safari. Render a bounded first page and progressively add rows
+  // as the user approaches the end. Search/queue still use ALL tracks.
+  let _mobileRowsLimit=84,_mobileRowsContext="",_mobileRowsObserver=null;
+  function _pagineLibreria(list,context,mobile){
+    if(!mobile)return {rows:list,more:false};
+    if(_mobileRowsContext!==context){
+      _mobileRowsContext=context;_mobileRowsLimit=84;
+    }
+    return {rows:list.slice(0,_mobileRowsLimit),
+      more:list.length>_mobileRowsLimit};
+  }
   // Avoid replacing hundreds of rows when only the playing track changes.
   let _renderRowsSignature="";
   function render() {
     _diag("render");
     const list = visibleTracks();
+    const isPhone=typeof window.matchMedia==="function"&&
+      window.matchMedia("(max-width: 720px)").matches;
+    const pageContext=[profile,_playlistAttiva,query,ordinamento,
+      favOnly,soloMaiAscoltati,soloScaricate,list.length].join("|");
+    const page=_pagineLibreria(list,pageContext,isPhone);
+    const displayed=page.rows;
     /* Costruisci tutte le righe fuori dal DOM: inserire centinaia di li
        uno alla volta forza calcoli di layout sul telefono. */
     const fragmentBrani = document.createDocumentFragment();
@@ -5395,7 +5405,7 @@ emptyEl.textContent = !total
     // A song skip previously destroyed/recreated every row and lazy image,
     // causing iPhone flicker and long blank scroll areas.
     const rowsSignature=profile+"|"+Number(_inSelezione)+"|"+
-      Number(_potenziatiCaricati)+"|"+list.map(t=>[
+      Number(_potenziatiCaricati)+"|"+displayed.length+"|"+list.length+"|"+displayed.map(t=>[
         t.id,t.title,t.artist,t.album,t.cover,t.gradient,t.url,t.file,
         t.review,t._ytStatus,t._ytErrore,t.source,t.youtubeId,
         t.builtin,t.preview,
@@ -5403,16 +5413,17 @@ emptyEl.textContent = !total
         _branoInGym(t.id)
       ].join("\u001f")).join("\u001e");
     if(_renderRowsSignature===rowsSignature &&
-       playlistEl.childElementCount===list.length){
+       playlistEl.childElementCount===displayed.length+(page.more?1:0)){
       const old=playlistEl.querySelector(".track.active");
       if(old)old.classList.remove("active");
       const activeIndex=list.findIndex(t=>t.id===currentId);
-      if(activeIndex>=0)playlistEl.children[activeIndex]?.classList.add("active");
+      if(activeIndex>=0&&activeIndex<displayed.length)
+        playlistEl.children[activeIndex]?.classList.add("active");
       renderQueueCount();
       return;
     }
     _renderRowsSignature=rowsSignature;
-    list.forEach((t) => {
+    displayed.forEach((t) => {
       const li = document.createElement("li");
       li.className = "track" + (t.id === currentId ? " active" : "");
 
@@ -5579,7 +5590,31 @@ li.addEventListener("click", () => {
     bindLongPress(li, t);
     fragmentBrani.appendChild(li);
     });
+    if(_mobileRowsObserver){_mobileRowsObserver.disconnect();_mobileRowsObserver=null}
     playlistEl.replaceChildren(fragmentBrani);
+    if(page.more){
+      const more=document.createElement("li");
+      more.className="library-more-row";
+      const btn=document.createElement("button");
+      btn.type="button";btn.className="btn-mini";
+      btn.textContent="Carica altri brani ("+(list.length-displayed.length)+")";
+      const expand=()=>{
+        if(_mobileRowsContext!==pageContext||_mobileRowsLimit>=list.length)return;
+        if(_mobileRowsObserver){_mobileRowsObserver.disconnect();_mobileRowsObserver=null}
+        _mobileRowsLimit=Math.min(list.length,_mobileRowsLimit+84);
+        render();
+      };
+      btn.addEventListener("click",expand);
+      more.appendChild(btn);
+      playlistEl.appendChild(more);
+      if(typeof IntersectionObserver!=="undefined"){
+        _mobileRowsObserver=new IntersectionObserver(entries=>{
+          if(entries.some(e=>e.isIntersecting))
+            requestAnimationFrame(expand);
+        },{rootMargin:"500px 0px"});
+        _mobileRowsObserver.observe(more);
+      }
+    }
     /* Se arriva un nuovo MP3 (anche YouTube) o cambiano i filtri,
        allinea la coda automatica e il badge senza modificare queue. */
     renderQueueCount();
@@ -15128,10 +15163,16 @@ rinomini: (function () {
           LS.set("mb.eliminatiDaMandare",_eliminatiDaMandare().filter(x=>!acknowledged.has(x)));
           LS.set("mb.eliminatiRimossiDaMandare",_eliminatiRimossiDaMandare().filter(x=>!acknowledgedRestores.has(x)));
           _rinominiDaMandareSvuota();
-          _soloInPlaylistDaMandareSvuota();
-          _soloInPlaylistRimossiSvuota();
+          const confirmedAdds=new Set(sent.soloInPlaylist||[]);
+          const confirmedRemoves=new Set(sent.soloInPlaylistRimossi||[]);
+          LS.set("mb.soloInPlaylistDaMandare",
+            _soloInPlaylistDaMandare().filter(id=>!confirmedAdds.has(id)));
+          LS.set("mb.soloInPlaylistRimossi",
+            _soloInPlaylistRimossiDaMandare().filter(id=>!confirmedRemoves.has(id)));
           _statoDaSalvare=_eliminatiDaMandare().length>0||
-            _eliminatiRimossiDaMandare().length>0;
+            _eliminatiRimossiDaMandare().length>0||
+            _soloInPlaylistDaMandare().length>0||
+            _soloInPlaylistRimossiDaMandare().length>0;
         }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
@@ -15158,8 +15199,11 @@ try {
   _diChe("worker /stato: " + (rw && rw.ok ? "risponde" : "non risponde"));
   if (rw.ok) {
   const jw = await rw.json();
-  if (jw && jw.stato) {
-  if (await _applicaStatoCondiviso(jw.stato)) return;
+  if (jw && jw.stato && typeof jw.stato === "object") {
+    await _applicaStatoCondiviso(jw.stato);
+    // A valid response is authoritative EVEN when it changed zero rows.
+    // Otherwise a stale stato.json overwrites a correct Worker snapshot.
+    return;
   }
   }
   }
@@ -15336,24 +15380,30 @@ for (const k of Object.keys(j.rinomini)) {
   Worker risponde, e' lui la verita'. */
   if (Array.isArray(j && j.soloInPlaylist)) {
     try {
-      const fuori = new Set(Array.isArray(j.soloInPlaylistRimossi) ? j.soloInPlaylistRimossi : []);
-      /* Le chiavi vecchie (senza profilo) erano globali: riguardavano
-         anche la libreria degli altri. Ste: "si sono tolte 2 canzoni
-         nell'account di diego". Le metto con il profilo principale, cosi'
-         non toccano piu' gli altri account. */
-      const giusto = j.soloInPlaylist
-        .filter(function (id) { return id && !fuori.has(id); })
-        .map(function (id) {
-          return String(id).indexOf(".") >= 0 ? String(id) : DEFAULT_PROFILE + "." + String(id);
-        });
-      const stessi = giusto.length === _soloInPlaylist.size &&
-        giusto.every(function (id) { return _soloInPlaylist.has(id); });
-      if (!stessi) {
-        _soloInPlaylist = new Set(giusto);
+      const normalizza = id => String(id||"").includes(".")
+        ? String(id) : DEFAULT_PROFILE+"."+String(id||"");
+      const rimossiRemoti=new Set(
+        (Array.isArray(j.soloInPlaylistRimossi)?j.soloInPlaylistRimossi:[]).map(normalizza));
+      const giusto=new Set(j.soloInPlaylist.map(normalizza)
+        .filter(id=>id&&!rimossiRemoti.has(id)));
+      // An in-flight iPhone change ALWAYS wins over a previous remote
+      // snapshot. Do not revert it just because the Worker answered before
+      // its delayed POST. Never erase another profile's local choices.
+      const aggiuntePendenti=new Set(_soloInPlaylistDaMandare().map(normalizza));
+      const rimozioniPendenti=new Set(_soloInPlaylistRimossiDaMandare().map(normalizza));
+      for(const id of aggiuntePendenti)if(!rimozioniPendenti.has(id))giusto.add(id);
+      for(const id of rimozioniPendenti)giusto.delete(id);
+      // Playlist-level "solo nella playlist" flags are another source of
+      // hidden songs, independent from the user's individual markers.
+      for(const id of _nascostiDallePlaylist())giusto.add(normalizza(id));
+      const stessi=giusto.size===_soloInPlaylist.size&&
+        [...giusto].every(id=>_soloInPlaylist.has(id));
+      if(!stessi){
+        _soloInPlaylist=giusto;
         _salvaSoloInPlaylist();
         cambiati++;
       }
-    } catch (e) { /* noop */ }
+    } catch(e){ /* Preserve saved local preferences if remote data is bad. */ }
   }
 
   /* Ste: "la libreria che ho su github e' diversa da quella su tailscale".
@@ -15380,7 +15430,8 @@ for (const k of Object.keys(j.rinomini)) {
   }
 
   /* Unisco le playlist arrivate da fuori a quelle che ho gia' qui. */
-function _unisciPlaylistCondivise(arrivate) {
+let _playlistDaSincronizzare=LS.get("mb.playlistDaSincronizzare",false)===true;
+function _unisciPlaylistCondivise(arrivate,daWorker=false) {
   /* Quelle che ho qui sono le piu' fresche: se la stessa playlist e' anche nel
      sito, tengo la mia per i brani, ma la scelta "nascondila dalla libreria"
      la rispetto sempre, altrimenti su un dispositivo nuovo i brani nascosti
@@ -15390,6 +15441,24 @@ function _unisciPlaylistCondivise(arrivate) {
     if (!p || !p.name) continue;
     if (_playlistCercata(p.name)) {
       const gia = _playlistCercata(p.name);
+      if(daWorker&&!_playlistDaSincronizzare){
+        // Fresh Worker state takes precedence over yesterday's local
+        // playlist, even if it is shorter. A deletion must remain deleted.
+        // A locally edited playlist awaiting POST is preserved instead.
+        const newIds=[...new Set(
+          (Array.isArray(p.tracks)?p.tracks:[]).map(String)
+            .filter(x=>/^(?:b-track-\d+|b-youtube-[A-Za-z0-9_-]+|yt-[A-Za-z0-9_-]+)$/.test(x)))];
+        const oldIds=Array.isArray(gia.tracks)?gia.tracks:[];
+        if(oldIds.length!==newIds.length||
+           oldIds.some((id,i)=>id!==newIds[i])||
+           gia.nascosta!==(p.nascosta===true)){
+          gia.tracks=newIds;
+          gia.nascosta=p.nascosta===true;
+          gia.nascostaDa=String(p.nascostaDa||"");
+          nuove++;
+        }
+        continue;
+      }
       if (gia && p.nascosta === true) {
           gia.nascosta = true;
           gia.nascostaDa = String(p.nascostaDa || "");
@@ -15455,6 +15524,7 @@ function _unisciPlaylistCondivise(arrivate) {
 }
 
 async function _caricaPlaylistCondivise() {
+  let workerValido=false;
   /* Prima provo dal Worker, che e' chi le scrive e quindi ha le piu' fresche.
 
      Ste: "posso modificare il titolo e l'artista solo nell'app di github, e
@@ -15468,14 +15538,22 @@ if (SERVIZIO_PUBBLICA) {
     const r = await fetch(SERVIZIO_PUBBLICA + "/playlist", { cache: "no-store" });
     if (r.ok) {
       const j = await r.json();
-      if (Array.isArray(j && j.playlist)) {
-        const arrivate = _unisciPlaylistCondivise(j.playlist);
+      if (Array.isArray(j && j.playlist)&&j.playlist.length) {
+        workerValido=true;
+        const arrivate = _unisciPlaylistCondivise(j.playlist,true);
         if (arrivate) {
           try { segnalaErrore("playlist dal worker: " + playlists.length + " in tutto"); } catch (e) {}
         }
       }
     }
   } catch (e) { /* senza rete uso il file sul sito */ }
+  }
+  if(workerValido){
+    // Never merge old static playlist.json over fresh Worker data.
+    // Also prevent repeated startup fetches that lock up Safari.
+    if(_playlistDaSincronizzare)
+      setTimeout(()=>_salvaPlaylistCondivise().catch(()=>{}),1500);
+    return;
   }
   /* ATTENZIONE: qui NON si torna indietro. Prima, dopo aver letto il
      Worker, uscivo subito e playlist.json non veniva letto affatto.
@@ -15604,6 +15682,8 @@ let _playlistInvioUltimo = "";
 let _playlistInvioProssimo = 0;
 let _playlistFallimenti = 0;
 async function _salvaPlaylistCondivise() {
+  _playlistDaSincronizzare=true;
+  LS.set("mb.playlistDaSincronizzare",true);
   const chiaveCorrente = String(LS.get("mb.chiave", "") || "").trim();
   if (!SERVIZIO_PUBBLICA || !chiaveCorrente) return false;
   const payload = JSON.stringify({ playlist: playlists });
@@ -15617,6 +15697,8 @@ async function _salvaPlaylistCondivise() {
     });
     if (r.ok) {
       _playlistInvioUltimo = payload;
+      _playlistDaSincronizzare=false;
+      LS.set("mb.playlistDaSincronizzare",false);
       _playlistFallimenti = 0;
       _playlistInvioProssimo = 0;
       return true;
