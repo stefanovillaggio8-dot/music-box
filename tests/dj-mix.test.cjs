@@ -507,3 +507,50 @@ test("optional vocal ML is not started for every shuffled preview",()=>{
  assert.ok(source.includes("voice?.analyze&&mayScanDesktopVoice(bridge(),track)"));
  assert.ok(source.includes("voiceJobs.size===0&&!voiceJobs.has(key)"));
 });
+
+test("desktop continuity exists when strict beat analysis returns zero matches",()=>{
+ const c=source.slice(source.indexOf("function continuityFallback("),
+   source.indexOf("function hasImmediateMusicalIntro("));
+ assert.ok(c.length>300,"fallback must be in the production DJ file");
+ const desktop=new Function("const isIOS=false,clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  "const musicalIntroEntry=t=>t?.safeIntroAt||0;"+c+
+  "return continuityFallback;")();
+ const mobile=new Function("const isIOS=true,clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  "const musicalIntroEntry=t=>t?.safeIntroAt||0;"+c+
+  "return continuityFallback;")();
+ const fallback=desktop(null,null,249);
+ assert.equal(fallback.kind,"continuity");
+ assert.equal(fallback.continuityFallback,true);
+ assert.equal(fallback.score,null,"not a fabricated certified beat");
+ assert.ok(fallback.begin>=246&&fallback.end>=248.8);
+ assert.ok(fallback.fade>=2.4&&fallback.fade<=2.6);
+ assert.equal(fallback.silenceTrim,false,"never cut unknown music");
+ assert.equal(mobile(null,null,249),null,"do not disrupt Safari native player");
+ const protectedEnd=desktop({duration:249,last:243,confidentTail:true,
+  protectedEnding:true,lastLyricAt:246},null,249);
+ assert.equal(protectedEnd.silenceTrim,false);
+ assert.ok(protectedEnd.end>=248.8,"protect final singing and music");
+ const silent=desktop({duration:249,last:243,confidentTail:true,
+  protectedEnding:false,lastLyricAt:210},null,249);
+ assert.equal(silent.silenceTrim,true);
+ assert.ok(silent.end>=243&&silent.end<245);
+ assert.equal(desktop({duration:190},null,249),null,"duration mismatch");
+});
+test("continuity overlay is audible before EOF while preserving outgoing vocal",()=>{
+ const begin=source.indexOf("if(act.continuityFallback){");
+ const end=source.indexOf("const correction=1+(act.gain-1)",begin);
+ assert.ok(begin>0&&end>begin);
+ const curve=new Function("time","const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  "const act={continuityFallback:true};let outGain=1,inGain=0;"+
+  source.slice(begin,end)+"return {outGain,inGain};");
+ assert.ok(curve(.5).outGain>.999);
+ assert.ok(curve(.5).inGain>0&&curve(.5).inGain<.18);
+ assert.ok(curve(.9).inGain>.5);
+ assert.ok(curve(.9).outGain<.9);
+ assert.ok(curve(1).outGain<.001&&curve(1).inGain>.99);
+});
+test("the DJ preplans continuity and retries failed desktop previews",()=>{
+ assert.ok(source.includes("plan=candidate||continuityFallback(currentAnalysis,nextAnalysis,audio.duration)"));
+ assert.ok(source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
+ assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
+});

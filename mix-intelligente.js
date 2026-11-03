@@ -1369,6 +1369,28 @@ function rhythmicFullTailJoin(a,b,dur){
    a.beatAnchor:end,nextBeat:Number.isFinite(b.introBeat)?
    b.introBeat-entry:null};
 }
+// Desktop continuity when a strict musical match is unavailable.
+// Never claim this as a matched beat; keep the outgoing song audible
+// nearly to its natural ending, while the next song rises below it.
+function continuityFallback(a,b,actualDuration){
+ const dur=Number(actualDuration);
+ if(isIOS||!Number.isFinite(dur)||dur<26||
+    a?.durationMismatch===true||
+    (Number.isFinite(a?.duration)&&Math.abs(a.duration-dur)>1.5))return null;
+ const last=Number(a?.last);
+ const trimmed=Boolean(a?.confidentTail===true&&Number.isFinite(last)&&
+    dur-last>=1.65&&dur-last<=12&&a?.protectedEnding!==true&&
+    (!Number.isFinite(a?.lastVoiceAt)||a.lastVoiceAt<last-.75)&&
+    (!Number.isFinite(a?.lastLyricAt)||a.lastLyricAt<last-.75));
+ const end=trimmed?Math.min(dur-.18,last+.15):dur-.18;
+ const fade=end>34?2.55:1.55;
+ return {kind:"continuity",continuityFallback:true,
+   begin:end-fade,end,fade,entry:b?musicalIntroEntry(b):0,
+   tempo:1,gain:1,preserveTail:true,quietCertified:false,
+   score:null,grooveScore:null,
+   silenceTrim:trimmed,trailing:trimmed?dur-end:0,
+   safeOutroAt:null};
+}
 function hasImmediateMusicalIntro(b){
  if(!b||(Number.isFinite(b.introDrive)&&b.introDrive<.33))return false;
  const entry=musicalIntroEntry(b);
@@ -2166,6 +2188,7 @@ async function beginMix(song,proposed){
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
+  continuityFallback:!!proposed.continuityFallback,
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
@@ -2200,7 +2223,8 @@ async function beginMix(song,proposed){
     cueAt:Number(proposed.begin.toFixed(2)),actualAt:Number(old.currentTime.toFixed(2)),
     remaining:Number((old.duration-old.currentTime).toFixed(2)),
     entry:proposed.entry,seconds:act.fade.toFixed(2),
-    certifiedRelease:!!proposed.liveQuietCertified});
+    certifiedRelease:!!proposed.liveQuietCertified,
+    continuityFallback:!!proposed.continuityFallback});
   if(old.paused){cancel();return}
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),proposed.kind==="snap"?.18:.8,12);
   act.at=performance.now();
@@ -2223,6 +2247,15 @@ async function beginMix(song,proposed){
     const late=clamp((time-.24)/.76,0,1);
     outGain=Math.cos(Math.pow(late,1.45)*Math.PI/2);
     inGain=Math.sin(Math.pow(time,1.75)*Math.PI/2);
+   }
+   if(act.continuityFallback){
+    // Avoid cutting a late vocal: the original holds at full volume
+    // for 75% of the short overlap, then naturally yields at its end.
+    const tail=clamp((time-.75)/.25,0,1);
+    const early=clamp(time/.66,0,1);
+    const lift=clamp((time-.66)/.34,0,1);
+    outGain=Math.cos(tail*Math.PI/2);
+    inGain=.17*Math.sin(early*Math.PI/2)+.83*Math.sin(lift*Math.PI/2);
    }
    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
@@ -2529,10 +2562,11 @@ function tick(){
    const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
    // iPhone uses a single stream: never cut an audible vocal outro
    // merely because the next track matches harmonically.
-   plan=candidate; // Non mantenere una transizione smentita dalle analisi.
+   plan=candidate||continuityFallback(currentAnalysis,nextAnalysis,audio.duration);
    updateDetails(a,b);
   };
-  plan=null; // Wait for analyzed tracks; no speculative cue.
+  // Preload the next track even if beat analysis cannot certify a mix.
+  plan=isIOS?null:continuityFallback(null,null,duration);
   const now=app.allTracks()?.find(t=>t.id===id);
   // Safari decodes one song at a time: get the next intro ready first.
   // Do not wait for the entire current track before preparing the next.
@@ -2664,7 +2698,9 @@ function tick(){
  const blockedUntil=mixFailures.get(id+"|"+next.id)||0;
  const previewAllowed=Date.now()>blockedUntil;
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&audio.currentTime>=Math.max(0,preloadAt) &&
-    (!prepared||prepared.id!==next.id||prepared.fromId!==id))prepare(next,id,app);
+    (!prepared||prepared.id!==next.id||prepared.fromId!==id||
+      (prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)))
+   prepare(next,id,app);
  // If the crossfade couldn't start (not enough buffering or suspended
  // iPhone WebAudio), hand off shortly AFTER a verified long quiet pause
  // begins. Do not leave the listener in silence for 20 more seconds.
@@ -2729,6 +2765,8 @@ function updateDetails(a,b){
    (Number.isFinite(plan.grooveScore)?" · ritmo "+Math.round(plan.grooveScore*100)+"%":""):
    Number.isFinite(plan?.outroGapStart)?
    " · pausa finale lunga riconosciuta: entrata prima del silenzio":
+   plan?.continuityFallback?
+   " · raccordo continuo, senza beatmatch certificato":
    plan?.softTailTrim?
    " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
    plan?.silenceTrim?" · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
@@ -2878,7 +2916,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[],nearScored=[],sequenceScored=[];
+ const scored=[],softScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
@@ -2907,6 +2945,17 @@ async function intelligentShuffle(app,audio,fromId){
      const harmony=similarNotes(old,info);
      if(harmony.focused>=.60&&harmony.phrase>=.45)
       harmonicCandidates++;
+     // Rhythm-only sorting never certifies a harmonic beat mix.
+     if(rhythm.score>=.66&&ratio>=.945&&ratio<=1.055&&
+        info.introDrive>=.43&&info.beatConfidence>=.16){
+      const key=camelotMatch(old,info);
+      const keyFit=key.weight>=.14?key.score:.5;
+      const chroma=Number.isFinite(harmony.focused)?harmony.focused:0;
+      const phrase=Number.isFinite(harmony.phrase)?harmony.phrase:0;
+      rhythmOrderScored.push({track,score:rhythm.score*.57+
+       chroma*.18+phrase*.12+keyFit*.13-
+       Math.abs(Math.log2(ratio))*.50});
+     }
      // Spotify-style smart ordering is separate from mixing: if there is
      // no certified overlap, prefer an adjacent song with matching tempo,
      // measured drums and key rather than an unrelated random track.
@@ -2980,10 +3029,11 @@ async function intelligentShuffle(app,audio,fromId){
  softScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
  sequenceScored.sort((a,b)=>b.score-a.score);
+ rhythmOrderScored.sort((a,b)=>b.score-a.score);
  // Order-only fallback is still preferable to an unrelated random song,
  // but absolutely never gains permission to overlap a sung ending.
  const choicePool=scored.length?scored:softScored.length?softScored:
-  nearScored.length?nearScored:sequenceScored;
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:rhythmOrderScored;
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -2994,12 +3044,15 @@ async function intelligentShuffle(app,audio,fromId){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
     beatCandidates:scored.length,softCandidates:softScored.length,
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
-    rhythmCandidates,harmonicCandidates,rejected,chosen:best.track.id,
+    rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
+    rejected,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):softScored.length?
      "sfumatura musicale verificata":nearScored.length?
-      "ordine per BPM, groove e tonalita":"ordine ritmico prudente (nessun mix forzato)"};
+      "ordine per BPM, groove e tonalita":sequenceScored.length?
+      "ordine ritmico prudente (nessun mix forzato)":
+      "ritmo simile, raccordo continuo (non beat certificato)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio musicale verificato":
      "[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)",
@@ -3016,7 +3069,8 @@ async function intelligentShuffle(app,audio,fromId){
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
   nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
-  rhythmCandidates,harmonicCandidates,rejected,chosen:current?.track.id||null,
+  rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
+   rejected,chosen:current?.track.id||null,
    vocalModelReady:!!old.voiceModel,
    outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
     Number.isFinite(old.voiceScannedEnd)&&Number.isFinite(old.last)&&
@@ -3026,7 +3080,9 @@ async function intelligentShuffle(app,audio,fromId){
    scored.length?"brano in coda gia compatibile con il beat":
    softScored.length?"brano in coda gia compatibile con la sfumatura":
    nearScored.length?"brano in coda gia simile per BPM, groove e note":
-    "brano in coda gia selezionato per compatibilita ritmica prudente",
+    sequenceScored.length?"brano in coda gia selezionato per ritmo e note":
+    rhythmOrderScored.length?"brano in coda gia affine per percussioni":
+    "nessun ritmo affidabile: raccordo continuo al cambio brano",
   indexAudioReady:!!deepIndex,
   lastKnownVocal:Number.isFinite(old.lastVoiceAt)?old.lastVoiceAt:null,
   lastLyric:Number.isFinite(old.lastLyricAt)?old.lastLyricAt:null};

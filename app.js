@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.580";
+  const APP_VERSION = "6.581";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -16246,7 +16246,11 @@ for (const p of playlists) {
     if (_usaControlliNativiIos() && !window.MusicBoxMix?.needsAudioContext?.()) return;
     // Safari may suspend this context after a lock/unlock cycle.
     // A later real user tap must be able to unlock it again.
-    if (_audioProno && _ctx?.state === "running") return;
+    // WebAudio cannot be resumed from a timer, promise or synthetic click.
+     // The music player can still run without this optional context.
+     if (typeof navigator.userActivation?.isActive === "boolean" &&
+         !navigator.userActivation.isActive) return;
+     if (_audioProno && _ctx?.state === "running") return;
     _audioProno = true;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;

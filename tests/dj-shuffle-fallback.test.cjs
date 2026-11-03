@@ -34,11 +34,11 @@ function fixture(options={}){
   "const enabled=true,isIOS=false,window={MusicBoxRoom:{isActive:()=>false}};",
   "const cache=new Map(),deepLookup=t=>t?.analysis||null;",
   "const decode=async t=>t?.analysis||null;",
-  "const grooveAgreement=()=>({score:.85});",
+  "const grooveAgreement=()=>({score:"+(Number(options.groove??.85))+"});",
   "const camelotMatch=()=>({score:"+(options.keyMatch?".97":".05")+
     ",weight:"+(options.keyMatch?".20":"0")+"});",
   "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
-  "const similarNotes=()=>({focused:.82,phrase:.81});",
+  "const similarNotes=()=>({focused:"+(Number(options.focused??.82))+",phrase:"+(Number(options.phrase??.81))+"});",
   "const transition=(old,next)=>next.cue||null;",
   "let shuffleLastDecision=null,deepIndex=null;",
   source.slice(source.indexOf("function withValidatedVoice("),
@@ -288,4 +288,19 @@ test("shuffle analysis yields between chunks on iPhone and rechecks playback gen
  assert.match(body,/await new Promise\(resolve=>setTimeout\(resolve,0\)\)/);
  assert.match(body,/runGeneration!==shuffleGeneration\|\|app\.currentId\(\)!==fromId/);
  assert.match(source,/setInterval\(\(\)=>\{try\{tick\(\)\}catch\(e\)\{\}\},isIOS\?650:350\)/);
+});
+
+test("real-world zero beat matches still choose the best measured percussive next song",async()=>{
+ const f=fixture({focused:.36,phrase:.21,groove:.82,pool:[
+  {analysis:{bpm:176},cue:null},{analysis:{bpm:120},cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().softCandidates,0);
+ assert.equal(f.decision().nearCandidates,0);
+ assert.equal(f.decision().sequenceCandidates,0);
+ assert.equal(f.decision().rhythmOrderCandidates,1);
+ assert.equal(f.decision().reason,
+  "ritmo simile, raccordo continuo (non beat certificato)");
 });

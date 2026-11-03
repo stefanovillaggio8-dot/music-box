@@ -14,7 +14,7 @@ const engine=new Function("isIOS","style",
  excerpt("function grooveAgreement(","// Find a *musical* release")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro};"
+ "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback};"
 )(false,"auto");
 const tracks=Object.entries(index.entries||{})
  .filter(([key,v])=>v?.status==="ok"&&Number.isFinite(v.duration)&&v.duration>=26&&
@@ -287,4 +287,31 @@ test("track-161 can find at least one measured percussive bridge, without invent
   assert.ok(plan.end>=outgoing.data.duration-.1);
   assert.ok(plan.fade<=1.05);
  }
+});
+
+test("real audio library: zero-candidate tracks still have a gentle final-song continuity",()=>{
+ const targets=["track-160.mp3","track-161.mp3","track-112.mp3","track-138.mp3"];
+ let tested=0,fallbacks=0;
+ for(const file of targets){
+  const a=tracks.find(t=>t.key==="audio/songs/"+file);
+  if(!a)continue;
+  const choices=tracks.filter(t=>t.key!==a.key).slice(0,120);
+  for(const b of choices){
+   const p=engine.transition(a.data,b.data,a.data.duration)||
+    engine.continuityFallback(a.data,b.data,a.data.duration);
+   assert.ok(p,"desktop must have an executable transition plan");
+   assert.ok(p.end<=a.data.duration&&p.end>=26);
+   assert.ok(p.fade>=0);
+   if(p.continuityFallback){
+    fallbacks++;
+    assert.equal(p.kind,"continuity");
+    assert.equal(p.score,null);
+    if(a.data.protectedEnding===true)
+     assert.ok(p.end>=a.data.duration-.2,"do not cut protected song");
+   }
+   tested++;
+  }
+ }
+ console.info("[DJ REAL FALLBACK]",JSON.stringify({tested,fallbacks}));
+ assert.ok(tested>=400&&fallbacks>0);
 });
