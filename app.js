@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.592";
+  const APP_VERSION = "6.593";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1394,6 +1394,10 @@ document.addEventListener("visibilitychange", () => {
   } else {
     _visibileIl = Date.now();
     _segna("tornato in primo piano");
+    // Safari sometimes drops the decoded playback position while keeping
+    // the visual MediaSession position. Repair the actual audio element.
+    if(typeof _riallineaPausaReale==="function")
+      _riallineaPausaReale();
   }
 });
 } catch (e) { /* noop */ }
@@ -5691,9 +5695,67 @@ li.addEventListener("click", () => {
     $("totTime").textContent = d ? fmtTime(d) : "0:00";
   }
 
+  // The audio element can be unloaded/recreated when iOS suspends the PWA.
+  // Keep the PAUSED playhead independently of the element and restore the
+  // media decoder, not merely the timestamp painted in the progress bar.
+  function _pausaSalvata() {
+    const p=_pausaCheckpoint?.id===currentId?_pausaCheckpoint:
+      LS.get("mb.pausaPos."+profile,null);
+    return p&&p.id===currentId&&Number.isFinite(Number(p.time))&&
+      Number(p.time)>=0?p:null;
+  }
+  function _memorizzaPausaCorrente() {
+    if(!currentId||!audio)return;
+    const real=Number(audio.currentTime);
+    const state=LS.get("mb.playback."+profile,null);
+    const existing=_pausaSalvata();
+    const fallback=state?.id===currentId?Number(state.time)||0:0;
+    // If Safari has already reset the element during suspension, don't
+    // replace the real position with 0 on a late pause callback.
+    const target=Number.isFinite(real)&&real>.15?real:
+      (Number(existing?.time)||fallback);
+    const time=Math.max(0,Math.round(target*1000)/1000);
+    _pausaCheckpoint={id:currentId,time,quando:Date.now()};
+    LS.set("mb.pausaPos."+profile,_pausaCheckpoint);
+    savePos();
+  }
+  let _ripristinoPausaAtteso=null;
+  function _riallineaPausaReale() {
+    if(!audio||!currentId||!audio.paused||_vuoleSuonare)return false;
+    const checkpoint=_pausaSalvata();
+    if(!checkpoint||audio.readyState<1)return false;
+    const duration=Number(audio.duration);
+    const time=Number(checkpoint.time);
+    if(!Number.isFinite(time)||time<.1)return false;
+    // A paused song 1 second before the end must remain at that second.
+    const target=Number.isFinite(duration)&&duration>0?
+      Math.min(time,Math.max(0,duration-.04)):time;
+    if(Math.abs(Number(audio.currentTime)-target)<.6){
+      updateProgressUI(audio.currentTime,totalDuration());
+      return true;
+    }
+    try{
+      const pending=_ripristinoPausaAtteso;
+      if(pending?.player===audio&&pending?.id===currentId&&
+         Date.now()-pending.when<1000)return false;
+      _ripristinoPausaAtteso={player:audio,id:currentId,
+        time:target,when:Date.now(),retries:0};
+      audio.currentTime=target;
+      // Never call play(): a deliberate pause survives Safari restoration.
+      updateProgressUI(audio.currentTime,totalDuration());
+      return true;
+    }catch(_){return false}
+  }
   function savePos() {
     if (!currentId || !audio || !isFinite(audio.currentTime)) return;
-    const sec = Math.max(0, Math.floor(audio.currentTime));
+    const checkpoint=_pausaSalvata();
+    const actual=Number(audio.currentTime);
+    // A suspended iPhone audio decoder can report 0 while the paused
+    // checkpoint is intact. Keep the actual second and millisecond.
+    const sec=Math.max(0,Math.round((
+      checkpoint&&actual<.5&&Number(checkpoint.time)>.5&&
+      (_pausaEsplicita||!_vuoleSuonare||_ripristinoPausaAtteso)
+        ? Number(checkpoint.time):actual)*1000)/1000);
     // Durante un refresh il browser puo' riportare currentTime a zero PRIMA
     // di pagehide. Non sovrascrivere una posizione valida mentre i metadati
     // del brano devono ancora caricarsi.
@@ -5762,31 +5824,26 @@ function handleTime() {
   }
 
 function handleMetadata() {
-    const want = resumeAt;
-    resumeAt = 0;
-    if (want > 8 && audio) {
-      const d = totalDuration();
-      /* Ste: se la canzone era davvero agli ultimi secondi, ricomincio. Prima
-         scattava con 8 secondi di margine, e su una canzone lunga con uno
-         scaricamento lento poteva capitare che la posizione salvata fosse
-         "quasi vicina alla fine" mentre il brano era ancora lontano: e la
-         canzone ripartiva dall'inizio. Ora il margine e' di 3 secondi. */
-      if (d > 0 && want >= d - 3) {
-        try { audio.currentTime = 0; } catch (e) { /* noop */ }
-      } else {
-        try { audio.currentTime = Math.min(want, d > 20 ? d - 5 : want); } catch (e) { /* noop */ }
+    const want=Number(resumeAt)||0;
+    if(want>.01&&audio){
+      const d=totalDuration();
+      // A saved paused playhead is not a near-end skip. Safari must seek
+      // the ACTUAL HTMLAudioElement before the UI advertises that position.
+      const pausedSaved=_pausaSalvata();
+      const wasPaused=pausedSaved&&pausedSaved.id===currentId&&
+        (LS.get("mb.suonava","no")!=="si"||_pausaEsplicita);
+      const at=d>0?Math.min(want,Math.max(0,d-(wasPaused?.04:3))):want;
+      try{
+        audio.currentTime=at;
+        if(Math.abs(Number(audio.currentTime)-at)<.65)
+          resumeAt=0;
+      }catch(_){
+        // Retain resumeAt for canplay; a failed early Safari seek must
+        // not be discarded just because loadedmetadata fired.
       }
     }
-    /* Ste: "la canzone riparte da capo SOLO quando riapro l'app dall'icona".
-       Quando si riapre dalla pagina gia' aperta funziona: la differenza e' che
-       dall'icona il telefono crea la pagina da zero. Quindi segno dove mi
-       trovo davvero dopo la ripresa: se qui torna 0, la posizione non e'
-       arrivata. */
-    try {
-      _segna("dopo la ripresa", "posizione reale " + Math.round((audio && audio.currentTime) || 0) +
-      "s su " + Math.round(totalDuration()) + "s");
-    } catch (e) { /* noop */ }
-updateProgressUI(audio ? audio.currentTime || 0 : 0, totalDuration());
+    if(audio?.paused&&!_vuoleSuonare)_riallineaPausaReale();
+    updateProgressUI(audio?Number(audio.currentTime)||0:0,totalDuration());
   }
 
   function _avvisaBranoNonDisponibile(t) {
@@ -6091,6 +6148,24 @@ a.addEventListener("pause", () => {
     });
     a.addEventListener("seeked", () => {
       if (a !== audio) return;
+      const pending=_ripristinoPausaAtteso;
+      if(pending?.player===a&&pending.id===currentId){
+        if(Math.abs(Number(a.currentTime)-pending.time)>.65&&
+           pending.retries<1&&!_vuoleSuonare){
+          pending.retries++;
+          pending.when=Date.now();
+          try{a.currentTime=pending.time}catch(_){}
+          return;
+        }
+        _ripristinoPausaAtteso=null;
+        updateProgressUI(a.currentTime,totalDuration());
+      }else if(a.paused&&!_vuoleSuonare&&a.readyState>=1){
+        // A user seek while paused changes the saved pause position too.
+        _pausaCheckpoint={id:currentId,
+          time:Math.round(Number(a.currentTime)*1000)/1000,quando:Date.now()};
+        LS.set("mb.pausaPos."+profile,_pausaCheckpoint);
+        savePos();
+      }
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
       _chiudiAscolto(false);
@@ -6112,6 +6187,11 @@ a.addEventListener("pause", () => {
        evento scatta finche' la musica suona, su computer e su telefono. */
     a.addEventListener("timeupdate", () => { if (a === audio) _contaAlMuoversi(); });
     a.addEventListener("loadedmetadata", () => { if (a === audio) handleMetadata(); });
+    a.addEventListener("canplay", () => {
+      if(a!==audio)return;
+      if(resumeAt>.01)handleMetadata();
+      else if(a.paused&&!_vuoleSuonare)_riallineaPausaReale();
+    });
     a.addEventListener("loadedmetadata", () => _notificaStatoNativo(true));
     a.addEventListener("error", () => { if(a===audio)handleError(); });
     return a;
@@ -7418,6 +7498,11 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
       currentId = id;
+      // An explicit new selection must not inherit the old song's
+      // paused playhead (even if the same track is selected again).
+      _pausaCheckpoint=null;
+      _ripristinoPausaAtteso=null;
+      LS.remove("mb.pausaPos."+profile);
       _ultimoAvanzamentoReale=Date.now();
       _casualeModificaUtente = false; // Nuovo brano, nuova scelta intelligente consentita.
       if (_casualeProgrammate.length) {
@@ -7803,6 +7888,9 @@ function playNext() {
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
     if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
+    // Save on the actual button/headphone command, before iOS suspends
+    // pending pause/timeupdate events. 3s periodic saves are not enough.
+    _memorizzaPausaCorrente();
     setPlaybackState("paused");
     _nascondiAiuto();
     syncPlayUI();
@@ -7888,6 +7976,8 @@ function playNext() {
       window.MusicBoxRoom.control("play");return;
     }
     _segna("riproduzione VOLUTARIA");
+    // Restore the real decoder first, while still paused, before play().
+    if(audio?.paused&&!_vuoleSuonare)_riallineaPausaReale();
     _pausaEsplicita = false;
     _vuoleSuonare = true;
     _segnaIntenzioneSono(true);
@@ -16907,7 +16997,16 @@ const precedente = LS.get("mb.playback." + profile, null);
            accorgono handleMetadata, collegata all'elemento audio. Prima avevo
            aggiunto qui un listener mio che metteva la posizione a mano, e
            quello fermava la canzone quando si riapriva l'app. */
-        resumeAt = salvato > 5 ? salvato : 0;
+        // Paused audio must survive even if it stopped at 0:02, and
+        // a voluntary pause remains exact even after the usual 6h limit.
+        const pausedStored=LS.get("mb.pausaPos."+profile,null);
+        if(pausedStored?.id===lastTrack.id&&
+           LS.get("mb.suonava","no")!=="si"&&
+           Number.isFinite(Number(pausedStored.time))){
+          salvato=Math.max(0,Number(pausedStored.time));
+          _pausaCheckpoint=pausedStored;
+        }
+        resumeAt=salvato>.01?salvato:0;
         _segna("ripresa all'avvio", "brano " + lastTrack.id +
           ", posizione salvata " + Math.round(salvato) + "s, riparto da " + resumeAt + "s" +
           (troppoVecchia ? " (ERA VECCHIA di " + Math.round(passate / 60000) + " minuti: ricomincio)" :

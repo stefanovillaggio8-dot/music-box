@@ -242,3 +242,87 @@ test("delayed play, retry and resume cannot resurrect an explicit iPhone pause",
  assert.ok(voluntary.includes('_pausaEsplicita = false;'));
  assert.ok(app.includes('if(_pausaEsplicita&&!_vuoleSuonare)return false;'));
 });
+
+test("background pause saves the precise decoder time, not just a painted progress bar",()=>{
+ const script=excerpt(app,"function _pausaSalvata()","function updatePlayerHeight()");
+ const state=new Map();
+ const LS={get:(k,d)=>state.has(k)?state.get(k):d,
+  set:(k,v)=>state.set(k,v),remove:k=>state.delete(k)};
+ let track={id:"b-track-80",currentTime:143.658,paused:true,readyState:4,
+  duration:238,playCalls:0,play(){this.playCalls++;return Promise.resolve()}};
+ const writes=[];
+ const env={track,LS,writes};
+ const make=new Function("env",
+  "let audio=env.track,currentId='b-track-80',profile='Ste';"+
+  "let _pausaCheckpoint=null,_pausaEsplicita=true,_vuoleSuonare=false;"+
+  "let _ultimoSeekUtente=0;"+
+  "const LS=env.LS,writeProfileState=(p,v)=>env.writes.push(v);"+
+  "const profileState=()=>({last:currentId,time:143.658});"+
+  "const totalDuration=()=>audio.duration;"+
+  "const updateProgressUI=(pos,dur)=>env.display={pos,dur};"+
+  script+
+  "return {checkpoint:_memorizzaPausaCorrente,save:savePos,"+
+   "restore:_riallineaPausaReale,reset:(a)=>{audio=a},stored:()=>_pausaCheckpoint};"
+ )(env);
+ make.checkpoint();
+ assert.equal(LS.get("mb.pausePos.Ste").time,143.658);
+ assert.equal(LS.get("mb.playback.Ste").time,143.658);
+ // Safari discards the decoded playback position while suspended.
+ track.currentTime=0;
+ make.save();
+ assert.equal(LS.get("mb.playback.Ste").time,143.658,
+  "a broken audio element must not overwrite an authoritative pause point");
+ assert.equal(make.restore(),true);
+ assert.equal(track.currentTime,143.658,"real audio decoder must seek");
+ assert.equal(track.playCalls,0,"restoring a PAUSED song must never press play");
+ assert.equal(env.display.pos,143.658);
+});
+test("a paused track can recover after a full iPhone page recreation",()=>{
+ const script=excerpt(app,"function _pausaSalvata()","function updatePlayerHeight()");
+ const state=new Map([["mb.pausaPos.Ste",{id:"b-track-42",time:119.127,quando:400}],
+   ["mb.playback.Ste",{id:"b-track-42",time:119.127,quando:400}]]);
+ const audio={paused:true,currentTime:0,readyState:1,duration:211,
+  playCalls:0,play(){this.playCalls++}};
+ const fn=new Function("s",
+  "const LS={get:(k,d)=>s.state.has(k)?s.state.get(k):d,set:(k,v)=>s.state.set(k,v)};"+
+  "let audio=s.audio,currentId='b-track-42',profile='Ste';"+
+  "let _pausaCheckpoint=null,_pausaEsplicita=false,_vuoleSuonare=false;"+
+  "let _ultimoSeekUtente=0;"+
+  "const profileState=()=>({last:currentId,time:119.127});"+
+  "const writeProfileState=()=>{};"+
+  "const totalDuration=()=>audio.duration,updateProgressUI=(pos,d)=>{s.display=pos};"+
+  script+"return _riallineaPausaReale;"
+ )({state,audio});
+ assert.equal(fn(),true);
+ assert.equal(audio.currentTime,119.127);
+ assert.equal(audio.playCalls,0);
+});
+test("the resume event keeps paused near-end timestamps, short positions and state",()=>{
+ const metadata=excerpt(app,"function handleMetadata()", "function _avvisaBranoNonDisponibile(");
+ const env={audio:{paused:true,duration:200,currentTime:0},
+  resumeAt:199.45,display:null};
+ const metadataFn=new Function("env",
+  "let audio=env.audio,resumeAt=env.resumeAt,currentId='b-track-1';"+
+  "const totalDuration=()=>audio.duration;"+
+  "const LS={get:()=> 'no'};const _pausaEsplicita=true;"+
+  "const _pausaSalvata=()=>({id:'b-track-1',time:199.45});"+
+  "const _riallineaPausaReale=()=>true;const _vuoleSuonare=false;"+
+  "const updateProgressUI=(p,d)=>env.display={p,d};"+
+  metadata+"return {run:handleMetadata,resume:()=>resumeAt};"
+ )(env);
+ metadataFn.run();
+ assert.ok(Math.abs(env.audio.currentTime-199.45)<.05,
+  "a pause near the end must not restart from zero");
+ assert.equal(metadataFn.resume(),0);
+ assert.equal(env.display.p,env.audio.currentTime);
+ assert.match(app,/resumeAt=salvato>\.01\?salvato:0/);
+ assert.match(app,/mb\.pausaPos\."\+profile/);
+});
+test("foreground recovery seeks the HTMLAudioElement and does not autoplay paused music",()=>{
+ assert.match(app,/if\(typeof _riallineaPausaReale==="function"\)\s*_riallineaPausaReale\(\)/);
+ assert.match(app,/a\.addEventListener\("canplay",\s*\(\) =>/);
+ assert.match(app,/const pending=_ripristinoPausaAtteso/);
+ assert.match(app,/_memorizzaPausaCorrente\(\);\s*setPlaybackState\("paused"\)/);
+ assert.match(app,/if\(audio\?\.paused&&!_vuoleSuonare\)_riallineaPausaReale\(\)/);
+ assert.match(app,/const sec=Math\.max\(0,Math\.round/);
+});
