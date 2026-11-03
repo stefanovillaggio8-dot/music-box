@@ -66,3 +66,67 @@ test("service worker update no longer force reloads an active iPhone playlist",(
  const manual=excerpt(app,"  async function _aggiornaMusicBoxDaVersione() {","  let offlineBusy = false;");
  assert(manual.includes("window.location.assign(url.href)"),"manual version button still updates on demand");
 });
+
+test("prefetched complete MP3 is promoted into the correct profile offline cache",async()=>{
+ const code=excerpt(app,"  async function _promuoviCachePerOffline(","  function _offlinePronto(");
+ const sample=new Uint8Array(8000).fill(31);
+ const names=[];
+ const prefetch={match:async()=>new Response(sample,{status:200,headers:{"Content-Type":"audio/mpeg","Content-Length":"8000"}})};
+ const dest={saved:null,put:async function(url,res){this.saved={url,res}}};
+ const promote=new Function("prefetch","Response",
+  "const CACHE_PREFIX='spotifynonavraiimieisoldi';"+
+  "const streamCache=async()=>({match:async()=>null});"+
+  "const caches={open:async name=>{if(name!=='spotifynonavraiimieisoldi-prefetch-Diego')throw Error('wrong profile');return prefetch}};"+
+  code+"return _promuoviCachePerOffline;")(prefetch,Response);
+ assert.equal(await promote(dest,"https://example.com/music.mp3","Diego"),true);
+ assert.equal(dest.saved.url,"https://example.com/music.mp3");
+ assert.equal((await dest.saved.res.blob()).size,8000);
+});
+test("legacy prefetch refuses partial HTTP 206 even if 6000 bytes exist",async()=>{
+ const code=excerpt(app,"  async function _promuoviCachePerOffline(","  function _offlinePronto(");
+ let writes=0;
+ const prefetch={match:async()=>new Response(new Uint8Array(6000),{status:206,headers:{"Content-Type":"audio/mpeg"}})};
+ const promote=new Function("prefetch","Response",
+  "const CACHE_PREFIX='spotifynonavraiimieisoldi';"+
+  "const streamCache=async()=>({match:async()=>null});"+
+  "const caches={open:async()=>prefetch};"+
+  code+"return _promuoviCachePerOffline;")(prefetch,Response);
+ assert.equal(await promote({put:async()=>writes++},"https://example.com/song.mp3","Ste"),false);
+ assert.equal(writes,0);
+});
+test("prefetch and single-song downloads reject HTTP 206 instead of saving partial audio",async()=>{
+ const code=excerpt(app,"  async function fetchToCache(","  async function _controllaSpazioAvviso()");
+ let writes=0;
+ const cache={put:async()=>{writes++}};
+ const run=new Function("fetch","Response","Blob",code+"return fetchToCache;");
+ const partial=run(async()=>new Response(new Uint8Array(8000),{
+   status:206,headers:{"Content-Type":"audio/mpeg"}}),Response,Blob);
+ await assert.rejects(partial("https://example.com/audio.mp3",cache,null),/HTTP 206/);
+ assert.equal(writes,0);
+ const complete=run(async()=>new Response(new Uint8Array(8000),{
+   status:200,headers:{"Content-Type":"audio/mpeg","Content-Length":"8000"}}),Response,Blob);
+ assert.equal(await complete("https://example.com/audio.mp3",cache,null),8000);
+ assert.equal(writes,1);
+});
+test("Safari repeat seek uses recent cached Blob before touching CacheStorage again",async()=>{
+ const sw=require("node:fs").readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ const code=excerpt(sw,"let _rangeBlobMemo=null;","let _ultimaRivalidazione")+
+  excerpt(sw,"async function cachedMusicResponse(event) {",'self.addEventListener("fetch"');
+ const stats={lookups:0};
+ const load=new Function("stats","Response","Blob","Headers",`
+   const profileForEvent=async()=> "Ste";
+   const findCachedMusic=async()=>{stats.lookups++;return new Response(new Uint8Array(12000),{
+     status:200,headers:{"Content-Type":"audio/mpeg"}})};
+   const _rivalidaBrano=async()=>{};
+   `+code+"return cachedMusicResponse;");
+ const serve=load(stats,Response,Blob,Headers);
+ const url="https://example.com/songs/track-1.mp3";
+ const request=range=>({request:{url,headers:new Headers({Range:range}),destination:"audio"},
+   waitUntil:()=>{}});
+ const first=await serve(request("bytes=0-1023"));
+ const next=await serve(request("bytes=6000-6999"));
+ assert.equal(first.status,206);
+ assert.equal(next.status,206);
+ assert.equal(next.headers.get("Content-Range"),"bytes 6000-6999/12000");
+ assert.equal(stats.lookups,1);
+});

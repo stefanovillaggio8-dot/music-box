@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6575";
+const CACHE = "spotifynonavraiimieisoldi-v6576";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1344,6 +1344,14 @@ async function _rivalidaBrano(url, profile) {
 async function cachedMusicResponse(event) {
   const profile = await profileForEvent(event);
   const range = event.request.headers.get("range");
+  const memoKey=String(profile||"")+"|"+event.request.url;
+  // Safari sends many small ranges while scrubbing. When this full MP3
+  // was just read, skip repeated CacheStorage lookups on every seek.
+  if(range && /^bytes=(?:\d+-\d*|-\d+)$/i.test(range.trim()) &&
+     _rangeBlobMemo?.url===memoKey &&
+     Date.now()-_rangeBlobMemo.at<90000){
+    return rispostaDallaCache(null,range,memoKey);
+  }
   const gia = await findCachedMusic(event.request.url, profile);
   /* Brano gia' in mano: lo uso subito, senza aspettare la rete. */
   if (gia) {

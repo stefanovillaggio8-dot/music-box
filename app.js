@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.575";
+  const APP_VERSION = "6.576";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12568,7 +12568,12 @@ $("fabMenu").addEventListener("click", (e) => {
       // A song heard already may exist in the temporary streaming cache.
       // Save it permanently without downloading those same bytes twice.
       const already=await cache.match(url);
-      if(already?.status===200 ||
+      const cachedLength=Number(already?.headers?.get("content-length")||0);
+      const cachedType=String(already?.headers?.get("content-type")||"").toLowerCase();
+      // A legacy partial or HTML response must never count as saved offline.
+      if((already?.status===200 && cachedLength>=4096 &&
+          cachedLength<=40*1024*1024 &&
+          !/text\/html|application\/json/.test(cachedType)) ||
          await _promuoviCachePerOffline(cache,url,owner)){
         _offlinePronto(row);
         return;
@@ -13035,25 +13040,33 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   // user-selected offline storage locally, without a second network download.
   // Neither cache is cleared or renamed, and unfinished 206 ranges are rejected.
   async function _promuoviCachePerOffline(dest,url,owner) {
-    try {
-      const old=await (await streamCache(owner))?.match(url);
-      if(!old||old.status!==200)return false;
-      const kind=String(old.headers.get("content-type")||"").toLowerCase();
-      if(/text\/html|application\/json/.test(kind))return false;
-      const len=Number(old.headers.get("content-length")||0);
-      if(len>40*1024*1024)return false;
-      const blob=await old.blob();
-      if(blob.size<4096||blob.size>40*1024*1024||
-         (len&&blob.size<len*.98))return false;
-      await dest.put(url,new Response(blob,{
-        status:200,headers:{
-          "Content-Type":blob.type||"audio/mpeg",
-          "Content-Length":String(blob.size),
-          "X-Scaricato":String(Date.now())
-        }
-      }));
-      return true;
-    }catch(_){return false}
+    // The next-track prefetch also contains complete MP3s, not just stream.
+    // Never use a different account's prefetch cache.
+    const sources=[];
+    try { sources.push(await streamCache(owner)); } catch (_) {}
+    try { sources.push(await caches.open(CACHE_PREFIX+"-prefetch-"+owner)); } catch (_) {}
+    for(const source of sources){
+      try {
+        const old=await source?.match(url);
+        if(!old||old.status!==200)continue;
+        const kind=String(old.headers.get("content-type")||"").toLowerCase();
+        if(/text\/html|application\/json/.test(kind))continue;
+        const len=Number(old.headers.get("content-length")||0);
+        if(len>40*1024*1024)continue;
+        const blob=await old.blob();
+        if(blob.size<4096||blob.size>40*1024*1024||
+           (len&&blob.size<len*.98))continue;
+        await dest.put(url,new Response(blob,{
+          status:200,headers:{
+            "Content-Type":blob.type||"audio/mpeg",
+            "Content-Length":String(blob.size),
+            "X-Scaricato":String(Date.now())
+          }
+        }));
+        return true;
+      }catch(_){/* try the next temporary cache */}
+    }
+    return false;
   }
   function _offlinePronto(row) {
     row.state="ok";row.label="pronta";
@@ -13066,11 +13079,12 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
 
   async function fetchToCache(url, cache, onProgress) {
     const res = await fetch(url);
-    if (!res.ok) throw new Error("HTTP " + res.status);
+    if (!res.ok || res.status !== 200) throw new Error("MP3 completo non disponibile: HTTP " + res.status);
     const mime = String(res.headers.get("content-type") || "").toLowerCase();
     if (/text\/html|application\/json/.test(mime))
       throw new Error("Il server non ha restituito un file audio");
     const total = Number(res.headers.get("content-length") || 0);
+    if (total > 40 * 1024 * 1024) throw new Error("MP3 troppo grande per la cache");
     let blob;
     if (res.body) {
       const reader = res.body.getReader();
@@ -13081,13 +13095,18 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
         if (part.done) break;
         chunks.push(part.value);
         got += part.value.byteLength;
+        if (got > 40 * 1024 * 1024) {
+          await reader.cancel();
+          throw new Error("MP3 troppo grande per la cache");
+        }
         if (onProgress) onProgress(total ? got / total : 0, got);
       }
       blob = new Blob(chunks, { type: res.headers.get("content-type") || "audio/mpeg" });
     } else {
       blob = await res.blob();
     }
-    if (blob.size < 4096 || (total && blob.size < total * .98))
+    if (blob.size < 4096 || blob.size > 40 * 1024 * 1024 ||
+        (total && blob.size < total * .98))
       throw new Error("Download incompleto: il file non e' stato salvato");
     await cache.put(url, new Response(blob, {
       status: 200,
