@@ -118,12 +118,12 @@ test("a final instrumental beat bridge requires a genuinely complete vocal scan"
   "const similarNotes=()=>({matches:false,score:.84,focused:.84,phrase:.78,alignment:{score:.72}});"+
   "const grooveAgreement=()=>({score:.78});"+
   "const camelotMatch=()=>({weight:0,score:1});"+
-  source.slice(start,end)+
+  source.slice(source.indexOf("function certifiedMixBoundary("),source.indexOf("// Permit a rhythmic overlap",source.indexOf("function certifiedMixBoundary(")))+source.slice(start,end)+
   "return verifiedInstrumentalSnap;"
  )();
- const a={duration:100,last:98,bpm:120,beatConfidence:.24,level:.22,
+ const a={duration:100,last:99.75,bpm:120,beatConfidence:.24,level:.22,
   outroFinalNotes:Array(12).fill(.13),voiceModel:"audio-vocal-ai",
-  voiceScannedEnd:98.4,lastVoiceAt:85,protectedEnding:true};
+  voiceScannedEnd:99.95,lastVoiceAt:85,protectedEnding:true};
  const b={duration:100,bpm:120,beatConfidence:.24,introDrive:.9,
   introAttackNotes:Array(12).fill(.14),safeIntroAt:0};
  const cue=bridge(a,b,100);
@@ -224,11 +224,11 @@ test("vocal-verified short beat join accepts strong drums and compatible key wit
     "alignment:{score:.59}});"+
   "const grooveAgreement=()=>({score:.83});"+
   "const camelotMatch=()=>({weight:.20,score:.92});"+
-  source.slice(start,end)+"return verifiedInstrumentalSnap;"
+  source.slice(source.indexOf("function certifiedMixBoundary("),source.indexOf("// Permit a rhythmic overlap",source.indexOf("function certifiedMixBoundary(")))+source.slice(start,end)+"return verifiedInstrumentalSnap;"
  )();
- const a={duration:100,last:98.1,bpm:116,beatConfidence:.27,
+ const a={duration:100,last:99.8,bpm:116,beatConfidence:.27,
   outroFinalNotes:Array(12).fill(.12),voiceModel:"YAMNet",
-  voiceScannedEnd:98.2,lastVoiceAt:83,protectedEnding:true};
+  voiceScannedEnd:99.95,lastVoiceAt:83,protectedEnding:true};
  const b={bpm:117,beatConfidence:.26,introDrive:.83,
   introAttackNotes:Array(12).fill(.12),safeIntroAt:0};
  const cue=join(a,b,100);

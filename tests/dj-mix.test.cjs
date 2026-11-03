@@ -487,8 +487,8 @@ test("late vocals veto the join; matched protected endings keep every audible be
   source.indexOf("function hasImmediateMusicalIntro("));
  const run=new Function("const isIOS=false,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
   "const hasReliableHarmony=a=>Array.isArray(a)&&a.length===12;"+
-  "const grooveAgreement=()=>({score:.82});"+
-  "const similarNotes=()=>({focused:.56,phrase:.42});"+
+  "const grooveAgreement=()=>({score:.90});"+
+  "const similarNotes=()=>({matches:true,focused:.86,phrase:.78,alignment:{matches:true}});"+
   "const camelotMatch=()=>({weight:.1,score:.5});"+
   "const musicalIntroEntry=()=>0;"+code+"return rhythmicFullTailJoin;")();
  const notes=Array(12).fill(.10);

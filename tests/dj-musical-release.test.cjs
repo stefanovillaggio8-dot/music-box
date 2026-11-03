@@ -3,6 +3,7 @@ const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs"),path=require("node:path");
 const source=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
 const helpers=source.slice(source.indexOf("function findDropRelease("),source.indexOf("function analyzeFrames("));
+const certifiedBoundarySource=source.slice(source.indexOf("function certifiedMixBoundary("),source.indexOf("// Permit a rhythmic overlap",source.indexOf("function certifiedMixBoundary(")));
 const transitionSource=source.slice(source.indexOf("function strongInstrumentalBeatBridge("),source.indexOf("// Circle of fifths/Camelot:"));
 function engine(ios=false,notesMatch=true){
  return new Function(
@@ -13,7 +14,7 @@ function engine(ios=false,notesMatch=true){
   "function hasReliableHarmony(){return false}"+
   "function bpmGap(){return 0}"+
   "function camelotMatch(){return {weight:0,score:1}}"+
-  helpers+transitionSource+
+  helpers+certifiedBoundarySource+transitionSource+
   "return {findDropRelease,drivenIntro,transition}"
  )();
 }
@@ -510,7 +511,8 @@ test("beat search preserves manually selected queue and never chooses a soft mat
  assert.match(app,/if\(!shuffle\|\|queue\.length\|\|repeat\|\|!currentId/);
  assert.match(app,/fresh\.has\(t\.id\)/);
  assert.match(app,/const pool=window\.MusicBoxBridge\.mixShufflePool\(\)/);
- assert.match(source,/cue\.instrumentalBeatBridge\|\|cue\.dropReleaseBridge/);
+ assert.match(source,/cue\.verifiedHarmonicBridge===true/);
+ assert.match(source,/cue\.verifiedMicroBeat===true/);
  assert.match(source,/if\(!verified\)\{/);
  assert.match(source,/const choicePool=scored\.length\?scored:softScored/);
  assert.match(source,/cue\.quietCertified===true/);
