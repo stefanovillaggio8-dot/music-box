@@ -5732,6 +5732,8 @@ const playFromRow = () => {
   // The audio element can be unloaded/recreated when iOS suspends the PWA.
   // Keep the PAUSED playhead independently of the element and restore the
   // media decoder, not merely the timestamp painted in the progress bar.
+  // This must exist for every track tap, including the very first one.
+  let _pausaCheckpoint = null;
   function _pausaSalvata() {
     const p=_pausaCheckpoint?.id===currentId?_pausaCheckpoint:
       LS.get("mb.pausaPos."+profile,null);
