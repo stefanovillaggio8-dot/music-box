@@ -9,6 +9,17 @@ try{enabled=localStorage.getItem("mb.djmix")!=="off"}catch(e){/* Storage bloccat
 const cache=new Map(),pending=new Map(),mixFailures=new Map(),unavailableAnalysis=new Map();
 const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),voiceJobs=new Map();
 const STALE_MOBILE_PREVIEW=Symbol("stale mobile intro request");
+// Optional DJ work must never delay a real song change or touch offline caches.
+let djPlaybackEpoch=0,lastDJTrackChange=0;
+const djFetchControllers=new Set();
+function abortObsoleteDJWork(){
+ djPlaybackEpoch++;lastDJTrackChange=Date.now();
+ for(const ctrl of djFetchControllers)try{ctrl.abort()}catch(_){}
+ djFetchControllers.clear();
+}
+function mobileDJMayWork(){
+ return !isIOS||(!document.hidden&&Date.now()-lastDJTrackChange>=4500);
+}
 function rememberMobileClip(key,decoded,info){
  if(!isIOS||!decoded||!info)return;
  try{
@@ -16,7 +27,7 @@ function rememberMobileClip(key,decoded,info){
   const start=Math.max(0,(info.safeIntroAt||0)-.2);
   const offset=Math.floor(start*rate);
   // Longer bounded preview covers delayed Safari startup.
-   const count=Math.min(Math.floor(21*rate),decoded.length-offset);
+   const count=Math.min(Math.floor(14*rate),decoded.length-offset);
   if(count<rate*4)return;
   const channels=[];
   for(let c=0;c<Math.min(2,decoded.numberOfChannels);c++)
@@ -24,7 +35,7 @@ function rememberMobileClip(key,decoded,info){
   if(!channels.length)return;
   mobileIntroClips.delete(key);
   mobileIntroClips.set(key,{start,rate,channels});
-  while(mobileIntroClips.size>2)mobileIntroClips.delete(mobileIntroClips.keys().next().value);
+  while(mobileIntroClips.size>1)mobileIntroClips.delete(mobileIntroClips.keys().next().value);
  }catch(e){} // Do not compromise the normal player
 }
 
@@ -188,7 +199,7 @@ function voiceIsRelevant(track){
 }
 function scheduleDeepVoice(track,key,data){
  const voice=window.MusicBoxVocal,net=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
- if(!enabled||!voice?.analyze||!voiceIsRelevant(track)||document.hidden||
+ if(!enabled||isIOS||!voice?.analyze||!voiceIsRelevant(track)||document.hidden||
    voiceJobs.has(key)||voiceJobs.size>=2||Date.now()<(voiceRetry.get(key)||0)||
    net?.saveData||/^(slow-)?2g$|^3g$/i.test(String(net?.effectiveType||"")))return;
  const job=(async()=>{
@@ -726,6 +737,7 @@ function compatibility(a,b){
 }
 async function decode(track,needClip=false){
  if(!enabled||!track)return null;
+ const epoch=djPlaybackEpoch;
  const source=bridge()?.mixUrl?.(track)||track.url;
  if(!source||/^(javascript:|data:)/i.test(source))return null;
  const key=String(source);
@@ -756,7 +768,11 @@ async function decode(track,needClip=false){
  if(connection?.saveData||/^(slow-)?2g$|^3g$/i.test(String(connection?.effectiveType||"")))
    return null;
  const operation=async()=>{
-  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),isIOS?35000:22000);
+  if(isIOS&&(!mobileDJMayWork()||epoch!==djPlaybackEpoch))
+   return STALE_MOBILE_PREVIEW;
+  const controller=new AbortController();
+  djFetchControllers.add(controller);
+  const timeout=setTimeout(()=>controller.abort(),isIOS?25000:22000);
   try{
    const response=await fetch(source,{mode:"cors",cache:"force-cache",signal:controller.signal});
    // 6.5MB escludeva molti MP3 su iPhone: mancava l'analisi delle code mute.
@@ -777,6 +793,8 @@ async function decode(track,needClip=false){
     const ab=await response.arrayBuffer();if(ab.byteLength>maxBytes)return null;
     bytes=new Uint8Array(ab);
    }
+   if(isIOS&&(epoch!==djPlaybackEpoch||controller.signal.aborted||
+      document.hidden))return STALE_MOBILE_PREVIEW;
    // OfflineAudioContext decodes without opening a second playback session.
    // The old live AudioContext could disturb MediaSession on iOS and fail
    // when Safari suspends output audio contexts.
@@ -788,7 +806,16 @@ async function decode(track,needClip=false){
    if(!ctx)return null;
    try{
     const decoded=await ctx.decodeAudioData(bytes.buffer.slice(0));
+    if(isIOS&&(epoch!==djPlaybackEpoch||document.hidden))
+     return STALE_MOBILE_PREVIEW;
     if(decoded.duration<35)return null;
+    // Already-indexed audio needs only the short intro preview on Safari:
+    // skip costly FFT/chroma and whole-song vocal model.
+    if(isIOS&&deep&&Math.abs(decoded.duration-deep.duration)<1.5){
+     if(needClip)rememberMobileClip(key,decoded,deep);
+     const fast=withValidatedVoice(deep,cache.get(key));
+     cache.set(key,fast);return fast;
+    }
     const frame=analyzeFrames(decoded);
     const harmonies=chroma(decoded);
      const tonal=chroma(decoded,0,decoded.duration,true);
@@ -829,7 +856,7 @@ async function decode(track,needClip=false){
     // Analyze singing and speech separately without delaying the native
     // playback or blocking the next-track preload on iPhone.
     const voice=window.MusicBoxVocal;
-    if(voice?.analyze&&!voiceJobs.has(key)&&!document.hidden){
+    if(!isIOS&&voice?.analyze&&!voiceJobs.has(key)&&!document.hidden){
      let job=null;
      job=Promise.resolve().then(()=>voice.analyze(decoded,frame))
       .then(v=>{
@@ -864,8 +891,9 @@ async function decode(track,needClip=false){
     if(cache.size>8)cache.delete(cache.keys().next().value);
     return result;
    }finally{if(typeof ctx.close==="function")await ctx.close().catch(()=>{})}
-  }catch(e){return null}
-  finally{clearTimeout(timeout)}
+  }catch(e){return controller.signal.aborted&&isIOS?
+    STALE_MOBILE_PREVIEW:null}
+  finally{clearTimeout(timeout);djFetchControllers.delete(controller)}
  };
  const job=isIOS?(mobileDecodeQueue=mobileDecodeQueue.catch(()=>{}).then(()=>{
   // The queue may change while Safari decodes another long MP3.
@@ -906,9 +934,10 @@ async function cachedMobileAnalysis(track){
  const key=String(source);
  const deep=deepLookup(track);
  if(deep){
-  const current=cache.get(key);
-  if(current?.voiceModel&&Math.abs(current.duration-deep.duration)<1)return current;
-  cache.set(key,deep);scheduleDeepVoice(track,key,deep);return deep;
+  const merged=withValidatedVoice(deep,cache.get(key));
+  cache.set(key,merged);
+  if(!merged.voiceModel)scheduleDeepVoice(track,key,merged);
+  return merged;
  }
  if(cache.has(key))return cache.get(key);
  const stored=await savedAnalysis(key);
@@ -2260,7 +2289,11 @@ function tick(){
  }
  if(isIOS&&audio&&boundAudio!==audio){
   boundAudio=audio;
-  audio.addEventListener("timeupdate",()=>{try{tick()}catch(e){}});
+  const attached=audio;
+  audio.addEventListener("timeupdate",()=>{
+   if(boundAudio!==attached)return;
+   try{tick()}catch(e){}
+  });
  }
  if(!audio||!id||audio.paused||!next||!Number.isFinite(audio.duration)||audio.duration<26){
   if(active||prepared||mobileFading)cancel();
@@ -2307,10 +2340,15 @@ function tick(){
    cachedMobileAnalysis(now).then(value=>{
     if(value){a=value;update()}
    }).catch(()=>{});
-   // Prioritize preparing the next song on Safari's serial decoder.
-   decode(next,mobileOverlayEnabled&&!document.hidden)
-    .then(value=>{if(value){b=value;update()}}).catch(()=>{});
-   decode(now).then(value=>{if(value){a=value;update()}}).catch(()=>{});
+   // Use the tiny precomputed index first; no full-song decoding while
+   // skipping or during the first part of playback.
+   if(audio.duration-audio.currentTime<=42&&mobileDJMayWork()){
+    decode(next,mobileOverlayEnabled&&!document.hidden)
+     .then(value=>{if(value&&value!==STALE_MOBILE_PREVIEW){b=value;update()}}).catch(()=>{});
+    if(!a)decode(now).then(value=>{
+     if(value&&value!==STALE_MOBILE_PREVIEW){a=value;update()}
+    }).catch(()=>{});
+   }
   }else{
    decode(now).then(value=>{a=value;update()}).catch(()=>{});
    decode(next).then(value=>{b=value;update()}).catch(()=>{});
@@ -2328,12 +2366,14 @@ function tick(){
  // Don't allow shuffle candidate downloads to monopolize Safari's
  // single decoder while the next track has not been prepared for the mix.
  const nextSource=app.mixUrl?.(next)||next.url;
- const canReorder=!isIOS||mobileIntroClips.has(String(nextSource))||
-   (!mobileOverlayEnabled&&cache.has(String(nextSource)));
+ const nowTrack=app.allTracks()?.find(t=>t.id===id);
+ const canReorder=!isIOS||
+   (!!deepLookup(nowTrack)&&audio.duration-audio.currentTime>52&&
+    mobileDJMayWork());
  if(canReorder&&audio.duration-audio.currentTime>(isIOS?60:25))
   maybeReorderShuffle(app,audio,id);
- if(isIOS&&!document.hidden&&mobileOverlayEnabled&&
-     audio.duration-audio.currentTime>16&&
+ if(isIOS&&!document.hidden&&mobileOverlayEnabled&&mobileDJMayWork()&&
+     audio.duration-audio.currentTime<=42&&audio.duration-audio.currentTime>16&&
      !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
    decode(next,true).catch(()=>{});
  // A soft transition needs the next MP3 buffered before the fade.
@@ -2639,8 +2679,14 @@ async function intelligentShuffle(app,audio,fromId){
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
  // has no songs with similar tempo or real beat patterns.
- let rhythmCandidates=0,harmonicCandidates=0;
+ let rhythmCandidates=0,harmonicCandidates=0,batchCount=0;
  for(const {track,info} of measured){
+  // Yield every few pairs to let iPhone controls and audio advance.
+  if(isIOS&&++batchCount%24===0){
+   await new Promise(resolve=>setTimeout(resolve,0));
+   if(runGeneration!==shuffleGeneration||app.currentId()!==fromId||
+      document.hidden)return {retry:false};
+  }
   if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
      !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
      !hasImmediateMusicalIntro(info)){
@@ -3090,7 +3136,7 @@ function start(){
   }
  });
  draw();
- setInterval(()=>{try{tick()}catch(e){}},isIOS?220:350);
+ setInterval(()=>{try{tick()}catch(e){}},isIOS?650:350);
  document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
    // This event still fires when foreground timers are suspended.
@@ -3160,6 +3206,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,isAnalyzing:()=>pending.size>0,cancel,
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
  onTrackChange:(id)=>{
+  abortObsoleteDJWork();
   // Immediately invalidate pending shuffle work on EACH song change.
   // A previous catalog fetch must not disable the next DJ transition.
   shuffleGeneration++;shuffleBusy=false;shuffleRetryAt=0;shuffleAttempts=0;

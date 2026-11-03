@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.565";
+  const APP_VERSION = "6.566";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6217,7 +6217,7 @@ function rebuildAudio(autoplay) {
          arrivava quando la canzone partiva (e l'app aspettava). Adesso il
          brano dopo lo scarico per davvero, in silenzio, e lo metto nella
          cache del telefono: cosi' "avanti" parte subito. */
-      _preparato.preload = _meglioNonScaricareTutto() ? "metadata" : "auto";
+      _preparato.preload = (_usaControlliNativiIos()||_meglioNonScaricareTutto()) ? "metadata" : "auto";
       _preparato.src = _urlDelBrano(t);
       /* se il brano e' gia' in mano la si riusa, altrimenti lo si scorda */
       try { _preparato.load(); } catch (e) { /* noop */ }
@@ -6228,7 +6228,7 @@ function rebuildAudio(autoplay) {
          lenta blocca tutto (Ste: "le canzoni ci stanno un sacco ad
          avviarsi"). */
       try {
-        if (!_meglioNonScaricareTutto() && _reteAbbastanzaVeloce() &&
+        if (!_usaControlliNativiIos() && !_meglioNonScaricareTutto() && _reteAbbastanzaVeloce() &&
             // The DJ engine may already be fetching this entire MP3 for a
             // decoded iPhone intro: avoid competing full-song downloads.
             !window.MusicBoxMix?.isAnalyzing?.()) {
