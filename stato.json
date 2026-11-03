@@ -3772,6 +3772,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"terr1\",\"kid yugi, geology\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "Terr1",
+    "a": "Kid Yugi, Geology"
+   },
+   "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
+    "v": 0,
+    "s": 72,
+    "t": "Terr1",
+    "a": "Kid Yugi, Geology"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 3,
@@ -4473,18 +4485,6 @@
     "s": 110,
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
-   },
-   "[\"terr1\",\"kid yugi, geology\"]": {
-    "v": 0,
-    "s": 72,
-    "t": "Terr1",
-    "a": "Kid Yugi, Geology"
-   },
-   "m:2026-11|[\"terr1\",\"kid yugi, geology\"]": {
-    "v": 0,
-    "s": 72,
-    "t": "Terr1",
-    "a": "Kid Yugi, Geology"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5693,14 +5693,14 @@
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "[\"balÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 72,
+    "v": 1,
+    "s": 83,
     "t": "BALÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"balÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 72,
+    "v": 1,
+    "s": 83,
     "t": "BALÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
@@ -6402,13 +6402,13 @@
    },
    "[\"balÃÂÃÂÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
     "v": 1,
-    "s": 83,
+    "s": 139,
     "t": "BALÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"balÃÂÃÂÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
     "v": 1,
-    "s": 83,
+    "s": 139,
     "t": "BALÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
@@ -6509,14 +6509,14 @@
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂ¨"
    },
    "[\"la notte\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 37,
+    "v": 2,
+    "s": 50,
     "t": "La notte",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"la notte\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 37,
+    "v": 2,
+    "s": 50,
     "t": "La notte",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7218,13 +7218,13 @@
    },
    "[\"la notte\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 50,
+    "s": 130,
     "t": "La notte",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"la notte\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 50,
+    "s": 130,
     "t": "La notte",
     "a": "ModÃÂÃÂ "
    },
@@ -7926,13 +7926,13 @@
    },
    "[\"la notte\",\"modÃÂ \"]": {
     "v": 2,
-    "s": 130,
+    "s": 129,
     "t": "La notte",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"la notte\",\"modÃÂ \"]": {
     "v": 2,
-    "s": 130,
+    "s": 129,
     "t": "La notte",
     "a": "ModÃÂ "
    },
@@ -8722,6 +8722,18 @@
     "t": "LA CITTÃ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 83,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃ©"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -9432,15 +9444,27 @@
    },
    "[\"il pescatore\",\"fabrizio de andré\"]": {
     "v": 0,
-    "s": 83,
+    "s": 124,
     "t": "Il pescatore",
     "a": "Fabrizio De André"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andré\"]": {
     "v": 0,
-    "s": 83,
+    "s": 124,
     "t": "Il pescatore",
     "a": "Fabrizio De André"
+   },
+   "[\"non ti dimentico\",\"modà\"]": {
+    "v": 0,
+    "s": 31,
+    "t": "Non ti dimentico",
+    "a": "Modà"
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modà\"]": {
+    "v": 0,
+    "s": 31,
+    "t": "Non ti dimentico",
+    "a": "Modà"
    }
   },
   "Diego": {
