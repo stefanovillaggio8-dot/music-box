@@ -94,3 +94,15 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
  assert.ok(total>=25000);
  assert.ok(allowed>=1,"at least one real beat/quiet overlap should be eligible");
 });
+
+test("iPhone shuffle only promotes tracks its actual mixer can play",()=>{
+ assert.ok(source.includes("const mobilePlayable=!isIOS||mobileMixAllowed(cue,old,lastLyric);"));
+ assert.ok(source.includes("const verified=Boolean(mobilePlayable&&cue"));
+ assert.ok(source.includes("const safeSoft=Boolean(mobilePlayable&&cue"));
+});
+test("DJ index does not compete with native iPhone startup or play while disabled",()=>{
+ assert.ok(source.includes("function start(){\n // A disabled DJ must not download"));
+ assert.ok(source.includes("if(enabled){\n  if(isIOS)setTimeout"));
+ assert.ok(source.includes("mobileOverlayEnabled=true;\n   try{localStorage.setItem"));
+ assert.ok(source.includes("bridge()?.mixEnableAudio?.();"));
+});
