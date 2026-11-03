@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.596";
+  const APP_VERSION = "6.597";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5589,15 +5589,49 @@ emptyEl.textContent = !total
       li.appendChild(del);
       }
 
-li.addEventListener("click", () => {
+const playFromRow = () => {
     if (suppressClick) {
       suppressClick = false;
       return;
     }
     /* Se sto scegliendo piu' canzioni, il tocco sceglie e non suona. */
     if (_alternaSelezione(t.id)) return;
-    playById(t.id);
-    });
+    const attempt = playById(t.id);
+    // An exception before audio.play() used to reject this promise
+    // silently. Report it without interrupting the following tap.
+    if (attempt && typeof attempt.catch === "function")
+      attempt.catch(err => {
+        console.warn("[Music Box] Errore avvio da libreria", err);
+        toast("Non riesco ad avviare il brano: " +
+          String(err?.message || err || "errore sconosciuto").slice(0,95), 7000);
+      });
+    };
+    // iOS sometimes drops the synthesized click after a DOM refresh or
+    // touch/long-press recognizer. Start on the actual short pointer-up
+    // gesture, before Safari's click, and suppress only the duplicate.
+    if (_usaControlliNativiIos()) {
+      let down = null, handledAt = 0;
+      li.addEventListener("pointerdown", e => {
+        if (e.target?.closest?.("button")) { down = null; return; }
+        down = { x:e.clientX, y:e.clientY, at:Date.now() };
+      }, {passive:true});
+      li.addEventListener("pointercancel", () => { down = null; });
+      li.addEventListener("pointerup", e => {
+        const p = down; down = null;
+        if (!p || e.target?.closest?.("button") ||
+            Date.now() - p.at > 460 ||
+            Math.abs(e.clientX - p.x) > 12 ||
+            Math.abs(e.clientY - p.y) > 12) return;
+        handledAt = Date.now();
+        playFromRow();
+      }, {passive:true});
+      li.addEventListener("click", () => {
+        if (Date.now() - handledAt < 850) return;
+        playFromRow();
+      });
+    } else {
+      li.addEventListener("click", playFromRow);
+    }
     /* Il segno di spunta sui brani scelti. */
     if (_inSelezione && _scelti.has(t.id)) li.classList.add("selezionato");
     bindLongPress(li, t);
@@ -6070,7 +6104,12 @@ function handleMetadata() {
       const u=new URL(target,location.href);
       const safe=u.origin===location.origin||
         (u.protocol==="https:"&&u.hostname==="raw.githubusercontent.com");
-      if(safe)a.crossOrigin="anonymous";
+      // Native iPhone playback needs NO CORS, even for GitHub raw MP3s.
+      // Requesting CORS makes an otherwise playable <audio> fail when
+      // a Service Worker serves a synthetic offline Range (206) response.
+      // Desktop DJ capture still uses CORS for decode/mixing.
+      if(_usaControlliNativiIos())a.removeAttribute("crossorigin");
+      else if(safe)a.crossOrigin="anonymous";
       else a.removeAttribute("crossorigin");
     }catch(_) {try{a.removeAttribute("crossorigin")}catch(_){}}
     a.src=target;
@@ -7595,14 +7634,11 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
        gesto audio ritarda l'avvio e su iPhone perde il permesso Safari. */
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
     _chiudiAscolto(false);
-    if (autoplay) _contaAscoltoNuovo(t);
-    _iniziaAscolto();
-    // Una selezione nuova deve sostituire la vecchia posizione salvata,
-    // altrimenti un reload immediato puo' riprendere il brano precedente.
+    // Keep localStorage and statistics OUTSIDE the synchronous path
+    // to native play(): writing a large profile before play() on iOS
+    // can forfeit the browser's one-shot user gesture.
     const inizio = Number.isFinite(startAt) && startAt > 0 ? Math.floor(startAt) : 0;
     const avviatoIl = Date.now();
-    writeProfileState(profile, { last: id, time: inizio, quando: avviatoIl });
-    LS.set("mb.playback." + profile, { id, time: inizio, quando: avviatoIl });
     if (!audio) audio = createAudio();
     if (autoplay) {
       _cominciaBranoNuovo();
@@ -7663,6 +7699,15 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
     // painting the heavy song list and calculating the random queue.
     // The promise is consumed below after UI bookkeeping.
     const _avvioImmediato = autoplay ? doPlay() : null;
+    // Now playback has been requested inside the native tap.
+    // Saving metadata is best-effort and cannot stop the audio player.
+    try {
+      writeProfileState(profile, { last:id, time:inizio, quando:avviatoIl });
+      LS.set("mb.playback." + profile, { id, time:inizio, quando:avviatoIl });
+    } catch (err) { console.warn("[Music Box] Salvataggio posizione",err); }
+    if (autoplay) {
+      try { _contaAscoltoNuovo(t); } catch (_) { /* statistics never stop music */ }
+    }
     /* La tengo in mano mentre la ascolto: e' cosi' che spostare la barra
        dentro la canzone non deve aspettare la rete. Vedi la nota sopra
        _scaricaDaSolaSeServe. */
@@ -8077,8 +8122,16 @@ function playNext() {
       await playById(tracks[0].id);
       return;
     }
-    if (audio.paused) _riproduciVolontaria();
-    else _pausaVolontaria();
+    // Safari can restore the song title after a discarded media decoder.
+    // The bar says 0:00 / 0:00 but the HTMLAudioElement has no source:
+    // Play must rebuild it from the real track, not play an empty element.
+    if (!audio || (!audio.currentSrc && !audio.src) || audio.error) {
+      const checkpoint = _pausaSalvata();
+      if (currentId) return playById(currentId, true,
+        Number(checkpoint?.time) || 0);
+    }
+    if (audio.paused) return _riproduciVolontaria();
+    return _pausaVolontaria();
   }
 
   /* Comandi ricevuti dal player nativo iOS (solo quando il bridge esiste). */
