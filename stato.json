@@ -8042,7 +8042,7 @@
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 1,
-    "s": 117,
+    "s": 118,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -8276,7 +8276,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 0,
-    "s": 112,
+    "s": 113,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -8742,6 +8742,18 @@
     "t": "LA CITTÃ",
     "a": "MOSTRO"
    },
+   "[\"verdi nei viola\",\"lazza\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
+   "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "verdi nei viola",
+    "a": "lazza"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -8750,7 +8762,7 @@
    },
    "[\"morirò da re\",\"måneskin\"]": {
     "v": 1,
-    "s": 118,
+    "s": 123,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
@@ -8984,7 +8996,7 @@
    },
    "m:2026-11|[\"morirò da re\",\"måneskin\"]": {
     "v": 0,
-    "s": 113,
+    "s": 118,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
@@ -9449,18 +9461,6 @@
     "s": 110,
     "t": "LA CITTÀ",
     "a": "MOSTRO"
-   },
-   "[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "verdi nei viola",
-    "a": "lazza"
-   },
-   "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "verdi nei viola",
-    "a": "lazza"
    }
   },
   "Diego": {
