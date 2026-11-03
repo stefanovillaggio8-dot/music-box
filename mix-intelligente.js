@@ -1305,12 +1305,20 @@ function verifiedInstrumentalSnap(a,b,dur){
   const longMusicalMatch=Boolean(keyCompatible&&groove?.score>=.80&&
    notes.matches===true&&notes.focused>=.79&&notes.phrase>=.68&&
    (chordSequence||staticException));
-  const exceptionallyStrongBoundary=notes.focused>=.92&&
-   notes.phrase>=.87&&groove?.score>=.89;
-  const shortMusicalMatch=Boolean(keyCompatible&&groove?.score>=.83&&
-   notes.focused>=.76&&notes.phrase>=.63&&
-   (notes.matches||chordSequence||exceptionallyStrongBoundary)&&
-   (!notes.alignment||notes.alignment.matches||exceptionallyStrongBoundary));
+  // Real final drums and the opening chord can match even when a
+  // long three-point chord progression does not. Such a boundary only
+  // earns a SHORT blend, never a 4-second fade or an early trim.
+  const measuredBoundary=Boolean(notes.alignment&&
+   Number(notes.alignment.score)>=.73&&
+   Number(notes.alignment.weakest)>=.50&&
+   Number(notes.focused)>=.77&&Number(notes.phrase)>=.66&&
+   groove?.score>=.80);
+  const exceptionalEdge=notes.focused>=.91&&
+   notes.phrase>=.86&&groove?.score>=.88;
+  const shortMusicalMatch=Boolean(keyCompatible&&groove?.score>=.78&&
+   notes.focused>=.74&&notes.phrase>=.63&&
+   (chordSequence||measuredBoundary||exceptionalEdge||
+    (!notes.alignment&&notes.matches===true)));
   if(!longMusicalMatch&&!shortMusicalMatch)return null;
   const end=clamp((Number.isFinite(a.last)?a.last:dur)+.055,25,dur-.035);
   if(end<26||dur-end>13||!certifiedMixBoundary(a,dur,end)||
@@ -1322,7 +1330,7 @@ function verifiedInstrumentalSnap(a,b,dur){
      (a.voiceModel&&a.voiceScannedEnd>=end-1&&
       (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-6.5)));
   const safe=voiceProof&&longMusicalMatch;
-  const snapFade=clamp(1.22*60/a.bpm,.48,.84);
+  const snapFade=clamp(1.75*60/a.bpm,.63,1.10);
   const fade=safe?3.95:snapFade,begin=end-fade;
   const entry=Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
   const trim=Boolean(a.confidentTail&&dur-a.last>=1.65);
@@ -2639,11 +2647,15 @@ function tick(){
    const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
    // iPhone uses a single stream: never cut an audible vocal outro
    // merely because the next track matches harmonically.
-   plan=candidate||continuityFallback(currentAnalysis,nextAnalysis,audio.duration);
+   plan=candidate||(currentAnalysis&&nextAnalysis?
+     continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null);
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
-  plan=isIOS?null:continuityFallback(null,null,duration);
+  // A speculative fade before ANY outgoing analysis may hide a
+  // real final beat. Prebuffer the next MP3 separately, but never
+  // play an uncertified overlap.
+  plan=null;
   const now=app.allTracks()?.find(t=>t.id===id);
   // Safari decodes one song at a time: get the next intro ready first.
   // Do not wait for the entire current track before preparing the next.

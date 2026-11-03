@@ -28,6 +28,37 @@ function synthetic(variant){
  }
  return {sampleRate:rate,duration,getChannelData:()=>data};
 }
+
+test("measured musical boundary can overlap without requiring an entire identical chord progression",()=>{
+ const s=source.slice(source.indexOf("function measuredBeatBridge("),
+  source.indexOf("// A four-second average",source.indexOf("function measuredBeatBridge(")));
+ const safe=source.slice(source.indexOf("function certifiedMixBoundary("),
+  source.indexOf("// Permit a rhythmic overlap",source.indexOf("function certifiedMixBoundary(")));
+ const mock=new Function(
+  "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+  "const hasReliableHarmony=()=>true;"+
+  "const grooveAgreement=()=>({score:.86});"+
+  "const similarNotes=()=>({matches:false,focused:.85,phrase:.76,score:.80,"+
+    "alignment:{matches:false,score:.82,weakest:.61}});"+
+  "const camelotMatch=()=>({score:.95,weight:.21});"+
+  safe+s+"return measuredBeatBridge;"
+ )();
+ const a={duration:180,last:179.96,bpm:120,beatConfidence:.29,
+  outroFinalNotes:[1],protectedEnding:false,beatAnchor:175.5};
+ const b={bpm:121,beatConfidence:.27,introDrive:.77,
+  introAttackNotes:[1],safeIntroAt:0,introBeat:.5};
+ const p=mock(a,b,180);
+ assert.equal(p?.kind,"snap");
+ assert.equal(p.verifiedMicroBeat,true);
+ assert.equal(p.preserveTail,true);
+ assert.equal(p.silenceTrim,false);
+ assert.ok(p.begin<179.3&&p.end>179.9,"matched beat starts before the end");
+ assert.ok(p.fade>=.63&&p.fade<=1.10);
+ assert.equal(mock({...a,last:174},b,180),null,
+  "an unverified tail cannot be cut after a false last-frame estimate");
+ assert.equal(mock({...a,lastLyricAt:178},b,180),null);
+});
+
 test("vocal or loud ending is never shortened by guessed timing",()=>{
  assert.equal(transition(current,next,180),null);
 });

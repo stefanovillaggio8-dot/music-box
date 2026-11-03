@@ -59,6 +59,23 @@ test("actual precomputed music library: sample real beat/soft/cut decisions and 
  assert.ok(candidateRhythm>0,"Expected at least some physically close BPM candidates");
 });
 
+test("audit verified audible beat candidates after the 17:05 regression video",()=>{
+ const selected=tracks.filter(x=>/audio\/songs\/track-(153|170|203|161)\.mp3$/.test(x.key));
+ const results=[];
+ for(const from of selected){
+  let compatible=0,long=0,short=0;
+  for(const to of tracks){
+   if(from.key===to.key)continue;
+   const p=engine.transition(from.data,to.data,from.data.duration);
+   if(p?.kind==="beat"&&p.verifiedHarmonicBridge){long++;compatible++}
+   if(p?.kind==="snap"&&p.verifiedMicroBeat){short++;compatible++}
+  }
+  results.push({track:from.key,compatible,long,short});
+ }
+ console.info("[DJ POST VIDEO MATCH AUDIT]",JSON.stringify(results));
+ assert.ok(selected.length>=3,"known outgoing songs remain indexed");
+});
+
 test("diagnose the 2026-11-03 screen recording: track 153 into 8",()=>{
  const a=tracks.find(t=>t.key==="audio/songs/track-153.mp3");
  const b=tracks.find(t=>t.key==="audio/songs/track-8.mp3");
