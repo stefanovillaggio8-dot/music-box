@@ -7591,9 +7591,8 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       try {
         if (!$("lyricsPanel").hidden && typeof openLyrics === "function") openLyrics();
       } catch (e) { /* noop */ }
-    /* Il brano successivo e' gia' scelto: aggiorna subito la coda visibile
-       e il contatore, anche se la riproduzione e' ancora in caricamento. */
-    if (!_usaControlliNativiIos()) renderQueueCount();
+    /* Aggiorna la coda DOPO il primo play(): farlo qui prima del
+       gesto audio ritarda l'avvio e su iPhone perde il permesso Safari. */
     /* Cambio brano: chiudo il conto del pezzo precedente e riparto. */
     _chiudiAscolto(false);
     if (autoplay) _contaAscoltoNuovo(t);
@@ -7629,6 +7628,19 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       audio = createAudio(liveDjAudio);
       // After swapping the active reference, old pause events are inert.
       if (previous && previous !== audio) {
+        try { previous.pause(); } catch (_) {}
+      }
+    } else {
+      // Each new selection gets its OWN decoder. Replacing src on the
+      // still-playing audio element can dispatch a late pause/abort after
+      // play() for the newly selected song; on Safari that stale pause
+      // is interpreted as a headphone pause and kills playback intent.
+      // Keep the old element only for historical events (ignored by
+      // createAudio's identity guard). Do not touch saved offline MP3s.
+      const previous = audio;
+      audio = createAudio();
+      if (previous && previous !== audio) {
+        previous._mbCambioBrano = true;
         try { previous.pause(); } catch (_) {}
       }
     }
