@@ -75,8 +75,9 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
   excerpt("function compatibility(","async function decode(")+
   excerpt("function hasReliableHarmony(","function resetMobileFade(")+
   excerpt("function iphoneBeatPairCertified(","function mobileMixAllowed(")+
-  "return {transition,iphoneBeatPairCertified};")(false,"auto");
- let total=0,plans=0,allowed=0,lowPreview=0,strict=0,weak=0;
+  "return {transition,iphoneBeatPairCertified,iphoneQuietReleaseCertified};")(false,"auto");
+ let total=0,plans=0,allowed=0,lowPreview=0,strict=0,weak=0,
+   softSafe=0,softUnsafe=0,beatEligible=0;
  for(let i=0;i<tracks.length;i+=11)
   for(let j=0;j<tracks.length;j+=2){
    if(i===j)continue;
@@ -87,15 +88,20 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
    plans++;
    if(allow(p,a,null)){
     allowed++;if(p.kind==="snap"&&!p.voiceVerifiedMicroBridge)lowPreview++;
-    if(engine.iphoneBeatPairCertified(a,b,p))strict++;else weak++;
+    if(p.kind==="beat"||p.kind==="snap"){
+      beatEligible++;
+      if(engine.iphoneBeatPairCertified(a,b,p))strict++;else weak++;
+    }else if(engine.iphoneQuietReleaseCertified(a,p))softSafe++;
+    else softUnsafe++;
     assert.ok(p.end<=a.duration+.04&&p.begin>=0);
    }
   }
  console.info("[iPhone DJ REAL]",JSON.stringify({indexed:tracks.length,total,
-  plans,allowed,lowPreview,strict,weak}));
+  plans,allowed,lowPreview,strict,weak,softSafe,softUnsafe,beatEligible}));
  assert.ok(total>=25000);
  assert.ok(allowed>=1,"at least one real beat/quiet overlap should be eligible");
- assert.ok(weak>0,"real library must reject false-positive beat claims");
+ assert.ok(softUnsafe+weak>0,
+  "real library must reject speculative overlays on audible unmatched endings");
 });
 
 test("iPhone shuffle only promotes tracks its actual mixer can play",()=>{
@@ -189,4 +195,22 @@ test("iPhone seeks are not treated as deliberate pauses",()=>{
  assert.ok(fn.includes("!eDelSistema && !pausaPerSeek"));
  assert.ok(fn.includes("_vuoleSuonare&&!a.ended&&pausaPerSeek"));
  assert.ok(app.includes("if(!a.seeking&&a.readyState>=3)a._mbCambioBrano=false"));
+});
+
+test("quiet fade on iPhone requires near-silent measured release",()=>{
+ const isQuiet=new Function(
+  excerpt("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
+  "return iphoneQuietReleaseCertified;"
+ )();
+ const cue={kind:"soft",begin:173,end:178,quietCertified:true};
+ const a={protectedEnding:false,dropRelease:{
+  releaseAt:171,quietLevel:.08,score:.88}};
+ assert.equal(isQuiet(a,cue),true);
+ assert.equal(isQuiet({...a,dropRelease:{...a.dropRelease,quietLevel:.43}},cue),false);
+ assert.equal(isQuiet({...a,protectedEnding:true},cue),false);
+ assert.equal(isQuiet({confidentTail:true,last:172.9},cue),true);
+ assert.equal(isQuiet({outroGap:{start:170,end:179}},cue),true);
+ assert.equal(isQuiet({},cue),false);
+ assert.equal(isQuiet(null,cue),false);
+ assert.equal(isQuiet(null,{kind:"snap"}),true);
 });

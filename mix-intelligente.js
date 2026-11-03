@@ -70,6 +70,27 @@ function iphoneBeatPairCertified(a,b,cue){
  if(key.weight>=.14&&key.score<.54)return false;
  return true;
 }
+// A quiet fade is NOT a beat match. Only crossfade if actual MP3 analysis
+// proves the outgoing song is already silent or has a settled musical decay.
+function iphoneQuietReleaseCertified(a,cue){
+ if(!cue)return false;
+ if(!["soft","fade","rise"].includes(cue.kind))return true;
+ if(!a||cue.quietCertified!==true||a.protectedEnding===true||
+    !Number.isFinite(cue.begin)||!Number.isFinite(cue.end))return false;
+ const digital=Boolean(a.confidentTail===true&&
+   Number.isFinite(a.last)&&cue.begin>=a.last-.35);
+ const gap=Boolean(a.outroGap&&
+   Number.isFinite(a.outroGap.start)&&Number.isFinite(a.outroGap.end)&&
+   cue.begin>=a.outroGap.start&&cue.end<=a.outroGap.end+.15);
+ const release=a.dropRelease;
+ const decayed=Boolean(release&&
+   Number.isFinite(release.releaseAt)&&release.releaseAt<=cue.begin-.3&&
+   Number.isFinite(release.quietLevel)&&release.quietLevel<=.15&&
+   Number(release.score)>=.76&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-1.4)&&
+   (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-4));
+ return digital||gap||decayed;
+}
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
     plan.end<=plan.begin)return false;
@@ -2841,9 +2862,10 @@ function tick(){
    // iPhone uses a single stream: never cut an audible vocal outro
    // merely because the next track matches harmonically.
    const weakIphoneMatch=isIOS&&candidate&&
-     !iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate);
-   // If outro/intro drums or harmonic frames don't agree, preserve the
-   // full original and use native progression instead of a false beat cut.
+     (!iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
+      !iphoneQuietReleaseCertified(currentAnalysis,candidate));
+   // Unmatched rhythm OR an audible, non-matching "quiet" fade
+   // must keep the original ending intact and use native progression.
    plan=weakIphoneMatch?null:
      (candidate||(currentAnalysis&&nextAnalysis?
        continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null));
@@ -3287,7 +3309,8 @@ async function intelligentShuffle(app,audio,fromId){
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
   const mobilePlayable=!isIOS||
-   (mobileMixAllowed(cue,old,lastLyric)&&iphoneBeatPairCertified(old,next,cue));
+   (mobileMixAllowed(cue,old,lastLyric)&&
+    iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue));
   // Only a musically verified bridge earns the "beat" tier. A weak
   // rhythmic resemblance must NEVER outrank a safe next song.
   const verified=Boolean(mobilePlayable&&cue&&
