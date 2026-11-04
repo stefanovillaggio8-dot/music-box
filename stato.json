@@ -2676,13 +2676,13 @@
    },
    "[\"culo\",\"tonypitony\"]": {
     "v": 0,
-    "s": 73,
+    "s": 153,
     "t": "CULO",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"culo\",\"tonypitony\"]": {
     "v": 0,
-    "s": 73,
+    "s": 153,
     "t": "CULO",
     "a": "TonyPitony"
    },
@@ -4648,6 +4648,18 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"lucifero\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 77,
+    "t": "Lucifero",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"lucifero\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 77,
+    "t": "Lucifero",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -5379,18 +5391,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"lucifero\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 77,
-    "t": "Lucifero",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"lucifero\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 77,
-    "t": "Lucifero",
-    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6444,13 +6444,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 145,
+    "s": 206,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 145,
+    "s": 206,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -7182,13 +7182,13 @@
    },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 206,
+    "s": 260,
     "t": "Ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 206,
+    "s": 260,
     "t": "Ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -8338,6 +8338,18 @@
     "t": "VENTANNI",
     "a": "MÃÂ¥neskin"
    },
+   "[\"nessuna\",\"luchÃÂ¨\"]": {
+    "v": 1,
+    "s": 14,
+    "t": "Nessuna",
+    "a": "LuchÃÂ¨"
+   },
+   "m:2026-11|[\"nessuna\",\"luchÃÂ¨\"]": {
+    "v": 1,
+    "s": 14,
+    "t": "Nessuna",
+    "a": "LuchÃÂ¨"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -9078,13 +9090,13 @@
    },
    "[\"nessuna\",\"luchÃ¨\"]": {
     "v": 1,
-    "s": 14,
+    "s": 84,
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
     "v": 1,
-    "s": 14,
+    "s": 84,
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
@@ -9828,13 +9840,13 @@
    },
    "[\"nessuna\",\"luchè\"]": {
     "v": 1,
-    "s": 84,
+    "s": 90,
     "t": "Nessuna",
     "a": "Luchè"
    },
    "m:2026-11|[\"nessuna\",\"luchè\"]": {
     "v": 1,
-    "s": 84,
+    "s": 90,
     "t": "Nessuna",
     "a": "Luchè"
    }
