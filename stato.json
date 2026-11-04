@@ -1367,8 +1367,8 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "[\"futuri possibili\",\"franco126\"]": {
-    "v": 0,
-    "s": 80,
+    "v": 1,
+    "s": 110,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
@@ -1391,8 +1391,8 @@
     "a": "thasup"
    },
    "m:2026-11|[\"futuri possibili\",\"franco126\"]": {
-    "v": 0,
-    "s": 17,
+    "v": 1,
+    "s": 46,
     "t": "Futuri Possibili",
     "a": "Franco126"
    },
@@ -4254,13 +4254,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 193,
+    "s": 239,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 193,
+    "s": 239,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
@@ -4986,13 +4986,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 239,
+    "s": 280,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 239,
+    "s": 280,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
@@ -6850,6 +6850,18 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"lucifero\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 77,
+    "t": "Lucifero",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"lucifero\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 77,
+    "t": "Lucifero",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7587,18 +7599,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂ¥neskin"
-   },
-   "[\"lucifero\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 77,
-    "t": "Lucifero",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"lucifero\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 77,
-    "t": "Lucifero",
-    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -8658,13 +8658,13 @@
    },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 145,
+    "s": 206,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 145,
+    "s": 206,
     "t": "Ma il cielo Ã¨ sempre piÃ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -9396,13 +9396,13 @@
    },
    "[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 206,
+    "s": 260,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo è sempre più blu\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 206,
+    "s": 260,
     "t": "Ma il cielo è sempre più blu",
     "a": "Rino Gaetano"
    },
