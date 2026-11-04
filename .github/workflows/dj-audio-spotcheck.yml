@@ -1,0 +1,33 @@
+name: Music Box DJ independent raw-audio audit
+on:
+  push:
+    paths:
+      - 'tools/dj-audio-spotcheck.py'
+      - 'tests/dj-beat-audit.test.cjs'
+      - '.github/workflows/dj-audio-spotcheck.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-mp3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cross-check 130k measured pairs and select real audio samples
+        env:
+          DJ_AUDIO_PAIR_FILE: /tmp/musicbox-dj-audio-pairs.json
+        run: node --test tests/dj-beat-audit.test.cjs
+      - name: Install independent waveform analyzer
+        run: |
+          python -m pip install "numpy>=1.26,<3" "librosa==0.11.0"
+          python -m py_compile tools/dj-audio-spotcheck.py
+      - name: Download and independently decode sampled actual published MP3s
+        run: |
+          python tools/dj-audio-spotcheck.py --pairs /tmp/musicbox-dj-audio-pairs.json
