@@ -123,8 +123,9 @@ def audit(p):
         weakest=min(checks)
         item={"overlapSec":fade,"chordAvg":round(score,3),
               "weakestWindow":round(weakest,3)}
-        if best is None or (score*.75+weakest*.25)>
-                (best["chordAvg"]*.75+best["weakestWindow"]*.25):
+        if (best is None or
+            (score*.75+weakest*.25) >
+            (best["chordAvg"]*.75+best["weakestWindow"]*.25)):
             best=item
     rhythm=percussion_match(a,b,float(A["bpm"]),edge,entry)
     firstEnd=audible_rms(a,edge-3.8,edge-2.8)
