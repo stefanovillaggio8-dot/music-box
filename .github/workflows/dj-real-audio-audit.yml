@@ -1,0 +1,26 @@
+name: Music Box - Audit indipendente audio reale DJ
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/dj-pair-waveform-audit.py'
+      - '.github/workflows/dj-real-audio-audit.yml'
+  workflow_dispatch:
+jobs:
+  audio-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare real MP3 signal analyzer
+        run: |
+          python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "librosa==0.11.0"
+          ffmpeg -version | head -n 1
+          python -m py_compile tools/dj-pair-waveform-audit.py
+      - name: Decode actual final/initial audio and measure beat/chord agreement
+        run: python tools/dj-pair-waveform-audit.py
