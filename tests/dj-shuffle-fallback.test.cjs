@@ -65,7 +65,7 @@ test("selects a certified musical fade instead of a random next song when beat m
  assert.equal(f.selected()?.pickId,3);
  assert.equal(f.decision().beatCandidates,0);
  assert.equal(f.decision().softCandidates,1);
- assert.equal(f.decision().reason,"sfumatura sul finale quieto (non beat uguali)");
+ assert.equal(f.decision().reason,"sfumatura su finale quieto (non beat uguali)");
 });
 test("verified beat always outranks soft fallback regardless of its fade length",async()=>{
  const f=fixture({pool:[{cue:soft(5.1)},{cue:beat(3.2)}]});
