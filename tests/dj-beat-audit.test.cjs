@@ -178,8 +178,17 @@ test("select best candidate for independent MP3 waveform spot-checks",()=>{
   ranked.sort((a,b)=>b.score-a.score);
   if(ranked.length)pairs.push(ranked[0]);
  }
- console.info("[DJ INDEPENDENT WAVEFORM TARGETS]",JSON.stringify(pairs));
+ const annotated=pairs.map(p=>{
+  const from=tracks.find(x=>x.key===p.from),to=tracks.find(x=>x.key===p.to);
+  const cue=from&&to?tools.transition(from.data,to.data,from.data.duration):null;
+  return {...p,plan:cue?{
+   kind:cue.kind,begin:short(cue.begin),end:short(cue.end),
+   fade:short(cue.fade),entry:short(cue.entry),
+   beatPeriod:short(cue.beatPeriod)
+  }:null};
+ });
+ console.info("[DJ INDEPENDENT WAVEFORM TARGETS]",JSON.stringify(annotated));
  if(process.env.DJ_AUDIO_PAIR_FILE)
-  fs.writeFileSync(process.env.DJ_AUDIO_PAIR_FILE,JSON.stringify(pairs,null,2));
+  fs.writeFileSync(process.env.DJ_AUDIO_PAIR_FILE,JSON.stringify(annotated,null,2));
  assert.ok(pairs.length>=3);
 });

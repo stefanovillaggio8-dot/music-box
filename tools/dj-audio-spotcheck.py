@@ -108,6 +108,11 @@ def audit(p):
     a,b=load(old),load(new)
     A,B=INDEX[old],INDEX[new]
     edge=float(A["last"])
+    release=A.get("dropRelease") or {}
+    # The MP3 index measures the rhythmic OUTRO BEFORE the last impact
+    # decays. Checking the reverb tail instead would be a false rejection.
+    musical_edge=min(edge,float(release["lastImpactAt"])+.20) if (
+        isinstance(release.get("lastImpactAt"),(int,float))) else edge
     entry=float(B.get("safeIntroAt") or 0)
     periods=[2.8,3.8,4.7]
     best=None
@@ -127,9 +132,16 @@ def audit(p):
             (score*.75+weakest*.25) >
             (best["chordAvg"]*.75+best["weakestWindow"]*.25)):
             best=item
-    rhythm=percussion_match(a,b,float(A["bpm"]),edge,entry)
-    firstEnd=audible_rms(a,edge-3.8,edge-2.8)
-    after=audible_rms(a,edge-.35,edge-.05)
+    rhythm=percussion_match(a,b,float(A["bpm"]),musical_edge,entry)
+    tailRhythm=percussion_match(a,b,float(A["bpm"]),edge,entry)
+    firstEnd=audible_rms(a,musical_edge-3.8,musical_edge-2.8)
+    after=audible_rms(a,musical_edge-.60,musical_edge-.10)
+    # Positive control: the exact same decoded drum waveform must have
+    # near-perfect correlation with itself, including phase search.
+    own=percussion_match(a,a,float(A["bpm"]),musical_edge,
+                        musical_edge-8*60/float(A["bpm"]))
+    if own is None or own<.94:
+        raise ValueError("Independent spectral-onset self-control failed "+old)
     report={
         "reason":p["reason"],"from":old,"to":new,
         "bpmA":A["bpm"],"bpmB":B["bpm"],
@@ -137,6 +149,11 @@ def audit(p):
         "audioDurationB":round(len(b)/SR,2),
         "chordWindows":best,
         "realOnsetCorrelation":round(rhythm,3) if rhythm is not None else None,
+        "onsetAtAudibleEnd":round(tailRhythm,3) if tailRhythm is not None else None,
+        "independentOnsetSelfControl":round(own,3),
+        "musicalEdge":round(musical_edge,2),
+        "lastAudible":round(edge,2),
+        "plannedMix":p.get("plan"),
         "lateMusicRms":round(after,5) if after is not None else None,
         "earlierMusicRms":round(firstEnd,5) if firstEnd is not None else None,
         "indexMatchValid":True,
