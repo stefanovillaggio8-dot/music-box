@@ -154,7 +154,10 @@ test("select best candidate for independent MP3 waveform spot-checks",()=>{
  const outgoing=["audio/songs/track-153.mp3","audio/songs/track-160.mp3",
   "audio/songs/track-161.mp3"];
  const pairs=[{from:"audio/songs/track-153.mp3",
-   to:"audio/songs/track-8.mp3",reason:"recorded_false_match"}];
+   to:"audio/songs/track-8.mp3",reason:"recorded_false_match"},
+  {from:"audio/songs/track-391.mp3",to:"audio/songs/track-1164.mp3",reason:"certified_beat"},
+  {from:"audio/songs/track-391.mp3",to:"audio/songs/track-598.mp3",reason:"certified_beat"},
+  {from:"audio/songs/track-568.mp3",to:"audio/songs/track-464.mp3",reason:"rejected_beat"}];
  for(const fromKey of outgoing){
   const from=tracks.find(x=>x.key===fromKey);
   if(!from)continue;
