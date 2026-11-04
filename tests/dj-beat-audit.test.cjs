@@ -12,6 +12,7 @@ const tools=new Function("isIOS","style",
  extract("function compatibility(","async function decode(")+
  extract("function hasReliableHarmony(","function resetMobileFade(")+
  extract("function desktopBeatPairCertified(","function iphoneQuietReleaseCertified(")+
+ extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
  "return {transition,similarNotes,grooveAgreement,camelotMatch,"+
  "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified};"
