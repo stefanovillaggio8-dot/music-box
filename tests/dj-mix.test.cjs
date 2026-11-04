@@ -702,3 +702,40 @@ test("Music Box app hands the prebuffered MP3 to its ordinary player without a f
  assert.ok(code.includes('window.MusicBoxMix?.onSeek?.("media")'));
  assert.equal((code.match(/window\.MusicBoxMix\?\.onSeek\?\.\("user"\)/g)||[]).length,2);
 });
+
+test("desktop compares both chord changes and drum grooves, not BPM alone",()=>{
+ const start=source.indexOf("function desktopBeatPairCertified(");
+ const end=source.indexOf("function iphoneQuietReleaseCertified(",start);
+ const check=new Function(
+  "const similarNotes=(a,b)=>b.notes;"+
+  "const grooveAgreement=(a,b)=>b.groove;"+
+  "const camelotMatch=(a,b)=>b.key;"+
+  source.slice(start,end)+"return desktopBeatPairCertified;")();
+ const a={bpm:126,beatConfidence:.55};
+ const b={bpm:127,beatConfidence:.52,introDrive:.8,
+  notes:{matches:true,focused:.88,phrase:.78,alignment:{
+   matches:true,score:.85,weakest:.7}},
+  groove:{score:.87,correlation:.74},key:{weight:.2,score:.86}};
+ const cue={kind:"snap",measuredBeatBridge:true};
+ assert.equal(check(a,b,cue),true);
+ assert.equal(check(a,{...b,groove:{score:.7,correlation:.4}},cue),false);
+ assert.equal(check(a,{...b,notes:{...b.notes,matches:false}},cue),false);
+ assert.equal(check(a,{...b,notes:{...b.notes,alignment:{score:.6,matches:false,weakest:.4}}},cue),false);
+ assert.equal(check(a,{...b,bpm:147},cue),false);
+ assert.equal(check(a,b,{kind:"soft"}),true);
+});
+test("desktop waits for an aligned beat instead of starting outside phase",()=>{
+ const i=source.indexOf("function desktopBeatStartDelay(");
+ const j=source.indexOf("async function beginMix(",i);
+ const delay=new Function(source.slice(i,j)+"return desktopBeatStartDelay;")();
+ const p={kind:"beat",end:104,beatPeriod:.5,beatAnchor:100,nextBeat:.1};
+ assert.ok(Math.abs(delay(p,98.5)-.4)<.0001);
+ assert.equal(delay({...p,kind:"snap",end:99},98.5),null);
+ assert.equal(delay({...p,beatPeriod:null},98.5),null);
+ assert.equal(delay({...p,kind:"soft"},98.5),0);
+});
+test("desktop runtime does not force an unverified beat overlap",()=>{
+ assert.ok(source.includes("weakDesktopMatch=!isIOS&&candidate&&"));
+ assert.ok(source.includes("desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)"));
+ assert.ok(source.includes("scored.length?scored:nearScored.length?nearScored:"));
+});

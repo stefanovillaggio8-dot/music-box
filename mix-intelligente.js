@@ -72,6 +72,30 @@ function iphoneBeatPairCertified(a,b,cue){
 }
 // A quiet fade is NOT a beat match. Only crossfade if actual MP3 analysis
 // proves the outgoing song is already silent or has a settled musical decay.
+// On desktop a beat match needs real rhythmic AND harmonic agreement.
+// BPM alone or a quiet outro is not enough to certify any DJ cut.
+function desktopBeatPairCertified(a,b,p){
+ if(!p)return false;
+ if(!["beat","snap","phrase"].includes(p.kind)&&
+    !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.beatConfidence<.20||b.beatConfidence<.20||
+    !Number.isFinite(b.introDrive)||b.introDrive<.39)return false;
+ const ratios=[.5,1,2].map(k=>a.bpm/(b.bpm*k));
+ const speed=ratios.reduce((x,y)=>Math.abs(Math.log2(x))<
+  Math.abs(Math.log2(y))?x:y);
+ if(!Number.isFinite(speed)||speed<.963||speed>1.037)return false;
+ const n=similarNotes(a,b),g=grooveAgreement(a,b);
+ if(n.matches!==true||!Number.isFinite(n.focused)||n.focused<.79||
+    !Number.isFinite(n.phrase)||n.phrase<.68||
+    !g||g.score<.80||!Number.isFinite(g.correlation)||
+    g.correlation<.60)return false;
+ if(n.alignment&&n.alignment.score>0&&
+    (!n.alignment.matches||n.alignment.weakest<.52))return false;
+ const key=camelotMatch(a,b);
+ return key.weight<.14||key.score>=.55;
+}
 function iphoneQuietReleaseCertified(a,cue){
  if(!cue)return false;
  if(!["soft","fade","rise"].includes(cue.kind))return true;
@@ -2472,6 +2496,19 @@ function quietDirectHandoff(app,audio,id,next,entry,reason){
   .catch(error=>console.warn("[Music Box DJ] Passaggio diretto non riuscito",String(error?.message||error)));
  return true;
 }
+// A phase offset over 420ms previously led to an OFF-BEAT start.
+function desktopBeatStartDelay(p,at){
+ if(!p||!["beat","snap","phrase"].includes(p.kind))return 0;
+ const period=Number(p.beatPeriod),out=Number(p.beatAnchor),
+  incoming=Number(p.nextBeat);
+ if(!Number.isFinite(period)||period<.24||period>1.2||
+    !Number.isFinite(out)||!Number.isFinite(incoming)||
+    !Number.isFinite(at)||!Number.isFinite(p.end))return null;
+ const phase=((out-at-incoming)%period+period)%period;
+ const wait=phase<=.045||period-phase<=.045?0:phase;
+ if(at+wait>=p.end-(p.kind==="snap"?.36:1.2))return null;
+ return wait;
+}
 async function beginMix(song,proposed){
  const app=bridge(),old=app?.audio(),id=app?.currentId();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
@@ -2503,15 +2540,11 @@ async function beginMix(song,proposed){
   if(act.tempo!==1){
    try{upcoming.preservesPitch=true;upcoming.playbackRate=act.tempo}catch(e){}
   }
-  // Match beat phase without ever skipping a musical introduction.
-  if((proposed.kind==="beat"||proposed.kind==="phrase"||proposed.kind==="snap")&&Number.isFinite(proposed.beatPeriod)&&
-     Number.isFinite(proposed.beatAnchor)&&Number.isFinite(proposed.nextBeat)){
-   const period=proposed.beatPeriod;
-   const phase=((proposed.beatAnchor-old.currentTime-proposed.nextBeat)%period+period)%period;
-   if(phase>.045&&phase<Math.min(proposed.kind==="snap"?.16:.42,period*.8)&&
-      old.currentTime+phase<proposed.end-(proposed.kind==="snap"?.35:2.2))
-    await new Promise(resolve=>setTimeout(resolve,Math.round(phase*1000)));
-  }
+  // Wait for the matching beat, or leave both song endings intact.
+  const beatWait=desktopBeatStartDelay(proposed,old.currentTime);
+  if(beatWait===null){cancel();plan=null;return}
+  if(beatWait>.045)
+   await new Promise(resolve=>setTimeout(resolve,Math.round(beatWait*1000)));
   if(active!==act||old.paused||app.currentId()!==id||
      old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:1.2)){cancel();return}
   await upcoming.play();
@@ -2866,9 +2899,13 @@ function tick(){
       !iphoneQuietReleaseCertified(currentAnalysis,candidate));
    // Unmatched rhythm OR an audible, non-matching "quiet" fade
    // must keep the original ending intact and use native progression.
+   const weakDesktopMatch=!isIOS&&candidate&&
+     (!desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
+      !iphoneQuietReleaseCertified(currentAnalysis,candidate));
    plan=weakIphoneMatch?null:
-     (candidate||(currentAnalysis&&nextAnalysis?
-       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null));
+     (weakDesktopMatch?null:
+      (candidate||(currentAnalysis&&nextAnalysis?
+       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null)));
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
@@ -3313,7 +3350,9 @@ async function intelligentShuffle(app,audio,fromId){
     iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue));
   // Only a musically verified bridge earns the "beat" tier. A weak
   // rhythmic resemblance must NEVER outrank a safe next song.
-  const verified=Boolean(mobilePlayable&&cue&&
+  const verified=Boolean(mobilePlayable&&
+   desktopBeatPairCertified(old,next,cue)&&
+   iphoneQuietReleaseCertified(old,cue)&&cue&&
     ((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.verifiedMicroBeat===true&&
       cue.fade>=.46)||
      (cue.kind==="beat"&&cue.fade>=2.7&&
@@ -3323,7 +3362,8 @@ async function intelligentShuffle(app,audio,fromId){
    // Only as a SECOND choice: a measured musical decay may permit a
    // short, audible overlap even when no two percussion patterns match.
    // Never silently count this as a verified beat or shorten a vocal.
-   const safeSoft=Boolean(mobilePlayable&&cue&&cue.kind==="soft"&&cue.fade>=2.35&&
+   const safeSoft=Boolean(mobilePlayable&&
+    iphoneQuietReleaseCertified(old,cue)&&cue&&cue.kind==="soft"&&cue.fade>=2.35&&
     cue.quietCertified===true&&info.introDrive>=.43&&
     (cue.neutralRelease||cue.verifiedDecayAfterLyrics||cue.dropReleaseBridge||
      (Number.isFinite(cue.safeOutroAt)&&cue.safeOutroAt<=cue.begin+.25))&&
@@ -3352,8 +3392,9 @@ async function intelligentShuffle(app,audio,fromId){
  rhythmOrderScored.sort((a,b)=>b.score-a.score);
  // Order-only fallback is still preferable to an unrelated random song,
  // but absolutely never gains permission to overlap a sung ending.
- const choicePool=scored.length?scored:softScored.length?softScored:
-  nearScored.length?nearScored:sequenceScored.length?sequenceScored:rhythmOrderScored;
+ // Prefer a next song with actually compatible notes and drums.
+ const choicePool=scored.length?scored:nearScored.length?nearScored:
+  softScored.length?softScored:sequenceScored.length?sequenceScored:rhythmOrderScored;
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -3368,13 +3409,14 @@ async function intelligentShuffle(app,audio,fromId){
     rejected,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
-     "raccordo ritmico breve, finale preservato":"beat certificato"):softScored.length?
-     "sfumatura musicale verificata":nearScored.length?
-      "ordine per BPM, groove e tonalita":sequenceScored.length?
+     "raccordo ritmico breve, finale preservato":"beat certificato"):nearScored.length?
+     "ordine per BPM, groove e tonalita":softScored.length?
+     "sfumatura su finale quieto (non beat uguali)":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
       "ritmo simile, raccordo continuo (non beat certificato)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
-    softScored.length?"[Music Box DJ] Scelta automatica: rilascio musicale verificato":
+    nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
+    softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
      "[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)",
     {outgoing:fromId,incoming:best.track.id,
      fade:best.cue?.fade?.toFixed(1)??null,
@@ -3398,8 +3440,8 @@ async function intelligentShuffle(app,audio,fromId){
    protectedEnding:old.protectedEnding===true,dropReleaseVerified:!!old.dropRelease,
   reason:noMatch?"nessuna sovrapposizione o sequenza affidabile nei brani analizzati":
    scored.length?"brano in coda gia compatibile con il beat":
-   softScored.length?"brano in coda gia compatibile con la sfumatura":
    nearScored.length?"brano in coda gia simile per BPM, groove e note":
+   softScored.length?"brano in coda compatibile con una sfumatura quieta":
     sequenceScored.length?"brano in coda gia selezionato per ritmo e note":
     rhythmOrderScored.length?"brano in coda gia affine per percussioni":
     "nessun ritmo affidabile: raccordo continuo al cambio brano",
