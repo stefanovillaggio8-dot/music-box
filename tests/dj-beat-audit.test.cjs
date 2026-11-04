@@ -11,6 +11,7 @@ const tools=new Function("isIOS","style",
  extract("function grooveAgreement(","// Find a *musical* release")+
  extract("function compatibility(","async function decode(")+
  extract("function hasReliableHarmony(","function resetMobileFade(")+
+ extract("function onsetPairAgreement(","function iphoneBeatPairCertified(")+
  extract("function desktopBeatPairCertified(","function iphoneQuietReleaseCertified(")+
  extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
@@ -134,7 +135,10 @@ test("adversarial edits: same BPM cannot camouflage incompatible drums or chords
   introAttackNotes:chroma,introPhraseNotes:chroma,
   outroFinalNotes:chroma,outroPhraseNotes:chroma,
   chroma, introChroma:chroma, outroChroma:chroma};
- const outgoing={...a,...b,last:180};
+ const pulse=Array.from({length:96},(_,i)=>i%17===0?2.3:
+  i%13===0?1.2:i%5===0?.3:-.4);
+ const outgoing={...a,...b,last:180,outroOnset:pulse};
+ b.introOnset=pulse;
  const p={kind:"beat",beatPeriod:60/a.bpm,begin:175,end:179.8,fade:4.8};
  const base=tools.desktopBeatPairCertified(outgoing,b,p);
  assert.equal(base,true,"Positive control should be a physically close musical signature");

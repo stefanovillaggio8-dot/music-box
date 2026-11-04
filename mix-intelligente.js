@@ -44,6 +44,37 @@ function mobileClipWindow(audio) {
 // A short matched drum junction without vocal proof is only a subdued
 // preview: the native original remains audible to its measured end.
 // An iPhone beat overlap must match measured DRUMS and CHORDS, not BPM alone.
+// Independent original-MP3 comparison showed similar BPM/chords are not
+// enough: 391->1164/598 had -0.16 aligned rhythmic correlation. Require
+// the newly measured 4-second drum/onset profiles before any beat overlay.
+function onsetPairAgreement(a,b){
+ const tail=a?.outroOnset,head=b?.introOnset,n=96;
+ if(!Array.isArray(tail)||!Array.isArray(head)||
+    tail.length!==n||head.length!==n||
+    tail.some(v=>!Number.isFinite(v))||
+    head.some(v=>!Number.isFinite(v)))return null;
+ const correlate=shift=>{
+  let dot=0,xx=0,yy=0,count=0;
+  for(let i=0;i<n;i++){
+   const j=i+shift;
+   if(j<0||j>=n)continue;
+   const x=tail[i],y=head[j];
+   dot+=x*y;xx+=x*x;yy+=y*y;count++;
+  }
+  if(count<78||xx<5||yy<5)return null;
+  return dot/Math.sqrt(xx*yy);
+ };
+ const zero=correlate(0);
+ if(!Number.isFinite(zero))return null;
+ let best=zero,shift=0;
+ for(let d=-12;d<=12;d++){
+  const score=correlate(d);
+  if(Number.isFinite(score)&&score>best){best=score;shift=d}
+ }
+ // Large resynchronizations and mismatched beats are not DJ transitions.
+ return {atZero:zero,best,lagMs:shift*4000/n,
+  certified:best>=.49&&zero>=.26&&Math.abs(shift)<=4};
+}
 function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
@@ -58,6 +89,7 @@ function iphoneBeatPairCertified(a,b,cue){
   Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
  if(tempo<.965||tempo>1.035)return false;
  const harmony=similarNotes(a,b),drums=grooveAgreement(a,b);
+ if(onsetPairAgreement(a,b)?.certified!==true)return false;
  if(harmony?.matches!==true||!Number.isFinite(harmony.focused)||
     harmony.focused<.79||!Number.isFinite(harmony.phrase)||
     harmony.phrase<.68||
@@ -89,6 +121,7 @@ function desktopBeatPairCertified(a,b,p){
   Math.abs(Math.log2(y))?x:y);
  if(!Number.isFinite(speed)||speed<.963||speed>1.037)return false;
  const n=similarNotes(a,b),g=grooveAgreement(a,b);
+ if(onsetPairAgreement(a,b)?.certified!==true)return false;
  if(n.matches!==true||!Number.isFinite(n.focused)||n.focused<.79||
     !Number.isFinite(n.phrase)||n.phrase<.68||
     !g||g.score<.80||!Number.isFinite(g.correlation)||

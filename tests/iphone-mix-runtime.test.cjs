@@ -162,6 +162,7 @@ test("iPhone rejects false beat matches even when BPM is similar",()=>{
  const verify=new Function(
   "const similarNotes=(a,b)=>b.notes;"+
   "const grooveAgreement=(a,b)=>b.drums;"+
+  "const onsetPairAgreement=()=>({certified:true});"+
   "const camelotMatch=(a,b)=>b.key;"+
   excerpt("function iphoneBeatPairCertified(","function mobileMixAllowed(")+
   "return iphoneBeatPairCertified;"

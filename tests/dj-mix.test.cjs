@@ -709,6 +709,7 @@ test("desktop compares both chord changes and drum grooves, not BPM alone",()=>{
  const check=new Function(
   "const similarNotes=(a,b)=>b.notes;"+
   "const grooveAgreement=(a,b)=>b.groove;"+
+  "const onsetPairAgreement=()=>({certified:true});"+
   "const camelotMatch=(a,b)=>b.key;"+
   source.slice(start,end)+"return desktopBeatPairCertified;")();
  const a={bpm:126,beatConfidence:.55,last:180};
@@ -738,4 +739,22 @@ test("desktop runtime does not force an unverified beat overlap",()=>{
  assert.ok(source.includes("weakDesktopMatch=!isIOS&&candidate&&"));
  assert.ok(source.includes("desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)"));
  assert.ok(source.includes("scored.length?scored:nearScored.length?nearScored:"));
+});
+
+test("onset fingerprint must prove a rhythmic join; mismatched drums never qualify",()=>{
+ const i=source.indexOf("function onsetPairAgreement(");
+ const j=source.indexOf("function iphoneBeatPairCertified(",i);
+ assert.ok(i>0&&j>i);
+ const compare=new Function(source.slice(i,j)+"return onsetPairAgreement;")();
+ const pulse=Array.from({length:96},(_,k)=>k%17===0?2.2:
+  k%11===0?1.1:k%5===0?.4:-.4);
+ const wrong=Array.from({length:96},(_,k)=>k%17===6?2.2:
+  k%11===3?1.1:k%5===2?.4:-.4);
+ assert.equal(compare({outroOnset:pulse},{introOnset:pulse})?.certified,true);
+ assert.equal(compare({outroOnset:pulse},{introOnset:wrong})?.certified,false);
+ assert.equal(compare({outroOnset:pulse},{introOnset:null}),null);
+ assert.equal(compare({outroOnset:pulse},{introOnset:Array(96).fill(0)}),null);
+ const late=Array.from({length:96},(_,k)=>k<9?0:pulse[k-9]);
+ assert.equal(compare({outroOnset:pulse},{introOnset:late})?.certified,false,
+  "even a similar rhythm cannot require a >300ms playback jump");
 });
