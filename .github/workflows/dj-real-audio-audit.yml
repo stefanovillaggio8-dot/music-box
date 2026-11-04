@@ -20,6 +20,8 @@ jobs:
       - name: Prepare real MP3 signal analyzer
         run: |
           python -m pip install --disable-pip-version-check "numpy>=1.26,<3" "librosa==0.11.0"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -n 1
           python -m py_compile tools/dj-pair-waveform-audit.py
       - name: Decode actual final/initial audio and measure beat/chord agreement
