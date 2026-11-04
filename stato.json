@@ -1620,13 +1620,13 @@
    },
    "[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
     "v": 1,
-    "s": 300,
+    "s": 352,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
    "m:2026-11|[\"cigno nero rmx\",\"nayt / frah quintale / tony boy\"]": {
     "v": 1,
-    "s": 300,
+    "s": 352,
     "t": "CIGNO NERO RMX",
     "a": "Nayt / Frah Quintale / Tony Boy"
    },
@@ -2424,13 +2424,13 @@
    },
    "[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 52,
+    "s": 77,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
    "m:2026-11|[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 52,
+    "s": 77,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
@@ -5368,6 +5368,18 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"sono ok\",\"xcarme\"]": {
+    "v": 0,
+    "s": 47,
+    "t": "Sono Ok",
+    "a": "XCarme"
+   },
+   "m:2026-11|[\"sono ok\",\"xcarme\"]": {
+    "v": 0,
+    "s": 47,
+    "t": "Sono Ok",
+    "a": "XCarme"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -6099,18 +6111,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"sono ok\",\"xcarme\"]": {
-    "v": 0,
-    "s": 47,
-    "t": "Sono Ok",
-    "a": "XCarme"
-   },
-   "m:2026-11|[\"sono ok\",\"xcarme\"]": {
-    "v": 0,
-    "s": 47,
-    "t": "Sono Ok",
-    "a": "XCarme"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7932,13 +7932,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 193,
+    "s": 239,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 193,
+    "s": 239,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
@@ -8670,13 +8670,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃ , bianca atzei\"]": {
     "v": 0,
-    "s": 239,
+    "s": 280,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃ , bianca atzei\"]": {
     "v": 0,
-    "s": 239,
+    "s": 280,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃ , Bianca Atzei"
    },
