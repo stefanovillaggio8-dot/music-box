@@ -2184,13 +2184,13 @@
    },
    "[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 476,
+    "s": 532,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "m:2026-11|[\"favola\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 476,
+    "s": 532,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
@@ -2898,13 +2898,13 @@
    },
    "[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 0,
-    "s": 124,
+    "s": 140,
     "t": "La Violenza Necessaria",
     "a": "Kid Yugi & Shiva"
    },
    "m:2026-11|[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 0,
-    "s": 124,
+    "s": 140,
     "t": "La Violenza Necessaria",
     "a": "Kid Yugi & Shiva"
    },
@@ -3155,14 +3155,14 @@
     "a": "Coez"
    },
    "[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
+    "v": 1,
+    "s": 62,
     "t": "ROMANTICA",
     "a": "Ultimo"
    },
    "m:2026-11|[\"romantica\",\"ultimo\"]": {
-    "v": 0,
-    "s": 5,
+    "v": 1,
+    "s": 62,
     "t": "ROMANTICA",
     "a": "Ultimo"
    },
@@ -5484,13 +5484,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 126,
+    "s": 165,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 126,
+    "s": 165,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -6222,13 +6222,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 165,
+    "s": 237,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 165,
+    "s": 237,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -6777,6 +6777,18 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
+   },
+   "[\"oroscopo\",\"calcutta, takagi & ketra\"]": {
+    "v": 0,
+    "s": 79,
+    "t": "Oroscopo",
+    "a": "Calcutta, Takagi & Ketra"
+   },
+   "m:2026-11|[\"oroscopo\",\"calcutta, takagi & ketra\"]": {
+    "v": 0,
+    "s": 79,
+    "t": "Oroscopo",
+    "a": "Calcutta, Takagi & Ketra"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7515,18 +7527,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂ¥neskin"
-   },
-   "[\"oroscopo\",\"calcutta, takagi & ketra\"]": {
-    "v": 0,
-    "s": 79,
-    "t": "Oroscopo",
-    "a": "Calcutta, Takagi & Ketra"
-   },
-   "m:2026-11|[\"oroscopo\",\"calcutta, takagi & ketra\"]": {
-    "v": 0,
-    "s": 79,
-    "t": "Oroscopo",
-    "a": "Calcutta, Takagi & Ketra"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
