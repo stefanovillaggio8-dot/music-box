@@ -15,7 +15,7 @@ const tools=new Function("isIOS","style",
  extract("function desktopBeatPairCertified(","function iphoneQuietReleaseCertified(")+
  extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
- "return {transition,similarNotes,grooveAgreement,camelotMatch,"+
+ "return {transition,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
  "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
