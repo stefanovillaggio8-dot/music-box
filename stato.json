@@ -1074,7 +1074,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 39,
-    "s": 1003,
+    "s": 1005,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1698,7 +1698,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 38,
-    "s": 995,
+    "s": 997,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -9311,14 +9311,14 @@
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "[\"ti amo\",\"luchè\"]": {
-    "v": 0,
-    "s": 6,
+    "v": 1,
+    "s": 9,
     "t": "Ti Amo",
     "a": "Luchè"
    },
    "m:2026-11|[\"ti amo\",\"luchè\"]": {
-    "v": 0,
-    "s": 6,
+    "v": 1,
+    "s": 9,
     "t": "Ti Amo",
     "a": "Luchè"
    },
