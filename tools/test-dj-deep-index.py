@@ -30,6 +30,11 @@ try:
     assert a["confidentTail"] is True
     assert a["outroChroma"] and len(a["outroChroma"])==12
     assert "outroTimeline" in a and "introTimeline" in a
+    assert "introOnset" in a and "outroOnset" in a
+    for fingerprint in [a["introOnset"],a["outroOnset"]]:
+        if fingerprint is not None:
+            assert len(fingerprint)==96
+            assert all(np.isfinite(v) for v in fingerprint)
     print("PASS: actual PCM analyzed, beat, chroma, verified silence, timelines.")
 finally:file.unlink(missing_ok=True)
 

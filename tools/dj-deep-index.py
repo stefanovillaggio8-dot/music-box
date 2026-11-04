@@ -142,6 +142,19 @@ def analyze(mp3):
     to=min(duration,first+12)
     end_note=musical_edge
     c=chroma(y)
+    def onset_signature(start):
+        # Short actual transients at the join. RMS similarity and BPM alone
+        # are not reliable evidence of matching drums.
+        span=4.0
+        times=start+(np.arange(96)+.5)*span/96
+        if start<0 or times[-1]>=duration-.05:return None
+        frames=np.interp(times,onset_t,onset)
+        mean=float(np.mean(frames));std=float(np.std(frames))
+        if not np.isfinite(std) or std<max(.045,mean*.12):return None
+        return [round(float(v),3) for v in
+          np.clip((frames-mean)/std,-3,3)]
+    intro_onset=onset_signature(float(safe_intro))
+    outro_onset=onset_signature(float(musical_edge)-4.0)
     out={"duration":round(duration,3),"first":round(first,3),"last":round(last,3),
       "trailing":round(trailing,3),"leading":round(leading,3),
       "bpm":round(bpm,2),"beatConfidence":round(strength,3),
@@ -156,6 +169,7 @@ def analyze(mp3):
       "outroTimeline":timeline(y,max(0,musical_edge-9),musical_edge,True),
       "introGroove":groove(rms,bpm,safe_intro),
       "outroGroove":groove(rms,bpm,musical_edge,True),
+      "introOnset":intro_onset,"outroOnset":outro_onset,
       "introDrive":round(drive,4),"dropRelease":release,
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
