@@ -212,3 +212,42 @@ test("real MP3 regression: proposed beat fades cannot start after the final audi
    "Never certify a beat if the source music ended before the fade starts");
  }
 });
+
+test("the rescanned real MP3 catalog has percussive transients, not just BPM estimates",()=>{
+ const measured=tracks.filter(t=>Array.isArray(t.data.outroOnset)&&
+  t.data.outroOnset.length===96&&
+  Array.isArray(t.data.introOnset)&&t.data.introOnset.length===96);
+ console.info("[DJ POST-PCM INDEX]",JSON.stringify({
+  indexed:tracks.length,withBothRealOnsets:measured.length,
+  coverage:measured.length/tracks.length}));
+ assert.ok(measured.length>=1000,"Per-MP3 drum transients need full library coverage");
+ const identical=measured[0].data.introOnset;
+ assert.equal(tools.onsetPairAgreement(
+  {outroOnset:identical},{introOnset:identical})?.certified,true);
+});
+
+test("original MP3 false beat matches stay rejected with fresh onset data",()=>{
+ const pairs=[
+  ["track-391.mp3","track-1164.mp3"],
+  ["track-391.mp3","track-598.mp3"],
+  ["track-568.mp3","track-464.mp3"],
+  ["track-153.mp3","track-8.mp3"],
+  ["track-160.mp3","track-111.mp3"]
+ ];
+ const results=[];
+ for(const pair of pairs){
+  const a=tracks.find(x=>x.key==="audio/songs/"+pair[0]);
+  const b=tracks.find(x=>x.key==="audio/songs/"+pair[1]);
+  assert.ok(a&&b,"Original MP3 absent from actual index: "+pair.join(" -> "));
+  const agreement=tools.onsetPairAgreement(a.data,b.data);
+  assert.ok(agreement,"Missing independently measured onsets for "+pair.join(" -> "));
+  assert.equal(agreement.certified,false,
+   "Unrelated drum beats may not pass: "+pair.join(" -> "));
+  const cue={kind:"beat",begin:a.data.last-3.8,end:a.data.last,fade:3.8};
+  assert.equal(tools.desktopBeatPairCertified(a.data,b.data,cue),false);
+  results.push({from:pair[0],to:pair[1],
+   zero:+agreement.atZero.toFixed(3),best:+agreement.best.toFixed(3),
+   lagMs:+agreement.lagMs.toFixed(1)});
+ }
+ console.info("[DJ VERIFIED WRONG BEATS REJECTED]",JSON.stringify(results));
+});
