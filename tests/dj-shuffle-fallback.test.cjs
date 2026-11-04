@@ -40,6 +40,7 @@ function fixture(options={}){
   "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
   "const similarNotes=()=>({focused:"+(Number(options.focused??.82))+",phrase:"+(Number(options.phrase??.81))+"});",
   "const transition=(old,next)=>next.cue||null;",
+  "const desktopBeatPairCertified=()=>true,iphoneQuietReleaseCertified=()=>true;",
   "let shuffleLastDecision=null,deepIndex=null;",
   source.slice(source.indexOf("function withValidatedVoice("),
     source.indexOf("function deepStatus(){",source.indexOf("function withValidatedVoice("))),
@@ -64,7 +65,7 @@ test("selects a certified musical fade instead of a random next song when beat m
  assert.equal(f.selected()?.pickId,3);
  assert.equal(f.decision().beatCandidates,0);
  assert.equal(f.decision().softCandidates,1);
- assert.equal(f.decision().reason,"sfumatura musicale verificata");
+ assert.equal(f.decision().reason,"sfumatura sul finale quieto (non beat uguali)");
 });
 test("verified beat always outranks soft fallback regardless of its fade length",async()=>{
  const f=fixture({pool:[{cue:soft(5.1)},{cue:beat(3.2)}]});

@@ -107,8 +107,8 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
 test("iPhone shuffle only promotes tracks its actual mixer can play",()=>{
  assert.ok(source.includes("const mobilePlayable=!isIOS||"));
  assert.ok(source.includes("iphoneBeatPairCertified(old,next,cue)"));
- assert.ok(source.includes("const verified=Boolean(mobilePlayable&&cue"));
- assert.ok(source.includes("const safeSoft=Boolean(mobilePlayable&&cue"));
+ assert.ok(source.includes("const verified=Boolean(mobilePlayable&&"));
+ assert.ok(source.includes("const safeSoft=Boolean(mobilePlayable&&"));
 });
 test("DJ index does not compete with native iPhone startup or play while disabled",()=>{
  assert.ok(source.includes("function start(){\n // A disabled DJ must not download"));

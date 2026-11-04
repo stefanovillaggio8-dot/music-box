@@ -467,6 +467,7 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
   "const similarNotes=()=>({focused:.8,phrase:.8});"+
    "const camelotMatch=()=>({score:.5,weight:0});"+
   "const hasImmediateMusicalIntro=()=>true;"+
+   "const desktopBeatPairCertified=()=>true,iphoneQuietReleaseCertified=()=>true;"+
   "let fromAnalysis={duration:200,bpm:120,beatConfidence:.82};"+
   "const deepLookup=t=>({id:t.id,duration:200,bpm:120,"+
   "beatConfidence:.8,introDrive:.8});"+
@@ -514,7 +515,7 @@ test("beat search preserves manually selected queue and never chooses a soft mat
  assert.match(source,/cue\.verifiedHarmonicBridge===true/);
  assert.match(source,/cue\.verifiedMicroBeat===true/);
  assert.match(source,/if\(!verified\)\{/);
- assert.match(source,/const choicePool=scored\.length\?scored:softScored/);
+ assert.match(source,/const choicePool=scored\.length\?scored:nearScored/);
  assert.match(source,/cue\.quietCertified===true/);
  assert.match(source,/return \{retry:unknown\.length>picked\.length&&noMatch/);
 });
