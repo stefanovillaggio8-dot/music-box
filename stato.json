@@ -2982,13 +2982,13 @@
    },
    "[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 93,
+    "s": 101,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 93,
+    "s": 101,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
@@ -3576,13 +3576,13 @@
    },
    "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
     "v": 0,
-    "s": 89,
+    "s": 110,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
    "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
     "v": 0,
-    "s": 89,
+    "s": 110,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
@@ -5070,13 +5070,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 73,
+    "s": 121,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 73,
+    "s": 121,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
@@ -6076,6 +6076,18 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"hey there delilah\",\"plain white t's\"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Hey There Delilah",
+    "a": "Plain White T's"
+   },
+   "m:2026-11|[\"hey there delilah\",\"plain white t's\"]": {
+    "v": 0,
+    "s": 101,
+    "t": "Hey There Delilah",
+    "a": "Plain White T's"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -6813,18 +6825,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"hey there delilah\",\"plain white t's\"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Hey There Delilah",
-    "a": "Plain White T's"
-   },
-   "m:2026-11|[\"hey there delilah\",\"plain white t's\"]": {
-    "v": 0,
-    "s": 101,
-    "t": "Hey There Delilah",
-    "a": "Plain White T's"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7603,13 +7603,25 @@
    "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'ÃÂ¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂ¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
@@ -7823,14 +7835,14 @@
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "[\"ti amo\",\"luchÃÂ¨\"]": {
-    "v": 0,
-    "s": 6,
+    "v": 1,
+    "s": 9,
     "t": "Ti Amo",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"ti amo\",\"luchÃÂ¨\"]": {
-    "v": 0,
-    "s": 6,
+    "v": 1,
+    "s": 9,
     "t": "Ti Amo",
     "a": "LuchÃÂ¨"
    },
@@ -7869,18 +7881,6 @@
     "s": 2,
     "t": "Voglio di piÃÂ¹",
     "a": "nayt, 3D"
-   },
-   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
    },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
@@ -7966,6 +7966,18 @@
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
+   "[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 293,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 293,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 0,
     "s": 94,
@@ -8000,18 +8012,6 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃÂ ",
-    "a": "ModÃÂ "
-   },
-   "[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 293,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 293,
-    "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "[\"voodoo\",\"guÃÂ¨\"]": {
@@ -8271,36 +8271,6 @@
     "s": 110,
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
-   },
-   "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"non ti dimentico\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
-    "v": 0,
-    "s": 103,
-    "t": "VENTANNI",
-    "a": "MÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -8574,13 +8544,13 @@
    },
    "[\"ti amo\",\"luchÃ¨\"]": {
     "v": 1,
-    "s": 9,
+    "s": 43,
     "t": "Ti Amo",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"ti amo\",\"luchÃ¨\"]": {
     "v": 1,
-    "s": 9,
+    "s": 43,
     "t": "Ti Amo",
     "a": "LuchÃ¨"
    },
@@ -9010,6 +8980,36 @@
     "t": "LA CITTÃ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"non ti dimentico\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 103,
+    "t": "VENTANNI",
+    "a": "MÃÂ¥neskin"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -9282,13 +9282,13 @@
    },
    "[\"ti amo\",\"luchè\"]": {
     "v": 1,
-    "s": 43,
+    "s": 59,
     "t": "Ti Amo",
     "a": "Luchè"
    },
    "m:2026-11|[\"ti amo\",\"luchè\"]": {
     "v": 1,
-    "s": 43,
+    "s": 59,
     "t": "Ti Amo",
     "a": "Luchè"
    },
