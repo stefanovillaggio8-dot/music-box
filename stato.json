@@ -3294,13 +3294,13 @@
    },
    "[\"quanto forte ti pensavo\",\"madame\"]": {
     "v": 1,
-    "s": 64,
+    "s": 87,
     "t": "QUANTO FORTE TI PENSAVO",
     "a": "Madame"
    },
    "m:2026-11|[\"quanto forte ti pensavo\",\"madame\"]": {
     "v": 1,
-    "s": 64,
+    "s": 87,
     "t": "QUANTO FORTE TI PENSAVO",
     "a": "Madame"
    },
@@ -6796,6 +6796,18 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"i kissed a girl (hardstyle)\",\"katy perry\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "I Kissed a Girl (Hardstyle)",
+    "a": "Katy Perry"
+   },
+   "m:2026-11|[\"i kissed a girl (hardstyle)\",\"katy perry\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "I Kissed a Girl (Hardstyle)",
+    "a": "Katy Perry"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7534,18 +7546,6 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
-   "[\"i kissed a girl (hardstyle)\",\"katy perry\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "I Kissed a Girl (Hardstyle)",
-    "a": "Katy Perry"
-   },
-   "m:2026-11|[\"i kissed a girl (hardstyle)\",\"katy perry\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "I Kissed a Girl (Hardstyle)",
-    "a": "Katy Perry"
-   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7553,8 +7553,8 @@
     "a": "MÃÂ¥neskin"
    },
    "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 123,
+    "v": 2,
+    "s": 126,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -7585,25 +7585,13 @@
    "[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'ÃÂ¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂ¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂ \"]": {
@@ -7799,8 +7787,8 @@
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
-    "v": 0,
-    "s": 118,
+    "v": 1,
+    "s": 121,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -7863,6 +7851,18 @@
     "s": 2,
     "t": "Voglio di piÃÂ¹",
     "a": "nayt, 3D"
+   },
+   "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂ¨ f@ke",
+    "a": "thasup"
    },
    "[\"ma il cielo ÃÂ¨ sempre piÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
@@ -7948,18 +7948,6 @@
     "t": "Tutti il resto ÃÂ¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 293,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
-    "v": 1,
-    "s": 293,
-    "t": "Passione maledetta",
-    "a": "ModÃÂ "
-   },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 0,
     "s": 94,
@@ -7994,6 +7982,18 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃÂ ",
+    "a": "ModÃÂ "
+   },
+   "[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 293,
+    "t": "Passione maledetta",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂ \"]": {
+    "v": 1,
+    "s": 293,
+    "t": "Passione maledetta",
     "a": "ModÃÂ "
    },
    "[\"voodoo\",\"guÃÂ¨\"]": {
@@ -8254,6 +8254,30 @@
     "t": "LA CITTÃÂ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"non ti dimentico\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃÂ \"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂ "
+   },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 0,
     "s": 124,
@@ -8278,11 +8302,11 @@
     "t": "Non ti dimentico",
     "a": "ModÃÂÃÂ "
    },
-   "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+   "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 0,
     "s": 103,
     "t": "VENTANNI",
-    "a": "MÃÂÃÂ¥neskin"
+    "a": "MÃÂ¥neskin"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -9016,35 +9040,17 @@
     "t": "Non ti dimentico",
     "a": "ModÃ "
    },
-   "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"non ti dimentico\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃÂ \"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂ "
-   },
    "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 0,
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃ¥neskin"
+   },
+   "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 103,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂ¥neskin"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -9138,13 +9144,13 @@
    },
    "[\"non è mai abbastanza\",\"modà\"]": {
     "v": 0,
-    "s": 49,
+    "s": 124,
     "t": "Non è mai abbastanza",
     "a": "Modà"
    },
    "m:2026-11|[\"non è mai abbastanza\",\"modà\"]": {
     "v": 0,
-    "s": 49,
+    "s": 124,
     "t": "Non è mai abbastanza",
     "a": "Modà"
    },
@@ -9783,12 +9789,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "Måneskin"
-   },
-   "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
-    "v": 0,
-    "s": 103,
-    "t": "VENTANNI",
-    "a": "MÃÂ¥neskin"
    }
   },
   "Diego": {
