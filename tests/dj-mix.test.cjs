@@ -711,12 +711,12 @@ test("desktop compares both chord changes and drum grooves, not BPM alone",()=>{
   "const grooveAgreement=(a,b)=>b.groove;"+
   "const camelotMatch=(a,b)=>b.key;"+
   source.slice(start,end)+"return desktopBeatPairCertified;")();
- const a={bpm:126,beatConfidence:.55};
+ const a={bpm:126,beatConfidence:.55,last:180};
  const b={bpm:127,beatConfidence:.52,introDrive:.8,
   notes:{matches:true,focused:.88,phrase:.78,alignment:{
    matches:true,score:.85,weakest:.7}},
   groove:{score:.87,correlation:.74},key:{weight:.2,score:.86}};
- const cue={kind:"snap",measuredBeatBridge:true};
+ const cue={kind:"snap",measuredBeatBridge:true,begin:179.2,end:179.92,fade:.72};
  assert.equal(check(a,b,cue),true);
  assert.equal(check(a,{...b,groove:{score:.7,correlation:.4}},cue),false);
  assert.equal(check(a,{...b,notes:{...b.notes,matches:false}},cue),false);

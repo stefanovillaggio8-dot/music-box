@@ -134,8 +134,8 @@ test("adversarial edits: same BPM cannot camouflage incompatible drums or chords
   introAttackNotes:chroma,introPhraseNotes:chroma,
   outroFinalNotes:chroma,outroPhraseNotes:chroma,
   chroma, introChroma:chroma, outroChroma:chroma};
- const outgoing={...a,...b};
- const p={kind:"beat",beatPeriod:60/a.bpm};
+ const outgoing={...a,...b,last:180};
+ const p={kind:"beat",beatPeriod:60/a.bpm,begin:175,end:179.8,fade:4.8};
  const base=tools.desktopBeatPairCertified(outgoing,b,p);
  assert.equal(base,true,"Positive control should be a physically close musical signature");
  const rotate=(v,shift)=>v.map((_,i)=>v[(i+shift)%12]);
@@ -181,7 +181,8 @@ test("select best candidate for independent MP3 waveform spot-checks",()=>{
  const annotated=pairs.map(p=>{
   const from=tracks.find(x=>x.key===p.from),to=tracks.find(x=>x.key===p.to);
   const cue=from&&to?tools.transition(from.data,to.data,from.data.duration):null;
-  return {...p,plan:cue?{
+  return {...p,runtimeBeatCertified:cue?
+   tools.desktopBeatPairCertified(from.data,to.data,cue):false,plan:cue?{
    kind:cue.kind,begin:short(cue.begin),end:short(cue.end),
    fade:short(cue.fade),entry:short(cue.entry),
    beatPeriod:short(cue.beatPeriod)
@@ -191,4 +192,19 @@ test("select best candidate for independent MP3 waveform spot-checks",()=>{
  if(process.env.DJ_AUDIO_PAIR_FILE)
   fs.writeFileSync(process.env.DJ_AUDIO_PAIR_FILE,JSON.stringify(annotated,null,2));
  assert.ok(pairs.length>=3);
+});
+
+test("real MP3 regression: proposed beat fades cannot start after the final audible beat",()=>{
+ const from=find("audio/songs/track-391.mp3");
+ assert.ok(from);
+ for(const key of ["audio/songs/track-1164.mp3","audio/songs/track-598.mp3"]){
+  const to=tracks.find(x=>x.key===key);
+  assert.ok(to);
+  const plan=tools.transition(from.data,to.data,from.data.duration);
+  assert.equal(plan?.kind,"beat");
+  assert.ok(plan.begin>from.data.last,
+   "The historical false beat should begin in the nonmusical outro");
+  assert.equal(tools.desktopBeatPairCertified(from.data,to.data,plan),false,
+   "Never certify a beat if the source music ended before the fade starts");
+ }
 });

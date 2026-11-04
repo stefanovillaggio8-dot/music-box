@@ -166,12 +166,12 @@ test("iPhone rejects false beat matches even when BPM is similar",()=>{
   excerpt("function iphoneBeatPairCertified(","function mobileMixAllowed(")+
   "return iphoneBeatPairCertified;"
  )();
- const from={bpm:126,beatConfidence:.5};
+ const from={bpm:126,beatConfidence:.5,last:180};
  const to={bpm:128,beatConfidence:.55,
   notes:{matches:true,focused:.86,phrase:.77,
    alignment:{matches:true,score:.84}},
   drums:{score:.87,correlation:.74},key:{weight:.2,score:.9}};
- const cue={kind:"snap",measuredBeatBridge:true};
+ const cue={kind:"snap",measuredBeatBridge:true,begin:179.2,end:179.92,fade:.72};
  assert.equal(verify(from,to,cue),true);
  assert.equal(verify(from,{...to,notes:{...to.notes,matches:false}},cue),false);
  assert.equal(verify(from,{...to,drums:{score:.72,correlation:.44}},cue),false);

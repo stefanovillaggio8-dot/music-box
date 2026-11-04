@@ -49,6 +49,7 @@ function iphoneBeatPairCertified(a,b,cue){
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true; // neutral quiet fade, not a claimed beat match
+ if(!beatWindowContainsAudibleMusic(a,cue))return false;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.beatConfidence<.20||b.beatConfidence<.20)return false;
@@ -78,6 +79,7 @@ function desktopBeatPairCertified(a,b,p){
  if(!p)return false;
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
+ if(!beatWindowContainsAudibleMusic(a,p))return false;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.beatConfidence<.20||b.beatConfidence<.20||
@@ -95,6 +97,23 @@ function desktopBeatPairCertified(a,b,p){
     (!n.alignment.matches||n.alignment.weakest<.52))return false;
  const key=camelotMatch(a,b);
  return key.weight<.14||key.score>=.55;
+}
+// The raw MP3 audio audit found two "certified" 391->1164/598 bridges
+// whose proposed mix STARTS AFTER the source music stopped (128.94s vs
+// 127.3s). Similar global notes and RMS grooves are not actual beat joins.
+function beatWindowContainsAudibleMusic(a,cue){
+ if(!a||!cue||!Number.isFinite(a.last)||
+    !Number.isFinite(cue.begin)||!Number.isFinite(cue.end)||
+    cue.end<=cue.begin||cue.begin<0)return false;
+ // Do not play a beat-match in encoded silence or after a long musical
+ // decay. Allow 350ms for 100ms RMS-window measurement uncertainty.
+ if(cue.end>a.last+.35)return false;
+ const fade=cue.end-cue.begin;
+ const audible=Math.min(cue.end,a.last)-cue.begin;
+ const needed=cue.kind==="snap"?
+   Math.min(.48,fade*.55):
+   Math.min(1.8,Math.max(1.1,fade*.45));
+ return audible>=needed;
 }
 function iphoneQuietReleaseCertified(a,cue){
  if(!cue)return false;
