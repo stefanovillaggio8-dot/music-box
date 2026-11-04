@@ -60,7 +60,7 @@ const beat=(fade,patch={})=>({
  ...patch
 });
 test("selects a certified musical fade instead of a random next song when beat matches are absent",async()=>{
- const f=fixture({pool:[{cue:null},{cue:soft(4.3)}]});
+ const f=fixture({groove:.40,pool:[{cue:null},{cue:soft(4.3)}]});
  await f.run();
  assert.equal(f.selected()?.pickId,3);
  assert.equal(f.decision().beatCandidates,0);
