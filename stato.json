@@ -2424,13 +2424,13 @@
    },
    "[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 77,
+    "s": 96,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
    "m:2026-11|[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 77,
+    "s": 96,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
@@ -4636,6 +4636,18 @@
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
+   "[\"sono ok\",\"xcarme\"]": {
+    "v": 0,
+    "s": 47,
+    "t": "Sono Ok",
+    "a": "XCarme"
+   },
+   "m:2026-11|[\"sono ok\",\"xcarme\"]": {
+    "v": 0,
+    "s": 47,
+    "t": "Sono Ok",
+    "a": "XCarme"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -5367,18 +5379,6 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
-   },
-   "[\"sono ok\",\"xcarme\"]": {
-    "v": 0,
-    "s": 47,
-    "t": "Sono Ok",
-    "a": "XCarme"
-   },
-   "m:2026-11|[\"sono ok\",\"xcarme\"]": {
-    "v": 0,
-    "s": 47,
-    "t": "Sono Ok",
-    "a": "XCarme"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7194,13 +7194,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 193,
+    "s": 239,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 193,
+    "s": 239,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂ , Bianca Atzei"
    },
@@ -7932,13 +7932,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 239,
+    "s": 280,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 239,
+    "s": 280,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂ , Bianca Atzei"
    },
@@ -9801,6 +9801,18 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "Måneskin"
+   },
+   "[\"lucifero\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 55,
+    "t": "Lucifero",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"lucifero\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 55,
+    "t": "Lucifero",
+    "a": "Kid Yugi"
    }
   },
   "Diego": {
