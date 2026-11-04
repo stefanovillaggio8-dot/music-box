@@ -1709,13 +1709,13 @@
     "a": "Andrea Bocelli"
    },
    "[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
-    "v": 0,
+    "v": 1,
     "s": 0,
     "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
     "a": "Kaskade"
    },
    "m:2026-11|[\"middle of the night (dom livez hardstyle remix)\",\"kaskade\"]": {
-    "v": 0,
+    "v": 1,
     "s": 0,
     "t": "Middle of the Night (Dom Livez Hardstyle Remix)",
     "a": "Kaskade"
@@ -3725,14 +3725,14 @@
     "a": "Iggy Azalea, Rita Ora"
    },
    "[\"last friday night (hardstyle remix)\",\"katy perry, zyzz\"]": {
-    "v": 0,
-    "s": 37,
+    "v": 1,
+    "s": 38,
     "t": "Last Friday Night (Hardstyle Remix)",
     "a": "Katy Perry, Zyzz"
    },
    "m:2026-11|[\"last friday night (hardstyle remix)\",\"katy perry, zyzz\"]": {
-    "v": 0,
-    "s": 37,
+    "v": 1,
+    "s": 38,
     "t": "Last Friday Night (Hardstyle Remix)",
     "a": "Katy Perry, Zyzz"
    },
@@ -9747,6 +9747,18 @@
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃ¥neskin"
+   },
+   "[\"i kissed a girl (hardstyle)\",\"katy perry\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "I Kissed a Girl (Hardstyle)",
+    "a": "Katy Perry"
+   },
+   "m:2026-11|[\"i kissed a girl (hardstyle)\",\"katy perry\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "I Kissed a Girl (Hardstyle)",
+    "a": "Katy Perry"
    }
   },
   "Diego": {
