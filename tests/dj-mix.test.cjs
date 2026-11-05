@@ -225,8 +225,8 @@ test("iPhone mixing falls back when context suspended, feature off or hidden",()
 test("iPhone preview hands off at the current second, never song start",()=>{
  const f=createMobileMixFixture();
  assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
- f.ctx.currentTime=105.6;
- f.old.currentTime=179.6;
+ f.ctx.currentTime=105.98;
+ f.old.currentTime=179.98;
  f.old.handlers.timeupdate();
  assert.equal(f.calls.length,1);
  assert.ok(f.calls[0].at>5.5&&f.calls[0].at<6.5);
@@ -244,6 +244,58 @@ test("iPhone preview hands off at the current second, never song start",()=>{
  f.engine.finishMobileMix(f.app);
  assert.equal(f.engine.active(),null);
 });
+
+test("iPhone leaves last 400ms of real audio intact during a DJ mix",()=>{
+ const f=createMobileMixFixture();
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ f.old.currentTime=179.6;f.ctx.currentTime=105.6;
+ f.old.handlers.timeupdate();
+ assert.equal(f.calls.length,0,"must not switch 400ms before the last note");
+ f.old.currentTime=179.98;f.ctx.currentTime=105.98;
+ f.old.handlers.timeupdate();
+ assert.equal(f.calls.length,1,"switch after measured last note");
+ assert.ok(f.calls[0].at>5.9,"native successor follows preview clock");
+});
+test("iPhone natural EOF pause keeps an active preview playing",()=>{
+ const f=createMobileMixFixture();
+ assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
+ f.ctx.currentTime=106;f.old.currentTime=180;f.old.ended=true;
+ f.old.handlers.pause();
+ assert.equal(f.calls.length,1,"EOF is not an intentional user pause");
+ assert.equal(f.engine.active()?.handingOff,true);
+ assert.equal(typeof f.old.handlers.ended,"function");
+ f.engine.stopMobileMix();
+ assert.equal(f.old.handlers.ended,undefined,"ended listener is cleaned up");
+});
+test("desktop fallback crossfades the new decoder and never replays old audio",async()=>{
+ const begin=source.indexOf("async function handoff(){");
+ const end=source.indexOf("function mixCurve(",begin);
+ assert.ok(begin>0&&end>begin);
+ const old={paused:false,volume:0,readyState:4,currentTime:178,seekable:{length:1}};
+ const preview={paused:false,seeking:true,readyState:4,currentTime:8,volume:.75};
+ const nextNative={paused:false,seeking:false,readyState:4,currentTime:8,volume:.75,
+   duration:200,seekable:{length:1}};
+ let current="old",main=old,canceled=0,calls=0;
+ const app={audio:()=>main,currentId:()=>current,mixNext:()=>({id:"next"}),
+  volume:()=>.75,wantsPlayback:()=>true,mixAdoptHandoff:()=>null,
+  mixHandoff:(id,at)=>{assert.equal(at,8);calls++;current=id;main=nextNative;return Promise.resolve()}};
+ const act={original:old,upcoming:preview,track:{id:"next"},fromId:"old",entry:0,timer:null};
+ const fn=new Function("app","act","onCancel",
+  "let active=act,mixing=true;const isIOS=false;"+
+  "const window={MusicBoxRoom:{isActive:()=>false}};"+
+  "const bridge=()=>app,stopSnapPrecision=()=>{},toast=()=>{};"+
+  "const cancel=()=>{onCancel();active=null};"+
+  "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+  source.slice(begin,end)+"return handoff;")(app,act,()=>canceled++);
+ await fn();
+ assert.equal(calls,1);
+ assert.equal(canceled,1);
+ assert.equal(old.volume,0,"outgoing audio stays silent");
+ assert.equal(nextNative.volume,.75,"new player reaches requested volume");
+ assert.ok(preview.volume<=.1,"DJ preview fades out to the new native player");
+ assert.equal(main,nextNative);
+});
+
 test("iPhone lock screen cleanup is hooked directly to visibilitychange",()=>{
  assert.ok(source.includes('document.addEventListener("visibilitychange"'));
  assert.ok(source.includes('if(document.hidden){\n   // This event still fires'));

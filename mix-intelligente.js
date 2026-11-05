@@ -2329,7 +2329,8 @@ function stopMobileMix(fadeSeconds=0){
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
   try{act.old?.removeEventListener?.("timeupdate",act.onProgress)}catch(e){}
-  try{act.old?.removeEventListener?.("seeking",act.onSeek)}catch(e){}
+  try{act.old?.removeEventListener?.("ended",act.onEnded)}catch(e){}
+   try{act.old?.removeEventListener?.("seeking",act.onSeek)}catch(e){}
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
   try{act.filter?.disconnect()}catch(e){}
@@ -2453,21 +2454,29 @@ function startMobileMix(song,p,app,old){
   source.start(startedAt,offset);
   mobileMixLastBlocker="";mobileMixLastStartedAt=Date.now();
   const onPause=()=>{
-   if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
+   if(mobileActive?.old!==old||mobileActive.handingOff)return;
+   // Natural EOF is not a user's pause: the DJ preview must continue
+   // while Safari opens the new native media element.
+   if(old.ended)handoffMobileMix(app);
+   else stopMobileMix();
   };
   const onPlaying=()=>{
    if(mobileActive?.handingOff)finishMobileMix(app);
   };
   const onProgress=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff&&
-      old.currentTime>=mobileActive.end-(mobileActive.snap?.09:.40))handoffMobileMix(app);
+      old.currentTime>=mobileActive.end-.04)handoffMobileMix(app);
+  };
+  const onEnded=()=>{
+   if(mobileActive?.source===source&&!mobileActive.handingOff)
+    handoffMobileMix(app);
   };
   const onSeek=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
   mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
-   end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
+   end:p.end,old,onPause,onPlaying,onProgress,onEnded,onSeek,handingOff:false,
    handoffAt:0,nativeRetryCount:0,nativeRetryAt:0,rateSpeed,rateRamp,
    clipEnd:startedAt+frames/clip.rate-offset-(rateSpeed-1)*rateRamp/2,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
@@ -2476,6 +2485,7 @@ function startMobileMix(song,p,app,old){
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   old.addEventListener?.("timeupdate",onProgress);
+  old.addEventListener?.("ended",onEnded);
   old.addEventListener?.("seeking",onSeek);
   source.onended=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
@@ -2724,18 +2734,23 @@ async function handoff(){
    console.warn("[Music Box DJ] Adozione audio non riuscita",String(error?.message||error));
   }
  }
- // Legacy fallback, if adoption is not possible.
- // Non togliere il lettore già udibile mentre il lettore principale sta
- // ancora facendo fetch, decode e seek del nuovo MP3.
+ // Fallback when the already-playing preview cannot be adopted.
+ // The NEXT native player is a different HTMLAudioElement. Never check,
+ // seek or restore the outgoing player while the next one loads.
  const timeAtHandoff=Math.max(0,preview.currentTime||act.entry);
+ const native=()=>app.currentId()===act.track.id?app.audio():null;
  let playJob;
  try{
   playJob=Promise.resolve(app.mixHandoff(act.track.id,timeAtHandoff));
-  // Il player originale reimposta il volume in _applicaAudio(): riportalo
-  // a zero finché non ha realmente un frame pronto da riprodurre.
+  const successor=native();
+  if(successor&&successor!==old&&successor!==preview)
+   try{successor.volume=0}catch(_){}
   old.volume=0;
-  const ready=()=>!old.paused&&old.readyState>=2&&
-    app.currentId()===act.track.id&&!old.seeking;
+  const ready=()=>{
+   const player=native();
+   return !!(player&&player!==old&&player!==preview&&
+    !player.paused&&player.readyState>=2&&!player.seeking);
+  };
   let maxWait=0;
   while(active===act&&!ready()&&maxWait<45){
    if(app.wantsPlayback?.()===false){cancel();return}
@@ -2744,41 +2759,40 @@ async function handoff(){
    maxWait++;
   }
   if(active!==act||app.currentId()!==act.track.id)return;
-  if(!ready()){
-   // Se il nuovo player non parte, non inventare una transizione conclusa.
-   // Lascia il preview udibile finché il browser lo consente.
+  if(!ready())
    await Promise.race([playJob.catch(()=>{}),new Promise(r=>setTimeout(r,600))]);
-  }
   if(ready()){
-   // Sincronizza il nuovo player alla traccia che l'utente sta già sentendo.
-   // Esegue il seek soltanto se non è già allineato e se il file è seekable.
+   const nextNative=native();
+   // Correct the new decoder once only if its actual playhead differs.
    try{
-    if(old.seekable?.length&&Math.abs(old.currentTime-preview.currentTime)>.35)
-      old.currentTime=Math.min(preview.currentTime,Math.max(0,(old.duration||Infinity)-.5));
-   }catch(e){}
-   if(old.seeking){
+    if(nextNative.seekable?.length&&Math.abs(nextNative.currentTime-preview.currentTime)>.35)
+     nextNative.currentTime=Math.min(preview.currentTime,
+      Math.max(0,(nextNative.duration||Infinity)-.5));
+   }catch(_){}
+   if(nextNative.seeking){
     await Promise.race([new Promise(resolve=>
-      old.addEventListener("seeked",resolve,{once:true})),
+      nextNative.addEventListener("seeked",resolve,{once:true})),
       new Promise(resolve=>setTimeout(resolve,1000))]);
    }
    if(active!==act||app.currentId()!==act.track.id)return;
-   // Passaggio finale breve ma continuo: elimina il salto del lettore
-   // precedente dopo il crossfade musicale principale.
    const t0=performance.now();
    while(active===act&&app.wantsPlayback?.()!==false&&performance.now()-t0<280){
     const p=clamp((performance.now()-t0)/280,0,1);
-    old.volume=volume*p;
+    nextNative.volume=volume*p;
     preview.volume=volume*(1-p);
     await new Promise(resolve=>setTimeout(resolve,35));
    }
+   if(active===act)try{nextNative.volume=volume}catch(_){}
   }else{
-   // Timeout: non tenere due stream vivi indefinitamente.
-   // Il lettore principale resta quello ufficiale con volume ripristinato.
-   try{old.volume=volume}catch(e){}
+   const nextNative=native();
+   if(nextNative&&nextNative!==old&&nextNative!==preview)
+    try{nextNative.volume=volume}catch(_){}
    toast("Il lettore ha impiegato troppo a preparare il brano successivo.");
   }
  }catch(e){
-  try{old.volume=volume}catch(_){}
+  const nextNative=native();
+  if(nextNative&&nextNative!==old&&nextNative!==preview)
+   try{nextNative.volume=volume}catch(_){}
  }finally{
   if(active===act)cancel();
  }
@@ -3168,7 +3182,8 @@ function tick(){
      mobileFadeTrack=id;mobileFading=true;
     }catch(_){}
    }
-   if(audio.currentTime>=mobileActive.end-(mobileActive.snap?.09:.40))handoffMobileMix(app);
+   // The .40 second early switch clipped the final audible kick or vocal.
+   if(audio.currentTime>=mobileActive.end-.04)handoffMobileMix(app);
    return;
   }
  }
