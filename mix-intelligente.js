@@ -4092,7 +4092,26 @@ async function intelligentShuffle(app,audio,fromId){
    Math.min(.12,Math.max(0,cue.fade)/45);
   scored.push({track,cue,score});
  }
+ // A beat-compatible automatic successor is preferable to a change
+ // during silence. Pick only from the already measured rhythm candidates,
+ // and keep manual user queues completely outside this selector.
+ const impactScored=[];
+ if(!isIOS&&rhythmOrderScored.length){
+  const byId=new Map(measured.map(({track,info})=>[track.id,info]));
+  for(const candidate of rhythmOrderScored){
+   const info=byId.get(candidate.track.id);
+   const cue=info&&desktopFinalImpactRelay(old,info,audio.duration);
+   if(!cue||!musicallyCompatibleOverlay(old,info,cue))continue;
+   const notes=similarNotes(old,info),drums=grooveAgreement(old,info);
+   const score=1+clamp(info.introDrive,0,1)*.14+
+    clamp(drums?.score||0,0,1)*.27+
+    clamp(notes?.focused||0,0,1)*.08+
+    clamp(notes?.phrase||0,0,1)*.05;
+   impactScored.push({track:candidate.track,cue,score});
+  }
+ }
  scored.sort((a,b)=>b.score-a.score);
+ impactScored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
  postludeScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
@@ -4105,8 +4124,8 @@ async function intelligentShuffle(app,audio,fromId){
  // PLAY over a rhythm/key resemblance that cannot produce a mix.
  // A similar drum pattern without compatible notes is NOT a DJ match.
  // Keep those near-misses only in diagnostics, never in the chosen queue.
- const choicePool=scored.length?scored:softScored.length?softScored:
-  postludeScored.length?postludeScored:
+ const choicePool=scored.length?scored:impactScored.length?impactScored:
+  softScored.length?softScored:postludeScored.length?postludeScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
@@ -4117,19 +4136,21 @@ async function intelligentShuffle(app,audio,fromId){
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
     beatCandidates:scored.length,softCandidates:softScored.length,
-    postludeCandidates:postludeScored.length,
+    impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
     rejected,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
-     "raccordo ritmico breve, finale preservato":"beat certificato"):softScored.length?
+     "raccordo ritmico breve, finale preservato":"beat certificato"):impactScored.length?
+     "ingresso sul colpo finale misurato, non beatmatch armonico":softScored.length?
      "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
      "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
       "ritmo simile, raccordo continuo (non beat certificato)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
+    impactScored.length?"[Music Box DJ] Scelta automatica: beat FINALE reale, fade controllato":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
     postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
     nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
@@ -4146,7 +4167,7 @@ async function intelligentShuffle(app,audio,fromId){
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
-  postludeCandidates:postludeScored.length,
+  impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
   nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
    rejected,chosen:current?.track.id||null,
@@ -4168,6 +4189,7 @@ async function intelligentShuffle(app,audio,fromId){
   lastLyric:Number.isFinite(old.lastLyricAt)?old.lastLyricAt:null};
  console.info("[Music Box DJ] Ricerca beat in libreria: "+
   scored.length+" beat verificati, "+softScored.length+" sfumature, "+
+  impactScored.length+" attacchi sul colpo finale, "+
   postludeScored.length+" raccordi su finale concluso, "+
   nearScored.length+" brani affini, "+rhythmCandidates+
   " ritmi compatibili su "+measured.length+" analizzati. "+
