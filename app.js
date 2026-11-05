@@ -16699,7 +16699,7 @@ for (const p of playlists) {
     if(now-_mixClockAt>=1750)_mixClockStalled=true;
     return _mixClockStalled?null:_ctx;
   }
-  function _preparaAudio() {
+  function _preparaAudio(event) {
     // Never spin up WebAudio for native iPhone playback with DJ off.
     // On Safari an unused context can still steal audio resources.
     if (_usaControlliNativiIos() && !window.MusicBoxMix?.needsAudioContext?.()) return;
@@ -16707,8 +16707,14 @@ for (const p of playlists) {
     // A later real user tap must be able to unlock it again.
     // WebAudio cannot be resumed from a timer, promise or synthetic click.
      // The music player can still run without this optional context.
-     if (typeof navigator.userActivation?.isActive === "boolean" &&
-         !navigator.userActivation.isActive) return;
+     // Actual touchstart/pointerdown/click events are user gestures even
+     // when Safari's navigator.userActivation.isActive is incorrectly false
+     // or has already reset in a PWA. Never grant this to synthetic events.
+     const trustedGesture=event?.isTrusted===true &&
+       /^(touchstart|pointerdown|click|keydown)$/.test(String(event.type||""));
+     if(!trustedGesture&&
+        typeof navigator.userActivation?.isActive==="boolean" &&
+        !navigator.userActivation.isActive) return;
      if (_audioProno && _mixContextAttivo()) return;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;

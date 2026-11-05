@@ -830,3 +830,25 @@ test("foreground precision scheduling includes measured quiet fades",()=>{
  assert.ok(fn.includes("},95);"));
  assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)'));
 });
+
+test("Safari accepts genuine touch gestures even if userActivation incorrectly reports false",()=>{
+ const start=app.indexOf("  let _audioProno = false;");
+ const end=app.indexOf('  try {\n    ["pointerdown",',start);
+ assert.ok(start>0&&end>start);
+ let created=0;
+ class AC {constructor(){created++;this.currentTime=0;this.state="running"}}
+ const build=new Function("AC",
+  "const Date={now:()=>1000};"+
+  "const navigator={userActivation:{isActive:false}};"+
+  "const window={AudioContext:AC,MusicBoxMix:{needsAudioContext:()=>true}};"+
+  "const _usaControlliNativiIos=()=>true;"+
+  "let _ctx=null,bassiAccesi=false,_audioCollegato=null;"+
+  app.slice(start,end)+"return {activate:_preparaAudio,get:()=>_ctx};"
+ )(AC);
+ build.activate();assert.equal(created,0,"no context without gesture");
+ build.activate({isTrusted:false,type:"click"});
+ assert.equal(created,0,"synthetic click must not start WebAudio");
+ build.activate({isTrusted:true,type:"touchstart"});
+ assert.equal(created,1,"actual iPhone touch must unlock mix context");
+ assert.equal(build.get()?.state,"running");
+});
