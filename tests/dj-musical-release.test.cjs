@@ -515,7 +515,7 @@ test("beat search preserves manually selected queue and never chooses a soft mat
  assert.match(source,/cue\.verifiedHarmonicBridge===true/);
  assert.match(source,/cue\.verifiedMicroBeat===true/);
  assert.match(source,/if\(!verified\)\{/);
- assert.match(source,/const choicePool=scored\.length\?scored:nearScored/);
+ assert.match(source,/const choicePool=scored\.length\?scored:softScored/);
  assert.match(source,/cue\.quietCertified===true/);
  assert.match(source,/return \{retry:unknown\.length>picked\.length&&noMatch/);
 });
