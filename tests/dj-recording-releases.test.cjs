@@ -169,3 +169,44 @@ test("postlude requires proof that final vocals ended",()=>{
  assert.equal(f({...a,lastLyricAt:242},b,a.duration),null);
  assert.ok(f({...a,voiceModel:"validated",voiceScannedEnd:243.9,lastVoiceAt:211},b,a.duration));
 });
+
+test("real indexed Ste-library alternatives after track 1197 have audible intros",()=>{
+ const idx=JSON.parse(fs.readFileSync(path.join(__dirname,"..","dj-deep-analysis.json"),"utf8"));
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,"..","stato.json"),"utf8"));
+ const start=app.indexOf("const BUILTIN = ["),end=app.indexOf("\n  ];",start);
+ const rows=new Function("return "+app.slice(start+"const BUILTIN = ".length,end+5))();
+ const copied=new Set(catalog.miei?.Ste||[]);
+ const allowed=rows.filter(t=>((t.profile||"Ste")==="Ste")||
+   copied.has("b-"+String(t.file||"").split("/").pop().replace(/\.mp3$/i,"")))
+   .map(t=>({file:"audio/"+t.file,title:t.title,artist:t.artist}));
+ const beginIntro=source.indexOf("function musicalIntroEntry(");
+ const endIntro=source.indexOf("function rhythmicFullTailJoin(",beginIntro);
+ const beginHas=source.indexOf("function hasImmediateMusicalIntro(");
+ const endHas=source.indexOf("// A safe ending alone",beginHas);
+ const beginPost=source.indexOf("function desktopMeasuredPostludeBridge(");
+ const endPost=source.indexOf("function continuityFallback(",beginPost);
+ assert.ok(beginIntro>=0&&endIntro>beginIntro&&beginHas>=0&&endHas>beginHas&&beginPost>=0&&endPost>beginPost);
+ const fn=new Function("isIOS","clamp",
+  source.slice(beginIntro,endIntro)+source.slice(beginHas,endHas)+
+  source.slice(beginPost,endPost)+"return desktopMeasuredPostludeBridge;")(
+  false,(x,a,b)=>Math.max(a,Math.min(b,x)));
+ const outgoing=idx.entries?.["audio/songs/track-1197.mp3"];
+ const incoming28=idx.entries?.["audio/songs/track-28.mp3"];
+ assert.ok(outgoing&&incoming28);
+ const proved={...outgoing,lastLyricAt:215.11,lastVoiceAt:213.59,
+  voiceModel:"runtime-diagnostic",voiceScannedEnd:244.5};
+ assert.equal(fn(proved,incoming28,proved.duration),null,
+  "track-28 opening is measured almost silent, so it must not be chosen");
+ const candidates=allowed.flatMap(t=>{
+  const analysis=idx.entries?.[t.file];
+  if(!analysis||t.file==="audio/songs/track-1197.mp3")return [];
+  const cue=fn(proved,analysis,proved.duration);
+  return cue?[{id:t.file,introDrive:analysis.introDrive,bpm:analysis.bpm,title:t.title}]:[];
+ }).sort((a,b)=>b.introDrive-a.introDrive);
+ console.info("[DJ 1197 STE AUDIBLE POSTLUDE]",JSON.stringify({
+  library:allowed.length,candidates:candidates.length,
+  first:candidates.slice(0,8)
+ }));
+ assert.ok(candidates.length>=1,"real Ste library must contain a safe audible-intro alternative");
+});
