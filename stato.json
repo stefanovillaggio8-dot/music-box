@@ -1529,14 +1529,14 @@
     "a": "Don Pero"
    },
    "[\"ballon d'or\",\"gemitaiz, nayt\"]": {
-    "v": 0,
-    "s": 149,
+    "v": 1,
+    "s": 191,
     "t": "Ballon d'Or",
     "a": "Gemitaiz, nayt"
    },
    "m:2026-11|[\"ballon d'or\",\"gemitaiz, nayt\"]": {
-    "v": 0,
-    "s": 149,
+    "v": 1,
+    "s": 191,
     "t": "Ballon d'Or",
     "a": "Gemitaiz, nayt"
    },
@@ -7684,6 +7684,18 @@
     "t": "Nessuna",
     "a": "LuchÃÂÃÂ¨"
    },
+   "[\"neon\",\"sfera ebbasta & shiva\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "NEON",
+    "a": "Sfera Ebbasta & Shiva"
+   },
+   "m:2026-11|[\"neon\",\"sfera ebbasta & shiva\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "NEON",
+    "a": "Sfera Ebbasta & Shiva"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -8434,18 +8446,6 @@
     "t": "Nessuna",
     "a": "LuchÃÂ¨"
    },
-   "[\"neon\",\"sfera ebbasta & shiva\"]": {
-    "v": 0,
-    "s": 107,
-    "t": "NEON",
-    "a": "Sfera Ebbasta & Shiva"
-   },
-   "m:2026-11|[\"neon\",\"sfera ebbasta & shiva\"]": {
-    "v": 0,
-    "s": 107,
-    "t": "NEON",
-    "a": "Sfera Ebbasta & Shiva"
-   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -8934,13 +8934,13 @@
    },
    "[\"quelli come me\",\"modÃ \"]": {
     "v": 0,
-    "s": 107,
+    "s": 163,
     "t": "Quelli come me",
     "a": "ModÃ "
    },
    "m:2026-11|[\"quelli come me\",\"modÃ \"]": {
     "v": 0,
-    "s": 107,
+    "s": 163,
     "t": "Quelli come me",
     "a": "ModÃ "
    },
@@ -9684,13 +9684,13 @@
    },
    "[\"quelli come me\",\"modà\"]": {
     "v": 0,
-    "s": 163,
+    "s": 191,
     "t": "Quelli come me",
     "a": "Modà"
    },
    "m:2026-11|[\"quelli come me\",\"modà\"]": {
     "v": 0,
-    "s": 163,
+    "s": 191,
     "t": "Quelli come me",
     "a": "Modà"
    },
