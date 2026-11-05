@@ -139,3 +139,19 @@ test("postlude can be selected even after strict beatmatch rejects a pair",()=>{
  assert.ok(source.includes("proposed.measuredPostludeBridge?.35:1.2"));
  assert.ok(source.includes('cue.measuredPostludeBridge===true&&cue.kind==="soft"'));
 });
+
+test("actual recording 1197 to 28 indexed context is logged for audio handoff",()=>{
+ const index=JSON.parse(fs.readFileSync(path.join(__dirname,"..","dj-deep-analysis.json"),"utf8"));
+ const a=index.entries?.["audio/songs/track-1197.mp3"];
+ const b=index.entries?.["audio/songs/track-28.mp3"];
+ console.info("[DJ USER REAL PAIR 1197->28]",JSON.stringify({
+  found:!!a&&!!b,
+  outgoing:a&&{duration:a.duration,last:a.last,
+   confidentTail:a.confidentTail,protectedEnding:a.protectedEnding,
+   release:a.dropRelease,lastVoiceAt:a.lastVoiceAt,lastLyricAt:a.lastLyricAt},
+  incoming:b&&{duration:b.duration,bpm:b.bpm,beatConfidence:b.beatConfidence,
+   first:b.first,safeIntroAt:b.safeIntroAt,introDrive:b.introDrive,
+   introBeat:b.introBeat,firstVoiceAt:b.firstVoiceAt,firstLyricAt:b.firstLyricAt}
+ }));
+ assert.ok(index.entries&&Object.keys(index.entries).length>500);
+});
