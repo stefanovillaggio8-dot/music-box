@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.613";
+  const APP_VERSION = "6.614";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12019,7 +12019,7 @@ window.MusicBoxBridge = {
   allTracks:()=>tracks,
   currentId:()=>currentId,
   audio:()=>audio,
-  mixRunningContext:()=>_ctx&&_ctx.state==="running"?_ctx:null,
+  mixRunningContext:()=>_mixContextAttivo(),
   offlineBusy:()=>offlineBusy,
   mixEnableAudio:()=>_preparaAudio(),
   play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
@@ -16680,6 +16680,25 @@ for (const p of playlists) {
      Cosi' preparo il motore audio al PRIMO tocco che fa in assoluto: da
      li' in poi l'audio e' sveglio e i bassi si accendono subito. */
   let _audioProno = false;
+  // Safari sometimes reports "running" when currentTime is frozen after
+  // home-screen backgrounding. This optional context must NEVER redirect
+  // the native MP3 player.
+  let _mixClockContext=null,_mixClockAt=0,_mixClockTime=0,_mixClockStalled=false;
+  function _mixContextAttivo() {
+    if(!_ctx||_ctx.state!=="running")return null;
+    const now=Date.now(),t=Number(_ctx.currentTime);
+    if(!Number.isFinite(t))return null;
+    if(_mixClockContext!==_ctx||!_mixClockAt){
+      _mixClockContext=_ctx;_mixClockAt=now;_mixClockTime=t;
+      _mixClockStalled=false;return _ctx;
+    }
+    if(t>_mixClockTime+.04){
+      _mixClockAt=now;_mixClockTime=t;_mixClockStalled=false;
+      return _ctx;
+    }
+    if(now-_mixClockAt>=1750)_mixClockStalled=true;
+    return _mixClockStalled?null:_ctx;
+  }
   function _preparaAudio() {
     // Never spin up WebAudio for native iPhone playback with DJ off.
     // On Safari an unused context can still steal audio resources.
@@ -16690,13 +16709,23 @@ for (const p of playlists) {
      // The music player can still run without this optional context.
      if (typeof navigator.userActivation?.isActive === "boolean" &&
          !navigator.userActivation.isActive) return;
-     if (_audioProno && _ctx?.state === "running") return;
-    _audioProno = true;
+     if (_audioProno && _mixContextAttivo()) return;
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
-      if (!_ctx) _ctx = new AC();
-      if (_ctx.state === "suspended") { try { _ctx.resume(); } catch (e) { } }
+      // Rebuild only an unused DJ context on a REAL user gesture.
+      // Do not disconnect an audio element attached to a bass chain.
+      if (_mixClockStalled && !bassiAccesi && !_audioCollegato) {
+        const stalled=_ctx;
+        _ctx=null;_audioProno=false;_mixClockContext=null;
+        _mixClockAt=0;_mixClockTime=0;_mixClockStalled=false;
+        try{stalled?.close()?.catch?.(()=>{})}catch(_){}
+      }
+      if (!_ctx || _ctx.state==="closed") _ctx=new AC();
+      _audioProno=true;
+      if (_ctx.state==="suspended" || _ctx.state==="interrupted") {
+        try{_ctx.resume()?.catch?.(()=>{})}catch(_){}
+      }
     } catch (e) { }
   }
   try {

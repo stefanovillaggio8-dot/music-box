@@ -41,7 +41,7 @@ function mobileClipWindow(audio) {
     ahead=Math.max(ahead,audio.buffered.end(i)-audio.currentTime);
   }
  }catch(_){}
- return audio.readyState>=4||ahead>=5;
+ return audio.readyState>=4||ahead>=8;
 }
 // A certified 3-5s blend requires the existing vocal/quiet constraints.
 // A short matched drum junction without vocal proof is only a subdued
@@ -1140,6 +1140,24 @@ function compatibility(a,b){
    mobileClipFailure={source:key,reason:"Attendo più audio già caricato"};
    return null;
   }
+  // Reuse a complete MP3 saved offline before issuing another full
+  // network fetch. Never store partial fragments into the offline cache.
+  try{
+   const existing=typeof caches!=="undefined"?
+    await caches.match(source,{ignoreSearch:true}):null;
+   if(existing?.status===200){
+    const len=Number(existing.headers.get("content-length")||0);
+    if(len>=16384&&len<=7*1024*1024){
+     const local=await readLimited(existing,7*1024*1024);
+     const decoded=await clipFromBytes(local,true);
+     if(decoded){
+      mobileClipMetrics.successes++;
+      mobileClipMetrics.method="MP3 offline già salvato";return decoded;
+     }
+    }
+   }
+  }catch(_){if(stale())return null}
+  if(stale())return null;
   mobileClipMetrics.fullFetches++;
   const full=await fetch(source,{mode:"cors",cache:"force-cache",signal:ctrl.signal});
   if(full.status!==200)throw Error("MP3 completo non disponibile");
@@ -1152,7 +1170,7 @@ function compatibility(a,b){
   const reason=String(e?.message||e||"Decodifica non disponibile");
   mobileClipFailure={source:key,reason};
   // Stop Safari from redownloading the same undecodable MP3 every 650 ms.
-  mobileClipRetryAt.set(key,Date.now()+90000);
+  mobileClipRetryAt.set(key,Date.now()+25000);
   mobileClipMetrics.errors++;mobileClipMetrics.lastError=reason;
   return null;
  }finally{clearTimeout(timer);djFetchControllers.delete(ctrl)}
@@ -2277,6 +2295,7 @@ function resetMobileFade(){
 }
 let mobileFading=false, mobileFadeTrack="";
 let mobileActive=null;
+let mobileMixLastBlocker="",mobileMixLastStartedAt=0;
 function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
  if(!act)return;
@@ -2310,20 +2329,36 @@ function startMobileMix(song,p,app,old){
  const lastLyricAt=app?.mixLyricCues?.(app.currentId?.())?.last;
  if(!isIOS||!enabled||!mobileOverlayEnabled||document.hidden||
     mobileActive||!mobileMixAllowed(p,ending,lastLyricAt)||
-    (p.kind!=="snap"&&old.currentTime<p.safeOutroAt-.1))return false;
+    (p.kind!=="snap"&&old.currentTime<p.safeOutroAt-.1)){
+   mobileMixLastBlocker="Transizione non consentita: protezione vocale o pagina inattiva";
+   return false;
+ }
  const ctx=app.mixRunningContext?.();
  const url=app.mixUrl?.(song)||song.url;
  const pair=app.currentId()+"|"+song.id;
- if(Date.now()<(mobileOverlayFailures.get(pair)||0))return false;
+ if(Date.now()<(mobileOverlayFailures.get(pair)||0)){
+   mobileMixLastBlocker="Motore Safari temporaneamente indisponibile";
+   return false;
+ }
  const clip=mobileIntroClips.get(String(url));
- if(!ctx||ctx.state!=="running"||!clip)return false;
+ if(!ctx||ctx.state!=="running"){
+   mobileMixLastBlocker="WebAudio inattivo: tocca Play con schermo acceso";
+   return false;
+ }
+ if(!clip){
+   mobileMixLastBlocker="Anteprima MP3 non ancora pronta";
+   return false;
+ }
  let source=null,gain=null,filter=null;
  try{
   const offset=Math.max(0,p.entry-clip.start);
   const frames=clip.channels[0].length;
   const secondsLeft=p.end-old.currentTime;
   // Do not start a crossfade so late that it would cut the next song.
-  if(secondsLeft<(p.kind==="snap"?.30:2.15)||(frames/clip.rate-offset)<secondsLeft+.3)return false;
+  if(secondsLeft<(p.kind==="snap"?.30:2.15)||(frames/clip.rate-offset)<secondsLeft+.3){
+   mobileMixLastBlocker="Punto di mix perso o introduzione troppo corta";
+   return false;
+  }
   const buf=ctx.createBuffer(clip.channels.length,frames,clip.rate);
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
   source=ctx.createBufferSource();gain=ctx.createGain();
@@ -2345,7 +2380,9 @@ function startMobileMix(song,p,app,old){
   const phase=Number.isFinite(period)&&period>.20&&
     Number.isFinite(p.beatAnchor)&&Number.isFinite(p.nextBeat)?
     ((p.beatAnchor-old.currentTime-p.nextBeat)%period+period)%period:0;
-  const delay=phase>0&&phase<=.23&&secondsLeft>3?phase:0;
+  // Short joins last less than a second: the previous 3s gate made
+  // on-beat alignment impossible for every mobile snap.
+  const delay=phase>.008&&phase<=.19&&secondsLeft-phase>=.48?phase:0;
   const startedAt=ctx.currentTime+delay;
   const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
    Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
@@ -2354,7 +2391,7 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (lowPreview?.32:p.kind==="snap"?.84:p.strongBeatBridge?.60:.86);
+   (lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
   // to a simple safe linear ramp.
@@ -2387,6 +2424,7 @@ function startMobileMix(song,p,app,old){
    }
   }
   source.start(startedAt,offset);
+  mobileMixLastBlocker="";mobileMixLastStartedAt=Date.now();
   const onPause=()=>{
    if(mobileActive?.old===old&&!mobileActive.handingOff)stopMobileMix();
   };
@@ -2417,7 +2455,9 @@ function startMobileMix(song,p,app,old){
   };
   return true;
  }catch(e){
-  mobileOverlayFailures.set(pair,Date.now()+60000);
+  mobileMixLastBlocker="Safari ha rifiutato il secondo audio: "+
+   String(e?.message||"avvio non consentito").slice(0,120);
+  mobileOverlayFailures.set(pair,Date.now()+30000);
   try{source?.stop()}catch(_){}
   try{source?.disconnect()}catch(_){}
   try{filter?.disconnect()}catch(_){}
@@ -2482,7 +2522,14 @@ function finishMobileMix(app){
   // The fallback stays bounded by the real decoded buffer, not an
   // arbitrary eight seconds which could cause a silent handoff.
   if(Date.now()>=act.timeoutAt||
-     act.ctx.currentTime>=act.clipEnd-.35)stopMobileMix();
+     act.ctx.currentTime>=act.clipEnd-.35){
+   // Do not resurrect a headset pause; recover only when the native
+   // successor is still stopped despite the listener's Play intention.
+   const recover=app?.currentId?.()===act.track.id&&
+    app?.wantsPlayback?.()===true&&(audio.paused||audio.readyState<2);
+   stopMobileMix();
+   if(recover)try{Promise.resolve(app.playCurrent?.()).catch(()=>{})}catch(_){}
+  }
  }
  function handoffMobileMix(app){
  const act=mobileActive;
@@ -3196,10 +3243,9 @@ function tick(){
  const nowUrl=nowTrack&&(app.mixUrl?.(nowTrack)||nowTrack.url);
  const nowInfo=nowTrack&&
   (cache.get(String(nowUrl))||deepLookup(nowTrack));
- if(isIOS&&mobileOverlayEnabled&&
-    // Don't fetch full previews when the iPhone AudioContext is suspended.
-    // It cannot mix audio in that state, even if native playback is fine.
-    app.mixRunningContext?.()?.state==="running"&&plan&&
+ if(isIOS&&mobileOverlayEnabled&&plan&&
+    // Offline decoding can prepare the next MP3 even while WebAudio is
+    // temporarily suspended. Only actual playback needs the running clock.
     mobileMixAllowed(plan,nowInfo,app.mixLyricCues?.(id)?.last)&&
     mobileClipWindow(audio)&&
     !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
@@ -3403,6 +3449,10 @@ function updateMobileStatus(){
  else if(!clip&&mobileClipFailure?.source===String(url))status=
   "Intro non pronta: "+mobileClipFailure.reason+". La musica normale continua.";
  else if(!clip)status="Preparo l'intro del prossimo brano senza fermare la canzone.";
+ else if(mobileMixLastBlocker&&Date.now()-mobileMixLastStartedAt>1800&&
+    Number.isFinite(plan?.begin)&&audio.currentTime>=plan.begin-.5&&
+    audio.currentTime<plan.end+.6)
+  status="Mix non avviato: "+mobileMixLastBlocker;
  else if(plan.pulseUnderlay)
   status="Pulsazioni allineate: preparo un breve raccordo ritmico a volume ridotto.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
@@ -4089,6 +4139,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
    measuredBeatBridge:!!plan?.measuredBeatBridge,
    pulseUnderlay:!!plan?.pulseUnderlay,
+   mobileMixLastBlocker,mobileMixLastStartedAt,
    certifiedQuietAlternative:!!plan?.neutralRelease,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,
