@@ -31,7 +31,8 @@ function fixture(options={}){
   harmonyScore:()=>({focused:.82,phrase:.81}),
  };
  const shim=[
-  "const enabled=true,isIOS=false,window={MusicBoxRoom:{isActive:()=>false}};",
+  "const enabled=true,isIOS=false,window={MusicBoxRoom:{isActive:()=>false}};"+
+   "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));",
   "const cache=new Map(),deepLookup=t=>t?.analysis||null;",
   "const decode=async t=>t?.analysis||null;",
   "const grooveAgreement=()=>({score:"+(Number(options.groove??.85))+"});",
