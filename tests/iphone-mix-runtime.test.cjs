@@ -260,3 +260,26 @@ test("iPhone mobile debug reports why an available cue failed to start",()=>{
  assert.ok(source.includes('mobileMixLastBlocker="Anteprima MP3 non ancora pronta"'));
  assert.ok(source.includes('status="Mix non avviato: "+mobileMixLastBlocker'));
 });
+
+test("Safari native handoff retries only twice and obeys a deliberate pause",()=>{
+ const code=excerpt("function finishMobileMix(","function handoffMobileMix(");
+ const counter={now:10000,tries:0,stops:0};
+ const state={track:{id:"next"},handingOff:true,entry:1,
+  ctx:{currentTime:2},started:0,rateSpeed:1,rateRamp:0,
+  handoffAt:8300,timeoutAt:17000,clipEnd:18,
+  nativeRetryCount:0,nativeRetryAt:0};
+ const audio={paused:true,readyState:0,seeking:false,currentTime:0,seekable:{length:0}};
+ let intended=true;
+ const app={currentId:()=>"next",audio:()=>audio,
+  wantsPlayback:()=>intended,playCurrent:()=>{counter.tries++;return Promise.resolve()}};
+ const finish=new Function("counter","state",
+  "let mobileActive=state;const stopMobileMix=()=>{counter.stops++};"+
+  "const Date={now:()=>counter.now};"+
+  "const mobilePlayedSeconds=act=>act.ctx.currentTime-act.started;"+
+  code+"return finishMobileMix;")(counter,state);
+ finish(app);assert.equal(counter.tries,1);
+ finish(app);assert.equal(counter.tries,1);
+ counter.now+=1300;finish(app);assert.equal(counter.tries,2);
+ counter.now+=1300;finish(app);assert.equal(counter.tries,2);
+ intended=false;finish(app);assert.equal(counter.stops,1);
+});

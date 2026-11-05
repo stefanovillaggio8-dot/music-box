@@ -41,7 +41,7 @@ function mobileClipWindow(audio) {
     ahead=Math.max(ahead,audio.buffered.end(i)-audio.currentTime);
   }
  }catch(_){}
- return audio.readyState>=4||ahead>=8;
+ return audio.readyState>=4||ahead>=3;
 }
 // A certified 3-5s blend requires the existing vocal/quiet constraints.
 // A short matched drum junction without vocal proof is only a subdued
@@ -1014,7 +1014,7 @@ function compatibility(a,b){
  if(offlineTransferPriority||!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
  if(Date.now()<(mobileClipRetryAt.get(key)||0))return null;
  const ctrl=new AbortController();djFetchControllers.add(ctrl);
- const timer=setTimeout(()=>ctrl.abort(),36000);
+ const timer=setTimeout(()=>ctrl.abort(),55000);
  const stale=()=>offlineTransferPriority||ctrl.signal.aborted||
   epoch!==djPlaybackEpoch||document.hidden;
  async function readLimited(response,limit){
@@ -1090,23 +1090,31 @@ function compatibility(a,b){
   if(complete&&advertised>7*1024*1024){
    const first=await readPrefix(response,2*1024*1024);
    if(stale())return null;
-   const result=await clipFromBytes(first,false);
-   if(result){mobileClipMetrics.successes++;
-    mobileClipMetrics.method="HTTP 200 · solo intro";}
-   return result;
+   try{
+    const result=await clipFromBytes(first,false);
+    if(result){mobileClipMetrics.successes++;
+     mobileClipMetrics.method="HTTP 200 · solo intro";return result;}
+   }catch(_){/* Incomplete MP3 frames fail on some Safari releases */ }
+   if(advertised>12*1024*1024){
+    mobileClipFailure={source:key,reason:"MP3 troppo grande per il mix"};
+    mobileClipRetryAt.set(key,Date.now()+90000);
+    return null;
+   }
+   // The 2MB prefix was consumed. Continue to the bounded complete-file path.
+  }else{
+   const bytes=await readLimited(response,complete?12*1024*1024:786432);
+   if(stale())return null;
+   if(complete){
+    mobileClipMetrics.fullFetches++;
+    const result=await clipFromBytes(bytes,true);
+    if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 200";}
+    return result;
+   }
+   try{
+    const result=await clipFromBytes(bytes,false);
+    if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 206";return result;}
+   }catch(_){/* Safari can reject a valid but incomplete MP3 */ }
   }
-  const bytes=await readLimited(response,complete?7*1024*1024:786432);
-  if(stale())return null;
-  if(complete){
-   mobileClipMetrics.fullFetches++;
-   const result=await clipFromBytes(bytes,true);
-   if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 200";}
-   return result;
-  }
-  try{
-   const result=await clipFromBytes(bytes,false);
-   if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 206";return result;}
-  }catch(_){/* Safari can reject a valid but incomplete MP3 */ }
   if(stale())return null;
   // Safari sometimes needs more complete MP3 frames before decodeAudioData
   // can decode a partial response. Try a bounded 2 MB header/intro first
@@ -1120,6 +1128,15 @@ function compatibility(a,b){
     const decoded=await clipFromBytes(widerBytes,false);
     if(decoded){mobileClipMetrics.successes++;
      mobileClipMetrics.method="HTTP 206 · intro estesa";return decoded;}
+   }else if(wider.status===200&&
+     Number(wider.headers.get("content-length")||0)<=12*1024*1024){
+    // The service worker may return an already-complete cached response.
+    // Avoid issuing an unnecessary third download.
+    const fullBytes=await readLimited(wider,12*1024*1024);
+    if(stale())return null;
+    const decoded=await clipFromBytes(fullBytes,true);
+    if(decoded){mobileClipMetrics.successes++;
+     mobileClipMetrics.method="HTTP 200 · cache completa";return decoded;}
    }
   }catch(_){if(stale())return null}
   if(stale())return null;
@@ -1147,8 +1164,8 @@ function compatibility(a,b){
     await caches.match(source,{ignoreSearch:true}):null;
    if(existing?.status===200){
     const len=Number(existing.headers.get("content-length")||0);
-    if(len>=16384&&len<=7*1024*1024){
-     const local=await readLimited(existing,7*1024*1024);
+    if(len>=16384&&len<=12*1024*1024){
+     const local=await readLimited(existing,12*1024*1024);
      const decoded=await clipFromBytes(local,true);
      if(decoded){
       mobileClipMetrics.successes++;
@@ -1161,7 +1178,7 @@ function compatibility(a,b){
   mobileClipMetrics.fullFetches++;
   const full=await fetch(source,{mode:"cors",cache:"force-cache",signal:ctrl.signal});
   if(full.status!==200)throw Error("MP3 completo non disponibile");
-  const completeBytes=await readLimited(full,7*1024*1024);
+  const completeBytes=await readLimited(full,12*1024*1024);
   const result=await clipFromBytes(completeBytes,true);
   if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="MP3 completo";}
   return result;
@@ -2441,7 +2458,7 @@ function startMobileMix(song,p,app,old){
   mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onSeek,handingOff:false,
-   handoffAt:0,rateSpeed,rateRamp,
+   handoffAt:0,nativeRetryCount:0,nativeRetryAt:0,rateSpeed,rateRamp,
    clipEnd:startedAt+frames/clip.rate-offset-(rateSpeed-1)*rateRamp/2,
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
    strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
@@ -2484,6 +2501,15 @@ function finishMobileMix(app){
   if(!audio||app.currentId()!==act.track.id){
    if(Date.now()>=act.timeoutAt)stopMobileMix();
    return;
+  }
+  // Honour explicit pauses, and retry a stalled native handoff at most twice.
+  if(app.wantsPlayback?.()===false){stopMobileMix();return}
+  if(audio.paused&&Date.now()-act.handoffAt>=850&&
+     Date.now()<act.timeoutAt-1000&&(act.nativeRetryCount||0)<2&&
+     Date.now()-(act.nativeRetryAt||0)>=1200){
+   act.nativeRetryCount=(act.nativeRetryCount||0)+1;
+   act.nativeRetryAt=Date.now();
+   try{Promise.resolve(app.playCurrent?.()).catch(()=>{})}catch(_){}
   }
   // A second forced seek before Safari has really decoded the native MP3
   // caused buffering pauses and rewinds to 0:00. Keep the audible preview
@@ -2546,7 +2572,8 @@ function finishMobileMix(app){
  act.handingOff=true;act.handoffAt=Date.now();
   act.timeoutAt=Date.now()+Math.max(1000,Math.min(15000,
    (act.clipEnd-act.ctx.currentTime-.4)*1000));
-  act.nativeSyncDone=false;
+  act.nativeSyncDone=false;act.nativeRepairAttempted=false;
+  act.nativeRetryCount=0;act.nativeRetryAt=0;
   const position=act.entry+mobilePlayedSeconds(act);
  Promise.resolve(app.mixHandoff(act.track.id,position))
   .catch(()=>stopMobileMix());

@@ -473,7 +473,7 @@ test("iPhone DJ retries a bounded wider intro before requesting a full MP3",()=>
  assert.ok(mix.includes('"Range":"bytes=0-786431"'));
  assert.ok(mix.includes('"Range":"bytes=0-2097151"'));
  assert.ok(mix.includes('mobileClipMetrics.method="HTTP 206 · intro estesa"'));
- assert.ok(mix.includes("setTimeout(()=>ctrl.abort(),36000)"));
+ assert.ok(mix.includes("setTimeout(()=>ctrl.abort(),55000)"));
  assert.ok(mix.includes("remaining>95||remaining<6"));
 });
 
@@ -514,4 +514,44 @@ test("mobile DJ status does not promise a preview when the pair has no safe cue"
  assert.ok(status.indexOf('else if(!plan||plan.kind==="cut")')<
            status.indexOf('else if(!clip)status'));
  assert.ok(status.includes("plan.pulseUnderlay"));
+});
+
+test("Safari complete 8.5MB MP3 retries after its short prefix cannot decode",async()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const code=excerpt(mix,"async function decodeMobileIntroRange(","async function decode(track,needClip=false)");
+ let calls=0,decoded=0,cancelled=0;
+ const r={
+  fetch:async()=>{
+   calls++;
+   if(calls===1)return {ok:true,status:200,headers:new Headers({"content-length":"8500000"}),
+    body:{getReader:()=>({read:async()=>({done:false,value:new Uint8Array(400000)}),
+     cancel:async()=>{cancelled++}})}};
+   return {ok:true,status:200,headers:new Headers({"content-length":"8500000"}),
+    body:null,arrayBuffer:async()=>new ArrayBuffer(8500000)};
+  },
+  Offline:class {async decodeAudioData(bytes){
+   decoded++;if(bytes.byteLength<5000000)throw Error("Safari requires complete MP3");
+   return {duration:165};
+  }}
+ };
+ const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
+  "const cache=new Map(),mobileIntroClips=new Map(),mobileClipRetryAt=new Map();"+
+  "const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:'',lastError:''};"+
+  "let mobileClipFailure=null,offlineTransferPriority=false;"+
+  "const bridge=()=>({audio:()=>({paused:false,seeking:false,readyState:4,buffered:{length:0}})});"+
+  "const mobileDJMayWork=()=>true;"+
+  "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
+  "const withValidatedVoice=v=>v;"+
+  "const fetch=(...args)=>r.fetch(...args);"+
+  "const window={OfflineAudioContext:r.Offline};";
+ const load=new Function("r",init+code+"return decodeMobileIntroRange;")(r);
+ const deep={duration:165,bpm:120};
+ assert.equal(await load("https://example.com/audio.mp3","audio",deep,0),deep);
+ assert.equal(decoded,2);
+ assert.equal(cancelled,1);
+ assert.equal(calls,2);
+});
+test("Safari preview gate allows normal readyState 3 with 3 seconds buffered",()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.ok(mix.includes("return audio.readyState>=4||ahead>=3;"));
 });
