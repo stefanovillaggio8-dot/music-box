@@ -1040,6 +1040,26 @@ function compatibility(a,b){
   if(buf.byteLength>limit)throw Error("Limite memoria anteprima raggiunto");
   return buf;
  }
+ // If a server ignores Range and streams a large HTTP 200, consume ONLY
+ // the intro prefix and cancel the remaining 10+ MB. Safari may still decode
+ // these complete MP3 frames for its bounded WebAudio overlap.
+ async function readPrefix(response,limit){
+  if(!response.body?.getReader)
+   throw Error("Il server non supporta anteprime MP3 in streaming");
+  const reader=response.body.getReader(),parts=[];let got=0;
+  try{
+   while(got<limit){
+    const {done,value}=await reader.read();if(done)break;
+    if(stale())throw Error("Anteprima annullata");
+    const remaining=limit-got;
+    const part=value.byteLength>remaining?value.subarray(0,remaining):value;
+    parts.push(part);got+=part.byteLength;
+   }
+  }finally{try{await reader.cancel()}catch(_){}}
+  const bytes=new Uint8Array(got);let off=0;
+  for(const part of parts){bytes.set(part,off);off+=part.byteLength}
+  return bytes.buffer;
+ }
  async function clipFromBytes(bytes,complete){
   if(stale()||bytes.byteLength<16384)return null;
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
@@ -1066,6 +1086,15 @@ function compatibility(a,b){
   const complete=response.status===200,cr=response.headers.get("content-range")||"";
   if(!complete&&cr&&!/^bytes\s+0-\d+\/\d+$/i.test(cr))
    throw Error("Intervallo MP3 non valido");
+  const advertised=Number(response.headers.get("content-length")||0);
+  if(complete&&advertised>7*1024*1024){
+   const first=await readPrefix(response,2*1024*1024);
+   if(stale())return null;
+   const result=await clipFromBytes(first,false);
+   if(result){mobileClipMetrics.successes++;
+    mobileClipMetrics.method="HTTP 200 · solo intro";}
+   return result;
+  }
   const bytes=await readLimited(response,complete?7*1024*1024:786432);
   if(stale())return null;
   if(complete){
@@ -3363,10 +3392,19 @@ function updateMobileStatus(){
  else if(!audio||audio.paused)status="Avvia una canzone per preparare il mix.";
  else if(!next)status="Nessun prossimo brano nella coda.";
  else if(!context)status="Audio mix non attivo: tocca Play o un comando nell'app con schermo acceso.";
+ else if(!plan||plan.kind==="cut")status=
+  "Nessun mix sicuro per questa coppia: passaggio normale, senza tagliare la canzone.";
+ else if(!mobileMixAllowed(plan,
+   app?.allTracks?.()?.find(t=>t.id===app.currentId?.())&&
+    (cache.get(String(app.mixUrl?.(app.allTracks().find(t=>t.id===app.currentId()))))||
+     deepLookup(app.allTracks().find(t=>t.id===app.currentId()))),
+   app?.mixLyricCues?.(app.currentId?.())?.last))
+  status="Finale non adatto a una sovrapposizione: passaggio normale protetto.";
  else if(!clip&&mobileClipFailure?.source===String(url))status=
   "Intro non pronta: "+mobileClipFailure.reason+". La musica normale continua.";
  else if(!clip)status="Preparo l'intro del prossimo brano senza fermare la canzone.";
- else if(!plan)status="Intro pronta: controllo note e finale. Se non combaciano, passaggio normale.";
+ else if(plan.pulseUnderlay)
+  status="Pulsazioni allineate: preparo un breve raccordo ritmico a volume ridotto.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
   status="Beat compatibili misurati: anteprima ritmica breve e prudente, se Safari la consente.";
  else if(!plan.quietCertified||!["beat","soft","fade","rise"].includes(plan.kind))

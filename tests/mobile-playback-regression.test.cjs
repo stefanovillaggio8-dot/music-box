@@ -476,3 +476,42 @@ test("iPhone DJ retries a bounded wider intro before requesting a full MP3",()=>
  assert.ok(mix.includes("setTimeout(()=>ctrl.abort(),36000)"));
  assert.ok(mix.includes("remaining>95||remaining<6"));
 });
+
+test("large HTTP 200 fallback keeps only a bounded iPhone preview and cancels the rest",async()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const code=excerpt(mix,"async function decodeMobileIntroRange(","async function decode(track,needClip=false)");
+ let read=0,cancelled=0,decoded=0;
+ const input={
+  fetch:async()=>({ok:true,status:200,
+   headers:new Headers({"content-length":"14000000"}),
+   body:{getReader:()=>({
+    read:async()=>{read++;return {done:false,value:new Uint8Array(300000).fill(4)}},
+    cancel:async()=>{cancelled++}
+   })}
+  }),
+  Offline:class {async decodeAudioData(buf){decoded++;return {duration:12}}}
+ };
+ const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
+  "const cache=new Map(),mobileIntroClips=new Map(),mobileClipRetryAt=new Map();"+
+  "const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:'',lastError:''};"+
+  "let mobileClipFailure=null,offlineTransferPriority=false;"+
+  "const bridge=()=>null,mobileDJMayWork=()=>true;"+
+  "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
+  "const withValidatedVoice=x=>x;"+
+  "const fetch=(...args)=>r.fetch(...args);"+
+  "const window={OfflineAudioContext:r.Offline};";
+ const run=new Function("r",init+code+"return decodeMobileIntroRange;")(input);
+ const sample={duration:192,bpm:129};
+ const result=await run("https://example.com/large.mp3","large",sample,0);
+ assert.equal(result,sample);
+ assert.equal(decoded,1);
+ assert.equal(cancelled,1,"cancel the unused rest of a large remote MP3");
+ assert.ok(read<=8,"no unbounded full-MP3 memory use");
+});
+test("mobile DJ status does not promise a preview when the pair has no safe cue",()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const status=excerpt(mix,"function updateMobileStatus()","function draw()");
+ assert.ok(status.indexOf('else if(!plan||plan.kind==="cut")')<
+           status.indexOf('else if(!clip)status'));
+ assert.ok(status.includes("plan.pulseUnderlay"));
+});
