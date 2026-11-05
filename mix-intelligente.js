@@ -1928,6 +1928,53 @@ function desktopSilentTailBridge(a,b,dur){
 // A decoded full MP3 can have a musically completed ending but residual
 // low-level room tone. Only fade after its LAST measured musical event.
 // Never count this as beat matching or as verified DIGITAL silence.
+// Start the next intro ON the final measured rhythmic impact, rather
+// than waiting for the quieter postlude or the MP3's encoded silence.
+// This is a guarded, restrained beat-synced relay, NOT a verified harmonic
+// beatmatch. The outgoing final note remains audible through its decay.
+function desktopFinalImpactRelay(a,b,dur){
+ const r=a?.dropRelease;
+ if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||!Number.isFinite(dur)||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(r?.lastImpactAt)||
+    !Number.isFinite(r?.releaseAt)||!Number.isFinite(r?.score)||
+    !Number.isFinite(r?.quietLevel)||r.score<.69||r.quietLevel>.30||
+    r.releaseAt<r.lastImpactAt||a.last-r.lastImpactAt<1.4||
+    a.last-r.lastImpactAt>4.5||a.last-r.releaseAt<1.2||
+    a.last-r.releaseAt>4.5||dur-a.last<2||dur-a.last>12||
+    a.beatConfidence<.18||b.beatConfidence<.16||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    !hasImmediateMusicalIntro(b)||b.introDrive<.43||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    r.lastImpactAt<26||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>r.lastImpactAt-6)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>r.lastImpactAt-5)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<1.4)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<1.4))return null;
+ const knownInstrumental=Boolean(
+   Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=r.lastImpactAt-6||
+   a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+   a.voiceScannedEnd>=a.last-.75&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=r.lastImpactAt-5));
+ if(!knownInstrumental)return null;
+ const ratio=[.5,1,2].map(k=>a.bpm/(b.bpm*k))
+  .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+ if(!Number.isFinite(ratio)||ratio<.945||ratio>1.055)return null;
+ const drums=grooveAgreement(a,b);
+ if(!drums||!Number.isFinite(drums.score)||drums.score<.66)return null;
+ const period=60/a.bpm,phase=onsetGridPhase(b.introOnset,b.bpm);
+ if(!Number.isFinite(phase)||phase<0||phase>period)return null;
+ const begin=r.lastImpactAt-phase,end=Math.min(dur-.035,a.last+.075);
+ const fade=end-begin;
+ if(begin<26||fade<1.4||fade>4.6||end<=r.releaseAt+.75)return null;
+ return {kind:"soft",begin,end,fade,entry:musicalIntroEntry(b),
+  tempo:1,gain:1,score:null,grooveScore:drums.score,
+  measuredFinalImpact:true,finalImpactAt:r.lastImpactAt,
+  quietCertified:false,preserveTail:true,silenceTrim:false,
+  softTailTrim:false,trailing:0,safeOutroAt:begin,
+  beatPeriod:period,beatAnchor:r.lastImpactAt,nextBeat:phase};
+}
 function desktopMeasuredPostludeBridge(a,b,dur){
  const r=a?.dropRelease;
  if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
@@ -2017,6 +2064,14 @@ function musicallyCompatibleOverlay(a,b,cue){
    cue.end<=a.duration-.19&&cue.fade>=.65&&cue.fade<=1.70&&
    (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<a.last-.75)&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-.75);
+ }
+ // A bounded rhythmic final-impact join only. Recalculate the full
+ // certificate on actual audio metadata, not merely on the cue flag.
+ if(cue.measuredFinalImpact===true){
+  const p=desktopFinalImpactRelay(a,b,a.duration);
+  return !!p&&Math.abs(p.begin-cue.begin)<.085&&
+   Math.abs(p.end-cue.end)<.085&&
+   Math.abs(p.finalImpactAt-cue.finalImpactAt)<.025;
  }
  // Verified postlude: the blend starts after the final musical event.
  // The outgoing recording can still contain quiet room tone, not a beat.
@@ -2778,7 +2833,7 @@ function stopSnapPrecision(){
 function armSnapPrecision(audio,id){
  // Safari may tick at 650ms when a short measured quiet fade has less
  // than a second to start; arm the accurate pre-roll for that cue too.
- const eligible=!!plan&&(plan.kind==="snap"||
+ const eligible=!!plan&&(plan.kind==="snap"||plan.measuredFinalImpact===true||
   (isIOS&&["beat","soft","fade","rise"].includes(plan.kind)));
  if(!eligible||mixing||!audio||audio.paused||document.hidden||
     audio.currentTime<plan.begin-3||audio.currentTime>=plan.end){
@@ -2787,7 +2842,7 @@ function armSnapPrecision(audio,id){
  if(snapPrecisionTimer!==null)return;
  snapPrecisionTimer=setInterval(()=>{
   const app=bridge(),a=app?.audio?.();
-  const stillEligible=!!plan&&(plan.kind==="snap"||
+  const stillEligible=!!plan&&(plan.kind==="snap"||plan.measuredFinalImpact===true||
    (isIOS&&["beat","soft","fade","rise"].includes(plan.kind)));
   if(!enabled||!a||a!==audio||app?.currentId?.()!==id||
      !stillEligible||a.paused||a.currentTime>=plan.end||
@@ -3006,7 +3061,17 @@ function quietDirectHandoff(app,audio,id,next,entry,reason){
 }
 // A phase offset over 420ms previously led to an OFF-BEAT start.
 function desktopBeatStartDelay(p,at){
- if(!p||!["beat","snap","phrase"].includes(p.kind))return 0;
+ if(!p)return 0;
+ // Schedule the real first incoming beat exactly at the last outgoing
+ // impact, with a 95ms precision clock. Never "catch up" in dead air.
+ if(p.measuredFinalImpact===true){
+  const target=Number(p.finalImpactAt)-Number(p.nextBeat);
+  if(!Number.isFinite(target)||!Number.isFinite(at)||
+     !Number.isFinite(p.end)||target>p.end-1.35||
+     at>target+.085||target-at>1.6)return null;
+  return Math.max(0,target-at);
+ }
+ if(!["beat","snap","phrase"].includes(p.kind))return 0;
  const period=Number(p.beatPeriod),out=Number(p.beatAnchor),
   incoming=Number(p.nextBeat);
  if(!Number.isFinite(period)||period<.24||period>1.2||
@@ -3032,6 +3097,7 @@ async function beginMix(song,proposed){
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
   vocalVerifiedBeat:!!proposed.vocalVerifiedBeat,
   continuityFallback:!!proposed.continuityFallback,
+  measuredFinalImpact:!!proposed.measuredFinalImpact,
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
@@ -3088,6 +3154,14 @@ async function beginMix(song,proposed){
     const late=clamp((time-lateStart)/(1-lateStart),0,1);
     outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
     inGain=Math.sin(Math.pow(time,act.vocalVerifiedBeat?1.18:1.85)*Math.PI/2);
+   }
+   if(act.measuredFinalImpact){
+    // Incoming kick on the last outgoing beat at restrained gain;
+    // the final note still rings and yields progressively.
+    const tail=clamp((time-.25)/.75,0,1);
+    const lift=clamp((time-.23)/.77,0,1);
+    outGain=Math.cos(Math.pow(tail,1.25)*Math.PI/2);
+    inGain=.24*clamp(time/.07,0,1)+.76*Math.pow(lift,1.1);
    }
    if(act.continuityFallback){
     // Avoid cutting a late vocal: the original holds at full volume
@@ -3434,6 +3508,11 @@ function tick(){
    const certifiedQuietAlternative=proposedQuiet&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedQuiet)?
        proposedQuiet:null;
+   const finalImpact=currentAnalysis&&nextAnalysis&&!isIOS?
+      desktopFinalImpactRelay(currentAnalysis,nextAnalysis,audio.duration):null;
+   const certifiedImpact=finalImpact&&
+      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,finalImpact)?
+       finalImpact:null;
    const postlude=currentAnalysis&&nextAnalysis&&!isIOS?
       desktopMeasuredPostludeBridge(currentAnalysis,nextAnalysis,audio.duration):null;
    const certifiedPostlude=postlude&&
@@ -3454,9 +3533,10 @@ function tick(){
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,possibleSilentBridge)?
       possibleSilentBridge:null;
    const chosen=compatibleCandidate?candidate:null;
+   const realBeat=chosen&&["beat","snap","phrase"].includes(chosen.kind)?chosen:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
-      certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude:
-     (chosen&&chosen.kind!=="cut"?chosen:null)||
+      certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude:
+     realBeat||certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)||
       certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||
       compatibleContinuity||chosen;
    updateDetails(a,b);
@@ -3688,6 +3768,7 @@ function updateDetails(a,b){
    " · raccordo continuo, senza beatmatch certificato":
    plan?.softTailTrim?
    " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
+   plan?.measuredFinalImpact?" · ingresso SUL COLPO FINALE misurato, non beatmatch armonico":
    plan?.measuredPostludeBridge?" · finale concluso: raccordo su coda debole, non beatmatch":
    plan?.mobileSilentBridge?" · coda digitale muta: ingresso breve senza tagliare note":
    plan?.silenceTrim?" · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
@@ -4544,6 +4625,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    certifiedQuietAlternative:!!plan?.neutralRelease,
    mobileSilentBridge:!!plan?.mobileSilentBridge,
    measuredPostludeBridge:!!plan?.measuredPostludeBridge,
+   measuredFinalImpact:!!plan?.measuredFinalImpact,
+   finalImpactAt:Number.isFinite(plan?.finalImpactAt)?plan.finalImpactAt:null,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,
    shuffleBusy,
