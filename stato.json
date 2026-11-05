@@ -5316,13 +5316,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 2,
-    "s": 499,
+    "s": 556,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 2,
-    "s": 499,
+    "s": 556,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6084,13 +6084,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 2,
-    "s": 556,
+    "s": 599,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 2,
-    "s": 556,
+    "s": 599,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -7410,13 +7410,13 @@
    },
    "[\"labirinto\",\"luchÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 105,
+    "s": 134,
     "t": "Labirinto",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"labirinto\",\"luchÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 105,
+    "s": 134,
     "t": "Labirinto",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -8184,13 +8184,13 @@
    },
    "[\"labirinto\",\"luchÃÂ¨\"]": {
     "v": 0,
-    "s": 134,
+    "s": 202,
     "t": "Labirinto",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"labirinto\",\"luchÃÂ¨\"]": {
     "v": 0,
-    "s": 134,
+    "s": 202,
     "t": "Labirinto",
     "a": "LuchÃÂ¨"
    },
@@ -8958,13 +8958,13 @@
    },
    "[\"labirinto\",\"luchÃ¨\"]": {
     "v": 0,
-    "s": 202,
+    "s": 206,
     "t": "Labirinto",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"labirinto\",\"luchÃ¨\"]": {
     "v": 0,
-    "s": 202,
+    "s": 206,
     "t": "Labirinto",
     "a": "LuchÃ¨"
    },
@@ -9514,6 +9514,18 @@
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"oh 9od\",\"thasup, nayt\"]": {
+    "v": 0,
+    "s": 90,
+    "t": "oh 9od",
+    "a": "thasup, nayt"
+   },
+   "m:2026-11|[\"oh 9od\",\"thasup, nayt\"]": {
+    "v": 0,
+    "s": 90,
+    "t": "oh 9od",
+    "a": "thasup, nayt"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
     "s": 220,
@@ -9720,13 +9732,13 @@
    },
    "[\"zitti e buoni\",\"måneskin\"]": {
     "v": 1,
-    "s": 81,
+    "s": 152,
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
    "m:2026-11|[\"zitti e buoni\",\"måneskin\"]": {
     "v": 1,
-    "s": 81,
+    "s": 152,
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
@@ -10287,18 +10299,6 @@
     "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"oh 9od\",\"thasup, nayt\"]": {
-    "v": 0,
-    "s": 87,
-    "t": "oh 9od",
-    "a": "thasup, nayt"
-   },
-   "m:2026-11|[\"oh 9od\",\"thasup, nayt\"]": {
-    "v": 0,
-    "s": 87,
-    "t": "oh 9od",
-    "a": "thasup, nayt"
    }
   },
   "Diego": {
