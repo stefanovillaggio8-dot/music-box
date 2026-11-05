@@ -1878,6 +1878,25 @@ function measuredPulseUnderlay(a,b,dur){
   beatAnchor:lastGridStart+onsetGridPhase(a.outroOnset,a.bpm),
   nextBeat:firstGridStart+onsetGridPhase(b.introOnset,b.bpm)-entry};
 }
+// Only a measured DIGITALLY SILENT outro can host a new song whose
+// harmony differs: this is continuity, never claimed as beat matching.
+function desktopSilentTailBridge(a,b,dur){
+ if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||a.confidentTail!==true||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||a.last<26||dur-a.last<2.4||
+    !hasImmediateMusicalIntro(b))return null;
+ if((Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-.75)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-.75))
+  return null;
+ const begin=a.last+.32,fade=.95,end=begin+fade;
+ if(end>dur-.25)return null;
+ return {kind:"soft",begin,end,fade,entry:musicalIntroEntry(b),
+  tempo:1,gain:1,score:null,quietCertified:true,
+  certifiedSilentBridge:true,preserveTail:true,
+  safeOutroAt:begin,silenceTrim:true,trailing:dur-end,
+  softTailTrim:false};
+}
 function continuityFallback(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(isIOS||!Number.isFinite(dur)||dur<26||
@@ -1929,6 +1948,29 @@ function musicallyCompatibleOverlay(a,b,cue){
  if(cue.kind==="cut"||cue.fade===0)return true;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !hasImmediateMusicalIntro(b))return false;
+ // No audible old chords overlap the new intro in a measured silent tail.
+ if(cue.certifiedSilentBridge===true&&cue.kind==="soft"){
+  return !isIOS&&a.confidentTail===true&&
+   a.protectedEnding!==true&&Number.isFinite(a.last)&&
+   Number.isFinite(a.duration)&&Number.isFinite(cue.begin)&&
+   Number.isFinite(cue.end)&&cue.begin>=a.last+.25&&
+   cue.end<=a.duration-.20&&cue.fade>=.5&&cue.fade<=1.5&&
+   (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<a.last-.75)&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-.75);
+ }
+ // A genuine, verified LOW-ENERGY release supports a neutral fade.
+ // It is NOT equivalent to matching BPM or beats.
+ if(cue.neutralRelease===true&&cue.quietCertified===true&&
+    cue.kind==="soft"){
+  const release=a.dropRelease;
+  if(release&&a.protectedEnding!==true&&
+     Number(release.score)>=.82&&Number(release.quietLevel)<=.12&&
+     Number.isFinite(release.releaseAt)&&Number.isFinite(a.last)&&
+     cue.begin>=release.releaseAt+.35&&cue.end<=a.last+.25&&
+     (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-4)&&
+     (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-2.5))
+   return true;
+ }
  if(["beat","snap","phrase"].includes(cue.kind)||cue.measuredBeatBridge||
     cue.rhythmicUnderlay||cue.strongBeatBridge)
   return isIOS?iphoneBeatPairCertified(a,b,cue):desktopBeatPairCertified(a,b,cue);
@@ -3314,8 +3356,18 @@ function tick(){
    const compatibleContinuity=proposedContinuity&&
       musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedContinuity)?
        proposedContinuity:null;
-   plan=(weakIphoneMatch||weakDesktopMatch)?certifiedQuietAlternative:
-    (compatibleCandidate?candidate:null)||certifiedQuietAlternative||compatibleContinuity;
+   // Prioritize an acoustically finished song over an abrupt hard cut.
+   const silentBridge=!isIOS&&currentAnalysis&&nextAnalysis?
+     desktopSilentTailBridge(currentAnalysis,nextAnalysis,audio.duration):null;
+   const certifiedSilentBridge=silentBridge&&
+     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,silentBridge)?
+      silentBridge:null;
+   const chosen=compatibleCandidate?candidate:null;
+   plan=(weakIphoneMatch||weakDesktopMatch)?
+      certifiedQuietAlternative||certifiedSilentBridge:
+     (chosen&&chosen.kind!=="cut"?chosen:null)||
+      certifiedQuietAlternative||certifiedSilentBridge||
+      compatibleContinuity||chosen;
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.

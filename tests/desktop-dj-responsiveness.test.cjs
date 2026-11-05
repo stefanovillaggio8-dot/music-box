@@ -36,3 +36,29 @@ test("console explains matching outcomes with explicit candidate counts",()=>{
  assert.ok(dj.includes('scored.length+" beat verificati'));
  assert.ok(!dj.includes('console.info("[Music Box DJ] Ricerca beat in libreria",shuffleLastDecision)'));
 });
+
+
+test("desktop fades in next song only after proven digital silence",()=>{
+ const start=dj.indexOf("function desktopSilentTailBridge(");
+ const end=dj.indexOf("function continuityFallback(",start);
+ assert.ok(start>=0&&end>start);
+ const safe=new Function("isIOS","hasImmediateMusicalIntro","musicalIntroEntry",
+  dj.slice(start,end)+"return desktopSilentTailBridge;")(false,()=>true,()=>0);
+ const a={duration:180,last:176,confidentTail:true,protectedEnding:false};
+ const p=safe(a,{introDrive:.7},180);
+ assert.ok(p);
+ assert.equal(p.certifiedSilentBridge,true);
+ assert.equal(p.kind,"soft");
+ assert.equal(p.score,null);
+ assert.ok(p.begin>=a.last+.3&&p.end<180);
+ assert.equal(safe({...a,protectedEnding:true},{},180),null);
+ assert.equal(safe({...a,confidentTail:false},{},180),null);
+ assert.equal(safe({...a,lastLyricAt:175.8},{},180),null);
+ assert.equal(safe({...a,last:179},{},180),null);
+});
+test("desktop prefers a certified silent bridge to a dry cut",()=>{
+ assert.match(dj,/const silentBridge=!isIOS&&currentAnalysis&&nextAnalysis/);
+ assert.match(dj,/chosen&&chosen.kind!=="cut"\?chosen:null/);
+ assert.match(dj,/certifiedQuietAlternative\|\|certifiedSilentBridge/);
+ assert.match(dj,/cue\.certifiedSilentBridge===true&&cue\.kind==="soft"/);
+});
