@@ -310,8 +310,10 @@ test("Safari native handoff retries only twice and obeys a deliberate pause",()=
 });
 
 test("quiet 2.35s fade has over 1s of possible launch time on Safari",()=>{
- assert.ok(source.includes('if(secondsLeft<(p.kind==="snap"?.30:1.25)'));
- assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)'));
+ assert.ok(source.includes('if(secondsLeft<(p.kind==="snap"?.30:'));
+ assert.ok(source.includes('p.mobileSilentBridge?.58:1.25'));
+ assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:'));
+ assert.ok(source.includes('plan.mobileSilentBridge?.42:1.25'));
  assert.ok(source.includes("armSnapPrecision(audio,id)"));
 });
 

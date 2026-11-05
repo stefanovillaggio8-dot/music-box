@@ -880,7 +880,8 @@ test("foreground precision scheduling includes measured quiet fades",()=>{
   source.indexOf("function dropPrepared("));
  assert.ok(fn.includes('isIOS&&["beat","soft","fade","rise"].includes(plan.kind)'));
  assert.ok(fn.includes("},95);"));
- assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)'));
+ assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:'));
+ assert.ok(source.includes('plan.mobileSilentBridge?.42:1.25'));
 });
 
 test("Safari accepts genuine touch gestures even if userActivation incorrectly reports false",()=>{
