@@ -234,6 +234,15 @@ function certifiedNeutralBridge(a,b,dur){
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
     plan.end<=plan.begin)return false;
+ // There is no audible overlapping beat: the original MP3 has ALREADY
+ // reached certified digital silence. Do not treat this as beatmatching.
+ if(plan.mobileSilentBridge===true&&plan.certifiedSilentBridge===true){
+  return plan.kind==="soft"&&!!ending&&ending.confidentTail===true&&
+   ending.protectedEnding!==true&&Number.isFinite(ending.last)&&
+   plan.begin>=ending.last+.23&&plan.fade>=.65&&plan.fade<=1.70&&
+   (!Number.isFinite(lastLyricAt)||lastLyricAt<ending.last-.75)&&
+   (!Number.isFinite(ending.lastVoiceAt)||ending.lastVoiceAt<ending.last-.75);
+ }
  if(plan.rhythmicUnderlay&&plan.measuredBeatBridge&&plan.preserveTail){
   // Low-volume unverified overlay: never duck the native Safari player.
   return !!ending&&Number.isFinite(ending.duration)&&
@@ -1878,6 +1887,25 @@ function measuredPulseUnderlay(a,b,dur){
   beatAnchor:lastGridStart+onsetGridPhase(a.outroOnset,a.bpm),
   nextBeat:firstGridStart+onsetGridPhase(b.introOnset,b.bpm)-entry};
 }
+// A short Safari fade only in CERTIFIED digital silence, never over music.
+function iphoneSilentTailBridge(a,b,dur){
+ if(!isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||a.confidentTail!==true||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||a.last<26||
+    dur-a.last<1.65||dur-a.last>12||
+    !hasImmediateMusicalIntro(b)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-.75)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-.75))return null;
+ const begin=a.last+.28,fade=Math.min(1.55,dur-.20-begin);
+ const end=begin+fade;
+ if(fade<.65||end>dur-.19||begin<26)return null;
+ return {kind:"soft",begin,end,fade,entry:musicalIntroEntry(b),
+  tempo:1,gain:1,score:null,quietCertified:true,
+  certifiedSilentBridge:true,mobileSilentBridge:true,
+  preserveTail:true,safeOutroAt:begin,silenceTrim:true,
+  trailing:dur-end,softTailTrim:false};
+}
 // Only a measured DIGITALLY SILENT outro can host a new song whose
 // harmony differs: this is continuity, never claimed as beat matching.
 function desktopSilentTailBridge(a,b,dur){
@@ -1950,11 +1978,11 @@ function musicallyCompatibleOverlay(a,b,cue){
     !hasImmediateMusicalIntro(b))return false;
  // No audible old chords overlap the new intro in a measured silent tail.
  if(cue.certifiedSilentBridge===true&&cue.kind==="soft"){
-  return !isIOS&&a.confidentTail===true&&
+  return (!isIOS||cue.mobileSilentBridge===true)&&a.confidentTail===true&&
    a.protectedEnding!==true&&Number.isFinite(a.last)&&
    Number.isFinite(a.duration)&&Number.isFinite(cue.begin)&&
    Number.isFinite(cue.end)&&cue.begin>=a.last+.25&&
-   cue.end<=a.duration-.20&&cue.fade>=.5&&cue.fade<=1.5&&
+   cue.end<=a.duration-.19&&cue.fade>=.65&&cue.fade<=1.70&&
    (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<a.last-.75)&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-.75);
  }
@@ -2471,7 +2499,8 @@ function startMobileMix(song,p,app,old){
   // Do not start a crossfade so late that it would cut the next song.
   // A 2.35-second quiet fade used to have a ~200ms start window.
   // Safari needs at least 1.25s remaining to finish a late, safe blend.
-  if(secondsLeft<(p.kind==="snap"?.30:1.25)||(frames/clip.rate-offset)<secondsLeft+.3){
+  if(secondsLeft<(p.kind==="snap"?.30:p.mobileSilentBridge?.58:1.25)||
+     (frames/clip.rate-offset)<secondsLeft+.3){
    mobileMixLastBlocker="Punto di mix perso o introduzione troppo corta";
    return false;
   }
@@ -3359,9 +3388,12 @@ function tick(){
    // Prioritize an acoustically finished song over an abrupt hard cut.
    const silentBridge=!isIOS&&currentAnalysis&&nextAnalysis?
      desktopSilentTailBridge(currentAnalysis,nextAnalysis,audio.duration):null;
-   const certifiedSilentBridge=silentBridge&&
-     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,silentBridge)?
-      silentBridge:null;
+   const mobileSilentBridge=isIOS&&currentAnalysis&&nextAnalysis?
+     iphoneSilentTailBridge(currentAnalysis,nextAnalysis,audio.duration):null;
+   const possibleSilentBridge=silentBridge||mobileSilentBridge;
+   const certifiedSilentBridge=possibleSilentBridge&&
+     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,possibleSilentBridge)?
+      possibleSilentBridge:null;
    const chosen=compatibleCandidate?candidate:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
       certifiedQuietAlternative||certifiedSilentBridge:
@@ -3546,7 +3578,8 @@ function tick(){
  }
  if(isIOS&&!document.hidden&&!mobileActive&&
     audio.currentTime>=plan.begin&&
-    audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)&&
+    audio.currentTime<plan.end-(plan.kind==="snap"?.26:
+      plan.mobileSilentBridge?.42:1.25)&&
     mobileMixAllowed(plan,measuredEnding,lastKnownLyric))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
@@ -3596,6 +3629,7 @@ function updateDetails(a,b){
    " · raccordo continuo, senza beatmatch certificato":
    plan?.softTailTrim?
    " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
+   plan?.mobileSilentBridge?" · coda digitale muta: ingresso breve senza tagliare note":
    plan?.silenceTrim?" · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
  const vocal=a?.voiceModel?(Number.isFinite(a.lastVoiceAt)?
   " · voce rilevata fino a "+a.lastVoiceAt.toFixed(1)+" s":
@@ -3645,6 +3679,8 @@ function updateMobileStatus(){
     Number.isFinite(plan?.begin)&&audio.currentTime>=plan.begin-.5&&
     audio.currentTime<plan.end+.6)
   status="Mix non avviato: "+mobileMixLastBlocker;
+ else if(plan.mobileSilentBridge)
+  status="Finale muto verificato: preparo un ingresso breve senza tagliare note.";
  else if(plan.pulseUnderlay)
   status="Pulsazioni allineate: preparo un breve raccordo ritmico a volume ridotto.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
@@ -3857,9 +3893,11 @@ async function intelligentShuffle(app,audio,fromId){
    // short, audible overlap even when no two percussion patterns match.
    // Never silently count this as a verified beat or shorten a vocal.
    const safeSoft=Boolean(mobilePlayable&&
-    iphoneQuietReleaseCertified(old,cue)&&cue&&cue.kind==="soft"&&cue.fade>=2.35&&
+    iphoneQuietReleaseCertified(old,cue)&&cue&&cue.kind==="soft"&&
+    (cue.fade>=2.35||cue.mobileSilentBridge===true)&&
     cue.quietCertified===true&&info.introDrive>=.43&&
-    (cue.neutralRelease||cue.verifiedDecayAfterLyrics||cue.dropReleaseBridge||
+    (cue.mobileSilentBridge||cue.neutralRelease||
+     cue.verifiedDecayAfterLyrics||cue.dropReleaseBridge||
      (Number.isFinite(cue.safeOutroAt)&&cue.safeOutroAt<=cue.begin+.25))&&
     (!Number.isFinite(old.lastVoiceAt)||old.lastVoiceAt<=cue.begin-1.3)&&
     (!Number.isFinite(old.lastLyricAt)||old.lastLyricAt<=cue.begin-4)&&
@@ -4353,6 +4391,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    pulseUnderlay:!!plan?.pulseUnderlay,
    mobileMixLastBlocker,mobileMixLastStartedAt,
    certifiedQuietAlternative:!!plan?.neutralRelease,
+   mobileSilentBridge:!!plan?.mobileSilentBridge,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,
    shuffleBusy,

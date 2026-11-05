@@ -338,3 +338,32 @@ test("certified silent outro hands off on iPhone even when an unusable plan exis
  assert.equal(safe(ending,175,176.3,null),false);
  assert.equal(safe(ending,180,175.9,null),false);
 });
+
+test("short iPhone fade allowed only in a verified digital-silent tail",()=>{
+ const policy=new Function("isIOS","hasImmediateMusicalIntro","musicalIntroEntry",
+  excerpt("function iphoneSilentTailBridge(","function desktopSilentTailBridge(")+
+  "return iphoneSilentTailBridge;")(true,()=>true,()=>0);
+ const a={duration:180,last:177.5,confidentTail:true,protectedEnding:false};
+ const b={introDrive:.8,duration:185};
+ const cue=policy(a,b,180);
+ assert.ok(cue);
+ assert.equal(cue.mobileSilentBridge,true);
+ assert.equal(cue.certifiedSilentBridge,true);
+ assert.equal(cue.kind,"soft");
+ assert.ok(cue.begin>a.last+.25&&cue.end<180);
+ assert.ok(cue.fade>=.65&&cue.fade<=1.70);
+ assert.equal(allow(cue,a,170),true);
+ assert.equal(allow(cue,a,177.2),false);
+ assert.equal(policy({...a,confidentTail:false},b,180),null);
+ assert.equal(policy({...a,protectedEnding:true},b,180),null);
+ assert.equal(policy({...a,lastVoiceAt:177.3},b,180),null);
+ assert.equal(policy({...a,last:179.3},b,180),null);
+ assert.equal(policy({...a,duration:177},b,180),null);
+});
+test("iPhone can actually start short verified silent fade",()=>{
+ assert.ok(source.includes("iphoneSilentTailBridge(currentAnalysis,nextAnalysis,audio.duration)"));
+ assert.ok(source.includes("possibleSilentBridge=silentBridge||mobileSilentBridge"));
+ assert.ok(source.includes("p.mobileSilentBridge?.58:1.25"));
+ assert.ok(source.includes("plan.mobileSilentBridge?.42:1.25"));
+ assert.ok(source.includes("cue.mobileSilentBridge===true"));
+});
