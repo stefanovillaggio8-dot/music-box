@@ -791,7 +791,7 @@ test("desktop waits for an aligned beat instead of starting outside phase",()=>{
 test("desktop runtime does not force an unverified beat overlap",()=>{
  assert.ok(source.includes("weakDesktopMatch=!isIOS&&candidate&&"));
  assert.ok(source.includes("desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)"));
- assert.ok(source.includes("scored.length?scored:softScored.length?softScored:"));
+ assert.ok(source.includes("scored.length?scored:impactScored.length?impactScored:"));
 });
 
 test("onset fingerprint must prove a rhythmic join; mismatched drums never qualify",()=>{
