@@ -287,3 +287,54 @@ test("real music: strict beat rejection still permits a measured, voice-safe neu
  assert.ok(alternatives>0,"Real MP3s should offer at least one certified neutral fade");
  assert.equal(unsafe,0,"Fallback must pass the same independent iPhone safety certificate");
 });
+
+test("pulse compatibility distribution from original onset spectra, not BPM alone",()=>{
+ const corr=(arr,lag)=>{
+  if(!Array.isArray(arr)||arr.length!==96||!Number.isInteger(lag)||lag<2||lag>48)return -1;
+  let sum=0,x=0,y=0;
+  for(let i=0;i+lag<96;i++){
+   const a=arr[i],b=arr[i+lag];
+   sum+=a*b;x+=a*a;y+=b*b;
+  }
+  return x>0&&y>0?sum/Math.sqrt(x*y):-1;
+ };
+ const periodic=(v,bpm)=>{
+  if(!Array.isArray(v)||v.length!==96)return null;
+  const frames=96*60/(bpm*4);
+  const lags=[frames,frames*2,frames*4];
+  const strengths=lags.map(t=>[Math.floor(t),Math.ceil(t)].map(l=>corr(v,l)))
+   .map(x=>Math.max(...x));
+  return Math.max(...strengths.slice(0,2));
+ };
+ const stats={pairs:0,tempo:0,harmony:0,rhythm:0,pulse:0,phase:0,negative:0};
+ const samples=[];
+ for(let i=0;i<tracks.length;i+=7){
+  const a=tracks[i];
+  for(let j=0;j<tracks.length;j+=3){
+   const b=tracks[j];if(a.key===b.key)continue;stats.pairs++;
+   const ratio=bpmRatio(a.data,b.data);
+   if(ratio<.97||ratio>1.03)continue;stats.tempo++;
+   const n=tools.similarNotes(a.data,b.data),g=tools.grooveAgreement(a.data,b.data);
+   if(n.focused<.83||n.phrase<.70||g?.score<.79)continue;stats.harmony++;
+   const x=tools.onsetPairAgreement(a.data,b.data);
+   if(x?.atZero<0)stats.negative++;
+   const pa=periodic(a.data.outroOnset,a.data.bpm),pb=periodic(b.data.introOnset,b.data.bpm);
+   if(pa===null||pb===null)continue;stats.rhythm++;
+   if(pa<.18||pb<.18)continue;stats.pulse++;
+   if(x?.best>=.18&&x?.atZero>=.03&&Math.abs(x?.lagMs||0)<=250){
+    stats.phase++;
+    if(samples.length<8)samples.push({from:a.key,to:b.key,
+     focus:+n.focused.toFixed(2),phrase:+n.phrase.toFixed(2),
+     groove:+g.score.toFixed(2),pa:+pa.toFixed(2),pb:+pb.toFixed(2),
+     phase:+x.atZero.toFixed(2),best:+x.best.toFixed(2),lag:x.lagMs});
+   }
+  }
+ }
+ const badA=find("audio/songs/track-391.mp3"),badB=find("audio/songs/track-1164.mp3");
+ const bad=badA&&badB?{
+  a:periodic(badA.data.outroOnset,badA.data.bpm),
+  b:periodic(badB.data.introOnset,badB.data.bpm),
+  match:tools.onsetPairAgreement(badA.data,badB.data)}:null;
+ console.info("[DJ ORIGINAL PULSE OPPORTUNITIES]",JSON.stringify({stats,samples,bad}));
+ assert.ok(stats.pairs>40000);
+});
