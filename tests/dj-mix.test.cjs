@@ -588,7 +588,8 @@ test("continuity overlay is audible before EOF while preserving outgoing vocal",
 });
 test("the DJ preplans continuity and retries failed desktop previews",()=>{
  assert.ok(source.includes("const weakIphoneMatch=isIOS&&candidate&&"));
- assert.ok(source.includes("plan=weakIphoneMatch?null:"));
+ assert.ok(source.includes("plan=(weakIphoneMatch||weakDesktopMatch)?"));
+ assert.ok(source.includes("certifiedQuietAlternative"),"uncertified beat must degrade to measured quiet fade, never a fake beat");
  assert.ok(source.includes("continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null"));
  assert.ok(source.includes("plan=null;"),"unmeasured outro must not trigger a speculative fade");
  assert.ok(!source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
