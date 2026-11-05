@@ -367,3 +367,38 @@ test("real-index beat-grid previews require regular pulses and chord safety",()=
  console.info("[DJ PHASE-GRID REAL PAIRS]",JSON.stringify({total,matched,sample}));
  assert.ok(total>40000);
 });
+
+test("real 1197 last-impact musical pairing: audit intro beat, harmony and groove",()=>{
+ const outgoing=find("audio/songs/track-1197.mp3")?.data;
+ assert.ok(outgoing);
+ const bpmA=outgoing.bpm;
+ const scored=[];
+ for(const b of tracks){
+  if(b.key.endsWith("track-1197.mp3"))continue;
+  const info=b.data;
+  if(!(info.introDrive>=.43&&info.beatConfidence>=.16))continue;
+  const ratio=[.5,1,2].map(k=>bpmA/(info.bpm*k))
+   .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+  if(!(ratio>=.94&&ratio<=1.06))continue;
+  const g=tools.grooveAgreement(outgoing,info),n=tools.similarNotes(outgoing,info),
+   k=tools.camelotMatch(outgoing,info);
+  const score=(g?.score||0)*.45+(n?.focused||0)*.25+(n?.phrase||0)*.2+
+    (k?.score||0)*.1-Math.abs(Math.log2(ratio))*.35;
+  scored.push({id:b.key,ratio:+ratio.toFixed(3),intro:+info.introDrive.toFixed(3),
+   bpm:info.bpm,groove:+(g?.score||0).toFixed(3),focused:+(n?.focused||0).toFixed(3),
+   phrase:+(n?.phrase||0).toFixed(3),matches:n.matches===true,
+   score:+score.toFixed(3),key:+(k?.score||0).toFixed(3),
+   keyW:+(k?.weight||0).toFixed(3),
+   onset:info.introBeat,voice:info.firstVoiceAt,lyric:info.firstLyricAt,
+   beatConfidence:info.beatConfidence});
+ }
+ scored.sort((a,b)=>b.score-a.score);
+ console.info("[DJ 1197 FINAL-BEAT MATCH SEARCH]",JSON.stringify({
+  outgoing:{bpm:outgoing.bpm,beatConfidence:outgoing.beatConfidence,
+   lastImpactAt:outgoing.dropRelease?.lastImpactAt,
+   releaseAt:outgoing.dropRelease?.releaseAt,last:outgoing.last,
+   voiceModel:outgoing.voiceModel,voiceScannedEnd:outgoing.voiceScannedEnd},
+  bpmCompatible:scored.length,top:scored.slice(0,16)
+ }));
+ assert.ok(scored.length>0);
+});
