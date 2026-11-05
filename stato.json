@@ -3018,13 +3018,13 @@
    },
    "[\"eva\",\"kid yugi, tedua & junior k\"]": {
     "v": 1,
-    "s": 223,
+    "s": 225,
     "t": "Eva",
     "a": "Kid Yugi, Tedua & Junior K"
    },
    "m:2026-11|[\"eva\",\"kid yugi, tedua & junior k\"]": {
     "v": 1,
-    "s": 223,
+    "s": 225,
     "t": "Eva",
     "a": "Kid Yugi, Tedua & Junior K"
    },
@@ -3270,13 +3270,13 @@
    },
    "[\"per una notte insieme\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 0,
-    "s": 195,
+    "s": 247,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "m:2026-11|[\"per una notte insieme\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 0,
-    "s": 195,
+    "s": 247,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
@@ -3575,14 +3575,14 @@
     "a": "tha supreme"
    },
    "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 1,
-    "s": 202,
+    "v": 2,
+    "s": 271,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
    "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 1,
-    "s": 202,
+    "v": 2,
+    "s": 271,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
@@ -4035,6 +4035,18 @@
     "s": 190,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "[\"porto il commerciale\",\"kid yugi, night skinny & artie 5ive\"]": {
+    "v": 0,
+    "s": 67,
+    "t": "Porto il Commerciale",
+    "a": "Kid Yugi, Night Skinny & Artie 5ive"
+   },
+   "m:2026-11|[\"porto il commerciale\",\"kid yugi, night skinny & artie 5ive\"]": {
+    "v": 0,
+    "s": 67,
+    "t": "Porto il Commerciale",
+    "a": "Kid Yugi, Night Skinny & Artie 5ive"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4791,18 +4803,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"porto il commerciale\",\"kid yugi, night skinny & artie 5ive\"]": {
-    "v": 0,
-    "s": 67,
-    "t": "Porto il Commerciale",
-    "a": "Kid Yugi, Night Skinny & Artie 5ive"
-   },
-   "m:2026-11|[\"porto il commerciale\",\"kid yugi, night skinny & artie 5ive\"]": {
-    "v": 0,
-    "s": 67,
-    "t": "Porto il Commerciale",
-    "a": "Kid Yugi, Night Skinny & Artie 5ive"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6755,14 +6755,14 @@
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 401,
+    "v": 2,
+    "s": 428,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 401,
+    "v": 2,
+    "s": 428,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7518,13 +7518,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 428,
+    "s": 499,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 428,
+    "s": 499,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
@@ -7698,13 +7698,13 @@
    },
    "[\"la notte\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 129,
+    "s": 134,
     "t": "La notte",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"la notte\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 129,
+    "s": 134,
     "t": "La notte",
     "a": "ModÃÂÃÂ "
    },
@@ -8460,13 +8460,13 @@
    },
    "[\"la notte\",\"modÃÂ \"]": {
     "v": 2,
-    "s": 134,
+    "s": 203,
     "t": "La notte",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"la notte\",\"modÃÂ \"]": {
     "v": 2,
-    "s": 134,
+    "s": 203,
     "t": "La notte",
     "a": "ModÃÂ "
    },
@@ -9222,13 +9222,13 @@
    },
    "[\"la notte\",\"modÃ \"]": {
     "v": 2,
-    "s": 203,
+    "s": 216,
     "t": "La notte",
     "a": "ModÃ "
    },
    "m:2026-11|[\"la notte\",\"modÃ \"]": {
     "v": 2,
-    "s": 203,
+    "s": 216,
     "t": "La notte",
     "a": "ModÃ "
    },
