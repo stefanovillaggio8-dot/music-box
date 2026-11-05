@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.630";
+  const APP_VERSION = "6.631";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5130,7 +5130,10 @@ function quasiUguali(x, y) {
    sono ancora li'), cosi' non ricompaiono a ogni avvio. */
 function _unisciDuplicatiLocali(elenco) {
   try {
-    const giaNascosti = new Set(_duplicatiLocali());
+    // Stale device-specific duplicate IDs are not proof of duplicates.
+    // Rebuild this decision from the CURRENT loaded songs on every refresh.
+    const previousDuplicates=_duplicatiLocali();
+    if(previousDuplicates.length)writeProfileState(profile,{duplicati:[]});
     const nuoviDaRicordare = [];
     const tenuti = [];
     for (const t of elenco) {
@@ -5144,8 +5147,8 @@ function _unisciDuplicatiLocali(elenco) {
         tenuti.push(t);
         continue;
       }
-      /* Un id nella lista dei "da non mostrare" resta nascosto. */
-      if (giaNascosti.has(t.id)) continue;
+      /* Never hide a song solely because a legacy device flagged its ID.
+         The next loop deduplicates only real title+artist matches. */
       /* Cerco il gemello confrontando con stessoBrano() (il confronto giusto
          del progetto) e NON con una chiave esatta: con la chiave "Linkin
          Park|In the End" e "|linkin park in the end" non si trovavano mai,
