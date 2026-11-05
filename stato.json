@@ -3870,13 +3870,13 @@
    },
    "[\"hey there delilah\",\"plain white t's\"]": {
     "v": 0,
-    "s": 176,
+    "s": 208,
     "t": "Hey There Delilah",
     "a": "Plain White T's"
    },
    "m:2026-11|[\"hey there delilah\",\"plain white t's\"]": {
     "v": 0,
-    "s": 176,
+    "s": 208,
     "t": "Hey There Delilah",
     "a": "Plain White T's"
    },
@@ -10053,6 +10053,18 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De André"
+   },
+   "[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 45,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 45,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
    }
   },
   "Diego": {
