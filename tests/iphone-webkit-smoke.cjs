@@ -1,0 +1,66 @@
+"use strict";
+// Real desktop WebKit integration, using an iPhone viewport + UA. This is
+// NOT a physical iPhone test and does not certify background iOS audio.
+const assert=require("node:assert/strict");
+const http=require("node:http"),fs=require("node:fs"),path=require("node:path");
+const {webkit}=require("playwright");
+const root=path.resolve(__dirname,"..");
+const mime={".html":"text/html",".js":"text/javascript",".json":"application/json",
+ ".css":"text/css",".svg":"image/svg+xml",".png":"image/png",".jpg":"image/jpeg"};
+const srv=http.createServer((req,res)=>{
+ const url=new URL(req.url,"http://127.0.0.1"),name=decodeURIComponent(url.pathname);
+ const file=path.resolve(root,"."+name);
+ if(!(file===root||file.startsWith(root+path.sep))){res.writeHead(403);res.end();return}
+ fs.readFile(file,(err,body)=>{
+  if(err){res.writeHead(404);res.end();return}
+  res.writeHead(200,{"Content-Type":mime[path.extname(file)]||"application/octet-stream",
+   "Cache-Control":"no-store"});res.end(body);
+ });
+});
+async function run(){
+ await new Promise(resolve=>srv.listen(0,"127.0.0.1",resolve));
+ const port=srv.address().port;
+ const browser=await webkit.launch({headless:true});
+ try{
+  const context=await browser.newContext({
+   viewport:{width:390,height:844},isMobile:true,hasTouch:true,
+   userAgent:"Mozilla/5.0 (iPhone; CPU iPhone OS 26_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"
+  });
+  const page=await context.newPage();
+  const errors=[];
+  page.on("pageerror",e=>errors.push(e.message));
+  await page.goto("http://127.0.0.1:"+port+"/index.html",{waitUntil:"domcontentloaded",timeout:45000});
+  await page.waitForFunction(()=>!!window.MusicBoxBridge&&!!window.MusicBoxMix,
+   {timeout:25000});
+  const initial=await page.evaluate(()=>({
+   hasMix:typeof window.MusicBoxMix?.diagnostics==="function",
+   hasBridge:typeof window.MusicBoxBridge?.mixHandoff==="function",
+   ios:window.MusicBoxMix.diagnostics()?.isIOS
+  }));
+  assert.equal(initial.hasMix,true);
+  assert.equal(initial.hasBridge,true);
+  assert.equal(initial.ios,true,"iPhone code path not selected in WebKit");
+  await page.evaluate(()=>{
+   const panel=document.getElementById("mixPanel");
+   if(panel)panel.hidden=false;
+   document.getElementById("btnMixSettings")?.click();
+  });
+  const status=await page.locator("#mixIphoneStatus").textContent();
+  assert.ok(status&&status.trim().length>4,"Safari DJ status must explain its state");
+  await page.evaluate(()=>{
+   const toggle=document.getElementById("mixIphoneToggle");
+   if(toggle)toggle.click();
+  });
+  const toggled=await page.evaluate(()=>window.MusicBoxMix.diagnostics().enabled);
+  assert.equal(typeof toggled,"boolean");
+  // A missing/stalled audio context must not crash the app or hide the
+  // native song controls. User-gesture requirements remain iOS-specific.
+  assert.ok(errors.length===0,"Unexpected WebKit JS exceptions: "+errors.join(" | "));
+  console.log("[IPHONE WEBKIT SMOKE]",JSON.stringify({initial,status,
+   errors:errors.length}));
+  await context.close();
+ }finally{await browser.close()}
+}
+run().then(()=>srv.close(),e=>{
+ console.error(e?.stack||e);srv.close();process.exitCode=1;
+});
