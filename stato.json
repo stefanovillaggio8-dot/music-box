@@ -3618,13 +3618,13 @@
    },
    "[\"frosinone\",\"calcutta\"]": {
     "v": 0,
-    "s": 202,
+    "s": 242,
     "t": "Frosinone",
     "a": "Calcutta"
    },
    "m:2026-11|[\"frosinone\",\"calcutta\"]": {
     "v": 0,
-    "s": 202,
+    "s": 242,
     "t": "Frosinone",
     "a": "Calcutta"
    },
@@ -5909,14 +5909,14 @@
     "a": "Rino Gaetano"
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 152,
+    "v": 2,
+    "s": 168,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 152,
+    "v": 2,
+    "s": 168,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -6672,13 +6672,13 @@
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 168,
+    "s": 250,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 168,
+    "s": 250,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -7434,13 +7434,13 @@
    },
    "[\"coraline\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 250,
+    "s": 275,
     "t": "CORALINE",
     "a": "MÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 250,
+    "s": 275,
     "t": "CORALINE",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -10149,6 +10149,18 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De André"
+   },
+   "[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 34,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
+   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 34,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
    }
   },
   "Diego": {
