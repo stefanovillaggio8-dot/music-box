@@ -369,3 +369,15 @@ test("iPhone can actually start short verified silent fade",()=>{
  assert.ok(source.includes("plan.mobileSilentBridge?.42:1.25"));
  assert.ok(source.includes("cue.mobileSilentBridge===true"));
 });
+
+test("mix copy diagnostic is optional and reports actual iPhone blockers",()=>{
+ const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
+ assert.ok(html.includes('id="mixCopyDiagnostics"'));
+ assert.ok(html.includes('id="mixDiagnosticsOutput"'));
+ assert.ok(source.includes('$("mixCopyDiagnostics")?.addEventListener("click"'));
+ assert.ok(source.includes('await navigator.clipboard.writeText(report)'));
+ assert.ok(source.includes('if(output){output.hidden=false;output.focus();output.select()}'));
+ assert.ok(source.includes('playerReadyState:audio?.readyState??null'));
+ assert.ok(source.includes('bufferedAhead:(()=>'));
+ assert.ok(!source.includes('fetch("/diagnostics"'));
+});

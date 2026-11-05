@@ -4319,6 +4319,25 @@ function start(){
   else if(enabled)bridge()?.mixEnableAudio?.(event);
   draw();
  });
+ $("mixCopyDiagnostics")?.addEventListener("click",async()=>{
+  const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
+  const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
+  const report=JSON.stringify({
+   musicBoxVersion:"6.628",capturedAt:new Date().toISOString(),
+   device:navigator.userAgent.slice(0,180),
+   ...snapshot
+  },null,2);
+  // The listener explicitly controls sharing. Never upload diagnostics.
+  if(output){output.value=report;output.hidden=true}
+  try{
+   if(!navigator.clipboard?.writeText)throw Error("Clipboard API unavailable");
+   await navigator.clipboard.writeText(report);
+   if(status)status.textContent="Diagnosi copiata: incollala in chat per individuare il blocco.";
+  }catch(_){
+   if(output){output.hidden=false;output.focus();output.select()}
+   if(status)status.textContent="Copia non consentita da Safari: tieni premuto sul testo qui sotto e scegli Copia.";
+  }
+ });
  $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio(verifyRequestedTrackId).catch(()=>{});});
  $("mixSmartOrder")?.addEventListener("click",()=>{
   suggestSmartOrder().catch(e=>{
@@ -4376,6 +4395,20 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   const points=liveOutro?.audio===audio?liveOutro.samples:[];
   return {
    enabled,isIOS,current:id,next:next?.id||null,
+   playerPaused:audio?.paused??null,
+   playerReadyState:audio?.readyState??null,
+   playerErrorCode:audio?.error?.code??null,
+   playbackTime:Number.isFinite(audio?.currentTime)?Math.round(audio.currentTime*10)/10:null,
+   bufferedAhead:(()=>{
+    if(!audio)return null;
+    let ahead=0;
+    try{for(let i=0;i<audio.buffered.length;i++)
+     if(audio.buffered.start(i)<=audio.currentTime+.5&&
+        audio.buffered.end(i)>=audio.currentTime)
+      ahead=Math.max(ahead,audio.buffered.end(i)-audio.currentTime);
+    }catch(_){}
+    return Math.round(ahead*10)/10;
+   })(),
    deepIndexLoaded:!!deepIndex,offlineTransferPriority,
    audioContextState:app?.mixRunningContext?.()?.state||"not-running",
    remaining:Number.isFinite(audio?.duration)?Math.round((audio.duration-audio.currentTime)*10)/10:null,
