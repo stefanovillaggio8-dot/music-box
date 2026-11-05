@@ -98,3 +98,41 @@ test("local-only playlist changes persist across refresh without extra cloud wri
  assert.match(src,/const libraryAll=visibleAll\.filter/);
  assert.match(src,/if\(_mobileRowsObserver\)\{_mobileRowsObserver\.disconnect/);
 });
+
+test("read-only library diagnostics detect playlist-only count differences",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.ok(html.includes('id="mixSyncLibrary"'));
+ assert.ok(html.includes('id="mixCopyLibrary"'));
+ assert.ok(mix.includes('$("mixCopyLibrary")?.addEventListener("click"'));
+ assert.ok(mix.includes('await navigator.clipboard.writeText(report)'));
+ const start=src.indexOf("librarySnapshot:()=>{");
+ const end=src.indexOf("syncLibrary:async()=>{",start);
+ assert.ok(start>0&&end>start);
+ const expression=src.slice(start,end).trim().replace(/,\s*$/,"");
+ const items=Array.from({length:233},(_,i)=>({id:"b-track-"+i,title:"Track "+i,artist:"Test",builtin:true}));
+ const environment={
+  tracks:items,profile:"Ste",DEFAULT_PROFILE:"Ste",
+  _soloInPlaylist:new Set(["Ste.b-track-1","Ste.b-track-2","Ste.b-track-3","Ste.b-track-4"]),
+  _chiaveSoloInPlaylist:id=>"Ste."+id,
+  LS:{get:()=>({})},_mieiCopiati:()=>new Set(),APP_VERSION:"test"
+ };
+ const snap=new Function("e",
+  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION}=e;"+
+  "return ({"+expression+"}).librarySnapshot;")(environment);
+ const result=snap();
+ assert.equal(result.totalLoaded,233);
+ assert.equal(result.visibleCount,229);
+ assert.deepEqual(result.playlistOnlyIds,["b-track-1","b-track-2","b-track-3","b-track-4"]);
+ assert.equal(result.tracks.length,229);
+ assert.equal(items.length,233,"diagnostics never delete loaded songs");
+});
+test("manual sync refreshes cloud and local view without erasing offline files",()=>{
+ const i=src.indexOf("syncLibrary:async()=>{");
+ const j=src.indexOf("profile:()=>profile,",i);
+ const body=src.slice(i,j);
+ assert.ok(body.includes("await _caricaStatoCondiviso()"));
+ assert.ok(body.includes("await _caricaPlaylistCondivise()"));
+ assert.ok(body.includes("await loadAll()"));
+ assert.doesNotMatch(body,/dbDelete|caches\.delete|\.splice\(/);
+});

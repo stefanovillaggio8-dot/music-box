@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.629";
+  const APP_VERSION = "6.630";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12014,6 +12014,35 @@ $("btnPrev").addEventListener("click", () => {
 /* Bridge ristretto fra il lettore locale e la stanza privata.
    Nessuna chiave e nessun accesso al database vengono esposti. */
 window.MusicBoxBridge = {
+  // Read-only inventory for comparing the same profile across devices.
+  // Never sends or removes any MP3; user chooses whether to copy it.
+  librarySnapshot:()=>{
+    const all=tracks.filter(t=>t&&t.source!=="stanza-condivisa");
+    const inPlaylist=id=>_soloInPlaylist.has(_chiaveSoloInPlaylist(id))||
+      (profile===DEFAULT_PROFILE&&_soloInPlaylist.has(id));
+    const visible=all.filter(t=>!inPlaylist(t.id));
+    const records=LS.get("mb.eliminati",null)||{};
+    const deletedIds=Object.keys(records).filter(id=>id.startsWith(profile+".")).sort();
+    const local=all.filter(t=>!t.builtin);
+    return {
+      profile,version:APP_VERSION,totalLoaded:all.length,
+      visibleCount:visible.length,localOnlyCount:local.length,
+      localOnlyIds:local.map(t=>t.id).sort(),
+      copiedIds:[..._mieiCopiati()].sort(),
+      playlistOnlyIds:all.filter(t=>inPlaylist(t.id)).map(t=>t.id).sort(),
+      deletedIds,
+      tracks:visible.map(t=>({id:t.id,title:t.title,artist:t.artist,builtin:!!t.builtin}))
+        .sort((x,y)=>x.id.localeCompare(y.id))
+    };
+  },
+  syncLibrary:async()=>{
+    // Read cloud state and playlists first, then rebuild. Keep local
+    // IndexedDB blobs, pending changes, and offline caches intact.
+    await _caricaStatoCondiviso();
+    await _caricaPlaylistCondivise();
+    await loadAll();
+    return window.MusicBoxBridge.librarySnapshot();
+  },
   profile:()=>profile,
   playable:()=>_listaPerIlSeguito(),
   allTracks:()=>tracks,

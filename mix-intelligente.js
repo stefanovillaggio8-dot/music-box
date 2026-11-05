@@ -4386,6 +4386,35 @@ function start(){
    if(status)status.textContent="Copia non consentita da Safari: tieni premuto sul testo qui sotto e scegli Copia.";
   }
  });
+ $("mixSyncLibrary")?.addEventListener("click",async()=>{
+  const status=$("mixLibraryStatus"),button=$("mixSyncLibrary");
+  if(button)button.disabled=true;
+  if(status)status.textContent="Rileggo il catalogo condiviso senza cancellare i brani locali…";
+  try{
+   const snap=await bridge()?.syncLibrary?.();
+   if(!snap)throw Error("Libreria non pronta");
+   if(status)status.textContent="Riletti "+snap.visibleCount+" brani visibili · "+
+    snap.localOnlyCount+" locali · "+snap.playlistOnlyIds.length+
+    " solo nelle playlist. Nessun MP3 cancellato.";
+  }catch(_){
+   if(status)status.textContent="Sincronizzazione non riuscita: dati locali conservati.";
+  }finally{if(button)button.disabled=false}
+ });
+ $("mixCopyLibrary")?.addEventListener("click",async()=>{
+  const status=$("mixLibraryStatus"),output=$("mixLibraryOutput");
+  const info=bridge()?.librarySnapshot?.();
+  if(!info){if(status)status.textContent="Libreria non pronta.";return}
+  const report=JSON.stringify({capturedAt:new Date().toISOString(),...info},null,2);
+  if(output){output.value=report;output.hidden=true}
+  try{
+   if(!navigator.clipboard?.writeText)throw Error("Clipboard API unavailable");
+   await navigator.clipboard.writeText(report);
+   if(status)status.textContent="Elenco copiato. Incollalo in chat, poi confrontalo con l'altro dispositivo.";
+  }catch(_){
+   if(output){output.hidden=false;output.focus();output.select()}
+   if(status)status.textContent="Copia bloccata: seleziona e copia il testo qui sotto.";
+  }
+ });
  $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio(verifyRequestedTrackId).catch(()=>{});});
  $("mixSmartOrder")?.addEventListener("click",()=>{
   suggestSmartOrder().catch(e=>{

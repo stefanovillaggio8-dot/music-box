@@ -1416,6 +1416,14 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
       <textarea id="mixDiagnosticsOutput" hidden readonly aria-label="Rapporto diagnostico da copiare" style="width:100%;min-height:105px;border-radius:9px;background:#0f1520;color:#eef6ff;border:1px solid #45566f;padding:10px;font-size:11px"></textarea>
     </div>
     <div class="mix-setting-section">
+      <strong>Confronto libreria PC / telefono</strong>
+      <p class="mix-setting-hint">Se i due dispositivi mostrano numeri diversi, rileggi i dati condivisi senza cancellare file. Poi copia gli ID per identificare esattamente quali brani cambiano.</p>
+      <button type="button" id="mixSyncLibrary" class="mix-action-btn">Risincronizza elenco (senza eliminare MP3)</button>
+      <button type="button" id="mixCopyLibrary" class="mix-action-btn">Copia elenco e differenze locali</button>
+      <p id="mixLibraryStatus" class="mix-setting-hint" role="status" aria-live="polite">Gli MP3 salvati sui dispositivi non vengono modificati.</p>
+      <textarea id="mixLibraryOutput" hidden readonly aria-label="Elenco brani da confrontare" style="width:100%;min-height:110px;padding:10px;background:#0f1520;color:#eef6ff;border:1px solid #45566f;border-radius:9px;font-size:11px"></textarea>
+    </div>
+    <div class="mix-setting-section">
       <strong>Verifica MP3 corrente</strong>
       <p class="mix-setting-hint">Se un brano di Diego o di un altro account sembra difettoso, avvialo e premi qui: controllo il download, la decodifica e la durata, senza modificare il file.</p>
       <button id="mixVerifyCurrent" type="button" class="mix-action-btn">Verifica il brano in ascolto</button>
@@ -1519,12 +1527,12 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 </div>
 </div>
 <script src="fuoco.js?v=6570"></script>
-<script src="app.js?v=6629"></script>
+<script src="app.js?v=6630"></script>
 <script src="stanza.js?v=6570"></script>
 <script src="amici-online.js?v=6570"></script>
 <script src="discord-presence.js?v=6570"></script>
 <script src="voice-analysis.js?v=6570"></script>
-<script src="mix-intelligente.js?v=6629"></script>
+<script src="mix-intelligente.js?v=6630"></script>
 <script src="immersive.js?v=6570"></script>
 </body>
 </html>
