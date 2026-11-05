@@ -27,6 +27,13 @@ async function run(){
    userAgent:"Mozilla/5.0 (iPhone; CPU iPhone OS 26_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"
   });
   const page=await context.newPage();
+  // The desktop-only 127.0.0.1:8788 diagnostics bridge is not installed
+  // on the GitHub Actions runner. Make its optional /log endpoint inert
+  // without concealing actual WebKit JavaScript exceptions in the DJ.
+  await page.route(/^https?:\/\/127\.0\.0\.1:8788\/log(?:\?|$)/,route=>
+   route.fulfill({status:204,headers:{
+    "Access-Control-Allow-Origin":"*",
+    "Access-Control-Allow-Methods":"GET,POST,OPTIONS"}}));
   const errors=[];
   page.on("pageerror",e=>errors.push(e.message));
   await page.goto("http://127.0.0.1:"+port+"/index.html",{waitUntil:"domcontentloaded",timeout:45000});
