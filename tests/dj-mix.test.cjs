@@ -328,7 +328,7 @@ test("iPhone audio-clock drift blocks a corrupted seek into the next song",()=>{
  const f=createMobileMixFixture();
  assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
  f.ctx.currentTime=101;
- f.old.currentTime=179.6;
+ f.old.currentTime=179.98;
  f.old.handlers.timeupdate();
  assert.equal(f.calls.length,0);
  assert.equal(f.engine.active(),null);
