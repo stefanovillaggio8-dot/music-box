@@ -3575,14 +3575,14 @@
     "a": "tha supreme"
    },
    "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 0,
-    "s": 129,
+    "v": 1,
+    "s": 179,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
    "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 0,
-    "s": 129,
+    "v": 1,
+    "s": 179,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
@@ -7768,6 +7768,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
+   "[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -8530,17 +8542,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
-   "[\"giovanni\",\"tonypitony\"]": {
+   "[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
-   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -9006,13 +9018,13 @@
    },
    "[\"g&v\",\"ivanbÃ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃ¬"
    },
@@ -9303,18 +9315,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -9780,13 +9780,13 @@
    },
    "[\"g&v\",\"ivanbì\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBì"
    },
    "m:2026-11|[\"g&v\",\"ivanbì\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBì"
    },
