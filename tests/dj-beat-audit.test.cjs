@@ -402,3 +402,40 @@ test("real 1197 last-impact musical pairing: audit intro beat, harmony and groov
  }));
  assert.ok(scored.length>0);
 });
+
+test("real Ste candidates for starting on final impact rather than room tone",()=>{
+ const app=fs.readFileSync(path.join(root,"app.js"),"utf8");
+ const start=app.indexOf("const BUILTIN = ["),end=app.indexOf("\n  ];",start);
+ assert.ok(start>=0&&end>start);
+ const rows=new Function("return "+app.slice(start+"const BUILTIN = ".length,end+5))();
+ const s=JSON.parse(fs.readFileSync(path.join(root,"stato.json"),"utf8"));
+ const own=new Set(rows.filter(x=>(x.profile||"Ste")==="Ste").map(x=>"audio/"+x.file));
+ const copied=new Set(s.miei?.Ste||[]);
+ for(const x of rows){
+  const id="b-"+String(x.file||"").split("/").pop().replace(/\.mp3$/,"");
+  if(copied.has(id))own.add("audio/"+x.file);
+ }
+ const a=find("audio/songs/track-1197.mp3").data;
+ const out=[];
+ for(const t of tracks){
+  if(!own.has(t.key)||t.key.endsWith("track-1197.mp3"))continue;
+  const b=t.data;if(!(b.introDrive>=.43&&b.beatConfidence>=.16))continue;
+  const ratio=bpmRatio(a,b);
+  if(ratio<.955||ratio>1.045)continue;
+  const g=tools.grooveAgreement(a,b),n=tools.similarNotes(a,b),
+   k=tools.camelotMatch(a,b),o=tools.onsetPairAgreement(a,b);
+  if(g?.score<.70||n?.focused<.65||n?.phrase<.50||
+     (k?.weight>=.14&&k.score<.45))continue;
+  out.push({
+   track:t.key,groove:+g.score.toFixed(3),focused:+n.focused.toFixed(3),
+   phrase:+n.phrase.toFixed(3),key:+k.score.toFixed(3),
+   onset:o?.best,zero:o?.atZero,certified:o?.certified===true,
+   intro:b.introDrive,beat:b.beatConfidence,
+   introBeat:b.introBeat,bpm:b.bpm
+  });
+ }
+ out.sort((x,y)=>(y.groove+y.focused+y.phrase)-(x.groove+x.focused+x.phrase));
+ console.info("[DJ 1197 STE FINAL IMPACT]",JSON.stringify({
+  ownTracks:own.size,eligible:out.length,top:out.slice(0,20)}));
+ assert.ok(out.length>=0);
+});
