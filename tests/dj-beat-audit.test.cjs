@@ -16,7 +16,7 @@ const tools=new Function("isIOS","style",
  extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
- "return {transition,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
+ "return {transition,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
  "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
@@ -438,4 +438,31 @@ test("real Ste candidates for starting on final impact rather than room tone",()
  console.info("[DJ 1197 STE FINAL IMPACT]",JSON.stringify({
   ownTracks:own.size,eligible:out.length,top:out.slice(0,20)}));
  assert.ok(out.length>=0);
+});
+
+test("real Ste final-impact eligible incoming MP3s",()=>{
+ const app=fs.readFileSync(path.join(root,"app.js"),"utf8");
+ const start=app.indexOf("const BUILTIN = ["),end=app.indexOf("\n  ];",start);
+ assert.ok(start>=0&&end>start);
+ const rows=new Function("return "+app.slice(start+"const BUILTIN = ".length,end+5))();
+ const copies=new Set(JSON.parse(fs.readFileSync(path.join(root,"stato.json"),"utf8")).miei?.Ste||[]);
+ const own=new Set(rows.filter(t=>(t.profile||"Ste")==="Ste"||
+   copies.has("b-"+String(t.file||"").split("/").pop().replace(/\.mp3$/i,"")))
+   .map(t=>"audio/"+t.file));
+ const outgoing=find("audio/songs/track-1197.mp3")?.data;
+ assert.ok(outgoing);
+ const scanned={...outgoing,lastLyricAt:215.11,lastVoiceAt:213.59};
+ const eligible=[];
+ for(const track of tracks){
+  if(!own.has(track.key)||track.key.endsWith("track-1197.mp3"))continue;
+  const plan=tools.desktopFinalImpactRelay(scanned,track.data,scanned.duration);
+  if(plan)eligible.push({id:track.key,introDrive:track.data.introDrive,
+    grooveScore:plan.grooveScore,begin:plan.begin,end:plan.end,
+    finalImpactAt:plan.finalImpactAt});
+ }
+ eligible.sort((a,b)=>b.grooveScore-a.grooveScore);
+ console.info("[DJ STE REAL FINAL BEAT JOIN]",JSON.stringify({
+  owned:own.size,eligible:eligible.length,top:eligible.slice(0,12)}));
+ assert.ok(eligible.length>=1,"must have a real eligible musical successor for track 1197");
+ assert.ok(eligible.every(p=>p.begin<241.3&&p.end>243.9));
 });
