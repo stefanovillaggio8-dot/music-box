@@ -3730,8 +3730,21 @@ async function intelligentShuffle(app,audio,fromId){
     (!Number.isFinite(next.firstVoiceAt)||next.firstVoiceAt>=3)&&
     (!Number.isFinite(next.firstLyricAt)||next.firstLyricAt>=3));
    if(safeSoft){
+    // A quiet outro is safe, but not every next song will sound equally
+    // natural. Prefer harmonic/key/tempo continuity within this safe tier,
+    // never use the score as permission to cut a vocal or fake matching beats.
+    const key=camelotMatch(old,next),notes=similarNotes(old,next);
+    const ratios=[.5,1,2].map(scale=>Number(old.bpm)/(Number(next.bpm)*scale));
+    const tempo=ratios.reduce((best,r)=>
+      Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
+    const tempoFit=Number.isFinite(tempo)&&tempo>0?
+      clamp(1-Math.abs(Math.log2(tempo))/.24,0,1):.5;
+    const toneFit=Number.isFinite(notes?.focused)?clamp(notes.focused,0,1):.5;
+    const phraseFit=Number.isFinite(notes?.phrase)?clamp(notes.phrase,0,1):.5;
+    const keyFit=key?.weight>=.14?clamp(key.score,0,1):.5;
     const score=1+Math.min(.16,cue.fade*.025)+info.introDrive*.10+
-     (Number(cue.grooveScore)||0)*.07;
+     (Number(cue.grooveScore)||0)*.07+
+     toneFit*.13+phraseFit*.07+keyFit*.13+tempoFit*.08;
     softScored.push({track,cue,score});
    }else if(!cue)rejected.noMusicalBridge++;
    else rejected.onlyQuiet++;
@@ -3769,9 +3782,9 @@ async function intelligentShuffle(app,audio,fromId){
     rejected,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
-     "raccordo ritmico breve, finale preservato":"beat certificato"):nearScored.length?
-     "ordine per BPM, groove e tonalita":softScored.length?
-     "sfumatura su finale quieto (non beat uguali)":sequenceScored.length?
+     "raccordo ritmico breve, finale preservato":"beat certificato"):softScored.length?
+     "sfumatura su finale quieto (non beat uguali)":nearScored.length?
+     "ordine per BPM, groove e tonalita":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
       "ritmo simile, raccordo continuo (non beat certificato)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":

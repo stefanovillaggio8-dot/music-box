@@ -35,10 +35,15 @@ function fixture(options={}){
   "const cache=new Map(),deepLookup=t=>t?.analysis||null;",
   "const decode=async t=>t?.analysis||null;",
   "const grooveAgreement=()=>({score:"+(Number(options.groove??.85))+"});",
-  "const camelotMatch=()=>({score:"+(options.keyMatch?".97":".05")+
-    ",weight:"+(options.keyMatch?".20":"0")+"});",
+  "const camelotMatch=(a,b)=>({score:Number.isFinite(b?.keyScore)?b.keyScore:"+
+    (options.keyMatch?".97":".05")+
+    ",weight:Number.isFinite(b?.keyWeight)?b.keyWeight:"+
+    (options.keyMatch?".20":"0")+"});",
   "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
-  "const similarNotes=()=>({focused:"+(Number(options.focused??.82))+",phrase:"+(Number(options.phrase??.81))+"});",
+  "const similarNotes=(a,b)=>({focused:Number.isFinite(b?.focusScore)?b.focusScore:"+
+    Number(options.focused??.82)+
+    ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
+    Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>next.cue||null;",
   "const desktopBeatPairCertified=()=>true,iphoneQuietReleaseCertified=()=>true;",
   "let shuffleLastDecision=null,deepIndex=null;",
@@ -59,6 +64,29 @@ const beat=(fade,patch={})=>({
  kind:"beat",fade,measuredBeatBridge:true,verifiedHarmonicBridge:true,grooveScore:.84,score:88,
  ...patch
 });
+
+test("Spotify-style safe soft fades prefer matching key, notes and BPM over a longer unrelated fade",async()=>{
+ const f=fixture({groove:.40,pool:[
+  {analysis:{bpm:95,introDrive:.9,keyScore:.05,keyWeight:.2,
+    focusScore:.20,phraseScore:.20},cue:soft(5.0)},
+  {analysis:{bpm:120,introDrive:.75,keyScore:.97,keyWeight:.2,
+    focusScore:.91,phraseScore:.84},cue:soft(3.2)}
+ ]});
+ const result=await f.run();
+ assert.equal(result.selected,true);
+ assert.equal(f.selected()?.pickId,3,"more harmonic fade should beat unrelated longer fade");
+ assert.equal(f.decision().beatCandidates,0,"no invented beatmatch");
+ assert.equal(f.decision().softCandidates,2);
+ assert.equal(f.decision().reason,"sfumatura su finale quieto (non beat uguali)");
+});
+test("safe soft musical ranking does not change manually ordered queues",async()=>{
+ const f=fixture({manual:true,pool:[
+  {analysis:{keyScore:.05,keyWeight:.2},cue:soft(5)},
+  {analysis:{keyScore:.97,keyWeight:.2},cue:soft(3)}
+ ]});
+ await f.run();assert.equal(f.selected(),null);
+});
+
 test("selects a certified musical fade instead of a random next song when beat matches are absent",async()=>{
  const f=fixture({groove:.40,pool:[{cue:null},{cue:soft(4.3)}]});
  await f.run();
