@@ -162,7 +162,10 @@ test("select best candidate for independent MP3 waveform spot-checks",()=>{
    to:"audio/songs/track-8.mp3",reason:"recorded_false_match"},
   {from:"audio/songs/track-391.mp3",to:"audio/songs/track-1164.mp3",reason:"certified_beat"},
   {from:"audio/songs/track-391.mp3",to:"audio/songs/track-598.mp3",reason:"certified_beat"},
-  {from:"audio/songs/track-568.mp3",to:"audio/songs/track-464.mp3",reason:"rejected_beat"}];
+  {from:"audio/songs/track-568.mp3",to:"audio/songs/track-464.mp3",reason:"rejected_beat"},
+  // A newly certified SHORT beat-grid join: inspect the real MP3 before
+  // allowing this kind of preview to become common on iPhone.
+  {from:"audio/songs/track-378.mp3",to:"audio/songs/track-91.mp3",reason:"pulse_grid"}];
  for(const fromKey of outgoing){
   const from=tracks.find(x=>x.key===fromKey);
   if(!from)continue;
