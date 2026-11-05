@@ -2310,13 +2310,13 @@
    },
    "[\"mi fido di te\",\"jovanotti\"]": {
     "v": 1,
-    "s": 152,
+    "s": 234,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
     "v": 1,
-    "s": 152,
+    "s": 234,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
@@ -7206,13 +7206,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 3,
+    "s": 75,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 3,
+    "s": 75,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
@@ -7914,13 +7914,13 @@
    },
    "[\"il regalo piÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 170,
+    "s": 226,
     "t": "Il Regalo PiÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃÂ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 170,
+    "s": 226,
     "t": "Il Regalo PiÃÂ¹ Grande",
     "a": "Tiziano Ferro"
    },
@@ -7956,13 +7956,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂ©\"]": {
     "v": 0,
-    "s": 75,
+    "s": 89,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂ©\"]": {
     "v": 0,
-    "s": 75,
+    "s": 89,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -8664,13 +8664,13 @@
    },
    "[\"il regalo piÃ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 226,
+    "s": 271,
     "t": "Il Regalo PiÃ¹ Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo piÃ¹ grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 226,
+    "s": 271,
     "t": "Il Regalo PiÃ¹ Grande",
     "a": "Tiziano Ferro"
    },
