@@ -46,10 +46,13 @@ function fixture(options={}){
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>next.cue||null;",
-  "const desktopBeatPairCertified=()=>true,iphoneQuietReleaseCertified=()=>true;",
+  "const desktopBeatPairCertified=()=>true,iphoneBeatPairCertified=()=>true,"+
+   "iphoneQuietReleaseCertified=()=>true;",
   "let shuffleLastDecision=null,deepIndex=null;",
   source.slice(source.indexOf("function withValidatedVoice("),
     source.indexOf("function deepStatus(){",source.indexOf("function withValidatedVoice("))),
+  source.slice(source.indexOf("function musicallyCompatibleOverlay("),
+    source.indexOf("function transition(",source.indexOf("function musicallyCompatibleOverlay("))),
   source.slice(start,end),
   "return {run:()=>intelligentShuffle(ctx.app,{duration:100,currentTime:0},1),",
   "decision:()=>shuffleLastDecision};"
@@ -67,7 +70,7 @@ const beat=(fade,patch={})=>({
 });
 
 test("Spotify-style safe soft fades prefer matching key, notes and BPM over a longer unrelated fade",async()=>{
- const f=fixture({groove:.40,pool:[
+ const f=fixture({groove:.85,pool:[
   {analysis:{bpm:95,introDrive:.9,keyScore:.05,keyWeight:.2,
     focusScore:.20,phraseScore:.20},cue:soft(5.0)},
   {analysis:{bpm:120,introDrive:.75,keyScore:.97,keyWeight:.2,
@@ -80,6 +83,24 @@ test("Spotify-style safe soft fades prefer matching key, notes and BPM over a lo
  assert.equal(f.decision().softCandidates,2);
  assert.equal(f.decision().reason,"sfumatura su finale quieto (non beat uguali)");
 });
+
+test("incompatible chords cannot blend merely because the outro is quiet",async()=>{
+ const f=fixture({groove:.86,pool:[
+  {analysis:{focusScore:.24,phraseScore:.12,keyScore:.05,keyWeight:.20},cue:soft(5)},
+  {analysis:{focusScore:.91,phraseScore:.84,keyScore:.97,keyWeight:.20},cue:soft(3.4)}
+ ]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().softCandidates,1,"dissonant quiet fades are refused");
+});
+test("matching drums alone never force an incompatible automatic DJ pair",async()=>{
+ const f=fixture({focused:.36,phrase:.21,groove:.82,pool:[
+  {analysis:{bpm:176},cue:null},{analysis:{bpm:120},cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.selected(),null,"a weak chord match cannot be advertised as mixed");
+ assert.equal(f.decision().rhythmOrderCandidates,1);
+});
 test("safe soft musical ranking does not change manually ordered queues",async()=>{
  const f=fixture({manual:true,pool:[
   {analysis:{keyScore:.05,keyWeight:.2},cue:soft(5)},
@@ -89,7 +110,7 @@ test("safe soft musical ranking does not change manually ordered queues",async()
 });
 
 test("selects a certified musical fade instead of a random next song when beat matches are absent",async()=>{
- const f=fixture({groove:.40,pool:[{cue:null},{cue:soft(4.3)}]});
+ const f=fixture({groove:.85,pool:[{cue:null},{cue:soft(4.3)}]});
  await f.run();
  assert.equal(f.selected()?.pickId,3);
  assert.equal(f.decision().beatCandidates,0);
@@ -322,21 +343,16 @@ test("shuffle analysis yields between chunks on iPhone and rechecks playback gen
  assert.match(source,/setInterval\(\(\)=>\{try\{tick\(\)\}catch\(e\)\{\}\},isIOS\?650:350\)/);
 });
 
-test("real-world zero beat matches still choose the best measured percussive next song",async()=>{
+test("rhythm-only resemblance is diagnostic, not a DJ mix",async()=>{
  const f=fixture({focused:.36,phrase:.21,groove:.82,pool:[
   {analysis:{bpm:176},cue:null},{analysis:{bpm:120},cue:null}
  ]});
  await f.run();
- assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.selected(),null);
  assert.equal(f.decision().beatCandidates,0);
- assert.equal(f.decision().softCandidates,0);
  assert.equal(f.decision().nearCandidates,0);
- assert.equal(f.decision().sequenceCandidates,0);
  assert.equal(f.decision().rhythmOrderCandidates,1);
- assert.equal(f.decision().reason,
-  "ritmo simile, raccordo continuo (non beat certificato)");
 });
-
 test("real audible DJ transitions outrank similarity-only queue candidates",()=>{
  const body=source.slice(source.indexOf("async function intelligentShuffle("),
   source.indexOf("let shuffleBusy=",source.indexOf("async function intelligentShuffle(")));
