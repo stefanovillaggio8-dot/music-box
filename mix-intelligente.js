@@ -1925,6 +1925,30 @@ function desktopSilentTailBridge(a,b,dur){
   safeOutroAt:begin,silenceTrim:true,trailing:dur-end,
   softTailTrim:false};
 }
+// A decoded full MP3 can have a musically completed ending but residual
+// low-level room tone. Only fade after its LAST measured musical event.
+// Never count this as beat matching or as verified DIGITAL silence.
+function desktopMeasuredPostludeBridge(a,b,dur){
+ const r=a?.dropRelease;
+ if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||a.confidentTail===true||
+    !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||!Number.isFinite(a.last)||
+    a.last<26||dur-a.last<3.5||dur-a.last>12||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.33||
+    !r||!Number.isFinite(r.lastImpactAt)||!Number.isFinite(r.releaseAt)||
+    r.releaseAt<r.lastImpactAt||!Number.isFinite(r.score)||
+    r.score<.70||!Number.isFinite(r.quietLevel)||r.quietLevel>.30||
+    a.last-r.releaseAt<1.65||a.last-r.releaseAt>5.5||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-6)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-5))return null;
+ const begin=a.last+.34,fade=Math.min(1.65,dur-begin-.45),end=begin+fade;
+ if(begin<26||fade<1.05||end>dur-.40)return null;
+ return {kind:"soft",begin,end,fade,entry:musicalIntroEntry(b),
+  tempo:1,gain:1,score:null,preserveTail:true,
+  measuredPostludeBridge:true,quietCertified:true,safeOutroAt:begin,
+  silenceTrim:true,trailing:dur-end,softTailTrim:false};
+}
 function continuityFallback(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(isIOS||!Number.isFinite(dur)||dur<26||
@@ -1985,6 +2009,23 @@ function musicallyCompatibleOverlay(a,b,cue){
    cue.end<=a.duration-.19&&cue.fade>=.65&&cue.fade<=1.70&&
    (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<a.last-.75)&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-.75);
+ }
+ // Verified postlude: the blend starts after the final musical event.
+ // The outgoing recording can still contain quiet room tone, not a beat.
+ if(cue.measuredPostludeBridge===true&&cue.kind==="soft"){
+  const r=a.dropRelease;
+  return !isIOS&&a.confidentTail!==true&&a.protectedEnding!==true&&
+   Number.isFinite(a.duration)&&Number.isFinite(a.last)&&
+   a.duration-a.last>=3.5&&a.duration-a.last<=12&&
+   r&&r.score>=.70&&r.quietLevel<=.30&&
+   Number.isFinite(r.releaseAt)&&Number.isFinite(r.lastImpactAt)&&
+   r.releaseAt>=r.lastImpactAt&&
+   a.last-r.releaseAt>=1.65&&a.last-r.releaseAt<=5.5&&
+   cue.begin>=a.last+.30&&cue.end<=a.duration-.40&&
+   cue.fade>=1.05&&cue.fade<=1.65&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-5)&&
+   (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<a.last-6)&&
+   hasImmediateMusicalIntro(b);
  }
  // A genuine, verified LOW-ENERGY release supports a neutral fade.
  // It is NOT equivalent to matching BPM or beats.
@@ -3001,7 +3042,8 @@ async function beginMix(song,proposed){
   if(beatWait>.045)
    await new Promise(resolve=>setTimeout(resolve,Math.round(beatWait*1000)));
   if(active!==act||old.paused||app.currentId()!==id||
-     old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:1.2)){cancel();return}
+     old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:
+      proposed.measuredPostludeBridge?.35:1.2)){cancel();return}
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
   console.info("[Music Box DJ] Sovrapposizione audio avviata",
@@ -3380,6 +3422,11 @@ function tick(){
    const certifiedQuietAlternative=proposedQuiet&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedQuiet)?
        proposedQuiet:null;
+   const postlude=currentAnalysis&&nextAnalysis&&!isIOS?
+      desktopMeasuredPostludeBridge(currentAnalysis,nextAnalysis,audio.duration):null;
+   const certifiedPostlude=postlude&&
+     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,postlude)?
+      postlude:null;
    const proposedContinuity=currentAnalysis&&nextAnalysis?
       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null;
    const compatibleContinuity=proposedContinuity&&
@@ -3396,9 +3443,9 @@ function tick(){
       possibleSilentBridge:null;
    const chosen=compatibleCandidate?candidate:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
-      certifiedQuietAlternative||certifiedSilentBridge:
+      certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude:
      (chosen&&chosen.kind!=="cut"?chosen:null)||
-      certifiedQuietAlternative||certifiedSilentBridge||
+      certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||
       compatibleContinuity||chosen;
    updateDetails(a,b);
   };
@@ -3629,6 +3676,7 @@ function updateDetails(a,b){
    " · raccordo continuo, senza beatmatch certificato":
    plan?.softTailTrim?
    " · finale molto debole abbreviato: "+plan.trailing.toFixed(1)+" s":
+   plan?.measuredPostludeBridge?" · finale concluso: raccordo su coda debole, non beatmatch":
    plan?.mobileSilentBridge?" · coda digitale muta: ingresso breve senza tagliare note":
    plan?.silenceTrim?" · finale muto eliminato: "+plan.trailing.toFixed(1)+" s":"";
  const vocal=a?.voiceModel?(Number.isFinite(a.lastVoiceAt)?
@@ -4425,6 +4473,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    mobileMixLastBlocker,mobileMixLastStartedAt,
    certifiedQuietAlternative:!!plan?.neutralRelease,
    mobileSilentBridge:!!plan?.mobileSilentBridge,
+   measuredPostludeBridge:!!plan?.measuredPostludeBridge,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,
    shuffleBusy,

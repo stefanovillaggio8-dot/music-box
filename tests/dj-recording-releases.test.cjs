@@ -107,3 +107,35 @@ test("the mixer logs its actual start, not only a selected library candidate",()
  assert.match(source,/actualAt:Number\(old.currentTime.toFixed\(2\)\)/);
  assert.match(source,/remaining:Number\(\(old.duration-old.currentTime\).toFixed\(2\)\)/);
 });
+
+test("real diagnostic 1197: finished musical postlude can crossfade safely",()=>{
+ const start=source.indexOf("function desktopMeasuredPostludeBridge(");
+ const end=source.indexOf("function continuityFallback(",start);
+ assert.ok(start>0&&end>start);
+ const fn=new Function("isIOS","hasImmediateMusicalIntro","musicalIntroEntry",
+  source.slice(start,end)+"return desktopMeasuredPostludeBridge;")(false,()=>true,()=>0);
+ const a={duration:249.133,last:243.9,confidentTail:false,
+  protectedEnding:false,lastLyricAt:215.11,lastVoiceAt:213.59,
+  dropRelease:{lastImpactAt:241.3,releaseAt:241.75,
+    quietLevel:.2685,score:.7315}};
+ const b={duration:200,introDrive:.8};
+ const plan=fn(a,b,249.133);
+ assert.ok(plan,"the measured final decay must not wait through room noise");
+ assert.equal(plan.kind,"soft");
+ assert.equal(plan.measuredPostludeBridge,true);
+ assert.equal(plan.score,null,"no false beat certification");
+ assert.ok(plan.begin>a.last&&plan.end<=a.duration-.40);
+ assert.equal(fn({...a,protectedEnding:true},b,249.133),null);
+ assert.equal(fn({...a,lastVoiceAt:243.3},b,249.133),null);
+ assert.equal(fn({...a,lastLyricAt:240},b,249.133),null);
+ assert.equal(fn({...a,last:248.7},b,249.133),null);
+ assert.equal(fn({...a,confidentTail:true},b,249.133),null);
+ assert.equal(fn({...a,dropRelease:{...a.dropRelease,quietLevel:.5}},b,249.133),null);
+ assert.equal(fn({...a,dropRelease:{...a.dropRelease,score:.6}},b,249.133),null);
+});
+test("postlude can be selected even after strict beatmatch rejects a pair",()=>{
+ assert.ok(source.includes("certifiedPostlude=postlude&&"));
+ assert.ok(source.includes("certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude"));
+ assert.ok(source.includes("proposed.measuredPostludeBridge?.35:1.2"));
+ assert.ok(source.includes('cue.measuredPostludeBridge===true&&cue.kind==="soft"'));
+});
