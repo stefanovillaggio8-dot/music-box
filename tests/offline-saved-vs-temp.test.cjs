@@ -130,3 +130,46 @@ test("Safari repeat seek uses recent cached Blob before touching CacheStorage ag
  assert.equal(next.headers.get("Content-Range"),"bytes 6000-6999/12000");
  assert.equal(stats.lookups,1);
 });
+
+test("two-slot iPhone offline saves can stream without buffering whole MP3 blobs",async()=>{
+ const code=excerpt(app,"  async function cacheTrack(","  /* Ste: \"quando premo seleziona");
+ const build=fetchMock=>{
+  const cache={
+   saved:null,deletes:0,
+   match:async()=>null,
+   put:async function(url,response){
+    const bytes=new Uint8Array(await response.arrayBuffer());
+    this.saved={url,bytes,headers:response.headers};
+   },
+   delete:async function(url){this.saved=null;this.deletes++;return true;}
+  };
+  const run=new Function("fetch","cache",
+   "const profile='Ste',offlineAbort=null,offlineStopRequested=false;"+
+   "const _promuoviCachePerOffline=async()=>false;"+
+   "const _offlinePronto=row=>{row.state='ok';row.label='pronta'};"+
+   "const fmtBytes=x=>String(x);"+
+   code+"return row=>cacheTrack(row,cache,'Ste');")(fetchMock,cache);
+  return {cache,run};
+ };
+ const complete=build(async()=>new Response(new Uint8Array(8192).fill(27),{
+  status:200,headers:{"Content-Type":"audio/mpeg","Content-Length":"8192"}}));
+ const good={track:{url:"https://example.com/good.mp3"},state:"todo",el:null};
+ await complete.run(good);
+ assert.equal(good.state,"ok");
+ assert.equal(complete.cache.saved.bytes.byteLength,8192);
+ assert.equal(complete.cache.saved.headers.get("X-Scaricato")!==null,true);
+ assert.equal(complete.cache.deletes,0);
+ const broken=build(async()=>new Response(new Uint8Array(4096).fill(27),{
+  status:200,headers:{"Content-Type":"audio/mpeg","Content-Length":"8192"}}));
+ const bad={track:{url:"https://example.com/partial.mp3"},state:"todo",el:null};
+ await broken.run(bad);
+ assert.equal(bad.state,"err","incomplete HTTP 200 must fail closed");
+ assert.equal(broken.cache.saved,null,"partial file must be deleted");
+ assert.equal(broken.cache.deletes,1);
+ const ranged=build(async()=>new Response(new Uint8Array(8192),{
+  status:206,headers:{"Content-Type":"audio/mpeg"}}));
+ const row={track:{url:"https://example.com/206.mp3"},state:"todo",el:null};
+ await ranged.run(row);
+ assert.equal(row.state,"err");
+ assert.equal(ranged.cache.saved,null);
+});

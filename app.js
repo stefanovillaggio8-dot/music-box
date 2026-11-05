@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.611";
+  const APP_VERSION = "6.612";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12927,6 +12927,58 @@ $("fabMenu").addEventListener("click", (e) => {
       if(total>40*1024*1024)throw new Error("Audio troppo grande per la cache offline");
       const started=Date.now();
       let lastPaint=0;
+      // iPhone: stream a complete 200 response directly into CacheStorage
+      // while independently counting progress. This avoids allocating two
+      // full-song JS chunk arrays plus a final MP3 Blob on the main thread.
+      // The cache write remains atomic; an interrupted/mismatched file is
+      // explicitly discarded and NEVER announced as saved offline.
+      if(total>=4096 && res.body && typeof res.body.tee==="function"){
+        const [progressStream,saveStream]=res.body.tee();
+        const stored=new Response(saveStream,{
+          status:200,headers:{
+           "Content-Type":res.headers.get("content-type")||"audio/mpeg",
+           "Content-Length":String(total),
+           "X-Scaricato":String(Date.now())
+          }
+        });
+        // Catch the cache promise immediately so quota errors do not become
+        // unhandled while the progress stream is still being consumed.
+        const saving=cache.put(url,stored).then(()=>null,error=>error);
+        const reader=progressStream.getReader();
+        let got=0;
+        try{
+          for(;;){
+            const part=await reader.read();if(part.done)break;
+            got+=part.value.byteLength;
+            if(got>40*1024*1024)throw new Error("MP3 oltre 40 MB");
+            resetIdle();
+            const now=Date.now();
+            if(row.el&&(now-lastPaint>=220||got>=total)){
+              lastPaint=now;
+              const pct=Math.min(99,Math.round((got/total)*100));
+              const rate=(got/1048576)/Math.max(.3,(now-started)/1000);
+              row.el.fill.style.width=pct+"%";
+              row.el.state.textContent=pct+"% · "+
+                (rate<.20?Math.round(rate*1024)+" KB/s":rate.toFixed(1)+" MB/s");
+            }
+          }
+          // Content-Length is the expected entire file length (unlike a
+          // Range 206); even one missing final byte is an incomplete MP3.
+          if(got!==total)throw new Error(
+            "MP3 incompleto: ricevuti "+got+" byte su "+total);
+          const cacheError=await saving;
+          if(cacheError)throw cacheError;
+          _offlinePronto(row);
+          return;
+        }catch(error){
+          // If the main reader fails, stop the other tee branch too.
+          try{requestController.abort()}catch(_){}
+          try{await reader.cancel()}catch(_){}
+          try{await saving}catch(_){}
+          try{await cache.delete(url)}catch(_){}
+          throw error;
+        }
+      }
       let blob;
       if (res.body) {
         const reader = res.body.getReader();
