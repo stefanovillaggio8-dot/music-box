@@ -1199,8 +1199,8 @@
     "a": "Coldplay"
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 31,
+    "v": 2,
+    "s": 55,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -1854,13 +1854,13 @@
    },
    "[\"tutti\",\"calcutta\"]": {
     "v": 2,
-    "s": 211,
+    "s": 257,
     "t": "Tutti",
     "a": "Calcutta"
    },
    "m:2026-11|[\"tutti\",\"calcutta\"]": {
     "v": 2,
-    "s": 211,
+    "s": 257,
     "t": "Tutti",
     "a": "Calcutta"
    },
@@ -2549,8 +2549,8 @@
     "a": "glocky"
    },
    "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 30,
+    "v": 2,
+    "s": 54,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
