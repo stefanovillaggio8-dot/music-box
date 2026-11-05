@@ -1942,6 +1942,14 @@ function desktopMeasuredPostludeBridge(a,b,dur){
     a.last-r.releaseAt<1.65||a.last-r.releaseAt>5.5||
     (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-6)||
     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-5))return null;
+ // A quiet scanned release is not a proof of silence when nobody has
+ // checked the final singing. LRC or a recent voice scan must certify it.
+ const knownInstrumental=Boolean(
+   (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<a.last-6)||
+   (a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+    a.voiceScannedEnd>=a.last-1&&
+    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-5)));
+ if(!knownInstrumental)return null;
  const begin=a.last+.34,fade=Math.min(1.65,dur-begin-.45),end=begin+fade;
  if(begin<26||fade<1.05||end>dur-.40)return null;
  return {kind:"soft",begin,end,fade,entry:musicalIntroEntry(b),
@@ -2025,6 +2033,10 @@ function musicallyCompatibleOverlay(a,b,cue){
    cue.fade>=1.05&&cue.fade<=1.65&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-5)&&
    (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<a.last-6)&&
+   (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<a.last-6||
+    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+    a.voiceScannedEnd>=a.last-1&&
+    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-5))&&
    hasImmediateMusicalIntro(b);
  }
  // A genuine, verified LOW-ENERGY release supports a neutral fade.
@@ -3844,7 +3856,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
+ const scored=[],softScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
@@ -3968,8 +3980,29 @@ async function intelligentShuffle(app,audio,fromId){
      (Number(cue.grooveScore)||0)*.07+
      toneFit*.13+phraseFit*.07+keyFit*.13+tempoFit*.08;
     softScored.push({track,cue,score});
-   }else if(!cue)rejected.noMusicalBridge++;
-   else rejected.onlyQuiet++;
+   }else{
+    // A song whose final musical impact has FINISHED may still have
+    // several seconds of low-level recorded room tone. On desktop,
+    // choose a new song with an actually audible opening so listeners
+    // do not wait through TWO quiet intros. Never override manual queues.
+    // This tier is a neutral postlude join, never a matched-beat claim.
+    const post=(!isIOS&&info.introDrive>=.43&&
+      typeof desktopMeasuredPostludeBridge==="function")?
+      desktopMeasuredPostludeBridge(old,next,audio.duration):null;
+    if(post&&musicallyCompatibleOverlay(old,next,post)){
+     const notes=similarNotes(old,next),drums=grooveAgreement(old,next);
+     const key=camelotMatch(old,next),gap=bpmGap(old,next);
+     const intro=clamp(info.introDrive,0,1);
+     const rhythm=Number.isFinite(drums?.score)?clamp(drums.score,0,1):0;
+     const harmony=Number.isFinite(notes?.focused)?clamp(notes.focused,0,1):0;
+     const keyFit=Number.isFinite(key?.score)?clamp(key.score,0,1):0;
+     const tempoFit=Number.isFinite(gap)?clamp(1-gap/22,0,1):0;
+     const score=1+intro*.28+rhythm*.16+harmony*.08+
+      keyFit*.06+tempoFit*.12;
+     postludeScored.push({track,cue:post,score});
+    }else if(!cue)rejected.noMusicalBridge++;
+    else rejected.onlyQuiet++;
+   }
    continue;
   }
   // Real source measurements and valid cue outweigh global BPM similarity.
@@ -3980,6 +4013,7 @@ async function intelligentShuffle(app,audio,fromId){
  }
  scored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
+ postludeScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
  sequenceScored.sort((a,b)=>b.score-a.score);
  rhythmOrderScored.sort((a,b)=>b.score-a.score);
@@ -3991,6 +4025,7 @@ async function intelligentShuffle(app,audio,fromId){
  // A similar drum pattern without compatible notes is NOT a DJ match.
  // Keep those near-misses only in diagnostics, never in the chosen queue.
  const choicePool=scored.length?scored:softScored.length?softScored:
+  postludeScored.length?postludeScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
@@ -4001,19 +4036,22 @@ async function intelligentShuffle(app,audio,fromId){
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
     beatCandidates:scored.length,softCandidates:softScored.length,
+    postludeCandidates:postludeScored.length,
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
     rejected,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):softScored.length?
-     "sfumatura su finale quieto (non beat uguali)":nearScored.length?
+     "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
+     "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
       "ritmo simile, raccordo continuo (non beat certificato)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
-    nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
+    postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
+    nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
      "[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)",
     {outgoing:fromId,incoming:best.track.id,
      fade:best.cue?.fade?.toFixed(1)??null,
@@ -4027,6 +4065,7 @@ async function intelligentShuffle(app,audio,fromId){
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
+  postludeCandidates:postludeScored.length,
   nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
    rejected,chosen:current?.track.id||null,
@@ -4037,8 +4076,9 @@ async function intelligentShuffle(app,audio,fromId){
    protectedEnding:old.protectedEnding===true,dropReleaseVerified:!!old.dropRelease,
   reason:noMatch?"nessuna sovrapposizione o sequenza affidabile nei brani analizzati":
    scored.length?"brano in coda gia compatibile con il beat":
-   nearScored.length?"brano in coda gia simile per BPM, groove e note":
    softScored.length?"brano in coda compatibile con una sfumatura quieta":
+   postludeScored.length?"brano in coda adatto al raccordo dopo l'ultimo suono":
+   nearScored.length?"brano in coda gia simile per BPM, groove e note":
     sequenceScored.length?"brano in coda gia selezionato per ritmo e note":
     rhythmOrderScored.length?"brano in coda gia affine per percussioni":
     "nessun ritmo affidabile: raccordo continuo al cambio brano",
@@ -4047,6 +4087,7 @@ async function intelligentShuffle(app,audio,fromId){
   lastLyric:Number.isFinite(old.lastLyricAt)?old.lastLyricAt:null};
  console.info("[Music Box DJ] Ricerca beat in libreria: "+
   scored.length+" beat verificati, "+softScored.length+" sfumature, "+
+  postludeScored.length+" raccordi su finale concluso, "+
   nearScored.length+" brani affini, "+rhythmCandidates+
   " ritmi compatibili su "+measured.length+" analizzati. "+
   shuffleLastDecision.reason);

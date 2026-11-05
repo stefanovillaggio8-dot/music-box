@@ -46,6 +46,9 @@ function fixture(options={}){
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>next.cue||null;",
+  "const musicalIntroEntry=()=>0;",
+  source.slice(source.indexOf("function desktopMeasuredPostludeBridge("),
+    source.indexOf("function continuityFallback(",source.indexOf("function desktopMeasuredPostludeBridge("))),
   "const desktopBeatPairCertified=()=>true,iphoneBeatPairCertified=()=>true,"+
    "iphoneQuietReleaseCertified=()=>true;",
   "let shuffleLastDecision=null,deepIndex=null;",
@@ -358,4 +361,25 @@ test("real audible DJ transitions outrank similarity-only queue candidates",()=>
   source.indexOf("let shuffleBusy=",source.indexOf("async function intelligentShuffle(")));
  assert.ok(body.includes("const choicePool=scored.length?scored:softScored.length?softScored:"));
  assert.ok(body.includes("nearScored.length?nearScored"));
+});
+
+test("measured final postlude chooses audible next song, not faint random intro",async()=>{
+ const old={duration:100,last:94,confidentTail:false,protectedEnding:false,
+  lastLyricAt:70,lastVoiceAt:72,
+  dropRelease:{lastImpactAt:90.7,releaseAt:91.7,score:.74,quietLevel:.27}};
+ const f=fixture({old,pool:[
+  {analysis:{introDrive:.0874},cue:null},
+  {analysis:{introDrive:.86},cue:null}
+ ]});
+ const selected=await f.run();
+ assert.equal(selected.selected,true);
+ assert.equal(f.selected()?.pickId,3,"audible intro must replace the almost-silent random next");
+ assert.equal(f.decision().beatCandidates,0,"no fake beat matching");
+ assert.equal(f.decision().postludeCandidates,1);
+ assert.equal(f.decision().reason,
+  "raccordo dopo ultimo suono, ingresso musicale subito udibile");
+ const manual=fixture({manual:true,old,pool:[
+  {analysis:{introDrive:.0874},cue:null},{analysis:{introDrive:.86},cue:null}
+ ]});
+ await manual.run();assert.equal(manual.selected(),null,"do not override manual queues");
 });

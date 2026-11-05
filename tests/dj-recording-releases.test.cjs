@@ -155,3 +155,17 @@ test("actual recording 1197 to 28 indexed context is logged for audio handoff",(
  }));
  assert.ok(index.entries&&Object.keys(index.entries).length>500);
 });
+
+test("postlude requires proof that final vocals ended",()=>{
+ const start=source.indexOf("function desktopMeasuredPostludeBridge(");
+ const end=source.indexOf("function continuityFallback(",start);
+ const f=new Function("isIOS","hasImmediateMusicalIntro","musicalIntroEntry",
+  source.slice(start,end)+"return desktopMeasuredPostludeBridge;")(false,()=>true,()=>0);
+ const a={duration:249.133,last:243.9,confidentTail:false,protectedEnding:false,
+  dropRelease:{lastImpactAt:241.3,releaseAt:241.75,quietLevel:.2685,score:.7315}};
+ const b={introDrive:.8};
+ assert.equal(f(a,b,a.duration),null,"no lyric/voice proof");
+ assert.ok(f({...a,lastLyricAt:215.11},b,a.duration));
+ assert.equal(f({...a,lastLyricAt:242},b,a.duration),null);
+ assert.ok(f({...a,voiceModel:"validated",voiceScannedEnd:243.9,lastVoiceAt:211},b,a.duration));
+});
