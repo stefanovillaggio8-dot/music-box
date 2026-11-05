@@ -5550,13 +5550,13 @@
    },
    "[\"come un pittore\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 122,
+    "s": 165,
     "t": "Come un pittore",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"come un pittore\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 122,
+    "s": 165,
     "t": "Come un pittore",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6318,13 +6318,13 @@
    },
    "[\"come un pittore\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 165,
+    "s": 232,
     "t": "Come un pittore",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"come un pittore\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 165,
+    "s": 232,
     "t": "Come un pittore",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -7625,14 +7625,14 @@
     "a": "ModÃÂÃÂ "
    },
    "[\"voodoo\",\"guÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 79,
+    "v": 1,
+    "s": 86,
     "t": "Voodoo",
     "a": "GuÃÂÃÂ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 79,
+    "v": 1,
+    "s": 86,
     "t": "Voodoo",
     "a": "GuÃÂÃÂ¨"
    },
@@ -7661,14 +7661,14 @@
     "a": "thasup"
    },
    "[\"quelli come me\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 191,
+    "v": 1,
+    "s": 203,
     "t": "Quelli come me",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"quelli come me\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 191,
+    "v": 1,
+    "s": 203,
     "t": "Quelli come me",
     "a": "ModÃÂÃÂ "
    },
@@ -8722,6 +8722,12 @@
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "m:2026-11|[\"8 miliardi di persone\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 102,
+    "t": "8 miliardi di persone",
+    "a": "Frah Quintale"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -9293,14 +9299,14 @@
     "a": "Coez"
    },
    "[\"che dio mi benedica\",\"luchÃ¨\"]": {
-    "v": 1,
-    "s": 186,
+    "v": 2,
+    "s": 233,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchÃ¨\"]": {
-    "v": 1,
-    "s": 186,
+    "v": 2,
+    "s": 233,
     "t": "Che Dio Mi Benedica",
     "a": "LuchÃ¨"
    },
@@ -9496,15 +9502,9 @@
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
-   "m:2026-11|[\"8 miliardi di persone\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 102,
-    "t": "8 miliardi di persone",
-    "a": "Frah Quintale"
-   },
    "[\"ventanni\",\"måneskin\"]": {
-    "v": 1,
-    "s": 106,
+    "v": 2,
+    "s": 166,
     "t": "VENTANNI",
     "a": "Måneskin"
    },
@@ -10074,13 +10074,13 @@
    },
    "[\"che dio mi benedica\",\"luchè\"]": {
     "v": 2,
-    "s": 233,
+    "s": 269,
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchè\"]": {
     "v": 2,
-    "s": 233,
+    "s": 269,
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
    },
@@ -10235,8 +10235,8 @@
     "a": "Modà"
    },
    "m:2026-11|[\"ventanni\",\"måneskin\"]": {
-    "v": 0,
-    "s": 103,
+    "v": 1,
+    "s": 163,
     "t": "VENTANNI",
     "a": "Måneskin"
    },
