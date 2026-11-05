@@ -1902,6 +1902,32 @@ function hasImmediateMusicalIntro(b){
  // Genuine pre-music gaps are rejected above using 'first' and groove.
  return true;
 }
+// A safe ending alone does not prove two songs belong in the same mix.
+// Require harmonic, rhythmic and tempo compatibility for every audible overlap.
+function musicallyCompatibleOverlay(a,b,cue){
+ if(!cue)return false;
+ if(cue.kind==="cut"||cue.fade===0)return true;
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !hasImmediateMusicalIntro(b))return false;
+ if(["beat","snap","phrase"].includes(cue.kind)||cue.measuredBeatBridge||
+    cue.rhythmicUnderlay||cue.strongBeatBridge)
+  return isIOS?iphoneBeatPairCertified(a,b,cue):desktopBeatPairCertified(a,b,cue);
+ if(!["soft","fade","rise","quiet","continuity"].includes(cue.kind))return false;
+ const bpmA=Number(a.bpm),bpmB=Number(b.bpm);
+ if(!(bpmA>0&&bpmB>0)||Number(a.beatConfidence)<.14||
+    Number(b.beatConfidence)<.14)return false;
+ const ratios=[.5,1,2].map(k=>bpmA/(bpmB*k));
+ const ratio=ratios.reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+ if(!Number.isFinite(ratio)||ratio<.95||ratio>1.05)return false;
+ const notes=similarNotes(a,b);
+ if(!Number.isFinite(notes?.focused)||!Number.isFinite(notes?.phrase))return false;
+ if(notes.alignment?.score>0&&notes.alignment.matches===false)return false;
+ if(!(notes.matches===true||(notes.focused>=.78&&notes.phrase>=.66&&
+     (!notes.alignment||notes.alignment.score<=0))))return false;
+ const key=camelotMatch(a,b),drums=grooveAgreement(a,b);
+ if(key?.weight>=.14&&key.score<.55)return false;
+ return !!drums&&Number.isFinite(drums.score)&&drums.score>=.60;
+}
 function transition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
@@ -3103,7 +3129,10 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  if(fade<1.7)return false;
  const nextSource=app.mixUrl?.(next)||next?.url;
  const nextAnalysis=nextSource&&(cache.get(String(nextSource))||deepLookup(next));
- if(!nextAnalysis||!hasImmediateMusicalIntro(nextAnalysis))return false;
+ if(!nextAnalysis||!hasImmediateMusicalIntro(nextAnalysis)||
+    !musicallyCompatibleOverlay(analysis,nextAnalysis,
+     {kind:"quiet",begin:audio.currentTime,end:audio.currentTime+fade,fade}))
+   return false;
  const verifiedIntro=Number.isFinite(nextAnalysis?.safeIntroAt)&&
    Number.isFinite(nextAnalysis?.duration)&&
    Number.isFinite(prepared?.audio?.duration)&&
@@ -3231,25 +3260,29 @@ function tick(){
    const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
    const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
    const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
-   // iPhone uses a single stream: never cut an audible vocal outro
-   // merely because the next track matches harmonically.
+   const compatibleCandidate=!!candidate&&
+     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,candidate);
    const weakIphoneMatch=isIOS&&candidate&&
-     (!iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
+     (!compatibleCandidate||
+      !iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
       !iphoneQuietReleaseCertified(currentAnalysis,candidate));
-   // Unmatched rhythm OR an audible, non-matching "quiet" fade
-   // must keep the original ending intact and use native progression.
    const weakDesktopMatch=!isIOS&&candidate&&
-     (!desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
+     (!compatibleCandidate||
+      !desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
       !iphoneQuietReleaseCertified(currentAnalysis,candidate));
-   const certifiedQuietAlternative=
-     (weakIphoneMatch||weakDesktopMatch||!candidate)&&
-     currentAnalysis&&nextAnalysis?
-      certifiedNeutralBridge(currentAnalysis,nextAnalysis,audio.duration):null;
-   plan=(weakIphoneMatch||weakDesktopMatch)?
-    certifiedQuietAlternative:
-    (candidate||certifiedQuietAlternative||
-      (currentAnalysis&&nextAnalysis?
-       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null));
+   const proposedQuiet=(weakIphoneMatch||weakDesktopMatch||!candidate)&&
+      currentAnalysis&&nextAnalysis?
+       certifiedNeutralBridge(currentAnalysis,nextAnalysis,audio.duration):null;
+   const certifiedQuietAlternative=proposedQuiet&&
+     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedQuiet)?
+       proposedQuiet:null;
+   const proposedContinuity=currentAnalysis&&nextAnalysis?
+      continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null;
+   const compatibleContinuity=proposedContinuity&&
+      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedContinuity)?
+       proposedContinuity:null;
+   plan=(weakIphoneMatch||weakDesktopMatch)?certifiedQuietAlternative:
+    (compatibleCandidate?candidate:null)||certifiedQuietAlternative||compatibleContinuity;
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
@@ -3701,11 +3734,12 @@ async function intelligentShuffle(app,audio,fromId){
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   const cue=transition(old,next,audio.duration);
+  const musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
-  const mobilePlayable=!isIOS||
+  const mobilePlayable=musicallyPlayable&&(!isIOS||
    (mobileMixAllowed(cue,old,lastLyric)&&
-    iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue));
+    iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue)));
   // Only a musically verified bridge earns the "beat" tier. A weak
   // rhythmic resemblance must NEVER outrank a safe next song.
   const verified=Boolean(mobilePlayable&&
@@ -3766,8 +3800,10 @@ async function intelligentShuffle(app,audio,fromId){
  // Prefer a next song with actually compatible notes and drums.
  // Prioritize a transition that the iPhone/desktop mixer can genuinely
  // PLAY over a rhythm/key resemblance that cannot produce a mix.
+ // A similar drum pattern without compatible notes is NOT a DJ match.
+ // Keep those near-misses only in diagnostics, never in the chosen queue.
  const choicePool=scored.length?scored:softScored.length?softScored:
-  nearScored.length?nearScored:sequenceScored.length?sequenceScored:rhythmOrderScored;
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
