@@ -6858,13 +6858,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 2,
-    "s": 499,
+    "s": 556,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 2,
-    "s": 499,
+    "s": 556,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7632,13 +7632,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 556,
+    "s": 599,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
     "v": 2,
-    "s": 556,
+    "s": 599,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
@@ -8958,13 +8958,13 @@
    },
    "[\"labirinto\",\"luchÃ¨\"]": {
     "v": 0,
-    "s": 105,
+    "s": 134,
     "t": "Labirinto",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"labirinto\",\"luchÃ¨\"]": {
     "v": 0,
-    "s": 105,
+    "s": 134,
     "t": "Labirinto",
     "a": "LuchÃ¨"
    },
@@ -9732,13 +9732,13 @@
    },
    "[\"labirinto\",\"luchè\"]": {
     "v": 0,
-    "s": 134,
+    "s": 202,
     "t": "Labirinto",
     "a": "Luchè"
    },
    "m:2026-11|[\"labirinto\",\"luchè\"]": {
     "v": 0,
-    "s": 134,
+    "s": 202,
     "t": "Labirinto",
     "a": "Luchè"
    },
