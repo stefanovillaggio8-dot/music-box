@@ -116,7 +116,44 @@ async function run(){
   assert.equal(finished.current,"test-next");
   assert.equal(finished.playing,true);
   assert.ok(finished.playbackPosition>.45,"preview audio restarted instead of being adopted");
+  // Real Chromium must start an incoming preview on the LAST measured
+  // outgoing impact, not after its remaining 2.6s musical tail or 5s
+  // of encoded silence. This also exercises precise scheduling and handoff.
+  const setupImpact=await page.evaluate(()=>{
+   const state=window.__MB_DESKTOP_STATE__;
+   state.id="impact-old";state.adopted=false;
+   state.next={id:"impact-next",url:state.next.url};
+   state.audio={paused:false,ended:false,seeking:false,
+    currentTime:241.11,duration:249.133,volume:.7,readyState:4,
+    pause(){this.paused=true},removeAttribute(){},load(){}};
+   window.__MB_DESKTOP_MIX_TEST__.prepare(state.next,state.id,window.MusicBoxBridge);
+   return {next:state.next.id,oldAt:state.audio.currentTime};
+  });
+  await page.waitForFunction(()=>
+   window.__MB_DESKTOP_MIX_TEST__.preview()?.ready===true,
+   null,{timeout:12000});
+  const impact=await page.evaluate(async()=>{
+   const p={kind:"soft",measuredFinalImpact:true,finalImpactAt:241.3,
+    nextBeat:.12,beatPeriod:60/129.2,beatAnchor:241.3,
+    begin:241.18,end:243.975,fade:2.795,entry:0,
+    tempo:1,gain:1,preserveTail:true,quietCertified:false};
+   const begun=performance.now();
+   await window.__MB_DESKTOP_MIX_TEST__.beginMix(
+    window.__MB_DESKTOP_STATE__.next,p);
+   const act=window.__MB_DESKTOP_MIX_TEST__.active();
+   return {started:!!act,impactRelay:!!act?.measuredFinalImpact,
+    incomingPlaying:act?.upcoming?.paused===false,
+    playbackDelayMs:Math.round(performance.now()-begun)};
+  });
+  assert.ok(impact.started&&impact.impactRelay&&impact.incomingPlaying,
+   "incoming audio did not start at certified final-impact cue");
+  assert.ok(setupImpact.oldAt<243.9,
+   "real last-impact playback should start before outgoing audio stops");
+  await page.waitForFunction(()=>window.__MB_DESKTOP_STATE__.adopted,
+   null,{timeout:9000});
+  assert.equal((await page.evaluate(()=>window.__MB_DESKTOP_STATE__.id)),"impact-next");
   assert.deepEqual(errors,[],"unhandled JavaScript exception in real Chromium");
+  console.log("[DESKTOP CHROMIUM FINAL IMPACT]",JSON.stringify({setupImpact,impact}));
   console.log("[DESKTOP CHROMIUM DJ SMOKE]",JSON.stringify({meta,setup:{
    prepared:setup.prepared},started,finished,errors:errors.length}));
   await context.close();
