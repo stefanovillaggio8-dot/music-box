@@ -314,3 +314,27 @@ test("quiet 2.35s fade has over 1s of possible launch time on Safari",()=>{
  assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)'));
  assert.ok(source.includes("armSnapPrecision(audio,id)"));
 });
+
+
+test("certified silent outro hands off on iPhone even when an unusable plan exists",()=>{
+ const a=source.indexOf("const measuredEnding=currentSource&&");
+ const b=source.indexOf("const earlyRelease=certifiedEarlyReleaseReady(",a);
+ assert.ok(a>0&&b>a,"late-stage playback control exists");
+ const body=source.slice(a,b);
+ assert.ok(body.includes("certifiedTailSkip(measuredEnding,audio.duration,"));
+ assert.ok(body.includes("quietDirectHandoff(app,audio,id,next,entry,"));
+ assert.ok(body.includes("!active&&!mobileActive&&!mixing&&!silentFadeReady"));
+ assert.ok(body.includes("!isIOS&&plan?.certifiedSilentBridge===true"));
+ // A full-track certificate, not silence inferred from the audio element.
+ const first=source.indexOf("function certifiedTailSkip(");
+ const last=source.indexOf("// Desktop-only safety net",first);
+ assert.ok(first>0&&last>first);
+ const safe=new Function(source.slice(first,last)+"return certifiedTailSkip;")();
+ const ending={duration:180,last:176,confidentTail:true};
+ assert.equal(safe(ending,180,176.3,null),true);
+ assert.equal(safe({...ending,confidentTail:false},180,176.3,null),false);
+ assert.equal(safe({...ending,lastVoiceAt:175.8},180,176.3,null),false);
+ assert.equal(safe(ending,180,176.3,175.7),false);
+ assert.equal(safe(ending,175,176.3,null),false);
+ assert.equal(safe(ending,180,175.9,null),false);
+});

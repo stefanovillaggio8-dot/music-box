@@ -3443,6 +3443,23 @@ function tick(){
  const measuredEnding=currentSource&&
    (cache.get(String(currentSource))||deepLookup(currentSong));
  const finalLyric=app.mixLyricCues?.(id)?.last;
+ // A decoded MP3 can have seconds of PROVEN digital silence at the end.
+ // Previously this shortcut only ran inside "if(!plan)", so a stalled or
+ // unplayable iPhone cue could keep Safari in silence until onended.
+ // Do not interrupt an audible overlap already underway. On desktop a
+ // prebuffered silent fade retains its short chance to start naturally.
+ const silentFadeReady=!isIOS&&plan?.certifiedSilentBridge===true&&
+   prepared?.ready&&!prepared?.failed&&
+   audio.currentTime<=plan.end+.08;
+ if(!active&&!mobileActive&&!mixing&&!silentFadeReady&&
+    certifiedTailSkip(measuredEnding,audio.duration,
+      audio.currentTime,finalLyric)){
+   const nextInfo=cache.get(String(nextSource))||deepLookup(next);
+   const entry=Number.isFinite(nextInfo?.safeIntroAt)?
+    clamp(nextInfo.safeIntroAt,0,18):0;
+   if(quietDirectHandoff(app,audio,id,next,entry,
+      "coda digitale misurata: nessun mix in corso"))return;
+ }
  const earlyRelease=certifiedEarlyReleaseReady(measuredEnding,
   audio.duration,audio.currentTime,finalLyric);
  const plannedLate=earlyRelease&&(!plan||plan.kind==="cut"||
