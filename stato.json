@@ -1842,13 +1842,13 @@
    },
    "[\"disfruto - carla morrison\",\"carla morrison\"]": {
     "v": 2,
-    "s": 197,
+    "s": 204,
     "t": "Disfruto - Carla Morrison",
     "a": "Carla Morrison"
    },
    "m:2026-11|[\"disfruto - carla morrison\",\"carla morrison\"]": {
     "v": 2,
-    "s": 197,
+    "s": 204,
     "t": "Disfruto - Carla Morrison",
     "a": "Carla Morrison"
    },
@@ -2424,13 +2424,13 @@
    },
    "[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 112,
+    "s": 143,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
    "m:2026-11|[\"malpensa\",\"g.mineiro, flatpearl, succo\"]": {
     "v": 0,
-    "s": 112,
+    "s": 143,
     "t": "Malpensa",
     "a": "G.Mineiro, Flatpearl, Succo"
    },
@@ -7866,13 +7866,13 @@
    },
    "[\"come un pittore\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 122,
+    "s": 165,
     "t": "Come un pittore",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"come un pittore\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 122,
+    "s": 165,
     "t": "Come un pittore",
     "a": "ModÃÂÃÂ "
    },
@@ -8640,13 +8640,13 @@
    },
    "[\"come un pittore\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 165,
+    "s": 232,
     "t": "Come un pittore",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"come un pittore\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 165,
+    "s": 232,
     "t": "Come un pittore",
     "a": "ModÃÂ "
    },
@@ -9947,14 +9947,14 @@
     "a": "Modà"
    },
    "[\"voodoo\",\"guè\"]": {
-    "v": 0,
-    "s": 79,
+    "v": 1,
+    "s": 86,
     "t": "Voodoo",
     "a": "Guè"
    },
    "m:2026-11|[\"voodoo\",\"guè\"]": {
-    "v": 0,
-    "s": 79,
+    "v": 1,
+    "s": 86,
     "t": "Voodoo",
     "a": "Guè"
    },
@@ -9983,14 +9983,14 @@
     "a": "thasup"
    },
    "[\"quelli come me\",\"modà\"]": {
-    "v": 0,
-    "s": 191,
+    "v": 1,
+    "s": 203,
     "t": "Quelli come me",
     "a": "Modà"
    },
    "m:2026-11|[\"quelli come me\",\"modà\"]": {
-    "v": 0,
-    "s": 191,
+    "v": 1,
+    "s": 203,
     "t": "Quelli come me",
     "a": "Modà"
    },
