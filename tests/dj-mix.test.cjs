@@ -261,7 +261,7 @@ test("sustained near-end karaoke remains protected",()=>{
  assert.equal(plan,null);
 });
 test("mobile DJ failed-start cooldown is installed",()=>{
- assert.ok(source.includes("mobileOverlayFailures.set(pair,Date.now()+60000)"));
+ assert.ok(source.includes("mobileOverlayFailures.set(pair,Date.now()+30000)"));
  assert.ok(source.includes("clockStep<.025"));
 });
 
@@ -354,7 +354,7 @@ test("iPhone readiness indicators distinguish preparing from an unsafe outro",()
 });
 test("Safari can resume an audio context on later user gestures",()=>{
  const appSource=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
- assert.ok(appSource.includes('_audioProno && _ctx?.state === "running"'));
+ assert.ok(appSource.includes('_audioProno && _mixContextAttivo()'));
  assert.ok(appSource.includes('window.addEventListener(ev, _preparaAudio, { passive: true })'));
 });
 
@@ -758,4 +758,57 @@ test("onset fingerprint must prove a rhythmic join; mismatched drums never quali
  const late=Array.from({length:96},(_,k)=>k<9?0:pulse[k-9]);
  assert.equal(compare({outroOnset:pulse},{introOnset:late})?.certified,false,
   "even a similar rhythm cannot require a >300ms playback jump");
+});
+
+test("a subsecond iPhone snap actually waits for the next aligned beat",()=>{
+ const f=createMobileMixFixture();
+ f.old.currentTime=179.15;
+ const p={...f.plan,kind:"snap",begin:179.05,end:180,fade:.95,
+  measuredBeatBridge:true,preserveTail:true,voiceVerifiedMicroBridge:true,
+  grooveScore:.85,score:83,beatPeriod:.5,beatAnchor:179.32,nextBeat:0};
+ assert.equal(f.engine.startMobileMix(f.song,p,f.app,f.old),true);
+ assert.ok(f.engine.active().started>f.ctx.currentTime+.14);
+ assert.ok(f.engine.active().started<f.ctx.currentTime+.19,
+  "the corrected 0.17-second beat delay must be applied even for a short snap");
+ f.engine.stopMobileMix();
+});
+test("iPhone WebAudio clock can be frozen despite reporting running, and a new tap rebuilds it",()=>{
+ const appSource=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const start=appSource.indexOf("  let _audioProno = false;");
+ const end=appSource.indexOf('  try {\n    ["pointerdown",',start);
+ assert.ok(start>=0&&end>start);
+ const env={now:1000,created:0,closed:0};
+ class AC{
+  constructor(){env.created++;this.state="running";this.currentTime=0}
+  close(){env.closed++;this.state="closed";return Promise.resolve()}
+  resume(){this.state="running";return Promise.resolve()}
+ }
+ const make=new Function("env","AC",
+  "const Date={now:()=>env.now};"+
+  "const navigator={userActivation:{isActive:true}};"+
+  "const window={AudioContext:AC,MusicBoxMix:{needsAudioContext:()=>true}};"+
+  "const _usaControlliNativiIos=()=>true;"+
+  "let _ctx=null,bassiAccesi=false,_audioCollegato=null;"+
+  appSource.slice(start,end)+
+  "return {tap:_preparaAudio,ready:_mixContextAttivo,ctx:()=>_ctx};");
+ const testEngine=make(env,AC);
+ testEngine.tap();
+ const initial=testEngine.ctx();
+ assert.equal(testEngine.ready(),initial);
+ env.now=3000;
+ assert.equal(testEngine.ready(),null,"running context with stalled clock must not mix");
+ testEngine.tap();
+ assert.notEqual(testEngine.ctx(),initial,"fresh gesture rebuilds a DJ-only context");
+ assert.equal(testEngine.ready(),testEngine.ctx());
+ assert.equal(env.closed,1);
+ assert.equal(env.created,2);
+ testEngine.ctx().currentTime=.42;
+ env.now+=600;
+ assert.equal(testEngine.ready(),testEngine.ctx());
+});
+test("iPhone checks its native successor before stopping WebAudio and never undoes a headset pause",()=>{
+ assert.ok(source.includes("app?.wantsPlayback?.()===true"));
+ assert.ok(source.includes("app.playCurrent?.()"));
+ assert.ok(source.includes("mobileMixLastBlocker"));
+ assert.ok(source.includes("mobileMixLastStartedAt"));
 });

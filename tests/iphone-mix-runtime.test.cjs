@@ -245,3 +245,18 @@ test("DJ recovers a verified quiet fade when an exact beatmatch is impossible",(
  assert.equal(choose(a,{...b,firstLyricAt:.5},180),null);
  assert.equal(choose(a,b,166),null);
 });
+
+test("iPhone DJ prepares optional intro data before WebAudio is resumed",()=>{
+ assert.ok(source.includes("if(isIOS&&mobileOverlayEnabled&&plan&&"));
+ const preparation=excerpt("if(isIOS&&mobileOverlayEnabled&&plan&&","decode(next,true).catch(()=>{})");
+ assert.ok(!preparation.includes('mixRunningContext?.()?.state==="running"'),
+  "preparing audio must not require a running playback AudioContext");
+ assert.ok(preparation.includes("mobileMixAllowed(plan,nowInfo"));
+ assert.ok(preparation.includes("mobileClipWindow(audio)"));
+ assert.ok(app.includes("mixRunningContext:()=>_mixContextAttivo()"));
+});
+test("iPhone mobile debug reports why an available cue failed to start",()=>{
+ assert.ok(source.includes('mobileMixLastBlocker="WebAudio inattivo:'));
+ assert.ok(source.includes('mobileMixLastBlocker="Anteprima MP3 non ancora pronta"'));
+ assert.ok(source.includes('status="Mix non avviato: "+mobileMixLastBlocker'));
+});
