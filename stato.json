@@ -1200,7 +1200,7 @@
    },
    "[\"un mondo a parte (visual)\",\"jovanotti\"]": {
     "v": 2,
-    "s": 55,
+    "s": 131,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -2550,7 +2550,7 @@
    },
    "m:2026-11|[\"un mondo a parte (visual)\",\"jovanotti\"]": {
     "v": 2,
-    "s": 54,
+    "s": 130,
     "t": "Un mondo a parte (Visual)",
     "a": "Jovanotti"
    },
@@ -9933,6 +9933,18 @@
     "s": 90,
     "t": "Nessuna",
     "a": "Luchè"
+   },
+   "[\"neon\",\"sfera ebbasta & shiva\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "NEON",
+    "a": "Sfera Ebbasta & Shiva"
+   },
+   "m:2026-11|[\"neon\",\"sfera ebbasta & shiva\"]": {
+    "v": 0,
+    "s": 5,
+    "t": "NEON",
+    "a": "Sfera Ebbasta & Shiva"
    }
   },
   "Diego": {
