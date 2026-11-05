@@ -1782,13 +1782,13 @@
    },
    "[\"mortale\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 176,
+    "s": 224,
     "t": "Mortale",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"mortale\",\"nayt, 3d\"]": {
     "v": 0,
-    "s": 176,
+    "s": 224,
     "t": "Mortale",
     "a": "nayt, 3D"
    },
@@ -7000,6 +7000,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
+   },
+   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
+    "v": 1,
+    "s": 84,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7039,25 +7051,13 @@
    "[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'ÃÂÃÂ¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'ÃÂÃÂ¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'ÃÂÃÂ¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
-    "v": 1,
-    "s": 67,
-    "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃÂÃÂ \"]": {
@@ -7318,6 +7318,18 @@
     "t": "Voglio di piÃÂÃÂ¹",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
+    "v": 1,
+    "s": 67,
+    "t": "mi @mio ÃÂÃÂ¨ f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo ÃÂÃÂ¨ sempre piÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 0,
     "s": 260,
@@ -7331,14 +7343,14 @@
     "a": "Rino Gaetano"
    },
    "[\"coraline\",\"mÃÂÃÂ¥neskin\"]": {
-    "v": 0,
-    "s": 146,
+    "v": 1,
+    "s": 152,
     "t": "CORALINE",
     "a": "MÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂ¥neskin\"]": {
-    "v": 0,
-    "s": 146,
+    "v": 1,
+    "s": 152,
     "t": "CORALINE",
     "a": "MÃÂÃÂ¥neskin"
    },
@@ -7402,18 +7414,6 @@
     "t": "Tutti il resto ÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 401,
-    "t": "Passione maledetta",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 401,
-    "t": "Passione maledetta",
-    "a": "ModÃÂÃÂ "
-   },
    "[\"torna da me\",\"luchÃÂÃÂ¨\"]": {
     "v": 0,
     "s": 94,
@@ -7448,6 +7448,18 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃÂÃÂ ",
+    "a": "ModÃÂÃÂ "
+   },
+   "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 401,
+    "t": "Passione maledetta",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 401,
+    "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "[\"voodoo\",\"guÃÂÃÂ¨\"]": {
@@ -7708,6 +7720,30 @@
     "t": "LA CITTÃÂÃÂ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 168,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 168,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂ "
+   },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
     "s": 124,
@@ -7732,35 +7768,29 @@
     "t": "Non ti dimentico",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
+   "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
+    "v": 0,
+    "s": 103,
+    "t": "VENTANNI",
+    "a": "MÃÂÃÂ¥neskin"
+   },
    "m:2026-11|[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 0,
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
-   "[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
+   "[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
     "v": 1,
     "s": 90,
     "t": "Nessuna",
-    "a": "LuchÃÂÃÂÃÂÃÂ¨"
+    "a": "LuchÃÂÃÂ¨"
    },
-   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
+   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
     "v": 1,
     "s": 90,
     "t": "Nessuna",
-    "a": "LuchÃÂÃÂÃÂÃÂ¨"
-   },
-   "[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 1,
-    "s": 84,
-    "t": "Via del campo",
-    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
-   },
-   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
-    "v": 1,
-    "s": 84,
-    "t": "Via del campo",
-    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
+    "a": "LuchÃÂÃÂ¨"
    },
    "[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 1,
@@ -8506,41 +8536,11 @@
     "t": "Non ti dimentico",
     "a": "ModÃÂ "
    },
-   "[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 168,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 168,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂ "
-   },
    "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 0,
     "s": 103,
     "t": "VENTANNI",
     "a": "MÃÂ¥neskin"
-   },
-   "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
-    "v": 0,
-    "s": 103,
-    "t": "VENTANNI",
-    "a": "MÃÂÃÂ¥neskin"
    },
    "[\"nessuna\",\"luchÃÂ¨\"]": {
     "v": 1,
@@ -8565,6 +8565,18 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 1,
+    "s": 90,
+    "t": "Nessuna",
+    "a": "LuchÃÂÃÂÃÂÃÂ¨"
+   },
+   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
+    "v": 1,
+    "s": 90,
+    "t": "Nessuna",
+    "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -9328,17 +9340,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
    },
-   "[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
-    "v": 1,
-    "s": 90,
-    "t": "Nessuna",
-    "a": "LuchÃÂÃÂ¨"
+   "[\"non mi riconosco\",\"mace\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "NON MI RICONOSCO",
+    "a": "MACE"
    },
-   "m:2026-11|[\"nessuna\",\"luchÃÂÃÂ¨\"]": {
-    "v": 1,
-    "s": 90,
-    "t": "Nessuna",
-    "a": "LuchÃÂÃÂ¨"
+   "m:2026-11|[\"non mi riconosco\",\"mace\"]": {
+    "v": 0,
+    "s": 85,
+    "t": "NON MI RICONOSCO",
+    "a": "MACE"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -10101,18 +10113,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De André"
-   },
-   "[\"non mi riconosco\",\"mace\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "NON MI RICONOSCO",
-    "a": "MACE"
-   },
-   "m:2026-11|[\"non mi riconosco\",\"mace\"]": {
-    "v": 0,
-    "s": 65,
-    "t": "NON MI RICONOSCO",
-    "a": "MACE"
    }
   },
   "Diego": {
