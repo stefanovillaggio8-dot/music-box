@@ -1343,8 +1343,8 @@
     "a": "Max Pezzali"
    },
    "[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 0,
-    "s": 49,
+    "v": 1,
+    "s": 95,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -2088,13 +2088,13 @@
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
     "v": 2,
-    "s": 250,
+    "s": 275,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 2,
-    "s": 250,
+    "s": 275,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
@@ -3587,8 +3587,8 @@
     "a": "nayt"
    },
    "m:2026-11|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 0,
-    "s": 47,
+    "v": 1,
+    "s": 93,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -6340,6 +6340,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 106,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
+   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 106,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7101,18 +7113,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"non avere paura\",\"tommaso paradiso\"]": {
-    "v": 0,
-    "s": 106,
-    "t": "non avere paura",
-    "a": "tommaso paradiso"
-   },
-   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
-    "v": 0,
-    "s": 106,
-    "t": "non avere paura",
-    "a": "tommaso paradiso"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -8638,6 +8638,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
+   "[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -9401,14 +9413,14 @@
     "a": "Fabrizio De AndrÃ©"
    },
    "[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 0,
+    "v": 0,
+    "s": 71,
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 0,
+    "v": 0,
+    "s": 71,
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
@@ -10176,13 +10188,13 @@
    },
    "[\"il più grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 0,
-    "s": 71,
+    "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il più grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 0,
-    "s": 71,
+    "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    }
