@@ -80,7 +80,7 @@ test("Spotify-style safe soft fades prefer matching key, notes and BPM over a lo
  assert.equal(result.selected,true);
  assert.equal(f.selected()?.pickId,3,"more harmonic fade should beat unrelated longer fade");
  assert.equal(f.decision().beatCandidates,0,"no invented beatmatch");
- assert.equal(f.decision().softCandidates,2);
+ assert.equal(f.decision().softCandidates,1,"unrelated quiet fade is not a compatible pairing");
  assert.equal(f.decision().reason,"sfumatura su finale quieto (non beat uguali)");
 });
 

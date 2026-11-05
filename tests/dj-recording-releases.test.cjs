@@ -99,7 +99,8 @@ test("23:18 recording: early verified impact can preempt a later silent-tail cue
  assert.match(source,/plan.begin>audio.currentTime\+1\.2/);
  assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\|\|plannedLate\)/);
  assert.match(source,/if\(!earlyCertified&&!liveQuietOutroReady\(/);
- assert.match(source,/if\(!nextAnalysis\|\|!hasImmediateMusicalIntro\(nextAnalysis\)\)return false/);
+ assert.match(source,/if\(!nextAnalysis\|\|!hasImmediateMusicalIntro\(nextAnalysis\)\|\|/);
+ assert.match(source,/!musicallyCompatibleOverlay\(analysis,nextAnalysis/);
 });
 test("the mixer logs its actual start, not only a selected library candidate",()=>{
  assert.match(source,/console.info\("\[Music Box DJ\] Sovrapposizione audio avviata"/);
