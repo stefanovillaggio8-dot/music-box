@@ -29,7 +29,7 @@ function mobileDJMayWork(){
 // optional Safari overlay can decode a whole MP3 and must NOT run while
 // a freshly selected native song is buffering.
 function mobileClipWindow(audio) {
- if(!audio||audio.paused||audio.seeking||document.hidden||audio.readyState<3||
+ if(!audio||audio.paused||audio.seeking||document.hidden||audio.readyState<2||
     !mobileDJMayWork())return false;
  const remaining=audio.duration-audio.currentTime;
  if(!Number.isFinite(remaining)||remaining>95||remaining<6)return false;
@@ -41,7 +41,10 @@ function mobileClipWindow(audio) {
     ahead=Math.max(ahead,audio.buffered.end(i)-audio.currentTime);
   }
  }catch(_){}
- return audio.readyState>=4||ahead>=3;
+ // iPhone Safari can keep HAVE_CURRENT_DATA (readyState 2) while the
+ // MP3 is already playing with plenty of audio buffered ahead.
+ // Plan from metadata normally; decode an optional clip only with headroom.
+ return audio.readyState>=4||ahead>=(audio.readyState===2?8:3);
 }
 // A certified 3-5s blend requires the existing vocal/quiet constraints.
 // A short matched drum junction without vocal proof is only a subdued
@@ -1063,8 +1066,13 @@ function compatibility(a,b){
  async function clipFromBytes(bytes,complete){
   if(stale()||bytes.byteLength<16384)return null;
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
-  if(!Offline)throw Error("Decodifica Web Audio non disponibile");
-  const ctx=new Offline(1,1,44100);
+  let ctx=null;
+  try{if(Offline)ctx=new Offline(1,1,44100)}catch(_){}
+  // Some Safari versions cannot construct an offline audio decoder.
+  // Reuse only an already unlocked DJ context, never the native media path.
+  if(!ctx)ctx=bridge()?.mixRunningContext?.();
+  if(!ctx||typeof ctx.decodeAudioData!=="function")
+   throw Error("Decodifica Web Audio non disponibile");
   const decoded=await ctx.decodeAudioData(bytes.slice(0));
   if(stale())return null;
   if(complete&&Math.abs(decoded.duration-deep.duration)>1.5)
@@ -3177,7 +3185,7 @@ function tick(){
   });
  }
  // Do not run music analysis while iOS is seeking/buffering.
- if(isIOS&&audio&&(audio.seeking||audio.readyState<3)){
+ if(isIOS&&audio&&(audio.seeking||audio.readyState<2)){
   if(mobileActive)stopMobileMix();
   return;
  }

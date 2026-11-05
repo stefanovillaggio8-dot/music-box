@@ -13,6 +13,29 @@ const allow=new Function(excerpt("function mobileMixAllowed(",
  "function rememberMobileClip(")+"return mobileMixAllowed;")();
 const sample={kind:"snap",begin:173,end:173.72,fade:.72,
  preserveTail:true,measuredBeatBridge:true,grooveScore:.83,score:82};
+
+test("Safari can plan a DJ cue at readyState 2 and prepares a clip only with buffered audio",()=>{
+  const from=source.indexOf("function mobileClipWindow(audio) {");
+  const until=source.indexOf("// A certified 3-5s blend",from);
+  assert.ok(from>0&&until>from,"bounded iOS preview gate exists");
+  const gate=Function("document","mobileDJMayWork",
+    source.slice(from,until)+";return mobileClipWindow")(
+      {hidden:false},()=>true);
+  const make=(ready,ahead)=>({
+    paused:false,seeking:false,readyState:ready,currentTime:110,duration:200,
+    buffered:{length:1,start:()=>100,end:()=>110+ahead}
+  });
+  assert.equal(gate(make(2,14)),true,"Safari state 2 can prepare after 14s buffered");
+  assert.equal(gate(make(2,3)),false,"do not compete with a weak mobile buffer");
+  assert.equal(gate(make(3,4)),true,"ordinary buffered stream still works");
+  assert.equal(gate(make(1,20)),false,"cannot decode while playback is not ready");
+  assert.equal(gate({...make(2,14),seeking:true}),false,"seeks take precedence");
+  assert.ok(source.includes("if(isIOS&&audio&&(audio.seeking||audio.readyState<2))"),
+    "metadata planning must work while Safari reports readyState=2");
+  assert.ok(source.includes('if(!ctx)ctx=bridge()?.mixRunningContext?.();'),
+    "legacy iPhone can reuse an unlocked context for decode");
+});
+
 test("measured short beat can enter iPhone with no simulated YAMNet voice scan",()=>{
  assert.equal(allow(sample,{protectedEnding:false,lastVoiceAt:165},167),true);
  assert.equal(allow({...sample,voiceVerifiedMicroBridge:true},{},null),true);
