@@ -3,6 +3,10 @@ on:
   push:
     branches: [main]
     paths:
+      - 'app.js'
+      - 'mix-intelligente.js'
+      - 'index.html'
+      - 'sw.js'
       - 'tests/iphone-webkit-smoke.cjs'
       - '.github/workflows/iphone-webkit-smoke.yml'
   workflow_dispatch:
