@@ -3630,13 +3630,13 @@
    },
    "[\"stratos\",\"kid yugi\"]": {
     "v": 1,
-    "s": 110,
+    "s": 135,
     "t": "Stratos",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"stratos\",\"kid yugi\"]": {
     "v": 1,
-    "s": 110,
+    "s": 135,
     "t": "Stratos",
     "a": "Kid Yugi"
    },
@@ -6244,6 +6244,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7006,17 +7018,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
-   "[\"giovanni\",\"tonypitony\"]": {
+   "[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
-   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7482,13 +7494,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃÂÃÂ¬"
    },
@@ -7779,18 +7791,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
@@ -8256,13 +8256,13 @@
    },
    "[\"g&v\",\"ivanbÃÂ¬\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂ¬\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBÃÂ¬"
    },
@@ -10077,6 +10077,18 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De André"
+   },
+   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 39,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 39,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
    }
   },
   "Diego": {
