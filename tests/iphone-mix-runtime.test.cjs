@@ -139,7 +139,7 @@ test("DJ index does not compete with native iPhone startup or play while disable
  assert.ok(source.includes("function start(){\n // A disabled DJ must not download"));
  assert.ok(source.includes("if(enabled){\n  if(isIOS)setTimeout"));
  assert.ok(source.includes("mobileOverlayEnabled=true;\n   try{localStorage.setItem"));
- assert.ok(source.includes("bridge()?.mixEnableAudio?.();"));
+ assert.ok(source.includes("bridge()?.mixEnableAudio?.(event);"));
 });
 
 test("large Safari DJ index retries after a slow/failed fetch without a reload",async()=>{
@@ -160,7 +160,7 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
   "const setTimeout=(fn,delay)=>{queued.push({fn,delay});return queued.length};"+
   "const clearTimeout=()=>{};"+
   "const AbortController=globalThis.AbortController;"+
-  "const bridge=()=>null;let offlineTransferPriority=false,deepTransferController=null;"+
+  "const bridge=()=>null;const iosIndexCanLoadNow=()=>true;let offlineTransferPriority=false,deepTransferController=null;"+
   "let enabled=true,mixing=false,plannedFor='',plan=null,"+
   "shuffleGeneration=0,shuffleBusy=false,shuffleRunFor='',shuffleRetryAt=0,shuffleAttempts=0;"+
   "const $=()=>null;"+
