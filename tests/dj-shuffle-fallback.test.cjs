@@ -48,7 +48,8 @@ function fixture(options={}){
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>next.cue||null;",
   "const musicalIntroEntry=()=>0;",
-  source.slice(source.indexOf("function desktopMeasuredPostludeBridge("),
+  "const onsetGridPhase=()=>.12;",
+  source.slice(source.indexOf("function desktopFinalImpactRelay("),
     source.indexOf("function continuityFallback(",source.indexOf("function desktopMeasuredPostludeBridge("))),
   "const desktopBeatPairCertified=()=>true,iphoneBeatPairCertified=()=>true,"+
    "iphoneQuietReleaseCertified=()=>true;",
@@ -360,7 +361,7 @@ test("rhythm-only resemblance is diagnostic, not a DJ mix",async()=>{
 test("real audible DJ transitions outrank similarity-only queue candidates",()=>{
  const body=source.slice(source.indexOf("async function intelligentShuffle("),
   source.indexOf("let shuffleBusy=",source.indexOf("async function intelligentShuffle(")));
- assert.ok(body.includes("const choicePool=scored.length?scored:softScored.length?softScored:"));
+ assert.ok(body.includes("const choicePool=scored.length?scored:impactScored.length?impactScored:"));
  assert.ok(body.includes("nearScored.length?nearScored"));
 });
 
@@ -383,4 +384,27 @@ test("measured final postlude chooses audible next song, not faint random intro"
   {analysis:{introDrive:.0874},cue:null},{analysis:{introDrive:.86},cue:null}
  ]});
  await manual.run();assert.equal(manual.selected(),null,"do not override manual queues");
+});
+
+test("verified last-impact cue replaces near-silent auto next, not a manual queue",async()=>{
+ const outgoing={duration:100,last:95.2,bpm:120,beatConfidence:.35,
+   lastLyricAt:70,lastVoiceAt:72,protectedEnding:false,
+   dropRelease:{lastImpactAt:92.7,releaseAt:93.1,score:.78,quietLevel:.22}};
+ const next={bpm:120,introDrive:.8,beatConfidence:.35,
+   introOnset:Array(96).fill(.3),first:0,safeIntroAt:0};
+ const f=fixture({old:outgoing,pool:[
+   {analysis:{...next,introDrive:.0874},cue:null},
+   {analysis:next,cue:null}
+ ]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3,"cue must be on measured impact, not later silence");
+ assert.equal(f.decision().beatCandidates,0,"not a verified harmonic beatmatch");
+ assert.equal(f.decision().impactCandidates,1);
+ assert.equal(f.decision().reason,
+   "ingresso sul colpo finale misurato, non beatmatch armonico");
+ const manual=fixture({manual:true,old:outgoing,pool:[
+   {analysis:next,cue:null},{analysis:next,cue:null}
+ ]});
+ await manual.run();
+ assert.equal(manual.selected(),null,"user queue is immutable");
 });
