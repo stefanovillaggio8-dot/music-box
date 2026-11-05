@@ -1158,7 +1158,7 @@ function compatibility(a,b){
     ahead=Math.max(ahead,playing.buffered.end(i)-playing.currentTime)
   }catch(_){}
   const conn=navigator.connection||navigator.webkitConnection;
-  if(!playing||playing.paused||playing.seeking||playing.readyState<3||
+  if(!playing||playing.paused||playing.seeking||playing.readyState<2||
      (playing.readyState<4&&ahead<12)||conn?.saveData||
      /^(slow-)?2g$|^3g$/i.test(String(conn?.effectiveType||""))){
    mobileClipRetryAt.set(key,Date.now()+18000);

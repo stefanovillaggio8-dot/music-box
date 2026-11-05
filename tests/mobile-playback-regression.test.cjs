@@ -555,3 +555,17 @@ test("Safari preview gate allows normal readyState 3 with 3 seconds buffered",()
  const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
  assert.ok(mix.includes("return audio.readyState>=4||ahead>=(audio.readyState===2?8:3);"));
 });
+
+
+test("Safari fallback decode accepts readyState 2 only with a deep playback buffer",()=>{
+  const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+  const from=mix.indexOf("const playing=bridge()?.audio?.();");
+  const fallback=mix.slice(from,mix.indexOf("// Reuse a complete MP3 saved offline",from));
+  assert.ok(from>0,"bounded fallback gate present");
+  assert.ok(fallback.includes("playing.readyState<2"),
+    "WebKit state 2 must not permanently prevent fallback when music is playing");
+  assert.ok(fallback.includes("playing.readyState<4&&ahead<12"),
+    "fallback full-file requests still need at least 12 buffered seconds");
+  assert.ok(fallback.includes('conn?.saveData'),
+    "data saver must retain priority over optional DJ decode");
+});
