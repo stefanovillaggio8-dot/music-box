@@ -210,3 +210,47 @@ test("real indexed Ste-library alternatives after track 1197 have audible intros
  }));
  assert.ok(candidates.length>=1,"real Ste library must contain a safe audible-intro alternative");
 });
+
+test("actual last-impact cue starts before the measured last audible frame",()=>{
+ const start=source.indexOf("function desktopFinalImpactRelay(");
+ const end=source.indexOf("function desktopMeasuredPostludeBridge(",start);
+ assert.ok(start>=0&&end>start);
+ const join=new Function("isIOS","hasImmediateMusicalIntro",
+   "grooveAgreement","onsetGridPhase","musicalIntroEntry",
+   source.slice(start,end)+"return desktopFinalImpactRelay;")(
+    false,()=>true,()=>({score:.77}),()=>.12,()=>0);
+ const a={duration:249.133,last:243.9,bpm:129.2,beatConfidence:.247,
+  lastLyricAt:215.11,lastVoiceAt:213.59,protectedEnding:false,
+  dropRelease:{lastImpactAt:241.3,releaseAt:241.75,score:.7315,quietLevel:.2685}};
+ const b={duration:205,bpm:129.2,beatConfidence:.23,introDrive:.8,
+  introOnset:Array(96).fill(.25)};
+ const cue=join(a,b,249.133);
+ assert.ok(cue);
+ assert.equal(cue.kind,"soft");
+ assert.equal(cue.measuredFinalImpact,true);
+ assert.equal(cue.finalImpactAt,241.3);
+ assert.ok(cue.begin<241.3&&cue.end>243.9);
+ assert.ok(cue.begin<243.9-2.0,"must enter on last kick, not after the musical tail");
+ assert.equal(cue.silenceTrim,false);
+ assert.equal(cue.score,null,"never claim an unverified full beatmatch");
+ assert.equal(join({...a,lastLyricAt:240},b,249.133),null);
+ assert.equal(join({...a,lastVoiceAt:241},b,249.133),null);
+ assert.equal(join({...a,protectedEnding:true},b,249.133),null);
+ assert.equal(join({...a,dropRelease:{...a.dropRelease,score:.55}},b,249.133),null);
+ assert.equal(join(a,{...b,introDrive:.1},249.133),null);
+ assert.equal(join(a,{...b,bpm:165},249.133),null);
+ assert.equal(join({...a,lastLyricAt:null,lastVoiceAt:null},b,249.133),null,
+  "missing vocal evidence does not allow an on-beat overlap");
+});
+test("final-impact scheduler rejects missed last beat instead of late silence",()=>{
+ const start=source.indexOf("function desktopBeatStartDelay(");
+ const end=source.indexOf("async function beginMix(",start);
+ const delay=new Function(source.slice(start,end)+"return desktopBeatStartDelay;")();
+ const cue={kind:"soft",measuredFinalImpact:true,
+  finalImpactAt:241.3,nextBeat:.12,end:243.97};
+ assert.ok(Math.abs(delay(cue,241.11)-.07)<.002);
+ assert.equal(delay(cue,241.32),null,"too late to enter on final impact");
+ assert.equal(delay(cue,239.0),null,"no early speculative play");
+ assert.match(source,/plan\.kind==="snap"\|\|plan\.measuredFinalImpact===true/);
+ assert.match(source,/if\(act\.measuredFinalImpact\)\{/);
+});
