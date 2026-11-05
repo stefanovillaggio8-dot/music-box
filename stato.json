@@ -1332,7 +1332,7 @@
    },
    "[\"l'universo tranne noi\",\"max pezzali\"]": {
     "v": 1,
-    "s": 66,
+    "s": 78,
     "t": "L'universo tranne noi",
     "a": "Max Pezzali"
    },
@@ -1758,13 +1758,13 @@
    },
    "[\"estate\",\"negromaro\"]": {
     "v": 0,
-    "s": 136,
+    "s": 196,
     "t": "Estate",
     "a": "Negromaro"
    },
    "m:2026-11|[\"estate\",\"negromaro\"]": {
     "v": 0,
-    "s": 136,
+    "s": 196,
     "t": "Estate",
     "a": "Negromaro"
    },
@@ -3384,7 +3384,7 @@
    },
    "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
     "v": 1,
-    "s": 1,
+    "s": 13,
     "t": "L'universo tranne noi",
     "a": "Max Pezzali"
    },
@@ -4732,6 +4732,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -5488,17 +5500,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
-   "[\"giovanni\",\"tonypitony\"]": {
+   "[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
-   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5958,13 +5970,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
@@ -6255,18 +6267,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6732,13 +6732,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂ¬"
    },
@@ -8554,6 +8554,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
+   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 94,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 94,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -9315,18 +9327,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 94,
-    "t": "Le Tasche Piene Di Sassi",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 94,
-    "t": "Le Tasche Piene Di Sassi",
-    "a": "Jovanotti"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
