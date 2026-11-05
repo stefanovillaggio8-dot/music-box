@@ -40,6 +40,15 @@ async function run(){
    await route.fulfill({status:200,contentType:"text/javascript",
     body:original.replace(marker,hook+marker)});
   });
+  // The Supabase import-queue is unrelated to audio mixing. Stub its
+  // optional startup polling so a network/CORS outage cannot mask a
+  // real browser-level DJ test failure.
+  await page.route("**/functions/v1/musicbox-import-queue*",route=>
+   route.fulfill({status:200,contentType:"application/json",
+    headers:{"Access-Control-Allow-Origin":"*",
+     "Access-Control-Allow-Methods":"GET,POST,OPTIONS",
+     "Access-Control-Allow-Headers":"*"},
+    body:'{"items":[],"queue":[],"status":"ok"}'}));
   // The desktop-only 127.0.0.1:8788 diagnostics bridge is not installed
   // on the GitHub Actions runner. Make its optional /log endpoint inert
   // without concealing actual WebKit JavaScript exceptions in the DJ.
