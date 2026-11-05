@@ -1853,14 +1853,14 @@
     "a": "Carla Morrison"
    },
    "[\"tutti\",\"calcutta\"]": {
-    "v": 2,
-    "s": 257,
+    "v": 3,
+    "s": 276,
     "t": "Tutti",
     "a": "Calcutta"
    },
    "m:2026-11|[\"tutti\",\"calcutta\"]": {
-    "v": 2,
-    "s": 257,
+    "v": 3,
+    "s": 276,
     "t": "Tutti",
     "a": "Calcutta"
    },
@@ -4072,6 +4072,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 106,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
+   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 106,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -4827,18 +4839,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"non avere paura\",\"tommaso paradiso\"]": {
-    "v": 0,
-    "s": 106,
-    "t": "non avere paura",
-    "a": "tommaso paradiso"
-   },
-   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
-    "v": 0,
-    "s": 106,
-    "t": "non avere paura",
-    "a": "tommaso paradiso"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -6352,6 +6352,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"il piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"il piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -7115,14 +7127,14 @@
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "[\"il piÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 0,
+    "v": 0,
+    "s": 71,
     "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il piÃÂÃÂÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 0,
+    "v": 0,
+    "s": 71,
     "t": "Il PiÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
@@ -7890,13 +7902,13 @@
    },
    "[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 0,
-    "s": 71,
+    "s": 107,
     "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"il piÃÂÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 0,
-    "s": 71,
+    "s": 107,
     "t": "Il PiÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
@@ -9234,13 +9246,13 @@
    },
    "[\"le luci della cittÃ \",\"coez\"]": {
     "v": 0,
-    "s": 51,
+    "s": 65,
     "t": "Le luci della cittÃ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃ \",\"coez\"]": {
     "v": 0,
-    "s": 51,
+    "s": 65,
     "t": "Le luci della cittÃ ",
     "a": "Coez"
    },
@@ -10008,13 +10020,13 @@
    },
    "[\"le luci della città\",\"coez\"]": {
     "v": 0,
-    "s": 65,
+    "s": 128,
     "t": "Le luci della città",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della città\",\"coez\"]": {
     "v": 0,
-    "s": 65,
+    "s": 128,
     "t": "Le luci della città",
     "a": "Coez"
    },
