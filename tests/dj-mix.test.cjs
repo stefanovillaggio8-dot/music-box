@@ -175,7 +175,7 @@ function createMobileMixFixture(){
   'const isIOS=true,document={hidden:false};let enabled=true,mobileOverlayEnabled=true;'+
   'const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));'+
   'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),cache=new Map();'+
-  'const deepLookup=()=>null;'+
+  'const deepLookup=()=>null,resetMobileFade=()=>{};'+
   source.slice(source.indexOf("function mobileMixAllowed("),
    source.indexOf("function rememberMobileClip("))+ '\n'+block+
   '\nreturn {startMobileMix,stopMobileMix,handoffMobileMix,finishMobileMix,'+
