@@ -35,7 +35,7 @@ test("long overlays still require certified safe vocal and quiet region",()=>{
 test("Safari never prepares a full MP3 while native playback is starting or buffering",()=>{
  const policy=rt=>new Function("runtime",
   "const isIOS=true,document={get hidden(){return runtime.hidden}},Date={now:()=>runtime.now};"+
-  "let lastDJTrackChange=runtime.last;"+
+  "let lastDJTrackChange=runtime.last,offlineTransferPriority=false;"+
   excerpt("function mobileDJMayWork(","function mobileMixAllowed(")+
   "return mobileClipWindow;")(rt);
  const audio=(at,state)=>({paused:false,readyState:state,
@@ -135,6 +135,7 @@ test("large Safari DJ index retries after a slow/failed fetch without a reload",
   "const setTimeout=(fn,delay)=>{queued.push({fn,delay});return queued.length};"+
   "const clearTimeout=()=>{};"+
   "const AbortController=globalThis.AbortController;"+
+  "const bridge=()=>null;let offlineTransferPriority=false,deepTransferController=null;"+
   "let enabled=true,mixing=false,plannedFor='',plan=null,"+
   "shuffleGeneration=0,shuffleBusy=false,shuffleRunFor='',shuffleRetryAt=0,shuffleAttempts=0;"+
   "const $=()=>null;"+

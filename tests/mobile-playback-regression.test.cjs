@@ -122,7 +122,7 @@ test("iPhone DJ loads bounded intro range and refuses a full file response",asyn
  const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
   "const cache=new Map(),mobileIntroClips=new Map(),mobileClipRetryAt=new Map();"+
   "const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:\'\',lastError:\'\'};"+
-  "let mobileClipFailure=null;const bridge=()=>null;"+
+  "let mobileClipFailure=null,offlineTransferPriority=false;const bridge=()=>null;"+
   "const mobileDJMayWork=()=>true;"+
   "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
   "const withValidatedVoice=(v)=>v;"+
@@ -173,7 +173,7 @@ test("iPhone DJ stops an unexpectedly oversized streaming response before decodi
  const init="const document={hidden:false},djPlaybackEpoch=0,djFetchControllers=new Set();"+
   "const cache=new Map(),mobileIntroClips=new Map(),mobileClipRetryAt=new Map();"+
   "const mobileClipMetrics={ranges:0,fullFetches:0,successes:0,errors:0,method:\'\',lastError:\'\'};"+
-  "let mobileClipFailure=null;const bridge=()=>null;"+
+  "let mobileClipFailure=null,offlineTransferPriority=false;const bridge=()=>null;"+
   "const mobileDJMayWork=()=>true;"+
   "const rememberMobileClip=(key,b)=>mobileIntroClips.set(key,b);"+
   "const withValidatedVoice=(v)=>v;"+
@@ -442,5 +442,28 @@ test("DJ index bypasses stale JSON cache while preserving music cache",()=>{
  const generic=sw.indexOf("const isCore = CORE_EXT.some");
  assert.ok(fresh>=0&&fresh<generic);
  assert.ok(sw.includes('cache:"no-cache",credentials:"same-origin"'));
- assert.ok(sw.includes("event.waitUntil(fresh.then(()=>persistence)"));
+ assert.ok(sw.includes("event.waitUntil(job.then(()=>persistence)"),
+   "DJ index cache persistence keeps the worker alive");
+ assert.ok(sw.includes("const CACHE_DJ_INDEX = CACHE_PREFIX + \"-dj-index\""),
+   "DJ index survives app-version cache rotation");
+ assert.ok(sw.includes("const saved=await cache.match(event.request)"),
+   "read persisted analysis before downloading megabytes");
+ assert.ok(sw.includes("if(saved?.status===200)"),
+   "cached index takes precedence over a slow network");
+ assert.ok(sw.includes("Date.now()-previous<60*60*1000"),
+   "no repeated 5 MB DJ re-download during offline batches");
+});
+
+// Regression: the iPhone's two saved-MP3 transfers must take priority over
+// optional DJ analysis, without dropping existing downloaded tracks.
+test("offline downloads take priority without deleting saved music",()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.ok(app.includes("const concurrency=2;"));
+ assert.ok(app.includes("window.MusicBoxMix?.pauseForOffline?.()"));
+ assert.ok(app.includes("window.MusicBoxMix?.resumeAfterOffline?.()"));
+ assert.ok(mix.includes("offlineTransferPriority=true"));
+ assert.ok(mix.includes("deepTransferController?.abort()"));
+ assert.ok(mix.includes("offlineTransferPriority=false"));
+ assert.ok(sw.includes("key !== CACHE_DJ_INDEX"));
+ assert.ok(sw.includes("key !== cacheInfoName()"));
 });

@@ -176,6 +176,7 @@ test("late full-audio index invalidates stale DJ picks and resets exhausted retr
   "let plannedFor='previous',plan={kind:'cut'},shuffleGeneration=5,"+
   "shuffleBusy=true,shuffleRunFor='outgoing',shuffleRetryAt=9999,shuffleAttempts=4;"+
   "let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;"+
+  "let offlineTransferPriority=false,deepTransferController=null;const bridge=()=>null;"+
   "const isIOS=false,document={hidden:false};"+
   "const deepStatus=()=>{};"+
   "const fetch=async()=>({ok:true,json:async()=>({version:2,entries:{}})});"+
