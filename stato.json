@@ -2226,13 +2226,13 @@
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 0,
-    "s": 193,
+    "s": 249,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 0,
-    "s": 193,
+    "s": 249,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -8530,6 +8530,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
+   "[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -9292,17 +9304,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
    },
-   "[\"giovanni\",\"tonypitony\"]": {
+   "[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
-   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -9768,13 +9780,13 @@
    },
    "[\"g&v\",\"ivanbì\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBì"
    },
    "m:2026-11|[\"g&v\",\"ivanbì\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBì"
    },
@@ -10065,18 +10077,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De André"
-   },
-   "[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
    }
   },
   "Diego": {
