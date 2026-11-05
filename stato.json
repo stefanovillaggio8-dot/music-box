@@ -1212,7 +1212,7 @@
    },
    "[\"dimmi che ce'\",\"thasup\"]": {
     "v": 2,
-    "s": 78,
+    "s": 144,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -1680,7 +1680,7 @@
    },
    "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
     "v": 1,
-    "s": 77,
+    "s": 143,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -2616,13 +2616,13 @@
    },
    "[\"sentire la musica\",\"kid yugi\"]": {
     "v": 2,
-    "s": 366,
+    "s": 370,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"sentire la musica\",\"kid yugi\"]": {
     "v": 2,
-    "s": 366,
+    "s": 370,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
@@ -6196,6 +6196,18 @@
     "t": "Nessuna",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
+   "[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
+    "v": 1,
+    "s": 42,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
+   },
+   "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
+    "v": 1,
+    "s": 42,
+    "t": "Via del campo",
+    "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -6324,13 +6336,13 @@
    },
    "[\"se si potesse non morire\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 324,
+    "s": 356,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 324,
+    "s": 356,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -6948,13 +6960,13 @@
    },
    "[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 42,
+    "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 42,
+    "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
@@ -7086,13 +7098,13 @@
    },
    "[\"se si potesse non morire\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 356,
+    "s": 418,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 356,
+    "s": 418,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂ "
    },
