@@ -1,0 +1,16 @@
+plugins { id 'com.android.application' }
+android {
+  namespace 'it.musicbox.player'
+  compileSdk 35
+  defaultConfig {
+    applicationId 'it.musicbox.player'
+    minSdk 26
+    targetSdk 34
+    versionCode 1
+    versionName '6.623'
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
+}
