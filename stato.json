@@ -5153,14 +5153,14 @@
     "a": "Rino Gaetano"
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 152,
+    "v": 2,
+    "s": 168,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
-    "v": 1,
-    "s": 152,
+    "v": 2,
+    "s": 168,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -5910,13 +5910,13 @@
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 168,
+    "s": 250,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 168,
+    "s": 250,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -6672,13 +6672,13 @@
    },
    "[\"coraline\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 250,
+    "s": 275,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
    "m:2026-11|[\"coraline\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 250,
+    "s": 275,
     "t": "CORALINE",
     "a": "MÃÂÃÂÃÂÃÂ¥neskin"
    },
@@ -9388,6 +9388,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
    },
+   "[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 64,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
+   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
+    "v": 0,
+    "s": 64,
+    "t": "non avere paura",
+    "a": "tommaso paradiso"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 106,
@@ -10149,18 +10161,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De André"
-   },
-   "[\"non avere paura\",\"tommaso paradiso\"]": {
-    "v": 0,
-    "s": 34,
-    "t": "non avere paura",
-    "a": "tommaso paradiso"
-   },
-   "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
-    "v": 0,
-    "s": 34,
-    "t": "non avere paura",
-    "a": "tommaso paradiso"
    }
   },
   "Diego": {
