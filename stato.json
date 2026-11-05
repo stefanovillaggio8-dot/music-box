@@ -3486,13 +3486,13 @@
    },
    "[\"exit\",\"nayt\"]": {
     "v": 0,
-    "s": 4,
+    "s": 49,
     "t": "Exit",
     "a": "nayt"
    },
    "m:2026-11|[\"exit\",\"nayt\"]": {
     "v": 0,
-    "s": 4,
+    "s": 49,
     "t": "Exit",
     "a": "nayt"
    },
@@ -4980,13 +4980,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 237,
+    "s": 266,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 237,
+    "s": 266,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -5736,13 +5736,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 266,
+    "s": 345,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 266,
+    "s": 345,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -9364,6 +9364,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
    },
+   "[\"doom\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 52,
+    "t": "Doom",
+    "a": "nayt, 3D"
+   },
+   "m:2026-11|[\"doom\",\"nayt, 3d\"]": {
+    "v": 1,
+    "s": 52,
+    "t": "Doom",
+    "a": "nayt, 3D"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 106,
@@ -10126,17 +10138,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De André"
    },
-   "[\"doom\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 44,
-    "t": "Doom",
-    "a": "nayt, 3D"
+   "[\"prima che\",\"nayt\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "Prima che",
+    "a": "nayt"
    },
-   "m:2026-11|[\"doom\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 44,
-    "t": "Doom",
-    "a": "nayt, 3D"
+   "m:2026-11|[\"prima che\",\"nayt\"]": {
+    "v": 0,
+    "s": 13,
+    "t": "Prima che",
+    "a": "nayt"
    }
   },
   "Diego": {
