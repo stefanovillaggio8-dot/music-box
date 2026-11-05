@@ -216,3 +216,32 @@ test("quiet fade on iPhone requires near-silent measured release",()=>{
  assert.equal(isQuiet(null,cue),false);
  assert.equal(isQuiet(null,{kind:"snap"}),true);
 });
+
+// A real closing decay earns a neutral fade, NOT a fake beat label.
+// Unknown vocals cannot override known late lyrics or voice detections.
+test("DJ recovers a verified quiet fade when an exact beatmatch is impossible",()=>{
+ const head=source.indexOf("function certifiedNeutralBridge(");
+ const tail=source.indexOf("function mobileMixAllowed(",head);
+ assert.ok(head>0&&tail>head);
+ const choose=new Function(
+  "const hasImmediateMusicalIntro=()=>true;"+
+  "const musicalIntroEntry=b=>b.safeIntroAt||0;"+
+  source.slice(head,tail)+"return certifiedNeutralBridge;")();
+ const a={duration:180,last:177,protectedEnding:false,
+  confidentTail:true,lastLyricAt:165,lastVoiceAt:168,
+  dropRelease:{lastImpactAt:170,releaseAt:172,score:.91,quietLevel:.08}};
+ const b={introDrive:.81,safeIntroAt:0,firstLyricAt:4};
+ const p=choose(a,b,180);
+ assert.equal(p?.kind,"soft");
+ assert.equal(p?.neutralRelease,true);
+ assert.equal(p?.preserveTail,true);
+ assert.ok(p.begin>=a.dropRelease.releaseAt+.3);
+ assert.ok(p.end>=a.last,"original last audible notes survive the fade");
+ assert.ok(p.fade>=2.35,"audible overlapping intro");
+ assert.equal(choose({...a,lastVoiceAt:172.1},b,180),null);
+ assert.equal(choose({...a,lastLyricAt:171},b,180),null);
+ assert.equal(choose({...a,protectedEnding:true},b,180),null);
+ assert.equal(choose({...a,dropRelease:{...a.dropRelease,quietLevel:.4}},b,180),null);
+ assert.equal(choose(a,{...b,firstLyricAt:.5},180),null);
+ assert.equal(choose(a,b,166),null);
+});

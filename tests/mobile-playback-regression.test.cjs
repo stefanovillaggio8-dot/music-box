@@ -467,3 +467,12 @@ test("offline downloads take priority without deleting saved music",()=>{
  assert.ok(sw.includes("key !== CACHE_DJ_INDEX"));
  assert.ok(sw.includes("key !== cacheInfoName()"));
 });
+
+test("iPhone DJ retries a bounded wider intro before requesting a full MP3",()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.ok(mix.includes('"Range":"bytes=0-786431"'));
+ assert.ok(mix.includes('"Range":"bytes=0-2097151"'));
+ assert.ok(mix.includes('mobileClipMetrics.method="HTTP 206 · intro estesa"'));
+ assert.ok(mix.includes("setTimeout(()=>ctrl.abort(),36000)"));
+ assert.ok(mix.includes("remaining>95||remaining<6"));
+});

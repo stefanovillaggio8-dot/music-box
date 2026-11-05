@@ -32,7 +32,7 @@ function mobileClipWindow(audio) {
  if(!audio||audio.paused||audio.seeking||document.hidden||audio.readyState<3||
     !mobileDJMayWork())return false;
  const remaining=audio.duration-audio.currentTime;
- if(!Number.isFinite(remaining)||remaining>75||remaining<6)return false;
+ if(!Number.isFinite(remaining)||remaining>95||remaining<6)return false;
  let ahead=0;
  try{
   for(let i=0;i<audio.buffered.length;i++){
@@ -169,6 +169,42 @@ function iphoneQuietReleaseCertified(a,cue){
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-1.4)&&
    (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-4));
  return digital||gap||decayed;
+}
+// A failed strict beatmatch must not erase a VERIFIED, already-decaying
+// outro. Use a neutral overlap only after the final impact has fallen away.
+// This never certifies two unrelated drum patterns as the same beat.
+function certifiedNeutralBridge(a,b,dur){
+ const release=a?.dropRelease;
+ if(!release||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||!Number.isFinite(a.duration)||
+    !Number.isFinite(dur)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(release.releaseAt)||
+    !Number.isFinite(release.lastImpactAt)||release.score<.78||
+    release.quietLevel>.15||a.last-release.releaseAt<2.9||
+    release.releaseAt<release.lastImpactAt||
+    !hasImmediateMusicalIntro(b)||b.introDrive<.36||
+    (Number.isFinite(a.lastLyricAt)&&
+     a.lastLyricAt>release.releaseAt-4)||
+    (Number.isFinite(a.lastVoiceAt)&&
+     a.lastVoiceAt>release.releaseAt-2.5)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<1.8)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<1.8))
+   return null;
+ const end=Math.min(dur-.04,a.last+.07);
+ const begin=Math.max(release.releaseAt+.4,end-4.8,
+   Number.isFinite(a.lastLyricAt)?a.lastLyricAt+4:0,
+   Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt+1.8:0);
+ const fade=end-begin;
+ if(!Number.isFinite(fade)||fade<2.35||fade>5||
+    begin<20||end-begin<=0)return null;
+ const trim=a.confidentTail===true&&dur-a.last>=1.65;
+ return {kind:"soft",begin,end,fade,
+  entry:musicalIntroEntry(b),tempo:1,gain:1,score:null,
+  quietCertified:true,neutralRelease:true,
+  safeOutroAt:begin,verifiedDecayAfterLyrics:true,
+  decayReleaseAt:release.releaseAt,
+  silenceTrim:trim,trailing:trim?dur-end:0,
+  preserveTail:true,softTailTrim:false};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
@@ -972,7 +1008,7 @@ function compatibility(a,b){
  if(offlineTransferPriority||!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
  if(Date.now()<(mobileClipRetryAt.get(key)||0))return null;
  const ctrl=new AbortController();djFetchControllers.add(ctrl);
- const timer=setTimeout(()=>ctrl.abort(),22000);
+ const timer=setTimeout(()=>ctrl.abort(),36000);
  const stale=()=>offlineTransferPriority||ctrl.signal.aborted||
   epoch!==djPlaybackEpoch||document.hidden;
  async function readLimited(response,limit){
@@ -1036,6 +1072,21 @@ function compatibility(a,b){
    const result=await clipFromBytes(bytes,false);
    if(result){mobileClipMetrics.successes++;mobileClipMetrics.method="HTTP 206";return result;}
   }catch(_){/* Safari can reject a valid but incomplete MP3 */ }
+  if(stale())return null;
+  // Safari sometimes needs more complete MP3 frames before decodeAudioData
+  // can decode a partial response. Try a bounded 2 MB header/intro first
+  // (rather than fetching a whole 7 MB song into iPhone RAM).
+  try{
+   const wider=await fetch(source,{mode:"cors",cache:"force-cache",
+    signal:ctrl.signal,headers:{"Range":"bytes=0-2097151"}});
+   if(wider.status===206){
+    const widerBytes=await readLimited(wider,2097152);
+    if(stale())return null;
+    const decoded=await clipFromBytes(widerBytes,false);
+    if(decoded){mobileClipMetrics.successes++;
+     mobileClipMetrics.method="HTTP 206 · intro estesa";return decoded;}
+   }
+  }catch(_){if(stale())return null}
   if(stale())return null;
   // The complete-file fallback is allowed only while the current native
   // song has adequate buffered audio; it must never stall playback.
@@ -2966,10 +3017,15 @@ function tick(){
    const weakDesktopMatch=!isIOS&&candidate&&
      (!desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
       !iphoneQuietReleaseCertified(currentAnalysis,candidate));
-   plan=weakIphoneMatch?null:
-     (weakDesktopMatch?null:
-      (candidate||(currentAnalysis&&nextAnalysis?
-       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null)));
+   const certifiedQuietAlternative=
+     (weakIphoneMatch||weakDesktopMatch||!candidate)&&
+     currentAnalysis&&nextAnalysis?
+      certifiedNeutralBridge(currentAnalysis,nextAnalysis,audio.duration):null;
+   plan=(weakIphoneMatch||weakDesktopMatch)?
+    certifiedQuietAlternative:
+    (candidate||certifiedQuietAlternative||
+      (currentAnalysis&&nextAnalysis?
+       continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null));
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
@@ -3903,6 +3959,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
    instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
    measuredBeatBridge:!!plan?.measuredBeatBridge,
+   certifiedQuietAlternative:!!plan?.neutralRelease,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,
    shuffleBusy,
