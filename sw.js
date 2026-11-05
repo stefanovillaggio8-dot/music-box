@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6623";
+const CACHE = "spotifynonavraiimieisoldi-v6624";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1402,6 +1402,8 @@ async function cachedMusicResponse(event) {
 }
 
 
+// Static shell refreshes when the Service Worker version changes.
+const _coreRevalidateAfter=new Map();
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
@@ -1506,6 +1508,7 @@ self.addEventListener("fetch", (event) => {
     const cache = caches.open(CACHE);
     /* NB: "c" (la cache) resta dentro la sua catena, altrimenti non e'
        definito e la promise rigetta (e ogni file diventa un 504). */
+    let _coreRefreshPending=Promise.resolve();
     const lavoro = cache.then((c) => c.match(event.request).then((cached) => {
       if (cached) {
         /* Se il file in cache e' ROTTO (un download interrotto), non lo uso:
@@ -1533,15 +1536,21 @@ self.addEventListener("fetch", (event) => {
             })
             .catch((e) => new Response("", { status: 504 }));
         }
-        /* in secondo piano: controllo se online c'e' qualcosa di nuovo */
-        fetch(new Request(event.request.url, { cache: "reload", credentials: "same-origin" }))
-          .then((response) => {
-            if (response && response.status === 200) {
-              const clone = response.clone();
-              return c.put(event.request, clone).catch(() => {});
-            }
-          })
-          .catch(() => { /* niente rete: tengo quella che ho */ });
+        /* Cached static assets must NOT trigger full background downloads:
+           Safari MP3 buffering had to compete with duplicate app downloads.
+           Cover and lyrics metadata may refresh hourly between releases. */
+        if(/\/(?:covers(?:-spotify)?|karaoke-index|lyrics)\.json$/i.test(url.pathname)){
+          const key=event.request.url,now=Date.now();
+          if(now>=(_coreRevalidateAfter.get(key)||0)){
+            _coreRevalidateAfter.set(key,now+60*60*1000);
+            _coreRefreshPending=fetch(new Request(key,{
+              cache:"reload",credentials:"same-origin"
+            })).then(response=>{
+              if(response?.status===200)
+                return c.put(event.request,response.clone()).catch(()=>{});
+            }).catch(()=>{});
+          }
+        }
         return cached;
       }
       /* non l'ho mai preso: vado a prenderlo dalla rete */
@@ -1556,7 +1565,8 @@ self.addEventListener("fetch", (event) => {
         .catch((e) => caches.match(event.request).then((r) => r || new Response("", { status: 504 })));
     }));
     event.respondWith(lavoro);
-    event.waitUntil(lavoro.catch(() => { }));
+    // The response is immediate; waitUntil retains only optional metadata refresh.
+    event.waitUntil(lavoro.then(()=>_coreRefreshPending).catch(() => { }));
     return;
   } else if (isCore) {
     /* versione.json e stato.json: sempre dalla rete, e la copia la

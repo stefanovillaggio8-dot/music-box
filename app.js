@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.623";
+  const APP_VERSION = "6.624";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12021,7 +12021,7 @@ window.MusicBoxBridge = {
   audio:()=>audio,
   mixRunningContext:()=>_mixContextAttivo(),
   offlineBusy:()=>offlineBusy,
-  mixEnableAudio:()=>_preparaAudio(),
+  mixEnableAudio:(event)=>_preparaAudio(event),
   play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
   mixNext:()=> {
     if (window.MusicBoxRoom?.isActive() || repeat || !currentId) return null;

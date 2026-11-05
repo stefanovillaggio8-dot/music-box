@@ -28,6 +28,22 @@ function mobileDJMayWork(){
 // The deep DJ index supplies beat/harmonic cues instantly. Preparing an
 // optional Safari overlay can decode a whole MP3 and must NOT run while
 // a freshly selected native song is buffering.
+function iosIndexCanLoadNow(){
+ if(!isIOS)return true;
+ const audio=bridge()?.audio?.();
+ if(!audio||audio.paused||audio.ended)return true;
+ if(audio.seeking||audio.readyState<2)return false;
+ if(audio.readyState>=4)return true;
+ let bufferedAhead=0;
+ try{
+  for(let i=0;i<audio.buffered.length;i++)
+   if(audio.buffered.start(i)<=audio.currentTime+.5&&
+      audio.buffered.end(i)>=audio.currentTime)
+    bufferedAhead=Math.max(bufferedAhead,audio.buffered.end(i)-audio.currentTime);
+ }catch(_){}
+ // Give Safari's native song priority over optional multi-megabyte metadata.
+ return bufferedAhead>=18;
+}
 function mobileClipWindow(audio) {
  if(!audio||audio.paused||audio.seeking||document.hidden||audio.readyState<2||
     !mobileDJMayWork())return false;
@@ -344,6 +360,10 @@ function loadDeepIndex(force=false){
  if(offlineTransferPriority||bridge()?.offlineBusy?.())return Promise.resolve(deepIndex);
  if(deepIndexPromise)return deepIndexPromise;
  if(deepIndex&&!force)return Promise.resolve(deepIndex);
+ if(!deepIndex&&!iosIndexCanLoadNow()){
+  scheduleDeepIndexRetry(9000);
+  return Promise.resolve(null);
+ }
  if(!force&&Date.now()<deepRetryAfter)return Promise.resolve(deepIndex);
  const job=(async()=>{
   // The index is several megabytes: six seconds is not enough on mobile.
@@ -3169,6 +3189,8 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
  });
  return true;
 }
+let lastIPhoneSlowTick=0,lastIPhoneSlowAudio=null;
+let lastIPhoneSlowId="",lastIPhoneSlowNext="";
 function tick(){
  // iOS suspends/limits JS timers behind the lock screen. Leave the native
  // single HTML audio uninterrupted until Safari restores this page.
@@ -3183,6 +3205,17 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ // Timeupdate fires much faster than planning needs; never throttle cues
+ // within five seconds of their start or the dedicated precision timer.
+ if(isIOS&&!mobileActive&&!mixing&&!active&&audio&&!audio.paused&&
+    Number.isFinite(audio.duration)&&audio.duration-audio.currentTime>14&&
+    (!plan||audio.currentTime<plan.begin-5)){
+  const ms=Date.now(),nextId=next?.id||"";
+  if(lastIPhoneSlowAudio===audio&&lastIPhoneSlowId===id&&
+     lastIPhoneSlowNext===nextId&&ms-lastIPhoneSlowTick<1150)return;
+  lastIPhoneSlowTick=ms;lastIPhoneSlowAudio=audio;
+  lastIPhoneSlowId=id;lastIPhoneSlowNext=nextId;
+ }
  if(isIOS)updateMobileStatus();
  if(mobileActive){
   if(document.hidden){stopMobileMix();return}
@@ -4110,7 +4143,7 @@ function settingsChanged(){
 }
 // Both switches call the same state setter. On iPhone the menu button
 // may be disabled/hidden, and programmatically clicking it was a no-op.
-function setMixEnabled(value){
+function setMixEnabled(value,event){
  const requested=Boolean(value);
  if(enabled===requested){draw();return}
  enabled=requested;
@@ -4123,7 +4156,7 @@ function setMixEnabled(value){
   if(isIOS){
    mobileOverlayEnabled=true;
    try{localStorage.setItem("mb.mixIphone","on")}catch(_){}
-   bridge()?.mixEnableAudio?.();
+   bridge()?.mixEnableAudio?.(event);
   }
   // Do not pull a multi-megabyte harmonic index in the same tap as play.
   if(!deepIndex)setTimeout(()=>{if(enabled&&!document.hidden)
@@ -4143,10 +4176,12 @@ function start(){
  // The cloud batch index grows while music is playing: adopt new analyzed
  // tracks automatically, without reloading the tab or re-downloading MP3s.
  setInterval(()=>{
-  if(enabled&&!document.hidden)loadDeepIndex(true).catch(()=>{});
+  if(enabled&&!document.hidden&&
+      (!isIOS||!bridge()?.audio?.()||bridge().audio().paused))
+    loadDeepIndex(true).catch(()=>{});
  },15*60*1000);
  const btn=$("btnMixIntelligente");
- btn?.addEventListener("click",()=>setMixEnabled(!enabled));
+ btn?.addEventListener("click",event=>setMixEnabled(!enabled,event));
  const panel=$("mixPanel");
  $("btnMixSettings")?.addEventListener("click",()=>{
   verifyRequestedTrackId=null;
@@ -4168,13 +4203,13 @@ function start(){
  $("mixToggle")?.addEventListener("click",event=>{
   event.preventDefault();
   event.stopPropagation();
-  setMixEnabled(!enabled);
+  setMixEnabled(!enabled,event);
  });
- $("mixIphoneToggle")?.addEventListener("click",()=>{
+ $("mixIphoneToggle")?.addEventListener("click",event=>{
   mobileOverlayEnabled=!mobileOverlayEnabled;
   try{localStorage.setItem("mb.mixIphone",mobileOverlayEnabled?"on":"off")}catch(e){}
   if(!mobileOverlayEnabled)stopMobileMix();
-  else if(enabled)bridge()?.mixEnableAudio?.();
+  else if(enabled)bridge()?.mixEnableAudio?.(event);
   draw();
  });
  $("mixVerifyCurrent")?.addEventListener("click",()=>{verifyCurrentAudio(verifyRequestedTrackId).catch(()=>{});});
