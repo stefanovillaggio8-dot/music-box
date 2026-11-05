@@ -3728,8 +3728,10 @@ async function intelligentShuffle(app,audio,fromId){
  // Order-only fallback is still preferable to an unrelated random song,
  // but absolutely never gains permission to overlap a sung ending.
  // Prefer a next song with actually compatible notes and drums.
- const choicePool=scored.length?scored:nearScored.length?nearScored:
-  softScored.length?softScored:sequenceScored.length?sequenceScored:rhythmOrderScored;
+ // Prioritize a transition that the iPhone/desktop mixer can genuinely
+ // PLAY over a rhythm/key resemblance that cannot produce a mix.
+ const choicePool=scored.length?scored:softScored.length?softScored:
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:rhythmOrderScored;
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&

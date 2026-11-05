@@ -307,3 +307,10 @@ test("real-world zero beat matches still choose the best measured percussive nex
  assert.equal(f.decision().reason,
   "ritmo simile, raccordo continuo (non beat certificato)");
 });
+
+test("real audible DJ transitions outrank similarity-only queue candidates",()=>{
+ const body=source.slice(source.indexOf("async function intelligentShuffle("),
+  source.indexOf("let shuffleBusy=",source.indexOf("async function intelligentShuffle(")));
+ assert.ok(body.includes("const choicePool=scored.length?scored:softScored.length?softScored:"));
+ assert.ok(body.includes("nearScored.length?nearScored"));
+});
