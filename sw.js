@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6608";
+const CACHE = "spotifynonavraiimieisoldi-v6609";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -7,6 +7,7 @@ const CACHE = "spotifynonavraiimieisoldi-v6608";
    scaricate non si devono ricopiare a ogni aggiornamento (sono GB).
    Ora ogni profilo ha le sue cache: brani-<profilo>, stream-<profilo>. */
 const CACHE_PREFIX = "spotifynonavraiimieisoldi";
+const CACHE_DJ_INDEX = CACHE_PREFIX + "-dj-index"; // durable, audio measurements only
 const CACHE_BRANI = CACHE_PREFIX + "-brani";  /* deprecato: usato per migrazione vecchie cache */
 function cacheBraniName(p) { return CACHE_PREFIX + "-brani-" + p; }
 function cacheStreamName(p) { return CACHE_PREFIX + "-stream-" + p; }
@@ -1112,10 +1113,13 @@ async function migrateOfflineSongsAndCleanup() {
   const oldKeys = keys.filter((key) => key.startsWith(CACHE_PREFIX + "-") && key !== CACHE &&
     key !== CACHE_BRANI &&
     key !== cacheInfoName() &&
+    key !== CACHE_DJ_INDEX &&
     !profileCachePattern.test(key));
   const activeCache = await caches.open(CACHE);
   /* Migriamo dalla vecchia cache condivisa CACHE_BRANI verso il profilo di default "Ste" */
   const cacheBraniDefault = await caches.open(cacheBraniName("Ste"));
+  const djStableCache = await caches.open(CACHE_DJ_INDEX);
+  const djIndexUrl = new URL("./dj-deep-analysis.json",self.registration.scope).href;
 
   /* Prima di eliminare vecchie cache, controllo che la versione nuova contenga
      tutti i file essenziali. Se l'installazione e' incompleta, non elimino nulla. */
@@ -1135,6 +1139,13 @@ async function migrateOfflineSongsAndCleanup() {
   for (const key of oldKeys) {
     const oldCache = await caches.open(key);
     let safeToDelete = true;
+    // Migrate the index before deleting any older application cache.
+    try {
+      if (!(await djStableCache.match(djIndexUrl))) {
+        const oldIndex = await oldCache.match(djIndexUrl);
+        if (oldIndex?.status === 200) await djStableCache.put(djIndexUrl,oldIndex.clone());
+      }
+    } catch (_) { safeToDelete=false; }
     const requests = await oldCache.keys();
 
     for (const request of requests) {
@@ -1432,25 +1443,38 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // The DJ index grows in real-audio batches. Generic stale-while-revalidate
-  // JSON responses must not hide new measured transitions from Safari.
+  // Use the already measured DJ index immediately; the old network-first
+  // rule re-downloaded more than 5 MB and competed with iPhone MP3 downloads.
   if (/\/dj-deep-analysis\.json$/i.test(url.pathname)) {
     let persistence=Promise.resolve();
-    const fresh=fetch(new Request(event.request.url,{
-      cache:"no-cache",credentials:"same-origin"
-    })).then(response=>{
-      if(response && response.ok && response.status===200){
-        persistence=caches.open(CACHE).then(c=>
-          c.put(event.request,response.clone())).catch(()=>{});
+    const job=(async()=>{
+      const cache=await caches.open(CACHE_DJ_INDEX);
+      const saved=await cache.match(event.request);
+      const request=new Request(event.request.url,{cache:"no-cache",credentials:"same-origin"});
+      if(saved?.status===200){
+        persistence=(async()=>{
+          const info=await caches.open(cacheInfoName());
+          const marker=new URL("./__metadata__/dj-last-check",self.registration.scope).href;
+          const prior=await info.match(marker);
+          const previous=Number(prior?await prior.text():0)||0;
+          if(Date.now()-previous<60*60*1000)return;
+          await info.put(marker,new Response(String(Date.now())));
+          try {
+            const response=await fetch(request);
+            if(response?.status===200)await cache.put(event.request,response.clone());
+          }catch(_){ /* keep the saved index on a slow/offline network */ }
+        })().catch(()=>{});
+        return saved;
       }
-      return response;
-    }).catch(async()=>{
-      const cached=await caches.open(CACHE)
-        .then(c=>c.match(event.request)).catch(()=>null);
-      return cached||new Response("",{status:504});
-    });
-    event.respondWith(fresh);
-    event.waitUntil(fresh.then(()=>persistence).catch(()=>{}));
+      try {
+        const response=await fetch(request);
+        if(response?.status===200)
+          persistence=cache.put(event.request,response.clone()).catch(()=>{});
+        return response;
+      }catch(_){return new Response("",{status:504})}
+    })();
+    event.respondWith(job);
+    event.waitUntil(job.then(()=>persistence).catch(()=>{}));
     return;
   }
 

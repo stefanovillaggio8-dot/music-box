@@ -19,8 +19,11 @@ function abortObsoleteDJWork(){
  for(const ctrl of djFetchControllers)try{ctrl.abort()}catch(_){}
  djFetchControllers.clear();
 }
+let offlineTransferPriority=false;
+let deepTransferController=null;
 function mobileDJMayWork(){
- return !isIOS||(!document.hidden&&Date.now()-lastDJTrackChange>=5500);
+ return !offlineTransferPriority&&
+  (!isIOS||(!document.hidden&&Date.now()-lastDJTrackChange>=5500));
 }
 // The deep DJ index supplies beat/harmonic cues instantly. Preparing an
 // optional Safari overlay can decode a whole MP3 and must NOT run while
@@ -293,6 +296,7 @@ function scheduleDeepIndexRetry(delay){
  },Math.max(1000,delay));
 }
 function loadDeepIndex(force=false){
+ if(offlineTransferPriority||bridge()?.offlineBusy?.())return Promise.resolve(deepIndex);
  if(deepIndexPromise)return deepIndexPromise;
  if(deepIndex&&!force)return Promise.resolve(deepIndex);
  if(!force&&Date.now()<deepRetryAfter)return Promise.resolve(deepIndex);
@@ -301,7 +305,9 @@ function loadDeepIndex(force=false){
   // Revalidate cached metadata, rather than forcing another complete
   // download every fifteen minutes when nothing changed.
   const ctrl=new AbortController();
-  const timeout=setTimeout(()=>ctrl.abort(),isIOS?25000:14000);
+  deepTransferController=ctrl;
+  // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
+  const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
    const resp=await fetch("dj-deep-analysis.json",{
     cache:"no-cache",signal:ctrl.signal
@@ -323,12 +329,17 @@ function loadDeepIndex(force=false){
     shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;
    }
   }catch(error){
+   if(offlineTransferPriority||bridge()?.offlineBusy?.())return deepIndex;
    deepLoadFailures++;
    const delay=Math.min(120000,15000*Math.pow(2,
     Math.min(3,deepLoadFailures-1)));
    deepRetryAfter=Date.now()+delay;
    if(!deepIndex&&enabled)scheduleDeepIndexRetry(delay+250);
-  }finally{clearTimeout(timeout);deepStatus()}
+  }finally{
+   clearTimeout(timeout);
+   if(deepTransferController===ctrl)deepTransferController=null;
+   deepStatus();
+  }
   return deepIndex;
  })();
  deepIndexPromise=job;
@@ -958,11 +969,12 @@ function compatibility(a,b){
  // The index already contains the measurements. On iPhone, load ONLY
  // an MP3 intro byte range for an optional WebAudio overlap, never a full song.
  async function decodeMobileIntroRange(source,key,deep,epoch){
- if(!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
+ if(offlineTransferPriority||!mobileDJMayWork()||document.hidden||epoch!==djPlaybackEpoch)return null;
  if(Date.now()<(mobileClipRetryAt.get(key)||0))return null;
  const ctrl=new AbortController();djFetchControllers.add(ctrl);
  const timer=setTimeout(()=>ctrl.abort(),22000);
- const stale=()=>ctrl.signal.aborted||epoch!==djPlaybackEpoch||document.hidden;
+ const stale=()=>offlineTransferPriority||ctrl.signal.aborted||
+  epoch!==djPlaybackEpoch||document.hidden;
  async function readLimited(response,limit){
   if(!response.ok)throw Error("HTTP "+response.status);
   if(Number(response.headers.get("content-length")||0)>limit)
@@ -3196,6 +3208,8 @@ function updateMobileStatus(){
  const context=app?.mixRunningContext?.();
  let status;
  if(!enabled||!mobileOverlayEnabled)status="Mix su iPhone disattivato.";
+ else if(offlineTransferPriority)status="Priorità ai download offline: il mix riprende dopo.";
+ else if(!deepIndex)status="Indice musicale in caricamento: il lettore normale continua.";
  else if(document.hidden)status="Schermo bloccato: riproduzione normale protetta.";
  else if(mobileActive?.handingOff)status="Mix eseguito: passo al lettore normale.";
  else if(mobileActive)status="Transizione in corso: introduzione sovrapposta.";
@@ -3855,6 +3869,17 @@ function start(){
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
 window.MusicBoxMix={isEnabled:()=>enabled,
+ pauseForOffline:()=>{
+  offlineTransferPriority=true;
+  try{deepTransferController?.abort()}catch(_){}
+  djPlaybackEpoch++;
+  for(const ctrl of djFetchControllers)try{ctrl.abort()}catch(_){}
+  djFetchControllers.clear();
+ },
+ resumeAfterOffline:()=>{
+  offlineTransferPriority=false;
+  if(enabled&&!deepIndex&&!document.hidden)scheduleDeepIndexRetry(1400);
+ },
  needsAudioContext:()=>enabled&&mobileOverlayEnabled,
  isAnalyzing:()=>pending.size>0,cancel,naturalEndHandoff,
  deepProgress:()=>({analyzed:deepIndex?.analyzed||0,total:deepIndex?.sourceCount||0}),
@@ -3866,6 +3891,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   const points=liveOutro?.audio===audio?liveOutro.samples:[];
   return {
    enabled,isIOS,current:id,next:next?.id||null,
+   deepIndexLoaded:!!deepIndex,offlineTransferPriority,
+   audioContextState:app?.mixRunningContext?.()?.state||"not-running",
    remaining:Number.isFinite(audio?.duration)?Math.round((audio.duration-audio.currentTime)*10)/10:null,
    analysisReady:!!a,deepIndexed:!!deepLookup(track),
    analysisDuration:a?.duration??null,lastAudible:a?.last??null,

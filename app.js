@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.608";
+  const APP_VERSION = "6.609";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12020,6 +12020,7 @@ window.MusicBoxBridge = {
   currentId:()=>currentId,
   audio:()=>audio,
   mixRunningContext:()=>_ctx&&_ctx.state==="running"?_ctx:null,
+  offlineBusy:()=>offlineBusy,
   mixEnableAudio:()=>_preparaAudio(),
   play:(id,autoplay,startAt)=>playById(id,autoplay,startAt),
   mixNext:()=> {
@@ -12948,7 +12949,7 @@ $("fabMenu").addEventListener("click", (e) => {
             const rate=(got/1048576)/Math.max(.3,(now-started)/1000);
             row.el.fill.style.width=pct+"%";
             row.el.state.textContent=(total?pct+"%":fmtBytes(got))+
-              " · "+rate.toFixed(1)+" MB/s";
+              " · "+(rate<.20?Math.round(rate*1024)+" KB/s":rate.toFixed(1)+" MB/s");
           }
         }
         blob = new Blob(chunks, { type: res.headers.get("content-type") || "audio/mpeg" });
@@ -13168,6 +13169,8 @@ $("fabMenu").addEventListener("click", (e) => {
       toast("Le canzoni richieste sono già pronte offline"); return;
     }
     offlineBusy=true;offlineStopRequested=false;
+    // Reserve bandwidth for the two explicit MP3 downloads.
+    try{window.MusicBoxMix?.pauseForOffline?.()}catch(_){}
     const controller=new AbortController();
     offlineAbort=controller;
     $("btnOfflineAll").textContent="Ferma";
@@ -13203,6 +13206,7 @@ $("fabMenu").addEventListener("click", (e) => {
       else _persistPendingOffline(owner,rows);
       if(offlineAbort===controller)offlineAbort=null;
       offlineBusy=false;offlineStopRequested=false;
+      try{window.MusicBoxMix?.resumeAfterOffline?.()}catch(_){}
       $("btnOfflineAll").textContent="Scarica tutte";
       const ok=rows.filter(r=>r.state==="ok").length;
       const errors=rows.filter(r=>r.state==="err");
