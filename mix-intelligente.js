@@ -2372,7 +2372,9 @@ function startMobileMix(song,p,app,old){
   const frames=clip.channels[0].length;
   const secondsLeft=p.end-old.currentTime;
   // Do not start a crossfade so late that it would cut the next song.
-  if(secondsLeft<(p.kind==="snap"?.30:2.15)||(frames/clip.rate-offset)<secondsLeft+.3){
+  // A 2.35-second quiet fade used to have a ~200ms start window.
+  // Safari needs at least 1.25s remaining to finish a late, safe blend.
+  if(secondsLeft<(p.kind==="snap"?.30:1.25)||(frames/clip.rate-offset)<secondsLeft+.3){
    mobileMixLastBlocker="Punto di mix perso o introduzione troppo corta";
    return false;
   }
@@ -2586,21 +2588,26 @@ function stopSnapPrecision(){
  if(snapPrecisionTimer!==null){clearInterval(snapPrecisionTimer);snapPrecisionTimer=null}
 }
 function armSnapPrecision(audio,id){
- if(!plan||plan.kind!=="snap"||mixing||
-    !audio||audio.paused||document.hidden||
+ // Safari may tick at 650ms when a short measured quiet fade has less
+ // than a second to start; arm the accurate pre-roll for that cue too.
+ const eligible=!!plan&&(plan.kind==="snap"||
+  (isIOS&&["beat","soft","fade","rise"].includes(plan.kind)));
+ if(!eligible||mixing||!audio||audio.paused||document.hidden||
     audio.currentTime<plan.begin-3||audio.currentTime>=plan.end){
   stopSnapPrecision();return;
  }
  if(snapPrecisionTimer!==null)return;
  snapPrecisionTimer=setInterval(()=>{
   const app=bridge(),a=app?.audio?.();
+  const stillEligible=!!plan&&(plan.kind==="snap"||
+   (isIOS&&["beat","soft","fade","rise"].includes(plan.kind)));
   if(!enabled||!a||a!==audio||app?.currentId?.()!==id||
-     !plan||plan.kind!=="snap"||a.paused||
-     a.currentTime>=plan.end||document.hidden||mixing){
+     !stillEligible||a.paused||a.currentTime>=plan.end||
+     document.hidden||mixing){
    stopSnapPrecision();return;
   }
   try{tick()}catch(_){stopSnapPrecision()}
- },85);
+ },95);
 }
 function dropPrepared(){
  if(!prepared)return;
@@ -3381,7 +3388,7 @@ function tick(){
  }
  if(isIOS&&!document.hidden&&!mobileActive&&
     audio.currentTime>=plan.begin&&
-    audio.currentTime<plan.end-(plan.kind==="snap"?.22:2.0)&&
+    audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)&&
     mobileMixAllowed(plan,measuredEnding,lastKnownLyric))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&

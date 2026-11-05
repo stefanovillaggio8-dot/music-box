@@ -812,3 +812,21 @@ test("iPhone checks its native successor before stopping WebAudio and never undo
  assert.ok(source.includes("mobileMixLastBlocker"));
  assert.ok(source.includes("mobileMixLastStartedAt"));
 });
+
+test("Safari can still begin a measured 2.35s soft fade after a short timer delay",()=>{
+ const f=createMobileMixFixture();
+ f.old.currentTime=178.45;
+ const p={...f.plan,kind:"soft",begin:177.65,end:180,
+  fade:2.35,safeOutroAt:172,quietCertified:true};
+ assert.equal(f.engine.startMobileMix(f.song,p,f.app,f.old),true,
+  "a real 1.55s remaining must still allow an audible measured overlap");
+ assert.equal(f.engine.active().old,f.old);
+ f.engine.stopMobileMix();
+});
+test("foreground precision scheduling includes measured quiet fades",()=>{
+ const fn=source.slice(source.indexOf("function armSnapPrecision("),
+  source.indexOf("function dropPrepared("));
+ assert.ok(fn.includes('isIOS&&["beat","soft","fade","rise"].includes(plan.kind)'));
+ assert.ok(fn.includes("},95);"));
+ assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:1.25)'));
+});
