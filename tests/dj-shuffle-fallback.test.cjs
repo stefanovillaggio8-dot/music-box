@@ -36,6 +36,7 @@ function fixture(options={}){
   "const cache=new Map(),deepLookup=t=>t?.analysis||null;",
   "const decode=async t=>t?.analysis||null;",
   "const grooveAgreement=()=>({score:"+(Number(options.groove??.85))+"});",
+  "const bpmGap=(a,b)=>Math.abs(Number(a?.bpm||0)-Number(b?.bpm||0));",
   "const camelotMatch=(a,b)=>({score:Number.isFinite(b?.keyScore)?b.keyScore:"+
     (options.keyMatch?".97":".05")+
     ",weight:Number.isFinite(b?.keyWeight)?b.keyWeight:"+
