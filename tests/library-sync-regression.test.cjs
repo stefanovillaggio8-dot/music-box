@@ -136,3 +136,24 @@ test("manual sync refreshes cloud and local view without erasing offline files",
  assert.ok(body.includes("await loadAll()"));
  assert.doesNotMatch(body,/dbDelete|caches\.delete|\.splice\(/);
 });
+
+test("stale local duplicate markers cannot hide unique shared tracks",()=>{
+ const code=excerpt("function _unisciDuplicatiLocali(elenco) {","function _duplicatiLocali() {");
+ const updates=[];
+ const merge=new Function("updates",
+  "const profile='Ste',DEFAULT_PROFILE='Ste';"+
+  "const _duplicatiLocali=()=>['b-track-7'];"+
+  "const writeProfileState=(name,value)=>updates.push({name,value});"+
+  "const stessoBrano=(a,b)=>a.title===b.title&&a.artist===b.artist;"+
+  "const _haRinomina=()=>false,_spostaRinomina=()=>{};"+
+  "const segnalaErrore=()=>{};"+code+"return _unisciDuplicatiLocali;")(updates);
+ const all=[
+  {id:"b-track-7",title:"Unico",artist:"Artista",builtin:true,profile:"Ste"},
+  {id:"b-track-8",title:"Altro",artist:"Artista",builtin:true,profile:"Ste"},
+  {id:"b-track-9",title:"Unico",artist:"Artista",builtin:true,profile:"Ste"}];
+ assert.deepEqual(merge(all).map(x=>x.id),["b-track-7","b-track-8"]);
+ assert.equal(all.length,3,"no source tracks were deleted");
+ assert.ok(updates.some(x=>x.name==="Ste"&&
+  Array.isArray(x.value.duplicati)&&x.value.duplicati.length===0));
+ assert.doesNotMatch(code,/giaNascosti\.has\(t\.id\)/);
+});
