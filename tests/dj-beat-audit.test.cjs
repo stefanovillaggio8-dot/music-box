@@ -14,9 +14,10 @@ const tools=new Function("isIOS","style",
  extract("function onsetPairAgreement(","function iphoneBeatPairCertified(")+
  extract("function desktopBeatPairCertified(","function iphoneQuietReleaseCertified(")+
  extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
+ extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
  "return {transition,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
- "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified};"
+ "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
  .filter(([key,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&
@@ -250,4 +251,39 @@ test("original MP3 false beat matches stay rejected with fresh onset data",()=>{
    lagMs:+agreement.lagMs.toFixed(1)});
  }
  console.info("[DJ VERIFIED WRONG BEATS REJECTED]",JSON.stringify(results));
+});
+
+
+test("real music: strict beat rejection still permits a measured, voice-safe neutral release",()=>{
+ let pairs=0,alternatives=0,unsafe=0,conservative=0;
+ const examples=[];
+ for(let i=0;i<tracks.length;i+=8){
+  const a=tracks[i];
+  for(let j=0;j<tracks.length;j+=3){
+   const b=tracks[j];if(a.key===b.key)continue;
+   pairs++;
+   const candidate=tools.transition(a.data,b.data,a.data.duration);
+   const blocked=Boolean(candidate&&(candidate.kind==="beat"||candidate.kind==="snap")&&
+    !tools.desktopBeatPairCertified(a.data,b.data,candidate));
+   const neutral=tools.certifiedNeutralBridge(a.data,b.data,a.data.duration);
+   if(!neutral)continue;
+   alternatives++;
+   if(blocked)conservative++;
+   assert.equal(neutral.kind,"soft");
+   assert.equal(neutral.preserveTail,true);
+   assert.ok(neutral.begin>=a.data.dropRelease.releaseAt+.3);
+   assert.ok(neutral.end>=a.data.last-.05);
+   assert.ok(neutral.fade>=2.35&&neutral.fade<=5);
+   if(!tools.iphoneQuietReleaseCertified(a.data,neutral))unsafe++;
+   if(examples.length<5)examples.push({from:a.key,to:b.key,
+    fade:+neutral.fade.toFixed(2),sourceLast:a.data.last,
+    early:neutral.begin,previous: candidate?.kind||null});
+  }
+ }
+ console.info("[DJ TRUE QUIET OPPORTUNITIES]",JSON.stringify({
+  pairs,alternatives,conservative,unsafe,examples
+ }));
+ assert.ok(pairs>30000);
+ assert.ok(alternatives>0,"Real MP3s should offer at least one certified neutral fade");
+ assert.equal(unsafe,0,"Fallback must pass the same independent iPhone safety certificate");
 });
