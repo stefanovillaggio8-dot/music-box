@@ -18,7 +18,10 @@ const srv=http.createServer((req,res)=>{
 });
 async function run(){
  await new Promise(resolve=>srv.listen(0,"127.0.0.1",resolve));
+ const systemChrome=process.env.CHROME_BIN||"/usr/bin/google-chrome";
+ const executablePath=fs.existsSync(systemChrome)?systemChrome:undefined;
  const browser=await chromium.launch({headless:true,
+  ...(executablePath?{executablePath}:{}),
   args:["--autoplay-policy=no-user-gesture-required"]});
  try{
   const context=await browser.newContext({viewport:{width:1350,height:900}});
