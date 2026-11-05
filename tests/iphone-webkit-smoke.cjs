@@ -62,9 +62,18 @@ async function run(){
   assert.equal(typeof toggled,"boolean");
   // A missing/stalled audio context must not crash the app or hide the
   // native song controls. User-gesture requirements remain iOS-specific.
-  assert.ok(errors.length===0,"Unexpected WebKit JS exceptions: "+errors.join(" | "));
+  // Music Box also probes its optional PC-only localhost bridge.
+  // That port is deliberately absent on an actual iPhone and in CI;
+  // WebKit reports this unreachable endpoint as a JS CORS exception.
+  // Preserve every unrelated page exception as a real failure.
+  const desktopBridgeOnly=errors.filter(message=>
+   /127\\.0\\.0\\.1:8788\\/log due to access control checks/i.test(message));
+  const actualErrors=errors.filter(message=>
+   !/127\\.0\\.0\\.1:8788\\/log due to access control checks/i.test(message));
+  assert.ok(actualErrors.length===0,
+   "Unexpected WebKit JS exceptions: "+actualErrors.join(" | "));
   console.log("[IPHONE WEBKIT SMOKE]",JSON.stringify({initial,status,
-   errors:errors.length}));
+   errors:actualErrors.length,unavailableOptionalPcBridge:desktopBridgeOnly.length}));
   await context.close();
  }finally{await browser.close()}
 }
