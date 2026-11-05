@@ -832,6 +832,7 @@ test("foreground precision scheduling includes measured quiet fades",()=>{
 });
 
 test("Safari accepts genuine touch gestures even if userActivation incorrectly reports false",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
  const start=app.indexOf("  let _audioProno = false;");
  const end=app.indexOf('  try {\n    ["pointerdown",',start);
  assert.ok(start>0&&end>start);
