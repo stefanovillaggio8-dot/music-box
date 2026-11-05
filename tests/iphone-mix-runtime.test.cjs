@@ -69,8 +69,10 @@ test("Safari never prepares a full MP3 while native playback is starting or buff
  assert.equal(policy({now:11000,last:0,hidden:false})(audio(110,4)),true);
  assert.equal(policy({now:11000,last:9000,hidden:false})(audio(110,4)),false,
   "skip cooldown");
- assert.equal(policy({now:11000,last:0,hidden:false})(audio(110,2)),false,
-  "buffering");
+ assert.equal(policy({now:11000,last:0,hidden:false})(audio(110,2)),true,
+  "iOS can report HAVE_CURRENT_DATA even with 54 seconds buffered");
+ assert.equal(policy({now:11000,last:0,hidden:false})(audio(158,2)),false,
+  "state 2 with six buffered seconds must not start a decode");
  assert.equal(policy({now:11000,last:0,hidden:true})(audio(110,4)),false,
   "screen locked");
 });

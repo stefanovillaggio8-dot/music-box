@@ -553,5 +553,5 @@ test("Safari complete 8.5MB MP3 retries after its short prefix cannot decode",as
 });
 test("Safari preview gate allows normal readyState 3 with 3 seconds buffered",()=>{
  const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
- assert.ok(mix.includes("return audio.readyState>=4||ahead>=3;"));
+ assert.ok(mix.includes("return audio.readyState>=4||ahead>=(audio.readyState===2?8:3);"));
 });
