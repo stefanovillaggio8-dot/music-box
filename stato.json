@@ -1116,7 +1116,7 @@
    },
    "[\"romantici terroni\",\"saitta\"]": {
     "v": 1,
-    "s": 60,
+    "s": 89,
     "t": "Romantici Terroni",
     "a": "SAITTA"
    },
@@ -1932,7 +1932,7 @@
    },
    "m:2026-11|[\"romantici terroni\",\"saitta\"]": {
     "v": 0,
-    "s": 57,
+    "s": 86,
     "t": "Romantici Terroni",
     "a": "SAITTA"
    },
@@ -3059,14 +3059,14 @@
     "a": "Massimo Pericolo, Crookers, Madame"
    },
    "[\"per te che lotto\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 155,
+    "v": 2,
+    "s": 200,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"per te che lotto\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 155,
+    "v": 2,
+    "s": 200,
     "t": "Per te che Lotto",
     "a": "Kid Yugi"
    },
@@ -4756,6 +4756,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 94,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 94,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -5511,18 +5523,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 94,
-    "t": "Le Tasche Piene Di Sassi",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 94,
-    "t": "Le Tasche Piene Di Sassi",
-    "a": "Jovanotti"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -7104,7 +7104,7 @@
    },
    "[\"salvami\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 120,
+    "s": 201,
     "t": "Salvami",
     "a": "ModÃÂÃÂ "
    },
@@ -7428,7 +7428,7 @@
    },
    "m:2026-11|[\"salvami\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 119,
+    "s": 200,
     "t": "Salvami",
     "a": "ModÃÂÃÂ "
    },
@@ -7866,7 +7866,7 @@
    },
    "[\"salvami\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 201,
+    "s": 226,
     "t": "Salvami",
     "a": "ModÃÂ "
    },
@@ -8190,7 +8190,7 @@
    },
    "m:2026-11|[\"salvami\",\"modÃÂ \"]": {
     "v": 0,
-    "s": 200,
+    "s": 225,
     "t": "Salvami",
     "a": "ModÃÂ "
    },
@@ -8565,6 +8565,18 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"fw/ss25 (freestyle)\",\"artie 5ive\"]": {
+    "v": 0,
+    "s": 79,
+    "t": "FW/SS25 (Freestyle)",
+    "a": "Artie 5ive"
+   },
+   "m:2026-11|[\"fw/ss25 (freestyle)\",\"artie 5ive\"]": {
+    "v": 0,
+    "s": 79,
+    "t": "FW/SS25 (Freestyle)",
+    "a": "Artie 5ive"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
@@ -9327,18 +9339,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"fw/ss25 (freestyle)\",\"artie 5ive\"]": {
-    "v": 0,
-    "s": 79,
-    "t": "FW/SS25 (Freestyle)",
-    "a": "Artie 5ive"
-   },
-   "m:2026-11|[\"fw/ss25 (freestyle)\",\"artie 5ive\"]": {
-    "v": 0,
-    "s": 79,
-    "t": "FW/SS25 (Freestyle)",
-    "a": "Artie 5ive"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
