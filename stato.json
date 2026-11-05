@@ -9184,6 +9184,18 @@
     "t": "Nessuna",
     "a": "LuchÃ¨"
    },
+   "[\"neon\",\"sfera ebbasta & shiva\"]": {
+    "v": 0,
+    "s": 91,
+    "t": "NEON",
+    "a": "Sfera Ebbasta & Shiva"
+   },
+   "m:2026-11|[\"neon\",\"sfera ebbasta & shiva\"]": {
+    "v": 0,
+    "s": 91,
+    "t": "NEON",
+    "a": "Sfera Ebbasta & Shiva"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 106,
@@ -9933,18 +9945,6 @@
     "s": 90,
     "t": "Nessuna",
     "a": "Luchè"
-   },
-   "[\"neon\",\"sfera ebbasta & shiva\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "NEON",
-    "a": "Sfera Ebbasta & Shiva"
-   },
-   "m:2026-11|[\"neon\",\"sfera ebbasta & shiva\"]": {
-    "v": 0,
-    "s": 5,
-    "t": "NEON",
-    "a": "Sfera Ebbasta & Shiva"
    }
   },
   "Diego": {
