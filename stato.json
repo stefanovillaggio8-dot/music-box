@@ -1332,7 +1332,7 @@
    },
    "[\"l'universo tranne noi\",\"max pezzali\"]": {
     "v": 1,
-    "s": 78,
+    "s": 135,
     "t": "L'universo tranne noi",
     "a": "Max Pezzali"
    },
@@ -3384,7 +3384,7 @@
    },
    "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
     "v": 1,
-    "s": 13,
+    "s": 70,
     "t": "L'universo tranne noi",
     "a": "Max Pezzali"
    },
@@ -3509,14 +3509,14 @@
     "a": "Coez"
    },
    "[\"nei treni la notte\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 219,
+    "v": 2,
+    "s": 222,
     "t": "nei treni la notte",
     "a": "frah quintale"
    },
    "m:2026-11|[\"nei treni la notte\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 219,
+    "v": 2,
+    "s": 222,
     "t": "nei treni la notte",
     "a": "frah quintale"
    },
@@ -3975,6 +3975,18 @@
     "s": 190,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
+   },
+   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+    "v": 0,
+    "s": 65,
+    "t": "GIOVANNI",
+    "a": "TonyPitony"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -4732,17 +4744,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
-   "[\"giovanni\",\"tonypitony\"]": {
+   "[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
-   "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
+   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
     "v": 0,
-    "s": 65,
-    "t": "GIOVANNI",
-    "a": "TonyPitony"
+    "s": 16,
+    "t": "Poter scegliere",
+    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5202,13 +5214,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 121,
+    "s": 147,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
@@ -5499,18 +5511,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
-   },
-   "m:2026-11|[\"poter scegliere\",\"nayt\"]": {
-    "v": 0,
-    "s": 16,
-    "t": "Poter scegliere",
-    "a": "nayt"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 1,
@@ -5970,13 +5970,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬\"]": {
     "v": 0,
-    "s": 147,
+    "s": 173,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¬"
    },
@@ -7792,6 +7792,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
+   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 94,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 94,
+    "t": "Le Tasche Piene Di Sassi",
+    "a": "Jovanotti"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 106,
@@ -8553,18 +8565,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 94,
-    "t": "Le Tasche Piene Di Sassi",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 94,
-    "t": "Le Tasche Piene Di Sassi",
-    "a": "Jovanotti"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
