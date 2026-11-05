@@ -82,7 +82,10 @@ function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
- if(!beatLike)return true; // neutral quiet fade, not a claimed beat match
+ if(!beatLike)return true;
+ if(cue.pulseUnderlay===true)
+  return cue.kind==="snap"&&!!measuredPulseUnderlay(a,b,a?.duration)&&
+   Number.isFinite(cue.fade)&&cue.fade>=.62&&cue.fade<=1.04; // neutral quiet fade, not a claimed beat match
  if(!beatWindowContainsAudibleMusic(a,cue))return false;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
@@ -114,6 +117,9 @@ function desktopBeatPairCertified(a,b,p){
  if(!p)return false;
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
+ if(p.pulseUnderlay===true)
+  return p.kind==="snap"&&!!measuredPulseUnderlay(a,b,a?.duration)&&
+   Number.isFinite(p.fade)&&p.fade>=.62&&p.fade<=1.04;
  if(!beatWindowContainsAudibleMusic(a,p))return false;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
@@ -1503,6 +1509,44 @@ function strongInstrumentalBeatBridge(a,b,dur){
   nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
 }
 
+// Regular beat-grid evidence independent of drum timbre: a different kick
+// sample must not be treated as a different tempo. Use only for short joins.
+function onsetPeriodicity(values,bpm){
+ if(!Array.isArray(values)||values.length!==96||
+    !Number.isFinite(bpm)||bpm<55||bpm>210)return null;
+ const corr=lag=>{
+  if(!Number.isInteger(lag)||lag<3||lag>48)return -1;
+  let xy=0,xx=0,yy=0;
+  for(let i=0;i+lag<96;i++){
+   const a=values[i],b=values[i+lag];
+   if(!Number.isFinite(a)||!Number.isFinite(b))return -1;
+   xy+=a*b;xx+=a*a;yy+=b*b;
+  }
+  return xx>1&&yy>1?xy/Math.sqrt(xx*yy):-1;
+ };
+ const lag=24*60/bpm;
+ return Math.max(...[lag,2*lag].map(n=>
+  Math.max(corr(Math.floor(n)),corr(Math.ceil(n)))));
+}
+function onsetGridPhase(values,bpm){
+ const period=24*60/bpm;
+ if(!Array.isArray(values)||values.length!==96||
+    !Number.isFinite(period)||period<6||period>27)return 0;
+ let best=-Infinity,bestPhase=0;
+ for(let phase=0;phase<period;phase+=.5){
+  let sum=0,count=0;
+  for(let p=phase;p<96;p+=period){
+   const i=Math.round(p);
+   sum+=Math.max(values[Math.max(0,i-1)]||0,
+    values[i]||0,values[Math.min(95,i+1)]||0);
+   count++;
+  }
+  if(sum/Math.max(1,count)>best){
+   best=sum/Math.max(1,count);bestPhase=phase;
+  }
+ }
+ return bestPhase/24;
+}
 // After a full REAL vocal scan, a short beat join is possible even when
 // the long-form chord progression is not a perfect match. Preserve the
 // outgoing final note; a missing voice measurement is never proof of safety.
@@ -1697,6 +1741,51 @@ function rhythmicFullTailJoin(a,b,dur){
 // Desktop continuity when a strict musical match is unavailable.
 // Never claim this as a matched beat; keep the outgoing song audible
 // nearly to its natural ending, while the next song rises below it.
+// Beat-grid aligned SUBDUED preview: preserves the complete outgoing
+// sound, uses two measured periodic pulses and checks the incoming chords.
+// Never claim identical drums and never cut an uncertain sung ending.
+function measuredPulseUnderlay(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||a.last<28||
+    !(a.last>=dur-1.6||(a.confidentTail&&dur-a.last<=12))||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.beatConfidence<.19||b.beatConfidence<.19||
+    b.introDrive<.39||!hasImmediateMusicalIntro(b)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-6)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-4.5)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2))return null;
+ const ratio=a.bpm/b.bpm;
+ if(ratio<.97||ratio>1.03)return null;
+ const pa=onsetPeriodicity(a.outroOnset,a.bpm);
+ const pb=onsetPeriodicity(b.introOnset,b.bpm);
+ if(!Number.isFinite(pa)||!Number.isFinite(pb)||pa<.18||pb<.18)return null;
+ const notes=similarNotes(a,b),g=grooveAgreement(a,b),key=camelotMatch(a,b);
+ if(!g||g.score<.77||g.correlation<.54||
+    !Number.isFinite(notes.focused)||notes.focused<.72||
+    !Number.isFinite(notes.phrase)||notes.phrase<.55||
+    (key.weight>=.14&&key.score<.55))return null;
+ const end=Math.min(dur-.035,a.last+.055);
+ const fade=Math.max(.62,Math.min(1.04,1.65*60/a.bpm));
+ const begin=end-fade;
+ if(begin<28||end>dur||end<=begin)return null;
+ const edge=a.dropRelease?
+  Math.min(a.last,a.dropRelease.lastImpactAt+.20):a.last;
+ const lastGridStart=Math.max(0,edge-4);
+ const firstGridStart=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
+ const entry=musicalIntroEntry(b);
+ const trim=a.confidentTail===true&&dur-a.last>=1.65;
+ return {kind:"snap",pulseUnderlay:true,rhythmicUnderlay:true,
+  measuredBeatBridge:true,preserveTail:true,verifiedMicroBeat:true,
+  begin,end,fade,entry,tempo:ratio,gain:1,
+  quietCertified:false,safeOutroAt:null,silenceTrim:trim,
+  trailing:trim?dur-end:0,
+  score:Math.round(notes.focused*100),grooveScore:g.score,
+  pulseConfidence:Math.min(pa,pb),beatPeriod:60/a.bpm,
+  beatAnchor:lastGridStart+onsetGridPhase(a.outroOnset,a.bpm),
+  nextBeat:firstGridStart+onsetGridPhase(b.introOnset,b.bpm)-entry};
+}
 function continuityFallback(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(isIOS||!Number.isFinite(dur)||dur<26||
@@ -1755,6 +1844,8 @@ function transition(a,b,actualDuration){
  if(measured)return measured;
  const scannedSnap=verifiedInstrumentalSnap(a,b,dur);
  if(scannedSnap)return scannedSnap;
+ const pulse=measuredPulseUnderlay(a,b,dur);
+ if(pulse)return pulse;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
  // protected, the remaining release is genuinely quiet, and the next
  // track starts with music rather than another quiet passage.
@@ -3959,6 +4050,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
    instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
    measuredBeatBridge:!!plan?.measuredBeatBridge,
+   pulseUnderlay:!!plan?.pulseUnderlay,
    certifiedQuietAlternative:!!plan?.neutralRelease,
    shuffleSearch:shuffleLastDecision&&shuffleLastDecision.outgoing===id?
     shuffleLastDecision:null,

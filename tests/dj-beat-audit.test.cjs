@@ -17,7 +17,7 @@ const tools=new Function("isIOS","style",
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
  "return {transition,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
- "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge};"
+ "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
  .filter(([key,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&
@@ -337,4 +337,30 @@ test("pulse compatibility distribution from original onset spectra, not BPM alon
   match:tools.onsetPairAgreement(badA.data,badB.data)}:null;
  console.info("[DJ ORIGINAL PULSE OPPORTUNITIES]",JSON.stringify({stats,samples,bad}));
  assert.ok(stats.pairs>40000);
+});
+
+test("real-index beat-grid previews require regular pulses and chord safety",()=>{
+ let total=0,matched=0;const sample=[];
+ for(let i=0;i<tracks.length;i+=7){
+  const a=tracks[i];
+  for(let j=0;j<tracks.length;j+=3){
+   const b=tracks[j];if(a.key===b.key)continue;total++;
+   const p=tools.measuredPulseUnderlay(a.data,b.data,a.data.duration);
+   if(!p)continue;matched++;
+   assert.equal(p.kind,"snap");assert.equal(p.pulseUnderlay,true);
+   assert.equal(p.preserveTail,true);
+   assert.ok(p.begin>=0&&p.end<=a.data.duration);
+   assert.ok(p.fade>=.62&&p.fade<=1.04);
+   assert.equal(tools.desktopBeatPairCertified(a.data,b.data,p),true);
+   if(sample.length<8)sample.push({a:a.key,b:b.key,quality:p.pulseConfidence});
+  }
+ }
+ const a=find("audio/songs/track-391.mp3"),
+   b=find("audio/songs/track-1164.mp3"),
+   c=find("audio/songs/track-153.mp3"),
+   d=find("audio/songs/track-8.mp3");
+ assert.equal(tools.measuredPulseUnderlay(a.data,b.data,a.data.duration),null);
+ assert.equal(tools.measuredPulseUnderlay(c.data,d.data,c.data.duration),null);
+ console.info("[DJ PHASE-GRID REAL PAIRS]",JSON.stringify({total,matched,sample}));
+ assert.ok(total>40000);
 });
