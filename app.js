@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.635";
+  const APP_VERSION = "6.636";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12683,6 +12683,9 @@ $("fabMenu").addEventListener("click", (e) => {
   let offlineAbort = null;
   let offlineStopRequested = false;
   let offlineResumeBusy = false;
+  // Failure details survive an offline-panel refresh, scoped to the profile.
+  // A failed MP3 remains retryable and never becomes a fake "downloaded" one.
+  const offlineLastFailures = new Map();
   // The pending download queue belongs to the selected account, not to an
   // update-specific service worker cache. Completed tracks are never queued.
   function _offlineQueueKey(p) { return "mb.codaOffline.v2." + String(p || profile); }
@@ -12760,8 +12763,9 @@ $("fabMenu").addEventListener("click", (e) => {
       const fill = document.createElement("span");
       bar.appendChild(fill);
       const state = document.createElement("div");
-      state.className = "off-state" + (r.state === "ok" ? " ok" : r.state === "run" ? " run" : r.state === "err" ? " err" : "");
+      state.className = "off-state" + (r.state === "ok" ? " ok" : r.state === "run" ? " run" : (r.state === "err" || r.motivo) ? " err" : "");
       state.textContent = r.label;
+      if (r.motivo) state.title = r.motivo;
       row.appendChild(name);
       row.appendChild(bar);
       row.appendChild(state);
@@ -12795,10 +12799,13 @@ $("fabMenu").addEventListener("click", (e) => {
     }
     const cached = isCached(t);
     const saved = _branoInElencoOffline(savedOffline,t);
+    const failed = saved ? "" : (offlineLastFailures.get(profile + "::" + t.url) || "");
     rows.push({
       title: t.title,
       state: saved ? "ok" : "todo",
-      label: saved ? "pronta" : cached ? "solo temporanea · salva offline" : "da scaricare",
+      label: saved ? "pronta" : failed ? "Riprova · " + failed.slice(0,85) :
+        cached ? "solo temporanea · salva offline" : "da scaricare",
+      motivo: failed,
       el: null,
       track: t
     });
@@ -12912,6 +12919,9 @@ $("fabMenu").addEventListener("click", (e) => {
 
   async function cacheTrack(row, cache, owner=profile) {
     const url = row.track.url;
+    row.offlineOwner = owner;
+    if (typeof offlineLastFailures !== "undefined")
+      offlineLastFailures.delete(owner + "::" + url);
     // A request suspended by iOS must not block the whole offline queue
     // forever after the screen wakes. The timeout covers the full stream.
     const parentSignal=offlineAbort?.signal;
@@ -12948,10 +12958,32 @@ $("fabMenu").addEventListener("click", (e) => {
         return;
       }
       if(requestController.signal.aborted)throw new DOMException("Interrotto","AbortError");
-      const res = await fetch(url, { signal: requestController.signal });
-      // Never store incomplete HTTP 206 byte ranges as offline MP3s.
-      if (!res.ok || res.status!==200)
-        throw new Error("Download completo non disponibile: HTTP "+res.status);
+      // Files from the published catalog have two independent public paths.
+      // If GitHub raw is throttled/unavailable on one device, try a mirror.
+      // Always save under the ORIGINAL URL so offline playback still matches.
+      const sources=[url];
+      const official=/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box-brani\/main\/(songs\/track-\d+\.mp3)(?:\?.*)?$/i.exec(String(url));
+      if(official){
+        sources.push("https://media.githubusercontent.com/media/stefanovillaggio8-dot/music-box-brani/main/"+official[1]);
+        sources.push("https://cdn.jsdelivr.net/gh/stefanovillaggio8-dot/music-box-brani@main/"+official[1]);
+      }
+      let res=null,lastSourceError=null;
+      for(const source of sources){
+        if(requestController.signal.aborted)
+          throw new DOMException("Download interrotto","AbortError");
+        resetIdle();
+        try{
+          const attempt=await fetch(source,{signal:requestController.signal,cache:"no-store"});
+          // HTTP 206 is never an acceptable whole offline audio file.
+          if(attempt.ok&&attempt.status===200){res=attempt;break;}
+          lastSourceError=new Error("MP3 non disponibile: HTTP "+attempt.status);
+          try{await attempt.body?.cancel()}catch(_){}
+        }catch(error){
+          if(requestController.signal.aborted)throw error;
+          lastSourceError=error;
+        }
+      }
+      if(!res)throw lastSourceError||new Error("Nessuna fonte MP3 disponibile");
       const contentType=String(res.headers.get("content-type")||"").toLowerCase();
       if(contentType.includes("text/html")||contentType.includes("application/json"))
         throw new Error("Il server ha restituito una pagina invece dell'MP3");
@@ -13058,7 +13090,11 @@ $("fabMenu").addEventListener("click", (e) => {
         const voluntary=offlineStopRequested || !!parentSignal?.aborted;
         row.state=voluntary?"todo":"err";
         row.label=voluntary?"da scaricare":"connessione lenta: da riprovare";
-        if(!voluntary)row.motivo="Il server non ha inviato nuovi dati per 25 secondi";
+        if(!voluntary){
+          row.motivo="Il server non ha inviato nuovi dati per 25 secondi";
+          if(typeof offlineLastFailures!=="undefined")
+            offlineLastFailures.set(owner+"::"+url,row.motivo);
+        }
         if(row.el){
           row.el.fill.style.width="0%";
           row.el.state.className="off-state"+(voluntary?"":" err");
@@ -13071,10 +13107,14 @@ $("fabMenu").addEventListener("click", (e) => {
       /* Ste: "se premo mi dice impossibile scaricare". Prima l'errore
          veniva buttato via e la riga diceva solo "errore": non si capiva
          il motivo (spazio finito, rete, file che non c'e'...). */
-      row.motivo = String((e && e.message) || "errore");
+      row.motivo = String((e && (e.name==="QuotaExceededError"
+        ? "Spazio di archiviazione esaurito" : e.message)) || "errore di rete").slice(0,140);
+      row.label = "Riprova · " + row.motivo;
+      if(typeof offlineLastFailures!=="undefined")
+        offlineLastFailures.set(owner+"::"+url,row.motivo);
       if (row.el) {
         row.el.state.className = "off-state err";
-        row.el.state.textContent = "errore";
+        row.el.state.textContent = row.label;
         row.el.state.title = row.motivo;
       }
     } finally {
@@ -13299,7 +13339,9 @@ $("fabMenu").addEventListener("click", (e) => {
       } else if(cancelled)toast("Download interrotti. "+ok+" brani salvati.");
       else if(errors.length) {
         const missing=errors.length;
-        toast(ok+" brani scaricati. "+missing+" non riusciti: riprovo i mancanti quando riapri Music Box.",8000);
+        const esempio=errors.slice(0,2).map(r=>r.title+": "+(r.motivo||r.label)).join(" · ");
+        toast(ok+" brani scaricati. "+missing+" non riusciti. "+esempio+
+          " · Riprova con Scarica tutte o riapri Music Box.",12000);
       } else toast(ok+" brani salvati offline.");
       if(owner===profile)await scanOffline();
     }
@@ -13494,6 +13536,8 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
   function _offlinePronto(row) {
     row.state="ok";row.label="pronta";
+    if(typeof offlineLastFailures!=="undefined" && row.track?.url)
+      offlineLastFailures.delete((row.offlineOwner||profile)+"::"+row.track.url);
     if(row.el){
       row.el.fill.style.width="100%";
       row.el.state.className="off-state ok";
