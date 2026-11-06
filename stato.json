@@ -2245,13 +2245,13 @@
    },
    "[\"memoria di uno sconfitto, pt. 2\",\"mostro\"]": {
     "v": 0,
-    "s": 226,
+    "s": 239,
     "t": "Memoria di uno sconfitto, pt. 2",
     "a": "Mostro"
    },
    "m:2026-11|[\"memoria di uno sconfitto, pt. 2\",\"mostro\"]": {
     "v": 0,
-    "s": 226,
+    "s": 239,
     "t": "Memoria di uno sconfitto, pt. 2",
     "a": "Mostro"
    },
@@ -3397,13 +3397,13 @@
    },
    "[\"victoria\",\"tony boy\"]": {
     "v": 1,
-    "s": 0,
+    "s": 66,
     "t": "Victoria",
     "a": "Tony Boy"
    },
    "m:2026-11|[\"victoria\",\"tony boy\"]": {
     "v": 1,
-    "s": 0,
+    "s": 66,
     "t": "Victoria",
     "a": "Tony Boy"
    },
@@ -4156,6 +4156,18 @@
     "s": 190,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "[\"hai visto mai\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 82,
+    "t": "Hai visto mai",
+    "a": "Frah Quintale"
+   },
+   "m:2026-11|[\"hai visto mai\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 82,
+    "t": "Hai visto mai",
+    "a": "Frah Quintale"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -4924,18 +4936,6 @@
     "s": 107,
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 82,
-    "t": "Hai visto mai",
-    "a": "Frah Quintale"
-   },
-   "m:2026-11|[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 82,
-    "t": "Hai visto mai",
-    "a": "Frah Quintale"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -5868,14 +5868,14 @@
     "a": "Andrea Bocelli"
    },
    "[\"e non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 7,
+    "v": 1,
+    "s": 45,
     "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 7,
+    "v": 1,
+    "s": 45,
     "t": "E non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6643,13 +6643,13 @@
    },
    "[\"e non c'ÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 45,
+    "s": 120,
     "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 45,
+    "s": 120,
     "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -8580,14 +8580,14 @@
     "a": "ModÃÂ "
    },
    "[\"le luci della cittÃÂ \",\"coez\"]": {
-    "v": 0,
-    "s": 206,
+    "v": 1,
+    "s": 267,
     "t": "Le luci della cittÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂ \",\"coez\"]": {
-    "v": 0,
-    "s": 206,
+    "v": 1,
+    "s": 267,
     "t": "Le luci della cittÃÂ ",
     "a": "Coez"
    },
@@ -9355,13 +9355,13 @@
    },
    "[\"le luci della cittÃ \",\"coez\"]": {
     "v": 1,
-    "s": 267,
+    "s": 277,
     "t": "Le luci della cittÃ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃ \",\"coez\"]": {
     "v": 1,
-    "s": 267,
+    "s": 277,
     "t": "Le luci della cittÃ ",
     "a": "Coez"
    },
