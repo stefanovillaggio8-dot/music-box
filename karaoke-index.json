@@ -1,4 +1,165 @@
 {
+  "b-track-1003": {
+    "lrclibId": 27109642,
+    "synced": true,
+    "duration": 167.76,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1005": {
+    "lrclibId": 18542938,
+    "synced": true,
+    "duration": 154,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1007": {
+    "lrclibId": 34543117,
+    "synced": true,
+    "duration": 235,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1009": {
+    "lrclibId": 10005503,
+    "synced": true,
+    "duration": 209,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1010": {
+    "lrclibId": 18353305,
+    "synced": true,
+    "duration": 165,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1011": {
+    "lrclibId": 33512056,
+    "synced": true,
+    "duration": 149,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1013": {
+    "lrclibId": 6120307,
+    "synced": true,
+    "duration": 165,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1014": {
+    "lrclibId": 15368733,
+    "synced": true,
+    "duration": 197.8,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1015": {
+    "lrclibId": 11978545,
+    "synced": true,
+    "duration": 168,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1016": {
+    "lrclibId": 5286215,
+    "synced": true,
+    "duration": 189,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1017": {
+    "lrclibId": 3321392,
+    "synced": true,
+    "duration": 162,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1018": {
+    "lrclibId": 9857508,
+    "synced": true,
+    "duration": 207,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1019": {
+    "lrclibId": 1178801,
+    "synced": true,
+    "duration": 208,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1020": {
+    "lrclibId": 39821646,
+    "synced": true,
+    "duration": 190,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1022": {
+    "lrclibId": 5417983,
+    "synced": true,
+    "duration": 174,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1023": {
+    "lrclibId": 3056961,
+    "synced": true,
+    "duration": 163,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1024": {
+    "lrclibId": 29147158,
+    "synced": true,
+    "duration": 205,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1026": {
+    "lrclibId": 3007539,
+    "synced": true,
+    "duration": 174,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1027": {
+    "lrclibId": 3321539,
+    "synced": true,
+    "duration": 219,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1028": {
+    "lrclibId": 9557070,
+    "synced": true,
+    "duration": 166,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1029": {
+    "lrclibId": 1756863,
+    "synced": true,
+    "duration": 240,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1031": {
+    "lrclibId": 2994158,
+    "synced": true,
+    "duration": 210,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1032": {
+    "lrclibId": 2994319,
+    "synced": true,
+    "duration": 205,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-1034": {
     "lrclibId": 16944477,
     "synced": true,
@@ -608,10 +769,129 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
+  "b-track-1125": {
+    "lrclibId": 15096389,
+    "synced": true,
+    "duration": 128,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1126": {
+    "lrclibId": 16589440,
+    "synced": true,
+    "duration": 235.56085,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1127": {
+    "lrclibId": 31325786,
+    "synced": true,
+    "duration": 171,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1128": {
+    "lrclibId": 7407247,
+    "synced": true,
+    "duration": 167,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1129": {
+    "lrclibId": 3321562,
+    "synced": true,
+    "duration": 185,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1130": {
+    "lrclibId": 33637445,
+    "synced": true,
+    "duration": 212,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1131": {
+    "lrclibId": 29020132,
+    "synced": true,
+    "duration": 196,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1132": {
+    "lrclibId": 5561806,
+    "synced": true,
+    "duration": 168,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1133": {
+    "lrclibId": 33707446,
+    "synced": true,
+    "duration": 293,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1134": {
+    "lrclibId": 9815492,
+    "synced": true,
+    "duration": 152,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1135": {
+    "lrclibId": 3321508,
+    "synced": true,
+    "duration": 163,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1136": {
+    "lrclibId": 7287586,
+    "synced": true,
+    "duration": 167,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1137": {
+    "lrclibId": 7563649,
+    "synced": true,
+    "duration": 218,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1138": {
+    "lrclibId": 14238128,
+    "synced": true,
+    "duration": 173,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1139": {
+    "lrclibId": 2126349,
+    "synced": true,
+    "duration": 234,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-1140": {
     "lrclibId": 22678602,
     "synced": true,
     "duration": 197,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1141": {
+    "lrclibId": 30211082,
+    "synced": true,
+    "duration": 174,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1142": {
+    "lrclibId": 4303905,
+    "synced": true,
+    "duration": 126,
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
@@ -678,6 +958,13 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
+  "b-track-1152": {
+    "lrclibId": 4642773,
+    "synced": true,
+    "duration": 258,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-1153": {
     "lrclibId": 25656976,
     "synced": true,
@@ -710,6 +997,20 @@
     "lrclibId": 11940220,
     "synced": true,
     "duration": 132,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1158": {
+    "lrclibId": 4986079,
+    "synced": true,
+    "duration": 238,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1159": {
+    "lrclibId": 6609492,
+    "synced": true,
+    "duration": 176,
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
@@ -839,12 +1140,47 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
+  "b-track-1178": {
+    "lrclibId": 4304218,
+    "synced": true,
+    "duration": 170,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1179": {
+    "lrclibId": 5285933,
+    "synced": true,
+    "duration": 166,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1180": {
+    "lrclibId": 34325551,
+    "synced": true,
+    "duration": 211,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1181": {
+    "lrclibId": 17734849,
+    "synced": true,
+    "duration": 134,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-1183": {
     "lrclibId": 12114031,
     "synced": true,
     "duration": 144,
     "source": "LRCLIB",
     "indexedAt": "2026-11-05"
+  },
+  "b-track-1184": {
+    "lrclibId": 31587135,
+    "synced": true,
+    "duration": 145,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
   },
   "b-track-1185": {
     "lrclibId": 30266809,
@@ -860,12 +1196,26 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
+  "b-track-1187": {
+    "lrclibId": 39983667,
+    "synced": true,
+    "duration": 168,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-1188": {
     "lrclibId": 14436916,
     "synced": true,
     "duration": 245,
     "source": "LRCLIB",
     "indexedAt": "2026-11-04"
+  },
+  "b-track-1189": {
+    "lrclibId": 31693521,
+    "synced": true,
+    "duration": 172,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
   },
   "b-track-1190": {
     "lrclibId": 4317167,
@@ -885,6 +1235,13 @@
     "lrclibId": 4729150,
     "synced": true,
     "duration": 202,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-1195": {
+    "lrclibId": 31989986,
+    "synced": true,
+    "duration": 199,
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
@@ -2421,6 +2778,13 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-05"
   },
+  "b-track-8": {
+    "lrclibId": 36259250,
+    "synced": true,
+    "duration": 120,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-802": {
     "lrclibId": 25907272,
     "synced": true,
@@ -2918,6 +3282,13 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-05"
   },
+  "b-track-89": {
+    "lrclibId": 5406614,
+    "synced": true,
+    "duration": 205,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-890": {
     "lrclibId": 20772764,
     "synced": true,
@@ -3097,6 +3468,13 @@
     "lrclibId": 10472461,
     "synced": true,
     "duration": 230,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-926": {
+    "lrclibId": 22678602,
+    "synced": true,
+    "duration": 197,
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
@@ -3317,6 +3695,13 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
+  "b-track-96": {
+    "lrclibId": 35550436,
+    "synced": true,
+    "duration": 121,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-962": {
     "lrclibId": 36807409,
     "synced": true,
@@ -3398,6 +3783,118 @@
     "lrclibId": 11217887,
     "synced": true,
     "duration": 175.68,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-981": {
+    "lrclibId": 35311770,
+    "synced": true,
+    "duration": 146,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-982": {
+    "lrclibId": 18520334,
+    "synced": true,
+    "duration": 209,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-983": {
+    "lrclibId": 15143692,
+    "synced": true,
+    "duration": 183,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-984": {
+    "lrclibId": 10473591,
+    "synced": true,
+    "duration": 203,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-985": {
+    "lrclibId": 10151987,
+    "synced": true,
+    "duration": 159,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-988": {
+    "lrclibId": 3205007,
+    "synced": true,
+    "duration": 106,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-989": {
+    "lrclibId": 9557351,
+    "synced": true,
+    "duration": 195,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-990": {
+    "lrclibId": 16169756,
+    "synced": true,
+    "duration": 200.68,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-991": {
+    "lrclibId": 17145294,
+    "synced": true,
+    "duration": 180.6,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-992": {
+    "lrclibId": 6830750,
+    "synced": true,
+    "duration": 196,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-993": {
+    "lrclibId": 9557831,
+    "synced": true,
+    "duration": 283,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-994": {
+    "lrclibId": 10443752,
+    "synced": true,
+    "duration": 162.96,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-995": {
+    "lrclibId": 34963337,
+    "synced": true,
+    "duration": 113,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-996": {
+    "lrclibId": 36737168,
+    "synced": true,
+    "duration": 205,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-997": {
+    "lrclibId": 4582993,
+    "synced": true,
+    "duration": 199,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-998": {
+    "lrclibId": 40099820,
+    "synced": true,
+    "duration": 201,
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   }
