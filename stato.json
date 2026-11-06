@@ -2221,13 +2221,13 @@
    },
    "[\"solo 3 min\",\"negromaro\"]": {
     "v": 1,
-    "s": 476,
+    "s": 484,
     "t": "Solo 3 min",
     "a": "Negromaro"
    },
    "m:2026-11|[\"solo 3 min\",\"negromaro\"]": {
     "v": 1,
-    "s": 476,
+    "s": 484,
     "t": "Solo 3 min",
     "a": "Negromaro"
    },
@@ -5693,6 +5693,18 @@
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
+   "[\"hai visto mai\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 82,
+    "t": "Hai visto mai",
+    "a": "Frah Quintale"
+   },
+   "m:2026-11|[\"hai visto mai\",\"frah quintale\"]": {
+    "v": 1,
+    "s": 82,
+    "t": "Hai visto mai",
+    "a": "Frah Quintale"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 220,
@@ -6460,18 +6472,6 @@
     "s": 107,
     "t": "Il PiÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 82,
-    "t": "Hai visto mai",
-    "a": "Frah Quintale"
-   },
-   "m:2026-11|[\"hai visto mai\",\"frah quintale\"]": {
-    "v": 1,
-    "s": 82,
-    "t": "Hai visto mai",
-    "a": "Frah Quintale"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -7416,14 +7416,14 @@
     "a": "Andrea Bocelli"
    },
    "[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 7,
+    "v": 1,
+    "s": 45,
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 7,
+    "v": 1,
+    "s": 45,
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
@@ -8191,13 +8191,13 @@
    },
    "[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 45,
+    "s": 120,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 45,
+    "s": 120,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
    },
@@ -10128,14 +10128,14 @@
     "a": "Modà"
    },
    "[\"le luci della città\",\"coez\"]": {
-    "v": 0,
-    "s": 206,
+    "v": 1,
+    "s": 267,
     "t": "Le luci della città",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della città\",\"coez\"]": {
-    "v": 0,
-    "s": 206,
+    "v": 1,
+    "s": 267,
     "t": "Le luci della città",
     "a": "Coez"
    },
