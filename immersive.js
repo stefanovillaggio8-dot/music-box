@@ -3,6 +3,7 @@
 "use strict";
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
 let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
+let lastLyricsSignature="",lyricRows=[],lyricTimed=false;
 const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
 function safeCover(t){
  const value=t?.cover;
@@ -26,45 +27,73 @@ function fillCurrent(){
  lastLyricsId="";
  lastLyrics=null;
  lastLine=-1;
+ lastLyricsSignature="";lyricRows=[];lyricTimed=false;
  $("imKaraoke").textContent="";
  $("imKaraoke").classList.remove("has-lines");
  renderLyrics(true);
 }
 function renderLyrics(force){
- const b=api(),id=b?.currentId?.();
- if(!id||!opened)return;
+ const b=api(),id=b?.currentId?.(),karaoke=$("imKaraoke");
+ if(!opened||!id||!karaoke)return;
  if(lastLyricsId!==id||force){
-  lastLyricsId=id;
-  lastLyrics=b.lyricsData?.()||null;
+  const next=b?.lyricsData?.()||null;
+  const signature=JSON.stringify([next?.text||"",next?.synced||[]]);
+  if(lastLyricsId!==id||signature!==lastLyricsSignature){
+   lastLyrics=next;lastLyricsId=id;lastLyricsSignature=signature;lastLine=-1;
+   const synced=Array.isArray(next?.synced)?
+    next.synced.filter(row=>Number.isFinite(Number(row?.t))&&String(row?.text||"").trim()):[];
+   lyricTimed=synced.length>=3;
+   const plain=String(next?.text||"").trim();
+   let plainRows=plain.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+   // Untimed text has no timestamps. Reflow a large paragraph into rows.
+   if(!lyricTimed&&plainRows.length<2&&plain.length>110){
+    plainRows=[];let row="";
+    for(const word of plain.split(/\s+/)){
+     if(row&&row.length+word.length+1>58){plainRows.push(row);row=""}
+     row+=(row?" ":"")+word;
+    }
+    if(row)plainRows.push(row);
+   }
+   lyricRows=(lyricTimed?synced.map(row=>({text:String(row.text).trim(),t:Number(row.t)})):
+    plainRows.map(text=>({text}))).slice(0,500);
+   if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
+   const fragment=document.createDocumentFragment();
+   for(const data of lyricRows){
+    const row=document.createElement("p");
+    row.className="im-line";row.textContent=data.text;
+    fragment.appendChild(row);
+   }
+   karaoke.replaceChildren(fragment);
+   karaoke.classList.toggle("has-lines",!!next?.text||lyricTimed);
+   karaoke.classList.toggle("approximate",!lyricTimed);
+   karaoke.scrollTop=0;
+  }
   lastLyricsRefreshAt=Date.now();
-  lastLine=-1;
  }
- const lines=Array.isArray(lastLyrics?.synced)?lastLyrics.synced:[];
- const karaoke=$("imKaraoke");
- if(lines.length){
-  const time=Math.max(0,Number(b.audio?.()?.currentTime)||0);
-  let ix=-1;
-  for(let i=0;i<lines.length;i++){if(Number(lines[i].t)<=time+.15)ix=i;else break}
-  if(ix===lastLine&&!force)return;
-  lastLine=ix;
-  karaoke.replaceChildren();
-  const start=Math.max(0,ix),visible=lines.slice(start,start+3);
-  if(ix<0&&lines.length)visible.splice(0,visible.length,...lines.slice(0,3));
-  visible.forEach((line,i)=>{
-   const row=document.createElement("p");
-   row.textContent=String(line.text||"").trim()||"♫";
-   row.className="im-line"+(i===0&&ix>=0?" active":"");
-   karaoke.append(row);
-  });
-  karaoke.classList.add("has-lines");
- }else{
-  const plain=String(lastLyrics?.text||"").trim();
-  karaoke.replaceChildren();
-  const el=document.createElement("p");
-  el.className="im-line active";
-  el.textContent=plain?plain.split(/\n/).map(x=>x.trim()).filter(Boolean).slice(0,2).join(" · "):"Musica, luci e atmosfera.";
-  karaoke.append(el);
-  karaoke.classList.toggle("has-lines",!!plain);
+ const audio=b?.audio?.(),time=Math.max(0,Number(audio?.currentTime)||0);
+ let index=0;
+ if(lyricTimed){
+  for(let i=0;i<lyricRows.length;i++){
+   if(lyricRows[i].t<=time+.15)index=i;
+   else break;
+  }
+ }else if(lyricRows.length>1){
+  // Plain text follows approximate playback progress, NOT fake LRC timings.
+  const duration=Number(audio?.duration)||0;
+  if(duration>1){
+   const progress=Math.min(1,Math.max(0,(time-3)/Math.max(1,duration-9)));
+   index=Math.min(lyricRows.length-1,Math.floor(progress*lyricRows.length));
+  }
+ }
+ if(index===lastLine)return;
+ lastLine=index;
+ for(let i=0;i<karaoke.children.length;i++)
+  karaoke.children[i].classList.toggle("active",i===index);
+ const active=karaoke.children[index];
+ if(active){
+  const top=Math.max(0,active.offsetTop-(karaoke.clientHeight-active.offsetHeight)/2);
+  try{karaoke.scrollTo({top,behavior:"smooth"})}
+  catch(_){karaoke.scrollTop=top}
  }
 }
 function paint(){

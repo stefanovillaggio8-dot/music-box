@@ -399,6 +399,7 @@ function loadDeepIndex(force=false){
    if(enabled&&!mixing){
     // A late index must reopen a search that previously had no candidates.
     plannedFor="";plan=null;
+    planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
     shuffleGeneration++;shuffleBusy=false;
     shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;
    }
@@ -478,6 +479,8 @@ try{
 }catch(e){}
 const KEY_NAMES=["Do","Do♯","Re","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"];
 let active=null,previousId="",plan=null,plannedFor="",mixing=false,boundAudio=null;
+let planEpoch=0,planRetryAt=0,planRetryCount=0,lastPlanMissing=false;
+let lastTickFailure="",lastTickFailureLoggedAt=0;
 function bridge(){return window.MusicBoxBridge}
 
 // Precomputed librosa features do not contain speech detections. Analyze
@@ -3477,16 +3480,26 @@ function tick(){
  if(mixing){stopSnapPrecision();return}
  if(previousId!==id){
   cancel();previousId=id;plannedFor="";plan=null;
+  planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
    shuffleGeneration++;shuffleBusy=false;
    shuffleRunFor="";shuffleRetryAt=0;shuffleAttempts=0;quietHandoffFor="";
    shuffleLastLyricFor="";shuffleLastLyric=null;
  }
+ // Retry a missing audio analysis; never fabricate musical proof.
+ if(plannedFor===next.id&&!plan&&lastPlanMissing&&planRetryCount<4&&
+    Date.now()>=planRetryAt&&audio.duration-audio.currentTime>12)
+  plannedFor="";
  if(plannedFor!==next.id){
   cancel();plannedFor=next.id;
+  const epoch=++planEpoch;
+  planRetryCount++;
+  planRetryAt=Date.now()+Math.min(24000,9000+planRetryCount*3000);
+  lastPlanMissing=true;
   const fromId=id,target=next.id,duration=audio.duration;
   let a=null,b=null;
   const update=()=>{
-   if(previousId!==fromId||plannedFor!==target||app.currentId()!==fromId||
+   if(!enabled||epoch!==planEpoch||previousId!==fromId||
+      plannedFor!==target||app.currentId()!==fromId||
       app.mixNext()?.id!==target||mixing)return;
    const lyricA=app.mixLyricCues?.(fromId),lyricB=app.mixLyricCues?.(target);
    const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
@@ -3539,6 +3552,7 @@ function tick(){
      realBeat||certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)||
       certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||
       compatibleContinuity||chosen;
+   lastPlanMissing=!(a&&b);
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
@@ -4577,7 +4591,16 @@ function start(){
   }
  });
  draw();
- setInterval(()=>{try{tick()}catch(e){}},isIOS?650:350);
+ setInterval(()=>{
+  try{tick();lastTickFailure=""}
+  catch(error){
+   lastTickFailure=String(error?.stack||error?.message||error).slice(0,450);
+   if(Date.now()-lastTickFailureLoggedAt>8000){
+    lastTickFailureLoggedAt=Date.now();
+    console.warn("[Music Box DJ] Errore nel ciclo di transizione:",error);
+   }
+  }
+ },isIOS?650:350);
  document.addEventListener("visibilitychange",()=>{
   if(document.hidden){
    // This event still fires when foreground timers are suspended.
@@ -4640,6 +4663,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    dropRelease:a?.dropRelease||null,softOutro:a?.softOutro||null,
    confidentTail:!!a?.confidentTail,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
+   planWaitingAnalysis:!!lastPlanMissing,planRetryCount,
+   planRetryInMs:lastPlanMissing?Math.max(0,planRetryAt-Date.now()):null,
+   lastTickFailure,
    instrumentalBeatBridge:!!plan?.instrumentalBeatBridge,
    measuredBeatBridge:!!plan?.measuredBeatBridge,
    pulseUnderlay:!!plan?.pulseUnderlay,
@@ -4699,6 +4725,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     ((active?.handingOff&&active.track.id===target)||
      (mobileActive?.handingOff&&mobileActive.track.id===target)))return;
   abortObsoleteDJWork();cancel();plan=null;plannedFor="";previousId="";
+  planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
  },
  onTrackChange:(id)=>{
@@ -4708,6 +4735,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   shuffleGeneration++;shuffleBusy=false;shuffleRetryAt=0;shuffleAttempts=0;
   shuffleRunFor="";shuffleLastDecision=null;
   quietHandoffFor="";plannedFor="";plan=null;
+  planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
   if(mobileActive&&!(mobileActive.handingOff&&mobileActive.track.id===id))stopMobileMix();
   if(active&&!(active.handingOff&&active.track.id===id))cancel();
  },
