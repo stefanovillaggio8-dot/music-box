@@ -1218,8 +1218,8 @@
     "a": "Jovanotti"
    },
    "[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 2,
-    "s": 175,
+    "v": 3,
+    "s": 216,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -1686,8 +1686,8 @@
     "a": "Coez"
    },
    "m:2026-11|[\"dimmi che ce'\",\"thasup\"]": {
-    "v": 1,
-    "s": 174,
+    "v": 2,
+    "s": 215,
     "t": "dimmi che ce'",
     "a": "thasup"
    },
@@ -2905,13 +2905,13 @@
    },
    "[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 0,
-    "s": 216,
+    "s": 266,
     "t": "La Violenza Necessaria",
     "a": "Kid Yugi & Shiva"
    },
    "m:2026-11|[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 0,
-    "s": 216,
+    "s": 266,
     "t": "La Violenza Necessaria",
     "a": "Kid Yugi & Shiva"
    },
@@ -6924,14 +6924,14 @@
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 3,
-    "s": 689,
+    "v": 4,
+    "s": 728,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 3,
-    "s": 689,
+    "v": 4,
+    "s": 728,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7699,13 +7699,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂ \"]": {
     "v": 4,
-    "s": 728,
+    "s": 779,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂ \"]": {
     "v": 4,
-    "s": 728,
+    "s": 779,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂ "
    },
