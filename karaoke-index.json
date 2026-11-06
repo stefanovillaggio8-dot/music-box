@@ -1273,12 +1273,124 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-05"
   },
+  "b-track-130": {
+    "lrclibId": 35844375,
+    "synced": true,
+    "duration": 129,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-140": {
+    "lrclibId": 35890766,
+    "synced": true,
+    "duration": 192,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-161": {
+    "lrclibId": 9955614,
+    "synced": true,
+    "duration": 236,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-243": {
+    "lrclibId": 4918218,
+    "synced": true,
+    "duration": 253,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-256": {
+    "lrclibId": 36510482,
+    "synced": true,
+    "duration": null,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-278": {
+    "lrclibId": 39789796,
+    "synced": true,
+    "duration": 206,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-305": {
     "lrclibId": 27232362,
     "synced": true,
     "duration": 149.567,
     "source": "LRCLIB",
     "indexedAt": "2026-11-04"
+  },
+  "b-track-322": {
+    "lrclibId": 18428109,
+    "synced": true,
+    "duration": 147,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-329": {
+    "lrclibId": 16936499,
+    "synced": true,
+    "duration": 170,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-337": {
+    "lrclibId": 36636785,
+    "synced": true,
+    "duration": 164,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-348": {
+    "lrclibId": 38919882,
+    "synced": true,
+    "duration": 105,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-373": {
+    "lrclibId": 30742296,
+    "synced": true,
+    "duration": 200,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-379": {
+    "lrclibId": 39887562,
+    "synced": true,
+    "duration": 124,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-434": {
+    "lrclibId": 36394749,
+    "synced": true,
+    "duration": 161,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-457": {
+    "lrclibId": 31407408,
+    "synced": true,
+    "duration": 175,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-477": {
+    "lrclibId": 16936518,
+    "synced": true,
+    "duration": 167,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-track-480": {
+    "lrclibId": 10098887,
+    "synced": true,
+    "duration": 150,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
   },
   "b-track-521": {
     "lrclibId": 5286467,
@@ -3786,6 +3898,13 @@
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   },
+  "b-track-98": {
+    "lrclibId": 39141663,
+    "synced": true,
+    "duration": 130,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
   "b-track-981": {
     "lrclibId": 35311770,
     "synced": true,
@@ -3895,6 +4014,27 @@
     "lrclibId": 40099820,
     "synced": true,
     "duration": 201,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-youtube-dimmi-chi-sei": {
+    "lrclibId": 16406249,
+    "synced": true,
+    "duration": 256.52,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-youtube-kopi-luwak": {
+    "lrclibId": 39753456,
+    "synced": true,
+    "duration": 213,
+    "source": "LRCLIB",
+    "indexedAt": "2026-11-06"
+  },
+  "b-youtube-un-uomo": {
+    "lrclibId": 37733117,
+    "synced": true,
+    "duration": 168,
     "source": "LRCLIB",
     "indexedAt": "2026-11-06"
   }
