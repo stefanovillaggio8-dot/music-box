@@ -63,15 +63,22 @@ test("desktop prefers a certified silent bridge to a dry cut",()=>{
  assert.match(dj,/cue\.certifiedSilentBridge===true&&cue\.kind==="soft"/);
 });
 
-test("current 6.633 final-impact priority is earlier than postlude",()=>{
+test("missing track analysis schedules bounded DJ retry without approving unsafe pairs",()=>{
+ assert.match(dj,/plannedFor===next\.id&&!plan&&lastPlanMissing&&planRetryCount<4/);
+ assert.match(dj,/epoch!==planEpoch/);
+ assert.match(dj,/lastPlanMissing=!\(a&&b\)/);
+ assert.match(dj,/planWaitingAnalysis:!!lastPlanMissing/);
+});
+test("current release prioritizes final-impact before postlude",()=>{
  const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
- assert.equal(version,"6.633");
- assert.ok(app.includes('const APP_VERSION = "6.633"'));
- assert.ok(html.includes('mix-intelligente.js?v=6633'));
- assert.ok(sw.includes('spotifynonavraiimieisoldi-v6633'));
+ assert.match(version,/^\d+\.\d+$/);
+ const revision=version.replace(".","");
+ assert.ok(app.includes('const APP_VERSION = "'+version+'"'));
+ assert.ok(html.includes('mix-intelligente.js?v='+revision));
+ assert.ok(sw.includes('spotifynonavraiimieisoldi-v'+revision));
  assert.ok(dj.includes('certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)'),
   "plan must prefer final beat over the quiet postlude");
  assert.ok(dj.includes('const choicePool=scored.length?scored:impactScored.length?impactScored:'),

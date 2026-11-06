@@ -732,6 +732,7 @@ test("automatic handoff seek does not cancel audible preview; manual seeking doe
  const fn=new Function("counters","active",
   "const mobileActive=null,bridge=()=>({currentId:()=>\"next\"});"+
   "let plan={},plannedFor='next',previousId='old';"+
+  "let planEpoch=2,planRetryAt=30000,planRetryCount=3,lastPlanMissing=true;"+
   "let shuffleGeneration=0,shuffleBusy=true,shuffleRunFor='old';"+
   "const abortObsoleteDJWork=()=>{counters.aborted++};"+
   "const cancel=()=>{counters.canceled++};"+

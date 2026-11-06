@@ -228,6 +228,7 @@ test("late full-audio index invalidates stale DJ picks and resets exhausted retr
  assert.ok(begin>=0&&end>begin,"complete deep index loader exists");
  const harness=new Function(
   "const enabled=true,mixing=false;"+
+  "let planEpoch=1,planRetryAt=30000,planRetryCount=3,lastPlanMissing=true;"+
   "let plannedFor='previous',plan={kind:'cut'},shuffleGeneration=5,"+
   "shuffleBusy=true,shuffleRunFor='outgoing',shuffleRetryAt=9999,shuffleAttempts=4;"+
   "let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;"+
@@ -345,7 +346,8 @@ test("shuffle analysis yields between chunks on iPhone and rechecks playback gen
  assert.match(body,/if\(\+\+batchCount%24===0\)/);
  assert.match(body,/await new Promise\(resolve=>setTimeout\(resolve,0\)\)/);
  assert.match(body,/runGeneration!==shuffleGeneration\|\|app\.currentId\(\)!==fromId/);
- assert.match(source,/setInterval\(\(\)=>\{try\{tick\(\)\}catch\(e\)\{\}\},isIOS\?650:350\)/);
+ assert.match(source,/try\{tick\(\);lastTickFailure=""\}/);
+ assert.match(source,/\},isIOS\?650:350\)/);
 });
 
 test("rhythm-only resemblance is diagnostic, not a DJ mix",async()=>{
