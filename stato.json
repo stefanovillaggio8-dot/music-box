@@ -3192,13 +3192,13 @@
    },
    "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 1,
-    "s": 152,
+    "s": 186,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
    "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 1,
-    "s": 152,
+    "s": 186,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
@@ -4050,13 +4050,13 @@
    },
    "[\"prima che\",\"nayt\"]": {
     "v": 0,
-    "s": 76,
+    "s": 122,
     "t": "Prima che",
     "a": "nayt"
    },
    "m:2026-11|[\"prima che\",\"nayt\"]": {
     "v": 0,
-    "s": 76,
+    "s": 122,
     "t": "Prima che",
     "a": "nayt"
    },
@@ -7788,13 +7788,13 @@
    },
    "[\"le luci della cittÃÂÃÂ \",\"coez\"]": {
     "v": 0,
-    "s": 128,
+    "s": 170,
     "t": "Le luci della cittÃÂÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂÃÂ \",\"coez\"]": {
     "v": 0,
-    "s": 128,
+    "s": 170,
     "t": "Le luci della cittÃÂÃÂ ",
     "a": "Coez"
    },
@@ -8562,13 +8562,13 @@
    },
    "[\"le luci della cittÃÂ \",\"coez\"]": {
     "v": 0,
-    "s": 170,
+    "s": 206,
     "t": "Le luci della cittÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂ \",\"coez\"]": {
     "v": 0,
-    "s": 170,
+    "s": 206,
     "t": "Le luci della cittÃÂ ",
     "a": "Coez"
    },
