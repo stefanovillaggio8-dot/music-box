@@ -27,10 +27,24 @@
     }
     /* I controlli standard del lettore iOS non richiedono che JavaScript
        resti attivo mentre Safari e' sospeso in background. */
+    // iOS installed PWAs can omit "Safari" from the user-agent.
+    function _iosInstallataComeApp() {
+      const ua=String(navigator.userAgent||"");
+      const ios=/iPhone|iPad|iPod/i.test(ua)||
+        (/Macintosh/i.test(ua)&&Number(navigator.maxTouchPoints||0)>1);
+      if(!ios)return false;
+      try{
+        return navigator.standalone===true||
+          Boolean(window.matchMedia?.("(display-mode: standalone)")?.matches);
+      }catch(_){return navigator.standalone===true;}
+    }
     function _usaControlliNativiIos() {
-      const ua = String(navigator.userAgent || "");
-      return /iPhone|iPad|iPod/i.test(ua) && /Safari/i.test(ua) &&
-        !/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);
+      const ua=String(navigator.userAgent||"");
+      const ios=/iPhone|iPad|iPod/i.test(ua)||
+        (/Macintosh/i.test(ua)&&Number(navigator.maxTouchPoints||0)>1);
+      if(!ios)return false;
+      if(_iosInstallataComeApp())return true;
+      return /Safari/i.test(ua)&&!/CriOS|FxiOS|EdgiOS|OPiOS/i.test(ua);
     }
   /* Vero quando l'accesso e' partito in QUESTA scheda: allora il pannello
      puo' limitarsi a "Apri Spotify" (e non ripartire da capo). */
@@ -1289,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.638";
+  const APP_VERSION = "6.639";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6131,8 +6145,9 @@ function handleMetadata() {
   // A deliberate foreground headphone/lockscreen pause still wins.
   let _ultimoSeekUtente = 0;
   function _pausaDuranteCambioVisibilita(nascosta, nascostaIl, visibileIl, ora) {
-    // An iPhone locked for more than a moment is background audio, not
-    // a fresh system interruption. The headphones may pause it any time.
+    // The installed PWA can receive an OS pause long after it was hidden.
+    // Explicit MediaSession Pause still calls _pausaVolontaria().
+    if(nascosta&&_iosInstallataComeApp())return true;
     return (nascosta&&nascostaIl>0&&ora-nascostaIl>=0&&ora-nascostaIl<1500)||
       (!nascosta&&visibileIl>0&&ora-visibileIl>=0&&ora-visibileIl<2000);
   }
@@ -6645,6 +6660,8 @@ function rebuildAudio(autoplay) {
   function _riprovaPiuTardi() {
     if(_pausaEsplicita||!_vuoleSuonare)return;
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())return;
+    // Timers do not unlock a suspended iOS PWA. Retry on foreground return.
+    if(_iosInstallataComeApp()&&document.hidden)return;
     if (_timerRiprove) clearTimeout(_timerRiprove);
     const attesa = [1500, 3000, 5000, 8000, 12000, 20000, 30000, 45000];
     let i = 0;
@@ -6781,6 +6798,7 @@ function rebuildAudio(autoplay) {
      tocca qualcosa, riprendo: e' il momento in cui il browser permette
      di nuovo la riproduzione. */
   function _riprendiSeInAttesa() {
+        if(_iosInstallataComeApp()&&document.hidden)return;
         if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.shouldPlay?.())return;
         /* Torno in primo piano o l'utente tocca: se la musica DOVE suonare,
            riprovo. Prima guardavo solo l'intento vecchio, ma il telefono con lo
@@ -7700,7 +7718,11 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       // Keep the old element only for historical events (ignored by
       // createAudio's identity guard). Do not touch saved offline MP3s.
       const previous = audio;
-      audio = createAudio();
+      // Preserve the active native media element/session when an installed
+      // iOS app advances while locked. WebKit can still deny the new play().
+      const keepNativeSession=_iosInstallataComeApp()&&document.hidden&&
+        previous&&!liveDjAudio;
+      audio = keepNativeSession ? previous : createAudio();
       if (previous && previous !== audio) {
         previous._mbCambioBrano = true;
         try { previous.pause(); } catch (_) {}
