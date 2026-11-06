@@ -2610,7 +2610,7 @@ function startMobileMix(song,p,app,old){
   // Do not start a crossfade so late that it would cut the next song.
   // A 2.35-second quiet fade used to have a ~200ms start window.
   // Safari needs at least 1.25s remaining to finish a late, safe blend.
-  if(secondsLeft<(p.kind==="snap"?.30:p.mobileSilentBridge?.58:1.25)||
+  if(secondsLeft<(p.kind==="snap"?.30:p.mobileSilentBridge?.36:1.25)||
      (frames/clip.rate-offset)<secondsLeft+.3){
    mobileMixLastBlocker="Punto di mix perso o introduzione troppo corta";
    return false;
@@ -2641,6 +2641,7 @@ function startMobileMix(song,p,app,old){
   const delay=phase>.008&&phase<=.19&&secondsLeft-phase>=.48?phase:0;
   const startedAt=ctx.currentTime+delay;
   const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
+   p.mobileSilentBridge?clamp(secondsLeft*.70,.22,.95):
    Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
   // If the outgoing vocal was not scanned, NEVER duck the old song.
@@ -3199,6 +3200,14 @@ async function beginMix(song,proposed){
 // Even when the next MP3 cannot be analyzed (or its intro is unsuitable),
 // never wait through *proven digital silence* in the current track.
 // Only a fully measured, duration-matched tail is eligible: no guesswork.
+// If Safari has a real, decoded next intro and a live audio clock, reserve
+// the verified silent-tail mixing window before considering native handoff.
+function reserveMobileSilentBridge(p,analysis,lastLyricAt,clipReady,clockReady,now){
+ return isIOS&&mobileOverlayEnabled&&!document.hidden&&clipReady&&clockReady&&
+  p?.mobileSilentBridge===true&&p?.certifiedSilentBridge===true&&
+  Number.isFinite(now)&&Number.isFinite(p.end)&&now<p.end-.30&&
+  mobileMixAllowed(p,analysis,lastLyricAt);
+}
 function certifiedTailSkip(a,duration,now,lastLyricAt){
  if(!a?.confidentTail||!Number.isFinite(a.duration)||
     Math.abs(a.duration-duration)>1.5||
@@ -3633,9 +3642,12 @@ function tick(){
  // unplayable iPhone cue could keep Safari in silence until onended.
  // Do not interrupt an audible overlap already underway. On desktop a
  // prebuffered silent fade retains its short chance to start naturally.
- const silentFadeReady=!isIOS&&plan?.certifiedSilentBridge===true&&
-   prepared?.ready&&!prepared?.failed&&
-   audio.currentTime<=plan.end+.08;
+ const mobileCueReady=reserveMobileSilentBridge(plan,measuredEnding,finalLyric,
+   mobileIntroClips.has(String(nextSource)),
+   app.mixRunningContext?.()?.state==="running",audio.currentTime);
+ const silentFadeReady=mobileCueReady||(!isIOS&&
+   plan?.certifiedSilentBridge===true&&prepared?.ready&&!prepared?.failed&&
+   audio.currentTime<=plan.end+.08);
  if(!active&&!mobileActive&&!mixing&&!silentFadeReady&&
     certifiedTailSkip(measuredEnding,audio.duration,
       audio.currentTime,finalLyric)){
@@ -3732,7 +3744,7 @@ function tick(){
  if(isIOS&&!document.hidden&&!mobileActive&&
     audio.currentTime>=plan.begin&&
     audio.currentTime<plan.end-(plan.kind==="snap"?.26:
-      plan.mobileSilentBridge?.42:1.25)&&
+      plan.mobileSilentBridge?.25:1.25)&&
     mobileMixAllowed(plan,measuredEnding,lastKnownLyric))
   startMobileMix(next,plan,app,audio);
  if(previewAllowed&&!isIOS&&plan.kind!=="cut"&&prepared?.ready && audio.currentTime>=plan.begin &&
@@ -4672,6 +4684,10 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    mobileMixLastBlocker,mobileMixLastStartedAt,
    certifiedQuietAlternative:!!plan?.neutralRelease,
    mobileSilentBridge:!!plan?.mobileSilentBridge,
+   mobileSilentBridgeReserved:!!(isIOS&&next&&audio&&
+    reserveMobileSilentBridge(plan,a,app?.mixLyricCues?.(id)?.last,
+     mobileIntroClips.has(String(app?.mixUrl?.(next)||next.url)),
+     app?.mixRunningContext?.()?.state==="running",audio.currentTime)),
    measuredPostludeBridge:!!plan?.measuredPostludeBridge,
    measuredFinalImpact:!!plan?.measuredFinalImpact,
    finalImpactAt:Number.isFinite(plan?.finalImpactAt)?plan.finalImpactAt:null,

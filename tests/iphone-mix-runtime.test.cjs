@@ -311,13 +311,36 @@ test("Safari native handoff retries only twice and obeys a deliberate pause",()=
 
 test("quiet 2.35s fade has over 1s of possible launch time on Safari",()=>{
  assert.ok(source.includes('if(secondsLeft<(p.kind==="snap"?.30:'));
- assert.ok(source.includes('p.mobileSilentBridge?.58:1.25'));
+ assert.ok(source.includes('p.mobileSilentBridge?.36:1.25'));
  assert.ok(source.includes('audio.currentTime<plan.end-(plan.kind==="snap"?.26:'));
- assert.ok(source.includes('plan.mobileSilentBridge?.42:1.25'));
+ assert.ok(source.includes('plan.mobileSilentBridge?.25:1.25'));
  assert.ok(source.includes("armSnapPrecision(audio,id)"));
 });
 
 
+test("iPhone reserves decoded silent-tail mix before native skip, with safe fallbacks",()=>{
+ const from=source.indexOf("function reserveMobileSilentBridge(");
+ const until=source.indexOf("function certifiedTailSkip(",from);
+ assert.ok(from>0&&until>from);
+ const make=(ios,mobile,hidden,allowed)=>new Function(
+  "isIOS","mobileOverlayEnabled","document","mobileMixAllowed",
+  source.slice(from,until)+"return reserveMobileSilentBridge;"
+ )(ios,mobile,{hidden},()=>allowed);
+ const cue={kind:"soft",mobileSilentBridge:true,certifiedSilentBridge:true,
+  begin:177.78,end:179.22,fade:1.44};
+ const reserve=make(true,true,false,true);
+ assert.equal(reserve(cue,{},null,true,true,177.77),true);
+ assert.equal(reserve(cue,{},null,true,true,178.02),true);
+ assert.equal(reserve(cue,{},null,false,true,178.02),false);
+ assert.equal(reserve(cue,{},null,true,false,178.02),false);
+ assert.equal(reserve(cue,{},null,true,true,179.10),false);
+ assert.equal(reserve({...cue,mobileSilentBridge:false},{},null,true,true,178),false);
+ assert.equal(make(true,true,true,true)(cue,{},null,true,true,178),false);
+ assert.equal(make(false,true,false,true)(cue,{},null,true,true,178),false);
+ assert.equal(make(true,true,false,false)(cue,{},null,true,true,178),false);
+ assert.ok(source.includes("const silentFadeReady=mobileCueReady||(!isIOS&&"));
+ assert.ok(source.includes("p.mobileSilentBridge?clamp(secondsLeft*.70,.22,.95)"));
+});
 test("certified silent outro hands off on iPhone even when an unusable plan exists",()=>{
  const a=source.indexOf("const measuredEnding=currentSource&&");
  const b=source.indexOf("const earlyRelease=certifiedEarlyReleaseReady(",a);
@@ -326,7 +349,8 @@ test("certified silent outro hands off on iPhone even when an unusable plan exis
  assert.ok(body.includes("certifiedTailSkip(measuredEnding,audio.duration,"));
  assert.ok(body.includes("quietDirectHandoff(app,audio,id,next,entry,"));
  assert.ok(body.includes("!active&&!mobileActive&&!mixing&&!silentFadeReady"));
- assert.ok(body.includes("!isIOS&&plan?.certifiedSilentBridge===true"));
+ assert.ok(body.includes("mobileCueReady=reserveMobileSilentBridge"));
+ assert.ok(body.includes("const silentFadeReady=mobileCueReady"));
  // A full-track certificate, not silence inferred from the audio element.
  const first=source.indexOf("function certifiedTailSkip(");
  const last=source.indexOf("// Desktop-only safety net",first);
@@ -365,8 +389,8 @@ test("short iPhone fade allowed only in a verified digital-silent tail",()=>{
 test("iPhone can actually start short verified silent fade",()=>{
  assert.ok(source.includes("iphoneSilentTailBridge(currentAnalysis,nextAnalysis,audio.duration)"));
  assert.ok(source.includes("possibleSilentBridge=silentBridge||mobileSilentBridge"));
- assert.ok(source.includes("p.mobileSilentBridge?.58:1.25"));
- assert.ok(source.includes("plan.mobileSilentBridge?.42:1.25"));
+ assert.ok(source.includes("p.mobileSilentBridge?.36:1.25"));
+ assert.ok(source.includes("plan.mobileSilentBridge?.25:1.25"));
  assert.ok(source.includes("cue.mobileSilentBridge===true"));
 });
 
