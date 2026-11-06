@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6637";
+const CACHE = "spotifynonavraiimieisoldi-v6638";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -1101,7 +1101,7 @@ function isCloudMusicBoxAudio(url) {
 function isMusicBoxSong(url) {
   return url.hostname === "raw.githubusercontent.com" &&
     (url.pathname.startsWith("/stefanovillaggio8-dot/music-box-brani/main/songs/") ||
-     /^\/stefanovillaggio8-dot\/music-box\/mobile-audio\/songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(url.pathname)) &&
+     /^\/stefanovillaggio8-dot\/music-box\/(?:main|mobile-audio)\/songs\/youtube-[A-Za-z0-9_-]+\.mp3$/.test(url.pathname)) &&
     /\.mp3$/i.test(url.pathname);
 }
 

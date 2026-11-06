@@ -1353,6 +1353,10 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
           <button class="btn-ghost" id="btnOfflineFree">Libera spazio</button>
         </div>
         <p class="step-hint" id="offlineSpace"></p>
+        <div id="offlineReportBox" hidden style="width:100%;margin:12px 0">
+          <p class="step-hint">Se non è stato copiato, tieni premuto il testo qui sotto e premi Copia.</p>
+          <textarea id="offlineReportText" aria-label="Resoconto errori download" readonly rows="8" style="display:block;box-sizing:border-box;width:100%;min-height:150px;border-radius:10px;border:1px solid #666;background:#23232b;color:#fff;padding:10px;font-size:12px;user-select:text;-webkit-user-select:text"></textarea>
+        </div>
         <div id="offlineList"></div>
         <p class="step-hint">I brani che scarichi manualmente restano nella cache offline del tuo account. Su iPhone puoi bloccare lo schermo: se iOS sospende l'app, la coda resta salvata e i brani mancanti riprendono automaticamente quando riapri Music Box con Internet. Il download continuo a schermo spento non è garantito da Safari. Lo spazio occupato dipende dal numero e dalla dimensione degli MP3.</p>
       </div>
@@ -1528,7 +1532,7 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 </div>
 </div>
 <script src="fuoco.js?v=6570"></script>
-<script src="app.js?v=6637"></script>
+<script src="app.js?v=6638"></script>
 <script src="stanza.js?v=6570"></script>
 <script src="amici-online.js?v=6570"></script>
 <script src="discord-presence.js?v=6570"></script>

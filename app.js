@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.637";
+  const APP_VERSION = "6.638";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -1631,6 +1631,10 @@ const PROFILI = [
   function _doveStaIlBrano(file) {
     const nome = String(file || "");
     if (!nome) return "";
+    // These six existing files are hosted in music-box/main, NOT
+    // music-box-brani/main. Resolve before the dynamic YouTube index.
+    if(/^songs\/youtube-(?:tRuyFtXGNQA|kopi-luwak|un-uomo|dimmi-chi-sei|ultimo-banco|falene)\.mp3$/.test(nome))
+      return "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/"+nome;
     /* I brani importati con Actions vivono nel repository principale,
        non in music-box-brani, anche quando il PC e\x27 acceso. */
     if (typeof _ytOnlineCache !== "undefined" && Array.isArray(_ytOnlineCache) &&
@@ -12781,7 +12785,9 @@ $("fabMenu").addEventListener("click", (e) => {
     }
   }
 
+  let offlineLastRows = [];
   function renderOfflineRows(rows) {
+    offlineLastRows = rows;
     const box = $("offlineList");
     const fragment=document.createDocumentFragment();
     for (const r of rows) {
@@ -13000,6 +13006,12 @@ $("fabMenu").addEventListener("click", (e) => {
       if(official){
         sources.push("https://media.githubusercontent.com/media/stefanovillaggio8-dot/music-box-brani/main/"+official[1]);
         sources.push("https://cdn.jsdelivr.net/gh/stefanovillaggio8-dot/music-box-brani@main/"+official[1]);
+      }
+      const youtube=/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box\/(?:main|mobile-audio)\/(songs\/youtube-[A-Za-z0-9_-]+\.mp3)(?:\?.*)?$/i.exec(String(url));
+      if(youtube){
+        const alternative=url.includes("/mobile-audio/")?"main":"mobile-audio";
+        sources.push("https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/"+alternative+"/"+youtube[1]);
+        sources.push("https://media.githubusercontent.com/media/stefanovillaggio8-dot/music-box/main/"+youtube[1]);
       }
       let lastError=null;
       for(let s=0;s<sources.length;s++){
@@ -13327,22 +13339,35 @@ $("fabMenu").addEventListener("click", (e) => {
     }
   }
 
-  async function _copiaProblemiOffline() {
-    if(offlineBusy){ toast("Termina prima i download.");return; }
-    const rows=await scanOffline();
-    const unresolved=rows.filter(r=>r.motivo||r.state==="pending");
+  function _copiaProblemiOffline() {
+    if(offlineBusy){toast("Termina prima i download.");return;}
+    const rows=offlineLastRows;
+    if(!rows.length){toast("Apri di nuovo il pannello per preparare il resoconto.");return;}
+    const problematic=rows.filter(r=>r.motivo||r.state==="pending");
     const report=[
       "Music Box · problemi download",
       "Profilo: "+profile,
-      "Versione: 6.637",
-      "Browser: "+navigator.userAgent,
+      "Versione: 6.638",
+      "Dispositivo: "+navigator.userAgent,
       "Connessione: "+(navigator.onLine?"online":"offline"),
-      "Salvati: "+rows.filter(r=>r.state==="ok").length,
-      "Non salvati: "+rows.filter(r=>r.state!=="ok").length,
-      ...unresolved.map(r=>"- "+r.title+" ["+String(r.track?.id||"?")+"]: "+(r.motivo||r.label))
+      "Scaricate: "+rows.filter(r=>r.state==="ok").length,
+      "Non scaricate: "+rows.filter(r=>r.state!=="ok").length,
+      ...problematic.map(r=>"- "+r.title+" ["+String(r.track?.id||"?")+"] "+(r.motivo||r.label))
     ].join("\n");
-    const success=await copiaNegliAppunti(report);
-    toast(success?"Problemi copiati. Incolla il resoconto in chat.":"Fai uno screenshot degli errori.",7000);
+    // Call the clipboard API without an await before it: iPhone gesture.
+    const copying=copiaNegliAppunti(report);
+    // Always provide selectable text in case iOS denies clipboard access.
+    const panel=$("offlineReportBox"),output=$("offlineReportText");
+    if(panel&&output) {
+      output.value=report;
+      panel.hidden=false;
+      output.focus();
+      output.select();
+    }
+    Promise.resolve(copying).then(ok=>toast(ok?
+      "Resoconto copiato: incollalo nella chat.":
+      "Resoconto aperto: tieni premuto il testo per copiarlo.",7000))
+      .catch(()=>toast("Resoconto aperto: seleziona e copia il testo.",7000));
   }
 
   async function _resumeOfflineDownloads() {
@@ -13825,6 +13850,7 @@ async function checkForNewSongs() {
 
   async function openOffline() {
     $("offlinePanel").hidden = false;
+    if($("offlineReportBox")) $("offlineReportBox").hidden=true;
     syncNoScroll();
     $("offlineList").innerHTML = "";
     await scanOffline();
