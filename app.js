@@ -1289,7 +1289,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.636";
+  const APP_VERSION = "6.637";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12686,6 +12686,38 @@ $("fabMenu").addEventListener("click", (e) => {
   // Failure details survive an offline-panel refresh, scoped to the profile.
   // A failed MP3 remains retryable and never becomes a fake "downloaded" one.
   const offlineLastFailures = new Map();
+  function _offlineRicordaErrore(owner,url,why) {
+    const reason=String(why||"Errore").slice(0,180);
+    offlineLastFailures.set(owner+"::"+url,reason);
+    try {
+      const key="mb.offline.lastErrors."+owner;
+      const saved=LS.get(key,{})||{};
+      saved[url]={reason,at:Date.now()};
+      const recent=Object.entries(saved).sort((a,b)=>Number(b[1]?.at||0)-Number(a[1]?.at||0)).slice(0,60);
+      LS.set(key,Object.fromEntries(recent));
+    }catch(_){}
+  }
+  function _offlineMotivo(owner,url) {
+    const fromMemory=offlineLastFailures.get(owner+"::"+url);
+    if(fromMemory)return fromMemory;
+    try{
+      const entry=LS.get("mb.offline.lastErrors."+owner,{})?.[url];
+      if(entry && Date.now()-Number(entry.at||0)<7*86400000)
+        return String(entry.reason||"").slice(0,180);
+    }catch(_){}
+    return "";
+  }
+  function _offlineCancellaErrore(owner,url) {
+    offlineLastFailures.delete(owner+"::"+url);
+    try{
+      const key="mb.offline.lastErrors."+owner;
+      const saved=LS.get(key,{});
+      if(saved && Object.prototype.hasOwnProperty.call(saved,url)){
+        delete saved[url];
+        LS.set(key,saved);
+      }
+    }catch(_){}
+  }
   // The pending download queue belongs to the selected account, not to an
   // update-specific service worker cache. Completed tracks are never queued.
   function _offlineQueueKey(p) { return "mb.codaOffline.v2." + String(p || profile); }
@@ -12793,13 +12825,15 @@ $("fabMenu").addEventListener("click", (e) => {
        Ora guardo davvero in cache, per tutti i brani. */
     if (!t.url) {
       rows.push({ title: t.title, state: "pending",
-        label: t.youtubeId ? "MP3 non ancora pronto" : "non scaricabile",
+        label: t.youtubeId ? (t._ytStatus==="failed"?"Importazione fallita":
+          "MP3 non ancora pronto"+(t._ytStatus?" · "+t._ytStatus:"")) : "non scaricabile",
+        motivo: String(t._ytErrore||"").slice(0,140),
         el: null, track: t });
       continue;
     }
     const cached = isCached(t);
     const saved = _branoInElencoOffline(savedOffline,t);
-    const failed = saved ? "" : (offlineLastFailures.get(profile + "::" + t.url) || "");
+    const failed = saved ? "" : _offlineMotivo(profile,t.url);
     rows.push({
       title: t.title,
       state: saved ? "ok" : "todo",
@@ -12920,12 +12954,11 @@ $("fabMenu").addEventListener("click", (e) => {
   async function cacheTrack(row, cache, owner=profile) {
     const url = row.track.url;
     row.offlineOwner = owner;
-    if (typeof offlineLastFailures !== "undefined")
-      offlineLastFailures.delete(owner + "::" + url);
+    // Retain the error until the MP3 is safely stored.
     // A request suspended by iOS must not block the whole offline queue
     // forever after the screen wakes. The timeout covers the full stream.
     const parentSignal=offlineAbort?.signal;
-    const requestController=new AbortController();
+    let requestController=new AbortController();
     const abortRequest=()=>requestController.abort();
     if(parentSignal?.aborted)abortRequest();
     parentSignal?.addEventListener("abort",abortRequest,{once:true});
@@ -12958,133 +12991,82 @@ $("fabMenu").addEventListener("click", (e) => {
         return;
       }
       if(requestController.signal.aborted)throw new DOMException("Interrotto","AbortError");
-      // Files from the published catalog have two independent public paths.
-      // If GitHub raw is throttled/unavailable on one device, try a mirror.
-      // Always save under the ORIGINAL URL so offline playback still matches.
+      // A 200 response can be truncated or non-audio. Verify every mirror
+      // before storing and retry another source if the transfer is broken.
+      // Safari CacheStorage is more reliable with a complete Blob than
+      // tee() of a live stream while two downloads are active.
       const sources=[url];
       const official=/^https:\/\/raw\.githubusercontent\.com\/stefanovillaggio8-dot\/music-box-brani\/main\/(songs\/track-\d+\.mp3)(?:\?.*)?$/i.exec(String(url));
       if(official){
         sources.push("https://media.githubusercontent.com/media/stefanovillaggio8-dot/music-box-brani/main/"+official[1]);
         sources.push("https://cdn.jsdelivr.net/gh/stefanovillaggio8-dot/music-box-brani@main/"+official[1]);
       }
-      let res=null,lastSourceError=null;
-      for(const source of sources){
-        if(requestController.signal.aborted)
-          throw new DOMException("Download interrotto","AbortError");
+      let lastError=null;
+      for(let s=0;s<sources.length;s++){
+        if(s>0)requestController=new AbortController();
+        if(parentSignal?.aborted||offlineStopRequested)
+          throw new DOMException("Interrotto","AbortError");
         resetIdle();
-        try{
-          const attempt=await fetch(source,{signal:requestController.signal,cache:"no-store"});
-          // HTTP 206 is never an acceptable whole offline audio file.
-          if(attempt.ok&&attempt.status===200){res=attempt;break;}
-          lastSourceError=new Error("MP3 non disponibile: HTTP "+attempt.status);
-          try{await attempt.body?.cancel()}catch(_){}
-        }catch(error){
-          if(requestController.signal.aborted)throw error;
-          lastSourceError=error;
-        }
-      }
-      if(!res)throw lastSourceError||new Error("Nessuna fonte MP3 disponibile");
-      const contentType=String(res.headers.get("content-type")||"").toLowerCase();
-      if(contentType.includes("text/html")||contentType.includes("application/json"))
-        throw new Error("Il server ha restituito una pagina invece dell'MP3");
-      const total = Number(res.headers.get("content-length") || 0);
-      if(total>40*1024*1024)throw new Error("Audio troppo grande per la cache offline");
-      const started=Date.now();
-      let lastPaint=0;
-      // iPhone: stream a complete 200 response directly into CacheStorage
-      // while independently counting progress. This avoids allocating two
-      // full-song JS chunk arrays plus a final MP3 Blob on the main thread.
-      // The cache write remains atomic; an interrupted/mismatched file is
-      // explicitly discarded and NEVER announced as saved offline.
-      if(total>=4096 && res.body && typeof res.body.tee==="function"){
-        const [progressStream,saveStream]=res.body.tee();
-        const stored=new Response(saveStream,{
-          status:200,headers:{
-           "Content-Type":res.headers.get("content-type")||"audio/mpeg",
-           "Content-Length":String(total),
-           "X-Scaricato":String(Date.now())
-          }
-        });
-        // Catch the cache promise immediately so quota errors do not become
-        // unhandled while the progress stream is still being consumed.
-        const saving=cache.put(url,stored).then(()=>null,error=>error);
-        const reader=progressStream.getReader();
-        let got=0;
-        try{
-          for(;;){
-            const part=await reader.read();if(part.done)break;
-            got+=part.value.byteLength;
-            if(got>40*1024*1024)throw new Error("MP3 oltre 40 MB");
-            resetIdle();
-            const now=Date.now();
-            if(row.el&&(now-lastPaint>=220||got>=total)){
-              lastPaint=now;
-              const pct=Math.min(99,Math.round((got/total)*100));
-              const rate=(got/1048576)/Math.max(.3,(now-started)/1000);
-              row.el.fill.style.width=pct+"%";
-              row.el.state.textContent=pct+"% · "+
-                (rate<.20?Math.round(rate*1024)+" KB/s":rate.toFixed(1)+" MB/s");
+        try {
+          const res=await fetch(sources[s],{signal:requestController.signal,cache:"no-store"});
+          if(!res.ok||res.status!==200)throw new Error("HTTP "+res.status+" da fonte "+(s+1));
+          const mime=String(res.headers.get("content-type")||"").toLowerCase();
+          if(/text\/|json|xml|image\//.test(mime))
+            throw new Error("Il server ha restituito dati anziché audio");
+          const total=Number(res.headers.get("content-length")||0);
+          if(total>40*1024*1024)throw new Error("MP3 oltre 40 MB");
+          let blob,received=0;
+          if(res.body&&typeof res.body.getReader==="function"){
+            const reader=res.body.getReader(),chunks=[];
+            const started=Date.now();let lastPaint=0;
+            while(true){
+              const piece=await reader.read();
+              if(piece.done)break;
+              received+=piece.value.byteLength;
+              if(received>40*1024*1024)throw new Error("MP3 oltre 40 MB");
+              chunks.push(piece.value);
+              resetIdle();
+              const now=Date.now();
+              if(row.el&&(now-lastPaint>250||(total&&received>=total))){
+                lastPaint=now;
+                const pct=total?Math.min(99,Math.round(100*received/total)):0;
+                const speed=received/1048576/Math.max(.5,(now-started)/1000);
+                row.el.fill.style.width=pct+"%";
+                row.el.state.textContent=(total?pct+"%":fmtBytes(received))+" · "+
+                  (speed<.2?Math.round(speed*1024)+" KB/s":speed.toFixed(1)+" MB/s");
+              }
             }
+            blob=new Blob(chunks,{type:mime||"audio/mpeg"});
+          }else{
+            blob=await res.blob();
+            received=blob.size;
           }
-          // Content-Length is the expected entire file length (unlike a
-          // Range 206); even one missing final byte is an incomplete MP3.
-          if(got!==total)throw new Error(
-            "MP3 incompleto: ricevuti "+got+" byte su "+total);
-          const cacheError=await saving;
-          if(cacheError)throw cacheError;
+          if(received<4096||received>40*1024*1024||(total&&received!==total))
+            throw new Error("MP3 incompleto: "+received+" byte su "+total);
+          clearTimeout(idleTimer);
+          try {
+            await cache.put(url,new Response(blob,{status:200,headers:{
+              "Content-Type":blob.type||"audio/mpeg",
+              "Content-Length":String(received),
+              "X-Scaricato":String(Date.now())
+            }}));
+          }catch(storageError){
+            storageError.offlineStorageFailure=true;
+            throw storageError;
+          }
           _offlinePronto(row);
           return;
         }catch(error){
-          // If the main reader fails, stop the other tee branch too.
-          try{requestController.abort()}catch(_){}
-          try{await reader.cancel()}catch(_){}
-          try{await saving}catch(_){}
-          try{await cache.delete(url)}catch(_){}
-          throw error;
-        }
-      }
-      let blob;
-      if (res.body) {
-        const reader = res.body.getReader();
-        const chunks = [];
-        let got = 0;
-        for (;;) {
-          const part = await reader.read();
-          if (part.done) break;
-          chunks.push(part.value);
-          got += part.value.byteLength;
-          if(got>40*1024*1024){
-            await reader.cancel();
-            throw new Error("Audio oltre il limite offline di 40 MB");
-          }
-          resetIdle(); // Slow but progressing downloads keep running.
-          const now=Date.now();
-          const pct=total ? Math.min(99,Math.round((got/total)*100)) : 0;
-          if(row.el && (now-lastPaint>=220 || (total && got>=total))){
-            lastPaint=now;
-            const rate=(got/1048576)/Math.max(.3,(now-started)/1000);
-            row.el.fill.style.width=pct+"%";
-            row.el.state.textContent=(total?pct+"%":fmtBytes(got))+
-              " · "+(rate<.20?Math.round(rate*1024)+" KB/s":rate.toFixed(1)+" MB/s");
+          if(parentSignal?.aborted||offlineStopRequested||error?.offlineStorageFailure)throw error;
+          lastError=error;
+          if(row.el){
+            row.el.fill.style.width="0%";
+            row.el.state.textContent=s+1<sources.length?
+              "Riprovo da un'altra fonte…":"Errore download";
           }
         }
-        blob = new Blob(chunks, { type: res.headers.get("content-type") || "audio/mpeg" });
-      } else {
-        blob = await res.blob();
-        resetIdle();
       }
-      if(blob.size<4096||total&&blob.size<total*.98)
-        throw new Error("Download incompleto: non salvo un MP3 danneggiato");
-      await cache.put(url, new Response(blob, {
-        status: 200,
-        headers: {
-          "Content-Type": blob.type || "audio/mpeg",
-          "Content-Length": String(blob.size),
-          /* l'ora del download: serve per liberare le piu' vecchie */
-          "X-Scaricato": String(Date.now())
-        }
-      }));
-      _offlinePronto(row);
+      throw lastError||new Error("Nessuna fonte disponibile");
     } catch (e) {
       if (e && e.name === "AbortError") {
         const voluntary=offlineStopRequested || !!parentSignal?.aborted;
@@ -13092,8 +13074,7 @@ $("fabMenu").addEventListener("click", (e) => {
         row.label=voluntary?"da scaricare":"connessione lenta: da riprovare";
         if(!voluntary){
           row.motivo="Il server non ha inviato nuovi dati per 25 secondi";
-          if(typeof offlineLastFailures!=="undefined")
-            offlineLastFailures.set(owner+"::"+url,row.motivo);
+          _offlineRicordaErrore(owner,url,row.motivo);
         }
         if(row.el){
           row.el.fill.style.width="0%";
@@ -13110,8 +13091,7 @@ $("fabMenu").addEventListener("click", (e) => {
       row.motivo = String((e && (e.name==="QuotaExceededError"
         ? "Spazio di archiviazione esaurito" : e.message)) || "errore di rete").slice(0,140);
       row.label = "Riprova · " + row.motivo;
-      if(typeof offlineLastFailures!=="undefined")
-        offlineLastFailures.set(owner+"::"+url,row.motivo);
+      _offlineRicordaErrore(owner,url,row.motivo);
       if (row.el) {
         row.el.state.className = "off-state err";
         row.el.state.textContent = row.label;
@@ -13347,6 +13327,24 @@ $("fabMenu").addEventListener("click", (e) => {
     }
   }
 
+  async function _copiaProblemiOffline() {
+    if(offlineBusy){ toast("Termina prima i download.");return; }
+    const rows=await scanOffline();
+    const unresolved=rows.filter(r=>r.motivo||r.state==="pending");
+    const report=[
+      "Music Box · problemi download",
+      "Profilo: "+profile,
+      "Versione: 6.637",
+      "Browser: "+navigator.userAgent,
+      "Connessione: "+(navigator.onLine?"online":"offline"),
+      "Salvati: "+rows.filter(r=>r.state==="ok").length,
+      "Non salvati: "+rows.filter(r=>r.state!=="ok").length,
+      ...unresolved.map(r=>"- "+r.title+" ["+String(r.track?.id||"?")+"]: "+(r.motivo||r.label))
+    ].join("\n");
+    const success=await copiaNegliAppunti(report);
+    toast(success?"Problemi copiati. Incolla il resoconto in chat.":"Fai uno screenshot degli errori.",7000);
+  }
+
   async function _resumeOfflineDownloads() {
     if(offlineBusy||offlineResumeBusy||!navigator.onLine||document.hidden)return;
     const owner=profile,urls=_pendingOfflineUrls(owner);
@@ -13536,8 +13534,8 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
   function _offlinePronto(row) {
     row.state="ok";row.label="pronta";
-    if(typeof offlineLastFailures!=="undefined" && row.track?.url)
-      offlineLastFailures.delete((row.offlineOwner||profile)+"::"+row.track.url);
+    if(row.track?.url)
+      _offlineCancellaErrore(row.offlineOwner||profile,row.track.url);
     if(row.el){
       row.el.fill.style.width="100%";
       row.el.state.className="off-state ok";
@@ -14558,6 +14556,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
     if (e.target === $("offlinePanel")) closeOffline();
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
+  $("btnOfflineReport")?.addEventListener("click", _copiaProblemiOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
   document.addEventListener("visibilitychange", () => {
     if(document.hidden) _workerOfflineBatch(profile);
