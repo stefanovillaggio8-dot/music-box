@@ -2317,13 +2317,13 @@
    },
    "[\"mi fido di te\",\"jovanotti\"]": {
     "v": 2,
-    "s": 247,
+    "s": 322,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"mi fido di te\",\"jovanotti\"]": {
     "v": 2,
-    "s": 247,
+    "s": 322,
     "t": "Mi Fido Di Te",
     "a": "Jovanotti"
    },
@@ -5905,13 +5905,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 345,
+    "s": 373,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 345,
+    "s": 373,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -6679,13 +6679,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 373,
+    "s": 444,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 0,
-    "s": 373,
+    "s": 444,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -8580,14 +8580,14 @@
     "a": "Tiziano Ferro"
    },
    "[\"lo stesso viso\",\"luchÃÂ¨, da blonde\"]": {
-    "v": 0,
-    "s": 350,
+    "v": 1,
+    "s": 365,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂ¨, da blonde\"]": {
-    "v": 0,
-    "s": 350,
+    "v": 1,
+    "s": 365,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂ¨, Da Blonde"
    },
@@ -9355,13 +9355,13 @@
    },
    "[\"lo stesso viso\",\"luchÃ¨, da blonde\"]": {
     "v": 1,
-    "s": 365,
+    "s": 434,
     "t": "Lo Stesso Viso",
     "a": "LuchÃ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃ¨, da blonde\"]": {
     "v": 1,
-    "s": 365,
+    "s": 434,
     "t": "Lo Stesso Viso",
     "a": "LuchÃ¨, Da Blonde"
    },
