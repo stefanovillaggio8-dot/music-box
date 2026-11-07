@@ -365,3 +365,33 @@ test("DJ can reorder compatible measured grooves without falsely scheduling over
  assert.match(dj,/const musicallyPlayable=!!cue&&musicallyCompatibleOverlay/);
  assert.match(dj,/if\(!verified\)\{/);
 });
+
+test("measured quiet postlude can hand off before MP3 EOF only after verified vocals",()=>{
+ const source=section(dj,"function certifiedSettledTailHandoff(","// Desktop-only safety net");
+ const handoff=new Function(source+"return certifiedSettledTailHandoff;")();
+ const release={lastImpactAt:154,releaseAt:154.5,score:.84,quietLevel:.14};
+ const measured={duration:172,last:163.5,protectedEnding:false,
+  dropRelease:release,voiceModel:"YAMNet",voiceScannedEnd:164,lastVoiceAt:147};
+ assert.equal(handoff(measured,172,163.8,null),true);
+ assert.equal(handoff({...measured,voiceModel:null},172,163.8,null),false,
+  "no vocal proof must not shorten a track");
+ assert.equal(handoff({...measured,voiceModel:null},172,163.8,146),true,
+  "verified early last lyric may protect the old song");
+ assert.equal(handoff(measured,172,163.8,152),false,
+  "late lyric veto overrides an earlier speech scan");
+ assert.equal(handoff({...measured,protectedEnding:true},172,163.8,146),false);
+ assert.equal(handoff({...measured,lastVoiceAt:159},172,163.8,146),false);
+ assert.equal(handoff({...measured,dropRelease:{...release,quietLevel:.39}},172,163.8,146),false);
+ assert.equal(handoff(measured,172,162,null),false,
+  "never cut before the final measured musical sound");
+ assert.equal(handoff({...measured,duration:190},172,163.8,146),false,
+  "mismatched analysis version cannot authorize a cut");
+});
+
+test("desktop early measured tail handoff never overrides an active beat mix",()=>{
+ const body=section(dj,' const mobileCueReady=reserveMobileSilentBridge(',' const silentFadeReady=');
+ assert.match(body,/!isIOS&&!active&&!mixing&&!mobileActive/);
+ assert.match(body,/certifiedSettledTailHandoff\(measuredEnding,audio\.duration/);
+ assert.match(body,/quietDirectHandoff\(app,audio,id,next,entry/);
+ assert.match(body,/ultimo evento musicale concluso e voce verificata/);
+});
