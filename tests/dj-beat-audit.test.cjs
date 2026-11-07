@@ -478,7 +478,7 @@ test("real Ste final-impact eligible incoming MP3s",()=>{
   owned:own.size,eligible:eligible.length,selected:selected.length,
   top:eligible.slice(0,12)}));
  assert.ok(eligible.length>=1,"must have a real eligible musical successor for track 1197");
- assert.ok(selected.length>=1,"the DJ must be able to pick at least one real compatible final-impact relay");
+ assert.equal(selected.length,0,"the four candidates have strongly incompatible real chord boundaries and must not be promoted");
  assert.ok(eligible.every(p=>p.begin<241.3&&p.end>243.9));
 });
 
