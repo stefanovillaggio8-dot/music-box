@@ -3673,6 +3673,40 @@ function certifiedTailSkip(a,duration,now,lastLyricAt){
  if(Number.isFinite(lyric)&&lyric>=a.last-.6)return false;
  return true;
 }
+// A complete MP3 analysis can prove that the FINAL musical release
+// has settled, even when the remaining bytes contain low-level room tone.
+// Unlike digital-tail skipping, this also requires trusted vocal evidence:
+// never shorten a song just because its last seconds look quiet.
+function certifiedSettledTailHandoff(a,duration,now,lastLyricAt){
+ const r=a?.dropRelease;
+ if(!a||!r||a.durationMismatch||a.protectedEnding===true||
+    !Number.isFinite(a.duration)||!Number.isFinite(duration)||
+    Math.abs(a.duration-duration)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(now)||
+    duration-a.last<2.5||duration-a.last>12||
+    a.last-r.releaseAt<2.35||a.last-r.releaseAt>11.5||
+    !Number.isFinite(r.lastImpactAt)||!Number.isFinite(r.releaseAt)||
+    r.releaseAt<r.lastImpactAt||
+    !Number.isFinite(r.score)||r.score<.76||
+    !Number.isFinite(r.quietLevel)||r.quietLevel>.24||
+    now<a.last+.14||now>=duration-.24)return false;
+ const lastKnown=Number.isFinite(lastLyricAt)?lastLyricAt:a.lastLyricAt;
+ const lyricSafe=Number.isFinite(lastKnown)&&
+  lastKnown<=r.releaseAt-5;
+ const scanSafe=Boolean(a.voiceModel&&
+  Number.isFinite(a.voiceScannedEnd)&&
+  a.voiceScannedEnd>=a.last-.75&&
+  (!Number.isFinite(a.lastVoiceAt)||
+    a.lastVoiceAt<=r.releaseAt-3));
+ // No source of vocal safety -> do not cut atmospheric, vocal or
+ // instrumental endings whose quietness alone might be misleading.
+ if(!lyricSafe&&!scanSafe)return false;
+ if(Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>r.releaseAt-3)
+  return false;
+ if(Number.isFinite(lastKnown)&&lastKnown>r.releaseAt-5)
+  return false;
+ return true;
+}
 // Desktop-only safety net for verified near-silent real-audio fade-outs.
 // Unlike PCM pre-analysis, this observes the currently *playing* stream.
 // It NEVER changes the original element's audio routing or connects to
@@ -4111,6 +4145,22 @@ function tick(){
  const mobileCueReady=reserveMobileSilentBridge(plan,measuredEnding,finalLyric,
    mobileIntroClips.has(String(nextSource)),
    app.mixRunningContext?.()?.state==="running",audio.currentTime);
+ // Without a certified beat, do not hold a prebuffered next song through
+ // 3-12 seconds of VERIFIED low-level postlude after the final vocal-free
+ // musical event. This is a direct handoff, NOT an invented beat match.
+ if(!isIOS&&!active&&!mixing&&!mobileActive&&
+    (!plan||plan.kind==="cut"||
+      (Number.isFinite(plan.begin)&&
+       plan.begin>Number(measuredEnding?.last)+.35))&&
+    certifiedSettledTailHandoff(measuredEnding,audio.duration,
+      audio.currentTime,finalLyric)){
+  const nextInfo=cache.get(String(nextSource))||deepLookup(next);
+  const entry=Number.isFinite(nextInfo?.safeIntroAt)?
+   clamp(nextInfo.safeIntroAt,0,18):0;
+  if(quietDirectHandoff(app,audio,id,next,entry,
+      "ultimo evento musicale concluso e voce verificata: coda debole abbreviata"))
+   return;
+ }
  const silentFadeReady=mobileCueReady||(!isIOS&&
    plan?.certifiedSilentBridge===true&&prepared?.ready&&!prepared?.failed&&
    audio.currentTime<=plan.end+.08);
