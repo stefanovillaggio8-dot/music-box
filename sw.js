@@ -63,6 +63,8 @@ const CORE = [
   /* File minuscolo col numero di versione e di brani: serve al controllo
      veloce (il telefono lo legge ogni 20 secondi invece di scaricare 400 KB). */
   "./versione.json",
+  // Playlist ownership and Gym-only visibility must be available offline.
+  "./playlist.json",
   /* La pista silenziosa che tiene viva la sessione audio: e' un file
      vero, cosi' continua a suonare anche con la pagina congelata. */
   "./silenzio.mp3",
@@ -1491,7 +1493,7 @@ self.addEventListener("fetch", (event) => {
        nuova. Servito dalla cache, l'app non vedrebbe mai l'aggiornamento.
      - stato.json: e' il fallback quando il worker non risponde, e deve
        dire le eliminazioni e le playlist giuste. */
-  const sempreFresco = /versione\.json$|stato\.json$|online-imports\.json$/.test(url.pathname);
+  const sempreFresco = /versione\.json$|stato\.json$|playlist\.json$|online-imports\.json$/.test(url.pathname);
 
   if (isCore && !sempreFresco) {
     /* Ste: "ci sta un sacco di tempo a caricare".
