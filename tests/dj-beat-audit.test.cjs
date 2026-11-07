@@ -630,3 +630,30 @@ test("real indexed pulse grid survives against mismatched BPM and chord progress
   "the independently decoded 0.215-correlation pair must not pass");
  assert.equal(tools.rhythmicGridEvidence(a.data,{...b.data,bpm:169}),null);
 });
+
+test("measure early instrumental beat matches in the real published audio index",()=>{
+ const withWindows=tracks.filter(x=>Array.isArray(x.data.outroOnsetWindows)&&
+   x.data.outroOnsetWindows.length>0);
+ let candidates=0,tempoClose=0;
+ const samples=[];
+ for(const outgoing of withWindows.filter((_,i)=>i%4===0)){
+  const a={...outgoing.data,lastLyricAt:0,lastVoiceAt:0,
+   voiceModel:"audit-instrumental-assumption",voiceScannedEnd:outgoing.data.last};
+  for(const incoming of tracks.filter((_,i)=>i%3===0)){
+   if(outgoing.key===incoming.key)continue;
+   const b={...incoming.data,firstLyricAt:99,firstVoiceAt:99};
+   const speed=a.bpm/b.bpm;
+   if(speed<.975||speed>1.025)continue;
+   tempoClose++;
+   const p=tools.transition(a,b,a.duration);
+   if(p?.earlyBeatJoin===true){
+    candidates++;
+    if(samples.length<8)samples.push({from:outgoing.key,to:incoming.key,
+     begin:short(p.begin),end:short(p.end),score:p.score});
+   }
+  }
+ }
+ console.info("[DJ EARLY-BAR AUDIT - assumed instrumental, NOT vocal-certified]",
+  JSON.stringify({withWindows:withWindows.length,tempoClose,candidates,samples}));
+ assert.ok(withWindows.length>=1,"recent real MP3 index must expose new early waveform windows");
+});
