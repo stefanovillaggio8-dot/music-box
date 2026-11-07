@@ -30,6 +30,8 @@ CASES = [
  ("audio/songs/track-568.mp3","audio/songs/track-464.mp3","rejected_drum"),
  ("audio/songs/track-808.mp3","audio/songs/track-209.mp3","rejected_drum_2"),
  ("audio/songs/track-153.mp3","audio/songs/track-8.mp3","user_recording_mismatch"),
+ ("audio/songs/track-378.mp3","audio/songs/track-91.mp3","candidate_pulse_grid_1"),
+ ("audio/songs/track-78.mp3","audio/songs/track-966.mp3","candidate_pulse_grid_2"),
  ("audio/songs/track-160.mp3","audio/songs/track-111.mp3","ranked_not_beat"),
  ("audio/songs/track-161.mp3","audio/songs/bassi/track-51.mp3","ranked_not_beat_2"),
  ("audio/songs/track-346.mp3","app/songs/youtube-kopi-luwak.mp3","rejected_snap"),
