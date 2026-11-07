@@ -155,6 +155,34 @@ def analyze(mp3):
           np.clip((frames-mean)/std,-3,3)]
     intro_onset=onset_signature(float(safe_intro))
     outro_onset=onset_signature(float(musical_edge)-4.0)
+    # Earlier REAL 4-second percussion/harmony windows allow the DJ to
+    # start a matching intro on a musical bar instead of waiting for the
+    # final beat. Do not guess from BPM or an empty MP3 tail. Every window
+    # is measured from original PCM and carries its own boundary notes.
+    outro_windows=[]
+    for offset in (8.0,12.0):
+        window_start=float(musical_edge)-offset
+        window_end=window_start+4.
+        if window_start<max(0.,first,25.) or window_end>musical_edge-3.95:
+            continue
+        signature=onset_signature(window_start)
+        local_groove=groove(rms,bpm,window_end,True)
+        if signature is None or local_groove is None:continue
+        sl=rms[max(0,int(window_start/.1)):min(len(rms),int(window_end/.1))]
+        if sl.size<30:continue
+        relative=float(np.mean(sl)/max(level,.0001))
+        if relative<.23:continue
+        a=int(window_start*SR);b=int(window_end*SR)
+        notes=chroma(y[a:b])
+        if notes is None:continue
+        outro_windows.append({
+            "start":round(window_start,3),
+            "end":round(window_end,3),
+            "onset":signature,
+            "groove":local_groove,
+            "notes":notes,
+            "levelRatio":round(relative,4)
+        })
     out={"duration":round(duration,3),"first":round(first,3),"last":round(last,3),
       "trailing":round(trailing,3),"leading":round(leading,3),
       "bpm":round(bpm,2),"beatConfidence":round(strength,3),
@@ -170,11 +198,12 @@ def analyze(mp3):
       "introGroove":groove(rms,bpm,safe_intro),
       "outroGroove":groove(rms,bpm,musical_edge,True),
       "introOnset":intro_onset,"outroOnset":outro_onset,
+      "outroOnsetWindows":outro_windows,
       "introDrive":round(drive,4),"dropRelease":release,
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v2"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v3-windows"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -191,7 +220,8 @@ def main():
     todo=[]
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
-        if previous.get("sha")==item["sha"] and previous.get("status")=="ok":continue
+        if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
+                and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:
                 when=dt.datetime.fromisoformat(previous["checkedAt"])
