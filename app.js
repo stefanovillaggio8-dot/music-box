@@ -12132,8 +12132,18 @@ window.MusicBoxBridge = {
     const records=LS.get("mb.eliminati",null)||{};
     const deletedIds=Object.keys(records).filter(id=>id.startsWith(profile+".")).sort();
     const local=all.filter(t=>!t.builtin);
+    const gym=_playlistCercata("gym");
+    const gymIds=new Set(Array.isArray(gym?.tracks)?gym.tracks:[]);
+    const gymLeaks=profile===DEFAULT_PROFILE&&gym?.nascosta===true?
+      visible.filter(t=>gymIds.has(t.id)).map(t=>t.id):[];
+    const standalone=typeof window.matchMedia==="function"&&
+      window.matchMedia("(display-mode: standalone)").matches;
     return {
-      profile,version:APP_VERSION,totalLoaded:all.length,
+      profile,version:APP_VERSION,origin:location.origin,standalone,
+      activePlaylist:_playlistAttiva||null,
+      gymPlaylistCount:gymIds.size,gymHidden:gym?.nascosta===true,
+      gymOwner:gym?.nascostaDa||null,gymUnexpectedInLibrary:gymLeaks,
+      totalLoaded:all.length,
       visibleCount:visible.length,localOnlyCount:local.length,
       localOnlyIds:local.map(t=>t.id).sort(),
       copiedIds:[..._mieiCopiati()].sort(),
