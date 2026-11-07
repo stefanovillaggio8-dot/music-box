@@ -10,7 +10,7 @@
   lastSeek=null,waitingAt=null,lastOverlap="",lastBlocker="",lastDiag=null,
   lastShuffle=null,lastSelectedAuto="",lastEnded=false,lastHidden=null,
   lastCatalogueAt=0,lastEventAt=new Map(),playedAutomatically=new Set(),
-  lastStatusAt=0;
+  lastStatusAt=0,activeLabUntil=0;
  try{const v=JSON.parse(localStorage.getItem(STORE));if(Array.isArray(v))events=v.slice(-650)}catch(_){}
  function app(){return window.MusicBoxBridge||null}
  function mix(){return window.MusicBoxMix||null}
@@ -166,6 +166,7 @@
  }
  if(channel)channel.onmessage=e=>{
   const msg=e.data;if(!msg||typeof msg!=="object")return;
+  activeLabUntil=Date.now()+10000;
   if(msg.type==="hello"||msg.type==="catalog-request"){
    if(Date.now()-lastCatalogueAt>400||msg.type==="catalog-request")catalogue();
    status();
@@ -178,6 +179,18 @@
    send({type:"inspect-response",requestId:msg.requestId,result});
   }
  };
+ // The engine dispatches this only after HTMLAudioElement.play() or
+ // Safari AudioBufferSourceNode.start() has actually succeeded.
+ window.addEventListener("musicbox:mix-overlap",e=>{
+  const t=e.detail||{};
+  if(!t.fromId||!t.toId)return;
+  lastOverlap=String(t.fromId)+"|"+String(t.toId);
+  emit("overlap","Sovrapposizione audio realmente avviata",
+   String(t.kind||"mix")+" · "+t.fromId+" → "+t.toId+
+   " · ingresso reale a "+(Number(t.actualAt)||0).toFixed(2)+" s"+
+   " · "+(Number(t.fade)||0).toFixed(2)+" s di mix previsto",
+   {fromId:t.fromId,toId:t.toId,trackId:t.fromId,cooldown:350});
+ });
  document.addEventListener("visibilitychange",()=>{
   const audio=app()?.audio?.(),playing=!!(audio&&!audio.paused);
   if(document.hidden){
@@ -205,6 +218,8 @@
  setInterval(()=>{
   if(document.hidden)return;
   if(!window.MusicBoxMix||!window.MusicBoxBridge)return;
+  // Reduce diagnostic work when the Lab is not open, especially on iPhone.
+  if(Date.now()>activeLabUntil&&Date.now()-lastStatusAt<9000)return;
   status();
   if(Date.now()-lastCatalogueAt>45000)catalogue();
  },1600);
