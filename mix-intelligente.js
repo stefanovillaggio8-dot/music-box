@@ -4287,7 +4287,8 @@ async function intelligentShuffle(app,audio,fromId){
    const cue=info&&desktopFinalImpactRelay(old,info,audio.duration);
    // An audible final-hit relay needs comparable notes and percussion;
    // matching BPM alone cannot create a musically convincing transition.
-   const evidence=info&&rhythmicGridEvidence(old,info);
+   const evidence=info&&typeof rhythmicGridEvidence==="function"?
+    rhythmicGridEvidence(old,info):null;
    if(!cue||!evidence||!musicallyCompatibleOverlay(old,info,cue))continue;
    const notes=similarNotes(old,info),drums=grooveAgreement(old,info);
    const score=1+clamp(info.introDrive,0,1)*.14+
@@ -4311,13 +4312,13 @@ async function intelligentShuffle(app,audio,fromId){
  // PLAY over a rhythm/key resemblance that cannot produce a mix.
  // A similar drum pattern without compatible notes is NOT a DJ match.
  // Keep those near-misses only in diagnostics, never in the chosen queue.
- // Musical compatibility comes before a fade. The ten random previews
- // are not fixed: the next actual track is promoted from the full library.
- // If no true beat match exists, pick a rhythmically similar song instead
- // of prioritizing an unrelated overlap on a quiet tail.
- const choicePool=scored.length?scored:nearScored.length?nearScored:
-  sequenceScored.length?sequenceScored:softScored.length?softScored:
-  impactScored.length?impactScored:postludeScored.length?postludeScored:[];
+ // The ten random previews are not fixed: the actual next track is
+ // promoted from the full library. A final-impact overlap only ranks here
+ // after independently validated rhythmic-grid evidence; otherwise a
+ // safe, verified release takes precedence over guessing at beat identity.
+ const choicePool=scored.length?scored:impactScored.length?impactScored:
+  softScored.length?softScored:postludeScored.length?postludeScored:
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
