@@ -1392,6 +1392,13 @@ try {
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     _nascostoIl = Date.now();
+    // iPhone may freeze JS immediately after backgrounding. Reaffirm the
+    // real track's native MediaSession BEFORE slow local/cloud saves;
+    // a paused source must remain "paused", never "none" or fake playing.
+    try {
+      if (audio && currentId && !audio.ended) updateMediaSession();
+      setPlaybackState(audio && !audio.paused && !audio.ended ? "playing" : "paused");
+    } catch (e) { /* WebKit owns the lock-screen widget */ }
     try { savePos(); } catch (e) { /* noop */ }
     /* Mandare i minuti anche quando l'app va in secondo piano: se no,
        gli ultimi minuti di una sessione restano solo qui e il computer non
@@ -1400,11 +1407,7 @@ document.addEventListener("visibilitychange", () => {
     try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
     _segna("app nel secondo piano", "salvo la posizione a " +
     Math.round((audio && audio.currentTime) || 0) + "s");
-    /* Teniamo la notifica visibile anche in background. */
-    try {
-      if (!_usaControlliNativiIos()) updateMediaSession();
-      setPlaybackState(audio && !audio.paused && !audio.ended ? "playing" : "paused");
-    } catch (e) { /* noop */ }
+    /* MediaSession was refreshed before background storage/telemetry. */
   } else {
     _visibileIl = Date.now();
     _segna("tornato in primo piano");
@@ -6241,6 +6244,13 @@ a.addEventListener("pause", () => {
       ", nascosta da " + Math.round(dalRitorno / 1000) + "s, visibile da " + Math.round(daVisibile / 1000) + "s"));
     /* Ferma il contatore PRIMA di ogni eventuale return o ripresa iOS. */
     if (a === audio) _chiudiAscolto(false);
+    // The in-app/MediaSession Pause already committed the paused state.
+    // A second pass here used to re-pause and rewrite the media session
+    // while Safari was sending its background state change.
+    if (_pausaEsplicita && !_vuoleSuonare) {
+      syncPlayUI();setPlaybackState("paused");
+      return;
+    }
     // Buffering after a seek is not an intentional iPhone pause.
     const pausaPerSeek = a.seeking || (Date.now()-_ultimoSeekUtente < 2500 && a.readyState < 3);
     if (_pausaNativaVolontaria(a,eDelSistema || pausaPerSeek)) {
@@ -6266,7 +6276,9 @@ a.addEventListener("pause", () => {
       try { setTimeout(() => _riprendiSeInAttesa(), 400); } catch (e) { /* noop */ }
     }
     syncPlayUI();
-    if (!_usaControlliNativiIos()) updateMediaSession();
+    // Even on iPhone, retain the current track artwork/action handlers.
+    // Safari may still evict a paused MediaSession after a long background.
+    updateMediaSession();
     setPlaybackState("paused");
     savePos();
     _chiudiAscolto(false);
@@ -8097,31 +8109,33 @@ function playNext() {
      Ora: il tasto play, il tasto pausa del telefono e quello del blocco
      schermo passano tutti di qui, quindi non possono piu' discordare. */
   function _pausaVolontaria() {
-    try { window.MusicBoxMix?.cancel?.(); } catch (_) {}
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
       window.MusicBoxRoom.control("pause");return;
     }
-    _segna("pausa VOLUTARIA (premi tu o il play del telefono)");
-    /* "adesso il silenzio e' voluto": lo dico subito a tutto il resto,
-       altrimenti chi aspetta di riavviare la musica mi riaccende. */
+    // A native pause may be followed by a second pause event. Do not
+    // destroy/re-register the same iPhone session twice.
+    if (_pausaEsplicita && !_vuoleSuonare && audio?.paused) return;
     _vuoleSuonare = false;
     _pausaEsplicita = true;
     _chiudiAscolto(false);
-    _segnaIntenzioneSono(false);
     _silenziDiFila = 0;
+    // Tell the real HTMLAudioElement first: this is the only native
+    // media source. Never create a silent keepalive or a second player.
+    if (audio) { try { audio.pause(); } catch (_) {} }
+    // Keep the paused song metadata, position and Play handler bound
+    // while WebKit still allows the page to execute.
+    try { updateMediaSession(); } catch (_) {}
+    setPlaybackState("paused");
+    syncPlayUI();
+    try { window.MusicBoxMix?.cancel?.(); } catch (_) {}
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
-    if (audio) { try { audio.pause(); } catch (e) { /* noop */ } }
-    // Save on the actual button/headphone command, before iOS suspends
-    // pending pause/timeupdate events. 3s periodic saves are not enough.
+    // Storage/diagnostics last: iOS can suspend a background page before
+    // these complete, but native pause + session state are already applied.
     _memorizzaPausaCorrente();
-    _annullaBloccoRipresaAudio();
-    setPlaybackState("paused");
+    _segnaIntenzioneSono(false);
     _nascondiAiuto();
-    syncPlayUI();
-    /* Teniamo attiva la notifica anche quando la musica e' fermata,
-       cosi' resta visibile finche' non chiudi l'app dal background. */
-    try { if (!_usaControlliNativiIos()) updateMediaSession(); } catch (e) { /* noop */ }
+    _segna("pausa VOLUTARIA (premi tu o il play del telefono)");
   }
 
   /* Ste: "riapro l'app e si ferma la canzone, senza che io tocchi nulla".
