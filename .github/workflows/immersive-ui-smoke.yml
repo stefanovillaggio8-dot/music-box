@@ -28,3 +28,9 @@ jobs:
           test -x /usr/bin/google-chrome
       - name: Test desktop and mobile viewport karaoke, controls and scrolling
         run: node tests/immersive-ui-smoke.cjs
+      - name: Install WebKit for Safari-style layout verification
+        run: npx playwright install --with-deps webkit
+      - name: Test immersive karaoke and controls in WebKit
+        env:
+          IMMERSIVE_ENGINE: webkit
+        run: node tests/immersive-ui-smoke.cjs
