@@ -6199,11 +6199,21 @@ function handleMetadata() {
       try{a.pause()}catch(e){}
       return;
     }
-    // Ignore stale playback events from outstanding autoplay/retry work
-    // after the user explicitly paused via headphones or the lock screen.
+    // The default iOS lock-screen Play command resumes the SAME native
+    // HTMLAudioElement without calling our MediaSession action handler.
+    // Do not immediately pause that genuine restart because the previous
+    // user command left the app's _pausaEsplicita flag set.
     if(_pausaEsplicita&&!_vuoleSuonare){
-      try{a.pause()}catch(_){}
-      return;
+      const ripresaNativa=_usaControlliNativiIos()&&!a.paused&&!a.ended&&
+        !a._mbCambioBrano&&!window.MusicBoxRoom?.isActive?.();
+      if(!ripresaNativa){
+        // A delayed/stale play event after an explicit Pause must still
+        // NOT override user intent (unless iOS actually unpaused media).
+        try{a.pause()}catch(_){}
+        return;
+      }
+      _pausaEsplicita=false;
+      _ultimoScorrimento=Date.now();
     }
     // Qualsiasi browser, non solo il wrapper iOS, deve ricordare che
     // stava effettivamente suonando prima di un refresh.
@@ -8401,56 +8411,72 @@ function _aggiornaPosizioneSchermo() {
     } catch (e) { /* noop */ }
   }
 
+  // Register remote controls once per playback mode. Re-registering
+  // handlers every time the iPhone backgrounded or paused could sever the
+  // MediaRemote ownership and replace the paused song with "Not Playing".
+  let _mediaSessionActionMode="";
+  let _mediaSessionTrackId="";
   function updateMediaSession() {
     if (!("mediaSession" in navigator)) return;
     const t = current();
     if (!t || !currentId) return;
     _configuraSessioneAudio();
-    const cop = _copertinaPerSchermo(t);
-    const meta = new MediaMetadata({
-      title: t ? t.title : APP_NAME,
-      artist: t ? (t.artist || APP_NAME) : APP_NAME,
-      album: APP_NAME,
-      artwork: cop ? [{ src: cop, sizes: "512x512" }] : [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
-    });
-    navigator.mediaSession.metadata = meta;
+    const session=navigator.mediaSession;
+    // Keep the SAME metadata object across pause, resume and background.
+    // Replacing it is necessary for a new song, not for every play/pause.
+    if (_mediaSessionTrackId!==currentId || !session.metadata) {
+      const cop = _copertinaPerSchermo(t);
+      session.metadata = new MediaMetadata({
+        title: t.title || APP_NAME,
+        artist: t.artist || APP_NAME,
+        album: APP_NAME,
+        artwork: cop ? [{ src: cop, sizes: "512x512" }] :
+          [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
+      });
+      _mediaSessionTrackId=currentId;
+    }
     _aggiornaPosizioneSchermo();
     const setHandler = (action, fn) => {
-      try { navigator.mediaSession.setActionHandler(action, fn); } catch (e) { /* noop */ }
+      try { session.setActionHandler(action, fn); } catch (_) { /* unsupported */ }
     };
-    /* Tasti del blocco schermo: passano dagli stessi due posti del tasto
-       play/pausa dell'app, altrimenti potrebbero dimenticarsi di dire
-       "l'utente ha messo pausa" e la musica ripartirebbe da sola. */
-    // Safari can deliver hardware/headset/lockscreen media commands
-    // through MediaSession even while document.hidden. Never unregister
-    // the PAUSE action: it must clear the autorecovery intent.
-    setHandler("play", () => {
-      if(currentId) _riproduciVolontaria(true);
-      else if(tracks.length) playById(tracks[0].id);
-    });
-    setHandler("pause", () => { _pausaVolontaria(); });
-    setHandler("nexttrack", () => playNext());
-    setHandler("previoustrack", () => {
-      if(window.MusicBoxRoom?.isActive())window.MusicBoxRoom.control("previous");
-      else playById(idBranoA(prevIndex()));
-    });
-    setHandler("seekto", (d) => {
-      if (d.seekTime != null && audio && isFinite(audio.duration)) {
-        _chiudiAscolto(false);
-        if(window.MusicBoxRoom?.isActive()){
-          window.MusicBoxRoom.control("seek",{seconds:d.seekTime});return;
-        }
-        audio.currentTime = Math.max(0, Math.min(d.seekTime, audio.duration));
-        updateProgressUI(audio.currentTime, audio.duration);
+    // With native iOS HTMLAudioElement playback, let WebKit handle
+    // Play/Pause directly (its default MediaRemote commands), without
+    // requiring suspended PWA JavaScript to run an app-level callback.
+    // WebKit also supplies default Play/Pause when other handlers exist.
+    // Shared rooms need app-specific logic, so keep the old callbacks.
+    const nativeIOS=_usaControlliNativiIos()&&
+      !window.MusicBoxRoom?.isActive?.();
+    const mode=nativeIOS?"native-ios":"custom";
+    if (_mediaSessionActionMode!==mode) {
+      if (nativeIOS) {
+        setHandler("play",null);
+        setHandler("pause",null);
+      } else {
+        setHandler("play", () => {
+          if(currentId) _riproduciVolontaria(true);
+          else if(tracks.length) playById(tracks[0].id);
+        });
+        setHandler("pause", () => { _pausaVolontaria(); });
       }
-    });
-    /* NON registro "avanti/indietro di 15 secondi".
-       Ste li aveva: con questi due comandi attivi, l'iPhone si metteva
-       "salta 10 secondi" ai lati della pausa invece di "canzone
-       precedente" e "canzone successiva", che e' quello che voleva lui.
-       Gli advancedi e i rientri di 15 secondi restano comunque disponibili
-       dentro l'app, sulla barra sopra al play. */
-    setHandler("stop", () => { _pausaVolontaria(); });
+      setHandler("nexttrack", () => playNext());
+      setHandler("previoustrack", () => {
+        if(window.MusicBoxRoom?.isActive())window.MusicBoxRoom.control("previous");
+        else playById(idBranoA(prevIndex()));
+      });
+      setHandler("seekto", (d) => {
+        if (d.seekTime != null && audio && isFinite(audio.duration)) {
+          _chiudiAscolto(false);
+          if(window.MusicBoxRoom?.isActive()){
+            window.MusicBoxRoom.control("seek",{seconds:d.seekTime});return;
+          }
+          audio.currentTime = Math.max(0, Math.min(d.seekTime, audio.duration));
+          updateProgressUI(audio.currentTime, audio.duration);
+        }
+      });
+      // Keep song skip buttons, not the 15-second rewind controls.
+      setHandler("stop", () => { _pausaVolontaria(); });
+      _mediaSessionActionMode=mode;
+    }
     setPlaybackState(audio && !audio.paused && !audio.ended ? "playing" : "paused");
     _notificaStatoNativo(true);
   }
