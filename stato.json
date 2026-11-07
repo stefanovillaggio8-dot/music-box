@@ -1352,8 +1352,8 @@
     "a": "Max Pezzali"
    },
    "[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 1,
-    "s": 306,
+    "v": 2,
+    "s": 336,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -3596,8 +3596,8 @@
     "a": "nayt"
    },
    "m:2026-11|[\"la mia storia tra le dita\",\"gianluca grignani\"]": {
-    "v": 1,
-    "s": 305,
+    "v": 2,
+    "s": 334,
     "t": "la mia storia tra le dita",
     "a": "gianluca grignani"
    },
@@ -3975,13 +3975,13 @@
    },
    "[\"giovanni\",\"tonypitony\"]": {
     "v": 1,
-    "s": 135,
+    "s": 184,
     "t": "GIOVANNI",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"giovanni\",\"tonypitony\"]": {
     "v": 1,
-    "s": 135,
+    "s": 184,
     "t": "GIOVANNI",
     "a": "TonyPitony"
    },
@@ -4989,7 +4989,7 @@
    },
    "[\"la cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
     "v": 2,
-    "s": 295,
+    "s": 307,
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
    },
@@ -5241,13 +5241,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 178,
+    "s": 186,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 178,
+    "s": 186,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -5673,7 +5673,7 @@
    },
    "m:2026-11|[\"la cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"mostro\"]": {
     "v": 1,
-    "s": 295,
+    "s": 307,
     "t": "LA CITTÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "MOSTRO"
    },
@@ -6009,13 +6009,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 186,
+    "s": 200,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 186,
+    "s": 200,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -6783,13 +6783,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 200,
+    "s": 263,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 200,
+    "s": 263,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
