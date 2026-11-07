@@ -168,7 +168,9 @@ test("standalone iPhone PWA reloads fresh Gym metadata without purging offline M
  assert.match(worker,/const sempreFresco = \/versione\\.json\$\|stato\\.json\$\|playlist\\.json\$/);
  const fresh=excerpt("async function _caricaPlaylistCondivise()", "let _gymInvioUltimo");
  assert.match(fresh,/gymCompletaSulWorker/);
- assert.match(fresh,/if\(!gymCompletaSulWorker\)/);
+ assert.match(fresh,/if\(!_playlistDaSincronizzare\)/);
+ assert.match(fresh,/current\.nascosta!==true/);
+ assert.match(fresh,/current\.tracks\|\|\[\]\)\.length<gym\[0\]\.tracks\.length/);
  assert.match(fresh,/cache:"no-store"/);
  assert.match(fresh,/_unisciPlaylistCondivise\(gym,false\)/);
  const initial=excerpt("function loadProfileState()", "function saveCurrentState()");
