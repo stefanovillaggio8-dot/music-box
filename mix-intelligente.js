@@ -1788,6 +1788,38 @@ function rhythmicGridEvidence(a,b){
 // real onset patterns, a compatible harmonic progression and vocal proof.
 // Earlier four-second bars are measured from original PCM, not
 // guessed from global BPM or the encoded silent tail.
+function alignedEarlyOnsetAgreement(outro,intro,offsetSeconds){
+ if(!Array.isArray(outro)||!Array.isArray(intro)||
+    outro.length!==96||intro.length!==96||
+    !Number.isFinite(offsetSeconds)||
+    outro.some(v=>!Number.isFinite(v))||
+    intro.some(v=>!Number.isFinite(v)))return null;
+ const shift=Math.round(offsetSeconds*24);
+ if(shift< -5||shift>32)return null;
+ const correlation=(nudge)=>{
+  let dot=0,xx=0,yy=0,firstDot=0,firstXX=0,firstYY=0,
+      secondDot=0,secondXX=0,secondYY=0,firstCount=0,secondCount=0;
+  for(let i=0;i<96;i++){
+   const k=i+shift+nudge;
+   if(k<0||k>=96)continue;
+   const x=Math.max(0,outro[k]),y=Math.max(0,intro[i]);
+   dot+=x*y;xx+=x*x;yy+=y*y;
+   if(i<48){firstDot+=x*y;firstXX+=x*x;firstYY+=y*y;firstCount++}
+   else{secondDot+=x*y;secondXX+=x*x;secondYY+=y*y;secondCount++}
+  }
+  if(firstCount<30||secondCount<22||xx<1.5||yy<1.5||
+     firstXX<.65||firstYY<.65||secondXX<.50||secondYY<.50)
+    return null;
+  return {score:dot/Math.sqrt(xx*yy),
+   first:firstDot/Math.sqrt(firstXX*firstYY),
+   second:secondDot/Math.sqrt(secondXX*secondYY)};
+ };
+ const candidates=[correlation(0),correlation(-1),correlation(1)]
+   .filter(Boolean).sort((x,y)=>y.score-x.score);
+ const best=candidates[0];
+ return best&&best.score>=.62&&best.first>=.40&&best.second>=.40?
+  best:null;
+}
 function earlyMatchedBar(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     a.protectedEnding===true||!Number.isFinite(a.duration)||
@@ -1857,11 +1889,17 @@ function earlyMatchedBar(a,b,dur){
      firstNextVoice<fade+.65||
      (knownLastLyric!==null&&knownLastLyric>begin-5.5)||
      (knownLastVoice!==null&&knownLastVoice>begin-4))continue;
-  const score=Math.round(100*(notes.focused*.4+
-    notes.phrase*.25+drums.score*.35));
+  // Equal BPM and compatible chords alone do not prove a beatmatched
+  // transition. Compare real PCM attacks at the shifted playback instant.
+  const matchedRhythm=alignedEarlyOnsetAgreement(
+    win.onset,b.introOnset,begin-win.start);
+  if(!matchedRhythm)continue;
+  const score=Math.round(100*(notes.focused*.32+
+    notes.phrase*.18+drums.score*.24+matchedRhythm.score*.26));
   const cue={kind:"beat",begin,end,fade,entry,
    tempo:clamp(speed,.975,1.025),gain:1,score,
    grooveScore:drums.score,beatGridScore:Math.min(pulseA,pulseB),
+   earlyOnsetAgreement:matchedRhythm.score,
    rhythmicGridJoin:true,earlyBeatJoin:true,measuredBeatBridge:true,
    earlyWindowStart:win.start,earlyWindowEnd:win.end,
    verifiedHarmonicBridge:true,quietCertified:true,preserveTail:true,
