@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b101b">
+<meta name="description" content="Smart Mix Lab: analisi, diagnostica e test del DJ di Music Box.">
+<title>Smart Mix Lab · Music Box</title>
+<link rel="stylesheet" href="./style.css?v=1">
+</head>
+<body>
+<div class="shell">
+ <aside class="sidebar" id="sidebar">
+  <a class="brand" href="../index.html" aria-label="Torna a Music Box">
+   <span class="brand-icon"><span></span><span></span><span></span><span></span></span>
+   <span><strong>MUSIC BOX</strong><small>SMART MIX LAB</small></span>
+  </a>
+  <div class="nav-caption">WORKSPACE</div>
+  <nav class="nav" aria-label="Sezioni">
+   <button class="nav-link active" data-view="overview"><span class="ni">◈</span> Overview</button>
+   <button class="nav-link" data-view="library"><span class="ni">▤</span> Brani analizzati</button>
+   <button class="nav-link" data-view="transitions"><span class="ni">⌁</span> Transizioni</button>
+   <button class="nav-link" data-view="events"><span class="ni">◷</span> Monitor live</button>
+   <button class="nav-link" data-view="tests"><span class="ni">◇</span> Test &amp; mobile</button>
+   <button class="nav-link" data-view="compare"><span class="ni">▥</span> Prima / dopo</button>
+  </nav>
+  <div class="sidebar-bottom">
+   <div class="device-card">
+    <span class="device-glyph">⌁</span>
+    <div><strong id="sideConnection">Sorgente dati</strong><small id="sideSub">In attesa del catalogo</small></div>
+   </div>
+   <a class="return-link" href="../index.html">↗ Apri Music Box</a>
+   <div class="foot">DIAGNOSTICA LOCALE · NON MODIFICA L'AUDIO</div>
+  </div>
+ </aside>
+ <main class="main">
+  <header class="topbar">
+   <div class="top-left"><button id="mobileNav" class="mobile-nav" aria-label="Apri menu">☰</button><div class="crumb">Music Box <span>/</span> <strong id="viewName">Overview</strong></div></div>
+   <div class="top-right">
+    <div class="device-segment" aria-label="Dispositivo da visualizzare">
+      <button type="button" data-device="pc" class="chosen">▣ <span>PC</span></button>
+      <button type="button" data-device="iphone">▯ <span>iPhone</span></button>
+    </div>
+    <span class="source-status" id="sourceStatus"><i></i> INDICE IN CARICAMENTO</span>
+    <button class="icon-btn" id="refresh" title="Aggiorna dati">⟳</button>
+   </div>
+  </header>
+  <div class="content">
+   <section class="view active" id="view-overview">
+    <div class="hero-heading">
+     <div><div class="eyebrow"><span class="eyebrow-line"></span> AUDIO INTELLIGENCE / DIAGNOSTICS</div>
+      <h1>Smart Mix <em>Lab.</em></h1>
+      <p>Ogni transizione sotto controllo. Dalla compatibilità dei beat al comportamento reale del player.</p></div>
+     <div class="heading-actions"><button class="btn btn-quiet" id="export1">↥ Esporta report</button><button class="btn btn-primary jump" data-target="transitions">⌁ Simula un mix <span>↗</span></button></div>
+    </div>
+    <div class="metrics">
+     <article class="metric"><div class="metric-top"><span>BRANI ANALIZZATI</span><span class="metric-icon">◈</span></div><div class="metric-number" id="metricAnalyzed">—</div><div class="metric-bottom" id="metricCoverage">Lettura indice in corso</div></article>
+     <article class="metric"><div class="metric-top"><span>TRANSIZIONI VALUTATE</span><span class="metric-icon purple">⌁</span></div><div class="metric-number" id="metricChecks">0</div><div class="metric-bottom">Prove e verifiche effettuate</div></article>
+     <article class="metric"><div class="metric-top"><span>SOVRAPPOSIZIONI REALI</span><span class="metric-icon teal">≋</span></div><div class="metric-number" id="metricOverlaps">0</div><div class="metric-bottom">Rilevate dalle sessioni locali</div></article>
+     <article class="metric"><div class="metric-top"><span>ANOMALIE OSSERVATE</span><span class="metric-icon orange">!</span></div><div class="metric-number" id="metricIssues">0</div><div class="metric-bottom">Eventi diagnosticati, non stime</div></article>
+    </div>
+    <div class="grid-two">
+     <section class="panel player-panel">
+      <div class="panel-heading"><div><span class="section-kicker">LIVE MONITORING</span><h2>Transizione in osservazione</h2></div><span class="pill" id="livePill">In attesa</span></div>
+      <div class="track-preview"><div class="track-avatar outgoing">A</div><div class="track-title"><strong id="currentTrack">Nessun brano in riproduzione</strong><span id="currentSubtitle">Apri Music Box in un'altra scheda dello stesso dispositivo</span></div><span class="track-end" id="currentTime">--:--</span></div>
+      <div class="wave-group"><div class="wave-label"><span>OUTRO / BRANO ATTUALE</span><span id="outroBpm">— BPM</span></div><div class="wavebox" id="waveOut"><div class="wave-empty">Forma d'onda disponibile dopo l'analisi</div></div><div class="wave-scale"><span>-16 s</span><span>-8 s</span><span>fine</span></div></div>
+      <div class="transition-arrow"><span>↘</span><span id="nowTransition">Nessun piano di transizione</span><span>↗</span></div>
+      <div class="wave-group"><div class="wave-label"><span>INTRO / PROSSIMO BRANO</span><span id="introBpm">— BPM</span></div><div class="wavebox" id="waveIn"><div class="wave-empty">Analisi dell'intro non disponibile</div></div><div class="wave-scale"><span>inizio</span><span>+8 s</span><span>+16 s</span></div></div>
+      <div class="track-preview second"><div class="track-avatar incoming">B</div><div class="track-title"><strong id="nextTrack">Prossimo brano sconosciuto</strong><span id="nextSubtitle">In attesa del player</span></div><span class="track-end" id="nextKey">—</span></div>
+      <div class="monitor-foot"><span id="liveDetail">Nessun monitor collegato</span><button class="text-button jump" data-target="events">Eventi live →</button></div>
+     </section>
+     <section class="panel diagnostic-panel">
+      <div class="panel-heading"><div><span class="section-kicker">ENGINE STATUS</span><h2>Diagnostica del motore</h2></div><span class="tiny-kicker" id="engineVersion">V —</span></div>
+      <div class="health-ring-layout"><div class="health-ring" id="healthRing"><div><strong id="healthScore">—</strong><small>DATI</small></div></div><div class="health-copy"><h3 id="healthTitle">Verifica in corso</h3><p id="healthBody">Carico l'indice audio e cerco una scheda Music Box attiva.</p></div></div>
+      <div class="status-rows">
+       <div><span>Indice audio reale</span><strong id="statusIndex">In caricamento</strong></div>
+       <div><span>Motore Smart Mix</span><strong id="statusEngine">Non collegato</strong></div>
+       <div><span>Ricerca Smart Shuffle</span><strong id="statusShuffle">Non disponibile</strong></div>
+       <div><span>Clock e buffer</span><strong id="statusBuffer">Non disponibile</strong></div>
+       <div><span>Sicurezza vocale</span><strong id="statusVocal">Da verificare</strong></div>
+      </div>
+      <div class="notice small-notice"><span>ⓘ</span><p>I dati musicali e gli eventi del dispositivo non sono la stessa cosa. Una sovrapposizione è confermata solo quando il lettore la avvia davvero.</p></div>
+     </section>
+    </div>
+    <div class="grid-two compact-bottom">
+     <section class="panel"><div class="panel-heading"><div><span class="section-kicker">LATEST EVENTS</span><h2>Ultimi eventi</h2></div><button class="text-button jump" data-target="events">Apri timeline →</button></div><div id="overviewEvents" class="event-list"><p class="empty">In attesa di eventi reali.</p></div></section>
+     <section class="panel"><div class="panel-heading"><div><span class="section-kicker">SAFE MIX POLICY</span><h2>Regole attive</h2></div></div><div class="rules"><div><span>✓</span><p><strong>Beat prima del silenzio</strong><small>Solo con allineamento e compatibilità verificati.</small></p></div><div><span>✓</span><p><strong>Voce e finale protetti</strong><small>Niente tagli arbitrari su frasi o colpi finali.</small></p></div><div><span>✓</span><p><strong>Fallback normale</strong><small>Se i dati non bastano, nessun mix inventato.</small></p></div></div></section>
+    </div>
+   </section>
+   <section class="view" id="view-library">
+    <div class="section-heading"><div><div class="eyebrow">AUDIO INDEX / REAL MEASUREMENTS</div><h1>Brani <em>analizzati.</em></h1><p>Valori letti dall'indice audio, non generati casualmente.</p></div><button class="btn btn-quiet" id="libraryRefresh">⟳ Ricarica indice</button></div>
+    <div class="panel"><div class="table-toolbar"><label class="search-wrap">⌕ <input id="librarySearch" placeholder="Cerca titolo, artista o file..." autocomplete="off"></label><select id="libraryFilter"><option value="all">Tutti i brani</option><option value="ok">Analisi completa</option><option value="unknown">Analisi mancante</option></select><span class="count-label" id="libraryCount">—</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>BRANO</th><th>BPM</th><th>CAMELOT</th><th>BEAT</th><th>INTRO / FINALE</th><th>STATO</th><th></th></tr></thead><tbody id="libraryRows"></tbody></table></div><div class="table-footer"><span id="libraryFooter">Caricamento...</span><div><button class="pagebtn" id="libraryPrev">←</button><span id="libraryPage">1</span><button class="pagebtn" id="libraryNext">→</button></div></div></div>
+   </section>
+   <section class="view" id="view-transitions">
+    <div class="section-heading"><div><div class="eyebrow">TRANSITION ENGINE / SAFE EVALUATION</div><h1>Simulatore <em>di mix.</em></h1><p>Confronta i brani senza cambiare riproduzione o coda.</p></div><button class="btn btn-quiet" id="randomPair">↻ Coppia casuale</button></div>
+    <div class="panel simulation-panel">
+     <div class="pair-controls"><label><span>BRANO IN USCITA</span><input id="fromQuery" list="trackOptions" placeholder="Cerca brano in uscita..."></label><div class="swap-circle" id="swapPair" title="Inverti i brani" role="button" tabindex="0">⇄</div><label><span>BRANO IN ENTRATA</span><input id="toQuery" list="trackOptions" placeholder="Cerca prossimo brano..."></label></div><datalist id="trackOptions"></datalist>
+     <div class="simulate-actions"><div class="simulation-help" id="simulationSource">In attesa del catalogo. Il simulatore usa soltanto dati misurati.</div><button class="btn btn-primary" id="simulate">▶ Analizza transizione</button></div>
+    </div>
+    <div id="simResult" class="result-placeholder"><div class="result-ornament">⌁</div><strong>Pronto a confrontare due brani</strong><p>Scegli la traccia in uscita e quella in entrata per controllare ritmo, chiave, tagli e certificazione del passaggio.</p></div>
+    <div class="panel small-panel"><div class="panel-heading"><div><span class="section-kicker">BATCH TEST</span><h2>Confronta più transizioni</h2></div><button class="btn btn-quiet" id="batchRun">Prova 12 coppie</button></div><div id="batchResults" class="batch-results"><p class="empty">Avvia un test per vedere le coppie valutate. I risultati non riproducono audio.</p></div></div>
+   </section>
+   <section class="view" id="view-events">
+    <div class="section-heading"><div><div class="eyebrow">BROWSER TELEMETRY / LOCAL SESSION</div><h1>Monitor <em>live.</em></h1><p>Play, seek, buffer, mix avviati, handoff e possibili anomalie.</p></div><div class="heading-actions"><button class="btn btn-quiet" id="clearEvents">Cancella eventi locali</button><button class="btn btn-primary" id="export2">↥ Esporta JSON</button></div></div>
+    <div class="panel"><div class="table-toolbar"><select id="eventFilter"><option value="all">Tutti gli eventi</option><option value="issue">Solo anomalie</option><option value="overlap">Mix reali</option><option value="track">Cambi brano</option></select><span class="count-label" id="eventCount">0 eventi</span></div><div id="eventsFeed" class="full-event-list"></div></div>
+   </section>
+   <section class="view" id="view-tests">
+    <div class="section-heading"><div><div class="eyebrow">QUALITY ASSURANCE / IOS + DESKTOP</div><h1>Suite <em>di controllo.</em></h1><p>Test automatici dove è possibile; verifica manuale quando Safari richiede un dispositivo reale.</p></div><button class="btn btn-primary" id="runChecks">▶ Esegui controlli</button></div>
+    <div class="test-summary"><div class="panel"><span>TEST SUPERATI</span><strong id="testsPass">0</strong></div><div class="panel"><span>DA VERIFICARE</span><strong id="testsPending">0</strong></div><div class="panel"><span>PROBLEMI</span><strong id="testsFail">0</strong></div></div>
+    <div class="test-columns"><div class="panel"><div class="panel-heading"><div><span class="section-kicker">SMART MIX / SHUFFLE</span><h2>Controlli automatici</h2></div></div><div id="autoTests" class="test-list"></div></div><div class="panel"><div class="panel-heading"><div><span class="section-kicker">MOBILE REGRESSIONS</span><h2>Problemi iPhone osservati</h2></div></div><div id="mobileTests" class="test-list"></div></div></div>
+    <div class="notice"><span>ⓘ</span><p>Il browser non può garantire i test di schermo bloccato o di audio in background senza un iPhone reale. Segna i risultati dopo la prova e importa il report dal dispositivo per confrontarli.</p></div>
+   </section>
+   <section class="view" id="view-compare">
+    <div class="section-heading"><div><div class="eyebrow">REGRESSION HISTORY / RELEASE QA</div><h1>Prima <em>/ dopo.</em></h1><p>Salva un punto di riferimento e confrontalo dopo ogni modifica a Music Box.</p></div><div class="heading-actions"><button class="btn btn-quiet" id="importBtn">↧ Importa report</button><button class="btn btn-primary" id="saveSnapshot">＋ Salva snapshot</button></div></div>
+    <div class="comparison-selectors"><label>VERSIONE PRIMA<select id="beforeSelect"></select></label><span>⇄</span><label>VERSIONE DOPO<select id="afterSelect"></select></label><button class="btn btn-quiet" id="compareNow">Confronta</button></div>
+    <div id="comparison" class="panel comparison-output"><p class="empty">Salva due snapshot, oppure importa un report dall'altro dispositivo.</p></div>
+    <div class="panel"><div class="panel-heading"><div><span class="section-kicker">HISTORY</span><h2>Snapshot conservati</h2></div></div><div id="snapshotList" class="snapshot-list"></div></div>
+   </section>
+  </div>
+ </main>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept=".json,application/json" hidden>
+<script src="./app.js?v=1" defer></script>
+</body>
+</html>
