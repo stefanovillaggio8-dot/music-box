@@ -101,10 +101,14 @@ async function run(){
    assert.equal(await page.evaluate(()=>window.fakeCalls.next),1);
    await page.evaluate(()=>{
     const el=document.getElementById("imKaraoke");
-    const t=new Touch({identifier:7,target:el,clientY:120});
-    el.dispatchEvent(new TouchEvent("touchstart",{bubbles:true,touches:[t],changedTouches:[t]}));
-    const e=new Touch({identifier:7,target:el,clientY:320});
-    el.dispatchEvent(new TouchEvent("touchend",{bubbles:true,touches:[],changedTouches:[e]}));
+    // Touch() is not directly constructible on some desktop WebKit builds.
+    // Dispatch real bubbling events with explicit coordinates in both engines.
+    const down=new Event("touchstart",{bubbles:true});
+    Object.defineProperty(down,"touches",{value:[{clientY:120}]});
+    el.dispatchEvent(down);
+    const up=new Event("touchend",{bubbles:true});
+    Object.defineProperty(up,"changedTouches",{value:[{clientY:320}]});
+    el.dispatchEvent(up);
    });
    assert.equal(await page.evaluate(()=>window.MusicBoxImmersive.isOpen()),true,
     "swiping the lyrics cannot dismiss immersive mode");
