@@ -115,10 +115,11 @@ test("read-only library diagnostics detect playlist-only count differences",()=>
   tracks:items,profile:"Ste",DEFAULT_PROFILE:"Ste",
   _soloInPlaylist:new Set(["Ste.b-track-1","Ste.b-track-2","Ste.b-track-3","Ste.b-track-4"]),
   _chiaveSoloInPlaylist:id=>"Ste."+id,
+  _nascostiDallePlaylist:()=>new Set(),
   LS:{get:()=>({})},_mieiCopiati:()=>new Set(),APP_VERSION:"test"
  };
  const snap=new Function("e",
-  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION}=e;"+
+  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION,_nascostiDallePlaylist}=e;"+
   "return ({"+expression+"}).librarySnapshot;")(environment);
  const result=snap();
  assert.equal(result.totalLoaded,233);
@@ -184,7 +185,7 @@ test("Gym tracks remain in the playlist, but not in Ste main library or count",(
  assert.equal(read("Diego").size,0,"Ste's hidden Gym must not remove Diego songs");
  const count=excerpt("const visibleAll = tracks.filter", "function _quantiEliminati()");
  const helper=new Function("env",
-  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,_playlistAttiva,_playlistCercata,list,eGiaCondiviso}=env;"+
+  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,_playlistAttiva,_playlistCercata,list,eGiaCondiviso,_nascostiDallePlaylist}=env;"+
   count+"return {total,mine};");
  const gymSet=new Set(gym.tracks);
  const items=[
@@ -194,7 +195,8 @@ test("Gym tracks remain in the playlist, but not in Ste main library or count",(
  const flags=new Set([...read("Ste")].map(id=>"Ste."+id));
  const env={tracks:items,profile:"Ste",DEFAULT_PROFILE:"Ste",_soloInPlaylist:flags,
   _chiaveSoloInPlaylist:id=>"Ste."+id,
-  _playlistAttiva:"",_playlistCercata:()=>gym,list:items,eGiaCondiviso:()=>false};
+  _playlistAttiva:"",_playlistCercata:()=>gym,list:items,eGiaCondiviso:()=>false,
+  _nascostiDallePlaylist:()=>read("Ste")};
  const main=helper(env);
  assert.equal(main.total,1,"Gym-only tracks must not inflate main library");
  const inside=helper({...env,_playlistAttiva:"gym"});
