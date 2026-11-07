@@ -1874,8 +1874,8 @@
     "a": "Calcutta"
    },
    "[\"alta marea\",\"antonello venditti\"]": {
-    "v": 10,
-    "s": 333,
+    "v": 11,
+    "s": 367,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -2528,8 +2528,8 @@
     "a": "Jovanotti"
    },
    "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
-    "v": 4,
-    "s": 303,
+    "v": 5,
+    "s": 337,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -4225,6 +4225,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"sweet child o' mine\",\"guns n' roses\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Sweet Child O' Mine",
+    "a": "Guns N' Roses"
+   },
+   "m:2026-11|[\"sweet child o' mine\",\"guns n' roses\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Sweet Child O' Mine",
+    "a": "Guns N' Roses"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -4939,17 +4951,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
-   "[\"sweet child o' mine\",\"guns n' roses\"]": {
+   "[\"smells like teen spirit\",\"nirvana\"]": {
     "v": 1,
     "s": 0,
-    "t": "Sweet Child O' Mine",
-    "a": "Guns N' Roses"
+    "t": "Smells Like Teen Spirit",
+    "a": "Nirvana"
    },
-   "m:2026-11|[\"sweet child o' mine\",\"guns n' roses\"]": {
+   "m:2026-11|[\"smells like teen spirit\",\"nirvana\"]": {
     "v": 1,
     "s": 0,
-    "t": "Sweet Child O' Mine",
-    "a": "Guns N' Roses"
+    "t": "Smells Like Teen Spirit",
+    "a": "Nirvana"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -5730,18 +5742,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"smells like teen spirit\",\"nirvana\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Smells Like Teen Spirit",
-    "a": "Nirvana"
-   },
-   "m:2026-11|[\"smells like teen spirit\",\"nirvana\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Smells Like Teen Spirit",
-    "a": "Nirvana"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -9693,7 +9693,7 @@
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
     "v": 7,
-    "s": 89,
+    "s": 104,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    },
@@ -9843,7 +9843,7 @@
    },
    "m:2026-11|[\"con te partirò\",\"andrea bocelli\"]": {
     "v": 6,
-    "s": 87,
+    "s": 102,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    },
