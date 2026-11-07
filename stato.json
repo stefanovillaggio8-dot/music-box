@@ -7309,6 +7309,18 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"yungest moonstar, neffa, tha supreme\",\"una direzione giusta\"]": {
+    "v": 1,
+    "s": 40,
+    "t": "yungest Moonstar, Neffa, tha Supreme",
+    "a": "uNa DiReZioNe giUsTa"
+   },
+   "m:2026-11|[\"yungest moonstar, neffa, tha supreme\",\"una direzione giusta\"]": {
+    "v": 1,
+    "s": 40,
+    "t": "yungest Moonstar, Neffa, tha Supreme",
+    "a": "uNa DiReZioNe giUsTa"
+   },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -8094,18 +8106,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"yungest moonstar, neffa, tha supreme\",\"una direzione giusta\"]": {
-    "v": 1,
-    "s": 40,
-    "t": "yungest Moonstar, Neffa, tha Supreme",
-    "a": "uNa DiReZioNe giUsTa"
-   },
-   "m:2026-11|[\"yungest moonstar, neffa, tha supreme\",\"una direzione giusta\"]": {
-    "v": 1,
-    "s": 40,
-    "t": "yungest Moonstar, Neffa, tha Supreme",
-    "a": "uNa DiReZioNe giUsTa"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 2,
@@ -8932,25 +8932,13 @@
    "[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi Che C''",
+    "t": "Dimmi che c'Ã¨",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'Ã¨",
-    "a": "thasup"
-   },
-   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 99,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 99,
-    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
@@ -9211,6 +9199,18 @@
     "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
+   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 2,
+    "s": 99,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 2,
+    "s": 99,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
     "s": 365,
@@ -9295,18 +9295,6 @@
     "t": "Tutti il resto Ã¨ noi",
     "a": "nayt, 3D"
    },
-   "[\"passione maledetta\",\"modÃ \"]": {
-    "v": 4,
-    "s": 779,
-    "t": "Passione maledetta",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
-    "v": 4,
-    "s": 779,
-    "t": "Passione maledetta",
-    "a": "ModÃ "
-   },
    "[\"torna da me\",\"luchÃ¨\"]": {
     "v": 0,
     "s": 94,
@@ -9341,6 +9329,18 @@
     "v": 0,
     "s": 95,
     "t": "ArriverÃ ",
+    "a": "ModÃ "
+   },
+   "[\"passione maledetta\",\"modÃ \"]": {
+    "v": 4,
+    "s": 779,
+    "t": "Passione maledetta",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
+    "v": 4,
+    "s": 779,
+    "t": "Passione maledetta",
     "a": "ModÃ "
    },
    "[\"voodoo\",\"guÃ¨\"]": {
@@ -9601,6 +9601,30 @@
     "t": "LA CITTÃ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 124,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "[\"non ti dimentico\",\"modÃ \"]": {
+    "v": 1,
+    "s": 168,
+    "t": "Non ti dimentico",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
+    "v": 1,
+    "s": 168,
+    "t": "Non ti dimentico",
+    "a": "ModÃ "
+   },
    "[\"il pescatore\",\"fabrizio de andrÃÂ©\"]": {
     "v": 0,
     "s": 124,
@@ -9625,23 +9649,29 @@
     "t": "Non ti dimentico",
     "a": "ModÃÂ "
    },
+   "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 325,
+    "t": "VENTANNI",
+    "a": "MÃ¥neskin"
+   },
    "m:2026-11|[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 1,
     "s": 325,
     "t": "VENTANNI",
     "a": "MÃÂ¥neskin"
    },
-   "[\"nessuna\",\"luchÃÂ¨\"]": {
+   "[\"nessuna\",\"luchÃ¨\"]": {
     "v": 2,
     "s": 192,
     "t": "Nessuna",
-    "a": "LuchÃÂ¨"
+    "a": "LuchÃ¨"
    },
-   "m:2026-11|[\"nessuna\",\"luchÃÂ¨\"]": {
+   "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
     "v": 2,
     "s": 192,
     "t": "Nessuna",
-    "a": "LuchÃÂ¨"
+    "a": "LuchÃ¨"
    },
    "[\"via del campo\",\"fabrizio de andrÃ©\"]": {
     "v": 1,
@@ -9655,6 +9685,30 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
    },
+   "[\"nessuna\",\"luchÃÂ¨\"]": {
+    "v": 2,
+    "s": 192,
+    "t": "Nessuna",
+    "a": "LuchÃÂ¨"
+   },
+   "m:2026-11|[\"nessuna\",\"luchÃÂ¨\"]": {
+    "v": 2,
+    "s": 192,
+    "t": "Nessuna",
+    "a": "LuchÃÂ¨"
+   },
+   "[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 0,
+    "s": 107,
+    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
    "[\"il piÃÂ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 0,
     "s": 107,
@@ -9666,6 +9720,18 @@
     "s": 107,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
+   },
+   "[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃ©"
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
     "v": 0,
@@ -10411,41 +10477,11 @@
     "t": "Non ti dimentico",
     "a": "Modà"
    },
-   "[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃ©"
-   },
-   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
-    "v": 0,
-    "s": 124,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 1,
-    "s": 168,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 1,
-    "s": 168,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
    "m:2026-11|[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 325,
     "t": "VENTANNI",
     "a": "Måneskin"
-   },
-   "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 325,
-    "t": "VENTANNI",
-    "a": "MÃ¥neskin"
    },
    "[\"nessuna\",\"luchè\"]": {
     "v": 2,
@@ -10471,18 +10507,6 @@
     "t": "Via del campo",
     "a": "Fabrizio De André"
    },
-   "[\"nessuna\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 192,
-    "t": "Nessuna",
-    "a": "LuchÃ¨"
-   },
-   "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 192,
-    "t": "Nessuna",
-    "a": "LuchÃ¨"
-   },
    "[\"il più grande spettacolo dopo il big bang\",\"jovanotti\"]": {
     "v": 0,
     "s": 107,
@@ -10493,18 +10517,6 @@
     "v": 0,
     "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 107,
-    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 0,
-    "s": 107,
-    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andré\"]": {
@@ -10518,18 +10530,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
-   },
-   "[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃ©"
-   },
-   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Bocca di rosa",
-    "a": "Fabrizio De AndrÃ©"
    }
   },
   "Diego": {
