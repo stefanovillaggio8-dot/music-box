@@ -1083,7 +1083,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 51,
-    "s": 1411,
+    "s": 1422,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1707,7 +1707,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 50,
-    "s": 1403,
+    "s": 1414,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -10452,6 +10452,18 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
+   },
+   "[\"yungest moonstar, neffa, tha supreme\",\"una direzione giusta\"]": {
+    "v": 1,
+    "s": 19,
+    "t": "yungest Moonstar, Neffa, tha Supreme",
+    "a": "uNa DiReZioNe giUsTa"
+   },
+   "m:2026-11|[\"yungest moonstar, neffa, tha supreme\",\"una direzione giusta\"]": {
+    "v": 1,
+    "s": 19,
+    "t": "yungest Moonstar, Neffa, tha Supreme",
+    "a": "uNa DiReZioNe giUsTa"
    }
   },
   "Diego": {
