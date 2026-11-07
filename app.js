@@ -8117,11 +8117,11 @@ function playNext() {
     if (_pausaEsplicita && !_vuoleSuonare && audio?.paused) return;
     _vuoleSuonare = false;
     _pausaEsplicita = true;
-    _chiudiAscolto(false);
     _silenziDiFila = 0;
-    // Tell the real HTMLAudioElement first: this is the only native
-    // media source. Never create a silent keepalive or a second player.
+    // Pause the native decoder first, before stats or local storage.
+    // There is no second silent player: Safari owns this one media source.
     if (audio) { try { audio.pause(); } catch (_) {} }
+    _chiudiAscolto(false);
     // Keep the paused song metadata, position and Play handler bound
     // while WebKit still allows the page to execute.
     try { updateMediaSession(); } catch (_) {}
