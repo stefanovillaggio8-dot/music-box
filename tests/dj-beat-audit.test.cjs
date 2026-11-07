@@ -574,8 +574,14 @@ test("diagnose real-index musical match stages without inventing BPM agreements"
   const k=tools.camelotMatch(a,b);
   if(k.weight>=.14&&k.score<.5)continue;
   stat.fullyMatched++;
-  if(near.length<9)near.push({a:i,b:j,tempo:a.bpm/b.bpm,
-   pulse:[pa,pb],groove:g.score,focus:n.focused,phrase:n.phrase});
+  if(near.length<16)near.push({from:tracks[i].key,to:tracks[j].key,
+   tempo:a.bpm/b.bpm,pulse:[pa,pb],groove:g.score,
+   focus:n.focused,phrase:n.phrase,notesMatch:n.matches,
+   alignment:n.alignment&&{match:n.alignment.matches,
+    score:n.alignment.score,weakest:n.alignment.weakest},
+   key:k,protectedEnding:a.protectedEnding,last:a.last,
+   dropRelease:a.dropRelease?.lastImpactAt,voiceProof:!!a.voiceModel,
+   lateVoice:a.lastVoiceAt,firstVoice:b.firstVoiceAt});
  }
  console.info("[DJ REAL MATCH GATES]",JSON.stringify({stat,near}));
  assert.ok(stat.sampled>40000);
