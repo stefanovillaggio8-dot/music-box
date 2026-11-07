@@ -16,7 +16,7 @@ const tools=new Function("isIOS","style",
  extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
- "return {transition,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
+ "return {transition,synchronizeBeatCue,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
  "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
@@ -465,4 +465,38 @@ test("real Ste final-impact eligible incoming MP3s",()=>{
   owned:own.size,eligible:eligible.length,top:eligible.slice(0,12)}));
  assert.ok(eligible.length>=1,"must have a real eligible musical successor for track 1197");
  assert.ok(eligible.every(p=>p.begin<241.3&&p.end>243.9));
+});
+
+
+test("same BPM is not sufficient if the final half of the real drums diverges",()=>{
+ const pulse=Array.from({length:96},(_,i)=>
+  Math.sin(i*.71)+Math.cos(i*1.63)*.45);
+ const mismatched=pulse.map((x,i)=>i<72?x:-x);
+ const identical=tools.onsetPairAgreement({outroOnset:pulse},{introOnset:pulse});
+ const broken=tools.onsetPairAgreement({outroOnset:pulse},{introOnset:mismatched});
+ assert.equal(identical?.certified,true,"matching 4s kick sequence must pass");
+ assert.equal(broken?.certified,false,"one matching passage cannot hide a clashing final measure");
+ assert.ok(broken?.firstHalf>.75&&broken?.secondHalf<.3);
+});
+
+test("beat clock uses actual four-second edge and intro, not a distant strongest transient",()=>{
+ const hits=Array.from({length:96},(_,i)=>i%12===2?2.5:-.25);
+ const a={bpm:120,last:140,beatAnchor:90,outroOnset:hits},
+  b={bpm:120,safeIntroAt:0,introBeat:9.8,introOnset:hits};
+ const cue=tools.synchronizeBeatCue(a,b,{
+  kind:"beat",begin:136.2,end:140,fade:3.8,entry:0,
+  beatPeriod:.5,beatAnchor:90,nextBeat:9.8});
+ assert.equal(cue.measuredOnsetGrid,true);
+ assert.ok(cue.beatAnchor>=136&&cue.beatAnchor<136.5,
+  "anchor should be within real 4s ending");
+ assert.ok(cue.nextBeat>=0&&cue.nextBeat<.5,
+  "next beat should be within the real opening measure");
+ assert.notEqual(cue.beatAnchor,90);
+ assert.notEqual(cue.nextBeat,9.8);
+});
+
+test("strict beat overlays cannot start once the measured last kick has decayed",()=>{
+ const a={last:100,dropRelease:{lastImpactAt:90.2,releaseAt:91.7}};
+ const p={kind:"beat",begin:95,end:100,fade:5};
+ assert.equal(tools.desktopBeatPairCertified(a,{},p),false);
 });

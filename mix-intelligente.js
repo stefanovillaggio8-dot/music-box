@@ -75,15 +75,15 @@ function onsetPairAgreement(a,b){
     tail.length!==n||head.length!==n||
     tail.some(v=>!Number.isFinite(v))||
     head.some(v=>!Number.isFinite(v)))return null;
- const correlate=shift=>{
+ const correlate=(shift,from=0,to=n)=>{
   let dot=0,xx=0,yy=0,count=0;
-  for(let i=0;i<n;i++){
+  for(let i=from;i<to;i++){
    const j=i+shift;
    if(j<0||j>=n)continue;
    const x=tail[i],y=head[j];
    dot+=x*y;xx+=x*x;yy+=y*y;count++;
   }
-  if(count<78||xx<5||yy<5)return null;
+  if(count<(to-from)*.78||xx<2||yy<2)return null;
   return dot/Math.sqrt(xx*yy);
  };
  const zero=correlate(0);
@@ -93,9 +93,14 @@ function onsetPairAgreement(a,b){
   const score=correlate(d);
   if(Number.isFinite(score)&&score>best){best=score;shift=d}
  }
- // Large resynchronizations and mismatched beats are not DJ transitions.
+ // A similar BPM or one coincident kick is insufficient. Both halves
+ // of the ACTUAL 4-second PCM onset join must keep a common rhythm.
+ const firstHalf=correlate(shift,0,48),secondHalf=correlate(shift,48,96);
+ const certified=best>=.58&&zero>=.37&&Math.abs(shift)<=3&&
+  Number.isFinite(firstHalf)&&firstHalf>=.20&&
+  Number.isFinite(secondHalf)&&secondHalf>=.20;
  return {atZero:zero,best,lagMs:shift*4000/n,
-  certified:best>=.49&&zero>=.26&&Math.abs(shift)<=4};
+  firstHalf,secondHalf,certified};
 }
 function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
@@ -103,7 +108,8 @@ function iphoneBeatPairCertified(a,b,cue){
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true;
  if(cue.pulseUnderlay===true)
-  return cue.kind==="snap"&&!!measuredPulseUnderlay(a,b,a?.duration)&&
+  return cue.kind==="snap"&&onsetPairAgreement(a,b)?.certified===true&&
+   !!measuredPulseUnderlay(a,b,a?.duration)&&
    Number.isFinite(cue.fade)&&cue.fade>=.62&&cue.fade<=1.04; // neutral quiet fade, not a claimed beat match
  if(!beatWindowContainsAudibleMusic(a,cue))return false;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
@@ -137,7 +143,8 @@ function desktopBeatPairCertified(a,b,p){
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
  if(p.pulseUnderlay===true)
-  return p.kind==="snap"&&!!measuredPulseUnderlay(a,b,a?.duration)&&
+  return p.kind==="snap"&&onsetPairAgreement(a,b)?.certified===true&&
+   !!measuredPulseUnderlay(a,b,a?.duration)&&
    Number.isFinite(p.fade)&&p.fade>=.62&&p.fade<=1.04;
  if(!beatWindowContainsAudibleMusic(a,p))return false;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
@@ -169,8 +176,13 @@ function beatWindowContainsAudibleMusic(a,cue){
  // Do not play a beat-match in encoded silence or after a long musical
  // decay. Allow 350ms for 100ms RMS-window measurement uncertainty.
  if(cue.end>a.last+.35)return false;
+ // Compare the actual LAST musical transients, not any later
+ // reverberation/recorded silence. The PCM onset index covers only 4s.
+ const edge=Number.isFinite(a.dropRelease?.lastImpactAt)?
+  Math.min(a.last,a.dropRelease.lastImpactAt+.20):a.last;
+ if(cue.begin<edge-4.25||cue.end>edge+.45)return false;
  const fade=cue.end-cue.begin;
- const audible=Math.min(cue.end,a.last)-cue.begin;
+ const audible=Math.min(cue.end,edge)-cue.begin;
  const needed=cue.kind==="snap"?
    Math.min(.48,fade*.55):
    Math.min(1.8,Math.max(1.1,fade*.45));
@@ -1876,7 +1888,8 @@ function measuredPulseUnderlay(a,b,dur){
  if(ratio<.97||ratio>1.03)return null;
  const pa=onsetPeriodicity(a.outroOnset,a.bpm);
  const pb=onsetPeriodicity(b.introOnset,b.bpm);
- if(!Number.isFinite(pa)||!Number.isFinite(pb)||pa<.18||pb<.18)return null;
+ if(!Number.isFinite(pa)||!Number.isFinite(pb)||pa<.18||pb<.18||
+    onsetPairAgreement(a,b)?.certified!==true)return null;
  const notes=similarNotes(a,b),g=grooveAgreement(a,b),key=camelotMatch(a,b);
  if(!g||g.score<.77||g.correlation<.54||
     !Number.isFinite(notes.focused)||notes.focused<.72||
@@ -2141,7 +2154,30 @@ function musicallyCompatibleOverlay(a,b,cue){
  if(key?.weight>=.14&&key.score<.55)return false;
  return !!drums&&Number.isFinite(drums.score)&&drums.score>=.60;
 }
+// Align the audible mix to the real local kick grid, rather than the
+// strongest transient anywhere in the last 16 seconds (or intro 12s).
+// The stored onset windows cover the final 4s of musical sound and
+// first 4s after verified digital intro silence.
+function synchronizeBeatCue(a,b,cue){
+ if(!cue||!["beat","snap","phrase"].includes(cue.kind)||
+    onsetPairAgreement(a,b)?.certified!==true||
+    !Number.isFinite(a?.last)||!Number.isFinite(a?.bpm)||
+    !Number.isFinite(b?.bpm)||!(a.bpm>0)||!(b.bpm>0))return cue;
+ const edge=Number.isFinite(a.dropRelease?.lastImpactAt)?
+  Math.min(a.last,a.dropRelease.lastImpactAt+.20):a.last;
+ const introStart=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
+ const outPhase=onsetGridPhase(a.outroOnset,a.bpm);
+ const inPhase=onsetGridPhase(b.introOnset,b.bpm);
+ if(!Number.isFinite(outPhase)||!Number.isFinite(inPhase))return cue;
+ return {...cue,beatPeriod:60/a.bpm,
+  beatAnchor:edge-4+outPhase,
+  nextBeat:introStart+inPhase-(Number(cue.entry)||0),
+  measuredOnsetGrid:true};
+}
 function transition(a,b,actualDuration){
+ return synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
+}
+function unalignedTransition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
@@ -2648,9 +2684,22 @@ function startMobileMix(song,p,app,old){
   const phase=Number.isFinite(period)&&period>.20&&
     Number.isFinite(p.beatAnchor)&&Number.isFinite(p.nextBeat)?
     ((p.beatAnchor-old.currentTime-p.nextBeat)%period+period)%period:0;
-  // Short joins last less than a second: the previous 3s gate made
-  // on-beat alignment impossible for every mobile snap.
-  const delay=phase>.008&&phase<=.19&&secondsLeft-phase>=.48?phase:0;
+  // Never replace a failed beat-phase alignment with an off-beat
+  // overlay. Safari cannot schedule a half-second corrective start
+  // during a 0.6s snap. Let the native song continue instead.
+  const syncMeasured=Number.isFinite(period)&&period>.20&&
+    Number.isFinite(p.beatAnchor)&&Number.isFinite(p.nextBeat);
+  if(syncMeasured&&["beat","snap","phrase"].includes(p.kind)&&
+     phase>.19&&period-phase>.045){
+   mobileMixLastBlocker="Beat reali fuori fase: passo al brano senza sovrapporli";
+   return false;
+  }
+  if(syncMeasured&&phase>.008&&phase<=.19&&
+     secondsLeft-phase<.48){
+   mobileMixLastBlocker="Beat allineato troppo tardi: lascio il finale integro";
+   return false;
+  }
+  const delay=phase>.008&&phase<=.19?phase:0;
   const startedAt=ctx.currentTime+delay;
   const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
    p.mobileSilentBridge?clamp(secondsLeft*.70,.22,.95):
@@ -3095,6 +3144,9 @@ function desktopBeatStartDelay(p,at){
     !Number.isFinite(at)||!Number.isFinite(p.end))return null;
  const phase=((out-at-incoming)%period+period)%period;
  const wait=phase<=.045||period-phase<=.045?0:phase;
+ // A half-second correction on a subsecond snap is not a mix: it
+ // starts late and makes unrelated kicks audible. Keep native playback.
+ if(wait>(p.kind==="snap"?.19:.35))return null;
  if(at+wait>=p.end-(p.kind==="snap"?.36:1.2))return null;
  return wait;
 }
@@ -4553,7 +4605,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.643",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.644",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

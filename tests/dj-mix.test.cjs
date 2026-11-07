@@ -907,3 +907,20 @@ test("Safari accepts genuine touch gestures even if userActivation incorrectly r
  assert.equal(created,1,"actual iPhone touch must unlock mix context");
  assert.equal(build.get()?.state,"running");
 });
+
+
+test("desktop declines phase corrections too late to sound like one beat",()=>{
+ const i=source.indexOf("function desktopBeatStartDelay(");
+ const j=source.indexOf("async function beginMix(",i);
+ const delay=new Function(source.slice(i,j)+"return desktopBeatStartDelay;")();
+ assert.equal(delay({kind:"snap",beatPeriod:.5,beatAnchor:200.31,
+  nextBeat:0,end:201},200),null);
+ assert.equal(delay({kind:"beat",beatPeriod:.5,beatAnchor:200.40,
+  nextBeat:0,end:205},200),null);
+ assert.ok(delay({kind:"beat",beatPeriod:.5,beatAnchor:200.1,
+  nextBeat:0,end:205},200)>=0);
+});
+test("iPhone never starts a full-volume off-phase beat to mask failed alignment",()=>{
+ assert.match(source,/Beat reali fuori fase: passo al brano senza sovrapporli/);
+ assert.match(source,/phase>\.19&&period-phase>\.045/);
+});
