@@ -2235,13 +2235,13 @@
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 2,
-    "s": 360,
+    "s": 407,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 2,
-    "s": 360,
+    "s": 407,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -3530,14 +3530,14 @@
     "a": "frah quintale"
    },
    "[\"un'idea\",\"nayt, 3d\"]": {
-    "v": 2,
-    "s": 294,
+    "v": 3,
+    "s": 297,
     "t": "un'idea",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"un'idea\",\"nayt, 3d\"]": {
-    "v": 2,
-    "s": 294,
+    "v": 3,
+    "s": 297,
     "t": "un'idea",
     "a": "nayt, 3D"
    },
@@ -4047,13 +4047,13 @@
    },
    "[\"doom\",\"nayt, 3d\"]": {
     "v": 2,
-    "s": 104,
+    "s": 166,
     "t": "Doom",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"doom\",\"nayt, 3d\"]": {
     "v": 2,
-    "s": 104,
+    "s": 166,
     "t": "Doom",
     "a": "nayt, 3D"
    },
@@ -10380,6 +10380,18 @@
     "s": 107,
     "t": "Il Più Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
+   },
+   "[\"bocca di rosa\",\"fabrizio de andré\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De André"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andré\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De André"
    }
   },
   "Diego": {
