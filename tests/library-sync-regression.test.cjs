@@ -116,13 +116,18 @@ test("read-only library diagnostics detect playlist-only count differences",()=>
   _soloInPlaylist:new Set(["Ste.b-track-1","Ste.b-track-2","Ste.b-track-3","Ste.b-track-4"]),
   _chiaveSoloInPlaylist:id=>"Ste."+id,
   _nascostiDallePlaylist:()=>new Set(),
+  _playlistCercata:()=>null,_playlistAttiva:"",
+  location:{origin:"https://example.test"},window:{matchMedia:()=>({matches:true})},
   LS:{get:()=>({})},_mieiCopiati:()=>new Set(),APP_VERSION:"test"
  };
  const snap=new Function("e",
-  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION,_nascostiDallePlaylist}=e;"+
+  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION,_nascostiDallePlaylist,_playlistCercata,_playlistAttiva,location,window}=e;"+
   "return ({"+expression+"}).librarySnapshot;")(environment);
  const result=snap();
  assert.equal(result.totalLoaded,233);
+ assert.equal(result.standalone,true);
+ assert.equal(result.gymPlaylistCount,0);
+ assert.deepEqual(result.gymUnexpectedInLibrary,[]);
  assert.equal(result.visibleCount,229);
  assert.deepEqual(result.playlistOnlyIds,["b-track-1","b-track-2","b-track-3","b-track-4"]);
  assert.equal(result.tracks.length,229);
