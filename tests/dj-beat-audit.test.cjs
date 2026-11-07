@@ -547,6 +547,7 @@ test("measure how many real indexed songs can actually match rhythmic grids",()=
  }
  console.info("[DJ REAL RHYTHM GRID]",JSON.stringify({sampled,grid,bridges,examples}));
  assert.ok(sampled>40000);
+ assert.ok(grid>0,"musically compatible rhythmic join must exist in the real index");
 });
 
 
