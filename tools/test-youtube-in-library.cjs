@@ -45,7 +45,8 @@ assert(src.includes("const ownLinks=await _ytBraniDalCloud(_nomeYT);") &&
        "The own and copied YouTube songs must be merged during profile load");
 assert(src.includes('_ytAggiornaVociLibreria(previous,selected,true)'));
 assert(src.includes('if (t.source==="youtube-link" && t.youtubeId)'));
-assert(src.includes('list=list.filter(t=>!t.youtubeId)'));
+assert(src.includes('list=list.filter(t=>!t.youtubeId&&!!t.url)'),
+       'Auto-next must skip unfinished YouTube imports and songs without usable audio');
 assert(src.includes('if (t.url && !t.youtubeId && !t.preview && !isCached(t) &&'),
        'Playable non-YouTube audio must retain its caching safeguard');
 assert(src.includes('if(!t.youtubeId) {'));
