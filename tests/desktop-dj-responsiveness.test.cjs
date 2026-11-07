@@ -237,3 +237,44 @@ test("iPhone early matched beats wait for Web Audio's exact grid",()=>{
  assert.equal(wait({kind:"beat",measuredBeatBridge:true,fade:7},.41,.5,true,3),false);
  assert.equal(wait({kind:"beat",measuredBeatBridge:true,fade:7},.035,.5,true,7),.035);
 });
+
+test("iPhone pause keeps Now Playing metadata and native player bound",()=>{
+ const body=section(app,"  function _pausaVolontaria() {",'  /* Ste: "riapro l\'app');
+ const events=[];
+ const fakeAudio={paused:false,pause(){this.paused=true;events.push("native-pause")}};
+ const pause=new Function("env",
+  "const {audio,events}=env;"+
+  "const window={MusicBoxRoom:{isActive:()=>false},MusicBoxMix:{cancel:()=>events.push('cancel-dj')}};"+
+  "let _pausaEsplicita=false,_vuoleSuonare=true,_silenziDiFila=0,"+
+  "_timerRiprove=null,_timerAiuto=null;"+
+  "const _chiudiAscolto=()=>events.push('stats'),"+
+  "updateMediaSession=()=>events.push('now-playing'),"+
+  "setPlaybackState=()=>events.push('state'),"+
+  "syncPlayUI=()=>events.push('ui'),"+
+  "_memorizzaPausaCorrente=()=>events.push('checkpoint'),"+
+  "_segnaIntenzioneSono=()=>events.push('storage'),"+
+  "_nascondiAiuto=()=>{},_segna=()=>{};"+
+  body+"return {pause:_pausaVolontaria,flags:()=>({paused:_pausaEsplicita,wants:_vuoleSuonare})};")({audio:fakeAudio,events});
+ pause.pause();
+ assert.deepEqual(events.slice(0,4),["native-pause","stats","now-playing","state"],
+  "iOS must see native pause and media metadata before storage");
+ assert.ok(events.indexOf("storage")>events.indexOf("now-playing"));
+ assert.deepEqual(pause.flags(),{paused:true,wants:false},
+  "intent stays paused; no automatic re-play after leaving");
+ pause.pause();
+ assert.equal(events.filter(e=>e==="native-pause").length,1);
+ assert.equal(events.filter(e=>e==="now-playing").length,1,
+  "duplicate Safari pause event must not re-register the session");
+});
+
+test("backgrounding refreshes the real track media metadata before cloud state",()=>{
+ const body=section(app,'document.addEventListener("visibilitychange", () => {\n  if (document.hidden) {',
+  '/* Su alcuni telefoni la pagina viene "congelata"');
+ assert.ok(body.includes('if (audio && currentId && !audio.ended) updateMediaSession();'));
+ assert.ok(body.indexOf('updateMediaSession();')<body.indexOf('savePos();'));
+ assert.ok(body.indexOf('updateMediaSession();')<body.indexOf('_salvaStatoCondiviso();'));
+ assert.ok(body.includes('audio && !audio.paused && !audio.ended ? "playing" : "paused"'));
+ const audioEvents=section(app,'a.addEventListener("pause", () => {','a.addEventListener("playing", () => {');
+ assert.ok(audioEvents.includes('if (_pausaEsplicita && !_vuoleSuonare)'));
+ assert.ok(audioEvents.includes('updateMediaSession();'));
+});
