@@ -2,8 +2,8 @@
 (function(){
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=n=>Number.isFinite(Number(n))?Number(n).toFixed(1):"—";
-const time=n=>{if(!Number.isFinite(Number(n)))return "--:--";let x=Math.max(0,Math.floor(Number(n)));return Math.floor(x/60)+":"+String(x%60).padStart(2,"0")};
+const fmt=n=>n!==null&&n!==undefined&&n!==""&&Number.isFinite(Number(n))?Number(n).toFixed(1):"—";
+const time=n=>{if(n===null||n===undefined||n===""||!Number.isFinite(Number(n)))return "--:--";let x=Math.max(0,Math.floor(Number(n)));return Math.floor(x/60)+":"+String(x%60).padStart(2,"0")};
 const ago=t=>{if(!t)return "—";const d=Math.max(0,Date.now()-new Date(t).getTime());return d<60000?"ora":d<3600000?Math.round(d/60000)+" min fa":new Date(t).toLocaleString("it-IT",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})};
 const safeNumber=n=>Number.isFinite(Number(n))?Number(n):null;
 const key="mb.smartmix.lab.";
@@ -129,7 +129,7 @@ function drawWave(el,values,isIncoming,beatAt,bpm,duration,first){
  const max=Math.max(.03,...values.map(x=>Math.max(0,Number(x)||0)));
  let markup=values.slice(0,64).map((v,i)=>'<span class="wavebar" style="height:'+Math.max(5,Math.round(Math.max(0,Number(v)||0)/max*58))+'px"></span>').join("");
  const period=Number(bpm)>0?60/Number(bpm):0;
- if(period&&Number.isFinite(Number(beatAt))){
+ if(period&&beatAt!==null&&beatAt!==undefined&&Number.isFinite(Number(beatAt))){
   const start=first?0:Math.max(0,Number(duration)-16);
   let anchor=Number(beatAt);
   const count=0;
@@ -298,7 +298,7 @@ function renderResult(r){
   '<div class="result-stat"><small>GROOVE / BEAT</small><strong>'+(g!=null?Math.round(g*100)+"%":"—")+'</strong></div>'+
   '<div class="result-stat"><small>FINESTRA MIX</small><strong>'+esc(cue.fade!=null?fmt(cue.fade)+" s":"Nessuna")+'</strong></div></div>'+
   '<div class="result-timeline"><div><div class="wave-label"><span>OUTRO REALE</span><span>BEAT</span></div><div class="wavebox" id="resultOut"></div></div><div><div class="wave-label"><span>INTRO REALE</span><span>BEAT</span></div><div class="wavebox" id="resultIn"></div></div></div>'+
-  '<div class="result-notes">'+(notes||'<span class="reason safe">Nessuna criticità riportata.</span>')+'</div>'+
+  '<div class="result-notes">'+(r.platformResults?'<span class="reason safe">PC: '+(r.platformResults.pc?.allowed?"piano consentito":"fallback")+"</span>"+'<span class="reason safe">iPhone: '+(r.platformResults.iphone?.allowed?"piano consentito":"fallback")+"</span>":"" )+(notes||'<span class="reason safe">Nessuna criticità riportata.</span>')+'</div>'+
   '<div class="monitor-foot"><span>'+esc(engine?"Certificazione riferita al dispositivo in cui il motore gira. La riproduzione reale va verificata a parte.":"La stima non garantisce sincronizzazione del beat, assenza di voce o possibilità di sovrapposizione.")+'</span><button class="text-button" id="savePairBaseline">Salva snapshot →</button></div>';
  drawWave($("resultOut"),a.outroWave,false,a.beatAnchor,a.bpm,a.duration,false);
  drawWave($("resultIn"),b.introWave,true,b.introBeat,b.bpm,b.duration,true);
@@ -323,12 +323,12 @@ async function batch(){
   let b=list[Math.floor(Math.random()*list.length)];
   if(a===b)b=list[(list.indexOf(a)+1)%list.length];
   // Each comparison uses measurements; it never starts playback.
-  const r=estimatePair(a,b);result.push({a,b,r});rememberResult(r);
+  const r=await inspect(a,b);result.push({a,b,r});rememberResult(r);
  }
  state.batch=result;
- $("batchResults").innerHTML=result.map(x=>'<div class="batch-row"><strong>'+esc(x.a.title)+' → '+esc(x.b.title)+'</strong><span>'+esc(x.r.groove?.score!=null?Math.round(x.r.groove.score*100)+"% groove":"Groove non disponibile")+'</span><span class="mini-tag purple">Pre-valutazione</span></div>').join("");
+ $("batchResults").innerHTML=result.map(x=>'<div class="batch-row"><strong>'+esc(x.a.title)+' → '+esc(x.b.title)+'</strong><span>'+esc(x.r.groove?.score!=null?Math.round(x.r.groove.score*100)+"% groove":"Groove non disponibile")+'</span><span class="mini-tag '+(x.r.source==="musicbox-engine"?(x.r.beatCertified?"ok":"warn"):"purple") +'">'+(x.r.beatCertified?"Beat certificato":x.r.source==="musicbox-engine"?"Motore / fallback":"Stima")+"</span></div>").join("");
  $("batchRun").disabled=false;
- toast("12 coppie valutate su dati misurati; nessuna certificazione inventata");
+ toast("12 coppie valutate; il motore certifica solo quelle supportate");
 }
 const autoDefs=[
  {id:"shuffleConflict",title:"Smart Mix non invade la coda manuale",desc:"La scelta automatica deve rispettare i brani aggiunti manualmente."},
@@ -351,7 +351,7 @@ function computeChecks(){
  const dup=events.filter(x=>x.type==="issue"&&/ripetut|duplicat|shuffle/i.test(x.title+" "+x.detail));
  const conflicts=events.filter(x=>x.type==="issue"&&/coda manuale|conflitto shuffle/i.test(x.title+" "+x.detail));
  const overlap=events.filter(x=>x.type==="overlap");
- const result=state.lastResult;
+ const result=state.lastResult?.device===state.device?state.lastResult:null;
  const tests={};
  tests.shuffleConflict={status:conflicts.length?"fail":d.shuffleState&&d.shuffleState.manualCount>0&&!d.shuffleSearch?.chosen?"pass":"pending",detail:conflicts.length?"Conflitto registrato nella timeline":d.shuffleState?"Coda manuale: "+d.shuffleState.manualCount+" · reorder utente: "+Boolean(d.shuffleState.userReordered):"Serve una sessione con coda casuale attiva"};
  tests.noRepeat={status:dup.length?"fail":seq.length>=3&&new Set(seq).size===seq.length?"pass":"pending",detail:dup.length?"Possibile ripetizione rilevata":seq.length+" cambi automatici osservati"};
