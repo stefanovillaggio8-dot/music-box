@@ -278,3 +278,57 @@ test("backgrounding refreshes the real track media metadata before cloud state",
  assert.ok(audioEvents.includes('if (_pausaEsplicita && !_vuoleSuonare)'));
  assert.ok(audioEvents.includes('updateMediaSession();'));
 });
+
+test("iOS native remote Play/Pause remain WebKit defaults with stable paused artwork",()=>{
+ const code=section(app,'  let _mediaSessionActionMode="";','  function totalDuration() {');
+ const installed=[],session={metadata:null,setActionHandler:(action,fn)=>installed.push({action,fn})};
+ const el={paused:false,ended:false},room={isActive:()=>false};
+ const get=new Function("e",
+ 'const {session,el,room}=e;const navigator={mediaSession:session},window={MusicBoxRoom:room};'+
+ "const current=()=>({title:'Track',artist:'Artist'});let currentId='track-a',audio=el;"+
+ "const APP_NAME='Music Box',_configuraSessioneAudio=()=>{},"+
+ "_aggiornaPosizioneSchermo=()=>{},_notificaStatoNativo=()=>{},"+
+ "_usaControlliNativiIos=()=>true,_copertinaPerSchermo=()=>'';"+
+ "const _riproduciVolontaria=()=>{},_pausaVolontaria=()=>{},playById=()=>{},"+
+ "playNext=()=>{},prevIndex=()=>{},idBranoA=()=>{},_chiudiAscolto=()=>{},"+
+ "updateProgressUI=()=>{},setPlaybackState=s=>{session.playbackState=s};"+
+ "const tracks=[];class MediaMetadata{constructor(x){Object.assign(this,x)}};"+
+ code+"return {update:updateMediaSession,setRoom:v=>{room.isActive=()=>v}};"
+ )({session,el,room});
+ get.update();
+ assert.ok(installed.some(x=>x.action==='play'&&x.fn===null));
+ assert.ok(installed.some(x=>x.action==='pause'&&x.fn===null));
+ const same=session.metadata,count=installed.length;
+ el.paused=true;get.update();
+ assert.equal(session.metadata,same);
+ assert.equal(installed.length,count,'do not re-register MediaRemote on pause');
+ assert.equal(session.playbackState,'paused');
+ get.setRoom(true);get.update();
+ assert.ok(installed.slice(count).some(x=>x.action==='play'&&typeof x.fn==='function'));
+});
+
+test("iOS native resume restores paused intent without reviving stale events",()=>{
+ const code=section(app,'    a.addEventListener("play", () => {','a.addEventListener("pause", () => {');
+ function run(paused,changing,ios){
+  const listeners={},calls={pause:0,updated:0};
+  const a={paused,ended:false,_mbCambioBrano:changing,
+   pause(){this.paused=true;calls.pause++},addEventListener:(k,fn)=>{listeners[k]=fn}};
+  const api=new Function("ctx",
+   "const {a,calls,listeners}=ctx;let audio=a,_pausaEsplicita=true,"+
+   "_vuoleSuonare=false,_ultimoScorrimento=0;"+
+   "const window={MusicBoxRoom:{isActive:()=>false,shouldPlay:()=>true}},"+
+   "_usaControlliNativiIos=()=>ctx.ios,_segnaIntenzioneSono=()=>{},"+
+   "_configuraSessioneAudio=()=>{},_segna=()=>{},syncPlayUI=()=>{},"+
+   "updateMediaSession=()=>{calls.updated++},setPlaybackState=()=>{},"+
+   "_iniziaAscolto=()=>{},_notificaStatoNativo=()=>{};"+
+   code+"return {run:()=>listeners.play(),state:()=>({explicit:_pausaEsplicita,wants:_vuoleSuonare})};"
+  )({a,calls,listeners,ios});
+  api.run();return {state:api.state(),calls};
+ }
+ assert.deepEqual(run(false,false,true).state,{explicit:false,wants:true});
+ assert.equal(run(false,false,true).calls.pause,0);
+ assert.deepEqual(run(true,false,true).state,{explicit:true,wants:false});
+ assert.equal(run(true,false,true).calls.pause,1);
+ assert.deepEqual(run(false,true,true).state,{explicit:true,wants:false});
+ assert.deepEqual(run(false,false,false).state,{explicit:true,wants:false});
+});
