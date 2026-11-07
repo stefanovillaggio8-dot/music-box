@@ -68,7 +68,7 @@ test("automatic next-song candidates exclude missing audio but browsing still sh
   'let tracks=library,profile="Ste",DEFAULT_PROFILE="Ste",_playlistAttiva="",'+
   'favOnly=false,soloMaiAscoltati=false,soloScaricate=false,query="";'+
   'const _soloInPlaylist=new Set(),favorites=new Set(),hiddenTracks=new Set(),'+
-  '_chiaveSoloInPlaylist=id=>id,_mieiCopiati=()=>new Set(),'+
+  '_chiaveSoloInPlaylist=id=>id,_nascostiDallePlaylist=()=>new Set(),_mieiCopiati=()=>new Set(),'+
   'ordinaLista=list=>list,_diChe=()=>{};'+
   app.slice(start,end)+'return visibleTracks;');
  const visible=build([
