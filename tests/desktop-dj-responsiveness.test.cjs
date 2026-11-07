@@ -88,3 +88,41 @@ test("current release prioritizes final-impact before postlude",()=>{
  assert.ok(dj.includes("finalImpactAt:Number.isFinite(plan?.finalImpactAt)?plan.finalImpactAt:null"),
   "diagnostics must disclose actual final-impact timing");
 });
+
+test("real final-beat release joins before encoded silence, without losing the instrumental ending",()=>{
+ const code=section(dj,"function rhythmicReleaseBeatBridge(","function verifiedRhythmicGridBridge(");
+ const validators=section(dj,"function iphoneBeatPairCertified(","function iphoneQuietReleaseCertified(");
+ const api=new Function("rhythmicGridEvidence","onsetPairAgreement",
+  "hasImmediateMusicalIntro","musicalIntroEntry","onsetGridPhase","clamp",
+  validators+code+"return {plan:rhythmicReleaseBeatBridge,pc:desktopBeatPairCertified,ios:iphoneBeatPairCertified};"
+ )(
+  (_,b)=>b?.badHarmony?null:{longCompatible:true,score:.91,tempo:1,groove:.9},
+  (_,b)=>({certified:!b?.offBeat}),
+  ()=>true,()=>0,()=>0,(n,min,max)=>Math.max(min,Math.min(max,n))
+ );
+ const a={duration:200,last:196,bpm:120,lastLyricAt:171,
+  confidentTail:true,protectedEnding:false,
+  dropRelease:{lastImpactAt:193.4,releaseAt:194.25,score:.87,quietLevel:.1}};
+ const b={bpm:120,safeIntroAt:0,firstLyricAt:8,firstVoiceAt:9};
+ const cue=api.plan(a,b,200);
+ assert.equal(cue?.kind,"beat");
+ assert.equal(cue?.measuredRhythmicRelease,true);
+ assert.ok(cue.begin<a.dropRelease.lastImpactAt-1.1,
+  "incoming beat must begin while old percussion is still playing");
+ assert.ok(cue.end<a.duration-3.5,
+  "the transition must finish before digital silence, not at EOF");
+ assert.ok(cue.end>a.last&&cue.preserveTail===true,
+  "preserve the original decay through its final audible sound");
+ assert.ok(api.pc(a,b,cue)&&api.ios(a,b,cue),
+  "both devices must certify the same measured release");
+ assert.equal(api.plan({...a,lastLyricAt:190},b,200),null,
+  "late vocal phrasing must never be overlaid");
+ assert.equal(api.plan({...a,lastLyricAt:undefined},b,200),null,
+  "no vocal evidence is not proof of an instrumental ending");
+ assert.equal(api.plan(a,{...b,offBeat:true},200),null,
+  "similar BPM cannot hide incompatible actual beat onsets");
+ assert.equal(api.plan(a,{...b,badHarmony:true},200),null,
+  "unrelated chord boundaries must never mix");
+ assert.equal(api.pc(a,b,{...cue,begin:194.8}),false,
+  "a mix started after the last actual beat is not beatmatched");
+});
