@@ -189,4 +189,9 @@ test("earlier four-second real beat windows can mix before the last impact witho
  assert.equal(plan(a,{...b,bpm:85},200),null,
   "tempo-incompatible music cannot be aligned by a simple fade");
  assert.equal(plan(a,b,200)?.preserveTail,true);
+ assert.equal(plan(a,{...b,introOnset:Array.from({length:96},
+  (_,i)=>i%12===6?2:.05)},200),null,
+  "a similar BPM with off-beat percussion is NOT a synchronized musical beat");
+ assert.match(dj,/librosa-onsets-chroma-rms-v4-windows/,
+  "new indexed beat windows must be loaded on both desktop and iPhone");
 });
