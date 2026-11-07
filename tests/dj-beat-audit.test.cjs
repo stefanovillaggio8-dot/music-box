@@ -31,7 +31,7 @@ const short=x=>Number.isFinite(x)?+x.toFixed(3):null;
 
 test("real-index audit: 130k+ different track pairs, classify actual join versus a merely quiet fade",()=>{
  assert.ok(tracks.length>=1100,"Real full-song MP3 metadata must be available");
- let pairs=0,nearBpm=0,plans=0,beats=0,strictBeats=0,
+ let pairs=0,nearBpm=0,plans=0,beats=0,releaseBeats=0,strictBeats=0,
   rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0;
  const examples=[],earliest=[];
  // Reproducible sampling across the COMPLETE catalog, not 10 queued songs.
@@ -44,6 +44,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
    if(ratio>=.94&&ratio<=1.06)nearBpm++;
    const p=tools.transition(A.data,B.data,A.data.duration);
    if(!p)continue;plans++;
+   if(p.measuredRhythmicRelease===true)releaseBeats++;
    assert.ok(Number.isFinite(p.begin)&&Number.isFinite(p.end)&&
     p.begin>=0&&p.end<=A.data.duration+.04,
     "Plan moves outside real MP3: "+A.key+" to "+B.key);
@@ -69,7 +70,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
   }
  }
  console.info("[DJ REAL INDEPENDENT AUDIT]",JSON.stringify({
-  indexed:tracks.length,pairs,nearBpm,plans,beatProposals:beats,
+  indexed:tracks.length,pairs,nearBpm,plans,beatProposals:beats,releaseBeats,
   strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,
   beatExamples:examples,veryEarly:earliest}));
  assert.ok(pairs>=130000,"Audit sampled too few real pairs");
