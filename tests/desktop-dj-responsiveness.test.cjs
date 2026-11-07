@@ -145,3 +145,47 @@ test("a measured early musical decay outranks a proposed late soft fade without 
  assert.ok(selector.includes('realBeat||certifiedImpact||'),
   "an already approved musical beat always retains priority");
 });
+
+test("earlier four-second real beat windows can mix before the last impact without clipping lyrics",()=>{
+ const body=section(dj,"function earlyMatchedBar(","function rhythmicReleaseBeatBridge(");
+ const make=new Function("env",
+  "const {clamp,hasImmediateMusicalIntro,camelotMatch,musicalIntroEntry,"+
+  "onsetGridPhase,similarNotes,grooveAgreement,onsetPeriodicity,hasReliableHarmony}=env;"+
+  body+"return earlyMatchedBar;");
+ const env={
+  clamp:(x,a,b)=>Math.max(a,Math.min(b,x)),
+  hasImmediateMusicalIntro:()=>true,
+  camelotMatch:()=>({weight:.5,score:.9}),
+  musicalIntroEntry:()=>0,
+  onsetGridPhase:()=>.13,
+  similarNotes:()=>({matches:true,focused:.90,phrase:.85}),
+  grooveAgreement:()=>({score:.9,correlation:.70}),
+  onsetPeriodicity:()=>.72,
+  hasReliableHarmony:()=>true
+ };
+ const plan=make(env);
+ const a={duration:200,last:198,bpm:120,beatConfidence:.8,
+  protectedEnding:false,lastLyricAt:172,voiceModel:"checked",
+  voiceScannedEnd:198,
+  outroOnsetWindows:[{start:190,end:194,onset:Array(96).fill(.5),
+    groove:Array(32).fill(.6),notes:Array(12).fill(.09),levelRatio:.7}]};
+ const b={bpm:120,beatConfidence:.8,introDrive:.8,
+  introOnset:Array(96).fill(.5),firstLyricAt:20};
+ const cue=plan(a,b,200);
+ assert.ok(cue&&cue.kind==="beat", "must recognize certified earlier musical bars");
+ assert.equal(cue.earlyBeatJoin,true);
+ assert.ok(cue.begin<a.last-6&&cue.end>=a.last-.2,
+  "start before final beat but preserve the entire original ending");
+ assert.equal(plan({...a,lastLyricAt:188},b,200),null,
+  "late original lyrics forbid an early overlay");
+ assert.equal(plan({...a,lastLyricAt:undefined,voiceModel:null},b,200),null,
+  "unknown vocal safety cannot be guessed");
+ assert.equal(plan(a,{...b,firstLyricAt:4},200),null,
+  "incoming vocals must not overlap the first song");
+ assert.equal(plan({...a,outroOnsetWindows:[]},b,200),null,
+  "older indexes fall back safely, with no invented early beats");
+ assert.equal(plan(a,b,190),null,"incorrect decoded duration vetoes a mix");
+ assert.equal(plan(a,{...b,bpm:85},200),null,
+  "tempo-incompatible music cannot be aligned by a simple fade");
+ assert.equal(plan(a,b,200)?.preserveTail,true);
+});
