@@ -3151,7 +3151,7 @@ function desktopBeatStartDelay(p,at){
  const wait=phase<=.045||period-phase<=.045?0:phase;
  // A half-second correction on a subsecond snap is not a mix: it
  // starts late and makes unrelated kicks audible. Keep native playback.
- if(wait>(p.kind==="snap"?.19:.35))return null;
+ if(wait>(p.kind==="snap"?.19:.55))return null;
  if(at+wait>=p.end-(p.kind==="snap"?.36:1.2))return null;
  return wait;
 }
