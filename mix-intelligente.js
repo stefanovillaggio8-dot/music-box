@@ -1828,7 +1828,25 @@ function earlyMatchedBar(a,b,dur){
   const pulseA=onsetPeriodicity(win.onset,a.bpm),
     pulseB=onsetPeriodicity(b.introOnset,b.bpm);
   if(!(pulseA>=.40&&pulseB>=.40))continue;
+  // Similar tempo is not enough: measured kicks must dominate offbeat
+  // events on BOTH independent waveforms over multiple pulses.
+  const beatContrast=(values,phase,bpm)=>{
+   const period=60/bpm,near=[],off=[];
+   for(let t=phase;t<3.75;t+=period){
+    const k=Math.round(t*24),m=Math.round((t+period*.5)*24);
+    if(k>=1&&k<95&&m>=0&&m<96){
+     near.push(Math.max(values[k-1]||0,values[k]||0,values[k+1]||0));
+     off.push(Math.max(0,values[m]||0));
+    }
+   }
+   return near.length>=3?
+    near.reduce((x,y)=>x+y,0)/near.length-
+    off.reduce((x,y)=>x+y,0)/off.length:-Infinity;
+  };
   const phase=onsetGridPhase(win.onset,a.bpm);
+  if(beatContrast(win.onset,phase,a.bpm)<.43||
+     beatContrast(b.introOnset,onsetGridPhase(b.introOnset,b.bpm),b.bpm)<.43)
+   continue;
   const beatAt=win.start+phase+
    Math.ceil((.55-phase)/period)*period;
   const begin=beatAt-nextPhase,end=Math.min(dur-.035,a.last+.06),
