@@ -87,7 +87,9 @@ async function run(){
    assert.ok(karaoke>20,"synced karaoke scrolls to the active line");
    await page.locator("#imFocusToggle").click();
    assert.equal(await page.locator("#imFocusToggle").getAttribute("aria-pressed"),"true");
-   assert.ok(await page.locator("#imKaraoke").evaluate(el=>el.clientHeight)>=220);
+   const focus=await page.evaluate(()=>({height:document.getElementById("imKaraoke").clientHeight,root:document.getElementById("immersivePanel").className,computed:getComputedStyle(document.getElementById("imKaraoke")).height}));
+   console.log("[IMMERSIVE FOCUS DEBUG]",JSON.stringify({screen:size.name,focus}));
+   assert.ok(focus.height>=220,"focus lyric stage should expand");
    await page.locator("#imToggle").click();
    await page.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
    assert.equal(await page.evaluate(()=>window.fakeCalls.toggle),1);
