@@ -15729,7 +15729,7 @@ try {
   if (rw.ok) {
   const jw = await rw.json();
   if (jw && jw.stato && typeof jw.stato === "object") {
-    await _applicaStatoCondiviso(jw.stato);
+    await _applicaStatoCondiviso(jw.stato,true);
     // A valid response is authoritative EVEN when it changed zero rows.
     // Otherwise a stale stato.json overwrites a correct Worker snapshot.
     return;
@@ -15746,13 +15746,13 @@ try {
       const r = await fetch("./stato.json", { cache: "no-store" });
       if (!r.ok) return;
 const j = await r.json();
-      await _applicaStatoCondiviso(j);
+      await _applicaStatoCondiviso(j,false);
     } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
   }
 
   /* Mette dentro quello che arriva dal Worker o dal sito. Ritorna true se
      ha fatto qualcosa, cosi' il chiamante sa che puo' fermarsi. */
-  async function _applicaStatoCondiviso(j) {
+  async function _applicaStatoCondiviso(j,fromWorker=false) {
     /* La prima riga dice che siamo entrati. Prima la traccia veniva
        dopo il ciclo dei nascosti: se li' saltava qualcosa, il catch
        se lo mangiava in silenzio e io non vedevo niente. */
@@ -15873,6 +15873,26 @@ un brano lo troverebbe gia' "nascosto" senza che nessuno l'avesse
               miei[nome] = [...mia].sort();
             }
             LS.set(LS_MIEI, JSON.stringify(miei));
+            // Safari, PC and the standalone PWA have separate storage.
+            // Copies added only on THIS device must be sent back once so
+            // other devices receive their real IDs, not a fabricated count.
+            // Never republish a deleted copy or trust an outdated static
+            // stato.json snapshot as an authoritative Worker response.
+            if(fromWorker){
+              const remote=new Set(Array.isArray(j.miei[profile])?j.miei[profile]:[]);
+              const missing=(Array.isArray(miei[profile])?miei[profile]:[])
+                .filter(id=>!remote.has(id)&&!_branoEliminato(id,profile));
+              if(missing.length){
+                const signature=missing.slice().sort().join(",");
+                const old=LS.get("mb.copieSyncTentativo",{})||{};
+                if(old.signature!==signature||Date.now()-Number(old.at||0)>300000){
+                  LS.set("mb.copieSyncTentativo",{signature,at:Date.now()});
+                  setTimeout(()=>_salvaStatoCondiviso(),1000);
+                }
+              }else{
+                LS.remove("mb.copieSyncTentativo");
+              }
+            }
           } catch (e) { /* noop */ }
         }
         /* I brani copiati nella mia libreria: devono valere anche sull'altro
