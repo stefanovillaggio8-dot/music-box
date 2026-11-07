@@ -3859,3 +3859,9 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
   .im-lyrics-heading{letter-spacing:.8px}
   .im-focus-toggle{padding:5px 7px;font-size:10px}
 }
+
+/* 6.657: inventario condiviso PC, Safari e PWA, senza oscurare Gym. */
+.mb-catalog-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 4px 8px; }
+.mb-catalog-row .track-count { margin:0; min-width:0; }
+.mb-catalog-sync { flex-shrink:0; border:1px solid var(--line); border-radius:999px; background:var(--card); color:var(--muted); font:inherit; font-size:11px; padding:5px 10px; cursor:pointer; }
+.mb-catalog-sync:disabled { opacity:.55; cursor:progress; }
