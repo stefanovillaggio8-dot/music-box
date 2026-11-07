@@ -1875,7 +1875,7 @@
    },
    "[\"alta marea\",\"antonello venditti\"]": {
     "v": 11,
-    "s": 367,
+    "s": 406,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -2529,7 +2529,7 @@
    },
    "m:2026-11|[\"alta marea\",\"antonello venditti\"]": {
     "v": 5,
-    "s": 337,
+    "s": 376,
     "t": "Alta marea",
     "a": "Antonello Venditti"
    },
@@ -4213,6 +4213,18 @@
     "t": "Alta marea (Don't Dream It's Over) [Testo]",
     "a": "Antonello Venditti"
    },
+   "[\"sweet child o' mine\",\"guns n' roses\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Sweet Child O' Mine",
+    "a": "Guns N' Roses"
+   },
+   "m:2026-11|[\"sweet child o' mine\",\"guns n' roses\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Sweet Child O' Mine",
+    "a": "Guns N' Roses"
+   },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 2,
     "s": 272,
@@ -4225,17 +4237,17 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
-   "[\"sweet child o' mine\",\"guns n' roses\"]": {
+   "[\"smells like teen spirit\",\"nirvana\"]": {
     "v": 1,
     "s": 0,
-    "t": "Sweet Child O' Mine",
-    "a": "Guns N' Roses"
+    "t": "Smells Like Teen Spirit",
+    "a": "Nirvana"
    },
-   "m:2026-11|[\"sweet child o' mine\",\"guns n' roses\"]": {
+   "m:2026-11|[\"smells like teen spirit\",\"nirvana\"]": {
     "v": 1,
     "s": 0,
-    "t": "Sweet Child O' Mine",
-    "a": "Guns N' Roses"
+    "t": "Smells Like Teen Spirit",
+    "a": "Nirvana"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -4950,18 +4962,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"smells like teen spirit\",\"nirvana\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Smells Like Teen Spirit",
-    "a": "Nirvana"
-   },
-   "m:2026-11|[\"smells like teen spirit\",\"nirvana\"]": {
-    "v": 1,
-    "s": 0,
-    "t": "Smells Like Teen Spirit",
-    "a": "Nirvana"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -10178,14 +10178,14 @@
     "a": "Guè"
    },
    "[\"balù - acoustic version\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 134,
+    "v": 1,
+    "s": 135,
     "t": "BALÙ - Acoustic Version",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"balù - acoustic version\",\"tonypitony\"]": {
-    "v": 0,
-    "s": 134,
+    "v": 1,
+    "s": 135,
     "t": "BALÙ - Acoustic Version",
     "a": "TonyPitony"
    },
@@ -10227,13 +10227,13 @@
    },
    "[\"le luci della città\",\"coez\"]": {
     "v": 0,
-    "s": 51,
+    "s": 53,
     "t": "Le luci della città",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della città\",\"coez\"]": {
     "v": 0,
-    "s": 51,
+    "s": 53,
     "t": "Le luci della città",
     "a": "Coez"
    },
