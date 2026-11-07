@@ -4848,6 +4848,95 @@ window.MusicBoxMix={isEnabled:()=>enabled,
  needsAudioContext:()=>enabled&&mobileOverlayEnabled,
  isAnalyzing:()=>pending.size>0,cancel,naturalEndHandoff,
  deepProgress:()=>({analyzed:deepIndex?.analyzed||0,total:deepIndex?.sourceCount||0}),
+ inspectPair:(fromId,toId)=>{
+  // Read-only. Never decodes MP3, seeks, enqueues, or starts playback.
+  const app=bridge(),tracks=app?.allTracks?.()||[];
+  const from=tracks.find(t=>t.id===fromId),to=tracks.find(t=>t.id===toId);
+  const info=t=>{
+   if(!t)return null;
+   const url=String(app?.mixUrl?.(t)||t.url||"");
+   return withValidatedVoice(deepLookup(t),cache.get(url));
+  };
+  const baseA=info(from),baseB=info(to);
+  const lrcA=app?.mixLyricCues?.(fromId),lrcB=app?.mixLyricCues?.(toId);
+  const a=baseA&&lrcA?{...baseA,lastLyricAt:lrcA.last}:baseA;
+  const b=baseB&&lrcB?{...baseB,firstLyricAt:lrcB.first}:baseB;
+  const compact=(t,m)=>({
+   id:t?.id||null,title:t?.title||null,artist:t?.artist||null,
+   info:m?{status:"ok",duration:m.duration,bpm:m.bpm,
+    beatConfidence:m.beatConfidence,camelot:m.camelot,
+    introWave:m.introWave,outroWave:m.outroWave,
+    introBeat:m.introBeat,beatAnchor:m.beatAnchor,
+    introGroove:m.introGroove,outroGroove:m.outroGroove,
+    first:m.first,last:m.last,safeIntroAt:m.safeIntroAt,
+    safeOutroAt:m.safeOutroAt,protectedEnding:!!m.protectedEnding,
+    lastVoiceAt:m.lastVoiceAt,firstVoiceAt:m.firstVoiceAt,
+    lastLyricAt:m.lastLyricAt,firstLyricAt:m.firstLyricAt,
+    voiceModel:m.voiceModel,introDrive:m.introDrive}:null
+  });
+  const reasons=[],notes=a&&b?similarNotes(a,b):null,
+    beats=a&&b?grooveAgreement(a,b):null,
+    key=a&&b?camelotMatch(a,b):null;
+  let cue=null,approved=false,beatCertified=false,vocalSafe=null;
+  if(!from||!to)reasons.push("Uno o entrambi i brani non sono presenti nella libreria attiva.");
+  else if(!a||!b)reasons.push("Analisi MP3 non disponibile sul dispositivo: nessuna transizione certificata.");
+  else if(a.durationMismatch||b.durationMismatch)
+   reasons.push("Durata MP3 differente dalla misura: non usare questi punti di transizione.");
+  else{
+   const duration=Number(a.duration);
+   cue=transition(a,b,duration);
+   const musical=!!cue&&musicallyCompatibleOverlay(a,b,cue);
+   const beatSafe=!!cue&&desktopBeatPairCertified(a,b,cue)&&
+    iphoneBeatPairCertified(a,b,cue);
+   const quietSafe=!!cue&&iphoneQuietReleaseCertified(a,cue);
+   const nativeSafe=!!cue&&(isIOS?
+    mobileMixAllowed(cue,a,a.lastLyricAt)&&
+     iphoneBeatPairCertified(a,b,cue)&&quietSafe:
+     desktopBeatPairCertified(a,b,cue));
+   approved=Boolean(musical&&nativeSafe);
+   beatCertified=Boolean(approved&&beatSafe&&quietSafe&&
+    ["beat","snap"].includes(cue?.kind)&&
+    (cue.measuredBeatBridge||cue.instrumentalBeatBridge||
+      cue.verifiedHarmonicBridge||cue.rhythmicGridJoin||cue.strongBeatBridge)&&
+    !cue.pulseUnderlay&&!cue.continuityFallback);
+   if(!cue)reasons.push("Nessuna finestra musicale sicura: fallback senza mix forzato.");
+   else if(!musical)reasons.push("Il confine reale fra finale e intro non supera il controllo musicale.");
+   else if(!nativeSafe)reasons.push(isIOS?
+    "Vincoli WebAudio/Safari o sicurezza vocale non soddisfatti.":
+    "Beat, fase o sicurezza del finale insufficienti per il motore desktop.");
+   else if(beatCertified)reasons.push("Beat e finestra ritmica certificati: resta necessaria la prova audio reale.");
+   else reasons.push("Raccordo consentito ma NON certificato come beatmatch.");
+   if(cue){
+    const voiceEnd=Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt:
+      Number.isFinite(a.lastLyricAt)?a.lastLyricAt+4:null;
+    vocalSafe=cue.preserveTail===true?null:
+     voiceEnd===null?null:
+      cue.kind==="cut"||cue.begin>=voiceEnd+
+       (Number.isFinite(a.lastVoiceAt)?1.1:0);
+    if(vocalSafe===false)reasons.push("ATTENZIONE: punto del mix vicino a una frase vocale misurata.");
+    if(cue.preserveTail===true)reasons.push("Il piano preserva la coda originale: test acustico ancora necessario.");
+   }else vocalSafe=true;
+  }
+  const plan=cue?{
+   kind:cue.kind,begin:cue.begin,end:cue.end,fade:cue.fade,
+   entry:cue.entry,tempo:cue.tempo,score:cue.score,
+   grooveScore:cue.grooveScore,beatGridScore:cue.beatGridScore,
+   beatPeriod:cue.beatPeriod,beatAnchor:cue.beatAnchor,
+   nextBeat:cue.nextBeat,protectedTail:!!cue.preserveTail,
+   measuredBeatBridge:!!cue.measuredBeatBridge,
+   instrumentalBeatBridge:!!cue.instrumentalBeatBridge,
+   rhythmicGridJoin:!!cue.rhythmicGridJoin,
+   quietCertified:!!cue.quietCertified,
+   mobileSilentBridge:!!cue.mobileSilentBridge}:null;
+  return {source:"musicbox-engine",device:isIOS?"iphone":"pc",
+   from:compact(from,a),to:compact(to,b),
+   cue:plan,approved,certified:beatCertified,beatCertified,
+   actual:false,vocalSafe,
+   tempoGap:a&&b?bpmGap(a,b):null,groove:beats,
+   camelotFit:key?.score??null,
+   harmonicBoundary:notes?{focused:notes.focused,phrase:notes.phrase,
+    matches:notes.matches}:null,reasons};
+ },
  diagnostics:()=>{
   const app=bridge(),audio=app?.audio?.(),id=app?.currentId?.(),next=app?.mixNext?.();
   const track=app?.allTracks?.()?.find(t=>t.id===id);
@@ -4879,6 +4968,28 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    lastVoiceAt:a?.lastVoiceAt??null,
    dropRelease:a?.dropRelease||null,softOutro:a?.softOutro||null,
    confidentTail:!!a?.confidentTail,
+   // These fields expose planned vs actually started overlaps separately.
+   shuffleState:app?.mixShuffleSelection?.()||null,
+   plannedCue:plan?{
+    kind:plan.kind,begin:plan.begin,end:plan.end,fade:plan.fade,
+    entry:plan.entry,beatAnchor:plan.beatAnchor,nextBeat:plan.nextBeat,
+    beatPeriod:plan.beatPeriod,quietCertified:!!plan.quietCertified,
+    measuredBeatBridge:!!plan.measuredBeatBridge,
+    protectedTail:!!plan.preserveTail}:null,
+   liveTransition:active&&active.at>0?{
+    device:"pc",fromId:active.fromId,toId:active.track?.id||null,
+    kind:active.kind,started:true,actualAt:active.original?.currentTime,
+    incomingAt:active.upcoming?.currentTime,
+    elapsed:Math.max(0,(performance.now()-active.at)/1000),
+    fade:active.fade,handingOff:!!active.handingOff}:
+    mobileActive?{
+     device:"iphone",fromId:mobileActive.fromId,
+     toId:mobileActive.track?.id||null,
+     kind:mobileActive.snap?"snap":"overlay",started:true,
+     actualAt:mobileActive.old?.currentTime,
+     incomingAt:Math.max(0,mobilePlayedSeconds(mobileActive)),
+     fade:Math.max(0,mobileActive.end-mobileActive.audioStartedAt),
+     handingOff:!!mobileActive.handingOff}:null,
    plannedKind:plan?.kind||null,plannedBegin:plan?.begin??null,
    planWaitingAnalysis:!!lastPlanMissing,planRetryCount,
    planRetryInMs:lastPlanMissing?Math.max(0,planRetryAt-Date.now()):null,
