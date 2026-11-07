@@ -2824,7 +2824,8 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
+   (p.rhythmicGridJoin&&lowPreview?.55:
+    lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
   // to a simple safe linear ramp.
@@ -3286,6 +3287,7 @@ async function beginMix(song,proposed){
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
+  verifiedRhythmicGrid:!!proposed.rhythmicGridJoin,
   vocalVerifiedBeat:!!proposed.vocalVerifiedBeat,
   continuityFallback:!!proposed.continuityFallback,
   measuredFinalImpact:!!proposed.measuredFinalImpact,
@@ -3342,10 +3344,12 @@ async function beginMix(song,proposed){
    }
    // Underlay remains quiet until the very end to limit key clashes.
    if(act.rhythmicUnderlay){
-    const lateStart=act.vocalVerifiedBeat ? .34 : .79;
+    const lateStart=act.verifiedRhythmicGrid?.42:
+      act.vocalVerifiedBeat?.34:.79;
     const late=clamp((time-lateStart)/(1-lateStart),0,1);
     outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
-    inGain=Math.sin(Math.pow(time,act.vocalVerifiedBeat?1.18:1.85)*Math.PI/2);
+    inGain=Math.sin(Math.pow(time,act.verifiedRhythmicGrid?1.18:
+      act.vocalVerifiedBeat?1.18:1.85)*Math.PI/2);
    }
    if(act.measuredFinalImpact){
     // Incoming kick on the last outgoing beat at restrained gain;
