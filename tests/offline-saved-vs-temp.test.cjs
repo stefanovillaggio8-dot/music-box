@@ -131,7 +131,7 @@ test("Safari repeat seek uses recent cached Blob before touching CacheStorage ag
  assert.equal(stats.lookups,1);
 });
 
-test("two-slot iPhone offline saves can stream without buffering whole MP3 blobs",async()=>{
+test("offline MP3s are fully validated before protected cache writes",async()=>{
  const code=excerpt(app,"  async function cacheTrack(","  /* Ste: \"quando premo seleziona");
  const build=fetchMock=>{
   const cache={
@@ -147,6 +147,7 @@ test("two-slot iPhone offline saves can stream without buffering whole MP3 blobs
    "const profile='Ste',offlineAbort=null,offlineStopRequested=false;"+
    "const _promuoviCachePerOffline=async()=>false;"+
    "const _offlinePronto=row=>{row.state='ok';row.label='pronta'};"+
+   "const _offlineRicordaErrore=()=>{};"+
    "const fmtBytes=x=>String(x);"+
    code+"return row=>cacheTrack(row,cache,'Ste');")(fetchMock,cache);
   return {cache,run};
@@ -164,8 +165,8 @@ test("two-slot iPhone offline saves can stream without buffering whole MP3 blobs
  const bad={track:{url:"https://example.com/partial.mp3"},state:"todo",el:null};
  await broken.run(bad);
  assert.equal(bad.state,"err","incomplete HTTP 200 must fail closed");
- assert.equal(broken.cache.saved,null,"partial file must be deleted");
- assert.equal(broken.cache.deletes,1);
+ assert.equal(broken.cache.saved,null,"partial file must never reach the cache");
+ assert.equal(broken.cache.deletes,0,"partial files are rejected before cache.put");
  const ranged=build(async()=>new Response(new Uint8Array(8192),{
   status:206,headers:{"Content-Type":"audio/mpeg"}}));
  const row={track:{url:"https://example.com/206.mp3"},state:"todo",el:null};

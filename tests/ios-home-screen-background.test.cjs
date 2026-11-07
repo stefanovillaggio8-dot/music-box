@@ -17,12 +17,13 @@ test("Safari remains supported, Chrome excluded",()=>{
  assert.equal(safari._usaControlliNativiIos(),true);
  assert.equal(chrome._usaControlliNativiIos(),false);
 });
-test("late OS pause while locked preserves PWA playback intent",()=>{
+test("system transition is not confused with a later headset pause",()=>{
  const i=app.indexOf("  function _pausaDuranteCambioVisibilita(");
  const j=app.indexOf("  function _pausaNativaVolontaria(",i);
- const policy=installed=>new Function("_iosInstallataComeApp",app.slice(i,j)+"return _pausaDuranteCambioVisibilita;")(()=>installed);
- assert.equal(policy(true)(true,1000,0,30000),true);
- assert.equal(policy(false)(true,1000,0,30000),false);
+ const classify=new Function(app.slice(i,j)+"return _pausaDuranteCambioVisibilita;")();
+ assert.equal(classify(true,1000,0,1400),true);
+ assert.equal(classify(true,1000,0,30000),false);
+ assert.equal(classify(false,1000,30000,30800),true);
 });
 test("hidden installed app preserves its media element across next song",()=>{
  const start=app.indexOf("async function playById("),end=app.indexOf("function idBranoA(",start);

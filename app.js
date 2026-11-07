@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.641";
+  const APP_VERSION = "6.642";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6145,9 +6145,8 @@ function handleMetadata() {
   // A deliberate foreground headphone/lockscreen pause still wins.
   let _ultimoSeekUtente = 0;
   function _pausaDuranteCambioVisibilita(nascosta, nascostaIl, visibileIl, ora) {
-    // The installed PWA can receive an OS pause long after it was hidden.
-    // Explicit MediaSession Pause still calls _pausaVolontaria().
-    if(nascosta&&_iosInstallataComeApp())return true;
+    // A deliberate headset pause after lock must never auto-resume.
+    // Only a pause at the actual hide/show boundary is a system transition.
     return (nascosta&&nascostaIl>0&&ora-nascostaIl>=0&&ora-nascostaIl<1500)||
       (!nascosta&&visibileIl>0&&ora-visibileIl>=0&&ora-visibileIl<2000);
   }
