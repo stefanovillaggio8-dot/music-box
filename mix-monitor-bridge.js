@@ -209,6 +209,28 @@
    lastHidden=null;
   }
  });
+ // On iPhone PWAs, a new Safari tab can have a separate storage partition.
+ // The in-app dashboard stays in the SAME document/origin as the player.
+ function openInlineLab(){
+  let overlay=document.getElementById("mixLabOverlay");
+  if(overlay){overlay.hidden=false;return}
+  document.getElementById("mixPanel")?.setAttribute("hidden","");
+  overlay=document.createElement("div");overlay.id="mixLabOverlay";
+  overlay.style.cssText="position:fixed;inset:0;z-index:100002;background:#0b101b;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);";
+  const header=document.createElement("div");
+  header.style.cssText="height:46px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 13px;background:#111a2a;border-bottom:1px solid #2b3750;color:#d6e2fb;font:600 12px system-ui";
+  const name=document.createElement("span");name.textContent="MUSIC BOX · SMART MIX LAB";
+  const close=document.createElement("button");close.type="button";
+  close.textContent="✕ Chiudi il monitor";close.setAttribute("aria-label","Chiudi Smart Mix Lab");
+  close.style.cssText="background:#342d59;color:#f1ebff;border:1px solid #655a95;border-radius:8px;padding:7px 11px;font:600 12px system-ui";
+  close.addEventListener("click",()=>overlay.remove());
+  header.append(name,close);
+  const iframe=document.createElement("iframe");
+  iframe.src="smart-mix-lab/index.html";iframe.title="Smart Mix Lab";
+  iframe.style.cssText="flex:1;border:0;width:100%;min-height:0;background:#090e19";
+  overlay.append(header,iframe);document.body.append(overlay);
+ }
+ document.getElementById("mixLabInline")?.addEventListener("click",openInlineLab);
  window.addEventListener("pagehide",()=>{
   emit("info","Sessione Music Box sospesa",
    "La pagina è stata chiusa o il browser l'ha sospesa.",{cooldown:1000});
