@@ -160,10 +160,10 @@ def analyze(mp3):
     # final beat. Do not guess from BPM or an empty MP3 tail. Every window
     # is measured from original PCM and carries its own boundary notes.
     outro_windows=[]
-    for offset in (8.0,12.0):
+    for offset in (6.0,9.0):
         window_start=float(musical_edge)-offset
         window_end=window_start+4.
-        if window_start<max(0.,first,25.) or window_end>musical_edge-3.95:
+        if window_start<max(0.,first,25.) or window_end>musical_edge-1.95:
             continue
         signature=onset_signature(window_start)
         local_groove=groove(rms,bpm,window_end,True)
@@ -203,7 +203,7 @@ def analyze(mp3):
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v3-windows"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v4-windows"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -221,6 +221,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v4-windows"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:
