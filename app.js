@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.639";
+  const APP_VERSION = "6.640";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9002,7 +9002,7 @@ async function removeTrack(id) {
 
   function stripVariants(s) {
     return normText(s)
-      .replace(/\b(live|remastered|remaster|explicit|version|edit|remix|cover|instrumental|acoustic|medley|karaoke|strumentale)\b/g, " ")
+      .replace(/\b(live|remastered|remaster|explicit|version|edit|remix|rmx|visual|visualizer|cover|instrumental|acoustic|medley|karaoke|strumentale)\b/g, " ")
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -9083,7 +9083,7 @@ async function removeTrack(id) {
       /* Per i feat Spotify elenca piu' artisti, mentre LRCLIB puo'
          riportare solo quello principale. Accetta un match verificato
          sul primo artista, non un artista completamente diverso. */
-      const mainArtist = String(artist || "").split(/,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim();
+      const mainArtist = String(artist || "").split(/\s*\/\s*|,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim();
       if (mainArtist && j.artistName &&
           tokenOverlap(mainArtist, j.artistName) < 0.48 &&
           !artistaSimile(mainArtist, j.artistName) &&
@@ -9121,33 +9121,52 @@ async function removeTrack(id) {
     }
     if (Date.now() >= _lrclibNonPrimaDi) {
       const endpoint = "https://lrclib.net";
-      const queries = [
-        endpoint + "/api/get?track_name=" + encodeURIComponent(name) +
-          "&artist_name=" + encodeURIComponent(artist || "") +
-          (options.album ? "&album_name=" + encodeURIComponent(options.album) : "") +
-          (duration >= 1 && duration <= 3600 ? "&duration=" + Math.round(duration) : ""),
-        endpoint + "/api/search?track_name=" + encodeURIComponent(name) +
-          "&artist_name=" + encodeURIComponent(artist || "")
-      ];
-      const header = { "Lrclib-Client": "MusicBox/6.470 (https://github.com/stefanovillaggio8-dot/music-box)" };
-      for (const url of queries) {
-        if (Date.now() < _lrclibNonPrimaDi) break;
-        try {
-          const r = await fetchConScadenza(url, 12000, { headers: header });
-          if (_gestisciPausaLrclib(r)) break;
-          if (!r.ok) continue;
-          const j = await r.json();
-          const selected = choose(Array.isArray(j) ? j : [j]);
-          if (selected) {
-            const sync = selected.syncedLyrics || "";
-            const plain = selected.plainLyrics || syncedToText(sync);
-            return { text: String(plain || "").trim(), synced: sync,
-              source: sync ? "LRCLIB (karaoke sincronizzato)" : "LRCLIB" };
+      // LRCLIB search returns [] for missing songs. Querying /api/get first
+      // caused a normal "no lyrics" to appear as HTTP 404 on every remix.
+      const fullArtist=String(artist||"").trim();
+      const firstArtist=fullArtist.split(/\s*\/\s*|,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim()||fullArtist;
+      const makeSearch=a=>endpoint+"/api/search?track_name="+encodeURIComponent(name)+
+        "&artist_name="+encodeURIComponent(a);
+      const searches=[makeSearch(firstArtist)];
+      if(fullArtist&&fullArtist!==firstArtist)searches.push(makeSearch(fullArtist));
+      const headers={"Lrclib-Client":"MusicBox/6.640 (https://github.com/stefanovillaggio8-dot/music-box)"};
+      let searchWorked=false;
+      for(const url of searches){
+        if(Date.now()<_lrclibNonPrimaDi)break;
+        try{
+          const r=await fetchConScadenza(url,12000,{headers});
+          if(_gestisciPausaLrclib(r))break;
+          if(!r.ok)continue;
+          searchWorked=true;
+          const data=await r.json();
+          const selected=choose(Array.isArray(data)?data:[data]);
+          if(selected){
+            const synced=selected.syncedLyrics||"";
+            return {text:String(selected.plainLyrics||syncedToText(synced)||"").trim(),
+              synced,source:synced?"LRCLIB (karaoke sincronizzato)":"LRCLIB"};
           }
-        } catch (e) {
-          _attendiLrclib(900000);
-          break;
+        }catch(_){
+          _attendiLrclib(900000);break;
         }
+      }
+      // When search answered 200 with no results, don't send another
+      // guaranteed-missing exact query. Preserve the other lyrics fallback.
+      if(!searchWorked&&Date.now()>=_lrclibNonPrimaDi){
+        try{
+          const url=endpoint+"/api/get?track_name="+encodeURIComponent(name)+
+            "&artist_name="+encodeURIComponent(firstArtist)+
+            (options.album?"&album_name="+encodeURIComponent(options.album):"")+
+            (duration>=1&&duration<=3600?"&duration="+Math.round(duration):"");
+          const r=await fetchConScadenza(url,12000,{headers});
+          if(!_gestisciPausaLrclib(r)&&r.ok){
+            const selected=choose([await r.json()]);
+            if(selected){
+              const synced=selected.syncedLyrics||"";
+              return {text:String(selected.plainLyrics||syncedToText(synced)||"").trim(),
+                synced,source:synced?"LRCLIB (karaoke sincronizzato)":"LRCLIB"};
+            }
+          }
+        }catch(_){ /* Keep the existing lyrics.ovh fallback. */ }
       }
     }
     if (options.syncedOnly) return null;
@@ -9157,7 +9176,7 @@ async function removeTrack(id) {
        prova prima quello principale, senza sacrificare il match completo.
        I 404 vengono memorizzati separatamente per 24 ore. */
     const artistaCompleto = String(artist || "Unknown").trim();
-    const artistaPrincipale = artistaCompleto.split(/,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim() || artistaCompleto;
+    const artistaPrincipale = artistaCompleto.split(/\s*\/\s*|,|\s*&\s*|\s+feat\.?\s+|\s+ft\.?\s+|\s+x\s+/i)[0].trim() || artistaCompleto;
     const ricercheOvh = [];
     /* Le raccolte possono indicare il nome della compilation al posto
        dell'interprete. L'originale "Live Is Life" e' degli Opus:
