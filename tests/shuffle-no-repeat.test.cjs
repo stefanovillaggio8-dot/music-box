@@ -92,7 +92,7 @@ test("ten displayed shuffle songs are previews; DJ promotion changes the ACTUAL 
  const until=app.indexOf("  mixHandoff:",begin);
  assert.ok(start>0&&end>start&&begin>0&&until>begin);
  const expression=app.slice(begin+"mixSelectShuffle:".length,until)
-   .trim().replace(/,\\s*$/,"");
+   .trim().replace(/,\s*$/,"");
  const tracks=Array.from({length:22},(_,i)=>({
   id:i===0?"a":"track-"+i,url:"/audio/"+i+".mp3"
  }));
