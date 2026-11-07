@@ -401,7 +401,7 @@ function deepLookup(track){
    ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
-  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows)$/.test(value.analyzer||"")&&
+  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return value;
  }
@@ -1823,11 +1823,12 @@ function earlyMatchedBar(a,b,dur){
    outroFinalNotes:win.notes,outroPhraseNotes:win.notes,
    outroNotes:win.notes,outroTimeline:[]};
   const notes=similarNotes(local,b),drums=grooveAgreement(local,b);
-  if(!drums||drums.score<.78||drums.correlation<.56||
-     notes.matches!==true||notes.focused<.81||notes.phrase<.73)continue;
+  if(!drums||drums.score<.73||drums.correlation<.46||
+     notes.focused<.79||notes.phrase<.70||
+     (notes.alignment?.score>0&&notes.alignment.matches===false))continue;
   const pulseA=onsetPeriodicity(win.onset,a.bpm),
     pulseB=onsetPeriodicity(b.introOnset,b.bpm);
-  if(!(pulseA>=.40&&pulseB>=.40))continue;
+  if(!(pulseA>=.34&&pulseB>=.34))continue;
   // Similar tempo is not enough: measured kicks must dominate offbeat
   // events on BOTH independent waveforms over multiple pulses.
   const beatContrast=(values,phase,bpm)=>{
@@ -1844,8 +1845,8 @@ function earlyMatchedBar(a,b,dur){
     off.reduce((x,y)=>x+y,0)/off.length:-Infinity;
   };
   const phase=onsetGridPhase(win.onset,a.bpm);
-  if(beatContrast(win.onset,phase,a.bpm)<.43||
-     beatContrast(b.introOnset,onsetGridPhase(b.introOnset,b.bpm),b.bpm)<.43)
+  if(beatContrast(win.onset,phase,a.bpm)<.36||
+     beatContrast(b.introOnset,onsetGridPhase(b.introOnset,b.bpm),b.bpm)<.36)
    continue;
   const beatAt=win.start+phase+
    Math.ceil((.55-phase)/period)*period;
