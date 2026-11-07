@@ -124,3 +124,17 @@ test("ten displayed shuffle songs are previews; DJ promotion changes the ACTUAL 
  assert.equal(c.select({fromId:"a",initialFirst:outside,pickId:firstTen[1]}),false,
   "a user's manual queue must override any automatic DJ reorder");
 });
+
+
+test("stale DJ overlays cannot override a manually changed first song",()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const fade=mix.slice(mix.indexOf("function fadeStep(){"),
+  mix.indexOf("const time=clamp((performance.now()",mix.indexOf("function fadeStep(){")));
+ assert.match(fade,/app\.mixNext\?\.\(\)\?\.id!==song\.id/);
+ const h=mix.slice(mix.indexOf("function quietDirectHandoff("),
+  mix.indexOf("// A phase offset",mix.indexOf("function quietDirectHandoff(")));
+ assert.match(h,/app\.mixNext\?\.\(\)\?\.id!==next\.id/);
+ const natural=mix.slice(mix.indexOf("function naturalEndHandoff("),
+  mix.indexOf("async function handoff(",mix.indexOf("function naturalEndHandoff(")));
+ assert.match(natural,/const latest=app\.mixNext\?\.\(\)/);
+});
