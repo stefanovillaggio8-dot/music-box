@@ -1329,7 +1329,7 @@
    },
    "[\"essere noi\",\"nayt\"]": {
     "v": 1,
-    "s": 114,
+    "s": 135,
     "t": "Essere noi",
     "a": "nayt"
    },
@@ -2492,14 +2492,14 @@
     "a": "Artie 5ive"
    },
    "[\"guerra dentro\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 134,
+    "v": 2,
+    "s": 180,
     "t": "guerra dentro",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"guerra dentro\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 134,
+    "v": 2,
+    "s": 180,
     "t": "guerra dentro",
     "a": "nayt, 3D"
    },
@@ -3153,13 +3153,13 @@
    },
    "[\"qualcosa di grande\",\"coez\"]": {
     "v": 1,
-    "s": 119,
+    "s": 121,
     "t": "Qualcosa di grande",
     "a": "Coez"
    },
    "m:2026-11|[\"qualcosa di grande\",\"coez\"]": {
     "v": 1,
-    "s": 119,
+    "s": 121,
     "t": "Qualcosa di grande",
     "a": "Coez"
    },
@@ -3327,7 +3327,7 @@
    },
    "m:2026-11|[\"essere noi\",\"nayt\"]": {
     "v": 1,
-    "s": 57,
+    "s": 78,
     "t": "Essere noi",
     "a": "nayt"
    },
@@ -8832,6 +8832,18 @@
     "s": 107,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
+   },
+   "[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂ©"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃÂ©\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃÂ©"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 2,
