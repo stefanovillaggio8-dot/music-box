@@ -267,7 +267,9 @@ function estimatePair(from,to){
  }
  if(!reasons.length)reasons.push("Dati compatibili come pre-selezione: serve il motore per certificare e avviare l'audio.");
  return {source:"index-estimate",device:state.device,from:{id:from?.id,title:from?.title,info:a},to:{id:to?.id,title:to?.title,info:b},
-  groove:gr,tempoGap:g,camelotFit:fit,approved:null,certified:false,beatCertified:false,actual:false,cue:null,reasons};
+  groove:gr,tempoGap:g,camelotFit:fit,approved:null,certified:false,beatCertified:false,actual:false,cue:null,
+  candidatePoints:[{at:a?.beatAnchor,label:"Beat finale stimato",evidence:"indice audio"},{at:a?.safeOutroAt,label:"Finale quieto misurato",evidence:"indice audio"}].filter(x=>x.at!=null),
+  introPoints:[{at:b?.introBeat,label:"Primo beat intro",evidence:"indice audio"},{at:b?.safeIntroAt,label:"Intro digitale verificata",evidence:"indice audio"}].filter(x=>x.at!=null),reasons};
 }
 async function inspect(from,to){
  const fallback=estimatePair(from,to);
@@ -291,12 +293,34 @@ function renderResult(r){
  const badge=certified?"Beat / passaggio verificato":engine?"Risultato del motore":"Solo pre-valutazione";
  const notes=(r.reasons||[]).map(reason=>'<span class="reason '+(certified?"safe":"")+'">'+esc(reason)+'</span>').join("");
  const cue=r.cue||{};
+ const pointList=(points,empty)=>{
+  const rows=(points||[]).filter(p=>p.at!==null&&p.at!==undefined&&Number.isFinite(Number(p.at)));
+  return rows.length?rows.map(p=>
+   '<div class="candidate-point"><span class="point-time">'+fmt(p.at)+' s</span><div><strong>'+
+   esc(p.label||"Punto misurato")+'</strong><small>'+esc(p.evidence||"analisi")+
+   (p.selected?" · scelto dal motore":" · candidato / non certificato")+
+   '</small></div></div>').join(""):'<p class="empty">'+esc(empty)+'</p>';
+ };
+ const harmonic=r.harmonicBoundary;
+ const harmonyText=harmonic?
+  "Note al confine "+(harmonic.focused!=null?Math.round(harmonic.focused*100)+"%":"—")+
+   " · frase "+(harmonic.phrase!=null?Math.round(harmonic.phrase*100)+"%":"—")+
+   (harmonic.matches?" · compatibile":" · compatibilità non confermata"):
+  "Compatibilità armonica al confine da verificare";
+ const candidatePanel='<div class="candidate-grid"><div><h4>OUTRO · PUNTI MISURATI</h4>'+
+  pointList(r.candidatePoints,"Nessun punto misurato disponibile")+'</div>'+
+  '<div><h4>INTRO · ATTACCHI CANDIDATI</h4>'+
+  pointList(r.introPoints,"Nessun punto misurato disponibile")+'</div></div>'+
+  '<div class="harmony-note">♫ '+esc(harmonyText)+
+  (cue.begin!=null?' · ingresso previsto '+fmt(cue.begin)+' s':' · nessuna finestra approvata')+
+  '</div>';
  $("simResult").className="result-card";
  $("simResult").innerHTML='<div class="result-heading"><div><h3>'+esc(title)+'</h3><p>'+esc(r.from?.title||r.from?.id||"Uscita")+' → '+esc(r.to?.title||r.to?.id||"Ingresso")+' · '+(engine?"Analisi motore reale":"Confronto matematico su indice audio")+'</p></div><span class="mini-tag '+cls+'">'+badge+'</span></div>'+
   '<div class="result-grid"><div class="result-stat"><small>TEMPO</small><strong>'+esc(fmt(a.bpm))+' / '+esc(fmt(b.bpm))+'</strong></div>'+
   '<div class="result-stat"><small>CAMELOT</small><strong>'+esc(a.camelot?.code||"—")+' / '+esc(b.camelot?.code||"—")+'</strong></div>'+
   '<div class="result-stat"><small>GROOVE / BEAT</small><strong>'+(g!=null?Math.round(g*100)+"%":"—")+'</strong></div>'+
   '<div class="result-stat"><small>FINESTRA MIX</small><strong>'+esc(cue.fade!=null?fmt(cue.fade)+" s":"Nessuna")+'</strong></div></div>'+
+  candidatePanel+
   '<div class="result-timeline"><div><div class="wave-label"><span>OUTRO REALE</span><span>BEAT</span></div><div class="wavebox" id="resultOut"></div></div><div><div class="wave-label"><span>INTRO REALE</span><span>BEAT</span></div><div class="wavebox" id="resultIn"></div></div></div>'+
   '<div class="result-notes">'+(r.platformResults?'<span class="reason safe">PC: '+(r.platformResults.pc?.allowed?"piano consentito":"fallback")+"</span>"+'<span class="reason safe">iPhone: '+(r.platformResults.iphone?.allowed?"piano consentito":"fallback")+"</span>":"" )+(notes||'<span class="reason safe">Nessuna criticità riportata.</span>')+'</div>'+
   '<div class="monitor-foot"><span>'+esc(engine?"Certificazione riferita al dispositivo in cui il motore gira. La riproduzione reale va verificata a parte.":"La stima non garantisce sincronizzazione del beat, assenza di voce o possibilità di sovrapposizione.")+'</span><button class="text-button" id="savePairBaseline">Salva snapshot →</button></div>';
