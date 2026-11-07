@@ -132,8 +132,6 @@ function open(){
  focusBefore=document.activeElement;
  opened=true;lastId="";lastLyricsId="";
  root.classList.remove("im-focus");
- const stage=$("imKaraoke");
- stage.style.removeProperty("height");stage.style.removeProperty("min-height");
  $("imFocusToggle").setAttribute("aria-pressed","false");
  $("imFocusToggle").innerHTML='Focus testo <span aria-hidden="true">⤢</span>';
  lockBefore=document.body.classList.contains("no-scroll");
@@ -160,17 +158,6 @@ function toggleFocus(){
  button.setAttribute("aria-label",enabled?"Riduci il testo":"Ingrandisci il testo");
  button.innerHTML=enabled?'Mostra copertina <span aria-hidden="true">⤡</span>':
   'Focus testo <span aria-hidden="true">⤢</span>';
- // Force the actual scroll container to grow with its focus frame:
- // inherited/legacy lyric sizing otherwise leaves a tiny 158px strip.
- const stage=$("imKaraoke");
- if(enabled){
-  const height=window.matchMedia("(max-width: 850px)").matches?"240px":"260px";
-  stage.style.setProperty("height",height,"important");
-  stage.style.setProperty("min-height",height,"important");
- }else{
-  stage.style.removeProperty("height");
-  stage.style.removeProperty("min-height");
- }
  lastLine=-1;renderLyrics(false);
 }
 function seekTo(){
