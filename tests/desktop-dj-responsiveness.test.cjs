@@ -126,3 +126,20 @@ test("real final-beat release joins before encoded silence, without losing the i
  assert.equal(api.pc(a,b,{...cue,begin:194.8}),false,
   "a mix started after the last actual beat is not beatmatched");
 });
+
+test("a measured early musical decay outranks a proposed late soft fade without overriding real beats",()=>{
+ const selector=section(dj,"const latePlannedSoft=Boolean(candidate&&",
+  "lastPlanMissing=!(a&&b);");
+ assert.ok(selector.includes('["soft","fade","rise","continuity"].includes(candidate.kind)'),
+  "only late non-beat plans may be replaced");
+ assert.ok(selector.includes("candidate.begin>currentAnalysis.dropRelease.releaseAt+1.2"),
+  "the replacement must be measurably earlier");
+ assert.ok(selector.includes("certifiedNeutralBridge(currentAnalysis,nextAnalysis,audio.duration)"),
+  "the early release must independently pass the existing strict safety gate");
+ assert.ok(selector.includes("certifiedQuietAlternative.begin+.65<candidate.begin"),
+  "a nearly identical cue should not be churned");
+ assert.ok(selector.includes("chosen=certifiedQuietAlternative"),
+  "the selected cue must actually be promoted");
+ assert.ok(selector.includes('realBeat||certifiedImpact||'),
+  "an already approved musical beat always retains priority");
+});
