@@ -1536,14 +1536,14 @@
     "a": "Don Pero"
    },
    "[\"ballon d'or\",\"gemitaiz, nayt\"]": {
-    "v": 1,
-    "s": 225,
+    "v": 2,
+    "s": 284,
     "t": "Ballon d'Or",
     "a": "Gemitaiz, nayt"
    },
    "m:2026-11|[\"ballon d'or\",\"gemitaiz, nayt\"]": {
-    "v": 1,
-    "s": 225,
+    "v": 2,
+    "s": 284,
     "t": "Ballon d'Or",
     "a": "Gemitaiz, nayt"
    },
@@ -5203,13 +5203,13 @@
    },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 2,
-    "s": 190,
+    "s": 215,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 2,
-    "s": 190,
+    "s": 215,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -5971,13 +5971,13 @@
    },
    "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 2,
-    "s": 215,
+    "s": 272,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 2,
-    "s": 215,
+    "s": 272,
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -8827,7 +8827,7 @@
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 2,
-    "s": 126,
+    "s": 184,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -9061,7 +9061,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 1,
-    "s": 121,
+    "s": 179,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -9601,7 +9601,7 @@
    },
    "[\"morirò da re\",\"måneskin\"]": {
     "v": 2,
-    "s": 184,
+    "s": 199,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
@@ -9835,7 +9835,7 @@
    },
    "m:2026-11|[\"morirò da re\",\"måneskin\"]": {
     "v": 1,
-    "s": 179,
+    "s": 194,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
