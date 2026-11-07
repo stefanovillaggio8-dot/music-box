@@ -603,6 +603,7 @@ test("real indexed pulse grid survives against mismatched BPM and chord progress
  assert.equal(tools.desktopBeatPairCertified(a.data,b.data,plan),true);
  assert.ok(plan.fade>=.75&&plan.fade<=1.36);
  const wait=tools.desktopBeatStartDelay(plan,plan.begin);
+ console.info("[DJ POSITIVE ALIGN DETAIL]",JSON.stringify({plan,wait}));
  assert.ok(wait!==null&&wait>=.08&&wait<=.19,
   "pre-roll must start before a real kick so it can enter in phase");
  const beat=plan.begin+wait+plan.nextBeat;
