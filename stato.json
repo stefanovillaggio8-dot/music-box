@@ -3243,13 +3243,13 @@
    },
    "[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
     "v": 0,
-    "s": 88,
+    "s": 122,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
    },
    "m:2026-11|[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
     "v": 0,
-    "s": 88,
+    "s": 122,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
    },
@@ -5474,14 +5474,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 4,
-    "s": 779,
+    "v": 5,
+    "s": 783,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 4,
-    "s": 779,
+    "v": 5,
+    "s": 783,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6255,13 +6255,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 5,
-    "s": 783,
+    "s": 859,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 5,
-    "s": 783,
+    "s": 859,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -7041,13 +7041,13 @@
    },
    "[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 5,
-    "s": 859,
+    "s": 875,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"passione maledetta\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 5,
-    "s": 859,
+    "s": 875,
     "t": "Passione maledetta",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -9602,14 +9602,14 @@
     "a": "ModÃ "
    },
    "[\"tappeto di fragole\",\"modÃ \"]": {
-    "v": 1,
-    "s": 155,
+    "v": 2,
+    "s": 230,
     "t": "Tappeto di fragole",
     "a": "ModÃ "
    },
    "m:2026-11|[\"tappeto di fragole\",\"modÃ \"]": {
-    "v": 1,
-    "s": 155,
+    "v": 2,
+    "s": 230,
     "t": "Tappeto di fragole",
     "a": "ModÃ "
    },
@@ -10389,13 +10389,13 @@
    },
    "[\"tappeto di fragole\",\"modà\"]": {
     "v": 2,
-    "s": 230,
+    "s": 244,
     "t": "Tappeto di fragole",
     "a": "Modà"
    },
    "m:2026-11|[\"tappeto di fragole\",\"modà\"]": {
     "v": 2,
-    "s": 230,
+    "s": 244,
     "t": "Tappeto di fragole",
     "a": "Modà"
    },
