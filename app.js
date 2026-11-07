@@ -4684,8 +4684,12 @@ function visibleTracks(perSuono) {
          Ora la chiave porta con se' il profilo, come per i brani eliminati:
          ogni account vede solo le proprie scelte. */
       const inPlaylist = _soloInPlaylist;
+      // Do not trust a cached set alone: a just-fetched Gym playlist may
+      // arrive one tick after the remote state on standalone iPhone.
+      const playlistOnlyNow=_nascostiDallePlaylist();
       const inPlaylistDi = function (id) {
-        return inPlaylist.has(_chiaveSoloInPlaylist(id)) ||
+        return playlistOnlyNow.has(id) ||
+          inPlaylist.has(_chiaveSoloInPlaylist(id)) ||
           /* le chiavi vecchie (senza profilo) erano globali: le metto con
              l'account principale, cosi' non toccano gli altri. */
           (profile===DEFAULT_PROFILE&&inPlaylist.has(id));
@@ -5371,7 +5375,9 @@ function _eliminatiRimossiDaMandareSvuota() {
     // The library count must exclude playlist-only songs, too.
     // Earlier it displayed the entire catalog and made a hidden song
     // look as though it had returned to the iPhone's library.
+    const gymOnlyNow=_nascostiDallePlaylist();
     const libraryAll=visibleAll.filter(t=>
+      !gymOnlyNow.has(t.id)&&
       !_soloInPlaylist.has(_chiaveSoloInPlaylist(t.id))&&
       !(profile===DEFAULT_PROFILE&&_soloInPlaylist.has(t.id)));
     // A playlist tab counts ONLY its own songs. The normal library
@@ -12118,7 +12124,9 @@ window.MusicBoxBridge = {
   // Never sends or removes any MP3; user chooses whether to copy it.
   librarySnapshot:()=>{
     const all=tracks.filter(t=>t&&t.source!=="stanza-condivisa");
-    const inPlaylist=id=>_soloInPlaylist.has(_chiaveSoloInPlaylist(id))||
+    const gymOnly=_nascostiDallePlaylist();
+    const inPlaylist=id=>gymOnly.has(id)||
+      _soloInPlaylist.has(_chiaveSoloInPlaylist(id))||
       (profile===DEFAULT_PROFILE&&_soloInPlaylist.has(id));
     const visible=all.filter(t=>!inPlaylist(t.id));
     const records=LS.get("mb.eliminati",null)||{};
@@ -12138,8 +12146,8 @@ window.MusicBoxBridge = {
   syncLibrary:async()=>{
     // Read cloud state and playlists first, then rebuild. Keep local
     // IndexedDB blobs, pending changes, and offline caches intact.
-    await _caricaStatoCondiviso();
     await _caricaPlaylistCondivise();
+    await _caricaStatoCondiviso();
     await loadAll();
     return window.MusicBoxBridge.librarySnapshot();
   },
@@ -17308,7 +17316,23 @@ await loadAll();
   });
   /* Controllo anche quanti brani sono ancora solo qui (cosi' il bottone
      "Manda al computer" compare) e accendo il ritento automatico. */
-      setTimeout(() => { _aggiornaNonCondivisi(); _riprovaCondivisione(); _preparaCasellaServizio(); _aggiornaCoda(); _caricaPlaylistCondivise(); _caricaStatoCondiviso(); _disegnaLinguettePlaylist(); _avvisoIcona(); }, 1600);
+      setTimeout(async () => {
+        _aggiornaNonCondivisi();_riprovaCondivisione();
+        _preparaCasellaServizio();_aggiornaCoda();_avvisoIcona();
+        // PWA and Safari keep separate storage. The playlist's hidden
+        // members MUST be loaded before cloud soloInPlaylist markers:
+        // concurrent requests could overwrite Gym and inflate the count.
+        try { await _caricaPlaylistCondivise(); } catch (_) {}
+        try { await _caricaStatoCondiviso(); } catch (_) {}
+        // Restore the union even if cloud returned a stale/empty list.
+        const finalFlags=new Set([..._soloInPlaylist,
+          ...[..._nascostiDallePlaylist()].map(id=>_chiaveSoloInPlaylist(id))]);
+        if(finalFlags.size!==_soloInPlaylist.size||
+           [...finalFlags].some(id=>!_soloInPlaylist.has(id))){
+          _soloInPlaylist=finalFlags;_salvaSoloInPlaylist();
+        }
+        try { _disegnaLinguettePlaylist();render(); } catch (_) {}
+      },1600);
   // If the user refreshed immediately after deleting a song, the local
   // tombstone survived but the delayed cloud POST might not have started.
   // Resume unsent changes at launch, without resubmitting confirmed ones.
