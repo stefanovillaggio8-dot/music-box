@@ -4433,7 +4433,13 @@ async function intelligentShuffle(app,audio,fromId){
    const evidence=typeof rhythmicGridEvidence==="function"?
     rhythmicGridEvidence(old,info):null;
    const exactGrid=Boolean(evidence?.longCompatible);
-   const credibleRelay=Boolean(drums&&drums.score>=.70&&
+   // A global volume/groove score without measured outgoing and incoming
+   // drum transients can be completely flat. Both MP3s need actual
+   // nonconstant 4-second onset profiles before a final-beat relay.
+   const measuredPulse=v=>Array.isArray(v)&&v.length===96&&
+    v.every(Number.isFinite)&&Math.max(...v)-Math.min(...v)>=.35;
+   const credibleRelay=Boolean(measuredPulse(old.outroOnset)&&
+    measuredPulse(info.introOnset)&&drums&&drums.score>=.70&&
     Number.isFinite(notes?.focused)&&notes.focused>=.65&&
     Number.isFinite(notes?.phrase)&&notes.phrase>=.50&&
     (key.weight<.14||key.score>=.52)&&
