@@ -527,3 +527,24 @@ test("pulse-grid beats need matching real percussion and chords, not just a cros
  const mismatched={...b,bpm:151};
  assert.ok(!tools.rhythmicGridEvidence(a,mismatched));
 });
+
+
+test("measure how many real indexed songs can actually match rhythmic grids",()=>{
+ let sampled=0,grid=0,bridges=0;const examples=[];
+ for(let i=0;i<tracks.length;i+=7)for(let j=0;j<tracks.length;j+=3){
+  const A=tracks[i],B=tracks[j];
+  if(A.key===B.key)continue;
+  sampled++;
+  const e=tools.rhythmicGridEvidence(A.data,B.data);
+  if(!e)continue;
+  grid++;
+  const p=tools.transition(A.data,B.data,A.data.duration);
+  if(p?.rhythmicGridJoin){
+   bridges++;
+   if(examples.length<7)examples.push({from:A.key,to:B.key,
+    kind:p.kind,score:+e.score.toFixed(3),pulse:+e.pulse.toFixed(3)});
+  }
+ }
+ console.info("[DJ REAL RHYTHM GRID]",JSON.stringify({sampled,grid,bridges,examples}));
+ assert.ok(sampled>40000);
+});
