@@ -49,7 +49,10 @@
   const audio=app()?.audio?.(),id=d.current||"";
   if(audio!==lastAudio){
    lastAudio=audio;lastTime=null;lastSeek=null;waitingAt=null;lastEnded=false;
-   if(audio){
+   // In browser smoke tests and external players, audio() may return a
+   // read-only playback adapter rather than an EventTarget. Monitoring must
+   // never interrupt the actual DJ or throw on a simulated audio object.
+   if(audio&&typeof audio.addEventListener==="function"){
     const bound=audio;
     audio.addEventListener("seeking",()=>{
      if(lastAudio!==bound)return;
