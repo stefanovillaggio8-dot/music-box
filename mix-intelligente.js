@@ -4890,6 +4890,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     beats=a&&b?grooveAgreement(a,b):null,
     key=a&&b?camelotMatch(a,b):null;
   let cue=null,approved=false,beatCertified=false,vocalSafe=null;
+  let platformResults={pc:{allowed:false},iphone:{allowed:false}};
   if(!from||!to)reasons.push("Uno o entrambi i brani non sono presenti nella libreria attiva.");
   else if(!a||!b)reasons.push("Analisi MP3 non disponibile sul dispositivo: nessuna transizione certificata.");
   else if(a.durationMismatch||b.durationMismatch)
@@ -4898,13 +4899,16 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    const duration=Number(a.duration);
    cue=transition(a,b,duration);
    const musical=!!cue&&musicallyCompatibleOverlay(a,b,cue);
-   const beatSafe=!!cue&&desktopBeatPairCertified(a,b,cue)&&
-    iphoneBeatPairCertified(a,b,cue);
+   const pcBeatSafe=!!cue&&desktopBeatPairCertified(a,b,cue);
+   const iphoneBeatSafe=!!cue&&iphoneBeatPairCertified(a,b,cue);
+   const beatSafe=isIOS?iphoneBeatSafe:pcBeatSafe;
    const quietSafe=!!cue&&iphoneQuietReleaseCertified(a,cue);
-   const nativeSafe=!!cue&&(isIOS?
-    mobileMixAllowed(cue,a,a.lastLyricAt)&&
-     iphoneBeatPairCertified(a,b,cue)&&quietSafe:
-     desktopBeatPairCertified(a,b,cue));
+   const iosAllowed=!!cue&&musical&&mobileMixAllowed(cue,a,a.lastLyricAt)&&
+    iphoneBeatSafe&&quietSafe;
+   const pcAllowed=!!cue&&musical&&pcBeatSafe;
+   const nativeSafe=isIOS?iosAllowed:pcAllowed;
+   platformResults={pc:{allowed:pcAllowed,beatCertified:pcBeatSafe},
+    iphone:{allowed:iosAllowed,beatCertified:iphoneBeatSafe}};
    approved=Boolean(musical&&nativeSafe);
    beatCertified=Boolean(approved&&beatSafe&&quietSafe&&
     ["beat","snap"].includes(cue?.kind)&&
@@ -4943,7 +4947,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   return {source:"musicbox-engine",device:isIOS?"iphone":"pc",
    from:compact(from,a),to:compact(to,b),
    cue:plan,approved,certified:beatCertified,beatCertified,
-   actual:false,vocalSafe,
+   actual:false,vocalSafe,platformResults,
    tempoGap:a&&b?bpmGap(a,b):null,groove:beats,
    camelotFit:key?.score??null,
    harmonicBoundary:notes?{focused:notes.focused,phrase:notes.phrase,
