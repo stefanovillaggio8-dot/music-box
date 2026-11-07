@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6634" />
+  <link rel="stylesheet" href="style.css?v=6646" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -965,30 +965,47 @@
   <div class="im-atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="im-shell">
     <header class="im-head">
-      <span class="im-brand">✦ MUSIC BOX <span>CINEMA</span></span>
-      <span class="im-mode">IMMERSIVE MODE</span>
-      <button id="imClose" type="button" class="im-close" aria-label="Chiudi Immersive Mode">×</button>
+      <div class="im-identity">
+        <span class="im-brand-icon" aria-hidden="true">✦</span>
+        <div class="im-brand-block"><strong>MUSIC BOX</strong><small>YOUR SOUND. YOUR WORLD.</small></div>
+      </div>
+      <div class="im-head-right">
+        <span class="im-mode"><span class="im-live-dot" aria-hidden="true"></span> IMMERSIVE</span>
+        <button id="imClose" type="button" class="im-close" aria-label="Chiudi Immersive Mode" title="Chiudi">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
+        </button>
+      </div>
     </header>
     <section class="im-main">
       <div class="im-art-zone">
-        <div id="imCover" class="im-cover im-no-cover" role="img" aria-label="Copertina della canzone in riproduzione"><span>✦</span></div>
-        <div class="im-art-reflection"></div>
+        <div class="im-disc" aria-hidden="true"></div>
+        <div class="im-cover-wrap">
+          <div id="imCover" class="im-cover im-no-cover" role="img" aria-label="Copertina della canzone in riproduzione"><span>✦</span></div>
+        </div>
+        <div class="im-art-reflection" aria-hidden="true"></div>
+        <p class="im-art-tag"><span aria-hidden="true">✧</span> THE MUSIC IS THE MOMENT</p>
       </div>
       <div class="im-player">
-        <p class="im-eyebrow" id="imState">ORA IN RIPRODUZIONE</p>
+        <p class="im-eyebrow"><span class="im-song-indicator" aria-hidden="true"></span><span id="imState">ORA IN RIPRODUZIONE</span></p>
         <h2 id="imTitle">Music Box</h2>
         <p id="imArtist" class="im-artist"></p>
-        <div id="imKaraoke" class="im-karaoke" aria-live="off"><p class="im-line active">Musica, luci e atmosfera.</p></div>
+        <div class="im-lyrics-head">
+          <div class="im-lyrics-heading"><span class="im-section-symbol" aria-hidden="true">♫</span><span>TESTO</span><span id="imLyricModeLabel" class="im-lyric-status">KARAOKE</span></div>
+          <button id="imFocusToggle" type="button" class="im-focus-toggle" aria-label="Ingrandisci il testo" aria-pressed="false">Focus testo <span aria-hidden="true">⤢</span></button>
+        </div>
+        <div class="im-karaoke-frame">
+          <div id="imKaraoke" class="im-karaoke" aria-live="off"><p class="im-line active">Musica, luci e atmosfera.</p></div>
+        </div>
         <div class="im-timeline">
           <input id="imSeek" type="range" min="0" max="1000" step="1" value="0" aria-label="Posizione nella canzone" />
           <div class="im-times"><span id="imCurrent">0:00</span><span id="imDuration">0:00</span></div>
         </div>
         <div class="im-controls">
-          <button id="imPrev" type="button" aria-label="Canzone precedente">⏮</button>
-          <button id="imToggle" type="button" class="im-main-play" aria-label="Play o pausa">▶</button>
-          <button id="imNext" type="button" aria-label="Canzone successiva">⏭</button>
+          <button id="imPrev" type="button" class="im-skip" aria-label="Canzone precedente" title="Precedente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14M18.5 5.5L8 12l10.5 6.5z"/></svg></button>
+          <button id="imToggle" type="button" class="im-main-play" aria-label="Riprendi" title="Riproduci o metti in pausa"><svg class="im-play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4.5L19 12 8 19.5z"/></svg><svg class="im-pause-icon" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M7 5h3v14H7zM14 5h3v14h-3z"/></svg></button>
+          <button id="imNext" type="button" class="im-skip" aria-label="Canzone successiva" title="Successivo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5v14M5.5 5.5L16 12 5.5 18.5z"/></svg></button>
         </div>
-        <button id="imLyrics" type="button" class="im-lyrics-btn">♫ Testo completo / Traduci</button>
+        <button id="imLyrics" type="button" class="im-lyrics-btn"><span>Apri il testo completo e la traduzione</span><span aria-hidden="true">↗</span></button>
       </div>
     </section>
     <div class="im-visualizer" id="imVisualizer" aria-hidden="true">
@@ -996,7 +1013,7 @@
       <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
     </div>
-    <p class="im-footer">AMBIENT LIGHTING · MUSIC BOX</p>
+    <p class="im-footer">MADE FOR THE MUSIC · MUSIC BOX</p>
   </div>
 </div>
 
@@ -1533,12 +1550,12 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 </div>
 </div>
 <script src="fuoco.js?v=6570"></script>
-<script src="app.js?v=6645"></script>
+<script src="app.js?v=6646"></script>
 <script src="stanza.js?v=6570"></script>
 <script src="amici-online.js?v=6570"></script>
 <script src="discord-presence.js?v=6570"></script>
 <script src="voice-analysis.js?v=6570"></script>
-<script src="mix-intelligente.js?v=6645"></script>
-<script src="immersive.js?v=6634"></script>
+<script src="mix-intelligente.js?v=6646"></script>
+<script src="immersive.js?v=6646"></script>
 </body>
 </html>
