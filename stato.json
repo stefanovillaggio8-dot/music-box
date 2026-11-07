@@ -3115,13 +3115,13 @@
    },
    "[\"senza armi (ft. nayt)\",\"nayt, 3d\"]": {
     "v": 3,
-    "s": 248,
+    "s": 322,
     "t": "Senza armi (ft. Nayt)",
     "a": "Nayt, 3D"
    },
    "m:2026-11|[\"senza armi (ft. nayt)\",\"nayt, 3d\"]": {
     "v": 3,
-    "s": 248,
+    "s": 322,
     "t": "Senza armi (ft. Nayt)",
     "a": "Nayt, 3D"
    },
@@ -6937,13 +6937,13 @@
    },
    "[\"voodoo\",\"guÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 88,
+    "s": 98,
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 88,
+    "s": 98,
     "t": "Voodoo",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
@@ -7711,13 +7711,13 @@
    },
    "[\"voodoo\",\"guÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 98,
+    "s": 166,
     "t": "Voodoo",
     "a": "GuÃÂÃÂ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 98,
+    "s": 166,
     "t": "Voodoo",
     "a": "GuÃÂÃÂ¨"
    },
@@ -8485,13 +8485,13 @@
    },
    "[\"voodoo\",\"guÃÂ¨\"]": {
     "v": 1,
-    "s": 166,
+    "s": 164,
     "t": "Voodoo",
     "a": "GuÃÂ¨"
    },
    "m:2026-11|[\"voodoo\",\"guÃÂ¨\"]": {
     "v": 1,
-    "s": 166,
+    "s": 164,
     "t": "Voodoo",
     "a": "GuÃÂ¨"
    },
@@ -8806,6 +8806,18 @@
     "s": 107,
     "t": "Il PiÃÂ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
+   },
+   "[\"s!r!\",\"thasup\"]": {
+    "v": 0,
+    "s": 96,
+    "t": "s!r!",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"s!r!\",\"thasup\"]": {
+    "v": 0,
+    "s": 96,
+    "t": "s!r!",
+    "a": "thasup"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 2,
@@ -9580,18 +9592,6 @@
     "s": 107,
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
-   },
-   "[\"s!r!\",\"thasup\"]": {
-    "v": 0,
-    "s": 96,
-    "t": "s!r!",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"s!r!\",\"thasup\"]": {
-    "v": 0,
-    "s": 96,
-    "t": "s!r!",
-    "a": "thasup"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
