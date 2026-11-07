@@ -332,3 +332,36 @@ test("iOS native resume restores paused intent without reviving stale events",()
  assert.deepEqual(run(false,true,true).state,{explicit:true,wants:false});
  assert.deepEqual(run(false,false,false).state,{explicit:true,wants:false});
 });
+
+test("negative-normalized real MP3 attacks survive beat-phase shifts without inventing a match",()=>{
+ const code=section(dj,"function onsetPairAgreement(","function iphoneBeatPairCertified(");
+ const compare=new Function(code+"return onsetPairAgreement;")();
+ // The source and next MP3 contain the SAME five measured kick attacks
+ // in both 2-second halves. Their decoded windows start 7/24 s apart.
+ const outgoing=Array.from({length:96},()=>-.42),
+       incoming=Array.from({length:96},()=>-.37);
+ for(const k of [8,20,32,44,56,68,80,92])outgoing[k]=2.8;
+ for(const k of [15,27,39,51,63,75,87])incoming[k]=2.7;
+ const result=compare({outroOnset:outgoing},{introOnset:incoming});
+ assert.ok(result?.certified===true);
+ assert.ok(Math.abs(result.lagMs-7*4000/96)<1);
+ assert.ok(result.firstHalf>=.4&&result.secondHalf>=.4);
+ assert.ok(result.matchedHits>=3);
+ const weak=Array.from({length:96},()=>-.4);
+ weak[15]=2.7;weak[75]=2.7;
+ assert.equal(compare({outroOnset:outgoing},{introOnset:weak})?.certified,false,
+  "only two coincident kicks are not a verified beat pattern");
+ const unrelated=Array.from({length:96},(_,i)=>i%11===0?2.8:-.4);
+ assert.equal(compare({outroOnset:outgoing},{introOnset:unrelated})?.certified,false,
+  "unrelated off-grid hits must not be described as matching beats");
+});
+
+test("DJ can reorder compatible measured grooves without falsely scheduling overlap",()=>{
+ const sectionText=section(dj,"async function intelligentShuffle(","let shuffleBusy=");
+ assert.match(sectionText,/rhythmOrderScored\.length\?rhythmOrderScored:\[\]/);
+ assert.match(sectionText,/rhythm\.score>=\.62&&ratio>=\.945/);
+ assert.match(sectionText,/mixSelectShuffle\(\{fromId,initialFirst,pickId:best\.track\.id\}\)/);
+ assert.match(sectionText,/groove misurato \(nessuna sovrapposizione autorizzata\)/);
+ assert.match(dj,/const musicallyPlayable=!!cue&&musicallyCompatibleOverlay/);
+ assert.match(dj,/if\(!verified\)\{/);
+});
