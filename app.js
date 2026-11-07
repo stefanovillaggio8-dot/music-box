@@ -16107,7 +16107,11 @@ if (SERVIZIO_PUBBLICA) {
     // snapshot that predates Gym visibility metadata. Restore ONLY the
     // published hidden Gym playlist in that case, never overwrite an
     // authoritative Worker playlist or resurrect its deleted tracks.
-    if(!gymCompletaSulWorker){
+    if(!_playlistDaSincronizzare){
+      // The published Gym policy is shared across Safari, standalone PWA
+      // and PC. Some old Worker snapshots report Gym as visible or
+      // contain only the first 13 of its 25 members. Correct that
+      // non-destructively; never overwrite an edit waiting to be uploaded.
       try{
         const r=await fetch("./playlist.json",{cache:"no-store"});
         if(r.ok){
@@ -16115,9 +16119,13 @@ if (SERVIZIO_PUBBLICA) {
           const list=Array.isArray(j)?j:Array.isArray(j?.playlist)?j.playlist:[];
           const gym=list.filter(p=>String(p?.name||"").trim().toLowerCase()==="gym"&&
             p.nascosta===true&&p.nascostaDa===DEFAULT_PROFILE);
-          if(gym.length)_unisciPlaylistCondivise(gym,false);
+          const current=_playlistCercata("gym");
+          if(gym.length&&(!gymCompletaSulWorker||!current||
+             current.nascosta!==true||current.nascostaDa!==DEFAULT_PROFILE||
+             (current.tracks||[]).length<gym[0].tracks.length))
+            _unisciPlaylistCondivise(gym,false);
         }
-      }catch(_){/* keep local and Worker playlists while offline */}
+      }catch(_){/* keep locally saved playlists while offline */}
     }
     // Never merge old static playlist.json over fresh Worker data.
     // Also prevent repeated startup fetches that lock up Safari.
