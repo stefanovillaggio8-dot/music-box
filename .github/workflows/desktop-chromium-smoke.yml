@@ -5,6 +5,7 @@ on:
     paths:
       - 'app.js'
       - 'mix-intelligente.js'
+      - 'mix-monitor-bridge.js'
       - 'index.html'
       - 'tests/desktop-chromium-smoke.cjs'
       - '.github/workflows/desktop-chromium-smoke.yml'
