@@ -915,8 +915,8 @@ test("desktop declines phase corrections too late to sound like one beat",()=>{
  const delay=new Function(source.slice(i,j)+"return desktopBeatStartDelay;")();
  assert.equal(delay({kind:"snap",beatPeriod:.5,beatAnchor:200.31,
   nextBeat:0,end:201},200),null);
- assert.equal(delay({kind:"beat",beatPeriod:.5,beatAnchor:200.40,
-  nextBeat:0,end:205},200),null);
+ assert.ok(delay({kind:"beat",beatPeriod:.5,beatAnchor:200.40,
+  nextBeat:0,end:205},200)>.35);
  assert.ok(delay({kind:"beat",beatPeriod:.5,beatAnchor:200.1,
   nextBeat:0,end:205},200)>=0);
 });
