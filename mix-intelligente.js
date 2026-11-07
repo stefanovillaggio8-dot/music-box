@@ -2268,6 +2268,10 @@ function musicallyCompatibleOverlay(a,b,cue){
 // The stored onset windows cover the final 4s of musical sound and
 // first 4s after verified digital intro silence.
 function synchronizeBeatCue(a,b,cue){
+ // A verified rhythmic-grid plan has already chosen its musical entry and
+ // exact beat, including an adjusted safeIntroAt. Recomputing from the
+ // original unmodified analysis shifts the beat phase by the intro skip.
+ if(cue?.rhythmicGridJoin===true)return cue;
  // Isolated legacy test harnesses may load only the planning functions.
  // The shipped player always includes the real onset validator.
  if(typeof onsetPairAgreement!=="function"||
