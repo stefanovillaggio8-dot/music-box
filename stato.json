@@ -3867,13 +3867,13 @@
    },
    "[\"l'anima\",\"madame\"]": {
     "v": 1,
-    "s": 220,
+    "s": 291,
     "t": "l'anima",
     "a": "madame"
    },
    "m:2026-11|[\"l'anima\",\"madame\"]": {
     "v": 1,
-    "s": 220,
+    "s": 291,
     "t": "l'anima",
     "a": "madame"
    },
@@ -10184,14 +10184,14 @@
     "a": "Modà"
    },
    "[\"passione maledetta\",\"modà\"]": {
-    "v": 4,
-    "s": 779,
+    "v": 5,
+    "s": 783,
     "t": "Passione maledetta",
     "a": "Modà"
    },
    "m:2026-11|[\"passione maledetta\",\"modà\"]": {
-    "v": 4,
-    "s": 779,
+    "v": 5,
+    "s": 783,
     "t": "Passione maledetta",
     "a": "Modà"
    },
