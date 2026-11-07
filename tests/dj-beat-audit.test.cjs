@@ -140,7 +140,7 @@ test("adversarial edits: same BPM cannot camouflage incompatible drums or chords
   i%13===0?1.2:i%5===0?.3:-.4);
  const outgoing={...a,...b,last:180,outroOnset:pulse};
  b.introOnset=pulse;
- const p={kind:"beat",beatPeriod:60/a.bpm,begin:175,end:179.8,fade:4.8};
+ const p={kind:"beat",beatPeriod:60/a.bpm,begin:176.0,end:179.8,fade:3.8};
  const base=tools.desktopBeatPairCertified(outgoing,b,p);
  assert.equal(base,true,"Positive control should be a physically close musical signature");
  const rotate=(v,shift)=>v.map((_,i)=>v[(i+shift)%12]);
