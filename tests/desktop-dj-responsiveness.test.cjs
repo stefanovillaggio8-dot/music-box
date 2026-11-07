@@ -147,7 +147,7 @@ test("a measured early musical decay outranks a proposed late soft fade without 
 });
 
 test("earlier four-second real beat windows can mix before the last impact without clipping lyrics",()=>{
- const body=section(dj,"function earlyMatchedBar(","function rhythmicReleaseBeatBridge(");
+ const body=section(dj,"function alignedEarlyOnsetAgreement(","function rhythmicReleaseBeatBridge(");
  const make=new Function("env",
   "const {clamp,hasImmediateMusicalIntro,camelotMatch,musicalIntroEntry,"+
   "onsetGridPhase,similarNotes,grooveAgreement,onsetPeriodicity,hasReliableHarmony}=env;"+
@@ -175,6 +175,8 @@ test("earlier four-second real beat windows can mix before the last impact witho
  const cue=plan(a,b,200);
  assert.ok(cue&&cue.kind==="beat", "must recognize certified earlier musical bars");
  assert.equal(cue.earlyBeatJoin,true);
+ assert.ok(cue.earlyOnsetAgreement>=.62,
+  "the actual shifted PCM rhythmic accents must match in both halves");
  assert.ok(cue.begin<a.last-6&&cue.end>=a.last-.2,
   "start before final beat but preserve the entire original ending");
  assert.equal(plan({...a,lastLyricAt:188},b,200),null,
@@ -189,6 +191,9 @@ test("earlier four-second real beat windows can mix before the last impact witho
  assert.equal(plan(a,{...b,bpm:85},200),null,
   "tempo-incompatible music cannot be aligned by a simple fade");
  assert.equal(plan(a,b,200)?.preserveTail,true);
+ assert.equal(plan(a,{...b,introOnset:Array.from({length:96},
+  (_,i)=>i%6===0?2:.05)},200),null,
+  "a dense competing rhythm is not the same drum pattern");
  assert.equal(plan(a,{...b,introOnset:Array.from({length:96},
   (_,i)=>i%12===6?2:.05)},200),null,
   "a similar BPM with off-beat percussion is NOT a synchronized musical beat");
