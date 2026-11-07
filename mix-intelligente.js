@@ -3089,7 +3089,11 @@ function naturalEndHandoff(){
    try{incoming.pause()}catch(_){}
    // Revert to standard native progression if autoplay/adoption fails.
    if(app.currentId?.()===fromId)
-    Promise.resolve().then(()=>app.mixHandoff(next.id,0))
+    Promise.resolve().then(()=>{
+     // Read the actual current queue head, not a stale DJ candidate.
+     const latest=app.mixNext?.();
+     if(latest&&app.currentId?.()===fromId)return app.mixHandoff(latest.id,0);
+    })
      .catch(e=>console.warn("[Music Box DJ] Fine naturale: ripiego fallito",e));
   }
  })();
@@ -3218,12 +3222,16 @@ function quietDirectHandoff(app,audio,id,next,entry,reason){
  const pair=id+"|"+next?.id;
  if(!app||!next||!audio||audio.paused||
     app.currentId()!==id||quietHandoffFor===pair||
+    app.mixNext?.()?.id!==next.id||
     window.MusicBoxRoom?.isActive())return false;
  quietHandoffFor=pair;
  cancel();plannedFor=next.id;plan=null;
  console.info("[Music Box DJ] Finale misurato: avvio diretto del prossimo brano",
   {outgoing:id,incoming:next.id,reason});
- Promise.resolve().then(()=>app.mixHandoff(next.id,entry))
+ Promise.resolve().then(()=>{
+  if(app.currentId?.()!==id||app.mixNext?.()?.id!==next.id)return;
+  return app.mixHandoff(next.id,entry);
+ })
   .catch(error=>console.warn("[Music Box DJ] Passaggio diretto non riuscito",String(error?.message||error)));
  return true;
 }
@@ -3308,6 +3316,7 @@ async function beginMix(song,proposed){
   function fadeStep(){
    if(active!==act)return;
    if(old.paused||app.audio()!==old||app.currentId()!==id||
+      app.mixNext?.()?.id!==song.id||
       window.MusicBoxRoom?.isActive()){cancel();return}
    const time=clamp((performance.now()-act.at)/(act.fade*1000),0,1);
    const vol=app.volume();
