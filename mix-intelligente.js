@@ -2900,6 +2900,12 @@ function startMobileMix(song,p,app,old){
   source.onended=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
+  // Safari WebAudio source.start succeeded: this is real overlap evidence.
+  try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
+   device:"iphone",fromId:mobileActive.fromId,toId:song.id,
+   kind:p.kind,actualAt:old.currentTime,cueAt:p.begin,
+   entry:p.entry,fade:p.fade
+  }}))}catch(_){}
   return true;
  }catch(e){
   mobileMixLastBlocker="Safari ha rifiutato il secondo audio: "+
@@ -3321,6 +3327,12 @@ async function beginMix(song,proposed){
       proposed.measuredPostludeBridge?.35:1.2)){cancel();return}
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
+  // Emitted only AFTER the second audio has actually started.
+  try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
+   device:"pc",fromId:id,toId:song.id,kind:proposed.kind,
+   actualAt:old.currentTime,cueAt:proposed.begin,
+   entry:proposed.entry,fade:act.fade
+  }}))}catch(_){}
   console.info("[Music Box DJ] Sovrapposizione audio avviata",
    {outgoing:id,incoming:song.id,kind:proposed.kind,
     cueAt:Number(proposed.begin.toFixed(2)),actualAt:Number(old.currentTime.toFixed(2)),
