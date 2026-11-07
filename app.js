@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.656";
+  const APP_VERSION = "6.657";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3298,7 +3298,9 @@ function _devoVedereBrano(eMio, b) {
   if (eMio) return true;
   /* l'id del brano e' b-track-<numero>, come lo chiama tutto il resto */
   const id=_idPerCopia(b);
-  return !!id && _mieiCopiati().has(id);
+  // Le tracce aggiunte volontariamente a una playlist nascosta devono
+  // essere ascoltabili li', ma non aggiunte alla libreria generale.
+  return !!id && (_mieiCopiati().has(id) || _nascostiDallePlaylist().has(id));
 }
 
   function _branoInRevisione(b) {
@@ -12186,6 +12188,7 @@ window.MusicBoxBridge = {
       window.matchMedia("(display-mode: standalone)").matches;
     return {
       profile,version:APP_VERSION,origin:location.origin,standalone,
+      sharedSource:SERVIZIO_PUBBLICA,playlistOnlyMarkerCount:_soloInPlaylist.size,
       activePlaylist:_playlistAttiva||null,
       gymPlaylistCount:gymIds.size,gymHidden:gym?.nascosta===true,
       gymOwner:gym?.nascostaDa||null,gymUnexpectedInLibrary:gymLeaks,
@@ -12199,14 +12202,7 @@ window.MusicBoxBridge = {
         .sort((x,y)=>x.id.localeCompare(y.id))
     };
   },
-  syncLibrary:async()=>{
-    // Read cloud state and playlists first, then rebuild. Keep local
-    // IndexedDB blobs, pending changes, and offline caches intact.
-    await _caricaPlaylistCondivise();
-    await _caricaStatoCondiviso();
-    await loadAll();
-    return window.MusicBoxBridge.librarySnapshot();
-  },
+  syncLibrary:()=>_sincronizzaCatalogoDispositivi(),
   profile:()=>profile,
   playable:()=>_listaPerIlSeguito(),
   allTracks:()=>tracks,
@@ -12354,6 +12350,18 @@ window.MusicBoxBridge = {
   syncScroll:()=>syncNoScroll(),
   toast:message=>toast(message,5000)
 };
+const _btnSyncCatalogo=$("btnSyncCatalogo");
+if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
+  if(_btnSyncCatalogo.disabled)return;
+  _btnSyncCatalogo.disabled=true;
+  _btnSyncCatalogo.textContent="Sincronizzo…";
+  try{
+    const s=await _sincronizzaCatalogoDispositivi();
+    toast("Libreria: "+s.visibleCount+" brani · Gym: "+s.gymPlaylistCount+
+      (s.recoveredCopies?" · recuperate "+s.recoveredCopies+" copie":"")+" · v"+APP_VERSION,6500);
+  }catch(e){toast("Sincronizzazione non riuscita: "+String(e?.message||e).slice(0,100),6500)}
+  finally{_btnSyncCatalogo.disabled=false;_btnSyncCatalogo.textContent="↻ Sincronizza"}
+});
 
 function _accendiCasuale(accendi) {
   shuffle = Boolean(accendi);
@@ -15806,6 +15814,68 @@ const j = await r.json();
     } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
   }
 
+
+  // Recupera soltanto ID di copie PUBBLICATE che un Worker in ritardo
+  // non ha ancora ricevuto. Non ripristinare eliminazioni, playlist o
+  // preferenze da un vecchio stato.json.
+  let _ultimaLetturaCopiePubblicate=0;
+  async function _recuperaCopiePubblicate() {
+    if(Date.now()-_ultimaLetturaCopiePubblicate<45000)return 0;
+    _ultimaLetturaCopiePubblicate=Date.now();
+    try {
+      const response=await fetch("./stato.json",{cache:"no-store"});
+      if(!response.ok)return 0;
+      const snapshot=await response.json();
+      const ids=Array.isArray(snapshot?.miei?.[profile])?snapshot.miei[profile]:[];
+      if(!ids.length)return 0;
+      const raw=LS.get(LS_MIEI,"{}");
+      const old=typeof raw==="string"?JSON.parse(raw):raw;
+      const saved=old&&typeof old==="object"&&!Array.isArray(old)?old:{};
+      const copies=new Set(Array.isArray(saved[profile])?saved[profile]:[]);
+      const catalogo=new Set(BUILTIN.map(_idBranoStabile));
+      let restored=0;
+      for(const item of ids){
+        const id=String(item||"");
+        if(!/^b-track-\d+$/.test(id)&&!/^b-youtube-[A-Za-z0-9_-]{11}$/.test(id))continue;
+        if(!catalogo.has(id)&&!id.startsWith("b-youtube-"))continue;
+        if(_branoEliminato(id,profile)||copies.has(id))continue;
+        copies.add(id);restored++;
+      }
+      if(restored){
+        saved[profile]=[...copies].sort();
+        LS.set(LS_MIEI,JSON.stringify(saved));
+        _salvaStatoCondiviso();
+      }
+      return restored;
+    }catch(_){return 0}
+  }
+
+  let _syncCatalogoInCorso=null;
+  function _sincronizzaCatalogoDispositivi(){
+    if(_syncCatalogoInCorso)return _syncCatalogoInCorso;
+    const job=(async()=>{
+      // Leggi le playlist e lo stato centrale prima degli ID pubblicati.
+      // Nessuna cancellazione di MP3, IndexedDB o download offline.
+      await _caricaPlaylistCondivise();
+      await _caricaStatoCondiviso();
+      const recuperate=await _recuperaCopiePubblicate();
+      await loadAll();
+      const flags=new Set([..._soloInPlaylist,
+        ...[..._nascostiDallePlaylist()].map(id=>_chiaveSoloInPlaylist(id))]);
+      if(flags.size!==_soloInPlaylist.size||
+          [...flags].some(id=>!_soloInPlaylist.has(id))){
+        _soloInPlaylist=flags;_salvaSoloInPlaylist();
+      }
+      _disegnaLinguettePlaylist();
+      render();
+      return {...window.MusicBoxBridge.librarySnapshot(),recoveredCopies:recuperate};
+    })();
+    _syncCatalogoInCorso=job;
+    job.then(()=>{if(_syncCatalogoInCorso===job)_syncCatalogoInCorso=null},
+      ()=>{if(_syncCatalogoInCorso===job)_syncCatalogoInCorso=null});
+    return job;
+  }
+
   /* Mette dentro quello che arriva dal Worker o dal sito. Ritorna true se
      ha fatto qualcosa, cosi' il chiamante sa che puo' fermarsi. */
   async function _applicaStatoCondiviso(j,fromWorker=false) {
@@ -17406,16 +17476,7 @@ await loadAll();
         // PWA and Safari keep separate storage. The playlist's hidden
         // members MUST be loaded before cloud soloInPlaylist markers:
         // concurrent requests could overwrite Gym and inflate the count.
-        try { await _caricaPlaylistCondivise(); } catch (_) {}
-        try { await _caricaStatoCondiviso(); } catch (_) {}
-        // Restore the union even if cloud returned a stale/empty list.
-        const finalFlags=new Set([..._soloInPlaylist,
-          ...[..._nascostiDallePlaylist()].map(id=>_chiaveSoloInPlaylist(id))]);
-        if(finalFlags.size!==_soloInPlaylist.size||
-           [...finalFlags].some(id=>!_soloInPlaylist.has(id))){
-          _soloInPlaylist=finalFlags;_salvaSoloInPlaylist();
-        }
-        try { _disegnaLinguettePlaylist();render(); } catch (_) {}
+        try { await _sincronizzaCatalogoDispositivi(); } catch (_) {}
       },1600);
   // If the user refreshed immediately after deleting a song, the local
   // tombstone survived but the delayed cloud POST might not have started.
