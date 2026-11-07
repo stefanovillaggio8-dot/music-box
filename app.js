@@ -1796,6 +1796,10 @@ window.addEventListener("storage", (e) => {
        (perche' viene da una versione vecchia), parto da vuoto invece di
        farmi fermare. */
     playlists = Array.isArray(st.playlists) ? st.playlists : [];
+    // Home-screen PWAs have separate browser storage. Apply the saved Gym
+    // playlist-only flags immediately, without showing its 25 songs in the
+    // ordinary library while waiting for the cloud/playlist fetch.
+    _soloInPlaylist = _ricalcolaSoloInPlaylist();
     return st;
   }
 
