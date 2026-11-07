@@ -4907,8 +4907,12 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     iphoneBeatSafe&&quietSafe;
    const pcAllowed=!!cue&&musical&&pcBeatSafe;
    const nativeSafe=isIOS?iosAllowed:pcAllowed;
-   platformResults={pc:{allowed:pcAllowed,beatCertified:pcBeatSafe},
-    iphone:{allowed:iosAllowed,beatCertified:iphoneBeatSafe}};
+   const measurableBeat=!!cue&&["beat","snap"].includes(cue.kind)&&
+    (cue.measuredBeatBridge||cue.instrumentalBeatBridge||
+     cue.verifiedHarmonicBridge||cue.rhythmicGridJoin||cue.strongBeatBridge)&&
+    !cue.pulseUnderlay&&!cue.continuityFallback;
+   platformResults={pc:{allowed:pcAllowed,beatCertified:!!(pcAllowed&&pcBeatSafe&&measurableBeat)},
+    iphone:{allowed:iosAllowed,beatCertified:!!(iosAllowed&&iphoneBeatSafe&&measurableBeat)}};
    approved=Boolean(musical&&nativeSafe);
    beatCertified=Boolean(approved&&beatSafe&&quietSafe&&
     ["beat","snap"].includes(cue?.kind)&&
@@ -4944,6 +4948,24 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    rhythmicGridJoin:!!cue.rhythmicGridJoin,
    quietCertified:!!cue.quietCertified,
    mobileSilentBridge:!!cue.mobileSilentBridge}:null;
+  const point=(at,label,evidence)=>{
+   const n=Number(at);
+   if(at===null||at===undefined||!Number.isFinite(n)||n<0)return null;
+   return {at:Math.round(n*100)/100,label,evidence,
+    selected:!!(approved&&cue&&Math.abs(n-cue.begin)<.16)};
+  };
+  const points=[
+   point(a?.dropRelease?.lastImpactAt,"Ultimo colpo musicale","audio misurato"),
+   point(a?.dropRelease?.releaseAt,"Inizio del decadimento","audio misurato"),
+   point(a?.beatAnchor,"Beat finale stimato","griglia audio"),
+   point(a?.safeOutroAt,"Finale quieto verificato","energia audio"),
+   point(cue?.begin,"Inizio del piano di mix","motore Smart Mix")
+  ].filter(Boolean).sort((x,y)=>x.at-y.at);
+  const intros=[
+   point(b?.safeIntroAt,"Intro digitale verificata","silenzio reale"),
+   point(b?.introBeat,"Primo beat intro","griglia audio"),
+   point(cue?.entry,"Entrata del piano","motore Smart Mix")
+  ].filter(Boolean).sort((x,y)=>x.at-y.at);
   return {source:"musicbox-engine",device:isIOS?"iphone":"pc",
    from:compact(from,a),to:compact(to,b),
    cue:plan,approved,certified:beatCertified,beatCertified,
@@ -4951,7 +4973,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    tempoGap:a&&b?bpmGap(a,b):null,groove:beats,
    camelotFit:key?.score??null,
    harmonicBoundary:notes?{focused:notes.focused,phrase:notes.phrase,
-    matches:notes.matches}:null,reasons};
+    matches:notes.matches}:null,candidatePoints:points,introPoints:intros,reasons};
  },
  diagnostics:()=>{
   const app=bridge(),audio=app?.audio?.(),id=app?.currentId?.(),next=app?.mixNext?.();
