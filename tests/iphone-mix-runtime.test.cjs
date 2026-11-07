@@ -99,6 +99,7 @@ test("real MP3 index contains eligible measured DJ joins but refuses unverified 
   excerpt("function grooveAgreement(","// Find a *musical* release")+
   excerpt("function compatibility(","async function decode(")+
   excerpt("function hasReliableHarmony(","function resetMobileFade(")+
+  excerpt("function onsetPairAgreement(","function iphoneBeatPairCertified(")+
   excerpt("function iphoneBeatPairCertified(","function mobileMixAllowed(")+
   "return {transition,iphoneBeatPairCertified,iphoneQuietReleaseCertified};")(false,"auto");
  let total=0,plans=0,allowed=0,lowPreview=0,strict=0,weak=0,
