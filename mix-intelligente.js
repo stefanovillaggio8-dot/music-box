@@ -3817,8 +3817,16 @@ function tick(){
      (!compatibleCandidate||
       !desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
       !iphoneQuietReleaseCertified(currentAnalysis,candidate));
-   const proposedQuiet=(weakIphoneMatch||weakDesktopMatch||!candidate)&&
-      currentAnalysis&&nextAnalysis?
+   // An ordinary late soft cue can conceal an EARLIER, independently
+   // certified musical decay. Compare both instead of automatically
+   // waiting until the outgoing song has already become silent.
+   const latePlannedSoft=Boolean(candidate&&
+      ["soft","fade","rise","continuity"].includes(candidate.kind)&&
+      Number.isFinite(candidate.begin)&&
+      Number.isFinite(currentAnalysis?.dropRelease?.releaseAt)&&
+      candidate.begin>currentAnalysis.dropRelease.releaseAt+1.2);
+   const proposedQuiet=(weakIphoneMatch||weakDesktopMatch||!candidate||
+      latePlannedSoft)&&currentAnalysis&&nextAnalysis?
        certifiedNeutralBridge(currentAnalysis,nextAnalysis,audio.duration):null;
    const certifiedQuietAlternative=proposedQuiet&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedQuiet)?
@@ -3847,7 +3855,10 @@ function tick(){
    const certifiedSilentBridge=possibleSilentBridge&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,possibleSilentBridge)?
       possibleSilentBridge:null;
-   const chosen=compatibleCandidate?candidate:null;
+   let chosen=compatibleCandidate?candidate:null;
+   if(latePlannedSoft&&certifiedQuietAlternative&&
+      certifiedQuietAlternative.begin+.65<candidate.begin)
+    chosen=certifiedQuietAlternative;
    const realBeat=chosen&&["beat","snap","phrase"].includes(chosen.kind)?chosen:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
       certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude:
