@@ -89,7 +89,8 @@ async function run(){
    assert.equal(await page.locator("#imFocusToggle").getAttribute("aria-pressed"),"true");
    const focus=await page.evaluate(()=>{const el=document.getElementById("imKaraoke");return {height:el.clientHeight,root:document.getElementById("immersivePanel").className,computed:getComputedStyle(el).height,minHeight:getComputedStyle(el).minHeight,frame:getComputedStyle(el.parentElement).height,inline:el.getAttribute("style"),matches:el.matches(".im-root.im-focus .im-karaoke"),parent:el.closest(".im-root")?.id,focusRules:[...document.styleSheets].flatMap(s=>[...s.cssRules]).filter(x=>x.selectorText?.includes(".im-root.im-focus .im-karaoke")).map(x=>x.cssText.slice(0,250))}});
    console.log("[IMMERSIVE FOCUS DEBUG]",JSON.stringify({screen:size.name,focus}));
-   assert.ok(focus.height>=220,"focus lyric stage should expand");
+   await page.waitForFunction(()=>document.getElementById("imKaraoke").clientHeight>=220,null,{timeout:4000});
+   assert.ok(await page.locator("#imKaraoke").evaluate(el=>el.clientHeight)>=220,"focus lyric stage should expand");
    await page.locator("#imToggle").click();
    await page.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
    assert.equal(await page.evaluate(()=>window.fakeCalls.toggle),1);
