@@ -1,7 +1,7 @@
 "use strict";
 const assert=require("node:assert/strict");
 const fs=require("node:fs"),http=require("node:http"),path=require("node:path");
-const {chromium}=require("playwright");
+const {chromium,webkit}=require("playwright");
 const root=path.resolve(__dirname,"..");
 const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
 const immersive=fs.readFileSync(path.join(root,"immersive.js"),"utf8");
@@ -46,9 +46,11 @@ const server=http.createServer((req,res)=>{
 });
 async function run(){
  await new Promise(resolve=>server.listen(0,"127.0.0.1",resolve));
- const browser=await chromium.launch({headless:true,
-  executablePath:fs.existsSync("/usr/bin/google-chrome")?"/usr/bin/google-chrome":undefined,
-  args:["--autoplay-policy=no-user-gesture-required"]});
+ const engine=process.env.IMMERSIVE_ENGINE==="webkit"?"webkit":"chromium";
+ const browser=await (engine==="webkit"?webkit:chromium).launch({headless:true,
+  ...(engine==="chromium"?{
+   executablePath:fs.existsSync("/usr/bin/google-chrome")?"/usr/bin/google-chrome":undefined,
+   args:["--autoplay-policy=no-user-gesture-required"]}:{} )});
  try{
   const sizes=[{name:"desktop",width:1360,height:900},{name:"iphone",width:390,height:844}];
   for(const size of sizes){
@@ -110,7 +112,7 @@ async function run(){
    await page.keyboard.press("Escape");
    await page.waitForFunction(()=>!window.MusicBoxImmersive.isOpen());
    assert.deepEqual(errors,[],"Unexpected browser errors: "+size.name);
-   console.log("[IMMERSIVE UI]",JSON.stringify({screen:size.name,state,
+   console.log("[IMMERSIVE UI]",JSON.stringify({engine,screen:size.name,state,
     karaokeScrolled:karaoke,focus:true,controls:true,errors:errors.length}));
    await context.close();
   }
