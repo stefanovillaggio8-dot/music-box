@@ -635,6 +635,7 @@ test("measure early instrumental beat matches in the real published audio index"
  const withWindows=tracks.filter(x=>Array.isArray(x.data.outroOnsetWindows)&&
    x.data.outroOnsetWindows.length>0);
  let candidates=0,tempoClose=0;
+ const steps={key:0,window:0,groove:0,notes:0,pulse:0,timing:0};
  const samples=[];
  for(const outgoing of withWindows.filter((_,i)=>i%4===0)){
   const a={...outgoing.data,lastLyricAt:0,lastVoiceAt:0,
@@ -645,6 +646,28 @@ test("measure early instrumental beat matches in the real published audio index"
    const speed=a.bpm/b.bpm;
    if(speed<.975||speed>1.025)continue;
    tempoClose++;
+   const key=tools.camelotMatch(a,b);
+   if(key.weight<.14||key.score>=.58){
+    steps.key++;
+    for(const win of a.outroOnsetWindows){
+     if(!win||!Array.isArray(win.onset)||!Array.isArray(win.groove)||
+       !Array.isArray(win.notes)||win.end>a.last-2)continue;
+     steps.window++;
+     const local={...a,outroOnset:win.onset,outroGroove:win.groove,
+      outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,outroTimeline:[]};
+     const groove=tools.grooveAgreement(local,b),
+      notes=tools.similarNotes(local,b);
+     if(!groove||groove.score<.78||groove.correlation<.56)continue;
+     steps.groove++;
+     if(!notes.matches||notes.focused<.81||notes.phrase<.73)continue;
+     steps.notes++;
+     if(!(tools.onsetPeriodicity(win.onset,a.bpm)>=.40&&
+       tools.onsetPeriodicity(b.introOnset,b.bpm)>=.40))continue;
+     steps.pulse++;
+     const fade=a.last-win.start;
+     if(fade>=4.5&&fade<=11.8)steps.timing++;
+    }
+   }
    const p=tools.transition(a,b,a.duration);
    if(p?.earlyBeatJoin===true){
     candidates++;
@@ -654,6 +677,6 @@ test("measure early instrumental beat matches in the real published audio index"
   }
  }
  console.info("[DJ EARLY-BAR AUDIT - assumed instrumental, NOT vocal-certified]",
-  JSON.stringify({withWindows:withWindows.length,tempoClose,candidates,samples}));
+  JSON.stringify({withWindows:withWindows.length,tempoClose,candidates,steps,samples}));
  assert.ok(withWindows.length>=1,"recent real MP3 index must expose new early waveform windows");
 });
