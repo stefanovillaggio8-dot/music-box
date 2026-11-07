@@ -3037,17 +3037,23 @@ function startMobileMix(song,p,app,old){
   // during a 0.6s snap. Let the native song continue instead.
   const syncMeasured=Number.isFinite(period)&&period>.20&&
     Number.isFinite(p.beatAnchor)&&Number.isFinite(p.nextBeat);
+  // iPhone's 650 ms timer often notices a long matched-bar cue between
+  // beats. Rather than rejecting a VALID early bar, let Web Audio start
+  // the incoming MP3 on the NEXT exact beat (up to one beat period later).
+  // Short snaps retain their tighter 190 ms protection.
+  const maxBeatWait=p.kind==="beat"&&p.measuredBeatBridge===true?
+    Math.min(.65,period):.19;
   if(syncMeasured&&["beat","snap","phrase"].includes(p.kind)&&
-     phase>.19&&period-phase>.045){
+     phase>maxBeatWait&&period-phase>.045){
    mobileMixLastBlocker="Beat reali fuori fase: passo al brano senza sovrapporli";
    return false;
   }
-  if(syncMeasured&&phase>.008&&phase<=.19&&
-     secondsLeft-phase<.48){
+  const delay=syncMeasured&&phase>.008&&phase<=maxBeatWait?phase:0;
+  if(syncMeasured&&
+     secondsLeft-delay<(p.kind==="beat"?Math.max(2.8,p.fade*.57):.48)){
    mobileMixLastBlocker="Beat allineato troppo tardi: lascio il finale integro";
    return false;
   }
-  const delay=phase>.008&&phase<=.19?phase:0;
   const startedAt=ctx.currentTime+delay;
   const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
    p.mobileSilentBridge?clamp(secondsLeft*.70,.22,.95):
