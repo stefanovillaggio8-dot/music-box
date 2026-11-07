@@ -1,7 +1,7 @@
 name: Music Box - Audit indipendente audio reale DJ
 on:
   push:
-    branches: [main, fix/dj-rhythm-first-shuffle-6645]
+    branches: [main]
     paths:
       - 'tools/dj-pair-waveform-audit.py'
       - '.github/workflows/dj-real-audio-audit.yml'
