@@ -19,10 +19,10 @@ test("removing only from library does not send contradictory playlist markers",(
 });
 test("worker state is authoritative even when its data is unchanged",()=>{
  const loader=excerpt("async function _caricaStatoCondiviso(", "async function _applicaStatoCondiviso(");
- assert.ok(loader.includes("await _applicaStatoCondiviso(jw.stato);"));
+ assert.ok(loader.includes("await _applicaStatoCondiviso(jw.stato,true);"));
  assert.ok(loader.includes("return;"));
- const segment=loader.slice(loader.indexOf("await _applicaStatoCondiviso(jw.stato);"),
-   loader.indexOf("} catch (e)",loader.indexOf("await _applicaStatoCondiviso(jw.stato);")));
+ const segment=loader.slice(loader.indexOf("await _applicaStatoCondiviso(jw.stato,true);"),
+   loader.indexOf("} catch (e)",loader.indexOf("await _applicaStatoCondiviso(jw.stato,true);")));
  assert.ok(segment.includes("return;"),"skip stale fallback on an unchanged Worker response");
  assert.doesNotMatch(loader,/if \(await _applicaStatoCondiviso\(jw.stato\)\) return/);
 });
@@ -212,4 +212,13 @@ test("Safari and installed PWA use the same deployed Music Box release",()=>{
  assert.ok(html.includes('app.js?v='+revision));
  assert.ok(worker.includes('const CACHE = "spotifynonavraiimieisoldi-v'+revision+'"'));
  assert.ok(html.includes('mix-intelligente.js?v='+revision));
+});
+
+test("PWA copies absent on cloud are published once without restoring deleted songs",()=>{
+ const apply=excerpt("async function _applicaStatoCondiviso(", "function _unisciPlaylistCondivise(");
+ assert.match(apply,/if\(fromWorker\)/);
+ assert.match(apply,/_branoEliminato\(id,profile\)/);
+ assert.match(apply,/mb\.copieSyncTentativo/);
+ assert.match(apply,/setTimeout\(\(\)=>_salvaStatoCondiviso\(\),1000\)/);
+ assert.match(src,/await _applicaStatoCondiviso\(j,false\)/);
 });
