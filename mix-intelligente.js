@@ -391,13 +391,25 @@ function loadDeepIndex(force=false){
    if(![1,2].includes(json?.version)||!json.entries||
       typeof json.entries!=="object")
     throw Error("Schema DJ non valido");
+   // An unchanged index should not invalidate a valid planned mix.
+   const previous=deepIndex,app=bridge();
+   const now=app?.allTracks?.()?.find(t=>t.id===app.currentId?.());
+   const nextId=app?.mixNext?.()?.id;
+   const next=app?.allTracks?.()?.find(t=>t.id===nextId);
+   const beforeNow=now?deepLookup(now):null;
+   const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
+   const changed=!previous||
+     previous.analyzed!==json.analyzed||
+     previous.sourceCount!==json.sourceCount||
+     JSON.stringify(beforeNow)!==JSON.stringify(now?deepLookup(now):null)||
+     JSON.stringify(beforeNext)!==JSON.stringify(next?deepLookup(next):null);
    deepLoadFailures=0;deepRetryAfter=0;
    if(deepRetryTimer!==null){
     clearTimeout(deepRetryTimer);deepRetryTimer=null;
    }
-   if(enabled&&!mixing){
-    // A late index must reopen a search that previously had no candidates.
+   if(enabled&&!mixing&&changed){
+    // Only updated analysis can reopen candidate selection.
     plannedFor="";plan=null;
     planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
     shuffleGeneration++;shuffleBusy=false;
@@ -2919,8 +2931,8 @@ function naturalEndHandoff(){
    const adopted=app.mixAdoptHandoff?.(next.id,incoming);
    if(!adopted)throw Error("Buffered player could not be adopted");
    await adopted;
-   console.info("[Music Box DJ] Fine naturale: prossimo MP3 già pronto, nessun beat tagliato",
-    {outgoing:fromId,incoming:next.id});
+   console.info("[Music Box DJ] Passaggio naturale: nessun beat compatibile certificato · "+
+    fromId+" → "+next.id+" (MP3 già pronto)");
   }catch(error){
    try{incoming.pause()}catch(_){}
    // Revert to standard native progression if autoplay/adoption fails.
@@ -3623,7 +3635,7 @@ function tick(){
  // A missing/incompatible musical plan must not leave a 3-5s silent tail.
  // Preload just one future track on desktop; leave iPhone unchanged.
  if(!isIOS&&(plan===null||plan.kind==="cut")&&
-    audio.duration-audio.currentTime<=25&&
+    audio.duration-audio.currentTime<=45&&
     audio.duration-audio.currentTime>2.2&&
     Date.now()>(mixFailures.get(id+"|"+next.id)||0)&&
     (!prepared||prepared.id!==next.id||prepared.fromId!==id))
@@ -4541,7 +4553,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.628",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.640",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
