@@ -403,7 +403,7 @@ test("unmeasured flat transients cannot be advertised as a final-impact beatmix"
  assert.equal(f.decision().beatCandidates,0,"not a verified harmonic beatmatch");
  assert.equal(f.decision().impactCandidates,0,"flat onset is not a beat match");
  assert.equal(f.decision().reason,
-   "ordine per BPM, groove e tonalita");
+   "raccordo dopo ultimo suono, ingresso musicale subito udibile");
  const manual=fixture({manual:true,old:outgoing,pool:[
    {analysis:next,cue:null},{analysis:next,cue:null}
  ]});
