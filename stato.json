@@ -1328,8 +1328,8 @@
     "a": "Frah Quintale"
    },
    "[\"essere noi\",\"nayt\"]": {
-    "v": 0,
-    "s": 80,
+    "v": 1,
+    "s": 114,
     "t": "Essere noi",
     "a": "nayt"
    },
@@ -3326,8 +3326,8 @@
     "a": "Lil Peep"
    },
    "m:2026-11|[\"essere noi\",\"nayt\"]": {
-    "v": 0,
-    "s": 23,
+    "v": 1,
+    "s": 57,
     "t": "Essere noi",
     "a": "nayt"
    },
@@ -3531,13 +3531,13 @@
    },
    "[\"un'idea\",\"nayt, 3d\"]": {
     "v": 3,
-    "s": 297,
+    "s": 345,
     "t": "un'idea",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"un'idea\",\"nayt, 3d\"]": {
     "v": 3,
-    "s": 297,
+    "s": 345,
     "t": "un'idea",
     "a": "nayt, 3D"
    },
@@ -9606,6 +9606,18 @@
     "s": 107,
     "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
     "a": "Jovanotti"
+   },
+   "[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "m:2026-11|[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Bocca di rosa",
+    "a": "Fabrizio De AndrÃ©"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
