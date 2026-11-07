@@ -108,7 +108,11 @@ function iphoneBeatPairCertified(a,b,cue){
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true;
  if(cue.rhythmicGridJoin===true)
-  return !!rhythmicGridEvidence(a,b)&&beatWindowContainsAudibleMusic(a,cue)&&
+  return !!rhythmicGridEvidence(a,b)&&
+   (cue.measuredRhythmicRelease!==true||
+    (rhythmicGridEvidence(a,b)?.longCompatible===true&&
+     onsetPairAgreement(a,b)?.certified===true))&&
+   beatWindowContainsAudibleMusic(a,cue)&&
    ((cue.kind==="snap"&&cue.fade>=.75&&cue.fade<=1.36)||
     (cue.kind==="beat"&&cue.quietCertified===true&&cue.fade>=3.5));
  if(cue.pulseUnderlay===true)
@@ -147,7 +151,11 @@ function desktopBeatPairCertified(a,b,p){
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
  if(p.rhythmicGridJoin===true)
-  return !!rhythmicGridEvidence(a,b)&&beatWindowContainsAudibleMusic(a,p)&&
+  return !!rhythmicGridEvidence(a,b)&&
+   (p.measuredRhythmicRelease!==true||
+    (rhythmicGridEvidence(a,b)?.longCompatible===true&&
+     onsetPairAgreement(a,b)?.certified===true))&&
+   beatWindowContainsAudibleMusic(a,p)&&
    ((p.kind==="snap"&&p.fade>=.75&&p.fade<=1.36)||
     (p.kind==="beat"&&p.quietCertified===true&&p.fade>=3.5));
  if(p.pulseUnderlay===true)
@@ -181,6 +189,28 @@ function beatWindowContainsAudibleMusic(a,cue){
  if(!a||!cue||!Number.isFinite(a.last)||
     !Number.isFinite(cue.begin)||!Number.isFinite(cue.end)||
     cue.end<=cue.begin||cue.begin<0)return false;
+ // A real final beat can be followed by its natural reverb and then
+ // several seconds of encoded silence. The strict release bridge starts
+ // WHILE the final instrumental pulses are still audible, keeps the release,
+ // and finishes BEFORE the silent tail. It is never certified by BPM alone.
+ if(cue.measuredRhythmicRelease===true){
+  const r=a.dropRelease,impact=Number(r?.lastImpactAt);
+  const voiceProof=Number.isFinite(a.lastLyricAt)&&
+    a.lastLyricAt<=cue.begin-5.5||
+    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+    a.voiceScannedEnd>=a.last-.75&&
+    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-3);
+  return !!r&&r.score>=.76&&r.quietLevel<=.18&&
+   a.protectedEnding!==true&&Number.isFinite(impact)&&
+   Number.isFinite(r.releaseAt)&&r.releaseAt>=impact&&
+   Number.isFinite(a.duration)&&a.duration-a.last>=-.2&&
+   a.duration-a.last<=12&&voiceProof&&
+   (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-5.5)&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-3)&&
+   cue.kind==="beat"&&cue.begin<=impact-1.1&&
+   cue.begin>=impact-4.25&&cue.end>=a.last-.2&&
+   cue.end<=a.last+.15&&cue.fade>=3.5&&cue.fade<=6.2;
+ }
  // Do not play a beat-match in encoded silence or after a long musical
  // decay. Allow 350ms for 100ms RMS-window measurement uncertainty.
  if(cue.end>a.last+.35)return false;
@@ -1736,6 +1766,59 @@ function rhythmicGridEvidence(a,b){
 // Mix a rhythm only when we can align the measured final bars to a
 // measured rhythmic intro. Without vocal proof use a brief subdued join;
 // a multi-second, audible beat blend needs a verified instrumental outro.
+// Beat-matched release: preserve the final note but start the incoming
+// rhythm on a measured OUTGOING beat, not after the song has gone silent.
+// This is deliberately stricter than the silent-tail fallback: it requires
+// real onset patterns, a compatible harmonic progression and vocal proof.
+function rhythmicReleaseBeatBridge(a,b,dur){
+ const r=a?.dropRelease;
+ if(!a||!b||!r||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||!Number.isFinite(dur)||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(r.lastImpactAt)||
+    !Number.isFinite(r.releaseAt)||!Number.isFinite(r.score)||
+    !Number.isFinite(r.quietLevel)||r.score<.76||r.quietLevel>.18||
+    r.releaseAt<r.lastImpactAt||a.last-r.lastImpactAt<1.15||
+    a.last-r.lastImpactAt>4.5||a.last-r.releaseAt<.65||
+    a.last-r.releaseAt>5||dur-a.last<-.2||dur-a.last>12||
+    !hasImmediateMusicalIntro(b)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2.6)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2.6))return null;
+ const evidence=rhythmicGridEvidence(a,b);
+ if(!evidence?.longCompatible||evidence.score<.77||
+    onsetPairAgreement(a,b)?.certified!==true)return null;
+ const period=60/a.bpm,entry=musicalIntroEntry(b);
+ const introOffset=(Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0)-entry;
+ const nextBeat=introOffset+onsetGridPhase(b.introOnset,b.bpm);
+ const beatAnchor=r.lastImpactAt-4+onsetGridPhase(a.outroOnset,a.bpm);
+ if(!Number.isFinite(nextBeat)||!Number.isFinite(beatAnchor)||
+    nextBeat<-.2||nextBeat>1.4)return null;
+ // Select a final-bar outgoing beat with at least 1.1 seconds of
+ // still-audible percussion; incoming first beat lands on that grid.
+ const lastMatchingBeat=beatAnchor+
+  Math.floor((r.lastImpactAt-1.20-nextBeat-beatAnchor)/period)*period;
+ const begin=lastMatchingBeat-nextBeat;
+ const end=Math.min(dur-.035,a.last+.06),fade=end-begin;
+ if(!Number.isFinite(begin)||begin<25||fade<3.5||fade>6.2||
+    begin>r.lastImpactAt-1.1||begin<r.lastImpactAt-4.25)return null;
+ const lyricSafe=Number.isFinite(a.lastLyricAt)&&
+  a.lastLyricAt<=begin-5.5;
+ const scannedSafe=!!(a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+  a.voiceScannedEnd>=a.last-.75&&
+  (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=begin-3));
+ if((!lyricSafe&&!scannedSafe)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>begin-5.5)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>begin-3))return null;
+ return {kind:"beat",begin,end,fade,entry,tempo:clamp(evidence.tempo,.975,1.025),
+  gain:1,score:Math.round(evidence.score*100),grooveScore:evidence.groove,
+  beatGridScore:evidence.score,rhythmicGridJoin:true,
+  measuredRhythmicRelease:true,measuredBeatBridge:true,
+  verifiedHarmonicBridge:true,quietCertified:true,preserveTail:true,
+  safeOutroAt:begin,softTailTrim:false,
+  silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
+  trailing:Math.max(0,dur-end),beatPeriod:period,beatAnchor,nextBeat,
+  measuredOnsetGrid:true};
+}
 function verifiedRhythmicGridBridge(a,b,dur){
  const evidence=rhythmicGridEvidence(a,b);
  if(!evidence||!Number.isFinite(a.duration)||
@@ -2302,6 +2385,8 @@ function unalignedTransition(a,b,actualDuration){
  const openingEntry=musicalIntroEntry(b);
  if(openingEntry!==(Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0))
   b={...b,safeIntroAt:openingEntry};
+ const releaseBeat=rhythmicReleaseBeatBridge(a,b,dur);
+ if(releaseBeat)return releaseBeat;
  const rhythmic=verifiedRhythmicGridBridge(a,b,dur);
  if(rhythmic)return rhythmic;
  const activeBeat=strongInstrumentalBeatBridge(a,b,dur);
