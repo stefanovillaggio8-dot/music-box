@@ -107,6 +107,11 @@ function iphoneBeatPairCertified(a,b,cue){
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true;
+ if(cue.earlyBeatJoin===true){
+  const expected=earlyMatchedBar(a,b,a?.duration);
+  return !!expected&&Math.abs(expected.begin-cue.begin)<.065&&
+    Math.abs(expected.end-cue.end)<.065;
+ }
  if(cue.rhythmicGridJoin===true)
   return !!rhythmicGridEvidence(a,b)&&
    (cue.measuredRhythmicRelease!==true||
@@ -150,6 +155,11 @@ function desktopBeatPairCertified(a,b,p){
  if(!p)return false;
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
+ if(p.earlyBeatJoin===true){
+  const expected=earlyMatchedBar(a,b,a?.duration);
+  return !!expected&&Math.abs(expected.begin-p.begin)<.065&&
+    Math.abs(expected.end-p.end)<.065;
+ }
  if(p.rhythmicGridJoin===true)
   return !!rhythmicGridEvidence(a,b)&&
    (p.measuredRhythmicRelease!==true||
@@ -189,6 +199,12 @@ function beatWindowContainsAudibleMusic(a,cue){
  if(!a||!cue||!Number.isFinite(a.last)||
     !Number.isFinite(cue.begin)||!Number.isFinite(cue.end)||
     cue.end<=cue.begin||cue.begin<0)return false;
+ if(cue.earlyBeatJoin===true)
+  return !!a.outroOnsetWindows?.some(win=>
+   Math.abs(win.start-cue.earlyWindowStart)<.05&&
+   Number(win.levelRatio)>=.23&&cue.begin>=win.start-.2&&
+   cue.begin<win.end-.25&&cue.end<=a.last+.15&&
+   cue.end>=a.last-.2&&cue.preserveTail===true);
  // A real final beat can be followed by its natural reverb and then
  // several seconds of encoded silence. The strict release bridge starts
  // WHILE the final instrumental pulses are still audible, keeps the release,
@@ -385,7 +401,7 @@ function deepLookup(track){
    ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
-  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2)$/.test(value.analyzer||"")&&
+  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return value;
  }
@@ -1770,6 +1786,75 @@ function rhythmicGridEvidence(a,b){
 // rhythm on a measured OUTGOING beat, not after the song has gone silent.
 // This is deliberately stricter than the silent-tail fallback: it requires
 // real onset patterns, a compatible harmonic progression and vocal proof.
+// Earlier four-second bars are measured from original PCM, not
+// guessed from global BPM or the encoded silent tail.
+function earlyMatchedBar(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||!Number.isFinite(a.duration)||
+    !Number.isFinite(dur)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(a.bpm)||
+    !Number.isFinite(b.bpm)||a.beatConfidence<.20||
+    b.beatConfidence<.20||b.introDrive<.45||
+    !hasImmediateMusicalIntro(b)||!Array.isArray(a.outroOnsetWindows)||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96)return null;
+ const speed=a.bpm/b.bpm;
+ if(speed<.975||speed>1.025)return null;
+ const knownLastLyric=Number.isFinite(a.lastLyricAt)?a.lastLyricAt:null;
+ const knownLastVoice=Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt:null;
+ const scanned=!!(a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+  a.voiceScannedEnd>=a.last-.75);
+ const firstNextVoice=Math.min(
+  Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+  Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if((knownLastLyric===null&&!scanned)||
+    !Number.isFinite(firstNextVoice))return null;
+ const key=camelotMatch(a,b);
+ if(key.weight>=.14&&key.score<.58)return null;
+ const period=60/a.bpm,entry=musicalIntroEntry(b),
+  nextPhase=onsetGridPhase(b.introOnset,b.bpm);
+ let winner=null;
+ for(const win of a.outroOnsetWindows){
+  if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
+     !Array.isArray(win.onset)||win.onset.length!==96||
+     !Array.isArray(win.groove)||win.groove.length!==32||
+     !hasReliableHarmony(win.notes)||Number(win.levelRatio)<.23||
+     Math.abs(win.end-win.start-4)>.12||win.end>a.last-2)continue;
+  const local={...a,outroOnset:win.onset,outroGroove:win.groove,
+   outroFinalNotes:win.notes,outroPhraseNotes:win.notes,
+   outroNotes:win.notes,outroTimeline:[]};
+  const notes=similarNotes(local,b),drums=grooveAgreement(local,b);
+  if(!drums||drums.score<.78||drums.correlation<.56||
+     notes.matches!==true||notes.focused<.81||notes.phrase<.73)continue;
+  const pulseA=onsetPeriodicity(win.onset,a.bpm),
+    pulseB=onsetPeriodicity(b.introOnset,b.bpm);
+  if(!(pulseA>=.40&&pulseB>=.40))continue;
+  const phase=onsetGridPhase(win.onset,a.bpm);
+  const beatAt=win.start+phase+
+   Math.ceil((.55-phase)/period)*period;
+  const begin=beatAt-nextPhase,end=Math.min(dur-.035,a.last+.06),
+   fade=end-begin;
+  if(!Number.isFinite(begin)||begin<26||fade<4.5||fade>9.6||
+     begin<win.start-.2||begin>win.end-.35||end<a.last-.2||
+     firstNextVoice<fade+.65||
+     (knownLastLyric!==null&&knownLastLyric>begin-5.5)||
+     (knownLastVoice!==null&&knownLastVoice>begin-4))continue;
+  const score=Math.round(100*(notes.focused*.4+
+    notes.phrase*.25+drums.score*.35));
+  const cue={kind:"beat",begin,end,fade,entry,
+   tempo:clamp(speed,.975,1.025),gain:1,score,
+   grooveScore:drums.score,beatGridScore:Math.min(pulseA,pulseB),
+   rhythmicGridJoin:true,earlyBeatJoin:true,measuredBeatBridge:true,
+   earlyWindowStart:win.start,earlyWindowEnd:win.end,
+   verifiedHarmonicBridge:true,quietCertified:true,preserveTail:true,
+   safeOutroAt:begin,softTailTrim:false,
+   silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
+   trailing:Math.max(0,dur-end),
+   beatPeriod:period,beatAnchor:win.start+phase,
+   nextBeat:nextPhase,measuredOnsetGrid:true};
+  if(!winner||score>winner.score)winner=cue;
+ }
+ return winner;
+}
 function rhythmicReleaseBeatBridge(a,b,dur){
  const r=a?.dropRelease;
  if(!a||!b||!r||a.durationMismatch||b.durationMismatch||
@@ -2354,7 +2439,7 @@ function synchronizeBeatCue(a,b,cue){
  // A verified rhythmic-grid plan has already chosen its musical entry and
  // exact beat, including an adjusted safeIntroAt. Recomputing from the
  // original unmodified analysis shifts the beat phase by the intro skip.
- if(cue?.rhythmicGridJoin===true)return cue;
+ if(cue?.rhythmicGridJoin===true||cue?.earlyBeatJoin===true)return cue;
  // Isolated legacy test harnesses may load only the planning functions.
  // The shipped player always includes the real onset validator.
  if(typeof onsetPairAgreement!=="function"||
@@ -2385,6 +2470,8 @@ function unalignedTransition(a,b,actualDuration){
  const openingEntry=musicalIntroEntry(b);
  if(openingEntry!==(Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0))
   b={...b,safeIntroAt:openingEntry};
+ const early=earlyMatchedBar(a,b,dur);
+ if(early)return early;
  const releaseBeat=rhythmicReleaseBeatBridge(a,b,dur);
  if(releaseBeat)return releaseBeat;
  const rhythmic=verifiedRhythmicGridBridge(a,b,dur);
