@@ -8187,25 +8187,31 @@ function playNext() {
     // button or headphone command has its own user-activated path.
   }
 
-  function _riproduciVolontaria() {
+  function _riproduciVolontaria(daControlloEsterno=false) {
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying()){
       window.MusicBoxRoom.control("play");return;
     }
-    _segna("riproduzione VOLUTARIA");
-    // Preserve iOS's immediate Play gesture, but suppress the stale
-    // decoder's first samples until the saved seek is really in place.
-    if(audio?.paused&&!_vuoleSuonare){
-      _preparaRipresaAudio();
-      _riallineaPausaReale();
+    // The headset / lock-screen Play command is already a native media
+    // activation. A synchronous seek, log or storage write BEFORE play()
+    // can lose that activation on iPhone Safari and installed PWAs.
+    if(!daControlloEsterno) {
+      _segna("riproduzione VOLUTARIA");
+      if(audio?.paused&&!_vuoleSuonare){
+        _preparaRipresaAudio();
+        _riallineaPausaReale();
+      }
     }
     _pausaEsplicita = false;
     _vuoleSuonare = true;
-    _segnaIntenzioneSono(true);
     _ultimoScorrimento = Date.now();
     _silenziDiFila = 0;
     if (_timerRiprove) { clearTimeout(_timerRiprove); _timerRiprove = null; }
     if (_timerAiuto) { clearTimeout(_timerAiuto); _timerAiuto = null; }
-    return doPlay();
+    // doPlay invokes the EXISTING HTMLAudioElement.play() synchronously
+    // before its first await, retaining the native iOS media session.
+    const started=doPlay();
+    _segnaIntenzioneSono(true);
+    return started;
   }
 
   async function togglePlay() {
@@ -8236,14 +8242,14 @@ function playNext() {
     try {
       switch (detail.action) {
         case "play":
-          _riproduciVolontaria();
+          _riproduciVolontaria(true);
           break;
         case "pause":
           _pausaVolontaria();
           break;
         case "toggle":
           if (audio && !audio.paused) _pausaVolontaria();
-          else _riproduciVolontaria();
+          else _riproduciVolontaria(true);
           break;
         case "next":
           playNext();
@@ -8405,7 +8411,7 @@ function _aggiornaPosizioneSchermo() {
     // through MediaSession even while document.hidden. Never unregister
     // the PAUSE action: it must clear the autorecovery intent.
     setHandler("play", () => {
-      if(currentId) _riproduciVolontaria();
+      if(currentId) _riproduciVolontaria(true);
       else if(tracks.length) playById(tracks[0].id);
     });
     setHandler("pause", () => { _pausaVolontaria(); });
