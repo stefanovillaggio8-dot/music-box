@@ -16,7 +16,7 @@ assert.doesNotMatch(immersive,/new Audio\s*\(|new AudioContext\s*\(/,
  "Immersive cannot create a second audio engine");
 const fixture=[
  '<!doctype html><html lang="it"><head>',
- '<meta name="viewport" content="width=device-width,initial-scale=1">',
+ '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">',
  '<link rel="stylesheet" href="/style.css"></head><body>',
  '<button id="btnImmersive" hidden>Immersive</button>',
  '<button id="btnLyrics" hidden>Testi</button>',
@@ -52,10 +52,16 @@ async function run(){
    executablePath:fs.existsSync("/usr/bin/google-chrome")?"/usr/bin/google-chrome":undefined,
    args:["--autoplay-policy=no-user-gesture-required"]}:{} )});
  try{
-  const sizes=[{name:"desktop",width:1360,height:900},{name:"iphone",width:390,height:844}];
+  const sizes=[
+   {name:"desktop",width:1360,height:900},
+   {name:"iphone13",width:390,height:844},
+   {name:"iphoneMini",width:375,height:667},
+   {name:"iphoneMax",width:430,height:932},
+   {name:"iphoneCompact",width:360,height:640}
+  ];
   for(const size of sizes){
    const context=await browser.newContext({viewport:{width:size.width,height:size.height},
-    ...(size.name==="iphone"?{isMobile:true,hasTouch:true}:{}),reducedMotion:"reduce"});
+    ...(size.name!=="desktop"?{isMobile:true,hasTouch:true}:{}),reducedMotion:"reduce"});
    const page=await context.newPage(),errors=[];
    page.on("pageerror",e=>errors.push(e.message));
    await page.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"load"});
@@ -77,6 +83,33 @@ async function run(){
    assert.match(state.active,/prova 2/);
    assert.ok(state.coverWidth>120,"album cover remains visible");
    assert.ok(state.overflow<=3,"no horizontal overflow: "+size.name);
+   const mobile=await page.evaluate(()=>{
+    const root=document.getElementById("immersivePanel");
+    const rect=id=>{
+     const r=document.getElementById(id).getBoundingClientRect();
+     return {top:+r.top.toFixed(1),bottom:+r.bottom.toFixed(1),height:+r.height.toFixed(1)}
+    };
+    return {vh:window.innerHeight,scrollHeight:root.scrollHeight,
+     playerBg:getComputedStyle(document.querySelector(".im-player")).backgroundColor,
+     artTag:getComputedStyle(document.querySelector(".im-art-tag")).display,
+     cover:rect("imCover"),title:rect("imTitle"),
+     lyrics:rect("imKaraoke"),seek:rect("imSeek"),
+     controls:rect("imToggle"),link:rect("imLyrics"),
+     close:rect("imClose")};
+   });
+   if(size.name!=="desktop"){
+    assert.equal(mobile.playerBg,"rgba(0, 0, 0, 0)",
+     "mobile now-playing must not be a boxed desktop glass panel");
+    assert.equal(mobile.artTag,"none",
+     "mobile view should hide decorative caption");
+    assert.ok(mobile.cover.height>=(size.height>740?180:120));
+    assert.ok(mobile.close.bottom<size.height,"close button must remain reachable");
+    if(size.height>=840){
+     assert.ok(mobile.controls.bottom<=size.height,
+      "playback must be visible without scrolling on a normal iPhone");
+    }
+   }
+   console.log("[IMMERSIVE PHONE LAYOUT]",JSON.stringify({engine,screen:size.name,mobile}));
    await page.evaluate(()=>{
     const seek=document.getElementById("imSeek");
     seek.value="600";

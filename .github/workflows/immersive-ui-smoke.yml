@@ -1,7 +1,7 @@
 name: Immersive Mode Chromium layout and controls
 on:
   push:
-    branches: [main, feat/immersive-cinema-refresh-6646]
+    branches: [main, fix/immersive-mobile-refine-6647]
     paths:
       - 'immersive.js'
       - 'style.css'
