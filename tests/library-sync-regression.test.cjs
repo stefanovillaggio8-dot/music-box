@@ -157,3 +157,46 @@ test("stale local duplicate markers cannot hide unique shared tracks",()=>{
   Array.isArray(x.value.duplicati)&&x.value.duplicati.length===0));
  assert.doesNotMatch(code,/giaNascosti\.has\(t\.id\)/);
 });
+
+test("standalone iPhone PWA reloads fresh Gym metadata without purging offline MP3s",()=>{
+ const published=JSON.parse(fs.readFileSync(path.join(__dirname,"..","playlist.json"),"utf8"));
+ const gym=published.find(p=>String(p.name).toLowerCase()==="gym");
+ assert.ok(gym&&gym.nascosta===true&&gym.nascostaDa==="Ste");
+ assert.ok(gym.tracks.length>=20,"real Gym-only playlist must stay available");
+ assert.match(worker,/\.\/playlist\.json/);
+ assert.match(worker,/const sempreFresco = \/versione\\.json\$\|stato\\.json\$\|playlist\\.json\$/);
+ const fresh=excerpt("async function _caricaPlaylistCondivise()", "let _gymInvioUltimo");
+ assert.match(fresh,/gymCompletaSulWorker/);
+ assert.match(fresh,/if\(!gymCompletaSulWorker\)/);
+ assert.match(fresh,/cache:"no-store"/);
+ assert.match(fresh,/_unisciPlaylistCondivise\(gym,false\)/);
+ const initial=excerpt("function loadProfileState()", "function saveCurrentState()");
+ assert.match(initial,/_soloInPlaylist = _ricalcolaSoloInPlaylist\(\)/);
+ assert.doesNotMatch(worker,/caches\.delete\(cacheBraniName\(/);
+});
+test("Gym tracks remain in the playlist, but not in Ste main library or count",()=>{
+ const published=JSON.parse(fs.readFileSync(path.join(__dirname,"..","playlist.json"),"utf8"));
+ const gym=published.find(p=>p.name==="gym");
+ const getFlags=excerpt("function _nascostiDallePlaylist()", "function _ricalcolaSoloInPlaylist()");
+ const read=(profile)=>new Function("playlists","profile",
+  getFlags+"return _nascostiDallePlaylist();")([gym],profile);
+ assert.deepEqual([...read("Ste")].sort(),[...new Set(gym.tracks)].sort());
+ assert.equal(read("Diego").size,0,"Ste's hidden Gym must not remove Diego songs");
+ const count=excerpt("const visibleAll = tracks.filter", "function _quantiEliminati()");
+ const helper=new Function("env",
+  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,_playlistAttiva,_playlistCercata,list,eGiaCondiviso}=env;"+
+  count+"return {total,mine};");
+ const gymSet=new Set(gym.tracks);
+ const items=[
+  {id:"b-track-1",source:"file",builtin:true},
+  ...gym.tracks.map(id=>({id,source:"file",builtin:true}))
+ ].filter((t,i,all)=>all.findIndex(x=>x.id===t.id)===i);
+ const flags=new Set([...read("Ste")].map(id=>"Ste."+id));
+ const env={tracks:items,profile:"Ste",DEFAULT_PROFILE:"Ste",_soloInPlaylist:flags,
+  _chiaveSoloInPlaylist:id=>"Ste."+id,
+  _playlistAttiva:"",_playlistCercata:()=>gym,list:items,eGiaCondiviso:()=>false};
+ const main=helper(env);
+ assert.equal(main.total,1,"Gym-only tracks must not inflate main library");
+ const inside=helper({...env,_playlistAttiva:"gym"});
+ assert.equal(inside.total,gymSet.size,"Gym tab must count exactly its own members");
+});
