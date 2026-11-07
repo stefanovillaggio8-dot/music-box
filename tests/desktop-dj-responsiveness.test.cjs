@@ -78,6 +78,8 @@ test("current release prioritizes final-impact before postlude",()=>{
  const revision=version.replace(".","");
  assert.ok(app.includes('const APP_VERSION = "'+version+'"'));
  assert.ok(html.includes('mix-intelligente.js?v='+revision));
+ assert.ok(html.includes('app.js?v='+revision),
+  'iPhone and PC must reload the matching player version');
  assert.ok(sw.includes('spotifynonavraiimieisoldi-v'+revision));
  assert.ok(dj.includes('certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)'),
   "plan must prefer final beat over the quiet postlude");
