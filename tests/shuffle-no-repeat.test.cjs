@@ -83,3 +83,44 @@ test("automatic next-song candidates exclude missing audio but browsing still sh
  assert.equal(visible(false).length,5,
    "do not hide broken/importing entries from the normal library view");
 });
+
+
+test("ten displayed shuffle songs are previews; DJ promotion changes the ACTUAL next track",()=>{
+ const start=app.indexOf("let _casualeFresche = null;");
+ const end=app.indexOf("  function nextIndex() {",start);
+ const begin=app.indexOf("mixSelectShuffle:({");
+ const until=app.indexOf("  mixHandoff:",begin);
+ assert.ok(start>0&&end>start&&begin>0&&until>begin);
+ const expression=app.slice(begin+"mixSelectShuffle:".length,until)
+   .trim().replace(/,\\s*$/,"");
+ const tracks=Array.from({length:22},(_,i)=>({
+  id:i===0?"a":"track-"+i,url:"/audio/"+i+".mp3"
+ }));
+ const make=new Function("tracks","selector",
+  'const LS={get:()=>({}),set:()=>{}},profile="Ste";'+
+  'let _playlistAttiva="",_posizionePlaylist=-1,_playlistSuona=[],'+
+  'favOnly=false,soloMaiAscoltati=false,soloScaricate=false,query="",'+
+  'shuffle=true,repeat=false,currentId="a",queue=[];'+
+  'const window={MusicBoxRoom:{isActive:()=>false},MusicBoxBridge:{}};'+
+  'let renderQueueCount=()=>{};'+
+  'const _listaPerIlSeguito=()=>tracks,_braniPlaylistInRiproduzione=()=>tracks;'+
+  app.slice(start,end)+
+  'const select=eval("("+selector+")");'+
+  'window.MusicBoxBridge.mixShufflePool=()=>tracks.filter(t=>'+
+  't.id!=="a"&&_casualeFresche.has(t.id));'+
+  'return {preview:()=>_listaProssimiCasuali(tracks,10),'+
+  'next:()=>tracks[_prossimaCasuale(tracks)]?.id,'+
+  'select,manual:id=>queue.push(id),dj:()=>_casualeSceltaDJ};');
+ const c=make(tracks,expression);
+ const firstTen=c.preview();
+ assert.equal(firstTen.length,10);
+ const outside=tracks.find(t=>t.id!=="a"&&!firstTen.includes(t.id)).id;
+ assert.equal(c.select({fromId:"a",initialFirst:firstTen[0],pickId:outside}),true);
+ assert.equal(c.preview()[0],outside);
+ assert.equal(c.next(),outside,"real auto-next must match DJ-selected first ID");
+ assert.equal(c.dj(),outside,"UI labels precisely the selected DJ candidate");
+ assert.equal(new Set(c.preview()).size,10);
+ c.manual("manual-id");
+ assert.equal(c.select({fromId:"a",initialFirst:outside,pickId:firstTen[1]}),false,
+  "a user's manual queue must override any automatic DJ reorder");
+});

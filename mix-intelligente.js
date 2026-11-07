@@ -107,6 +107,10 @@ function iphoneBeatPairCertified(a,b,cue){
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true;
+ if(cue.rhythmicGridJoin===true)
+  return !!rhythmicGridEvidence(a,b)&&beatWindowContainsAudibleMusic(a,cue)&&
+   ((cue.kind==="snap"&&cue.fade>=.60&&cue.fade<=.86)||
+    (cue.kind==="beat"&&cue.quietCertified===true&&cue.fade>=3.5));
  if(cue.pulseUnderlay===true)
   return cue.kind==="snap"&&onsetPairAgreement(a,b)?.certified===true&&
    !!measuredPulseUnderlay(a,b,a?.duration)&&
@@ -142,6 +146,10 @@ function desktopBeatPairCertified(a,b,p){
  if(!p)return false;
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
+ if(p.rhythmicGridJoin===true)
+  return !!rhythmicGridEvidence(a,b)&&beatWindowContainsAudibleMusic(a,p)&&
+   ((p.kind==="snap"&&p.fade>=.60&&p.fade<=.86)||
+    (p.kind==="beat"&&p.quietCertified===true&&p.fade>=3.5));
  if(p.pulseUnderlay===true)
   return p.kind==="snap"&&onsetPairAgreement(a,b)?.certified===true&&
    !!measuredPulseUnderlay(a,b,a?.duration)&&
@@ -1675,6 +1683,84 @@ function onsetGridPhase(values,bpm){
  }
  return bestPhase/24;
 }
+
+/* A beat match is the SAME pulse structure at the musical boundary, not
+   two MP3 files at the same tempo or a high volume-envelope score.
+   Compare periodic transients, rhythmic accents and actual boundary chords.
+   Distinct drum timbres can pass; unrelated kicks and harmonies cannot. */
+function rhythmicGridEvidence(a,b){
+ if(!a||!b||!Array.isArray(a.outroOnset)||
+    !Array.isArray(b.introOnset)||a.outroOnset.length!==96||
+    b.introOnset.length!==96||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.bpm<55||a.bpm>210||b.bpm<55||b.bpm>210||
+    a.beatConfidence<.18||b.beatConfidence<.18||
+    b.introDrive<.43)return null;
+ const tempo=a.bpm/b.bpm;
+ if(tempo<.975||tempo>1.025)return null;
+ const tailPulse=onsetPeriodicity(a.outroOnset,a.bpm);
+ const introPulse=onsetPeriodicity(b.introOnset,b.bpm);
+ if(!Number.isFinite(tailPulse)||!Number.isFinite(introPulse)||
+    tailPulse<.23||introPulse<.23)return null;
+ const g=grooveAgreement(a,b),n=similarNotes(a,b);
+ if(!g||g.score<.81||g.correlation<.62||!n||
+    Number(n.focused)<.78||Number(n.phrase)<.64||
+    (n.alignment&&n.alignment.score>0&&
+     (!n.alignment.matches||n.alignment.weakest<.50))||
+    (n.matches!==true&&!(n.focused>=.90&&n.phrase>=.84)))
+    return null;
+ const key=camelotMatch(a,b);
+ if(key.weight>=.14&&key.score<.54)return null;
+ return {tempo,groove:g.score,focus:n.focused,phrase:n.phrase,
+  pulse:Math.min(tailPulse,introPulse),
+  score:clamp(g.score*.37+n.focused*.27+n.phrase*.15+
+    Math.min(1,tailPulse)*.105+Math.min(1,introPulse)*.105,0,1)};
+}
+// Mix a rhythm only when we can align the measured final bars to a
+// measured rhythmic intro. Without vocal proof use a brief subdued join;
+// a multi-second, audible beat blend needs a verified instrumental outro.
+function verifiedRhythmicGridBridge(a,b,dur){
+ const evidence=rhythmicGridEvidence(a,b);
+ if(!evidence||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||!Number.isFinite(a.last)||
+    a.last<27||!hasImmediateMusicalIntro(b))return null;
+ const edge=Number.isFinite(a.dropRelease?.lastImpactAt)?
+    Math.min(a.last,a.dropRelease.lastImpactAt+.20):a.last;
+ const end=Math.min(dur-.04,a.last+.05);
+ if(end-edge>.40||end<27||dur-end>13||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end-5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>end-6)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<1.8)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<1.8))
+  return null;
+ const endingVoiceProven=Boolean(
+   Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=end-10||
+   a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+   a.voiceScannedEnd>=end-1&&
+   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-7));
+ const long=endingVoiceProven&&a.protectedEnding!==true;
+ const fade=long?clamp(7*60/a.bpm,3.5,4.15):
+    clamp(1.75*60/a.bpm,.64,.85);
+ const begin=end-fade;
+ if(begin<25||end-begin<.60)return null;
+ const entry=musicalIntroEntry(b);
+ return {kind:long?"beat":"snap",begin,end,fade,entry,
+  tempo:clamp(evidence.tempo,.975,1.025),gain:1,
+  score:Math.round(evidence.score*100),grooveScore:evidence.groove,
+  beatGridScore:evidence.score,rhythmicGridJoin:true,
+  measuredBeatBridge:true,verifiedMicroBeat:true,
+  verifiedHarmonicBridge:long,voiceVerifiedMicroBridge:long,
+  preserveTail:true,rhythmicUnderlay:!long,vocalVerifiedBeat:long,
+  quietCertified:long,safeOutroAt:long?begin:null,
+  silenceTrim:!!(a.confidentTail&&dur-a.last>=1.65),
+  softTailTrim:false,trailing:Math.max(0,dur-end),
+  beatPeriod:60/a.bpm,
+  beatAnchor:edge-4+onsetGridPhase(a.outroOnset,a.bpm),
+  nextBeat:(Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0)+
+   onsetGridPhase(b.introOnset,b.bpm)-entry,
+  measuredOnsetGrid:true};
+}
+
 // After a full REAL vocal scan, a short beat join is possible even when
 // the long-form chord progression is not a perfect match. Preserve the
 // outgoing final note; a missing voice measurement is never proof of safety.
@@ -2165,7 +2251,7 @@ function synchronizeBeatCue(a,b,cue){
  if(typeof onsetPairAgreement!=="function"||
     typeof onsetGridPhase!=="function")return cue;
  if(!cue||!["beat","snap","phrase"].includes(cue.kind)||
-    onsetPairAgreement(a,b)?.certified!==true||
+    (cue.rhythmicGridJoin!==true&&onsetPairAgreement(a,b)?.certified!==true)||
     !Number.isFinite(a?.last)||!Number.isFinite(a?.bpm)||
     !Number.isFinite(b?.bpm)||!(a.bpm>0)||!(b.bpm>0))return cue;
  const edge=Number.isFinite(a.dropRelease?.lastImpactAt)?
@@ -2190,6 +2276,8 @@ function unalignedTransition(a,b,actualDuration){
  const openingEntry=musicalIntroEntry(b);
  if(openingEntry!==(Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0))
   b={...b,safeIntroAt:openingEntry};
+ const rhythmic=verifiedRhythmicGridBridge(a,b,dur);
+ if(rhythmic)return rhythmic;
  const activeBeat=strongInstrumentalBeatBridge(a,b,dur);
  if(activeBeat)return activeBeat;
  const measured=measuredBeatBridge(a,b,dur);
@@ -4184,6 +4272,7 @@ async function intelligentShuffle(app,audio,fromId){
   // Real source measurements and valid cue outweigh global BPM similarity.
   const score=1+(Number(cue.grooveScore)||0)*.22+
    (Number(cue.score)||0)/100*.15+
+   (Number(cue.beatGridScore)||0)*.24+
    Math.min(.12,Math.max(0,cue.fade)/45);
   scored.push({track,cue,score});
  }
@@ -4196,7 +4285,10 @@ async function intelligentShuffle(app,audio,fromId){
   for(const candidate of rhythmOrderScored){
    const info=byId.get(candidate.track.id);
    const cue=info&&desktopFinalImpactRelay(old,info,audio.duration);
-   if(!cue||!musicallyCompatibleOverlay(old,info,cue))continue;
+   // An audible final-hit relay needs comparable notes and percussion;
+   // matching BPM alone cannot create a musically convincing transition.
+   const evidence=info&&rhythmicGridEvidence(old,info);
+   if(!cue||!evidence||!musicallyCompatibleOverlay(old,info,cue))continue;
    const notes=similarNotes(old,info),drums=grooveAgreement(old,info);
    const score=1+clamp(info.introDrive,0,1)*.14+
     clamp(drums?.score||0,0,1)*.27+
@@ -4219,9 +4311,13 @@ async function intelligentShuffle(app,audio,fromId){
  // PLAY over a rhythm/key resemblance that cannot produce a mix.
  // A similar drum pattern without compatible notes is NOT a DJ match.
  // Keep those near-misses only in diagnostics, never in the chosen queue.
- const choicePool=scored.length?scored:impactScored.length?impactScored:
-  softScored.length?softScored:postludeScored.length?postludeScored:
-  nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
+ // Musical compatibility comes before a fade. The ten random previews
+ // are not fixed: the next actual track is promoted from the full library.
+ // If no true beat match exists, pick a rhythmically similar song instead
+ // of prioritizing an unrelated overlap on a quiet tail.
+ const choicePool=scored.length?scored:nearScored.length?nearScored:
+  sequenceScored.length?sequenceScored:softScored.length?softScored:
+  impactScored.length?impactScored:postludeScored.length?postludeScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -4610,7 +4706,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.644",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.645",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

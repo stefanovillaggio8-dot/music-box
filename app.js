@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.644";
+  const APP_VERSION = "6.645";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6998,7 +6998,8 @@ function rebuildAudio(autoplay) {
       row.appendChild(info);
       const tag = document.createElement("span");
       tag.className = "queue-auto-tag";
-      tag.textContent = roomActive ? "Insieme" : "Casuale";
+      tag.textContent = roomActive ? "Insieme" :
+        (i===0&&_casualeSceltaDJ===automatico.id?"DJ Mix":"Casuale");
       row.appendChild(tag);
       if (roomActive) {
         const actions=document.createElement("div");actions.className="queue-actions";
@@ -7649,6 +7650,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       LS.remove("mb.pausaPos."+profile);
       _ultimoAvanzamentoReale=Date.now();
       _casualeModificaUtente = false; // Nuovo brano, nuova scelta intelligente consentita.
+      _casualeSceltaDJ = ""; // Previous DJ winner was consumed or skipped.
       if (_casualeProgrammate.length) {
         if (_casualeProgrammate[0] === id) _casualeProgrammate.shift();
         else _casualeProgrammate = [];
@@ -7835,6 +7837,7 @@ let _casualeUniverso = null;
 let _casualeScelto = "";
 let _casualeDa = "";
 let _casualeProgrammate = [];
+let _casualeSceltaDJ = ""; // Exactly the auto-next promoted by Smart Mix.
 let _casualeFirma = "";
 let _casualeEscluse = new Set();
 let _casualeModificaUtente = false;
@@ -7865,6 +7868,7 @@ function _preparaCicloCasuale(lista){
    saved.filter(x=>typeof x==="string"&&x.length<=256):[]);
   _casualeChiaveAttiva=key;
   _casualeProgrammate=[];_casualeScelto="";_casualeDa="";
+  _casualeSceltaDJ="";
   _casualeFirma="";_casualeEscluse.clear();_casualeModificaUtente=false;
  }
  const available=new Set(lista.filter(t=>t?.id).map(t=>t.id));
@@ -7902,6 +7906,7 @@ function _azzeraCasuale() {
   _casualeScelto = "";
   _casualeDa = "";
   _casualeProgrammate = [];
+  _casualeSceltaDJ = "";
   _casualeFirma = "";
   _casualeEscluse.clear();
   _casualeModificaUtente = false;
@@ -7948,6 +7953,7 @@ function _ordineCasualeModificato() {
 }
 function _spostaCasuale(i, direzione) {
   _casualeModificaUtente = true;
+  _casualeSceltaDJ = "";
   const j = i + direzione;
   if (i < 0 || j < 0 || j >= _casualeProgrammate.length) return;
   [_casualeProgrammate[i], _casualeProgrammate[j]] =
@@ -7956,6 +7962,7 @@ function _spostaCasuale(i, direzione) {
 }
 function _saltaCasuale(i) {
   _casualeModificaUtente = true;
+  _casualeSceltaDJ = "";
   const id = _casualeProgrammate[i];
   if (!id) return;
   _casualeEscluse.add(id);
@@ -7964,6 +7971,7 @@ function _saltaCasuale(i) {
 }
 function _rimescolaCasuale() {
   _casualeModificaUtente = true;
+  _casualeSceltaDJ = "";
   const lista = _casualeProgrammate.slice();
   for (let i = lista.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -12183,6 +12191,14 @@ window.MusicBoxBridge = {
   // randomly displayed next tracks. The DJ looks up existing measurements
   // and NEVER fetches hundreds of MP3s to choose an automatic successor.
   // Played/excluded tracks and all manually managed queues stay untouched.
+  mixShuffleSelection:()=>({
+    outgoing:currentId,
+    chosen:_casualeSceltaDJ,
+    first:_prossimoAutomaticoInCoda()?.id||"",
+    autoCount:_prossimiAutomaticiInCoda().length,
+    manualCount:queue.length,
+    userReordered:_casualeModificaUtente
+  }),
   mixShufflePool:()=>{
     if(!shuffle||queue.length||repeat||!currentId||
        window.MusicBoxRoom?.isActive()||_casualeModificaUtente)return [];
@@ -12212,6 +12228,7 @@ window.MusicBoxBridge = {
       _casualeProgrammate.splice(idx,1);
       _casualeProgrammate.unshift(pickId);
     }
+    _casualeSceltaDJ=pickId; // First actual next song, not a separate DJ queue.
     _ordineCasualeModificato();
     return true;
   },

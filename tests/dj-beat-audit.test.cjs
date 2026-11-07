@@ -16,7 +16,7 @@ const tools=new Function("isIOS","style",
  extract("function iphoneQuietReleaseCertified(","function mobileMixAllowed(")+
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
- "return {transition,synchronizeBeatCue,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,similarNotes,grooveAgreement,camelotMatch,"+
+ "return {transition,synchronizeBeatCue,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,rhythmicGridEvidence,similarNotes,grooveAgreement,camelotMatch,"+
  "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
@@ -499,4 +499,31 @@ test("strict beat overlays cannot start once the measured last kick has decayed"
  const a={last:100,dropRelease:{lastImpactAt:90.2,releaseAt:91.7}};
  const p={kind:"beat",begin:95,end:100,fade:5};
  assert.equal(tools.desktopBeatPairCertified(a,{},p),false);
+});
+
+
+test("pulse-grid beats need matching real percussion and chords, not just a crossfade",()=>{
+ const data=tracks.map(x=>x.data).find(x=>x?.introOnset?.length===96&&
+  x?.outroOnset?.length===96&&x?.introGroove?.length===32&&
+  x?.outroGroove?.length===32);
+ assert.ok(data,"must use real indexed onset and groove measurements");
+ const beat=data.outroOnset,groove=data.outroGroove;
+ const chroma=[.25,.18,.13,.10,.08,.07,.06,.05,.03,.02,.02,.01];
+ const shared={bpm:124,beatConfidence:.75,introDrive:.8,duration:180,
+  last:179.9,outroOnset:beat,introOnset:beat,
+  outroGroove:groove,introGroove:groove,
+  outroFinalNotes:chroma,outroPhraseNotes:chroma,
+  introAttackNotes:chroma,introPhraseNotes:chroma,
+  chroma,introChroma:chroma,outroChroma:chroma};
+ const a={...shared,voiceModel:true,voiceScannedEnd:180,
+  lastVoiceAt:155,lastLyricAt:155,protectedEnding:false};
+ const b={...shared,firstVoiceAt:24,firstLyricAt:24};
+ const candidate=tools.transition(a,b,180);
+ assert.ok(candidate!==null,"identical measured beats must have a candidate");
+ if(candidate.rhythmicGridJoin){
+   assert.ok(candidate.beatPeriod>0.2&&candidate.beatPeriod<1);
+   assert.ok(tools.desktopBeatPairCertified(a,b,candidate));
+ }
+ const mismatched={...b,bpm:151};
+ assert.ok(!tools.rhythmicGridEvidence(a,mismatched));
 });
