@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.640";
+  const APP_VERSION = "6.641";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7655,6 +7655,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
         else _casualeProgrammate = [];
         _casualeEscluse.clear();
       }
+      if(autoplay)_casualeSegnaAscoltata(id);
       /* Se torno dal casuale all'ordine della playlist, continua dalla
          posizione del brano realmente in ascolto, non da quella vecchia. */
       if (_posizionePlaylist >= 0 && _playlistSuona.length) {
@@ -7838,8 +7839,65 @@ let _casualeProgrammate = [];
 let _casualeFirma = "";
 let _casualeEscluse = new Set();
 let _casualeModificaUtente = false;
+let _casualeChiaveAttiva = "";
+let _casualeAscoltate = new Set();
+
+// A single durable shuffle/Smart Mix cycle per profile and playlist/filter.
+function _chiaveContestoCasuale(){
+ return JSON.stringify([_playlistAttiva||"libreria",!!favOnly,
+  !!soloMaiAscoltati,!!soloScaricate,String(query||"").trim().toLowerCase()]);
+}
+function _salvaCicloCasuale(){
+ if(!_casualeChiaveAttiva)return;
+ const key="mb.shuffle.cicli.v1."+profile;
+ const old=LS.get(key,{});
+ const saved=old&&typeof old==="object"&&!Array.isArray(old)?old:{};
+ saved[_casualeChiaveAttiva]={played:[..._casualeAscoltate],at:Date.now()};
+ const recent=Object.entries(saved).sort((a,b)=>Number(b[1]?.at||0)-
+  Number(a[1]?.at||0)).slice(0,40);
+ LS.set(key,Object.fromEntries(recent));
+}
+function _preparaCicloCasuale(lista){
+ const key=_chiaveContestoCasuale();
+ if(_casualeChiaveAttiva!==key){
+  const store=LS.get("mb.shuffle.cicli.v1."+profile,{});
+  const saved=store?.[key]?.played;
+  _casualeAscoltate=new Set(Array.isArray(saved)?
+   saved.filter(x=>typeof x==="string"&&x.length<=256):[]);
+  _casualeChiaveAttiva=key;
+  _casualeProgrammate=[];_casualeScelto="";_casualeDa="";
+  _casualeFirma="";_casualeEscluse.clear();_casualeModificaUtente=false;
+ }
+ const available=new Set(lista.filter(t=>t?.id).map(t=>t.id));
+ if(currentId&&available.has(currentId)&&!_casualeAscoltate.has(currentId)){
+  _casualeAscoltate.add(currentId);_salvaCicloCasuale();
+ }
+ _casualeUniverso=available;
+ _casualeFresche=new Set([...available].filter(id=>!_casualeAscoltate.has(id)));
+ // Remove previously played IDs from queued previews and DJ selections.
+ const unique=new Set();
+ _casualeProgrammate=_casualeProgrammate.filter(id=>{
+  if(!id||id===currentId||!_casualeFresche.has(id)||
+     _casualeEscluse.has(id)||unique.has(id))return false;
+  unique.add(id);return true;
+ });
+}
+function _casualeSegnaAscoltata(id){
+ if(!shuffle||!id||window.MusicBoxRoom?.isActive())return;
+ const list=(_posizionePlaylist>=0&&_playlistSuona.length)?
+  _braniPlaylistInRiproduzione():_listaPerIlSeguito();
+ if(!list.some(t=>t?.id===id))return;
+ _preparaCicloCasuale(list);
+ if(!_casualeAscoltate.has(id)){
+  _casualeAscoltate.add(id);_casualeFresche.delete(id);
+  _salvaCicloCasuale();
+ }
+}
 
 function _azzeraCasuale() {
+  // Forget only the preview; visited songs remain saved for this profile.
+  _casualeChiaveAttiva = "";
+  _casualeAscoltate = new Set();
   _casualeFresche = null;
   _casualeUniverso = null;
   _casualeScelto = "";
@@ -7866,25 +7924,18 @@ function _listaProssimiCasuali(lista, quanti = 10) {
   }
   /* Pianifica fino a 10 brani: resta la stessa sequenza anche
      quando l'utente apre e chiude la coda, o l'app precarica l'MP3. */
-  const fresche = new Set(_casualeFresche || ids);
-  fresche.delete(currentId);
-  for (const id of _casualeProgrammate) fresche.delete(id);
-  const limite = Math.min(quanti, ids.length > 1 ? ids.length - 1 : 0);
-  while (_casualeProgrammate.length < limite) {
-    let possibili = ids.filter(id => id !== currentId &&
-      fresche.has(id) && !_casualeProgrammate.includes(id) &&
-      !_casualeEscluse.has(id));
-    if (!possibili.length) {
-      for (const id of ids) if (id !== currentId && !_casualeProgrammate.includes(id) &&
-          !_casualeEscluse.has(id)) fresche.add(id);
-      possibili = ids.filter(id => fresche.has(id) && ! _casualeProgrammate.includes(id) && id !== currentId);
-    }
-    if (!possibili.length) break;
-    const scelto = possibili[Math.floor(Math.random() * possibili.length)];
-    _casualeProgrammate.push(scelto);
-    fresche.delete(scelto);
+  // Never fill the ten preview positions with previously heard songs.
+  const cap=Math.min(Math.max(0,quanti),_casualeFresche?.size||0);
+  const fresh=new Set(_casualeFresche);
+  for(const id of _casualeProgrammate)fresh.delete(id);
+  while(_casualeProgrammate.length<cap){
+   const choices=ids.filter(id=>id!==currentId&&fresh.has(id)&&
+     !_casualeEscluse.has(id)&&!_casualeProgrammate.includes(id));
+   if(!choices.length)break;
+   const selected=choices[Math.floor(Math.random()*choices.length)];
+   _casualeProgrammate.push(selected);fresh.delete(selected);
   }
-  return _casualeProgrammate.slice(0, limite);
+  return _casualeProgrammate.slice(0, cap);
 }
 function _ordineCasualeModificato() {
   if (_casualeProgrammate.length) {
@@ -7925,60 +7976,44 @@ function _rimescolaCasuale() {
   _ordineCasualeModificato();
 }
 
-function _prossimaCasuale(lista) {
-  if (!Array.isArray(lista) || !lista.length) return -1;
-  const disponibili = new Set(lista.map((t) => t.id));
-  if (!_casualeFresche) {
-    _casualeFresche = new Set(disponibili);
-  } else {
-    /* La libreria cambia mentre suona: rimuovi gli eliminati e aggiungi
-       i brani appena importati (compresi YouTube con MP3 cloud pronto). */
-    for (const id of _casualeFresche) {
-      if (!disponibili.has(id)) _casualeFresche.delete(id);
-    }
-    for (const id of disponibili) {
-      if (!_casualeUniverso || !_casualeUniverso.has(id)) _casualeFresche.add(id);
-    }
-  }
-  _casualeUniverso = disponibili;
-  if (currentId) _casualeFresche.delete(currentId);
-  if (!_casualeFresche.size) {
-    /* Giro concluso: rimescola senza ripetere subito il brano attuale. */
-    _casualeFresche = new Set(disponibili);
-    if (disponibili.size > 1) _casualeFresche.delete(currentId);
-    _casualeScelto = "";
-  }
-  /* Rispetta la sequenza dei 10 brani visibili nella coda e gli
-     spostamenti manuali. Non cambiare scelta fra anteprima e playback. */
-  const inPiano = _casualeProgrammate[0];
-  if (inPiano && inPiano !== currentId && disponibili.has(inPiano) &&
-      !_casualeEscluse.has(inPiano)) {
-    _casualeScelto = inPiano;
-    _casualeDa = currentId;
-    return lista.findIndex(t => t.id === inPiano);
-  }
-  /* nextIndex viene chiamato anche dal pre-caricamento del brano successivo.
-     Non deve estrarre due risultati diversi prima della riproduzione. */
-  if (_casualeDa === currentId && _casualeScelto &&
-      !_casualeEscluse.has(_casualeScelto) &&
-      _casualeFresche.has(_casualeScelto)) {
-    const i = lista.findIndex((t) => t.id === _casualeScelto);
-    if (i >= 0) return i;
-  }
-  const rimaste = lista.filter((t) => _casualeFresche.has(t.id) && !_casualeEscluse.has(t.id));
-  if (!rimaste.length) return -1;
-  const scelta = rimaste[Math.floor(Math.random() * rimaste.length)];
-  _casualeScelto = scelta.id;
-  _casualeDa = currentId;
-  return lista.findIndex((t) => t.id === scelta.id);
+function _prossimaCasuale(lista){
+ if(!Array.isArray(lista)||!lista.length)return -1;
+ _preparaCicloCasuale(lista);
+ if(!_casualeFresche.size){
+  // Every eligible song has played: only now a new cycle may begin.
+  _casualeAscoltate=new Set(currentId&&_casualeUniverso.has(currentId)?[currentId]:[]);
+  _casualeFresche=new Set([..._casualeUniverso].filter(id=>!_casualeAscoltate.has(id)));
+  _casualeProgrammate=[];_casualeScelto="";_casualeDa="";
+  _casualeEscluse.clear();_salvaCicloCasuale();
+ }
+ const first=_casualeProgrammate[0];
+ if(first&&first!==currentId&&_casualeFresche.has(first)&&
+    !_casualeEscluse.has(first)){
+  _casualeScelto=first;_casualeDa=currentId;
+  return lista.findIndex(t=>t.id===first);
+ }
+ if(_casualeDa===currentId&&_casualeScelto&&
+    _casualeFresche.has(_casualeScelto)&&!_casualeEscluse.has(_casualeScelto)){
+  const i=lista.findIndex(t=>t.id===_casualeScelto);
+  if(i>=0)return i;
+ }
+ let fresh=lista.filter(t=>_casualeFresche.has(t.id)&&!_casualeEscluse.has(t.id));
+ if(!fresh.length&&_casualeFresche.size){
+  // Skipped != played. Make skipped tracks eligible again if necessary.
+  _casualeEscluse.clear();
+  fresh=lista.filter(t=>_casualeFresche.has(t.id));
+ }
+ if(!fresh.length)return -1;
+ const selected=fresh[Math.floor(Math.random()*fresh.length)];
+ _casualeScelto=selected.id;_casualeDa=currentId;
+ return lista.findIndex(t=>t.id===selected.id);
 }
 
   function nextIndex() {
     const lista = _listaPerIlSeguito();
     if (!lista.length) return -1;
     if (shuffle && lista.length > 1) {
-      const n = _prossimaCasuale(lista);
-      return n >= 0 ? n : 0;
+      return _prossimaCasuale(lista);
     }
     const idx = lista.findIndex((x) => x.id === currentId);
     /* Se il brano che sto ascoltando non e' nella lista (l'ho appena tolto,
@@ -8549,6 +8584,7 @@ if (!sceltaCopia) updateProfileButton();
       if(offlineBusy&&offlineAbort)offlineAbort.abort();
       saveCurrentState();
       profile = name;
+      _azzeraCasuale(); // The other account has its own saved cycle.
       LS.set("mb.profile", name);
       /* Comunica il cambio di profilo al service worker per usare le cache giuste */
       if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -12165,6 +12201,7 @@ window.MusicBoxBridge = {
        _casualeProgrammate[0]!==initialFirst)return false;
     const idx=_casualeProgrammate.indexOf(pickId);
     if(idx===0)return false;
+    if(!_casualeFresche?.has(pickId)||pickId===currentId)return false;
     if(idx<0){
       // This song can be outside the ten preselected shuffle items.
       // Only a fresh, playable member of the CURRENT playlist is eligible.
@@ -12251,11 +12288,9 @@ function _toggleCasuale() {
      che non sta andando piu' in ordine. */
   const lista = (_posizionePlaylist >= 0 && _playlistSuona.length)
     ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
-  const alternative = lista.filter((t) => t.id !== currentId);
-  if (alternative.length) {
-    const id = alternative[Math.floor(Math.random() * alternative.length)].id;
-    if (id) playById(id);
-  }
+  const pick=_prossimaCasuale(lista);
+  const id=pick>=0?lista[pick]?.id:"";
+  if(id&&id!==currentId)playById(id);
   if (_playlistAttiva || (_posizionePlaylist >= 0 && _playlistSuona.length)) {
     toast('Casuale: suonano solo le canzoni di "' + _playlistAttiva + '", in ordine sparso');
   } else {
@@ -14867,10 +14902,12 @@ function _aggiornaBadgePlaylist() {
       .map((id) => tracks.find((t) => t.id === id))
       .filter((t) => t && !t.youtubeId && t.url);
     if (!brani.length) { toast("Playlist \"" + pl.name + "\": nessun audio pronto da riprodurre"); return; }
-    _playlistSuona = brani.map((t) => t.id);
-    const primo = shuffle ? brani[Math.floor(Math.random() * brani.length)].id : _playlistSuona[0];
-    _posizionePlaylist = _playlistSuona.indexOf(primo);
+    _cambiaContestoPlaylist(pl.name);
+    _playlistSuona=brani.map(t=>t.id);
     _azzeraCasuale();
+    const pick=shuffle?_prossimaCasuale(brani):0;
+    const primo=brani[Math.max(0,pick)].id;
+    _posizionePlaylist=_playlistSuona.indexOf(primo);
     chiudiPanelPlaylist();
     playById(primo);
   }
