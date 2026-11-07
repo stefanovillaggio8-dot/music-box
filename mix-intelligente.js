@@ -109,7 +109,7 @@ function iphoneBeatPairCertified(a,b,cue){
  if(!beatLike)return true;
  if(cue.rhythmicGridJoin===true)
   return !!rhythmicGridEvidence(a,b)&&beatWindowContainsAudibleMusic(a,cue)&&
-   ((cue.kind==="snap"&&cue.fade>=.60&&cue.fade<=.86)||
+   ((cue.kind==="snap"&&cue.fade>=.75&&cue.fade<=1.36)||
     (cue.kind==="beat"&&cue.quietCertified===true&&cue.fade>=3.5));
  if(cue.pulseUnderlay===true)
   return cue.kind==="snap"&&onsetPairAgreement(a,b)?.certified===true&&
@@ -148,7 +148,7 @@ function desktopBeatPairCertified(a,b,p){
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
  if(p.rhythmicGridJoin===true)
   return !!rhythmicGridEvidence(a,b)&&beatWindowContainsAudibleMusic(a,p)&&
-   ((p.kind==="snap"&&p.fade>=.60&&p.fade<=.86)||
+   ((p.kind==="snap"&&p.fade>=.75&&p.fade<=1.36)||
     (p.kind==="beat"&&p.quietCertified===true&&p.fade>=3.5));
  if(p.pulseUnderlay===true)
   return p.kind==="snap"&&onsetPairAgreement(a,b)?.certified===true&&
@@ -275,6 +275,13 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
     ending.lastVoiceAt<=plan.begin-2.5);
  }
  if(plan.kind==="snap"){
+  if(plan.rhythmicGridJoin===true)
+   return !!ending&&ending.durationMismatch!==true&&
+    plan.preserveTail===true&&plan.beatGridScore>=.69&&
+    plan.fade>=.75&&plan.fade<=1.36&&
+    (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
+    (!Number.isFinite(ending.lastVoiceAt)||
+      ending.lastVoiceAt<=plan.begin-2.5);
   if(!plan.measuredBeatBridge||plan.fade<.46)return false;
   if(plan.voiceVerifiedMicroBridge)return true;
   return plan.fade<=.86&&plan.preserveTail===true&&
@@ -1711,7 +1718,7 @@ function rhythmicGridEvidence(a,b){
  const chordScore=Number(n.alignment?.score)||0;
  const weakest=Number(n.alignment?.weakest)||0;
  const shortHarmony=n.matches===true||
-  chordScore>=.65&&weakest>=.55&&n.focused>=.78&&n.phrase>=.72||
+  chordScore>=.72&&weakest>=.58&&n.focused>=.78&&n.phrase>=.72||
   !chordScore&&n.focused>=.84&&n.phrase>=.80;
  if(!shortHarmony)return null;
  const key=camelotMatch(a,b);
@@ -1749,11 +1756,20 @@ function verifiedRhythmicGridBridge(a,b,dur){
    a.voiceScannedEnd>=end-1&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-7));
  const long=endingVoiceProven&&a.protectedEnding!==true&&evidence.longCompatible;
- const fade=long?clamp(7*60/a.bpm,3.5,4.15):
-    clamp(1.75*60/a.bpm,.64,.85);
- const begin=end-fade;
- if(begin<25||end-begin<.60)return null;
- const entry=musicalIntroEntry(b);
+ const entry=musicalIntroEntry(b),period=60/a.bpm;
+ const beatAnchor=edge-4+onsetGridPhase(a.outroOnset,a.bpm);
+ const nextBeat=(Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0)+
+   onsetGridPhase(b.introOnset,b.bpm)-entry;
+ // The beat is scheduled in advance, rather than delayed after the fade
+ // already began. The short preroll compensates for real browser tick lag.
+ const maxAudible=long?3.98:1.20,minAudible=long?3.5:.65;
+ const earliest=end-maxAudible;
+ const phase=((beatAnchor-earliest-nextBeat)%period+period)%period;
+ const beatTime=earliest+phase;
+ const audible=end-beatTime;
+ if(audible<minAudible-.001||audible>maxAudible+.001)return null;
+ const begin=beatTime-.14,fade=end-begin;
+ if(begin<25||begin<edge-4.25||fade<.60)return null;
  return {kind:long?"beat":"snap",begin,end,fade,entry,
   tempo:clamp(evidence.tempo,.975,1.025),gain:1,
   score:Math.round(evidence.score*100),grooveScore:evidence.groove,
@@ -1764,11 +1780,7 @@ function verifiedRhythmicGridBridge(a,b,dur){
   quietCertified:long,safeOutroAt:long?begin:null,
   silenceTrim:!!(a.confidentTail&&dur-a.last>=1.65),
   softTailTrim:false,trailing:Math.max(0,dur-end),
-  beatPeriod:60/a.bpm,
-  beatAnchor:edge-4+onsetGridPhase(a.outroOnset,a.bpm),
-  nextBeat:(Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0)+
-   onsetGridPhase(b.introOnset,b.bpm)-entry,
-  measuredOnsetGrid:true};
+  beatPeriod:period,beatAnchor,nextBeat,measuredOnsetGrid:true};
 }
 
 // After a full REAL vocal scan, a short beat join is possible even when
