@@ -4421,16 +4421,30 @@ async function intelligentShuffle(app,audio,fromId){
   for(const candidate of rhythmOrderScored){
    const info=byId.get(candidate.track.id);
    const cue=info&&desktopFinalImpactRelay(old,info,audio.duration);
-   // An audible final-hit relay needs comparable notes and percussion;
-   // matching BPM alone cannot create a musically convincing transition.
-   const evidence=info&&typeof rhythmicGridEvidence==="function"?
-    rhythmicGridEvidence(old,info):null;
-   if(!cue||!evidence||!musicallyCompatibleOverlay(old,info,cue))continue;
+   // A verified beat-grid join is ideal. A final-impact RELAY is a
+   // different, safer musical option: the final measured kick triggers the
+   // next intro as the old note decays. Requiring an identical multi-bar
+   // onset sequence here rejected every actual candidate and left silence.
+   // Still demand compatible boundary notes, tempo/key and measured groove;
+   // never describe this lower tier as a certified harmonic beatmatch.
+   if(!cue||!musicallyCompatibleOverlay(old,info,cue))continue;
    const notes=similarNotes(old,info),drums=grooveAgreement(old,info);
+   const key=camelotMatch(old,info);
+   const evidence=typeof rhythmicGridEvidence==="function"?
+    rhythmicGridEvidence(old,info):null;
+   const exactGrid=Boolean(evidence?.longCompatible);
+   const credibleRelay=Boolean(drums&&drums.score>=.70&&
+    Number.isFinite(notes?.focused)&&notes.focused>=.65&&
+    Number.isFinite(notes?.phrase)&&notes.phrase>=.50&&
+    (key.weight<.14||key.score>=.52)&&
+    (!notes.alignment||!Number.isFinite(notes.alignment.score)||
+     notes.alignment.score<=0||notes.alignment.score>=.53));
+   if(!exactGrid&&!credibleRelay)continue;
    const score=1+clamp(info.introDrive,0,1)*.14+
     clamp(drums?.score||0,0,1)*.27+
-    clamp(notes?.focused||0,0,1)*.08+
-    clamp(notes?.phrase||0,0,1)*.05;
+    clamp(notes?.focused||0,0,1)*.11+
+    clamp(notes?.phrase||0,0,1)*.08+
+    (exactGrid?.08:0);
    impactScored.push({track:candidate.track,cue,score});
   }
  }
