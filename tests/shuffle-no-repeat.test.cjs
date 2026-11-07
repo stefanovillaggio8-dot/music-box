@@ -46,3 +46,40 @@ test("Smart Mix selection only accepts unplayed tracks",()=>{
  assert.match(app,/if\(!_casualeFresche\?\.has\(pickId\)\|\|pickId===currentId\)return false;/);
  assert.match(app,/if\(autoplay\)_casualeSegnaAscoltata\(id\)/);
 });
+
+
+test("entering a playlist containing the current song does not schedule it again",()=>{
+ const s=make(),first=s.peek();
+ assert.ok(!first.includes("a"));
+ s.context("Gym");
+ const gym=s.peek();
+ assert.ok(gym.length>0);
+ assert.ok(!gym.includes("a"),"already playing song must be marked as visited in this context");
+ assert.equal(new Set(gym).size,gym.length,"no duplicates in playlist preview");
+ s.context("");
+ assert.ok(!s.peek().includes("a"),"library history survives changing tabs");
+});
+
+test("automatic next-song candidates exclude missing audio but browsing still shows them",()=>{
+ const start=app.indexOf("function visibleTracks(perSuono) {");
+ const end=app.indexOf("  /* Se un brano e' stato tolto",start);
+ assert.ok(start>0&&end>start);
+ const build=new Function("library",
+  'let tracks=library,profile="Ste",DEFAULT_PROFILE="Ste",_playlistAttiva="",'+
+  'favOnly=false,soloMaiAscoltati=false,soloScaricate=false,query="";'+
+  'const _soloInPlaylist=new Set(),favorites=new Set(),hiddenTracks=new Set(),'+
+  '_chiaveSoloInPlaylist=id=>id,_mieiCopiati=()=>new Set(),'+
+  'ordinaLista=list=>list,_diChe=()=>{};'+
+  app.slice(start,end)+'return visibleTracks;');
+ const visible=build([
+  {id:"playable",url:"https://example.org/a.mp3",profile:"Ste"},
+  {id:"missing-url",url:"",profile:"Ste"},
+  {id:"undefined-url",profile:"Ste"},
+  {id:"waiting-video",youtubeId:"pending",url:"https://example.org/video",profile:"Ste"},
+  {id:"friend",url:"https://example.org/f.mp3",profile:"Diego"}
+ ]);
+ assert.deepEqual(visible(true).map(t=>t.id),["playable"],
+   "auto-next and DJ should see only playable tracks owned by the current profile");
+ assert.equal(visible(false).length,5,
+   "do not hide broken/importing entries from the normal library view");
+});

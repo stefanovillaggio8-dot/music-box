@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.642";
+  const APP_VERSION = "6.643";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4695,7 +4695,7 @@ function visibleTracks(perSuono) {
       /* Per la coda: niente canzoni degli altri, se non me l'ha chiesto. */
 if (perLaCoda) {
       // I link video non sono sorgenti audio per riproduzione continua/auto-next.
-      list=list.filter(t=>!t.youtubeId);
+      list=list.filter(t=>!t.youtubeId&&!!t.url);
       /* Per la coda contano le canzoni del profilo aperto e quelle che ho
          copiato nella mia libreria. Ste ha tolto l'interruttore "fai suonare
          anche le canzoni degli altri": non serve piu', perche' le canzoni di
