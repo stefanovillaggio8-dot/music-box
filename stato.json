@@ -3913,13 +3913,13 @@
    },
    "[\"lucifero\",\"kid yugi\"]": {
     "v": 0,
-    "s": 109,
+    "s": 162,
     "t": "Lucifero",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"lucifero\",\"kid yugi\"]": {
     "v": 0,
-    "s": 109,
+    "s": 162,
     "t": "Lucifero",
     "a": "Kid Yugi"
    },
@@ -4159,13 +4159,13 @@
    },
    "[\"punto d'incontro\",\"nayt\"]": {
     "v": 0,
-    "s": 88,
+    "s": 118,
     "t": "Punto d'incontro",
     "a": "nayt"
    },
    "m:2026-11|[\"punto d'incontro\",\"nayt\"]": {
     "v": 0,
-    "s": 88,
+    "s": 118,
     "t": "Punto d'incontro",
     "a": "nayt"
    },
@@ -6601,13 +6601,13 @@
    },
    "[\"lasciami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 381,
+    "s": 420,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 381,
+    "s": 420,
     "t": "Lasciami",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7375,13 +7375,13 @@
    },
    "[\"lasciami\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 420,
+    "s": 483,
     "t": "Lasciami",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"lasciami\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 420,
+    "s": 483,
     "t": "Lasciami",
     "a": "ModÃÂÃÂ "
    },
