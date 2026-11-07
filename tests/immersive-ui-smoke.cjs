@@ -83,6 +83,7 @@ async function run(){
    });
    assert.equal(await page.evaluate(()=>window.fakeAudio.currentTime),144);
    await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("19"));
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke").scrollTop>20,null,{timeout:4000});
    const karaoke=await page.evaluate(()=>document.querySelector("#imKaraoke").scrollTop);
    assert.ok(karaoke>20,"synced karaoke scrolls to the active line");
    await page.locator("#imFocusToggle").click();
