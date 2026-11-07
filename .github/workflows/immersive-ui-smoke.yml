@@ -1,0 +1,30 @@
+name: Immersive Mode Chromium layout and controls
+on:
+  push:
+    branches: [main, feat/immersive-cinema-refresh-6646]
+    paths:
+      - 'immersive.js'
+      - 'style.css'
+      - 'index.html'
+      - 'tests/immersive-ui-smoke.cjs'
+      - '.github/workflows/immersive-ui-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Immersive JavaScript syntax
+        run: node --check immersive.js && node --check tests/immersive-ui-smoke.cjs
+      - name: Install Chromium browser test
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          test -x /usr/bin/google-chrome
+      - name: Test desktop and mobile viewport karaoke, controls and scrolling
+        run: node tests/immersive-ui-smoke.cjs
