@@ -31,6 +31,12 @@ try:
     assert a["outroChroma"] and len(a["outroChroma"])==12
     assert "outroTimeline" in a and "introTimeline" in a
     assert "introOnset" in a and "outroOnset" in a
+    assert isinstance(a["outroOnsetWindows"],list)
+    for w in a["outroOnsetWindows"]:
+        assert w["end"] < a["last"] - 3.5
+        assert w["start"] < w["end"] and len(w["onset"]) == 96
+        assert len(w["groove"]) == 32 and len(w["notes"]) == 12
+        assert w["levelRatio"] >= .23
     for fingerprint in [a["introOnset"],a["outroOnset"]]:
         if fingerprint is not None:
             assert len(fingerprint)==96
