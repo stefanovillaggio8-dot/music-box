@@ -23,6 +23,7 @@ function fillCurrent(){
  $("imCover").style.backgroundImage=img?"url("+JSON.stringify(img)+")":"";
  $("imBackdrop").style.backgroundImage=img?"url("+JSON.stringify(img)+")":"";
  $("imCover").classList.toggle("im-no-cover",!img);
+ $("imCover").setAttribute("aria-label",img?"Copertina di "+title:"Copertina non disponibile per "+title);
  $("imBackdrop").classList.toggle("im-no-cover",!img);
  lastLyricsId="";
  lastLyrics=null;
@@ -66,6 +67,9 @@ function renderLyrics(force){
    karaoke.replaceChildren(fragment);
    karaoke.classList.toggle("has-lines",!!next?.text||lyricTimed);
    karaoke.classList.toggle("approximate",!lyricTimed);
+   const status=$("imLyricModeLabel");
+   if(status)status.textContent=lyricTimed?"SINCRONIZZATO":
+     next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
    karaoke.scrollTop=0;
   }
   lastLyricsRefreshAt=Date.now();
@@ -87,8 +91,10 @@ function renderLyrics(force){
  }
  if(index===lastLine)return;
  lastLine=index;
- for(let i=0;i<karaoke.children.length;i++)
+ for(let i=0;i<karaoke.children.length;i++){
   karaoke.children[i].classList.toggle("active",i===index);
+  karaoke.children[i].classList.toggle("past",i<index);
+ }
  const active=karaoke.children[index];
  if(active){
   const top=Math.max(0,active.offsetTop-(karaoke.clientHeight-active.offsetHeight)/2);
@@ -106,10 +112,14 @@ function paint(){
  if(!seek.matches(":active")&&document.activeElement!==seek){
   seek.value=length?String(Math.min(1000,Math.round(position/length*1000))):"0";
  }
+ seek.style.setProperty("--im-progress",(Math.max(0,Math.min(1000,Number(seek.value)||0))/10)+"%");
  $("imCurrent").textContent=fmt(position);
  $("imDuration").textContent=fmt(length);
- $("imToggle").textContent=a?.paused?"▶":"❚❚";
- $("imToggle").setAttribute("aria-label",a?.paused?"Riprendi":"Metti in pausa");
+ const paused=!a||a.paused;
+ $("imToggle").querySelector(".im-play-icon").hidden=!paused;
+ $("imToggle").querySelector(".im-pause-icon").hidden=paused;
+ $("imToggle").setAttribute("aria-label",paused?"Riprendi":"Metti in pausa");
+ $("immersivePanel").classList.toggle("im-paused",paused);
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
  if(Date.now()-lastLyricsRefreshAt>3500)renderLyrics(true);
@@ -121,6 +131,9 @@ function open(){
  const root=$("immersivePanel");if(!root)return;
  focusBefore=document.activeElement;
  opened=true;lastId="";lastLyricsId="";
+ root.classList.remove("im-focus");
+ $("imFocusToggle").setAttribute("aria-pressed","false");
+ $("imFocusToggle").innerHTML='Focus testo <span aria-hidden="true">⤢</span>';
  lockBefore=document.body.classList.contains("no-scroll");
  root.hidden=false;
  document.body.classList.add("no-scroll");
@@ -138,6 +151,15 @@ function close(){
  try{focusBefore?.focus?.({preventScroll:true})}catch(e){}
 }
 function toggle(){opened?close():open()}
+function toggleFocus(){
+ if(!opened)return;
+ const enabled=$("immersivePanel").classList.toggle("im-focus"),button=$("imFocusToggle");
+ button.setAttribute("aria-pressed",String(enabled));
+ button.setAttribute("aria-label",enabled?"Riduci il testo":"Ingrandisci il testo");
+ button.innerHTML=enabled?'Mostra copertina <span aria-hidden="true">⤡</span>':
+  'Focus testo <span aria-hidden="true">⤢</span>';
+ lastLine=-1;renderLyrics(false);
+}
 function seekTo(){
  const b=api(),a=b?.audio?.();if(!a||!Number.isFinite(a.duration)||a.duration<=0)return;
  const seconds=Math.min(a.duration,Math.max(0,Number($("imSeek").value)/1000*a.duration));
@@ -167,12 +189,25 @@ function start(){
  $("imPrev")?.addEventListener("click",goBack);
  $("imNext")?.addEventListener("click",goNext);
  $("imLyrics")?.addEventListener("click",textPanel);
+ $("imFocusToggle")?.addEventListener("click",toggleFocus);
  $("imSeek")?.addEventListener("change",seekTo);
- $("imSeek")?.addEventListener("input",()=>{const a=api()?.audio?.();$("imCurrent").textContent=fmt((Number(a?.duration)||0)*Number($("imSeek").value)/1000)});
+ $("imSeek")?.addEventListener("input",()=>{
+  const a=api()?.audio?.(),seek=$("imSeek");
+  $("imCurrent").textContent=fmt((Number(a?.duration)||0)*Number(seek.value)/1000);
+  seek.style.setProperty("--im-progress",(Number(seek.value)/10)+"%");
+ });
  const root=$("immersivePanel");
  root?.addEventListener("pointerdown",e=>{if(e.target===root)close()});
- root?.addEventListener("touchstart",e=>{gestureY=e.touches?.[0]?.clientY??null},{passive:true});
- root?.addEventListener("touchend",e=>{if(gestureY!=null&&e.changedTouches?.[0]?.clientY-gestureY>140)close();gestureY=null},{passive:true});
+ // A swipe inside karaoke must SCROLL the lyrics, not dismiss the player.
+ root?.addEventListener("touchstart",e=>{
+  const target=e.target;
+  const dismissible=target===root||target.closest?.(".im-head");
+  gestureY=dismissible?e.touches?.[0]?.clientY??null:null;
+ },{passive:true});
+ root?.addEventListener("touchend",e=>{
+  if(gestureY!=null&&e.changedTouches?.[0]?.clientY-gestureY>140)close();
+  gestureY=null;
+ },{passive:true});
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&opened){e.preventDefault();close()}});
  window.addEventListener("popstate",()=>{if(opened)close()});
  const btn=$("btnImmersive");
