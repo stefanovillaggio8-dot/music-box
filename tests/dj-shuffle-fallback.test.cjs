@@ -388,7 +388,7 @@ test("measured final postlude chooses audible next song, not faint random intro"
  await manual.run();assert.equal(manual.selected(),null,"do not override manual queues");
 });
 
-test("verified last-impact cue replaces near-silent auto next, not a manual queue",async()=>{
+test("unmeasured flat transients cannot be advertised as a final-impact beatmix",async()=>{
  const outgoing={duration:100,last:95.2,bpm:120,beatConfidence:.35,
    lastLyricAt:70,lastVoiceAt:72,protectedEnding:false,
    dropRelease:{lastImpactAt:92.7,releaseAt:93.1,score:.78,quietLevel:.22}};
@@ -401,9 +401,9 @@ test("verified last-impact cue replaces near-silent auto next, not a manual queu
  await f.run();
  assert.equal(f.selected()?.pickId,3,"cue must be on measured impact, not later silence");
  assert.equal(f.decision().beatCandidates,0,"not a verified harmonic beatmatch");
- assert.equal(f.decision().impactCandidates,1);
+ assert.equal(f.decision().impactCandidates,0,"flat onset is not a beat match");
  assert.equal(f.decision().reason,
-   "ingresso sul colpo finale misurato, non beatmatch armonico");
+   "ordine per BPM, groove e tonalita");
  const manual=fixture({manual:true,old:outgoing,pool:[
    {analysis:next,cue:null},{analysis:next,cue:null}
  ]});
