@@ -12,13 +12,14 @@ function write(name,value){try{localStorage.setItem(key+name,JSON.stringify(valu
 const state={
  device:/iPhone|iPad|iPod/i.test(navigator.userAgent)?"iphone":"pc",view:"overview",
  index:null,rows:[],catalog:[],events:read("events",[]),snapshots:read("snapshots",[]),
- manual:read("manual",{}),checks:[],results:[],lastResult:null,lastLive:null,lastLiveAt:0,
+ manual:read("manual",{}),checks:[],results:read("results",[]),lastResult:null,lastLive:null,lastLiveAt:0,
  version:"—",page:0,batch:[],channel:null,pending:new Map(),toastTimer:null,
  lastStatusDevice:null,indexError:null
 };
 state.events=Array.isArray(state.events)?state.events.slice(-650):[];
 state.snapshots=Array.isArray(state.snapshots)?state.snapshots.slice(-50):[];
 state.manual=state.manual&&typeof state.manual==="object"?state.manual:{};
+state.results=Array.isArray(state.results)?state.results.slice(-400):[];
 function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("visible");clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove("visible"),2500)}
 function platformLabel(d){return d==="iphone"?"iPhone":"PC"}
 function changeView(view){
@@ -283,7 +284,7 @@ async function inspect(from,to){
 function rememberResult(r){state.lastResult=r;state.results.push({device:state.device,at:new Date().toISOString(),from:r.from?.id||r.from?.title,to:r.to?.id||r.to?.title,
  source:r.source,approved:r.approved,certified:r.certified,beatCertified:r.beatCertified,
  reasons:r.reasons?.slice(0,8)||[],cue:r.cue?{kind:r.cue.kind,begin:r.cue.begin,end:r.cue.end,fade:r.cue.fade}:null});
- state.results=state.results.slice(-400);renderOverview()}
+ state.results=state.results.slice(-400);write("results",state.results);renderOverview()}
 function renderResult(r){
  const a=r.from?.info||{},b=r.to?.info||{},g=r.groove?.score,tempoGap=r.tempoGap;
  const certified=r.approved===true&&r.certified===true;
@@ -470,7 +471,7 @@ async function importReport(file){
    state.snapshots.push(s);ids.add(s.id);
   }
   if(obj.manual&&typeof obj.manual==="object")state.manual={...state.manual,...obj.manual};
-  if(Array.isArray(obj.results))state.results=[...state.results,...obj.results.slice(-250)].slice(-400);
+  if(Array.isArray(obj.results))state.results=[...state.results,...obj.results.slice(-250)].slice(-400);write("results",state.results);
   write("snapshots",state.snapshots);write("manual",state.manual);renderAll();toast("Report "+platformLabel(obj.device)+" importato");
  }catch(e){toast("Importazione fallita: "+String(e?.message||e))}
 }
