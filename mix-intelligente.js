@@ -69,6 +69,10 @@ function mobileClipWindow(audio) {
 // Independent original-MP3 comparison showed similar BPM/chords are not
 // enough: 391->1164/598 had -0.16 aligned rhythmic correlation. Require
 // the newly measured 4-second drum/onset profiles before any beat overlay.
+// Compare actual positive drum transients after beat-phase alignment.
+// Librosa normalizes the quiet onset floor to NEGATIVE values. The old
+// signed correlation and its ±125 ms phase veto rejected compatible MP3s
+// that the timed DJ player could synchronize on the next real beat.
 function onsetPairAgreement(a,b){
  const tail=a?.outroOnset,head=b?.introOnset,n=96;
  if(!Array.isArray(tail)||!Array.isArray(head)||
@@ -76,31 +80,39 @@ function onsetPairAgreement(a,b){
     tail.some(v=>!Number.isFinite(v))||
     head.some(v=>!Number.isFinite(v)))return null;
  const correlate=(shift,from=0,to=n)=>{
-  let dot=0,xx=0,yy=0,count=0;
+  let dot=0,xx=0,yy=0,hits=0,firstHits=0,secondHits=0,count=0;
   for(let i=from;i<to;i++){
    const j=i+shift;
    if(j<0||j>=n)continue;
-   const x=tail[i],y=head[j];
+   const x=Math.max(0,tail[i]),y=Math.max(0,head[j]);
    dot+=x*y;xx+=x*x;yy+=y*y;count++;
+   if(x>=1.2&&y>=1.2){
+    hits++;
+    if(i<48)firstHits++;else secondHits++;
+   }
   }
-  if(count<(to-from)*.78||xx<2||yy<2)return null;
-  return dot/Math.sqrt(xx*yy);
+  if(count<(to-from)*.76||xx<1.5||yy<1.5)return null;
+  return {score:dot/Math.sqrt(xx*yy),hits,firstHits,secondHits};
  };
  const zero=correlate(0);
- if(!Number.isFinite(zero))return null;
- let best=zero,shift=0;
- for(let d=-12;d<=12;d++){
-  const score=correlate(d);
-  if(Number.isFinite(score)&&score>best){best=score;shift=d}
+ if(!zero)return null;
+ // This is an ANALYSIS offset, not a guessed playback start. The DJ
+ // still has to align the incoming audio on a measured beat and pass
+ // independent harmony, tempo, vocal and outro safety checks.
+ let best={...zero,shift:0};
+ for(let shift=-12;shift<=12;shift++){
+  const result=correlate(shift);
+  if(result&&result.score>best.score)best={...result,shift};
  }
- // A similar BPM or one coincident kick is insufficient. Both halves
- // of the ACTUAL 4-second PCM onset join must keep a common rhythm.
- const firstHalf=correlate(shift,0,48),secondHalf=correlate(shift,48,96);
- const certified=best>=.58&&zero>=.37&&Math.abs(shift)<=3&&
-  Number.isFinite(firstHalf)&&firstHalf>=.20&&
-  Number.isFinite(secondHalf)&&secondHalf>=.20;
- return {atZero:zero,best,lagMs:shift*4000/n,
-  firstHalf,secondHalf,certified};
+ const first=correlate(best.shift,0,48),
+       second=correlate(best.shift,48,96);
+ const certified=best.score>=.61&&
+  Number.isFinite(first?.score)&&first.score>=.40&&
+  Number.isFinite(second?.score)&&second.score>=.40&&
+  best.hits>=3&&best.firstHits>=1&&best.secondHits>=1;
+ return {atZero:zero.score,best:best.score,lagMs:best.shift*4000/n,
+  firstHalf:first?.score??null,secondHalf:second?.score??null,
+  matchedHits:best.hits,certified};
 }
 function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
@@ -4447,7 +4459,7 @@ async function intelligentShuffle(app,audio,fromId){
      if(harmony.focused>=.60&&harmony.phrase>=.45)
       harmonicCandidates++;
      // Rhythm-only sorting never certifies a harmonic beat mix.
-     if(rhythm.score>=.66&&ratio>=.945&&ratio<=1.055&&
+     if(rhythm.score>=.62&&ratio>=.945&&ratio<=1.055&&
         info.introDrive>=.43&&info.beatConfidence>=.16){
       const key=camelotMatch(old,info);
       const keyFit=key.weight>=.14?key.score:.5;
@@ -4635,7 +4647,8 @@ async function intelligentShuffle(app,audio,fromId){
  // safe, verified release takes precedence over guessing at beat identity.
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
-  nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:
+  rhythmOrderScored.length?rhythmOrderScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -4657,13 +4670,14 @@ async function intelligentShuffle(app,audio,fromId){
      "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
-      "ritmo simile, raccordo continuo (non beat certificato)"};
+      "ordine basato su groove misurato (nessuna sovrapposizione autorizzata)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
     impactScored.length?"[Music Box DJ] Scelta automatica: beat FINALE reale, fade controllato":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
     postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
     nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
-     "[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)",
+    sequenceScored.length?"[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)":
+     "[Music Box DJ] Scelta automatica: groove reale affine, passaggio prudente",
     {outgoing:fromId,incoming:best.track.id,
      fade:best.cue?.fade?.toFixed(1)??null,
      checked:measured.length,available:pool.length});
@@ -4701,7 +4715,8 @@ async function intelligentShuffle(app,audio,fromId){
   impactScored.length+" attacchi sul colpo finale, "+
   postludeScored.length+" raccordi su finale concluso, "+
   nearScored.length+" brani affini, "+rhythmCandidates+
-  " ritmi compatibili su "+measured.length+" analizzati. "+
+  " ritmi compatibili, "+rhythmOrderScored.length+
+  " ordini ritmici su "+measured.length+" analizzati. "+
   shuffleLastDecision.reason);
  return {retry:unknown.length>picked.length&&noMatch,
   checked:measured.length,missing:unknown.length,noMatch};
