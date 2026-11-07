@@ -200,3 +200,40 @@ test("earlier four-second real beat windows can mix before the last impact witho
  assert.match(dj,/librosa-onsets-chroma-rms-v4-windows/,
   "new indexed beat windows must be loaded on both desktop and iPhone");
 });
+
+test("headphone Play starts native media before seek and storage",()=>{
+ const code=section(app,"function _riproduciVolontaria(","async function togglePlay()");
+ const trace=[];
+ const make=()=>new Function("env",
+  'const {window,audio,trace}=env;'+
+  'let _pausaEsplicita=true,_vuoleSuonare=false,_ultimoScorrimento=0,'+
+  '_silenziDiFila=0,_timerRiprove=null,_timerAiuto=null;'+
+  'const _segna=()=>trace.push("log"),'+
+  '_preparaRipresaAudio=()=>trace.push("prepare-seek"),'+
+  '_riallineaPausaReale=()=>trace.push("seek"),'+
+  '_segnaIntenzioneSono=()=>trace.push("storage"),'+
+  'doPlay=()=>{trace.push("native-play");return Promise.resolve(true)};'+
+  code+'return _riproduciVolontaria;')({
+   window:{MusicBoxRoom:{isActive:()=>false}},
+   audio:{paused:true},trace
+  });
+ make()(true);
+ assert.deepEqual(trace,["native-play","storage"]);
+ trace.length=0;
+ make()(false);
+ assert.deepEqual(trace.slice(0,4),["log","prepare-seek","seek","native-play"]);
+ assert.ok(app.includes('if(currentId) _riproduciVolontaria(true);'));
+ assert.ok(app.includes('case "play":\n          _riproduciVolontaria(true);'));
+});
+
+test("iPhone early matched beats wait for Web Audio's exact grid",()=>{
+ const code=section(dj,
+  '  const maxBeatWait=p.kind==="beat"&&p.measuredBeatBridge===true?',
+  '  const startedAt=ctx.currentTime+delay;');
+ const wait=new Function("p","phase","period","syncMeasured","secondsLeft",
+  'let mobileMixLastBlocker="";'+code+'return delay;');
+ assert.equal(wait({kind:"beat",measuredBeatBridge:true,fade:7},.41,.5,true,7),.41);
+ assert.equal(wait({kind:"snap",measuredBeatBridge:true,fade:.8},.41,.5,true,2),false);
+ assert.equal(wait({kind:"beat",measuredBeatBridge:true,fade:7},.41,.5,true,3),false);
+ assert.equal(wait({kind:"beat",measuredBeatBridge:true,fade:7},.035,.5,true,7),.035);
+});
