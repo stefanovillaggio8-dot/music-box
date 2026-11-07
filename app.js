@@ -5370,8 +5370,13 @@ function _eliminatiRimossiDaMandareSvuota() {
     const libraryAll=visibleAll.filter(t=>
       !_soloInPlaylist.has(_chiaveSoloInPlaylist(t.id))&&
       !(profile===DEFAULT_PROFILE&&_soloInPlaylist.has(t.id)));
-    const total=(_playlistAttiva?visibleAll:libraryAll).length;
-    const mine=(_playlistAttiva?visibleAll:libraryAll)
+    // A playlist tab counts ONLY its own songs. The normal library
+    // excludes playlist-only Gym tracks, on Safari and standalone iPhone.
+    const currentPlaylist=_playlistAttiva?_playlistCercata(_playlistAttiva):null;
+    const countSource=_playlistAttiva?visibleAll.filter(t=>
+      !!currentPlaylist&&(currentPlaylist.tracks||[]).includes(t.id)):libraryAll;
+    const total=countSource.length;
+    const mine=countSource
       .filter(t=>!t.builtin&&!t.preview&&!eGiaCondiviso(t)).length;
     const n = list.length;
 function _quantiEliminati() {
@@ -15963,7 +15968,8 @@ function _unisciPlaylistCondivise(arrivate,daWorker=false) {
         const oldIds=Array.isArray(gia.tracks)?gia.tracks:[];
         if(oldIds.length!==newIds.length||
            oldIds.some((id,i)=>id!==newIds[i])||
-           gia.nascosta!==(p.nascosta===true)){
+           gia.nascosta!==(p.nascosta===true)||
+           String(gia.nascostaDa||"")!==String(p.nascostaDa||"")){
           gia.tracks=newIds;
           gia.nascosta=p.nascosta===true;
           gia.nascostaDa=String(p.nascostaDa||"");
@@ -16036,7 +16042,7 @@ function _unisciPlaylistCondivise(arrivate,daWorker=false) {
 }
 
 async function _caricaPlaylistCondivise() {
-  let workerValido=false;
+  let workerValido=false,gymCompletaSulWorker=false;
   /* Prima provo dal Worker, che e' chi le scrive e quindi ha le piu' fresche.
 
      Ste: "posso modificare il titolo e l'artista solo nell'app di github, e
@@ -16052,6 +16058,10 @@ if (SERVIZIO_PUBBLICA) {
       const j = await r.json();
       if (Array.isArray(j && j.playlist)&&j.playlist.length) {
         workerValido=true;
+        gymCompletaSulWorker=j.playlist.some(p=>
+          String(p?.name||"").trim().toLowerCase()==="gym"&&
+          (p.nascosta===false||p.nascosta===true&&
+           typeof p.nascostaDa==="string"&&!!p.nascostaDa));
         const arrivate = _unisciPlaylistCondivise(j.playlist,true);
         if (arrivate) {
           try { segnalaErrore("playlist dal worker: " + playlists.length + " in tutto"); } catch (e) {}
@@ -16061,6 +16071,22 @@ if (SERVIZIO_PUBBLICA) {
   } catch (e) { /* senza rete uso il file sul sito */ }
   }
   if(workerValido){
+    // An installed PWA can have an isolated storage partition and a Worker
+    // snapshot that predates Gym visibility metadata. Restore ONLY the
+    // published hidden Gym playlist in that case, never overwrite an
+    // authoritative Worker playlist or resurrect its deleted tracks.
+    if(!gymCompletaSulWorker){
+      try{
+        const r=await fetch("./playlist.json",{cache:"no-store"});
+        if(r.ok){
+          const j=await r.json();
+          const list=Array.isArray(j)?j:Array.isArray(j?.playlist)?j.playlist:[];
+          const gym=list.filter(p=>String(p?.name||"").trim().toLowerCase()==="gym"&&
+            p.nascosta===true&&p.nascostaDa===DEFAULT_PROFILE);
+          if(gym.length)_unisciPlaylistCondivise(gym,false);
+        }
+      }catch(_){/* keep local and Worker playlists while offline */}
+    }
     // Never merge old static playlist.json over fresh Worker data.
     // Also prevent repeated startup fetches that lock up Safari.
     if(_playlistDaSincronizzare)
