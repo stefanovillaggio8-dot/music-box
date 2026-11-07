@@ -601,5 +601,17 @@ test("real indexed pulse grid survives against mismatched BPM and chord progress
  assert.equal(plan?.rhythmicGridJoin,true);
  assert.equal(plan.kind,"snap","without verified singer ending, use only a short protected beat");
  assert.equal(tools.desktopBeatPairCertified(a.data,b.data,plan),true);
+ assert.ok(plan.fade>=.75&&plan.fade<=1.36);
+ const wait=tools.desktopBeatStartDelay(plan,plan.begin);
+ assert.ok(wait!==null&&wait>=.08&&wait<=.19,
+  "pre-roll must start before a real kick so it can enter in phase");
+ const beat=plan.begin+wait+plan.nextBeat;
+ const error=Math.abs(((beat-plan.beatAnchor)/plan.beatPeriod)-
+  Math.round((beat-plan.beatAnchor)/plan.beatPeriod))*plan.beatPeriod;
+ assert.ok(error<=.045,"the audible next kick must land on the old beat grid");
+ const wrongA=find("audio/songs/track-78.mp3"),
+  wrongB=find("audio/songs/track-966.mp3");
+ assert.equal(tools.rhythmicGridEvidence(wrongA.data,wrongB.data),null,
+  "the independently decoded 0.215-correlation pair must not pass");
  assert.equal(tools.rhythmicGridEvidence(a.data,{...b.data,bpm:169}),null);
 });
