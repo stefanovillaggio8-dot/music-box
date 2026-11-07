@@ -453,18 +453,32 @@ test("real Ste final-impact eligible incoming MP3s",()=>{
  const outgoing=find("audio/songs/track-1197.mp3")?.data;
  assert.ok(outgoing);
  const scanned={...outgoing,lastLyricAt:215.11,lastVoiceAt:213.59};
- const eligible=[];
+ const eligible=[],selected=[];
  for(const track of tracks){
   if(!own.has(track.key)||track.key.endsWith("track-1197.mp3"))continue;
   const plan=tools.desktopFinalImpactRelay(scanned,track.data,scanned.duration);
-  if(plan)eligible.push({id:track.key,introDrive:track.data.introDrive,
-    grooveScore:plan.grooveScore,begin:plan.begin,end:plan.end,
-    finalImpactAt:plan.finalImpactAt});
+  if(!plan)continue;
+  const n=tools.similarNotes(scanned,track.data),
+    g=tools.grooveAgreement(scanned,track.data),
+    k=tools.camelotMatch(scanned,track.data);
+  const fit=!!(g&&g.score>=.70&&Number.isFinite(n?.focused)&&
+   n.focused>=.65&&Number.isFinite(n?.phrase)&&n.phrase>=.50&&
+   (k.weight<.14||k.score>=.52)&&
+   (!n.alignment||!Number.isFinite(n.alignment.score)||
+     n.alignment.score<=0||n.alignment.score>=.53));
+  const sample={id:track.key,introDrive:track.data.introDrive,
+   grooveScore:plan.grooveScore,focus:short(n.focused),
+   phrase:short(n.phrase),key:short(k.score),keyWeight:short(k.weight),
+   begin:plan.begin,end:plan.end,finalImpactAt:plan.finalImpactAt};
+  eligible.push(sample);
+  if(fit)selected.push(sample);
  }
  eligible.sort((a,b)=>b.grooveScore-a.grooveScore);
  console.info("[DJ STE REAL FINAL BEAT JOIN]",JSON.stringify({
-  owned:own.size,eligible:eligible.length,top:eligible.slice(0,12)}));
+  owned:own.size,eligible:eligible.length,selected:selected.length,
+  top:eligible.slice(0,12)}));
  assert.ok(eligible.length>=1,"must have a real eligible musical successor for track 1197");
+ assert.ok(selected.length>=1,"the DJ must be able to pick at least one real compatible final-impact relay");
  assert.ok(eligible.every(p=>p.begin<241.3&&p.end>243.9));
 });
 
