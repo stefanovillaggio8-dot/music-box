@@ -593,6 +593,9 @@ test("real indexed pulse grid survives against mismatched BPM and chord progress
  const a=find("audio/songs/track-378.mp3"),b=find("audio/songs/track-91.mp3");
  assert.ok(a&&b);
  const evidence=tools.rhythmicGridEvidence(a.data,b.data);
+ const bad=find("audio/songs/track-78.mp3"),badNext=find("audio/songs/track-966.mp3");
+ console.info("[DJ ONSET VALIDATION PAIRS]",JSON.stringify({good:tools.onsetPairAgreement(a.data,b.data),
+  bad:tools.onsetPairAgreement(bad.data,badNext.data)}));
  assert.ok(evidence,"real measured kick patterns should have a strict positive example");
  const plan=tools.transition(a.data,b.data,a.data.duration);
  assert.equal(plan?.rhythmicGridJoin,true);
