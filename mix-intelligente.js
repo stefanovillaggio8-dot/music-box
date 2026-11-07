@@ -1701,18 +1701,28 @@ function rhythmicGridEvidence(a,b){
  const tailPulse=onsetPeriodicity(a.outroOnset,a.bpm);
  const introPulse=onsetPeriodicity(b.introOnset,b.bpm);
  if(!Number.isFinite(tailPulse)||!Number.isFinite(introPulse)||
-    tailPulse<.23||introPulse<.23)return null;
+    tailPulse<.20||introPulse<.20)return null;
  const g=grooveAgreement(a,b),n=similarNotes(a,b);
- if(!g||g.score<.81||g.correlation<.62||!n||
-    Number(n.focused)<.78||Number(n.phrase)<.64||
-    (n.alignment&&n.alignment.score>0&&
-     (!n.alignment.matches||n.alignment.weakest<.50))||
-    (n.matches!==true&&!(n.focused>=.90&&n.phrase>=.84)))
-    return null;
+ if(!g||g.score<.775||g.correlation<.55||!n||
+    !Number.isFinite(n.focused)||!Number.isFinite(n.phrase)||
+    n.focused<.76||n.phrase<.65)return null;
+ // A one-beat join can preserve a strong boundary chord even if the
+ // songs do not share the same full multi-bar chord progression.
+ const chordScore=Number(n.alignment?.score)||0;
+ const weakest=Number(n.alignment?.weakest)||0;
+ const shortHarmony=n.matches===true||
+  chordScore>=.65&&weakest>=.55&&n.focused>=.78&&n.phrase>=.72||
+  !chordScore&&n.focused>=.84&&n.phrase>=.80;
+ if(!shortHarmony)return null;
  const key=camelotMatch(a,b);
  if(key.weight>=.14&&key.score<.54)return null;
+ // Multi-second beats still need a full convincing chord progression.
+ const longCompatible=Boolean(
+  n.matches===true&&(n.alignment?.matches===true||
+    !n.alignment&&n.focused>=.91)||
+  chordScore>=.78&&weakest>=.70&&n.focused>=.86&&n.phrase>=.82);
  return {tempo,groove:g.score,focus:n.focused,phrase:n.phrase,
-  pulse:Math.min(tailPulse,introPulse),
+  longCompatible,pulse:Math.min(tailPulse,introPulse),
   score:clamp(g.score*.37+n.focused*.27+n.phrase*.15+
     Math.min(1,tailPulse)*.105+Math.min(1,introPulse)*.105,0,1)};
 }
@@ -1738,7 +1748,7 @@ function verifiedRhythmicGridBridge(a,b,dur){
    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
    a.voiceScannedEnd>=end-1&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-7));
- const long=endingVoiceProven&&a.protectedEnding!==true;
+ const long=endingVoiceProven&&a.protectedEnding!==true&&evidence.longCompatible;
  const fade=long?clamp(7*60/a.bpm,3.5,4.15):
     clamp(1.75*60/a.bpm,.64,.85);
  const begin=end-fade;
