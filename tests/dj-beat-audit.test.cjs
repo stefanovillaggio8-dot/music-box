@@ -548,3 +548,35 @@ test("measure how many real indexed songs can actually match rhythmic grids",()=
  console.info("[DJ REAL RHYTHM GRID]",JSON.stringify({sampled,grid,bridges,examples}));
  assert.ok(sampled>40000);
 });
+
+
+test("diagnose real-index musical match stages without inventing BPM agreements",()=>{
+ const stat={sampled:0,tempo:0,withOnsets:0,pulseA:0,bothPulse:0,
+  withGroove:0,withNotes:0,fullyMatched:0};const near=[];
+ for(let i=0;i<tracks.length;i+=7)for(let j=0;j<tracks.length;j+=3){
+  const a=tracks[i].data,b=tracks[j].data;stat.sampled++;
+  if(!(a.bpm>55&&b.bpm>55&&a.bpm/b.bpm>=.975&&a.bpm/b.bpm<=1.025))continue;
+  stat.tempo++;
+  if(a.outroOnset?.length!==96||b.introOnset?.length!==96)continue;
+  stat.withOnsets++;
+  const pa=tools.onsetPeriodicity(a.outroOnset,a.bpm),
+    pb=tools.onsetPeriodicity(b.introOnset,b.bpm);
+  if(!(pa>=.18))continue;
+  stat.pulseA++;
+  if(!(pb>=.18))continue;
+  stat.bothPulse++;
+  const g=tools.grooveAgreement(a,b);
+  if(!g||g.score<.75||g.correlation<.5)continue;
+  stat.withGroove++;
+  const n=tools.similarNotes(a,b);
+  if(!(n.focused>=.72&&n.phrase>=.60))continue;
+  stat.withNotes++;
+  const k=tools.camelotMatch(a,b);
+  if(k.weight>=.14&&k.score<.5)continue;
+  stat.fullyMatched++;
+  if(near.length<9)near.push({a:i,b:j,tempo:a.bpm/b.bpm,
+   pulse:[pa,pb],groove:g.score,focus:n.focused,phrase:n.phrase});
+ }
+ console.info("[DJ REAL MATCH GATES]",JSON.stringify({stat,near}));
+ assert.ok(stat.sampled>40000);
+});
