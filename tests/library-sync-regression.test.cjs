@@ -200,3 +200,14 @@ test("Gym tracks remain in the playlist, but not in Ste main library or count",(
  const inside=helper({...env,_playlistAttiva:"gym"});
  assert.equal(inside.total,gymSet.size,"Gym tab must count exactly its own members");
 });
+
+test("Safari and installed PWA use the same deployed Music Box release",()=>{
+ const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const revision=version.replace(".","");
+ assert.match(version,/^\d+\.\d+$/);
+ assert.ok(src.includes('const APP_VERSION = "'+version+'"'));
+ assert.ok(html.includes('app.js?v='+revision));
+ assert.ok(worker.includes('const CACHE = "spotifynonavraiimieisoldi-v'+revision+'"'));
+ assert.ok(html.includes('mix-intelligente.js?v='+revision));
+});
