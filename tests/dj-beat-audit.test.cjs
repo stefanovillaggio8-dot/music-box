@@ -587,3 +587,16 @@ test("diagnose real-index musical match stages without inventing BPM agreements"
  console.info("[DJ REAL MATCH GATES]",JSON.stringify({stat,near}));
  assert.ok(stat.sampled>40000);
 });
+
+
+test("real indexed pulse grid survives against mismatched BPM and chord progressions",()=>{
+ const a=find("audio/songs/track-378.mp3"),b=find("audio/songs/track-91.mp3");
+ assert.ok(a&&b);
+ const evidence=tools.rhythmicGridEvidence(a.data,b.data);
+ assert.ok(evidence,"real measured kick patterns should have a strict positive example");
+ const plan=tools.transition(a.data,b.data,a.data.duration);
+ assert.equal(plan?.rhythmicGridJoin,true);
+ assert.equal(plan.kind,"snap","without verified singer ending, use only a short protected beat");
+ assert.equal(tools.desktopBeatPairCertified(a.data,b.data,plan),true);
+ assert.equal(tools.rhythmicGridEvidence(a.data,{...b.data,bpm:169}),null);
+});
