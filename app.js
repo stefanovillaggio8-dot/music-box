@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.657";
+  const APP_VERSION = "6.658";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12182,6 +12182,9 @@ window.MusicBoxBridge = {
     const local=all.filter(t=>!t.builtin);
     const gym=_playlistCercata("gym");
     const gymIds=new Set(Array.isArray(gym?.tracks)?gym.tracks:[]);
+    // Conserva gli ID della playlist anche quando manca il file MP3:
+    // una voce non disponibile non va conteggiata come canzone riproducibile.
+    const gymUnavailableIds=[...gymIds].filter(id=>!all.some(t=>t.id===id)).sort();
     const gymLeaks=profile===DEFAULT_PROFILE&&gym?.nascosta===true?
       visible.filter(t=>gymIds.has(t.id)).map(t=>t.id):[];
     const standalone=typeof window.matchMedia==="function"&&
@@ -12190,7 +12193,8 @@ window.MusicBoxBridge = {
       profile,version:APP_VERSION,origin:location.origin,standalone,
       sharedSource:SERVIZIO_PUBBLICA,playlistOnlyMarkerCount:_soloInPlaylist.size,
       activePlaylist:_playlistAttiva||null,
-      gymPlaylistCount:gymIds.size,gymHidden:gym?.nascosta===true,
+      gymPlaylistCount:gymIds.size,gymPlayableCount:gymIds.size-gymUnavailableIds.length,
+      gymUnavailableIds,gymHidden:gym?.nascosta===true,
       gymOwner:gym?.nascostaDa||null,gymUnexpectedInLibrary:gymLeaks,
       totalLoaded:all.length,
       visibleCount:visible.length,localOnlyCount:local.length,
@@ -12357,8 +12361,10 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   _btnSyncCatalogo.textContent="Sincronizzo…";
   try{
     const s=await _sincronizzaCatalogoDispositivi();
-    toast("Libreria: "+s.visibleCount+" brani · Gym: "+s.gymPlaylistCount+
-      (s.recoveredCopies?" · recuperate "+s.recoveredCopies+" copie":"")+" · v"+APP_VERSION,6500);
+    toast("Libreria: "+s.visibleCount+" brani · Gym disponibili: "+
+      s.gymPlayableCount+"/"+s.gymPlaylistCount+
+      (s.gymUnavailableIds?.length?" · ID da recuperare: "+s.gymUnavailableIds.join(", "):"")+
+      (s.recoveredCopies?" · recuperate "+s.recoveredCopies+" copie":"")+" · v"+APP_VERSION,7500);
   }catch(e){toast("Sincronizzazione non riuscita: "+String(e?.message||e).slice(0,100),6500)}
   finally{_btnSyncCatalogo.disabled=false;_btnSyncCatalogo.textContent="↻ Sincronizza"}
 });
