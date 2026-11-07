@@ -3676,10 +3676,3 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
  .im-cover,.im-art-zone,.im-cover-wrap,.im-controls button,.im-line{animation:none!important;transition:none!important;}
  .im-karaoke{scroll-behavior:auto;}
 }
-
-/* Keep karaoke itself as tall as its focus frame. A legacy karaoke
-   sizing rule may otherwise retain the normal 158px viewport. */
-#immersivePanel.im-focus #imKaraoke{height:260px!important;min-height:260px!important}
-@media(max-width:850px){
- #immersivePanel.im-focus #imKaraoke{height:240px!important;min-height:240px!important}
-}
