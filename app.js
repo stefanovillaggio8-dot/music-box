@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.659";
+  const APP_VERSION = "6.660";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12374,6 +12374,64 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
       (s.recoveredCopies?" · recuperate "+s.recoveredCopies+" copie":"")+" · v"+APP_VERSION,7500);
   }catch(e){toast("Sincronizzazione non riuscita: "+String(e?.message||e).slice(0,100),6500)}
   finally{_btnSyncCatalogo.disabled=false;_btnSyncCatalogo.textContent="↻ Sincronizza"}
+});
+
+
+function _mbCatalogDiagnosi(){
+  const out=$("mbCatalogReport");
+  if(!out)return null;
+  try{
+    const snap=window.MusicBoxBridge?.librarySnapshot?.();
+    if(!snap){out.value="La libreria non e' ancora pronta.";return null}
+    const publicIds=BUILTIN.filter(b=>
+      (b.profile||DEFAULT_PROFILE)===profile||
+      _mieiCopiati().has(_idBranoStabile(b))||
+      _nascostiDallePlaylist().has(_idBranoStabile(b)))
+      .map(_idBranoStabile);
+    const published=new Set(publicIds);
+    const loadedIds=new Set(window.MusicBoxBridge.allTracks().map(x=>x.id));
+    const deleted=new Set(snap.deletedIds);
+    const gymIds=_nascostiDallePlaylist();
+    const savedOnly=_soloInPlaylist;
+    const omitted=publicIds.filter(id=>
+      !loadedIds.has(id)&&!deleted.has(profile+"."+id));
+    const soloPlaylist=[...new Set([...gymIds,...snap.playlistOnlyIds])]
+      .filter(id=>published.has(id)||loadedIds.has(id));
+    const report={
+      versione:snap.version,profilo:snap.profile,origine:snap.origin,
+      braniNellaLibreria:snap.visibleCount,
+      braniTotaliCaricati:snap.totalLoaded,
+      braniPropriNelCatalogo:snap.publishedOwnedCount,
+      copieSalvateNelProfilo:snap.copiedCount,
+      braniSoloSuQuestoDispositivo:snap.localOnlyCount,
+      esclusiDallaLibreriaPerPlaylist:snap.playlistOnlyCount,
+      eliminatiInLocale:snap.deletedLocalCount,
+      eliminatiConfermatiDalWorker:snap.remoteDeletedCount,
+      eliminazioniObsoleteRiparate:snap.localStaleDeletionsRestored,
+      origineStatoCondiviso:snap.remoteSource,
+      GymDisponibili:snap.gymPlayableCount,
+      GymTotali:snap.gymPlaylistCount,
+      GymMancanti:snap.gymUnavailableIds,
+      IDCatalogoNonCaricati:omitted,
+      IDsVisibili:snap.tracks.map(t=>t.id)
+    };
+    out.value=JSON.stringify(report,null,2);
+    return report;
+  }catch(e){out.value="Errore diagnosi: "+String(e?.message||e);return null}
+}
+$("btnCatalogDetails")?.addEventListener("click",()=>{
+  const pane=$("mbCatalogDetails");
+  if(!pane)return;
+  pane.hidden=!pane.hidden;
+  if(!pane.hidden)_mbCatalogDiagnosi();
+});
+$("btnCopyCatalog")?.addEventListener("click",async()=>{
+  const report=_mbCatalogDiagnosi();
+  if(!report)return;
+  try{await navigator.clipboard.writeText(JSON.stringify(report,null,2));
+    toast("Diagnosi catalogo copiata.",4500)}
+  catch(_){$("mbCatalogReport")?.focus();$("mbCatalogReport")?.select();
+    toast("Seleziona e copia la diagnosi qui sotto.",4500)}
 });
 
 function _accendiCasuale(accendi) {
