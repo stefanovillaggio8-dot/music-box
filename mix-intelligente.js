@@ -92,8 +92,12 @@ function onsetPairAgreement(a,b){
   return raised;
  };
  const positiveTail=peaks(tail),positiveHead=peaks(head);
- if(!positiveTail||!positiveHead)return {atZero:0,best:0,lagMs:0,
-  firstHalf:null,secondHalf:null,matchedHits:0,certified:false};
+ if(!positiveTail||!positiveHead){
+  const contrast=values=>Math.max(...values)-Math.min(...values);
+  if(contrast(tail)<.44||contrast(head)<.44)return null;
+  return {atZero:0,best:0,lagMs:0,
+   firstHalf:null,secondHalf:null,matchedHits:0,certified:false};
+ }
  const correlate=(shift,from=0,to=n)=>{
   let dot=0,xx=0,yy=0,hits=0,firstHits=0,secondHits=0,count=0;
   for(let i=from;i<to;i++){
