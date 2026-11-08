@@ -40,6 +40,7 @@
    "b-track-664",
    "b-track-670",
    "b-track-705",
+   "b-track-724",
    "b-track-954",
    "b-track-963"
   ],
@@ -4261,18 +4262,6 @@
     "t": "yungest Moonstar, Neffa, tha Supreme",
     "a": "uNa DiReZioNe giUsTa"
    },
-   "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
-    "v": 2,
-    "s": 359,
-    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
-    "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
-   "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
-    "v": 2,
-    "s": 359,
-    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
-    "a": "MACE, Kid Yugi, Izi, Franco126"
-   },
    "[\"adrenalina\",\"samurai jay, vito salamarca\"]": {
     "v": 0,
     "s": 1,
@@ -4284,6 +4273,18 @@
     "s": 1,
     "t": "ADRENALINA",
     "a": "Samurai Jay, Vito Salamarca"
+   },
+   "[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
+    "v": 2,
+    "s": 359,
+    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
+   },
+   "m:2026-11|[\"tutto fuori controllo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
+    "v": 2,
+    "s": 359,
+    "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
+    "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -5845,6 +5846,12 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "m:2026-11|[\"una direzione giusta\",\"thasup\"]": {
+    "v": 3,
+    "s": 482,
+    "t": "uNa DiReZioNe giUsTa",
+    "a": "thasup"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -6625,12 +6632,6 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
-   "m:2026-11|[\"una direzione giusta\",\"thasup\"]": {
-    "v": 3,
-    "s": 482,
-    "t": "uNa DiReZioNe giUsTa",
-    "a": "thasup"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -7022,13 +7023,13 @@
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 0,
+    "v": 1,
     "s": 389,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 0,
+    "v": 1,
     "s": 389,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
@@ -7059,13 +7060,13 @@
    },
    "[\"arriverÃÂÃÂÃÂÃÂ \",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 95,
+    "s": 99,
     "t": "ArriverÃÂÃÂÃÂÃÂ ",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"arriverÃÂÃÂÃÂÃÂ \",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 95,
+    "s": 99,
     "t": "ArriverÃÂÃÂÃÂÃÂ ",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7371,13 +7372,13 @@
    },
    "[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 192,
+    "s": 225,
     "t": "Nessuna",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 192,
+    "s": 225,
     "t": "Nessuna",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
@@ -7587,13 +7588,13 @@
    },
    "[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 120,
+    "s": 137,
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 120,
+    "s": 137,
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
@@ -7808,14 +7809,14 @@
     "a": "ModÃÂÃÂ "
    },
    "[\"tutti il resto ÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 389,
+    "v": 0,
+    "s": 395,
     "t": "Tutti il resto ÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 389,
+    "v": 0,
+    "s": 395,
     "t": "Tutti il resto ÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
@@ -8025,13 +8026,13 @@
    },
    "[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 61,
+    "s": 69,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"scale\",\"night skinny, luchÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 61,
+    "s": 69,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂ¨"
    },
@@ -8373,13 +8374,13 @@
    },
    "[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 137,
+    "s": 150,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 137,
+    "s": 150,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
    },
@@ -9069,13 +9070,13 @@
    },
    "[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 325,
+    "s": 361,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 325,
+    "s": 361,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
@@ -9159,13 +9160,13 @@
    },
    "[\"e non c'Ã¨ mai una fine\",\"modÃ \"]": {
     "v": 1,
-    "s": 150,
+    "s": 235,
     "t": "E non c'Ã¨ mai una fine",
     "a": "ModÃ "
    },
    "m:2026-11|[\"e non c'Ã¨ mai una fine\",\"modÃ \"]": {
     "v": 1,
-    "s": 150,
+    "s": 235,
     "t": "E non c'Ã¨ mai una fine",
     "a": "ModÃ "
    },
@@ -9855,13 +9856,13 @@
    },
    "[\"è sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 361,
+    "s": 363,
     "t": "È sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"è sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 361,
+    "s": 363,
     "t": "È sempre bello",
     "a": "Coez"
    },
@@ -12736,6 +12737,54 @@
     "s": 7,
     "t": "Vidrado Em Você",
     "a": "Dj Guuga, Mc Livinho"
+   },
+   "e-reset-20261031|[\"mustbearealdragwakingupandbeingyou\",\"bones\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "MustBeARealDragWakingUpAndBeingYou",
+    "a": "BONES"
+   },
+   "m:2026-11|e-reset-20261031|[\"mustbearealdragwakingupandbeingyou\",\"bones\"]": {
+    "v": 1,
+    "s": 2,
+    "t": "MustBeARealDragWakingUpAndBeingYou",
+    "a": "BONES"
+   },
+   "e-reset-20261031|[\"x 1 mex (feat. dani faiv)\",\"bloody vinyl, slait, tha supreme, miles, dani faiv\"]": {
+    "v": 1,
+    "s": 7,
+    "t": "X 1 MEX (feat. Dani Faiv)",
+    "a": "BLOODY VINYL, Slait, tha Supreme, MILES, Dani Faiv"
+   },
+   "m:2026-11|e-reset-20261031|[\"x 1 mex (feat. dani faiv)\",\"bloody vinyl, slait, tha supreme, miles, dani faiv\"]": {
+    "v": 1,
+    "s": 7,
+    "t": "X 1 MEX (feat. Dani Faiv)",
+    "a": "BLOODY VINYL, Slait, tha Supreme, MILES, Dani Faiv"
+   },
+   "e-reset-20261031|[\"veleno 8\",\"canesecco\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Veleno 8",
+    "a": "Canesecco"
+   },
+   "m:2026-11|e-reset-20261031|[\"veleno 8\",\"canesecco\"]": {
+    "v": 0,
+    "s": 0,
+    "t": "Veleno 8",
+    "a": "Canesecco"
+   },
+   "e-reset-20261031|[\"allenamento #3\",\"capo plaza, ava, mojobeatz\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Allenamento #3",
+    "a": "Capo Plaza, AVA, Mojobeatz"
+   },
+   "m:2026-11|e-reset-20261031|[\"allenamento #3\",\"capo plaza, ava, mojobeatz\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "Allenamento #3",
+    "a": "Capo Plaza, AVA, Mojobeatz"
    }
   }
  }
