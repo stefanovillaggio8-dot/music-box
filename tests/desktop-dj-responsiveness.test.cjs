@@ -356,9 +356,10 @@ test("negative-normalized real MP3 attacks survive beat-phase shifts without inv
   "unrelated off-grid hits must not be described as matching beats");
 });
 
-test("DJ can reorder compatible measured grooves without falsely scheduling overlap",()=>{
+test("DJ only reorders certified or harmonically compatible songs; weak rhythms remain diagnostic",()=>{
  const sectionText=section(dj,"async function intelligentShuffle(","let shuffleBusy=");
- assert.match(sectionText,/rhythmOrderScored\.length\?rhythmOrderScored:\[\]/);
+ assert.doesNotMatch(sectionText,/rhythmOrderScored\.length\?rhythmOrderScored:\[\]/);
+ assert.match(sectionText,/rhythmOrderCandidates:rhythmOrderScored\.length/);
  assert.match(sectionText,/rhythm\.score>=\.62&&ratio>=\.945/);
  assert.match(sectionText,/mixSelectShuffle\(\{fromId,initialFirst,pickId:best\.track\.id\}\)/);
  assert.match(sectionText,/groove misurato \(nessuna sovrapposizione autorizzata\)/);

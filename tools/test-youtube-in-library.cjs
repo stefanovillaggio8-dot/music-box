@@ -4,7 +4,7 @@ const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/st
 const src=fs.readFileSync("app.js","utf8");
 const page=fs.readFileSync("index.html","utf8");
 const start=src.indexOf("  function _ytAggiornaVociLibreria(entries, owner, draw=false) {");
-const end=src.indexOf("  async function loadAll() {",start);
+const end=src.indexOf("  async function loadAll(",start);
 assert(start>0&&end>start,"Missing link-to-library mapping function");
 const calls=[];
 const ctx={

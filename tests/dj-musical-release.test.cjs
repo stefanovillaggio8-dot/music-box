@@ -540,7 +540,7 @@ test("version badge uses the real header button, updates worker before reload, p
  assert.match(updater,/activate\(reg\.waiting\)/);
  assert.match(updater,/worker\.postMessage\(\{ type:"SKIP_WAITING" \}\)/);
  assert.match(updater,/searchParams\.set\("forza", String\(Date\.now\(\)\)\)/);
- assert.match(updater,/window\.location\.assign\(url\.href\)/);
+ assert.match(updater,/location\.assign\(url\.href\)/);
  assert.ok(!/caches\.delete\(|indexedDB\.deleteDatabase\(|unregister\(\)/.test(updater),
   "Never clear offline caches or databases when refreshing the app");
  assert.match(css,/#appVer:focus-visible/);

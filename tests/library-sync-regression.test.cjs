@@ -118,10 +118,11 @@ test("read-only library diagnostics detect playlist-only count differences",()=>
   _nascostiDallePlaylist:()=>new Set(),
   _playlistCercata:()=>null,_playlistAttiva:"",
   location:{origin:"https://example.test"},window:{matchMedia:()=>({matches:true})},
-  LS:{get:()=>({})},_mieiCopiati:()=>new Set(),APP_VERSION:"test"
+  LS:{get:()=>({})},_mieiCopiati:()=>new Set(),APP_VERSION:"test",
+  SERVIZIO_PUBBLICA:"",_mbUltimaLetturaWorker:{source:"test",deleted:0,restored:[],copied:0}
  };
  const snap=new Function("e",
-  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION,_nascostiDallePlaylist,_playlistCercata,_playlistAttiva,location,window}=e;"+
+  "const {tracks,profile,DEFAULT_PROFILE,_soloInPlaylist,_chiaveSoloInPlaylist,LS,_mieiCopiati,APP_VERSION,_nascostiDallePlaylist,_playlistCercata,_playlistAttiva,location,window,SERVIZIO_PUBBLICA,_mbUltimaLetturaWorker}=e;"+
   "return ({"+expression+"}).librarySnapshot;")(environment);
  const result=snap();
  assert.equal(result.totalLoaded,233);
