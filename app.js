@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.681";
+  const APP_VERSION = "6.682";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5600,6 +5600,15 @@ emptyEl.textContent = !total
            le copertine arrivano man mano che si scorre. */
         art.loading = "lazy";
         art.decoding = "async";
+        // An external YouTube thumbnail may fail without any issue in the
+        // MP3 player. Replace the broken picture with the app's local art.
+        art.addEventListener("error", () => {
+          if (!art.isConnected) return;
+          const fallback=document.createElement("div");
+          fallback.className="track-art";
+          fallback.style.background=t.gradient||PALETTE[0];
+          art.replaceWith(fallback);
+        },{once:true});
         art.src = t.cover;
       } else {
         art = document.createElement("div");
@@ -14864,6 +14873,10 @@ function _nomePerIlBrano(link, suggerito) {
         thumb.src="https://i.ytimg.com/vi/"+track.video_id+"/mqdefault.jpg";
         thumb.alt="";thumb.loading="lazy";
         thumb.style.cssText="width:70px;height:42px;object-fit:cover;border-radius:8px;flex-shrink:0";
+        thumb.addEventListener("error",()=>{
+          thumb.removeAttribute("src");
+          thumb.style.background="#282b36";
+        },{once:true});
         const btn=document.createElement("button");
         btn.type="button";btn.className="btn-ghost";
         btn.textContent=published?"▶ Ascolta in Music Box":"Aggiorna stato";

@@ -677,10 +677,88 @@ test("natural EOF switches to the prebuffered MP3 without losing the last beat",
  assert.equal(fixture.prepared(),null);
  assert.equal(preview.volume,.8);
 });
+
+test("preloaded next MP3 seeks only a certified digital intro and waits for seeked",()=>{
+ const begin=source.indexOf("function certifiedNaturalIntroEntry(");
+ const end=source.indexOf("// No verified musical match:",begin);
+ assert.ok(begin>0&&end>begin);
+ class FakeAudio{
+  constructor(){this.readyState=0;this.seeking=false;this._time=0;this.listeners={};}
+  addEventListener(name,fn){(this.listeners[name]||=[]).push(fn)}
+  emit(name){for(const fn of this.listeners[name]||[])fn()}
+  set currentTime(v){this._time=v;this.seeking=true}
+  get currentTime(){return this._time}
+  load(){this.readyState=1;this.emit("loadedmetadata");this.readyState=4;this.emit("canplay")}
+  finishSeek(){this.seeking=false;this.emit("seeked");this.emit("canplay")}
+  pause(){}
+  removeAttribute(){}
+ }
+ const records=new Map([["next.mp3",{safeIntroAt:3.12,first:3.24,introDrive:.8}]]);
+ const harness=new Function("Audio","cache",
+  "let prepared=null,plan=null;const deepLookup=()=>null;"+
+  "const dropPrepared=()=>{prepared=null};"+
+  source.slice(begin,end)+
+  "return {prepare,entry:certifiedNaturalIntroEntry,get:()=>prepared};"
+ )(FakeAudio,records);
+ const app={mixUrl:t=>t.url};
+ const song={id:"next",url:"next.mp3"};
+ assert.ok(Math.abs(harness.entry(song,app)-3.12)<.01);
+ harness.prepare(song,"old",app);
+ const p=harness.get();
+ assert.equal(p.audio.currentTime,3.12);
+ assert.equal(p.ready,false,"do not promote a seek-in-progress to playable");
+ p.audio.finishSeek();
+ assert.equal(p.ready,true);
+ assert.equal(p.seekReady,true);
+ const voiced={id:"voice",url:"voice.mp3"};
+ records.set("voice.mp3",{safeIntroAt:0,first:.1});
+ assert.equal(harness.entry(voiced,app),0,"never skip a genuine first note");
+ records.set("voice.mp3",{safeIntroAt:3,first:2.1});
+ assert.equal(harness.entry(voiced,app),0,"never seek past an audible introduction");
+});
+
+test("digital silence can adopt buffered next MP3 early, but not before the LAST audible sound",async()=>{
+ const begin=source.indexOf("function naturalEndHandoff(");
+ const end=source.indexOf("async function handoff(){",begin);
+ const guardStart=source.indexOf("function certifiedTailSkip(");
+ const guardEnd=source.indexOf("// A complete MP3 analysis",guardStart);
+ assert.ok(begin>0&&end>begin&&guardStart>0&&guardEnd>guardStart);
+ const analysis={duration:200,last:195,confidentTail:true,lastVoiceAt:178,lastLyricAt:175};
+ let current="old",adopted=0,fallback=0;
+ const old={ended:false,paused:false,duration:200,currentTime:194.9,
+  pause(){this.paused=true}};
+ const preview={readyState:4,currentTime:3.12,paused:true,
+  async play(){this.paused=false},pause(){this.paused=true}};
+ const app={audio:()=>old,currentId:()=>current,mixNext:()=>({id:"next"}),
+  allTracks:()=>[{id:"old",url:"old.mp3"}],mixUrl:t=>t.url,
+  mixLyricCues:()=>({last:175}),volume:()=>.65,
+  mixAdoptHandoff:(id,node)=>{assert.equal(node,preview);
+   assert.equal(id,"next");adopted++;current=id;return Promise.resolve(true)},
+  mixHandoff:()=>{fallback++}};
+ const fixture=new Function("app","preview","cache",
+  "let prepared={id:'next',fromId:'old',audio:preview,ready:true,failed:false,"+
+   "naturalEntry:3.12,seekReady:true};"+
+  "const enabled=true,isIOS=false,mixing=false,active=null,"+
+  "window={MusicBoxRoom:{isActive:()=>false}};"+
+  "const bridge=()=>app,deepLookup=()=>null,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+  source.slice(guardStart,guardEnd)+source.slice(begin,end)+
+  "return {run:naturalEndHandoff,get:()=>prepared};"
+ )(app,preview,new Map([["old.mp3",analysis]]));
+ assert.equal(fixture.run(true),false,"keep the last .1s music");
+ old.currentTime=195.30;
+ assert.equal(fixture.run(true),true,"only verified digital silence may be bypassed");
+ assert.equal(fixture.run(),true,"ignore duplicated ended event while adopting");
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(adopted,1);assert.equal(fallback,0);
+ assert.equal(preview.currentTime,3.12);
+ assert.equal(old.paused,true);
+ assert.equal(fixture.get(),null);
+});
+
 test("native EOF remains available when no next preview is ready",()=>{
  const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
  assert.ok(app.includes("if (window.MusicBoxMix?.naturalEndHandoff?.()) return;"));
- assert.ok(source.includes("p.audio?.readyState<2)return false"));
+ assert.match(source,/p\.audio\?\.readyState<2\|\|/);
  assert.ok(source.includes("try{incoming.pause()}catch(_){}"));
  assert.ok(!source.includes("caches.delete("));
 });

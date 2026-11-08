@@ -3418,39 +3418,97 @@ function cancel(){
  dropPrepared();
  mixing=false;
 }
+// The normal Music Box EOF path already skips VERIFIED digital intro silence.
+// Its prebuffered DJ path must use exactly the same conservative entry.
+// Never skip an audible pad, lyric, first beat or unanalysed introduction.
+function certifiedNaturalIntroEntry(song,app){
+ const url=app?.mixUrl?.(song)||song?.url;
+ const info=url&&(cache.get(String(url))||deepLookup(song));
+ const at=Number(info?.safeIntroAt),first=Number(info?.first);
+ if(!info||info.durationMismatch===true||
+    !Number.isFinite(at)||at<.35||at>18||
+    !Number.isFinite(first)||first<.85||
+    first<at-.03||first-at>.55)return 0;
+ return at;
+}
 function prepare(song,fromId,app){
  const url=app.mixUrl?.(song)||song.url;
  if(!url)return;
  if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url){
-  // A failed previous preview is not permanently "prepared".
-  // Try again once after a short cooldown if the connection recovered.
+  // Retry a truly failed preview, but never replace valid buffered MP3s.
   if(!prepared.failed||Date.now()-(prepared.failedAt||Date.now())<11000)return;
  }
  dropPrepared();
  const upcoming=new Audio();upcoming.preload="auto";upcoming.volume=0;
- const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false};
+ const naturalEntry=(!plan||plan.kind==="cut")?
+  certifiedNaturalIntroEntry(song,app):0;
+ const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false,
+  naturalEntry,seekReady:naturalEntry===0,seekIssued:false};
  prepared=p;
- upcoming.addEventListener("canplay",()=>{if(prepared===p)p.ready=true},{once:true});
- upcoming.addEventListener("error",()=>{if(prepared===p){p.failed=true;p.ready=false;p.failedAt=Date.now();}},{once:true});
+ const markReady=()=>{
+  if(prepared!==p||p.failed)return;
+  p.ready=p.seekReady&&!upcoming.seeking&&upcoming.readyState>=2&&
+   (!p.naturalEntry||Math.abs(upcoming.currentTime-p.naturalEntry)<=.55);
+ };
+ const preseek=()=>{
+  if(prepared!==p||p.seekReady||p.seekIssued||upcoming.readyState<1)return;
+  p.seekIssued=true;
+  try{
+   upcoming.currentTime=p.naturalEntry;
+   if(!upcoming.seeking&&Math.abs(upcoming.currentTime-p.naturalEntry)<=.20){
+    p.seekReady=true;markReady();
+   }
+  }catch(e){
+   // An MP3 source that cannot seek keeps its entire intro. The native
+   // EOF handler remains available rather than claiming a ready preview.
+   p.naturalEntry=0;p.seekReady=true;markReady();
+  }
+ };
+ upcoming.addEventListener("loadedmetadata",preseek,{once:true});
+ upcoming.addEventListener("seeked",()=>{
+  if(prepared!==p)return;
+  p.seekReady=!!p.seekIssued&&
+   Math.abs(upcoming.currentTime-p.naturalEntry)<=.35;
+  markReady();
+ });
+ upcoming.addEventListener("canplay",()=>{preseek();markReady()});
+ upcoming.addEventListener("error",()=>{
+  if(prepared===p){p.failed=true;p.ready=false;p.failedAt=Date.now()}
+ },{once:true});
  upcoming.src=url;
  try{upcoming.load()}catch(e){p.failed=true;p.failedAt=Date.now()}
- if(upcoming.readyState>=2)p.ready=true;
+ preseek();markReady();
 }
 // No verified musical match: use the ALREADY buffered next audio exactly
 // at native EOF. Do not fade out the last kick or download the same MP3
 // again. If prebuffer is absent, let the original ended handler run.
-function naturalEndHandoff(){
+function naturalEndHandoff(certifiedSilentTail=false){
  if(!enabled||isIOS||mixing||active||
     window.MusicBoxRoom?.isActive())return false;
  const app=bridge(),old=app?.audio?.(),fromId=app?.currentId?.();
+ if(!fromId)return false;
+ // An ended event can arrive while its successor has already started.
+ if(naturalEndHandoff.inFlight===fromId)return true;
+ const ended=!!old?.ended;
+ if(!ended){
+  if(!certifiedSilentTail)return false;
+  const track=app?.allTracks?.()?.find(t=>t.id===fromId);
+  const url=track&&(app.mixUrl?.(track)||track.url);
+  const analysis=url&&(cache.get(String(url))||deepLookup(track));
+  const lyric=app.mixLyricCues?.(fromId)?.last;
+  // Full MP3 analysis verifies that the original is ALREADY digitally
+  // silent. Never move a final beat, vocal or audible atmosphere.
+  if(!certifiedTailSkip(analysis,old.duration,old.currentTime,lyric))return false;
+ }
  const next=app?.mixNext?.(),p=prepared;
- if(!old?.ended||!fromId||!next||!p||p.fromId!==fromId||
+ if(!next||!p||p.fromId!==fromId||
     p.id!==next.id||!p.ready||p.failed||p.audio?.error||
-    p.audio?.readyState<2)return false;
- // Detach the preview BEFORE playById/onTrackChange removes prepared
- // media nodes. The browser's loaded MP3 is the new native player.
+    p.audio?.readyState<2||
+    (p.naturalEntry>0&&(!p.seekReady||
+      Math.abs(p.audio.currentTime-p.naturalEntry)>.55)))return false;
  const incoming=p.audio;
  prepared=null;
+ naturalEndHandoff.inFlight=fromId;
  (async()=>{
   try{
    if(app.currentId?.()!==fromId||app.mixNext?.()?.id!==next.id)return;
@@ -3463,18 +3521,22 @@ function naturalEndHandoff(){
    const adopted=app.mixAdoptHandoff?.(next.id,incoming);
    if(!adopted)throw Error("Buffered player could not be adopted");
    await adopted;
-   console.info("[Music Box DJ] Passaggio naturale: nessun beat compatibile certificato · "+
-    fromId+" → "+next.id+" (MP3 già pronto)");
+   if(!ended)try{old.pause()}catch(_){}
+   console.info("[Music Box DJ] Passaggio senza beatmatch · "+
+    fromId+" → "+next.id+
+    (ended?" (intro muto verificato evitato)":
+     " (coda digitalmente muta verificata evitata)"));
   }catch(error){
    try{incoming.pause()}catch(_){}
-   // Revert to standard native progression if autoplay/adoption fails.
    if(app.currentId?.()===fromId)
     Promise.resolve().then(()=>{
-     // Read the actual current queue head, not a stale DJ candidate.
      const latest=app.mixNext?.();
-     if(latest&&app.currentId?.()===fromId)return app.mixHandoff(latest.id,0);
-    })
-     .catch(e=>console.warn("[Music Box DJ] Fine naturale: ripiego fallito",e));
+     if(latest&&app.currentId?.()===fromId)
+      return app.mixHandoff(latest.id,latest.id===next.id?p.naturalEntry||0:0);
+    }).catch(e=>console.warn("[Music Box DJ] Fine naturale: ripiego fallito",e));
+  }finally{
+   if(naturalEndHandoff.inFlight===fromId)
+    naturalEndHandoff.inFlight="";
   }
  })();
  return true;
@@ -4030,6 +4092,7 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ if(id&&naturalEndHandoff.inFlight===id)return;
  // Timeupdate fires much faster than planning needs; never throttle cues
  // within five seconds of their start or the dedicated precision timer.
  if(isIOS&&!mobileActive&&!mixing&&!active&&audio&&!audio.paused&&
@@ -4303,6 +4366,9 @@ function tick(){
    const nextInfo=cache.get(String(nextSource))||deepLookup(next);
    const entry=Number.isFinite(nextInfo?.safeIntroAt)?
     clamp(nextInfo.safeIntroAt,0,18):0;
+   // Prefer the already-buffered next audio to a fresh MP3 download;
+   // preserve the entire original music until the verified silent tail.
+   if(!isIOS&&naturalEndHandoff(true))return;
    if(quietDirectHandoff(app,audio,id,next,entry,
       "coda digitale misurata: nessun mix in corso"))return;
  }
@@ -5249,7 +5315,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.681",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.682",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -5546,6 +5612,11 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     shuffleLastDecision:null,
    shuffleBusy,
    previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
+   prebufferIntroAt:prepared?.naturalEntry??null,
+   prebufferSeekReady:prepared?.seekReady??null,
+   prebufferPlaybackTime:Number.isFinite(prepared?.audio?.currentTime)?
+    Math.round(prepared.audio.currentTime*100)/100:null,
+   earlyHandoffPending:naturalEndHandoff.inFlight===id,
    mobileClipReady:!!(next&&mobileIntroClips.has(String(app?.mixUrl?.(next)||next.url))),
    mobileClipFailure:mobileClipFailure?.source===String(app?.mixUrl?.(next)||next?.url)?
     mobileClipFailure.reason:null,mobileClipMetrics:{...mobileClipMetrics},
