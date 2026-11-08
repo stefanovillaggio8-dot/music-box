@@ -2525,13 +2525,15 @@ function musicallyCompatibleOverlay(a,b,cue){
  // It is NOT equivalent to matching BPM or beats.
  if(cue.neutralRelease===true&&cue.quietCertified===true&&
     cue.kind==="soft"){
-  const release=a.dropRelease;
-  if(release&&a.protectedEnding!==true&&
-     Number(release.score)>=.82&&Number(release.quietLevel)<=.12&&
-     Number.isFinite(release.releaseAt)&&Number.isFinite(a.last)&&
-     cue.begin>=release.releaseAt+.35&&cue.end<=a.last+.25&&
-     (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-4)&&
-     (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-2.5))
+  // Recheck the identical PCM-derived, voice-safe decay certificate used
+  // by the planner. The old second gate silently demanded a stronger
+  // threshold (.82/.12) than the planner (.78/.15), discarding the safe
+  // short fade and causing a normal hard handoff on most eligible pairs.
+  // This is only a quiet, neutral fade; never a certified beatmatch.
+  const verified=certifiedNeutralBridge(a,b,a.duration);
+  if(verified&&Math.abs(verified.begin-cue.begin)<.085&&
+     Math.abs(verified.end-cue.end)<.085&&
+     Math.abs(verified.fade-cue.fade)<.085)
    return true;
  }
  if(["beat","snap","phrase"].includes(cue.kind)||cue.measuredBeatBridge||
