@@ -2092,7 +2092,11 @@ function _originaleDi(id) {
      I nomi li tengo nel database dei brani, lo stesso dove gia' stanno le
      copertine e i testi: e' un posto che ha gia' tenuto i dati di Ste senza
      perdere niente, quindi regge anche lui. */
-  async function _salvaRinomineSulDisco(mappa) {
+  // Serialize IndexedDB saves so an older in-flight rename cannot win.
+  let _rinominiDiskWrites=Promise.resolve();
+  function _salvaRinomineSulDisco(mappa) {
+    const snapshot=JSON.parse(JSON.stringify(mappa||{}));
+    const write=async()=>{
     try {
       const d = db || await openDB();
       if (!d) return false;
@@ -2104,12 +2108,16 @@ function _originaleDi(id) {
              bloccarsi. L'id e' un nome riservato, nessun brano puo' chiamarsi
              cosi', quindi non si confonde con niente. */
           const tx = d.transaction(DB_LYRICS, "readwrite");
-          tx.objectStore(DB_LYRICS).put({ id: _ID_RINOMI, mappa: JSON.parse(JSON.stringify(mappa)) });
+          tx.objectStore(DB_LYRICS).put({ id: _ID_RINOMI, mappa: snapshot });
           tx.oncomplete = () => fatto(true);
           tx.onerror = () => fatto(false);
         } catch (e) { fatto(false); }
       });
     } catch (e) { return false; }
+    };
+    const result=_rinominiDiskWrites.catch(()=>false).then(write);
+    _rinominiDiskWrites=result;
+    return result;
   }
   async function _leggiRinomineDalDisco() {
     try {
@@ -2145,7 +2153,8 @@ function _originaleDi(id) {
             const r = dalDisco[k];
             if (!r || (!r.title && !r.artist)) continue;
             const mia = mappa[k];
-            if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
+            // IndexedDB may contain an older name than this browser.
+            if (!mia || (!mia.title && !mia.artist)) {
               mappa[k] = { title: String(r.title || ""), artist: String(r.artist || "") };
               rimessi++;
             }
@@ -5282,8 +5291,17 @@ function _rinominaDaMandareSegna(id, valore) {
     LS.set("mb.rinominiDaMandare", m);
   } catch (e) { /* noop */ }
 }
-function _rinominiDaMandareSvuota() {
-  try { LS.set("mb.rinominiDaMandare", {}); } catch (e) { /* noop */ }
+function _rinominiDaMandareSvuota(acknowledged={}) {
+  try {
+    const m=_rinominiDaMandare();
+    for(const [id,value] of Object.entries(acknowledged)){
+      const current=m[id];
+      // Clear only the value actually sent, not a second edit in flight.
+      if(current&&current.title===(value?.title||"")&&
+         current.artist===(value?.artist||""))delete m[id];
+    }
+    LS.set("mb.rinominiDaMandare",m);
+  } catch (e) { /* noop */ }
 }
 
 /* Gli stessi due giochi, ma per i brani eliminati con la X: si mandano
@@ -16213,14 +16231,15 @@ rinomini: (function () {
           const acknowledgedRestores=new Set(Array.isArray(sent.eliminatiRimossi)?sent.eliminatiRimossi:[]);
           LS.set("mb.eliminatiDaMandare",_eliminatiDaMandare().filter(x=>!acknowledged.has(x)));
           LS.set("mb.eliminatiRimossiDaMandare",_eliminatiRimossiDaMandare().filter(x=>!acknowledgedRestores.has(x)));
-          _rinominiDaMandareSvuota();
+          _rinominiDaMandareSvuota(sent.rinomini);
           const confirmedAdds=new Set(sent.soloInPlaylist||[]);
           const confirmedRemoves=new Set(sent.soloInPlaylistRimossi||[]);
           LS.set("mb.soloInPlaylistDaMandare",
             _soloInPlaylistDaMandare().filter(id=>!confirmedAdds.has(id)));
           LS.set("mb.soloInPlaylistRimossi",
             _soloInPlaylistRimossiDaMandare().filter(id=>!confirmedRemoves.has(id)));
-          _statoDaSalvare=_eliminatiDaMandare().length>0||
+          _statoDaSalvare=Object.keys(_rinominiDaMandare()).length>0||
+            _eliminatiDaMandare().length>0||
             _eliminatiRimossiDaMandare().length>0||
             _soloInPlaylistDaMandare().length>0||
             _soloInPlaylistRimossiDaMandare().length>0;
@@ -16536,6 +16555,8 @@ for (const k of Object.keys(j.rinomini)) {
       try {
         const inAttesa = _rinominiDaMandare();
         if (inAttesa[k]) continue;
+        // Static stato.json is a delayed fallback, not the latest user edit.
+        if(!fromWorker&&mappa[k])continue;
       } catch (e) { /* noop */ }
       const mia = mappa[k];
           if (!mia || mia.title !== (r.title || "") || mia.artist !== (r.artist || "")) {
@@ -16543,7 +16564,11 @@ for (const k of Object.keys(j.rinomini)) {
             rimessi++;
           }
         }
-        if (rimessi) { LS.set("mb.rinomini", mappa); cambiati++; }
+        if (rimessi) {
+          LS.set("mb.rinomini",mappa);
+          _salvaRinomineSulDisco(mappa).catch(()=>{});
+          cambiati++;
+        }
       } catch (e) { /* noop */ }
     }
 /* Ste: "226 da entrambe, poi 227 su github a caso". I brani "solo nelle
@@ -17987,7 +18012,8 @@ await loadAll();
   // tombstone survived but the delayed cloud POST might not have started.
   // Resume unsent changes at launch, without resubmitting confirmed ones.
   setTimeout(()=>{
-    if(_eliminatiDaMandare().length||_eliminatiRimossiDaMandare().length)
+    if(_eliminatiDaMandare().length||_eliminatiRimossiDaMandare().length||
+       Object.keys(_rinominiDaMandare()).length)
       _salvaStatoCondiviso();
   },5500);
   /* Ogni tanto guardo se il computer ha scaricato quello che era in coda:
