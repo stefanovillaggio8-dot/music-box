@@ -79,8 +79,10 @@ function onsetPairAgreement(a,b){
     tail.length!==n||head.length!==n||
     tail.some(v=>!Number.isFinite(v))||
     head.some(v=>!Number.isFinite(v)))return null;
- // Audited PCM fingerprints can have a negative onset baseline.
- // Use sparse positive TRANSIENT prominence rather than raw RMS.
+ // Modern precomputed MP3 fingerprints may have a NEGATIVE librosa onset
+ // baseline. Compare both the original absolute attacks and a separate
+ // adaptive prominence representation; neither may bypass the other beat,
+ // harmonic, lyric or last-audible-note safety certificates.
  const peaks=values=>{
   const sorted=values.slice().sort((x,y)=>x-y);
   const floor=sorted[19],top=sorted[93],range=top-floor;
@@ -88,57 +90,55 @@ function onsetPairAgreement(a,b){
   const gate=floor+range*.32;
   const raised=values.map(v=>Math.max(0,(v-gate)/range));
   const hits=raised.filter(v=>v>=.48).length;
-  if(hits<4||hits>34)return null; // cannot certify flat noise or one click
-  return raised;
+  return hits>=4&&hits<=34?raised:null;
  };
- const positiveTail=peaks(tail),positiveHead=peaks(head);
- if(!positiveTail||!positiveHead){
-  const contrast=values=>Math.max(...values)-Math.min(...values);
-  if(contrast(tail)<.44||contrast(head)<.44)return null;
-  return {atZero:0,best:0,lagMs:0,
-   firstHalf:null,secondHalf:null,matchedHits:0,certified:false};
- }
- const correlate=(shift,from=0,to=n)=>{
-  let dot=0,xx=0,yy=0,hits=0,firstHits=0,secondHits=0,count=0;
-  for(let i=from;i<to;i++){
-   const j=i+shift;
-   if(j<0||j>=n)continue;
-   const x=positiveTail[i],y=positiveHead[j];
-   dot+=x*y;xx+=x*x;yy+=y*y;count++;
-   if(x>=.48&&y>=.48){
-    hits++;
-    if(i<48)firstHits++;else secondHits++;
+ function assess(xValues,yValues,threshold,minimumPower,method){
+  if(!xValues||!yValues)return null;
+  const correlate=(shift,from=0,to=n)=>{
+   let dot=0,xx=0,yy=0,hits=0,firstHits=0,secondHits=0,count=0;
+   for(let i=from;i<to;i++){
+    const j=i+shift;
+    if(j<0||j>=n)continue;
+    const x=xValues[i],y=yValues[j];
+    dot+=x*y;xx+=x*x;yy+=y*y;count++;
+    if(x>=threshold&&y>=threshold){
+     hits++;
+     if(i<48)firstHits++;else secondHits++;
+    }
    }
+   if(count<(to-from)*.76||xx<minimumPower||yy<minimumPower)return null;
+   return {score:dot/Math.sqrt(xx*yy),hits,firstHits,secondHits};
+  };
+  const zero=correlate(0);if(!zero)return null;
+  let best={...zero,shift:0};
+  for(let shift=-12;shift<=12;shift++){
+   const found=correlate(shift);
+   if(found&&found.score>best.score)best={...found,shift};
   }
-  if(count<(to-from)*.76||xx<.65||yy<.65)return null;
-  return {score:dot/Math.sqrt(xx*yy),hits,firstHits,secondHits};
- };
- const zero=correlate(0);
- if(!zero)return null;
- // This is an ANALYSIS offset, not a guessed playback start. The DJ
- // still has to align the incoming audio on a measured beat and pass
- // independent harmony, tempo, vocal and outro safety checks.
- let best={...zero,shift:0};
- for(let shift=-12;shift<=12;shift++){
-  const result=correlate(shift);
-  if(result&&result.score>best.score)best={...result,shift};
- }
- const first=correlate(best.shift,0,48),
-       second=correlate(best.shift,48,96);
- // Large analysis offsets are credible only when the whole 4-second
- // fingerprint matches exceptionally well. Never infer a 250ms jump
- // from a weak, partly similar drum sequence.
- const lagMs=Math.abs(best.shift*4000/n);
- const preciseShift=lagMs<=190||
+  const first=correlate(best.shift,0,48),
+    second=correlate(best.shift,48,96);
+  const lagMs=Math.abs(best.shift*4000/n);
+  const preciseShift=lagMs<=190||
    (lagMs<=310&&best.score>=.92&&
     first?.score>=.85&&second?.score>=.85&&best.hits>=5);
- const certified=best.score>=.61&&preciseShift&&
-  Number.isFinite(first?.score)&&first.score>=.40&&
-  Number.isFinite(second?.score)&&second.score>=.40&&
-  best.hits>=3&&best.firstHits>=1&&best.secondHits>=1;
- return {atZero:zero.score,best:best.score,lagMs:best.shift*4000/n,
-  firstHalf:first?.score??null,secondHalf:second?.score??null,
-  matchedHits:best.hits,certified};
+  const certified=best.score>=.61&&preciseShift&&
+   Number.isFinite(first?.score)&&first.score>=.40&&
+   Number.isFinite(second?.score)&&second.score>=.40&&
+   best.hits>=3&&best.firstHits>=1&&best.secondHits>=1;
+  return {atZero:zero.score,best:best.score,lagMs:best.shift*4000/n,
+   firstHalf:first?.score??null,secondHalf:second?.score??null,
+   matchedHits:best.hits,method,certified};
+ }
+ const raw=assess(tail.map(v=>Math.max(0,v)),head.map(v=>Math.max(0,v)),
+  1.2,1.5,"absolute");
+ const prominent=assess(peaks(tail),peaks(head),.48,.65,"prominence");
+ // Preserve every previously certified true beat. The adaptive method may
+ // add only independently measured multi-attack evidence, never a guessed
+ // tempo match or a shorter/unsafe vocal ending.
+ if(raw?.certified)return raw;
+ if(prominent?.certified)return prominent;
+ return raw&&prominent?(raw.best>=prominent.best?raw:prominent):
+  raw||prominent;
 }
 function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
