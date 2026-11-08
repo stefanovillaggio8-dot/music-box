@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.661";
+  const APP_VERSION = "6.662";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12412,6 +12412,14 @@ function _mbCatalogDiagnosi(){
       GymDisponibili:snap.gymPlayableCount,
       GymTotali:snap.gymPlaylistCount,
       GymMancanti:snap.gymUnavailableIds,
+      GymPresentiInLibreria:snap.gymUnexpectedInLibrary,
+      ContestoAttivo:snap.activePlaylist||"Libreria",
+      PlaylistCaricate:playlists.map(p=>{
+        const inLibrary=(p.tracks||[]).filter(id=>snap.tracks.some(t=>t.id===id));
+        return {nome:p.name,esclusiva:p.nascosta===true,proprietario:p.nascostaDa||null,
+          totaleID:(p.tracks||[]).length,visibiliInLibreria:inLibrary.length,
+          idVisibili:inLibrary.slice(0,40)};
+      }),
       IDCatalogoNonCaricati:omitted,
       IDsVisibili:snap.tracks.map(t=>t.id)
     };
@@ -16051,35 +16059,29 @@ const j = await r.json();
         } catch (e) { /* noop */ }
       }
 
-      // Il Worker fornisce la lista corrente delle eliminazioni. I vecchi
-      // client aggiungevano tombstone ma non li rimuovevano quando il Worker
-      // non li riportava piu': da qui inventari diversi fra PC e PWA.
-      // Nessuna sincronizzazione distruttiva in modalita' offline/fallback.
+
+      // Il Worker puo' avere eliminazioni incomplete: un ID assente
+      // NON significa che l'utente abbia ripristinato il brano.
+      // Prima 25 eliminazioni locali furono cancellate automaticamente.
+      // Le eliminazioni si tolgono solo con esplicito eliminatiRimossi.
       if(fromWorker&&Array.isArray(j?.eliminati)){
-        const canonical=id=>{
+        const normalizza=id=>{
           const s=String(id||"");
           return s&&!s.includes(".")?DEFAULT_PROFILE+"."+s:s;
         };
-        const remote=new Set(j.eliminati.map(canonical)
+        const remote=new Set(j.eliminati.map(normalizza)
           .filter(k=>k.startsWith(profile+".")));
-        const stillDeleting=new Set(_eliminatiDaMandare().map(canonical));
-        const restoring=new Set(_eliminatiRimossiDaMandare().map(canonical));
+        const restoring=new Set(_eliminatiRimossiDaMandare().map(normalizza));
         const records=LS.get("mb.eliminati",{})||{};
-        const stale=Object.keys(records).filter(k=>k.startsWith(profile+".")&&
-          !remote.has(k)&&!stillDeleting.has(k)&&!restoring.has(k));
+        let nuovi=0;
         _mbUltimaLetturaWorker.deleted=remote.size;
         _mbUltimaLetturaWorker.copied=Array.isArray(j?.miei?.[profile])
           ?j.miei[profile].length:null;
-        _mbUltimaLetturaWorker.restored=stale.slice().sort();
-        for(const key of stale)delete records[key];
-        for(const key of remote)if(!restoring.has(key))records[key]=records[key]||Date.now();
-        for(const key of stillDeleting)if(key.startsWith(profile+"."))
-          records[key]=records[key]||Date.now();
-        for(const key of restoring)if(key.startsWith(profile+"."))delete records[key];
-        if(stale.length){
-          LS.set("mb.eliminati",records);
-          cambiati++;
+        _mbUltimaLetturaWorker.restored=[];
+        for(const key of remote)if(!restoring.has(key)&&!records[key]){
+          records[key]=Date.now();nuovi++;
         }
+        if(nuovi){LS.set("mb.eliminati",records);cambiati++;}
       }
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
         /* "preferiti" e' un vecchio elenco globale. Non lo posso applicare
@@ -16201,6 +16203,13 @@ for (const k of Object.keys(j.rinomini)) {
         (Array.isArray(j.soloInPlaylistRimossi)?j.soloInPlaylistRimossi:[]).map(normalizza));
       const giusto=new Set(j.soloInPlaylist.map(normalizza)
         .filter(id=>id&&!rimossiRemoti.has(id)));
+      // I vecchi snapshot del Worker perdono a volte i marcatori
+      // "solo in playlist". Conserva quelli scelti su questo dispositivo
+      // finche' non arriva una rimozione esplicita.
+      for(const id of _soloInPlaylist){
+        const chiave=normalizza(id);
+        if(!rimossiRemoti.has(chiave))giusto.add(chiave);
+      }
       // An in-flight iPhone change ALWAYS wins over a previous remote
       // snapshot. Do not revert it just because the Worker answered before
       // its delayed POST. Never erase another profile's local choices.
