@@ -64,7 +64,7 @@ test("service worker update no longer force reloads an active iPhone playlist",(
  const section=excerpt(app,"navigator.serviceWorker.addEventListener(\"controllerchange\"","navigator.serviceWorker.register(\"sw.js\"");
  assert(!section.includes("window.location.reload()"),"controller change must not reload the running player");
  const manual=excerpt(app,"  async function _aggiornaMusicBoxDaVersione() {","  let offlineBusy = false;");
- assert(manual.includes("window.location.assign(url.href)"),"manual version button still updates on demand");
+ assert(/\b(?:window\.)?location\.assign\(url\.href\)/.test(manual),"manual version button still updates on demand");
 });
 
 test("prefetched complete MP3 is promoted into the correct profile offline cache",async()=>{
