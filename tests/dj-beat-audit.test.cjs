@@ -210,11 +210,19 @@ test("real MP3 regression: proposed beat fades cannot start after the final audi
   const to=tracks.find(x=>x.key===key);
   assert.ok(to);
   const plan=tools.transition(from.data,to.data,from.data.duration);
-  assert.equal(plan?.kind,"beat");
-  assert.ok(plan.begin>from.data.last,
-   "The historical false beat should begin in the nonmusical outro");
-  assert.equal(tools.desktopBeatPairCertified(from.data,to.data,plan),false,
-   "Never certify a beat if the source music ended before the fade starts");
+  // A quiet postlude is safer than the old falsely certified beat.
+  assert.ok(plan&&plan.begin>from.data.last,
+   "Never beatmatch against a passage after the last musical event");
+  if(plan.postMusicalTailUnderlay){
+   assert.equal(plan.kind,"postlude");
+   assert.equal(plan.preserveTail,true,"Keep the full original ending");
+   assert.equal(plan.quietCertified,false,"Postlude is not a certified beatmatch");
+   assert.ok(plan.end>=from.data.duration-.06);
+  }else{
+   assert.equal(plan.kind,"beat");
+   assert.equal(tools.desktopBeatPairCertified(from.data,to.data,plan),false,
+    "A false beat cannot be certified just from matching BPM");
+  }
  }
 });
 
