@@ -4534,6 +4534,12 @@ function tick(){
     lastKnownLyric>=plan.outroGapStart-3.5){
   dropPrepared();plan=null;resetMobileFade();return;
  }
+ // A late timed karaoke line can invalidate a previously planned
+ // postlude. Never assume missing vocal metadata means the outro is silent.
+ if(!mixing&&plan.postMusicalTailUnderlay===true&&
+    Number.isFinite(lastKnownLyric)&&lastKnownLyric>plan.begin-5){
+  dropPrepared();plan=null;resetMobileFade();return;
+ }
  const verifiedVocalBeat=Boolean(plan.vocalBeatUnderlay===true&&
    plan.earlyBeatJoin===true&&Number.isFinite(lastKnownLyric)&&
    lastKnownLyric<=plan.end-2.5&&
@@ -5497,7 +5503,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.686",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.687",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

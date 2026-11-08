@@ -1079,6 +1079,10 @@ test("a measured instrumental beat can enter beneath a complete outgoing vocal",
  assert.match(source,/!verifiedQuietLyricExit&&!verifiedVocalBeat/);
 });
 
+test("late arriving karaoke line can cancel a formerly quiet postlude",()=>{
+ assert.match(source,/plan\.postMusicalTailUnderlay===true&&/);
+ assert.match(source,/lastKnownLyric>plan\.begin-5/);
+});
 test("shuffle exposes every real-audio filter stage without forcing bad beatmatches",()=>{
  assert.match(source,/candidateAudit=\{indexed:indexed\.length,missingFromIndex:unknown\.length/);
  assert.match(source,/candidateAudit\.validIntros\+\+/);
