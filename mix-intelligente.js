@@ -4622,9 +4622,15 @@ async function intelligentShuffle(app,audio,fromId){
       const keyFit=key.weight>=.14?key.score:.5;
       const chroma=Number.isFinite(harmony.focused)?harmony.focused:0;
       const phrase=Number.isFinite(harmony.phrase)?harmony.phrase:0;
+      // A groove resemblance alone is only a diagnostic. Reorder the
+      // next song ONLY when tempo, notes, phrase and key pass a
+      // separate modest safety floor; it never certifies any audio blend.
+      const orderSafe=rhythm.score>=.78&&ratio>=.97&&ratio<=1.03&&
+       chroma>=.52&&phrase>=.32&&
+       (!((key?.weight||0)>=.14)||key.score>=.40);
       rhythmOrderScored.push({track,score:rhythm.score*.57+
        chroma*.18+phrase*.12+keyFit*.13-
-       Math.abs(Math.log2(ratio))*.50});
+       Math.abs(Math.log2(ratio))*.50,orderSafe});
      }
      // Spotify-style smart ordering is separate from mixing: if there is
      // no certified overlap, prefer an adjacent song with matching tempo,
@@ -4804,6 +4810,7 @@ async function intelligentShuffle(app,audio,fromId){
  rhythmOrderScored.sort((a,b)=>b.score-a.score);
  // Measured groove is an ORDER-ONLY fallback: never grant permission
  // to overlap or shorten the outgoing protected vocal/instrumental ending.
+ const safeRhythmOrder=rhythmOrderScored.filter(x=>x.orderSafe===true);
  // Order-only fallback is still preferable to an unrelated random song,
  // but absolutely never gains permission to overlap a sung ending.
  // Prefer a next song with actually compatible notes and drums.
@@ -4818,7 +4825,7 @@ async function intelligentShuffle(app,audio,fromId){
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:
-  rhythmOrderScored.length?rhythmOrderScored:[];
+  safeRhythmOrder.length?safeRhythmOrder:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -4831,6 +4838,7 @@ async function intelligentShuffle(app,audio,fromId){
     impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
+     rhythmOrderPickableCandidates:safeRhythmOrder.length,
     rejected,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
@@ -4863,6 +4871,7 @@ async function intelligentShuffle(app,audio,fromId){
   impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
   nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
+     rhythmOrderPickableCandidates:safeRhythmOrder.length,
    rejected,chosen:current?.track.id||null,
    vocalModelReady:!!old.voiceModel,
    outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
