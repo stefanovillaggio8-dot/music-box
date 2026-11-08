@@ -138,7 +138,7 @@
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
     { title: "carusi do sud", file: "songs/track-67.mp3", artist: "l'elfo", profile: "Ste" },
     { title: "nei treni la notte", file: "songs/track-73.mp3", artist: "frah quintale", profile: "Ste" },
-    { title: "Dimmi Che C''", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
+    { title: "Dimmi che c'è", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
     { title: "stupido", file: "songs/track-75.mp3", artist: "massimo pericolo", profile: "Ste" },
     { title: "Spettri", file: "songs/track-77.mp3", artist: "nayt, 3D" },
     { title: "Memoria di uno sconfitto, pt. 2", file: "songs/track-78.mp3", artist: "Mostro" },
@@ -181,9 +181,9 @@
     { title: "Scrivendo", file: "songs/track-121.mp3", artist: "nayt" },
     { title: "Vibe", file: "songs/track-122.mp3", artist: "Guè" },
     { title: "Distrutto", file: "songs/track-123.mp3", artist: "Carla Morrison" },
-    { title: "marte", file: "songs/track-124.mp3", artist: "thasup" },
-    { title: "mi @mio è f@ke", file: "songs/track-125.mp3", artist: "thasup" },
-    { title: "slrl", file: "songs/track-126.mp3", artist: "thasup, Lazza, Sfera Ebbasta" },
+    { title: "mar+e", file: "songs/track-124.mp3", artist: "thasup" },
+    { title: "mi @mi o è f@ke", file: "songs/track-125.mp3", artist: "thasup" },
+    { title: "s!r! (feat. Lazza & Sfera Ebbasta)", file: "songs/track-126.mp3", artist: "thasup, Lazza, Sfera Ebbasta" },
     { title: "Hey There Delilah", file: "songs/track-127.mp3", artist: "Plain White T's" },
     { title: "STANOTTE", file: "songs/track-128.mp3", artist: "TY1, Coez, Massimo Pericolo" },
     { title: "CRUDELIA - Inervi", file: "songs/track-129.mp3", artist: "Marracash" },
@@ -254,7 +254,7 @@
     { title: "Davide e Golia", file: "songs/track-208.mp3", artist: "Kid Yugi" },
     { title: "cosa conta davvero", file: "songs/track-209.mp3", artist: "nayt, 3D" },
     { title: "Paraguai", file: "songs/track-210.mp3", artist: "nayt, Canova" },
-    { title: "m@star", file: "songs/track-211.mp3", artist: "thasup" },
+    { title: "m8nstar", file: "songs/track-211.mp3", artist: "thasup" },
     { title: "gRAZie A Dio", file: "songs/track-212.mp3", artist: "yungest Moonstar, thasup" },
     { title: "Jolly", file: "songs/track-213.mp3", artist: "Kid Yugi" },
     { title: "Il Ferro di Echov", file: "songs/track-215.mp3", artist: "Kid Yugi" },
@@ -427,17 +427,17 @@
     { title: "Davide (feat. Coez)", file: "songs/track-397.mp3", artist: "Gemitaiz, Coez", profile: "Diego" },
     { title: "Dancing With The Devil Pt.2", file: "songs/track-398.mp3", artist: "Gemitaiz, Neffa, Ele A", profile: "Diego" },
     { title: "Senza Di Me", file: "songs/track-399.mp3", artist: "MadMan, nayt, Johnny Marsiglia", profile: "Diego" },
-    { title: "come fal", file: "songs/track-400.mp3", artist: "thasup", profile: "Diego" },
+    { title: "come fa1", file: "songs/track-400.mp3", artist: "thasup", profile: "Diego" },
     { title: "pers0na2 (feat. Gemitaiz, MadMan)", file: "songs/track-401.mp3", artist: "thasup, Gemitaiz, MadMan", profile: "Diego" },
     { title: "ch1 5ei te", file: "songs/track-402.mp3", artist: "thasup", profile: "Diego" },
-    { title: "occrl purpl3 (feat. Marracash)", file: "songs/track-403.mp3", artist: "thasup, Marracash", profile: "Diego" },
+    { title: "occh1 purpl3 (feat. Marracash)", file: "songs/track-403.mp3", artist: "thasup, Marracash", profile: "Diego" },
     { title: "LUMIERE = (con Izi, Ernia, Tony Boy, Digital Astro)", file: "songs/track-404.mp3", artist: "MACE, Izi, Ernia, Tony Boy, Astro", profile: "Diego" },
     { title: "Rock'n'roll", file: "songs/track-405.mp3", artist: "Tony Boy, Sick Luke", profile: "Diego" },
     { title: "CRUDELIA - I nervi", file: "songs/track-406.mp3", artist: "Marracash", profile: "Diego" },
     { title: "Fable", file: "songs/track-423.mp3", artist: "Gigi Perez", profile: "Diego" },
     { title: "Ti penso sempre", file: "songs/track-415.mp3", artist: "chiello", profile: "Diego" },
     { title: "Carusi do sud", file: "songs/track-426.mp3", artist: "Gipsy Prince", profile: "Diego" },
-    { title: "clao (feat. Rondodasosa)", file: "songs/track-438.mp3", artist: "thasup, Rondodasosa", profile: "Diego" },
+    { title: "c!ao (feat. Rondodasosa)", file: "songs/track-438.mp3", artist: "thasup, Rondodasosa", profile: "Diego" },
     { title: "Stanotte", file: "songs/track-428.mp3", artist: "Gemello, Gemitaiz", profile: "Diego" },
     { title: "ADRENALINA", file: "songs/track-430.mp3", artist: "Samurai Jay, Vito Salamanca", profile: "Diego" },
     { title: "Voglio Di Più", file: "songs/track-432.mp3", artist: "Silent Bob, Sick Budd", profile: "Diego" },
@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.666";
+  const APP_VERSION = "6.667";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12364,16 +12364,30 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   if(_btnSyncCatalogo.disabled)return;
   _btnSyncCatalogo.disabled=true;
   _btnSyncCatalogo.textContent="Sincronizzo…";
+  const before=window.MusicBoxBridge?.librarySnapshot?.();
+  const diff=$("mbCatalogDiff");
+  if(diff){diff.hidden=false;diff.textContent="Sincronizzazione in corso: leggo Worker, playlist, copie e Libreria…";}
   try{
     const s=await _sincronizzaCatalogoDispositivi();
-    toast("Libreria: "+s.visibleCount+" brani · copie: "+s.copiedCount+
-      (s.localStaleDeletionsRestored?.length?" · eliminazioni obsolete corrette: "+s.localStaleDeletionsRestored.length:"")+
-      " · Gym disponibili: "+
-      s.gymPlayableCount+"/"+s.gymPlaylistCount+
-      (s.gymUnavailableIds?.length?" · ID da recuperare: "+s.gymUnavailableIds.join(", "):"")+
-      (s.recoveredCopies?" · recuperate "+s.recoveredCopies+" copie":"")+" · v"+APP_VERSION,7500);
-  }catch(e){toast("Sincronizzazione non riuscita: "+String(e?.message||e).slice(0,100),6500)}
-  finally{_btnSyncCatalogo.disabled=false;_btnSyncCatalogo.textContent="↻ Sincronizza"}
+    const changed=Number(s.visibleCount||0)-Number(before?.visibleCount||0);
+    const status="Sincronizzazione completata · v"+APP_VERSION+
+      "\n"+(before?.visibleCount??"?")+" → "+s.visibleCount+" brani in Libreria"+
+      (changed===0?" (conteggio invariato)":changed>0?" (+"+changed+")":" ("+changed+")")+
+      "\nStato: "+s.remoteSource+
+      " · eliminazioni confermate: "+(s.remoteDeletedCount??"non disponibile")+
+      " · copie: "+s.copiedCount+
+      " · Gym: "+s.gymPlayableCount+"/"+s.gymPlaylistCount+
+      "\nSe il numero non cambia, la sincronizzazione non deve inventare"+
+      " o nascondere brani: apri «Confronta con il Worker» per gli ID reali.";
+    if(diff){diff.hidden=false;diff.textContent=status;}
+    toast("Sincronizzazione: "+s.visibleCount+" brani"+
+      (changed===0?" (nessun cambiamento)":changed>0?" (+"+changed+")":" ("+changed+")")+
+      " · "+s.remoteSource,7500);
+  }catch(e){
+    const message="Sincronizzazione non riuscita: "+String(e?.message||e).slice(0,160);
+    if(diff){diff.hidden=false;diff.textContent=message;}
+    toast(message,6500);
+  }finally{_btnSyncCatalogo.disabled=false;_btnSyncCatalogo.textContent="↻ Sincronizza"}
 });
 
 
