@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.664";
+  const APP_VERSION = "6.665";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12427,6 +12427,86 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
       toast("Modifica Gym non completata: "+String(e?.message||e),6500);
     }finally{if(btn)btn.disabled=false}
   });
+
+
+async function _mbConfrontaCatalogoConWorker(){
+  const out=$("mbCatalogDiff"),button=$("btnCompareCatalogo");
+  if(!out||!button)return;
+  out.hidden=false;button.disabled=true;button.textContent="Confronto in corso…";
+  out.textContent="Controllo le differenze senza modificare canzoni o download.";
+  try{
+    if(!SERVIZIO_PUBBLICA)throw new Error("Servizio non configurato");
+    const get=async path=>{
+      const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),9000);
+      try{
+        const r=await fetch(SERVIZIO_PUBBLICA+path,{cache:"no-store",signal:ctrl.signal});
+        if(!r.ok)throw new Error(path+" HTTP "+r.status);
+        return await r.json();
+      }finally{clearTimeout(timer)}
+    };
+    const [sr,pr,vr]=await Promise.all([
+      get("/stato"),get("/playlist"),fetch("./versione.json",{cache:"no-store"})
+    ]);
+    const state=sr?.stato,pls=pr?.playlist;
+    if(!state||!Array.isArray(pls))
+      throw new Error("Risposta incompleta del Worker");
+    const published=vr.ok?await vr.json():{};
+    const copies=new Set(Array.isArray(state.miei?.[profile])?state.miei[profile]:[]);
+    const deleted=new Set(Array.isArray(state.eliminati)?state.eliminati:[]);
+    const onlyInPlaylist=new Set();
+    for(const pl of pls){
+      if(pl?.nascosta!==true||(pl.nascostaDa&&pl.nascostaDa!==profile))continue;
+      for(const id of pl.tracks||[])onlyInPlaylist.add(id);
+    }
+    const expected=[];
+    for(const b of BUILTIN){
+      const id=_idBranoStabile(b);
+      if((b.profile||DEFAULT_PROFILE)!==profile&&!copies.has(id))continue;
+      if(deleted.has(profile+"."+id)||onlyInPlaylist.has(id))continue;
+      // The real loader only collapses name duplicates inside one owner.
+      if(expected.some(x=>(x.profile||DEFAULT_PROFILE)===(b.profile||DEFAULT_PROFILE)
+        &&stessoBrano(x,b)))continue;
+      expected.push(b);
+    }
+    const snap=window.MusicBoxBridge.librarySnapshot();
+    const onDevice=new Set(snap.tracks.map(t=>t.id));
+    const remote=new Set(expected.map(_idBranoStabile));
+    const missing=expected.filter(b=>!onDevice.has(_idBranoStabile(b)))
+      .map(b=>({id:_idBranoStabile(b),titolo:b.title,artista:b.artist||""}));
+    const extras=snap.tracks.filter(t=>!remote.has(t.id))
+      .map(t=>({id:t.id,titolo:t.title,artista:t.artist||""}));
+    const lines=[
+      "Versione caricata: "+APP_VERSION+" · versione pubblicata: "+(published.versione||"non disponibile"),
+      "Profilo: "+profile+" · copie nel Worker: "+copies.size+
+        " · ID esclusi dalle playlist: "+onlyInPlaylist.size,
+      "Catalogo condiviso atteso: "+remote.size+" · libreria su questo dispositivo: "+snap.visibleCount,
+      "Mancano su questo dispositivo: "+missing.length,
+      ...missing.slice(0,50).map(x=>"  • "+x.id+" · "+x.titolo+" — "+x.artista),
+      "Presenti solo localmente o non previsti: "+extras.length,
+      ...extras.slice(0,50).map(x=>"  • "+x.id+" · "+x.titolo+" — "+x.artista)
+    ];
+    if(published.versione&&published.versione!==APP_VERSION)
+      lines.push("Aggiorna Music Box dal pulsante versione: il codice caricato e' vecchio.");
+    else if(missing.length)
+      lines.push("Questi ID non sono stati eliminati: premi Sincronizza per recuperarli.");
+    else if(extras.length)
+      lines.push("Le copie locali non sono state eliminate automaticamente.");
+    else lines.push("Questo dispositivo coincide con il catalogo condiviso per gli ID controllati.");
+    out.textContent=lines.join("\n");
+    const report=_mbCatalogDiagnosi();
+    if(report){
+      report.ConfrontoWorker={versionePubblicata:published.versione||null,
+        attesi:remote.size,qui:snap.visibleCount,copieWorker:copies.size,
+        mancantiSuQuestoDispositivo:missing,soloSuQuestoDispositivo:extras};
+      const textbox=$("mbCatalogReport");
+      if(textbox)textbox.value=JSON.stringify(report,null,2);
+    }
+  }catch(e){
+    out.textContent="Confronto non riuscito: "+String(e?.message||e)+
+      ". Nessuna modifica ai brani o ai download.";
+  }finally{button.disabled=false;button.textContent="Confronta con il Worker"}
+}
+$("btnCompareCatalogo")?.addEventListener("click",_mbConfrontaCatalogoConWorker);
 
 function _mbCatalogDiagnosi(){
   const out=$("mbCatalogReport");
