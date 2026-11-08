@@ -4945,6 +4945,17 @@ async function intelligentShuffle(app,audio,fromId){
      (cue.grooveScore||0)*.26});
     continue;
    }
+   // A finished low-energy postlude can also introduce a new song BEFORE
+   // encoded EOF. No identical beat is claimed, and the source remains full.
+   if(mobilePlayable&&cue?.postMusicalTailUnderlay===true){
+    const level=Number.isFinite(info.introDrive)?clamp(info.introDrive,0,1):0;
+    const key=camelotMatch(old,next);
+    const keyScore=key.weight>=.14?key.score:.5;
+    postludeScored.push({track,cue,
+      score:1+level*.28+(Number(keyScore)||0)*.10+
+       Math.min(.12,Math.max(0,cue.fade)*.015)});
+    continue;
+   }
    // Only as a SECOND choice: a measured musical decay may permit a
    // short, audible overlap even when no two percussion patterns match.
    // Never silently count this as a verified beat or shorten a vocal.
