@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.675";
+  const APP_VERSION = "6.676";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -2060,14 +2060,16 @@ function _originaleDi(id) {
     if (r && (r.title || r.artist)) {
       if (r.title) t.title = r.title;
       if (r.artist) t.artist = r.artist;
-      continue;
+    } else {
+      const orig = _originaleDi(t.id);
+      if (orig) {
+        t.title = orig.title || t.title;
+        t.artist = orig.artist || t.artist || "";
+      }
     }
-    /* nessuna rinomina attiva: torna al nome vero */
-    const orig = _originaleDi(t.id);
-    if (orig) {
-      t.title = orig.title || t.title;
-      t.artist = orig.artist || t.artist || "";
-    }
+    // Every library refresh automatically repairs corrupt local/remote
+    // text BEFORE search, deduplication, playlists and the player use it.
+    _riparaMetadatiTraccia(t);
   }
   }
 
@@ -3329,7 +3331,7 @@ function _devoVedereBrano(eMio, b) {
         _ytOnlineCache = data.filter(x => x && typeof x.title === "string" &&
           typeof x.file === "string" && /^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(x.file) &&
           typeof x.profile === "string" && x.profile.length <= 40)
-          .map(x => ({title:x.title, artist:String(x.artist||""),
+          .map(x => ({title:_riparaTestoMetadati(x.title), artist:_riparaTestoMetadati(String(x.artist||"")),
             file:x.file, profile:x.profile, cover:String(x.cover||""),
             audioSource:x.audioSource==="Internet Archive"?"Internet Archive":"",
             license:x.license==="CC0-1.0"?"CC0-1.0":"",
@@ -5422,6 +5424,37 @@ function _artistaOriginalePerSchermo(t) {
     if(matches.length===1)return matches[0];
   }
   return fallback;
+}
+
+function _metadatiIlleggibili(value){
+ const s=String(value??"");
+ return /(?:[ÃÂ][ÃÂ\u0080-\u00BF\uFFFD\u25A1]){3,}/u.test(s)||
+  ((s.match(/[ÃÂ\uFFFD\u25A1]/gu)||[]).length>=5&&s.length>=36);
+}
+function _riparaTestoMetadati(value,original=""){
+ const raw=String(value??"");
+ if(!raw)return raw;
+ if(_metadatiIlleggibili(raw)){
+  const canonical=String(original??"").trim();
+  if(canonical&&!_metadatiIlleggibili(canonical))return canonical;
+ }
+ // General decoder handles isolated mojibake and unrecognized damaged
+ // sequences without changing IDs, title typography or file contents.
+ return _titoloPerSchermo(raw);
+}
+function _riparaMetadatiTraccia(t){
+ if(!t||typeof t!=="object")return t;
+ if(typeof t.title==="string")
+  t.title=_riparaTestoMetadati(t.title,_titoloOriginalePerSchermo(t));
+ if(typeof t.artist==="string")
+  t.artist=_riparaTestoMetadati(t.artist,_artistaOriginalePerSchermo(t));
+ if(typeof t.album==="string"){
+  let canonical=_originaleDi(t.id)?.spotifyAlbum||"";
+  if(_metadatiIlleggibili(t.album)&&!canonical)
+   try{canonical=coverInfo(t.artist,t.title)?.album||""}catch(_){}
+  t.album=_riparaTestoMetadati(t.album,canonical);
+ }
+ return t;
 }
   function render() {
     _diag("render");
@@ -9080,7 +9113,7 @@ async function addFiles(fileList) {
       const rec = {
         id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
         aggiunto: Date.now(),
-        title: file.name.replace(/\.[^.]+$/, ""),
+        title: _riparaTestoMetadati(file.name.replace(/\.[^.]+$/, "")),
         artist: "",
         profile: profile,
         blob: file,

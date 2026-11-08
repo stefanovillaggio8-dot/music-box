@@ -52,3 +52,26 @@ test('healthy single album restores exact titles while corrupt artist uses match
  assert.equal(helpers.artist({artist:"Mod"+garbled,
   album:"Il meglio dei Modà, 2000 - 2011"}),"Modà");
 });
+
+test('every imported and loaded song is automatically cleaned before search and playback',()=>{
+ const start=code.indexOf("function _titoloPerSchermo(value");
+ const end=code.indexOf("  function render() {",start);
+ assert.ok(start>=0&&end>start);
+ const repair=vm.runInNewContext(
+   "const _originaleDi=()=>({title:'s!r!',artist:'thasup'});"+
+   "const coverInfo=()=>({album:'Il meglio dei Modà, 2000 - 2011'});"+
+   code.slice(start,end)+";_riparaMetadatiTraccia;");
+ const broken="Ã\uFFFD".repeat(35);
+ const single={title:"uNa DiReZioNe gi"+broken,artist:"thasup",
+   album:"uNa DiReZioNe giUsTa - Single"};
+ repair(single);assert.equal(single.title,"uNa DiReZioNe giUsTa");
+ const mod={title:"fragile",artist:"Mod"+broken,
+   album:"Il meglio dei Mod"+broken};
+ repair(mod);assert.equal(mod.artist,"Modà");
+ assert(!mod.album.includes("Ã\uFFFD"));
+ const plain={title:"mi @mio è f@ke",artist:"thasup",album:""};
+ repair(plain);assert.equal(plain.title,"mi @mio è f@ke");
+ assert.match(code,/_riparaMetadatiTraccia\(t\)/);
+ assert.match(code,/title: _riparaTestoMetadati\(file.name/);
+ assert.match(code,/title:_riparaTestoMetadati\(x.title\)/);
+});
