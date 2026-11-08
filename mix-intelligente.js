@@ -79,19 +79,33 @@ function onsetPairAgreement(a,b){
     tail.length!==n||head.length!==n||
     tail.some(v=>!Number.isFinite(v))||
     head.some(v=>!Number.isFinite(v)))return null;
+ // Audited PCM fingerprints can have a negative onset baseline.
+ // Use sparse positive TRANSIENT prominence rather than raw RMS.
+ const peaks=values=>{
+  const sorted=values.slice().sort((x,y)=>x-y);
+  const floor=sorted[19],top=sorted[93],range=top-floor;
+  if(!Number.isFinite(range)||range<.44)return null;
+  const gate=floor+range*.32;
+  const raised=values.map(v=>Math.max(0,(v-gate)/range));
+  const hits=raised.filter(v=>v>=.48).length;
+  if(hits<4||hits>34)return null; // cannot certify flat noise or one click
+  return raised;
+ };
+ const positiveTail=peaks(tail),positiveHead=peaks(head);
+ if(!positiveTail||!positiveHead)return null;
  const correlate=(shift,from=0,to=n)=>{
   let dot=0,xx=0,yy=0,hits=0,firstHits=0,secondHits=0,count=0;
   for(let i=from;i<to;i++){
    const j=i+shift;
    if(j<0||j>=n)continue;
-   const x=Math.max(0,tail[i]),y=Math.max(0,head[j]);
+   const x=positiveTail[i],y=positiveHead[j];
    dot+=x*y;xx+=x*x;yy+=y*y;count++;
-   if(x>=1.2&&y>=1.2){
+   if(x>=.48&&y>=.48){
     hits++;
     if(i<48)firstHits++;else secondHits++;
    }
   }
-  if(count<(to-from)*.76||xx<1.5||yy<1.5)return null;
+  if(count<(to-from)*.76||xx<.65||yy<.65)return null;
   return {score:dot/Math.sqrt(xx*yy),hits,firstHits,secondHits};
  };
  const zero=correlate(0);
@@ -1746,15 +1760,23 @@ function strongInstrumentalBeatBridge(a,b,dur){
 function onsetPeriodicity(values,bpm){
  if(!Array.isArray(values)||values.length!==96||
     !Number.isFinite(bpm)||bpm<55||bpm>210)return null;
+ // Reject constant sound and discard signed spectral floor before
+ // checking multiple genuine pulses in the outgoing/incoming PCM.
+ const sorted=values.slice().sort((x,y)=>x-y);
+ const floor=sorted[19],top=sorted[93],range=top-floor;
+ if(!Number.isFinite(range)||range<.44)return null;
+ const gate=floor+range*.32;
+ const transients=values.map(v=>Math.max(0,(v-gate)/range));
+ if(transients.filter(v=>v>=.48).length<4)return null;
  const corr=lag=>{
   if(!Number.isInteger(lag)||lag<3||lag>48)return -1;
   let xy=0,xx=0,yy=0;
   for(let i=0;i+lag<96;i++){
-   const a=values[i],b=values[i+lag];
+   const a=transients[i],b=transients[i+lag];
    if(!Number.isFinite(a)||!Number.isFinite(b))return -1;
    xy+=a*b;xx+=a*a;yy+=b*b;
   }
-  return xx>1&&yy>1?xy/Math.sqrt(xx*yy):-1;
+  return xx>.6&&yy>.6?xy/Math.sqrt(xx*yy):-1;
  };
  const lag=24*60/bpm;
  return Math.max(...[lag,2*lag].map(n=>
