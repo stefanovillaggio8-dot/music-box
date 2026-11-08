@@ -554,6 +554,17 @@ test("measured onset audit: actual groove and drum phase candidates for reported
 test("actual track 1197 prefers a full-length verified postlude when musical data allows it",()=>{
  const from=tracks.find(x=>x.key==="audio/songs/track-1197.mp3");
  if(!from)return;
+ const record=from.data,companion=tracks.find(x=>x.key==="audio/songs/track-209.mp3");
+ console.info("[DJ 1197 OUTRO DIAG]",JSON.stringify({
+  from:{duration:record.duration,last:record.last,tail:record.duration-record.last,
+   safeOutroAt:record.safeOutroAt,protectedEnding:record.protectedEnding,
+   confidentTail:record.confidentTail,dropRelease:record.dropRelease,
+   voiceModel:record.voiceModel,lastVoiceAt:record.lastVoiceAt,
+   lastLyricAt:record.lastLyricAt,voiceScannedEnd:record.voiceScannedEnd},
+  next:companion?{bpm:companion.data.bpm,introDrive:companion.data.introDrive,
+   first:companion.data.first,firstLyricAt:companion.data.firstLyricAt}:null,
+  exactPlan:companion?engine.transition(record,companion.data,record.duration):null
+ }));
  const figures={outgoing:"1197",checked:0,postlude:0,retainsWholeFile:0};
  for(const other of tracks){
   if(other.key===from.key)continue;
