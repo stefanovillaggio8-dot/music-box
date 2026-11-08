@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.677";
+  const APP_VERSION = "6.678";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5437,23 +5437,26 @@ function _riparaTestoMetadati(value,original=""){
  if(_metadatiIlleggibili(raw)){
   const canonical=String(original??"").trim();
   if(canonical&&!_metadatiIlleggibili(canonical))return canonical;
+  // A truncated UTF-8 sequence can leave a stray "Ã" just before the
+  // replacement dots. This character is not an intentional song accent.
+  return _titoloPerSchermo(raw).replace(/[ÃÂ\uFFFD\u25A1]+(?=…)/gu,"");
  }
- // General decoder handles isolated mojibake and unrecognized damaged
- // sequences without changing IDs, title typography or file contents.
  return _titoloPerSchermo(raw);
 }
 function _riparaMetadatiTraccia(t){
  if(!t||typeof t!=="object")return t;
- if(typeof t.title==="string")
-  t.title=_riparaTestoMetadati(t.title,_titoloOriginalePerSchermo(t));
- if(typeof t.artist==="string")
-  t.artist=_riparaTestoMetadati(t.artist,_artistaOriginalePerSchermo(t));
+ // Recover reliable album text first: it can supply the missing accent in
+ // the artist (Modà) and the full spelling of a damaged single title.
  if(typeof t.album==="string"){
   let canonical=_originaleDi(t.id)?.spotifyAlbum||"";
   if(_metadatiIlleggibili(t.album)&&!canonical)
    try{canonical=coverInfo(t.artist,t.title)?.album||""}catch(_){}
   t.album=_riparaTestoMetadati(t.album,canonical);
  }
+ if(typeof t.artist==="string")
+  t.artist=_riparaTestoMetadati(t.artist,_artistaOriginalePerSchermo(t));
+ if(typeof t.title==="string")
+  t.title=_riparaTestoMetadati(t.title,_titoloOriginalePerSchermo(t));
  return t;
 }
   function render() {

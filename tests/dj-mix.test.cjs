@@ -925,3 +925,58 @@ test("iPhone never starts a full-volume off-phase beat to mask failed alignment"
  assert.match(source,/const maxBeatWait=p.kind==="beat"/);
  assert.match(source,/phase>maxBeatWait&&period-phase>\.045/);
 });
+
+test("a measured instrumental beat can enter beneath a complete outgoing vocal",()=>{
+ const i=source.indexOf("function earlyMatchedBar(");
+ const j=source.indexOf("function rhythmicReleaseBeatBridge(",i);
+ assert.ok(i>=0&&j>i);
+ const early=new Function(
+  "const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  "const hasImmediateMusicalIntro=()=>true,hasReliableHarmony=()=>true;"+
+  "const camelotMatch=()=>({weight:.2,score:.96});"+
+  "const grooveAgreement=()=>({score:.95,correlation:.90});"+
+  "const similarNotes=()=>({focused:.93,phrase:.90,alignment:{score:.93,matches:true}});"+
+  "const onsetPeriodicity=()=>.85,onsetGridPhase=()=>0,musicalIntroEntry=()=>0;"+
+  "const alignedEarlyOnsetAgreement=()=>({score:.95,first:.95,second:.95});"+
+  source.slice(i,j)+";return earlyMatchedBar;"
+ )();
+ const onset=Array.from({length:96},(_,i)=>i%12===0?2.5:0);
+ const outgoing={duration:120,last:119.75,bpm:120,beatConfidence:.9,
+  lastLyricAt:113.6,lastVoiceAt:118.4,voiceModel:"YAMNet",
+  voiceScannedEnd:119.7,protectedEnding:true,
+  outroOnsetWindows:[{start:111,end:115,onset,groove:Array(32).fill(.8),
+   notes:Array(12).fill(.13),levelRatio:.85}]};
+ const next={bpm:120,beatConfidence:.9,introDrive:.9,
+  firstVoiceAt:12,firstLyricAt:13,introOnset:onset};
+ const safe=early(outgoing,next,120);
+ assert.equal(safe?.kind,"beat");
+ assert.equal(safe?.vocalBeatUnderlay,true);
+ assert.equal(safe?.vocalEndAt,118.4);
+ assert.equal(safe?.preserveTail,true);
+ assert.equal(safe?.rhythmicGridJoin,true);
+ assert.equal(safe?.quietCertified,false,"audible vocals cannot be called a quiet fade");
+ assert.ok(safe.begin<outgoing.lastLyricAt&&safe.end>outgoing.lastVoiceAt);
+ assert.equal(early({...outgoing,lastVoiceAt:119.7},next,120),null,
+  "protect a vocal that continues to the very end");
+ assert.equal(early(outgoing,{...next,firstVoiceAt:4},120),null,
+  "two simultaneous vocal lines are not allowed");
+ assert.equal(early({...outgoing,lastLyricAt:null,voiceModel:null,
+  voiceScannedEnd:null,lastVoiceAt:null},next,120),null,
+  "unknown singer cannot be treated as an instrumental outro");
+ const unknown=early({...outgoing,lastVoiceAt:null,voiceModel:null,
+  voiceScannedEnd:null},next,120);
+ assert.equal(unknown?.vocalBeatUnderlay,true,
+  "karaoke timing permits subdued underlay only with fully preserved tail");
+ assert.ok(unknown.vocalEndAt>=unknown.end-.07);
+ const mi=source.indexOf("function mobileMixAllowed(");
+ const mj=source.indexOf("function rememberMobileClip(",mi);
+ const allowed=new Function(source.slice(mi,mj)+";return mobileMixAllowed;")();
+ assert.equal(Boolean(allowed(safe,outgoing,outgoing.lastLyricAt)),true);
+ assert.equal(Boolean(allowed(unknown,{...outgoing,voiceModel:null,
+  lastVoiceAt:null,voiceScannedEnd:null},outgoing.lastLyricAt)),true);
+ assert.equal(Boolean(allowed(safe,outgoing,119)),false,
+  "late lyrics invalidate a previously certified overlay");
+ assert.match(source,/if\(act\.vocalBeatUnderlay\)/);
+ assert.match(source,/if\(mobileActive\.vocalBeatUnderlay\)/);
+ assert.match(source,/!verifiedQuietLyricExit&&!verifiedVocalBeat/);
+});
