@@ -9285,6 +9285,11 @@ async function removeTrack(id) {
   /* Un 404 di lyrics.ovh e' un testo assente, non un crash dell'app.
      Ricorda per 24 ore gli esiti negativi e preserva i testi gia' salvati. */
   const _lyricsOvh404 = LS.get("mb.lyricsOvh404", {}) || {};
+  let _lyricsOvhNonPrimaDi = Math.max(0, Number(LS.get("mb.lyricsOvhAttesaFino", 0)) || 0);
+  function _attendiLyricsOvh(ms) {
+    _lyricsOvhNonPrimaDi = Math.max(_lyricsOvhNonPrimaDi, Date.now() + ms);
+    LS.set("mb.lyricsOvhAttesaFino", _lyricsOvhNonPrimaDi);
+  }
   function _lyricsOvhMancante(chiave) {
     return Number(_lyricsOvh404[chiave] || 0) > Date.now();
   }
@@ -9297,8 +9302,17 @@ async function removeTrack(id) {
     }
     LS.set("mb.lyricsOvh404", _lyricsOvh404);
   }
+  function _titoloPulitoPerTesti(artist, title) {
+    const original = stripVariants(title);
+    const match = original.match(/^(.*?)\s+(?:ft\.?|feat\.?|featuring)\s+(.+)$/i);
+    if (!match) return original;
+    const credited = String(artist || "").split(/\s*[,/&]\s*|\s+feat\.?\s+|\s+ft\.?\s+/i)
+      .map(value => normKey(value)).filter(Boolean);
+    return credited.includes(normKey(match[2])) && match[1].trim()
+      ? match[1].trim() : original;
+  }
   async function findLyrics(artist, title, options = {}) {
-    const name = stripVariants(title);
+    const name = _titoloPulitoPerTesti(artist, title);
     const duration = Number(options.durationMs || 0) / 1000;
     const validate = (j) => {
       if (!j || j.instrumental || !j.trackName || !titleCompatible(name, j.trackName)) return false;
@@ -9407,7 +9421,9 @@ async function removeTrack(id) {
       ricercheOvh.push({ a: "Opus", t: "Live Is Life" });
     }
     ricercheOvh.push({ a: artistaPrincipale, t: name });
-    if (artistaCompleto !== artistaPrincipale) ricercheOvh.push({ a: artistaCompleto, t: name });
+    if (artistaCompleto !== artistaPrincipale && !/[,/&]/.test(artistaCompleto))
+      ricercheOvh.push({ a: artistaCompleto, t: name });
+    if (Date.now() < _lyricsOvhNonPrimaDi) return null;
     for (const ricerca of ricercheOvh.slice(0, 3)) {
       const chiaveLyricsOvh = normKey(ricerca.a) + "|" + normKey(ricerca.t);
       if (_lyricsOvhMancante(chiaveLyricsOvh)) continue;
@@ -9419,7 +9435,10 @@ async function removeTrack(id) {
           _segnaLyricsOvhMancante(chiaveLyricsOvh);
           continue;
         }
-        if (r.status === 429 || r.status >= 500) break;
+        if (r.status === 429 || r.status >= 500) {
+          _attendiLyricsOvh(r.status === 429 ? 600000 : 180000);
+          break;
+        }
         if (r.ok) {
           const j = await r.json();
           if (j && typeof j.lyrics === "string" && j.lyrics.length > 120 &&
@@ -9427,7 +9446,10 @@ async function removeTrack(id) {
             return { text: j.lyrics.replace(/\r/g, "").trim(), synced: "", source: "lyrics.ovh" };
           }
         }
-      } catch (e) { break; }
+       } catch (e) {
+        _attendiLyricsOvh(300000);
+        break;
+      }
     }
     return null;
   }
