@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.658";
+  const APP_VERSION = "6.659";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12196,6 +12196,11 @@ window.MusicBoxBridge = {
       gymPlaylistCount:gymIds.size,gymPlayableCount:gymIds.size-gymUnavailableIds.length,
       gymUnavailableIds,gymHidden:gym?.nascosta===true,
       gymOwner:gym?.nascostaDa||null,gymUnexpectedInLibrary:gymLeaks,
+      deletedLocalCount:deletedIds.length,
+      remoteSource:_mbUltimaLetturaWorker.source,
+      remoteDeletedCount:_mbUltimaLetturaWorker.deleted,
+      localStaleDeletionsRestored:_mbUltimaLetturaWorker.restored,
+      copiedCount:_mieiCopiati().size,
       totalLoaded:all.length,
       visibleCount:visible.length,localOnlyCount:local.length,
       localOnlyIds:local.map(t=>t.id).sort(),
@@ -12361,7 +12366,9 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   _btnSyncCatalogo.textContent="Sincronizzo…";
   try{
     const s=await _sincronizzaCatalogoDispositivi();
-    toast("Libreria: "+s.visibleCount+" brani · Gym disponibili: "+
+    toast("Libreria: "+s.visibleCount+" brani · copie: "+s.copiedCount+
+      (s.localStaleDeletionsRestored?.length?" · eliminazioni obsolete corrette: "+s.localStaleDeletionsRestored.length:"")+
+      " · Gym disponibili: "+
       s.gymPlayableCount+"/"+s.gymPlaylistCount+
       (s.gymUnavailableIds?.length?" · ID da recuperare: "+s.gymUnavailableIds.join(", "):"")+
       (s.recoveredCopies?" · recuperate "+s.recoveredCopies+" copie":"")+" · v"+APP_VERSION,7500);
@@ -15778,6 +15785,7 @@ rinomini: (function () {
     }, 2500);
   }
 
+  const _mbUltimaLetturaWorker={source:"non letto",deleted:null,restored:[],copied:null};
   async function _caricaStatoCondiviso() {
     /* Ste: "da PC funziona ma da telefono no".
      Il nome da telefono arrivava gia' sul sito, ma al riavvio l'app rileggeva
@@ -15800,6 +15808,7 @@ try {
   const jw = await rw.json();
   if (jw && jw.stato && typeof jw.stato === "object") {
     await _applicaStatoCondiviso(jw.stato,true);
+    _mbUltimaLetturaWorker.source="Worker";
     // A valid response is authoritative EVEN when it changed zero rows.
     // Otherwise a stale stato.json overwrites a correct Worker snapshot.
     return;
@@ -15817,6 +15826,7 @@ try {
       if (!r.ok) return;
 const j = await r.json();
       await _applicaStatoCondiviso(j,false);
+      _mbUltimaLetturaWorker.source="fallback statico";
     } catch (e) { /* nessuna rete: vedo quello che ho gia' */ }
   }
 
@@ -15946,6 +15956,37 @@ const j = await r.json();
           }
           if (tolti) { LS.set("mb.eliminati", el); cambiati++; }
         } catch (e) { /* noop */ }
+      }
+
+      // Il Worker fornisce la lista corrente delle eliminazioni. I vecchi
+      // client aggiungevano tombstone ma non li rimuovevano quando il Worker
+      // non li riportava piu': da qui inventari diversi fra PC e PWA.
+      // Nessuna sincronizzazione distruttiva in modalita' offline/fallback.
+      if(fromWorker&&Array.isArray(j?.eliminati)){
+        const canonical=id=>{
+          const s=String(id||"");
+          return s&&!s.includes(".")?DEFAULT_PROFILE+"."+s:s;
+        };
+        const remote=new Set(j.eliminati.map(canonical)
+          .filter(k=>k.startsWith(profile+".")));
+        const stillDeleting=new Set(_eliminatiDaMandare().map(canonical));
+        const restoring=new Set(_eliminatiRimossiDaMandare().map(canonical));
+        const records=LS.get("mb.eliminati",{})||{};
+        const stale=Object.keys(records).filter(k=>k.startsWith(profile+".")&&
+          !remote.has(k)&&!stillDeleting.has(k)&&!restoring.has(k));
+        _mbUltimaLetturaWorker.deleted=remote.size;
+        _mbUltimaLetturaWorker.copied=Array.isArray(j?.miei?.[profile])
+          ?j.miei[profile].length:null;
+        _mbUltimaLetturaWorker.restored=stale.slice().sort();
+        for(const key of stale)delete records[key];
+        for(const key of remote)if(!restoring.has(key))records[key]=records[key]||Date.now();
+        for(const key of stillDeleting)if(key.startsWith(profile+"."))
+          records[key]=records[key]||Date.now();
+        for(const key of restoring)if(key.startsWith(profile+"."))delete records[key];
+        if(stale.length){
+          LS.set("mb.eliminati",records);
+          cambiati++;
+        }
       }
         const prefs = Array.isArray(j && j.preferiti) ? j.preferiti : [];
         /* "preferiti" e' un vecchio elenco globale. Non lo posso applicare
