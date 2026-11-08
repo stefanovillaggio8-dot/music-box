@@ -82,6 +82,24 @@ test("diagnose wider cautious rhythm choices on real MP3 metadata",()=>{
  console.info("[DJ CAUTIOUS FUNNEL REAL]",JSON.stringify({s,examples}));
  assert.ok(s.tempo>0);
 });
+test("real MP3 low-energy outro can lead into next intro before EOF while fully preserving original",()=>{
+ let checked=0,postlude=0,unsafe=0,preEOF=0;const examples=[];
+ for(let i=0;i<tracks.length;i+=3)for(let j=0;j<tracks.length;j+=3){
+  if(i===j)continue;checked++;
+  const A=tracks[i],B=tracks[j];
+  const cue=engine.transition(A.data,B.data,A.data.duration);
+  if(!cue?.postMusicalTailUnderlay)continue;
+  postlude++;
+  if(cue.begin<A.data.duration-1.8)preEOF++;
+  if(cue.begin<A.data.last+.25||cue.end<A.data.duration-.06||
+     cue.preserveTail!==true||cue.quietCertified!==false)unsafe++;
+  if(examples.length<5)examples.push({from:A.key,to:B.key,
+    startsBeforeEOF:+(A.data.duration-cue.begin).toFixed(2)});
+ }
+ console.info("[DJ PRE-EOF POSTLUDE REAL]",JSON.stringify({checked,postlude,preEOF,unsafe,examples}));
+ assert.equal(unsafe,0,"Never cut original music, even if its last frames are quiet");
+ assert.ok(postlude>100,"Expected usable early lead-ins in real MP3 catalog");
+});
 test("actual precomputed music library: sample real beat/soft/cut decisions and ensure transitions respect duration",()=>{
  assert.ok(tracks.length>100,"Expected many actual indexed MP3 analyses");
  const labels={beat:0,snap:0,soft:0,cut:0,none:0},byTrack=new Set();
