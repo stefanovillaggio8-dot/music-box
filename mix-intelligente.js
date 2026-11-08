@@ -2696,9 +2696,23 @@ function subduedRhythmicIntro(a,b,dur){
 // Low-energy postlude lead-in: the outgoing song stays at full gain
 // through its natural ending. No claim of a BPM/key/beat match is made.
 function lowEnergyPostludeLeadIn(a,b,dur){
+ // A weak final release is NOT enough to prove a safe musical exit.
+ // For verified PCM releases require lyric timing or a completed voice scan.
+ const release=a?.dropRelease;
+ const safeRelease=Boolean(release&&
+    Number(release.score)>=.70&&Number(release.quietLevel)<=.30&&
+    Number.isFinite(release.lastImpactAt)&&
+    Number.isFinite(release.releaseAt)&&
+    release.releaseAt>=release.lastImpactAt&&
+    Number.isFinite(a.last)&&a.last-release.releaseAt>=1.65&&
+    a.last-release.releaseAt<=5.5&&
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<a.last-6||
+     a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+     a.voiceScannedEnd>=a.last-1&&
+     (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-5)));
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     a.protectedEnding===true||a.confidentTail===true||
-    !!a.dropRelease||Number.isFinite(a.safeOutroAt)||
+    (release&&!safeRelease)||Number.isFinite(a.safeOutroAt)||
     !Number.isFinite(dur)||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||a.last<26||
@@ -4957,11 +4971,17 @@ async function intelligentShuffle(app,audio,fromId){
    // encoded EOF. No identical beat is claimed, and the source remains full.
    if(mobilePlayable&&cue?.postMusicalTailUnderlay===true){
     const level=Number.isFinite(info.introDrive)?clamp(info.introDrive,0,1):0;
-    const key=camelotMatch(old,next);
-    const keyScore=key.weight>=.14?key.score:.5;
+    const key=camelotMatch(old,next),notes=similarNotes(old,next);
+    const keyScore=key.weight>=.14?clamp(key.score,0,1):.5;
+    const harmony=Number.isFinite(notes?.focused)?clamp(notes.focused,0,1):.5;
+    const gap=bpmGap(old,next),tempo=Number.isFinite(gap)?
+      clamp(1-gap/25,0,1):.5;
+    // Reward a clear early intro over a very late 1.6-second postlude,
+    // but only AFTER voice safety has been independently established.
+    const early=clamp((audio.duration-cue.begin-1.6)/8,0,1);
     postludeScored.push({track,cue,
-      score:1+level*.28+(Number(keyScore)||0)*.10+
-       Math.min(.12,Math.max(0,cue.fade)*.015)});
+      score:1+level*.23+keyScore*.08+harmony*.10+tempo*.07+
+       early*.20});
     continue;
    }
    // Only as a SECOND choice: a measured musical decay may permit a
