@@ -3434,16 +3434,25 @@ function certifiedNaturalIntroEntry(song,app){
 function prepare(song,fromId,app){
  const url=app.mixUrl?.(song)||song.url;
  if(!url)return;
+ const eofEntry=certifiedNaturalIntroEntry(song,app);
+ // Seek the incoming song BEFORE its matching downbeat. Natural EOF may
+ // skip only independently certified digital silence, never audible music.
+ const plannedEntry=plan&&plan.kind!=="cut"&&Number.isFinite(plan.entry)?
+  Math.max(0,Math.min(18,plan.entry)):eofEntry;
  if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url){
-  // Retry a truly failed preview, but never replace valid buffered MP3s.
-  if(!prepared.failed||Date.now()-(prepared.failedAt||Date.now())<11000)return;
+  // When analysis changes the cue, reposition the SAME buffered decoder.
+  // Re-downloading or seeking during the final beat can stall the handoff.
+  if(!prepared.failed||Date.now()-(prepared.failedAt||Date.now())<11000){
+   prepared.retarget?.(plannedEntry,eofEntry);
+   return;
+  }
  }
  dropPrepared();
  const upcoming=new Audio();upcoming.preload="auto";upcoming.volume=0;
- const naturalEntry=(!plan||plan.kind==="cut")?
-  certifiedNaturalIntroEntry(song,app):0;
+ const naturalEntry=plannedEntry;
  const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false,
-  naturalEntry,seekReady:naturalEntry===0,seekIssued:false};
+  naturalEntry,eofSafe:Math.abs(naturalEntry-eofEntry)<=.20,
+  seekReady:naturalEntry===0,seekIssued:false};
  prepared=p;
  const markReady=()=>{
   if(prepared!==p||p.failed)return;
@@ -3463,6 +3472,14 @@ function prepare(song,fromId,app){
    // EOF handler remains available rather than claiming a ready preview.
    p.naturalEntry=0;p.seekReady=true;markReady();
   }
+ };
+ p.retarget=(entry,safeEOF)=>{
+  if(prepared!==p||p.failed)return;
+  const target=Math.max(0,Math.min(18,Number(entry)||0));
+  p.eofSafe=Math.abs(target-(Number(safeEOF)||0))<=.20;
+  if(Math.abs(p.naturalEntry-target)<=.06)return;
+  p.naturalEntry=target;p.ready=false;p.seekReady=false;p.seekIssued=false;
+  preseek();
  };
  upcoming.addEventListener("loadedmetadata",preseek,{once:true});
  upcoming.addEventListener("seeked",()=>{
@@ -3503,7 +3520,7 @@ function naturalEndHandoff(certifiedSilentTail=false){
  const next=app?.mixNext?.(),p=prepared;
  if(!next||!p||p.fromId!==fromId||
     p.id!==next.id||!p.ready||p.failed||p.audio?.error||
-    p.audio?.readyState<2||
+    p.audio?.readyState<2||p.eofSafe===false||
     (p.naturalEntry>0&&(!p.seekReady||
       Math.abs(p.audio.currentTime-p.naturalEntry)>.55)))return false;
  const incoming=p.audio;
@@ -3708,6 +3725,13 @@ async function beginMix(song,proposed){
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
  const p=prepared;
  if(!p||p.failed||!p.ready||p.id!==song.id||p.fromId!==id)return;
+ const targetEntry=Number.isFinite(proposed.entry)?
+  Math.max(0,Math.min(18,proposed.entry)):0;
+ // An inaccurate playhead is not an aligned transition: retry prebuffering.
+ if(Math.abs((p.naturalEntry||0)-targetEntry)>.10||
+    p.audio.seeking||Math.abs(p.audio.currentTime-targetEntry)>.22){
+  prepare(song,id,app);return;
+ }
  if(old.currentTime>proposed.end-(proposed.kind==="snap"?.25:.55))return;
  mixing=true;stopSnapPrecision();prepared=null;
  const upcoming=p.audio;
@@ -3725,14 +3749,10 @@ async function beginMix(song,proposed){
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
-  if(proposed.entry>0&&upcoming.readyState>=1){
-   try{upcoming.currentTime=Math.min(proposed.entry,Math.max(0,(upcoming.duration||Infinity)-1))}
-   catch(e){/* Se il provider non consente il seek, mantiene l'inizio */}
-   if(upcoming.seeking){
-    await Promise.race([new Promise(resolve=>
-      upcoming.addEventListener("seeked",resolve,{once:true})),
-      new Promise(resolve=>setTimeout(resolve,1400))]);
-   }
+  // Never seek at the last beat: it would create an audible stall or
+  // destroy the measured phase alignment. prepare() has positioned it.
+  if(upcoming.seeking||Math.abs(upcoming.currentTime-targetEntry)>.22){
+   cancel();return;
   }
   if(active!==act||old.paused||app.currentId()!==id){cancel();return}
   if(act.tempo!==1){
@@ -4258,6 +4278,9 @@ function tick(){
       certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||
       compatibleContinuity||chosen;
    lastPlanMissing=!(a&&b);
+   // The final cue may arrive after buffering. Reuse the existing decoder.
+   if(!isIOS&&prepared?.id===target&&prepared.fromId===fromId&&
+      !prepared.failed)prepare(next,fromId,app);
    updateDetails(a,b);
   };
   // Preload the next track even if beat analysis cannot certify a mix.
@@ -5336,7 +5359,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.683",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.684",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -5635,6 +5658,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
    prebufferIntroAt:prepared?.naturalEntry??null,
    prebufferSeekReady:prepared?.seekReady??null,
+   prebufferSafeForNaturalEOF:prepared?.eofSafe??null,
    prebufferPlaybackTime:Number.isFinite(prepared?.audio?.currentTime)?
     Math.round(prepared.audio.currentTime*100)/100:null,
    earlyHandoffPending:naturalEndHandoff.inFlight===id,

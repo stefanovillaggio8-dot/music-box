@@ -698,7 +698,8 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
   "let prepared=null,plan=null;const deepLookup=()=>null;"+
   "const dropPrepared=()=>{prepared=null};"+
   source.slice(begin,end)+
-  "return {prepare,entry:certifiedNaturalIntroEntry,get:()=>prepared};"
+  "return {prepare,entry:certifiedNaturalIntroEntry,get:()=>prepared,"+
+  "setPlan:v=>{plan=v}};"
  )(FakeAudio,records);
  const app={mixUrl:t=>t.url};
  const song={id:"next",url:"next.mp3"};
@@ -710,6 +711,24 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
  p.audio.finishSeek();
  assert.equal(p.ready,true);
  assert.equal(p.seekReady,true);
+ // Later-arriving beat analysis must update the SAME buffered MP3 in
+ // advance and must not turn a musical cue into an unsafe EOF skip.
+ harness.setPlan({kind:"beat",entry:1.62});
+ harness.prepare(song,"old",app);
+ assert.equal(harness.get(),p,"never re-download prebuffered audio");
+ assert.equal(p.audio.currentTime,1.62);
+ assert.equal(p.ready,false,"wait for the new seeked event");
+ assert.equal(p.eofSafe,false);
+ p.audio.finishSeek();
+ assert.equal(p.ready,true);
+ harness.setPlan(null);
+ harness.prepare(song,"old",app);
+ assert.equal(harness.get(),p);
+ assert.equal(p.audio.currentTime,3.12);
+ assert.equal(p.ready,false);
+ p.audio.finishSeek();
+ assert.equal(p.ready,true);
+ assert.equal(p.eofSafe,true);
  const voiced={id:"voice",url:"voice.mp3"};
  records.set("voice.mp3",{safeIntroAt:0,first:.1});
  assert.equal(harness.entry(voiced,app),0,"never skip a genuine first note");
