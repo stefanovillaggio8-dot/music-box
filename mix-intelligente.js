@@ -5612,6 +5612,11 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     shuffleLastDecision:null,
    shuffleBusy,
    previewReady:!!prepared?.ready,previewFailed:!!prepared?.failed,
+   prebufferIntroAt:prepared?.naturalEntry??null,
+   prebufferSeekReady:prepared?.seekReady??null,
+   prebufferPlaybackTime:Number.isFinite(prepared?.audio?.currentTime)?
+    Math.round(prepared.audio.currentTime*100)/100:null,
+   earlyHandoffPending:naturalEndHandoff.inFlight===id,
    mobileClipReady:!!(next&&mobileIntroClips.has(String(app?.mixUrl?.(next)||next.url))),
    mobileClipFailure:mobileClipFailure?.source===String(app?.mixUrl?.(next)||next?.url)?
     mobileClipFailure.reason:null,mobileClipMetrics:{...mobileClipMetrics},
