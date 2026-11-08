@@ -549,3 +549,21 @@ test("measured onset audit: actual groove and drum phase candidates for reported
    counts,examples:top.slice(0,6)}));
  }
 });
+
+
+test("actual track 1197 prefers a full-length verified postlude when musical data allows it",()=>{
+ const from=tracks.find(x=>x.key==="audio/songs/track-1197.mp3");
+ if(!from)return;
+ const figures={outgoing:"1197",checked:0,postlude:0,retainsWholeFile:0};
+ for(const other of tracks){
+  if(other.key===from.key)continue;
+  figures.checked++;
+  const cue=engine.transition(from.data,other.data,from.data.duration);
+  if(!cue?.postMusicalTailUnderlay)continue;
+  figures.postlude++;
+  if(cue.end>=from.data.duration-.06&&cue.preserveTail===true&&
+      cue.silenceTrim===false)figures.retainsWholeFile++;
+ }
+ console.info("[DJ 1197 FULL-LENGTH INTRO]",JSON.stringify(figures));
+ assert.equal(figures.postlude,figures.retainsWholeFile);
+});

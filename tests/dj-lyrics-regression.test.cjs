@@ -21,5 +21,24 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Passaggio naturale: nessun beat compatibile certificato/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- assert.match(dj,/musicBoxVersion:"6\.640"/);
+ assert.match(dj,/musicBoxVersion:"6\.688"/);
+});
+
+
+test("redundant featuring credits are cleaned only for lyric provider search",()=>{
+ const from=app.indexOf("function _titoloPulitoPerTesti(");
+ const end=app.indexOf("async function findLyrics(",from);
+ assert.ok(from>0&&end>from);
+ const normalize=s=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"");
+ const fn=new Function("stripVariants","normKey",app.slice(from,end)+
+  "return _titoloPulitoPerTesti;")(s=>String(s).trim(),normalize);
+ assert.equal(fn("Nayt, 3D","senza armi ft nayt"),"senza armi");
+ assert.equal(fn("Nayt, 3D","senza armi ft altri"),"senza armi ft altri");
+ assert.equal(fn("Nayt","senza armi"),"senza armi");
+});
+test("unreachable lyric services enter independent provider cooldown",()=>{
+ assert.match(app,/mb\.lyricsOvhAttesaFino/);
+ assert.match(app,/_attendiLyricsOvh\(300000\)/);
+ assert.match(app,/_segnaLyricsOvhMancante\(chiaveLyricsOvh\)/);
+ assert.match(app,/!\/\[,\/&\]\/\.test\(artistaCompleto\)/);
 });
