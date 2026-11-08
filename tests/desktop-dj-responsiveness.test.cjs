@@ -364,7 +364,7 @@ test("DJ only reorders certified or harmonically compatible songs; weak rhythms 
  assert.match(sectionText,/rhythm\.score>=\.62&&ratio>=\.945/);
  assert.match(sectionText,/mixSelectShuffle\(\{fromId,initialFirst,pickId:best\.track\.id\}\)/);
  assert.match(sectionText,/groove misurato \(nessuna sovrapposizione autorizzata\)/);
- assert.match(dj,/const musicallyPlayable=!!cue&&musicallyCompatibleOverlay/);
+ assert.match(dj,/(?:const|let) musicallyPlayable=!!cue&&musicallyCompatibleOverlay/);
  assert.match(dj,/if\(!verified\)\{/);
 });
 
