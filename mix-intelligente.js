@@ -328,6 +328,23 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
    (!Number.isFinite(lastLyricAt)||lastLyricAt<ending.last-.75)&&
    (!Number.isFinite(ending.lastVoiceAt)||ending.lastVoiceAt<ending.last-.75);
  }
+ if(plan.vocalBeatUnderlay===true){
+  return !!ending&&plan.earlyBeatJoin===true&&
+   plan.kind==="beat"&&plan.measuredBeatBridge===true&&
+   plan.rhythmicGridJoin===true&&plan.preserveTail===true&&
+   Number.isFinite(ending.last)&&
+   Number.isFinite(lastLyricAt)&&lastLyricAt<=plan.end-2.5&&
+   Number.isFinite(plan.vocalEndAt)&&
+   plan.vocalEndAt<=plan.end-.055&&
+   plan.beatGridScore>=.34&&plan.earlyOnsetAgreement>=.62&&
+   plan.fade>=4.5&&plan.fade<=9.6&&
+   (plan.voiceConfirmedUnderlay===true?
+    ending.voiceModel&&Number.isFinite(ending.lastVoiceAt)&&
+      Math.abs(ending.lastVoiceAt-plan.vocalEndAt)<=.20&&
+      Number.isFinite(ending.voiceScannedEnd)&&
+      ending.voiceScannedEnd>=ending.last-.75:
+    !ending.voiceModel&&plan.end>=ending.duration-.55);
+ }
  if(plan.rhythmicUnderlay&&plan.measuredBeatBridge&&plan.preserveTail){
   // Low-volume unverified overlay: never duck the native Safari player.
   return !!ending&&Number.isFinite(ending.duration)&&
@@ -1537,6 +1554,13 @@ async function decode(track,needClip=false){
 // transition window can invalidate an already audible mix.
 function voiceThreatensPlan(voice,isCurrent,isNext,currentPlan){
  if(!currentPlan)return false;
+ if(currentPlan.vocalBeatUnderlay===true){
+  return Boolean(
+   isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
+    voice.lastVoiceAt>currentPlan.vocalEndAt+.20||
+   isNext&&Number.isFinite(voice?.firstVoiceAt)&&
+    voice.firstVoiceAt<currentPlan.fade+.55);
+ }
  return Boolean(
   (isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
    Number.isFinite(currentPlan.begin)&&voice.lastVoiceAt>=currentPlan.begin-5)||
@@ -1841,7 +1865,7 @@ function alignedEarlyOnsetAgreement(outro,intro,offsetSeconds){
 }
 function earlyMatchedBar(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
-    a.protectedEnding===true||!Number.isFinite(a.duration)||
+    !Number.isFinite(a.duration)||
     !Number.isFinite(dur)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||!Number.isFinite(a.bpm)||
     !Number.isFinite(b.bpm)||a.beatConfidence<.20||
@@ -1903,11 +1927,28 @@ function earlyMatchedBar(a,b,dur){
    Math.ceil((.55-phase)/period)*period;
   const begin=beatAt-nextPhase,end=Math.min(dur-.035,a.last+.06),
    fade=end-begin;
+  const singing=Boolean(
+    (knownLastLyric!==null&&knownLastLyric>begin-5.5)||
+    (knownLastVoice!==null&&knownLastVoice>begin-4));
+  // Incoming intro MUST contain only music for the whole overlap.
+  // A known voice end permits an audible instrumental bed under singing.
+  // With karaoke-only evidence, protect the entire native outgoing song:
+  // it stays at full gain until its last measured audible instant.
+  const voiceConfirmed=Boolean(scanned&&knownLastVoice!==null&&
+    knownLastVoice>begin+.3&&knownLastVoice<=end-.65&&
+    knownLastLyric!==null&&knownLastLyric<=end-2.5);
+  const preserveUnknownVoice=Boolean(!scanned&&knownLastVoice===null&&
+    knownLastLyric!==null&&knownLastLyric<=end-2.5&&
+    dur-end<=.55);
+  const vocalUnderlay=Boolean(singing&&
+    (voiceConfirmed||preserveUnknownVoice)&&
+    firstNextVoice>=fade+.65);
+  const vocalEndAt=voiceConfirmed?knownLastVoice:end-.06;
   if(!Number.isFinite(begin)||begin<26||fade<4.5||fade>9.6||
      begin<win.start-.2||begin>win.end-.35||end<a.last-.2||
-     firstNextVoice<fade+.65||
-     (knownLastLyric!==null&&knownLastLyric>begin-5.5)||
-     (knownLastVoice!==null&&knownLastVoice>begin-4))continue;
+     dur-end>12||firstNextVoice<fade+.65||
+     (a.protectedEnding===true&&!vocalUnderlay)||
+     (singing&&!vocalUnderlay))continue;
   // Equal BPM and compatible chords alone do not prove a beatmatched
   // transition. Compare real PCM attacks at the shifted playback instant.
   const matchedRhythm=alignedEarlyOnsetAgreement(
@@ -1921,8 +1962,13 @@ function earlyMatchedBar(a,b,dur){
    earlyOnsetAgreement:matchedRhythm.score,
    rhythmicGridJoin:true,earlyBeatJoin:true,measuredBeatBridge:true,
    earlyWindowStart:win.start,earlyWindowEnd:win.end,
-   verifiedHarmonicBridge:true,quietCertified:true,preserveTail:true,
-   safeOutroAt:begin,softTailTrim:false,
+   vocalBeatUnderlay:vocalUnderlay,
+   vocalEndAt:vocalUnderlay?vocalEndAt:null,
+   voiceConfirmedUnderlay:voiceConfirmed&&vocalUnderlay,
+   vocalVerifiedBeat:voiceConfirmed&&vocalUnderlay,
+   rhythmicUnderlay:vocalUnderlay,
+   verifiedHarmonicBridge:true,quietCertified:!vocalUnderlay,preserveTail:true,
+   safeOutroAt:vocalUnderlay?null:begin,softTailTrim:false,
    silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
    trailing:Math.max(0,dur-end),
    beatPeriod:period,beatAnchor:win.start+phase,
@@ -3074,7 +3120,9 @@ function startMobileMix(song,p,app,old){
    return false;
   }
   const startedAt=ctx.currentTime+delay;
-  const ramp=p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
+  const ramp=p.vocalBeatUnderlay?
+   Math.max(.35,secondsLeft-delay-.12):
+   p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
    p.mobileSilentBridge?clamp(secondsLeft*.70,.22,.95):
    Math.max(.9,Math.min(p.fade*.72,secondsLeft-delay-.25));
   gain.gain.setValueAtTime(0,ctx.currentTime);
@@ -3092,14 +3140,22 @@ function startMobileMix(song,p,app,old){
     const shape=new Float32Array(48);
     for(let i=0;i<shape.length;i++){
      const u=i/(shape.length-1);
-     const proportion=p.softTailTrim?Math.sin(Math.pow(u,.65)*Math.PI/2):
+     const singerEnd=(Number(p.vocalEndAt)-old.currentTime)/
+       Math.max(.35,ramp);
+     const postSinger=clamp((u-singerEnd-.02)/
+       Math.max(.05,1-singerEnd-.02),0,1);
+     const proportion=p.vocalBeatUnderlay?
+       (u<=singerEnd+.02?.10+.23*clamp(u/.20,0,1):
+        .33+.67*Math.sin(postSinger*Math.PI/2)):
+       p.softTailTrim?Math.sin(Math.pow(u,.65)*Math.PI/2):
        p.kind==="rise"?Math.pow(u,1.7):
        p.kind==="beat"?Math.sin(u*Math.PI/2):u;
      shape[i]=target*proportion;
     }
     gain.gain.setValueCurveAtTime(shape,startedAt,ramp);
    }catch(e){gain.gain.linearRampToValueAtTime(target,startedAt+ramp)}
-  }else gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
+  }else gain.gain.linearRampToValueAtTime(
+   p.vocalBeatUnderlay?target*.28:target,startedAt+ramp);
   // Make the measured BPM adjustment actually audible on iPhone.
   // The last beat of the preview is always back to original speed,
   // so the native handoff has no permanent pitch/rate discontinuity.
@@ -3139,6 +3195,7 @@ function startMobileMix(song,p,app,old){
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
   mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
+   vocalBeatUnderlay:!!p.vocalBeatUnderlay,vocalEndAt:Number(p.vocalEndAt),
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onEnded,onSeek,handingOff:false,
    handoffAt:0,nativeRetryCount:0,nativeRetryAt:0,rateSpeed,rateRamp,
@@ -3551,6 +3608,8 @@ async function beginMix(song,proposed){
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
+  vocalBeatUnderlay:!!proposed.vocalBeatUnderlay,
+  vocalEndAt:Number(proposed.vocalEndAt),
   verifiedRhythmicGrid:!!proposed.rhythmicGridJoin,
   vocalVerifiedBeat:!!proposed.vocalVerifiedBeat,
   continuityFallback:!!proposed.continuityFallback,
@@ -3620,6 +3679,19 @@ async function beginMix(song,proposed){
     outGain=Math.cos(Math.pow(late,1.35)*Math.PI/2);
     inGain=Math.sin(Math.pow(time,act.verifiedRhythmicGrid?1.18:
       act.vocalVerifiedBeat?1.18:1.85)*Math.PI/2);
+   }
+   if(act.vocalBeatUnderlay){
+    // Audible matched instrumental underneath the first song's full vocal.
+    // Only after the last measured sung syllable does the original duck.
+    const progress=clamp((old.currentTime-act.vocalEndAt-.16)/
+     Math.max(.12,act.end-act.vocalEndAt-.16),0,1);
+    if(old.currentTime<=act.vocalEndAt+.16){
+     outGain=1;
+     inGain=.08+.25*clamp(time/.22,0,1);
+    }else{
+     outGain=Math.cos(progress*Math.PI/2);
+     inGain=.33+.67*Math.sin(progress*Math.PI/2);
+    }
    }
    if(act.measuredFinalImpact){
     // Incoming kick on the last outgoing beat at restrained gain;
@@ -3941,7 +4013,15 @@ function tick(){
    }
    mobileActive.lastAudioTime=audio.currentTime;
    mobileActive.lastCtxTime=mobileActive.ctx.currentTime;
-   if((mobileActive.strongBeatBridge||mobileActive.snap)&&mobileActive.vocalSafe){
+   if(mobileActive.vocalBeatUnderlay){
+    const vol=app.volume?.()??1;
+    const progress=clamp((audio.currentTime-mobileActive.vocalEndAt-.16)/
+     Math.max(.12,mobileActive.end-mobileActive.vocalEndAt-.16),0,1);
+    try{
+     audio.volume=vol*Math.cos(progress*Math.PI/2);
+     mobileFadeTrack=id;mobileFading=true;
+    }catch(_){}
+   }else if((mobileActive.strongBeatBridge||mobileActive.snap)&&mobileActive.vocalSafe){
     // Duck the native outgoing beat where supported; Safari may
     // ignore media-element volume, so the incoming gain stays limited.
     const progress=clamp((audio.currentTime-mobileActive.audioStartedAt)/
@@ -4211,6 +4291,11 @@ function tick(){
     lastKnownLyric>=plan.outroGapStart-3.5){
   dropPrepared();plan=null;resetMobileFade();return;
  }
+ const verifiedVocalBeat=Boolean(plan.vocalBeatUnderlay===true&&
+   plan.earlyBeatJoin===true&&Number.isFinite(lastKnownLyric)&&
+   lastKnownLyric<=plan.end-2.5&&
+   Number.isFinite(plan.vocalEndAt)&&
+   plan.vocalEndAt<=plan.end-.055);
  const verifiedQuietLyricExit=Boolean(plan.verifiedDecayAfterLyrics&&
     plan.quietCertified&&plan.kind==="soft"&&
     Number.isFinite(plan.decayReleaseAt)&&
@@ -4218,7 +4303,7 @@ function tick(){
     plan.begin>=lastKnownLyric+4);
  if(!mixing&&Number.isFinite(lastKnownLyric)&&
     plan.begin<lastKnownLyric+6&&audio.duration-lastKnownLyric<16&&
-    !verifiedQuietLyricExit){
+    !verifiedQuietLyricExit&&!verifiedVocalBeat){
   if(plan.silenceTrim)plan={...plan,begin:plan.end,fade:0,kind:"cut"};
   else {dropPrepared();plan=null;resetMobileFade();return}
  }
@@ -5095,7 +5180,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.676",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.677",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
