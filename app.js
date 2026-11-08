@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.674";
+  const APP_VERSION = "6.675";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5397,6 +5397,32 @@ function _titoloPerSchermo(value, canonical="") {
   if(text.length>320)text=[...text].slice(0,240).join("")+"…";
   return text;
 }
+
+function _titoloOriginalePerSchermo(t) {
+  const fallback=_originaleDi(t?.id)?.title||"";
+  const album=String(t?.album||"").trim(),raw=String(t?.title||"").trim();
+  const single=/^(.+?)\s+[-–]\s+Single$/i.exec(album);
+  if(single&&!/[ÃÂ\uFFFD\u25A1]{3,}/u.test(album)){
+    const candidate=single[1].trim();
+    const prefix=raw.split(/[ÃÂ\uFFFD\u25A1]/u)[0].trim();
+    if(prefix.length>=6&&candidate.toLocaleLowerCase("it-IT")
+      .startsWith(prefix.toLocaleLowerCase("it-IT")))return candidate;
+  }
+  return fallback;
+}
+function _artistaOriginalePerSchermo(t) {
+  const fallback=_originaleDi(t?.id)?.artist||"";
+  const raw=String(t?.artist||"").trim();
+  const prefix=raw.split(/[ÃÂ\uFFFD\u25A1]/u)[0].trim();
+  if(prefix.length>=3&&!/\s/u.test(prefix)){
+    const words=String(t?.album||"").match(/\p{L}+/gu)||[];
+    const matches=[...new Set(words.filter(w=>
+      w.toLocaleLowerCase("it-IT").startsWith(prefix.toLocaleLowerCase("it-IT"))&&
+      w.length<=prefix.length+3))];
+    if(matches.length===1)return matches[0];
+  }
+  return fallback;
+}
   function render() {
     _diag("render");
     const list = visibleTracks();
@@ -5549,7 +5575,7 @@ emptyEl.textContent = !total
          vengono mai tagliati. */
       const testoTitolo = document.createElement("span");
       testoTitolo.className = "track-testo";
-      testoTitolo.textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
+      testoTitolo.textContent = _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t));
       title.appendChild(testoTitolo);
       const contrassegni = [];
       info.appendChild(title);
@@ -5557,7 +5583,7 @@ emptyEl.textContent = !total
       const meta = document.createElement("div");
       meta.className = "track-meta";
       const bits = [];
-      if (t.artist) bits.push(_titoloPerSchermo(t.artist,_originaleDi(t.id)?.artist));
+      if (t.artist) bits.push(_titoloPerSchermo(t.artist,_artistaOriginalePerSchermo(t)));
       if (t.album) bits.push(_titoloPerSchermo(t.album,_originaleDi(t.id)?.spotifyAlbum));
       if (t.preview) bits.push("anteprima 30s");
       // Una richiesta YouTube non viene spacciata per un audio disponibile.
@@ -7175,12 +7201,12 @@ function rebuildAudio(autoplay) {
       info.addEventListener("click", () => playFromQueue(i));
       const ti = document.createElement("div");
       ti.className = "queue-title";
-      ti.textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
+      ti.textContent = _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t));
       info.appendChild(ti);
       if (t.artist) {
         const ar = document.createElement("div");
         ar.className = "queue-artist";
-        ar.textContent = _titoloPerSchermo(t.artist,_originaleDi(t.id)?.artist);
+        ar.textContent = _titoloPerSchermo(t.artist,_artistaOriginalePerSchermo(t));
         info.appendChild(ar);
       }
       row.appendChild(info);
@@ -7316,7 +7342,7 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
 
   function openQuickMenu(t) {
     if (!t) return;
-    $("quickTitle").textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
+    $("quickTitle").textContent = _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t));
     const box = $("quickActions");
 box.innerHTML = "";
   /* Prima cosa nel menu: cambiare il nome. Stava in una pressione lunga
@@ -7495,8 +7521,8 @@ box.innerHTML = "";
        libreria fosse sparita. Era solo il momento PRIMA che arrivasse.
        Ora, mentre carica, la scritta lo dice. */
     const staCaricando = !t && !_libreriaPronta;
-    $("playerTitle").textContent = t ? _titoloPerSchermo(t.title,_originaleDi(t.id)?.title) : "—";
-    $("hudTitle").textContent = t ? _titoloPerSchermo(t.title,_originaleDi(t.id)?.title) : (staCaricando ? "Sto caricando..." : "Nessuna traccia");
+    $("playerTitle").textContent = t ? _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t)) : "—";
+    $("hudTitle").textContent = t ? _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t)) : (staCaricando ? "Sto caricando..." : "Nessuna traccia");
     $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto")
       : (staCaricando ? "Un attimo, sto prendendo la libreria" : "Aggiungi musica per iniziare");
     updateLyricsButton();
@@ -8469,8 +8495,8 @@ function _aggiornaPosizioneSchermo() {
     if (_mediaSessionTrackId!==currentId || !session.metadata) {
       const cop = _copertinaPerSchermo(t);
       session.metadata = new MediaMetadata({
-        title: _titoloPerSchermo(t.title,_originaleDi(t.id)?.title) || APP_NAME,
-        artist: _titoloPerSchermo(t.artist,_originaleDi(t.id)?.artist) || APP_NAME,
+        title: _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t)) || APP_NAME,
+        artist: _titoloPerSchermo(t.artist,_artistaOriginalePerSchermo(t)) || APP_NAME,
         album: APP_NAME,
         artwork: cop ? [{ src: cop, sizes: "512x512" }] :
           [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
@@ -15463,7 +15489,7 @@ function _aggiornaBadgePlaylist() {
         const nome = document.createElement("button");
         nome.type = "button";
         nome.className = "playlist-nome";
-        nome.textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
+        nome.textContent = _titoloPerSchermo(t.title,_titoloOriginalePerSchermo(t));
         nome.addEventListener("click", () => { chiudiPanelPlaylist(); playById(t.id); });
         const togli = document.createElement("button");
         togli.type = "button";

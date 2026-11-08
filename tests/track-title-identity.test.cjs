@@ -17,7 +17,7 @@ test('render-only unicode guard strips pathological marks, never rewrites stored
  assert.equal(show('A\u200eB'),'AB');
  assert.equal(show('A\u0301\u0300\u0301\u0300\u0301'), 'Á̀');
  assert.ok(show('A'.repeat(500)).length<260);
- assert.match(code,/testoTitolo\.textContent = _titoloPerSchermo\(t\.title,_originaleDi\(t\.id\)\?\.title\)/);
+ assert.match(code,/testoTitolo\.textContent = _titoloPerSchermo\(t\.title,_titoloOriginalePerSchermo\(t\)\)/);
  assert.match(css,/\.track-testo \{[\s\S]*?max-width: 100%;/);
 });
 
@@ -35,5 +35,20 @@ test('repeated mojibake in titles and album metadata is display-only',()=>{
  assert.equal(show("mi @mio è f@ke"),"mi @mio è f@ke");
  assert.equal(show("s!r!"),"s!r!");
  assert.match(code,/bits\.push\(_titoloPerSchermo\(t\.album,/);
- assert.match(code,/_titoloPerSchermo\(t\.title,_originaleDi\(t\.id\)\?\.title\)/);
+ assert.match(code,/_titoloPerSchermo\(t\.title,_titoloOriginalePerSchermo\(t\)\)/);
+});
+test('healthy single album restores exact titles while corrupt artist uses matching album word',()=>{
+ const start=code.indexOf("function _titoloOriginalePerSchermo(t) {");
+ const end=code.indexOf("  function render() {",start);
+ assert.ok(start>=0&&end>start);
+ const helpers=vm.runInNewContext("const _originaleDi=()=>({title:'fallback',artist:'fallback'});"+
+  code.slice(start,end)+";({title:_titoloOriginalePerSchermo,artist:_artistaOriginalePerSchermo});");
+ const garbled="Ã\uFFFD".repeat(25);
+ assert.equal(helpers.title({title:"Dimmi Che C'"+garbled,
+  album:"Dimmi Che C'è (feat. Tedua) - Single"}),"Dimmi Che C'è (feat. Tedua)");
+ assert.equal(helpers.title({title:"uNa DiReZioNe gi"+garbled,
+  album:"uNa DiReZioNe giUsTa - Single"}),"uNa DiReZioNe giUsTa");
+ assert.equal(helpers.title({title:"Different"+garbled,album:"Other Song - Single"}),"fallback");
+ assert.equal(helpers.artist({artist:"Mod"+garbled,
+  album:"Il meglio dei Modà, 2000 - 2011"}),"Modà");
 });
