@@ -491,7 +491,8 @@ test("same BPM is not sufficient if the final half of the real drums diverges",(
  const broken=tools.onsetPairAgreement({outroOnset:pulse},{introOnset:mismatched});
  assert.equal(identical?.certified,true,"matching 4s kick sequence must pass");
  assert.equal(broken?.certified,false,"one matching passage cannot hide a clashing final measure");
- assert.ok(broken?.firstHalf>.75&&broken?.secondHalf<.3);
+ assert.ok(broken?.firstHalf>.75&&broken?.secondHalf<.4,
+  "a mismatched last half must stay below the .40 safety threshold");
 });
 
 test("beat clock uses actual four-second edge and intro, not a distant strongest transient",()=>{

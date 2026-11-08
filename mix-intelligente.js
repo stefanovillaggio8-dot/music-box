@@ -107,6 +107,9 @@ function onsetPairAgreement(a,b){
  const first=correlate(best.shift,0,48),
        second=correlate(best.shift,48,96);
  const certified=best.score>=.61&&
+  // Never certify a join that requires an inaudible 250-500 ms timing jump.
+  // Longer early-bar joins have their own independently measured verifier.
+  Math.abs(best.shift*4000/n)<=190&&
   Number.isFinite(first?.score)&&first.score>=.40&&
   Number.isFinite(second?.score)&&second.score>=.40&&
   best.hits>=3&&best.firstHits>=1&&best.secondHits>=1;
@@ -5089,7 +5092,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.647",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.670",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -5111,9 +5114,15 @@ function start(){
   try{
    const snap=await bridge()?.syncLibrary?.();
    if(!snap)throw Error("Libreria non pronta");
-   if(status)status.textContent="Riletti "+snap.visibleCount+" brani visibili · "+
-    snap.localOnlyCount+" locali · "+snap.playlistOnlyIds.length+
-    " solo nelle playlist. Nessun MP3 cancellato.";
+   if(status)status.textContent="Sincronizzazione completata · "+
+    snap.visibleCount+" brani in libreria · "+
+    (snap.addedIds?.length||0)+" aggiunti · "+
+    (snap.removedIds?.length||0)+" rimossi dall'elenco · "+
+    (snap.updatedIds?.length||0)+" titoli aggiornati · "+
+    "fonte "+snap.remoteSource+". "+
+    ((snap.addedIds?.length||0)+(snap.removedIds?.length||0)+(snap.updatedIds?.length||0)===0
+      ?"Nessuna differenza tra gli ID prima e dopo. ":"")+
+    "Nessun MP3 offline cancellato.";
   }catch(_){
    if(status)status.textContent="Sincronizzazione non riuscita: dati locali conservati.";
   }finally{if(button)button.disabled=false}

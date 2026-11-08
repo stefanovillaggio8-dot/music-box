@@ -133,13 +133,19 @@ test("read-only library diagnostics detect playlist-only count differences",()=>
  assert.equal(result.tracks.length,229);
  assert.equal(items.length,233,"diagnostics never delete loaded songs");
 });
-test("manual sync refreshes cloud and local view without erasing offline files",()=>{
- const i=src.indexOf("syncLibrary:async()=>{");
- const j=src.indexOf("profile:()=>profile,",i);
+test("manual sync bypasses stale metadata cooldown, reports ID differences and preserves MP3s",()=>{
+ const i=src.indexOf("function _sincronizzaCatalogoDispositivi(force=false){");
+ const j=src.indexOf("/* Mette dentro quello che arriva dal Worker",i);
+ assert.ok(i>=0&&j>i);
  const body=src.slice(i,j);
+ assert.ok(src.includes("syncLibrary:()=>_sincronizzaCatalogoDispositivi(true)"));
  assert.ok(body.includes("await _caricaStatoCondiviso()"));
  assert.ok(body.includes("await _caricaPlaylistCondivise()"));
- assert.ok(body.includes("await loadAll()"));
+ assert.ok(body.includes("await loadAll(force)"));
+ assert.ok(body.includes("await _recuperaCopiePubblicate(force)"));
+ assert.ok(body.includes("addedIds,removedIds"));
+ assert.ok(body.includes("updatedIds"));
+ assert.match(src,/if \(!force && Date\.now\(\) - _ytOnlineFetchedAt < 45000\)/);
  assert.doesNotMatch(body,/dbDelete|caches\.delete|\.splice\(/);
 });
 

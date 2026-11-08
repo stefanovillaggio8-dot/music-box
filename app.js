@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.669";
+  const APP_VERSION = "6.670";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3314,8 +3314,8 @@ function _devoVedereBrano(eMio, b) {
      Rete disattivata: conserva l'ultima lista in memoria; non blocca la PWA. */
   let _ytOnlineCache = [];
   let _ytOnlineFetchedAt = 0;
-  async function _braniYouTubePubblicati() {
-    if (Date.now() - _ytOnlineFetchedAt < 45000) return _ytOnlineCache;
+  async function _braniYouTubePubblicati(force=false) {
+    if (!force && Date.now() - _ytOnlineFetchedAt < 45000) return _ytOnlineCache;
     _ytOnlineFetchedAt = Date.now();
     const ctrl = new AbortController();
     const timeout = setTimeout(() => ctrl.abort(), 3500);
@@ -3497,7 +3497,7 @@ function _devoVedereBrano(eMio, b) {
         _programmaTestiKaraoke();
     }
   }
-  async function loadAll() {
+  async function loadAll(forceRemote=false) {
   _diag("loadAll");
   _memoCondiviso.clear();
   /* Copertine che ho cercato io dal browser per questi brani (vedi
@@ -3555,7 +3555,7 @@ function _devoVedereBrano(eMio, b) {
      Ora la chiave e' "profilo.id": io elimino "Ste.b-track-12", Diego
      elimina "Diego.b-track-30", e ognuno vede solo le proprie. */
   /* MB_REVIEW_VISIBLE_SAFE_20261030 */
-  const builtin = BUILTIN.concat((await _braniYouTubePubblicati()).filter(x =>
+  const builtin = BUILTIN.concat((await _braniYouTubePubblicati(forceRemote)).filter(x =>
     !BUILTIN.some(b => b.file === x.file && (b.profile || DEFAULT_PROFILE) === x.profile)))
   .filter((b) => !_branoEliminato(_idBranoStabile(b),profile,eliminati))
   /* Ste: "cancello, spariscono e ricompaiono dopo 5 secondi".
@@ -12225,7 +12225,7 @@ window.MusicBoxBridge = {
         .sort((x,y)=>x.id.localeCompare(y.id))
     };
   },
-  syncLibrary:()=>_sincronizzaCatalogoDispositivi(),
+  syncLibrary:()=>_sincronizzaCatalogoDispositivi(true),
   profile:()=>profile,
   playable:()=>_listaPerIlSeguito(),
   allTracks:()=>tracks,
@@ -12382,7 +12382,7 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   const diff=$("mbCatalogDiff");
   if(diff){diff.hidden=false;diff.textContent="Sincronizzazione in corso: leggo Worker, playlist, copie e Libreria…";}
   try{
-    const s=await _sincronizzaCatalogoDispositivi();
+    const s=await _sincronizzaCatalogoDispositivi(true);
     const changed=Number(s.visibleCount||0)-Number(before?.visibleCount||0);
     const status="Sincronizzazione completata · v"+APP_VERSION+
       "\n"+(before?.visibleCount??"?")+" → "+s.visibleCount+" brani in Libreria"+
@@ -12393,7 +12393,17 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
       " · Gym: "+s.gymPlayableCount+"/"+s.gymPlaylistCount+
       "\nSe il numero non cambia, la sincronizzazione non deve inventare"+
       " o nascondere brani: apri «Confronta con il Worker» per gli ID reali.";
-    if(diff){diff.hidden=false;diff.textContent=status;}
+    if(diff){
+      const changedIds=[...(s.addedIds||[]).map(id=>" + "+id),
+        ...(s.removedIds||[]).map(id=>" - "+id),
+        ...(s.updatedIds||[]).map(id=>" ~ "+id)];
+      diff.hidden=false;
+      diff.textContent=status+"\nID modificati: "+
+        (changedIds.length?changedIds.slice(0,24).join(", ")+
+          (changedIds.length>24?" (e altri "+(changedIds.length-24)+")":""):
+          "nessuno")+
+        "\nRecuperate dal catalogo pubblicato: "+s.recoveredCopies;
+    }
     toast("Sincronizzazione: "+s.visibleCount+" brani"+
       (changed===0?" (nessun cambiamento)":changed>0?" (+"+changed+")":" ("+changed+")")+
       " · "+s.remoteSource,7500);
@@ -16182,8 +16192,8 @@ const j = await r.json();
   // non ha ancora ricevuto. Non ripristinare eliminazioni, playlist o
   // preferenze da un vecchio stato.json.
   let _ultimaLetturaCopiePubblicate=0;
-  async function _recuperaCopiePubblicate() {
-    if(Date.now()-_ultimaLetturaCopiePubblicate<45000)return 0;
+  async function _recuperaCopiePubblicate(force=false) {
+    if(!force&&Date.now()-_ultimaLetturaCopiePubblicate<45000)return 0;
     _ultimaLetturaCopiePubblicate=Date.now();
     try {
       const response=await fetch("./stato.json",{cache:"no-store"});
@@ -16214,15 +16224,17 @@ const j = await r.json();
   }
 
   let _syncCatalogoInCorso=null;
-  function _sincronizzaCatalogoDispositivi(){
+  function _sincronizzaCatalogoDispositivi(force=false){
     if(_syncCatalogoInCorso)return _syncCatalogoInCorso;
     const job=(async()=>{
+      const before=window.MusicBoxBridge?.librarySnapshot?.();
+      _mbUltimaLetturaWorker.source="non letto";
       // Leggi le playlist e lo stato centrale prima degli ID pubblicati.
       // Nessuna cancellazione di MP3, IndexedDB o download offline.
       await _caricaPlaylistCondivise();
       await _caricaStatoCondiviso();
-      const recuperate=await _recuperaCopiePubblicate();
-      await loadAll();
+      const recuperate=await _recuperaCopiePubblicate(force);
+      await loadAll(force);
       const flags=new Set([..._soloInPlaylist,
         ...[..._nascostiDallePlaylist()].map(id=>_chiaveSoloInPlaylist(id))]);
       if(flags.size!==_soloInPlaylist.size||
@@ -16231,7 +16243,17 @@ const j = await r.json();
       }
       _disegnaLinguettePlaylist();
       render();
-      return {...window.MusicBoxBridge.librarySnapshot(),recoveredCopies:recuperate};
+      const after=window.MusicBoxBridge.librarySnapshot();
+      const oldRows=new Map((before?.tracks||[]).map(t=>[t.id,t]));
+      const newRows=new Map(after.tracks.map(t=>[t.id,t]));
+      const addedIds=after.tracks.filter(t=>!oldRows.has(t.id)).map(t=>t.id);
+      const removedIds=(before?.tracks||[]).filter(t=>!newRows.has(t.id)).map(t=>t.id);
+      const updatedIds=after.tracks.filter(t=>{
+        const prior=oldRows.get(t.id);
+        return prior&&(prior.title!==t.title||prior.artist!==t.artist);
+      }).map(t=>t.id);
+      return {...after,recoveredCopies:recuperate,addedIds,removedIds,
+        updatedIds,synchronizedAt:new Date().toISOString()};
     })();
     _syncCatalogoInCorso=job;
     job.then(()=>{if(_syncCatalogoInCorso===job)_syncCatalogoInCorso=null},
