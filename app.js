@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.665";
+  const APP_VERSION = "6.666";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12429,11 +12429,16 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   });
 
 
+let _mbCatalogConfrontoTesto="";
+let _mbCatalogEsclusioniCondivisibili=[];
 async function _mbConfrontaCatalogoConWorker(){
   const out=$("mbCatalogDiff"),button=$("btnCompareCatalogo");
+  const share=$("btnShareCatalogExclusions");
   if(!out||!button)return;
   out.hidden=false;button.disabled=true;button.textContent="Confronto in corso…";
-  out.textContent="Controllo le differenze senza modificare canzoni o download.";
+  if(share)share.hidden=true;
+  out.textContent="Verifico i motivi delle differenze senza cambiare canzoni.";
+  _mbCatalogConfrontoTesto="";_mbCatalogEsclusioniCondivisibili=[];
   try{
     if(!SERVIZIO_PUBBLICA)throw new Error("Servizio non configurato");
     const get=async path=>{
@@ -12448,11 +12453,11 @@ async function _mbConfrontaCatalogoConWorker(){
       get("/stato"),get("/playlist"),fetch("./versione.json",{cache:"no-store"})
     ]);
     const state=sr?.stato,pls=pr?.playlist;
-    if(!state||!Array.isArray(pls))
-      throw new Error("Risposta incompleta del Worker");
+    if(!state||!Array.isArray(pls))throw new Error("Risposta incompleta del Worker");
     const published=vr.ok?await vr.json():{};
-    const copies=new Set(Array.isArray(state.miei?.[profile])?state.miei[profile]:[]);
-    const deleted=new Set(Array.isArray(state.eliminati)?state.eliminati:[]);
+    const copied=new Set(Array.isArray(state.miei?.[profile])?state.miei[profile]:[]);
+    const deleted=new Set(Array.isArray(state.eliminati)?state.eliminati.map(String):[]);
+    const remoteOnly=new Set(Array.isArray(state.soloInPlaylist)?state.soloInPlaylist.map(String):[]);
     const onlyInPlaylist=new Set();
     for(const pl of pls){
       if(pl?.nascosta!==true||(pl.nascostaDa&&pl.nascostaDa!==profile))continue;
@@ -12461,9 +12466,8 @@ async function _mbConfrontaCatalogoConWorker(){
     const expected=[];
     for(const b of BUILTIN){
       const id=_idBranoStabile(b);
-      if((b.profile||DEFAULT_PROFILE)!==profile&&!copies.has(id))continue;
+      if((b.profile||DEFAULT_PROFILE)!==profile&&!copied.has(id))continue;
       if(deleted.has(profile+"."+id)||onlyInPlaylist.has(id))continue;
-      // The real loader only collapses name duplicates inside one owner.
       if(expected.some(x=>(x.profile||DEFAULT_PROFILE)===(b.profile||DEFAULT_PROFILE)
         &&stessoBrano(x,b)))continue;
       expected.push(b);
@@ -12471,42 +12475,122 @@ async function _mbConfrontaCatalogoConWorker(){
     const snap=window.MusicBoxBridge.librarySnapshot();
     const onDevice=new Set(snap.tracks.map(t=>t.id));
     const remote=new Set(expected.map(_idBranoStabile));
-    const missing=expected.filter(b=>!onDevice.has(_idBranoStabile(b)))
-      .map(b=>({id:_idBranoStabile(b),titolo:b.title,artista:b.artist||""}));
-    const extras=snap.tracks.filter(t=>!remote.has(t.id))
-      .map(t=>({id:t.id,titolo:t.title,artista:t.artist||""}));
+    const all=window.MusicBoxBridge.allTracks();
+    const inAnyPlaylist=new Set();
+    for(const pl of playlists)for(const id of pl.tracks||[])inAnyPlaylist.add(id);
+    const reasons=[];
+    for(const b of expected){
+      const id=_idBranoStabile(b);
+      if(onDevice.has(id))continue;
+      let reason="",category="unknown";
+      if(_branoEliminato(id,profile)){
+        reason="Eliminato nelle scelte salvate su questo dispositivo";
+        category="deleted-local";
+      }else if(_soloInPlaylist.has(_chiaveSoloInPlaylist(id))||
+        (profile===DEFAULT_PROFILE&&_soloInPlaylist.has(id))){
+        const hasList=inAnyPlaylist.has(id);
+        reason=hasList?"Segnato qui come solo in playlist":
+          "Segnato come solo in playlist, ma non presente nelle playlist caricate";
+        category="playlist-only-local";
+      }else if(all.some(t=>t?.id===id)){
+        reason="Caricato ma escluso dalla vista corrente";category="visible-filter";
+      }else{
+        const same=all.find(t=>t?.id!==id&&
+          (t.profile||DEFAULT_PROFILE)===(b.profile||DEFAULT_PROFILE)&&stessoBrano(t,b));
+        if(same){reason="Unito al brano "+same.id+" per nome e artista";category="duplicate";}
+        else{reason="Non caricato: origine o sincronizzazione da verificare";category="not-loaded";}
+      }
+      reasons.push({id,titolo:b.title,artista:b.artist||"",motivo:reason,categoria:category});
+      const workerKey=profile+"."+id;
+      if(category==="deleted-local"&&!deleted.has(workerKey)||
+         category==="playlist-only-local"&&!remoteOnly.has(workerKey)&&
+           !remoteOnly.has(id)){
+        _mbCatalogEsclusioniCondivisibili.push({id,key:workerKey,category});
+      }
+    }
+    const other=snap.tracks.filter(t=>!remote.has(t.id));
+    const youtube=other.filter(t=>/^yt-|^b-youtube-/i.test(t.id)||
+      t.id.startsWith("b-youtube-"));
+    const extra=other.filter(t=>!youtube.includes(t));
     const lines=[
-      "Versione caricata: "+APP_VERSION+" · versione pubblicata: "+(published.versione||"non disponibile"),
-      "Profilo: "+profile+" · copie nel Worker: "+copies.size+
-        " · ID esclusi dalle playlist: "+onlyInPlaylist.size,
-      "Catalogo condiviso atteso: "+remote.size+" · libreria su questo dispositivo: "+snap.visibleCount,
-      "Mancano su questo dispositivo: "+missing.length,
-      ...missing.slice(0,50).map(x=>"  • "+x.id+" · "+x.titolo+" — "+x.artista),
-      "Presenti solo localmente o non previsti: "+extras.length,
-      ...extras.slice(0,50).map(x=>"  • "+x.id+" · "+x.titolo+" — "+x.artista)
+      "VERSIONE "+APP_VERSION+" · pubblicata "+(published.versione||"non disponibile"),
+      "Profilo "+profile+" · "+(snap.standalone?"App installata":"Browser")+
+        " · Worker copie "+copied.size+" · Gym esclusi "+onlyInPlaylist.size,
+      "Confronto MP3 incorporati: "+remote.size+" attesi, "+reasons.length+" non visibili.",
+      "Brani YouTube/Cloud (non sono automaticamente doppioni o scarti): "+youtube.length,
+      "Altri brani extra al catalogo base: "+extra.length,
+      "BRANI NON VISIBILI E MOTIVO",
+      ...(reasons.length?reasons.map(x=>" • "+x.id+" · "+x.titolo+" — "+x.motivo):
+        [" • Nessuno"]),
+      "BRANI YOUTUBE / CLOUD",
+      ...(youtube.length?youtube.map(x=>" • "+x.id+" · "+x.title+" — "+x.artist):
+        [" • Nessuno"]),
+      "ALTRI BRANI NON NEL CATALOGO BASE",
+      ...(extra.length?extra.map(x=>" • "+x.id+" · "+x.title+" — "+x.artist):
+        [" • Nessuno"]),
+      "RISULTATO: "+remote.size+" - "+reasons.length+" + "+youtube.length+
+        " + "+extra.length+" = "+snap.visibleCount+" brani su questo dispositivo.",
+      "Esclusioni locali NON presenti nel Worker: "+
+        _mbCatalogEsclusioniCondivisibili.length,
+      "Nessun brano e' stato eliminato o ripristinato dal confronto."
     ];
     if(published.versione&&published.versione!==APP_VERSION)
-      lines.push("Aggiorna Music Box dal pulsante versione: il codice caricato e' vecchio.");
-    else if(missing.length)
-      lines.push("Questi ID non sono stati eliminati: premi Sincronizza per recuperarli.");
-    else if(extras.length)
-      lines.push("Le copie locali non sono state eliminate automaticamente.");
-    else lines.push("Questo dispositivo coincide con il catalogo condiviso per gli ID controllati.");
-    out.textContent=lines.join("\n");
-    const report=_mbCatalogDiagnosi();
-    if(report){
-      report.ConfrontoWorker={versionePubblicata:published.versione||null,
-        attesi:remote.size,qui:snap.visibleCount,copieWorker:copies.size,
-        mancantiSuQuestoDispositivo:missing,soloSuQuestoDispositivo:extras};
-      const textbox=$("mbCatalogReport");
-      if(textbox)textbox.value=JSON.stringify(report,null,2);
+      lines.push("ATTENZIONE: la versione caricata e' vecchia.");
+    if(_mbCatalogEsclusioniCondivisibili.length&&share){
+      share.hidden=false;
+      lines.push("Puoi condividere SOLO queste esclusioni locali con gli altri dispositivi, "+
+        "dopo conferma esplicita, senza cancellare file MP3.");
     }
+    _mbCatalogConfrontoTesto=lines.join("\n");
+    out.textContent=_mbCatalogConfrontoTesto;
   }catch(e){
     out.textContent="Confronto non riuscito: "+String(e?.message||e)+
-      ". Nessuna modifica ai brani o ai download.";
+      ". Nessun dato o download e' stato modificato.";
   }finally{button.disabled=false;button.textContent="Confronta con il Worker"}
 }
 $("btnCompareCatalogo")?.addEventListener("click",_mbConfrontaCatalogoConWorker);
+$("btnCopyCatalogDiff")?.addEventListener("click",async()=>{
+  const content=_mbCatalogConfrontoTesto||$("mbCatalogDiff")?.textContent||"";
+  if(!content)return;
+  try{
+    await navigator.clipboard.writeText(content);
+    toast("Confronto copiato.",3500);
+  }catch(_){
+    const el=$("mbCatalogDiff");
+    if(!el)return;
+    const range=document.createRange();range.selectNodeContents(el);
+    const selection=window.getSelection();selection?.removeAllRanges();selection?.addRange(range);
+    toast("Seleziona e copia il confronto.",4000);
+  }
+});
+$("btnShareCatalogExclusions")?.addEventListener("click",()=>{
+  const items=_mbCatalogEsclusioniCondivisibili.filter(x=>
+    x.category==="deleted-local"?_branoEliminato(x.id,profile):
+      _soloInPlaylist.has(_chiaveSoloInPlaylist(x.id))||
+      (profile===DEFAULT_PROFILE&&_soloInPlaylist.has(x.id)));
+  if(!items.length){toast("Nessuna esclusione locale da condividere.",4500);return}
+  const confirmed=confirm("Condividere "+items.length+" esclusioni di "+profile+
+    " con PC, Safari e app installata?\n\n"+
+    items.map(x=>x.id+" ("+(x.category==="deleted-local"?"eliminato nel profilo":
+      "solo in playlist")+")").join("\n")+
+    "\n\nI brani verranno esclusi dalla Libreria sugli altri dispositivi. "+
+    "Non vengono cancellati gli MP3 e gli altri profili non sono modificati.");
+  if(!confirmed)return;
+  for(const item of items){
+    if(item.category==="deleted-local"){
+      _eliminatiDaMandareSegna(item.key);
+      const pending=_eliminatiRimossiDaMandare().filter(x=>x!==item.key);
+      LS.set("mb.eliminatiRimossiDaMandare",pending);
+    }else{
+      _soloInPlaylistSegna(item.key,true);
+      const pending=_soloInPlaylistRimossiDaMandare().filter(x=>x!==item.key);
+      LS.set("mb.soloInPlaylistRimossi",pending);
+    }
+  }
+  _salvaStatoCondiviso();
+  toast("Condivisione di "+items.length+
+    " esclusioni in coda. Verifica poi con Sincronizza.",6000);
+});
 
 function _mbCatalogDiagnosi(){
   const out=$("mbCatalogReport");
