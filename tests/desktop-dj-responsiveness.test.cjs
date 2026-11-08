@@ -334,6 +334,24 @@ test("iOS native resume restores paused intent without reviving stale events",()
  assert.deepEqual(run(false,false,false).state,{explicit:true,wants:false});
 });
 
+test("adaptive beat analysis finds measured kicks below old hard-coded peak threshold",()=>{
+ const fingerprint=section(dj,"function onsetPairAgreement(","function iphoneBeatPairCertified(");
+ const compare=new Function(fingerprint+"return onsetPairAgreement;")();
+ const a=Array(96).fill(-.80),b=Array(96).fill(-.73);
+ for(const i of [8,20,32,44,56,68,80,92])a[i]=.84;
+ for(const i of [9,21,33,45,57,69,81,93])b[i]=.91;
+ const result=compare({outroOnset:a},{introOnset:b});
+ assert.equal(result?.certified,true,"multiple real low-amplitude attacks should align");
+ assert.equal(result?.method,"prominence","legacy hard 1.2 threshold would miss these");
+ assert.ok(Math.abs(result.lagMs-4000/96)<1);
+ const flat=Array(96).fill(-.5);
+ assert.equal(compare({outroOnset:flat},{introOnset:b}),null,
+  "constant background noise is not independent rhythm evidence");
+ const isolated=Array(96).fill(-.73);isolated[9]=.91;isolated[69]=.91;
+ assert.equal(compare({outroOnset:a},{introOnset:isolated})?.certified,false,
+  "two isolated transients cannot authorize a musical cut");
+});
+
 test("negative-normalized real MP3 attacks survive beat-phase shifts without inventing a match",()=>{
  const code=section(dj,"function onsetPairAgreement(","function iphoneBeatPairCertified(");
  const compare=new Function(code+"return onsetPairAgreement;")();
