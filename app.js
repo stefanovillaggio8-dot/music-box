@@ -247,7 +247,7 @@
     { title: "Tutti il resto è noi", file: "songs/track-198.mp3", artist: "nayt, 3D" },
     { title: "Essere noi", file: "songs/track-200.mp3", artist: "nayt" },
     { title: "Lullu - Acoustic Version", file: "songs/track-201.mp3", artist: "nayt, 3D" },
-    { title: "ily", file: "songs/track-203.mp3", artist: "thasup, Coez" },
+    { title: "!ly (feat. Coez)", file: "songs/track-203.mp3", artist: "thasup, Coez" },
     { title: "Amelie", file: "songs/track-205.mp3", artist: "Kid Yugi" },
     { title: "Per il Sangue Versato", file: "songs/track-206.mp3", artist: "Kid Yugi" },
     { title: "Per te che Lotto", file: "songs/track-207.mp3", artist: "Kid Yugi" },
@@ -364,7 +364,7 @@
     { title: "Fuori fa paura", file: "songs/track-328.mp3", artist: "nayt, 3D", profile: "Diego" },
     { title: "Emozioni", file: "songs/track-329.mp3", artist: "Tony Boy, Finesse, Nardi", profile: "Diego" },
     { title: "Crack (feat. Salmo & Massimo Pericolo)", file: "songs/track-330.mp3", artist: "Coez, Salmo, Massimo Pericolo", profile: "Diego" },
-    { title: "rlva (feat. Pinguini Tattici Nucleari)", file: "songs/track-331.mp3", artist: "thasup, Pinguini Tattici Nucleari", profile: "Diego" },
+    { title: "r!va (feat. Pinguini Tattici Nucleari)", file: "songs/track-331.mp3", artist: "thasup, Pinguini Tattici Nucleari", profile: "Diego" },
     { title: "Marymango (feat. thasup)", file: "songs/track-332.mp3", artist: "Ghali, thasup", profile: "Diego" },
     { title: "UPPER (feat. thasup & Shiva)", file: "songs/track-333.mp3", artist: "Drillionaire, thasup, Shiva", profile: "Diego" },
     { title: "Coltellata", file: "songs/track-334.mp3", artist: "Gazzelle, thasup", profile: "Diego" },
@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.667";
+  const APP_VERSION = "6.668";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
