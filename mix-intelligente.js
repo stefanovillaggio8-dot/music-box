@@ -340,6 +340,10 @@ function certifiedNeutralBridge(a,b,dur){
   preserveTail:true,softTailTrim:false};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if(plan?.subduedRhythmicUnderlay===true)
+  return !!ending&&plan.kind==="underlay"&&plan.preserveTail===true&&
+   Math.abs(ending.duration-plan.end)<.2&&
+   plan.grooveScore>=.70&&plan.fade>=2.25&&plan.fade<=11.8;
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
     plan.end<=plan.begin)return false;
  // There is no audible overlapping beat: the original MP3 has ALREADY
@@ -2510,6 +2514,11 @@ function hasImmediateMusicalIntro(b){
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
 function musicallyCompatibleOverlay(a,b,cue){
  if(!cue)return false;
+ if(cue.subduedRhythmicUnderlay===true){
+  const p=subduedRhythmicIntro(a,b,a?.duration);
+  return !!p&&cue.kind==="underlay"&&
+   Math.abs(p.begin-cue.begin)<.085&&Math.abs(p.entry-cue.entry)<.085;
+ }
  if(cue.kind==="cut"||cue.fade===0)return true;
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !hasImmediateMusicalIntro(b))return false;
@@ -2627,6 +2636,49 @@ function synchronizeBeatCue(a,b,cue){
   nextBeat:introStart+inPhase-(Number(cue.entry)||0),
   measuredOnsetGrid:true};
 }
+// Low-volume rhythmic entrance: NOT a certified beatmatch.
+// Original vocal and final instrument must remain audible until native EOF.
+function subduedRhythmicIntro(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||a.last<28||dur-a.last>10||dur-a.last<-.2||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    a.beatConfidence<.17||b.beatConfidence<.17||
+    !Array.isArray(a.outroOnset)||a.outroOnset.length!==96||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    !hasImmediateMusicalIntro(b)||b.introDrive<.40)return null;
+ const ratio=a.bpm/b.bpm;
+ if(ratio<.975||ratio>1.025||
+    onsetPeriodicity(a.outroOnset,a.bpm)<.18||
+    onsetPeriodicity(b.introOnset,b.bpm)<.18)return null;
+ const g=grooveAgreement(a,b),n=similarNotes(a,b),key=camelotMatch(a,b);
+ if(!g||g.score<.70||g.correlation<.40||
+    n.focused<.70||n.phrase<.53||
+    (a.protectedEnding===true&&n.focused<.77)||
+    (key.weight>=.14&&key.score<.55)||
+    (Number(n.alignment?.score)>0&&Number(n.alignment?.weakest)<.32))
+  return null;
+ const entry=musicalIntroEntry(b);
+ if((Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt-entry<2.6)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt-entry<2.6))return null;
+ const period=60/a.bpm,
+   beatAnchor=a.last-4+onsetGridPhase(a.outroOnset,a.bpm),
+   nextBeat=(Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0)+
+      onsetGridPhase(b.introOnset,b.bpm)-entry;
+ if(!Number.isFinite(nextBeat)||nextBeat<-.20||nextBeat>period+1.1)
+  return null;
+ const ideal=Math.min(dur-3.1,a.last-1.15),
+   begin=beatAnchor+Math.round((ideal+nextBeat-beatAnchor)/period)*period-nextBeat,
+   end=dur-.035,fade=end-begin;
+ if(!Number.isFinite(begin)||begin<28||begin<a.last-3.9||
+    begin>a.last-.55||fade<2.25||fade>11.8)return null;
+ return {kind:"underlay",subduedRhythmicUnderlay:true,preserveTail:true,
+   begin,end,fade,entry,tempo:Math.max(.975,Math.min(1.025,ratio)),
+   gain:1,beatPeriod:period,beatAnchor,nextBeat,
+   score:Math.round((g.score*.42+n.focused*.36+n.phrase*.22)*100),
+   grooveScore:g.score,quietCertified:false,safeOutroAt:null,
+   silenceTrim:false,softTailTrim:false,trailing:0};
+}
 function transition(a,b,actualDuration){
  return synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
 }
@@ -2652,6 +2704,8 @@ function unalignedTransition(a,b,actualDuration){
  if(scannedSnap)return scannedSnap;
  const pulse=measuredPulseUnderlay(a,b,dur);
  if(pulse)return pulse;
+ const softEntry=subduedRhythmicIntro(a,b,dur);
+ if(softEntry)return softEntry;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
  // protected, the remaining release is genuinely quiet, and the next
  // track starts with music rather than another quiet passage.
@@ -3152,9 +3206,10 @@ function startMobileMix(song,p,app,old){
   // beats. Rather than rejecting a VALID early bar, let Web Audio start
   // the incoming MP3 on the NEXT exact beat (up to one beat period later).
   // Short snaps retain their tighter 190 ms protection.
-  const maxBeatWait=p.kind==="beat"&&p.measuredBeatBridge===true?
+  const maxBeatWait=(p.kind==="underlay"||
+    p.kind==="beat"&&p.measuredBeatBridge===true)?
     Math.min(.65,period):.19;
-  if(syncMeasured&&["beat","snap","phrase"].includes(p.kind)&&
+  if(syncMeasured&&["beat","snap","phrase","underlay"].includes(p.kind)&&
      phase>maxBeatWait&&period-phase>.045){
    mobileMixLastBlocker="Beat reali fuori fase: passo al brano senza sovrapporli";
    return false;
@@ -3176,7 +3231,7 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (p.rhythmicGridJoin&&lowPreview?.55:
+   (p.subduedRhythmicUnderlay?.34:p.rhythmicGridJoin&&lowPreview?.55:
     lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
@@ -3381,7 +3436,7 @@ function stopSnapPrecision(){
 function armSnapPrecision(audio,id){
  // Safari may tick at 650ms when a short measured quiet fade has less
  // than a second to start; arm the accurate pre-roll for that cue too.
- const eligible=!!plan&&(plan.kind==="snap"||plan.measuredFinalImpact===true||
+ const eligible=!!plan&&(plan.kind==="snap"||plan.kind==="underlay"||plan.measuredFinalImpact===true||
   (isIOS&&["beat","soft","fade","rise"].includes(plan.kind)));
  if(!eligible||mixing||!audio||audio.paused||document.hidden||
     audio.currentTime<plan.begin-3||audio.currentTime>=plan.end){
@@ -3390,7 +3445,7 @@ function armSnapPrecision(audio,id){
  if(snapPrecisionTimer!==null)return;
  snapPrecisionTimer=setInterval(()=>{
   const app=bridge(),a=app?.audio?.();
-  const stillEligible=!!plan&&(plan.kind==="snap"||plan.measuredFinalImpact===true||
+  const stillEligible=!!plan&&(plan.kind==="snap"||plan.kind==="underlay"||plan.measuredFinalImpact===true||
    (isIOS&&["beat","soft","fade","rise"].includes(plan.kind)));
   if(!enabled||!a||a!==audio||app?.currentId?.()!==id||
      !stillEligible||a.paused||a.currentTime>=plan.end||
@@ -3500,6 +3555,8 @@ function prepare(song,fromId,app){
 // at native EOF. Do not fade out the last kick or download the same MP3
 // again. If prebuffer is absent, let the original ended handler run.
 function naturalEndHandoff(certifiedSilentTail=false){
+ if(active?.subduedRhythmicUnderlay&&active.original?.ended&&
+    !active.handingOff){handoff();return true;}
  if(!enabled||isIOS||mixing||active||
     window.MusicBoxRoom?.isActive())return false;
  const app=bridge(),old=app?.audio?.(),fromId=app?.currentId?.();
@@ -3706,7 +3763,7 @@ function desktopBeatStartDelay(p,at){
      at>target+.085||target-at>1.6)return null;
   return Math.max(0,target-at);
  }
- if(!["beat","snap","phrase"].includes(p.kind))return 0;
+ if(!["beat","snap","phrase","underlay"].includes(p.kind))return 0;
  const period=Number(p.beatPeriod),out=Number(p.beatAnchor),
   incoming=Number(p.nextBeat);
  if(!Number.isFinite(period)||period<.24||period>1.2||
@@ -3737,6 +3794,7 @@ async function beginMix(song,proposed){
  const upcoming=p.audio;
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
+   subduedRhythmicUnderlay:!!proposed.subduedRhythmicUnderlay,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
@@ -3838,7 +3896,10 @@ async function beginMix(song,proposed){
     outGain=Math.cos(tail*Math.PI/2);
     inGain=.17*Math.sin(early*Math.PI/2)+.83*Math.sin(lift*Math.PI/2);
    }
-   const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
+   if(act.subduedRhythmicUnderlay){
+     outGain=1;inGain=.34*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
+    }
+    const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     old.volume=clamp(vol*outGain,0,1);
     upcoming.volume=clamp(vol*inGain*correction,0,1);
@@ -4436,7 +4497,7 @@ function tick(){
     Number.isFinite(plan.decayReleaseAt)&&
     lastKnownLyric<=plan.decayReleaseAt+.5&&
     plan.begin>=lastKnownLyric+4);
- if(!mixing&&Number.isFinite(lastKnownLyric)&&
+ if(!mixing&&Number.isFinite(lastKnownLyric)&&!plan.subduedRhythmicUnderlay&&
     plan.begin<lastKnownLyric+6&&audio.duration-lastKnownLyric<16&&
     !verifiedQuietLyricExit&&!verifiedVocalBeat){
   if(plan.silenceTrim)plan={...plan,begin:plan.end,fade:0,kind:"cut"};
@@ -4521,7 +4582,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.measuredBeatBridge?
+ const description=plan?.subduedRhythmicUnderlay?
+   " · ritmo anticipato a basso volume, finale originale integro (non beatmatch certificato)":
+   plan?.measuredBeatBridge?
    plan.kind==="snap"?" · stacco corto sulla battuta, senza aspettare silenzi":
    " · beat reali compatibili: mix anticipato":
    plan?.instrumentalBeatBridge?
