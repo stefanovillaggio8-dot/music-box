@@ -343,7 +343,7 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(plan?.subduedRhythmicUnderlay===true)
   return !!ending&&plan.kind==="underlay"&&plan.preserveTail===true&&
    Math.abs(ending.duration-plan.end)<.2&&
-   plan.grooveScore>=.70&&plan.fade>=2.25&&plan.fade<=11.8;
+   plan.grooveScore>=.65&&plan.fade>=2.25&&plan.fade<=11.8;
  if(!plan||!Number.isFinite(plan.begin)||!Number.isFinite(plan.end)||
     plan.end<=plan.begin)return false;
  // There is no audible overlapping beat: the original MP3 has ALREADY
@@ -2649,14 +2649,14 @@ function subduedRhythmicIntro(a,b,dur){
     !hasImmediateMusicalIntro(b)||b.introDrive<.40)return null;
  const ratio=a.bpm/b.bpm;
  if(ratio<.975||ratio>1.025||
-    onsetPeriodicity(a.outroOnset,a.bpm)<.18||
-    onsetPeriodicity(b.introOnset,b.bpm)<.18)return null;
+    onsetPeriodicity(a.outroOnset,a.bpm)<.12||
+    onsetPeriodicity(b.introOnset,b.bpm)<.12)return null;
  const g=grooveAgreement(a,b),n=similarNotes(a,b),key=camelotMatch(a,b);
- if(!g||g.score<.70||g.correlation<.40||
-    n.focused<.70||n.phrase<.53||
-    (a.protectedEnding===true&&n.focused<.77)||
-    (key.weight>=.14&&key.score<.55)||
-    (Number(n.alignment?.score)>0&&Number(n.alignment?.weakest)<.32))
+ if(!g||g.score<.65||g.correlation<.30||
+    n.focused<.64||n.phrase<.50||
+    (a.protectedEnding===true&&n.focused<.72)||
+    (key.weight>=.10&&key.score<.42)||
+    (Number(n.alignment?.score)>0&&Number(n.alignment?.weakest)<.42))
   return null;
  const entry=musicalIntroEntry(b);
  if((Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt-entry<2.6)||
@@ -2674,7 +2674,9 @@ function subduedRhythmicIntro(a,b,dur){
     begin>a.last-.55||fade<2.25||fade>11.8)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,preserveTail:true,
    begin,end,fade,entry,tempo:Math.max(.975,Math.min(1.025,ratio)),
-   gain:1,beatPeriod:period,beatAnchor,nextBeat,
+   gain:1,underlayVolume:Math.max(.20,Math.min(.35,
+    .20+(g.score-.65)*.6+(n.focused-.64)*.3)),
+   beatPeriod:period,beatAnchor,nextBeat,
    score:Math.round((g.score*.42+n.focused*.36+n.phrase*.22)*100),
    grooveScore:g.score,quietCertified:false,safeOutroAt:null,
    silenceTrim:false,softTailTrim:false,trailing:0};
@@ -3231,7 +3233,7 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (p.subduedRhythmicUnderlay?.34:p.rhythmicGridJoin&&lowPreview?.55:
+   (p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
     lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
@@ -3795,6 +3797,7 @@ async function beginMix(song,proposed){
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
    subduedRhythmicUnderlay:!!proposed.subduedRhythmicUnderlay,
+   underlayVolume:proposed.underlayVolume||.24,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
   rhythmicUnderlay:!!proposed.rhythmicUnderlay,
@@ -3897,7 +3900,7 @@ async function beginMix(song,proposed){
     inGain=.17*Math.sin(early*Math.PI/2)+.83*Math.sin(lift*Math.PI/2);
    }
    if(act.subduedRhythmicUnderlay){
-     outGain=1;inGain=.34*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
+     outGain=1;inGain=act.underlayVolume*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
     }
     const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
