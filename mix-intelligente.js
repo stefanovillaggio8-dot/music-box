@@ -4802,6 +4802,8 @@ async function intelligentShuffle(app,audio,fromId){
  nearScored.sort((a,b)=>b.score-a.score);
  sequenceScored.sort((a,b)=>b.score-a.score);
  rhythmOrderScored.sort((a,b)=>b.score-a.score);
+ // Measured groove is an ORDER-ONLY fallback: never grant permission
+ // to overlap or shorten the outgoing protected vocal/instrumental ending.
  // Order-only fallback is still preferable to an unrelated random song,
  // but absolutely never gains permission to overlap a sung ending.
  // Prefer a next song with actually compatible notes and drums.
@@ -4815,7 +4817,8 @@ async function intelligentShuffle(app,audio,fromId){
  // safe, verified release takes precedence over guessing at beat identity.
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
-  nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:
+  rhythmOrderScored.length?rhythmOrderScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -5206,7 +5209,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.679",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.680",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
