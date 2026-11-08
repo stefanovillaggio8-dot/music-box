@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.660";
+  const APP_VERSION = "6.661";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12879,50 +12879,85 @@ $("fabMenu").addEventListener("click", (e) => {
   let _aggiornaDaVersioneBusy = false;
   async function _aggiornaMusicBoxDaVersione() {
     if (_aggiornaDaVersioneBusy) return;
-    /* Un aggiornamento non deve mai cancellare Cache Storage, IndexedDB,
-       i preferiti, le playlist o gli MP3 gia' scaricati per l'offline. */
+    // Mai toccare cache offline, playlist, IndexedDB o download salvati.
     if (offlineBusy) {
       toast("Termina lo scaricamento prima di aggiornare.");
       return;
     }
     _aggiornaDaVersioneBusy = true;
     const badge = $("appVer");
-    if (badge) {
-      badge.disabled = true;
-      badge.title = "Controllo aggiornamenti in corso...";
-    }
-    try { _salvaPuntoLibreria(); savePos(); } catch (e) {}
-    toast("Controllo la nuova versione e aggiorno Music Box...");
+    if (badge) { badge.disabled = true; badge.title = "Aggiorno Music Box…"; }
+    try { _salvaPuntoLibreria(); savePos(); } catch (_) {}
+    toast("Cerco e attivo la nuova versione di Music Box…", 5500);
     try {
       if ("serviceWorker" in navigator) {
-        // The version badge is a direct user refresh request. Waiting for an
-        // installing worker used to delay navigation for up to 8.5 seconds,
-        // making the button appear inert. Update worker asynchronously;
-        // navigation uses a cache-busting URL and network-first HTML.
         const reg = await Promise.race([
           navigator.serviceWorker.getRegistration(),
-          new Promise(resolve => setTimeout(() => resolve(null), 750))
+          new Promise(resolve => setTimeout(() => resolve(null), 2000))
         ]);
         if (reg) {
-          if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
-          reg.update().catch(() => {});
+          let controllerChanged = false;
+          let changeHandler = () => { controllerChanged = true; };
+          navigator.serviceWorker.addEventListener("controllerchange", changeHandler);
+          const activate = worker => {
+            if (!worker) return;
+            const tryActivate = () => {
+              if (worker.state === "installed" || reg.waiting === worker) {
+                try { worker.postMessage({ type:"SKIP_WAITING" }); } catch (_) {}
+              }
+            };
+            tryActivate();
+            if (worker.state !== "activated" && worker.state !== "redundant") {
+              worker.addEventListener("statechange", tryActivate);
+            }
+          };
+          const onUpdateFound = () => activate(reg.installing);
+          reg.addEventListener("updatefound", onUpdateFound);
+          activate(reg.waiting);
+          activate(reg.installing);
+          try {
+            await Promise.race([
+              reg.update(),
+              new Promise(resolve => setTimeout(resolve, 6000))
+            ]);
+          } catch (e) {
+            console.warn("[Music Box] update()", e);
+          }
+          activate(reg.waiting);
+          activate(reg.installing);
+          // Aspetta l'attivazione effettiva, non ricaricare quando il
+          // nuovo worker sta ancora installandosi. Con piu' schede aperte
+          // SKIP_WAITING prende il controllo senza attendere la loro chiusura.
+          if (reg.waiting || reg.installing) {
+            await Promise.race([
+              new Promise(resolve => {
+                const started = Date.now();
+                const tick = () => {
+                  if (controllerChanged || !reg.waiting && !reg.installing ||
+                      Date.now() - started > 5500) resolve();
+                  else setTimeout(tick, 120);
+                };
+                tick();
+              }),
+              new Promise(resolve => setTimeout(resolve, 6000))
+            ]);
+          }
+          reg.removeEventListener("updatefound", onUpdateFound);
+          navigator.serviceWorker.removeEventListener("controllerchange", changeHandler);
         }
       }
     } catch (e) {
-      console.warn("[Music Box] Aggiornamento service worker non riuscito:", e);
+      console.warn("[Music Box] Service worker update failed", e);
     }
-    // Navigation requests are network-first in the worker; the unique
-    // address prevents an old HTML document from being reused. No wipe.
-    const url = new URL("./index.html", window.location.href);
+    // Non basta ricaricare la vecchia pagina: anche CSS e app.js hanno una
+    // query nuova. Il documento usa la rete prima della cache.
+    const url = new URL("./index.html", location.href);
     url.searchParams.set("forza", String(Date.now()));
-    try { window.location.assign(url.href); }
-    catch (e) {
+    try { location.assign(url.href); }
+    catch (_) {
       _aggiornaDaVersioneBusy = false;
-      if (badge) {
-        badge.disabled = false;
-        badge.title = "Tocca per aggiornare Music Box";
-      }
-      try { window.location.reload(); } catch (_) {}
+      if (badge) badge.disabled = false;
+      try { location.reload(); } catch (__) {}
     }
   }
   $("btnRefresh").addEventListener("click", _aggiornaMusicBoxDaVersione);
@@ -17793,7 +17828,7 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
       /* Controllo gli aggiornamenti OGNI volta che apri la pagina, non solo
          se non c'e' un controller: prima l'aggiornamento partiva a caso e il
          browser restava su una versione vecchia anche per giorni. */
-      try { reg.update(); } catch (e) { /* noop */ }
+      try { reg.update().catch(() => {}); } catch (e) { /* noop */ }
       /* e ogni 10 minuti, se la pagina resta aperta */
       setInterval(() => { try { reg.update(); } catch (e) { /* noop */ } }, 600000);
       reg.addEventListener("updatefound", () => {
@@ -17824,6 +17859,13 @@ navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg)
        online se ci sono piu' brani, e se ci sono ricarico da solo.
        Non ricarico pero' mentre stai scaricando o suonando: in quel caso ti
        mostro un avviso e aggiorno quando sei fermo. */
+    // Il controllo della versione esisteva ma non era MAI invocato.
+    // Adesso segnala quando il browser esegue file di una release vecchia
+    // senza forzare un reload mentre l'utente ascolta musica.
+    setTimeout(_controllaSeSonoVecchio, 2500);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) _controllaSeSonoVecchio();
+    });
     let _stoControllando = false;
     function branoInCorso() {
       try {
