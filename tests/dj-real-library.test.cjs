@@ -11,11 +11,12 @@ const excerpt=(start,end)=>{
 };
 const engine=new Function("isIOS","style",
  "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));\n"+
+ excerpt("function onsetPairAgreement(","function iphoneBeatPairCertified(")+
  excerpt("function grooveAgreement(","// Find a *musical* release")+
  excerpt("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay};"
+ "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay,onsetPairAgreement,rhythmicGridEvidence};"
 )(false,"auto");
 const tracks=Object.entries(index.entries||{})
  .filter(([key,v])=>v?.status==="ok"&&Number.isFinite(v.duration)&&v.duration>=26&&
@@ -434,4 +435,39 @@ test("audit voice-safe neutral fade coverage and actual playback acceptance",()=
  console.info("[DJ SAFE NEUTRAL COVERAGE]",JSON.stringify({planned,accepted,unsafe}));
  assert.equal(accepted,planned,
   "a voice-safe neutral release should be playable when planner and playback share the same certificate");
+});
+
+test("measured onset audit: actual groove and drum phase candidates for reported tracks",()=>{
+ for(const id of [122,171,12,2,153,160]){
+  const from=tracks.find(t=>t.key.endsWith("/track-"+id+".mp3"));
+  if(!from)continue;
+  const a=from.data;
+  const counts={nearBpm:0,groove:0,harmony:0,alignedOnsets:0,grid:0,beat:0,snap:0,protectedEnding:!!a.protectedEnding};
+  const top=[];
+  for(const to of tracks){
+   if(to.key===from.key||!engine.hasImmediateMusicalIntro(to.data))continue;
+   const b=to.data;
+   const ratio=[.5,1,2].map(k=>a.bpm/(b.bpm*k)).reduce((p,q)=>Math.abs(Math.log2(p))<Math.abs(Math.log2(q))?p:q);
+   if(ratio<.95||ratio>1.05)continue;
+   counts.nearBpm++;
+   const drums=engine.grooveAgreement(a,b),notes=engine.similarNotes(a,b);
+   if(drums?.score>=.75)counts.groove++;
+   if(notes.focused>=.68&&notes.phrase>=.5)counts.harmony++;
+   const onset=engine.onsetPairAgreement(a,b),grid=engine.rhythmicGridEvidence(a,b);
+   if(onset?.certified)counts.alignedOnsets++;
+   if(grid)counts.grid++;
+   const cue=engine.transition(a,b,a.duration);
+   if(cue?.kind==="beat")counts.beat++;
+   if(cue?.kind==="snap")counts.snap++;
+   if(drums?.score>=.75&&notes.focused>=.52&&notes.phrase>=.35)
+    top.push({id:to.key.split("/").at(-1),groove:+drums.score.toFixed(2),
+     focus:+notes.focused.toFixed(2),phrase:+notes.phrase.toFixed(2),
+     onset:onset?{best:+onset.best.toFixed(2),lag:+onset.lagMs.toFixed(1),
+      hits:onset.matchedHits,certified:onset.certified}:null,
+     grid:!!grid,plan:cue?.kind||null});
+  }
+  console.info("[DJ ONSET BASELINE]",JSON.stringify({id,bpm:a.bpm,
+   confidence:a.beatConfidence,last:a.last,lastLyric:a.lastLyricAt,
+   counts,examples:top.slice(0,6)}));
+ }
 });

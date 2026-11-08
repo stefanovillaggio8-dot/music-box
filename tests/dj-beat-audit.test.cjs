@@ -319,7 +319,7 @@ test("pulse compatibility distribution from original onset spectra, not BPM alon
    const ratio=bpmRatio(a.data,b.data);
    if(ratio<.97||ratio>1.03)continue;stats.tempo++;
    const n=tools.similarNotes(a.data,b.data),g=tools.grooveAgreement(a.data,b.data);
-   if(n.focused<.83||n.phrase<.70||g?.score<.79)continue;stats.harmony++;
+   if(!g||n.focused<.83||n.phrase<.70||g.score<.79)continue;stats.harmony++;
    const x=tools.onsetPairAgreement(a.data,b.data);
    if(x?.atZero<0)stats.negative++;
    const pa=periodic(a.data.outroOnset,a.data.bpm),pb=periodic(b.data.introOnset,b.data.bpm);
