@@ -537,7 +537,8 @@ test("version badge uses the real header button, updates worker before reload, p
  assert.ok(first>=0&&last>first,"Updater must be available to both refresh buttons");
  assert.match(updater,/getRegistration\(\)/);
  assert.match(updater,/reg\.update\(\)/);
- assert.match(updater,/reg\.waiting\) reg\.waiting\.postMessage\(\{ type: "SKIP_WAITING" \}/);
+ assert.match(updater,/activate\(reg\.waiting\)/);
+ assert.match(updater,/worker\.postMessage\(\{ type:"SKIP_WAITING" \}\)/);
  assert.match(updater,/searchParams\.set\("forza", String\(Date\.now\(\)\)\)/);
  assert.match(updater,/window\.location\.assign\(url\.href\)/);
  assert.ok(!/caches\.delete\(|indexedDB\.deleteDatabase\(|unregister\(\)/.test(updater),

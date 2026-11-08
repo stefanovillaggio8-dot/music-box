@@ -107,7 +107,7 @@ test("read-only library diagnostics detect playlist-only count differences",()=>
  assert.ok(mix.includes('$("mixCopyLibrary")?.addEventListener("click"'));
  assert.ok(mix.includes('await navigator.clipboard.writeText(report)'));
  const start=src.indexOf("librarySnapshot:()=>{");
- const end=src.indexOf("syncLibrary:async()=>{",start);
+ const end=src.indexOf("syncLibrary:()=>_sincronizzaCatalogoDispositivi(true)",start);
  assert.ok(start>0&&end>start);
  const expression=src.slice(start,end).trim().replace(/,\s*$/,"");
  const items=Array.from({length:233},(_,i)=>({id:"b-track-"+i,title:"Track "+i,artist:"Test",builtin:true}));

@@ -234,7 +234,7 @@ test("headphone pause cancels all retry work and persists paused intent",()=>{
 test("delayed play, retry and resume cannot resurrect an explicit iPhone pause",()=>{
  const player=excerpt(app,"function createAudio()","function rebuildAudio(");
  const recovery=excerpt(app,"function _riprendiDopoRicarica()",
-  "function _riproduciVolontaria()");
+  "function _riproduciVolontaria(");
  const retry=excerpt(app,"function _riprovaPiuTardi(",
   "/* L'intestazione esce");
  const voluntary=excerpt(app,"function _riproduciVolontaria(",
@@ -328,7 +328,11 @@ test("foreground recovery seeks the HTMLAudioElement and does not autoplay pause
  assert.match(app,/if\(typeof _riallineaPausaReale==="function"\)\s*_riallineaPausaReale\(\)/);
  assert.match(app,/a\.addEventListener\("canplay",\s*\(\) =>/);
  assert.match(app,/const pending=_ripristinoPausaAtteso/);
- assert.match(app,/_memorizzaPausaCorrente\(\);\s*_annullaBloccoRipresaAudio\(\);\s*setPlaybackState\("paused"\)/);
+ const pause=excerpt(app,"function _pausaVolontaria(","function _segnaIntenzioneSono(");
+ assert.match(pause,/setPlaybackState\("paused"\)/);
+ assert.match(pause,/_memorizzaPausaCorrente\(\)/);
+ assert.ok(pause.indexOf("audio.pause()")<pause.indexOf("_memorizzaPausaCorrente()"),
+  "native iPhone pause must be applied before potentially slow storage writes");
  assert.match(app,/if\(\(audio\?\.paused&&!_vuoleSuonare\)\|\|_bloccoRipresaAudio\)/);
  assert.match(app,/const sec=Math\.max\(0,Math\.round/);
 });
@@ -393,7 +397,7 @@ test("iOS canplay, seeked and changing songs settle outstanding restore",()=>{
  assert.match(app,/a\.addEventListener\("canplay",\s*\(\) =>/);
  assert.match(app,/if\(audio\.readyState<2\|\|audio\.seeking/);
  assert.match(app,/_annullaBloccoRipresaAudio\(\);\s*_pausaCheckpoint=null/);
- assert.match(app,/_memorizzaPausaCorrente\(\);\s*_annullaBloccoRipresaAudio\(\)/);
+ assert.match(app,/_annullaBloccoRipresaAudio\(\);\s*_pausaCheckpoint=null;\s*_ripristinoPausaAtteso=null;/);
  assert.match(app,/_preparaRipresaAudio\(\);\s*_riallineaPausaReale\(\)/);
 });
 

@@ -106,10 +106,14 @@ function onsetPairAgreement(a,b){
  }
  const first=correlate(best.shift,0,48),
        second=correlate(best.shift,48,96);
- const certified=best.score>=.61&&
-  // Never certify a join that requires an inaudible 250-500 ms timing jump.
-  // Longer early-bar joins have their own independently measured verifier.
-  Math.abs(best.shift*4000/n)<=190&&
+ // Large analysis offsets are credible only when the whole 4-second
+ // fingerprint matches exceptionally well. Never infer a 250ms jump
+ // from a weak, partly similar drum sequence.
+ const lagMs=Math.abs(best.shift*4000/n);
+ const preciseShift=lagMs<=190||
+   (lagMs<=310&&best.score>=.92&&
+    first?.score>=.85&&second?.score>=.85&&best.hits>=5);
+ const certified=best.score>=.61&&preciseShift&&
   Number.isFinite(first?.score)&&first.score>=.40&&
   Number.isFinite(second?.score)&&second.score>=.40&&
   best.hits>=3&&best.firstHits>=1&&best.secondHits>=1;
@@ -4700,8 +4704,7 @@ async function intelligentShuffle(app,audio,fromId){
  // safe, verified release takes precedence over guessing at beat identity.
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
-  nearScored.length?nearScored:sequenceScored.length?sequenceScored:
-  rhythmOrderScored.length?rhythmOrderScored:[];
+  nearScored.length?nearScored:sequenceScored.length?sequenceScored:[];
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -5092,7 +5095,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.670",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.671",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
