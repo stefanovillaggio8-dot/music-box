@@ -578,3 +578,26 @@ test("actual track 1197 prefers a full-length verified postlude when musical dat
  console.info("[DJ 1197 FULL-LENGTH INTRO]",JSON.stringify(figures));
  assert.equal(figures.postlude,figures.retainsWholeFile);
 });
+
+
+test("track 1197's measured outro allows a long pre-EOF intro ONLY with last-lyric evidence",()=>{
+ const a=tracks.find(x=>x.key==="audio/songs/track-1197.mp3");
+ const b=tracks.find(x=>x.key==="audio/songs/track-209.mp3");
+ assert.ok(a&&b);
+ const unsafe=engine.transition(a.data,b.data,a.data.duration);
+ assert.ok(!unsafe?.postMusicalTailUnderlay,
+  "no timed lyrics or vocal scan: preserve the unverified finale");
+ const lyricsVerified={...a.data,lastLyricAt:230};
+ const plan=engine.transition(lyricsVerified,b.data,a.data.duration);
+ console.info("[DJ 1197 VERIFIED FULL-TAIL]",JSON.stringify({
+  originalPlan:unsafe?.kind||null,certifiedPlan:plan?.kind||null,
+  fade:plan?.fade||null,begin:plan?.begin||null,originalEnd:a.data.duration
+ }));
+ assert.equal(plan?.postMusicalTailUnderlay,true,
+  "verified final release should lead into the next intro before file EOF");
+ assert.ok(plan.begin>a.data.last,"no new music over original audible final impacts");
+ assert.ok(plan.fade>=3,"use musical tail rather than only a 1.6s fade");
+ assert.ok(plan.end>=a.data.duration-.06);
+ assert.equal(plan.preserveTail,true);
+ assert.equal(plan.silenceTrim,false);
+});
