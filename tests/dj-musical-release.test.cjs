@@ -546,3 +546,41 @@ test("version badge uses the real header button, updates worker before reload, p
  assert.match(css,/#appVer:focus-visible/);
  assert.match(css,/#appVer:disabled/);
 });
+
+test("measured low-energy neutral releases use the same voice-safe certificate at playback",()=>{
+ const a=source.indexOf("function certifiedNeutralBridge(");
+ const b=source.indexOf("function mobileMixAllowed(",a);
+ const c=source.indexOf("function musicallyCompatibleOverlay(");
+ const d=source.indexOf("// Align the audible mix",c);
+ assert.ok(a>=0&&b>a&&c>=0&&d>c);
+ const check=new Function(
+  "const isIOS=false;"+
+  "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+
+  "const hasImmediateMusicalIntro=()=>true;"+
+  "const musicalIntroEntry=()=>0;"+
+  source.slice(a,b)+source.slice(c,d)+
+  "return {certifiedNeutralBridge,musicallyCompatibleOverlay};"
+ )();
+ const outgoing={duration:120,last:119,protectedEnding:false,
+  dropRelease:{releaseAt:113,lastImpactAt:110,score:.80,quietLevel:.14},
+  lastLyricAt:100,lastVoiceAt:103};
+ const incoming={introDrive:.85,firstLyricAt:12,firstVoiceAt:12,
+  safeIntroAt:0};
+ const cue=check.certifiedNeutralBridge(outgoing,incoming,120);
+ assert.ok(cue&&cue.kind==="soft"&&cue.neutralRelease);
+ assert.equal(check.musicallyCompatibleOverlay(outgoing,incoming,cue),true,
+  "a planner-certified quiet vocal-free fade must not be rejected by a contradictory stricter gate");
+ for(const unsafe of [
+  {...outgoing,protectedEnding:true},
+  {...outgoing,lastLyricAt:117},
+  {...outgoing,lastVoiceAt:116},
+  {...outgoing,dropRelease:{...outgoing.dropRelease,score:.74}},
+  {...outgoing,dropRelease:{...outgoing.dropRelease,quietLevel:.18}}
+ ]){
+  assert.equal(check.certifiedNeutralBridge(unsafe,incoming,120),null);
+  assert.equal(check.musicallyCompatibleOverlay(unsafe,incoming,cue),false);
+ }
+ assert.equal(check.musicallyCompatibleOverlay(outgoing,incoming,
+  {...cue,begin:cue.begin-.35}),false,
+  "a shifted fade never inherits another boundary's clearance");
+});
