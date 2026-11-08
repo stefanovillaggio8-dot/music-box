@@ -1058,3 +1058,16 @@ test("a measured instrumental beat can enter beneath a complete outgoing vocal",
  assert.match(source,/if\(mobileActive\.vocalBeatUnderlay\)/);
  assert.match(source,/!verifiedQuietLyricExit&&!verifiedVocalBeat/);
 });
+
+test("shuffle exposes every real-audio filter stage without forcing bad beatmatches",()=>{
+ assert.match(source,/candidateAudit=\{indexed:indexed\.length,missingFromIndex:unknown\.length/);
+ assert.match(source,/candidateAudit\.validIntros\+\+/);
+ assert.match(source,/candidateAudit\.closeTempo\+\+/);
+ assert.match(source,/candidateAudit\.compatibleGroove\+\+/);
+ assert.match(source,/candidateAudit\.compatibleNotes\+\+/);
+ assert.match(source,/candidateAudit\.verifiedBeats\+\+/);
+ assert.match(source,/rejected,candidateAudit,limitingStage,chosen:/);
+ assert.match(source,/beat del brano in uscita non abbastanza affidabile/);
+ assert.match(source,/nessun punto di sovrapposizione musicale sicuro/);
+ assert.match(source,/nessuna sovrapposizione o sequenza affidabile nei brani analizzati/);
+});
