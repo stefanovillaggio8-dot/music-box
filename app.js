@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.672";
+  const APP_VERSION = "6.673";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5361,13 +5361,39 @@ function _eliminatiRimossiDaMandareSvuota() {
 // Render-only protection: keep original metadata, user renames, imports and
 // search identity untouched. Broken pasted combining marks or bidirectional
 // control characters must not stretch a song title across the whole screen.
-function _titoloPerSchermo(value) {
-  let text=String(value??"")
+function _titoloPerSchermo(value, canonical="") {
+  // Repair ONLY the visible text. Track IDs, saved titles, artist typography
+  // and MP3s stay byte-for-byte unchanged on every device.
+  const clean=input=>String(input??"")
     .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B\u200E\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g,"")
     .replace(/(\p{M}{2})\p{M}+/gu,"$1")
     .normalize("NFC");
-  // A malicious/garbled imported string must never create thousands of
-  // glyphs in the list. Only the DISPLAY text is limited, not stored data.
+  let text=clean(value);
+  const run=/(?:[ÃÂ][ÃÂ\u0080-\u00BF\uFFFD\u25A1]){3,}/gu;
+  const broken=input=>new RegExp(run.source,"u").test(input)||
+    ((input.match(/[ÃÂ\uFFFD\u25A1]/gu)||[]).length>=5&&input.length>=36);
+  // Very long mojibake (e.g. giÃ�Ã�Ã�...) can arrive from local metadata.
+  // Prefer the authoritative original when it is a published builtin song.
+  if(broken(text)){
+    const original=clean(canonical);
+    if(original&&!broken(original))text=original;
+    else {
+      text=text.replace(run,"…");
+      if((text.match(/[ÃÂ\uFFFD\u25A1]/gu)||[]).length>=5){
+        const i=text.search(/[ÃÂ\uFFFD\u25A1]/u);
+        if(i>=0){
+          const remaining=text.slice(i),following=remaining.search(/\s[\p{L}\p{N}]/u);
+          text=text.slice(0,i)+"…"+(following>=0?remaining.slice(following):"");
+        }
+      }
+    }
+  }
+  // Common single UTF-8-as-Latin-1 errors; do not touch real stylistic
+  // punctuation or correctly encoded accents.
+  const pairs={"Ã ":"à","Ã¨":"è","Ã©":"é","Ã¬":"ì","Ã²":"ò",
+    "Ã¹":"ù","Ã€":"À","Ãˆ":"È","Ã‰":"É",
+    "ÃŒ":"Ì","Ã’":"Ò","Ã™":"Ù","Â ":" "};
+  text=text.replace(/Ã[ ¨©¬²¹€ˆ‰Œ’™]|Â /gu,part=>pairs[part]??part);
   if(text.length>320)text=[...text].slice(0,240).join("")+"…";
   return text;
 }
@@ -5523,7 +5549,7 @@ emptyEl.textContent = !total
          vengono mai tagliati. */
       const testoTitolo = document.createElement("span");
       testoTitolo.className = "track-testo";
-      testoTitolo.textContent = _titoloPerSchermo(t.title);
+      testoTitolo.textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
       title.appendChild(testoTitolo);
       const contrassegni = [];
       info.appendChild(title);
@@ -5531,8 +5557,8 @@ emptyEl.textContent = !total
       const meta = document.createElement("div");
       meta.className = "track-meta";
       const bits = [];
-      if (t.artist) bits.push(t.artist);
-      if (t.album) bits.push(t.album);
+      if (t.artist) bits.push(_titoloPerSchermo(t.artist,_originaleDi(t.id)?.artist));
+      if (t.album) bits.push(_titoloPerSchermo(t.album,_originaleDi(t.id)?.spotifyAlbum));
       if (t.preview) bits.push("anteprima 30s");
       // Una richiesta YouTube non viene spacciata per un audio disponibile.
       if (t.builtin) meta.textContent = bits.join(" ");
@@ -7037,7 +7063,7 @@ function rebuildAudio(autoplay) {
       info.className = "queue-info";
       const title = document.createElement("div");
       title.className = "queue-title";
-      title.textContent = automatico.title;
+      title.textContent = _titoloPerSchermo(automatico.title,_originaleDi(automatico.id)?.title);
       info.appendChild(title);
       const subtitle = document.createElement("div");
       subtitle.className = "queue-artist";
@@ -7149,12 +7175,12 @@ function rebuildAudio(autoplay) {
       info.addEventListener("click", () => playFromQueue(i));
       const ti = document.createElement("div");
       ti.className = "queue-title";
-      ti.textContent = t.title;
+      ti.textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
       info.appendChild(ti);
       if (t.artist) {
         const ar = document.createElement("div");
         ar.className = "queue-artist";
-        ar.textContent = t.artist;
+        ar.textContent = _titoloPerSchermo(t.artist,_originaleDi(t.id)?.artist);
         info.appendChild(ar);
       }
       row.appendChild(info);
@@ -7290,7 +7316,7 @@ const ICON_EDIT = "M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25ZM20.7 7.04a1 1 
 
   function openQuickMenu(t) {
     if (!t) return;
-    $("quickTitle").textContent = t.title;
+    $("quickTitle").textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
     const box = $("quickActions");
 box.innerHTML = "";
   /* Prima cosa nel menu: cambiare il nome. Stava in una pressione lunga
@@ -7469,8 +7495,8 @@ box.innerHTML = "";
        libreria fosse sparita. Era solo il momento PRIMA che arrivasse.
        Ora, mentre carica, la scritta lo dice. */
     const staCaricando = !t && !_libreriaPronta;
-    $("playerTitle").textContent = t ? t.title : "—";
-    $("hudTitle").textContent = t ? t.title : (staCaricando ? "Sto caricando..." : "Nessuna traccia");
+    $("playerTitle").textContent = t ? _titoloPerSchermo(t.title,_originaleDi(t.id)?.title) : "—";
+    $("hudTitle").textContent = t ? _titoloPerSchermo(t.title,_originaleDi(t.id)?.title) : (staCaricando ? "Sto caricando..." : "Nessuna traccia");
     $("hudSub").textContent = t ? (currentLyrics() ? "Testo disponibile" : t.builtin ? "Brano incluso" : "Brano aggiunto")
       : (staCaricando ? "Un attimo, sto prendendo la libreria" : "Aggiungi musica per iniziare");
     updateLyricsButton();
@@ -8443,8 +8469,8 @@ function _aggiornaPosizioneSchermo() {
     if (_mediaSessionTrackId!==currentId || !session.metadata) {
       const cop = _copertinaPerSchermo(t);
       session.metadata = new MediaMetadata({
-        title: t.title || APP_NAME,
-        artist: t.artist || APP_NAME,
+        title: _titoloPerSchermo(t.title,_originaleDi(t.id)?.title) || APP_NAME,
+        artist: _titoloPerSchermo(t.artist,_originaleDi(t.id)?.artist) || APP_NAME,
         album: APP_NAME,
         artwork: cop ? [{ src: cop, sizes: "512x512" }] :
           [{ src: "icon-512.png", sizes: "512x512", type: "image/png" }]
@@ -15437,7 +15463,7 @@ function _aggiornaBadgePlaylist() {
         const nome = document.createElement("button");
         nome.type = "button";
         nome.className = "playlist-nome";
-        nome.textContent = t.title;
+        nome.textContent = _titoloPerSchermo(t.title,_originaleDi(t.id)?.title);
         nome.addEventListener("click", () => { chiudiPanelPlaylist(); playById(t.id); });
         const togli = document.createElement("button");
         togli.type = "button";
