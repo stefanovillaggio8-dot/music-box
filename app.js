@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.662";
+  const APP_VERSION = "6.663";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12377,6 +12377,57 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
 });
 
 
+
+  // Three Gym-themed tracks exist in the Library, but their IDs do not
+  // occur in the 25 published Gym members. Never reclassify silently.
+  const MB_GYM_REVIEW_IDS=["b-track-65","b-track-254","b-track-258"];
+  function _braniGymDaRivedere(){
+    const gym=_playlistCercata("gym");
+    if(profile!==DEFAULT_PROFILE||!gym||
+       gym.nascosta!==true||gym.nascostaDa!==profile)return [];
+    const known=new Set(gym.tracks||[]);
+    const visible=new Set(visibleTracks().map(t=>t.id));
+    return MB_GYM_REVIEW_IDS.filter(id=>!known.has(id)&&visible.has(id))
+      .map(id=>tracks.find(t=>t.id===id)).filter(Boolean);
+  }
+  function _mostraRiepilogoGym(){
+    const box=$("mbGymReview"),label=$("mbGymReviewSongs"),button=$("btnGymReviewApply");
+    if(!box||!label||!button)return;
+    const candidates=_braniGymDaRivedere();
+    box.hidden=!candidates.length;
+    label.textContent=candidates.map(t=>t.title+" — "+(t.artist||"")).join(" · ");
+    button.textContent="Sposta "+candidates.length+
+      (candidates.length===1?" brano":" brani")+" solo in Gym";
+  }
+  $("btnGymReviewApply")?.addEventListener("click",async()=>{
+    const gym=_playlistCercata("gym");
+    const candidates=_braniGymDaRivedere();
+    if(!gym||!candidates.length)return;
+    const listing=candidates.map(t=>"• "+t.title+" — "+(t.artist||"")).join("\n");
+    if(!confirm("Vuoi tenere questi brani SOLO in Gym?\n\n"+listing+
+      "\n\nSaranno aggiunti alla playlist Gym e spariranno da 'Tutte'. "+
+      "Gli altri profili, gli MP3 e i download non verranno modificati."))return;
+    const btn=$("btnGymReviewApply");
+    if(btn)btn.disabled=true;
+    try{
+      gym.tracks=[...new Set([...(gym.tracks||[]),...candidates.map(t=>t.id)])];
+      gym.nascosta=true;
+      gym.nascostaDa=profile;
+      for(const t of candidates)_mettiSoloInPlaylist(t.id);
+      saveCurrentState();
+      _salvaStatoCondiviso();
+      const synced=await _salvaPlaylistCondivise();
+      _disegnaLinguettePlaylist();
+      render();
+      _mbCatalogDiagnosi();
+      toast(candidates.length+" brani spostati solo in Gym."+
+        (synced?"":" La sincronizzazione degli altri dispositivi e' in attesa."),6500);
+    }catch(e){
+      console.warn("[Music Box] Correzione Gym non completa",e);
+      toast("Modifica Gym non completata: "+String(e?.message||e),6500);
+    }finally{if(btn)btn.disabled=false}
+  });
+
 function _mbCatalogDiagnosi(){
   const out=$("mbCatalogReport");
   if(!out)return null;
@@ -12413,6 +12464,8 @@ function _mbCatalogDiagnosi(){
       GymTotali:snap.gymPlaylistCount,
       GymMancanti:snap.gymUnavailableIds,
       GymPresentiInLibreria:snap.gymUnexpectedInLibrary,
+      BraniSimiliAGymMaNonNellaPlaylist:_braniGymDaRivedere().map(t=>({
+        id:t.id,titolo:t.title,artista:t.artist})),
       ContestoAttivo:snap.activePlaylist||"Libreria",
       PlaylistCaricate:playlists.map(p=>{
         const inLibrary=(p.tracks||[]).filter(id=>snap.tracks.some(t=>t.id===id));
@@ -12424,6 +12477,7 @@ function _mbCatalogDiagnosi(){
       IDsVisibili:snap.tracks.map(t=>t.id)
     };
     out.value=JSON.stringify(report,null,2);
+    _mostraRiepilogoGym();
     return report;
   }catch(e){out.value="Errore diagnosi: "+String(e?.message||e);return null}
 }
