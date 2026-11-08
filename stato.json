@@ -41,8 +41,10 @@
    "b-track-670",
    "b-track-705",
    "b-track-724",
+   "b-track-855",
    "b-track-954",
-   "b-track-963"
+   "b-track-963",
+   "b-track-977"
   ],
   "Diego": [
    "b-track-1187",
@@ -5066,6 +5068,12 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "m:2026-11|[\"una direzione giusta\",\"thasup\"]": {
+    "v": 3,
+    "s": 482,
+    "t": "uNa DiReZioNe giUsTa",
+    "a": "thasup"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -5846,12 +5854,6 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
-   "m:2026-11|[\"una direzione giusta\",\"thasup\"]": {
-    "v": 3,
-    "s": 482,
-    "t": "uNa DiReZioNe giUsTa",
-    "a": "thasup"
-   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -6237,13 +6239,13 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 0,
+    "v": 1,
     "s": 389,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 0,
+    "v": 1,
     "s": 389,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
@@ -6274,13 +6276,13 @@
    },
    "[\"arriverÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 95,
+    "s": 99,
     "t": "ArriverÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"arriverÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 95,
+    "s": 99,
     "t": "ArriverÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6586,13 +6588,13 @@
    },
    "[\"nessuna\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 192,
+    "s": 225,
     "t": "Nessuna",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"nessuna\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 192,
+    "s": 225,
     "t": "Nessuna",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
@@ -6802,13 +6804,13 @@
    },
    "[\"e non c'ÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 120,
+    "s": 137,
     "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂÃÂÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 120,
+    "s": 137,
     "t": "E non c'ÃÂÃÂÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7023,14 +7025,14 @@
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"tutti il resto ÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 389,
+    "v": 0,
+    "s": 395,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tutti il resto ÃÂÃÂÃÂÃÂ¨ noi\",\"nayt, 3d\"]": {
-    "v": 1,
-    "s": 389,
+    "v": 0,
+    "s": 395,
     "t": "Tutti il resto ÃÂÃÂÃÂÃÂ¨ noi",
     "a": "nayt, 3D"
    },
@@ -7240,13 +7242,13 @@
    },
    "[\"scale\",\"night skinny, luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 61,
+    "s": 69,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"scale\",\"night skinny, luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 0,
-    "s": 61,
+    "s": 69,
     "t": "Scale",
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂ¨"
    },
@@ -7588,13 +7590,13 @@
    },
    "[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 137,
+    "s": 150,
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂÃÂ¨ mai una fine\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 137,
+    "s": 150,
     "t": "E non c'ÃÂÃÂ¨ mai una fine",
     "a": "ModÃÂÃÂ "
    },
@@ -8284,13 +8286,13 @@
    },
    "[\"ÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 325,
+    "s": 361,
     "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"ÃÂ¨ sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 325,
+    "s": 361,
     "t": "ÃÂ sempre bello",
     "a": "Coez"
    },
@@ -8374,13 +8376,13 @@
    },
    "[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 150,
+    "s": 235,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"e non c'ÃÂ¨ mai una fine\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 150,
+    "s": 235,
     "t": "E non c'ÃÂ¨ mai una fine",
     "a": "ModÃÂ "
    },
@@ -9070,13 +9072,13 @@
    },
    "[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 361,
+    "s": 363,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
    "m:2026-11|[\"Ã¨ sempre bello\",\"coez\"]": {
     "v": 1,
-    "s": 361,
+    "s": 363,
     "t": "Ã sempre bello",
     "a": "Coez"
    },
@@ -12726,18 +12728,6 @@
     "t": "Vidrado Em VocÃª",
     "a": "Dj Guuga, Mc Livinho"
    },
-   "e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em Você",
-    "a": "Dj Guuga, Mc Livinho"
-   },
-   "m:2026-10|e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
-    "v": 0,
-    "s": 7,
-    "t": "Vidrado Em Você",
-    "a": "Dj Guuga, Mc Livinho"
-   },
    "e-reset-20261031|[\"mustbearealdragwakingupandbeingyou\",\"bones\"]": {
     "v": 1,
     "s": 2,
@@ -12785,6 +12775,30 @@
     "s": 1,
     "t": "Allenamento #3",
     "a": "Capo Plaza, AVA, Mojobeatz"
+   },
+   "e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em Você",
+    "a": "Dj Guuga, Mc Livinho"
+   },
+   "m:2026-10|e-reset-20261031|[\"vidrado em você\",\"dj guuga, mc livinho\"]": {
+    "v": 0,
+    "s": 7,
+    "t": "Vidrado Em Você",
+    "a": "Dj Guuga, Mc Livinho"
+   },
+   "e-reset-20261031|[\"superclassico\",\"ernia\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Superclassico",
+    "a": "Ernia"
+   },
+   "m:2026-11|e-reset-20261031|[\"superclassico\",\"ernia\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Superclassico",
+    "a": "Ernia"
    }
   }
  }
