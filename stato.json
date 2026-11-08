@@ -2697,13 +2697,13 @@
    },
    "[\"m@star\",\"thasup\"]": {
     "v": 0,
-    "s": 262,
+    "s": 295,
     "t": "m@star",
     "a": "thasup"
    },
    "m:2026-11|[\"m@star\",\"thasup\"]": {
     "v": 0,
-    "s": 262,
+    "s": 295,
     "t": "m@star",
     "a": "thasup"
    },
@@ -3902,14 +3902,14 @@
     "a": "Katy Perry"
    },
    "[\"sono ok\",\"xcarme\"]": {
-    "v": 1,
-    "s": 94,
+    "v": 2,
+    "s": 136,
     "t": "Sono Ok",
     "a": "XCarme"
    },
    "m:2026-11|[\"sono ok\",\"xcarme\"]": {
-    "v": 1,
-    "s": 94,
+    "v": 2,
+    "s": 136,
     "t": "Sono Ok",
     "a": "XCarme"
    },
