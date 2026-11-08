@@ -100,20 +100,21 @@ test("incompatible chords cannot blend merely because the outro is quiet",async(
  assert.equal(f.decision().softCandidates,1,"dissonant quiet fades are refused");
 });
 test("rhythm-only shuffle can pick a better successor but never certify a beat overlap",async()=>{
- const f=fixture({focused:.36,phrase:.21,groove:.82,pool:[
+ const f=fixture({focused:.56,phrase:.36,groove:.82,pool:[
   {analysis:{bpm:176},cue:null},{analysis:{bpm:120},cue:null}
  ]});
  const result=await f.run();
  assert.equal(result.selected,true);
  assert.equal(f.selected()?.pickId,3,"promote a compatible rhythmic order over unrelated shuffle");
  assert.equal(f.decision().rhythmOrderCandidates,1);
+ assert.equal(f.decision().rhythmOrderPickableCandidates,1);
  assert.equal(f.decision().beatCandidates,0,"rhythm-only evidence cannot pretend to beatmatch");
  assert.equal(f.decision().softCandidates,0,"rhythm-only evidence cannot force a fade");
  assert.equal(f.decision().reason,"ordine basato su groove misurato (nessuna sovrapposizione autorizzata)");
 });
 test("protected musical endings may reorder automatic shuffle but remain uncut",async()=>{
  const f=fixture({old:{protectedEnding:true,confidentTail:false,lastLyricAt:82},
-  focused:.36,phrase:.21,groove:.82,pool:[
+  focused:.56,phrase:.36,groove:.82,pool:[
    {analysis:{bpm:176},cue:null},{analysis:{bpm:120},cue:null}
   ]});
  await f.run();
@@ -121,9 +122,10 @@ test("protected musical endings may reorder automatic shuffle but remain uncut",
  assert.equal(f.decision().beatCandidates,0);
  assert.equal(f.decision().softCandidates,0);
  assert.equal(f.decision().postludeCandidates,0);
+ assert.equal(f.decision().rhythmOrderPickableCandidates,1);
 });
 test("a manually curated queue never gets rhythm-order automatic overrides",async()=>{
- const f=fixture({manual:true,focused:.36,phrase:.21,groove:.82,pool:[
+ const f=fixture({manual:true,focused:.56,phrase:.36,groove:.82,pool:[
   {analysis:{bpm:176},cue:null},{analysis:{bpm:120},cue:null}
  ]});
  await f.run();
