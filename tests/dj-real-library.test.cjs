@@ -12,6 +12,7 @@ const excerpt=(start,end)=>{
 const engine=new Function("isIOS","style",
  "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));\n"+
  excerpt("function grooveAgreement(","// Find a *musical* release")+
+ excerpt("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
  "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay};"
