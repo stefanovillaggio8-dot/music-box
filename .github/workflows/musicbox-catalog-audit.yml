@@ -1,0 +1,51 @@
+name: Music Box catalog authority audit
+on:
+  push:
+    paths:
+      - .github/workflows/musicbox-catalog-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read-only Worker vs GitHub catalog comparison
+        env:
+          MB_WORKER: https://musicbox-dal-telefono.stefanovillaggio8.workers.dev
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const base=process.env.MB_WORKER;
+          const get=async path=>{
+            const r=await fetch(base+path,{signal:AbortSignal.timeout(12000),headers:{accept:'application/json'}});
+            if(!r.ok)throw Error(path+' HTTP '+r.status);
+            return r.json();
+          };
+          const state=JSON.parse(fs.readFileSync('stato.json','utf8'));
+          const publishedPlaylist=JSON.parse(fs.readFileSync('playlist.json','utf8'));
+          try {
+            const worker=await get('/stato');
+            const remote=worker.stato || worker;
+            const p='Ste';
+            const local=new Set(state.miei?.[p]||[]),cloud=new Set(remote.miei?.[p]||[]);
+            console.log('COPIES GITHUB',local.size,'WORKER',cloud.size);
+            console.log('COPIES published-only',JSON.stringify([...local].filter(x=>!cloud.has(x))));
+            console.log('COPIES worker-only',JSON.stringify([...cloud].filter(x=>!local.has(x))));
+            console.log('DELETED GITHUB',state.eliminati?.filter(x=>x.startsWith('Ste.')).length||0,'WORKER',remote.eliminati?.filter(x=>x.startsWith('Ste.')).length||0);
+          } catch(e) {console.log('STATE WORKER UNAVAILABLE:',e.message);}
+          try {
+            const worker=await get('/playlist');
+            const remote=worker.playlist||worker;
+            const a=publishedPlaylist.find(x=>x.name.toLowerCase()==='gym');
+            const b=remote.find?.(x=>x.name.toLowerCase()==='gym');
+            console.log('GYM GITHUB',a?.tracks?.length,'WORKER',b?.tracks?.length,'OWNER',b?.nascostaDa,'EXCLUSIVE',b?.nascosta);
+            console.log('GYM published-only',JSON.stringify((a?.tracks||[]).filter(x=>!(b?.tracks||[]).includes(x))));
+            console.log('GYM worker-only',JSON.stringify((b?.tracks||[]).filter(x=>!(a?.tracks||[]).includes(x))));
+          } catch(e) {console.log('PLAYLIST WORKER UNAVAILABLE:',e.message);}
+          NODE
