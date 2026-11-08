@@ -3878,5 +3878,37 @@
     "album": "10",
     "source": "Deezer catalogo, titolo/artista verificati",
     "date": "2026-10-31"
+  },
+  "thasupmare": {
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e7/cd/1a/e7cd1a8f-1d25-15b1-9d0e-0fbabd5d9ffa/ticket.zvhwwoxe.jpg/600x600bb.jpg",
+    "title": "mar+e",
+    "artist": "thasup",
+    "album": "c@ra++ere s?ec!@le",
+    "source": "Apple iTunes catalogo, titolo/artista verificati",
+    "date": "2026-11-08"
+  },
+  "thasupm8nstar": {
+    "cover": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/b4/34/b6/b434b67c-6813-1e01-a4a9-a14a3f3078e3/ticket.equlwylm.jpg/600x600bb.jpg",
+    "title": "m8nstar",
+    "artist": "thasup",
+    "album": "23 6451",
+    "source": "Apple iTunes catalogo, titolo/artista verificati",
+    "date": "2026-11-08"
+  },
+  "thasupcomefa1": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/87ff198207811b59028ed4d1663d869b/500x500-000000-80-0-0.jpg",
+    "title": "come fa1",
+    "artist": "thasup",
+    "album": "23 6451",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-11-08"
+  },
+  "thasupmarracashocch1purpl3": {
+    "cover": "https://cdn-images.dzcdn.net/images/cover/87ff198207811b59028ed4d1663d869b/500x500-000000-80-0-0.jpg",
+    "title": "occh1 purpl3 (feat. Marracash)",
+    "artist": "thasup, Marracash",
+    "album": "23 6451",
+    "source": "Deezer catalogo, titolo/artista verificati",
+    "date": "2026-11-08"
   }
 }
