@@ -4769,14 +4769,14 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
+ const scored=[],softScored=[],underlayScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
  const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
   sampledForDecode:picked.length,measured:measured.length,
   outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
   validIntros:0,closeTempo:0,compatibleGroove:0,compatibleNotes:0,
-  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0};
+  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0,subduedUnderlays:0};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
  // has no songs with similar tempo or real beat patterns.
@@ -4891,6 +4891,13 @@ async function intelligentShuffle(app,audio,fromId){
        cue.instrumentalBeatBridge===true))));
   if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
+   // This measured early intro is NOT a certified beatmatch.
+   if(mobilePlayable&&cue?.subduedRhythmicUnderlay===true){
+    candidateAudit.subduedUnderlays++;
+    underlayScored.push({track,cue,score:1+(cue.score||0)/100*.55+
+     (cue.grooveScore||0)*.26});
+    continue;
+   }
    // Only as a SECOND choice: a measured musical decay may permit a
    // short, audible overlap even when no two percussion patterns match.
    // Never silently count this as a verified beat or shorten a vocal.
@@ -4999,6 +5006,7 @@ async function intelligentShuffle(app,audio,fromId){
  scored.sort((a,b)=>b.score-a.score);
  impactScored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
+ underlayScored.sort((a,b)=>b.score-a.score);
  postludeScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
  sequenceScored.sort((a,b)=>b.score-a.score);
@@ -5018,6 +5026,7 @@ async function intelligentShuffle(app,audio,fromId){
  // after independently validated rhythmic-grid evidence; otherwise a
  // safe, verified release takes precedence over guessing at beat identity.
  const choicePool=scored.length?scored:impactScored.length?impactScored:
+  underlayScored.length?underlayScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:
   safeRhythmOrder.length?safeRhythmOrder:[];
@@ -5039,6 +5048,7 @@ async function intelligentShuffle(app,audio,fromId){
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
     beatCandidates:scored.length,softCandidates:softScored.length,
+   underlayCandidates:underlayScored.length,
     impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
@@ -5047,7 +5057,8 @@ async function intelligentShuffle(app,audio,fromId){
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):impactScored.length?
-     "ingresso sul colpo finale misurato, non beatmatch armonico":softScored.length?
+     "ingresso sul colpo finale misurato, non beatmatch armonico":underlayScored.length?
+      "ingresso ritmico anticipato, originale preservato":softScored.length?
      "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
      "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
@@ -5055,6 +5066,7 @@ async function intelligentShuffle(app,audio,fromId){
       "ordine basato su groove misurato (nessuna sovrapposizione autorizzata)"};
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
     impactScored.length?"[Music Box DJ] Scelta automatica: beat FINALE reale, fade controllato":
+    underlayScored.length?"[Music Box DJ] Scelta automatica: ingresso ritmico prima del finale":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
     postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
     nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
@@ -5072,6 +5084,7 @@ async function intelligentShuffle(app,audio,fromId){
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
+   underlayCandidates:underlayScored.length,
   impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
   nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
@@ -5084,6 +5097,7 @@ async function intelligentShuffle(app,audio,fromId){
    protectedEnding:old.protectedEnding===true,dropReleaseVerified:!!old.dropRelease,
   reason:noMatch?"nessuna sovrapposizione o sequenza affidabile nei brani analizzati":
    scored.length?"brano in coda gia compatibile con il beat":
+   underlayScored.length?"brano in coda gia compatibile con ingresso ritmico cauto":
    softScored.length?"brano in coda compatibile con una sfumatura quieta":
    postludeScored.length?"brano in coda adatto al raccordo dopo l'ultimo suono":
    nearScored.length?"brano in coda gia simile per BPM, groove e note":
@@ -5094,7 +5108,8 @@ async function intelligentShuffle(app,audio,fromId){
   lastKnownVocal:Number.isFinite(old.lastVoiceAt)?old.lastVoiceAt:null,
   lastLyric:Number.isFinite(old.lastLyricAt)?old.lastLyricAt:null};
  console.info("[Music Box DJ] Ricerca beat in libreria: "+
-  scored.length+" beat verificati, "+softScored.length+" sfumature, "+
+  scored.length+" beat verificati, "+underlayScored.length+
+  " ingressi ritmici cauti, "+softScored.length+" sfumature, "+
   impactScored.length+" attacchi sul colpo finale, "+
   postludeScored.length+" raccordi su finale concluso, "+
   nearScored.length+" brani affini, "+rhythmCandidates+
@@ -5422,7 +5437,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.684",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.685",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
