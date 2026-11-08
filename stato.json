@@ -1340,8 +1340,8 @@
     "a": "nayt"
    },
    "[\"l'universo tranne noi\",\"max pezzali\"]": {
-    "v": 1,
-    "s": 280,
+    "v": 2,
+    "s": 296,
     "t": "L'universo tranne noi",
     "a": "Max Pezzali"
    },
@@ -1419,13 +1419,13 @@
    },
    "[\"lilith\",\"kid yugi\"]": {
     "v": 1,
-    "s": 66,
+    "s": 136,
     "t": "Lilith",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"lilith\",\"kid yugi\"]": {
     "v": 1,
-    "s": 66,
+    "s": 136,
     "t": "Lilith",
     "a": "Kid Yugi"
    },
@@ -3392,8 +3392,8 @@
     "a": "Night Skinny, LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "m:2026-11|[\"l'universo tranne noi\",\"max pezzali\"]": {
-    "v": 1,
-    "s": 215,
+    "v": 2,
+    "s": 230,
     "t": "L'universo tranne noi",
     "a": "Max Pezzali"
    },
