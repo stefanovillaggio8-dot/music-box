@@ -4685,6 +4685,12 @@ async function intelligentShuffle(app,audio,fromId){
  // the verified quiet/silence fallback.
  const scored=[],softScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
+ // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
+ const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
+  sampledForDecode:picked.length,measured:measured.length,
+  outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
+  validIntros:0,closeTempo:0,compatibleGroove:0,compatibleNotes:0,
+  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
  // has no songs with similar tempo or real beat patterns.
@@ -4701,17 +4707,20 @@ async function intelligentShuffle(app,audio,fromId){
      !hasImmediateMusicalIntro(info)){
    rejected.weakIntro++;continue;
   }
+  candidateAudit.validIntros++;
   const bpmA=Number(old.bpm),bpmB=Number(info.bpm);
   if(bpmA>0&&bpmB>0&&old.beatConfidence>=.16){
    const ratio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,value)=>Math.abs(Math.log2(value))<Math.abs(Math.log2(best))?value:best);
    if(ratio>=.94&&ratio<=1.06){
+    candidateAudit.closeTempo++;
     const rhythm=grooveAgreement(old,info);
     if(rhythm?.score>=.60){
-     rhythmCandidates++;
+     rhythmCandidates++;candidateAudit.compatibleGroove++;
      const harmony=similarNotes(old,info);
-     if(harmony.focused>=.60&&harmony.phrase>=.45)
-      harmonicCandidates++;
+     if(harmony.focused>=.60&&harmony.phrase>=.45){
+      harmonicCandidates++;candidateAudit.compatibleNotes++;
+     }
      // Rhythm-only sorting never certifies a harmonic beat mix.
      if(rhythm.score>=.62&&ratio>=.945&&ratio<=1.055&&
         info.introDrive>=.43&&info.beatConfidence>=.16){
@@ -4766,6 +4775,7 @@ async function intelligentShuffle(app,audio,fromId){
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   let cue=transition(old,next,audio.duration);
   let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  if(cue&&["beat","snap"].includes(cue.kind))candidateAudit.potentialBeatCues++;
   // Even when no identical drum pattern exists, a measured and voice-free
   // settled outro may permit a neutral quiet fade. Previously this second
   // choice was used by the live player but never considered when choosing
@@ -4779,6 +4789,7 @@ async function intelligentShuffle(app,audio,fromId){
   }
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
+  if(musicallyPlayable)candidateAudit.musicalOverlays++;
   const mobilePlayable=musicallyPlayable&&(!isIOS||
    (mobileMixAllowed(cue,old,lastLyric)&&
     iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue)));
@@ -4792,6 +4803,7 @@ async function intelligentShuffle(app,audio,fromId){
      (cue.kind==="beat"&&cue.fade>=2.7&&
       (cue.verifiedHarmonicBridge===true||cue.dropReleaseBridge===true||
        cue.instrumentalBeatBridge===true))));
+  if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
    // Only as a SECOND choice: a measured musical decay may permit a
    // short, audible overlap even when no two percussion patterns match.
@@ -4923,6 +4935,15 @@ async function intelligentShuffle(app,audio,fromId){
   softScored.length?softScored:postludeScored.length?postludeScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:
   safeRhythmOrder.length?safeRhythmOrder:[];
+ const limitingStage=!candidateAudit.validIntros?"nessuna intro verificabile":
+  !Number.isFinite(old.beatConfidence)||old.beatConfidence<.16?
+   "beat del brano in uscita non abbastanza affidabile":
+  !candidateAudit.closeTempo?"nessun BPM compatibile col brano in uscita":
+  !candidateAudit.compatibleGroove?"finali e intro senza groove sufficientemente simile":
+  !candidateAudit.compatibleNotes?"groove vicino, ma note e frasi non compatibili":
+  !candidateAudit.musicalOverlays?"nessun punto di sovrapposizione musicale sicuro":
+  !candidateAudit.verifiedBeats?"il punto di mix non supera i controlli di sicurezza":
+  "transizioni certificate presenti";
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
@@ -4936,7 +4957,7 @@ async function intelligentShuffle(app,audio,fromId){
     nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-    rejected,chosen:best.track.id,
+    rejected,candidateAudit,limitingStage,chosen:best.track.id,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):impactScored.length?
@@ -4969,7 +4990,7 @@ async function intelligentShuffle(app,audio,fromId){
   nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-   rejected,chosen:current?.track.id||null,
+   rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,
    vocalModelReady:!!old.voiceModel,
    outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
     Number.isFinite(old.voiceScannedEnd)&&Number.isFinite(old.last)&&
@@ -4993,7 +5014,7 @@ async function intelligentShuffle(app,audio,fromId){
   nearScored.length+" brani affini, "+rhythmCandidates+
   " ritmi compatibili, "+rhythmOrderScored.length+
   " ordini ritmici su "+measured.length+" analizzati. "+
-  shuffleLastDecision.reason);
+  shuffleLastDecision.reason+(noMatch?" · filtro: "+limitingStage:""));
  return {retry:unknown.length>picked.length&&noMatch,
   checked:measured.length,missing:unknown.length,noMatch};
 }
@@ -5315,7 +5336,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.682",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.683",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
