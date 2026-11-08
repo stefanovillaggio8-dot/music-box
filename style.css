@@ -3865,3 +3865,8 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .mb-catalog-row .track-count { margin:0; min-width:0; }
 .mb-catalog-sync { flex-shrink:0; border:1px solid var(--line); border-radius:999px; background:var(--card); color:var(--muted); font:inherit; font-size:11px; padding:5px 10px; cursor:pointer; }
 .mb-catalog-sync:disabled { opacity:.55; cursor:progress; }
+
+.mb-catalog-btns{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mb-catalog-details{margin:0 4px 10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:12px}
+.mb-catalog-details p{margin:0 0 9px;color:var(--muted)}
+.mb-catalog-details textarea{display:block;width:100%;min-height:152px;margin-top:9px;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font-size:11px;line-height:1.45;font-family:monospace;resize:vertical}
