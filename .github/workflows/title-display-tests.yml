@@ -1,0 +1,19 @@
+name: Music Box title display and original metadata regression
+on:
+  push:
+    paths:
+      - app.js
+      - style.css
+      - tests/track-title-identity.test.cjs
+      - .github/workflows/title-display-tests.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  names-and-display:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Original metadata and Unicode rendering guard
+        run: node --test tests/track-title-identity.test.cjs
