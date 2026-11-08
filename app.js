@@ -2460,22 +2460,9 @@ if (t) {
     try { _salvaStatoCondiviso(); } catch (e) { /* noop */ }
     applicaRinomine();
     render();
-    /* Ste: "se cambio l'artista e riavvio il sito torna di prima".
-       Prima scrivevo "Nome cambiato" e basta: sembrava tutto a posto, ma il
-       nome restava solo sul telefono, e sul telefono quei dati spariscono
-       (e' successo: e' sparita anche la chiave del servizio, che aveva messo
-       lui prima). Adesso invece dico la verita': se non riesco a portare il
-       nome fuori dal telefono, dico subito che deve stare sul Wi-Fi di casa,
-       e intanto l'app continua a riprovare da sola. */
-    try {
-      if (typeof _statoCondivisoOk !== "undefined" && _statoCondivisoOk) {
-        toast("Nome cambiato e salvato");
-      } else {
-        toast("Nome cambiato, MA non è ancora al sicuro: su questo telefono i\n" +
-          "dati spariscono al riavvio. Collega il Wi-Fi di casa (o lascia il PC\n" +
-          "acceso): l'app lo salva da sola appena può.", 9000);
-      }
-    } catch (e) { /* noop */ }
+    // A previous successful sync does not certify THIS just-edited name.
+    // Do not claim cloud persistence before the debounced POST completes.
+    toast("Nome aggiornato. Salvataggio online in corso: se manca la rete riprovo automaticamente.");
   }
 
   /* Sposta la scheda di ascolto da un nome all'altro quando cambio il nome
