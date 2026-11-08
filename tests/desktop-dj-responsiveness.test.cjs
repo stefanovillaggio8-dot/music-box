@@ -228,7 +228,7 @@ test("headphone Play starts native media before seek and storage",()=>{
 
 test("iPhone early matched beats wait for Web Audio's exact grid",()=>{
  const code=section(dj,
-  '  const maxBeatWait=p.kind==="beat"&&p.measuredBeatBridge===true?',
+  '  const maxBeatWait=',
   '  const startedAt=ctx.currentTime+delay;');
  const wait=new Function("p","phase","period","syncMeasured","secondsLeft",
   'let mobileMixLastBlocker="";'+code+'return delay;');

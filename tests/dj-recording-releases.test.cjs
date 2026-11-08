@@ -251,6 +251,6 @@ test("final-impact scheduler rejects missed last beat instead of late silence",(
  assert.ok(Math.abs(delay(cue,241.11)-.07)<.002);
  assert.equal(delay(cue,241.32),null,"too late to enter on final impact");
  assert.equal(delay(cue,239.0),null,"no early speculative play");
- assert.match(source,/plan\.kind==="snap"\|\|plan\.measuredFinalImpact===true/);
+ assert.match(source,/plan\.kind==="snap"\|\|(?:plan\.kind==="underlay"\|\|)?plan\.measuredFinalImpact===true/);
  assert.match(source,/if\(act\.measuredFinalImpact\)\{/);
 });

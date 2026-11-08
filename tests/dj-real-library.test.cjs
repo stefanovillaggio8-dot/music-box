@@ -16,7 +16,7 @@ const engine=new Function("isIOS","style",
  excerpt("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay,onsetPairAgreement,rhythmicGridEvidence};"
+ "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay,onsetPairAgreement,rhythmicGridEvidence,onsetPeriodicity};"
 )(false,"auto");
 const tracks=Object.entries(index.entries||{})
  .filter(([key,v])=>v?.status==="ok"&&Number.isFinite(v.duration)&&v.duration>=26&&
@@ -38,6 +38,49 @@ test("real indexed audio supports early rhythmic underlays without cutting origi
  console.info("[DJ CAUTIOUS EARLY INDEX AUDIT]",JSON.stringify({eligible,early,unsafe,checked,examples}));
  assert.equal(unsafe,0,"underlays must never truncate original endings");
  assert.ok(eligible>0,"the fallback must work on real MP3 data, not only synthetics");
+});
+test("diagnose wider cautious rhythm choices on real MP3 metadata",()=>{
+ const s={considered:0,tempo:0,pulse18:0,nearHarmony:0,
+   strictLike:0,balancedPulse:0,balancedNoPulse:0,widePulse:0};
+ let examples=[];
+ for(let i=0;i<tracks.length;i+=3){
+  const A=tracks[i].data;
+  if(A.last<28||A.duration-A.last>10||A.beatConfidence<.16)continue;
+  for(let j=0;j<tracks.length;j+=3){
+   if(i===j)continue;const B=tracks[j].data;s.considered++;
+   if(B.beatConfidence<.16||!engine.hasImmediateMusicalIntro(B))continue;
+   const tempo=A.bpm/B.bpm;
+   if(!Number.isFinite(tempo)||tempo<.95||tempo>1.05)continue;
+   s.tempo++;
+   const g=engine.grooveAgreement(A,B),n=engine.similarNotes(A,B);
+   if(!g||!Number.isFinite(n?.focused)||!Number.isFinite(n?.phrase))continue;
+   const key=engine.camelotMatch(A,B);
+   const pa=engine.onsetPeriodicity(A.outroOnset,A.bpm)||0;
+   const pb=engine.onsetPeriodicity(B.introOnset,B.bpm)||0;
+   if(pa>=.18&&pb>=.18)s.pulse18++;
+   const keySafe=key.weight<.14||key.score>=.55;
+   if(g.score>=.65&&n.focused>=.64&&n.phrase>=.43)s.nearHarmony++;
+   if(keySafe&&g.score>=.70&&g.correlation>=.40&&
+      n.focused>=.70&&n.phrase>=.53&&tempo>=.975&&tempo<=1.025)
+     s.strictLike++;
+   const balanced=keySafe&&g.score>=.67&&g.correlation>=.35&&
+      n.focused>=.67&&n.phrase>=.48&&tempo>=.97&&tempo<=1.03;
+   if(balanced){
+    s.balancedNoPulse++;
+    if(pa>=.12&&pb>=.12){
+     s.balancedPulse++;
+     if(examples.length<5)examples.push({a:tracks[i].key,b:tracks[j].key,
+      pa:+pa.toFixed(2),pb:+pb.toFixed(2),
+      groove:+g.score.toFixed(2),notes:+n.focused.toFixed(2)});
+    }
+   }
+   if(keySafe&&pa>=.10&&pb>=.10&&g.score>=.62&&g.correlation>=.27&&
+      n.focused>=.62&&n.phrase>=.42&&tempo>=.96&&tempo<=1.04)
+     s.widePulse++;
+  }
+ }
+ console.info("[DJ CAUTIOUS FUNNEL REAL]",JSON.stringify({s,examples}));
+ assert.ok(s.tempo>0);
 });
 test("actual precomputed music library: sample real beat/soft/cut decisions and ensure transitions respect duration",()=>{
  assert.ok(tracks.length>100,"Expected many actual indexed MP3 analyses");

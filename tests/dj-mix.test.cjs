@@ -1019,7 +1019,8 @@ test("desktop declines phase corrections too late to sound like one beat",()=>{
 });
 test("iPhone never starts a full-volume off-phase beat to mask failed alignment",()=>{
  assert.match(source,/Beat reali fuori fase: passo al brano senza sovrapporli/);
- assert.match(source,/const maxBeatWait=p.kind==="beat"/);
+ assert.match(source,/const maxBeatWait=/);
+  assert.match(source,/p.kind==="beat"&&p.measuredBeatBridge===true/);
  assert.match(source,/phase>maxBeatWait&&period-phase>\.045/);
 });
 
