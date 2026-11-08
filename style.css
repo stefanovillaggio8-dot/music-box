@@ -3870,3 +3870,7 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .mb-catalog-details{margin:0 4px 10px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card);font-size:12px}
 .mb-catalog-details p{margin:0 0 9px;color:var(--muted)}
 .mb-catalog-details textarea{display:block;width:100%;min-height:152px;margin-top:9px;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--txt);font-size:11px;line-height:1.45;font-family:monospace;resize:vertical}
+
+.mb-gym-review{margin:10px 0 0;padding:10px;border:1px solid var(--line);border-radius:10px}
+.mb-gym-review p{margin:0 0 9px;line-height:1.5}
+.mb-gym-review button{max-width:100%}
