@@ -3482,18 +3482,33 @@ function prepare(song,fromId,app){
 // No verified musical match: use the ALREADY buffered next audio exactly
 // at native EOF. Do not fade out the last kick or download the same MP3
 // again. If prebuffer is absent, let the original ended handler run.
-function naturalEndHandoff(){
+function naturalEndHandoff(certifiedSilentTail=false){
  if(!enabled||isIOS||mixing||active||
     window.MusicBoxRoom?.isActive())return false;
  const app=bridge(),old=app?.audio?.(),fromId=app?.currentId?.();
+ if(!fromId)return false;
+ // An ended event can arrive while its successor has already started.
+ if(naturalEndHandoff.inFlight===fromId)return true;
+ const ended=!!old?.ended;
+ if(!ended){
+  if(!certifiedSilentTail)return false;
+  const track=app?.allTracks?.()?.find(t=>t.id===fromId);
+  const url=track&&(app.mixUrl?.(track)||track.url);
+  const analysis=url&&(cache.get(String(url))||deepLookup(track));
+  const lyric=app.mixLyricCues?.(fromId)?.last;
+  // Full MP3 analysis verifies that the original is ALREADY digitally
+  // silent. Never move a final beat, vocal or audible atmosphere.
+  if(!certifiedTailSkip(analysis,old.duration,old.currentTime,lyric))return false;
+ }
  const next=app?.mixNext?.(),p=prepared;
- if(!old?.ended||!fromId||!next||!p||p.fromId!==fromId||
+ if(!next||!p||p.fromId!==fromId||
     p.id!==next.id||!p.ready||p.failed||p.audio?.error||
-    p.audio?.readyState<2)return false;
- // Detach the preview BEFORE playById/onTrackChange removes prepared
- // media nodes. The browser's loaded MP3 is the new native player.
+    p.audio?.readyState<2||
+    (p.naturalEntry>0&&(!p.seekReady||
+      Math.abs(p.audio.currentTime-p.naturalEntry)>.55)))return false;
  const incoming=p.audio;
  prepared=null;
+ naturalEndHandoff.inFlight=fromId;
  (async()=>{
   try{
    if(app.currentId?.()!==fromId||app.mixNext?.()?.id!==next.id)return;
@@ -3506,18 +3521,22 @@ function naturalEndHandoff(){
    const adopted=app.mixAdoptHandoff?.(next.id,incoming);
    if(!adopted)throw Error("Buffered player could not be adopted");
    await adopted;
-   console.info("[Music Box DJ] Passaggio naturale: nessun beat compatibile certificato · "+
-    fromId+" → "+next.id+" (MP3 già pronto)");
+   if(!ended)try{old.pause()}catch(_){}
+   console.info("[Music Box DJ] Passaggio senza beatmatch · "+
+    fromId+" → "+next.id+
+    (ended?" (intro muto verificato evitato)":
+     " (coda digitalmente muta verificata evitata)"));
   }catch(error){
    try{incoming.pause()}catch(_){}
-   // Revert to standard native progression if autoplay/adoption fails.
    if(app.currentId?.()===fromId)
     Promise.resolve().then(()=>{
-     // Read the actual current queue head, not a stale DJ candidate.
      const latest=app.mixNext?.();
-     if(latest&&app.currentId?.()===fromId)return app.mixHandoff(latest.id,0);
-    })
-     .catch(e=>console.warn("[Music Box DJ] Fine naturale: ripiego fallito",e));
+     if(latest&&app.currentId?.()===fromId)
+      return app.mixHandoff(latest.id,latest.id===next.id?p.naturalEntry||0:0);
+    }).catch(e=>console.warn("[Music Box DJ] Fine naturale: ripiego fallito",e));
+  }finally{
+   if(naturalEndHandoff.inFlight===fromId)
+    naturalEndHandoff.inFlight="";
   }
  })();
  return true;
@@ -4073,6 +4092,7 @@ function tick(){
   return;
  }
  const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ if(id&&naturalEndHandoff.inFlight===id)return;
  // Timeupdate fires much faster than planning needs; never throttle cues
  // within five seconds of their start or the dedicated precision timer.
  if(isIOS&&!mobileActive&&!mixing&&!active&&audio&&!audio.paused&&
@@ -4346,6 +4366,9 @@ function tick(){
    const nextInfo=cache.get(String(nextSource))||deepLookup(next);
    const entry=Number.isFinite(nextInfo?.safeIntroAt)?
     clamp(nextInfo.safeIntroAt,0,18):0;
+   // Prefer the already-buffered next audio to a fresh MP3 download;
+   // preserve the entire original music until the verified silent tail.
+   if(!isIOS&&naturalEndHandoff(true))return;
    if(quietDirectHandoff(app,audio,id,next,entry,
       "coda digitale misurata: nessun mix in corso"))return;
  }
