@@ -47,6 +47,7 @@ function fixture(options={}){
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>next.cue||null;",
+  ...(options.neutralFallback?["const certifiedNeutralBridge=(old,next)=>next.safeNeutral||null;"]:[]),
   "const musicalIntroEntry=()=>0;",
   "const onsetGridPhase=()=>.12;",
   source.slice(source.indexOf("function desktopFinalImpactRelay("),
@@ -409,4 +410,19 @@ test("unmeasured flat transients cannot be advertised as a final-impact beatmix"
  ]});
  await manual.run();
  assert.equal(manual.selected(),null,"user queue is immutable");
+});
+
+test("auto shuffle searches safe neutral fade across new songs even if none has a beat cue",async()=>{
+ const low={kind:"soft",neutralRelease:true,quietCertified:true,
+  begin:92,end:97,fade:5,entry:0,measuredRelease:true};
+ const f=fixture({neutralFallback:true,pool:[
+  {cue:null,analysis:{introDrive:.55}},
+  {cue:null,analysis:{introDrive:.85,safeNeutral:low}}
+ ]});
+ const result=await f.run();
+ assert.equal(result.selected,true);
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().beatCandidates,0,"neutral quiet fade must never count as a beatmatch");
+ assert.equal(f.decision().softCandidates,1);
+ assert.equal(f.decision().reason,"sfumatura su finale quieto (non beat uguali)");
 });

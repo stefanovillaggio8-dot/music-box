@@ -2525,14 +2525,29 @@ function musicallyCompatibleOverlay(a,b,cue){
  // It is NOT equivalent to matching BPM or beats.
  if(cue.neutralRelease===true&&cue.quietCertified===true&&
     cue.kind==="soft"){
-  const release=a.dropRelease;
-  if(release&&a.protectedEnding!==true&&
-     Number(release.score)>=.82&&Number(release.quietLevel)<=.12&&
-     Number.isFinite(release.releaseAt)&&Number.isFinite(a.last)&&
-     cue.begin>=release.releaseAt+.35&&cue.end<=a.last+.25&&
-     (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-4)&&
-     (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-2.5))
-   return true;
+  // Recheck the identical PCM-derived, voice-safe decay certificate used
+  // by the planner. The old second gate silently demanded a stronger
+  // threshold (.82/.12) than the planner (.78/.15), discarding the safe
+  // short fade and causing a normal hard handoff on most eligible pairs.
+  // This is only a quiet, neutral fade; never a certified beatmatch.
+  // Isolated test engines sometimes load just this function and not the
+  // planner. Keep their original strict compatibility guard intact.
+  if(typeof certifiedNeutralBridge==="function"){
+   const verified=certifiedNeutralBridge(a,b,a.duration);
+   if(verified&&Math.abs(verified.begin-cue.begin)<.085&&
+      Math.abs(verified.end-cue.end)<.085&&
+      Math.abs(verified.fade-cue.fade)<.085)
+    return true;
+  }else{
+   const release=a.dropRelease;
+   if(release&&a.protectedEnding!==true&&
+      Number(release.score)>=.82&&Number(release.quietLevel)<=.12&&
+      Number.isFinite(release.releaseAt)&&Number.isFinite(a.last)&&
+      cue.begin>=release.releaseAt+.35&&cue.end<=a.last+.25&&
+      (!Number.isFinite(a.lastLyricAt)||a.lastLyricAt<=cue.begin-4)&&
+      (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=cue.begin-2.5))
+    return true;
+  }
  }
  if(["beat","snap","phrase"].includes(cue.kind)||cue.measuredBeatBridge||
     cue.rhythmicUnderlay||cue.strongBeatBridge)
@@ -4646,8 +4661,19 @@ async function intelligentShuffle(app,audio,fromId){
   }
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
-  const cue=transition(old,next,audio.duration);
-  const musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  let cue=transition(old,next,audio.duration);
+  let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  // Even when no identical drum pattern exists, a measured and voice-free
+  // settled outro may permit a neutral quiet fade. Previously this second
+  // choice was used by the live player but never considered when choosing
+  // the next song from the library. Genuine verified beats still win first.
+  if((!musicallyPlayable||cue.kind==="cut")&&
+     typeof certifiedNeutralBridge==="function"){
+   const quiet=certifiedNeutralBridge(old,next,audio.duration);
+   if(quiet&&musicallyCompatibleOverlay(old,next,quiet)){
+    cue=quiet;musicallyPlayable=true;
+   }
+  }
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
   const mobilePlayable=musicallyPlayable&&(!isIOS||
@@ -5180,7 +5206,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.678",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.679",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
