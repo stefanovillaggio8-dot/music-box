@@ -14,7 +14,7 @@ const engine=new Function("isIOS","style",
  excerpt("function grooveAgreement(","// Find a *musical* release")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback};"
+ "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay};"
 )(false,"auto");
 const tracks=Object.entries(index.entries||{})
  .filter(([key,v])=>v?.status==="ok"&&Number.isFinite(v.duration)&&v.duration>=26&&
@@ -412,4 +412,25 @@ test("real audio library: zero-candidate tracks still have a gentle final-song c
  }
  console.info("[DJ REAL FALLBACK]",JSON.stringify({tested,fallbacks}));
  assert.ok(tested>=400,"real-library playback must cover every selected pair");
+});
+
+test("audit voice-safe neutral fade coverage and actual playback acceptance",()=>{
+ const sources=tracks.filter((_,i)=>i%Math.max(1,Math.floor(tracks.length/90))===0).slice(0,90);
+ let planned=0,accepted=0,unsafe=0;
+ for(const out of sources){
+  for(let i=0;i<tracks.length;i+=Math.max(1,Math.floor(tracks.length/165))){
+   const next=tracks[i];
+   if(next.key===out.key)continue;
+   const cue=engine.certifiedNeutralBridge(out.data,next.data,out.data.duration);
+   if(!cue)continue;
+   planned++;
+   if(engine.musicallyCompatibleOverlay(out.data,next.data,cue))accepted++;
+   else unsafe++;
+   const protectedOut={...out.data,protectedEnding:true};
+   assert.equal(engine.certifiedNeutralBridge(protectedOut,next.data,protectedOut.duration),null);
+  }
+ }
+ console.info("[DJ SAFE NEUTRAL COVERAGE]",JSON.stringify({planned,accepted,unsafe}));
+ assert.equal(accepted,planned,
+  "a voice-safe neutral release should be playable when planner and playback share the same certificate");
 });
