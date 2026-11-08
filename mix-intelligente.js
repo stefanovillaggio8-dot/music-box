@@ -113,7 +113,11 @@ function onsetPairAgreement(a,b){
   let best={...zero,shift:0};
   for(let shift=-12;shift<=12;shift++){
    const found=correlate(shift);
-   if(found&&found.score>best.score)best={...found,shift};
+   if(found&&(found.score>best.score+.012||
+     (Math.abs(found.score-best.score)<=.012&&
+      (found.hits>best.hits||
+       (found.hits===best.hits&&Math.abs(shift)<Math.abs(best.shift))))))
+    best={...found,shift};
   }
   const first=correlate(best.shift,0,48),
     second=correlate(best.shift,48,96);
