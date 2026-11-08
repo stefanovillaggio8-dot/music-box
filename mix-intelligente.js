@@ -2712,7 +2712,8 @@ function lowEnergyPostludeLeadIn(a,b,dur){
      (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<a.last-5)));
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     a.protectedEnding===true||a.confidentTail===true||
-    (release&&!safeRelease)||Number.isFinite(a.safeOutroAt)||
+    (release&&!safeRelease)||
+    (Number.isFinite(a.safeOutroAt)&&!safeRelease)||
     !Number.isFinite(dur)||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||a.last<26||
