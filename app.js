@@ -138,7 +138,7 @@
    byte per byte: la stessa canzone due volte in libreria. Tolta. */
     { title: "carusi do sud", file: "songs/track-67.mp3", artist: "l'elfo", profile: "Ste" },
     { title: "nei treni la notte", file: "songs/track-73.mp3", artist: "frah quintale", profile: "Ste" },
-    { title: "Dimmi che c'è", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
+    { title: "Dimmi Che C''", file: "songs/track-74.mp3", artist: "thasup", profile: "Ste" },
     { title: "stupido", file: "songs/track-75.mp3", artist: "massimo pericolo", profile: "Ste" },
     { title: "Spettri", file: "songs/track-77.mp3", artist: "nayt, 3D" },
     { title: "Memoria di uno sconfitto, pt. 2", file: "songs/track-78.mp3", artist: "Mostro" },
@@ -181,9 +181,9 @@
     { title: "Scrivendo", file: "songs/track-121.mp3", artist: "nayt" },
     { title: "Vibe", file: "songs/track-122.mp3", artist: "Guè" },
     { title: "Distrutto", file: "songs/track-123.mp3", artist: "Carla Morrison" },
-    { title: "mar+e", file: "songs/track-124.mp3", artist: "thasup" },
-    { title: "mi @mi o è f@ke", file: "songs/track-125.mp3", artist: "thasup" },
-    { title: "s!r! (feat. Lazza & Sfera Ebbasta)", file: "songs/track-126.mp3", artist: "thasup, Lazza, Sfera Ebbasta" },
+    { title: "marte", file: "songs/track-124.mp3", artist: "thasup" },
+    { title: "mi @mio è f@ke", file: "songs/track-125.mp3", artist: "thasup" },
+    { title: "slrl", file: "songs/track-126.mp3", artist: "thasup, Lazza, Sfera Ebbasta" },
     { title: "Hey There Delilah", file: "songs/track-127.mp3", artist: "Plain White T's" },
     { title: "STANOTTE", file: "songs/track-128.mp3", artist: "TY1, Coez, Massimo Pericolo" },
     { title: "CRUDELIA - Inervi", file: "songs/track-129.mp3", artist: "Marracash" },
@@ -247,14 +247,14 @@
     { title: "Tutti il resto è noi", file: "songs/track-198.mp3", artist: "nayt, 3D" },
     { title: "Essere noi", file: "songs/track-200.mp3", artist: "nayt" },
     { title: "Lullu - Acoustic Version", file: "songs/track-201.mp3", artist: "nayt, 3D" },
-    { title: "!ly (feat. Coez)", file: "songs/track-203.mp3", artist: "thasup, Coez" },
+    { title: "ily", file: "songs/track-203.mp3", artist: "thasup, Coez" },
     { title: "Amelie", file: "songs/track-205.mp3", artist: "Kid Yugi" },
     { title: "Per il Sangue Versato", file: "songs/track-206.mp3", artist: "Kid Yugi" },
     { title: "Per te che Lotto", file: "songs/track-207.mp3", artist: "Kid Yugi" },
     { title: "Davide e Golia", file: "songs/track-208.mp3", artist: "Kid Yugi" },
     { title: "cosa conta davvero", file: "songs/track-209.mp3", artist: "nayt, 3D" },
     { title: "Paraguai", file: "songs/track-210.mp3", artist: "nayt, Canova" },
-    { title: "m8nstar", file: "songs/track-211.mp3", artist: "thasup" },
+    { title: "m@star", file: "songs/track-211.mp3", artist: "thasup" },
     { title: "gRAZie A Dio", file: "songs/track-212.mp3", artist: "yungest Moonstar, thasup" },
     { title: "Jolly", file: "songs/track-213.mp3", artist: "Kid Yugi" },
     { title: "Il Ferro di Echov", file: "songs/track-215.mp3", artist: "Kid Yugi" },
@@ -364,7 +364,7 @@
     { title: "Fuori fa paura", file: "songs/track-328.mp3", artist: "nayt, 3D", profile: "Diego" },
     { title: "Emozioni", file: "songs/track-329.mp3", artist: "Tony Boy, Finesse, Nardi", profile: "Diego" },
     { title: "Crack (feat. Salmo & Massimo Pericolo)", file: "songs/track-330.mp3", artist: "Coez, Salmo, Massimo Pericolo", profile: "Diego" },
-    { title: "r!va (feat. Pinguini Tattici Nucleari)", file: "songs/track-331.mp3", artist: "thasup, Pinguini Tattici Nucleari", profile: "Diego" },
+    { title: "rlva (feat. Pinguini Tattici Nucleari)", file: "songs/track-331.mp3", artist: "thasup, Pinguini Tattici Nucleari", profile: "Diego" },
     { title: "Marymango (feat. thasup)", file: "songs/track-332.mp3", artist: "Ghali, thasup", profile: "Diego" },
     { title: "UPPER (feat. thasup & Shiva)", file: "songs/track-333.mp3", artist: "Drillionaire, thasup, Shiva", profile: "Diego" },
     { title: "Coltellata", file: "songs/track-334.mp3", artist: "Gazzelle, thasup", profile: "Diego" },
@@ -427,17 +427,17 @@
     { title: "Davide (feat. Coez)", file: "songs/track-397.mp3", artist: "Gemitaiz, Coez", profile: "Diego" },
     { title: "Dancing With The Devil Pt.2", file: "songs/track-398.mp3", artist: "Gemitaiz, Neffa, Ele A", profile: "Diego" },
     { title: "Senza Di Me", file: "songs/track-399.mp3", artist: "MadMan, nayt, Johnny Marsiglia", profile: "Diego" },
-    { title: "come fa1", file: "songs/track-400.mp3", artist: "thasup", profile: "Diego" },
+    { title: "come fal", file: "songs/track-400.mp3", artist: "thasup", profile: "Diego" },
     { title: "pers0na2 (feat. Gemitaiz, MadMan)", file: "songs/track-401.mp3", artist: "thasup, Gemitaiz, MadMan", profile: "Diego" },
     { title: "ch1 5ei te", file: "songs/track-402.mp3", artist: "thasup", profile: "Diego" },
-    { title: "occh1 purpl3 (feat. Marracash)", file: "songs/track-403.mp3", artist: "thasup, Marracash", profile: "Diego" },
+    { title: "occrl purpl3 (feat. Marracash)", file: "songs/track-403.mp3", artist: "thasup, Marracash", profile: "Diego" },
     { title: "LUMIERE = (con Izi, Ernia, Tony Boy, Digital Astro)", file: "songs/track-404.mp3", artist: "MACE, Izi, Ernia, Tony Boy, Astro", profile: "Diego" },
     { title: "Rock'n'roll", file: "songs/track-405.mp3", artist: "Tony Boy, Sick Luke", profile: "Diego" },
     { title: "CRUDELIA - I nervi", file: "songs/track-406.mp3", artist: "Marracash", profile: "Diego" },
     { title: "Fable", file: "songs/track-423.mp3", artist: "Gigi Perez", profile: "Diego" },
     { title: "Ti penso sempre", file: "songs/track-415.mp3", artist: "chiello", profile: "Diego" },
     { title: "Carusi do sud", file: "songs/track-426.mp3", artist: "Gipsy Prince", profile: "Diego" },
-    { title: "c!ao (feat. Rondodasosa)", file: "songs/track-438.mp3", artist: "thasup, Rondodasosa", profile: "Diego" },
+    { title: "clao (feat. Rondodasosa)", file: "songs/track-438.mp3", artist: "thasup, Rondodasosa", profile: "Diego" },
     { title: "Stanotte", file: "songs/track-428.mp3", artist: "Gemello, Gemitaiz", profile: "Diego" },
     { title: "ADRENALINA", file: "songs/track-430.mp3", artist: "Samurai Jay, Vito Salamanca", profile: "Diego" },
     { title: "Voglio Di Più", file: "songs/track-432.mp3", artist: "Silent Bob, Sick Budd", profile: "Diego" },
@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.668";
+  const APP_VERSION = "6.669";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5357,6 +5357,20 @@ function _eliminatiRimossiDaMandareSvuota() {
   }
   // Avoid replacing hundreds of rows when only the playing track changes.
   let _renderRowsSignature="";
+
+// Render-only protection: keep original metadata, user renames, imports and
+// search identity untouched. Broken pasted combining marks or bidirectional
+// control characters must not stretch a song title across the whole screen.
+function _titoloPerSchermo(value) {
+  let text=String(value??"")
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B\u200E\u200F\u202A-\u202E\u2066-\u2069\uFEFF]/g,"")
+    .replace(/(\p{M}{2})\p{M}+/gu,"$1")
+    .normalize("NFC");
+  // A malicious/garbled imported string must never create thousands of
+  // glyphs in the list. Only the DISPLAY text is limited, not stored data.
+  if(text.length>320)text=[...text].slice(0,240).join("")+"…";
+  return text;
+}
   function render() {
     _diag("render");
     const list = visibleTracks();
@@ -5509,7 +5523,7 @@ emptyEl.textContent = !total
          vengono mai tagliati. */
       const testoTitolo = document.createElement("span");
       testoTitolo.className = "track-testo";
-      testoTitolo.textContent = t.title;
+      testoTitolo.textContent = _titoloPerSchermo(t.title);
       title.appendChild(testoTitolo);
       const contrassegni = [];
       info.appendChild(title);

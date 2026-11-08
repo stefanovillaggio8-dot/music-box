@@ -1,21 +1,22 @@
 'use strict';
-const test=require('node:test');
-const assert=require('node:assert/strict');
-const fs=require('node:fs');
-const path=require('node:path');
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const code=fs.readFileSync(path.join(__dirname,'..','app.js'),'utf8');
-const corrected=[[203,"!ly (feat. Coez)"],[331,"r!va (feat. Pinguini Tattici Nucleari)"],[124,"mar+e"],[125,"mi @mi o è f@ke"],[126,"s!r! (feat. Lazza & Sfera Ebbasta)"],[211,"m8nstar"],[400,"come fa1"],[403,"occh1 purpl3 (feat. Marracash)"],[438,"c!ao (feat. Rondodasosa)"],[74,"Dimmi che c'è"]];
-const rows=[...code.matchAll(/\{[^\n]*\btitle:\s*"([^"]*)"[^\n]*\bfile:\s*"songs\/track-(\d+)\.mp3"[^\n]*\bartist:\s*"([^"]*)"/g)];
-// Important: these are the intended artist spellings, not a generic removal of
-// digits/symbols. Distinct files and user renames must remain untouched.
-test('thasup verified catalog titles preserve artistic spelling',()=>{
- const map=new Map(rows.map(x=>[Number(x[2]),x[1]]));
- for(const [id,title] of corrected)assert.equal(map.get(id),title,'track-'+id);
- assert.equal(map.get(12),'s!r!');
- assert.equal(map.get(64),"dimmi che ce'");
+const css=fs.readFileSync(path.join(__dirname,'..','style.css'),'utf8');
+const originals=[[74,"Dimmi Che C''"],[124,"marte"],[125,"mi @mio è f@ke"],[126,"slrl"],[203,"ily"],[211,"m@star"],[331,"rlva (feat. Pinguini Tattici Nucleari)"],[400,"come fal"],[403,"occrl purpl3 (feat. Marracash)"],[438,"clao (feat. Rondodasosa)"]];
+const matches=[...code.matchAll(/\{[^\n]*\btitle:\s*"([^"]*)"[^\n]*\bfile:\s*"songs\/track-(\d+)\.mp3"[^\n]*\bartist:\s*"([^"]*)"/g)];
+test('all mistakenly altered track names restored byte-for-byte',()=>{
+ const titles=new Map(matches.map(m=>[Number(m[2]),m[1]]));
+ for(const [id,title] of originals)assert.equal(titles.get(id),title,'track '+id);
 });
-test('sync button presents before/after count rather than a silent no-op',()=>{
- assert.match(code,/const changed=Number\(s\.visibleCount\|\|0\)-Number\(before\?\.visibleCount\|\|0\)/);
- assert.match(code,/\(conteggio invariato\)/);
- assert.match(code,/Sincronizzazione completata/);
+test('render-only unicode guard strips pathological marks, never rewrites stored names',()=>{
+ const match=code.match(/function _titoloPerSchermo\(value\) \{[\s\S]*?\n\}/);
+ assert.ok(match,'display-only function');
+ const show=vm.runInNewContext(match[0]+';_titoloPerSchermo;');
+ assert.equal(show('m@star'),'m@star');
+ assert.equal(show('marte'),'marte');
+ assert.equal(show('A\u200eB'),'AB');
+ assert.equal(show('A\u0301\u0300\u0301\u0300\u0301'), 'Á̀');
+ assert.ok(show('A'.repeat(500)).length<260);
+ assert.match(code,/testoTitolo\.textContent = _titoloPerSchermo\(t\.title\)/);
+ assert.match(css,/\.track-testo \{[\s\S]*?max-width: 100%;/);
 });

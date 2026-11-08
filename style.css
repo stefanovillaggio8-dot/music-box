@@ -303,10 +303,14 @@ main { padding: 8px 16px calc(var(--player-h) + 40px); }
 }
 /* Solo il testo si tronca con i puntini: i contrassegni restano interi. */
 .track-testo {
+  display: block;
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  unicode-bidi: isolate;
 }
 .track-badge {
   display: inline-block;
