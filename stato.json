@@ -53,7 +53,12 @@
    "b-youtube-wHblJtYzqus"
   ]
  },
- "rinomini": {},
+ "rinomini": {
+  "yt-T17CP3bU7Ds": {
+   "title": "uNa DiReZioNe giUsTa",
+   "artist": "tha supreme"
+  }
+ },
  "statistiche": {
   "Ste": {
    "evanescence|bringmetolife": {
@@ -1090,7 +1095,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 54,
-    "s": 1455,
+    "s": 1464,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1395,8 +1400,8 @@
     "a": "Franco126"
    },
    "[\"una direzione giusta\",\"thasup\"]": {
-    "v": 0,
-    "s": 2,
+    "v": 1,
+    "s": 23,
     "t": "uNa DiReZioNe giÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
     "a": "thasup"
    },
@@ -1714,7 +1719,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 53,
-    "s": 1447,
+    "s": 1456,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -3580,13 +3585,13 @@
    },
    "[\"una direzione giusta\",\"tha supreme\"]": {
     "v": 1,
-    "s": 216,
+    "s": 224,
     "t": "uNa DiReZioNe giUsTa",
     "a": "tha supreme"
    },
    "m:2026-11|[\"una direzione giusta\",\"tha supreme\"]": {
     "v": 1,
-    "s": 216,
+    "s": 224,
     "t": "uNa DiReZioNe giUsTa",
     "a": "tha supreme"
    },
@@ -6321,14 +6326,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"vibe\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 70,
+    "v": 1,
+    "s": 71,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 70,
+    "v": 1,
+    "s": 71,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
@@ -6963,14 +6968,14 @@
     "a": "ModÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
    "[\"favola\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 568,
+    "v": 1,
+    "s": 598,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 568,
+    "v": 1,
+    "s": 598,
     "t": "Favola",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7108,13 +7113,13 @@
    },
    "[\"vibe\",\"guÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 71,
+    "s": 82,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 71,
+    "s": 82,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
@@ -7192,13 +7197,13 @@
    },
    "[\"esistere (piÃÂÃÂÃÂÃÂ¹ di me)\",\"nayt\"]": {
     "v": 1,
-    "s": 224,
+    "s": 226,
     "t": "Esistere (piÃÂÃÂÃÂÃÂ¹ di me)",
     "a": "nayt"
    },
    "m:2026-11|[\"esistere (piÃÂÃÂÃÂÃÂ¹ di me)\",\"nayt\"]": {
     "v": 1,
-    "s": 224,
+    "s": 226,
     "t": "Esistere (piÃÂÃÂÃÂÃÂ¹ di me)",
     "a": "nayt"
    },
@@ -7750,13 +7755,13 @@
    },
    "[\"favola\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 598,
+    "s": 601,
     "t": "Favola",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"favola\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 598,
+    "s": 601,
     "t": "Favola",
     "a": "ModÃÂÃÂ "
    },
@@ -7893,13 +7898,13 @@
     "a": "ModÃÂÃÂ "
    },
    "[\"vibe\",\"guÃÂÃÂ¨\"]": {
-    "v": 1,
+    "v": 2,
     "s": 82,
     "t": "Vibe",
     "a": "GuÃÂÃÂ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃÂÃÂ¨\"]": {
-    "v": 1,
+    "v": 2,
     "s": 82,
     "t": "Vibe",
     "a": "GuÃÂÃÂ¨"
@@ -8179,6 +8184,18 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂ©"
+   },
+   "[\"adrenalina\",\"samurai jay, vito salamarca\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "ADRENALINA",
+    "a": "Samurai Jay, Vito Salamarca"
+   },
+   "m:2026-11|[\"adrenalina\",\"samurai jay, vito salamarca\"]": {
+    "v": 0,
+    "s": 1,
+    "t": "ADRENALINA",
+    "a": "Samurai Jay, Vito Salamarca"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 2,
@@ -8965,18 +8982,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"adrenalina\",\"samurai jay, vito salamarca\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "ADRENALINA",
-    "a": "Samurai Jay, Vito Salamarca"
-   },
-   "m:2026-11|[\"adrenalina\",\"samurai jay, vito salamarca\"]": {
-    "v": 0,
-    "s": 1,
-    "t": "ADRENALINA",
-    "a": "Samurai Jay, Vito Salamarca"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 2,
@@ -10549,6 +10554,12 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
+   },
+   "m:2026-11|[\"una direzione giusta\",\"thasup\"]": {
+    "v": 1,
+    "s": 21,
+    "t": "uNa DiReZioNe giUsTa",
+    "a": "thasup"
    }
   },
   "Diego": {
