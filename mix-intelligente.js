@@ -3418,23 +3418,66 @@ function cancel(){
  dropPrepared();
  mixing=false;
 }
+// The normal Music Box EOF path already skips VERIFIED digital intro silence.
+// Its prebuffered DJ path must use exactly the same conservative entry.
+// Never skip an audible pad, lyric, first beat or unanalysed introduction.
+function certifiedNaturalIntroEntry(song,app){
+ const url=app?.mixUrl?.(song)||song?.url;
+ const info=url&&(cache.get(String(url))||deepLookup(song));
+ const at=Number(info?.safeIntroAt),first=Number(info?.first);
+ if(!info||info.durationMismatch===true||
+    !Number.isFinite(at)||at<.35||at>18||
+    !Number.isFinite(first)||first<.85||
+    first<at-.03||first-at>.55)return 0;
+ return at;
+}
 function prepare(song,fromId,app){
  const url=app.mixUrl?.(song)||song.url;
  if(!url)return;
  if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url){
-  // A failed previous preview is not permanently "prepared".
-  // Try again once after a short cooldown if the connection recovered.
+  // Retry a truly failed preview, but never replace valid buffered MP3s.
   if(!prepared.failed||Date.now()-(prepared.failedAt||Date.now())<11000)return;
  }
  dropPrepared();
  const upcoming=new Audio();upcoming.preload="auto";upcoming.volume=0;
- const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false};
+ const naturalEntry=(!plan||plan.kind==="cut")?
+  certifiedNaturalIntroEntry(song,app):0;
+ const p={id:song.id,fromId,url,audio:upcoming,ready:false,failed:false,
+  naturalEntry,seekReady:naturalEntry===0,seekIssued:false};
  prepared=p;
- upcoming.addEventListener("canplay",()=>{if(prepared===p)p.ready=true},{once:true});
- upcoming.addEventListener("error",()=>{if(prepared===p){p.failed=true;p.ready=false;p.failedAt=Date.now();}},{once:true});
+ const markReady=()=>{
+  if(prepared!==p||p.failed)return;
+  p.ready=p.seekReady&&!upcoming.seeking&&upcoming.readyState>=2&&
+   (!p.naturalEntry||Math.abs(upcoming.currentTime-p.naturalEntry)<=.55);
+ };
+ const preseek=()=>{
+  if(prepared!==p||p.seekReady||p.seekIssued||upcoming.readyState<1)return;
+  p.seekIssued=true;
+  try{
+   upcoming.currentTime=p.naturalEntry;
+   if(!upcoming.seeking&&Math.abs(upcoming.currentTime-p.naturalEntry)<=.20){
+    p.seekReady=true;markReady();
+   }
+  }catch(e){
+   // An MP3 source that cannot seek keeps its entire intro. The native
+   // EOF handler remains available rather than claiming a ready preview.
+   p.naturalEntry=0;p.seekReady=true;markReady();
+  }
+ };
+ upcoming.addEventListener("loadedmetadata",preseek,{once:true});
+ upcoming.addEventListener("seeked",()=>{
+  if(prepared!==p)return;
+  p.seekReady=!!p.seekIssued&&
+   Math.abs(upcoming.currentTime-p.naturalEntry)<=.35;
+  markReady();
+ });
+ upcoming.addEventListener("canplay",()=>{preseek();markReady()});
+ upcoming.addEventListener("error",()=>{
+  if(prepared===p){p.failed=true;p.ready=false;p.failedAt=Date.now()}
+ },{once:true});
  upcoming.src=url;
  try{upcoming.load()}catch(e){p.failed=true;p.failedAt=Date.now()}
- if(upcoming.readyState>=2)p.ready=true;
+ preseek();markReady();
 }
 // No verified musical match: use the ALREADY buffered next audio exactly
 // at native EOF. Do not fade out the last kick or download the same MP3
