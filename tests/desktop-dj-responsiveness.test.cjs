@@ -288,7 +288,8 @@ test("iOS native remote Play/Pause remain WebKit defaults with stable paused art
  "const current=()=>({title:'Track',artist:'Artist'});let currentId='track-a',audio=el;"+
  "const APP_NAME='Music Box',_configuraSessioneAudio=()=>{},"+
  "_aggiornaPosizioneSchermo=()=>{},_notificaStatoNativo=()=>{},"+
- "_usaControlliNativiIos=()=>true,_copertinaPerSchermo=()=>'';"+
+ "_usaControlliNativiIos=()=>true,_copertinaPerSchermo=()=>'',"+
+ "_titoloPerSchermo=value=>String(value||''),_originaleDi=()=>null;"+
  "const _riproduciVolontaria=()=>{},_pausaVolontaria=()=>{},playById=()=>{},"+
  "playNext=()=>{},prevIndex=()=>{},idBranoA=()=>{},_chiudiAscolto=()=>{},"+
  "updateProgressUI=()=>{},setPlaybackState=s=>{session.playbackState=s};"+
