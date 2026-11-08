@@ -4661,8 +4661,19 @@ async function intelligentShuffle(app,audio,fromId){
   }
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
-  const cue=transition(old,next,audio.duration);
-  const musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  let cue=transition(old,next,audio.duration);
+  let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  // Even when no identical drum pattern exists, a measured and voice-free
+  // settled outro may permit a neutral quiet fade. Previously this second
+  // choice was used by the live player but never considered when choosing
+  // the next song from the library. Genuine verified beats still win first.
+  if((!musicallyPlayable||cue.kind==="cut")&&
+     typeof certifiedNeutralBridge==="function"){
+   const quiet=certifiedNeutralBridge(old,next,audio.duration);
+   if(quiet&&musicallyCompatibleOverlay(old,next,quiet)){
+    cue=quiet;musicallyPlayable=true;
+   }
+  }
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
   const mobilePlayable=musicallyPlayable&&(!isIOS||
