@@ -2697,7 +2697,9 @@ function subduedRhythmicIntro(a,b,dur){
 // through its natural ending. No claim of a BPM/key/beat match is made.
 function lowEnergyPostludeLeadIn(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
-    a.protectedEnding===true||!Number.isFinite(dur)||
+    a.protectedEnding===true||a.confidentTail===true||
+    !!a.dropRelease||Number.isFinite(a.safeOutroAt)||
+    !Number.isFinite(dur)||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||a.last<26||
     !hasImmediateMusicalIntro(b)||b.introDrive<.37)return null;
