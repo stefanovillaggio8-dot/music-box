@@ -4013,14 +4013,14 @@
     "a": "nayt"
    },
    "[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 188,
+    "v": 2,
+    "s": 208,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 188,
+    "v": 2,
+    "s": 208,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
@@ -9443,14 +9443,14 @@
     "a": "nayt, 3D"
    },
    "[\"torna da me\",\"luchÃ¨\"]": {
-    "v": 0,
-    "s": 94,
+    "v": 1,
+    "s": 121,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
    },
    "m:2026-11|[\"torna da me\",\"luchÃ¨\"]": {
-    "v": 0,
-    "s": 94,
+    "v": 1,
+    "s": 121,
     "t": "Torna Da Me",
     "a": "LuchÃ¨"
    },
@@ -10230,13 +10230,13 @@
    },
    "[\"torna da me\",\"luchè\"]": {
     "v": 1,
-    "s": 121,
+    "s": 173,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
    "m:2026-11|[\"torna da me\",\"luchè\"]": {
     "v": 1,
-    "s": 121,
+    "s": 173,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
