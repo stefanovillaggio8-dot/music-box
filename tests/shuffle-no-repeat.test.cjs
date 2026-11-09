@@ -158,7 +158,7 @@ test("new catalog notifications rearm DJ selection without interrupting audio",(
  assert.match(app,/const allowed=new Set\(playlist\.tracks\)/);
  assert.match(mix,/onLibraryChange:\(change\)=>/);
  assert.match(mix,/shuffleGeneration\+\+;shuffleBusy=false;shuffleRunFor="";/);
- assert.match(mix,/for\(const id of recentLibraryIds\)/);
+ assert.match(mix,/const byPriority=new Set\(\[\.\.\.recentLibraryIds/);
 });
 
 test("a newly imported song enters an already-filled ten-song preview",()=>{
