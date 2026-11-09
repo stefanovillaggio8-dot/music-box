@@ -5527,6 +5527,19 @@ function _quantiEliminati() {
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
     if (favOnly || soloMaiAscoltati || soloScaricate || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
     $("trackCount").textContent = label;
+    const sources=$("mbCatalogOrigin");
+    if(sources){
+      const shared=libraryAll.filter(t=>t.builtin).length;
+      const localOnly=libraryAll.filter(t=>!t.builtin&&!t.youtubeId&&
+        !eGiaCondiviso(t)).length;
+      const webLinks=libraryAll.filter(t=>!t.builtin&&!!t.youtubeId).length;
+      sources.hidden=!!_playlistAttiva;
+      sources.textContent=shared+" dal catalogo pubblicato"+
+        (localOnly?" · "+localOnly+" solo su questo dispositivo":"")+
+        (webLinks?" · "+webLinks+" link cloud":"")+
+        " · v"+APP_VERSION;
+    }
+
     /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
     const bt = $("btnOrdina");
     if (bt) {
@@ -12621,6 +12634,15 @@ window.MusicBoxBridge = {
       totalLoaded:all.length,
       visibleCount:visible.length,localOnlyCount:local.length,
       localOnlyIds:local.map(t=>t.id).sort(),
+      sharedVisibleCount:visible.filter(t=>t.builtin).length,
+      localDeviceOnlyIds:visible.filter(t=>!t.builtin&&!t.youtubeId&&
+        !eGiaCondiviso(t)).map(t=>t.id).sort(),
+      cloudLinkIds:visible.filter(t=>!t.builtin&&!!t.youtubeId)
+        .map(t=>t.id).sort(),
+      activeFilters:{playlist:_playlistAttiva||null,search:query||"",
+        favorites:!!favOnly,unheard:!!soloMaiAscoltati,downloaded:!!soloScaricate},
+      displayedCount:visibleTracks().length,
+
       copiedIds:[..._mieiCopiati()].sort(),
       playlistOnlyIds:all.filter(t=>inPlaylist(t.id)).map(t=>t.id).sort(),
       deletedIds,
@@ -12960,6 +12982,15 @@ async function _mbConfrontaCatalogoConWorker(){
       "VERSIONE "+APP_VERSION+" · pubblicata "+(published.versione||"non disponibile"),
       "Profilo "+profile+" · "+(snap.standalone?"App installata":"Browser")+
         " · Worker copie "+copied.size+" · Gym esclusi "+onlyInPlaylist.size,
+      "Origine: "+snap.sharedVisibleCount+" dal catalogo, "+
+        snap.localDeviceOnlyIds.length+" soltanto qui, "+
+        snap.cloudLinkIds.length+" link cloud. "+
+        "Solo playlist: "+snap.playlistOnlyIds.length+".",
+      "Filtro attivo: "+JSON.stringify(snap.activeFilters)+
+        " · visibili nella vista "+snap.displayedCount+".",
+      "ID solo su questo dispositivo: "+
+        (snap.localDeviceOnlyIds.join(", ")||"nessuno"),
+
       "Confronto MP3 incorporati: "+remote.size+" attesi, "+reasons.length+" non visibili.",
       "Brani YouTube/Cloud (non sono automaticamente doppioni o scarti): "+youtube.length,
       "Altri brani extra al catalogo base: "+extra.length,
@@ -18367,6 +18398,22 @@ await loadAll();
         // concurrent requests could overwrite Gym and inflate the count.
         try { await _sincronizzaCatalogoDispositivi(); } catch (_) {}
       },1600);
+      // Reconcile the shared inventory on returning to an idle device.
+      // Never reconstruct object URLs while audio or downloads are active.
+      let _lastIdleCatalogSync=Date.now();
+      const _syncCatalogWhenIdle=()=>{
+        if(document.hidden||navigator.onLine===false||offlineBusy||
+          (audio&&!audio.paused)||_syncCatalogoInCorso||
+          Date.now()-_lastIdleCatalogSync<120000)return;
+        _lastIdleCatalogSync=Date.now();
+        _sincronizzaCatalogoDispositivi().catch(()=>{});
+      };
+      document.addEventListener("visibilitychange",()=>{
+        if(!document.hidden)setTimeout(_syncCatalogWhenIdle,1000);
+      });
+      window.addEventListener("online",()=>setTimeout(_syncCatalogWhenIdle,800));
+      setInterval(_syncCatalogWhenIdle,150000);
+
   // If the user refreshed immediately after deleting a song, the local
   // tombstone survived but the delayed cloud POST might not have started.
   // Resume unsent changes at launch, without resubmitting confirmed ones.
