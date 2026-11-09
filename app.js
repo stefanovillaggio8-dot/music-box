@@ -3490,7 +3490,7 @@ function _devoVedereBrano(eMio, b) {
     try { applicaRinomine(); } catch (e) { /* mantieni la libreria */ }
     if(draw){
       render();
-      _controllaNuoviBraniMix();
+      if(typeof _controllaNuoviBraniMix==="function")_controllaNuoviBraniMix();
       // Una nuova canzone YouTube pronta deve cercare i testi senza play.
       if(linked.some(t=>t.source==="cloud-audio" && t.url))
         _programmaTestiKaraoke();
