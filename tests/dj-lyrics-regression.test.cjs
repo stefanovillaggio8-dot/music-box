@@ -57,19 +57,19 @@ test("per-track lyric delay is durable and does not alter other songs",()=>{
   app.slice(start,end)+
   'return {get:id=>_ritardoTesto(id),set:(id,n)=>_impostaRitardoTesto(id,n)};');
  const one=make(memory);
- assert.equal(one.get("song-a"),.25,"default correction must delay slightly, never lead");
+ assert.equal(one.get("song-a"),0,"default LRC offset must not add artificial latency");
  one.set("song-a",1.2);
  one.set("song-b",-.4);
  assert.equal(one.get("song-a"),1.2);
  assert.equal(one.get("song-b"),-.4);
  assert.equal(make(memory).get("song-a"),1.2,"survive reload");
- assert.equal(make(memory).get("song-c"),.25,"unrelated track remains at default");
+ assert.equal(make(memory).get("song-c"),0,"unrelated track keeps the LRC recording time");
 });
 test("both lyrics views share the corrected clock without scaling the LRC",()=>{
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  assert.match(app,/activeLineIndex\(now-_ritardoTesto\(currentId\)\)/);
- assert.match(immersive,/const adjusted=time-\(Number\.isFinite\(delay\)\?delay:\.25\)/);
+ assert.match(immersive,/const adjusted=time-\(Number\.isFinite\(delay\)\?delay:0\)/);
  assert.doesNotMatch(app,/const fattore = \(dur - 2\) \/ ultimo/);
  assert.match(html,/id="lyricsDelay"/);
  assert.match(html,/id="lyricsMode"/);
@@ -181,4 +181,32 @@ test("cross-device reference includes the shared cloud import records",()=>{
  assert.match(app,/const cloudRows=await _ytBraniDalCloud\(profile,true\)/);
  assert.match(app,/const refId=b=>b\._cloudReferenceId\|\|_idBranoStabile\(b\)/);
  assert.match(app,/referenceSource\+=" \+ cloud"/);
+});
+
+test("LRC karaoke runs on the real audio clock, not timeupdate alone",()=>{
+ assert.match(app,/function _precisioneKaraokeFrame\(\)/);
+ assert.match(app,/requestAnimationFrame\(_precisioneKaraokeFrame\)/);
+ assert.match(app,/if\(_precisioneKaraokeId\)cancelAnimationFrame\(_precisioneKaraokeId\)/);
+ assert.match(app,/if\(document.hidden\)_fermaKaraokePrecisione\(\)/);
+ const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
+ assert.match(immersive,/requestAnimationFrame\(precisionLyrics\)/);
+ assert.match(immersive,/cancelAnimationFrame\(lyricAnimation\)/);
+});
+test("LRC provider ranks the right recording by file duration, not first search hit",()=>{
+ const start=app.indexOf("    const choose = (arr) => {",app.indexOf("async function findLyrics("));
+ const end=app.indexOf("    /* Lookup immediato",start);
+ assert.ok(start>0&&end>start);
+ const choose=new Function("arr","options","duration",
+  "const artist='Singer',name='Example Song';"+
+  "const normKey=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');"+
+  "const validate=j=>!!j.syncedLyrics;"+
+  "const parseSynced=s=>s.split('|').map(x=>({t:Number(x)}));"+
+  app.slice(start,end)+"return choose(arr);");
+ const items=[
+  {trackName:"Example Song",artistName:"Singer",duration:161,syncedLyrics:"5|30|90"},
+  {trackName:"Example Song",artistName:"Singer",duration:176,syncedLyrics:"5|30|90"},
+  {trackName:"Example Song (Live)",artistName:"Singer",duration:175,syncedLyrics:"5|30|90"}
+ ];
+ assert.equal(choose(items,{syncedOnly:true},176),items[1]);
+ assert.match(app,/const playingDuration=options.trackId===currentId&&audio&&/);
 });

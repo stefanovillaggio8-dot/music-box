@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
-let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
+let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,lyricAnimation=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
 let lastLyricsSignature="",lyricRows=[],lyricTimed=false;
 const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
 function safeCover(t){
@@ -78,7 +78,7 @@ function renderLyrics(force){
  // LRC timestamps are line onsets. Never highlight before the onset:
  // an adjustable positive delay makes the lyrics enter later, not earlier.
  const delay=Number(b?.lyricsDelay?.(id));
- const adjusted=time-(Number.isFinite(delay)?delay:.25);
+ const adjusted=time-(Number.isFinite(delay)?delay:0);
  let index=lyricTimed?-1:0;
  if(lyricTimed){
   for(let i=0;i<lyricRows.length;i++){
@@ -105,6 +105,15 @@ function renderLyrics(force){
   try{karaoke.scrollTo({top,behavior:"smooth"})}
   catch(_){karaoke.scrollTop=top}
  }
+}
+// Advance LRC lines at media-clock precision without repainting the player.
+function precisionLyrics(){
+ lyricAnimation=0;
+ if(!opened||document.hidden)return;
+ const a=api()?.audio?.();
+ if(!a||a.paused||a.ended||a.seeking)return;
+ renderLyrics(false);
+ lyricAnimation=requestAnimationFrame(precisionLyrics);
 }
 function paint(){
  if(!opened)return;
@@ -142,6 +151,8 @@ function paint(){
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
  if(Date.now()-lastLyricsRefreshAt>3500)renderLyrics(true);
  else renderLyrics(false);
+ if(!lyricAnimation&&!document.hidden&&a&&!a.paused&&!a.ended&&!a.seeking)
+   lyricAnimation=requestAnimationFrame(precisionLyrics);
  anim=window.setTimeout(paint,120);
 }
 function open(){
@@ -163,6 +174,8 @@ function close(){
  if(!opened)return;
  opened=false;
  if(anim)clearTimeout(anim);anim=0;
+ if(lyricAnimation)cancelAnimationFrame(lyricAnimation);
+ lyricAnimation=0;
  $("immersivePanel").hidden=true;
  $("btnImmersive")?.setAttribute("aria-expanded","false");
  if(!lockBefore)document.body.classList.remove("no-scroll");

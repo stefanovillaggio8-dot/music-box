@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.704";
+  const APP_VERSION = "6.705";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6538,6 +6538,8 @@ a.addEventListener("pause", () => {
     // Ignore stale events from the previous media element after a skip.
     a.addEventListener("ended", () => { if (a === audio) handleEnded(); });
     a.addEventListener("timeupdate", () => { if (a === audio) handleTime(); });
+    a.addEventListener("playing",()=>{if(a===audio)_avviaKaraokePrecisione()});
+    a.addEventListener("seeked",()=>{if(a===audio)tickLyrics()});
     a.addEventListener("timeupdate", () => _notificaStatoNativo(false));
     /* Ste: "funziona anche nella schermata di blocco, dalla notifica della
        canzone". Motivo: la barra del brano nella schermata di blocco
@@ -9017,7 +9019,9 @@ function openProfile() {
   }
 
   const _ritardiTesti=new Map();
-  const RITARDO_TESTO_BASE=.25;
+  // Keep original LRC timestamp fidelity: an unconditional 250ms delay
+  // made every verified vocal onset late. Saved per-song edits still win.
+  const RITARDO_TESTO_BASE=0;
   function _ritardoTesto(id){
     if(!id)return RITARDO_TESTO_BASE;
     const key="mb.lyrics.delay.v1."+profile;
@@ -9181,6 +9185,10 @@ function openProfile() {
     });
     setTimeout(()=>_sincronizzaRitardiTestiCloud(),1800);
     setInterval(()=>{if(!document.hidden)_sincronizzaRitardiTestiCloud()},180000);
+    document.addEventListener("visibilitychange",()=>{
+      if(document.hidden)_fermaKaraokePrecisione();
+      else _avviaKaraokePrecisione();
+    });
   }catch(_){/* Sync is optional: lyrics always work without network. */ }
 
   function activeLineIndex(time) {
@@ -9192,6 +9200,30 @@ function openProfile() {
     return idx;
   }
 
+  // Native timeupdate events are too sparse for tight line changes on iOS.
+  // Watch the actual MP3 playhead only while karaoke is visible/playing;
+  // do not touch the audio graph or any saved offline music.
+  let _precisioneKaraokeId=0;
+  function _fermaKaraokePrecisione(){
+    if(_precisioneKaraokeId)cancelAnimationFrame(_precisioneKaraokeId);
+    _precisioneKaraokeId=0;
+  }
+  function _precisioneKaraokeFrame(){
+    _precisioneKaraokeId=0;
+    if(document.hidden||$("lyricsPanel")?.hidden||_vistaTestiCompleta||
+       !audio||audio.paused||audio.ended)return;
+    if(!audio.seeking&&lyricLines.length){
+      const index=activeLineIndex((Number(audio.currentTime)||0)-_ritardoTesto(currentId));
+      if(index!==lyricActive)tickLyrics();
+    }
+    _precisioneKaraokeId=requestAnimationFrame(_precisioneKaraokeFrame);
+  }
+  function _avviaKaraokePrecisione(){
+    if(!_precisioneKaraokeId&&!document.hidden&&!$("lyricsPanel")?.hidden&&
+       !_vistaTestiCompleta&&audio&&!audio.paused&&!audio.ended&&
+       lyricLines.length)
+      _precisioneKaraokeId=requestAnimationFrame(_precisioneKaraokeFrame);
+  }
   function tickLyrics() {
     if ($("lyricsPanel").hidden || !audio) return;
     const now=Math.max(0,Number(audio.currentTime)||0);
@@ -9334,6 +9366,7 @@ function openProfile() {
     const body = $("lyricsBody");
     _azzeraVistaTraduzione();
     body.innerHTML = "";
+    _fermaKaraokePrecisione();
     lyricLines = [];
     lyricActive = -1;
     lyricsUserScrollAt = 0;
@@ -9417,6 +9450,7 @@ function openProfile() {
     _aggiornaSfondoTesti();
     _aggiornaComandiTesti();
     tickLyrics();
+    _avviaKaraokePrecisione();
   }
 
   /* Lo sfondo prende i colori della copertina, come in Liner: senza questo
@@ -9444,6 +9478,7 @@ function openProfile() {
   }
 
   function closeLyrics() {
+    _fermaKaraokePrecisione();
     $("lyricsPanel").hidden = true;
     syncNoScroll();
     const target=$("btnLyrics");
@@ -9672,7 +9707,10 @@ async function removeTrack(id) {
   }
   async function findLyrics(artist, title, options = {}) {
     const name = _titoloPulitoPerTesti(artist, title);
-    const duration = Number(options.durationMs || 0) / 1000;
+    // The current MP3 may differ from a Spotify edition.
+    const playingDuration=options.trackId===currentId&&audio&&
+      Number.isFinite(audio.duration)&&audio.duration>20?Number(audio.duration):0;
+    const duration=playingDuration||Number(options.durationMs||0)/1000;
     const validate = (j) => {
       if (!j || j.instrumental || !j.trackName || !titleCompatible(name, j.trackName)) return false;
       /* Per i feat Spotify elenca piu' artisti, mentre LRCLIB puo'
@@ -9684,13 +9722,25 @@ async function removeTrack(id) {
           !artistaSimile(mainArtist, j.artistName) &&
           !normKey(j.artistName).includes(normKey(mainArtist))) return false;
       if (duration > 0 && Number(j.duration) > 0 &&
-          Math.abs(Number(j.duration) - duration) > 16) return false;
+          Math.abs(Number(j.duration) - duration) > (playingDuration?8:16)) return false;
       return !!(j.syncedLyrics || j.plainLyrics);
     };
     const choose = (arr) => {
-      const matched = arr.filter(validate);
-      const timed = matched.find(j => j.syncedLyrics && parseSynced(j.syncedLyrics).length >= 3);
-      return timed || (!options.syncedOnly ? matched.find(j => j.plainLyrics) : null);
+      const matched=arr.filter(validate);
+      const mainArtist=String(artist||"").split(/[,/&]|\\s+feat\\.?\\s+|\\s+ft\\.?\\s+/i)[0].trim();
+      const score=j=>{
+        let points=normKey(j.trackName)===normKey(name)?28:0;
+        if(normKey(j.artistName)===normKey(mainArtist))points+=9;
+        if(options.album&&j.albumName&&normKey(j.albumName)===normKey(options.album))points+=8;
+        if(duration>0&&Number(j.duration)>0)
+          points+=Math.max(-20,48-6*Math.abs(Number(j.duration)-duration));
+        const cues=parseSynced(j.syncedLyrics||"");
+        if(duration>0&&cues.length&&cues[cues.length-1].t>duration+2)points-=80;
+        return points;
+      };
+      const timed=matched.filter(j=>j.syncedLyrics&&parseSynced(j.syncedLyrics).length>=3)
+        .sort((a,b)=>score(b)-score(a));
+      return timed[0]||(!options.syncedOnly?matched.find(j=>j.plainLyrics):null);
     };
     /* Lookup immediato della registrazione sincronizzata gia' riconosciuta
        nell'indice: evita ricerche ripetute e ambiguita' fra versioni. */
