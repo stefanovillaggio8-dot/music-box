@@ -1017,14 +1017,20 @@
   </div>
 </div>
 
-<div class="lyrics-overlay" id="lyricsPanel" hidden>
-    <div class="lyrics-sfondo" id="lyricsSfondo"></div>
+<div class="lyrics-overlay" id="lyricsPanel" hidden role="dialog" aria-modal="true" aria-label="Testo della canzone">
+    <div class="lyrics-sfondo" id="lyricsSfondo" aria-hidden="true"></div>
     <div class="lyrics-card">
       <div class="lyrics-head">
+        <div class="lyrics-cover lyrics-cover-empty" id="lyricsCover" aria-hidden="true"><span>♫</span></div>
         <div class="lyrics-head-info">
+          <p class="lyrics-eyebrow">MUSIC BOX <span class="lyrics-star">✦</span> LYRICS</p>
           <p class="lyrics-title" id="lyricsTitle"></p>
           <p class="lyrics-sub" id="lyricsSub"></p>
         </div>
+        <button class="lyrics-close" id="lyricsClose" type="button" aria-label="Chiudi testi">×</button>
+      </div>
+      <div class="lyrics-toolbar">
+        <div class="lyrics-mode" id="lyricsMode">TESTO COMPLETO</div>
         <div class="lyrics-translate-actions">
           <select id="lyricsLingua" aria-label="Lingua originale del testo">
             <option value="en">Inglese</option>
@@ -1035,13 +1041,31 @@
           </select>
           <button class="lyrics-traduci" id="lyricsTraduci" type="button" aria-pressed="false">Traduci</button>
         </div>
-        <button class="lyrics-close" id="lyricsClose" aria-label="Chiudi testi">&times;</button>
       </div>
-      <div class="lyrics-body" id="lyricsBody"></div>
+      <div class="lyrics-sync-controls" id="lyricsSyncControls" hidden>
+        <div class="lyrics-sync-heading">
+          <span>Regola sincronizzazione</span>
+          <output id="lyricsDelayValue" for="lyricsDelay">+0,3 s</output>
+        </div>
+        <div class="lyrics-sync-slider">
+          <span>Anticipa</span>
+          <input id="lyricsDelay" type="range" min="-8" max="8" step="0.1" value="0.3" aria-label="Anticipa o ritarda il testo rispetto all'audio" />
+          <span>Ritarda</span>
+          <button id="lyricsDelayReset" type="button" aria-label="Ripristina la sincronizzazione originale">Reset</button>
+        </div>
+      </div>
+      <div class="lyrics-body" id="lyricsBody" tabindex="0" aria-label="Testo scorrevole"></div>
       <div class="lyrics-pie">
-        <button class="lyrics-nav" id="lyricsPrev" aria-label="Brano precedente">&#9664;&#9664;</button>
-        <button class="lyrics-nav grande" id="lyricsPlay" aria-label="Pausa o play">&#10074;&#10074;</button>
-        <button class="lyrics-nav" id="lyricsNext" aria-label="Brano successivo">&#9654;&#9654;</button>
+        <div class="lyrics-playback-time">
+          <span id="lyricsElapsed">0:00</span>
+          <span id="lyricsRemaining">0:00</span>
+        </div>
+        <div class="lyrics-progress"><span id="lyricsProgressFill"></span></div>
+        <div class="lyrics-playback-controls">
+          <button class="lyrics-nav" id="lyricsPrev" type="button" aria-label="Brano precedente">&#9664;&#9664;</button>
+          <button class="lyrics-nav grande" id="lyricsPlay" type="button" aria-label="Pausa o play">&#10074;&#10074;</button>
+          <button class="lyrics-nav" id="lyricsNext" type="button" aria-label="Brano successivo">&#9654;&#9654;</button>
+        </div>
       </div>
     </div>
   </div>
