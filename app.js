@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.697";
+  const APP_VERSION = "6.698";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5548,6 +5548,7 @@ function _quantiEliminati() {
         (webLinks?" · "+webLinks+" link cloud":"")+
         " · totale su questo dispositivo "+total+" · v"+APP_VERSION;
     }
+    _mbAggiornaBadgeCatalogo();
 
     /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
     const bt = $("btnOrdina");
@@ -12831,6 +12832,7 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   if(diff){diff.hidden=false;diff.textContent="Sincronizzazione in corso: leggo Worker, playlist, copie e Libreria…";}
   try{
     const s=await _sincronizzaCatalogoDispositivi(true);
+    await _mbConfrontaCatalogoConWorker(true);
     const changed=Number(s.visibleCount||0)-Number(before?.visibleCount||0);
     const status="Sincronizzazione completata · v"+APP_VERSION+
       "\n"+(before?.visibleCount??"?")+" → "+s.visibleCount+" brani in Libreria"+
@@ -12915,18 +12917,54 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
   });
 
 
+
+let _mbCatalogReference=null;
+function _mbAggiornaBadgeCatalogo(){
+  const ref=_mbCatalogReference,quick=$("btnCompareQuick");
+  if(!ref||ref.profile!==profile||_playlistAttiva){
+    if(quick)quick.hidden=true;
+    return null;
+  }
+  const snap=window.MusicBoxBridge?.librarySnapshot?.();
+  if(!snap)return null;
+  const refIds=new Set(ref.ids),localIds=new Set(snap.tracks.map(t=>t.id));
+  const extras=snap.tracks.filter(t=>!refIds.has(t.id));
+  const missing=ref.ids.filter(id=>!localIds.has(id));
+  const origin=$("mbCatalogOrigin");
+  if(origin){
+    origin.hidden=false;
+    origin.textContent="Catalogo di riferimento: "+ref.ids.length+
+      " · su questo dispositivo: "+snap.visibleCount+
+      (extras.length?" · "+extras.length+" ID in più":"")+
+      (missing.length?" · "+missing.length+" ID mancanti":"")+
+      (!extras.length&&!missing.length?" · elenchi allineati":"")+
+      " · "+ref.source+" · v"+APP_VERSION;
+  }
+  if(quick){
+    quick.hidden=!extras.length&&!missing.length;
+    quick.textContent="Confronta "+(extras.length+missing.length)+
+      (extras.length+missing.length===1?" differenza":" differenze")+" per ID";
+  }
+  if(!favOnly&&!soloMaiAscoltati&&!soloScaricate&&!query){
+    const label=$("trackCount");
+    if(label)label.textContent=profile+": "+snap.visibleCount+" brani qui"+
+      (extras.length||missing.length?" · "+ref.ids.length+" online":"");
+  }
+  return {extras,missing};
+}
+
 let _mbCatalogConfrontoTesto="";
 let _mbCatalogEsclusioniCondivisibili=[];
-async function _mbConfrontaCatalogoConWorker(){
+async function _mbConfrontaCatalogoConWorker(silent=false){
   const out=$("mbCatalogDiff"),button=$("btnCompareCatalogo");
   const share=$("btnShareCatalogExclusions");
   if(!out||!button)return;
-  out.hidden=false;button.disabled=true;button.textContent="Confronto in corso…";
-  if(share)share.hidden=true;
-  out.textContent="Verifico i motivi delle differenze senza cambiare canzoni.";
+  if(!silent){out.hidden=false;button.disabled=true;button.textContent="Confronto in corso…";}
+  if(!silent){if(share)share.hidden=true;
+  out.textContent="Verifico i motivi delle differenze senza cambiare canzoni.";}
   _mbCatalogConfrontoTesto="";_mbCatalogEsclusioniCondivisibili=[];
   try{
-    if(!SERVIZIO_PUBBLICA)throw new Error("Servizio non configurato");
+    // The read-only public snapshot remains useful if the Worker is offline.
     const get=async path=>{
       const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),9000);
       try{
@@ -12935,11 +12973,25 @@ async function _mbConfrontaCatalogoConWorker(){
         return await r.json();
       }finally{clearTimeout(timer)}
     };
-    const [sr,pr,vr]=await Promise.all([
-      get("/stato"),get("/playlist"),fetch("./versione.json",{cache:"no-store"})
-    ]);
+    let sr=null,pr=null,referenceSource="Worker";
+    try{
+      if(!SERVIZIO_PUBBLICA)throw new Error("Worker non configurato");
+      [sr,pr]=await Promise.all([get("/stato"),get("/playlist")]);
+      if(!sr?.stato||!Array.isArray(pr?.playlist))
+        throw new Error("Worker incompleto");
+    }catch(_){
+      const [st,pl]=await Promise.all([
+        fetch("./stato.json",{cache:"no-store"}),
+        fetch("./playlist.json",{cache:"no-store"})]);
+      if(!st.ok||!pl.ok)throw new Error("Né Worker né catalogo pubblicato disponibili");
+      sr={stato:await st.json()};
+      const list=await pl.json();
+      pr={playlist:Array.isArray(list)?list:list?.playlist};
+      referenceSource="GitHub (fallback)";
+    }
     const state=sr?.stato,pls=pr?.playlist;
-    if(!state||!Array.isArray(pls))throw new Error("Risposta incompleta del Worker");
+    if(!state||!Array.isArray(pls))throw new Error("Risposta incompleta del catalogo");
+    const vr=await fetch("./versione.json",{cache:"no-store"});
     const published=vr.ok?await vr.json():{};
     const copied=new Set(Array.isArray(state.miei?.[profile])?state.miei[profile]:[]);
     const deleted=new Set(Array.isArray(state.eliminati)?state.eliminati.map(String):[]);
@@ -12949,16 +13001,37 @@ async function _mbConfrontaCatalogoConWorker(){
       if(pl?.nascosta!==true||(pl.nascostaDa&&pl.nascostaDa!==profile))continue;
       for(const id of pl.tracks||[])onlyInPlaylist.add(id);
     }
+    // The published Gym list is longer than some stale Worker snapshots.
+    // Honor Gym-only songs without deleting any track or moving playlists.
+    try{
+      const gymResponse=await fetch("./playlist.json",{cache:"no-store"});
+      if(gymResponse.ok){
+        const stored=await gymResponse.json();
+        const rows=Array.isArray(stored)?stored:stored?.playlist||[];
+        const gym=rows.find(p=>String(p?.name||"").toLowerCase()==="gym"&&
+          p.nascosta===true&&p.nascostaDa===profile);
+        if(gym){
+          const cloudGym=pls.find(p=>String(p?.name||"").toLowerCase()==="gym");
+          if(!cloudGym||(cloudGym.tracks||[]).length<(gym.tracks||[]).length)
+            for(const id of gym.tracks||[])onlyInPlaylist.add(id);
+        }
+      }
+    }catch(_){/* Keep the live Worker reference when static data is unavailable. */}
     const expected=[];
-    for(const b of BUILTIN){
+    const publishedImports=await _braniYouTubePubblicati(true);
+    for(const b of BUILTIN.concat(publishedImports||[])){
       const id=_idBranoStabile(b);
       if((b.profile||DEFAULT_PROFILE)!==profile&&!copied.has(id))continue;
-      if(deleted.has(profile+"."+id)||onlyInPlaylist.has(id))continue;
+      if(deleted.has(profile+"."+id)||onlyInPlaylist.has(id)||
+         remoteOnly.has(profile+"."+id)||
+         (profile===DEFAULT_PROFILE&&remoteOnly.has(id)))continue;
       if(expected.some(x=>(x.profile||DEFAULT_PROFILE)===(b.profile||DEFAULT_PROFILE)
         &&stessoBrano(x,b)))continue;
       expected.push(b);
     }
+    _mbCatalogReference={profile,ids:expected.map(_idBranoStabile),source:referenceSource};
     const snap=window.MusicBoxBridge.librarySnapshot();
+    const comparison=_mbAggiornaBadgeCatalogo();
     const onDevice=new Set(snap.tracks.map(t=>t.id));
     const remote=new Set(expected.map(_idBranoStabile));
     const all=window.MusicBoxBridge.allTracks();
@@ -12999,7 +13072,12 @@ async function _mbConfrontaCatalogoConWorker(){
       t.id.startsWith("b-youtube-"));
     const extra=other.filter(t=>!youtube.includes(t));
     const lines=[
-      "VERSIONE "+APP_VERSION+" · pubblicata "+(published.versione||"non disponibile"),
+      "VERSIONE "+APP_VERSION+" · pubblicata "+(published.versione||"non disponibile")+
+        " · fonte "+referenceSource,
+      "RIFERIMENTO "+_mbCatalogReference.ids.length+
+        " · QUI "+snap.visibleCount+
+        " · EXTRA "+(comparison?.extras?.length||0)+
+        " · MANCANTI "+(comparison?.missing?.length||0),
       "Profilo "+profile+" · "+(snap.standalone?"App installata":"Browser")+
         " · Worker copie "+copied.size+" · Gym esclusi "+onlyInPlaylist.size,
       "Origine: "+snap.sharedVisibleCount+" dal catalogo, "+
@@ -13010,6 +13088,10 @@ async function _mbConfrontaCatalogoConWorker(){
         " · visibili nella vista "+snap.displayedCount+".",
       "ID solo su questo dispositivo: "+
         (snap.localDeviceOnlyIds.join(", ")||"nessuno"),
+      "ID EXTRA (fuori dal riferimento): "+
+        ((comparison?.extras||[]).map(t=>t.id+" "+t.title).join(", ")||"nessuno"),
+      "ID MANCANTI dal dispositivo: "+
+        ((comparison?.missing||[]).join(", ")||"nessuno"),
 
       "Confronto MP3 incorporati: "+remote.size+" attesi, "+reasons.length+" non visibili.",
       "Brani YouTube/Cloud (non sono automaticamente doppioni o scarti): "+youtube.length,
@@ -13031,19 +13113,23 @@ async function _mbConfrontaCatalogoConWorker(){
     ];
     if(published.versione&&published.versione!==APP_VERSION)
       lines.push("ATTENZIONE: la versione caricata e' vecchia.");
-    if(_mbCatalogEsclusioniCondivisibili.length&&share){
+    if(!silent&&_mbCatalogEsclusioniCondivisibili.length&&share){
       share.hidden=false;
       lines.push("Puoi condividere SOLO queste esclusioni locali con gli altri dispositivi, "+
         "dopo conferma esplicita, senza cancellare file MP3.");
     }
     _mbCatalogConfrontoTesto=lines.join("\n");
-    out.textContent=_mbCatalogConfrontoTesto;
+    if(!silent)out.textContent=_mbCatalogConfrontoTesto;
   }catch(e){
-    out.textContent="Confronto non riuscito: "+String(e?.message||e)+
+    if(!silent)out.textContent="Confronto non riuscito: "+String(e?.message||e)+
       ". Nessun dato o download e' stato modificato.";
-  }finally{button.disabled=false;button.textContent="Confronta con il Worker"}
+  }finally{if(!silent){button.disabled=false;button.textContent="Confronta con il Worker"}}
 }
-$("btnCompareCatalogo")?.addEventListener("click",_mbConfrontaCatalogoConWorker);
+$("btnCompareCatalogo")?.addEventListener("click",()=>_mbConfrontaCatalogoConWorker(false));
+$("btnCompareQuick")?.addEventListener("click",()=>{
+  const details=$("mbCatalogDetails");if(details)details.hidden=false;
+  _mbConfrontaCatalogoConWorker(false);
+});
 $("btnCopyCatalogDiff")?.addEventListener("click",async()=>{
   const content=_mbCatalogConfrontoTesto||$("mbCatalogDiff")?.textContent||"";
   if(!content)return;
@@ -18422,6 +18508,7 @@ await loadAll();
         // members MUST be loaded before cloud soloInPlaylist markers:
         // concurrent requests could overwrite Gym and inflate the count.
         try { await _sincronizzaCatalogoDispositivi(); } catch (_) {}
+        try { await _mbConfrontaCatalogoConWorker(true); } catch (_) {}
       },1600);
       // Reconcile the shared inventory on returning to an idle device.
       // Never reconstruct object URLs while audio or downloads are active.

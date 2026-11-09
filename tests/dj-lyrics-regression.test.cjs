@@ -21,7 +21,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Sovrapposizione audio avviata/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- assert.match(dj,/musicBoxVersion:"6\.697"/);
+ assert.match(dj,/musicBoxVersion:"6\.698"/);
 });
 
 
@@ -158,4 +158,16 @@ test("private device-only MP3s remain visible but are not presented as synced",(
  assert.match(app,/condivisi · \+"/);
  assert.match(app,/totale su questo dispositivo "\+total/);
  assert.match(app,/localDeviceOnlyIds:visible\.filter/);
+});
+
+test("device reference exposes real ID differences rather than guessed local count",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ assert.match(html,/id="btnCompareQuick"/);
+ assert.match(app,/let _mbCatalogReference=null/);
+ assert.match(app,/function _mbAggiornaBadgeCatalogo\(\)/);
+ assert.match(app,/const publishedImports=await _braniYouTubePubblicati\(true\)/);
+ assert.match(app,/ID EXTRA \(fuori dal riferimento\)/);
+ assert.match(app,/ID MANCANTI dal dispositivo/);
+ assert.match(app,/await _mbConfrontaCatalogoConWorker\(true\)/);
+ assert.match(app,/function _mbConfrontaCatalogoConWorker\(silent=false\)/);
 });
