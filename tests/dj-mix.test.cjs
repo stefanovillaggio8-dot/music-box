@@ -230,8 +230,11 @@ test("iPhone preview hands off at the current second, never song start",()=>{
  f.old.handlers.timeupdate();
  assert.equal(f.calls.length,1);
  assert.ok(f.calls[0].at>5.5&&f.calls[0].at<6.5);
+ // The native target must really be seekable and buffered. Safari's
+ // readyState 3 alone does not certify a distant playback position.
  const nextAudio={paused:false,readyState:3,seeking:false,
-  currentTime:0,seekable:{length:1},duration:180};
+  currentTime:0,seekable:{length:1,start:()=>0,end:()=>180},
+  buffered:{length:1,start:()=>0,end:()=>30},duration:180};
  f.setCurrent("next");f.setNative(nextAudio);
  f.engine.finishMobileMix(f.app);
  assert.ok(nextAudio.currentTime>5.5);
