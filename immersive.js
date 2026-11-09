@@ -75,10 +75,14 @@ function renderLyrics(force){
   lastLyricsRefreshAt=Date.now();
  }
  const audio=b?.audio?.(),time=Math.max(0,Number(audio?.currentTime)||0);
- let index=0;
+ // LRC timestamps are line onsets. Never highlight before the onset:
+ // an adjustable positive delay makes the lyrics enter later, not earlier.
+ const delay=Number(b?.lyricsDelay?.(id));
+ const adjusted=time-(Number.isFinite(delay)?delay:.25);
+ let index=lyricTimed?-1:0;
  if(lyricTimed){
   for(let i=0;i<lyricRows.length;i++){
-   if(lyricRows[i].t<=time+.15)index=i;
+   if(lyricRows[i].t<=adjusted)index=i;
    else break;
   }
  }else if(lyricRows.length>1){
