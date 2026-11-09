@@ -210,3 +210,85 @@ test("LRC provider ranks the right recording by file duration, not first search 
  assert.equal(choose(items,{syncedOnly:true},176),items[1]);
  assert.match(app,/const playingDuration=options.trackId===currentId&&audio&&/);
 });
+
+test("word-level lyricsfile parser keeps actual word starts, spaces, and apostrophes",()=>{
+ const win={};
+ new Function("window","globalThis",
+  fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(win,win);
+ const engine=win.MusicBoxWordKaraoke;
+ const example=[
+  "version: '1.0'","metadata:","  title: Test","lines:",
+  "  - text: 'It''s a test'","    words:",
+  "      - text: \"It's \"","        start_ms: 1000","        end_ms: 1350",
+  "      - text: 'a '","        start_ms: 1350",
+  "      - text: test","        start_ms: 1520","        end_ms: 1890",
+  "    start_ms: 1000","    end_ms: 1890",
+  "  - text: Another line","    start_ms: 2050","    words:",
+  "      - text: 'Another '","        start_ms: 2050",
+  "      - text: line","        start_ms: 2500",
+  "plain: |","  It's a test"
+ ].join("\n");
+ const data=engine.parseLyricsfile(example);
+ assert.equal(data.length,2);
+ assert.equal(data[0].text,"It's a test");
+ assert.deepEqual(data[0].words.map(x=>x.t),[1,1.35,1.52]);
+ assert.deepEqual(data[0].words.map(x=>x.end),[1.35,undefined,1.89]);
+ assert.equal(data[1].words[1].text,"line");
+});
+test("enhanced LRC word timing is exact; ordinary LRC does not invent words",()=>{
+ const win={};
+ new Function("window","globalThis",
+  fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(win,win);
+ const api=win.MusicBoxWordKaraoke;
+ const enhanced="[00:12.30]<00:12.30>Hello <00:12.80>world\n"+
+  "[00:15.10]<00:15.10>Next <00:15.50>sentence";
+ const parsed=api.parseEnhancedLrc(enhanced);
+ assert.equal(parsed.length,2);
+ assert.deepEqual(parsed[0].words.map(w=>w.t),[12.3,12.8]);
+ assert.equal(parsed[0].text,"Hello world");
+ assert.equal(api.parseEnhancedLrc("[00:12.30] Hello world")[0].words,undefined);
+ assert.equal(api.fromRecord({syncedLyrics:"[00:12.30] Hello world"}).length,0);
+ assert.equal(api.fromRecord({syncedLyrics:enhanced}).length,2);
+});
+test("word display rejects wrong text/timestamps and only paints trusted words",()=>{
+ const win={};
+ new Function("window","globalThis",
+  fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(win,win);
+ const engine=win.MusicBoxWordKaraoke;
+ const doc={createElement:()=>({style:{setProperty(k,v){this[k]=v}},textContent:""})};
+ const mount={children:[],appendChild(node){this.children.push(node)},textContent:""};
+ const row={t:1,end:2,text:"Turn on",words:[
+  {t:1,end:1.5,text:"Turn "},{t:1.5,end:2,text:"on"}
+ ]};
+ const elements=engine.spanWords(doc,row,mount);
+ assert.equal(elements.length,2);
+ engine.paintWords(row,elements,1.25);
+ assert.equal(elements[0].style["--karaoke-fill"],"50%");
+ assert.equal(elements[1].style["--karaoke-fill"],"0%");
+ engine.paintWords(row,elements,1.75);
+ assert.equal(elements[0].style["--karaoke-fill"],"100%");
+ assert.equal(elements[1].style["--karaoke-fill"],"50%");
+ const invalid={...row,text:"Different words"};
+ assert.deepEqual(engine.spanWords(doc,invalid,{appendChild(){},textContent:""}),[]);
+ assert.equal(engine.parseLyricsfile("version: '1.0'\nlines:\n - text: Broken\n   start_ms: -42").length,0);
+});
+test("word-synced karaoke persists locally, upgrades on demand and renders in both views",()=>{
+ const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
+ const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
+ assert.equal(version,"6.706");
+ assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
+ assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
+ assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
+ assert.match(app,/requestWordLyrics:\(id\)=>_verificaParoleKaraoke/);
+ assert.match(app,/engine\?\.fromRecord\(j\)/);
+ assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
+ assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
+ assert.match(immersive,/PAROLA PER PAROLA/);
+ assert.match(html,/word-karaoke\.js\?v=6706/);
+ assert.match(sw,/word-karaoke\.js\?v=6706/);
+ assert.match(css,/\.lyr-line\.on \.karaoke-word/);
+ assert.match(css,/\.im-line\.active \.karaoke-word/);
+});
