@@ -55,21 +55,28 @@ function renderLyrics(force){
     }
     if(row)plainRows.push(row);
    }
-   lyricRows=(lyricTimed?synced.map(row=>({text:String(row.text).trim(),t:Number(row.t)})):
+   lyricRows=(lyricTimed?synced.map(row=>({text:String(row.text).trim(),t:Number(row.t),
+      ...(row.end!=null&&Number.isFinite(Number(row.end))?{end:Number(row.end)}:{}),
+      ...(Array.isArray(row.words)?{words:row.words}:{})})):
     plainRows.map(text=>({text}))).slice(0,500);
    if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
    const fragment=document.createDocumentFragment();
    for(const data of lyricRows){
     const row=document.createElement("p");
-    row.className="im-line";row.textContent=data.text;
+    row.className="im-line";
+    data._elements=window.MusicBoxWordKaraoke?.spanWords(document,data,row)||[];
+    if(!data._elements.length)row.textContent=data.text;
     fragment.appendChild(row);
    }
    karaoke.replaceChildren(fragment);
    karaoke.classList.toggle("has-lines",!!next?.text||lyricTimed);
    karaoke.classList.toggle("approximate",!lyricTimed);
    const status=$("imLyricModeLabel");
-   if(status)status.textContent=lyricTimed?"SINCRONIZZATO":
-     next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
+   if(status)status.textContent=lyricTimed
+     ?(lyricRows.some(r=>r._elements?.length>=2)?"PAROLA PER PAROLA":"SINCRONIZZATO")
+     :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
+   if(lyricTimed&&!lyricRows.some(r=>r._elements?.length>=2))
+     b?.requestWordLyrics?.(id)?.catch?.(()=>{});
    karaoke.scrollTop=0;
   }
   lastLyricsRefreshAt=Date.now();
@@ -93,7 +100,11 @@ function renderLyrics(force){
    index=Math.min(lyricRows.length-1,Math.floor(progress*lyricRows.length));
   }
  }
- if(index===lastLine)return;
+ if(index===lastLine){
+  if(index>=0)window.MusicBoxWordKaraoke?.paintWords(
+   lyricRows[index],lyricRows[index]._elements,adjusted);
+  return;
+ }
  lastLine=index;
  for(let i=0;i<karaoke.children.length;i++){
   karaoke.children[i].classList.toggle("active",i===index);
@@ -101,6 +112,8 @@ function renderLyrics(force){
  }
  const active=karaoke.children[index];
  if(active){
+  window.MusicBoxWordKaraoke?.paintWords(
+   lyricRows[index],lyricRows[index]._elements,adjusted);
   const top=Math.max(0,active.offsetTop-(karaoke.clientHeight-active.offsetHeight)/2);
   try{karaoke.scrollTo({top,behavior:"smooth"})}
   catch(_){karaoke.scrollTop=top}

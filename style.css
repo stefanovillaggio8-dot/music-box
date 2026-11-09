@@ -4320,3 +4320,20 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
  font-size:11px;font-weight:750;touch-action:manipulation}
 .mb-catalog-compare-quick[hidden]{display:none!important}
 .mb-catalog-compare-quick:hover{background:#624086}
+
+/* Music Box 6.706 — genuine word/syllable timestamps in both karaoke views */
+.lyrics-body .lyr-line .karaoke-word,.im-karaoke .im-line .karaoke-word{
+  white-space:pre-wrap;box-decoration-break:clone;-webkit-box-decoration-break:clone;color:inherit;
+}
+.lyrics-body .lyr-line.on .karaoke-word,
+.im-karaoke .im-line.active .karaoke-word{
+  color:transparent;
+  background:linear-gradient(90deg,#fffaf2 0%,#dec2ff var(--karaoke-fill,0%),
+    #87759d var(--karaoke-fill,0%),#87759d 100%);
+  -webkit-background-clip:text;background-clip:text;text-shadow:none;
+}
+@media(prefers-reduced-motion:reduce){
+  .lyrics-body .lyr-line.on .karaoke-word,.im-karaoke .im-line.active .karaoke-word{
+    transition:none;
+  }
+}
