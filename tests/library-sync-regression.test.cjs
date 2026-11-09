@@ -244,7 +244,7 @@ test("manual catalog synchronization re-requests fresh cloud audio and cloud cop
  assert.match(load,/await _ytCopieDaAltriProfili\(_nomeYT,forceRemote\)/);
  const copy=excerpt("async function _ytCopieDaAltriProfili(owner,force=false)", "function _ytFondiBozze");
  assert.match(copy,/await _ytBraniDalCloud\(name,force\)/);
- assert.match(src,/if \(!force && cached && Date\.now\(\)-cached\.time < 25000\)/);
+ assert.match(src,/if\(!force&&cached&&cached\.time>0&&Date\.now\(\)-cached\.time<25000\)/);
  const sync=excerpt("function _sincronizzaCatalogoDispositivi(force=false)", "/* Mette dentro quello che arriva dal Worker");
  assert.match(sync,/await loadAll\(force\)/);
  assert.doesNotMatch(sync,/dbDelete|caches\.delete/);
