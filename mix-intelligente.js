@@ -3419,6 +3419,7 @@ function mobilePlayedSeconds(act){
 function mobileNativeSeekReady(audio,at){
  if(!audio||audio.seeking||audio.readyState<2||
     !audio.seekable?.length||!Number.isFinite(at))return false;
+ if(audio.readyState>=3)return true;
  try{
   let seekable=false;
   for(let i=0;i<audio.seekable.length;i++){
@@ -3427,7 +3428,6 @@ function mobileNativeSeekReady(audio,at){
    }
   }
   if(!seekable)return false;
-  if(audio.readyState>=3)return true;
   // A seek outside buffered audio can stall Safari and restart at zero.
   for(let i=0;i<(audio.buffered?.length||0);i++){
    if(audio.buffered.start(i)<=at&&audio.buffered.end(i)>=at+.35)
