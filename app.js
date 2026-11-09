@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.700";
+  const APP_VERSION = "6.701";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12646,6 +12646,10 @@ window.MusicBoxBridge = {
       visible.filter(t=>gymIds.has(t.id)).map(t=>t.id):[];
     const standalone=typeof window.matchMedia==="function"&&
       window.matchMedia("(display-mode: standalone)").matches;
+    // A device can have a complete local list while its cloud request failed.
+    // Record the last real cloud read rather than calling cached data "synced".
+    const cloudFetch=typeof _ytCloudFetchState==="object" ?
+      (_ytCloudFetchState[profile]||null):null;
     return {
       profile,version:APP_VERSION,origin:location.origin,standalone,
       sharedSource:SERVIZIO_PUBBLICA,playlistOnlyMarkerCount:_soloInPlaylist.size,
@@ -12666,6 +12670,10 @@ window.MusicBoxBridge = {
         t.source!=="cloud-audio"&&t.source!=="youtube-link").length,
       cloudAudioCount:visible.filter(t=>t.source==="cloud-audio").length,
       cloudPendingCount:visible.filter(t=>t.source==="youtube-link").length,
+      cloudFetchOk:cloudFetch?cloudFetch.ok===true:null,
+      cloudFetchCount:Number.isFinite(cloudFetch?.count)?cloudFetch.count:null,
+      cloudFetchAt:Number.isFinite(cloudFetch?.at)?cloudFetch.at:null,
+      cloudFetchError:cloudFetch?.ok===false?String(cloudFetch.error||"Cloud non raggiungibile"):"",
       localDeviceOnlyIds:visible.filter(t=>!t.builtin&&!t.youtubeId&&
         !eGiaCondiviso(t)).map(t=>t.id).sort(),
       cloudLinkIds:visible.filter(t=>!t.builtin&&!!t.youtubeId)
@@ -13236,6 +13244,12 @@ function _mbCatalogDiagnosi(){
       versione:snap.version,profilo:snap.profile,origine:snap.origin,
       braniNellaLibreria:snap.visibleCount,
       braniTotaliCaricati:snap.totalLoaded,
+      braniPubblicatiDisponibili:snap.publishedCatalogCount,
+      braniCloudPronti:snap.cloudAudioCount,
+      braniCloudAncoraNonPronti:snap.cloudPendingCount,
+      letturaCloudRiuscita:snap.cloudFetchOk,
+      righeRicevuteDalCloud:snap.cloudFetchCount,
+      erroreLetturaCloud:snap.cloudFetchError,
       braniPropriNelCatalogo:snap.publishedOwnedCount,
       copieSalvateNelProfilo:snap.copiedCount,
       braniSoloSuQuestoDispositivo:snap.localOnlyCount,
@@ -16891,6 +16905,18 @@ const j = await r.json();
       await _caricaStatoCondiviso();
       const recuperate=await _recuperaCopiePubblicate(force);
       await loadAll(force);
+      // One transient CORS/WAF/network response can leave PC or Safari
+      // behind the installed PWA. Retry a forced, user-initiated sync once
+      // without deleting local metadata, cloud links or downloaded audio.
+      if(force&&_ytCloudFetchState[profile]?.ok===false&&navigator.onLine!==false){
+        await new Promise(resolve=>setTimeout(resolve,750));
+        const owner=String(profile);
+        const refreshed=await _ytBraniDalCloud(owner,true);
+        if(owner===profile&&_ytCloudFetchState[owner]?.ok===true){
+          await _ytCopieDaAltriProfili(owner,true);
+          _ytAggiornaVociLibreria(refreshed,owner,false);
+        }
+      }
       const flags=new Set([..._soloInPlaylist,
         ...[..._nascostiDallePlaylist()].map(id=>_chiaveSoloInPlaylist(id))]);
       if(flags.size!==_soloInPlaylist.size||

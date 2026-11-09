@@ -250,6 +250,21 @@ test("manual catalog synchronization re-requests fresh cloud audio and cloud cop
  assert.doesNotMatch(sync,/dbDelete|caches\.delete/);
 });
 
+test("cloud library diagnostics report whether remote data was actually refreshed",()=>{
+ const snapshot=excerpt("librarySnapshot:()=>{","syncLibrary:()=>");
+ assert.match(snapshot,/cloudFetchOk:cloudFetch\?cloudFetch\.ok===true:null/);
+ assert.match(snapshot,/publishedCatalogCount:visible\.filter/);
+ assert.match(snapshot,/cloudAudioCount:visible\.filter/);
+ assert.match(snapshot,/cloudPendingCount:visible\.filter/);
+ const sync=excerpt("function _sincronizzaCatalogoDispositivi(force=false)","/* Mette dentro quello che arriva dal Worker");
+ assert.match(sync,/if\(force&&_ytCloudFetchState\[profile\]\?\.ok===false/);
+ assert.match(sync,/await _ytBraniDalCloud\(owner,true\)/);
+ assert.doesNotMatch(sync,/caches\.delete|indexedDB\.deleteDatabase/);
+ const dj=require("node:fs").readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.match(dj,/Cloud aggiornato/);
+ assert.match(dj,/cloud non verificato/);
+});
+
 test("cross-device source counts distinguish published catalog from playable and pending cloud entries",()=>{
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  assert.match(src,/publishedCatalogCount:visible\.filter/);

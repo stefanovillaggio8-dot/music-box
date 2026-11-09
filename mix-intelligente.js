@@ -5588,7 +5588,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.700",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.701",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -5612,10 +5612,15 @@ function start(){
    if(!snap)throw Error("Libreria non pronta");
    if(status)status.textContent="Sincronizzazione completata · "+
     snap.visibleCount+" brani in libreria · "+
+    (snap.publishedCatalogCount??"?")+" pubblicati · "+
+    (snap.cloudAudioCount??0)+" MP3 cloud · "+
+    (snap.cloudPendingCount??0)+" link non pronti · "+
     (snap.addedIds?.length||0)+" aggiunti · "+
     (snap.removedIds?.length||0)+" rimossi dall'elenco · "+
     (snap.updatedIds?.length||0)+" titoli aggiornati · "+
     "fonte "+snap.remoteSource+". "+
+    (snap.cloudFetchOk===true?"Cloud aggiornato. ":
+      "ATTENZIONE: cloud non verificato, questo dispositivo potrebbe mostrare meno brani. ")+
     ((snap.addedIds?.length||0)+(snap.removedIds?.length||0)+(snap.updatedIds?.length||0)===0
       ?"Nessuna differenza tra gli ID prima e dopo. ":"")+
     "Nessun MP3 offline cancellato.";
