@@ -4811,6 +4811,13 @@ async function intelligentShuffle(app,audio,fromId){
  // the remainder across the playlist rather than just alphabetic entries.
  const extra=unknown.length?Math.min(isIOS?3:8,unknown.length):0;
  const picked=[];
+ // Prioritize newly imported tracks that have not entered the cloud DJ
+ // index yet. This does not bypass safety or decode more than the cap.
+ for(const id of recentLibraryIds){
+  if(picked.length>=extra)break;
+  const t=unknown.find(x=>x.id===id);
+  if(t&&!picked.some(x=>x.id===id))picked.push(t);
+ }
  for(const t of sequence.slice(0,3)){
   if(unknown.some(x=>x.id===t.id)&&!picked.some(x=>x.id===t.id))picked.push(t);
  }
@@ -5206,6 +5213,7 @@ async function intelligentShuffle(app,audio,fromId){
  return {retry:unknown.length>picked.length&&noMatch,
   checked:measured.length,missing:unknown.length,noMatch};
 }
+let recentLibraryIds=[];
 let shuffleBusy=false,shuffleRetryAt=0,shuffleAttempts=0,shuffleGeneration=0;
 let shuffleLastDecision=null,shuffleLastLyricFor="",shuffleLastLyric=null;
 function rearmShuffleAfterVocalScan(id){
@@ -5875,6 +5883,18 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   abortObsoleteDJWork();cancel();plan=null;plannedFor="";previousId="";
   planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
+ },
+ onLibraryChange:(change)=>{
+  // A new playable MP3 or a playlist edit must reopen candidate search for
+  // the CURRENT song. Preserve the actual playback and manually queued items.
+  const added=Array.isArray(change?.addedIds)?change.addedIds:[];
+  recentLibraryIds=[...new Set([...added,...recentLibraryIds])].slice(0,32);
+  shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
+  shuffleRetryAt=0;shuffleAttempts=0;shuffleLastDecision=null;
+  if(!mixing&&!active&&!mobileActive){
+    plannedFor="";plan=null;planEpoch++;
+    planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
+  }
  },
  onTrackChange:(id)=>{
   abortObsoleteDJWork();
