@@ -21,7 +21,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Sovrapposizione audio avviata/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- assert.match(dj,/musicBoxVersion:"6\.694"/);
+ assert.match(dj,/musicBoxVersion:"6\.695"/);
 });
 
 
@@ -113,4 +113,31 @@ test("DJ extra analysis budget respects iPhone/desktop limits and admits new imp
  assert.ok(desktop.length<=8&&desktop.length>2,"desktop analysis stays bounded");
  assert.ok(desktop.includes("new-a")&&desktop.includes("new-b"));
  assert.equal(new Set(desktop).size,desktop.length,"no duplicate candidate decoding");
+});
+
+test("full lyrics are available even when karaoke timestamps exist",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
+ assert.match(app,/let _vistaTestiCompleta=true/);
+ assert.match(app,/const useSynced=synced\.length>0&&!_vistaTestiCompleta/);
+ assert.match(app,/classList\.toggle\("lyrics-full-view",!useSynced\)/);
+ assert.match(app,/const heading=document\.createElement\("h3"\)/);
+ assert.match(app,/className="lyrics-verse"/);
+ for(const id of ["lyricsViewToggle","lyricsReadingTools","lyricsFontDown","lyricsFontUp",
+                  "lyricsReadTop","lyricsReadingCount","lyricsReadingProgress"]){
+   assert.ok(html.includes('id="'+id+'"'),"missing reader control "+id);
+ }
+ assert.match(css,/grid-template-columns:minmax\(268px,34%\)/);
+ assert.match(css,/\.lyrics-full-view \.lyrics-body\.lyrics-plain/);
+ assert.match(css,/@media\(max-width:760px\)/);
+});
+test("shared catalog reconciliation avoids playback and identifies local-only items",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ assert.match(app,/localDeviceOnlyIds:visible\.filter/);
+ assert.match(app,/sharedVisibleCount:visible\.filter/);
+ assert.match(app,/cloudLinkIds:visible\.filter/);
+ assert.match(app,/const _syncCatalogWhenIdle=/);
+ assert.match(app,/\(audio&&!audio\.paused\)/);
+ assert.match(app,/const urls=\["\.\/online-imports\.json\?v="/);
+ assert.match(html,/id="mbCatalogOrigin"/);
 });
