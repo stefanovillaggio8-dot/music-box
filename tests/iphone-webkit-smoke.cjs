@@ -23,6 +23,9 @@ async function run(){
  const browser=await webkit.launch({headless:true});
  try{
   const context=await browser.newContext({
+   // This tests foreground WebAudio, not the PWA worker. Disable workers so
+   // Playwright can intercept optional Supabase polling without CORS noise.
+   serviceWorkers:"block",
    viewport:{width:390,height:844},isMobile:true,hasTouch:true,
    userAgent:"Mozilla/5.0 (iPhone; CPU iPhone OS 26_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.0 Mobile/15E148 Safari/604.1"
   });
