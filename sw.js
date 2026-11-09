@@ -51,7 +51,7 @@ const CORE = [
   "./amici-online.js",
   "./discord-presence.js",
   "./discord-fallback.webp",
-  "./mix-intelligente.js",
+  "./mix-intelligente.js?v=6700", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
