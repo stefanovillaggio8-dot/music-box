@@ -10,6 +10,10 @@ const begin=html.indexOf('<div id="immersivePanel"');
 const end=html.indexOf('<div class="lyrics-overlay"',begin);
 assert.ok(begin>=0&&end>begin,"Immersive markup must exist");
 const fragment=html.slice(begin,end);
+const lyricsBegin=html.indexOf('<div class="lyrics-overlay"');
+const lyricsEnd=html.indexOf('<div class="import-overlay" id="spotifyPanel"',lyricsBegin);
+assert.ok(lyricsBegin>0&&lyricsEnd>lyricsBegin,"full lyrics markup must exist");
+const lyricsFragment=html.slice(lyricsBegin,lyricsEnd);
 assert.match(css,/\.im-root\.im-focus \.im-karaoke/);
 assert.match(css,/env\(safe-area-inset-top\)/);
 assert.doesNotMatch(immersive,/new Audio\s*\(|new AudioContext\s*\(/,
@@ -34,6 +38,7 @@ const fixture=[
  '};',
  '</script>',
  fragment,
+ lyricsFragment,
  '<script src="/immersive.js"></script>',
  '</body></html>'
 ].join("\n");
@@ -176,6 +181,32 @@ async function run(){
    await page.screenshot({path:"/tmp/immersive-"+size.name+".png"});
    await page.keyboard.press("Escape");
    await page.waitForFunction(()=>!window.MusicBoxImmersive.isOpen());
+   // Validate the separately opened full-lyrics sheet with a long text,
+   // including on a compact iPhone. The controls must stay visible.
+   const fullLyrics=await page.evaluate(()=>{
+     const panel=document.getElementById("lyricsPanel"),body=document.getElementById("lyricsBody");
+     panel.hidden=false;
+     document.getElementById("lyricsTitle").textContent="Brano di prova";
+     document.getElementById("lyricsSub").textContent="Artista";
+     document.getElementById("lyricsSyncControls").hidden=false;
+     body.classList.add("lyrics-plain");
+     body.replaceChildren(...Array.from({length:65},(_,i)=>{
+       const p=document.createElement("p");p.textContent="Verso completo della canzone "+(i+1);
+       return p;
+     }));
+     const frame=panel.getBoundingClientRect(),
+       footer=panel.querySelector(".lyrics-pie").getBoundingClientRect(),
+       viewport=window.innerHeight;
+     return {width:panel.scrollWidth-panel.clientWidth,
+       footerBottom:footer.bottom,viewport,bodyScroll:body.scrollHeight,
+       bodyHeight:body.clientHeight,sliderVisible:
+        document.getElementById("lyricsDelay").getBoundingClientRect().width>20,
+       modeVisible:document.getElementById("lyricsMode").getBoundingClientRect().height>0};
+   });
+   assert.ok(fullLyrics.width<=3,"lyrics sheet must not overflow horizontally");
+   assert.ok(fullLyrics.footerBottom<=fullLyrics.viewport+2,"footer must fit phone height");
+   assert.ok(fullLyrics.bodyScroll>fullLyrics.bodyHeight,"long plain lyrics must scroll");
+   assert.ok(fullLyrics.sliderVisible&&fullLyrics.modeVisible,"sync controls must remain accessible");
    assert.deepEqual(errors,[],"Unexpected browser errors: "+size.name);
    console.log("[IMMERSIVE UI]",JSON.stringify({engine,screen:size.name,state,
     karaokeScrolled:karaoke,focus:true,controls:true,errors:errors.length}));
