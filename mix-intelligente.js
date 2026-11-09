@@ -3419,7 +3419,9 @@ function mobilePlayedSeconds(act){
 function mobileNativeSeekReady(audio,at){
  if(!audio||audio.seeking||audio.readyState<2||
     !audio.seekable?.length||!Number.isFinite(at))return false;
- if(audio.readyState>=3)return true;
+ // HAVE_FUTURE_DATA certifies the current playback position, NOT a remote seek.
+ // On Safari a seek into unbuffered MP3 can stall or restart at 0:00.
+ // All readyState levels must prove the target is seekable and buffered.
  try{
   let seekable=false;
   for(let i=0;i<audio.seekable.length;i++){
@@ -5588,7 +5590,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.703",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.704",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

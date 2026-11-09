@@ -287,7 +287,7 @@ test("iPhone mobile debug reports why an available cue failed to start",()=>{
  assert.ok(source.includes('status="Mix non avviato: "+mobileMixLastBlocker'));
 });
 
-test("Safari handoff seeks once at readyState 2 only when the target is buffered",()=>{
+test("Safari handoff seeks only into buffered audio at every readyState",()=>{
  const guard=excerpt("function mobileNativeSeekReady(","function finishMobileMix(");
  const can=new Function(guard+"return mobileNativeSeekReady;")();
  const make=(ready,end)=>({
@@ -298,7 +298,9 @@ test("Safari handoff seeks once at readyState 2 only when the target is buffered
  assert.equal(can(make(2,12),5),true,"decoded preview target is ready in iOS state 2");
  assert.equal(can(make(2,4),5),false,"never seek outside Safari buffered media");
  assert.equal(can(make(1,12),5),false,"do not seek while metadata is unavailable");
- assert.equal(can(make(3,4),5),true,"normal readyState 3 remains supported");
+ assert.equal(can(make(3,4),5),false,"readyState 3 is not proof that a distant target is buffered");
+  assert.equal(can(make(3,12),5),true,"readyState 3 may seek only to buffered audio");
+  assert.equal(can(make(4,4),5),false,"readyState 4 cannot certify an unbuffered seek target");
  assert.equal(can({...make(2,12),seeking:true},5),false);
  assert.equal(can({...make(2,12),seekable:{length:0}},5),false);
  let seeks=0,at=0;
