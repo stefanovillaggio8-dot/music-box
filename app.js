@@ -3490,6 +3490,7 @@ function _devoVedereBrano(eMio, b) {
     try { applicaRinomine(); } catch (e) { /* mantieni la libreria */ }
     if(draw){
       render();
+      _controllaNuoviBraniMix();
       // Una nuova canzone YouTube pronta deve cercare i testi senza play.
       if(linked.some(t=>t.source==="cloud-audio" && t.url))
         _programmaTestiKaraoke();
@@ -3761,6 +3762,7 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
         ", mai ascoltati " + (soloMaiAscoltati ? "si" : "no") +
         ", playlist " + (_playlistAttiva || "nessuna"));
       render();
+      _controllaNuoviBraniMix();
   }
 
   /* L'indice pubblicato contiene solo gli ID LRCLIB (non testi).
@@ -7018,6 +7020,7 @@ function rebuildAudio(autoplay) {
 
   function renderQueueCount() {
     const auto = _prossimiAutomaticiInCoda();
+    _controllaNuoviBraniMix();
     const quanti = (window.MusicBoxRoom?.isActive() ? 0 : queue.length) + auto.length;
     const el = $("quickCount");
     if (el) {
@@ -7982,6 +7985,27 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
     try { return visibleTracks(true); } catch (e) { return tracks; }
   }
 
+  let _djCatalogoPrecedente=new Map();
+  function _controllaNuoviBraniMix(){
+    // Only playable, currently permitted songs enter the automatic pool.
+    // This observes new MP3 imports and playlist additions without clearing
+    // the durable shuffle history or the manually chosen queue.
+    const list=(_posizionePlaylist>=0&&_playlistSuona.length)?
+      _braniPlaylistInRiproduzione():_listaPerIlSeguito();
+    const fresh=new Map();
+    for(const t of list)if(t?.id&&t.url&&!t.youtubeId)
+      fresh.set(t.id,String(t.url));
+    const changed=fresh.size!==_djCatalogoPrecedente.size||
+      [...fresh].some(([id,url])=>_djCatalogoPrecedente.get(id)!==url);
+    if(!changed)return;
+    const addedIds=[...fresh.keys()].filter(id=>!_djCatalogoPrecedente.has(id));
+    const removedIds=[..._djCatalogoPrecedente.keys()].filter(id=>!fresh.has(id));
+    _djCatalogoPrecedente=fresh;
+    try{window.MusicBoxMix?.onLibraryChange?.({
+      addedIds,removedIds,available:fresh.size,profile
+    })}catch(_){/* Never disrupt music on a library notification. */}
+  }
+
   /* Canzoni gia' suonate nella riproduzione casuale.
 
    Ste vuole che in casuale non si senta due volte la stessa canzone: quando
@@ -8894,6 +8918,44 @@ function openProfile() {
     return out;
   }
 
+  const _ritardiTesti=new Map();
+  const RITARDO_TESTO_BASE=.25;
+  function _ritardoTesto(id){
+    if(!id)return RITARDO_TESTO_BASE;
+    const key="mb.lyrics.delay.v1."+profile;
+    let values=_ritardiTesti.get(key);
+    if(!values){
+      const stored=LS.get(key,{});
+      values=stored&&typeof stored==="object"&&!Array.isArray(stored)?stored:{};
+      _ritardiTesti.set(key,values);
+    }
+    const value=Number(values[id]);
+    return Number.isFinite(value)&&Object.prototype.hasOwnProperty.call(values,id)
+      ? Math.max(-8,Math.min(8,value)):RITARDO_TESTO_BASE;
+  }
+  function _impostaRitardoTesto(id,seconds){
+    if(!id)return;
+    const value=Math.max(-8,Math.min(8,Math.round(Number(seconds)*10)/10));
+    const key="mb.lyrics.delay.v1."+profile;
+    const old=_ritardiTesti.get(key)||LS.get(key,{})||{};
+    const saved={...old,[id]:value};
+    _ritardiTesti.set(key,saved);
+    LS.set(key,saved);
+    const slider=$("lyricsDelay");
+    if(slider)slider.value=String(value);
+    const label=$("lyricsDelayValue");
+    if(label)label.textContent=(value>0?"+":"")+value.toFixed(1).replace(".",",")+" s";
+    lyricActive=-1;
+    for(const line of lyricLines)line.classList.remove("on");
+    tickLyrics();
+  }
+  function _aggiornaRitardoTestoUI(){
+    const value=_ritardoTesto(currentId);
+    const slider=$("lyricsDelay"),label=$("lyricsDelayValue");
+    if(slider)slider.value=String(value);
+    if(label)label.textContent=(value>0?"+":"")+value.toFixed(1).replace(".",",")+" s";
+  }
+
   function activeLineIndex(time) {
     let idx = -1;
     for (let i = 0; i < lyricLines.length; i++) {
@@ -8905,7 +8967,7 @@ function openProfile() {
 
   function tickLyrics() {
     if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
-    const idx = activeLineIndex(audio.currentTime || 0);
+    const idx = activeLineIndex((audio.currentTime || 0)-_ritardoTesto(currentId));
     if (idx === lyricActive) return;
     if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
     if (idx >= 0) {
@@ -9021,23 +9083,9 @@ function openProfile() {
     lyricActive = -1;
     lyricsUserScrollAt = 0;
     const synced = parseSynced(l.synced);
-    /* Ste: "il testo va in ritardo anche senza premere niente".
-       Ho confrontato i tempi con la durata vera di tutti i mp3: per 51 brani
-       su 350 i tempi sono di una versione diversa (piu' corta o piu'
-       lunga), e le righe arrivano con troppo ritardo (o troppo presto).
-       Se l'ultima riga finisce dopo la fine del brano, ri-scalo i tempi
-       sulla durata vera: e' un'approssimazione, ma toglie decine di
-       secondi di scarto. */
-    try {
-      const dur = totalDuration();
-      if (dur > 20 && synced.length) {
-        const ultimo = synced[synced.length - 1].t;
-        if (ultimo > dur + 5) {
-          const fattore = (dur - 2) / ultimo;
-          for (const riga of synced) riga.t = Math.round(riga.t * fattore * 10) / 10;
-        }
-      }
-    } catch (e) { /* noop */ }
+    // LRC timestamps describe a recording, not the full MP3 duration.
+    // Rescaling every cue from the last line alone can advance entire verses.
+    // Keep source timing and use the per-song correction control instead.
     if (synced.length) {
       for (const line of synced) {
         const p = document.createElement("p");
@@ -9058,6 +9106,18 @@ function openProfile() {
       });
     }
     $("lyricsPanel").hidden = false;
+    $("lyricsSyncControls").hidden = !synced.length;
+    $("lyricsMode").textContent = synced.length?"TESTO SINCRONIZZATO":"TESTO COMPLETO";
+    $("lyricsBody").classList.toggle("lyrics-plain",!synced.length);
+    const cover=$("lyricsCover"),track=current();
+    if(cover){
+      const url=String(track?.cover||"");
+      const safe=/^(https?:|blob:|data:image\/)/i.test(url)||
+        /^(copertine|covers)\/[a-z0-9/_-]+\.(?:jpe?g|png|webp)$/i.test(url);
+      cover.style.backgroundImage=safe?"url("+JSON.stringify(url)+")":"";
+      cover.classList.toggle("lyrics-cover-empty",!safe);
+    }
+    _aggiornaRitardoTestoUI();
     document.body.classList.add("no-scroll");
     _aggiornaSfondoTesti();
     _aggiornaComandiTesti();
@@ -12469,6 +12529,7 @@ window.MusicBoxBridge = {
   togglePlayback:()=>togglePlay(),
   next:()=>playNext(),
   previous:()=>playById(idBranoA(prevIndex())),
+  lyricsDelay:(id)=>_ritardoTesto(id||currentId),
   lyricsData:()=>{
     const l=currentLyrics();
     if(!l)return null;
@@ -12925,6 +12986,12 @@ $("btnModalitaGym").addEventListener("click", () => {
   /* I tre comandi dentro i testi a tutto schermo: riusano le funzioni vere
      del player, cosi' non possono andare discordi con quelli del basso. */
   $("lyricsPlay").addEventListener("click", () => { togglePlay(); _aggiornaComandiTesti(); });
+  $("lyricsDelay")?.addEventListener("input",e=>{
+    _impostaRitardoTesto(currentId,Number(e.target.value));
+  });
+  $("lyricsDelayReset")?.addEventListener("click",()=>{
+    _impostaRitardoTesto(currentId,RITARDO_TESTO_BASE);
+  });
   $("lyricsNext").addEventListener("click", () => { playNext(); });
   $("lyricsPrev").addEventListener("click", () => {
     /* Come il tasto "indietro" del player: ora va SEMPRE al brano precedente,
@@ -15507,8 +15574,20 @@ function _aggiornaBadgePlaylist() {
     playById(primo);
   }
   function _braniPlaylistInRiproduzione() {
-    return _playlistSuona.map((id) => tracks.find((t) => t.id === id))
-      .filter((t) => t && !t.youtubeId && t.url);
+    // Refresh the playing playlist without discarding its established order.
+    // A song added to this playlist during playback must be eligible now.
+    const playlist=_playlistCercata(_playlistAttiva);
+    if(playlist&&Array.isArray(playlist.tracks)){
+      const allowed=new Set(playlist.tracks);
+      _playlistSuona=_playlistSuona.filter(id=>allowed.has(id));
+      const existing=new Set(_playlistSuona);
+      for(const id of playlist.tracks)if(!existing.has(id)){
+        _playlistSuona.push(id);existing.add(id);
+      }
+      if(currentId)_posizionePlaylist=_playlistSuona.indexOf(currentId);
+    }
+    return _playlistSuona.map(id=>tracks.find(t=>t.id===id))
+      .filter(t=>t&&!t.youtubeId&&t.url);
   }
   /* Mantiene la playlist selezionata anche in casuale, senza usare i brani
      della libreria generale e senza ripetizioni finche' ce ne sono. */
