@@ -851,7 +851,7 @@ test("Music Box app hands the prebuffered MP3 to its ordinary player without a f
  assert.ok(code.includes("if (!_adottaDj && startAt > 0 && Number.isFinite(startAt))"));
  assert.ok(code.includes("mixAdoptHandoff:(id,liveAudio)=>"));
  assert.ok(code.includes('window.MusicBoxMix?.onSeek?.("media")'));
- assert.equal((code.match(/window\.MusicBoxMix\?\.onSeek\?\.\("user"\)/g)||[]).length,2);
+ assert.equal((code.match(/window\.MusicBoxMix\?\.onSeek\?\.\("user"\)/g)||[]).length,3);
 });
 
 test("desktop compares both chord changes and drum grooves, not BPM alone",()=>{
