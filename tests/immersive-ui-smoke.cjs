@@ -194,10 +194,12 @@ async function run(){
        const p=document.createElement("p");p.textContent="Verso completo della canzone "+(i+1);
        return p;
      }));
-     const frame=panel.getBoundingClientRect(),
-       footer=panel.querySelector(".lyrics-pie").getBoundingClientRect(),
+     const card=panel.querySelector(".lyrics-card");
+     const footer=panel.querySelector(".lyrics-pie").getBoundingClientRect(),
        viewport=window.innerHeight;
-     return {width:panel.scrollWidth-panel.clientWidth,
+     // Backdrop intentionally extends beyond the screen for blur.
+     // Measure actual content overflow inside the clipped sheet instead.
+     return {width:card.scrollWidth-card.clientWidth,
        footerBottom:footer.bottom,viewport,bodyScroll:body.scrollHeight,
        bodyHeight:body.clientHeight,sliderVisible:
         document.getElementById("lyricsDelay").getBoundingClientRect().width>20,
