@@ -25,6 +25,7 @@ const timeout=45000;
 async function run(){
  await new Promise(resolve=>server.listen(0,"127.0.0.1",resolve));
  const url="http://127.0.0.1:"+server.address().port+"/";
+ const release=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8")).versione.replace(/\./g,"");
  let browser;
  try{
   browser=await webkit.launch({headless:true});
@@ -35,25 +36,25 @@ async function run(){
   await page.goto(url,{waitUntil:"domcontentloaded",timeout});
   await page.waitForFunction(()=>!!window.MusicBoxBridge,{timeout});
   await page.evaluate(()=>navigator.serviceWorker.ready);
-  const shell=await page.waitForFunction(async()=>{
+  const shell=await page.waitForFunction(async(rev)=>{
    const names=await caches.keys();
-   const name=names.find(x=>x==="spotifynonavraiimieisoldi-v6700");
+   const name=names.find(x=>x==="spotifynonavraiimieisoldi-v"+rev);
    if(!name)return false;
    const c=await caches.open(name);
-   const required=["index.html","style.css?v=6700","app.js?v=6700",
-    "fuoco.js?v=6570","mix-intelligente.js?v=6700","immersive.js?v=6700"];
+   const required=["index.html","style.css?v="+rev,"app.js?v="+rev,
+    "fuoco.js?v=6570","mix-intelligente.js?v="+rev,"immersive.js?v="+rev];
    for(const item of required)if(!(await c.match(new URL(item,location.href))))return false;
    return required.length;
-  },null,{timeout});
+  },release,{timeout});
   assert.ok(await shell.jsonValue(),"install must precache exact versioned shell");
   await page.close();
   await context.setOffline(true);
   const cold=await context.newPage();
   await cold.goto(url,{waitUntil:"domcontentloaded",timeout});
   await cold.waitForFunction(()=>!!window.MusicBoxBridge,{timeout:30000});
-  const offline=await cold.evaluate(async()=>{
-   const css=await fetch("style.css?v=6700");
-   const js=await fetch("app.js?v=6700");
+  const offline=await cold.evaluate(async(rev)=>{
+   const css=await fetch("style.css?v="+rev);
+   const js=await fetch("app.js?v="+rev);
    const legacy=await fetch("style.css?v=unvisited-offline-variant");
    return {background:getComputedStyle(document.body).backgroundColor,
     cssOk:css.ok,jsOk:js.ok,legacyCssOk:legacy.ok,
@@ -61,7 +62,7 @@ async function run(){
     legacyCssBytes:(await legacy.text()).length,
     playerLoaded:!!window.MusicBoxBridge,
     stylesheetCount:document.styleSheets.length};
-  });
+  },release);
   assert.ok(offline.cssOk&&offline.jsOk&&offline.legacyCssOk,
    "offline asset requests must be served from the cache");
   assert.ok(offline.cssBytes>20000&&offline.jsBytes>200000&&
