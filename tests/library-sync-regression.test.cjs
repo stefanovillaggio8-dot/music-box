@@ -164,7 +164,8 @@ test("stale local duplicate markers cannot hide unique shared tracks",()=>{
   {id:"b-track-7",title:"Unico",artist:"Artista",builtin:true,profile:"Ste"},
   {id:"b-track-8",title:"Altro",artist:"Artista",builtin:true,profile:"Ste"},
   {id:"b-track-9",title:"Unico",artist:"Artista",builtin:true,profile:"Ste"}];
- assert.deepEqual(merge(all).map(x=>x.id),["b-track-7","b-track-8"]);
+ assert.deepEqual(merge(all).map(x=>x.id),["b-track-7","b-track-8","b-track-9"],
+  "two different published IDs are not duplicates solely by display title");
  assert.equal(all.length,3,"no source tracks were deleted");
  assert.ok(updates.some(x=>x.name==="Ste"&&
   Array.isArray(x.value.duplicati)&&x.value.duplicati.length===0));
