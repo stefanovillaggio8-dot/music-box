@@ -3880,3 +3880,87 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 .mb-gym-review button{max-width:100%}
 
 .mb-catalog-diff{white-space:pre-wrap;overflow-wrap:anywhere;margin:9px 0;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:12px;line-height:1.5;max-height:320px;overflow:auto}
+
+
+/* Music Box full-lyrics redesign: scrollable reading, comfortable phone layout. */
+.lyrics-overlay{z-index:22005;background:#090714;color:#f9f5ff;overscroll-behavior:contain}
+.lyrics-overlay::after{background:linear-gradient(180deg,rgba(8,7,18,.82),rgba(9,7,21,.88) 42%,rgba(8,7,18,.96));pointer-events:none}
+.lyrics-sfondo{filter:blur(78px) saturate(165%) brightness(.65);opacity:.47;transform:scale(1.22);pointer-events:none}
+.lyrics-card{width:100%;max-width:780px;height:100%;height:100dvh;min-height:0;background:linear-gradient(180deg,rgba(26,18,43,.64),rgba(12,11,24,.28) 33%,rgba(11,9,24,.6));border-left:1px solid #ffffff16;border-right:1px solid #ffffff16;box-shadow:0 0 90px #0007}
+.lyrics-head{flex-shrink:0;padding:calc(19px + env(safe-area-inset-top)) clamp(18px,4vw,38px) 17px;gap:16px;border-bottom:1px solid #ffffff15}
+.lyrics-cover{width:64px;height:64px;flex:0 0 64px;display:grid;place-items:center;border-radius:15px;background-size:cover;background-position:center;background-color:#4c3965;border:1px solid #ffffff3c;box-shadow:0 7px 28px #0006;overflow:hidden}
+.lyrics-cover span{display:none}.lyrics-cover.lyrics-cover-empty span{display:block;font-size:30px;color:#dfcbff}
+.lyrics-head-info{min-width:0;display:flex;flex-direction:column;gap:4px}
+.lyrics-eyebrow{font-size:10px;font-weight:800;letter-spacing:2.4px;color:#c8a9ff;margin:0 0 3px}
+.lyrics-star{color:#ffdcae;margin:0 4px}
+.lyrics-title{font-size:clamp(19px,3.1vw,27px);line-height:1.15;font-weight:800;letter-spacing:-.5px;margin:0;color:#fff}
+.lyrics-sub{font-size:13px;color:#d5c8e3;margin:0}
+.lyrics-close{display:grid;place-items:center;width:43px;height:43px;flex:0 0 43px;font-size:26px;background:#ffffff13;border:1px solid #ffffff24;color:#faf4ff;transition:background .2s;touch-action:manipulation}
+.lyrics-close:hover{background:#ffffff29}
+.lyrics-toolbar{flex-shrink:0;padding:12px clamp(18px,4vw,38px);display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff10}
+.lyrics-mode{font-size:10px;letter-spacing:1.7px;font-weight:800;color:#d7c7f6;white-space:nowrap}
+.lyrics-translate-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;min-width:0}
+.lyrics-translate-actions select,.lyrics-translate-actions button{min-height:35px;max-width:130px;font-size:12px;border-radius:10px;padding:7px 10px;background:rgba(255,255,255,.10);color:#f6ecff;border:1px solid #ffffff25}
+.lyrics-translate-actions select option{color:#161224}
+.lyrics-translate-actions button[aria-pressed="true"]{background:#784bcb;color:#fff}
+.lyrics-sync-controls{flex-shrink:0;margin:0 clamp(18px,4vw,38px);padding:10px 0 11px;border-bottom:1px solid #ffffff13}
+.lyrics-sync-controls[hidden]{display:none!important}
+.lyrics-sync-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#e8dafb;font-size:12px;font-weight:650;margin-bottom:8px}
+#lyricsDelayValue{font-size:12px;color:#fff;font-variant-numeric:tabular-nums;font-weight:800;border-radius:7px;padding:3px 7px;background:#ffffff1b}
+.lyrics-sync-slider{display:flex;align-items:center;gap:10px}
+.lyrics-sync-slider span{font-size:10px;color:#b9a9d1;white-space:nowrap}
+#lyricsDelay{width:100%;flex:1;min-width:54px;height:22px;cursor:pointer;accent-color:#cba5ff;touch-action:pan-x}
+#lyricsDelayReset{font-size:11px;font-weight:750;min-height:32px;padding:5px 9px;border-radius:9px;color:#f3eaff;background:#ffffff15;border:1px solid #ffffff20;cursor:pointer}
+.lyrics-body{min-height:0;flex:1;position:relative;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;scroll-padding-block:35%;padding:clamp(28px,5vh,54px) clamp(23px,6vw,68px) 45vh;line-height:1.48;font-size:clamp(23px,3.2vw,31px);font-weight:720;letter-spacing:-.3px;scrollbar-color:#9776c17a transparent;scrollbar-width:thin}
+.lyrics-body p{margin:0 0 17px}
+.lyrics-body .lyr-line{position:relative;color:#d8cce7;opacity:.5;transform:none;transition:opacity .18s ease,color .18s ease,background .18s ease;line-height:1.42;word-break:normal;overflow-wrap:anywhere;padding:7px 12px;margin-left:-12px;margin-right:-12px;border-radius:12px}
+.lyrics-body .lyr-line.on{opacity:1;color:#fff;transform:none;background:linear-gradient(95deg,rgba(154,111,232,.27),rgba(154,111,232,.03) 92%);text-shadow:0 0 28px #ad84fd46}
+.lyrics-body .lyr-line[data-t]:hover{background:rgba(175,132,238,.16)}
+.lyrics-body.lyrics-plain{padding-top:28px;font-size:clamp(18px,2.4vw,22px);font-weight:520;line-height:1.74;letter-spacing:0}
+.lyrics-body.lyrics-plain p{margin:0 0 13px;opacity:.95;color:#f3eafc;white-space:pre-wrap;overflow-wrap:anywhere}
+.lyrics-body.lyrics-plain .lyr-sec{font-size:11px;font-weight:800;letter-spacing:1.8px;color:#caafff;margin:30px 0 12px}
+.lyrics-body.lyrics-plain .lyr-gap{height:14px}
+.lyrics-body .lyr-traduzione{display:block;font-size:.62em;font-weight:500;line-height:1.45;letter-spacing:0;color:#cdb9ed;margin-top:6px;text-shadow:none}
+.lyrics-pie{flex-shrink:0;display:flex;flex-direction:column;gap:9px;align-items:stretch;padding:11px clamp(22px,5vw,46px) calc(14px + env(safe-area-inset-bottom));margin:0;border-top:1px solid #ffffff20;background:linear-gradient(0deg,#100c22fa,#130d28ee);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.lyrics-playback-time{width:100%;display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:#c6b9db;font-variant-numeric:tabular-nums}
+.lyrics-progress{width:100%;height:4px;border-radius:10px;overflow:hidden;background:#ffffff30}
+#lyricsProgressFill{height:100%;width:0;display:block;background:linear-gradient(90deg,#b9a2ff,#e7c6ff);border-radius:10px;transition:width .14s linear}
+.lyrics-playback-controls{display:flex;justify-content:center;align-items:center;gap:27px;padding-top:4px}
+.lyrics-nav{display:grid;place-items:center;width:43px;height:43px;font-size:16px;border:none;background:transparent;color:#efe9fa;touch-action:manipulation}
+.lyrics-nav.grande{width:60px;height:60px;background:#eee6ff;color:#24123f;font-size:18px;border:0;box-shadow:0 8px 25px #b79bfa30}
+.lyrics-nav:hover{background:#ffffff24}.lyrics-nav.grande:hover{background:#fff}
+.lyrics-overlay button:focus-visible,.lyrics-overlay select:focus-visible,.lyrics-overlay input:focus-visible,.lyrics-body:focus-visible{outline:2px solid #e5c7ff;outline-offset:3px}
+@media(max-width:600px){
+ .lyrics-card{border-left:none;border-right:none}
+ .lyrics-head{padding:calc(12px + env(safe-area-inset-top)) 15px 13px;gap:11px}
+ .lyrics-cover{width:52px;height:52px;flex-basis:52px;border-radius:12px}
+ .lyrics-eyebrow{font-size:8px;letter-spacing:1.6px}
+ .lyrics-title{font-size:19px}
+ .lyrics-sub{font-size:11px}
+ .lyrics-close{width:38px;height:38px;flex-basis:38px;font-size:23px}
+ .lyrics-toolbar{padding:9px 15px;gap:5px;flex-wrap:wrap}
+ .lyrics-mode{font-size:9px;letter-spacing:1.2px}
+ .lyrics-translate-actions{gap:5px}
+ .lyrics-translate-actions select,.lyrics-translate-actions button{min-height:32px;font-size:11px;padding:5px 8px}
+ .lyrics-sync-controls{margin:0 15px;padding:9px 0}
+ .lyrics-sync-heading{margin-bottom:3px;font-size:11px}
+ .lyrics-sync-slider{gap:6px}
+ .lyrics-sync-slider span{font-size:9px}
+ .lyrics-body{font-size:clamp(21px,5.5vw,26px);padding:28px 23px 42vh;line-height:1.42}
+ .lyrics-body.lyrics-plain{font-size:18px;padding:20px 22px 26vh}
+ .lyrics-pie{padding:9px 20px calc(9px + env(safe-area-inset-bottom));gap:7px}
+ .lyrics-playback-controls{gap:20px;padding-top:1px}
+ .lyrics-nav.grande{width:53px;height:53px}
+}
+@media(max-height:690px) and (max-width:600px){
+ .lyrics-head{padding-top:calc(7px + env(safe-area-inset-top));padding-bottom:8px}
+ .lyrics-cover{width:42px;height:42px;flex-basis:42px}
+ .lyrics-sync-controls{padding:6px 0}
+ .lyrics-body{padding-top:16px}
+ .lyrics-pie{gap:5px;padding-top:7px}
+ .lyrics-nav.grande{width:47px;height:47px}
+}
+@media(prefers-reduced-motion:reduce){
+ .lyrics-body{scroll-behavior:auto}
+ .lyrics-body .lyr-line,.lyrics-progress span{transition:none}
+}
