@@ -287,6 +287,44 @@ test("iPhone mobile debug reports why an available cue failed to start",()=>{
  assert.ok(source.includes('status="Mix non avviato: "+mobileMixLastBlocker'));
 });
 
+test("Safari handoff seeks once at readyState 2 only when the target is buffered",()=>{
+ const guard=excerpt("function mobileNativeSeekReady(","function finishMobileMix(");
+ const can=new Function(guard+"return mobileNativeSeekReady;")();
+ const make=(ready,end)=>({
+  readyState:ready,seeking:false,
+  seekable:{length:1,start:()=>0,end:()=>120},
+  buffered:{length:1,start:()=>0,end:()=>end}
+ });
+ assert.equal(can(make(2,12),5),true,"decoded preview target is ready in iOS state 2");
+ assert.equal(can(make(2,4),5),false,"never seek outside Safari buffered media");
+ assert.equal(can(make(1,12),5),false,"do not seek while metadata is unavailable");
+ assert.equal(can(make(3,4),5),true,"normal readyState 3 remains supported");
+ assert.equal(can({...make(2,12),seeking:true},5),false);
+ assert.equal(can({...make(2,12),seekable:{length:0}},5),false);
+ let seeks=0,at=0;
+ const audio={...make(2,12),paused:false,error:null,duration:120,
+  get currentTime(){return at},
+  set currentTime(v){seeks++;at=v}};
+ const state={track:{id:"next"},handingOff:true,entry:4,
+  ctx:{currentTime:1},started:0,rateSpeed:1,rateRamp:0,
+  handoffAt:11000,timeoutAt:19000,clipEnd:18,
+  nativeRetryCount:0,nativeRetryAt:0,nativeRepairAttempted:false};
+ const code=excerpt("function finishMobileMix(","function handoffMobileMix(");
+ const finish=new Function("state","clock",
+  "let mobileActive=state;const Date={now:()=>clock.now};"+
+  "const mobilePlayedSeconds=act=>act.ctx.currentTime-act.started;"+
+  "const stopMobileMix=()=>{};"+
+  guard+code+"return finishMobileMix;")(state,{now:12000});
+ const app={currentId:()=>"next",audio:()=>audio,
+  wantsPlayback:()=>true,playCurrent:()=>Promise.resolve()};
+ finish(app);
+ assert.equal(seeks,1,"first verified correction repairs the iPhone native player");
+ assert.equal(at,5);
+ assert.equal(state.nativeRepairAttempted,true);
+ finish(app);
+ assert.equal(seeks,1,"subsequent ticks must never re-seek the new song");
+});
+
 test("Safari native handoff retries only twice and obeys a deliberate pause",()=>{
  const code=excerpt("function finishMobileMix(","function handoffMobileMix(");
  const counter={now:10000,tries:0,stops:0};
