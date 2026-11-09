@@ -160,3 +160,42 @@ test("new catalog notifications rearm DJ selection without interrupting audio",(
  assert.match(mix,/shuffleGeneration\+\+;shuffleBusy=false;shuffleRunFor="";/);
  assert.match(mix,/for\(const id of recentLibraryIds\)/);
 });
+
+test("a newly imported song enters an already-filled ten-song preview",()=>{
+ const source=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const start=source.indexOf("let _casualeFresche = null;");
+ const end=source.indexOf("  function nextIndex() {",start);
+ assert.ok(start>0&&end>start);
+ const tracks=Array.from({length:18},(_,i)=>({
+  id:i===0?"a":"old-"+i,url:"/audio/"+i+".mp3",aggiunto:Date.now()-86400000
+ }));
+ const f=new Function("tracks",
+  'const LS={get:()=>({}),set:()=>{}},profile="Ste";'+
+  'let _playlistAttiva="",_posizionePlaylist=-1,_playlistSuona=[],'+
+  'favOnly=false,soloMaiAscoltati=false,soloScaricate=false,query="",'+
+  'shuffle=true,currentId="a";'+
+  'const window={MusicBoxRoom:{isActive:()=>false}},renderQueueCount=()=>{};'+
+  'const _listaPerIlSeguito=()=>tracks,_braniPlaylistInRiproduzione=()=>tracks;'+
+  source.slice(start,end)+
+  'return {peek:()=>_listaProssimiCasuali(tracks,10),'+
+  'add:t=>tracks.push(t),next:()=>tracks[_prossimaCasuale(tracks)]?.id};'
+ )(tracks);
+ const original=f.peek();
+ assert.equal(original.length,10);
+ f.add({id:"fresh-new-song",url:"/audio/fresh.mp3",aggiunto:Date.now()});
+ const updated=f.peek();
+ assert.equal(updated.length,10,"preview remains capped to ten");
+ assert.ok(updated.includes("fresh-new-song"),"fresh song must join upcoming preview");
+ assert.equal(updated[0],original[0],"currently scheduled next song stays stable");
+ assert.equal(new Set(updated).size,10,"no duplicates");
+});
+test("Smart Mix exposes the full playable catalog rather than first 80 entries",()=>{
+ const source=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const section=source.slice(source.indexOf("mixCandidates:()=>"),
+  source.indexOf("mixEnqueue:",source.indexOf("mixCandidates:()=>")));
+ assert.doesNotMatch(section,/\.slice\(0,80\)/);
+ const dj=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ assert.match(dj,/const freshImports=unknown\.filter/);
+ assert.match(dj,/const byPriority=new Set/);
+ assert.match(dj,/const recent=recentLibraryIds\.includes\(track\.id\)/);
+});
