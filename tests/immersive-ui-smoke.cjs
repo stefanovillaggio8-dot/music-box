@@ -131,6 +131,9 @@ async function run(){
     seek.dispatchEvent(new Event("change",{bubbles:true}));
    });
    assert.equal(await page.evaluate(()=>window.fakeAudio.currentTime),144);
+   // At 144.00 the next line must NOT enter before its .25s offset.
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("18"));
+   await page.evaluate(()=>{fakeAudio.currentTime=144.4;});
    await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("19"));
    await page.waitForFunction(()=>document.querySelector("#imKaraoke").scrollTop>20,null,{timeout:4000});
    const karaoke=await page.evaluate(()=>document.querySelector("#imKaraoke").scrollTop);
