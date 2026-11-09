@@ -89,6 +89,14 @@ async function run(){
    assert.equal(await page.locator("#imToggle .im-pause-icon").isVisible(),true,
     "Playing state must show the pause bars");
    assert.ok(state.overflow<=3,"no horizontal overflow: "+size.name);
+   await page.evaluate(()=>{
+     fakeAudio.currentTime=8.1;
+     MusicBoxBridge.lyricsDelay=()=>.25;
+   });
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("prova 1"));
+   await page.evaluate(()=>{fakeAudio.currentTime=8.4;});
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("prova 2"));
+   await page.evaluate(()=>{fakeAudio.currentTime=12;});
    const mobile=await page.evaluate(()=>{
     const root=document.getElementById("immersivePanel");
     const rect=id=>{
