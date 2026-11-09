@@ -8966,8 +8966,16 @@ function openProfile() {
   }
 
   function tickLyrics() {
-    if ($("lyricsPanel").hidden || !lyricLines.length || !audio) return;
-    const idx = activeLineIndex((audio.currentTime || 0)-_ritardoTesto(currentId));
+    if ($("lyricsPanel").hidden || !audio) return;
+    const now=Math.max(0,Number(audio.currentTime)||0);
+    const total=Number.isFinite(audio.duration)?Math.max(0,audio.duration):0;
+    const elapsed=$("lyricsElapsed"),remaining=$("lyricsRemaining"),fill=$("lyricsProgressFill");
+    if(elapsed)elapsed.textContent=fmtTime(now);
+    if(remaining)remaining.textContent=fmtTime(Math.max(0,total-now));
+    if(fill)fill.style.width=(total?Math.min(100,now/total*100):0)+"%";
+    _aggiornaComandiTesti();
+    if(!lyricLines.length)return;
+    const idx = activeLineIndex(now-_ritardoTesto(currentId));
     if (idx === lyricActive) return;
     if (lyricActive >= 0 && lyricLines[lyricActive]) lyricLines[lyricActive].classList.remove("on");
     if (idx >= 0) {
@@ -13023,6 +13031,22 @@ $("btnModalitaGym").addEventListener("click", () => {
   });
   $("lyricsBody").addEventListener("wheel", () => {
     lyricsUserScrollAt = Date.now();
+  });
+  $("lyricsBody").addEventListener("click",e=>{
+    const row=e.target.closest?.(".lyr-line[data-t]");
+    if(!row||!audio)return;
+    const time=Number(row.dataset.t)+_ritardoTesto(currentId);
+    if(!Number.isFinite(time))return;
+    const seconds=Math.max(0,Math.min(Number(audio.duration)||time,time));
+    lyricsUserScrollAt=0;
+    if(window.MusicBoxRoom?.isActive?.())
+      window.MusicBoxRoom.control("seek",{seconds});
+    else{
+      try{window.MusicBoxMix?.onSeek?.("user")}catch(_){}
+      try{audio.currentTime=seconds}catch(_){}
+    }
+    lyricActive=-1;
+    tickLyrics();
   });
   $("quickPanel").addEventListener("click", (e) => {
     if (e.target === $("quickPanel")) closeQuick();
