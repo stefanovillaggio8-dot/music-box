@@ -282,7 +282,8 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
- assert.match(app,/requestWordLyrics:\(id\)=>_verificaParoleKaraoke/);
+ assert.match(app,/requestWordLyrics:\(id\)=>\{/);
+ assert.match(app,/_verificaParoleKaraoke\(song\)\.finally/);
  assert.match(app,/engine\?\.fromRecord\(j\)/);
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
