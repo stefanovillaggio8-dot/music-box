@@ -4,9 +4,10 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=1,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,FS=16000;
+const VERSION=2,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
-const active=new Set();
+const active=new Set(),completedInSession=new Set();
 const attempts=new Map();
 const normalized=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
   .toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9']+/g,"").replace(/'/g,"");
@@ -105,26 +106,34 @@ function canRun(){
  return true;
 }
 let worker=null,sequence=0,pending=new Map();
+function stopWorker(reason){
+ const old=worker;worker=null;
+ for(const req of pending.values()){
+  clearTimeout(req.timer);
+  req.reject(Error(reason||"Whisper unavailable"));
+ }
+ pending.clear();
+ try{old?.terminate()}catch(_){}
+}
 function requestWorker(data){
  if(!worker){
-  worker=new Worker("audio-lyrics-worker.js?v=6707",{type:"module"});
+  worker=new Worker("audio-lyrics-worker.js?v=6708",{type:"module"});
   worker.onmessage=e=>{
-   const id=Number(e.data?.id),request=pending.get(id);
-   if(!request)return;
-   pending.delete(id);
-   if(e.data?.error)request.reject(Error(String(e.data.error)));
-   else request.resolve(e.data?.chunks||[]);
+   const id=Number(e.data?.id),req=pending.get(id);
+   if(!req)return;
+   clearTimeout(req.timer);pending.delete(id);
+   if(e.data?.error)req.reject(Error(String(e.data.error)));
+   else req.resolve(Array.isArray(e.data?.chunks)?e.data.chunks:[]);
   };
-  worker.onerror=()=>{
-   for(const req of pending.values())req.reject(Error("Model initialization failed"));
-   pending.clear();try{worker.terminate()}catch(_){}
-   worker=null;
-  };
+  worker.onerror=()=>stopWorker("Whisper could not load");
+  worker.onmessageerror=()=>stopWorker("Invalid Whisper worker message");
  }
  const id=++sequence;
  return new Promise((resolve,reject)=>{
-  pending.set(id,{resolve,reject});
-  worker.postMessage({id,pcm:data},[data.buffer]);
+  const timer=setTimeout(()=>stopWorker("Whisper timed out"),WORKER_TIMEOUT_MS);
+  pending.set(id,{resolve,reject,timer});
+  try{worker.postMessage({id,pcm:data},[data.buffer])}
+  catch(e){stopWorker("Whisper worker message failed")}
  });
 }
 function setStatus(value){
@@ -133,8 +142,8 @@ function setStatus(value){
 }
 function preferredWindows(lines,duration){
  const blocks=[...new Set(lines.filter(l=>!l.words?.length&&Number.isFinite(Number(l.t)))
-  .map(row=>Math.floor(Math.max(0,row.t-.6)/WINDOW)*WINDOW))]
-  .filter(at=>at<duration-3);
+  .map(row=>Math.floor(Math.max(0,row.t-.8)/STEP)*STEP))]
+  .filter(at=>at<duration-3&&Number.isFinite(at));
  // Current verse first, then earlier verses. Never process beyond a
  // bounded number of windows in one foreground listening session.
  const now=Number(window.MusicBoxBridge?.audio?.()?.currentTime)||0;
@@ -144,7 +153,7 @@ function preferredWindows(lines,duration){
 async function analyze(id){
  if(!canRun())return false;
  const bridge=window.MusicBoxBridge;
- if(!bridge||bridge.currentId?.()!==id)return false;
+ if(!bridge||bridge.currentId?.()!==id||completedInSession.has(id))return false;
  const rows=bridge.lyricsData?.()?.synced||[];
  if(rows.length<3||rows.every(row=>row.words?.length>=2))return false;
  const last=Number(sessionStorage.getItem("mb.audioWords.fail."+id)||0);
@@ -155,24 +164,36 @@ async function analyze(id){
   const absolute=new URL(src,document.baseURI);
   if(!/^(https?:|blob:)$/i.test(absolute.protocol))return false;
  const profile=String(bridge.profile?.()||"");
+ const isPhone=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")||
+   (/Macintosh/i.test(navigator.userAgent||"")&&Number(navigator.maxTouchPoints)>1);
+ const limit=isPhone?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES;
+ // An already-visited song/section must not trigger repeated network,
+ // decoding and model downloads as Immersive refreshes every few seconds.
+ const clockDuration=Number(bridge.audio?.()?.duration)||0;
+ const keyFor=at=>"mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
+ const selected=at=>Date.now()-Number(sessionStorage.getItem(keyFor(at))||0)>=6*3600000;
+ if(clockDuration>3&&!preferredWindows(rows,clockDuration).some(selected))return false;
  setStatus("Analisi voce locale: preparo il brano…");
  let ctx;
  try{
   const response=await fetch(absolute.href,{cache:"force-cache"});
   if(!response.ok)throw Error("Music download unavailable");
   const declared=Number(response.headers.get("content-length"));
-  if(declared>MAX_AUDIO_BYTES)throw Error("Track too large for mobile-safe analysis");
+  if(declared>limit)throw Error("Track too large for safe analysis");
   const blob=await response.blob();
-  if(blob.size>MAX_AUDIO_BYTES)throw Error("Track too large");
+  if(blob.size>limit)throw Error("Track too large");
   const bytes=await blob.arrayBuffer();
-  const AudioCtor=window.AudioContext||window.webkitAudioContext;
-  if(!AudioCtor)throw Error("Audio decoding not available");
-  ctx=new AudioCtor();
+  // Offline context does not claim the active iPhone audio session.
+  // Never start a second live AudioContext while Music Box is playing.
+  const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  if(!Offline)throw Error("Offline audio decoder unavailable");
+  ctx=new Offline(1,FS,FS);
   const decoded=await ctx.decodeAudioData(bytes);
-  const duration=Math.min(decoded.duration,3600);
+  const duration=Math.min(Number(decoded.duration)||0,3600);
+  if(!Number.isFinite(duration)||duration<4||
+     duration>(isPhone?300:600))throw Error("Track too long for safe analysis");
   const windows=preferredWindows(rows,duration);
   if(!windows.length)return false;
-  const isPhone=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"");
   // Mobile: only one short window per visit; no full-song inference in
   // the foreground, which could kill the PWA or interrupt Smart Mix.
   const budget=isPhone?1:3;
@@ -180,8 +201,8 @@ async function analyze(id){
   for(const at of windows){
    if(scanned>=budget||active.has(id)===false||document.hidden||
      bridge.currentId?.()!==id)break;
-   const key="mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
-   if(Date.now()-Number(sessionStorage.getItem(key)||0)<6*3600000)continue;
+   const key=keyFor(at);
+   if(!selected(at))continue;
    scanned++;
    const sample=pcmSlice(decoded,at,WINDOW);
    setStatus("Analizzo la voce: "+Math.round(at)+"–"+
@@ -195,24 +216,21 @@ async function analyze(id){
    saved+=Number(stored)||0;
    if(saved>0)setStatus("IA locale: "+saved+" frasi con parole allineate");
   }
-  if(!saved)setStatus("Voce troppo ambigua: mantengo i tempi originali");
+  if(scanned)completedInSession.add(id);
+  if(!saved&&scanned)setStatus("Voce troppo ambigua: mantengo i tempi originali");
   return saved>0;
  }catch(e){
   sessionStorage.setItem("mb.audioWords.fail."+id,String(Date.now()));
   setStatus("Analisi audio non disponibile: karaoke originale conservato");
   return false;
  }finally{
-  try{await ctx?.close()}catch(_){}
-  if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")&&
-     worker&&!pending.size){
-    try{worker.terminate()}catch(_){}
-    worker=null;
-  }
+  try{await ctx?.close?.()}catch(_){}
+  if(isPhone&&worker&&!pending.size)stopWorker("Mobile analysis complete");
  }
 }
 function request(id){
  id=String(id||window.MusicBoxBridge?.currentId?.()||"");
- if(!id||active.has(id)||!canRun())return false;
+ if(!id||active.size||completedInSession.has(id)||!canRun())return false;
  const now=Date.now(),last=attempts.get(id)||0;
  if(now-last<15000)return false;
  attempts.set(id,now);

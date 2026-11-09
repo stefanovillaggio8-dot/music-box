@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6707";
+const CACHE = "spotifynonavraiimieisoldi-v6708";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -45,23 +45,23 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6707",
+  "./style.css?v=6708",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6707",
-  "./audio-lyrics-align.js?v=6707",
-  "./audio-lyrics-worker.js?v=6707",
-  "./app.js?v=6707",
+  "./word-karaoke.js?v=6708",
+  "./audio-lyrics-align.js?v=6708",
+  "./audio-lyrics-worker.js?v=6708",
+  "./app.js?v=6708",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
-  "./mix-intelligente.js?v=6707", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6708", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6707",
+  "./immersive.js?v=6708",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -84,19 +84,19 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6707",
+  "./style.css?v=6708",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6707",
-  "./audio-lyrics-align.js?v=6707",
-  "./audio-lyrics-worker.js?v=6707",
-  "./app.js?v=6707",
+  "./word-karaoke.js?v=6708",
+  "./audio-lyrics-align.js?v=6708",
+  "./audio-lyrics-worker.js?v=6708",
+  "./app.js?v=6708",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
-  "./mix-intelligente.js?v=6707",
+  "./mix-intelligente.js?v=6708",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6707"
+  "./immersive.js?v=6708"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",

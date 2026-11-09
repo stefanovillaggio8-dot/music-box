@@ -278,7 +278,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
- assert.equal(version,"6.707");
+ assert.equal(version,"6.708");
  assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
@@ -288,8 +288,8 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
  assert.match(immersive,/PAROLA PER PAROLA/);
- assert.match(html,/word-karaoke\.js\?v=6707/);
- assert.match(sw,/word-karaoke\.js\?v=6707/);
+ assert.match(html,/word-karaoke\.js\?v=6708/);
+ assert.match(sw,/word-karaoke\.js\?v=6708/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
  assert.match(css,/\.im-line\.active \.karaoke-word/);
 });
@@ -332,8 +332,8 @@ test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio p
  assert.match(audio,/saveAudioWordRows\?\.\(id,aligned\)/);
  assert.match(app,/saveAudioWordRows:\(id,rows\)=>_salvaParoleDallAudio/);
  assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
- assert.match(html,/audio-lyrics-align\.js\?v=6707/);
- assert.match(sw,/audio-lyrics-worker\.js\?v=6707/);
+ assert.match(html,/audio-lyrics-align\.js\?v=6708/);
+ assert.match(sw,/audio-lyrics-worker\.js\?v=6708/);
  assert.match(html,/id="lyricsAudioStatus"/);
 });
 
@@ -373,7 +373,7 @@ test("automatic audio analysis samples at most one window on iPhone when no word
   mixUrl:()=>track.url,
   saveAudioWordRows:async()=>{saved++;return 1}
  };
- const fakeWindow={Worker:MockWorker,AudioContext:MockAudio,MusicBoxBridge:bridge};
+ const fakeWindow={Worker:MockWorker,OfflineAudioContext:MockAudio,AudioContext:class {constructor(){throw Error("Live audio session must never be acquired")}},MusicBoxBridge:bridge};
  const fakeNav={gpu:{},onLine:true,userAgent:"iPhone",connection:{saveData:false}};
  const fakeDoc={hidden:false,baseURI:"https://music.example/",
   getElementById:()=>null};
@@ -404,4 +404,127 @@ test("audio analysis has no external upload endpoint and does not overwrite sour
  assert.match(engine,/if\(!best\)continue/);
  assert.doesNotMatch(engine,/\/api\/transcription|speech-to-text.*fetch/);
  assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+});
+
+
+test("WebGPU Whisper model uses accurate encoder and GPU-safe q4 decoder, not broken q8",()=>{
+ const worker=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-worker.js"),"utf8");
+ assert.match(worker,/encoder_model:"fp32",decoder_model_merged:"q4"/);
+ assert.doesNotMatch(worker,/dtype:"q8"/);
+ assert.match(worker,/return_timestamps:"word"/);
+ assert.match(worker,/Invalid audio segment/);
+ const doc=fs.readFileSync(path.join(__dirname,"..",".github/workflows/dj-mix-tests.yml"),"utf8");
+ for(const p of ["audio-lyrics-worker.js","audio-lyrics-align.js","word-karaoke.js","immersive.js"]){
+  assert.ok(doc.includes("node --check "+p),"syntax must be checked in CI: "+p);
+ }
+});
+test("word-window overlap handles a lyric at 27 s and avoids guessing outside its recording",()=>{
+ const win={},code=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ new Function("window","globalThis",code)(win,win);
+ const api=win.MusicBoxAudioAlign,track={t:27.2,text:"This verse starts now"};
+ const rows=[{t:2,text:"An intro starts here"},track,{t:35,text:"Another phrase begins"}];
+ const fakeWindow={MusicBoxBridge:{audio:()=>({currentTime:27})}};
+ const select=new Function("window",code+";return window.MusicBoxAudioAlign.preferredWindows(arguments[1],arguments[2]);");
+ const starts=select(fakeWindow,rows,90);
+ assert.ok(starts.includes(24),"overlapping windows must analyze 27 s within a 28 s clip");
+ const chunks=[
+  {text:" This",timestamp:[3.3,3.48]},
+  {text:" verse",timestamp:[3.49,3.71]},
+  {text:" starts",timestamp:[3.72,3.93]},
+  {text:" now",timestamp:[3.94,4.3]}
+ ];
+ const good=api.alignWindow(rows,chunks,24,28);
+ assert.equal(good.length,1);
+ assert.equal(good[0].t,27.2);
+ assert.equal(good[0].words[0].t,27.3);
+ const bogus=api.alignWindow(rows,chunks,0,28);
+ assert.equal(bogus.length,0,"timestamps relative to audio windows cannot be treated as absolute");
+});
+test("mobile refuses oversized MP3 before decode and preserves the live music session",async()=>{
+ const src=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ let downloaded=0,decoders=0,workers=0,flag="";
+ class FakeOffline{constructor(){decoders++}}
+ class FakeWorker{constructor(){workers++}}
+ const rows=[{t:2,text:"First few words"},{t:7,text:"Second few words"},{t:12,text:"Third few words"}];
+ const music={id:"oversize",title:"Track",artist:"Artist",url:"song.mp3"};
+ const fakeWindow={
+  Worker:FakeWorker,OfflineAudioContext:FakeOffline,
+  AudioContext:class {constructor(){throw Error("would steal music audio session")}},
+  MusicBoxBridge:{
+   currentId:()=>music.id,allTracks:()=>[music],lyricsData:()=>({synced:rows}),
+   mixUrl:()=>music.url,audio:()=>({duration:180,currentTime:2}),profile:()=>"Ste"
+  }};
+ const fakeNav={gpu:{},onLine:true,userAgent:"iPhone",connection:{saveData:false}};
+ const fakeDoc={hidden:false,baseURI:"https://example.org/",
+  getElementById:()=>({set textContent(v){flag=v}})};
+ const storage={getItem:()=>null,setItem:()=>{}};
+ const fakeFetch=async()=>{
+  downloaded++;
+  return {ok:true,headers:{get:()=>String(9*1024*1024)}};
+ };
+ const api=new Function("window","globalThis","navigator","document","Worker",
+   "sessionStorage","fetch","requestIdleCallback",src+
+   "\nreturn window.MusicBoxAudioAlign;")(fakeWindow,fakeWindow,fakeNav,
+   fakeDoc,FakeWorker,storage,fakeFetch,fn=>fn());
+ assert.equal(api.request(music.id),true);
+ await new Promise(resolve=>setTimeout(resolve,45));
+ assert.equal(downloaded,1);
+ assert.equal(decoders,0);
+ assert.equal(workers,0);
+ assert.match(flag,/non disponibile/);
+ assert.equal(fakeWindow.MusicBoxBridge.currentId(),music.id);
+});
+test("Whisper timeout terminates a hung worker without freezing playback",async()=>{
+ const src=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const buffer=new Float32Array(16000*40);
+ let terminated=0,launched=0,closed=0,stage="";
+ class HangWorker{
+  constructor(){launched++}
+  postMessage(){/* intentionally never responds */}
+  terminate(){terminated++}
+ }
+ class Offline{
+  async decodeAudioData(){return {
+   sampleRate:16000,length:buffer.length,duration:40,numberOfChannels:1,
+   getChannelData:()=>buffer
+  }}
+  async close(){closed++}
+ }
+ const music={id:"stall",title:"Track",artist:"Artist",url:"song.mp3"};
+ const rows=[{t:3,text:"Some words now"},{t:9,text:"Some other words"},{t:18,text:"Another lyric line"}];
+ const win={Worker:HangWorker,OfflineAudioContext:Offline,MusicBoxBridge:{
+  currentId:()=>music.id,allTracks:()=>[music],lyricsData:()=>({synced:rows}),
+  mixUrl:()=>music.url,audio:()=>({currentTime:3,duration:40}),profile:()=>"Ste"
+ }};
+ const nav={gpu:{},userAgent:"iPhone",onLine:true,connection:{saveData:false}};
+ const doc={hidden:false,baseURI:"https://example.org/",getElementById:()=>
+  ({set textContent(x){stage=x}})};
+ const mem=new Map();
+ const storage={getItem:k=>mem.get(k)||null,setItem:(k,v)=>mem.set(k,String(v))};
+ const fetchMock=async()=>({ok:true,headers:{get:()=>String(30000)},
+  blob:async()=>({size:30000,arrayBuffer:async()=>new ArrayBuffer(30000)})});
+ const fastTimeout=(fn,ms)=>setTimeout(fn,ms===90000?12:ms);
+ const api=new Function("window","globalThis","navigator","document","Worker",
+  "sessionStorage","fetch","requestIdleCallback","setTimeout",src+
+  "\nreturn window.MusicBoxAudioAlign;")(win,win,nav,doc,HangWorker,storage,
+    fetchMock,fn=>fn(),fastTimeout);
+ assert.equal(api.request(music.id),true);
+ await new Promise(resolve=>setTimeout(resolve,70));
+ assert.equal(launched,1);
+ assert.equal(terminated,1);
+ assert.equal(closed,1);
+ assert.match(stage,/non disponibile/);
+ assert.ok(mem.has("mb.audioWords.fail."+music.id));
+});
+test("AI timing provenance survives browser restart and does not masquerade as LRCLIB",()=>{
+ assert.match(app,/audioWordSynced:r\.audioWordSynced===true/);
+ assert.match(app,/wordRows:joined,audioWordSynced:true/);
+ assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+ const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
+ assert.match(immersive,/next\?\.audioWordSynced\?"PAROLE · ANALISI AUDIO"/);
+ const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ assert.match(engine,/completedInSession\.has\(id\)/);
+ assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
+ assert.match(engine,/window\.OfflineAudioContext\|\|window\.webkitOfflineAudioContext/);
+ assert.match(engine,/if\(!selected\(at\)\)continue/);
 });

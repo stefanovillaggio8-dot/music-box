@@ -9,15 +9,18 @@ async function getModel(){
    const lib=await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1");
    return lib.pipeline("automatic-speech-recognition",
      "onnx-community/whisper-tiny",
-     {device:"webgpu",dtype:"q8"});
+     {device:"webgpu",dtype:{encoder_model:"fp32",decoder_model_merged:"q4"}});
   })();
  }
  return model;
 }
 self.onmessage=async e=>{
  const id=Number(e.data?.id),pcm=e.data?.pcm;
- if(!Number.isSafeInteger(id)||!(pcm instanceof Float32Array)||
-    pcm.length<16000||pcm.length>16000*30)return;
+ if(!Number.isSafeInteger(id))return;
+ if(!(pcm instanceof Float32Array)||pcm.length<16000||
+    pcm.length>16000*30){
+  self.postMessage({id,error:"Invalid audio segment"});return;
+ }
  try{
   const asr=await getModel();
   const result=await asr(pcm,{return_timestamps:"word",task:"transcribe"});

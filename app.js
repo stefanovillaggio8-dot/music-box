@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.707";
+  const APP_VERSION = "6.708";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -4404,7 +4404,8 @@ try { _pulisciFallitiRisolti(); } catch (e) { /* noop */ }
            finire fra i testi. */
         if (!r || r.id === _ID_RINOMI) continue;
         localLyrics[r.id] = { title:r.title, artist:r.artist||"", text:r.text,
-          synced:r.synced||"", source:r.source||"", wordRows:r.wordRows||[] };
+          synced:r.synced||"", source:r.source||"", wordRows:r.wordRows||[],
+          audioWordSynced:r.audioWordSynced===true };
       }
     } catch (e) {
       localLyrics = {};
@@ -13022,7 +13023,11 @@ window.MusicBoxBridge = {
   requestWordLyrics:(id)=>{
     const song=id||currentId;
     return _verificaParoleKaraoke(song).finally(()=>{
-      if(song===currentId)window.MusicBoxAudioAlign?.request(song);
+      if(song===currentId){
+        const l=currentLyrics();
+        if(l?.synced&&!_righeTestoConParole(l).every(r=>r.words?.length>=2))
+          window.MusicBoxAudioAlign?.request(song);
+      }
     });
   },
   saveAudioWordRows:(id,rows)=>_salvaParoleDallAudio(id,rows),
