@@ -11,6 +11,7 @@ const ctx={
  tracks:[{id:"b-track-2",title:"Existing MP3",file:"songs/track-2.mp3",builtin:true}],
  profile:"Ste",PALETTE:["gradient"],BUILTIN:[],
  _ytForeignCopiesByOwner:Object.create(null),
+ _ytCloudFetchState:Object.create(null),
  _branoEliminato:()=>false,
  _dataAggiuntaBrano:()=>null,
  applicaRinomine(){},_programmaTestiKaraoke(){},
