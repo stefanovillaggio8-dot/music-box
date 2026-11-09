@@ -330,3 +330,44 @@ test("a failed cloud response cannot erase already loaded playable YouTube music
  assert.deepEqual(make.list().map(x=>x.id),["b-track-10"],
   "a successful authoritative response can remove an outdated cloud link");
 });
+
+
+test("published catalog reparse retains all songs and Spotify/cover metadata",()=>{
+ const start=src.indexOf("  const BUILTIN_RE = ");
+ const end=src.indexOf('let _firmaLibreria = "";',start);
+ assert.ok(start>0&&end>start,"catalog parser exists");
+ const parse=new Function("DEFAULT_PROFILE",src.slice(start,end)+"return parseBuiltinFrom;")("Ste");
+ const parsed=parse(src);
+ const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8"));
+ assert.equal(parsed.length,version.brani,"catalog reparse must preserve every published row");
+ for(const id of [205,224,515])
+  assert.ok(parsed.some(t=>t.file==="songs/track-"+id+".mp3"&&t.profile==="Ste"),
+   "published track "+id+" must not disappear");
+ assert.ok(parsed.some(t=>t.profile==="Emanuele"&&t.spotifyId),
+  "Spotify metadata cannot be lost during refresh");
+ assert.ok(parsed.some(t=>t.cover),"cover metadata cannot be lost");
+ const updater=src.slice(src.indexOf("async function checkForNewSongs()"),
+   src.indexOf("  async function openOffline()",src.indexOf("async function checkForNewSongs()")));
+ assert.match(updater,/parsed\.length<BUILTIN\.length/);
+ assert.match(updater,/BUILTIN\.push\(\{\.\.\.b\}\)/);
+});
+
+test("catalog retains distinct published song IDs even with identical renamed titles",()=>{
+ const reducer=excerpt("function _unisciDuplicatiLocali(elenco)","function _duplicatiLocali()");
+ const merge=new Function("profile",
+   "const DEFAULT_PROFILE='Ste';"+
+   "const _duplicatiLocali=()=>[],writeProfileState=()=>{},segnalaErrore=()=>{};"+
+   "const stessoBrano=(a,b)=>a.title===b.title&&a.artist===b.artist;"+
+   "const _haRinomina=()=>false;"+
+   reducer+"return _unisciDuplicatiLocali;")("Ste");
+ const rows=[
+  {id:"b-track-28",title:"Amelie",artist:"Kid Yugi",profile:"Ste",builtin:true},
+  {id:"b-track-205",title:"Amelie",artist:"Kid Yugi",profile:"Ste",builtin:true},
+  {id:"b-track-224",title:"Terri",artist:"Kid Yugi",profile:"Ste",builtin:true},
+  {id:"b-track-515",title:"A Te",artist:"Jovanotti",profile:"Ste",builtin:true},
+  {id:"u-first",title:"Local",artist:"Artist",profile:"Ste",builtin:false},
+  {id:"u-copy",title:"Local",artist:"Artist",profile:"Ste",builtin:false}
+ ];
+ assert.deepEqual(merge(rows).map(t=>t.id),
+ ["b-track-28","b-track-205","b-track-224","b-track-515","u-first"]);
+});
