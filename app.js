@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.695";
+  const APP_VERSION = "6.696";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12647,9 +12647,12 @@ window.MusicBoxBridge = {
         !eGiaCondiviso(t)).map(t=>t.id).sort(),
       cloudLinkIds:visible.filter(t=>!t.builtin&&!!t.youtubeId)
         .map(t=>t.id).sort(),
-      activeFilters:{playlist:_playlistAttiva||null,search:query||"",
-        favorites:!!favOnly,unheard:!!soloMaiAscoltati,downloaded:!!soloScaricate},
-      displayedCount:visibleTracks().length,
+      activeFilters:{playlist:_playlistAttiva||null,
+        search:typeof query==="string"?query:"",
+        favorites:typeof favOnly!=="undefined"&&!!favOnly,
+        unheard:typeof soloMaiAscoltati!=="undefined"&&!!soloMaiAscoltati,
+        downloaded:typeof soloScaricate!=="undefined"&&!!soloScaricate},
+      displayedCount:typeof visibleTracks==="function"?visibleTracks().length:visible.length,
 
       copiedIds:[..._mieiCopiati()].sort(),
       playlistOnlyIds:all.filter(t=>inPlaylist(t.id)).map(t=>t.id).sort(),
