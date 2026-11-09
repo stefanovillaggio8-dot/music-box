@@ -1396,8 +1396,25 @@ async function decode(track,needClip=false){
  // Never decode a full MP3 or download the giant index just to play an
  // optional Safari intro. The native song is always highest priority.
  if(isIOS&&needClip&&!deepIndex)return null;
- if(isIOS&&!needClip&&bridge()?.audio?.()&&!bridge().audio().paused)
-  return deepLookup(track)||cache.get(key)||null;
+ if(isIOS&&!needClip&&bridge()?.audio?.()&&!bridge().audio().paused){
+  const measured=deepLookup(track)||cache.get(key);
+  if(measured)return measured;
+  // Only genuinely new, unindexed tracks may be examined while music
+  // is playing. Earlier code returned null for ALL of them on iPhone.
+  // Do not steal bandwidth from the player when it is barely buffered.
+  const playing=bridge().audio(),remaining=playing.duration-playing.currentTime;
+  let ahead=0;
+  try{for(let i=0;i<playing.buffered.length;i++)
+   if(playing.buffered.start(i)<=playing.currentTime+.5&&
+      playing.buffered.end(i)>=playing.currentTime)
+    ahead=Math.max(ahead,playing.buffered.end(i)-playing.currentTime)
+  }catch(_){}
+  const added=Number(track.aggiunto)||Date.parse(track.aggiunto)||0;
+  const recent=recentLibraryIds.includes(track.id)||
+    (added>0&&Date.now()-added<30*86400000);
+  if(!recent||!mobileDJMayWork()||document.hidden||
+     !Number.isFinite(remaining)||remaining<40||ahead<7)return null;
+ }
  if(!deepIndex)await loadDeepIndex();
  const deep=deepLookup(track);
  if(isIOS&&needClip){
@@ -4809,11 +4826,20 @@ async function intelligentShuffle(app,audio,fromId){
  // When the deep index hasn't covered the library, decode only a bounded,
  // distributed sample. Prefer the already scheduled next songs and spread
  // the remainder across the playlist rather than just alphabetic entries.
- const extra=unknown.length?Math.min(isIOS?3:8,unknown.length):0;
+ const extra=unknown.length?Math.min(isIOS?2:8,unknown.length):0;
  const picked=[];
- // Prioritize newly imported tracks that have not entered the cloud DJ
- // index yet. This does not bypass safety or decode more than the cap.
- for(const id of recentLibraryIds){
+ // A library may already be populated when the DJ module loads, before
+ // the onLibraryChange event can be delivered. Rank newly imported tracks
+ // by their own addedAt metadata as well as runtime notifications.
+ const addedTime=t=>{
+  const raw=t?.aggiunto??t?.addedAt??t?.createdAt;
+  const numeric=Number(raw);
+  return Number.isFinite(numeric)&&numeric>0?numeric:Date.parse(raw)||0;
+ };
+ const freshImports=unknown.filter(t=>addedTime(t)>0)
+  .sort((a,b)=>addedTime(b)-addedTime(a)).slice(0,25);
+ const byPriority=new Set([...recentLibraryIds,...freshImports.map(t=>t.id)]);
+ for(const id of byPriority){
   if(picked.length>=extra)break;
   const t=unknown.find(x=>x.id===id);
   if(t&&!picked.some(x=>x.id===id))picked.push(t);
@@ -4839,7 +4865,7 @@ async function intelligentShuffle(app,audio,fromId){
    if(info)measured.push({track:t,info});
   }
  }
- if(picked.length)await Promise.all([worker(),worker()]);
+ if(picked.length)await Promise.all(isIOS?[worker()]:[worker(),worker()]);
  if(!enabled||app.currentId()!==fromId||
     window.MusicBoxRoom?.isActive()||
     audio.duration-audio.currentTime<22)return {retry:false};
