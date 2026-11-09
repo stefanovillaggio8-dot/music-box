@@ -1,0 +1,48 @@
+name: Music Box lyric sync cloud smoke
+on:
+  push:
+    paths:
+      - '.github/workflows/lyric-cloud-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify cloud CORS, cross-device reads, writes and updates
+        shell: bash
+        run: |
+          node <<'NODE'
+          const assert=require('node:assert/strict');
+          (async()=>{
+            const url='https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-lyric-timing';
+            const origin='https://stefanovillaggio8-dot.github.io';
+            const opt=await fetch(url,{method:'OPTIONS',headers:{Origin:origin}});
+            assert.equal(opt.status,204,'CORS preflight must succeed');
+            assert.equal(opt.headers.get('access-control-allow-origin'),origin);
+            const profile='MusicBoxCheck',id='b-track-ci-sync';
+            const call=async(method,body)=>{
+              const res=await fetch(url+(method==='GET'?'?profile='+profile:''),{
+                method,headers:{Origin:origin,'Content-Type':'application/json'},
+                ...(body?{body:JSON.stringify(body)}:{})
+              });
+              const data=await res.json();
+              assert.equal(res.status,200,JSON.stringify(data));
+              assert.equal(data.ok,true);
+              return data;
+            };
+            await call('POST',{profile,id,delay:1.7});
+            let data=await call('GET');
+            assert.equal(data.offsets.find(x=>x.id===id)?.delay,1.7);
+            await call('POST',{profile,id,delay:-.5});
+            data=await call('GET');
+            assert.equal(data.offsets.find(x=>x.id===id)?.delay,-.5);
+            console.log('OK: shared karaoke timing is readable and writable on a second device');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          NODE
