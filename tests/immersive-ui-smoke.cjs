@@ -82,6 +82,12 @@ async function run(){
    assert.equal(state.lyricMode,"SINCRONIZZATO");
    assert.match(state.active,/prova 2/);
    assert.ok(state.coverWidth>120,"album cover remains visible");
+   // Check the rendered SVG, not just aria labels: assigning .hidden on
+   // SVGElement may be a no-op in Safari, showing both icons at once.
+   assert.equal(await page.locator("#imToggle .im-play-icon").isVisible(),false,
+    "Playing state must hide the play triangle");
+   assert.equal(await page.locator("#imToggle .im-pause-icon").isVisible(),true,
+    "Playing state must show the pause bars");
    assert.ok(state.overflow<=3,"no horizontal overflow: "+size.name);
    const mobile=await page.evaluate(()=>{
     const root=document.getElementById("immersivePanel");
@@ -129,6 +135,17 @@ async function run(){
    await page.waitForFunction(()=>document.querySelector(".im-root").classList.contains("im-paused"));
    assert.equal(await page.evaluate(()=>window.fakeCalls.toggle),1);
    assert.equal(await page.locator("#imToggle").getAttribute("aria-label"),"Riprendi");
+   assert.equal(await page.locator("#imToggle .im-play-icon").isVisible(),true,
+    "Paused state must show only the play triangle");
+   assert.equal(await page.locator("#imToggle .im-pause-icon").isVisible(),false,
+    "Paused state must hide the pause bars");
+   await page.locator("#imToggle").click();
+   await page.waitForFunction(()=>!document.querySelector(".im-root").classList.contains("im-paused"));
+   assert.equal(await page.evaluate(()=>window.fakeCalls.toggle),2);
+   assert.equal(await page.locator("#imToggle .im-play-icon").isVisible(),false,
+    "Resuming must hide the play triangle again");
+   assert.equal(await page.locator("#imToggle .im-pause-icon").isVisible(),true,
+    "Resuming must restore the pause bars");
    await page.locator("#imNext").click();
    await page.waitForFunction(()=>document.getElementById("imTitle").textContent==="Secondo brano");
    assert.equal(await page.evaluate(()=>window.fakeCalls.next),1);
