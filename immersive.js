@@ -115,10 +115,24 @@ function paint(){
  seek.style.setProperty("--im-progress",(Math.max(0,Math.min(1000,Number(seek.value)||0))/10)+"%");
  $("imCurrent").textContent=fmt(position);
  $("imDuration").textContent=fmt(length);
- const paused=!a||a.paused;
- $("imToggle").querySelector(".im-play-icon").hidden=!paused;
- $("imToggle").querySelector(".im-pause-icon").hidden=paused;
- $("imToggle").setAttribute("aria-label",paused?"Riprendi":"Metti in pausa");
+ const room=window.MusicBoxRoom;
+ const paused=room?.isActive?.()&&typeof room.shouldPlay==="function"
+  ? !room.shouldPlay():!a||a.paused;
+ const toggle=$("imToggle");
+ // SVGElement.hidden is not reliably reflected as the HTML hidden
+ // attribute (notably on Safari/WebKit). Set real attributes so the
+ // stylesheet's svg[hidden] rule actually hides the inactive symbol.
+ const playIcon=toggle.querySelector(".im-play-icon");
+ const pauseIcon=toggle.querySelector(".im-pause-icon");
+ if(paused){
+  playIcon.removeAttribute("hidden");
+  pauseIcon.setAttribute("hidden","");
+ }else{
+  playIcon.setAttribute("hidden","");
+  pauseIcon.removeAttribute("hidden");
+ }
+ toggle.setAttribute("aria-label",paused?"Riprendi":"Metti in pausa");
+ toggle.setAttribute("aria-pressed",String(!paused));
  $("immersivePanel").classList.toggle("im-paused",paused);
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
