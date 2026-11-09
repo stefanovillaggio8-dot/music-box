@@ -14,7 +14,7 @@ function make(storage=new Map(),profile="Ste"){
   app.slice(a,b)+
   'return {peek:()=>_listaProssimiCasuali(tracks),next:()=>{const i=_prossimaCasuale(tracks);return i>=0?tracks[i].id:null},'+
   'play:id=>{currentId=id;if(_casualeProgrammate[0]===id)_casualeProgrammate.shift();else _casualeProgrammate=[];_casualeSegnaAscoltata(id)},'+
-  'reset:_azzeraCasuale,context:c=>{_playlistAttiva=c;_azzeraCasuale()}}'
+  'reset:_azzeraCasuale,add:id=>tracks.push({id,url:"x"}),context:c=>{_playlistAttiva=c;_azzeraCasuale()}}'
  )(storage,profile);
 }
 test("every song appears exactly once before a new shuffle cycle",()=>{
@@ -137,4 +137,26 @@ test("stale DJ overlays cannot override a manually changed first song",()=>{
  const natural=mix.slice(mix.indexOf("function naturalEndHandoff("),
   mix.indexOf("async function handoff(",mix.indexOf("function naturalEndHandoff(")));
  assert.match(natural,/const latest=app\.mixNext\?\.\(\)/);
+});
+
+test("songs imported during playback join shuffle without replaying listened tracks",()=>{
+ const s=make(),played=s.next();
+ s.play(played);
+ s.add("fresh-import-7");
+ const upcoming=s.peek();
+ assert.ok(upcoming.includes("fresh-import-7"),
+  "new MP3 is immediately included in the same shuffle cycle");
+ assert.ok(!upcoming.includes(played),
+  "already played items stay excluded when the library grows");
+ assert.equal(new Set(upcoming).size,upcoming.length);
+});
+test("new catalog notifications rearm DJ selection without interrupting audio",()=>{
+ const mix=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const appUpdate=app.slice(app.indexOf("let _djCatalogoPrecedente"),
+  app.indexOf("/* Canzoni gia' suonate",app.indexOf("let _djCatalogoPrecedente")));
+ assert.match(appUpdate,/onLibraryChange/);
+ assert.match(app,/const allowed=new Set\(playlist\.tracks\)/);
+ assert.match(mix,/onLibraryChange:\(change\)=>/);
+ assert.match(mix,/shuffleGeneration\+\+;shuffleBusy=false;shuffleRunFor="";/);
+ assert.match(mix,/for\(const id of recentLibraryIds\)/);
 });
