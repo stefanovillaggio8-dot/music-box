@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - 'sw.js'
       - 'tests/iphone-webkit-smoke.cjs'
+      - 'tests/iphone-offline-shell.test.cjs'
       - '.github/workflows/iphone-webkit-smoke.yml'
   workflow_dispatch:
 permissions:
@@ -26,4 +27,6 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps webkit
       - name: Run live DOM and iPhone path regression in WebKit
-        run: node tests/iphone-webkit-smoke.cjs
+        run: |
+          node tests/iphone-webkit-smoke.cjs
+          node tests/iphone-offline-shell.test.cjs
