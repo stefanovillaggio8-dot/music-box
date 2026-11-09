@@ -336,3 +336,72 @@ test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio p
  assert.match(sw,/audio-lyrics-worker\.js\?v=6707/);
  assert.match(html,/id="lyricsAudioStatus"/);
 });
+
+test("automatic audio analysis samples at most one window on iPhone when no words match",async()=>{
+ const module=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const values=new Map(),get=k=>values.get(k)||null,put=(k,v)=>values.set(k,String(v));
+ let workers=0,segments=0,saved=0,fetched="",closed=false;
+ const track={id:"s",title:"Original",artist:"Singer",url:"songs/test.mp3"};
+ const lines=[
+  {t:4,text:"Three short words"},{t:8,text:"Another three words"},
+  {t:37,text:"More lyrics here"},{t:66,text:"One last verse"}
+ ];
+ const pcm=new Float32Array(16000*95);
+ class MockWorker{
+  constructor(){workers++}
+  postMessage(message){
+   segments++;
+   queueMicrotask(()=>this.onmessage({data:{id:message.id,chunks:[
+    {text:" wrong",timestamp:[4.1,4.3]},
+    {text:" sound",timestamp:[4.4,4.8]},
+    {text:" words",timestamp:[4.9,5.2]}
+   ]}}));
+  }
+  terminate(){}
+ }
+ class MockAudio{
+  async decodeAudioData(){return {sampleRate:16000,duration:95,length:pcm.length,
+    numberOfChannels:1,getChannelData:()=>pcm}}
+  async close(){closed=true}
+ }
+ const bridge={
+  currentId:()=>track.id,
+  audio:()=>({currentTime:4}),
+  profile:()=>"Ste",
+  allTracks:()=>[track],
+  lyricsData:()=>({synced:lines}),
+  mixUrl:()=>track.url,
+  saveAudioWordRows:async()=>{saved++;return 1}
+ };
+ const fakeWindow={Worker:MockWorker,AudioContext:MockAudio,MusicBoxBridge:bridge};
+ const fakeNav={gpu:{},onLine:true,userAgent:"iPhone",connection:{saveData:false}};
+ const fakeDoc={hidden:false,baseURI:"https://music.example/",
+  getElementById:()=>null};
+ const session={getItem:get,setItem:put};
+ const fetchMock=async url=>{
+  fetched=url;
+  return {ok:true,headers:{get:()=>null},blob:async()=>({
+   size:20,arrayBuffer:async()=>new ArrayBuffer(20)
+  })};
+ };
+ const api=new Function("window","globalThis","navigator","document","Worker",
+   "sessionStorage","fetch","requestIdleCallback",module+
+   "\nreturn window.MusicBoxAudioAlign;")(fakeWindow,fakeWindow,fakeNav,
+   fakeDoc,MockWorker,session,fetchMock,callback=>callback());
+ assert.equal(api.request("s"),true);
+ await new Promise(resolve=>setTimeout(resolve,60));
+ assert.equal(workers,1);
+ assert.equal(segments,1,"one 28-second inference max on iPhone, even if every line is rejected");
+ assert.equal(saved,0);
+ assert.equal(fetched,"https://music.example/songs/test.mp3");
+ assert.equal(closed,true);
+ assert.equal(api.request("s"),false,"immediate repeated open does not reload Whisper");
+});
+test("audio analysis has no external upload endpoint and does not overwrite source timestamps",()=>{
+ const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ assert.match(engine,/const budget=isPhone\?1:3/);
+ assert.match(engine,/if\(scanned>=budget/);
+ assert.match(engine,/if\(!best\)continue/);
+ assert.doesNotMatch(engine,/\/api\/transcription|speech-to-text.*fetch/);
+ assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+});
