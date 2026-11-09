@@ -4111,3 +4111,17 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
 @media(prefers-reduced-motion:reduce){
  .lyrics-full-view .lyrics-reading-buttons button:active{transform:none}
 }
+
+/* The full-text reader is the default; switch to timed karaoke explicitly. */
+.lyrics-view-toggle{display:inline-flex;align-items:center;justify-content:center;
+ min-height:36px;padding:7px 12px;background:#b98cde24;color:#e6d4f3;
+ border:1px solid #d4b1f64a;border-radius:11px;font-size:11px;font-weight:750;
+ cursor:pointer;white-space:nowrap;touch-action:manipulation}
+.lyrics-view-toggle:hover{background:#b98cde45}
+.lyrics-view-toggle[hidden]{display:none!important}
+.lyrics-full-view .lyrics-view-toggle{background:#392447;color:#f6e1ff;border-color:#a87bc76a}
+.lyrics-full-view .lyrics-view-toggle:hover{background:#583269}
+@media(max-width:760px){
+ .lyrics-toolbar .lyrics-view-toggle{font-size:10px;padding:6px 9px;min-height:32px}
+ .lyrics-full-view .lyrics-reading-caption strong{max-width:145px}
+}
