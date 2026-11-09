@@ -19,7 +19,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
  assert.match(code,/JSON\.stringify\(beforeNext\)/);
 });
 test("normal handoff is clearly distinguished from real beat mix",()=>{
- assert.match(dj,/Passaggio naturale: nessun beat compatibile certificato/);
+ assert.match(dj,/Sovrapposizione audio avviata/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
  assert.match(dj,/musicBoxVersion:"6\.691"/);
 });
