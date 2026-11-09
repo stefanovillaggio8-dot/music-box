@@ -45,19 +45,20 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css",
-  "./app.js",
-  "./stanza.js",
-  "./amici-online.js",
-  "./discord-presence.js",
+  "./style.css?v=6700",
+  "./fuoco.js?v=6570",
+  "./app.js?v=6700",
+  "./stanza.js?v=6570",
+  "./amici-online.js?v=6570",
+  "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
   "./mix-intelligente.js?v=6700", // Refresh the actual URL used by the PWA on worker install
-  "./mix-monitor-bridge.js",
+  "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
-  "./voice-analysis.js",
-  "./immersive.js",
+  "./voice-analysis.js?v=6570",
+  "./immersive.js?v=6700",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -75,6 +76,21 @@ const CORE = [
   "./icon-192.png",
   "./icon-512.png",
   "./icon-180.png"
+];
+// The offline cache MUST include the exact URLs requested by index.html.
+// A versioned CSS or JS URL was otherwise unavailable after a cold restart.
+const OFFLINE_SHELL = [
+  "./index.html",
+  "./style.css?v=6700",
+  "./fuoco.js?v=6570",
+  "./app.js?v=6700",
+  "./stanza.js?v=6570",
+  "./amici-online.js?v=6570",
+  "./discord-presence.js?v=6570",
+  "./voice-analysis.js?v=6570",
+  "./mix-intelligente.js?v=6700",
+  "./mix-monitor-bridge.js?v=4",
+  "./immersive.js?v=6700"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",
@@ -1086,6 +1102,18 @@ self.addEventListener("install", (event) => {
         .map((r, i) => (r.status === "rejected" ? CORE[i] : null))
         .filter(Boolean);
       if (failed.length) console.warn("Non memorizzate:", failed.join(", "));
+      // Never install an incomplete offline shell (unstyled/empty page).
+      // Secondary metadata may fail, but HTML, CSS and JS must be cached.
+      const absent = [];
+      for (const file of OFFLINE_SHELL) {
+        const url = new URL(file, self.registration.scope).href;
+        const hit = await cache.match(url);
+        if (!hit || !hit.ok || hit.status !== 200) absent.push(file);
+      }
+      if (absent.length) {
+        console.warn("Music Box: shell offline incompleto:", absent.join(", "));
+        throw new Error("App offline incompleta: " + absent.join(", "));
+      }
       cacheSongs(cache);
       /* Ste: "l'app si aggiorna continuamente e ogni volta toglie le
          canzoni". Prima facevo "skipWaiting": la nuova versione si
@@ -1540,7 +1568,12 @@ self.addEventListener("fetch", (event) => {
               }
               return response;
             })
-            .catch((e) => new Response("", { status: 504 }));
+            .catch(async () => {
+              const older = await caches.match(event.request, { ignoreSearch: true })
+                .catch(() => null);
+              return older?.ok && older.status === 200 ?
+                older : new Response("", { status: 504 });
+            });
         }
         /* Cached static assets must NOT trigger full background downloads:
            Safari MP3 buffering had to compete with duplicate app downloads.
@@ -1568,7 +1601,16 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch((e) => caches.match(event.request).then((r) => r || new Response("", { status: 504 })));
+        .catch(async () => {
+          // Legacy workers precached the bare path, but the HTML requests
+          // ?v=... . Reuse the existing file only if offline network fails.
+          const compatible = await c.match(event.request, { ignoreSearch: true })
+            .catch(() => null) ||
+            await caches.match(event.request, { ignoreSearch: true })
+              .catch(() => null);
+          return compatible?.ok && compatible.status === 200 ?
+            compatible : new Response("", { status: 504 });
+        });
     }));
     event.respondWith(lavoro);
     // The response is immediate; waitUntil retains only optional metadata refresh.
