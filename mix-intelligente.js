@@ -3414,6 +3414,28 @@ function mobilePlayedSeconds(act){
   (1-speed)*elapsed*elapsed/(2*ramp);
  return elapsed+(speed-1)*ramp/2;
 }
+// Safari may report readyState 2 even though the native MP3's early
+// seconds are buffered. Repair the handoff only at a seekable, buffered point.
+function mobileNativeSeekReady(audio,at){
+ if(!audio||audio.seeking||audio.readyState<2||
+    !audio.seekable?.length||!Number.isFinite(at))return false;
+ try{
+  let seekable=false;
+  for(let i=0;i<audio.seekable.length;i++){
+   if(audio.seekable.start(i)<=at+.08&&audio.seekable.end(i)>=at-.08){
+    seekable=true;break;
+   }
+  }
+  if(!seekable)return false;
+  if(audio.readyState>=3)return true;
+  // A seek outside buffered audio can stall Safari and restart at zero.
+  for(let i=0;i<(audio.buffered?.length||0);i++){
+   if(audio.buffered.start(i)<=at&&audio.buffered.end(i)>=at+.35)
+    return true;
+  }
+ }catch(_){}
+ return false;
+}
 function finishMobileMix(app){
   const act=mobileActive;
   if(!act||!act.handingOff)return;
@@ -3442,11 +3464,12 @@ function finishMobileMix(app){
     if(Math.abs(drift)>.85){
      // Correct at most once, and only after the source is seekable and
      // playable; never seek repeatedly across waiting/timeupdate events.
-     if(!act.nativeRepairAttempted&&audio.readyState>=3&&
-        audio.seekable?.length){
-      act.nativeRepairAttempted=true;
-      try{audio.currentTime=Math.min(heard,
-        Math.max(0,(audio.duration||Infinity)-.5))}catch(_){}
+     const correctionAt=Math.min(heard,
+        Math.max(0,(audio.duration||Infinity)-.5));
+       if(!act.nativeRepairAttempted&&
+          mobileNativeSeekReady(audio,correctionAt)){
+        act.nativeRepairAttempted=true;
+        try{audio.currentTime=correctionAt}catch(_){}
      }
      return;
     }
