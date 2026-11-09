@@ -3315,16 +3315,19 @@ function _devoVedereBrano(eMio, b) {
   async function _braniYouTubePubblicati(force=false) {
     if (!force && Date.now() - _ytOnlineFetchedAt < 45000) return _ytOnlineCache;
     _ytOnlineFetchedAt = Date.now();
-    const ctrl = new AbortController();
-    const timeout = setTimeout(() => ctrl.abort(), 3500);
-    try {
-      const res = await fetch("https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/online-imports.json?ts=" + Date.now(), {
-        cache: "no-store", signal: ctrl.signal
-      });
-      if (!res.ok) return _ytOnlineCache;
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        _ytOnlineCache = data.filter(x => x && typeof x.title === "string" &&
+    // Same-origin first: Safari, standalone PWA and desktop all see the
+    // published online-imports manifest, including the offline copy.
+    const urls=["./online-imports.json?v="+APP_VERSION,
+      "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/online-imports.json?ts="+Date.now()];
+    for(const url of urls){
+      const ctrl=new AbortController();
+      const timeout=setTimeout(()=>ctrl.abort(),url.startsWith("./")?2800:2400);
+      try{
+        const res=await fetch(url,{cache:"no-store",signal:ctrl.signal});
+        if(!res.ok)continue;
+        const data=await res.json();
+        if(!Array.isArray(data))continue;
+        _ytOnlineCache=data.filter(x => x && typeof x.title === "string" &&
           typeof x.file === "string" && /^songs\/youtube-[A-Za-z0-9_-]{11}\.mp3$/.test(x.file) &&
           typeof x.profile === "string" && x.profile.length <= 40)
           .map(x => ({title:_riparaTestoMetadati(x.title), artist:_riparaTestoMetadati(String(x.artist||"")),
@@ -3332,12 +3335,12 @@ function _devoVedereBrano(eMio, b) {
             audioSource:x.audioSource==="Internet Archive"?"Internet Archive":"",
             license:x.license==="CC0-1.0"?"CC0-1.0":"",
             sourceUrl:typeof x.sourceUrl==="string" && /^https:\/\/archive\.org\/details\/[\w.-]+$/.test(x.sourceUrl)?x.sourceUrl:""}));
-      }
-    } catch (_) { /* offline o manifest non ancora pubblicato */ }
-    finally { clearTimeout(timeout); }
+        return _ytOnlineCache;
+      }catch(_){/* Alternate origin retry, preserve existing catalog. */}
+      finally{clearTimeout(timeout)}
+    }
     return _ytOnlineCache;
   }
-
 
   // Per i link YouTube mostriamo voci nella libreria senza fingere che siano MP3.
   // Ogni profilo ha i suoi link, sincronizzati sul servizio cloud e memorizzati
@@ -9231,6 +9234,25 @@ function openProfile() {
     }
   }
 
+  // Reader controls apply only to full lyrics, never LRC timings.
+  let _scalaLetturaTesti=1;
+  try{_scalaLetturaTesti=Math.max(.85,Math.min(1.35,
+    Number(LS.get("mb.lyricsReadScale",1))||1))}catch(_){}
+  function _applicaDimensioneLettura(scale){
+    _scalaLetturaTesti=Math.max(.85,Math.min(1.35,Math.round(scale*100)/100));
+    const body=$("lyricsBody"),out=$("lyricsFontScale");
+    if(body)body.style.setProperty("--lyrics-read-scale",String(_scalaLetturaTesti));
+    if(out)out.textContent=Math.round(_scalaLetturaTesti*100)+"%";
+    try{LS.set("mb.lyricsReadScale",_scalaLetturaTesti)}catch(_){}
+  }
+  function _aggiornaProgressoLettura(){
+    const panel=$("lyricsPanel"),body=$("lyricsBody"),out=$("lyricsReadingProgress");
+    if(!panel||panel.hidden||!panel.classList.contains("lyrics-full-view")||!body||!out)return;
+    const max=Math.max(0,body.scrollHeight-body.clientHeight);
+    out.textContent=(max<=8?100:Math.max(0,Math.min(100,
+      Math.round(body.scrollTop/max*100))))+"% letto";
+  }
+
   function openLyrics() {
     const l = currentLyrics();
     if (!l) return;
@@ -9256,19 +9278,50 @@ function openProfile() {
         lyricLines.push(p);
       }
     } else {
-      String(l.text || "").split("\n").forEach((line) => {
-        const p = document.createElement("p");
-        p.textContent = line;
-        const trim = line.trim();
-        if (/^\[.*\]$/.test(trim)) p.className = "lyr-sec";
-        else if (!trim) p.className = "lyr-gap";
+      // Readable verses instead of one visually undifferentiated column.
+      let verse=null,verseCount=0,lineCount=0;
+      for(const raw of String(l.text||"").replace(/\r\n?/g,"\n").split("\n")){
+        const line=String(raw||""),trim=line.trim();
+        if(!trim){verse=null;continue}
+        if(/^\[[^\]\n]{1,56}\]$/.test(trim)&&
+           !/^\[\d{1,2}:\d{2}/.test(trim)){
+          verse=null;
+          const heading=document.createElement("h3");
+          heading.className="lyr-sec";
+          heading.textContent=trim.slice(1,-1);
+          body.appendChild(heading);
+          continue;
+        }
+        if(!verse){
+          verse=document.createElement("section");
+          verse.className="lyrics-verse";
+          body.appendChild(verse);verseCount++;
+        }
+        const p=document.createElement("p");
+        p.className="lyr-line-full";
+        p.textContent=line;verse.appendChild(p);lineCount++;
+      }
+      if(!lineCount){
+        const p=document.createElement("p");
+        p.className="lyr-empty";
+        p.textContent="Testo non disponibile per questo brano.";
         body.appendChild(p);
-      });
+      }
+      const counter=$("lyricsReadingCount");
+      if(counter)counter.textContent=lineCount+" righe · "+verseCount+
+        (verseCount===1?" strofa":" strofe");
+      body.scrollTop=0;
     }
     $("lyricsPanel").hidden = false;
     $("lyricsSyncControls").hidden = !synced.length;
     $("lyricsMode").textContent = synced.length?"TESTO SINCRONIZZATO":"TESTO COMPLETO";
     $("lyricsBody").classList.toggle("lyrics-plain",!synced.length);
+    $("lyricsPanel").classList.toggle("lyrics-full-view",!synced.length);
+    if($("lyricsReadingTools"))$("lyricsReadingTools").hidden=!!synced.length;
+    if(!synced.length){
+      _applicaDimensioneLettura(_scalaLetturaTesti);
+      requestAnimationFrame(_aggiornaProgressoLettura);
+    }
     const cover=$("lyricsCover"),track=current();
     if(cover){
       const url=String(track?.cover||"");
@@ -13197,6 +13250,16 @@ $("btnModalitaGym").addEventListener("click", () => {
     if($("lyricsPanel").hidden)syncNoScroll();
   });
   lyricsObserver.observe($("lyricsPanel"),{attributes:true,attributeFilter:["hidden"]});
+  $("lyricsFontDown")?.addEventListener("click",()=>{
+    _applicaDimensioneLettura(_scalaLetturaTesti-.1);_aggiornaProgressoLettura();
+  });
+  $("lyricsFontUp")?.addEventListener("click",()=>{
+    _applicaDimensioneLettura(_scalaLetturaTesti+.1);_aggiornaProgressoLettura();
+  });
+  $("lyricsReadTop")?.addEventListener("click",()=>{
+    $("lyricsBody").scrollTo({top:0,behavior:"smooth"});
+  });
+  $("lyricsBody").addEventListener("scroll",_aggiornaProgressoLettura,{passive:true});
   $("lyricsBody").addEventListener("pointerdown", () => {
     lyricsUserScrollAt = Date.now();
   });
