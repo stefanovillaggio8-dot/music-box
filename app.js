@@ -8964,6 +8964,7 @@ function openProfile() {
     const saved={...old,[id]:value};
     _ritardiTesti.set(key,saved);
     LS.set(key,saved);
+    _segnalaModificaRitardoCloud(id);
     const slider=$("lyricsDelay");
     if(slider)slider.value=String(value);
     const label=$("lyricsDelayValue");
@@ -8978,6 +8979,134 @@ function openProfile() {
     if(slider)slider.value=String(value);
     if(label)label.textContent=(value>0?"+":"")+value.toFixed(1).replace(".",",")+" s";
   }
+
+  /* Condivisione delle correzioni LRC fra Safari, PWA e computer.
+     Solo ID, profilo e ritardo numerico: non inviamo audio o testo. */
+  const _RITARDI_CLOUD="https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-lyric-timing";
+  const _ritardiCloudAggiornati="mb.lyrics.delay.edited.v1.";
+  let _ritardiCloudTimer=null,_ritardiCloudInCorso=null;
+  function _statoSyncRitardo(testo){
+    const el=$("lyricsSyncStatus");
+    if(el)el.textContent=testo;
+  }
+  function _segnalaModificaRitardoCloud(id){
+    const key=_ritardiCloudAggiornati+profile;
+    const previous=LS.get(key,{});
+    const edits=previous&&typeof previous==="object"&&!Array.isArray(previous)?
+      {...previous}:{};
+    edits[id]=Date.now();
+    LS.set(key,edits);
+    _statoSyncRitardo("Modifica locale · sincronizzo...");
+    if(typeof window!=="undefined"&&window.document){
+      clearTimeout(_ritardiCloudTimer);
+      _ritardiCloudTimer=setTimeout(()=>_sincronizzaRitardiTestiCloud(),950);
+    }
+  }
+  async function _richiediRitardiCloud(url,options={}){
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),9000);
+    try{
+      const response=await fetch(url,{...options,cache:"no-store",signal:controller.signal});
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const payload=await response.json();
+      if(!payload?.ok)throw new Error("Sincronizzazione non disponibile");
+      return payload;
+    }finally{clearTimeout(timeout)}
+  }
+  function _valoreRitardoSicuro(x){
+    return typeof x==="number"&&Number.isFinite(x)&&x>=-8&&x<=8;
+  }
+  async function _sincronizzaRitardiTestiCloud(){
+    if(_ritardiCloudInCorso)return _ritardiCloudInCorso;
+    const owner=String(profile||"");
+    if(!owner||typeof navigator!=="undefined"&&navigator.onLine===false)
+      return false;
+    const task=(async()=>{
+      const key="mb.lyrics.delay.v1."+owner;
+      const editedKey=_ritardiCloudAggiornati+owner;
+      let local={...(LS.get(key,{})||{})};
+      let edits={...(LS.get(editedKey,{})||{})};
+      try{
+        const response=await _richiediRitardiCloud(
+          _RITARDI_CLOUD+"?profile="+encodeURIComponent(owner));
+        const remote=new Map();
+        for(const entry of response.offsets||[]){
+          if(!entry||!_valoreRitardoSicuro(Number(entry.delay))||
+              !/^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$/.test(String(entry.id||"")))continue;
+          const id=String(entry.id),at=Number(entry.updatedAt)||0;
+          remote.set(id,{delay:Number(entry.delay),at});
+          if((Number(edits[id])||0)<=at+500){
+            // A newer correction made on another device wins.
+            local[id]=Number(entry.delay);edits[id]=at;
+          }
+        }
+        const fresh=LS.get(editedKey,{})||{};
+        // Never erase a correction performed while this GET was in flight.
+        for(const [id,at] of Object.entries(fresh)){
+          if(Number(at)>(Number(edits[id])||0)){
+            const now=LS.get(key,{})||{};
+            local[id]=now[id];edits[id]=at;
+          }
+        }
+        _ritardiTesti.set(key,local);
+        LS.set(key,local);LS.set(editedKey,edits);
+        const pending=Object.keys(local).filter(id=>
+          /^[A-Za-z0-9][A-Za-z0-9_-]{1,127}$/.test(id)&&
+          _valoreRitardoSicuro(Number(local[id]))&&
+          (!remote.has(id)||(Number(edits[id])||0)>remote.get(id).at+500));
+        for(let i=0;i<pending.length;i+=40){
+          const batch=pending.slice(i,i+40);
+          const changed=await _richiediRitardiCloud(_RITARDI_CLOUD,{
+            method:"POST",headers:{"content-type":"application/json"},
+            body:JSON.stringify({profile:owner,offsets:batch.map(id=>({
+              id,delay:Number(local[id])
+            }))})
+          });
+          const current=LS.get(editedKey,{})||{};
+          for(const entry of changed.offsets||[]){
+            const id=String(entry.id||"");
+            if(!batch.includes(id))continue;
+            const newAt=Number(entry.updatedAt)||Date.now();
+            if((Number(current[id])||0)<=(Number(edits[id])||0)){
+              edits[id]=newAt;
+            }
+          }
+        }
+        // Preserve last-minute local edits made during an upload.
+        const newest=LS.get(editedKey,{})||{};
+        const finalVals=LS.get(key,{})||{};
+        for(const [id,at] of Object.entries(newest))
+          if(Number(at)>(Number(edits[id])||0)){
+            edits[id]=at;local[id]=finalVals[id];
+          }
+        LS.set(key,local);LS.set(editedKey,edits);
+        _ritardiTesti.set(key,local);
+        if(profile===owner){
+          if(document.activeElement!==$("lyricsDelay"))_aggiornaRitardoTestoUI();
+          if(!$("lyricsPanel").hidden){
+            lyricActive=-1;
+            for(const el of lyricLines)el.classList.remove("on");
+            tickLyrics();
+          }
+          _statoSyncRitardo("Sincronizzato su PC e telefono");
+        }
+        return true;
+      }catch(_){
+        if(profile===owner)_statoSyncRitardo("Salvato qui · sync al prossimo collegamento");
+        return false;
+      }
+    })();
+    _ritardiCloudInCorso=task;
+    try{return await task}finally{if(_ritardiCloudInCorso===task)_ritardiCloudInCorso=null}
+  }
+  try{
+    window.addEventListener("online",()=>_sincronizzaRitardiTestiCloud());
+    document.addEventListener("visibilitychange",()=>{
+      if(!document.hidden)_sincronizzaRitardiTestiCloud();
+    });
+    setTimeout(()=>_sincronizzaRitardiTestiCloud(),1800);
+    setInterval(()=>{if(!document.hidden)_sincronizzaRitardiTestiCloud()},180000);
+  }catch(_){/* Sync is optional: lyrics always work without network. */ }
 
   function activeLineIndex(time) {
     let idx = -1;
@@ -9149,7 +9278,9 @@ function openProfile() {
       cover.classList.toggle("lyrics-cover-empty",!safe);
     }
     _aggiornaRitardoTestoUI();
-    document.body.classList.add("no-scroll");
+    syncNoScroll();
+    _statoSyncRitardo("Regolazioni condivise fra dispositivi");
+    _sincronizzaRitardiTestiCloud();
     _aggiornaSfondoTesti();
     _aggiornaComandiTesti();
     tickLyrics();
@@ -9181,7 +9312,11 @@ function openProfile() {
 
   function closeLyrics() {
     $("lyricsPanel").hidden = true;
-    document.body.classList.remove("no-scroll");
+    syncNoScroll();
+    const target=$("btnLyrics");
+    if(target&&typeof target.focus==="function"&&document.activeElement?.closest?.("#lyricsPanel")){
+      try{target.focus({preventScroll:true})}catch(_){}
+    }
   }
 
   /* ---------- Aggiunta / rimozione ---------- */
@@ -13049,8 +13184,19 @@ $("btnModalitaGym").addEventListener("click", () => {
   } catch (e) { /* noop */ }
   $("lyricsClose").addEventListener("click", closeLyrics);
   $("lyricsPanel").addEventListener("click", (e) => {
-    if (e.target === $("lyricsPanel")) closeLyrics();
+    if (e.target === $("lyricsPanel")||e.target === $("lyricsSfondo"))closeLyrics();
   });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&!$("lyricsPanel").hidden){
+      e.preventDefault();closeLyrics();
+    }
+  });
+  // If another overlay changes, synchronize document scrolling to the
+  // actual visible dialogs. Never leave the page unclickable on desktop.
+  const lyricsObserver=new MutationObserver(()=>{
+    if($("lyricsPanel").hidden)syncNoScroll();
+  });
+  lyricsObserver.observe($("lyricsPanel"),{attributes:true,attributeFilter:["hidden"]});
   $("lyricsBody").addEventListener("pointerdown", () => {
     lyricsUserScrollAt = Date.now();
   });
