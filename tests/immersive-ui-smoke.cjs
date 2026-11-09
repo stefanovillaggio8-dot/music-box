@@ -188,11 +188,18 @@ async function run(){
      panel.hidden=false;
      document.getElementById("lyricsTitle").textContent="Brano di prova";
      document.getElementById("lyricsSub").textContent="Artista";
-     document.getElementById("lyricsSyncControls").hidden=false;
+     panel.classList.add("lyrics-full-view");
+     document.getElementById("lyricsSyncControls").hidden=true;
+     document.getElementById("lyricsReadingTools").hidden=false;
      body.classList.add("lyrics-plain");
-     body.replaceChildren(...Array.from({length:65},(_,i)=>{
-       const p=document.createElement("p");p.textContent="Verso completo della canzone "+(i+1);
-       return p;
+     body.replaceChildren(...Array.from({length:14},(_,stanza)=>{
+       const section=document.createElement("section");section.className="lyrics-verse";
+       for(let i=0;i<5;i++){
+         const p=document.createElement("p");p.className="lyr-line-full";
+         p.textContent="Verso completo della canzone "+(stanza*5+i+1);
+         section.appendChild(p);
+       }
+       return section;
      }));
      const card=panel.querySelector(".lyrics-card");
      const footer=panel.querySelector(".lyrics-pie").getBoundingClientRect(),
@@ -208,7 +215,22 @@ async function run(){
    assert.ok(fullLyrics.width<=3,"lyrics sheet must not overflow horizontally");
    assert.ok(fullLyrics.footerBottom<=fullLyrics.viewport+2,"footer must fit phone height");
    assert.ok(fullLyrics.bodyScroll>fullLyrics.bodyHeight,"long plain lyrics must scroll");
-   assert.ok(fullLyrics.sliderVisible&&fullLyrics.modeVisible,"sync controls must remain accessible");
+   assert.ok(fullLyrics.modeVisible,"reading mode must stay visible");
+   const reader=await page.evaluate(()=>{
+     const back=document.getElementById("lyricsBack").getBoundingClientRect();
+     const controls=document.getElementById("lyricsReadingTools").getBoundingClientRect();
+     const body=document.getElementById("lyricsBody");
+     const theme=getComputedStyle(body).backgroundImage;
+     return {backWidth:back.width,backBottom:back.bottom,controlsHeight:controls.height,
+       darkTheme:theme.includes("gradient")&&!theme.includes("rgb(251, 248, 252)"),
+       color:getComputedStyle(body.querySelector(".lyr-line-full")).color};
+   });
+   assert.ok(reader.backWidth>50&&reader.backBottom<=size.height,
+    "Indietro must fit the device viewport "+size.name);
+   assert.ok(reader.controlsHeight>0,"reader controls should be visible "+size.name);
+   assert.ok(reader.darkTheme,"full lyrics must use the dark theme "+size.name);
+   assert.equal(reader.color,"rgb(252, 246, 255)","lines must contrast with dark reading surface");
+   console.log("[LYRICS MOBILE READER]",JSON.stringify({engine,screen:size.name,...reader}));
    assert.deepEqual(errors,[],"Unexpected browser errors: "+size.name);
    console.log("[IMMERSIVE UI]",JSON.stringify({engine,screen:size.name,state,
     karaokeScrolled:karaoke,focus:true,controls:true,errors:errors.length}));
