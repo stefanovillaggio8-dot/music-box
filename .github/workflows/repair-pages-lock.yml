@@ -1,0 +1,18 @@
+name: Release orphaned GitHub Pages deployment
+on:
+  push:
+    paths:
+      - ".github/workflows/repair-pages-lock.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+jobs:
+  cancel-orphan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel old already-aborted Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST "repos/${{ github.repository }}/pages/deployments/9d0f68807639e06a1dd041bee8d999b2c9f91843/cancel"
