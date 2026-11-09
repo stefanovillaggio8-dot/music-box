@@ -21,7 +21,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Sovrapposizione audio avviata/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- assert.match(dj,/musicBoxVersion:"6\.698"/);
+ assert.match(dj,/musicBoxVersion:"6\.699"/);
 });
 
 
@@ -170,4 +170,14 @@ test("device reference exposes real ID differences rather than guessed local cou
  assert.match(app,/ID MANCANTI dal dispositivo/);
  assert.match(app,/await _mbConfrontaCatalogoConWorker\(true\)/);
  assert.match(app,/function _mbConfrontaCatalogoConWorker\(silent=false\)/);
+});
+
+test("cross-device reference includes the shared cloud import records",()=>{
+ assert.match(app,/async function _ytBraniDalCloud\(owner,force=false\)/);
+ assert.match(app,/_ytCloudFetchState\[owner\]=\{ok:true/);
+ assert.match(app,/async function _ytRicaricaLibreriaCloud\(force=false\)/);
+ assert.match(app,/setTimeout\(\(\)=>_ytRicaricaLibreriaCloud\(true\),1400\)/);
+ assert.match(app,/const cloudRows=await _ytBraniDalCloud\(profile,true\)/);
+ assert.match(app,/const refId=b=>b\._cloudReferenceId\|\|_idBranoStabile\(b\)/);
+ assert.match(app,/referenceSource\+=" \+ cloud"/);
 });

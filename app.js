@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.698";
+  const APP_VERSION = "6.699";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3346,6 +3346,7 @@ function _devoVedereBrano(eMio, b) {
   // Ogni profilo ha i suoi link, sincronizzati sul servizio cloud e memorizzati
   // localmente per evitare che una rete lenta faccia sparire i titoli.
   const _ytLinksMemory = Object.create(null);
+  const _ytCloudFetchState=Object.create(null);
   // Copied YouTube audio belongs to the receiving profile's library but
   // references the original cloud job. These rows are never submitted again.
   const _ytForeignCopiesByOwner=Object.create(null);
@@ -3389,14 +3390,14 @@ function _devoVedereBrano(eMio, b) {
     }
     return result;
   }
-  async function _ytBraniDalCloud(owner) {
+  async function _ytBraniDalCloud(owner,force=false) {
     const key = "mb.youtube.links." + owner;
     const cached = _ytLinksMemory[owner];
-    if (cached && Date.now()-cached.time < 25000) return cached.links;
+    if (!force && cached && Date.now()-cached.time < 25000) return cached.links;
     let entries = LS.get(key, []);
     if (!Array.isArray(entries)) entries=[];
     const ctrl = new AbortController();
-    const timeout = setTimeout(() => ctrl.abort(), 4500);
+    const timeout = setTimeout(() => ctrl.abort(), force?8500:4500);
     try {
       const res = await fetch(
         "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue?action=links&profile="
@@ -3406,7 +3407,12 @@ function _devoVedereBrano(eMio, b) {
       if (!json.ok || !Array.isArray(json.links)) throw new Error("Formato link non valido");
       entries=_ytFondiBozze(json.links,owner);
       LS.set(key,entries);
-    } catch (_) { /* fallback locale; non cancella i link gia' presenti */ }
+      _ytCloudFetchState[owner]={ok:true,at:Date.now(),count:json.links.length};
+    } catch (error) {
+      _ytCloudFetchState[owner]={ok:false,at:Date.now(),
+        error:String(error?.message||error).slice(0,100)};
+      /* Keep offline links until the network becomes available. */
+    }
     finally { clearTimeout(timeout); }
     _ytLinksMemory[owner]={links:entries,time:Date.now()};
     return entries;
@@ -13029,17 +13035,42 @@ async function _mbConfrontaCatalogoConWorker(silent=false){
         &&stessoBrano(x,b)))continue;
       expected.push(b);
     }
-    _mbCatalogReference={profile,ids:expected.map(_idBranoStabile),source:referenceSource};
+    // Include actual shared Supabase cloud entries, not just GitHub MP3s.
+    const cloudRows=await _ytBraniDalCloud(profile,true);
+    const publishedVideos=new Set((publishedImports||[]).map(b=>
+      /\/youtube-([A-Za-z0-9_-]{11})\.mp3$/i.exec(b.file||"")?.[1]).filter(Boolean));
+    const seenVideos=new Map();
+    for(const item of cloudRows||[]){
+      const video=String(item?.video_id||"");
+      if(!/^[A-Za-z0-9_-]{11}$/.test(video))continue;
+      const score=item.status==="completed"?4:item.status==="running"?3:
+        item.status==="queued"?2:item.status==="checking"?1:0;
+      const previous=seenVideos.get(video);
+      if(!previous||score>previous.score)seenVideos.set(video,{item,score});
+    }
+    for(const [video,{item}] of seenVideos){
+      if(publishedVideos.has(video))continue;
+      const id="yt-"+video;
+      if(deleted.has(profile+"."+id)||deleted.has(profile+".b-youtube-"+video)||
+         onlyInPlaylist.has(id)||remoteOnly.has(profile+"."+id))continue;
+      expected.push({title:item.track_title||item.title||item.requested_title||
+        "Video YouTube "+video,artist:item.artist||item.artist_name||"",
+        profile,_cloudReferenceId:id});
+    }
+    const refId=b=>b._cloudReferenceId||_idBranoStabile(b);
+    if(_ytCloudFetchState[profile]?.ok)referenceSource+=" + cloud";
+    else referenceSource+=" (cloud non verificato)";
+    _mbCatalogReference={profile,ids:expected.map(refId),source:referenceSource};
     const snap=window.MusicBoxBridge.librarySnapshot();
     const comparison=_mbAggiornaBadgeCatalogo();
     const onDevice=new Set(snap.tracks.map(t=>t.id));
-    const remote=new Set(expected.map(_idBranoStabile));
+    const remote=new Set(expected.map(refId));
     const all=window.MusicBoxBridge.allTracks();
     const inAnyPlaylist=new Set();
     for(const pl of playlists)for(const id of pl.tracks||[])inAnyPlaylist.add(id);
     const reasons=[];
     for(const b of expected){
-      const id=_idBranoStabile(b);
+      const id=refId(b);
       if(onDevice.has(id))continue;
       let reason="",category="unknown";
       if(_branoEliminato(id,profile)){
@@ -15565,28 +15596,37 @@ function _nomePerIlBrano(link, suggerito) {
   $("ytOnlineGo").addEventListener("click",_ytInviaLink);
   // Lo stato si aggiorna anche dopo aver riaperto la PWA dallo stesso telefono.
   setInterval(_ytCheckPending,15000);
-  // Nuovi MP3 pubblicati da un altro telefono/account devono arrivare
-  // anche senza riaprire la PWA. Massimo un controllo ogni minuto.
+  // Sync all completed Supabase jobs when Safari, installed PWA or PC
+  // comes back online. Never rebuild audio blob URLs while playing.
   let _ytSyncBackgroundBusy=false;
-  setInterval(async () => {
-    if(_ytSyncBackgroundBusy||_ytStatusBusy||!navigator.onLine||document.hidden)return;
+  async function _ytRicaricaLibreriaCloud(force=false){
+    if(_ytSyncBackgroundBusy||_ytStatusBusy||
+       navigator.onLine===false||document.hidden)return;
     _ytSyncBackgroundBusy=true;
     const owner=String(profile||DEFAULT_PROFILE);
-    try {
-      const entries=await _ytBraniDalCloud(owner);
+    try{
+      const entries=await _ytBraniDalCloud(owner,force);
       if(owner!==profile)return;
       _ytOnlineFetchedAt=0;
       const published=await _braniYouTubePubblicati();
       if(owner!==profile)return;
-      const hasNew=published.some(x=>x.profile===owner && !tracks.some(t=>t.file===x.file));
-      if(hasNew) await loadAll();
+      const hasNew=published.some(x=>x.profile===owner &&
+        !tracks.some(t=>t.file===x.file));
+      if(hasNew&&(!audio||audio.paused))await loadAll();
       else _ytAggiornaVociLibreria(entries,owner,true);
-    } catch (_) { /* nessun blocco del lettore per un controllo cloud fallito */ }
-    finally {_ytSyncBackgroundBusy=false;}
-  },60000);
-  window.addEventListener("online",_ytCheckPending);
+    }catch(_){/* Cloud outages never interrupt playback. */}
+    finally{_ytSyncBackgroundBusy=false;}
+  }
+  setInterval(()=>_ytRicaricaLibreriaCloud(false),60000);
+  window.addEventListener("online",()=>{
+    _ytCheckPending();
+    setTimeout(()=>_ytRicaricaLibreriaCloud(true),1000);
+  });
   document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible")_ytCheckPending();
+    if(document.visibilityState==="visible"){
+      _ytCheckPending();
+      setTimeout(()=>_ytRicaricaLibreriaCloud(true),1400);
+    }
   });
   setTimeout(_ytCheckPending,9000);
   /* ---------- La guida (il "?" nel menu Altro) ----------
