@@ -4828,6 +4828,12 @@ async function intelligentShuffle(app,audio,fromId){
  // the remainder across the playlist rather than just alphabetic entries.
  const extra=unknown.length?Math.min(isIOS?2:8,unknown.length):0;
  const picked=[];
+ // Reserve one bounded analysis slot for the already scheduled next
+ // track. It must not be starved by a burst of recent imports, especially
+ // on iPhone where only two extra MP3 decodes are affordable.
+ const scheduledUnknown=sequence.slice(0,3)
+  .find(t=>unknown.some(x=>x.id===t.id));
+ if(extra&&scheduledUnknown)picked.push(scheduledUnknown);
  // A library may already be populated when the DJ module loads, before
  // the onLibraryChange event can be delivered. Rank newly imported tracks
  // by their own addedAt metadata as well as runtime notifications.
@@ -4845,6 +4851,7 @@ async function intelligentShuffle(app,audio,fromId){
   if(t&&!picked.some(x=>x.id===id))picked.push(t);
  }
  for(const t of sequence.slice(0,3)){
+  if(picked.length>=extra)break;
   if(unknown.some(x=>x.id===t.id)&&!picked.some(x=>x.id===t.id))picked.push(t);
  }
  for(let i=0;picked.length<extra&&i<extra*3;i++){

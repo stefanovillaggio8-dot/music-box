@@ -91,3 +91,26 @@ test("karaoke timing changes persist locally and sync to the dedicated cloud end
  assert.match(app,/e\.key==="Escape"&&!\$\("lyricsPanel"\)\.hidden/);
  assert.match(app,/function closeLyrics\(\) \{[\s\S]{0,160}syncNoScroll\(\)/);
 });
+
+test("DJ extra analysis budget respects iPhone/desktop limits and admits new imports",()=>{
+ const from=dj.indexOf(" const extra=unknown.length?");
+ const to=dj.indexOf(" const measured=indexed.slice();",from);
+ assert.ok(from>0&&to>from,"candidate selection code must be extractable");
+ const select=new Function("unknown","sequence","recentLibraryIds","isIOS",
+  dj.slice(from,to)+"\\nreturn picked.map(t=>t.id);".replace(/\\n/g,"\n"));
+ const unknown=[
+  {id:"queued",aggiunto:1},
+  {id:"new-a",aggiunto:Date.now()},
+  {id:"new-b",aggiunto:Date.now()-100},
+  ...Array.from({length:50},(_,i)=>({id:"older-"+i,aggiunto:2+i}))
+ ];
+ const next=[unknown[0]];
+ const recent=["new-a","new-b"];
+ const iphone=select(unknown,next,recent,true);
+ assert.equal(iphone.length,2,"iPhone must never decode more than 2 extra MP3s");
+ assert.deepEqual(iphone,["queued","new-a"],"scheduled and newly imported music both stay eligible");
+ const desktop=select(unknown,next,recent,false);
+ assert.ok(desktop.length<=8&&desktop.length>2,"desktop analysis stays bounded");
+ assert.ok(desktop.includes("new-a")&&desktop.includes("new-b"));
+ assert.equal(new Set(desktop).size,desktop.length,"no duplicate candidate decoding");
+});
