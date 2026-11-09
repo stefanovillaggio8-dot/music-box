@@ -1097,8 +1097,8 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 57,
-    "s": 1497,
+    "v": 58,
+    "s": 1498,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1721,8 +1721,8 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 56,
-    "s": 1489,
+    "v": 57,
+    "s": 1490,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -4294,6 +4294,18 @@
     "t": "TUTTO FUORI CONTROLLO ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
+   "[\"superclassico\",\"ernia\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Superclassico",
+    "a": "Ernia"
+   },
+   "m:2026-11|[\"superclassico\",\"ernia\"]": {
+    "v": 0,
+    "s": 3,
+    "t": "Superclassico",
+    "a": "Ernia"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -5073,18 +5085,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"superclassico\",\"ernia\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Superclassico",
-    "a": "Ernia"
-   },
-   "m:2026-11|[\"superclassico\",\"ernia\"]": {
-    "v": 0,
-    "s": 3,
-    "t": "Superclassico",
-    "a": "Ernia"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -6785,14 +6785,14 @@
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "[\"dove ÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 98,
+    "v": 1,
+    "s": 100,
     "t": "Dove ÃÂÃÂÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"dove ÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 98,
+    "v": 1,
+    "s": 100,
     "t": "Dove ÃÂÃÂÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -6966,13 +6966,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
-    "s": 365,
+    "s": 368,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
-    "s": 365,
+    "s": 368,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -7431,6 +7431,30 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
+   },
+   "[\"angela\",\"checco zalone, mitili ignoti\"]": {
+    "v": 1,
+    "s": 16,
+    "t": "Angela",
+    "a": "Checco Zalone, Mitili Ignoti"
+   },
+   "m:2026-11|[\"angela\",\"checco zalone, mitili ignoti\"]": {
+    "v": 1,
+    "s": 16,
+    "t": "Angela",
+    "a": "Checco Zalone, Mitili Ignoti"
+   },
+   "[\"ruggine\",\"mace, chiello, coez\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "RUGGINE",
+    "a": "MACE, chiello, Coez"
+   },
+   "m:2026-11|[\"ruggine\",\"mace, chiello, coez\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "RUGGINE",
+    "a": "MACE, chiello, Coez"
    },
    "[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -8217,30 +8241,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "[\"angela\",\"checco zalone, mitili ignoti\"]": {
-    "v": 1,
-    "s": 16,
-    "t": "Angela",
-    "a": "Checco Zalone, Mitili Ignoti"
-   },
-   "m:2026-11|[\"angela\",\"checco zalone, mitili ignoti\"]": {
-    "v": 1,
-    "s": 16,
-    "t": "Angela",
-    "a": "Checco Zalone, Mitili Ignoti"
-   },
-   "[\"ruggine\",\"mace, chiello, coez\"]": {
-    "v": 1,
-    "s": 13,
-    "t": "RUGGINE",
-    "a": "MACE, chiello, Coez"
-   },
-   "m:2026-11|[\"ruggine\",\"mace, chiello, coez\"]": {
-    "v": 1,
-    "s": 13,
-    "t": "RUGGINE",
-    "a": "MACE, chiello, Coez"
    },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 2,
