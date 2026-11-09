@@ -1794,13 +1794,13 @@
    },
    "[\"tuttok\",\"nayt, 3d\"]": {
     "v": 1,
-    "s": 90,
+    "s": 106,
     "t": "Tuttok",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"tuttok\",\"nayt, 3d\"]": {
     "v": 1,
-    "s": 90,
+    "s": 106,
     "t": "Tuttok",
     "a": "nayt, 3D"
    },
@@ -2592,13 +2592,13 @@
    },
    "[\"occhi mei\",\"thasup, mara sattei\"]": {
     "v": 1,
-    "s": 112,
+    "s": 179,
     "t": "OCCHI MEI",
     "a": "thasup, Mara Sattei"
    },
    "m:2026-11|[\"occhi mei\",\"thasup, mara sattei\"]": {
     "v": 1,
-    "s": 112,
+    "s": 179,
     "t": "OCCHI MEI",
     "a": "thasup, Mara Sattei"
    },
@@ -4014,13 +4014,13 @@
    },
    "[\"le tasche piene di sassi\",\"jovanotti\"]": {
     "v": 2,
-    "s": 279,
+    "s": 285,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
     "v": 2,
-    "s": 279,
+    "s": 285,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
@@ -7871,14 +7871,14 @@
     "a": "nayt, 3D"
    },
    "[\"torna da me\",\"luchÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 94,
+    "v": 1,
+    "s": 121,
     "t": "Torna Da Me",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"torna da me\",\"luchÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 94,
+    "v": 1,
+    "s": 121,
     "t": "Torna Da Me",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -8658,13 +8658,13 @@
    },
    "[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 1,
-    "s": 121,
+    "s": 173,
     "t": "Torna Da Me",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"torna da me\",\"luchÃÂ¨\"]": {
     "v": 1,
-    "s": 121,
+    "s": 173,
     "t": "Torna Da Me",
     "a": "LuchÃÂ¨"
    },
