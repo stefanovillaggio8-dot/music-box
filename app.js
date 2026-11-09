@@ -7994,7 +7994,9 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       _braniPlaylistInRiproduzione():_listaPerIlSeguito();
     const fresh=new Map();
     for(const t of list)if(t?.id&&t.url&&!t.youtubeId)
-      fresh.set(t.id,String(t.url));
+      // Blob URLs and cloud playback URLs may rotate on refresh. Identity
+      // is the stable MP3/track, not a temporary transport URL.
+      fresh.set(t.id,String(t.file||t.id));
     const changed=fresh.size!==_djCatalogoPrecedente.size||
       [...fresh].some(([id,url])=>_djCatalogoPrecedente.get(id)!==url);
     if(!changed)return;
