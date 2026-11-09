@@ -74,3 +74,20 @@ test("both lyrics views share the corrected clock without scaling the LRC",()=>{
  assert.match(html,/id="lyricsMode"/);
  assert.match(html,/id="lyricsProgressFill"/);
 });
+
+test("karaoke timing changes persist locally and sync to the dedicated cloud endpoint",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
+ assert.match(app,/musicbox-lyric-timing/);
+ assert.match(app,/async function _sincronizzaRitardiTestiCloud/);
+ assert.match(app,/_segnalaModificaRitardoCloud\(id\)/);
+ assert.match(app,/window\.addEventListener\("online"/);
+ assert.match(app,/_ritardiCloudAggiornati/);
+ assert.match(html,/id="lyricsSyncStatus"/);
+ // A confirmation must remain above a lyrics overlay, and the sheet
+ // must have a keyboard path out even when the mouse is unavailable.
+ assert.match(css,/\.lyrics-overlay\{z-index:100!important/);
+ assert.match(app,/e\.key==="Escape"&&!\$\("lyricsPanel"\)\.hidden/);
+ assert.match(app,/function closeLyrics\(\) \{[\s\S]{0,160}syncNoScroll\(\)/);
+});
