@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.706";
+  const APP_VERSION = "6.707";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7683,7 +7683,7 @@ box.innerHTML = "";
     const track=tracks.find(t=>t.id===id);
     const existing=id===currentId?currentLyrics():localLyrics[id];
     if(!track?.title||!track.artist||!existing?.synced||
-       existing.wordRows?.some?.(row=>row.words?.length>=2)||
+       (existing.wordRows?.some?.(row=>row.words?.length>=2)&&!existing.audioWordSynced)||
        _ricercheParoleInCorso.has(id)||document.hidden||
        navigator.onLine===false||Date.now()<_lrclibNonPrimaDi)return;
     const key="mb.karaoke.wordSearch.v1."+id;
@@ -7700,12 +7700,40 @@ box.innerHTML = "";
       if(!result?.synced||!result.wordRows?.some?.(r=>r.words?.length>=2))return;
       const updated={...existing,id,title:track.title,artist:track.artist,
         text:result.text||existing.text,synced:result.synced,
-        wordRows:result.wordRows,source:result.source};
+        wordRows:result.wordRows,source:result.source,audioWordSynced:false};
       localLyrics[id]=updated;
       try{if(db)await dbPutLyrics(updated)}catch(_){}
       if(id===currentId&&!$("lyricsPanel").hidden)openLyrics();
     }catch(_){/* Ordinary karaoke keeps working even with no word timing. */}
     finally{_ricercheParoleInCorso.delete(id)}
+  }
+
+  async function _salvaParoleDallAudio(id,rows){
+    if(!id||id!==currentId||!Array.isArray(rows)||!rows.length)return 0;
+    const engine=window.MusicBoxWordKaraoke;
+    const incoming=engine?.normalizeRows(rows)||[];
+    const existing=localLyrics[id]||lyricsData[id];
+    if(!existing?.synced||!incoming.length)return 0;
+    const baseline=parseSynced(existing.synced);
+    if(baseline.length<3)return 0;
+    const previous=_righeTestoConParole(existing);
+    let added=0;
+    const joined=baseline.map((original,i)=>{
+      const kept=previous.find(row=>row.t===original.t&&row.text===original.text);
+      if(kept?.words?.length>=2)return kept; // Never override LRCLIB or earlier proof.
+      const matched=incoming.find(row=>
+        Math.abs(row.t-original.t)<.02&&row.text===original.text&&row.words?.length>=3);
+      if(matched){added++;return matched}
+      return kept||original;
+    });
+    if(!added)return 0;
+    const updated={...existing,id,wordRows:joined,audioWordSynced:true,
+      source:existing.source||"LRC + analisi audio locale"};
+    localLyrics[id]=updated;
+    try{if(db)await dbPutLyrics({...updated,title:updated.title||current()?.title||"",
+      artist:updated.artist||current()?.artist||""})}catch(_){}
+    if(!$("lyricsPanel").hidden&&!_vistaTestiCompleta)openLyrics();
+    return added;
   }
 
   /* Recupero graduale mentre la pagina e' aperta: testi sincronizzati
@@ -9486,7 +9514,9 @@ function openProfile() {
     $("lyricsPanel").hidden = false;
     $("lyricsSyncControls").hidden = !useSynced;
     $("lyricsMode").textContent=useSynced
-      ?(synced.some(r=>r.words?.length>=2)?"KARAOKE · PAROLA PER PAROLA":"TESTO SINCRONIZZATO")
+      ?(synced.some(r=>r.words?.length>=2)
+        ?(l.audioWordSynced?"KARAOKE · ANALISI VOCE (IA)":"KARAOKE · PAROLA PER PAROLA")
+        :"TESTO SINCRONIZZATO")
       :"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
     if(switchView){
@@ -9517,7 +9547,8 @@ function openProfile() {
     _aggiornaComandiTesti();
     tickLyrics();
     _avviaKaraokePrecisione();
-    if(useSynced&&currentId)_verificaParoleKaraoke(currentId).catch(()=>{});
+    if(useSynced&&currentId)
+      window.MusicBoxBridge?.requestWordLyrics?.(currentId)?.catch?.(()=>{});
   }
 
   /* Lo sfondo prende i colori della copertina, come in Liner: senza questo
@@ -12988,11 +13019,18 @@ window.MusicBoxBridge = {
   next:()=>playNext(),
   previous:()=>playById(idBranoA(prevIndex())),
   lyricsDelay:(id)=>_ritardoTesto(id||currentId),
-  requestWordLyrics:(id)=>_verificaParoleKaraoke(id||currentId),
+  requestWordLyrics:(id)=>{
+    const song=id||currentId;
+    return _verificaParoleKaraoke(song).finally(()=>{
+      if(song===currentId)window.MusicBoxAudioAlign?.request(song);
+    });
+  },
+  saveAudioWordRows:(id,rows)=>_salvaParoleDallAudio(id,rows),
   lyricsData:()=>{
     const l=currentLyrics();
     if(!l)return null;
-    return {text:String(l.text||""),synced:_righeTestoConParole(l)};
+    return {text:String(l.text||""),synced:_righeTestoConParole(l),
+      audioWordSynced:!!l.audioWordSynced};
   },
   setRoomPlaybackIntent:(playing)=>{
     // Stato del player coerente con il server e con i controlli cuffie.

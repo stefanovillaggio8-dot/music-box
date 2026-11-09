@@ -73,7 +73,9 @@ function renderLyrics(force){
    karaoke.classList.toggle("approximate",!lyricTimed);
    const status=$("imLyricModeLabel");
    if(status)status.textContent=lyricTimed
-     ?(lyricRows.some(r=>r._elements?.length>=2)?"PAROLA PER PAROLA":"SINCRONIZZATO")
+     ?(lyricRows.some(r=>r._elements?.length>=2)
+       ?(next?.audioWordSynced?"PAROLE · ANALISI AUDIO":"PAROLA PER PAROLA")
+       :"SINCRONIZZATO")
      :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
    if(lyricTimed&&!lyricRows.some(r=>r._elements?.length>=2))
      b?.requestWordLyrics?.(id)?.catch?.(()=>{});

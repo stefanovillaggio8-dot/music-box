@@ -278,7 +278,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
- assert.equal(version,"6.706");
+ assert.equal(version,"6.707");
  assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
@@ -287,8 +287,51 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
  assert.match(immersive,/PAROLA PER PAROLA/);
- assert.match(html,/word-karaoke\.js\?v=6706/);
- assert.match(sw,/word-karaoke\.js\?v=6706/);
+ assert.match(html,/word-karaoke\.js\?v=6707/);
+ assert.match(sw,/word-karaoke\.js\?v=6707/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
  assert.match(css,/\.im-line\.active \.karaoke-word/);
+});
+
+test("offline Whisper word alignment accepts only exact transcript matching LRC line",()=>{
+ const fake={};
+ new Function("window","globalThis",
+   fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8"))(fake,fake);
+ const align=fake.MusicBoxAudioAlign.alignWindow;
+ const rows=[{t:2,text:"Questa è la mia canzone"},{t:8,text:"Un'altra riga ancora"}];
+ const good=[
+  {text:" Questa",timestamp:[2.12,2.51]},
+  {text:" è",timestamp:[2.52,2.63]},
+  {text:" la",timestamp:[2.64,2.75]},
+  {text:" mia",timestamp:[2.76,3.07]},
+  {text:" canzone",timestamp:[3.08,3.63]},
+  {text:" Un'altra",timestamp:[8.13,8.66]},
+  {text:" riga",timestamp:[8.67,9.10]},
+  {text:" ancora",timestamp:[9.11,9.71]}
+ ];
+ const ok=align(rows,good,0,28);
+ assert.equal(ok.length,2);
+ assert.equal(ok[0].words.length,5);
+ assert.equal(ok[0].words[0].t,2.12);
+ assert.equal(ok[0].words.map(w=>w.text).join(""),rows[0].text);
+ assert.equal(align(rows,[{text:" what",timestamp:[2.1,2.3]}],0,28).length,0);
+ const late=good.map(w=>({...w,timestamp:w.timestamp.map(t=>t+2)}));
+ assert.equal(align(rows,late,0,28).length,0,"repeated choruses must not shift lyric times by two seconds");
+});
+test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio playback",()=>{
+ const audio=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const worker=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-worker.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ assert.match(worker,/whisper-tiny/);
+ assert.match(worker,/return_timestamps:"word"/);
+ assert.match(audio,/navigator\.gpu/);
+ assert.match(audio,/window\.MusicBoxBridge\?\.audio/);
+ assert.match(audio,/const budget=isPhone\?1:3/);
+ assert.match(audio,/saveAudioWordRows\?\.\(id,aligned\)/);
+ assert.match(app,/saveAudioWordRows:\(id,rows\)=>_salvaParoleDallAudio/);
+ assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+ assert.match(html,/audio-lyrics-align\.js\?v=6707/);
+ assert.match(sw,/audio-lyrics-worker\.js\?v=6707/);
+ assert.match(html,/id="lyricsAudioStatus"/);
 });
