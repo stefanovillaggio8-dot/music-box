@@ -9727,7 +9727,7 @@ async function removeTrack(id) {
     };
     const choose = (arr) => {
       const matched=arr.filter(validate);
-      const mainArtist=String(artist||"").split(/[,/&]|\\s+feat\\.?\\s+|\\s+ft\\.?\\s+/i)[0].trim();
+      const mainArtist=String(artist||"").split(/[,/&]|\s+feat\.?\s+|\s+ft\.?\s+/i)[0].trim();
       const score=j=>{
         let points=normKey(j.trackName)===normKey(name)?28:0;
         if(normKey(j.artistName)===normKey(mainArtist))points+=9;
