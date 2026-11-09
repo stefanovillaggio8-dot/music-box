@@ -236,3 +236,26 @@ test("PWA copies absent on cloud are published once without restoring deleted so
  assert.match(apply,/setTimeout\(\(\)=>_salvaStatoCondiviso\(\),1000\)/);
  assert.match(src,/await _applicaStatoCondiviso\(j,false\)/);
 });
+
+
+test("manual catalog synchronization re-requests fresh cloud audio and cloud copies",()=>{
+ const load=excerpt("async function loadAll(forceRemote=false)", "/* L'indice pubblicato contiene solo gli ID LRCLIB");
+ assert.match(load,/const ownLinks=await _ytBraniDalCloud\(_nomeYT,forceRemote\)/);
+ assert.match(load,/await _ytCopieDaAltriProfili\(_nomeYT,forceRemote\)/);
+ const copy=excerpt("async function _ytCopieDaAltriProfili(owner,force=false)", "function _ytFondiBozze");
+ assert.match(copy,/await _ytBraniDalCloud\(name,force\)/);
+ assert.match(src,/if \(!force && cached && Date\.now\(\)-cached\.time < 25000\)/);
+ const sync=excerpt("function _sincronizzaCatalogoDispositivi(force=false)", "/* Mette dentro quello che arriva dal Worker");
+ assert.match(sync,/await loadAll\(force\)/);
+ assert.doesNotMatch(sync,/dbDelete|caches\.delete/);
+});
+
+test("cross-device source counts distinguish published catalog from playable and pending cloud entries",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ assert.match(src,/publishedCatalogCount:visible\.filter/);
+ assert.match(src,/cloudAudioCount:visible\.filter\(t=>t\.source==="cloud-audio"\)/);
+ assert.match(src,/cloudPendingCount:visible\.filter\(t=>t\.source==="youtube-link"\)/);
+ assert.match(src,/MP3 cloud/);
+ assert.match(src,/link cloud \(non pronti\)/);
+ assert.match(html,/id="mbCatalogOrigin"/);
+});

@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.699";
+  const APP_VERSION = "6.700";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3350,14 +3350,14 @@ function _devoVedereBrano(eMio, b) {
   // Copied YouTube audio belongs to the receiving profile's library but
   // references the original cloud job. These rows are never submitted again.
   const _ytForeignCopiesByOwner=Object.create(null);
-  async function _ytCopieDaAltriProfili(owner){
+  async function _ytCopieDaAltriProfili(owner,force=false){
     const copied=_mieiCopiatiDi(owner);
     const wanted=new Set([...copied].filter(id=>/^b-youtube-[A-Za-z0-9_-]{11}$/.test(id)));
     if(!wanted.size){_ytForeignCopiesByOwner[owner]=[];return [];}
     const sources=profileList().filter(n=>n!==owner);
     const gathered=await Promise.all(sources.map(async name=>{
       try {
-        const rows=await _ytBraniDalCloud(name);
+        const rows=await _ytBraniDalCloud(name,force);
         return rows.filter(row=>row&&
           wanted.has("b-youtube-"+String(row.video_id||"")))
           .map(row=>({...row,_ytSourceProfile:name}));
@@ -3751,8 +3751,8 @@ function _devoVedereBrano(eMio, b) {
     applicaRinomine();
     try {
       const _nomeYT=String(profile||DEFAULT_PROFILE);
-      const ownLinks=await _ytBraniDalCloud(_nomeYT);
-      await _ytCopieDaAltriProfili(_nomeYT);
+      const ownLinks=await _ytBraniDalCloud(_nomeYT,forceRemote);
+      await _ytCopieDaAltriProfili(_nomeYT,forceRemote);
       if(_nomeYT===profile)_ytAggiornaVociLibreria(ownLinks,_nomeYT,false);
     } catch (_) { /* il caricamento dei link non deve fermare gli MP3 */ }
     /* un brano che avevo segnato come "non scaricato" e' comparso in
@@ -5545,14 +5545,17 @@ function _quantiEliminati() {
     $("trackCount").textContent = label;
     const sources=$("mbCatalogOrigin");
     if(sources){
-      const shared=libraryAll.filter(t=>t.builtin).length;
+      const published=libraryAll.filter(t=>t.builtin&&
+        t.source!=="cloud-audio"&&t.source!=="youtube-link").length;
+      const ready=libraryAll.filter(t=>t.source==="cloud-audio").length;
+      const pending=libraryAll.filter(t=>t.source==="youtube-link").length;
       const localOnly=localDeviceOnly.length;
-      const webLinks=libraryAll.filter(t=>!t.builtin&&!!t.youtubeId).length;
       sources.hidden=!!_playlistAttiva;
-      sources.textContent=shared+" dal catalogo pubblicato"+
+      sources.textContent=published+" dal catalogo GitHub"+
+        (ready?" · "+ready+" MP3 cloud":"")+
+        (pending?" · "+pending+" link cloud (non pronti)":"")+
         (localOnly?" · "+localOnly+" solo su questo dispositivo":"")+
-        (webLinks?" · "+webLinks+" link cloud":"")+
-        " · totale su questo dispositivo "+total+" · v"+APP_VERSION;
+        " · totale "+total+" · v"+APP_VERSION;
     }
     _mbAggiornaBadgeCatalogo();
 
@@ -12659,6 +12662,10 @@ window.MusicBoxBridge = {
       visibleCount:visible.length,localOnlyCount:local.length,
       localOnlyIds:local.map(t=>t.id).sort(),
       sharedVisibleCount:visible.filter(t=>t.builtin).length,
+      publishedCatalogCount:visible.filter(t=>t.builtin&&
+        t.source!=="cloud-audio"&&t.source!=="youtube-link").length,
+      cloudAudioCount:visible.filter(t=>t.source==="cloud-audio").length,
+      cloudPendingCount:visible.filter(t=>t.source==="youtube-link").length,
       localDeviceOnlyIds:visible.filter(t=>!t.builtin&&!t.youtubeId&&
         !eGiaCondiviso(t)).map(t=>t.id).sort(),
       cloudLinkIds:visible.filter(t=>!t.builtin&&!!t.youtubeId)
@@ -13111,9 +13118,10 @@ async function _mbConfrontaCatalogoConWorker(silent=false){
         " · MANCANTI "+(comparison?.missing?.length||0),
       "Profilo "+profile+" · "+(snap.standalone?"App installata":"Browser")+
         " · Worker copie "+copied.size+" · Gym esclusi "+onlyInPlaylist.size,
-      "Origine: "+snap.sharedVisibleCount+" dal catalogo, "+
-        snap.localDeviceOnlyIds.length+" soltanto qui, "+
-        snap.cloudLinkIds.length+" link cloud. "+
+      "Origine: "+snap.publishedCatalogCount+" catalogo GitHub, "+
+        snap.cloudAudioCount+" MP3 cloud, "+
+        snap.cloudPendingCount+" link cloud non pronti, "+
+        snap.localDeviceOnlyIds.length+" soltanto qui. "+
         "Solo playlist: "+snap.playlistOnlyIds.length+".",
       "Filtro attivo: "+JSON.stringify(snap.activeFilters)+
         " · visibili nella vista "+snap.displayedCount+".",
