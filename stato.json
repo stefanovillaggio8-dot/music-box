@@ -2286,13 +2286,13 @@
    },
    "[\"se ne va\",\"nayt, 3d\"]": {
     "v": 5,
-    "s": 172,
+    "s": 213,
     "t": "se ne va",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"se ne va\",\"nayt, 3d\"]": {
     "v": 5,
-    "s": 172,
+    "s": 213,
     "t": "se ne va",
     "a": "nayt, 3D"
    },
@@ -10229,14 +10229,14 @@
     "a": "nayt, 3D"
    },
    "[\"torna da me\",\"luchè\"]": {
-    "v": 0,
-    "s": 94,
+    "v": 1,
+    "s": 121,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
    "m:2026-11|[\"torna da me\",\"luchè\"]": {
-    "v": 0,
-    "s": 94,
+    "v": 1,
+    "s": 121,
     "t": "Torna Da Me",
     "a": "Luchè"
    },
