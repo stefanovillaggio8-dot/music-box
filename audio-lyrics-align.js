@@ -151,12 +151,14 @@ async function analyze(id){
  if(last&&Date.now()-last<RETRY_MS)return false;
  const track=bridge.allTracks?.().find(t=>t.id===id);
  const src=track&&bridge.mixUrl?.(track);
- if(typeof src!=="string"||!src||!/^(https?:|blob:|\/)/i.test(src))return false;
+ if(typeof src!=="string"||!src)return false;
+  const absolute=new URL(src,document.baseURI);
+  if(!/^(https?:|blob:)$/i.test(absolute.protocol))return false;
  const profile=String(bridge.profile?.()||"");
  setStatus("Analisi voce locale: preparo il brano…");
  let ctx;
  try{
-  const response=await fetch(src,{cache:"force-cache"});
+  const response=await fetch(absolute.href,{cache:"force-cache"});
   if(!response.ok)throw Error("Music download unavailable");
   const declared=Number(response.headers.get("content-length"));
   if(declared>MAX_AUDIO_BYTES)throw Error("Track too large for mobile-safe analysis");
@@ -174,12 +176,13 @@ async function analyze(id){
   // Mobile: only one short window per visit; no full-song inference in
   // the foreground, which could kill the PWA or interrupt Smart Mix.
   const budget=isPhone?1:3;
-  let saved=0;
+  let saved=0,scanned=0;
   for(const at of windows){
-   if(saved>=budget||active.has(id)===false||document.hidden||
+   if(scanned>=budget||active.has(id)===false||document.hidden||
      bridge.currentId?.()!==id)break;
    const key="mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
    if(Date.now()-Number(sessionStorage.getItem(key)||0)<6*3600000)continue;
+   scanned++;
    const sample=pcmSlice(decoded,at,WINDOW);
    setStatus("Analizzo la voce: "+Math.round(at)+"–"+
      Math.round(Math.min(duration,at+WINDOW))+" s…");
@@ -198,7 +201,14 @@ async function analyze(id){
   sessionStorage.setItem("mb.audioWords.fail."+id,String(Date.now()));
   setStatus("Analisi audio non disponibile: karaoke originale conservato");
   return false;
- }finally{try{await ctx?.close()}catch(_){}}
+ }finally{
+  try{await ctx?.close()}catch(_){}
+  if(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")&&
+     worker&&!pending.size){
+    try{worker.terminate()}catch(_){}
+    worker=null;
+  }
+ }
 }
 function request(id){
  id=String(id||window.MusicBoxBridge?.currentId?.()||"");
