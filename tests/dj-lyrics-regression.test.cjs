@@ -21,7 +21,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Passaggio naturale: nessun beat compatibile certificato/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- assert.match(dj,/musicBoxVersion:"6\.688"/);
+ assert.match(dj,/musicBoxVersion:"6\.691"/);
 });
 
 
@@ -41,4 +41,36 @@ test("unreachable lyric services enter independent provider cooldown",()=>{
  assert.match(app,/_attendiLyricsOvh\(300000\)/);
  assert.match(app,/_segnaLyricsOvhMancante\(chiaveLyricsOvh\)/);
  assert.match(app,/!\/\[,\/&\]\/\.test\(artistaCompleto\)/);
+});
+
+test("per-track lyric delay is durable and does not alter other songs",()=>{
+ const start=app.indexOf("const _ritardiTesti=new Map();");
+ const end=app.indexOf("function activeLineIndex(",start);
+ assert.ok(start>0&&end>start);
+ const memory=new Map();
+ const make=new Function("store",
+  'const LS={get:(k,d)=>store.has(k)?JSON.parse(store.get(k)):d,'+
+  'set:(k,v)=>store.set(k,JSON.stringify(v))};'+
+  'let profile="Ste",currentId="song-a",lyricActive=-1;'+
+  'const lyricLines=[],$=()=>null,tickLyrics=()=>{};'+
+  app.slice(start,end)+
+  'return {get:id=>_ritardoTesto(id),set:(id,n)=>_impostaRitardoTesto(id,n)};');
+ const one=make(memory);
+ assert.equal(one.get("song-a"),.25,"default correction must delay slightly, never lead");
+ one.set("song-a",1.2);
+ one.set("song-b",-.4);
+ assert.equal(one.get("song-a"),1.2);
+ assert.equal(one.get("song-b"),-.4);
+ assert.equal(make(memory).get("song-a"),1.2,"survive reload");
+ assert.equal(make(memory).get("song-c"),.25,"unrelated track remains at default");
+});
+test("both lyrics views share the corrected clock without scaling the LRC",()=>{
+ const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ assert.match(app,/activeLineIndex\(now-_ritardoTesto\(currentId\)\)/);
+ assert.match(immersive,/const adjusted=time-\(Number\.isFinite\(delay\)\?delay:\.25\)/);
+ assert.doesNotMatch(app,/const fattore = \(dur - 2\) \/ ultimo/);
+ assert.match(html,/id="lyricsDelay"/);
+ assert.match(html,/id="lyricsMode"/);
+ assert.match(html,/id="lyricsProgressFill"/);
 });
