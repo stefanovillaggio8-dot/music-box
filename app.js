@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.702";
+  const APP_VERSION = "6.703";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5214,7 +5214,16 @@ function _unisciDuplicatiLocali(elenco) {
          il filtro generico ne nascondeva 20 (600 invece di 620).
          Questa eccezione non modifica il filtro degli altri profili,
          ne' le eliminazioni volontarie, applicate prima in loadAll(). */
-      if (profile === "Emanuele" && t.builtin && t.profile === "Emanuele") {
+      // Published MP3s with different stable IDs remain distinct even if
+      // user-adjusted metadata makes their display titles identical.
+      if(t.builtin){
+        const index=tenuti.findIndex(x=>x.builtin&&x.id===t.id);
+        if(index>=0){
+          if((t.profile||DEFAULT_PROFILE)===profile &&
+             (tenuti[index].profile||DEFAULT_PROFILE)!==profile)
+            tenuti[index]=t;
+          continue;
+        }
         tenuti.push(t);
         continue;
       }
@@ -14916,32 +14925,24 @@ liberava davvero niente. Cancello solo i brani del profilo corrente: i file dell
   }
 
   let checkingSongs = false;
-  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/track-\d+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"(?:,\s*profile:\s*"((?:[^"\\]|\\.)*)")?(?:,\s*spotifyId:\s*"((?:[^"\\]|\\.)*)",\s*spotifyAlbum:\s*(null|"(?:[^"\\]|\\.)*"),\s*spotifyDurationMs:\s*(null|\d+),\s*spotifyAddedAt:\s*(null|"(?:[^"\\]|\\.)*"),\s*spotifyAddedDisplay:\s*(null|"(?:[^"\\]|\\.)*"))?\s*\}/g;
-
+  // Read the full published catalog, including covers and partial Spotify data.
+  const BUILTIN_RE = /\{\s*title:\s*"((?:[^"\\]|\\.)*)",\s*file:\s*"(songs\/[^"]+\.mp3)",\s*artist:\s*"((?:[^"\\]|\\.)*)"([^{}]*?)\}/g;
   function parseBuiltinFrom(text) {
-    const start = text.indexOf("const BUILTIN = [");
-    if (start < 0) return null;
-    const end = text.indexOf("];", start);
-    if (end < 0) return null;
-    const block = text.slice(start, end);
-    const out = [];
-    const re = new RegExp(BUILTIN_RE.source, "g");
+    const start=text.indexOf("const BUILTIN = [");
+    if(start<0)return null;
+    const end=text.indexOf("];",start);
+    if(end<0)return null;
+    const out=[],re=new RegExp(BUILTIN_RE.source,"g"),block=text.slice(start,end);
     let m;
-    while ((m = re.exec(block))) {
-      const item = {
-        title: JSON.parse('"' + m[1] + '"'),
-        file: m[2],
-        artist: JSON.parse('"' + m[3] + '"'),
-        profile: m[4] ? JSON.parse('"' + m[4] + '"') : DEFAULT_PROFILE
-      };
-      if (m[5]) {
-        item.spotifyId = JSON.parse('"' + m[5] + '"');
-        item.spotifyAlbum = JSON.parse(m[6]);
-        item.spotifyDurationMs = JSON.parse(m[7]);
-        item.spotifyAddedAt = JSON.parse(m[8]);
-        item.spotifyAddedDisplay = JSON.parse(m[9]);
-      }
-      out.push(item);
+    while((m=re.exec(block))){
+      let song;
+      try{song={title:JSON.parse('"'+m[1]+'"'),file:m[2],artist:JSON.parse('"'+m[3]+'"')}}
+      catch(_){return null}
+      const fields=/,\s*(profile|cover|spotifyId|spotifyAlbum|spotifyDurationMs|spotifyAddedAt|spotifyAddedDisplay|expectedDurationSec)\s*:\s*(null|"(?:[^"\\]|\\.)*"|\d+)/g;
+      let f;
+      while((f=fields.exec(m[4]||""))){try{song[f[1]]=JSON.parse(f[2])}catch(_){}}
+      song.profile=song.profile||DEFAULT_PROFILE;
+      out.push(song);
     }
     return out;
   }
@@ -14983,6 +14984,7 @@ async function checkForNewSongs() {
     if (ora - _ultimoControllo < 20000) return;
     _ultimoControllo = ora;
     checkingSongs = true;
+    let expectedPublishedCount=0;
     try {
       /* Primo il file leggero: se la versione e' quella che ho gia', ho
          finito e non scarico nient'altro. */
@@ -14990,6 +14992,7 @@ async function checkForNewSongs() {
         const risposta = await fetch("versione.json?t=" + ora, { cache: "no-store" });
         if (risposta.ok) {
           const piccolo = await risposta.json();
+          expectedPublishedCount=Number(piccolo.brani)||0;
           const mia = String(typeof APP_VERSION !== "undefined" ? APP_VERSION : "");
           const suoi = String(piccolo.versione || "");
           const stessi = !!mia && !! suoi && mia.split(".").slice(0, 2).join(".") === suoi.split(".").slice(0, 2).join(".");
@@ -15009,7 +15012,12 @@ async function checkForNewSongs() {
       if (!res.ok) return;
       const text = await res.text();
       const parsed = parseBuiltinFrom(text);
-      if (!parsed || !parsed.length) return;
+      // A partial/stale response may not replace the user's loaded catalog.
+      if(!parsed||!parsed.length||parsed.length<BUILTIN.length||
+         (expectedPublishedCount>0&&parsed.length<expectedPublishedCount)){
+        console.warn("Music Box: incomplete catalog update, retaining prior songs");
+        return;
+      }
       /* Confronto col sito solo per i brani che SONO nella mia libreria (i miei piu'
          quelli che ho copiato dagli altri). Se guardassi tutti i brani del
          sito, le canzoni degli altri sembrerebbero sparite e potrei essere
@@ -15043,7 +15051,7 @@ async function checkForNewSongs() {
 
       BUILTIN.length = 0;
       for (const b of parsed) {
-        BUILTIN.push({ title: b.title, file: b.file, artist: b.artist, profile: b.profile });
+        BUILTIN.push({...b});
       }
       for (const t of localBuiltin) {
         const file = t.file || t.url;
