@@ -47,16 +47,30 @@ async function run(){
    return required.length;
   },release,{timeout});
   assert.ok(await shell.jsonValue(),"install must precache exact versioned shell");
+  // A downloaded MP3 lives in a separate persistent profile cache and must
+  // survive a cold restart while the app shell changes across releases.
+  await page.evaluate(async()=>{
+   const cache=await caches.open("spotifynonavraiimieisoldi-brani-Ste");
+   await cache.put(new URL("songs/track-2.mp3",location.href),
+    new Response(new Uint8Array([73,68,51]),{status:200,
+     headers:{"Content-Type":"audio/mpeg"}}));
+  });
   await page.close();
   await context.setOffline(true);
   const cold=await context.newPage();
   await cold.goto(url,{waitUntil:"domcontentloaded",timeout});
   await cold.waitForFunction(()=>!!window.MusicBoxBridge,{timeout:30000});
+  await cold.waitForFunction(()=>window.MusicBoxBridge?.librarySnapshot?.().totalLoaded>200,
+   {timeout:30000});
   const offline=await cold.evaluate(async(rev)=>{
    const css=await fetch("style.css?v="+rev);
    const js=await fetch("app.js?v="+rev);
    const legacy=await fetch("style.css?v=unvisited-offline-variant");
+   const saved=await (await caches.open("spotifynonavraiimieisoldi-brani-Ste"))
+     .match(new URL("songs/track-2.mp3",location.href));
    return {background:getComputedStyle(document.body).backgroundColor,
+    libraryCount:window.MusicBoxBridge.librarySnapshot().totalLoaded,
+    downloadStillSaved:!!saved&&saved.status===200,
     cssOk:css.ok,jsOk:js.ok,legacyCssOk:legacy.ok,
     cssBytes:(await css.text()).length,jsBytes:(await js.text()).length,
     legacyCssBytes:(await legacy.text()).length,
@@ -67,8 +81,11 @@ async function run(){
    "offline asset requests must be served from the cache");
   assert.ok(offline.cssBytes>20000&&offline.jsBytes>200000&&
    offline.legacyCssBytes>20000,"offline should load full CSS and JS");
-  assert.ok(offline.stylesheetCount>0&&offline.playerLoaded,
-   "offline page must be styled and app.js must execute");
+  assert.ok(offline.stylesheetCount>0&&offline.playerLoaded&&
+   offline.background!=="rgba(0, 0, 0, 0)"&&offline.libraryCount>200,
+   "offline app must have styles and a populated library, not giant icons or zero songs");
+  assert.equal(offline.downloadStillSaved,true,
+   "saved MP3s must remain in the profile cache after offline restart");
   console.log("[IPHONE OFFLINE SHELL]",JSON.stringify(offline));
   await context.close();
  }finally{if(browser)await browser.close();server.close()}
