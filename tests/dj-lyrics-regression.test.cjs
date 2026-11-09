@@ -21,7 +21,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Sovrapposizione audio avviata/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- assert.match(dj,/musicBoxVersion:"6\.696"/);
+ assert.match(dj,/musicBoxVersion:"6\.697"/);
 });
 
 
@@ -140,4 +140,22 @@ test("shared catalog reconciliation avoids playback and identifies local-only it
  assert.match(app,/\(audio&&!audio\.paused\)/);
  assert.match(app,/const urls=\["\.\/online-imports\.json\?v="/);
  assert.match(html,/id="mbCatalogOrigin"/);
+});
+
+test("lyrics reading mode has a visible back button and a dark premium theme",()=>{
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
+ assert.match(html,/<button[^>]*id="lyricsBack"[^>]*>← Indietro<\/button>/);
+ assert.match(app,/\$\("lyricsBack"\)\?\.addEventListener\("click", closeLyrics\)/);
+ assert.match(css,/\.lyrics-back-btn\{/);
+ assert.match(css,/\/\* Music Box 6\.697 — Velvet Nights lyrics experience/);
+ assert.match(css,/\.lyrics-full-view \.lyrics-body\.lyrics-plain\{\s*background:radial-gradient/);
+ assert.match(css,/@media\(prefers-reduced-motion:reduce\)/);
+});
+test("private device-only MP3s remain visible but are not presented as synced",()=>{
+ assert.match(app,/const localDeviceOnly=libraryAll\.filter\(t=>!t\.builtin/);
+ assert.match(app,/const commonCount=Math\.max\(0,total-localDeviceOnly\.length\)/);
+ assert.match(app,/condivisi · \+"/);
+ assert.match(app,/totale su questo dispositivo "\+total/);
+ assert.match(app,/localDeviceOnlyIds:visible\.filter/);
 });

@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.696";
+  const APP_VERSION = "6.697";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -5526,18 +5526,27 @@ function _quantiEliminati() {
     if (inRevisione - audioErrati - versioniNonOriginali > 0) label += ", " + (inRevisione - audioErrati - versioniNonOriginali) + " da verificare (audio non confermato)";
     if (mine) label += ", " + mine + (mine === 1 ? " solo tuo" : " solo tuoi");
     if (favOnly || soloMaiAscoltati || soloScaricate || query) label = n + " di " + total + (total === 1 ? " brano" : " brani");
+    // Keep local-only audio visible but do not count it as synchronized.
+    // The number in the main title describes the shared library, while the
+    // detail line explains additional tracks unique to this PWA/browser.
+    const localDeviceOnly=libraryAll.filter(t=>!t.builtin&&!t.youtubeId&&
+      !eGiaCondiviso(t));
+    const commonCount=Math.max(0,total-localDeviceOnly.length);
+    if(!_playlistAttiva&&!favOnly&&!soloMaiAscoltati&&!soloScaricate&&!query&&
+       localDeviceOnly.length)
+      label=profile+": "+commonCount+" condivisi · +"+
+        localDeviceOnly.length+" solo qui";
     $("trackCount").textContent = label;
     const sources=$("mbCatalogOrigin");
     if(sources){
       const shared=libraryAll.filter(t=>t.builtin).length;
-      const localOnly=libraryAll.filter(t=>!t.builtin&&!t.youtubeId&&
-        !eGiaCondiviso(t)).length;
+      const localOnly=localDeviceOnly.length;
       const webLinks=libraryAll.filter(t=>!t.builtin&&!!t.youtubeId).length;
       sources.hidden=!!_playlistAttiva;
       sources.textContent=shared+" dal catalogo pubblicato"+
         (localOnly?" · "+localOnly+" solo su questo dispositivo":"")+
         (webLinks?" · "+webLinks+" link cloud":"")+
-        " · v"+APP_VERSION;
+        " · totale su questo dispositivo "+total+" · v"+APP_VERSION;
     }
 
     /* Il bottone dell'ordinamento mostra sempre la scelta attuale. */
@@ -13278,6 +13287,7 @@ $("btnModalitaGym").addEventListener("click", () => {
     }
   } catch (e) { /* noop */ }
   $("lyricsClose").addEventListener("click", closeLyrics);
+  $("lyricsBack")?.addEventListener("click", closeLyrics);
   $("lyricsPanel").addEventListener("click", (e) => {
     if (e.target === $("lyricsPanel")||e.target === $("lyricsSfondo"))closeLyrics();
   });

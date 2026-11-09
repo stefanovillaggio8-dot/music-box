@@ -4125,3 +4125,190 @@ color:var(--txt);font-size:13px;font-weight:850;cursor:pointer}
  .lyrics-toolbar .lyrics-view-toggle{font-size:10px;padding:6px 9px;min-height:32px}
  .lyrics-full-view .lyrics-reading-caption strong{max-width:145px}
 }
+
+
+/* Music Box 6.697 — Velvet Nights lyrics experience. The full reader is
+   an atmospheric page, not a white sheet. All visual effects are CSS-only. */
+.lyrics-overlay.lyrics-full-view{
+  background:radial-gradient(ellipse 95% 52% at 45% -12%,#6d3d8e66,transparent 68%),
+             linear-gradient(145deg,#140c24,#0d0a18 70%);
+  color:#f9f3ff;
+}
+.lyrics-full-view .lyrics-sfondo{filter:blur(92px) saturate(135%);opacity:.26!important}
+.lyrics-full-view .lyrics-card{
+  background:linear-gradient(145deg,#271937f5,#181128f6 55%,#130e20fa);
+  border-color:#d4a9f738;box-shadow:0 22px 75px #06020eca,0 0 70px #ad69f41c;
+}
+.lyrics-full-view .lyrics-card:before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 16% 11%,#e5b1ff14,transparent 34%),
+             radial-gradient(circle at 88% 70%,#bc7bfb14,transparent 30%);
+}
+.lyrics-full-view .lyrics-head,.lyrics-full-view .lyrics-toolbar,
+.lyrics-full-view .lyrics-reading-tools,.lyrics-full-view .lyrics-body,
+.lyrics-full-view .lyrics-pie{position:relative;z-index:1}
+.lyrics-full-view .lyrics-eyebrow{color:#d5b0f1}
+.lyrics-full-view .lyrics-head-info .lyrics-title{color:#fff7fe;text-shadow:0 3px 26px #a465dd40}
+.lyrics-full-view .lyrics-toolbar{
+  gap:9px;background:linear-gradient(90deg,#2d1b40aa,#1b122cd9);
+  border-bottom:1px solid #d1a6ec30;
+}
+.lyrics-back-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  min-height:36px;border-radius:999px;padding:7px 13px;
+  border:1px solid #d8b0ff6b;color:#f9f0ff;
+  background:linear-gradient(130deg,#7a4c9e99,#4a2f6b99);
+  box-shadow:0 6px 18px #a465dd20;
+  font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer;
+  touch-action:manipulation;
+}
+.lyrics-back-btn:hover{background:#7954a8}
+.lyrics-back-btn:active{transform:scale(.96)}
+.lyrics-full-view .lyrics-mode{
+  background:#a66edc29;border:1px solid #c89af046;color:#ead4ff;
+  box-shadow:inset 0 1px 0 #ffffff10;
+}
+.lyrics-full-view .lyrics-reading-tools{
+  background:linear-gradient(150deg,#2a1a40d0,#1a132acc);
+  border-top:1px solid #c09cef26;
+}
+.lyrics-full-view .lyrics-reading-caption span{
+  color:#d6b9ee;letter-spacing:1.9px;
+}
+.lyrics-full-view .lyrics-reading-caption strong{color:#fff6ff}
+.lyrics-full-view .lyrics-reading-caption small{color:#c7acdd}
+.lyrics-full-view .lyrics-reading-buttons button{
+  border-radius:11px;color:#f3e3ff;border:1px solid #c596ec3b;
+  background:linear-gradient(145deg,#62417fa8,#36234e);
+  box-shadow:inset 0 1px 0 #ffffff20,0 3px 12px #09021430;
+}
+.lyrics-full-view .lyrics-reading-buttons button:hover{background:#725298}
+.lyrics-full-view #lyricsFontScale{color:#d7baf0}
+.lyrics-full-view .lyrics-body.lyrics-plain{
+  background:radial-gradient(circle at 6% 2%,#70408a42,transparent 35%),
+             radial-gradient(circle at 100% 80%,#6c3b8640,transparent 42%),
+             linear-gradient(162deg,#241931 0%,#160f24 55%,#120e21 100%);
+  color:#faf2ff;border-left:1px solid #daaeef2b;
+  box-shadow:inset 12px 0 28px #0b071338;
+  scrollbar-color:#986ec38a #150f22;
+}
+.lyrics-full-view .lyrics-verse{
+  position:relative;overflow:hidden;
+  background:linear-gradient(137deg,#69477f75,#35254cdb 55%,#30203ff0);
+  border:1px solid #c99bea65;
+  border-left:3px solid #dc9eff;
+  box-shadow:inset 0 1px 0 #ffffff25,0 10px 30px #06020e55,
+             0 0 22px #b36de91a;
+  transition:transform .25s ease,box-shadow .3s ease,border-color .3s ease;
+  animation:lyrCardReveal .45s ease-out both;
+}
+.lyrics-full-view .lyrics-verse:before{
+  content:"✧";position:absolute;top:8px;right:15px;
+  font-size:16px;color:#e4bdff81;pointer-events:none;
+}
+.lyrics-full-view .lyrics-verse:nth-of-type(3n){border-left-color:#f7c89a}
+.lyrics-full-view .lyrics-verse:nth-of-type(3n):before{color:#f7d4b18b}
+.lyrics-full-view .lyrics-verse:nth-of-type(4n + 1){animation-delay:.05s}
+.lyrics-full-view .lyrics-verse:nth-of-type(4n + 2){animation-delay:.1s}
+.lyrics-full-view .lyrics-verse:nth-of-type(4n + 3){animation-delay:.15s}
+.lyrics-full-view .lyrics-body.lyrics-plain .lyr-line-full{
+  color:#fcf6ff;font-weight:555;text-shadow:0 2px 10px #05010e36;
+  line-height:1.62;letter-spacing:.03px;
+}
+.lyrics-full-view .lyrics-body.lyrics-plain .lyr-sec{
+  color:#f2c897;text-shadow:0 0 14px #f5b76f34;
+  letter-spacing:1.6px;border-bottom:1px solid #d5a8ed2c;
+  padding-bottom:11px;
+}
+.lyrics-full-view .lyrics-body.lyrics-plain .lyr-traduzione{
+  color:#d7b5f2;border-left-color:#b080db;
+}
+.lyrics-full-view .lyrics-body.lyrics-plain .lyr-empty{color:#decbe9}
+.lyrics-full-view .lyrics-pie{
+  border-top:1px solid #ddb4ff3e;
+  background:linear-gradient(120deg,#301d47,#1b132c 58%,#26193c);
+  box-shadow:0 -12px 30px #07031088;
+}
+.lyrics-full-view #lyricsProgressFill{
+  background:linear-gradient(90deg,#9a74ec,#e7bbff,#f0cda4);
+  box-shadow:0 0 11px #d8a6fa81;
+}
+.lyrics-full-view .lyrics-nav.grande{
+  background:linear-gradient(135deg,#e6bfff,#c798f4);
+  box-shadow:0 3px 24px #c994fd4a;
+}
+@keyframes lyrCardReveal{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@media(max-width:760px){
+  .lyrics-full-view .lyrics-head{
+    padding:calc(6px + env(safe-area-inset-top)) 14px 7px;
+    gap:8px;min-height:0;
+  }
+  .lyrics-full-view .lyrics-cover{width:40px;height:40px;flex-basis:40px;border-radius:11px}
+  .lyrics-full-view .lyrics-eyebrow{font-size:7px}
+  .lyrics-full-view .lyrics-title{font-size:16px}
+  .lyrics-full-view .lyrics-sub{font-size:11px}
+  .lyrics-full-view .lyrics-close{top:calc(9px + env(safe-area-inset-top));right:11px;
+    width:32px;height:32px;flex-basis:32px;font-size:21px;opacity:.86}
+  .lyrics-full-view .lyrics-toolbar{
+    display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+    gap:6px 7px;padding:8px 12px;
+  }
+  .lyrics-back-btn{grid-column:1;min-height:34px;padding:6px 10px;font-size:11px}
+  .lyrics-full-view .lyrics-mode{grid-column:2;font-size:8px;
+    letter-spacing:.8px;padding:5px 7px;justify-self:start}
+  .lyrics-full-view .lyrics-view-toggle{
+    grid-column:3;max-width:115px;font-size:10px;padding:6px 9px;
+  }
+  .lyrics-full-view .lyrics-translate-actions{
+    grid-column:1/-1;justify-self:end;width:auto;display:flex;
+    gap:6px;margin:0;padding:0;
+  }
+  .lyrics-full-view .lyrics-translate-actions select,
+  .lyrics-full-view .lyrics-translate-actions button{
+    min-height:30px;font-size:10px;padding:4px 8px;
+  }
+  .lyrics-full-view .lyrics-reading-tools{
+    flex-direction:row;gap:6px;justify-content:space-between;
+    align-items:center;padding:8px 12px;min-height:0;
+  }
+  .lyrics-full-view .lyrics-reading-caption{gap:3px;min-width:0}
+  .lyrics-full-view .lyrics-reading-caption span{display:none}
+  .lyrics-full-view .lyrics-reading-caption strong{font-size:10px;
+    max-width:125px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lyrics-full-view .lyrics-reading-caption small{font-size:9px}
+  .lyrics-full-view .lyrics-reading-buttons{flex-wrap:nowrap;gap:4px}
+  .lyrics-full-view .lyrics-reading-buttons button{
+    min-width:31px;min-height:31px;padding:3px 6px;font-size:10px;
+  }
+  .lyrics-full-view #lyricsFontScale{min-width:25px;font-size:9px}
+  .lyrics-full-view .lyrics-body.lyrics-plain{
+    padding:17px 13px 26px;
+    font-size:calc(17px * var(--lyrics-read-scale,1));
+    border-left:0;
+  }
+  .lyrics-full-view .lyrics-verse{
+    padding:15px 16px 14px;margin-bottom:13px;border-radius:17px;
+  }
+  .lyrics-full-view .lyrics-body.lyrics-plain .lyr-line-full{
+    font-size:1em;line-height:1.56;margin-bottom:7px;
+  }
+  .lyrics-full-view .lyrics-body.lyrics-plain .lyr-sec{margin:22px 0 10px}
+  .lyrics-full-view .lyrics-pie{
+    gap:6px;padding:8px 14px calc(7px + env(safe-area-inset-bottom));
+  }
+  .lyrics-full-view .lyrics-playback-controls{gap:17px;padding-top:0}
+  .lyrics-full-view .lyrics-nav.grande{width:47px;height:47px}
+}
+@media(max-width:375px){
+  .lyrics-full-view .lyrics-mode{font-size:7px;padding:5px}
+  .lyrics-full-view .lyrics-view-toggle{max-width:103px}
+  .lyrics-back-btn{padding:6px 8px;font-size:10px}
+  .lyrics-full-view .lyrics-reading-buttons button{padding:3px 5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .lyrics-full-view .lyrics-verse{animation:none;transition:none}
+  .lyrics-back-btn:active{transform:none}
+}
