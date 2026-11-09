@@ -9248,6 +9248,7 @@ function openProfile() {
   }
 
   // Reader controls apply only to full lyrics, never LRC timings.
+  let _vistaTestiCompleta=true;
   let _scalaLetturaTesti=1;
   try{_scalaLetturaTesti=Math.max(.85,Math.min(1.35,
     Number(LS.get("mb.lyricsReadScale",1))||1))}catch(_){}
@@ -9278,10 +9279,11 @@ function openProfile() {
     lyricActive = -1;
     lyricsUserScrollAt = 0;
     const synced = parseSynced(l.synced);
+    const useSynced=synced.length>0&&!_vistaTestiCompleta;
     // LRC timestamps describe a recording, not the full MP3 duration.
     // Rescaling every cue from the last line alone can advance entire verses.
     // Keep source timing and use the per-song correction control instead.
-    if (synced.length) {
+    if (useSynced) {
       for (const line of synced) {
         const p = document.createElement("p");
         p.className = "lyr-line";
@@ -9293,7 +9295,7 @@ function openProfile() {
     } else {
       // Readable verses instead of one visually undifferentiated column.
       let verse=null,verseCount=0,lineCount=0;
-      for(const raw of String(l.text||"").replace(/\r\n?/g,"\n").split("\n")){
+      for(const raw of String(l.text||(synced.length?synced.map(row=>row.text).join("\n"):"")).replace(/\r\n?/g,"\n").split("\n")){
         const line=String(raw||""),trim=line.trim();
         if(!trim){verse=null;continue}
         if(/^\[[^\]\n]{1,56}\]$/.test(trim)&&
@@ -9326,12 +9328,18 @@ function openProfile() {
       body.scrollTop=0;
     }
     $("lyricsPanel").hidden = false;
-    $("lyricsSyncControls").hidden = !synced.length;
-    $("lyricsMode").textContent = synced.length?"TESTO SINCRONIZZATO":"TESTO COMPLETO";
-    $("lyricsBody").classList.toggle("lyrics-plain",!synced.length);
-    $("lyricsPanel").classList.toggle("lyrics-full-view",!synced.length);
-    if($("lyricsReadingTools"))$("lyricsReadingTools").hidden=!!synced.length;
-    if(!synced.length){
+    $("lyricsSyncControls").hidden = !useSynced;
+    $("lyricsMode").textContent = useSynced?"TESTO SINCRONIZZATO":"TESTO COMPLETO";
+    const switchView=$("lyricsViewToggle");
+    if(switchView){
+      switchView.hidden=!synced.length;
+      switchView.textContent=useSynced?"Apri testo completo":"Apri karaoke";
+      switchView.setAttribute("aria-pressed",String(useSynced));
+    }
+    $("lyricsBody").classList.toggle("lyrics-plain",!useSynced);
+    $("lyricsPanel").classList.toggle("lyrics-full-view",!useSynced);
+    if($("lyricsReadingTools"))$("lyricsReadingTools").hidden=!!useSynced;
+    if(!useSynced){
       _applicaDimensioneLettura(_scalaLetturaTesti);
       requestAnimationFrame(_aggiornaProgressoLettura);
     }
@@ -13281,6 +13289,10 @@ $("btnModalitaGym").addEventListener("click", () => {
     if($("lyricsPanel").hidden)syncNoScroll();
   });
   lyricsObserver.observe($("lyricsPanel"),{attributes:true,attributeFilter:["hidden"]});
+  $("lyricsViewToggle")?.addEventListener("click",()=>{
+    _vistaTestiCompleta=!_vistaTestiCompleta;
+    openLyrics();
+  });
   $("lyricsFontDown")?.addEventListener("click",()=>{
     _applicaDimensioneLettura(_scalaLetturaTesti-.1);_aggiornaProgressoLettura();
   });
