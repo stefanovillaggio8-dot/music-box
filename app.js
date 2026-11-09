@@ -8000,6 +8000,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
     const changed=fresh.size!==_djCatalogoPrecedente.size||
       [...fresh].some(([id,url])=>_djCatalogoPrecedente.get(id)!==url);
     if(!changed)return;
+    if(shuffle&&currentId)_preparaCicloCasuale(list);
     const addedIds=[...fresh.keys()].filter(id=>!_djCatalogoPrecedente.has(id));
     const removedIds=[..._djCatalogoPrecedente.keys()].filter(id=>!fresh.has(id));
     _djCatalogoPrecedente=fresh;
@@ -8052,7 +8053,8 @@ function _preparaCicloCasuale(lista){
   _casualeSceltaDJ="";
   _casualeFirma="";_casualeEscluse.clear();_casualeModificaUtente=false;
  }
- const available=new Set(lista.filter(t=>t?.id).map(t=>t.id));
+ const previousUniverse=_casualeUniverso;
+ const available=new Set(lista.filter(t=>t?.id&&t.url&&!t.youtubeId).map(t=>t.id));
  if(currentId&&available.has(currentId)&&!_casualeAscoltate.has(currentId)){
   _casualeAscoltate.add(currentId);_salvaCicloCasuale();
  }
@@ -8065,6 +8067,25 @@ function _preparaCicloCasuale(lista){
      _casualeEscluse.has(id)||unique.has(id))return false;
   unique.add(id);return true;
  });
+ // An existing ten-song preview is NOT a frozen library snapshot.
+ // Introduce a few newly imported, playable songs in its upcoming slots,
+ // without replaying a track or replacing the user's immediate successor.
+ // Manual queue edits are protected and always win.
+ if(previousUniverse&&!_casualeModificaUtente&&_casualeProgrammate.length){
+  const added=lista.filter(t=>t?.id&&available.has(t.id)&&
+    !previousUniverse.has(t.id)&&_casualeFresche.has(t.id)&&
+    !_casualeProgrammate.includes(t.id)&&!_casualeEscluse.has(t.id));
+  added.sort((a,b)=>Number(b.aggiunto||0)-Number(a.aggiunto||0));
+  for(const track of added.slice(0,3)){
+   const id=track.id;
+   const slot=Math.min(_casualeProgrammate.length,2+
+     Math.floor(Math.random()*Math.max(1,Math.min(8,_casualeProgrammate.length-1))));
+   if(_casualeProgrammate.length<10)
+    _casualeProgrammate.splice(Math.min(slot,_casualeProgrammate.length),0,id);
+   else _casualeProgrammate.splice(Math.min(slot,9),1,id);
+  }
+  if(added.length)_casualeSceltaDJ="";
+ }
 }
 function _casualeSegnaAscoltata(id){
  if(!shuffle||!id||window.MusicBoxRoom?.isActive())return;
@@ -12452,8 +12473,10 @@ window.MusicBoxBridge = {
     if (window.MusicBoxRoom?.isActive()) return [];
     const list=(_posizionePlaylist>=0&&_playlistSuona.length)
       ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
+    // The old 80-item truncation discarded recently added songs in large
+    // libraries, before Smart Mix's sampling code could even inspect them.
     return list.filter(t=>t&&t.url&&!t.youtubeId&&t.id!==currentId&&
-      !queue.includes(t.id)).slice(0,80);
+      !queue.includes(t.id));
   },
   mixEnqueue:(ids)=>{
     if(window.MusicBoxRoom?.isActive()||!Array.isArray(ids))return 0;
