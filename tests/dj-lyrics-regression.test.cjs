@@ -156,7 +156,7 @@ test("private device-only MP3s remain visible but are not presented as synced",(
  assert.match(app,/const localDeviceOnly=libraryAll\.filter\(t=>!t\.builtin/);
  assert.match(app,/const commonCount=Math\.max\(0,total-localDeviceOnly\.length\)/);
  assert.match(app,/condivisi · \+"/);
- assert.match(app,/totale su questo dispositivo "\+total/);
+ assert.match(app,/totale "\+total/);
  assert.match(app,/localDeviceOnlyIds:visible\.filter/);
 });
 
