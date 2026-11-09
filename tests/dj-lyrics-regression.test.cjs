@@ -21,7 +21,7 @@ test("unchanged DJ index refresh retains planned desktop transition",()=>{
 test("normal handoff is clearly distinguished from real beat mix",()=>{
  assert.match(dj,/Sovrapposizione audio avviata/);
  assert.match(dj,/audio\.duration-audio\.currentTime<=45&&/);
- const version=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8")).versione;
+ const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
  assert.ok(dj.includes('musicBoxVersion:"'+version+'"'),"DJ diagnostics must match the app release");
 });
 
