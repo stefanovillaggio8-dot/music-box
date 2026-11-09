@@ -274,3 +274,59 @@ test("cross-device source counts distinguish published catalog from playable and
  assert.match(src,/link cloud \(non pronti\)/);
  assert.match(html,/id="mbCatalogOrigin"/);
 });
+
+test("cloud network errors keep the last complete playlist and permit immediate retry",async()=>{
+ const cloud=excerpt("async function _ytBraniDalCloud(owner,force=false)",
+  "function _ytAggiornaVociLibreria(entries, owner, draw=false)");
+ const saved=new Map(),requests=[];
+ const links=[{video_id:"75qIYkMUGVE",status:"completed"},
+  {video_id:"Osxwh-qQLu4",status:"completed"}];
+ const mockFetch=async(url)=>{
+  requests.push(url);
+  if(requests.length===2)throw Error("Offline / HTTP 403");
+  return {ok:true,json:async()=>({ok:true,links:requests.length===1?links:links.slice(0,1)})};
+ };
+ const code="const DEFAULT_PROFILE='Ste';"+
+  "const LS=env.LS,fetch=env.fetch;"+
+  "const _ytLinksMemory=Object.create(null);"+
+  "const _ytCloudFetchState=Object.create(null);"+
+  "const _ytLinksInFlight=Object.create(null);"+
+  "const _ytFondiBozze=rows=>rows;"+
+  cloud+"return {read:_ytBraniDalCloud,status:_ytCloudFetchState,cached:_ytLinksMemory};";
+ const api=new Function("env",code)({LS:{
+  get:(k,def)=>saved.has(k)?saved.get(k):def,
+  set:(k,v)=>saved.set(k,v)},fetch:mockFetch});
+ const first=await api.read("Ste",true);
+ assert.equal(first.length,2);
+ const unavailable=await api.read("Ste",true);
+ assert.equal(unavailable.length,2,"403 must retain the last successful cloud list");
+ assert.equal(api.status.Ste.ok,false);
+ assert.equal(api.cached.Ste.time,0,"failed refresh must not block another retry");
+ const updated=await api.read("Ste",false);
+ assert.equal(updated.length,1,"a successful shorter response is authoritative");
+ assert.equal(api.status.Ste.ok,true);
+ assert.equal(requests.length,3);
+});
+test("a failed cloud response cannot erase already loaded playable YouTube music",()=>{
+ const update=excerpt("function _ytAggiornaVociLibreria(entries, owner, draw=false)",
+  "async function loadAll(forceRemote=false)");
+ const cloud={id:"yt-75qIYkMUGVE",source:"cloud-audio",profile:"Ste",
+  file:"cloud/youtube-75qIYkMUGVE.mp3",url:"https://example.test/audio"};
+ const main={id:"b-track-10",file:"songs/track-10.mp3",source:"published",profile:"Ste"};
+ const state={Ste:{ok:false}};
+ const env={tracks:[main,cloud],state,deleted:new Set()};
+ const make=new Function("e",
+  "let tracks=e.tracks;const profile='Ste',_ytCloudFetchState=e.state;"+
+  "const _ytForeignCopiesByOwner=Object.create(null);"+
+  "const _branoEliminato=(id)=>e.deleted.has(id);"+
+  "const _dataAggiuntaBrano=()=>0,PALETTE=['#000'],BUILTIN=[];"+
+  "const applicaRinomine=()=>{},render=()=>{},"+
+  "_controllaNuoviBraniMix=()=>{},_programmaTestiKaraoke=()=>{};"+
+  update+"return {run:_ytAggiornaVociLibreria,list:()=>tracks};")(env);
+ make.run([],"Ste",false);
+ assert.deepEqual(make.list().map(x=>x.id).sort(),["b-track-10","yt-75qIYkMUGVE"]);
+ state.Ste={ok:true};
+ make.run([],"Ste",false);
+ assert.deepEqual(make.list().map(x=>x.id),["b-track-10"],
+  "a successful authoritative response can remove an outdated cloud link");
+});

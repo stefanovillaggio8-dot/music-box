@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.701";
+  const APP_VERSION = "6.702";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -3347,6 +3347,9 @@ function _devoVedereBrano(eMio, b) {
   // localmente per evitare che una rete lenta faccia sparire i titoli.
   const _ytLinksMemory = Object.create(null);
   const _ytCloudFetchState=Object.create(null);
+  // A background refresh and a manual sync must share the same fetch:
+  // otherwise an older response can overwrite newer cloud data.
+  const _ytLinksInFlight=Object.create(null);
   // Copied YouTube audio belongs to the receiving profile's library but
   // references the original cloud job. These rows are never submitted again.
   const _ytForeignCopiesByOwner=Object.create(null);
@@ -3391,31 +3394,44 @@ function _devoVedereBrano(eMio, b) {
     return result;
   }
   async function _ytBraniDalCloud(owner,force=false) {
-    const key = "mb.youtube.links." + owner;
-    const cached = _ytLinksMemory[owner];
-    if (!force && cached && Date.now()-cached.time < 25000) return cached.links;
-    let entries = LS.get(key, []);
-    if (!Array.isArray(entries)) entries=[];
-    const ctrl = new AbortController();
-    const timeout = setTimeout(() => ctrl.abort(), force?8500:4500);
-    try {
-      const res = await fetch(
-        "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue?action=links&profile="
-        + encodeURIComponent(owner), {cache:"no-store",signal:ctrl.signal});
-      if (!res.ok) throw new Error("Servizio link non disponibile");
-      const json=await res.json();
-      if (!json.ok || !Array.isArray(json.links)) throw new Error("Formato link non valido");
-      entries=_ytFondiBozze(json.links,owner);
-      LS.set(key,entries);
-      _ytCloudFetchState[owner]={ok:true,at:Date.now(),count:json.links.length};
-    } catch (error) {
-      _ytCloudFetchState[owner]={ok:false,at:Date.now(),
-        error:String(error?.message||error).slice(0,100)};
-      /* Keep offline links until the network becomes available. */
-    }
-    finally { clearTimeout(timeout); }
-    _ytLinksMemory[owner]={links:entries,time:Date.now()};
-    return entries;
+    owner=String(owner||DEFAULT_PROFILE);
+    // Make every part of the player agree about the latest cloud response.
+    // A concurrent forced sync waits for the active request, then the
+    // manual-sync retry can ask again if that request failed.
+    if(_ytLinksInFlight[owner])return _ytLinksInFlight[owner];
+    const cached=_ytLinksMemory[owner];
+    if(!force&&cached&&cached.time>0&&Date.now()-cached.time<25000)
+      return cached.links;
+    const job=(async()=>{
+      const key="mb.youtube.links."+owner;
+      let entries=Array.isArray(cached?.links)&&cached.links.length ?
+        cached.links : LS.get(key,[]);
+      if(!Array.isArray(entries))entries=[];
+      const ctrl=new AbortController();
+      const timeout=setTimeout(()=>ctrl.abort(),force?8500:4500);
+      try {
+        const res=await fetch(
+          "https://adnteitlhopehllutlua.supabase.co/functions/v1/musicbox-import-queue?action=links&profile="
+          +encodeURIComponent(owner),{cache:"no-store",signal:ctrl.signal});
+        if(!res.ok)throw new Error("Cloud HTTP "+res.status);
+        const json=await res.json();
+        if(!json.ok||!Array.isArray(json.links))throw new Error("Formato link non valido");
+        entries=_ytFondiBozze(json.links,owner);
+        LS.set(key,entries);
+        _ytCloudFetchState[owner]={ok:true,at:Date.now(),count:json.links.length};
+        _ytLinksMemory[owner]={links:entries,time:Date.now()};
+      }catch(error){
+        _ytCloudFetchState[owner]={ok:false,at:Date.now(),
+          error:String(error?.message||error).slice(0,100)};
+        // Never turn a temporary 403/timeout into an empty library. Keep the
+        // most recent successful list but make it retryable immediately.
+        _ytLinksMemory[owner]={links:entries,time:0};
+      }finally{clearTimeout(timeout)}
+      return entries;
+    })();
+    _ytLinksInFlight[owner]=job;
+    try{return await job}
+    finally{if(_ytLinksInFlight[owner]===job)delete _ytLinksInFlight[owner]}
   }
   function _ytAggiornaVociLibreria(entries, owner, draw=false) {
     if(owner!==profile || !Array.isArray(entries))return;
@@ -3491,6 +3507,21 @@ function _devoVedereBrano(eMio, b) {
         _ytStatus:String(row.status||"queued"),
         _ytErrore:String(row.error_message||"").slice(0,180)
       });
+    }
+    if(_ytCloudFetchState[owner]?.ok===false){
+      // The failed request may return a shorter device-local cache. Keep
+      // previously visible cloud tracks until a successful server response
+      // confirms a removal. Never resurrect a deleted or newly published ID.
+      const known=new Set(linked.map(t=>t.id));
+      for(const prior of tracks){
+        if(!prior||(prior.source!=="cloud-audio"&&prior.source!=="youtube-link")||
+           prior.profile!==owner||known.has(prior.id)||
+           _branoEliminato(prior.id,owner))continue;
+        const video=String(prior.id||"").replace(/^yt-/,"");
+        if(published.has("songs/youtube-"+video+".mp3"))continue;
+        linked.push(prior);
+        known.add(prior.id);
+      }
     }
     tracks=linked.concat(old);
     // Il caricamento dei link YouTube avviene DOPO la costruzione della
