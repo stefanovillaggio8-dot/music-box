@@ -573,3 +573,48 @@ test("Safari fallback decode accepts readyState 2 only with a deep playback buff
   assert.ok(fallback.includes('conn?.saveData'),
     "data saver must retain priority over optional DJ decode");
 });
+
+test("iPhone lock-screen pause and play retain active media and recover a discarded decoder",()=>{
+ const handlers={},events=[],metadata=[],changes=[];
+ const player={paused:false,ended:false,src:"https://example.test/song.mp3",
+  currentSrc:"https://example.test/song.mp3",currentTime:74,duration:200,error:null};
+ const harness={
+  player,handlers,events,metadata,changes,
+  checkpoint:{id:"b-track-42",time:74.345}
+ };
+ const source=excerpt(app,"let _mediaSessionActionMode=","function totalDuration()");
+ const run=new Function("r",
+  `"use strict";
+   const audio=r.player,currentId="b-track-42",tracks=[{id:"b-track-42"}];
+   const window={MusicBoxRoom:{isActive:()=>false}};
+   const navigator={mediaSession:{metadata:null,setActionHandler:(name,fn)=>r.handlers[name]=fn}};
+   const MediaMetadata=class {constructor(values){r.metadata.push(values)}};
+   const current=()=>({title:"Song",artist:"Singer"});
+   const APP_NAME="Music Box";
+   const _configuraSessioneAudio=()=>{},_copertinaPerSchermo=()=>"",
+    _titoloPerSchermo=s=>s,_titoloOriginalePerSchermo=()=>"",
+    _artistaOriginalePerSchermo=()=>{},_aggiornaPosizioneSchermo=()=>{},
+    _notificaStatoNativo=()=>{},setPlaybackState=s=>r.changes.push(s);
+   const _riproduciVolontaria=external=>{r.events.push(["play",external]);audio.paused=false};
+   const _pausaVolontaria=()=>{r.events.push(["pause"]);audio.paused=true};
+   const _pausaSalvata=()=>r.checkpoint;
+   const playById=(id,autoplay,time)=>r.events.push(["rebuild",id,autoplay,time]);
+   const playNext=()=>{},idBranoA=()=>null,prevIndex=()=>0,_chiudiAscolto=()=>{},
+    updateProgressUI=()=>{};
+   `+source+`
+   updateMediaSession();
+   return {updateMediaSession,session:navigator.mediaSession};
+  `)(harness);
+ assert.equal(typeof handlers.play,"function");
+ assert.equal(typeof handlers.pause,"function");
+ assert.equal(typeof handlers.stop,"function");
+ const play=handlers.play;
+ handlers.pause(); handlers.play(); run.updateMediaSession();
+ assert.deepEqual(events,[["pause"],["play",true]]);
+ assert.equal(handlers.play,play,"paused/resumed actions must not be re-registered");
+ assert.equal(metadata.length,1,"same song must retain its MediaMetadata");
+ assert.equal(run.session.playbackState,undefined,"mock does not pretend to own the OS state");
+ player.src="";player.currentSrc="";player.error={code:2};
+ handlers.play();
+ assert.deepEqual(events.at(-1),["rebuild","b-track-42",true,74.345]);
+});
