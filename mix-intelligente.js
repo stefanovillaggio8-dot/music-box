@@ -5072,8 +5072,9 @@ function tick(){
  }
  const earlyRelease=certifiedEarlyReleaseReady(measuredEnding,
   audio.duration,audio.currentTime,finalLyric);
- const plannedLate=earlyRelease&&(!plan||plan.kind==="cut"||
-  !Number.isFinite(plan.begin)||plan.begin>audio.currentTime+1.2);
+ const plannedLate=earlyRelease&&!plan?.measuredReleaseLeadIn&&
+  (!plan||plan.kind==="cut"||
+   !Number.isFinite(plan.begin)||plan.begin>audio.currentTime+1.2);
  if(needsLiveQuietRecovery(plan,audio.currentTime,mixReady)||plannedLate){
   if(tryLiveQuietMix(app,audio,id,next,finalLyric,measuredEnding))return;
  }
@@ -5577,9 +5578,13 @@ async function intelligentShuffle(app,audio,fromId){
     // Reward a clear early intro over a very late 1.6-second postlude,
     // but only AFTER voice safety has been independently established.
     const early=clamp((audio.duration-cue.begin-1.6)/8,0,1);
+    // A clear intro is useful, but a compatible BPM and musical
+    // phrase are more important than an unrelated loud start.
+    const phrase=Number.isFinite(notes?.phrase)?
+      clamp(notes.phrase,0,1):.5;
     postludeScored.push({track,cue,
-      score:1+level*.23+keyScore*.08+harmony*.10+tempo*.07+
-       early*.20});
+      score:1+level*.16+keyScore*.14+harmony*.22+
+       phrase*.12+tempo*.20+early*.12});
     continue;
    }
    // Only as a SECOND choice: a measured musical decay may permit a
