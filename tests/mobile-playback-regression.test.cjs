@@ -618,3 +618,19 @@ test("iPhone lock-screen pause and play retain active media and recover a discar
  handlers.play();
  assert.deepEqual(events.at(-1),["rebuild","b-track-42",true,74.345]);
 });
+
+test("rapid seeking gives the native decoder priority over DJ analysis",()=>{
+ const djSource=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const tick=excerpt(djSource,"function tick(){","function sampleLiveOutro(");
+ // Tick is explicitly short-circuited before computing the next song.
+ assert.ok(tick.includes("audio.seeking||Date.now()<seekRecoveryUntil"));
+ assert.ok(tick.indexOf("audio.seeking||Date.now()<seekRecoveryUntil")<
+    tick.indexOf("const next=app?.mixNext()"));
+ const seek=excerpt(djSource," onSeek:(reason)=>{"," onLibraryChange:(change)=>{");
+ assert.match(seek,/seekRecoveryUntil=now\+1600/);
+ assert.match(seek,/now-lastSeekCancelledAt<350/);
+ assert.match(app,/function _saveSeekAfterDecoder\(\)/);
+ assert.match(app,/scrubRect=progressBar.getBoundingClientRect\(\)/);
+ assert.match(app,/pendingSeek = null;\s+_saveSeekAfterDecoder\(\)/);
+ assert.ok(!excerpt(app,"function seekBy(delta)","async function exportTrack(").includes("    savePos();"));
+});
