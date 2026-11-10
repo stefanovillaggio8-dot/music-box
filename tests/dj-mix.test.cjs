@@ -1107,3 +1107,95 @@ test("shuffle exposes every real-audio filter stage without forcing bad beatmatc
  assert.match(source,/nessun punto di sovrapposizione musicale sicuro/);
  assert.match(source,/nessuna sovrapposizione o sequenza affidabile nei brani analizzati/);
 });
+
+
+test("DJ impact reveal is exactly tied to a measured incoming beat and never runs on unverified music",()=>{
+ const funcs=source.slice(source.indexOf("function djImpactBeatPoint("),
+  source.indexOf("\ntry{\n const stored=",source.indexOf("function djImpactBeatPoint(")));
+ const api=new Function("clamp",funcs+"\nreturn {beat:djImpactBeatPoint,envelope:djImpactEnvelope};")(
+  (x,a,b)=>Math.max(a,Math.min(b,x)));
+ const certified={kind:"beat",preserveTail:true,
+  vocalVerifiedBeat:true,measuredBeatBridge:true,quietCertified:false,
+  beatPeriod:.5,beatAnchor:100,nextBeat:.1,tempo:1};
+ const point=api.beat(certified,4);
+ assert.ok(Math.abs(point-.525)<1e-8,"bass reveal must land on the incoming actual kick");
+ assert.equal(api.beat({...certified,vocalVerifiedBeat:false},4),null,
+  "unknown vocal safety is not permission for a loud bass reveal");
+ assert.equal(api.beat({...certified,kind:"snap"},4),null,
+  "a subsecond unverified snap stays subtle");
+ assert.equal(api.beat({...certified,beatAnchor:null},4),null);
+ assert.equal(api.beat({...certified,nextBeat:null},4),null);
+ assert.equal(api.beat({...certified,tempo:1.2},4),null);
+ assert.equal(api.beat({...certified,subduedRhythmicUnderlay:true},4),null);
+ assert.equal(api.beat({...certified,vocalBeatUnderlay:true},4),null,
+  "the original singing must never be ducked for an impact");
+ assert.equal(api.beat(certified,1.2),null,"short mixes cannot stage a long reveal");
+ const start=api.envelope(0,point),warm=api.envelope(.25,point),
+   beat=api.envelope(point,point),drop=api.envelope(.72,point),
+   final=api.envelope(1,point);
+ assert.ok(start.inGain<.001&&start.outGain>.99);
+ assert.ok(warm.inGain<.25&&warm.outGain>.95);
+ assert.ok(beat.inGain>.35&&beat.inGain<.42);
+ assert.ok(drop.inGain>.92&&drop.outGain<.40,
+  "the new recording must become clearly foreground music after its downbeat");
+ assert.ok(final.inGain>.999&&final.outGain<.001);
+ let previous=0;
+ for(let step=0;step<=100;step++){
+  const gains=api.envelope(step/100,point);
+  assert.ok(gains.inGain>=previous-1e-9,"no abrupt backwards volume pumps");
+  assert.ok(Math.abs(gains.inGain**2+gains.outGain**2-1)<1e-6,
+   "equal-power mix avoids artificial power spikes");
+  previous=gains.inGain;
+ }
+});
+
+test("certified impact DSP holds back the bass then reveals it near the real beat",()=>{
+ const code=source.slice(source.indexOf("function connectMixDsp("),
+  source.indexOf("\ntry{\n const stored=",source.indexOf("function connectMixDsp(")));
+ const attach=new Function("dspMode","dspStrength","dspBass","dspMid","dspTreble",
+  code+"\nreturn connectMixDsp;")("auto",55,0,0,0);
+ const events=[];
+ const filter={type:"",frequency:{
+  value:0,setValueAtTime(value,time){events.push({kind:"set",value,time})},
+  exponentialRampToValueAtTime(value,time){events.push({kind:"ramp",value,time})}},
+  Q:{value:0},gain:{value:0},connect(){},disconnect(){}};
+ const audio={connect(){},disconnect(){}},output={};
+ const ctx={currentTime:100,createBiquadFilter:()=>filter};
+ const nodes=attach(ctx,audio,output,4,true,.525);
+ assert.equal(nodes.length,1);
+ assert.equal(filter.type,"highpass");
+ assert.ok(events[0].value>=100,"filtered underlay has a muted bass");
+ assert.ok(events[1].time>101.8&&events[1].time<102.1);
+ assert.equal(events[2].value,35,"full bass returns after the incoming downbeat");
+ assert.ok(events[2].time>102.1&&events[2].time<102.3);
+ events.length=0;
+ attach(ctx,audio,output,4,false,null);
+ assert.equal(events.length,0,"a non-beat plan has no automatic highpass gimmick");
+});
+
+test("iPhone confident beat overlap exposes the next real track at the certified kick",()=>{
+ const f=createMobileMixFixture();
+ const curves=[];
+ f.ctx.createGain=()=>({
+  gain:{value:0,setValueAtTime(){},linearRampToValueAtTime(){},
+   cancelScheduledValues(){},setValueCurveAtTime(shape,started,duration){
+    curves.push({shape:[...shape],started,duration});
+   }},
+  connect(){},disconnect(){}
+ });
+ const plan={...f.plan,preserveTail:true,vocalVerifiedBeat:true,
+  measuredBeatBridge:true,verifiedHarmonicBridge:true,
+  beatPeriod:.5,beatAnchor:174.1,nextBeat:.1,tempo:1};
+ assert.equal(f.engine.startMobileMix(f.song,plan,f.app,f.old),true);
+ const state=f.engine.active();
+ assert.ok(state&&state.djRevealAt>=.4&&state.djRevealAt<=.72);
+ assert.equal(curves.length,1,"real WebAudio gain curve must be scheduled");
+ const values=curves[0].shape;
+ assert.ok(values[Math.round(values.length*.75)]>
+   3*values[Math.round(values.length*.25)],
+   "incoming beat becomes audibly dominant after the certified impact");
+ assert.ok(values.every(n=>Number.isFinite(n)&&n>=0&&n<=.8),
+  "no accidental boost outside the user volume or unsafe gain");
+ f.old.handlers.pause();
+ assert.equal(f.engine.active(),null);
+});

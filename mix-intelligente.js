@@ -679,7 +679,7 @@ function saveDspScope(){
   bass:dspBass,mid:dspMid,treble:dspTreble
  }))}catch(_){}
 }
-function connectMixDsp(ctx,source,gain,seconds,beatMatched){
+function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,startDelay=0){
  let tail=source;const nodes=[];
  const add=(type,freq,db=0)=>{
   const node=ctx.createBiquadFilter();
@@ -695,10 +695,18 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched){
    if(Math.abs(dspTreble)>.05)add("highshelf",4700,dspTreble);
    const effect=dspMode==="auto"?(beatMatched?"highpass":"off"):dspMode;
    if(effect!=="off"&&dspStrength>0){
-    const filter=add(effect,400),t=ctx.currentTime,strength=dspStrength/100;
+    const filter=add(effect,400),
+     t=ctx.currentTime+Math.max(0,Number(startDelay)||0),strength=dspStrength/100;
     const from=effect==="highpass"?35+300*strength:18000-(18000-360)*strength;
+    const musicalReveal=dspMode==="auto"&&effect==="highpass"&&beatMatched&&
+     Number.isFinite(revealPoint)&&revealPoint>=.3&&revealPoint<=.76&&seconds>=2.6;
     filter.frequency.setValueAtTime(from,t);
-    filter.frequency.exponentialRampToValueAtTime(
+    if(musicalReveal){
+     const impact=seconds*revealPoint;
+     filter.frequency.setValueAtTime(from,t+Math.max(.07,impact-.13));
+     filter.frequency.exponentialRampToValueAtTime(35,
+      t+Math.min(seconds-.04,impact+.09));
+    }else filter.frequency.exponentialRampToValueAtTime(
       effect==="highpass"?35:18000,t+Math.max(.25,Math.min(10,seconds)));
    }
   }
@@ -709,6 +717,42 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched){
   try{source.connect(gain)}catch(e){}
   return [];
  }
+}
+
+// Confident musical joins get a defined bass-reveal on an ACTUAL incoming
+// beat. Non-compatible rhythms, unknown vocals, and weak previews are not
+// made louder, and synthetic kicks/swooshes are never inserted.
+function djImpactBeatPoint(p,seconds){
+ if(!p||p.kind!=="beat"||p.preserveTail!==true||
+    !Number.isFinite(seconds)||seconds<2.7||
+    p.vocalBeatUnderlay||p.subduedRhythmicUnderlay||
+    p.postMusicalTailUnderlay||p.continuityFallback||
+    p.measuredFinalImpact||
+    !(p.vocalVerifiedBeat===true||
+      p.verifiedHarmonicBridge===true&&p.quietCertified===true||
+      p.strongBeatBridge===true&&p.quietCertified===true||
+      p.rhythmicGridJoin===true&&p.quietCertified===true||
+      p.dropReleaseBridge===true&&p.quietCertified===true))
+  return null;
+ const period=Number(p.beatPeriod),speed=Number(p.tempo)||1;
+ if(!Number.isFinite(period)||period<.27||period>1.10||
+    !Number.isFinite(p.beatAnchor)||!Number.isFinite(p.nextBeat)||
+    !Number.isFinite(speed)||speed<.965||speed>1.035)return null;
+ const first=Number(p.nextBeat)/speed;
+ const phase=((first%period)+period)%period;
+ const beat=phase+Math.max(0,Math.ceil((seconds*.45-phase)/period))*period;
+ if(beat<seconds*.4||beat>seconds*.72)return null;
+ return beat/seconds;
+}
+function djImpactEnvelope(progress,beatPoint){
+ const t=clamp(progress,0,1),pivot=clamp(beatPoint,.4,.72);
+ const smooth=x=>{const z=clamp(x,0,1);return z*z*(3-2*z)};
+ const liftWindow=Math.min(.22,(1-pivot)*.67);
+ const blend=t<=pivot?.25*smooth(t/pivot):
+   .25+.52*smooth((t-pivot)/liftWindow)+
+   .23*smooth((t-pivot)/(1-pivot));
+ return {outGain:Math.cos(blend*Math.PI/2),
+   inGain:Math.sin(blend*Math.PI/2)};
 }
 
 try{
@@ -3327,7 +3371,7 @@ function releaseDesktopDsp(audio){
 // MediaElementAudioSource redirects the element permanently into WebAudio.
 // Reuse the EXISTING running Music Box context, never create a new one.
 // Keep it connected after adoption, disconnect only after song replacement.
-function attachDesktopDsp(preview,seconds,beatMatched){
+function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null){
  if(isIOS||preview?.crossOrigin!=="anonymous"||
     (dspMode==="off"&&Math.abs(dspBass)+Math.abs(dspMid)+Math.abs(dspTreble)<.05))
     return null;
@@ -3340,7 +3384,7 @@ function attachDesktopDsp(preview,seconds,beatMatched){
  try{
   source=ctx.createMediaElementSource(preview);
   out=ctx.createGain();out.gain.value=1;
-  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched);
+  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched,revealPoint);
   out.connect(ctx.destination);
   const graph={audio:preview,source,out,nodes};
   desktopDspGraphs.set(preview,graph);
@@ -3440,9 +3484,7 @@ function startMobileMix(song,p,app,old){
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
   source=ctx.createBufferSource();gain=ctx.createGain();
   source.buffer=buf;
-  // Filter only the validated optional intro; keep native audio untouched.
-  dspNodes=connectMixDsp(ctx,source,gain,
-    Math.max(.4,Math.min(p.fade,secondsLeft)),!!p.measuredBeatBridge);
+  // Keep Safari's native media output untouched; route only the intro clip.
   gain.connect(ctx.destination);
   // Schedule at a measured beat phase if it costs less than 230 ms.
   // Never seek into the incoming song to fake musical alignment.
@@ -3482,7 +3524,13 @@ function startMobileMix(song,p,app,old){
    return false;
   }
   const startedAt=ctx.currentTime+delay;
-  const ramp=p.vocalBeatUnderlay?
+  const djRevealAt=djImpactBeatPoint(p,Math.min(p.fade,secondsLeft-delay));
+  dspNodes=connectMixDsp(ctx,source,gain,
+    Math.max(.4,Math.min(p.fade,secondsLeft-delay)),
+    !!p.measuredBeatBridge,djRevealAt,delay);
+  const ramp=Number.isFinite(djRevealAt)?
+   Math.max(.9,Math.min(p.fade,secondsLeft-delay-.14)):
+   p.vocalBeatUnderlay?
    Math.max(.35,secondsLeft-delay-.12):
    p.kind==="snap"?Math.max(.23,Math.min(.40,secondsLeft-delay-.08)):
    p.mobileSilentBridge?clamp(secondsLeft*.70,.22,.95):
@@ -3492,7 +3540,7 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (p.postMusicalTailUnderlay?.72:p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
+   (Number.isFinite(djRevealAt)?.72:p.postMusicalTailUnderlay?.72:p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
     lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
@@ -3506,7 +3554,9 @@ function startMobileMix(song,p,app,old){
        Math.max(.35,ramp);
      const postSinger=clamp((u-singerEnd-.02)/
        Math.max(.05,1-singerEnd-.02),0,1);
-     const proportion=p.vocalBeatUnderlay?
+     const proportion=Number.isFinite(djRevealAt)?
+       djImpactEnvelope(u,djRevealAt).inGain:
+      p.vocalBeatUnderlay?
        (u<=singerEnd+.02?.10+.23*clamp(u/.20,0,1):
         .33+.67*Math.sin(postSinger*Math.PI/2)):
        p.softTailTrim?Math.sin(Math.pow(u,.65)*Math.PI/2):
@@ -3516,6 +3566,12 @@ function startMobileMix(song,p,app,old){
     }
     gain.gain.setValueCurveAtTime(shape,startedAt,ramp);
    }catch(e){gain.gain.linearRampToValueAtTime(target,startedAt+ramp)}
+  }else if(Number.isFinite(djRevealAt)){
+   const late=Math.min(.995,djRevealAt+Math.min(.22,(1-djRevealAt)*.67));
+   gain.gain.setValueAtTime(0,startedAt);
+   gain.gain.linearRampToValueAtTime(target*.38,startedAt+ramp*djRevealAt);
+   gain.gain.linearRampToValueAtTime(target*.93,startedAt+ramp*late);
+   gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
   }else gain.gain.linearRampToValueAtTime(
    p.vocalBeatUnderlay?target*.28:target,startedAt+ramp);
   // Make the measured BPM adjustment actually audible on iPhone.
@@ -3564,7 +3620,7 @@ function startMobileMix(song,p,app,old){
    clipEnd:startedAt+frames/clip.rate-offset-
      (rateSpeed-1)*(rateHold+rateRamp/2),
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
-   strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
+   djRevealAt,strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
    vocalSafe:!lowPreview};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
@@ -4026,7 +4082,12 @@ function mixCurve(kind,t,softTail=false){
   // A verified soft outro is already low: lift the next music earlier
   // instead of applying a linear fade to two near-silent signals.
   inGain=Math.sin(Math.pow(time,.58)*Math.PI/2);
- }else if(kind==="fade"||kind==="soft"){outGain=1-time;inGain=time}
+ }else if(kind==="soft"){
+  // Quiet releases let the next real music emerge earlier than a linear
+  // fade, without pretending an unrelated pair shares a rhythmic grid.
+  const rise=Math.pow(time,.66);
+  outGain=Math.cos(rise*Math.PI/2);inGain=Math.sin(rise*Math.PI/2);
+ }else if(kind==="fade"){outGain=1-time;inGain=time}
  else if(kind==="rise"){
   outGain=1-Math.pow(time,1.4);
   inGain=Math.pow(time,1.7);
@@ -4142,13 +4203,16 @@ async function beginMix(song,proposed){
   if(active!==act||old.paused||app.currentId()!==id||
      old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:
       proposed.measuredPostludeBridge?.35:1.2)){cancel();return}
-  // DSP is optional and runs only at the certified transition, never
-  // while a user is seeking through an MP3.
-  act.dsp=attachDesktopDsp(upcoming,act.fade,
-    ["beat","phrase","snap"].includes(proposed.kind)&&
-    (proposed.measuredBeatBridge||proposed.rhythmicGridJoin));
+  // The prepared incoming MP3 starts muted. Establish its real start
+  // before scheduling a bass reveal, avoiding WebAudio clock drift.
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
+  act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),
+    proposed.kind==="snap"?.18:.8,12);
+  act.djRevealAt=djImpactBeatPoint(proposed,act.fade);
+  act.dsp=attachDesktopDsp(upcoming,act.fade,
+    ["beat","phrase","snap"].includes(proposed.kind)&&
+    (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt);
   // Emitted only AFTER the second audio has actually started.
   try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
    device:"pc",fromId:id,toId:song.id,kind:proposed.kind,
@@ -4163,7 +4227,6 @@ async function beginMix(song,proposed){
     certifiedRelease:!!proposed.liveQuietCertified,
     continuityFallback:!!proposed.continuityFallback});
   if(old.paused){cancel();return}
-  act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),proposed.kind==="snap"?.18:.8,12);
   act.at=performance.now();
   function fadeStep(){
    if(active!==act)return;
@@ -4218,6 +4281,11 @@ async function beginMix(song,proposed){
     const lift=clamp((time-.66)/.34,0,1);
     outGain=Math.cos(tail*Math.PI/2);
     inGain=.17*Math.sin(early*Math.PI/2)+.83*Math.sin(lift*Math.PI/2);
+   }
+   if(Number.isFinite(act.djRevealAt)){
+    // Switch musical focus on the real next kick: recognisable without a
+    // fabricated drum, a bad cross-key overlay, or a clipped final vocal.
+    ({outGain,inGain}=djImpactEnvelope(time,act.djRevealAt));
    }
    if(act.subduedRhythmicUnderlay){
      outGain=1;inGain=act.underlayVolume*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
@@ -4541,6 +4609,14 @@ function tick(){
      Math.max(.12,mobileActive.end-mobileActive.vocalEndAt-.16),0,1);
     try{
      audio.volume=vol*Math.cos(progress*Math.PI/2);
+     mobileFadeTrack=id;mobileFading=true;
+    }catch(_){}
+   }else if(Number.isFinite(mobileActive.djRevealAt)&&mobileActive.vocalSafe){
+    const progress=clamp((audio.currentTime-mobileActive.audioStartedAt)/
+      Math.max(.5,mobileActive.end-mobileActive.audioStartedAt),0,1);
+    const envelope=djImpactEnvelope(progress,mobileActive.djRevealAt);
+    try{
+     audio.volume=(app.volume?.()??1)*Math.max(.30,envelope.outGain);
      mobileFadeTrack=id;mobileFading=true;
     }catch(_){}
    }else if((mobileActive.strongBeatBridge||mobileActive.snap)&&mobileActive.vocalSafe){
