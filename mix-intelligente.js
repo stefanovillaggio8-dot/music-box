@@ -3503,7 +3503,10 @@ function stopMobileMix(fadeSeconds=0){
  // A verified DJ reveal or vocal-underlay may duck the native player
  // even without the legacy strongBeatBridge flag. Always restore it
  // after cancelling the preview while the outgoing track is still main.
- if(mobileFading&&mobileFadeTrack===act.fromId)resetMobileFade();
+ if(act.strongBeatBridge||act.snap||
+    (typeof mobileFading!=="undefined"&&mobileFading&&
+     typeof mobileFadeTrack!=="undefined"&&mobileFadeTrack===act.fromId))
+  resetMobileFade();
  const release=()=>{
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
