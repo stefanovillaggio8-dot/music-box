@@ -766,6 +766,20 @@ function djImpactEnvelope(progress,beatPoint){
  return {outGain:Math.cos(blend*Math.PI/2),
    inGain:Math.sin(blend*Math.PI/2)};
 }
+// Compare the REAL playheads after decoder startup. Scheduling an aligned
+// beat is not proof that a delayed HTMLAudioElement actually started on it.
+function djBeatPhaseError(p,outgoingTime,incomingTime){
+ const period=Number(p?.beatPeriod),speed=Number(p?.tempo)||1;
+ if(!Number.isFinite(period)||period<.24||period>1.20||
+    !Number.isFinite(speed)||speed<.94||speed>1.06||
+    !Number.isFinite(p?.beatAnchor)||!Number.isFinite(p?.nextBeat)||
+    !Number.isFinite(outgoingTime)||!Number.isFinite(incomingTime))
+  return null;
+ const outgoing=outgoingTime-p.beatAnchor;
+ const incoming=(incomingTime-(Number(p.entry)||0)-p.nextBeat)/speed;
+ const phase=((outgoing-incoming)%period+period)%period;
+ return Math.min(phase,period-phase);
+}
 function djSoftFocusEnvelope(progress){
  // Only verified quiet tails: the next actual intro emerges early.
  return Math.sin(Math.pow(clamp(progress,0,1),.58)*Math.PI/2);
@@ -2129,6 +2143,46 @@ function alignedEarlyOnsetAgreement(outro,intro,offsetSeconds){
  return best&&best.score>=.62&&best.first>=.40&&best.second>=.40?
   best:null;
 }
+// Check real four-beat accent contours at the chosen playback offset.
+// Global BPM or one isolated kick cannot certify a musical measure.
+// If the data is flat/too short we leave this unproven (not a fake match).
+function djMeasuredBarAccents(outro,intro,bpm,offsetSeconds){
+ if(!Array.isArray(outro)||!Array.isArray(intro)||
+    outro.length!==96||intro.length!==96||
+    !Number.isFinite(bpm)||bpm<55||bpm>210||
+    !Number.isFinite(offsetSeconds))return null;
+ const period=24*60/bpm,phase=onsetGridPhase(intro,bpm)*24;
+ const outgoing=[],incoming=[];
+ const attack=(values,i)=>Math.max(0,values[Math.max(0,i-1)]||0,
+   values[i]||0,values[Math.min(95,i+1)]||0);
+ for(let n=0;n<12;n++){
+  const introAt=Math.round(phase+n*period);
+  const outroAt=Math.round(phase+n*period+offsetSeconds*24);
+  if(introAt>94||outroAt>94)break;
+  if(introAt<1||outroAt<1)continue;
+  incoming.push(attack(intro,introAt));
+  outgoing.push(attack(outro,outroAt));
+ }
+ if(incoming.length<5)return null;
+ const profile=values=>{
+  const mean=values.reduce((a,b)=>a+b,0)/values.length;
+  const diffs=values.map(x=>x-mean);
+  const variance=diffs.reduce((a,b)=>a+b*b,0);
+  return {mean,diffs,variance,contrast:Math.sqrt(variance/values.length)/
+   Math.max(.05,mean)};
+ };
+ const a=profile(outgoing),b=profile(incoming);
+ if(a.mean<.12||b.mean<.12)return null;
+ // Uniform four-on-the-floor pulses carry no reliable bar accent.
+ if(a.contrast<.23&&b.contrast<.23)
+  return {reliable:false,score:null,beats:incoming.length};
+ if(a.contrast<.23||b.contrast<.23)
+  return {reliable:true,score:0,beats:incoming.length};
+ const correlation=a.diffs.reduce((sum,x,i)=>sum+x*b.diffs[i],0)/
+  Math.sqrt(a.variance*b.variance);
+ const score=clamp((correlation+1)/2,0,1);
+ return {reliable:true,score,beats:incoming.length};
+}
 function earlyMatchedBar(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.duration)||
@@ -2220,12 +2274,20 @@ function earlyMatchedBar(a,b,dur){
   const matchedRhythm=alignedEarlyOnsetAgreement(
     win.onset,b.introOnset,begin-win.start);
   if(!matchedRhythm)continue;
+  const barAccents=djMeasuredBarAccents(
+    win.onset,b.introOnset,b.bpm,begin-win.start);
+  // When two independently accentuated bars disagree, don't force a
+  // long crossfade merely because their individual kicks line up.
+  if(barAccents?.reliable&&barAccents.score<.62)continue;
   const score=Math.round(100*(notes.focused*.32+
     notes.phrase*.18+drums.score*.24+matchedRhythm.score*.26));
   const cue={kind:"beat",begin,end,fade,entry,
    tempo:clamp(speed,.975,1.025),gain:1,score,
    grooveScore:drums.score,beatGridScore:Math.min(pulseA,pulseB),
    earlyOnsetAgreement:matchedRhythm.score,
+   barAccentScore:barAccents?.reliable?barAccents.score:null,
+   barAccentBeats:barAccents?.beats||0,
+   phraseAlignmentScore:notes.alignment?.score??null,
    rhythmicGridJoin:true,earlyBeatJoin:true,measuredBeatBridge:true,
    earlyWindowStart:win.start,earlyWindowEnd:win.end,
    vocalBeatUnderlay:vocalUnderlay,
@@ -3438,7 +3500,10 @@ let mobileMixLastBlocker="",mobileMixLastStartedAt=0;
 function stopMobileMix(fadeSeconds=0){
  const act=mobileActive;mobileActive=null;
  if(!act)return;
- if(act.strongBeatBridge||act.snap)resetMobileFade();
+ // A verified DJ reveal or vocal-underlay may duck the native player
+ // even without the legacy strongBeatBridge flag. Always restore it
+ // after cancelling the preview while the outgoing track is still main.
+ if(mobileFading&&mobileFadeTrack===act.fromId)resetMobileFade();
  const release=()=>{
   try{act.old?.removeEventListener?.("pause",act.onPause)}catch(e){}
   try{act.old?.removeEventListener?.("playing",act.onPlaying)}catch(e){}
@@ -3685,11 +3750,18 @@ function startMobileMix(song,p,app,old){
 // returns smoothly to 1x before the native iPhone player takes over.
 function mobilePlayedSeconds(act){
  const elapsed=Math.max(0,act.ctx.currentTime-act.started);
- const speed=Number(act.rateSpeed)||1,ramp=Number(act.rateRamp)||0;
- if(ramp<=0||speed===1)return elapsed;
- if(elapsed<=ramp)return speed*elapsed+
-  (1-speed)*elapsed*elapsed/(2*ramp);
- return elapsed+(speed-1)*ramp/2;
+ const speed=Number(act.rateSpeed)||1;
+ const hold=Math.max(0,Number(act.rateHold)||0);
+ const ramp=Math.max(0,Number(act.rateRamp)||0);
+ if(!Number.isFinite(speed)||speed<=0||speed===1)return elapsed;
+ // Safari holds the adjusted BPM first, then eases the LAST part back
+ // to 1x. The old formula integrated the ramp from t=0, causing a
+ // false native seek / audible rewind during the iPhone handoff.
+ if(elapsed<=hold)return speed*elapsed;
+ const t=elapsed-hold;
+ if(ramp>0&&t<ramp)return speed*hold+speed*t+
+  (1-speed)*t*t/(2*ramp);
+ return elapsed+(speed-1)*(hold+ramp/2);
 }
 // Safari may report readyState 2 even though the native MP3's early
 // seconds are buffered. Repair the handoff only at a seekable, buffered point.
@@ -4240,9 +4312,24 @@ async function beginMix(song,proposed){
   // before scheduling a bass reveal, avoiding WebAudio clock drift.
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
+  // The browser may take >100ms to resolve play(): verify both live
+  // MP3 clocks BEFORE lifting the muted preview into the mix.
+  const livePhaseError=djBeatPhaseError(
+    proposed,old.currentTime,upcoming.currentTime);
+  if(proposed.measuredBeatBridge===true&&
+     Number.isFinite(livePhaseError)&&
+     livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
+   console.info("[Music Box DJ] Beat allineato in teoria ma decoder fuori fase",
+    {errorMs:Math.round(livePhaseError*1000)});
+   cancel();plan=null;return;
+  }
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),
     proposed.kind==="snap"?.18:.8,12);
-  act.djRevealAt=djImpactBeatPoint(proposed,act.fade);
+  // Play may already have consumed part of the incoming first measure.
+  const playedCue=Number.isFinite(proposed.nextBeat)?
+    {...proposed,nextBeat:proposed.nextBeat-(upcoming.currentTime-targetEntry)}:
+    proposed;
+  act.djRevealAt=djImpactBeatPoint(playedCue,act.fade);
   act.dsp=attachDesktopDsp(upcoming,act.fade,
     ["beat","phrase","snap"].includes(proposed.kind)&&
     (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
