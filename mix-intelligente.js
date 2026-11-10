@@ -2274,8 +2274,8 @@ function earlyMatchedBar(a,b,dur){
   const matchedRhythm=alignedEarlyOnsetAgreement(
     win.onset,b.introOnset,begin-win.start);
   if(!matchedRhythm)continue;
-  const barAccents=djMeasuredBarAccents(
-    win.onset,b.introOnset,b.bpm,begin-win.start);
+  const barAccents=typeof djMeasuredBarAccents==="function"?
+    djMeasuredBarAccents(win.onset,b.introOnset,b.bpm,begin-win.start):null;
   // When two independently accentuated bars disagree, don't force a
   // long crossfade merely because their individual kicks line up.
   if(barAccents?.reliable&&barAccents.score<.62)continue;
