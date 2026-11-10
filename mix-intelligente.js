@@ -2810,6 +2810,14 @@ function hasImmediateMusicalIntro(b){
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
 function musicallyCompatibleOverlay(a,b,cue){
  if(!cue)return false;
+ if(cue.measuredReleaseLeadIn===true){
+  // Never trust a fabricated release flag: redo every audio/lyric gate.
+  const valid=desktopMeasuredReleaseLeadIn(a,b,a?.duration);
+  return !!valid&&cue.kind==="soft"&&cue.preserveTail===true&&
+    Math.abs(valid.begin-cue.begin)<.085&&
+    Math.abs(valid.end-cue.end)<.085&&
+    Math.abs(valid.releaseLastMusicalAt-cue.releaseLastMusicalAt)<.085;
+ }
  if(cue.postMusicalTailUnderlay===true){
   const expected=lowEnergyPostludeLeadIn(a,b,a?.duration);
   return !!expected&&cue.kind==="postlude"&&
@@ -2983,6 +2991,53 @@ function subduedRhythmicIntro(a,b,dur){
    grooveScore:g.score,quietCertified:false,safeOutroAt:null,
    silenceTrim:false,softTailTrim:false,trailing:0};
 }
+// On a genuinely measured musical release, bring in a compatible
+// introduction WHILE the old quiet notes are still decaying, not after
+// its last audible frame. This is NOT a beatmatch: neither a reliable
+// downbeat nor a full vocal stem is guaranteed. The outgoing recording
+// stays at full gain through its native end; incoming preview stays
+// subdued until the old measured musical end, then becomes dominant in
+// the low-energy tail. No seek, early pause, or unverified tail cut.
+function desktopMeasuredReleaseLeadIn(a,b,dur){
+ const r=a?.dropRelease;
+ if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||a.confidentTail===true||
+    !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(a.safeOutroAt)||
+    !Number.isFinite(r?.lastImpactAt)||!Number.isFinite(r?.releaseAt)||
+    !Number.isFinite(r?.score)||!Number.isFinite(r?.quietLevel)||
+    Math.abs(a.safeOutroAt-r.releaseAt)>.80||
+    r.releaseAt<r.lastImpactAt||r.score<.72||r.quietLevel>.28||
+    a.last-r.releaseAt<1.5||a.last-r.releaseAt>5.5||
+    dur-a.last<1.65||dur-a.last>12||
+    a.beatConfidence<.16||b.beatConfidence<.16||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.40||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>r.releaseAt-4)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>r.releaseAt-3)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2))return null;
+ const ratio=a.bpm/b.bpm;
+ if(ratio<.955||ratio>1.045)return null;
+ const groove=grooveAgreement(a,b),notes=similarNotes(a,b);
+ const key=camelotMatch(a,b);
+ if(!groove||groove.score<.63||groove.correlation<.26||
+    !Number.isFinite(notes.focused)||notes.focused<.67||
+    !Number.isFinite(notes.phrase)||notes.phrase<.50||
+    (key.weight>=.14&&key.score<.54)||
+    (Number(notes.alignment?.score)>0&&
+     Number(notes.alignment.score)<.56))return null;
+ const begin=r.releaseAt+.14,end=dur-.035,fade=end-begin;
+ if(begin<26||begin>=a.last-1||fade<3||fade>12.5)return null;
+ return {kind:"soft",measuredReleaseLeadIn:true,
+   begin,end,fade,entry:musicalIntroEntry(b),tempo:1,gain:1,
+   releaseLastMusicalAt:a.last,
+   score:Math.round((groove.score*.30+notes.focused*.40+
+     notes.phrase*.30)*100),grooveScore:groove.score,
+   quietCertified:false,preserveTail:true,
+   safeOutroAt:null,silenceTrim:false,softTailTrim:false,trailing:0};
+}
 // Low-energy postlude lead-in: the outgoing song stays at full gain
 // through its natural ending. No claim of a BPM/key/beat match is made.
 function lowEnergyPostludeLeadIn(a,b,dur){
@@ -3049,6 +3104,11 @@ function unalignedTransition(a,b,actualDuration){
  if(pulse)return pulse;
  const softEntry=subduedRhythmicIntro(a,b,dur);
  if(softEntry)return softEntry;
+ // A trusted low-energy *musical* release is preferable to waiting
+ // until the old audio has already finished.
+ const earlyRelease=typeof desktopMeasuredReleaseLeadIn==="function"?
+   desktopMeasuredReleaseLeadIn(a,b,dur):null;
+ if(earlyRelease)return earlyRelease;
  const postlude=lowEnergyPostludeLeadIn(a,b,dur);
  if(postlude)return postlude;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
@@ -4291,6 +4351,9 @@ async function beginMix(song,proposed){
   vocalVerifiedBeat:!!proposed.vocalVerifiedBeat,
   continuityFallback:!!proposed.continuityFallback,
   measuredFinalImpact:!!proposed.measuredFinalImpact,
+  measuredReleaseLeadIn:!!proposed.measuredReleaseLeadIn,
+  releaseLastMusicalAt:Number(proposed.releaseLastMusicalAt),
+  begin:Number(proposed.begin),
   at:0,fade,end:proposed.end,timer:null};
  active=act;
  try{
@@ -4418,6 +4481,19 @@ async function beginMix(song,proposed){
      // No early stop or duck of the original recording.
      outGain=1;inGain=.78*Math.sin(Math.min(1,time*1.65)*Math.PI/2);
     }
+   if(act.measuredReleaseLeadIn){
+    // Rise from silence to at most -13 dB under the old recording's
+    // actual last quiet notes. Only after those notes finish may the
+    // new intro take over. Original output stays at native full gain.
+    const last=act.releaseLastMusicalAt,now=old.currentTime;
+    const before=clamp((now-act.begin)/
+      Math.max(.35,last-act.begin),0,1);
+    const after=clamp((now-last)/
+      Math.max(.5,act.end-last),0,1);
+    outGain=1;
+    inGain=now<last?.23*Math.sin(before*Math.PI/2):
+      .23+.77*Math.sin(after*Math.PI/2);
+   }
     const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     old.volume=clamp(vol*outGain,0,1);
@@ -5120,7 +5196,9 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.postMusicalTailUnderlay?
+ const description=plan?.measuredReleaseLeadIn?
+   " · intro anticipata nel rilascio musicale misurato, originale integro (non beatmatch)":
+   plan?.postMusicalTailUnderlay?
     " · finale musicale concluso: la nuova intro entra nella coda debole":
    plan?.subduedRhythmicUnderlay?
    " · ritmo anticipato a basso volume, finale originale integro (non beatmatch certificato)":
@@ -5464,6 +5542,16 @@ async function intelligentShuffle(app,audio,fromId){
        cue.instrumentalBeatBridge===true))));
   if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
+   // A measured quiet RELEASE permits early musical continuity even
+   // when no complete bass/beat match is certified. Keep it distinct
+   // from actual rhythm-matched candidates and from postlude-only fades.
+   if(!isIOS&&mobilePlayable&&cue?.measuredReleaseLeadIn===true){
+    underlayScored.push({track,cue,
+      score:1+(cue.score||0)/100*.52+
+        (cue.grooveScore||0)*.18+
+        clamp((old.last-cue.begin)/5,0,1)*.15});
+    continue;
+   }
    // This measured early intro is NOT a certified beatmatch.
    if(mobilePlayable&&cue?.subduedRhythmicUnderlay===true){
     candidateAudit.subduedUnderlays++;
@@ -5648,7 +5736,9 @@ async function intelligentShuffle(app,audio,fromId){
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):impactScored.length?
      "ingresso sul colpo finale misurato, non beatmatch armonico":underlayScored.length?
-      "ingresso ritmico anticipato, originale preservato":softScored.length?
+      (best.cue?.measuredReleaseLeadIn?
+      "introduzione anticipata sul rilascio musicale misurato, finale integro":
+      "ingresso ritmico anticipato, originale preservato"):softScored.length?
      "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
      "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
