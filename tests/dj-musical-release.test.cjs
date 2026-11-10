@@ -287,7 +287,10 @@ test("desktop fallback prebuffers even if harmonic plan is null or direct-cut",(
  assert.match(source,/if\(!isIOS&&\(plan===null\|\|plan.kind==="cut"\)/);
  assert.match(source,/if\(tryLiveQuietMix\(app,audio,id,next,finalLyric,measuredEnding\)\)return/);
  assert.match(source,/source\.connect\(analyser\); \/\/ No destination/);
- assert.ok(!source.includes("source.connect(ctx.destination)"),
+ const capture=source.slice(source.indexOf("function sampleLiveOutro("),
+  source.indexOf("function liveQuietOutroReady("));
+ assert.ok(capture.includes("source.connect(analyser)"));
+ assert.ok(!capture.includes("source.connect(ctx.destination)"),
   "Do not reroute original playback through the analysis context");
 });
 
