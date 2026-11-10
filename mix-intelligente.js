@@ -4235,6 +4235,18 @@ async function handoff(){
   if(active===act)cancel();
  }
 }
+// Bounded gain for a NON beatmatched early instrumental lead-in.
+// Before last musical audio: next intro <= -12.8 dB, old stays 100%.
+// After the last music: softly reach unity at native EOF for an
+// adoption without an audible 0.2 -> 1.0 volume jump.
+function measuredReleasePreviewGain(now,begin,last,end){
+ if(![now,begin,last,end].every(Number.isFinite)||
+    !(begin<last&&last<end))return 0;
+ const before=clamp((now-begin)/Math.max(.35,last-begin),0,1);
+ const after=clamp((now-last)/Math.max(.5,end-last),0,1);
+ return now<last ? .23*Math.sin(before*Math.PI/2) :
+  .23+.77*Math.sin(after*Math.PI/2);
+}
 function mixCurve(kind,t,softTail=false){
  const time=clamp(t,0,1);
  let outGain=Math.cos(time*Math.PI/2),inGain=Math.sin(time*Math.PI/2);
@@ -4482,17 +4494,11 @@ async function beginMix(song,proposed){
      outGain=1;inGain=.78*Math.sin(Math.min(1,time*1.65)*Math.PI/2);
     }
    if(act.measuredReleaseLeadIn){
-    // Rise from silence to at most -13 dB under the old recording's
-    // actual last quiet notes. Only after those notes finish may the
-    // new intro take over. Original output stays at native full gain.
-    const last=act.releaseLastMusicalAt,now=old.currentTime;
-    const before=clamp((now-act.begin)/
-      Math.max(.35,last-act.begin),0,1);
-    const after=clamp((now-last)/
-      Math.max(.5,act.end-last),0,1);
+    // Preserve the outgoing song in full. Expose a gentle, harmonious
+    // preview during its measured release, then lift once it has ended.
     outGain=1;
-    inGain=now<last?.23*Math.sin(before*Math.PI/2):
-      .23+.77*Math.sin(after*Math.PI/2);
+    inGain=measuredReleasePreviewGain(old.currentTime,
+      act.begin,act.releaseLastMusicalAt,act.end);
    }
     const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
