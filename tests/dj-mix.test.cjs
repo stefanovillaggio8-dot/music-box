@@ -176,7 +176,9 @@ function createMobileMixFixture(){
   'const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));'+
   'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),'+
    'cache=new Map([["previous.mp3",{duration:180,last:180,protectedEnding:false}]]);'+
-   'const connectMixDsp=(ctx,source,gain)=>{source.connect(gain);return []};'+
+   'let dspMode="auto",dspStrength=55,dspBass=0,dspMid=0,dspTreble=0;'+
+   source.slice(source.indexOf("function connectMixDsp("),
+    source.indexOf("\ntry{\n const stored=",source.indexOf("function connectMixDsp(")))+'\n'+
   'const deepLookup=()=>null,resetMobileFade=()=>{};'+
   source.slice(source.indexOf("function mobileMixAllowed("),
    source.indexOf("function rememberMobileClip("))+ '\n'+block+
@@ -346,10 +348,11 @@ test("iPhone EQ lowers incoming bass first and restores it progressively",()=>{
  const frequency={initial:0,final:0,setValueAtTime(v){this.initial=v},
   exponentialRampToValueAtTime(v){this.final=v}};
  f.ctx.createBiquadFilter=()=>({type:"",frequency,connect(){},disconnect(){}});
- assert.equal(f.engine.startMobileMix(f.song,f.plan,f.app,f.old),true);
- assert.equal(f.engine.active().filter.type,"highpass");
- assert.equal(frequency.initial,135);
- assert.equal(frequency.final,40);
+ assert.equal(f.engine.startMobileMix(f.song,
+  {...f.plan,measuredBeatBridge:true},f.app,f.old),true);
+ assert.equal(f.engine.active().dspNodes[0].type,"highpass");
+ assert.ok(frequency.initial>=150,"incoming bass starts attenuated");
+ assert.ok(frequency.final<=50,"incoming bass opens up by the end");
  f.engine.stopMobileMix();
 });
 test("iPhone EQ unavailability must not stop the native audio or the safe overlay",()=>{
