@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6713";
+const CACHE = "spotifynonavraiimieisoldi-v6714";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -45,23 +45,23 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6713",
+  "./style.css?v=6714",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6713",
-  "./audio-lyrics-align.js?v=6713",
-  "./audio-lyrics-worker.js?v=6713",
-  "./app.js?v=6713",
+  "./word-karaoke.js?v=6714",
+  "./audio-lyrics-align.js?v=6714",
+  "./audio-lyrics-worker.js?v=6714",
+  "./app.js?v=6714",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
-  "./mix-intelligente.js?v=6713", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6714", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6713",
+  "./immersive.js?v=6714",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -84,19 +84,19 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6713",
+  "./style.css?v=6714",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6713",
-  "./audio-lyrics-align.js?v=6713",
-  "./audio-lyrics-worker.js?v=6713",
-  "./app.js?v=6713",
+  "./word-karaoke.js?v=6714",
+  "./audio-lyrics-align.js?v=6714",
+  "./audio-lyrics-worker.js?v=6714",
+  "./app.js?v=6714",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
-  "./mix-intelligente.js?v=6713",
+  "./mix-intelligente.js?v=6714",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6713"
+  "./immersive.js?v=6714"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",
@@ -1321,6 +1321,10 @@ async function findCachedMusic(url, profile, allowLegacyHostLookup = false) {
 /* Se il brano e' gia' salvato, lo uso subito: e' quello che rende
      istantaneo lo spostamento dentro la canzone. */
 let _rangeBlobMemo=null;
+// A streaming track without a full offline copy can request multiple
+// byte ranges in under a second. Skip five CacheStorage misses for repeat
+// requests, but never replace/download/delete manually saved songs.
+const _streamRangeMisses=new Map();
 async function rispostaDallaCache(cached, range, url="") {
   if (!range) return cached;
   const match = /^bytes=(\d*)-(\d*)$/i.exec(range.trim());
@@ -1396,6 +1400,14 @@ async function cachedMusicResponse(event) {
   const profile = await profileForEvent(event);
   const range = event.request.headers.get("range");
   const memoKey=String(profile||"")+"|"+event.request.url;
+  // Fast path ONLY for recently confirmed cache misses. A new offline
+  // download becomes eligible after 4 seconds, or immediately if the
+  // network fails and we retry CacheStorage below.
+  if(range&&_streamRangeMisses.get(memoKey)>Date.now()){
+    try{return await fetch(event.request)}catch(_){
+      _streamRangeMisses.delete(memoKey);
+    }
+  }
   // Safari sends many small ranges while scrubbing. When this full MP3
   // was just read, skip repeated CacheStorage lookups on every seek.
   if(range && /^bytes=(?:\d+-\d*|-\d+)$/i.test(range.trim()) &&
@@ -1406,6 +1418,7 @@ async function cachedMusicResponse(event) {
   const gia = await findCachedMusic(event.request.url, profile);
   /* Brano gia' in mano: lo uso subito, senza aspettare la rete. */
   if (gia) {
+    _streamRangeMisses.delete(memoKey);
     try {
       /* Lo servo subito (cosi' parte all'istante) e intanto vado a prendere
          la versione nuova del file: e' cosi' che le canzoni potenziate si
@@ -1417,6 +1430,11 @@ async function cachedMusicResponse(event) {
       }
       return await rispostaDallaCache(gia, range, String(profile||"")+"|"+event.request.url);
     } catch (e) { /* se non riesco, vado in rete */ }
+  }
+  if(range){
+    _streamRangeMisses.set(memoKey,Date.now()+4000);
+    if(_streamRangeMisses.size>40)
+      _streamRangeMisses.delete(_streamRangeMisses.keys().next().value);
   }
   try {
     const response = await fetch(event.request);
