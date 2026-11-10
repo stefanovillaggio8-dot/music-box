@@ -1100,7 +1100,7 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 65,
+    "v": 66,
     "s": 1620,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -1724,7 +1724,7 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 64,
+    "v": 65,
     "s": 1612,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -9069,7 +9069,7 @@
    },
    "[\"con te partirÃ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 183,
+    "s": 190,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
    },
@@ -9207,7 +9207,7 @@
    },
    "m:2026-11|[\"con te partirÃ²\",\"andrea bocelli\"]": {
     "v": 7,
-    "s": 181,
+    "s": 188,
     "t": "Con Te PartirÃ²",
     "a": "Andrea Bocelli"
    },
@@ -9828,6 +9828,18 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
+   },
+   "[\"il filmografo\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "Il Filmografo",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "Il Filmografo",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
@@ -10614,18 +10626,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
-   },
-   "[\"il filmografo\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Il Filmografo",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 1,
-    "t": "Il Filmografo",
-    "a": "Kid Yugi"
    }
   },
   "Diego": {
