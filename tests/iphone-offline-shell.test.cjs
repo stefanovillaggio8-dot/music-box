@@ -35,13 +35,17 @@ async function run(){
   "DJ script in live HTML must carry the current app version");
  // Karaoke and DJ releases can independently append cache revisions.
  // Test the actual installed HTML URLs, never a stale CSS/JS guess.
- const versionedAsset=name=>{
+ const versionedAsset=(name,requiredRelease=null)=>{
   const re=new RegExp('(?:src|href)="('+name.replace(".", "\\.")+
-   '\\?v='+release+'(?:&amp;[a-z]+=[0-9]+)?)"');
-  return re.exec(html)?.[1]?.replace(/&amp;/g,"&")||"";
+   '\\?v=([0-9]+)(?:&amp;[a-z]+=[0-9]+)?)"');
+  const match=re.exec(html);
+  if(!match||(requiredRelease&&match[2]!==requiredRelease))return "";
+  return match[1].replace(/&amp;/g,"&");
  };
+ // Player/DJ use the new release; unchanged CSS and Immersive scripts
+ // retain their independently pinned revision. Precache the exact URLs.
  const cssUrl=versionedAsset("style.css"),
-  appUrl=versionedAsset("app.js"),
+  appUrl=versionedAsset("app.js",release),
   immersiveUrl=versionedAsset("immersive.js");
  assert.ok(cssUrl&&appUrl&&immersiveUrl,
   "versioned stylesheet, player and immersive script must be present");
