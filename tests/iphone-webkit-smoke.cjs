@@ -39,7 +39,8 @@ async function run(){
    const hook="window.__MB_WEBKIT_DJ_TEST__={"+
     "seed:(key,buffer,info)=>rememberMobileClip(key,buffer,info),"+
     "put:(key,info)=>cache.set(key,info),"+
-    "start:startMobileMix,active:()=>mobileActive,stop:stopMobileMix};";
+    "start:startMobileMix,active:()=>mobileActive,stop:stopMobileMix,"+
+    "played:mobilePlayedSeconds,seekReady:mobileNativeSeekReady};";
    await route.fulfill({status:200,contentType:"text/javascript",
     body:original.replace(marker,hook+marker)});
   });
@@ -128,14 +129,69 @@ async function run(){
    await new Promise(resolve=>setTimeout(resolve,250));
    const advanced=ctx.currentTime-clockStart;
    testing.stop();
+   // Repeat real native-WebKit AudioBufferSource lifecycle events.
+   // This catches leaked preview state after rapid Next, pause or seek.
+   const handlers={};
+   old.addEventListener=(name,fn)=>{handlers[name]=fn};
+   old.removeEventListener=(name,fn)=>{
+    if(handlers[name]===fn)delete handlers[name];
+   };
+   let rapidStarts=0,pausedStops=0,cleanStops=0;
+   for(let i=0;i<24;i++){
+    const ok=testing.start(incoming,plan,app,old);
+    if(!ok||!testing.active())break;
+    rapidStarts++;
+    if(i%4===0){
+     handlers.pause?.();
+     pausedStops++;
+    }else testing.stop();
+    if(testing.active()!==null)break;
+    cleanStops++;
+   }
+   // Independently compare native handoff offsets against WebAudio's
+   // scheduled hold/linear-ramp playbackRate on real WebKit JS.
+   let maxClockError=0,rateCases=0;
+   for(const speed of [.97,.98,.99,1,1.01,1.02,1.03]){
+    for(let j=0;j<=40;j++){
+     const t=j*.1,hold=2,ramp=1;
+     const state={ctx:{currentTime:10+t},started:10,
+      rateSpeed:speed,rateHold:hold,rateRamp:ramp};
+     const expected=t<=hold?speed*t:t<hold+ramp?
+      speed*hold+speed*(t-hold)+(1-speed)*(t-hold)*(t-hold)/(2*ramp):
+      t+(speed-1)*(hold+ramp/2);
+     maxClockError=Math.max(maxClockError,
+      Math.abs(testing.played(state)-expected));
+     rateCases++;
+    }
+   }
+   const seekable={length:1,start:()=>0,end:()=>60};
+   const buffered=(end)=>({length:1,start:()=>0,end:()=>end});
+   const safeSeek=testing.seekReady({readyState:2,seeking:false,
+    seekable,buffered:buffered(12)},5);
+   const unsafeSeek=testing.seekReady({readyState:4,seeking:false,
+    seekable,buffered:buffered(4)},5);
    await ctx.close();
-   return {started,scheduled,advanced,contextState:ctx.state};
+   return {started,scheduled,advanced,contextState:ctx.state,
+    rapidStarts,pausedStops,cleanStops,maxClockError,rateCases,
+    safeSeek,unsafeSeek};
   });
   assert.equal(audioResult.started,true,
    "Real WebKit refused an iPhone DJ AudioBufferSource on trusted gesture");
   assert.equal(audioResult.scheduled,true);
   assert.ok(audioResult.advanced>.05,
    "WebKit audio playback clock did not advance while preview was active");
+  assert.equal(audioResult.rapidStarts,24,
+   "Safari DJ cannot repeatedly start decoded preview sources");
+  assert.equal(audioResult.cleanStops,24,
+   "Safari DJ leaves stale preview state after a pause/skip");
+  assert.equal(audioResult.pausedStops,6,
+   "Safari manual pauses must cancel a playing preview");
+  assert.equal(audioResult.rateCases,287);
+  assert.ok(audioResult.maxClockError<1e-8,
+   "WebKit native handoff clock drifts across an adapted BPM");
+  assert.equal(audioResult.safeSeek,true);
+  assert.equal(audioResult.unsafeSeek,false,
+   "WebKit must not seek into unbuffered audio");
 
   // A missing/stalled audio context must not crash the app or hide the
   // native song controls. User-gesture requirements remain iOS-specific.
