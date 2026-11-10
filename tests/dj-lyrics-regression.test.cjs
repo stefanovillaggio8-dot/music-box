@@ -548,3 +548,54 @@ test("audio word alignment overlaps lyric phrases crossing a 28-second boundary"
  assert.equal(aligned[0].words.length,7);
  assert.equal(aligned[0].words.map(w=>w.text).join(""),"One two three four five six seven");
 });
+
+
+test("Whisper language comes from real LRC text, not the browser locale or an English default",()=>{
+ const fake={};
+ new Function("window","globalThis",
+  fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8"))(fake,fake);
+ const detect=fake.MusicBoxAudioAlign.languageFromLyrics;
+ const rows=text=>text.split(/[.!?]+/).filter(Boolean).map(text=>({text}));
+ assert.equal(detect(rows("Non so perché sei ancora qui, voglio solo stare con te. Che cosa vuoi da me? Sono sempre io, davvero.")),"it");
+ assert.equal(detect(rows("And when you look at me, I know what you want. The world will never be the same because you are here with me.")),"en");
+ assert.equal(detect(rows("Yo quiero estar contigo porque tengo corazón. Estoy contigo y no quiero olvidarte nunca, sabes que estoy aquí.")),"es");
+ assert.equal(detect(rows("Je suis avec toi dans la nuit. Je veux encore quelque chose, pourquoi toujours moi et jamais vous?")),"fr");
+ assert.equal(detect(rows("Eu não tenho nada, você fica com meu coração. Minha saudade é demais e ninguém está aqui comigo.")),"pt");
+ assert.equal(detect(rows("Ich liebe dich und ich bin immer hier. Warum bist du nicht bei mir heute, meine liebe?")),"de");
+ assert.equal(detect(rows("La la la, oh baby, la la la.")),"","ambiguous lyrics must not be forced to English");
+ assert.equal(detect(rows("Je suis avec toi. I want you, the world is mine. Che sono, non so.")),"","mixed language cue must be inconclusive");
+ const worker=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-worker.js"),"utf8");
+ const align=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ assert.match(worker,/return_timestamps:"word",task:"transcribe",language/);
+ assert.match(worker,/!LANGUAGES\.has\(language\)/);
+ assert.match(align,/requestWorker\(sample,language\)/);
+ assert.match(align,/completedInSession\.add\(id\);\s*setStatus\("Lingua del testo incerta/);
+ assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=1/);
+ for(const file of ["audio-lyrics-align.js","audio-lyrics-worker.js"])
+  assert.equal(sw.split(file+"?v=6715&lang=1").length-1,2);
+});
+
+test("Whisper worker sends explicit per-track language to ASR and rejects missing or invalid language",async()=>{
+ const worker=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-worker.js"),"utf8");
+ const source=worker.slice(worker.indexOf("self.onmessage=async e=>"));
+ assert.ok(source.startsWith("self.onmessage"),"worker handler missing");
+ const sent=[],calls=[];
+ const mockSelf={postMessage:msg=>sent.push(msg)};
+ const asr=async(_pcm,options)=>{calls.push(options);return {chunks:[{text:" test",timestamp:[0,0.4]}]};};
+ const mockGetModel=async()=>asr;
+ new Function("self","getModel","LANGUAGES",source)(mockSelf,mockGetModel,new Set(["it","en","es","fr","pt","de"]));
+ const pcm=new Float32Array(16000);
+ await mockSelf.onmessage({data:{id:10,pcm,language:"it"}});
+ assert.equal(calls[0].language,"it");
+ assert.deepEqual(calls[0],{return_timestamps:"word",task:"transcribe",language:"it"});
+ assert.equal(sent[0].id,10);
+ await mockSelf.onmessage({data:{id:11,pcm,language:"en"}});
+ assert.equal(calls[1].language,"en");
+ await mockSelf.onmessage({data:{id:12,pcm}});
+ await mockSelf.onmessage({data:{id:13,pcm,language:"xx"}});
+ assert.equal(calls.length,2,"invalid or missing language must not launch transcription");
+ assert.match(sent[2].error,/Invalid audio segment/);
+ assert.match(sent[3].error,/Invalid audio segment/);
+});

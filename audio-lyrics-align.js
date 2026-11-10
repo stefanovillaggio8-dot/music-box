@@ -9,6 +9,36 @@ const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
 const attempts=new Map();
+
+/* Read the existing timed lyrics to select Whisper's explicit language.
+   Transformers.js 3.8.1 otherwise silently assumes English even for the
+   multilingual model. Unknown/mixed lyrics are left untouched rather than
+   making up Italian/English word timestamps. No external language API. */
+const ASR_LANGUAGE_MARKERS=Object.freeze({"it":"che sono siamo non perche perché voglio vuoi volevo vorrei dentro senza ancora niente sempre ormai adesso questo questa questi queste quello quella quelli quelle tutto tutta tutti tutte posso potrei sappiamo dimmi dirti davvero davvero invece soltanto mentre allora pure sai so cuore occhi stanotte notte sogni sogno strada pensieri pensiero amore amarti amarti","en":"the and you your yours with when where what why how who will would should never always nothing something because want wanna gonna know knows knew just dont don't can't could there their they them we're we are was were have has had here more another some other few three four first second third words word lyrics lyric line lines one last verse song music today tomorrow forever tonight feeling feel heart mind mine baby girl boy please look think see need make take time again","es":"quiero quieres tengo tienes estoy estamos eres nadie nunca tampoco contigo conmigo mañana manana corazón corazon ahora donde dónde cuando cuándo porque pero aunque solo sólo ojos noche sueños suenos vida años anos olvidar olvidarte sabe sabes dime quiero volver volveré besame beso amar amor siempre","fr":"je suis avec dans pour parce pourquoi jamais toujours rien toi moi vous nous est etait étais être etre veux peux alors encore aujourd'hui demain amour coeur cœur nuit jours jour yeux sans belle beaux elle elles ils leur notre votre","pt":"não nao você voce vocês voces coração coracao estou tenho minha minhas meu meus teu teus sua suas tudo todos todas saudade demais fica ficar fico hoje ontem amanhã amanha ninguém ninguem comigo comigo saudades viver beijo beijos amor sempre","de":"ich nicht dich dir liebe mein meine meiner meiner und keine kein alles immer etwas nichts bist sind haben gehen wann bitte warum heute morgen nacht wieder deine deiner deine deinen unser unsere herz augen ohne jeder jeden zeit weiß weiss"});
+const ASR_LANGUAGE_SETS=Object.fromEntries(Object.entries(ASR_LANGUAGE_MARKERS)
+  .map(([code,words])=>[code,new Set(words.split(/\s+/u))]));
+function languageFromLyrics(rows){
+ if(!Array.isArray(rows))return "";
+ const source=rows.slice(0,120).map(r=>String(r?.text||"")).join(" ").toLowerCase();
+ const tokens=source.match(/\p{L}+/gu)||[];
+ if(tokens.length<6)return "";
+ const scores=[];
+ for(const [code,markers] of Object.entries(ASR_LANGUAGE_SETS)){
+  const counts=new Map();let score=0,hits=0;
+  for(const token of tokens){
+   if(!markers.has(token))continue;
+   const count=counts.get(token)||0;
+   if(count>=3)continue; // A repeated hook cannot decide the whole track.
+   counts.set(token,count+1);score++;if(count===0)hits++;
+  }
+  scores.push({code,score,hits});
+ }
+ scores.sort((a,b)=>b.score-a.score);
+ const [winner,second]=scores;
+ if(winner.score<5||winner.hits<3||
+    winner.score<second.score*1.5+2)return "";
+ return winner.code;
+}
 const normalized=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"")
   .toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9']+/g,"").replace(/'/g,"");
 const wordTokens=s=>String(s||"").match(/\S+\s*/gu)||[];
@@ -115,9 +145,9 @@ function stopWorker(reason){
  pending.clear();
  try{old?.terminate()}catch(_){}
 }
-function requestWorker(data){
+function requestWorker(data,language){
  if(!worker){
-  worker=new Worker("audio-lyrics-worker.js?v=6708",{type:"module"});
+  worker=new Worker("audio-lyrics-worker.js?v=6715&lang=1",{type:"module"});
   worker.onmessage=e=>{
    const id=Number(e.data?.id),req=pending.get(id);
    if(!req)return;
@@ -132,7 +162,7 @@ function requestWorker(data){
  return new Promise((resolve,reject)=>{
   const timer=setTimeout(()=>stopWorker("Whisper timed out"),WORKER_TIMEOUT_MS);
   pending.set(id,{resolve,reject,timer});
-  try{worker.postMessage({id,pcm:data},[data.buffer])}
+  try{worker.postMessage({id,pcm:data,language},[data.buffer])}
   catch(e){stopWorker("Whisper worker message failed")}
  });
 }
@@ -165,6 +195,12 @@ async function analyze(id){
  if(!bridge||bridge.currentId?.()!==id||completedInSession.has(id))return false;
  const rows=bridge.lyricsData?.()?.synced||[];
  if(rows.length<3||rows.every(row=>row.words?.length>=2))return false;
+ const language=languageFromLyrics(rows);
+ if(!language){
+  completedInSession.add(id);
+  setStatus("Lingua del testo incerta: mantengo i tempi originali");
+  return false;
+ }
  const last=Number(sessionStorage.getItem("mb.audioWords.fail."+id)||0);
  if(last&&Date.now()-last<RETRY_MS)return false;
  const track=bridge.allTracks?.().find(t=>t.id===id);
@@ -216,7 +252,7 @@ async function analyze(id){
    const sample=pcmSlice(decoded,at,WINDOW);
    setStatus("Analizzo la voce: "+Math.round(at)+"–"+
      Math.round(Math.min(duration,at+WINDOW))+" s…");
-   const chunks=await requestWorker(sample);
+   const chunks=await requestWorker(sample,language);
    if(active.has(id)===false||bridge.currentId?.()!==id)break;
    const aligned=alignWindow(rows,chunks,at,Math.min(WINDOW,duration-at));
    sessionStorage.setItem(key,String(Date.now()));
@@ -254,5 +290,5 @@ function request(id){
  else setTimeout(start,1600);
  return true;
 }
-root.MusicBoxAudioAlign={request,alignWindow,recognizedWords,pcmSlice,preferredWindows};
+root.MusicBoxAudioAlign={request,alignWindow,recognizedWords,pcmSlice,preferredWindows,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);
