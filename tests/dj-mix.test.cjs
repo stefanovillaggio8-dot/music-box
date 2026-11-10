@@ -1318,3 +1318,15 @@ test("measured early release preview is smooth, capped, and never ducks the outg
   source.includes("inGain=measuredReleasePreviewGain(old.currentTime,"),
   "the original is never muted during the measured release");
 });
+
+
+test("measured release preview survives a delayed fade tick at the old song native EOF",()=>{
+ const handler=source.slice(source.indexOf("function naturalEndHandoff("),
+   source.indexOf("async function handoff("));
+ assert.ok(handler.includes("active?.measuredReleaseLeadIn"),
+  "native onended must adopt a running early preview instead of loading a new MP3");
+ assert.ok(handler.includes("active.original?.ended"));
+ assert.ok(source.includes("measuredReleaseLeadIn:!!proposed.measuredReleaseLeadIn"));
+ assert.ok(source.includes("!plan?.measuredReleaseLeadIn"),
+  "do not preempt a planned release with a later quiet fallback");
+});
