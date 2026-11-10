@@ -282,6 +282,6 @@ test("desktop independently measured releases must bypass the iOS-only quiet gat
  const j=source.indexOf("const latePlannedSoft=",i);
  assert.ok(i>=0&&j>i);
  const gate=source.slice(i,j);
- assert.match(gate,/candidate\\.measuredReleaseLeadIn!==true/);
+ assert.ok(gate.includes("candidate.measuredReleaseLeadIn!==true"));
  assert.match(gate,/!desktopBeatPairCertified/);
 });
