@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.711";
+  const APP_VERSION = "6.712";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12906,6 +12906,7 @@ window.MusicBoxBridge = {
   },
   syncLibrary:()=>_sincronizzaCatalogoDispositivi(true),
   profile:()=>profile,
+  mixScope:()=>profile+"|"+String(_playlistAttiva||"library"),
   playable:()=>_listaPerIlSeguito(),
   allTracks:()=>tracks,
   currentId:()=>currentId,
