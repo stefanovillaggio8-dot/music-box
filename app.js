@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.709";
+  const APP_VERSION = "6.710";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8744,25 +8744,20 @@ function _aggiornaPosizioneSchermo() {
     const setHandler = (action, fn) => {
       try { session.setActionHandler(action, fn); } catch (_) { /* unsupported */ }
     };
-    // With native iOS HTMLAudioElement playback, let WebKit handle
-    // Play/Pause directly (its default MediaRemote commands), without
-    // requiring suspended PWA JavaScript to run an app-level callback.
-    // WebKit also supplies default Play/Pause when other handlers exist.
-    // Shared rooms need app-specific logic, so keep the old callbacks.
-    const nativeIOS=_usaControlliNativiIos()&&
-      !window.MusicBoxRoom?.isActive?.();
-    const mode=nativeIOS?"native-ios":"custom";
+    // WebKit unregisters native MediaRemote commands when a page sets
+    // ANY custom MediaSession action (including next/previous/seek).
+    // Therefore iOS must always have explicit Play and Pause handlers.
+    // Use the same existing HTMLAudioElement and synchronous play() path.
+    const mode=window.MusicBoxRoom?.isActive?.()?"room":"player";
     if (_mediaSessionActionMode!==mode) {
-      if (nativeIOS) {
-        setHandler("play",null);
-        setHandler("pause",null);
-      } else {
-        setHandler("play", () => {
-          if(currentId) _riproduciVolontaria(true);
-          else if(tracks.length) playById(tracks[0].id);
-        });
-        setHandler("pause", () => { _pausaVolontaria(); });
-      }
+      setHandler("play", () => {
+        if(currentId && (!audio || (!audio.currentSrc&&!audio.src) || audio.error)) {
+          const checkpoint=_pausaSalvata();
+          playById(currentId,true,Number(checkpoint?.time)||0);
+        } else if(currentId) _riproduciVolontaria(true);
+        else if(tracks.length) playById(tracks[0].id);
+      });
+      setHandler("pause", () => { _pausaVolontaria(); });
       setHandler("nexttrack", () => playNext());
       setHandler("previoustrack", () => {
         if(window.MusicBoxRoom?.isActive())window.MusicBoxRoom.control("previous");
