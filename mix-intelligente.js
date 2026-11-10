@@ -1945,7 +1945,7 @@ function rhythmicGridEvidence(a,b){
  if(!Number.isFinite(tailPulse)||!Number.isFinite(introPulse)||
     tailPulse<.20||introPulse<.20)return null;
  const g=grooveAgreement(a,b),n=similarNotes(a,b);
- if(!g||g.score<.775||g.correlation<.55||!n||
+ if(!g||g.score<.77||g.correlation<.55||!n||
     !Number.isFinite(n.focused)||!Number.isFinite(n.phrase)||
     n.focused<.76||n.phrase<.65)return null;
  // A one-beat join can preserve a strong boundary chord even if the
