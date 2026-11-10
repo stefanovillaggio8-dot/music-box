@@ -174,7 +174,9 @@ function createMobileMixFixture(){
  const engine=new Function("schedule",
   'const isIOS=true,document={hidden:false};let enabled=true,mobileOverlayEnabled=true;'+
   'const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));'+
-  'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),cache=new Map();'+
+  'const mobileIntroClips=new Map(),mobileOverlayFailures=new Map(),'+
+   'cache=new Map([["previous.mp3",{duration:180,last:180,protectedEnding:false}]]);'+
+   'const connectMixDsp=(ctx,source,gain)=>{source.connect(gain);return []};'+
   'const deepLookup=()=>null,resetMobileFade=()=>{};'+
   source.slice(source.indexOf("function mobileMixAllowed("),
    source.indexOf("function rememberMobileClip("))+ '\n'+block+
@@ -197,6 +199,8 @@ function createMobileMixFixture(){
  const plan={kind:"beat",begin:172,fade:6,entry:0,safeOutroAt:172,end:180,quietCertified:true};
  let id="previous",native=old;const calls=[];
  const app={currentId:()=>id,mixNext:()=>song,mixRunningContext:()=>ctx,
+  allTracks:()=>[{id:"previous",url:"previous.mp3"}],
+  mixLyricCues:()=>({last:150}),
   mixUrl:track=>track.url,volume:()=>.8,audio:()=>native,
   mixHandoff:(trackId,at)=>{calls.push({trackId,at});return Promise.resolve()}};
  engine.clips.set(song.url,{start:0,rate:100,channels:[new Float32Array(1400)]});
@@ -698,7 +702,7 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
  }
  const records=new Map([["next.mp3",{safeIntroAt:3.12,first:3.24,introDrive:.8}]]);
  const harness=new Function("Audio","cache",
-  "let prepared=null,plan=null;const deepLookup=()=>null;"+
+  "let prepared=null,plan=null;const isIOS=false;const deepLookup=()=>null;"+
   "const dropPrepared=()=>{prepared=null};"+
   source.slice(begin,end)+
   "return {prepare,entry:certifiedNaturalIntroEntry,get:()=>prepared,"+
@@ -806,7 +810,8 @@ test("DJ handoff keeps its already playing decoded audio instead of loading same
  const harness=new Function("app","act","stopSnapPrecision",
   "let active=act,mixing=true;const isIOS=false;"+
   "const window={MusicBoxRoom:{isActive:()=>false}};"+
-  "const bridge=()=>app;const cancel=()=>{throw Error('must not cancel adopted preview')};"+
+  "const bridge=()=>app;const releaseDesktopDsp=()=>{};"+
+  "const cancel=()=>{throw Error('must not cancel adopted preview')};"+
   source.slice(start,end)+
   "return {handoff,state:()=>({active,mixing})};"
  )(app,act,()=>stoppedPrecision++);
@@ -833,6 +838,7 @@ test("automatic handoff seek does not cancel audible preview; manual seeking doe
   "const mobileActive=null,bridge=()=>({currentId:()=>\"next\"});"+
   "let plan={},plannedFor='next',previousId='old';"+
   "let planEpoch=2,planRetryAt=30000,planRetryCount=3,lastPlanMissing=true;"+
+  "let seekRecoveryUntil=0,lastSeekCancelledAt=0,lastSeekCancelledTrack='';"+
   "let shuffleGeneration=0,shuffleBusy=true,shuffleRunFor='old';"+
   "const abortObsoleteDJWork=()=>{counters.aborted++};"+
   "const cancel=()=>{counters.canceled++};"+
