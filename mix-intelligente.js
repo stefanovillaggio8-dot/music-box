@@ -507,6 +507,21 @@ function scheduleDeepIndexRetry(delay){
   loadDeepIndex().catch(()=>{});
  },Math.max(1000,delay));
 }
+
+let _coarseTempoWarningShown=false;
+function djTempoIndexQuality(){
+ if(!deepIndex?.entries)return null;
+ let analyzed=0,reliableTempo=0;const distinct=new Set();
+ for(const row of Object.values(deepIndex.entries)){
+  if(row?.status!=="ok"||!Number.isFinite(row.bpm))continue;
+  analyzed++;
+  distinct.add(Number(row.bpm).toFixed(2));
+  if(Number(row.beatConfidence)>=.30)reliableTempo++;
+ }
+ return {analyzed,distinctBpm:distinct.size,tempoReliableAtLeast030:reliableTempo,
+  limitedResolution:analyzed>=100&&distinct.size<Math.max(15,analyzed*.04)};
+}
+
 function loadDeepIndex(force=false){
  if(offlineTransferPriority||bridge()?.offlineBusy?.())return Promise.resolve(deepIndex);
  if(deepIndexPromise)return deepIndexPromise;
@@ -541,6 +556,12 @@ function loadDeepIndex(force=false){
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
+   const tempoQuality=djTempoIndexQuality();
+   if(tempoQuality?.limitedResolution&&!_coarseTempoWarningShown){
+    _coarseTempoWarningShown=true;
+    console.warn("[Music Box DJ] Indice BPM a bassa risoluzione:",tempoQuality,
+     "Il solo valore BPM non certifica un beatmatch. Serve una nuova analisi ritmica dei file reali.");
+   }
    const changed=!previous||
      previous.analyzed!==json.analyzed||
      previous.sourceCount!==json.sourceCount||
@@ -5737,7 +5758,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.713",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.714",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -5987,7 +6008,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     }catch(_){}
     return Math.round(ahead*10)/10;
    })(),
-   deepIndexLoaded:!!deepIndex,offlineTransferPriority,
+   deepIndexLoaded:!!deepIndex,tempoIndexQuality:djTempoIndexQuality(),
+   offlineTransferPriority,
    audioContextState:app?.mixRunningContext?.()?.state||"not-running",
    remaining:Number.isFinite(audio?.duration)?Math.round((audio.duration-audio.currentTime)*10)/10:null,
    analysisReady:!!a,deepIndexed:!!deepLookup(track),
