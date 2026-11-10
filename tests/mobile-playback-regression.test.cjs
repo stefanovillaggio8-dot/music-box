@@ -634,3 +634,19 @@ test("rapid seeking gives the native decoder priority over DJ analysis",()=>{
  assert.match(app,/pendingSeek = null;\s+_saveSeekAfterDecoder\(\)/);
  assert.ok(!excerpt(app,"function seekBy(delta)","async function exportTrack(").includes("    savePos();"));
 });
+
+test("seek uses preload and emits bounded network/decoder timing",()=>{
+ assert.ok(app.includes('if (!existing) a.preload = "auto";'));
+ assert.ok(app.includes('_misuraSeekAudio(audio,pendingSeek,"cursore")'));
+ assert.ok(app.includes('_misuraSeekAudio(audio,t,"pulsante")'));
+ assert.ok(app.includes('console.warn("[Music Box SEEK] buffering lento"'));
+ assert.ok(app.includes('if(event?.target?.closest?.("#playerProgress,#btnSeekFor,#btnSeekBack"))return;'));
+});
+test("uncached MP3 ranges skip repeated CacheStorage misses without dropping offline fallback",()=>{
+ assert.ok(sw.includes('const _streamRangeMisses=new Map();'));
+ const segment=excerpt(sw,"async function cachedMusicResponse(event)","// Static shell refreshes");
+ assert.ok(segment.indexOf("_streamRangeMisses.get(memoKey)")<segment.indexOf("findCachedMusic(event.request.url, profile)"));
+ assert.ok(segment.includes('_streamRangeMisses.delete(memoKey)'));
+ assert.ok(segment.includes("if(range){\n    _streamRangeMisses.set(memoKey,Date.now()+4000)"));
+ assert.ok(segment.includes('const legacy = await findCachedMusic(event.request.url, profile, true)'));
+});
