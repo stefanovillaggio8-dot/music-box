@@ -528,3 +528,19 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  assert.match(engine,/window\.OfflineAudioContext\|\|window\.webkitOfflineAudioContext/);
  assert.match(engine,/if\(!selected\(at\)\)continue/);
 });
+
+test("audio word alignment overlaps lyric phrases crossing a 28-second boundary",()=>{
+ const fake={MusicBoxBridge:{audio:()=>({currentTime:24})}};
+ new Function("window","globalThis",fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8"))(fake,fake);
+ const api=fake.MusicBoxAudioAlign;
+ const rows=[{t:24.1,text:"One two three four five six seven"},{t:27.2,text:"Next phrase"}];
+ const windows=api.preferredWindows(rows,90);
+ assert.ok(windows.includes(19),"the full phrase must be in a window starting before its cue");
+ assert.ok(windows.includes(24),"existing naturally aligned overlap remains");
+ assert.ok(windows.indexOf(19)<windows.indexOf(0),"prioritize nearby overlap over a clipped early window");
+ const chunks=["One","two","three","four","five","six","seven"].map((text,i)=>({text:" "+text,timestamp:[5.1+i,5.55+i]}));
+ const aligned=api.alignWindow([rows[0]],chunks,19,28);
+ assert.equal(aligned.length,1);
+ assert.equal(aligned[0].words.length,7);
+ assert.equal(aligned[0].words.map(w=>w.text).join(""),"One two three four five six seven");
+});
