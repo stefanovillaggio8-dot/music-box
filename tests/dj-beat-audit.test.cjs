@@ -699,3 +699,26 @@ test("measure early instrumental beat matches in the real published audio index"
   JSON.stringify({withWindows:withWindows.length,tempoClose,candidates,steps,samples}));
  assert.ok(withWindows.length>=1,"recent real MP3 index must expose new early waveform windows");
 });
+
+test("diagnose rare actual waveform beat proposals before changing musical safety gates",()=>{
+ const pairs=[
+  ["audio/songs/track-346.mp3","app/songs/youtube-kopi-luwak.mp3"],
+  ["mobile/songs/youtube-kopi-luwak.mp3","app/songs/youtube-kopi-luwak.mp3"],
+  ["audio/songs/track-378.mp3","audio/songs/track-91.mp3"]
+ ];
+ const detail=pairs.map(([from,to])=>{
+  const a=find(from),b=find(to);
+  if(!a||!b)return {from,to,missing:true};
+  const d=a.data,n=b.data,p=tools.transition(d,n,d.duration);
+  const musical=tools.similarNotes(d,n),groove=tools.grooveAgreement(d,n);
+  const grid=tools.rhythmicGridEvidence(d,n);
+  return {from,to,plan:p,certified:!!p&&tools.desktopBeatPairCertified(d,n,p),
+   last:d.last,duration:d.duration,release:d.dropRelease,
+   protectedEnding:!!d.protectedEnding,confidence:[d.beatConfidence,n.beatConfidence],
+   voice:[d.lastVoiceAt,d.lastLyricAt,n.firstVoiceAt,n.firstLyricAt],
+   grid,notes:{focused:musical.focused,phrase:musical.phrase,matches:musical.matches,
+    alignment:musical.alignment},groove};
+ });
+ console.info("[DJ REAL NEAR-BEAT DIAGNOSTICS]",JSON.stringify(detail));
+ assert.ok(detail.some(x=>x.plan?.kind==="snap"),"retain a real measured snap example");
+});
