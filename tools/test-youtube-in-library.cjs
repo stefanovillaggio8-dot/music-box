@@ -52,5 +52,5 @@ assert(src.includes('if (t.url && !t.youtubeId && !t.preview && !isCached(t) &&'
        'Playable non-YouTube audio must retain its caching safeguard');
 assert(src.includes('if(!t.youtubeId) {'));
 assert(!page.includes('id="btnMieiVideoYT"'));
-assert(/<script src="app\.js\?v=\d+"><\/script>/.test(page),"App script must be versioned");
+assert(/<script src="app\.js\?v=\d+(?:&amp;words=\d+)?"><\/script>/.test(page),"App script must be versioned");
 console.log("OK: YouTube appears in the actual library, instantly and after reload; profile isolation, dedupe, playback routing, no fake MP3/offline.");
