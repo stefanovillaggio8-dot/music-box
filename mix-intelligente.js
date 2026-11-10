@@ -4075,7 +4075,8 @@ function prepare(song,fromId,app){
 // at native EOF. Do not fade out the last kick or download the same MP3
 // again. If prebuffer is absent, let the original ended handler run.
 function naturalEndHandoff(certifiedSilentTail=false){
- if((active?.subduedRhythmicUnderlay||active?.postMusicalTailUnderlay)&&
+ if((active?.subduedRhythmicUnderlay||active?.postMusicalTailUnderlay||
+     active?.measuredReleaseLeadIn)&&
     active.original?.ended&&
     !active.handingOff){handoff();return true;}
  if(!enabled||isIOS||mixing||active||
