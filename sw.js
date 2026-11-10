@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6715";
+const CACHE = "spotifynonavraiimieisoldi-v6716";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -55,7 +55,7 @@ const CORE = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
-  "./mix-intelligente.js?v=6715&dj=9", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6716&dj=10", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -94,7 +94,7 @@ const OFFLINE_SHELL = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
-  "./mix-intelligente.js?v=6715&dj=9",
+  "./mix-intelligente.js?v=6716&dj=10",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6715&words=2"
 ];
