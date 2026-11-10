@@ -459,3 +459,16 @@ test("DSP presets are scoped to playlist and connect WebAudio EQ and filters",()
  assert.ok(dj.includes('filter.frequency.exponentialRampToValueAtTime'));
  assert.ok(dj.includes('source.connect(gain)'));
 });
+
+test("desktop DSP uses existing context and cleans graphs after native handoff",()=>{
+ const dj=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const desktop=dj.slice(dj.indexOf("function attachDesktopDsp("),dj.indexOf("function resetMobileFade()"));
+ assert.ok(desktop.includes('preview?.crossOrigin!=="anonymous"'));
+ assert.ok(desktop.includes('ctx.state!=="running"'));
+ assert.ok(desktop.includes('ctx.createMediaElementSource(preview)'));
+ assert.ok(desktop.includes('desktopDspGraphs.set(preview,graph)'));
+ assert.ok(dj.includes("setTimeout(cleanupDesktopDsp,900)"));
+ assert.ok(dj.includes('releaseDesktopDsp(old);'));
+ assert.ok(dj.includes('act.dsp=attachDesktopDsp(upcoming,act.fade,'));
+ assert.ok(dj.includes('upcoming.crossOrigin="anonymous"'));
+});
