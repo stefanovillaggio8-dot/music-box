@@ -698,10 +698,12 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
     const filter=add(effect,400),
      t=ctx.currentTime+Math.max(0,Number(startDelay)||0),strength=dspStrength/100;
     const softLift=dspMode==="auto"&&effect==="lowpass"&&softReveal&&seconds>=1.2;
-    const from=softLift?Math.max(900,4200-2800*strength):
-     effect==="highpass"?35+300*strength:18000-(18000-360)*strength;
     const musicalReveal=dspMode==="auto"&&effect==="highpass"&&beatMatched&&
      Number.isFinite(revealPoint)&&revealPoint>=.3&&revealPoint<=.76&&seconds>=2.6;
+    // The verified new kick gets a bass reveal; unsafe handoffs do not.
+    const from=softLift?Math.max(900,4200-2800*strength):
+     musicalReveal?Math.max(350,170+720*strength):
+     effect==="highpass"?35+300*strength:18000-(18000-360)*strength;
     filter.frequency.setValueAtTime(from,t);
     if(musicalReveal){
      const impact=seconds*revealPoint;
@@ -714,7 +716,7 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
      // The sweep changes only the incoming recording, never adds audio.
      filter.frequency.setValueAtTime(from,t+.12);
      filter.frequency.exponentialRampToValueAtTime(18000,
-      t+Math.max(.35,Math.min(seconds*.65,1.45)));
+      t+Math.max(.35,Math.min(seconds*.50,1.05)));
     }else filter.frequency.exponentialRampToValueAtTime(
       effect==="highpass"?35:18000,t+Math.max(.25,Math.min(10,seconds)));
    }
@@ -756,12 +758,17 @@ function djImpactBeatPoint(p,seconds){
 function djImpactEnvelope(progress,beatPoint){
  const t=clamp(progress,0,1),pivot=clamp(beatPoint,.4,.72);
  const smooth=x=>{const z=clamp(x,0,1);return z*z*(3-2*z)};
- const liftWindow=Math.min(.22,(1-pivot)*.67);
- const blend=t<=pivot?.25*smooth(t/pivot):
-   .25+.52*smooth((t-pivot)/liftWindow)+
-   .23*smooth((t-pivot)/(1-pivot));
+ // Equal-power focal switch centered on the measured incoming downbeat.
+ const switchStart=pivot-.09,switchEnd=pivot+.075;
+ const blend=t<=switchStart?.22*smooth(t/switchStart):
+   t<=switchEnd?.22+.60*smooth((t-switchStart)/(switchEnd-switchStart)):
+   .82+.18*smooth((t-switchEnd)/(1-switchEnd));
  return {outGain:Math.cos(blend*Math.PI/2),
    inGain:Math.sin(blend*Math.PI/2)};
+}
+function djSoftFocusEnvelope(progress){
+ // Only verified quiet tails: the next actual intro emerges early.
+ return Math.sin(Math.pow(clamp(progress,0,1),.58)*Math.PI/2);
 }
 function djSoftRevealReady(p,seconds){
  return !!p&&p.kind==="soft"&&p.quietCertified===true&&
@@ -3541,10 +3548,10 @@ function startMobileMix(song,p,app,old){
   }
   const startedAt=ctx.currentTime+delay;
   const djRevealAt=djImpactBeatPoint(p,Math.min(p.fade,secondsLeft-delay));
+  const softReveal=djSoftRevealReady(p,Math.min(p.fade,secondsLeft-delay));
   dspNodes=connectMixDsp(ctx,source,gain,
     Math.max(.4,Math.min(p.fade,secondsLeft-delay)),
-    !!p.measuredBeatBridge,djRevealAt,delay,
-    djSoftRevealReady(p,Math.min(p.fade,secondsLeft-delay)));
+    !!p.measuredBeatBridge,djRevealAt,delay,softReveal);
   const ramp=Number.isFinite(djRevealAt)?
    Math.max(.9,Math.min(p.fade,secondsLeft-delay-.14)):
    p.vocalBeatUnderlay?
@@ -3557,7 +3564,7 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (Number.isFinite(djRevealAt)?.72:p.postMusicalTailUnderlay?.72:p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
+   (Number.isFinite(djRevealAt)?.78:p.postMusicalTailUnderlay?.72:p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
     lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
@@ -3573,6 +3580,7 @@ function startMobileMix(song,p,app,old){
        Math.max(.05,1-singerEnd-.02),0,1);
      const proportion=Number.isFinite(djRevealAt)?
        djImpactEnvelope(u,djRevealAt).inGain:
+      softReveal?djSoftFocusEnvelope(u):
       p.vocalBeatUnderlay?
        (u<=singerEnd+.02?.10+.23*clamp(u/.20,0,1):
         .33+.67*Math.sin(postSinger*Math.PI/2)):
@@ -3588,6 +3596,11 @@ function startMobileMix(song,p,app,old){
    gain.gain.setValueAtTime(0,startedAt);
    gain.gain.linearRampToValueAtTime(target*.38,startedAt+ramp*djRevealAt);
    gain.gain.linearRampToValueAtTime(target*.93,startedAt+ramp*late);
+   gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
+  }else if(softReveal){
+   // Early real-music arrival also on WebAudio without curve support.
+   gain.gain.setValueAtTime(0,startedAt);
+   gain.gain.linearRampToValueAtTime(target*.78,startedAt+ramp*.42);
    gain.gain.linearRampToValueAtTime(target,startedAt+ramp);
   }else gain.gain.linearRampToValueAtTime(
    p.vocalBeatUnderlay?target*.28:target,startedAt+ramp);
@@ -4069,7 +4082,10 @@ async function handoff(){
     preview.volume=volume*(1-p);
     await new Promise(resolve=>setTimeout(resolve,35));
    }
-   if(active===act)try{nextNative.volume=volume}catch(_){}
+   if(active===act)try{
+    nextNative.volume=volume;
+    preview.volume=0; // No residual preview when decoder handoff completes.
+   }catch(_){}
   }else{
    const nextNative=native();
    if(nextNative&&nextNative!==old&&nextNative!==preview)
