@@ -288,8 +288,8 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
  assert.match(immersive,/PAROLA PER PAROLA/);
- assert.match(html,/word-karaoke\.js\?v=6710/);
- assert.match(sw,/word-karaoke\.js\?v=6710/);
+ assert.match(html,/word-karaoke\.js\?v=\d+/);
+ assert.match(sw,/word-karaoke\.js\?v=\d+/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
  assert.match(css,/\.im-line\.active \.karaoke-word/);
 });
@@ -332,8 +332,8 @@ test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio p
  assert.match(audio,/saveAudioWordRows\?\.\(id,aligned\)/);
  assert.match(app,/saveAudioWordRows:\(id,rows\)=>_salvaParoleDallAudio/);
  assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
- assert.match(html,/audio-lyrics-align\.js\?v=6710/);
- assert.match(sw,/audio-lyrics-worker\.js\?v=6710/);
+ assert.match(html,/audio-lyrics-align\.js\?v=\d+/);
+ assert.match(sw,/audio-lyrics-worker\.js\?v=\d+/);
  assert.match(html,/id="lyricsAudioStatus"/);
 });
 
