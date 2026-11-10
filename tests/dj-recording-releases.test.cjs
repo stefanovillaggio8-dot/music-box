@@ -95,7 +95,8 @@ test("never mistake a temporary volume valley or renewed last chorus for a final
  assert.equal(early({...outgoing,dropRelease:{...outgoing.dropRelease,quietLevel:.38}},206,194.4,186),false);
 });
 test("23:18 recording: early verified impact can preempt a later silent-tail cue",()=>{
- assert.match(source,/const plannedLate=earlyRelease&&\(!plan\|\|plan.kind==="cut"\|\|/);
+ assert.match(source,/const plannedLate=earlyRelease&&!plan\?\.measuredReleaseLeadIn&&/);
+ assert.match(source,/\(!plan\|\|plan.kind==="cut"\|\|/);
  assert.match(source,/plan.begin>audio.currentTime\+1\.2/);
  assert.match(source,/if\(needsLiveQuietRecovery\(plan,audio.currentTime,mixReady\)\|\|plannedLate\)/);
  assert.match(source,/if\(!earlyCertified&&!liveQuietOutroReady\(/);
