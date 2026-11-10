@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.713";
+  const APP_VERSION = "6.714";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -6374,7 +6374,9 @@ function handleMetadata() {
     // existing playback tests; an optional DJ audio comes from arguments[0].
     const existing = arguments.length ? arguments[0] : null;
     const a = existing || new Audio();
-    if (!existing) a.preload = _usaControlliNativiIos() ? "auto" : "metadata";
+    // Keep enough of the current MP3 buffered for responsive random access.
+    // A metadata-only preload leaves PC seeks waiting for extra Range reads.
+    if (!existing) a.preload = "auto";
     // Boosted-file failure is handled only by handleError. A second
     // independent error listener used to swap /bassi/ while handleError
     // simultaneously rebuilt the player, interrupting a valid fallback.
@@ -8802,6 +8804,59 @@ function _aggiornaPosizioneSchermo() {
       if(target===audio&&id===currentId)try{savePos()}catch(_){}
     },180);
   }
+
+  // One bounded diagnostic per real user seek, never an MP3 fetch or decoder.
+  // Helps separate a blocked media Range from a slow JavaScript handler.
+  let _stopSeekProbe=null;
+  function _misuraSeekAudio(player,target,origine){
+    if(_stopSeekProbe)_stopSeekProbe();
+    if(!player||!Number.isFinite(Number(target)))return;
+    const id=currentId,started=performance.now(),wanted=Number(target);
+    let finished=false,timer=null;
+    const buffered=()=>{
+      let ahead=0;
+      try{
+        for(let i=0;i<player.buffered.length;i++)
+          if(player.buffered.start(i)<=wanted+.15&&player.buffered.end(i)>=wanted)
+            ahead=Math.max(ahead,player.buffered.end(i)-wanted);
+      }catch(_){}
+      return Math.round(ahead*10)/10;
+    };
+    const finish=(state)=>{
+      if(finished)return;finished=true;
+      clearTimeout(timer);
+      for(const type of ["seeked","canplay","playing","timeupdate"])
+        player.removeEventListener(type,check);
+      if(_stopSeekProbe===stop)_stopSeekProbe=null;
+      if(player!==audio||id!==currentId)return;
+      let host="sconosciuto";
+      try{host=new URL(player.currentSrc||player.src,location.href).hostname}catch(_){}
+      const detail={
+        origine,brano:id,host,ms:Math.round(performance.now()-started),
+        destinazione:Math.round(wanted*10)/10,
+        posizione:Math.round((Number(player.currentTime)||0)*10)/10,
+        readyState:player.readyState,seeking:player.seeking,paused:player.paused,
+        bufferedAhead:buffered(),networkState:player.networkState,
+        errore:player.error?.code||null
+      };
+      if(state==="lento")console.warn("[Music Box SEEK] buffering lento",detail);
+      else console.info("[Music Box SEEK] posizione pronta",detail);
+    };
+    const stop=()=>{finished=true;clearTimeout(timer);
+      for(const type of ["seeked","canplay","playing","timeupdate"])
+        player.removeEventListener(type,check)};
+    const check=()=>{
+      if(player!==audio||id!==currentId){stop();return}
+      if(!player.seeking&&Math.abs((Number(player.currentTime)||0)-wanted)<.7&&
+         (player.readyState>=3||(player.readyState>=2&&buffered()>.1)))
+        finish("ok");
+    };
+    _stopSeekProbe=stop;
+    for(const type of ["seeked","canplay","playing","timeupdate"])
+      player.addEventListener(type,check);
+    timer=setTimeout(()=>finish("lento"),6500);
+  }
+
   function seekBy(delta) {
     if (!audio) return;
     _ultimoSeekUtente=Date.now();
@@ -8812,6 +8867,7 @@ function _aggiornaPosizioneSchermo() {
     let t = attuale + delta;
     if (t < 0) t = 0;
     if (d && t > d) t = d;
+    _misuraSeekAudio(audio,t,"pulsante");
     try {
       audio.currentTime = t;
     } catch (e) {
@@ -13736,6 +13792,7 @@ $("btnModalitaGym").addEventListener("click", () => {
       _ultimoSeekUtente=Date.now();
       try { window.MusicBoxMix?.onSeek?.("user"); } catch (_) {}
       _chiudiAscolto(false);
+      _misuraSeekAudio(audio,pendingSeek,"cursore");
       try { audio.currentTime = pendingSeek; } catch (_) {}
     }
     pendingSeek = null;
@@ -18482,6 +18539,9 @@ for (const p of playlists) {
     return _mixClockStalled?null:_ctx;
   }
   function _preparaAudio(event) {
+    // Scrolling the timeline is NOT an audio-activation gesture. Starting
+    // a context here stalls a seek and competes with the native MP3.
+    if(event?.target?.closest?.("#playerProgress,#btnSeekFor,#btnSeekBack"))return;
     // Never spin up WebAudio for native iPhone playback with DJ off.
     // On Safari an unused context can still steal audio resources.
     if (_usaControlliNativiIos() && !window.MusicBoxMix?.needsAudioContext?.()) return;
