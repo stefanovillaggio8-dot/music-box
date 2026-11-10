@@ -483,3 +483,26 @@ test("distinct real kick samples can join on matching short pulse grids, not on 
  assert.equal(api.rhythmicGridEvidence(a,{...b,
   introOnset:Array(96).fill(-1)}),null,"constant intro rejected");
 });
+
+test("a confident one-beat boundary can match different drums with realistic .22 onset periodicity",()=>{
+ const body=section(dj,"function independentPulseTrain(","// Mix a rhythm only when");
+ const api=new Function("onsetGridPhase","onsetPeriodicity","grooveAgreement",
+  "similarNotes","camelotMatch","clamp",body+"return rhythmicGridEvidence;")(
+   ()=>0,()=>.22,(_a,b)=>b.groove,(_a,b)=>b.notes,(_a,b)=>b.key,
+   (x,a,b)=>Math.max(a,Math.min(b,x)));
+ const drumsA=Array.from({length:96},(_,i)=>i%12===0?2:-1);
+ const drumsB=Array.from({length:96},(_,i)=>i%12===0?2.2:i%12===6?0:-1);
+ const a={bpm:120,beatConfidence:.8,outroOnset:drumsA};
+ const b={bpm:120,beatConfidence:.8,introDrive:.8,introOnset:drumsB,
+  groove:{score:.66,correlation:.32},
+  notes:{matches:false,focused:.88,phrase:.80,
+   alignment:{matches:false,score:.70,weakest:.54}},
+  key:{weight:.21,score:.92}};
+ const short=api(a,b);
+ assert.equal(short?.independentGrid,true,"measured repeated real pulses should be usable");
+ assert.equal(short.longCompatible,false,"no long fade from a short boundary chord");
+ assert.equal(api(a,{...b,notes:{...b.notes,alignment:{
+  matches:false,score:.49,weakest:.25}}}),null,"harmonic mismatch still vetoes");
+ assert.equal(api(a,{...b,key:{weight:.30,score:.10}}),null,
+  "verified incompatible tonalities still veto the join");
+});

@@ -1984,18 +1984,26 @@ function rhythmicGridEvidence(a,b){
  // Distinct drum samples may overlap for ONE beat only if both tracks
  // independently have a precise pulse, with strongly agreeing chords.
  const independentGrid=Boolean(!originalGroove&&pulseA&&pulseB&&
-   tailPulse>=.46&&introPulse>=.46&&
+   // Real librosa onset confidence often sits around .20-.30. Both
+   // independent contrast-certified pulse trains must ALSO be strong.
+   tailPulse>=.20&&introPulse>=.20&&
    pulseA.score>=.74&&pulseB.score>=.74&&
    g.score>=.60&&g.correlation>=.18&&
    n.focused>=.83&&n.phrase>=.74&&
-   n.alignment?.matches!==false&&
+   // A short one-beat join does not need matching three full bars:
+   // require robust measured boundary chords instead. Bad intermediate
+   // chords cannot certify a longer overlap.
+   (n.alignment?.matches===true||
+    Number(n.alignment?.score)>=.66&&
+    Number(n.alignment?.weakest)>=.50||
+    !Number(n.alignment?.score)&&n.focused>=.90&&n.phrase>=.86)&&
    (key.weight<.14||key.score>=.60));
  if(!originalGroove&&!independentGrid)return null;
  // A one-beat join can preserve a strong boundary chord even if the
  // songs do not share the same full multi-bar chord progression.
  const chordScore=Number(n.alignment?.score)||0;
  const weakest=Number(n.alignment?.weakest)||0;
- const shortHarmony=n.matches===true||
+ const shortHarmony=n.matches===true||independentGrid||
   chordScore>=.72&&weakest>=.58&&n.focused>=.78&&n.phrase>=.72||
   !chordScore&&n.focused>=.84&&n.phrase>=.80;
  if(!shortHarmony)return null;
