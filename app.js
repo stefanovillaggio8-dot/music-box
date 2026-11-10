@@ -12863,7 +12863,7 @@ window.MusicBoxBridge = {
       gymUnavailableIds,gymHidden:gym?.nascosta===true,
       gymOwner:gym?.nascostaDa||null,gymUnexpectedInLibrary:gymLeaks,
       deletedLocalCount:deletedIds.length,
-      unsharedDeletionIds:_mbUltimaLetturaWorker.unsharedDeleted.slice(),
+      unsharedDeletionIds:(_mbUltimaLetturaWorker.unsharedDeleted||[]).slice(),
       remoteSource:_mbUltimaLetturaWorker.source,
       remoteDeletedCount:_mbUltimaLetturaWorker.deleted,
       localStaleDeletionsRestored:_mbUltimaLetturaWorker.restored,
