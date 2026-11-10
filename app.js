@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.708";
+  const APP_VERSION = "6.709";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -12863,6 +12863,7 @@ window.MusicBoxBridge = {
       gymUnavailableIds,gymHidden:gym?.nascosta===true,
       gymOwner:gym?.nascostaDa||null,gymUnexpectedInLibrary:gymLeaks,
       deletedLocalCount:deletedIds.length,
+      unsharedDeletionIds:_mbUltimaLetturaWorker.unsharedDeleted.slice(),
       remoteSource:_mbUltimaLetturaWorker.source,
       remoteDeletedCount:_mbUltimaLetturaWorker.deleted,
       localStaleDeletionsRestored:_mbUltimaLetturaWorker.restored,
@@ -13075,6 +13076,7 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
       (changed===0?" (conteggio invariato)":changed>0?" (+"+changed+")":" ("+changed+")")+
       "\nStato: "+s.remoteSource+
       " · eliminazioni confermate: "+(s.remoteDeletedCount??"non disponibile")+
+      " · non ancora confermate: "+(s.unsharedDeletionIds||[]).length+
       " · copie: "+s.copiedCount+
       " · Gym: "+s.gymPlayableCount+"/"+s.gymPlaylistCount+
       "\nSe il numero non cambia, la sincronizzazione non deve inventare"+
@@ -13088,7 +13090,10 @@ if(_btnSyncCatalogo)_btnSyncCatalogo.addEventListener("click",async()=>{
         (changedIds.length?changedIds.slice(0,24).join(", ")+
           (changedIds.length>24?" (e altri "+(changedIds.length-24)+")":""):
           "nessuno")+
-        "\nRecuperate dal catalogo pubblicato: "+s.recoveredCopies;
+        "\nRecuperate dal catalogo pubblicato: "+s.recoveredCopies+
+        "\nEliminazioni ancora da confermare nel Worker: "+
+        ((s.unsharedDeletionIds||[]).join(", ")||"nessuna")+
+        "\nNessun MP3 locale o download offline e' stato rimosso.";
     }
     toast("Sincronizzazione: "+s.visibleCount+" brani"+
       (changed===0?" (nessun cambiamento)":changed>0?" (+"+changed+")":" ("+changed+")")+
@@ -13471,6 +13476,7 @@ function _mbCatalogDiagnosi(){
       esclusiDallaLibreriaPerPlaylist:snap.playlistOnlyCount,
       eliminatiInLocale:snap.deletedLocalCount,
       eliminatiConfermatiDalWorker:snap.remoteDeletedCount,
+      eliminazioniDaConfermareNelWorker:snap.unsharedDeletionIds,
       eliminazioniObsoleteRiparate:snap.localStaleDeletionsRestored,
       origineStatoCondiviso:snap.remoteSource,
       GymDisponibili:snap.gymPlayableCount,
@@ -16891,7 +16897,7 @@ $("btnTimer").addEventListener("click", () => {
     clearTimeout(_timerRiprovaStato);
     _timerRiprovaStato = setTimeout(() => {
       _quanteRiprove++;
-      _salvaStatoCondiviso();
+      _salvaStatoCondiviso(true);
     }, 15000);
   }
   /* Appena la rete torna, riprovo subito invece di aspettare il giro dopo. */
@@ -16917,9 +16923,9 @@ $("btnTimer").addEventListener("click", () => {
    Il segno e' una lista di nomi rimossi, tenuta sul telefono. Quando
    invece nascondi un brano di nuovo, il segno sparisce: la scelta piu'
    recente vince sempre. */
-  function _salvaStatoCondiviso() {
+  function _salvaStatoCondiviso(daRiprova=false) {
     _statoDaSalvare = true;
-    _quanteRiprove = 0;
+    if(!daRiprova)_quanteRiprove = 0;
     try {
       clearTimeout(_timerStatoCondiviso);
     } catch (e) { /* noop */ }
@@ -17000,12 +17006,13 @@ rinomini: (function () {
           body: corpo
         });
         if(r.ok){
+          const result=await r.json().catch(()=>null);
+          if(result?.ok===false)throw new Error("Worker rejected state");
           _statoCondivisoOk=true;
           const sent=JSON.parse(corpo);
-          // Do not erase deletions performed while the previous request
-          // was already in flight. Clear only IDs acknowledged in this POST.
-          const acknowledged=new Set(Array.isArray(sent.eliminati)?sent.eliminati:[]);
-          const acknowledgedRestores=new Set(Array.isArray(sent.eliminatiRimossi)?sent.eliminatiRimossi:[]);
+          const confirmed=await _confermaOperazioniEliminazioni(sent);
+          const acknowledged=new Set(confirmed.deletions);
+          const acknowledgedRestores=new Set(confirmed.restores);
           LS.set("mb.eliminatiDaMandare",_eliminatiDaMandare().filter(x=>!acknowledged.has(x)));
           LS.set("mb.eliminatiRimossiDaMandare",_eliminatiRimossiDaMandare().filter(x=>!acknowledgedRestores.has(x)));
           _rinominiDaMandareSvuota(sent.rinomini);
@@ -17020,13 +17027,68 @@ rinomini: (function () {
             _eliminatiRimossiDaMandare().length>0||
             _soloInPlaylistDaMandare().length>0||
             _soloInPlaylistRimossiDaMandare().length>0;
+          if(!_statoDaSalvare)clearTimeout(_timerRiprovaStato);
         }
       } catch (e) { /* senza rete resta sul telefono, e va bene */ }
       _programmaDiRiprovare();
     }, 2500);
   }
 
-  const _mbUltimaLetturaWorker={source:"non letto",deleted:null,restored:[],copied:null};
+  const _mbUltimaLetturaWorker={
+    source:"non letto",deleted:null,restored:[],copied:null,unsharedDeleted:[]
+  };
+  function _eliminazioniLocaliMancantiNelWorker(state,owner=profile){
+    if(!state||!Array.isArray(state.eliminati)||!owner)return [];
+    const canonical=id=>{
+      const key=String(id||"");
+      return key.includes(".")?key:DEFAULT_PROFILE+"."+key;
+    };
+    const remote=new Set(state.eliminati.map(canonical));
+    const restored=new Set((Array.isArray(state.eliminatiRimossi)?
+      state.eliminatiRimossi:[]).map(canonical));
+    const pendingRestores=new Set(_eliminatiRimossiDaMandare().map(canonical));
+    const saved=LS.get("mb.eliminati",{})||{};
+    return Object.keys(saved).filter(key=>
+      key.startsWith(owner+".")&&
+      /^(?:b-track-\d+|b-youtube-[A-Za-z0-9_-]{11}|yt-[A-Za-z0-9_-]{11})$/.test(key.slice(owner.length+1))&&
+      !!saved[key]&&!remote.has(key)&&!restored.has(key)&&!pendingRestores.has(key))
+      .slice(0,200);
+  }
+  function _accodaEliminazioniLocaliNonCondivise(state){
+    const missing=_eliminazioniLocaliMancantiNelWorker(state,profile);
+    _mbUltimaLetturaWorker.unsharedDeleted=missing;
+    if(!missing.length)return 0;
+    const queued=new Set(_eliminatiDaMandare()),old=queued.size;
+    for(const key of missing)queued.add(key);
+    if(queued.size===old)return 0;
+    LS.set("mb.eliminatiDaMandare",[...queued]);
+    _salvaStatoCondiviso();
+    return queued.size-old;
+  }
+  async function _confermaOperazioniEliminazioni(sent){
+    const adds=Array.isArray(sent?.eliminati)?sent.eliminati:[];
+    const restores=Array.isArray(sent?.eliminatiRimossi)?sent.eliminatiRimossi:[];
+    if(!adds.length&&!restores.length)return {deletions:[],restores:[]};
+    const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),8000);
+    try{
+      const response=await fetch(SERVIZIO_PUBBLICA+"/stato",{
+        cache:"no-store",signal:ctrl.signal});
+      if(!response.ok)return {deletions:[],restores:[]};
+      const data=await response.json();
+      if(!data?.stato||!Array.isArray(data.stato.eliminati))
+        return {deletions:[],restores:[]};
+      const normal=id=>{
+        const k=String(id||"");
+        return k.includes(".")?k:DEFAULT_PROFILE+"."+k;
+      };
+      const remote=new Set(data.stato.eliminati.map(normal));
+      return {
+        deletions:adds.filter(k=>remote.has(normal(k))),
+        restores:restores.filter(k=>!remote.has(normal(k)))
+      };
+    }catch(_){return {deletions:[],restores:[]}}
+    finally{clearTimeout(timer)}
+  }
   async function _caricaStatoCondiviso() {
     /* Ste: "da PC funziona ma da telefono no".
      Il nome da telefono arrivava gia' sul sito, ma al riavvio l'app rileggeva
@@ -17050,6 +17112,7 @@ try {
   if (jw && jw.stato && typeof jw.stato === "object") {
     await _applicaStatoCondiviso(jw.stato,true);
     _mbUltimaLetturaWorker.source="Worker";
+    _accodaEliminazioniLocaliNonCondivise(jw.stato);
     // A valid response is authoritative EVEN when it changed zero rows.
     // Otherwise a stale stato.json overwrites a correct Worker snapshot.
     return;
@@ -17113,6 +17176,7 @@ const j = await r.json();
     const job=(async()=>{
       const before=window.MusicBoxBridge?.librarySnapshot?.();
       _mbUltimaLetturaWorker.source="non letto";
+      _mbUltimaLetturaWorker.unsharedDeleted=[];
       // Leggi le playlist e lo stato centrale prima degli ID pubblicati.
       // Nessuna cancellazione di MP3, IndexedDB o download offline.
       await _caricaPlaylistCondivise();

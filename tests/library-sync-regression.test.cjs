@@ -372,3 +372,122 @@ test("catalog retains distinct published song IDs even with identical renamed ti
  assert.deepEqual(merge(rows).map(t=>t.id),
  ["b-track-28","b-track-205","b-track-224","b-track-515","u-first"]);
 });
+
+
+test("237 PC vs 240 phone: three local deletions missing from Worker are queued without altering files",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const a=app.indexOf('  const _mbUltimaLetturaWorker={');
+ const b=app.indexOf('  async function _caricaStatoCondiviso()',a);
+ assert.ok(a>0&&b>a);
+ const source=app.slice(a,b);
+ const records=Object.fromEntries([
+  ...Array.from({length:11},(_,i)=>["Ste.b-track-"+(i+1),Date.now()-i*1000]),
+  ["Diego.b-track-121",Date.now()]
+ ]);
+ const db=new Map([["mb.eliminati",records],["mb.eliminatiDaMandare",[]]]);
+ let writes=0,queued=0;
+ const env={
+  profile:"Ste",
+  LS:{get:(key,d)=>db.has(key)?db.get(key):d,set:(key,v)=>{db.set(key,v);writes++}},
+  pendingRestore:[],
+  sent:()=>{queued++},
+  defaultProfile:"Ste"
+ };
+ const make=new Function("env",
+  'const profile=env.profile,DEFAULT_PROFILE=env.defaultProfile;'+
+  'const LS=env.LS;'+
+  'const _eliminatiDaMandare=()=>LS.get("mb.eliminatiDaMandare",[]);'+
+  'const _eliminatiRimossiDaMandare=()=>env.pendingRestore;'+
+  'const _salvaStatoCondiviso=()=>env.sent();'+
+  source+
+  'return {diff:_eliminazioniLocaliMancantiNelWorker,'+
+  'queue:_accodaEliminazioniLocaliNonCondivise,diagnosis:_mbUltimaLetturaWorker};');
+ const f=make(env);
+ const remote={eliminati:Array.from({length:8},(_,i)=>"Ste.b-track-"+(i+1))};
+ assert.deepEqual(f.diff(remote),["Ste.b-track-9","Ste.b-track-10","Ste.b-track-11"]);
+ assert.equal(f.queue(remote),3);
+ assert.equal(queued,1);
+ assert.deepEqual(db.get("mb.eliminatiDaMandare"),
+  ["Ste.b-track-9","Ste.b-track-10","Ste.b-track-11"]);
+ assert.equal(Object.keys(db.get("mb.eliminati")).length,12,
+  "deletions are flags, not mp3 or IndexedDB destructive operations");
+ assert.equal(f.queue(remote),0,"repeated sync cannot queue duplicate tombstones");
+ assert.equal(queued,1);
+ assert.deepEqual(f.diagnosis.unsharedDeleted,
+  ["Ste.b-track-9","Ste.b-track-10","Ste.b-track-11"]);
+ assert.equal(f.diff({eliminati:[...remote.eliminati,...db.get("mb.eliminatiDaMandare")]}).length,0,
+  "the next successful Worker read converges to the PC selection");
+});
+test("a deliberate remote restore wins over stale phone deletions and preserves other profiles",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const a=app.indexOf('  const _mbUltimaLetturaWorker={');
+ const b=app.indexOf('  async function _caricaStatoCondiviso()',a);
+ const source=app.slice(a,b);
+ const db=new Map([["mb.eliminati",{
+  "Ste.b-track-2":1,"Ste.b-track-4":1,"Ste.b-track-5":1,
+  "Diego.b-track-2":1,
+  "Ste.invalid-key":1,"Ste.b-track-11":""
+ }]]);
+ const env={profile:"Ste",DEFAULT_PROFILE:"Ste"};
+ const api=new Function("db","source",
+  "const profile='Ste',DEFAULT_PROFILE='Ste';"+
+  "const LS={get:(k,d)=>db.has(k)?db.get(k):d,set:(k,v)=>db.set(k,v)};"+
+  "const _eliminatiRimossiDaMandare=()=>['Ste.b-track-5'];"+
+  "const _eliminatiDaMandare=()=>[],_salvaStatoCondiviso=()=>{};"+
+  source+
+  "return _eliminazioniLocaliMancantiNelWorker;")(db,source);
+ assert.deepEqual(api({eliminati:["Ste.b-track-2"],
+   eliminatiRimossi:["Ste.b-track-4"]}),[],
+   "a restored or pending restored song cannot be re-deleted");
+ assert.deepEqual(api({eliminati:["Ste.b-track-2"]},"Diego"),["Diego.b-track-2"],
+   "other profile deletion flags remain independent if inspecting their own account");
+ assert.deepEqual(api({eliminati:null}),[],
+   "incomplete Worker data must never trigger mass re-deletions");
+});
+test("HTTP 200 is not enough: retries keep only unconfirmed deletions until GET validates",async()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const a=app.indexOf('  const _mbUltimaLetturaWorker={');
+ const b=app.indexOf('  async function _caricaStatoCondiviso()',a);
+ const src=app.slice(a,b);
+ let requested="";
+ const make=remote=>new Function("fetch",
+  "const profile='Ste',DEFAULT_PROFILE='Ste';"+
+  "const SERVIZIO_PUBBLICA='https://worker.example';"+
+  "const LS={get:()=>({}),set:()=>{}};"+
+  "const _eliminatiRimossiDaMandare=()=>[];"+
+  "const _eliminatiDaMandare=()=>[],_salvaStatoCondiviso=()=>{};"+
+  src+"return _confermaOperazioniEliminazioni;")(
+  async url=>{requested=url;return {ok:true,json:async()=>({stato:{eliminati:remote}})};});
+ const initial=await make(["Ste.b-track-1"])({
+  eliminati:["Ste.b-track-1","Ste.b-track-2"],
+  eliminatiRimossi:["Ste.b-track-3"]});
+ assert.equal(requested,"https://worker.example/stato");
+ assert.deepEqual(initial,{deletions:["Ste.b-track-1"],restores:["Ste.b-track-3"]},
+  "unconfirmed tombstone 2 remains pending even if POST itself returned OK");
+ const next=await make(["Ste.b-track-1","Ste.b-track-2"])({
+  eliminati:["Ste.b-track-2"]});
+ assert.deepEqual(next,{deletions:["Ste.b-track-2"],restores:[]});
+ const unavailable=await new Function("fetch",
+  "const profile='Ste',DEFAULT_PROFILE='Ste',SERVIZIO_PUBBLICA='https://worker.example';"+
+  "const LS={get:()=>({}),set:()=>{}};"+
+  "const _eliminatiRimossiDaMandare=()=>[];"+
+  "const _eliminatiDaMandare=()=>[],_salvaStatoCondiviso=()=>{};"+
+  src+"return _confermaOperazioniEliminazioni;")(
+  async()=>{throw Error("offline")})({eliminati:["Ste.b-track-1"]});
+ assert.deepEqual(unavailable,{deletions:[],restores:[]});
+});
+test("synchronization reports unreconciled song IDs and never hardcodes 237 or deletes audio",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const segment=app.slice(
+  app.indexOf("function _sincronizzaCatalogoDispositivi(force=false)"),
+  app.indexOf("/* Mette dentro quello che arriva dal Worker")
+ );
+ assert.match(segment,/_mbUltimaLetturaWorker\.unsharedDeleted=\[\]/);
+ assert.match(app,/_accodaEliminazioniLocaliNonCondivise\(jw\.stato\)/);
+ assert.match(app,/eliminazioniDaConfermareNelWorker:snap\.unsharedDeletionIds/);
+ assert.match(app,/Eliminazioni ancora da confermare nel Worker/);
+ assert.match(app,/const confirmed=await _confermaOperazioniEliminazioni\(sent\)/);
+ assert.match(app,/if\(!daRiprova\)_quanteRiprove = 0/);
+ assert.doesNotMatch(segment,/indexedDB\.deleteDatabase|caches\.delete|dbDelete\(/);
+ assert.doesNotMatch(segment,/visibleCount\s*=\s*237|visibleCount\s*=\s*240/);
+});
