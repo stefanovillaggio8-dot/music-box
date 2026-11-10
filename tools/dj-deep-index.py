@@ -68,6 +68,48 @@ def groove(rms,bpm,at,end_aligned=False):
     mean=float(np.mean(points));std=float(np.std(points))
     if mean<.003 or std<mean*.13:return None
     return [round(float(np.clip((x-mean)/std,-3,3)),4) for x in points]
+def refine_tempo_from_beats(estimated, frames):
+    """Refine librosa's quantized BPM using several independently tracked beats.
+
+    A detected beat grid is the evidence; a spectral peak anywhere in the
+    last few seconds is NOT automatically a downbeat.
+    """
+    try:
+        rough=float(np.asarray(estimated).reshape(-1)[0])
+    except (TypeError, ValueError, IndexError):
+        rough=float("nan")
+    timestamps=librosa.frames_to_time(np.asarray(frames,dtype=int),
+                                     sr=SR,hop_length=HOP)
+    if timestamps.size<10:
+        return (round(rough,3) if np.isfinite(rough) and 55<=rough<=210 else 120.0,
+                False,timestamps)
+    rates=[]
+    # Twelve consecutive beats suppress the ~46ms individual frame
+    # quantization: estimate the slope, not the median of single intervals.
+    for pos in range(0,len(timestamps)-11,5):
+        segment=timestamps[pos:pos+12]
+        diffs=np.diff(segment)
+        median=float(np.median(diffs))
+        if not .28<=median<=1.1 or np.max(np.abs(diffs-median))>median*.24:
+            continue
+        slope=float(np.polyfit(np.arange(len(segment)),segment,1)[0])
+        if not slope>0:continue
+        residual=float(np.max(np.abs(segment-(segment[0]+
+                            slope*np.arange(len(segment))))))
+        bpm=60./slope
+        if 55<=bpm<=210 and residual<max(.10,slope*.23):
+            rates.append(bpm)
+    if len(rates)>=2:
+        center=float(np.median(rates))
+        dispersion=float(np.median(np.abs(np.asarray(rates)-center)))
+        # Avoid certifying a drifting tempo or a half/double beat alias.
+        if dispersion<=center*.022 and (
+           not np.isfinite(rough) or
+           any(abs(center/(rough*scale)-1)<=.055 for scale in (.5,1.,2.))):
+            return round(center,3),True,timestamps
+    return (round(rough,3) if np.isfinite(rough) and 55<=rough<=210 else 120.,
+            False,timestamps)
+
 def analyze(mp3):
     y,sr=librosa.load(str(mp3),sr=SR,mono=True)
     if len(y)<SR*26 or len(y)>SR*900:raise ValueError("duration out of range")
@@ -122,22 +164,23 @@ def analyze(mp3):
     # Onset envelope is evaluated on real audio, not player metadata.
     onset=librosa.onset.onset_strength(y=y,sr=SR,hop_length=HOP)
     tempo,beats=librosa.beat.beat_track(onset_envelope=onset,sr=SR,hop_length=HOP,trim=False)
-    bpm=float(np.asarray(tempo).reshape(-1)[0])
-    if not 55<=bpm<=210:bpm=120.
+    bpm,tempo_refined,beat_times=refine_tempo_from_beats(tempo,beats)
     strength=float(np.clip((np.std(onset)/(np.mean(onset)+1e-7))*.24,0,1))
+    # A failed beat tracker must never pretend that a default 120 BPM is
+    # measured. Keep onset signatures for neutral/safe release decisions.
+    if len(beat_times)<4:strength=0.
     onset_t=librosa.frames_to_time(np.arange(len(onset)),sr=SR,hop_length=HOP)
-    start_hit=onset_t[(onset_t>=first)&(onset_t<=first+12)]
-    end_hit=onset_t[(onset_t>=max(first,last-16))&(onset_t<last)]
-    def peak_at(times):
-        if times.size==0:return None
-        ids=np.searchsorted(onset_t,times)
-        ids=np.clip(ids,0,len(onset)-1)
-        return round(float(times[np.argmax(onset[ids])]),3)
-    firstbeat=peak_at(start_hit)
-    beat_anchor=peak_at(end_hit)
+    def tracked_beat(start,end,latest=False):
+        measured=beat_times[(beat_times>=start)&(beat_times<=end)]
+        if measured.size==0:return None
+        return round(float(measured[-1] if latest else measured[0]),3)
+    firstbeat=tracked_beat(safe_intro,min(duration,safe_intro+5))
+    # A last-audible musical edge is computed below. Never align to an
+    # arbitrary loud transient or a beat inside encoded digital silence.
     # Chord and groove signatures must precede the SILENT OUTRO: the
     # listener expects matching music, not two matching empty sections.
     musical_edge=min(last,release["lastImpactAt"]+.20) if release else last
+    beat_anchor=tracked_beat(max(first,musical_edge-5.0),musical_edge,True)
     outro_start=max(first,musical_edge-10)
     to=min(duration,first+12)
     end_note=musical_edge
@@ -185,7 +228,8 @@ def analyze(mp3):
         })
     out={"duration":round(duration,3),"first":round(first,3),"last":round(last,3),
       "trailing":round(trailing,3),"leading":round(leading,3),
-      "bpm":round(bpm,2),"beatConfidence":round(strength,3),
+      "bpm":round(bpm,3),"tempoRefined":tempo_refined,
+      "beatConfidence":round(strength,3),
       "beatAnchor":beat_anchor,"introBeat":firstbeat,"level":round(level,5),
       "chroma":c,"introChroma":chroma(y[:int(to*SR)]),
       "outroChroma":chroma(y[int(outro_start*SR):int(end_note*SR)]),
@@ -203,7 +247,7 @@ def analyze(mp3):
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v4-windows"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v5-verified-beats"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -221,7 +265,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
-                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v4-windows"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v5-verified-beats"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:
