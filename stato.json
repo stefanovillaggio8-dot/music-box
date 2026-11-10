@@ -1058,7 +1058,7 @@
    },
    "[\"davverodavvero\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 176,
+    "s": 186,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1112,7 +1112,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 69,
-    "s": 1664,
+    "s": 1676,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1580,7 +1580,7 @@
    },
    "m:2026-11|[\"davverodavvero\",\"artie 5ive\"]": {
     "v": 2,
-    "s": 150,
+    "s": 160,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1736,7 +1736,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 68,
-    "s": 1656,
+    "s": 1668,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1975,26 +1975,26 @@
     "a": "SAITTA"
    },
    "[\"cigno nero\",\"fedez, francesca michelini\"]": {
-    "v": 1,
-    "s": 105,
+    "v": 2,
+    "s": 106,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
    },
    "m:2026-11|[\"cigno nero\",\"fedez, francesca michelini\"]": {
-    "v": 1,
-    "s": 105,
+    "v": 2,
+    "s": 106,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
    },
    "[\"a mano a mano\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 8,
+    "s": 22,
     "t": "A mano a mano",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"a mano a mano\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 8,
+    "s": 22,
     "t": "A mano a mano",
     "a": "Rino Gaetano"
    },
@@ -2023,14 +2023,14 @@
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ"
    },
    "[\"molecole (interlude)\",\"thasup\"]": {
-    "v": 0,
-    "s": 172,
+    "v": 1,
+    "s": 184,
     "t": "molecole (interlude)",
     "a": "thasup"
    },
    "m:2026-11|[\"molecole (interlude)\",\"thasup\"]": {
-    "v": 0,
-    "s": 172,
+    "v": 1,
+    "s": 184,
     "t": "molecole (interlude)",
     "a": "thasup"
    },
@@ -3086,13 +3086,13 @@
    },
    "[\"airforce\",\"massimo pericolo, crookers, madame\"]": {
     "v": 3,
-    "s": 366,
+    "s": 371,
     "t": "AIRFORCE",
     "a": "Massimo Pericolo, Crookers, Madame"
    },
    "m:2026-11|[\"airforce\",\"massimo pericolo, crookers, madame\"]": {
     "v": 3,
-    "s": 366,
+    "s": 371,
     "t": "AIRFORCE",
     "a": "Massimo Pericolo, Crookers, Madame"
    },
@@ -7364,13 +7364,13 @@
    },
    "[\"le parole piÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
-    "s": 98,
+    "s": 108,
     "t": "Le parole piÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
    "m:2026-11|[\"le parole piÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
-    "s": 98,
+    "s": 108,
     "t": "Le parole piÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
@@ -10448,13 +10448,13 @@
    },
    "[\"per una notte insieme\",\"modà\"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "Modà"
    },
    "m:2026-11|[\"per una notte insieme\",\"modà\"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "Modà"
    },
