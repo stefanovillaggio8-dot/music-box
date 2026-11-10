@@ -3078,27 +3078,19 @@ function lowEnergyPostludeLeadIn(a,b,dur){
   silenceTrim:false,trailing:0,score:null};
 }
 function transition(a,b,actualDuration){
- const primary=synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
- // A rhythmic candidate can pass the initial planner but fail the
- // independent playback certificate. Do not lose a DIFFERENT, verified
- // musical release merely because that rejected candidate came first.
- // Valid beat joins always retain priority; never weaken their evidence.
- if(!primary||primary.kind==="cut"||
-    typeof musicallyCompatibleOverlay!=="function"||
-    musicallyCompatibleOverlay(a,b,primary))return primary;
- const dur=Number(actualDuration);
- if(!isIOS&&typeof desktopMeasuredReleaseLeadIn==="function"){
-  const release=desktopMeasuredReleaseLeadIn(a,b,dur);
+ return synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
+}
+// This fallback is invoked ONLY after the first cue failed independent
+// playback certification. All genuine beat joins keep their priority.
+function certifiedAlternateRelease(a,b,dur,failed){
+ if(!failed||failed.kind==="cut"||!a||!b)return failed;
+ if(!isIOS){
+  const release=desktopMeasuredReleaseLeadIn(a,b,Number(dur));
   if(release&&musicallyCompatibleOverlay(a,b,release))return release;
  }
- // A post-musical underlay is not a beatmatch. Recheck its independent
- // gates before selecting it and never replace a rejected primary with
- // an unverified overlap.
- if(typeof lowEnergyPostludeLeadIn==="function"){
-  const postlude=lowEnergyPostludeLeadIn(a,b,dur);
-  if(postlude&&musicallyCompatibleOverlay(a,b,postlude))return postlude;
- }
- return primary;
+ const post=lowEnergyPostludeLeadIn(a,b,Number(dur));
+ if(post&&musicallyCompatibleOverlay(a,b,post))return post;
+ return failed;
 }
 function unalignedTransition(a,b,actualDuration){
  const dur=Number(actualDuration);
@@ -4914,9 +4906,14 @@ function tick(){
    const lyricA=app.mixLyricCues?.(fromId),lyricB=app.mixLyricCues?.(target);
    const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
    const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
-   const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
-   const compatibleCandidate=!!candidate&&
+   let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
+   let compatibleCandidate=!!candidate&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,candidate);
+   if(candidate&&!compatibleCandidate){
+    const alternate=certifiedAlternateRelease(currentAnalysis,nextAnalysis,
+      audio.duration,candidate);
+    if(alternate!==candidate){candidate=alternate;compatibleCandidate=true}
+   }
    const weakIphoneMatch=isIOS&&candidate&&
      (!compatibleCandidate||
       !iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
@@ -4924,7 +4921,10 @@ function tick(){
    const weakDesktopMatch=!isIOS&&candidate&&
      (!compatibleCandidate||
       !desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
-      !iphoneQuietReleaseCertified(currentAnalysis,candidate));
+      // Desktop measured release has an independent audio/voice certificate.
+      // Safari's quiet-release check cannot veto this other safe cue.
+      (candidate.measuredReleaseLeadIn!==true&&
+       !iphoneQuietReleaseCertified(currentAnalysis,candidate)));
    // An ordinary late soft cue can conceal an EARLIER, independently
    // certified musical decay. Compare both instead of automatically
    // waiting until the outgoing song has already become silent.
@@ -5540,6 +5540,10 @@ async function intelligentShuffle(app,audio,fromId){
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   let cue=transition(old,next,audio.duration);
   let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  if(cue&&!musicallyPlayable){
+   const alternate=certifiedAlternateRelease(old,next,audio.duration,cue);
+   if(alternate!==cue){cue=alternate;musicallyPlayable=true}
+  }
   if(cue&&["beat","snap"].includes(cue.kind))candidateAudit.potentialBeatCues++;
   // Even when no identical drum pattern exists, a measured and voice-free
   // settled outro may permit a neutral quiet fade. Previously this second
