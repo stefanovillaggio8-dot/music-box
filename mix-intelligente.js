@@ -624,6 +624,64 @@ async function saveAnalysis(source,data){
 
 const allowedStyles=new Set(["auto","fade","rise"]);
 let style="auto",mixSeconds=6,mobileOverlayEnabled=true;
+
+const dspModes=new Set(["auto","off","highpass","lowpass"]);
+let dspMode="auto",dspStrength=55,dspBass=0,dspMid=0,dspTreble=0,dspScope="";
+function loadDspScope(){
+ const name=String(bridge()?.mixScope?.()||"global");
+ if(name===dspScope)return;
+ dspScope=name;dspMode="auto";dspStrength=55;dspBass=0;dspMid=0;dspTreble=0;
+ try{
+  const o=JSON.parse(localStorage.getItem("mb.mixPreset."+name)||"null");
+  if(!o)return;
+  if(dspModes.has(o.effect))dspMode=o.effect;
+  const n=(k,min,max,def)=>Number.isFinite(Number(o[k]))?
+    clamp(Number(o[k]),min,max):def;
+  dspStrength=n("strength",0,100,55);
+  dspBass=n("bass",-6,6,0);dspMid=n("mid",-6,6,0);dspTreble=n("treble",-6,6,0);
+  if(allowedStyles.has(o.style))style=o.style;
+  mixSeconds=n("seconds",3,12,mixSeconds);
+ }catch(_){}
+}
+function saveDspScope(){
+ loadDspScope();
+ try{localStorage.setItem("mb.mixPreset."+dspScope,JSON.stringify({
+  style,seconds:mixSeconds,effect:dspMode,strength:dspStrength,
+  bass:dspBass,mid:dspMid,treble:dspTreble
+ }))}catch(_){}
+}
+function connectMixDsp(ctx,source,gain,seconds,beatMatched){
+ let tail=source;const nodes=[];
+ const add=(type,freq,db=0)=>{
+  const node=ctx.createBiquadFilter();
+  node.type=type;node.frequency.value=freq;
+  if(type==="peaking")node.Q.value=.8;
+  if(["peaking","lowshelf","highshelf"].includes(type))node.gain.value=db;
+  tail.connect(node);tail=node;nodes.push(node);return node;
+ };
+ try{
+  if(typeof ctx.createBiquadFilter==="function"){
+   if(Math.abs(dspBass)>.05)add("lowshelf",155,dspBass);
+   if(Math.abs(dspMid)>.05)add("peaking",1100,dspMid);
+   if(Math.abs(dspTreble)>.05)add("highshelf",4700,dspTreble);
+   const effect=dspMode==="auto"?(beatMatched?"highpass":"off"):dspMode;
+   if(effect!=="off"&&dspStrength>0){
+    const filter=add(effect,400),t=ctx.currentTime,strength=dspStrength/100;
+    const from=effect==="highpass"?35+300*strength:18000-(18000-360)*strength;
+    filter.frequency.setValueAtTime(from,t);
+    filter.frequency.exponentialRampToValueAtTime(
+      effect==="highpass"?35:18000,t+Math.max(.25,Math.min(10,seconds)));
+   }
+  }
+  tail.connect(gain);return nodes;
+ }catch(_){
+  try{source.disconnect()}catch(e){}
+  for(const node of nodes)try{node.disconnect()}catch(e){}
+  try{source.connect(gain)}catch(e){}
+  return [];
+ }
+}
+
 try{
  const stored=localStorage.getItem("mb.mixStyle");
  if(allowedStyles.has(stored))style=stored;
@@ -3197,6 +3255,7 @@ function stopMobileMix(fadeSeconds=0){
   try{act.source.onended=null;act.source.stop()}catch(e){}
   try{act.source.disconnect()}catch(e){}
   try{act.filter?.disconnect()}catch(e){}
+  for(const node of act.dspNodes||[])try{node.disconnect()}catch(e){}
   try{act.gain.disconnect()}catch(e){}
  };
  if(fadeSeconds>0&&act.ctx.state==="running"){
@@ -3238,7 +3297,7 @@ function startMobileMix(song,p,app,old){
    mobileMixLastBlocker="Anteprima MP3 non ancora pronta";
    return false;
  }
- let source=null,gain=null,filter=null;
+ let source=null,gain=null,filter=null,dspNodes=[];
  try{
   const offset=Math.max(0,p.entry-clip.start);
   const frames=clip.channels[0].length;
@@ -3255,16 +3314,9 @@ function startMobileMix(song,p,app,old){
   for(let c=0;c<clip.channels.length;c++)buf.copyToChannel(clip.channels[c],c);
   source=ctx.createBufferSource();gain=ctx.createGain();
   source.buffer=buf;
-  // Ease the new bass into the old outro instead of doubling both kicks.
-  // If a filter is unsupported, use the ordinary gain-only path.
-  if(typeof ctx.createBiquadFilter==="function"){
-   try{
-    filter=ctx.createBiquadFilter();filter.type="highpass";
-    filter.frequency.setValueAtTime(135,ctx.currentTime);
-    filter.frequency.exponentialRampToValueAtTime(40,ctx.currentTime+Math.max(1.2,p.fade*.72));
-    source.connect(filter);filter.connect(gain);
-   }catch(e){try{filter?.disconnect()}catch(_){}filter=null;source.connect(gain)}
-  }else source.connect(gain);
+  // Filter only the validated optional intro; keep native audio untouched.
+  dspNodes=connectMixDsp(ctx,source,gain,
+    Math.max(.4,Math.min(p.fade,secondsLeft)),!!p.measuredBeatBridge);
   gain.connect(ctx.destination);
   // Schedule at a measured beat phase if it costs less than 230 ms.
   // Never seek into the incoming song to fake musical alignment.
@@ -3370,7 +3422,7 @@ function startMobileMix(song,p,app,old){
   const onSeek=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
-  mobileActive={source,gain,filter,ctx,fromId:app.currentId(),track:song,
+  mobileActive={source,gain,filter,dspNodes,ctx,fromId:app.currentId(),track:song,
    vocalBeatUnderlay:!!p.vocalBeatUnderlay,vocalEndAt:Number(p.vocalEndAt),
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onEnded,onSeek,handingOff:false,
@@ -3401,6 +3453,7 @@ function startMobileMix(song,p,app,old){
   try{source?.stop()}catch(_){}
   try{source?.disconnect()}catch(_){}
   try{filter?.disconnect()}catch(_){}
+  for(const node of dspNodes)try{node.disconnect()}catch(_){}
   try{gain?.disconnect()}catch(_){}
   stopMobileMix();
   return false;
@@ -4785,6 +4838,7 @@ function updateMobileStatus(){
  if(el.textContent!==status)el.textContent=status;
 }
 function draw(){
+ loadDspScope();
  const row=$("mixIphoneRow"),toggle=$("mixIphoneToggle");
  if(row)row.hidden=!isIOS;
  if(toggle){
@@ -4809,6 +4863,15 @@ function draw(){
   secs.title=style==="auto"?"Automix sceglie da solo la durata per ogni coppia di brani":"Durata manuale della transizione";
  }
  const value=$("mixSecondsValue");if(value)value.textContent=mixSeconds+" s";
+ if($("mixDspEffect"))$("mixDspEffect").value=dspMode;
+ if($("mixDspStrength"))$("mixDspStrength").value=String(dspStrength);
+ if($("mixDspStrengthValue"))$("mixDspStrengthValue").textContent=dspStrength+"%";
+ for(const [id,val] of [["mixDspBass",dspBass],["mixDspMid",dspMid],["mixDspTreble",dspTreble]]){
+  if($(id))$(id).value=String(val);
+  if($(id+"Value"))$(id+"Value").textContent=(val>0?"+":"")+val+" dB";
+ }
+ if($("mixPresetScope"))$("mixPresetScope").textContent=
+  "Salvato per "+String(dspScope.split("|")[1]||"libreria")+" su questo dispositivo.";
  const note=$("mixDeviceNote");
  if(note)note.textContent=isIOS?
    "Su iPhone, a schermo acceso, mixa anche beat finali e iniziali compatibili quando l'assenza di voce è verificata; riconosce inoltre i finali silenziosi. Safari può limitare le sovrapposizioni: a schermo bloccato riproduzione normale protetta.":
@@ -5516,6 +5579,7 @@ async function verifyCurrentAudio(targetId=null){
  }
 }
 function settingsChanged(){
+ saveDspScope();
  try{
   localStorage.setItem("mb.mixStyle",style);
   localStorage.setItem("mb.mixSeconds",String(mixSeconds));
@@ -5582,6 +5646,21 @@ function start(){
   mixSeconds=clamp(Math.round(Number(e.target.value)||6),3,12);
   settingsChanged();
  });
+ $("mixDspEffect")?.addEventListener("change",e=>{
+  if(dspModes.has(e.target.value)){dspMode=e.target.value;settingsChanged()}
+ });
+ $("mixDspStrength")?.addEventListener("input",e=>{
+  dspStrength=clamp(Number(e.target.value)||0,0,100);settingsChanged();
+ });
+ for(const [id,key] of [["mixDspBass","bass"],["mixDspMid","mid"],["mixDspTreble","treble"]]){
+  $(id)?.addEventListener("input",e=>{
+   const val=clamp(Number(e.target.value)||0,-6,6);
+   if(key==="bass")dspBass=val;
+   else if(key==="mid")dspMid=val;
+   else dspTreble=val;
+   settingsChanged();
+  });
+ }
  $("mixToggle")?.addEventListener("click",event=>{
   event.preventDefault();
   event.stopPropagation();
@@ -5598,7 +5677,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.711",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.712",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
