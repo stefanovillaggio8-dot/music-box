@@ -6,6 +6,17 @@ p=pathlib.Path(__file__).with_name("dj-deep-index.py")
 spec=importlib.util.spec_from_file_location("mbdj",p)
 mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
 assert mod.VERSION==2
+# Refined BPM uses the measured rhythmic grid across twelve beats,
+# never the loudest amplitude/onset spike at a nearby timestamp.
+measured_bpm=127.35
+grid=np.arange(42)*60/measured_bpm
+frames=np.rint(grid*mod.SR/mod.HOP).astype(int)
+value,verified,times=mod.refine_tempo_from_beats(129.2,frames)
+assert verified is True and abs(value-measured_bpm)<0.5,(value,verified)
+assert len(times)==42
+fallback,verified,empty=mod.refine_tempo_from_beats(120.0,np.array([],dtype=int))
+assert verified is False and fallback==120.0 and len(empty)==0
+print("PASS: multi-beat tempo precision and unverified-grid fallback.")
 rate=mod.SR
 duration=64.
 def write_audio(values):
