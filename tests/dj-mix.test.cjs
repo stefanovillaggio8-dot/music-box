@@ -1290,3 +1290,31 @@ test("actual decoder playhead must preserve outgoing-incoming beat phase",()=>{
  assert.ok(source.includes("const livePhaseError=djBeatPhaseError("));
  assert.ok(source.includes("cancel();plan=null;return;"));
 });
+
+
+test("measured early release preview is smooth, capped, and never ducks the outgoing song",()=>{
+ const part=source.slice(source.indexOf("function measuredReleasePreviewGain("),
+  source.indexOf("function mixCurve(",source.indexOf("function measuredReleasePreviewGain(")));
+ const gain=new Function("clamp",part+"return measuredReleasePreviewGain;")(
+  (x,a,b)=>Math.max(a,Math.min(b,x)));
+ const begin=182.79,last=185.5,end=188.999;
+ assert.equal(gain(begin,begin,last,end),0);
+ assert.ok(gain(last-.001,begin,last,end)<=.23);
+ assert.ok(Math.abs(gain(last,begin,last,end)-.23)<1e-7);
+ assert.ok(Math.abs(gain(end,begin,last,end)-1)<1e-8);
+ assert.equal(gain(NaN,begin,last,end),0);
+ assert.equal(gain(3,5,2,1),0);
+ let prev=-1;
+ for(let i=0;i<=1000;i++){
+  const x=begin+(end-begin)*i/1000;
+  const g=gain(x,begin,last,end);
+  assert.ok(g>=prev-1e-8,"no backward volume pump");
+  assert.ok(g>=0&&g<=1+1e-8,"no amplitude boost");
+  if(x<last)assert.ok(g<=.23+1e-8,
+   "unknown vocal safety forbids overpowering the original outro");
+  prev=g;
+ }
+ assert.ok(source.includes("outGain=1;")&&
+  source.includes("inGain=measuredReleasePreviewGain(old.currentTime,"),
+  "the original is never muted during the measured release");
+});
