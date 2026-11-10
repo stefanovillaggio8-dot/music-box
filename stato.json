@@ -1976,13 +1976,13 @@
    },
    "[\"cigno nero\",\"fedez, francesca michelini\"]": {
     "v": 2,
-    "s": 109,
+    "s": 113,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
    },
    "m:2026-11|[\"cigno nero\",\"fedez, francesca michelini\"]": {
     "v": 2,
-    "s": 109,
+    "s": 113,
     "t": "Cigno nero",
     "a": "Fedez, Francesca Michelini"
    },
@@ -2864,13 +2864,13 @@
    },
    "[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 1,
-    "s": 360,
+    "s": 364,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
    "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 1,
-    "s": 360,
+    "s": 364,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
@@ -5798,13 +5798,13 @@
    },
    "[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
-    "s": 98,
+    "s": 108,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
    "m:2026-11|[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
-    "s": 98,
+    "s": 108,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
@@ -8876,13 +8876,13 @@
    },
    "[\"per una notte insieme\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"per una notte insieme\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "ModÃÂ "
    },
@@ -10637,6 +10637,18 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
+   },
+   "[\"carusi do sud\",\"l'elfo\"]": {
+    "v": 1,
+    "s": 56,
+    "t": "carusi do sud",
+    "a": "l'elfo"
+   },
+   "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
+    "v": 1,
+    "s": 56,
+    "t": "carusi do sud",
+    "a": "l'elfo"
    }
   },
   "Diego": {
