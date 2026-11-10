@@ -3231,6 +3231,49 @@ function bpmGap(a,b){
  return Math.min(...[.5,1,2].map(scale=>Math.abs(bpmA-bpmB*scale)));
 }
 
+
+const desktopDspGraphs=new Map();
+function releaseDesktopDsp(audio){
+ const graph=desktopDspGraphs.get(audio);
+ if(!graph)return;
+ desktopDspGraphs.delete(audio);
+ try{graph.source.disconnect()}catch(_){}
+ for(const node of graph.nodes)try{node.disconnect()}catch(_){}
+ try{graph.out.disconnect()}catch(_){}
+}
+// MediaElementAudioSource redirects the element permanently into WebAudio.
+// Reuse the EXISTING running Music Box context, never create a new one.
+// Keep it connected after adoption, disconnect only after song replacement.
+function attachDesktopDsp(preview,seconds,beatMatched){
+ if(isIOS||preview?.crossOrigin!=="anonymous"||
+    (dspMode==="off"&&Math.abs(dspBass)+Math.abs(dspMid)+Math.abs(dspTreble)<.05))
+    return null;
+ const ctx=bridge()?.mixRunningContext?.();
+ if(!ctx||ctx.state!=="running"||
+    typeof ctx.createMediaElementSource!=="function"||
+    typeof ctx.createGain!=="function")return null;
+ if(desktopDspGraphs.has(preview))return desktopDspGraphs.get(preview);
+ let source=null,out=null;
+ try{
+  source=ctx.createMediaElementSource(preview);
+  out=ctx.createGain();out.gain.value=1;
+  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched);
+  out.connect(ctx.destination);
+  const graph={audio:preview,source,out,nodes};
+  desktopDspGraphs.set(preview,graph);
+  return graph;
+ }catch(_){
+  // A failed optional filter must not silence the new native MP3.
+  try{if(source)source.connect(ctx.destination)}catch(e){}
+  return null;
+ }
+}
+function cleanupDesktopDsp(){
+ const current=bridge()?.audio?.();
+ for(const [player] of desktopDspGraphs)
+  if(player!==current&&(player.paused||!player.src))releaseDesktopDsp(player);
+}
+
 function resetMobileFade(){
  if(mobileFading){
   const app=bridge(),audio=app?.audio();
@@ -3621,6 +3664,7 @@ function cancel(){
   const act=active;active=null;
   if(act.timer)clearTimeout(act.timer);
   try{act.upcoming.pause();act.upcoming.removeAttribute("src");act.upcoming.load()}catch(e){}
+  if(act.upcoming!==bridge()?.audio?.())releaseDesktopDsp(act.upcoming);
   try{act.original.volume=bridge()?.volume?.()??1}catch(e){}
  }
  dropPrepared();
@@ -3700,6 +3744,16 @@ function prepare(song,fromId,app){
  upcoming.addEventListener("error",()=>{
   if(prepared===p){p.failed=true;p.ready=false;p.failedAt=Date.now()}
  },{once:true});
+ // Restrict WebAudio processing to audio hosts known to support CORS.
+ // Configure before src, never during a seek or after buffering begins.
+ if(!isIOS){
+  try{
+   const resolved=new URL(url,location.href);
+   if(resolved.origin===location.origin||
+      resolved.hostname==="raw.githubusercontent.com")
+     upcoming.crossOrigin="anonymous";
+  }catch(_){}
+ }
  upcoming.src=url;
  try{upcoming.load()}catch(e){p.failed=true;p.failedAt=Date.now()}
  preseek();markReady();
@@ -3790,6 +3844,7 @@ async function handoff(){
     if(act.timer)clearTimeout(act.timer);
     try{old.pause()}catch(_){}
     try{old.removeAttribute("src");old.load()}catch(_){}
+    releaseDesktopDsp(old);
     // No cancel(): that would pause/remove src from the NEW main player.
     Promise.resolve(adopted).catch(error=>console.warn(
      "[Music Box DJ] Errore dopo adozione audio",String(error?.message||error)));
@@ -3980,6 +4035,11 @@ async function beginMix(song,proposed){
   if(active!==act||old.paused||app.currentId()!==id||
      old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:
       proposed.measuredPostludeBridge?.35:1.2)){cancel();return}
+  // DSP is optional and runs only at the certified transition, never
+  // while a user is seeking through an MP3.
+  act.dsp=attachDesktopDsp(upcoming,act.fade,
+    ["beat","phrase","snap"].includes(proposed.kind)&&
+    (proposed.measuredBeatBridge||proposed.rhythmicGridJoin));
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
   // Emitted only AFTER the second audio has actually started.
@@ -5677,7 +5737,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.712",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.713",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -6052,6 +6112,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   }
  },
  onTrackChange:(id)=>{
+  // The previously adopted EQ graph may still own the outgoing media
+  // element. Dispose only after the old song is no longer the main audio.
+  setTimeout(cleanupDesktopDsp,900);
   abortObsoleteDJWork();
   // Immediately invalidate pending shuffle work on EACH song change.
   // A previous catalog fetch must not disable the next DJ transition.
