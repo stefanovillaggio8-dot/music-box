@@ -679,7 +679,7 @@ function saveDspScope(){
   bass:dspBass,mid:dspMid,treble:dspTreble
  }))}catch(_){}
 }
-function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,startDelay=0){
+function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,startDelay=0,softReveal=false){
  let tail=source;const nodes=[];
  const add=(type,freq,db=0)=>{
   const node=ctx.createBiquadFilter();
@@ -693,11 +693,13 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
    if(Math.abs(dspBass)>.05)add("lowshelf",155,dspBass);
    if(Math.abs(dspMid)>.05)add("peaking",1100,dspMid);
    if(Math.abs(dspTreble)>.05)add("highshelf",4700,dspTreble);
-   const effect=dspMode==="auto"?(beatMatched?"highpass":"off"):dspMode;
+   const effect=dspMode==="auto"?(beatMatched?"highpass":softReveal?"lowpass":"off"):dspMode;
    if(effect!=="off"&&dspStrength>0){
     const filter=add(effect,400),
      t=ctx.currentTime+Math.max(0,Number(startDelay)||0),strength=dspStrength/100;
-    const from=effect==="highpass"?35+300*strength:18000-(18000-360)*strength;
+    const softLift=dspMode==="auto"&&effect==="lowpass"&&softReveal&&seconds>=1.2;
+    const from=softLift?Math.max(900,4200-2800*strength):
+     effect==="highpass"?35+300*strength:18000-(18000-360)*strength;
     const musicalReveal=dspMode==="auto"&&effect==="highpass"&&beatMatched&&
      Number.isFinite(revealPoint)&&revealPoint>=.3&&revealPoint<=.76&&seconds>=2.6;
     filter.frequency.setValueAtTime(from,t);
@@ -706,6 +708,13 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
      filter.frequency.setValueAtTime(from,t+Math.max(.07,impact-.13));
      filter.frequency.exponentialRampToValueAtTime(35,
       t+Math.min(seconds-.04,impact+.09));
+    }else if(softLift){
+     // A decayed old song can yield to the NEW music through a short
+     // low-pass opening, even if the rhythms are not a beatmatched pair.
+     // The sweep changes only the incoming recording, never adds audio.
+     filter.frequency.setValueAtTime(from,t+.12);
+     filter.frequency.exponentialRampToValueAtTime(18000,
+      t+Math.max(.35,Math.min(seconds*.65,1.45)));
     }else filter.frequency.exponentialRampToValueAtTime(
       effect==="highpass"?35:18000,t+Math.max(.25,Math.min(10,seconds)));
    }
@@ -753,6 +762,13 @@ function djImpactEnvelope(progress,beatPoint){
    .23*smooth((t-pivot)/(1-pivot));
  return {outGain:Math.cos(blend*Math.PI/2),
    inGain:Math.sin(blend*Math.PI/2)};
+}
+function djSoftRevealReady(p,seconds){
+ return !!p&&p.kind==="soft"&&p.quietCertified===true&&
+  Number.isFinite(seconds)&&seconds>=1.2&&
+  !p.vocalBeatUnderlay&&!p.continuityFallback&&
+  (p.neutralRelease===true||p.measuredPostludeBridge===true||
+   p.certifiedSilentBridge===true||p.verifiedDecayAfterLyrics===true);
 }
 
 try{
@@ -3371,7 +3387,7 @@ function releaseDesktopDsp(audio){
 // MediaElementAudioSource redirects the element permanently into WebAudio.
 // Reuse the EXISTING running Music Box context, never create a new one.
 // Keep it connected after adoption, disconnect only after song replacement.
-function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null){
+function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null,softReveal=false){
  if(isIOS||preview?.crossOrigin!=="anonymous"||
     (dspMode==="off"&&Math.abs(dspBass)+Math.abs(dspMid)+Math.abs(dspTreble)<.05))
     return null;
@@ -3384,7 +3400,7 @@ function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null){
  try{
   source=ctx.createMediaElementSource(preview);
   out=ctx.createGain();out.gain.value=1;
-  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched,revealPoint);
+  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched,revealPoint,0,softReveal);
   out.connect(ctx.destination);
   const graph={audio:preview,source,out,nodes};
   desktopDspGraphs.set(preview,graph);
@@ -3527,7 +3543,8 @@ function startMobileMix(song,p,app,old){
   const djRevealAt=djImpactBeatPoint(p,Math.min(p.fade,secondsLeft-delay));
   dspNodes=connectMixDsp(ctx,source,gain,
     Math.max(.4,Math.min(p.fade,secondsLeft-delay)),
-    !!p.measuredBeatBridge,djRevealAt,delay);
+    !!p.measuredBeatBridge,djRevealAt,delay,
+    djSoftRevealReady(p,Math.min(p.fade,secondsLeft-delay)));
   const ramp=Number.isFinite(djRevealAt)?
    Math.max(.9,Math.min(p.fade,secondsLeft-delay-.14)):
    p.vocalBeatUnderlay?
@@ -4212,7 +4229,8 @@ async function beginMix(song,proposed){
   act.djRevealAt=djImpactBeatPoint(proposed,act.fade);
   act.dsp=attachDesktopDsp(upcoming,act.fade,
     ["beat","phrase","snap"].includes(proposed.kind)&&
-    (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt);
+    (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
+    djSoftRevealReady(proposed,act.fade));
   // Emitted only AFTER the second audio has actually started.
   try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
    device:"pc",fromId:id,toId:song.id,kind:proposed.kind,

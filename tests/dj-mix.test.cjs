@@ -1199,3 +1199,36 @@ test("iPhone confident beat overlap exposes the next real track at the certified
  f.old.handlers.pause();
  assert.equal(f.engine.active(),null);
 });
+
+
+test("safe quiet-song transitions get a fast musical sweep without claiming matched beats",()=>{
+ const helpers=source.slice(source.indexOf("function djImpactBeatPoint("),
+  source.indexOf("\ntry{\n const stored=",source.indexOf("function djImpactBeatPoint(")));
+ const yes=new Function("clamp",helpers+"return djSoftRevealReady;")(
+  (x,a,b)=>Math.max(a,Math.min(b,x)));
+ assert.equal(yes({kind:"soft",neutralRelease:true,quietCertified:true},3.5),true);
+ assert.equal(yes({kind:"soft",neutralRelease:true,quietCertified:false},3.5),false);
+ assert.equal(yes({kind:"soft",neutralRelease:true,quietCertified:true,
+  vocalBeatUnderlay:true},3.5),false);
+ assert.equal(yes({kind:"beat",neutralRelease:true,quietCertified:true},3.5),false);
+ const code=source.slice(source.indexOf("function connectMixDsp("),
+  source.indexOf("\ntry{\n const stored=",source.indexOf("function connectMixDsp(")));
+ const attach=new Function("dspMode","dspStrength","dspBass","dspMid","dspTreble",
+  code+"return connectMixDsp;")("auto",55,0,0,0);
+ let filter=null;const events=[];
+ const ctx={currentTime:10,createBiquadFilter:()=>filter={
+  type:"",frequency:{value:0,
+   setValueAtTime(v,t){events.push({type:"set",v,t})},
+   exponentialRampToValueAtTime(v,t){events.push({type:"ramp",v,t})}},
+  Q:{value:0},gain:{value:0},connect(){},disconnect(){}
+ }};
+ const sound={connect(){},disconnect(){}};
+ assert.equal(attach(ctx,sound,{},3.4,false,null,0,true).length,1);
+ assert.equal(filter.type,"lowpass");
+ assert.ok(events[0].v>1500&&events[0].v<3600);
+ assert.equal(events.at(-1).v,18000,"incoming track regains full high frequencies");
+ assert.ok(events.at(-1).t<=11.5,"sweep is audible early, not after the transition");
+ events.length=0;
+ assert.equal(attach(ctx,sound,{},3.4,false,null,0,false).length,0,
+  "an unverified handoff never gets an added effect");
+});

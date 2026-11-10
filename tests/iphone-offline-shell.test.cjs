@@ -33,6 +33,18 @@ async function run(){
  const djUrl=djAsset?.[1]?.replace(/&amp;/g,"&");
  assert.ok(djUrl?.startsWith("mix-intelligente.js?v="+release),
   "DJ script in live HTML must carry the current app version");
+ // Karaoke and DJ releases can independently append cache revisions.
+ // Test the actual installed HTML URLs, never a stale CSS/JS guess.
+ const versionedAsset=name=>{
+  const re=new RegExp('(?:src|href)="('+name.replace(".", "\\.")+
+   '\\?v='+release+'(?:&amp;[a-z]+=[0-9]+)?)"');
+  return re.exec(html)?.[1]?.replace(/&amp;/g,"&")||"";
+ };
+ const cssUrl=versionedAsset("style.css"),
+  appUrl=versionedAsset("app.js"),
+  immersiveUrl=versionedAsset("immersive.js");
+ assert.ok(cssUrl&&appUrl&&immersiveUrl,
+  "versioned stylesheet, player and immersive script must be present");
  let browser;
  try{
   browser=await webkit.launch({headless:true});
@@ -43,16 +55,16 @@ async function run(){
   await page.goto(url,{waitUntil:"domcontentloaded",timeout});
   await page.waitForFunction(()=>!!window.MusicBoxBridge,{timeout});
   await page.evaluate(()=>navigator.serviceWorker.ready);
-  const shell=await page.waitForFunction(async({rev,djUrl})=>{
+  const shell=await page.waitForFunction(async({rev,djUrl,cssUrl,appUrl,immersiveUrl})=>{
    const names=await caches.keys();
    const name=names.find(x=>x==="spotifynonavraiimieisoldi-v"+rev);
    if(!name)return false;
    const c=await caches.open(name);
-   const required=["index.html","style.css?v="+rev,"app.js?v="+rev,
-    "fuoco.js?v=6570",djUrl,"immersive.js?v="+rev];
+   const required=["index.html",cssUrl,appUrl,
+    "fuoco.js?v=6570",djUrl,immersiveUrl];
    for(const item of required)if(!(await c.match(new URL(item,location.href))))return false;
    return required.length;
-  },{rev:release,djUrl},{timeout});
+  },{rev:release,djUrl,cssUrl,appUrl,immersiveUrl},{timeout});
   assert.ok(await shell.jsonValue(),"install must precache exact versioned shell");
   // A downloaded MP3 lives in a separate persistent profile cache and must
   // survive a cold restart while the app shell changes across releases.
@@ -69,9 +81,9 @@ async function run(){
   await cold.waitForFunction(()=>!!window.MusicBoxBridge,{timeout:30000});
   await cold.waitForFunction(()=>window.MusicBoxBridge?.librarySnapshot?.().totalLoaded>200,
    {timeout:30000});
-  const offline=await cold.evaluate(async(rev)=>{
-   const css=await fetch("style.css?v="+rev);
-   const js=await fetch("app.js?v="+rev);
+  const offline=await cold.evaluate(async({cssUrl,appUrl})=>{
+   const css=await fetch(cssUrl);
+   const js=await fetch(appUrl);
    const legacy=await fetch("style.css?v=unvisited-offline-variant");
    const saved=await (await caches.open("spotifynonavraiimieisoldi-brani-Ste"))
      .match(new URL("songs/track-2.mp3",location.href));
@@ -83,7 +95,7 @@ async function run(){
     legacyCssBytes:(await legacy.text()).length,
     playerLoaded:!!window.MusicBoxBridge,
     stylesheetCount:document.styleSheets.length};
-  },release);
+  },{cssUrl,appUrl});
   assert.ok(offline.cssOk&&offline.jsOk&&offline.legacyCssOk,
    "offline asset requests must be served from the cache");
   assert.ok(offline.cssBytes>20000&&offline.jsBytes>200000&&
