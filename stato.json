@@ -1101,7 +1101,7 @@
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 66,
-    "s": 1620,
+    "s": 1627,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1143,7 +1143,7 @@
    },
    "[\"romantici terroni\",\"saitta\"]": {
     "v": 1,
-    "s": 89,
+    "s": 100,
     "t": "Romantici Terroni",
     "a": "SAITTA"
    },
@@ -1587,13 +1587,13 @@
    },
    "[\"lastronauta (visual)\",\"nayt\"]": {
     "v": 0,
-    "s": 97,
+    "s": 111,
     "t": "Lastronauta (Visual)",
     "a": "nayt"
    },
    "m:2026-11|[\"lastronauta (visual)\",\"nayt\"]": {
     "v": 0,
-    "s": 97,
+    "s": 111,
     "t": "Lastronauta (Visual)",
     "a": "nayt"
    },
@@ -1671,13 +1671,13 @@
    },
    "[\"morto mai (piano solo)\",\"lazza\"]": {
     "v": 0,
-    "s": 194,
+    "s": 200,
     "t": "Morto Mai (Piano Solo)",
     "a": "Lazza"
    },
    "m:2026-11|[\"morto mai (piano solo)\",\"lazza\"]": {
     "v": 0,
-    "s": 194,
+    "s": 200,
     "t": "Morto Mai (Piano Solo)",
     "a": "Lazza"
    },
@@ -1725,7 +1725,7 @@
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
     "v": 65,
-    "s": 1612,
+    "s": 1619,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
    },
@@ -1959,7 +1959,7 @@
    },
    "m:2026-11|[\"romantici terroni\",\"saitta\"]": {
     "v": 0,
-    "s": 86,
+    "s": 97,
     "t": "Romantici Terroni",
     "a": "SAITTA"
    },
@@ -2426,14 +2426,14 @@
     "a": "Leon Faun, Duffy"
    },
    "[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
-    "v": 1,
-    "s": 358,
+    "v": 2,
+    "s": 362,
     "t": "TUTTO FUORI CONTROLLO",
     "a": "MACE, Kid Yugi, IzI, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo\",\"mace, kid yugi, izi, franco126\"]": {
-    "v": 1,
-    "s": 358,
+    "v": 2,
+    "s": 362,
     "t": "TUTTO FUORI CONTROLLO",
     "a": "MACE, Kid Yugi, IzI, Franco126"
    },
@@ -3159,13 +3159,13 @@
    },
    "[\"end of beginning\",\"djo\"]": {
     "v": 1,
-    "s": 153,
+    "s": 157,
     "t": "End of Beginning",
     "a": "Djo"
    },
    "m:2026-11|[\"end of beginning\",\"djo\"]": {
     "v": 1,
-    "s": 153,
+    "s": 157,
     "t": "End of Beginning",
     "a": "Djo"
    },
@@ -8283,7 +8283,7 @@
    },
    "[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 183,
+    "s": 190,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -8421,7 +8421,7 @@
    },
    "m:2026-11|[\"con te partirÃÂ²\",\"andrea bocelli\"]": {
     "v": 7,
-    "s": 181,
+    "s": 188,
     "t": "Con Te PartirÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -9042,6 +9042,18 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂ©"
+   },
+   "[\"il filmografo\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "Il Filmografo",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
+    "v": 1,
+    "s": 13,
+    "t": "Il Filmografo",
+    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 2,
@@ -9828,18 +9840,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"il filmografo\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 13,
-    "t": "Il Filmografo",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"il filmografo\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 13,
-    "t": "Il Filmografo",
-    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
