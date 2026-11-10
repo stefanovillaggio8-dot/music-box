@@ -2654,13 +2654,13 @@
    },
    "[\"sentire la musica\",\"kid yugi\"]": {
     "v": 5,
-    "s": 535,
+    "s": 548,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"sentire la musica\",\"kid yugi\"]": {
     "v": 5,
-    "s": 535,
+    "s": 548,
     "t": "Sentire La Musica",
     "a": "Kid Yugi"
    },
@@ -6518,13 +6518,13 @@
    },
    "[\"per una notte insieme\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"per una notte insieme\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -8280,6 +8280,18 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
+   "[\"carusi do sud\",\"l'elfo\"]": {
+    "v": 1,
+    "s": 72,
+    "t": "carusi do sud",
+    "a": "l'elfo"
+   },
+   "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
+    "v": 1,
+    "s": 72,
+    "t": "carusi do sud",
+    "a": "l'elfo"
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 2,
     "s": 328,
@@ -9002,13 +9014,13 @@
    },
    "[\"non ti dimentico\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 168,
+    "s": 173,
     "t": "Non ti dimentico",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"non ti dimentico\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 168,
+    "s": 173,
     "t": "Non ti dimentico",
     "a": "ModÃÂ "
    },
@@ -9065,18 +9077,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃÂ©"
-   },
-   "[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 1,
-    "s": 72,
-    "t": "carusi do sud",
-    "a": "l'elfo"
-   },
-   "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 1,
-    "s": 72,
-    "t": "carusi do sud",
-    "a": "l'elfo"
    },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 2,
