@@ -5540,7 +5540,7 @@ async function intelligentShuffle(app,audio,fromId){
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   let cue=transition(old,next,audio.duration);
   let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
-  if(cue&&!musicallyPlayable){
+  if(cue&&!musicallyPlayable&&typeof certifiedAlternateRelease==="function"){
    const alternate=certifiedAlternateRelease(old,next,audio.duration,cue);
    if(alternate!==cue){cue=alternate;musicallyPlayable=true}
   }
