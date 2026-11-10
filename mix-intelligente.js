@@ -470,7 +470,7 @@ function deepLookup(track){
    ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
-  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows)$/.test(value.analyzer||"")&&
+  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return value;
  }
@@ -511,14 +511,20 @@ function scheduleDeepIndexRetry(delay){
 let _coarseTempoWarningShown=false;
 function djTempoIndexQuality(){
  if(!deepIndex?.entries)return null;
- let analyzed=0,reliableTempo=0;const distinct=new Set();
+ let analyzed=0,reliableTempo=0,refinedTempo=0,trackedBeatEndpoints=0;
+ const distinct=new Set();
  for(const row of Object.values(deepIndex.entries)){
   if(row?.status!=="ok"||!Number.isFinite(row.bpm))continue;
   analyzed++;
   distinct.add(Number(row.bpm).toFixed(2));
   if(Number(row.beatConfidence)>=.30)reliableTempo++;
+  if(row.tempoRefined===true)refinedTempo++;
+  if(Number.isFinite(row.beatAnchor)&&Number.isFinite(row.introBeat))
+   trackedBeatEndpoints++;
  }
  return {analyzed,distinctBpm:distinct.size,tempoReliableAtLeast030:reliableTempo,
+  temposRefinedFromTrackedBeats:refinedTempo,
+  songsWithTrackedIntroOutroBeats:trackedBeatEndpoints,
   limitedResolution:analyzed>=100&&distinct.size<Math.max(15,analyzed*.04)};
 }
 
