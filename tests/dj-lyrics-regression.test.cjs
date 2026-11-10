@@ -278,7 +278,11 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
- assert.equal(version,"6.714");
+ assert.match(version,/^6\.\d+$/);
+ assert.ok(app.includes('const APP_VERSION = "'+version+'"'));
+ const revision=version.replace(/\D/g,"");
+ assert.ok(html.includes("mix-intelligente.js?v="+revision));
+ assert.ok(sw.includes('const CACHE = "spotifynonavraiimieisoldi-v'+revision+'";'));
  assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
