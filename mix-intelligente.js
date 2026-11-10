@@ -3988,6 +3988,17 @@ function quietDirectHandoff(app,audio,id,next,entry,reason){
  return true;
 }
 // A phase offset over 420ms previously led to an OFF-BEAT start.
+// Keep a measured beatmatch stable while BOTH audible songs carry drums.
+// Returning to native speed from the first fade frame causes the kicks to
+// drift apart before the outgoing recording finishes. Ease the last part
+// instead, once its gain is already falling, so adoption is still at 1x.
+function matchedTempoRate(tempo,progress){
+ const measured=Number(tempo);
+ if(!Number.isFinite(measured)||measured<=0)return 1;
+ const reset=clamp((clamp(progress,0,1)-.72)/.28,0,1);
+ const smooth=reset*reset*(3-2*reset);
+ return 1+(measured-1)*(1-smooth);
+}
 function desktopBeatStartDelay(p,at){
  if(!p)return 0;
  // Schedule the real first incoming beat exactly at the last outgoing
@@ -4152,7 +4163,7 @@ async function beginMix(song,proposed){
     upcoming.volume=clamp(vol*inGain*correction,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
-    if(act.tempo!==1)upcoming.playbackRate=1+(act.tempo-1)*(1-time);
+    if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
    }catch(e){cancel();return}
    if(time>=1){handoff();return}
    act.timer=setTimeout(fadeStep,50);

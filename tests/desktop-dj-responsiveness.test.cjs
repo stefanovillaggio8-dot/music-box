@@ -417,3 +417,26 @@ test("desktop early measured tail handoff never overrides an active beat mix",()
  assert.match(body,/quietDirectHandoff\(app,audio,id,next,entry/);
  assert.match(body,/ultimo evento musicale concluso e voce verificata/);
 });
+
+test("desktop beatmatch keeps the real drum speed through the audible overlap then eases to 1x",()=>{
+ const code=section(dj,"function matchedTempoRate(","function desktopBeatStartDelay(");
+ const rate=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+code+
+  "return matchedTempoRate;")();
+ for(const tempo of [.97,1.03]){
+  assert.equal(rate(tempo,0),tempo);
+  assert.equal(rate(tempo,.70),tempo);
+  assert.equal(rate(tempo,1),1);
+  const interim=rate(tempo,.86);
+  assert.ok(interim>Math.min(tempo,1)&&interim<Math.max(tempo,1));
+  let previous=rate(tempo,.72);
+  for(let step=73;step<=100;step++){
+   const now=rate(tempo,step/100);
+   assert.ok(Math.abs(now-1)<=Math.abs(previous-1)+1e-12);
+   assert.ok(now>=Math.min(tempo,1)-1e-12&&now<=Math.max(tempo,1)+1e-12);
+   previous=now;
+  }
+ }
+ assert.equal(rate(Infinity,.4),1);
+ assert.match(dj,/upcoming\.playbackRate=matchedTempoRate\(act\.tempo,time\)/);
+ assert.doesNotMatch(dj,/upcoming\.playbackRate=1\+\(act\.tempo-1\)\*\(1-time\)/);
+});
