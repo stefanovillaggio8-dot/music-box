@@ -2,6 +2,8 @@ name: Music Box DJ independent raw-audio audit
 on:
   push:
     paths:
+      - 'mix-intelligente.js'
+      - 'dj-deep-analysis.json'
       - 'tools/dj-audio-spotcheck.py'
       - 'tests/dj-beat-audit.test.cjs'
       - '.github/workflows/dj-audio-spotcheck.yml'
