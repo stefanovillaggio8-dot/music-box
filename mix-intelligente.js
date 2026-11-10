@@ -4001,10 +4001,14 @@ function matchedTempoRate(tempo,progress){
 }
 function desktopBeatStartDelay(p,at){
  if(!p)return 0;
+ // nextBeat is in original-file seconds, not post-playbackRate wall time.
+ // Account for tempo scaling when scheduling the audible incoming kick.
+ const playbackRate=Number.isFinite(p.tempo)&&p.tempo>=.95&&
+    p.tempo<=1.05?p.tempo:1;
  // Schedule the real first incoming beat exactly at the last outgoing
  // impact, with a 95ms precision clock. Never "catch up" in dead air.
  if(p.measuredFinalImpact===true){
-  const target=Number(p.finalImpactAt)-Number(p.nextBeat);
+  const target=Number(p.finalImpactAt)-Number(p.nextBeat)/playbackRate;
   if(!Number.isFinite(target)||!Number.isFinite(at)||
      !Number.isFinite(p.end)||target>p.end-1.35||
      at>target+.085||target-at>1.6)return null;
@@ -4012,7 +4016,7 @@ function desktopBeatStartDelay(p,at){
  }
  if(!["beat","snap","phrase","underlay"].includes(p.kind))return 0;
  const period=Number(p.beatPeriod),out=Number(p.beatAnchor),
-  incoming=Number(p.nextBeat);
+  incoming=Number(p.nextBeat)/playbackRate;
  if(!Number.isFinite(period)||period<.24||period>1.2||
     !Number.isFinite(out)||!Number.isFinite(incoming)||
     !Number.isFinite(at)||!Number.isFinite(p.end))return null;

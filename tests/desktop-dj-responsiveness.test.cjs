@@ -440,3 +440,22 @@ test("desktop beatmatch keeps the real drum speed through the audible overlap th
  assert.match(dj,/upcoming\.playbackRate=matchedTempoRate\(act\.tempo,time\)/);
  assert.doesNotMatch(dj,/upcoming\.playbackRate=1\+\(act\.tempo-1\)\*\(1-time\)/);
 });
+
+test("desktop starting kick accounts for the actual incoming playback rate",()=>{
+ const code=section(dj,"function desktopBeatStartDelay(","async function beginMix(");
+ const start=new Function(code+"return desktopBeatStartDelay;")();
+ const phase={kind:"beat",tempo:1.03,beatPeriod:.5,
+  beatAnchor:102.5,nextBeat:2.06,end:105};
+ const delay=start(phase,101.35);
+ assert.ok(delay!==null);
+ assert.ok(Math.abs(delay-.15)<1e-9,
+  "the incoming onset is earlier by 60ms after speed-up");
+ const actualBeat=101.35+delay+phase.nextBeat/phase.tempo;
+ assert.ok(Math.abs((actualBeat-phase.beatAnchor)/phase.beatPeriod-
+  Math.round((actualBeat-phase.beatAnchor)/phase.beatPeriod))<1e-9);
+ const impact={kind:"beat",measuredFinalImpact:true,tempo:1.03,
+  finalImpactAt:104,nextBeat:1.545,end:105};
+ assert.ok(Math.abs(start(impact,102.45)-.05)<1e-9,
+  "the final-impact relay must account for tempo adjustment");
+ assert.ok(Math.abs(start({...phase,tempo:1,nextBeat:2},101.35)-.15)<1e-9);
+});

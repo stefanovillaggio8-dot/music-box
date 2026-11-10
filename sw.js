@@ -55,7 +55,7 @@ const CORE = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
-  "./mix-intelligente.js?v=6715&dj=2", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6715&dj=3", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -94,7 +94,7 @@ const OFFLINE_SHELL = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
-  "./mix-intelligente.js?v=6715&dj=2",
+  "./mix-intelligente.js?v=6715&dj=3",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6715"
 ];

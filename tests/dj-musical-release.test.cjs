@@ -385,8 +385,9 @@ test("release version is identical in player, metadata, HTML assets and service 
  const token=match[1].replace(/\./g,"");
  assert.ok(html.includes('app.js?v='+token+'"'),
   "HTML must request the updated player script");
- assert.ok(html.includes('mix-intelligente.js?v='+token+'"'),
-  "HTML must request the same release of DJ Mix");
+ const djAsset=/mix-intelligente\.js\?v=([0-9]+)(?:&amp;dj=[0-9]+)?"/.exec(html);
+ assert.equal(djAsset?.[1],token,
+  "HTML must request the same release of DJ Mix, even with a cache-busting query");
  assert.ok(sw.includes('spotifynonavraiimieisoldi-v'+token+'"'),
   "Offline worker version must match the player");
 });
