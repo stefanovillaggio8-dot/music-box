@@ -617,6 +617,16 @@ test("real indexed pulse grid survives against mismatched BPM and chord progress
  const a=find("audio/songs/track-378.mp3"),b=find("audio/songs/track-91.mp3");
  assert.ok(a&&b);
  const evidence=tools.rhythmicGridEvidence(a.data,b.data);
+ console.info("[DJ V5 KNOWN PAIR GATES]",JSON.stringify({
+  bpm:[a.data.bpm,b.data.bpm],
+  beatConfidence:[a.data.beatConfidence,b.data.beatConfidence],
+  introDrive:b.data.introDrive,periodicity:[
+   tools.onsetPeriodicity(a.data.outroOnset,a.data.bpm),
+   tools.onsetPeriodicity(b.data.introOnset,b.data.bpm)],
+  groove:tools.grooveAgreement(a.data,b.data),
+  harmony:tools.similarNotes(a.data,b.data),
+  key:tools.camelotMatch(a.data,b.data)
+ }));
  const bad=find("audio/songs/track-78.mp3"),badNext=find("audio/songs/track-966.mp3");
  console.info("[DJ ONSET VALIDATION PAIRS]",JSON.stringify({good:tools.onsetPairAgreement(a.data,b.data),
   bad:tools.onsetPairAgreement(bad.data,badNext.data)}));
