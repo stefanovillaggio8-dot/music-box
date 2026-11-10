@@ -57,7 +57,8 @@ function renderLyrics(force){
    }
    lyricRows=(lyricTimed?synced.map(row=>({text:String(row.text).trim(),t:Number(row.t),
       ...(row.end!=null&&Number.isFinite(Number(row.end))?{end:Number(row.end)}:{}),
-      ...(Array.isArray(row.words)?{words:row.words}:{})})):
+      ...(Array.isArray(row.words)?{words:row.words}:{}),
+      ...(row.estimated?{estimated:true}:{})})):
     plainRows.map(text=>({text}))).slice(0,500);
    if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
    const fragment=document.createDocumentFragment();
@@ -72,12 +73,13 @@ function renderLyrics(force){
    karaoke.classList.toggle("has-lines",!!next?.text||lyricTimed);
    karaoke.classList.toggle("approximate",!lyricTimed);
    const status=$("imLyricModeLabel");
+   const trusted=lyricRows.some(r=>r._elements?.length>=2&&!r.estimated);
+   const guessed=lyricRows.some(r=>r.estimated);
    if(status)status.textContent=lyricTimed
-     ?(lyricRows.some(r=>r._elements?.length>=2)
-       ?(next?.audioWordSynced?"PAROLE · ANALISI AUDIO":"PAROLA PER PAROLA")
-       :"SINCRONIZZATO")
+     ?(trusted?(next?.audioWordSynced?"PAROLA PER PAROLA · IA":"PAROLA PER PAROLA"):
+       guessed?"PAROLA PER PAROLA · STIMA":"SINCRONIZZATO")
      :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
-   if(lyricTimed&&!lyricRows.some(r=>r._elements?.length>=2))
+   if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<2))
      b?.requestWordLyrics?.(id)?.catch?.(()=>{});
    karaoke.scrollTop=0;
   }

@@ -119,7 +119,7 @@ test("DJ extra analysis budget respects iPhone/desktop limits and admits new imp
 test("full lyrics are available even when karaoke timestamps exist",()=>{
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
- assert.match(app,/let _vistaTestiCompleta=true/);
+ assert.match(app,/let _vistaTestiCompleta=LS\.get\("mb\.lyricsFullView",false\)===true/);
  assert.match(app,/const useSynced=synced\.length>0&&!_vistaTestiCompleta/);
  assert.match(app,/classList\.toggle\("lyrics-full-view",!useSynced\)/);
  assert.match(app,/const heading=document\.createElement\("h3"\)/);
@@ -335,7 +335,7 @@ test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio p
  assert.match(audio,/const budget=isPhone\?1:3/);
  assert.match(audio,/saveAudioWordRows\?\.\(id,aligned\)/);
  assert.match(app,/saveAudioWordRows:\(id,rows\)=>_salvaParoleDallAudio/);
- assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+ assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
  assert.match(html,/audio-lyrics-align\.js\?v=\d+/);
  assert.match(sw,/audio-lyrics-worker\.js\?v=\d+/);
  assert.match(html,/id="lyricsAudioStatus"/);
@@ -407,7 +407,7 @@ test("audio analysis has no external upload endpoint and does not overwrite sour
  assert.match(engine,/if\(scanned>=budget/);
  assert.match(engine,/if\(!best\)continue/);
  assert.doesNotMatch(engine,/\/api\/transcription|speech-to-text.*fetch/);
- assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+ assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
 });
 
 
@@ -523,9 +523,9 @@ test("Whisper timeout terminates a hung worker without freezing playback",async(
 test("AI timing provenance survives browser restart and does not masquerade as LRCLIB",()=>{
  assert.match(app,/audioWordSynced:r\.audioWordSynced===true/);
  assert.match(app,/wordRows:joined,audioWordSynced:true/);
- assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
+ assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
- assert.match(immersive,/next\?\.audioWordSynced\?"PAROLE · ANALISI AUDIO"/);
+ assert.match(immersive,/next\?\.audioWordSynced\?"PAROLA PER PAROLA · IA"/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
  assert.match(engine,/completedInSession\.has\(id\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
@@ -598,4 +598,52 @@ test("Whisper worker sends explicit per-track language to ASR and rejects missin
  assert.equal(calls.length,2,"invalid or missing language must not launch transcription");
  assert.match(sent[2].error,/Invalid audio segment/);
  assert.match(sent[3].error,/Invalid audio segment/);
+});
+
+
+test("line-level LRC lyrics now produce a distinct estimated word-by-word karaoke",()=>{
+ const win={};
+ new Function("window","globalThis",
+  fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(win,win);
+ const api=win.MusicBoxWordKaraoke;
+ const rows=[{t:7.7,text:"E quanto forte ti pensavo"},
+  {t:11.92,text:"Che quasi non respiravo"},
+  {t:15.92,text:"[Instrumental]"},
+  {t:20.05,text:"Dammi un goccio in più Maria"}];
+ const est=api.estimateRows(rows);
+ assert.equal(rows[0].words,undefined,"source LRC rows remain untouched");
+ assert.equal(est[0].estimated,true);
+ assert.ok(est[0].words.length>=4,"word progress exists with line timestamps");
+ assert.equal(est[0].words.map(w=>w.text).join("").trim(),rows[0].text);
+ assert.equal(est[0].words[0].t,rows[0].t);
+ assert.ok(est[0].words.at(-1).end<rows[1].t);
+ assert.ok(est[0].words.every((w,i)=>i===0||w.t>=est[0].words[i-1].t));
+ assert.equal(est[2].words,undefined,"instrumental markers are never spoken words");
+ const container={children:[],appendChild(node){this.children.push(node)},textContent:""};
+ const document={createElement:()=>({textContent:"",style:{setProperty(){}}})};
+ assert.equal(api.spanWords(document,est[0],container).length,est[0].words.length);
+ const verified={t:10,text:"Turn on",words:[{t:10,end:10.5,text:"Turn "},{t:10.5,end:11,text:"on"}]};
+ assert.strictEqual(api.estimateRows([verified])[0],verified,"verified word data takes priority");
+});
+
+test("estimated words never suppress Whisper or contaminate verified saved timings",()=>{
+ const align=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
+ assert.match(app,/const baseline=saved\.some\(row=>row\.words\?\.length>=2\)/);
+ assert.match(app,/return e\?\.estimateRows\?\.\(baseline\)\|\|baseline/);
+ assert.match(app,/return kept&&!kept\.estimated\?kept:original/);
+ assert.match(app,/if\(l\?\.synced&&!_righeTestoConParole\(l\)\.every\(r=>\s*r\.words\?\.length>=2&&!r\.estimated\)\)/);
+ assert.match(align,/row\?\.estimated\?\{t:row\.t,text:row\.text\}:row/);
+ assert.match(immersive,/guessed\?"PAROLA PER PAROLA · STIMA"/);
+ assert.match(immersive,/row\.estimated\?\{estimated:true\}/);
+ assert.match(app,/KARAOKE · PAROLA PER PAROLA \(STIMA\)/);
+ assert.match(app,/track-badge-karaoke/);
+ assert.match(app,/_statoKaraokeBrano\(t\.id\)\?\.label\|\|""/);
+ assert.match(app,/LS\.set\("mb\.lyricsFullView",_vistaTestiCompleta\)/);
+ for(const file of ["app.js","word-karaoke.js","immersive.js","style.css"]){
+  assert.ok(html.includes(file+"?v=6715&amp;words=2"));
+  assert.equal(sw.split(file+"?v=6715&words=2").length-1,2);
+ }
 });

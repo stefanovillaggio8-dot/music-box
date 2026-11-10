@@ -329,6 +329,11 @@ main { padding: 8px 16px calc(var(--player-h) + 40px); }
   vertical-align: 1px;
 }
 .track-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.track-badge-karaoke{
+  font-size:9px;letter-spacing:.02em;margin-left:5px;
+  border-color:rgba(154,218,238,.52);color:#aee4ee;
+  background:rgba(60,138,170,.09);padding:1px 5px;
+}
 
 .track-del {
   background: none;

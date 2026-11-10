@@ -193,7 +193,8 @@ async function analyze(id){
  if(!canRun())return false;
  const bridge=window.MusicBoxBridge;
  if(!bridge||bridge.currentId?.()!==id||completedInSession.has(id))return false;
- const rows=bridge.lyricsData?.()?.synced||[];
+ const rows=(bridge.lyricsData?.()?.synced||[]).map(row=>
+  row?.estimated?{t:row.t,text:row.text}:row);
  if(rows.length<3||rows.every(row=>row.words?.length>=2))return false;
  const language=languageFromLyrics(rows);
  if(!language){

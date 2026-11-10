@@ -45,12 +45,12 @@ async function profileForEvent(event) {
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=6715",
+  "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6715",
+  "./word-karaoke.js?v=6715&words=2",
   "./audio-lyrics-align.js?v=6715&lang=1",
   "./audio-lyrics-worker.js?v=6715&lang=1",
-  "./app.js?v=6715",
+  "./app.js?v=6715&words=2",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -61,7 +61,7 @@ const CORE = [
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6715",
+  "./immersive.js?v=6715&words=2",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -84,19 +84,19 @@ const CORE = [
 // A versioned CSS or JS URL was otherwise unavailable after a cold restart.
 const OFFLINE_SHELL = [
   "./index.html",
-  "./style.css?v=6715",
+  "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6715",
+  "./word-karaoke.js?v=6715&words=2",
   "./audio-lyrics-align.js?v=6715&lang=1",
   "./audio-lyrics-worker.js?v=6715&lang=1",
-  "./app.js?v=6715",
+  "./app.js?v=6715&words=2",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
   "./mix-intelligente.js?v=6715&dj=6",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6715"
+  "./immersive.js?v=6715&words=2"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",

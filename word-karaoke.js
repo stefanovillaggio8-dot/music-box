@@ -145,6 +145,37 @@ function toLrc(rows){
   return "["+m+":"+s+"] "+r.text;
  }).join("\n");
 }
+/* Word progress guessed from LRC LINE timing: visual only, never persisted
+   or represented as an audio-verified word alignment. */
+function estimateRows(rows){
+ if(!Array.isArray(rows))return [];
+ return rows.map((row,index)=>{
+  if(!row||Array.isArray(row.words)&&row.words.length>=2)return row;
+  const start=number(row.t),text=String(row.text||"").trim();
+  const tokens=text.match(/\S+\s*/gu)||[];
+  if(start==null||tokens.length<2||tokens.length>24||text.length>220||
+     /^\[[^\]\n]+\]$/u.test(text))return row;
+  const following=number(rows[index+1]?.t);
+  const gap=following!=null&&following>start?following-start:null;
+  if(gap!==null&&gap<.85)return row;
+  const weights=tokens.map(token=>{
+   const letters=token.replace(/[^\p{L}\p{N}]/gu,"").length;
+   return clamp(letters/4+.35,.7,2.5);
+  });
+  const total=weights.reduce((a,b)=>a+b,0);
+  const natural=clamp(total*.43+.35,1.1,6.5);
+  const duration=gap===null?natural:Math.min(gap-.12,Math.max(.9,Math.min(gap*.9,natural)));
+  if(duration<.78)return row;
+  let cursor=start;
+  const words=tokens.map((token,i)=>{
+   const t=cursor;
+   cursor+=duration*weights[i]/total;
+   return {text:token,t:+t.toFixed(3),end:+cursor.toFixed(3)};
+  });
+  if(words.map(w=>w.text).join("").trim()!==text)return row;
+  return {...row,words,estimated:true};
+ });
+}
 function spanWords(document,row,container){
  const words=validWords(row.words,row.text,row.t,row.end??null);
  if(words.length<2){container.textContent=row.text;return []}
@@ -171,6 +202,6 @@ function paintWords(row,elements,time){
  }
 }
 root.MusicBoxWordKaraoke={
- parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,spanWords,paintWords
+ parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords
 };
 })(typeof window!=="undefined"?window:globalThis);
