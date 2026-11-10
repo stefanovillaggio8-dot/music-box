@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.710";
+  const APP_VERSION = "6.711";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -8791,6 +8791,17 @@ function _aggiornaPosizioneSchermo() {
     return 0;
   }
 
+  // Let the native MP3 decoder seek first. Serializing the full profile
+  // and offline state in the same pointer/seek event blocked the UI on PC.
+  let _seekSaveTimer=null;
+  function _saveSeekAfterDecoder(){
+    if(_seekSaveTimer)clearTimeout(_seekSaveTimer);
+    const target=audio,id=currentId;
+    _seekSaveTimer=setTimeout(()=>{
+      _seekSaveTimer=null;
+      if(target===audio&&id===currentId)try{savePos()}catch(_){}
+    },180);
+  }
   function seekBy(delta) {
     if (!audio) return;
     _ultimoSeekUtente=Date.now();
@@ -8807,7 +8818,7 @@ function _aggiornaPosizioneSchermo() {
       return;
     }
     updateProgressUI(audio.currentTime, d);
-    savePos();
+    _saveSeekAfterDecoder();
     if(window.MusicBoxRoom?.isActive()&&!window.MusicBoxRoom.isApplying())
       window.MusicBoxRoom.control("seek",{seconds:t});
   }
@@ -13698,9 +13709,12 @@ $("btnModalitaGym").addEventListener("click", () => {
   });
 
   const progressBar = $("playerProgress");
+  let scrubRect=null;
   function ratioFromX(clientX) {
-    const rect = progressBar.getBoundingClientRect();
-    return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    // A drag may send hundreds of pointermove events. Cache the geometry
+    // instead of forcing layout calculations on every pixel of movement.
+    const rect=scrubRect||progressBar.getBoundingClientRect();
+    return Math.min(1, Math.max(0, (clientX - rect.left) / Math.max(1,rect.width)));
   }
   function scrubTo(clientX) {
     if (!audio || !isFinite(audio.duration)) return;
@@ -13715,6 +13729,7 @@ $("btnModalitaGym").addEventListener("click", () => {
   function endScrub() {
     if (!scrubbing) return;
     scrubbing = false;
+    scrubRect=null;
     progressBar.classList.remove("scrubbing");
     if (pendingSeek != null && audio) {
       _ultimoSeekUtente=Date.now();
@@ -13723,11 +13738,12 @@ $("btnModalitaGym").addEventListener("click", () => {
       try { audio.currentTime = pendingSeek; } catch (_) {}
     }
     pendingSeek = null;
-    savePos();
+    _saveSeekAfterDecoder();
   }
   progressBar.addEventListener("pointerdown", (e) => {
     if (!audio || !isFinite(audio.duration)) return;
     scrubbing = true;
+    scrubRect=progressBar.getBoundingClientRect();
     progressBar.classList.add("scrubbing");
     try { progressBar.setPointerCapture(e.pointerId); } catch (err) { /* noop */ }
     scrubTo(e.clientX);
