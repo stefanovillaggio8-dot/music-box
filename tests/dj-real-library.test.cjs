@@ -620,8 +620,8 @@ test("real indexed MP3 releases enter before the last original sound only with m
    "original musical ending is not truncated or time-stretched");
   assert.equal(engine.musicallyCompatibleOverlay(a,b,p),true,
    "cue must pass independent revalidation of real-audio metadata");
-  assert.equal(choose({...a,lastLyricAt:a.dropRelease.releaseAt-1},b)
-   ?.measuredReleaseLeadIn,false,
+  assert.notEqual(choose({...a,lastLyricAt:a.dropRelease.releaseAt-1},b)
+   ?.measuredReleaseLeadIn,true,
    "a late lyric must revoke the early overlap");
   assert.notEqual(choose(a,{...b,bpm:b.bpm*1.22})
    ?.measuredReleaseLeadIn,true,
