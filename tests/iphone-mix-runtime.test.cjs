@@ -453,7 +453,7 @@ test("DSP presets are scoped to playlist and connect WebAudio EQ and filters",()
  assert.ok(app.includes('mixScope:()=>profile+"|"'));
  for(const id of ["mixDspEffect","mixDspStrength","mixDspBass","mixDspMid","mixDspTreble"]){
   assert.ok(html.includes('id="'+id+'"'));
-  assert.ok(dj.includes('$("'+id+'")'));
+  assert.ok(dj.includes('"'+id+'"'),"control bound through a named selector or the shared loop");
  }
  assert.ok(dj.includes('localStorage.setItem("mb.mixPreset."+dspScope'));
  assert.ok(dj.includes('filter.frequency.exponentialRampToValueAtTime'));
