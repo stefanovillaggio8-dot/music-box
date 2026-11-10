@@ -601,3 +601,34 @@ test("track 1197's measured outro allows a long pre-EOF intro ONLY with last-lyr
  assert.equal(plan.preserveTail,true);
  assert.equal(plan.silenceTrim,false);
 });
+
+
+test("real indexed MP3 releases enter before the last original sound only with measured compatibility",()=>{
+ const choose=(a,b)=>engine.transition(a,b,a.duration);
+ const cases=[[642,547],[695,470],[1121,650],[1197,661]];
+ for(const [aId,bId] of cases){
+  const a=index.entries["audio/songs/track-"+aId+".mp3"],
+        b=index.entries["audio/songs/track-"+bId+".mp3"];
+  assert.ok(a&&b,"real metadata exists for "+aId+" -> "+bId);
+  const p=choose(a,b);
+  assert.equal(p?.measuredReleaseLeadIn,true,
+   "real harmonic release should yield early, conservative intro");
+  assert.ok(p.begin>=a.dropRelease.releaseAt&&p.begin<a.last-1,
+   "next song starts during the measured original release");
+  assert.ok(p.end>=a.duration-.04&&p.preserveTail&&
+   !p.silenceTrim&&p.tempo===1,
+   "original musical ending is not truncated or time-stretched");
+  assert.equal(engine.musicallyCompatibleOverlay(a,b,p),true,
+   "cue must pass independent revalidation of real-audio metadata");
+  assert.notEqual(choose({...a,lastLyricAt:a.dropRelease.releaseAt-1},b)
+   ?.measuredReleaseLeadIn,true,
+   "a late lyric must revoke the early overlap");
+  assert.notEqual(choose(a,{...b,bpm:b.bpm*1.22})
+   ?.measuredReleaseLeadIn,true,
+   "wrong tempo must never gain early overlay permission");
+ }
+ const a=index.entries["audio/songs/track-239.mp3"],
+  b=index.entries["audio/songs/track-990.mp3"];
+ assert.equal(choose(a,b)?.measuredReleaseLeadIn,undefined,
+  "a song without a measured release must not invent one");
+});
