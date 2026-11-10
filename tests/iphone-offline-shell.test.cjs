@@ -26,6 +26,13 @@ async function run(){
  await new Promise(resolve=>server.listen(0,"127.0.0.1",resolve));
  const url="http://127.0.0.1:"+server.address().port+"/";
  const release=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8")).versione.replace(/\./g,"");
+ // The live HTML can append a DJ-only cache-bust parameter; precache must
+ // match the full actual script URL rather than a stale assumed URL.
+ const html=fs.readFileSync(path.join(root,"index.html"),"utf8");
+ const djAsset=/<script src="(mix-intelligente\.js\?v=[0-9]+(?:&amp;dj=[0-9]+)?)"><\/script>/.exec(html);
+ const djUrl=djAsset?.[1]?.replace(/&amp;/g,"&");
+ assert.ok(djUrl?.startsWith("mix-intelligente.js?v="+release),
+  "DJ script in live HTML must carry the current app version");
  let browser;
  try{
   browser=await webkit.launch({headless:true});
@@ -36,16 +43,16 @@ async function run(){
   await page.goto(url,{waitUntil:"domcontentloaded",timeout});
   await page.waitForFunction(()=>!!window.MusicBoxBridge,{timeout});
   await page.evaluate(()=>navigator.serviceWorker.ready);
-  const shell=await page.waitForFunction(async(rev)=>{
+  const shell=await page.waitForFunction(async({rev,djUrl})=>{
    const names=await caches.keys();
    const name=names.find(x=>x==="spotifynonavraiimieisoldi-v"+rev);
    if(!name)return false;
    const c=await caches.open(name);
    const required=["index.html","style.css?v="+rev,"app.js?v="+rev,
-    "fuoco.js?v=6570","mix-intelligente.js?v="+rev,"immersive.js?v="+rev];
+    "fuoco.js?v=6570",djUrl,"immersive.js?v="+rev];
    for(const item of required)if(!(await c.match(new URL(item,location.href))))return false;
    return required.length;
-  },release,{timeout});
+  },{rev:release,djUrl},{timeout});
   assert.ok(await shell.jsonValue(),"install must precache exact versioned shell");
   // A downloaded MP3 lives in a separate persistent profile cache and must
   // survive a cold restart while the app shell changes across releases.
