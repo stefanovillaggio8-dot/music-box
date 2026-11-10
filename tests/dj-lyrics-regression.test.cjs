@@ -642,8 +642,13 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  assert.match(app,/track-badge-karaoke/);
  assert.match(app,/_statoKaraokeBrano\(t\.id\)\?\.label\|\|""/);
  assert.match(app,/LS\.set\("mb\.lyricsFullView",_vistaTestiCompleta\)/);
+ const release=JSON.parse(fs.readFileSync(
+  path.join(__dirname,"..","versione.json"),"utf8")).versione.replace(".","");
  for(const file of ["app.js","word-karaoke.js","immersive.js","style.css"]){
-  assert.ok(html.includes(file+"?v=6715&amp;words=2"));
-  assert.equal(sw.split(file+"?v=6715&words=2").length-1,2);
+  // The main player follows the release; unchanged karaoke/CSS assets
+  // deliberately keep their own revision in both online and offline URLs.
+  const revision=file==="app.js"?release:"6715";
+  assert.ok(html.includes(file+"?v="+revision+"&amp;words=2"));
+  assert.equal(sw.split(file+"?v="+revision+"&words=2").length-1,2);
  }
 });
