@@ -141,14 +141,23 @@ function setStatus(value){
  if(el)el.textContent=value;
 }
 function preferredWindows(lines,duration){
- const blocks=[...new Set(lines.filter(l=>!l.words?.length&&Number.isFinite(Number(l.t)))
-  .map(row=>Math.floor(Math.max(0,row.t-.8)/STEP)*STEP))]
-  .filter(at=>at<duration-3&&Number.isFinite(at));
- // Current verse first, then earlier verses. Never process beyond a
- // bounded number of windows in one foreground listening session.
+ const blocks=new Set();
+ for(const row of Array.isArray(lines)?lines:[]){
+  const t=Number(row?.t);
+  if(row?.words?.length>=2||!Number.isFinite(t)||t<0)continue;
+  const base=Math.floor(Math.max(0,t-.8)/STEP)*STEP;
+  // A phrase near the end of a 28-second clip may be cut off even
+  // when its first word is inside it. Add a window with five seconds
+  // of lead-in so Whisper can hear the complete phrase.
+  if(t-base>WINDOW-10){
+   const overlap=Math.max(0,Math.floor(t-5));
+   if(overlap<duration-3)blocks.add(overlap);
+  }
+  if(base<duration-3)blocks.add(base);
+ }
+ // The nearest relevant clip gets the mobile one-window budget first.
  const now=Number(window.MusicBoxBridge?.audio?.()?.currentTime)||0;
- blocks.sort((a,b)=>Math.abs(a-now)-Math.abs(b-now));
- return blocks;
+ return [...blocks].sort((a,b)=>Math.abs(a-now)-Math.abs(b-now));
 }
 async function analyze(id){
  if(!canRun())return false;
