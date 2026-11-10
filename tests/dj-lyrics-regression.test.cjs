@@ -278,7 +278,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
- assert.equal(version,"6.709");
+ assert.equal(version,"6.710");
  assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
@@ -288,8 +288,8 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
  assert.match(immersive,/PAROLA PER PAROLA/);
- assert.match(html,/word-karaoke\.js\?v=6709/);
- assert.match(sw,/word-karaoke\.js\?v=6709/);
+ assert.match(html,/word-karaoke\.js\?v=6710/);
+ assert.match(sw,/word-karaoke\.js\?v=6710/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
  assert.match(css,/\.im-line\.active \.karaoke-word/);
 });
@@ -332,8 +332,8 @@ test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio p
  assert.match(audio,/saveAudioWordRows\?\.\(id,aligned\)/);
  assert.match(app,/saveAudioWordRows:\(id,rows\)=>_salvaParoleDallAudio/);
  assert.match(app,/if\(kept\?\.words\?\.length>=2\)return kept/);
- assert.match(html,/audio-lyrics-align\.js\?v=6709/);
- assert.match(sw,/audio-lyrics-worker\.js\?v=6709/);
+ assert.match(html,/audio-lyrics-align\.js\?v=6710/);
+ assert.match(sw,/audio-lyrics-worker\.js\?v=6710/);
  assert.match(html,/id="lyricsAudioStatus"/);
 });
 
