@@ -446,3 +446,16 @@ test("mix copy diagnostic is optional and reports actual iPhone blockers",()=>{
  assert.ok(source.includes('bufferedAhead:(()=>'));
  assert.ok(!source.includes('fetch("/diagnostics"'));
 });
+
+test("DSP presets are scoped to playlist and connect WebAudio EQ and filters",()=>{
+ const dj=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
+ assert.ok(app.includes('mixScope:()=>profile+"|"'));
+ for(const id of ["mixDspEffect","mixDspStrength","mixDspBass","mixDspMid","mixDspTreble"]){
+  assert.ok(html.includes('id="'+id+'"'));
+  assert.ok(dj.includes('$("'+id+'")'));
+ }
+ assert.ok(dj.includes('localStorage.setItem("mb.mixPreset."+dspScope'));
+ assert.ok(dj.includes('filter.frequency.exponentialRampToValueAtTime'));
+ assert.ok(dj.includes('source.connect(gain)'));
+});
