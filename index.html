@@ -26,7 +26,7 @@
       } catch (e) { }
     })();
   </script>
-  <link rel="stylesheet" href="style.css?v=6711" />
+  <link rel="stylesheet" href="style.css?v=6712" />
     <script>
       /* Ste: "non va ancora, porta sempre ad accedi con spotify".
          Motivo: su iPhone, quando Spotify rimanda all'app, il sistema passa la
@@ -139,7 +139,7 @@
 #mixPanel .mix-setting-toggle{background:#208f73;color:white;border:0;padding:9px 15px;border-radius:30px;font-weight:650}
 #mixPanel label{font-size:13px;font-weight:650;color:#cbd5e4}
 #mixPanel select{width:100%;background:#0f1520;border:1px solid #45566f;color:white;border-radius:9px;padding:12px;font:inherit}
-#mixPanel #mixSeconds{width:100%;accent-color:#57d9b5}
+#mixPanel input[type=range]{width:100%;accent-color:#57d9b5}
 #mixPanel output{float:right;color:#74e5c4}
 #mixPanel .mix-setting-hint,#mixPanel #mixDetail{font-size:12px;line-height:1.6;color:#aebbd0;margin:0}
 #mixPanel #mixDetail{color:#deebff;overflow-wrap:anywhere}
@@ -1450,7 +1450,23 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
       </select>
       <label for="mixSeconds">Durata transizioni manuali <output id="mixSecondsValue" for="mixSeconds">6 s</output></label>
       <input id="mixSeconds" type="range" min="3" max="12" step="1" value="6">
-      <p class="mix-setting-hint">Automix sceglie da solo se mixare: quando due brani non sono adatti, evita sovrapposizioni forzate. Fade e Rise sono opzioni manuali, non necessarie.</p>
+      <label for="mixDspEffect">Effetto sulle frequenze</label>
+      <select id="mixDspEffect">
+        <option value="auto">Automatico — separa bassi compatibili</option>
+        <option value="highpass">Passa-alto — entrata graduale bassi</option>
+        <option value="lowpass">Passa-basso — entrata graduale alti</option>
+        <option value="off">Nessun filtro</option>
+      </select>
+      <label for="mixDspStrength">Intensità effetto <output id="mixDspStrengthValue">55%</output></label>
+      <input id="mixDspStrength" type="range" min="0" max="100" step="5" value="55">
+      <label for="mixDspBass">EQ bassi <output id="mixDspBassValue">0 dB</output></label>
+      <input id="mixDspBass" type="range" min="-6" max="6" step="1" value="0">
+      <label for="mixDspMid">EQ medi <output id="mixDspMidValue">0 dB</output></label>
+      <input id="mixDspMid" type="range" min="-6" max="6" step="1" value="0">
+      <label for="mixDspTreble">EQ alti <output id="mixDspTrebleValue">0 dB</output></label>
+      <input id="mixDspTreble" type="range" min="-6" max="6" step="1" value="0">
+      <p id="mixPresetScope" class="mix-setting-hint">Le regolazioni vengono salvate per playlist sul dispositivo.</p>
+      <p class="mix-setting-hint">BPM, Camelot e quartine guidano il passaggio. EQ e filtri agiscono sulle sovrapposizioni Web Audio supportate; in caso di problemi resta la riproduzione originale.</p>
       <div id="mixIphoneRow" hidden>
         <div class="mix-setting-line">
           <strong>Mix su iPhone (schermo acceso)</strong>
@@ -1589,15 +1605,15 @@ Ste lo chiedeva perche' i due modi non si capivano. -->
 </div>
 </div>
 <script src="fuoco.js?v=6570"></script>
-<script src="word-karaoke.js?v=6711"></script>
-<script src="audio-lyrics-align.js?v=6711"></script>
-<script src="app.js?v=6711"></script>
+<script src="word-karaoke.js?v=6712"></script>
+<script src="audio-lyrics-align.js?v=6712"></script>
+<script src="app.js?v=6712"></script>
 <script src="stanza.js?v=6570"></script>
 <script src="amici-online.js?v=6570"></script>
 <script src="discord-presence.js?v=6570"></script>
 <script src="voice-analysis.js?v=6570"></script>
-<script src="mix-intelligente.js?v=6711"></script>
+<script src="mix-intelligente.js?v=6712"></script>
 <script src="mix-monitor-bridge.js?v=4"></script>
-<script src="immersive.js?v=6711"></script>
+<script src="immersive.js?v=6712"></script>
 </body>
 </html>
