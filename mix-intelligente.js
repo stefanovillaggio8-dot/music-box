@@ -2236,8 +2236,9 @@ function verifiedRhythmicGridBridge(a,b,dur){
    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
    a.voiceScannedEnd>=end-1&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-7));
- // A protected final note must not be ducked if singing is unknown.
- if(a.protectedEnding===true&&!endingVoiceProven)return null;
+ // The original is still audible through the measured short snap.
+ // A loud protected closing hit is not by itself evidence of singing:
+ // keep it intact, and restrict any unverified junction to a short preview.
  const long=endingVoiceProven&&a.protectedEnding!==true&&evidence.longCompatible;
  const entry=musicalIntroEntry(b),period=60/a.bpm;
  const beatAnchor=edge-4+onsetGridPhase(a.outroOnset,a.bpm);
