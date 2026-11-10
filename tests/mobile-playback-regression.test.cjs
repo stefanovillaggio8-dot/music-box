@@ -621,7 +621,7 @@ test("iPhone lock-screen pause and play retain active media and recover a discar
 
 test("rapid seeking gives the native decoder priority over DJ analysis",()=>{
  const djSource=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
- const tick=excerpt(djSource,"function tick(){","function sampleLiveOutro(");
+ const tick=excerpt(djSource,"function tick(){"," onSeek:(reason)=>{");
  // Tick is explicitly short-circuited before computing the next song.
  assert.ok(tick.includes("audio.seeking||Date.now()<seekRecoveryUntil"));
  assert.ok(tick.indexOf("audio.seeking||Date.now()<seekRecoveryUntil")<
