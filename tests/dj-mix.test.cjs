@@ -1252,3 +1252,41 @@ test("decisive certified downbeat still has constant musical energy",()=>{
  assert.equal(f.ready({kind:"soft",quietCertified:true,neutralRelease:true},3),true);
  assert.ok(source.includes("softReveal?djSoftFocusEnvelope(u)"));
 });
+
+
+test("real four-beat accent matching vetoes mismatched bar accents, not flat drum grids",()=>{
+ const phase=source.slice(source.indexOf("function onsetGridPhase("),
+  source.indexOf("// Different kick samples may still share",source.indexOf("function onsetGridPhase(")));
+ const bars=source.slice(source.indexOf("function djMeasuredBarAccents("),
+  source.indexOf("function earlyMatchedBar(",source.indexOf("function djMeasuredBarAccents(")));
+ const verify=new Function("clamp",phase+bars+"return djMeasuredBarAccents;")(
+  (x,a,b)=>Math.max(a,Math.min(b,x)));
+ const onset=(beats)=>Array.from({length:96},(_,i)=>{
+  const beat=i/12;
+  return i%12===0&&beat<beats.length?beats[beat]:0;
+ });
+ const a=onset([1,.35,.7,.40,1,.35,.7,.40]);
+ const equal=onset([1,.35,.7,.40,1,.35,.7,.40]);
+ const reversed=onset([.35,1,.4,.7,.35,1,.4,.7]);
+ const plain=onset(Array(8).fill(.6));
+ assert.ok(verify(a,equal,120,0).score>.98);
+ assert.ok(verify(a,reversed,120,0).score<.62);
+ assert.equal(verify(plain,plain,120,0).reliable,false,
+  "flat 4-on-floor drums cannot certify a downbeat or musical measure");
+ assert.equal(verify(a,equal,120,3.9),null,
+  "too few overlapping verified beats must remain unproven");
+});
+
+test("actual decoder playhead must preserve outgoing-incoming beat phase",()=>{
+ const helpers=source.slice(source.indexOf("function djImpactBeatPoint("),
+  source.indexOf("\ntry{\n const stored=",source.indexOf("function djImpactBeatPoint(")));
+ const verify=new Function("clamp",helpers+"return djBeatPhaseError;")(
+  (x,a,b)=>Math.max(a,Math.min(b,x)));
+ const plan={beatPeriod:.5,beatAnchor:100,nextBeat:.1,entry:0,tempo:1};
+ assert.ok(verify(plan,101.1,1.2)<1e-8);
+ assert.ok(Math.abs(verify(plan,101.1,1.45)-.25)<1e-8);
+ assert.ok(verify({...plan,tempo:1.02},101.1,1.222)<1e-8);
+ assert.equal(verify({...plan,nextBeat:null},101.1,1.2),null);
+ assert.ok(source.includes("const livePhaseError=djBeatPhaseError("));
+ assert.ok(source.includes("cancel();plan=null;return;"));
+});
