@@ -278,7 +278,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
  const css=fs.readFileSync(path.join(__dirname,"..","style.css"),"utf8");
  const version=JSON.parse(fs.readFileSync(path.join(__dirname,"..","versione.json"),"utf8")).versione;
- assert.equal(version,"6.711");
+ assert.equal(version,"6.712");
  assert.match(app,/wordRows:r\.wordRows\|\|\[\]/);
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
