@@ -1135,7 +1135,7 @@ test("DJ impact reveal is exactly tied to a measured incoming beat and never run
    final=api.envelope(1,point);
  assert.ok(start.inGain<.001&&start.outGain>.99);
  assert.ok(warm.inGain<.25&&warm.outGain>.95);
- assert.ok(beat.inGain>.35&&beat.inGain<.42);
+ assert.ok(beat.inGain>.72&&beat.inGain<.89,"real next kick gains the focus");
  assert.ok(drop.inGain>.92&&drop.outGain<.40,
   "the new recording must become clearly foreground music after its downbeat");
  assert.ok(final.inGain>.999&&final.outGain<.001);
@@ -1231,4 +1231,24 @@ test("safe quiet-song transitions get a fast musical sweep without claiming matc
  events.length=0;
  assert.equal(attach(ctx,sound,{},3.4,false,null,0,false).length,0,
   "an unverified handoff never gets an added effect");
+});
+
+test("decisive certified downbeat still has constant musical energy",()=>{
+ const h=source.slice(source.indexOf("function djImpactBeatPoint("),
+  source.indexOf("\ntry{\n const stored=",source.indexOf("function djImpactBeatPoint(")));
+ const f=new Function("clamp",h+
+  "return {impact:djImpactEnvelope,soft:djSoftFocusEnvelope,ready:djSoftRevealReady};")(
+  (x,a,b)=>Math.max(a,Math.min(b,x)));
+ const before=f.impact(.24,.525),at=f.impact(.525,.525),after=f.impact(.72,.525);
+ assert.ok(before.outGain>.95&&before.inGain<.25);
+ assert.ok(at.inGain>.75&&at.outGain<.66);
+ assert.ok(after.inGain>.95&&after.outGain<.32);
+ for(let i=0;i<=100;i++){
+  const x=f.impact(i/100,.525);
+  assert.ok(Math.abs(x.inGain*x.inGain+x.outGain*x.outGain-1)<1e-7);
+ }
+ assert.ok(f.soft(.3)>.69);
+ assert.equal(f.ready({kind:"soft",quietCertified:false,neutralRelease:true},3),false);
+ assert.equal(f.ready({kind:"soft",quietCertified:true,neutralRelease:true},3),true);
+ assert.ok(source.includes("softReveal?djSoftFocusEnvelope(u)"));
 });
