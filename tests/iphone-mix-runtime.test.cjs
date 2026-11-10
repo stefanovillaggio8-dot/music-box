@@ -495,3 +495,43 @@ test("Safari accepts the real-index PC-certified short grid score without loosen
  assert.equal(allow({...actual,preserveTail:false},ending,133),false,
   "short beat cannot trim a protected final note");
 });
+
+
+test("iPhone preview clock integrates BPM hold plus final ramp before native handoff",()=>{
+ const body=source.slice(source.indexOf("function mobilePlayedSeconds("),
+  source.indexOf("function mobileNativeSeekReady(",source.indexOf("function mobilePlayedSeconds(")));
+ const played=new Function(body+"return mobilePlayedSeconds;")();
+ const state={ctx:{currentTime:0},started:0,
+  rateSpeed:1.03,rateHold:2,rateRamp:1};
+ const at=t=>{state.ctx.currentTime=t;return played(state)};
+ assert.equal(at(0),0);
+ assert.ok(Math.abs(at(.5)-.515)<1e-9);
+ assert.ok(Math.abs(at(2)-2.06)<1e-9);
+ assert.ok(Math.abs(at(2.5)-2.57125)<1e-9);
+ assert.ok(Math.abs(at(3)-3.075)<1e-9);
+ assert.ok(Math.abs(at(4)-4.075)<1e-9);
+ state.rateSpeed=.97;
+ assert.ok(Math.abs(at(3)-2.925)<1e-9);
+ state.rateSpeed=1;
+ assert.equal(at(3),3);
+ state.rateSpeed=1.03;state.ctx.currentTime=1;
+ state.started=2;assert.equal(played(state),0,
+  "scheduled future preview must not move its playhead early");
+});
+
+test("iPhone cancel always restores a ducked original, including certified reveal",()=>{
+ const body=source.slice(source.indexOf("function stopMobileMix("),
+  source.indexOf("function startMobileMix(",source.indexOf("function stopMobileMix(")));
+ let restored=0,stopped=0;
+ const state={strongBeatBridge:false,snap:false,fromId:"old",
+  ctx:{state:"suspended"},old:{removeEventListener(){}},
+  source:{stop(){stopped++},disconnect(){}},gain:{disconnect(){}}};
+ const stop=new Function("state","restore",
+  "let mobileActive=state,mobileFading=true,mobileFadeTrack='old';"+
+  "const resetMobileFade=()=>restore();"+body+"return stopMobileMix;")(
+  state,()=>{restored++});
+ stop();
+ assert.equal(restored,1);
+ assert.equal(stopped,1);
+ stop();assert.equal(restored,1,"cleanup remains idempotent");
+});
