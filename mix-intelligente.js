@@ -633,6 +633,9 @@ try{
 }catch(e){}
 const KEY_NAMES=["Do","Do♯","Re","Mi♭","Mi","Fa","Fa♯","Sol","La♭","La","Si♭","Si"];
 let active=null,previousId="",plan=null,plannedFor="",mixing=false,boundAudio=null;
+// A user seek or Safari range seek always gets exclusive decoder/network
+// priority. Planning returns after playback stabilizes, not during buffering.
+let seekRecoveryUntil=0,lastSeekCancelledAt=0,lastSeekCancelledTrack="";
 let planEpoch=0,planRetryAt=0,planRetryCount=0,lastPlanMissing=false;
 let lastTickFailure="",lastTickFailureLoggedAt=0;
 function bridge(){return window.MusicBoxBridge}
@@ -4276,7 +4279,12 @@ function tick(){
   closeLiveOutro();
   return;
  }
- const app=bridge(),audio=app?.audio(),id=app?.currentId(),next=app?.mixNext();
+ const app=bridge(),audio=app?.audio(),id=app?.currentId();
+ // Stop BEFORE mixNext/shuffle analysis, index scans or AudioContext work.
+ // Waiting a bounded 1.6s after a seek is preferable to stalling the MP3.
+ if(audio&&(audio.seeking||Date.now()<seekRecoveryUntil||
+    (audio.readyState<2&&!audio.paused)))return;
+ const next=app?.mixNext();
  if(id&&naturalEndHandoff.inFlight===id)return;
  // Timeupdate fires much faster than planning needs; never throttle cues
  // within five seconds of their start or the dedicated precision timer.
@@ -5590,7 +5598,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.710",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.711",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
@@ -5936,13 +5944,18 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
  onSeek:(reason)=>{
-  // Metadata/loading/resync can trigger seeking on the newly selected
-  // song. It is NOT a user's scrub: keep the audible preview alive until
-  // the main audio clock has actually resumed.
+  // Never start a competing MP3 decode while the user is skipping.
+  // Explicit and native seeking events fire for the SAME action; cancel
+  // the old DJ work only once, then leave the actual player alone.
   const target=bridge()?.currentId?.();
   if(reason!=="user"&&
     ((active?.handingOff&&active.track.id===target)||
      (mobileActive?.handingOff&&mobileActive.track.id===target)))return;
+  const now=Date.now();
+  seekRecoveryUntil=now+1600;
+  if(lastSeekCancelledTrack===target&&now-lastSeekCancelledAt<350)return;
+  lastSeekCancelledAt=now;
+  lastSeekCancelledTrack=target;
   abortObsoleteDJWork();cancel();plan=null;plannedFor="";previousId="";
   planEpoch++;planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
