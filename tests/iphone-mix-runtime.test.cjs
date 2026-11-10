@@ -472,3 +472,13 @@ test("desktop DSP uses existing context and cleans graphs after native handoff",
  assert.ok(dj.includes('act.dsp=attachDesktopDsp(upcoming,act.fade,'));
  assert.ok(dj.includes('upcoming.crossOrigin="anonymous"'));
 });
+
+test("Safari beat phase uses playbackRate and preserves tempo until the last 28 percent",()=>{
+ const code=excerpt("function startMobileMix(","function finishMobileMix(");
+ assert.match(code,/const incomingBeat=Number\(p\.nextBeat\)\/requested;/);
+ assert.match(code,/p\.beatAnchor-old\.currentTime-incomingBeat/);
+ assert.match(code,/rateHold=Math\.max\(\.12,audible\*\.72\)/);
+ assert.match(code,/rate\.setValueAtTime\(requested,startedAt\+rateHold\)/);
+ assert.match(code,/rate\.linearRampToValueAtTime\(1,startedAt\+rateHold\+rateRamp\)/);
+ assert.match(code,/rateHold\+rateRamp\/2/);
+});

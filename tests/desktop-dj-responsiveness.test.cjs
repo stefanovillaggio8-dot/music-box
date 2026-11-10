@@ -459,3 +459,27 @@ test("desktop starting kick accounts for the actual incoming playback rate",()=>
   "the final-impact relay must account for tempo adjustment");
  assert.ok(Math.abs(start({...phase,tempo:1,nextBeat:2},101.35)-.15)<1e-9);
 });
+
+test("distinct real kick samples can join on matching short pulse grids, not on BPM alone",()=>{
+ const body=section(dj,"function onsetPeriodicity(","// Mix a rhythm only when");
+ const api=new Function("grooveAgreement","similarNotes","camelotMatch",
+  "function clamp(x,a,b){return Math.max(a,Math.min(b,x))}"+
+  body+"return {rhythmicGridEvidence,independentPulseTrain};")(
+  (_a,b)=>b.groove,(_a,b)=>b.notes,(_a,b)=>b.key);
+ const drumsA=Array.from({length:96},(_,i)=>i%12===0?2:-1);
+ const drumsB=Array.from({length:96},(_,i)=>i%12===0?1.9:i%12===5?.1:-1);
+ const a={bpm:120,beatConfidence:.8,outroOnset:drumsA};
+ const b={bpm:120,beatConfidence:.8,introDrive:.9,introOnset:drumsB,
+  groove:{score:.65,correlation:.3},
+  notes:{matches:true,focused:.90,phrase:.84,alignment:{matches:true,score:.9,weakest:.8}},
+  key:{weight:.3,score:.9}};
+ const match=api.rhythmicGridEvidence(a,b);
+ assert.ok(match?.independentGrid,"different timbres, same measured pulses");
+ assert.equal(match.longCompatible,false,"different timbres cannot certify 4s of overlap");
+ assert.ok(match.score>=.69);
+ assert.equal(api.rhythmicGridEvidence(a,{...b,bpm:128}),null,"wrong BPM rejected");
+ assert.equal(api.rhythmicGridEvidence(a,{...b,
+  notes:{matches:false,focused:.4,phrase:.3}}),null,"wrong chords rejected");
+ assert.equal(api.rhythmicGridEvidence(a,{...b,
+  introOnset:Array(96).fill(-1)}),null,"constant intro rejected");
+});

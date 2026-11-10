@@ -378,6 +378,15 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
       ending.voiceScannedEnd>=ending.last-.75:
     !ending.voiceModel&&plan.end>=ending.duration-.55);
  }
+ // Allow an independently measured grid to pass on iPhone even when
+ // two different percussion timbres do not share the same RMS shape.
+ if(plan.rhythmicGridJoin===true&&plan.kind==="snap")
+  return !!ending&&ending.durationMismatch!==true&&
+   plan.preserveTail===true&&plan.beatGridScore>=.69&&
+   plan.fade>=.75&&plan.fade<=1.36&&
+   (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
+   (!Number.isFinite(ending.lastVoiceAt)||
+     ending.lastVoiceAt<=plan.begin-2.5);
  if(plan.rhythmicUnderlay&&plan.measuredBeatBridge&&plan.preserveTail){
   // Low-volume unverified overlay: never duck the native Safari player.
   return !!ending&&Number.isFinite(ending.duration)&&
@@ -390,13 +399,6 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
     ending.lastVoiceAt<=plan.begin-2.5);
  }
  if(plan.kind==="snap"){
-  if(plan.rhythmicGridJoin===true)
-   return !!ending&&ending.durationMismatch!==true&&
-    plan.preserveTail===true&&plan.beatGridScore>=.69&&
-    plan.fade>=.75&&plan.fade<=1.36&&
-    (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
-    (!Number.isFinite(ending.lastVoiceAt)||
-      ending.lastVoiceAt<=plan.begin-2.5);
   if(!plan.measuredBeatBridge||plan.fade<.46)return false;
   if(plan.voiceVerifiedMicroBridge)return true;
   return plan.fade<=.86&&plan.preserveTail===true&&
@@ -1926,6 +1928,34 @@ function onsetGridPhase(values,bpm){
  return bestPhase/24;
 }
 
+// Different kick samples may still share the SAME independently measured
+// beat grid. Require repeated strong attacks on BOTH halves, against
+// offbeat energy; not merely two songs with similar global BPM.
+function independentPulseTrain(values,bpm){
+ if(!Array.isArray(values)||values.length!==96||
+    !values.every(Number.isFinite)||!Number.isFinite(bpm)||
+    bpm<55||bpm>210)return null;
+ const sorted=values.slice().sort((a,b)=>a-b);
+ const floor=sorted[19],span=sorted[93]-floor;
+ if(!Number.isFinite(span)||span<.52)return null;
+ const amplitude=values.map(v=>Math.max(0,(v-floor-span*.24)/span));
+ const period=24*60/bpm,phase=onsetGridPhase(values,bpm)*24;
+ let beats=0,confirmed=0,first=0,second=0;
+ for(let p=phase;p<95;p+=period){
+  const i=Math.round(p),off=Math.round(p+period*.5);
+  if(i<1||i>94||off>95)continue;
+  const attack=Math.max(amplitude[i-1],amplitude[i],amplitude[i+1]);
+  const between=Math.max(0,amplitude[off]||0);
+  beats++;
+  if(attack>=.50&&attack>=between+.18){
+   confirmed++;
+   if(i<48)first++;else second++;
+  }
+ }
+ if(beats<4||confirmed<4||confirmed/beats<.67||
+    first<1||second<1)return null;
+ return {score:confirmed/beats,beats,confirmed,phase:phase/24};
+}
 /* A beat match is the SAME pulse structure at the musical boundary, not
    two MP3 files at the same tempo or a high volume-envelope score.
    Compare periodic transients, rhythmic accents and actual boundary chords.
@@ -1945,9 +1975,22 @@ function rhythmicGridEvidence(a,b){
  if(!Number.isFinite(tailPulse)||!Number.isFinite(introPulse)||
     tailPulse<.20||introPulse<.20)return null;
  const g=grooveAgreement(a,b),n=similarNotes(a,b);
- if(!g||g.score<.77||g.correlation<.545||!n||
-    !Number.isFinite(n.focused)||!Number.isFinite(n.phrase)||
-    n.focused<.76||n.phrase<.65)return null;
+ if(!g||!n||!Number.isFinite(n.focused)||
+    !Number.isFinite(n.phrase)||n.focused<.76||n.phrase<.65)return null;
+ const originalGroove=Boolean(g.score>=.77&&g.correlation>=.545);
+ const pulseA=independentPulseTrain(a.outroOnset,a.bpm);
+ const pulseB=independentPulseTrain(b.introOnset,b.bpm);
+ const key=camelotMatch(a,b);
+ // Distinct drum samples may overlap for ONE beat only if both tracks
+ // independently have a precise pulse, with strongly agreeing chords.
+ const independentGrid=Boolean(!originalGroove&&pulseA&&pulseB&&
+   tailPulse>=.46&&introPulse>=.46&&
+   pulseA.score>=.74&&pulseB.score>=.74&&
+   g.score>=.60&&g.correlation>=.18&&
+   n.focused>=.83&&n.phrase>=.74&&
+   n.alignment?.matches!==false&&
+   (key.weight<.14||key.score>=.60));
+ if(!originalGroove&&!independentGrid)return null;
  // A one-beat join can preserve a strong boundary chord even if the
  // songs do not share the same full multi-bar chord progression.
  const chordScore=Number(n.alignment?.score)||0;
@@ -1956,17 +1999,19 @@ function rhythmicGridEvidence(a,b){
   chordScore>=.72&&weakest>=.58&&n.focused>=.78&&n.phrase>=.72||
   !chordScore&&n.focused>=.84&&n.phrase>=.80;
  if(!shortHarmony)return null;
- const key=camelotMatch(a,b);
  if(key.weight>=.14&&key.score<.54)return null;
- // Multi-second beats still need a full convincing chord progression.
- const longCompatible=Boolean(
+ // Independent pulse evidence NEVER unlocks a multi-second crossfade.
+ const longCompatible=Boolean(originalGroove&&(
   n.matches===true&&(n.alignment?.matches===true||
     !n.alignment&&n.focused>=.91)||
-  chordScore>=.78&&weakest>=.70&&n.focused>=.86&&n.phrase>=.82);
+  chordScore>=.78&&weakest>=.70&&n.focused>=.86&&n.phrase>=.82));
+ const score=independentGrid?
+   clamp(g.score*.28+n.focused*.27+n.phrase*.15+
+     Math.min(pulseA.score,pulseB.score)*.30,0,1):
+   clamp(g.score*.37+n.focused*.27+n.phrase*.15+
+     Math.min(1,tailPulse)*.105+Math.min(1,introPulse)*.105,0,1);
  return {tempo,groove:g.score,focus:n.focused,phrase:n.phrase,
-  longCompatible,pulse:Math.min(tailPulse,introPulse),
-  score:clamp(g.score*.37+n.focused*.27+n.phrase*.15+
-    Math.min(1,tailPulse)*.105+Math.min(1,introPulse)*.105,0,1)};
+  independentGrid,longCompatible,pulse:Math.min(tailPulse,introPulse),score};
 }
 // Mix a rhythm only when we can align the measured final bars to a
 // measured rhythmic intro. Without vocal proof use a brief subdued join;
@@ -2191,6 +2236,8 @@ function verifiedRhythmicGridBridge(a,b,dur){
    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
    a.voiceScannedEnd>=end-1&&
    (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=end-7));
+ // A protected final note must not be ducked if singing is unknown.
+ if(a.protectedEnding===true&&!endingVoiceProven)return null;
  const long=endingVoiceProven&&a.protectedEnding!==true&&evidence.longCompatible;
  const entry=musicalIntroEntry(b),period=60/a.bpm;
  const beatAnchor=edge-4+onsetGridPhase(a.outroOnset,a.bpm);
@@ -3391,9 +3438,17 @@ function startMobileMix(song,p,app,old){
   // Schedule at a measured beat phase if it costs less than 230 ms.
   // Never seek into the incoming song to fake musical alignment.
   const period=Number(p.beatPeriod);
+  const rate=source.playbackRate;
+  const programmableRate=!!rate&&
+    typeof rate.setValueAtTime==="function"&&
+    typeof rate.linearRampToValueAtTime==="function";
+  const requested=programmableRate?
+    clamp(Number(p.tempo)||1,.97,1.03):1;
+  // The incoming beat offset is in MP3 seconds, not wall-clock seconds.
+  const incomingBeat=Number(p.nextBeat)/requested;
   const phase=Number.isFinite(period)&&period>.20&&
-    Number.isFinite(p.beatAnchor)&&Number.isFinite(p.nextBeat)?
-    ((p.beatAnchor-old.currentTime-p.nextBeat)%period+period)%period:0;
+    Number.isFinite(p.beatAnchor)&&Number.isFinite(incomingBeat)?
+    ((p.beatAnchor-old.currentTime-incomingBeat)%period+period)%period:0;
   // Never replace a failed beat-phase alignment with an off-beat
   // overlay. Safari cannot schedule a half-second corrective start
   // during a 0.6s snap. Let the native song continue instead.
@@ -3457,17 +3512,17 @@ function startMobileMix(song,p,app,old){
   // Make the measured BPM adjustment actually audible on iPhone.
   // The last beat of the preview is always back to original speed,
   // so the native handoff has no permanent pitch/rate discontinuity.
-  let rateSpeed=1,rateRamp=0;
-  const rate=source.playbackRate;
-  if(rate&&typeof rate.setValueAtTime==="function"&&
-     typeof rate.linearRampToValueAtTime==="function"){
-   const requested=clamp(Number(p.tempo)||1,.97,1.03);
-   if(Math.abs(requested-1)>.002){
-    rateSpeed=requested;
-    rateRamp=clamp(secondsLeft*.60,.45,2.6);
-    rate.setValueAtTime(requested,startedAt);
-    rate.linearRampToValueAtTime(1,startedAt+rateRamp);
-   }
+  let rateSpeed=1,rateHold=0,rateRamp=0;
+  if(programmableRate&&Math.abs(requested-1)>.002){
+   rateSpeed=requested;
+   const audible=Math.min(p.fade,secondsLeft-delay);
+   // Keep matching beats stable until the last 28% of the overlap,
+   // then ease to original playback speed before native handoff.
+   rateHold=Math.max(.12,audible*.72);
+   rateRamp=Math.max(.10,audible-rateHold);
+   rate.setValueAtTime(requested,startedAt);
+   rate.setValueAtTime(requested,startedAt+rateHold);
+   rate.linearRampToValueAtTime(1,startedAt+rateHold+rateRamp);
   }
   source.start(startedAt,offset);
   mobileMixLastBlocker="";mobileMixLastStartedAt=Date.now();
@@ -3496,8 +3551,9 @@ function startMobileMix(song,p,app,old){
    vocalBeatUnderlay:!!p.vocalBeatUnderlay,vocalEndAt:Number(p.vocalEndAt),
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onEnded,onSeek,handingOff:false,
-   handoffAt:0,nativeRetryCount:0,nativeRetryAt:0,rateSpeed,rateRamp,
-   clipEnd:startedAt+frames/clip.rate-offset-(rateSpeed-1)*rateRamp/2,
+   handoffAt:0,nativeRetryCount:0,nativeRetryAt:0,rateSpeed,rateHold,rateRamp,
+   clipEnd:startedAt+frames/clip.rate-offset-
+     (rateSpeed-1)*(rateHold+rateRamp/2),
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
    strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
    vocalSafe:!lowPreview};
