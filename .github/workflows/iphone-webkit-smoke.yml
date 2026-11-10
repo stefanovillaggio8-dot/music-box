@@ -10,6 +10,16 @@ on:
       - 'tests/iphone-webkit-smoke.cjs'
       - 'tests/iphone-offline-shell.test.cjs'
       - '.github/workflows/iphone-webkit-smoke.yml'
+  pull_request:
+    paths:
+      - 'app.js'
+      - 'mix-intelligente.js'
+      - 'index.html'
+      - 'sw.js'
+      - 'tests/iphone-webkit-smoke.cjs'
+      - 'tests/iphone-offline-shell.test.cjs'
+      - 'tests/iphone-handoff-stress.test.cjs'
+      - '.github/workflows/iphone-webkit-smoke.yml'
   workflow_dispatch:
 permissions:
   contents: read
