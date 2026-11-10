@@ -482,3 +482,16 @@ test("Safari beat phase uses playbackRate and preserves tempo until the last 28 
  assert.match(code,/rate\.linearRampToValueAtTime\(1,startedAt\+rateHold\+rateRamp\)/);
  assert.match(code,/rateHold\+rateRamp\/2/);
 });
+
+test("Safari accepts the real-index PC-certified short grid score without loosening vocal protection",()=>{
+ const actual={kind:"snap",rhythmicGridJoin:true,rhythmicUnderlay:true,
+  beatGridScore:.678,preserveTail:true,begin:140.1,end:141.1,fade:1};
+ const ending={durationMismatch:false,protectedEnding:true,lastVoiceAt:130};
+ assert.equal(allow(actual,ending,133),true,
+  "verified indexed short beat is accepted even with a distinct kick timbre");
+ assert.equal(allow({...actual,beatGridScore:.64},ending,133),false,
+  "weak rhythm evidence still rejected");
+ assert.equal(allow(actual,ending,138),false,"recent sung ending stays protected");
+ assert.equal(allow({...actual,preserveTail:false},ending,133),false,
+  "short beat cannot trim a protected final note");
+});

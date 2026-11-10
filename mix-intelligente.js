@@ -382,7 +382,7 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
  // two different percussion timbres do not share the same RMS shape.
  if(plan.rhythmicGridJoin===true&&plan.kind==="snap")
   return !!ending&&ending.durationMismatch!==true&&
-   plan.preserveTail===true&&plan.beatGridScore>=.69&&
+   plan.preserveTail===true&&plan.beatGridScore>=.67&&
    plan.fade>=.75&&plan.fade<=1.36&&
    (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-4)&&
    (!Number.isFinite(ending.lastVoiceAt)||
