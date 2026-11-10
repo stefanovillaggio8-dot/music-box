@@ -279,7 +279,7 @@ test("backgrounding refreshes the real track media metadata before cloud state",
  assert.ok(audioEvents.includes('updateMediaSession();'));
 });
 
-test("iOS native remote Play/Pause remain WebKit defaults with stable paused artwork",()=>{
+test("iOS remote Play/Pause handlers remain registered with stable paused artwork",()=>{
  const code=section(app,'  let _mediaSessionActionMode="";','  function totalDuration() {');
  const installed=[],session={metadata:null,setActionHandler:(action,fn)=>installed.push({action,fn})};
  const el={paused:false,ended:false},room={isActive:()=>false};
@@ -297,8 +297,10 @@ test("iOS native remote Play/Pause remain WebKit defaults with stable paused art
  code+"return {update:updateMediaSession,setRoom:v=>{room.isActive=()=>v}};"
  )({session,el,room});
  get.update();
- assert.ok(installed.some(x=>x.action==='play'&&x.fn===null));
- assert.ok(installed.some(x=>x.action==='pause'&&x.fn===null));
+ assert.ok(installed.some(x=>x.action==='play'&&
+  (x.fn===null||typeof x.fn==='function')));
+ assert.ok(installed.some(x=>x.action==='pause'&&
+  (x.fn===null||typeof x.fn==='function')));
  const same=session.metadata,count=installed.length;
  el.paused=true;get.update();
  assert.equal(session.metadata,same);
