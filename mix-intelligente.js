@@ -3080,6 +3080,18 @@ function lowEnergyPostludeLeadIn(a,b,dur){
 function transition(a,b,actualDuration){
  return synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
 }
+// This fallback is invoked ONLY after the first cue failed independent
+// playback certification. All genuine beat joins keep their priority.
+function certifiedAlternateRelease(a,b,dur,failed){
+ if(!failed||failed.kind==="cut"||!a||!b)return failed;
+ if(!isIOS){
+  const release=desktopMeasuredReleaseLeadIn(a,b,Number(dur));
+  if(release&&musicallyCompatibleOverlay(a,b,release))return release;
+ }
+ const post=lowEnergyPostludeLeadIn(a,b,Number(dur));
+ if(post&&musicallyCompatibleOverlay(a,b,post))return post;
+ return failed;
+}
 function unalignedTransition(a,b,actualDuration){
  const dur=Number(actualDuration);
  if(!Number.isFinite(dur)||dur<26||!a||!b||
@@ -4894,9 +4906,14 @@ function tick(){
    const lyricA=app.mixLyricCues?.(fromId),lyricB=app.mixLyricCues?.(target);
    const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
    const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
-   const candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
-   const compatibleCandidate=!!candidate&&
+   let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
+   let compatibleCandidate=!!candidate&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,candidate);
+   if(candidate&&!compatibleCandidate){
+    const alternate=certifiedAlternateRelease(currentAnalysis,nextAnalysis,
+      audio.duration,candidate);
+    if(alternate!==candidate){candidate=alternate;compatibleCandidate=true}
+   }
    const weakIphoneMatch=isIOS&&candidate&&
      (!compatibleCandidate||
       !iphoneBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
@@ -4904,7 +4921,10 @@ function tick(){
    const weakDesktopMatch=!isIOS&&candidate&&
      (!compatibleCandidate||
       !desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)||
-      !iphoneQuietReleaseCertified(currentAnalysis,candidate));
+      // Desktop measured release has an independent audio/voice certificate.
+      // Safari's quiet-release check cannot veto this other safe cue.
+      (candidate.measuredReleaseLeadIn!==true&&
+       !iphoneQuietReleaseCertified(currentAnalysis,candidate)));
    // An ordinary late soft cue can conceal an EARLIER, independently
    // certified musical decay. Compare both instead of automatically
    // waiting until the outgoing song has already become silent.
@@ -5520,6 +5540,10 @@ async function intelligentShuffle(app,audio,fromId){
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   let cue=transition(old,next,audio.duration);
   let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
+  if(cue&&!musicallyPlayable&&typeof certifiedAlternateRelease==="function"){
+   const alternate=certifiedAlternateRelease(old,next,audio.duration,cue);
+   if(alternate!==cue){cue=alternate;musicallyPlayable=true}
+  }
   if(cue&&["beat","snap"].includes(cue.kind))candidateAudit.potentialBeatCues++;
   // Even when no identical drum pattern exists, a measured and voice-free
   // settled outro may permit a neutral quiet fade. Previously this second
@@ -6146,7 +6170,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.717",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.718",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

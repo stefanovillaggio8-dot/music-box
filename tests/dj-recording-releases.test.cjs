@@ -255,3 +255,33 @@ test("final-impact scheduler rejects missed last beat instead of late silence",(
  assert.match(source,/plan\.kind==="snap"\|\|(?:plan\.kind==="underlay"\|\|)?plan\.measuredFinalImpact===true/);
  assert.match(source,/if\(act\.measuredFinalImpact\)\{/);
 });
+
+test("certified release fallback does not authorize unsafe or iPhone overlays",()=>{
+ const part=source.slice(source.indexOf("function certifiedAlternateRelease("),
+   source.indexOf("function unalignedTransition(",
+    source.indexOf("function certifiedAlternateRelease(")));
+ const make=(failed,early,post,isIOS=false)=>{
+  const factory=new Function("isIOS","desktopMeasuredReleaseLeadIn",
+   "lowEnergyPostludeLeadIn","musicallyCompatibleOverlay",
+   part+"return certifiedAlternateRelease;");
+  return factory(isIOS,()=>early,()=>post,(a,b,p)=>p?.certified===true)(
+   {duration:200},{duration:200},200,failed);
+ };
+ const bad={kind:"snap",certified:false},early={kind:"soft",certified:true},
+       post={kind:"postlude",certified:true};
+ assert.equal(make(bad,early,post),early);
+ assert.equal(make(bad,early,post,true),post,
+  "desktop-only releases are not available on iPhone");
+ assert.equal(make(bad,null,post),post);
+ assert.equal(make(bad,{kind:"soft",certified:false},null),bad);
+ assert.equal(make(null,early,post),null);
+ assert.equal(make({kind:"cut"},early,post).kind,"cut");
+});
+test("desktop independently measured releases must bypass the iOS-only quiet gate",()=>{
+ const i=source.indexOf("const weakDesktopMatch=");
+ const j=source.indexOf("const latePlannedSoft=",i);
+ assert.ok(i>=0&&j>i);
+ const gate=source.slice(i,j);
+ assert.ok(gate.includes("candidate.measuredReleaseLeadIn!==true"));
+ assert.match(gate,/!desktopBeatPairCertified/);
+});
