@@ -3078,7 +3078,27 @@ function lowEnergyPostludeLeadIn(a,b,dur){
   silenceTrim:false,trailing:0,score:null};
 }
 function transition(a,b,actualDuration){
- return synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
+ const primary=synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
+ // A rhythmic candidate can pass the initial planner but fail the
+ // independent playback certificate. Do not lose a DIFFERENT, verified
+ // musical release merely because that rejected candidate came first.
+ // Valid beat joins always retain priority; never weaken their evidence.
+ if(!primary||primary.kind==="cut"||
+    typeof musicallyCompatibleOverlay!=="function"||
+    musicallyCompatibleOverlay(a,b,primary))return primary;
+ const dur=Number(actualDuration);
+ if(!isIOS&&typeof desktopMeasuredReleaseLeadIn==="function"){
+  const release=desktopMeasuredReleaseLeadIn(a,b,dur);
+  if(release&&musicallyCompatibleOverlay(a,b,release))return release;
+ }
+ // A post-musical underlay is not a beatmatch. Recheck its independent
+ // gates before selecting it and never replace a rejected primary with
+ // an unverified overlap.
+ if(typeof lowEnergyPostludeLeadIn==="function"){
+  const postlude=lowEnergyPostludeLeadIn(a,b,dur);
+  if(postlude&&musicallyCompatibleOverlay(a,b,postlude))return postlude;
+ }
+ return primary;
 }
 function unalignedTransition(a,b,actualDuration){
  const dur=Number(actualDuration);
