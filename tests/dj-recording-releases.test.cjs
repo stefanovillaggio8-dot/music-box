@@ -255,3 +255,28 @@ test("final-impact scheduler rejects missed last beat instead of late silence",(
  assert.match(source,/plan\.kind==="snap"\|\|(?:plan\.kind==="underlay"\|\|)?plan\.measuredFinalImpact===true/);
  assert.match(source,/if\(act\.measuredFinalImpact\)\{/);
 });
+
+test("rejected beat plans may fall back only to independently certified early releases",()=>{
+ const segment=source.slice(source.indexOf("function transition("),
+   source.indexOf("function unalignedTransition(",source.indexOf("function transition(")));
+ const make=(primary,release,postlude,isIOS=false)=>{
+  const fn=new Function("synchronizeBeatCue","unalignedTransition",
+   "musicallyCompatibleOverlay","desktopMeasuredReleaseLeadIn",
+   "lowEnergyPostludeLeadIn","isIOS",segment+"return transition;");
+  return fn((a,b,p)=>p,()=>primary,(a,b,p)=>p?.certified===true,
+   ()=>release,()=>postlude,isIOS)({duration:200},{duration:200},200);
+ };
+ const beat={kind:"beat",certified:true};
+ const rejected={kind:"snap",certified:false};
+ const early={kind:"soft",certified:true,measuredReleaseLeadIn:true};
+ const post={kind:"postlude",certified:true};
+ assert.equal(make(beat,early,post),beat,"do not override a valid beat");
+ assert.equal(make(rejected,early,post),early,
+  "a failed early rhythm plan must not obscure a safe musical release");
+ assert.equal(make(rejected,early,post,true),post,
+  "iPhone must not inherit the desktop-only early release");
+ assert.equal(make(rejected,null,post),post,"verified postlude fallback");
+ assert.equal(make(rejected,{kind:"soft",certified:false},null),rejected,
+  "an uncertified fallback must never be played");
+ assert.equal(make(null,early,post),null,"preserve null when no original plan");
+});
