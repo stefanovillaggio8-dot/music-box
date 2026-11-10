@@ -2533,14 +2533,14 @@
     "a": "nayt, 3D"
    },
    "[\"sogni appesi\",\"ultimo\"]": {
-    "v": 1,
-    "s": 182,
+    "v": 2,
+    "s": 189,
     "t": "Sogni Appesi",
     "a": "Ultimo"
    },
    "m:2026-11|[\"sogni appesi\",\"ultimo\"]": {
-    "v": 1,
-    "s": 182,
+    "v": 2,
+    "s": 189,
     "t": "Sogni Appesi",
     "a": "Ultimo"
    },
@@ -3979,14 +3979,14 @@
     "a": "nayt, 3D"
    },
    "[\"neon\",\"sfera ebbasta & shiva\"]": {
-    "v": 1,
-    "s": 207,
+    "v": 2,
+    "s": 218,
     "t": "NEON",
     "a": "Sfera Ebbasta & Shiva"
    },
    "m:2026-11|[\"neon\",\"sfera ebbasta & shiva\"]": {
-    "v": 1,
-    "s": 207,
+    "v": 2,
+    "s": 218,
     "t": "NEON",
     "a": "Sfera Ebbasta & Shiva"
    },
@@ -5018,13 +5018,13 @@
    },
    "[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
-    "s": 98,
+    "s": 108,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
    "m:2026-11|[\"le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi\",\"coez\"]": {
     "v": 0,
-    "s": 98,
+    "s": 108,
     "t": "Le parole piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ grandi",
     "a": "Coez"
    },
@@ -8090,13 +8090,13 @@
    },
    "[\"per una notte insieme\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"per una notte insieme\",\"modÃÂÃÂ \"]": {
     "v": 1,
-    "s": 337,
+    "s": 349,
     "t": "Per una notte insieme",
     "a": "ModÃÂÃÂ "
    },
@@ -9852,6 +9852,18 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
    },
+   "[\"carusi do sud\",\"l'elfo\"]": {
+    "v": 1,
+    "s": 72,
+    "t": "carusi do sud",
+    "a": "l'elfo"
+   },
+   "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
+    "v": 1,
+    "s": 72,
+    "t": "carusi do sud",
+    "a": "l'elfo"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
     "s": 328,
@@ -10574,13 +10586,13 @@
    },
    "[\"non ti dimentico\",\"modà\"]": {
     "v": 1,
-    "s": 168,
+    "s": 173,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
    "m:2026-11|[\"non ti dimentico\",\"modà\"]": {
     "v": 1,
-    "s": 168,
+    "s": 173,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
@@ -10637,18 +10649,6 @@
     "s": 7,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
-   },
-   "[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 1,
-    "s": 56,
-    "t": "carusi do sud",
-    "a": "l'elfo"
-   },
-   "m:2026-11|[\"carusi do sud\",\"l'elfo\"]": {
-    "v": 1,
-    "s": 56,
-    "t": "carusi do sud",
-    "a": "l'elfo"
    }
   },
   "Diego": {
