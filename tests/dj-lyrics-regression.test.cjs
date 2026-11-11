@@ -573,8 +573,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
  assert.match(align,/completedInSession\.add\(id\);\s*setStatus\("Lingua del testo incerta/);
- assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=2/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=2").length-1,2);
+ assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=3/);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=3").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 
@@ -649,7 +649,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"3":"2";
+  const wordCache=file==="word-karaoke.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
