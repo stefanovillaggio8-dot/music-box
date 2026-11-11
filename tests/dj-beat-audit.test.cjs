@@ -51,7 +51,8 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
   rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0,bassOnly=0;
  const examples=[],earliest=[];
  const funnel={tailAndIntro:0,tempo:0,onsetData:0,periodic:0,
-  compatibleGroove:0,compatibleNotes:0,allMatched:0};
+  compatibleGroove:0,compatibleNotes:0,allMatched:0,
+  strongGroove:0,lowHarmony:0,keyCompatible:0};
  // Reproducible sampling across the COMPLETE catalog, not 10 queued songs.
  for(let i=0;i<tracks.length;i+=5){
   const A=tracks[i];let local=0;
@@ -80,6 +81,14 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
         funnel.compatibleGroove++;
         const n=tools.similarNotes(aa,bb);
         if(n.focused>=.64&&n.phrase>=.50)funnel.compatibleNotes++;
+        if(groove.score>=.78&&groove.correlation>=.56){
+         funnel.strongGroove++;
+         if(n.focused>=.53&&n.phrase>=.39){
+          funnel.lowHarmony++;
+          const key=tools.camelotMatch(aa,bb);
+          if(key.weight<.14||key.score>=.60)funnel.keyCompatible++;
+         }
+        }
        }
       }
      }
