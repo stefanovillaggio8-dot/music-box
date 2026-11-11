@@ -73,7 +73,8 @@ def request_from_file(path):
         raise ValueError("Expected dedicated approved stem request file")
     obj = json.loads(Path(path).read_text(encoding="utf8"))
     requests = obj.get("requests") if isinstance(obj, dict) else None
-    if obj.get("version") != 1 or not isinstance(requests, list) or len(requests) != 1:
+    if not isinstance(obj, dict) or obj.get("version") != 1 or \
+       not isinstance(requests, list) or len(requests) != 1:
         raise ValueError("Expected exactly one versioned stem request")
     item = requests[0]
     if not isinstance(item, dict):
