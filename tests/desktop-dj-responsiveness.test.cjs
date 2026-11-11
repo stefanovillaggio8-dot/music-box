@@ -4,16 +4,22 @@ const dj=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8")
 const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
 function section(s,a,b){const i=s.indexOf(a),j=s.indexOf(b,i+a.length);
  assert.ok(i>=0&&j>i,"missing "+a);return s.slice(i,j);}
-test("optional desktop voice classification is limited to current track well before ending",()=>{
+test("desktop vocal scan includes queued intro only when native playback has headroom",()=>{
  const code=section(dj,"function mayScanDesktopVoice(","function scheduleDeepVoice(");
  const policy=new Function("let mixing=false,active=null;"+code+"return mayScanDesktopVoice;")();
- const media={duration:180,currentTime:20,paused:false,seeking:false};
- const bridge={currentId:()=>"a",audio:()=>media};
+ const media={duration:180,currentTime:20,paused:false,seeking:false,
+  readyState:4,buffered:{length:0}};
+ const bridge={currentId:()=>"a",mixNext:()=>({id:"b"}),audio:()=>media};
  assert.equal(policy(bridge,{id:"a"}),true);
+ assert.equal(policy(bridge,{id:"b"}),true);
+ assert.equal(policy(bridge,{id:"c"}),false);
+ media.readyState=2;assert.equal(policy(bridge,{id:"b"}),false);
+ media.readyState=4;media.currentTime=105;
  assert.equal(policy(bridge,{id:"b"}),false);
+ assert.equal(policy(bridge,{id:"a"}),true);
  media.currentTime=120;assert.equal(policy(bridge,{id:"a"}),false);
  media.currentTime=20;media.paused=true;assert.equal(policy(bridge,{id:"a"}),false);
- media.paused=false;media.seeking=true;assert.equal(policy(bridge,{id:"a"}),false);
+ media.paused=false;media.seeking=true;assert.equal(policy(bridge,{id:"b"}),false);
 });
 test("heavy voice ML is delayed and single-flight on desktop",()=>{
  const code=section(dj,"function scheduleDeepVoice(","function toast(");

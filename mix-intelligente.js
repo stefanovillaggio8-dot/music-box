@@ -834,9 +834,25 @@ function voiceIsRelevant(track){
 // Optional speech inference is not allowed to compete with the timed mix.
 function mayScanDesktopVoice(app,track){
  const audio=app?.audio?.();
- return Boolean(app?.currentId?.()===track?.id&&audio&&
-  !audio.paused&&!audio.seeking&&Number.isFinite(audio.duration)&&
-  audio.duration-audio.currentTime>75&&!mixing&&!active);
+ const current=app?.currentId?.()===track?.id,
+       queued=app?.mixNext?.()?.id===track?.id;
+ if(!track?.id||(!current&&!queued)||!audio||audio.paused||
+    audio.seeking||!Number.isFinite(audio.duration)||mixing||active||
+    (typeof window!=="undefined"&&window.MusicBoxRoom?.isActive()))return false;
+ const remaining=audio.duration-audio.currentTime;
+ if(!Number.isFinite(remaining)||remaining<(queued?85:75))return false;
+ if(current)return true;
+ // Decoding an entire optional next MP3 must not starve the native song.
+ // Queue vocal proof only after the active player has enough headroom.
+ if(audio.readyState<3)return false;
+ let ahead=0;
+ try{
+  for(let i=0;i<audio.buffered.length;i++)
+   if(audio.buffered.start(i)<=audio.currentTime+.3&&
+      audio.buffered.end(i)>=audio.currentTime)
+    ahead=Math.max(ahead,audio.buffered.end(i)-audio.currentTime);
+ }catch(_){}
+ return audio.readyState>=4||ahead>=12;
 }
 function scheduleDeepVoice(track,key,data){
  const app=bridge();
@@ -870,7 +886,8 @@ function scheduleDeepVoice(track,key,data){
     const raw=await response.arrayBuffer();if(raw.byteLength>limit)return;
     bytes=new Uint8Array(raw);
    }
-   if(document.hidden||!voiceIsRelevant(track))return;
+   if(document.hidden||!voiceIsRelevant(track)||
+      !mayScanDesktopVoice(bridge(),track))return;
    const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
    const Live=window.AudioContext||window.webkitAudioContext;
    if(Offline)try{context=new Offline(1,1,44100)}catch(e){}
@@ -879,7 +896,7 @@ function scheduleDeepVoice(track,key,data){
    const decoded=await context.decodeAudioData(bytes.buffer);
    if(Math.abs(decoded.duration-data.duration)>Math.max(5,data.duration*.045))return;
    const found=await voice.analyze(decoded,{last:data.last});
-   if(!found||document.hidden)return;
+   if(!found||document.hidden||!voiceIsRelevant(track))return;
    const previous=cache.get(key);
    if(!previous||Math.abs(previous.duration-data.duration)>1)return;
    const enriched={...previous,
