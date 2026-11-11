@@ -5806,13 +5806,28 @@ async function intelligentShuffle(app,audio,fromId){
  const lastLyric=app.mixLyricCues?.(fromId)?.last;
  const old=Number.isFinite(lastLyric)?{...fromInfo,lastLyricAt:lastLyric}:fromInfo;
  const source=t=>String(app.mixUrl?.(t)||t.url||"");
+ // Distinct IDs can contain the EXACT same recording (e.g. app/mobile).
+ // Never promote the song that just played or count exact duplicate Git
+ // blobs as new candidates. Similar BPM/chroma alone never proves identity.
+ const audioSha=x=>{
+  const value=String(x?.sha||"").toLowerCase();
+  return /^[0-9a-f]{40}$/.test(value)?value:"";
+ };
+ const sourceSha=audioSha(deepLookup(from))||audioSha(old);
+ const seenAudioShas=new Set(sourceSha?[sourceSha]:[]);
+ let identicalAudioSkipped=0;
  // Indexed real-audio measurements: cheap and synchronous even for hundreds
  // of candidates. A missing analysis is NOT proof of matching beat.
  const indexed=[],unknown=[];
  for(const t of pool.slice(0,1800)){
   if(!t?.id||t.id===fromId)continue;
+  const deep=deepLookup(t),candidateSha=audioSha(deep);
+  if(candidateSha&&seenAudioShas.has(candidateSha)){
+   identicalAudioSkipped++;continue;
+  }
+  if(candidateSha)seenAudioShas.add(candidateSha);
   const local=cache.get(source(t));
-  const info=withValidatedVoice(deepLookup(t),local);
+  const info=withValidatedVoice(deep,local);
   if(info)indexed.push({track:t,info});
   else unknown.push(t);
  }
@@ -5876,6 +5891,7 @@ async function intelligentShuffle(app,audio,fromId){
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
  const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
+  exactSameRecordingSkipped:identicalAudioSkipped,
   sampledForDecode:picked.length,measured:measured.length,
   outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
   validIntros:0,closeTempo:0,compatibleGroove:0,compatibleNotes:0,
