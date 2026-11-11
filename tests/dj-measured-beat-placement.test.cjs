@@ -40,6 +40,21 @@ test("bad periodicity, unsupported tempo shift or insufficient evidence cannot p
  assert.equal(engine.measuredBeatJoinCandidate(
   a,[.25,.75],0,1,100,101,100.25),null);
 });
+test("full-band promotion requires direct PCM beats plus unchanged vocal/harmonic checks",()=>{
+ const early=js.slice(js.indexOf("function earlyMatchedBar("),
+   js.indexOf("function rhythmicReleaseBeatBridge("));
+ assert.match(early,/observedPlacement=reliableLocalGrid\?measuredBeatJoinCandidate\(/);
+ assert.match(early,/observedFit\.verified>=4/);
+ assert.match(early,/observedFit\.ratio>=\.90/);
+ assert.match(early,/observedFit\.rms<=\.055/);
+ assert.match(early,/notes\.focused>=\.86/);
+ assert.match(early,/drums\.correlation>=\.55/);
+ assert.match(early,/if\(reliableLocalGrid&&!observedPlacement\)continue/);
+ assert.match(early,/voiceConfirmed/);
+ assert.match(early,/firstNextVoice>=fade\+\.65/);
+ assert.match(early,/barAccents\?\.reliable&&barAccents\.score<\.62/);
+ assert.match(early,/measuredBeatPlacement:!!observedPlacement/);
+});
 test("phase alignment stays a low-band preview, never a fake full-band beat certificate",()=>{
  const block=js.slice(end,js.indexOf("function adaptiveUnderlayLevel(",end));
  assert.match(block,/measuredBeatPlacement:best\.measuredBeatPlacement/);
