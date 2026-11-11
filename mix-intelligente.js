@@ -558,7 +558,7 @@ function deepStatus(){
  const count=Number(deepIndex?.analyzed)||0,total=Number(deepIndex?.sourceCount)||0;
  const el=$("mixDeepStatus");
  if(el)el.textContent=total?
-   "Audio reale analizzato: "+count+"/"+total+" brani. I nuovi MP3 vengono elaborati progressivamente; gli altri usano il controllo locale.":
+   "Audio reale analizzato: "+count+"/"+total+" brani. "+(djLyricBoundaries?Object.keys(djLyricBoundaries).length+" finali vocali protetti da testi sincronizzati (stime prudenti). ":"")+"I nuovi MP3 vengono elaborati progressivamente; gli altri usano il controllo locale.":
    "Indice audio avanzato in preparazione. Intanto Music Box analizza localmente le transizioni.";
 }
 // A large real-audio index must survive slow Safari connections and retry
@@ -6907,7 +6907,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     safeOutroAt:m.safeOutroAt,protectedEnding:!!m.protectedEnding,
     lastVoiceAt:m.lastVoiceAt,firstVoiceAt:m.firstVoiceAt,
     lastLyricAt:m.lastLyricAt,firstLyricAt:m.firstLyricAt,
-    voiceModel:m.voiceModel,introDrive:m.introDrive}:null
+    voiceModel:m.voiceModel,introDrive:m.introDrive,lrcBoundarySource:m.lrcBoundarySource||null}:null
   });
   const reasons=[],notes=a&&b?similarNotes(a,b):null,
     beats=a&&b?grooveAgreement(a,b):null,
