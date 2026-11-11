@@ -43,7 +43,11 @@ try:
     assert "outroTimeline" in a and "introTimeline" in a
     assert "introOnset" in a and "outroOnset" in a
     assert isinstance(a["outroOnsetWindows"],list)
-    assert a["analyzer"]=="librosa-onsets-chroma-rms-v6-phrases"
+    assert a["analyzer"]=="librosa-onsets-chroma-rms-v7-bars-sections"
+    assert a["barGrid"] is None or a["barGrid"]["beatsPerBar"]==4
+    assert isinstance(a["sectionBoundaries"],list)
+    assert all(e["kind"] in ("energy_up","energy_down","harmonic_change")
+               and e["score"]>=.40 for e in a["sectionBoundaries"])
     assert isinstance(a["structureEvents"],list)
     assert a["introBassRatio"] is not None and 0<=a["introBassRatio"]<=1
     assert len(a["outroOnsetWindows"])<=5
