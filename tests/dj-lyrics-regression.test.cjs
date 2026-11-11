@@ -783,3 +783,41 @@ test("low-harmony DJ previews require a real low-pass filter before playback",()
  assert.ok(events.some(e=>e[0]==="ramp"&&e[1]===18000));
  assert.match(dj,/if\(proposed\.drumOnlyUnderlay&&!act\.dsp\)\{cancel\(\);plan=null;return\}/);
 });
+
+
+test("window-aware DJ measures older audible kick windows and preserves the whole vocal ending",()=>{
+ const from=dj.indexOf("function measuredWindowRhythmUnderlay(");
+ const to=dj.indexOf("function subduedRhythmicIntro(",from);
+ assert.ok(from>0&&to>from);
+ const choose=new Function("const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+
+  "const independentPulseTrain=()=>({score:.87,phase:.25}),"+
+  "onsetPeriodicity=()=>.68,hasImmediateMusicalIntro=()=>true,"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.25,"+
+  "grooveAgreement=()=>({score:.8,correlation:.6}),"+
+  "similarNotes=()=>({focused:.56,phrase:.5}),"+
+  "camelotMatch=()=>({weight:.08,score:.6});"+
+  dj.slice(from,to)+";return measuredWindowRhythmUnderlay;")();
+ const win={start:190,end:194,levelRatio:.75,
+  onset:Array(96).fill(0).map((_,i)=>i%12===0?1:0),
+  groove:Array(32).fill(.3),notes:Array(12).fill(.5)};
+ const outgoing={duration:200,last:199,bpm:120,beatConfidence:.8,
+  outroOnsetWindows:[win]};
+ const incoming={duration:180,bpm:120,beatConfidence:.8,introDrive:.8,
+  introOnset:Array(96).fill(0).map((_,i)=>i%12===0?1:0)};
+ const cue=choose(outgoing,incoming,200);
+ assert.ok(cue,"a measured window before the last four seconds must be eligible");
+ assert.equal(cue.kind,"underlay");
+ assert.equal(cue.measuredWindowUnderlay,true);
+ assert.equal(cue.drumOnlyUnderlay,true);
+ assert.ok(cue.begin>=win.start+.25&&cue.begin<=win.end-1.1);
+ assert.ok(cue.begin<outgoing.last-4.65,"incoming kick begins before old silence");
+ assert.equal(cue.preserveTail,true);
+ assert.equal(cue.silenceTrim,false);
+ assert.ok(cue.underlayVolume<=.105);
+ assert.equal(choose(outgoing,{...incoming,firstVoiceAt:.5},200),null,
+  "measured incoming vocals prevent underlay");
+ assert.equal(choose({...outgoing,outroOnsetWindows:[{...win,levelRatio:.01}]},
+  incoming,200),null,"digitally silent outgoing windows cannot certify a beat");
+ assert.match(dj,/filter\.frequency\.setValueAtTime\(260,t\+Math\.max\(\.16,seconds-\.04\)\)/);
+ assert.match(dj,/filter\.frequency\.exponentialRampToValueAtTime\(18000,\s*t\+Math\.max\(\.34,seconds\+\.38\)\)/);
+});
