@@ -73,6 +73,19 @@ test("missing stems and browser clock drift never create an extra playback chann
  assert.equal(api.prepare("old",{...outgoing,sha:"b".repeat(40)},cue),false);
  assert.equal(streams(),1);
 });
+test("a pending third audio play cannot block the original DJ transition",async()=>{
+ const {api}=fixture();
+ api.load();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(api.prepare("old",outgoing,cue),true);
+ // Simulate a browser with a permanently unresolved optional play promise.
+ const p=api.activate("old",cue,{currentTime:180,paused:false,seeking:false});
+ const release=await Promise.race([
+  p,
+  new Promise((_,reject)=>setTimeout(
+   ()=>reject(new Error("Optional vocal held up the native mix")),350))
+ ]);
+ assert.equal(release,null);
+});
 test("isolated stem routing is optional and excluded from iPhone WebAudio mixer",()=>{
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
