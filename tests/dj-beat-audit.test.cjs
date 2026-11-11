@@ -43,6 +43,18 @@ for(const [name,yes] of [
  ["fiveOutroWindows",d=>Array.isArray(d.outroOnsetWindows)&&d.outroOnsetWindows.length>=5]
 ])djIndexCoverage[name]=tracks.filter(x=>yes(x.data)).length;
 console.info("[DJ INDEX COVERAGE]",JSON.stringify(djIndexCoverage));
+const v18Records=tracks.filter(x=>x.data.analyzer==="librosa-onsets-chroma-rms-v6-phrases");
+console.info("[DJ V18 REAL INDEX]",JSON.stringify({
+ v18:v18Records.length,tracks:tracks.length,
+ fiveWindows:djIndexCoverage.fiveOutroWindows,
+ structured:djIndexCoverage.structureIndex,
+ bassMeasured:djIndexCoverage.bassMeasured,
+ indexedIntroBassRatioMedian:(()=>{
+  const measured=v18Records.map(x=>x.data.introBassRatio)
+   .filter(Number.isFinite).sort((a,b)=>a-b);
+  return measured.length?measured[Math.floor(measured.length/2)]:null;
+ })()
+}));
 const windowDiagnostics={windowTracks:0,windowSignals:0,windowPeriodic:0,
  windowIndependent:0,introIndependent:0,introPeriodic:0};
 for(const {data} of tracks){
