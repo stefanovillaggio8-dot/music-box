@@ -334,3 +334,43 @@ test("bass reveal is measured, limited and never fabricates a beat",()=>{
  assert.ok(Math.abs(measured(14,10,14,20)-.23)<.001);
  assert.ok(Math.abs(measured(20,10,14,20)-1)<.001);
 });
+
+test("certified rhythmic low-end gain is peak controlled in real WebAudio graphs",()=>{
+ const i=source.indexOf("function connectMixDsp("),j=source.indexOf("function djImpactBeatPoint(",i);
+ assert.ok(i>=0&&j>i);
+ const graph=new Function("dspMode","dspStrength","dspBass","dspMid","dspTreble",
+  source.slice(i,j)+"return connectMixDsp;")("auto",55,0,0,0);
+ const links=[];
+ const param=()=>({value:0,setValueAtTime(v){this.value=v},
+  exponentialRampToValueAtTime(v){this.value=v}});
+ let count=0;
+ const ctx={currentTime:5,createBiquadFilter:()=>{
+   const name="f"+ ++count;
+   return {name,type:"",frequency:param(),Q:param(),gain:param(),
+    connect(to){links.push(name+">"+(to.name||"out"))},disconnect(){}};
+  },createDynamicsCompressor:()=>({name:"limiter",
+   threshold:param(),knee:param(),ratio:param(),attack:param(),release:param(),
+   connect(to){links.push("limiter>"+(to.name||"out"))},disconnect(){}})};
+ const src={connect(to){links.push("src>"+(to.name||"out"))}},out={name:"out"};
+ const nodes=graph(ctx,src,out,4,true,.52);
+ assert.equal(nodes.length,3);
+ assert.equal(nodes[0].type,"highpass","first filter must suppress unverified pre-beat bass");
+ assert.equal(nodes[1].type,"lowshelf","boost only after the beat filter");
+ assert.ok(nodes[1].gain.value<=2,"never add excessive automatic low-frequency boost");
+ assert.equal(nodes[2].threshold.value,-5);
+ assert.equal(nodes[2].ratio.value,4);
+ assert.deepEqual(links,["src>f1","f1>f2","f2>limiter","limiter>out"]);
+ const plain=graph(ctx,src,out,4,false,null);
+ assert.equal(plain.length,0,"uncertified transitions must not receive boosted bass");
+});
+test("iPhone cancelled cursor gesture cannot seek or restart the native MP3",()=>{
+ const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ const start=app.indexOf('progressBar.addEventListener("pointercancel",');
+ const end=app.indexOf('  $("btnSeekBack")',start);
+ assert.ok(start>=0&&end>start);
+ const handler=app.slice(start,end);
+ assert.ok(handler.includes("scrubbing = false;"));
+ assert.ok(handler.includes("pendingSeek = null;"));
+ assert.ok(!handler.includes("endScrub()"),"pointercancel must never request a seek");
+ assert.ok(app.includes('progressBar.addEventListener("pointerup", endScrub)'));
+});
