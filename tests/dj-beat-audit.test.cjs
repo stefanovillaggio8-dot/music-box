@@ -25,6 +25,22 @@ const tracks=Object.entries(catalog.entries||{})
   Array.isArray(x.chroma)&&x.chroma.length===12)
  .map(([key,data])=>({key,data}));
 const find=(suffix)=>tracks.find(x=>x.key.endsWith(suffix));
+// Diagnostic coverage of REAL indexed MP3 data used by the planner.
+const djIndexCoverage={tracks:tracks.length};
+for(const [name,yes] of [
+ ["outroWindows",d=>Array.isArray(d.outroOnsetWindows)&&d.outroOnsetWindows.length>0],
+ ["outroOnset",d=>Array.isArray(d.outroOnset)&&d.outroOnset.length===96],
+ ["introOnset",d=>Array.isArray(d.introOnset)&&d.introOnset.length===96],
+ ["firstVoiceAt",d=>Number.isFinite(d.firstVoiceAt)],
+ ["firstLyricAt",d=>Number.isFinite(d.firstLyricAt)],
+ ["lastLyricAt",d=>Number.isFinite(d.lastLyricAt)],
+ ["voiceScanned",d=>d.voiceModel&&Number.isFinite(d.voiceScannedEnd)],
+ ["release",d=>!!d.dropRelease],
+ ["tempoConfidence",d=>d.beatConfidence>=.20],
+ ["audibleIntro",d=>Number(d.introDrive)>=.45]
+])djIndexCoverage[name]=tracks.filter(x=>yes(x.data)).length;
+console.info("[DJ INDEX COVERAGE]",JSON.stringify(djIndexCoverage));
+
 const bpmRatio=(a,b)=>[.5,1,2].map(k=>a.bpm/(b.bpm*k))
  .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
 const short=x=>Number.isFinite(x)?+x.toFixed(3):null;
@@ -721,4 +737,23 @@ test("diagnose rare actual waveform beat proposals before changing musical safet
  });
  console.info("[DJ REAL NEAR-BEAT DIAGNOSTICS]",JSON.stringify(detail));
  assert.ok(detail.some(x=>x.plan?.kind==="snap"),"retain a real measured snap example");
+});
+
+test("independent drum-grid fallback rejects shifted/offbeat and flat recordings",()=>{
+ const onset=extract("function onsetGridPhase(","function rhythmicGridEvidence(");
+ const fallback=extract("function alignedIndependentPulseAgreement(","function djMeasuredBarAccents(");
+ const run=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));\n"+
+   onset+fallback+"\nreturn alignedIndependentPulseAgreement;")();
+ const pulse=(phase)=>Array.from({length:96},(_,i)=>{
+  const at=(i-phase)/12;
+  return Math.abs(at-Math.round(at))<.06?2.2:-.30+.02*Math.sin(i);
+ });
+ const aligned=run(pulse(7),pulse(7),120,0);
+ assert.ok(aligned?.score>=.8,"Matching measured independent beat trains should be retained");
+ assert.equal(run(pulse(7),pulse(13),120,0),null,
+   "An eighth-note shift is NOT the same downbeat");
+ assert.equal(run(pulse(7),Array(96).fill(1),120,0),null,
+   "Steady amplitude cannot forge rhythmic proof");
+ assert.equal(run(pulse(7),pulse(7),120,1.5),null,
+   "No extrapolation beyond the decoded outgoing window");
 });
