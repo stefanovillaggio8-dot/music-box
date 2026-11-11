@@ -78,8 +78,13 @@ async function activate(trackId,cue,original){
     Math.abs(p.audio.currentTime+p.stem.start-original.currentTime)>.26)
   return null;
  try{
-  await p.audio.play();
-  if(prepared!==p||original.paused||p.audio.paused||
+  // A third optional decoder must NEVER hold the main DJ handoff hostage.
+  // Autoplay can leave play() pending indefinitely on some desktop engines.
+  const started=await Promise.race([
+   Promise.resolve(p.audio.play()).then(()=>true,()=>false),
+   new Promise(resolve=>setTimeout(()=>resolve(false),180))
+  ]);
+  if(!started||prepared!==p||original.paused||p.audio.paused||
      p.audio.seeking||p.audio.readyState<2||
      Math.abs(p.audio.currentTime+p.stem.start-original.currentTime)>.16){
    if(prepared===p)prepared=null;release(p);return null;
