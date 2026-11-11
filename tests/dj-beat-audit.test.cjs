@@ -25,6 +25,22 @@ const tracks=Object.entries(catalog.entries||{})
   Array.isArray(x.chroma)&&x.chroma.length===12)
  .map(([key,data])=>({key,data}));
 const find=(suffix)=>tracks.find(x=>x.key.endsWith(suffix));
+// Diagnostic coverage of REAL indexed MP3 data used by the planner.
+const djIndexCoverage={tracks:tracks.length};
+for(const [name,yes] of [
+ ["outroWindows",d=>Array.isArray(d.outroOnsetWindows)&&d.outroOnsetWindows.length>0],
+ ["outroOnset",d=>Array.isArray(d.outroOnset)&&d.outroOnset.length===96],
+ ["introOnset",d=>Array.isArray(d.introOnset)&&d.introOnset.length===96],
+ ["firstVoiceAt",d=>Number.isFinite(d.firstVoiceAt)],
+ ["firstLyricAt",d=>Number.isFinite(d.firstLyricAt)],
+ ["lastLyricAt",d=>Number.isFinite(d.lastLyricAt)],
+ ["voiceScanned",d=>d.voiceModel&&Number.isFinite(d.voiceScannedEnd)],
+ ["release",d=>!!d.dropRelease],
+ ["tempoConfidence",d=>d.beatConfidence>=.20],
+ ["audibleIntro",d=>Number(d.introDrive)>=.45]
+])djIndexCoverage[name]=tracks.filter(x=>yes(x.data)).length;
+console.info("[DJ INDEX COVERAGE]",JSON.stringify(djIndexCoverage));
+
 const bpmRatio=(a,b)=>[.5,1,2].map(k=>a.bpm/(b.bpm*k))
  .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
 const short=x=>Number.isFinite(x)?+x.toFixed(3):null;
