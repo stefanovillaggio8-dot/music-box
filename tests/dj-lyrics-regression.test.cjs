@@ -984,3 +984,60 @@ test("DJ harmonic section entry earns stronger bass only with independently alig
    introBeatTimes:Array.from({length:8},(_,i)=>i*.5)},200);
  assert.equal(misaligned,null,"Strong bass cannot play with a measured offbeat grid");
 });
+
+test("iPhone karaoke may inspect several different passages on later requests without unbounded decoding",async()=>{
+ const code=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const lyrics=[
+  {t:3,text:"I want to know your heart is mine"},
+  {t:9,text:"You know that I want you tonight"},
+  {t:35,text:"And we will see the world tonight"},
+  {t:60,text:"I wanna know where you are now"}
+ ];
+ let current=4,now=Date.now(),clips=0,downloads=0,closed=0;
+ const pcm=new Float32Array(16000*80),memory=new Map();
+ class WorkerMock{
+  postMessage(m){
+   clips++;
+   queueMicrotask(()=>this.onmessage({data:{id:m.id,chunks:[]}}));
+  }
+  terminate(){}
+ }
+ class OfflineMock{
+  async decodeAudioData(){
+   return {sampleRate:16000,duration:80,length:pcm.length,
+    numberOfChannels:1,getChannelData:()=>pcm};
+  }
+  async close(){closed++}
+ }
+ const track={id:"song-karaoke",url:"songs/track.mp3"};
+ const bridge={currentId:()=>track.id,
+  audio:()=>({duration:80,currentTime:current}),
+  profile:()=>"Ste",allTracks:()=>[track],
+  lyricsData:()=>({synced:lyrics}),mixUrl:()=>track.url};
+ const win={Worker:WorkerMock,OfflineAudioContext:OfflineMock,MusicBoxBridge:bridge};
+ const nav={gpu:{},onLine:true,userAgent:"iPhone",connection:{saveData:false}};
+ const doc={hidden:false,baseURI:"https://music.example/",getElementById:()=>null};
+ const storage={getItem:k=>memory.get(k)||null,
+  setItem:(k,v)=>memory.set(k,String(v))};
+ const fetchMock=async()=>{
+  downloads++;
+  return {ok:true,headers:{get:()=>null},blob:async()=>({
+   size:100,arrayBuffer:async()=>new ArrayBuffer(100)})};
+ };
+ const api=new Function("window","navigator","document","sessionStorage",
+  "fetch","Worker","requestIdleCallback","Date","URL",
+  code+";return window.MusicBoxAudioAlign;")(
+   win,nav,doc,storage,fetchMock,WorkerMock,fn=>fn(),{now:()=>now},URL);
+ assert.equal(api.languageFromLyrics(lyrics),"en");
+ for(const [i,position] of [4,36,61].entries()){
+  current=position;now+=16000;
+  assert.equal(api.request(track.id),true);
+  await new Promise(resolve=>setTimeout(resolve,40));
+  assert.equal(clips,i+1,"one new isolated 28s clip per request");
+  assert.equal(downloads,i+1,"never download more than once per request");
+ }
+ now+=16000;current=70;
+ assert.equal(api.request(track.id),false,"per-song session cap protects iPhone");
+ assert.equal(clips,3);
+ assert.equal(closed,3,"offline decoders must be closed after each window");
+});
