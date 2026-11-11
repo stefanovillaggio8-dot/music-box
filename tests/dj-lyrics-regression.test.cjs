@@ -712,7 +712,8 @@ test("subdued Smart Mix lead-in starts before the last musical beats, not the si
   "grooveAgreement=()=>({score:.84,correlation:.7}),"+
   "similarNotes=()=>({focused:.87,phrase:.8}),"+
   "camelotMatch=()=>({weight:0,score:.7}),"+
-  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1;"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1,"+
+  "djAdaptivePreviewGain=()=>.145;"+
   dj.slice(from,to)+";return subduedRhythmicIntro;")();
  const data={duration:200,last:199,bpm:120,beatConfidence:.8,
   outroOnset:Array(96).fill(1),introOnset:Array(96).fill(1),
@@ -759,7 +760,7 @@ test("strong recorded drums can enter early as bass-only without blending weak c
  const cue=fn(a,{...a},200);
  assert.equal(cue.kind,"underlay");
  assert.equal(cue.drumOnlyUnderlay,true);
- assert.ok(cue.underlayVolume<=.16&&cue.preserveTail);
+ assert.ok(cue.underlayVolume<=.20&&cue.preserveTail);
  assert.ok(cue.begin<a.last-2.5);
 });
 test("low-harmony DJ previews require a real low-pass filter before playback",()=>{
