@@ -534,7 +534,7 @@ function deepLookup(track){
   const value=deepIndex.entries?.[key];
   if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
-     Array.isArray(value.chroma)&&value.chroma.length===12)return withGuardedLRC(value);
+     Array.isArray(value.chroma)&&value.chroma.length===12)return typeof withGuardedLRC==="function"?withGuardedLRC(value):value;
  }
  return null;
 }
@@ -627,7 +627,7 @@ function loadDeepIndex(force=false){
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
-   loadDJLyricBoundaries();
+   if(typeof window!=="undefined")loadDJLyricBoundaries();
    if(typeof window!=="undefined")window.MusicBoxVocalStems?.load?.();
    const tempoQuality=djTempoIndexQuality();
    if(tempoQuality?.limitedResolution&&!_coarseTempoWarningShown){
