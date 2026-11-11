@@ -574,6 +574,7 @@ function loadDeepIndex(force=false){
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
+   window.MusicBoxVocalStems?.load?.();
    const tempoQuality=djTempoIndexQuality();
    if(tempoQuality?.limitedResolution&&!_coarseTempoWarningShown){
     _coarseTempoWarningShown=true;
@@ -4336,9 +4337,11 @@ function cancel(){
  stopSnapPrecision();
  stopMobileMix();
  resetMobileFade();
+ window.MusicBoxVocalStems?.stop?.();
  if(active){
   const act=active;active=null;
   if(act.timer)clearTimeout(act.timer);
+  if(act.stem)window.MusicBoxVocalStems?.release?.(act.stem);
   try{act.upcoming.pause();act.upcoming.removeAttribute("src");act.upcoming.load()}catch(e){}
   if(act.upcoming!==bridge()?.audio?.())releaseDesktopDsp(act.upcoming);
   try{act.original.volume=bridge()?.volume?.()??1}catch(e){}
@@ -4520,6 +4523,8 @@ async function handoff(){
    if(adopted&&app.currentId()===act.track.id&&app.audio()===preview){
     active=null;mixing=false;stopSnapPrecision();
     if(act.timer)clearTimeout(act.timer);
+    if(act.stem)window.MusicBoxVocalStems?.release?.(act.stem);
+    window.MusicBoxVocalStems?.stop?.();
     try{old.pause()}catch(_){}
     try{old.removeAttribute("src");old.load()}catch(_){}
     releaseDesktopDsp(old);
