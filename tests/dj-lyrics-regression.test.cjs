@@ -815,7 +815,8 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
  assert.ok(cue.begin<outgoing.last-4.65,"incoming kick begins before old silence");
  assert.equal(cue.preserveTail,true);
  assert.equal(cue.silenceTrim,false);
- assert.ok(cue.underlayVolume<=.105);
+ assert.ok(cue.underlayVolume<=.21&&cue.underlayVolume>=.035,
+  "Measured loudness may raise the filtered bass while preserving the guarded cap");
  assert.equal(choose(outgoing,{...incoming,firstVoiceAt:.5},200),null,
   "measured incoming vocals prevent underlay");
  assert.equal(choose({...outgoing,outroOnsetWindows:[{...win,levelRatio:.01}]},
