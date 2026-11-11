@@ -700,9 +700,11 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
     const filter=add("lowpass",260);
     const t=ctx.currentTime+Math.max(0,Number(startDelay)||0);
     filter.frequency.setValueAtTime(260,t);
-    filter.frequency.setValueAtTime(260,t+Math.max(.16,seconds*.76));
+    // Keep the full band closed for the WHOLE outgoing song. The
+    // vocal/harmonic reveal begins only after its protected natural end.
+    filter.frequency.setValueAtTime(260,t+Math.max(.16,seconds-.04));
     filter.frequency.exponentialRampToValueAtTime(18000,
-     t+Math.max(.28,seconds-.04));
+     t+Math.max(.34,seconds+.38));
    }
    const effect=dspMode==="auto"?(beatMatched?"highpass":softReveal?"lowpass":"off"):dspMode;
    if(effect!=="off"&&dspStrength>0){
@@ -2925,6 +2927,12 @@ function musicallyCompatibleOverlay(a,b,cue){
    Math.abs(expected.begin-cue.begin)<.085&&
    Math.abs(expected.end-cue.end)<.085;
  }
+ if(cue.measuredWindowUnderlay===true){
+  const p=measuredWindowRhythmUnderlay(a,b,a?.duration);
+  return !!p&&cue.kind==="underlay"&&
+   Math.abs(p.begin-cue.begin)<.085&&Math.abs(p.end-cue.end)<.085&&
+   p.drumOnlyUnderlay===true;
+ }
  if(cue.subduedRhythmicUnderlay===true){
   const p=subduedRhythmicIntro(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&
@@ -3050,6 +3058,87 @@ function synchronizeBeatCue(a,b,cue){
 }
 // Low-volume rhythmic entrance: NOT a certified beatmatch.
 // Original vocal and final instrument must remain audible until native EOF.
+// Examine measured 4-second OUTRO windows, rather than requiring the
+// only usable rhythm to occur in the last four seconds. A short, filtered
+// percussion bed can start 5-9s before the final audible sound, even when
+// full-band harmony/voice overlap has NOT been proved. Do not duck or
+// seek over the outgoing vocal. Never call this a certified beatmatch.
+function measuredWindowRhythmUnderlay(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||!Number.isFinite(a.last)||
+    a.last<32||dur-a.last>10||dur-a.last<-.2||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    Number(a.beatConfidence)<.19||Number(b.beatConfidence)<.19||
+    !Array.isArray(a.outroOnsetWindows)||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.43)return null;
+ const ratio=a.bpm/b.bpm;
+ if(ratio<.975||ratio>1.025)return null;
+ const introPeriod=onsetPeriodicity(b.introOnset,b.bpm);
+ const incoming=independentPulseTrain(b.introOnset,b.bpm);
+ // Strong independent beat proof is ideal. A merely PERIODIC real PCM
+ // signal may be used only for a filtered, 10%-volume kick underlay,
+ // never to certify full-band rhythm or to shorten the outgoing song.
+ if(!(incoming?.score>=.72||introPeriod>=.36))return null;
+ const entry=musicalIntroEntry(b);
+ // Do not knowingly launch a sung intro under the existing song.
+ const firstVoice=Math.min(
+  Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+  Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(firstVoice-entry<2.6)return null;
+ const period=60/a.bpm,nextPhase=onsetGridPhase(b.introOnset,b.bpm);
+ const key=camelotMatch(a,b);
+ let best=null;
+ for(const win of a.outroOnsetWindows){
+  if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
+     Math.abs(win.end-win.start-4)>.13||
+     win.start<a.last-12.5||win.end>a.last-1.6||
+     Number(win.levelRatio)<.28||
+     !Array.isArray(win.onset)||win.onset.length!==96||
+     !Array.isArray(win.groove)||win.groove.length!==32)continue;
+  const windowPeriod=onsetPeriodicity(win.onset,a.bpm);
+  const pulse=independentPulseTrain(win.onset,a.bpm);
+  if(!(pulse?.score>=.72||windowPeriod>=.36))continue;
+  const local={...a,outroOnset:win.onset,outroGroove:win.groove,
+   outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,
+   outroTimeline:[]};
+  const g=grooveAgreement(local,b);
+  if(!g||g.score<.65||g.correlation<.30)continue;
+  const notes=similarNotes(local,b);
+  // The upper harmonics will be filtered; require some tonal safety
+  // but not a full-band chord match we are not going to play.
+  if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
+     notes.focused<.33||notes.phrase<.23||
+     (key.weight>=.14&&key.score<.47))continue;
+  const beatAnchor=win.start+
+   (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
+  const desired=Math.max(win.start+.55,a.last-8.5);
+  const begin=beatAnchor+
+   Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
+  const end=dur-.035,fade=end-begin;
+  // This puts the actual attack INSIDE the measured outgoing window,
+  // rather than extrapolating an inferred rhythm over the whole track.
+  if(!Number.isFinite(begin)||begin<28||
+     begin<win.start+.25||begin>win.end-1.10||
+     begin>a.last-4.65||begin<a.last-9.25||
+     fade<4.5||fade>12.4)continue;
+  const quality=Math.min(1,pulse?.score??windowPeriod)*.27+
+   Math.min(1,incoming?.score??introPeriod)*.27+
+   g.score*.23+notes.focused*.15+notes.phrase*.08;
+  if(!best||quality>best.quality)best={quality,begin,end,fade,
+   beatAnchor,nextBeat:nextPhase,grooveScore:g.score};
+ }
+ if(!best)return null;
+ return {kind:"underlay",subduedRhythmicUnderlay:true,
+  measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+  begin:best.begin,end:best.end,fade:best.fade,entry,
+  tempo:clamp(ratio,.975,1.025),gain:1,underlayVolume:.105,
+  beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
+  score:Math.round(best.quality*100),grooveScore:best.grooveScore,
+  quietCertified:false,safeOutroAt:null,
+  silenceTrim:false,softTailTrim:false,trailing:0};
+}
 function subduedRhythmicIntro(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
@@ -3229,6 +3318,8 @@ function unalignedTransition(a,b,actualDuration){
  if(scannedSnap)return scannedSnap;
  const pulse=measuredPulseUnderlay(a,b,dur);
  if(pulse)return pulse;
+ const extendedRhythm=measuredWindowRhythmUnderlay(a,b,dur);
+ if(extendedRhythm)return extendedRhythm;
  const softEntry=subduedRhythmicIntro(a,b,dur);
  if(softEntry)return softEntry;
  // A trusted low-energy *musical* release is preferable to waiting

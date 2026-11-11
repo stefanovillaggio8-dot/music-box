@@ -17,7 +17,7 @@ const tools=new Function("isIOS","style",
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
  "return {transition,synchronizeBeatCue,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,rhythmicGridEvidence,similarNotes,grooveAgreement,camelotMatch,"+
- "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity};"
+ "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity,independentPulseTrain,measuredWindowRhythmUnderlay};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
  .filter(([key,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&
@@ -40,6 +40,25 @@ for(const [name,yes] of [
  ["audibleIntro",d=>Number(d.introDrive)>=.45]
 ])djIndexCoverage[name]=tracks.filter(x=>yes(x.data)).length;
 console.info("[DJ INDEX COVERAGE]",JSON.stringify(djIndexCoverage));
+const windowDiagnostics={windowTracks:0,windowSignals:0,windowPeriodic:0,
+ windowIndependent:0,introIndependent:0,introPeriodic:0};
+for(const {data} of tracks){
+ const wins=Array.isArray(data.outroOnsetWindows)?data.outroOnsetWindows:[];
+ if(wins.length)windowDiagnostics.windowTracks++;
+ for(const w of wins){
+  if(w?.onset?.length!==96)continue;
+  windowDiagnostics.windowSignals++;
+  if(tools.onsetPeriodicity(w.onset,data.bpm)>=.25)
+   windowDiagnostics.windowPeriodic++;
+  if(tools.independentPulseTrain(w.onset,data.bpm)?.score>=.72)
+   windowDiagnostics.windowIndependent++;
+ }
+ if(tools.independentPulseTrain(data.introOnset,data.bpm)?.score>=.72)
+  windowDiagnostics.introIndependent++;
+ if(tools.onsetPeriodicity(data.introOnset,data.bpm)>=.24)
+  windowDiagnostics.introPeriodic++;
+}
+console.info("[DJ WINDOW FUNNEL]",JSON.stringify(windowDiagnostics));
 
 const bpmRatio=(a,b)=>[.5,1,2].map(k=>a.bpm/(b.bpm*k))
  .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
@@ -48,7 +67,7 @@ const short=x=>Number.isFinite(x)?+x.toFixed(3):null;
 test("real-index audit: 130k+ different track pairs, classify actual join versus a merely quiet fade",()=>{
  assert.ok(tracks.length>=1100,"Real full-song MP3 metadata must be available");
  let pairs=0,nearBpm=0,plans=0,beats=0,releaseBeats=0,strictBeats=0,
-  rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0,bassOnly=0;
+  rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0,bassOnly=0,windowed=0;
  const examples=[],earliest=[];
  const funnel={tailAndIntro:0,tempo:0,onsetData:0,periodic:0,
   compatibleGroove:0,compatibleNotes:0,allMatched:0,
@@ -96,7 +115,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
    }
    const p=tools.transition(A.data,B.data,A.data.duration);
    if(!p)continue;plans++;
-   if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;if(p.drumOnlyUnderlay)bassOnly++;}
+   if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;if(p.drumOnlyUnderlay)bassOnly++;if(p.measuredWindowUnderlay)windowed++;}
    if(p.measuredRhythmicRelease===true)releaseBeats++;
    assert.ok(Number.isFinite(p.begin)&&Number.isFinite(p.end)&&
     p.begin>=0&&p.end<=A.data.duration+.04,
@@ -124,7 +143,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
  }
  console.info("[DJ REAL INDEPENDENT AUDIT]",JSON.stringify({
   indexed:tracks.length,pairs,nearBpm,plans,beatProposals:beats,releaseBeats,
-  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,bassOnly,funnel,
+  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,bassOnly,windowed,funnel,
   beatExamples:examples,veryEarly:earliest}));
  assert.ok(pairs>=130000,"Audit sampled too few real pairs");
  assert.equal(strictBeats+rejectedBeat,beats);
