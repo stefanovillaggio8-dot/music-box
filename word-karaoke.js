@@ -125,8 +125,14 @@ function parseEnhancedLrc(value){
   // Trim leading whitespace of the first token consistently with line text.
   if(words.length&&prefix.trim()===""&&words[0].text)
     words[0].text=words[0].text.trimStart();
-  const clean=validWords(words,text,t,null);
-  if(text)result.push({t,text,...(clean.length?{words:clean}:{})});
+  // Enhanced LRC sometimes timestamps the line a little after the
+  // first audible syllable. Preserve the measured word time instead of
+  // discarding the entire word stream and inventing estimated karaoke.
+  const firstWord=words[0]?.t;
+  const adjustedStart=Number.isFinite(firstWord)&&
+    firstWord<t-.15&&firstWord>=t-.95?firstWord:t;
+  const clean=validWords(words,text,adjustedStart,null);
+  if(text)result.push({t:adjustedStart,text,...(clean.length?{words:clean}:{})});
  }
  return result;
 }
