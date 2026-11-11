@@ -156,7 +156,7 @@ test("deep audio always wins over stale local beat analysis; vocal veto remains"
  assert.equal(result.lastVoiceAt,156);
  assert.equal(result.voiceModel,"YAMNet");
  assert.equal(merge(deep,{...local,duration:173}).voiceModel,undefined);
- assert.match(text,/withValidatedVoice\(deepLookup\(t\),local\)/);
+ assert.match(text,/withValidatedVoice\(deepLookup\(t\),cache\.get\(url\)\)/);
 });
 
 test("iPhone skip aborts stale optional MP3 work but never touches playback or offline downloads",()=>{
