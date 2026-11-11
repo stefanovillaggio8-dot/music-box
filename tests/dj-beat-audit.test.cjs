@@ -48,7 +48,7 @@ const short=x=>Number.isFinite(x)?+x.toFixed(3):null;
 test("real-index audit: 130k+ different track pairs, classify actual join versus a merely quiet fade",()=>{
  assert.ok(tracks.length>=1100,"Real full-song MP3 metadata must be available");
  let pairs=0,nearBpm=0,plans=0,beats=0,releaseBeats=0,strictBeats=0,
-  rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0;
+  rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0,bassOnly=0;
  const examples=[],earliest=[];
  const funnel={tailAndIntro:0,tempo:0,onsetData:0,periodic:0,
   compatibleGroove:0,compatibleNotes:0,allMatched:0};
@@ -87,7 +87,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
    }
    const p=tools.transition(A.data,B.data,A.data.duration);
    if(!p)continue;plans++;
-   if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;}
+   if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;if(p.drumOnlyUnderlay)bassOnly++;}
    if(p.measuredRhythmicRelease===true)releaseBeats++;
    assert.ok(Number.isFinite(p.begin)&&Number.isFinite(p.end)&&
     p.begin>=0&&p.end<=A.data.duration+.04,
@@ -115,7 +115,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
  }
  console.info("[DJ REAL INDEPENDENT AUDIT]",JSON.stringify({
   indexed:tracks.length,pairs,nearBpm,plans,beatProposals:beats,releaseBeats,
-  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,funnel,
+  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,bassOnly,funnel,
   beatExamples:examples,veryEarly:earliest}));
  assert.ok(pairs>=130000,"Audit sampled too few real pairs");
  assert.equal(strictBeats+rejectedBeat,beats);
