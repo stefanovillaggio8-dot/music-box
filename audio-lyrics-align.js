@@ -76,7 +76,12 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   if(candidates.length<tokens.length||candidates.length>34)continue;
   let best=null;
   for(let k=0;k<candidates.length;k++){
-   if(candidates[k].key!==keys[0]||Math.abs(candidates[k].t-start)>.85)continue;
+   // A provider's LRC line may lead the recorded vocal by 1-2 seconds.
+   // Accept only a complete, ordered EXACT match of >=4 spoken words
+   // in that wider region; short/repeated hooks retain the strict gate.
+   const lag=candidates[k].t-start;
+   const maximumLate=tokens.length>=4?1.70:.85;
+   if(candidates[k].key!==keys[0]||lag<-.45||lag>maximumLate)continue;
    const found=[candidates[k]];let cursor=k+1;
    for(let w=1;w<tokens.length;w++){
     // Allow at most 2 unrelated words between correctly recognized tokens.
