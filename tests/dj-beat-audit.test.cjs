@@ -17,7 +17,7 @@ const tools=new Function("isIOS","style",
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
  "return {transition,synchronizeBeatCue,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,rhythmicGridEvidence,similarNotes,grooveAgreement,camelotMatch,"+
- "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity};"
+ "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity,independentPulseTrain,measuredWindowRhythmUnderlay};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
  .filter(([key,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&
@@ -40,6 +40,25 @@ for(const [name,yes] of [
  ["audibleIntro",d=>Number(d.introDrive)>=.45]
 ])djIndexCoverage[name]=tracks.filter(x=>yes(x.data)).length;
 console.info("[DJ INDEX COVERAGE]",JSON.stringify(djIndexCoverage));
+const windowDiagnostics={windowTracks:0,windowSignals:0,windowPeriodic:0,
+ windowIndependent:0,introIndependent:0,introPeriodic:0};
+for(const {data} of tracks){
+ const wins=Array.isArray(data.outroOnsetWindows)?data.outroOnsetWindows:[];
+ if(wins.length)windowDiagnostics.windowTracks++;
+ for(const w of wins){
+  if(w?.onset?.length!==96)continue;
+  windowDiagnostics.windowSignals++;
+  if(tools.onsetPeriodicity(w.onset,data.bpm)>=.25)
+   windowDiagnostics.windowPeriodic++;
+  if(tools.independentPulseTrain(w.onset,data.bpm)?.score>=.72)
+   windowDiagnostics.windowIndependent++;
+ }
+ if(tools.independentPulseTrain(data.introOnset,data.bpm)?.score>=.72)
+  windowDiagnostics.introIndependent++;
+ if(tools.onsetPeriodicity(data.introOnset,data.bpm)>=.24)
+  windowDiagnostics.introPeriodic++;
+}
+console.info("[DJ WINDOW FUNNEL]",JSON.stringify(windowDiagnostics));
 
 const bpmRatio=(a,b)=>[.5,1,2].map(k=>a.bpm/(b.bpm*k))
  .reduce((x,y)=>Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
