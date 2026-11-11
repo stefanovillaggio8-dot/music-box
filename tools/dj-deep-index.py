@@ -241,6 +241,22 @@ def analyze(mp3):
     # final beat. Do not guess from BPM or an empty MP3 tail. Every window
     # is measured from original PCM and carries its own boundary notes.
     outro_windows=[]
+    intro_windows=[]
+    for offset in (0.,4.,8.,12.):
+        start=float(safe_intro)+offset
+        if start<0 or start+4>=min(duration-.25,first+21):continue
+        signature=onset_signature(start)
+        local_groove=groove(rms,bpm,start)
+        if signature is None or local_groove is None:continue
+        part=rms[max(0,int(start/.1)):min(len(rms),int((start+4)/.1))]
+        if part.size<30 or float(np.mean(part))<max(.003,level*.23):continue
+        notes=chroma(y[int(start*SR):int((start+4)*SR)])
+        if notes is None:continue
+        intro_windows.append({"start":round(start,3),
+          "end":round(start+4,3),"onset":signature,
+          "groove":local_groove,"notes":notes,
+          "levelRatio":round(float(np.mean(part)/max(level,.0001)),4),
+          "bassRatio":frequency_bass_ratio(y,start,start+4)})
     # More phrase candidates for build/drop, not only two final windows.
     # All remain measured from the actual original MP3 and the browser
     # validates the chosen live phase before a filtered beat preview.
@@ -293,6 +309,11 @@ def analyze(mp3):
       "outroGroove":groove(rms,bpm,musical_edge,True),
       "introOnset":intro_onset,"outroOnset":outro_onset,
       "outroOnsetWindows":outro_windows,
+      "introOnsetWindows":intro_windows,
+      "introRms":round(float(np.sqrt(np.mean(
+          y[int(safe_intro*SR):int(min(duration,safe_intro+4)*SR)]**2))),5),
+      "introPeak":round(float(np.max(np.abs(
+          y[int(safe_intro*SR):int(min(duration,safe_intro+4)*SR)]))),5),
       # Structural descriptors are waveform evidence, NOT lyrical/vocal
       # classifications. Those come from synced karaoke or local YAMNet.
       "structureEvents":structure_events(rms,level,first,musical_edge),
