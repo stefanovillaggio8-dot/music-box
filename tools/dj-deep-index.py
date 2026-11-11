@@ -297,6 +297,9 @@ def analyze(mp3):
       "beatConfidence":round(strength,3),
       "beatAnchor":beat_anchor,"introBeat":firstbeat,"level":round(level,5),
       "beatGrid":measured_grid,
+      "introBeatTimes":[round(float(v),3) for v in
+          beat_times[(beat_times>=safe_intro)&
+                     (beat_times<=min(duration,safe_intro+9))][:20]],
       "chroma":c,"introChroma":chroma(y[:int(to*SR)]),
       "outroChroma":chroma(y[int(outro_start*SR):int(end_note*SR)]),
       "introAttackNotes":chroma(y[int(first*SR):int(min(duration,first+2.3)*SR)]),
