@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6719";
+const CACHE = "spotifynonavraiimieisoldi-v6720";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -48,7 +48,7 @@ const CORE = [
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6715&words=4",
-  "./audio-lyrics-align.js?v=6715&lang=3",
+  "./audio-lyrics-align.js?v=6720&lang=4",
   "./audio-lyrics-worker.js?v=6715&lang=1",
   "./app.js?v=6719&words=2",
   "./stanza.js?v=6570",
@@ -87,7 +87,7 @@ const OFFLINE_SHELL = [
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6715&words=4",
-  "./audio-lyrics-align.js?v=6715&lang=3",
+  "./audio-lyrics-align.js?v=6720&lang=4",
   "./audio-lyrics-worker.js?v=6715&lang=1",
   "./app.js?v=6719&words=2",
   "./stanza.js?v=6570",
