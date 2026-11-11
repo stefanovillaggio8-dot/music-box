@@ -469,6 +469,52 @@ function analysisDatabase(){
 // Deep DJ index measures real MP3 audio in bounded cloud batches.
 // New or offline songs still fall back to local waveform analysis.
 let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;
+// Existing timed lyrics are useful for SAFETY only: an LRC line marks
+// the beginning of words, not the moment the singer stopped singing.
+// Offline-built SHA/duration-bound metadata adds conservative guards.
+// It NEVER sets voiceModel, lastVoiceAt or asserts a vocal-free outro.
+let djLyricBoundaries=null,djLyricMetaRequested=false;
+function withGuardedLRC(audio){
+ if(!audio||!djLyricBoundaries)return audio;
+ const sha=String(audio.sha||"").toLowerCase(),bound=djLyricBoundaries[sha];
+ if(!bound||bound.sha!==sha||
+    bound.provenance!=="existing-synced-lrc-not-vocal-model"||
+    !Number.isFinite(bound.duration)||!Number.isFinite(audio.duration)||
+    Math.abs(bound.duration-audio.duration)>.55||
+    !Number.isFinite(bound.firstLyricAt)||
+    !Number.isFinite(bound.lastLyricAt)||
+    !Number.isFinite(bound.firstLrcAt)||
+    !Number.isFinite(bound.lastLrcAt)||
+    bound.firstLyricAt<0||bound.lastLyricAt>audio.duration+.1||
+    bound.firstLyricAt>bound.lastLyricAt||
+    bound.lastLyricAt<bound.lastLrcAt+Math.min(5,audio.duration-bound.lastLrcAt)-.1||
+    bound.lineCount<4)return audio;
+ return {...audio,
+  // Existing local vocal evidence must NEVER be overwritten by lyrics.
+  firstLyricAt:Number.isFinite(audio.firstLyricAt)?
+   Math.min(audio.firstLyricAt,bound.firstLyricAt):bound.firstLyricAt,
+  lastLyricAt:Number.isFinite(audio.lastLyricAt)?
+   Math.max(audio.lastLyricAt,bound.lastLyricAt):bound.lastLyricAt,
+  lrcBoundarySource:bound.provenance,lrcSourceKey:bound.sourceKey};
+}
+function loadDJLyricBoundaries(){
+ if(djLyricMetaRequested||!deepIndex||offlineTransferPriority||
+    bridge()?.offlineBusy?.())return;
+ djLyricMetaRequested=true;
+ fetch("dj-lyric-boundaries.json",{cache:"no-cache"})
+  .then(r=>r.ok?r.json():null).then(json=>{
+   if(json?.version!==1||!json.entries||
+      typeof json.entries!=="object"||
+      Array.isArray(json.entries))return;
+   djLyricBoundaries=json.entries;
+   if(enabled&&!mixing&&!active&&!mobileActive){
+    plannedFor="";plan=null;planEpoch++;
+    planRetryAt=0;planRetryCount=0;lastPlanMissing=false;
+    shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
+    shuffleRetryAt=0;shuffleAttempts=0;
+   }
+  }).catch(()=>{djLyricMetaRequested=false;});
+}
 function deepLookup(track){
  if(!deepIndex||!track)return null;
  const raw=String(track.file||track.url||"");
@@ -488,7 +534,7 @@ function deepLookup(track){
   const value=deepIndex.entries?.[key];
   if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
-     Array.isArray(value.chroma)&&value.chroma.length===12)return value;
+     Array.isArray(value.chroma)&&value.chroma.length===12)return withGuardedLRC(value);
  }
  return null;
 }
@@ -581,6 +627,7 @@ function loadDeepIndex(force=false){
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
+   loadDJLyricBoundaries();
    if(typeof window!=="undefined")window.MusicBoxVocalStems?.load?.();
    const tempoQuality=djTempoIndexQuality();
    if(tempoQuality?.limitedResolution&&!_coarseTempoWarningShown){
@@ -5398,8 +5445,8 @@ function tick(){
       plannedFor!==target||app.currentId()!==fromId||
       app.mixNext()?.id!==target||mixing)return;
    const lyricA=app.mixLyricCues?.(fromId),lyricB=app.mixLyricCues?.(target);
-   const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
-   const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
+   const currentAnalysis=a&&lyricA?{...a,lastLyricAt:Math.max(Number(a.lastLyricAt)||0,Number(lyricA.last)||0)}:a;
+   const nextAnalysis=b&&lyricB?{...b,firstLyricAt:Math.min(Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity,Number.isFinite(lyricB.first)?lyricB.first:Infinity)}:b;
    let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
    if(!candidate||candidate.kind==="cut"||
       (Number.isFinite(candidate.begin)&&
@@ -5897,7 +5944,7 @@ async function intelligentShuffle(app,audio,fromId){
  const fromInfo=await decode(from);
  if(!fromInfo||!enabled||app.currentId()!==fromId)return {retry:app.currentId()===fromId};
  const lastLyric=app.mixLyricCues?.(fromId)?.last;
- const old=Number.isFinite(lastLyric)?{...fromInfo,lastLyricAt:lastLyric}:fromInfo;
+ const old=Number.isFinite(lastLyric)?{...fromInfo,lastLyricAt:Math.max(Number(fromInfo.lastLyricAt)||0,lastLyric)}:fromInfo;
  const source=t=>String(app.mixUrl?.(t)||t.url||"");
  // Distinct IDs can contain the EXACT same recording (e.g. app/mobile).
  // Never promote the song that just played or count exact duplicate Git
@@ -6070,7 +6117,7 @@ async function intelligentShuffle(app,audio,fromId){
    }
   }
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
-  const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
+  const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:Math.min(Number.isFinite(info.firstLyricAt)?info.firstLyricAt:Infinity,firstLyric)}:info;
   let cue=transition(old,next,audio.duration);
   if(!cue||cue.kind==="cut"||
      (Number.isFinite(cue.begin)&&cue.begin>old.last+.20)){
@@ -6847,8 +6894,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   };
   const baseA=info(from),baseB=info(to);
   const lrcA=app?.mixLyricCues?.(fromId),lrcB=app?.mixLyricCues?.(toId);
-  const a=baseA&&lrcA?{...baseA,lastLyricAt:lrcA.last}:baseA;
-  const b=baseB&&lrcB?{...baseB,firstLyricAt:lrcB.first}:baseB;
+  const a=baseA&&lrcA?{...baseA,lastLyricAt:Math.max(Number(baseA.lastLyricAt)||0,Number(lrcA.last)||0)}:baseA;
+  const b=baseB&&lrcB?{...baseB,firstLyricAt:Math.min(Number.isFinite(baseB.firstLyricAt)?baseB.firstLyricAt:Infinity,Number.isFinite(lrcB.first)?lrcB.first:Infinity)}:baseB;
   const compact=(t,m)=>({
    id:t?.id||null,title:t?.title||null,artist:t?.artist||null,
    info:m?{status:"ok",duration:m.duration,bpm:m.bpm,
