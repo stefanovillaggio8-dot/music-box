@@ -50,6 +50,8 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
  let pairs=0,nearBpm=0,plans=0,beats=0,releaseBeats=0,strictBeats=0,
   rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0;
  const examples=[],earliest=[];
+ const funnel={tailAndIntro:0,tempo:0,onsetData:0,periodic:0,
+  compatibleGroove:0,compatibleNotes:0,allMatched:0};
  // Reproducible sampling across the COMPLETE catalog, not 10 queued songs.
  for(let i=0;i<tracks.length;i+=5){
   const A=tracks[i];let local=0;
@@ -58,6 +60,31 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
    pairs++;
    const ratio=bpmRatio(A.data,B.data);
    if(ratio>=.94&&ratio<=1.06)nearBpm++;
+   // Attribution funnel for the genuinely audible early-intro tier.
+   const aa=A.data,bb=B.data;
+   if(aa.last>=28&&aa.duration-aa.last<=10&&
+      aa.duration-aa.last>=-.2&&bb.introDrive>=.40&&
+      aa.beatConfidence>=.17&&bb.beatConfidence>=.17){
+    funnel.tailAndIntro++;
+    const speed=aa.bpm/bb.bpm;
+    if(speed>=.975&&speed<=1.025){
+     funnel.tempo++;
+     if(Array.isArray(aa.outroOnset)&&aa.outroOnset.length===96&&
+        Array.isArray(bb.introOnset)&&bb.introOnset.length===96){
+      funnel.onsetData++;
+      if(tools.onsetPeriodicity(aa.outroOnset,aa.bpm)>=.12&&
+         tools.onsetPeriodicity(bb.introOnset,bb.bpm)>=.12){
+       funnel.periodic++;
+       const groove=tools.grooveAgreement(aa,bb);
+       if(groove&&groove.score>=.65&&groove.correlation>=.30){
+        funnel.compatibleGroove++;
+        const n=tools.similarNotes(aa,bb);
+        if(n.focused>=.64&&n.phrase>=.50)funnel.compatibleNotes++;
+       }
+      }
+     }
+    }
+   }
    const p=tools.transition(A.data,B.data,A.data.duration);
    if(!p)continue;plans++;
    if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;}
@@ -88,7 +115,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
  }
  console.info("[DJ REAL INDEPENDENT AUDIT]",JSON.stringify({
   indexed:tracks.length,pairs,nearBpm,plans,beatProposals:beats,releaseBeats,
-  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,
+  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,funnel,
   beatExamples:examples,veryEarly:earliest}));
  assert.ok(pairs>=130000,"Audit sampled too few real pairs");
  assert.equal(strictBeats+rejectedBeat,beats);
