@@ -3366,7 +3366,11 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   // Independent pulse agreement is a ranking bonus and can veto a
   // badly aligned overlay only when BOTH decoders have reliable
   // timestamps from the same real-file analysis.
-  if(verifiedGrid&&measuredGrid&&measuredGrid.ratio<.30)continue;
+  // Even an imperfect local grid may CONTRADICT the proposed overlap.
+  // Three or more measured pulses with <30% alignment veto the preview:
+  // otherwise a drifting real rhythm can masquerade as matched bass.
+  if(measuredGrid&&measuredGrid.total>=3&&
+     measuredGrid.ratio<.30)continue;
   const quality=Math.min(1,pulse?.score??windowPeriod)*.25+
    Math.min(1,incoming?.score??introPeriod)*.24+
    g.score*.21+notes.focused*.13+notes.phrase*.07+
