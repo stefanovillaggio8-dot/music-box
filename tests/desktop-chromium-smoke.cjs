@@ -104,6 +104,8 @@ async function run(){
    window.__MB_DESKTOP_MIX_TEST__.preview()?.ready===true,
    null,{timeout:12000});
   const started=await page.evaluate(async()=>{
+   // Begin the measured cue NOW, after asynchronous prebuffering completes.
+   window.__MB_DESKTOP_STATE__.audio.currentTime=37;
    const plan={kind:"soft",begin:37,end:39.1,fade:1.2,entry:0,
     tempo:1,gain:1,quietCertified:true,certifiedSilentBridge:true};
    await window.__MB_DESKTOP_MIX_TEST__.beginMix(
@@ -141,6 +143,7 @@ async function run(){
    window.__MB_DESKTOP_MIX_TEST__.preview()?.ready===true,
    null,{timeout:12000});
   const impact=await page.evaluate(async()=>{
+   window.__MB_DESKTOP_STATE__.audio.currentTime=241.11;
    const p={kind:"soft",measuredFinalImpact:true,finalImpactAt:241.3,
     nextBeat:.12,beatPeriod:60/129.2,beatAnchor:241.3,
     begin:241.18,end:243.975,fade:2.795,entry:0,
