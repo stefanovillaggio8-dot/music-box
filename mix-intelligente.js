@@ -2504,15 +2504,18 @@ function rhythmicReleaseBeatBridge(a,b,dur){
  const end=Math.min(dur-.035,a.last+.06),fade=end-begin;
  if(!Number.isFinite(begin)||begin<25||fade<3.5||fade>6.2||
     begin>r.lastImpactAt-1.1||begin<r.lastImpactAt-4.25)return null;
+ // LRC is a line START, not the end of the last sung syllable.
+ // Even after the offline +6s last-line guard, use an additional
+ // 6.5s of positive instrumental lead before granting full-band rhythm.
  const lyricSafe=Number.isFinite(a.lastLyricAt)&&
-  a.lastLyricAt<=begin-5.5;
+  a.lastLyricAt<=begin-6.5;
  const scannedSafe=!!(a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
   a.voiceScannedEnd>=a.last-.75&&
   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=begin-3));
  if((!lyricSafe&&!scannedSafe)||
-    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>begin-5.5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>begin-6.5)||
     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>begin-3))return null;
- return {kind:"beat",begin,end,fade,entry,tempo:clamp(evidence.tempo,.975,1.025),
+ const proposed={kind:"beat",begin,end,fade,entry,tempo:clamp(evidence.tempo,.975,1.025),
   gain:1,score:Math.round(evidence.score*100),grooveScore:evidence.groove,
   beatGridScore:evidence.score,rhythmicGridJoin:true,
   measuredRhythmicRelease:true,measuredBeatBridge:true,
@@ -2521,6 +2524,12 @@ function rhythmicReleaseBeatBridge(a,b,dur){
   silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
   trailing:Math.max(0,dur-end),beatPeriod:period,beatAnchor,nextBeat,
   measuredOnsetGrid:true};
+ // Do not advertise a beat that the playback certifier would reject.
+ // Real MP3 audits found a small number of visually plausible cues
+ // with mismatched playable beat windows, despite the old onset check.
+ if(typeof desktopBeatPairCertified==="function"&&
+    !desktopBeatPairCertified(a,b,proposed))return null;
+ return proposed;
 }
 function verifiedRhythmicGridBridge(a,b,dur){
  const evidence=rhythmicGridEvidence(a,b);
@@ -3821,21 +3830,34 @@ function unalignedTransition(a,b,actualDuration){
     clamp(8*60/bpmA,3.65,4.7);
    const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
-   // A loud beat bridge on iPhone is only safe when karaoke or a vocal
-   // classifier has verified that the singing ended before this section.
-   const verifiedInstrumentalEnd=(Number.isFinite(a.lastLyricAt)&&
-     a.lastLyricAt<=end-seconds-2);
+   // A timestamp is only the START of a lyric line. A real indexed
+   // recording also needs proof of a long-enough vocal exit, followed by
+   // the same beat/harmony certification used by the actual player.
+   const entryAt=end-seconds;
+   const verifiedInstrumentalEnd=Boolean(
+    Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=entryAt-6.5||
+    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+     a.voiceScannedEnd>=end-.75&&
+     (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=entryAt-4));
    const mobileSafe=Boolean(verifiedInstrumentalEnd&&groove?.score>=.80);
-   if(!isIOS||mobileSafe){
-    return {...common,begin:end-seconds,end,fade:seconds,
+   if((a.precomputed!==true||verifiedInstrumentalEnd)&&
+      (!isIOS||mobileSafe)){
+    const proposal={...common,begin:entryAt,end,fade:seconds,
      kind:style==="auto"?"beat":style,
      tempo:clamp(tempoRatio,.97,1.03),
      quietCertified:mobileSafe,strongBeatBridge:true,
-     safeOutroAt:end-seconds,
+     safeOutroAt:entryAt,
      softTailTrim:false,score:Math.round(notes.score*100),
      grooveScore:groove?.score??null,
      beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
      nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+    // A real MP3 cannot claim to be beatmatched if the real player would
+    // reject its beat window. Synthetic compatibility fixtures retain their
+    // original intentionally unmeasured behavior.
+    if(!(a.precomputed===true&&b.precomputed===true&&
+       typeof desktopBeatPairCertified==="function"&&
+       !desktopBeatPairCertified(a,b,proposal)))
+     return proposal;
    }
   }
   const shortJoin=rhythmicFullTailJoin(a,b,dur);
@@ -6770,7 +6792,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.722",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.723",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
