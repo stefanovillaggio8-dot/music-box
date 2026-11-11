@@ -177,6 +177,63 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
  assert.ok(unsafeFades+quietFades+cut+beats>0);
 });
 
+test("real indexed DJ candidates evaluated with independently joined synced lyrics",()=>{
+ const file=path.join(root,"dj-lyric-boundaries.json");
+ const bound=JSON.parse(fs.readFileSync(file,"utf8"));
+ assert.equal(bound.version,1);
+ const fromSha=new Map();
+ for(const [sha,row] of Object.entries(bound.entries)){
+  if(row.sha!==sha||row.provenance!=="existing-synced-lrc-not-vocal-model"||
+     !Number.isFinite(row.duration)||!Number.isFinite(row.firstLyricAt)||
+     !Number.isFinite(row.lastLyricAt)||row.lineCount<4)continue;
+  fromSha.set(sha,row);
+ }
+ let matched=0;
+ const annotated=tracks.map(t=>{
+  const row=fromSha.get(String(t.data.sha||"").toLowerCase());
+  if(!row||Math.abs(row.duration-t.data.duration)>.55)return t.data;
+  matched++;
+  return {...t.data,
+   firstLyricAt:Number.isFinite(t.data.firstLyricAt)?
+    Math.min(t.data.firstLyricAt,row.firstLyricAt):row.firstLyricAt,
+   lastLyricAt:Number.isFinite(t.data.lastLyricAt)?
+    Math.max(t.data.lastLyricAt,row.lastLyricAt):row.lastLyricAt,
+   lrcBoundarySource:row.provenance};
+ });
+ let checked=0,changed=0,prevented=0,beatBefore=0,beatAfter=0,
+  rhythmicBefore=0,rhythmicAfter=0,lrcViolations=0,verifiedAfter=0;
+ for(let i=0;i<tracks.length;i+=5)for(let j=0;j<tracks.length;j+=3){
+  if(i===j)continue;
+  const A=tracks[i],B=tracks[j],a=annotated[i],b=annotated[j];
+  if(a===A.data&&b===B.data)continue;
+  const old=tools.transition(A.data,B.data,A.data.duration);
+  const after=tools.transition(a,b,a.duration);
+  checked++;
+  if(old?.kind==="beat"||old?.kind==="snap")beatBefore++;
+  if(after?.kind==="beat"||after?.kind==="snap"){
+   beatAfter++;
+   if(tools.desktopBeatPairCertified(a,b,after))verifiedAfter++;
+  }
+  if(old?.subduedRhythmicUnderlay)rhythmicBefore++;
+  if(after?.subduedRhythmicUnderlay)rhythmicAfter++;
+  if(old?.kind!==after?.kind||old?.begin!==after?.begin)changed++;
+  if(old?.kind&&old.kind!=="cut"&&(!after||after.kind==="cut"))
+   prevented++;
+  if(after&&["beat","snap","phrase"].includes(after.kind)&&
+     !after.vocalBeatUnderlay&&Number.isFinite(a.lastLyricAt)&&
+     a.lastLyricAt>after.begin-5.5)
+   lrcViolations++;
+ }
+ console.info("[DJ SHA-BOUND LRC SAFETY AUDIT]",JSON.stringify({
+  uniqueSha:fromSha.size,matched,checked,changed,prevented,
+  beatBefore,beatAfter,verifiedAfter,
+  rhythmicBefore,rhythmicAfter,lrcViolations
+ }));
+ assert.ok(matched>=280,"Timed lyrics must match hundreds of original audio recordings");
+ assert.ok(changed>0,"A previous unsafe vocal treatment must actually be reconsidered");
+ assert.equal(lrcViolations,0,
+  "LRC-last-line guard cannot be ignored for full-band beat/phrase joins");
+});
 test("actual known bad recorded pair cannot pass as a matched beat",()=>{
  const a=find("audio/songs/track-153.mp3"),
   b=find("audio/songs/track-8.mp3");
