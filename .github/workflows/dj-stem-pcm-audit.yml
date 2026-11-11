@@ -7,6 +7,12 @@ on:
       - 'dj-stems/vocals/**'
       - 'tools/dj-stem-pcm-audit.py'
       - '.github/workflows/dj-stem-pcm-audit.yml'
+  pull_request:
+    paths:
+      - 'dj-vocal-stems.json'
+      - 'dj-stems/vocals/**'
+      - 'tools/dj-stem-pcm-audit.py'
+      - '.github/workflows/dj-stem-pcm-audit.yml'
   workflow_dispatch:
 permissions:
   contents: read
