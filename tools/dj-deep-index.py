@@ -6,6 +6,7 @@ Output is lightweight versioned musical metadata used by the browser DJ.
 import argparse, datetime as dt, json, os, pathlib, tempfile, urllib.parse, urllib.request
 import numpy as np
 import librosa
+from dj_beat_phrases import bar_evidence, section_boundaries
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEST = ROOT / "dj-deep-analysis.json"
@@ -215,6 +216,9 @@ def analyze(mp3):
     # listener expects matching music, not two matching empty sections.
     musical_edge=min(last,release["lastImpactAt"]+.20) if release else last
     beat_anchor=tracked_beat(max(first,musical_edge-5.0),musical_edge,True)
+    bar_grid=bar_evidence(beat_times,onset,onset_t,rms,bpm,musical_edge)
+    sections=section_boundaries(y,SR,rms,onset,onset_t,first,
+                                musical_edge,level,chroma,bar_grid)
     outro_start=max(first,musical_edge-10)
     to=min(duration,first+12)
     end_note=musical_edge
@@ -276,6 +280,7 @@ def analyze(mp3):
       "bpm":round(bpm,3),"tempoRefined":tempo_refined,
       "beatConfidence":round(strength,3),
       "beatAnchor":beat_anchor,"introBeat":firstbeat,"level":round(level,5),
+      "barGrid":bar_grid,"sectionBoundaries":sections,
       "chroma":c,"introChroma":chroma(y[:int(to*SR)]),
       "outroChroma":chroma(y[int(outro_start*SR):int(end_note*SR)]),
       "introAttackNotes":chroma(y[int(first*SR):int(min(duration,first+2.3)*SR)]),
@@ -297,7 +302,7 @@ def analyze(mp3):
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v6-phrases"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v7-bars-sections"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -315,7 +320,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
-                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v6-phrases"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v7-bars-sections"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:
