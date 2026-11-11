@@ -222,7 +222,7 @@ test("real indexed DJ candidates evaluated with independently joined synced lyri
   if(after&&["beat","snap","phrase"].includes(after.kind)&&
      !after.vocalBeatUnderlay&&Number.isFinite(a.lastLyricAt)&&
      a.lastLyricAt>after.begin-5.5)
-   {lrcViolations++;if(violations.length<8)violations.push({from:A.key,to:B.key,kind:after.kind,begin:after.begin,end:after.end,lastLyricAt:a.lastLyricAt,voiceModel:a.voiceModel,vocalBeatUnderlay:after.vocalBeatUnderlay,protectedEnding:a.protectedEnding});}
+   {lrcViolations++;if(violations.length<8)violations.push({from:A.key,to:B.key,kind:after.kind,begin:after.begin,end:after.end,lastLyricAt:a.lastLyricAt,voiceModel:a.voiceModel,vocalBeatUnderlay:after.vocalBeatUnderlay,protectedEnding:a.protectedEnding,plan:after});}
  }
  console.info("[DJ SHA-BOUND LRC SAFETY AUDIT]",JSON.stringify({
   uniqueSha:fromSha.size,matched,checked,changed,prevented,
