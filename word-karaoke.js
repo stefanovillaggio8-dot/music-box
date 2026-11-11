@@ -200,8 +200,17 @@ function paintWords(row,elements,time){
  if(!row||!Array.isArray(row.words)||elements?.length!==row.words.length)return;
  for(let i=0;i<elements.length;i++){
   const w=row.words[i],next=row.words[i+1];
-  const fallback=next?next.t:row.end!=null&&row.end>w.t?row.end:w.t+0.55;
-  const end=w.end!=null&&w.end>=w.t?w.end:fallback;
+  // In word-timed LRC a long pause before the next word does NOT mean
+  // the previous syllable was sung for that entire gap. Complete the
+  // highlight promptly, then hold it until the next measured onset.
+  // Explicit measured end timestamps still take precedence.
+  const length=String(w.text||"").replace(/[^\\p{L}\\p{N}]/gu,"").length;
+  const natural=clamp(.24+Math.min(length,9)*.062,.28,.82);
+  const fallback=next?
+    Math.min(next.t,w.t+natural):
+    row.end!=null&&row.end>w.t?Math.min(row.end,w.t+natural):w.t+natural;
+  const end=w.end!=null&&w.end>=w.t?
+    Math.min(w.end,next?.t??Infinity):fallback;
   const pct=Math.round(100*clamp((time-w.t)/Math.max(.06,end-w.t),0,1));
   const el=elements[i];
   if(el._karaokePct!==pct){el._karaokePct=pct;el.style.setProperty("--karaoke-fill",pct+"%")}
