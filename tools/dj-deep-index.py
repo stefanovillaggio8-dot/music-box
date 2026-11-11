@@ -102,6 +102,39 @@ def structure_events(rms, level, first, last):
     events.sort(key=lambda e:abs(e["change"]),reverse=True)
     return sorted(events[:12],key=lambda e:e["at"])
 
+def harmonic_section_events(samples, first, last):
+    """Real chroma novelty near track end, not fabricated verse/chorus labels."""
+    start=max(0.,float(first),float(last)-35.)
+    stop=min(len(samples)/SR,float(last))
+    if stop-start<9:return []
+    audio=np.asarray(samples[int(start*SR):int(stop*SR)],dtype=np.float32)
+    if np.sqrt(np.mean(audio*audio))<.002:return []
+    matrix=librosa.feature.chroma_stft(y=audio,sr=SR,
+                                      n_fft=2048,hop_length=HOP)
+    frameTimes=librosa.frames_to_time(np.arange(matrix.shape[1]),
+                                     sr=SR,hop_length=HOP)
+    events=[]
+    for at in np.arange(4.,stop-start-3.,1.):
+        before=matrix[:,(frameTimes>=at-2.4)&(frameTimes<at-.5)]
+        after=matrix[:,(frameTimes>at+.5)&(frameTimes<=at+2.4)]
+        if before.shape[1]<6 or after.shape[1]<6:continue
+        a=np.mean(before,axis=1);b=np.mean(after,axis=1)
+        norm=float(np.linalg.norm(a)*np.linalg.norm(b))
+        if norm<.001:continue
+        cosine=float(np.dot(a,b)/norm)
+        novelty=1.-np.clip(cosine,0,1)
+        if novelty<.24:continue
+        events.append({"at":round(float(start+at),2),
+          "direction":"harmonic","change":round(float(novelty),3)})
+    # Nonmax suppression: a sustained key change is ONE section marker.
+    events.sort(key=lambda x:x["change"],reverse=True)
+    selected=[]
+    for event in events:
+        if all(abs(event["at"]-x["at"])>=2.6 for x in selected):
+            selected.append(event)
+        if len(selected)>=8:break
+    return sorted(selected,key=lambda x:x["at"])
+
 def measured_beat_grid(beat_times, first, last, bpm):
     """Conservative beat timestamps, no fabricated 4/4 downbeat labels."""
     if not 55<=bpm<=210:return {"reliable":False,"anchors":[],"error":None}
@@ -314,14 +347,17 @@ def analyze(mp3):
       "outroOnsetWindows":outro_windows,
       # Structural descriptors are waveform evidence, NOT lyrical/vocal
       # classifications. Those come from synced karaoke or local YAMNet.
-      "structureEvents":structure_events(rms,level,first,musical_edge),
+      "structureEvents":sorted(
+          structure_events(rms,level,first,musical_edge)+
+          harmonic_section_events(y,first,musical_edge),
+          key=lambda event:event["at"]),
       "introBassRatio":frequency_bass_ratio(
           y,safe_intro,min(duration,safe_intro+4)),
       "introDrive":round(drive,4),"dropRelease":release,
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v7-pulses"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v8-harmonic-sections"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -339,7 +375,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
-                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v7-pulses"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v8-harmonic-sections"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:
