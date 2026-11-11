@@ -2409,10 +2409,9 @@ function earlyMatchedBar(a,b,dur){
   // Two genuine MP3s can share precisely timed beats despite different
   // kick samples. Select phase from OBSERVED PCM timestamp sequences, not
   // from a similar-looking drum waveform or global BPM alone.
-  const reliableLocalGrid=a.beatGrid?.reliable===true&&
-    b.beatGrid?.reliable===true&&
-    Array.isArray(win.measuredBeatTimes)&&
-    Array.isArray(b.introBeatTimes);
+  const reliableLocalGrid=measuredLocalBeatGrid(
+    win.measuredBeatTimes,a.bpm,win.start,win.end)&&
+    measuredLocalBeatGrid(b.introBeatTimes,b.bpm,entry,entry+7);
   const observedPlacement=reliableLocalGrid?measuredBeatJoinCandidate(
     win.measuredBeatTimes,b.introBeatTimes,entry,speed,
     Math.max(win.start+.08,end-9.6),
@@ -3185,6 +3184,30 @@ function measuredTempoRelation(a,b){
  if(!chosen||chosen.ratio<.975||chosen.ratio>1.025)return null;
  return {...chosen,period:Math.max(60/x,60/y)};
 }
+// Verify beat regularity at the actual 4-second junction, not only from
+// an entire song that might contain tempo changes or long breakdowns.
+// Timestamps are real PCM beat positions, not synthesized pulse guesses.
+// This does NOT claim a downbeat, vocal absence or harmonic compatibility.
+function measuredLocalBeatGrid(times,bpm,start,end){
+ if(!Array.isArray(times)||times.length<5||
+    ![bpm,start,end].every(Number.isFinite)||bpm<55||bpm>210||
+    end-start<2.1)return false;
+ const beats=times.filter(t=>Number.isFinite(t)&&t>=start-.08&&
+   t<=end+.08).sort((a,b)=>a-b);
+ if(beats.length<5||beats[beats.length-1]-beats[0]<2.0)return false;
+ const target=60/bpm,errors=[];
+ for(let i=1;i<beats.length;i++){
+  const gap=beats[i]-beats[i-1];
+  // A flurry of hi-hats or one repeated timestamp is NOT several beats.
+  if(gap<target*.70||gap>target*1.30)return false;
+  errors.push(Math.abs(gap-target));
+ }
+ if(errors.length<4)return false;
+ const sorted=errors.slice().sort((a,b)=>a-b);
+ const median=sorted[Math.floor(sorted.length/2)];
+ return median<=target*.11&&
+    errors.filter(e=>e<=target*.18).length/errors.length>=.75;
+}
 // Compare repeated, REAL beat timestamps near a candidate join; no
 // inference of bar downbeats unless separately measured.
 function measuredPulseAlignment(outgoing,incoming,begin,entry,ratio){
@@ -3308,8 +3331,9 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   // seconds. Every selected begin stays inside its measured window.
   const desired=Math.max(win.start+.55,
    Math.min(a.last-7.6,win.end-1.55));
-  const verifiedGrid=a.beatGrid?.reliable===true&&
-   b.beatGrid?.reliable===true;
+  const verifiedGrid=measuredLocalBeatGrid(
+   win.measuredBeatTimes,a.bpm,win.start,win.end)&&
+   measuredLocalBeatGrid(b.introBeatTimes,b.bpm,entry,entry+7);
   const placed=verifiedGrid?measuredBeatJoinCandidate(
    win.measuredBeatTimes,b.introBeatTimes,entry,ratio,
    Math.max(win.start+.25,a.last-11.9),
@@ -3342,8 +3366,7 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   // Independent pulse agreement is a ranking bonus and can veto a
   // badly aligned overlay only when BOTH decoders have reliable
   // timestamps from the same real-file analysis.
-  if(a.beatGrid?.reliable===true&&b.beatGrid?.reliable===true&&
-     measuredGrid&&measuredGrid.ratio<.30)continue;
+  if(verifiedGrid&&measuredGrid&&measuredGrid.ratio<.30)continue;
   const quality=Math.min(1,pulse?.score??windowPeriod)*.25+
    Math.min(1,incoming?.score??introPeriod)*.24+
    g.score*.21+notes.focused*.13+notes.phrase*.07+
