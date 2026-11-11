@@ -479,6 +479,7 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
   "const decode=async t=>t.id.startsWith('current')?fromAnalysis:deepLookup(t);"+
   "const musicallyCompatibleOverlay=()=>true;"+
   "const desktopFinalImpactRelay=()=>null;"+
+  "const adaptiveLowBandContinuity=()=>null;"+
    "const transition=(a,b)=>b.id.startsWith('winner')?"+
   "{kind:'beat',fade:4.2,grooveScore:.91,score:93,"+
   "instrumentalBeatBridge:true}:null;"+
