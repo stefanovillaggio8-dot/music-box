@@ -1548,7 +1548,7 @@ self.addEventListener("fetch", (event) => {
        nuova. Servito dalla cache, l'app non vedrebbe mai l'aggiornamento.
      - stato.json: e' il fallback quando il worker non risponde, e deve
        dire le eliminazioni e le playlist giuste. */
-  const sempreFresco = /versione\.json$|stato\.json$|playlist\.json$|online-imports\.json$|dj-vocal-stems\.json$/.test(url.pathname);
+  const sempreFresco = /versione\.json$|stato\.json$|playlist\.json$|online-imports\.json$|dj-vocal-stems\.json$|dj-lyric-boundaries\.json$/.test(url.pathname);
 
   if (isCore && !sempreFresco) {
     /* Ste: "ci sta un sacco di tempo a caricare".
