@@ -836,12 +836,12 @@ test("DJ phrase mapper supports real half-time groove without double-speed playb
   "similarNotes=()=>({focused:.64,phrase:.54}),"+
   "camelotMatch=()=>({weight:.10,score:.75});"+
   dj.slice(begin,end)+";return {measuredTempoRelation,measuredWindowRhythmUnderlay};")();
- const win={start:189,end:193,levelRatio:.72,energyTrend:.9,
+ const win={start:190,end:194,levelRatio:.72,energyTrend:.9,
   onset:Array(96).fill(.2),groove:Array(32).fill(.5),
   notes:Array(12).fill(.08),beatCount:7,bassRatio:.35};
  const old={duration:200,last:199,bpm:60,beatConfidence:.80,
   outroOnsetWindows:[win],
-  structureEvents:[{at:190.4,direction:"rising",change:1.1}]};
+  structureEvents:[{at:192.1,direction:"rising",change:1.1}]};
  const intro={duration:170,bpm:120,beatConfidence:.80,
   introDrive:.90,introBassRatio:.36,introOnset:Array(96).fill(.3)};
  const relative=choose.measuredTempoRelation(old,intro);
