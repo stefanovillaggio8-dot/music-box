@@ -496,6 +496,8 @@ function withValidatedVoice(deep,local){
   lastVoiceConfidence:local.lastVoiceConfidence,
   firstVoiceConfidence:local.firstVoiceConfidence,
   voiceIntervals:local.voiceIntervals,
+  introVoiceIntervals:local.introVoiceIntervals,
+  outroVoiceIntervals:local.outroVoiceIntervals,
   voiceScannedFrom:local.voiceScannedFrom,voiceScannedEnd:local.voiceScannedEnd};
 }
 function deepStatus(){
@@ -924,6 +926,8 @@ function scheduleDeepVoice(track,key,data){
     lastVoiceConfidence:found.lastVoiceConfidence,
     firstVoiceConfidence:found.firstVoiceConfidence,
     voiceIntervals:found.voiceIntervals,
+    introVoiceIntervals:found.introVoiceIntervals,
+    outroVoiceIntervals:found.outroVoiceIntervals,
     voiceModel:found.source,voiceModelVersion:found.modelVersion,
     voiceScannedEnd:found.scannedEnd,voiceScannedFrom:found.scannedFrom};
    cache.set(key,enriched);saveAnalysis(key,enriched).catch(()=>{});
