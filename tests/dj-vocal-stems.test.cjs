@@ -80,7 +80,7 @@ test("isolated stem routing is optional and excluded from iPhone WebAudio mixer"
  assert.match(engine,/act\.stem=await window\.MusicBoxVocalStems\?\.activate/);
  assert.match(engine,/combinedPower=Math\.hypot\(outGain,incomingGain,stemGain\)/);
  assert.match(engine,/if\(act\.stem\)window\.MusicBoxVocalStems\?\.release/);
- assert.match(html,/dj-vocal-stem-runtime\.js\?v=6719&amp;stem=1/);
- assert.equal(sw.split("dj-vocal-stem-runtime.js?v=6719&stem=1").length-1,2);
+ assert.match(html,/dj-vocal-stem-runtime\.js\?v=6720&amp;stem=1/);
+ assert.equal(sw.split("dj-vocal-stem-runtime.js?v=6720&stem=1").length-1,2);
  assert.ok(sw.includes('"./dj-vocal-stems.json"'));
 });
