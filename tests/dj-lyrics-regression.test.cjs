@@ -796,7 +796,8 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
   "grooveAgreement=()=>({score:.8,correlation:.6}),"+
   "similarNotes=()=>({focused:.56,phrase:.5}),"+
   "camelotMatch=()=>({weight:.08,score:.6});"+
-  dj.slice(from,to)+";return measuredWindowRhythmUnderlay;")();
+  dj.slice(dj.indexOf("function measuredTempoRelation("),to)+
+  ";return measuredWindowRhythmUnderlay;")();
  const win={start:190,end:194,levelRatio:.75,
   onset:Array(96).fill(0).map((_,i)=>i%12===0?1:0),
   groove:Array(32).fill(.3),notes:Array(12).fill(.5)};
@@ -820,4 +821,48 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
   incoming,200),null,"digitally silent outgoing windows cannot certify a beat");
  assert.match(dj,/filter\.frequency\.setValueAtTime\(260,t\+Math\.max\(\.16,seconds-\.04\)\)/);
  assert.match(dj,/filter\.frequency\.exponentialRampToValueAtTime\(18000,\s*t\+Math\.max\(\.34,seconds\+\.38\)\)/);
+});
+
+
+test("DJ phrase mapper supports real half-time groove without double-speed playback",()=>{
+ const begin=dj.indexOf("function measuredTempoRelation(");
+ const end=dj.indexOf("function subduedRhythmicIntro(",begin);
+ assert.ok(begin>0&&end>begin);
+ const choose=new Function("const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  "const independentPulseTrain=()=>({score:.89,phase:.25}),"+
+  "onsetPeriodicity=()=>.67,hasImmediateMusicalIntro=()=>true,"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.25,"+
+  "grooveAgreement=()=>({score:.82,correlation:.66}),"+
+  "similarNotes=()=>({focused:.64,phrase:.54}),"+
+  "camelotMatch=()=>({weight:.10,score:.75});"+
+  dj.slice(begin,end)+";return {measuredTempoRelation,measuredWindowRhythmUnderlay};")();
+ const win={start:189,end:193,levelRatio:.72,energyTrend:.9,
+  onset:Array(96).fill(.2),groove:Array(32).fill(.5),
+  notes:Array(12).fill(.08),beatCount:7,bassRatio:.35};
+ const old={duration:200,last:199,bpm:60,beatConfidence:.80,
+  outroOnsetWindows:[win],
+  structureEvents:[{at:190.4,direction:"rising",change:1.1}]};
+ const intro={duration:170,bpm:120,beatConfidence:.80,
+  introDrive:.90,introBassRatio:.36,introOnset:Array(96).fill(.3)};
+ const relative=choose.measuredTempoRelation(old,intro);
+ assert.equal(relative.scale,.5);
+ assert.equal(relative.ratio,1);
+ assert.equal(relative.period,1);
+ const cue=choose.measuredWindowRhythmUnderlay(old,intro,200);
+ assert.ok(cue,"Half-time matching should be eligible for lowpass only");
+ assert.equal(cue.tempoScale,.5);
+ assert.equal(cue.tempo,1,"Never speed up a 120-BPM MP3 to 240 BPM");
+ assert.equal(cue.drumOnlyUnderlay,true);
+ assert.ok(cue.fade>=4.5&&cue.fade<=11.8);
+ assert.ok(cue.begin>=win.start+.25&&cue.begin<=win.end-1.10);
+ assert.equal(cue.preserveTail,true);
+ assert.ok(cue.underlayVolume<=.135);
+ assert.equal(choose.measuredWindowRhythmUnderlay(old,
+  {...intro,introBassRatio:.01},200),null,
+  "Filtered-only intro must contain measured low-frequency energy");
+ assert.equal(choose.measuredWindowRhythmUnderlay(old,
+  {...intro,firstLyricAt:.3},200),null,
+  "Known initial lyric forbids overlapping it with outgoing music");
+ assert.equal(choose.measuredTempoRelation(old,{...intro,bpm:94}),null,
+  "Different tempos without a half/double-time relationship are rejected");
 });
