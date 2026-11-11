@@ -652,3 +652,35 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   assert.equal(sw.split(file+"?v="+revision+"&words=2").length-1,2);
  }
 });
+
+
+test("queued vocal scanning protects playback and respects native buffering",()=>{
+ const from=dj.indexOf("function mayScanDesktopVoice(");
+ const to=dj.indexOf("function scheduleDeepVoice(",from);
+ assert.ok(from>=0&&to>from,"queued scan eligibility must be present");
+ const eligible=new Function("window","mixing","active",dj.slice(from,to)+
+  "\nreturn mayScanDesktopVoice;")({MusicBoxRoom:{isActive:()=>false}},false,null);
+ const audio={paused:false,seeking:false,duration:190,currentTime:30,
+  readyState:4,buffered:{length:0}};
+ const player={audio:()=>audio,currentId:()=> "song-a",
+  mixNext:()=>({id:"song-b"})};
+ assert.equal(eligible(player,{id:"song-b"}),true,
+  "Queued intro can be checked with a stable buffered player");
+ audio.readyState=2;
+ assert.equal(eligible(player,{id:"song-b"}),false,
+  "Do not download an optional MP3 while the player buffers");
+ audio.readyState=3;
+ audio.buffered={length:1,start:()=>0,end:()=>32};
+ assert.equal(eligible(player,{id:"song-b"}),false,
+  "A small buffer cannot authorize queued analysis");
+ audio.buffered={length:1,start:()=>0,end:()=>55};
+ assert.equal(eligible(player,{id:"song-b"}),true);
+ audio.currentTime=111;
+ assert.equal(eligible(player,{id:"song-b"}),false,
+  "Late queue changes cannot begin a costly scan");
+ audio.currentTime=30;audio.paused=true;
+ assert.equal(eligible(player,{id:"song-b"}),false,
+  "Pause and seeking should never start new DJ analysis");
+ assert.equal(eligible(player,{id:"song-c"}),false,
+  "Unrelated tracks must not be scanned");
+});
