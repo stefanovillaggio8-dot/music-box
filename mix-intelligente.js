@@ -3830,21 +3830,34 @@ function unalignedTransition(a,b,actualDuration){
     clamp(8*60/bpmA,3.65,4.7);
    const tempoRatio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,r)=>Math.abs(Math.log2(r))<Math.abs(Math.log2(best))?r:best);
-   // A loud beat bridge on iPhone is only safe when karaoke or a vocal
-   // classifier has verified that the singing ended before this section.
-   const verifiedInstrumentalEnd=(Number.isFinite(a.lastLyricAt)&&
-     a.lastLyricAt<=end-seconds-2);
+   // A timestamp is only the START of a lyric line. A real indexed
+   // recording also needs proof of a long-enough vocal exit, followed by
+   // the same beat/harmony certification used by the actual player.
+   const entryAt=end-seconds;
+   const verifiedInstrumentalEnd=Boolean(
+    Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=entryAt-6.5||
+    a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+     a.voiceScannedEnd>=end-.75&&
+     (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=entryAt-4));
    const mobileSafe=Boolean(verifiedInstrumentalEnd&&groove?.score>=.80);
-   if(!isIOS||mobileSafe){
-    return {...common,begin:end-seconds,end,fade:seconds,
+   if((a.precomputed!==true||verifiedInstrumentalEnd)&&
+      (!isIOS||mobileSafe)){
+    const proposal={...common,begin:entryAt,end,fade:seconds,
      kind:style==="auto"?"beat":style,
      tempo:clamp(tempoRatio,.97,1.03),
      quietCertified:mobileSafe,strongBeatBridge:true,
-     safeOutroAt:end-seconds,
+     safeOutroAt:entryAt,
      softTailTrim:false,score:Math.round(notes.score*100),
      grooveScore:groove?.score??null,
      beatPeriod:60/bpmA,beatAnchor:a.beatAnchor,
      nextBeat:Number.isFinite(b.introBeat)?b.introBeat-entry:null};
+    // A real MP3 cannot claim to be beatmatched if the real player would
+    // reject its beat window. Synthetic compatibility fixtures retain their
+    // original intentionally unmeasured behavior.
+    if(!(a.precomputed===true&&b.precomputed===true&&
+       typeof desktopBeatPairCertified==="function"&&
+       !desktopBeatPairCertified(a,b,proposal)))
+     return proposal;
    }
   }
   const shortJoin=rhythmicFullTailJoin(a,b,dur);
