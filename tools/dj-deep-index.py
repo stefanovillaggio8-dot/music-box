@@ -74,7 +74,7 @@ def frequency_bass_ratio(samples, start, end):
     if stop-begin<int(.7*SR):return None
     # 3x downsampling preserves the 55-260Hz kick/bass band and keeps
     # full-library analysis bounded even for imported long recordings.
-    x=np.asarray(samples[begin:stop:3],dtype=np.float64)
+    x=np.asarray(samples[begin:stop:3],dtype=np.float64).copy()
     if x.size<2048 or np.sqrt(np.mean(x*x))<.001:return None
     x*=np.hanning(x.size)
     power=np.abs(np.fft.rfft(x))**2
