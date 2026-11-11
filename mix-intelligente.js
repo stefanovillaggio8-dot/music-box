@@ -3067,9 +3067,9 @@ function subduedRhythmicIntro(a,b,dur){
  const melodic=Number.isFinite(n.focused)&&Number.isFinite(n.phrase)&&
   n.focused>=.64&&n.phrase>=.50;
  const drumOnly=Boolean(!melodic&&Number.isFinite(n.focused)&&
-  Number.isFinite(n.phrase)&&n.focused>=.50&&n.phrase>=.35&&
-  g?.score>=.70&&g.correlation>=.40&&
-  (key.weight<.14||key.score>=.52));
+  Number.isFinite(n.phrase)&&n.focused>=.43&&n.phrase>=.29&&
+  g?.score>=.66&&g.correlation>=.33&&
+  (key.weight<.14||key.score>=.48));
  if(!g||g.score<.65||g.correlation<.30||
     (!melodic&&!drumOnly)||
     (a.protectedEnding===true&&!drumOnly&&n.focused<.72)||
@@ -3099,7 +3099,7 @@ function subduedRhythmicIntro(a,b,dur){
  return {kind:"underlay",subduedRhythmicUnderlay:true,preserveTail:true,
    drumOnlyUnderlay:drumOnly,
    begin,end,fade,entry,tempo:Math.max(.975,Math.min(1.025,ratio)),
-   gain:1,underlayVolume:drumOnly?.15:Math.max(.20,Math.min(.35,
+   gain:1,underlayVolume:drumOnly?.12:Math.max(.20,Math.min(.35,
     .20+(g.score-.65)*.6+(n.focused-.64)*.3)),
    beatPeriod:period,beatAnchor,nextBeat,
    score:Math.round((g.score*.42+n.focused*.36+n.phrase*.22)*100),
