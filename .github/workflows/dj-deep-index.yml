@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'tools/dj-deep-index.py'
+      - 'tools/dj_beat_phrases.py'
+      - 'tools/test-dj-beat-phrases.py'
       - 'tools/dj-deep-reconcile.py'
       - 'tools/test-dj-deep-index.py'
       - '.github/workflows/dj-deep-index.yml'
@@ -35,6 +37,7 @@ jobs:
         run: |
           python -m py_compile tools/dj-deep-index.py
           python tools/test-dj-deep-index.py
+          python tools/test-dj-beat-phrases.py
       - name: Analyze real audio in bounded batches
         env:
           GITHUB_TOKEN: ${{ github.token }}
