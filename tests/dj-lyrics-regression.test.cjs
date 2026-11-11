@@ -982,7 +982,19 @@ test("DJ harmonic section entry earns stronger bass only with independently alig
    measuredBeatTimes:alignedWindow.measuredBeatTimes.map(t=>t+.2)}]},
   {...incoming,beatGrid:{reliable:true},
    introBeatTimes:Array.from({length:8},(_,i)=>i*.5)},200);
- assert.equal(misaligned,null,"Strong bass cannot play with a measured offbeat grid");
+ // A CONSTANT 200 ms phase offset is correctable by scheduling the
+ // upcoming song at a different moment; it is not an offbeat result.
+ assert.ok(misaligned?.measuredBeatPlacement===true);
+ assert.ok(misaligned.beatPulseAgreement>=.85);
+ assert.ok(Math.abs(misaligned.begin-matched.begin)>.12,
+  "the mixer must ACTUALLY shift the start to the measured new phase");
+ const drifting=choose({...outgoing,beatGrid:{reliable:true},
+  outroOnsetWindows:[{...alignedWindow,
+   measuredBeatTimes:alignedWindow.measuredBeatTimes.map((t,i)=>t+i*i*.17)}]},
+  {...incoming,beatGrid:{reliable:true},
+   introBeatTimes:Array.from({length:8},(_,i)=>i*.5)},200);
+ assert.equal(drifting,null,
+  "irregular drifting beats must not be presented as phase-matched bass");
 });
 
 test("iPhone karaoke may inspect several different passages on later requests without unbounded decoding",async()=>{
