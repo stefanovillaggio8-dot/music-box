@@ -32,4 +32,11 @@ jobs:
           python -m py_compile tools/dj-audio-spotcheck.py
       - name: Download and independently decode sampled actual published MP3s
         run: |
-          python tools/dj-audio-spotcheck.py --pairs /tmp/musicbox-dj-audio-pairs.json
+          python tools/dj-audio-spotcheck.py --pairs /tmp/musicbox-dj-audio-pairs.json --preview-dir "${{ runner.temp }}/dj-auditions"
+      - name: Retain short real-audio audition snippets for manual review
+        uses: actions/upload-artifact@v4
+        with:
+          name: dj-v19-real-audio-auditions
+          path: "${{ runner.temp }}/dj-auditions"
+          if-no-files-found: warn
+          retention-days: 1
