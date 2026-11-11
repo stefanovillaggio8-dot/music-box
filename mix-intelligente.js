@@ -838,7 +838,7 @@ function mayScanDesktopVoice(app,track){
        queued=app?.mixNext?.()?.id===track?.id;
  if(!track?.id||(!current&&!queued)||!audio||audio.paused||
     audio.seeking||!Number.isFinite(audio.duration)||mixing||active||
-    window.MusicBoxRoom?.isActive())return false;
+    (typeof window!=="undefined"&&window.MusicBoxRoom?.isActive()))return false;
  const remaining=audio.duration-audio.currentTime;
  if(!Number.isFinite(remaining)||remaining<(queued?85:75))return false;
  if(current)return true;
