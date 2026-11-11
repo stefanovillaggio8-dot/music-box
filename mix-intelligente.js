@@ -2396,6 +2396,11 @@ function earlyMatchedBar(a,b,dur){
   // When two independently accentuated bars disagree, don't force a
   // long crossfade merely because their individual kicks line up.
   if(barAccents?.reliable&&barAccents.score<.62)continue;
+  const bar=typeof djBarAgreement==="function"?
+    djBarAgreement(a,b,begin,entry,speed):null;
+  // Unlike a simple bass underlay, full-band simultaneous beats MUST
+  // agree on a confidently measured bar start when both files have one.
+  if(bar?.measured&&!bar.aligned)continue;
   const score=Math.round(100*(notes.focused*.32+
     notes.phrase*.18+drums.score*.24+matchedRhythm.score*.26));
   const cue={kind:"beat",begin,end,fade,entry,
@@ -2404,6 +2409,7 @@ function earlyMatchedBar(a,b,dur){
    earlyOnsetAgreement:matchedRhythm.score,
    barAccentScore:barAccents?.reliable?barAccents.score:null,
    barAccentBeats:barAccents?.beats||0,
+   barGridAligned:bar?.aligned===true,barPhaseError:bar?.error??null,
    phraseAlignmentScore:notes.alignment?.score??null,
    rhythmicGridJoin:true,earlyBeatJoin:true,measuredBeatBridge:true,
    earlyWindowStart:win.start,earlyWindowEnd:win.end,
