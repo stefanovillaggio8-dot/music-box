@@ -55,6 +55,7 @@ const CORE = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
+  "./dj-vocal-stem-runtime.js?v=6719&stem=1",
   "./mix-intelligente.js?v=6719&dj=21", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
@@ -74,6 +75,7 @@ const CORE = [
   "./silenzio.mp3",
   "./covers.json",
   "./covers-spotify.json",
+  "./dj-vocal-stems.json",
   "./karaoke-index.json",
   "./online-imports.json",
   "./icon-192.png",
@@ -94,6 +96,7 @@ const OFFLINE_SHELL = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
+  "./dj-vocal-stem-runtime.js?v=6719&stem=1",
   "./mix-intelligente.js?v=6719&dj=21",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6715&words=2"
