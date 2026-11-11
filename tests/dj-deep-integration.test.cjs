@@ -43,6 +43,26 @@ test("v6 and v8 real waveform indexes remain usable by Smart Mix",()=>{
  assert.equal(get({file:"songs/track-23.mp3"}),null,
   "unknown future analyzer needs explicit schema review");
 });
+test("same MP3 filename in different repos never borrows unrelated waveform",()=>{
+ const first={...features,sha:"a".repeat(40),bpm:90};
+ const second={...features,sha:"b".repeat(40),bpm:134};
+ const third={...features,sha:"c".repeat(40),bpm:172};
+ const get=lookup({
+  "audio/songs/shared.mp3":first,
+  "mobile/songs/shared.mp3":second,
+  "app/songs/shared.mp3":third
+ });
+ assert.equal(get({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/shared.mp3"})?.sha,first.sha);
+ assert.equal(get({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/mobile-audio/songs/shared.mp3"})?.sha,second.sha);
+ assert.equal(get({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/songs/shared.mp3"})?.sha,third.sha);
+ const missing=lookup({"audio/songs/shared.mp3":first});
+ assert.equal(missing({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/mobile-audio/songs/shared.mp3"}),null,
+  "known mobile source must not use a different main-audio recording");
+});
 test("index analyzed asynchronously, unindexed songs retain local analysis",()=>{
  assert.ok(text.includes('fetch("dj-deep-analysis.json"'));
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
