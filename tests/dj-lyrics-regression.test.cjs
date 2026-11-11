@@ -873,7 +873,8 @@ test("continuity fallback never cuts a late vocal or claims a beatmatched overla
  const to=dj.indexOf("function subduedRhythmicIntro(",from);
  assert.ok(from>0&&to>from);
  const policy=new Function("const hasImmediateMusicalIntro=()=>true,"+
-  "onsetPeriodicity=()=>.65,musicalIntroEntry=()=>0;"+
+  "onsetPeriodicity=()=>.65,musicalIntroEntry=()=>0,"+
+  "adaptiveUnderlayLevel=()=>.08;"+
   dj.slice(from,to)+";return adaptiveLowBandContinuity;")();
  const outgoing={duration:200,last:199,protectedEnding:true};
  const next={introDrive:.80,bpm:120,beatConfidence:.82,
@@ -903,4 +904,43 @@ test("continuity fallback never cuts a late vocal or claims a beatmatched overla
  assert.match(dj,/if\(!p\|\|p\.neutralAmbientUnderlay===true\)return 0/);
  assert.match(dj,/if\(cue\.neutralAmbientUnderlay===true\)/);
  assert.match(dj,/if\(plan\?\.neutralAmbientUnderlay===true\)/);
+});
+
+
+test("measured beat-pulse alignment rejects drifting decoders and validates repeated kicks",()=>{
+ const a=dj.indexOf("function measuredPulseAlignment(");
+ const b=dj.indexOf("function measuredWindowRhythmUnderlay(",a);
+ assert.ok(a>=0&&b>a);
+ const check=new Function(dj.slice(a,b)+";return measuredPulseAlignment;")();
+ const hits=[10,10.5,11,11.5,12,12.5,13,13.5];
+ const intro=[0,.5,1,1.5,2,2.5,3];
+ const good=check(hits,intro,10,0,1);
+ assert.ok(good&&good.ratio>=.9&&good.rms<.01);
+ const late=check(hits,intro.map(x=>x+.22),10,0,1);
+ assert.ok(late&&late.ratio<.30);
+ assert.equal(check([],intro,10,0,1),null);
+});
+test("verified audio alignment activates the lyric row at first spoken syllable",()=>{
+ const alignScript=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const api=new Function("const window={};"+alignScript+
+  ";return window.MusicBoxAudioAlign;")();
+ const line="Feel the rhythm tonight";
+ const chunks=line.split(" ").map((text,i)=>({
+   text,timestamp:[10.7+i*.35,10.9+i*.35]
+ }));
+ const rows=api.alignWindow([{t:10,text:line},{t:14,text:"Other phrase"}],chunks,0,28);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].t,10.7);
+ assert.equal(rows[0].words[0].t,10.7);
+ assert.equal(rows[0].alignedFromAudio,true);
+ const wordScript=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
+ const words=new Function("const window={};"+wordScript+
+  ";return window.MusicBoxWordKaraoke;")();
+ const normalized=words.normalizeRows([
+  {t:10,text:line,words:chunks.map((x,i)=>({
+   text:i===3?"tonight":x.text+" ",t:x.timestamp[0]
+  })).map((w,i,arr)=>i===arr.length-1?w:{...w})}
+ ]);
+ assert.equal(normalized.length,1);
+ assert.equal(normalized[0].t,10.7);
 });
