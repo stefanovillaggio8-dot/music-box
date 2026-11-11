@@ -679,7 +679,7 @@ function saveDspScope(){
   bass:dspBass,mid:dspMid,treble:dspTreble
  }))}catch(_){}
 }
-function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,startDelay=0,softReveal=false){
+function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,startDelay=0,softReveal=false,drumOnly=false){
  let tail=source;const nodes=[];
  const add=(type,freq,db=0)=>{
   const node=ctx.createBiquadFilter();
@@ -693,6 +693,17 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
    if(Math.abs(dspBass)>.05)add("lowshelf",155,dspBass);
    if(Math.abs(dspMid)>.05)add("peaking",1100,dspMid);
    if(Math.abs(dspTreble)>.05)add("highshelf",4700,dspTreble);
+   if(drumOnly){
+    // Weak harmonic compatibility is never permission for a full-band
+    // overlay. Let only the real incoming kick/bass enter under the
+    // outgoing song; reveal vocals and harmonies at the actual handoff.
+    const filter=add("lowpass",260);
+    const t=ctx.currentTime+Math.max(0,Number(startDelay)||0);
+    filter.frequency.setValueAtTime(260,t);
+    filter.frequency.setValueAtTime(260,t+Math.max(.16,seconds*.76));
+    filter.frequency.exponentialRampToValueAtTime(18000,
+     t+Math.max(.28,seconds-.04));
+   }
    const effect=dspMode==="auto"?(beatMatched?"highpass":softReveal?"lowpass":"off"):dspMode;
    if(effect!=="off"&&dspStrength>0){
     const filter=add(effect,400),
@@ -2917,6 +2928,7 @@ function musicallyCompatibleOverlay(a,b,cue){
  if(cue.subduedRhythmicUnderlay===true){
   const p=subduedRhythmicIntro(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&
+   p.drumOnlyUnderlay===cue.drumOnlyUnderlay&&
    Math.abs(p.begin-cue.begin)<.085&&Math.abs(p.entry-cue.entry)<.085;
  }
  if(cue.kind==="cut"||cue.fade===0)return true;
@@ -3052,11 +3064,18 @@ function subduedRhythmicIntro(a,b,dur){
     onsetPeriodicity(a.outroOnset,a.bpm)<.12||
     onsetPeriodicity(b.introOnset,b.bpm)<.12)return null;
  const g=grooveAgreement(a,b),n=similarNotes(a,b),key=camelotMatch(a,b);
+ const melodic=Number.isFinite(n.focused)&&Number.isFinite(n.phrase)&&
+  n.focused>=.64&&n.phrase>=.50;
+ const drumOnly=Boolean(!melodic&&Number.isFinite(n.focused)&&
+  Number.isFinite(n.phrase)&&n.focused>=.43&&n.phrase>=.29&&
+  g?.score>=.66&&g.correlation>=.33&&
+  (key.weight<.14||key.score>=.48));
  if(!g||g.score<.65||g.correlation<.30||
-    n.focused<.64||n.phrase<.50||
-    (a.protectedEnding===true&&n.focused<.72)||
+    (!melodic&&!drumOnly)||
+    (a.protectedEnding===true&&!drumOnly&&n.focused<.72)||
     (key.weight>=.10&&key.score<.42)||
-    (Number(n.alignment?.score)>0&&Number(n.alignment?.weakest)<.42))
+    (!drumOnly&&Number(n.alignment?.score)>0&&
+      Number(n.alignment?.weakest)<.42))
   return null;
  const entry=musicalIntroEntry(b);
  if((Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt-entry<2.6)||
@@ -3078,8 +3097,9 @@ function subduedRhythmicIntro(a,b,dur){
  if(!Number.isFinite(begin)||begin<28||begin<a.last-4.15||
     begin>a.last-2.20||fade<2.25||fade>11.8)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,preserveTail:true,
+   drumOnlyUnderlay:drumOnly,
    begin,end,fade,entry,tempo:Math.max(.975,Math.min(1.025,ratio)),
-   gain:1,underlayVolume:Math.max(.20,Math.min(.35,
+   gain:1,underlayVolume:drumOnly?.12:Math.max(.20,Math.min(.35,
     .20+(g.score-.65)*.6+(n.focused-.64)*.3)),
    beatPeriod:period,beatAnchor,nextBeat,
    score:Math.round((g.score*.42+n.focused*.36+n.phrase*.22)*100),
@@ -3623,9 +3643,9 @@ function releaseDesktopDsp(audio){
 // MediaElementAudioSource redirects the element permanently into WebAudio.
 // Reuse the EXISTING running Music Box context, never create a new one.
 // Keep it connected after adoption, disconnect only after song replacement.
-function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null,softReveal=false){
+function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null,softReveal=false,drumOnly=false){
  if(isIOS||preview?.crossOrigin!=="anonymous"||
-    (dspMode==="off"&&Math.abs(dspBass)+Math.abs(dspMid)+Math.abs(dspTreble)<.05))
+    (dspMode==="off"&&!drumOnly&&Math.abs(dspBass)+Math.abs(dspMid)+Math.abs(dspTreble)<.05))
     return null;
  const ctx=bridge()?.mixRunningContext?.();
  if(!ctx||ctx.state!=="running"||
@@ -3636,7 +3656,8 @@ function attachDesktopDsp(preview,seconds,beatMatched,revealPoint=null,softRevea
  try{
   source=ctx.createMediaElementSource(preview);
   out=ctx.createGain();out.gain.value=1;
-  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched,revealPoint,0,softReveal);
+  const nodes=connectMixDsp(ctx,source,out,seconds,beatMatched,revealPoint,0,softReveal,drumOnly);
+  if(drumOnly&&!nodes.length)throw Error("Low-pass safety filter unavailable");
   out.connect(ctx.destination);
   const graph={audio:preview,source,out,nodes};
   desktopDspGraphs.set(preview,graph);
@@ -3786,7 +3807,9 @@ function startMobileMix(song,p,app,old){
   const softReveal=djSoftRevealReady(p,Math.min(p.fade,secondsLeft-delay));
   dspNodes=connectMixDsp(ctx,source,gain,
     Math.max(.4,Math.min(p.fade,secondsLeft-delay)),
-    !!p.measuredBeatBridge,djRevealAt,delay,softReveal);
+    !!p.measuredBeatBridge,djRevealAt,delay,softReveal,!!p.drumOnlyUnderlay);
+  if(p.drumOnlyUnderlay&&!dspNodes.length)
+   throw Error("Low-pass filter unavailable for protected drum entrance");
   const ramp=Number.isFinite(djRevealAt)?
    Math.max(.9,Math.min(p.fade,secondsLeft-delay-.14)):
    p.vocalBeatUnderlay?
@@ -4477,6 +4500,7 @@ async function beginMix(song,proposed){
  const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
    subduedRhythmicUnderlay:!!proposed.subduedRhythmicUnderlay,
+   drumOnlyUnderlay:!!proposed.drumOnlyUnderlay,
    postMusicalTailUnderlay:!!proposed.postMusicalTailUnderlay,
    underlayVolume:proposed.underlayVolume||.24,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
@@ -4519,7 +4543,8 @@ async function beginMix(song,proposed){
   // MP3 clocks BEFORE lifting the muted preview into the mix.
   const livePhaseError=djBeatPhaseError(
     proposed,old.currentTime,upcoming.currentTime);
-  if(proposed.measuredBeatBridge===true&&
+  if((proposed.measuredBeatBridge===true||
+      proposed.subduedRhythmicUnderlay===true)&&
      Number.isFinite(livePhaseError)&&
      livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
    console.info("[Music Box DJ] Beat allineato in teoria ma decoder fuori fase",
@@ -4536,7 +4561,8 @@ async function beginMix(song,proposed){
   act.dsp=attachDesktopDsp(upcoming,act.fade,
     ["beat","phrase","snap"].includes(proposed.kind)&&
     (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
-    djSoftRevealReady(proposed,act.fade));
+    djSoftRevealReady(proposed,act.fade),!!proposed.drumOnlyUnderlay);
+  if(proposed.drumOnlyUnderlay&&!act.dsp){cancel();plan=null;return}
   // Emitted only AFTER the second audio has actually started.
   try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
    device:"pc",fromId:id,toId:song.id,kind:proposed.kind,

@@ -740,3 +740,46 @@ test("Whisper exact four-word timing repairs LRC verses leading the audio",()=>{
  assert.equal(rejected.length,0,
   "Loose offset should not accept short, repeatedly sung lines");
 });
+
+
+test("strong recorded drums can enter early as bass-only without blending weak chords",()=>{
+ const from=dj.indexOf("function subduedRhythmicIntro(");
+ const to=dj.indexOf("function desktopMeasuredReleaseLeadIn(",from);
+ const fn=new Function("const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  "const onsetPeriodicity=()=>.6,hasImmediateMusicalIntro=()=>true,"+
+  "grooveAgreement=()=>({score:.84,correlation:.70}),"+
+  "similarNotes=()=>({focused:.58,phrase:.46}),"+
+  "camelotMatch=()=>({weight:.12,score:.75}),"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1;"+
+  dj.slice(from,to)+";return subduedRhythmicIntro;")();
+ const a={duration:200,last:199,bpm:120,beatConfidence:.8,
+  outroOnset:Array(96).fill(1),introOnset:Array(96).fill(1),
+  introDrive:.8};
+ const cue=fn(a,{...a},200);
+ assert.equal(cue.kind,"underlay");
+ assert.equal(cue.drumOnlyUnderlay,true);
+ assert.ok(cue.underlayVolume<=.16&&cue.preserveTail);
+ assert.ok(cue.begin<a.last-2.5);
+});
+test("low-harmony DJ previews require a real low-pass filter before playback",()=>{
+ const from=dj.indexOf("function connectMixDsp(");
+ const to=dj.indexOf("// Confident musical joins",from);
+ const make=new Function("const dspBass=0,dspMid=0,dspTreble=0,"+
+   "dspMode='auto',dspStrength=55;"+dj.slice(from,to)+
+   ";return connectMixDsp;")();
+ const filters=[],events=[];
+ const frequency=()=>({value:0,setValueAtTime:(v,t)=>events.push(["set",v,t]),
+  exponentialRampToValueAtTime:(v,t)=>events.push(["ramp",v,t])});
+ const ctx={currentTime:0,createBiquadFilter:()=>{
+  const node={type:"",frequency:frequency(),gain:{value:0},
+   Q:{value:0},connect:()=>{}};
+  filters.push(node);return node;
+ }};
+ const source={connect:()=>{}},gain={};
+ const nodes=make(ctx,source,gain,4,false,null,0,false,true);
+ assert.ok(nodes.length>0);
+ assert.ok(filters.some(f=>f.type==="lowpass"));
+ assert.ok(events.some(e=>e[0]==="set"&&e[1]===260));
+ assert.ok(events.some(e=>e[0]==="ramp"&&e[1]===18000));
+ assert.match(dj,/if\(proposed\.drumOnlyUnderlay&&!act\.dsp\)\{cancel\(\);plan=null;return\}/);
+});
