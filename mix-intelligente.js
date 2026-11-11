@@ -3063,6 +3063,18 @@ function synchronizeBeatCue(a,b,cue){
 // percussion bed can start 5-9s before the final audible sound, even when
 // full-band harmony/voice overlap has NOT been proved. Do not duck or
 // seek over the outgoing vocal. Never call this a certified beatmatch.
+// A 2:1 or 1:2 BPM relationship can be a real double/half-time groove.
+// Compare actual audio pulses at each track's own tempo, and align on
+// the slower common beat; never apply a 2x playback-rate stretch.
+function measuredTempoRelation(a,b){
+ const x=Number(a?.bpm),y=Number(b?.bpm);
+ if(!(x>=55&&x<=210&&y>=55&&y<=210))return null;
+ const chosen=[.5,1,2].map(scale=>({scale,ratio:x/(y*scale)}))
+  .sort((p,q)=>Math.abs(Math.log2(p.ratio))-
+   Math.abs(Math.log2(q.ratio)))[0];
+ if(!chosen||chosen.ratio<.975||chosen.ratio>1.025)return null;
+ return {...chosen,period:Math.max(60/x,60/y)};
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3073,8 +3085,9 @@ function measuredWindowRhythmUnderlay(a,b,dur){
     !Array.isArray(a.outroOnsetWindows)||
     !Array.isArray(b.introOnset)||b.introOnset.length!==96||
     !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.43)return null;
- const ratio=a.bpm/b.bpm;
- if(ratio<.975||ratio>1.025)return null;
+ const cadence=measuredTempoRelation(a,b);
+ if(!cadence)return null;
+ const ratio=cadence.ratio;
  const introPeriod=onsetPeriodicity(b.introOnset,b.bpm);
  const incoming=independentPulseTrain(b.introOnset,b.bpm);
  // Strong independent beat proof is ideal. A merely PERIODIC real PCM
@@ -3087,13 +3100,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
  if(firstVoice-entry<2.6)return null;
- const period=60/a.bpm,nextPhase=onsetGridPhase(b.introOnset,b.bpm);
+ const period=cadence.period,
+  nextPhase=onsetGridPhase(b.introOnset,b.bpm);
  const key=camelotMatch(a,b);
+ // The low-pass preview needs real bass energy when measured. This
+ // cannot certify an instrumental intro or the absence of vocals.
+ if(Number.isFinite(b.introBassRatio)&&b.introBassRatio<.085)return null;
  let best=null;
  for(const win of a.outroOnsetWindows){
   if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
      Math.abs(win.end-win.start-4)>.13||
-     win.start<a.last-12.5||win.end>a.last-1.6||
+     win.start<a.last-15.2||win.end>a.last-1.6||
      Number(win.levelRatio)<.28||
      !Array.isArray(win.onset)||win.onset.length!==96||
      !Array.isArray(win.groove)||win.groove.length!==32)continue;
@@ -3113,7 +3130,11 @@ function measuredWindowRhythmUnderlay(a,b,dur){
      (key.weight>=.14&&key.score<.47))continue;
   const beatAnchor=win.start+
    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
-  const desired=Math.max(win.start+.55,a.last-8.5);
+  // A phrase boundary several bars from the end should get its OWN
+  // measured cue, not a fictional beat extrapolated from the last four
+  // seconds. Every selected begin stays inside its measured window.
+  const desired=Math.max(win.start+.55,
+   Math.min(a.last-7.6,win.end-1.55));
   const begin=beatAnchor+
    Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
   const end=dur-.035,fade=end-begin;
@@ -3121,19 +3142,40 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   // rather than extrapolating an inferred rhythm over the whole track.
   if(!Number.isFinite(begin)||begin<28||
      begin<win.start+.25||begin>win.end-1.10||
-     begin>a.last-4.65||begin<a.last-9.25||
-     fade<4.5||fade>12.4)continue;
-  const quality=Math.min(1,pulse?.score??windowPeriod)*.27+
-   Math.min(1,incoming?.score??introPeriod)*.27+
-   g.score*.23+notes.focused*.15+notes.phrase*.08;
+     begin>a.last-4.65||begin<a.last-11.9||
+     fade<4.5||fade>11.8)continue;
+  const shape=Number(win.energyTrend);
+  const phraseEvent=Array.isArray(a.structureEvents)?
+   a.structureEvents.find(e=>Number.isFinite(e?.at)&&
+    Math.abs(e.at-begin)<=1.25&&
+    (e.direction==="rising"||e.direction==="falling")):null;
+  // Rising or falling musical sections are better deliberate entrances
+  // than arbitrary PCM windows. These are amplitude transitions, NEVER
+  // labeled as chorus/drop/vocal absence without independent evidence.
+  const structureBonus=phraseEvent?.direction==="rising"?.085:
+   phraseEvent?.direction==="falling"?.05:
+   Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
+  const quality=Math.min(1,pulse?.score??windowPeriod)*.25+
+   Math.min(1,incoming?.score??introPeriod)*.24+
+   g.score*.21+notes.focused*.13+notes.phrase*.07+
+   structureBonus+
+   Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
+   (cadence.scale!==1?.045:0);
   if(!best||quality>best.quality)best={quality,begin,end,fade,
-   beatAnchor,nextBeat:nextPhase,grooveScore:g.score};
+   beatAnchor,nextBeat:nextPhase,grooveScore:g.score,
+   structuralShift:phraseEvent?.direction||null,
+   structuralMatch:!!phraseEvent,structureScore:structureBonus};
  }
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+  structuralMatch:best.structuralMatch,
+  structuralShift:best.structuralShift,structureScore:best.structureScore,
+  tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
-  tempo:clamp(ratio,.975,1.025),gain:1,underlayVolume:.105,
+  tempo:clamp(ratio,.975,1.025),gain:1,
+  underlayVolume:Number.isFinite(b.introBassRatio)&&
+    b.introBassRatio>=.26?.135:.105,
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
@@ -5855,8 +5897,10 @@ async function intelligentShuffle(app,audio,fromId){
    // This measured early intro is NOT a certified beatmatch.
    if(mobilePlayable&&cue?.subduedRhythmicUnderlay===true){
     candidateAudit.subduedUnderlays++;
-    underlayScored.push({track,cue,score:1+(cue.score||0)/100*.55+
-     (cue.grooveScore||0)*.26});
+    underlayScored.push({track,cue,score:1+(cue.score||0)/100*.53+
+     (cue.grooveScore||0)*.23+
+     clamp((old.last-cue.begin-4)/10,0,1)*.10+
+     (cue.structuralMatch?.07:0)});
     continue;
    }
    // A finished low-energy postlude can also introduce a new song BEFORE
