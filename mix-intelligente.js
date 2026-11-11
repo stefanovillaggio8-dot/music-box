@@ -4813,11 +4813,14 @@ async function beginMix(song,proposed){
   if(proposed.voiceConfirmedUnderlay&&proposed.vocalBeatUnderlay)
    act.stem=await window.MusicBoxVocalStems?.activate?.(id,proposed,old)||null;
   if(active!==act||old.paused||app.currentId()!==id){cancel();return}
+  if(act.stem)console.info("[Music Box DJ] Voce isolata reale sopra la nuova base",
+   {from:id,to:song.id,source:"demucs-htdemucs",
+    vocalStartsAt:old.currentTime,until:act.vocalEndAt});
   // Emitted only AFTER the second audio has actually started.
   try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
    device:"pc",fromId:id,toId:song.id,kind:proposed.kind,
    actualAt:old.currentTime,cueAt:proposed.begin,
-   entry:proposed.entry,fade:act.fade
+   entry:proposed.entry,fade:act.fade,vocalOnlyStem:!!act.stem
   }}))}catch(_){}
   console.info("[Music Box DJ] Sovrapposizione audio avviata",
    {outgoing:id,incoming:song.id,kind:proposed.kind,
