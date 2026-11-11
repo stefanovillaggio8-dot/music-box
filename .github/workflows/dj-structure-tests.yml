@@ -3,12 +3,16 @@ on:
   pull_request:
     paths:
       - 'tools/dj-deep-index.py'
+      - 'tools/dj_beat_phrases.py'
+      - 'tools/test-dj-beat-phrases.py'
       - 'tools/test-dj-deep-index.py'
       - '.github/workflows/dj-structure-tests.yml'
   push:
     branches: [main]
     paths:
       - 'tools/dj-deep-index.py'
+      - 'tools/dj_beat_phrases.py'
+      - 'tools/test-dj-beat-phrases.py'
       - 'tools/test-dj-deep-index.py'
       - '.github/workflows/dj-structure-tests.yml'
 permissions:
@@ -28,3 +32,4 @@ jobs:
         run: |
           python -m py_compile tools/dj-deep-index.py
           python tools/test-dj-deep-index.py
+          python tools/test-dj-beat-phrases.py
