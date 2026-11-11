@@ -722,3 +722,22 @@ test("diagnose rare actual waveform beat proposals before changing musical safet
  console.info("[DJ REAL NEAR-BEAT DIAGNOSTICS]",JSON.stringify(detail));
  assert.ok(detail.some(x=>x.plan?.kind==="snap"),"retain a real measured snap example");
 });
+
+test("independent drum-grid fallback rejects shifted/offbeat and flat recordings",()=>{
+ const onset=extract("function onsetGridPhase(","function rhythmicGridEvidence(");
+ const fallback=extract("function alignedIndependentPulseAgreement(","function djMeasuredBarAccents(");
+ const run=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));\n"+
+   onset+fallback+"\nreturn alignedIndependentPulseAgreement;")();
+ const pulse=(phase)=>Array.from({length:96},(_,i)=>{
+  const at=(i-phase)/12;
+  return Math.abs(at-Math.round(at))<.06?2.2:-.30+.02*Math.sin(i);
+ });
+ const aligned=run(pulse(7),pulse(7),120,0);
+ assert.ok(aligned?.score>=.8,"Matching measured independent beat trains should be retained");
+ assert.equal(run(pulse(7),pulse(13),120,0),null,
+   "An eighth-note shift is NOT the same downbeat");
+ assert.equal(run(pulse(7),Array(96).fill(1),120,0),null,
+   "Steady amplitude cannot forge rhythmic proof");
+ assert.equal(run(pulse(7),pulse(7),120,1.5),null,
+   "No extrapolation beyond the decoded outgoing window");
+});
