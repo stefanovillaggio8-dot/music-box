@@ -721,6 +721,20 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
       effect==="highpass"?35:18000,t+Math.max(.25,Math.min(10,seconds)));
    }
   }
+  // Real-time compressors are optional on old browser implementations.
+  // Keep the initial high-pass as the beat reveal (and legacy WebKit
+  // contract). When peak containment is available, add only a small
+  // low-end emphasis AFTER the filter sweep.
+  if(typeof ctx.createDynamicsCompressor==="function"&&
+     (beatMatched||dspBass>0||dspMid>0||dspTreble>0)){
+   if(beatMatched&&dspMode==="auto"&&Math.abs(dspBass)<.05)
+    add("lowshelf",95,2.0);
+   const limiter=ctx.createDynamicsCompressor();
+   limiter.threshold.value=-5;limiter.knee.value=5;
+   limiter.ratio.value=4;limiter.attack.value=.004;
+   limiter.release.value=.16;
+   tail.connect(limiter);tail=limiter;nodes.push(limiter);
+  }
   tail.connect(gain);return nodes;
  }catch(_){
   try{source.disconnect()}catch(e){}
@@ -4037,7 +4051,7 @@ function prepare(song,fromId,app){
    (!p.naturalEntry||Math.abs(upcoming.currentTime-p.naturalEntry)<=.55);
  };
  const preseek=()=>{
-  if(prepared!==p||p.seekReady||p.seekIssued||upcoming.readyState<1)return;
+  if(prepared!==p||p.seekReady||p.seekIssued||upcoming.seeking||upcoming.readyState<1)return;
   p.seekIssued=true;
   try{
    upcoming.currentTime=p.naturalEntry;
@@ -4063,6 +4077,7 @@ function prepare(song,fromId,app){
   if(prepared!==p)return;
   p.seekReady=!!p.seekIssued&&
    Math.abs(upcoming.currentTime-p.naturalEntry)<=.35;
+  if(!p.seekReady){p.seekIssued=false;preseek();return}
   markReady();
  });
  upcoming.addEventListener("canplay",()=>{preseek();markReady()});
@@ -4257,8 +4272,10 @@ function measuredReleasePreviewGain(now,begin,last,end){
     !(begin<last&&last<end))return 0;
  const before=clamp((now-begin)/Math.max(.35,last-begin),0,1);
  const after=clamp((now-last)/Math.max(.5,end-last),0,1);
- return now<last ? .23*Math.sin(before*Math.PI/2) :
-  .23+.77*Math.sin(after*Math.PI/2);
+ // Preserve the tested -12.8 dB cap while the old measured release
+ // still sounds. The gentler curve is audible sooner, never louder.
+ const preview=.23*Math.sin(Math.pow(before,.55)*Math.PI/2);
+ return now<last?preview:.23+.77*Math.sin(after*Math.PI/2);
 }
 function mixCurve(kind,t,softTail=false){
  const time=clamp(t,0,1);
@@ -4317,6 +4334,20 @@ function matchedTempoRate(tempo,progress){
  const reset=clamp((clamp(progress,0,1)-.72)/.28,0,1);
  const smooth=reset*reset*(3-2*reset);
  return 1+(measured-1)*(1-smooth);
+}
+// The crossfade follows the OUTGOING MP3 CLOCK, not performance.now().
+// If either decoder stalls or the user seeks, abandon the optional overlay
+// and keep the original player intact instead of completing an off-beat fade.
+function djAudioClockProgress(oldNow,oldStart,newNow,newStart,tempo,duration){
+ if(![oldNow,oldStart,newNow,newStart,duration].every(Number.isFinite)||
+    duration<=0)return null;
+ const rate=Number(tempo);
+ if(!Number.isFinite(rate)||rate<.94||rate>1.06)return null;
+ const oldElapsed=oldNow-oldStart;
+ const newElapsed=(newNow-newStart)/rate;
+ if(oldElapsed<-.08||newElapsed<-.08||
+    Math.abs(oldElapsed-newElapsed)>.72)return null;
+ return clamp(oldElapsed/duration,0,1);
 }
 function desktopBeatStartDelay(p,at){
  if(!p)return 0;
@@ -4440,12 +4471,24 @@ async function beginMix(song,proposed){
     continuityFallback:!!proposed.continuityFallback});
   if(old.paused){cancel();return}
   act.at=performance.now();
+  act.oldAudioAt=old.currentTime;
+  act.newAudioAt=upcoming.currentTime;
   function fadeStep(){
    if(active!==act)return;
    if(old.paused||app.audio()!==old||app.currentId()!==id||
       app.mixNext?.()?.id!==song.id||
       window.MusicBoxRoom?.isActive()){cancel();return}
-   const time=clamp((performance.now()-act.at)/(act.fade*1000),0,1);
+   // Never advance a crossfade while the actual MP3 is buffering. A
+   // wall-clock ramp could otherwise finish and swap songs during a stall.
+   const time=old.seeking||upcoming.seeking||old.readyState<2||
+     upcoming.readyState<2?null:djAudioClockProgress(
+      old.currentTime,act.oldAudioAt,upcoming.currentTime,
+      act.newAudioAt,act.tempo,act.fade);
+   if(time===null){
+    console.info("[Music Box DJ] Lettore rallentato o fuori sincrono: preservo il brano originale");
+    mixFailures.set(id+"|"+song.id,Date.now()+12000);
+    cancel();plan=null;return;
+   }
    const vol=app.volume();
    // Dedicated curve: the first track stays audible until its last
    // fraction, and the second song enters quietly beneath matching notes.
@@ -4790,7 +4833,11 @@ function tick(){
  // Stop BEFORE mixNext/shuffle analysis, index scans or AudioContext work.
  // Waiting a bounded 1.6s after a seek is preferable to stalling the MP3.
  if(audio&&(audio.seeking||Date.now()<seekRecoveryUntil||
-    (audio.readyState<2&&!audio.paused)))return;
+    (audio.readyState<2&&!audio.paused))){
+  // Range seeks have priority over optional Safari preview decoding.
+  if(isIOS&&mobileActive&&!mobileActive.handingOff)stopMobileMix();
+  return;
+ }
  const next=app?.mixNext();
  if(id&&naturalEndHandoff.inFlight===id)return;
  // Timeupdate fires much faster than planning needs; never throttle cues
@@ -6170,7 +6217,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.718",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.719",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

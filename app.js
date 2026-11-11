@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.718";
+  const APP_VERSION = "6.719";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -13840,7 +13840,17 @@ $("btnModalitaGym").addEventListener("click", () => {
     if (scrubbing) scrubTo(e.clientX);
   });
   progressBar.addEventListener("pointerup", endScrub);
-  progressBar.addEventListener("pointercancel", endScrub);
+  // A browser-cancelled drag (Safari gesture, app switch, lost pointer)
+  // must NOT request a new MP3 Range or seek over the current playback.
+  // Commit a seek only on a real pointerup.
+  progressBar.addEventListener("pointercancel", () => {
+    if (!scrubbing) return;
+    scrubbing = false;
+    scrubRect = null;
+    pendingSeek = null;
+    progressBar.classList.remove("scrubbing");
+    if (audio) updateProgressUI(audio.currentTime, totalDuration());
+  });
 
   $("btnSeekBack").addEventListener("click", () => seekBy(-15));
   $("btnSeekFor").addEventListener("click", () => seekBy(15));
