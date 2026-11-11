@@ -25,6 +25,24 @@ test("failed, unknown and stale/incomplete analyses safely fall back",()=>{
  assert.equal(get({file:"songs/track-89.mp3"}),null);
  assert.equal(get({file:"songs/track-90.mp3"}),null);
 });
+test("v6 and v8 real waveform indexes remain usable by Smart Mix",()=>{
+ const get=lookup({
+  "audio/songs/track-21.mp3":{...features,sha:"a".repeat(40),
+   analyzer:"librosa-onsets-chroma-rms-v6-phrases",
+   outroOnsetWindows:[{start:140,end:144}]},
+  "app/songs/track-22.mp3":{...features,sha:"b".repeat(40),
+   analyzer:"librosa-onsets-chroma-rms-v8-harmonic-sections",
+   structureEvents:[{at:142,direction:"harmonic",change:.4}]},
+  "audio/songs/track-23.mp3":{...features,
+   analyzer:"librosa-onsets-chroma-rms-v99-unknown"}
+ });
+ assert.equal(get({file:"songs/track-21.mp3"})?.sha,"a".repeat(40),
+  "indexed v6 drums/phrase evidence must not be dropped");
+ assert.equal(get({file:"songs/track-22.mp3"})?.sha,"b".repeat(40),
+  "v8 harmonic transitions must be available");
+ assert.equal(get({file:"songs/track-23.mp3"}),null,
+  "unknown future analyzer needs explicit schema review");
+});
 test("index analyzed asynchronously, unindexed songs retain local analysis",()=>{
  assert.ok(text.includes('fetch("dj-deep-analysis.json"'));
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
