@@ -3075,9 +3075,12 @@ function measuredWindowRhythmUnderlay(a,b,dur){
     !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.43)return null;
  const ratio=a.bpm/b.bpm;
  if(ratio<.98||ratio>1.02)return null;
+ const introPeriod=onsetPeriodicity(b.introOnset,b.bpm);
  const incoming=independentPulseTrain(b.introOnset,b.bpm);
- if(!incoming||incoming.score<.72||
-    onsetPeriodicity(b.introOnset,b.bpm)<.24)return null;
+ // Strong independent beat proof is ideal. A merely PERIODIC real PCM
+ // signal may be used only for a filtered, 10%-volume kick underlay,
+ // never to certify full-band rhythm or to shorten the outgoing song.
+ if(!(incoming?.score>=.72||introPeriod>=.43))return null;
  const entry=musicalIntroEntry(b);
  // Do not knowingly launch a sung intro under the existing song.
  const firstVoice=Math.min(
@@ -3094,9 +3097,9 @@ function measuredWindowRhythmUnderlay(a,b,dur){
      Number(win.levelRatio)<.28||
      !Array.isArray(win.onset)||win.onset.length!==96||
      !Array.isArray(win.groove)||win.groove.length!==32)continue;
+  const windowPeriod=onsetPeriodicity(win.onset,a.bpm);
   const pulse=independentPulseTrain(win.onset,a.bpm);
-  if(!pulse||pulse.score<.72||
-     onsetPeriodicity(win.onset,a.bpm)<.25)continue;
+  if(!(pulse?.score>=.72||windowPeriod>=.43))continue;
   const local={...a,outroOnset:win.onset,outroGroove:win.groove,
    outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,
    outroTimeline:[]};
@@ -3108,7 +3111,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
      notes.focused<.39||notes.phrase<.27||
      (key.weight>=.14&&key.score<.43))continue;
-  const beatAnchor=win.start+pulse.phase;
+  const beatAnchor=win.start+
+   (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
   const desired=Math.max(win.start+.55,a.last-8.5);
   const begin=beatAnchor+
    Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
@@ -3119,7 +3123,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
      begin<win.start+.25||begin>win.end-1.10||
      begin>a.last-4.65||begin<a.last-9.25||
      fade<4.5||fade>12.4)continue;
-  const quality=pulse.score*.27+incoming.score*.27+
+  const quality=Math.min(1,pulse?.score??windowPeriod)*.27+
+   Math.min(1,incoming?.score??introPeriod)*.27+
    g.score*.23+notes.focused*.15+notes.phrase*.08;
   if(!best||quality>best.quality)best={quality,begin,end,fade,
    beatAnchor,nextBeat:nextPhase,grooveScore:g.score};
