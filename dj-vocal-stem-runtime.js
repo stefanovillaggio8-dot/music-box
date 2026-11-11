@@ -96,7 +96,7 @@ function levels(progress,secondsFromStart,remainingVoice){
  const release=Math.min(1,Math.max(0,(.32-remainingVoice)/.32));
  return {
   native:Math.cos(fade*Math.PI/2),
-  vocals:.82*Math.sin(fade*Math.PI/2)*Math.cos(release*Math.PI/2),
+  vocals:release>=1?0:.82*Math.sin(fade*Math.PI/2)*Math.cos(release*Math.PI/2),
   backing:Math.min(.90,.36+.44*Math.sin(Math.max(0,Math.min(1,progress))*Math.PI/2))
  };
 }
