@@ -76,6 +76,7 @@ const CORE = [
   "./covers.json",
   "./covers-spotify.json",
   "./dj-vocal-stems.json",
+  "./dj-lyric-boundaries.json",
   "./karaoke-index.json",
   "./online-imports.json",
   "./icon-192.png",
