@@ -40,8 +40,8 @@ def bar_evidence(beat_times, onset, onset_times, rms, bpm, end):
     half=len(amps)//2
     bests=[]
     for begin,stop in [(0,half),(half,len(amps))]:
-        local=np.asarray([np.median(amps[i] for i in range(begin,stop)
-                         if i%4==j) for j in range(4)])
+        local=np.asarray([np.median([amps[i] for i in range(begin,stop)
+                         if i%4==j]) for j in range(4)])
         bests.append(int(np.argmax(local)))
     if bests[0]!=bests[1] or bests[0]!=int(order[0]):
         return None
