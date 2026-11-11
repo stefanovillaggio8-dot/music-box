@@ -581,7 +581,7 @@ function loadDeepIndex(force=false){
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
-   window.MusicBoxVocalStems?.load?.();
+   if(typeof window!=="undefined")window.MusicBoxVocalStems?.load?.();
    const tempoQuality=djTempoIndexQuality();
    if(tempoQuality?.limitedResolution&&!_coarseTempoWarningShown){
     _coarseTempoWarningShown=true;
@@ -6678,7 +6678,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.719",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.720",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
