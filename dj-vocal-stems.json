@@ -1,4 +1,17 @@
 {
   "version": 1,
-  "entries": {}
+  "entries": {
+    "c6cbe35e749776e0fe218701e627a54fdd0c31e9": {
+      "sourceSha": "c6cbe35e749776e0fe218701e627a54fdd0c31e9",
+      "path": "dj-stems/vocals/c6cbe35e749776e0fe218701e627a54fdd0c31e9.m4a",
+      "start": 189.838,
+      "end": 213.678,
+      "sourceDuration": 213.838,
+      "separator": "demucs-htdemucs",
+      "role": "isolated-outgoing-vocals",
+      "stemSha256": "a5b72b4581aadc610fe22bb21dc66b56ee621206fa4734c93a3ecacae195ecbd",
+      "trackKey": "audio/songs/track-2.mp3",
+      "createdAt": "2026-11-11T23:13:20.997876+00:00"
+    }
+  }
 }
