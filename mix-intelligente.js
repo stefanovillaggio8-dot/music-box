@@ -2504,15 +2504,18 @@ function rhythmicReleaseBeatBridge(a,b,dur){
  const end=Math.min(dur-.035,a.last+.06),fade=end-begin;
  if(!Number.isFinite(begin)||begin<25||fade<3.5||fade>6.2||
     begin>r.lastImpactAt-1.1||begin<r.lastImpactAt-4.25)return null;
+ // LRC is a line START, not the end of the last sung syllable.
+ // Even after the offline +6s last-line guard, use an additional
+ // 6.5s of positive instrumental lead before granting full-band rhythm.
  const lyricSafe=Number.isFinite(a.lastLyricAt)&&
-  a.lastLyricAt<=begin-5.5;
+  a.lastLyricAt<=begin-6.5;
  const scannedSafe=!!(a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
   a.voiceScannedEnd>=a.last-.75&&
   (!Number.isFinite(a.lastVoiceAt)||a.lastVoiceAt<=begin-3));
  if((!lyricSafe&&!scannedSafe)||
-    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>begin-5.5)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>begin-6.5)||
     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>begin-3))return null;
- return {kind:"beat",begin,end,fade,entry,tempo:clamp(evidence.tempo,.975,1.025),
+ const proposed={kind:"beat",begin,end,fade,entry,tempo:clamp(evidence.tempo,.975,1.025),
   gain:1,score:Math.round(evidence.score*100),grooveScore:evidence.groove,
   beatGridScore:evidence.score,rhythmicGridJoin:true,
   measuredRhythmicRelease:true,measuredBeatBridge:true,
@@ -2521,6 +2524,12 @@ function rhythmicReleaseBeatBridge(a,b,dur){
   silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
   trailing:Math.max(0,dur-end),beatPeriod:period,beatAnchor,nextBeat,
   measuredOnsetGrid:true};
+ // Do not advertise a beat that the playback certifier would reject.
+ // Real MP3 audits found a small number of visually plausible cues
+ // with mismatched playable beat windows, despite the old onset check.
+ if(typeof desktopBeatPairCertified==="function"&&
+    !desktopBeatPairCertified(a,b,proposed))return null;
+ return proposed;
 }
 function verifiedRhythmicGridBridge(a,b,dur){
  const evidence=rhythmicGridEvidence(a,b);
