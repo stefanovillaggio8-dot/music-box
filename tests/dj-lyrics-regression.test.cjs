@@ -752,7 +752,8 @@ test("strong recorded drums can enter early as bass-only without blending weak c
   "grooveAgreement=()=>({score:.84,correlation:.70}),"+
   "similarNotes=()=>({focused:.58,phrase:.46}),"+
   "camelotMatch=()=>({weight:.12,score:.75}),"+
-  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1;"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1,"+
+  "djAdaptivePreviewGain=()=>.145;"+
   dj.slice(from,to)+";return subduedRhythmicIntro;")();
  const a={duration:200,last:199,bpm:120,beatConfidence:.8,
   outroOnset:Array(96).fill(1),introOnset:Array(96).fill(1),
