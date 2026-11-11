@@ -474,9 +474,16 @@ function deepLookup(track){
  const raw=String(track.file||track.url||"");
  const path=raw.match(/(?:^|\/)(songs\/[A-Za-z0-9/_-]+\.mp3)(?:[?#]|$)/i)?.[1];
  if(!path)return null;
- const keys=/\/music-box\/(?:mobile-audio|refs\/heads\/mobile-audio)\//.test(raw)?
-   ["mobile/"+path,"audio/"+path,"app/"+path]:
-   ["audio/"+path,"mobile/"+path,"app/"+path];
+ // The same songs/name.mp3 can exist in THREE different Git repos.
+ // For a known source URL its own decoded waveform must be used; do not
+ // silently substitute a same-named recording with different beats.
+ const address=String(track.url||track.file||"");
+ const origin=/\/stefanovillaggio8-dot\/music-box-brani\/(?:main|refs\/heads\/main)\//i.test(address)?
+  "audio":/\/stefanovillaggio8-dot\/music-box\/(?:mobile-audio|refs\/heads\/mobile-audio)\//i.test(address)?
+  "mobile":/\/stefanovillaggio8-dot\/music-box\/(?:main|refs\/heads\/main)\//i.test(address)?
+  "app":null;
+ const keys=origin?[origin+"/"+path]:
+  ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
   if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
