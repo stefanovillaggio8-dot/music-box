@@ -340,6 +340,13 @@ function certifiedNeutralBridge(a,b,dur){
   preserveTail:true,softTailTrim:false};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if(plan?.neutralAmbientUnderlay===true)
+  return !!ending&&plan.kind==="underlay"&&
+   plan.drumOnlyUnderlay===true&&plan.preserveTail===true&&
+   ending.durationMismatch!==true&&
+   Number.isFinite(ending.duration)&&Number.isFinite(plan.end)&&
+   Math.abs(ending.duration-plan.end)<.20&&
+   plan.fade>=3.15&&plan.fade<=6.8&&plan.underlayVolume<=.09;
  if(plan?.postMusicalTailUnderlay===true)
   return !!ending&&plan.kind==="postlude"&&plan.preserveTail===true&&
    ending.protectedEnding!==true&&Number.isFinite(ending.last)&&
@@ -2927,6 +2934,12 @@ function musicallyCompatibleOverlay(a,b,cue){
    Math.abs(expected.begin-cue.begin)<.085&&
    Math.abs(expected.end-cue.end)<.085;
  }
+ if(cue.neutralAmbientUnderlay===true){
+  const p=adaptiveLowBandContinuity(a,b,a?.duration);
+  return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
+   cue.drumOnlyUnderlay===true&&Math.abs(p.begin-cue.begin)<.085&&
+   Math.abs(p.end-cue.end)<.085;
+ }
  if(cue.measuredWindowUnderlay===true){
   const p=measuredWindowRhythmUnderlay(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&
@@ -3180,6 +3193,41 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
   silenceTrim:false,softTailTrim:false,trailing:0};
+}
+// Lower-tier continuity only after every stronger musical cue fails.
+// Incoming audio is filtered to low frequencies at <10% gain until the
+// outgoing song finishes naturally; no beatmatch or vocal absence claimed.
+function adaptiveLowBandContinuity(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||dur<30||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||!Number.isFinite(a.last)||
+    a.last<27||dur-a.last<-.2||dur-a.last>3.0||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.49||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    !Number.isFinite(b.bpm)||Number(b.beatConfidence)<.17)
+    return null;
+ const measuredBass=Number(b.introBassRatio);
+ const hasBass=Number.isFinite(b.introBassRatio);
+ const periodic=onsetPeriodicity(b.introOnset,b.bpm);
+ // No guessed bass: an unindexed source requires strong repeated PCM
+ // intro transients. No vocal detection is NEVER proof of no singing.
+ if(hasBass?measuredBass<.15:
+    !Number.isFinite(periodic)||periodic<.30)return null;
+ const entry=musicalIntroEntry(b),end=dur-.035,
+  begin=Math.min(a.last-2.7,end-3.35),fade=end-begin;
+ if(!Number.isFinite(begin)||begin<26||fade<3.15||fade>6.8||
+    begin>=a.last-2.4)return null;
+ const firstVoice=Math.min(
+  Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+  Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(firstVoice-entry<fade+.35)return null;
+ return {kind:"underlay",neutralAmbientUnderlay:true,
+   subduedRhythmicUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+   begin,end,fade,entry,tempo:1,gain:1,
+   underlayVolume:hasBass?.09:.065,
+   beatPeriod:null,beatAnchor:null,nextBeat:null,
+   score:null,grooveScore:null,quietCertified:false,safeOutroAt:null,
+   silenceTrim:false,softTailTrim:false,trailing:0};
 }
 function subduedRhythmicIntro(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
@@ -4587,7 +4635,7 @@ function djAudioClockProgress(oldNow,oldStart,newNow,newStart,tempo,duration){
  return clamp(oldElapsed/duration,0,1);
 }
 function desktopBeatStartDelay(p,at){
- if(!p)return 0;
+ if(!p||p.neutralAmbientUnderlay===true)return 0;
  // nextBeat is in original-file seconds, not post-playbackRate wall time.
  // Account for tempo scaling when scheduling the audible incoming kick.
  const playbackRate=Number.isFinite(p.tempo)&&p.tempo>=.95&&
@@ -5217,6 +5265,17 @@ function tick(){
    const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
    const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
    let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
+   if(!candidate||candidate.kind==="cut"||
+      (Number.isFinite(candidate.begin)&&
+       Number.isFinite(currentAnalysis?.last)&&
+       candidate.begin>currentAnalysis.last+.20)){
+    // Never replace a verified beat / musical release with this tier.
+    // Only offer a quiet, low-band preview where otherwise the player
+    // would switch directly or wait for an already-silent tail.
+    const gentle=adaptiveLowBandContinuity(currentAnalysis,nextAnalysis,
+      audio.duration);
+    if(gentle)candidate=gentle;
+   }
    let compatibleCandidate=!!candidate&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,candidate);
    if(candidate&&!compatibleCandidate){
