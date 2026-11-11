@@ -944,3 +944,43 @@ test("verified audio alignment activates the lyric row at first spoken syllable"
  assert.equal(normalized.length,1);
  assert.equal(normalized[0].t,10.7);
 });
+
+
+test("DJ harmonic section entry earns stronger bass only with independently aligned real beats",()=>{
+ const start=dj.indexOf("function measuredTempoRelation(");
+ const end=dj.indexOf("function subduedRhythmicIntro(",start);
+ const choose=new Function("const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  "const independentPulseTrain=()=>({score:.90,phase:.25}),"+
+  "onsetPeriodicity=()=>.72,hasImmediateMusicalIntro=()=>true,"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.25,"+
+  "grooveAgreement=()=>({score:.86,correlation:.78}),"+
+  "similarNotes=()=>({focused:.84,phrase:.75}),"+
+  "camelotMatch=()=>({weight:.08,score:.76});"+
+  dj.slice(start,end)+";return measuredWindowRhythmUnderlay;")();
+ const window={start:190,end:194,levelRatio:.8,energyTrend:.03,
+  onset:Array(96).fill(.3),groove:Array(32).fill(.3),
+  notes:Array(12).fill(.08)};
+ const outgoing={duration:200,last:199,bpm:120,beatConfidence:.9,
+  outroOnsetWindows:[window],
+  structureEvents:[{at:191.5,direction:"harmonic",change:.43}]};
+ const incoming={duration:180,bpm:120,beatConfidence:.9,
+  introDrive:.8,introBassRatio:.5,
+  introOnset:Array(96).fill(.4)};
+ const prior=choose(outgoing,incoming,200);
+ assert.ok(prior);
+ const alignedWindow={...window,
+  measuredBeatTimes:Array.from({length:9},(_,i)=>prior.begin+i*.5)};
+ const matched=choose({...outgoing,beatGrid:{reliable:true},
+  outroOnsetWindows:[alignedWindow]},
+  {...incoming,beatGrid:{reliable:true},
+   introBeatTimes:Array.from({length:8},(_,i)=>i*.5)},200);
+ assert.ok(matched);
+ assert.ok(matched.beatPulseAgreement>=.75);
+ assert.ok(matched.underlayVolume>.145&&matched.underlayVolume<=.215);
+ const misaligned=choose({...outgoing,beatGrid:{reliable:true},
+  outroOnsetWindows:[{...alignedWindow,
+   measuredBeatTimes:alignedWindow.measuredBeatTimes.map(t=>t+.2)}]},
+  {...incoming,beatGrid:{reliable:true},
+   introBeatTimes:Array.from({length:8},(_,i)=>i*.5)},200);
+ assert.equal(misaligned,null,"Strong bass cannot play with a measured offbeat grid");
+});
