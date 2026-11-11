@@ -2160,6 +2160,57 @@ function alignedEarlyOnsetAgreement(outro,intro,offsetSeconds){
 // Check real four-beat accent contours at the chosen playback offset.
 // Global BPM or one isolated kick cannot certify a musical measure.
 // If the data is flat/too short we leave this unproven (not a fake match).
+// Different drum kits can have the same verified downbeat grid without
+// matching waveform magnitudes. This is an independent pulse-only audit,
+// NOT permission to cut a vocal or ignore harmonic compatibility.
+// Only the outgoing measured four-second window can be used for this check.
+function alignedIndependentPulseAgreement(outro,intro,bpm,offsetSeconds){
+ if(!Array.isArray(outro)||!Array.isArray(intro)||
+    outro.length!==96||intro.length!==96||
+    !outro.every(Number.isFinite)||!intro.every(Number.isFinite)||
+    !Number.isFinite(bpm)||bpm<55||bpm>210||
+    !Number.isFinite(offsetSeconds)||offsetSeconds<-.15||
+    offsetSeconds>1.10)return null;
+ const a=independentPulseTrain(outro,bpm),
+       b=independentPulseTrain(intro,bpm);
+ if(!a||!b||a.score<.83||b.score<.83)return null;
+ const period=24*60/bpm,offset=offsetSeconds*24;
+ const normalize=values=>{
+  const sorted=values.slice().sort((x,y)=>x-y);
+  const floor=sorted[19],span=sorted[93]-floor;
+  if(!(span>=.52))return null;
+  return values.map(v=>Math.max(0,(v-floor-span*.24)/span));
+ };
+ const x=normalize(outro),y=normalize(intro);
+ if(!x||!y)return null;
+ const pulse=(values,pos)=>{
+  const i=Math.round(pos);
+  return i>=1&&i<95?Math.max(values[i-1],values[i],values[i+1]):0;
+ };
+ let hits=0,first=0,second=0,total=0,offbeat=0;
+ for(let p=b.phase*24;p<96;p+=period){
+  if(p<2||p+offset<2||p+offset>=94||
+     p+period/2>=95||p+offset+period/2>=95)continue;
+  const out=pulse(x,p+offset),inc=pulse(y,p);
+  const outOff=pulse(x,p+offset+period/2),
+        incOff=pulse(y,p+period/2);
+  total++;
+  if(out>=.49&&inc>=.49&&out>=outOff+.17&&inc>=incOff+.17){
+   hits++;
+   if(p<48)first++;else second++;
+  }else if(outOff>out+.15||incOff>inc+.15)offbeat++;
+ }
+ if(total<5||hits<5||hits/total<.78||
+    first<2||second<2||offbeat>0)return null;
+ const phaseDelta=Math.abs(((a.phase-b.phase-offsetSeconds+
+   (60/bpm)*100)%(60/bpm)));
+ const aligned=Math.min(phaseDelta,60/bpm-phaseDelta);
+ if(aligned>.075)return null;
+ return {score:Math.min(a.score,b.score,hits/total),
+   first:first/Math.max(1,total/2),
+   second:second/Math.max(1,total/2),
+   beats:hits,method:"independent-onset-grid"};
+}
 function djMeasuredBarAccents(outro,intro,bpm,offsetSeconds){
  if(!Array.isArray(outro)||!Array.isArray(intro)||
     outro.length!==96||intro.length!==96||
@@ -2285,8 +2336,16 @@ function earlyMatchedBar(a,b,dur){
      (singing&&!vocalUnderlay))continue;
   // Equal BPM and compatible chords alone do not prove a beatmatched
   // transition. Compare real PCM attacks at the shifted playback instant.
-  const matchedRhythm=alignedEarlyOnsetAgreement(
+  let matchedRhythm=alignedEarlyOnsetAgreement(
     win.onset,b.introOnset,begin-win.start);
+  // A different drum sound is not an off-beat song. Allow a strong
+  // independent real-onset match only with EXTRA harmonic/phrase proof;
+  // the existing vocal, accent and live decoder timing vetoes remain.
+  if(!matchedRhythm&&notes.focused>=.86&&notes.phrase>=.78&&
+     drums.score>=.79&&drums.correlation>=.55&&
+     pulseA>=.42&&pulseB>=.42)
+   matchedRhythm=alignedIndependentPulseAgreement(
+     win.onset,b.introOnset,a.bpm,begin-win.start);
   if(!matchedRhythm)continue;
   const barAccents=typeof djMeasuredBarAccents==="function"?
     djMeasuredBarAccents(win.onset,b.introOnset,b.bpm,begin-win.start):null;
