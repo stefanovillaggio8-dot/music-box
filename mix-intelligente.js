@@ -715,7 +715,8 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
     filter.frequency.exponentialRampToValueAtTime(18000,
      t+Math.max(.34,seconds+.38));
    }
-   const effect=dspMode==="auto"?(beatMatched?"highpass":softReveal?"lowpass":"off"):dspMode;
+   const effect=drumOnly?"off":
+    dspMode==="auto"?(beatMatched?"highpass":softReveal?"lowpass":"off"):dspMode;
    if(effect!=="off"&&dspStrength>0){
     const filter=add(effect,400),
      t=ctx.currentTime+Math.max(0,Number(startDelay)||0),strength=dspStrength/100;
@@ -748,12 +749,14 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
   // contract). When peak containment is available, add only a small
   // low-end emphasis AFTER the filter sweep.
   if(typeof ctx.createDynamicsCompressor==="function"&&
-     (beatMatched||dspBass>0||dspMid>0||dspTreble>0)){
+     (beatMatched||drumOnly||dspBass>0||dspMid>0||dspTreble>0)){
    if(beatMatched&&dspMode==="auto"&&Math.abs(dspBass)<.05)
     add("lowshelf",95,2.0);
    const limiter=ctx.createDynamicsCompressor();
-   limiter.threshold.value=-5;limiter.knee.value=5;
-   limiter.ratio.value=4;limiter.attack.value=.004;
+   limiter.threshold.value=drumOnly?-9:-5;
+   limiter.knee.value=drumOnly?3:5;
+   limiter.ratio.value=drumOnly?5:4;
+   limiter.attack.value=.004;
    limiter.release.value=.16;
    tail.connect(limiter);tail=limiter;nodes.push(limiter);
   }
@@ -3343,7 +3346,8 @@ function subduedRhythmicIntro(a,b,dur){
  return {kind:"underlay",subduedRhythmicUnderlay:true,preserveTail:true,
    drumOnlyUnderlay:drumOnly,
    begin,end,fade,entry,tempo:Math.max(.975,Math.min(1.025,ratio)),
-   gain:1,underlayVolume:drumOnly?.12:Math.max(.20,Math.min(.35,
+   gain:1,underlayVolume:drumOnly?
+    djAdaptivePreviewGain(a,b,.145,.20):Math.max(.20,Math.min(.35,
     .20+(g.score-.65)*.6+(n.focused-.64)*.3)),
    beatPeriod:period,beatAnchor,nextBeat,
    score:Math.round((g.score*.42+n.focused*.36+n.phrase*.22)*100),
