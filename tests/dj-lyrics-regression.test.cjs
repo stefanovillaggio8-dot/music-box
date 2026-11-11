@@ -722,3 +722,21 @@ test("subdued Smart Mix lead-in starts before the last musical beats, not the si
   "Subdued entrance should start while final music is audible");
  assert.ok(plan.end>199&&plan.preserveTail);
 });
+
+
+test("Whisper exact four-word timing repairs LRC verses leading the audio",()=>{
+ const code=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const align=new Function("const window={};"+code+";return window.MusicBoxAudioAlign;")();
+ const phrase=(text,times)=>times.map((t,i)=>({text:text.split(" ")[i],timestamp:[t,t+.18]}));
+ const four="When the drums arrive";
+ const match=align.alignWindow([{t:10,text:four},{t:15,text:"Next chorus"}],
+  phrase(four,[11.25,11.61,12.01,12.42]),0,28);
+ assert.equal(match.length,1);
+ assert.ok(Math.abs(match[0].words[0].t-11.25)<.001);
+ assert.equal(match[0].words.map(w=>w.text).join("").trim(),four);
+ const ambiguous="Three short words";
+ const rejected=align.alignWindow([{t:10,text:ambiguous},{t:15,text:"Next chorus"}],
+  phrase(ambiguous,[11.25,11.64,12.01]),0,28);
+ assert.equal(rejected.length,0,
+  "Loose offset should not accept short, repeatedly sung lines");
+});
