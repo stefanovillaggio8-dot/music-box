@@ -47,10 +47,16 @@ function normalizeRows(rows){
   const t=number(row.t),end=row.end==null?null:number(row.end);
   const text=String(row.text??"");
   if(t==null||end!=null&&end<t||text.length>380||!text.trim())continue;
-  const words=validWords(row.words,text,t,end);
+  // Only word streams with an exact textual match may adjust the
+  // line cue. A verified first syllable can be up to 1.7 seconds after
+  // an early LRC row, or 450ms before it. Reject remote outliers.
+  const firstWord=number(row.words?.[0]?.t);
+  const adjustedStart=firstWord!=null&&firstWord>=t-.45&&
+    firstWord<=t+1.70?firstWord:t;
+  const words=validWords(row.words,text,adjustedStart,end);
   totalWords+=words.length;
   if(totalWords>MAX_WORDS)break;
-  out.push({t:+t.toFixed(3),text,
+  out.push({t:+(words.length?adjustedStart:t).toFixed(3),text,
    ...(end!=null?{end:+end.toFixed(3)}:{}),
    ...(words.length?{words}:{})});
  }

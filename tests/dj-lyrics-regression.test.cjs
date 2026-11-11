@@ -439,7 +439,7 @@ test("word-window overlap handles a lyric at 27 s and avoids guessing outside it
  ];
  const good=api.alignWindow(rows,chunks,24,28);
  assert.equal(good.length,1);
- assert.equal(good[0].t,27.2);
+ assert.equal(good[0].t,27.3);
  assert.equal(good[0].words[0].t,27.3);
  const bogus=api.alignWindow(rows,chunks,0,28);
  assert.equal(bogus.length,0,"timestamps relative to audio windows cannot be treated as absolute");
@@ -572,8 +572,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
  assert.match(align,/completedInSession\.add\(id\);\s*setStatus\("Lingua del testo incerta/);
- assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=2/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=2").length-1,2);
+ assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=3/);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=3").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 
@@ -648,7 +648,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"3":"2";
+  const wordCache=file==="word-karaoke.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -814,7 +814,7 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
  assert.ok(cue.begin<outgoing.last-4.65,"incoming kick begins before old silence");
  assert.equal(cue.preserveTail,true);
  assert.equal(cue.silenceTrim,false);
- assert.ok(cue.underlayVolume<=.105);
+ assert.ok(cue.underlayVolume<=.145);
  assert.equal(choose(outgoing,{...incoming,firstVoiceAt:.5},200),null,
   "measured incoming vocals prevent underlay");
  assert.equal(choose({...outgoing,outroOnsetWindows:[{...win,levelRatio:.01}]},
@@ -873,7 +873,8 @@ test("continuity fallback never cuts a late vocal or claims a beatmatched overla
  const to=dj.indexOf("function subduedRhythmicIntro(",from);
  assert.ok(from>0&&to>from);
  const policy=new Function("const hasImmediateMusicalIntro=()=>true,"+
-  "onsetPeriodicity=()=>.65,musicalIntroEntry=()=>0;"+
+  "onsetPeriodicity=()=>.65,musicalIntroEntry=()=>0,"+
+  "adaptiveUnderlayLevel=()=>.08;"+
   dj.slice(from,to)+";return adaptiveLowBandContinuity;")();
  const outgoing={duration:200,last:199,protectedEnding:true};
  const next={introDrive:.80,bpm:120,beatConfidence:.82,
@@ -903,4 +904,43 @@ test("continuity fallback never cuts a late vocal or claims a beatmatched overla
  assert.match(dj,/if\(!p\|\|p\.neutralAmbientUnderlay===true\)return 0/);
  assert.match(dj,/if\(cue\.neutralAmbientUnderlay===true\)/);
  assert.match(dj,/if\(plan\?\.neutralAmbientUnderlay===true\)/);
+});
+
+
+test("measured beat-pulse alignment rejects drifting decoders and validates repeated kicks",()=>{
+ const a=dj.indexOf("function measuredPulseAlignment(");
+ const b=dj.indexOf("function measuredWindowRhythmUnderlay(",a);
+ assert.ok(a>=0&&b>a);
+ const check=new Function(dj.slice(a,b)+";return measuredPulseAlignment;")();
+ const hits=[10,10.5,11,11.5,12,12.5,13,13.5];
+ const intro=[0,.5,1,1.5,2,2.5,3];
+ const good=check(hits,intro,10,0,1);
+ assert.ok(good&&good.ratio>=.9&&good.rms<.01);
+ const late=check(hits,intro.map(x=>x+.22),10,0,1);
+ assert.ok(late&&late.ratio<.30);
+ assert.equal(check([],intro,10,0,1),null);
+});
+test("verified audio alignment activates the lyric row at first spoken syllable",()=>{
+ const alignScript=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const api=new Function("const window={};"+alignScript+
+  ";return window.MusicBoxAudioAlign;")();
+ const line="Feel the rhythm tonight";
+ const chunks=line.split(" ").map((text,i)=>({
+   text,timestamp:[10.7+i*.35,10.9+i*.35]
+ }));
+ const rows=api.alignWindow([{t:10,text:line},{t:14,text:"Other phrase"}],chunks,0,28);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].t,10.7);
+ assert.equal(rows[0].words[0].t,10.7);
+ assert.equal(rows[0].alignedFromAudio,true);
+ const wordScript=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
+ const words=new Function("const window={};"+wordScript+
+  ";return window.MusicBoxWordKaraoke;")();
+ const normalized=words.normalizeRows([
+  {t:10,text:line,words:chunks.map((x,i)=>({
+   text:i===3?"tonight":x.text+" ",t:x.timestamp[0]
+  })).map((w,i,arr)=>i===arr.length-1?w:{...w})}
+ ]);
+ assert.equal(normalized.length,1);
+ assert.equal(normalized[0].t,10.7);
 });

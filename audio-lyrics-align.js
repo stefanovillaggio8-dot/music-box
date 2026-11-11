@@ -108,7 +108,15 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   });
   // Round-tripping is mandatory: the user-supplied lyric line is authoritative.
   if(parts.map(w=>w.text).join("").trim()!==String(row.text||"").trim())continue;
-  results.push({t:start,text:String(row.text).trim(),words:parts});
+  // The aligned FIRST syllable determines when this line lights up.
+  // Keeping the provider's earlier row.t made a visually premature
+  // karaoke line even though every individual word was audio-aligned.
+  const measuredStart=parts[0].t;
+  const displayStart=Math.abs(measuredStart-start)<=1.70?
+   measuredStart:start;
+  results.push({t:+displayStart.toFixed(3),
+   text:String(row.text).trim(),words:parts,
+   alignedFromAudio:true});
  }
  return results;
 }

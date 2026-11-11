@@ -102,6 +102,24 @@ def structure_events(rms, level, first, last):
     events.sort(key=lambda e:abs(e["change"]),reverse=True)
     return sorted(events[:12],key=lambda e:e["at"])
 
+def measured_beat_grid(beat_times, first, last, bpm):
+    """Conservative beat timestamps, no fabricated 4/4 downbeat labels."""
+    if not 55<=bpm<=210:return {"reliable":False,"anchors":[],"error":None}
+    beats=np.asarray(beat_times,dtype=float)
+    beats=beats[(beats>=first)&(beats<=last)]
+    if beats.size<8:return {"reliable":False,"anchors":[],"error":None}
+    diffs=np.diff(beats)
+    target=60./bpm
+    errors=np.abs(diffs-target)
+    robust=float(np.median(errors))
+    reliable=bool(np.median(errors)<=target*.10 and
+      np.mean(errors<=target*.18)>=.75)
+    return {"reliable":reliable,
+      # Sparse real pulse timestamps let the mixer test repeated beats.
+      # They do NOT identify strong bar-downbeats or song sections alone.
+      "anchors":[round(float(t),3) for t in beats[::2][-32:]],
+      "error":round(robust,4)}
+
 def refine_tempo_from_beats(estimated, frames):
     """Refine librosa's quantized BPM using several independently tracked beats.
 
@@ -200,6 +218,7 @@ def analyze(mp3):
     tempo,beats=librosa.beat.beat_track(onset_envelope=onset,sr=SR,hop_length=HOP,trim=False)
     bpm,tempo_refined,beat_times=refine_tempo_from_beats(tempo,beats)
     strength=float(np.clip((np.std(onset)/(np.mean(onset)+1e-7))*.24,0,1))
+    measured_grid=measured_beat_grid(beat_times,first,last,bpm)
     # A failed beat tracker must never pretend that a default 120 BPM is
     # measured. Keep onset signatures for neutral/safe release decisions.
     if len(beat_times)<4:strength=0.
@@ -269,6 +288,7 @@ def analyze(mp3):
             "levelRatio":round(relative,4),
             "energyTrend":round(float(np.clip(trend,-3.,3.)),3),
             "beatCount":int(beats_near.size),
+            "measuredBeatTimes":[round(float(t),3) for t in beats_near[-16:]],
             "bassRatio":frequency_bass_ratio(y,window_start,window_end)
         })
     out={"duration":round(duration,3),"first":round(first,3),"last":round(last,3),
@@ -276,6 +296,10 @@ def analyze(mp3):
       "bpm":round(bpm,3),"tempoRefined":tempo_refined,
       "beatConfidence":round(strength,3),
       "beatAnchor":beat_anchor,"introBeat":firstbeat,"level":round(level,5),
+      "beatGrid":measured_grid,
+      "introBeatTimes":[round(float(v),3) for v in
+          beat_times[(beat_times>=safe_intro)&
+                     (beat_times<=min(duration,safe_intro+9))][:20]],
       "chroma":c,"introChroma":chroma(y[:int(to*SR)]),
       "outroChroma":chroma(y[int(outro_start*SR):int(end_note*SR)]),
       "introAttackNotes":chroma(y[int(first*SR):int(min(duration,first+2.3)*SR)]),
@@ -297,7 +321,7 @@ def analyze(mp3):
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v6-phrases"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v7-pulses"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -315,7 +339,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
-                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v6-phrases"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v7-pulses"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:

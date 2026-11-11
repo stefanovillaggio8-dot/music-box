@@ -3088,6 +3088,29 @@ function measuredTempoRelation(a,b){
  if(!chosen||chosen.ratio<.975||chosen.ratio>1.025)return null;
  return {...chosen,period:Math.max(60/x,60/y)};
 }
+// Compare repeated, REAL beat timestamps near a candidate join; no
+// inference of bar downbeats unless separately measured.
+function measuredPulseAlignment(outgoing,incoming,begin,entry,ratio){
+ if(!Array.isArray(outgoing)||!Array.isArray(incoming)||
+    outgoing.length<3||incoming.length<3)return null;
+ const a=outgoing.filter(Number.isFinite).sort((x,y)=>x-y);
+ const b=incoming.filter(Number.isFinite).sort((x,y)=>x-y);
+ if(a.length<3||b.length<3||!Number.isFinite(begin)||
+    !Number.isFinite(entry)||!Number.isFinite(ratio)||ratio<=0)return null;
+ // Incoming timestamp converted to playback wall time.
+ const candidates=b.map(t=>begin+(t-entry)/ratio);
+ let verified=0,total=0,squared=0;
+ for(const t of candidates){
+  if(t<begin-.1||t>begin+3.7)continue;
+  const nearest=a.reduce((best,v)=>
+   Math.abs(v-t)<Math.abs(best-t)?v:best,a[0]);
+  const error=Math.abs(nearest-t);
+  total++;
+  if(error<=.095){verified++;squared+=error*error}
+ }
+ return total>=3?{total,verified,ratio:verified/total,
+  rms:verified?Math.sqrt(squared/verified):Infinity}:null;
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3168,27 +3191,36 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   const structureBonus=phraseEvent?.direction==="rising"?.085:
    phraseEvent?.direction==="falling"?.05:
    Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
+  const measuredGrid=measuredPulseAlignment(
+   win.measuredBeatTimes,b.introBeatTimes,begin,entry,ratio);
+  // Independent pulse agreement is a ranking bonus and can veto a
+  // badly aligned overlay only when BOTH decoders have reliable
+  // timestamps from the same real-file analysis.
+  if(a.beatGrid?.reliable===true&&b.beatGrid?.reliable===true&&
+     measuredGrid&&measuredGrid.ratio<.30)continue;
   const quality=Math.min(1,pulse?.score??windowPeriod)*.25+
    Math.min(1,incoming?.score??introPeriod)*.24+
    g.score*.21+notes.focused*.13+notes.phrase*.07+
    structureBonus+
+   (measuredGrid?Math.min(.12,measuredGrid.ratio*.12):0)+
    Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
    (cadence.scale!==1?.045:0);
   if(!best||quality>best.quality)best={quality,begin,end,fade,
    beatAnchor,nextBeat:nextPhase,grooveScore:g.score,
    structuralShift:phraseEvent?.direction||null,
-   structuralMatch:!!phraseEvent,structureScore:structureBonus};
+   structuralMatch:!!phraseEvent,structureScore:structureBonus,
+   beatPulseAgreement:measuredGrid?.ratio??null};
  }
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
   structuralMatch:best.structuralMatch,
   structuralShift:best.structuralShift,structureScore:best.structureScore,
+  beatPulseAgreement:best.beatPulseAgreement,
   tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
   tempo:clamp(ratio,.975,1.025),gain:1,
-  underlayVolume:Number.isFinite(b.introBassRatio)&&
-    b.introBassRatio>=.26?.135:.105,
+  underlayVolume:adaptiveUnderlayLevel(b,.105,.145),
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
@@ -3197,6 +3229,16 @@ function measuredWindowRhythmUnderlay(a,b,dur){
 // Lower-tier continuity only after every stronger musical cue fails.
 // Incoming audio is filtered to low frequencies at <10% gain until the
 // outgoing song finishes naturally; no beatmatch or vocal absence claimed.
+// RMS-normalized low-band preview: the track's measured intro relative
+// level sets a restrained gain, never a boost above the configured cap.
+function adaptiveUnderlayLevel(info,minimum,maximum){
+ const relative=Number(info?.introDrive);
+ const bass=info?.introBassRatio==null?null:Number(info.introBassRatio);
+ if(!Number.isFinite(relative)||relative<=0)return minimum;
+ const energy=clamp(1/Math.sqrt(Math.max(.20,relative)),.75,1.30);
+ const bassFocus=Number.isFinite(bass)?clamp(bass/.30,.75,1.17):1;
+ return clamp(minimum*energy*bassFocus,minimum*.75,maximum);
+}
 function adaptiveLowBandContinuity(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||dur<30||!Number.isFinite(a.duration)||
@@ -3206,8 +3248,8 @@ function adaptiveLowBandContinuity(a,b,dur){
     !Array.isArray(b.introOnset)||b.introOnset.length!==96||
     !Number.isFinite(b.bpm)||Number(b.beatConfidence)<.17)
     return null;
- const measuredBass=Number(b.introBassRatio);
- const hasBass=Number.isFinite(b.introBassRatio);
+ const measuredBass=b.introBassRatio==null?null:Number(b.introBassRatio);
+ const hasBass=Number.isFinite(measuredBass);
  const periodic=onsetPeriodicity(b.introOnset,b.bpm);
  // No guessed bass: an unindexed source requires strong repeated PCM
  // intro transients. No vocal detection is NEVER proof of no singing.
@@ -3224,7 +3266,7 @@ function adaptiveLowBandContinuity(a,b,dur){
  return {kind:"underlay",neutralAmbientUnderlay:true,
    subduedRhythmicUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
    begin,end,fade,entry,tempo:1,gain:1,
-   underlayVolume:hasBass?.09:.065,
+   underlayVolume:adaptiveUnderlayLevel(b,hasBass?.08:.055,.09),
    beatPeriod:null,beatAnchor:null,nextBeat:null,
    score:null,grooveScore:null,quietCertified:false,safeOutroAt:null,
    silenceTrim:false,softTailTrim:false,trailing:0};
