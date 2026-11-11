@@ -3142,7 +3142,7 @@ function measuredBeatJoinCandidate(outgoing,incoming,entry,ratio,lower,upper,pre
    if(begin<lower||begin>upper)continue;
    const fit=measuredPulseAlignment(a,b,begin,entry,ratio);
    if(!fit||fit.total<3||fit.verified<3||
-      fit.ratio<.74||fit.rms>.080)continue;
+      fit.ratio<.85||fit.rms>.075)continue;
    // Prefer a deliberate entry near the measured window's leading beat,
    // but never trade away a substantially better multi-beat alignment.
    const quality=fit.ratio-.9*fit.rms-
