@@ -638,3 +638,52 @@ test("real indexed MP3 releases enter before the last original sound only with m
  assert.equal(choose(a,b)?.measuredReleaseLeadIn,undefined,
   "a song without a measured release must not invent one");
 });
+
+test("existing song lyrics improve real-waveform safety without inventing vocal proof",()=>{
+ const manifest=JSON.parse(fs.readFileSync(path.join(root,"dj-lyric-boundaries.json"),"utf8"));
+ assert.equal(manifest.version,1);
+ let matchedTracks=0,safetyViolations=0;
+ const guarded=tracks.map(t=>{
+  const info=t.data,lyric=manifest.entries?.[String(info.sha||"").toLowerCase()];
+  if(!lyric)return t;
+  assert.equal(lyric.sha,String(info.sha).toLowerCase());
+  assert.ok(Math.abs(lyric.duration-info.duration)<=.55);
+  assert.equal(lyric.provenance,"existing-synced-lrc-not-vocal-model");
+  assert.ok(lyric.lastLyricAt>=lyric.lastLrcAt+
+   Math.min(6,info.duration-lyric.lastLrcAt)-.15);
+  const x={...info,firstLyricAt:lyric.firstLyricAt,
+   lastLyricAt:lyric.lastLyricAt,lrcBoundarySource:lyric.provenance};
+  assert.equal(x.voiceModel,info.voiceModel,
+   "LRC timestamps must not pretend a voice model scanned the real MP3");
+  matchedTracks++;
+  return {...t,data:x};
+ });
+ let checked=0,changed=0,beatBefore=0,beatAfter=0,
+  preventedUnsafe=0,previewBefore=0,previewAfter=0;
+ for(let i=0;i<tracks.length;i+=6)for(let j=0;j<tracks.length;j+=5){
+  if(i===j)continue;
+  const a=tracks[i].data,b=tracks[j].data,
+   updatedA=guarded[i].data,updatedB=guarded[j].data;
+  if(a===updatedA&&b===updatedB)continue;
+  const oldPlan=engine.transition(a,b,a.duration);
+  const newPlan=engine.transition(updatedA,updatedB,a.duration);
+  checked++;
+  if(oldPlan?.kind==="beat")beatBefore++;
+  if(newPlan?.kind==="beat")beatAfter++;
+  if(oldPlan?.subduedRhythmicUnderlay)previewBefore++;
+  if(newPlan?.subduedRhythmicUnderlay)previewAfter++;
+  if(oldPlan?.kind!==newPlan?.kind||oldPlan?.begin!==newPlan?.begin)changed++;
+  if(oldPlan&&!newPlan&&a!==updatedA)preventedUnsafe++;
+  if(newPlan&&["beat","phrase"].includes(newPlan.kind)&&
+     Number.isFinite(updatedA.lastLyricAt)&&
+     updatedA.lastLyricAt>newPlan.begin-4&&!newPlan.vocalBeatUnderlay)
+    safetyViolations++;
+ }
+ console.info("[DJ REAL LRC IMPACT]",JSON.stringify({
+  matchedTracks,checked,changed,beatBefore,beatAfter,
+  preventedUnsafe,previewBefore,previewAfter,safetyViolations
+ }));
+ assert.ok(matchedTracks>=100,"Real lyrics must match many original MP3 SHA values");
+ assert.equal(safetyViolations,0,
+  "No lyric-present ending can be treated as safe for a full-band mix");
+});

@@ -1,0 +1,50 @@
+name: Music Box - aggiorna limiti vocali da testi sincronizzati
+on:
+  push:
+    branches:
+      - main
+      - work/dj23-lyric-safety-audit-2026-11-11
+    paths:
+      - 'tools/build-dj-lyric-boundaries.cjs'
+      - 'tests/dj-lyric-boundaries.test.cjs'
+      - 'dj-deep-analysis.json'
+      - 'lyrics.json'
+      - 'karaoke-index.json'
+      - '.github/workflows/dj-lyric-boundaries.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: musicbox-guarded-lyrics-${{ github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  build-conservative-lyrics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test rules with mismatched MP3 and fake lyrics
+        run: node --test tests/dj-lyric-boundaries.test.cjs
+      - name: Build SHA-constrained singer safety windows from real synced LRC
+        run: node tools/build-dj-lyric-boundaries.cjs
+      - name: Save only deterministic safe timing metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- dj-lyric-boundaries.json
+          if git diff --cached --quiet; then
+            echo "DJ lyric timing unchanged"
+            exit 0
+          fi
+          git commit -m "DJ: refresh SHA and duration matched conservative vocal boundaries"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
