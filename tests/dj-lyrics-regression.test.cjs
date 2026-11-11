@@ -706,6 +706,27 @@ test("enhanced LRC preserves early measured syllables instead of estimating kara
  assert.equal(bad[0].words,undefined,
   "Do not trust a word timestamp five seconds before its LRC line");
 });
+test("enhanced LRC uses the actual first word even when the provider line is early",()=>{
+ const script=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
+ const karaoke=new Function("const window={};"+script+";return window.MusicBoxWordKaraoke;")();
+ const legitimate=karaoke.parseEnhancedLrc(
+  "[00:10.00]<00:11.20>Hello <00:11.70>real <00:12.25>music");
+ assert.equal(legitimate.length,1);
+ assert.equal(legitimate[0].t,11.20,"Do not light up a line 1.2s before the first confirmed syllable");
+ assert.equal(legitimate[0].words.length,3);
+ assert.equal(legitimate[0].words[0].t,11.20);
+ const tooLate=karaoke.parseEnhancedLrc(
+  "[00:10.00]<00:13.50>Hello <00:14.00>real <00:14.40>music");
+ assert.equal(tooLate[0].t,10.00,
+  "An implausible word clock must not move the lyric cue");
+ assert.equal(tooLate[0].words,undefined,
+  "Do not present implausible tags as audio-confirmed karaoke");
+ const textMismatch=karaoke.parseEnhancedLrc(
+  "[00:10.00]Hello <00:11.20>real <00:11.70>music");
+ assert.equal(textMismatch[0].t,10.00);
+ assert.equal(textMismatch[0].words,undefined,
+  "Unmatched text prefixes cannot justify a shifted line");
+});
 test("subdued Smart Mix lead-in starts before the last musical beats, not the silence",()=>{
  const from=dj.indexOf("function subduedRhythmicIntro(");
  const to=dj.indexOf("function desktopMeasuredReleaseLeadIn(",from);
