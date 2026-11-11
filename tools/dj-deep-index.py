@@ -6,6 +6,7 @@ Output is lightweight versioned musical metadata used by the browser DJ.
 import argparse, datetime as dt, json, os, pathlib, tempfile, urllib.parse, urllib.request
 import numpy as np
 import librosa
+from dj_beat_phrases import bar_evidence, section_boundaries
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEST = ROOT / "dj-deep-analysis.json"
@@ -215,6 +216,9 @@ def analyze(mp3):
     # listener expects matching music, not two matching empty sections.
     musical_edge=min(last,release["lastImpactAt"]+.20) if release else last
     beat_anchor=tracked_beat(max(first,musical_edge-5.0),musical_edge,True)
+    bar_grid=bar_evidence(beat_times,onset,onset_t,rms,bpm,musical_edge)
+    sections=section_boundaries(y,SR,rms,onset,onset_t,first,
+                                musical_edge,level,chroma,bar_grid)
     outro_start=max(first,musical_edge-10)
     to=min(duration,first+12)
     end_note=musical_edge
@@ -237,6 +241,22 @@ def analyze(mp3):
     # final beat. Do not guess from BPM or an empty MP3 tail. Every window
     # is measured from original PCM and carries its own boundary notes.
     outro_windows=[]
+    intro_windows=[]
+    for offset in (0.,4.,8.,12.):
+        start=float(safe_intro)+offset
+        if start<0 or start+4>=min(duration-.25,first+21):continue
+        signature=onset_signature(start)
+        local_groove=groove(rms,bpm,start)
+        if signature is None or local_groove is None:continue
+        part=rms[max(0,int(start/.1)):min(len(rms),int((start+4)/.1))]
+        if part.size<30 or float(np.mean(part))<max(.003,level*.23):continue
+        notes=chroma(y[int(start*SR):int((start+4)*SR)])
+        if notes is None:continue
+        intro_windows.append({"start":round(start,3),
+          "end":round(start+4,3),"onset":signature,
+          "groove":local_groove,"notes":notes,
+          "levelRatio":round(float(np.mean(part)/max(level,.0001)),4),
+          "bassRatio":frequency_bass_ratio(y,start,start+4)})
     # More phrase candidates for build/drop, not only two final windows.
     # All remain measured from the actual original MP3 and the browser
     # validates the chosen live phase before a filtered beat preview.
@@ -276,6 +296,7 @@ def analyze(mp3):
       "bpm":round(bpm,3),"tempoRefined":tempo_refined,
       "beatConfidence":round(strength,3),
       "beatAnchor":beat_anchor,"introBeat":firstbeat,"level":round(level,5),
+      "barGrid":bar_grid,"sectionBoundaries":sections,
       "chroma":c,"introChroma":chroma(y[:int(to*SR)]),
       "outroChroma":chroma(y[int(outro_start*SR):int(end_note*SR)]),
       "introAttackNotes":chroma(y[int(first*SR):int(min(duration,first+2.3)*SR)]),
@@ -288,6 +309,11 @@ def analyze(mp3):
       "outroGroove":groove(rms,bpm,musical_edge,True),
       "introOnset":intro_onset,"outroOnset":outro_onset,
       "outroOnsetWindows":outro_windows,
+      "introOnsetWindows":intro_windows,
+      "introRms":round(float(np.sqrt(np.mean(
+          y[int(safe_intro*SR):int(min(duration,safe_intro+4)*SR)]**2))),5),
+      "introPeak":round(float(np.max(np.abs(
+          y[int(safe_intro*SR):int(min(duration,safe_intro+4)*SR)]))),5),
       # Structural descriptors are waveform evidence, NOT lyrical/vocal
       # classifications. Those come from synced karaoke or local YAMNet.
       "structureEvents":structure_events(rms,level,first,musical_edge),
@@ -297,7 +323,7 @@ def analyze(mp3):
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v6-phrases"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v7-bars-sections"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -315,7 +341,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
-                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v6-phrases"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v7-bars-sections"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:

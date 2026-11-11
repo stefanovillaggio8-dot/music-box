@@ -439,7 +439,8 @@ test("word-window overlap handles a lyric at 27 s and avoids guessing outside it
  ];
  const good=api.alignWindow(rows,chunks,24,28);
  assert.equal(good.length,1);
- assert.equal(good[0].t,27.2);
+ assert.equal(good[0].t,27.3,"line begins with the first measured syllable");
+ assert.equal(good[0].alignment.originalT,27.2);
  assert.equal(good[0].words[0].t,27.3);
  const bogus=api.alignWindow(rows,chunks,0,28);
  assert.equal(bogus.length,0,"timestamps relative to audio windows cannot be treated as absolute");
@@ -572,8 +573,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
  assert.match(align,/completedInSession\.add\(id\);\s*setStatus\("Lingua del testo incerta/);
- assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=2/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=2").length-1,2);
+ assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=3/);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=3").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 
@@ -648,7 +649,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"3":"2";
+  const wordCache=file==="word-karaoke.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -711,7 +712,8 @@ test("subdued Smart Mix lead-in starts before the last musical beats, not the si
   "grooveAgreement=()=>({score:.84,correlation:.7}),"+
   "similarNotes=()=>({focused:.87,phrase:.8}),"+
   "camelotMatch=()=>({weight:0,score:.7}),"+
-  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1;"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1,"+
+  "djAdaptivePreviewGain=()=>.145;"+
   dj.slice(from,to)+";return subduedRhythmicIntro;")();
  const data={duration:200,last:199,bpm:120,beatConfidence:.8,
   outroOnset:Array(96).fill(1),introOnset:Array(96).fill(1),
@@ -750,7 +752,8 @@ test("strong recorded drums can enter early as bass-only without blending weak c
   "grooveAgreement=()=>({score:.84,correlation:.70}),"+
   "similarNotes=()=>({focused:.58,phrase:.46}),"+
   "camelotMatch=()=>({weight:.12,score:.75}),"+
-  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1;"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1,"+
+  "djAdaptivePreviewGain=()=>.145;"+
   dj.slice(from,to)+";return subduedRhythmicIntro;")();
  const a={duration:200,last:199,bpm:120,beatConfidence:.8,
   outroOnset:Array(96).fill(1),introOnset:Array(96).fill(1),
@@ -758,7 +761,7 @@ test("strong recorded drums can enter early as bass-only without blending weak c
  const cue=fn(a,{...a},200);
  assert.equal(cue.kind,"underlay");
  assert.equal(cue.drumOnlyUnderlay,true);
- assert.ok(cue.underlayVolume<=.16&&cue.preserveTail);
+ assert.ok(cue.underlayVolume<=.20&&cue.preserveTail);
  assert.ok(cue.begin<a.last-2.5);
 });
 test("low-harmony DJ previews require a real low-pass filter before playback",()=>{
@@ -814,7 +817,8 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
  assert.ok(cue.begin<outgoing.last-4.65,"incoming kick begins before old silence");
  assert.equal(cue.preserveTail,true);
  assert.equal(cue.silenceTrim,false);
- assert.ok(cue.underlayVolume<=.105);
+ assert.ok(cue.underlayVolume<=.21&&cue.underlayVolume>=.035,
+  "Measured loudness may raise the filtered bass while preserving the guarded cap");
  assert.equal(choose(outgoing,{...incoming,firstVoiceAt:.5},200),null,
   "measured incoming vocals prevent underlay");
  assert.equal(choose({...outgoing,outroOnsetWindows:[{...win,levelRatio:.01}]},

@@ -14,6 +14,8 @@ import urllib.parse
 import urllib.request
 import numpy as np
 import librosa
+from scipy.signal import butter, sosfilt
+from scipy.io import wavfile
 
 SR=11025
 HOP=256
@@ -103,6 +105,48 @@ def audible_rms(y,start,end):
     seg=clip(y,start,end)
     return float(np.sqrt(np.mean(seg**2))) if seg is not None else None
 
+def audition_pair(p,a,b,target):
+    """A 6s OFFLINE rendition of the safe bass-preview tier for listening.
+    Does not certify beatmatching, stems, or exact browser scheduling.
+    Saves small temporary WAVs ONLY as short-lived Actions artifacts.
+    """
+    A,B=INDEX[p["from"]],INDEX[p["to"]]
+    last=float(A["last"])
+    end=min(len(a)/SR,max(6.,last))
+    length=5.0
+    outgoing=clip(a,end-length,end)
+    incoming=clip(b,float(B.get("safeIntroAt") or 0),
+                  float(B.get("safeIntroAt") or 0)+length+1.25)
+    if outgoing is None or incoming is None:return None
+    n=min(len(outgoing),len(incoming)-int(SR))
+    if n<SR*3:return None
+    original=outgoing[-n:]
+    preview=incoming[:n]
+    bass=sosfilt(butter(4,260,fs=SR,output="sos"),preview)
+    t=np.arange(n)/SR
+    gain=.12*np.sin(np.clip(t/1.3,0,1)*np.pi/2)
+    combined=original+bass*gain
+    peak=float(np.max(np.abs(combined)))
+    rms0=float(np.sqrt(np.mean(original**2)))
+    rmsMix=float(np.sqrt(np.mean(combined**2)))
+    # The amplitude guard is a last resort; it does NOT mask peak risk
+    # from the real-time browser mixer.
+    reduction=min(1.,.96/max(1e-9,peak))
+    joined=combined*reduction
+    after=incoming[n:n+int(SR*1.0)]
+    if len(after)<int(SR*.7):return None
+    # Simulate low-band -> full-band reveal AFTER native EOF only.
+    afterbass=sosfilt(butter(4,260,fs=SR,output="sos"),after)
+    ramp=np.clip(np.arange(len(after))/(SR*.65),0,1)
+    reveal=(afterbass*(1-ramp)+after*ramp)*reduction
+    waveform=np.concatenate([joined,reveal])
+    safe=np.clip(waveform,-.999,.999)
+    wavfile.write(str(target),SR,np.asarray(safe*32767,dtype="<i2"))
+    return {"peakBeforeGuard":round(peak,4),
+            "rmsChangeDb":round(20*np.log10((rmsMix+1e-9)/(rms0+1e-9)),2),
+            "normalizationDb":round(20*np.log10(max(reduction,1e-9)),2),
+            "renderSeconds":round(len(waveform)/SR,2)}
+ 
 def audit(p):
     old,new=p["from"],p["to"]
     a,b=load(old),load(new)
@@ -164,15 +208,29 @@ def audit(p):
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--pairs",required=True,type=pathlib.Path)
+    ap.add_argument("--preview-dir",type=pathlib.Path,default=None)
     args=ap.parse_args()
+    if args.preview_dir:
+        args.preview_dir.mkdir(parents=True,exist_ok=True)
     pairs=json.loads(args.pairs.read_text(encoding="utf-8"))
     # Cap the read-only network workload and avoid excessive downloads.
     pairs=pairs[:7]
     reports=[]
     for p in pairs:
         result=audit(p)
+        if args.preview_dir and len(reports)<4:
+            filename=f"mix-demo-{len(reports)+1:02}.wav"
+            stats=audition_pair(p,load(p["from"]),load(p["to"]),
+                                args.preview_dir/filename)
+            if stats:
+                result["offlineAudition"]={**stats,"file":filename}
         print("[DJ RAW MP3 WAVEFORM]",json.dumps(result,ensure_ascii=False),flush=True)
         reports.append(result)
+    if args.preview_dir:
+        meta={"warning":"Offline preview only. NOT a live-device or vocal-stem test.",
+              "pairs":reports}
+        (args.preview_dir/"readme.json").write_text(
+            json.dumps(meta,indent=2,ensure_ascii=False),encoding="utf8")
     print("[DJ RAW AUDIO SUMMARY]",json.dumps({
         "pairsAnalyzed":len(reports),"uniqueMP3":len(CACHE),
         "certifiedPairs":sum(p["reason"]=="certified_beat" for p in reports),

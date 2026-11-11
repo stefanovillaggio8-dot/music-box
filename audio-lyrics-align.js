@@ -72,7 +72,10 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   const tokens=wordTokens(row.text),keys=tokens.map(normalized);
   if(tokens.length<3||tokens.length>22||keys.some(k=>!k)||
      new Set(keys).size<2||String(row.text||"").length>220)continue;
-  const candidates=words.filter(w=>w.t>=start-.45&&w.t<=limit+.1);
+  // For an exact >=4-word phrase, allow earlier observed singing to
+  // correct an LRC line that arrives late. Short hooks remain strict.
+  const earliest=tokens.length>=4?start-1.7:start-.45;
+  const candidates=words.filter(w=>w.t>=earliest&&w.t<=limit+.1);
   if(candidates.length<tokens.length||candidates.length>34)continue;
   let best=null;
   for(let k=0;k<candidates.length;k++){
@@ -81,7 +84,8 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
    // in that wider region; short/repeated hooks retain the strict gate.
    const lag=candidates[k].t-start;
    const maximumLate=tokens.length>=4?1.70:.85;
-   if(candidates[k].key!==keys[0]||lag<-.45||lag>maximumLate)continue;
+   if(candidates[k].key!==keys[0]||
+      lag<-(tokens.length>=4?1.70:.45)||lag>maximumLate)continue;
    const found=[candidates[k]];let cursor=k+1;
    for(let w=1;w<tokens.length;w++){
     // Allow at most 2 unrelated words between correctly recognized tokens.
@@ -108,7 +112,19 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   });
   // Round-tripping is mandatory: the user-supplied lyric line is authoritative.
   if(parts.map(w=>w.text).join("").trim()!==String(row.text||"").trim())continue;
-  results.push({t:start,text:String(row.text).trim(),words:parts});
+  // A whole line's highlight should follow the first independently
+  // transcribed syllable, not the provider's stale LRC timestamp.
+  // Keep the original cue as provenance; only exact ordered >=4-word
+  // phrases may be moved by >850ms, and never outside the source window.
+  const observed=best.found[0].t;
+  const shift=observed-start;
+  const trustedLine=Math.abs(shift)<=.85||
+    (tokens.length>=4&&Math.abs(shift)<=1.7);
+  const corrected=trustedLine?Math.round(observed*1000)/1000:start;
+  results.push({t:corrected,text:String(row.text).trim(),words:parts,
+    alignment:{method:"whisper-exact-phrase",originalT:start,
+      correction:Math.round((corrected-start)*1000)/1000,
+      exactWords:tokens.length}});
  }
  return results;
 }

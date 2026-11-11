@@ -6,6 +6,8 @@ on:
     paths:
       - 'tools/dj-deep-shard.py'
       - 'tools/dj-deep-index.py'
+      - 'tools/dj_beat_phrases.py'
+      - 'tools/test-dj-beat-phrases.py'
       - 'tools/test-dj-deep-index.py'
       - 'tools/dj-deep-merge.py'
       - '.github/workflows/dj-deep-full-scan.yml'
@@ -30,7 +32,8 @@ jobs:
       - name: Install the local music-signal analyzer
         run: |
           python -m pip install "numpy>=1.26,<3" "librosa==0.11.0"
-          python -m py_compile tools/dj-deep-index.py tools/dj-deep-shard.py
+          python -m py_compile tools/dj-deep-index.py tools/dj-deep-shard.py tools/dj_beat_phrases.py
+          python tools/test-dj-beat-phrases.py
       - name: Analyze actual MP3 waveform from authorized catalog
         env:
           GITHUB_TOKEN: ${{ github.token }}

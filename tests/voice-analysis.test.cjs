@@ -96,7 +96,7 @@ test("YAMNet receives enough audio per window even at 16kHz",()=>{
   rates.add(rate);
   return [{classifications:[{categories:[{categoryName:"Music",score:.99}]}]}];
  }},{last:54});
- assert.equal(out.modelVersion,3);
+ assert.equal(out.modelVersion,4);
  assert.ok(minLength>=15600 && maxLength<=16500,{minLength,maxLength});
  assert.deepEqual([...rates],[16000]);
 });
@@ -123,7 +123,7 @@ test("adjacent quiet rap frames form a protected vocal phrase",()=>{
  let call=0;
  const result=moduleInstance().evaluate(fakeBuffer("instrumental"),{
   classify(){
-   const score=(call>=58&&call<=61)?.20:.01;call++;
+   const score=(call>=72&&call<=75)?.20:.01;call++;
    return [{classifications:[{categories:[{categoryName:"Rapping",score}]}]}];
   }
  },{last:80});

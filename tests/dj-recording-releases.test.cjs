@@ -323,8 +323,8 @@ test("bass reveal is measured, limited and never fabricates a beat",()=>{
  assert.match(dsp,/if\(beatMatched&&dspMode==="auto"&&Math\.abs\(dspBass\)<\.05\)/);
  assert.match(dsp,/add\("lowshelf",95,2\.0\)/);
  assert.match(dsp,/createDynamicsCompressor/);
- assert.match(dsp,/limiter\.threshold\.value=-5/);
- assert.match(dsp,/beatMatched\|\|dspBass>0\|\|dspMid>0\|\|dspTreble>0/);
+ assert.match(dsp,/limiter\.threshold\.value=drumOnly\?-9:-5/);
+ assert.match(dsp,/beatMatched\|\|drumOnly\|\|dspBass>0\|\|dspMid>0\|\|dspTreble>0/);
  const gainSnippet=source.slice(source.indexOf("function measuredReleasePreviewGain("),
    source.indexOf("function mixCurve("));
  const measured=new Function("clamp",gainSnippet+"return measuredReleasePreviewGain;")(
