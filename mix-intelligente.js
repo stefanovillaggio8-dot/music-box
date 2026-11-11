@@ -4543,7 +4543,8 @@ async function beginMix(song,proposed){
   // MP3 clocks BEFORE lifting the muted preview into the mix.
   const livePhaseError=djBeatPhaseError(
     proposed,old.currentTime,upcoming.currentTime);
-  if(proposed.measuredBeatBridge===true&&
+  if((proposed.measuredBeatBridge===true||
+      proposed.subduedRhythmicUnderlay===true)&&
      Number.isFinite(livePhaseError)&&
      livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
    console.info("[Music Box DJ] Beat allineato in teoria ma decoder fuori fase",
