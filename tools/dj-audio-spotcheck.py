@@ -14,6 +14,7 @@ import urllib.parse
 import urllib.request
 import numpy as np
 import librosa
+from scipy.signal import butter,sosfilt
 
 SR=11025
 HOP=256
@@ -103,6 +104,29 @@ def audible_rms(y,start,end):
     seg=clip(y,start,end)
     return float(np.sqrt(np.mean(seg**2))) if seg is not None else None
 
+def low_band_combined_peak(outgoing,incoming,old_at,new_at,seconds=3.0):
+    """Read-only in-memory audition proxy, never uploads derived audio."""
+    a=clip(outgoing,old_at,old_at+seconds)
+    b=clip(incoming,new_at,new_at+seconds)
+    if a is None or b is None:return None
+    n=min(len(a),len(b))
+    if n<SR:return None
+    bass=sosfilt(butter(4,260,fs=SR,output="sos"),b[:n]).astype(float)
+    full=np.asarray(a[:n],dtype=float)
+    # Test the upper permitted underlay gain, even if a pair would earn
+    # less in the real app. Normalize combined RMS conservatively.
+    gain=.215
+    attenuation=min(1.,1.06/math.hypot(1,gain))
+    mixed=attenuation*(full+gain*bass)
+    return {
+      "peakOriginal":round(float(np.max(np.abs(full))),4),
+      "peakCombined":round(float(np.max(np.abs(mixed))),4),
+      "peakIncreaseDb":round(20*math.log10(
+        (np.max(np.abs(mixed))+.000001)/
+        (np.max(np.abs(full))+.000001)),2),
+      "rmsCombined":round(float(np.sqrt(np.mean(mixed*mixed))),4),
+      "bassContributionRms":round(float(gain*np.sqrt(np.mean(bass*bass))),5)}
+
 def audit(p):
     old,new=p["from"],p["to"]
     a,b=load(old),load(new)
@@ -157,8 +181,16 @@ def audit(p):
         "lateMusicRms":round(after,5) if after is not None else None,
         "earlierMusicRms":round(firstEnd,5) if firstEnd is not None else None,
         "indexMatchValid":True,
+        "lowBandPreview":low_band_combined_peak(
+          a,b,max(0,musical_edge-3.3),entry),
         "note":"Spectral similarity cannot by itself certify voice-free or subjective DJ quality"
     }
+    if report["lowBandPreview"] is not None:
+        mix=report["lowBandPreview"]
+        if not all(math.isfinite(v) for v in mix.values()):
+            raise ValueError("Invalid low-band mixed PCM")
+        if mix["peakIncreaseDb"]>2.4:
+            raise ValueError("Low-band mix exceeds conservative peak change")
     return report
 
 def main():
