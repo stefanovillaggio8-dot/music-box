@@ -204,7 +204,7 @@ function paintWords(row,elements,time){
   // the previous syllable was sung for that entire gap. Complete the
   // highlight promptly, then hold it until the next measured onset.
   // Explicit measured end timestamps still take precedence.
-  const length=String(w.text||"").replace(/[^\\p{L}\\p{N}]/gu,"").length;
+  const length=String(w.text||"").replace(/[^\p{L}\p{N}]/gu,"").length;
   const natural=clamp(.24+Math.min(length,9)*.062,.28,.82);
   const fallback=next?
     Math.min(next.t,w.t+natural):
