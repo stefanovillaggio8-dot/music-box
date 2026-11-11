@@ -188,7 +188,7 @@ test("real indexed DJ candidates evaluated with independently joined synced lyri
      !Number.isFinite(row.lastLyricAt)||row.lineCount<4)continue;
   fromSha.set(sha,row);
  }
- let matched=0;
+ let matched=0;const violations=[];
  const annotated=tracks.map(t=>{
   const row=fromSha.get(String(t.data.sha||"").toLowerCase());
   if(!row||Math.abs(row.duration-t.data.duration)>.55)return t.data;
@@ -222,12 +222,12 @@ test("real indexed DJ candidates evaluated with independently joined synced lyri
   if(after&&["beat","snap","phrase"].includes(after.kind)&&
      !after.vocalBeatUnderlay&&Number.isFinite(a.lastLyricAt)&&
      a.lastLyricAt>after.begin-5.5)
-   lrcViolations++;
+   {lrcViolations++;if(violations.length<8)violations.push({from:A.key,to:B.key,kind:after.kind,begin:after.begin,end:after.end,lastLyricAt:a.lastLyricAt,voiceModel:a.voiceModel,vocalBeatUnderlay:after.vocalBeatUnderlay,protectedEnding:a.protectedEnding});}
  }
  console.info("[DJ SHA-BOUND LRC SAFETY AUDIT]",JSON.stringify({
   uniqueSha:fromSha.size,matched,checked,changed,prevented,
   beatBefore,beatAfter,verifiedAfter,
-  rhythmicBefore,rhythmicAfter,lrcViolations
+  rhythmicBefore,rhythmicAfter,lrcViolations,violations
  }));
  assert.ok(matched>=280,"Timed lyrics must match hundreds of original audio recordings");
  assert.ok(changed>0,"A previous unsafe vocal treatment must actually be reconsidered");
