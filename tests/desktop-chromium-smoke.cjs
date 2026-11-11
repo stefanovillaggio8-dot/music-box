@@ -71,9 +71,19 @@ async function run(){
     view.setInt16(44+i*2,Math.round(10000*Math.sin(2*Math.PI*220*i/rate)),true);
    const url=URL.createObjectURL(new Blob([wav],{type:"audio/wav"}));
    const next={id:"test-next",url};
-   const old={paused:false,ended:false,seeking:false,
-    currentTime:37,duration:40,volume:.7,readyState:4,
-    pause(){this.paused=true},removeAttribute(){},load(){}};
+   // Model the outgoing HTMLMediaElement's clock, not a static object.
+   // Decoder-clock crossfades intentionally abort if the old MP3 stalls.
+   window.__MB_CHROME_OLD_AUDIO__=(start,duration)=>{
+    let base=start,began=performance.now();
+    return {paused:false,ended:false,seeking:false,
+     duration,volume:.7,readyState:4,
+     get currentTime(){return Math.min(duration,base+
+      (this.paused?0:(performance.now()-began)/1000))},
+     set currentTime(value){base=Number(value)||0;began=performance.now()},
+     pause(){base=this.currentTime;this.paused=true;began=performance.now()},
+     removeAttribute(){},load(){}};
+   };
+   const old=window.__MB_CHROME_OLD_AUDIO__(37,40);
    const testState={id:"test-old",audio:old,next,adopted:false};
    const app={
     audio:()=>testState.audio,currentId:()=>testState.id,
@@ -123,9 +133,7 @@ async function run(){
    const state=window.__MB_DESKTOP_STATE__;
    state.id="impact-old";state.adopted=false;
    state.next={id:"impact-next",url:state.next.url};
-   state.audio={paused:false,ended:false,seeking:false,
-    currentTime:241.11,duration:249.133,volume:.7,readyState:4,
-    pause(){this.paused=true},removeAttribute(){},load(){}};
+   state.audio=window.__MB_CHROME_OLD_AUDIO__(241.11,249.133);
    window.__MB_DESKTOP_MIX_TEST__.prepare(state.next,state.id,window.MusicBoxBridge);
    return {next:state.next.id,oldAt:state.audio.currentTime};
   });
