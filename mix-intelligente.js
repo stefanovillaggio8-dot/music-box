@@ -3092,6 +3092,53 @@ function measuredTempoRelation(a,b){
  if(!chosen||chosen.ratio<.975||chosen.ratio>1.025)return null;
  return {...chosen,period:Math.max(60/x,60/y)};
 }
+// Verified bar-start evidence is optional: a constant 4/4 kick has
+// no trustworthy downbeat and must NEVER receive invented first-beat
+// labels. Only two confidently accented PCM grids may be compared.
+function djBarAgreement(a,b,begin,entry,tempo=1){
+ const left=a?.barGrid,right=b?.barGrid;
+ if(!left||!right||Number(left.confidence)<.39||
+    Number(right.confidence)<.39||
+    left.beatsPerBar!==4||right.beatsPerBar!==4||
+    !Array.isArray(left.outroDownbeats)||
+    !Array.isArray(right.introDownbeats)||
+    !Number.isFinite(begin)||!Number.isFinite(entry)||
+    !Number.isFinite(tempo)||tempo<.96||tempo>1.04||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
+    Math.abs(a.bpm/b.bpm-1)>.03)return null;
+ const barSeconds=4*Number(left.interval);
+ if(!(barSeconds>1.1&&barSeconds<4.8))return null;
+ let best=Infinity;
+ for(const out of left.outroDownbeats){
+  if(!Number.isFinite(out)||out<begin-2||out>begin+7)continue;
+  for(const incoming of right.introDownbeats){
+   if(!Number.isFinite(incoming)||incoming<entry-2||incoming>entry+7)continue;
+   const difference=(out-begin)-(incoming-entry)/tempo;
+   const phase=((difference%barSeconds)+barSeconds)%barSeconds;
+   best=Math.min(best,phase,barSeconds-phase);
+  }
+ }
+ if(!Number.isFinite(best))return null;
+ return {measured:true,error:best,aligned:best<=.16,
+  score:clamp(1-best/.36,0,1)};
+}
+// Compensate for actual recorded intro loudness, not just a global
+// arbitrary slider. The native outgoing player is NEVER boosted or
+// shortened, and the low-band preview remains volume-limited.
+function djAdaptivePreviewGain(a,b,base,cap){
+ const maximum=clamp(Number(cap)||.12,.07,.25);
+ const requested=clamp(Number(base)||.10,.035,maximum);
+ const old=Number(a?.level);
+ const intro=Number(b?.introRms)||Number(b?.level);
+ if(!Number.isFinite(old)||!Number.isFinite(intro)||
+    old<=.001||intro<=.001)return Math.min(requested,.12);
+ const relative=clamp(old/intro,.24,2.3);
+ const bass=Number.isFinite(b?.introBassRatio)?
+    clamp(.73+Number(b.introBassRatio)*.67,.74,1.15):1;
+ const safePeak=Number.isFinite(b?.introPeak)&&b.introPeak>.88?.77:1;
+ return clamp(requested*Math.sqrt(relative)*bass*safePeak,
+    .035,maximum);
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3104,95 +3151,109 @@ function measuredWindowRhythmUnderlay(a,b,dur){
     !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.43)return null;
  const cadence=measuredTempoRelation(a,b);
  if(!cadence)return null;
- const ratio=cadence.ratio;
- const introPeriod=onsetPeriodicity(b.introOnset,b.bpm);
- const incoming=independentPulseTrain(b.introOnset,b.bpm);
- // Strong independent beat proof is ideal. A merely PERIODIC real PCM
- // signal may be used only for a filtered, 10%-volume kick underlay,
- // never to certify full-band rhythm or to shorten the outgoing song.
- if(!(incoming?.score>=.72||introPeriod>=.36))return null;
- const entry=musicalIntroEntry(b);
- // Do not knowingly launch a sung intro under the existing song.
+ const ratio=cadence.ratio,period=cadence.period;
+ const key=camelotMatch(a,b);
+ if(Number.isFinite(b.introBassRatio)&&b.introBassRatio<.085)return null;
  const firstVoice=Math.min(
   Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
- if(firstVoice-entry<2.6)return null;
- const period=cadence.period,
-  nextPhase=onsetGridPhase(b.introOnset,b.bpm);
- const key=camelotMatch(a,b);
- // The low-pass preview needs real bass energy when measured. This
- // cannot certify an instrumental intro or the absence of vocals.
- if(Number.isFinite(b.introBassRatio)&&b.introBassRatio<.085)return null;
+ const primary=musicalIntroEntry(b);
+ const openings=[{start:primary,onset:b.introOnset,
+  groove:b.introGroove,notes:b.introAttackNotes,primary:true}];
+ // Only skip into another true PCM-measured intro segment when a
+ // TRUSTED vocal/lyric timestamp establishes sufficient instrumental
+ // lead-in. Unknown vocals do not authorize a late entry.
+ if(Number.isFinite(firstVoice)&&
+    Array.isArray(b.introOnsetWindows)){
+  for(const win of b.introOnsetWindows){
+   if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
+      win.start<=primary+1||win.start>15||win.end+4>=firstVoice||
+      win.onset?.length!==96||win.groove?.length!==32||
+      Number(win.levelRatio)<.30)continue;
+   openings.push(win);
+  }
+ }
  let best=null;
- for(const win of a.outroOnsetWindows){
-  if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
-     Math.abs(win.end-win.start-4)>.13||
-     win.start<a.last-15.2||win.end>a.last-1.6||
-     Number(win.levelRatio)<.28||
-     !Array.isArray(win.onset)||win.onset.length!==96||
-     !Array.isArray(win.groove)||win.groove.length!==32)continue;
-  const windowPeriod=onsetPeriodicity(win.onset,a.bpm);
-  const pulse=independentPulseTrain(win.onset,a.bpm);
-  if(!(pulse?.score>=.72||windowPeriod>=.36))continue;
-  const local={...a,outroOnset:win.onset,outroGroove:win.groove,
-   outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,
-   outroTimeline:[]};
-  const g=grooveAgreement(local,b);
-  if(!g||g.score<.65||g.correlation<.30)continue;
-  const notes=similarNotes(local,b);
-  // The upper harmonics will be filtered; require some tonal safety
-  // but not a full-band chord match we are not going to play.
-  if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
-     notes.focused<.33||notes.phrase<.23||
-     (key.weight>=.14&&key.score<.47))continue;
-  const beatAnchor=win.start+
-   (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
-  // A phrase boundary several bars from the end should get its OWN
-  // measured cue, not a fictional beat extrapolated from the last four
-  // seconds. Every selected begin stays inside its measured window.
-  const desired=Math.max(win.start+.55,
-   Math.min(a.last-7.6,win.end-1.55));
-  const begin=beatAnchor+
-   Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
-  const end=dur-.035,fade=end-begin;
-  // This puts the actual attack INSIDE the measured outgoing window,
-  // rather than extrapolating an inferred rhythm over the whole track.
-  if(!Number.isFinite(begin)||begin<28||
-     begin<win.start+.25||begin>win.end-1.10||
-     begin>a.last-4.65||begin<a.last-11.9||
-     fade<4.5||fade>11.8)continue;
-  const shape=Number(win.energyTrend);
-  const phraseEvent=Array.isArray(a.structureEvents)?
-   a.structureEvents.find(e=>Number.isFinite(e?.at)&&
-    Math.abs(e.at-begin)<=1.25&&
-    (e.direction==="rising"||e.direction==="falling")):null;
-  // Rising or falling musical sections are better deliberate entrances
-  // than arbitrary PCM windows. These are amplitude transitions, NEVER
-  // labeled as chorus/drop/vocal absence without independent evidence.
-  const structureBonus=phraseEvent?.direction==="rising"?.085:
-   phraseEvent?.direction==="falling"?.05:
-   Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
-  const quality=Math.min(1,pulse?.score??windowPeriod)*.25+
-   Math.min(1,incoming?.score??introPeriod)*.24+
-   g.score*.21+notes.focused*.13+notes.phrase*.07+
-   structureBonus+
-   Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
-   (cadence.scale!==1?.045:0);
-  if(!best||quality>best.quality)best={quality,begin,end,fade,
-   beatAnchor,nextBeat:nextPhase,grooveScore:g.score,
-   structuralShift:phraseEvent?.direction||null,
-   structuralMatch:!!phraseEvent,structureScore:structureBonus};
+ for(const opening of openings){
+  const introPeriod=onsetPeriodicity(opening.onset,b.bpm);
+  const incoming=independentPulseTrain(opening.onset,b.bpm);
+  if(!(incoming?.score>=.72||introPeriod>=.36))continue;
+  const entry=opening.start,nextPhase=onsetGridPhase(opening.onset,b.bpm);
+  const localB=opening.primary?b:{...b,
+    introOnset:opening.onset,introGroove:opening.groove,
+    introAttackNotes:opening.notes,introPhraseNotes:opening.notes};
+  for(const win of a.outroOnsetWindows){
+   if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
+      Math.abs(win.end-win.start-4)>.13||
+      win.start<a.last-15.2||win.end>a.last-1.6||
+      Number(win.levelRatio)<.28||
+      win.onset?.length!==96||win.groove?.length!==32)continue;
+   const windowPeriod=onsetPeriodicity(win.onset,a.bpm);
+   const pulse=independentPulseTrain(win.onset,a.bpm);
+   if(!(pulse?.score>=.72||windowPeriod>=.36))continue;
+   const local={...a,outroOnset:win.onset,outroGroove:win.groove,
+    outroFinalNotes:win.notes,outroPhraseNotes:win.notes,
+    outroNotes:win.notes,outroTimeline:[]};
+   const g=grooveAgreement(local,localB);
+   if(!g||g.score<.65||g.correlation<.30)continue;
+   const notes=similarNotes(local,localB);
+   if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
+      notes.focused<.33||notes.phrase<.23||
+      (key.weight>=.14&&key.score<.47))continue;
+   const beatAnchor=win.start+
+    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
+   const desired=Math.max(win.start+.55,
+    Math.min(a.last-7.6,win.end-1.55));
+   const begin=beatAnchor+
+    Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
+   const end=dur-.035,fade=end-begin;
+   if(!Number.isFinite(begin)||begin<28||
+      begin<win.start+.25||begin>win.end-1.10||
+      begin>a.last-4.65||begin<a.last-11.9||
+      fade<4.5||fade>11.8||
+      firstVoice-entry<fade+.35)continue;
+   const bar=cadence.scale===1?
+    djBarAgreement(a,b,begin,entry,ratio):null;
+   const shape=Number(win.energyTrend);
+   const boundaries=Array.isArray(a.sectionBoundaries)?
+    a.sectionBoundaries:Array.isArray(a.structureEvents)?
+    a.structureEvents:[];
+   const event=boundaries.find(e=>Number.isFinite(e?.at)&&
+    Math.abs(e.at-begin)<=1.4);
+   const eventKind=event?.kind||event?.direction||null;
+   const meaningful=Boolean(eventKind&&
+      ["energy_up","energy_down","harmonic_change","rising","falling"]
+       .includes(eventKind));
+   const structureBonus=meaningful?
+    .045+clamp(Number(event?.score)||Math.abs(Number(event?.change)||0),0,1)*.06:
+    Number.isFinite(shape)&&Math.abs(shape)>=.40?.03:0;
+   const quality=Math.min(1,pulse?.score??windowPeriod)*.23+
+    Math.min(1,incoming?.score??introPeriod)*.23+
+    g.score*.20+notes.focused*.12+notes.phrase*.07+
+    structureBonus+(bar?.aligned?.10:0)-
+    (bar?.measured&&!bar.aligned?.09:0)+
+    Math.min(.06,Math.max(0,a.last-begin-5)*.012)-
+    (cadence.scale!==1?.045:0);
+   if(!best||quality>best.quality)best={
+    quality,begin,end,fade,entry,beatAnchor,nextBeat:nextPhase,
+    grooveScore:g.score,barAligned:bar?.aligned===true,
+    barError:bar?.error??null,structuralMatch:meaningful,
+    structuralShift:eventKind,structureScore:structureBonus,
+    candidateIntros:openings.length};
+  }
  }
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
   structuralMatch:best.structuralMatch,
   structuralShift:best.structuralShift,structureScore:best.structureScore,
+  barGridAligned:best.barAligned,barPhaseError:best.barError,
+  introCandidateCount:best.candidateIntros,
   tempoScale:cadence.scale,
-  begin:best.begin,end:best.end,fade:best.fade,entry,
+  begin:best.begin,end:best.end,fade:best.fade,entry:best.entry,
   tempo:clamp(ratio,.975,1.025),gain:1,
-  underlayVolume:Number.isFinite(b.introBassRatio)&&
-    b.introBassRatio>=.26?.135:.105,
+  underlayVolume:djAdaptivePreviewGain(a,b,
+    Number.isFinite(b.introBassRatio)&&b.introBassRatio>=.26?.16:.12,.21),
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
