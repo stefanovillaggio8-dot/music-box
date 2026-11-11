@@ -3072,9 +3072,10 @@ function subduedRhythmicIntro(a,b,dur){
   (key.weight<.14||key.score>=.60));
  if(!g||g.score<.65||g.correlation<.30||
     (!melodic&&!drumOnly)||
-    (a.protectedEnding===true&&n.focused<.72)||
+    (a.protectedEnding===true&&!drumOnly&&n.focused<.72)||
     (key.weight>=.10&&key.score<.42)||
-    (Number(n.alignment?.score)>0&&Number(n.alignment?.weakest)<.42))
+    (!drumOnly&&Number(n.alignment?.score)>0&&
+      Number(n.alignment?.weakest)<.42))
   return null;
  const entry=musicalIntroEntry(b);
  if((Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt-entry<2.6)||
