@@ -474,17 +474,27 @@ function deepLookup(track){
  const raw=String(track.file||track.url||"");
  const path=raw.match(/(?:^|\/)(songs\/[A-Za-z0-9/_-]+\.mp3)(?:[?#]|$)/i)?.[1];
  if(!path)return null;
- const keys=/\/music-box\/(?:mobile-audio|refs\/heads\/mobile-audio)\//.test(raw)?
-   ["mobile/"+path,"audio/"+path,"app/"+path]:
-   ["audio/"+path,"mobile/"+path,"app/"+path];
+ // The same songs/name.mp3 can exist in THREE different Git repos.
+ // For a known source URL its own decoded waveform must be used; do not
+ // silently substitute a same-named recording with different beats.
+ const address=String(track.url||track.file||"");
+ const origin=/\/stefanovillaggio8-dot\/music-box-brani\/(?:main|refs\/heads\/main)\//i.test(address)?
+  "audio":/\/stefanovillaggio8-dot\/music-box\/(?:mobile-audio|refs\/heads\/mobile-audio)\//i.test(address)?
+  "mobile":/\/stefanovillaggio8-dot\/music-box\/(?:main|refs\/heads\/main)\//i.test(address)?
+  "app":null;
+ const keys=origin?[origin+"/"+path]:
+  ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
-  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats)$/.test(value.analyzer||"")&&
+  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return value;
  }
  return null;
 }
+// The v6/v8 analyzers include measured onset windows, chord phrases
+// and structure boundaries. Reject unknown analyzers but retain these valid
+// current records rather than falling back to an unmeasured transition.
 // The full real-audio index provides comparable beat/harmony measurements.
 // Carry only vocal safety data from an older local decoded copy.
 function withValidatedVoice(deep,local){
@@ -571,6 +581,7 @@ function loadDeepIndex(force=false){
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
    deepIndex=json;
+   if(typeof window!=="undefined")window.MusicBoxVocalStems?.load?.();
    const tempoQuality=djTempoIndexQuality();
    if(tempoQuality?.limitedResolution&&!_coarseTempoWarningShown){
     _coarseTempoWarningShown=true;
@@ -4333,9 +4344,11 @@ function cancel(){
  stopSnapPrecision();
  stopMobileMix();
  resetMobileFade();
+ window.MusicBoxVocalStems?.stop?.();
  if(active){
   const act=active;active=null;
   if(act.timer)clearTimeout(act.timer);
+  if(act.stem)window.MusicBoxVocalStems?.release?.(act.stem);
   try{act.upcoming.pause();act.upcoming.removeAttribute("src");act.upcoming.load()}catch(e){}
   if(act.upcoming!==bridge()?.audio?.())releaseDesktopDsp(act.upcoming);
   try{act.original.volume=bridge()?.volume?.()??1}catch(e){}
@@ -4517,6 +4530,8 @@ async function handoff(){
    if(adopted&&app.currentId()===act.track.id&&app.audio()===preview){
     active=null;mixing=false;stopSnapPrecision();
     if(act.timer)clearTimeout(act.timer);
+    if(act.stem)window.MusicBoxVocalStems?.release?.(act.stem);
+    window.MusicBoxVocalStems?.stop?.();
     try{old.pause()}catch(_){}
     try{old.removeAttribute("src");old.load()}catch(_){}
     releaseDesktopDsp(old);
@@ -4793,11 +4808,19 @@ async function beginMix(song,proposed){
     (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
     djSoftRevealReady(proposed,act.fade),!!proposed.drumOnlyUnderlay);
   if(proposed.drumOnlyUnderlay&&!act.dsp){cancel();plan=null;return}
+  // Optional genuine Demucs vocal stem (never AI-generated during playback).
+  // Decoder drift or missing stem means the already-proven native fallback.
+  if(proposed.voiceConfirmedUnderlay&&proposed.vocalBeatUnderlay)
+   act.stem=await window.MusicBoxVocalStems?.activate?.(id,proposed,old)||null;
+  if(active!==act||old.paused||app.currentId()!==id){cancel();return}
+  if(act.stem)console.info("[Music Box DJ] Voce isolata reale sopra la nuova base",
+   {from:id,to:song.id,source:"demucs-htdemucs",
+    vocalStartsAt:old.currentTime,until:act.vocalEndAt});
   // Emitted only AFTER the second audio has actually started.
   try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
    device:"pc",fromId:id,toId:song.id,kind:proposed.kind,
    actualAt:old.currentTime,cueAt:proposed.begin,
-   entry:proposed.entry,fade:act.fade
+   entry:proposed.entry,fade:act.fade,vocalOnlyStem:!!act.stem
   }}))}catch(_){}
   console.info("[Music Box DJ] Sovrapposizione audio avviata",
    {outgoing:id,incoming:song.id,kind:proposed.kind,
@@ -4910,16 +4933,35 @@ async function beginMix(song,proposed){
     inGain=measuredReleasePreviewGain(old.currentTime,
       act.begin,act.releaseLastMusicalAt,act.end);
    }
+    let stemGain=0;
+    if(act.stem){
+     const drift=Math.abs(
+      act.stem.audio.currentTime+act.stem.stem.start-old.currentTime);
+     if(act.stem.audio.paused||act.stem.audio.readyState<2||drift>.20){
+      window.MusicBoxVocalStems?.release?.(act.stem);
+      act.stem=null;
+     }else{
+      const voice=window.MusicBoxVocalStems?.levels?.(
+       time,old.currentTime-act.oldAudioAt,
+       act.vocalEndAt-old.currentTime);
+      if(voice){
+       outGain=voice.native;
+       inGain=Math.max(inGain,voice.backing);
+       stemGain=voice.vocals;
+      }
+     }
+    }
     const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     // Constant-power headroom for TWO simultaneous MP3s. Prevent an
     // unexpectedly loud summed kick while retaining the measured bass
     // reveal and each user's volume setting. No effect on solo playback.
     const incomingGain=inGain*correction;
-    const combinedPower=Math.hypot(outGain,incomingGain);
+    const combinedPower=Math.hypot(outGain,incomingGain,stemGain);
     const headroom=combinedPower>1.06?1.06/combinedPower:1;
     old.volume=clamp(vol*outGain*headroom,0,1);
     upcoming.volume=clamp(vol*incomingGain*headroom,0,1);
+    if(act.stem)act.stem.audio.volume=clamp(vol*stemGain*headroom,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
     if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
@@ -5589,6 +5631,12 @@ function tick(){
     (!prepared||prepared.id!==next.id||prepared.fromId!==id||
       (prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)))
    prepare(next,id,app);
+  // Only desktop, only trusted isolated vocal evidence. The extra short
+  // audio is optional: the regular intro/last vocal remains protected.
+  if(previewAllowed&&!isIOS&&plan.voiceConfirmedUnderlay&&
+     plan.vocalBeatUnderlay&&audio.currentTime>=Math.max(0,preloadAt))
+   window.MusicBoxVocalStems?.prepare?.(
+    id,deepLookup(currentSong)||measuredEnding,plan);
  // If the crossfade couldn't start (not enough buffering or suspended
  // iPhone WebAudio), hand off shortly AFTER a verified long quiet pause
  // begins. Do not leave the listener in silence for 20 more seconds.
@@ -5806,13 +5854,28 @@ async function intelligentShuffle(app,audio,fromId){
  const lastLyric=app.mixLyricCues?.(fromId)?.last;
  const old=Number.isFinite(lastLyric)?{...fromInfo,lastLyricAt:lastLyric}:fromInfo;
  const source=t=>String(app.mixUrl?.(t)||t.url||"");
+ // Distinct IDs can contain the EXACT same recording (e.g. app/mobile).
+ // Never promote the song that just played or count exact duplicate Git
+ // blobs as new candidates. Similar BPM/chroma alone never proves identity.
+ const audioSha=x=>{
+  const value=String(x?.sha||"").toLowerCase();
+  return /^[0-9a-f]{40}$/.test(value)?value:"";
+ };
+ const sourceSha=audioSha(deepLookup(from))||audioSha(old);
+ const seenAudioShas=new Set(sourceSha?[sourceSha]:[]);
+ let identicalAudioSkipped=0;
  // Indexed real-audio measurements: cheap and synchronous even for hundreds
  // of candidates. A missing analysis is NOT proof of matching beat.
  const indexed=[],unknown=[];
  for(const t of pool.slice(0,1800)){
   if(!t?.id||t.id===fromId)continue;
+  const deep=deepLookup(t),candidateSha=audioSha(deep);
+  if(candidateSha&&seenAudioShas.has(candidateSha)){
+   identicalAudioSkipped++;continue;
+  }
+  if(candidateSha)seenAudioShas.add(candidateSha);
   const local=cache.get(source(t));
-  const info=withValidatedVoice(deepLookup(t),local);
+  const info=withValidatedVoice(deep,local);
   if(info)indexed.push({track:t,info});
   else unknown.push(t);
  }
@@ -5876,6 +5939,7 @@ async function intelligentShuffle(app,audio,fromId){
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
  const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
+  exactSameRecordingSkipped:identicalAudioSkipped,
   sampledForDecode:picked.length,measured:measured.length,
   outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
   validIntros:0,closeTempo:0,compatibleGroove:0,compatibleNotes:0,
@@ -6614,7 +6678,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.719",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.720",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

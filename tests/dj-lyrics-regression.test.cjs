@@ -518,7 +518,7 @@ test("Whisper timeout terminates a hung worker without freezing playback",async(
  assert.equal(terminated,1);
  assert.equal(closed,1);
  assert.match(stage,/non disponibile/);
- assert.ok(mem.has("mb.audioWords.fail."+music.id));
+ assert.ok(mem.has("mb.audioWords.fail.Ste."+music.id));
 });
 test("AI timing provenance survives browser restart and does not masquerade as LRCLIB",()=>{
  assert.match(app,/audioWordSynced:r\.audioWordSynced===true/);
@@ -527,7 +527,7 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
  assert.match(immersive,/next\?\.audioWordSynced\?"PAROLA PER PAROLA · IA"/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
- assert.match(engine,/completedInSession\.has\(id\)/);
+ assert.match(engine,/completedInSession\.has\(sessionId\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
  assert.match(engine,/window\.OfflineAudioContext\|\|window\.webkitOfflineAudioContext/);
  assert.match(engine,/if\(!selected\(at\)\)continue/);
@@ -571,9 +571,9 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/return_timestamps:"word",task:"transcribe",language/);
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
- assert.match(align,/completedInSession\.add\(id\);\s*setStatus\("Lingua del testo incerta/);
- assert.match(html,/audio-lyrics-align\.js\?v=6715&amp;lang=3/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6715&lang=3").length-1,2);
+ assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
+ assert.match(html,/audio-lyrics-align\.js\?v=6720&amp;lang=4/);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6720&lang=4").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 
@@ -983,4 +983,71 @@ test("DJ harmonic section entry earns stronger bass only with independently alig
   {...incoming,beatGrid:{reliable:true},
    introBeatTimes:Array.from({length:8},(_,i)=>i*.5)},200);
  assert.equal(misaligned,null,"Strong bass cannot play with a measured offbeat grid");
+});
+
+test("iPhone karaoke may inspect several different passages on later requests without unbounded decoding",async()=>{
+ const code=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const lyrics=[
+  {t:3,text:"I want to know your heart is mine"},
+  {t:9,text:"You know that I want you tonight"},
+  {t:35,text:"And we will see the world tonight"},
+  {t:60,text:"I wanna know where you are now"}
+ ];
+ let current=4,now=Date.now(),clips=0,downloads=0,closed=0,profile="Ste";
+ const pcm=new Float32Array(16000*80),memory=new Map();
+ class WorkerMock{
+  postMessage(m){
+   clips++;
+   queueMicrotask(()=>this.onmessage({data:{id:m.id,chunks:[]}}));
+  }
+  terminate(){}
+ }
+ class OfflineMock{
+  async decodeAudioData(){
+   return {sampleRate:16000,duration:80,length:pcm.length,
+    numberOfChannels:1,getChannelData:()=>pcm};
+  }
+  async close(){closed++}
+ }
+ const track={id:"song-karaoke",url:"songs/track.mp3"};
+ const bridge={currentId:()=>track.id,
+  audio:()=>({duration:80,currentTime:current}),
+  profile:()=>profile,allTracks:()=>[track],
+  lyricsData:()=>({synced:lyrics}),mixUrl:()=>track.url};
+ const win={Worker:WorkerMock,OfflineAudioContext:OfflineMock,MusicBoxBridge:bridge};
+ const nav={gpu:{},onLine:true,userAgent:"iPhone",connection:{saveData:false}};
+ const doc={hidden:false,baseURI:"https://music.example/",getElementById:()=>null};
+ const storage={getItem:k=>memory.get(k)||null,
+  setItem:(k,v)=>memory.set(k,String(v))};
+ const fetchMock=async()=>{
+  downloads++;
+  return {ok:true,headers:{get:()=>null},blob:async()=>({
+   size:100,arrayBuffer:async()=>new ArrayBuffer(100)})};
+ };
+ const api=new Function("window","navigator","document","sessionStorage",
+  "fetch","Worker","requestIdleCallback","Date","URL",
+  code+";return window.MusicBoxAudioAlign;")(
+   win,nav,doc,storage,fetchMock,WorkerMock,fn=>fn(),{now:()=>now},URL);
+ assert.equal(api.languageFromLyrics(lyrics),"en");
+ for(const [i,position] of [4,36,61].entries()){
+  current=position;now+=16000;
+  assert.equal(api.request(track.id),true);
+  await new Promise(resolve=>setTimeout(resolve,40));
+  assert.equal(clips,i+1,"one new isolated 28s clip per request");
+  assert.equal(downloads,i+1,"never download more than once per request");
+ }
+ now+=16000;current=70;
+ assert.equal(api.request(track.id),false,"per-song session cap protects iPhone");
+ assert.equal(clips,3);
+ assert.equal(closed,3,"offline decoders must be closed after each window");
+ // Same catalog ID on a different profile must not inherit the first
+ // profile's cap, pending work, or previously inspected lyric windows.
+ profile="Diego";current=4;now+=16000;
+ assert.equal(api.request(track.id),true);
+ await new Promise(resolve=>setTimeout(resolve,40));
+ assert.equal(clips,4);
+ assert.equal(downloads,4);
+ assert.equal(closed,4);
+ assert.ok(!memory.has("mb.audioWords.fail.Ste."+track.id),
+  "healthy analysis does not create another profile's error cooldown");
 });

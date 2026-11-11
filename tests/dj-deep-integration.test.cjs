@@ -25,6 +25,44 @@ test("failed, unknown and stale/incomplete analyses safely fall back",()=>{
  assert.equal(get({file:"songs/track-89.mp3"}),null);
  assert.equal(get({file:"songs/track-90.mp3"}),null);
 });
+test("v6 and v8 real waveform indexes remain usable by Smart Mix",()=>{
+ const get=lookup({
+  "audio/songs/track-21.mp3":{...features,sha:"a".repeat(40),
+   analyzer:"librosa-onsets-chroma-rms-v6-phrases",
+   outroOnsetWindows:[{start:140,end:144}]},
+  "app/songs/track-22.mp3":{...features,sha:"b".repeat(40),
+   analyzer:"librosa-onsets-chroma-rms-v8-harmonic-sections",
+   structureEvents:[{at:142,direction:"harmonic",change:.4}]},
+  "audio/songs/track-23.mp3":{...features,
+   analyzer:"librosa-onsets-chroma-rms-v99-unknown"}
+ });
+ assert.equal(get({file:"songs/track-21.mp3"})?.sha,"a".repeat(40),
+  "indexed v6 drums/phrase evidence must not be dropped");
+ assert.equal(get({file:"songs/track-22.mp3"})?.sha,"b".repeat(40),
+  "v8 harmonic transitions must be available");
+ assert.equal(get({file:"songs/track-23.mp3"}),null,
+  "unknown future analyzer needs explicit schema review");
+});
+test("same MP3 filename in different repos never borrows unrelated waveform",()=>{
+ const first={...features,sha:"a".repeat(40),bpm:90};
+ const second={...features,sha:"b".repeat(40),bpm:134};
+ const third={...features,sha:"c".repeat(40),bpm:172};
+ const get=lookup({
+  "audio/songs/shared.mp3":first,
+  "mobile/songs/shared.mp3":second,
+  "app/songs/shared.mp3":third
+ });
+ assert.equal(get({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/shared.mp3"})?.sha,first.sha);
+ assert.equal(get({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/mobile-audio/songs/shared.mp3"})?.sha,second.sha);
+ assert.equal(get({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/main/songs/shared.mp3"})?.sha,third.sha);
+ const missing=lookup({"audio/songs/shared.mp3":first});
+ assert.equal(missing({file:"songs/shared.mp3",
+  url:"https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box/mobile-audio/songs/shared.mp3"}),null,
+  "known mobile source must not use a different main-audio recording");
+});
 test("index analyzed asynchronously, unindexed songs retain local analysis",()=>{
  assert.ok(text.includes('fetch("dj-deep-analysis.json"'));
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
@@ -118,7 +156,7 @@ test("deep audio always wins over stale local beat analysis; vocal veto remains"
  assert.equal(result.lastVoiceAt,156);
  assert.equal(result.voiceModel,"YAMNet");
  assert.equal(merge(deep,{...local,duration:173}).voiceModel,undefined);
- assert.match(text,/withValidatedVoice\(deepLookup\(t\),local\)/);
+ assert.match(text,/withValidatedVoice\(deepLookup\(t\),cache\.get\(url\)\)/);
 });
 
 test("iPhone skip aborts stale optional MP3 work but never touches playback or offline downloads",()=>{

@@ -1,0 +1,52 @@
+name: Music Box - separazione vocale reale DJ (un brano)
+on:
+  workflow_dispatch:
+    inputs:
+      track_key:
+        description: "Una traccia autorizzata: audio/songs/track-123.mp3 o app/songs/..."
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: musicbox-demucs-stems
+  cancel-in-progress: false
+jobs:
+  isolate-outgoing-vocals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU-only Demucs and ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          python -m pip install --upgrade pip
+          python -m pip install "numpy<2"
+          python -m pip install "torch==2.3.1+cpu" "torchaudio==2.3.1+cpu" --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install "demucs==4.0.1"
+          python -m py_compile tools/dj-vocal-stem.py
+      - name: Isolate only the final 26 seconds of the selected authorized MP3
+        env:
+          TRACK_KEY: ${{ inputs.track_key }}
+        run: python tools/dj-vocal-stem.py --track-key "$TRACK_KEY"
+      - name: Publish only the isolated vocal sidecar and SHA metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- dj-vocal-stems.json dj-stems/vocals/
+          if git diff --cached --quiet; then
+            echo "Nothing new to publish"
+            exit 0
+          fi
+          git commit -m "Music Box DJ: publish SHA-verified outgoing isolated vocal stem"
+          git pull --rebase origin main
+          git push origin HEAD:main

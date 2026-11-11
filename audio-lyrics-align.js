@@ -8,7 +8,9 @@ const VERSION=2,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
-const attempts=new Map();
+const attempts=new Map(),sessionWindows=new Map();
+// Keep each foreground WebGPU pass short; permit later, separate lyric clips.
+const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=6;
 
 /* Read the existing timed lyrics to select Whisper's explicit language.
    Transformers.js 3.8.1 otherwise silently assumes English even for the
@@ -205,24 +207,26 @@ function preferredWindows(lines,duration){
 async function analyze(id){
  if(!canRun())return false;
  const bridge=window.MusicBoxBridge;
- if(!bridge||bridge.currentId?.()!==id||completedInSession.has(id))return false;
+ const profile=String(bridge?.profile?.()||"");
+ const sessionId=profile+"|"+id;
+ if(!bridge||bridge.currentId?.()!==id||completedInSession.has(sessionId))return false;
  const rows=(bridge.lyricsData?.()?.synced||[]).map(row=>
   row?.estimated?{t:row.t,text:row.text}:row);
  if(rows.length<3||rows.every(row=>row.words?.length>=2))return false;
  const language=languageFromLyrics(rows);
  if(!language){
-  completedInSession.add(id);
+  completedInSession.add(sessionId);
   setStatus("Lingua del testo incerta: mantengo i tempi originali");
   return false;
  }
- const last=Number(sessionStorage.getItem("mb.audioWords.fail."+id)||0);
+ const failureKey="mb.audioWords.fail."+profile+"."+id;
+ const last=Number(sessionStorage.getItem(failureKey)||0);
  if(last&&Date.now()-last<RETRY_MS)return false;
  const track=bridge.allTracks?.().find(t=>t.id===id);
  const src=track&&bridge.mixUrl?.(track);
  if(typeof src!=="string"||!src)return false;
   const absolute=new URL(src,document.baseURI);
   if(!/^(https?:|blob:)$/i.test(absolute.protocol))return false;
- const profile=String(bridge.profile?.()||"");
  const isPhone=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")||
    (/Macintosh/i.test(navigator.userAgent||"")&&Number(navigator.maxTouchPoints)>1);
  const limit=isPhone?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES;
@@ -231,7 +235,13 @@ async function analyze(id){
  const clockDuration=Number(bridge.audio?.()?.duration)||0;
  const keyFor=at=>"mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
  const selected=at=>Date.now()-Number(sessionStorage.getItem(keyFor(at))||0)>=6*3600000;
- if(clockDuration>3&&!preferredWindows(rows,clockDuration).some(selected))return false;
+ const sessionCap=isPhone?MOBILE_SESSION_WINDOW_CAP:DESKTOP_SESSION_WINDOW_CAP;
+ if((sessionWindows.get(sessionId)||0)>=sessionCap){
+  completedInSession.add(sessionId);return false;
+ }
+ if(clockDuration>3&&!preferredWindows(rows,clockDuration).some(selected)){
+  completedInSession.add(sessionId);return false;
+ }
  setStatus("Analisi voce locale: preparo il brano…");
  let ctx;
  try{
@@ -258,8 +268,8 @@ async function analyze(id){
   const budget=isPhone?1:3;
   let saved=0,scanned=0;
   for(const at of windows){
-   if(scanned>=budget||active.has(id)===false||document.hidden||
-     bridge.currentId?.()!==id)break;
+   if(scanned>=budget||active.has(sessionId)===false||document.hidden||
+     bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
    const key=keyFor(at);
    if(!selected(at))continue;
    scanned++;
@@ -267,7 +277,7 @@ async function analyze(id){
    setStatus("Analizzo la voce: "+Math.round(at)+"–"+
      Math.round(Math.min(duration,at+WINDOW))+" s…");
    const chunks=await requestWorker(sample,language);
-   if(active.has(id)===false||bridge.currentId?.()!==id)break;
+   if(active.has(sessionId)===false||bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
    const aligned=alignWindow(rows,chunks,at,Math.min(WINDOW,duration-at));
    sessionStorage.setItem(key,String(Date.now()));
    if(!aligned.length)continue;
@@ -275,11 +285,18 @@ async function analyze(id){
    saved+=Number(stored)||0;
    if(saved>0)setStatus("IA locale: "+saved+" frasi con parole allineate");
   }
-  if(scanned)completedInSession.add(id);
+  if(scanned){
+   const total=(sessionWindows.get(sessionId)||0)+scanned;
+   sessionWindows.set(sessionId,total);
+   // Keep the six-hour per-window cooldown. New requests can inspect only
+   // a DIFFERENT passage, bounded per session and never during this pass.
+   if(total>=sessionCap||!preferredWindows(rows,duration).some(selected))
+    completedInSession.add(sessionId);
+  }
   if(!saved&&scanned)setStatus("Voce troppo ambigua: mantengo i tempi originali");
   return saved>0;
  }catch(e){
-  sessionStorage.setItem("mb.audioWords.fail."+id,String(Date.now()));
+  sessionStorage.setItem(failureKey,String(Date.now()));
   setStatus("Analisi audio non disponibile: karaoke originale conservato");
   return false;
  }finally{
@@ -289,15 +306,16 @@ async function analyze(id){
 }
 function request(id){
  id=String(id||window.MusicBoxBridge?.currentId?.()||"");
- if(!id||active.size||completedInSession.has(id)||!canRun())return false;
- const now=Date.now(),last=attempts.get(id)||0;
+ const sessionId=String(window.MusicBoxBridge?.profile?.()||"")+"|"+id;
+ if(!id||active.size||completedInSession.has(sessionId)||!canRun())return false;
+ const now=Date.now(),last=attempts.get(sessionId)||0;
  if(now-last<15000)return false;
- attempts.set(id,now);
- active.add(id);
+ attempts.set(sessionId,now);
+ active.add(sessionId);
  // Do not hold up UI events or voice playback. Use idle time if available.
  const start=()=>{
-  if(!active.has(id))return;
-  analyze(id).finally(()=>active.delete(id));
+  if(!active.has(sessionId))return;
+  analyze(id).finally(()=>active.delete(sessionId));
  };
  if(typeof requestIdleCallback==="function")
   requestIdleCallback(start,{timeout:2500});

@@ -4,6 +4,12 @@ on:
     paths:
       - 'mix-intelligente.js'
       - 'voice-analysis.js'
+      - 'dj-vocal-stem-runtime.js'
+      - 'dj-vocal-stems.json'
+      - 'tools/dj-vocal-stem.py'
+      - 'tools/test-dj-vocal-stem.py'
+      - '.github/workflows/dj-vocal-stem.yml'
+      - 'tests/dj-vocal-stems.test.cjs'
       - 'tests/voice-analysis.test.cjs'
       - 'tests/harmonic-transitions.test.cjs'
       - 'app.js'
@@ -35,6 +41,12 @@ on:
     paths:
       - 'mix-intelligente.js'
       - 'voice-analysis.js'
+      - 'dj-vocal-stem-runtime.js'
+      - 'dj-vocal-stems.json'
+      - 'tools/dj-vocal-stem.py'
+      - 'tools/test-dj-vocal-stem.py'
+      - '.github/workflows/dj-vocal-stem.yml'
+      - 'tests/dj-vocal-stems.test.cjs'
       - 'tests/voice-analysis.test.cjs'
       - 'tests/harmonic-transitions.test.cjs'
       - 'app.js'
@@ -74,9 +86,12 @@ jobs:
           node --check app.js
           node --check mix-intelligente.js
           node --check voice-analysis.js
+          node --check dj-vocal-stem-runtime.js
+          python -m py_compile tools/dj-vocal-stem.py
+          python tools/test-dj-vocal-stem.py
           node --check audio-lyrics-align.js
           node --check audio-lyrics-worker.js
           node --check word-karaoke.js
           node --check immersive.js
       - name: Test DJ transition safety
-        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs tests/harmonic-transitions.test.cjs tests/dj-musical-release.test.cjs tests/dj-deep-integration.test.cjs tests/dj-shuffle-fallback.test.cjs tests/dj-real-library.test.cjs tests/dj-beat-audit.test.cjs tests/dj-recording-releases.test.cjs tests/mobile-playback-regression.test.cjs tests/library-sync-regression.test.cjs tests/iphone-mix-runtime.test.cjs tests/iphone-handoff-stress.test.cjs tests/desktop-dj-responsiveness.test.cjs tests/shuffle-no-repeat.test.cjs tests/dj-lyrics-regression.test.cjs tests/ios-home-screen-background.test.cjs
+        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs tests/harmonic-transitions.test.cjs tests/dj-musical-release.test.cjs tests/dj-deep-integration.test.cjs tests/dj-shuffle-fallback.test.cjs tests/dj-real-library.test.cjs tests/dj-beat-audit.test.cjs tests/dj-recording-releases.test.cjs tests/mobile-playback-regression.test.cjs tests/library-sync-regression.test.cjs tests/iphone-mix-runtime.test.cjs tests/iphone-handoff-stress.test.cjs tests/desktop-dj-responsiveness.test.cjs tests/shuffle-no-repeat.test.cjs tests/dj-lyrics-regression.test.cjs tests/dj-vocal-stems.test.cjs tests/ios-home-screen-background.test.cjs

@@ -450,3 +450,25 @@ test("auto shuffle searches safe neutral fade across new songs even if none has 
  assert.equal(f.decision().softCandidates,1);
  assert.equal(f.decision().reason,"sfumatura su finale quieto (non beat uguali)");
 });
+
+test("Smart Mix skips identical MP3 blobs across app/mobile libraries",async()=>{
+ const recording="a".repeat(40),different="b".repeat(40);
+ const f=fixture({old:{sha:recording},pool:[
+  {analysis:{sha:recording},cue:beat(6.2)},
+  {analysis:{sha:different},cue:beat(3.0)}
+ ]});
+ const result=await f.run();
+ assert.equal(result.selected,true);
+ assert.equal(f.selected()?.pickId,3,"the same MP3 under another ID must not replay");
+ assert.equal(f.decision().candidateAudit.exactSameRecordingSkipped,1);
+ assert.equal(f.decision().beatCandidates,1);
+});
+test("two different MP3 blobs remain separately eligible even with near-identical BPM",async()=>{
+ const f=fixture({old:{sha:"a".repeat(40)},pool:[
+  {analysis:{sha:"b".repeat(40)},cue:soft(3.0)},
+  {analysis:{sha:"c".repeat(40)},cue:beat(3.1)}
+ ]});
+ await f.run();
+ assert.equal(f.selected()?.pickId,3);
+ assert.equal(f.decision().candidateAudit.exactSameRecordingSkipped,0);
+});
