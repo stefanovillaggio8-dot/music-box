@@ -219,7 +219,8 @@ async function analyze(id){
   setStatus("Lingua del testo incerta: mantengo i tempi originali");
   return false;
  }
- const last=Number(sessionStorage.getItem("mb.audioWords.fail."+id)||0);
+ const failureKey="mb.audioWords.fail."+profile+"."+id;
+ const last=Number(sessionStorage.getItem(failureKey)||0);
  if(last&&Date.now()-last<RETRY_MS)return false;
  const track=bridge.allTracks?.().find(t=>t.id===id);
  const src=track&&bridge.mixUrl?.(track);
@@ -295,7 +296,7 @@ async function analyze(id){
   if(!saved&&scanned)setStatus("Voce troppo ambigua: mantengo i tempi originali");
   return saved>0;
  }catch(e){
-  sessionStorage.setItem("mb.audioWords.fail."+id,String(Date.now()));
+  sessionStorage.setItem(failureKey,String(Date.now()));
   setStatus("Analisi audio non disponibile: karaoke originale conservato");
   return false;
  }finally{
