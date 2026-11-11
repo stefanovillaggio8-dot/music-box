@@ -39,3 +39,32 @@ test("LRC filters section labels and rejects sparse or out of range lyrics",()=>
  }},{"b-track-23":{synced:lrc}},{});
  assert.equal(tooLate.stats.mapped,0);
 });
+
+test("runtime refuses false vocal proofs and never overwrites stronger local cues",()=>{
+ const fs=require("node:fs"),path=require("node:path");
+ const src=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+ const begin=src.indexOf("let djLyricBoundaries=null"),
+  end=src.indexOf("function deepLookup(track){",begin);
+ assert.ok(begin>0&&end>begin);
+ const good={sha,duration:110,firstLyricAt:2.3,lastLyricAt:100.3,
+  firstLrcAt:5.1,lastLrcAt:94.3,lineCount:4,sourceKey:"audio/songs/track-23.mp3",
+  provenance:"existing-synced-lrc-not-vocal-model"};
+ const lookup=new Function("entries",src.slice(begin,end)+
+  ";djLyricBoundaries=entries;return withGuardedLRC;")({[sha]:good});
+ const recording={sha,duration:110,bpm:128,voiceModel:"YAMNet",
+  lastVoiceAt:108,firstLyricAt:1.5,lastLyricAt:106};
+ const merged=lookup(recording);
+ assert.equal(merged.firstLyricAt,1.5);
+ assert.equal(merged.lastLyricAt,106);
+ assert.equal(merged.voiceModel,"YAMNet");
+ assert.equal(merged.lastVoiceAt,108);
+ const newAudio=lookup({sha,duration:110,bpm:128});
+ assert.equal(newAudio.firstLyricAt,2.3);
+ assert.equal(newAudio.lastLyricAt,100.3);
+ assert.equal("voiceModel" in newAudio,false);
+ assert.equal("lastVoiceAt" in newAudio,false);
+ const mismatch=lookup({sha,duration:117});
+ assert.equal(mismatch.lastLyricAt,undefined);
+ const different=lookup({sha:other,duration:110});
+ assert.equal(different.lastLyricAt,undefined);
+});
