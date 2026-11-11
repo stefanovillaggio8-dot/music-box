@@ -331,6 +331,8 @@ test("bass reveal is measured, limited and never fabricates a beat",()=>{
   (n,min,max)=>Math.max(min,Math.min(max,n)));
  assert.equal(measured(0,10,14,20),0);
  assert.ok(measured(12,10,14,20)>0&&measured(12,10,14,20)<.23);
+ assert.ok(measured(10.8,10,14,20)>.13,
+  "early harmonic release should be audible long before native EOF");
  assert.ok(Math.abs(measured(14,10,14,20)-.23)<.001);
  assert.ok(Math.abs(measured(20,10,14,20)-1)<.001);
 });
