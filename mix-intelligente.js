@@ -4274,7 +4274,7 @@ function measuredReleasePreviewGain(now,begin,last,end){
  const after=clamp((now-last)/Math.max(.5,end-last),0,1);
  // Preserve the tested -12.8 dB cap while the old measured release
  // still sounds. The gentler curve is audible sooner, never louder.
- const preview=.23*Math.sin(Math.pow(before,.80)*Math.PI/2);
+ const preview=.23*Math.sin(Math.pow(before,.55)*Math.PI/2);
  return now<last?preview:.23+.77*Math.sin(after*Math.PI/2);
 }
 function mixCurve(kind,t,softTail=false){
