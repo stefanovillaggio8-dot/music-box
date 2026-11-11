@@ -9,7 +9,7 @@ const row={sourceSha:sha,path:file,start:175,end:199.84,
 const outgoing={sha,duration:200};
 const cue={voiceConfirmedUnderlay:true,vocalBeatUnderlay:true,
  earlyBeatJoin:true,measuredBeatBridge:true,begin:180,vocalEndAt:198.7};
-function fixture(entries={[sha]:row}){
+function fixture(entries={[sha]:row},options={}){
  let streams=0;
  class FakeAudio{
   constructor(){
@@ -20,7 +20,7 @@ function fixture(entries={[sha]:row}){
   set src(value){this._src=value}
   get src(){return this._src}
   load(){this.handlers.loadedmetadata?.();this.handlers.canplay?.()}
-  async play(){this.paused=false}
+  async play(){if(options.hangPlay)return new Promise(()=>{});this.paused=false}
   pause(){this.paused=true}
   removeAttribute(k){if(k==="src")this._src=""}
  }
@@ -74,7 +74,7 @@ test("missing stems and browser clock drift never create an extra playback chann
  assert.equal(streams(),1);
 });
 test("a pending third audio play cannot block the original DJ transition",async()=>{
- const {api}=fixture();
+ const {api}=fixture({[sha]:row},{hangPlay:true});
  api.load();await new Promise(resolve=>setImmediate(resolve));
  assert.equal(api.prepare("old",outgoing,cue),true);
  // Simulate a browser with a permanently unresolved optional play promise.
