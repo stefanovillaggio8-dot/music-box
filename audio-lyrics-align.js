@@ -8,7 +8,9 @@ const VERSION=2,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
-const attempts=new Map();
+const attempts=new Map(),sessionWindows=new Map();
+// Keep each foreground WebGPU pass short; permit later, separate lyric clips.
+const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=6;
 
 /* Read the existing timed lyrics to select Whisper's explicit language.
    Transformers.js 3.8.1 otherwise silently assumes English even for the
@@ -231,7 +233,13 @@ async function analyze(id){
  const clockDuration=Number(bridge.audio?.()?.duration)||0;
  const keyFor=at=>"mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
  const selected=at=>Date.now()-Number(sessionStorage.getItem(keyFor(at))||0)>=6*3600000;
- if(clockDuration>3&&!preferredWindows(rows,clockDuration).some(selected))return false;
+ const sessionCap=isPhone?MOBILE_SESSION_WINDOW_CAP:DESKTOP_SESSION_WINDOW_CAP;
+ if((sessionWindows.get(id)||0)>=sessionCap){
+  completedInSession.add(id);return false;
+ }
+ if(clockDuration>3&&!preferredWindows(rows,clockDuration).some(selected)){
+  completedInSession.add(id);return false;
+ }
  setStatus("Analisi voce locale: preparo il brano…");
  let ctx;
  try{
@@ -275,7 +283,14 @@ async function analyze(id){
    saved+=Number(stored)||0;
    if(saved>0)setStatus("IA locale: "+saved+" frasi con parole allineate");
   }
-  if(scanned)completedInSession.add(id);
+  if(scanned){
+   const total=(sessionWindows.get(id)||0)+scanned;
+   sessionWindows.set(id,total);
+   // Keep the six-hour per-window cooldown. New requests can inspect only
+   // a DIFFERENT passage, bounded per session and never during this pass.
+   if(total>=sessionCap||!preferredWindows(rows,duration).some(selected))
+    completedInSession.add(id);
+  }
   if(!saved&&scanned)setStatus("Voce troppo ambigua: mantengo i tempi originali");
   return saved>0;
  }catch(e){
