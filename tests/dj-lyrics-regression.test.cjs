@@ -439,7 +439,8 @@ test("word-window overlap handles a lyric at 27 s and avoids guessing outside it
  ];
  const good=api.alignWindow(rows,chunks,24,28);
  assert.equal(good.length,1);
- assert.equal(good[0].t,27.2);
+ assert.equal(good[0].t,27.3,"line begins with the first measured syllable");
+ assert.equal(good[0].alignment.originalT,27.2);
  assert.equal(good[0].words[0].t,27.3);
  const bogus=api.alignWindow(rows,chunks,0,28);
  assert.equal(bogus.length,0,"timestamps relative to audio windows cannot be treated as absolute");
