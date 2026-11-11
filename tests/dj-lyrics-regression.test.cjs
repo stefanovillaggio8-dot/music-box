@@ -866,3 +866,41 @@ test("DJ phrase mapper supports real half-time groove without double-speed playb
  assert.equal(choose.measuredTempoRelation(old,{...intro,bpm:94}),null,
   "Different tempos without a half/double-time relationship are rejected");
 });
+
+
+test("continuity fallback never cuts a late vocal or claims a beatmatched overlay",()=>{
+ const from=dj.indexOf("function adaptiveLowBandContinuity(");
+ const to=dj.indexOf("function subduedRhythmicIntro(",from);
+ assert.ok(from>0&&to>from);
+ const policy=new Function("const hasImmediateMusicalIntro=()=>true,"+
+  "onsetPeriodicity=()=>.65,musicalIntroEntry=()=>0;"+
+  dj.slice(from,to)+";return adaptiveLowBandContinuity;")();
+ const outgoing={duration:200,last:199,protectedEnding:true};
+ const next={introDrive:.80,bpm:120,beatConfidence:.82,
+  introBassRatio:.39,introOnset:Array(96).fill(.2)};
+ const cue=policy(outgoing,next,200);
+ assert.ok(cue,"a measured low-band opening can bridge under a protected ending");
+ assert.equal(cue.kind,"underlay");
+ assert.equal(cue.neutralAmbientUnderlay,true);
+ assert.equal(cue.drumOnlyUnderlay,true);
+ assert.equal(cue.preserveTail,true);
+ assert.equal(cue.beatPeriod,null,"no fabricated beat certificate");
+ assert.equal(cue.safeOutroAt,null,"never advance the outgoing playhead");
+ assert.equal(cue.silenceTrim,false);
+ assert.ok(cue.begin<=outgoing.last-2.4&&cue.end>outgoing.last);
+ assert.ok(cue.underlayVolume<=.09);
+ assert.ok(cue.fade>=3.15&&cue.fade<=6.8);
+ assert.equal(policy(outgoing,{...next,firstVoiceAt:0},200),null,
+  "Known incoming singing at 0 seconds forbids overlap");
+ assert.equal(policy(outgoing,{...next,firstLyricAt:1.0},200),null,
+  "Lyrics also prevent overlapping a sung intro");
+ assert.equal(policy(outgoing,{...next,introBassRatio:.02},200),null,
+  "An intro with insufficient measured bass cannot enter the low band");
+ assert.equal(policy({...outgoing,last:185},next,200),null,
+  "A long digital tail needs its own independently verified skip");
+ assert.equal(policy({...outgoing,duration:191},next,200),null,
+  "A mismatched duration is never safe");
+ assert.match(dj,/if\(!p\|\|p\.neutralAmbientUnderlay===true\)return 0/);
+ assert.match(dj,/if\(cue\.neutralAmbientUnderlay===true\)/);
+ assert.match(dj,/if\(plan\?\.neutralAmbientUnderlay===true\)/);
+});
