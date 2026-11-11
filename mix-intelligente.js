@@ -4480,15 +4480,32 @@ async function beginMix(song,proposed){
       window.MusicBoxRoom?.isActive()){cancel();return}
    // Never advance a crossfade while the actual MP3 is buffering. A
    // wall-clock ramp could otherwise finish and swap songs during a stall.
-   const time=old.seeking||upcoming.seeking||old.readyState<2||
-     upcoming.readyState<2?null:djAudioClockProgress(
-      old.currentTime,act.oldAudioAt,upcoming.currentTime,
-      act.newAudioAt,act.tempo,act.fade);
-   if(time===null){
-    console.info("[Music Box DJ] Lettore rallentato o fuori sincrono: preservo il brano originale");
+   // A short decoder underrun is different from an inaccurate beat.
+   // Hold the fade briefly before it has really started; never seek or
+   // stop either native song just because one readyState tick dipped.
+   if(old.seeking||upcoming.seeking){cancel();plan=null;return}
+   if(old.readyState<2||upcoming.readyState<2){
+    if(!act.bufferingSince)act.bufferingSince=performance.now();
+    if((act.lastProgress||0)<=.12&&
+       performance.now()-act.bufferingSince<900&&
+       old.currentTime<act.end-.35){
+     act.timer=setTimeout(fadeStep,75);
+     return;
+    }
+    console.info("[Music Box DJ] Buffer insufficiente: ritorno al player principale");
     mixFailures.set(id+"|"+song.id,Date.now()+12000);
     cancel();plan=null;return;
    }
+   act.bufferingSince=0;
+   const time=djAudioClockProgress(
+      old.currentTime,act.oldAudioAt,upcoming.currentTime,
+      act.newAudioAt,act.tempo,act.fade);
+   if(time===null){
+    console.info("[Music Box DJ] Orologi audio fuori sincrono: preservo il brano originale");
+    mixFailures.set(id+"|"+song.id,Date.now()+12000);
+    cancel();plan=null;return;
+   }
+   act.lastProgress=time;
    const vol=app.volume();
    // Dedicated curve: the first track stays audible until its last
    // fraction, and the second song enters quietly beneath matching notes.
@@ -4558,8 +4575,14 @@ async function beginMix(song,proposed){
    }
     const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
-    old.volume=clamp(vol*outGain,0,1);
-    upcoming.volume=clamp(vol*inGain*correction,0,1);
+    // Constant-power headroom for TWO simultaneous MP3s. Prevent an
+    // unexpectedly loud summed kick while retaining the measured bass
+    // reveal and each user's volume setting. No effect on solo playback.
+    const incomingGain=inGain*correction;
+    const combinedPower=Math.hypot(outGain,incomingGain);
+    const headroom=combinedPower>1.06?1.06/combinedPower:1;
+    old.volume=clamp(vol*outGain*headroom,0,1);
+    upcoming.volume=clamp(vol*incomingGain*headroom,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
     if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
