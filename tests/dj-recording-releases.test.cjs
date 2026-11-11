@@ -285,3 +285,52 @@ test("desktop independently measured releases must bypass the iOS-only quiet gat
  assert.ok(gate.includes("candidate.measuredReleaseLeadIn!==true"));
  assert.match(gate,/!desktopBeatPairCertified/);
 });
+
+test("desktop crossfade follows decoded MP3 clocks rather than stale wall time",()=>{
+ const i=source.indexOf("function djAudioClockProgress("),j=source.indexOf("function desktopBeatStartDelay(",i);
+ assert.ok(i>=0&&j>i,"dedicated decoder-clock guard must exist");
+ const progress=new Function("clamp",source.slice(i,j)+"return djAudioClockProgress;")(
+  (n,min,max)=>Math.max(min,Math.min(max,n)));
+ assert.equal(progress(102,100,22,20,1,4),.5);
+ assert.ok(Math.abs(progress(102,100,22.04,20,1.02,4)-.5)<1e-8);
+ assert.equal(progress(104.2,100,24.2,20,1,4),1);
+ assert.equal(progress(100.85,100,20.01,20,1,4),null,
+  "a stalled incoming decoder must not complete the mix");
+ assert.equal(progress(100.02,100,20.9,20,1,4),null,
+  "a stalled outgoing MP3 must not complete the mix");
+ assert.equal(progress(99.8,100,20,20,1,4),null,
+  "rewinding the outgoing MP3 must abort this cue");
+ assert.equal(progress(102,100,22,20,Infinity,4),null);
+ assert.equal(progress(102,100,22,20,1,0),null);
+ const fade=source.slice(source.indexOf("function fadeStep(){",source.indexOf("async function beginMix(")),
+   source.indexOf("if(time>=1){handoff();return}",source.indexOf("async function beginMix(")));
+ assert.match(fade,/djAudioClockProgress\(/);
+ assert.match(fade,/old\.seeking\|\|upcoming\.seeking/);
+ assert.ok(!fade.includes("(performance.now()-act.at)/(act.fade*1000)"),
+  "wall-time fade can complete while the MP3 decoder is stalled");
+});
+test("iPhone seek takes precedence over WebAudio and desktop re-seek waits for metadata",()=>{
+ const tick=source.slice(source.indexOf("function tick(){"),
+  source.indexOf("function paintWave(",source.indexOf("function tick(){")));
+ assert.match(tick,/if\(isIOS&&mobileActive&&!mobileActive\.handingOff\)stopMobileMix\(\)/);
+ const prep=source.slice(source.indexOf("function prepare("),source.indexOf("function naturalEndHandoff("));
+ assert.match(prep,/p\.seekIssued\|\|upcoming\.seeking\|\|upcoming\.readyState<1/);
+ assert.match(prep,/if\(!p\.seekReady\)\{p\.seekIssued=false;preseek\(\);return\}/);
+});
+test("bass reveal is measured, limited and never fabricates a beat",()=>{
+ const dsp=source.slice(source.indexOf("function connectMixDsp("),
+  source.indexOf("function djImpactBeatPoint("));
+ assert.match(dsp,/if\(beatMatched&&dspMode==="auto"&&Math\.abs\(dspBass\)<\.05\)/);
+ assert.match(dsp,/add\("lowshelf",95,2\.0\)/);
+ assert.match(dsp,/createDynamicsCompressor/);
+ assert.match(dsp,/limiter\.threshold\.value=-5/);
+ assert.match(dsp,/beatMatched\|\|dspBass>0\|\|dspMid>0\|\|dspTreble>0/);
+ const gainSnippet=source.slice(source.indexOf("function measuredReleasePreviewGain("),
+   source.indexOf("function mixCurve("));
+ const measured=new Function("clamp",gainSnippet+"return measuredReleasePreviewGain;")(
+  (n,min,max)=>Math.max(min,Math.min(max,n)));
+ assert.equal(measured(0,10,14,20),0);
+ assert.ok(measured(12,10,14,20)>0&&measured(12,10,14,20)<.27);
+ assert.ok(Math.abs(measured(14,10,14,20)-.27)<.001);
+ assert.ok(Math.abs(measured(20,10,14,20)-1)<.001);
+});
