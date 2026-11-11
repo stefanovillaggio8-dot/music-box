@@ -4801,6 +4801,11 @@ async function beginMix(song,proposed){
     (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
     djSoftRevealReady(proposed,act.fade),!!proposed.drumOnlyUnderlay);
   if(proposed.drumOnlyUnderlay&&!act.dsp){cancel();plan=null;return}
+  // Optional genuine Demucs vocal stem (never AI-generated during playback).
+  // Decoder drift or missing stem means the already-proven native fallback.
+  if(proposed.voiceConfirmedUnderlay&&proposed.vocalBeatUnderlay)
+   act.stem=await window.MusicBoxVocalStems?.activate?.(id,proposed,old)||null;
+  if(active!==act||old.paused||app.currentId()!==id){cancel();return}
   // Emitted only AFTER the second audio has actually started.
   try{window.dispatchEvent(new CustomEvent("musicbox:mix-overlap",{detail:{
    device:"pc",fromId:id,toId:song.id,kind:proposed.kind,
@@ -4918,16 +4923,35 @@ async function beginMix(song,proposed){
     inGain=measuredReleasePreviewGain(old.currentTime,
       act.begin,act.releaseLastMusicalAt,act.end);
    }
+    let stemGain=0;
+    if(act.stem){
+     const drift=Math.abs(
+      act.stem.audio.currentTime+act.stem.stem.start-old.currentTime);
+     if(act.stem.audio.paused||act.stem.audio.readyState<2||drift>.20){
+      window.MusicBoxVocalStems?.release?.(act.stem);
+      act.stem=null;
+     }else{
+      const voice=window.MusicBoxVocalStems?.levels?.(
+       time,old.currentTime-act.oldAudioAt,
+       act.vocalEndAt-old.currentTime);
+      if(voice){
+       outGain=voice.native;
+       inGain=Math.max(inGain,voice.backing);
+       stemGain=voice.vocals;
+      }
+     }
+    }
     const correction=1+(act.gain-1)*Math.sin(Math.PI*time);
    try{
     // Constant-power headroom for TWO simultaneous MP3s. Prevent an
     // unexpectedly loud summed kick while retaining the measured bass
     // reveal and each user's volume setting. No effect on solo playback.
     const incomingGain=inGain*correction;
-    const combinedPower=Math.hypot(outGain,incomingGain);
+    const combinedPower=Math.hypot(outGain,incomingGain,stemGain);
     const headroom=combinedPower>1.06?1.06/combinedPower:1;
     old.volume=clamp(vol*outGain*headroom,0,1);
     upcoming.volume=clamp(vol*incomingGain*headroom,0,1);
+    if(act.stem)act.stem.audio.volume=clamp(vol*stemGain*headroom,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
     if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
@@ -5597,6 +5621,12 @@ function tick(){
     (!prepared||prepared.id!==next.id||prepared.fromId!==id||
       (prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)))
    prepare(next,id,app);
+  // Only desktop, only trusted isolated vocal evidence. The extra short
+  // audio is optional: the regular intro/last vocal remains protected.
+  if(previewAllowed&&!isIOS&&plan.voiceConfirmedUnderlay&&
+     plan.vocalBeatUnderlay&&audio.currentTime>=Math.max(0,preloadAt))
+   window.MusicBoxVocalStems?.prepare?.(
+    id,deepLookup(currentSong)||measuredEnding,plan);
  // If the crossfade couldn't start (not enough buffering or suspended
  // iPhone WebAudio), hand off shortly AFTER a verified long quiet pause
  // begins. Do not leave the listener in silence for 20 more seconds.
