@@ -43,7 +43,7 @@ try:
     assert "outroTimeline" in a and "introTimeline" in a
     assert "introOnset" in a and "outroOnset" in a
     assert isinstance(a["outroOnsetWindows"],list)
-    assert a["analyzer"]=="librosa-onsets-chroma-rms-v7-pulses"
+    assert a["analyzer"]=="librosa-onsets-chroma-rms-v8-harmonic-sections"
     assert isinstance(a["structureEvents"],list)
     assert isinstance(a["beatGrid"],dict)
     assert isinstance(a["beatGrid"]["anchors"],list)
@@ -118,3 +118,14 @@ broken_grid=np.cumsum(np.resize([.30,.7,.37,.63],40))
 assert mod.measured_beat_grid(broken_grid,0,40,120)["reliable"] is False
 assert mod.measured_beat_grid(np.array([]),0,40,120)["reliable"] is False
 print("PASS: real pulse-grid timing, missing-beat and drifting-beat safeguards.")
+
+# An equal-RMS chord change must create a harmonic section boundary,
+# without pretending it is a chorus or a singer-free interval.
+change=np.sin(2*np.pi*220*time)*.25
+change[time>=40]=np.sin(2*np.pi*329.63*time[time>=40])*.25
+harmonic=mod.harmonic_section_events(change,24,61)
+assert isinstance(harmonic,list)
+assert all(e["direction"]=="harmonic" for e in harmonic)
+assert len(harmonic)<=8
+assert any(abs(e["at"]-40)<4 for e in harmonic),harmonic
+print("PASS: timbre/harmonic structural boundaries independent of RMS crescendos.")

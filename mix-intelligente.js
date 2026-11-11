@@ -3184,12 +3184,14 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   const phraseEvent=Array.isArray(a.structureEvents)?
    a.structureEvents.find(e=>Number.isFinite(e?.at)&&
     Math.abs(e.at-begin)<=1.25&&
-    (e.direction==="rising"||e.direction==="falling")):null;
+    (e.direction==="rising"||e.direction==="falling"||
+     e.direction==="harmonic")):null;
   // Rising or falling musical sections are better deliberate entrances
   // than arbitrary PCM windows. These are amplitude transitions, NEVER
   // labeled as chorus/drop/vocal absence without independent evidence.
   const structureBonus=phraseEvent?.direction==="rising"?.085:
    phraseEvent?.direction==="falling"?.05:
+   phraseEvent?.direction==="harmonic"?.055:
    Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
   const measuredGrid=measuredPulseAlignment(
    win.measuredBeatTimes,b.introBeatTimes,begin,entry,ratio);
@@ -3209,7 +3211,10 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    beatAnchor,nextBeat:nextPhase,grooveScore:g.score,
    structuralShift:phraseEvent?.direction||null,
    structuralMatch:!!phraseEvent,structureScore:structureBonus,
-   beatPulseAgreement:measuredGrid?.ratio??null};
+   beatPulseAgreement:measuredGrid?.ratio??null,
+   strongBassBridge:!!(measuredGrid?.ratio>=.75&&
+    g.score>=.78&&notes.focused>=.74&&
+    Number(b.introBassRatio)>=.34)};
  }
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
@@ -3220,7 +3225,9 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
   tempo:clamp(ratio,.975,1.025),gain:1,
-  underlayVolume:adaptiveUnderlayLevel(b,.105,.145),
+  underlayVolume:best.strongBassBridge?
+   adaptiveUnderlayLevel(b,.16,.215):
+   adaptiveUnderlayLevel(b,.105,.145),
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
