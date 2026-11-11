@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "description": "Single SHA-bound, existing synced-LRC source approved for real Demucs vocal separation; not a fake filter",
+  "requests": [
+    {
+      "trackKey": "audio/songs/track-2.mp3",
+      "sourceSha": "c6cbe35e749776e0fe218701e627a54fdd0c31e9"
+    }
+  ]
+}
