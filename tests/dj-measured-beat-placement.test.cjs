@@ -1,0 +1,40 @@
+"use strict";
+const test=require("node:test"),assert=require("node:assert/strict");
+const fs=require("node:fs"),path=require("node:path");
+const js=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
+const start=js.indexOf("function measuredPulseAlignment(");
+const end=js.indexOf("function measuredWindowRhythmUnderlay(",start);
+assert.ok(start>0&&end>start);
+const engine=new Function(js.slice(start,end)+
+  "return {measuredPulseAlignment,measuredBeatJoinCandidate};")();
+const a=Array.from({length:11},(_,i)=>100+i*.5);
+const b=Array.from({length:10},(_,i)=>.25+i*.5);
+test("independent PCM beat anchors align different kick sounds with timed entry",()=>{
+ const result=engine.measuredBeatJoinCandidate(a,b,0,1,100,101,100.22);
+ assert.ok(result,"multi-beat grid should find a phase-compatible start");
+ assert.ok(result.begin>=100&&result.begin<=101);
+ assert.ok(result.fit.total>=3&&result.fit.verified>=3);
+ assert.ok(result.fit.rms<.015);
+ assert.ok(result.fit.ratio>=.9);
+ const at=engine.measuredPulseAlignment(a,b,result.begin,0,1);
+ assert.ok(at.ratio>=.9);
+});
+test("bad periodicity, unsupported tempo shift or insufficient evidence cannot pass",()=>{
+ const irregular=[.25,.96,1.84,2.76,3.98];
+ assert.equal(engine.measuredBeatJoinCandidate(
+  a,irregular,0,1,100,101,100.25),null);
+ assert.equal(engine.measuredBeatJoinCandidate(
+  a,b,0,1.20,100,101,100.25),null);
+ assert.equal(engine.measuredBeatJoinCandidate(
+  [100,100.5],b,0,1,100,101,100.25),null);
+ assert.equal(engine.measuredBeatJoinCandidate(
+  a,[.25,.75],0,1,100,101,100.25),null);
+});
+test("phase alignment stays a low-band preview, never a fake full-band beat certificate",()=>{
+ const block=js.slice(end,js.indexOf("function adaptiveUnderlayLevel(",end));
+ assert.match(block,/measuredBeatPlacement:best\.measuredBeatPlacement/);
+ assert.match(block,/drumOnlyUnderlay:true,preserveTail:true/);
+ assert.match(block,/quietCertified:false/);
+ assert.match(block,/placed\?\.fit\?\.ratio>=\.85/);
+ assert.doesNotMatch(block,/voiceConfirmedUnderlay:true/);
+});
