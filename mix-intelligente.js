@@ -2405,7 +2405,20 @@ function earlyMatchedBar(a,b,dur){
    continue;
   const beatAt=win.start+phase+
    Math.ceil((.55-phase)/period)*period;
-  const begin=beatAt-nextPhase,end=Math.min(dur-.035,a.last+.06),
+  const end=Math.min(dur-.035,a.last+.06);
+  // Two genuine MP3s can share precisely timed beats despite different
+  // kick samples. Select phase from OBSERVED PCM timestamp sequences, not
+  // from a similar-looking drum waveform or global BPM alone.
+  const reliableLocalGrid=a.beatGrid?.reliable===true&&
+    b.beatGrid?.reliable===true&&
+    Array.isArray(win.measuredBeatTimes)&&
+    Array.isArray(b.introBeatTimes);
+  const observedPlacement=reliableLocalGrid?measuredBeatJoinCandidate(
+    win.measuredBeatTimes,b.introBeatTimes,entry,speed,
+    Math.max(win.start+.08,end-9.6),
+    Math.min(win.end-.35,end-4.5),
+    Math.max(win.start+.65,end-6.3)):null;
+  const begin=observedPlacement?.begin??beatAt-nextPhase,
    fade=end-begin;
   const singing=Boolean(
     (knownLastLyric!==null&&knownLastLyric>begin-5.5)||
@@ -2441,6 +2454,20 @@ function earlyMatchedBar(a,b,dur){
      pulseA>=.42&&pulseB>=.42)
    matchedRhythm=alignedIndependentPulseAgreement(
      win.onset,b.introOnset,a.bpm,begin-win.start);
+  // A verified PCM grid adds independent phase evidence. Promote the
+  // source only if harmony, phrase notes and groove also agree; preserve
+  // ALL existing outgoing-voice and incoming-vocal safety vetoes.
+  const observedFit=observedPlacement?.fit;
+  if(!matchedRhythm&&observedFit&&observedFit.verified>=4&&
+     observedFit.total>=4&&observedFit.ratio>=.90&&
+     observedFit.rms<=.055&&notes.focused>=.86&&
+     notes.phrase>=.78&&drums.score>=.79&&
+     drums.correlation>=.55&&pulseA>=.34&&pulseB>=.34)
+   matchedRhythm={score:Math.min(1,observedFit.ratio-
+     observedFit.rms),method:"observed-pcm-beat-timestamps"};
+  // A reliable direct beat measurement can veto a visually similar
+  // waveform: never certify a known off-grid full-band overlap.
+  if(reliableLocalGrid&&!observedPlacement)continue;
   if(!matchedRhythm)continue;
   const barAccents=typeof djMeasuredBarAccents==="function"?
     djMeasuredBarAccents(win.onset,b.introOnset,b.bpm,begin-win.start):null;
@@ -2467,8 +2494,11 @@ function earlyMatchedBar(a,b,dur){
    safeOutroAt:vocalUnderlay?null:begin,softTailTrim:false,
    silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
    trailing:Math.max(0,dur-end),
-   beatPeriod:period,beatAnchor:win.start+phase,
-   nextBeat:nextPhase,measuredOnsetGrid:true};
+   beatPeriod:period,beatAnchor:observedPlacement?.oldBeat??win.start+phase,
+   nextBeat:observedPlacement?.nextBeat??nextPhase,
+   measuredBeatPlacement:!!observedPlacement,
+   measuredPlacementError:observedFit?.rms??null,
+   measuredOnsetGrid:true};
   if(!winner||score>winner.score)winner=cue;
  }
  return winner;
