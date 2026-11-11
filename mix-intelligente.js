@@ -479,12 +479,15 @@ function deepLookup(track){
    ["audio/"+path,"mobile/"+path,"app/"+path];
  for(const key of keys){
   const value=deepIndex.entries?.[key];
-  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats)$/.test(value.analyzer||"")&&
+  if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
      Array.isArray(value.chroma)&&value.chroma.length===12)return value;
  }
  return null;
 }
+// The v6/v8 analyzers include measured onset windows, chord phrases
+// and structure boundaries. Reject unknown analyzers but retain these valid
+// current records rather than falling back to an unmeasured transition.
 // The full real-audio index provides comparable beat/harmony measurements.
 // Carry only vocal safety data from an older local decoded copy.
 function withValidatedVoice(deep,local){
