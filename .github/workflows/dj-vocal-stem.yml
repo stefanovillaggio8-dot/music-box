@@ -1,5 +1,10 @@
 name: Music Box - separazione vocale reale DJ (un brano)
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'dj-vocal-stem-requests.json'
+      - '.github/workflows/dj-vocal-stem.yml'
   workflow_dispatch:
     inputs:
       track_key:
@@ -23,6 +28,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Validate the explicit vocal request before expensive separation
+        run: python tools/test-dj-vocal-stem.py
       - name: Install CPU-only Demucs and ffmpeg
         run: |
           sudo apt-get update -qq
@@ -35,7 +42,13 @@ jobs:
       - name: Isolate only the final 26 seconds of the selected authorized MP3
         env:
           TRACK_KEY: ${{ inputs.track_key }}
-        run: python tools/dj-vocal-stem.py --track-key "$TRACK_KEY"
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            python tools/dj-vocal-stem.py --request-file dj-vocal-stem-requests.json
+          else
+            python tools/dj-vocal-stem.py --track-key "$TRACK_KEY"
+          fi
       - name: Publish only the isolated vocal sidecar and SHA metadata
         shell: bash
         run: |

@@ -30,6 +30,37 @@ class StemContract(unittest.TestCase):
             self.assertTrue(stem.TRACK.fullmatch(value) is None or
                 ".." in value or "//" in value)
 
+    def test_explicit_request_is_bound_to_the_real_lyric_source(self):
+        key, sha = stem.request_from_file(ROOT / "dj-vocal-stem-requests.json")
+        self.assertEqual(key, "audio/songs/track-2.mp3")
+        self.assertEqual(sha, "c6cbe35e749776e0fe218701e627a54fdd0c31e9")
+
+    def test_wrong_sha_and_unrelated_song_cannot_queue_isolation(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "dj-vocal-stem-requests.json"
+            for item in (
+                {"trackKey":"audio/songs/track-2.mp3","sourceSha":"0"*40},
+                {"trackKey":"audio/songs/track-9.mp3",
+                 "sourceSha":"48f947b6aa3b103ce9def6537ee2d3b3f8d087ff"},
+                {"trackKey":"audio/songs/../../bad.mp3","sourceSha":"0"*40},
+            ):
+                file.write_text(json.dumps({"version":1,"requests":[item]}),encoding="utf8")
+                with self.assertRaises(ValueError):
+                    stem.request_from_file(file)
+
+    def test_request_schema_cannot_process_bulk_or_untrusted_urls(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "dj-vocal-stem-requests.json"
+            for payload in ([],{"version":1,"requests":[]},
+                {"version":1,"requests":[{},{}]},
+                {"version":1,"requests":[{"trackKey":"https://evil.example/a.mp3",
+                   "sourceSha":"0"*40}]}):
+                file.write_text(json.dumps(payload),encoding="utf8")
+                with self.assertRaises(ValueError):
+                    stem.request_from_file(file)
+
     def test_exact_sha_manifest(self):
         manifest = json.loads(stem.MANIFEST.read_text(encoding="utf8"))
         self.assertEqual(manifest["version"], 1)

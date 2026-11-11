@@ -65,8 +65,42 @@ def source_mp3(key):
     ).hexdigest()
     return digest, content
 
-def build(key):
+def request_from_file(path):
+    """A repository change is explicit opt-in for ONE already indexed source.
+    Never blindly turn a queue of random public URLs into uploaded vocals.
+    """
+    if Path(path).name != "dj-vocal-stem-requests.json":
+        raise ValueError("Expected dedicated approved stem request file")
+    obj = json.loads(Path(path).read_text(encoding="utf8"))
+    requests = obj.get("requests") if isinstance(obj, dict) else None
+    if not isinstance(obj, dict) or obj.get("version") != 1 or \
+       not isinstance(requests, list) or len(requests) != 1:
+        raise ValueError("Expected exactly one versioned stem request")
+    item = requests[0]
+    if not isinstance(item, dict):
+        raise ValueError("Invalid stem request")
+    key = item.get("trackKey")
+    sha = item.get("sourceSha")
+    if not isinstance(key, str) or not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
+        raise ValueError("Stem request must include an exact source blob SHA")
+    if not TRACK.fullmatch(key) or ".." in key or "//" in key:
+        raise ValueError("Invalid stem source key")
+    bounds = json.loads((ROOT / "dj-lyric-boundaries.json").read_text(encoding="utf8"))
+    linked = bounds.get("entries", {}).get(sha, {})
+    # A trusted synchronized LRC is only evidence that the passage might
+    # contain vocals. The Demucs separator must produce the real sidecar.
+    duration = linked.get("duration")
+    last = linked.get("lastLrcAt")
+    if linked.get("sourceKey") != key or not isinstance(duration, (int, float)) or \
+       not isinstance(last, (int, float)) or not 0 <= duration-last <= 16:
+        raise ValueError("No matching SHA-bound synced vocal passage near outro")
+    return key, sha
+
+
+def build(key, expected_sha=None):
     sha, content = source_mp3(key)
+    if expected_sha is not None and sha != expected_sha:
+        raise ValueError("Source MP3 changed since synchronized analysis")
     manifest = json.loads(MANIFEST.read_text(encoding="utf8"))
     if manifest.get("version") != 1 or not isinstance(manifest.get("entries"), dict):
         raise ValueError("Unexpected vocal stem manifest schema")
@@ -108,7 +142,8 @@ def build(key):
         if staging.stat().st_size < 18_000:
             raise RuntimeError("Invalid or empty vocal stem")
         # GitHub Actions will publish both the manifest and small AAC clip.
-        out.write_bytes(staging.read_bytes())
+        stem_bytes = staging.read_bytes()
+        out.write_bytes(stem_bytes)
     manifest["entries"][sha] = {
         "sourceSha": sha,
         "path": str(out.relative_to(ROOT)).replace(os.sep, "/"),
@@ -117,6 +152,7 @@ def build(key):
         "sourceDuration": round(duration, 3),
         "separator": "demucs-htdemucs",
         "role": "isolated-outgoing-vocals",
+        "stemSha256": hashlib.sha256(stem_bytes).hexdigest(),
         "trackKey": key,
         "createdAt": dt.datetime.now(dt.timezone.utc).isoformat()
     }
@@ -128,10 +164,16 @@ def build(key):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--track-key", required=True,
-                        help="audio|mobile|app/songs/...mp3 (authorized Music Box only)")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--track-key",
+                       help="audio|mobile|app/songs/...mp3 (authorized Music Box only)")
+    group.add_argument("--request-file", help="single preapproved SHA-bound request")
     arguments = parser.parse_args()
-    build(arguments.track_key)
+    if arguments.request_file:
+        key, expected_sha = request_from_file(arguments.request_file)
+        build(key, expected_sha=expected_sha)
+    else:
+        build(arguments.track_key)
 
 if __name__ == "__main__":
     main()

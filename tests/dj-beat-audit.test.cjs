@@ -24,6 +24,34 @@ const tracks=Object.entries(catalog.entries||{})
   x.duration>=26&&x.bpm>=55&&x.bpm<=210&&
   Array.isArray(x.chroma)&&x.chroma.length===12)
  .map(([key,data])=>({key,data}));
+// Measure LOCAL timing coverage from the actual indexed waveform beats.
+// Diagnostic only: never promote a match to pass a test.
+const localStart=src.indexOf("function measuredLocalBeatGrid(");
+const localEnd=src.indexOf("function measuredPulseAlignment(",localStart);
+const localGrid=localStart>=0&&localEnd>localStart?
+ new Function(src.slice(localStart,localEnd)+"return measuredLocalBeatGrid;")():null;
+if(localGrid){
+ const outro=tracks.map(({data})=>Array.isArray(data.outroOnsetWindows)&&
+   data.outroOnsetWindows.some(w=>localGrid(
+     w.measuredBeatTimes,data.bpm,w.start,w.end)));
+ const intro=tracks.map(({data})=>localGrid(
+   data.introBeatTimes,data.bpm,Number(data.safeIntroAt)||0,
+   (Number(data.safeIntroAt)||0)+7));
+ let pairs=0;
+ for(let i=0;i<tracks.length;i+=5)if(outro[i])
+  for(let j=0;j<tracks.length;j+=2)if(i!==j&&intro[j]){
+   const a=tracks[i].data,b=tracks[j].data;
+   const ratio=a.bpm/b.bpm;
+   if(ratio>=.975&&ratio<=1.025)pairs++;
+  }
+ console.info("[DJ LOCAL PCM GRID COVERAGE]",JSON.stringify({
+  analyzed:tracks.length,
+  globalReliable:tracks.filter(t=>t.data.beatGrid?.reliable===true).length,
+  outroLocal:outro.filter(Boolean).length,
+  introLocal:intro.filter(Boolean).length,
+  tempoCompatiblePairs:pairs
+ }));
+}
 const find=(suffix)=>tracks.find(x=>x.key.endsWith(suffix));
 // Diagnostic coverage of REAL indexed MP3 data used by the planner.
 const djIndexCoverage={tracks:tracks.length};

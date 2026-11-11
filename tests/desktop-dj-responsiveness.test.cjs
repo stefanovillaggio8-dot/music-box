@@ -154,10 +154,13 @@ test("a measured early musical decay outranks a proposed late soft fade without 
 
 test("earlier four-second real beat windows can mix before the last impact without clipping lyrics",()=>{
  const body=section(dj,"function alignedEarlyOnsetAgreement(","function rhythmicReleaseBeatBridge(");
+ // The isolated fixture must include the shipped local PCM helper even
+ // though this legacy synthetic sample has no new measured timestamps.
+ const local=section(dj,"function measuredLocalBeatGrid(","function measuredPulseAlignment(");
  const make=new Function("env",
   "const {clamp,hasImmediateMusicalIntro,camelotMatch,musicalIntroEntry,"+
   "onsetGridPhase,similarNotes,grooveAgreement,onsetPeriodicity,hasReliableHarmony}=env;"+
-  body+"return earlyMatchedBar;");
+  local+body+"return earlyMatchedBar;");
  const env={
   clamp:(x,a,b)=>Math.max(a,Math.min(b,x)),
   hasImmediateMusicalIntro:()=>true,

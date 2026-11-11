@@ -1048,6 +1048,8 @@ test("a measured instrumental beat can enter beneath a complete outgoing vocal",
   "const similarNotes=()=>({focused:.93,phrase:.90,alignment:{score:.93,matches:true}});"+
   "const onsetPeriodicity=()=>.85,onsetGridPhase=()=>0,musicalIntroEntry=()=>0;"+
   "const alignedEarlyOnsetAgreement=()=>({score:.95,first:.95,second:.95});"+
+  source.slice(source.indexOf("function measuredLocalBeatGrid("),
+    source.indexOf("function measuredPulseAlignment("))+
   source.slice(i,j)+";return earlyMatchedBar;"
  )();
  const onset=Array.from({length:96},(_,i)=>i%12===0?2.5:0);
