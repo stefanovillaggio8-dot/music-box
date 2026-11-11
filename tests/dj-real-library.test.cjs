@@ -23,19 +23,25 @@ const tracks=Object.entries(index.entries||{})
   Array.isArray(v.chroma)&&v.chroma.length===12&&v.bpm>=55&&v.bpm<=210)
  .map(([key,data])=>({key,data}));
 test("real indexed audio supports early rhythmic underlays without cutting original",()=>{
- let eligible=0,early=0,unsafe=0,checked=0,examples=[];
+ let eligible=0,early=0,unsafe=0,checked=0,measured=0,strongBass=0,examples=[];
  for(let i=0;i<tracks.length;i+=3)for(let j=0;j<tracks.length;j+=3){
   const A=tracks[i],B=tracks[j];if(A.key===B.key)continue;checked++;
   const p=engine.transition(A.data,B.data,A.data.duration);
   if(!p?.subduedRhythmicUnderlay)continue;
   eligible++;
+  if(p.measuredBeatPlacement){
+   measured++;
+   if(p.beatPulseAgreement<.85||
+      p.measuredPlacementError>.075)unsafe++;
+  }
+  if(p.underlayVolume>.145)strongBass++;
   if(p.begin<A.data.last-.55)early++;
   if(p.end<A.data.duration-.06||p.preserveTail!==true||
      p.quietCertified===true)unsafe++;
   if(examples.length<6)examples.push({from:A.key,to:B.key,
     startsBeforeEOF:+(A.data.duration-p.begin).toFixed(2)});
  }
- console.info("[DJ CAUTIOUS EARLY INDEX AUDIT]",JSON.stringify({eligible,early,unsafe,checked,examples}));
+ console.info("[DJ CAUTIOUS EARLY INDEX AUDIT]",JSON.stringify({eligible,early,measured,strongBass,unsafe,checked,examples}));
  assert.equal(unsafe,0,"underlays must never truncate original endings");
  assert.ok(eligible>0,"the fallback must work on real MP3 data, not only synthetics");
 });

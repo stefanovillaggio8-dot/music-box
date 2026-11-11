@@ -3122,6 +3122,38 @@ function measuredPulseAlignment(outgoing,incoming,begin,entry,ratio){
  return total>=3?{total,verified,ratio:verified/total,
   rms:verified?Math.sqrt(squared/verified):Infinity}:null;
 }
+// Both recordings contain independently tracked real PCM beat timestamps.
+// Find an actual OUTGOING↔INCOMING beat coincidence by choosing the start
+// time; never require identical drum timbres or invent a bar/downbeat label.
+// This certifies phase on a short LOW-PASS preview, not full-band DJ quality.
+function measuredBeatJoinCandidate(outgoing,incoming,entry,ratio,lower,upper,preferred){
+ if(!Array.isArray(outgoing)||!Array.isArray(incoming)||
+    outgoing.length<4||incoming.length<4||
+    ![entry,ratio,lower,upper,preferred].every(Number.isFinite)||
+    ratio<=0||ratio<.94||ratio>1.06||upper<=lower)return null;
+ const a=outgoing.filter(Number.isFinite).sort((x,y)=>x-y),
+  b=incoming.filter(Number.isFinite).sort((x,y)=>x-y);
+ const heads=b.filter(x=>x>=entry-.08&&x<=entry+2.1).slice(0,7);
+ let winner=null;
+ for(const oldBeat of a){
+  if(oldBeat<lower-.05||oldBeat>upper+2.2)continue;
+  for(const nextBeat of heads){
+   const begin=oldBeat-(nextBeat-entry)/ratio;
+   if(begin<lower||begin>upper)continue;
+   const fit=measuredPulseAlignment(a,b,begin,entry,ratio);
+   if(!fit||fit.total<3||fit.verified<3||
+      fit.ratio<.85||fit.rms>.075)continue;
+   // Prefer a deliberate entry near the measured window's leading beat,
+   // but never trade away a substantially better multi-beat alignment.
+   const quality=fit.ratio-.9*fit.rms-
+     Math.abs(begin-preferred)*.014+
+     Math.min(fit.verified,6)*.002;
+   if(!winner||quality>winner.quality)winner={
+    begin,quality,fit,oldBeat,nextBeat:nextBeat-entry};
+  }
+ }
+ return winner;
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3175,15 +3207,22 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
      notes.focused<.33||notes.phrase<.23||
      (key.weight>=.14&&key.score<.47))continue;
-  const beatAnchor=win.start+
+  let beatAnchor=win.start+
    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
   // A phrase boundary several bars from the end should get its OWN
   // measured cue, not a fictional beat extrapolated from the last four
   // seconds. Every selected begin stays inside its measured window.
   const desired=Math.max(win.start+.55,
    Math.min(a.last-7.6,win.end-1.55));
-  const begin=beatAnchor+
-   Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
+  const verifiedGrid=a.beatGrid?.reliable===true&&
+   b.beatGrid?.reliable===true;
+  const placed=verifiedGrid?measuredBeatJoinCandidate(
+   win.measuredBeatTimes,b.introBeatTimes,entry,ratio,
+   Math.max(win.start+.25,a.last-11.9),
+   Math.min(win.end-1.10,a.last-4.65),desired):null;
+  const begin=placed?.begin??(beatAnchor+
+   Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase);
+  if(placed)beatAnchor=placed.oldBeat;
   const end=dur-.035,fade=end-begin;
   // This puts the actual attack INSIDE the measured outgoing window,
   // rather than extrapolating an inferred rhythm over the whole track.
@@ -3204,7 +3243,7 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    phraseEvent?.direction==="falling"?.05:
    phraseEvent?.direction==="harmonic"?.055:
    Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
-  const measuredGrid=measuredPulseAlignment(
+  const measuredGrid=placed?.fit??measuredPulseAlignment(
    win.measuredBeatTimes,b.introBeatTimes,begin,entry,ratio);
   // Independent pulse agreement is a ranking bonus and can veto a
   // badly aligned overlay only when BOTH decoders have reliable
@@ -3219,13 +3258,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
    (cadence.scale!==1?.045:0);
   if(!best||quality>best.quality)best={quality,begin,end,fade,
-   beatAnchor,nextBeat:nextPhase,grooveScore:g.score,
+   beatAnchor,nextBeat:placed?.nextBeat??nextPhase,
+   measuredBeatPlacement:!!placed,
+   measuredPlacementError:placed?.fit.rms??null,
+   grooveScore:g.score,
    structuralShift:phraseEvent?.direction||null,
    structuralMatch:!!phraseEvent,structureScore:structureBonus,
    beatPulseAgreement:measuredGrid?.ratio??null,
-   strongBassBridge:!!(measuredGrid?.ratio>=.75&&
-    g.score>=.78&&notes.focused>=.74&&
-    Number(b.introBassRatio)>=.34)};
+   strongBassBridge:!!(placed?.fit?.ratio>=.85&&
+    placed.fit.rms<=.055&&cadence.scale===1&&
+    g.score>=.69&&notes.focused>=.55&&
+    Number(b.introBassRatio)>=.23)};
  }
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
@@ -3233,6 +3276,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   structuralMatch:best.structuralMatch,
   structuralShift:best.structuralShift,structureScore:best.structureScore,
   beatPulseAgreement:best.beatPulseAgreement,
+  measuredBeatPlacement:best.measuredBeatPlacement,
+  measuredPlacementError:best.measuredPlacementError,
   tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
   tempo:clamp(ratio,.975,1.025),gain:1,
@@ -6678,7 +6723,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.720",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.721",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
