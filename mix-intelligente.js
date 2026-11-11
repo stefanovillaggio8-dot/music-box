@@ -3074,13 +3074,13 @@ function measuredWindowRhythmUnderlay(a,b,dur){
     !Array.isArray(b.introOnset)||b.introOnset.length!==96||
     !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.43)return null;
  const ratio=a.bpm/b.bpm;
- if(ratio<.98||ratio>1.02)return null;
+ if(ratio<.975||ratio>1.025)return null;
  const introPeriod=onsetPeriodicity(b.introOnset,b.bpm);
  const incoming=independentPulseTrain(b.introOnset,b.bpm);
  // Strong independent beat proof is ideal. A merely PERIODIC real PCM
  // signal may be used only for a filtered, 10%-volume kick underlay,
  // never to certify full-band rhythm or to shorten the outgoing song.
- if(!(incoming?.score>=.72||introPeriod>=.43))return null;
+ if(!(incoming?.score>=.72||introPeriod>=.36))return null;
  const entry=musicalIntroEntry(b);
  // Do not knowingly launch a sung intro under the existing song.
  const firstVoice=Math.min(
@@ -3099,18 +3099,18 @@ function measuredWindowRhythmUnderlay(a,b,dur){
      !Array.isArray(win.groove)||win.groove.length!==32)continue;
   const windowPeriod=onsetPeriodicity(win.onset,a.bpm);
   const pulse=independentPulseTrain(win.onset,a.bpm);
-  if(!(pulse?.score>=.72||windowPeriod>=.43))continue;
+  if(!(pulse?.score>=.72||windowPeriod>=.36))continue;
   const local={...a,outroOnset:win.onset,outroGroove:win.groove,
    outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,
    outroTimeline:[]};
   const g=grooveAgreement(local,b);
-  if(!g||g.score<.69||g.correlation<.38)continue;
+  if(!g||g.score<.65||g.correlation<.30)continue;
   const notes=similarNotes(local,b);
   // The upper harmonics will be filtered; require some tonal safety
   // but not a full-band chord match we are not going to play.
   if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
-     notes.focused<.39||notes.phrase<.27||
-     (key.weight>=.14&&key.score<.43))continue;
+     notes.focused<.33||notes.phrase<.23||
+     (key.weight>=.14&&key.score<.47))continue;
   const beatAnchor=win.start+
    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
   const desired=Math.max(win.start+.55,a.last-8.5);
@@ -3133,7 +3133,7 @@ function measuredWindowRhythmUnderlay(a,b,dur){
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
   begin:best.begin,end:best.end,fade:best.fade,entry,
-  tempo:clamp(ratio,.98,1.02),gain:1,underlayVolume:.105,
+  tempo:clamp(ratio,.975,1.025),gain:1,underlayVolume:.105,
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
