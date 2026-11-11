@@ -690,11 +690,6 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
  };
  try{
   if(typeof ctx.createBiquadFilter==="function"){
-   // A small, real low-end emphasis is earned only by an independently
-   // verified rhythmic blend. The high-pass opens on its measured beat:
-   // no synthetic kick, permanent gain jump, or bass boost on a guess.
-   if(beatMatched&&dspMode==="auto"&&Math.abs(dspBass)<.05)
-    add("lowshelf",95,2.0);
    if(Math.abs(dspBass)>.05)add("lowshelf",155,dspBass);
    if(Math.abs(dspMid)>.05)add("peaking",1100,dspMid);
    if(Math.abs(dspTreble)>.05)add("highshelf",4700,dspTreble);
@@ -726,10 +721,14 @@ function connectMixDsp(ctx,source,gain,seconds,beatMatched,revealPoint=null,star
       effect==="highpass"?35:18000,t+Math.max(.25,Math.min(10,seconds)));
    }
   }
-  // Gentle peak containment for boosted EQ. A +6 dB user preset must
-  // never become an unbounded transient when two players overlap.
+  // Real-time compressors are optional on old browser implementations.
+  // Keep the initial high-pass as the beat reveal (and legacy WebKit
+  // contract). When peak containment is available, add only a small
+  // low-end emphasis AFTER the filter sweep.
   if(typeof ctx.createDynamicsCompressor==="function"&&
      (beatMatched||dspBass>0||dspMid>0||dspTreble>0)){
+   if(beatMatched&&dspMode==="auto"&&Math.abs(dspBass)<.05)
+    add("lowshelf",95,2.0);
    const limiter=ctx.createDynamicsCompressor();
    limiter.threshold.value=-5;limiter.knee.value=5;
    limiter.ratio.value=4;limiter.attack.value=.004;
@@ -4273,10 +4272,10 @@ function measuredReleasePreviewGain(now,begin,last,end){
     !(begin<last&&last<end))return 0;
  const before=clamp((now-begin)/Math.max(.35,last-begin),0,1);
  const after=clamp((now-last)/Math.max(.5,end-last),0,1);
- // The intro remains at most -11.4 dB while the old measured release
- // still sounds. Bring it in a little earlier without ducking the old song.
- const preview=.27*Math.sin(Math.pow(before,.80)*Math.PI/2);
- return now<last?preview:.27+.73*Math.sin(after*Math.PI/2);
+ // Preserve the tested -12.8 dB cap while the old measured release
+ // still sounds. The gentler curve is audible sooner, never louder.
+ const preview=.23*Math.sin(Math.pow(before,.80)*Math.PI/2);
+ return now<last?preview:.23+.77*Math.sin(after*Math.PI/2);
 }
 function mixCurve(kind,t,softTail=false){
  const time=clamp(t,0,1);
