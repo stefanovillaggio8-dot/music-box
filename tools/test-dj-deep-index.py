@@ -43,6 +43,12 @@ try:
     assert "outroTimeline" in a and "introTimeline" in a
     assert "introOnset" in a and "outroOnset" in a
     assert isinstance(a["outroOnsetWindows"],list)
+    assert isinstance(a["introOnsetWindows"],list)
+    assert 0<=a["introRms"]<2 and 0<=a["introPeak"]<2
+    assert len(a["introOnsetWindows"])<=4
+    for w in a["introOnsetWindows"]:
+        assert w["start"]<w["end"] and len(w["onset"])==96
+        assert len(w["groove"])==32 and len(w["notes"])==12
     assert a["analyzer"]=="librosa-onsets-chroma-rms-v7-bars-sections"
     assert a["barGrid"] is None or a["barGrid"]["beatsPerBar"]==4
     assert isinstance(a["sectionBoundaries"],list)
