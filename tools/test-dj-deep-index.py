@@ -43,8 +43,11 @@ try:
     assert "outroTimeline" in a and "introTimeline" in a
     assert "introOnset" in a and "outroOnset" in a
     assert isinstance(a["outroOnsetWindows"],list)
-    assert a["analyzer"]=="librosa-onsets-chroma-rms-v6-phrases"
+    assert a["analyzer"]=="librosa-onsets-chroma-rms-v7-pulses"
     assert isinstance(a["structureEvents"],list)
+    assert isinstance(a["beatGrid"],dict)
+    assert isinstance(a["beatGrid"]["anchors"],list)
+    assert isinstance(a["beatGrid"]["reliable"],bool)
     assert a["introBassRatio"] is not None and 0<=a["introBassRatio"]<=1
     assert len(a["outroOnsetWindows"])<=5
     for w in a["outroOnsetWindows"]:
@@ -54,6 +57,8 @@ try:
         assert w["levelRatio"] >= .23
         assert np.isfinite(w["energyTrend"])
         assert w["beatCount"]>=0
+        assert isinstance(w["measuredBeatTimes"],list)
+        assert len(w["measuredBeatTimes"])<=16
         assert w["bassRatio"] is None or 0<=w["bassRatio"]<=1
     for fingerprint in [a["introOnset"],a["outroOnset"]]:
         if fingerprint is not None:
@@ -102,3 +107,14 @@ tone_high=np.sin(2*np.pi*850*np.arange(rate*4)/rate)*.3
 assert mod.frequency_bass_ratio(tone_low,0,4)>.80
 assert mod.frequency_bass_ratio(tone_high,0,4)<.15
 print("PASS: waveform-only structure markers, frequency evidence and five measured windows.")
+
+# A trustworthy pulse grid must be built from tracked attacks, not BPM alone.
+synthetic_grid=np.arange(0,40)*.5
+measured=mod.measured_beat_grid(synthetic_grid,0,40,120)
+assert measured["reliable"] is True,measured
+assert len(measured["anchors"])>=8
+assert measured["error"]<.001
+broken_grid=np.cumsum(np.resize([.30,.7,.37,.63],40))
+assert mod.measured_beat_grid(broken_grid,0,40,120)["reliable"] is False
+assert mod.measured_beat_grid(np.array([]),0,40,120)["reliable"] is False
+print("PASS: real pulse-grid timing, missing-beat and drifting-beat safeguards.")
