@@ -5593,7 +5593,11 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.measuredReleaseLeadIn?
+ const description=plan?.neutralAmbientUnderlay?
+   " · ingresso continuo filtrato e prudente, senza beatmatch e senza tagliare il finale":
+   plan?.measuredWindowUnderlay?
+   " · ingresso anticipato su finestra ritmica misurata":
+   plan?.measuredReleaseLeadIn?
    " · intro anticipata nel rilascio musicale misurato, originale integro (non beatmatch)":
    plan?.postMusicalTailUnderlay?
     " · finale musicale concluso: la nuova intro entra nella coda debole":
@@ -5669,6 +5673,8 @@ function updateMobileStatus(){
   status="Mix non avviato: "+mobileMixLastBlocker;
  else if(plan.mobileSilentBridge)
   status="Finale muto verificato: preparo un ingresso breve senza tagliare note.";
+ else if(plan.neutralAmbientUnderlay)
+  status="Intro filtrata a basso volume: finale originale integro (non beatmatch).";
  else if(plan.pulseUnderlay)
   status="Pulsazioni allineate: preparo un breve raccordo ritmico a volume ridotto.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
@@ -6149,7 +6155,7 @@ async function intelligentShuffle(app,audio,fromId){
     beatCandidates:scored.length,softCandidates:softScored.length,
    underlayCandidates:underlayScored.length,
     impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
-    nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
+    ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
     rejected,candidateAudit,limitingStage,chosen:best.track.id,
@@ -6161,7 +6167,8 @@ async function intelligentShuffle(app,audio,fromId){
       "introduzione anticipata sul rilascio musicale misurato, finale integro":
       "ingresso ritmico anticipato, originale preservato"):softScored.length?
      "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
-     "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
+     "raccordo dopo ultimo suono, ingresso musicale subito udibile":ambientScored.length?
+     "introduzione filtrata a basso volume, finale integro (non beatmatch)":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
       "ordine basato su groove misurato (nessuna sovrapposizione autorizzata)"};
@@ -6170,6 +6177,7 @@ async function intelligentShuffle(app,audio,fromId){
     underlayScored.length?"[Music Box DJ] Scelta automatica: ingresso ritmico prima del finale":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
     postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
+    ambientScored.length?"[Music Box DJ] Scelta automatica: raccordo neutro filtrato, non beatmatch":
     nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
     sequenceScored.length?"[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)":
      "[Music Box DJ] Scelta automatica: groove reale affine, passaggio prudente",
@@ -6187,7 +6195,7 @@ async function intelligentShuffle(app,audio,fromId){
   beatCandidates:scored.length,softCandidates:softScored.length,
    underlayCandidates:underlayScored.length,
   impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
-  nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
+  ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
    rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,
@@ -6201,6 +6209,7 @@ async function intelligentShuffle(app,audio,fromId){
    underlayScored.length?"brano in coda gia compatibile con ingresso ritmico cauto":
    softScored.length?"brano in coda compatibile con una sfumatura quieta":
    postludeScored.length?"brano in coda adatto al raccordo dopo l'ultimo suono":
+   ambientScored.length?"brano in coda adatto a una introduzione filtrata e prudente":
    nearScored.length?"brano in coda gia simile per BPM, groove e note":
     sequenceScored.length?"brano in coda gia selezionato per ritmo e note":
     rhythmOrderScored.length?"brano in coda gia affine per percussioni":
@@ -6213,6 +6222,7 @@ async function intelligentShuffle(app,audio,fromId){
   " ingressi ritmici cauti, "+softScored.length+" sfumature, "+
   impactScored.length+" attacchi sul colpo finale, "+
   postludeScored.length+" raccordi su finale concluso, "+
+  ambientScored.length+" raccordi neutri filtrati, "+
   nearScored.length+" brani affini, "+rhythmCandidates+
   " ritmi compatibili, "+rhythmOrderScored.length+
   " ordini ritmici su "+measured.length+" analizzati. "+
