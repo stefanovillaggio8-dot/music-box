@@ -321,7 +321,7 @@ def analyze(mp3):
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v7-pulses"
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v7-pulses"}
     return out
 def main():
     ap=argparse.ArgumentParser()
