@@ -135,10 +135,15 @@ function parseEnhancedLrc(value){
   // first audible syllable. Preserve the measured word time instead of
   // discarding the entire word stream and inventing estimated karaoke.
   const firstWord=words[0]?.t;
-  const adjustedStart=Number.isFinite(firstWord)&&
-    firstWord<t-.15&&firstWord>=t-.95?firstWord:t;
-  const clean=validWords(words,text,adjustedStart,null);
-  if(text)result.push({t:adjustedStart,text,...(clean.length?{words:clean}:{})});
+  // Trust the exact first-word cue over an early LRC line marker, in both
+  // directions. A matching word can start up to 1.7s AFTER the line cue.
+  // Never shift a lyric on the basis of malformed/incomplete word tags.
+  const plausible=Number.isFinite(firstWord)&&
+    firstWord>=t-.95&&firstWord<=t+1.70;
+  const adjustedStart=plausible?firstWord:t;
+  const clean=plausible?validWords(words,text,adjustedStart,null):[];
+  if(text)result.push({t:clean.length?adjustedStart:t,text,
+    ...(clean.length?{words:clean}:{})});
  }
  return result;
 }
