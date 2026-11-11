@@ -5817,7 +5817,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[],underlayScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
+ const scored=[],softScored=[],underlayScored=[],ambientScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
  const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
@@ -5908,6 +5908,11 @@ async function intelligentShuffle(app,audio,fromId){
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   let cue=transition(old,next,audio.duration);
+  if(!cue||cue.kind==="cut"||
+     (Number.isFinite(cue.begin)&&cue.begin>old.last+.20)){
+   const gentle=adaptiveLowBandContinuity(old,next,audio.duration);
+   if(gentle)cue=gentle;
+  }
   let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
   if(cue&&!musicallyPlayable&&typeof certifiedAlternateRelease==="function"){
    const alternate=certifiedAlternateRelease(old,next,audio.duration,cue);
@@ -5943,6 +5948,13 @@ async function intelligentShuffle(app,audio,fromId){
        cue.instrumentalBeatBridge===true))));
   if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
+   if(mobilePlayable&&cue?.neutralAmbientUnderlay===true){
+    ambientScored.push({track,cue,
+      score:1+clamp(info.introDrive,0,1)*.16+
+       (Number.isFinite(info.introBassRatio)?
+        info.introBassRatio*.13:0)});
+    continue;
+   }
    // A measured quiet RELEASE permits early musical continuity even
    // when no complete bass/beat match is certified. Keep it distinct
    // from actual rhythm-matched candidates and from postlude-only fades.
@@ -6092,6 +6104,7 @@ async function intelligentShuffle(app,audio,fromId){
  impactScored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
  underlayScored.sort((a,b)=>b.score-a.score);
+ ambientScored.sort((a,b)=>b.score-a.score);
  postludeScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
  sequenceScored.sort((a,b)=>b.score-a.score);
@@ -6113,6 +6126,7 @@ async function intelligentShuffle(app,audio,fromId){
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   underlayScored.length?underlayScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
+  ambientScored.length?ambientScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:
   safeRhythmOrder.length?safeRhythmOrder:[];
  const limitingStage=!candidateAudit.validIntros?"nessuna intro verificabile":
