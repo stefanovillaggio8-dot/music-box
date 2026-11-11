@@ -19,6 +19,16 @@ test("independent PCM beat anchors align different kick sounds with timed entry"
  const at=engine.measuredPulseAlignment(a,b,result.begin,0,1);
  assert.ok(at.ratio>=.9);
 });
+test("several fast onset detections cannot reuse one outgoing beat as multiple matches",()=>{
+ const outgoing=[100,100.5,101,101.5];
+ const clustered=[.25,.28,.31,.34];
+ const fit=engine.measuredPulseAlignment(outgoing,clustered,99.75,0,1);
+ assert.ok(fit&&fit.total===4);
+ assert.ok(fit.verified<=1&&fit.ratio<.85,
+  "three hi-hats near one kick cannot certify a rhythmic bridge");
+ assert.equal(engine.measuredBeatJoinCandidate(
+  outgoing,clustered,0,1,99.6,100.2,99.75),null);
+});
 test("bad periodicity, unsupported tempo shift or insufficient evidence cannot pass",()=>{
  const irregular=[.25,.96,1.84,2.76,3.98];
  assert.equal(engine.measuredBeatJoinCandidate(
