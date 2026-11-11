@@ -72,8 +72,11 @@ function prepare(buffer,info){
  const end=Math.min(duration,Number.isFinite(info?.last)?info.last:duration);
  // Sample more of the outro than before, so vocals around late breakdowns
  // don't go unnoticed. At 16kHz these ~44s occupy under 3MB in mono PCM.
- const head=monoSegment(buffer,0,11.5);
- const tail=monoSegment(buffer,Math.max(0,end-32),32);
+ // Catch short vocal pickups in the incoming first sixteen seconds,
+ // and late re-entries up to forty seconds before the outro. One optional
+ // desktop job at a time; iPhone scans are disabled by the DJ scheduler.
+ const head=monoSegment(buffer,0,16);
+ const tail=monoSegment(buffer,Math.max(0,end-40),40);
  if(!head||!tail)return null;
  return {head,tail,rate:head.rate,end};
 }
@@ -123,12 +126,14 @@ function summarizeFrames(data,frames){
   return spans;
  }
  const head=intervals("intro"),tail=intervals("outro");
- return {source:"yamnet",modelVersion:3,
+ return {source:"yamnet",modelVersion:4,
   firstVoiceAt:head.length?head[0].at:null,
   lastVoiceAt:tail.length?tail[tail.length-1].end:null,
   firstVoiceConfidence:head.length?head[0].confidence:null,
   lastVoiceConfidence:tail.length?tail[tail.length-1].confidence:null,
-  voiceIntervals:tail.slice(-12),
+  voiceIntervals:tail.slice(-16),
+  introVoiceIntervals:head.slice(0,16),
+  outroVoiceIntervals:tail.slice(-16),
   scannedEnd:data.end,scannedFrom:data.tail.at,
   // Coverage indicates *where* the model ran, never verified vocal absence.
   scannedFrames:frames.length};
