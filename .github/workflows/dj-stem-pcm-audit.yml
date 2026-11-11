@@ -1,0 +1,29 @@
+name: Music Box DJ - independent vocal stem PCM proof
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'dj-vocal-stems.json'
+      - 'dj-stems/vocals/**'
+      - 'tools/dj-stem-pcm-audit.py'
+      - '.github/workflows/dj-stem-pcm-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-real-vocals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PCM decode requirements
+        run: |
+          python -m pip install "numpy>=1.26,<3"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m py_compile tools/dj-stem-pcm-audit.py
+      - name: Decode published AAC and original audio, compare hashes and real signal
+        run: python tools/dj-stem-pcm-audit.py
