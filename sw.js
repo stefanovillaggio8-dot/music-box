@@ -47,7 +47,7 @@ const CORE = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6715&words=2",
+  "./word-karaoke.js?v=6715&words=3",
   "./audio-lyrics-align.js?v=6715&lang=1",
   "./audio-lyrics-worker.js?v=6715&lang=1",
   "./app.js?v=6719&words=2",
@@ -55,7 +55,7 @@ const CORE = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
-  "./mix-intelligente.js?v=6719&dj=14", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6719&dj=15", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -86,7 +86,7 @@ const OFFLINE_SHELL = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6715&words=2",
+  "./word-karaoke.js?v=6715&words=3",
   "./audio-lyrics-align.js?v=6715&lang=1",
   "./audio-lyrics-worker.js?v=6715&lang=1",
   "./app.js?v=6719&words=2",
@@ -94,7 +94,7 @@ const OFFLINE_SHELL = [
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
-  "./mix-intelligente.js?v=6719&dj=14",
+  "./mix-intelligente.js?v=6719&dj=15",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6715&words=2"
 ];
