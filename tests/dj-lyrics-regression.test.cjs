@@ -527,7 +527,7 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
  assert.match(immersive,/next\?\.audioWordSynced\?"PAROLA PER PAROLA · IA"/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
- assert.match(engine,/completedInSession\.has\(id\)/);
+ assert.match(engine,/completedInSession\.has\(sessionId\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
  assert.match(engine,/window\.OfflineAudioContext\|\|window\.webkitOfflineAudioContext/);
  assert.match(engine,/if\(!selected\(at\)\)continue/);
@@ -571,7 +571,7 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/return_timestamps:"word",task:"transcribe",language/);
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
- assert.match(align,/completedInSession\.add\(id\);\s*setStatus\("Lingua del testo incerta/);
+ assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
  assert.match(html,/audio-lyrics-align\.js\?v=6720&amp;lang=4/);
  assert.equal(sw.split("audio-lyrics-align.js?v=6720&lang=4").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
@@ -993,7 +993,7 @@ test("iPhone karaoke may inspect several different passages on later requests wi
   {t:35,text:"And we will see the world tonight"},
   {t:60,text:"I wanna know where you are now"}
  ];
- let current=4,now=Date.now(),clips=0,downloads=0,closed=0;
+ let current=4,now=Date.now(),clips=0,downloads=0,closed=0,profile="Ste";
  const pcm=new Float32Array(16000*80),memory=new Map();
  class WorkerMock{
   postMessage(m){
@@ -1012,7 +1012,7 @@ test("iPhone karaoke may inspect several different passages on later requests wi
  const track={id:"song-karaoke",url:"songs/track.mp3"};
  const bridge={currentId:()=>track.id,
   audio:()=>({duration:80,currentTime:current}),
-  profile:()=>"Ste",allTracks:()=>[track],
+  profile:()=>profile,allTracks:()=>[track],
   lyricsData:()=>({synced:lyrics}),mixUrl:()=>track.url};
  const win={Worker:WorkerMock,OfflineAudioContext:OfflineMock,MusicBoxBridge:bridge};
  const nav={gpu:{},onLine:true,userAgent:"iPhone",connection:{saveData:false}};
@@ -1040,4 +1040,12 @@ test("iPhone karaoke may inspect several different passages on later requests wi
  assert.equal(api.request(track.id),false,"per-song session cap protects iPhone");
  assert.equal(clips,3);
  assert.equal(closed,3,"offline decoders must be closed after each window");
+ // Same catalog ID on a different profile must not inherit the first
+ // profile's cap, pending work, or previously inspected lyric windows.
+ profile="Diego";current=4;now+=16000;
+ assert.equal(api.request(track.id),true);
+ await new Promise(resolve=>setTimeout(resolve,40));
+ assert.equal(clips,4);
+ assert.equal(downloads,4);
+ assert.equal(closed,4);
 });
