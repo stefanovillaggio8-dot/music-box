@@ -33,7 +33,7 @@ test("mismatched duration and unknown SHA cannot mislabel a different MP3",()=>{
 test("LRC filters section labels and rejects sparse or out of range lyrics",()=>{
  const valid=builder.timestamps(lrc+"\n[01:40.20] [Outro]");
  assert.equal(valid.length,4);
- assert.equal(builder.timestamps("[00:00.00] Intro\n[00:01.00] Okay"),[].length);
+ assert.equal(builder.timestamps("[00:00.00] Intro\n[00:01.00] Okay").length,0);
  const tooLate=builder.build({version:2,entries:{
   "audio/songs/track-23.mp3":{status:"ok",sha,duration:75}
  }},{"b-track-23":{synced:lrc}},{});
