@@ -518,7 +518,7 @@ test("Whisper timeout terminates a hung worker without freezing playback",async(
  assert.equal(terminated,1);
  assert.equal(closed,1);
  assert.match(stage,/non disponibile/);
- assert.ok(mem.has("mb.audioWords.fail."+music.id));
+ assert.ok(mem.has("mb.audioWords.fail.Ste."+music.id));
 });
 test("AI timing provenance survives browser restart and does not masquerade as LRCLIB",()=>{
  assert.match(app,/audioWordSynced:r\.audioWordSynced===true/);
@@ -1048,4 +1048,6 @@ test("iPhone karaoke may inspect several different passages on later requests wi
  assert.equal(clips,4);
  assert.equal(downloads,4);
  assert.equal(closed,4);
+ assert.ok(!memory.has("mb.audioWords.fail.Ste."+track.id),
+  "healthy analysis does not create another profile's error cooldown");
 });
