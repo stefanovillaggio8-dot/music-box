@@ -3067,11 +3067,16 @@ function subduedRhythmicIntro(a,b,dur){
       onsetGridPhase(b.introOnset,b.bpm)-entry;
  if(!Number.isFinite(nextBeat)||nextBeat<-.20||nextBeat>period+1.1)
   return null;
- const ideal=Math.min(dur-3.1,a.last-1.15),
+ // Anchor a subdued, non-vocal-cutting intro several actual kicks
+ // before the last audible beat. Previously the -1.15s target often
+ // admitted an almost-EOF fade indistinguishable from a normal skip.
+ // The indexed onset evidence spans only four seconds: do not extrapolate
+ // beyond its measured window or treat this as certified full beatmix.
+ const ideal=Math.min(dur-3.5,a.last-3.1),
    begin=beatAnchor+Math.round((ideal+nextBeat-beatAnchor)/period)*period-nextBeat,
    end=dur-.035,fade=end-begin;
- if(!Number.isFinite(begin)||begin<28||begin<a.last-3.9||
-    begin>a.last-.55||fade<2.25||fade>11.8)return null;
+ if(!Number.isFinite(begin)||begin<28||begin<a.last-4.15||
+    begin>a.last-2.20||fade<2.25||fade>11.8)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,preserveTail:true,
    begin,end,fade,entry,tempo:Math.max(.975,Math.min(1.025,ratio)),
    gain:1,underlayVolume:Math.max(.20,Math.min(.35,
