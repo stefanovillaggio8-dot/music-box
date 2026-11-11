@@ -684,3 +684,40 @@ test("queued vocal scanning protects playback and respects native buffering",()=
  assert.equal(eligible(player,{id:"song-c"}),false,
   "Unrelated tracks must not be scanned");
 });
+
+
+test("enhanced LRC preserves early measured syllables instead of estimating karaoke",()=>{
+ const script=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
+ const karaoke=new Function("const window={};"+script+";return window.MusicBoxWordKaraoke;")();
+ const input="[00:20.00]<00:19.35>Can <00:19.75>you <00:20.12>hear <00:20.47>me";
+ const rows=karaoke.parseEnhancedLrc(input);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].words.length,4);
+ assert.equal(rows[0].t,19.35);
+ assert.equal(rows[0].words[0].t,19.35);
+ assert.equal(rows[0].words[3].t,20.47);
+ const unsafe="[00:20.00]<00:15.00>Can <00:15.40>you <00:16.00>hear <00:16.40>me";
+ const bad=karaoke.parseEnhancedLrc(unsafe);
+ assert.equal(bad[0].words,undefined,
+  "Do not trust a word timestamp five seconds before its LRC line");
+});
+test("subdued Smart Mix lead-in starts before the last musical beats, not the silence",()=>{
+ const from=dj.indexOf("function subduedRhythmicIntro(");
+ const to=dj.indexOf("function desktopMeasuredReleaseLeadIn(",from);
+ assert.ok(from>0&&to>from);
+ const make=new Function("const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  "const onsetPeriodicity=()=>.6,hasImmediateMusicalIntro=()=>true,"+
+  "grooveAgreement=()=>({score:.84,correlation:.7}),"+
+  "similarNotes=()=>({focused:.87,phrase:.8}),"+
+  "camelotMatch=()=>({weight:0,score:.7}),"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.1;"+
+  dj.slice(from,to)+";return subduedRhythmicIntro;")();
+ const data={duration:200,last:199,bpm:120,beatConfidence:.8,
+  outroOnset:Array(96).fill(1),introOnset:Array(96).fill(1),
+  introDrive:.8};
+ const plan=make(data,{...data},200);
+ assert.equal(plan.kind,"underlay");
+ assert.ok(plan.begin<=196.8&&plan.begin>=194.9,
+  "Subdued entrance should start while final music is audible");
+ assert.ok(plan.end>199&&plan.preserveTail);
+});
