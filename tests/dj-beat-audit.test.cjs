@@ -17,7 +17,7 @@ const tools=new Function("isIOS","style",
  extract("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  extract("function desktopBeatStartDelay(","async function beginMix(")+
  "return {transition,synchronizeBeatCue,desktopFinalImpactRelay,onsetPairAgreement,desktopBeatPairCertified,rhythmicGridEvidence,similarNotes,grooveAgreement,camelotMatch,"+
- "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity,independentPulseTrain,measuredWindowRhythmUnderlay};"
+ "desktopBeatPairCertified,desktopBeatStartDelay,iphoneQuietReleaseCertified,certifiedNeutralBridge,measuredPulseUnderlay,onsetPeriodicity,independentPulseTrain,measuredWindowRhythmUnderlay,adaptiveLowBandContinuity,musicallyCompatibleOverlay,measuredTempoRelation};"
 )(false,"auto");
 const tracks=Object.entries(catalog.entries||{})
  .filter(([key,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&
@@ -37,7 +37,10 @@ for(const [name,yes] of [
  ["voiceScanned",d=>d.voiceModel&&Number.isFinite(d.voiceScannedEnd)],
  ["release",d=>!!d.dropRelease],
  ["tempoConfidence",d=>d.beatConfidence>=.20],
- ["audibleIntro",d=>Number(d.introDrive)>=.45]
+ ["audibleIntro",d=>Number(d.introDrive)>=.45],
+ ["structureIndex",d=>Array.isArray(d.structureEvents)],
+ ["bassMeasured",d=>Number.isFinite(d.introBassRatio)],
+ ["fiveOutroWindows",d=>Array.isArray(d.outroOnsetWindows)&&d.outroOnsetWindows.length>=5]
 ])djIndexCoverage[name]=tracks.filter(x=>yes(x.data)).length;
 console.info("[DJ INDEX COVERAGE]",JSON.stringify(djIndexCoverage));
 const windowDiagnostics={windowTracks:0,windowSignals:0,windowPeriodic:0,
@@ -67,7 +70,8 @@ const short=x=>Number.isFinite(x)?+x.toFixed(3):null;
 test("real-index audit: 130k+ different track pairs, classify actual join versus a merely quiet fade",()=>{
  assert.ok(tracks.length>=1100,"Real full-song MP3 metadata must be available");
  let pairs=0,nearBpm=0,plans=0,beats=0,releaseBeats=0,strictBeats=0,
-  rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0,bassOnly=0,windowed=0;
+  rejectedBeat=0,quietFades=0,unsafeFades=0,cut=0,other=0,subdued=0,earlySubdued=0,bassOnly=0,windowed=0,
+  neutralEligible=0,neutralPreferred=0,halfTimeWindowed=0,phraseMatched=0;
  const examples=[],earliest=[];
  const funnel={tailAndIntro:0,tempo:0,onsetData:0,periodic:0,
   compatibleGroove:0,compatibleNotes:0,allMatched:0,
@@ -114,8 +118,18 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
     }
    }
    const p=tools.transition(A.data,B.data,A.data.duration);
+   const gentle=tools.adaptiveLowBandContinuity(A.data,B.data,A.data.duration);
+   if(gentle&&tools.musicallyCompatibleOverlay(A.data,B.data,gentle)){
+    neutralEligible++;
+    if(!p||p.kind==="cut"||
+       (Number.isFinite(p.begin)&&p.begin>A.data.last+.20))
+      neutralPreferred++;
+    assert.equal(gentle.preserveTail,true);
+    assert.equal(gentle.beatPeriod,null);
+    assert.ok(gentle.underlayVolume<=.09);
+   }
    if(!p)continue;plans++;
-   if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;if(p.drumOnlyUnderlay)bassOnly++;if(p.measuredWindowUnderlay)windowed++;}
+   if(p.subduedRhythmicUnderlay){subdued++;if(p.begin<A.data.last-2.5)earlySubdued++;if(p.drumOnlyUnderlay)bassOnly++;if(p.measuredWindowUnderlay){windowed++;if(p.tempoScale!==1)halfTimeWindowed++;if(p.structuralMatch)phraseMatched++;}}
    if(p.measuredRhythmicRelease===true)releaseBeats++;
    assert.ok(Number.isFinite(p.begin)&&Number.isFinite(p.end)&&
     p.begin>=0&&p.end<=A.data.duration+.04,
@@ -143,7 +157,7 @@ test("real-index audit: 130k+ different track pairs, classify actual join versus
  }
  console.info("[DJ REAL INDEPENDENT AUDIT]",JSON.stringify({
   indexed:tracks.length,pairs,nearBpm,plans,beatProposals:beats,releaseBeats,
-  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,bassOnly,windowed,funnel,
+  strictBeats,rejectedBeat,quietFades,unsafeFades,cut,other,subdued,earlySubdued,bassOnly,windowed,halfTimeWindowed,phraseMatched,neutralEligible,neutralPreferred,funnel,
   beatExamples:examples,veryEarly:earliest}));
  assert.ok(pairs>=130000,"Audit sampled too few real pairs");
  assert.equal(strictBeats+rejectedBeat,beats);

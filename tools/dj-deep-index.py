@@ -68,6 +68,40 @@ def groove(rms,bpm,at,end_aligned=False):
     mean=float(np.mean(points));std=float(np.std(points))
     if mean<.003 or std<mean*.13:return None
     return [round(float(np.clip((x-mean)/std,-3,3)),4) for x in points]
+def frequency_bass_ratio(samples, start, end):
+    """Measured low-band content; never interpreted as proof of no vocals."""
+    begin=max(0,int(start*SR));stop=min(len(samples),int(end*SR))
+    if stop-begin<int(.7*SR):return None
+    # 3x downsampling preserves the 55-260Hz kick/bass band and keeps
+    # full-library analysis bounded even for imported long recordings.
+    x=np.asarray(samples[begin:stop:3],dtype=np.float64).copy()
+    if x.size<2048 or np.sqrt(np.mean(x*x))<.001:return None
+    x*=np.hanning(x.size)
+    power=np.abs(np.fft.rfft(x))**2
+    hz=np.fft.rfftfreq(x.size,d=3/SR)
+    measured=(hz>=55)&(hz<=1500)
+    bass=(hz>=55)&(hz<=260)
+    total=float(np.sum(power[measured]))
+    if total<1e-8:return None
+    return round(float(np.clip(np.sum(power[bass])/total,0,1)),4)
+
+def structure_events(rms, level, first, last):
+    """Loudness/energy section boundaries (NOT chorus or singing labels)."""
+    events=[]
+    for at in np.arange(max(first+4,last-34),last-3,2):
+        before=rms[max(0,int((at-2.6)/.1)):max(0,int((at-.6)/.1))]
+        after=rms[min(len(rms),int((at+.6)/.1)):min(len(rms),int((at+2.6)/.1))]
+        if before.size<12 or after.size<12:continue
+        a=float(np.mean(before));b=float(np.mean(after))
+        if max(a,b)<max(.004,level*.20):continue
+        delta=float(np.log2((b+.0005)/(a+.0005)))
+        if abs(delta)<.70:continue
+        events.append({"at":round(float(at),2),
+           "direction":"rising" if delta>0 else "falling",
+           "change":round(delta,3)})
+    events.sort(key=lambda e:abs(e["change"]),reverse=True)
+    return sorted(events[:12],key=lambda e:e["at"])
+
 def refine_tempo_from_beats(estimated, frames):
     """Refine librosa's quantized BPM using several independently tracked beats.
 
@@ -203,7 +237,10 @@ def analyze(mp3):
     # final beat. Do not guess from BPM or an empty MP3 tail. Every window
     # is measured from original PCM and carries its own boundary notes.
     outro_windows=[]
-    for offset in (6.0,9.0):
+    # More phrase candidates for build/drop, not only two final windows.
+    # All remain measured from the actual original MP3 and the browser
+    # validates the chosen live phase before a filtered beat preview.
+    for offset in (6.0,8.0,10.0,12.0,14.0):
         window_start=float(musical_edge)-offset
         window_end=window_start+4.
         if window_start<max(0.,first,25.) or window_end>musical_edge-1.95:
@@ -218,13 +255,21 @@ def analyze(mp3):
         a=int(window_start*SR);b=int(window_end*SR)
         notes=chroma(y[a:b])
         if notes is None:continue
+        first_half=float(np.mean(sl[:len(sl)//2]))
+        second_half=float(np.mean(sl[len(sl)//2:]))
+        trend=float(np.log2((second_half+.0005)/(first_half+.0005)))
+        beats_near=beat_times[(beat_times>=window_start)&
+                              (beat_times<=window_end)]
         outro_windows.append({
             "start":round(window_start,3),
             "end":round(window_end,3),
             "onset":signature,
             "groove":local_groove,
             "notes":notes,
-            "levelRatio":round(relative,4)
+            "levelRatio":round(relative,4),
+            "energyTrend":round(float(np.clip(trend,-3.,3.)),3),
+            "beatCount":int(beats_near.size),
+            "bassRatio":frequency_bass_ratio(y,window_start,window_end)
         })
     out={"duration":round(duration,3),"first":round(first,3),"last":round(last,3),
       "trailing":round(trailing,3),"leading":round(leading,3),
@@ -243,11 +288,16 @@ def analyze(mp3):
       "outroGroove":groove(rms,bpm,musical_edge,True),
       "introOnset":intro_onset,"outroOnset":outro_onset,
       "outroOnsetWindows":outro_windows,
+      # Structural descriptors are waveform evidence, NOT lyrical/vocal
+      # classifications. Those come from synced karaoke or local YAMNet.
+      "structureEvents":structure_events(rms,level,first,musical_edge),
+      "introBassRatio":frequency_bass_ratio(
+          y,safe_intro,min(duration,safe_intro+4)),
       "introDrive":round(drive,4),"dropRelease":release,
       "protectedEnding":protected,"safeIntroAt":round(safe_intro,3),
       "safeOutroAt":release["releaseAt"] if release else None,
       "confidentTail":confident,"durationMismatch":False,
-      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v5-verified-beats"}
+      "precomputed":True,"analyzer":"librosa-onsets-chroma-rms-v6-phrases"}
     return out
 def main():
     ap=argparse.ArgumentParser()
@@ -265,7 +315,7 @@ def main():
     for key,item in sorted(sources.items()):
         previous=entries.get(key,{})
         if (previous.get("sha")==item["sha"] and previous.get("status")=="ok"
-                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v5-verified-beats"
+                and previous.get("analyzer")=="librosa-onsets-chroma-rms-v6-phrases"
                 and isinstance(previous.get("outroOnsetWindows"),list)):continue
         if previous.get("sha")==item["sha"] and previous.get("status")=="failed":
             try:

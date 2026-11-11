@@ -796,7 +796,8 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
   "grooveAgreement=()=>({score:.8,correlation:.6}),"+
   "similarNotes=()=>({focused:.56,phrase:.5}),"+
   "camelotMatch=()=>({weight:.08,score:.6});"+
-  dj.slice(from,to)+";return measuredWindowRhythmUnderlay;")();
+  dj.slice(dj.indexOf("function measuredTempoRelation("),to)+
+  ";return measuredWindowRhythmUnderlay;")();
  const win={start:190,end:194,levelRatio:.75,
   onset:Array(96).fill(0).map((_,i)=>i%12===0?1:0),
   groove:Array(32).fill(.3),notes:Array(12).fill(.5)};
@@ -820,4 +821,86 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
   incoming,200),null,"digitally silent outgoing windows cannot certify a beat");
  assert.match(dj,/filter\.frequency\.setValueAtTime\(260,t\+Math\.max\(\.16,seconds-\.04\)\)/);
  assert.match(dj,/filter\.frequency\.exponentialRampToValueAtTime\(18000,\s*t\+Math\.max\(\.34,seconds\+\.38\)\)/);
+});
+
+
+test("DJ phrase mapper supports real half-time groove without double-speed playback",()=>{
+ const begin=dj.indexOf("function measuredTempoRelation(");
+ const end=dj.indexOf("function subduedRhythmicIntro(",begin);
+ assert.ok(begin>0&&end>begin);
+ const choose=new Function("const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  "const independentPulseTrain=()=>({score:.89,phase:.25}),"+
+  "onsetPeriodicity=()=>.67,hasImmediateMusicalIntro=()=>true,"+
+  "musicalIntroEntry=()=>0,onsetGridPhase=()=>.25,"+
+  "grooveAgreement=()=>({score:.82,correlation:.66}),"+
+  "similarNotes=()=>({focused:.64,phrase:.54}),"+
+  "camelotMatch=()=>({weight:.10,score:.75});"+
+  dj.slice(begin,end)+";return {measuredTempoRelation,measuredWindowRhythmUnderlay};")();
+ const win={start:190,end:194,levelRatio:.72,energyTrend:.9,
+  onset:Array(96).fill(.2),groove:Array(32).fill(.5),
+  notes:Array(12).fill(.08),beatCount:7,bassRatio:.35};
+ const old={duration:200,last:199,bpm:60,beatConfidence:.80,
+  outroOnsetWindows:[win],
+  structureEvents:[{at:192.1,direction:"rising",change:1.1}]};
+ const intro={duration:170,bpm:120,beatConfidence:.80,
+  introDrive:.90,introBassRatio:.36,introOnset:Array(96).fill(.3)};
+ const relative=choose.measuredTempoRelation(old,intro);
+ assert.equal(relative.scale,.5);
+ assert.equal(relative.ratio,1);
+ assert.equal(relative.period,1);
+ const cue=choose.measuredWindowRhythmUnderlay(old,intro,200);
+ assert.ok(cue,"Half-time matching should be eligible for lowpass only");
+ assert.equal(cue.tempoScale,.5);
+ assert.equal(cue.tempo,1,"Never speed up a 120-BPM MP3 to 240 BPM");
+ assert.equal(cue.drumOnlyUnderlay,true);
+ assert.ok(cue.fade>=4.5&&cue.fade<=11.8);
+ assert.ok(cue.begin>=win.start+.25&&cue.begin<=win.end-1.10);
+ assert.equal(cue.preserveTail,true);
+ assert.ok(cue.underlayVolume<=.135);
+ assert.equal(choose.measuredWindowRhythmUnderlay(old,
+  {...intro,introBassRatio:.01},200),null,
+  "Filtered-only intro must contain measured low-frequency energy");
+ assert.equal(choose.measuredWindowRhythmUnderlay(old,
+  {...intro,firstLyricAt:.3},200),null,
+  "Known initial lyric forbids overlapping it with outgoing music");
+ assert.equal(choose.measuredTempoRelation(old,{...intro,bpm:94}),null,
+  "Different tempos without a half/double-time relationship are rejected");
+});
+
+
+test("continuity fallback never cuts a late vocal or claims a beatmatched overlay",()=>{
+ const from=dj.indexOf("function adaptiveLowBandContinuity(");
+ const to=dj.indexOf("function subduedRhythmicIntro(",from);
+ assert.ok(from>0&&to>from);
+ const policy=new Function("const hasImmediateMusicalIntro=()=>true,"+
+  "onsetPeriodicity=()=>.65,musicalIntroEntry=()=>0;"+
+  dj.slice(from,to)+";return adaptiveLowBandContinuity;")();
+ const outgoing={duration:200,last:199,protectedEnding:true};
+ const next={introDrive:.80,bpm:120,beatConfidence:.82,
+  introBassRatio:.39,introOnset:Array(96).fill(.2)};
+ const cue=policy(outgoing,next,200);
+ assert.ok(cue,"a measured low-band opening can bridge under a protected ending");
+ assert.equal(cue.kind,"underlay");
+ assert.equal(cue.neutralAmbientUnderlay,true);
+ assert.equal(cue.drumOnlyUnderlay,true);
+ assert.equal(cue.preserveTail,true);
+ assert.equal(cue.beatPeriod,null,"no fabricated beat certificate");
+ assert.equal(cue.safeOutroAt,null,"never advance the outgoing playhead");
+ assert.equal(cue.silenceTrim,false);
+ assert.ok(cue.begin<=outgoing.last-2.4&&cue.end>outgoing.last);
+ assert.ok(cue.underlayVolume<=.09);
+ assert.ok(cue.fade>=3.15&&cue.fade<=6.8);
+ assert.equal(policy(outgoing,{...next,firstVoiceAt:0},200),null,
+  "Known incoming singing at 0 seconds forbids overlap");
+ assert.equal(policy(outgoing,{...next,firstLyricAt:1.0},200),null,
+  "Lyrics also prevent overlapping a sung intro");
+ assert.equal(policy(outgoing,{...next,introBassRatio:.02},200),null,
+  "An intro with insufficient measured bass cannot enter the low band");
+ assert.equal(policy({...outgoing,last:185},next,200),null,
+  "A long digital tail needs its own independently verified skip");
+ assert.equal(policy({...outgoing,duration:191},next,200),null,
+  "A mismatched duration is never safe");
+ assert.match(dj,/if\(!p\|\|p\.neutralAmbientUnderlay===true\)return 0/);
+ assert.match(dj,/if\(cue\.neutralAmbientUnderlay===true\)/);
+ assert.match(dj,/if\(plan\?\.neutralAmbientUnderlay===true\)/);
 });

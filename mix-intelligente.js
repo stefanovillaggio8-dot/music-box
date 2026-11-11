@@ -340,6 +340,13 @@ function certifiedNeutralBridge(a,b,dur){
   preserveTail:true,softTailTrim:false};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if(plan?.neutralAmbientUnderlay===true)
+  return !!ending&&plan.kind==="underlay"&&
+   plan.drumOnlyUnderlay===true&&plan.preserveTail===true&&
+   ending.durationMismatch!==true&&
+   Number.isFinite(ending.duration)&&Number.isFinite(plan.end)&&
+   Math.abs(ending.duration-plan.end)<.20&&
+   plan.fade>=3.15&&plan.fade<=6.8&&plan.underlayVolume<=.09;
  if(plan?.postMusicalTailUnderlay===true)
   return !!ending&&plan.kind==="postlude"&&plan.preserveTail===true&&
    ending.protectedEnding!==true&&Number.isFinite(ending.last)&&
@@ -2927,6 +2934,12 @@ function musicallyCompatibleOverlay(a,b,cue){
    Math.abs(expected.begin-cue.begin)<.085&&
    Math.abs(expected.end-cue.end)<.085;
  }
+ if(cue.neutralAmbientUnderlay===true){
+  const p=adaptiveLowBandContinuity(a,b,a?.duration);
+  return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
+   cue.drumOnlyUnderlay===true&&Math.abs(p.begin-cue.begin)<.085&&
+   Math.abs(p.end-cue.end)<.085;
+ }
  if(cue.measuredWindowUnderlay===true){
   const p=measuredWindowRhythmUnderlay(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&
@@ -3063,6 +3076,18 @@ function synchronizeBeatCue(a,b,cue){
 // percussion bed can start 5-9s before the final audible sound, even when
 // full-band harmony/voice overlap has NOT been proved. Do not duck or
 // seek over the outgoing vocal. Never call this a certified beatmatch.
+// A 2:1 or 1:2 BPM relationship can be a real double/half-time groove.
+// Compare actual audio pulses at each track's own tempo, and align on
+// the slower common beat; never apply a 2x playback-rate stretch.
+function measuredTempoRelation(a,b){
+ const x=Number(a?.bpm),y=Number(b?.bpm);
+ if(!(x>=55&&x<=210&&y>=55&&y<=210))return null;
+ const chosen=[.5,1,2].map(scale=>({scale,ratio:x/(y*scale)}))
+  .sort((p,q)=>Math.abs(Math.log2(p.ratio))-
+   Math.abs(Math.log2(q.ratio)))[0];
+ if(!chosen||chosen.ratio<.975||chosen.ratio>1.025)return null;
+ return {...chosen,period:Math.max(60/x,60/y)};
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3073,8 +3098,9 @@ function measuredWindowRhythmUnderlay(a,b,dur){
     !Array.isArray(a.outroOnsetWindows)||
     !Array.isArray(b.introOnset)||b.introOnset.length!==96||
     !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.43)return null;
- const ratio=a.bpm/b.bpm;
- if(ratio<.975||ratio>1.025)return null;
+ const cadence=measuredTempoRelation(a,b);
+ if(!cadence)return null;
+ const ratio=cadence.ratio;
  const introPeriod=onsetPeriodicity(b.introOnset,b.bpm);
  const incoming=independentPulseTrain(b.introOnset,b.bpm);
  // Strong independent beat proof is ideal. A merely PERIODIC real PCM
@@ -3087,13 +3113,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
  if(firstVoice-entry<2.6)return null;
- const period=60/a.bpm,nextPhase=onsetGridPhase(b.introOnset,b.bpm);
+ const period=cadence.period,
+  nextPhase=onsetGridPhase(b.introOnset,b.bpm);
  const key=camelotMatch(a,b);
+ // The low-pass preview needs real bass energy when measured. This
+ // cannot certify an instrumental intro or the absence of vocals.
+ if(Number.isFinite(b.introBassRatio)&&b.introBassRatio<.085)return null;
  let best=null;
  for(const win of a.outroOnsetWindows){
   if(!win||!Number.isFinite(win.start)||!Number.isFinite(win.end)||
      Math.abs(win.end-win.start-4)>.13||
-     win.start<a.last-12.5||win.end>a.last-1.6||
+     win.start<a.last-15.2||win.end>a.last-1.6||
      Number(win.levelRatio)<.28||
      !Array.isArray(win.onset)||win.onset.length!==96||
      !Array.isArray(win.groove)||win.groove.length!==32)continue;
@@ -3113,7 +3143,11 @@ function measuredWindowRhythmUnderlay(a,b,dur){
      (key.weight>=.14&&key.score<.47))continue;
   const beatAnchor=win.start+
    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
-  const desired=Math.max(win.start+.55,a.last-8.5);
+  // A phrase boundary several bars from the end should get its OWN
+  // measured cue, not a fictional beat extrapolated from the last four
+  // seconds. Every selected begin stays inside its measured window.
+  const desired=Math.max(win.start+.55,
+   Math.min(a.last-7.6,win.end-1.55));
   const begin=beatAnchor+
    Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase;
   const end=dur-.035,fade=end-begin;
@@ -3121,23 +3155,79 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   // rather than extrapolating an inferred rhythm over the whole track.
   if(!Number.isFinite(begin)||begin<28||
      begin<win.start+.25||begin>win.end-1.10||
-     begin>a.last-4.65||begin<a.last-9.25||
-     fade<4.5||fade>12.4)continue;
-  const quality=Math.min(1,pulse?.score??windowPeriod)*.27+
-   Math.min(1,incoming?.score??introPeriod)*.27+
-   g.score*.23+notes.focused*.15+notes.phrase*.08;
+     begin>a.last-4.65||begin<a.last-11.9||
+     fade<4.5||fade>11.8)continue;
+  const shape=Number(win.energyTrend);
+  const phraseEvent=Array.isArray(a.structureEvents)?
+   a.structureEvents.find(e=>Number.isFinite(e?.at)&&
+    Math.abs(e.at-begin)<=1.25&&
+    (e.direction==="rising"||e.direction==="falling")):null;
+  // Rising or falling musical sections are better deliberate entrances
+  // than arbitrary PCM windows. These are amplitude transitions, NEVER
+  // labeled as chorus/drop/vocal absence without independent evidence.
+  const structureBonus=phraseEvent?.direction==="rising"?.085:
+   phraseEvent?.direction==="falling"?.05:
+   Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
+  const quality=Math.min(1,pulse?.score??windowPeriod)*.25+
+   Math.min(1,incoming?.score??introPeriod)*.24+
+   g.score*.21+notes.focused*.13+notes.phrase*.07+
+   structureBonus+
+   Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
+   (cadence.scale!==1?.045:0);
   if(!best||quality>best.quality)best={quality,begin,end,fade,
-   beatAnchor,nextBeat:nextPhase,grooveScore:g.score};
+   beatAnchor,nextBeat:nextPhase,grooveScore:g.score,
+   structuralShift:phraseEvent?.direction||null,
+   structuralMatch:!!phraseEvent,structureScore:structureBonus};
  }
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+  structuralMatch:best.structuralMatch,
+  structuralShift:best.structuralShift,structureScore:best.structureScore,
+  tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
-  tempo:clamp(ratio,.975,1.025),gain:1,underlayVolume:.105,
+  tempo:clamp(ratio,.975,1.025),gain:1,
+  underlayVolume:Number.isFinite(b.introBassRatio)&&
+    b.introBassRatio>=.26?.135:.105,
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
   score:Math.round(best.quality*100),grooveScore:best.grooveScore,
   quietCertified:false,safeOutroAt:null,
   silenceTrim:false,softTailTrim:false,trailing:0};
+}
+// Lower-tier continuity only after every stronger musical cue fails.
+// Incoming audio is filtered to low frequencies at <10% gain until the
+// outgoing song finishes naturally; no beatmatch or vocal absence claimed.
+function adaptiveLowBandContinuity(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||dur<30||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||!Number.isFinite(a.last)||
+    a.last<27||dur-a.last<-.2||dur-a.last>3.0||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.49||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    !Number.isFinite(b.bpm)||Number(b.beatConfidence)<.17)
+    return null;
+ const measuredBass=Number(b.introBassRatio);
+ const hasBass=Number.isFinite(b.introBassRatio);
+ const periodic=onsetPeriodicity(b.introOnset,b.bpm);
+ // No guessed bass: an unindexed source requires strong repeated PCM
+ // intro transients. No vocal detection is NEVER proof of no singing.
+ if(hasBass?measuredBass<.15:
+    !Number.isFinite(periodic)||periodic<.30)return null;
+ const entry=musicalIntroEntry(b),end=dur-.035,
+  begin=Math.min(a.last-2.7,end-3.35),fade=end-begin;
+ if(!Number.isFinite(begin)||begin<26||fade<3.15||fade>6.8||
+    begin>=a.last-2.4)return null;
+ const firstVoice=Math.min(
+  Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+  Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(firstVoice-entry<fade+.35)return null;
+ return {kind:"underlay",neutralAmbientUnderlay:true,
+   subduedRhythmicUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+   begin,end,fade,entry,tempo:1,gain:1,
+   underlayVolume:hasBass?.09:.065,
+   beatPeriod:null,beatAnchor:null,nextBeat:null,
+   score:null,grooveScore:null,quietCertified:false,safeOutroAt:null,
+   silenceTrim:false,softTailTrim:false,trailing:0};
 }
 function subduedRhythmicIntro(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
@@ -4545,7 +4635,7 @@ function djAudioClockProgress(oldNow,oldStart,newNow,newStart,tempo,duration){
  return clamp(oldElapsed/duration,0,1);
 }
 function desktopBeatStartDelay(p,at){
- if(!p)return 0;
+ if(!p||p.neutralAmbientUnderlay===true)return 0;
  // nextBeat is in original-file seconds, not post-playbackRate wall time.
  // Account for tempo scaling when scheduling the audible incoming kick.
  const playbackRate=Number.isFinite(p.tempo)&&p.tempo>=.95&&
@@ -5175,6 +5265,17 @@ function tick(){
    const currentAnalysis=a&&lyricA?{...a,lastLyricAt:lyricA.last}:a;
    const nextAnalysis=b&&lyricB?{...b,firstLyricAt:lyricB.first}:b;
    let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
+   if(!candidate||candidate.kind==="cut"||
+      (Number.isFinite(candidate.begin)&&
+       Number.isFinite(currentAnalysis?.last)&&
+       candidate.begin>currentAnalysis.last+.20)){
+    // Never replace a verified beat / musical release with this tier.
+    // Only offer a quiet, low-band preview where otherwise the player
+    // would switch directly or wait for an already-silent tail.
+    const gentle=adaptiveLowBandContinuity(currentAnalysis,nextAnalysis,
+      audio.duration);
+    if(gentle)candidate=gentle;
+   }
    let compatibleCandidate=!!candidate&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,candidate);
    if(candidate&&!compatibleCandidate){
@@ -5492,7 +5593,11 @@ function updateDetails(a,b){
   [(Number.isFinite(obj.bpm)?obj.bpm+" BPM":"BPM non disponibili"),
     (obj.camelot?.code?"Camelot "+obj.camelot.code+" (stima)":keyGuess(obj.chroma))||"tonalità da verificare"].join(" · "):
   "analisi non disponibile";
- const description=plan?.measuredReleaseLeadIn?
+ const description=plan?.neutralAmbientUnderlay?
+   " · ingresso continuo filtrato e prudente, senza beatmatch e senza tagliare il finale":
+   plan?.measuredWindowUnderlay?
+   " · ingresso anticipato su finestra ritmica misurata":
+   plan?.measuredReleaseLeadIn?
    " · intro anticipata nel rilascio musicale misurato, originale integro (non beatmatch)":
    plan?.postMusicalTailUnderlay?
     " · finale musicale concluso: la nuova intro entra nella coda debole":
@@ -5568,6 +5673,8 @@ function updateMobileStatus(){
   status="Mix non avviato: "+mobileMixLastBlocker;
  else if(plan.mobileSilentBridge)
   status="Finale muto verificato: preparo un ingresso breve senza tagliare note.";
+ else if(plan.neutralAmbientUnderlay)
+  status="Intro filtrata a basso volume: finale originale integro (non beatmatch).";
  else if(plan.pulseUnderlay)
   status="Pulsazioni allineate: preparo un breve raccordo ritmico a volume ridotto.";
  else if(plan.kind==="snap"&&plan.measuredBeatBridge)
@@ -5716,7 +5823,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[],underlayScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
+ const scored=[],softScored=[],underlayScored=[],ambientScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
  const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
@@ -5807,6 +5914,11 @@ async function intelligentShuffle(app,audio,fromId){
   const firstLyric=app.mixLyricCues?.(track.id)?.first;
   const next=Number.isFinite(firstLyric)?{...info,firstLyricAt:firstLyric}:info;
   let cue=transition(old,next,audio.duration);
+  if(!cue||cue.kind==="cut"||
+     (Number.isFinite(cue.begin)&&cue.begin>old.last+.20)){
+   const gentle=adaptiveLowBandContinuity(old,next,audio.duration);
+   if(gentle)cue=gentle;
+  }
   let musicallyPlayable=!!cue&&musicallyCompatibleOverlay(old,next,cue);
   if(cue&&!musicallyPlayable&&typeof certifiedAlternateRelease==="function"){
    const alternate=certifiedAlternateRelease(old,next,audio.duration,cue);
@@ -5842,6 +5954,13 @@ async function intelligentShuffle(app,audio,fromId){
        cue.instrumentalBeatBridge===true))));
   if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
+   if(mobilePlayable&&cue?.neutralAmbientUnderlay===true){
+    ambientScored.push({track,cue,
+      score:1+clamp(info.introDrive,0,1)*.16+
+       (Number.isFinite(info.introBassRatio)?
+        info.introBassRatio*.13:0)});
+    continue;
+   }
    // A measured quiet RELEASE permits early musical continuity even
    // when no complete bass/beat match is certified. Keep it distinct
    // from actual rhythm-matched candidates and from postlude-only fades.
@@ -5855,8 +5974,10 @@ async function intelligentShuffle(app,audio,fromId){
    // This measured early intro is NOT a certified beatmatch.
    if(mobilePlayable&&cue?.subduedRhythmicUnderlay===true){
     candidateAudit.subduedUnderlays++;
-    underlayScored.push({track,cue,score:1+(cue.score||0)/100*.55+
-     (cue.grooveScore||0)*.26});
+    underlayScored.push({track,cue,score:1+(cue.score||0)/100*.53+
+     (cue.grooveScore||0)*.23+
+     clamp((old.last-cue.begin-4)/10,0,1)*.10+
+     (cue.structuralMatch?.07:0)});
     continue;
    }
    // A finished low-energy postlude can also introduce a new song BEFORE
@@ -5989,6 +6110,7 @@ async function intelligentShuffle(app,audio,fromId){
  impactScored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
  underlayScored.sort((a,b)=>b.score-a.score);
+ ambientScored.sort((a,b)=>b.score-a.score);
  postludeScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
  sequenceScored.sort((a,b)=>b.score-a.score);
@@ -6010,6 +6132,7 @@ async function intelligentShuffle(app,audio,fromId){
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   underlayScored.length?underlayScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
+  ambientScored.length?ambientScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:
   safeRhythmOrder.length?safeRhythmOrder:[];
  const limitingStage=!candidateAudit.validIntros?"nessuna intro verificabile":
@@ -6032,7 +6155,7 @@ async function intelligentShuffle(app,audio,fromId){
     beatCandidates:scored.length,softCandidates:softScored.length,
    underlayCandidates:underlayScored.length,
     impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
-    nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
+    ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
     rejected,candidateAudit,limitingStage,chosen:best.track.id,
@@ -6044,7 +6167,8 @@ async function intelligentShuffle(app,audio,fromId){
       "introduzione anticipata sul rilascio musicale misurato, finale integro":
       "ingresso ritmico anticipato, originale preservato"):softScored.length?
      "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
-     "raccordo dopo ultimo suono, ingresso musicale subito udibile":nearScored.length?
+     "raccordo dopo ultimo suono, ingresso musicale subito udibile":ambientScored.length?
+     "introduzione filtrata a basso volume, finale integro (non beatmatch)":nearScored.length?
      "ordine per BPM, groove e tonalita":sequenceScored.length?
       "ordine ritmico prudente (nessun mix forzato)":
       "ordine basato su groove misurato (nessuna sovrapposizione autorizzata)"};
@@ -6053,6 +6177,7 @@ async function intelligentShuffle(app,audio,fromId){
     underlayScored.length?"[Music Box DJ] Scelta automatica: ingresso ritmico prima del finale":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
     postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
+    ambientScored.length?"[Music Box DJ] Scelta automatica: raccordo neutro filtrato, non beatmatch":
     nearScored.length?"[Music Box DJ] Scelta automatica: note e groove affini":
     sequenceScored.length?"[Music Box DJ] Scelta automatica: ritmo e tonalita affini (senza taglio forzato)":
      "[Music Box DJ] Scelta automatica: groove reale affine, passaggio prudente",
@@ -6070,7 +6195,7 @@ async function intelligentShuffle(app,audio,fromId){
   beatCandidates:scored.length,softCandidates:softScored.length,
    underlayCandidates:underlayScored.length,
   impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
-  nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
+  ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
    rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,
@@ -6084,6 +6209,7 @@ async function intelligentShuffle(app,audio,fromId){
    underlayScored.length?"brano in coda gia compatibile con ingresso ritmico cauto":
    softScored.length?"brano in coda compatibile con una sfumatura quieta":
    postludeScored.length?"brano in coda adatto al raccordo dopo l'ultimo suono":
+   ambientScored.length?"brano in coda adatto a una introduzione filtrata e prudente":
    nearScored.length?"brano in coda gia simile per BPM, groove e note":
     sequenceScored.length?"brano in coda gia selezionato per ritmo e note":
     rhythmOrderScored.length?"brano in coda gia affine per percussioni":
@@ -6096,6 +6222,7 @@ async function intelligentShuffle(app,audio,fromId){
   " ingressi ritmici cauti, "+softScored.length+" sfumature, "+
   impactScored.length+" attacchi sul colpo finale, "+
   postludeScored.length+" raccordi su finale concluso, "+
+  ambientScored.length+" raccordi neutri filtrati, "+
   nearScored.length+" brani affini, "+rhythmCandidates+
   " ritmi compatibili, "+rhythmOrderScored.length+
   " ordini ritmici su "+measured.length+" analizzati. "+

@@ -43,11 +43,18 @@ try:
     assert "outroTimeline" in a and "introTimeline" in a
     assert "introOnset" in a and "outroOnset" in a
     assert isinstance(a["outroOnsetWindows"],list)
+    assert a["analyzer"]=="librosa-onsets-chroma-rms-v6-phrases"
+    assert isinstance(a["structureEvents"],list)
+    assert a["introBassRatio"] is not None and 0<=a["introBassRatio"]<=1
+    assert len(a["outroOnsetWindows"])<=5
     for w in a["outroOnsetWindows"]:
         assert w["end"] <= a["last"] - 1.80
         assert w["start"] < w["end"] and len(w["onset"]) == 96
         assert len(w["groove"]) == 32 and len(w["notes"]) == 12
         assert w["levelRatio"] >= .23
+        assert np.isfinite(w["energyTrend"])
+        assert w["beatCount"]>=0
+        assert w["bassRatio"] is None or 0<=w["bassRatio"]<=1
     for fingerprint in [a["introOnset"],a["outroOnset"]]:
         if fingerprint is not None:
             assert len(fingerprint)==96
@@ -80,3 +87,18 @@ try:
     assert b["dropRelease"] is None
     print("PASS: loud final beat protected; no invented empty tail.")
 finally:file.unlink(missing_ok=True)
+
+# Section cues are measured energy changes, never inferred vocal labels.
+samples=np.full(240,.06,dtype=float)
+samples[80:150]=.29
+samples[150:]=.07
+events=mod.structure_events(samples,.16,0.,24.)
+assert any(e["direction"]=="rising" for e in events),events
+assert any(e["direction"]=="falling" for e in events),events
+assert all(e["direction"] in ("rising","falling") for e in events)
+assert 0<=mod.frequency_bass_ratio(audio,0,4)<=1
+tone_low=np.sin(2*np.pi*110*np.arange(rate*4)/rate)*.3
+tone_high=np.sin(2*np.pi*850*np.arange(rate*4)/rate)*.3
+assert mod.frequency_bass_ratio(tone_low,0,4)>.80
+assert mod.frequency_bass_ratio(tone_high,0,4)<.15
+print("PASS: waveform-only structure markers, frequency evidence and five measured windows.")

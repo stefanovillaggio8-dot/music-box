@@ -1,0 +1,30 @@
+name: Music Box DJ structural audio extraction tests
+on:
+  pull_request:
+    paths:
+      - 'tools/dj-deep-index.py'
+      - 'tools/test-dj-deep-index.py'
+      - '.github/workflows/dj-structure-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/dj-deep-index.py'
+      - 'tools/test-dj-deep-index.py'
+      - '.github/workflows/dj-structure-tests.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install identical extraction libraries
+        run: python -m pip install "numpy>=1.26,<3" "librosa==0.11.0"
+      - name: Verify synthetic beat, energy structure and bass spectra
+        run: |
+          python -m py_compile tools/dj-deep-index.py
+          python tools/test-dj-deep-index.py
