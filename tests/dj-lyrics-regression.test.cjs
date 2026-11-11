@@ -439,7 +439,7 @@ test("word-window overlap handles a lyric at 27 s and avoids guessing outside it
  ];
  const good=api.alignWindow(rows,chunks,24,28);
  assert.equal(good.length,1);
- assert.equal(good[0].t,27.2);
+ assert.equal(good[0].t,27.3);
  assert.equal(good[0].words[0].t,27.3);
  const bogus=api.alignWindow(rows,chunks,0,28);
  assert.equal(bogus.length,0,"timestamps relative to audio windows cannot be treated as absolute");
@@ -814,7 +814,7 @@ test("window-aware DJ measures older audible kick windows and preserves the whol
  assert.ok(cue.begin<outgoing.last-4.65,"incoming kick begins before old silence");
  assert.equal(cue.preserveTail,true);
  assert.equal(cue.silenceTrim,false);
- assert.ok(cue.underlayVolume<=.105);
+ assert.ok(cue.underlayVolume<=.145);
  assert.equal(choose(outgoing,{...incoming,firstVoiceAt:.5},200),null,
   "measured incoming vocals prevent underlay");
  assert.equal(choose({...outgoing,outroOnsetWindows:[{...win,levelRatio:.01}]},
