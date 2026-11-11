@@ -3166,14 +3166,22 @@ function measuredPulseAlignment(outgoing,incoming,begin,entry,ratio){
     !Number.isFinite(entry)||!Number.isFinite(ratio)||ratio<=0)return null;
  // Incoming timestamp converted to playback wall time.
  const candidates=b.map(t=>begin+(t-entry)/ratio);
- let verified=0,total=0,squared=0;
+ let verified=0,total=0,squared=0,lastMatched=-1;
  for(const t of candidates){
   if(t<begin-.1||t>begin+3.7)continue;
-  const nearest=a.reduce((best,v)=>
-   Math.abs(v-t)<Math.abs(best-t)?v:best,a[0]);
-  const error=Math.abs(nearest-t);
+  // A rapid cluster of hi-hat/onset detections cannot each reuse the
+  // SAME outgoing kick to impersonate several agreeing beats. Align
+  // one-to-one, in time order, with the actual measured PCM pulses.
+  let nearest=-1,error=Infinity;
+  for(let i=lastMatched+1;i<a.length;i++){
+   const delta=Math.abs(a[i]-t);
+   if(delta<error){error=delta;nearest=i}
+   if(a[i]>t+.095)break;
+  }
   total++;
-  if(error<=.095){verified++;squared+=error*error}
+  if(nearest>=0&&error<=.095){
+   lastMatched=nearest;verified++;squared+=error*error;
+  }
  }
  return total>=3?{total,verified,ratio:verified/total,
   rms:verified?Math.sqrt(squared/verified):Infinity}:null;

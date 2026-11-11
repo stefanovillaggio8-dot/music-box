@@ -542,6 +542,10 @@ test("audio word alignment overlaps lyric phrases crossing a 28-second boundary"
  assert.ok(windows.includes(19),"the full phrase must be in a window starting before its cue");
  assert.ok(windows.includes(24),"existing naturally aligned overlap remains");
  assert.ok(windows.indexOf(19)<windows.indexOf(0),"prioritize nearby overlap over a clipped early window");
+ assert.notEqual(windows[0],24,
+  "iPhone must not use its one window on a start that skips the 24.1s line");
+ assert.ok([19,22].includes(windows[0]),
+  "choose a nearby clip that can actually align the full vocal phrase");
  const chunks=["One","two","three","four","five","six","seven"].map((text,i)=>({text:" "+text,timestamp:[5.1+i,5.55+i]}));
  const aligned=api.alignWindow([rows[0]],chunks,19,28);
  assert.equal(aligned.length,1);
@@ -573,7 +577,7 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(align,/requestWorker\(sample,language\)/);
  assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
  assert.match(html,/audio-lyrics-align\.js\?v=6720&amp;lang=4/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6720&lang=4").length-1,2);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6724&lang=5").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 

@@ -200,9 +200,30 @@ function preferredWindows(lines,duration){
   }
   if(base<duration-3)blocks.add(base);
  }
- // The nearest relevant clip gets the mobile one-window budget first.
+ // On mobile only ONE clip is analyzed per request. The absolutely nearest
+ // clip may begin just BEFORE a lyric cue (the matcher needs 150ms lead-in)
+ // or leave too little room to hear its final syllables. Prefer a nearby
+ // clip that contains a complete, not-yet-timed phrase instead.
  const now=Number(window.MusicBoxBridge?.audio?.()?.currentTime)||0;
- return [...blocks].sort((a,b)=>Math.abs(a-now)-Math.abs(b-now));
+ const coverage=new Map();
+ for(const at of blocks){
+  let eligible=0;
+  for(const row of Array.isArray(lines)?lines:[]){
+   const t=Number(row?.t);
+   if(row?.words?.length>=2||!Number.isFinite(t)||
+      t<at+.15||t>Math.min(duration-1.1,at+WINDOW-4.5)||
+      (String(row?.text||"").match(/\S+/gu)||[]).length<3)continue;
+   eligible++;
+  }
+  coverage.set(at,eligible);
+ }
+ // Preserve proximity: a faraway verse must not jump ahead of the
+ // current passage just because it contains more lines.
+ return [...blocks].sort((a,b)=>{
+  const da=Math.abs(a-now),db=Math.abs(b-now);
+  return Math.floor(da/12)-Math.floor(db/12)||
+   coverage.get(b)-coverage.get(a)||da-db;
+ });
 }
 async function analyze(id){
  if(!canRun())return false;
