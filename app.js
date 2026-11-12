@@ -7805,9 +7805,16 @@ box.innerHTML = "";
       const kept=previous.find(row=>
         Math.abs(sourceT(row)-original.t)<.02&&row.text===original.text);
       if(kept?.words?.length>=2&&!kept.estimated)return kept;
+      // Preserve the extra LRC-to-voice delay only when an entire long,
+      // distinctive phrase was verified word for word against the MP3.
+      const tokens=String(original.text||"").match(/\S+/gu)||[];
+      const unique=new Set(tokens.map(x=>x.normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"").toLowerCase()
+        .replace(/[^a-z0-9]/g,"")).filter(Boolean));
+      const maxLag=tokens.length>=7&&unique.size>=5?2.70:1.70;
       const matched=incoming.find(row=>
         Math.abs(sourceT(row)-original.t)<.02&&
-        Math.abs(row.t-original.t)<=1.70&&
+        row.t>=original.t-.45&&row.t<=original.t+maxLag&&
         row.text===original.text&&row.words?.length>=3);
       if(matched){added++;changedRows.push(i);return matched}
       return kept&&!kept.estimated?kept:original;
@@ -13219,8 +13226,8 @@ window.MusicBoxBridge = {
   lyricsData:()=>{
     const l=currentLyrics();
     if(!l)return null;
-    return {text:String(l.text||""),synced:_righeTestoConParole(l),
-      audioWordSynced:!!l.audioWordSynced};
+    return {id:currentId,text:String(l.text||""),
+      synced:_righeTestoConParole(l),audioWordSynced:!!l.audioWordSynced};
   },
   setRoomPlaybackIntent:(playing)=>{
     // Stato del player coerente con il server e con i controlli cuffie.
