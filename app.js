@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.724";
+  const APP_VERSION = "6.725";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7690,10 +7690,57 @@ box.innerHTML = "";
     $("btnLyrics").hidden = !currentLyrics();
   }
 
+  // Source text + current recording must agree. LRCLIB can return a
+  // different track by the SAME artist when the duration is similar.
+  // Older devices may already have saved that wrong match in IndexedDB.
+  // The file ID and a reused song title are not proof of lyric identity.
+  const _testoIdentitaCache=new WeakMap();
+  function _testoAppartieneAlBrano(id,entry) {
+    if(!entry||typeof entry!=="object"||
+       entry.id!=null&&String(entry.id)!==String(id))return false;
+    const original=lyricsData[id];
+    if(!original?.synced||!entry.synced)return true;
+    if(entry===original||entry.synced===original.synced)return true;
+    const stored=_testoIdentitaCache.get(entry);
+    if(stored?.id===id&&stored.original===original&&
+       stored.synced===entry.synced)return stored.ok;
+    // Compare distinctive 4-word sequences, not broad artist/album tags.
+    // Removing LRC/Enhanced timestamps allows legitimate punctuation,
+    // split-line and small timing differences across lyric providers.
+    const words=value=>String(value||"")
+      .replace(/\\[\\d{1,3}:\\d{2}(?:[.:]\\d{1,3})?\\]/g," ")
+      .replace(/<\\d{1,3}:\\d{2}(?:[.:]\\d{1,3})?>/g," ")
+      .normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")
+      .toLowerCase().match(/[a-z0-9]+/g)||[];
+    const grams=items=>{
+      const out=new Set();
+      for(let i=0;i+4<=items.length;i++)
+        out.add(items.slice(i,i+4).join(" "));
+      return out;
+    };
+    const a=words(original.synced),b=words(entry.synced);
+    // Very short snippets cannot prove that a song is different.
+    let ok=true;
+    if(a.length>=35&&b.length>=35){
+      const originalPhrases=grams(a),candidatePhrases=grams(b);
+      const sample=Math.min(originalPhrases.size,candidatePhrases.size);
+      let matching=0;
+      for(const phrase of candidatePhrases)
+        if(originalPhrases.has(phrase))matching++;
+      ok=matching>=Math.max(3,Math.ceil(sample*.12));
+    }
+    _testoIdentitaCache.set(entry,{id,original,synced:entry.synced,ok});
+    return ok;
+  }
+  function _testoLocaleVerificato(id){
+    const saved=localLyrics[id];
+    return _testoAppartieneAlBrano(id,saved)?saved:null;
+  }
+
   function currentLyrics() {
     if (!currentId) return null;
     const builtin = lyricsData[currentId];
-    const saved = localLyrics[currentId];
+    const saved = _testoLocaleVerificato(currentId);
     if(saved?.wordRows?.some?.(r=>r.words?.length>=2))return saved;
     if (saved && saved.synced && parseSynced(saved.synced).length >= 3) return saved;
     if (builtin && builtin.synced && parseSynced(builtin.synced).length >= 3) return builtin;
@@ -7707,7 +7754,8 @@ box.innerHTML = "";
   const _ricercheParoleInCorso=new Set();
   async function _verificaParoleKaraoke(id){
     const track=tracks.find(t=>t.id===id);
-    const existing=id===currentId?currentLyrics():localLyrics[id];
+    const existing=id===currentId?currentLyrics():
+      _testoLocaleVerificato(id)||lyricsData[id];
     if(!track?.title||!track.artist||!existing?.synced||
        (existing.wordRows?.some?.(row=>row.words?.length>=2)&&!existing.audioWordSynced)||
        _ricercheParoleInCorso.has(id)||document.hidden||
@@ -7724,6 +7772,9 @@ box.innerHTML = "";
       });
       if(Date.now()>=_lrclibNonPrimaDi)LS.set(key,Date.now());
       if(!result?.synced||!result.wordRows?.some?.(r=>r.words?.length>=2))return;
+      // A perfectly timed karaoke for another song is still WRONG.
+      // Reject it before replacing the current recording's LRC.
+      if(!_testoAppartieneAlBrano(id,{synced:result.synced}))return;
       const updated={...existing,id,title:track.title,artist:track.artist,
         text:result.text||existing.text,synced:result.synced,
         wordRows:result.wordRows,source:result.source,audioWordSynced:false};
@@ -7739,7 +7790,7 @@ box.innerHTML = "";
     if(!id||id!==currentId||!Array.isArray(rows)||!rows.length)return 0;
     const engine=window.MusicBoxWordKaraoke;
     const incoming=engine?.normalizeRows(rows)||[];
-    const existing=localLyrics[id]||lyricsData[id];
+    const existing=_testoLocaleVerificato(id)||lyricsData[id];
     if(!existing?.synced||!incoming.length)return 0;
     const baseline=parseSynced(existing.synced);
     if(baseline.length<3)return 0;
@@ -7841,7 +7892,7 @@ box.innerHTML = "";
 
   async function _completaTestoInAscolto(t, syncedOnly = false) {
     if (!t || !t.id || !t.title || !t.artist) return;
-    const preesistente = localLyrics[t.id] || lyricsData[t.id] || null;
+    const preesistente = _testoLocaleVerificato(t.id) || lyricsData[t.id] || null;
     if (preesistente && preesistente.synced &&
         parseSynced(preesistente.synced).length >= 3) return;
     /* Se e' gia' presente il testo normale, recupera esclusivamente
@@ -7874,6 +7925,11 @@ box.innerHTML = "";
         text: risultato.text, synced: risultato.synced || "",
         wordRows: risultato.wordRows || [], source: risultato.source || ""
       };
+      if(!_testoAppartieneAlBrano(t.id,entry)){
+        // Do not let a loose provider match erase correct built-in lyrics.
+        _registraTentativoTesto(t.id, soloTempi, false);
+        return;
+      }
       localLyrics[t.id] = entry;
       _registraTentativoTesto(t.id, soloTempi, true);
       try { if (db) await dbPutLyrics(entry); } catch (e) { /* Conservato almeno nella sessione. */ }
@@ -9389,7 +9445,14 @@ function openProfile() {
       if(Number(lyricLines[mid].dataset.t)<=time)low=mid+1;
       else high=mid;
     }
-    return low-1;
+    const result=low-1;
+    if(result===lyricLines.length-1&&lyricLines.length){
+      const row=_lyricWordParts?.[result]?.row;
+      const end=Number(row?.end),last=Number(lyricLines[result].dataset.t);
+      const expiry=Number.isFinite(end)&&end>=last?end+2.5:last+9;
+      if(Number.isFinite(last)&&time>expiry)return -1;
+    }
+    return result;
   }
 
   // Native timeupdate events are too sparse for tight line changes on iOS.
@@ -13038,7 +13101,8 @@ window.MusicBoxBridge = {
   // Only timestamps, never lyric text, leave the lyrics store.
   // They help the DJ protect a final sung phrase when timed LRC exists.
   mixLyricCues:(id)=>{
-    const candidate=(localLyrics[id]?.synced?localLyrics[id]:lyricsData[id])||null;
+    const local=_testoLocaleVerificato(id);
+    const candidate=(local?.synced?local:lyricsData[id])||null;
     if(!candidate?.synced)return null;
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
