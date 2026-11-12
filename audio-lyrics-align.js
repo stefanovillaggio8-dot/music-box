@@ -82,20 +82,34 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
    // Accept only a complete, ordered EXACT match of >=4 spoken words
    // in that wider region; short/repeated hooks retain the strict gate.
    const lag=candidates[k].t-start;
-   // Long, distinctive phrases can legitimately start >1.7s after an
-   // early LRC cue. Require seven-plus exact ordered ASR words and at least
-   // five distinct tokens; short/repeated hooks keep the strict gate.
+   // Whisper sometimes splits one Italian contraction (l'amore or c'è)
+   // into two measured ASR tokens. Merge only adjacent timestamps when
+   // their full normalized spelling matches the actual written word.
+   const measuredWordAt=(at,key)=>{
+    const first=candidates[at],second=candidates[at+1];
+    if(first?.key===key)return {word:first,advance:1};
+    if(keys.length>=4&&first&&second&&first.key+second.key===key&&
+       second.t>=first.end-.04&&second.t-first.end<=.20&&
+       second.end-first.t<=2)
+     return {word:{key,t:first.t,end:second.end},advance:2};
+    return null;
+   };
+   // Long distinctive phrases may start after an early LRC cue;
+   // short or repeated hooks retain the tight 850ms / 1700ms gate.
    const extended=keys.length>=7&&new Set(keys).size>=5;
    const maximumLate=extended?2.70:tokens.length>=4?1.70:.85;
-   if(candidates[k].key!==keys[0]||lag<-.45||lag>maximumLate)continue;
-   const found=[candidates[k]];let cursor=k+1;
+   const firstMatch=measuredWordAt(k,keys[0]);
+   if(!firstMatch||lag<-.45||lag>maximumLate)continue;
+   const found=[firstMatch.word];let cursor=k+firstMatch.advance;
    for(let w=1;w<tokens.length;w++){
-    // Allow at most 2 unrelated words between correctly recognized tokens.
-    let hit=-1;
-    for(let n=cursor;n<Math.min(candidates.length,cursor+3);n++)
-     if(candidates[n].key===keys[w]){hit=n;break}
-    if(hit<0)break;
-    found.push(candidates[hit]);cursor=hit+1;
+    // At most two unrelated recognized tokens between exact matches.
+    let hit=null;
+    for(let n=cursor;n<Math.min(candidates.length,cursor+3);n++){
+     const matched=measuredWordAt(n,keys[w]);
+     if(matched){hit={word:matched.word,next:n+matched.advance};break}
+    }
+    if(!hit)break;
+    found.push(hit.word);cursor=hit.next;
    }
    if(found.length!==tokens.length||found.some((w,i)=>i>0&&w.t<found[i-1].t))
     continue;
