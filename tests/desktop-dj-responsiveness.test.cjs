@@ -160,6 +160,7 @@ test("earlier four-second real beat windows can mix before the last impact witho
  const make=new Function("env",
   "const {clamp,hasImmediateMusicalIntro,camelotMatch,musicalIntroEntry,"+
   "onsetGridPhase,similarNotes,grooveAgreement,onsetPeriodicity,hasReliableHarmony}=env;"+
+  "const beatBearingIntro=(b,min)=>Number(b?.introDrive)>=min;"+
   local+body+"return earlyMatchedBar;");
  const env={
   clamp:(x,a,b)=>Math.max(a,Math.min(b,x)),

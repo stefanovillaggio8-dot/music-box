@@ -216,10 +216,10 @@ test("actual last-impact cue starts before the measured last audible frame",()=>
  const start=source.indexOf("function desktopFinalImpactRelay(");
  const end=source.indexOf("function desktopMeasuredPostludeBridge(",start);
  assert.ok(start>=0&&end>start);
- const join=new Function("isIOS","hasImmediateMusicalIntro",
+ const join=new Function("isIOS","hasImmediateMusicalIntro","beatBearingIntro",
    "grooveAgreement","onsetGridPhase","musicalIntroEntry",
    source.slice(start,end)+"return desktopFinalImpactRelay;")(
-    false,()=>true,()=>({score:.77}),()=>.12,()=>0);
+    false,()=>true,(b,min)=>Number(b.introDrive)>=min,()=>({score:.77}),()=>.12,()=>0);
  const a={duration:249.133,last:243.9,bpm:129.2,beatConfidence:.247,
   lastLyricAt:215.11,lastVoiceAt:213.59,protectedEnding:false,
   dropRelease:{lastImpactAt:241.3,releaseAt:241.75,score:.7315,quietLevel:.2685}};
@@ -375,4 +375,28 @@ test("iPhone cancelled cursor gesture cannot seek or restart the native MP3",()=
  assert.ok(handler.includes("pendingSeek = null;"));
  assert.ok(!handler.includes("endScrub()"),"pointercancel must never request a seek");
  assert.ok(app.includes('progressBar.addEventListener("pointerup", endScrub)'));
+});
+
+test("quiet but beat-bearing opening survives every strict energy gate only with measured PCM pulses",()=>{
+ const segment=source.slice(source.indexOf("function measuredQuietRhythmicIntro("),
+  source.indexOf("// A safe ending alone"));
+ const verify=new Function(
+  "const musicalIntroEntry=b=>b.safeIntroAt||0,onsetPeriodicity=()=>.55;"+
+  segment+"return beatBearingIntro;")();
+ const intro=Array.from({length:96},(_,i)=>i%12===0?1:.02);
+ const candidate={introDrive:.18,first:0,safeIntroAt:0,bpm:120,
+  beatConfidence:.48,introOnset:intro};
+ assert.equal(verify(candidate,.45),true,
+  "a quiet but measured regular intro can enter the strict beat planner");
+ assert.equal(verify({...candidate,introOnset:Array(96).fill(0)},.45),false,
+  "quiet room tone is not a reliable rhythmic intro");
+ assert.equal(verify({...candidate,introOnset:intro.map((x,i)=>i<48?x:.02)},.45),false,
+  "a pulse in the first half alone is not a rhythmic intro");
+ assert.equal(verify({...candidate,introDrive:.06},.45),false);
+ assert.equal(verify({...candidate,introDrive:undefined},.45),false,
+  "unmeasured intro energy cannot be certified from a bare BPM");
+ assert.equal(verify({...candidate,first:2.4},.45),false,
+  "a delayed attack must not produce a silent early transition");
+ assert.equal(verify({...candidate,introDrive:.85,introOnset:null},.45),true,
+  "an already strong intro remains eligible");
 });

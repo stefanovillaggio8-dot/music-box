@@ -496,6 +496,7 @@ test("20:33:52: beat match searches beyond ten queued songs and works again on n
   "const similarNotes=()=>({focused:.8,phrase:.8});"+
    "const camelotMatch=()=>({score:.5,weight:0});"+
   "const hasImmediateMusicalIntro=()=>true;"+
+   "const measuredQuietRhythmicIntro=()=>false,beatBearingIntro=(b,min)=>Number(b?.introDrive)>=min;"+
    "const desktopBeatPairCertified=()=>true,iphoneQuietReleaseCertified=()=>true;"+
   "let fromAnalysis={duration:200,bpm:120,beatConfidence:.82};"+
   "const deepLookup=t=>({id:t.id,duration:200,bpm:120,"+

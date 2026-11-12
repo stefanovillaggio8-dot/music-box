@@ -218,7 +218,7 @@ function desktopBeatPairCertified(a,b,p){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.beatConfidence<.20||b.beatConfidence<.20||
-    !Number.isFinite(b.introDrive)||b.introDrive<.39)return false;
+    !beatBearingIntro(b,.39))return false;
  const ratios=[.5,1,2].map(k=>a.bpm/(b.bpm*k));
  const speed=ratios.reduce((x,y)=>Math.abs(Math.log2(x))<
   Math.abs(Math.log2(y))?x:y);
@@ -2104,7 +2104,7 @@ function strongInstrumentalBeatBridge(a,b,dur){
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.bpm<55||a.bpm>210||b.bpm<55||b.bpm>210||
     a.beatConfidence<.30||b.beatConfidence<.30||
-    !Number.isFinite(b.introDrive)||b.introDrive<.43||
+    !beatBearingIntro(b,.43)||
     !(a.outroFinalNotes||a.outroNotes||a.outroChroma)||
     !(b.introAttackNotes||b.introNotes||b.introChroma))return null;
  if(a.protectedEnding!==true&&a.dropRelease)return null;
@@ -2429,8 +2429,7 @@ function earlyMatchedBar(a,b,dur){
     !Number.isFinite(dur)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||!Number.isFinite(a.bpm)||
     !Number.isFinite(b.bpm)||a.beatConfidence<.20||
-    b.beatConfidence<.20||b.introDrive<.45||
-    !hasImmediateMusicalIntro(b)||!Array.isArray(a.outroOnsetWindows)||
+    b.beatConfidence<.20||!beatBearingIntro(b,.45)||!Array.isArray(a.outroOnsetWindows)||
     !Array.isArray(b.introOnset)||b.introOnset.length!==96)return null;
  const speed=a.bpm/b.bpm;
  if(speed<.975||speed>1.025)return null;
@@ -2747,7 +2746,7 @@ function verifiedInstrumentalSnap(a,b,dur){
   if(!a||!b||a.durationMismatch||b.durationMismatch||
      !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
      a.beatConfidence<.18||b.beatConfidence<.18||
-     b.introDrive<.30||a.protectedEnding===true||
+     !beatBearingIntro(b,.30)||a.protectedEnding===true||
      !hasReliableHarmony(a.outroFinalNotes)||!hasReliableHarmony(b.introAttackNotes))
    return null;
   const speeds=[.5,1,2].map(k=>a.bpm/(b.bpm*k));
@@ -2830,7 +2829,7 @@ function rhythmicFullTailJoin(a,b,dur){
     (a.last<dur-1.6&&!(a.confidentTail===true&&dur-a.last<=12))||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.beatConfidence<.16||b.beatConfidence<.16||
-    b.introDrive<.43||
+    !beatBearingIntro(b,.43)||
     !hasReliableHarmony(a.outroFinalNotes)||
     !hasReliableHarmony(b.introAttackNotes)||
     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-5)||
@@ -2894,7 +2893,7 @@ function measuredPulseUnderlay(a,b,dur){
     !(a.last>=dur-1.6||(a.confidentTail&&dur-a.last<=12))||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
     a.beatConfidence<.19||b.beatConfidence<.19||
-    b.introDrive<.39||!hasImmediateMusicalIntro(b)||
+    !beatBearingIntro(b,.39)||
     (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=a.last-6)||
     (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>=a.last-4.5)||
     (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2)||
@@ -2989,7 +2988,7 @@ function desktopFinalImpactRelay(a,b,dur){
     a.last-r.releaseAt>4.5||dur-a.last<2||dur-a.last>12||
     a.beatConfidence<.18||b.beatConfidence<.16||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm)||
-    !hasImmediateMusicalIntro(b)||b.introDrive<.43||
+    !beatBearingIntro(b,.43)||
     !Array.isArray(b.introOnset)||b.introOnset.length!==96||
     r.lastImpactAt<26||
     (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>r.lastImpactAt-6)||
@@ -3117,6 +3116,14 @@ function hasImmediateMusicalIntro(b){
   if(early<-.85&&later-early>.85&&!rhythmicQuiet)return false;
  }
  return true;
+}
+// Global energy is relative to the loudest part of the complete recording.
+// Measured attacks across both halves of a quiet intro may qualify for
+// BEAT analysis; they never bypass harmony, voice or beat-grid certificates.
+function beatBearingIntro(b,minimumDrive=.43){
+ if(!b||!hasImmediateMusicalIntro(b))return false;
+ if(!Number.isFinite(b.introDrive))return false;
+ return b.introDrive>=minimumDrive||measuredQuietRhythmicIntro(b);
 }
 // A safe ending alone does not prove two songs belong in the same mix.
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
@@ -6247,7 +6254,7 @@ async function intelligentShuffle(app,audio,fromId){
   exactSameRecordingSkipped:identicalAudioSkipped,
   sampledForDecode:picked.length,measured:measured.length,
   outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
-  validIntros:0,closeTempo:0,withinNinePercent:0,
+  validIntros:0,verifiedQuietIntros:0,closeTempo:0,withinNinePercent:0,
    candidateIntroFailures:{},introFailureSamples:[],
    eligiblePoolSize:pool.length,automaticQueueSize:sequence.length,
    closestTempo:[],outgoingBpm:Number.isFinite(old.bpm)?old.bpm:null,
@@ -6309,6 +6316,7 @@ async function intelligentShuffle(app,audio,fromId){
    continue;
   }
   candidateAudit.validIntros++;
+  if(measuredQuietRhythmicIntro(info))candidateAudit.verifiedQuietIntros++;
   if(bpmA>0&&bpmB>0&&old.beatConfidence>=.16){
    const ratio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,value)=>Math.abs(Math.log2(value))<Math.abs(Math.log2(best))?value:best);
@@ -6323,7 +6331,7 @@ async function intelligentShuffle(app,audio,fromId){
      }
      // Rhythm-only sorting never certifies a harmonic beat mix.
      if(rhythm.score>=.62&&ratio>=.945&&ratio<=1.055&&
-        info.introDrive>=.43&&info.beatConfidence>=.16){
+        beatBearingIntro(info,.43)&&info.beatConfidence>=.16){
       const key=camelotMatch(old,info);
       const keyFit=key.weight>=.14?key.score:.5;
       const chroma=Number.isFinite(harmony.focused)?harmony.focused:0;
@@ -7040,7 +7048,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.729",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.730",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
