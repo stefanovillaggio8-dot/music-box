@@ -6248,6 +6248,8 @@ async function intelligentShuffle(app,audio,fromId){
   sampledForDecode:picked.length,measured:measured.length,
   outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
   validIntros:0,closeTempo:0,withinNinePercent:0,
+   candidateIntroFailures:{},introFailureSamples:[],
+   eligiblePoolSize:pool.length,automaticQueueSize:sequence.length,
    closestTempo:[],outgoingBpm:Number.isFinite(old.bpm)?old.bpm:null,
    outgoingGridCorrected:old.tempoVerifiedByGrid===true,
    compatibleGroove:0,compatibleNotes:0,
@@ -6263,13 +6265,9 @@ async function intelligentShuffle(app,audio,fromId){
    if(runGeneration!==shuffleGeneration||app.currentId()!==fromId||
       (typeof document!=="undefined"&&document.hidden))return {retry:false};
   }
-  if(!info||info.durationMismatch||!Number.isFinite(info.bpm)||
-     !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12||
-     !hasImmediateMusicalIntro(info)){
-   rejected.weakIntro++;continue;
-  }
-  candidateAudit.validIntros++;
-  const bpmA=Number(old.bpm),bpmB=Number(info.bpm);
+  const bpmA=Number(old.bpm),bpmB=Number(info?.bpm);
+  // Report tempo proximity BEFORE the intro veto. Previously "no BPM
+  // match" or zero rhythm was misleading when all intros failed first.
   if(bpmA>0&&bpmB>0){
    const ratios=[.5,1,2].map(scale=>bpmA/(bpmB*scale));
    const nearest=ratios.reduce((x,y)=>
@@ -6283,6 +6281,34 @@ async function intelligentShuffle(app,audio,fromId){
    closest.sort((x,y)=>x.mismatchPercent-y.mismatchPercent);
    if(closest.length>4)closest.pop();
   }
+  const introductionReason=!info?"analisi assente":
+   info.durationMismatch?"durata MP3 non corrispondente":
+   !Number.isFinite(info.bpm)?"BPM non misurato":
+   !Number.isFinite(info.beatConfidence)||info.beatConfidence<.12?
+    "beat non affidabile":
+   !Number.isFinite(info.introDrive)||info.introDrive<.11?
+    "intro troppo debole":
+   !hasImmediateMusicalIntro(info)?
+    (Number.isFinite(info.first)&&
+     info.first-(Number(info.safeIntroAt)||0)>1.3?
+     "attacco musicale ritardato":"intro priva di ritmo immediato verificato"):null;
+  if(introductionReason){
+   rejected.weakIntro++;
+   const fail=candidateAudit.candidateIntroFailures;
+   fail[introductionReason]=(fail[introductionReason]||0)+1;
+   if(candidateAudit.introFailureSamples.length<7)
+    candidateAudit.introFailureSamples.push({
+     id:track.id,reason:introductionReason,
+     bpm:Number.isFinite(info?.bpm)?info.bpm:null,
+     drive:Number.isFinite(info?.introDrive)?info.introDrive:null,
+     first:Number.isFinite(info?.first)?info.first:null,
+     safeIntroAt:Number.isFinite(info?.safeIntroAt)?info.safeIntroAt:null,
+     beatConfidence:Number.isFinite(info?.beatConfidence)?info.beatConfidence:null,
+     measuredQuietIntro:measuredQuietRhythmicIntro(info)
+    });
+   continue;
+  }
+  candidateAudit.validIntros++;
   if(bpmA>0&&bpmB>0&&old.beatConfidence>=.16){
    const ratio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,value)=>Math.abs(Math.log2(value))<Math.abs(Math.log2(best))?value:best);
