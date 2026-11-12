@@ -47,12 +47,18 @@ function normalizeRows(rows){
   const t=number(row.t),end=row.end==null?null:number(row.end);
   const text=String(row.text??"");
   if(t==null||end!=null&&end<t||text.length>380||!text.trim())continue;
-  // Only word streams with an exact textual match may adjust the
-  // line cue. A verified first syllable can be up to 1.7 seconds after
-  // an early LRC row, or 450ms before it. Reject remote outliers.
+  // Only an audio-verified long, distinctive phrase can retain an LRC
+  // source anchor up to 2.7 seconds before the first measured syllable.
+  // Enhanced LRC and short repeated hooks still use the old 1.7s gate.
+  const tokens=text.match(/\S+/gu)||[];
+  const unique=new Set(tokens.map(x=>x.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"").toLowerCase()
+    .replace(/[^a-z0-9]/g,"")).filter(Boolean));
+  const longPhrase=tokens.length>=7&&unique.size>=5;
+  const maxMeasuredOffset=longPhrase&&number(row.sourceT)!=null?2.70:1.70;
   const firstWord=number(row.words?.[0]?.t);
   const adjustedStart=firstWord!=null&&firstWord>=t-.45&&
-    firstWord<=t+1.70?firstWord:t;
+    firstWord<=t+maxMeasuredOffset?firstWord:t;
   const words=validWords(row.words,text,adjustedStart,end);
   totalWords+=words.length;
   if(totalWords>MAX_WORDS)break;
@@ -61,7 +67,8 @@ function normalizeRows(rows){
   // first word. Otherwise shifted, correctly aligned rows cannot be
   // matched back to the provider line when saving or reloading.
   const sourceT=number(row.sourceT);
-  const anchored=sourceT!=null&&Math.abs(sourceT-displayT)<=1.70;
+  const anchored=sourceT!=null&&displayT>=sourceT-.45&&
+    displayT<=sourceT+(longPhrase?2.70:1.70);
   out.push({t:+displayT.toFixed(3),text,
    ...(anchored?{sourceT:+sourceT.toFixed(3)}:{}),
    ...(end!=null?{end:+end.toFixed(3)}:{}),
