@@ -3026,7 +3026,7 @@ function desktopMeasuredPostludeBridge(a,b,dur){
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5||!Number.isFinite(a.last)||
     a.last<26||dur-a.last<3.5||dur-a.last>12||
-    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.33||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.20||
     !r||!Number.isFinite(r.lastImpactAt)||!Number.isFinite(r.releaseAt)||
     r.releaseAt<r.lastImpactAt||!Number.isFinite(r.score)||
     r.score<.70||!Number.isFinite(r.quietLevel)||r.quietLevel>.30||
@@ -3073,23 +3073,49 @@ function continuityFallback(a,b,actualDuration){
    silenceTrim:trimmed,trailing:trimmed?dur-end:0,
    safeOutroAt:null};
 }
+// A quiet opening can still carry measured beats: global introDrive is
+// relative to the ENTIRE song, so a strong later chorus skews it down.
+// Trust the 4-second PCM onset signature only when both halves contain
+// actual transients recurring near the measured BPM. This is NOT a
+// beatmatch certificate; all downstream harmonic and vocal gates remain.
+function measuredQuietRhythmicIntro(b){
+ if(!b||!Number.isFinite(b.introDrive)||b.introDrive<.11||
+    !Number.isFinite(b.first)||!Number.isFinite(b.bpm)||
+    !Number.isFinite(b.beatConfidence)||b.beatConfidence<.16||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    !b.introOnset.every(Number.isFinite))return false;
+ const entry=Number.isFinite(b.safeIntroAt)?Math.max(0,Math.min(18,b.safeIntroAt)):0;
+ if(b.first-entry>1.05||b.first<entry-.15)return false;
+ const pattern=b.introOnset,sorted=[...pattern].sort((a,b)=>a-b);
+ const floor=sorted[19],span=sorted[93]-floor;
+ if(!Number.isFinite(span)||span<.50)return false;
+ const gate=floor+span*.50;
+ let early=0,late=0;
+ for(let i=0;i<96;i++){
+  if(pattern[i]<=gate)continue;
+  if(i<48)early++;else late++;
+ }
+ if(early<2||late<2)return false;
+ const pulse=onsetPeriodicity(pattern,b.bpm);
+ return Number.isFinite(pulse)&&pulse>=.25;
+}
 function hasImmediateMusicalIntro(b){
- if(!b||(Number.isFinite(b.introDrive)&&b.introDrive<.33))return false;
+ if(!b)return false;
+ const rhythmicQuiet=measuredQuietRhythmicIntro(b);
+ if(Number.isFinite(b.introDrive)&&b.introDrive<.33&&!rhythmicQuiet)
+  return false;
  const entry=musicalIntroEntry(b);
- // A verified digital-silence trim is fine; a quiet atmospheric passage
- // before the first real note must NOT be mistaken for the opening beat.
+ // A verified digital-silence trim is fine. Never treat a delayed
+ // atmospheric introduction as if it contained beat at time zero.
  if(Number.isFinite(b.first)&&b.first-entry>1.3)return false;
  const groove=b.introGroove;
  if(Array.isArray(groove)&&groove.length===32){
   const mean=arr=>arr.reduce((s,v)=>s+v,0)/arr.length;
-  const early=mean(groove.slice(0,8));
-  const later=mean(groove.slice(8,24));
-  if(early<-.85&&later-early>.85)return false;
+  const early=mean(groove.slice(0,8)),later=mean(groove.slice(8,24));
+  // Measured drums in BOTH PCM halves outweigh an RMS-only first-bar
+  // penalty. If there is no independently measured pulse, keep veto.
+  if(early<-.85&&later-early>.85&&!rhythmicQuiet)return false;
  }
- // introBeat is the STRONGEST onset within 12 seconds, not the
- // first musical sound. Its timing must not veto an opening that is
- // already audible and rhythmically driven from its first measure.
- // Genuine pre-music gaps are rejected above using 'first' and groove.
  return true;
 }
 // A safe ending alone does not prove two songs belong in the same mix.
@@ -3668,7 +3694,7 @@ function lowEnergyPostludeLeadIn(a,b,dur){
     !Number.isFinite(dur)||
     !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
     !Number.isFinite(a.last)||a.last<26||
-    !hasImmediateMusicalIntro(b)||b.introDrive<.37)return null;
+    !hasImmediateMusicalIntro(b)||b.introDrive<.20)return null;
  const gap=dur-a.last;
  if(gap<2.6||gap>11.8||
     (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>a.last-5.2)||
