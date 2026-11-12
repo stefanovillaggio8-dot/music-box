@@ -43,3 +43,38 @@ test("Italian contractions preserve actual two-token ASR timing, never guessed w
  assert.equal(align([{t:1,text:"L'amore fugge quando puoi"}],chunks,0,4).length,0,
   "same word count but incorrect transcription must not be accepted");
 });
+
+test("real index quiet rhythmic opening does not get mistaken for silence",()=>{
+ const index=JSON.parse(fs.readFileSync(path.join(root,"dj-deep-analysis.json"),"utf8")).entries;
+ const engine=new Function(
+  "const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));"+
+  source.slice(source.indexOf("function onsetPeriodicity("),
+   source.indexOf("function onsetGridPhase("))+
+  "const musicalIntroEntry=b=>Number.isFinite(b?.safeIntroAt)?b.safeIntroAt:0;"+
+  source.slice(source.indexOf("function measuredQuietRhythmicIntro("),
+   source.indexOf("// A safe ending alone does not prove"))+
+  source.slice(source.indexOf("function lowEnergyPostludeLeadIn("),
+   source.indexOf("function transition(a,b,actualDuration)"))+
+  "return {measuredQuietRhythmicIntro,hasImmediateMusicalIntro,lowEnergyPostludeLeadIn};"
+ )();
+ const outgoing=index["audio/songs/track-1197.mp3"];
+ const quiet=index["audio/songs/track-686.mp3"];
+ const silent=index["audio/songs/track-174.mp3"];
+ assert.ok(outgoing&&quiet&&silent);
+ assert.ok(quiet.introDrive<.33,"the existing global energy gate rejected this real song");
+ assert.equal(engine.measuredQuietRhythmicIntro(quiet),true);
+ assert.equal(engine.hasImmediateMusicalIntro(quiet),true);
+ assert.equal(engine.hasImmediateMusicalIntro(silent),false,
+  "genuinely weak or delayed intros must remain protected");
+ assert.equal(engine.measuredQuietRhythmicIntro({...quiet,introOnset:Array(96).fill(0)}),false,
+  "never invent rhythmic evidence from BPM alone");
+ const vocalSafe={...outgoing,lastLyricAt:215.11,lastVoiceAt:213.59};
+ const cue=engine.lowEnergyPostludeLeadIn(vocalSafe,quiet,outgoing.duration);
+ assert.equal(cue?.kind,"postlude");
+ assert.ok(cue.begin>outgoing.last&&cue.begin<outgoing.duration-3,
+  "actual quiet song joins during measured encoded postlude, never cuts old music");
+ assert.equal(cue.preserveTail,true);
+ assert.equal(cue.silenceTrim,false);
+ assert.equal(engine.lowEnergyPostludeLeadIn({...vocalSafe,lastLyricAt:242},
+  quiet,outgoing.duration),null,"late vocal activity must still veto the overlap");
+});
