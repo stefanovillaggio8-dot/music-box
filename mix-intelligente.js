@@ -286,6 +286,14 @@ function beatWindowContainsAudibleMusic(a,cue){
 }
 function iphoneQuietReleaseCertified(a,cue){
  if(!cue)return false;
+ // Distinct measured, vocal-safe release without BPM matching.
+ if(cue.tempoFreeRelease===true)
+  return cue.kind==="soft"&&cue.quietCertified===true&&
+   a?.protectedEnding!==true&&a?.dropRelease?.score>=.72&&
+   a?.dropRelease?.quietLevel<=.21&&
+   Number.isFinite(cue.begin)&&
+   a.dropRelease.releaseAt<=cue.begin-.4;
+
  if(!["soft","fade","rise"].includes(cue.kind))return true;
  if(!a||cue.quietCertified!==true||a.protectedEnding===true||
     !Number.isFinite(cue.begin)||!Number.isFinite(cue.end))return false;
@@ -338,6 +346,41 @@ function certifiedNeutralBridge(a,b,dur){
   decayReleaseAt:release.releaseAt,
   silenceTrim:trim,trailing:trim?dur-end:0,
   preserveTail:true,softTailTrim:false};
+}
+// Cross-tempo soft segue after a measured and vocal-safe quiet release.
+// This NEVER claims matched beats, tempo stretching or an instrumental
+// section inferred from a missing speech detection.
+function tempoFreeReleaseBridge(a,b,dur){
+ const r=a?.dropRelease;
+ if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||!Number.isFinite(dur)||
+    !Number.isFinite(a.duration)||Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||a.last<28||dur-a.last>10||
+    !r||![r.releaseAt,r.lastImpactAt,r.quietLevel,r.score].every(Number.isFinite)||
+    r.score<.72||r.quietLevel>.21||r.releaseAt<r.lastImpactAt||
+    a.last-r.releaseAt<2.6||a.last-r.releaseAt>6.5||
+    !hasImmediateMusicalIntro(b)||Number(b.introDrive)<.39)return null;
+ // A last LRC cue is a line onset, NOT the singer's exit.
+ const lyricSafe=Number.isFinite(a.lastLyricAt)&&
+   a.lastLyricAt<=r.releaseAt-4.5;
+ const scannedSafe=Boolean(a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+   a.voiceScannedEnd>=a.last-.75&&Number.isFinite(a.lastVoiceAt)&&
+   a.lastVoiceAt<=r.releaseAt-2.5);
+ if((!lyricSafe&&!scannedSafe)||
+    (Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>r.releaseAt-2.5)||
+    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<2)||
+    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<2))return null;
+ const end=Math.min(dur-.035,a.last+.055);
+ const begin=Math.max(r.releaseAt+.5,end-4.55,
+   Number.isFinite(a.lastLyricAt)?a.lastLyricAt+4.5:0,
+   Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt+2.5:0);
+ const fade=end-begin;
+ if(begin<26||fade<2.25||fade>4.7)return null;
+ const trim=a.confidentTail===true&&dur-a.last>=1.65;
+ return {kind:"soft",begin,end,fade,entry:musicalIntroEntry(b),
+  tempo:1,gain:1,preserveTail:true,quietCertified:true,
+  tempoFreeRelease:true,safeOutroAt:begin,softTailTrim:false,
+  silenceTrim:trim,trailing:trim?dur-end:0};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(plan?.neutralAmbientUnderlay===true)
@@ -3016,6 +3059,12 @@ function hasImmediateMusicalIntro(b){
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
 function musicallyCompatibleOverlay(a,b,cue){
  if(!cue)return false;
+ if(cue.tempoFreeRelease===true){
+  const p=tempoFreeReleaseBridge(a,b,a?.duration);
+  return !!p&&cue.kind==="soft"&&cue.preserveTail===true&&
+   Math.abs(p.begin-cue.begin)<.085&&
+   Math.abs(p.end-cue.end)<.085&&cue.tempo===1;
+ }
  if(cue.measuredReleaseLeadIn===true){
   // Never trust a fabricated release flag: redo every audio/lyric gate.
   const valid=desktopMeasuredReleaseLeadIn(a,b,a?.duration);
@@ -5578,6 +5627,14 @@ function tick(){
    const certifiedQuietAlternative=proposedQuiet&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,proposedQuiet)?
        proposedQuiet:null;
+   // Different-BPM introductions may enter only after a verified,
+   // lyric-safe quiet release. Never label this a beatmatch.
+   const tempoFree=currentAnalysis&&nextAnalysis&&!isIOS&&
+     typeof tempoFreeReleaseBridge==="function"?
+     tempoFreeReleaseBridge(currentAnalysis,nextAnalysis,audio.duration):null;
+   const certifiedTempoFree=tempoFree&&
+     musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,tempoFree)?
+      tempoFree:null;
    const finalImpact=currentAnalysis&&nextAnalysis&&!isIOS?
       desktopFinalImpactRelay(currentAnalysis,nextAnalysis,audio.duration):null;
    const certifiedImpact=finalImpact&&
@@ -5608,9 +5665,9 @@ function tick(){
     chosen=certifiedQuietAlternative;
    const realBeat=chosen&&["beat","snap","phrase"].includes(chosen.kind)?chosen:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
-      certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude:
+      certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||certifiedTempoFree:
      realBeat||certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)||
-      certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||
+      certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||certifiedTempoFree||
       compatibleContinuity||chosen;
    lastPlanMissing=!(a&&b);
    // The final cue may arrive after buffering. Reuse the existing decoder.
@@ -6228,6 +6285,15 @@ async function intelligentShuffle(app,audio,fromId){
     cue=quiet;musicallyPlayable=true;
    }
   }
+  // No matching BPM? This optional measured quiet release must pass
+  // vocal safety independently. It is NOT a beatmatched overlap.
+  if((!musicallyPlayable||cue?.kind==="cut")&&!isIOS&&
+     typeof tempoFreeReleaseBridge==="function"){
+   const release=tempoFreeReleaseBridge(old,next,audio.duration);
+   if(release&&musicallyCompatibleOverlay(old,next,release)){
+    cue=release;musicallyPlayable=true;
+   }
+  }
   // Never declare a "beat winner" on Safari if its actual mobile
   // overlay constraints would reject it at playback time.
   if(musicallyPlayable)candidateAudit.musicalOverlays++;
@@ -6246,6 +6312,12 @@ async function intelligentShuffle(app,audio,fromId){
        cue.instrumentalBeatBridge===true))));
   if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
+   if(mobilePlayable&&cue?.tempoFreeRelease===true){
+    // A real continuous segue, below all beat matches in priority.
+    softScored.push({track,cue,score:1.10+
+      clamp(info.introDrive,0,1)*.1});
+    continue;
+   }
    if(mobilePlayable&&cue?.neutralAmbientUnderlay===true){
     ambientScored.push({track,cue,
       score:1+clamp(info.introDrive,0,1)*.16+
@@ -6857,7 +6929,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.723",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.724",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);

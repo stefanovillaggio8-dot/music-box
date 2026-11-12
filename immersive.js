@@ -109,18 +109,36 @@ function renderLyrics(force){
    lyricRows[index],lyricRows[index]._elements,adjusted);
   return;
  }
+ // Only the changed passage needs DOM class updates. Toggling all 500
+ // rows at every sung line caused layout/style stalls on GPU-busy desktops.
+ const previous=lastLine;
  lastLine=index;
- for(let i=0;i<karaoke.children.length;i++){
-  karaoke.children[i].classList.toggle("active",i===index);
-  karaoke.children[i].classList.toggle("past",i<index);
+ const lines=karaoke.children;
+ if(previous>=0&&previous<lines.length)
+  lines[previous].classList.remove("active");
+ if(index>=0&&index<lines.length)
+  lines[index].classList.add("active");
+ if(index>previous){
+  for(let i=Math.max(0,previous);i<index;i++)lines[i]?.classList.add("past");
+ }else if(index<previous){
+  for(let i=Math.max(0,index);i<previous;i++)lines[i]?.classList.remove("past");
  }
- const active=karaoke.children[index];
+ const active=lines[index];
  if(active){
   window.MusicBoxWordKaraoke?.paintWords(
    lyricRows[index],lyricRows[index]._elements,adjusted);
   const top=Math.max(0,active.offsetTop-(karaoke.clientHeight-active.offsetHeight)/2);
-  try{karaoke.scrollTo({top,behavior:"smooth"})}
-  catch(_){karaoke.scrollTop=top}
+  // A user seek can jump dozens of verses: cancel the previous smooth
+  // animation instead of forcing Safari to finish it before showing lyrics.
+  const jumped=Math.abs(index-previous)>3||audio?.seeking;
+  if(jumped){
+   karaoke.style.scrollBehavior="auto";
+   karaoke.scrollTop=top;
+   karaoke.style.removeProperty("scroll-behavior");
+  }else{
+   try{karaoke.scrollTo({top,behavior:"smooth"})}
+   catch(_){karaoke.scrollTop=top}
+  }
  }
 }
 // Advance LRC lines at media-clock precision without repainting the player.

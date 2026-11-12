@@ -576,8 +576,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
  assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
- assert.match(html,/audio-lyrics-align\.js\?v=6724&amp;lang=5/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6724&lang=5").length-1,2);
+ assert.match(html,/audio-lyrics-align\.js\?v=6724&amp;lang=6/);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6724&lang=6").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 
@@ -652,7 +652,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"5":"2";
+  const wordCache=file==="word-karaoke.js"?"6":file==="immersive.js"?"3":file==="app.js"?"3":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -726,6 +726,36 @@ test("enhanced LRC uses the actual first word even when the provider line is ear
  assert.equal(textMismatch[0].t,10.00);
  assert.equal(textMismatch[0].words,undefined,
   "Unmatched text prefixes cannot justify a shifted line");
+});
+test("Whisper first-word shift is saved using original LRC source anchor",()=>{
+ const alignSource=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const wordSource=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
+ const window={};
+ new Function("window","globalThis",alignSource)(window,window);
+ new Function("window","globalThis",wordSource)(window,window);
+ const lines=[{t:10,text:"We feel the music"},{t:16,text:"Other words now"},
+  {t:22,text:"Another phrase here"}];
+ const chunks=[
+  {text:" We",timestamp:[11.2,11.4]},
+  {text:" feel",timestamp:[11.45,11.66]},
+  {text:" the",timestamp:[11.7,11.8]},
+  {text:" music",timestamp:[11.85,12.1]}
+ ];
+ const shifted=window.MusicBoxAudioAlign.alignWindow(lines,chunks,0,28);
+ assert.equal(shifted.length,1,"Exact four-word match should be accepted");
+ assert.equal(shifted[0].sourceT,10);
+ assert.equal(shifted[0].t,11.2);
+ const saved=window.MusicBoxWordKaraoke.normalizeRows(shifted);
+ assert.equal(saved[0].sourceT,10,"Persisted row must retain original phrase anchor");
+ assert.equal(saved[0].t,11.2,"Audio-verified first word is the display cue");
+ assert.equal(saved[0].words.length,4);
+ const appSave=app.slice(app.indexOf("async function _salvaParoleDallAudio("),
+  app.indexOf("/* Recupero graduale mentre",app.indexOf("async function _salvaParoleDallAudio(")));
+ assert.match(appSave,/Math\.abs\(sourceT\(row\)-original\.t\)<\.02/);
+ assert.match(appSave,/p\.replaceChildren\(\)/,
+  "UI must patch only changed lyrics instead of rebuilding the whole sheet");
+ assert.doesNotMatch(appSave,/Math\.abs\(row\.t-original\.t\)<\.02/,
+  "Display timing must not be used to find the original lyric row");
 });
 test("subdued Smart Mix lead-in starts before the last musical beats, not the silence",()=>{
  const from=dj.indexOf("function subduedRhythmicIntro(");

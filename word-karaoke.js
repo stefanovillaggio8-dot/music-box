@@ -56,7 +56,14 @@ function normalizeRows(rows){
   const words=validWords(row.words,text,adjustedStart,end);
   totalWords+=words.length;
   if(totalWords>MAX_WORDS)break;
-  out.push({t:+(words.length?adjustedStart:t).toFixed(3),text,
+  const displayT=words.length?adjustedStart:t;
+  // Keep the original LRC anchor separately from the audio-measured
+  // first word. Otherwise shifted, correctly aligned rows cannot be
+  // matched back to the provider line when saving or reloading.
+  const sourceT=number(row.sourceT);
+  const anchored=sourceT!=null&&Math.abs(sourceT-displayT)<=1.70;
+  out.push({t:+displayT.toFixed(3),text,
+   ...(anchored?{sourceT:+sourceT.toFixed(3)}:{}),
    ...(end!=null?{end:+end.toFixed(3)}:{}),
    ...(words.length?{words}:{})});
  }

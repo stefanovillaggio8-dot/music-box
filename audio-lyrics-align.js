@@ -4,7 +4,7 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=2,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const VERSION=3,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
@@ -116,7 +116,7 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   const measuredStart=parts[0].t;
   const displayStart=Math.abs(measuredStart-start)<=1.70?
    measuredStart:start;
-  results.push({t:+displayStart.toFixed(3),
+  results.push({t:+displayStart.toFixed(3),sourceT:+start.toFixed(3),
    text:String(row.text).trim(),words:parts,
    alignedFromAudio:true});
  }
