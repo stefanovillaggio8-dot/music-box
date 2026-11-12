@@ -77,8 +77,8 @@ function renderLyrics(force){
    const guessed=lyricRows.some(r=>r.estimated);
    if(status)status.textContent=lyricTimed
      ?(trusted?(next?.audioWordSynced?"PAROLA PER PAROLA · IA":"PAROLA PER PAROLA"):
-       guessed?"PAROLA PER PAROLA · STIMA":"SINCRONIZZATO")
-     :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
+       guessed?"FRASI SINCRONIZZATE · PAROLE DA VERIFICARE":"SINCRONIZZATO")
+     :next?.text?"TESTO NON SINCRONIZZATO":"SOLO MUSICA";
    if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<2))
      b?.requestWordLyrics?.(id)?.catch?.(()=>{});
    karaoke.scrollTop=0;
@@ -96,13 +96,12 @@ function renderLyrics(force){
    if(lyricRows[i].t<=adjusted)index=i;
    else break;
   }
- }else if(lyricRows.length>1){
-  // Plain text follows approximate playback progress, NOT fake LRC timings.
-  const duration=Number(audio?.duration)||0;
-  if(duration>1){
-   const progress=Math.min(1,Math.max(0,(time-3)/Math.max(1,duration-9)));
-   index=Math.min(lyricRows.length-1,Math.floor(progress*lyricRows.length));
-  }
+ }else{
+  // Plain text is NOT time-synced. Do not march across lyrics based
+  // on a fraction of song duration: that was visibly out of sync for
+  // VENTANNI in the 03:15 screen recording. The entire text stays
+  // readable until real LRC cues can be fetched.
+  index=-1;
  }
  if(lyricTimed&&index===lyricRows.length-1){
   const last=lyricRows[index],lastWord=last.words?.[last.words.length-1];
