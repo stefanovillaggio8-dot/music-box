@@ -1332,3 +1332,35 @@ test("measured release preview survives a delayed fade tick at the old song nati
  assert.ok(source.includes("!plan?.measuredReleaseLeadIn"),
   "do not preempt a planned release with a later quiet fallback");
 });
+
+
+test("DJ uses already measured source-specific analysis before async decode after a seek",()=>{
+ const helperStart=source.indexOf("function alreadyMeasuredAnalysis(");
+ const helperEnd=source.indexOf("async function cachedMobileAnalysis(",helperStart);
+ const mergeStart=source.indexOf("function withValidatedVoice(");
+ const mergeEnd=source.indexOf("function deepStatus(",mergeStart);
+ assert.ok(helperStart>0&&helperEnd>helperStart);
+ const local=new Map([["file-a.mp3",{duration:120,voiceModel:"verified",
+  lastVoiceAt:113,voiceScannedEnd:119}]]);
+ const lookup=(track)=>track.id==="a"?{duration:120,bpm:123,
+  analyzer:"librosa-onsets-chroma-rms-v8-harmonic-sections"}:null;
+ const measured=new Function("cache","deepLookup",
+  source.slice(mergeStart,mergeEnd)+source.slice(helperStart,helperEnd)+
+  "return alreadyMeasuredAnalysis;")(local,lookup);
+ const app={mixUrl:(track)=>track.url};
+ const existing=measured({id:"a",url:"file-a.mp3"},app);
+ assert.equal(existing.bpm,123);
+ assert.equal(existing.voiceModel,"verified");
+ assert.equal(existing.lastVoiceAt,113);
+ assert.equal(measured({id:"b",url:"file-b.mp3"},app),null);
+ const tick=source.slice(source.indexOf("function tick(){"),
+  source.indexOf("function paintWave("));
+ const current=tick.indexOf("a=alreadyMeasuredAnalysis(now,app)");
+ const incoming=tick.indexOf("b=alreadyMeasuredAnalysis(next,app)");
+ const firstPlan=tick.indexOf("if(a||b)update()");
+ const decode=tick.indexOf("decode(now).then(");
+ assert.ok(current>0&&incoming>current&&firstPlan>incoming&&decode>firstPlan,
+  "A measured, lyric-safe cue must be planned before optional async decoding");
+ assert.match(tick,/if\(!isIOS&&prepared\?\.id===target/,
+  "later analysis must still retarget the existing prebuffer, not redownload");
+});
