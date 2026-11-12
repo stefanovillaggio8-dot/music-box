@@ -5629,7 +5629,8 @@ function tick(){
        proposedQuiet:null;
    // Different-BPM introductions may enter only after a verified,
    // lyric-safe quiet release. Never label this a beatmatch.
-   const tempoFree=currentAnalysis&&nextAnalysis&&!isIOS?
+   const tempoFree=currentAnalysis&&nextAnalysis&&!isIOS&&
+     typeof tempoFreeReleaseBridge==="function"?
      tempoFreeReleaseBridge(currentAnalysis,nextAnalysis,audio.duration):null;
    const certifiedTempoFree=tempoFree&&
      musicallyCompatibleOverlay(currentAnalysis,nextAnalysis,tempoFree)?
@@ -5664,9 +5665,9 @@ function tick(){
     chosen=certifiedQuietAlternative;
    const realBeat=chosen&&["beat","snap","phrase"].includes(chosen.kind)?chosen:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
-      certifiedImpact||certifiedQuietAlternative||certifiedTempoFree||certifiedSilentBridge||certifiedPostlude:
+      certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedTempoFree||certifiedPostlude:
      realBeat||certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)||
-      certifiedQuietAlternative||certifiedTempoFree||certifiedSilentBridge||certifiedPostlude||
+      certifiedQuietAlternative||certifiedSilentBridge||certifiedTempoFree||certifiedPostlude||
       compatibleContinuity||chosen;
    lastPlanMissing=!(a&&b);
    // The final cue may arrive after buffering. Reuse the existing decoder.
@@ -6286,7 +6287,8 @@ async function intelligentShuffle(app,audio,fromId){
   }
   // No matching BPM? This optional measured quiet release must pass
   // vocal safety independently. It is NOT a beatmatched overlap.
-  if((!musicallyPlayable||cue?.kind==="cut")&&!isIOS){
+  if((!musicallyPlayable||cue?.kind==="cut")&&!isIOS&&
+     typeof tempoFreeReleaseBridge==="function"){
    const release=tempoFreeReleaseBridge(old,next,audio.duration);
    if(release&&musicallyCompatibleOverlay(old,next,release)){
     cue=release;musicallyPlayable=true;
@@ -6927,7 +6929,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.723",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.724",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
