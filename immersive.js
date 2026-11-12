@@ -37,7 +37,11 @@ function renderLyrics(force){
  const b=api(),id=b?.currentId?.(),karaoke=$("imKaraoke");
  if(!opened||!id||!karaoke)return;
  if(lastLyricsId!==id||force){
-  const next=b?.lyricsData?.()||null;
+  const incoming=b?.lyricsData?.()||null;
+  // A deferred lyric-provider callback can still expose the previous
+  // recording during DJ handoff. Never show that text on the new song.
+  const next=incoming?.id!=null&&String(incoming.id)!==String(id)?
+   null:incoming;
   const signature=JSON.stringify([next?.text||"",next?.synced||[]]);
   if(lastLyricsId!==id||signature!==lastLyricsSignature){
    lastLyrics=next;lastLyricsId=id;lastLyricsSignature=signature;lastLine=-1;
@@ -196,7 +200,7 @@ function paint(){
  $("immersivePanel").classList.toggle("im-paused",paused);
  $("imState").textContent=window.MusicBoxRoom?.isActive?.()?"ASCOLTO CONDIVISO":"ORA IN RIPRODUZIONE";
  $("imVisualizer").classList.toggle("im-stopped",!a||a.paused);
- if(Date.now()-lastLyricsRefreshAt>3500)renderLyrics(true);
+ if(Date.now()-lastLyricsRefreshAt>1800)renderLyrics(true);
  else renderLyrics(false);
  if(!lyricAnimation&&!document.hidden&&a&&!a.paused&&!a.ended&&!a.seeking)
    lyricAnimation=requestAnimationFrame(precisionLyrics);

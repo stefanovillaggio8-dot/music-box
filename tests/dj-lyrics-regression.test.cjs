@@ -652,7 +652,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"6":file==="immersive.js"?"4":file==="app.js"?"4":"2";
+  const wordCache=file==="word-karaoke.js"?"6":file==="immersive.js"?"5":file==="app.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -1181,4 +1181,22 @@ test("iPhone karaoke may inspect several different passages on later requests wi
  assert.equal(closed,4);
  assert.ok(!memory.has("mb.audioWords.fail.Ste."+track.id),
   "healthy analysis does not create another profile's error cooldown");
+});
+
+
+test("immersive karaoke rejects stale lyrics from a different recording during DJ handoff",()=>{
+ const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
+ const start=immersive.indexOf("const incoming=b?.lyricsData?.()||null;");
+ const end=immersive.indexOf("const signature=",start);
+ assert.ok(start>0&&end>start,"the real immersive source must verify the recording");
+ const current={id:"b-track-205",text:"Amelie",synced:[{t:10,text:"Amelie"}]};
+ const previous={id:"b-track-213",text:"Jolly",synced:[{t:10,text:"Jolly"}]};
+ const choose=new Function("b","id",immersive.slice(start,end)+"return next;");
+ assert.equal(choose({lyricsData:()=>previous},current.id),null,
+  "stale Jolly provider data must not replace current Amelie lyrics");
+ assert.deepEqual(choose({lyricsData:()=>current},current.id),current);
+ assert.deepEqual(choose({lyricsData:()=>({text:"No explicit ID"})},current.id),
+  {text:"No explicit ID"},"legacy verified built-in lyrics remain available");
+ assert.match(immersive,/Date\.now\(\)-lastLyricsRefreshAt>1800/,
+  "on-screen corrections should propagate promptly, without polling at frame rate");
 });
