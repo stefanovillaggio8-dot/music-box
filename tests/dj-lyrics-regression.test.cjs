@@ -742,6 +742,19 @@ test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
   "DJ must not trust the wrong song's lyric boundary");
 });
 
+test("Dimenticare and Sono gia solo never show unrelated plain lyrics",()=>{
+ const all=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
+ for(const id of ["b-track-185","b-track-246"]){
+  const song=all[id],lines=song.synced.split(/\r?\n/).
+   map(x=>x.replace(/^\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\]\s*/,"").trim()).
+   filter(Boolean);
+  assert.ok(lines.length>=15,"The original timed song has full lyrics");
+  const phrase=lines.find(x=>x.split(/\s+/).length>=5);
+  assert.ok(song.text.includes(phrase),
+   "The full-text view must use words from the SAME recording as timed karaoke: "+song.title);
+ }
+});
+
 test("enhanced LRC preserves early measured syllables instead of estimating karaoke",()=>{
  const script=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
  const karaoke=new Function("const window={};"+script+";return window.MusicBoxWordKaraoke;")();
