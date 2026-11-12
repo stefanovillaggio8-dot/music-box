@@ -2188,13 +2188,13 @@
    },
    "[\"bad vibes\",\"nayt\"]": {
     "v": 1,
-    "s": 145,
+    "s": 163,
     "t": "Bad vibes",
     "a": "nayt"
    },
    "m:2026-11|[\"bad vibes\",\"nayt\"]": {
     "v": 1,
-    "s": 145,
+    "s": 163,
     "t": "Bad vibes",
     "a": "nayt"
    },
@@ -3076,13 +3076,13 @@
    },
    "[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
     "v": 0,
-    "s": 276,
+    "s": 315,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
    "m:2026-11|[\"quelli che non pensano - il cervello\",\"marracash, coez\"]": {
     "v": 0,
-    "s": 276,
+    "s": 315,
     "t": "QUELLI CHE NON PENSANO - Il cervello",
     "a": "Marracash, Coez"
    },
@@ -5108,6 +5108,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
+   "[\"dimmi che c''\",\"thasup\"]": {
+    "v": 0,
+    "s": 45,
+    "t": "Dimmi Che C''",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"dimmi che c''\",\"thasup\"]": {
+    "v": 0,
+    "s": 45,
+    "t": "Dimmi Che C''",
+    "a": "thasup"
+   },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
     "s": 190,
@@ -5888,17 +5900,17 @@
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
-   "[\"dimmi che c''\",\"thasup\"]": {
+   "[\"terri\",\"kid yugi, geology\"]": {
     "v": 0,
-    "s": 45,
-    "t": "Dimmi Che C''",
-    "a": "thasup"
+    "s": 48,
+    "t": "Terri",
+    "a": "Kid Yugi, Geology"
    },
-   "m:2026-11|[\"dimmi che c''\",\"thasup\"]": {
+   "m:2026-11|[\"terri\",\"kid yugi, geology\"]": {
     "v": 0,
-    "s": 45,
-    "t": "Dimmi Che C''",
-    "a": "thasup"
+    "s": 48,
+    "t": "Terri",
+    "a": "Kid Yugi, Geology"
    },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
@@ -6679,18 +6691,6 @@
     "s": 84,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
-   },
-   "[\"terri\",\"kid yugi, geology\"]": {
-    "v": 0,
-    "s": 48,
-    "t": "Terri",
-    "a": "Kid Yugi, Geology"
-   },
-   "m:2026-11|[\"terri\",\"kid yugi, geology\"]": {
-    "v": 0,
-    "s": 48,
-    "t": "Terri",
-    "a": "Kid Yugi, Geology"
    },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
