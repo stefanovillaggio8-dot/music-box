@@ -558,6 +558,32 @@ function loadDJLyricBoundaries(){
    }
   }).catch(()=>{djLyricMetaRequested=false;});
 }
+// Infer tempo only from actual tracked beat timestamps, never synthetic BPM.
+// beatGrid.anchors stores every second measured beat (120 / seconds apart).
+function verifiedIndexedGridTempo(entry){
+ const anchors=entry?.beatGrid?.anchors;
+ if(!entry||entry.tempoRefined===true||entry.beatGrid?.reliable!==true||
+    !Array.isArray(anchors)||anchors.length<9)return entry;
+ const beats=anchors.map(Number);
+ if(beats.some(t=>!Number.isFinite(t)))return entry;
+ const gaps=beats.slice(1).map((t,i)=>t-beats[i]);
+ if(gaps.some(t=>t<.56||t>2.2))return entry;
+ const median=values=>{
+  const sorted=[...values].sort((a,b)=>a-b),n=sorted.length;
+  return n%2?sorted[(n-1)/2]:(sorted[n/2-1]+sorted[n/2])/2;
+ };
+ const period=median(gaps);
+ const error=median(gaps.map(g=>Math.abs(g-period)));
+ if(!(period>0)||error>period*.018||
+    gaps.filter(g=>Math.abs(g-period)>period*.055).length>1)return entry;
+ const measured=120/period,old=Number(entry.bpm);
+ if(!Number.isFinite(old)||old<55||old>210||
+    measured<55||measured>210||
+    Math.abs(Math.log2(measured/old))>.09||
+    Math.abs(measured-old)<.15)return entry;
+ return {...entry,bpm:+measured.toFixed(3),
+  indexedBpmOriginal:old,tempoVerifiedByGrid:true};
+}
 function deepLookup(track){
  if(!deepIndex||!track)return null;
  const raw=String(track.file||track.url||"");
@@ -577,7 +603,9 @@ function deepLookup(track){
   const value=deepIndex.entries?.[key];
   if(value?.status==="ok"&&/^(librosa-onsets-chroma-rms-v1|librosa-onsets-chroma-rms-v2|librosa-onsets-chroma-rms-v3-windows|librosa-onsets-chroma-rms-v4-windows|librosa-onsets-chroma-rms-v5-verified-beats|librosa-onsets-chroma-rms-v6-phrases|librosa-onsets-chroma-rms-v8-harmonic-sections)$/.test(value.analyzer||"")&&
      Number.isFinite(value.duration)&&value.duration>=26&&
-     Array.isArray(value.chroma)&&value.chroma.length===12)return typeof withGuardedLRC==="function"?withGuardedLRC(value):value;
+     Array.isArray(value.chroma)&&value.chroma.length===12)return typeof withGuardedLRC==="function"?
+        withGuardedLRC(verifiedIndexedGridTempo(value)):
+        verifiedIndexedGridTempo(value);
  }
  return null;
 }
@@ -6193,7 +6221,10 @@ async function intelligentShuffle(app,audio,fromId){
   exactSameRecordingSkipped:identicalAudioSkipped,
   sampledForDecode:picked.length,measured:measured.length,
   outgoingBeatConfidence:Number.isFinite(old.beatConfidence)?old.beatConfidence:null,
-  validIntros:0,closeTempo:0,compatibleGroove:0,compatibleNotes:0,
+  validIntros:0,closeTempo:0,withinNinePercent:0,
+   closestTempo:[],outgoingBpm:Number.isFinite(old.bpm)?old.bpm:null,
+   outgoingGridCorrected:old.tempoVerifiedByGrid===true,
+   compatibleGroove:0,compatibleNotes:0,
   musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0,subduedUnderlays:0};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
@@ -6213,6 +6244,19 @@ async function intelligentShuffle(app,audio,fromId){
   }
   candidateAudit.validIntros++;
   const bpmA=Number(old.bpm),bpmB=Number(info.bpm);
+  if(bpmA>0&&bpmB>0){
+   const ratios=[.5,1,2].map(scale=>bpmA/(bpmB*scale));
+   const nearest=ratios.reduce((x,y)=>
+    Math.abs(Math.log2(x))<Math.abs(Math.log2(y))?x:y);
+   const distance=Math.abs(Math.log2(nearest));
+   if(distance<=Math.log2(1.09))candidateAudit.withinNinePercent++;
+   const closest=candidateAudit.closestTempo;
+   closest.push({id:track.id,bpm:+bpmB.toFixed(2),
+    mismatchPercent:+((Math.pow(2,distance)-1)*100).toFixed(1),
+    gridCorrected:info.tempoVerifiedByGrid===true});
+   closest.sort((x,y)=>x.mismatchPercent-y.mismatchPercent);
+   if(closest.length>4)closest.pop();
+  }
   if(bpmA>0&&bpmB>0&&old.beatConfidence>=.16){
    const ratio=[.5,1,2].map(scale=>bpmA/(bpmB*scale))
     .reduce((best,value)=>Math.abs(Math.log2(value))<Math.abs(Math.log2(best))?value:best);
