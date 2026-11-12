@@ -1439,13 +1439,13 @@
    },
    "[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 88,
+    "s": 149,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
    },
    "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 88,
+    "s": 149,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
    },
@@ -3365,13 +3365,13 @@
    },
    "[\"gilgamesh\",\"kid yugi\"]": {
     "v": 2,
-    "s": 289,
+    "s": 294,
     "t": "Gilgamesh",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"gilgamesh\",\"kid yugi\"]": {
     "v": 2,
-    "s": 289,
+    "s": 294,
     "t": "Gilgamesh",
     "a": "Kid Yugi"
    },
@@ -6003,6 +6003,18 @@
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
+   "[\"per il sangue versato\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Per il Sangue Versato",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"per il sangue versato\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Per il Sangue Versato",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
     "s": 335,
@@ -6794,18 +6806,6 @@
     "s": 9,
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
-   },
-   "[\"per il sangue versato\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Per il Sangue Versato",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"per il sangue versato\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Per il Sangue Versato",
-    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"mÃÂÃÂÃÂÃÂ¥neskin\"]": {
     "v": 2,
@@ -10126,14 +10126,14 @@
     "a": "Modà"
    },
    "[\"se si potesse non morire\",\"modà\"]": {
-    "v": 1,
-    "s": 418,
+    "v": 2,
+    "s": 422,
     "t": "Se si potesse non morire",
     "a": "Modà"
    },
    "m:2026-11|[\"se si potesse non morire\",\"modà\"]": {
-    "v": 1,
-    "s": 418,
+    "v": 2,
+    "s": 422,
     "t": "Se si potesse non morire",
     "a": "Modà"
    },
