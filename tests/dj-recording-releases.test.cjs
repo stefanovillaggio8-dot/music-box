@@ -183,13 +183,13 @@ test("real indexed Ste-library alternatives after track 1197 have audible intros
    .map(t=>({file:"audio/"+t.file,title:t.title,artist:t.artist}));
  const beginIntro=source.indexOf("function musicalIntroEntry(");
  const endIntro=source.indexOf("function rhythmicFullTailJoin(",beginIntro);
- const beginHas=source.indexOf("function hasImmediateMusicalIntro(");
+ const beginHas=source.indexOf("function measuredQuietRhythmicIntro(");
  const endHas=source.indexOf("// A safe ending alone",beginHas);
  const beginPost=source.indexOf("function desktopMeasuredPostludeBridge(");
  const endPost=source.indexOf("function continuityFallback(",beginPost);
  assert.ok(beginIntro>=0&&endIntro>beginIntro&&beginHas>=0&&endHas>beginHas&&beginPost>=0&&endPost>beginPost);
  const fn=new Function("isIOS","clamp",
-  source.slice(beginIntro,endIntro)+source.slice(beginHas,endHas)+
+  source.slice(source.indexOf("function onsetPeriodicity("),source.indexOf("function onsetGridPhase("))+source.slice(beginIntro,endIntro)+source.slice(beginHas,endHas)+
   source.slice(beginPost,endPost)+"return desktopMeasuredPostludeBridge;")(
   false,(x,a,b)=>Math.max(a,Math.min(b,x)));
  const outgoing=idx.entries?.["audio/songs/track-1197.mp3"];
