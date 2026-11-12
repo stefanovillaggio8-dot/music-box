@@ -143,6 +143,13 @@ async function run(){
    await page.waitForFunction(()=>document.querySelector("#imKaraoke").scrollTop>20,null,{timeout:4000});
    const karaoke=await page.evaluate(()=>document.querySelector("#imKaraoke").scrollTop);
    assert.ok(karaoke>20,"synced karaoke scrolls to the active line");
+   // The last line begins at 200s; the MP3 continues to 240s.
+   // Do not leave it highlighted during a long vocal-free outro.
+   await page.evaluate(()=>{fakeAudio.currentTime=220;});
+   await page.waitForFunction(()=>!document.querySelector("#imKaraoke .im-line.active"));
+   await page.evaluate(()=>{fakeAudio.currentTime=144.4;});
+   await page.waitForFunction(()=>document.querySelector("#imKaraoke .im-line.active")?.textContent.includes("19"),
+    null,{timeout:4000});
    await page.locator("#imFocusToggle").click();
    assert.equal(await page.locator("#imFocusToggle").getAttribute("aria-pressed"),"true");
    await page.waitForFunction(()=>document.getElementById("imKaraoke").clientHeight>=220,null,{timeout:4000});
