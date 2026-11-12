@@ -1239,3 +1239,19 @@ test("distinct long vocals keep their measured onset beyond an early LRC cue, un
  assert.match(appSource,/return \{id:currentId,text:String\(l\.text\|\|""\)/,
   "immersive karaoke must receive the currently playing recording ID");
 });
+
+test("audio-aligned karaoke rebuilds the line order when measured syllables cross LRC timestamps",()=>{
+ const start=app.indexOf("  function _righeKaraokeInOrdine(");
+ const end=app.indexOf("  async function _salvaParoleDallAudio(",start);
+ assert.ok(start>=0&&end>start,"measured-line order gate is present");
+ const ordered=new Function(app.slice(start,end)+"return _righeKaraokeInOrdine;")();
+ assert.equal(ordered([{t:6},{t:7.2},{t:9.5}]),true);
+ assert.equal(ordered([{t:6},{t:7.2},{t:7.2}]),true,
+  "simultaneous lyric cues do not require a needless DOM rebuild");
+ assert.equal(ordered([{t:6},{t:9.1},{t:8.8}]),false,
+  "a late voice onset must not leave an unsorted binary-search timeline");
+ assert.equal(ordered([{t:6},{t:NaN},{t:10}]),false);
+ assert.equal(ordered([{t:6},{t:-1}]),false);
+ assert.match(app,/const inPlace=_righeKaraokeInOrdine\(joined\)&&/);
+ assert.match(app,/\}else openLyrics\(\);/);
+});
