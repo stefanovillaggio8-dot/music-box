@@ -41,7 +41,7 @@ test("measured musical boundary can overlap without requiring an entire identica
   "const similarNotes=()=>({matches:false,focused:.85,phrase:.76,score:.80,"+
     "alignment:{matches:false,score:.82,weakest:.61}});"+
   "const camelotMatch=()=>({score:.95,weight:.21});"+
-  safe+s+"return measuredBeatBridge;"
+  "const beatBearingIntro=(b,min)=>b.introDrive>=min;"+safe+s+"return measuredBeatBridge;"
  )();
  const a={duration:180,last:179.96,bpm:120,beatConfidence:.29,
   outroFinalNotes:[1],protectedEnding:false,beatAnchor:175.5};
@@ -586,7 +586,7 @@ test("late vocals veto the join; matched protected endings keep every audible be
   "const grooveAgreement=()=>({score:.90});"+
   "const similarNotes=()=>({matches:true,focused:.86,phrase:.78,alignment:{matches:true}});"+
   "const camelotMatch=()=>({weight:.1,score:.5});"+
-  "const musicalIntroEntry=()=>0;"+code+"return rhythmicFullTailJoin;")();
+  "const musicalIntroEntry=()=>0,beatBearingIntro=(b,min)=>b.introDrive>=min;"+code+"return rhythmicFullTailJoin;")();
  const notes=Array(12).fill(.10);
  const a={duration:180,last:179.9,bpm:120,beatConfidence:.23,
   protectedEnding:false,outroFinalNotes:notes};
@@ -874,6 +874,7 @@ test("desktop compares both chord changes and drum grooves, not BPM alone",()=>{
   "const grooveAgreement=(a,b)=>b.groove;"+
   "const onsetPairAgreement=()=>({certified:true});"+
   "const camelotMatch=(a,b)=>b.key;"+
+  "const beatBearingIntro=(b,min)=>b.introDrive>=min;"+
   source.slice(start,end)+"return desktopBeatPairCertified;")();
  const a={bpm:126,beatConfidence:.55,last:180};
  const b={bpm:127,beatConfidence:.52,introDrive:.8,
@@ -1048,6 +1049,7 @@ test("a measured instrumental beat can enter beneath a complete outgoing vocal",
   "const similarNotes=()=>({focused:.93,phrase:.90,alignment:{score:.93,matches:true}});"+
   "const onsetPeriodicity=()=>.85,onsetGridPhase=()=>0,musicalIntroEntry=()=>0;"+
   "const alignedEarlyOnsetAgreement=()=>({score:.95,first:.95,second:.95});"+
+  "const beatBearingIntro=(b,min)=>b.introDrive>=min;"+
   source.slice(source.indexOf("function measuredLocalBeatGrid("),
     source.indexOf("function measuredPulseAlignment("))+
   source.slice(i,j)+";return earlyMatchedBar;"
