@@ -2597,13 +2597,13 @@
    },
    "[\"davide e golia\",\"kid yugi\"]": {
     "v": 0,
-    "s": 191,
+    "s": 216,
     "t": "Davide e Golia",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"davide e golia\",\"kid yugi\"]": {
     "v": 0,
-    "s": 191,
+    "s": 216,
     "t": "Davide e Golia",
     "a": "Kid Yugi"
    },
@@ -4103,13 +4103,13 @@
    },
    "[\"non avere paura\",\"tommaso paradiso\"]": {
     "v": 0,
-    "s": 166,
+    "s": 224,
     "t": "non avere paura",
     "a": "tommaso paradiso"
    },
    "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
     "v": 0,
-    "s": 166,
+    "s": 224,
     "t": "non avere paura",
     "a": "tommaso paradiso"
    },
@@ -5356,14 +5356,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
-    "v": 0,
-    "s": 368,
+    "v": 1,
+    "s": 440,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
-    "v": 0,
-    "s": 368,
+    "v": 1,
+    "s": 440,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
@@ -6149,13 +6149,13 @@
    },
    "[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
     "v": 1,
-    "s": 440,
+    "s": 466,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
    "m:2026-11|[\"la musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\",\"coez\"]": {
     "v": 1,
-    "s": 440,
+    "s": 466,
     "t": "La musica non c'ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨",
     "a": "Coez"
    },
@@ -9189,6 +9189,18 @@
     "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂ "
    },
+   "[\"per il sangue versato\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Per il Sangue Versato",
+    "a": "Kid Yugi"
+   },
+   "m:2026-11|[\"per il sangue versato\",\"kid yugi\"]": {
+    "v": 0,
+    "s": 80,
+    "t": "Per il Sangue Versato",
+    "a": "Kid Yugi"
+   },
    "[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 2,
     "s": 335,
@@ -9986,18 +9998,6 @@
     "s": 9,
     "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃ "
-   },
-   "[\"per il sangue versato\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Per il Sangue Versato",
-    "a": "Kid Yugi"
-   },
-   "m:2026-11|[\"per il sangue versato\",\"kid yugi\"]": {
-    "v": 0,
-    "s": 80,
-    "t": "Per il Sangue Versato",
-    "a": "Kid Yugi"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
