@@ -201,6 +201,11 @@ function estimateRows(rows){
  });
 }
 function spanWords(document,row,container){
+ // Proportional syllable timings from a LINE are not audio evidence.
+ // Paint the full line until genuine per-word timecodes are available.
+ // Keeping guessed `words` in memory lets the alignment engine know
+ // this line still needs transcription; it must never animate them.
+ if(row?.estimated===true){container.textContent=row.text;return []}
  const words=validWords(row.words,row.text,row.t,row.end??null);
  if(words.length<2){container.textContent=row.text;return []}
  const elements=[];
