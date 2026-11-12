@@ -576,8 +576,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
  assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
- assert.match(html,/audio-lyrics-align\.js\?v=6724&amp;lang=6/);
- assert.equal(sw.split("audio-lyrics-align.js?v=6724&lang=6").length-1,2);
+ assert.match(html,/audio-lyrics-align\.js\?v=6727&amp;lang=7/);
+ assert.equal(sw.split("audio-lyrics-align.js?v=6727&lang=7").length-1,2);
  assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
 });
 
@@ -652,7 +652,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"6":file==="immersive.js"?"5":file==="app.js"?"4":"2";
+  const wordCache=file==="word-karaoke.js"?"7":file==="immersive.js"?"5":file==="app.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -1199,4 +1199,43 @@ test("immersive karaoke rejects stale lyrics from a different recording during D
   {text:"No explicit ID"},"legacy verified built-in lyrics remain available");
  assert.match(immersive,/Date\.now\(\)-lastLyricsRefreshAt>1800/,
   "on-screen corrections should propagate promptly, without polling at frame rate");
+});
+
+
+test("distinct long vocals keep their measured onset beyond an early LRC cue, unlike repeated hooks",()=>{
+ const alignSource=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
+ const karaokeSource=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
+ const win={};
+ new Function("window","globalThis",alignSource)(win,win);
+ new Function("window","globalThis",karaokeSource)(win,win);
+ const text="Every single night the city remembers your name";
+ const tokens=text.split(" ");
+ const makeChunks=(offset,wrong=-1)=>tokens.map((word,i)=>({
+  text:" "+(i===wrong?"different":word),
+  timestamp:[+(offset+i*.31).toFixed(3),+(offset+i*.31+.22).toFixed(3)]
+ }));
+ const base=[{t:10,text},{t:18,text:"A different line begins"}];
+ const measured=win.MusicBoxAudioAlign.alignWindow(base,makeChunks(12.35),0,28);
+ assert.equal(measured.length,1,"seven-plus exact unique words can confirm a late vocal");
+ assert.equal(measured[0].sourceT,10,"the original LRC anchor is retained");
+ assert.equal(measured[0].t,12.35,"the first measured syllable drives display");
+ const stored=win.MusicBoxWordKaraoke.normalizeRows(measured);
+ assert.equal(stored[0].sourceT,10,"normalization must not drop a trusted 2.35s correction");
+ assert.equal(stored[0].t,12.35);
+ assert.equal(stored[0].words.length,tokens.length);
+ assert.equal(win.MusicBoxAudioAlign.alignWindow(base,makeChunks(12.85),0,28).length,0,
+  "an implausible 2.85-second shift is rejected");
+ assert.equal(win.MusicBoxAudioAlign.alignWindow(base,makeChunks(12.35,3),0,28).length,0,
+  "even one incorrect word prevents a measured correction");
+ const short=[{t:10,text:"We feel the music tonight"},{t:18,text:"Another lyric line"}];
+ const lateShort="We feel the music tonight".split(" ").map((word,i)=>({
+  text:" "+word,timestamp:[12.1+i*.30,12.32+i*.30]
+ }));
+ assert.equal(win.MusicBoxAudioAlign.alignWindow(short,lateShort,0,28).length,0,
+  "short repeated hooks cannot use the extended lag allowance");
+ const appSource=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
+ assert.match(appSource,/row\.t>=original\.t-\.45&&row\.t<=original\.t\+maxLag/,
+  "the save path must preserve the same validated offset bounds");
+ assert.match(appSource,/return \{id:currentId,text:String\(l\.text\|\|""\)/,
+  "immersive karaoke must receive the currently playing recording ID");
 });
