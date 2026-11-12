@@ -5927,13 +5927,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 124,
+    "s": 140,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 124,
+    "s": 140,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -6719,13 +6719,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 140,
+    "s": 209,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 140,
+    "s": 209,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ©"
    },
@@ -7517,13 +7517,13 @@
    },
    "[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 209,
+    "s": 234,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
    "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃÂÃÂÃÂÃÂ©\"]": {
     "v": 0,
-    "s": 209,
+    "s": 234,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂÃÂÃÂ©"
    },
@@ -8357,13 +8357,13 @@
    },
    "[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 84,
+    "s": 139,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
     "v": 1,
-    "s": 84,
+    "s": 139,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
@@ -9155,13 +9155,13 @@
    },
    "[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
     "v": 1,
-    "s": 139,
+    "s": 162,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
     "v": 1,
-    "s": 139,
+    "s": 162,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -9999,6 +9999,18 @@
     "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃ "
    },
+   "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 1,
+    "s": 52,
+    "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 1,
+    "s": 52,
+    "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
+    "a": "thasup"
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 2,
     "s": 335,
@@ -10229,13 +10241,13 @@
    },
    "[\"il regalo più grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 271,
+    "s": 300,
     "t": "Il Regalo Più Grande",
     "a": "Tiziano Ferro"
    },
    "m:2026-11|[\"il regalo più grande\",\"tiziano ferro\"]": {
     "v": 0,
-    "s": 271,
+    "s": 300,
     "t": "Il Regalo Più Grande",
     "a": "Tiziano Ferro"
    },
@@ -10799,13 +10811,13 @@
    },
    "[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 1,
-    "s": 52,
+    "s": 97,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
     "v": 1,
-    "s": 52,
+    "s": 97,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    }
