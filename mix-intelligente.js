@@ -1943,6 +1943,15 @@ function voiceThreatensPlan(voice,isCurrent,isNext,currentPlan){
 
 // Read lightweight saved analysis first, without waiting for a whole MP3 to
 // be decoded again just to build a small iPhone playback preview.
+// An already analyzed track needs no network round trip after a seek.
+// Build its first safe cue from source-specific measurements. Optional vocal
+// scanning and decoding can refine the plan without blocking playback.
+function alreadyMeasuredAnalysis(track,app){
+ if(!track)return null;
+ const source=app?.mixUrl?.(track)||track.url;
+ const local=source?cache.get(String(source)):null;
+ return withValidatedVoice(deepLookup(track),local);
+}
 async function cachedMobileAnalysis(track){
  const source=bridge()?.mixUrl?.(track)||track?.url;
  if(!source)return null;
@@ -5681,6 +5690,12 @@ function tick(){
   // play an uncertified overlap.
   plan=null;
   const now=app.allTracks()?.find(t=>t.id===id);
+  // A seek near the next transition must not wait for IndexedDB or a
+  // full MP3 decode; that used to miss the complete mixing window.
+  // update() still enforces every musical, lyric and vocal safety gate.
+  a=alreadyMeasuredAnalysis(now,app);
+  b=alreadyMeasuredAnalysis(next,app);
+  if(a||b)update();
   // Safari decodes one song at a time: get the next intro ready first.
   // Do not wait for the entire current track before preparing the next.
   if(isIOS){
