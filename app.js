@@ -7745,12 +7745,20 @@ box.innerHTML = "";
     if(baseline.length<3)return 0;
     const previous=_righeTestoConParole(existing);
     let added=0;
+    const changedRows=[];
+    // The LRC time identifies WHICH phrase Whisper checked. The new row.t
+    // is the actual first sung word and can legitimately differ by 1.7s.
+    // Never equate only the text: repeated choruses must remain separate.
+    const sourceT=row=>Number.isFinite(row?.sourceT)?row.sourceT:row?.t;
     const joined=baseline.map((original,i)=>{
-      const kept=previous.find(row=>row.t===original.t&&row.text===original.text);
-      if(kept?.words?.length>=2&&!kept.estimated)return kept; // Never override verified word timing.
+      const kept=previous.find(row=>
+        Math.abs(sourceT(row)-original.t)<.02&&row.text===original.text);
+      if(kept?.words?.length>=2&&!kept.estimated)return kept;
       const matched=incoming.find(row=>
-        Math.abs(row.t-original.t)<.02&&row.text===original.text&&row.words?.length>=3);
-      if(matched){added++;return matched}
+        Math.abs(sourceT(row)-original.t)<.02&&
+        Math.abs(row.t-original.t)<=1.70&&
+        row.text===original.text&&row.words?.length>=3);
+      if(matched){added++;changedRows.push(i);return matched}
       return kept&&!kept.estimated?kept:original;
     });
     if(!added)return 0;
@@ -7759,7 +7767,25 @@ box.innerHTML = "";
     localLyrics[id]=updated;
     try{if(db)await dbPutLyrics({...updated,title:updated.title||current()?.title||"",
       artist:updated.artist||current()?.artist||""})}catch(_){}
-    if(!$("lyricsPanel").hidden&&!_vistaTestiCompleta)openLyrics();
+    if(!$("lyricsPanel").hidden&&!_vistaTestiCompleta){
+      // Patch only newly verified phrases. Rebuilding every lyric row
+      // mid-song produced an expensive DOM reset and visible karaoke freeze.
+      const inPlace=lyricLines.length===joined.length&&changedRows.every(i=>
+        lyricLines[i]&&_lyricWordParts[i]?.row?.text===joined[i].text);
+      if(inPlace){
+        for(const i of changedRows){
+          const p=lyricLines[i],row=joined[i];
+          p.replaceChildren();
+          const elements=window.MusicBoxWordKaraoke?.spanWords(document,row,p)||[];
+          if(!elements.length)p.textContent=row.text;
+          p.dataset.t=String(row.t);
+          _lyricWordParts[i]={row,elements};
+        }
+        if(lyricActive>=0)lyricLines[lyricActive]?.classList.remove("on");
+        lyricActive=-1;
+        tickLyrics();
+      }else openLyrics();
+    }
     render();
     return added;
   }
@@ -9355,12 +9381,15 @@ function openProfile() {
   }catch(_){/* Sync is optional: lyrics always work without network. */ }
 
   function activeLineIndex(time) {
-    let idx = -1;
-    for (let i = 0; i < lyricLines.length; i++) {
-      if (Number(lyricLines[i].dataset.t) <= time) idx = i;
-      else break;
+    // A binary lookup avoids repeatedly reading hundreds of DOM datasets
+    // 60 times a second when Whisper and WebGPU are also active.
+    let low=0,high=lyricLines.length;
+    while(low<high){
+      const mid=(low+high)>>>1;
+      if(Number(lyricLines[mid].dataset.t)<=time)low=mid+1;
+      else high=mid;
     }
-    return idx;
+    return low-1;
   }
 
   // Native timeupdate events are too sparse for tight line changes on iOS.
