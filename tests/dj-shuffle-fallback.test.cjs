@@ -43,6 +43,7 @@ function fixture(options={}){
     (options.keyMatch?".20":"0")+"});",
   "const hasImmediateMusicalIntro=t=>t.introDrive>=.30;",
    "const measuredQuietRhythmicIntro=t=>false; // synthetic tracks have no measured PCM",
+   "const beatBearingIntro=(t,min=.43)=>hasImmediateMusicalIntro(t)&&t.introDrive>=min;",
   "const similarNotes=(a,b)=>({focused:Number.isFinite(b?.focusScore)?b.focusScore:"+
     Number(options.focused??.82)+
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
