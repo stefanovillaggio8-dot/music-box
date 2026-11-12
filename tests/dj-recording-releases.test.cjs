@@ -393,6 +393,8 @@ test("quiet but beat-bearing opening survives every strict energy gate only with
  assert.equal(verify({...candidate,introOnset:intro.map((x,i)=>i<48?x:.02)},.45),false,
   "a pulse in the first half alone is not a rhythmic intro");
  assert.equal(verify({...candidate,introDrive:.06},.45),false);
+ assert.equal(verify({...candidate,introDrive:undefined},.45),false,
+  "unmeasured intro energy cannot be certified from a bare BPM");
  assert.equal(verify({...candidate,first:2.4},.45),false,
   "a delayed attack must not produce a silent early transition");
  assert.equal(verify({...candidate,introDrive:.85,introOnset:null},.45),true,
