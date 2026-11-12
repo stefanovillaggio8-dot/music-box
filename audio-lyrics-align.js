@@ -116,7 +116,7 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   const measuredStart=parts[0].t;
   const displayStart=Math.abs(measuredStart-start)<=1.70?
    measuredStart:start;
-  results.push({t:+displayStart.toFixed(3),
+  results.push({t:+displayStart.toFixed(3),sourceT:+start.toFixed(3),
    text:String(row.text).trim(),words:parts,
    alignedFromAudio:true});
  }
