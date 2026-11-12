@@ -2,7 +2,7 @@
 const test=require("node:test"),assert=require("node:assert/strict");
 const fs=require("node:fs"),path=require("node:path");
 const text=fs.readFileSync(path.join(__dirname,"..","mix-intelligente.js"),"utf8");
-const start=text.indexOf("function deepLookup(track){");
+const start=text.indexOf("function verifiedIndexedGridTempo(");
 const end=text.indexOf("function deepStatus(){",start);
 assert.ok(start>0&&end>start);
 const lookup=(entries)=>new Function("deepIndex",text.slice(start,end)+"return deepLookup")({
