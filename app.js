@@ -9698,7 +9698,7 @@ function openProfile() {
     $("lyricsMode").textContent=useSynced
       ?(precise
         ?(l.audioWordSynced?"KARAOKE · PAROLA PER PAROLA (IA)":"KARAOKE · PAROLA PER PAROLA")
-        :estimated?"KARAOKE · PAROLA PER PAROLA (STIMA)":"TESTO SINCRONIZZATO")
+        :estimated?"KARAOKE · FRASI SINCRONIZZATE (PAROLE DA VERIFICARE)":"TESTO SINCRONIZZATO")
       :"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
     if(switchView){
