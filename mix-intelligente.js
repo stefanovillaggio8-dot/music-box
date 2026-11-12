@@ -5665,9 +5665,9 @@ function tick(){
     chosen=certifiedQuietAlternative;
    const realBeat=chosen&&["beat","snap","phrase"].includes(chosen.kind)?chosen:null;
    plan=(weakIphoneMatch||weakDesktopMatch)?
-      certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedTempoFree||certifiedPostlude:
+      certifiedImpact||certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||certifiedTempoFree:
      realBeat||certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)||
-      certifiedQuietAlternative||certifiedSilentBridge||certifiedTempoFree||certifiedPostlude||
+      certifiedQuietAlternative||certifiedSilentBridge||certifiedPostlude||certifiedTempoFree||
       compatibleContinuity||chosen;
    lastPlanMissing=!(a&&b);
    // The final cue may arrive after buffering. Reuse the existing decoder.
