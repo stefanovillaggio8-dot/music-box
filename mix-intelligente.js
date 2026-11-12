@@ -3122,7 +3122,7 @@ function hasImmediateMusicalIntro(b){
 // BEAT analysis; they never bypass harmony, voice or beat-grid certificates.
 function beatBearingIntro(b,minimumDrive=.43){
  if(!b||!hasImmediateMusicalIntro(b))return false;
- if(!Number.isFinite(b.introDrive))return true;
+ if(!Number.isFinite(b.introDrive))return false;
  return b.introDrive>=minimumDrive||measuredQuietRhythmicIntro(b);
 }
 // A safe ending alone does not prove two songs belong in the same mix.
