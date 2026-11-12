@@ -7708,9 +7708,9 @@ box.innerHTML = "";
     // Removing LRC/Enhanced timestamps allows legitimate punctuation,
     // split-line and small timing differences across lyric providers.
     const words=value=>String(value||"")
-      .replace(/\\[\\d{1,3}:\\d{2}(?:[.:]\\d{1,3})?\\]/g," ")
-      .replace(/<\\d{1,3}:\\d{2}(?:[.:]\\d{1,3})?>/g," ")
-      .normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")
+      .replace(/\[\d{1,3}:\d{2}(?:[.:]\d{1,3})?\]/g," ")
+      .replace(/<\d{1,3}:\d{2}(?:[.:]\d{1,3})?>/g," ")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
       .toLowerCase().match(/[a-z0-9]+/g)||[];
     const grams=items=>{
       const out=new Set();
