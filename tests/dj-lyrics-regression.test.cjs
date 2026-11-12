@@ -736,7 +736,9 @@ test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
   app.indexOf("function _programmaTestiKaraoke(",app.indexOf("async function _completaTestoInAscolto(")));
  assert.match(fetching, /_testoAppartieneAlBrano\(t\.id,entry\)/,
   "Auto-fetched karaoke must never overwrite known lyrics of another recording");
- assert.match(app, /const local=_testoLocaleVerificato\(id\);[\s\S]{0,180}mixLyricCues/,
+ const djCues=app.slice(app.indexOf("mixLyricCues:(id)=>"),
+  app.indexOf("mixCandidates:()=>",app.indexOf("mixLyricCues:(id)=>")));
+ assert.match(djCues,/const local=_testoLocaleVerificato\(id\)/,
   "DJ must not trust the wrong song's lyric boundary");
 });
 
