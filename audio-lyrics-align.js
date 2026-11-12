@@ -82,7 +82,11 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
    // Accept only a complete, ordered EXACT match of >=4 spoken words
    // in that wider region; short/repeated hooks retain the strict gate.
    const lag=candidates[k].t-start;
-   const maximumLate=tokens.length>=4?1.70:.85;
+   // Long, distinctive phrases can legitimately start >1.7s after an
+   // early LRC cue. Require seven-plus exact ordered ASR words and at least
+   // five distinct tokens; short/repeated hooks keep the strict gate.
+   const extended=keys.length>=7&&new Set(keys).size>=5;
+   const maximumLate=extended?2.70:tokens.length>=4?1.70:.85;
    if(candidates[k].key!==keys[0]||lag<-.45||lag>maximumLate)continue;
    const found=[candidates[k]];let cursor=k+1;
    for(let w=1;w<tokens.length;w++){
@@ -114,8 +118,9 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   // Keeping the provider's earlier row.t made a visually premature
   // karaoke line even though every individual word was audio-aligned.
   const measuredStart=parts[0].t;
-  const displayStart=Math.abs(measuredStart-start)<=1.70?
-   measuredStart:start;
+  const maxMeasuredOffset=keys.length>=7&&new Set(keys).size>=5?2.70:1.70;
+  const displayStart=measuredStart>=start-.45&&
+   measuredStart<=start+maxMeasuredOffset?measuredStart:start;
   results.push({t:+displayStart.toFixed(3),sourceT:+start.toFixed(3),
    text:String(row.text).trim(),words:parts,
    alignedFromAudio:true});
