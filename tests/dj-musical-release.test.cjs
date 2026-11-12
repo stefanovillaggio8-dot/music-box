@@ -34,6 +34,30 @@ function fixture(ios=false){
   introDrive:.8,safeIntroAt:0,introBeat:0};
  return {e,cue,outgoing,incoming};
 }
+test("measured quiet release allows a non-beatmatched transition across different BPM",()=>{
+ const code=source.slice(source.indexOf("function tempoFreeReleaseBridge("),
+  source.indexOf("function mobileMixAllowed("));
+ assert.ok(code.startsWith("function tempoFreeReleaseBridge("));
+ const compile=ios=>new Function("isIOS",
+  "const hasImmediateMusicalIntro=()=>true,musicalIntroEntry=()=>0;"+
+  code+"return tempoFreeReleaseBridge;")(ios);
+ const from={duration:100,last:99,protectedEnding:false,lastLyricAt:80,
+  bpm:86,dropRelease:{lastImpactAt:92,releaseAt:94,score:.82,quietLevel:.18}};
+ const to={duration:182,bpm:155,introDrive:.79,safeIntroAt:0};
+ const bridge=compile(false)(from,to,100);
+ assert.ok(bridge&&bridge.tempoFreeRelease&&bridge.kind==="soft");
+ assert.equal(bridge.tempo,1,"different BPM must never be labeled beatmatch");
+ assert.ok(bridge.begin>94&&bridge.end>=99&&bridge.preserveTail);
+ assert.equal(compile(true)(from,to,100),null,"iPhone must not inherit untested desktop dual-stream path");
+ assert.equal(compile(false)({...from,lastLyricAt:92},to,100),null,
+  "A late lyric is not proof that the voice ended before a measured decay");
+ assert.equal(compile(false)({...from,lastLyricAt:null},to,100),null,
+  "Missing vocal evidence must not certify instrumental music");
+ assert.equal(compile(false)({...from,protectedEnding:true},to,100),null);
+ assert.equal(compile(false)({...from,dropRelease:{...from.dropRelease,quietLevel:.35}},to,100),null);
+ assert.equal(compile(false)(from,{...to,firstVoiceAt:.2},100),null);
+ assert.equal(compile(false)(from,to,89),null);
+});
 test("detects final drop release before encoded silence",()=>{
  const {cue}=fixture();
  assert.ok(cue,"last drop must be detected");
