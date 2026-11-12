@@ -104,9 +104,21 @@ function renderLyrics(force){
    index=Math.min(lyricRows.length-1,Math.floor(progress*lyricRows.length));
   }
  }
+ if(lyricTimed&&index===lyricRows.length-1){
+  const last=lyricRows[index],lastWord=last.words?.[last.words.length-1];
+  const wordEnd=Number(lastWord?.end);
+  const phraseEnd=Number(last.end);
+  const expiry=Number.isFinite(phraseEnd)&&phraseEnd>=last.t?
+    phraseEnd+2.5:Number.isFinite(wordEnd)&&wordEnd>=last.t?
+    wordEnd+2.5:last.t+9;
+  // A missing final LRC line must NOT leave an unrelated phrase
+  // brightly active throughout a long instrumental outro.
+  if(adjusted>expiry)index=lyricRows.length;
+ }
  if(index===lastLine){
-  if(index>=0)window.MusicBoxWordKaraoke?.paintWords(
-   lyricRows[index],lyricRows[index]._elements,adjusted);
+  if(index>=0&&index<lyricRows.length)
+   window.MusicBoxWordKaraoke?.paintWords(
+    lyricRows[index],lyricRows[index]._elements,adjusted);
   return;
  }
  // Only the changed passage needs DOM class updates. Toggling all 500
