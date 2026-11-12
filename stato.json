@@ -10060,13 +10060,13 @@
    },
    "[\"dove è sempre sole\",\"modà\"]": {
     "v": 0,
-    "s": 98,
+    "s": 128,
     "t": "Dove è sempre sole",
     "a": "Modà"
    },
    "m:2026-11|[\"dove è sempre sole\",\"modà\"]": {
     "v": 0,
-    "s": 98,
+    "s": 128,
     "t": "Dove è sempre sole",
     "a": "Modà"
    },
@@ -10132,13 +10132,13 @@
    },
    "[\"labirinto\",\"luchè\"]": {
     "v": 0,
-    "s": 152,
+    "s": 171,
     "t": "Labirinto",
     "a": "Luchè"
    },
    "m:2026-11|[\"labirinto\",\"luchè\"]": {
     "v": 0,
-    "s": 152,
+    "s": 171,
     "t": "Labirinto",
     "a": "Luchè"
    },
