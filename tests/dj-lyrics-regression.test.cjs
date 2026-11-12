@@ -691,6 +691,55 @@ test("queued vocal scanning protects playback and respects native buffering",()=
 });
 
 
+test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
+ const builtin=JSON.parse(fs.readFileSync(path.join(__dirname,"..","lyrics.json"),"utf8"));
+ const first=app.indexOf("const _testoIdentitaCache=new WeakMap()");
+ const end=app.indexOf("// A foreground, rate-limited upgrade",first);
+ assert.ok(first>0&&end>first,"read the actual lyric identity and selection code");
+ const code=app.slice(first,end);
+ const am=builtin["b-track-205"],pa=builtin["b-track-28"],jo=builtin["b-track-213"];
+ assert.equal(am.title,"Amelie");
+ assert.equal(pa.title,"Paganini");
+ assert.equal(jo.title,"Jolly");
+ const local={};
+ const currentId="b-track-205";
+ const parse=s=>String(s||"").split("\n").filter(x=>/^\[\d/.test(x));
+ const engine=new Function("lyricsData","localLyrics","currentId","parseSynced",
+   code+";return {same:_testoAppartieneAlBrano,active:currentLyrics};")(
+    builtin,local,currentId,parse);
+ const fakeLyrics=(source)=>({
+  id:currentId,title:"Amelie",artist:"Kid Yugi",
+  synced:source.synced,text:source.text,
+  wordRows:[{t:3,text:"Wrong song",words:[{t:3,text:"Wrong "},{t:4,text:"song"}]}]
+ });
+ for(const wrong of [pa,jo]){
+  local[currentId]=fakeLyrics(wrong);
+  assert.equal(engine.same(currentId,local[currentId]),false,
+   "Matching artist, displayed title and timed words do not prove song identity");
+  assert.equal(engine.active(),am,
+   "Built-in Amelie lyrics must beat a previously cached wrong-song karaoke");
+ }
+ local[currentId]=fakeLyrics(am);
+ assert.equal(engine.same(currentId,local[currentId]),true);
+ assert.equal(engine.active(),local[currentId],
+  "A correctly associated per-song word upgrade must remain eligible");
+ const retimed={...fakeLyrics(am),synced:am.synced.replace(/\[00:09\.99\]/,"[00:10.12]")};
+ assert.equal(engine.same(currentId,retimed),true,
+  "Small timing edits and different punctuation must not reject the right song");
+ assert.equal(engine.same("b-track-500",fakeLyrics(am)),false,
+  "An explicit mismatched recording ID must never be reused across profiles");
+ const upgrading=app.slice(app.indexOf("async function _verificaParoleKaraoke("),
+  app.indexOf("async function _salvaParoleDallAudio("));
+ assert.match(upgrading, /_testoAppartieneAlBrano\(id,\{synced:result\.synced\}\)/,
+  "Word upgrades must check identity BEFORE writing to IndexedDB");
+ const fetching=app.slice(app.indexOf("async function _completaTestoInAscolto("),
+  app.indexOf("function _programmaTestiKaraoke(",app.indexOf("async function _completaTestoInAscolto(")));
+ assert.match(fetching, /_testoAppartieneAlBrano\(t\.id,entry\)/,
+  "Auto-fetched karaoke must never overwrite known lyrics of another recording");
+ assert.match(app, /const local=_testoLocaleVerificato\(id\);[\s\S]{0,180}mixLyricCues/,
+  "DJ must not trust the wrong song's lyric boundary");
+});
+
 test("enhanced LRC preserves early measured syllables instead of estimating karaoke",()=>{
  const script=fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8");
  const karaoke=new Function("const window={};"+script+";return window.MusicBoxWordKaraoke;")();
