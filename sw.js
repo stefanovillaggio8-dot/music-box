@@ -1,4 +1,4 @@
-const CACHE = "spotifynonavraiimieisoldi-v6730";
+const CACHE = "spotifynonavraiimieisoldi-v6731";
 /* Le canzoni offline stanno in una cache SEPARATA dai file dell'app.
    Motivo (Ste, 20/10/2026): "ho messo 2gb e quando diego toglie la
    connessione non gli si apre l'app". Con le canzoni e i file dell'app
@@ -50,13 +50,13 @@ const CORE = [
   "./word-karaoke.js?v=6715&words=7",
   "./audio-lyrics-align.js?v=6728&lang=8",
   "./audio-lyrics-worker.js?v=6715&lang=1",
-  "./app.js?v=6730&words=4",
+  "./app.js?v=6731&words=4",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6730&dj=29", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6731&dj=29", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -92,13 +92,13 @@ const OFFLINE_SHELL = [
   "./word-karaoke.js?v=6715&words=7",
   "./audio-lyrics-align.js?v=6728&lang=8",
   "./audio-lyrics-worker.js?v=6715&lang=1",
-  "./app.js?v=6730&words=4",
+  "./app.js?v=6731&words=4",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6730&dj=29",
+  "./mix-intelligente.js?v=6731&dj=29",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6715&words=5"
 ];

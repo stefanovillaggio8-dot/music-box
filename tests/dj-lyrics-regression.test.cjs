@@ -1239,3 +1239,42 @@ test("distinct long vocals keep their measured onset beyond an early LRC cue, un
  assert.match(appSource,/return \{id:currentId,text:String\(l\.text\|\|""\)/,
   "immersive karaoke must receive the currently playing recording ID");
 });
+
+test("audio-aligned karaoke rebuilds the line order when measured syllables cross LRC timestamps",()=>{
+ const start=app.indexOf("  function _righeKaraokeInOrdine(");
+ const end=app.indexOf("  async function _salvaParoleDallAudio(",start);
+ assert.ok(start>=0&&end>start,"measured-line order gate is present");
+ const ordered=new Function(app.slice(start,end)+"return _righeKaraokeInOrdine;")();
+ assert.equal(ordered([{t:6},{t:7.2},{t:9.5}]),true);
+ assert.equal(ordered([{t:6},{t:7.2},{t:7.2}]),true,
+  "simultaneous lyric cues do not require a needless DOM rebuild");
+ assert.equal(ordered([{t:6},{t:9.1},{t:8.8}]),false,
+  "a late voice onset must not leave an unsorted binary-search timeline");
+ assert.equal(ordered([{t:6},{t:NaN},{t:10}]),false);
+ assert.equal(ordered([{t:6},{t:-1}]),false);
+ assert.match(app,/const inPlace=_righeKaraokeInOrdine\(joined\)&&/);
+ assert.match(app,/\}else openLyrics\(\);/);
+});
+
+test("last karaoke verse stops glowing after the measured final sung word",()=>{
+ const begin=app.indexOf("  function activeLineIndex(time) {");
+ const end=app.indexOf("  // Native timeupdate events",begin);
+ assert.ok(begin>=0&&end>begin);
+ const choose=(row)=>new Function("lyricLines","_lyricWordParts",
+  app.slice(begin,end)+"return activeLineIndex;")(
+  [{dataset:{t:"10"}},{dataset:{t:"80"}}],
+  [{row:{t:10}},{row}]);
+ const measured=choose({t:80,words:[
+  {t:80,text:"fine ",end:81},{t:82,text:"canzone",end:82.7}]});
+ assert.equal(measured(84.9),1);
+ assert.equal(measured(85.21),-1,
+  "do not light the final line for 9s after its last measured syllable");
+ const explicit=choose({t:80,end:86,words:[{t:82,end:82.7}]});
+ assert.equal(explicit(87.1),1,"honor longer verified line endings");
+ assert.equal(explicit(88.6),-1);
+ const estimated=choose({t:80,estimated:true,words:[{t:80,end:81}]});
+ assert.equal(estimated(88),1,"estimated word timing cannot certify the vocal outro");
+ const unknown=choose({t:80});
+ assert.equal(unknown(88),1,"do not invent an early finish without word timing");
+ assert.equal(unknown(89.1),-1);
+});

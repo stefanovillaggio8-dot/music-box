@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.730";
+  const APP_VERSION = "6.731";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -7786,6 +7786,19 @@ box.innerHTML = "";
     finally{_ricercheParoleInCorso.delete(id)}
   }
 
+  // Verified Whisper offsets can reorder two adjacent lines. The karaoke
+  // player uses binary search over DOM timestamps, so a partial DOM patch
+  // is allowed only when every resulting line remains chronological.
+  function _righeKaraokeInOrdine(rows){
+    if(!Array.isArray(rows))return false;
+    let previous=-1;
+    for(const row of rows){
+      const time=Number(row?.t);
+      if(!Number.isFinite(time)||time<0||time<previous)return false;
+      previous=time;
+    }
+    return true;
+  }
   async function _salvaParoleDallAudio(id,rows){
     if(!id||id!==currentId||!Array.isArray(rows)||!rows.length)return 0;
     const engine=window.MusicBoxWordKaraoke;
@@ -7828,7 +7841,8 @@ box.innerHTML = "";
     if(!$("lyricsPanel").hidden&&!_vistaTestiCompleta){
       // Patch only newly verified phrases. Rebuilding every lyric row
       // mid-song produced an expensive DOM reset and visible karaoke freeze.
-      const inPlace=lyricLines.length===joined.length&&changedRows.every(i=>
+      const inPlace=_righeKaraokeInOrdine(joined)&&
+        lyricLines.length===joined.length&&changedRows.every(i=>
         lyricLines[i]&&_lyricWordParts[i]?.row?.text===joined[i].text);
       if(inPlace){
         for(const i of changedRows){
@@ -9455,8 +9469,16 @@ function openProfile() {
     const result=low-1;
     if(result===lyricLines.length-1&&lyricLines.length){
       const row=_lyricWordParts?.[result]?.row;
-      const end=Number(row?.end),last=Number(lyricLines[result].dataset.t);
-      const expiry=Number.isFinite(end)&&end>=last?end+2.5:last+9;
+      const last=Number(lyricLines[result].dataset.t);
+      const end=row?.end==null?NaN:Number(row.end);
+      const lastWord=row?.estimated===true?null:row?.words?.[row.words.length-1];
+      const wordEnd=lastWord?.end==null?NaN:Number(lastWord.end);
+      // Honor the actual last measured syllable; LRC line markers alone
+      // otherwise leave the final verse highlighted for nine extra seconds.
+      const knownEnd=Math.max(
+        Number.isFinite(end)&&end>=last?end:-Infinity,
+        Number.isFinite(wordEnd)&&wordEnd>=last?wordEnd:-Infinity);
+      const expiry=Number.isFinite(knownEnd)?knownEnd+2.5:last+9;
       if(Number.isFinite(last)&&time>expiry)return -1;
     }
     return result;
