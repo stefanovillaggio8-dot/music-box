@@ -9663,7 +9663,27 @@ function openProfile() {
 
   function openLyrics() {
     const l = currentLyrics();
-    if (!l) return;
+    if (!l) {
+      // A DJ handoff or rapid previous/next tap can select a song before its
+      // provider returns lyrics. The old DOM must NEVER stay visible under
+      // the new song's title: it belongs to the previous recording.
+      if (!$("lyricsPanel").hidden) {
+        _fermaKaraokePrecisione();
+        lyricLines=[]; _lyricWordParts=[]; lyricActive=-1;
+        const track=current();
+        $("lyricsTitle").textContent=String(track?.title||"Brano");
+        $("lyricsSub").textContent=String(track?.artist||"");
+        const body=$("lyricsBody");
+        body.replaceChildren();
+        const placeholder=document.createElement("p");
+        placeholder.className="lyr-empty";
+        placeholder.textContent="Testo in caricamento o non disponibile per questo brano.";
+        body.appendChild(placeholder);
+        $("lyricsMode").textContent="TESTO NON DISPONIBILE";
+        $("lyricsSyncControls").hidden=true;
+      }
+      return;
+    }
     $("lyricsTitle").textContent = l.title;
     $("lyricsSub").textContent = l.artist || "";
     const body = $("lyricsBody");
