@@ -34,6 +34,30 @@ const tracks=Object.entries(database.entries||{})
   Array.isArray(x.chroma)&&x.chroma.length===12&&x.bpm>=55&&x.bpm<=210)
  .sort(([a],[b])=>a.localeCompare(b))
  .map(([key,meta])=>[key,engine.withGuardedLRC(engine.verifiedIndexedGridTempo(meta))]);
+// Independent PCM spotchecks need the EXACT simulated mix point, not a
+// generic final four seconds that can be after an earlier beat entry.
+const fromKey=arg("pair-from",""),toKey=arg("pair-to","");
+if(fromKey||toKey){
+ if(!fromKey||!toKey)throw Error("Supply both --pair-from and --pair-to");
+ const byKey=new Map(tracks);
+ const a=byKey.get(fromKey),b=byKey.get(toKey);
+ if(!a||!b)throw Error("Unanalyzable pair: "+fromKey+" -> "+toKey);
+ const plan=engine.transition(a,b,a.duration);
+ const beatLike=!!plan&&(["beat","snap","phrase"].includes(plan.kind)||
+  plan.measuredBeatBridge===true||plan.earlyBeatJoin===true||
+  plan.rhythmicGridJoin===true||plan.strongBeatBridge===true);
+ const certified=!!(beatLike&&
+  engine.desktopBeatPairCertified(a,b,plan)===true&&
+  Number.isFinite(plan.begin)&&Number.isFinite(plan.end)&&
+  Number.isFinite(a.last)&&plan.begin<a.last-.05&&
+  plan.end>plan.begin&&plan.end<=a.duration+.2&&
+  Number.isFinite(plan.score));
+ console.log("[DJ PAIR PLAN]",JSON.stringify({from:fromKey,to:toKey,
+  analyzedFrom:a.duration,analyzedTo:b.duration,
+  lastAudible:a.last,plan,beatLike,certified,
+  evidence:"metadata-engine simulation only; verify original PCM separately"}));
+ process.exit(0);
+}
 const parts=arg("shard","0/1").split("/").map(Number);
 const [shard,totalShards]=parts;
 if(!Number.isInteger(shard)||!Number.isInteger(totalShards)||shard<0||
