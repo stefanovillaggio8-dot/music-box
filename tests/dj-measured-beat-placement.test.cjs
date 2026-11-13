@@ -77,3 +77,23 @@ test("phase alignment stays a low-band preview, never a fake full-band beat cert
  assert.match(block,/placed\?\.fit\?\.ratio>=\.85/);
  assert.doesNotMatch(block,/voiceConfirmedUnderlay:true/);
 });
+
+test("3.5 percent rhythm adjustment needs both PCM grids and cannot certify full-band music",()=>{
+ const from=js.indexOf("function measuredTempoRelation(");
+ const to=js.indexOf("function measuredLocalBeatGrid(",from);
+ assert.ok(from>0&&to>from);
+ const relation=new Function(js.slice(from,to)+"return measuredTempoRelation;")();
+ const a={bpm:120,beatGrid:{reliable:true},outroOnsetWindows:[{start:90}]};
+ const b={bpm:116.1,beatGrid:{reliable:true},introBeatTimes:[.5,1,1.5,2,2.5,3]};
+ const yes=relation(a,b);
+ assert.ok(yes&&yes.ratio>1.025&&yes.ratio<1.035);
+ assert.equal(relation({...a,beatGrid:{reliable:false}},b),null);
+ assert.equal(relation(a,{...b,introBeatTimes:[]}),null);
+ assert.equal(relation(a,{...b,bpm:114}),null,"tempo correction above 3.5% remains blocked");
+ const portion=js.slice(js.indexOf("function measuredWindowRhythmUnderlay("),
+  js.indexOf("function adaptiveUnderlayLevel("));
+ assert.match(portion,/widerTempo&&\(!placed\|\|placed\.fit\.verified<4/);
+ assert.match(portion,/placed\.fit\.ratio<\.90\|\|placed\.fit\.rms>\.06/);
+ assert.match(portion,/drumOnlyUnderlay:true,preserveTail:true/);
+ assert.match(portion,/quietCertified:false/);
+});
