@@ -1272,6 +1272,8 @@ test("last karaoke verse stops glowing after the measured final sung word",()=>{
  const explicit=choose({t:80,end:86,words:[{t:82,end:82.7}]});
  assert.equal(explicit(87.1),1,"honor longer verified line endings");
  assert.equal(explicit(88.6),-1);
+ const estimated=choose({t:80,estimated:true,words:[{t:80,end:81}]});
+ assert.equal(estimated(88),1,"estimated word timing cannot certify the vocal outro");
  const unknown=choose({t:80});
  assert.equal(unknown(88),1,"do not invent an early finish without word timing");
  assert.equal(unknown(89.1),-1);
