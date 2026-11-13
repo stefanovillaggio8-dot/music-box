@@ -2867,13 +2867,13 @@
    },
    "[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 1,
-    "s": 478,
+    "s": 486,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
    "m:2026-11|[\"ci nasci, ci muori\",\"nayt\"]": {
     "v": 1,
-    "s": 478,
+    "s": 486,
     "t": "Ci nasci, ci muori",
     "a": "nayt"
    },
@@ -3323,13 +3323,13 @@
    },
    "[\"striscia\",\"tonypitony\"]": {
     "v": 2,
-    "s": 266,
+    "s": 280,
     "t": "Striscia",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"striscia\",\"tonypitony\"]": {
     "v": 2,
-    "s": 266,
+    "s": 280,
     "t": "Striscia",
     "a": "TonyPitony"
    },
@@ -3616,14 +3616,14 @@
     "a": "tha supreme"
    },
    "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 2,
-    "s": 358,
+    "v": 3,
+    "s": 406,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
    "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
-    "v": 2,
-    "s": 358,
+    "v": 3,
+    "s": 406,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
@@ -6448,14 +6448,14 @@
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "[\"non abbiamo etÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 333,
+    "v": 1,
+    "s": 335,
     "t": "Non Abbiamo EtÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"non abbiamo etÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 333,
+    "v": 1,
+    "s": 335,
     "t": "Non Abbiamo EtÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
@@ -7259,13 +7259,13 @@
    },
    "[\"non abbiamo etÃÂÃÂÃÂÃÂ \",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 335,
+    "s": 416,
     "t": "Non Abbiamo EtÃÂÃÂÃÂÃÂ ",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"non abbiamo etÃÂÃÂÃÂÃÂ \",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 1,
-    "s": 335,
+    "s": 416,
     "t": "Non Abbiamo EtÃÂÃÂÃÂÃÂ ",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
