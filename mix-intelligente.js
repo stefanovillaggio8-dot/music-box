@@ -3129,6 +3129,13 @@ function beatBearingIntro(b,minimumDrive=.43){
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
 function musicallyCompatibleOverlay(a,b,cue){
  if(!cue)return false;
+ if(cue.measuredReleaseHandoff===true){
+  const p=measuredMusicalTailUnderlay(a,b,a?.duration);
+  return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
+    cue.tempo===1&&cue.silenceTrim===false&&
+    Math.abs(p.begin-cue.begin)<.085&&Math.abs(p.end-cue.end)<.085&&
+    Math.abs(p.releaseLastMusicalAt-cue.releaseLastMusicalAt)<.085;
+ }
  if(cue.tempoFreeRelease===true){
   const p=tempoFreeReleaseBridge(a,b,a?.duration);
   return !!p&&cue.kind==="soft"&&cue.preserveTail===true&&
@@ -3677,6 +3684,66 @@ function desktopMeasuredReleaseLeadIn(a,b,dur){
    quietCertified:false,preserveTail:true,
    safeOutroAt:null,silenceTrim:false,softTailTrim:false,trailing:0};
 }
+// Cross-tempo continuity for a genuinely MEASURED final musical decay.
+// A mismatched BPM is not permission to layer two full drum sections, but
+// a quiet, still audible final release can host the next recognisable intro.
+// The original track stays at full gain until its native end; the incoming
+// preview remains subdued while its last measured musical notes ring, then
+// reaches normal volume in the genuine post-musical tail. This is NEVER a
+// certified beatmatch or a digital-silence trim.
+function measuredMusicalTailUnderlay(a,b,dur){
+ const r=a?.dropRelease;
+ if(isIOS||!a||!b||a.durationMismatch||b.durationMismatch||
+    a.protectedEnding===true||a.confidentTail===true||
+    !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+    Math.abs(a.duration-dur)>1.5||
+    !Number.isFinite(a.last)||!Number.isFinite(r?.lastImpactAt)||
+    !Number.isFinite(r?.releaseAt)||!Number.isFinite(r?.score)||
+    !Number.isFinite(r?.quietLevel)||r.score<.70||r.quietLevel>.30||
+    r.releaseAt<r.lastImpactAt||
+    a.last-r.releaseAt<1.5||a.last-r.releaseAt>5.5||
+    a.last-r.lastImpactAt<1.8||a.last-r.lastImpactAt>6||
+    dur-a.last<2.5||dur-a.last>12||
+    !Number.isFinite(b.introDrive)||b.introDrive<.20||
+    !Number.isFinite(b.first)||b.first>1.05||
+    Number(b.beatConfidence)<.16||
+    !Array.isArray(b.introOnset)||b.introOnset.length!==96||
+    !Number.isFinite(b.bpm)||
+    onsetPeriodicity(b.introOnset,b.bpm)<.20)return null;
+ // No silent LRC or missing speech detection can certify vocal absence.
+ // The final sung phrase must have ended before the measured last impact.
+ const lyricSafe=Number.isFinite(a.lastLyricAt)&&
+   a.lastLyricAt<=r.lastImpactAt-3.3;
+ const voiceSafe=Boolean(a.voiceModel&&
+   Number.isFinite(a.voiceScannedEnd)&&a.voiceScannedEnd>=a.last-.65&&
+   Number.isFinite(a.lastVoiceAt)&&
+   a.lastVoiceAt<=r.lastImpactAt-2.3);
+ if(!lyricSafe&&!voiceSafe)return null;
+ if((Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>r.lastImpactAt-2.3)||
+    (Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>r.lastImpactAt-3.3))
+   return null;
+ // The incoming first words must not be thrown away in a muted preview.
+ // Guarded LRC is deliberately early by up to 2.8 s; even that
+ // conservative onset must land only as the original notes are fading.
+ const firstVoice=Math.min(
+   Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(!Number.isFinite(firstVoice)||firstVoice<1.45)return null;
+ const begin=Math.max(r.lastImpactAt-.10,a.last-3.8);
+ const end=dur-.035,fade=end-begin;
+ if(begin<28||begin>a.last-1.4||
+    firstVoice<a.last-begin-1.05||
+    fade<4.5||fade>11.8)return null;
+ return {kind:"underlay",measuredReleaseHandoff:true,
+  preserveTail:true,drumOnlyUnderlay:false,
+  begin,end,fade,entry:musicalIntroEntry(b),
+  tempo:1,gain:1,quietCertified:false,
+  releaseLastMusicalAt:a.last,
+  underlayVolume:adaptiveUnderlayLevel(b,.105,.18),
+  score:null,grooveScore:null,
+  beatPeriod:null,beatAnchor:null,nextBeat:null,
+  safeOutroAt:null,silenceTrim:false,softTailTrim:false,trailing:0};
+}
 // Low-energy postlude lead-in: the outgoing song stays at full gain
 // through its natural ending. No claim of a BPM/key/beat match is made.
 function lowEnergyPostludeLeadIn(a,b,dur){
@@ -3762,6 +3829,8 @@ function unalignedTransition(a,b,actualDuration){
  const earlyRelease=typeof desktopMeasuredReleaseLeadIn==="function"?
    desktopMeasuredReleaseLeadIn(a,b,dur):null;
  if(earlyRelease)return earlyRelease;
+ const measuredTail=measuredMusicalTailUnderlay(a,b,dur);
+ if(measuredTail)return measuredTail;
  const postlude=lowEnergyPostludeLeadIn(a,b,dur);
  if(postlude)return postlude;
  // First try a MUSICAL phrase bridge: last significant drop/beat is
@@ -4997,7 +5066,7 @@ function djAudioClockProgress(oldNow,oldStart,newNow,newStart,tempo,duration){
  return clamp(oldElapsed/duration,0,1);
 }
 function desktopBeatStartDelay(p,at){
- if(!p||p.neutralAmbientUnderlay===true)return 0;
+ if(!p||p.neutralAmbientUnderlay===true||p.measuredReleaseHandoff===true)return 0;
  // nextBeat is in original-file seconds, not post-playbackRate wall time.
  // Account for tempo scaling when scheduling the audible incoming kick.
  const playbackRate=Number.isFinite(p.tempo)&&p.tempo>=.95&&
@@ -5056,6 +5125,7 @@ async function beginMix(song,proposed){
   continuityFallback:!!proposed.continuityFallback,
   measuredFinalImpact:!!proposed.measuredFinalImpact,
   measuredReleaseLeadIn:!!proposed.measuredReleaseLeadIn,
+  measuredReleaseHandoff:!!proposed.measuredReleaseHandoff,
   releaseLastMusicalAt:Number(proposed.releaseLastMusicalAt),
   begin:Number(proposed.begin),
   at:0,fade,end:proposed.end,timer:null};
@@ -5224,6 +5294,20 @@ async function beginMix(song,proposed){
      // No early stop or duck of the original recording.
      outGain=1;inGain=.78*Math.sin(Math.min(1,time*1.65)*Math.PI/2);
     }
+   if(act.measuredReleaseHandoff){
+    // The last musical impact is still audible: bring the next actual
+    // intro beneath it at <=18%, then reveal the COMPLETE recording
+    // promptly after the last measured note, not at encoded MP3 silence.
+    // Different tempos never enter the beatmatch clock or playbackRate.
+    const early=clamp((old.currentTime-act.begin)/
+      Math.max(.35,act.releaseLastMusicalAt-act.begin),0,1);
+    const reveal=clamp((old.currentTime-act.releaseLastMusicalAt)/
+      Math.max(.6,Math.min(1.0,act.end-act.releaseLastMusicalAt-.3)),0,1);
+    outGain=1;
+    inGain=old.currentTime<act.releaseLastMusicalAt?
+      act.underlayVolume*Math.sin(early*Math.PI/2):
+      act.underlayVolume+(1-act.underlayVolume)*Math.sin(reveal*Math.PI/2);
+   }
    if(act.measuredReleaseLeadIn){
     // Preserve the outgoing song in full. Expose a gentle, harmonious
     // preview during its measured release, then lift once it has ended.
@@ -6247,7 +6331,7 @@ async function intelligentShuffle(app,audio,fromId){
  // Count only physically justified BEAT plans, not a similarly keyed
  // song with a random groove. No candidate -> keep current order and
  // the verified quiet/silence fallback.
- const scored=[],softScored=[],underlayScored=[],ambientScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
+ const scored=[],softScored=[],underlayScored=[],releaseScored=[],ambientScored=[],postludeScored=[],nearScored=[],sequenceScored=[],rhythmOrderScored=[];
  const rejected={weakIntro:0,noMusicalBridge:0,onlyQuiet:0};
  // Real-audio evidence funnel: do not invent beatmatches by relaxing safety.
  const candidateAudit={indexed:indexed.length,missingFromIndex:unknown.length,
@@ -6431,6 +6515,14 @@ async function intelligentShuffle(app,audio,fromId){
        cue.instrumentalBeatBridge===true))));
   if(verified)candidateAudit.verifiedBeats++;
   if(!verified){
+   if(mobilePlayable&&cue?.measuredReleaseHandoff===true){
+    // Genuine early audible music before the last recorded note.
+    // This is cross-tempo continuity, explicitly NOT a beatmatch.
+    releaseScored.push({track,cue,score:1.08+
+     clamp((old.last-cue.begin)/5,0,1)*.16+
+     clamp(info.introDrive,0,1)*.12});
+    continue;
+   }
    if(mobilePlayable&&cue?.tempoFreeRelease===true){
     // A real continuous segue, below all beat matches in priority.
     softScored.push({track,cue,score:1.10+
@@ -6593,6 +6685,7 @@ async function intelligentShuffle(app,audio,fromId){
  impactScored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
  underlayScored.sort((a,b)=>b.score-a.score);
+ releaseScored.sort((a,b)=>b.score-a.score);
  ambientScored.sort((a,b)=>b.score-a.score);
  postludeScored.sort((a,b)=>b.score-a.score);
  nearScored.sort((a,b)=>b.score-a.score);
@@ -6614,11 +6707,14 @@ async function intelligentShuffle(app,audio,fromId){
  // safe, verified release takes precedence over guessing at beat identity.
  const choicePool=scored.length?scored:impactScored.length?impactScored:
   underlayScored.length?underlayScored:
+  releaseScored.length?releaseScored:
   softScored.length?softScored:postludeScored.length?postludeScored:
   ambientScored.length?ambientScored:
   nearScored.length?nearScored:sequenceScored.length?sequenceScored:
   safeRhythmOrder.length?safeRhythmOrder:[];
- const limitingStage=!candidateAudit.validIntros?"nessuna intro verificabile":
+ const limitingStage=releaseScored.length&&!candidateAudit.verifiedBeats?
+   "BPM non allineati: raccordo anticipato sul finale reale, non beatmatch":
+  !candidateAudit.validIntros?"nessuna intro verificabile":
   !Number.isFinite(old.beatConfidence)||old.beatConfidence<.16?
    "beat del brano in uscita non abbastanza affidabile":
   !candidateAudit.closeTempo?"nessun BPM compatibile col brano in uscita":
@@ -6636,7 +6732,7 @@ async function intelligentShuffle(app,audio,fromId){
   if(selected){
    shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
     beatCandidates:scored.length,softCandidates:softScored.length,
-   underlayCandidates:underlayScored.length,
+   underlayCandidates:underlayScored.length,releaseCandidates:releaseScored.length,
     impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
     ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
@@ -6648,7 +6744,8 @@ async function intelligentShuffle(app,audio,fromId){
      "ingresso sul colpo finale misurato, non beatmatch armonico":underlayScored.length?
       (best.cue?.measuredReleaseLeadIn?
       "introduzione anticipata sul rilascio musicale misurato, finale integro":
-      "ingresso ritmico anticipato, originale preservato"):softScored.length?
+      "ingresso ritmico anticipato, originale preservato"):releaseScored.length?
+     "intro anticipata sul finale ancora udibile, senza falsi beatmatch":softScored.length?
      "sfumatura su finale quieto (non beat uguali)":postludeScored.length?
      "raccordo dopo ultimo suono, ingresso musicale subito udibile":ambientScored.length?
      "introduzione filtrata a basso volume, finale integro (non beatmatch)":nearScored.length?
@@ -6658,6 +6755,7 @@ async function intelligentShuffle(app,audio,fromId){
    console.info(scored.length?"[Music Box DJ] Scelta automatica: beat verificato in libreria":
     impactScored.length?"[Music Box DJ] Scelta automatica: beat FINALE reale, fade controllato":
     underlayScored.length?"[Music Box DJ] Scelta automatica: ingresso ritmico prima del finale":
+    releaseScored.length?"[Music Box DJ] Scelta automatica: intro sul finale misurato (BPM liberi)":
     softScored.length?"[Music Box DJ] Scelta automatica: rilascio quieto verificato":
     postludeScored.length?"[Music Box DJ] Scelta automatica: coda musicale conclusa, intro udibile":
     ambientScored.length?"[Music Box DJ] Scelta automatica: raccordo neutro filtrato, non beatmatch":
@@ -6676,7 +6774,7 @@ async function intelligentShuffle(app,audio,fromId){
  // becomes available, instead of permanently locking the song to silence.
  shuffleLastDecision={outgoing:fromId,checked:measured.length,available:pool.length,
   beatCandidates:scored.length,softCandidates:softScored.length,
-   underlayCandidates:underlayScored.length,
+   underlayCandidates:underlayScored.length,releaseCandidates:releaseScored.length,
   impactCandidates:impactScored.length,postludeCandidates:postludeScored.length,
   ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
@@ -7048,7 +7146,7 @@ function start(){
   const status=$("mixCopyDiagnosticsStatus"),output=$("mixDiagnosticsOutput");
   const snapshot=window.MusicBoxMix?.diagnostics?.()||{};
   const report=JSON.stringify({
-   musicBoxVersion:"6.731",capturedAt:new Date().toISOString(),
+   musicBoxVersion:"6.732",capturedAt:new Date().toISOString(),
    device:navigator.userAgent.slice(0,180),
    ...snapshot
   },null,2);
