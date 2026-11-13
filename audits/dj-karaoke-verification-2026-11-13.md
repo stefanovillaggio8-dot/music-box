@@ -220,3 +220,24 @@ passaggio normale. Nessuna equivalenza Spotify, precisione ASR universale o
 verifica su iPhone fisico viene dedotta da questi test.
 
 `main` resta invariato; nessun merge o deploy è stato eseguito.
+
+## Verifica successiva: ripresa del mix dopo seek su iPhone
+
+Il preparatore SoundTouch in `audio-stretch.js` utilizzava il medesimo
+*backoff* di 25 secondi per gli errori reali e per una cancellazione voluta
+dal lettore (seek o cambio traccia). Una seconda preparazione dello stesso
+brano poteva quindi essere rifiutata anche quando il decoder funzionava.
+
+- Le cancellazioni volontarie liberano subito le preparazioni in corso e
+  consentono un nuovo tentativo senza attendere 25 secondi.
+- Un worker effettivamente guasto o bloccato conserva il backoff per evitare
+  riavvii continui e carico eccessivo su Safari.
+- Un risultato tardivo di una preparazione annullata non può cancellare un
+  nuovo risultato già in lavorazione.
+- L'asset viene richiesto con una nuova revisione (`audio-stretch.js?v=2`)
+  sia online sia nella shell offline, senza modificare la cache dei brani
+  scaricati dagli utenti.
+
+Questa correzione migliora **la possibilità di riprovare un beatmix mobile**;
+non aumenta automaticamente la copertura dei beatmatch completi e non
+costituisce un test fisico su iPhone.
