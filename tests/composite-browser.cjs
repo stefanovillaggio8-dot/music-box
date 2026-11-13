@@ -56,9 +56,17 @@ const server=http.createServer(async(req,res)=>{
     assert.equal(decoded,plans.length);
     const resampled=await page.evaluate(async plans=>{
      const other=new (window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
-     try{for(const p of plans)await MusicBoxCompositeMix.prepare(p.cue,other);return {sampleRate:other.sampleRate,decoded:plans.length};}
+     const rejected=[];
+     try{for(const p of plans){try{await MusicBoxCompositeMix.prepare(p.cue,other)}catch(error){
+      const buffer=await other.decodeAudioData(await (await fetch(p.cue.composite.path)).arrayBuffer());let peak=0,overlapPeak=0,peakAt=0;
+      for(let c=0;c<buffer.numberOfChannels;c++){const values=buffer.getChannelData(c);for(let i=0;i<values.length;i++){const value=Math.abs(values[i]);if(value>peak){peak=value;peakAt=i/buffer.sampleRate}if(i>=.3*buffer.sampleRate&&i<=(.3+p.cue.composite.nativeHandoffAt)*buffer.sampleRate)overlapPeak=Math.max(overlapPeak,value)}}
+      rejected.push({from:p.from,toSha:p.toSha,structural:!!p.cue.structuralBeat,sha:p.cue.composite.sha256,error:String(error),peak,peakAt,overlapPeak,declaredPeak:p.cue.composite.oversampledPeak});
+     }}
+      return {sampleRate:other.sampleRate,decoded:plans.length-rejected.length,rejected};}
      finally{await other.close()}
     },plans);
+    console.error(name,'resampled',JSON.stringify(resampled));
+    assert.equal(resampled.sampleRate,44100);assert.deepEqual(resampled.rejected,[]);
     const plan=[...plans].sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     await original(plan.fromSha);await original(plan.toSha);
     await page.evaluate(async plan=>{

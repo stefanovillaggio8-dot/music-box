@@ -16,8 +16,10 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('plans','assets','cache','report'):parser.add_argument('--'+name,required=True)
     parser.add_argument('--rate',type=int,default=44100)
+    parser.add_argument('--peak-ceiling',type=float,default=.96)
     parser.add_argument('--context-mode',choices=('auto','warm','cold'),default='auto');args=parser.parse_args()
     if args.rate not in (16000,44100,48000):raise ValueError('Unsupported sample rate')
+    if not .85<=args.peak_ceiling<=.96:raise ValueError('Unsafe peak ceiling')
     audit.SR=args.rate;assets=pathlib.Path(args.assets);assets.mkdir(parents=True,exist_ok=True)
     cache=pathlib.Path(args.cache);cache.mkdir(parents=True,exist_ok=True)
     plans=json.loads(pathlib.Path(args.plans).read_text())['plans'];results=[]
@@ -29,7 +31,7 @@ def main():
         with tempfile.TemporaryDirectory(prefix='context-audit-',dir=report_path.parent) as temporary:
             temporary=pathlib.Path(temporary);warm_report=temporary/'warm.json';cold_report=temporary/'cold.json'
             common=[sys.executable,str(pathlib.Path(__file__).resolve()),'--assets='+str(assets.resolve()),
-                '--cache='+str(cache.resolve()),'--rate='+str(args.rate)]
+                '--cache='+str(cache.resolve()),'--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling)]
             subprocess.run(common+['--plans='+str(pathlib.Path(args.plans).resolve()),'--report='+str(warm_report),'--context-mode=warm'],check=True)
             warm=json.loads(warm_report.read_text())['results']
             failed=[p for p,r in zip(plans,warm) if r.get('error') and p['cue']['tempo']!=1]
@@ -64,7 +66,7 @@ def main():
                 folder=pathlib.Path(folder)
                 for name,value in [('outgoing',outgoing),('incoming',incoming)]:
                     (folder/(name+'.f32')).write_bytes(value.astype('<f4').tobytes())
-                ceiling=.96;target=folder/'mix.flac'
+                ceiling=args.peak_ceiling;target=folder/'mix.flac'
                 for attempt in range(3):
                     (folder/'cue.json').write_text(json.dumps({**cue,'renderPeakCeiling':ceiling,'warmupOriginal':args.context_mode=='warm'}))
                     run=subprocess.run(['node',str(ROOT/'tools/render-composite-mix.mjs'),

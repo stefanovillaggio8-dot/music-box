@@ -6671,6 +6671,12 @@ function tick(){
   }
   return;
  }
+ // The common descriptor is permission for that measured buffer only.
+ // If preparation/clock validation failed, Safari must not fall through
+ // to an unattenuated native overlap that still needs shared headroom.
+ if(isIOS&&plan?.measuredFullBeat&&plan.composite&&
+    window.MusicBoxCompositeMix?.supports?.(plan)&&
+    !(Number(plan.outputHeadroom)>=.999))return;
  if(isIOS&&mobileOverlayEnabled&&plan&&
     // Offline decoding can prepare the next MP3 even while WebAudio is
     // temporarily suspended. Only actual playback needs the running clock.
