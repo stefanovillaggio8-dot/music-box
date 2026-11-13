@@ -6,6 +6,7 @@ const root=path.join(__dirname,"..");
 const source=fs.readFileSync(path.join(root,"mix-intelligente.js"),"utf8");
 const database=JSON.parse(fs.readFileSync(path.join(root,"dj-deep-analysis.json"),"utf8"));
 const karaoke=JSON.parse(fs.readFileSync(path.join(root,"karaoke-index.json"),"utf8"));
+const lyricBoundaries=JSON.parse(fs.readFileSync(path.join(root,"dj-lyric-boundaries.json"),"utf8"));
 const version=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8"));
 const args=process.argv.slice(2);
 const arg=(key,otherwise)=>args.find(a=>a.startsWith("--"+key+"="))?.slice(key.length+3)??otherwise;
@@ -16,20 +17,23 @@ const snippet=(from,to)=>{
 };
 // Same real-index engine used in tests/dj-real-library.test.cjs, plus
 // the exact desktop playback beat-certifier. A postlude is NOT a beatmatch.
-const engine=new Function("isIOS","style",
+const engine=new Function("isIOS","style","djLyricBoundaries",
  "const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));\n"+
+ snippet("function withGuardedLRC(","function loadDJLyricBoundaries(")+
+ snippet("function verifiedIndexedGridTempo(","function deepLookup(")+
  snippet("function onsetPairAgreement(","function iphoneBeatPairCertified(")+
  snippet("function desktopBeatPairCertified(","function certifiedNeutralBridge(")+
  snippet("function grooveAgreement(","// Find a *musical* release")+
  snippet("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  snippet("function compatibility(","async function decode(")+
  snippet("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,desktopBeatPairCertified};"
-)(false,"auto");
+ "\nreturn {transition,desktopBeatPairCertified,withGuardedLRC,verifiedIndexedGridTempo};"
+)(false,"auto",lyricBoundaries.entries||{});
 const tracks=Object.entries(database.entries||{})
  .filter(([k,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&x.duration>=26&&
   Array.isArray(x.chroma)&&x.chroma.length===12&&x.bpm>=55&&x.bpm<=210)
- .sort(([a],[b])=>a.localeCompare(b));
+ .sort(([a],[b])=>a.localeCompare(b))
+ .map(([key,meta])=>[key,engine.withGuardedLRC(engine.verifiedIndexedGridTempo(meta))]);
 const parts=arg("shard","0/1").split("/").map(Number);
 const [shard,totalShards]=parts;
 if(!Number.isInteger(shard)||!Number.isInteger(totalShards)||shard<0||
@@ -37,10 +41,12 @@ if(!Number.isInteger(shard)||!Number.isInteger(totalShards)||shard<0||
 const maxOutgoing=Number(arg("max-outgoing","0"));
 if(!Number.isInteger(maxOutgoing)||maxOutgoing<0)throw Error("Bad max-outgoing");
 const result={
- schema:1,version:version.versione,catalogTracks:version.brani,
+ schema:2,version:version.versione,catalogTracks:version.brani,
  indexTracks:Object.keys(database.entries||{}).length,
  analyzableTracks:tracks.length,
  excludedIndexTracks:Object.keys(database.entries||{}).length-tracks.length,
+ lyricalBoundariesLoaded:tracks.filter(([k,a])=>a.lrcBoundarySource==="existing-synced-lrc-not-vocal-model").length,
+ beatGridsTempoRefined:tracks.filter(([k,a])=>a.tempoVerifiedByGrid===true).length,
  possibleOrderedPairs:tracks.length*(tracks.length-1),
  shard,totalShards,analyzedPairs:0,verifiedBeat:0,earlyVerifiedBeat:0,
  rejectedBeat:0,postlude:0,underlay:0,other:0,none:0,errors:[],
@@ -49,7 +55,7 @@ const result={
   provenWordAlignmentFromIndex:false,
   caveat:"Synced LRC lines do not prove the times of individual words."
  },verdict:"NOT_CERTIFIED",
- caveat:"Feature index simulation: not an acoustic listening test, comparison with Spotify, or physical iPhone verification."
+ caveat:"Simulates the actual player feature enrichment with guarded synced-LRC and validated beat-grid BPM. Still not an acoustic listening test, comparison with Spotify, or physical iPhone verification."
 };
 const beatLike=p=>!!p&&(["beat","snap","phrase"].includes(p.kind)||
  p.measuredBeatBridge===true||p.earlyBeatJoin===true||

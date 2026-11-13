@@ -62,6 +62,7 @@ function renderLyrics(force){
    lyricRows=(lyricTimed?synced.map(row=>({text:String(row.text).trim(),t:Number(row.t),
       ...(row.end!=null&&Number.isFinite(Number(row.end))?{end:Number(row.end)}:{}),
       ...(Array.isArray(row.words)?{words:row.words}:{}),
+      ...(row.sourceT!=null&&Number.isFinite(Number(row.sourceT))?{sourceT:Number(row.sourceT)}:{}),
       ...(row.estimated?{estimated:true}:{})})):
     plainRows.map(text=>({text}))).slice(0,500);
    if(!lyricRows.length)lyricRows=[{text:"Musica, luci e atmosfera."}];
@@ -77,11 +78,13 @@ function renderLyrics(force){
    karaoke.classList.toggle("has-lines",!!next?.text||lyricTimed);
    karaoke.classList.toggle("approximate",!lyricTimed);
    const status=$("imLyricModeLabel");
-   const trusted=lyricRows.some(r=>r._elements?.length>=2&&!r.estimated);
-   const guessed=lyricRows.some(r=>r.estimated);
+   const coverage=window.MusicBoxWordKaraoke?.timingCoverage?.(lyricRows);
    if(status)status.textContent=lyricTimed
-     ?(trusted?(next?.audioWordSynced?"PAROLA PER PAROLA · IA":"PAROLA PER PAROLA"):
-       guessed?"PAROLA PER PAROLA · STIMA":"SINCRONIZZATO")
+     ?coverage?.wordTimed?
+       ("PAROLE VERIFICATE "+coverage.wordTimed+"/"+coverage.total+
+        " FRASI"+(coverage.audio?" · AUDIO "+coverage.audio:""))
+       :coverage?.estimated?"PAROLE STIMATE · NON VERIFICATE":
+        "SINCRONIZZATO PER FRASI"
      :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
    if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<2))
      b?.requestWordLyrics?.(id)?.catch?.(()=>{});

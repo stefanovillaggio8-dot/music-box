@@ -9,6 +9,11 @@ const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
 const attempts=new Map(),sessionWindows=new Map();
+const uncertainLanguageLyrics=new Map();
+// A provider can later replace an ambiguous LRC with one whose language
+// can be recognized. Skip repeated identical lyrics, not every future edit.
+const lyricSignature=rows=>(Array.isArray(rows)?rows:[]).slice(0,120)
+ .map(row=>String(row?.text||"")).join("\u241e");
 // Keep each foreground WebGPU pass short; permit later, separate lyric clips.
 const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=18;
 
@@ -260,10 +265,11 @@ async function analyze(id){
  if(rows.length<3||rows.every(row=>row.words?.length>=2))return false;
  const language=languageFromLyrics(rows);
  if(!language){
-  completedInSession.add(sessionId);
+  uncertainLanguageLyrics.set(sessionId,lyricSignature(rows));
   setStatus("Lingua del testo incerta: mantengo i tempi originali");
   return false;
  }
+ uncertainLanguageLyrics.delete(sessionId);
  const failureKey="mb.audioWords.fail."+profile+"."+id;
  const last=Number(sessionStorage.getItem(failureKey)||0);
  if(last&&Date.now()-last<RETRY_MS)return false;
@@ -353,6 +359,9 @@ function request(id){
  id=String(id||window.MusicBoxBridge?.currentId?.()||"");
  const sessionId=String(window.MusicBoxBridge?.profile?.()||"")+"|"+id;
  if(!id||active.size||completedInSession.has(sessionId)||!canRun())return false;
+ const signature=lyricSignature(window.MusicBoxBridge?.lyricsData?.()?.synced);
+ if(uncertainLanguageLyrics.has(sessionId)&&
+    uncertainLanguageLyrics.get(sessionId)===signature)return false;
  const now=Date.now(),last=attempts.get(sessionId)||0;
  if(now-last<15000)return false;
  attempts.set(sessionId,now);

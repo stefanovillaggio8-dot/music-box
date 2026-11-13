@@ -291,7 +291,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/engine\?\.fromRecord\(j\)/);
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
- assert.match(immersive,/PAROLA PER PAROLA/);
+ assert.match(immersive,/PAROLE VERIFICATE/);
  assert.match(html,/word-karaoke\.js\?v=\d+/);
  assert.match(sw,/word-karaoke\.js\?v=\d+/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
@@ -525,7 +525,7 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  assert.match(app,/wordRows:joined,audioWordSynced:true/);
  assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
- assert.match(immersive,/next\?\.audioWordSynced\?"PAROLA PER PAROLA · IA"/);
+ assert.match(immersive,/coverage\.audio\?" · AUDIO "/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
  assert.match(engine,/completedInSession\.has\(sessionId\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
@@ -575,7 +575,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/return_timestamps:"word",task:"transcribe",language/);
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
- assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
+ assert.match(align,/uncertainLanguageLyrics\.set\(sessionId,lyricSignature\(rows\)\)/);
+ assert.match(align,/uncertainLanguageLyrics\.get\(sessionId\)===signature/);
  const liveAlignAsset=/audio-lyrics-align\.js\?v=\d+&amp;lang=\d+/.exec(html)?.[0];
  assert.ok(liveAlignAsset,"HTML must include a revisioned audio aligner");
  assert.equal(sw.split(liveAlignAsset.replace("&amp;","&")).length-1,2,
@@ -642,9 +643,9 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  assert.match(app,/return kept&&!kept\.estimated\?kept:original/);
  assert.match(app,/if\(l\?\.synced&&!_righeTestoConParole\(l\)\.every\(r=>\s*r\.words\?\.length>=2&&!r\.estimated\)\)/);
  assert.match(align,/row\?\.estimated\?\{t:row\.t,text:row\.text\}:row/);
- assert.match(immersive,/guessed\?"PAROLA PER PAROLA · STIMA"/);
+ assert.match(immersive,/PAROLE STIMATE · NON VERIFICATE/);
  assert.match(immersive,/row\.estimated\?\{estimated:true\}/);
- assert.match(app,/KARAOKE · PAROLA PER PAROLA \(STIMA\)/);
+ assert.match(app,/KARAOKE · PAROLE STIMATE, NON VERIFICATE/);
  assert.match(app,/track-badge-karaoke/);
  assert.match(app,/_statoKaraokeBrano\(t\.id\)\?\.label\|\|""/);
  assert.match(app,/LS\.set\("mb\.lyricsFullView",_vistaTestiCompleta\)/);
@@ -653,8 +654,8 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  for(const file of ["app.js","word-karaoke.js","immersive.js","style.css"]){
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
-  const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"8":file==="immersive.js"?"5":file==="app.js"?"4":"2";
+  const revision=file==="app.js"?release:file==="word-karaoke.js"||file==="immersive.js"?"6734":"6715";
+  const wordCache=file==="word-karaoke.js"?"9":file==="immersive.js"?"6":file==="app.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }

@@ -1303,7 +1303,7 @@
     } catch (e) { /* mai bloccare l'app per una traccia */ }
   }
   const APP_NAME = "spotifynonavraiimieisoldi";
-  const APP_VERSION = "6.733";
+  const APP_VERSION = "6.734";
 
   let recovering = false;
   /* Questa "riparazione" non serve piu' e fa solo danni.
@@ -9663,7 +9663,27 @@ function openProfile() {
 
   function openLyrics() {
     const l = currentLyrics();
-    if (!l) return;
+    if (!l) {
+      // A DJ handoff or rapid previous/next tap can select a song before its
+      // provider returns lyrics. The old DOM must NEVER stay visible under
+      // the new song's title: it belongs to the previous recording.
+      if (!$("lyricsPanel").hidden) {
+        _fermaKaraokePrecisione();
+        lyricLines=[]; _lyricWordParts=[]; lyricActive=-1;
+        const track=current();
+        $("lyricsTitle").textContent=String(track?.title||"Brano");
+        $("lyricsSub").textContent=String(track?.artist||"");
+        const body=$("lyricsBody");
+        body.replaceChildren();
+        const placeholder=document.createElement("p");
+        placeholder.className="lyr-empty";
+        placeholder.textContent="Testo in caricamento o non disponibile per questo brano.";
+        body.appendChild(placeholder);
+        $("lyricsMode").textContent="TESTO NON DISPONIBILE";
+        $("lyricsSyncControls").hidden=true;
+      }
+      return;
+    }
     $("lyricsTitle").textContent = l.title;
     $("lyricsSub").textContent = l.artist || "";
     const body = $("lyricsBody");
@@ -9727,12 +9747,13 @@ function openProfile() {
     }
     $("lyricsPanel").hidden = false;
     $("lyricsSyncControls").hidden = !useSynced;
-    const precise=synced.some(r=>r.words?.length>=2&&!r.estimated);
-    const estimated=synced.some(r=>r.estimated);
+    const wordCoverage=window.MusicBoxWordKaraoke?.timingCoverage?.(synced);
     $("lyricsMode").textContent=useSynced
-      ?(precise
-        ?(l.audioWordSynced?"KARAOKE · PAROLA PER PAROLA (IA)":"KARAOKE · PAROLA PER PAROLA")
-        :estimated?"KARAOKE · PAROLA PER PAROLA (STIMA)":"TESTO SINCRONIZZATO")
+      ?wordCoverage?.wordTimed?
+        ("KARAOKE · PAROLE VERIFICATE "+wordCoverage.wordTimed+"/"+wordCoverage.total+
+         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:""))
+        :wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
+         "TESTO SINCRONIZZATO PER FRASI"
       :"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
     if(switchView){

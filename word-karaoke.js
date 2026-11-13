@@ -236,7 +236,27 @@ function paintWords(row,elements,time){
   if(el._karaokePct!==pct){el._karaokePct=pct;el.style.setProperty("--karaoke-fill",pct+"%")}
  }
 }
+/* Report timing coverage by ACTUAL source. One validated line must not
+   label an entire 70-line recording as word-synced. An estimated word is
+   never counted as verified regardless of how it looks on screen. */
+function timingCoverage(rows){
+ const result={total:0,audio:0,provider:0,estimated:0,lineOnly:0};
+ if(!Array.isArray(rows))return result;
+ for(const row of rows){
+  if(!row||!String(row.text||"").trim()||!Number.isFinite(Number(row.t)))continue;
+  result.total++;
+  const timed=Array.isArray(row.words)&&row.words.length>=2;
+  if(!timed){result.lineOnly++;continue;}
+  if(row.estimated===true){result.estimated++;continue;}
+  if(row.sourceT!=null&&Number.isFinite(Number(row.sourceT))&&Number(row.sourceT)>=0)
+   result.audio++;
+  else result.provider++;
+ }
+ result.wordTimed=result.audio+result.provider;
+ result.percent=result.total?Math.round(result.wordTimed*100/result.total):0;
+ return result;
+}
 root.MusicBoxWordKaraoke={
- parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords
+ parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage
 };
 })(typeof window!=="undefined"?window:globalThis);
