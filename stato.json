@@ -7139,13 +7139,13 @@
    },
    "[\"star\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 400,
+    "s": 452,
     "t": "Star",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 400,
+    "s": 452,
     "t": "Star",
     "a": "LuchÃÂÃÂÃÂÃÂ¨"
    },
@@ -7949,13 +7949,13 @@
    },
    "[\"star\",\"luchÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 452,
+    "s": 524,
     "t": "Star",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 452,
+    "s": 524,
     "t": "Star",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -9928,14 +9928,14 @@
     "a": "ModÃ "
    },
    "[\"tappeto di fragole\",\"modÃ \"]": {
-    "v": 2,
-    "s": 244,
+    "v": 3,
+    "s": 254,
     "t": "Tappeto di fragole",
     "a": "ModÃ "
    },
    "m:2026-11|[\"tappeto di fragole\",\"modÃ \"]": {
-    "v": 2,
-    "s": 244,
+    "v": 3,
+    "s": 254,
     "t": "Tappeto di fragole",
     "a": "ModÃ "
    },
@@ -10667,13 +10667,13 @@
    },
    "[\"che dio mi benedica\",\"luchè\"]": {
     "v": 2,
-    "s": 466,
+    "s": 533,
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
    },
    "m:2026-11|[\"che dio mi benedica\",\"luchè\"]": {
     "v": 2,
-    "s": 466,
+    "s": 533,
     "t": "Che Dio Mi Benedica",
     "a": "Luchè"
    },
@@ -10739,13 +10739,13 @@
    },
    "[\"tappeto di fragole\",\"modà\"]": {
     "v": 3,
-    "s": 254,
+    "s": 256,
     "t": "Tappeto di fragole",
     "a": "Modà"
    },
    "m:2026-11|[\"tappeto di fragole\",\"modà\"]": {
     "v": 3,
-    "s": 254,
+    "s": 256,
     "t": "Tappeto di fragole",
     "a": "Modà"
    },
