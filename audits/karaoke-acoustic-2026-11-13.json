@@ -1,0 +1,1673 @@
+{
+  "schema": 1,
+  "source": "https://huggingface.co/datasets/jamendolyrics/jamendolyrics",
+  "reference": "manually annotated word starts and ends, current dataset",
+  "inference": {
+    "model": "onnx-community/whisper-tiny_timestamped",
+    "library": "transformers.js 3.8.1",
+    "device": "cpu",
+    "dtype": {
+      "encoder_model": "fp32",
+      "decoder_model_merged": "q4"
+    },
+    "browserWebGPUVerified": false,
+    "revision": "517244293732ee2d58139af5814231b7e6830a0d"
+  },
+  "limitation": "English external references; exact human line anchors isolate acoustic word timing. No claim of Italian or full-catalog word accuracy.",
+  "cases": [
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@156.225",
+      "record": "Quentin_Hannappe_-_Keep_On",
+      "genre": "Pop",
+      "category": "singing-sparse",
+      "start": 156.2247772217,
+      "seconds": 28,
+      "sourceAudioSha256": "80281dbb9a9c311222fa3da80f0765bff8efee46758ba3ab5238b487a16b28af",
+      "referenceWords": 16,
+      "observedWords": 0,
+      "observedCoverage": 0,
+      "estimatedWords": 12,
+      "onset": null,
+      "end": null,
+      "errors": [],
+      "unmatched": [
+        {
+          "lineIndex": 24,
+          "words": 7
+        },
+        {
+          "lineIndex": 25,
+          "words": 5
+        },
+        {
+          "lineIndex": 26,
+          "words": 4
+        }
+      ],
+      "estimatedOnset": {
+        "count": 12,
+        "signedMeanMs": 87.24991861666827,
+        "medianAbsoluteMs": 311.5783691000047,
+        "p90AbsoluteMs": 438.1984862999957,
+        "p95AbsoluteMs": 511.2504883000213,
+        "within50": 0.16666666666666666,
+        "within100": 0.16666666666666666,
+        "within250": 0.5
+      },
+      "estimatedEnd": {
+        "count": 12,
+        "signedMeanMs": 196.65977986666405,
+        "medianAbsoluteMs": 311.5783691000047,
+        "p90AbsoluteMs": 485.9348144999842,
+        "p95AbsoluteMs": 511.2504883000213,
+        "within50": 0.08333333333333333,
+        "within100": 0.08333333333333333,
+        "within250": 0.4166666666666667
+      },
+      "estimatedErrors": [
+        {
+          "lineIndex": 24,
+          "wordIndex": 0,
+          "startErrorMs": 0.22277829998529342,
+          "endErrorMs": 104.15295409998748
+        },
+        {
+          "lineIndex": 24,
+          "wordIndex": 1,
+          "startErrorMs": 104.15295409998748,
+          "endErrorMs": 311.5783691000047
+        },
+        {
+          "lineIndex": 24,
+          "wordIndex": 2,
+          "startErrorMs": 311.5783691000047,
+          "endErrorMs": 485.9348144999842
+        },
+        {
+          "lineIndex": 24,
+          "wordIndex": 3,
+          "startErrorMs": -438.1984862999957,
+          "endErrorMs": -354.211547899979
+        },
+        {
+          "lineIndex": 24,
+          "wordIndex": 4,
+          "startErrorMs": -354.211547899979,
+          "endErrorMs": -155.6209717000172
+        },
+        {
+          "lineIndex": 24,
+          "wordIndex": 5,
+          "startErrorMs": -226.2386474999971,
+          "endErrorMs": 192.47619629999235
+        },
+        {
+          "lineIndex": 24,
+          "wordIndex": 6,
+          "startErrorMs": 192.47619629999235,
+          "endErrorMs": 45.52734379998924
+        },
+        {
+          "lineIndex": 25,
+          "wordIndex": 0,
+          "startErrorMs": -0.0410155999759354,
+          "endErrorMs": 163.88403319999156
+        },
+        {
+          "lineIndex": 25,
+          "wordIndex": 1,
+          "startErrorMs": 163.88403319999156,
+          "endErrorMs": 362.32971190000285
+        },
+        {
+          "lineIndex": 25,
+          "wordIndex": 2,
+          "startErrorMs": 362.32971190000285,
+          "endErrorMs": 419.7941894999815
+        },
+        {
+          "lineIndex": 25,
+          "wordIndex": 3,
+          "startErrorMs": 419.7941894999815,
+          "endErrorMs": 511.2504883000213
+        },
+        {
+          "lineIndex": 25,
+          "wordIndex": 4,
+          "startErrorMs": 511.2504883000213,
+          "endErrorMs": 272.82177730000967
+        }
+      ]
+    },
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@91.988",
+      "record": "Quentin_Hannappe_-_Keep_On",
+      "genre": "Pop",
+      "category": "repeated-phrase",
+      "start": 91.9879150391,
+      "seconds": 28,
+      "sourceAudioSha256": "80281dbb9a9c311222fa3da80f0765bff8efee46758ba3ab5238b487a16b28af",
+      "referenceWords": 26,
+      "observedWords": 0,
+      "observedCoverage": 0,
+      "estimatedWords": 18,
+      "onset": null,
+      "end": null,
+      "errors": [],
+      "unmatched": [
+        {
+          "lineIndex": 14,
+          "words": 9
+        },
+        {
+          "lineIndex": 15,
+          "words": 9
+        },
+        {
+          "lineIndex": 16,
+          "words": 8
+        }
+      ],
+      "estimatedOnset": {
+        "count": 18,
+        "signedMeanMs": 931.8411187000017,
+        "medianAbsoluteMs": 1082.8142090000056,
+        "p90AbsoluteMs": 1625.7286987000016,
+        "p95AbsoluteMs": 1757.2473755000005,
+        "within50": 0.1111111111111111,
+        "within100": 0.1111111111111111,
+        "within250": 0.1111111111111111
+      },
+      "estimatedEnd": {
+        "count": 18,
+        "signedMeanMs": 1220.51996527778,
+        "medianAbsoluteMs": 1383.6419678000027,
+        "p90AbsoluteMs": 1790.682617200005,
+        "p95AbsoluteMs": 1969.7171631000003,
+        "within50": 0,
+        "within100": 0,
+        "within250": 0
+      },
+      "estimatedErrors": [
+        {
+          "lineIndex": 14,
+          "wordIndex": 0,
+          "startErrorMs": 0.08496089999709966,
+          "endErrorMs": 326.26770020000606
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 1,
+          "startErrorMs": 326.26770020000606,
+          "endErrorMs": 462.3456421000043
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 2,
+          "startErrorMs": 462.3456421000043,
+          "endErrorMs": 860.2271118000004
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 3,
+          "startErrorMs": 860.2271118000004,
+          "endErrorMs": 1082.8142090000056
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 4,
+          "startErrorMs": 1082.8142090000056,
+          "endErrorMs": 1431.4502562999962
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 5,
+          "startErrorMs": 1431.4502562999962,
+          "endErrorMs": 1747.5430298000133
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 6,
+          "startErrorMs": 816.1236572000092,
+          "endErrorMs": 1149.3391113000087
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 7,
+          "startErrorMs": 1149.3391113000087,
+          "endErrorMs": 1536.7248534999903
+        },
+        {
+          "lineIndex": 14,
+          "wordIndex": 8,
+          "startErrorMs": 1536.7248534999903,
+          "endErrorMs": 1383.6419678000027
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 0,
+          "startErrorMs": -0.3013305999957083,
+          "endErrorMs": 361.73956300000043
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 1,
+          "startErrorMs": 361.73956300000043,
+          "endErrorMs": 415.4347534000067
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 2,
+          "startErrorMs": 415.4347534000067,
+          "endErrorMs": 1293.4653319999966
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 3,
+          "startErrorMs": 1293.4653319999966,
+          "endErrorMs": 1625.7286987000016
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 4,
+          "startErrorMs": 1625.7286987000016,
+          "endErrorMs": 1790.682617200005
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 5,
+          "startErrorMs": 879.4582520000063,
+          "endErrorMs": 1207.7756348000007
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 6,
+          "startErrorMs": 1207.7756348000007,
+          "endErrorMs": 1567.214355499999
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 7,
+          "startErrorMs": 1567.214355499999,
+          "endErrorMs": 1757.2473755000005
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 8,
+          "startErrorMs": 1757.2473755000005,
+          "endErrorMs": 1969.7171631000003
+        }
+      ]
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@33.900",
+      "record": "Wordsmith_-_The_Statement",
+      "genre": "Hip-Hop",
+      "category": "rap-dense",
+      "start": 33.9003219604,
+      "seconds": 28,
+      "sourceAudioSha256": "c7da05309e6eb613601b427a019cd54d157df7ce93bea0924bdef906b5d99cee",
+      "referenceWords": 114,
+      "observedWords": 0,
+      "observedCoverage": 0,
+      "estimatedWords": 0,
+      "onset": null,
+      "end": null,
+      "errors": [],
+      "unmatched": [
+        {
+          "lineIndex": 3,
+          "words": 19
+        },
+        {
+          "lineIndex": 4,
+          "words": 25
+        },
+        {
+          "lineIndex": 5,
+          "words": 25
+        },
+        {
+          "lineIndex": 6,
+          "words": 15
+        },
+        {
+          "lineIndex": 7,
+          "words": 15
+        },
+        {
+          "lineIndex": 8,
+          "words": 15
+        }
+      ],
+      "estimatedOnset": null,
+      "estimatedEnd": null,
+      "estimatedErrors": []
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@89.234",
+      "record": "Wordsmith_-_The_Statement",
+      "genre": "Hip-Hop",
+      "category": "repeated-phrase",
+      "start": 89.2336349487,
+      "seconds": 28,
+      "sourceAudioSha256": "c7da05309e6eb613601b427a019cd54d157df7ce93bea0924bdef906b5d99cee",
+      "referenceWords": 110,
+      "observedWords": 0,
+      "observedCoverage": 0,
+      "estimatedWords": 0,
+      "onset": null,
+      "end": null,
+      "errors": [],
+      "unmatched": [
+        {
+          "lineIndex": 14,
+          "words": 25
+        },
+        {
+          "lineIndex": 15,
+          "words": 25
+        },
+        {
+          "lineIndex": 16,
+          "words": 15
+        },
+        {
+          "lineIndex": 17,
+          "words": 15
+        },
+        {
+          "lineIndex": 18,
+          "words": 15
+        },
+        {
+          "lineIndex": 19,
+          "words": 15
+        }
+      ],
+      "estimatedOnset": null,
+      "estimatedEnd": null,
+      "estimatedErrors": []
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@146.081",
+      "record": "JASON_MILLER_-_CROWD_PLEASER",
+      "genre": "Hip-Hop",
+      "category": "rap-dense",
+      "start": 146.0813903809,
+      "seconds": 28,
+      "sourceAudioSha256": "dcb3a02dd11827dab6d94da5f20091321288038cd533c7e25f0a0c6b353a9ad5",
+      "referenceWords": 101,
+      "observedWords": 23,
+      "observedCoverage": 0.22772277227722773,
+      "estimatedWords": 0,
+      "onset": {
+        "count": 23,
+        "signedMeanMs": 26.868875260870187,
+        "medianAbsoluteMs": 43.3211670000162,
+        "p90AbsoluteMs": 146.72094729999685,
+        "p95AbsoluteMs": 188.76501459999417,
+        "within50": 0.5652173913043478,
+        "within100": 0.6956521739130435,
+        "within250": 1
+      },
+      "end": {
+        "count": 23,
+        "signedMeanMs": 57.889743982606795,
+        "medianAbsoluteMs": 43.3211670000162,
+        "p90AbsoluteMs": 139.8916015999987,
+        "p95AbsoluteMs": 197.32690430001298,
+        "within50": 0.5652173913043478,
+        "within100": 0.7391304347826086,
+        "within250": 0.9565217391304348
+      },
+      "errors": [
+        {
+          "lineIndex": 68,
+          "wordIndex": 0,
+          "startErrorMs": 199.6096191000163,
+          "endErrorMs": 11.467529300006163,
+          "observedStart": 146.781,
+          "observedEnd": 147.001,
+          "referenceStart": 146.5813903809,
+          "referenceEnd": 146.9895324707
+        },
+        {
+          "lineIndex": 68,
+          "wordIndex": 1,
+          "startErrorMs": 11.467529300006163,
+          "endErrorMs": 69.70483400002081,
+          "observedStart": 147.001,
+          "observedEnd": 147.241,
+          "referenceStart": 146.9895324707,
+          "referenceEnd": 147.171295166
+        },
+        {
+          "lineIndex": 68,
+          "wordIndex": 2,
+          "startErrorMs": 69.70483400002081,
+          "endErrorMs": 139.8916015999987,
+          "observedStart": 147.241,
+          "observedEnd": 147.401,
+          "referenceStart": 147.171295166,
+          "referenceEnd": 147.2611083984
+        },
+        {
+          "lineIndex": 68,
+          "wordIndex": 3,
+          "startErrorMs": 139.8916015999987,
+          "endErrorMs": 109.57543949999149,
+          "observedStart": 147.401,
+          "observedEnd": 147.601,
+          "referenceStart": 147.2611083984,
+          "referenceEnd": 147.4914245605
+        },
+        {
+          "lineIndex": 68,
+          "wordIndex": 4,
+          "startErrorMs": 109.57543949999149,
+          "endErrorMs": 73.24975589997962,
+          "observedStart": 147.601,
+          "observedEnd": 147.861,
+          "referenceStart": 147.4914245605,
+          "referenceEnd": 147.7877502441
+        },
+        {
+          "lineIndex": 68,
+          "wordIndex": 5,
+          "startErrorMs": 9.147582999986525,
+          "endErrorMs": 126.95764160000067,
+          "observedStart": 147.861,
+          "observedEnd": 148.161,
+          "referenceStart": 147.851852417,
+          "referenceEnd": 148.0340423584
+        },
+        {
+          "lineIndex": 68,
+          "wordIndex": 6,
+          "startErrorMs": 126.95764160000067,
+          "endErrorMs": 278.70483399996715,
+          "observedStart": 148.161,
+          "observedEnd": 148.42564697269998,
+          "referenceStart": 148.0340423584,
+          "referenceEnd": 148.1469421387
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 0,
+          "startErrorMs": -146.72094729999685,
+          "endErrorMs": -3.714355500022748,
+          "observedStart": 154.361,
+          "observedEnd": 154.641,
+          "referenceStart": 154.5077209473,
+          "referenceEnd": 154.6447143555
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 1,
+          "startErrorMs": -3.714355500022748,
+          "endErrorMs": 46.14343259999032,
+          "observedStart": 154.641,
+          "observedEnd": 154.821,
+          "referenceStart": 154.6447143555,
+          "referenceEnd": 154.7748565674
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 2,
+          "startErrorMs": 46.14343259999032,
+          "endErrorMs": 43.3211670000162,
+          "observedStart": 154.821,
+          "observedEnd": 154.961,
+          "referenceStart": 154.7748565674,
+          "referenceEnd": 154.917678833
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 3,
+          "startErrorMs": 43.3211670000162,
+          "endErrorMs": 94.18176270000345,
+          "observedStart": 154.961,
+          "observedEnd": 155.161,
+          "referenceStart": 154.917678833,
+          "referenceEnd": 155.0668182373
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 4,
+          "startErrorMs": 94.18176270000345,
+          "endErrorMs": 0.7924805000243396,
+          "observedStart": 155.161,
+          "observedEnd": 155.401,
+          "referenceStart": 155.0668182373,
+          "referenceEnd": 155.4002075195
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 5,
+          "startErrorMs": 0.7924805000243396,
+          "endErrorMs": 4.980712899993023,
+          "observedStart": 155.401,
+          "observedEnd": 155.581,
+          "referenceStart": 155.4002075195,
+          "referenceEnd": 155.5760192871
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 6,
+          "startErrorMs": 4.980712899993023,
+          "endErrorMs": -15.94274899997572,
+          "observedStart": 155.581,
+          "observedEnd": 155.741,
+          "referenceStart": 155.5760192871,
+          "referenceEnd": 155.756942749
+        },
+        {
+          "lineIndex": 72,
+          "wordIndex": 7,
+          "startErrorMs": -15.94274899997572,
+          "endErrorMs": 197.32690430001298,
+          "observedStart": 155.741,
+          "observedEnd": 156.181,
+          "referenceStart": 155.756942749,
+          "referenceEnd": 155.9836730957
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 0,
+          "startErrorMs": -188.76501459999417,
+          "endErrorMs": 31.239868199975263,
+          "observedStart": 161.461,
+          "observedEnd": 161.801,
+          "referenceStart": 161.6497650146,
+          "referenceEnd": 161.7697601318
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 1,
+          "startErrorMs": 31.239868199975263,
+          "endErrorMs": 57.712646499993525,
+          "observedStart": 161.801,
+          "observedEnd": 162.021,
+          "referenceStart": 161.7697601318,
+          "referenceEnd": 161.9632873535
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 2,
+          "startErrorMs": 57.712646499993525,
+          "endErrorMs": -41.246704099989984,
+          "observedStart": 162.021,
+          "observedEnd": 162.121,
+          "referenceStart": 161.9632873535,
+          "referenceEnd": 162.1622467041
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 3,
+          "startErrorMs": -41.246704099989984,
+          "endErrorMs": 101.61157229998707,
+          "observedStart": 162.121,
+          "observedEnd": 162.381,
+          "referenceStart": 162.1622467041,
+          "referenceEnd": 162.2793884277
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 4,
+          "startErrorMs": 101.61157229998707,
+          "endErrorMs": -15.289672899996276,
+          "observedStart": 162.381,
+          "observedEnd": 162.541,
+          "referenceStart": 162.2793884277,
+          "referenceEnd": 162.5562896729
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 5,
+          "startErrorMs": -15.289672899996276,
+          "endErrorMs": 7.838989299983723,
+          "observedStart": 162.541,
+          "observedEnd": 162.701,
+          "referenceStart": 162.5562896729,
+          "referenceEnd": 162.6931610107
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 6,
+          "startErrorMs": 7.838989299983723,
+          "endErrorMs": -24.513305699997545,
+          "observedStart": 162.701,
+          "observedEnd": 162.861,
+          "referenceStart": 162.6931610107,
+          "referenceEnd": 162.8855133057
+        },
+        {
+          "lineIndex": 76,
+          "wordIndex": 7,
+          "startErrorMs": -24.513305699997545,
+          "endErrorMs": 37.46972659999415,
+          "observedStart": 162.861,
+          "observedEnd": 163.281,
+          "referenceStart": 162.8855133057,
+          "referenceEnd": 163.2435302734
+        }
+      ],
+      "unmatched": [
+        {
+          "lineIndex": 69,
+          "words": 5
+        },
+        {
+          "lineIndex": 70,
+          "words": 6
+        },
+        {
+          "lineIndex": 71,
+          "words": 7
+        },
+        {
+          "lineIndex": 73,
+          "words": 7
+        },
+        {
+          "lineIndex": 74,
+          "words": 7
+        },
+        {
+          "lineIndex": 75,
+          "words": 8
+        },
+        {
+          "lineIndex": 77,
+          "words": 8
+        },
+        {
+          "lineIndex": 78,
+          "words": 7
+        },
+        {
+          "lineIndex": 79,
+          "words": 7
+        },
+        {
+          "lineIndex": 80,
+          "words": 8
+        },
+        {
+          "lineIndex": 81,
+          "words": 8
+        }
+      ],
+      "estimatedOnset": null,
+      "estimatedEnd": null,
+      "estimatedErrors": []
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@77.153",
+      "record": "JASON_MILLER_-_CROWD_PLEASER",
+      "genre": "Hip-Hop",
+      "category": "repeated-phrase",
+      "start": 77.1525878906,
+      "seconds": 28,
+      "sourceAudioSha256": "dcb3a02dd11827dab6d94da5f20091321288038cd533c7e25f0a0c6b353a9ad5",
+      "referenceWords": 84,
+      "observedWords": 11,
+      "observedCoverage": 0.13095238095238096,
+      "estimatedWords": 0,
+      "onset": {
+        "count": 11,
+        "signedMeanMs": 29.888427736365614,
+        "medianAbsoluteMs": 50.147522000003164,
+        "p90AbsoluteMs": 144.74255369999867,
+        "p95AbsoluteMs": 174.21490480001012,
+        "within50": 0.45454545454545453,
+        "within100": 0.8181818181818182,
+        "within250": 1
+      },
+      "end": {
+        "count": 11,
+        "signedMeanMs": 21.793462590909225,
+        "medianAbsoluteMs": 50.147522000003164,
+        "p90AbsoluteMs": 144.74255369999867,
+        "p95AbsoluteMs": 201.77001960000496,
+        "within50": 0.45454545454545453,
+        "within100": 0.8181818181818182,
+        "within250": 1
+      },
+      "errors": [
+        {
+          "lineIndex": 34,
+          "wordIndex": 0,
+          "startErrorMs": 72.13299560000053,
+          "endErrorMs": -12.507812500004434,
+          "observedStart": 81.453,
+          "observedEnd": 81.633,
+          "referenceStart": 81.3808670044,
+          "referenceEnd": 81.6455078125
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 1,
+          "startErrorMs": -12.507812500004434,
+          "endErrorMs": -33.54235839999831,
+          "observedStart": 81.633,
+          "observedEnd": 81.813,
+          "referenceStart": 81.6455078125,
+          "referenceEnd": 81.8465423584
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 2,
+          "startErrorMs": -33.54235839999831,
+          "endErrorMs": 50.147522000003164,
+          "observedStart": 81.813,
+          "observedEnd": 82.013,
+          "referenceStart": 81.8465423584,
+          "referenceEnd": 81.962852478
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 3,
+          "startErrorMs": 50.147522000003164,
+          "endErrorMs": -80.93615720000003,
+          "observedStart": 82.013,
+          "observedEnd": 82.313,
+          "referenceStart": 81.962852478,
+          "referenceEnd": 82.3939361572
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 4,
+          "startErrorMs": -80.93615720000003,
+          "endErrorMs": -74.98522950000108,
+          "observedStart": 82.313,
+          "observedEnd": 82.813,
+          "referenceStart": 82.3939361572,
+          "referenceEnd": 82.8879852295
+        },
+        {
+          "lineIndex": 39,
+          "wordIndex": 0,
+          "startErrorMs": 174.21490480001012,
+          "endErrorMs": -11.903564500002517,
+          "observedStart": 91.093,
+          "observedEnd": 91.233,
+          "referenceStart": 90.9187850952,
+          "referenceEnd": 91.2449035645
+        },
+        {
+          "lineIndex": 39,
+          "wordIndex": 1,
+          "startErrorMs": -11.903564500002517,
+          "endErrorMs": 79.72515870000052,
+          "observedStart": 91.233,
+          "observedEnd": 91.413,
+          "referenceStart": 91.2449035645,
+          "referenceEnd": 91.3332748413
+        },
+        {
+          "lineIndex": 39,
+          "wordIndex": 2,
+          "startErrorMs": 79.72515870000052,
+          "endErrorMs": 144.74255369999867,
+          "observedStart": 91.413,
+          "observedEnd": 91.593,
+          "referenceStart": 91.3332748413,
+          "referenceEnd": 91.4482574463
+        },
+        {
+          "lineIndex": 39,
+          "wordIndex": 3,
+          "startErrorMs": 144.74255369999867,
+          "endErrorMs": -16.737548799994784,
+          "observedStart": 91.593,
+          "observedEnd": 91.933,
+          "referenceStart": 91.4482574463,
+          "referenceEnd": 91.9497375488
+        },
+        {
+          "lineIndex": 39,
+          "wordIndex": 4,
+          "startErrorMs": -16.737548799994784,
+          "endErrorMs": -6.044494600004668,
+          "observedStart": 91.933,
+          "observedEnd": 92.413,
+          "referenceStart": 91.9497375488,
+          "referenceEnd": 92.4190444946
+        },
+        {
+          "lineIndex": 42,
+          "wordIndex": 0,
+          "startErrorMs": -36.56298829999116,
+          "endErrorMs": 201.77001960000496,
+          "observedStart": 96.453,
+          "observedEnd": 97.6602737427,
+          "referenceStart": 96.4895629883,
+          "referenceEnd": 97.4585037231
+        }
+      ],
+      "unmatched": [
+        {
+          "lineIndex": 32,
+          "words": 7
+        },
+        {
+          "lineIndex": 33,
+          "words": 7
+        },
+        {
+          "lineIndex": 35,
+          "words": 6
+        },
+        {
+          "lineIndex": 36,
+          "words": 7
+        },
+        {
+          "lineIndex": 37,
+          "words": 7
+        },
+        {
+          "lineIndex": 38,
+          "words": 7
+        },
+        {
+          "lineIndex": 40,
+          "words": 6
+        },
+        {
+          "lineIndex": 41,
+          "words": 7
+        },
+        {
+          "lineIndex": 43,
+          "words": 2
+        },
+        {
+          "lineIndex": 44,
+          "words": 2
+        },
+        {
+          "lineIndex": 45,
+          "words": 5
+        },
+        {
+          "lineIndex": 46,
+          "words": 10
+        }
+      ],
+      "estimatedOnset": null,
+      "estimatedEnd": null,
+      "estimatedErrors": []
+    },
+    {
+      "id": "Slingshot_Miracle_-_Whistler@103.648",
+      "record": "Slingshot_Miracle_-_Whistler",
+      "genre": "Blues",
+      "category": "singing-sparse",
+      "start": 103.6484985352,
+      "seconds": 28,
+      "sourceAudioSha256": "ba61876b9680783d6cb75614835645e62918ff162688fc5bbd1d1075f41809b7",
+      "referenceWords": 17,
+      "observedWords": 0,
+      "observedCoverage": 0,
+      "estimatedWords": 10,
+      "onset": null,
+      "end": null,
+      "errors": [],
+      "unmatched": [
+        {
+          "lineIndex": 15,
+          "words": 6
+        },
+        {
+          "lineIndex": 16,
+          "words": 4
+        },
+        {
+          "lineIndex": 17,
+          "words": 7
+        }
+      ],
+      "estimatedOnset": {
+        "count": 10,
+        "signedMeanMs": 119.9030700800023,
+        "medianAbsoluteMs": 199.73205569999664,
+        "p90AbsoluteMs": 512.7908936000125,
+        "p95AbsoluteMs": 512.7908936000125,
+        "within50": 0.3,
+        "within100": 0.4,
+        "within250": 0.6
+      },
+      "estimatedEnd": {
+        "count": 10,
+        "signedMeanMs": 23.60538942000404,
+        "medianAbsoluteMs": 285.88983150000047,
+        "p90AbsoluteMs": 906.3262938999941,
+        "p95AbsoluteMs": 906.3262938999941,
+        "within50": 0.1,
+        "within100": 0.2,
+        "within250": 0.5
+      },
+      "estimatedErrors": [
+        {
+          "lineIndex": 15,
+          "wordIndex": 0,
+          "startErrorMs": -0.498535200009087,
+          "endErrorMs": 85.26416020001193
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 1,
+          "startErrorMs": 85.26416020001193,
+          "endErrorMs": 335.1236572000005
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 2,
+          "startErrorMs": 335.1236572000005,
+          "endErrorMs": -180.24792479999974
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 3,
+          "startErrorMs": -329.3873291000011,
+          "endErrorMs": -10.317260699991948
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 4,
+          "startErrorMs": -10.317260699991948,
+          "endErrorMs": 199.73205569999664
+        },
+        {
+          "lineIndex": 15,
+          "wordIndex": 5,
+          "startErrorMs": 199.73205569999664,
+          "endErrorMs": -305.5883179000034
+        },
+        {
+          "lineIndex": 16,
+          "wordIndex": 0,
+          "startErrorMs": 0.042480499999442145,
+          "endErrorMs": 285.88983150000047
+        },
+        {
+          "lineIndex": 16,
+          "wordIndex": 1,
+          "startErrorMs": 285.88983150000047,
+          "endErrorMs": 512.7908936000125
+        },
+        {
+          "lineIndex": 16,
+          "wordIndex": 2,
+          "startErrorMs": 512.7908936000125,
+          "endErrorMs": 219.73309330000745
+        },
+        {
+          "lineIndex": 16,
+          "wordIndex": 3,
+          "startErrorMs": 120.39074710000364,
+          "endErrorMs": -906.3262938999941
+        }
+      ]
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@15.216",
+      "record": "Explosive_Ear_Candy_-_Like_The_Sun",
+      "genre": "Pop",
+      "category": "singing-fast",
+      "start": 15.216211319,
+      "seconds": 28,
+      "sourceAudioSha256": "2172a564b8a695d566435344da37c18e37bae5da3a7ac6f5c9347288dfaa22f6",
+      "referenceWords": 69,
+      "observedWords": 13,
+      "observedCoverage": 0.18840579710144928,
+      "estimatedWords": 9,
+      "onset": {
+        "count": 13,
+        "signedMeanMs": 76.68087063846174,
+        "medianAbsoluteMs": 106.26596070000005,
+        "p90AbsoluteMs": 147.16119380000237,
+        "p95AbsoluteMs": 202.77070619999904,
+        "within50": 0.23076923076923078,
+        "within100": 0.38461538461538464,
+        "within250": 1
+      },
+      "end": {
+        "count": 13,
+        "signedMeanMs": 69.36366975384665,
+        "medianAbsoluteMs": 138.3859405999992,
+        "p90AbsoluteMs": 204.5710907,
+        "p95AbsoluteMs": 334.4088592999981,
+        "within50": 0.15384615384615385,
+        "within100": 0.3076923076923077,
+        "within250": 0.9230769230769231
+      },
+      "errors": [
+        {
+          "lineIndex": 2,
+          "wordIndex": 0,
+          "startErrorMs": -45.483306899999576,
+          "endErrorMs": 138.3859405999992,
+          "observedStart": 20.596,
+          "observedEnd": 20.976,
+          "referenceStart": 20.6414833069,
+          "referenceEnd": 20.8376140594
+        },
+        {
+          "lineIndex": 2,
+          "wordIndex": 1,
+          "startErrorMs": 138.3859405999992,
+          "endErrorMs": 202.77070619999904,
+          "observedStart": 20.976,
+          "observedEnd": 21.296,
+          "referenceStart": 20.8376140594,
+          "referenceEnd": 21.0932292938
+        },
+        {
+          "lineIndex": 2,
+          "wordIndex": 2,
+          "startErrorMs": 202.77070619999904,
+          "endErrorMs": -41.14256289999929,
+          "observedStart": 21.296,
+          "observedEnd": 21.696,
+          "referenceStart": 21.0932292938,
+          "referenceEnd": 21.7371425629
+        },
+        {
+          "lineIndex": 2,
+          "wordIndex": 3,
+          "startErrorMs": -117.94577029999687,
+          "endErrorMs": 204.5710907,
+          "observedStart": 21.696,
+          "observedEnd": 22.136,
+          "referenceStart": 21.8139457703,
+          "referenceEnd": 21.9314289093
+        },
+        {
+          "lineIndex": 2,
+          "wordIndex": 4,
+          "startErrorMs": 104.34564210000019,
+          "endErrorMs": -334.4088592999981,
+          "observedStart": 22.136,
+          "observedEnd": 22.696,
+          "referenceStart": 22.0316543579,
+          "referenceEnd": 23.0304088593
+        },
+        {
+          "lineIndex": 7,
+          "wordIndex": 0,
+          "startErrorMs": 147.16119380000237,
+          "endErrorMs": 144.97933959999898,
+          "observedStart": 32.496,
+          "observedEnd": 32.656,
+          "referenceStart": 32.3488388062,
+          "referenceEnd": 32.5110206604
+        },
+        {
+          "lineIndex": 7,
+          "wordIndex": 1,
+          "startErrorMs": 65.72900389999603,
+          "endErrorMs": 71.9181212999942,
+          "observedStart": 32.656,
+          "observedEnd": 32.916,
+          "referenceStart": 32.5902709961,
+          "referenceEnd": 32.8440818787
+        },
+        {
+          "lineIndex": 7,
+          "wordIndex": 2,
+          "startErrorMs": 17.46713259999666,
+          "endErrorMs": 142.72500610000094,
+          "observedStart": 32.916,
+          "observedEnd": 33.316,
+          "referenceStart": 32.8985328674,
+          "referenceEnd": 33.1732749939
+        },
+        {
+          "lineIndex": 7,
+          "wordIndex": 3,
+          "startErrorMs": 142.72500610000094,
+          "endErrorMs": -49.99999999999716,
+          "observedStart": 33.316,
+          "observedEnd": 33.6863510132,
+          "referenceStart": 33.1732749939,
+          "referenceEnd": 33.7363510132
+        },
+        {
+          "lineIndex": 10,
+          "wordIndex": 0,
+          "startErrorMs": 20.66445919999893,
+          "endErrorMs": 140.35989380000302,
+          "observedStart": 37.556,
+          "observedEnd": 37.816,
+          "referenceStart": 37.5353355408,
+          "referenceEnd": 37.6756401062
+        },
+        {
+          "lineIndex": 10,
+          "wordIndex": 1,
+          "startErrorMs": 140.35989380000302,
+          "endErrorMs": 74.40545650000274,
+          "observedStart": 37.816,
+          "observedEnd": 38.076,
+          "referenceStart": 37.6756401062,
+          "referenceEnd": 38.0015945435
+        },
+        {
+          "lineIndex": 10,
+          "wordIndex": 2,
+          "startErrorMs": 74.40545650000274,
+          "endErrorMs": 106.26596070000005,
+          "observedStart": 38.076,
+          "observedEnd": 38.736,
+          "referenceStart": 38.0015945435,
+          "referenceEnd": 38.6297340393
+        },
+        {
+          "lineIndex": 10,
+          "wordIndex": 3,
+          "startErrorMs": 106.26596070000005,
+          "endErrorMs": 100.89761350000259,
+          "observedStart": 38.736,
+          "observedEnd": 39.616,
+          "referenceStart": 38.6297340393,
+          "referenceEnd": 39.5151023865
+        }
+      ],
+      "unmatched": [
+        {
+          "lineIndex": 0,
+          "words": 8
+        },
+        {
+          "lineIndex": 1,
+          "words": 6
+        },
+        {
+          "lineIndex": 3,
+          "words": 5
+        },
+        {
+          "lineIndex": 4,
+          "words": 6
+        },
+        {
+          "lineIndex": 5,
+          "words": 11
+        },
+        {
+          "lineIndex": 6,
+          "words": 4
+        },
+        {
+          "lineIndex": 8,
+          "words": 5
+        },
+        {
+          "lineIndex": 9,
+          "words": 4
+        },
+        {
+          "lineIndex": 11,
+          "words": 7
+        }
+      ],
+      "estimatedOnset": {
+        "count": 9,
+        "signedMeanMs": 232.14184399999976,
+        "medianAbsoluteMs": 276.5078735000017,
+        "p90AbsoluteMs": 517.7976227000016,
+        "p95AbsoluteMs": 517.7976227000016,
+        "within50": 0.2222222222222222,
+        "within100": 0.3333333333333333,
+        "within250": 0.4444444444444444
+      },
+      "estimatedEnd": {
+        "count": 9,
+        "signedMeanMs": 348.35948519999994,
+        "medianAbsoluteMs": 322.0881041999988,
+        "p90AbsoluteMs": 646.3262177000004,
+        "p95AbsoluteMs": 646.3262177000004,
+        "within50": 0,
+        "within100": 0.1111111111111111,
+        "within250": 0.1111111111111111
+      },
+      "estimatedErrors": [
+        {
+          "lineIndex": 6,
+          "wordIndex": 0,
+          "startErrorMs": -0.32456969999827834,
+          "endErrorMs": 280.22651670000084
+        },
+        {
+          "lineIndex": 6,
+          "wordIndex": 1,
+          "startErrorMs": 280.22651670000084,
+          "endErrorMs": 516.6528931000016
+        },
+        {
+          "lineIndex": 6,
+          "wordIndex": 2,
+          "startErrorMs": 396.29156490000025,
+          "endErrorMs": 646.3262177000004
+        },
+        {
+          "lineIndex": 6,
+          "wordIndex": 3,
+          "startErrorMs": 517.7976227000016,
+          "endErrorMs": 350.5095673000014
+        },
+        {
+          "lineIndex": 8,
+          "wordIndex": 0,
+          "startErrorMs": -0.3510132000030808,
+          "endErrorMs": 50.98980710000234
+        },
+        {
+          "lineIndex": 8,
+          "wordIndex": 1,
+          "startErrorMs": 50.98980710000234,
+          "endErrorMs": 276.5078735000017
+        },
+        {
+          "lineIndex": 8,
+          "wordIndex": 2,
+          "startErrorMs": 276.5078735000017,
+          "endErrorMs": 322.0881041999988
+        },
+        {
+          "lineIndex": 8,
+          "wordIndex": 3,
+          "startErrorMs": 166.94055179999623,
+          "endErrorMs": 401.198242199996
+        },
+        {
+          "lineIndex": 8,
+          "wordIndex": 4,
+          "startErrorMs": 401.198242199996,
+          "endErrorMs": 290.7361449999968
+        }
+      ]
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@91.396",
+      "record": "Explosive_Ear_Candy_-_Like_The_Sun",
+      "genre": "Pop",
+      "category": "repeated-phrase",
+      "start": 91.3960113525,
+      "seconds": 28,
+      "sourceAudioSha256": "2172a564b8a695d566435344da37c18e37bae5da3a7ac6f5c9347288dfaa22f6",
+      "referenceWords": 53,
+      "observedWords": 18,
+      "observedCoverage": 0.33962264150943394,
+      "estimatedWords": 12,
+      "onset": {
+        "count": 18,
+        "signedMeanMs": 61.73172674444456,
+        "medianAbsoluteMs": 58.083435100002134,
+        "p90AbsoluteMs": 205.860534699994,
+        "p95AbsoluteMs": 345.805908199992,
+        "within50": 0.4444444444444444,
+        "within100": 0.6111111111111112,
+        "within250": 0.9444444444444444
+      },
+      "end": {
+        "count": 18,
+        "signedMeanMs": 131.48656887777736,
+        "medianAbsoluteMs": 126.3381348000081,
+        "p90AbsoluteMs": 345.805908199992,
+        "p95AbsoluteMs": 904.5696410999966,
+        "within50": 0.3333333333333333,
+        "within100": 0.5,
+        "within250": 0.8888888888888888
+      },
+      "errors": [
+        {
+          "lineIndex": 28,
+          "wordIndex": 0,
+          "startErrorMs": -17.690795899994782,
+          "endErrorMs": 126.3381348000081,
+          "observedStart": 95.656,
+          "observedEnd": 95.936,
+          "referenceStart": 95.6736907959,
+          "referenceEnd": 95.8096618652
+        },
+        {
+          "lineIndex": 28,
+          "wordIndex": 1,
+          "startErrorMs": 126.3381348000081,
+          "endErrorMs": 58.083435100002134,
+          "observedStart": 95.936,
+          "observedEnd": 96.196,
+          "referenceStart": 95.8096618652,
+          "referenceEnd": 96.1379165649
+        },
+        {
+          "lineIndex": 28,
+          "wordIndex": 2,
+          "startErrorMs": 58.083435100002134,
+          "endErrorMs": 73.14111329999662,
+          "observedStart": 96.196,
+          "observedEnd": 96.816,
+          "referenceStart": 96.1379165649,
+          "referenceEnd": 96.7428588867
+        },
+        {
+          "lineIndex": 28,
+          "wordIndex": 3,
+          "startErrorMs": 19.613281200008714,
+          "endErrorMs": 43.347717300008526,
+          "observedStart": 96.816,
+          "observedEnd": 97.676,
+          "referenceStart": 96.7963867188,
+          "referenceEnd": 97.6326522827
+        },
+        {
+          "lineIndex": 30,
+          "wordIndex": 0,
+          "startErrorMs": -15.396484400000077,
+          "endErrorMs": 171.62530519999564,
+          "observedStart": 101.416,
+          "observedEnd": 101.976,
+          "referenceStart": 101.4313964844,
+          "referenceEnd": 101.8043746948
+        },
+        {
+          "lineIndex": 30,
+          "wordIndex": 1,
+          "startErrorMs": 171.62530519999564,
+          "endErrorMs": 38.589111299998535,
+          "observedStart": 101.976,
+          "observedEnd": 102.416,
+          "referenceStart": 101.8043746948,
+          "referenceEnd": 102.3774108887
+        },
+        {
+          "lineIndex": 30,
+          "wordIndex": 2,
+          "startErrorMs": 38.589111299998535,
+          "endErrorMs": 182.62048340000092,
+          "observedStart": 102.416,
+          "observedEnd": 102.756,
+          "referenceStart": 102.3774108887,
+          "referenceEnd": 102.5733795166
+        },
+        {
+          "lineIndex": 30,
+          "wordIndex": 3,
+          "startErrorMs": 182.62048340000092,
+          "endErrorMs": 48.65319820000025,
+          "observedStart": 102.756,
+          "observedEnd": 103.376,
+          "referenceStart": 102.5733795166,
+          "referenceEnd": 103.3273468018
+        },
+        {
+          "lineIndex": 33,
+          "wordIndex": 0,
+          "startErrorMs": -63.74853520000556,
+          "endErrorMs": -53.69299320000209,
+          "observedStart": 111.116,
+          "observedEnd": 111.616,
+          "referenceStart": 111.1797485352,
+          "referenceEnd": 111.6696929932
+        },
+        {
+          "lineIndex": 33,
+          "wordIndex": 1,
+          "startErrorMs": -53.69299320000209,
+          "endErrorMs": 31.111999499998433,
+          "observedStart": 111.616,
+          "observedEnd": 112.096,
+          "referenceStart": 111.6696929932,
+          "referenceEnd": 112.0648880005
+        },
+        {
+          "lineIndex": 33,
+          "wordIndex": 2,
+          "startErrorMs": 31.111999499998433,
+          "endErrorMs": 19.67370610000785,
+          "observedStart": 112.096,
+          "observedEnd": 112.676,
+          "referenceStart": 112.0648880005,
+          "referenceEnd": 112.6563262939
+        },
+        {
+          "lineIndex": 33,
+          "wordIndex": 3,
+          "startErrorMs": -34.81542970000362,
+          "endErrorMs": 201.2957153000059,
+          "observedStart": 112.676,
+          "observedEnd": 113.156,
+          "referenceStart": 112.7108154297,
+          "referenceEnd": 112.9547042847
+        },
+        {
+          "lineIndex": 33,
+          "wordIndex": 4,
+          "startErrorMs": 201.2957153000059,
+          "endErrorMs": 26.72021479999387,
+          "observedStart": 113.156,
+          "observedEnd": 113.476,
+          "referenceStart": 112.9547042847,
+          "referenceEnd": 113.4492797852
+        },
+        {
+          "lineIndex": 33,
+          "wordIndex": 5,
+          "startErrorMs": 26.72021479999387,
+          "endErrorMs": 904.5696410999966,
+          "observedStart": 113.476,
+          "observedEnd": 115.316,
+          "referenceStart": 113.4492797852,
+          "referenceEnd": 114.4114303589
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 0,
+          "startErrorMs": -149.8203124999975,
+          "endErrorMs": 345.805908199992,
+          "observedStart": 115.316,
+          "observedEnd": 116.076,
+          "referenceStart": 115.4658203125,
+          "referenceEnd": 115.7301940918
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 1,
+          "startErrorMs": 345.805908199992,
+          "endErrorMs": 159.2617187999963,
+          "observedStart": 116.076,
+          "observedEnd": 116.316,
+          "referenceStart": 115.7301940918,
+          "referenceEnd": 116.1567382812
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 2,
+          "startErrorMs": 38.67150880000736,
+          "endErrorMs": 205.860534699994,
+          "observedStart": 116.316,
+          "observedEnd": 116.716,
+          "referenceStart": 116.2773284912,
+          "referenceEnd": 116.5101394653
+        },
+        {
+          "lineIndex": 34,
+          "wordIndex": 3,
+          "startErrorMs": 205.860534699994,
+          "endErrorMs": -216.24670410000135,
+          "observedStart": 116.716,
+          "observedEnd": 117.196,
+          "referenceStart": 116.5101394653,
+          "referenceEnd": 117.4122467041
+        }
+      ],
+      "unmatched": [
+        {
+          "lineIndex": 26,
+          "words": 5
+        },
+        {
+          "lineIndex": 27,
+          "words": 4
+        },
+        {
+          "lineIndex": 29,
+          "words": 7
+        },
+        {
+          "lineIndex": 31,
+          "words": 10
+        },
+        {
+          "lineIndex": 32,
+          "words": 9
+        }
+      ],
+      "estimatedOnset": {
+        "count": 12,
+        "signedMeanMs": 272.53808594166645,
+        "medianAbsoluteMs": 297.0283203000008,
+        "p90AbsoluteMs": 506.7171020999979,
+        "p95AbsoluteMs": 572.0051880000057,
+        "within50": 0.16666666666666666,
+        "within100": 0.25,
+        "within250": 0.4166666666666667
+      },
+      "estimatedEnd": {
+        "count": 12,
+        "signedMeanMs": 298.71782939999747,
+        "medianAbsoluteMs": 297.0283203000008,
+        "p90AbsoluteMs": 543.1463012999984,
+        "p95AbsoluteMs": 572.0051880000057,
+        "within50": 0,
+        "within100": 0.08333333333333333,
+        "within250": 0.4166666666666667
+      },
+      "estimatedErrors": [
+        {
+          "lineIndex": 26,
+          "wordIndex": 0,
+          "startErrorMs": -0.01135249999606458,
+          "endErrorMs": 91.69384770000022
+        },
+        {
+          "lineIndex": 26,
+          "wordIndex": 1,
+          "startErrorMs": 91.69384770000022,
+          "endErrorMs": 297.0283203000008
+        },
+        {
+          "lineIndex": 26,
+          "wordIndex": 2,
+          "startErrorMs": 297.0283203000008,
+          "endErrorMs": 246.28741459999048
+        },
+        {
+          "lineIndex": 26,
+          "wordIndex": 3,
+          "startErrorMs": 140.07098390000294,
+          "endErrorMs": 359.22570799999676
+        },
+        {
+          "lineIndex": 26,
+          "wordIndex": 4,
+          "startErrorMs": 359.22570799999676,
+          "endErrorMs": 197.6902465999899
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 0,
+          "startErrorMs": -0.37048340000467306,
+          "endErrorMs": 207.64703369999893
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 1,
+          "startErrorMs": 207.64703369999893,
+          "endErrorMs": 294.5068358999947
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 2,
+          "startErrorMs": 294.5068358999947,
+          "endErrorMs": 397.5609741000028
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 3,
+          "startErrorMs": 397.5609741000028,
+          "endErrorMs": 506.7171020999979
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 4,
+          "startErrorMs": 506.7171020999979,
+          "endErrorMs": 572.0051880000057
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 5,
+          "startErrorMs": 572.0051880000057,
+          "endErrorMs": 543.1463012999984
+        },
+        {
+          "lineIndex": 29,
+          "wordIndex": 6,
+          "startErrorMs": 404.3828734999977,
+          "endErrorMs": -128.89501950000692
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "referenceWords": 590,
+    "observedWords": 65,
+    "observedCoverage": 0.11016949152542373,
+    "onset": {
+      "count": 65,
+      "signedMeanMs": 46.99660362769292,
+      "medianAbsoluteMs": 58.083435100002134,
+      "p90AbsoluteMs": 182.62048340000092,
+      "p95AbsoluteMs": 201.2957153000059,
+      "within50": 0.4461538461538462,
+      "within100": 0.6307692307692307,
+      "within250": 0.9846153846153847
+    },
+    "end": {
+      "count": 65,
+      "signedMeanMs": 74.45658687230703,
+      "medianAbsoluteMs": 73.14111329999662,
+      "p90AbsoluteMs": 204.5710907,
+      "p95AbsoluteMs": 278.70483399996715,
+      "within50": 0.4,
+      "within100": 0.6,
+      "within250": 0.9384615384615385
+    },
+    "estimatedWords": 61,
+    "estimatedOnset": {
+      "count": 61,
+      "signedMeanMs": 399.65415554262415,
+      "medianAbsoluteMs": 329.3873291000011,
+      "p90AbsoluteMs": 1207.7756348000007,
+      "p95AbsoluteMs": 1536.7248534999903,
+      "within50": 0.18032786885245902,
+      "within100": 0.22950819672131148,
+      "within250": 0.3770491803278688
+    },
+    "estimatedEnd": {
+      "count": 61,
+      "signedMeanMs": 512.8718024131151,
+      "medianAbsoluteMs": 359.22570799999676,
+      "p90AbsoluteMs": 1536.7248534999903,
+      "p95AbsoluteMs": 1747.5430298000133,
+      "within50": 0.03278688524590164,
+      "within100": 0.08196721311475409,
+      "within250": 0.26229508196721313
+    }
+  }
+}

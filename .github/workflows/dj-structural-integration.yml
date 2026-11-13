@@ -128,7 +128,15 @@ jobs:
         with:
           name: structural-compiled-windows
           path: results
+      - uses: actions/cache@v4
+        id: rendered
+        with:
+          path: |
+            results/dj-mixes
+            results/composite-${{ matrix.rate }}-report.json
+          key: structural-render-v1-${{ runner.os }}-${{ matrix.rate }}-${{ hashFiles('results/structural-all-pairs.json') }}-${{ hashFiles('tools/build-composite-assets.py', 'tools/audit-full-beat-audio.py', 'tools/dj-rendered-rhythm.py', 'tools/render-composite-mix.mjs', 'audio-composite-core.mjs', 'audio-stretch-core.mjs', 'vendor/soundtouch*.js') }}
       - name: Render original sources and validate actual rhythm and peaks
+        if: steps.rendered.outputs.cache-hit != 'true'
         run: python tools/build-composite-assets.py --rate=${{ matrix.rate }} --plans=results/structural-all-pairs.json --assets=results/dj-mixes --cache=original-mp3 --report=results/composite-${{ matrix.rate }}-report.json
       - uses: actions/upload-artifact@v4
         if: always()
