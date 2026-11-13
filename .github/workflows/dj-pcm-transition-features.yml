@@ -7,6 +7,7 @@ on:
       - 'tools/build-full-beat-plans.cjs'
       - 'tools/retrack-dj-pcm.py'
       - 'tools/audit-full-beat-audio.py'
+      - 'tools/test-dj-audio-render.py'
       - 'tools/apply-full-beat-audio-proof.cjs'
       - 'tools/dj-verify-stretch.cjs'
       - 'mix-intelligente.js'
@@ -73,6 +74,7 @@ jobs:
           OPENBLAS_NUM_THREADS: '1'
           OMP_NUM_THREADS: '1'
         run: |
+          python tools/test-dj-audio-render.py
           python tools/audit-full-beat-audio.py --plans=results/full-beat-report.json --output=results/audio-16k --cache=original-mp3
           python tools/audit-full-beat-audio.py --plans=results/full-beat-report.json --output=results/audio-48k --cache=original-mp3 --rate=48000
           node tools/apply-full-beat-audio-proof.cjs --index=results/dj-deep-analysis.json --plans=results/full-beat-report.json --reports=results/audio-16k/report.json,results/audio-48k/report.json --output=results/dj-deep-analysis.json --report=results/verified-full-beat-plans.json

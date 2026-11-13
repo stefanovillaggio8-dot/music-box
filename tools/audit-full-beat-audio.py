@@ -11,7 +11,10 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 SR=16000
 
 def decode(path,start,seconds):
-    run=subprocess.run(['ffmpeg','-nostdin','-v','error','-ss',str(start),'-i',str(path),
+    # Decode from the recording's beginning before trimming. Input-side
+    # MP3 seeking can lose bit-reservoir history and insert silent/incorrect
+    # samples at the very beat whose phase this audit is meant to verify.
+    run=subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(path),'-ss',str(start),
         '-t',str(seconds),'-ar',str(SR),'-ac','2','-f','f32le','pipe:1'],capture_output=True,check=True,timeout=60)
     return np.frombuffer(run.stdout,dtype='<f4').reshape(-1,2).copy()
 

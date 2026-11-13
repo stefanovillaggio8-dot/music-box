@@ -143,6 +143,18 @@ and passes with the correction; it does not change or invent word timestamps.
   latest PR commit; earlier green runs are not represented as tests of a
   later code revision.
 
+### Accurate MP3 window rendering
+
+A final sample inspection detected 22ms of artificial silence at the start
+of a reference WAV. The audit's input-side FFmpeg seek had discarded MP3
+bit-reservoir history. Rendering now decodes from the beginning and trims
+the output accurately. A generated stereo MP3 reproduces the defect:
+window-versus-full-decode RMS error was 0.0164 before and falls below 0.0001
+after the correction. This is a decoder regression test, not a source-text
+assertion. All 34 exact windows were rendered again; all timing checks pass,
+with zero full-scale sample overruns. Five conservative gain factors update;
+the 17 pairs and three Safari-eligible pairs remain unchanged.
+
 ## Limits that remain material
 
 - **17 / 1,381,800 ≈ 0.00123%** remains very low coverage. This is an
