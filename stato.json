@@ -1114,7 +1114,7 @@
     "a": "BLANCO"
    },
    "[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 77,
+    "v": 78,
     "s": 1821,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -1738,7 +1738,7 @@
     "a": "Lucky Twice"
    },
    "m:2026-11|[\"l'emozione non ha voce (io non so parlar d'amore)\",\"adriano celentano\"]": {
-    "v": 76,
+    "v": 77,
     "s": 1813,
     "t": "L'Emozione Non Ha Voce (Io Non So Parlar D'Amore)",
     "a": "Adriano Celentano"
@@ -2717,13 +2717,13 @@
    },
    "[\"culo\",\"tonypitony\"]": {
     "v": 1,
-    "s": 335,
+    "s": 336,
     "t": "CULO",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"culo\",\"tonypitony\"]": {
     "v": 1,
-    "s": 335,
+    "s": 336,
     "t": "CULO",
     "a": "TonyPitony"
    },
@@ -2939,13 +2939,13 @@
    },
    "[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 1,
-    "s": 337,
+    "s": 339,
     "t": "La Violenza Necessaria",
     "a": "Kid Yugi & Shiva"
    },
    "m:2026-11|[\"la violenza necessaria\",\"kid yugi & shiva\"]": {
     "v": 1,
-    "s": 337,
+    "s": 339,
     "t": "La Violenza Necessaria",
     "a": "Kid Yugi & Shiva"
    },
@@ -5213,13 +5213,13 @@
    },
    "[\"non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂÃÂÃÂÃÂÃÂ": {
     "v": 1,
-    "s": 72,
+    "s": 111,
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂÃÂÃÂÃ": {
     "v": 1,
-    "s": 72,
+    "s": 111,
     "t": "Non ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -8068,14 +8068,14 @@
     "a": "LuchÃÂÃÂ¨"
    },
    "[\"non abbiamo etÃÂÃÂ \",\"luchÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 333,
+    "v": 1,
+    "s": 335,
     "t": "Non Abbiamo EtÃÂÃÂ ",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"non abbiamo etÃÂÃÂ \",\"luchÃÂÃÂ¨\"]": {
-    "v": 0,
-    "s": 333,
+    "v": 1,
+    "s": 335,
     "t": "Non Abbiamo EtÃÂÃÂ ",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -8879,13 +8879,13 @@
    },
    "[\"non abbiamo etÃÂ \",\"luchÃÂ¨\"]": {
     "v": 1,
-    "s": 335,
+    "s": 416,
     "t": "Non Abbiamo EtÃÂ ",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"non abbiamo etÃÂ \",\"luchÃÂ¨\"]": {
     "v": 1,
-    "s": 335,
+    "s": 416,
     "t": "Non Abbiamo EtÃÂ ",
     "a": "LuchÃÂ¨"
    },
