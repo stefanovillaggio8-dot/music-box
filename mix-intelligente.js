@@ -15,9 +15,11 @@ const STALE_MOBILE_PREVIEW=Symbol("stale mobile intro request");
 let djPlaybackEpoch=0,lastDJTrackChange=0;
 const djFetchControllers=new Set();
 function abortObsoleteDJWork(){
+ if(typeof window!=="undefined")window.MusicBoxCompositeMix?.cancelPreparation?.();
  djPlaybackEpoch++;lastDJTrackChange=Date.now();
  for(const ctrl of djFetchControllers)try{ctrl.abort()}catch(_){}
  djFetchControllers.clear();
+ try{window.MusicBoxStretch?.cancel?.()}catch(_){}
 }
 let offlineTransferPriority=false;
 let deepTransferController=null;
@@ -146,6 +148,7 @@ function onsetPairAgreement(a,b){
 }
 function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
+ if(cue.measuredFullBeat===true||cue.structuralBeat===true)return fullBeatCueCertified(a,b,cue);
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true;
@@ -195,6 +198,7 @@ function iphoneBeatPairCertified(a,b,cue){
 // BPM alone or a quiet outro is not enough to certify any DJ cut.
 function desktopBeatPairCertified(a,b,p){
  if(!p)return false;
+ if(p.measuredFullBeat===true||p.structuralBeat===true)return fullBeatCueCertified(a,b,p);
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
  if(p.earlyBeatJoin===true){
@@ -383,6 +387,32 @@ function tempoFreeReleaseBridge(a,b,dur){
   silenceTrim:trim,trailing:trim?dur-end:0};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if((plan?.measuredFullBeat||plan?.structuralBeat)&&plan.sourceSha===ending?.sha&&
+    typeof window!=="undefined"&&window.MusicBoxCompositeMix?.supports?.(plan))return true;
+ if(plan?.structuralBeat)return false;
+ // Safari can ignore HTMLMediaElement.volume. A hot two-track sum that
+ // requires shared output headroom cannot be made safe by turning down
+ // only the WebAudio intro. Keep its native fallback until a common bus
+ // has been verified on the device.
+ if(plan?.measuredFullBeat&&Number.isFinite(plan.outputHeadroom)&&plan.outputHeadroom<1)return false;
+ if(plan?.measuredFullBeat===true)
+  return (!!ending?.pcmBeatPlans?.[plan.targetSha]||!!pcmTransitionSection(ending,"outro"))&&
+   plan.sourceSha===ending.sha&&(plan.percussiveIntro||Math.abs(plan.tempo-1)<=.002||
+    typeof window!=="undefined"&&!!window.MusicBoxStretch)&&plan.kind==="beat"&&
+   plan.quietCertified===false&&plan.nativeTailFullBeat===true&&plan.preserveTail===true&&
+   plan.measuredBeatCount>=8&&plan.beatPulseAgreement>=.90&&
+   plan.measuredPlacementError<=.040&&plan.grooveScore>=.36&&
+   (plan.measuredPulseMode?plan.measuredBeatCount>=12&&plan.beatPulseAgreement>=.95&&
+    plan.measuredPlacementError<=.025&&plan.fullPulseFirst>=5&&plan.fullPulseSecond>=5&&
+    plan.fullPulseAttackSupport>=.90:plan.fullOnsetFirst>=.22&&plan.fullOnsetSecond>=.22)&&
+   (plan.percussiveIntro?[2,3].includes(plan.introPcmVersion)&&plan.introTonalRatioMax<=.12&&
+    plan.introTonalPeakMax<=.23&&plan.introMeasuredRmsMin>=.005&&plan.introTonalFrames>=6:
+    plan.harmonicMode==="compatible-key"?plan.harmonicKeyConfidence>=.70&&
+    plan.harmonicDissonanceMax<=.05&&plan.harmonicRawDissonanceMax<=.45:
+    plan.harmonicScore>=.78&&plan.harmonicWeakest>=.60)&&
+   plan.fade>=4.5&&plan.fade<=(plan.fullBeatSearchVersion===2?16:8)&&
+   Math.abs(plan.end-ending.duration)<.1;
+
  if(plan?.neutralAmbientUnderlay===true)
   return !!ending&&plan.kind==="underlay"&&
    plan.drumOnlyUnderlay===true&&plan.preserveTail===true&&
@@ -396,6 +426,18 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
    plan.begin>=ending.last+.25&&Math.abs(ending.duration-plan.end)<.2&&
    (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-5)&&
    plan.fade>=1.8&&plan.fade<=11.4;
+ if(plan?.independentLowBand===true)
+  return !!ending&&plan.kind==="underlay"&&
+   plan.measuredWindowUnderlay===true&&plan.drumOnlyUnderlay===true&&
+   plan.preserveTail===true&&plan.measuredBeatPlacement===true&&
+   Number(plan.beatPulseAgreement)>=.90&&
+   Number.isFinite(plan.measuredPlacementError)&&
+   plan.measuredPlacementError>=0&&
+   Number(plan.measuredPlacementError)<=.055&&
+   Number.isFinite(plan.grooveScore)&&
+   Number(plan.underlayVolume)>0&&Number(plan.underlayVolume)<=.09&&
+   Math.abs(ending.duration-plan.end)<.20&&
+   plan.fade>=4.5&&plan.fade<=11.8;
  if(plan?.subduedRhythmicUnderlay===true)
   return !!ending&&plan.kind==="underlay"&&plan.preserveTail===true&&
    Math.abs(ending.duration-plan.end)<.2&&
@@ -471,7 +513,8 @@ function rememberMobileClip(key,decoded,info){
   const start=Math.max(0,musicalIntroEntry(info)-.2);
   const offset=Math.floor(start*rate);
   // Longer bounded preview covers delayed Safari startup.
-   const count=Math.min(Math.floor(14*rate),decoded.length-offset);
+   const seconds=Number.isFinite(info.pcmIntroSeconds)?clamp(info.pcmIntroSeconds,14,24):14;
+   const count=Math.min(Math.floor(seconds*rate),decoded.length-offset);
   if(count<rate*4)return;
   const channels=[];
   for(let c=0;c<Math.min(2,decoded.numberOfChannels);c++)
@@ -538,6 +581,8 @@ function withGuardedLRC(audio){
    Math.min(audio.firstLyricAt,bound.firstLyricAt):bound.firstLyricAt,
   lastLyricAt:Number.isFinite(audio.lastLyricAt)?
    Math.max(audio.lastLyricAt,bound.lastLyricAt):bound.lastLyricAt,
+  ...(Array.isArray(bound.starts)&&bound.starts.length>=3&&bound.starts.every((t,i)=>
+    Number.isFinite(t)&&t>=0&&t<=audio.duration+.1&&(!i||t>=bound.starts[i-1]))?{lyricStarts:bound.starts}:{}),
   lrcBoundarySource:bound.provenance,lrcSourceKey:bound.sourceKey};
 }
 function loadDJLyricBoundaries(){
@@ -682,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=2",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -942,6 +987,15 @@ function djBeatPhaseError(p,outgoingTime,incomingTime){
  const incoming=(incomingTime-(Number(p.entry)||0)-p.nextBeat)/speed;
  const phase=((outgoing-incoming)%period+period)%period;
  return Math.min(phase,period-phase);
+}
+function djFullBeatClockError(p,outgoingTime,incomingTime){
+ if(!p||![p.begin,p.entry,p.tempo,outgoingTime,incomingTime].every(Number.isFinite)||
+    p.tempo<=0)return Infinity;
+ return Math.abs(outgoingTime-p.begin-(incomingTime-p.entry)/p.tempo);
+}
+function fullBeatFeedbackRate(tempo,phaseError){
+ if(!Number.isFinite(tempo)||!Number.isFinite(phaseError))return 1;
+ return clamp(tempo*(1+clamp(phaseError*1.25,-.06,.06)),.90,1.10);
 }
 function djSoftFocusEnvelope(progress){
  // Only verified quiet tails: the next actual intro emerges early.
@@ -1955,12 +2009,18 @@ async function decode(track,needClip=false){
 // transition window can invalidate an already audible mix.
 function voiceThreatensPlan(voice,isCurrent,isNext,currentPlan){
  if(!currentPlan)return false;
+ if(currentPlan.nativeTailFullBeat===true){
+  return Boolean(isNext&&Number.isFinite(voice?.firstVoiceAt)&&
+   (voice.firstVoiceAt-(Number(currentPlan.entry)||0))/
+    Math.max(1,Number(currentPlan.tempo)||1)<currentPlan.fade+.65);
+ }
  if(currentPlan.vocalBeatUnderlay===true){
   return Boolean(
    isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
     voice.lastVoiceAt>currentPlan.vocalEndAt+.20||
    isNext&&Number.isFinite(voice?.firstVoiceAt)&&
-    voice.firstVoiceAt<currentPlan.fade+.55);
+    (voice.firstVoiceAt-(Number(currentPlan.entry)||0))/
+     Math.max(1,Number(currentPlan.tempo)||1)<currentPlan.fade+.55);
  }
  return Boolean(
   (isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
@@ -2423,6 +2483,424 @@ function djMeasuredBarAccents(outro,intro,bpm,offsetSeconds){
  const score=clamp((correlation+1)/2,0,1);
  return {reliable:true,score,beats:incoming.length};
 }
+// Fine-grained original-PCM features cover BOTH songs throughout the fade.
+// A similar four-second fingerprint or global BPM is not this certificate.
+function pcmTransitionSection(track,name){
+ const data=track?.pcmTransition,part=data?.[name];
+ if(!((data?.version===1&&data.method==="original-pcm-onset-chroma-20ms")||
+      (data?.version===2&&data.method==="original-pcm-hpss-onset-chroma-20ms-v2")||
+      (data?.version===3&&data.method==="original-pcm-hpss-onset-chroma-20ms-v3-multigrid"))||
+    data.sha!==track.sha||!part||
+    !Number.isFinite(part.start)||!Number.isFinite(part.end)||
+    part.end<=part.start||part.step!==.02||
+    !Array.isArray(part.onset)||part.onset.length<150||part.onset.length>5000||
+    !part.onset.every(v=>Number.isFinite(v)&&v>=0&&v<=4)||
+    !Array.isArray(part.beats)||part.beats.length<8||part.beats.length>250||
+    !part.beats.every((t,i)=>Number.isFinite(t)&&t>=part.start&&t<=part.end&&
+      (!i||t>part.beats[i-1]))||
+    !Array.isArray(part.harmony)||part.harmony.length<6)return null;
+ return part;
+}
+function pcmContourAt(part,time){
+ const pos=(time-part.start)/part.step,i=Math.floor(pos),fraction=pos-i;
+ if(i<0||i+1>=part.onset.length)return null;
+ return part.onset[i]*(1-fraction)+part.onset[i+1]*fraction;
+}
+function pcmFullBeatFit(outro,intro,begin,entry,rate,fade){
+ const old=outro.beats.filter(t=>t>=begin-.075&&t<=begin+fade-.12),
+  next=intro.beats.map(t=>begin+(t-entry)/rate)
+   .filter(t=>t>=begin&&t<=begin+fade-.12);
+ if(old.length<8||next.length<8)return null;
+ let cursor=0,errors=[],matches=[],first=0,second=0;
+ for(const t of next){
+  while(cursor+1<old.length&&Math.abs(old[cursor+1]-t)<Math.abs(old[cursor]-t))cursor++;
+  const error=old[cursor]-t;
+  if(cursor<old.length&&Math.abs(error)<=.075){
+   errors.push(error);matches.push({old:old[cursor],next:t});
+   if(t<begin+fade/2)first++;else second++;
+   cursor++;
+  }
+ }
+ const ratio=errors.length/Math.max(old.length,next.length);
+ if(errors.length<8||ratio<.90||first<3||second<3)return null;
+ const rms=Math.sqrt(errors.reduce((sum,x)=>sum+x*x,0)/errors.length);
+ if(rms>.040)return null;
+ // Measure all real transients at their ACTUAL simultaneous positions,
+ // including the second half; do not select the best lag after planning.
+ const xs=[],ys=[];
+ for(let t=.08;t<fade-.12;t+=.02){
+  const x=pcmContourAt(outro,begin+t),y=pcmContourAt(intro,entry+t*rate);
+  if(x===null||y===null)return null;
+  xs.push(x);ys.push(y);
+ }
+ const correlation=(lo,hi)=>{
+  const x=xs.slice(lo,hi),y=ys.slice(lo,hi),n=x.length;
+  if(n<35)return -1;
+  const mx=x.reduce((a,b)=>a+b,0)/n,my=y.reduce((a,b)=>a+b,0)/n;
+  let xy=0,xx=0,yy=0;
+  for(let i=0;i<n;i++){const a=x[i]-mx,b=y[i]-my;xy+=a*b;xx+=a*a;yy+=b*b}
+  return xx>1e-6&&yy>1e-6?xy/Math.sqrt(xx*yy):-1;
+ };
+ const half=Math.floor(xs.length/2),onset=correlation(0,xs.length),
+  firstHalf=correlation(0,half),secondHalf=correlation(half,xs.length);
+ const peak=(part,t)=>Math.max(...[-.03,-.01,.01,.03].map(d=>pcmContourAt(part,t+d)??0));
+ const strongHits=matches.filter(m=>peak(outro,m.old)>=.35&&
+  peak(intro,entry+(m.next-begin)*rate)>=.35).length;
+ const attackSupport=strongHits/matches.length;
+ // Different drum patterns can share actual beats without sharing an
+ // amplitude contour. Only a substantially stronger 12-pulse certificate
+ // may use that path: >=95% one-to-one matches, <=25ms RMS, five in each
+ // half, and independently strong PCM attacks on both recordings.
+ const observedPulses=errors.length>=12&&ratio>=.95&&rms<=.025&&
+  first>=5&&second>=5&&attackSupport>=.90;
+ const correlated=onset>=.36&&firstHalf>=.22&&secondHalf>=.22;
+ if(!correlated&&!observedPulses)return null;
+ return {beats:errors.length,ratio,rms,onset,firstHalf,secondHalf,
+  observedPulses:!correlated&&observedPulses,firstBeats:first,secondBeats:second,
+  attackSupport,score:correlated?onset:ratio*(1-rms/.10)};
+}
+// Compatible musical keys need not play identical chords. Check the
+// actual HPSS harmonic phrase and bound semitone/tritone clashes at every
+// half-second of the overlap, rather than treating drum timbre as harmony.
+function pcmCompatibleKeyHarmony(outro,intro,begin,entry,rate,fade){
+ const close=(part,t)=>{
+  let row=null,d=Infinity;
+  for(const r of part.harmony){const delta=Math.abs(r.t-t);if(delta<d){d=delta;row=r}}
+  return d<=.30&&Number.isFinite(row?.tonalRatio)&&Number.isFinite(row?.rms)&&
+   row.rms>=.005&&Array.isArray(row.notes)&&row.notes.length===12&&
+   row.notes.every(x=>Number.isFinite(x)&&x>=0)?row.notes:null;
+ };
+ const a=[],b=[],scores=[],clashes=[],excessClashes=[];
+ for(let t=.5;t<=fade-.5;t+=.5){
+  const x=close(outro,begin+t),y=close(intro,entry+t*rate);
+  if(!x||!y)return null;
+  const normalize=z=>{
+   const v=focusedChroma(z),sum=v.reduce((p,q)=>p+q,0);
+   return sum>.025?v.map(n=>n/sum):null;
+  };
+  const xx=normalize(x),yy=normalize(y);
+  if(!xx||!yy)return null;
+  let clash=0;
+  for(let p=0;p<12;p++)clash+=xx[p]*(yy[(p+1)%12]+yy[(p+11)%12]+.5*yy[(p+6)%12]);
+  const intrinsic=z=>z.reduce((sum,n,p)=>sum+n*(z[(p+1)%12]+z[(p+11)%12]+.5*z[(p+6)%12]),0);
+  clashes.push(clash);excessClashes.push(clash-Math.max(intrinsic(xx),intrinsic(yy)));
+  scores.push(focusedCompatibility(x,y));a.push(x);b.push(y);
+ }
+ // Compare added roughness to the source arrangements themselves. Dense
+ // seventh chords are not unsafe merely for exceeding a fixed flat-spectrum
+ // threshold; the blend may not add >5 percentage points at any frame.
+ if(a.length<6||Math.max(...clashes)>.45||Math.max(...excessClashes)>.05)return null;
+ const mean=rows=>Array.from({length:12},(_,p)=>rows.reduce((sum,r)=>sum+r[p],0)/rows.length);
+ const ka=camelotEstimate(mean(a)),kb=camelotEstimate(mean(b));
+ if(!ka||!kb||Math.min(ka.confidence,kb.confidence)<.70)return null;
+ const relation=camelotMatch({camelot:ka},{camelot:kb});
+ if(relation.score<.92)return null;
+ return {compatibleKey:true,average:scores.reduce((a,b)=>a+b,0)/scores.length,
+  weakest:Math.min(...scores),keyFrom:ka.code,keyTo:kb.code,
+  keyConfidence:Math.min(ka.confidence,kb.confidence),
+  keyCompatibility:relation.score,dissonanceMax:Math.max(...excessClashes),rawDissonanceMax:Math.max(...clashes)};
+}
+function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
+ const frames=intro.harmony.filter(row=>Number.isFinite(row?.t)&&
+  row.t>=entry+.25&&row.t<=entry+fade*rate-.25);
+ // An original percussive intro need not contain the SAME chord as the
+ // outgoing arrangement. Require measured HPSS tonal power <=12% in
+ // EVERY half-second frame and no dominant pitched note, not flat or
+ // missing chroma masquerading as a harmonic match.
+ const percussiveIntro=frames.length>=Math.floor(fade*rate*2)-2&&
+  frames.length>=6&&frames.every(row=>
+   Number.isFinite(row.tonalRatio)&&row.tonalRatio>=0&&row.tonalRatio<=.12&&
+   Number.isFinite(row.rms)&&row.rms>=.005&&
+   Array.isArray(row.notes)&&row.notes.length===12&&
+   row.notes.every(Number.isFinite)&&Math.max(...row.notes)<=.23);
+ if(percussiveIntro)return {percussiveIntro:true,average:null,weakest:null,
+  tonalRatioMax:Math.max(...frames.map(row=>row.tonalRatio)),
+  tonalPeakMax:Math.max(...frames.map(row=>Math.max(...row.notes))),
+  measuredRmsMin:Math.min(...frames.map(row=>row.rms)),frames:frames.length};
+ const keyCompatible=pcmCompatibleKeyHarmony(outro,intro,begin,entry,rate,fade);
+ const closest=(part,time)=>{
+  let winner=null,distance=Infinity;
+  for(const row of part.harmony){
+   const delta=Math.abs(row?.t-time);
+   if(delta<distance){distance=delta;winner=row?.notes}
+  }
+  return distance<=.30&&hasReliableHarmony(winner)?winner:null;
+ };
+ const scores=[];let shared=0;
+ for(const f of [.16,.38,.62,.84]){
+  const a=closest(outro,begin+fade*f),b=closest(intro,entry+fade*f*rate);
+  if(!a||!b)return keyCompatible;
+  const top=x=>x.map((v,p)=>({v,p})).sort((a,b)=>b.v-a.v).slice(0,3);
+  if(top(a).filter(x=>top(b).some(y=>y.p===x.p)).length>=2)shared++;
+  scores.push(focusedCompatibility(a,b));
+ }
+ const average=scores.reduce((a,b)=>a+b,0)/scores.length,
+  weakest=Math.min(...scores);
+ return average>=.78&&weakest>=.60&&shared>=3?{average,weakest}:keyCompatible;
+}
+// Offline pair plans contain only the validated cue and evidence summary.
+// The large PCM contours stay in audit artifacts, never in the PWA index.
+function indexedFullBeatBridge(a,b,dur){
+ const record=a?.pcmBeatPlans?.[b?.sha],p=record?.cue;
+ const expanded=record?.version===2&&p?.fullBeatSearchVersion===2;
+ if(record?.version===2&&!expanded)return null;
+ if(expanded&&(!p.renderEvidence||p.outputHeadroom==null))return null;
+ const sourceBpm=expanded?p.sourceTempoBpm:a?.bpm,targetBpm=expanded?p.targetTempoBpm:b?.bpm;
+ if(![1,2].includes(record?.version)||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+    !p||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
+    Math.abs(record.sourceDuration-a.duration)>.1||
+    Math.abs(record.nextDuration-b.duration)>.1||
+    !beatBearingIntro(b,.39)||p.kind!=="beat"||p.measuredFullBeat!==true||
+    p.quietCertified!==false||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||
+    ![p.begin,p.end,p.fade,p.entry,p.tempo,p.gain,p.beatAnchor,p.nextBeat,
+      p.beatPeriod,p.measuredBeatCount,p.beatPulseAgreement,
+      p.measuredPlacementError,p.grooveScore,p.fullOnsetFirst,
+      p.fullOnsetSecond].every(Number.isFinite)||
+    p.fade<4.5||p.fade>(expanded?16:8)||p.begin<26||
+    Math.abs(p.end-p.begin-p.fade)>.001||
+    Math.abs(p.end-(dur-.035))>.01||
+    (expanded?(!Number.isFinite(p.entry)||p.entry<musicalIntroEntry(b)||p.entry>musicalIntroEntry(b)+8):p.entry!==musicalIntroEntry(b))||
+    !Number.isFinite(sourceBpm)||!Number.isFinite(targetBpm)||sourceBpm<55||sourceBpm>210||targetBpm<55||targetBpm>210||
+    p.tempo<.95||p.tempo>1.05||
+    !Number.isFinite(p.nominalTempo)||Math.abs(p.nominalTempo-sourceBpm/targetBpm)>.0001||
+    Math.abs(p.tempo/p.nominalTempo-1)>.025||p.gain!==1||
+    Math.abs(p.beatPeriod-60/sourceBpm)>.0001||
+    p.measuredBeatCount<8||p.beatPulseAgreement<.90||
+    p.measuredPlacementError<0||p.measuredPlacementError>.040||
+    p.grooveScore<.36)return null;
+ if(p.measuredPulseMode){
+  if(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||
+     ![p.fullPulseFirst,p.fullPulseSecond,p.fullPulseAttackSupport].every(Number.isFinite)||
+     p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.90)return null;
+ }else if(p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)return null;
+ if(p.percussiveIntro===true){
+  if(![2,3].includes(p.introPcmVersion)||
+     ![p.introTonalRatioMax,p.introTonalPeakMax,p.introMeasuredRmsMin,p.introTonalFrames].every(Number.isFinite)||
+     p.introTonalRatioMax<0||p.introTonalRatioMax>.12||p.introTonalPeakMax>.23||
+     p.introMeasuredRmsMin<.005||p.introTonalFrames<6)return null;
+ }else if(p.harmonicMode==="compatible-key"){
+  if(![2,3].includes(p.introPcmVersion)||![2,3].includes(p.outroPcmVersion)||
+     !Number.isFinite(p.harmonicKeyConfidence)||p.harmonicKeyConfidence<.70||
+     !Number.isFinite(p.harmonicDissonanceMax)||p.harmonicDissonanceMax>.05||
+     !Number.isFinite(p.harmonicRawDissonanceMax)||p.harmonicRawDissonanceMax>.45||
+     !/^(?:[1-9]|1[0-2])[AB]$/.test(p.harmonicKeyFrom||"")||
+     !/^(?:[1-9]|1[0-2])[AB]$/.test(p.harmonicKeyTo||"")||
+     camelotMatch({camelot:p.harmonicKeyFrom},{camelot:p.harmonicKeyTo}).score<.92)return null;
+ }else if(!Number.isFinite(p.harmonicScore)||!Number.isFinite(p.harmonicWeakest)||
+   p.harmonicScore<.78||p.harmonicWeakest<.60)return null;
+ const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(!Number.isFinite(firstVoice)||(firstVoice-p.entry)/Math.max(1,p.tempo)<p.fade+.65)return null;
+ if(p.outputHeadroom!=null&&(!Number.isFinite(p.outputHeadroom)||p.outputHeadroom<=0||p.outputHeadroom>1||
+   p.renderEvidence?.sourceSha!==a.sha||p.renderEvidence?.targetSha!==b.sha||
+   p.renderEvidence?.timingVerified!==true||p.renderEvidence?.pitchPreserved!==true||
+   !Number.isFinite(p.renderEvidence?.peakBound)||p.renderEvidence.peakBound>.961))return null;
+ return {...p,sourceSha:a.sha,targetSha:b.sha};
+}
+// Internal entry/exit windows are independently certified offline. They
+// require a rendered common signal: the generic crossfade cannot choose
+// an arbitrary interior entry or fade the last sung phrase by accident.
+function indexedStructuralBeatBridge(a,b,dur){
+ const record=a?.structuralBeatPlans?.[b?.sha];
+ if(!record)return null;
+ const position=Number.isFinite(a?.mixPosition)?a.mixPosition:0;
+ for(const p of record.cues||[record.cue]){
+  if(!p||p.begin-.3<position-.04)continue;
+  const valid=validateStructuralBeatCue(record,p,a,b,dur);
+  if(valid)return valid;
+ }
+ return null;
+}
+function validateStructuralBeatCue(record,p,a,b,dur){
+ const e=p?.structuralEvidence;
+ const strict=p?.measuredFullBeat===true&&p?.metricalRhythmic===false;
+ const metrical=p?.measuredFullBeat===false&&p?.metricalRhythmic===true;
+ const localVocalConflict=p&&[a?.lastVoiceAt,a?.lastLyricAt,...(a?.lyricStarts||[])].some(t=>
+  Number.isFinite(t)&&t>=p.end-1.2&&t<p.end);
+ if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+    !p?.structuralBeat||(!strict&&!metrical)||p.kind!=="beat"||localVocalConflict||
+    a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
+    Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
+    p.sourceSha!==a.sha||p.targetSha!==b.sha||p.nativeTailFullBeat!==false||
+    p.preserveTail!==false||p.silenceTrim!==false||
+    ![p.begin,p.end,p.fade,p.entry,p.tempo,p.measuredPlacementError,p.grooveScore,p.measuredBeatCount,p.beatPulseAgreement].every(Number.isFinite)||
+    p.begin<26||p.end>a.duration-8||p.entry<0||p.entry+p.fade*p.tempo>b.duration-2||
+    p.fade<4.5||p.fade>16||Math.abs(p.end-p.begin-p.fade)>.001||p.tempo<.95||p.tempo>1.05||
+    !Number.isInteger(p.measuredBeatCount)||p.measuredBeatCount<8||p.measuredPlacementError<0||p.measuredPlacementError>.04||p.grooveScore<.36||p.beatPulseAgreement>1||
+    (strict&&(p.beatPulseAgreement<.9||(p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseAttackSupport<.9):
+      p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)))||
+    e?.version!==1||![4,8,16].includes(e.bars)||![3,4,5].includes(e.beatsPerBar)||
+    ![e.sourcePhaseConfidence,e.targetPhaseConfidence,e.downbeatRms].every(Number.isFinite)||
+    e.sourcePhaseConfidence<.8||e.sourcePhaseConfidence>1||e.targetPhaseConfidence<.8||e.targetPhaseConfidence>1||e.downbeatRms<0||e.downbeatRms>.04||
+    e.simultaneousVocalFrames!==0||e.outgoingVocalTail?.clear!==true||
+    e.outgoingVocalTail?.method!=="spleeter-2stems-energy-v1"||
+    ![e.outgoingVocalTail.maxVocalRms,e.outgoingVocalTail.maxRelativeVocal].every(Number.isFinite)||
+    e.outgoingVocalTail.maxVocalRms>=.004||e.outgoingVocalTail.maxRelativeVocal>=.08||
+    p.vocalFadeSeconds!==.4||e.outgoingVocalTail.start>p.end-1.199||e.outgoingVocalTail.end<p.end-.001||
+    !p.composite||p.composite.sourceSha!==a.sha||p.composite.targetSha!==b.sha||
+    ![p.composite.overlapPeak,p.composite.peak,p.composite.oversampledPeak].every(Number.isFinite)||
+    p.composite.pitchPreserved!==true||p.composite.timingVerified!==true||
+    p.composite.overlapPeak>.961||p.composite.peak>.9991||p.composite.oversampledPeak>1)return null;
+ const rendered=p.composite.postRenderRhythm;
+ if(p.composite.rhythmVerified!==true||rendered?.method!=="rendered-hpss-attacks-v1"||rendered.accepted!==true||
+    ![rendered.matches,rendered.rmsSeconds,rendered.agreement].every(Number.isFinite)||
+    rendered.matches<8||rendered.rmsSeconds<0||rendered.rmsSeconds>(strict?.040:.020)||
+    (strict&&(rendered.mode!=="full-pcm"||rendered.agreement<.90||rendered.firstHalfMatches<3||rendered.secondHalfMatches<3))||
+    (metrical&&(rendered.mode!=="metrical-rhythmic"||!Array.isArray(rendered.sharedPerBar)||rendered.sharedPerBar.length!==e.bars||rendered.sharedPerBar.some(n=>n<2)))||
+    (p.nativeRatePreferred===true&&p.tempo!==1)||
+    (p.tempo!==1&&e.outgoingVoiceDuringEntry&&e.incomingLeadVocalGuard?.clear!==true))return null;
+ if(metrical){
+  const c=e.metricalCertificate;
+  if(c?.method!=="shared-observed-attacks-plus-metrical-hypotheses-v1"||
+    ![c.gridRms,c.gridMaximum,c.observedSharedRms,c.observedShared,c.minimumSharedPerBar,c.observedDownbeats,c.modelGridPoints].every(Number.isFinite)||
+    c.gridRms<0||c.gridRms>.025||c.gridMaximum>.05||c.observedSharedRms<0||c.observedSharedRms>.020||
+    c.observedShared<8||c.minimumSharedPerBar<2||c.observedDownbeats!==e.bars||
+    c.modelGridPoints!==e.bars*e.beatsPerBar)return null;
+ }
+ const h=p.harmonicEvidence;
+ if(!h||(h.percussiveIntro?!(h.tonalRatioMax<=.12&&h.tonalPeakMax<=.23&&h.measuredRmsMin>=.005&&h.frames>=6):
+   h.compatibleKey?!(h.keyConfidence>=.70&&h.dissonanceMax<=.05&&h.rawDissonanceMax<=.45):
+   !(h.average>=.78&&h.weakest>=.60)))return null;
+ return {...p};
+}
+function pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal){
+ const a=outro.beats.filter(t=>t>=oldBeat).slice(0,16),
+  b=intro.beats.filter(t=>t>=nextBeat).slice(0,16),n=Math.min(a.length,b.length);
+ if(n<8)return null;
+ let xy=0,xx=0;
+ for(let i=1;i<n;i++){
+  const x=a[i]-oldBeat,y=b[i]-nextBeat;
+  xy+=x*y;xx+=x*x;
+ }
+ const rate=xx>0?xy/xx:0;
+ // Fit real local observations. The full-window fit below independently
+ // rejects missing pulses, changing tempo and any poor residual phase.
+ return rate>=.95&&rate<=1.05&&Math.abs(rate/nominal-1)<=.025?rate:null;
+}
+// Several observed pulse tracks may explain half/double-time or a local
+// change. These are offline-only hypotheses, NEVER synthesized metronomes.
+// Each proposed window still has to pass the unchanged independent fit.
+function pcmBeatVariants(track,name){
+ const part=pcmTransitionSection(track,name);
+ if(!part)return [];
+ const variants=[track];
+ if(track.pcmTransition.version!==3||!Array.isArray(part.grids))return variants;
+ for(const grid of part.grids.slice(0,6)){
+  if(grid.method!=="local-onset"||!Number.isFinite(grid.bpm)||grid.bpm<55||grid.bpm>210||
+     !Array.isArray(grid.beats)||grid.beats.length<8||grid.beats.length>250||
+     !grid.beats.every((t,i)=>Number.isFinite(t)&&t>=part.start&&t<=part.end&&(!i||t>grid.beats[i-1]))||
+     grid.beats.some(t=>Math.max(...[-.02,0,.02].map(d=>pcmContourAt(part,t+d)??0))<.25))continue;
+  variants.push({...track,bpm:grid.bpm,pcmTransition:{...track.pcmTransition,
+   [name]:{...part,beats:grid.beats}}});
+ }
+ return variants;
+}
+function measuredFullBeatBridge(a,b,dur){
+ if(!a?.pcmTransition||!b?.pcmTransition)return indexedFullBeatBridge(a,b,dur);
+ if(!beatBearingIntro(b,.39)||!Number.isFinite(Math.min(
+   Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity)))return null;
+ let best=null;
+ for(const aa of pcmBeatVariants(a,"outro"))for(const bb of pcmBeatVariants(b,"intro")){
+  const cue=pcmFullBeatWindowSearch(aa,bb,dur);
+  if(cue&&(!best||cue.score>best.score))best=cue;
+ }
+ return best;
+}
+function pcmFullBeatWindowSearch(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+    Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
+    a.last>dur+.2||!beatBearingIntro(b,.39)||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm))return null;
+ const nominal=a.bpm/b.bpm;
+ if(nominal<.93||nominal>1.07)return null;
+ const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+    Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(!Number.isFinite(firstVoice))return null;
+ const baseEntry=musicalIntroEntry(b),end=dur-.035;
+ const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
+ if(!outro||!intro)return null;
+ // Missing vocal data never certifies a full-band instrumental intro.
+ if(!Number.isFinite(firstVoice)||baseEntry<intro.start||end>outro.end)return null;
+ // The actual overlapping sections determine harmony below. A whole-song
+ // key must not veto a separately verified local modulation.
+ let best=null;
+ const entries=[baseEntry,...intro.beats.filter(t=>t>baseEntry+.1&&
+  t<=Math.min(baseEntry+8,firstVoice-5.4))];
+ for(const entry of entries){
+ for(const oldBeat of outro.beats){
+  if(oldBeat<end-16.0||oldBeat>end-3.0)continue;
+  for(const nextBeat of intro.beats){
+   if(nextBeat<entry||nextBeat>entry+1.1)continue;
+   const fitted=pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal);
+   const rates=[...new Set([nominal,fitted].filter(r=>Number.isFinite(r)&&r>=.95&&r<=1.05))];
+   for(const rate of rates){
+   const begin=oldBeat-(nextBeat-entry)/rate,fade=end-begin;
+   if(begin<26||fade<4.5||fade>16||begin<outro.start||
+      entry+fade*Math.max(1,rate)>intro.end||
+      (firstVoice-entry)/Math.max(1,rate)<fade+.65)continue;
+   // The complete original finishes at native EOF, including any vocal.
+   // The incoming window must precede the known vocal/lyric boundary.
+   // An LRC boundary is metadata, not an independent vocal-model result.
+   const fit=pcmFullBeatFit(outro,intro,begin,entry,rate,fade);
+   if(!fit)continue;
+   const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade);
+   if(!harmony)continue;
+   const quality=.45*fit.score+.35*(harmony.percussiveIntro?fit.ratio:
+    harmony.compatibleKey?harmony.keyCompatibility:harmony.average)+.20*fit.ratio;
+   const cue={kind:"beat",measuredFullBeat:true,fullBeatSearchVersion:2,
+    sourceTempoBpm:a.bpm,targetTempoBpm:b.bpm,
+    sourceSha:a.sha,targetSha:b.sha,measuredBeatBridge:true,
+    measuredBeatPlacement:true,measuredOnsetGrid:true,
+    begin,end,fade,entry,tempo:rate,gain:1,
+    beatAnchor:oldBeat,nextBeat:nextBeat-entry,beatPeriod:60/a.bpm,nominalTempo:nominal,
+    quietCertified:false,nativeTailFullBeat:true,preserveTail:true,softTailTrim:false,
+    silenceTrim:false,
+    trailing:Math.max(0,dur-end),safeOutroAt:begin,
+    measuredPlacementError:fit.rms,beatPulseAgreement:fit.ratio,
+    measuredBeatCount:fit.beats,grooveScore:fit.score,
+    measuredPulseMode:fit.observedPulses,fullPulseFirst:fit.firstBeats,
+    fullPulseSecond:fit.secondBeats,fullPulseAttackSupport:fit.attackSupport,
+    fullOnsetCorrelation:fit.onset,
+    beatGridScore:fit.ratio,fullOnsetFirst:fit.firstHalf,
+    fullOnsetSecond:fit.secondHalf,harmonicScore:harmony.average,
+    harmonicWeakest:harmony.weakest,percussiveIntro:!!harmony.percussiveIntro,
+    introPcmVersion:b.pcmTransition.version,outroPcmVersion:a.pcmTransition.version,
+    harmonicMode:harmony.percussiveIntro?"percussive-intro":harmony.compatibleKey?"compatible-key":"matched-chords",
+    harmonicKeyFrom:harmony.keyFrom??null,harmonicKeyTo:harmony.keyTo??null,
+    harmonicKeyConfidence:harmony.keyConfidence??null,
+    harmonicDissonanceMax:harmony.dissonanceMax??null,
+    harmonicRawDissonanceMax:harmony.rawDissonanceMax??null,
+    introTonalRatioMax:harmony.tonalRatioMax??null,
+    introTonalPeakMax:harmony.tonalPeakMax??null,
+    introMeasuredRmsMin:harmony.measuredRmsMin??null,
+    introTonalFrames:harmony.frames??null,score:Math.round(100*quality)};
+   if(!best||quality>best.quality)best={quality,cue};
+   }
+  }
+ }
+ }
+ return best?.cue||null;
+}
+function fullBeatCueCertified(a,b,cue){
+ if(cue?.structuralBeat){
+  const expected=indexedStructuralBeatBridge(a,b,a?.duration);
+  return !!expected&&JSON.stringify(cue)===JSON.stringify(expected);
+ }
+ const expected=measuredFullBeatBridge(a,b,a?.duration);
+ return !!expected&&cue.kind==="beat"&&cue.measuredFullBeat===true&&
+  cue.sourceSha===a.sha&&cue.targetSha===b.sha&&
+  cue.quietCertified===false&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&
+  !cue.drumOnlyUnderlay&&!cue.vocalBeatUnderlay&&cue.percussiveIntro===expected.percussiveIntro&&
+  cue.harmonicMode===expected.harmonicMode&&cue.measuredPulseMode===expected.measuredPulseMode&&
+  cue.silenceTrim===false&&cue.softTailTrim===false&&
+  Math.abs((cue.outputHeadroom??1)-(expected.outputHeadroom??1))<.0001&&
+  ["begin","end","fade","entry","tempo","gain","beatAnchor","nextBeat","beatPeriod"].every(k=>
+   Number.isFinite(cue[k])&&Math.abs(cue[k]-expected[k])<.001);
+}
+
 function earlyMatchedBar(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.duration)||
@@ -2511,13 +2989,16 @@ function earlyMatchedBar(a,b,dur){
   const preserveUnknownVoice=Boolean(!scanned&&knownLastVoice===null&&
     knownLastLyric!==null&&knownLastLyric<=end-2.5&&
     dur-end<=.55);
+  // File cues must be converted to wall time after entry and speed.
+  // Use the fastest rate of the ramp, so slowing to 1x remains safe.
+  const incomingVoiceAfter=(firstNextVoice-entry)/Math.max(1,speed);
   const vocalUnderlay=Boolean(singing&&
     (voiceConfirmed||preserveUnknownVoice)&&
-    firstNextVoice>=fade+.65);
+    incomingVoiceAfter>=fade+.65);
   const vocalEndAt=voiceConfirmed?knownLastVoice:end-.06;
   if(!Number.isFinite(begin)||begin<26||fade<4.5||fade>9.6||
      begin<win.start-.2||begin>win.end-.35||end<a.last-.2||
-     dur-end>12||firstNextVoice<fade+.65||
+     dur-end>12||incomingVoiceAfter<fade+.65||
      (a.protectedEnding===true&&!vocalUnderlay)||
      (singing&&!vocalUnderlay))continue;
   // Equal BPM and compatible chords alone do not prove a beatmatched
@@ -3129,6 +3610,7 @@ function beatBearingIntro(b,minimumDrive=.43){
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
 function musicallyCompatibleOverlay(a,b,cue){
  if(!cue)return false;
+ if(cue.measuredFullBeat===true||cue.structuralBeat===true)return fullBeatCueCertified(a,b,cue);
  if(cue.measuredReleaseHandoff===true){
   const p=measuredMusicalTailUnderlay(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
@@ -3165,6 +3647,10 @@ function musicallyCompatibleOverlay(a,b,cue){
  if(cue.measuredWindowUnderlay===true){
   const p=measuredWindowRhythmUnderlay(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&
+   cue.independentLowBand===p.independentLowBand&&
+   (cue.independentLowBand!==true||
+    Math.abs(cue.independentOnsetScore-p.independentOnsetScore)<.01)&&
+   cue.underlayVolume<=p.underlayVolume+.001&&
    Math.abs(p.begin-cue.begin)<.085&&Math.abs(p.end-cue.end)<.085&&
    p.drumOnlyUnderlay===true;
  }
@@ -3271,7 +3757,7 @@ function synchronizeBeatCue(a,b,cue){
  // A verified rhythmic-grid plan has already chosen its musical entry and
  // exact beat, including an adjusted safeIntroAt. Recomputing from the
  // original unmodified analysis shifts the beat phase by the intro skip.
- if(cue?.rhythmicGridJoin===true||cue?.earlyBeatJoin===true)return cue;
+ if(cue?.measuredFullBeat===true||cue?.structuralBeat===true||cue?.rhythmicGridJoin===true||cue?.earlyBeatJoin===true)return cue;
  // Isolated legacy test harnesses may load only the planning functions.
  // The shipped player always includes the real onset validator.
  if(typeof onsetPairAgreement!=="function"||
@@ -3403,6 +3889,51 @@ function measuredBeatJoinCandidate(outgoing,incoming,entry,ratio,lower,upper,pre
  }
  return winner;
 }
+// A one-to-one beat timestamp fit can occur even for two very different
+// drum patterns. Compare the ACTUAL PCM-derived onset contour at the
+// precise local 4s window and incoming file entry, with <=42ms tolerance.
+// This is only evidence for a faint, low-pass preview, not full-band DJ.
+function measuredLowBandOnsetAgreement(outro,intro,beginOffset,entryOffset,rate){
+ if(!Array.isArray(outro)||!Array.isArray(intro)||
+    outro.length!==96||intro.length!==96||
+    !outro.every(Number.isFinite)||!intro.every(Number.isFinite)||
+    ![beginOffset,entryOffset,rate].every(Number.isFinite)||
+    beginOffset<0||beginOffset>2.8||entryOffset<-.10||
+    rate<.965||rate>1.035)return null;
+ let best=null;
+ for(const lag of [-1,0,1]){
+  const x=[],y=[];
+  for(let i=0;i<75;i++){
+   const oldAt=Math.round((beginOffset+i/24)*24);
+   const newAt=Math.round((entryOffset+i*rate/24)*24)+lag;
+   if(oldAt>=96||newAt>=96)break;
+   if(oldAt<0||newAt<0)continue;
+   x.push(Math.max(0,outro[oldAt]));
+   y.push(Math.max(0,intro[newAt]));
+  }
+  if(x.length<48)continue;
+  const correlation=(from,to)=>{
+   let ax=0,ay=0,xx=0,yy=0,xy=0;
+   const n=to-from;
+   for(let k=from;k<to;k++){ax+=x[k];ay+=y[k]}
+   ax/=n;ay/=n;
+   for(let k=from;k<to;k++){
+    const a=x[k]-ax,b=y[k]-ay;
+    xx+=a*a;yy+=b*b;xy+=a*b;
+   }
+   return xx>=.45&&yy>=.45?xy/Math.sqrt(xx*yy):null;
+  };
+  const middle=Math.floor(x.length/2),
+   whole=correlation(0,x.length),
+   first=correlation(0,middle),second=correlation(middle,x.length);
+  if(!Number.isFinite(whole)||!Number.isFinite(first)||
+     !Number.isFinite(second))continue;
+  if(!best||whole>best.score)best={score:whole,first,second,
+   lagMs:lag*1000/24,frames:x.length};
+ }
+ return best&&best.score>=.36&&best.first>=.10&&best.second>=.10?
+  best:null;
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3449,13 +3980,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,
    outroTimeline:[]};
   const g=grooveAgreement(local,b);
-  if(!g||g.score<.65||g.correlation<.30)continue;
+  if(!g)continue;
   const notes=similarNotes(local,b);
-  // The upper harmonics will be filtered; require some tonal safety
-  // but not a full-band chord match we are not going to play.
+  // A normal rhythmic underlay still needs compatible chords and groove.
+  // An *independently measured* four-beat coincidence can instead earn a
+  // very quiet, low-pass-only preview: it is never a full-band beatmatch.
   if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
-     notes.focused<.33||notes.phrase<.23||
-     (key.weight>=.14&&key.score<.47))continue;
+     notes.focused<.10||notes.phrase<.08||
+     (key.weight>=.14&&key.score<.25))continue;
+  const normallyCompatible=g.score>=.65&&g.correlation>=.30&&
+    notes.focused>=.33&&notes.phrase>=.23&&
+    (key.weight<.14||key.score>=.47);
   let beatAnchor=win.start+
    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
   // A phrase boundary several bars from the end should get its OWN
@@ -3484,7 +4019,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   if(!Number.isFinite(begin)||begin<28||
      begin<win.start+.25||begin>win.end-1.10||
      begin>a.last-4.65||begin<a.last-11.9||
-     fade<4.5||fade>11.8)continue;
+     fade<4.5||fade>11.8||
+     (firstVoice-entry)/Math.max(1,ratio)<fade+.35)continue;
   const shape=Number(win.energyTrend);
   const phraseEvent=Array.isArray(a.structureEvents)?
    a.structureEvents.find(e=>Number.isFinite(e?.at)&&
@@ -3500,6 +4036,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
   const measuredGrid=placed?.fit??measuredPulseAlignment(
    win.measuredBeatTimes,b.introBeatTimes,begin,entry,ratio);
+  // A poor harmonic/groove match must NOT use the usual louder preview.
+  // Only independently located, one-to-one PCM attacks can unlock the
+  // exceptional low-band path, and even those remain non-certified.
+  const independentLowBand=Boolean(!normallyCompatible&&
+   cadence.scale===1&&placed?.fit?.verified>=4&&
+   placed.fit.total>=4&&placed.fit.ratio>=.90&&
+   placed.fit.rms<=.055&&Number(b.introBassRatio)>=.20);
+  const lowBandOnsets=independentLowBand?
+   measuredLowBandOnsetAgreement(win.onset,b.introOnset,
+    begin-win.start,entry-(Number(b.safeIntroAt)||0),ratio):null;
+  if(!normallyCompatible&&!lowBandOnsets)continue;
   // Independent pulse agreement is a ranking bonus and can veto a
   // badly aligned overlay only when BOTH decoders have reliable
   // timestamps from the same real-file analysis.
@@ -3516,6 +4063,10 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
    (cadence.scale!==1?.045:0);
   if(!best||quality>best.quality)best={quality,begin,end,fade,
+   independentLowBand:!!lowBandOnsets,
+   independentOnsetScore:lowBandOnsets?.score??null,
+   independentOnsetLagMs:lowBandOnsets?.lagMs??null,
+   measuredWindowStart:win.start,
    beatAnchor,nextBeat:placed?.nextBeat??nextPhase,
    measuredBeatPlacement:!!placed,
    measuredPlacementError:placed?.fit.rms??null,
@@ -3531,6 +4082,10 @@ function measuredWindowRhythmUnderlay(a,b,dur){
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+  independentLowBand:best.independentLowBand,
+  independentOnsetScore:best.independentOnsetScore,
+  independentOnsetLagMs:best.independentOnsetLagMs,
+  measuredWindowStart:best.measuredWindowStart,
   structuralMatch:best.structuralMatch,
   structuralShift:best.structuralShift,structureScore:best.structureScore,
   beatPulseAgreement:best.beatPulseAgreement,
@@ -3539,7 +4094,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
   tempo:clamp(ratio,.965,1.035),gain:1,
-  underlayVolume:best.strongBassBridge?
+  underlayVolume:best.independentLowBand?
+   adaptiveUnderlayLevel(b,.06,.09):best.strongBassBridge?
    adaptiveUnderlayLevel(b,.16,.215):
    adaptiveUnderlayLevel(b,.105,.145),
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
@@ -3811,12 +4367,16 @@ function certifiedAlternateRelease(a,b,dur,failed){
 }
 function unalignedTransition(a,b,actualDuration){
  const dur=Number(actualDuration);
+ const structural=indexedStructuralBeatBridge(a,b,dur);
+ if(structural)return structural;
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5||!hasImmediateMusicalIntro(b))return null;
  const openingEntry=musicalIntroEntry(b);
  if(openingEntry!==(Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0))
   b={...b,safeIntroAt:openingEntry};
+ const fullBeat=measuredFullBeatBridge(a,b,dur);
+ if(fullBeat)return fullBeat;
  const early=earlyMatchedBar(a,b,dur);
  if(early)return early;
  const releaseBeat=rhythmicReleaseBeatBridge(a,b,dur);
@@ -4356,7 +4916,9 @@ function startMobileMix(song,p,app,old){
    mobileMixLastBlocker="Motore Safari temporaneamente indisponibile";
    return false;
  }
- const clip=mobileIntroClips.get(String(url));
+ const rawClip=mobileIntroClips.get(String(url));
+ const needsStretch=p.measuredFullBeat&&Math.abs(p.tempo-1)>.002;
+ const clip=needsStretch&&rawClip?window.MusicBoxStretch?.get?.(rawClip,p):rawClip;
  if(!ctx||ctx.state!=="running"){
    mobileMixLastBlocker="WebAudio inattivo: tocca Play con schermo acceso";
    return false;
@@ -4392,7 +4954,7 @@ function startMobileMix(song,p,app,old){
     typeof rate.setValueAtTime==="function"&&
     typeof rate.linearRampToValueAtTime==="function";
   const requested=programmableRate?
-    clamp(Number(p.tempo)||1,.97,1.03):1;
+    clamp(Number(p.tempo)||1,p.measuredFullBeat?.95:.97,p.measuredFullBeat?1.05:1.03):1;
   // The incoming beat offset is in MP3 seconds, not wall-clock seconds.
   const incomingBeat=Number(p.nextBeat)/requested;
   const phase=Number.isFinite(period)&&period>.20&&
@@ -4415,16 +4977,24 @@ function startMobileMix(song,p,app,old){
    mobileMixLastBlocker="Beat reali fuori fase: passo al brano senza sovrapporli";
    return false;
   }
-  const delay=syncMeasured&&phase>.008&&phase<=maxBeatWait?phase:0;
+  const fullDelay=p.measuredFullBeat?p.begin-old.currentTime:null;
+  if(p.measuredFullBeat&&(!Number.isFinite(fullDelay)||fullDelay<-.065||fullDelay>.55)){
+   mobileMixLastBlocker="Finestra PCM completa persa: mantengo il brano originale";
+   return false;
+  }
+  const delay=p.measuredFullBeat?Math.max(0,fullDelay):
+   syncMeasured&&phase>.008&&phase<=maxBeatWait?phase:0;
   if(syncMeasured&&
      secondsLeft-delay<(p.kind==="beat"?Math.max(2.8,p.fade*.57):.48)){
    mobileMixLastBlocker="Beat allineato troppo tardi: lascio il finale integro";
    return false;
   }
   const startedAt=ctx.currentTime+delay;
-  const djRevealAt=djImpactBeatPoint(p,Math.min(p.fade,secondsLeft-delay));
+  const djRevealAt=p.nativeTailFullBeat?null:djImpactBeatPoint(p,Math.min(p.fade,secondsLeft-delay));
   const softReveal=djSoftRevealReady(p,Math.min(p.fade,secondsLeft-delay));
-  dspNodes=connectMixDsp(ctx,source,gain,
+  // The rendered full-band certificate describes the original signal.
+  // Optional boosts/filters would change both its attacks and peak bound.
+  dspNodes=p.measuredFullBeat?[]:connectMixDsp(ctx,source,gain,
     Math.max(.4,Math.min(p.fade,secondsLeft-delay)),
     !!p.measuredBeatBridge,djRevealAt,delay,softReveal,!!p.drumOnlyUnderlay);
   if(p.drumOnlyUnderlay&&!dspNodes.length)
@@ -4441,7 +5011,7 @@ function startMobileMix(song,p,app,old){
   // Keep the matched subsecond drum preview quiet instead.
   const lowPreview=p.kind==="snap"&&!p.voiceVerifiedMicroBridge;
   const target=clamp(app.volume?.()??1,0,1)*
-   (Number.isFinite(djRevealAt)?.78:p.postMusicalTailUnderlay?.72:p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
+   (p.nativeTailFullBeat?.33:Number.isFinite(djRevealAt)?.78:p.postMusicalTailUnderlay?.72:p.subduedRhythmicUnderlay?(p.underlayVolume||.24):p.rhythmicGridJoin&&lowPreview?.55:
     lowPreview?.43:p.kind==="snap"?.80:p.strongBeatBridge?.60:.86);
   // Spotify-style envelopes: beat/equal power, fade/linear, rise/slow
   // start. If the iOS WebAudio implementation lacks curves, fall back
@@ -4455,7 +5025,7 @@ function startMobileMix(song,p,app,old){
        Math.max(.35,ramp);
      const postSinger=clamp((u-singerEnd-.02)/
        Math.max(.05,1-singerEnd-.02),0,1);
-     const proportion=Number.isFinite(djRevealAt)?
+     const proportion=p.nativeTailFullBeat?Math.sin(Math.min(1,u*1.5)*Math.PI/2):Number.isFinite(djRevealAt)?
        djImpactEnvelope(u,djRevealAt).inGain:
       softReveal?djSoftFocusEnvelope(u):
       p.vocalBeatUnderlay?
@@ -4484,8 +5054,9 @@ function startMobileMix(song,p,app,old){
   // Make the measured BPM adjustment actually audible on iPhone.
   // The last beat of the preview is always back to original speed,
   // so the native handoff has no permanent pitch/rate discontinuity.
-  let rateSpeed=1,rateHold=0,rateRamp=0;
-  if(programmableRate&&Math.abs(requested-1)>.002){
+  let rateSpeed=clip.pitchPreserved?clip.rateSpeed:1,
+   rateHold=clip.pitchPreserved?clip.rateHold:0,rateRamp=clip.pitchPreserved?clip.rateRamp:0;
+  if(!clip.pitchPreserved&&programmableRate&&Math.abs(requested-1)>.002){
    rateSpeed=requested;
    const audible=Math.min(p.fade,secondsLeft-delay);
    // Keep matching beats stable until the last 28% of the overlap,
@@ -4510,7 +5081,7 @@ function startMobileMix(song,p,app,old){
   };
   const onProgress=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff&&
-      old.currentTime>=mobileActive.end-.04)handoffMobileMix(app);
+      old.currentTime>=mobileActive.end-.04&&(!mobileActive.nativeTailFullBeat||old.ended))handoffMobileMix(app);
   };
   const onEnded=()=>{
    if(mobileActive?.source===source&&!mobileActive.handingOff)
@@ -4520,15 +5091,16 @@ function startMobileMix(song,p,app,old){
    if(mobileActive?.source===source&&!mobileActive.handingOff)stopMobileMix();
   };
   mobileActive={source,gain,filter,dspNodes,ctx,fromId:app.currentId(),track:song,
+   nativeTailFullBeat:!!p.nativeTailFullBeat,
    vocalBeatUnderlay:!!p.vocalBeatUnderlay,vocalEndAt:Number(p.vocalEndAt),
    entry:p.entry,started:startedAt,audioStartedAt:old.currentTime+delay,
    end:p.end,old,onPause,onPlaying,onProgress,onEnded,onSeek,handingOff:false,
    handoffAt:0,nativeRetryCount:0,nativeRetryAt:0,rateSpeed,rateHold,rateRamp,
    clipEnd:startedAt+frames/clip.rate-offset-
-     (rateSpeed-1)*(rateHold+rateRamp/2),
+     (clip.pitchPreserved?0:(rateSpeed-1)*(rateHold+rateRamp/2)),
    lastCtxTime:ctx.currentTime,lastAudioTime:old.currentTime,
    djRevealAt,strongBeatBridge:!!p.strongBeatBridge,snap:p.kind==="snap",
-   vocalSafe:!lowPreview};
+   vocalSafe:!lowPreview&&!p.nativeTailFullBeat};
   old.addEventListener?.("pause",onPause);
   old.addEventListener?.("playing",onPlaying);
   old.addEventListener?.("timeupdate",onProgress);
@@ -4754,7 +5326,7 @@ function prepare(song,fromId,app){
  // Seek the incoming song BEFORE its matching downbeat. Natural EOF may
  // skip only independently certified digital silence, never audible music.
  const plannedEntry=plan&&plan.kind!=="cut"&&Number.isFinite(plan.entry)?
-  Math.max(0,Math.min(18,plan.entry)):eofEntry;
+  Math.max(0,Math.min(plan.structuralBeat?3600:18,plan.entry)):eofEntry;
  if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url){
   // When analysis changes the cue, reposition the SAME buffered decoder.
   // Re-downloading or seeking during the final beat can stall the handoff.
@@ -4791,7 +5363,7 @@ function prepare(song,fromId,app){
  };
  p.retarget=(entry,safeEOF)=>{
   if(prepared!==p||p.failed)return;
-  const target=Math.max(0,Math.min(18,Number(entry)||0));
+  const target=Math.max(0,Math.min(plan?.structuralBeat?3600:18,Number(entry)||0));
   p.eofSafe=Math.abs(target-(Number(safeEOF)||0))<=.20;
   if(Math.abs(p.naturalEntry-target)<=.06)return;
   p.naturalEntry=target;p.ready=false;p.seekReady=false;p.seekIssued=false;
@@ -4827,7 +5399,21 @@ function prepare(song,fromId,app){
 // at native EOF. Do not fade out the last kick or download the same MP3
 // again. If prebuffer is absent, let the original ended handler run.
 function naturalEndHandoff(certifiedSilentTail=false){
- if((active?.subduedRhythmicUnderlay||active?.postMusicalTailUnderlay||
+ if(window.MusicBoxCompositeMix?.owns?.(bridge()?.audio?.()))return true;
+ // The app's native ended listener is registered before the overlay's.
+ // Claim this exact EOF first; otherwise the generic queue would restart
+ // the next track at its intro and discard the already-heard PCM buffer.
+ if(typeof mobileActive!=="undefined"&&mobileActive?.nativeTailFullBeat&&mobileActive.old?.ended){
+  const act=mobileActive,app=bridge();
+  if(app?.audio?.()===act.old&&app.currentId?.()===act.fromId&&app.mixNext?.()?.id===act.track.id){
+   if(act.handingOff)return true;
+   const drift=(act.old.currentTime-act.audioStartedAt)-(act.ctx.currentTime-act.started);
+   if(act.ctx.state==="running"&&Math.abs(drift)<=.85){handoffMobileMix(app);return true;}
+   stopMobileMix();
+  }
+ }
+
+ if((active?.nativeTailFullBeat||active?.subduedRhythmicUnderlay||active?.postMusicalTailUnderlay||
      active?.measuredReleaseLeadIn)&&
     active.original?.ended&&
     !active.handingOff){handoff();return true;}
@@ -4892,6 +5478,63 @@ function naturalEndHandoff(certifiedSilentTail=false){
  return true;
 }
 
+// An underlay deliberately plays the second MP3 at only 6-21% while the
+// first track is still audible. On adoption that SAME audio element becomes
+// the main player: without this post-EOF reveal the NEXT WHOLE SONG stays
+// nearly silent. Reveal it only after the protected original has ended.
+// Match the low-pass filter's existing ~380ms opening, with no gain jump.
+function adoptedMixRevealGain(initial,progress){
+ const start=clamp(Number(initial)||0,0,1),t=clamp(Number(progress)||0,0,1);
+ const smooth=Math.sin(Math.pow(t,1.25)*Math.PI/2);
+ return start+(1-start)*smooth;
+}
+function revealAdoptedMixAudio(audio,trackId,initialVolume,seconds=.78){
+ const app=bridge(),target=Number(app?.volume?.());
+ if(!audio||!app||app.audio?.()!==audio||app.currentId?.()!==trackId||
+    !Number.isFinite(target))return;
+ const initialFraction=target>.001?
+   clamp(initialVolume/target,0,1):1;
+ if(initialFraction>=.995){
+  audio.volume=clamp(target,0,1);return;
+ }
+ const started=performance.now(),span=Math.max(350,seconds*1000);
+ const update=()=>{
+  const live=bridge();
+  if(live?.audio?.()!==audio||live?.currentId?.()!==trackId)return;
+  const currentTarget=clamp(Number(live.volume?.())||0,0,1);
+  const progress=clamp((performance.now()-started)/span,0,1);
+  // A pause/seek must not leave the resumed song permanently at 8%.
+  if(audio.paused||audio.seeking||audio.ended){
+   audio.volume=currentTarget;return;
+  }
+  audio.volume=currentTarget*adoptedMixRevealGain(initialFraction,progress);
+  if(progress<1)setTimeout(update,45);
+ };
+ update();
+}
+
+function relaxAdoptedTempo(audio,trackId,initialRate){
+ if(!Number.isFinite(initialRate))return;
+ if(Math.abs(initialRate-1)<.001){
+  // Phase feedback can leave 0.999x/1.000x even when the nominal tempo
+  // is exactly one. Snap that residual to native speed; returning early
+  // left the adopted recording permanently at the feedback rate.
+  const live=bridge();
+  if(live?.audio?.()===audio&&live.currentId?.()===trackId)audio.playbackRate=1;
+  return;
+ }
+ const started=performance.now();
+ const update=()=>{
+  const live=bridge();
+  if(live?.audio?.()!==audio||live.currentId?.()!==trackId)return;
+  const t=clamp((performance.now()-started)/850,0,1);
+  if(audio.paused||audio.seeking||audio.ended){audio.playbackRate=1;return;}
+  const smooth=t*t*(3-2*t);
+  audio.playbackRate=initialRate+(1-initialRate)*smooth;
+  if(t<1)setTimeout(update,40);
+ };
+ update();
+}
 async function handoff(){
  const act=active;if(!act||act.handingOff)return;
  const app=bridge();
@@ -4908,6 +5551,10 @@ async function handoff(){
   try{
    const adopted=app.mixAdoptHandoff(act.track.id,preview);
    if(adopted&&app.currentId()===act.track.id&&app.audio()===preview){
+    // The pre-EOF low-pass introduction can be almost inaudible by design.
+    // Restore the real listening volume smoothly AFTER native adoption.
+    // The old recording has already reached its protected natural EOF.
+    const previewLevel=preview.volume,previewRate=preview.playbackRate;
     active=null;mixing=false;stopSnapPrecision();
     if(act.timer)clearTimeout(act.timer);
     if(act.stem)window.MusicBoxVocalStems?.release?.(act.stem);
@@ -4915,6 +5562,14 @@ async function handoff(){
     try{old.pause()}catch(_){}
     try{old.removeAttribute("src");old.load()}catch(_){}
     releaseDesktopDsp(old);
+    try{
+     if(act.nativeTailFullBeat)relaxAdoptedTempo(preview,act.track.id,previewRate);
+     revealAdoptedMixAudio(preview,act.track.id,previewLevel,
+      act.subduedRhythmicUnderlay?.78:.48);
+    }catch(_){
+     // A failed optional gain ramp must never trigger a second MP3 load.
+     try{preview.volume=clamp(volume,0,1)}catch(_){}
+    }
     // No cancel(): that would pause/remove src from the NEW main player.
     Promise.resolve(adopted).catch(error=>console.warn(
      "[Music Box DJ] Errore dopo adozione audio",String(error?.message||error)));
@@ -5079,6 +5734,13 @@ function djAudioClockProgress(oldNow,oldStart,newNow,newStart,tempo,duration){
  return clamp(oldElapsed/duration,0,1);
 }
 function desktopBeatStartDelay(p,at){
+ if(p?.measuredFullBeat===true){
+  // This certificate describes exact PCM windows, not the next arbitrary
+  // bar. Missing the start cannot move the mix into unverified harmony.
+  if(!Number.isFinite(at)||!Number.isFinite(p.begin)||
+     at>p.begin+.065||p.begin-at>.55)return null;
+  return Math.max(0,p.begin-at);
+ }
  if(!p||p.neutralAmbientUnderlay===true||p.measuredReleaseHandoff===true)return 0;
  // nextBeat is in original-file seconds, not post-playbackRate wall time.
  // Account for tempo scaling when scheduling the audible incoming kick.
@@ -5107,7 +5769,36 @@ function desktopBeatStartDelay(p,at){
  if(at+wait>=p.end-(p.kind==="snap"?.36:1.2))return null;
  return wait;
 }
+// HTML decoders can acquire a small, constant clock offset during their
+// first hardware buffers. Settle and, at most once, align ONLY the muted,
+// already buffered incoming decoder. Never seek the original or an audible
+// overlay, and never shift the certified PCM window to another beat.
+async function settleFullBeatDecoder(old,upcoming,p,valid){
+ await new Promise(resolve=>setTimeout(resolve,120));
+ if(!valid()||upcoming.volume!==0||upcoming.paused||old.paused)return false;
+ const error=djFullBeatClockError(p,old.currentTime,upcoming.currentTime);
+ if(error>.15)return false;
+ if(error>.012){
+  const target=p.entry+(old.currentTime-p.begin)*p.tempo;
+  let buffered=false;
+  try{for(let i=0;i<upcoming.buffered.length;i++)
+   if(upcoming.buffered.start(i)<=target&&upcoming.buffered.end(i)>=target+.3)buffered=true;
+  }catch(_){}
+  if(!buffered||target<p.entry||target>p.entry+.55)return false;
+  await new Promise(resolve=>{
+   let timer;
+   const done=()=>{clearTimeout(timer);upcoming.removeEventListener("seeked",done);resolve()};
+   upcoming.addEventListener("seeked",done,{once:true});
+   timer=setTimeout(done,300);
+   upcoming.currentTime=target;
+  });
+  await new Promise(resolve=>setTimeout(resolve,45));
+ }
+ return valid()&&!old.paused&&!upcoming.paused&&!upcoming.seeking&&
+  djFullBeatClockError(p,old.currentTime,upcoming.currentTime)<=.065;
+}
 async function beginMix(song,proposed){
+ if(proposed?.structuralBeat)return; // The common PCM renderer owns these windows.
  const app=bridge(),old=app?.audio(),id=app?.currentId();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
  const p=prepared;
@@ -5122,11 +5813,13 @@ async function beginMix(song,proposed){
  if(old.currentTime>proposed.end-(proposed.kind==="snap"?.25:.55))return;
  mixing=true;stopSnapPrecision();prepared=null;
  const upcoming=p.audio;
- const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
+ const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,proposed.measuredFullBeat?16:12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
    subduedRhythmicUnderlay:!!proposed.subduedRhythmicUnderlay,
    drumOnlyUnderlay:!!proposed.drumOnlyUnderlay,
    postMusicalTailUnderlay:!!proposed.postMusicalTailUnderlay,
+   nativeTailFullBeat:!!proposed.nativeTailFullBeat,
+   outputHeadroom:Number.isFinite(proposed.outputHeadroom)?clamp(proposed.outputHeadroom,0,1):1,
    underlayVolume:proposed.underlayVolume||.24,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
@@ -5158,6 +5851,12 @@ async function beginMix(song,proposed){
   if(beatWait===null){cancel();plan=null;return}
   if(beatWait>.045)
    await new Promise(resolve=>setTimeout(resolve,Math.round(beatWait*1000)));
+  if(proposed.measuredFullBeat){
+   const deadline=performance.now()+650;
+   while(active===act&&!old.paused&&old.currentTime<proposed.begin-.006&&performance.now()<deadline)
+    await new Promise(resolve=>setTimeout(resolve,8));
+   if(old.currentTime<proposed.begin-.010||old.currentTime>proposed.begin+.065){cancel();plan=null;return}
+  }
   if(active!==act||old.paused||app.currentId()!==id||
      old.currentTime>=proposed.end-(proposed.kind==="snap"?.17:
       proposed.measuredPostludeBridge?.35:1.2)){cancel();return}
@@ -5165,26 +5864,33 @@ async function beginMix(song,proposed){
   // before scheduling a bass reveal, avoiding WebAudio clock drift.
   await upcoming.play();
   if(active!==act||app.currentId()!==id){cancel();return}
+  if(proposed.measuredFullBeat&&!(await settleFullBeatDecoder(old,upcoming,proposed,
+     ()=>active===act&&app.currentId()===id))){cancel();plan=null;return}
   // The browser may take >100ms to resolve play(): verify both live
   // MP3 clocks BEFORE lifting the muted preview into the mix.
   const livePhaseError=djBeatPhaseError(
     proposed,old.currentTime,upcoming.currentTime);
-  if((proposed.measuredBeatBridge===true||
-      proposed.subduedRhythmicUnderlay===true)&&
+  if((proposed.measuredBeatBridge===true||proposed.measuredBeatPlacement===true||
+      proposed.rhythmicGridJoin===true||proposed.subduedRhythmicUnderlay===true)&&
      Number.isFinite(livePhaseError)&&
      livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
    console.info("[Music Box DJ] Beat allineato in teoria ma decoder fuori fase",
     {errorMs:Math.round(livePhaseError*1000)});
    cancel();plan=null;return;
   }
+  if(proposed.measuredFullBeat&&
+     djFullBeatClockError(proposed,old.currentTime,upcoming.currentTime)>.075){
+   console.info("[Music Box DJ PCM] Avvio fuori finestra: "+Math.round(djFullBeatClockError(proposed,old.currentTime,upcoming.currentTime)*1000)+" ms");
+   cancel();plan=null;return;
+  }
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),
-    proposed.kind==="snap"?.18:.8,12);
+    proposed.kind==="snap"?.18:.8,proposed.measuredFullBeat?16:12);
   // Play may already have consumed part of the incoming first measure.
   const playedCue=Number.isFinite(proposed.nextBeat)?
     {...proposed,nextBeat:proposed.nextBeat-(upcoming.currentTime-targetEntry)}:
     proposed;
   act.djRevealAt=djImpactBeatPoint(playedCue,act.fade);
-  act.dsp=attachDesktopDsp(upcoming,act.fade,
+  if(!proposed.measuredFullBeat)act.dsp=attachDesktopDsp(upcoming,act.fade,
     ["beat","phrase","snap"].includes(proposed.kind)&&
     (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
     djSoftRevealReady(proposed,act.fade),!!proposed.drumOnlyUnderlay);
@@ -5216,6 +5922,13 @@ async function beginMix(song,proposed){
   act.newAudioAt=upcoming.currentTime;
   function fadeStep(){
    if(active!==act)return;
+   // An underlay holds the outgoing MP3 at 100% through its REAL end.
+   // Previously the fade clock reached 1 around 80ms before EOF and
+   // handoff() paused its last note; the next tick could also misread the
+   // native ended pause as a user pause and discard the prepared DJ audio.
+   if(old.ended&&(act.nativeTailFullBeat||act.subduedRhythmicUnderlay||act.postMusicalTailUnderlay)){
+    handoff();return;
+   }
    if(old.paused||app.audio()!==old||app.currentId()!==id||
       app.mixNext?.()?.id!==song.id||
       window.MusicBoxRoom?.isActive()){cancel();return}
@@ -5245,6 +5958,28 @@ async function beginMix(song,proposed){
     console.info("[Music Box DJ] Orologi audio fuori sincrono: preservo il brano originale");
     mixFailures.set(id+"|"+song.id,Date.now()+12000);
     cancel();plan=null;return;
+   }
+   // A decoder may stall for less than the broad 720ms continuity gate
+   // while both clocks still look plausible. Recheck the actual kick
+   // phase until the deliberate final tempo release begins.
+   if(time<=.72&&(proposed.measuredBeatBridge===true||
+      proposed.measuredBeatPlacement===true||proposed.rhythmicGridJoin===true)){
+    const livePhaseError=djBeatPhaseError(proposed,old.currentTime,upcoming.currentTime);
+    if(!Number.isFinite(livePhaseError)||
+       livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
+     mixFailures.set(id+"|"+song.id,Date.now()+12000);
+     cancel();plan=null;return;
+    }
+   }
+   if(proposed.measuredFullBeat){
+    const error=old.currentTime-proposed.begin-(upcoming.currentTime-proposed.entry)/act.tempo;
+    act.phaseError=Number.isFinite(act.phaseError)?act.phaseError*.65+error*.35:error;
+    if(Math.abs(error)>.15){cancel();plan=null;return;}
+    if(Math.abs(act.phaseError)>.075){
+     if(!act.phaseCorrectionAt){act.phaseCorrectionAt=performance.now();act.phaseCorrectionError=Math.abs(act.phaseError);}
+     if(performance.now()-act.phaseCorrectionAt>600&&
+        Math.abs(act.phaseError)>act.phaseCorrectionError-.02){cancel();plan=null;return;}
+    }else act.phaseCorrectionAt=0;
    }
    act.lastProgress=time;
    const vol=app.volume();
@@ -5300,6 +6035,12 @@ async function beginMix(song,proposed){
     // fabricated drum, a bad cross-key overlay, or a clipped final vocal.
     ({outGain,inGain}=djImpactEnvelope(time,act.djRevealAt));
    }
+   if(act.nativeTailFullBeat){
+     outGain=1;inGain=.33*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
+     // Common output attenuation preserves the entire outgoing vocal and
+     // the ratio of the two arrangements; it is not a compressor or stem.
+     outGain*=act.outputHeadroom;inGain*=act.outputHeadroom;
+    }
    if(act.subduedRhythmicUnderlay){
      outGain=1;inGain=act.underlayVolume*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
     }
@@ -5359,9 +6100,18 @@ async function beginMix(song,proposed){
     if(act.stem)act.stem.audio.volume=clamp(vol*stemGain*headroom,0,1);
     // Micro-beatmatching massimo ±3%; termina a velocità normale
     // per evitare uno scatto udibile quando subentra il lettore principale.
-    if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
+    if(act.nativeTailFullBeat)
+     upcoming.playbackRate=fullBeatFeedbackRate(act.tempo,act.phaseError||0);
+    else if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
    }catch(e){cancel();return}
-   if(time>=1){handoff();return}
+   if(time>=1){
+    if(act.nativeTailFullBeat||act.subduedRhythmicUnderlay||act.postMusicalTailUnderlay){
+     // The new MP3 is already running at its quiet preview gain;
+     // wait for old.ended rather than cutting its final samples.
+     act.timer=setTimeout(fadeStep,45);return;
+    }
+    handoff();return;
+   }
    act.timer=setTimeout(fadeStep,50);
   }
   fadeStep();
@@ -5614,6 +6364,10 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
 let lastIPhoneSlowTick=0,lastIPhoneSlowAudio=null;
 let lastIPhoneSlowId="",lastIPhoneSlowNext="";
 function tick(){
+ if(window.MusicBoxCompositeMix?.active?.()){
+  if(!enabled||document.hidden||window.MusicBoxRoom?.isActive())window.MusicBoxCompositeMix.stop();
+  else return;
+ }
  // iOS suspends/limits JS timers behind the lock screen. Leave the native
  // single HTML audio uninterrupted until Safari restores this page.
  if(isIOS&&document.hidden){
@@ -5693,7 +6447,8 @@ function tick(){
     }catch(_){}
    }
    // The .40 second early switch clipped the final audible kick or vocal.
-   if(audio.currentTime>=mobileActive.end-.04)handoffMobileMix(app);
+   if(audio.currentTime>=mobileActive.end-.04&&
+      (!mobileActive.nativeTailFullBeat||audio.ended))handoffMobileMix(app);
    return;
   }
  }
@@ -5748,7 +6503,8 @@ function tick(){
       plannedFor!==target||app.currentId()!==fromId||
       app.mixNext()?.id!==target||mixing)return;
    const lyricA=app.mixLyricCues?.(fromId),lyricB=app.mixLyricCues?.(target);
-   const currentAnalysis=a&&lyricA?{...a,lastLyricAt:Math.max(Number(a.lastLyricAt)||0,Number(lyricA.last)||0)}:a;
+   const currentAnalysis=a?{...a,mixPosition:audio.currentTime,
+    ...(lyricA?{lastLyricAt:Math.max(Number(a.lastLyricAt)||0,Number(lyricA.last)||0),lyricStarts:lyricA.starts||[]}:{} )}:a;
    const nextAnalysis=b&&lyricB?{...b,firstLyricAt:Math.min(Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity,Number.isFinite(lyricB.first)?lyricB.first:Infinity)}:b;
    let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);
    if(!candidate||candidate.kind==="cut"||
@@ -5896,6 +6652,31 @@ function tick(){
  const nowUrl=nowTrack&&(app.mixUrl?.(nowTrack)||nowTrack.url);
  const nowInfo=nowTrack&&
   (cache.get(String(nowUrl))||deepLookup(nowTrack));
+ if(plan&&window.MusicBoxCompositeMix?.supports?.(plan)&&!document.hidden&&!offlineTransferPriority&&!app.offlineBusy?.()&&
+    (!isIOS||mobileOverlayEnabled)&&audio.currentTime>=plan.begin-32&&audio.currentTime<plan.end){
+  const mixContext=app.mixRunningContext?.();
+  if(mixContext?.state==="running"){
+   window.MusicBoxCompositeMix.prepare(plan,mixContext).catch(()=>{});
+   if(audio.currentTime>=plan.begin-5&&
+      window.MusicBoxCompositeMix.tryStart(plan,audio,app,next.id,mixContext))return;
+  }
+ }
+ // An interior cut is valid only through its certified common render.
+ // Asset/clock failure keeps the original song playing through its end.
+ if(plan?.structuralBeat){
+  if(audio.currentTime>plan.begin+.05){
+   // Try a later certified alternative after a missed/declined window.
+   // The next planning pass carries the actual current playhead.
+   plan=null;plannedFor="";planEpoch++;
+  }
+  return;
+ }
+ // The common descriptor is permission for that measured buffer only.
+ // If preparation/clock validation failed, Safari must not fall through
+ // to an unattenuated native overlap that still needs shared headroom.
+ if(isIOS&&plan?.measuredFullBeat&&plan.composite&&
+    window.MusicBoxCompositeMix?.supports?.(plan)&&
+    !(Number(plan.outputHeadroom)>=.999))return;
  if(isIOS&&mobileOverlayEnabled&&plan&&
     // Offline decoding can prepare the next MP3 even while WebAudio is
     // temporarily suspended. Only actual playback needs the running clock.
@@ -5903,6 +6684,12 @@ function tick(){
     mobileClipWindow(audio)&&
     !mobileIntroClips.has(String(nextSource))&&!pending.has(String(nextSource)))
    decode(next,true).catch(()=>{});
+ if(isIOS&&plan?.measuredFullBeat&&Math.abs(plan.tempo-1)>.002&&
+    mobileDJMayWork()&&mobileClipWindow(audio)){
+  const clip=mobileIntroClips.get(String(nextSource));
+  if(clip&&!window.MusicBoxStretch?.get?.(clip,plan))
+   window.MusicBoxStretch?.prepare?.(clip,plan).catch(()=>{});
+ }
  // A soft transition needs the next MP3 buffered before the fade.
  // A missing/incompatible musical plan must not leave a 3-5s silent tail.
  // Preload just one future track on desktop; leave iPhone unchanged.
@@ -6109,6 +6896,10 @@ function updateDetails(a,b){
     " · finale musicale concluso: la nuova intro entra nella coda debole":
    plan?.subduedRhythmicUnderlay?
    " · ritmo anticipato a basso volume, finale originale integro (non beatmatch certificato)":
+   plan?.metricalRhythmic?
+   " · raccordo sulle battute con colpi condivisi, distinto dal beatmatch completo":
+   plan?.measuredFullBeat?
+   " · beatmatch su più battute verificato sul PCM completo":
    plan?.measuredBeatBridge?
    plan.kind==="snap"?" · stacco corto sulla battuta, senza aspettare silenzi":
    " · beat reali compatibili: mix anticipato":
@@ -6357,7 +7148,8 @@ async function intelligentShuffle(app,audio,fromId){
    closestTempo:[],outgoingBpm:Number.isFinite(old.bpm)?old.bpm:null,
    outgoingGridCorrected:old.tempoVerifiedByGrid===true,
    compatibleGroove:0,compatibleNotes:0,
-  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0,subduedUnderlays:0};
+  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0,subduedUnderlays:0,
+    certificationFailures:{},certificationSamples:[]};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
  // has no songs with similar tempo or real beat patterns.
@@ -6518,15 +7310,39 @@ async function intelligentShuffle(app,audio,fromId){
     iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue)));
   // Only a musically verified bridge earns the "beat" tier. A weak
   // rhythmic resemblance must NEVER outrank a safe next song.
-  const verified=Boolean(mobilePlayable&&
-   desktopBeatPairCertified(old,next,cue)&&
-   iphoneQuietReleaseCertified(old,cue)&&cue&&
-    ((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.verifiedMicroBeat===true&&
-      cue.fade>=.46)||
-     (cue.kind==="beat"&&cue.fade>=2.7&&
-      (cue.verifiedHarmonicBridge===true||cue.dropReleaseBridge===true||
-       cue.instrumentalBeatBridge===true))));
+  // Separately diagnose every gate, rather than reporting all failed
+  // candidates as an unexplained zero. These are measurements only:
+  // no rejection threshold, playback behaviour or certification is relaxed.
+  const desktopCertified=musicallyPlayable&&!!cue&&
+   desktopBeatPairCertified(old,next,cue);
+  const iphoneReleaseCertified=desktopCertified&&
+   iphoneQuietReleaseCertified(old,cue);
+  const beatShapeCertified=!!cue&&
+   ((cue.kind==="snap"&&cue.measuredBeatBridge&&
+     cue.verifiedMicroBeat===true&&cue.fade>=.46)||
+    (cue.kind==="beat"&&cue.fade>=2.7&&
+     (cue.verifiedHarmonicBridge===true||cue.dropReleaseBridge===true||
+      cue.instrumentalBeatBridge===true)));
+  const verified=Boolean(mobilePlayable&&desktopCertified&&
+   iphoneReleaseCertified&&beatShapeCertified);
   if(verified)candidateAudit.verifiedBeats++;
+  else{
+   const cause=!cue? "no_transition":cue.kind==="cut"?"direct_cut":
+    !musicallyPlayable?"musical_overlap_veto":
+    !mobilePlayable?"mobile_playback_veto":
+    !desktopCertified?"desktop_beat_evidence_veto":
+    !iphoneReleaseCertified?"outro_release_veto":
+    !beatShapeCertified?"not_certified_beat_shape":"unknown";
+   candidateAudit.certificationFailures[cause]=
+    (candidateAudit.certificationFailures[cause]||0)+1;
+   if(candidateAudit.certificationSamples.length<12)
+    candidateAudit.certificationSamples.push({id:track.id,cause,
+     cueKind:cue?.kind||null,
+     fade:Number.isFinite(cue?.fade)?+cue.fade.toFixed(3):null,
+     begin:Number.isFinite(cue?.begin)?+cue.begin.toFixed(3):null,
+     sourceLast:Number.isFinite(old.last)?+old.last.toFixed(3):null,
+     bpm:Number.isFinite(info?.bpm)?+info.bpm.toFixed(2):null});
+  }
   if(!verified){
    if(mobilePlayable&&cue?.measuredReleaseHandoff===true){
     // Genuine early audible music before the last recorded note.
@@ -7076,7 +7892,7 @@ function setMixEnabled(value,event){
  if(enabled===requested){draw();return}
  enabled=requested;
  try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
- if(!enabled){cancel();plannedFor="";plan=null;resetMobileFade()}
+ if(!enabled){window.MusicBoxCompositeMix?.stop?.();cancel();plannedFor="";plan=null;resetMobileFade()}
  else {
   previousId="";plannedFor="";
   // Turning the primary Mix switch on also enables iPhone mixing. The
@@ -7086,6 +7902,7 @@ function setMixEnabled(value,event){
    try{localStorage.setItem("mb.mixIphone","on")}catch(_){}
    bridge()?.mixEnableAudio?.(event);
   }
+  else bridge()?.mixEnableAudio?.(event);
   // Do not pull a multi-megabyte harmonic index in the same tap as play.
   if(!deepIndex)setTimeout(()=>{if(enabled&&!document.hidden)
    loadDeepIndex().catch(()=>{})},isIOS?2200:0);
@@ -7259,6 +8076,8 @@ function start(){
 }
 window.MusicBoxMix={isEnabled:()=>enabled,
  pauseForOffline:()=>{
+  window.MusicBoxCompositeMix?.cancelPreparation?.();
+  window.MusicBoxCompositeMix?.stop?.();
   offlineTransferPriority=true;
   try{deepTransferController?.abort()}catch(_){}
   djPlaybackEpoch++;
@@ -7320,7 +8139,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    const pcAllowed=!!cue&&musical&&pcBeatSafe;
    const nativeSafe=isIOS?iosAllowed:pcAllowed;
    const measurableBeat=!!cue&&["beat","snap"].includes(cue.kind)&&
-    (cue.measuredBeatBridge||cue.instrumentalBeatBridge||
+    (cue.measuredFullBeat||cue.measuredBeatBridge||cue.instrumentalBeatBridge||
      cue.verifiedHarmonicBridge||cue.rhythmicGridJoin||cue.strongBeatBridge)&&
     !cue.pulseUnderlay&&!cue.continuityFallback;
    platformResults={pc:{allowed:pcAllowed,beatCertified:!!(pcAllowed&&pcBeatSafe&&measurableBeat)},
@@ -7328,7 +8147,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    approved=Boolean(musical&&nativeSafe);
    beatCertified=Boolean(approved&&beatSafe&&quietSafe&&
     ["beat","snap"].includes(cue?.kind)&&
-    (cue.measuredBeatBridge||cue.instrumentalBeatBridge||
+    (cue.measuredFullBeat||cue.measuredBeatBridge||cue.instrumentalBeatBridge||
       cue.verifiedHarmonicBridge||cue.rhythmicGridJoin||cue.strongBeatBridge)&&
     !cue.pulseUnderlay&&!cue.continuityFallback);
    if(!cue)reasons.push("Nessuna finestra musicale sicura: fallback senza mix forzato.");
@@ -7337,8 +8156,14 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     "Vincoli WebAudio/Safari o sicurezza vocale non soddisfatti.":
     "Beat, fase o sicurezza del finale insufficienti per il motore desktop.");
    else if(beatCertified)reasons.push("Beat e finestra ritmica certificati: resta necessaria la prova audio reale.");
+   else if(cue.independentLowBand===true)
+    reasons.push("Colpi PCM allineati: solo bassi filtrati, volume <=9%, finale originale intatto. NON è beatmatch certificato.");
    else reasons.push("Raccordo consentito ma NON certificato come beatmatch.");
    if(cue){
+    if(cue.structuralBeat){
+     vocalSafe=cue.structuralEvidence?.outgoingVocalTail?.clear===true;
+     reasons.push("Uscita protetta da evidenza vocale locale: confine stimato, non annotato manualmente.");
+    }else{
     const voiceEnd=Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt:
       Number.isFinite(a.lastLyricAt)?a.lastLyricAt+4:null;
     vocalSafe=cue.preserveTail===true?null:
@@ -7347,6 +8172,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
        (Number.isFinite(a.lastVoiceAt)?1.1:0);
     if(vocalSafe===false)reasons.push("ATTENZIONE: punto del mix vicino a una frase vocale misurata.");
     if(cue.preserveTail===true)reasons.push("Il piano preserva la coda originale: test acustico ancora necessario.");
+    }
    }else vocalSafe=true;
   }
   const plan=cue?{
@@ -7356,8 +8182,13 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    beatPeriod:cue.beatPeriod,beatAnchor:cue.beatAnchor,
    nextBeat:cue.nextBeat,protectedTail:!!cue.preserveTail,
    measuredBeatBridge:!!cue.measuredBeatBridge,
+   measuredFullBeat:!!cue.measuredFullBeat,structuralBeat:!!cue.structuralBeat,metricalRhythmic:!!cue.metricalRhythmic,
    instrumentalBeatBridge:!!cue.instrumentalBeatBridge,
    rhythmicGridJoin:!!cue.rhythmicGridJoin,
+   independentLowBand:!!cue.independentLowBand,
+   independentOnsetScore:cue.independentOnsetScore??null,
+   independentOnsetLagMs:cue.independentOnsetLagMs??null,
+   underlayVolume:cue.underlayVolume??null,
    quietCertified:!!cue.quietCertified,
    mobileSilentBridge:!!cue.mobileSilentBridge}:null;
   const point=(at,label,evidence)=>{
@@ -7425,6 +8256,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     kind:plan.kind,begin:plan.begin,end:plan.end,fade:plan.fade,
     entry:plan.entry,beatAnchor:plan.beatAnchor,nextBeat:plan.nextBeat,
     beatPeriod:plan.beatPeriod,quietCertified:!!plan.quietCertified,
+    independentLowBand:!!plan.independentLowBand,
+    independentOnsetScore:plan.independentOnsetScore??null,
+    underlayVolume:plan.underlayVolume??null,
     measuredBeatBridge:!!plan.measuredBeatBridge,
     protectedTail:!!plan.preserveTail}:null,
    liveTransition:active&&active.at>0?{
@@ -7506,6 +8340,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
   },
  onSeek:(reason)=>{
+  if(typeof window!=="undefined"&&window.MusicBoxCompositeMix?.onSeek?.(reason,bridge()?.audio?.()))return;
   // Never start a competing MP3 decode while the user is skipping.
   // Explicit and native seeking events fire for the SAME action; cancel
   // the old DJ work only once, then leave the actual player alone.

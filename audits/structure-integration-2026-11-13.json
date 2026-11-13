@@ -1,0 +1,256 @@
+{
+  "baselineCommit": "b656c1573c3d71d023125c906864d7f0b643bbb8",
+  "audioCommit": "50f2ce9a",
+  "sourceRun": 43463500768,
+  "sourceArtifacts": 16,
+  "sourceTracks": 1176,
+  "sourceErrors": 0,
+  "modelEvidenceNotHumanTruth": true,
+  "refinedWindows": {
+    "entry": {
+      "windows": 7679,
+      "tracks": 1110
+    },
+    "exit": {
+      "windows": 250,
+      "tracks": 130
+    }
+  },
+  "comparison": {
+    "analyzedPairs": {
+      "before": 1381800,
+      "after": 1381800
+    },
+    "completePcmBeat": {
+      "before": 17,
+      "after": 60
+    },
+    "metricalRhythmic": {
+      "before": 0,
+      "after": 3
+    },
+    "structuralEarlyExits": {
+      "before": 0,
+      "after": 46
+    },
+    "shortIndexedBeat": {
+      "before": 2,
+      "after": 2
+    },
+    "crossfadePlans": {
+      "before": 59837,
+      "after": 59835
+    },
+    "normalChanges": {
+      "before": 1233976,
+      "after": 1233940
+    },
+    "postlude": {
+      "before": 85581,
+      "after": 85573
+    },
+    "underlay": {
+      "before": 2358,
+      "after": 2358
+    },
+    "rejectedBeat": {
+      "before": 29,
+      "after": 29
+    },
+    "averageFullOverlapSeconds": {
+      "before": 9.302484577900088,
+      "after": 9.525370630405027
+    },
+    "safariFullAvailable": {
+      "before": 3,
+      "after": 54
+    },
+    "safariFullWithCommonPcm": {
+      "before": 0,
+      "after": 54
+    },
+    "safariFullNativeNoAttenuation": {
+      "before": 3,
+      "after": 3
+    }
+  },
+  "structuralCandidateFunnel": {
+    "version": 1,
+    "completeCoverage": true,
+    "features": 1176,
+    "tracks": 1176,
+    "possibleOrderedPairs": 1381800,
+    "consideredPairs": 1381800,
+    "sameRecording": 218,
+    "missingWholeRecording": 0,
+    "noExitWindow": 1228847,
+    "positiveLyricVeto": 4700,
+    "noEntryWindow": 8314,
+    "meterOrTempo": 121417,
+    "vocalConflict": 13650,
+    "harmony": 4363,
+    "eligiblePairs": 291,
+    "insufficientObservedBeatFit": 169,
+    "fullBeatCandidates": 98,
+    "renderingNotYetVerified": 252,
+    "windowsEvaluated": 1863038,
+    "metricalRhythmicCandidates": 24,
+    "eligibility": "SHA-bound whole-file evidence, structural exit with separated-vocal quiet tail, same meter and bar count, tempo within 5%, no simultaneous separated vocal activity, local PCM harmonic gate; independent actual attack fit and rendering follow.",
+    "modelAccuracyIsNotHumanGroundTruth": true,
+    "candidateWindows": 252,
+    "candidatePairs": 122,
+    "fullSuccessOnEligible": 0.33676975945017185,
+    "successOnEligible": 0.41924398625429554,
+    "successOnFullCatalog": 8.82906354030974e-05,
+    "averageOverlap": 9.667213114754093
+  },
+  "rendering": {
+    "candidateWindows": 252,
+    "accepted48k": 90,
+    "accepted16k": 91,
+    "sameWindowsAcceptedBothRates": 84,
+    "uniqueFullPairs": 43,
+    "uniquePartialOnlyPairs": 3,
+    "rejectedReasons48k": {
+      "Smooth common gain exceeds safe peak": 107,
+      "Post-render rhythm certificate failed": 36,
+      "Stretch timing failed": 15,
+      "Lossless/oversampled render validation failed": 2,
+      "Oversampled overlap peak exceeds ceiling": 1,
+      "Chromium 44100 Hz decoded peak exceeded declared oversampled bound; later certified alternative retained": 1
+    },
+    "postRenderRmsMs": {
+      "min": 6.359046472622319,
+      "median": 25.50345652203619,
+      "mean": 25.15184996431953,
+      "max": 37.23045367055685
+    },
+    "oversampledPeak": {
+      "min": 0.2954860329627991,
+      "median": 0.9453972280025482,
+      "mean": 0.8725087285041809,
+      "max": 0.9987571835517883
+    },
+    "oversampledOverlapPeak": {
+      "min": 0.2954860329627991,
+      "median": 0.906208723783493,
+      "mean": 0.8535891304413478,
+      "max": 0.9603173136711121
+    },
+    "commonGain": {
+      "min": 0.7066399183438873,
+      "median": 1.0,
+      "mean": 0.9500585420121597,
+      "max": 1
+    },
+    "nativeTempoWindows": 9,
+    "bothPhraseHypotheses": 3,
+    "semanticSectionsHumanVerified": false
+  },
+  "profileOwnership": {
+    "scope": "Unchanged BUILTIN membership; active playlists, user deletions and runtime queue can further restrict availability. No profile libraries are combined.",
+    "catalogCounts": {
+      "Ste": 242,
+      "Diego": 209,
+      "Emanuele": 621
+    },
+    "baselineFull": {
+      "sameProfile": {
+        "Ste": 2,
+        "Diego": 1
+      },
+      "crossProfile": 11,
+      "outsideCurrentBuiltin": 3,
+      "sameSpotifyId": 0,
+      "sameTitleAndArtist": 0
+    },
+    "afterFull": {
+      "sameProfile": {
+        "Ste": 7,
+        "Emanuele": 5,
+        "Diego": 1
+      },
+      "crossProfile": 26,
+      "outsideCurrentBuiltin": 21,
+      "sameSpotifyId": 0,
+      "sameTitleAndArtist": 0
+    },
+    "afterPartial": {
+      "sameProfile": {
+        "Emanuele": 2
+      },
+      "crossProfile": 0,
+      "outsideCurrentBuiltin": 1,
+      "sameSpotifyId": 0,
+      "sameTitleAndArtist": 0
+    },
+    "structuralEligible": {
+      "sameProfile": {
+        "Ste": 25,
+        "Emanuele": 57
+      },
+      "crossProfile": 110,
+      "outsideCurrentBuiltin": 99,
+      "sameSpotifyId": 0,
+      "sameTitleAndArtist": 0
+    }
+  },
+  "karaoke": {
+    "referenceWords": 590,
+    "observedWords": 65,
+    "observedCoverage": 0.11016949152542373,
+    "onset": {
+      "count": 65,
+      "signedMeanMs": 46.99660362769292,
+      "medianAbsoluteMs": 58.083435100002134,
+      "p90AbsoluteMs": 182.62048340000092,
+      "p95AbsoluteMs": 201.2957153000059,
+      "within50": 0.4461538461538462,
+      "within100": 0.6307692307692307,
+      "within250": 0.9846153846153847
+    },
+    "end": {
+      "count": 65,
+      "signedMeanMs": 74.45658687230703,
+      "medianAbsoluteMs": 73.14111329999662,
+      "p90AbsoluteMs": 204.5710907,
+      "p95AbsoluteMs": 278.70483399996715,
+      "within50": 0.4,
+      "within100": 0.6,
+      "within250": 0.9384615384615385
+    },
+    "estimatedWords": 61,
+    "estimatedOnset": {
+      "count": 61,
+      "signedMeanMs": 399.65415554262415,
+      "medianAbsoluteMs": 329.3873291000011,
+      "p90AbsoluteMs": 1207.7756348000007,
+      "p95AbsoluteMs": 1536.7248534999903,
+      "within50": 0.18032786885245902,
+      "within100": 0.22950819672131148,
+      "within250": 0.3770491803278688
+    },
+    "estimatedEnd": {
+      "count": 61,
+      "signedMeanMs": 512.8718024131151,
+      "medianAbsoluteMs": 359.22570799999676,
+      "p90AbsoluteMs": 1536.7248534999903,
+      "p95AbsoluteMs": 1747.5430298000133,
+      "within50": 0.03278688524590164,
+      "within100": 0.08196721311475409,
+      "within250": 0.26229508196721313
+    }
+  },
+  "vocalGuard": {
+    "externalEnglishReferences": 5,
+    "quietLeadSeconds": 1.2,
+    "actualFadeSeconds": 0.4,
+    "windowsWithManualVocal": 7044,
+    "falseClearWindows": 8,
+    "falseClearInActualFade": 0,
+    "overlappingWindowsNotIndependentTrials": true,
+    "notFullCatalogVocalCertification": true
+  },
+  "physicalIPhoneTested": false,
+  "spotifyEquivalence": "NOT_CERTIFIED"
+}

@@ -5,6 +5,11 @@ on:
     paths:
       - 'tools/dj-pair-waveform-audit.py'
       - '.github/workflows/dj-real-audio-audit.yml'
+  pull_request:
+    paths:
+      - 'mix-intelligente.js'
+      - 'tools/dj-pair-waveform-audit.py'
+      - '.github/workflows/dj-real-audio-audit.yml'
   workflow_dispatch:
 jobs:
   audio-audit:
@@ -25,4 +30,11 @@ jobs:
           ffmpeg -version | head -n 1
           python -m py_compile tools/dj-pair-waveform-audit.py
       - name: Decode actual final/initial audio and measure beat/chord agreement
-        run: python tools/dj-pair-waveform-audit.py
+        run: python tools/dj-pair-waveform-audit.py --output=results/dj-real-pcm-spotcheck.json
+      - name: Keep independent MP3 measurements for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: musicbox-dj-real-pcm-spotcheck
+          path: results/dj-real-pcm-spotcheck.json
+          if-no-files-found: warn

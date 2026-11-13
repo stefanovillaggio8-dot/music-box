@@ -5522,7 +5522,7 @@ function _riparaMetadatiTraccia(t){
   function _statoKaraokeBrano(id){
     const records=[localLyrics[id],lyricsData[id]].filter(Boolean);
     const verified=records.find(l=>Array.isArray(l.wordRows)&&
-      l.wordRows.some(row=>row.words?.length>=2));
+      l.wordRows.some(row=>_haTempiParole(row)));
     if(verified)return {label:verified.audioWordSynced?"PAROLE IA":"PAROLE",
       title:verified.audioWordSynced?"Parole ricavate dall'analisi vocale sul dispositivo":"Tempi originali delle singole parole disponibili"};
     if(records.some(l=>typeof l.synced==="string"&&
@@ -6361,6 +6361,7 @@ function handleMetadata() {
   // CORS headers, and enabling it for them would break playback entirely.
   function _assegnaAudioSorgente(a,source) {
     const target=String(source||"");
+    if(target&&!/^blob:/i.test(target))a._mbMixSourceUrl=target;
     try {
       const u=new URL(target,location.href);
       const safe=u.origin===location.origin||
@@ -7737,11 +7738,15 @@ box.innerHTML = "";
     return _testoAppartieneAlBrano(id,saved)?saved:null;
   }
 
+  function _haTempiParole(row){
+    return window.MusicBoxWordKaraoke?.hasWordTiming?.(row)===true;
+  }
+
   function currentLyrics() {
     if (!currentId) return null;
     const builtin = lyricsData[currentId];
     const saved = _testoLocaleVerificato(currentId);
-    if(saved?.wordRows?.some?.(r=>r.words?.length>=2))return saved;
+    if(saved?.wordRows?.some?.(r=>_haTempiParole(r)))return saved;
     if (saved && saved.synced && parseSynced(saved.synced).length >= 3) return saved;
     if (builtin && builtin.synced && parseSynced(builtin.synced).length >= 3) return builtin;
     if (saved && saved.text) return saved;
@@ -7757,7 +7762,7 @@ box.innerHTML = "";
     const existing=id===currentId?currentLyrics():
       _testoLocaleVerificato(id)||lyricsData[id];
     if(!track?.title||!track.artist||!existing?.synced||
-       (existing.wordRows?.some?.(row=>row.words?.length>=2)&&!existing.audioWordSynced)||
+       (existing.wordRows?.some?.(row=>_haTempiParole(row))&&!existing.audioWordSynced)||
        _ricercheParoleInCorso.has(id)||document.hidden||
        navigator.onLine===false||Date.now()<_lrclibNonPrimaDi)return;
     const key="mb.karaoke.wordSearch.v1."+id;
@@ -7771,7 +7776,7 @@ box.innerHTML = "";
         durationMs:track.spotifyDurationMs||0,album:track.spotifyAlbum||track.album||""
       });
       if(Date.now()>=_lrclibNonPrimaDi)LS.set(key,Date.now());
-      if(!result?.synced||!result.wordRows?.some?.(r=>r.words?.length>=2))return;
+      if(!result?.synced||!result.wordRows?.some?.(r=>_haTempiParole(r)))return;
       // A perfectly timed karaoke for another song is still WRONG.
       // Reject it before replacing the current recording's LRC.
       if(!_testoAppartieneAlBrano(id,{synced:result.synced}))return;
@@ -7779,7 +7784,7 @@ box.innerHTML = "";
       // Whisper stored while this provider request was still in flight.
       const newest=_testoLocaleVerificato(id);
       if(newest?.audioWordSynced&&newest.wordRows?.some(row=>
-          row.words?.length>=2&&!row.estimated))return;
+          _haTempiParole(row)&&!row.estimated))return;
       const updated={...(newest||existing),id,title:track.title,artist:track.artist,
         text:result.text||existing.text,synced:result.synced,
         wordRows:result.wordRows,source:result.source,audioWordSynced:false};
@@ -7822,7 +7827,7 @@ box.innerHTML = "";
     const joined=baseline.map((original,i)=>{
       const kept=previous.find(row=>
         Math.abs(sourceT(row)-original.t)<.02&&row.text===original.text);
-      if(kept?.words?.length>=2&&!kept.estimated)return kept;
+      if(_haTempiParole(kept)&&!kept.estimated)return kept;
       // Preserve the extra LRC-to-voice delay only when an entire long,
       // distinctive phrase was verified word for word against the MP3.
       const tokens=String(original.text||"").match(/\S+/gu)||[];
@@ -7833,7 +7838,9 @@ box.innerHTML = "";
       const matched=incoming.find(row=>
         Math.abs(sourceT(row)-original.t)<.02&&
         row.t>=original.t-.45&&row.t<=original.t+maxLag&&
-        row.text===original.text&&row.words?.length>=3);
+        row.text===original.text&&
+        (row.words?.length>=3||_haTempiParole(row)&&
+         row.t>=original.t-.20&&row.t<=original.t+.30));
       if(matched){added++;changedRows.push(i);return matched}
       return kept&&!kept.estimated?kept:original;
     });
@@ -8037,7 +8044,7 @@ box.innerHTML = "";
     }, 300000);
   } catch (e) { /* noop */ }
 
-async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
+async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, silentDjStart = false) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
@@ -8074,6 +8081,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
       if (id !== currentId) resumeAt = 0;
+      try { window.MusicBoxAudioAlign?.cancel?.(); } catch (_) {}
       currentId = id;
       // An explicit new selection must not inherit the old song's
       // paused playhead (even if the same track is selected again).
@@ -8155,8 +8163,13 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       const previous = audio;
       // Preserve the active native media element/session when an installed
       // iOS app advances while locked. WebKit can still deny the new play().
-      const keepNativeSession=_iosInstallataComeApp()&&document.hidden&&
-        previous&&!liveDjAudio;
+      // A common PCM buffer already owns the audible signal. Reuse the
+      // gesture-authorized native decoder for its muted handoff: WebKit
+      // may pause a newly autoplayed element as soon as it is unmuted.
+      const keepCommonSession=silentDjStart===true&&previous&&
+        window.MusicBoxCompositeMix?.owns?.(previous)===true&&!document.hidden;
+      const keepNativeSession=keepCommonSession||(_iosInstallataComeApp()&&document.hidden&&
+        previous&&!liveDjAudio);
       audio = keepNativeSession ? previous : createAudio();
       if (previous && previous !== audio) {
         previous._mbCambioBrano = true;
@@ -8164,6 +8177,11 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       }
     }
     audio._mbCambioBrano = !_adottaDj;
+    if(_adottaDj)audio._mbMixSourceUrl=_url;
+    // Common-buffer DJ playback owns the audible signal until this native
+    // decoder is ready. Set binary mute before src/play(), including iOS.
+    audio._mbCommonMixMuted=silentDjStart===true;
+    if (silentDjStart === true) audio.muted = true;
     /* Ste: "il boost sembra che non sia cambiato nulla". Metto in traccia
        l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
        potenziato, se c'e' "songs/" e' l'originale. */
@@ -9266,7 +9284,7 @@ function openProfile() {
   }
 
   function parseSynced(synced) {
-    if(/<\d{1,3}:\d{2}[.:]\d{1,3}>/.test(String(synced||""))){
+    if(/<\d{1,3}:\d{2}(?:[.:]\d{1,3})?>/.test(String(synced||""))){
       const parsed=window.MusicBoxWordKaraoke?.parseEnhancedLrc(synced)||[];
       if(parsed.length)return parsed;
     }
@@ -9285,8 +9303,8 @@ function openProfile() {
     const e=window.MusicBoxWordKaraoke;
     const saved=e?.normalizeRows(l?.wordRows||[])||[];
     const enhanced=e?.parseEnhancedLrc(l?.synced||"")||[];
-    const baseline=saved.some(row=>row.words?.length>=2)?saved:
-      enhanced.some(row=>row.words?.length>=2)?enhanced:parseSynced(l?.synced||"");
+    const baseline=(saved.some(_haTempiParole))?saved:
+      (enhanced.some(_haTempiParole))?enhanced:parseSynced(l?.synced||"");
     return e?.estimateRows?.(baseline)||baseline;
   }
   const _ritardiTesti=new Map();
@@ -10051,7 +10069,7 @@ async function removeTrack(id) {
       const wordRows=engine?.fromRecord(j)||[];
       const synced=String(j.syncedLyrics||(wordRows.length?engine.toLrc(wordRows):""));
       return {text:String(j.plainLyrics||syncedToText(synced)||"").trim(),
-        synced,wordRows,source:wordRows.some(row=>row.words?.length>=2)
+        synced,wordRows,source:wordRows.some(row=>_haTempiParole(row))
           ?"LRCLIB (parole sincronizzate)":synced?"LRCLIB (karaoke sincronizzato)":"LRCLIB"};
     };
     const validate = (j) => {
@@ -10104,7 +10122,7 @@ async function removeTrack(id) {
           const rows = j && j.syncedLyrics && parseSynced(j.syncedLyrics);
           if(validate(j)&&((rows&&rows.length>=3)||j.hasWordSync)){
             const result=lrclibResult(j);
-            if(!options.wordSyncOnly||result.wordRows.some(r=>r.words?.length>=2))
+            if(!options.wordSyncOnly||result.wordRows.some(r=>_haTempiParole(r)))
               return result;
           }
         }
@@ -10136,7 +10154,7 @@ async function removeTrack(id) {
           const selected=choose(Array.isArray(data)?data:[data]);
           if(selected){
             const result=lrclibResult(selected);
-            if(!options.wordSyncOnly||result.wordRows.some(r=>r.words?.length>=2))
+            if(!options.wordSyncOnly||result.wordRows.some(r=>_haTempiParole(r)))
               return result;
           }
         }catch(_){
@@ -10156,7 +10174,7 @@ async function removeTrack(id) {
             const selected=choose([await r.json()]);
             if(selected){
               const result=lrclibResult(selected);
-              if(!options.wordSyncOnly||result.wordRows.some(r=>r.words?.length>=2))
+              if(!options.wordSyncOnly||result.wordRows.some(r=>_haTempiParole(r)))
                 return result;
             }
           }
@@ -13162,7 +13180,19 @@ window.MusicBoxBridge = {
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
     if(rows.length<3)return null;
-    return {first:rows[0].t,last:rows[rows.length-1].t};
+    return {first:rows[0].t,last:rows[rows.length-1].t,starts:rows.map(r=>r.t)};
+  },
+  mixVocalCutSafe:(cue,id)=>{
+    if(!cue?.structuralBeat)return true;
+    const local=_testoLocaleVerificato(id),candidate=(local?.synced?local:lyricsData[id])||null;
+    if(!candidate)return true;
+    const rows=_righeTestoConParole(candidate);
+    for(const row of rows){
+      if(!row.estimated&&_haTempiParole(row)&&row.words.some(w=>
+        Number.isFinite(w.t)&&Number.isFinite(w.end)&&w.t<cue.end&&w.end>cue.end-.4))return false;
+      if(Number.isFinite(row.t)&&row.t>=cue.end-.4&&row.t<cue.end&&String(row.text||"").trim())return false;
+    }
+    return true;
   },
 
   mixCandidates:()=>{
@@ -13237,9 +13267,17 @@ window.MusicBoxBridge = {
     _ordineCasualeModificato();
     return true;
   },
-  mixHandoff:(id,startAt)=>{
+  mixHandoff:(id,startAt,options)=>{
     if(queue[0]===id){queue.shift();persistQueue()}
-    return playById(id,true,startAt);
+    return playById(id,true,startAt,null,options?.muted===true);
+  },
+  mixSourceMatches:(id,liveAudio)=>{
+    const track=tracks.find(t=>t.id===id);
+    if(!track||liveAudio!==audio||id!==currentId)return false;
+    try{
+      const actual=liveAudio._mbMixSourceUrl||liveAudio.currentSrc||liveAudio.src;
+      return !!actual&&new URL(actual,location.href).href===new URL(_urlDelBrano(track),location.href).href;
+    }catch(_){return false}
   },
   mixAdoptHandoff:(id,liveAudio)=>{
     if(!liveAudio||_usaControlliNativiIos())return null;
@@ -13265,7 +13303,7 @@ window.MusicBoxBridge = {
       if(song===currentId){
         const l=currentLyrics();
         if(l?.synced&&!_righeTestoConParole(l).every(r=>
-          r.words?.length>=2&&!r.estimated))
+          _haTempiParole(r)&&!r.estimated))
           window.MusicBoxAudioAlign?.request(song);
       }
     };
@@ -18866,6 +18904,7 @@ for (const p of playlists) {
     try {
       const v = Number(volumePct) || 0;
       if (audio) audio.volume = Math.min(1, Math.max(0, v / 100));
+      if (audio) audio.muted=v<=0||audio._mbCommonMixMuted===true;
       if (_gain) _gain.gain.value = 1;
       if (_filtroBassi) _filtroBassi.gain.value = 0;
       return true;

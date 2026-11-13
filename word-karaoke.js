@@ -6,6 +6,7 @@
 const MAX_TEXT=600000,MAX_ROWS=800,MAX_WORDS=16000,MAX_TIME=21600;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function number(v){
+ if(typeof v!=="number"&&typeof v!=="string"||typeof v==="string"&&!v.trim())return null;
  const n=Number(v);
  return Number.isFinite(n)&&n>=0&&n<=MAX_TIME?n:null;
 }
@@ -24,13 +25,15 @@ function timeParts(m){
  return seconds<60?number(minutes*60+seconds+fraction):null;
 }
 function validWords(raw,lineText,lineStart,lineEnd){
- if(!Array.isArray(raw)||raw.length<2||raw.length>80)return [];
+ if(!Array.isArray(raw)||raw.length<1||raw.length>80)return [];
  const words=[];let prior=-1;
  for(const w of raw){
+  if(!w||typeof w!=="object")return [];
   const t=number(w.t),text=String(w.text??"");
   const end=w.end==null?null:number(w.end);
   if(t==null||end!=null&&end<t||t+0.3<lineStart||
     lineEnd!=null&&t>lineEnd+0.3||t<prior||!text||text.length>140)return [];
+  if(raw.length===1&&(end==null||end<=t))return [];
   words.push({t:+t.toFixed(3),text,...(end!=null?{end:+end.toFixed(3)}:{})});
   prior=t;
  }
@@ -72,7 +75,8 @@ function normalizeRows(rows){
   out.push({t:+displayT.toFixed(3),text,
    ...(anchored?{sourceT:+sourceT.toFixed(3)}:{}),
    ...(end!=null?{end:+end.toFixed(3)}:{}),
-   ...(words.length?{words}:{})});
+   ...(words.length?{words}:{}),
+   ...(row.estimated===true?{estimated:true}:{})});
  }
  return out.sort((a,b)=>a.t-b.t);
 }
@@ -140,7 +144,15 @@ function parseEnhancedLrc(value){
    if(secs==null){words=[];break}
    lastTime=secs;last=re.lastIndex;
   }
-  if(last>=0)words.push({t:lastTime,text:body.slice(last)});
+  let end=null;
+  if(last>=0){
+   const tail=body.slice(last);
+   // A closing Enhanced LRC tag marks the end of the last word, rather
+   // than an empty additional word that invalidates the entire phrase.
+   if(!tail.trim()&&words.length&&lastTime>=words[words.length-1].t){
+    end=lastTime;words[words.length-1].end=end;
+   }else words.push({t:lastTime,text:tail});
+  }
   const text=(last>=0?prefix+words.map(w=>w.text).join(""):body).trim();
   // Trim leading whitespace of the first token consistently with line text.
   if(words.length&&prefix.trim()===""&&words[0].text)
@@ -157,16 +169,19 @@ function parseEnhancedLrc(value){
   const adjustedStart=plausible?firstWord:t;
   const clean=plausible?validWords(words,text,adjustedStart,null):[];
   if(text)result.push({t:clean.length?adjustedStart:t,text,
-    ...(clean.length?{words:clean}:{})});
+    ...(clean.length?{words:clean,...(end!=null?{end}:{})}:{})});
  }
  return result;
+}
+function hasWordTiming(row){
+ return !!row&&number(row.t)!=null&&validWords(row.words,row.text,row.t,row.end??null).length>0;
 }
 function fromRecord(entry){
  if(!entry||typeof entry!=="object")return [];
  const full=entry.lyricsfile?parseLyricsfile(entry.lyricsfile):[];
  const fromEnhanced=entry.syncedLyrics?parseEnhancedLrc(entry.syncedLyrics):[];
- const words=full.filter(row=>row.words?.length>=2).length;
- const enhanced=fromEnhanced.filter(row=>row.words?.length>=2).length;
+ const words=full.filter(hasWordTiming).length;
+ const enhanced=fromEnhanced.filter(hasWordTiming).length;
  return words>0&&words>=enhanced?full:enhanced>0?fromEnhanced:[];
 }
 function toLrc(rows){
@@ -181,7 +196,7 @@ function toLrc(rows){
 function estimateRows(rows){
  if(!Array.isArray(rows))return [];
  return rows.map((row,index)=>{
-  if(!row||Array.isArray(row.words)&&row.words.length>=2)return row;
+  if(!row||hasWordTiming(row))return row;
   const start=number(row.t),text=String(row.text||"").trim();
   const tokens=text.match(/\S+\s*/gu)||[];
   if(start==null||tokens.length<2||tokens.length>24||text.length>220||
@@ -213,7 +228,7 @@ function estimateRows(rows){
 }
 function spanWords(document,row,container){
  const words=validWords(row.words,row.text,row.t,row.end??null);
- if(words.length<2){container.textContent=row.text;return []}
+ if(!words.length){container.textContent=row.text;return []}
  const elements=[];
  for(const w of words){
   const el=document.createElement("span");
@@ -230,8 +245,14 @@ function paintWords(row,elements,time){
  for(let i=0;i<elements.length;i++){
   const w=row.words[i],next=row.words[i+1];
   const fallback=next?next.t:row.end!=null&&row.end>w.t?row.end:w.t+0.55;
-  const end=w.end!=null&&w.end>=w.t?w.end:fallback;
-  const pct=Math.round(100*clamp((time-w.t)/Math.max(.06,end-w.t),0,1));
+  // An ASR word's reported end can overlap the next timestamp.
+  // Visually constrain its fill to the next verified word or phrase end.
+  const rawEnd=w.end!=null&&w.end>=w.t?w.end:fallback;
+  const end=Math.max(w.t,Math.min(rawEnd,
+   next?next.t:row.end!=null&&row.end>=w.t?row.end:rawEnd));
+  // A short, measured rap syllable must finish at its real boundary.
+  // A 60ms visual floor kept it half-filled after the next word began.
+  const pct=time>=end?100:Math.round(100*clamp((time-w.t)/Math.max(.001,end-w.t),0,1));
   const el=elements[i];
   if(el._karaokePct!==pct){el._karaokePct=pct;el.style.setProperty("--karaoke-fill",pct+"%")}
  }
@@ -243,12 +264,12 @@ function timingCoverage(rows){
  const result={total:0,audio:0,provider:0,estimated:0,lineOnly:0};
  if(!Array.isArray(rows))return result;
  for(const row of rows){
-  if(!row||!String(row.text||"").trim()||!Number.isFinite(Number(row.t)))continue;
+  if(!row||!String(row.text||"").trim()||number(row.t)==null)continue;
   result.total++;
-  const timed=Array.isArray(row.words)&&row.words.length>=2;
+  const timed=validWords(row.words,row.text,number(row.t),row.end==null?null:number(row.end)).length>=1;
   if(!timed){result.lineOnly++;continue;}
   if(row.estimated===true){result.estimated++;continue;}
-  if(row.sourceT!=null&&Number.isFinite(Number(row.sourceT))&&Number(row.sourceT)>=0)
+  if(number(row.sourceT)!=null)
    result.audio++;
   else result.provider++;
  }
@@ -257,6 +278,6 @@ function timingCoverage(rows){
  return result;
 }
 root.MusicBoxWordKaraoke={
- parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage
+ parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage,hasWordTiming
 };
 })(typeof window!=="undefined"?window:globalThis);

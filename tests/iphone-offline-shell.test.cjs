@@ -5,7 +5,7 @@ const assert=require("node:assert/strict");
 const fs=require("node:fs"),http=require("node:http"),path=require("node:path");
 const {webkit}=require("playwright");
 const root=path.resolve(__dirname,"..");
-const mime={".html":"text/html",".js":"text/javascript",".css":"text/css",
+const mime={".html":"text/html",".js":"text/javascript",".mjs":"text/javascript",".css":"text/css",
  ".json":"application/json",".svg":"image/svg+xml",".png":"image/png",
  ".webp":"image/webp",".jpg":"image/jpeg",".mp3":"audio/mpeg"};
 const server=http.createServer((req,res)=>{

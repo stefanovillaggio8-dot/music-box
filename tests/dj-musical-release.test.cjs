@@ -407,9 +407,9 @@ test("release version is identical in player, metadata, HTML assets and service 
  assert.equal(match[1],meta.versione,
   "Player version must match the online metadata: no more stale version badges");
  const token=match[1].replace(/\./g,"");
- assert.ok(html.includes('app.js?v='+token+'"')||
-   html.includes('app.js?v='+token+'&amp;words=4"'),
-  "HTML must request the updated player script and optional karaoke cache revision");
+ const appAsset=/app\.js\?v=([0-9]+)(?:&amp;words=[0-9]+)?"/.exec(html);
+ assert.equal(appAsset?.[1],token,
+  "HTML must request the updated player script with its optional karaoke revision");
  const djAsset=/mix-intelligente\.js\?v=([0-9]+)(?:&amp;dj=[0-9]+)?"/.exec(html);
  assert.equal(djAsset?.[1],token,
   "HTML must request the same release of DJ Mix, even with a cache-busting query");

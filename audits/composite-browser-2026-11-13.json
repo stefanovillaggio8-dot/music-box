@@ -1,0 +1,60 @@
+{
+  "results": [
+    {
+      "browser": "chromium",
+      "decodedOriginalMixes": 96,
+      "resampled": {
+        "sampleRate": 44100,
+        "decoded": 96,
+        "rejected": []
+      },
+      "actualNativeHandoff": {
+        "id": "in",
+        "handoffs": 1,
+        "mutedBeforePlay": true,
+        "paused": false,
+        "at": 12.983603,
+        "playError": null
+      },
+      "seekRollback": true,
+      "silentAppBridge": {
+        "muted": true,
+        "lastPlayWasMuted": true
+      },
+      "actualSameProfilePlannerPlayback": {
+        "handoffs": 1,
+        "paused": false,
+        "sourceMatches": true
+      },
+      "physicalIPhone": false
+    },
+    {
+      "browser": "webkit",
+      "decodedOriginalMixes": 96,
+      "resampled": {
+        "sampleRate": 44100,
+        "decoded": 96,
+        "rejected": []
+      },
+      "actualNativeHandoff": {
+        "id": "in",
+        "handoffs": 1,
+        "mutedBeforePlay": true,
+        "paused": false,
+        "at": 12.974088898,
+        "playError": null
+      },
+      "seekRollback": true,
+      "silentAppBridge": {
+        "muted": true,
+        "lastPlayWasMuted": true
+      },
+      "actualSameProfilePlannerPlayback": {
+        "handoffs": 1,
+        "paused": false,
+        "sourceMatches": true
+      },
+      "physicalIPhone": false
+    }
+  ]
+}

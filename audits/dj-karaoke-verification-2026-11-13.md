@@ -1,0 +1,243 @@
+# Music Box · Smart Mix e karaoke — verifica del 13 novembre 2026
+
+**Verdetto: equivalenza a Spotify Mixa NON certificata.** Questo documento
+contiene misure riproducibili e distingue la simulazione dei metadati dalla
+prova acustica e da quella su un iPhone fisico.
+
+## Copertura delle transizioni
+
+- Catalogo nell'indice: 1.176 brani analizzabili.
+- Coppie ordinate possibili: 1.381.800.
+- Coppie dichiarate *ritmicamente compatibili* dall'audit esaustivo
+  dell'indice alla base di questo ramo: **2 su 1.381.800**.
+- Le due coppie sono snap inferiori a circa 1,2 secondi, non mix musicali
+  completi di diverse battute. Il conteggio dell'indice non certifica
+  l'ascolto, l'assenza di artefatti o il comportamento su Safari.
+
+## MP3 originali: due migliori candidate
+
+`tools/dj-pair-waveform-audit.py` scarica i file originali, li decodifica con
+FFmpeg, applica una *approssimazione* della variazione di tempo e confronta
+gli onset e la cromia. Da questa verifica usa l'effettivo istante di avvio
+previsto, **dopo il preroll di circa 140 ms**. Nelle precedenti misure quel
+preroll non veniva applicato e gli onset di clip lunghe erano confrontati
+tra estremi non simultanei.
+
+| Coppia | Avvio ritardato | Correlazione ritmica allo stesso istante | Migliore correlazione (lag) | Similarità cromatica |
+| --- | ---: | ---: | ---: | ---: |
+| 892 → 1096 | 140 ms | −0,088 | 0,409 (−174 ms) | 0,938 |
+| 770 → 874 | 136 ms | −0,122 | 0,245 (+151 ms) | 0,879 |
+
+Le armonie risultano relativamente affini, ma queste finestre **non
+dimostrano una sovrapposizione delle percussioni convincente al tempo zero**.
+Un coefficiente basso non prova da solo che un essere umano percepirà un
+passaggio sbagliato: sono finestre molto brevi e i timbri dei colpi sono
+diversi. Di conseguenza è scorretto sia certificarle sia bocciarle solo
+in base al coefficiente. Occorrono ascolto comparativo e analisi di più
+beat originali, non solo dei BPM memorizzati.
+
+Riproduzione:
+
+```sh
+node tools/dj-equivalence-audit.cjs --pair-from=audio/songs/track-892.mp3 --pair-to=audio/songs/track-1096.mp3
+python tools/dj-pair-waveform-audit.py --only current_verified_snap_1 --only current_verified_snap_2 --output=results/dj-pcm-candidates.json
+```
+
+Il secondo comando richiede FFmpeg, NumPy e Librosa 0.11.0. La GitHub Action
+`dj-real-audio-audit.yml` esegue tutte le 16 coppie di controllo e conserva
+il rapporto JSON come artifact `musicbox-dj-real-pcm-spotcheck`.
+
+## Correzione karaoke verificabile
+
+- Le finestre vocali stereo quasi in controfase usano il canale originale
+  più leggibile quando la somma L+R cancellerebbe quasi tutto il canto.
+- Timestamp Whisper nulli, mancanti o vuoti non diventano falsi tempi `0`.
+- Il numero di versione interna delle finestre audio passa a 4 per poter
+  ritentare clip precedentemente scartate con il vecchio preprocessore.
+- Non vengono inventati allineamenti: parole di un testo diverso e
+  timestamp non verificati rimangono esclusi.
+
+## Test e limiti
+
+- Suite CI DJ: **519/519 passati**, compresi i tre test aggiunti sul segnale
+  stereo, i timestamp e l'istante reale di pianificazione del beat.
+- Suite mirata karaoke/DJ: **9/9 passati**.
+- La suite generica `tests/*.test.cjs` include tre test fuori dalla
+  pipeline DJ che falliscono già sulla base precedente: uno richiede
+  Playwright qui assente, uno cerca l'antica cache `v6624` e uno cerca
+  una firma di funzione senza i parametri oggi presenti.
+- Nessuna prova di sincronizzazione parola per parola su tutto il catalogo.
+- Nessuna prova automatizzata su iPhone fisico e nessun confronto d'ascolto
+  controllato con Spotify Mixa. **Non pubblicare come certificato**.
+
+## Secondo intervento: ingressi ritmici anticipati a banda bassa
+
+La selezione delle anteprime musicali è stata estesa **senza allentare la
+certificazione dei beatmatch completi**. Se il riconoscimento di armonia e
+groove non basta per sovrapporre due canzoni a volume normale, è permessa
+soltanto una *anteprima filtrata sulle basse frequenze*, quando:
+
+1. almeno quattro colpi PCM originali sono associati uno a uno, con almeno
+   il 90% di corrispondenze e un errore temporale RMS non oltre 55 ms;
+2. la vera curva degli attacchi audio delle due sezioni mostra correlazione
+   ≥ 0,36, anche separatamente nelle due metà;
+3. l'intro possiede basso misurato, il tempo non richiede salti 2×/0,5×,
+   il volume dell'anteprima non supera il 9%, e l'originale non viene
+   tagliato o abbassato in base a una presunta assenza di voce.
+
+La scelta è stata guidata da test MP3 reali, non dal solo indice:
+
+| Coppia | Correlazione ritmica PCM allo stesso istante | Migliore correlazione e lag | Ruolo |
+| --- | ---: | ---: | --- |
+| 11 → 1184 | 0,018 | 0,378 / +325 ms | negativo: scartata |
+| 588 → 684 | 0,063 | 0,439 / +372 ms | negativo: scartata |
+| 588 → 627 | 0,352 | 0,381 / −23 ms | positivo cauto, bassi filtrati |
+| 588 → 573 | 0,452 | 0,607 / −441 ms | positivo cauto, bassi filtrati |
+
+Su un campione deterministico di **115.150 coppie ordinate** dello stesso
+indice, le anteprime basate su finestre ritmiche misurate passano da **51 a
+77** (+26; +51%). Queste 26 aggiunte sono raccordi filtrati e conservativi,
+**non 26 nuove certificazioni di beatmatch**. L'audit delle coppie strict
+rimane separato. Il resto delle coppie può usare altre uscite sicure oppure
+un normale passaggio, secondo i vincoli vocali e musicali disponibili.
+
+## Terzo intervento: ripristino controllato del volume dopo il mix
+
+### Difetto reale nel codice
+
+Quando un'anteprima ritmica filtrata viene riprodotta a 6–21% di volume e
+adottata come **lettore principale**, l'elemento HTMLAudioElement è lo
+stesso. Il vecchio percorso `handoff()` non ripristinava sempre il livello
+di ascolto dell'utente. Il brano nuovo poteva quindi continuare a suonare
+quasi inudibile anche **dopo** la fine del brano precedente.
+
+### Correzione
+
+- All'adozione effettiva del lettore, il volume aumenta dolcemente dal
+  livello residuo fino al volume impostato dall'ascoltatore in 480–780 ms.
+- La salita parte **solo dopo il termine naturale** del vecchio audio; non
+  altera le decisioni sulla voce, sul beat o sui tagli consentiti.
+- La curva asseconda l'apertura del filtro passa-basso prevista dal DSP;
+  non effettua seek, ricaricamenti o sostituzione del decoder.
+- Pause, seek, nuovo brano o modifiche dello slider interrompono oppure
+  adattano la salita, senza lasciare il brano ripreso a volume ridotto.
+- Test autonomi verificano salita, assenza di salto al primo istante,
+  volume finale corretto, cambi volume, pausa e sostituzione lettore.
+
+La correzione è un miglioramento di continuità e udibilità **sul percorso
+desktop**. I test automatici non dimostrano qualità equivalente a Spotify,
+non aumentano il numero di beatmatch strict e non sostituiscono un ascolto
+fisico su iPhone.
+
+## Continuazione: beatmatch completo, clock reali e karaoke breve
+
+### Percorso di più battute
+
+È stato aggiunto un percorso distinto dagli snap e dalle anteprime filtrate.
+L'estrazione PCM copre l'intera sovrapposizione, con onset ogni 20 ms,
+beat osservati, separazione HPSS e armonia ogni mezzo secondo. Il compilatore
+richiede tutti i 1.176 file analizzabili, verifica gli SHA originali e conserva
+nel player soltanto il piano compatto. I contorni audio restano negli artifact,
+non aumentano di decine di MB l'indice scaricato dal telefono.
+
+Il controllo ammette almeno otto beat reali, corrispondenza >=90%, RMS <=40 ms
+ed evidenza ritmica in entrambe le metà. Il percorso alternativo per timbri
+diversi richiede almeno dodici beat, >=95%, RMS <=25 ms e attacchi originali
+forti su entrambi i file. I BPM locali possono essere stimati dai beat della
+finestra, senza scambiare il BPM medio del brano per un clock esatto.
+
+L'armonia può essere verificata con accordi simili, con un'intro percussiva
+misurata, oppure con tonalità locali compatibili e un controllo frame per
+frame dell'aumento di ruvidità rispetto agli originali. La compatibilità di
+tonalità **non è dichiarata identità degli accordi**.
+
+**Prima coppia completa verificata dal nuovo percorso:**
+`audio/songs/track-584.mp3 → audio/songs/track-336.mp3`
+(Take 5 → Lamborghini nel catalogo).
+
+- Intervallo: 204,2668–211,1160 s; sovrapposizione 6,849 s.
+- Ingresso: 2,38 s; playbackRate nominale 1,045808.
+- 13 beat osservati; RMS 19,9 ms; accordo degli onset HPSS 0,571.
+- Tonalità locali 4A → 5A, confidenza minima 0,876.
+- Il brano uscente resta al volume originale fino all'EOF nativo; nessun
+  taglio o presunta assenza di voce. L'entrante usa il file originale a banda
+  piena, fino al 33%, quindi recupera dolcemente il volume dell'ascoltatore.
+- Il decoder desktop viene allineato soltanto mentre è ancora muto e già
+  bufferizzato. Un controllo di fase corregge piccole derive; un decoder
+  bloccato annulla l'overlay e preserva l'originale. Dopo l'adozione il tempo
+  torna gradualmente a 1x.
+
+L'audit indipendente sui MP3, con un diverso algoritmo di time stretch,
+misura correlazione grezza 0,396 all'istante pianificato; nelle due metà
+0,392 e 0,314. Il massimo della seconda metà è a circa un beat di distanza:
+questi profili di accento non vanno confusi con identità delle percussioni o
+con una prova d'ascolto perfetta. La certificazione del piano usa anche i
+beat osservati uno a uno e la verifica armonica locale.
+
+### Percorso Safari con intonazione conservata
+
+La correzione del tempo di un AudioBufferSource cambierebbe anche la tonalità.
+Per i nuovi mix completi viene invece preparata una breve intro con
+SoundTouchJS 0.3.0, in un worker locale separato. Il source WebAudio riproduce
+quella intro a **1x**; il clock di handoff continua a usare i secondi originali.
+Il tempo resta abbinato fino all'EOF, poi ritorna a 1x. Ogni buffer trasformato
+è accettato solo dopo una verifica di attacchi in entrambe le metà.
+
+Sul vero ingresso di Lamborghini, a 16.000, 44.100 e 48.000 Hz, il confronto
+con la curva temporale prevista misura -10 ms in entrambe le metà. Il test
+a 440 Hz verifica che l'intonazione rimanga 440 Hz invece di salire a circa
+460 Hz. Audio, inferenza e preparazione restano locali; il modulo opzionale
+non crea un secondo AudioContext e non trasferisce gli audio a un servizio.
+
+### Karaoke
+
+- Le frasi di una parola con fine esplicita e quelle di due parole possono
+  essere parse, disegnate, allineate, salvate e ricaricate.
+- Una frase al tempo zero può ricevere l'onset realmente riconosciuto.
+- Le frasi brevi richiedono corrispondenza esatta, scarto stretto e nessun
+  salto di parole ASR; non diventano allineate soltanto perché sono brevi.
+- Il cambio traccia annulla fetch, worker e callback vecchi. Una cancellazione
+  non attiva il backoff di errore da 24 ore e non blocca il brano successivo.
+- Con il karaoke aperto, l'analisi prosegue in passaggi brevi e limitati,
+  anziché fermarsi definitivamente dopo tre finestre mobili. Chiudere la
+  vista o cambiare brano interrompe la continuazione programmata.
+- Le parole stimate mantengono la loro provenienza; non sono conteggiate
+  come tempi verificati.
+
+### Verifiche e limiti
+
+I test includono fixture PCM originali legate agli SHA, rifiuto di cue
+alterati, controller di fase, mantenimento dell'EOF, riproduzione Chromium
+con due decoder reali, interruzione del decoder, worker di time stretch,
+intonazione, stereo, persistenza dei versi brevi e cambi rapidi di traccia.
+La pipeline WebKit esegue anche l'intera suite generale e la riapertura
+PWA offline. I risultati definitivi sono nei check della PR #59.
+
+La nuova generazione ha prodotto **un piano completo**, oltre ai due snap
+precedenti: non è una dimostrazione di beatmatch su tutte le coppie del
+catalogo. Le coppie prive di evidenza conservano i raccordi sicuri o il
+passaggio normale. Nessuna equivalenza Spotify, precisione ASR universale o
+verifica su iPhone fisico viene dedotta da questi test.
+
+`main` resta invariato; nessun merge o deploy è stato eseguito.
+
+## Verifica successiva: ripresa del mix dopo seek su iPhone
+
+Il preparatore SoundTouch in `audio-stretch.js` utilizzava il medesimo
+*backoff* di 25 secondi per gli errori reali e per una cancellazione voluta
+dal lettore (seek o cambio traccia). Una seconda preparazione dello stesso
+brano poteva quindi essere rifiutata anche quando il decoder funzionava.
+
+- Le cancellazioni volontarie liberano subito le preparazioni in corso e
+  consentono un nuovo tentativo senza attendere 25 secondi.
+- Un worker effettivamente guasto o bloccato conserva il backoff per evitare
+  riavvii continui e carico eccessivo su Safari.
+- Un risultato tardivo di una preparazione annullata non può cancellare un
+  nuovo risultato già in lavorazione.
+- L'asset viene richiesto con una nuova revisione (`audio-stretch.js?v=2`)
+  sia online sia nella shell offline, senza modificare la cache dei brani
+  scaricati dagli utenti.
+
+Questa correzione migliora **la possibilità di riprovare un beatmix mobile**;
+non aumenta automaticamente la copertura dei beatmatch completi e non
+costituisce un test fisico su iPhone.

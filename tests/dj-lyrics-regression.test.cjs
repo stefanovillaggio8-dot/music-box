@@ -335,7 +335,7 @@ test("word-level ASR analysis rejects wrong lyrics, preserves LRCLIB and audio p
  assert.match(audio,/const budget=isPhone\?1:3/);
  assert.match(audio,/saveAudioWordRows\?\.\(id,aligned\)/);
  assert.match(app,/saveAudioWordRows:\(id,rows\)=>_salvaParoleDallAudio/);
- assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
+ assert.match(app,/if\(_haTempiParole\(kept\)&&!kept\.estimated\)return kept/);
  assert.match(html,/audio-lyrics-align\.js\?v=\d+/);
  assert.match(sw,/audio-lyrics-worker\.js\?v=\d+/);
  assert.match(html,/id="lyricsAudioStatus"/);
@@ -404,10 +404,10 @@ test("automatic audio analysis samples at most one window on iPhone when no word
 test("audio analysis has no external upload endpoint and does not overwrite source timestamps",()=>{
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
  assert.match(engine,/const budget=isPhone\?1:3/);
- assert.match(engine,/if\(scanned>=budget/);
+ assert.match(engine,/if\(epoch!==alignmentEpoch\|\|scanned>=budget/);
  assert.match(engine,/if\(!best\)continue/);
  assert.doesNotMatch(engine,/\/api\/transcription|speech-to-text.*fetch/);
- assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
+ assert.match(app,/if\(_haTempiParole\(kept\)&&!kept\.estimated\)return kept/);
 });
 
 
@@ -523,7 +523,7 @@ test("Whisper timeout terminates a hung worker without freezing playback",async(
 test("AI timing provenance survives browser restart and does not masquerade as LRCLIB",()=>{
  assert.match(app,/audioWordSynced:r\.audioWordSynced===true/);
  assert.match(app,/wordRows:joined,audioWordSynced:true/);
- assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
+ assert.match(app,/if\(_haTempiParole\(kept\)&&!kept\.estimated\)return kept/);
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
  assert.match(immersive,/coverage\.audio\?" · AUDIO "/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
@@ -581,7 +581,10 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.ok(liveAlignAsset,"HTML must include a revisioned audio aligner");
  assert.equal(sw.split(liveAlignAsset.replace("&amp;","&")).length-1,2,
   "SW must cache exactly the alignment script used by HTML");
- assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
+ const workerUrl=/new Worker\("([^"]+)"/.exec(align)?.[1];
+ assert.ok(workerUrl?.includes('lang=2'),"new timestamp-capable worker must bypass the old cached export");
+ assert.equal(sw.split(workerUrl).length-1,2);
+ assert.match(worker,/onnx-community\/whisper-tiny_timestamped/);
 });
 
 test("Whisper worker sends explicit per-track language to ASR and rejects missing or invalid language",async()=>{
@@ -638,10 +641,10 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
  const html=fs.readFileSync(path.join(__dirname,"..","index.html"),"utf8");
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
- assert.match(app,/const baseline=saved\.some\(row=>row\.words\?\.length>=2\)/);
+ assert.match(app,/const baseline=\(saved\.some\(_haTempiParole\)/);
  assert.match(app,/return e\?\.estimateRows\?\.\(baseline\)\|\|baseline/);
  assert.match(app,/return kept&&!kept\.estimated\?kept:original/);
- assert.match(app,/if\(l\?\.synced&&!_righeTestoConParole\(l\)\.every\(r=>\s*r\.words\?\.length>=2&&!r\.estimated\)\)/);
+ assert.match(app,/if\(l\?\.synced&&!_righeTestoConParole\(l\)\.every\(r=>\s*_haTempiParole\(r\)&&!r\.estimated\)\)/);
  assert.match(align,/row\?\.estimated\?\{t:row\.t,text:row\.text\}:row/);
  assert.match(immersive,/PAROLE STIMATE · NON VERIFICATE/);
  assert.match(immersive,/row\.estimated\?\{estimated:true\}/);
@@ -655,7 +658,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:file==="word-karaoke.js"||file==="immersive.js"?"6734":"6715";
-  const wordCache=file==="word-karaoke.js"?"9":file==="immersive.js"?"6":file==="app.js"?"4":"2";
+  const wordCache=file==="word-karaoke.js"?"12":file==="immersive.js"?"7":file==="app.js"?"8":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -707,9 +710,11 @@ test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
  const local={};
  const currentId="b-track-205";
  const parse=s=>String(s||"").split("\n").filter(x=>/^\[\d/.test(x));
- const engine=new Function("lyricsData","localLyrics","currentId","parseSynced",
+ const lyricWindow={};
+ new Function("window",fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(lyricWindow);
+ const engine=new Function("lyricsData","localLyrics","currentId","parseSynced","window",
    code+";return {same:_testoAppartieneAlBrano,active:currentLyrics};")(
-    builtin,local,currentId,parse);
+    builtin,local,currentId,parse,lyricWindow);
  const fakeLyrics=(source)=>({
   id:currentId,title:"Amelie",artist:"Kid Yugi",
   synced:source.synced,text:source.text,

@@ -1,0 +1,51 @@
+name: Whole-recording musical structure evidence
+on:
+  # Expensive source-model evidence is an explicit snapshot. PR changes
+  # reuse the pinned complete run in dj-structural-integration.yml, which
+  # reruns window extraction, pair audits and original-audio rendering.
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: whole-structure-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Restore SHA-bound feature shard
+        id: features
+        uses: actions/cache@v4
+        with:
+          path: results
+          key: whole-v1-${{ matrix.shard }}-${{ hashFiles('tools/dj-structure-*.py', 'dj-deep-analysis.json') }}
+      - if: steps.features.outputs.cache-hit != 'true'
+        name: Install bounded offline analysis dependencies
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install torch==2.5.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install numpy==1.26.4 librosa==0.11.0 soxr beat-this==1.1.0 tensorflow-cpu==2.15.1 ffmpeg-python==0.2.0 norbert==0.2.1 'pandas<2' 'httpx[http2]' typer
+          python -m pip install spleeter==2.4.2 --no-deps
+      - if: steps.features.outputs.cache-hit != 'true'
+        run: python tools/test-dj-whole-structure.py
+      - if: steps.features.outputs.cache-hit != 'true'
+        name: Analyze whole original recordings, including internal sections
+        run: python tools/dj-structure-features.py --shard=${{ matrix.shard }}/16 --cache=original-mp3 --models=models --output=results/structure-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: whole-structure-${{ matrix.shard }}
+          path: results/structure-${{ matrix.shard }}.json
+          retention-days: 14

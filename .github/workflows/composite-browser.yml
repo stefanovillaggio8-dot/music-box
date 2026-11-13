@@ -1,0 +1,38 @@
+name: Common PCM mix Chromium and WebKit playback
+on:
+  pull_request:
+    paths:
+      - 'audio-composite-*.js'
+      - 'audio-composite-*.mjs'
+      - 'dj-mixes/**'
+      - 'dj-deep-analysis.json'
+      - 'app.js'
+      - 'mix-intelligente.js'
+      - 'tests/composite-*.cjs'
+      - '.github/workflows/composite-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+      - run: node --test tests/composite-mix.test.cjs
+      - run: |
+          set -o pipefail
+          node tests/composite-browser.cjs | tee composite-browser-result.json
+          node -e "const r=require('./composite-browser-result.json');if(r.results.length!==2||r.results.some(x=>!x.actualSameProfilePlannerPlayback))process.exit(1)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: common-pcm-browser-proof
+          path: composite-browser-result.json
+          retention-days: 14
