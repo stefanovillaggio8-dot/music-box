@@ -248,7 +248,7 @@ function timingCoverage(rows){
   const timed=Array.isArray(row.words)&&row.words.length>=2;
   if(!timed){result.lineOnly++;continue;}
   if(row.estimated===true){result.estimated++;continue;}
-  if(Number.isFinite(Number(row.sourceT))&&Number(row.sourceT)>=0)
+  if(row.sourceT!=null&&Number.isFinite(Number(row.sourceT))&&Number(row.sourceT)>=0)
    result.audio++;
   else result.provider++;
  }
