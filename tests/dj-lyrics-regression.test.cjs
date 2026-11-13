@@ -575,7 +575,8 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.match(worker,/return_timestamps:"word",task:"transcribe",language/);
  assert.match(worker,/!LANGUAGES\.has\(language\)/);
  assert.match(align,/requestWorker\(sample,language\)/);
- assert.match(align,/completedInSession\.add\(sessionId\);\s*setStatus\("Lingua del testo incerta/);
+ assert.match(align,/uncertainLanguageLyrics\.set\(sessionId,lyricSignature\(rows\)\)/);
+ assert.match(align,/uncertainLanguageLyrics\.get\(sessionId\)===signature/);
  const liveAlignAsset=/audio-lyrics-align\.js\?v=\d+&amp;lang=\d+/.exec(html)?.[0];
  assert.ok(liveAlignAsset,"HTML must include a revisioned audio aligner");
  assert.equal(sw.split(liveAlignAsset.replace("&amp;","&")).length-1,2,
