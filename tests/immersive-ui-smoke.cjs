@@ -84,7 +84,7 @@ async function run(){
      overflow:root.scrollWidth-root.clientWidth};
    });
    assert.equal(state.title,"Notte stellata");
-   assert.equal(state.lyricMode,"SINCRONIZZATO");
+   assert.equal(state.lyricMode,"SINCRONIZZATO PER FRASI");
    assert.match(state.active,/prova 2/);
    assert.ok(state.coverWidth>120,"album cover remains visible");
    // Check the rendered SVG, not just aria labels: assigning .hidden on
