@@ -400,3 +400,44 @@ test("quiet but beat-bearing opening survives every strict energy gate only with
  assert.equal(verify({...candidate,introDrive:.85,introOnset:null},.45),true,
   "an already strong intro remains eligible");
 });
+
+test("1197 to 79: measured outgoing notes can host real intro BEFORE silence without fake beatmatch",()=>{
+ const idx=JSON.parse(fs.readFileSync(path.join(__dirname,"..","dj-deep-analysis.json"),"utf8"));
+ const a=idx.entries["audio/songs/track-1197.mp3"];
+ const b=idx.entries["audio/songs/track-79.mp3"];
+ assert.ok(a&&b&&a.dropRelease);
+ const begin=source.indexOf("function measuredMusicalTailUnderlay(");
+ const end=source.indexOf("// Low-energy postlude lead-in:",begin);
+ assert.ok(begin>=0&&end>begin);
+ const join=new Function("isIOS","onsetPeriodicity","musicalIntroEntry",
+  "adaptiveUnderlayLevel",source.slice(begin,end)+"return measuredMusicalTailUnderlay;")(
+    false,()=>.52,()=>0,(x,min)=>min);
+ // The real published 79 intro is quiet and has virtually no bass:
+ // the preview must not be called a matched kick or tempo-stretched.
+ const outgoing={...a,lastLyricAt:236.6};
+ const incoming={...b,firstLyricAt:1.85};
+ const cue=join(outgoing,incoming,a.duration);
+ assert.ok(cue,"certified final-impact fade must beat the postlude-only queue");
+ assert.equal(cue.kind,"underlay");
+ assert.equal(cue.measuredReleaseHandoff,true);
+ assert.equal(cue.tempo,1);
+ assert.equal(cue.preserveTail,true);
+ assert.equal(cue.silenceTrim,false);
+ assert.equal(cue.beatPeriod,null);
+ assert.ok(cue.begin<a.dropRelease.releaseAt&&cue.begin<a.last-2,
+  "the next song must start during measured outgoing music, not after silence");
+ assert.ok(Math.abs(cue.end-a.duration)<.15,
+  "the original stays on its full native timeline");
+ assert.equal(join({...outgoing,lastLyricAt:240},incoming,a.duration),null,
+  "a recently sung lyric vetoes an early music lead-in");
+ assert.equal(join({...outgoing,dropRelease:{...a.dropRelease,quietLevel:.45}},
+  incoming,a.duration),null);
+ assert.equal(join(outgoing,{...incoming,firstLyricAt:.3},a.duration),null,
+  "a sung incoming first second cannot be hidden under the old music");
+ assert.equal(join(outgoing,{...incoming,introDrive:.02},a.duration),null,
+  "a near-silent incoming opening must not create a misleading DJ intro");
+ assert.equal(new Function("isIOS","onsetPeriodicity","musicalIntroEntry",
+  "adaptiveUnderlayLevel",source.slice(begin,end)+"return measuredMusicalTailUnderlay;")(
+  true,()=>.52,()=>0,()=>.12)(outgoing,incoming,a.duration),null,
+  "untested native iPhone dual-stream playback stays excluded");
+});
