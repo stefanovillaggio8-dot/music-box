@@ -62,4 +62,42 @@ test("DJ audit counts independent certification vetoes",()=>{
  }
  assert.match(djSource,/if\(verified\)candidateAudit\.verifiedBeats\+\+/);
 });
+test("immersive sorts ASR-shifted cues and hides old-track lyrics",()=>{
+ const makeClass=()=>({set:new Set(),toggle(name,on){
+   if(on===undefined)on=!this.set.has(name);
+   if(on)this.set.add(name);else this.set.delete(name);
+   return on;
+  },add(name){this.set.add(name)},remove(name){this.set.delete(name)},
+  contains(name){return this.set.has(name)}});
+ const karaoke={children:[],classList:makeClass(),
+  replaceChildren(fragment){this.children=fragment.children},
+  scrollTo(){},style:{removeProperty(){},setProperty(){}},
+  clientHeight:400,scrollTop:0};
+ const elements={imKaraoke:karaoke,imLyricModeLabel:{textContent:""}};
+ const doc={readyState:"loading",addEventListener(){},
+  getElementById(id){return elements[id]||null},
+  createDocumentFragment(){return {children:[],appendChild(node){this.children.push(node)}}},
+  createElement(){return {className:"",textContent:"",
+   style:{setProperty(){}},classList:makeClass(),
+   appendChild(){},offsetTop:50,offsetHeight:20}}};
+ let current="song-b";
+ const audio={currentTime:2.5,paused:true,seeking:false,duration:15};
+ const app={currentId:()=>current,
+  lyricsData:()=>({id:"song-b",synced:[
+   {t:8,text:"third line"},{t:2,text:"first line"},{t:5,text:"second line"}]}),
+  audio:()=>audio,lyricsDelay:()=>0};
+ const w={MusicBoxBridge:app,MusicBoxWordKaraoke:k,addEventListener(){}};
+ const instrumented=immersiveSource.replace("function renderLyrics(force){",
+  "window.__setTestOpen=()=>{opened=true};"+
+  "window.__renderTestLyrics=renderLyrics;"+
+  "window.__rows=()=>lyricRows;function renderLyrics(force){");
+ assert.notEqual(instrumented,immersiveSource,"test hooks inserted");
+ vm.runInNewContext(instrumented,{window:w,document:doc,performance:{now:()=>0}});
+ w.__setTestOpen();w.__renderTestLyrics(true);
+ assert.deepEqual(Array.from(w.__rows(),row=>row.t),[2,5,8]);
+ assert.ok(karaoke.children[0].classList.contains("active"));
+ current="song-c";w.__renderTestLyrics(true);
+ assert.equal(w.__rows()[0].text,"Musica, luci e atmosfera.");
+ assert.doesNotMatch(karaoke.children[0].textContent,/first line|second line|third line/);
+});
 console.log("Music Box karaoke/DJ targeted regression:",passed,"passed");
