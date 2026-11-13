@@ -29,7 +29,7 @@ const {engine}=new Function('require','__dirname',tool.slice(0,tool.indexOf('// 
 const guardedTracks=tracks.map(([key,e])=>[key,engine.withGuardedLRC(e)]);
 const report={version:1,completeCoverage:!partial,features:features.size,tracks:tracks.length,
  possibleOrderedPairs:tracks.length*(tracks.length-1),consideredPairs:0,sameRecording:0,
- missingWholeRecording:0,noExitWindow:0,positiveLyricVeto:0,noEntryWindow:0,meterOrTempo:0,
+ missingWholeRecording:0,noExitWindow:0,positiveLyricVeto:0,contentProtectionVeto:0,noEntryWindow:0,meterOrTempo:0,
  vocalConflict:0,harmony:0,eligiblePairs:0,eligiblePairKeys:[],insufficientObservedBeatFit:0,fullBeatCandidates:0,
  renderingNotYetVerified:0,windowsEvaluated:0,metricalRhythmicCandidates:0,plans:[],
  eligibility:'SHA-bound whole-file evidence, structural exit with separated-vocal quiet tail, same meter and bar count, tempo within 5%, no simultaneous separated vocal activity, local PCM harmonic gate; independent actual attack fit and rendering follow.',
@@ -86,8 +86,10 @@ for(const [from,a] of guardedTracks){
   const aa=features.get(from),bb=features.get(to);
   if(!aa||!bb){report.missingWholeRecording++;continue;}
   const allExits=aa.windows.filter(w=>w.role==='exit'),entries=bb.windows.filter(w=>w.role==='entry');
-  const exits=allExits.filter(w=>![a.lastVoiceAt,a.lastLyricAt,...(a.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=w.end-1.2&&t<w.end));
-  if(allExits.length&&!exits.length){report.positiveLyricVeto++;continue;}
+  const localSafe=allExits.filter(w=>![a.lastVoiceAt,a.lastLyricAt,...(a.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=w.end-1.2&&t<w.end));
+  if(allExits.length&&!localSafe.length){report.positiveLyricVeto++;continue;}
+  const exits=localSafe.filter(w=>engine.structuralContentDecision(a,{end:w.end}).allowed);
+  if(localSafe.length&&!exits.length){report.contentProtectionVeto++;continue;}
   if(!exits.length){report.noExitWindow++;continue;}
   if(!entries.length){report.noEntryWindow++;continue;}
   let metrical=false,vocal=false,harmonic=false,winner=null;const alternatives=[];

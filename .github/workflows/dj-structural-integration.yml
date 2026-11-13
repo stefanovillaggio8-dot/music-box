@@ -5,6 +5,7 @@ on:
       - 'tools/refine-structure-windows.py'
       - 'tools/dj-structure-core.py'
       - 'tools/build-structural-beat-plans.cjs'
+      - 'tools/build-musical-content.py'
       - 'audio-composite-core.mjs'
       - 'audio-stretch-core.mjs'
       - 'tools/dj-rendered-rhythm.py'
@@ -95,7 +96,9 @@ jobs:
           pattern: refined-structure-*
           path: refined
       - name: Audit every ordered pair using actual internal PCM windows
-        run: node tools/build-structural-beat-plans.cjs --features=refined --report=results/structural-all-pairs.json
+        run: |
+          python tools/build-musical-content.py --features=refined --output=results/content-index.json
+          node tools/build-structural-beat-plans.cjs --features=refined --index=results/content-index.json --report=results/structural-all-pairs.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

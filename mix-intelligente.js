@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=2",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=3",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2705,12 +2705,46 @@ function indexedStructuralBeatBridge(a,b,dur){
  const record=a?.structuralBeatPlans?.[b?.sha];
  if(!record)return null;
  const position=Number.isFinite(a?.mixPosition)?a.mixPosition:0;
+ const eligible=[];
  for(const p of record.cues||[record.cue]){
   if(!p||p.begin-.3<position-.04)continue;
   const valid=validateStructuralBeatCue(record,p,a,b,dur);
-  if(valid)return valid;
+  if(valid)eligible.push({cue:valid,content:structuralContentDecision(a,p)});
  }
- return null;
+ eligible.sort((x,y)=>x.content.penalty-y.content.penalty||Number(y.cue.measuredFullBeat)-Number(x.cue.measuredFullBeat));
+ return eligible[0]?.cue||null;
+}
+function structuralContentDecision(a,p){
+ const m=a?.musicalContent,end=p?.end;
+ const reject=(reason,details={})=>({allowed:false,reason,penalty:Infinity,...details});
+ if(m?.version!==1||m.sourceSha!==a?.sha||m.wholeCoverageVerified!==true||
+    !Number.isFinite(m.sourceDuration)||Math.abs(m.sourceDuration-a.duration)>.1||
+    ![m.audibleStart,m.audibleEnd,end].every(Number.isFinite)||
+    !Array.isArray(m.vocalRegions)||!Array.isArray(m.boundaryTimes)||!Array.isArray(m.cutEvidence))return reject('missing-whole-content-evidence');
+ const remaining=Math.max(0,m.audibleEnd-end),span=m.audibleEnd-m.audibleStart;
+ if(span<=0||end<m.audibleStart||end>m.audibleEnd+.1)return reject('invalid-content-span');
+ const fraction=remaining/span;
+ const futureVoice=m.vocalRegions.reduce((sum,r)=>sum+Math.max(0,Math.min(r[1],m.audibleEnd)-Math.max(r[0],end)),0);
+ const futureLyrics=[a.lastLyricAt,...(a.lyricStarts||[])].filter(t=>Number.isFinite(t)&&t>=end-.01&&t<m.audibleEnd+.1);
+ const futureSections=m.boundaryTimes.filter(t=>Number.isFinite(t)&&t>end+.5&&t<m.audibleEnd-2);
+ const details={remainingSeconds:remaining,unplayedFraction:fraction,futureVocalSeconds:futureVoice,
+  positiveFutureLyrics:futureLyrics.length,futureSectionHypotheses:futureSections.length,semanticSectionsVerified:false};
+ if(futureLyrics.length)return reject('future-lyric-content',details);
+ if(futureVoice>.2||Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>end+.2)return reject('future-vocal-content',details);
+ if(futureSections.length)return reject('future-section-change',details);
+ const tail=m.cutEvidence.find(c=>Number.isFinite(c.end)&&Math.abs(c.end-end)<.001);
+ if(!tail||![tail.remainingEnergyRatio,tail.maximumRemainingBlockRatio].every(Number.isFinite))return reject('missing-remaining-pcm-evidence',details);
+ if(tail.remainingEnergyRatio>1.1||tail.maximumRemainingBlockRatio>1.35)return reject('remaining-energy-rise-or-build-unknown',details);
+ // Short final instrumental groups are bounded in BOTH time and proportion.
+ // This is a conservative fallback, not a semantic chorus/solo classifier.
+ const short=remaining<=12&&fraction<=.10;
+ const r=tail.repetition;
+ const repeated=remaining<=36&&fraction<=.20&&tail.remainingEnergyRatio<=.85&&
+  r?.method==='original-pcm-bar-repetition-v1'&&r.sourceSha===a.sha&&Math.abs(r.cut-end)<.001&&
+  r.comparedBars>=8&&r.minimumSimilarity>=.96&&r.maximumBassGrowth<=1.1&&r.futureVocalSeconds<=.2;
+ if(!short&&!repeated)return reject('too-much-unverified-musical-content',details);
+ return {allowed:true,reason:short?'bounded-final-instrumental-group':'pcm-repeated-decaying-instrumental-ending',
+  penalty:fraction*100+remaining/10+Math.max(0,tail.remainingEnergyRatio-.5)*2,...details};
 }
 function validateStructuralBeatCue(record,p,a,b,dur){
  const e=p?.structuralEvidence;
@@ -2718,7 +2752,7 @@ function validateStructuralBeatCue(record,p,a,b,dur){
  const metrical=p?.measuredFullBeat===false&&p?.metricalRhythmic===true;
  const localVocalConflict=p&&[a?.lastVoiceAt,a?.lastLyricAt,...(a?.lyricStarts||[])].some(t=>
   Number.isFinite(t)&&t>=p.end-1.2&&t<p.end);
- if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+ if(!structuralContentDecision(a,p).allowed||record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     !p?.structuralBeat||(!strict&&!metrical)||p.kind!=="beat"||localVocalConflict||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
@@ -8075,6 +8109,14 @@ function start(){
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
 window.MusicBoxMix={isEnabled:()=>enabled,
+ contentCutSafe:(cue,id)=>{
+  if(!cue?.structuralBeat)return true;
+  const app=bridge(),track=app?.allTracks?.().find(t=>t.id===id),a=track&&deepLookup(track);
+  if(!a)return false;
+  const lrc=app.mixLyricCues?.(id);
+  return structuralContentDecision({...a,lastLyricAt:Math.max(Number(a.lastLyricAt)||0,Number(lrc?.last)||0),
+   lyricStarts:[...(a.lyricStarts||[]),...(lrc?.starts||[])]},cue).allowed;
+ },
  pauseForOffline:()=>{
   window.MusicBoxCompositeMix?.cancelPreparation?.();
   window.MusicBoxCompositeMix?.stop?.();

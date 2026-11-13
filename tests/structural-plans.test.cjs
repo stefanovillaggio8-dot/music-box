@@ -5,13 +5,15 @@ const from=source.indexOf('function indexedStructuralBeatBridge('),to=source.ind
 const lookup=new Function(source.slice(from,to)+'return indexedStructuralBeatBridge;')();
 function fixture(){
  const a={sha:'a'.repeat(40),duration:100},b={sha:'b'.repeat(40),duration:200};
+ a.musicalContent={version:1,sourceSha:a.sha,sourceDuration:100,audibleStart:0,audibleEnd:100,wholeCoverageVerified:true,
+  vocalRegions:[[1,80]],boundaryTimes:[20,60],cutEvidence:[92,94].map(end=>({end,remainingEnergyRatio:.8,maximumRemainingBlockRatio:1}))};
  const p={kind:'beat',structuralBeat:true,measuredFullBeat:true,metricalRhythmic:false,
   nativeTailFullBeat:false,preserveTail:false,silenceTrim:false,vocalFadeSeconds:.4,
-  begin:32,end:40,fade:8,entry:80,tempo:1,sourceSha:a.sha,targetSha:b.sha,
+  begin:84,end:92,fade:8,entry:80,tempo:1,sourceSha:a.sha,targetSha:b.sha,
   measuredPlacementError:.015,grooveScore:.8,measuredBeatCount:16,beatPulseAgreement:1,
   measuredPulseMode:false,fullOnsetFirst:.8,fullOnsetSecond:.8,
   structuralEvidence:{version:1,bars:4,beatsPerBar:4,sourcePhaseConfidence:.95,targetPhaseConfidence:.95,downbeatRms:.01,
-   simultaneousVocalFrames:0,outgoingVocalTail:{start:38.8,end:40.35,clear:true,method:'spleeter-2stems-energy-v1',maxVocalRms:.001,maxRelativeVocal:.01}},
+   simultaneousVocalFrames:0,outgoingVocalTail:{start:90.8,end:92.35,clear:true,method:'spleeter-2stems-energy-v1',maxVocalRms:.001,maxRelativeVocal:.01}},
   harmonicEvidence:{average:.9,weakest:.8},composite:{sourceSha:a.sha,targetSha:b.sha,pitchPreserved:true,timingVerified:true,overlapPeak:.95,peak:.98,oversampledPeak:.99,
    rhythmVerified:true,postRenderRhythm:{method:'rendered-hpss-attacks-v1',mode:'full-pcm',accepted:true,matches:16,rmsSeconds:.015,agreement:1,firstHalfMatches:8,secondHalfMatches:8}}};
  a.structuralBeatPlans={[b.sha]:{version:1,fromSha:a.sha,toSha:b.sha,sourceDuration:100,nextDuration:200,cue:p,cues:[p]}};
@@ -38,14 +40,25 @@ test('strict full PCM agreement is never replaced by the partial metrical catego
  p.structuralEvidence.metricalCertificate.observedDownbeats=3;assert.equal(lookup(a,b,100),null);
 });
 test('seeking beyond an early cue selects a later verified alternative or native fallback',()=>{
- const {a,b,p}=fixture(),later=JSON.parse(JSON.stringify(p));later.begin=60;later.end=68;
- later.structuralEvidence.outgoingVocalTail.start=66.8;later.structuralEvidence.outgoingVocalTail.end=68.35;
+ const {a,b,p}=fixture(),later=JSON.parse(JSON.stringify(p));p.begin=82;p.end=90;
+ p.structuralEvidence.outgoingVocalTail.start=88.8;p.structuralEvidence.outgoingVocalTail.end=90.35;
+ a.musicalContent.cutEvidence.push({end:90,remainingEnergyRatio:.8,maximumRemainingBlockRatio:1});
  a.structuralBeatPlans[b.sha].cues.push(later);
- assert.equal(lookup(a,b,100).begin,32);a.mixPosition=50;assert.equal(lookup(a,b,100).begin,60);
- a.mixPosition=70;assert.equal(lookup(a,b,100),null);assert.equal(lookup(a,b,NaN),null);
+ assert.equal(lookup(a,b,100).begin,84);a.mixPosition=83;assert.equal(lookup(a,b,100).begin,84);
+ a.mixPosition=95;assert.equal(lookup(a,b,100),null);assert.equal(lookup(a,b,NaN),null);
 });
-test('future vocals do not forbid an earlier section exit but fresh local vocal evidence vetoes it',()=>{
+test('a quiet cut cannot sacrifice a future vocal or lyric phrase',()=>{
  const {a,b}=fixture();a.lastLyricAt=90;a.lastVoiceAt=90;assert.ok(lookup(a,b,100));
- a.lastVoiceAt=39.9;assert.equal(lookup(a,b,100),null);
- a.lastVoiceAt=90;a.lyricStarts=[39.8,90];assert.equal(lookup(a,b,100),null);
+ a.lastVoiceAt=99;assert.equal(lookup(a,b,100),null);
+ a.lastVoiceAt=90;a.lyricStarts=[90,99];assert.equal(lookup(a,b,100),null);
+});
+test('large unverified skips and later structural changes are denied despite perfect rhythm',()=>{
+ const {a,b,p}=fixture();p.begin=27.48;p.end=35.48;
+ p.structuralEvidence.outgoingVocalTail.start=34.28;p.structuralEvidence.outgoingVocalTail.end=35.48;
+ a.musicalContent.vocalRegions=[];a.musicalContent.boundaryTimes=[];
+ a.musicalContent.cutEvidence.push({end:35.48,remainingEnergyRatio:.8,maximumRemainingBlockRatio:1});
+ assert.equal(lookup(a,b,100),null);
+ p.begin=84;p.end=92;p.structuralEvidence.outgoingVocalTail.start=90.8;p.structuralEvidence.outgoingVocalTail.end=92;
+ a.musicalContent.boundaryTimes=[96];assert.equal(lookup(a,b,100),null);
+ a.musicalContent.boundaryTimes=[];delete a.musicalContent;assert.equal(lookup(a,b,100),null);
 });

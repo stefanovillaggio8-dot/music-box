@@ -28,7 +28,7 @@ const engine=new Function("isIOS","style","djLyricBoundaries",
  snippet("function compatibility(","async function decode(")+
  snippet("function hasReliableHarmony(","function resetMobileFade(")+
  snippet("function desktopBeatStartDelay(","async function beginMix(")+
- "\nreturn {measuredFullBeatBridge,pcmFullBeatFit,pcmFullHarmony,fullBeatCueCertified,transition,desktopBeatPairCertified,desktopBeatStartDelay,withGuardedLRC,verifiedIndexedGridTempo};"
+ "\nreturn {measuredFullBeatBridge,pcmFullBeatFit,pcmFullHarmony,fullBeatCueCertified,structuralContentDecision,transition,desktopBeatPairCertified,desktopBeatStartDelay,withGuardedLRC,verifiedIndexedGridTempo};"
 )(false,"auto",lyricBoundaries.entries||{});
 const tracks=Object.entries(database.entries||{})
  .filter(([k,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&x.duration>=26&&
