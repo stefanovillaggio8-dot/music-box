@@ -1972,7 +1972,8 @@ function voiceThreatensPlan(voice,isCurrent,isNext,currentPlan){
    isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
     voice.lastVoiceAt>currentPlan.vocalEndAt+.20||
    isNext&&Number.isFinite(voice?.firstVoiceAt)&&
-    voice.firstVoiceAt<currentPlan.fade+.55);
+    (voice.firstVoiceAt-(Number(currentPlan.entry)||0))/
+     Math.max(1,Number(currentPlan.tempo)||1)<currentPlan.fade+.55);
  }
  return Boolean(
   (isCurrent&&Number.isFinite(voice?.lastVoiceAt)&&
@@ -2523,13 +2524,16 @@ function earlyMatchedBar(a,b,dur){
   const preserveUnknownVoice=Boolean(!scanned&&knownLastVoice===null&&
     knownLastLyric!==null&&knownLastLyric<=end-2.5&&
     dur-end<=.55);
+  // File cues must be converted to wall time after entry and speed.
+  // Use the fastest rate of the ramp, so slowing to 1x remains safe.
+  const incomingVoiceAfter=(firstNextVoice-entry)/Math.max(1,speed);
   const vocalUnderlay=Boolean(singing&&
     (voiceConfirmed||preserveUnknownVoice)&&
-    firstNextVoice>=fade+.65);
+    incomingVoiceAfter>=fade+.65);
   const vocalEndAt=voiceConfirmed?knownLastVoice:end-.06;
   if(!Number.isFinite(begin)||begin<26||fade<4.5||fade>9.6||
      begin<win.start-.2||begin>win.end-.35||end<a.last-.2||
-     dur-end>12||firstNextVoice<fade+.65||
+     dur-end>12||incomingVoiceAfter<fade+.65||
      (a.protectedEnding===true&&!vocalUnderlay)||
      (singing&&!vocalUnderlay))continue;
   // Equal BPM and compatible chords alone do not prove a beatmatched
@@ -3549,7 +3553,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   if(!Number.isFinite(begin)||begin<28||
      begin<win.start+.25||begin>win.end-1.10||
      begin>a.last-4.65||begin<a.last-11.9||
-     fade<4.5||fade>11.8)continue;
+     fade<4.5||fade>11.8||
+     (firstVoice-entry)/Math.max(1,ratio)<fade+.35)continue;
   const shape=Number(win.energyTrend);
   const phraseEvent=Array.isArray(a.structureEvents)?
    a.structureEvents.find(e=>Number.isFinite(e?.at)&&
@@ -5300,8 +5305,8 @@ async function beginMix(song,proposed){
   // MP3 clocks BEFORE lifting the muted preview into the mix.
   const livePhaseError=djBeatPhaseError(
     proposed,old.currentTime,upcoming.currentTime);
-  if((proposed.measuredBeatBridge===true||
-      proposed.subduedRhythmicUnderlay===true)&&
+  if((proposed.measuredBeatBridge===true||proposed.measuredBeatPlacement===true||
+      proposed.rhythmicGridJoin===true||proposed.subduedRhythmicUnderlay===true)&&
      Number.isFinite(livePhaseError)&&
      livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
    console.info("[Music Box DJ] Beat allineato in teoria ma decoder fuori fase",
@@ -5383,6 +5388,18 @@ async function beginMix(song,proposed){
     console.info("[Music Box DJ] Orologi audio fuori sincrono: preservo il brano originale");
     mixFailures.set(id+"|"+song.id,Date.now()+12000);
     cancel();plan=null;return;
+   }
+   // A decoder may stall for less than the broad 720ms continuity gate
+   // while both clocks still look plausible. Recheck the actual kick
+   // phase until the deliberate final tempo release begins.
+   if(time<=.72&&(proposed.measuredBeatBridge===true||
+      proposed.measuredBeatPlacement===true||proposed.rhythmicGridJoin===true)){
+    const livePhaseError=djBeatPhaseError(proposed,old.currentTime,upcoming.currentTime);
+    if(!Number.isFinite(livePhaseError)||
+       livePhaseError>Math.min(.13,Number(proposed.beatPeriod)*.25)){
+     mixFailures.set(id+"|"+song.id,Date.now()+12000);
+     cancel();plan=null;return;
+    }
    }
    act.lastProgress=time;
    const vol=app.volume();

@@ -39,4 +39,4 @@ jobs:
       - name: Run live DOM and iPhone path regression in WebKit
         run: |
           node tests/iphone-webkit-smoke.cjs
-          node tests/iphone-offline-shell.test.cjs
+          node --test tests/*.test.cjs

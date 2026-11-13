@@ -47,7 +47,7 @@ const CORE = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6734&words=9",
+  "./word-karaoke.js?v=6734&words=10",
   "./audio-lyrics-align.js?v=6734&lang=11",
   "./audio-lyrics-worker.js?v=6715&lang=1",
   "./app.js?v=6734&words=4",
@@ -56,7 +56,7 @@ const CORE = [
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6734&dj=32", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6734&dj=33", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -89,7 +89,7 @@ const OFFLINE_SHELL = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6734&words=9",
+  "./word-karaoke.js?v=6734&words=10",
   "./audio-lyrics-align.js?v=6734&lang=11",
   "./audio-lyrics-worker.js?v=6715&lang=1",
   "./app.js?v=6734&words=4",
@@ -98,7 +98,7 @@ const OFFLINE_SHELL = [
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6734&dj=32",
+  "./mix-intelligente.js?v=6734&dj=33",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=6"
 ];
