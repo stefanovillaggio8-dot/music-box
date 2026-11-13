@@ -153,10 +153,12 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
             # Entry and exit carry separate voice tests. A vocal phrase may
             # remain audible at FULL gain early in the outgoing window.
             # Only its final 400ms fade is permitted, inside a measured
-            # 650ms quiet lead plus 350ms of original post-boundary context.
-            # This changes the playback envelope, not the voice thresholds.
-            full=vocal_guard(vocals,mix,start,end+.7)
-            tail=vocal_guard(vocals,mix,end-.65,end+.35)
+            # 1200ms quiet lead. The outgoing signal is exactly zero from
+            # end onward. A NEW vocal in the next original section is not
+            # played and must not veto an otherwise protected section exit.
+            # Thresholds and the 400ms audible fade remain unchanged.
+            full=vocal_guard(vocals,mix,start,end)
+            tail=vocal_guard(vocals,mix,end-1.2,end)
             if instrumental_only and (not full or not full['clear']):continue
             common={'start':round(start,4),'end':round(end,4),'bars':count,
                 'beats':[round(t,4) for b in chain for t in b['beats']],

@@ -28,6 +28,16 @@ class EvidenceTests(unittest.TestCase):
         windows=core.candidate_windows(b,[dict(barIndex=32,t=64.,novelty=.5)],[],np.zeros(1300),np.ones(1300)*.1,128)
         self.assertFalse(any(w['role']=='exit' and w['start']<=60 for w in windows))
 
+    def test_unplayed_next_vocal_cannot_veto_completed_previous_section(self):
+        b=bars();voice=np.zeros(1300);mix=np.ones(1300)*.1
+        voice[641:680]=.1 # Next original section starts AFTER the cut.
+        boundaries=[dict(barIndex=32,t=64.,novelty=.5)]
+        windows=core.candidate_windows(b,boundaries,[],voice,mix,128)
+        self.assertTrue(any(w['role']=='exit' and w['end']==64 for w in windows))
+        voice[638:640]=.1 # A syllable still active before the cut is protected.
+        windows=core.candidate_windows(b,boundaries,[],voice,mix,128)
+        self.assertFalse(any(w['role']=='exit' and w['end']==64 for w in windows))
+
     def test_observed_attacks_required_and_metrical_phase_coherent(self):
         beats=np.arange(.5,40,.5);bp=np.ones(2100)*.99;dp=np.ones(2100)*.01;onset=np.zeros(2100)
         for i,t in enumerate(beats):

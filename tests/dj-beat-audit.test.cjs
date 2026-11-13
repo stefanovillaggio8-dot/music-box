@@ -247,7 +247,12 @@ test("real indexed DJ candidates evaluated with independently joined synced lyri
   if(old?.kind!==after?.kind||old?.begin!==after?.begin)changed++;
   if(old?.kind&&old.kind!=="cut"&&(!after||after.kind==="cut"))
    prevented++;
-  if(after&&["beat","snap","phrase"].includes(after.kind)&&
+  if(after?.structuralBeat){
+   assert.ok(tools.desktopBeatPairCertified(a,b,after),"internal entries need the source-bound rendered certificate");
+   assert.ok(after.structuralEvidence.outgoingVocalTail.clear&&after.composite.postRenderRhythm.accepted,
+    "a future unplayed LRC line cannot substitute for local vocal and actual rhythm evidence");
+   if(Number.isFinite(a.lastLyricAt)&&a.lastLyricAt>=after.end-1.2&&a.lastLyricAt<after.end)lrcViolations++;
+  }else if(after&&["beat","snap","phrase"].includes(after.kind)&&
      !after.vocalBeatUnderlay&&Number.isFinite(a.lastLyricAt)&&
      a.lastLyricAt>after.begin-5.5)
    {lrcViolations++;if(violations.length<8)violations.push({from:A.key,to:B.key,kind:after.kind,begin:after.begin,end:after.end,lastLyricAt:a.lastLyricAt,voiceModel:a.voiceModel,vocalBeatUnderlay:after.vocalBeatUnderlay,protectedEnding:a.protectedEnding,plan:after});}

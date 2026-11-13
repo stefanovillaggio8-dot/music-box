@@ -6361,6 +6361,7 @@ function handleMetadata() {
   // CORS headers, and enabling it for them would break playback entirely.
   function _assegnaAudioSorgente(a,source) {
     const target=String(source||"");
+    if(target&&!/^blob:/i.test(target))a._mbMixSourceUrl=target;
     try {
       const u=new URL(target,location.href);
       const safe=u.origin===location.origin||
@@ -8171,6 +8172,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
       }
     }
     audio._mbCambioBrano = !_adottaDj;
+    if(_adottaDj)audio._mbMixSourceUrl=_url;
     // Common-buffer DJ playback owns the audible signal until this native
     // decoder is ready. Set binary mute before src/play(), including iOS.
     if (silentDjStart === true) audio.muted = true;
@@ -13172,7 +13174,19 @@ window.MusicBoxBridge = {
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
     if(rows.length<3)return null;
-    return {first:rows[0].t,last:rows[rows.length-1].t};
+    return {first:rows[0].t,last:rows[rows.length-1].t,starts:rows.map(r=>r.t)};
+  },
+  mixVocalCutSafe:(cue,id)=>{
+    if(!cue?.structuralBeat)return true;
+    const local=_testoLocaleVerificato(id),candidate=(local?.synced?local:lyricsData[id])||null;
+    if(!candidate)return true;
+    const rows=_righeTestoConParole(candidate);
+    for(const row of rows){
+      if(!row.estimated&&_haTempiParole(row)&&row.words.some(w=>
+        Number.isFinite(w.t)&&Number.isFinite(w.end)&&w.t<cue.end&&w.end>cue.end-.4))return false;
+      if(Number.isFinite(row.t)&&row.t>=cue.end-.4&&row.t<cue.end&&String(row.text||"").trim())return false;
+    }
+    return true;
   },
 
   mixCandidates:()=>{
@@ -13250,6 +13264,14 @@ window.MusicBoxBridge = {
   mixHandoff:(id,startAt,options)=>{
     if(queue[0]===id){queue.shift();persistQueue()}
     return playById(id,true,startAt,null,options?.muted===true);
+  },
+  mixSourceMatches:(id,liveAudio)=>{
+    const track=tracks.find(t=>t.id===id);
+    if(!track||liveAudio!==audio||id!==currentId)return false;
+    try{
+      const actual=liveAudio._mbMixSourceUrl||liveAudio.currentSrc||liveAudio.src;
+      return !!actual&&new URL(actual,location.href).href===new URL(_urlDelBrano(track),location.href).href;
+    }catch(_){return false}
   },
   mixAdoptHandoff:(id,liveAudio)=>{
     if(!liveAudio||_usaControlliNativiIos())return null;

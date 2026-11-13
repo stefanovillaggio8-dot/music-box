@@ -32,12 +32,15 @@ const report={schema:1,source:'https://huggingface.co/datasets/jamendolyrics/jam
  inference:{model:arg('model','onnx-community/whisper-tiny_timestamped'),library:'transformers.js 3.8.1',device:'cpu',
  dtype:{encoder_model:'fp32',decoder_model_merged:'q4'},browserWebGPUVerified:false},
  limitation:'English external references; exact human line anchors isolate acoustic word timing. No claim of Italian or full-catalog word accuracy.',cases:[]};
+report.inference.revision=arg('revision',report.inference.model==='onnx-community/whisper-tiny_timestamped'?'517244293732ee2d58139af5814231b7e6830a0d':'main');
+const inferenceKey=crypto.createHash('sha256').update(JSON.stringify(report.inference)).digest('hex').slice(0,12);
 fs.mkdirSync(path.dirname(output),{recursive:true});
 const asr=await pipeline('automatic-speech-recognition',report.inference.model,{
- device:'cpu',dtype:report.inference.dtype,session_options:{intraOpNumThreads:2,interOpNumThreads:1}});
+ device:'cpu',revision:report.inference.revision,dtype:report.inference.dtype,session_options:{intraOpNumThreads:2,interOpNumThreads:1}});
 for(const record of records){
  const file=path.join(audio,record.name+'.mp3');
  const sha256=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+ if(record.audioSha256&&record.audioSha256!==sha256)throw Error('Reference recording changed');
  const lines=record.lines.map((row,i)=>({...row,index:i,t:row.start}));
  const completeLines=start=>lines.filter(l=>l.start>=start+.15&&l.start<start+26.9&&l.end<start+27.96);
  const choices=lines.filter(l=>l.start>1).map(l=>{
@@ -45,9 +48,9 @@ for(const record of records){
   const words=record.words.filter(w=>selected.some(l=>w.start>=l.start-.001&&w.end<=l.end+.001));
   return {start,selected,words,density:words.length/28};
  }).filter(c=>c.words.length>=12);
- const fast=record.genre==='Hip-Hop';
+ const fast=record.genre==='Hip-Hop'||record.benchmarkRole==='singing-fast';
  choices.sort((a,b)=>fast?b.density-a.density:a.density-b.density);
- const selected=[{...choices[0],category:fast?'rap-dense':'singing-sparse'}];
+ const selected=[{...choices[0],category:record.benchmarkRole||(fast?'rap-dense':'singing-sparse')}];
  // Repeated text at a distant position tests occurrence identity, not just
  // whether a chorus appears somewhere in the recording.
  const seen=new Map();
@@ -60,7 +63,7 @@ for(const record of records){
   seen.set(key,line);
  }
  for(const choice of selected){
-  const id=record.name+'@'+choice.start.toFixed(3),cache=output+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
+  const id=record.name+'@'+choice.start.toFixed(3),cache=output+'.'+inferenceKey+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
   let chunks;
   if(fs.existsSync(cache))chunks=JSON.parse(fs.readFileSync(cache));
   else{
@@ -72,11 +75,19 @@ for(const record of records){
   }
   const aligned=context.MusicBoxAudioAlign.alignWindow(choice.selected,chunks,choice.start,28);
   const errors=[],unmatched=[],estimated=[];let denominator=0;
+  const displayed=context.MusicBoxWordKaraoke.estimateRows(choice.selected.map(line=>
+   aligned.find(r=>Math.abs(r.sourceT-line.start)<.002)||line));
   for(const line of choice.selected){
    const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001);
    denominator+=reference.length;
    const result=aligned.find(r=>Math.abs(r.sourceT-line.start)<.002);
-   if(!result){unmatched.push({lineIndex:line.index,words:reference.length});continue;}
+   if(!result){
+    unmatched.push({lineIndex:line.index,words:reference.length});
+    const fallback=displayed.find(r=>r.t===line.start&&r.estimated===true);
+    if(fallback?.words?.length===reference.length&&fallback.words.every((w,i)=>normalize(w.text)===normalize(reference[i].text)))
+     fallback.words.forEach((w,i)=>estimated.push({lineIndex:line.index,wordIndex:i,startErrorMs:(w.t-reference[i].start)*1000,endErrorMs:(w.end-reference[i].end)*1000}));
+    continue;
+   }
    if(result.words.length!==reference.length||result.words.some((w,i)=>normalize(w.text)!==normalize(reference[i].text))){
     unmatched.push({lineIndex:line.index,words:reference.length,reason:'tokenization mismatch'});continue;
    }
@@ -87,7 +98,8 @@ for(const record of records){
   const item={id,record:record.name,genre:record.genre,category:choice.category,start:choice.start,seconds:28,
    sourceAudioSha256:sha256,referenceWords:denominator,observedWords:errors.length,
    observedCoverage:denominator?errors.length/denominator:0,estimatedWords:estimated.length,
-   onset:stats(errors.map(x=>x.startErrorMs)),end:stats(errors.map(x=>x.endErrorMs)),errors,unmatched};
+   onset:stats(errors.map(x=>x.startErrorMs)),end:stats(errors.map(x=>x.endErrorMs)),errors,unmatched,
+   estimatedOnset:stats(estimated.map(x=>x.startErrorMs)),estimatedEnd:stats(estimated.map(x=>x.endErrorMs)),estimatedErrors:estimated};
   report.cases.push(item);fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify({id,words:denominator,observed:errors.length,onset:item.onset,end:item.end}));
  }
@@ -95,4 +107,7 @@ for(const record of records){
 const all=report.cases.flatMap(c=>c.errors),total=report.cases.reduce((s,c)=>s+c.referenceWords,0);
 report.aggregate={referenceWords:total,observedWords:all.length,observedCoverage:all.length/total,
  onset:stats(all.map(x=>x.startErrorMs)),end:stats(all.map(x=>x.endErrorMs))};
+const estimated=report.cases.flatMap(c=>c.estimatedErrors);
+report.aggregate.estimatedWords=estimated.length;report.aggregate.estimatedOnset=stats(estimated.map(x=>x.startErrorMs));
+report.aggregate.estimatedEnd=stats(estimated.map(x=>x.endErrorMs));
 fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');

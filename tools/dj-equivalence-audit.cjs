@@ -84,6 +84,7 @@ const result={
  possibleOrderedPairs:tracks.length*(tracks.length-1),
  shard,totalShards,analyzedPairs:0,verifiedBeat:0,earlyVerifiedBeat:0,
  completePcmBeat:0,renderedFullBeat:0,shortIndexedBeat:0,fullOverlapSeconds:0,
+ metricalRhythmic:0,structuralEarlyExits:0,commonPcmAssets:0,crossfadePlans:0,normalChanges:0,
  plannedKinds:{},
  verifiedBeatSamples:[],
  rejectedBeat:0,postlude:0,underlay:0,other:0,none:0,errors:[],
@@ -114,7 +115,7 @@ for(let i=0;i<tracks.length;i++){
    if(result.errors.length<12)result.errors.push({from,to,error:String(e)});
    continue;
   }
-  if(!plan){result.none++;continue;}
+  if(!plan){result.none++;result.normalChanges++;continue;}
   result.plannedKinds[plan.kind]=(result.plannedKinds[plan.kind]||0)+1;
   if(beatLike(plan)){
    let certified=false;
@@ -127,20 +128,25 @@ for(let i=0;i<tracks.length;i++){
     result.verifiedBeat++;
     if(plan.measuredFullBeat){
      result.completePcmBeat++;result.fullOverlapSeconds+=plan.fade;
-     if(plan.renderEvidence?.timingVerified)result.renderedFullBeat++;
-    }else result.shortIndexedBeat++;
+     if(plan.renderEvidence?.timingVerified||plan.composite?.timingVerified&&plan.composite?.rhythmVerified)result.renderedFullBeat++;
+    }else if(plan.metricalRhythmic)result.metricalRhythmic++;
+    else result.shortIndexedBeat++;
+    if(plan.structuralBeat&&plan.end<=a.duration-8)result.structuralEarlyExits++;
+    if(plan.composite?.timingVerified)result.commonPcmAssets++;
     if(result.verifiedBeatSamples.length<12)
      result.verifiedBeatSamples.push({from,to,kind:plan.kind,
       begin:plan.begin,end:plan.end,entry:plan.entry,
       fade:plan.fade,tempo:plan.tempo,
       lastAudible:a.last,score:plan.score,
-      rendered:!!plan.renderEvidence?.timingVerified,
+      rendered:!!(plan.renderEvidence?.timingVerified||plan.composite?.timingVerified&&plan.composite?.rhythmVerified),
+      metricalRhythmic:!!plan.metricalRhythmic,structuralEarlyExit:!!plan.structuralBeat,
       outputHeadroom:plan.outputHeadroom??null});
     if(plan.begin<a.last-.6)result.earlyVerifiedBeat++;
    }else result.rejectedBeat++;
   }else if(plan.kind==="postlude"||plan.measuredPostludeBridge)result.postlude++;
   else if(plan.kind==="underlay"||plan.subduedRhythmicUnderlay)result.underlay++;
-  else result.other++;
+  else{result.other++;if(plan.kind==='cut')result.normalChanges++;
+   else if(['soft','fade','rise','continuity'].includes(plan.kind))result.crossfadePlans++;}
   if(result.nonBeatSamples.length<15&&
     (!beatLike(plan)||result.rejectedBeat>0&&!Number.isFinite(plan.score)))
    result.nonBeatSamples.push({from,to,kind:plan.kind||null});

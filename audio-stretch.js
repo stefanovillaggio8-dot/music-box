@@ -25,7 +25,7 @@ function prepare(clip,cue){
  if(old?.failedAt&&Date.now()-old.failedAt<25000)return Promise.resolve(null);
  if(!root.Worker)return Promise.resolve(null);
  if(!worker){
-  try{worker=new Worker('audio-stretch-worker.js?v=2',{type:'module'})}
+  try{worker=new Worker('audio-stretch-worker.js?v=3',{type:'module'})}
   catch(_){entries.set(k,{failedAt:Date.now()});return Promise.resolve(null)}
   worker.onmessage=({data})=>{
    const job=jobs.get(data.id);if(!job)return;

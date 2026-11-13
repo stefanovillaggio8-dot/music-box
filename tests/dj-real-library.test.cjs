@@ -16,7 +16,7 @@ const engine=new Function("isIOS","style",
  excerpt("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  excerpt("function compatibility(","async function decode(")+
  excerpt("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay,onsetPairAgreement,rhythmicGridEvidence,onsetPeriodicity};"
+ "\nreturn {transition,similarNotes,grooveAgreement,camelotMatch,hasImmediateMusicalIntro,continuityFallback,certifiedNeutralBridge,musicallyCompatibleOverlay,onsetPairAgreement,rhythmicGridEvidence,onsetPeriodicity,fullBeatCueCertified};"
 )(false,"auto");
 const tracks=Object.entries(index.entries||{})
  .filter(([key,v])=>v?.status==="ok"&&Number.isFinite(v.duration)&&v.duration>=26&&
@@ -366,15 +366,21 @@ test("large-library randomized DJ transitions respect real audio boundaries and 
     "nonfinite DJ cue "+tracks[i].key+" -> "+tracks[j].key);
    assert.ok(cue.begin>=0&&cue.end<=a.duration+.05&&cue.end>=cue.begin,
     "invalid transition boundary "+tracks[i].key+" -> "+tracks[j].key);
-   assert.ok(Number.isFinite(cue.entry)&&cue.entry>=0&&cue.entry<=18.01,
-    "next music entrance must not jump ahead");
+   if(cue.structuralBeat){
+    assert.ok(engine.fullBeatCueCertified(a,b,cue),"an internal entrance needs a verified structural render");
+    assert.ok(cue.entry>=0&&cue.entry+cue.fade*cue.tempo<=b.duration-2,
+     "internal entry must leave a real native handoff tail");
+   }else assert.ok(Number.isFinite(cue.entry)&&cue.entry>=0&&cue.entry<=18.01,
+    "an unverified next entrance must not jump ahead");
    if(cue.kind==="beat")beat++;
    if(cue.kind==="snap")snap++;
    if((cue.kind==="beat"||cue.kind==="snap")&&plans%7===0){
     // Newly discovered late vocals must not permit this early beat join.
     const guarded=engine.transition({...a,lastLyricAt:cue.end-.1,
      lastVoiceAt:cue.end-.1},b,a.duration);
-    assert.ok(guarded?.kind!=="beat"&&guarded?.kind!=="snap",
+    const certifiedLater=cue.structuralBeat&&guarded?.structuralBeat&&guarded.end>cue.end+1.2&&
+     engine.fullBeatCueCertified({...a,lastLyricAt:cue.end-.1,lastVoiceAt:cue.end-.1},b,guarded);
+    assert.ok(certifiedLater||guarded?.kind!=="beat"&&guarded?.kind!=="snap",
       "unsafe beat crossing late vocal "+tracks[i].key+" -> "+tracks[j].key);
     protectedCount++;
    }

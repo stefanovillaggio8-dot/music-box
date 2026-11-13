@@ -12,6 +12,7 @@ features=importlib.util.module_from_spec(spec);spec.loader.exec_module(features)
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('references','audio','models','output'):parser.add_argument('--'+name,required=True)
+    parser.add_argument('--quiet-lead',type=float,default=1.2)
     args=parser.parse_args();models=pathlib.Path(args.models).resolve()
     import os
     os.chdir(models)
@@ -25,17 +26,23 @@ def main():
         raw=subprocess.run(['ffmpeg','-nostdin','-v','error','-i',str(pathlib.Path(args.audio)/(row['name']+'.mp3')),
             '-ar','44100','-ac','2','-f','f32le','pipe:1'],capture_output=True,check=True).stdout
         stereo=np.frombuffer(raw,dtype='<f4').reshape(-1,2).copy()
-        voice,mix=features.vocal_envelope(separator,stereo)
-        words=row['words'];decisions=[];false_clear=0;annotated=0;clear=0
+        cache=pathlib.Path(args.output).parent/(row['name']+'.pinned-spleeter-envelope.npz')
+        if cache.exists():
+            cached=np.load(cache);voice,mix=cached['voice'],cached['mix']
+        else:
+            voice,mix=features.vocal_envelope(separator,stereo);np.savez_compressed(cache,voice=voice,mix=mix)
+        words=row['words'];decisions=[];false_clear=0;false_fade=0;annotated=0;clear=0
         for end in np.arange(2.1,len(stereo)/44100-.4,.1):
-            start=end-2;stop=end+.35
+            start=end-args.quiet_lead;stop=end
             overlaps=any(w['start']<stop and w['end']>start for w in words)
             guard=features.core.vocal_guard(voice,mix,start,stop)
             if not guard:continue
             annotated+=overlaps;clear+=guard['clear'];false_clear+=guard['clear'] and overlaps
+            false_fade+=guard['clear'] and any(w['start']<end and w['end']>end-.4 for w in words)
             if guard['clear']:decisions.append({'start':float(start),'end':float(stop),'overlapsManualWord':overlaps})
         result={'record':row['name'],'seconds':len(stereo)/44100,'windowsWithManualVocal':annotated,
-            'quietDecisions':clear,'falseClear':false_clear,'falseClearRate':false_clear/annotated if annotated else None,
+            'quietLeadSeconds':args.quiet_lead,'fadeSeconds':.4,
+            'quietDecisions':clear,'falseClear':false_clear,'falseClearDuringActualFade':false_fade,'falseClearRate':false_clear/annotated if annotated else None,
             'quietWindows':decisions}
         results.append(result);pathlib.Path(args.output).write_text(json.dumps({'results':results},indent=2)+'\n')
         print(json.dumps({k:v for k,v in result.items() if k!='quietWindows'}),flush=True)

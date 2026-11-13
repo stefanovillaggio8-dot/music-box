@@ -27,11 +27,15 @@ def main():
     keys=[key for i,key in enumerate(sorted(k for k,e in index['entries'].items() if e['status']=='ok')) if i%parts==shard]
     if not all(key in all_entries for key in keys):raise ValueError('Incomplete source evidence for selected shard')
     output=pathlib.Path(args.output);output.parent.mkdir(parents=True,exist_ok=True)
+    previous=json.loads(output.read_text()).get('entries',{}) if output.exists() else {}
     cache=pathlib.Path(args.cache);cache.mkdir(parents=True,exist_ok=True);entries={};errors=[]
     audit.SR=pcm.SR
     for key in keys:
         try:
-            at=time.monotonic();e=copy.deepcopy(all_entries[key]);old=e['windows']
+            at=time.monotonic();e=copy.deepcopy(all_entries[key])
+            cached=previous.get(key)
+            if cached and cached.get('sha')==e['sha'] and cached.get('modelSha256')==e.get('modelSha256'):e=copy.deepcopy(cached)
+            old=e['windows']
             windows=core.candidate_windows(e['reliableBars'],e['boundaries'],e['phraseHypotheses'],e['vocalRms'],e['mixRms'],e['duration'])
             small=None;new_count=0
             for number,w in enumerate(windows):
@@ -50,6 +54,7 @@ def main():
                 'exits':sum(w['role']=='exit' for w in windows),'seconds':round(time.monotonic()-at,2)}),flush=True)
         except Exception as error:
             errors.append({'key':key,'error':str(error).split('?')[0][:300]});print('ERROR',key,type(error).__name__,flush=True)
-        output.write_text(json.dumps({'version':1,'windowSearchVersion':2,'entries':entries,'errors':errors},separators=(',',':'))+'\n')
+        if (len(entries)+len(errors))%10==0 or key==keys[-1]:
+            output.write_text(json.dumps({'version':1,'windowSearchVersion':2,'entries':entries,'errors':errors},separators=(',',':'))+'\n')
     if errors:raise SystemExit(1)
 if __name__=='__main__':main()

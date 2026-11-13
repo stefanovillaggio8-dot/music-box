@@ -4,7 +4,7 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=5,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const VERSION=6,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
@@ -233,7 +233,7 @@ function stopWorker(reason){
 }
 function requestWorker(data,language){
  if(!worker){
-  worker=new Worker("audio-lyrics-worker.js?v=6715&lang=1",{type:"module"});
+  worker=new Worker("audio-lyrics-worker.js?v=6715&lang=2",{type:"module"});
   worker.onmessage=e=>{
    const id=Number(e.data?.id),req=pending.get(id);
    if(!req)return;

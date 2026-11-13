@@ -6,6 +6,9 @@ on:
       - 'tools/dj-structure-core.py'
       - 'tools/build-structural-beat-plans.cjs'
       - 'audio-composite-core.mjs'
+      - 'audio-stretch-core.mjs'
+      - 'tools/dj-rendered-rhythm.py'
+      - 'tools/render-composite-mix.mjs'
       - 'tools/build-composite-assets.py'
       - '.github/workflows/dj-structural-integration.yml'
   workflow_dispatch:
@@ -37,8 +40,9 @@ jobs:
         with:
           path: results
           key: refined-source43463500768-${{ matrix.shard }}-${{ hashFiles('tools/dj-structure-core.py', 'tools/refine-structure-windows.py') }}
+          restore-keys: refined-source43463500768-${{ matrix.shard }}-
       - name: Retrieve complete pinned whole-recording model evidence
-        if: steps.refined.outputs.cache-hit != 'true'
+        if: steps.refined.outputs.cache-hit != 'true' && hashFiles('results/structure-*.json') == ''
         run: |
           buddy=$(( ${{ matrix.shard }} + 8 ))
           for attempt in 1 2 3; do
@@ -58,7 +62,10 @@ jobs:
         run: python tools/test-dj-whole-structure.py
       - name: Search additional instrumental bar groups and protect the actual vocal fade
         if: steps.refined.outputs.cache-hit != 'true'
-        run: python tools/refine-structure-windows.py --features=whole --shard=${{ matrix.shard }}/8 --cache=original-mp3 --output=results/structure-${{ matrix.shard }}.json
+        run: |
+          source=whole
+          if test -f results/structure-${{ matrix.shard }}.json; then source=results; fi
+          python tools/refine-structure-windows.py --features=$source --shard=${{ matrix.shard }}/8 --cache=original-mp3 --output=results/structure-${{ matrix.shard }}.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

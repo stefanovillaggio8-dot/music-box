@@ -581,7 +581,10 @@ test("Whisper language comes from real LRC text, not the browser locale or an En
  assert.ok(liveAlignAsset,"HTML must include a revisioned audio aligner");
  assert.equal(sw.split(liveAlignAsset.replace("&amp;","&")).length-1,2,
   "SW must cache exactly the alignment script used by HTML");
- assert.equal(sw.split("audio-lyrics-worker.js?v=6715&lang=1").length-1,2);
+ const workerUrl=/new Worker\("([^"]+)"/.exec(align)?.[1];
+ assert.ok(workerUrl?.includes('lang=2'),"new timestamp-capable worker must bypass the old cached export");
+ assert.equal(sw.split(workerUrl).length-1,2);
+ assert.match(worker,/onnx-community\/whisper-tiny_timestamped/);
 });
 
 test("Whisper worker sends explicit per-track language to ASR and rejects missing or invalid language",async()=>{
@@ -655,7 +658,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:file==="word-karaoke.js"||file==="immersive.js"?"6734":"6715";
-  const wordCache=file==="word-karaoke.js"?"12":file==="immersive.js"?"7":file==="app.js"?"5":"2";
+  const wordCache=file==="word-karaoke.js"?"12":file==="immersive.js"?"7":file==="app.js"?"6":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }

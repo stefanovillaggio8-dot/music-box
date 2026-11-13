@@ -1,10 +1,8 @@
 name: Whole-recording musical structure evidence
 on:
-  pull_request:
-    paths:
-      - 'tools/dj-structure-*.py'
-      - 'tools/test-dj-whole-structure.py'
-      - '.github/workflows/dj-whole-structure.yml'
+  # Expensive source-model evidence is an explicit snapshot. PR changes
+  # reuse the pinned complete run in dj-structural-integration.yml, which
+  # reruns window extraction, pair audits and original-audio rendering.
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,4 +1,4 @@
-import {stretchClip} from './audio-stretch-core.mjs?v=2';
+import {stretchClip} from './audio-stretch-core.mjs?v=3';
 self.onmessage=({data})=>{
  try{
   const clip=stretchClip(data.clip,data.cue);
