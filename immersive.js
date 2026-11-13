@@ -45,8 +45,11 @@ function renderLyrics(force){
   const signature=JSON.stringify([next?.text||"",next?.synced||[]]);
   if(lastLyricsId!==id||signature!==lastLyricsSignature){
    lastLyrics=next;lastLyricsId=id;lastLyricsSignature=signature;lastLine=-1;
+   // ASR-corrected starts may reorder adjacent LRC lines; the binary-like
+   // media-clock scan below must always receive chronological cues.
    const synced=Array.isArray(next?.synced)?
-    next.synced.filter(row=>Number.isFinite(Number(row?.t))&&String(row?.text||"").trim()):[];
+    next.synced.filter(row=>Number.isFinite(Number(row?.t))&&String(row?.text||"").trim())
+     .sort((a,b)=>Number(a.t)-Number(b.t)):[];
    lyricTimed=synced.length>=3;
    const plain=String(next?.text||"").trim();
    let plainRows=plain.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
