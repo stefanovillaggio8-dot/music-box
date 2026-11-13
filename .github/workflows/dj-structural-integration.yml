@@ -17,7 +17,7 @@ permissions:
   actions: read
 concurrency:
   group: structural-integration-v2-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   refine:
     runs-on: ubuntu-latest
@@ -72,10 +72,10 @@ jobs:
           name: refined-structure-${{ matrix.shard }}
           path: results/
           retention-days: 14
-  compile-render:
+  compile:
     needs: refine
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
     env:
       OPENBLAS_NUM_THREADS: '1'
       OMP_NUM_THREADS: '1'
@@ -96,13 +96,43 @@ jobs:
           path: refined
       - name: Audit every ordered pair using actual internal PCM windows
         run: node tools/build-structural-beat-plans.cjs --features=refined --report=results/structural-all-pairs.json
-      - name: Render original sources and certify common output peaks at 16 and 48 kHz
-        run: |
-          python tools/build-composite-assets.py --rate=16000 --plans=results/structural-all-pairs.json --assets=results/mixes-16k --cache=original-mp3 --report=results/composite-16k-report.json
-          python tools/build-composite-assets.py --rate=48000 --plans=results/structural-all-pairs.json --assets=results/dj-mixes --cache=original-mp3 --report=results/composite-48k-report.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: structural-compiled-rendered
+          name: structural-compiled-windows
+          path: results/
+          retention-days: 14
+  render:
+    needs: compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        rate: [16000,48000]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install numpy==1.26.4 librosa==0.11.0
+      - uses: actions/download-artifact@v4
+        with:
+          name: structural-compiled-windows
+          path: results
+      - name: Render original sources and validate actual rhythm and peaks
+        run: python tools/build-composite-assets.py --rate=${{ matrix.rate }} --plans=results/structural-all-pairs.json --assets=results/dj-mixes --cache=original-mp3 --report=results/composite-${{ matrix.rate }}-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: structural-rendered-${{ matrix.rate }}
           path: results/
           retention-days: 14
