@@ -287,7 +287,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/wordRows: risultato\.wordRows \|\| \[\]/);
  assert.match(app,/wordSyncOnly:true,syncedOnly:true/);
  assert.match(app,/requestWordLyrics:\(id\)=>\{/);
- assert.match(app,/_verificaParoleKaraoke\(song\)\.finally/);
+ assert.match(app,/Promise\.resolve\(_verificaParoleKaraoke\(song\)\)/);
  assert.match(app,/engine\?\.fromRecord\(j\)/);
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
@@ -1020,7 +1020,7 @@ test("continuity fallback never cuts a late vocal or claims a beatmatched overla
   "A long digital tail needs its own independently verified skip");
  assert.equal(policy({...outgoing,duration:191},next,200),null,
   "A mismatched duration is never safe");
- assert.match(dj,/if\(!p\|\|p\.neutralAmbientUnderlay===true\)return 0/);
+ assert.match(dj,/if\(!p\|\|p\.neutralAmbientUnderlay===true\|\|p\.measuredReleaseHandoff===true\)return 0/);
  assert.match(dj,/if\(cue\.neutralAmbientUnderlay===true\)/);
  assert.match(dj,/if\(plan\?\.neutralAmbientUnderlay===true\)/);
 });
