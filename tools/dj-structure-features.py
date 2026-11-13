@@ -130,6 +130,12 @@ def main():
                     (target/name).write_bytes(archive.extractfile(member).read())
         if not (target/'model.index').exists():raise ValueError('Missing checkpoint')
         (target/'.probe').write_text('OK')
+    # Estimator otherwise silently initializes a random network when the
+    # archive's checkpoint manifest is absent. Weight files alone are not
+    # sufficient. Bind the manifest to the pinned local checkpoint.
+    (target/'checkpoint').write_text('model_checkpoint_path: "model"\nall_model_checkpoint_paths: "model"\n')
+    checkpoint=tf.train.latest_checkpoint(str(target))
+    if checkpoint is None or pathlib.Path(checkpoint).name!='model':raise ValueError('Pretrained vocal checkpoint not selected')
     torch.set_num_threads(2)
     beat_model=Audio2Frames('final0',device='cpu');separator=Separator('spleeter:2stems',multiprocess=False)
     for file,expected in MODEL_HASHES.items():
