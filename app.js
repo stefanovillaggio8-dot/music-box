@@ -9469,8 +9469,16 @@ function openProfile() {
     const result=low-1;
     if(result===lyricLines.length-1&&lyricLines.length){
       const row=_lyricWordParts?.[result]?.row;
-      const end=Number(row?.end),last=Number(lyricLines[result].dataset.t);
-      const expiry=Number.isFinite(end)&&end>=last?end+2.5:last+9;
+      const last=Number(lyricLines[result].dataset.t);
+      const end=row?.end==null?NaN:Number(row.end);
+      const lastWord=row?.words?.[row.words.length-1];
+      const wordEnd=lastWord?.end==null?NaN:Number(lastWord.end);
+      // Honor the actual last measured syllable; LRC line markers alone
+      // otherwise leave the final verse highlighted for nine extra seconds.
+      const knownEnd=Math.max(
+        Number.isFinite(end)&&end>=last?end:-Infinity,
+        Number.isFinite(wordEnd)&&wordEnd>=last?wordEnd:-Infinity);
+      const expiry=Number.isFinite(knownEnd)?knownEnd+2.5:last+9;
       if(Number.isFinite(last)&&time>expiry)return -1;
     }
     return result;
