@@ -2404,14 +2404,14 @@
     "a": "girl in red"
    },
    "[\"paraguai\",\"nayt, canova\"]": {
-    "v": 2,
-    "s": 201,
+    "v": 3,
+    "s": 217,
     "t": "Paraguai",
     "a": "nayt, Canova"
    },
    "m:2026-11|[\"paraguai\",\"nayt, canova\"]": {
-    "v": 2,
-    "s": 201,
+    "v": 3,
+    "s": 217,
     "t": "Paraguai",
     "a": "nayt, Canova"
    },
@@ -2759,13 +2759,13 @@
    },
    "[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 1,
-    "s": 115,
+    "s": 129,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 1,
-    "s": 115,
+    "s": 129,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
