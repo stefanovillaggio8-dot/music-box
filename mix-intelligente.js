@@ -3307,7 +3307,13 @@ function measuredTempoRelation(a,b){
  const chosen=[.5,1,2].map(scale=>({scale,ratio:x/(y*scale)}))
   .sort((p,q)=>Math.abs(Math.log2(p.ratio))-
    Math.abs(Math.log2(q.ratio)))[0];
- if(!chosen||chosen.ratio<.975||chosen.ratio>1.025)return null;
+ // Allow up to 3.5% only when BOTH tracks have a reliable PCM beat grid.
+ // Wider tempo corrections without measured beats would drift audibly.
+ const measured= a?.beatGrid?.reliable===true&&b?.beatGrid?.reliable===true&&
+   Array.isArray(a?.outroOnsetWindows)&&a.outroOnsetWindows.length>0&&
+   Array.isArray(b?.introBeatTimes)&&b.introBeatTimes.length>=5;
+ const lower=measured?.965:.975,upper=measured?1.035:1.025;
+ if(!chosen||chosen.ratio<lower||chosen.ratio>upper)return null;
  return {...chosen,period:Math.max(60/x,60/y)};
 }
 // Verify beat regularity at the actual 4-second junction, not only from
@@ -3464,6 +3470,11 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    win.measuredBeatTimes,b.introBeatTimes,entry,ratio,
    Math.max(win.start+.25,a.last-11.9),
    Math.min(win.end-1.10,a.last-4.65),desired):null;
+  // A >2.5% tempo correction must use independently tracked PCM beats;
+  // it may never rely on the estimated onset phase of a generic track.
+  const widerTempo=ratio<.975||ratio>1.025;
+  if(widerTempo&&(!placed||placed.fit.verified<4||
+    placed.fit.ratio<.90||placed.fit.rms>.06))continue;
   const begin=placed?.begin??(beatAnchor+
    Math.ceil((desired+nextPhase-beatAnchor)/period)*period-nextPhase);
   if(placed)beatAnchor=placed.oldBeat;
@@ -3527,7 +3538,7 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   measuredPlacementError:best.measuredPlacementError,
   tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
-  tempo:clamp(ratio,.975,1.025),gain:1,
+  tempo:clamp(ratio,.965,1.035),gain:1,
   underlayVolume:best.strongBassBridge?
    adaptiveUnderlayLevel(b,.16,.215):
    adaptiveUnderlayLevel(b,.105,.145),
@@ -4861,7 +4872,9 @@ function naturalEndHandoff(certifiedSilentTail=false){
    if(!ended)try{old.pause()}catch(_){}
    console.info("[Music Box DJ] Passaggio senza beatmatch · "+
     fromId+" → "+next.id+
-    (ended?" (intro muto verificato evitato)":
+    (ended?(p.naturalEntry>=.35?
+       " (ingresso digitale muto misurato evitato)":
+       " (fine naturale, nessun beatmatch verificato)"):
      " (coda digitalmente muta verificata evitata)"));
   }catch(error){
    try{incoming.pause()}catch(_){}
