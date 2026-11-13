@@ -1255,3 +1255,24 @@ test("audio-aligned karaoke rebuilds the line order when measured syllables cros
  assert.match(app,/const inPlace=_righeKaraokeInOrdine\(joined\)&&/);
  assert.match(app,/\}else openLyrics\(\);/);
 });
+
+test("last karaoke verse stops glowing after the measured final sung word",()=>{
+ const begin=app.indexOf("  function activeLineIndex(time) {");
+ const end=app.indexOf("  // Native timeupdate events",begin);
+ assert.ok(begin>=0&&end>begin);
+ const choose=(row)=>new Function("lyricLines","_lyricWordParts",
+  app.slice(begin,end)+"return activeLineIndex;")(
+  [{dataset:{t:"10"}},{dataset:{t:"80"}}],
+  [{row:{t:10}},{row}]);
+ const measured=choose({t:80,words:[
+  {t:80,text:"fine ",end:81},{t:82,text:"canzone",end:82.7}]});
+ assert.equal(measured(84.9),1);
+ assert.equal(measured(85.21),-1,
+  "do not light the final line for 9s after its last measured syllable");
+ const explicit=choose({t:80,end:86,words:[{t:82,end:82.7}]});
+ assert.equal(explicit(87.1),1,"honor longer verified line endings");
+ assert.equal(explicit(88.6),-1);
+ const unknown=choose({t:80});
+ assert.equal(unknown(88),1,"do not invent an early finish without word timing");
+ assert.equal(unknown(89.1),-1);
+});
