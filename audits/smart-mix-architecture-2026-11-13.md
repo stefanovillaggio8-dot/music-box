@@ -110,6 +110,39 @@ remain authoritative; translations and the two karaoke views are preserved.
 Targeted tests reproduce these cases and the stale-track cancellation path.
 These tests do not establish an acoustic word-error metric for the catalog.
 
+An additional reproduced defect affected sub-60ms measured words: the visual
+minimum stretched a 30ms word's fill to 60ms. Rendering now follows its actual
+end (including seeks backwards). The regression fails on the old renderer
+and passes with the correction; it does not change or invent word timestamps.
+
+## Additional verification
+
+- Both independent all-pair scans evaluate **1,381,800 / 1,381,800** pairs.
+  Full-window plans: **1 → 17**; separate short indexed snaps: **2 → 2**.
+  Underlays: 2,362 → 2,358; soft plans: 59,838 → 59,837; postludes: unchanged
+  at 85,581. Cut proposals remain 183,988. No-plan outcomes: 1,049,999 →
+  1,049,988. The 29 rejected beat proposals remain rejected. These are
+  simulated planner categories, not a listening census or a certification of
+  every attenuated transition. Word timing error remains unavailable.
+- Fresh CI run `43449151573` re-decodes every original MP3, completes all
+  twelve shards and reproduces the same 17 unique recording pairs, timings,
+  playback rates, gain bounds and mean duration. Floating-point differences
+  in five diagnostic scores are below 0.000016; no decision changes.
+- All **nine PR workflows** pass on `7a138cb291d1ece04fd63b12f030a339a8666a5e`.
+  WebKit runs **586/586** general tests, including installed offline shell
+  reopening and downloaded-MP3 retention. Both Immersive browsers pass.
+- CI found a residual native-tempo bug: feedback at 0.999x/1.000x bypassed
+  the 850ms release and stayed non-native. The corrected early-return path
+  explicitly restores 1x for the adopted player only. The unchanged live
+  Chromium test now passes; a unit test reproduces the actual defect.
+- A further all-catalog experiment fitted 8/12/16/24-pulse prefixes. It
+  yielded the same 17 pairs, no additions, at higher computation cost. It
+  is not enabled or counted as improvement.
+- The short-word renderer's subsequent focused run passes **73/73** plus
+  **9/9** targeted karaoke checks. Final workflow status is attached to the
+  latest PR commit; earlier green runs are not represented as tests of a
+  later code revision.
+
 ## Limits that remain material
 
 - **17 / 1,381,800 ≈ 0.00123%** remains very low coverage. This is an

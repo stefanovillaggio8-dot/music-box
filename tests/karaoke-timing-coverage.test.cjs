@@ -118,6 +118,16 @@ test('estimated display words remain eligible for real audio analysis',()=>{
  assert.equal(api.alignWindow([row],[{text:'vieni',timestamp:[1.1,1.3]},
   {text:'qui',timestamp:[1.35,1.6]}]).length,1);
 });
+
+test('a measured rapid word completes at its actual end before the next word',()=>{
+ const api=win.MusicBoxWordKaraoke;
+ const row={t:10,end:10.2,text:'e poi',words:[{t:10,end:10.03,text:'e '},{t:10.03,end:10.2,text:'poi'}]};
+ const parts=row.words.map(()=>({style:{setProperty(key,value){this[key]=value}}}));
+ api.paintWords(row,parts,10.015);assert.equal(parts[0].style['--karaoke-fill'],'50%');
+ api.paintWords(row,parts,10.03);assert.equal(parts[0].style['--karaoke-fill'],'100%');
+ assert.equal(parts[1].style['--karaoke-fill'],'0%');
+ api.paintWords(row,parts,9.99);assert.equal(parts[0].style['--karaoke-fill'],'0%');
+});
 test("a new song aborts stale karaoke analysis and immediately accepts the next request",async()=>{
  const idle=[],writes=[];let current='old',aborted=false;
  const bridge={currentId:()=>current,profile:()=>'',audio:()=>({duration:180}),

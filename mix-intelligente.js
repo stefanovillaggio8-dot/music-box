@@ -2637,6 +2637,7 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
 function indexedFullBeatBridge(a,b,dur){
  const record=a?.pcmBeatPlans?.[b?.sha],p=record?.cue;
  const expanded=record?.version===2&&p?.fullBeatSearchVersion===2;
+ if(record?.version===2&&!expanded)return null;
  if(expanded&&(!p.renderEvidence||p.outputHeadroom==null))return null;
  const sourceBpm=expanded?p.sourceTempoBpm:a?.bpm,targetBpm=expanded?p.targetTempoBpm:b?.bpm;
  if(![1,2].includes(record?.version)||record.fromSha!==a?.sha||record.toSha!==b?.sha||
@@ -2768,8 +2769,9 @@ function pcmFullBeatWindowSearch(a,b,dur){
    if(begin<26||fade<4.5||fade>16||begin<outro.start||
       entry+fade*Math.max(1,rate)>intro.end||
       (firstVoice-entry)/Math.max(1,rate)<fade+.65)continue;
-   // The original stays at full gain until native EOF, including any vocal.
-   // Only the incoming instrumental window needs a vocal-free certificate.
+   // The complete original finishes at native EOF, including any vocal.
+   // The incoming window must precede the known vocal/lyric boundary.
+   // An LRC boundary is metadata, not an independent vocal-model result.
    const fit=pcmFullBeatFit(outro,intro,begin,entry,rate,fade);
    if(!fit)continue;
    const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade);
@@ -2813,6 +2815,7 @@ function pcmFullBeatWindowSearch(a,b,dur){
 function fullBeatCueCertified(a,b,cue){
  const expected=measuredFullBeatBridge(a,b,a?.duration);
  return !!expected&&cue.kind==="beat"&&cue.measuredFullBeat===true&&
+  cue.sourceSha===a.sha&&cue.targetSha===b.sha&&
   cue.quietCertified===false&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&
   !cue.drumOnlyUnderlay&&!cue.vocalBeatUnderlay&&cue.percussiveIntro===expected.percussiveIntro&&
   cue.harmonicMode===expected.harmonicMode&&cue.measuredPulseMode===expected.measuredPulseMode&&

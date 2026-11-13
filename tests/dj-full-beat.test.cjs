@@ -160,6 +160,8 @@ test('rendered output headroom cannot be removed and hot sums retain the Safari 
  assert.equal(engine.desktopBeatPairCertified(a,b,safe),true);
  const stripped={...safe};delete stripped.outputHeadroom;
  assert.equal(engine.desktopBeatPairCertified(a,b,stripped),false);
+ assert.equal(engine.desktopBeatPairCertified(a,b,{...safe,sourceSha:'other-recording'}),false);
+ assert.equal(engine.desktopBeatPairCertified(a,b,{...safe,targetSha:'other-recording'}),false);
  const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
  const body=source.slice(source.indexOf('function mobileMixAllowed('),source.indexOf('function rememberMobileClip('));
  const allowed=new Function(body+'return mobileMixAllowed;')();

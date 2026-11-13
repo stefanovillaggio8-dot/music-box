@@ -250,7 +250,9 @@ function paintWords(row,elements,time){
   const rawEnd=w.end!=null&&w.end>=w.t?w.end:fallback;
   const end=Math.max(w.t,Math.min(rawEnd,
    next?next.t:row.end!=null&&row.end>=w.t?row.end:rawEnd));
-  const pct=Math.round(100*clamp((time-w.t)/Math.max(.06,end-w.t),0,1));
+  // A short, measured rap syllable must finish at its real boundary.
+  // A 60ms visual floor kept it half-filled after the next word began.
+  const pct=time>=end?100:Math.round(100*clamp((time-w.t)/Math.max(.001,end-w.t),0,1));
   const el=elements[i];
   if(el._karaokePct!==pct){el._karaokePct=pct;el.style.setProperty("--karaoke-fill",pct+"%")}
  }
