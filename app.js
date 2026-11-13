@@ -9471,7 +9471,7 @@ function openProfile() {
       const row=_lyricWordParts?.[result]?.row;
       const last=Number(lyricLines[result].dataset.t);
       const end=row?.end==null?NaN:Number(row.end);
-      const lastWord=row?.words?.[row.words.length-1];
+      const lastWord=row?.estimated===true?null:row?.words?.[row.words.length-1];
       const wordEnd=lastWord?.end==null?NaN:Number(lastWord.end);
       // Honor the actual last measured syllable; LRC line markers alone
       // otherwise leave the final verse highlighted for nine extra seconds.
