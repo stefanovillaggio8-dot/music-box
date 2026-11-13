@@ -1,9 +1,15 @@
 name: Music Box - exhaustive Mixa pair audit
 on:
   push:
-    branches: ['audit/**']
+    branches: ['audit/**', 'improve/**']
     paths:
       - 'tools/dj-equivalence-audit.cjs'
+      - '.github/workflows/dj-equivalence-audit.yml'
+  pull_request:
+    paths:
+      - 'tools/dj-equivalence-audit.cjs'
+      - 'mix-intelligente.js'
+      - 'dj-lyric-boundaries.json'
       - '.github/workflows/dj-equivalence-audit.yml'
   workflow_dispatch:
 permissions:
