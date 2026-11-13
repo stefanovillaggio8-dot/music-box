@@ -5,6 +5,13 @@
 'use strict';
 const cache=new Map(),pending=new Map(),failures=new Map();let current=null;
 const finite=Number.isFinite,limit=(n,a,b)=>Math.max(a,Math.min(b,n));
+function outputLevel(app,audio){
+ if(Number(app.volume())===0)return 0;
+ const native=Number(audio?.volume);
+ // iOS can return 1 despite a lower requested software volume. Match
+ // the native readback at both binary switches, including that case.
+ return finite(native)?limit(native,0,1):limit(Number(app.volume())||0,0,1);
+}
 function supports(cue){
  const c=cue?.composite;
  return !!c&&c.version===1&&c.sourceSha===cue.sourceSha&&c.targetSha===cue.targetSha&&
@@ -54,8 +61,9 @@ function cancelPreparation(){for(const job of pending.values())job.controller.ab
 function stop(){
  const act=current;if(!act)return;current=null;clearTimeout(act.timer);
  try{act.source.stop()}catch(_){}try{act.source.disconnect();act.gain.disconnect()}catch(_){}
- act.old.muted=act.wasMuted;
- if(act.successor)act.successor.muted=false;
+ const userMuted=Number(act.app.volume())===0;
+ act.old._mbCommonMixMuted=false;act.old.muted=act.wasMuted||userMuted;
+ if(act.successor){act.successor._mbCommonMixMuted=false;act.successor.muted=userMuted;}
  for(const [target,event,listener] of act.listeners)target.removeEventListener(event,listener);
 }
 function tryStart(cue,old,app,toId,ctx){
@@ -66,7 +74,7 @@ function tryStart(cue,old,app,toId,ctx){
     old.currentTime<cue.begin-5||old.currentTime>cue.begin-cue.composite.preRoll+.04)return false;
  const source=ctx.createBufferSource(),gain=ctx.createGain(),fromId=app.currentId();
  source.buffer=buffer;source.connect(gain);gain.connect(ctx.destination);
- gain.gain.value=limit(Number(app.volume())||0,0,1);
+ gain.gain.value=outputLevel(app,old);
  let offset=0,started=0;
  const act={source,gain,old,wasMuted:old.muted,ctx,fromId,toId,app,cue,listeners:[],handingOff:false};
  const listen=(target,event,listener)=>{target?.addEventListener?.(event,listener);act.listeners.push([target,event,listener]);};
@@ -87,7 +95,7 @@ function tryStart(cue,old,app,toId,ctx){
      app.currentId()!==expectedId||(!act.handingOff&&((old.paused&&!(cue.nativeTailFullBeat&&old.ended))||old.seeking||app.audio()!==old||
       app.mixNext?.()?.id!==toId||Math.abs(old.currentTime-cue.begin-elapsed)>.08))||
      root.MusicBoxRoom?.isActive?.()){stop();return;}
-  gain.gain.setTargetAtTime(limit(Number(app.volume())||0,0,1),ctx.currentTime,.025);
+  gain.gain.setTargetAtTime(outputLevel(app,app.audio()),ctx.currentTime,.025);
   if(!act.handingOff&&elapsed>=cue.composite.nativeHandoffAt){
    act.handingOff=true;
    act.requestedPosition=position;act.requestedAt=ctx.currentTime;
@@ -105,7 +113,7 @@ function tryStart(cue,old,app,toId,ctx){
    }else if(next.readyState>=2&&!next.paused&&Math.abs(next.currentTime-position)<=.065&&elapsed>=cue.composite.nativeRevealAt){
     // Native volume is unreliable on iOS: switch binary mute and stop
     // the common buffer in one JS turn. No simultaneous unattenuated sum.
-    next.muted=false;stop();return;
+    next.muted=Number(app.volume())===0;stop();return;
    }else if(next.readyState>=2&&!next.paused&&Math.abs(next.currentTime-position)>.065&&!act.corrected){
     act.corrected=true;act.correctingSeekTarget=position;try{next.currentTime=position}catch(_){stop();return;}
    }
@@ -120,7 +128,7 @@ function tryStart(cue,old,app,toId,ctx){
   if(old.currentTime<startAt){act.timer=setTimeout(launch,old.currentTime<startAt-.12?35:8);return;}
   if(old.currentTime>startAt+.04){stop();return;}
   offset=old.currentTime-cue.begin;started=ctx.currentTime;
-  try{source.start(started,offset+cue.composite.preRoll);old.muted=true}catch(_){stop();return;}
+  try{source.start(started,offset+cue.composite.preRoll);old._mbCommonMixMuted=true;old.muted=true}catch(_){stop();return;}
   act.timer=setTimeout(advance,20);
  };
  launch();return true;

@@ -6,7 +6,7 @@ function fixture(){
  const listeners=new Map(),events={addEventListener:(name,f)=>listeners.set(name,f),removeEventListener:()=>{}};
  const doc={...events,hidden:false};const ctx={...events,state:'running',sampleRate:48000,currentTime:0,
   createBufferSource:()=>({connect(){},disconnect(){},start(){},stop(){}}),
-  createGain:()=>({connect(){},disconnect(){},gain:{value:0,setTargetAtTime(){}}}),destination:{},
+  createGain:()=>{ctx.testGain={connect(){},disconnect(){},gain:{value:0,setTargetAtTime(value){this.value=value}}};return ctx.testGain;},destination:{},
   decodeAudioData:async()=>({duration:7.1,sampleRate:48000,numberOfChannels:2,getChannelData:()=>new Float32Array([.1,-.2])})};
  const bytes=new Uint8Array([1,2,3]).buffer;
  const sandbox={console,Map,Set,Number,Array,Uint8Array,Float32Array,crypto,AbortController,
@@ -84,4 +84,20 @@ test('a common handoff can retain the gesture-authorized native media element',a
  f.ctx.currentTime=5.32;audio.currentTime=37.02;
  await new Promise(r=>setTimeout(r,35));assert.equal(id,'b');assert.equal(f.api.active(),true);
  assert.equal(f.api.onSeek('media',audio),true);assert.equal(audio.muted,true);
+});
+test('common output follows native volume readback rather than an ignored iOS request',async t=>{
+ const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);t.after(()=>f.api.stop());
+ const audio={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,volume:1};
+ const app={audio:()=>audio,currentId:()=> 'a',mixNext:()=>({id:'b'}),volume:()=>.37,wantsPlayback:()=>true,mixSourceMatches:()=>true};
+ audio.currentTime=31;assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);
+ assert.equal(audio.muted,false);assert.notEqual(audio._mbCommonMixMuted,true,'arming alone cannot claim the native mute');f.api.stop();audio.currentTime=31.7;
+ assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);assert.equal(f.ctx.testGain.gain.value,1);
+ f.api.stop();audio.volume=.37;assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);assert.equal(f.ctx.testGain.gain.value,.37);
+});
+test('a mute requested during the common overlap survives cancellation',async()=>{
+ const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);let volume=1;
+ const audio={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,volume:1};
+ const app={audio:()=>audio,currentId:()=> 'a',mixNext:()=>({id:'b'}),volume:()=>volume,wantsPlayback:()=>true,mixSourceMatches:()=>true};
+ assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);volume=0;f.api.stop();
+ assert.equal(audio.muted,true);assert.equal(audio._mbCommonMixMuted,false);
 });

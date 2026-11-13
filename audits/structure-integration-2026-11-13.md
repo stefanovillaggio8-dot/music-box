@@ -46,6 +46,8 @@ Safari usa un unico buffer delle due registrazioni con margine di picco e rampe 
 
 Asset mancanti o respinti non autorizzano un overlap nativo senza headroom. Seek, pausa, coda/stanza, visibilità e download offline annullano le operazioni obsolete. Il test a 44,1 kHz ha portato a rigenerare tre asset con più margine, mantenendo invariati i limiti sui picchi, e a conservare le altre alternative della finestra esclusa.
 
+Il guadagno del buffer segue il volume effettivamente restituito dal decoder nativo, anche se Safari ignora un valore software richiesto più basso. Il comando Muto durante il mix rimane attivo dopo annullamento e handoff; riattivare il volume durante l'overlap non rende contemporaneamente udibile la sorgente nativa. La sola preparazione di una finestra futura non imposta il muto.
+
 Il [test 43515593554](https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43515593554) passa con **96 descrittori in Chromium e WebKit**, sia a 48 sia a 44,1 kHz, zero rifiuti finali. Verifica handoff, rollback dopo seek e percorso reale fra due brani dello stesso profilo: un solo cambio, sorgente corretta, lettura attiva. Sono 92 FLAC unici. WebKit su Linux non certifica iPhone fisico, cuffie, interruzioni di sistema o PWA in background.
 
 ## Karaoke misurato
@@ -65,6 +67,6 @@ Su **590 parole**, 65 sono accettate acusticamente (**11,02%**), 61 restano stim
 - `dj-equivalence-audit.cjs`: pianificatore reale, `--index` e `--lyrics` per ripetere il riferimento precedente.
 - `fetch-karaoke-references.py`, `benchmark-karaoke-acoustic.mjs`, `benchmark-vocal-guard.py`: corpus e misurazioni riproducibili.
 
-Regressione locale **601/601**, poi **91/91** focalizzati sull'ultima protezione; strutturali Python **6/6**. I workflow verificano anche Chromium desktop, WebKit iPhone in primo piano, Immersive Mode, volume, audio indipendente, tutte le coppie e nuova estrazione PCM. Rendering 16/48 kHz paralleli e cache vincolata a manifest, sorgenti e codice evitano di ripetere lavoro invariato. I run superati annullati non sono considerati prove riuscite. Stato puntuale dei workflow nel JSON di verifica allegato.
+Regressione locale **603/603**, più **91/91** focalizzati sul fallback; strutturali Python **6/6**. I workflow verificano anche Chromium desktop, WebKit iPhone in primo piano, Immersive Mode, volume, audio indipendente, tutte le coppie e nuova estrazione PCM. Rendering 16/48 kHz paralleli e cache vincolata a manifest, sorgenti e codice evitano di ripetere lavoro invariato. I run superati annullati non sono considerati prove riuscite. Stato puntuale dei workflow nel JSON di verifica allegato.
 
 Nessuna equivalenza a Spotify Mixa è certificata. Nessun merge o rilascio pubblico.

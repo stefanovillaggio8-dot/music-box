@@ -153,12 +153,18 @@ const server=http.createServer(async(req,res)=>{
      };
     },actualPlan);
     await shell.click('#silent-handoff');
-    await shell.waitForFunction(()=>MusicBoxCompositeMix.active(),{timeout:22000});
+    await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});
+    const muteDuringOverlap=await shell.evaluate(()=>{
+     const button=document.querySelector('#btnVolIcon');button.click();
+     const muted=MusicBoxBridge.volume()===0&&MusicBoxBridge.audio().muted;
+     button.click();return {muted,unmuteKeptCommonOwnership:MusicBoxBridge.volume()>0&&MusicBoxBridge.audio().muted};
+    });
+    assert.equal(muteDuringOverlap.muted,true);assert.equal(muteDuringOverlap.unmuteKeptCommonOwnership,true);
     await shell.waitForFunction(id=>MusicBoxBridge.currentId()===id&&!MusicBoxCompositeMix.active()&&!MusicBoxBridge.audio().muted,actualPlan.toId,{timeout:25000});
     const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio())}));
     assert.equal(plannedPlayback.handoffs,1);assert.equal(plannedPlayback.paused,false);assert.equal(plannedPlayback.sourceMatches,true);
     await appContext.close();
-    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,physicalIPhone:false});
+    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,muteDuringOverlap,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));
