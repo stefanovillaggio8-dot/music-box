@@ -188,7 +188,11 @@ function estimateRows(rows){
      /^\[[^\]\n]+\]$/u.test(text))return row;
   const following=number(rows[index+1]?.t);
   const gap=following!=null&&following>start?following-start:null;
-  if(gap!==null&&gap<.85)return row;
+  // A line timestamp alone cannot locate every word in rapid rap.
+  // Do not animate invented syllables at 3-6 words/second, or guess the
+  // end of the final phrase where no following LRC cue exists. Such rows
+  // remain honestly line-synchronised until audio-verified ASR arrives.
+  if(gap===null||gap<1.15||gap>12||tokens.length/gap>2.55)return row;
   const weights=tokens.map(token=>{
    const letters=token.replace(/[^\p{L}\p{N}]/gu,"").length;
    return clamp(letters/4+.35,.7,2.5);
