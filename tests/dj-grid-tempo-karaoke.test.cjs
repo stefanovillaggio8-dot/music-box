@@ -78,3 +78,18 @@ test("real index quiet rhythmic opening does not get mistaken for silence",()=>{
  assert.equal(engine.lowEnergyPostludeLeadIn({...vocalSafe,lastLyricAt:242},
   quiet,outgoing.duration),null,"late vocal activity must still veto the overlap");
 });
+
+test("karaoke refuses false word timestamps assembled across repeated ASR hallucinations",()=>{
+ const row=[{t:4,text:"ciao bella come stai oggi"}];
+ const observed=[
+  ["ciao",4.2],["eh",4.4],["bella",4.6],
+  ["uh",4.8],["come",5.0],["mah",5.2],
+  ["stai",5.4],["oh",5.6],["oggi",5.8]
+ ].map(([text,t])=>({text,timestamp:[t,t+.13]}));
+ assert.equal(align(row,observed,0,28).length,0,
+  "four unmatched ASR words cannot certify an exact five-word lyric");
+ const exact=observed.filter(x=>!["eh","uh","mah","oh"].includes(x.text));
+ const accepted=align(row,exact,0,28);
+ assert.equal(accepted.length,1,"genuinely contiguous audio words remain accepted");
+ assert.equal(accepted[0].words.length,5);
+});
