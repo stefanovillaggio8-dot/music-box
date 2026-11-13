@@ -34,3 +34,41 @@ test('full beatmix requires source identity, independent rhythm and vocal safety
  const wrong=structuredClone(b);wrong.pcmTransition.intro.harmony.forEach(x=>x.notes=x.notes.map((v,i,all)=>all[(i+2)%12]));
  assert.equal(engine.measuredFullBeatBridge(a,wrong,a.duration),null);
 });
+
+test('compact plans preserve the PCM certificate while rechecking live recording and vocals',()=>{
+ const {a,b}=fixture(),cue=engine.measuredFullBeatBridge(a,b,a.duration);
+ a.pcmBeatPlans={[b.sha]:{version:1,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue}};
+ delete a.pcmTransition;delete b.pcmTransition;
+ assert.ok(engine.measuredFullBeatBridge(a,b,a.duration));
+ assert.equal(engine.desktopBeatPairCertified(a,b,cue),true);
+ assert.equal(engine.measuredFullBeatBridge(a,{...b,sha:'different'},a.duration),null);
+ assert.equal(engine.measuredFullBeatBridge(a,{...b,duration:181},a.duration),null);
+ assert.equal(engine.measuredFullBeatBridge({...a,lastVoiceAt:cue.begin},b,a.duration),null);
+ assert.equal(engine.measuredFullBeatBridge(a,{...b,firstVoiceAt:cue.fade-.1},a.duration),null);
+ assert.equal(engine.desktopBeatPairCertified(a,b,{...cue,entry:cue.entry+.1}),false);
+});
+test('an exact PCM window cannot be rescheduled one beat later',()=>{
+ const {a,b}=fixture(),cue=engine.measuredFullBeatBridge(a,b,a.duration);
+ assert.equal(engine.desktopBeatStartDelay(cue,cue.begin),0);
+ assert.equal(engine.desktopBeatStartDelay(cue,cue.begin+.5),null);
+ assert.ok(Math.abs(engine.desktopBeatStartDelay(cue,cue.begin-.1)-.1)<1e-9);
+ const code=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
+ const helpers=code.slice(code.indexOf('function djFullBeatClockError('),code.indexOf('function djSoftFocusEnvelope('));
+ const error=new Function(helpers+'return djFullBeatClockError;')();
+ assert.ok(error(cue,cue.begin+1,cue.entry+cue.tempo)<1e-8);
+ assert.ok(error(cue,cue.begin+1.5,cue.entry+cue.tempo)>.49);
+});
+
+test('full-band original percussion intro does not pretend to have matching chords',()=>{
+ const {a,b}=fixture();
+ b.pcmTransition.version=2;b.pcmTransition.method='original-pcm-hpss-onset-chroma-20ms-v2';
+ for(const row of b.pcmTransition.intro.harmony){row.notes=Array(12).fill(1/12);row.tonalRatio=.03;row.rms=.15;}
+ const p=engine.measuredFullBeatBridge(a,b,a.duration);
+ assert.ok(p);assert.equal(p.percussiveIntro,true);assert.equal(p.harmonicScore,null);
+ assert.equal(p.drumOnlyUnderlay,undefined,'the original incoming recording plays at full bandwidth');
+ assert.equal(engine.desktopBeatPairCertified(a,b,p),true);
+ const pitched=structuredClone(b);pitched.pcmTransition.intro.harmony.forEach(r=>r.tonalRatio=.4);
+ assert.equal(engine.measuredFullBeatBridge(a,pitched,a.duration),null);
+ const quiet=structuredClone(b);quiet.pcmTransition.intro.harmony.forEach(r=>r.rms=0);
+ assert.equal(engine.measuredFullBeatBridge(a,quiet,a.duration),null);
+});

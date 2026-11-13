@@ -32,6 +32,7 @@ jobs:
           OMP_NUM_THREADS: '1'
         run: python tools/dj-transition-features.py --shard=${{ matrix.shard }}/12 --workers=2 --output=results/pcm-${{ matrix.shard }}.json
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: pcm-transition-${{ matrix.shard }}
           path: results/pcm-${{ matrix.shard }}.json

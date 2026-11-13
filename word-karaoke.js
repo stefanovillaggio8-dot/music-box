@@ -25,7 +25,7 @@ function timeParts(m){
  return seconds<60?number(minutes*60+seconds+fraction):null;
 }
 function validWords(raw,lineText,lineStart,lineEnd){
- if(!Array.isArray(raw)||raw.length<2||raw.length>80)return [];
+ if(!Array.isArray(raw)||raw.length<1||raw.length>80)return [];
  const words=[];let prior=-1;
  for(const w of raw){
   if(!w||typeof w!=="object")return [];
@@ -33,6 +33,7 @@ function validWords(raw,lineText,lineStart,lineEnd){
   const end=w.end==null?null:number(w.end);
   if(t==null||end!=null&&end<t||t+0.3<lineStart||
     lineEnd!=null&&t>lineEnd+0.3||t<prior||!text||text.length>140)return [];
+  if(raw.length===1&&(end==null||end<=t))return [];
   words.push({t:+t.toFixed(3),text,...(end!=null?{end:+end.toFixed(3)}:{})});
   prior=t;
  }
@@ -172,12 +173,15 @@ function parseEnhancedLrc(value){
  }
  return result;
 }
+function hasWordTiming(row){
+ return !!row&&number(row.t)!=null&&validWords(row.words,row.text,row.t,row.end??null).length>0;
+}
 function fromRecord(entry){
  if(!entry||typeof entry!=="object")return [];
  const full=entry.lyricsfile?parseLyricsfile(entry.lyricsfile):[];
  const fromEnhanced=entry.syncedLyrics?parseEnhancedLrc(entry.syncedLyrics):[];
- const words=full.filter(row=>row.words?.length>=2).length;
- const enhanced=fromEnhanced.filter(row=>row.words?.length>=2).length;
+ const words=full.filter(hasWordTiming).length;
+ const enhanced=fromEnhanced.filter(hasWordTiming).length;
  return words>0&&words>=enhanced?full:enhanced>0?fromEnhanced:[];
 }
 function toLrc(rows){
@@ -192,7 +196,7 @@ function toLrc(rows){
 function estimateRows(rows){
  if(!Array.isArray(rows))return [];
  return rows.map((row,index)=>{
-  if(!row||Array.isArray(row.words)&&row.words.length>=2)return row;
+  if(!row||hasWordTiming(row))return row;
   const start=number(row.t),text=String(row.text||"").trim();
   const tokens=text.match(/\S+\s*/gu)||[];
   if(start==null||tokens.length<2||tokens.length>24||text.length>220||
@@ -224,7 +228,7 @@ function estimateRows(rows){
 }
 function spanWords(document,row,container){
  const words=validWords(row.words,row.text,row.t,row.end??null);
- if(words.length<2){container.textContent=row.text;return []}
+ if(!words.length){container.textContent=row.text;return []}
  const elements=[];
  for(const w of words){
   const el=document.createElement("span");
@@ -260,7 +264,7 @@ function timingCoverage(rows){
  for(const row of rows){
   if(!row||!String(row.text||"").trim()||number(row.t)==null)continue;
   result.total++;
-  const timed=validWords(row.words,row.text,number(row.t),row.end==null?null:number(row.end)).length>=2;
+  const timed=validWords(row.words,row.text,number(row.t),row.end==null?null:number(row.end)).length>=1;
   if(!timed){result.lineOnly++;continue;}
   if(row.estimated===true){result.estimated++;continue;}
   if(number(row.sourceT)!=null)
@@ -272,6 +276,6 @@ function timingCoverage(rows){
  return result;
 }
 root.MusicBoxWordKaraoke={
- parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage
+ parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage,hasWordTiming
 };
 })(typeof window!=="undefined"?window:globalThis);

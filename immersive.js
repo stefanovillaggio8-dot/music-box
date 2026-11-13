@@ -89,7 +89,7 @@ function renderLyrics(force){
        :coverage?.estimated?"PAROLE STIMATE · NON VERIFICATE":
         "SINCRONIZZATO PER FRASI"
      :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
-   if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<2))
+   if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<1))
      b?.requestWordLyrics?.(id)?.catch?.(()=>{});
    karaoke.scrollTop=0;
   }

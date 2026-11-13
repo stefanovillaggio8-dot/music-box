@@ -4,7 +4,7 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=4,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const VERSION=5,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
@@ -57,7 +57,8 @@ function recognizedWords(raw,offset=0){
   // Whisper sometimes emits [null, null] for an unaligned word.
   // Number(null) is zero, which used to invent a word at song start.
   if(!Array.isArray(ts)||ts.length!==2||
-     ts.some(value=>value===null||value===undefined||value===""))continue;
+     ts.some(value=>typeof value!=="number"&&typeof value!=="string"||
+       typeof value==="string"&&!value.trim()))continue;
   const t=Number(ts[0]),end=Number(ts[1]);
   const text=String(part?.text||"").trim();
   if(!text||text.length>60||text.split(/\s+/).length!==1||
@@ -70,6 +71,11 @@ function recognizedWords(raw,offset=0){
 }
 // Only all-exact, ordered word matches can earn timing. A repeated chorus
 // at the wrong position cannot drift more than 850ms from its LRC cue.
+function hasWordTiming(row){
+ return root.MusicBoxWordKaraoke?.hasWordTiming?.(row)??
+  (row?.words?.length>=2||row?.words?.length===1&&
+   Number.isFinite(row.words[0].end)&&row.words[0].end>row.words[0].t);
+}
 function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
  if(!Array.isArray(lines)||!Array.isArray(transcribed))return [];
  const words=recognizedWords(transcribed,offset);
@@ -77,13 +83,15 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
  const results=[],end=offset+duration;
  for(let j=0;j<lines.length;j++){
   const row=lines[j],start=Number(row?.t),next=Number(lines[j+1]?.t);
-  if(!Number.isFinite(start)||start<offset+.15||start>end-1.1||
-     row?.words?.length>=2)continue;
+  if(row?.t==null||!Number.isFinite(start)||
+     start<offset+.15&&!(offset===0&&start===0)||start>end-1.1||
+     hasWordTiming(row))continue;
   const limit=Math.min(end-.04,Number.isFinite(next)?next-.05:start+10,start+11);
   if(limit-start<.45)continue;
   const tokens=wordTokens(row.text),keys=tokens.map(normalized);
-  if(tokens.length<3||tokens.length>22||keys.some(k=>!k)||
-     new Set(keys).size<2||String(row.text||"").length>220)continue;
+  const shortPhrase=tokens.length<=2;
+  if(tokens.length<1||tokens.length>22||keys.some(k=>!k)||
+     tokens.length>1&&new Set(keys).size<2||String(row.text||"").length>220)continue;
   const candidates=words.filter(w=>w.t>=start-.45&&w.t<=limit+.1);
   if(candidates.length<tokens.length||candidates.length>34)continue;
   let best=null;
@@ -107,9 +115,9 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
    // Long distinctive phrases may start after an early LRC cue;
    // short or repeated hooks retain the tight 850ms / 1700ms gate.
    const extended=keys.length>=7&&new Set(keys).size>=5;
-   const maximumLate=extended?2.70:tokens.length>=4?1.70:.85;
+   const maximumLate=shortPhrase?.30:extended?2.70:tokens.length>=4?1.70:.85;
    const firstMatch=measuredWordAt(k,keys[0]);
-   if(!firstMatch||lag<-.45||lag>maximumLate)continue;
+   if(!firstMatch||lag<(shortPhrase?-.20:-.45)||lag>maximumLate)continue;
    const found=[firstMatch.word];let cursor=k+firstMatch.advance;
    let unrelatedAsrWords=0;
    for(let w=1;w<tokens.length;w++){
@@ -118,7 +126,7 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
     let hit=null;
     for(let n=cursor;n<Math.min(candidates.length,cursor+3);n++){
      const matched=measuredWordAt(n,keys[w]);
-     if(matched&&unrelatedAsrWords+n-cursor<=2){
+     if(matched&&unrelatedAsrWords+n-cursor<=(shortPhrase?0:2)){
       unrelatedAsrWords+=n-cursor;
       hit={word:matched.word,next:n+matched.advance};break;
      }
@@ -126,7 +134,8 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
     if(!hit)break;
     found.push(hit.word);cursor=hit.next;
    }
-   if(found.length!==tokens.length||found.some((w,i)=>i>0&&w.t<found[i-1].t))
+   if(found.length!==tokens.length||shortPhrase&&found.some(w=>w.end-w.t<.04)||
+      found.some((w,i)=>i>0&&w.t<found[i-1].t))
     continue;
    if(found[found.length-1].t>=limit+.16||
       found[found.length-1].end>limit+.7)continue;
@@ -151,7 +160,7 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   const displayStart=measuredStart>=start-.45&&
    measuredStart<=start+maxMeasuredOffset?measuredStart:start;
   results.push({t:+displayStart.toFixed(3),sourceT:+start.toFixed(3),
-   text:String(row.text).trim(),words:parts,
+   text:String(row.text).trim(),words:parts,end:parts[parts.length-1].end,
    alignedFromAudio:true});
  }
  return results;
@@ -202,6 +211,7 @@ function canRun(){
  return true;
 }
 let worker=null,sequence=0,pending=new Map();
+let alignmentEpoch=0,downloadController=null;
 function stopWorker(reason){
  const old=worker;worker=null;
  for(const req of pending.values()){
@@ -240,7 +250,7 @@ function preferredWindows(lines,duration){
  const blocks=new Set();
  for(const row of Array.isArray(lines)?lines:[]){
   const t=Number(row?.t);
-  if(row?.words?.length>=2||!Number.isFinite(t)||t<0)continue;
+  if(hasWordTiming(row)||!Number.isFinite(t)||t<0)continue;
   const base=Math.floor(Math.max(0,t-.8)/STEP)*STEP;
   // A phrase near the end of a 28-second clip may be cut off even
   // when its first word is inside it. Add a window with five seconds
@@ -261,9 +271,9 @@ function preferredWindows(lines,duration){
   let eligible=0;
   for(const row of Array.isArray(lines)?lines:[]){
    const t=Number(row?.t);
-   if(row?.words?.length>=2||!Number.isFinite(t)||
-      t<at+.15||t>Math.min(duration-1.1,at+WINDOW-4.5)||
-      (String(row?.text||"").match(/\S+/gu)||[]).length<3)continue;
+   if(hasWordTiming(row)||!Number.isFinite(t)||
+      t<at+.15&&!(at===0&&t===0)||t>Math.min(duration-1.1,at+WINDOW-4.5)||
+      (String(row?.text||"").match(/\S+/gu)||[]).length<1)continue;
    eligible++;
   }
   coverage.set(at,eligible);
@@ -276,15 +286,16 @@ function preferredWindows(lines,duration){
    coverage.get(b)-coverage.get(a)||da-db;
  });
 }
-async function analyze(id){
+async function analyze(id,epoch=alignmentEpoch){
  if(!canRun())return false;
  const bridge=window.MusicBoxBridge;
+ if(epoch!==alignmentEpoch)return false;
  const profile=String(bridge?.profile?.()||"");
  const sessionId=profile+"|"+id;
  if(!bridge||bridge.currentId?.()!==id||completedInSession.has(sessionId))return false;
  const rows=(bridge.lyricsData?.()?.synced||[]).map(row=>
   row?.estimated?{t:row.t,text:row.text}:row);
- if(rows.length<3||rows.every(row=>row.words?.length>=2))return false;
+ if(rows.length<3||rows.every(hasWordTiming))return false;
  const language=languageFromLyrics(rows);
  if(!language){
   uncertainLanguageLyrics.set(sessionId,lyricSignature(rows));
@@ -317,20 +328,24 @@ async function analyze(id){
  }
  setStatus("Analisi voce locale: preparo il brano…");
  let ctx;
+ const controller=new AbortController();downloadController=controller;
  try{
-  const response=await fetch(absolute.href,{cache:"force-cache"});
+  const response=await fetch(absolute.href,{cache:"force-cache",signal:controller.signal});
+  if(epoch!==alignmentEpoch)return false;
   if(!response.ok)throw Error("Music download unavailable");
   const declared=Number(response.headers.get("content-length"));
   if(declared>limit)throw Error("Track too large for safe analysis");
   const blob=await response.blob();
   if(blob.size>limit)throw Error("Track too large");
   const bytes=await blob.arrayBuffer();
+  if(epoch!==alignmentEpoch)return false;
   // Offline context does not claim the active iPhone audio session.
   // Never start a second live AudioContext while Music Box is playing.
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
   if(!Offline)throw Error("Offline audio decoder unavailable");
   ctx=new Offline(1,FS,FS);
   const decoded=await ctx.decodeAudioData(bytes);
+  if(epoch!==alignmentEpoch)return false;
   const duration=Math.min(Number(decoded.duration)||0,3600);
   if(!Number.isFinite(duration)||duration<4||
      duration>(isPhone?300:600))throw Error("Track too long for safe analysis");
@@ -341,7 +356,7 @@ async function analyze(id){
   const budget=isPhone?1:3;
   let saved=0,scanned=0;
   for(const at of windows){
-   if(scanned>=budget||active.has(sessionId)===false||document.hidden||
+   if(epoch!==alignmentEpoch||scanned>=budget||active.has(sessionId)===false||document.hidden||
      bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
    const key=keyFor(at);
    if(!selected(at))continue;
@@ -350,7 +365,7 @@ async function analyze(id){
    setStatus("Analizzo la voce: "+Math.round(at)+"–"+
      Math.round(Math.min(duration,at+WINDOW))+" s…");
    const chunks=await requestWorker(sample,language);
-   if(active.has(sessionId)===false||bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
+   if(epoch!==alignmentEpoch||active.has(sessionId)===false||bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
    const aligned=alignWindow(rows,chunks,at,Math.min(WINDOW,duration-at));
    sessionStorage.setItem(key,String(Date.now()));
    if(!aligned.length)continue;
@@ -369,17 +384,28 @@ async function analyze(id){
   if(!saved&&scanned)setStatus("Voce troppo ambigua: mantengo i tempi originali");
   return saved>0;
  }catch(e){
+  if(epoch!==alignmentEpoch||controller.signal.aborted)return false;
   sessionStorage.setItem(failureKey,String(Date.now()));
   setStatus("Analisi audio non disponibile: karaoke originale conservato");
   return false;
  }finally{
   try{await ctx?.close?.()}catch(_){}
-  if(isPhone&&worker&&!pending.size)stopWorker("Mobile analysis complete");
+  if(downloadController===controller)downloadController=null;
+  if(epoch===alignmentEpoch&&isPhone&&worker&&!pending.size)stopWorker("Mobile analysis complete");
  }
+}
+function cancel(){
+ alignmentEpoch++;
+ for(const key of active)attempts.delete(key);
+ active.clear();
+ try{downloadController?.abort()}catch(_){}
+ downloadController=null;
+ stopWorker("Alignment superseded");
 }
 function request(id){
  id=String(id||window.MusicBoxBridge?.currentId?.()||"");
  const sessionId=String(window.MusicBoxBridge?.profile?.()||"")+"|"+id;
+ if(active.size&&!active.has(sessionId))cancel();
  if(!id||active.size||completedInSession.has(sessionId)||!canRun())return false;
  const signature=lyricSignature(window.MusicBoxBridge?.lyricsData?.()?.synced);
  if(uncertainLanguageLyrics.has(sessionId)&&
@@ -388,15 +414,16 @@ function request(id){
  if(now-last<15000)return false;
  attempts.set(sessionId,now);
  active.add(sessionId);
+ const epoch=alignmentEpoch;
  // Do not hold up UI events or voice playback. Use idle time if available.
  const start=()=>{
-  if(!active.has(sessionId))return;
-  analyze(id).finally(()=>active.delete(sessionId));
+  if(epoch!==alignmentEpoch||!active.has(sessionId))return;
+  analyze(id,epoch).finally(()=>{if(epoch===alignmentEpoch)active.delete(sessionId)});
  };
  if(typeof requestIdleCallback==="function")
   requestIdleCallback(start,{timeout:2500});
  else setTimeout(start,1600);
  return true;
 }
-root.MusicBoxAudioAlign={request,alignWindow,recognizedWords,pcmSlice,preferredWindows,languageFromLyrics};
+root.MusicBoxAudioAlign={request,cancel,alignWindow,recognizedWords,pcmSlice,preferredWindows,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);

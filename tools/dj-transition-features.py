@@ -2,13 +2,13 @@
 """SHA-bound PCM features for the complete audible transition, never synthetic beats.
 Adds data to existing entries; keeps every previous measurement unchanged.
 """
-import argparse, concurrent.futures, hashlib, json, os, pathlib, shutil, subprocess, tempfile, urllib.request
+import argparse, concurrent.futures, hashlib, json, os, pathlib, shutil, subprocess, tempfile, time, urllib.request
 import librosa
 import numpy as np
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 SR=11025
 HOP=128
-VERSION=1
+VERSION=2
 
 def source_url(key):
     origin,path=key.split('/',1)
@@ -16,7 +16,8 @@ def source_url(key):
     return 'https://raw.githubusercontent.com/stefanovillaggio8-dot/'+base+'/'+path
 
 def section(samples,start,bpm):
-    onset=librosa.onset.onset_strength(y=samples,sr=SR,hop_length=HOP)
+    harmonic,percussive=librosa.effects.hpss(samples,margin=(2.,2.))
+    onset=librosa.onset.onset_strength(y=percussive,sr=SR,hop_length=HOP)
     _,frames=librosa.beat.beat_track(onset_envelope=onset,sr=SR,hop_length=HOP,bpm=bpm,trim=True)
     times=librosa.frames_to_time(np.arange(len(onset)),sr=SR,hop_length=HOP)
     # Refine each tracked pulse to an observed attack, rather than emitting
@@ -31,13 +32,16 @@ def section(samples,start,bpm):
             if not beats or t-beats[-1]>.20:beats.append(t)
     grid=np.arange(0,len(samples)/SR,.02)
     contour=np.maximum(0,(np.interp(grid,times,onset)-floor)/max(.01,scale))
-    matrix=librosa.feature.chroma_stft(y=samples,sr=SR,hop_length=HOP,n_fft=2048)
+    matrix=librosa.feature.chroma_stft(y=harmonic,sr=SR,hop_length=HOP,n_fft=2048)
     notes=[]
     for at in np.arange(.5,len(samples)/SR-.5,.5):
         mask=(times>=at-.5)&(times<at+.5)
         chroma=matrix[:,mask].mean(axis=1)
         chroma=chroma/max(1e-9,float(chroma.sum()))
-        notes.append({'t':round(start+float(at),3),'notes':[round(float(v),5) for v in chroma]})
+        lo=max(0,round((at-.5)*SR));hi=min(len(samples),round((at+.5)*SR))
+        total=float(np.mean(samples[lo:hi]**2))
+        tonal=float(np.mean(harmonic[lo:hi]**2))
+        notes.append({'t':round(start+float(at),3),'tonalRatio':round(min(1.,tonal/max(1e-9,total)),4),'rms':round(float(np.sqrt(total)),5),'notes':[round(float(v),5) for v in chroma]})
     return {'start':round(start,4),'end':round(start+len(samples)/SR,4),'step':.02,
             'onset':[round(float(min(4,v)),3) for v in contour], 'beats':beats,'harmony':notes}
 
@@ -45,7 +49,13 @@ def analyze(key,entry,cache):
     dest=cache/(entry['sha']+'.mp3')
     if not dest.exists():
         request=urllib.request.Request(source_url(key),headers={'User-Agent':'MusicBox-PCM-Transition/1.0'})
-        with urllib.request.urlopen(request,timeout=60) as response:content=response.read(32*1024*1024+1)
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(request,timeout=60) as response:content=response.read(32*1024*1024+1)
+                break
+            except (TimeoutError, OSError):
+                if attempt==2:raise
+                time.sleep(1+attempt)
         if len(content)>32*1024*1024:raise ValueError('Audio too large: '+key)
         digest=hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()
         if digest!=entry['sha']:raise ValueError('Source SHA changed: '+key)
@@ -60,7 +70,7 @@ def analyze(key,entry,cache):
     duration=len(samples)/SR
     if abs(duration-entry['duration'])>1.5:raise ValueError('Duration mismatch: '+key)
     tail=max(0.,entry['last']-20)
-    result={'version':VERSION,'sha':entry['sha'],'method':'original-pcm-onset-chroma-20ms',
+    result={'version':VERSION,'sha':entry['sha'],'method':'original-pcm-hpss-onset-chroma-20ms-v2',
             'intro':section(samples[:min(len(samples),20*SR)],0,entry['bpm']),
             'outro':section(samples[round(tail*SR):],tail,entry['bpm'])}
     return key,result

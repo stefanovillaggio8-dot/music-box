@@ -386,12 +386,15 @@ function tempoFreeReleaseBridge(a,b,dur){
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
  if(plan?.measuredFullBeat===true)
-  return !!pcmTransitionSection(ending,"outro")&&plan.kind==="beat"&&
+  return (!!ending?.pcmBeatPlans?.[plan.targetSha]||!!pcmTransitionSection(ending,"outro"))&&
+   plan.sourceSha===ending.sha&&(plan.percussiveIntro||Math.abs(plan.tempo-1)<=.002)&&plan.kind==="beat"&&
    plan.quietCertified===true&&plan.preserveTail===true&&
    plan.measuredBeatCount>=8&&plan.beatPulseAgreement>=.90&&
    plan.measuredPlacementError<=.040&&plan.grooveScore>=.36&&
    plan.fullOnsetFirst>=.22&&plan.fullOnsetSecond>=.22&&
-   plan.harmonicScore>=.78&&plan.harmonicWeakest>=.60&&
+   (plan.percussiveIntro?plan.introPcmVersion===2&&plan.introTonalRatioMax<=.12&&
+    plan.introTonalPeakMax<=.23&&plan.introMeasuredRmsMin>=.005&&plan.introTonalFrames>=6:
+    plan.harmonicScore>=.78&&plan.harmonicWeakest>=.60)&&
    plan.fade>=4.5&&plan.fade<=8&&
    Number.isFinite(lastLyricAt)&&lastLyricAt<=plan.begin-5.5;
 
@@ -966,6 +969,11 @@ function djBeatPhaseError(p,outgoingTime,incomingTime){
  const incoming=(incomingTime-(Number(p.entry)||0)-p.nextBeat)/speed;
  const phase=((outgoing-incoming)%period+period)%period;
  return Math.min(phase,period-phase);
+}
+function djFullBeatClockError(p,outgoingTime,incomingTime){
+ if(!p||![p.begin,p.entry,p.tempo,outgoingTime,incomingTime].every(Number.isFinite)||
+    p.tempo<=0)return Infinity;
+ return Math.abs(outgoingTime-p.begin-(incomingTime-p.entry)/p.tempo);
 }
 function djSoftFocusEnvelope(progress){
  // Only verified quiet tails: the next actual intro emerges early.
@@ -2452,8 +2460,9 @@ function djMeasuredBarAccents(outro,intro,bpm,offsetSeconds){
 // A similar four-second fingerprint or global BPM is not this certificate.
 function pcmTransitionSection(track,name){
  const data=track?.pcmTransition,part=data?.[name];
- if(data?.version!==1||data.sha!==track.sha||
-    data.method!=="original-pcm-onset-chroma-20ms"||!part||
+ if(!((data?.version===1&&data.method==="original-pcm-onset-chroma-20ms")||
+      (data?.version===2&&data.method==="original-pcm-hpss-onset-chroma-20ms-v2"))||
+    data.sha!==track.sha||!part||
     !Number.isFinite(part.start)||!Number.isFinite(part.end)||
     part.end<=part.start||part.step!==.02||
     !Array.isArray(part.onset)||part.onset.length<150||part.onset.length>5000||
@@ -2509,6 +2518,22 @@ function pcmFullBeatFit(outro,intro,begin,entry,rate,fade){
  return {beats:errors.length,ratio,rms,onset,firstHalf,secondHalf};
 }
 function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
+ const frames=intro.harmony.filter(row=>Number.isFinite(row?.t)&&
+  row.t>=entry+.25&&row.t<=entry+fade*rate-.25);
+ // An original percussive intro need not contain the SAME chord as the
+ // outgoing arrangement. Require measured HPSS tonal power <=12% in
+ // EVERY half-second frame and no dominant pitched note, not flat or
+ // missing chroma masquerading as a harmonic match.
+ const percussiveIntro=frames.length>=Math.floor(fade*rate*2)-2&&
+  frames.length>=6&&frames.every(row=>
+   Number.isFinite(row.tonalRatio)&&row.tonalRatio>=0&&row.tonalRatio<=.12&&
+   Number.isFinite(row.rms)&&row.rms>=.005&&
+   Array.isArray(row.notes)&&row.notes.length===12&&
+   row.notes.every(Number.isFinite)&&Math.max(...row.notes)<=.23);
+ if(percussiveIntro)return {percussiveIntro:true,average:null,weakest:null,
+  tonalRatioMax:Math.max(...frames.map(row=>row.tonalRatio)),
+  tonalPeakMax:Math.max(...frames.map(row=>Math.max(...row.notes))),
+  measuredRmsMin:Math.min(...frames.map(row=>row.rms)),frames:frames.length};
  const closest=(part,time)=>{
   let winner=null,distance=Infinity;
   for(const row of part.harmony){
@@ -2529,19 +2554,80 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
   weakest=Math.min(...scores);
  return average>=.78&&weakest>=.60&&shared>=3?{average,weakest}:null;
 }
+// Offline pair plans contain only the validated cue and evidence summary.
+// The large PCM contours stay in audit artifacts, never in the PWA index.
+function indexedFullBeatBridge(a,b,dur){
+ const record=a?.pcmBeatPlans?.[b?.sha],p=record?.cue;
+ if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+    !p||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
+    Math.abs(record.sourceDuration-a.duration)>.1||
+    Math.abs(record.nextDuration-b.duration)>.1||
+    !beatBearingIntro(b,.39)||p.kind!=="beat"||p.measuredFullBeat!==true||
+    p.quietCertified!==true||p.preserveTail!==true||
+    ![p.begin,p.end,p.fade,p.entry,p.tempo,p.gain,p.beatAnchor,p.nextBeat,
+      p.beatPeriod,p.measuredBeatCount,p.beatPulseAgreement,
+      p.measuredPlacementError,p.grooveScore,p.fullOnsetFirst,
+      p.fullOnsetSecond].every(Number.isFinite)||
+    p.fade<4.5||p.fade>8||p.begin<26||
+    Math.abs(p.end-p.begin-p.fade)>.001||
+    Math.abs(p.end-Math.min(dur-.035,a.last+.05))>.01||
+    p.entry!==musicalIntroEntry(b)||p.tempo<.95||p.tempo>1.05||
+    !Number.isFinite(p.nominalTempo)||Math.abs(p.nominalTempo-a.bpm/b.bpm)>.0001||
+    Math.abs(p.tempo/p.nominalTempo-1)>.025||p.gain!==1||
+    Math.abs(p.beatPeriod-60/a.bpm)>.0001||
+    p.measuredBeatCount<8||p.beatPulseAgreement<.90||
+    p.measuredPlacementError<0||p.measuredPlacementError>.040||
+    p.grooveScore<.36||p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)return null;
+ if(p.percussiveIntro===true){
+  if(p.introPcmVersion!==2||
+     ![p.introTonalRatioMax,p.introTonalPeakMax,p.introMeasuredRmsMin,p.introTonalFrames].every(Number.isFinite)||
+     p.introTonalRatioMax<0||p.introTonalRatioMax>.12||p.introTonalPeakMax>.23||
+     p.introMeasuredRmsMin<.005||p.introTonalFrames<6)return null;
+ }else if(!Number.isFinite(p.harmonicScore)||!Number.isFinite(p.harmonicWeakest)||
+   p.harmonicScore<.78||p.harmonicWeakest<.60)return null;
+ const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ const safeLyrics=Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=p.begin-5.5,
+  safeVoice=a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+   a.voiceScannedEnd>=a.last-.75&&Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt<=p.begin-5.5;
+ if(!Number.isFinite(firstVoice)||(firstVoice-p.entry)/Math.max(1,p.tempo)<p.fade+.65||
+    (!safeLyrics&&!safeVoice))return null;
+ // A newly supplied voice result can veto an older lyric-only plan.
+ if(Number.isFinite(a.lastVoiceAt)&&a.lastVoiceAt>p.begin-5.5)return null;
+ return {...p,sourceSha:a.sha,targetSha:b.sha};
+}
+function pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal){
+ const a=outro.beats.filter(t=>t>=oldBeat).slice(0,16),
+  b=intro.beats.filter(t=>t>=nextBeat).slice(0,16),n=Math.min(a.length,b.length);
+ if(n<8)return null;
+ let xy=0,xx=0;
+ for(let i=1;i<n;i++){
+  const x=a[i]-oldBeat,y=b[i]-nextBeat;
+  xy+=x*y;xx+=x*x;
+ }
+ const rate=xx>0?xy/xx:0;
+ // Fit real local observations. The full-window fit below independently
+ // rejects missing pulses, changing tempo and any poor residual phase.
+ return rate>=.95&&rate<=1.05&&Math.abs(rate/nominal-1)<=.025?rate:null;
+}
 function measuredFullBeatBridge(a,b,dur){
+ if(!a?.pcmTransition||!b?.pcmTransition)return indexedFullBeatBridge(a,b,dur);
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
     Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
     a.last>dur+.2||!beatBearingIntro(b,.39)||
     !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm))return null;
- const rate=a.bpm/b.bpm;
- if(rate<.97||rate>1.03)return null;
+ const nominal=a.bpm/b.bpm;
+ if(nominal<.93||nominal>1.07)return null;
+ const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+    Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ if(!Number.isFinite(firstVoice)||
+    !(Number.isFinite(a.lastLyricAt)||a.voiceModel))return null;
+ const entry=musicalIntroEntry(b),end=Math.min(dur-.035,a.last+.05);
+ if(!a.voiceModel&&a.lastLyricAt>end-10)return null;
  const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
  if(!outro||!intro)return null;
- const entry=musicalIntroEntry(b),end=Math.min(dur-.035,a.last+.05),
-  firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
-    Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
  // Missing vocal data never certifies a full-band instrumental intro.
  if(!Number.isFinite(firstVoice)||entry<intro.start||end>outro.end)return null;
  const key=camelotMatch(a,b);
@@ -2551,6 +2637,9 @@ function measuredFullBeatBridge(a,b,dur){
   if(oldBeat<end-8.0||oldBeat>end-3.0)continue;
   for(const nextBeat of intro.beats){
    if(nextBeat<entry||nextBeat>entry+1.1)continue;
+   const fitted=pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal);
+   const rates=[...new Set([nominal,fitted].filter(r=>Number.isFinite(r)&&r>=.95&&r<=1.05))];
+   for(const rate of rates){
    const begin=oldBeat-(nextBeat-entry)/rate,fade=end-begin;
    if(begin<26||fade<4.5||fade>8||begin<outro.start||
       entry+fade*Math.max(1,rate)>intro.end||
@@ -2564,11 +2653,11 @@ function measuredFullBeatBridge(a,b,dur){
    if(!fit)continue;
    const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade);
    if(!harmony)continue;
-   const quality=.45*fit.onset+.35*harmony.average+.20*fit.ratio;
-   const cue={kind:"beat",measuredFullBeat:true,measuredBeatBridge:true,
+   const quality=.45*fit.onset+.35*(harmony.percussiveIntro?fit.ratio:harmony.average)+.20*fit.ratio;
+   const cue={kind:"beat",measuredFullBeat:true,sourceSha:a.sha,targetSha:b.sha,measuredBeatBridge:true,
     measuredBeatPlacement:true,measuredOnsetGrid:true,
     begin,end,fade,entry,tempo:rate,gain:1,
-    beatAnchor:oldBeat,nextBeat:nextBeat-entry,beatPeriod:60/a.bpm,
+    beatAnchor:oldBeat,nextBeat:nextBeat-entry,beatPeriod:60/a.bpm,nominalTempo:nominal,
     quietCertified:true,preserveTail:true,softTailTrim:false,
     silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
     trailing:Math.max(0,dur-end),safeOutroAt:begin,
@@ -2576,8 +2665,14 @@ function measuredFullBeatBridge(a,b,dur){
     measuredBeatCount:fit.beats,grooveScore:fit.onset,
     beatGridScore:fit.ratio,fullOnsetFirst:fit.firstHalf,
     fullOnsetSecond:fit.secondHalf,harmonicScore:harmony.average,
-    harmonicWeakest:harmony.weakest,score:Math.round(100*quality)};
+    harmonicWeakest:harmony.weakest,percussiveIntro:!!harmony.percussiveIntro,
+    introPcmVersion:b.pcmTransition.version,
+    introTonalRatioMax:harmony.tonalRatioMax??null,
+    introTonalPeakMax:harmony.tonalPeakMax??null,
+    introMeasuredRmsMin:harmony.measuredRmsMin??null,
+    introTonalFrames:harmony.frames??null,score:Math.round(100*quality)};
    if(!best||quality>best.quality)best={quality,cue};
+   }
   }
  }
  return best?.cue||null;
@@ -2586,7 +2681,7 @@ function fullBeatCueCertified(a,b,cue){
  const expected=measuredFullBeatBridge(a,b,a?.duration);
  return !!expected&&cue.kind==="beat"&&cue.measuredFullBeat===true&&
   cue.quietCertified===true&&cue.preserveTail===true&&
-  !cue.drumOnlyUnderlay&&!cue.vocalBeatUnderlay&&
+  !cue.drumOnlyUnderlay&&!cue.vocalBeatUnderlay&&cue.percussiveIntro===expected.percussiveIntro&&
   ["begin","end","fade","entry","tempo","gain"].every(k=>
    Number.isFinite(cue[k])&&Math.abs(cue[k]-expected[k])<.001);
 }
@@ -4639,7 +4734,7 @@ function startMobileMix(song,p,app,old){
     typeof rate.setValueAtTime==="function"&&
     typeof rate.linearRampToValueAtTime==="function";
   const requested=programmableRate?
-    clamp(Number(p.tempo)||1,.97,1.03):1;
+    clamp(Number(p.tempo)||1,p.measuredFullBeat?.95:.97,p.measuredFullBeat?1.05:1.03):1;
   // The incoming beat offset is in MP3 seconds, not wall-clock seconds.
   const incomingBeat=Number(p.nextBeat)/requested;
   const phase=Number.isFinite(period)&&period>.20&&
@@ -4662,7 +4757,13 @@ function startMobileMix(song,p,app,old){
    mobileMixLastBlocker="Beat reali fuori fase: passo al brano senza sovrapporli";
    return false;
   }
-  const delay=syncMeasured&&phase>.008&&phase<=maxBeatWait?phase:0;
+  const fullDelay=p.measuredFullBeat?p.begin-old.currentTime:null;
+  if(p.measuredFullBeat&&(!Number.isFinite(fullDelay)||fullDelay<-.065||fullDelay>.55)){
+   mobileMixLastBlocker="Finestra PCM completa persa: mantengo il brano originale";
+   return false;
+  }
+  const delay=p.measuredFullBeat?Math.max(0,fullDelay):
+   syncMeasured&&phase>.008&&phase<=maxBeatWait?phase:0;
   if(syncMeasured&&
      secondsLeft-delay<(p.kind==="beat"?Math.max(2.8,p.fade*.57):.48)){
    mobileMixLastBlocker="Beat allineato troppo tardi: lascio il finale integro";
@@ -5372,6 +5473,13 @@ function djAudioClockProgress(oldNow,oldStart,newNow,newStart,tempo,duration){
  return clamp(oldElapsed/duration,0,1);
 }
 function desktopBeatStartDelay(p,at){
+ if(p?.measuredFullBeat===true){
+  // This certificate describes exact PCM windows, not the next arbitrary
+  // bar. Missing the start cannot move the mix into unverified harmony.
+  if(!Number.isFinite(at)||!Number.isFinite(p.begin)||
+     at>p.begin+.065||p.begin-at>.55)return null;
+  return Math.max(0,p.begin-at);
+ }
  if(!p||p.neutralAmbientUnderlay===true||p.measuredReleaseHandoff===true)return 0;
  // nextBeat is in original-file seconds, not post-playbackRate wall time.
  // Account for tempo scaling when scheduling the audible incoming kick.
@@ -5470,6 +5578,10 @@ async function beginMix(song,proposed){
     {errorMs:Math.round(livePhaseError*1000)});
    cancel();plan=null;return;
   }
+  if(proposed.measuredFullBeat&&
+     djFullBeatClockError(proposed,old.currentTime,upcoming.currentTime)>.075){
+   cancel();plan=null;return;
+  }
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),
     proposed.kind==="snap"?.18:.8,12);
   // Play may already have consumed part of the incoming first measure.
@@ -5557,6 +5669,10 @@ async function beginMix(song,proposed){
      mixFailures.set(id+"|"+song.id,Date.now()+12000);
      cancel();plan=null;return;
     }
+   }
+   if(proposed.measuredFullBeat&&
+      djFullBeatClockError(proposed,old.currentTime,upcoming.currentTime)>.075){
+    cancel();plan=null;return;
    }
    act.lastProgress=time;
    const vol=app.volume();
