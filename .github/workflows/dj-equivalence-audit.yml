@@ -60,6 +60,7 @@ jobs:
           const report={source:'waveform-derived features, not double-blind acoustic listening',
             analyzedTracks:parts[0].analyzableTracks,expectedPairs:expected,
             ...counts,coveragePercent:+(100*counts.verifiedBeat/Math.max(1,expected)).toFixed(5),
+            verifiedBeatSamples:parts.flatMap(p=>p.verifiedBeatSamples||[]).slice(0,100),
             karaokeIndexedTimedLines:parts[0].karaoke.syncedLinesIndexed,
             karaokeVerifiedWordTimestamps:'NOT_PROVEN_BY_THIS_AUDIT',
             spotifyEquivalence:'NOT_CERTIFIED',allPairsBeatmatched:counts.verifiedBeat===expected};
