@@ -125,6 +125,24 @@ function renderLyrics(force){
   // brightly active throughout a long instrumental outro.
   if(adjusted>expiry)index=lyricRows.length;
  }
+ // A verified phrase can finish well before the next lyric cue.
+ // During instrumental gaps clear its highlight without advancing to a
+ // future line or marking unsung verses as already performed.
+ // Never guess the end from unverified LRC line-start timestamps.
+ if(lyricTimed&&index>=0&&index<lyricRows.length-1){
+  const row=lyricRows[index],next=lyricRows[index+1];
+  const end=row.end!=null?Number(row.end):
+   row.estimated!==true&&row.words?.length?
+    Number(row.words[row.words.length-1]?.end):NaN;
+  const nextAt=Number(next.t);
+  if(Number.isFinite(end)&&end>=row.t&&Number.isFinite(nextAt)&&
+     nextAt-end>4&&adjusted>end+1.5){
+   if(lastLine>=0&&lastLine<karaoke.children.length)
+    karaoke.children[lastLine].classList.remove("active");
+   lastLine=-1;
+   return;
+  }
+ }
  if(index===lastLine){
   if(index>=0&&index<lyricRows.length)
    window.MusicBoxWordKaraoke?.paintWords(
