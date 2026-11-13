@@ -27,7 +27,8 @@ const engine=new Function("isIOS","style","djLyricBoundaries",
  snippet("function certifiedNeutralBridge(","function mobileMixAllowed(")+
  snippet("function compatibility(","async function decode(")+
  snippet("function hasReliableHarmony(","function resetMobileFade(")+
- "\nreturn {transition,desktopBeatPairCertified,withGuardedLRC,verifiedIndexedGridTempo};"
+ snippet("function desktopBeatStartDelay(","async function beginMix(")+
+ "\nreturn {transition,desktopBeatPairCertified,desktopBeatStartDelay,withGuardedLRC,verifiedIndexedGridTempo};"
 )(false,"auto",lyricBoundaries.entries||{});
 const tracks=Object.entries(database.entries||{})
  .filter(([k,x])=>x?.status==="ok"&&Number.isFinite(x.duration)&&x.duration>=26&&
@@ -52,9 +53,16 @@ if(fromKey||toKey){
   Number.isFinite(a.last)&&plan.begin<a.last-.05&&
   plan.end>plan.begin&&plan.end<=a.duration+.2&&
   Number.isFinite(plan.score));
+ // The playback engine arms the cue at begin, then waits for the next
+ // matching kick. PCM measurements must start at the *audible* moment.
+ const beatStartWait=beatLike&&Number.isFinite(plan?.begin)?
+  engine.desktopBeatStartDelay(plan,plan.begin):0;
+ const scheduledStart=Number.isFinite(beatStartWait)&&
+   Number.isFinite(plan?.begin)?plan.begin+beatStartWait:null;
  console.log("[DJ PAIR PLAN]",JSON.stringify({from:fromKey,to:toKey,
   analyzedFrom:a.duration,analyzedTo:b.duration,
   lastAudible:a.last,plan,beatLike,certified,
+  beatStartWait,scheduledStart,
   evidence:"metadata-engine simulation only; verify original PCM separately"}));
  process.exit(0);
 }

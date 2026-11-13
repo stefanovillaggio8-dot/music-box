@@ -4,7 +4,7 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=3,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const VERSION=4,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
@@ -53,7 +53,12 @@ function recognizedWords(raw,offset=0){
  if(!Array.isArray(raw))return [];
  const out=[];
  for(const part of raw){
-  const ts=part?.timestamp,t=Number(ts?.[0]),end=Number(ts?.[1]);
+  const ts=part?.timestamp;
+  // Whisper sometimes emits [null, null] for an unaligned word.
+  // Number(null) is zero, which used to invent a word at song start.
+  if(!Array.isArray(ts)||ts.length!==2||
+     ts.some(value=>value===null||value===undefined||value===""))continue;
+  const t=Number(ts[0]),end=Number(ts[1]);
   const text=String(part?.text||"").trim();
   if(!text||text.length>60||text.split(/\s+/).length!==1||
      !Number.isFinite(t)||!Number.isFinite(end)||t<0||end<t)continue;
@@ -161,13 +166,30 @@ function pcmSlice(buffer,from,seconds=WINDOW){
  const available=Math.max(0,Math.min(count-start,Math.floor(seconds*sr)));
  if(available<sr*2)throw Error("Insufficient audio data");
  const length=Math.floor(available*FS/sr),pcm=new Float32Array(length);
+ // In some masters a vocal stem is nearly opposite-phase between L/R.
+ // Blindly averaging stereo then silences that voice before Whisper hears
+ // it. Inspect this *window's* PCM (not metadata) and keep the stronger
+ // original channel ONLY when the normal mono sum severely cancels.
+ let fallbackChannel=null;
+ if(r){
+  let ll=0,rr=0,lr=0;
+  const stride=Math.max(1,Math.floor(available/8192));
+  for(let j=start;j<start+available;j+=stride){
+   const left=l[j],right=r[j];
+   ll+=left*left;rr+=right*right;lr+=left*right;
+  }
+  const opposition=lr/Math.sqrt(ll*rr||1);
+  const remaining=(ll+rr+2*lr)/(ll+rr||1);
+  if(opposition<-.90&&remaining<.22)
+   fallbackChannel=ll>=rr?l:r;
+ }
  const step=sr/FS;
  for(let i=0;i<length;i++){
   const begin=start+Math.floor(i*step);
   const last=Math.min(count,start+Math.floor((i+1)*step));
   let sum=0;
   for(let j=begin;j<Math.max(begin+1,last);j++)
-   sum+=r?(l[j]+r[j])*.5:l[j];
+   sum+=fallbackChannel?fallbackChannel[j]:r?(l[j]+r[j])*.5:l[j];
   pcm[i]=sum/Math.max(1,last-begin);
  }
  return pcm;

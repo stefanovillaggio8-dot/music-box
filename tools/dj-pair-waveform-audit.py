@@ -7,6 +7,7 @@ DJ index is used ONLY to locate tracks and choose the audible window; it
 does not supply any similarity scores for this audit.
 """
 from __future__ import annotations
+import argparse
 import json
 import math
 import pathlib
@@ -102,7 +103,10 @@ def envelope(x):
 
 def align(outgoing,incoming):
  n=min(len(outgoing),len(incoming))
- tail=outgoing[-n:].astype(float)
+ # These PCM windows are both decoded from the SAME scheduled wall-clock
+ # start. Comparing the last 3 seconds of one to the first 3 of the other
+ # would misalign the onsets even for a perfect beat-matched overlap.
+ tail=outgoing[:n].astype(float)
  head=incoming[:n].astype(float)
  def normalize(x):
   v=x-np.mean(x)
@@ -110,8 +114,10 @@ def align(outgoing,incoming):
   return v/max(sd,1e-6)
  tail=normalize(tail);head=normalize(head)
  overlap=min(n,round(3.1*SR/HOP))
- if overlap<80:raise ValueError("Insufficient shared onset windows")
- tail=tail[-overlap:];head=head[:overlap]
+ # A protected snap may keep only ~0.9s of genuinely audible source;
+ # score it with its limited evidence instead of moving to unrelated audio.
+ if overlap<64:raise ValueError("Insufficient shared onset windows")
+ tail=tail[:overlap];head=head[:overlap]
  def corr(shift):
   # A positive phase lag shifts the start of the next beat pattern.
   if shift<0:a,b=tail[-shift:],head[:len(head)+shift]
@@ -142,16 +148,25 @@ def chord_similarity(a,b):
          "top_note_overlap":len(set(top(x))&set(top(y)))}
 
 def main():
+ parser=argparse.ArgumentParser(description="Independent MP3 PCM DJ spotcheck")
+ parser.add_argument("--only",action="append",default=[],
+                     help="Run just this named case (repeatable)")
+ parser.add_argument("--output",default="",
+                     help="Write all independently measured PCM results as JSON")
+ options=parser.parse_args()
+ selected=[case for case in CASES if not options.only or case[2] in options.only]
+ if not selected or len(selected)<len(set(options.only)):
+  parser.error("Unknown or missing case label")
  results=[]
  with tempfile.TemporaryDirectory(prefix="musicbox-dj-audio-") as tmp:
   folder=pathlib.Path(tmp)
-  for outkey,inkey,label in CASES:
+  for outkey,inkey,label in selected:
    a=ENTRIES.get(outkey);b=ENTRIES.get(inkey)
    if not a or not b or a.get("status")!="ok" or b.get("status")!="ok":
     raise RuntimeError("Missing real audio index entry for "+label)
    aa=download(outkey,folder);bb=download(inkey,folder)
    # A last-four-seconds comparison can be INVALID for an early DJ join.
-   # Use the exact planned waveform window where at least 0.95s of source
+   # Use the exact scheduled waveform window where at least 0.75s of source
    # music remains audible. Ultra-short snaps are reported separately, not falsely
    # rated by a multi-second correlation from outside their actual overlap.
    info=planned_pair(outkey,inkey)
@@ -160,18 +175,27 @@ def main():
    planned_begin=cue.get("begin")
    planned_end=cue.get("end")
    planned_entry=cue.get("entry")
-   usable=(min(float(planned_end),audio_end)-float(planned_begin)
-           if isinstance(planned_begin,(int,float)) and
+   scheduled_start=info.get("scheduledStart")
+   beat_wait=info.get("beatStartWait")
+   usable=(min(float(planned_end),audio_end)-float(scheduled_start)
+           if isinstance(scheduled_start,(int,float)) and
            isinstance(planned_end,(int,float)) else 0)
-   exact_window=bool(usable>=.95 and
+   exact_window=bool(usable>=.75 and
        isinstance(planned_entry,(int,float)) and planned_entry>=0)
+   rate=float(cue.get("tempo") or 1)
+   if not .94<=rate<=1.06:raise ValueError("Invalid playback rate in plan")
    if exact_window:
-    start=float(planned_begin)
+    start=float(scheduled_start)
     first=float(planned_entry)
-    span=min(4.,usable,float(planned_end)-start)
+    span=min(4.,usable)
     out_audio=decode(aa,start,span)
-    in_audio=decode(bb,first,span)
-    x=out_audio[:int(span*SR)];y=in_audio[:int(span*SR)]
+    # HTMLMediaElement preserves pitch when changing playbackRate. Use an
+    # independent phase-vocoder approximation to compare the timeline the
+    # listener actually hears. This is NOT a real browser playback proof.
+    in_audio=decode(bb,first,span*rate+.20)
+    y=(librosa.effects.time_stretch(in_audio,rate=rate)
+       if abs(rate-1)>.0005 else in_audio)
+    x=out_audio[:int(span*SR)];y=y[:int(span*SR)]
    else:
     start=max(0,audio_end-8.0)
     first=max(0,float(b.get("safeIntroAt") or 0))
@@ -187,21 +211,32 @@ def main():
      "simulated_plan_begin":planned_begin,
      "simulated_plan_end":planned_end,
      "simulated_certified":bool(info.get("certified")),
-     "pcm_window":"actual_planned_overlap" if exact_window else "diagnostic_tail_not_plan",
-     "tempo_adjustment_measured_but_not_applied":cue.get("tempo",1),
+     "scheduled_beat_wait_ms":round(float(beat_wait)*1000) if isinstance(beat_wait,(int,float)) else None,
+     "scheduled_audible_start":round(start,3) if exact_window else None,
+     "pcm_window":"scheduled_overlap_with_tempo_approximation" if exact_window else "diagnostic_tail_not_plan",
+     "approximate_playback_rate":rate,
      "source_seconds":[round(start,2),round(first,2)],
      "actual_rms":[round(float(np.sqrt(np.mean(x*x))),4),
                    round(float(np.sqrt(np.mean(y*y))),4)],
      **beats,**chords}
    results.append(result)
    print("[DJ ACTUAL PCM]",json.dumps(result,ensure_ascii=False),flush=True)
- print("[DJ PCM SUMMARY]",json.dumps({"pairs":len(results),
+ summary={"pairs":len(results),
   "sources":len(CACHE),
   "best_rhythm_ge_05":sum((x["best_rhythm"] or 0)>=.5 for x in results),
   "zero_rhythm_ge_05":sum((x["rhythm_at_zero"] or 0)>=.5 for x in results),
   "chroma_ge_085":sum(x["chroma_cosine"]>=.85 for x in results),
-  "details":results},ensure_ascii=False),flush=True)
- assert len(results)==len(CASES)
+  "index_certified_audio_examples":sum(x["simulated_certified"] for x in results),
+  "index_certified_with_strong_zero_rhythm":sum(x["simulated_certified"] and
+      (x["rhythm_at_zero"] or 0)>=.5 for x in results),
+  "evidence_scope":"Independent MP3 onset/chroma spotchecks, not physical-device listening or Spotify equivalence",
+  "details":results}
+ if options.output:
+  output=pathlib.Path(options.output)
+  output.parent.mkdir(parents=True,exist_ok=True)
+  output.write_text(json.dumps(summary,indent=2,ensure_ascii=False)+"\n",encoding="utf8")
+ print("[DJ PCM SUMMARY]",json.dumps(summary,ensure_ascii=False),flush=True)
+ assert len(results)==len(selected)
  for x in results:
   assert x["chroma_cosine"]>=0 and x["chroma_cosine"]<=1.001
   assert x["best_lag_ms"]>=-510 and x["best_lag_ms"]<=510
