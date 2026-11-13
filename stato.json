@@ -2075,13 +2075,13 @@
    },
    "[\"certe bugie\",\"nayt\"]": {
     "v": 4,
-    "s": 119,
+    "s": 165,
     "t": "Certe bugie",
     "a": "nayt"
    },
    "m:2026-11|[\"certe bugie\",\"nayt\"]": {
     "v": 4,
-    "s": 119,
+    "s": 165,
     "t": "Certe bugie",
     "a": "nayt"
    },
@@ -3659,13 +3659,13 @@
    },
    "[\"frosinone\",\"calcutta\"]": {
     "v": 1,
-    "s": 314,
+    "s": 317,
     "t": "Frosinone",
     "a": "Calcutta"
    },
    "m:2026-11|[\"frosinone\",\"calcutta\"]": {
     "v": 1,
-    "s": 314,
+    "s": 317,
     "t": "Frosinone",
     "a": "Calcutta"
    },
@@ -8385,6 +8385,18 @@
     "t": "Dimmi Che C'ÃÂÃÂÃÂÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
+   "[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 173,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
+    "v": 1,
+    "s": 173,
+    "t": "Non ti dimentico",
+    "a": "ModÃÂÃÂ "
+   },
    "[\"ventanni\",\"mÃÂ¥neskin\"]": {
     "v": 2,
     "s": 335,
@@ -9104,18 +9116,6 @@
     "s": 234,
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃÂÃÂ©"
-   },
-   "[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 173,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 173,
-    "t": "Non ti dimentico",
-    "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"ventanni\",\"mÃÂÃÂ¥neskin\"]": {
     "v": 1,
