@@ -9747,12 +9747,13 @@ function openProfile() {
     }
     $("lyricsPanel").hidden = false;
     $("lyricsSyncControls").hidden = !useSynced;
-    const precise=synced.some(r=>r.words?.length>=2&&!r.estimated);
-    const estimated=synced.some(r=>r.estimated);
+    const wordCoverage=window.MusicBoxWordKaraoke?.timingCoverage?.(synced);
     $("lyricsMode").textContent=useSynced
-      ?(precise
-        ?(l.audioWordSynced?"KARAOKE · PAROLA PER PAROLA (IA)":"KARAOKE · PAROLA PER PAROLA")
-        :estimated?"KARAOKE · PAROLA PER PAROLA (STIMA)":"TESTO SINCRONIZZATO")
+      ?wordCoverage?.wordTimed?
+        ("KARAOKE · PAROLE VERIFICATE "+wordCoverage.wordTimed+"/"+wordCoverage.total+
+         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:""))
+        :wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
+         "TESTO SINCRONIZZATO PER FRASI"
       :"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
     if(switchView){
