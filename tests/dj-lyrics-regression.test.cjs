@@ -291,7 +291,7 @@ test("word-synced karaoke persists locally, upgrades on demand and renders in bo
  assert.match(app,/engine\?\.fromRecord\(j\)/);
  assert.match(app,/window\.MusicBoxWordKaraoke\?\.spanWords\(document,line,p\)/);
  assert.match(immersive,/window\.MusicBoxWordKaraoke\?\.paintWords/);
- assert.match(immersive,/PAROLA PER PAROLA/);
+ assert.match(immersive,/PAROLE VERIFICATE/);
  assert.match(html,/word-karaoke\.js\?v=\d+/);
  assert.match(sw,/word-karaoke\.js\?v=\d+/);
  assert.match(css,/\.lyr-line\.on \.karaoke-word/);
@@ -525,7 +525,7 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  assert.match(app,/wordRows:joined,audioWordSynced:true/);
  assert.match(app,/if\(kept\?\.words\?\.length>=2&&!kept\.estimated\)return kept/);
  const immersive=fs.readFileSync(path.join(__dirname,"..","immersive.js"),"utf8");
- assert.match(immersive,/next\?\.audioWordSynced\?"PAROLA PER PAROLA · IA"/);
+ assert.match(immersive,/coverage\.audio\?" · AUDIO "/);
  const engine=fs.readFileSync(path.join(__dirname,"..","audio-lyrics-align.js"),"utf8");
  assert.match(engine,/completedInSession\.has\(sessionId\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
@@ -642,9 +642,9 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
  assert.match(app,/return kept&&!kept\.estimated\?kept:original/);
  assert.match(app,/if\(l\?\.synced&&!_righeTestoConParole\(l\)\.every\(r=>\s*r\.words\?\.length>=2&&!r\.estimated\)\)/);
  assert.match(align,/row\?\.estimated\?\{t:row\.t,text:row\.text\}:row/);
- assert.match(immersive,/guessed\?"PAROLA PER PAROLA · STIMA"/);
+ assert.match(immersive,/PAROLE STIMATE · NON VERIFICATE/);
  assert.match(immersive,/row\.estimated\?\{estimated:true\}/);
- assert.match(app,/KARAOKE · PAROLA PER PAROLA \(STIMA\)/);
+ assert.match(app,/KARAOKE · PAROLE STIMATE, NON VERIFICATE/);
  assert.match(app,/track-badge-karaoke/);
  assert.match(app,/_statoKaraokeBrano\(t\.id\)\?\.label\|\|""/);
  assert.match(app,/LS\.set\("mb\.lyricsFullView",_vistaTestiCompleta\)/);
