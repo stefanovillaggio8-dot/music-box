@@ -7775,7 +7775,12 @@ box.innerHTML = "";
       // A perfectly timed karaoke for another song is still WRONG.
       // Reject it before replacing the current recording's LRC.
       if(!_testoAppartieneAlBrano(id,{synced:result.synced}))return;
-      const updated={...existing,id,title:track.title,artist:track.artist,
+      // A slower network response cannot replace real measured words that
+      // Whisper stored while this provider request was still in flight.
+      const newest=_testoLocaleVerificato(id);
+      if(newest?.audioWordSynced&&newest.wordRows?.some(row=>
+          row.words?.length>=2&&!row.estimated))return;
+      const updated={...(newest||existing),id,title:track.title,artist:track.artist,
         text:result.text||existing.text,synced:result.synced,
         wordRows:result.wordRows,source:result.source,audioWordSynced:false};
       localLyrics[id]=updated;
@@ -13235,14 +13240,21 @@ window.MusicBoxBridge = {
   lyricsDelay:(id)=>_ritardoTesto(id||currentId),
   requestWordLyrics:(id)=>{
     const song=id||currentId;
-    return _verificaParoleKaraoke(song).finally(()=>{
+    const startLocalAlignment=()=>{
       if(song===currentId){
         const l=currentLyrics();
         if(l?.synced&&!_righeTestoConParole(l).every(r=>
           r.words?.length>=2&&!r.estimated))
           window.MusicBoxAudioAlign?.request(song);
       }
-    });
+    };
+    // Real local word alignment must NOT wait for LRCLIB lookups/404/503.
+    // Those can take longer than the remaining song, particularly after
+    // a late seek. Run both sources concurrently; each keeps its own
+    // identity and trusted-timestamp checks.
+    startLocalAlignment();
+    return Promise.resolve(_verificaParoleKaraoke(song))
+      .finally(startLocalAlignment);
   },
   saveAudioWordRows:(id,rows)=>_salvaParoleDallAudio(id,rows),
   lyricsData:()=>{
