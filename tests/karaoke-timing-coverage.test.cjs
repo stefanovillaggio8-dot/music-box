@@ -92,6 +92,32 @@ test("audio matching covers time-zero and short phrases only with exact, nearby 
  assert.equal(api.alignWindow(rows,extra).length,0);
  assert.equal(api.recognizedWords([{text:'Ciao',timestamp:[false,' ']}]).length,0);
 });
+
+test('rapid exact ASR lines align without the old 450ms phrase floor',()=>{
+ const api=win.MusicBoxAudioAlign;
+ const lines=[{t:1,text:'questa notte sono qui'},{t:1.4,text:'resto con te'}];
+ const chunks=['questa','notte','sono','qui'].map((text,i)=>({text,timestamp:[1+i*.08,1.07+i*.08]}));
+ const aligned=api.alignWindow(lines,chunks);
+ assert.equal(aligned.length,1);assert.equal(aligned[0].words.length,4);
+ assert.equal(aligned[0].end,1.31);
+ assert.equal(api.alignWindow(lines,chunks.map((w,i)=>i===2?{...w,text:'altra'}:w)).length,0);
+ for(const t of [null,false,'',true,{}])assert.equal(api.alignWindow([{t,text:lines[0].text}],chunks).length,0);
+});
+
+test('adjacent repeated hooks cannot claim the same ASR word observations twice',()=>{
+ const api=win.MusicBoxAudioAlign;
+ const aligned=api.alignWindow([{t:1,text:'vieni qui'},{t:1.3,text:'vieni qui'},{t:3,text:'dopo'}],
+  [{text:'vieni',timestamp:[1.1,1.2]},{text:'qui',timestamp:[1.21,1.3]}]);
+ assert.equal(aligned.length,1);assert.equal(aligned[0].sourceT,1);
+});
+
+test('estimated display words remain eligible for real audio analysis',()=>{
+ const api=win.MusicBoxAudioAlign;
+ const row={t:1,text:'vieni qui',estimated:true,words:[{t:1,text:'vieni '},{t:1.5,text:'qui'}]};
+ assert.ok(api.preferredWindows([row],30).length);
+ assert.equal(api.alignWindow([row],[{text:'vieni',timestamp:[1.1,1.3]},
+  {text:'qui',timestamp:[1.35,1.6]}]).length,1);
+});
 test("a new song aborts stale karaoke analysis and immediately accepts the next request",async()=>{
  const idle=[],writes=[];let current='old',aborted=false;
  const bridge={currentId:()=>current,profile:()=>'',audio:()=>({duration:180}),
