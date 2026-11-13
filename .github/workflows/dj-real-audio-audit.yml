@@ -5,6 +5,11 @@ on:
     paths:
       - 'tools/dj-pair-waveform-audit.py'
       - '.github/workflows/dj-real-audio-audit.yml'
+  pull_request:
+    paths:
+      - 'mix-intelligente.js'
+      - 'tools/dj-pair-waveform-audit.py'
+      - '.github/workflows/dj-real-audio-audit.yml'
   workflow_dispatch:
 jobs:
   audio-audit:
