@@ -1360,8 +1360,8 @@
     "a": "Frah Quintale"
    },
    "[\"essere noi\",\"nayt\"]": {
-    "v": 1,
-    "s": 205,
+    "v": 2,
+    "s": 223,
     "t": "Essere noi",
     "a": "nayt"
    },
@@ -3274,13 +3274,13 @@
     "a": "Oasis"
    },
    "[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
-    "v": 0,
+    "v": 1,
     "s": 164,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
    },
    "m:2026-11|[\"funghi in salsa rosa\",\"l'elfo, funkymann\"]": {
-    "v": 0,
+    "v": 1,
     "s": 164,
     "t": "Funghi in salsa rosa",
     "a": "L'Elfo, Funkymann"
@@ -3358,20 +3358,20 @@
     "a": "Lil Peep"
    },
    "m:2026-11|[\"essere noi\",\"nayt\"]": {
-    "v": 1,
-    "s": 148,
+    "v": 2,
+    "s": 166,
     "t": "Essere noi",
     "a": "nayt"
    },
    "[\"gilgamesh\",\"kid yugi\"]": {
     "v": 2,
-    "s": 294,
+    "s": 300,
     "t": "Gilgamesh",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"gilgamesh\",\"kid yugi\"]": {
     "v": 2,
-    "s": 294,
+    "s": 300,
     "t": "Gilgamesh",
     "a": "Kid Yugi"
    },
@@ -3971,13 +3971,13 @@
    },
    "[\"noi due\",\"nayt, 3d\"]": {
     "v": 2,
-    "s": 101,
+    "s": 107,
     "t": "Noi due",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"noi due\",\"nayt, 3d\"]": {
     "v": 2,
-    "s": 101,
+    "s": 107,
     "t": "Noi due",
     "a": "nayt, 3D"
    },
