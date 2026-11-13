@@ -22,10 +22,10 @@ def main():
         for key,e in shard['entries'].items():
             if key in all_entries or e['sha']!=index['entries'][key]['sha'] or not e.get('modelSha256'):raise ValueError('Unbound structure source')
             all_entries[key]=e
-    if len(all_entries)!=sum(e['status']=='ok' for e in index['entries'].values()):raise ValueError('Incomplete whole-recording coverage')
     shard,parts=map(int,args.shard.split('/'))
     if not 0<=shard<parts<=32:raise ValueError('Invalid shard')
-    keys=[key for i,key in enumerate(sorted(all_entries)) if i%parts==shard]
+    keys=[key for i,key in enumerate(sorted(k for k,e in index['entries'].items() if e['status']=='ok')) if i%parts==shard]
+    if not all(key in all_entries for key in keys):raise ValueError('Incomplete source evidence for selected shard')
     output=pathlib.Path(args.output);output.parent.mkdir(parents=True,exist_ok=True)
     cache=pathlib.Path(args.cache);cache.mkdir(parents=True,exist_ok=True);entries={};errors=[]
     audit.SR=pcm.SR

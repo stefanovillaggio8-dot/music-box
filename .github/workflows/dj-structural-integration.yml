@@ -13,7 +13,7 @@ permissions:
   contents: read
   actions: read
 concurrency:
-  group: structural-integration-${{ github.ref }}
+  group: structural-integration-v2-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   refine:
@@ -32,14 +32,32 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - uses: actions/cache@v4
+        id: refined
+        with:
+          path: results
+          key: refined-source43463500768-${{ matrix.shard }}-${{ hashFiles('tools/dj-structure-core.py', 'tools/refine-structure-windows.py') }}
       - name: Retrieve complete pinned whole-recording model evidence
-        run: gh run download 43463500768 --repo stefanovillaggio8-dot/music-box --pattern 'whole-structure-*' --dir whole
+        if: steps.refined.outputs.cache-hit != 'true'
+        run: |
+          buddy=$(( ${{ matrix.shard }} + 8 ))
+          for attempt in 1 2 3; do
+            if gh run download 43463500768 --repo stefanovillaggio8-dot/music-box --name whole-structure-${{ matrix.shard }} --name whole-structure-$buddy --dir whole-attempt-$attempt; then
+              mv whole-attempt-$attempt whole
+              break
+            fi
+            sleep 5
+          done
+          test -d whole
       - name: Install PCM decoder and feature libraries
+        if: steps.refined.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           python -m pip install numpy==1.26.4 librosa==0.11.0
-      - run: python tools/test-dj-whole-structure.py
+      - if: steps.refined.outputs.cache-hit != 'true'
+        run: python tools/test-dj-whole-structure.py
       - name: Search additional instrumental bar groups and protect the actual vocal fade
+        if: steps.refined.outputs.cache-hit != 'true'
         run: python tools/refine-structure-windows.py --features=whole --shard=${{ matrix.shard }}/8 --cache=original-mp3 --output=results/structure-${{ matrix.shard }}.json
       - uses: actions/upload-artifact@v4
         if: always()
