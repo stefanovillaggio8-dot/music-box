@@ -3113,13 +3113,13 @@
    },
    "[\"niente canzoni d'amore\",\"elodie\"]": {
     "v": 0,
-    "s": 82,
+    "s": 110,
     "t": "Niente Canzoni D'Amore",
     "a": "Elodie"
    },
    "m:2026-11|[\"niente canzoni d'amore\",\"elodie\"]": {
     "v": 0,
-    "s": 82,
+    "s": 110,
     "t": "Niente Canzoni D'Amore",
     "a": "Elodie"
    },
@@ -4337,13 +4337,13 @@
    },
    "[\"lost on you\",\"lp\"]": {
     "v": 4,
-    "s": 107,
+    "s": 163,
     "t": "Lost On You",
     "a": "LP"
    },
    "m:2026-11|[\"lost on you\",\"lp\"]": {
     "v": 4,
-    "s": 107,
+    "s": 163,
     "t": "Lost On You",
     "a": "LP"
    },
@@ -5729,13 +5729,13 @@
    },
    "[\"vibe\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 82,
+    "s": 117,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 82,
+    "s": 117,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
@@ -6353,13 +6353,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
-    "s": 368,
+    "s": 425,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
-    "s": 368,
+    "s": 425,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -6533,13 +6533,13 @@
    },
    "[\"vibe\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 117,
+    "s": 139,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
    "m:2026-11|[\"vibe\",\"guÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 117,
+    "s": 139,
     "t": "Vibe",
     "a": "GuÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨"
    },
@@ -7163,13 +7163,13 @@
    },
    "[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
-    "s": 425,
+    "s": 496,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
-    "s": 425,
+    "s": 496,
     "t": "Ma il cielo ÃÂÃÂÃÂÃÂ¨ sempre piÃÂÃÂÃÂÃÂ¹ blu",
     "a": "Rino Gaetano"
    },
@@ -9251,13 +9251,13 @@
    },
    "[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 9,
+    "s": 72,
     "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"non ÃÂ¨ mai abbastanza - videoclip ufficiale\",\"modÃÂ \"]": {
     "v": 1,
-    "s": 9,
+    "s": 72,
     "t": "Non ÃÂ¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃÂ "
    },
@@ -10061,13 +10061,13 @@
    },
    "[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
     "v": 1,
-    "s": 72,
+    "s": 111,
     "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃ "
    },
    "m:2026-11|[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
     "v": 1,
-    "s": 72,
+    "s": 111,
     "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
     "a": "ModÃ "
    },
