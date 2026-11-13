@@ -73,6 +73,7 @@ const result={
  beatGridsTempoRefined:tracks.filter(([k,a])=>a.tempoVerifiedByGrid===true).length,
  possibleOrderedPairs:tracks.length*(tracks.length-1),
  shard,totalShards,analyzedPairs:0,verifiedBeat:0,earlyVerifiedBeat:0,
+ verifiedBeatSamples:[],
  rejectedBeat:0,postlude:0,underlay:0,other:0,none:0,errors:[],
  nonBeatSamples:[],karaoke:{
   syncedLinesIndexed:Object.values(karaoke).filter(x=>x?.synced===true).length,
@@ -111,6 +112,11 @@ for(let i=0;i<tracks.length;i++){
      plan.end>plan.begin&&plan.end<=a.duration+.2;
    if(certified&&audible&&Number.isFinite(plan.score)){
     result.verifiedBeat++;
+    if(result.verifiedBeatSamples.length<12)
+     result.verifiedBeatSamples.push({from,to,kind:plan.kind,
+      begin:plan.begin,end:plan.end,entry:plan.entry,
+      fade:plan.fade,tempo:plan.tempo,
+      lastAudible:a.last,score:plan.score});
     if(plan.begin<a.last-.6)result.earlyVerifiedBeat++;
    }else result.rejectedBeat++;
   }else if(plan.kind==="postlude"||plan.measuredPostludeBridge)result.postlude++;
