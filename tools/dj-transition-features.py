@@ -2,7 +2,7 @@
 """SHA-bound PCM features for the complete audible transition, never synthetic beats.
 Adds data to existing entries; keeps every previous measurement unchanged.
 """
-import argparse, concurrent.futures, hashlib, json, os, pathlib, subprocess, tempfile, urllib.request
+import argparse, concurrent.futures, hashlib, json, os, pathlib, shutil, subprocess, tempfile, urllib.request
 import librosa
 import numpy as np
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -75,6 +75,7 @@ def main():
     parser.add_argument('--output',help='Write only new SHA-bound features, leaving input index unchanged')
     parser.add_argument('--cache',default=str(ROOT.parent/'scratch'/'dj-original-mp3'))
     args=parser.parse_args()
+    if not shutil.which("ffmpeg"):parser.error("ffmpeg is required before downloading any audio")
     path=pathlib.Path(args.index);data=json.loads(path.read_text());entries=data['entries']
     keys=sorted(set(x[k] for x in json.loads(pathlib.Path(args.pairs).read_text()) for k in ('from','to'))) if args.pairs else sorted(entries)
     shard,parts=map(int,args.shard.split('/'))
