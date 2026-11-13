@@ -1685,13 +1685,13 @@
    },
    "[\"morto mai (piano solo)\",\"lazza\"]": {
     "v": 1,
-    "s": 268,
+    "s": 295,
     "t": "Morto Mai (Piano Solo)",
     "a": "Lazza"
    },
    "m:2026-11|[\"morto mai (piano solo)\",\"lazza\"]": {
     "v": 1,
-    "s": 268,
+    "s": 295,
     "t": "Morto Mai (Piano Solo)",
     "a": "Lazza"
    },
@@ -5801,13 +5801,13 @@
    },
    "[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"coez\"]": {
     "v": 2,
-    "s": 421,
+    "s": 446,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"coez\"]": {
     "v": 2,
-    "s": 421,
+    "s": 446,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "Coez"
    },
@@ -6605,13 +6605,13 @@
    },
    "[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"coez\"]": {
     "v": 2,
-    "s": 446,
+    "s": 493,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \",\"coez\"]": {
     "v": 2,
-    "s": 446,
+    "s": 493,
     "t": "Le luci della cittÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ",
     "a": "Coez"
    },
@@ -6881,7 +6881,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
-    "s": 190,
+    "s": 251,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7019,7 +7019,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 188,
+    "s": 249,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7691,7 +7691,7 @@
    },
    "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
-    "s": 251,
+    "s": 262,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7829,7 +7829,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 249,
+    "s": 260,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7973,13 +7973,13 @@
    },
    "[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 2,
-    "s": 99,
+    "s": 108,
     "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 2,
-    "s": 99,
+    "s": 108,
     "t": "mi @mio ÃÂÃÂ¨ f@ke",
     "a": "thasup"
    },
@@ -8783,13 +8783,13 @@
    },
    "[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 2,
-    "s": 108,
+    "s": 124,
     "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
    "m:2026-11|[\"mi @mio ÃÂ¨ f@ke\",\"thasup\"]": {
     "v": 2,
-    "s": 108,
+    "s": 124,
     "t": "mi @mio ÃÂ¨ f@ke",
     "a": "thasup"
    },
@@ -10300,14 +10300,14 @@
     "a": "Måneskin"
    },
    "[\"zitti e buoni\",\"måneskin\"]": {
-    "v": 1,
-    "s": 157,
+    "v": 2,
+    "s": 211,
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
    "m:2026-11|[\"zitti e buoni\",\"måneskin\"]": {
-    "v": 1,
-    "s": 157,
+    "v": 2,
+    "s": 211,
     "t": "ZITTI E BUONI",
     "a": "Måneskin"
    },
