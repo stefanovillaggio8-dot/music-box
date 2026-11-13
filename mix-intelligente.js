@@ -6357,7 +6357,8 @@ async function intelligentShuffle(app,audio,fromId){
    closestTempo:[],outgoingBpm:Number.isFinite(old.bpm)?old.bpm:null,
    outgoingGridCorrected:old.tempoVerifiedByGrid===true,
    compatibleGroove:0,compatibleNotes:0,
-  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0,subduedUnderlays:0};
+  musicalOverlays:0,potentialBeatCues:0,verifiedBeats:0,subduedUnderlays:0,
+    certificationFailures:{},certificationSamples:[]};
  // These are near matches, not certified playback candidates. Showing both
  // numbers prevents 'beatCandidates: 0' from falsely implying the library
  // has no songs with similar tempo or real beat patterns.
@@ -6518,15 +6519,39 @@ async function intelligentShuffle(app,audio,fromId){
     iphoneBeatPairCertified(old,next,cue)&&iphoneQuietReleaseCertified(old,cue)));
   // Only a musically verified bridge earns the "beat" tier. A weak
   // rhythmic resemblance must NEVER outrank a safe next song.
-  const verified=Boolean(mobilePlayable&&
-   desktopBeatPairCertified(old,next,cue)&&
-   iphoneQuietReleaseCertified(old,cue)&&cue&&
-    ((cue.kind==="snap"&&cue.measuredBeatBridge&&cue.verifiedMicroBeat===true&&
-      cue.fade>=.46)||
-     (cue.kind==="beat"&&cue.fade>=2.7&&
-      (cue.verifiedHarmonicBridge===true||cue.dropReleaseBridge===true||
-       cue.instrumentalBeatBridge===true))));
+  // Separately diagnose every gate, rather than reporting all failed
+  // candidates as an unexplained zero. These are measurements only:
+  // no rejection threshold, playback behaviour or certification is relaxed.
+  const desktopCertified=musicallyPlayable&&!!cue&&
+   desktopBeatPairCertified(old,next,cue);
+  const iphoneReleaseCertified=desktopCertified&&
+   iphoneQuietReleaseCertified(old,cue);
+  const beatShapeCertified=!!cue&&
+   ((cue.kind==="snap"&&cue.measuredBeatBridge&&
+     cue.verifiedMicroBeat===true&&cue.fade>=.46)||
+    (cue.kind==="beat"&&cue.fade>=2.7&&
+     (cue.verifiedHarmonicBridge===true||cue.dropReleaseBridge===true||
+      cue.instrumentalBeatBridge===true)));
+  const verified=Boolean(mobilePlayable&&desktopCertified&&
+   iphoneReleaseCertified&&beatShapeCertified);
   if(verified)candidateAudit.verifiedBeats++;
+  else{
+   const cause=!cue? "no_transition":cue.kind==="cut"?"direct_cut":
+    !musicallyPlayable?"musical_overlap_veto":
+    !mobilePlayable?"mobile_playback_veto":
+    !desktopCertified?"desktop_beat_evidence_veto":
+    !iphoneReleaseCertified?"outro_release_veto":
+    !beatShapeCertified?"not_certified_beat_shape":"unknown";
+   candidateAudit.certificationFailures[cause]=
+    (candidateAudit.certificationFailures[cause]||0)+1;
+   if(candidateAudit.certificationSamples.length<12)
+    candidateAudit.certificationSamples.push({id:track.id,cause,
+     cueKind:cue?.kind||null,
+     fade:Number.isFinite(cue?.fade)?+cue.fade.toFixed(3):null,
+     begin:Number.isFinite(cue?.begin)?+cue.begin.toFixed(3):null,
+     sourceLast:Number.isFinite(old.last)?+old.last.toFixed(3):null,
+     bpm:Number.isFinite(info?.bpm)?+info.bpm.toFixed(2):null});
+  }
   if(!verified){
    if(mobilePlayable&&cue?.measuredReleaseHandoff===true){
     // Genuine early audible music before the last recorded note.
