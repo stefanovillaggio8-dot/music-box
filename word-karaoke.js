@@ -230,7 +230,11 @@ function paintWords(row,elements,time){
  for(let i=0;i<elements.length;i++){
   const w=row.words[i],next=row.words[i+1];
   const fallback=next?next.t:row.end!=null&&row.end>w.t?row.end:w.t+0.55;
-  const end=w.end!=null&&w.end>=w.t?w.end:fallback;
+  // An ASR word's reported end can overlap the next timestamp.
+  // Visually constrain its fill to the next verified word or phrase end.
+  const rawEnd=w.end!=null&&w.end>=w.t?w.end:fallback;
+  const end=Math.max(w.t,Math.min(rawEnd,
+   next?next.t:row.end!=null&&row.end>=w.t?row.end:rawEnd));
   const pct=Math.round(100*clamp((time-w.t)/Math.max(.06,end-w.t),0,1));
   const el=elements[i];
   if(el._karaokePct!==pct){el._karaokePct=pct;el.style.setProperty("--karaoke-fill",pct+"%")}
