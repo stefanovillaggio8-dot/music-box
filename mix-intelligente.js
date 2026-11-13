@@ -4977,6 +4977,41 @@ function naturalEndHandoff(certifiedSilentTail=false){
  return true;
 }
 
+// An underlay deliberately plays the second MP3 at only 6-21% while the
+// first track is still audible. On adoption that SAME audio element becomes
+// the main player: without this post-EOF reveal the NEXT WHOLE SONG stays
+// nearly silent. Reveal it only after the protected original has ended.
+// Match the low-pass filter's existing ~380ms opening, with no gain jump.
+function adoptedMixRevealGain(initial,progress){
+ const start=clamp(Number(initial)||0,0,1),t=clamp(Number(progress)||0,0,1);
+ const smooth=Math.sin(Math.pow(t,1.25)*Math.PI/2);
+ return start+(1-start)*smooth;
+}
+function revealAdoptedMixAudio(audio,trackId,initialVolume,seconds=.78){
+ const app=bridge(),target=Number(app?.volume?.());
+ if(!audio||!app||app.audio?.()!==audio||app.currentId?.()!==trackId||
+    !Number.isFinite(target))return;
+ const initialFraction=target>.001?
+   clamp(initialVolume/target,0,1):1;
+ if(initialFraction>=.995){
+  audio.volume=clamp(target,0,1);return;
+ }
+ const started=performance.now(),span=Math.max(350,seconds*1000);
+ const update=()=>{
+  const live=bridge();
+  if(live?.audio?.()!==audio||live?.currentId?.()!==trackId)return;
+  const currentTarget=clamp(Number(live.volume?.())||0,0,1);
+  const progress=clamp((performance.now()-started)/span,0,1);
+  // A pause/seek must not leave the resumed song permanently at 8%.
+  if(audio.paused||audio.seeking||audio.ended){
+   audio.volume=currentTarget;return;
+  }
+  audio.volume=currentTarget*adoptedMixRevealGain(initialFraction,progress);
+  if(progress<1)setTimeout(update,45);
+ };
+ update();
+}
+
 async function handoff(){
  const act=active;if(!act||act.handingOff)return;
  const app=bridge();
@@ -4993,6 +5028,10 @@ async function handoff(){
   try{
    const adopted=app.mixAdoptHandoff(act.track.id,preview);
    if(adopted&&app.currentId()===act.track.id&&app.audio()===preview){
+    // The pre-EOF low-pass introduction can be almost inaudible by design.
+    // Restore the real listening volume smoothly AFTER native adoption.
+    // The old recording has already reached its protected natural EOF.
+    const previewLevel=preview.volume;
     active=null;mixing=false;stopSnapPrecision();
     if(act.timer)clearTimeout(act.timer);
     if(act.stem)window.MusicBoxVocalStems?.release?.(act.stem);
@@ -5000,6 +5039,13 @@ async function handoff(){
     try{old.pause()}catch(_){}
     try{old.removeAttribute("src");old.load()}catch(_){}
     releaseDesktopDsp(old);
+    try{
+     revealAdoptedMixAudio(preview,act.track.id,previewLevel,
+      act.subduedRhythmicUnderlay?.78:.48);
+    }catch(_){
+     // A failed optional gain ramp must never trigger a second MP3 load.
+     try{preview.volume=clamp(volume,0,1)}catch(_){}
+    }
     // No cancel(): that would pause/remove src from the NEW main player.
     Promise.resolve(adopted).catch(error=>console.warn(
      "[Music Box DJ] Errore dopo adozione audio",String(error?.message||error)));
@@ -5301,6 +5347,13 @@ async function beginMix(song,proposed){
   act.newAudioAt=upcoming.currentTime;
   function fadeStep(){
    if(active!==act)return;
+   // An underlay holds the outgoing MP3 at 100% through its REAL end.
+   // Previously the fade clock reached 1 around 80ms before EOF and
+   // handoff() paused its last note; the next tick could also misread the
+   // native ended pause as a user pause and discard the prepared DJ audio.
+   if(old.ended&&(act.subduedRhythmicUnderlay||act.postMusicalTailUnderlay)){
+    handoff();return;
+   }
    if(old.paused||app.audio()!==old||app.currentId()!==id||
       app.mixNext?.()?.id!==song.id||
       window.MusicBoxRoom?.isActive()){cancel();return}
@@ -5446,7 +5499,14 @@ async function beginMix(song,proposed){
     // per evitare uno scatto udibile quando subentra il lettore principale.
     if(act.tempo!==1)upcoming.playbackRate=matchedTempoRate(act.tempo,time);
    }catch(e){cancel();return}
-   if(time>=1){handoff();return}
+   if(time>=1){
+    if(act.subduedRhythmicUnderlay||act.postMusicalTailUnderlay){
+     // The new MP3 is already running at its quiet preview gain;
+     // wait for old.ended rather than cutting its final samples.
+     act.timer=setTimeout(fadeStep,45);return;
+    }
+    handoff();return;
+   }
    act.timer=setTimeout(fadeStep,50);
   }
   fadeStep();

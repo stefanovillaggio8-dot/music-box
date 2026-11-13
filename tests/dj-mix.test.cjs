@@ -799,25 +799,27 @@ test("DJ handoff keeps its already playing decoded audio instead of loading same
  const old={paused:false,volume:0,pauseCount:0,
   pause(){this.paused=true;this.pauseCount++},
   removeAttribute(){this.srcRemoved=true},load(){this.cleared=true}};
- const live={paused:false,seeking:false,readyState:4,currentTime:3.4,
+ const live={paused:false,seeking:false,readyState:4,currentTime:3.4,volume:.08,
   src:"https://example.com/song.mp3"};
  const act={original:old,fromId:"out",upcoming:live,
   track:{id:"next"},entry:0,fade:2.55,timer:null};
- let current="out",main=old,adopted=0,ordinary=0,stoppedPrecision=0;
+ let current="out",main=old,adopted=0,ordinary=0,stoppedPrecision=0,revealed=0;
  const app={audio:()=>main,currentId:()=>current,
   mixNext:()=>({id:"next"}),volume:()=>.25,
   mixAdoptHandoff:(id,elem)=>{
    adopted++;current=id;main=elem;return Promise.resolve(true);
   },
   mixHandoff:()=>{ordinary++;throw new Error("refetch would interrupt audio")}};
- const harness=new Function("app","act","stopSnapPrecision",
+ const harness=new Function("app","act","stopSnapPrecision","revealAdoptedMixAudio",
   "let active=act,mixing=true;const isIOS=false;"+
   "const window={MusicBoxRoom:{isActive:()=>false}};"+
   "const bridge=()=>app;const releaseDesktopDsp=()=>{};"+
   "const cancel=()=>{throw Error('must not cancel adopted preview')};"+
   source.slice(start,end)+
   "return {handoff,state:()=>({active,mixing})};"
- )(app,act,()=>stoppedPrecision++);
+ )(app,act,()=>stoppedPrecision++,(_audio,id,at)=>{
+  revealed++;assert.equal(_audio,live);assert.equal(id,"next");assert.equal(at,.08);
+ });
  await harness.handoff();
  assert.equal(adopted,1,"adopt preloaded audio instead of downloading again");
  assert.equal(ordinary,0);
@@ -829,6 +831,7 @@ test("DJ handoff keeps its already playing decoded audio instead of loading same
  assert.equal(harness.state().active,null);
  assert.equal(harness.state().mixing,false);
  assert.equal(stoppedPrecision,1);
+ assert.equal(revealed,1,"successful native handoff must restore the new audio volume");
 });
 test("automatic handoff seek does not cancel audible preview; manual seeking does",()=>{
  const beg=source.indexOf("onSeek:(reason)=>");

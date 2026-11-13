@@ -56,7 +56,7 @@ const CORE = [
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6734&dj=31", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6734&dj=32", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -98,7 +98,7 @@ const OFFLINE_SHELL = [
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
-  "./mix-intelligente.js?v=6734&dj=31",
+  "./mix-intelligente.js?v=6734&dj=32",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=6"
 ];

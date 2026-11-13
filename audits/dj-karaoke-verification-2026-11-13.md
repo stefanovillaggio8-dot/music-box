@@ -100,3 +100,31 @@ indice, le anteprime basate su finestre ritmiche misurate passano da **51 a
 **non 26 nuove certificazioni di beatmatch**. L'audit delle coppie strict
 rimane separato. Il resto delle coppie può usare altre uscite sicure oppure
 un normale passaggio, secondo i vincoli vocali e musicali disponibili.
+
+## Terzo intervento: ripristino controllato del volume dopo il mix
+
+### Difetto reale nel codice
+
+Quando un'anteprima ritmica filtrata viene riprodotta a 6–21% di volume e
+adottata come **lettore principale**, l'elemento HTMLAudioElement è lo
+stesso. Il vecchio percorso `handoff()` non ripristinava sempre il livello
+di ascolto dell'utente. Il brano nuovo poteva quindi continuare a suonare
+quasi inudibile anche **dopo** la fine del brano precedente.
+
+### Correzione
+
+- All'adozione effettiva del lettore, il volume aumenta dolcemente dal
+  livello residuo fino al volume impostato dall'ascoltatore in 480–780 ms.
+- La salita parte **solo dopo il termine naturale** del vecchio audio; non
+  altera le decisioni sulla voce, sul beat o sui tagli consentiti.
+- La curva asseconda l'apertura del filtro passa-basso prevista dal DSP;
+  non effettua seek, ricaricamenti o sostituzione del decoder.
+- Pause, seek, nuovo brano o modifiche dello slider interrompono oppure
+  adattano la salita, senza lasciare il brano ripreso a volume ridotto.
+- Test autonomi verificano salita, assenza di salto al primo istante,
+  volume finale corretto, cambi volume, pausa e sostituzione lettore.
+
+La correzione è un miglioramento di continuità e udibilità **sul percorso
+desktop**. I test automatici non dimostrano qualità equivalente a Spotify,
+non aumentano il numero di beatmatch strict e non sostituiscono un ascolto
+fisico su iPhone.

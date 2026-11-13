@@ -16,6 +16,7 @@ on:
       - 'tests/dj-measured-beat-placement.test.cjs'
       - 'tests/dj-audio-verification.test.cjs'
       - 'tests/dj-measured-lowband.test.cjs'
+      - 'tests/dj-adopted-volume.test.cjs'
       - 'tests/voice-analysis.test.cjs'
       - 'tests/harmonic-transitions.test.cjs'
       - 'app.js'
@@ -62,6 +63,7 @@ on:
       - 'tests/dj-measured-beat-placement.test.cjs'
       - 'tests/dj-audio-verification.test.cjs'
       - 'tests/dj-measured-lowband.test.cjs'
+      - 'tests/dj-adopted-volume.test.cjs'
       - 'tests/voice-analysis.test.cjs'
       - 'tests/harmonic-transitions.test.cjs'
       - 'app.js'
@@ -113,4 +115,4 @@ jobs:
           node --check word-karaoke.js
           node --check immersive.js
       - name: Test DJ transition safety
-        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs tests/harmonic-transitions.test.cjs tests/dj-musical-release.test.cjs tests/dj-deep-integration.test.cjs tests/dj-shuffle-fallback.test.cjs tests/dj-real-library.test.cjs tests/dj-beat-audit.test.cjs tests/dj-recording-releases.test.cjs tests/mobile-playback-regression.test.cjs tests/library-sync-regression.test.cjs tests/iphone-mix-runtime.test.cjs tests/iphone-handoff-stress.test.cjs tests/desktop-dj-responsiveness.test.cjs tests/shuffle-no-repeat.test.cjs tests/dj-lyrics-regression.test.cjs tests/dj-vocal-stems.test.cjs tests/dj-lyric-boundaries.test.cjs tests/dj-measured-beat-placement.test.cjs tests/dj-grid-tempo-karaoke.test.cjs tests/karaoke-rapid-handoff.test.cjs tests/karaoke-timing-coverage.test.cjs tests/ios-home-screen-background.test.cjs tests/dj-audio-verification.test.cjs tests/dj-measured-lowband.test.cjs
+        run: node --test tests/dj-mix.test.cjs tests/voice-analysis.test.cjs tests/harmonic-transitions.test.cjs tests/dj-musical-release.test.cjs tests/dj-deep-integration.test.cjs tests/dj-shuffle-fallback.test.cjs tests/dj-real-library.test.cjs tests/dj-beat-audit.test.cjs tests/dj-recording-releases.test.cjs tests/mobile-playback-regression.test.cjs tests/library-sync-regression.test.cjs tests/iphone-mix-runtime.test.cjs tests/iphone-handoff-stress.test.cjs tests/desktop-dj-responsiveness.test.cjs tests/shuffle-no-repeat.test.cjs tests/dj-lyrics-regression.test.cjs tests/dj-vocal-stems.test.cjs tests/dj-lyric-boundaries.test.cjs tests/dj-measured-beat-placement.test.cjs tests/dj-grid-tempo-karaoke.test.cjs tests/karaoke-rapid-handoff.test.cjs tests/karaoke-timing-coverage.test.cjs tests/ios-home-screen-background.test.cjs tests/dj-audio-verification.test.cjs tests/dj-measured-lowband.test.cjs tests/dj-adopted-volume.test.cjs
