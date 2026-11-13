@@ -8043,7 +8043,7 @@ box.innerHTML = "";
     }, 300000);
   } catch (e) { /* noop */ }
 
-async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
+async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, silentDjStart = false) {
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
@@ -8171,6 +8171,9 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null) {
       }
     }
     audio._mbCambioBrano = !_adottaDj;
+    // Common-buffer DJ playback owns the audible signal until this native
+    // decoder is ready. Set binary mute before src/play(), including iOS.
+    if (silentDjStart === true) audio.muted = true;
     /* Ste: "il boost sembra che non sia cambiato nulla". Metto in traccia
        l'indirizzo che uso davvero: se c'e' scritto "bassi" il brano e'
        potenziato, se c'e' "songs/" e' l'originale. */
@@ -13244,9 +13247,9 @@ window.MusicBoxBridge = {
     _ordineCasualeModificato();
     return true;
   },
-  mixHandoff:(id,startAt)=>{
+  mixHandoff:(id,startAt,options)=>{
     if(queue[0]===id){queue.shift();persistQueue()}
-    return playById(id,true,startAt);
+    return playById(id,true,startAt,null,options?.muted===true);
   },
   mixAdoptHandoff:(id,liveAudio)=>{
     if(!liveAudio||_usaControlliNativiIos())return null;

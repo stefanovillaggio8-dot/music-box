@@ -1,0 +1,83 @@
+name: Internal musical windows and common PCM rendering
+on:
+  pull_request:
+    paths:
+      - 'tools/refine-structure-windows.py'
+      - 'tools/dj-structure-core.py'
+      - 'tools/build-structural-beat-plans.cjs'
+      - 'audio-composite-core.mjs'
+      - 'tools/build-composite-assets.py'
+      - '.github/workflows/dj-structural-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: structural-integration-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Retrieve complete pinned whole-recording model evidence
+        run: gh run download 43463500768 --repo stefanovillaggio8-dot/music-box --pattern 'whole-structure-*' --dir whole
+      - name: Install PCM decoder and feature libraries
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install numpy==1.26.4 librosa==0.11.0
+      - run: python tools/test-dj-whole-structure.py
+      - name: Search additional instrumental bar groups and protect the actual vocal fade
+        run: python tools/refine-structure-windows.py --features=whole --shard=${{ matrix.shard }}/8 --cache=original-mp3 --output=results/structure-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: refined-structure-${{ matrix.shard }}
+          path: results/
+          retention-days: 14
+  compile-render:
+    needs: refine
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install numpy==1.26.4 librosa==0.11.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: refined-structure-*
+          path: refined
+      - name: Audit every ordered pair using actual internal PCM windows
+        run: node tools/build-structural-beat-plans.cjs --features=refined --report=results/structural-all-pairs.json
+      - name: Render original sources and certify common output peaks at 16 and 48 kHz
+        run: |
+          python tools/build-composite-assets.py --rate=16000 --plans=results/structural-all-pairs.json --assets=results/mixes-16k --cache=original-mp3 --report=results/composite-16k-report.json
+          python tools/build-composite-assets.py --rate=48000 --plans=results/structural-all-pairs.json --assets=results/dj-mixes --cache=original-mp3 --report=results/composite-48k-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: structural-compiled-rendered
+          path: results/
+          retention-days: 14

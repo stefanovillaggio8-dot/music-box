@@ -386,6 +386,8 @@ function tempoFreeReleaseBridge(a,b,dur){
   silenceTrim:trim,trailing:trim?dur-end:0};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if(plan?.measuredFullBeat&&plan.sourceSha===ending?.sha&&
+    typeof window!=="undefined"&&window.MusicBoxCompositeMix?.supports?.(plan))return true;
  // Safari can ignore HTMLMediaElement.volume. A hot two-track sum that
  // requires shared output headroom cannot be made safe by turning down
  // only the WebAudio intro. Keep its native fallback until a common bus
@@ -2692,6 +2694,36 @@ function indexedFullBeatBridge(a,b,dur){
    !Number.isFinite(p.renderEvidence?.peakBound)||p.renderEvidence.peakBound>.961))return null;
  return {...p,sourceSha:a.sha,targetSha:b.sha};
 }
+// Internal entry/exit windows are independently certified offline. They
+// require a rendered common signal: the generic crossfade cannot choose
+// an arbitrary interior entry or fade the last sung phrase by accident.
+function indexedStructuralBeatBridge(a,b,dur){
+ const record=a?.structuralBeatPlans?.[b?.sha],p=record?.cue,e=p?.structuralEvidence;
+ if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+    !p?.structuralBeat||!p.measuredFullBeat||p.kind!=="beat"||
+    a.durationMismatch||b.durationMismatch||Math.abs(dur-a.duration)>1.5||
+    Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
+    p.sourceSha!==a.sha||p.targetSha!==b.sha||p.nativeTailFullBeat!==false||
+    p.preserveTail!==false||p.silenceTrim!==false||
+    ![p.begin,p.end,p.fade,p.entry,p.tempo,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
+    p.begin<26||p.end>a.duration-8||p.entry<0||p.entry+p.fade*p.tempo>b.duration-1||
+    p.fade<4.5||p.fade>16||Math.abs(p.end-p.begin-p.fade)>.001||p.tempo<.95||p.tempo>1.05||
+    p.measuredBeatCount<8||p.beatPulseAgreement<.9||p.measuredPlacementError>.04||p.grooveScore<.36||
+    (p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseAttackSupport<.9):
+      p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)||
+    e?.version!==1||![4,8,16].includes(e.bars)||![3,4,5].includes(e.beatsPerBar)||
+    e.sourcePhaseConfidence<.8||e.targetPhaseConfidence<.8||e.downbeatRms>.04||
+    e.simultaneousVocalFrames!==0||e.outgoingVocalTail?.clear!==true||
+    e.outgoingVocalTail?.method!=="spleeter-2stems-energy-v1"||
+    p.vocalFadeSeconds!==.4||e.outgoingVocalTail.start>p.end-.649||e.outgoingVocalTail.end<p.end+.34||
+    !p.composite||p.composite.sourceSha!==a.sha||p.composite.targetSha!==b.sha||
+    p.composite.pitchPreserved!==true||p.composite.timingVerified!==true||p.composite.peak>.961)return null;
+ const h=p.harmonicEvidence;
+ if(!h||(h.percussiveIntro?!(h.tonalRatioMax<=.12&&h.tonalPeakMax<=.23&&h.measuredRmsMin>=.005&&h.frames>=6):
+   h.compatibleKey?!(h.keyConfidence>=.70&&h.dissonanceMax<=.05&&h.rawDissonanceMax<=.45):
+   !(h.average>=.78&&h.weakest>=.60)))return null;
+ return {...p};
+}
 function pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal){
  const a=outro.beats.filter(t=>t>=oldBeat).slice(0,16),
   b=intro.beats.filter(t=>t>=nextBeat).slice(0,16),n=Math.min(a.length,b.length);
@@ -2813,6 +2845,10 @@ function pcmFullBeatWindowSearch(a,b,dur){
  return best?.cue||null;
 }
 function fullBeatCueCertified(a,b,cue){
+ if(cue?.structuralBeat){
+  const expected=indexedStructuralBeatBridge(a,b,a?.duration);
+  return !!expected&&JSON.stringify(cue)===JSON.stringify(expected);
+ }
  const expected=measuredFullBeatBridge(a,b,a?.duration);
  return !!expected&&cue.kind==="beat"&&cue.measuredFullBeat===true&&
   cue.sourceSha===a.sha&&cue.targetSha===b.sha&&
@@ -3534,6 +3570,7 @@ function beatBearingIntro(b,minimumDrive=.43){
 // Require harmonic, rhythmic and tempo compatibility for every audible overlap.
 function musicallyCompatibleOverlay(a,b,cue){
  if(!cue)return false;
+ if(cue.measuredFullBeat===true)return fullBeatCueCertified(a,b,cue);
  if(cue.measuredReleaseHandoff===true){
   const p=measuredMusicalTailUnderlay(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&cue.preserveTail===true&&
@@ -4290,6 +4327,8 @@ function certifiedAlternateRelease(a,b,dur,failed){
 }
 function unalignedTransition(a,b,actualDuration){
  const dur=Number(actualDuration);
+ const structural=indexedStructuralBeatBridge(a,b,dur);
+ if(structural)return structural;
  if(!Number.isFinite(dur)||dur<26||!a||!b||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(a.duration)||
     Math.abs(a.duration-dur)>1.5||!hasImmediateMusicalIntro(b))return null;
@@ -5247,7 +5286,7 @@ function prepare(song,fromId,app){
  // Seek the incoming song BEFORE its matching downbeat. Natural EOF may
  // skip only independently certified digital silence, never audible music.
  const plannedEntry=plan&&plan.kind!=="cut"&&Number.isFinite(plan.entry)?
-  Math.max(0,Math.min(18,plan.entry)):eofEntry;
+  Math.max(0,Math.min(plan.structuralBeat?3600:18,plan.entry)):eofEntry;
  if(prepared?.id===song.id&&prepared.fromId===fromId&&prepared.url===url){
   // When analysis changes the cue, reposition the SAME buffered decoder.
   // Re-downloading or seeking during the final beat can stall the handoff.
@@ -5284,7 +5323,7 @@ function prepare(song,fromId,app){
  };
  p.retarget=(entry,safeEOF)=>{
   if(prepared!==p||p.failed)return;
-  const target=Math.max(0,Math.min(18,Number(entry)||0));
+  const target=Math.max(0,Math.min(plan?.structuralBeat?3600:18,Number(entry)||0));
   p.eofSafe=Math.abs(target-(Number(safeEOF)||0))<=.20;
   if(Math.abs(p.naturalEntry-target)<=.06)return;
   p.naturalEntry=target;p.ready=false;p.seekReady=false;p.seekIssued=false;
@@ -5718,6 +5757,7 @@ async function settleFullBeatDecoder(old,upcoming,p,valid){
   djFullBeatClockError(p,old.currentTime,upcoming.currentTime)<=.065;
 }
 async function beginMix(song,proposed){
+ if(proposed?.structuralBeat)return; // The common PCM renderer owns these windows.
  const app=bridge(),old=app?.audio(),id=app?.currentId();
  if(!old||old.paused||mixing||!proposed||app.mixNext()?.id!==song.id||isIOS)return;
  const p=prepared;
@@ -6283,6 +6323,10 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
 let lastIPhoneSlowTick=0,lastIPhoneSlowAudio=null;
 let lastIPhoneSlowId="",lastIPhoneSlowNext="";
 function tick(){
+ if(window.MusicBoxCompositeMix?.active?.()){
+  if(!enabled||document.hidden||window.MusicBoxRoom?.isActive())window.MusicBoxCompositeMix.stop();
+  else return;
+ }
  // iOS suspends/limits JS timers behind the lock screen. Leave the native
  // single HTML audio uninterrupted until Safari restores this page.
  if(isIOS&&document.hidden){
@@ -6566,6 +6610,18 @@ function tick(){
  const nowUrl=nowTrack&&(app.mixUrl?.(nowTrack)||nowTrack.url);
  const nowInfo=nowTrack&&
   (cache.get(String(nowUrl))||deepLookup(nowTrack));
+ if(plan&&window.MusicBoxCompositeMix?.supports?.(plan)&&!document.hidden&&
+    (!isIOS||mobileOverlayEnabled)&&audio.currentTime>=plan.begin-32&&audio.currentTime<plan.end){
+  const mixContext=app.mixRunningContext?.();
+  if(mixContext?.state==="running"){
+   window.MusicBoxCompositeMix.prepare(plan,mixContext).catch(()=>{});
+   if(audio.currentTime>=plan.begin-.45&&
+      window.MusicBoxCompositeMix.tryStart(plan,audio,app,next.id,mixContext))return;
+  }
+ }
+ // An interior cut is valid only through its certified common render.
+ // Asset/clock failure keeps the original song playing through its end.
+ if(plan?.structuralBeat)return;
  if(isIOS&&mobileOverlayEnabled&&plan&&
     // Offline decoding can prepare the next MP3 even while WebAudio is
     // temporarily suspended. Only actual playback needs the running clock.
@@ -7779,7 +7835,7 @@ function setMixEnabled(value,event){
  if(enabled===requested){draw();return}
  enabled=requested;
  try{localStorage.setItem("mb.djmix",enabled?"on":"off")}catch(e){}
- if(!enabled){cancel();plannedFor="";plan=null;resetMobileFade()}
+ if(!enabled){window.MusicBoxCompositeMix?.stop?.();cancel();plannedFor="";plan=null;resetMobileFade()}
  else {
   previousId="";plannedFor="";
   // Turning the primary Mix switch on also enables iPhone mixing. The
@@ -7789,6 +7845,7 @@ function setMixEnabled(value,event){
    try{localStorage.setItem("mb.mixIphone","on")}catch(_){}
    bridge()?.mixEnableAudio?.(event);
   }
+  else bridge()?.mixEnableAudio?.(event);
   // Do not pull a multi-megabyte harmonic index in the same tap as play.
   if(!deepIndex)setTimeout(()=>{if(enabled&&!document.hidden)
    loadDeepIndex().catch(()=>{})},isIOS?2200:0);

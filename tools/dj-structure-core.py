@@ -130,9 +130,17 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
     spans=[]
     for anchor,bound in boundary.items():
         for count in (4,8):
-            spans.append((anchor,anchor+count,'entry',bound))
-            for after in (0,1):spans.append((anchor+after-count,anchor+after,'exit',bound))
-    for begin,stop,role,bound in spans:
+            spans.append((anchor,anchor+count,'entry',bound,False))
+            for after in (0,1):spans.append((anchor+after-count,anchor+after,'exit',bound,False))
+            # A new instrumental section may need more than one bar for
+            # the preceding vocal decay. Search whole metrical groups
+            # inside it, rather than stopping at boundary+one-bar. These
+            # shifted spans require the ENTIRE window to be vocal-clear.
+            # They remain bar-span hypotheses, not certified phrase labels.
+            for after in (4,8,12,16):
+                spans.append((anchor+after-count,anchor+after,'exit',bound,True))
+                spans.append((anchor+after,anchor+after+count,'entry',bound,True))
+    for begin,stop,role,bound,instrumental_only in spans:
             count=stop-begin
             if begin<0:continue
             if stop>len(bars):continue
@@ -143,10 +151,13 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
             if start<0 or end>duration-.15:continue
             phrase=next((p for p in phrases if abs(p['end']-end)<.08 and p['start']<=start+.08),None)
             # Entry and exit carry separate voice tests. A vocal phrase may
-            # remain audible early in the outgoing window, but its last two
-            # seconds must be quiet before any fade/cut is permitted.
+            # remain audible at FULL gain early in the outgoing window.
+            # Only its final 400ms fade is permitted, inside a measured
+            # 650ms quiet lead plus 350ms of original post-boundary context.
+            # This changes the playback envelope, not the voice thresholds.
             full=vocal_guard(vocals,mix,start,end+.7)
-            tail=vocal_guard(vocals,mix,end-2,end+.35)
+            tail=vocal_guard(vocals,mix,end-.65,end+.35)
+            if instrumental_only and (not full or not full['clear']):continue
             common={'start':round(start,4),'end':round(end,4),'bars':count,
                 'beats':[round(t,4) for b in chain for t in b['beats']],
                 'downbeats':[round(b['start'],4) for b in chain]+[round(end,4)],
@@ -156,7 +167,9 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
                 'beatProbabilityMin':min(b['beatProbabilityMin'] for b in chain),
                 'downbeatProbabilityMin':min(b['downbeatProbabilityMin'] for b in chain),
                 'boundaryNovelty':bound['novelty'],'phrase':phrase,
-                'semanticLabel':None,'sectionAnchor':bound['t'],'endGuard':tail,'fullGuard':full}
+                'semanticLabel':None,'sectionAnchor':bound['t'],'endGuard':tail,'fullGuard':full,
+                'windowMethod':'instrumental-bar-group-after-section' if instrumental_only else 'observed-section-boundary',
+                'phraseVerified':False,'vocalFadeSeconds':.4}
             if role=='entry' and full:windows.append({**common,'role':'entry'})
             if role=='exit' and start>=26 and duration-end>=8 and tail and tail['clear']:
                 windows.append({**common,'role':'exit'})
@@ -165,7 +178,7 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
     for role in ('entry','exit'):
         ranked=sorted((w for w in windows if w['role']==role),key=lambda w:(bool(w['phrase']),w['boundaryNovelty']),reverse=True)
         for w in ranked:
-            if sum(v['role']==role for v in selected)>=6:break
+            if sum(v['role']==role for v in selected)>=16:break
             if any(v['role']==role and abs(v['end']-w['end'])<2 for v in selected):continue
             selected.append(w)
     return selected

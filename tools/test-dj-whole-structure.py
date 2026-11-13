@@ -21,7 +21,7 @@ class EvidenceTests(unittest.TestCase):
         windows=core.candidate_windows(b,boundary,[],voice,mix,128)
         self.assertTrue(any(w['role']=='exit' and w['end']<=66 for w in windows))
         voice[600:680]=.1
-        self.assertFalse(any(w['role']=='exit' for w in core.candidate_windows(b,boundary,[],voice,mix,128)))
+        self.assertFalse(any(w['role']=='exit' and w['end']<=66 for w in core.candidate_windows(b,boundary,[],voice,mix,128)))
 
     def test_gaps_or_meter_change_cannot_form_phrase_window(self):
         b=bars();b[30]['beatsPerBar']=3
