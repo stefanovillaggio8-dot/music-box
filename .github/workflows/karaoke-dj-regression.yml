@@ -1,0 +1,31 @@
+name: Karaoke and DJ regression checks
+on:
+  push:
+    branches:
+      - audit-karaoke-beatmatch-20261113
+  pull_request:
+    paths:
+      - "mix-intelligente.js"
+      - "immersive.js"
+      - "word-karaoke.js"
+      - "audio-lyrics-align.js"
+      - "tests/karaoke-dj-regression.cjs"
+      - ".github/workflows/karaoke-dj-regression.yml"
+jobs:
+  static-and-functional:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax checks
+        run: |
+          node --check mix-intelligente.js
+          node --check immersive.js
+          node --check word-karaoke.js
+          node --check audio-lyrics-align.js
+      - name: Karaoke and DJ regression tests
+        run: node tests/karaoke-dj-regression.cjs
