@@ -1361,7 +1361,7 @@
    },
    "[\"essere noi\",\"nayt\"]": {
     "v": 2,
-    "s": 223,
+    "s": 236,
     "t": "Essere noi",
     "a": "nayt"
    },
@@ -2759,13 +2759,13 @@
    },
    "[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 1,
-    "s": 94,
+    "s": 115,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"il ferro di echov\",\"kid yugi\"]": {
     "v": 1,
-    "s": 94,
+    "s": 115,
     "t": "Il Ferro di Echov",
     "a": "Kid Yugi"
    },
@@ -3359,7 +3359,7 @@
    },
    "m:2026-11|[\"essere noi\",\"nayt\"]": {
     "v": 2,
-    "s": 166,
+    "s": 179,
     "t": "Essere noi",
     "a": "nayt"
    },
