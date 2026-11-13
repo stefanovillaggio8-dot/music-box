@@ -8163,8 +8163,13 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
       const previous = audio;
       // Preserve the active native media element/session when an installed
       // iOS app advances while locked. WebKit can still deny the new play().
-      const keepNativeSession=_iosInstallataComeApp()&&document.hidden&&
-        previous&&!liveDjAudio;
+      // A common PCM buffer already owns the audible signal. Reuse the
+      // gesture-authorized native decoder for its muted handoff: WebKit
+      // may pause a newly autoplayed element as soon as it is unmuted.
+      const keepCommonSession=silentDjStart===true&&previous&&
+        window.MusicBoxCompositeMix?.owns?.(previous)===true&&!document.hidden;
+      const keepNativeSession=keepCommonSession||(_iosInstallataComeApp()&&document.hidden&&
+        previous&&!liveDjAudio);
       audio = keepNativeSession ? previous : createAudio();
       if (previous && previous !== audio) {
         previous._mbCambioBrano = true;

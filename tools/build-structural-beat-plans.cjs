@@ -30,7 +30,7 @@ const guardedTracks=tracks.map(([key,e])=>[key,engine.withGuardedLRC(e)]);
 const report={version:1,completeCoverage:!partial,features:features.size,tracks:tracks.length,
  possibleOrderedPairs:tracks.length*(tracks.length-1),consideredPairs:0,sameRecording:0,
  missingWholeRecording:0,noExitWindow:0,positiveLyricVeto:0,noEntryWindow:0,meterOrTempo:0,
- vocalConflict:0,harmony:0,eligiblePairs:0,insufficientObservedBeatFit:0,fullBeatCandidates:0,
+ vocalConflict:0,harmony:0,eligiblePairs:0,eligiblePairKeys:[],insufficientObservedBeatFit:0,fullBeatCandidates:0,
  renderingNotYetVerified:0,windowsEvaluated:0,metricalRhythmicCandidates:0,plans:[],
  eligibility:'SHA-bound whole-file evidence, structural exit with separated-vocal quiet tail, same meter and bar count, tempo within 5%, no simultaneous separated vocal activity, local PCM harmonic gate; independent actual attack fit and rendering follow.',
  modelAccuracyIsNotHumanGroundTruth:true};
@@ -139,6 +139,7 @@ for(const [from,a] of guardedTracks){
   if(!vocal){report.vocalConflict++;continue;}
   if(!harmonic){report.harmony++;continue;}
   report.eligiblePairs++;
+  report.eligiblePairKeys.push({from,to});
   if(!winner){report.insufficientObservedBeatFit++;continue;}
   const selected=[winner];
   for(const cue of alternatives.sort((a,b)=>Number(b.measuredFullBeat)-Number(a.measuredFullBeat)||Number(b.nativeRatePreferred)-Number(a.nativeRatePreferred)||b.score-a.score)){

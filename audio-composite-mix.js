@@ -71,7 +71,7 @@ function tryStart(cue,old,app,toId,ctx){
  const act={source,gain,old,wasMuted:old.muted,ctx,fromId,toId,app,cue,listeners:[],handingOff:false};
  const listen=(target,event,listener)=>{target?.addEventListener?.(event,listener);act.listeners.push([target,event,listener]);};
  const abort=()=>{if(current===act)stop()};
- listen(old,'seeking',abort);listen(old,'pause',()=>{if(!act.handingOff&&!(cue.nativeTailFullBeat&&old.ended))abort()});
+ listen(old,'seeking',()=>{if(!act.handingOff)abort()});listen(old,'pause',()=>{if(!act.handingOff&&!(cue.nativeTailFullBeat&&old.ended))abort()});
  listen(root.document,'visibilitychange',()=>{if(root.document.hidden)abort()});
  listen(ctx,'statechange',()=>{if(ctx.state!=='running')abort()});
  source.onended=abort;current=act;
@@ -94,7 +94,7 @@ function tryStart(cue,old,app,toId,ctx){
    try{
     const job=app.mixHandoff(toId,position,{muted:true});
     act.successor=app.audio();
-    if(!act.successor||act.successor===old||!act.successor.muted)throw Error('Silent handoff unavailable');
+    if(!act.successor||!act.successor.muted)throw Error('Silent handoff unavailable');
     Promise.resolve(job).catch(abort);
    }catch(_){stop();return;}
   }

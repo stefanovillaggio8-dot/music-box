@@ -75,3 +75,13 @@ test('a user seek during native handoff cancels the common clock and is never co
  next.currentTime=69.2;assert.equal(f.api.onSeek('user',next),false);
  assert.equal(f.api.active(),false);assert.equal(next.muted,false);assert.equal(next.currentTime,69.2);
 });
+test('a common handoff can retain the gesture-authorized native media element',async t=>{
+ const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);t.after(()=>f.api.stop());
+ const audio={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,readyState:2};let id='a';
+ const app={audio:()=>audio,currentId:()=>id,mixNext:()=>({id:'b'}),volume:()=>1,wantsPlayback:()=>true,mixSourceMatches:()=>true,
+  mixHandoff:(_,position)=>{id='b';audio.currentTime=position;f.listeners.get('seeking')?.();return Promise.resolve()}};
+ assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);
+ f.ctx.currentTime=5.32;audio.currentTime=37.02;
+ await new Promise(r=>setTimeout(r,35));assert.equal(id,'b');assert.equal(f.api.active(),true);
+ assert.equal(f.api.onSeek('media',audio),true);assert.equal(audio.muted,true);
+});

@@ -3,13 +3,13 @@
 // NOT an external Spotify-equivalence certificate or a listening test.
 const fs=require("node:fs"),path=require("node:path");
 const root=path.join(__dirname,"..");
-const source=fs.readFileSync(path.join(root,"mix-intelligente.js"),"utf8");
-const database=JSON.parse(fs.readFileSync(path.join(root,"dj-deep-analysis.json"),"utf8"));
-const karaoke=JSON.parse(fs.readFileSync(path.join(root,"karaoke-index.json"),"utf8"));
-const lyricBoundaries=JSON.parse(fs.readFileSync(path.join(root,"dj-lyric-boundaries.json"),"utf8"));
-const version=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8"));
 const args=process.argv.slice(2);
 const arg=(key,otherwise)=>args.find(a=>a.startsWith("--"+key+"="))?.slice(key.length+3)??otherwise;
+const source=fs.readFileSync(path.join(root,"mix-intelligente.js"),"utf8");
+const database=JSON.parse(fs.readFileSync(arg('index',path.join(root,"dj-deep-analysis.json")),"utf8"));
+const karaoke=JSON.parse(fs.readFileSync(path.join(root,"karaoke-index.json"),"utf8"));
+const lyricBoundaries=JSON.parse(fs.readFileSync(arg('lyrics',path.join(root,"dj-lyric-boundaries.json")),"utf8"));
+const version=JSON.parse(fs.readFileSync(path.join(root,"versione.json"),"utf8"));
 const snippet=(from,to)=>{
  const a=source.indexOf(from),b=source.indexOf(to,a+from.length);
  if(a<0||b<a)throw Error("Missing DJ source function "+from);
@@ -86,7 +86,7 @@ const result={
  completePcmBeat:0,renderedFullBeat:0,shortIndexedBeat:0,fullOverlapSeconds:0,
  metricalRhythmic:0,structuralEarlyExits:0,commonPcmAssets:0,crossfadePlans:0,normalChanges:0,
  plannedKinds:{},
- verifiedBeatSamples:[],
+ verifiedBeatSamples:[],verifiedPairs:[],safariFullWithCommonPcm:0,safariFullNativeNoAttenuation:0,safariFullAvailable:0,
  rejectedBeat:0,postlude:0,underlay:0,other:0,none:0,errors:[],
  nonBeatSamples:[],karaoke:{
   syncedLinesIndexed:Object.values(karaoke).filter(x=>x?.synced===true).length,
@@ -126,8 +126,18 @@ for(let i=0;i<tracks.length;i++){
      plan.end>plan.begin&&plan.end<=a.duration+.2;
    if(certified&&audible&&Number.isFinite(plan.score)){
     result.verifiedBeat++;
+    const common=!!plan.composite?.timingVerified;
+    const nativeSafe=Number(plan.outputHeadroom)>=.999;
+    result.verifiedPairs.push({from,to,full:!!plan.measuredFullBeat,partial:!!plan.metricalRhythmic,
+     structural:!!plan.structuralBeat,common,fade:plan.fade,begin:plan.begin,end:plan.end,entry:plan.entry,
+     rmsSeconds:plan.composite?.postRenderRhythm?.rmsSeconds??null,
+     peak:plan.composite?.oversampledPeak??null,
+     commonSha:plan.composite?.sha256??null});
     if(plan.measuredFullBeat){
      result.completePcmBeat++;result.fullOverlapSeconds+=plan.fade;
+     if(common)result.safariFullWithCommonPcm++;
+     if(nativeSafe)result.safariFullNativeNoAttenuation++;
+     if(common||nativeSafe)result.safariFullAvailable++;
      if(plan.renderEvidence?.timingVerified||plan.composite?.timingVerified&&plan.composite?.rhythmVerified)result.renderedFullBeat++;
     }else if(plan.metricalRhythmic)result.metricalRhythmic++;
     else result.shortIndexedBeat++;

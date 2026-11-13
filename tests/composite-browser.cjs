@@ -62,10 +62,10 @@ const server=http.createServer(async(req,res)=>{
      window.trace={handoffs:0,mutedBeforePlay:false};
      window.app={audio:()=>player,currentId:()=>id,mixNext:()=>({id:'in'}),volume:()=>.7,wantsPlayback:()=>true,mixSourceMatches:()=>true,
       mixHandoff:(target,position,options)=>{
-       trace.handoffs++;const previous=player;id=target;player=new Audio('/original/'+plan.toSha+'.mp3');
+       trace.handoffs++;id=target;player.src='/original/'+plan.toSha+'.mp3';
        player.muted=options?.muted===true;trace.mutedBeforePlay=player.muted;
        player.addEventListener('loadedmetadata',()=>{player.currentTime=position},{once:true});
-       previous.pause();return player.play();
+       return player.play().catch(error=>{trace.playError=String(error);throw error});
       }};
      await new Promise((resolve,reject)=>{player.addEventListener('loadedmetadata',resolve,{once:true});player.addEventListener('error',reject,{once:true});player.load()});
      player.currentTime=cue.begin-.65;
@@ -75,7 +75,8 @@ const server=http.createServer(async(req,res)=>{
     await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-.44);
     const started=await page.evaluate(()=>MusicBoxCompositeMix.tryStart(cue,player,app,'in',ctx));assert.equal(started,true);
     await page.waitForFunction(()=>trace.handoffs===1&&!MusicBoxCompositeMix.active()&&!player.muted,{timeout:25000});
-    const state=await page.evaluate(()=>({id,handoffs:trace.handoffs,mutedBeforePlay:trace.mutedBeforePlay,paused:player.paused,at:player.currentTime}));
+    const state=await page.evaluate(()=>({id,handoffs:trace.handoffs,mutedBeforePlay:trace.mutedBeforePlay,paused:player.paused,at:player.currentTime,playError:trace.playError||null}));
+    console.error(name,'native handoff',JSON.stringify(state));
     assert.equal(state.id,'in');assert.equal(state.handoffs,1);assert.equal(state.mutedBeforePlay,true);assert.equal(state.paused,false);
     // Repeat start then seek: the common source must release native mute.
     await page.evaluate(async plan=>{
