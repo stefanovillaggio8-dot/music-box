@@ -75,7 +75,7 @@ if(!Number.isInteger(shard)||!Number.isInteger(totalShards)||shard<0||
 const maxOutgoing=Number(arg("max-outgoing","0"));
 if(!Number.isInteger(maxOutgoing)||maxOutgoing<0)throw Error("Bad max-outgoing");
 const result={
- schema:2,version:version.versione,catalogTracks:version.brani,
+ schema:3,version:version.versione,catalogTracks:version.brani,
  indexTracks:Object.keys(database.entries||{}).length,
  analyzableTracks:tracks.length,
  excludedIndexTracks:Object.keys(database.entries||{}).length-tracks.length,
@@ -83,6 +83,8 @@ const result={
  beatGridsTempoRefined:tracks.filter(([k,a])=>a.tempoVerifiedByGrid===true).length,
  possibleOrderedPairs:tracks.length*(tracks.length-1),
  shard,totalShards,analyzedPairs:0,verifiedBeat:0,earlyVerifiedBeat:0,
+ completePcmBeat:0,renderedFullBeat:0,shortIndexedBeat:0,fullOverlapSeconds:0,
+ plannedKinds:{},
  verifiedBeatSamples:[],
  rejectedBeat:0,postlude:0,underlay:0,other:0,none:0,errors:[],
  nonBeatSamples:[],karaoke:{
@@ -113,6 +115,7 @@ for(let i=0;i<tracks.length;i++){
    continue;
   }
   if(!plan){result.none++;continue;}
+  result.plannedKinds[plan.kind]=(result.plannedKinds[plan.kind]||0)+1;
   if(beatLike(plan)){
    let certified=false;
    try{certified=engine.desktopBeatPairCertified(a,b,plan)===true}
@@ -122,11 +125,17 @@ for(let i=0;i<tracks.length;i++){
      plan.end>plan.begin&&plan.end<=a.duration+.2;
    if(certified&&audible&&Number.isFinite(plan.score)){
     result.verifiedBeat++;
+    if(plan.measuredFullBeat){
+     result.completePcmBeat++;result.fullOverlapSeconds+=plan.fade;
+     if(plan.renderEvidence?.timingVerified)result.renderedFullBeat++;
+    }else result.shortIndexedBeat++;
     if(result.verifiedBeatSamples.length<12)
      result.verifiedBeatSamples.push({from,to,kind:plan.kind,
       begin:plan.begin,end:plan.end,entry:plan.entry,
       fade:plan.fade,tempo:plan.tempo,
-      lastAudible:a.last,score:plan.score});
+      lastAudible:a.last,score:plan.score,
+      rendered:!!plan.renderEvidence?.timingVerified,
+      outputHeadroom:plan.outputHeadroom??null});
     if(plan.begin<a.last-.6)result.earlyVerifiedBeat++;
    }else result.rejectedBeat++;
   }else if(plan.kind==="postlude"||plan.measuredPostludeBridge)result.postlude++;
@@ -141,6 +150,7 @@ for(let i=0;i<tracks.length;i++){
 const sum=result.verifiedBeat+result.rejectedBeat+result.postlude+
  result.underlay+result.other+result.none;
 if(sum!==result.analyzedPairs)throw Error("Audit arithmetic error");
+result.averageFullOverlapSeconds=result.completePcmBeat?result.fullOverlapSeconds/result.completePcmBeat:null;
 result.coveragePercent=result.analyzedPairs?
  +(100*result.verifiedBeat/result.analyzedPairs).toFixed(5):0;
 result.verdict=result.analyzedPairs===result.possibleOrderedPairs&&

@@ -38,7 +38,9 @@ test('full beatmix requires source identity, independent rhythm and vocal safety
 
 test('compact plans preserve the PCM certificate while rechecking live recording and vocals',()=>{
  const {a,b}=fixture(),cue=engine.measuredFullBeatBridge(a,b,a.duration);
- a.pcmBeatPlans={[b.sha]:{version:1,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue}};
+ cue.outputHeadroom=1;cue.renderEvidence={sourceSha:a.sha,targetSha:b.sha,
+  pitchPreserved:true,timingVerified:true,peakBound:.9};
+ a.pcmBeatPlans={[b.sha]:{version:2,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue}};
  delete a.pcmTransition;delete b.pcmTransition;
  assert.ok(engine.measuredFullBeatBridge(a,b,a.duration));
  assert.equal(engine.desktopBeatPairCertified(a,b,cue),true);
@@ -93,7 +95,9 @@ test('original MP3 fixtures prove a 6.8 second thirteen-beat mix, independent of
  const vocals={...b,firstVoiceAt:b.safeIntroAt+2};
  assert.equal(engine.measuredFullBeatBridge(a,vocals,a.duration),null);
  delete a.pcmTransition;delete b.pcmTransition;
- assert.equal(engine.desktopBeatPairCertified(a,b,p),true,'runtime uses the same SHA-bound compact plan');
+ const rendered=a.pcmBeatPlans[b.sha].cue;
+ assert.equal(engine.desktopBeatPairCertified(a,b,p),false,'unrendered cue cannot bypass the measured common headroom');
+ assert.equal(engine.desktopBeatPairCertified(a,b,rendered),true,'runtime uses the same SHA-bound rendered plan');
  assert.equal(engine.measuredFullBeatBridge(a,{...b,sha:'changed-audio'},a.duration),null);
 });
 test('live phase feedback converges without moving or retiming the outgoing player',()=>{
@@ -110,4 +114,54 @@ test('live phase feedback converges without moving or retiming the outgoing play
   }
   assert.ok(Math.abs(old-newClock/tempo)<.003);
  }
+});
+
+test('local pulse hypotheses rescue half-time metadata only with observed attacks',()=>{
+ const {a,b}=fixture();
+ b.bpm=60;
+ b.pcmTransition.version=3;b.pcmTransition.method='original-pcm-hpss-onset-chroma-20ms-v3-multigrid';
+ b.pcmTransition.intro.grids=[{method:'local-onset',bpm:120,beats:[...b.pcmTransition.intro.beats]}];
+ b.pcmTransition.intro.beats=b.pcmTransition.intro.beats.filter((t,i)=>i%2===0);
+ const p=engine.measuredFullBeatBridge(a,b,a.duration);
+ assert.ok(p);assert.equal(p.targetTempoBpm,120);assert.ok(p.measuredBeatCount>=8);
+ const fake=structuredClone(b);fake.pcmTransition.intro.grids[0].beats=fake.pcmTransition.intro.grids[0].beats.map(t=>t+.25);
+ assert.equal(engine.measuredFullBeatBridge(a,fake,a.duration),null,'pulses in the trough cannot count');
+});
+
+test('extended native-tail windows keep both complete clocks and bounded mobile preparation',()=>{
+ const evidence=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-multigrid.json'),'utf8'));
+ const byKey=new Map(tracks),from='audio/songs/track-1008.mp3',to='audio/songs/track-51.mp3';
+ const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
+ const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
+ const p=engine.measuredFullBeatBridge(a,b,a.duration);
+ assert.ok(p.fade>8&&p.fade<=16);assert.equal(p.end,a.duration-.035);
+ assert.equal(p.nativeTailFullBeat,true);assert.equal(p.silenceTrim,false);
+ const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
+ assert.match(source,/clamp\(info\.pcmIntroSeconds,14,24\)/);
+});
+
+test('original PCM alternative grids add a real pair missed by the global beat grid',()=>{
+ const evidence=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-multigrid.json'),'utf8'));
+ const byKey=new Map(tracks),from='audio/songs/track-347.mp3',to='audio/songs/track-219.mp3';
+ const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
+ const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
+ const p=engine.measuredFullBeatBridge(a,b,a.duration);assert.ok(p);assert.ok(p.measuredBeatCount>=8);
+ const oldA=structuredClone(a),oldB=structuredClone(b);
+ delete oldA.pcmTransition.outro.grids;delete oldB.pcmTransition.intro.grids;
+ assert.equal(engine.measuredFullBeatBridge(oldA,oldB,a.duration),null);
+});
+
+test('rendered output headroom cannot be removed and hot sums retain the Safari fallback',()=>{
+ const {a,b}=fixture(),cue=engine.measuredFullBeatBridge(a,b,a.duration);
+ const safe={...cue,outputHeadroom:.72,renderEvidence:{sourceSha:a.sha,targetSha:b.sha,
+  pitchPreserved:true,timingVerified:true,peakBound:.96}};
+ a.pcmBeatPlans={[b.sha]:{version:2,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue:safe}};
+ delete a.pcmTransition;delete b.pcmTransition;
+ assert.equal(engine.desktopBeatPairCertified(a,b,safe),true);
+ const stripped={...safe};delete stripped.outputHeadroom;
+ assert.equal(engine.desktopBeatPairCertified(a,b,stripped),false);
+ const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
+ const body=source.slice(source.indexOf('function mobileMixAllowed('),source.indexOf('function rememberMobileClip('));
+ const allowed=new Function(body+'return mobileMixAllowed;')();
+ assert.equal(allowed(safe,a),false,'Safari native volume cannot provide common headroom');
 });

@@ -386,6 +386,11 @@ function tempoFreeReleaseBridge(a,b,dur){
   silenceTrim:trim,trailing:trim?dur-end:0};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ // Safari can ignore HTMLMediaElement.volume. A hot two-track sum that
+ // requires shared output headroom cannot be made safe by turning down
+ // only the WebAudio intro. Keep its native fallback until a common bus
+ // has been verified on the device.
+ if(plan?.measuredFullBeat&&Number.isFinite(plan.outputHeadroom)&&plan.outputHeadroom<1)return false;
  if(plan?.measuredFullBeat===true)
   return (!!ending?.pcmBeatPlans?.[plan.targetSha]||!!pcmTransitionSection(ending,"outro"))&&
    plan.sourceSha===ending.sha&&(plan.percussiveIntro||Math.abs(plan.tempo-1)<=.002||
@@ -396,12 +401,12 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
    (plan.measuredPulseMode?plan.measuredBeatCount>=12&&plan.beatPulseAgreement>=.95&&
     plan.measuredPlacementError<=.025&&plan.fullPulseFirst>=5&&plan.fullPulseSecond>=5&&
     plan.fullPulseAttackSupport>=.90:plan.fullOnsetFirst>=.22&&plan.fullOnsetSecond>=.22)&&
-   (plan.percussiveIntro?plan.introPcmVersion===2&&plan.introTonalRatioMax<=.12&&
+   (plan.percussiveIntro?[2,3].includes(plan.introPcmVersion)&&plan.introTonalRatioMax<=.12&&
     plan.introTonalPeakMax<=.23&&plan.introMeasuredRmsMin>=.005&&plan.introTonalFrames>=6:
     plan.harmonicMode==="compatible-key"?plan.harmonicKeyConfidence>=.70&&
     plan.harmonicDissonanceMax<=.05&&plan.harmonicRawDissonanceMax<=.45:
     plan.harmonicScore>=.78&&plan.harmonicWeakest>=.60)&&
-   plan.fade>=4.5&&plan.fade<=8&&
+   plan.fade>=4.5&&plan.fade<=(plan.fullBeatSearchVersion===2?16:8)&&
    Math.abs(plan.end-ending.duration)<.1;
 
  if(plan?.neutralAmbientUnderlay===true)
@@ -504,7 +509,8 @@ function rememberMobileClip(key,decoded,info){
   const start=Math.max(0,musicalIntroEntry(info)-.2);
   const offset=Math.floor(start*rate);
   // Longer bounded preview covers delayed Safari startup.
-   const count=Math.min(Math.floor(14*rate),decoded.length-offset);
+   const seconds=Number.isFinite(info.pcmIntroSeconds)?clamp(info.pcmIntroSeconds,14,24):14;
+   const count=Math.min(Math.floor(seconds*rate),decoded.length-offset);
   if(count<rate*4)return;
   const channels=[];
   for(let c=0;c<Math.min(2,decoded.numberOfChannels);c++)
@@ -2476,7 +2482,8 @@ function djMeasuredBarAccents(outro,intro,bpm,offsetSeconds){
 function pcmTransitionSection(track,name){
  const data=track?.pcmTransition,part=data?.[name];
  if(!((data?.version===1&&data.method==="original-pcm-onset-chroma-20ms")||
-      (data?.version===2&&data.method==="original-pcm-hpss-onset-chroma-20ms-v2"))||
+      (data?.version===2&&data.method==="original-pcm-hpss-onset-chroma-20ms-v2")||
+      (data?.version===3&&data.method==="original-pcm-hpss-onset-chroma-20ms-v3-multigrid"))||
     data.sha!==track.sha||!part||
     !Number.isFinite(part.start)||!Number.isFinite(part.end)||
     part.end<=part.start||part.step!==.02||
@@ -2629,7 +2636,10 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
 // The large PCM contours stay in audit artifacts, never in the PWA index.
 function indexedFullBeatBridge(a,b,dur){
  const record=a?.pcmBeatPlans?.[b?.sha],p=record?.cue;
- if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+ const expanded=record?.version===2&&p?.fullBeatSearchVersion===2;
+ if(expanded&&(!p.renderEvidence||p.outputHeadroom==null))return null;
+ const sourceBpm=expanded?p.sourceTempoBpm:a?.bpm,targetBpm=expanded?p.targetTempoBpm:b?.bpm;
+ if(![1,2].includes(record?.version)||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     !p||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     Math.abs(record.sourceDuration-a.duration)>.1||
@@ -2640,13 +2650,15 @@ function indexedFullBeatBridge(a,b,dur){
       p.beatPeriod,p.measuredBeatCount,p.beatPulseAgreement,
       p.measuredPlacementError,p.grooveScore,p.fullOnsetFirst,
       p.fullOnsetSecond].every(Number.isFinite)||
-    p.fade<4.5||p.fade>8||p.begin<26||
+    p.fade<4.5||p.fade>(expanded?16:8)||p.begin<26||
     Math.abs(p.end-p.begin-p.fade)>.001||
     Math.abs(p.end-(dur-.035))>.01||
-    p.entry!==musicalIntroEntry(b)||p.tempo<.95||p.tempo>1.05||
-    !Number.isFinite(p.nominalTempo)||Math.abs(p.nominalTempo-a.bpm/b.bpm)>.0001||
+    (expanded?(!Number.isFinite(p.entry)||p.entry<musicalIntroEntry(b)||p.entry>musicalIntroEntry(b)+8):p.entry!==musicalIntroEntry(b))||
+    !Number.isFinite(sourceBpm)||!Number.isFinite(targetBpm)||sourceBpm<55||sourceBpm>210||targetBpm<55||targetBpm>210||
+    p.tempo<.95||p.tempo>1.05||
+    !Number.isFinite(p.nominalTempo)||Math.abs(p.nominalTempo-sourceBpm/targetBpm)>.0001||
     Math.abs(p.tempo/p.nominalTempo-1)>.025||p.gain!==1||
-    Math.abs(p.beatPeriod-60/a.bpm)>.0001||
+    Math.abs(p.beatPeriod-60/sourceBpm)>.0001||
     p.measuredBeatCount<8||p.beatPulseAgreement<.90||
     p.measuredPlacementError<0||p.measuredPlacementError>.040||
     p.grooveScore<.36)return null;
@@ -2656,12 +2668,12 @@ function indexedFullBeatBridge(a,b,dur){
      p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.90)return null;
  }else if(p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)return null;
  if(p.percussiveIntro===true){
-  if(p.introPcmVersion!==2||
+  if(![2,3].includes(p.introPcmVersion)||
      ![p.introTonalRatioMax,p.introTonalPeakMax,p.introMeasuredRmsMin,p.introTonalFrames].every(Number.isFinite)||
      p.introTonalRatioMax<0||p.introTonalRatioMax>.12||p.introTonalPeakMax>.23||
      p.introMeasuredRmsMin<.005||p.introTonalFrames<6)return null;
  }else if(p.harmonicMode==="compatible-key"){
-  if(p.introPcmVersion!==2||p.outroPcmVersion!==2||
+  if(![2,3].includes(p.introPcmVersion)||![2,3].includes(p.outroPcmVersion)||
      !Number.isFinite(p.harmonicKeyConfidence)||p.harmonicKeyConfidence<.70||
      !Number.isFinite(p.harmonicDissonanceMax)||p.harmonicDissonanceMax>.05||
      !Number.isFinite(p.harmonicRawDissonanceMax)||p.harmonicRawDissonanceMax>.45||
@@ -2673,6 +2685,10 @@ function indexedFullBeatBridge(a,b,dur){
  const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
    Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
  if(!Number.isFinite(firstVoice)||(firstVoice-p.entry)/Math.max(1,p.tempo)<p.fade+.65)return null;
+ if(p.outputHeadroom!=null&&(!Number.isFinite(p.outputHeadroom)||p.outputHeadroom<=0||p.outputHeadroom>1||
+   p.renderEvidence?.sourceSha!==a.sha||p.renderEvidence?.targetSha!==b.sha||
+   p.renderEvidence?.timingVerified!==true||p.renderEvidence?.pitchPreserved!==true||
+   !Number.isFinite(p.renderEvidence?.peakBound)||p.renderEvidence.peakBound>.961))return null;
  return {...p,sourceSha:a.sha,targetSha:b.sha};
 }
 function pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal){
@@ -2689,8 +2705,37 @@ function pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal){
  // rejects missing pulses, changing tempo and any poor residual phase.
  return rate>=.95&&rate<=1.05&&Math.abs(rate/nominal-1)<=.025?rate:null;
 }
+// Several observed pulse tracks may explain half/double-time or a local
+// change. These are offline-only hypotheses, NEVER synthesized metronomes.
+// Each proposed window still has to pass the unchanged independent fit.
+function pcmBeatVariants(track,name){
+ const part=pcmTransitionSection(track,name);
+ if(!part)return [];
+ const variants=[track];
+ if(track.pcmTransition.version!==3||!Array.isArray(part.grids))return variants;
+ for(const grid of part.grids.slice(0,6)){
+  if(grid.method!=="local-onset"||!Number.isFinite(grid.bpm)||grid.bpm<55||grid.bpm>210||
+     !Array.isArray(grid.beats)||grid.beats.length<8||grid.beats.length>250||
+     !grid.beats.every((t,i)=>Number.isFinite(t)&&t>=part.start&&t<=part.end&&(!i||t>grid.beats[i-1]))||
+     grid.beats.some(t=>Math.max(...[-.02,0,.02].map(d=>pcmContourAt(part,t+d)??0))<.25))continue;
+  variants.push({...track,bpm:grid.bpm,pcmTransition:{...track.pcmTransition,
+   [name]:{...part,beats:grid.beats}}});
+ }
+ return variants;
+}
 function measuredFullBeatBridge(a,b,dur){
  if(!a?.pcmTransition||!b?.pcmTransition)return indexedFullBeatBridge(a,b,dur);
+ if(!beatBearingIntro(b,.39)||!Number.isFinite(Math.min(
+   Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+   Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity)))return null;
+ let best=null;
+ for(const aa of pcmBeatVariants(a,"outro"))for(const bb of pcmBeatVariants(b,"intro")){
+  const cue=pcmFullBeatWindowSearch(aa,bb,dur);
+  if(cue&&(!best||cue.score>best.score))best=cue;
+ }
+ return best;
+}
+function pcmFullBeatWindowSearch(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
     Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
@@ -2701,23 +2746,26 @@ function measuredFullBeatBridge(a,b,dur){
  const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
     Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
  if(!Number.isFinite(firstVoice))return null;
- const entry=musicalIntroEntry(b),end=dur-.035;
+ const baseEntry=musicalIntroEntry(b),end=dur-.035;
  const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
  if(!outro||!intro)return null;
  // Missing vocal data never certifies a full-band instrumental intro.
- if(!Number.isFinite(firstVoice)||entry<intro.start||end>outro.end)return null;
- const key=camelotMatch(a,b);
- if(key.weight>=.14&&key.score<.55)return null;
+ if(!Number.isFinite(firstVoice)||baseEntry<intro.start||end>outro.end)return null;
+ // The actual overlapping sections determine harmony below. A whole-song
+ // key must not veto a separately verified local modulation.
  let best=null;
+ const entries=[baseEntry,...intro.beats.filter(t=>t>baseEntry+.1&&
+  t<=Math.min(baseEntry+8,firstVoice-5.4))];
+ for(const entry of entries){
  for(const oldBeat of outro.beats){
-  if(oldBeat<end-8.0||oldBeat>end-3.0)continue;
+  if(oldBeat<end-16.0||oldBeat>end-3.0)continue;
   for(const nextBeat of intro.beats){
    if(nextBeat<entry||nextBeat>entry+1.1)continue;
    const fitted=pcmFittedTempo(outro,intro,oldBeat,nextBeat,nominal);
    const rates=[...new Set([nominal,fitted].filter(r=>Number.isFinite(r)&&r>=.95&&r<=1.05))];
    for(const rate of rates){
    const begin=oldBeat-(nextBeat-entry)/rate,fade=end-begin;
-   if(begin<26||fade<4.5||fade>8||begin<outro.start||
+   if(begin<26||fade<4.5||fade>16||begin<outro.start||
       entry+fade*Math.max(1,rate)>intro.end||
       (firstVoice-entry)/Math.max(1,rate)<fade+.65)continue;
    // The original stays at full gain until native EOF, including any vocal.
@@ -2728,7 +2776,9 @@ function measuredFullBeatBridge(a,b,dur){
    if(!harmony)continue;
    const quality=.45*fit.score+.35*(harmony.percussiveIntro?fit.ratio:
     harmony.compatibleKey?harmony.keyCompatibility:harmony.average)+.20*fit.ratio;
-   const cue={kind:"beat",measuredFullBeat:true,sourceSha:a.sha,targetSha:b.sha,measuredBeatBridge:true,
+   const cue={kind:"beat",measuredFullBeat:true,fullBeatSearchVersion:2,
+    sourceTempoBpm:a.bpm,targetTempoBpm:b.bpm,
+    sourceSha:a.sha,targetSha:b.sha,measuredBeatBridge:true,
     measuredBeatPlacement:true,measuredOnsetGrid:true,
     begin,end,fade,entry,tempo:rate,gain:1,
     beatAnchor:oldBeat,nextBeat:nextBeat-entry,beatPeriod:60/a.bpm,nominalTempo:nominal,
@@ -2757,6 +2807,7 @@ function measuredFullBeatBridge(a,b,dur){
    }
   }
  }
+ }
  return best?.cue||null;
 }
 function fullBeatCueCertified(a,b,cue){
@@ -2766,6 +2817,7 @@ function fullBeatCueCertified(a,b,cue){
   !cue.drumOnlyUnderlay&&!cue.vocalBeatUnderlay&&cue.percussiveIntro===expected.percussiveIntro&&
   cue.harmonicMode===expected.harmonicMode&&cue.measuredPulseMode===expected.measuredPulseMode&&
   cue.silenceTrim===false&&cue.softTailTrim===false&&
+  Math.abs((cue.outputHeadroom??1)-(expected.outputHeadroom??1))<.0001&&
   ["begin","end","fade","entry","tempo","gain","beatAnchor","nextBeat","beatPeriod"].every(k=>
    Number.isFinite(cue[k])&&Math.abs(cue[k]-expected[k])<.001);
 }
@@ -4858,7 +4910,9 @@ function startMobileMix(song,p,app,old){
   const startedAt=ctx.currentTime+delay;
   const djRevealAt=p.nativeTailFullBeat?null:djImpactBeatPoint(p,Math.min(p.fade,secondsLeft-delay));
   const softReveal=djSoftRevealReady(p,Math.min(p.fade,secondsLeft-delay));
-  dspNodes=connectMixDsp(ctx,source,gain,
+  // The rendered full-band certificate describes the original signal.
+  // Optional boosts/filters would change both its attacks and peak bound.
+  dspNodes=p.measuredFullBeat?[]:connectMixDsp(ctx,source,gain,
     Math.max(.4,Math.min(p.fade,secondsLeft-delay)),
     !!p.measuredBeatBridge,djRevealAt,delay,softReveal,!!p.drumOnlyUnderlay);
   if(p.drumOnlyUnderlay&&!dspNodes.length)
@@ -5667,12 +5721,13 @@ async function beginMix(song,proposed){
  if(old.currentTime>proposed.end-(proposed.kind==="snap"?.25:.55))return;
  mixing=true;stopSnapPrecision();prepared=null;
  const upcoming=p.audio;
- const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,12);
+ const fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.08),proposed.kind==="snap"?.20:.8,proposed.measuredFullBeat?16:12);
  const act={original:old,fromId:id,upcoming,track:song,entry:proposed.entry,
    subduedRhythmicUnderlay:!!proposed.subduedRhythmicUnderlay,
    drumOnlyUnderlay:!!proposed.drumOnlyUnderlay,
    postMusicalTailUnderlay:!!proposed.postMusicalTailUnderlay,
    nativeTailFullBeat:!!proposed.nativeTailFullBeat,
+   outputHeadroom:Number.isFinite(proposed.outputHeadroom)?clamp(proposed.outputHeadroom,0,1):1,
    underlayVolume:proposed.underlayVolume||.24,
   tempo:proposed.tempo||1,kind:proposed.kind,gain:proposed.gain||1,
   softTail:!!proposed.softTailTrim,preserveTail:!!proposed.preserveTail,
@@ -5737,13 +5792,13 @@ async function beginMix(song,proposed){
    cancel();plan=null;return;
   }
   act.fade=clamp(Math.min(proposed.fade,proposed.end-old.currentTime-.05),
-    proposed.kind==="snap"?.18:.8,12);
+    proposed.kind==="snap"?.18:.8,proposed.measuredFullBeat?16:12);
   // Play may already have consumed part of the incoming first measure.
   const playedCue=Number.isFinite(proposed.nextBeat)?
     {...proposed,nextBeat:proposed.nextBeat-(upcoming.currentTime-targetEntry)}:
     proposed;
   act.djRevealAt=djImpactBeatPoint(playedCue,act.fade);
-  act.dsp=attachDesktopDsp(upcoming,act.fade,
+  if(!proposed.measuredFullBeat)act.dsp=attachDesktopDsp(upcoming,act.fade,
     ["beat","phrase","snap"].includes(proposed.kind)&&
     (proposed.measuredBeatBridge||proposed.rhythmicGridJoin),act.djRevealAt,
     djSoftRevealReady(proposed,act.fade),!!proposed.drumOnlyUnderlay);
@@ -5890,6 +5945,9 @@ async function beginMix(song,proposed){
    }
    if(act.nativeTailFullBeat){
      outGain=1;inGain=.33*Math.sin(Math.min(1,time*1.5)*Math.PI/2);
+     // Common output attenuation preserves the entire outgoing vocal and
+     // the ratio of the two arrangements; it is not a compressor or stem.
+     outGain*=act.outputHeadroom;inGain*=act.outputHeadroom;
     }
    if(act.subduedRhythmicUnderlay){
      outGain=1;inGain=act.underlayVolume*Math.sin(Math.min(1,time*1.5)*Math.PI/2);

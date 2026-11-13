@@ -8,7 +8,29 @@ import numpy as np
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 SR=11025
 HOP=128
-VERSION=2
+VERSION=3
+
+def observed_grids(contour,start,bpm):
+    """Alternative LOCAL pulse tracks, refined to observed HPSS attacks.
+
+    The tempo hypotheses guide the tracker; they never create missing beats.
+    The pair compiler independently tests the entire simultaneous window.
+    """
+    env=np.asarray(contour,dtype=float)
+    if len(env)<150 or float(np.max(env))<.25:return []
+    auto=float(librosa.feature.tempo(onset_envelope=env,sr=50,hop_length=1)[0])
+    seeds=sorted(set(round(b,3) for b in (auto,auto/2,auto*2,bpm/2,bpm*2) if 55<=b<=210))
+    grids=[]
+    for seed in seeds:
+        _,frames=librosa.beat.beat_track(onset_envelope=env,sr=50,hop_length=1,bpm=seed,trim=True)
+        beats=[]
+        for frame in frames:
+            lo=max(0,int(frame)-2);hi=min(len(env),int(frame)+3)
+            peak=lo+int(np.argmax(env[lo:hi]));t=round(start+peak*.02,4)
+            if env[peak]>=.25 and (not beats or t-beats[-1]>.20):beats.append(t)
+        if len(beats)>=8 and not any(g['beats']==beats for g in grids):
+            grids.append({'beats':beats,'bpm':seed,'method':'local-onset'})
+    return grids
 
 def source_url(key):
     origin,path=key.split('/',1)
@@ -42,8 +64,9 @@ def section(samples,start,bpm):
         total=float(np.mean(samples[lo:hi]**2))
         tonal=float(np.mean(harmonic[lo:hi]**2))
         notes.append({'t':round(start+float(at),3),'tonalRatio':round(min(1.,tonal/max(1e-9,total)),4),'rms':round(float(np.sqrt(total)),5),'notes':[round(float(v),5) for v in chroma]})
+    onset=[round(float(min(4,v)),3) for v in contour]
     return {'start':round(start,4),'end':round(start+len(samples)/SR,4),'step':.02,
-            'onset':[round(float(min(4,v)),3) for v in contour], 'beats':beats,'harmony':notes}
+            'onset':onset,'beats':beats,'grids':observed_grids(onset,start,bpm),'harmony':notes}
 
 def analyze(key,entry,cache):
     dest=cache/(entry['sha']+'.mp3')
@@ -70,7 +93,7 @@ def analyze(key,entry,cache):
     duration=len(samples)/SR
     if abs(duration-entry['duration'])>1.5:raise ValueError('Duration mismatch: '+key)
     tail=max(0.,entry['last']-20)
-    result={'version':VERSION,'sha':entry['sha'],'method':'original-pcm-hpss-onset-chroma-20ms-v2',
+    result={'version':VERSION,'sha':entry['sha'],'method':'original-pcm-hpss-onset-chroma-20ms-v3-multigrid',
             'intro':section(samples[:min(len(samples),20*SR)],0,entry['bpm']),
             'outro':section(samples[round(tail*SR):],tail,entry['bpm'])}
     return key,result

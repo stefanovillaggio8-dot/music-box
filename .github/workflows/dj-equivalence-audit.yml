@@ -53,13 +53,14 @@ jobs:
           const files=fs.readdirSync('results').filter(x=>/^part-\d+\.json$/.test(x));
           if(files.length!==12)throw Error('Missing audit shard: '+files.length+'/12');
           const parts=files.map(x=>JSON.parse(fs.readFileSync(path.join('results',x),'utf8')));
-          const metrics=['analyzedPairs','verifiedBeat','earlyVerifiedBeat','rejectedBeat','postlude','underlay','other','none'];
+          const metrics=['analyzedPairs','verifiedBeat','earlyVerifiedBeat','rejectedBeat','postlude','underlay','other','none','completePcmBeat','renderedFullBeat','shortIndexedBeat','fullOverlapSeconds'];
           const counts=Object.fromEntries(metrics.map(k=>[k,parts.reduce((sum,p)=>sum+p[k],0)]));
           const expected=parts[0].possibleOrderedPairs;
           if(counts.analyzedPairs!==expected)throw Error('Incomplete ordered-pair audit: '+counts.analyzedPairs+' of '+expected);
           const report={source:'waveform-derived features, not double-blind acoustic listening',
             analyzedTracks:parts[0].analyzableTracks,expectedPairs:expected,
             ...counts,coveragePercent:+(100*counts.verifiedBeat/Math.max(1,expected)).toFixed(5),
+            averageFullOverlapSeconds:counts.completePcmBeat?counts.fullOverlapSeconds/counts.completePcmBeat:null,
             verifiedBeatSamples:parts.flatMap(p=>p.verifiedBeatSamples||[]).slice(0,100),
             karaokeIndexedTimedLines:parts[0].karaoke.syncedLinesIndexed,
             karaokeVerifiedWordTimestamps:'NOT_PROVEN_BY_THIS_AUDIT',

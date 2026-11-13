@@ -18,7 +18,7 @@ for(const name of files(directory))for(const [key,value] of Object.entries(JSON.
 const expected=Object.values(data.entries).filter(e=>e.status==='ok').length;
 if(features.size!==expected)throw Error('Incomplete PCM coverage: '+features.size+'/'+expected);
 for(const [key,entry] of Object.entries(data.entries)){
- delete entry.pcmTransition;delete entry.pcmBeatPlans;
+ delete entry.pcmTransition;delete entry.pcmBeatPlans;delete entry.pcmIntroSeconds;
  if(features.has(key))entry.pcmTransition=features.get(key);
 }
 const tool=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
@@ -26,21 +26,32 @@ const fsForEngine={...fs,readFileSync:(f,...args)=>path.resolve(String(f))===fil
 const req=x=>x==='node:fs'?fsForEngine:require(x);
 const {engine,tracks}=new Function('require','__dirname',tool.slice(0,tool.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks};')(req,path.join(root,'tools'));
 const plans=[],raw=new Map(Object.entries(data.entries));
+let consideredPairs=0,evaluatedPairs=0,sameRecordingSkipped=0;
 for(const [from,a] of tracks){
  if(!features.has(from))continue;
  for(const [to,b] of tracks){
-  if(from===to||a.sha===b.sha||!features.has(to))continue;
+  if(from===to)continue;
+  consideredPairs++;
+  if(a.sha===b.sha){sameRecordingSkipped++;continue;}
+  if(!features.has(to))throw Error('Missing analyzed PCM '+to);
+  evaluatedPairs++;
   const cue=engine.measuredFullBeatBridge(a,b,a.duration);
   if(!cue)continue;
   const entry=raw.get(from);entry.pcmBeatPlans??={};
-  entry.pcmBeatPlans[b.sha]={version:1,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue};
+  entry.pcmBeatPlans[b.sha]={version:2,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue};
+  const incoming=raw.get(to),base=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
+  incoming.pcmIntroSeconds=Math.min(24,Math.max(incoming.pcmIntroSeconds||14,
+   Math.ceil(cue.entry-base+cue.fade*Math.max(1,cue.tempo)+3)));
   plans.push({from,to,cue});
  }
 }
 for(const entry of Object.values(data.entries))delete entry.pcmTransition;
 fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});
 fs.writeFileSync(output,JSON.stringify(data)+'\n');
-const report={features:features.size,analyzable:tracks.length,fullBeatPlans:plans.length,plans};
+const report={features:features.size,analyzable:tracks.length,consideredPairs,evaluatedPairs,
+ sameRecordingSkipped,fullBeatPlans:plans.length,
+ averagePlannedOverlap:plans.length?plans.reduce((sum,p)=>sum+p.cue.fade,0)/plans.length:null,
+ downbeatsVerified:false,phrasesVerified:false,listeningVerified:false,plans};
 const reportFile=arg('report','/tmp/musicbox-full-beat-report.json');
 fs.mkdirSync(path.dirname(path.resolve(reportFile)),{recursive:true});
 fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+'\n');

@@ -39,7 +39,7 @@ export function stretchClip(clip,cue){
  const sr=Number(clip.rate),channels=clip.channels,tempo=Number(cue.tempo),fade=Number(cue.fade);
  if(!Array.isArray(channels)||channels.length<1||channels.length>2||
   !Number.isFinite(sr)||sr<8000||sr>96000||!Number.isFinite(tempo)||tempo<.95||tempo>1.05||
-  !Number.isFinite(fade)||fade<4.5||fade>8||
+  !Number.isFinite(fade)||fade<4.5||fade>16||
   channels.some(c=>!(c instanceof Float32Array)||c.length!==channels[0].length||c.length>sr*40))throw Error('Invalid time-stretch clip');
  const offset=cue.entry-clip.start,prefix=Math.round(offset*sr),inputLength=channels[0].length-prefix;
  if(prefix<0||inputLength<sr*(fade*1.05+1))throw Error('Incomplete time-stretch source');

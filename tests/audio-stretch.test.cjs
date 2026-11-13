@@ -33,6 +33,15 @@ test('time-stretch worker is local, bounded and required before a pitched mobile
  assert.match(source,/clip\.pitchPreserved\?clip\.rateSpeed:1/);
  assert.match(source,/clip\.pitchPreserved\?0:/);
 });
+
+test('sixteen-second native-tail stretch keeps the measured tempo until EOF',async()=>{
+ const {stretchClip,playedAt}=await import('../audio-stretch-core.mjs');
+ const rate=16000,input=tone(rate,23,440);
+ const out=stretchClip({rate,start:0,channels:[input]},{entry:0,tempo:.97,fade:16});
+ assert.equal(out.rateHold,16);assert.ok(Math.abs(playedAt(15,.97,out.rateHold,out.rateRamp)-14.55)<1e-8);
+ let crossing=0;for(let i=rate*12+1;i<rate*14;i++)if(out.channels[0][i-1]<0&&out.channels[0][i]>=0)crossing++;
+ assert.ok(Math.abs(crossing/2-440)<3);
+});
 test('seek cancellation allows the same iPhone mix to prepare immediately again',async()=>{
  const {api,instances}=fakeStretchBrowser();
  const clip={rate:16000,start:0,channels:[new Float32Array(1024)]};
