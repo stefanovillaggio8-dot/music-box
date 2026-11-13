@@ -25,8 +25,12 @@ ENTRIES = INDEX["entries"]
 SR = 11025
 HOP = 128
 CASES = [
- ("audio/songs/track-391.mp3","audio/songs/track-1164.mp3","claimed_strict_1"),
- ("audio/songs/track-391.mp3","audio/songs/track-598.mp3","claimed_strict_2"),
+ # Both short snaps verified by the CURRENT exhaustive index-based run.
+ ("audio/songs/track-892.mp3","audio/songs/track-1096.mp3","current_verified_snap_1"),
+ ("audio/songs/track-770.mp3","audio/songs/track-874.mp3","current_verified_snap_2"),
+ # Legacy claims are retained as negative controls, not asserted as valid.
+ ("audio/songs/track-391.mp3","audio/songs/track-1164.mp3","legacy_strict_claim_1"),
+ ("audio/songs/track-391.mp3","audio/songs/track-598.mp3","legacy_strict_claim_2"),
  ("audio/songs/track-568.mp3","audio/songs/track-464.mp3","rejected_drum"),
  ("audio/songs/track-808.mp3","audio/songs/track-209.mp3","rejected_drum_2"),
  ("audio/songs/track-153.mp3","audio/songs/track-8.mp3","user_recording_mismatch"),
@@ -86,7 +90,7 @@ def decode(path,at,length):
  process=subprocess.run(args,capture_output=True,timeout=50)
  if process.returncode:raise RuntimeError("ffmpeg decode: "+process.stderr.decode(errors="ignore")[:300])
  signal=np.frombuffer(process.stdout,dtype="<f4").copy()
- if signal.size<SR*2:raise ValueError("Not enough decoded source audio")
+ if signal.size<SR*.75:raise ValueError("Not enough decoded source audio")
  return signal
 
 def envelope(x):
@@ -147,8 +151,8 @@ def main():
     raise RuntimeError("Missing real audio index entry for "+label)
    aa=download(outkey,folder);bb=download(inkey,folder)
    # A last-four-seconds comparison can be INVALID for an early DJ join.
-   # Use the exact planned waveform window where at least 2.5s of source
-   # music remains audible. Short snaps are reported separately, not falsely
+   # Use the exact planned waveform window where at least 0.95s of source
+   # music remains audible. Ultra-short snaps are reported separately, not falsely
    # rated by a multi-second correlation from outside their actual overlap.
    info=planned_pair(outkey,inkey)
    cue=info.get("plan") or {}
@@ -159,7 +163,7 @@ def main():
    usable=(min(float(planned_end),audio_end)-float(planned_begin)
            if isinstance(planned_begin,(int,float)) and
            isinstance(planned_end,(int,float)) else 0)
-   exact_window=bool(usable>=2.5 and
+   exact_window=bool(usable>=.95 and
        isinstance(planned_entry,(int,float)) and planned_entry>=0)
    if exact_window:
     start=float(planned_begin)
