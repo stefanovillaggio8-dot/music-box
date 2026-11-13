@@ -55,7 +55,9 @@ if(fromKey||toKey){
   Number.isFinite(plan.score));
  // The playback engine arms the cue at begin, then waits for the next
  // matching kick. PCM measurements must start at the *audible* moment.
- const beatStartWait=beatLike&&Number.isFinite(plan?.begin)?
+ const hasScheduledBeat=!!plan&&Number.isFinite(plan.beatPeriod)&&
+  ["beat","snap","phrase","underlay"].includes(plan.kind);
+ const beatStartWait=hasScheduledBeat&&Number.isFinite(plan?.begin)?
   engine.desktopBeatStartDelay(plan,plan.begin):0;
  const scheduledStart=Number.isFinite(beatStartWait)&&
    Number.isFinite(plan?.begin)?plan.begin+beatStartWait:null;

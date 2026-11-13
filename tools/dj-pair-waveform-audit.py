@@ -26,6 +26,12 @@ ENTRIES = INDEX["entries"]
 SR = 11025
 HOP = 128
 CASES = [
+ # An independently placed four-pulse low-band preview is not certified
+ # full-band beatmatching: inspect the REAL planned 9-11s overlap too.
+ ("audio/songs/track-11.mp3","audio/songs/track-1184.mp3","new_independent_lowband_1"),
+ ("audio/songs/track-588.mp3","audio/songs/track-684.mp3","new_independent_lowband_2"),
+ ("audio/songs/track-588.mp3","audio/songs/track-627.mp3","new_independent_onsets_1"),
+ ("audio/songs/track-588.mp3","audio/songs/track-573.mp3","new_independent_onsets_2"),
  # Both short snaps verified by the CURRENT exhaustive index-based run.
  ("audio/songs/track-892.mp3","audio/songs/track-1096.mp3","current_verified_snap_1"),
  ("audio/songs/track-770.mp3","audio/songs/track-874.mp3","current_verified_snap_2"),

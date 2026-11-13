@@ -44,7 +44,7 @@ python tools/dj-pair-waveform-audit.py --only current_verified_snap_1 --only cur
 ```
 
 Il secondo comando richiede FFmpeg, NumPy e Librosa 0.11.0. La GitHub Action
-`dj-real-audio-audit.yml` esegue tutte le 12 coppie di controllo e conserva
+`dj-real-audio-audit.yml` esegue tutte le 16 coppie di controllo e conserva
 il rapporto JSON come artifact `musicbox-dj-real-pcm-spotcheck`.
 
 ## Correzione karaoke verificabile
@@ -69,3 +69,34 @@ il rapporto JSON come artifact `musicbox-dj-real-pcm-spotcheck`.
 - Nessuna prova di sincronizzazione parola per parola su tutto il catalogo.
 - Nessuna prova automatizzata su iPhone fisico e nessun confronto d'ascolto
   controllato con Spotify Mixa. **Non pubblicare come certificato**.
+
+## Secondo intervento: ingressi ritmici anticipati a banda bassa
+
+La selezione delle anteprime musicali è stata estesa **senza allentare la
+certificazione dei beatmatch completi**. Se il riconoscimento di armonia e
+groove non basta per sovrapporre due canzoni a volume normale, è permessa
+soltanto una *anteprima filtrata sulle basse frequenze*, quando:
+
+1. almeno quattro colpi PCM originali sono associati uno a uno, con almeno
+   il 90% di corrispondenze e un errore temporale RMS non oltre 55 ms;
+2. la vera curva degli attacchi audio delle due sezioni mostra correlazione
+   ≥ 0,36, anche separatamente nelle due metà;
+3. l'intro possiede basso misurato, il tempo non richiede salti 2×/0,5×,
+   il volume dell'anteprima non supera il 9%, e l'originale non viene
+   tagliato o abbassato in base a una presunta assenza di voce.
+
+La scelta è stata guidata da test MP3 reali, non dal solo indice:
+
+| Coppia | Correlazione ritmica PCM allo stesso istante | Migliore correlazione e lag | Ruolo |
+| --- | ---: | ---: | --- |
+| 11 → 1184 | 0,018 | 0,378 / +325 ms | negativo: scartata |
+| 588 → 684 | 0,063 | 0,439 / +372 ms | negativo: scartata |
+| 588 → 627 | 0,352 | 0,381 / −23 ms | positivo cauto, bassi filtrati |
+| 588 → 573 | 0,452 | 0,607 / −441 ms | positivo cauto, bassi filtrati |
+
+Su un campione deterministico di **115.150 coppie ordinate** dello stesso
+indice, le anteprime basate su finestre ritmiche misurate passano da **51 a
+77** (+26; +51%). Queste 26 aggiunte sono raccordi filtrati e conservativi,
+**non 26 nuove certificazioni di beatmatch**. L'audit delle coppie strict
+rimane separato. Il resto delle coppie può usare altre uscite sicure oppure
+un normale passaggio, secondo i vincoli vocali e musicali disponibili.

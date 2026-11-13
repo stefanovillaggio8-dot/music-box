@@ -396,6 +396,18 @@ function mobileMixAllowed(plan,ending,lastLyricAt) {
    plan.begin>=ending.last+.25&&Math.abs(ending.duration-plan.end)<.2&&
    (!Number.isFinite(lastLyricAt)||lastLyricAt<=plan.begin-5)&&
    plan.fade>=1.8&&plan.fade<=11.4;
+ if(plan?.independentLowBand===true)
+  return !!ending&&plan.kind==="underlay"&&
+   plan.measuredWindowUnderlay===true&&plan.drumOnlyUnderlay===true&&
+   plan.preserveTail===true&&plan.measuredBeatPlacement===true&&
+   Number(plan.beatPulseAgreement)>=.90&&
+   Number.isFinite(plan.measuredPlacementError)&&
+   plan.measuredPlacementError>=0&&
+   Number(plan.measuredPlacementError)<=.055&&
+   Number.isFinite(plan.grooveScore)&&
+   Number(plan.underlayVolume)>0&&Number(plan.underlayVolume)<=.09&&
+   Math.abs(ending.duration-plan.end)<.20&&
+   plan.fade>=4.5&&plan.fade<=11.8;
  if(plan?.subduedRhythmicUnderlay===true)
   return !!ending&&plan.kind==="underlay"&&plan.preserveTail===true&&
    Math.abs(ending.duration-plan.end)<.2&&
@@ -3165,6 +3177,10 @@ function musicallyCompatibleOverlay(a,b,cue){
  if(cue.measuredWindowUnderlay===true){
   const p=measuredWindowRhythmUnderlay(a,b,a?.duration);
   return !!p&&cue.kind==="underlay"&&
+   cue.independentLowBand===p.independentLowBand&&
+   (cue.independentLowBand!==true||
+    Math.abs(cue.independentOnsetScore-p.independentOnsetScore)<.01)&&
+   cue.underlayVolume<=p.underlayVolume+.001&&
    Math.abs(p.begin-cue.begin)<.085&&Math.abs(p.end-cue.end)<.085&&
    p.drumOnlyUnderlay===true;
  }
@@ -3403,6 +3419,51 @@ function measuredBeatJoinCandidate(outgoing,incoming,entry,ratio,lower,upper,pre
  }
  return winner;
 }
+// A one-to-one beat timestamp fit can occur even for two very different
+// drum patterns. Compare the ACTUAL PCM-derived onset contour at the
+// precise local 4s window and incoming file entry, with <=42ms tolerance.
+// This is only evidence for a faint, low-pass preview, not full-band DJ.
+function measuredLowBandOnsetAgreement(outro,intro,beginOffset,entryOffset,rate){
+ if(!Array.isArray(outro)||!Array.isArray(intro)||
+    outro.length!==96||intro.length!==96||
+    !outro.every(Number.isFinite)||!intro.every(Number.isFinite)||
+    ![beginOffset,entryOffset,rate].every(Number.isFinite)||
+    beginOffset<0||beginOffset>2.8||entryOffset<-.10||
+    rate<.965||rate>1.035)return null;
+ let best=null;
+ for(const lag of [-1,0,1]){
+  const x=[],y=[];
+  for(let i=0;i<75;i++){
+   const oldAt=Math.round((beginOffset+i/24)*24);
+   const newAt=Math.round((entryOffset+i*rate/24)*24)+lag;
+   if(oldAt>=96||newAt>=96)break;
+   if(oldAt<0||newAt<0)continue;
+   x.push(Math.max(0,outro[oldAt]));
+   y.push(Math.max(0,intro[newAt]));
+  }
+  if(x.length<48)continue;
+  const correlation=(from,to)=>{
+   let ax=0,ay=0,xx=0,yy=0,xy=0;
+   const n=to-from;
+   for(let k=from;k<to;k++){ax+=x[k];ay+=y[k]}
+   ax/=n;ay/=n;
+   for(let k=from;k<to;k++){
+    const a=x[k]-ax,b=y[k]-ay;
+    xx+=a*a;yy+=b*b;xy+=a*b;
+   }
+   return xx>=.45&&yy>=.45?xy/Math.sqrt(xx*yy):null;
+  };
+  const middle=Math.floor(x.length/2),
+   whole=correlation(0,x.length),
+   first=correlation(0,middle),second=correlation(middle,x.length);
+  if(!Number.isFinite(whole)||!Number.isFinite(first)||
+     !Number.isFinite(second))continue;
+  if(!best||whole>best.score)best={score:whole,first,second,
+   lagMs:lag*1000/24,frames:x.length};
+ }
+ return best&&best.score>=.36&&best.first>=.10&&best.second>=.10?
+  best:null;
+}
 function measuredWindowRhythmUnderlay(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||!Number.isFinite(a.duration)||
@@ -3449,13 +3510,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    outroFinalNotes:win.notes,outroPhraseNotes:win.notes,outroNotes:win.notes,
    outroTimeline:[]};
   const g=grooveAgreement(local,b);
-  if(!g||g.score<.65||g.correlation<.30)continue;
+  if(!g)continue;
   const notes=similarNotes(local,b);
-  // The upper harmonics will be filtered; require some tonal safety
-  // but not a full-band chord match we are not going to play.
+  // A normal rhythmic underlay still needs compatible chords and groove.
+  // An *independently measured* four-beat coincidence can instead earn a
+  // very quiet, low-pass-only preview: it is never a full-band beatmatch.
   if(!Number.isFinite(notes.focused)||!Number.isFinite(notes.phrase)||
-     notes.focused<.33||notes.phrase<.23||
-     (key.weight>=.14&&key.score<.47))continue;
+     notes.focused<.10||notes.phrase<.08||
+     (key.weight>=.14&&key.score<.25))continue;
+  const normallyCompatible=g.score>=.65&&g.correlation>=.30&&
+    notes.focused>=.33&&notes.phrase>=.23&&
+    (key.weight<.14||key.score>=.47);
   let beatAnchor=win.start+
    (pulse?.phase??onsetGridPhase(win.onset,a.bpm));
   // A phrase boundary several bars from the end should get its OWN
@@ -3500,6 +3565,17 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    Number.isFinite(shape)&&Math.abs(shape)>=.40?.032:0;
   const measuredGrid=placed?.fit??measuredPulseAlignment(
    win.measuredBeatTimes,b.introBeatTimes,begin,entry,ratio);
+  // A poor harmonic/groove match must NOT use the usual louder preview.
+  // Only independently located, one-to-one PCM attacks can unlock the
+  // exceptional low-band path, and even those remain non-certified.
+  const independentLowBand=Boolean(!normallyCompatible&&
+   cadence.scale===1&&placed?.fit?.verified>=4&&
+   placed.fit.total>=4&&placed.fit.ratio>=.90&&
+   placed.fit.rms<=.055&&Number(b.introBassRatio)>=.20);
+  const lowBandOnsets=independentLowBand?
+   measuredLowBandOnsetAgreement(win.onset,b.introOnset,
+    begin-win.start,entry-(Number(b.safeIntroAt)||0),ratio):null;
+  if(!normallyCompatible&&!lowBandOnsets)continue;
   // Independent pulse agreement is a ranking bonus and can veto a
   // badly aligned overlay only when BOTH decoders have reliable
   // timestamps from the same real-file analysis.
@@ -3516,6 +3592,10 @@ function measuredWindowRhythmUnderlay(a,b,dur){
    Math.min(.055,Math.max(0,a.last-begin-5)*.011)-
    (cadence.scale!==1?.045:0);
   if(!best||quality>best.quality)best={quality,begin,end,fade,
+   independentLowBand:!!lowBandOnsets,
+   independentOnsetScore:lowBandOnsets?.score??null,
+   independentOnsetLagMs:lowBandOnsets?.lagMs??null,
+   measuredWindowStart:win.start,
    beatAnchor,nextBeat:placed?.nextBeat??nextPhase,
    measuredBeatPlacement:!!placed,
    measuredPlacementError:placed?.fit.rms??null,
@@ -3531,6 +3611,10 @@ function measuredWindowRhythmUnderlay(a,b,dur){
  if(!best)return null;
  return {kind:"underlay",subduedRhythmicUnderlay:true,
   measuredWindowUnderlay:true,drumOnlyUnderlay:true,preserveTail:true,
+  independentLowBand:best.independentLowBand,
+  independentOnsetScore:best.independentOnsetScore,
+  independentOnsetLagMs:best.independentOnsetLagMs,
+  measuredWindowStart:best.measuredWindowStart,
   structuralMatch:best.structuralMatch,
   structuralShift:best.structuralShift,structureScore:best.structureScore,
   beatPulseAgreement:best.beatPulseAgreement,
@@ -3539,7 +3623,8 @@ function measuredWindowRhythmUnderlay(a,b,dur){
   tempoScale:cadence.scale,
   begin:best.begin,end:best.end,fade:best.fade,entry,
   tempo:clamp(ratio,.965,1.035),gain:1,
-  underlayVolume:best.strongBassBridge?
+  underlayVolume:best.independentLowBand?
+   adaptiveUnderlayLevel(b,.06,.09):best.strongBassBridge?
    adaptiveUnderlayLevel(b,.16,.215):
    adaptiveUnderlayLevel(b,.105,.145),
   beatPeriod:period,beatAnchor:best.beatAnchor,nextBeat:best.nextBeat,
@@ -7362,6 +7447,8 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     "Vincoli WebAudio/Safari o sicurezza vocale non soddisfatti.":
     "Beat, fase o sicurezza del finale insufficienti per il motore desktop.");
    else if(beatCertified)reasons.push("Beat e finestra ritmica certificati: resta necessaria la prova audio reale.");
+   else if(cue.independentLowBand===true)
+    reasons.push("Colpi PCM allineati: solo bassi filtrati, volume <=9%, finale originale intatto. NON è beatmatch certificato.");
    else reasons.push("Raccordo consentito ma NON certificato come beatmatch.");
    if(cue){
     const voiceEnd=Number.isFinite(a.lastVoiceAt)?a.lastVoiceAt:
@@ -7383,6 +7470,10 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    measuredBeatBridge:!!cue.measuredBeatBridge,
    instrumentalBeatBridge:!!cue.instrumentalBeatBridge,
    rhythmicGridJoin:!!cue.rhythmicGridJoin,
+   independentLowBand:!!cue.independentLowBand,
+   independentOnsetScore:cue.independentOnsetScore??null,
+   independentOnsetLagMs:cue.independentOnsetLagMs??null,
+   underlayVolume:cue.underlayVolume??null,
    quietCertified:!!cue.quietCertified,
    mobileSilentBridge:!!cue.mobileSilentBridge}:null;
   const point=(at,label,evidence)=>{
@@ -7450,6 +7541,9 @@ window.MusicBoxMix={isEnabled:()=>enabled,
     kind:plan.kind,begin:plan.begin,end:plan.end,fade:plan.fade,
     entry:plan.entry,beatAnchor:plan.beatAnchor,nextBeat:plan.nextBeat,
     beatPeriod:plan.beatPeriod,quietCertified:!!plan.quietCertified,
+    independentLowBand:!!plan.independentLowBand,
+    independentOnsetScore:plan.independentOnsetScore??null,
+    underlayVolume:plan.underlayVolume??null,
     measuredBeatBridge:!!plan.measuredBeatBridge,
     protectedTail:!!plan.preserveTail}:null,
    liveTransition:active&&active.at>0?{
