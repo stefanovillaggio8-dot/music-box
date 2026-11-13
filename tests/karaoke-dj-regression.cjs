@@ -99,5 +99,19 @@ test("immersive sorts ASR-shifted cues and hides old-track lyrics",()=>{
  current="song-c";w.__renderTestLyrics(true);
  assert.equal(w.__rows()[0].text,"Musica, luci e atmosfera.");
  assert.doesNotMatch(karaoke.children[0].textContent,/first line|second line|third line/);
+ // A genuinely timed phrase ends at 3s; never highlight it all the way
+ // through the instrumental break to the next verse at 12s.
+ current="song-b";
+ app.lyricsData=()=>({id:"song-b",synced:[
+  {t:2,end:3,text:"sung phrase"},{t:12,text:"next verse"},
+  {t:15,text:"final verse"}]});
+ audio.currentTime=2.5;w.__renderTestLyrics(true);
+ assert.ok(karaoke.children[0].classList.contains("active"));
+ audio.currentTime=6;w.__renderTestLyrics(false);
+ assert.ok(karaoke.children.every(el=>!el.classList.contains("active")));
+ assert.ok(!karaoke.children[1].classList.contains("past"),
+  "future lyrics must not be marked as sung during instrumental gaps");
+ audio.currentTime=12.25;w.__renderTestLyrics(false);
+ assert.ok(karaoke.children[1].classList.contains("active"));
 });
 console.log("Music Box karaoke/DJ targeted regression:",passed,"passed");
