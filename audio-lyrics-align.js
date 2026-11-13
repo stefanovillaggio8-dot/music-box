@@ -10,7 +10,7 @@ const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
 const attempts=new Map(),sessionWindows=new Map();
 // Keep each foreground WebGPU pass short; permit later, separate lyric clips.
-const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=6;
+const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=18;
 
 /* Read the existing timed lyrics to select Whisper's explicit language.
    Transformers.js 3.8.1 otherwise silently assumes English even for the
@@ -101,12 +101,17 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
    const firstMatch=measuredWordAt(k,keys[0]);
    if(!firstMatch||lag<-.45||lag>maximumLate)continue;
    const found=[firstMatch.word];let cursor=k+firstMatch.advance;
+   let unrelatedAsrWords=0;
    for(let w=1;w<tokens.length;w++){
-    // At most two unrelated recognized tokens between exact matches.
+    // Reject an apparent match that jumps across many unrelated ASR words.
+    // Allow at most TWO skipped words in the whole line, not two per word.
     let hit=null;
     for(let n=cursor;n<Math.min(candidates.length,cursor+3);n++){
      const matched=measuredWordAt(n,keys[w]);
-     if(matched){hit={word:matched.word,next:n+matched.advance};break}
+     if(matched&&unrelatedAsrWords+n-cursor<=2){
+      unrelatedAsrWords+=n-cursor;
+      hit={word:matched.word,next:n+matched.advance};break;
+     }
     }
     if(!hit)break;
     found.push(hit.word);cursor=hit.next;

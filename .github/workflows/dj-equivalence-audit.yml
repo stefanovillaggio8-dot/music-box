@@ -1,0 +1,67 @@
+name: Music Box - exhaustive Mixa pair audit
+on:
+  push:
+    branches: ['audit/**']
+    paths:
+      - 'tools/dj-equivalence-audit.cjs'
+      - '.github/workflows/dj-equivalence-audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check
+        run: node --check tools/dj-equivalence-audit.cjs
+      - name: Compare all ordered pairs assigned to the shard
+        run: node tools/dj-equivalence-audit.cjs --shard=${{ matrix.shard }}/12 --output=results/part-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dj-pairs-${{ matrix.shard }}
+          path: results/part-${{ matrix.shard }}.json
+          retention-days: 7
+  summary:
+    needs: source-audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dj-pairs-*
+          path: results
+          merge-multiple: true
+      - name: Merge exhaustive audited pairs with real labels
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs=require('node:fs'),path=require('node:path');
+          const files=fs.readdirSync('results').filter(x=>/^part-\d+\.json$/.test(x));
+          if(files.length!==12)throw Error('Missing audit shard: '+files.length+'/12');
+          const parts=files.map(x=>JSON.parse(fs.readFileSync(path.join('results',x),'utf8')));
+          const metrics=['analyzedPairs','verifiedBeat','earlyVerifiedBeat','rejectedBeat','postlude','underlay','other','none'];
+          const counts=Object.fromEntries(metrics.map(k=>[k,parts.reduce((sum,p)=>sum+p[k],0)]));
+          const expected=parts[0].possibleOrderedPairs;
+          if(counts.analyzedPairs!==expected)throw Error('Incomplete ordered-pair audit: '+counts.analyzedPairs+' of '+expected);
+          const report={source:'waveform-derived features, not double-blind acoustic listening',
+            analyzedTracks:parts[0].analyzableTracks,expectedPairs:expected,
+            ...counts,coveragePercent:+(100*counts.verifiedBeat/Math.max(1,expected)).toFixed(5),
+            karaokeIndexedTimedLines:parts[0].karaoke.syncedLinesIndexed,
+            karaokeVerifiedWordTimestamps:'NOT_PROVEN_BY_THIS_AUDIT',
+            spotifyEquivalence:'NOT_CERTIFIED',allPairsBeatmatched:counts.verifiedBeat===expected};
+          fs.writeFileSync('results/summary.json',JSON.stringify(report,null,2)+'\n');
+          console.log('[DJ COVERAGE VERDICT]',JSON.stringify(report));
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dj-equivalence-audit-summary
+          path: results/summary.json
+          retention-days: 7
