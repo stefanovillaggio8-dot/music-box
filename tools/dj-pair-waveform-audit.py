@@ -48,6 +48,18 @@ def url_for(key):
   return base+quote(key.removeprefix("mobile/"),safe="/")
  raise ValueError("Unknown source key: "+key)
 
+def planned_pair(outkey,inkey):
+ """Read the exact engine-selected cue; audio is measured independently."""
+ command=["node",str(ROOT/"tools/dj-equivalence-audit.cjs"),
+          "--pair-from="+outkey,"--pair-to="+inkey]
+ run=subprocess.run(command,capture_output=True,text=True,timeout=45)
+ if run.returncode:raise RuntimeError("DJ plan inspector failed: "+run.stderr[-1000:])
+ marker="[DJ PAIR PLAN] "
+ output=next((line.split(marker,1)[1] for line in run.stdout.splitlines()
+             if marker in line),None)
+ if not output:raise RuntimeError("Missing simulated pair plan for "+outkey+" -> "+inkey)
+ return json.loads(output)
+
 CACHE={}
 def download(key,dir):
  if key in CACHE:return CACHE[key]
@@ -134,21 +146,46 @@ def main():
    if not a or not b or a.get("status")!="ok" or b.get("status")!="ok":
     raise RuntimeError("Missing real audio index entry for "+label)
    aa=download(outkey,folder);bb=download(inkey,folder)
-   # Exclude encoded silence; compare the actual LAST 8s of audible music.
+   # A last-four-seconds comparison can be INVALID for an early DJ join.
+   # Use the exact planned waveform window where at least 2.5s of source
+   # music remains audible. Short snaps are reported separately, not falsely
+   # rated by a multi-second correlation from outside their actual overlap.
+   info=planned_pair(outkey,inkey)
+   cue=info.get("plan") or {}
    audio_end=max(12,float(a.get("last") or a["duration"]))
-   start=max(0,audio_end-8.0)
-   first=max(0,float(b.get("safeIntroAt") or 0))
-   out_audio=decode(aa,start,8.0)
-   in_audio=decode(bb,first,8.0)
-   # A 4-second tail and 4-second intro represent the audible mix junction.
-   x=out_audio[-4*SR:]
-   y=in_audio[:4*SR]
+   planned_begin=cue.get("begin")
+   planned_end=cue.get("end")
+   planned_entry=cue.get("entry")
+   usable=(min(float(planned_end),audio_end)-float(planned_begin)
+           if isinstance(planned_begin,(int,float)) and
+           isinstance(planned_end,(int,float)) else 0)
+   exact_window=bool(usable>=2.5 and
+       isinstance(planned_entry,(int,float)) and planned_entry>=0)
+   if exact_window:
+    start=float(planned_begin)
+    first=float(planned_entry)
+    span=min(4.,usable,float(planned_end)-start)
+    out_audio=decode(aa,start,span)
+    in_audio=decode(bb,first,span)
+    x=out_audio[:int(span*SR)];y=in_audio[:int(span*SR)]
+   else:
+    start=max(0,audio_end-8.0)
+    first=max(0,float(b.get("safeIntroAt") or 0))
+    out_audio=decode(aa,start,8.0)
+    in_audio=decode(bb,first,8.0)
+    x=out_audio[-4*SR:];y=in_audio[:4*SR]
    onset_out=envelope(x);onset_in=envelope(y)
    beats=align(onset_out,onset_in)
    chords=chord_similarity(x,y)
    result={"case":label,"outgoing":outkey,"incoming":inkey,
      "bpm_from_index":[a.get("bpm"),b.get("bpm")],
-     "source_seconds":[round(audio_end,2),round(first,2)],
+     "simulated_plan_kind":cue.get("kind"),
+     "simulated_plan_begin":planned_begin,
+     "simulated_plan_end":planned_end,
+     "simulated_certified":bool(info.get("certified")),
+     "pcm_window":"actual_planned_overlap" if exact_window else "diagnostic_tail_not_plan",
+     "tempo_adjustment_measured_but_not_applied":cue.get("tempo",1),
+     "source_seconds":[round(start,2),round(first,2)],
      "actual_rms":[round(float(np.sqrt(np.mean(x*x))),4),
                    round(float(np.sqrt(np.mean(y*y))),4)],
      **beats,**chords}
