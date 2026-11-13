@@ -3,7 +3,7 @@
 "use strict";
 const $=id=>document.getElementById(id), api=()=>window.MusicBoxBridge;
 let opened=false,lastId="",lastLyrics=null,lastLyricsId="",lastLine=-1,anim=0,lyricAnimation=0,gestureY=null,focusBefore=null,lockBefore=false,lastLyricsRefreshAt=0;
-let lastLyricsSignature="",lyricRows=[],lyricTimed=false;
+let lastLyricsSignature="",lyricRows=[],lyricTimed=false,lastLyricScrollAt=0;
 const fmt=n=>{const value=Number(n);const s=Number.isFinite(value)?Math.max(0,Math.floor(value)):0;return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
 function safeCover(t){
  const value=t?.cover;
@@ -28,7 +28,7 @@ function fillCurrent(){
  lastLyricsId="";
  lastLyrics=null;
  lastLine=-1;
- lastLyricsSignature="";lyricRows=[];lyricTimed=false;
+ lastLyricsSignature="";lyricRows=[];lyricTimed=false;lastLyricScrollAt=0;
  $("imKaraoke").textContent="";
  $("imKaraoke").classList.remove("has-lines");
  renderLyrics(true);
@@ -149,7 +149,14 @@ function renderLyrics(force){
   const top=Math.max(0,active.offsetTop-(karaoke.clientHeight-active.offsetHeight)/2);
   // A user seek can jump dozens of verses: cancel the previous smooth
   // animation instead of forcing Safari to finish it before showing lyrics.
-  const jumped=Math.abs(index-previous)>3||audio?.seeking;
+  // Closely spaced rap/fast lyrics can change lines faster than Safari's
+  // smooth-scroll animation finishes. Repeated animations then queue up,
+  // appearing to freeze or lag despite correct media-clock timestamps.
+  const now=performance.now();
+  const rapid=lastLyricScrollAt>0&&now-lastLyricScrollAt<450;
+  lastLyricScrollAt=now;
+  const reducedMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches===true;
+  const jumped=Math.abs(index-previous)>3||audio?.seeking||rapid||reducedMotion;
   if(jumped){
    karaoke.style.scrollBehavior="auto";
    karaoke.scrollTop=top;
