@@ -1439,13 +1439,13 @@
    },
    "[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 167,
+    "s": 208,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
    },
    "m:2026-11|[\"il tuo sorriso\",\"medy\"]": {
     "v": 0,
-    "s": 167,
+    "s": 208,
     "t": "Il Tuo Sorriso",
     "a": "Medy"
    },
@@ -7949,13 +7949,13 @@
    },
    "[\"star\",\"luchÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 400,
+    "s": 452,
     "t": "Star",
     "a": "LuchÃÂÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂÃÂ¨\"]": {
     "v": 2,
-    "s": 400,
+    "s": 452,
     "t": "Star",
     "a": "LuchÃÂÃÂ¨"
    },
@@ -8759,13 +8759,13 @@
    },
    "[\"star\",\"luchÃÂ¨\"]": {
     "v": 2,
-    "s": 452,
+    "s": 524,
     "t": "Star",
     "a": "LuchÃÂ¨"
    },
    "m:2026-11|[\"star\",\"luchÃÂ¨\"]": {
     "v": 2,
-    "s": 452,
+    "s": 524,
     "t": "Star",
     "a": "LuchÃÂ¨"
    },
@@ -10738,14 +10738,14 @@
     "a": "Modà"
    },
    "[\"tappeto di fragole\",\"modà\"]": {
-    "v": 2,
-    "s": 244,
+    "v": 3,
+    "s": 254,
     "t": "Tappeto di fragole",
     "a": "Modà"
    },
    "m:2026-11|[\"tappeto di fragole\",\"modà\"]": {
-    "v": 2,
-    "s": 244,
+    "v": 3,
+    "s": 254,
     "t": "Tappeto di fragole",
     "a": "Modà"
    },
