@@ -54,6 +54,11 @@ const server=http.createServer(async(req,res)=>{
      return plans.length;
     },plans);
     assert.equal(decoded,plans.length);
+    const resampled=await page.evaluate(async plans=>{
+     const other=new (window.AudioContext||window.webkitAudioContext)({sampleRate:44100});
+     try{for(const p of plans)await MusicBoxCompositeMix.prepare(p.cue,other);return {sampleRate:other.sampleRate,decoded:plans.length};}
+     finally{await other.close()}
+    },plans);
     const plan=[...plans].sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     await original(plan.fromSha);await original(plan.toSha);
     await page.evaluate(async plan=>{
@@ -145,7 +150,7 @@ const server=http.createServer(async(req,res)=>{
     const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio())}));
     assert.equal(plannedPlayback.handoffs,1);assert.equal(plannedPlayback.paused,false);assert.equal(plannedPlayback.sourceMatches,true);
     await appContext.close();
-    results.push({browser:name,decodedOriginalMixes:decoded,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,physicalIPhone:false});
+    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));
