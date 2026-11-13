@@ -171,7 +171,8 @@ async function run(){
     seekable,buffered:buffered(12)},5);
    const unsafeSeek=testing.seekReady({readyState:4,seeking:false,
     seekable,buffered:buffered(4)},5);
-   await ctx.close();
+   // Keep the user-gesture-unlocked context alive for the full-beat test
+   // below. A closed AudioContext cannot start another Safari preview.
    return {started,scheduled,advanced,contextState:ctx.state,
     rapidStarts,pausedStops,cleanStops,maxClockError,rateCases,
     safeSeek,unsafeSeek};
@@ -223,13 +224,17 @@ async function run(){
    const result={verified:processed.timing.verified,timing:processed.timing,started,
     sourceRate:act?.source?.playbackRate?.value,mappedRate:act?.rateSpeed,
     pitchPreserved:processed.pitchPreserved,originalVolume:old.volume};
+   if(!started||!act){
+    testing.stop();window.MusicBoxStretch.cancel();await ctx.close();
+    return {...result,blocker:window.MusicBoxMix.diagnostics()?.mobileMixLastBlocker};
+   }
    const originalBridge=window.MusicBoxBridge;window.MusicBoxBridge=app;
    old.ended=true;old.currentTime=p.end+.035;
    act.started=ctx.currentTime-(old.currentTime-act.audioStartedAt);
    result.nativeEOFHandled=testing.end();testing.end();
    result.handoffCount=handoffs.length;result.nativePosition=handoffs[0]?.position;
    testing.stop();window.MusicBoxBridge=originalBridge;
-   window.MusicBoxStretch.cancel();return result;
+   window.MusicBoxStretch.cancel();await ctx.close();return result;
   });
   assert.ok(pitchSafe.verified&&pitchSafe.started&&pitchSafe.pitchPreserved);
   assert.equal(pitchSafe.sourceRate,1,"WebKit must not pitch the prepared buffer a second time");
