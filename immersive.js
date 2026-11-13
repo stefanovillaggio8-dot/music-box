@@ -65,6 +65,7 @@ function renderLyrics(force){
    lyricRows=(lyricTimed?synced.map(row=>({text:String(row.text).trim(),t:Number(row.t),
       ...(row.end!=null&&Number.isFinite(Number(row.end))?{end:Number(row.end)}:{}),
       ...(Array.isArray(row.words)?{words:row.words}:{}),
+      ...(row.partialAudio?{partialAudio:true,acousticSpans:row.acousticSpans}:{}),
       ...(row.sourceT!=null&&Number.isFinite(Number(row.sourceT))?{sourceT:Number(row.sourceT)}:{}),
       ...(row.estimated?{estimated:true}:{})})):
     plainRows.map(text=>({text}))).slice(0,500);
@@ -85,8 +86,9 @@ function renderLyrics(force){
    if(status)status.textContent=lyricTimed
      ?coverage?.wordTimed?
        ("PAROLE VERIFICATE "+coverage.wordTimed+"/"+coverage.total+
-        " FRASI"+(coverage.audio?" · AUDIO "+coverage.audio:""))
-       :coverage?.estimated?"PAROLE STIMATE · NON VERIFICATE":
+        " FRASI"+(coverage.audio?" · AUDIO "+coverage.audio:"")+(coverage.partialWords?" · PARZIALI "+coverage.partialWords+" PAROLE":""))
+       :coverage?.partial?coverage.partialWords+" PAROLE AUDIO · ALLINEAMENTO PARZIALE":
+        coverage?.estimated?"PAROLE STIMATE · NON VERIFICATE":
         "SINCRONIZZATO PER FRASI"
      :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
    if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<1))

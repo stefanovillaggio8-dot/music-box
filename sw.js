@@ -47,10 +47,10 @@ const CORE = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6734&words=12",
-  "./audio-lyrics-align.js?v=6734&lang=14",
+  "./word-karaoke.js?v=6734&words=13",
+  "./audio-lyrics-align.js?v=6734&lang=15",
   "./audio-lyrics-worker.js?v=6715&lang=2",
-  "./app.js?v=6734&words=8",
+  "./app.js?v=6734&words=9",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -67,7 +67,7 @@ const CORE = [
   "./smart-mix-lab/app.js",
   "./smart-mix-lab/style.css",
   "./voice-analysis.js?v=6570",
-  "./immersive.js?v=6734&words=7",
+  "./immersive.js?v=6734&words=8",
   "./manifest.json",
   "./lyrics.json",
   /* File minuscolo col numero di versione e di brani: serve al controllo
@@ -94,10 +94,10 @@ const OFFLINE_SHELL = [
   "./index.html",
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
-  "./word-karaoke.js?v=6734&words=12",
-  "./audio-lyrics-align.js?v=6734&lang=14",
+  "./word-karaoke.js?v=6734&words=13",
+  "./audio-lyrics-align.js?v=6734&lang=15",
   "./audio-lyrics-worker.js?v=6715&lang=2",
-  "./app.js?v=6734&words=8",
+  "./app.js?v=6734&words=9",
   "./stanza.js?v=6570",
   "./amici-online.js?v=6570",
   "./discord-presence.js?v=6570",
@@ -110,7 +110,7 @@ const OFFLINE_SHELL = [
   "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6734&dj=38",
   "./mix-monitor-bridge.js?v=4",
-  "./immersive.js?v=6734&words=7"
+  "./immersive.js?v=6734&words=8"
 ];
 const SONGS = [
   "https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/songs/track-1.mp3",

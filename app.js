@@ -5525,6 +5525,8 @@ function _riparaMetadatiTraccia(t){
       l.wordRows.some(row=>_haTempiParole(row)));
     if(verified)return {label:verified.audioWordSynced?"PAROLE IA":"PAROLE",
       title:verified.audioWordSynced?"Parole ricavate dall'analisi vocale sul dispositivo":"Tempi originali delle singole parole disponibili"};
+    if(records.some(l=>l.wordRows?.some(row=>window.MusicBoxWordKaraoke?.hasPartialTiming?.(row))))
+      return {label:"PAROLE IA PARZIALI",title:"Solo le sequenze riconosciute hanno tempi acustici; le parole restanti non sono allineate"};
     if(records.some(l=>typeof l.synced==="string"&&
       /\[\d{1,3}:\d{2}/.test(l.synced)))
       return {label:"PAROLE STIMATE",title:"Progressione per parole stimata dai tempi delle frasi: non verificata sull'audio"};
@@ -7839,9 +7841,26 @@ box.innerHTML = "";
         Math.abs(sourceT(row)-original.t)<.02&&
         row.t>=original.t-.45&&row.t<=original.t+maxLag&&
         row.text===original.text&&
-        (row.words?.length>=3||_haTempiParole(row)&&
+        (engine?.hasPartialTiming?.(row)||row.words?.length>=3||_haTempiParole(row)&&
          row.t>=original.t-.20&&row.t<=original.t+.30));
-      if(matched){added++;changedRows.push(i);return matched}
+      if(matched){
+        let chosen=matched;
+        if(engine?.hasPartialTiming?.(kept)&&engine?.hasPartialTiming?.(matched)){
+          const old=new Map(kept.acousticSpans.map(w=>[w.wordIndex,w]));
+          for(const w of matched.acousticSpans)if(!old.has(w.wordIndex))old.set(w.wordIndex,w);
+          const merged={...kept,acousticSpans:[...old.values()].sort((a,b)=>a.wordIndex-b.wordIndex)};
+          if(!engine.hasPartialTiming(merged)||merged.acousticSpans.length===kept.acousticSpans.length)return kept;
+          chosen=merged;
+        }
+        if(engine?.hasPartialTiming?.(kept)&&_haTempiParole(matched)){
+          const observed=new Map(kept.acousticSpans.map(w=>[w.wordIndex,w]));
+          const words=matched.words.map((w,i)=>observed.has(i)?{...w,t:observed.get(i).t,end:observed.get(i).end}:w);
+          const full=engine.normalizeRows([{...matched,words}])[0];
+          if(!full||!_haTempiParole(full))return kept;
+          chosen=full;
+        }
+        added++;changedRows.push(i);return chosen;
+      }
       return kept&&!kept.estimated?kept:original;
     });
     if(!added)return 0;
@@ -9303,7 +9322,7 @@ function openProfile() {
     const e=window.MusicBoxWordKaraoke;
     const saved=e?.normalizeRows(l?.wordRows||[])||[];
     const enhanced=e?.parseEnhancedLrc(l?.synced||"")||[];
-    const baseline=(saved.some(_haTempiParole))?saved:
+    const baseline=(saved.some(_haTempiParole)||saved.some(row=>e?.hasPartialTiming?.(row)))?saved:
       (enhanced.some(_haTempiParole))?enhanced:parseSynced(l?.synced||"");
     return e?.estimateRows?.(baseline)||baseline;
   }
@@ -9769,8 +9788,9 @@ function openProfile() {
     $("lyricsMode").textContent=useSynced
       ?wordCoverage?.wordTimed?
         ("KARAOKE · PAROLE VERIFICATE "+wordCoverage.wordTimed+"/"+wordCoverage.total+
-         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:""))
-        :wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
+         " FRASI"+(wordCoverage.audio?" · AUDIO "+wordCoverage.audio:"")+(wordCoverage.partialWords?" · PARZIALI "+wordCoverage.partialWords+" PAROLE":""))
+        :wordCoverage?.partial?"KARAOKE · "+wordCoverage.partialWords+" PAROLE AUDIO, ALLINEAMENTO PARZIALE":
+         wordCoverage?.estimated?"KARAOKE · PAROLE STIMATE, NON VERIFICATE":
          "TESTO SINCRONIZZATO PER FRASI"
       :"TESTO COMPLETO";
     const switchView=$("lyricsViewToggle");
@@ -13180,7 +13200,10 @@ window.MusicBoxBridge = {
     const rows=parseSynced(candidate.synced).filter(row=>
       Number.isFinite(row.t)&&row.t>=0&&String(row.text||"").trim());
     if(rows.length<3)return null;
-    return {first:rows[0].t,last:rows[rows.length-1].t,starts:rows.map(r=>r.t)};
+    const observed=(candidate.wordRows||[]).flatMap(row=>row.estimated?[]:
+      _haTempiParole(row)?row.words:window.MusicBoxWordKaraoke?.validAcousticSpans?.(row)||[]);
+    const starts=[...rows.map(r=>r.t),...observed.flatMap(w=>[w.t,w.end]).filter(Number.isFinite)].sort((a,b)=>a-b);
+    return {first:Math.min(rows[0].t,starts[0]),last:Math.max(rows[rows.length-1].t,starts[starts.length-1]),starts};
   },
   mixVocalCutSafe:(cue,id)=>{
     if(!cue?.structuralBeat)return true;
@@ -13188,7 +13211,8 @@ window.MusicBoxBridge = {
     if(!candidate)return true;
     const rows=_righeTestoConParole(candidate);
     for(const row of rows){
-      if(!row.estimated&&_haTempiParole(row)&&row.words.some(w=>
+      const measured=row.estimated?[]:_haTempiParole(row)?row.words:window.MusicBoxWordKaraoke?.validAcousticSpans?.(row)||[];
+      if(measured.some(w=>
         Number.isFinite(w.t)&&Number.isFinite(w.end)&&w.t<cue.end&&w.end>cue.end-.4))return false;
       if(Number.isFinite(row.t)&&row.t>=cue.end-.4&&row.t<cue.end&&String(row.text||"").trim())return false;
     }

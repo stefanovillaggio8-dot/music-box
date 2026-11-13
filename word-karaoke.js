@@ -63,6 +63,7 @@ function normalizeRows(rows){
   const adjustedStart=firstWord!=null&&firstWord>=t-.45&&
     firstWord<=t+maxMeasuredOffset?firstWord:t;
   const words=validWords(row.words,text,adjustedStart,end);
+  const acousticSpans=words.length||row.partialAudio!==true?[]:validAcousticSpans(row);
   totalWords+=words.length;
   if(totalWords>MAX_WORDS)break;
   const displayT=words.length?adjustedStart:t;
@@ -76,6 +77,7 @@ function normalizeRows(rows){
    ...(anchored?{sourceT:+sourceT.toFixed(3)}:{}),
    ...(end!=null?{end:+end.toFixed(3)}:{}),
    ...(words.length?{words}:{}),
+   ...(acousticSpans.length?{partialAudio:true,acousticSpans}:{}),
    ...(row.estimated===true?{estimated:true}:{})});
  }
  return out.sort((a,b)=>a.t-b.t);
@@ -176,6 +178,20 @@ function parseEnhancedLrc(value){
 function hasWordTiming(row){
  return !!row&&number(row.t)!=null&&validWords(row.words,row.text,row.t,row.end??null).length>0;
 }
+function validAcousticSpans(row){
+ if(!row?.partialAudio||row.estimated||!Array.isArray(row.acousticSpans)||row.acousticSpans.length<4)return [];
+ const tokens=String(row.text||'').match(/\S+\s*/gu)||[],start=number(row.sourceT??row.t),out=[];
+ let previousIndex=-1,previousTime=-1;
+ for(const w of row.acousticSpans){
+  const i=w.wordIndex,t=number(w.t),end=number(w.end);
+  if(start==null||!Number.isInteger(i)||i<=previousIndex||i>=tokens.length||t==null||end==null||
+    t<start-.45||end-t<.035||end-t>.801||t<previousTime||
+    String(w.text).trim()!==tokens[i].trim())return [];
+  out.push({wordIndex:i,text:tokens[i],t,end});previousIndex=i;previousTime=t;
+ }
+ return out;
+}
+function hasPartialTiming(row){return validAcousticSpans(row).length>=4;}
 function fromRecord(entry){
  if(!entry||typeof entry!=="object")return [];
  const full=entry.lyricsfile?parseLyricsfile(entry.lyricsfile):[];
@@ -196,7 +212,7 @@ function toLrc(rows){
 function estimateRows(rows){
  if(!Array.isArray(rows))return [];
  return rows.map((row,index)=>{
-  if(!row||hasWordTiming(row))return row;
+  if(!row||hasWordTiming(row)||hasPartialTiming(row))return row;
   const start=number(row.t),text=String(row.text||"").trim();
   const tokens=text.match(/\S+\s*/gu)||[];
   if(start==null||tokens.length<2||tokens.length>24||text.length>220||
@@ -228,6 +244,14 @@ function estimateRows(rows){
 }
 function spanWords(document,row,container){
  const words=validWords(row.words,row.text,row.t,row.end??null);
+ if(!words.length&&hasPartialTiming(row)){
+  const known=new Set(row.acousticSpans.map(w=>w.wordIndex)),elements=[];
+  for(const [i,text] of (row.text.match(/\S+\s*/gu)||[]).entries()){
+   const el=document.createElement('span');el.className=known.has(i)?'karaoke-word':'karaoke-unmatched';el.textContent=text;
+   if(known.has(i))el.style.setProperty('--karaoke-fill','0%');container.appendChild(el);elements.push(el);
+  }
+  return elements;
+ }
  if(!words.length){container.textContent=row.text;return []}
  const elements=[];
  for(const w of words){
@@ -241,6 +265,14 @@ function spanWords(document,row,container){
  return elements;
 }
 function paintWords(row,elements,time){
+ if(hasPartialTiming(row)){
+  for(const w of row.acousticSpans){
+   const el=elements?.[w.wordIndex];if(!el)continue;
+   const pct=time>=w.end?100:Math.round(100*clamp((time-w.t)/(w.end-w.t),0,1));
+   if(el._karaokePct!==pct){el._karaokePct=pct;el.style.setProperty('--karaoke-fill',pct+'%')}
+  }
+  return;
+ }
  if(!row||!Array.isArray(row.words)||elements?.length!==row.words.length)return;
  for(let i=0;i<elements.length;i++){
   const w=row.words[i],next=row.words[i+1];
@@ -266,6 +298,7 @@ function timingCoverage(rows){
  for(const row of rows){
   if(!row||!String(row.text||"").trim()||number(row.t)==null)continue;
   result.total++;
+  if(hasPartialTiming(row)){result.partial=(result.partial||0)+1;result.partialWords=(result.partialWords||0)+row.acousticSpans.length;continue;}
   const timed=validWords(row.words,row.text,number(row.t),row.end==null?null:number(row.end)).length>=1;
   if(!timed){result.lineOnly++;continue;}
   if(row.estimated===true){result.estimated++;continue;}
@@ -278,6 +311,6 @@ function timingCoverage(rows){
  return result;
 }
 root.MusicBoxWordKaraoke={
- parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage,hasWordTiming
+ parseLyricsfile,parseEnhancedLrc,fromRecord,normalizeRows,toLrc,estimateRows,spanWords,paintWords,timingCoverage,hasWordTiming,hasPartialTiming,validAcousticSpans
 };
 })(typeof window!=="undefined"?window:globalThis);

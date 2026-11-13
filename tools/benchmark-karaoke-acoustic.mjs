@@ -63,20 +63,38 @@ for(const record of records){
   seen.set(key,line);
  }
  for(const choice of selected){
-  const id=record.name+'@'+choice.start.toFixed(3),cache=output+'.'+inferenceKey+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
+  const id=record.name+'@'+choice.start.toFixed(3),cache=arg('asr-cache-prefix',output)+'.'+inferenceKey+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
   let chunks;
-  if(fs.existsSync(cache))chunks=JSON.parse(fs.readFileSync(cache));
+  const cached=fs.existsSync(cache);let inferenceMs=null;
+  if(cached){
+   const prefix=arg('asr-cache-prefix','');
+   if(prefix&&prefix!==output){const original=JSON.parse(fs.readFileSync(prefix));
+    if(original.cases.find(c=>c.id===id)?.sourceAudioSha256!==sha256)throw Error('Cached ASR recording identity mismatch');}
+   chunks=JSON.parse(fs.readFileSync(cache));
+  }
   else{
    const decoded=spawnSync('ffmpeg',['-nostdin','-v','error','-i',file,'-ss',String(choice.start),'-t','28','-ac','1','-ar','16000','-f','f32le','pipe:1'],{maxBuffer:4e6});
    if(decoded.status!==0)throw Error('Reference decode failed');
    const bytes=decoded.stdout,pcm=new Float32Array(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
-   chunks=(await asr(pcm,{return_timestamps:'word',task:'transcribe',language:'en'})).chunks??[];
+   const inferAt=performance.now();chunks=(await asr(pcm,{return_timestamps:'word',task:'transcribe',language:record.language||'en'})).chunks??[];
+   inferenceMs=performance.now()-inferAt;
    fs.writeFileSync(cache,JSON.stringify(chunks));
   }
-  const aligned=context.MusicBoxAudioAlign.alignWindow(choice.selected,chunks,choice.start,28);
+  const alignmentAt=performance.now();const aligned=context.MusicBoxAudioAlign.alignWindow(choice.selected,chunks,choice.start,28);
+  const partial=context.MusicBoxAudioAlign.alignAcousticSpans?.(choice.selected.map(line=>aligned.find(r=>Math.abs(r.sourceT-line.start)<.002)||line),chunks,choice.start,28)||[];
+  const partialErrors=[];
+  for(const row of partial){
+   const line=choice.selected.find(l=>Math.abs(l.start-row.sourceT)<.002);
+   const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001);
+   const tokens=line.text.match(/\S+\s*/gu)||[];
+   if(tokens.length!==reference.length||tokens.some((s,i)=>normalize(s)!==normalize(reference[i].text)))continue;
+   for(const w of row.acousticSpans)partialErrors.push({wordIndex:w.wordIndex,lineIndex:line.index,
+    startErrorMs:(w.t-reference[w.wordIndex].start)*1000,endErrorMs:(w.end-reference[w.wordIndex].end)*1000});
+  }
   const errors=[],unmatched=[],estimated=[];let denominator=0;
+  const alignmentMs=performance.now()-alignmentAt;
   const displayed=context.MusicBoxWordKaraoke.estimateRows(choice.selected.map(line=>
-   aligned.find(r=>Math.abs(r.sourceT-line.start)<.002)||line));
+   aligned.find(r=>Math.abs(r.sourceT-line.start)<.002)||partial.find(r=>Math.abs(r.sourceT-line.start)<.002)||line));
   for(const line of choice.selected){
    const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001);
    denominator+=reference.length;
@@ -99,7 +117,9 @@ for(const record of records){
    sourceAudioSha256:sha256,referenceWords:denominator,observedWords:errors.length,
    observedCoverage:denominator?errors.length/denominator:0,estimatedWords:estimated.length,
    onset:stats(errors.map(x=>x.startErrorMs)),end:stats(errors.map(x=>x.endErrorMs)),errors,unmatched,
-   estimatedOnset:stats(estimated.map(x=>x.startErrorMs)),estimatedEnd:stats(estimated.map(x=>x.endErrorMs)),estimatedErrors:estimated};
+   estimatedOnset:stats(estimated.map(x=>x.startErrorMs)),estimatedEnd:stats(estimated.map(x=>x.endErrorMs)),estimatedErrors:estimated,
+   partialWords:partialErrors.length,partialErrors,partialOnset:stats(partialErrors.map(x=>x.startErrorMs)),partialEnd:stats(partialErrors.map(x=>x.endErrorMs)),
+   acceptedWords:errors.length+partialErrors.length,performance:{cachedAsr:cached,inferenceMs,alignmentMs,notPhysicalIPhone:true}};
   report.cases.push(item);fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify({id,words:denominator,observed:errors.length,onset:item.onset,end:item.end}));
  }
@@ -108,6 +128,20 @@ const all=report.cases.flatMap(c=>c.errors),total=report.cases.reduce((s,c)=>s+c
 report.aggregate={referenceWords:total,observedWords:all.length,observedCoverage:all.length/total,
  onset:stats(all.map(x=>x.startErrorMs)),end:stats(all.map(x=>x.endErrorMs))};
 const estimated=report.cases.flatMap(c=>c.estimatedErrors);
+const partial=report.cases.flatMap(c=>c.partialErrors);
+report.partial={words:partial.length,onset:stats(partial.map(w=>w.startErrorMs)),end:stats(partial.map(w=>w.endErrorMs)),
+ combinedCoverage:(all.length+partial.length)/total};
+report.fullPhraseBaseline={...report.aggregate};
+const combined=[...all,...partial];
+report.aggregate={...report.aggregate,observedWords:combined.length,completePhraseWords:all.length,partialWords:partial.length,
+ observedCoverage:combined.length/total,onset:stats(combined.map(w=>w.startErrorMs)),end:stats(combined.map(w=>w.endErrorMs))};
 report.aggregate.estimatedWords=estimated.length;report.aggregate.estimatedOnset=stats(estimated.map(x=>x.startErrorMs));
 report.aggregate.estimatedEnd=stats(estimated.map(x=>x.endErrorMs));
+report.aggregate.unalignedWords=total-combined.length-estimated.length;
+report.categories={};
+for(const category of ['rap-dense','singing-fast','singing-sparse','repeated-phrase']){
+ const cases=report.cases.filter(c=>c.category===category),errors=cases.flatMap(c=>[...c.errors,...c.partialErrors]),denominator=cases.reduce((s,c)=>s+c.referenceWords,0);
+ report.categories[category]={referenceWords:denominator,acceptedWords:errors.length,coverage:denominator?errors.length/denominator:null,
+  onset:stats(errors.map(e=>e.startErrorMs)),end:stats(errors.map(e=>e.endErrorMs))};
+}
 fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');

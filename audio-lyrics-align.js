@@ -4,7 +4,7 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=6,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const VERSION=7,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
@@ -172,6 +172,53 @@ function alignWindow(lines,transcribed,offset=0,duration=WINDOW){
   results.push({t:+displayStart.toFixed(3),sourceT:+start.toFixed(3),
    text:String(row.text).trim(),words:parts,end:parts[parts.length-1].end,
    alignedFromAudio:true});
+ }
+ return results;
+}
+// Separate partial evidence: exact distinctive sequences, never guessed
+// timestamps for missing tokens or a "verified" label for an entire line.
+function alignAcousticSpans(lines,transcribed,offset=0,duration=WINDOW){
+ if(!Array.isArray(lines)||!Array.isArray(transcribed))return [];
+ const words=recognizedWords(transcribed,offset).map((w,index)=>({...w,index}));
+ const reserved=new Set();
+ for(const row of lines)if(hasWordTiming(row)){
+  const lo=row.words[0].t-.02,hi=row.words[row.words.length-1].end+.02;
+  for(const w of words)if(w.t>=lo&&w.end<=hi)reserved.add(w.index);
+ }
+ const results=[];let lastUsed=-1;
+ for(let rowIndex=0;rowIndex<lines.length;rowIndex++){
+  const row=lines[rowIndex],start=Number(row?.sourceT??row?.t),next=Number(lines[rowIndex+1]?.sourceT??lines[rowIndex+1]?.t);
+  if(!Number.isFinite(start)||row?.t==null||hasWordTiming(row)||start<offset+.15&&!(offset===0&&start===0))continue;
+  const tokens=wordTokens(row.text),keys=tokens.map(normalized);
+  if(keys.length<4||keys.length>80||keys.some(k=>!k))continue;
+  const limit=Math.min(offset+duration-.04,Number.isFinite(next)&&next>start?next-.05:start+27);
+  const pool=words.filter(w=>!reserved.has(w.index)&&w.index>lastUsed&&w.t>=start-.45&&w.end<=limit+.4),runs=[];
+  for(let i=0;i<keys.length;i++)for(let j=0;j<pool.length;j++){
+   if(keys[i]!==pool[j].key)continue;let n=0;
+   while(i+n<keys.length&&j+n<pool.length&&keys[i+n]===pool[j+n].key&&
+    pool[j+n].end-pool[j+n].t>=.035&&pool[j+n].end-pool[j+n].t<=.8&&
+    (!n||pool[j+n].index===pool[j+n-1].index+1&&pool[j+n].t>=pool[j+n-1].end-.04&&pool[j+n].t-pool[j+n-1].end<=.25))n++;
+   const distinctive=new Set(keys.slice(i,i+n)).size,anchored=i===0&&pool[j].t-start<=.85;
+   if(n<(anchored?4:6)||distinctive<(anchored?3:5))continue;
+   const same=(list,at)=>keys.slice(i,i+n).every((key,k)=>list[at+k]===key);
+   const recognized=pool.map(w=>w.key);
+   if(keys.reduce((s,_,at)=>s+Number(same(keys,at)),0)!==1||recognized.reduce((s,_,at)=>s+Number(same(recognized,at)),0)!==1)continue;
+   runs.push({i,j,n});
+  }
+  runs.sort((a,b)=>b.n-a.n||a.i-b.i||a.j-b.j);
+  const chosen=[],usedLyrics=new Set(),usedAsr=new Set();
+  for(const run of runs){
+   if(Array.from({length:run.n},(_,k)=>run.i+k).some(i=>usedLyrics.has(i))||
+      Array.from({length:run.n},(_,k)=>pool[run.j+k].index).some(i=>usedAsr.has(i))||
+      chosen.some(c=>(c.i<run.i)!==(c.j<run.j)))continue;
+   chosen.push(run);for(let k=0;k<run.n;k++){usedLyrics.add(run.i+k);usedAsr.add(pool[run.j+k].index)}
+  }
+  const spans=chosen.flatMap(r=>Array.from({length:r.n},(_,k)=>({wordIndex:r.i+k,text:tokens[r.i+k],
+   t:pool[r.j+k].t,end:pool[r.j+k].end,asrIndex:pool[r.j+k].index}))).sort((a,b)=>a.wordIndex-b.wordIndex);
+  if(spans.length<4||spans.some((w,i)=>i&&w.t<spans[i-1].t))continue;
+  lastUsed=Math.max(lastUsed,...spans.map(s=>s.asrIndex));
+  results.push({t:start,sourceT:start,text:String(row.text).trim(),partialAudio:true,
+   acousticSpans:spans.map(({asrIndex,...word})=>word)});
  }
  return results;
 }
@@ -382,6 +429,9 @@ async function analyze(id,epoch=alignmentEpoch){
    const chunks=await requestWorker(sample,language);
    if(epoch!==alignmentEpoch||active.has(sessionId)===false||bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
    const aligned=alignWindow(rows,chunks,at,Math.min(WINDOW,duration-at));
+   const sourceAt=row=>row.sourceT??row.t;
+   const partial=alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,at,Math.min(WINDOW,duration-at));
+   aligned.push(...partial);
    sessionStorage.setItem(key,String(Date.now()));
    if(!aligned.length)continue;
    const stored=await bridge.saveAudioWordRows?.(id,aligned);
@@ -454,5 +504,5 @@ function request(id){
  else setTimeout(start,1600);
  return true;
 }
-root.MusicBoxAudioAlign={request,cancel,alignWindow,recognizedWords,pcmSlice,preferredWindows,languageFromLyrics};
+root.MusicBoxAudioAlign={request,cancel,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);
