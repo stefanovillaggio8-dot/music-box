@@ -3011,13 +3011,13 @@
    },
    "[\"jolly\",\"kid yugi\"]": {
     "v": 0,
-    "s": 93,
+    "s": 100,
     "t": "Jolly",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"jolly\",\"kid yugi\"]": {
     "v": 0,
-    "s": 93,
+    "s": 100,
     "t": "Jolly",
     "a": "Kid Yugi"
    },
@@ -10005,6 +10005,18 @@
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
+   "[\"non ti dimentico\",\"modÃ \"]": {
+    "v": 1,
+    "s": 173,
+    "t": "Non ti dimentico",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
+    "v": 1,
+    "s": 173,
+    "t": "Non ti dimentico",
+    "a": "ModÃ "
+   },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
     "s": 3,
@@ -10725,18 +10737,6 @@
     "t": "Il pescatore",
     "a": "Fabrizio De AndrÃ©"
    },
-   "[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 1,
-    "s": 173,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 1,
-    "s": 173,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
    "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
     "v": 1,
     "s": 332,
@@ -10817,13 +10817,13 @@
    },
    "[\"non ti dimentico\",\"modà\"]": {
     "v": 0,
-    "s": 15,
+    "s": 51,
     "t": "Non ti dimentico",
     "a": "Modà"
    },
    "m:2026-11|[\"non ti dimentico\",\"modà\"]": {
     "v": 0,
-    "s": 15,
+    "s": 51,
     "t": "Non ti dimentico",
     "a": "Modà"
    }
