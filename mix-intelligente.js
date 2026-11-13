@@ -146,6 +146,7 @@ function onsetPairAgreement(a,b){
 }
 function iphoneBeatPairCertified(a,b,cue){
  if(!cue)return false;
+ if(cue.measuredFullBeat===true)return fullBeatCueCertified(a,b,cue);
  const beatLike=cue.kind==="snap"||cue.kind==="beat"||
   cue.measuredBeatBridge||cue.rhythmicUnderlay||cue.strongBeatBridge;
  if(!beatLike)return true;
@@ -195,6 +196,7 @@ function iphoneBeatPairCertified(a,b,cue){
 // BPM alone or a quiet outro is not enough to certify any DJ cut.
 function desktopBeatPairCertified(a,b,p){
  if(!p)return false;
+ if(p.measuredFullBeat===true)return fullBeatCueCertified(a,b,p);
  if(!["beat","snap","phrase"].includes(p.kind)&&
     !p.measuredBeatBridge&&!p.rhythmicUnderlay&&!p.strongBeatBridge)return true;
  if(p.earlyBeatJoin===true){
@@ -383,6 +385,16 @@ function tempoFreeReleaseBridge(a,b,dur){
   silenceTrim:trim,trailing:trim?dur-end:0};
 }
 function mobileMixAllowed(plan,ending,lastLyricAt) {
+ if(plan?.measuredFullBeat===true)
+  return !!pcmTransitionSection(ending,"outro")&&plan.kind==="beat"&&
+   plan.quietCertified===true&&plan.preserveTail===true&&
+   plan.measuredBeatCount>=8&&plan.beatPulseAgreement>=.90&&
+   plan.measuredPlacementError<=.040&&plan.grooveScore>=.36&&
+   plan.fullOnsetFirst>=.22&&plan.fullOnsetSecond>=.22&&
+   plan.harmonicScore>=.78&&plan.harmonicWeakest>=.60&&
+   plan.fade>=4.5&&plan.fade<=8&&
+   Number.isFinite(lastLyricAt)&&lastLyricAt<=plan.begin-5.5;
+
  if(plan?.neutralAmbientUnderlay===true)
   return !!ending&&plan.kind==="underlay"&&
    plan.drumOnlyUnderlay===true&&plan.preserveTail===true&&
@@ -2436,6 +2448,149 @@ function djMeasuredBarAccents(outro,intro,bpm,offsetSeconds){
  const score=clamp((correlation+1)/2,0,1);
  return {reliable:true,score,beats:incoming.length};
 }
+// Fine-grained original-PCM features cover BOTH songs throughout the fade.
+// A similar four-second fingerprint or global BPM is not this certificate.
+function pcmTransitionSection(track,name){
+ const data=track?.pcmTransition,part=data?.[name];
+ if(data?.version!==1||data.sha!==track.sha||
+    data.method!=="original-pcm-onset-chroma-20ms"||!part||
+    !Number.isFinite(part.start)||!Number.isFinite(part.end)||
+    part.end<=part.start||part.step!==.02||
+    !Array.isArray(part.onset)||part.onset.length<150||part.onset.length>5000||
+    !part.onset.every(v=>Number.isFinite(v)&&v>=0&&v<=4)||
+    !Array.isArray(part.beats)||part.beats.length<8||part.beats.length>250||
+    !part.beats.every((t,i)=>Number.isFinite(t)&&t>=part.start&&t<=part.end&&
+      (!i||t>part.beats[i-1]))||
+    !Array.isArray(part.harmony)||part.harmony.length<6)return null;
+ return part;
+}
+function pcmContourAt(part,time){
+ const pos=(time-part.start)/part.step,i=Math.floor(pos),fraction=pos-i;
+ if(i<0||i+1>=part.onset.length)return null;
+ return part.onset[i]*(1-fraction)+part.onset[i+1]*fraction;
+}
+function pcmFullBeatFit(outro,intro,begin,entry,rate,fade){
+ const old=outro.beats.filter(t=>t>=begin-.075&&t<=begin+fade-.12),
+  next=intro.beats.map(t=>begin+(t-entry)/rate)
+   .filter(t=>t>=begin&&t<=begin+fade-.12);
+ if(old.length<8||next.length<8)return null;
+ let cursor=0,errors=[],first=0,second=0;
+ for(const t of next){
+  while(cursor+1<old.length&&Math.abs(old[cursor+1]-t)<Math.abs(old[cursor]-t))cursor++;
+  const error=old[cursor]-t;
+  if(cursor<old.length&&Math.abs(error)<=.075){
+   errors.push(error);if(t<begin+fade/2)first++;else second++;
+   cursor++;
+  }
+ }
+ const ratio=errors.length/Math.max(old.length,next.length);
+ if(errors.length<8||ratio<.90||first<3||second<3)return null;
+ const rms=Math.sqrt(errors.reduce((sum,x)=>sum+x*x,0)/errors.length);
+ if(rms>.040)return null;
+ // Measure all real transients at their ACTUAL simultaneous positions,
+ // including the second half; do not select the best lag after planning.
+ const xs=[],ys=[];
+ for(let t=.08;t<fade-.12;t+=.02){
+  const x=pcmContourAt(outro,begin+t),y=pcmContourAt(intro,entry+t*rate);
+  if(x===null||y===null)return null;
+  xs.push(x);ys.push(y);
+ }
+ const correlation=(lo,hi)=>{
+  const x=xs.slice(lo,hi),y=ys.slice(lo,hi),n=x.length;
+  if(n<35)return -1;
+  const mx=x.reduce((a,b)=>a+b,0)/n,my=y.reduce((a,b)=>a+b,0)/n;
+  let xy=0,xx=0,yy=0;
+  for(let i=0;i<n;i++){const a=x[i]-mx,b=y[i]-my;xy+=a*b;xx+=a*a;yy+=b*b}
+  return xx>1e-6&&yy>1e-6?xy/Math.sqrt(xx*yy):-1;
+ };
+ const half=Math.floor(xs.length/2),onset=correlation(0,xs.length),
+  firstHalf=correlation(0,half),secondHalf=correlation(half,xs.length);
+ if(onset<.36||firstHalf<.22||secondHalf<.22)return null;
+ return {beats:errors.length,ratio,rms,onset,firstHalf,secondHalf};
+}
+function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
+ const closest=(part,time)=>{
+  let winner=null,distance=Infinity;
+  for(const row of part.harmony){
+   const delta=Math.abs(row?.t-time);
+   if(delta<distance){distance=delta;winner=row?.notes}
+  }
+  return distance<=.30&&hasReliableHarmony(winner)?winner:null;
+ };
+ const scores=[];let shared=0;
+ for(const f of [.16,.38,.62,.84]){
+  const a=closest(outro,begin+fade*f),b=closest(intro,entry+fade*f*rate);
+  if(!a||!b)return null;
+  const top=x=>x.map((v,p)=>({v,p})).sort((a,b)=>b.v-a.v).slice(0,3);
+  if(top(a).filter(x=>top(b).some(y=>y.p===x.p)).length>=2)shared++;
+  scores.push(focusedCompatibility(a,b));
+ }
+ const average=scores.reduce((a,b)=>a+b,0)/scores.length,
+  weakest=Math.min(...scores);
+ return average>=.78&&weakest>=.60&&shared>=3?{average,weakest}:null;
+}
+function measuredFullBeatBridge(a,b,dur){
+ if(!a||!b||a.durationMismatch||b.durationMismatch||
+    !Number.isFinite(dur)||!Number.isFinite(a.duration)||
+    Math.abs(dur-a.duration)>1.5||!Number.isFinite(a.last)||
+    a.last>dur+.2||!beatBearingIntro(b,.39)||
+    !Number.isFinite(a.bpm)||!Number.isFinite(b.bpm))return null;
+ const rate=a.bpm/b.bpm;
+ if(rate<.97||rate>1.03)return null;
+ const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
+ if(!outro||!intro)return null;
+ const entry=musicalIntroEntry(b),end=Math.min(dur-.035,a.last+.05),
+  firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
+    Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
+ // Missing vocal data never certifies a full-band instrumental intro.
+ if(!Number.isFinite(firstVoice)||entry<intro.start||end>outro.end)return null;
+ const key=camelotMatch(a,b);
+ if(key.weight>=.14&&key.score<.55)return null;
+ let best=null;
+ for(const oldBeat of outro.beats){
+  if(oldBeat<end-8.0||oldBeat>end-3.0)continue;
+  for(const nextBeat of intro.beats){
+   if(nextBeat<entry||nextBeat>entry+1.1)continue;
+   const begin=oldBeat-(nextBeat-entry)/rate,fade=end-begin;
+   if(begin<26||fade<4.5||fade>8||begin<outro.start||
+      entry+fade*Math.max(1,rate)>intro.end||
+      (firstVoice-entry)/Math.max(1,rate)<fade+.65)continue;
+   const safeLyrics=Number.isFinite(a.lastLyricAt)&&a.lastLyricAt<=begin-5.5,
+    safeVoice=a.voiceModel&&Number.isFinite(a.voiceScannedEnd)&&
+      a.voiceScannedEnd>=a.last-.75&&Number.isFinite(a.lastVoiceAt)&&
+      a.lastVoiceAt<=begin-5.5;
+   if(!safeLyrics&&!safeVoice)continue;
+   const fit=pcmFullBeatFit(outro,intro,begin,entry,rate,fade);
+   if(!fit)continue;
+   const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade);
+   if(!harmony)continue;
+   const quality=.45*fit.onset+.35*harmony.average+.20*fit.ratio;
+   const cue={kind:"beat",measuredFullBeat:true,measuredBeatBridge:true,
+    measuredBeatPlacement:true,measuredOnsetGrid:true,
+    begin,end,fade,entry,tempo:rate,gain:1,
+    beatAnchor:oldBeat,nextBeat:nextBeat-entry,beatPeriod:60/a.bpm,
+    quietCertified:true,preserveTail:true,softTailTrim:false,
+    silenceTrim:a.confidentTail===true&&dur-a.last>=1.65,
+    trailing:Math.max(0,dur-end),safeOutroAt:begin,
+    measuredPlacementError:fit.rms,beatPulseAgreement:fit.ratio,
+    measuredBeatCount:fit.beats,grooveScore:fit.onset,
+    beatGridScore:fit.ratio,fullOnsetFirst:fit.firstHalf,
+    fullOnsetSecond:fit.secondHalf,harmonicScore:harmony.average,
+    harmonicWeakest:harmony.weakest,score:Math.round(100*quality)};
+   if(!best||quality>best.quality)best={quality,cue};
+  }
+ }
+ return best?.cue||null;
+}
+function fullBeatCueCertified(a,b,cue){
+ const expected=measuredFullBeatBridge(a,b,a?.duration);
+ return !!expected&&cue.kind==="beat"&&cue.measuredFullBeat===true&&
+  cue.quietCertified===true&&cue.preserveTail===true&&
+  !cue.drumOnlyUnderlay&&!cue.vocalBeatUnderlay&&
+  ["begin","end","fade","entry","tempo","gain"].every(k=>
+   Number.isFinite(cue[k])&&Math.abs(cue[k]-expected[k])<.001);
+}
+
 function earlyMatchedBar(a,b,dur){
  if(!a||!b||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(a.duration)||
@@ -3291,7 +3446,7 @@ function synchronizeBeatCue(a,b,cue){
  // A verified rhythmic-grid plan has already chosen its musical entry and
  // exact beat, including an adjusted safeIntroAt. Recomputing from the
  // original unmodified analysis shifts the beat phase by the intro skip.
- if(cue?.rhythmicGridJoin===true||cue?.earlyBeatJoin===true)return cue;
+ if(cue?.measuredFullBeat===true||cue?.rhythmicGridJoin===true||cue?.earlyBeatJoin===true)return cue;
  // Isolated legacy test harnesses may load only the planning functions.
  // The shipped player always includes the real onset validator.
  if(typeof onsetPairAgreement!=="function"||
@@ -3907,6 +4062,8 @@ function unalignedTransition(a,b,actualDuration){
  const openingEntry=musicalIntroEntry(b);
  if(openingEntry!==(Number.isFinite(b.safeIntroAt)?clamp(b.safeIntroAt,0,18):0))
   b={...b,safeIntroAt:openingEntry};
+ const fullBeat=measuredFullBeatBridge(a,b,dur);
+ if(fullBeat)return fullBeat;
  const early=earlyMatchedBar(a,b,dur);
  if(early)return early;
  const releaseBeat=rhythmicReleaseBeatBridge(a,b,dur);
@@ -6271,6 +6428,8 @@ function updateDetails(a,b){
     " · finale musicale concluso: la nuova intro entra nella coda debole":
    plan?.subduedRhythmicUnderlay?
    " · ritmo anticipato a basso volume, finale originale integro (non beatmatch certificato)":
+   plan?.measuredFullBeat?
+   " · beatmatch su più battute verificato sul PCM completo":
    plan?.measuredBeatBridge?
    plan.kind==="snap"?" · stacco corto sulla battuta, senza aspettare silenzi":
    " · beat reali compatibili: mix anticipato":
