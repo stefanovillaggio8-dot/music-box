@@ -652,7 +652,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:"6715";
-  const wordCache=file==="word-karaoke.js"?"7":file==="immersive.js"?"5":file==="app.js"?"4":"2";
+  const wordCache=file==="word-karaoke.js"?"8":file==="immersive.js"?"5":file==="app.js"?"4":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }
@@ -1277,4 +1277,41 @@ test("last karaoke verse stops glowing after the measured final sung word",()=>{
  const unknown=choose({t:80});
  assert.equal(unknown(88),1,"do not invent an early finish without word timing");
  assert.equal(unknown(89.1),-1);
+});
+
+test("real G&V rap timing is not replaced by invented rapid-word karaoke",()=>{
+ const win={};
+ new Function("window","globalThis",
+  fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(win,win);
+ const rows=[
+  {t:95.31,text:"Nonna pensa che mi sono dichiarato"},
+  {t:97.60,text:"tanta carta e Troppi cambiamenti"},
+  {t:99.72,text:"ma stessi valori e stessi insegnamenti"}
+ ];
+ const result=win.MusicBoxWordKaraoke.estimateRows(rows);
+ assert.equal(result[0].words,undefined,
+  "very fast speech must keep line-level cues instead of invented word times");
+ assert.equal(result[1].words,undefined,
+  "rapid second line must not generate arbitrary syllable offsets");
+ assert.equal(result[2].words,undefined,
+  "without a following LRC marker, the final word end is unmeasured");
+ const relaxed=win.MusicBoxWordKaraoke.estimateRows([
+  {t:7.7,text:"E quanto forte ti pensavo"},
+  {t:11.92,text:"Che quasi non respiravo"}]);
+ assert.equal(relaxed[0].estimated,true,
+  "slow, bounded phrases retain their clearly labelled approximate fallback");
+});
+test("real word ASR starts before slow LRCLIB fallback, and verified words survive a late provider response",()=>{
+ const begin=app.indexOf("  requestWordLyrics:(id)=>{");
+ const end=app.indexOf("  saveAudioWordRows:",begin);
+ assert.ok(begin>=0&&end>begin);
+ const path=app.slice(begin,end);
+ assert.ok(path.indexOf("startLocalAlignment();")>=0&&
+  path.indexOf("startLocalAlignment();")<
+   path.indexOf("Promise.resolve(_verificaParoleKaraoke(song))"),
+  "the on-device alignment must run before waiting for a remote 404/503");
+ const provider=app.slice(app.indexOf("async function _verificaParoleKaraoke("),
+  app.indexOf("async function _salvaParoleDallAudio("));
+ assert.match(provider,/const newest=_testoLocaleVerificato\(id\);/);
+ assert.match(provider,/if\(newest\?\.audioWordSynced&&newest\.wordRows\?\.some/);
 });
