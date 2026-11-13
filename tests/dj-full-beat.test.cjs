@@ -2,7 +2,7 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
 const tool=fs.readFileSync(path.join(__dirname,'../tools/dj-equivalence-audit.cjs'),'utf8');
-const {engine}=new Function('require','__dirname',tool.slice(0,tool.indexOf('// Independent PCM spotchecks'))+'return {engine};')(require,path.join(__dirname,'../tools'));
+const {engine,tracks}=new Function('require','__dirname',tool.slice(0,tool.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks};')(require,path.join(__dirname,'../tools'));
 function fixture(){
  const notes=[.23,.01,.01,.01,.21,.01,.01,.23,.01,.01,.01,.25];
  const section=(start,end)=>({start,end,step:.02,
@@ -25,7 +25,8 @@ test('full beatmix requires source identity, independent rhythm and vocal safety
  const {a,b}=fixture();
  assert.equal(engine.measuredFullBeatBridge({...a,sha:'changed'},b,a.duration),null);
  assert.equal(engine.measuredFullBeatBridge(a,{...b,firstLyricAt:null},a.duration),null);
- assert.equal(engine.measuredFullBeatBridge({...a,lastLyricAt:99},b,a.duration),null);
+ assert.equal(engine.measuredFullBeatBridge({...a,lastLyricAt:99},b,a.duration)?.nativeTailFullBeat,true,
+  'the native original must finish without ducking its late vocal');
  assert.equal(engine.measuredFullBeatBridge(a,{...b,firstLyricAt:3},a.duration),null);
  const flat=structuredClone(b);flat.pcmTransition.intro.onset.fill(.1);
  assert.equal(engine.measuredFullBeatBridge(a,flat,a.duration),null);
@@ -43,7 +44,7 @@ test('compact plans preserve the PCM certificate while rechecking live recording
  assert.equal(engine.desktopBeatPairCertified(a,b,cue),true);
  assert.equal(engine.measuredFullBeatBridge(a,{...b,sha:'different'},a.duration),null);
  assert.equal(engine.measuredFullBeatBridge(a,{...b,duration:181},a.duration),null);
- assert.equal(engine.measuredFullBeatBridge({...a,lastVoiceAt:cue.begin},b,a.duration),null);
+ assert.equal(engine.measuredFullBeatBridge({...a,lastVoiceAt:cue.begin},b,a.duration)?.nativeTailFullBeat,true);
  assert.equal(engine.measuredFullBeatBridge(a,{...b,firstVoiceAt:cue.fade-.1},a.duration),null);
  assert.equal(engine.desktopBeatPairCertified(a,b,{...cue,entry:cue.entry+.1}),false);
 });
@@ -71,4 +72,42 @@ test('full-band original percussion intro does not pretend to have matching chor
  assert.equal(engine.measuredFullBeatBridge(a,pitched,a.duration),null);
  const quiet=structuredClone(b);quiet.pcmTransition.intro.harmony.forEach(r=>r.rms=0);
  assert.equal(engine.measuredFullBeatBridge(a,quiet,a.duration),null);
+});
+
+test('original MP3 fixtures prove a 6.8 second thirteen-beat mix, independent of compact flags',()=>{
+ const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-584-336.json'),'utf8'));
+ const byKey=new Map(tracks),from='audio/songs/track-584.mp3',to='audio/songs/track-336.mp3';
+ const a={...byKey.get(from),pcmTransition:fixture.entries[from].pcmTransition};
+ const b={...byKey.get(to),pcmTransition:fixture.entries[to].pcmTransition};
+ const p=engine.measuredFullBeatBridge(a,b,a.duration);
+ assert.ok(p);assert.ok(p.fade>6.8&&p.fade<6.9);assert.equal(p.measuredBeatCount,13);
+ assert.ok(p.measuredPlacementError<.025);assert.ok(p.fullOnsetCorrelation>.55);
+ assert.equal(p.harmonicMode,'compatible-key');assert.equal(p.harmonicKeyFrom,'4A');assert.equal(p.harmonicKeyTo,'5A');
+ assert.ok(p.harmonicKeyConfidence>.87);assert.ok(p.harmonicDissonanceMax<0);
+ assert.equal(p.nativeTailFullBeat,true);assert.equal(p.quietCertified,false);
+ assert.ok(Math.abs(p.end-a.duration)<.04);assert.equal(p.silenceTrim,false);
+ assert.equal(engine.desktopBeatPairCertified(a,b,p),true);
+ assert.equal(engine.desktopBeatPairCertified(a,b,{...p,beatAnchor:p.beatAnchor+.1}),false);
+ const bad=structuredClone(b);bad.pcmTransition.intro.onset.fill(0);
+ assert.equal(engine.measuredFullBeatBridge(a,bad,a.duration),null);
+ const vocals={...b,firstVoiceAt:b.safeIntroAt+2};
+ assert.equal(engine.measuredFullBeatBridge(a,vocals,a.duration),null);
+ delete a.pcmTransition;delete b.pcmTransition;
+ assert.equal(engine.desktopBeatPairCertified(a,b,p),true,'runtime uses the same SHA-bound compact plan');
+ assert.equal(engine.measuredFullBeatBridge(a,{...b,sha:'changed-audio'},a.duration),null);
+});
+test('live phase feedback converges without moving or retiming the outgoing player',()=>{
+ const code=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
+ const helper=code.slice(code.indexOf('function fullBeatFeedbackRate('),code.indexOf('function djSoftFocusEnvelope('));
+ const rate=new Function('clamp',helper+'return fullBeatFeedbackRate;')((v,a,b)=>Math.max(a,Math.min(b,v)));
+ for(const tempo of [.96,1,1.0458])for(const initial of [-.08,.08]){
+  let old=1,newClock=(1-initial)*tempo;
+  for(let i=0;i<60;i++){
+   const error=old-newClock/tempo;
+   const correction=rate(tempo,error);
+   assert.ok(correction>=.9&&correction<=1.1);
+   old+=.05;newClock+=.05*correction;
+  }
+  assert.ok(Math.abs(old-newClock/tempo)<.003);
+ }
 });

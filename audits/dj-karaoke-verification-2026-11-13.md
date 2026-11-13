@@ -128,3 +128,95 @@ La correzione è un miglioramento di continuità e udibilità **sul percorso
 desktop**. I test automatici non dimostrano qualità equivalente a Spotify,
 non aumentano il numero di beatmatch strict e non sostituiscono un ascolto
 fisico su iPhone.
+
+## Continuazione: beatmatch completo, clock reali e karaoke breve
+
+### Percorso di più battute
+
+È stato aggiunto un percorso distinto dagli snap e dalle anteprime filtrate.
+L'estrazione PCM copre l'intera sovrapposizione, con onset ogni 20 ms,
+beat osservati, separazione HPSS e armonia ogni mezzo secondo. Il compilatore
+richiede tutti i 1.176 file analizzabili, verifica gli SHA originali e conserva
+nel player soltanto il piano compatto. I contorni audio restano negli artifact,
+non aumentano di decine di MB l'indice scaricato dal telefono.
+
+Il controllo ammette almeno otto beat reali, corrispondenza >=90%, RMS <=40 ms
+ed evidenza ritmica in entrambe le metà. Il percorso alternativo per timbri
+diversi richiede almeno dodici beat, >=95%, RMS <=25 ms e attacchi originali
+forti su entrambi i file. I BPM locali possono essere stimati dai beat della
+finestra, senza scambiare il BPM medio del brano per un clock esatto.
+
+L'armonia può essere verificata con accordi simili, con un'intro percussiva
+misurata, oppure con tonalità locali compatibili e un controllo frame per
+frame dell'aumento di ruvidità rispetto agli originali. La compatibilità di
+tonalità **non è dichiarata identità degli accordi**.
+
+**Prima coppia completa verificata dal nuovo percorso:**
+`audio/songs/track-584.mp3 → audio/songs/track-336.mp3`
+(Take 5 → Lamborghini nel catalogo).
+
+- Intervallo: 204,2668–211,1160 s; sovrapposizione 6,849 s.
+- Ingresso: 2,38 s; playbackRate nominale 1,045808.
+- 13 beat osservati; RMS 19,9 ms; accordo degli onset HPSS 0,571.
+- Tonalità locali 4A → 5A, confidenza minima 0,876.
+- Il brano uscente resta al volume originale fino all'EOF nativo; nessun
+  taglio o presunta assenza di voce. L'entrante usa il file originale a banda
+  piena, fino al 33%, quindi recupera dolcemente il volume dell'ascoltatore.
+- Il decoder desktop viene allineato soltanto mentre è ancora muto e già
+  bufferizzato. Un controllo di fase corregge piccole derive; un decoder
+  bloccato annulla l'overlay e preserva l'originale. Dopo l'adozione il tempo
+  torna gradualmente a 1x.
+
+L'audit indipendente sui MP3, con un diverso algoritmo di time stretch,
+misura correlazione grezza 0,396 all'istante pianificato; nelle due metà
+0,392 e 0,314. Il massimo della seconda metà è a circa un beat di distanza:
+questi profili di accento non vanno confusi con identità delle percussioni o
+con una prova d'ascolto perfetta. La certificazione del piano usa anche i
+beat osservati uno a uno e la verifica armonica locale.
+
+### Percorso Safari con intonazione conservata
+
+La correzione del tempo di un AudioBufferSource cambierebbe anche la tonalità.
+Per i nuovi mix completi viene invece preparata una breve intro con
+SoundTouchJS 0.3.0, in un worker locale separato. Il source WebAudio riproduce
+quella intro a **1x**; il clock di handoff continua a usare i secondi originali.
+Il tempo resta abbinato fino all'EOF, poi ritorna a 1x. Ogni buffer trasformato
+è accettato solo dopo una verifica di attacchi in entrambe le metà.
+
+Sul vero ingresso di Lamborghini, a 16.000, 44.100 e 48.000 Hz, il confronto
+con la curva temporale prevista misura -10 ms in entrambe le metà. Il test
+a 440 Hz verifica che l'intonazione rimanga 440 Hz invece di salire a circa
+460 Hz. Audio, inferenza e preparazione restano locali; il modulo opzionale
+non crea un secondo AudioContext e non trasferisce gli audio a un servizio.
+
+### Karaoke
+
+- Le frasi di una parola con fine esplicita e quelle di due parole possono
+  essere parse, disegnate, allineate, salvate e ricaricate.
+- Una frase al tempo zero può ricevere l'onset realmente riconosciuto.
+- Le frasi brevi richiedono corrispondenza esatta, scarto stretto e nessun
+  salto di parole ASR; non diventano allineate soltanto perché sono brevi.
+- Il cambio traccia annulla fetch, worker e callback vecchi. Una cancellazione
+  non attiva il backoff di errore da 24 ore e non blocca il brano successivo.
+- Con il karaoke aperto, l'analisi prosegue in passaggi brevi e limitati,
+  anziché fermarsi definitivamente dopo tre finestre mobili. Chiudere la
+  vista o cambiare brano interrompe la continuazione programmata.
+- Le parole stimate mantengono la loro provenienza; non sono conteggiate
+  come tempi verificati.
+
+### Verifiche e limiti
+
+I test includono fixture PCM originali legate agli SHA, rifiuto di cue
+alterati, controller di fase, mantenimento dell'EOF, riproduzione Chromium
+con due decoder reali, interruzione del decoder, worker di time stretch,
+intonazione, stereo, persistenza dei versi brevi e cambi rapidi di traccia.
+La pipeline WebKit esegue anche l'intera suite generale e la riapertura
+PWA offline. I risultati definitivi sono nei check della PR #59.
+
+La nuova generazione ha prodotto **un piano completo**, oltre ai due snap
+precedenti: non è una dimostrazione di beatmatch su tutte le coppie del
+catalogo. Le coppie prive di evidenza conservano i raccordi sicuri o il
+passaggio normale. Nessuna equivalenza Spotify, precisione ASR universale o
+verifica su iPhone fisico viene dedotta da questi test.
+
+`main` resta invariato; nessun merge o deploy è stato eseguito.

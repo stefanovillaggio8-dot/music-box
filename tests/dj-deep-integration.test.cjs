@@ -64,7 +64,7 @@ test("same MP3 filename in different repos never borrows unrelated waveform",()=
   "known mobile source must not use a different main-audio recording");
 });
 test("index analyzed asynchronously, unindexed songs retain local analysis",()=>{
- assert.ok(text.includes('fetch("dj-deep-analysis.json"'));
+ assert.match(text,/fetch\("dj-deep-analysis\.json(?:\?[^"\n]*)?"/);
  assert.ok(text.includes('loadDeepIndex().catch(()=>{})'));
  assert.ok(text.includes('const saved=await savedAnalysis(key)'));
  assert.ok(text.includes('decode(next,true).catch(()=>{})'));

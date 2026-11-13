@@ -707,9 +707,11 @@ test("wrong-song lyrics cannot replace Amelie with Paganini or Jolly",()=>{
  const local={};
  const currentId="b-track-205";
  const parse=s=>String(s||"").split("\n").filter(x=>/^\[\d/.test(x));
- const engine=new Function("lyricsData","localLyrics","currentId","parseSynced",
+ const lyricWindow={};
+ new Function("window",fs.readFileSync(path.join(__dirname,"..","word-karaoke.js"),"utf8"))(lyricWindow);
+ const engine=new Function("lyricsData","localLyrics","currentId","parseSynced","window",
    code+";return {same:_testoAppartieneAlBrano,active:currentLyrics};")(
-    builtin,local,currentId,parse);
+    builtin,local,currentId,parse,lyricWindow);
  const fakeLyrics=(source)=>({
   id:currentId,title:"Amelie",artist:"Kid Yugi",
   synced:source.synced,text:source.text,

@@ -76,10 +76,10 @@ test("filtered beat underlay waits for native EOF before adopting and revealing"
  const stop=source.indexOf("// Even when the next MP3 cannot be analyzed",start);
  assert.ok(start>0&&stop>start);
  const fade=source.slice(start,stop);
- const ended=fade.indexOf("if(old.ended&&(act.subduedRhythmicUnderlay||act.postMusicalTailUnderlay))");
+ const ended=fade.indexOf("if(old.ended&&(act.nativeTailFullBeat||act.subduedRhythmicUnderlay||act.postMusicalTailUnderlay))");
  const pauseGuard=fade.indexOf("if(old.paused||app.audio()!==old");
  assert.ok(ended>=0&&ended<pauseGuard,
   "native ended event must win over paused state and preserve seamless handoff");
- assert.match(fade,/if\(time>=1\)\{[\s\S]*?if\(act\.subduedRhythmicUnderlay\|\|act\.postMusicalTailUnderlay\)\{[\s\S]*?setTimeout\(fadeStep,45\);return;/,
+ assert.match(fade,/if\(time>=1\)\{[\s\S]*?if\(act\.nativeTailFullBeat\|\|act\.subduedRhythmicUnderlay\|\|act\.postMusicalTailUnderlay\)\{[\s\S]*?setTimeout\(fadeStep,45\);return;/,
   "underlay clock completion must not cut the outgoing MP3 before EOF");
 });

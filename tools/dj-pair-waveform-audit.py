@@ -8,6 +8,7 @@ does not supply any similarity scores for this audit.
 """
 from __future__ import annotations
 import argparse
+import hashlib
 import json
 import math
 import pathlib
@@ -26,6 +27,7 @@ ENTRIES = INDEX["entries"]
 SR = 11025
 HOP = 128
 CASES = [
+ ("audio/songs/track-584.mp3","audio/songs/track-336.mp3","full_pcm_native_tail_1"),
  # An independently placed four-pulse low-band preview is not certified
  # full-band beatmatching: inspect the REAL planned 9-11s overlap too.
  ("audio/songs/track-11.mp3","audio/songs/track-1184.mp3","new_independent_lowband_1"),
@@ -82,6 +84,10 @@ def download(key,dir):
    with urllib.request.urlopen(request,timeout=60) as response,open(target,"wb") as dest:
     shutil.copyfileobj(response,dest)
    if target.stat().st_size<10000:raise ValueError("Audio download too short")
+   content=target.read_bytes()
+   expected=ENTRIES[key].get("sha")
+   actual=hashlib.sha1(b"blob "+str(len(content)).encode()+b"\0"+content).hexdigest()
+   if expected and actual!=expected:raise ValueError("Original MP3 SHA changed: "+key)
    CACHE[key]=target
    return target
   except Exception as error:
@@ -193,7 +199,7 @@ def main():
    if exact_window:
     start=float(scheduled_start)
     first=float(planned_entry)
-    span=min(4.,usable)
+    span=min(8. if cue.get("measuredFullBeat") else 4.,usable)
     out_audio=decode(aa,start,span)
     # HTMLMediaElement preserves pitch when changing playbackRate. Use an
     # independent phase-vocoder approximation to compare the timeline the
@@ -225,6 +231,18 @@ def main():
      "actual_rms":[round(float(np.sqrt(np.mean(x*x))),4),
                    round(float(np.sqrt(np.mean(y*y))),4)],
      **beats,**chords}
+   if cue.get("measuredFullBeat") and exact_window:
+    stereo=subprocess.run(["ffmpeg","-nostdin","-v","error","-i",str(bb),"-t","20",
+      "-ar","16000","-ac","2","-f","f32le","pipe:1"],capture_output=True,check=True,timeout=50).stdout
+    raw_path=folder/"stretch-original.pcm";raw_path.write_bytes(stereo)
+    cue_path=folder/"stretch-cue.json";cue_path.write_text(json.dumps(cue))
+    checked=subprocess.run(["node",str(ROOT/"tools/dj-verify-stretch.cjs"),
+      "--input="+str(raw_path),"--cue="+str(cue_path)],capture_output=True,text=True,check=True,timeout=30)
+    result["pitch_preserving_intro_processing"]=json.loads(checked.stdout)
+    half=min(len(x),len(y))//2
+    result["full_overlap"]={"seconds":round(span,3),
+     "first_half":align(envelope(x[:half]),envelope(y[:half])),
+     "second_half":align(envelope(x[half:]),envelope(y[half:]))}
    results.append(result)
    print("[DJ ACTUAL PCM]",json.dumps(result,ensure_ascii=False),flush=True)
  summary={"pairs":len(results),

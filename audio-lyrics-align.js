@@ -15,7 +15,7 @@ const uncertainLanguageLyrics=new Map();
 const lyricSignature=rows=>(Array.isArray(rows)?rows:[]).slice(0,120)
  .map(row=>String(row?.text||"")).join("\u241e");
 // Keep each foreground WebGPU pass short; permit later, separate lyric clips.
-const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=18;
+const MOBILE_SESSION_WINDOW_CAP=3,DESKTOP_SESSION_WINDOW_CAP=26;
 
 /* Read the existing timed lyrics to select Whisper's explicit language.
    Transformers.js 3.8.1 otherwise silently assumes English even for the
@@ -211,7 +211,7 @@ function canRun(){
  return true;
 }
 let worker=null,sequence=0,pending=new Map();
-let alignmentEpoch=0,downloadController=null;
+let alignmentEpoch=0,downloadController=null,continuationTimer=null;
 function stopWorker(reason){
  const old=worker;worker=null;
  for(const req of pending.values()){
@@ -245,6 +245,9 @@ function requestWorker(data,language){
 function setStatus(value){
  const el=$("lyricsAudioStatus");
  if(el)el.textContent=value;
+}
+function karaokeViewOpen(){
+ return $("lyricsPanel")?.hidden===false||$("immersivePanel")?.hidden===false;
 }
 function preferredWindows(lines,duration){
  const blocks=new Set();
@@ -319,7 +322,9 @@ async function analyze(id,epoch=alignmentEpoch){
  const clockDuration=Number(bridge.audio?.()?.duration)||0;
  const keyFor=at=>"mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
  const selected=at=>Date.now()-Number(sessionStorage.getItem(keyFor(at))||0)>=6*3600000;
- const sessionCap=isPhone?MOBILE_SESSION_WINDOW_CAP:DESKTOP_SESSION_WINDOW_CAP;
+ const sessionCap=isPhone?(karaokeViewOpen()?
+  Math.min(16,Math.max(MOBILE_SESSION_WINDOW_CAP,Math.ceil(clockDuration/STEP)+2)):
+  MOBILE_SESSION_WINDOW_CAP):DESKTOP_SESSION_WINDOW_CAP;
  if((sessionWindows.get(sessionId)||0)>=sessionCap){
   completedInSession.add(sessionId);return false;
  }
@@ -396,6 +401,7 @@ async function analyze(id,epoch=alignmentEpoch){
 }
 function cancel(){
  alignmentEpoch++;
+ if(continuationTimer){clearTimeout(continuationTimer);continuationTimer=null;}
  for(const key of active)attempts.delete(key);
  active.clear();
  try{downloadController?.abort()}catch(_){}
@@ -414,11 +420,24 @@ function request(id){
  if(now-last<15000)return false;
  attempts.set(sessionId,now);
  active.add(sessionId);
- const epoch=alignmentEpoch;
+ const epoch=alignmentEpoch,beforeWindows=sessionWindows.get(sessionId)||0;
  // Do not hold up UI events or voice playback. Use idle time if available.
  const start=()=>{
   if(epoch!==alignmentEpoch||!active.has(sessionId))return;
-  analyze(id,epoch).finally(()=>{if(epoch===alignmentEpoch)active.delete(sessionId)});
+  analyze(id,epoch).finally(()=>{
+   if(epoch!==alignmentEpoch)return;
+   active.delete(sessionId);
+   if((sessionWindows.get(sessionId)||0)>beforeWindows&&
+      !completedInSession.has(sessionId)&&canRun()&&karaokeViewOpen()&&
+      String(window.MusicBoxBridge?.profile?.()||"")+"|"+
+       window.MusicBoxBridge?.currentId?.()===sessionId){
+    if(continuationTimer)clearTimeout(continuationTimer);
+    continuationTimer=setTimeout(()=>{
+     continuationTimer=null;
+     if(epoch===alignmentEpoch&&karaokeViewOpen())request(id);
+    },20000);
+   }
+  });
  };
  if(typeof requestIdleCallback==="function")
   requestIdleCallback(start,{timeout:2500});

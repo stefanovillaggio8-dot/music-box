@@ -112,3 +112,28 @@ test("a new song aborts stale karaoke analysis and immediately accepts the next 
  api.cancel();current='old';assert.equal(api.request('old'),true,'a cancelled window can be retried');
  api.cancel();
 });
+
+test("audio-measured short phrases survive actual application save and reload",async()=>{
+ const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ const save=app.slice(app.indexOf('  async function _salvaParoleDallAudio('),app.indexOf('  /* Recupero graduale mentre'));
+ const parser=app.slice(app.indexOf('  function parseSynced('),app.indexOf('  function _righeTestoConParole('));
+ const getter=app.slice(app.indexOf('  function _righeTestoConParole('),app.indexOf('  const _ritardiTesti='));
+ const existing={synced:'[00:00] Ciao\n[00:04] Vieni qui\n[00:08] Ancora una frase'};
+ const fixture=new Function('window','existing',`
+  const currentId='song',lyricsData={song:existing},localLyrics={},db=null;
+  const _testoLocaleVerificato=()=>localLyrics.song||existing;
+  const $=()=>({hidden:true}),render=()=>{};
+  const _haTempiParole=row=>window.MusicBoxWordKaraoke.hasWordTiming(row);
+  ${parser}\n${getter}\n${save}
+  return {save:_salvaParoleDallAudio,read:()=>localLyrics.song,rows:_righeTestoConParole};
+ `)(win,existing);
+ const aligned=win.MusicBoxAudioAlign.alignWindow([{t:0,text:'Ciao'},{t:4,text:'Vieni qui'},{t:8,text:'Ancora una frase'}],
+  [{text:'Ciao',timestamp:[.08,.6]},{text:'Vieni',timestamp:[4.1,4.4]},{text:'qui',timestamp:[4.45,4.8]}]);
+ assert.equal(await fixture.save('song',aligned),2);
+ const stored=JSON.parse(JSON.stringify(fixture.read()));
+ assert.equal(stored.synced,existing.synced);
+ const rows=fixture.rows(stored);
+ assert.equal(rows[0].words.length,1);assert.equal(rows[0].sourceT,0);
+ assert.equal(rows[0].end,.6);assert.equal(rows[1].words.length,2);
+ assert.equal(win.MusicBoxWordKaraoke.timingCoverage(rows).audio,2);
+});

@@ -15,7 +15,8 @@ for(const name of files(directory))for(const [key,value] of Object.entries(JSON.
  if(features.has(key))throw Error('Duplicate PCM shard entry '+key);
  features.set(key,value.pcmTransition);
 }
-if(!features.size)throw Error('No PCM transition features');
+const expected=Object.values(data.entries).filter(e=>e.status==='ok').length;
+if(features.size!==expected)throw Error('Incomplete PCM coverage: '+features.size+'/'+expected);
 for(const [key,entry] of Object.entries(data.entries)){
  delete entry.pcmTransition;delete entry.pcmBeatPlans;
  if(features.has(key))entry.pcmTransition=features.get(key);
@@ -37,7 +38,10 @@ for(const [from,a] of tracks){
  }
 }
 for(const entry of Object.values(data.entries))delete entry.pcmTransition;
+fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});
 fs.writeFileSync(output,JSON.stringify(data)+'\n');
 const report={features:features.size,analyzable:tracks.length,fullBeatPlans:plans.length,plans};
-fs.writeFileSync(arg('report','/tmp/musicbox-full-beat-report.json'),JSON.stringify(report,null,2)+'\n');
+const reportFile=arg('report','/tmp/musicbox-full-beat-report.json');
+fs.mkdirSync(path.dirname(path.resolve(reportFile)),{recursive:true});
+fs.writeFileSync(reportFile,JSON.stringify(report,null,2)+'\n');
 console.log(JSON.stringify({features:features.size,fullBeatPlans:plans.length,examples:plans.slice(0,5)},null,2));

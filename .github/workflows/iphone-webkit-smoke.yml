@@ -5,6 +5,11 @@ on:
     paths:
       - 'app.js'
       - 'mix-intelligente.js'
+      - 'audio-stretch.js'
+      - 'audio-stretch-worker.js'
+      - 'audio-stretch-core.mjs'
+      - 'vendor/soundtouchjs/**'
+      - 'tests/audio-stretch.test.cjs'
       - 'index.html'
       - 'sw.js'
       - 'tests/iphone-webkit-smoke.cjs'
@@ -14,6 +19,11 @@ on:
     paths:
       - 'app.js'
       - 'mix-intelligente.js'
+      - 'audio-stretch.js'
+      - 'audio-stretch-worker.js'
+      - 'audio-stretch-core.mjs'
+      - 'vendor/soundtouchjs/**'
+      - 'tests/audio-stretch.test.cjs'
       - 'index.html'
       - 'sw.js'
       - 'tests/iphone-webkit-smoke.cjs'

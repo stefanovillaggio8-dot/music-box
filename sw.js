@@ -56,6 +56,10 @@ const CORE = [
   "./discord-presence.js?v=6570",
   "./discord-fallback.webp",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
+  "./audio-stretch.js?v=1",
+  "./audio-stretch-worker.js?v=1",
+  "./audio-stretch-core.mjs?v=1",
+  "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6734&dj=34", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
@@ -98,6 +102,10 @@ const OFFLINE_SHELL = [
   "./discord-presence.js?v=6570",
   "./voice-analysis.js?v=6570",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
+  "./audio-stretch.js?v=1",
+  "./audio-stretch-worker.js?v=1",
+  "./audio-stretch-core.mjs?v=1",
+  "./vendor/soundtouchjs/soundtouch.mjs",
   "./mix-intelligente.js?v=6734&dj=34",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=7"
@@ -1260,7 +1268,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-const CORE_EXT = [".html", ".css", ".js", ".json", ".png", ".jpg", ".jpeg", ".webp"];
+const CORE_EXT = [".html", ".css", ".js", ".mjs", ".json", ".png", ".jpg", ".jpeg", ".webp"];
 
 /* Ste: "quando diego toglie la connessione non gli si apre l'app".
    Se il telefono e' offline e i file dell'app non sono piu' in cache
@@ -1535,7 +1543,10 @@ self.addEventListener("fetch", (event) => {
         if(response?.status===200)
           persistence=cache.put(event.request,response.clone()).catch(()=>{});
         return response;
-      }catch(_){return new Response("",{status:504})}
+      }catch(_){
+        const previous=await cache.match(event.request,{ignoreSearch:true}).catch(()=>null);
+        return previous||new Response("",{status:504});
+      }
     })();
     event.respondWith(job);
     event.waitUntil(job.then(()=>persistence).catch(()=>{}));
