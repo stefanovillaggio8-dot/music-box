@@ -5431,7 +5431,15 @@ function revealAdoptedMixAudio(audio,trackId,initialVolume,seconds=.78){
 }
 
 function relaxAdoptedTempo(audio,trackId,initialRate){
- if(!Number.isFinite(initialRate)||Math.abs(initialRate-1)<.001)return;
+ if(!Number.isFinite(initialRate))return;
+ if(Math.abs(initialRate-1)<.001){
+  // Phase feedback can leave 0.999x/1.000x even when the nominal tempo
+  // is exactly one. Snap that residual to native speed; returning early
+  // left the adopted recording permanently at the feedback rate.
+  const live=bridge();
+  if(live?.audio?.()===audio&&live.currentId?.()===trackId)audio.playbackRate=1;
+  return;
+ }
  const started=performance.now();
  const update=()=>{
   const live=bridge();

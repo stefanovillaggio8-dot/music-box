@@ -165,3 +165,13 @@ test('rendered output headroom cannot be removed and hot sums retain the Safari 
  const allowed=new Function(body+'return mobileMixAllowed;')();
  assert.equal(allowed(safe,a),false,'Safari native volume cannot provide common headroom');
 });
+
+test('adoption resets sub-permille phase feedback instead of leaving a permanent non-native rate',()=>{
+ const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
+ const body=source.slice(source.indexOf('function relaxAdoptedTempo('),source.indexOf('async function handoff('));
+ const audio={playbackRate:.9997},state={audio:()=>audio,currentId:()=> 'new'};
+ const relax=new Function('bridge',body+'return relaxAdoptedTempo;')(()=>state);
+ for(const rate of [.9997,1,1.0008]){audio.playbackRate=rate;relax(audio,'new',rate);assert.equal(audio.playbackRate,1);}
+ const obsolete={playbackRate:.9995};relax(obsolete,'old',.9995);
+ assert.equal(obsolete.playbackRate,.9995,'stale adoption cannot retime another recording');
+});
