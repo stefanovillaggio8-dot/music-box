@@ -4491,6 +4491,7 @@ function transition(a,b,actualDuration){
 // playback certification. All genuine beat joins keep their priority.
 function certifiedAlternateRelease(a,b,dur,failed){
  if(!failed||failed.kind==="cut"||!a||!b)return failed;
+ b={...b,safeIntroAt:musicalIntroEntry(b)};
  if(!isIOS){
   const release=desktopMeasuredReleaseLeadIn(a,b,Number(dur));
   if(release&&musicallyCompatibleOverlay(a,b,release))return release;
@@ -5446,7 +5447,7 @@ function cancel(){
 function certifiedNaturalIntroEntry(song,app){
  const url=app?.mixUrl?.(song)||song?.url;
  const info=url&&(cache.get(String(url))||deepLookup(song));
- const at=Number(info?.safeIntroAt),first=Number(info?.first);
+ const at=musicalIntroEntry(info),first=Number(info?.first);
  if(!info||info.durationMismatch===true||
     !Number.isFinite(at)||at<.35||at>18||
     !Number.isFinite(first)||first<.85||
@@ -6463,7 +6464,7 @@ function tryLiveQuietMix(app,audio,id,next,lastLyricAt,analysis){
    Number.isFinite(nextAnalysis?.duration)&&
    Number.isFinite(prepared?.audio?.duration)&&
    Math.abs(nextAnalysis.duration-prepared.audio.duration)<1.5;
- const entry=verifiedIntro?clamp(nextAnalysis.safeIntroAt,0,18):0;
+ const entry=verifiedIntro?musicalIntroEntry(nextAnalysis):0;
  const previewMatches=prepared?.id===next.id&&prepared.fromId===id;
  const previewReady=previewMatches&&prepared.ready&&!prepared.failed&&
    !prepared.audio?.error&&prepared.audio?.readyState>=2;
@@ -6860,8 +6861,7 @@ function tick(){
     certifiedSettledTailHandoff(measuredEnding,audio.duration,
       audio.currentTime,finalLyric)){
   const nextInfo=cache.get(String(nextSource))||deepLookup(next);
-  const entry=Number.isFinite(nextInfo?.safeIntroAt)?
-   clamp(nextInfo.safeIntroAt,0,18):0;
+  const entry=musicalIntroEntry(nextInfo);
   if(quietDirectHandoff(app,audio,id,next,entry,
       "ultimo evento musicale concluso e voce verificata: coda debole abbreviata"))
    return;
@@ -6873,8 +6873,7 @@ function tick(){
     certifiedTailSkip(measuredEnding,audio.duration,
       audio.currentTime,finalLyric)){
    const nextInfo=cache.get(String(nextSource))||deepLookup(next);
-   const entry=Number.isFinite(nextInfo?.safeIntroAt)?
-    clamp(nextInfo.safeIntroAt,0,18):0;
+   const entry=musicalIntroEntry(nextInfo);
    // Prefer the already-buffered next audio to a fresh MP3 download;
    // preserve the entire original music until the verified silent tail.
    if(!isIOS&&naturalEndHandoff(true))return;
@@ -6896,8 +6895,7 @@ function tick(){
   const lastLyric=app.mixLyricCues?.(id)?.last;
   if(certifiedTailSkip(analysis,audio.duration,audio.currentTime,lastLyric)){
    const nextInfo=cache.get(String(nextSource))||deepLookup(next);
-   const entry=Number.isFinite(nextInfo?.safeIntroAt)?
-    clamp(nextInfo.safeIntroAt,0,18):0;
+   const entry=musicalIntroEntry(nextInfo);
    const target=next.id;
    cancel();plannedFor=target;plan=null;
    Promise.resolve(app.mixHandoff(target,entry)).catch(()=>{});

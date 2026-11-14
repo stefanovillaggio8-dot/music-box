@@ -352,7 +352,7 @@ test("screen recording 19:32:45: verified soft release gets a head start without
   101,96,88,89),false,"A muted capture is not musical evidence");
  assert.match(source,/kind:"quiet",silenceTrim:false/);
  assert.match(source,/Math\.abs\(nextAnalysis\.duration-prepared\.audio\.duration\)<1\.5/);
- assert.match(source,/const entry=verifiedIntro\?clamp\(nextAnalysis\.safeIntroAt,0,18\):0/);
+ assert.match(source,/const entry=verifiedIntro\?musicalIntroEntry\(nextAnalysis\):0/);
  const curveSource=source.slice(source.indexOf("function mixCurve("),
   source.indexOf("async function beginMix("));
  const curve=new Function("const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));"+

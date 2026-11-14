@@ -282,6 +282,7 @@ test("certified release fallback does not authorize unsafe or iPhone overlays",(
  const make=(failed,early,post,isIOS=false)=>{
   const factory=new Function("isIOS","desktopMeasuredReleaseLeadIn",
    "lowEnergyPostludeLeadIn","musicallyCompatibleOverlay",
+   "const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+introHelpers+
    part+"return certifiedAlternateRelease;");
   return factory(isIOS,()=>early,()=>post,(a,b,p)=>p?.certified===true)(
    {duration:200},{duration:200},200,failed);

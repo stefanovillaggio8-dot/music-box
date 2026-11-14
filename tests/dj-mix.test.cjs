@@ -144,7 +144,7 @@ test("a late vocal cue protects the song even with a quiet ending",()=>{
 });
 test("the engine does not seek into low volume opening notes",()=>{
  assert.equal(source.includes("measured?.leading>=1.8"),false);
- assert.ok(source.includes("measured?.safeIntroAt"));
+ assert.ok(source.includes("return musicalIntroEntry(measured)"));
 });
 test("iPhone leaves playback alone while app is in the background",()=>{
  assert.ok(source.includes("if(isIOS&&document.hidden)"));
@@ -712,9 +712,13 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
   pause(){}
   removeAttribute(){}
  }
- const records=new Map([["next.mp3",{safeIntroAt:3.12,first:3.24,introDrive:.8}]]);
+ const sha='a'.repeat(40);
+ const records=new Map([["next.mp3",{sha,safeIntroAt:3.12,first:3.24,introDrive:.8,
+  musicalContent:{leadingDigitalSilence:{sourceSha:sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:3.12,maximumPeak:0}}}]]);
  const harness=new Function("Audio","cache",
   "let prepared=null,plan=null;const isIOS=false;const deepLookup=()=>null;"+
+  "const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));"+
+  source.slice(source.indexOf('function musicalIntroEntry('),source.indexOf('function rhythmicFullTailJoin('))+
   "const dropPrepared=()=>{prepared=null};"+
   source.slice(begin,end)+
   "return {prepare,entry:certifiedNaturalIntroEntry,get:()=>prepared,"+
@@ -753,6 +757,8 @@ test("preloaded next MP3 seeks only a certified digital intro and waits for seek
  assert.equal(harness.entry(voiced,app),0,"never skip a genuine first note");
  records.set("voice.mp3",{safeIntroAt:3,first:2.1});
  assert.equal(harness.entry(voiced,app),0,"never seek past an audible introduction");
+ records.set("voice.mp3",{sha,safeIntroAt:3.12,first:3.24,introDrive:.8});
+ assert.equal(harness.entry(voiced,app),0,"prebuffering cannot treat an energy threshold as proof of digital silence");
 });
 
 test("digital silence can adopt buffered next MP3 early, but not before the LAST audible sound",async()=>{
