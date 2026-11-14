@@ -55,7 +55,10 @@ test("reject incoming music that enters late despite high four-second average",(
   "Strongest onset at 8s is not evidence that the first musical beat is at 8s");
 });
 test("verified digital silence at the start can be skipped without deleting music",()=>{
- assert.equal(immediate({introDrive:.85,first:3.5,safeIntroAt:3.25,introBeat:3.8}),true);
+ const b={sha:'a'.repeat(40),introDrive:.85,first:3.5,safeIntroAt:3.25,introBeat:3.8};
+ assert.equal(immediate(b),false,'a low-energy threshold does not prove the omitted pickup is silence');
+ b.musicalContent={leadingDigitalSilence:{sourceSha:b.sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:3.25,maximumPeak:0}};
+ assert.equal(immediate(b),true);
 });
 test("detect an intro whose first bar is weak despite late high-volume beat",()=>{
  const g=[...Array(8).fill(-1.2),...Array(16).fill(.6),...Array(8).fill(0)];

@@ -45,7 +45,7 @@ test("Whisper missing timestamps cannot silently become fabricated zero-second w
 });
 
 test("real-index beat audio audit starts at the scheduled kick, not the 140ms preroll",()=>{
- const pairs=[["892","1096"],["770","874"]];
+ const pairs=[["892","1096"]];
  for(const [a,b] of pairs){
   const raw=execFileSync(process.execPath,["tools/dj-equivalence-audit.cjs",
    `--pair-from=audio/songs/track-${a}.mp3`,
@@ -61,4 +61,14 @@ test("real-index beat audio audit starts at the scheduled kick, not the 140ms pr
   assert.ok(Math.min(phase,p.beatPeriod-phase)<.00001,
    "the scheduled incoming kick must coincide with a measured outgoing beat");
  }
+});
+
+test("the old 770 to 874 phase match cannot authorize skipping an unverified incoming pickup",()=>{
+ const raw=execFileSync(process.execPath,["tools/dj-equivalence-audit.cjs",
+  '--pair-from=audio/songs/track-770.mp3','--pair-to=audio/songs/track-874.mp3'],{cwd:root,encoding:'utf8'});
+ const data=JSON.parse(raw.split('[DJ PAIR PLAN] ')[1]);
+ assert.equal(data.certified,false);assert.equal(data.plan,null);
+ const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json'),'utf8'));
+ assert.ok(index.entries['audio/songs/track-874.mp3'].safeIntroAt>0);
+ assert.equal(index.entries['audio/songs/track-874.mp3'].musicalContent?.leadingDigitalSilence,undefined);
 });

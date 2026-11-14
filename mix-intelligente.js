@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=3",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=4",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2642,7 +2642,8 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
 // not missing chroma and cannot create a harmonic clash. Keep the existing
 // key and clash limits on every meaningful frame; bound even an unknown
 // quiet frame by its worst possible cross interaction at the actual gain.
-function pcmPreservedTailHarmony(outro,intro,begin,rate,fade){
+function pcmPreservedTailHarmony(outro,intro,begin,rate,fade,entrance='native-tail-sine-033-v1'){
+ if(!['native-tail-sine-033-v1','first-attack-033-v1'].includes(entrance))return null;
  const nearest=(part,t)=>{
   let row=null,distance=Infinity;
   for(const r of part.harmony){const d=Math.abs(r.t-t);if(d<distance){distance=d;row=r}}
@@ -2656,7 +2657,7 @@ function pcmPreservedTailHarmony(outro,intro,begin,rate,fade){
  const source=[],target=[],clashes=[],excess=[];let boundedQuiet=0,frames=0;
  for(let t=.5;t<=fade-.5;t+=.5){
   const a=nearest(outro,begin+t),b=nearest(intro,t*rate);if(!a||!b)return null;frames++;
-  const incomingGain=.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
+  const incomingGain=entrance==='first-attack-033-v1'?.33:.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
    aa=a.rms,bb=b.rms*incomingGain,w=aa+bb>0?4*aa*bb/(aa+bb)**2:0;
   if((a.rms<.005||b.rms<.005)&&w<=.05){boundedQuiet++;continue;}
   const x=normalize(a.notes),y=normalize(b.notes);if(!x||!y)return null;
@@ -2669,9 +2670,10 @@ function pcmPreservedTailHarmony(outro,intro,begin,rate,fade){
   a=camelotEstimate(mean(source)),b=camelotEstimate(mean(target));
  if(!a||!b||Math.min(a.confidence,b.confidence)<.70||camelotMatch({camelot:a},{camelot:b}).score<.92)return null;
  return {method:'pcm-key-with-quiet-frame-bound-v1',compatibleKey:true,keyFrom:a.code,keyTo:b.code,
-  keyConfidence:Math.min(a.confidence,b.confidence),dissonanceMax:Math.max(...excess),rawDissonanceMax:Math.max(...clashes),
+  keyConfidence:Math.min(a.confidence,b.confidence),keyCompatibility:camelotMatch({camelot:a},{camelot:b}).score,
+  dissonanceMax:Math.max(...excess),rawDissonanceMax:Math.max(...clashes),
   frames,sharedTonalFrames:source.length,boundedQuietFrames:boundedQuiet,quietInteractionMaximum:.05,
-  sourceGain:1,incomingEnvelope:'native-tail-sine-033-v1'};
+  sourceGain:1,incomingEnvelope:entrance};
 }
 // Offline pair plans contain only the validated cue and evidence summary.
 // The large PCM contours stay in audit artifacts, never in the PWA index.
@@ -2695,7 +2697,7 @@ function indexedFullBeatBridge(a,b,dur){
     p.fade<4.5||p.fade>(expanded?16:8)||p.begin<26||
     Math.abs(p.end-p.begin-p.fade)>.001||
     Math.abs(p.end-(dur-.035))>.01||
-    (expanded?(!Number.isFinite(p.entry)||p.entry<musicalIntroEntry(b)||p.entry>musicalIntroEntry(b)+8):p.entry!==musicalIntroEntry(b))||
+    (expanded?(!Number.isFinite(p.entry)||p.entry>musicalIntroEntry(b)+8):p.entry!==musicalIntroEntry(b))||
     !Number.isFinite(sourceBpm)||!Number.isFinite(targetBpm)||sourceBpm<55||sourceBpm>210||targetBpm<55||targetBpm>210||
     p.tempo<.95||p.tempo>1.05||
     !Number.isFinite(p.nominalTempo)||Math.abs(p.nominalTempo-sourceBpm/targetBpm)>.0001||
@@ -2746,7 +2748,8 @@ function indexedStructuralBeatBridge(a,b,dur){
   const valid=validateStructuralBeatCue(record,p,a,b,dur);
   if(valid)eligible.push({cue:valid,content:structuralContentDecision(a,p)});
  }
- eligible.sort((x,y)=>x.content.penalty-y.content.penalty||Number(y.cue.measuredFullBeat)-Number(x.cue.measuredFullBeat));
+ const attack=p=>p.preservedEntrance==='first-attack-033-v1'&&p.composite?.postRenderRhythm?.rmsSeconds<=.025;
+ eligible.sort((x,y)=>x.content.penalty-y.content.penalty||Number(y.cue.measuredFullBeat)-Number(x.cue.measuredFullBeat)||Number(attack(y.cue))-Number(attack(x.cue)));
  return eligible[0]?.cue||null;
 }
 function structuralContentDecision(a,p){
@@ -2792,18 +2795,28 @@ function incomingContentDecision(b,p){
  if(!Number.isFinite(p?.entry)||p.entry<0)return {allowed:false,reason:'invalid-entry'};
  if(p.entry<=.001)return {allowed:true,reason:'incoming-recording-from-start',skippedSeconds:0};
  const proof=b?.musicalContent?.leadingDigitalSilence;
- if(proof?.sourceSha===b.sha&&proof.method==='original-stereo-peak-prefix-v1'&&proof.sampleRate>=44100&&
+ if(proof&&proof.sourceSha===b?.sha&&proof.method==='original-stereo-peak-prefix-v1'&&proof.sampleRate>=44100&&
     Number.isFinite(proof.through)&&proof.through>=p.entry&&Number.isFinite(proof.maximumPeak)&&proof.maximumPeak<=.0001)
   return {allowed:true,reason:'verified-digital-silence-only',skippedSeconds:0};
  return {allowed:false,reason:'unverified-incoming-content-skip',skippedSeconds:p.entry};
 }
 function validatePreservedFileTailCue(record,p,a,b,dur){
  const e=p?.structuralEvidence,c=p?.composite,h=p?.harmonicEvidence,r=c?.postRenderRhythm,g=e?.incomingWholeOverlap;
+ const quiet=proof=>proof?.method==='spleeter-2stems-energy-v1'&&proof.clear===true&&
+  [proof.start,proof.end,proof.maxVocalRms,proof.maxRelativeVocal].every(Number.isFinite)&&
+  proof.maxVocalRms>=0&&proof.maxVocalRms<.004&&proof.maxRelativeVocal>=0&&proof.maxRelativeVocal<.08;
+ const incomingQuiet=quiet(g)&&g.start===0&&g.end>=p.fade*p.tempo+.29&&
+  !(Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<p.fade*p.tempo+.3);
+ const outgoing=e?.outgoingWholeOverlap;
+ const outgoingQuiet=e?.vocalOverlapPolicy==='instrumental-outgoing-v1'&&quiet(outgoing)&&
+  outgoing.start<=p.begin-.29&&outgoing.end>=p.end-.001&&
+  ![a.lastVoiceAt,a.lastLyricAt,...(a.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=p.begin-.3&&t<p.end+.1);
  if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
     p.preservedFileTail!==true||p.structuralBeat!==true||p.measuredFullBeat!==true||p.metricalRhythmic!==false||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
+    p.preservedEntrance!=null&&p.preservedEntrance!=='first-attack-033-v1'||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     p.sourceSha!==a.sha||p.targetSha!==b.sha||p.entry!==0||p.vocalFadeSeconds!==0||p.gain!==1||
     ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
@@ -2817,9 +2830,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     e?.version!==1||![2,4,8,16].includes(e.bars)||![3,4,5].includes(e.beatsPerBar)||
     ![e.sourcePhaseConfidence,e.targetPhaseConfidence,e.downbeatRms].every(Number.isFinite)||
     e.sourcePhaseConfidence<.8||e.targetPhaseConfidence<.8||e.sourcePhaseConfidence>1||e.targetPhaseConfidence>1||e.downbeatRms<0||e.downbeatRms>.025||
-    g?.method!=='spleeter-2stems-energy-v1'||g.clear!==true||g.start!==0||!Number.isFinite(g.end)||g.end<p.fade*p.tempo+.29||
-    !Number.isFinite(g.maxVocalRms)||g.maxVocalRms>=.004||!Number.isFinite(g.maxRelativeVocal)||g.maxRelativeVocal>=.08||
-    Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<p.fade*p.tempo+.3||
+    !incomingQuiet&&!outgoingQuiet||
     c?.sourceSha!==a.sha||c.targetSha!==b.sha||c.pitchPreserved!==true||c.timingVerified!==true||
     ![c.peak,c.overlapPeak,c.oversampledPeak,c.sourceReadThrough].every(Number.isFinite)||c.peak>.9991||c.overlapPeak>.961||c.oversampledPeak>1||
     Math.abs(c.sourceReadThrough-a.duration)>.1||c.outgoingEnvelope!=='unity-through-decoded-eof-v1'||
@@ -2830,7 +2841,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  if(!h||(h.percussiveIntro?!(h.tonalRatioMax<=.12&&h.tonalPeakMax<=.23&&h.measuredRmsMin>=.005&&h.frames>=6):
    h.compatibleKey?!(h.keyConfidence>=.70&&h.dissonanceMax<=.05&&h.rawDissonanceMax<=.45):!(h.average>=.78&&h.weakest>=.60)))return null;
  if(h.method==='pcm-key-with-quiet-frame-bound-v1'&&!(h.sharedTonalFrames>=6&&h.frames>=h.sharedTonalFrames&&
-    h.quietInteractionMaximum===.05&&h.sourceGain===1&&h.incomingEnvelope==='native-tail-sine-033-v1'))return null;
+    h.quietInteractionMaximum===.05&&h.sourceGain===1&&h.incomingEnvelope===(p.preservedEntrance||'native-tail-sine-033-v1')))return null;
  return {...p};
 }
 function validateStructuralBeatCue(record,p,a,b,dur){
@@ -2941,7 +2952,7 @@ function pcmFullBeatWindowSearch(a,b,dur){
  const firstVoice=Math.min(Number.isFinite(b.firstVoiceAt)?b.firstVoiceAt:Infinity,
     Number.isFinite(b.firstLyricAt)?b.firstLyricAt:Infinity);
  if(!Number.isFinite(firstVoice))return null;
- const baseEntry=musicalIntroEntry(b),end=dur-.035;
+ const baseEntry=0,end=dur-.035;
  const outro=pcmTransitionSection(a,"outro"),intro=pcmTransitionSection(b,"intro");
  if(!outro||!intro)return null;
  // Missing vocal data never certifies a full-band instrumental intro.
@@ -2969,7 +2980,8 @@ function pcmFullBeatWindowSearch(a,b,dur){
    // An LRC boundary is metadata, not an independent vocal-model result.
    const fit=pcmFullBeatFit(outro,intro,begin,entry,rate,fade);
    if(!fit)continue;
-   const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade);
+   const harmony=pcmFullHarmony(outro,intro,begin,entry,rate,fade)||
+    (entry===0?pcmPreservedTailHarmony(outro,intro,begin,rate,fade):null);
    if(!harmony)continue;
    const quality=.45*fit.score+.35*(harmony.percussiveIntro?fit.ratio:
     harmony.compatibleKey?harmony.keyCompatibility:harmony.average)+.20*fit.ratio;
@@ -3413,13 +3425,11 @@ function verifiedInstrumentalSnap(a,b,dur){
 
 function musicalIntroEntry(b){
  const saved=Number.isFinite(b?.safeIntroAt)?clamp(b.safeIntroAt,0,18):0;
- // A measurable driven intro after digital silence deserves an accurate cue.
- if(!b||!Number.isFinite(b.first)||b.first-saved<=1.3||
-    b.first>12.5||Number(b.introDrive)<.43||
-    !(Number(b.beatConfidence)>=.16)||
-    (Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<b.first-.2)||
-    (Number.isFinite(b.firstVoiceAt)&&b.firstVoiceAt<b.first-.2))return saved;
- return clamp(b.first-.12,saved,18);
+ // A quiet pickup remains part of the recording. A level/drive threshold
+ // is not proof of digital silence and cannot authorize omitting it.
+ const proof=b?.musicalContent?.leadingDigitalSilence;
+ return proof&&proof.sourceSha===b?.sha&&proof.method==='original-stereo-peak-prefix-v1'&&proof.sampleRate>=44100&&
+  Number.isFinite(proof.through)&&proof.through>=saved&&Number.isFinite(proof.maximumPeak)&&proof.maximumPeak<=.0001?saved:0;
 }
 // This is a short two-pulse overlap, not a claim of identical full phrases.
 // The incoming music enters under the complete outgoing audio boundary.
@@ -4474,7 +4484,8 @@ function lowEnergyPostludeLeadIn(a,b,dur){
   silenceTrim:false,trailing:0,score:null};
 }
 function transition(a,b,actualDuration){
- return synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
+ const cue=synchronizeBeatCue(a,b,unalignedTransition(a,b,actualDuration));
+ return cue&&!incomingContentDecision(b,cue).allowed?null:cue;
 }
 // This fallback is invoked ONLY after the first cue failed independent
 // playback certification. All genuine beat joins keep their priority.

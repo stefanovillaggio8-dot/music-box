@@ -574,14 +574,18 @@ test("late vocal model result does not forcibly reset an in-progress handoff",()
  assert.ok(source.includes("if(voiceThreatensPlan(v,currentTrack,nextTrack,plan)&&"));
 });
 
-test("analyzes the real first musical onset instead of a long dead intro",()=>{
+test("a late first loud onset cannot delete a quiet pickup without original digital-silence proof",()=>{
  const code=source.slice(source.indexOf("function musicalIntroEntry("),
   source.indexOf("function rhythmicFullTailJoin("));
  const entry=new Function("const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));"+code+
   "return musicalIntroEntry;")();
- assert.ok(Math.abs(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25})-5.38)<.001);
+ assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25}),0);
  assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.12,beatConfidence:.25}),0);
  assert.equal(entry({safeIntroAt:0,first:5.5,introDrive:.8,beatConfidence:.25,firstLyricAt:2}),0);
+ const sha='f'.repeat(40),b={sha,safeIntroAt:5.38,first:5.5,introDrive:.8,beatConfidence:.25,
+  musicalContent:{leadingDigitalSilence:{sourceSha:sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:5.38,maximumPeak:0}}};
+ assert.equal(entry(b),5.38);
+ b.musicalContent.leadingDigitalSilence.sourceSha='a'.repeat(40);assert.equal(entry(b),0);
 });
 test("late vocals veto the join; matched protected endings keep every audible beat",()=>{
  const code=source.slice(source.indexOf("function rhythmicFullTailJoin("),

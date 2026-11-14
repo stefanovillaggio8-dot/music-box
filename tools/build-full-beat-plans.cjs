@@ -26,17 +26,27 @@ const fsForEngine={...fs,readFileSync:(f,...args)=>path.resolve(String(f))===fil
 const req=x=>x==='node:fs'?fsForEngine:require(x);
 const {engine,tracks}=new Function('require','__dirname',tool.slice(0,tool.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks};')(req,path.join(root,'tools'));
 const plans=[],raw=new Map(Object.entries(data.entries));
+const candidatesFile=arg('candidates',''),candidatePairs=candidatesFile?new Set(JSON.parse(fs.readFileSync(candidatesFile,'utf8')).map(p=>p.from+'\n'+p.to)):null;
 let consideredPairs=0,evaluatedPairs=0,sameRecordingSkipped=0;
 for(const [from,a] of tracks){
  if(!features.has(from))continue;
  for(const [to,b] of tracks){
   if(from===to)continue;
+  if(candidatePairs&&!candidatePairs.has(from+'\n'+to))continue;
   consideredPairs++;
   if(a.sha===b.sha){sameRecordingSkipped++;continue;}
   if(!features.has(to))throw Error('Missing analyzed PCM '+to);
   evaluatedPairs++;
   const cue=engine.measuredFullBeatBridge(a,b,a.duration);
   if(!cue)continue;
+  const section=(track,name,bpm)=>{
+   const part=features.get(track)[name],native=data.entries[track].bpm;
+   const grid=(part.grids||[]).find(g=>Math.abs(g.bpm-bpm)<.001);
+   return {...part,beats:grid?.beats||part.beats};
+  };
+  const outro=section(from,'outro',cue.sourceTempoBpm),intro=section(to,'intro',cue.targetTempoBpm);
+  cue.structuralEvidence={pulseCheck:{source:outro.beats.filter(t=>t>=cue.begin-.075&&t<=cue.end-.12).map(t=>t-cue.begin),
+   target:intro.beats.filter(t=>t>=cue.entry-.075&&t<=cue.entry+cue.fade*cue.tempo-.12).map(t=>t-cue.entry)}};
   const entry=raw.get(from);entry.pcmBeatPlans??={};
   entry.pcmBeatPlans[b.sha]={version:2,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue};
   const incoming=raw.get(to),base=Number.isFinite(b.safeIntroAt)?b.safeIntroAt:0;
@@ -48,7 +58,7 @@ for(const [from,a] of tracks){
 for(const entry of Object.values(data.entries))delete entry.pcmTransition;
 fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});
 fs.writeFileSync(output,JSON.stringify(data)+'\n');
-const report={features:features.size,analyzable:tracks.length,consideredPairs,evaluatedPairs,
+const report={features:features.size,analyzable:tracks.length,candidateRestricted:!!candidatePairs,consideredPairs,evaluatedPairs,
  sameRecordingSkipped,fullBeatPlans:plans.length,
  averagePlannedOverlap:plans.length?plans.reduce((sum,p)=>sum+p.cue.fade,0)/plans.length:null,
  downbeatsVerified:false,phrasesVerified:false,listeningVerified:false,plans};

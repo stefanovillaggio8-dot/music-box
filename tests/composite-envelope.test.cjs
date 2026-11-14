@@ -47,3 +47,19 @@ test('offline shared lookahead contains an isolated summed peak without attenuat
  outgoing.channels[0][0]=1.1;
  assert.throws(()=>compositePCM(outgoing,incoming,{...cue,renderGainMode:'lookahead'}),/native boundaries/);
 });
+
+test('the intact entrance retains the first drum attack without fading the outgoing recording',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>new Float32Array(Math.round(5.3*sr)).fill(.2))};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>new Float32Array(sr*10).fill(.3))};
+ const slow=compositePCM(outgoing,incoming,cue),attack=compositePCM(outgoing,incoming,{...cue,preservedEntrance:'first-attack-033-v1'});
+ const first=Math.round((.3+.016)*sr),last=outgoing.channels[0].length-1;
+ assert.ok(Math.abs(attack.components.incoming[0][first]-.3*.33)<1e-7);
+ assert.ok(attack.components.incoming[0][first]>20*slow.components.incoming[0][first]);
+ assert.equal(attack.components.outgoing[0][first],Math.fround(.2));
+ assert.equal(attack.components.outgoing[0][last],Math.fround(.2));
+ assert.equal(attack.components.outgoing[0][last+1],0);
+ assert.equal(attack.components.incoming[0][Math.round(.3*sr)],0);
+ assert.ok(attack.peak<=.999&&attack.overlapPeak<=.961);
+});

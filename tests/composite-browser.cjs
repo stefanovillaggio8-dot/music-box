@@ -4,6 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto');
 const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright');
 const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
+const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
 const plans=Object.entries(data.entries).flatMap(([from,a])=>[...Object.values(a.pcmBeatPlans||{}),...Object.values(a.structuralBeatPlans||{})].flatMap(p=>(p.cues||[p.cue]).filter(c=>c?.composite).map(cue=>({from,...p,cue}))));
 if(!plans.length)throw Error('No actual composite plans to test');
 const catalog=new Map(Object.entries(data.entries).map(([k,e])=>[e.sha,k])),sourceCache=new Map();
@@ -115,35 +116,35 @@ const server=http.createServer(async(req,res)=>{
      if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}
      await route.abort();
     });
-    await shell.addInitScript(()=>{
-     localStorage.setItem('mb.profile','Ste');window.__nativePlayMutes=[];
+    await shell.addInitScript(profile=>{
+     localStorage.setItem('mb.profile',JSON.stringify(profile));window.__nativePlayMutes=[];
      const play=HTMLMediaElement.prototype.play;
      HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);return play.apply(this,arguments)};
-    });
+    },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     await shell.waitForFunction(()=>!!window.MusicBoxBridge?.allTracks?.()?.length,{timeout:20000});
-    await shell.evaluate(()=>{
-     const track=MusicBoxBridge.allTracks().find(t=>t.file==='songs/track-51.mp3');if(!track)throw Error('Native bridge reference not available');
+    await shell.evaluate(knownFiles=>{
+     const track=MusicBoxBridge.allTracks().find(t=>knownFiles.includes(t.file));if(!track)throw Error('Native bridge reference not available');
      const button=document.createElement('button');button.id='silent-handoff';button.textContent='test';
      button.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
      button.onclick=()=>MusicBoxBridge.mixHandoff(track.id,2,{muted:true});document.body.append(button);
-    });
+    },Array.from(catalog.values()).filter(k=>k.startsWith('audio/')).map(k=>k.slice(6)));
     await shell.click('#silent-handoff');
     await shell.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2&&!MusicBoxBridge.audio().paused,{timeout:20000});
     const silentBridge=await shell.evaluate(()=>({muted:MusicBoxBridge.audio().muted,lastPlayWasMuted:__nativePlayMutes.at(-1)}));
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
     await shell.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
-    const actualPlan=await shell.evaluate(plans=>{
+    const actualPlan=await shell.evaluate(({plans,profile})=>{
      const tracks=MusicBoxBridge.allTracks(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat)continue;
       const a=find(p.from),b=find(p.to);
-      if(!a||!b||(a.profile||'Ste')!=='Ste'||(b.profile||'Ste')!=='Ste')continue;
+      if(!a||!b||(a.profile||'Ste')!==profile||(b.profile||'Ste')!==profile)continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue};
      }
      return null;
-    },plans.map(p=>({...p,to:catalog.get(p.toSha)})));
+    },{profile:playbackProfile,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)}))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{
@@ -178,7 +179,7 @@ const server=http.createServer(async(req,res)=>{
      const url=new URL(route.request().url()),at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
      if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}await route.abort();
     });
-    await auto.addInitScript(()=>{localStorage.setItem('mb.profile','Ste');localStorage.setItem('mb.shuffle','true')});
+    await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
     await auto.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     await auto.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
     await auto.evaluate(p=>{

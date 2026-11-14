@@ -23,6 +23,7 @@ export function compositePCM(outgoing,incoming,cue){
  for(let i=0;i<frames;i++){
   const t=i/sr-preRoll,u=clamp(t/cue.fade,0,1);
   let a=1,b=.33*Math.sin(Math.min(1,u*1.5)*Math.PI/2);
+  if(preserveFile&&cue.preservedEntrance==='first-attack-033-v1')b=.33*Math.sin(clamp(t/.008,0,1)*Math.PI/2);
   if(cue.structuralBeat&&!preserveFile){
    if(cue.vocalFadeSeconds!==.4)throw Error('Unbound vocal fade envelope');
    const fadeStart=cue.fade-cue.vocalFadeSeconds;

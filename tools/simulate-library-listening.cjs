@@ -93,13 +93,17 @@ function resultFor(from,to){
  if(allowed){if(p.measuredFullBeat)kind='full';else if(p.metricalRhythmic||p.kind==='snap')kind='partial';
   else if(['soft','fade','rise'].includes(p.kind))kind='crossfade';else if(p.kind==='postlude')kind='postlude';else if(p.kind==='underlay')kind='underlay';}
  const skipped=p.structuralBeat&&allowed?Math.max(0,(a.musicalContent?.audibleEnd??a.last)-p.end):0;
- return {kind,overlap:kind==='normal'?0:p.fade,skipped,begin:p.begin,end:p.end,
+ const incomingOmitted=kind==='normal'?0:Math.max(0,p.entry||0);
+ return {kind,overlap:kind==='normal'?0:p.fade,skipped,incomingOmitted,
+  incomingAudibleUpperBound:Math.max(0,incomingOmitted-(b.musicalContent?.audibleStart??0)),begin:p.begin,end:p.end,
+  earlyOverlapStart:!!(allowed&&p.begin<=a.duration-8),
   early:!!(allowed&&p.structuralBeat&&p.end<=a.duration-8),safariFull:kind==='full'&&(common||p.outputHeadroom>=.999),
   significantContentSkippedSeconds:null,semanticContentUnknown:true};
 }
 async function simulate(profile,mode,list,sessions,steps,seed){
  const totals={attempts:0,full:0,partial:0,crossfade:0,normal:0,postlude:0,underlay:0,unavailable:0,early:0,safariFull:0,
-  overlapSum:0,skippedSum:0,maxSkipped:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,missingAnalysis:0};
+  overlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
+  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,missingAnalysis:0};
  const trace=[];scenarioOffline=mode==='offline-shuffle';preparedMixes=new Set();
  const random=rng(seed),offlineOrder=shuffled(list,random);available=new Set(offlineOrder.slice(0,Math.ceil(list.length/2)).map(t=>t.id));
  for(let session=0;session<sessions;session++){
@@ -121,6 +125,9 @@ async function simulate(profile,mode,list,sessions,steps,seed){
    if(!fresh.some(t=>t.id===next.id)||next.id===current.id)throw Error('Repeated or out-of-pool selection');
    const result=resultFor(current,next);totals.attempts++;totals[result.kind]++;totals.early+=!!result.early;totals.safariFull+=!!result.safariFull;
    totals.overlapSum+=result.overlap||0;totals.skippedSum+=result.skipped||0;totals.maxSkipped=Math.max(totals.maxSkipped,result.skipped||0);
+   totals.incomingOmittedSum+=result.incomingOmitted||0;totals.maxIncomingOmitted=Math.max(totals.maxIncomingOmitted,result.incomingOmitted||0);
+   totals.incomingAudibleUpperBoundSum+=result.incomingAudibleUpperBound||0;totals.earlyOverlapStart+=!!result.earlyOverlapStart;
+   totals.manualQueueChanges+=mode==='manual-queue';
    totals.automaticChanges+=selected;totals.missingAnalysis+=!!result.missingAnalysis;
    streak=result.kind==='full'?0:streak+1;totals.longestWithoutFull=Math.max(totals.longestWithoutFull,streak);
    if(trace.length<40)trace.push({session,step,from:current.id,to:next.id,...result});
@@ -134,7 +141,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
 }
 (async()=>{
- const report={version:1,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
+ const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
   sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
   offlineAssumption:'Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.',
   limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[]};

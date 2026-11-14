@@ -662,7 +662,7 @@ test("estimated words never suppress Whisper or contaminate verified saved timin
   // The main player follows the release; unchanged karaoke/CSS assets
   // deliberately keep their own revision in both online and offline URLs.
   const revision=file==="app.js"?release:file==="word-karaoke.js"||file==="immersive.js"?"6734":"6715";
-  const wordCache=file==="word-karaoke.js"?"13":file==="immersive.js"?"9":file==="app.js"?"10":"2";
+  const wordCache=file==="word-karaoke.js"?"13":file==="immersive.js"?"9":file==="app.js"?"11":"2";
   assert.ok(html.includes(file+"?v="+revision+"&amp;words="+wordCache));
   assert.equal(sw.split(file+"?v="+revision+"&words="+wordCache).length-1,2);
  }

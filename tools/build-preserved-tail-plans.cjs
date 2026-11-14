@@ -51,17 +51,18 @@ const prepared=[];
 for(const [key,raw] of Object.entries(index.entries)){
  if(raw.status!=='ok'||!owner(key).size)continue;
  let e=whole.get(key),p=pcm.get(key);const edge=edges.get(key);
- if(edge){e={...e,beats:[...edge.intro.beats,...edge.outro.beats].sort((a,b)=>a-b)};p={intro:edge.intro.pcm,outro:edge.outro.pcm};}
+ if(edge){e={...e,beats:[...e.beats,...edge.intro.beats,...edge.outro.beats].sort((a,b)=>a-b)};p={intro:edge.intro.pcm,outro:edge.outro.pcm};}
  if(!e||!p)throw Error('Missing source evidence '+key);
  const source=[],target=[];
  for(const role of ['intro','outro']){
- const bars=edge?edge[role].bars:e.reliableBars;
+ for(const bars of edge?[e.reliableBars,edge[role].bars]:[e.reliableBars]){
  for(let stop=2;stop<=bars.length;stop++)for(const n of [2,4,8]){
   const chain=bars.slice(stop-n,stop);if(stop<n||chain.length!==n||chain.some((r,i)=>i&&(Math.abs(chain[i-1].end-r.start)>.08||r.beatsPerBar!==chain[0].beatsPerBar)))continue;
   const start=chain[0].start,end=chain.at(-1).end;
   const w={start,end,bars:n,meter:chain[0].beatsPerBar,phase:Math.min(...chain.map(x=>x.metricalPhaseConfidence)),downbeats:[...chain.map(x=>x.start),end],modelBeats:chain.flatMap(x=>x.modelBeats)};
   if(role==='outro'&&start>=26&&raw.duration-start<=16&&raw.duration-end>=-.001&&raw.duration-end<=8)source.push(w);
   if(role==='intro'&&start<=4&&end<=p.intro.end-.1)target.push(w);
+ }
  }
  }
  prepared.push({key,raw:engine.withGuardedLRC(raw),e,source,target,outro:observedGrid(p.outro,e),intro:observedGrid(p.intro,e),owners:owner(key)});
@@ -92,13 +93,17 @@ for(const a of prepared)for(const b of prepared){
     fade=a.raw.duration-begin,end=a.raw.duration;
    if(begin<a.outro.start+.1||begin<26||fade<4.5||fade>16||fade*rate>b.intro.end-.1)continue;tempo=true;
    const guard=clear(b.e,0,fade*rate+.3);
-   if(!guard?.clear||Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<fade*rate+.3)continue;voice=true;
+   const incomingClear=guard?.clear&&!(Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<fade*rate+.3);
+   const outgoingGuard=incomingClear?null:clear(a.e,begin-.3,end);
+   const knownOutgoing=[a.raw.lastVoiceAt,a.raw.lastLyricAt,...(a.raw.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=begin-.3&&t<end+.1);
+   if(!incomingClear&&(!outgoingGuard?.clear||knownOutgoing))continue;voice=true;
    const downbeatErrors=sourceDown.map((t,i)=>t-begin-targetDown[i]/rate),rms=Math.sqrt(downbeatErrors.reduce((s,x)=>s+x*x,0)/downbeatErrors.length);
    if(rms>.025||downbeatErrors.some(t=>Math.abs(t)>.05))continue;
-   const h=engine.pcmFullHarmony(a.outro,b.intro,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(a.outro,b.intro,begin,rate,fade);if(!h)continue;harmony=true;
+   const h=engine.pcmFullHarmony(a.outro,b.intro,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(a.outro,b.intro,begin,rate,fade,'first-attack-033-v1');if(!h)continue;harmony=true;
    report.windows++;
    const fit=engine.pcmFullBeatFit(a.outro,b.intro,begin,0,rate,fade);if(!fit)continue;
-   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:h,sourceWindow:x,targetWindow:y,incomingGuard:guard,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown});
+   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:h,sourceWindow:x,targetWindow:y,incomingGuard:guard,outgoingGuard,
+    vocalOverlapPolicy:incomingClear?'instrumental-incoming-v1':'instrumental-outgoing-v1',downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown});
   }
  }
  count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':'completeCandidates');
@@ -109,7 +114,7 @@ for(const a of prepared)for(const b of prepared){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
    const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:true,metricalRhythmic:false,
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
-    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,
+    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
     sourceTempoBpm:60*x.bars*x.meter/(x.end-x.start),targetTempoBpm:60*y.bars*y.meter/(y.end-y.start),
     nominalTempo:(y.end-y.start)/(x.end-x.start),nativeRatePreferred:c.tempo===1&&fit.rms<=.025,
@@ -120,7 +125,7 @@ for(const a of prepared)for(const b of prepared){
     harmonicEvidence:h,harmonicMode:h.compatibleKey?'compatible-key':h.percussiveIntro?'percussion':'local-chords',
     percussiveIntro:!!h.percussiveIntro,harmonicScore:h.average,harmonicWeakest:h.weakest,
     structuralEvidence:{version:1,bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
-     downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,
+     downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,
      sourceObservedDownbeats:c.sourceObservedDownbeats,targetObservedDownbeats:c.targetObservedDownbeats,
      sourceModelDownbeats:x.downbeats,targetModelDownbeats:y.downbeats,
      pulseCheck:{source:a.outro.beats.filter(t=>t>=c.begin-.075&&t<=c.end-.12).map(t=>t-c.begin),

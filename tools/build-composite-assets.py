@@ -99,7 +99,7 @@ def main():
                         ceiling*=.96/overlap_true_peak*.9999;continue
                     if overlap_true_peak>.961:raise ValueError('Oversampled overlap peak exceeds ceiling')
                     break
-                if cue.get('structuralBeat'):
+                if cue.get('structuralBeat') or cue.get('structuralEvidence',{}).get('pulseCheck'):
                     old=np.frombuffer((folder/'old.f32').read_bytes(),dtype='<f4').reshape(-1,2)
                     new=np.frombuffer((folder/'new.f32').read_bytes(),dtype='<f4').reshape(-1,2)
                     post_rhythm=rhythm.verify(old,new,args.rate,cue,proof['preRoll'])

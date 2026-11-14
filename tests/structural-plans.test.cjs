@@ -92,3 +92,15 @@ test('intact-file mode rejects cuts, hidden entrance skips, missing attacks and 
  for(const change of mutations){const {a,b,p}=intactFixture();change(p);assert.equal(lookup(a,b,100),null);}
  const {a,b}=intactFixture();b.firstLyricAt=7;assert.equal(lookup(a,b,100),null);
 });
+
+
+test('a vocal entrance needs the entire preserved outgoing overlap to be independently quiet',()=>{
+ const {a,b,p}=intactFixture();b.firstLyricAt=2;
+ assert.equal(lookup(a,b,100),null);
+ const e=p.structuralEvidence;e.vocalOverlapPolicy='instrumental-outgoing-v1';
+ e.outgoingWholeOverlap={method:'spleeter-2stems-energy-v1',clear:true,start:91.7,end:100,maxVocalRms:.001,maxRelativeVocal:.01};
+ a.lastVoiceAt=90;a.lastLyricAt=90;assert.ok(lookup(a,b,100));
+ a.lyricStarts=[95];assert.equal(lookup(a,b,100),null);
+ a.lyricStarts=[];e.outgoingWholeOverlap.end=99;assert.equal(lookup(a,b,100),null);
+ e.outgoingWholeOverlap.end=100;e.outgoingWholeOverlap.maxVocalRms=.004;assert.equal(lookup(a,b,100),null);
+});
