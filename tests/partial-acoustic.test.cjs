@@ -34,3 +34,22 @@ test('partial rendering leaves unmatched words plain and paints only observed ti
  assert.equal(elements[5].style['--karaoke-fill'],undefined);assert.equal(elements[0].style['--karaoke-fill'],'100%');
  const coverage=words.timingCoverage([row]);assert.equal(coverage.wordTimed,0);assert.equal(coverage.partial,1);
 });
+
+test('partial Italian contractions use both adjacent observed boundaries without timing the unknown word',()=>{
+ const row={t:1,text:"L'amore corre forte senza più paura oggi sorpresa"};
+ const tokens=["L'",'amore','corre','forte','senza','più','paura','oggi','errore'];
+ const asr=tokens.map((text,i)=>({text,timestamp:[1.05+i*.1,1.15+i*.1]}));
+ const result=align.alignAcousticSpans([row],asr)[0];assert.ok(result);
+ assert.equal(result.acousticSpans.length,7);assert.equal(result.acousticSpans[0].wordIndex,0);
+ assert.equal(result.acousticSpans[0].t,1.05);assert.equal(result.acousticSpans[0].end,1.25);
+ assert.equal(result.acousticSpans.some(w=>w.wordIndex===7),false);
+ const paused=structuredClone(asr);paused[0].timestamp=[.5,.6];
+ assert.equal(align.alignAcousticSpans([row],paused).some(r=>r.acousticSpans.some(w=>w.wordIndex===0)),false);
+});
+
+test('the same contracted sequence in two ASR occurrences stays ambiguous',()=>{
+ const row={t:1,text:"L'amore corre forte senza più paura oggi sorpresa"};
+ const text=["L'",'amore','corre','forte','senza','più','paura','oggi','errore'];
+ const asr=[1.05,5.05].flatMap(at=>text.map((text,i)=>({text,timestamp:[at+i*.1,at+(i+1)*.1]})));
+ assert.equal(align.alignAcousticSpans([row],asr).length,0);
+});
