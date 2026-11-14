@@ -13,14 +13,20 @@ on:
       - 'tools/build-composite-assets.py'
       - '.github/workflows/dj-structural-integration.yml'
   workflow_dispatch:
+    inputs:
+      profile_edges:
+        description: Reanalyse intact-song profile edges, reusing full vocal evidence
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: structural-integration-v2-${{ github.ref }}
+  group: structural-integration-v2-${{ github.ref }}-${{ inputs.profile_edges && 'edges' || 'windows' }}
   cancel-in-progress: true
 jobs:
   refine:
+    if: ${{ !inputs.profile_edges }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     strategy:
@@ -147,3 +153,6 @@ jobs:
           name: structural-rendered-${{ matrix.rate }}
           path: results/
           retention-days: 14
+  intact-profile-edges:
+    if: ${{ inputs.profile_edges }}
+    uses: ./.github/workflows/dj-profile-edges.yml

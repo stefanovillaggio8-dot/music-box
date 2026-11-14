@@ -1,6 +1,7 @@
 name: Profile-aware intact-song PCM edge analysis
 on:
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
   actions: read
