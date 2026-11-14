@@ -2003,13 +2003,13 @@
    },
    "[\"sogno americano\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 274,
+    "s": 321,
     "t": "SOGNO AMERICANO",
     "a": "Artie 5ive"
    },
    "m:2026-11|[\"sogno americano\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 274,
+    "s": 321,
     "t": "SOGNO AMERICANO",
     "a": "Artie 5ive"
    },
@@ -2164,14 +2164,14 @@
     "a": "Artie 5ive"
    },
    "[\"nuts\",\"lil peep\"]": {
-    "v": 1,
-    "s": 158,
+    "v": 2,
+    "s": 198,
     "t": "nuts",
     "a": "Lil Peep"
    },
    "m:2026-11|[\"nuts\",\"lil peep\"]": {
-    "v": 1,
-    "s": 158,
+    "v": 2,
+    "s": 198,
     "t": "nuts",
     "a": "Lil Peep"
    },
@@ -9293,7 +9293,7 @@
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 2,
-    "s": 200,
+    "s": 263,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -9527,7 +9527,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 1,
-    "s": 195,
+    "s": 258,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -10103,7 +10103,7 @@
    },
    "[\"morirò da re\",\"måneskin\"]": {
     "v": 2,
-    "s": 263,
+    "s": 264,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
@@ -10337,7 +10337,7 @@
    },
    "m:2026-11|[\"morirò da re\",\"måneskin\"]": {
     "v": 1,
-    "s": 258,
+    "s": 259,
     "t": "Morirò da Re",
     "a": "Måneskin"
    },
