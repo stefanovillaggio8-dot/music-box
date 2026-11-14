@@ -15,8 +15,14 @@ permissions:
   contents: read
 jobs:
   real-audio:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,10 +35,10 @@ jobs:
       - run: |
           set -o pipefail
           node tests/composite-browser.cjs | tee composite-browser-result.json
-          node -e "const r=require('./composite-browser-result.json');if(r.results.length!==2||r.results.some(x=>!x.actualSameProfilePlannerPlayback))process.exit(1)"
+          node -e "const r=require('./composite-browser-result.json');if(r.results.length!==1||r.results.some(x=>x.browser!==process.env.MUSICBOX_COMPOSITE_BROWSERS||!x.actualSameProfilePlannerPlayback))process.exit(1)"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: common-pcm-browser-proof
+          name: common-pcm-browser-proof-${{ matrix.browser }}
           path: composite-browser-result.json
           retention-days: 14

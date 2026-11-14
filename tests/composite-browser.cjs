@@ -187,7 +187,6 @@ const server=http.createServer(async(req,res)=>{
     // A cold synthetic DJ handoff is not a user-started listening session
     // and can be denied by WebKit's native autoplay policy.
     await auto.evaluate(p=>MusicBoxBridge.play(p.fromId,false,0),actualPlan);
-    await auto.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2,{timeout:20000});
     console.error(name,'automatic source',JSON.stringify(actualPlan));
     await auto.click('#btnPlay');
     try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0,{timeout:20000});}
