@@ -1,0 +1,478 @@
+{
+  "baselineCommit": "e80402adfddb8c07683f86652cc78b4cd5cf56dc",
+  "codeCommit": "564489a713a417c3cb0a19d4c409272236b232ca",
+  "before": {
+    "analyzedPairs": 1381800,
+    "completePcmBeat": 60,
+    "metricalRhythmic": 3,
+    "shortIndexedBeat": 2,
+    "structuralEarlyExits": 46,
+    "crossfadePlans": 59835,
+    "normalChanges": 1233940,
+    "postlude": 85573,
+    "underlay": 2358,
+    "safariFullAvailable": 54,
+    "averageFullOverlapSeconds": 9.525370630405027
+  },
+  "after": {
+    "analyzedPairs": 1381800,
+    "completePcmBeat": 33,
+    "metricalRhythmic": 0,
+    "shortIndexedBeat": 2,
+    "structuralEarlyExits": 14,
+    "crossfadePlans": 59833,
+    "normalChanges": 1233966,
+    "postlude": 85579,
+    "underlay": 2358,
+    "safariFullAvailable": 27,
+    "averageFullOverlapSeconds": 9.977643570433381
+  },
+  "wholeSourceFeatures": {
+    "tracks": 1176,
+    "beats": 1176,
+    "downbeats": 1176,
+    "reliableBars": 1168,
+    "boundaries": 1149,
+    "phraseHypotheses": 904,
+    "entryTracks": 1110,
+    "exitTracks": 182,
+    "entries": 7679,
+    "exits": 445
+  },
+  "candidateFunnel": {
+    "version": 1,
+    "completeCoverage": true,
+    "features": 1176,
+    "tracks": 1176,
+    "possibleOrderedPairs": 1381800,
+    "consideredPairs": 1381800,
+    "sameRecording": 218,
+    "missingWholeRecording": 0,
+    "noExitWindow": 1167750,
+    "positiveLyricVeto": 3525,
+    "contentProtectionVeto": 115136,
+    "noEntryWindow": 5346,
+    "meterOrTempo": 77528,
+    "vocalConflict": 8750,
+    "harmony": 3357,
+    "eligiblePairs": 190,
+    "insufficientObservedBeatFit": 122,
+    "fullBeatCandidates": 56,
+    "renderingNotYetVerified": 153,
+    "windowsEvaluated": 1181335,
+    "metricalRhythmicCandidates": 12,
+    "eligibility": "SHA-bound whole-file evidence, structural exit with separated-vocal quiet tail, same meter and bar count, tempo within 5%, no simultaneous separated vocal activity, local PCM harmonic gate; independent actual attack fit and rendering follow.",
+    "modelAccuracyIsNotHumanGroundTruth": true,
+    "profileFunnel": {
+      "Ste": {
+        "consideredPairs": 72630,
+        "noExitWindow": 56179,
+        "sameRecording": 56,
+        "contentProtectionVeto": 11017,
+        "noEntryWindow": 475,
+        "meterOrTempo": 3915,
+        "harmony": 362,
+        "vocalConflict": 335,
+        "eligiblePairs": 22,
+        "insufficientObservedBeatFit": 16,
+        "positiveLyricVeto": 269,
+        "fullBeatCandidates": 6
+      },
+      "Diego": {
+        "consideredPairs": 46010,
+        "noExitWindow": 40434,
+        "sameRecording": 12,
+        "meterOrTempo": 1710,
+        "vocalConflict": 244,
+        "noEntryWindow": 150,
+        "contentProtectionVeto": 2996,
+        "harmony": 35,
+        "eligiblePairs": 1,
+        "insufficientObservedBeatFit": 1,
+        "positiveLyricVeto": 428
+      },
+      "Emanuele": {
+        "consideredPairs": 383780,
+        "noExitWindow": 337347,
+        "meterOrTempo": 23185,
+        "vocalConflict": 3141,
+        "harmony": 545,
+        "noEntryWindow": 945,
+        "contentProtectionVeto": 18570,
+        "sameRecording": 8,
+        "eligiblePairs": 39,
+        "fullBeatCandidates": 14,
+        "insufficientObservedBeatFit": 23,
+        "metricalRhythmicCandidates": 2
+      }
+    },
+    "candidateWindows": 153,
+    "candidatePairs": 68,
+    "fullSuccessOnEligible": 0.29473684210526313,
+    "successOnEligible": 0.35789473684210527,
+    "successOnFullCatalog": 4.9211173831234624e-05,
+    "averageOverlap": 10.120882352941162
+  },
+  "exitContentFunnel": {
+    "rawExitWindows": 445,
+    "wholeContentAllowedWindows": 155,
+    "wholeContentAllowedTracks": 81,
+    "reasons": {
+      "future-vocal-content": 145,
+      "bounded-final-instrumental-group": 155,
+      "too-much-unverified-musical-content": 32,
+      "remaining-energy-rise-or-build-unknown": 16,
+      "invalid-content-span": 26,
+      "future-lyric-content": 62,
+      "future-section-change": 9
+    }
+  },
+  "selectedActualCommonSignals": {
+    "rhythmRmsSeconds": {
+      "count": 16,
+      "mean": 0.020044447408437156,
+      "median": 0.020149734932571592,
+      "p95": 0.034047136911070086,
+      "max": 0.034047136911070086
+    },
+    "maximumOversampledPeak": 0.9980398416519165,
+    "maximumOverlapPeak": 0.9600000322422588,
+    "minimumHeadroom": 0.6622959987062051,
+    "maximumAttenuationDB": -3.5789573751324433,
+    "skippedAudibleSecondsOnStructuralPlans": {
+      "count": 16,
+      "mean": 4.214999999999998,
+      "median": 3.339999999999975,
+      "p95": 11.960000000000008,
+      "max": 11.960000000000008
+    },
+    "pairs": [
+      {
+        "from": "audio/songs/track-1008.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.7678960561752319,
+        "overlapPeak": 0.40173640847206116,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-102.mp3",
+        "to": "audio/songs/track-239.mp3",
+        "headroom": 0.8184338250388076,
+        "attenuationDB": -1.7403285995020368,
+        "oversampledPeak": 0.9599040746688843,
+        "overlapPeak": 0.9589024233367013,
+        "rhythmRmsSeconds": 0.014988416275572078,
+        "skippedAudibleSeconds": 0.160000000000025,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-102.mp3",
+        "to": "audio/songs/track-245.mp3",
+        "headroom": 0.9169134447421053,
+        "attenuationDB": -0.7534331828933547,
+        "oversampledPeak": 0.95990389585495,
+        "overlapPeak": 0.9592932429901936,
+        "rhythmRmsSeconds": 0.017065933270417073,
+        "skippedAudibleSeconds": 0.160000000000025,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-123.mp3",
+        "to": "audio/songs/track-514.mp3",
+        "headroom": 0.9543690332129059,
+        "attenuationDB": -0.4056732166566921,
+        "oversampledPeak": 0.95990389585495,
+        "overlapPeak": 0.9592933251651051,
+        "rhythmRmsSeconds": 0.006359046472622319,
+        "skippedAudibleSeconds": 3.339999999999975,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-123.mp3",
+        "to": "audio/songs/track-638.mp3",
+        "headroom": 0.9763605587895934,
+        "attenuationDB": -0.20779545453592704,
+        "oversampledPeak": 0.9599040150642395,
+        "overlapPeak": 0.9592934116659382,
+        "rhythmRmsSeconds": 0.023698766974773113,
+        "skippedAudibleSeconds": 3.339999999999975,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-203.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "headroom": 0.9052213506685226,
+        "attenuationDB": -0.8649042254073268,
+        "oversampledPeak": 0.9526360034942627,
+        "overlapPeak": 0.9400000284096102,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-246.mp3",
+        "to": "audio/songs/track-146.mp3",
+        "headroom": 0.9464085382689645,
+        "attenuationDB": -0.4784270052532107,
+        "oversampledPeak": 0.9978692531585693,
+        "overlapPeak": 0.9399999846448958,
+        "rhythmRmsSeconds": 0.015211581151324427,
+        "skippedAudibleSeconds": 0.6999999999999886,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-246.mp3",
+        "to": "audio/songs/track-857.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.8689650297164917,
+        "overlapPeak": 0.767989993095398,
+        "rhythmRmsSeconds": 0.019542503886778008,
+        "skippedAudibleSeconds": 0.6999999999999886,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-347.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.8117178678512573,
+        "overlapPeak": 0.7563068866729736,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-348.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.5167075395584106,
+        "overlapPeak": 0.2739907205104828,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-353.mp3",
+        "to": "audio/songs/track-219.mp3",
+        "headroom": 0.7791750326504219,
+        "attenuationDB": -2.1672994428114416,
+        "oversampledPeak": 0.9606111645698547,
+        "overlapPeak": 0.9600000161593265,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-388.mp3",
+        "to": "audio/songs/track-50.mp3",
+        "headroom": 0.9168395608936559,
+        "attenuationDB": -0.754133110257664,
+        "oversampledPeak": 0.9645485281944275,
+        "overlapPeak": 0.9600000322422588,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-451.mp3",
+        "to": "audio/songs/track-315.mp3",
+        "headroom": 0.9280024825864434,
+        "attenuationDB": -0.6490172391539863,
+        "oversampledPeak": 0.9655105471611023,
+        "overlapPeak": 0.9599999856359148,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-50.mp3",
+        "to": "audio/songs/track-474.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.7237986326217651,
+        "overlapPeak": 0.6923760175704956,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-514.mp3",
+        "to": "audio/songs/track-123.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.8520280122756958,
+        "overlapPeak": 0.8514859676361084,
+        "rhythmRmsSeconds": 0.006703023533448682,
+        "skippedAudibleSeconds": 3.299999999999983,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-514.mp3",
+        "to": "audio/songs/track-638.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.9431980848312378,
+        "overlapPeak": 0.9422970414161682,
+        "rhythmRmsSeconds": 0.023603781554564374,
+        "skippedAudibleSeconds": 3.299999999999983,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-53.mp3",
+        "to": "audio/songs/track-51.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.9290180206298828,
+        "overlapPeak": 0.92842698097229,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-584.mp3",
+        "to": "audio/songs/track-451.mp3",
+        "headroom": 0.7560365624140032,
+        "attenuationDB": -2.4291440246138416,
+        "oversampledPeak": 0.9769145846366882,
+        "overlapPeak": 0.939999966353358,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-599.mp3",
+        "to": "audio/songs/track-166.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.9666189551353455,
+        "overlapPeak": 0.45597758889198303,
+        "rhythmRmsSeconds": null,
+        "skippedAudibleSeconds": 0,
+        "structural": false
+      },
+      {
+        "from": "audio/songs/track-675.mp3",
+        "to": "audio/songs/track-1186.mp3",
+        "headroom": 0.8163549054291701,
+        "attenuationDB": -1.7624198651108605,
+        "oversampledPeak": 0.9980398416519165,
+        "overlapPeak": 0.9585687458272899,
+        "rhythmRmsSeconds": 0.026432360012284058,
+        "skippedAudibleSeconds": 11.960000000000008,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-675.mp3",
+        "to": "audio/songs/track-621.mp3",
+        "headroom": 0.9179686783260905,
+        "attenuationDB": -0.7434427389862366,
+        "oversampledPeak": 0.9599040150642395,
+        "overlapPeak": 0.9553395955894879,
+        "rhythmRmsSeconds": 0.02075696597836518,
+        "skippedAudibleSeconds": 3.5800000000000125,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-675.mp3",
+        "to": "audio/songs/track-638.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.9544987678527832,
+        "overlapPeak": 0.9538915157318115,
+        "rhythmRmsSeconds": 0.03005168118838506,
+        "skippedAudibleSeconds": 11.960000000000008,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-675.mp3",
+        "to": "audio/songs/track-807.mp3",
+        "headroom": 0.8446269875756374,
+        "attenuationDB": -1.4667009216858904,
+        "oversampledPeak": 0.997606098651886,
+        "overlapPeak": 0.9399999899312615,
+        "rhythmRmsSeconds": 0.025347711932372254,
+        "skippedAudibleSeconds": 3.5800000000000125,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-745.mp3",
+        "to": "audio/songs/track-638.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.6969816088676453,
+        "overlapPeak": 0.6965382099151611,
+        "rhythmRmsSeconds": 0.014376383851784426,
+        "skippedAudibleSeconds": 1.539999999999992,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-745.mp3",
+        "to": "audio/songs/track-716.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.7892484664916992,
+        "overlapPeak": 0.7887463569641113,
+        "rhythmRmsSeconds": 0.034047136911070086,
+        "skippedAudibleSeconds": 6.659999999999997,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-745.mp3",
+        "to": "audio/songs/track-721.mp3",
+        "headroom": 1,
+        "attenuationDB": 0.0,
+        "oversampledPeak": 0.7892484664916992,
+        "overlapPeak": 0.7887463569641113,
+        "rhythmRmsSeconds": 0.034047136911070086,
+        "skippedAudibleSeconds": 6.659999999999997,
+        "structural": true
+      },
+      {
+        "from": "audio/songs/track-889.mp3",
+        "to": "audio/songs/track-308.mp3",
+        "headroom": 0.6622959987062051,
+        "attenuationDB": -3.5789573751324433,
+        "oversampledPeak": 0.9603937268257141,
+        "overlapPeak": 0.948172226077815,
+        "rhythmRmsSeconds": 0.008478728630163279,
+        "skippedAudibleSeconds": 6.5,
+        "structural": true
+      }
+    ]
+  },
+  "samePublishedProfileCompletePairs": {
+    "beforeAllVariants": {
+      "Ste": 7,
+      "Diego": 1,
+      "Emanuele": 5
+    },
+    "afterAllVariants": {
+      "Ste": 7,
+      "Diego": 1,
+      "Emanuele": 7
+    },
+    "beforeNormalFiles": {
+      "Ste": 6,
+      "Diego": 1,
+      "Emanuele": 5
+    },
+    "afterNormalFiles": {
+      "Ste": 6,
+      "Diego": 1,
+      "Emanuele": 7
+    },
+    "method": "Set membership across original BUILTIN profiles plus explicit published copies minus deletions; bassi variants separate; no ownership change. The membership correction confirms 13 baseline full pairs and gives 15 after."
+  },
+  "limits": [
+    "All source phase/phrase/boundary and vocal model evidence remains a hypothesis, not a certified semantic section or human singing reference.",
+    "Audible seconds skipped are measured; importance, chorus/solo/build identity and listening beauty are not semantically annotated.",
+    "Safari availability is a gated logical/native-browser result, not a physical iPhone/PWA/background endurance measurement.",
+    "Karaoke partial matching was tuned and evaluated on the same nine reference windows; not held-out Italian accuracy."
+  ]
+}

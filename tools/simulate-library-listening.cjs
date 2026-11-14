@@ -140,12 +140,17 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[]};
  const sessions=Number(arg('sessions','20')),steps=Number(arg('steps','40'));
  for(const [i,profile] of profiles.entries()){
+  if(arg('only-profile','')&&arg('only-profile','')!==profile)continue;
   const library=members(profile);
   for(const mode of ['ordered','manual-queue','shuffle','offline-shuffle']){
+   if(arg('only-mode','')&&arg('only-mode','')!==mode)continue;
    const result=await simulate(profile,mode,library,mode==='ordered'||mode==='manual-queue'?1:sessions,mode==='ordered'?library.length-1:steps,20261114+i*100);
    report.results.push(result);console.log(JSON.stringify({profile,mode,members:library.length,full:result.totals.full,attempts:result.totals.attempts}));
   }
-  for(const playlist of playlists.filter(p=>p.nascostaDa===profile))report.results.push({...await simulate(profile,'playlist',members(profile,playlist),1,playlist.tracks.length-1,20261114+i),playlist:playlist.name});
+  for(const playlist of playlists.filter(p=>p.nascostaDa===profile))for(const mode of ['playlist','playlist-shuffle']){
+   if(arg('only-mode','')&&arg('only-mode','')!==mode)continue;
+   report.results.push({...await simulate(profile,mode,members(profile,playlist),mode==='playlist'?1:sessions,playlist.tracks.length-1,20261114+i),playlist:playlist.name});
+  }
  }
  fs.writeFileSync(arg('output','listening-simulation.json'),JSON.stringify(report,null,2)+'\n');
 })().catch(e=>{console.error(e);process.exitCode=1});

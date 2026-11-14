@@ -513,7 +513,11 @@ test("Whisper timeout terminates a hung worker without freezing playback",async(
   "\nreturn window.MusicBoxAudioAlign;")(win,win,nav,doc,HangWorker,storage,
     fetchMock,fn=>fn(),fastTimeout);
  assert.equal(api.request(music.id),true);
- await new Promise(resolve=>setTimeout(resolve,70));
+ // Wait for the observable timeout result, rather than assuming the
+ // initial decode and idle callback have run within 70 ms on a busy host.
+ const deadline=Date.now()+2000;
+ while(!mem.has("mb.audioWords.fail.Ste."+music.id)&&Date.now()<deadline)
+  await new Promise(resolve=>setTimeout(resolve,5));
  assert.equal(launched,1);
  assert.equal(terminated,1);
  assert.equal(closed,1);
