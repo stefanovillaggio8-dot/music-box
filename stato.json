@@ -2003,13 +2003,13 @@
    },
    "[\"sogno americano\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 321,
+    "s": 357,
     "t": "SOGNO AMERICANO",
     "a": "Artie 5ive"
    },
    "m:2026-11|[\"sogno americano\",\"artie 5ive\"]": {
     "v": 4,
-    "s": 321,
+    "s": 357,
     "t": "SOGNO AMERICANO",
     "a": "Artie 5ive"
    },
@@ -2524,14 +2524,14 @@
     "a": "Artie 5ive"
    },
    "[\"guerra dentro\",\"nayt, 3d\"]": {
-    "v": 2,
-    "s": 199,
+    "v": 3,
+    "s": 241,
     "t": "guerra dentro",
     "a": "nayt, 3D"
    },
    "m:2026-11|[\"guerra dentro\",\"nayt, 3d\"]": {
-    "v": 2,
-    "s": 199,
+    "v": 3,
+    "s": 241,
     "t": "guerra dentro",
     "a": "nayt, 3D"
    },
@@ -8483,7 +8483,7 @@
    },
    "[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 2,
-    "s": 200,
+    "s": 263,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -8717,7 +8717,7 @@
    },
    "m:2026-11|[\"morirÃÂ² da re\",\"mÃÂ¥neskin\"]": {
     "v": 1,
-    "s": 195,
+    "s": 258,
     "t": "MorirÃÂ² da Re",
     "a": "MÃÂ¥neskin"
    },
@@ -9293,7 +9293,7 @@
    },
    "[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 2,
-    "s": 263,
+    "s": 264,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
@@ -9527,7 +9527,7 @@
    },
    "m:2026-11|[\"morirÃ² da re\",\"mÃ¥neskin\"]": {
     "v": 1,
-    "s": 258,
+    "s": 259,
     "t": "MorirÃ² da Re",
     "a": "MÃ¥neskin"
    },
