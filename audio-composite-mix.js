@@ -65,7 +65,8 @@ async function prepare(cue,ctx){
 function cancelPreparation(){for(const job of pending.values())job.controller.abort();pending.clear();}
 function stop(reason='cancelled'){
  const act=current;if(!act)return;current=null;clearTimeout(act.timer);
- lastStop={reason,handingOff:act.handingOff,nativeTime:act.old.currentTime,clock:act.ctx.currentTime};
+ lastStop={reason,handingOff:act.handingOff,nativeTime:act.old.currentTime,clock:act.ctx.currentTime,
+  clockError:act.clockError,contextState:act.ctx.state,paused:act.old.paused,seeking:act.old.seeking};
  try{act.source.stop()}catch(_){}try{act.source.disconnect();act.gain.disconnect()}catch(_){}
  const userMuted=Number(act.app.volume())===0;
  act.old._mbCommonMixMuted=false;act.old.muted=act.wasMuted||userMuted;
@@ -86,6 +87,7 @@ function tryStart(cue,old,app,toId,ctx){
  const listen=(target,event,listener)=>{target?.addEventListener?.(event,listener);act.listeners.push([target,event,listener]);};
  const abort=()=>{if(current===act)stop()};
  listen(old,'seeking',()=>{if(!act.handingOff)abort()});listen(old,'pause',()=>{if(!act.handingOff&&!(cue.nativeTailFullBeat&&old.ended))abort()});
+ listen(old,'ratechange',()=>{if(!act.handingOff)abort()});
  listen(root.document,'visibilitychange',()=>{if(root.document.hidden)abort()});
  listen(ctx,'statechange',()=>{if(ctx.state!=='running')abort()});
  source.onended=abort;current=act;
@@ -94,12 +96,18 @@ function tryStart(cue,old,app,toId,ctx){
   const elapsed=ctx.currentTime-started+offset,post=limit(elapsed-cue.fade,0,.85);
   const position=cue.composite.handoffPosition+post*cue.tempo+(1-cue.tempo)*post*post/1.7+Math.max(0,elapsed-cue.fade-.85);
   const expectedId=act.handingOff?toId:fromId;
+  // Once muted, the outgoing media element can switch to a different
+  // clock. Its reported drift cannot desynchronize the already rendered
+  // common signal: both audible tracks now use this one AudioContext.
+  // Seeking, pause, rate/source changes still cancel explicitly, and the
+  // incoming native clock must match before its output is revealed.
+  act.clockError=old.currentTime-cue.begin-elapsed;
   if(!act.handingOff&&(!Number.isFinite(act.vocalCheckedAt)||ctx.currentTime-act.vocalCheckedAt>.25)){
    act.vocalCheckedAt=ctx.currentTime;if(app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId)===false){stop();return;}
   }
   if(ctx.state!=='running'||root.document?.hidden||app.wantsPlayback?.()===false||
      app.currentId()!==expectedId||(!act.handingOff&&((old.paused&&!(cue.nativeTailFullBeat&&old.ended))||old.seeking||app.audio()!==old||
-      app.mixNext?.()?.id!==toId||Math.abs(old.currentTime-cue.begin-elapsed)>.08))||
+      app.mixNext?.()?.id!==toId))||
      root.MusicBoxRoom?.isActive?.()){stop('playback-state-or-clock-changed');return;}
   gain.gain.setTargetAtTime(outputLevel(app,app.audio()),ctx.currentTime,.025);
   if(!act.handingOff&&elapsed>=cue.composite.nativeHandoffAt){

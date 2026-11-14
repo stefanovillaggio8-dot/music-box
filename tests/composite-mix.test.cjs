@@ -101,3 +101,14 @@ test('a mute requested during the common overlap survives cancellation',async()=
  assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);volume=0;f.api.stop();
  assert.equal(audio.muted,true);assert.equal(audio._mbCommonMixMuted,false);
 });
+
+test('muted outgoing clock drift does not cancel the shared audible signal; rate changes still cancel',async t=>{
+ const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);t.after(()=>f.api.stop());
+ const audio={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,volume:1};
+ const app={audio:()=>audio,currentId:()=> 'a',mixNext:()=>({id:'b'}),volume:()=>1,wantsPlayback:()=>true,mixSourceMatches:()=>true};
+ assert.equal(f.api.tryStart(p,audio,app,'b',f.ctx),true);
+ f.ctx.currentTime=.4;audio.currentTime=32.19;
+ await new Promise(r=>setTimeout(r,35));
+ assert.equal(f.api.active(),true);assert.equal(audio.muted,true);
+ f.listeners.get('ratechange')();assert.equal(f.api.active(),false);assert.equal(audio.muted,false);
+});
