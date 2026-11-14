@@ -1,0 +1,19 @@
+{
+  "method": "Real checkpoint/current module, same stalled mocked ASR worker; ownership counters only, not physical GPU or CPU measurements.",
+  "before": {
+    "ownedWorkersBeforeHidden": 1,
+    "ownedWorkersAfterHidden": 1,
+    "terminationsOnHidden": 0,
+    "nativePlaybackPaused": false,
+    "measuredCpuPercent": null,
+    "measuredRamBytes": null
+  },
+  "after": {
+    "ownedWorkersBeforeHidden": 1,
+    "ownedWorkersAfterHidden": 0,
+    "terminationsOnHidden": 1,
+    "nativePlaybackPaused": false,
+    "measuredCpuPercent": null,
+    "measuredRamBytes": null
+  }
+}

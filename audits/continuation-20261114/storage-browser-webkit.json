@@ -1,0 +1,93 @@
+{
+  "results": [
+    {
+      "browser": "webkit",
+      "report": {
+        "version": 1,
+        "profile": "Diego",
+        "origin": "http://127.0.0.1:36897",
+        "readOnly": true,
+        "databaseAvailable": true,
+        "cacheStorageAvailable": true,
+        "scope": "Music Box-prefixed CacheStorage and supplied musicbox database; shared HTTP cache and other sites are not attributable.",
+        "sizes": "Cache declared Content-Length and IndexedDB Blob sizes/UTF-8 metadata; NOT exact physical disk usage.",
+        "estimate": {
+          "usage": 12433,
+          "quota": 1048576000,
+          "originWide": true,
+          "approximate": true
+        },
+        "caches": [
+          {
+            "name": "spotifynonavraiimieisoldi-brani-Diego",
+            "groups": {
+              "audio": {
+                "entries": 1,
+                "declaredBytes": 6000,
+                "unknownSizeEntries": 0
+              }
+            }
+          },
+          {
+            "name": "spotifynonavraiimieisoldi-stream-Diego",
+            "groups": {
+              "audio": {
+                "entries": 1,
+                "declaredBytes": 6000,
+                "unknownSizeEntries": 0
+              }
+            }
+          },
+          {
+            "name": "spotifynonavraiimieisoldi-fixture",
+            "groups": {
+              "musicalAnalysis": {
+                "entries": 1,
+                "declaredBytes": 0,
+                "unknownSizeEntries": 1
+              }
+            }
+          }
+        ],
+        "databases": [
+          {
+            "name": "copertine",
+            "records": 1,
+            "blobBytes": 0,
+            "metadataUtf8Bytes": 47
+          },
+          {
+            "name": "lyrics",
+            "records": 1,
+            "blobBytes": 0,
+            "metadataUtf8Bytes": 38
+          },
+          {
+            "name": "tracks",
+            "records": 1,
+            "blobBytes": 6000,
+            "metadataUtf8Bytes": 56
+          }
+        ],
+        "sameRequestCopies": [
+          {
+            "caches": [
+              "spotifynonavraiimieisoldi-brani-Diego",
+              "spotifynonavraiimieisoldi-stream-Diego"
+            ],
+            "byteIdentityVerified": false
+          }
+        ],
+        "unattributedCacheCount": 0
+      },
+      "cacheNamesUnchanged": true,
+      "offlineAudioByteExact": true,
+      "importedAudioBytes": 6000,
+      "lyricsPreserved": true,
+      "favoritesPreserved": true,
+      "cancelled": true,
+      "networkRequestsDuringAudit": 0,
+      "physicalIPhone": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "label": "Diego-Stanza-DAVVERODAVVERO",
+    "sourceSha": "72b6ff9ffe85ceea9490eb4679b9fc84441357db",
+    "targetSha": "a074b2be7650c7f28df0d1fc592a900d4f5bc1ba",
+    "playerMixSha256": "977070a8972bdbd9dfe2a9c9da87e47f030536eb70361b70fbbb887eee294b66",
+    "contextSeconds": 10,
+    "transitionStartsAt": 10.3,
+    "overlapSeconds": 5.87215752225481,
+    "previewUniformGain": 0.8063351637050516,
+    "mp3OversampledPeak192k": 0.8598054647445679,
+    "note": "Current unchanged player mix with 10 seconds of original context. Only the audition copy has uniform peak headroom; not a new certified pair or original native playback volume."
+  },
+  {
+    "label": "Emanuele-UnNuovoBacio-OGNIAMICOMIO",
+    "sourceSha": "f9146d91c776a2de72a173d538978e0dc8f93535",
+    "targetSha": "a50faf5c4f1699e729f7f95571d9d41448cdd055",
+    "playerMixSha256": "2946cdafd2b1f6b07bb825d12f387c40eea077867e23431e94c13d5421670ab0",
+    "contextSeconds": 10,
+    "transitionStartsAt": 10.3,
+    "overlapSeconds": 13.65163857677905,
+    "previewUniformGain": 1,
+    "mp3OversampledPeak192k": 0.8249370455741882,
+    "note": "Current unchanged player mix with 10 seconds of original context. Only the audition copy has uniform peak headroom; not a new certified pair or original native playback volume."
+  }
+]

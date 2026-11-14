@@ -1,0 +1,12 @@
+{
+  "revision": "de188c963fd4539bc769b3feb83582e5a9595e36",
+  "metadataSha256": "a214dbc7ca88fee4e41effa559502777365f5798e28ef585812e8413330be73b",
+  "recordings": 79,
+  "languageCounts": {
+    "en": 20,
+    "de": 20,
+    "es": 20,
+    "fr": 19
+  },
+  "italianReferences": []
+}

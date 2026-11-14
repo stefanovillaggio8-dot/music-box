@@ -1,0 +1,82 @@
+{
+  "checkpoint": "7ddd25219a895b677797750d9d11b4c6daa800e0",
+  "codeCommit": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+  "fullBefore": 9,
+  "fullAfter": 9,
+  "uniqueRecordingPairs": 7,
+  "availableByProfile": {
+    "Ste": 0,
+    "Diego": 2,
+    "Emanuele": 5
+  },
+  "gymFull": 0,
+  "shortenedPair": {
+    "from": "audio/songs/track-1183.mp3",
+    "to": "audio/songs/track-1198.mp3",
+    "beforeSeconds": 13.789301745635939,
+    "afterSeconds": 9.954452055843177,
+    "reductionPercent": 27.810325428598446,
+    "barsBefore": 4,
+    "barsAfter": 4,
+    "rmsBeforeMs": 12.980349257141784,
+    "rmsAfterMs": 13.475689338469873,
+    "rateBefore": 1.0442708333333326,
+    "rateAfter": 1.041075928765819,
+    "entryBefore": 0,
+    "entryAfter": 0,
+    "sourceEOFBefore": 140.516,
+    "sourceEOFAfter": 140.516,
+    "assetBeforeBytes": 2917473,
+    "assetAfterBytes": 2211795,
+    "nominalDecodedPcmBytesBefore": 6101488,
+    "nominalDecodedPcmBytesAfter": 4628912
+  },
+  "optimizedAssetUsesInFourteenScenarios": 0,
+  "karaokeBefore": {
+    "referenceWords": 590,
+    "acceptedWords": 160,
+    "coverage": 0.2711864406779661,
+    "onset": {
+      "count": 160,
+      "medianAbsoluteMs": 55.19158940001034,
+      "p95AbsoluteMs": 201.2957153000059
+    },
+    "end": {
+      "count": 160,
+      "medianAbsoluteMs": 65.77288819998728,
+      "p95AbsoluteMs": 216.24670410000135
+    }
+  },
+  "karaokeAfter": {
+    "referenceWords": 590,
+    "acceptedWords": 168,
+    "coverage": 0.2847457627118644,
+    "onset": {
+      "count": 168,
+      "medianAbsoluteMs": 53.84814449999453,
+      "p95AbsoluteMs": 200.2113189999992
+    },
+    "end": {
+      "count": 168,
+      "medianAbsoluteMs": 65.77288819998728,
+      "p95AbsoluteMs": 228.38804630000098
+    }
+  },
+  "independentKaraoke": {
+    "referenceWords": 150,
+    "acceptedWords": 10,
+    "coverage": 0.06666666666666667,
+    "onset": {
+      "count": 10,
+      "medianAbsoluteMs": 39.937866199991845,
+      "p95AbsoluteMs": 156.6727904999965
+    },
+    "end": {
+      "count": 10,
+      "medianAbsoluteMs": 39.937866199991845,
+      "p95AbsoluteMs": 202.7949218999936
+    }
+  },
+  "beforeObservationPasses": 3,
+  "afterObservationPasses": 7
+}

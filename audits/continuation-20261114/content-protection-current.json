@@ -1,0 +1,3454 @@
+{
+  "baselineEarlyTransitions": 46,
+  "retained": 7,
+  "scope": "Outgoing-content guard only; retaining a historical exit does not authorize incoming skips or runtime playback.",
+  "rejected": 39,
+  "reasonCounts": {
+    "future-vocal-content": 22,
+    "too-much-unverified-musical-content": 7,
+    "bounded-final-instrumental-group": 7,
+    "future-lyric-content": 8,
+    "future-section-change": 2
+  },
+  "rows": [
+    {
+      "from": "audio/songs/bassi/track-59.mp3",
+      "to": "audio/songs/track-1070.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 153.9,
+      "end": 161.62,
+      "originalDuration": 302.939,
+      "audibleEnd": 290.1,
+      "skippedAudibleSeconds": 128.48000000000002,
+      "unplayedRecordingPercent": 44.3953006219765,
+      "remainingVocalRegions": [
+        [
+          166.5,
+          168
+        ],
+        [
+          168.4,
+          168.6
+        ],
+        [
+          186.1,
+          186.3
+        ],
+        [
+          189.6,
+          189.8
+        ],
+        [
+          190.7,
+          190.9
+        ],
+        [
+          191.4,
+          192
+        ],
+        [
+          213.7,
+          222.8
+        ],
+        [
+          223.2,
+          231.1
+        ],
+        [
+          231.7,
+          261.3
+        ],
+        [
+          261.7,
+          289.9
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        167.4,
+        182.82,
+        196.32,
+        217.34,
+        243.46,
+        251.02,
+        262.28,
+        269.8
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 159.7,
+          "end": 167.4,
+          "bars": 4
+        },
+        {
+          "start": 167.4,
+          "end": 182.82,
+          "bars": 8
+        },
+        {
+          "start": 243.46,
+          "end": 251.02,
+          "bars": 4
+        },
+        {
+          "start": 262.28,
+          "end": 269.8,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 128.48000000000002,
+        "unplayedFraction": 0.443953006219765,
+        "futureVocalSeconds": 77.70000000000007,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 8,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/bassi/track-59.mp3",
+      "to": "audio/songs/track-446.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 205.9,
+      "end": 213.54,
+      "originalDuration": 302.939,
+      "audibleEnd": 290.1,
+      "skippedAudibleSeconds": 76.56000000000003,
+      "unplayedRecordingPercent": 26.454733932273676,
+      "remainingVocalRegions": [
+        [
+          213.7,
+          222.8
+        ],
+        [
+          223.2,
+          231.1
+        ],
+        [
+          231.7,
+          261.3
+        ],
+        [
+          261.7,
+          289.9
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        217.34,
+        243.46,
+        251.02,
+        262.28,
+        269.8
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 243.46,
+          "end": 251.02,
+          "bars": 4
+        },
+        {
+          "start": 262.28,
+          "end": 269.8,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 76.56000000000003,
+        "unplayedFraction": 0.2645473393227368,
+        "futureVocalSeconds": 74.80000000000004,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 5,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1008.mp3",
+      "to": "audio/songs/track-228.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 27.58,
+      "end": 35.48,
+      "originalDuration": 130.252,
+      "audibleEnd": 128,
+      "skippedAudibleSeconds": 92.52000000000001,
+      "unplayedRecordingPercent": 72.28125000000001,
+      "remainingVocalRegions": [
+        [
+          36.4,
+          37
+        ],
+        [
+          44.3,
+          44.9
+        ],
+        [
+          55.9,
+          56.9
+        ],
+        [
+          57.5,
+          58.6
+        ],
+        [
+          60,
+          60.2
+        ],
+        [
+          62.3,
+          62.5
+        ],
+        [
+          63.8,
+          65
+        ],
+        [
+          67.9,
+          68.1
+        ],
+        [
+          71.8,
+          72.6
+        ],
+        [
+          75.7,
+          75.9
+        ],
+        [
+          77,
+          77.6
+        ],
+        [
+          80.5,
+          80.7
+        ],
+        [
+          88.2,
+          88.4
+        ],
+        [
+          91.5,
+          91.7
+        ],
+        [
+          96.2,
+          96.4
+        ],
+        [
+          103.3,
+          103.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        64.96
+      ],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 92.52000000000001,
+        "unplayedFraction": 0.7228125000000001,
+        "futureVocalSeconds": 7.900000000000013,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1160.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 16.04000000000002,
+      "unplayedRecordingPercent": 5.653859710962291,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1183.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 31.660000000000025,
+      "unplayedRecordingPercent": 11.159675713782173,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1198.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 31.660000000000025,
+      "unplayedRecordingPercent": 11.159675713782173,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-550.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 31.660000000000025,
+      "unplayedRecordingPercent": 11.159675713782173,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-663.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 16.04000000000002,
+      "unplayedRecordingPercent": 5.653859710962291,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-833.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 16.04000000000002,
+      "unplayedRecordingPercent": 5.653859710962291,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-877.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalDuration": 303.845,
+      "audibleEnd": 285.1,
+      "skippedAudibleSeconds": 31.660000000000025,
+      "unplayedRecordingPercent": 11.159675713782173,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "too-much-unverified-musical-content",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1117.mp3",
+      "to": "audio/songs/track-716.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 115,
+      "end": 125.24,
+      "originalDuration": 138.855,
+      "audibleEnd": 132.9,
+      "skippedAudibleSeconds": 7.660000000000011,
+      "unplayedRecordingPercent": 5.763732129420625,
+      "remainingVocalRegions": [
+        [
+          129.3,
+          134.9
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 7.660000000000011,
+        "unplayedFraction": 0.05763732129420625,
+        "futureVocalSeconds": 3.5999999999999943,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1117.mp3",
+      "to": "audio/songs/track-721.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 115,
+      "end": 125.24,
+      "originalDuration": 138.855,
+      "audibleEnd": 132.9,
+      "skippedAudibleSeconds": 7.660000000000011,
+      "unplayedRecordingPercent": 5.763732129420625,
+      "remainingVocalRegions": [
+        [
+          129.3,
+          134.9
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 7.660000000000011,
+        "unplayedFraction": 0.05763732129420625,
+        "futureVocalSeconds": 3.5999999999999943,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/track-159.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 71.44,
+      "end": 77.92,
+      "originalDuration": 245.533,
+      "audibleEnd": 241.4,
+      "skippedAudibleSeconds": 163.48000000000002,
+      "unplayedRecordingPercent": 67.72162386081193,
+      "remainingVocalRegions": [
+        [
+          78.3,
+          84.3
+        ],
+        [
+          84.7,
+          87
+        ],
+        [
+          88,
+          90.5
+        ],
+        [
+          91.3,
+          97
+        ],
+        [
+          98.3,
+          100.3
+        ],
+        [
+          101.6,
+          104.2
+        ],
+        [
+          104.8,
+          110.9
+        ],
+        [
+          111.7,
+          113.3
+        ],
+        [
+          114.2,
+          117.2
+        ],
+        [
+          117.7,
+          136.9
+        ],
+        [
+          137.3,
+          139.3
+        ],
+        [
+          140.7,
+          142.4
+        ],
+        [
+          144.2,
+          157
+        ],
+        [
+          157.8,
+          161.1
+        ],
+        [
+          164.4,
+          165
+        ],
+        [
+          165.7,
+          171.6
+        ],
+        [
+          189.7,
+          191.3
+        ],
+        [
+          191.8,
+          192.1
+        ],
+        [
+          193.3,
+          197.7
+        ],
+        [
+          209.1,
+          209.4
+        ],
+        [
+          212.9,
+          213.8
+        ],
+        [
+          215.3,
+          215.5
+        ],
+        [
+          216,
+          216.5
+        ],
+        [
+          218.5,
+          218.7
+        ],
+        [
+          219.3,
+          219.8
+        ],
+        [
+          221,
+          221.9
+        ],
+        [
+          225.1,
+          225.9
+        ],
+        [
+          234.3,
+          234.5
+        ],
+        [
+          236.9,
+          237.8
+        ],
+        [
+          238.9,
+          241.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        84.64,
+        97.98,
+        106.26,
+        119.26,
+        130.7,
+        157.36,
+        182.52,
+        201,
+        232.86
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 71.44,
+          "end": 84.64,
+          "bars": 8
+        },
+        {
+          "start": 71.44,
+          "end": 97.98,
+          "bars": 16
+        },
+        {
+          "start": 77.92,
+          "end": 84.64,
+          "bars": 4
+        },
+        {
+          "start": 84.64,
+          "end": 97.98,
+          "bars": 8
+        },
+        {
+          "start": 106.26,
+          "end": 119.26,
+          "bars": 8
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 163.48000000000002,
+        "unplayedFraction": 0.6772162386081194,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 9,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/track-240.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 71.44,
+      "end": 77.92,
+      "originalDuration": 245.533,
+      "audibleEnd": 241.4,
+      "skippedAudibleSeconds": 163.48000000000002,
+      "unplayedRecordingPercent": 67.72162386081193,
+      "remainingVocalRegions": [
+        [
+          78.3,
+          84.3
+        ],
+        [
+          84.7,
+          87
+        ],
+        [
+          88,
+          90.5
+        ],
+        [
+          91.3,
+          97
+        ],
+        [
+          98.3,
+          100.3
+        ],
+        [
+          101.6,
+          104.2
+        ],
+        [
+          104.8,
+          110.9
+        ],
+        [
+          111.7,
+          113.3
+        ],
+        [
+          114.2,
+          117.2
+        ],
+        [
+          117.7,
+          136.9
+        ],
+        [
+          137.3,
+          139.3
+        ],
+        [
+          140.7,
+          142.4
+        ],
+        [
+          144.2,
+          157
+        ],
+        [
+          157.8,
+          161.1
+        ],
+        [
+          164.4,
+          165
+        ],
+        [
+          165.7,
+          171.6
+        ],
+        [
+          189.7,
+          191.3
+        ],
+        [
+          191.8,
+          192.1
+        ],
+        [
+          193.3,
+          197.7
+        ],
+        [
+          209.1,
+          209.4
+        ],
+        [
+          212.9,
+          213.8
+        ],
+        [
+          215.3,
+          215.5
+        ],
+        [
+          216,
+          216.5
+        ],
+        [
+          218.5,
+          218.7
+        ],
+        [
+          219.3,
+          219.8
+        ],
+        [
+          221,
+          221.9
+        ],
+        [
+          225.1,
+          225.9
+        ],
+        [
+          234.3,
+          234.5
+        ],
+        [
+          236.9,
+          237.8
+        ],
+        [
+          238.9,
+          241.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        84.64,
+        97.98,
+        106.26,
+        119.26,
+        130.7,
+        157.36,
+        182.52,
+        201,
+        232.86
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 71.44,
+          "end": 84.64,
+          "bars": 8
+        },
+        {
+          "start": 71.44,
+          "end": 97.98,
+          "bars": 16
+        },
+        {
+          "start": 77.92,
+          "end": 84.64,
+          "bars": 4
+        },
+        {
+          "start": 84.64,
+          "end": 97.98,
+          "bars": 8
+        },
+        {
+          "start": 106.26,
+          "end": 119.26,
+          "bars": 8
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 163.48000000000002,
+        "unplayedFraction": 0.6772162386081194,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 9,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/track-738.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 71.44,
+      "end": 77.92,
+      "originalDuration": 245.533,
+      "audibleEnd": 241.4,
+      "skippedAudibleSeconds": 163.48000000000002,
+      "unplayedRecordingPercent": 67.72162386081193,
+      "remainingVocalRegions": [
+        [
+          78.3,
+          84.3
+        ],
+        [
+          84.7,
+          87
+        ],
+        [
+          88,
+          90.5
+        ],
+        [
+          91.3,
+          97
+        ],
+        [
+          98.3,
+          100.3
+        ],
+        [
+          101.6,
+          104.2
+        ],
+        [
+          104.8,
+          110.9
+        ],
+        [
+          111.7,
+          113.3
+        ],
+        [
+          114.2,
+          117.2
+        ],
+        [
+          117.7,
+          136.9
+        ],
+        [
+          137.3,
+          139.3
+        ],
+        [
+          140.7,
+          142.4
+        ],
+        [
+          144.2,
+          157
+        ],
+        [
+          157.8,
+          161.1
+        ],
+        [
+          164.4,
+          165
+        ],
+        [
+          165.7,
+          171.6
+        ],
+        [
+          189.7,
+          191.3
+        ],
+        [
+          191.8,
+          192.1
+        ],
+        [
+          193.3,
+          197.7
+        ],
+        [
+          209.1,
+          209.4
+        ],
+        [
+          212.9,
+          213.8
+        ],
+        [
+          215.3,
+          215.5
+        ],
+        [
+          216,
+          216.5
+        ],
+        [
+          218.5,
+          218.7
+        ],
+        [
+          219.3,
+          219.8
+        ],
+        [
+          221,
+          221.9
+        ],
+        [
+          225.1,
+          225.9
+        ],
+        [
+          234.3,
+          234.5
+        ],
+        [
+          236.9,
+          237.8
+        ],
+        [
+          238.9,
+          241.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        84.64,
+        97.98,
+        106.26,
+        119.26,
+        130.7,
+        157.36,
+        182.52,
+        201,
+        232.86
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 71.44,
+          "end": 84.64,
+          "bars": 8
+        },
+        {
+          "start": 71.44,
+          "end": 97.98,
+          "bars": 16
+        },
+        {
+          "start": 77.92,
+          "end": 84.64,
+          "bars": 4
+        },
+        {
+          "start": 84.64,
+          "end": 97.98,
+          "bars": 8
+        },
+        {
+          "start": 106.26,
+          "end": 119.26,
+          "bars": 8
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 163.48000000000002,
+        "unplayedFraction": 0.6772162386081194,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 9,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-123.mp3",
+      "to": "audio/songs/track-514.mp3",
+      "cueSource": "active-index",
+      "begin": 219.78,
+      "end": 230.36,
+      "originalDuration": 246.956,
+      "audibleEnd": 233.7,
+      "skippedAudibleSeconds": 3.339999999999975,
+      "unplayedRecordingPercent": 1.4334763948497746,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 1.9127363948497722,
+        "remainingSeconds": 3.339999999999975,
+        "unplayedFraction": 0.014334763948497746,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-123.mp3",
+      "to": "audio/songs/track-638.mp3",
+      "cueSource": "active-index",
+      "begin": 214.48,
+      "end": 225.08,
+      "originalDuration": 246.956,
+      "audibleEnd": 233.7,
+      "skippedAudibleSeconds": 8.619999999999976,
+      "unplayedRecordingPercent": 3.6995708154506337,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 5.2019508154506315,
+        "remainingSeconds": 8.619999999999976,
+        "unplayedFraction": 0.036995708154506333,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-273.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalDuration": 249.8,
+      "audibleEnd": 246.4,
+      "skippedAudibleSeconds": 72.62,
+      "unplayedRecordingPercent": 29.77449774497745,
+      "remainingVocalRegions": [
+        [
+          180.1,
+          208
+        ],
+        [
+          210.9,
+          216.6
+        ],
+        [
+          217,
+          223.2
+        ],
+        [
+          226.2,
+          229.4
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        179.78,
+        194.8,
+        209.78,
+        221.8
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 209.78,
+          "end": 221.8,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        174.01,
+        180.26,
+        187.09,
+        189.96,
+        197.59,
+        205.18,
+        214.35
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-296.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalDuration": 277.931,
+      "audibleEnd": 268.9,
+      "skippedAudibleSeconds": 21.879999999999967,
+      "unplayedRecordingPercent": 8.441358024691347,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [
+        257.76
+      ],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-section-change",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-604.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalDuration": 277.931,
+      "audibleEnd": 268.9,
+      "skippedAudibleSeconds": 21.879999999999967,
+      "unplayedRecordingPercent": 8.441358024691347,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [
+        257.76
+      ],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-section-change",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-857.mp3",
+      "cueSource": "active-index",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalDuration": 219.394,
+      "audibleEnd": 211.6,
+      "skippedAudibleSeconds": 0.6999999999999886,
+      "unplayedRecordingPercent": 0.3512293025589507,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-51.mp3",
+      "to": "audio/songs/track-1008.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 82.8,
+      "end": 90.68,
+      "originalDuration": 230.737,
+      "audibleEnd": 228.6,
+      "skippedAudibleSeconds": 137.92,
+      "unplayedRecordingPercent": 60.33245844269466,
+      "remainingVocalRegions": [
+        [
+          91.1,
+          96
+        ],
+        [
+          98.6,
+          150.2
+        ],
+        [
+          152.4,
+          204.3
+        ],
+        [
+          217,
+          219.8
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        98.56,
+        149.76,
+        159.6,
+        167.48,
+        175.36,
+        189.14,
+        202.92
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 90.68,
+          "end": 98.56,
+          "bars": 4
+        },
+        {
+          "start": 159.6,
+          "end": 167.48,
+          "bars": 4
+        },
+        {
+          "start": 159.6,
+          "end": 175.36,
+          "bars": 8
+        },
+        {
+          "start": 167.48,
+          "end": 175.36,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        90.95,
+        98.49,
+        102.85,
+        106.37,
+        110.38,
+        114.92,
+        118.39,
+        122.71,
+        126.15,
+        132.01,
+        136.24,
+        139.96,
+        144.14,
+        167.34,
+        171.39,
+        175.82,
+        179.3,
+        183.72,
+        187.13
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 137.92,
+        "unplayedFraction": 0.6033245844269466,
+        "futureVocalSeconds": 111.20000000000002,
+        "positiveFutureLyrics": 20,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-514.mp3",
+      "to": "audio/songs/track-123.mp3",
+      "cueSource": "active-index",
+      "begin": 219.82,
+      "end": 230.4,
+      "originalDuration": 247.014,
+      "audibleEnd": 233.7,
+      "skippedAudibleSeconds": 3.299999999999983,
+      "unplayedRecordingPercent": 1.4163090128755291,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 1.8687890128755273,
+        "remainingSeconds": 3.299999999999983,
+        "unplayedFraction": 0.01416309012875529,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-514.mp3",
+      "to": "audio/songs/track-638.mp3",
+      "cueSource": "active-index",
+      "begin": 214.52,
+      "end": 225.12,
+      "originalDuration": 247.014,
+      "audibleEnd": 233.7,
+      "skippedAudibleSeconds": 8.579999999999984,
+      "unplayedRecordingPercent": 3.682403433476388,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 5.183383433476386,
+        "remainingSeconds": 8.579999999999984,
+        "unplayedFraction": 0.03682403433476388,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-1070.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 161.6,
+      "end": 169.34,
+      "originalDuration": 302.939,
+      "audibleEnd": 290.2,
+      "skippedAudibleSeconds": 120.85999999999999,
+      "unplayedRecordingPercent": 41.747841105354055,
+      "remainingVocalRegions": [
+        [
+          213.7,
+          214.5
+        ],
+        [
+          216.5,
+          222.6
+        ],
+        [
+          223.2,
+          231.1
+        ],
+        [
+          231.8,
+          237.9
+        ],
+        [
+          238.5,
+          248.7
+        ],
+        [
+          249.4,
+          252.9
+        ],
+        [
+          254,
+          260.4
+        ],
+        [
+          261.7,
+          289.9
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        182.82,
+        196.3,
+        217.34,
+        243.46,
+        251,
+        262.28
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 167.4,
+          "end": 182.82,
+          "bars": 8
+        },
+        {
+          "start": 243.46,
+          "end": 251,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 120.85999999999999,
+        "unplayedFraction": 0.41747841105354055,
+        "futureVocalSeconds": 69.19999999999996,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 6,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-446.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 198.24,
+      "end": 205.88,
+      "originalDuration": 302.939,
+      "audibleEnd": 290.2,
+      "skippedAudibleSeconds": 84.32,
+      "unplayedRecordingPercent": 29.126079447322972,
+      "remainingVocalRegions": [
+        [
+          213.7,
+          214.5
+        ],
+        [
+          216.5,
+          222.6
+        ],
+        [
+          223.2,
+          231.1
+        ],
+        [
+          231.8,
+          237.9
+        ],
+        [
+          238.5,
+          248.7
+        ],
+        [
+          249.4,
+          252.9
+        ],
+        [
+          254,
+          260.4
+        ],
+        [
+          261.7,
+          289.9
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        217.34,
+        243.46,
+        251,
+        262.28
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 243.46,
+          "end": 251,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 84.32,
+        "unplayedFraction": 0.29126079447322967,
+        "futureVocalSeconds": 69.19999999999996,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-640.mp3",
+      "to": "audio/songs/track-1025.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 102.6,
+      "end": 110.46,
+      "originalDuration": 172.176,
+      "audibleEnd": 167.9,
+      "skippedAudibleSeconds": 57.44000000000001,
+      "unplayedRecordingPercent": 34.29253731343284,
+      "remainingVocalRegions": [
+        [
+          141.7,
+          144.4
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 57.44000000000001,
+        "unplayedFraction": 0.3429253731343284,
+        "futureVocalSeconds": 2.700000000000017,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-390.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalDuration": 244.831,
+      "audibleEnd": 237.8,
+      "skippedAudibleSeconds": 199.52,
+      "unplayedRecordingPercent": 84.11467116357504,
+      "remainingVocalRegions": [
+        [
+          49.7,
+          51
+        ],
+        [
+          51.5,
+          53.2
+        ],
+        [
+          54.2,
+          57.3
+        ],
+        [
+          58.5,
+          65.9
+        ],
+        [
+          67,
+          71.2
+        ],
+        [
+          71.6,
+          74.5
+        ],
+        [
+          76,
+          104.5
+        ],
+        [
+          107.2,
+          110.6
+        ],
+        [
+          111.6,
+          114.7
+        ],
+        [
+          115.5,
+          144.3
+        ],
+        [
+          150.8,
+          155.3
+        ],
+        [
+          155.8,
+          158.9
+        ],
+        [
+          159.9,
+          187.2
+        ],
+        [
+          187.6,
+          191.2
+        ],
+        [
+          193,
+          193.2
+        ],
+        [
+          194,
+          195.1
+        ],
+        [
+          196.3,
+          197.2
+        ],
+        [
+          200.3,
+          203.9
+        ],
+        [
+          205.1,
+          205.3
+        ],
+        [
+          208.7,
+          212
+        ],
+        [
+          217.9,
+          220.9
+        ],
+        [
+          226.8,
+          229.4
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        44.9,
+        69.16,
+        82.44,
+        106.78,
+        122.2,
+        150.94,
+        159.74,
+        168.58,
+        192.9,
+        208.36,
+        217.18,
+        230.42
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 150.94,
+          "end": 159.74,
+          "bars": 4
+        },
+        {
+          "start": 150.94,
+          "end": 168.58,
+          "bars": 8
+        },
+        {
+          "start": 159.74,
+          "end": 168.58,
+          "bars": 4
+        },
+        {
+          "start": 208.36,
+          "end": 217.18,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-947.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalDuration": 244.831,
+      "audibleEnd": 237.8,
+      "skippedAudibleSeconds": 192.9,
+      "unplayedRecordingPercent": 81.32377740303541,
+      "remainingVocalRegions": [
+        [
+          49.7,
+          51
+        ],
+        [
+          51.5,
+          53.2
+        ],
+        [
+          54.2,
+          57.3
+        ],
+        [
+          58.5,
+          65.9
+        ],
+        [
+          67,
+          71.2
+        ],
+        [
+          71.6,
+          74.5
+        ],
+        [
+          76,
+          104.5
+        ],
+        [
+          107.2,
+          110.6
+        ],
+        [
+          111.6,
+          114.7
+        ],
+        [
+          115.5,
+          144.3
+        ],
+        [
+          150.8,
+          155.3
+        ],
+        [
+          155.8,
+          158.9
+        ],
+        [
+          159.9,
+          187.2
+        ],
+        [
+          187.6,
+          191.2
+        ],
+        [
+          193,
+          193.2
+        ],
+        [
+          194,
+          195.1
+        ],
+        [
+          196.3,
+          197.2
+        ],
+        [
+          200.3,
+          203.9
+        ],
+        [
+          205.1,
+          205.3
+        ],
+        [
+          208.7,
+          212
+        ],
+        [
+          217.9,
+          220.9
+        ],
+        [
+          226.8,
+          229.4
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        69.16,
+        82.44,
+        106.78,
+        122.2,
+        150.94,
+        159.74,
+        168.58,
+        192.9,
+        208.36,
+        217.18,
+        230.42
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 150.94,
+          "end": 159.74,
+          "bars": 4
+        },
+        {
+          "start": 150.94,
+          "end": 168.58,
+          "bars": 8
+        },
+        {
+          "start": 159.74,
+          "end": 168.58,
+          "bars": 4
+        },
+        {
+          "start": 208.36,
+          "end": 217.18,
+          "bars": 4
+        }
+      ],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-69.mp3",
+      "to": "audio/songs/track-174.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 361.72,
+      "end": 376.12,
+      "originalDuration": 518.347,
+      "audibleEnd": 509.5,
+      "skippedAudibleSeconds": 133.38,
+      "unplayedRecordingPercent": 26.209471408921203,
+      "remainingVocalRegions": [
+        [
+          379.7,
+          381.1
+        ],
+        [
+          381.5,
+          382.1
+        ],
+        [
+          382.5,
+          383.1
+        ],
+        [
+          383.5,
+          390.3
+        ],
+        [
+          390.7,
+          397.9
+        ],
+        [
+          405.9,
+          406.1
+        ],
+        [
+          412.1,
+          413.1
+        ],
+        [
+          415.5,
+          446.5
+        ],
+        [
+          447,
+          447.2
+        ],
+        [
+          448.3,
+          455.1
+        ],
+        [
+          457.2,
+          465.3
+        ],
+        [
+          465.8,
+          471.4
+        ],
+        [
+          472.7,
+          473.1
+        ],
+        [
+          480.6,
+          484.6
+        ],
+        [
+          486.4,
+          496.3
+        ],
+        [
+          499,
+          499.8
+        ],
+        [
+          501.7,
+          505
+        ],
+        [
+          505.8,
+          512.5
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 133.38,
+        "unplayedFraction": 0.26209471408921203,
+        "futureVocalSeconds": 91.6000000000002,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-1001.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-536.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-562.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-765.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-1001.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-536.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-562.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-765.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalDuration": 207.935,
+      "audibleEnd": 202.8,
+      "skippedAudibleSeconds": 9.52000000000001,
+      "unplayedRecordingPercent": 4.694280078895468,
+      "remainingVocalRegions": [
+        [
+          201.8,
+          202.2
+        ]
+      ],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "future-vocal-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-745.mp3",
+      "to": "audio/songs/track-716.mp3",
+      "cueSource": "active-index",
+      "begin": 228.06,
+      "end": 238.24,
+      "originalDuration": 246.77,
+      "audibleEnd": 244.9,
+      "skippedAudibleSeconds": 6.659999999999997,
+      "unplayedRecordingPercent": 2.719477337688851,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 3.385477337688851,
+        "remainingSeconds": 6.659999999999997,
+        "unplayedFraction": 0.027194773376888512,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-745.mp3",
+      "to": "audio/songs/track-721.mp3",
+      "cueSource": "active-index",
+      "begin": 228.06,
+      "end": 238.24,
+      "originalDuration": 246.77,
+      "audibleEnd": 244.9,
+      "skippedAudibleSeconds": 6.659999999999997,
+      "unplayedRecordingPercent": 2.719477337688851,
+      "remainingVocalRegions": [],
+      "remainingSectionHypotheses": [],
+      "remainingPhraseHypotheses": [],
+      "positiveFutureLyricTimes": [],
+      "musicalReason": "bounded-final-instrumental-group",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 3.385477337688851,
+        "remainingSeconds": 6.659999999999997,
+        "unplayedFraction": 0.027194773376888512,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-1056.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalDuration": 277.722,
+      "audibleEnd": 269.6,
+      "skippedAudibleSeconds": 231.8,
+      "unplayedRecordingPercent": 89.60185543100114,
+      "remainingVocalRegions": [
+        [
+          38,
+          42.6
+        ],
+        [
+          43.4,
+          48.3
+        ],
+        [
+          48.7,
+          55.5
+        ],
+        [
+          60,
+          70.4
+        ],
+        [
+          70.8,
+          77.4
+        ],
+        [
+          81.5,
+          85.9
+        ],
+        [
+          87,
+          91.3
+        ],
+        [
+          92.9,
+          99.9
+        ],
+        [
+          101.1,
+          102.8
+        ],
+        [
+          103.4,
+          123.3
+        ],
+        [
+          123.9,
+          124.2
+        ],
+        [
+          130.5,
+          147.7
+        ],
+        [
+          151.8,
+          156.3
+        ],
+        [
+          157.1,
+          161.7
+        ],
+        [
+          162.9,
+          171.4
+        ],
+        [
+          172.5,
+          173.2
+        ],
+        [
+          173.8,
+          193.8
+        ],
+        [
+          194.7,
+          195.2
+        ],
+        [
+          195.9,
+          210.4
+        ],
+        [
+          210.8,
+          215.1
+        ],
+        [
+          216.8,
+          217
+        ],
+        [
+          218,
+          240.9
+        ],
+        [
+          241.7,
+          242.1
+        ],
+        [
+          249.8,
+          250.6
+        ],
+        [
+          256.4,
+          257.3
+        ],
+        [
+          261.7,
+          269.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        62.64,
+        81.94,
+        98.54,
+        115.08,
+        168.96,
+        193.76,
+        240.68
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 37.8,
+          "end": 81.94,
+          "bars": 16
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        44.62,
+        50.46,
+        55.72,
+        66.16,
+        71.92,
+        77.83,
+        88.35,
+        92.5,
+        97.85,
+        103.1,
+        115.52,
+        120.9,
+        125.84,
+        136.75,
+        142.24,
+        147.75,
+        158.61,
+        162.8,
+        167.39,
+        172.74,
+        180.36,
+        183.68,
+        190.12,
+        195.54,
+        202.81,
+        206.97,
+        212.5,
+        217.92
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-1095.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalDuration": 277.722,
+      "audibleEnd": 269.6,
+      "skippedAudibleSeconds": 231.8,
+      "unplayedRecordingPercent": 89.60185543100114,
+      "remainingVocalRegions": [
+        [
+          38,
+          42.6
+        ],
+        [
+          43.4,
+          48.3
+        ],
+        [
+          48.7,
+          55.5
+        ],
+        [
+          60,
+          70.4
+        ],
+        [
+          70.8,
+          77.4
+        ],
+        [
+          81.5,
+          85.9
+        ],
+        [
+          87,
+          91.3
+        ],
+        [
+          92.9,
+          99.9
+        ],
+        [
+          101.1,
+          102.8
+        ],
+        [
+          103.4,
+          123.3
+        ],
+        [
+          123.9,
+          124.2
+        ],
+        [
+          130.5,
+          147.7
+        ],
+        [
+          151.8,
+          156.3
+        ],
+        [
+          157.1,
+          161.7
+        ],
+        [
+          162.9,
+          171.4
+        ],
+        [
+          172.5,
+          173.2
+        ],
+        [
+          173.8,
+          193.8
+        ],
+        [
+          194.7,
+          195.2
+        ],
+        [
+          195.9,
+          210.4
+        ],
+        [
+          210.8,
+          215.1
+        ],
+        [
+          216.8,
+          217
+        ],
+        [
+          218,
+          240.9
+        ],
+        [
+          241.7,
+          242.1
+        ],
+        [
+          249.8,
+          250.6
+        ],
+        [
+          256.4,
+          257.3
+        ],
+        [
+          261.7,
+          269.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        62.64,
+        81.94,
+        98.54,
+        115.08,
+        168.96,
+        193.76,
+        240.68
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 37.8,
+          "end": 81.94,
+          "bars": 16
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        44.62,
+        50.46,
+        55.72,
+        66.16,
+        71.92,
+        77.83,
+        88.35,
+        92.5,
+        97.85,
+        103.1,
+        115.52,
+        120.9,
+        125.84,
+        136.75,
+        142.24,
+        147.75,
+        158.61,
+        162.8,
+        167.39,
+        172.74,
+        180.36,
+        183.68,
+        190.12,
+        195.54,
+        202.81,
+        206.97,
+        212.5,
+        217.92
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-232.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalDuration": 277.722,
+      "audibleEnd": 269.6,
+      "skippedAudibleSeconds": 231.8,
+      "unplayedRecordingPercent": 89.60185543100114,
+      "remainingVocalRegions": [
+        [
+          38,
+          42.6
+        ],
+        [
+          43.4,
+          48.3
+        ],
+        [
+          48.7,
+          55.5
+        ],
+        [
+          60,
+          70.4
+        ],
+        [
+          70.8,
+          77.4
+        ],
+        [
+          81.5,
+          85.9
+        ],
+        [
+          87,
+          91.3
+        ],
+        [
+          92.9,
+          99.9
+        ],
+        [
+          101.1,
+          102.8
+        ],
+        [
+          103.4,
+          123.3
+        ],
+        [
+          123.9,
+          124.2
+        ],
+        [
+          130.5,
+          147.7
+        ],
+        [
+          151.8,
+          156.3
+        ],
+        [
+          157.1,
+          161.7
+        ],
+        [
+          162.9,
+          171.4
+        ],
+        [
+          172.5,
+          173.2
+        ],
+        [
+          173.8,
+          193.8
+        ],
+        [
+          194.7,
+          195.2
+        ],
+        [
+          195.9,
+          210.4
+        ],
+        [
+          210.8,
+          215.1
+        ],
+        [
+          216.8,
+          217
+        ],
+        [
+          218,
+          240.9
+        ],
+        [
+          241.7,
+          242.1
+        ],
+        [
+          249.8,
+          250.6
+        ],
+        [
+          256.4,
+          257.3
+        ],
+        [
+          261.7,
+          269.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        62.64,
+        81.94,
+        98.54,
+        115.08,
+        168.96,
+        193.76,
+        240.68
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 37.8,
+          "end": 81.94,
+          "bars": 16
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        44.62,
+        50.46,
+        55.72,
+        66.16,
+        71.92,
+        77.83,
+        88.35,
+        92.5,
+        97.85,
+        103.1,
+        115.52,
+        120.9,
+        125.84,
+        136.75,
+        142.24,
+        147.75,
+        158.61,
+        162.8,
+        167.39,
+        172.74,
+        180.36,
+        183.68,
+        190.12,
+        195.54,
+        202.81,
+        206.97,
+        212.5,
+        217.92
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-246.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalDuration": 277.722,
+      "audibleEnd": 269.6,
+      "skippedAudibleSeconds": 231.8,
+      "unplayedRecordingPercent": 89.60185543100114,
+      "remainingVocalRegions": [
+        [
+          38,
+          42.6
+        ],
+        [
+          43.4,
+          48.3
+        ],
+        [
+          48.7,
+          55.5
+        ],
+        [
+          60,
+          70.4
+        ],
+        [
+          70.8,
+          77.4
+        ],
+        [
+          81.5,
+          85.9
+        ],
+        [
+          87,
+          91.3
+        ],
+        [
+          92.9,
+          99.9
+        ],
+        [
+          101.1,
+          102.8
+        ],
+        [
+          103.4,
+          123.3
+        ],
+        [
+          123.9,
+          124.2
+        ],
+        [
+          130.5,
+          147.7
+        ],
+        [
+          151.8,
+          156.3
+        ],
+        [
+          157.1,
+          161.7
+        ],
+        [
+          162.9,
+          171.4
+        ],
+        [
+          172.5,
+          173.2
+        ],
+        [
+          173.8,
+          193.8
+        ],
+        [
+          194.7,
+          195.2
+        ],
+        [
+          195.9,
+          210.4
+        ],
+        [
+          210.8,
+          215.1
+        ],
+        [
+          216.8,
+          217
+        ],
+        [
+          218,
+          240.9
+        ],
+        [
+          241.7,
+          242.1
+        ],
+        [
+          249.8,
+          250.6
+        ],
+        [
+          256.4,
+          257.3
+        ],
+        [
+          261.7,
+          269.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        62.64,
+        81.94,
+        98.54,
+        115.08,
+        168.96,
+        193.76,
+        240.68
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 37.8,
+          "end": 81.94,
+          "bars": 16
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        44.62,
+        50.46,
+        55.72,
+        66.16,
+        71.92,
+        77.83,
+        88.35,
+        92.5,
+        97.85,
+        103.1,
+        115.52,
+        120.9,
+        125.84,
+        136.75,
+        142.24,
+        147.75,
+        158.61,
+        162.8,
+        167.39,
+        172.74,
+        180.36,
+        183.68,
+        190.12,
+        195.54,
+        202.81,
+        206.97,
+        212.5,
+        217.92
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-638.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalDuration": 277.722,
+      "audibleEnd": 269.6,
+      "skippedAudibleSeconds": 231.8,
+      "unplayedRecordingPercent": 89.60185543100114,
+      "remainingVocalRegions": [
+        [
+          38,
+          42.6
+        ],
+        [
+          43.4,
+          48.3
+        ],
+        [
+          48.7,
+          55.5
+        ],
+        [
+          60,
+          70.4
+        ],
+        [
+          70.8,
+          77.4
+        ],
+        [
+          81.5,
+          85.9
+        ],
+        [
+          87,
+          91.3
+        ],
+        [
+          92.9,
+          99.9
+        ],
+        [
+          101.1,
+          102.8
+        ],
+        [
+          103.4,
+          123.3
+        ],
+        [
+          123.9,
+          124.2
+        ],
+        [
+          130.5,
+          147.7
+        ],
+        [
+          151.8,
+          156.3
+        ],
+        [
+          157.1,
+          161.7
+        ],
+        [
+          162.9,
+          171.4
+        ],
+        [
+          172.5,
+          173.2
+        ],
+        [
+          173.8,
+          193.8
+        ],
+        [
+          194.7,
+          195.2
+        ],
+        [
+          195.9,
+          210.4
+        ],
+        [
+          210.8,
+          215.1
+        ],
+        [
+          216.8,
+          217
+        ],
+        [
+          218,
+          240.9
+        ],
+        [
+          241.7,
+          242.1
+        ],
+        [
+          249.8,
+          250.6
+        ],
+        [
+          256.4,
+          257.3
+        ],
+        [
+          261.7,
+          269.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        62.64,
+        81.94,
+        98.54,
+        115.08,
+        168.96,
+        193.76,
+        240.68
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 37.8,
+          "end": 81.94,
+          "bars": 16
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        44.62,
+        50.46,
+        55.72,
+        66.16,
+        71.92,
+        77.83,
+        88.35,
+        92.5,
+        97.85,
+        103.1,
+        115.52,
+        120.9,
+        125.84,
+        136.75,
+        142.24,
+        147.75,
+        158.61,
+        162.8,
+        167.39,
+        172.74,
+        180.36,
+        183.68,
+        190.12,
+        195.54,
+        202.81,
+        206.97,
+        212.5,
+        217.92
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-850.mp3",
+      "cueSource": "sha-bound-archived-index",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalDuration": 277.722,
+      "audibleEnd": 269.6,
+      "skippedAudibleSeconds": 231.8,
+      "unplayedRecordingPercent": 89.60185543100114,
+      "remainingVocalRegions": [
+        [
+          38,
+          42.6
+        ],
+        [
+          43.4,
+          48.3
+        ],
+        [
+          48.7,
+          55.5
+        ],
+        [
+          60,
+          70.4
+        ],
+        [
+          70.8,
+          77.4
+        ],
+        [
+          81.5,
+          85.9
+        ],
+        [
+          87,
+          91.3
+        ],
+        [
+          92.9,
+          99.9
+        ],
+        [
+          101.1,
+          102.8
+        ],
+        [
+          103.4,
+          123.3
+        ],
+        [
+          123.9,
+          124.2
+        ],
+        [
+          130.5,
+          147.7
+        ],
+        [
+          151.8,
+          156.3
+        ],
+        [
+          157.1,
+          161.7
+        ],
+        [
+          162.9,
+          171.4
+        ],
+        [
+          172.5,
+          173.2
+        ],
+        [
+          173.8,
+          193.8
+        ],
+        [
+          194.7,
+          195.2
+        ],
+        [
+          195.9,
+          210.4
+        ],
+        [
+          210.8,
+          215.1
+        ],
+        [
+          216.8,
+          217
+        ],
+        [
+          218,
+          240.9
+        ],
+        [
+          241.7,
+          242.1
+        ],
+        [
+          249.8,
+          250.6
+        ],
+        [
+          256.4,
+          257.3
+        ],
+        [
+          261.7,
+          269.7
+        ]
+      ],
+      "remainingSectionHypotheses": [
+        62.64,
+        81.94,
+        98.54,
+        115.08,
+        168.96,
+        193.76,
+        240.68
+      ],
+      "remainingPhraseHypotheses": [
+        {
+          "start": 37.8,
+          "end": 81.94,
+          "bars": 16
+        }
+      ],
+      "positiveFutureLyricTimes": [
+        44.62,
+        50.46,
+        55.72,
+        66.16,
+        71.92,
+        77.83,
+        88.35,
+        92.5,
+        97.85,
+        103.1,
+        115.52,
+        120.9,
+        125.84,
+        136.75,
+        142.24,
+        147.75,
+        158.61,
+        162.8,
+        167.39,
+        172.74,
+        180.36,
+        183.68,
+        190.12,
+        195.54,
+        202.81,
+        206.97,
+        212.5,
+        217.92
+      ],
+      "musicalReason": "future-lyric-content",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      },
+      "confidence": "SHA-bound original PCM energy and model vocal/novelty evidence; semantic roles and human listening unverified",
+      "chorusSoloBuildDropLabels": "UNKNOWN: no certified semantic classifier"
+    }
+  ]
+}

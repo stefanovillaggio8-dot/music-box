@@ -1,0 +1,19 @@
+{
+  "checkpoint": "7ddd25219a895b677797750d9d11b4c6daa800e0",
+  "codeCommit": "e7e9c4c07f1487df1125d026c2d6b29a928e2068",
+  "files": {
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+    "mix-intelligente.js": "a33a9630da8d225e914a6b71d8cd81794a5b609944568b3613cb3e53d93cf85c",
+    "audio-lyrics-align.js": "a09077ec61444718b3e82a0bf964dae2f955ab892f38ecbea4701176e41d73ab",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "offline-storage-audit.js": "7523c9ee90e1b3e51577df54e2eea47723d7608e2cbadffc97ea53cd1d23eabe",
+    "audio-composite-core.mjs": "fb1f5db48aedc8d81566809a241b14d0fea8c20b4d1cacdb393039397487e84e",
+    "audio-composite-mix.js": "103da39757cbad5493e247e3b8bca7d2bbfdea08671a2941f02061a782c95009",
+    "dj-deep-analysis.json": "87f02bd0437c32407fe46e5eeea90af3bad3356da72436b06155fbcda0263c4a",
+    "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "sw.js": "1e7c885a77666e66b954918d7920edb040195ec988696b4931951dd5e076c564"
+  },
+  "physicalIPhoneTested": false,
+  "publicDeployment": false
+}
