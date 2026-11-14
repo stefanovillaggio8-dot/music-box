@@ -27,13 +27,21 @@ if(!partial&&features.size!==tracks.length)throw Error('Incomplete structure cov
 const tool=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
 const {engine}=new Function('require','__dirname',tool.slice(0,tool.indexOf('// Independent PCM spotchecks'))+'return {engine};')(require,path.join(root,'tools'));
 const guardedTracks=tracks.map(([key,e])=>[key,engine.withGuardedLRC(e)]);
+const appSource=fs.readFileSync(path.join(root,'app.js'),'utf8'),catalogStart=appSource.indexOf('const BUILTIN = ['),catalogEnd=appSource.indexOf('];',catalogStart);
+const catalog=require('node:vm').runInNewContext(appSource.slice(catalogStart,catalogEnd+2)+';BUILTIN');
+const owners=new Map();for(const t of catalog){if(!owners.has(t.file))owners.set(t.file,new Set());owners.get(t.file).add(t.profile||'Ste');}
+const owner=key=>owners.get(key.split('/').slice(1).join('/').replace('/bassi/','/'))||new Set();
 const report={version:1,completeCoverage:!partial,features:features.size,tracks:tracks.length,
  possibleOrderedPairs:tracks.length*(tracks.length-1),consideredPairs:0,sameRecording:0,
  missingWholeRecording:0,noExitWindow:0,positiveLyricVeto:0,contentProtectionVeto:0,noEntryWindow:0,meterOrTempo:0,
  vocalConflict:0,harmony:0,eligiblePairs:0,eligiblePairKeys:[],insufficientObservedBeatFit:0,fullBeatCandidates:0,
  renderingNotYetVerified:0,windowsEvaluated:0,metricalRhythmicCandidates:0,plans:[],
  eligibility:'SHA-bound whole-file evidence, structural exit with separated-vocal quiet tail, same meter and bar count, tempo within 5%, no simultaneous separated vocal activity, local PCM harmonic gate; independent actual attack fit and rendering follow.',
- modelAccuracyIsNotHumanGroundTruth:true};
+ modelAccuracyIsNotHumanGroundTruth:true,profileFunnel:{Ste:{},Diego:{},Emanuele:{}}};
+function count(name,from,to){
+ report[name]=(report[name]||0)+1;
+ const targets=owner(to);for(const profile of owner(from))if(targets.has(profile))report.profileFunnel[profile][name]=(report.profileFunnel[profile][name]||0)+1;
+}
 function voiced(w,t){
  const i=Math.round((t-w.vocalStart)/.1),v=w.vocalRms?.[i],m=w.mixRms?.[i];
  return !Number.isFinite(v)||!Number.isFinite(m)||v>=.004||v/Math.max(m,.003)>=.08;
@@ -81,17 +89,17 @@ function metricalFit(aa,bb,x,y,rate){
 }
 for(const [from,a] of guardedTracks){
  for(const [to,b] of guardedTracks){
-  if(from===to)continue;report.consideredPairs++;
-  if(a.sha===b.sha||from.replace('/bassi/','/')===to.replace('/bassi/','/')){report.sameRecording++;continue;}
+  if(from===to)continue;count('consideredPairs',from,to);
+  if(a.sha===b.sha||from.replace('/bassi/','/')===to.replace('/bassi/','/')){count('sameRecording',from,to);continue;}
   const aa=features.get(from),bb=features.get(to);
-  if(!aa||!bb){report.missingWholeRecording++;continue;}
+  if(!aa||!bb){count('missingWholeRecording',from,to);continue;}
   const allExits=aa.windows.filter(w=>w.role==='exit'),entries=bb.windows.filter(w=>w.role==='entry');
   const localSafe=allExits.filter(w=>![a.lastVoiceAt,a.lastLyricAt,...(a.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=w.end-1.2&&t<w.end));
-  if(allExits.length&&!localSafe.length){report.positiveLyricVeto++;continue;}
+  if(allExits.length&&!localSafe.length){count('positiveLyricVeto',from,to);continue;}
   const exits=localSafe.filter(w=>engine.structuralContentDecision(a,{end:w.end}).allowed);
-  if(localSafe.length&&!exits.length){report.contentProtectionVeto++;continue;}
-  if(!exits.length){report.noExitWindow++;continue;}
-  if(!entries.length){report.noEntryWindow++;continue;}
+  if(localSafe.length&&!exits.length){count('contentProtectionVeto',from,to);continue;}
+  if(!exits.length){count('noExitWindow',from,to);continue;}
+  if(!entries.length){count('noEntryWindow',from,to);continue;}
   let metrical=false,vocal=false,harmonic=false,winner=null;const alternatives=[];
   for(const x of exits)for(const y of entries){
    report.windowsEvaluated++;
@@ -123,7 +131,7 @@ for(const [from,a] of guardedTracks){
     percussiveIntro:!!harmony.percussiveIntro,harmonicMode:harmony.compatibleKey?'compatible-key':harmony.percussiveIntro?'percussion':'local-chords',
     harmonicEvidence:harmony,introPcmVersion:3,outroPcmVersion:3,
     harmonicScore:harmony.average,harmonicWeakest:harmony.weakest,
-    score:fit.score,structuralEvidence:{version:1,fromWindow:x.id,toWindow:y.id,
+    score:fit.score,contentPenalty:engine.structuralContentDecision(a,{end:x.end}).penalty,structuralEvidence:{version:1,fromWindow:x.id,toWindow:y.id,
      pulseCheck:{source:x.beats.map(t=>t-x.start),target:y.beats.map(t=>t-y.start),sourceBars:x.downbeats.slice(0,-1).map(t=>t-x.start),targetBars:y.downbeats.slice(0,-1).map(t=>(t-y.start)/rate)},
      bars:x.bars,beatsPerBar:x.beatsPerBar,sourceBoundary:x.sectionAnchor,targetBoundary:y.sectionAnchor,
      metricalCertificate:fit.metricalCertificate||null,
@@ -133,23 +141,24 @@ for(const [from,a] of guardedTracks){
      outgoingVoiceDuringEntry:[0,.1,.2].some(t=>voiced(x,x.start+t)),incomingLeadVocalGuard:y.incomingLeadVocalGuard,
      sourcePhrase:x.phrase,targetPhrase:y.phrase,semanticLabelsVerified:false,humanVerified:false}};
    alternatives.push(cue);
-   if(!winner||cue.measuredFullBeat&&!winner.measuredFullBeat||cue.measuredFullBeat===winner.measuredFullBeat&&
-     (cue.nativeRatePreferred&&!winner.nativeRatePreferred||cue.nativeRatePreferred===winner.nativeRatePreferred&&cue.score>winner.score))winner=cue;
+   if(!winner||cue.contentPenalty<winner.contentPenalty-.001||Math.abs(cue.contentPenalty-winner.contentPenalty)<.001&&
+     (cue.measuredFullBeat&&!winner.measuredFullBeat||cue.measuredFullBeat===winner.measuredFullBeat&&
+     (cue.nativeRatePreferred&&!winner.nativeRatePreferred||cue.nativeRatePreferred===winner.nativeRatePreferred&&cue.score>winner.score)))winner=cue;
    }
   }
-  if(!metrical){report.meterOrTempo++;continue;}
-  if(!vocal){report.vocalConflict++;continue;}
-  if(!harmonic){report.harmony++;continue;}
-  report.eligiblePairs++;
+  if(!metrical){count('meterOrTempo',from,to);continue;}
+  if(!vocal){count('vocalConflict',from,to);continue;}
+  if(!harmonic){count('harmony',from,to);continue;}
+  count('eligiblePairs',from,to);
   report.eligiblePairKeys.push({from,to});
-  if(!winner){report.insufficientObservedBeatFit++;continue;}
+  if(!winner){count('insufficientObservedBeatFit',from,to);continue;}
   const selected=[winner];
-  for(const cue of alternatives.sort((a,b)=>Number(b.measuredFullBeat)-Number(a.measuredFullBeat)||Number(b.nativeRatePreferred)-Number(a.nativeRatePreferred)||b.score-a.score)){
+  for(const cue of alternatives.sort((a,b)=>a.contentPenalty-b.contentPenalty||Number(b.measuredFullBeat)-Number(a.measuredFullBeat)||Number(b.nativeRatePreferred)-Number(a.nativeRatePreferred)||b.score-a.score)){
    if(selected.length>=6)break;
    if(selected.every(p=>Math.abs(p.end-cue.end)>=2||Math.abs(p.entry-cue.entry)>=2||Math.abs(p.tempo-cue.tempo)>.0001))selected.push(cue);
   }
   selected.forEach((cue,i)=>report.plans.push({from,to,primary:i===0,cue}));
-  if(winner.measuredFullBeat)report.fullBeatCandidates++;else report.metricalRhythmicCandidates++;
+  count(winner.measuredFullBeat?'fullBeatCandidates':'metricalRhythmicCandidates',from,to);
  }
 }
 report.renderingNotYetVerified=report.plans.length;

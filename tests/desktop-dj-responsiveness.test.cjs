@@ -89,7 +89,7 @@ test("current release prioritizes final-impact before postlude",()=>{
  assert.ok(sw.includes('spotifynonavraiimieisoldi-v'+revision));
  assert.ok(dj.includes('certifiedImpact||(chosen&&chosen.kind!=="cut"?chosen:null)'),
   "plan must prefer final beat over the quiet postlude");
- assert.ok(dj.includes('const choicePool=scored.length?scored:impactScored.length?impactScored:'),
+ assert.ok(dj.includes('const choicePool=scored.length?scored:partialScored.length?partialScored:impactScored.length?impactScored:'),
   "auto selector must prefer the final-beat successor");
  assert.ok(dj.includes("plan.measuredFinalImpact===true"),
   "measured beat must use the precision timer");

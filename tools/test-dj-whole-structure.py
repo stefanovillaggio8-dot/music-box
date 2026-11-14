@@ -16,12 +16,15 @@ class EvidenceTests(unittest.TestCase):
 
     def test_early_exit_requires_real_boundary_and_clear_vocal_tail(self):
         b=bars();voice=np.zeros(1300);mix=np.ones(1300)*.1
-        self.assertEqual(core.candidate_windows(b,[],[],voice,mix,128),[])
-        boundary=[dict(barIndex=32,t=64.,novelty=.5)]
+        ending=core.candidate_windows(b,[],[],voice,mix,128)
+        self.assertTrue(ending)
+        self.assertTrue(all(w['windowMethod']=='concluding-observed-bars' and w['end']>=102.4 and w['role']=='exit' for w in ending))
+        self.assertTrue(all(w['phraseVerified'] is False and w['semanticLabel'] is None for w in ending))
+        boundary=[dict(barIndex=56,t=112.,novelty=.5)]
         windows=core.candidate_windows(b,boundary,[],voice,mix,128)
-        self.assertTrue(any(w['role']=='exit' and w['end']<=66 for w in windows))
-        voice[600:680]=.1
-        self.assertFalse(any(w['role']=='exit' and w['end']<=66 for w in core.candidate_windows(b,boundary,[],voice,mix,128)))
+        self.assertTrue(any(w['role']=='exit' and w['end']<=114 for w in windows))
+        voice[1100:1160]=.1
+        self.assertFalse(any(w['role']=='exit' and w['end']<=114 for w in core.candidate_windows(b,boundary,[],voice,mix,128)))
 
     def test_gaps_or_meter_change_cannot_form_phrase_window(self):
         b=bars();b[30]['beatsPerBar']=3
@@ -51,5 +54,10 @@ class EvidenceTests(unittest.TestCase):
     def test_uniform_audio_does_not_invent_section_or_chorus(self):
         b=bars();t=np.arange(0,128,.1);x=np.ones((12,len(t)))
         self.assertEqual(core.summarize_structure(b,x,x,np.ones(len(t)),np.ones(len(t)),t),([],[]))
+
+    def test_a_concluding_bar_group_cannot_skip_a_later_vocal(self):
+        voice=np.zeros(1300);voice[1190:1270]=.02
+        windows=core.candidate_windows(bars(),[],[],voice,np.ones(1300)*.1,128)
+        self.assertFalse(any(w['role']=='exit' for w in windows))
 
 if __name__=='__main__':unittest.main()

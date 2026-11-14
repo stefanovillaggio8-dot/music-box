@@ -1,0 +1,1938 @@
+{
+  "historicalWindows": 107,
+  "reasons": {
+    "future-vocal-content": 42,
+    "future-lyric-content": 18,
+    "bounded-final-instrumental-group": 11,
+    "too-much-unverified-musical-content": 21,
+    "future-section-change": 15
+  },
+  "rows": [
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/track-18.mp3",
+      "begin": 66.6,
+      "end": 73.08,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 168.32,
+        "unplayedFraction": 0.6972659486329743,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 10,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/track-952.mp3",
+      "begin": 71.44,
+      "end": 77.92,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 163.48000000000002,
+        "unplayedFraction": 0.6772162386081194,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 9,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/bassi/track-61.mp3",
+      "begin": 71.44,
+      "end": 77.92,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 163.48000000000002,
+        "unplayedFraction": 0.6772162386081194,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 9,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1188.mp3",
+      "to": "audio/songs/track-415.mp3",
+      "begin": 71.44,
+      "end": 77.92,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 163.48000000000002,
+        "unplayedFraction": 0.6772162386081194,
+        "futureVocalSeconds": 91.50000000000001,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 9,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-1000.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-1000.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-1000.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-1000.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-688.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-656.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-649.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-509.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-705.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-705.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-152.mp3",
+      "to": "audio/songs/track-705.mp3",
+      "begin": 161.8,
+      "end": 173.78,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 72.62,
+        "unplayedFraction": 0.2977449774497745,
+        "futureVocalSeconds": 43,
+        "positiveFutureLyrics": 8,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1069.mp3",
+      "to": "audio/songs/track-707.mp3",
+      "begin": 154.74,
+      "end": 167.38,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 7.244072134831464,
+        "remainingSeconds": 10.620000000000005,
+        "unplayedFraction": 0.059662921348314635,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-181.mp3",
+      "to": "audio/songs/track-663.mp3",
+      "begin": 154.22,
+      "end": 162.2,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 40.20000000000002,
+        "unplayedFraction": 0.20292781423523482,
+        "futureVocalSeconds": 34.19999999999999,
+        "positiveFutureLyrics": 10,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-181.mp3",
+      "to": "audio/songs/track-663.mp3",
+      "begin": 154.22,
+      "end": 162.2,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 40.20000000000002,
+        "unplayedFraction": 0.20292781423523482,
+        "futureVocalSeconds": 34.19999999999999,
+        "positiveFutureLyrics": 10,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-984.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-146.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-625.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-173.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-173.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-173.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-173.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-173.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-246.mp3",
+      "to": "audio/songs/track-173.mp3",
+      "begin": 199.6,
+      "end": 210.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 0.4584293025589494,
+        "remainingSeconds": 0.6999999999999886,
+        "unplayedFraction": 0.0035122930255895067,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-166.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-166.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-941.mp3",
+      "begin": 198.24,
+      "end": 205.88,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 84.32,
+        "unplayedFraction": 0.29126079447322967,
+        "futureVocalSeconds": 69.19999999999996,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 4,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-550.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-550.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-1160.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-1160.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-432.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-432.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-59.mp3",
+      "to": "audio/songs/track-825.mp3",
+      "begin": 80.78,
+      "end": 88.5,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 201.7,
+        "unplayedFraction": 0.6967184801381692,
+        "futureVocalSeconds": 121.59999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 14,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-686.mp3",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-523.mp3",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-523.mp3",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-523.mp3",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-523.mp3",
+      "begin": 38.28,
+      "end": 47.1,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 190.70000000000002,
+        "unplayedFraction": 0.8039629005059022,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-884.mp3",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-884.mp3",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-1112.mp3",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-1112.mp3",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-1123.mp3",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-1145.mp3",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-1145.mp3",
+      "begin": 36.06,
+      "end": 44.9,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 192.9,
+        "unplayedFraction": 0.8132377740303541,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 11,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-644.mp3",
+      "to": "audio/songs/track-1145.mp3",
+      "begin": 29.46,
+      "end": 38.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 199.52,
+        "unplayedFraction": 0.8411467116357504,
+        "futureVocalSeconds": 137.79999999999995,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 12,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-166.mp3",
+      "begin": 253.44,
+      "end": 261.24,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 23.860000000000014,
+        "unplayedFraction": 0.08410292562566095,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-166.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-166.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1185.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1185.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-920.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-920.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-920.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-920.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-300.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-300.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-300.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1016.mp3",
+      "begin": 253.44,
+      "end": 261.24,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 23.860000000000014,
+        "unplayedFraction": 0.08410292562566095,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-550.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-550.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-550.mp3",
+      "begin": 253.44,
+      "end": 261.24,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 23.860000000000014,
+        "unplayedFraction": 0.08410292562566095,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1160.mp3",
+      "begin": 245.64,
+      "end": 253.44,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 31.660000000000025,
+        "unplayedFraction": 0.11159675713782172,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1160.mp3",
+      "begin": 261.24,
+      "end": 269.06,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 16.04000000000002,
+        "unplayedFraction": 0.056538597109622904,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-1160.mp3",
+      "begin": 253.44,
+      "end": 261.24,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 23.860000000000014,
+        "unplayedFraction": 0.08410292562566095,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-432.mp3",
+      "begin": 253.44,
+      "end": 261.24,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 23.860000000000014,
+        "unplayedFraction": 0.08410292562566095,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-1025.mp3",
+      "to": "audio/songs/track-825.mp3",
+      "begin": 253.44,
+      "end": 261.24,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "too-much-unverified-musical-content",
+        "penalty": null,
+        "remainingSeconds": 23.860000000000014,
+        "unplayedFraction": 0.08410292562566095,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-1090.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-1111.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-671.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-721.mp3",
+      "to": "audio/songs/track-671.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/bassi/track-59.mp3",
+      "to": "audio/songs/track-1002.mp3",
+      "begin": 175.14,
+      "end": 182.82,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 107.28000000000003,
+        "unplayedFraction": 0.37069799585349006,
+        "futureVocalSeconds": 76.00000000000009,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 6,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/bassi/track-59.mp3",
+      "to": "audio/songs/track-941.mp3",
+      "begin": 205.9,
+      "end": 213.54,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 76.56000000000003,
+        "unplayedFraction": 0.2645473393227368,
+        "futureVocalSeconds": 74.80000000000004,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 5,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/bassi/track-59.mp3",
+      "to": "audio/songs/track-432.mp3",
+      "begin": 205.9,
+      "end": 213.54,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 76.56000000000003,
+        "unplayedFraction": 0.2645473393227368,
+        "futureVocalSeconds": 74.80000000000004,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 5,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/bassi/track-59.mp3",
+      "to": "audio/songs/track-1129.mp3",
+      "begin": 175.14,
+      "end": 182.82,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 107.28000000000003,
+        "unplayedFraction": 0.37069799585349006,
+        "futureVocalSeconds": 76.00000000000009,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 6,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-891.mp3",
+      "to": "audio/songs/track-1188.mp3",
+      "begin": 122.32,
+      "end": 128.72,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 58.379999999999995,
+        "unplayedFraction": 0.31202565473009086,
+        "futureVocalSeconds": 48.900000000000006,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 2,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-891.mp3",
+      "to": "audio/songs/track-559.mp3",
+      "begin": 122.32,
+      "end": 128.72,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 58.379999999999995,
+        "unplayedFraction": 0.31202565473009086,
+        "futureVocalSeconds": 48.900000000000006,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 2,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-891.mp3",
+      "to": "audio/songs/track-559.mp3",
+      "begin": 122.32,
+      "end": 128.72,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 58.379999999999995,
+        "unplayedFraction": 0.31202565473009086,
+        "futureVocalSeconds": 48.900000000000006,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 2,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-165.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-909.mp3",
+      "begin": 243.42,
+      "end": 257.76,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": true,
+        "reason": "bounded-final-instrumental-group",
+        "penalty": 5.411839506172834,
+        "remainingSeconds": 11.139999999999986,
+        "unplayedFraction": 0.04297839506172835,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-787.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-787.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-515.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-515.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-69.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-69.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-69.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-90.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-149.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-604.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-604.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-604.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-604.mp3",
+      "begin": 236.26,
+      "end": 250.58,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 18.319999999999965,
+        "unplayedFraction": 0.07067901234567887,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-174.mp3",
+      "to": "audio/songs/track-278.mp3",
+      "begin": 232.7,
+      "end": 247.02,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-section-change",
+        "penalty": null,
+        "remainingSeconds": 21.879999999999967,
+        "unplayedFraction": 0.08441358024691345,
+        "futureVocalSeconds": 0,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 1,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-1090.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-1111.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-671.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-716.mp3",
+      "to": "audio/songs/track-671.mp3",
+      "begin": 183.18,
+      "end": 193.28,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-vocal-content",
+        "penalty": null,
+        "remainingSeconds": 9.52000000000001,
+        "unplayedFraction": 0.046942800788954686,
+        "futureVocalSeconds": 0.39999999999997726,
+        "positiveFutureLyrics": 0,
+        "futureSectionHypotheses": 0,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-994.mp3",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-1141.mp3",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-1141.mp3",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-832.mp3",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      }
+    },
+    {
+      "from": "audio/songs/track-76.mp3",
+      "to": "audio/songs/track-304.mp3",
+      "begin": 26.76,
+      "end": 37.8,
+      "originalError": "Smooth common gain exceeds safe peak",
+      "decision": {
+        "allowed": false,
+        "reason": "future-lyric-content",
+        "penalty": null,
+        "remainingSeconds": 231.8,
+        "unplayedFraction": 0.8960185543100114,
+        "futureVocalSeconds": 178.8,
+        "positiveFutureLyrics": 29,
+        "futureSectionHypotheses": 7,
+        "semanticSectionsVerified": false
+      }
+    }
+  ]
+}

@@ -128,6 +128,8 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
     # Phrase ends/section changes can be far inside the file. No dependency
     # on duration-16, and no arbitrary every-four-bars cut is emitted.
     spans=[]
+    active=np.flatnonzero(np.asarray(mix)>=.003)
+    audible_end=min(duration,(float(active[-1])+1)*.1) if len(active) else duration
     for anchor,bound in boundary.items():
         for count in (4,8):
             spans.append((anchor,anchor+count,'entry',bound,False))
@@ -140,6 +142,17 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
             for after in (4,8,12,16):
                 spans.append((anchor+after-count,anchor+after,'exit',bound,True))
                 spans.append((anchor+after,anchor+after+count,'entry',bound,True))
+    # Do not require a novelty peak for an instrumental conclusion: a
+    # repeating final phrase often has NONE. Search genuine observed bars
+    # near the audible ending; whole-content protection still decides
+    # whether sacrificing the remainder is acceptable.
+    for stop,bar in enumerate(bars,1):
+        end=bar['end'];remaining=audible_end-end
+        if not 0<=remaining<=min(36,.20*max(1,audible_end)):continue
+        future=vocal_guard(vocals,mix,end,audible_end)
+        if remaining>=.2 and (not future or not future['clear']):continue
+        for count in (4,8):
+            spans.append((stop-count,stop,'exit',{'t':end,'novelty':0,'endingCandidate':True},False))
     for begin,stop,role,bound,instrumental_only in spans:
             count=stop-begin
             if begin<0:continue
@@ -172,13 +185,19 @@ def candidate_windows(bars,boundaries,phrases,vocals,mix,duration):
                 'semanticLabel':None,'sectionAnchor':bound['t'],'endGuard':tail,'fullGuard':full,
                 'windowMethod':'instrumental-bar-group-after-section' if instrumental_only else 'observed-section-boundary',
                 'phraseVerified':False,'vocalFadeSeconds':.4}
+            if bound.get('endingCandidate'):
+                context=bars[max(0,stop-16):stop]
+                coherent=not any(abs(a['end']-b['start'])>.08 or a['beatsPerBar']!=b['beatsPerBar'] for a,b in zip(context,context[1:]))
+                common.update({'windowMethod':'concluding-observed-bars','endingContextBars':len(context) if coherent else count,
+                    'conclusionIsHypothesis':True})
             if role=='entry' and full:windows.append({**common,'role':'entry'})
-            if role=='exit' and start>=26 and duration-end>=8 and tail and tail['clear']:
+            if role=='exit' and start>=26 and duration-end>=.15 and tail and tail['clear']:
                 windows.append({**common,'role':'exit'})
     # Keep distinct, strongest alternatives distributed across the recording.
     selected=[]
     for role in ('entry','exit'):
-        ranked=sorted((w for w in windows if w['role']==role),key=lambda w:(bool(w['phrase']),w['boundaryNovelty']),reverse=True)
+        ranked=sorted((w for w in windows if w['role']==role),
+            key=lambda w:((w['windowMethod']=='concluding-observed-bars',w['end']) if role=='exit' else (False,0))+(bool(w['phrase']),w['boundaryNovelty']),reverse=True)
         for w in ranked:
             if sum(v['role']==role for v in selected)>=16:break
             if any(v['role']==role and abs(v['end']-w['end'])<2 for v in selected):continue

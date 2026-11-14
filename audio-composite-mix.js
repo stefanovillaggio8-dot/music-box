@@ -17,7 +17,12 @@ function supports(cue){
  return !!c&&c.version===1&&c.sourceSha===cue.sourceSha&&c.targetSha===cue.targetSha&&
   /^[a-f0-9]{40}$/.test(c.sourceSha)&&/^[a-f0-9]{40}$/.test(c.targetSha)&&
   /^dj-mixes\/[a-f0-9]{64}\.flac$/.test(c.path)&&/^[a-f0-9]{64}$/.test(c.sha256)&&
-  [c.seconds,c.peak,c.overlapPeak,c.oversampledPeak,c.begin,c.entry,c.fade,c.tempo,c.handoffPosition,c.nativeHandoffAt,c.nativeRevealAt].every(finite)&&c.preRoll===.3&&
+  [c.seconds,c.peak,c.overlapPeak,c.oversampledPeak,c.begin,c.entry,c.fade,c.tempo,c.handoffPosition,c.nativeHandoffAt,c.nativeRevealAt].every(finite)&&[.3,.6,.9].includes(c.preRoll)&&
+  (c.releaseSeconds==null||[.9,1.2,1.5].includes(c.releaseSeconds))&&
+  ((c.preRoll===.3&&(c.releaseSeconds==null||c.releaseSeconds===.9))||
+   c.envelopeVersion===3&&finite(c.releaseSeconds)&&
+   Math.abs(c.seconds-(c.preRoll+cue.fade+c.releaseSeconds+.9))<.002&&
+   Math.abs(c.nativeRevealAt-(c.nativeHandoffAt+c.releaseSeconds+.15))<.002)&&
   c.nativeHandoffAt>=cue.fade-.001&&c.nativeHandoffAt<=cue.fade+.2&&
   c.nativeRevealAt>=c.nativeHandoffAt+1&&c.nativeRevealAt<=c.seconds-c.preRoll-.1&&
   c.peak>0&&c.peak<=.9991&&c.overlapPeak<=.961&&c.oversampledPeak<=1&&c.seconds>=cue.fade+1.7&&c.seconds<=20&&
@@ -141,5 +146,7 @@ function onSeek(reason,audio){
  }
  stop();return false;
 }
-root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,active:()=>!!current,owns:audio=>!!current&&current.old===audio};
+root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,
+ isPrepared:(cue,ctx)=>!!ctx&&supports(cue)&&cache.has(cue.composite.sha256+':'+ctx.sampleRate),
+ active:()=>!!current,owns:audio=>!!current&&current.old===audio};
 })(typeof window==='undefined'?globalThis:window);

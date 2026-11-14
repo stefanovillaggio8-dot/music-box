@@ -7119,7 +7119,12 @@ function rebuildAudio(autoplay) {
       ? _braniPlaylistInRiproduzione() : _listaPerIlSeguito();
     return _listaProssimiCasuali(lista, 10)
       .map(id => tracks.find(t => t.id === id))
-      .filter(t => t && t.id !== currentId && !t.youtubeId && t.url);
+      .filter(t => t && t.id !== currentId && !t.youtubeId && t.url && _mixPlayableNow(t));
+  }
+  function _mixPlayableNow(t){
+    if(typeof navigator==='undefined'||navigator.onLine!==false)return true;
+    if(String(t?.url||'').startsWith('blob:'))return true;
+    try{return isCached(t)}catch(_){return false}
   }
   function _prossimoAutomaticoInCoda() {
     return _prossimiAutomaticiInCoda()[0] || null;
@@ -7786,7 +7791,7 @@ box.innerHTML = "";
       // Whisper stored while this provider request was still in flight.
       const newest=_testoLocaleVerificato(id);
       if(newest?.audioWordSynced&&newest.wordRows?.some(row=>
-          _haTempiParole(row)&&!row.estimated))return;
+          (_haTempiParole(row)||window.MusicBoxWordKaraoke?.hasPartialTiming?.(row))&&!row.estimated))return;
       const updated={...(newest||existing),id,title:track.title,artist:track.artist,
         text:result.text||existing.text,synced:result.synced,
         wordRows:result.wordRows,source:result.source,audioWordSynced:false};
@@ -9520,7 +9525,8 @@ function openProfile() {
       const knownEnd=Math.max(
         Number.isFinite(end)&&end>=last?end:-Infinity,
         Number.isFinite(wordEnd)&&wordEnd>=last?wordEnd:-Infinity);
-      const expiry=Number.isFinite(knownEnd)?knownEnd+2.5:last+9;
+      const partialEnd=Math.max(-Infinity,...(row?.acousticSpans||[]).map(w=>Number(w.end)).filter(Number.isFinite));
+      const expiry=Math.max(Number.isFinite(knownEnd)?knownEnd+2.5:last+9,partialEnd+2.5);
       if(Number.isFinite(last)&&time>expiry)return -1;
     }
     return result;
@@ -13267,7 +13273,7 @@ window.MusicBoxBridge = {
     const fresh=_casualeFresche;
     if(!fresh)return [];
     return available.filter(t=>t&&t.id!==currentId&&t.url&&!t.youtubeId&&
-      fresh.has(t.id)&&!_casualeEscluse.has(t.id));
+      fresh.has(t.id)&&!_casualeEscluse.has(t.id)&&_mixPlayableNow(t));
   },
   mixSelectShuffle:({fromId,initialFirst,pickId})=>{
     if(!shuffle||queue.length||repeat||_casualeModificaUtente||

@@ -49,6 +49,8 @@ function fixture(options={}){
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>next.cue||null;",
+  ...(options.internalPlans?["const indexedStructuralBeatBridge=(old,next)=>next.cue?.structuralBeat&&!next.cue.invalidCertificate?next.cue:null;",
+    "const fullBeatCueCertified=(old,next,cue)=>!cue.invalidCertificate;"]:[]),
   ...(options.neutralFallback?["const certifiedNeutralBridge=(old,next)=>next.safeNeutral||null;"]:[]),
   "const musicalIntroEntry=()=>0;",
   "const onsetGridPhase=()=>.12;",
@@ -390,7 +392,7 @@ test("rhythm-only resemblance is diagnostic, not a DJ mix",async()=>{
 test("real audible DJ transitions outrank similarity-only queue candidates",()=>{
  const body=source.slice(source.indexOf("async function intelligentShuffle("),
   source.indexOf("let shuffleBusy=",source.indexOf("async function intelligentShuffle(")));
- assert.ok(body.includes("const choicePool=scored.length?scored:impactScored.length?impactScored:"));
+ assert.ok(body.includes("const choicePool=scored.length?scored:partialScored.length?partialScored:impactScored.length?impactScored:"));
  assert.ok(body.includes("nearScored.length?nearScored"));
 });
 
@@ -473,4 +475,14 @@ test("two different MP3 blobs remain separately eligible even with near-identica
  await f.run();
  assert.equal(f.selected()?.pickId,3);
  assert.equal(f.decision().candidateAudit.exactSameRecordingSkipped,0);
+});
+test('a certified internal PCM entry survives a weak file intro and enters the complete beat tier',async()=>{
+ const f=fixture({internalPlans:true,pool:[{cue:null},{analysis:{introDrive:.01},cue:{kind:'beat',structuralBeat:true,measuredFullBeat:true,fade:6,begin:90,score:.8,grooveScore:.9}}]});
+ await f.run();assert.equal(f.selected()?.pickId,3);assert.equal(f.decision().beatCandidates,1);
+ assert.equal(f.decision().candidateAudit.validInternalEntries,1);
+});
+test('partial structural rhythms remain a separate shuffle tier and never become full beat candidates',async()=>{
+ const f=fixture({internalPlans:true,pool:[{cue:null},{analysis:{introDrive:.01},cue:{kind:'beat',structuralBeat:true,measuredFullBeat:false,metricalRhythmic:true,fade:6,begin:90,grooveScore:.9}}]});
+ await f.run();assert.equal(f.selected()?.pickId,3);assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().partialBeatCandidates,1);
 });

@@ -17,6 +17,8 @@ def main():
     for name in ('plans','assets','cache','report'):parser.add_argument('--'+name,required=True)
     parser.add_argument('--rate',type=int,default=44100)
     parser.add_argument('--peak-ceiling',type=float,default=.96)
+    parser.add_argument('--pre-roll',type=float,choices=(.3,.6,.9),default=.3)
+    parser.add_argument('--release-seconds',type=float,choices=(.9,1.2,1.5),default=.9)
     parser.add_argument('--context-mode',choices=('auto','warm','cold'),default='auto');args=parser.parse_args()
     if args.rate not in (16000,44100,48000):raise ValueError('Unsupported sample rate')
     if not .85<=args.peak_ceiling<=.96:raise ValueError('Unsafe peak ceiling')
@@ -24,6 +26,9 @@ def main():
     cache=pathlib.Path(args.cache);cache.mkdir(parents=True,exist_ok=True)
     plans=json.loads(pathlib.Path(args.plans).read_text())['plans'];results=[]
     report_path=pathlib.Path(args.report);report_path.parent.mkdir(parents=True,exist_ok=True)
+    if not plans:
+        report_path.write_text(json.dumps({'requested':0,'rendered':0,'results':[]})+'\n')
+        return
     if args.context_mode=='auto':
         # Context can improve a transient or move WSOLA's selected grain.
         # Keep the previous cold path available. EVERY chosen rendition
@@ -31,7 +36,8 @@ def main():
         with tempfile.TemporaryDirectory(prefix='context-audit-',dir=report_path.parent) as temporary:
             temporary=pathlib.Path(temporary);warm_report=temporary/'warm.json';cold_report=temporary/'cold.json'
             common=[sys.executable,str(pathlib.Path(__file__).resolve()),'--assets='+str(assets.resolve()),
-                '--cache='+str(cache.resolve()),'--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling)]
+                '--cache='+str(cache.resolve()),'--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling),
+                '--pre-roll='+str(args.pre_roll),'--release-seconds='+str(args.release_seconds)]
             subprocess.run(common+['--plans='+str(pathlib.Path(args.plans).resolve()),'--report='+str(warm_report),'--context-mode=warm'],check=True)
             warm=json.loads(warm_report.read_text())['results']
             failed=[p for p,r in zip(plans,warm) if r.get('error') and p['cue']['tempo']!=1]
@@ -57,7 +63,7 @@ def main():
         original_peak=None;incoming_peak=None;post_rhythm=None
         try:
             a=audit.source(p['from'],cue['sourceSha'],cache);b=audit.source(p['to'],cue['targetSha'],cache)
-            outgoing=audit.decode(a,cue['begin']-.3,(cue['fade'] if cue.get('structuralBeat') else cue['fade']+2)+.3)
+            outgoing=audit.decode(a,cue['begin']-args.pre_roll,(cue['fade'] if cue.get('structuralBeat') else cue['fade']+2)+args.pre_roll)
             warmup=min(.8,cue['entry'])
             incoming=audit.decode(b,cue['entry']-warmup,cue['fade']*1.05+4+warmup)
             if len(incoming)/args.rate<warmup+cue['fade']*cue['tempo']+2.1:raise ValueError('Incomplete original incoming tail for native handoff')
@@ -68,7 +74,8 @@ def main():
                     (folder/(name+'.f32')).write_bytes(value.astype('<f4').tobytes())
                 ceiling=args.peak_ceiling;target=folder/'mix.flac'
                 for attempt in range(3):
-                    (folder/'cue.json').write_text(json.dumps({**cue,'renderPeakCeiling':ceiling,'warmupOriginal':args.context_mode=='warm'}))
+                    (folder/'cue.json').write_text(json.dumps({**cue,'renderPeakCeiling':ceiling,'renderPreRoll':args.pre_roll,
+                        'renderReleaseSeconds':args.release_seconds,'warmupOriginal':args.context_mode=='warm'}))
                     run=subprocess.run(['node',str(ROOT/'tools/render-composite-mix.mjs'),
                         '--rate='+str(args.rate),'--cue='+str(folder/'cue.json'),
                         '--outgoing='+str(folder/'outgoing.f32'),'--incoming='+str(folder/'incoming.f32'),
@@ -106,7 +113,7 @@ def main():
                     'seconds':len(decoded)/args.rate,'peak':peak,'headroom':proof['headroom'],
                     'pitchPreserved':True,'timingVerified':True,'renderedFromOriginals':True,
                     'handoffPosition':proof['handoffPosition'],'sampleRate':args.rate}
-                composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
+                composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','releaseSeconds','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
                 composite['oversampledPeak']=true_peak
                 composite['oversampledOverlapPeak']=overlap_true_peak
                 composite['processing']=proof['timing'].get('method','soundtouch-wsola')

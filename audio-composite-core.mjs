@@ -10,7 +10,9 @@ export function compositePCM(outgoing,incoming,cue){
     incoming.channels.some(c=>!(c instanceof Float32Array)))throw Error('Invalid stereo source');
  const stretched=stretchClip(incoming,cue);
  if(!stretched.timing.verified||!stretched.pitchPreserved)throw Error('Stretch timing failed');
- const preRoll=.3,tail=1.8,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
+ const preRoll=cue.renderPreRoll??.3,releaseSeconds=cue.renderReleaseSeconds??.9;
+ if(![.3,.6,.9].includes(preRoll)||![.9,1.2,1.5].includes(releaseSeconds))throw Error('Unbounded common gain envelope');
+ const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
  const nativeHandoffAt=cue.structuralBeat?cue.fade:(outgoing.channels[0].length-aOffset)/sr-preRoll;
  if(!cue.structuralBeat&&(nativeHandoffAt<cue.fade-.001||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
  if(aOffset<0||bOffset<0||outgoing.channels.some(c=>aOffset+Math.floor((preRoll+cue.fade)*sr)>c.length+1)||
@@ -43,7 +45,7 @@ export function compositePCM(outgoing,incoming,cue){
  let peak=0,overlapPeak=0;
  const channels=raw.map(c=>Float32Array.from(c,(x,i)=>{
   const t=i/sr-preRoll,g=t<0?1-(1-headroom)*smooth((t+preRoll)/preRoll):
-   t<=nativeHandoffAt?headroom:headroom+(1-headroom)*smooth((t-nativeHandoffAt)/.9);
+   t<=nativeHandoffAt?headroom:headroom+(1-headroom)*smooth((t-nativeHandoffAt)/releaseSeconds);
   const value=x*g;peak=Math.max(peak,Math.abs(value));
   // Shared headroom does not alter relative phase. Component envelopes
   // remain separate only for the independent offline rendered-attack audit.
@@ -52,7 +54,7 @@ export function compositePCM(outgoing,incoming,cue){
  // Smooth entrance/release must itself remain safe. Reject hot source
  // masters rather than silently introducing a level step or hard limiter.
  if(peak>.999||overlapPeak>.961)throw Error('Smooth common gain exceeds safe peak');
- return {rate:sr,channels,components,seconds,preRoll,envelopeVersion:2,warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:nativeHandoffAt+1.05,peak,overlapPeak,headroom,pitchPreserved:true,
+ return {rate:sr,channels,components,seconds,preRoll,releaseSeconds,envelopeVersion:preRoll===.3&&releaseSeconds===.9?2:3,warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:nativeHandoffAt+releaseSeconds+.15,peak,overlapPeak,headroom,pitchPreserved:true,
   timingVerified:true,timing:stretched.timing,
   handoffPosition:cue.entry+playedAt(cue.fade,cue.tempo,cue.fade,.85)};
 }

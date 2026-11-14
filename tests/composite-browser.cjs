@@ -67,7 +67,7 @@ const server=http.createServer(async(req,res)=>{
     },plans);
     console.error(name,'resampled',JSON.stringify(resampled));
     assert.equal(resampled.sampleRate,44100);assert.deepEqual(resampled.rejected,[]);
-    const plan=[...plans].sort((a,b)=>a.cue.fade-b.cue.fade)[0];
+    const plan=plans.find(p=>p.cue.composite.envelopeVersion===3)||[...plans].sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     await original(plan.fromSha);await original(plan.toSha);
     await page.evaluate(async plan=>{
      window.cue=plan.cue;await MusicBoxCompositeMix.prepare(cue,ctx);
@@ -81,11 +81,11 @@ const server=http.createServer(async(req,res)=>{
        return player.play().catch(error=>{trace.playError=String(error);throw error});
       }};
      await new Promise((resolve,reject)=>{player.addEventListener('loadedmetadata',resolve,{once:true});player.addEventListener('error',reject,{once:true});player.load()});
-     player.currentTime=cue.begin-.65;
+     player.currentTime=cue.begin-cue.composite.preRoll-.35;
      await new Promise(resolve=>player.addEventListener('seeked',resolve,{once:true}));
      document.querySelector('#go').onclick=()=>{ctx.resume();player.play()};
     },plan);
-    await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-.44);
+    await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-cue.composite.preRoll-.14);
     const started=await page.evaluate(()=>MusicBoxCompositeMix.tryStart(cue,player,app,'in',ctx));assert.equal(started,true);
     await page.waitForFunction(()=>trace.handoffs===1&&!MusicBoxCompositeMix.active()&&!player.muted,{timeout:25000});
     const state=await page.evaluate(()=>({id,handoffs:trace.handoffs,mutedBeforePlay:trace.mutedBeforePlay,paused:player.paused,at:player.currentTime,playError:trace.playError||null}));
@@ -95,10 +95,10 @@ const server=http.createServer(async(req,res)=>{
     await page.evaluate(async plan=>{
      player.pause();id='out';player=new Audio('/original/'+plan.fromSha+'.mp3');
      await new Promise(resolve=>{player.addEventListener('loadedmetadata',resolve,{once:true});player.load()});
-     player.currentTime=cue.begin-.65;await new Promise(resolve=>player.addEventListener('seeked',resolve,{once:true}));
+     player.currentTime=cue.begin-cue.composite.preRoll-.35;await new Promise(resolve=>player.addEventListener('seeked',resolve,{once:true}));
      document.querySelector('#go').onclick=()=>player.play();
     },plan);
-    await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-.44);
+    await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-cue.composite.preRoll-.14);
     assert.equal(await page.evaluate(()=>MusicBoxCompositeMix.tryStart(cue,player,app,'in',ctx)),true);
     await page.waitForFunction(()=>player.muted);await page.evaluate(()=>{player.currentTime+=2});
     await page.waitForFunction(()=>!MusicBoxCompositeMix.active()&&!player.muted);
@@ -153,7 +153,10 @@ const server=http.createServer(async(req,res)=>{
      };
     },actualPlan);
     await shell.click('#silent-handoff');
-    await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});
+    try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
+    catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
+     diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.cue,p.fromId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     const muteDuringOverlap=await shell.evaluate(()=>{
      const button=document.querySelector('#btnVolIcon');button.click();
      const muted=MusicBoxBridge.volume()===0&&MusicBoxBridge.audio().muted;
@@ -164,7 +167,35 @@ const server=http.createServer(async(req,res)=>{
     const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio())}));
     assert.equal(plannedPlayback.handoffs,1);assert.equal(plannedPlayback.paused,false);assert.equal(plannedPlayback.sourceMatches,true);
     await appContext.close();
-    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,muteDuringOverlap,physicalIPhone:false});
+    // Independent fresh-listening session: the manual handoff above has
+    // already played its target and must not be used to fake repeat-free
+    // shuffle availability by erasing the active session's history.
+    const autoContext=await browser.newContext({serviceWorkers:'block'}),auto=await autoContext.newPage();
+    await auto.route('https://**',async route=>{
+     const url=new URL(route.request().url()),at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
+     if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}await route.abort();
+    });
+    await auto.addInitScript(()=>{localStorage.setItem('mb.profile','Ste');localStorage.setItem('mb.shuffle','true')});
+    await auto.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
+    await auto.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
+    await auto.evaluate(p=>{
+     const button=document.createElement('button');button.id='auto-start';button.textContent='test';button.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
+     button.onclick=async event=>{
+      MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(p.fromId,0);
+     };document.body.append(button);
+    },actualPlan);
+    console.error(name,'automatic source',JSON.stringify(actualPlan));
+    await auto.click('#auto-start');
+    try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0,{timeout:20000});}
+    catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection()}))));throw error;}
+    const automaticShuffle=await auto.evaluate(()=>{
+     const next=MusicBoxBridge.mixNext(),current=MusicBoxBridge.currentId(),state=MusicBoxBridge.mixShuffleSelection();
+     return {full:MusicBoxMix.inspectPair(current,next.id).cue?.measuredFullBeat===true,
+      manualQueue:state.manualCount,poolRespected:MusicBoxBridge.mixShufflePool().some(t=>t.id===next.id)};
+    });
+    assert.equal(automaticShuffle.full,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
+    await autoContext.close();
+    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,muteDuringOverlap,automaticShuffle,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));

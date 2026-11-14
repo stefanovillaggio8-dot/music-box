@@ -91,7 +91,7 @@ function renderLyrics(force){
         coverage?.estimated?"PAROLE STIMATE · NON VERIFICATE":
         "SINCRONIZZATO PER FRASI"
      :next?.text?"SCORRIMENTO STIMATO":"SOLO MUSICA";
-   if(lyricTimed&&lyricRows.some(r=>r.estimated||r._elements?.length<1))
+   if(lyricTimed&&lyricRows.some(r=>r.estimated||r.partialAudio||r._elements?.length<1))
      b?.requestWordLyrics?.(id)?.catch?.(()=>{});
    karaoke.scrollTop=0;
   }
@@ -120,9 +120,11 @@ function renderLyrics(force){
   const last=lyricRows[index],lastWord=last.words?.[last.words.length-1];
   const wordEnd=Number(lastWord?.end);
   const phraseEnd=Number(last.end);
-  const expiry=Number.isFinite(phraseEnd)&&phraseEnd>=last.t?
+  const measuredExpiry=Number.isFinite(phraseEnd)&&phraseEnd>=last.t?
     phraseEnd+2.5:Number.isFinite(wordEnd)&&wordEnd>=last.t?
     wordEnd+2.5:last.t+9;
+  const partialEnd=Math.max(-Infinity,...(last.acousticSpans||[]).map(w=>Number(w.end)).filter(Number.isFinite));
+  const expiry=Math.max(measuredExpiry,partialEnd+2.5);
   // A missing final LRC line must NOT leave an unrelated phrase
   // brightly active throughout a long instrumental outro.
   if(adjusted>expiry)index=lyricRows.length;
