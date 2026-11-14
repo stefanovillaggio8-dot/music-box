@@ -18,11 +18,19 @@ def main():
  for k in ('cache','models','output'):p.add_argument('--'+k,required=True)
  p.add_argument('--shard',default='0/1');p.add_argument('--limit',type=int,default=0);args=p.parse_args()
  model_root=pathlib.Path(args.models).resolve();checkpoint=model_root/'torch/hub/checkpoints/beat_this-final0.ckpt'
- if not checkpoint.exists():
+ if not checkpoint.exists() or hashlib.sha256(checkpoint.read_bytes()).hexdigest()!=MODEL_SHA:
   checkpoint.parent.mkdir(parents=True,exist_ok=True)
-  with urllib.request.urlopen('https://cloud.cp.jku.at/public.php/dav/files/7ik4RrBKTS273gp/final0.ckpt',timeout=120) as response:content=response.read(100*1024*1024+1)
-  if len(content)>100*1024*1024 or hashlib.sha256(content).hexdigest()!=MODEL_SHA:raise ValueError('Untrusted model download')
-  checkpoint.write_bytes(content)
+  urls=['https://cloud.cp.jku.at/public.php/dav/files/7ik4RrBKTS273gp/final0.ckpt',
+   'https://huggingface.co/OpenStems/OpenStems-Models/resolve/f10f75fa1edf642e63291c6671806b9ca9622986/ultra-20261105/assets/'+MODEL_SHA+'/beat_this-final0.ckpt']
+  content=None
+  for url in urls:
+   try:
+    with urllib.request.urlopen(url,timeout=120) as response:candidate=response.read(100*1024*1024+1)
+    if len(candidate)>100*1024*1024 or hashlib.sha256(candidate).hexdigest()!=MODEL_SHA:raise ValueError('Untrusted model download')
+    content=candidate;break
+   except OSError as error:print('Model endpoint unavailable:',type(error).__name__,flush=True)
+  if content is None:raise ValueError('No SHA-verified model available')
+  temporary=checkpoint.with_suffix('.ckpt.tmp');temporary.write_bytes(content);temporary.replace(checkpoint)
  if hashlib.sha256(checkpoint.read_bytes()).hexdigest()!=MODEL_SHA:raise ValueError('Model changed')
  os.environ['TORCH_HOME']=str(model_root/'torch');torch.set_num_threads(2);model=Audio2Frames(str(checkpoint),device='cpu')
  index=json.loads((ROOT/'dj-deep-analysis.json').read_text(encoding='utf-8'));shard,parts=map(int,args.shard.split('/'));audio.SR=pcm.SR
