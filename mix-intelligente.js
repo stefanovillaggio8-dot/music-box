@@ -8395,7 +8395,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    point(cue?.begin,"Inizio del piano di mix","motore Smart Mix")
   ].filter(Boolean).sort((x,y)=>x.at-y.at);
   const intros=[
-   point(b?.safeIntroAt,"Intro digitale verificata","silenzio reale"),
+   point(b?.safeIntroAt,"Intro stimata","analisi energetica automatica"),
    point(b?.introBeat,"Primo beat intro","griglia audio"),
    point(cue?.entry,"Entrata del piano","motore Smart Mix")
   ].filter(Boolean).sort((x,y)=>x.at-y.at);
@@ -8527,7 +8527,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    const source=app.mixUrl?.(track)||track.url;
    const measured=deepLookup(track)||cache.get(String(source));
    // Skip only verified digital silence; preserve low-volume instruments.
-   return Number.isFinite(measured?.safeIntroAt)?clamp(measured.safeIntroAt,0,18):0;
+   return musicalIntroEntry(measured);
   },
  onSeek:(reason)=>{
   if(typeof window!=="undefined"&&window.MusicBoxCompositeMix?.onSeek?.(reason,bridge()?.audio?.()))return;

@@ -55,7 +55,7 @@ const program=`const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  if(!plans.has(key))plans.set(key,nativeTransition(a,b,dur));return plans.get(key);};`+
  snippet('async function intelligentShuffle(','let recentLibraryIds=')+
  `return {transition,desktopBeatPairCertified,iphoneBeatPairCertified,iphoneQuietReleaseCertified,mobileMixAllowed,
- musicallyCompatibleOverlay,withGuardedLRC,verifiedIndexedGridTempo,intelligentShuffle,decision:()=>shuffleLastDecision};`;
+ musicallyCompatibleOverlay,musicalIntroEntry,withGuardedLRC,verifiedIndexedGridTempo,intelligentShuffle,decision:()=>shuffleLastDecision};`;
 let scenarioOffline=false,available=new Set(),preparedMixes=new Set();
 const window={MusicBoxRoom:{isActive:()=>false},MusicBoxStretch:{},MusicBoxCompositeMix:{
  supports:c=>commonScope.MusicBoxCompositeMix.supports(c)&&(!scenarioOffline||preparedMixes.has(c.composite.sha256)),
@@ -74,6 +74,13 @@ function lookup(t){
 }
 engine=new Function('isIOS','boundaries','lookup','window','navigator','document','console','setTimeout','clearTimeout',program)(
  isIOS,lyricBoundaries,lookup,window,{get onLine(){return !scenarioOffline}},{hidden:false},{info(){},warn(){}},microtask,()=>{});
+let normalDestination=null;
+const introFrom=source.indexOf(' introStart:(id)=>{'),introTo=source.indexOf(' onSeek:(',introFrom);
+if(introFrom<0||introTo<introFrom)throw Error('Missing public intro API');
+const publicIntro=new Function('enabled','bridge','deepLookup','cache','clamp','musicalIntroEntry',
+ 'return ({'+source.slice(introFrom,introTo)+'});')(true,
+ ()=>({allTracks:()=>normalDestination?[normalDestination]:[],mixUrl:t=>t.url}),lookup,new Map(),
+ (x,a,b)=>Math.max(a,Math.min(b,x)),engine.musicalIntroEntry);
 const rng=seed=>()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
 const shuffled=(items,random)=>{const copy=items.slice();for(let i=copy.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy};
 const profiles=['Ste','Diego','Emanuele'],offlineFilterImplemented=appSource.includes('function _mixPlayableNow(');
@@ -93,14 +100,20 @@ function members(profile,playlist=null){
 }
 function resultFor(from,to){
  if(scenarioOffline&&!available.has(to.id))return {kind:'unavailable',overlap:0,skipped:0};
- const a=lookup(from),b=lookup(to);if(!a||!b)return {kind:'normal',overlap:0,skipped:0,missingAnalysis:true};
+ const a=lookup(from),b=lookup(to);
+ const normal=(missingAnalysis=false)=>{
+  normalDestination=to;const incomingOmitted=publicIntro.introStart(to.id);
+  return {kind:'normal',overlap:0,skipped:0,missingAnalysis,incomingOmitted,
+   incomingAudibleUpperBound:Math.max(0,incomingOmitted-(b?.musicalContent?.audibleStart??0))};
+ };
+ if(!a||!b)return normal(true);
  let position=0,p=null;
  for(let retry=0;retry<18;retry++){
   p=engine.transition({...a,mixPosition:position},b,a.duration);
   if(!p?.structuralBeat||window.MusicBoxCompositeMix.supports(p))break;
   position=p.begin+.06;
  }
- if(!p||p.begin<position-.1)return {kind:'normal',overlap:0,skipped:0};
+ if(!p||p.begin<position-.1)return normal();
  const common=window.MusicBoxCompositeMix.supports(p);
  const allowed=engine.musicallyCompatibleOverlay(a,b,p)&&engine.desktopBeatPairCertified(a,b,p)&&
   (!p.structuralBeat||common)&&(!isIOS||engine.mobileMixAllowed(p,a,a.lastLyricAt)&&engine.iphoneBeatPairCertified(a,b,p)&&engine.iphoneQuietReleaseCertified(a,p))&&
@@ -108,6 +121,7 @@ function resultFor(from,to){
  let kind='normal';
  if(allowed){if(p.measuredFullBeat)kind='full';else if(p.metricalRhythmic||p.kind==='snap')kind='partial';
   else if(['soft','fade','rise'].includes(p.kind))kind='crossfade';else if(p.kind==='postlude')kind='postlude';else if(p.kind==='underlay')kind='underlay';}
+ if(kind==='normal')return {...normal(),begin:p.begin,end:p.end};
  const skipped=p.structuralBeat&&allowed?Math.max(0,(a.musicalContent?.audibleEnd??a.last)-p.end):0;
  const incomingOmitted=kind==='normal'?0:Math.max(0,p.entry||0);
  return {kind,overlap:kind==='normal'?0:p.fade,skipped,incomingOmitted,
