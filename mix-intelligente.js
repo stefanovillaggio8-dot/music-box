@@ -7652,6 +7652,31 @@ async function intelligentShuffle(app,audio,fromId){
   }
  }
  scored.sort((a,b)=>b.score-a.score);
+ // Among nearby, ALREADY certified full mixes, use the audible rendered
+ // timing instead of rewarding only a similar drum amplitude contour.
+ // This grants no new certificate and cannot select outside the fresh pool.
+ const renderedQuality=item=>{
+  const p=item?.cue,r=p?.composite?.postRenderRhythm;
+  if(p?.measuredFullBeat!==true||p.composite?.rhythmVerified!==true||r?.accepted!==true||
+     r.method!=='rendered-hpss-attacks-v1'||r.mode!=='full-pcm'||!Number.isFinite(r.rmsSeconds))return null;
+  return [p.tempo===1&&r.rmsSeconds<=.025?0:1,r.downbeatsVerified===true?0:1,Math.floor(r.rmsSeconds/.005)];
+ };
+ const compareRendered=(a,b)=>{
+  const x=renderedQuality(a),y=renderedQuality(b);if(!x||!y)return 0;
+  for(let i=0;i<x.length;i++)if(x[i]!==y[i])return x[i]-y[i];return 0;
+ };
+ let renderPreference=null;
+ if(scored.length>1&&renderedQuality(scored[0])){
+  const previous=scored[0],nearby=scored.filter(x=>x.score>=previous.score*.97&&renderedQuality(x));
+  nearby.sort((a,b)=>compareRendered(a,b)||b.score-a.score);
+  const measuredBest=nearby[0];
+  if(measuredBest&&compareRendered(measuredBest,previous)<0){
+   scored.splice(scored.indexOf(measuredBest),1);scored.unshift(measuredBest);
+   renderPreference={method:'rendered-precision-within-musical-tier-v1',previous:previous.track.id,chosen:measuredBest.track.id,
+    maximumRelativeScoreLoss:.03,previousRms:previous.cue.composite.postRenderRhythm.rmsSeconds,
+    chosenRms:measuredBest.cue.composite.postRenderRhythm.rmsSeconds};
+  }
+ }
  impactScored.sort((a,b)=>b.score-a.score);
  softScored.sort((a,b)=>b.score-a.score);
  underlayScored.sort((a,b)=>b.score-a.score);
@@ -7728,9 +7753,15 @@ async function intelligentShuffle(app,audio,fromId){
   if(choicePool[0]?.continuation)sequenceLookahead=choicePool[0].continuation;
  }
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
+ const renderedChoice=Boolean(scored.length&&best&&current&&renderedQuality(best)&&renderedQuality(current)&&
+  best.score>=current.score*.97&&compareRendered(best,current)<0);
+ if(renderedChoice&&!renderPreference)renderPreference={method:'rendered-precision-within-musical-tier-v1',
+  previous:current.track.id,chosen:best.track.id,maximumRelativeScoreLoss:.03,
+  previousRms:current.cue.composite.postRenderRhythm.rmsSeconds,chosenRms:best.cue.composite.postRenderRhythm.rmsSeconds};
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
-    (!current||(best.sequenceScore??best.score)>(current.sequenceScore??current.score)+.045)){
+    (!current||(best.sequenceScore??best.score)>(current.sequenceScore??current.score)+.045||
+      renderedChoice)){
   if(runGeneration!==null&&runGeneration!==shuffleGeneration)return {retry:false};
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
@@ -7741,7 +7772,7 @@ async function intelligentShuffle(app,audio,fromId){
     ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-    rejected,candidateAudit,limitingStage,chosen:best.track.id,sequenceLookahead,
+    rejected,candidateAudit,limitingStage,chosen:best.track.id,sequenceLookahead,renderPreference,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):partialScored.length?

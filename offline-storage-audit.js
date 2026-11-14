@@ -23,6 +23,7 @@ function payload(value){
 async function inspect({db,cacheStorage=root.caches,storage=root.navigator?.storage,signal,profile}={}){
  const cancelled=()=>{if(signal?.aborted)throw Error('Storage inventory cancelled');};
  const report={version:1,profile:String(profile||''),origin:root.location?.origin||'',readOnly:true,
+  databaseAvailable:!!db,cacheStorageAvailable:!!cacheStorage,
   scope:'Music Box-prefixed CacheStorage and supplied musicbox database; shared HTTP cache and other sites are not attributable.',
   sizes:'Cache declared Content-Length and IndexedDB Blob sizes/UTF-8 metadata; NOT exact physical disk usage.',
   estimate:null,caches:[],databases:[],sameRequestCopies:[],unattributedCacheCount:0};

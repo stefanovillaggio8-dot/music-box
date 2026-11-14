@@ -125,7 +125,7 @@ function resultFor(from,to){
  const outgoingReadThrough=p.preservedFileTail||p.nativeTailFullBeat||p.subduedRhythmicUnderlay||p.postMusicalTailUnderlay?a.duration:p.end;
  const skipped=allowed?Math.max(0,(a.musicalContent?.audibleEnd??a.last)-outgoingReadThrough):0;
  const incomingOmitted=kind==='normal'?0:Math.max(0,p.entry||0);
- return {kind,overlap:kind==='normal'?0:p.fade,skipped,incomingOmitted,outgoingReadThrough,
+ return {kind,overlap:kind==='normal'?0:p.fade,commonAssetSha:p.composite?.sha256||null,skipped,incomingOmitted,outgoingReadThrough,
   incomingAudibleUpperBound:Math.max(0,incomingOmitted-(b.musicalContent?.audibleStart??0)),begin:p.begin,end:p.end,
   earlyOverlapStart:!!(allowed&&p.begin<=a.duration-8),
   early:!!(allowed&&p.structuralBeat&&p.end<=a.duration-8),safariFull:kind==='full'&&(common||p.outputHeadroom>=.999),
@@ -133,9 +133,9 @@ function resultFor(from,to){
 }
 async function simulate(profile,mode,list,sessions,steps,seed){
  const totals={attempts:0,full:0,partial:0,crossfade:0,normal:0,postlude:0,underlay:0,unavailable:0,early:0,safariFull:0,
-  overlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
-  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,missingAnalysis:0};
- const trace=[];scenarioOffline=mode==='offline-shuffle';preparedMixes=new Set();
+  overlapSum:0,fullOverlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
+  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,missingAnalysis:0};
+ const trace=[],assetUse=new Map();scenarioOffline=mode==='offline-shuffle';preparedMixes=new Set();
  const random=rng(seed),offlineOrder=shuffled(list,random);available=new Set(offlineOrder.slice(0,Math.ceil(list.length/2)).map(t=>t.id));
  for(let session=0;session<sessions;session++){
   const ordered=mode==='ordered'||mode==='playlist'||mode==='manual-queue';
@@ -156,10 +156,14 @@ async function simulate(profile,mode,list,sessions,steps,seed){
    if(!fresh.some(t=>t.id===next.id)||next.id===current.id)throw Error('Repeated or out-of-pool selection');
    const result=resultFor(current,next);totals.attempts++;totals[result.kind]++;totals.early+=!!result.early;totals.safariFull+=!!result.safariFull;
    totals.overlapSum+=result.overlap||0;totals.skippedSum+=result.skipped||0;totals.maxSkipped=Math.max(totals.maxSkipped,result.skipped||0);
+   if(result.kind==='full')totals.fullOverlapSum+=result.overlap||0;
+   if((result.kind==='full'||result.kind==='partial')&&result.commonAssetSha)assetUse.set(result.commonAssetSha,(assetUse.get(result.commonAssetSha)||0)+1);
    totals.incomingOmittedSum+=result.incomingOmitted||0;totals.maxIncomingOmitted=Math.max(totals.maxIncomingOmitted,result.incomingOmitted||0);
    totals.incomingAudibleUpperBoundSum+=result.incomingAudibleUpperBound||0;totals.earlyOverlapStart+=!!result.earlyOverlapStart;
    totals.manualQueueChanges+=mode==='manual-queue';
    totals.automaticChanges+=selected;totals.missingAnalysis+=!!result.missingAnalysis;
+   const decision=selected?engine.decision():null;
+   totals.renderQualityPromotions+=!!(decision?.outgoing===current.id&&decision?.chosen===next.id&&decision?.renderPreference);
    streak=result.kind==='full'?0:streak+1;totals.longestWithoutFull=Math.max(totals.longestWithoutFull,streak);
    if(trace.length<40)trace.push({session,step,from:current.id,to:next.id,...result});
    fresh=fresh.filter(t=>t.id!==next.id);current=next;
@@ -168,7 +172,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
  const mixed=totals.attempts-totals.normal-totals.unavailable;
  return {profile,mode,members:list.length,boostedMembers:list.filter(t=>t.boosted).length,sessions,steps,seed,totals,
   percent:Object.fromEntries(['full','partial','crossfade','normal','postlude','underlay','unavailable','early','safariFull'].map(k=>[k,totals.attempts?100*totals[k]/totals.attempts:0])),
-  averageOverlap:mixed?totals.overlapSum/mixed:0,averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
+  averageOverlap:mixed?totals.overlapSum/mixed:0,averageFullOverlap:totals.full?totals.fullOverlapSum/totals.full:0,commonAssetUse:Object.fromEntries(assetUse),averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
 }
 function inventory(profile,list,audit){
