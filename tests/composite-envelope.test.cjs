@@ -63,3 +63,14 @@ test('the intact entrance retains the first drum attack without fading the outgo
  assert.equal(attack.components.incoming[0][Math.round(.3*sr)],0);
  assert.ok(attack.peak<=.999&&attack.overlapPeak<=.961);
 });
+
+test('lookahead reserves numerical headroom for a hot original transient while keeping the final peak guard unchanged',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,renderGainMode:'lookahead'};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>{const x=new Float32Array(Math.round(5.3*sr)).fill(.4);x.fill(1.3285365,1200,1210);return x;})};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>new Float32Array(sr*10).fill(.2))};
+ const result=compositePCM(outgoing,incoming,cue);
+ assert.ok(result.peak<=.999);assert.ok(result.overlapPeak<=.961);
+ assert.equal(result.gainProof.firstGain,1);assert.equal(result.gainProof.nativeRevealGain,1);
+ assert.equal(result.components.outgoing[0][1200],Math.fround(1.3285365),'original transient is preserved before shared safety gain');
+});

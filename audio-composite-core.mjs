@@ -55,7 +55,10 @@ export function compositePCM(outgoing,incoming,cue){
   // No hard limiter, gain boost, or relaxed peak ceiling is involved.
   const reduction=new Float64Array(frames),attack=40/sr,release=8/sr;
   for(let i=0;i<frames;i++){
-   const t=i/sr-preRoll,bound=t>=0&&t<=nativeHandoffAt?ceiling:.999;
+   // Reserve a numerical margin below the unchanged final .999 guard.
+   // A hot but safely attenuated source can otherwise compute as
+   // .9990000000000001 and be spuriously rejected after smooth gain.
+   const t=i/sr-preRoll,bound=t>=0&&t<=nativeHandoffAt?ceiling:.998999;
    reduction[i]=Math.max(0,20*Math.log10(Math.max(Math.abs(raw[0][i]),Math.abs(raw[1][i]),1e-9)/bound));
    if(i)reduction[i]=Math.max(reduction[i],reduction[i-1]-release);
   }
@@ -83,7 +86,7 @@ export function compositePCM(outgoing,incoming,cue){
  }));
  // Smooth entrance/release must itself remain safe. Reject hot source
  // masters rather than silently introducing a level step or hard limiter.
- if(peak>.999||overlapPeak>.961)throw Error('Smooth common gain exceeds safe peak');
+ if(peak>.999||overlapPeak>.961)throw Error('Smooth common gain exceeds safe peak ('+peak+', overlap '+overlapPeak+')');
  return {rate:sr,channels,components,audibleComponents,seconds,preRoll,releaseSeconds,envelopeVersion:gainProof?4:preRoll===.3&&releaseSeconds===.9?2:3,...(gainProof?{gainProof}:{}),warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:nativeHandoffAt+releaseSeconds+.15,peak,overlapPeak,headroom,pitchPreserved:true,
   ...(preserveFile?{sourceReadThrough:outgoing.start+outgoing.channels[0].length/sr,outgoingEnvelope:'unity-through-decoded-eof-v1'}:{}),
   timingVerified:true,timing:stretched.timing,
