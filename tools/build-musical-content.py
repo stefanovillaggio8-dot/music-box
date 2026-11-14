@@ -59,7 +59,9 @@ def main():
         if not s or s['sha']!=e['sha'] or abs(s['duration']-e['duration'])>1.5:raise ValueError('Unbound source '+key)
         ends=[cue['end'] for record in e.get('structuralBeatPlans',{}).values() for cue in record.get('cues',[record['cue']])]
         e['musicalContent']=summarize(s,e,ends);count+=1
-    pathlib.Path(args.output).write_text(json.dumps(index,separators=(',',':'))+'\n',encoding='utf-8',newline='\n')
+    output=pathlib.Path(args.output)
+    output.parent.mkdir(parents=True,exist_ok=True)
+    output.write_text(json.dumps(index,separators=(',',':'))+'\n',encoding='utf-8',newline='\n')
     print(json.dumps({'sources':count,'wholeCoverage':all(e.get('musicalContent',{}).get('wholeCoverageVerified') for e in index['entries'].values() if e.get('status')=='ok')}))
 
 if __name__=='__main__':main()
