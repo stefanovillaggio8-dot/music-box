@@ -183,6 +183,7 @@ const server=http.createServer(async(req,res)=>{
     // shuffle availability by erasing the active session's history.
     const autoContext=await browser.newContext({serviceWorkers:'block'}),auto=await autoContext.newPage();
     auto.on('pageerror',e=>console.error(name,'shuffle page',e.message));
+    auto.on('console',m=>{if(['warning','error'].includes(m.type()))console.error(name,'shuffle console',m.type(),m.text())});
     await auto.route('**/*',async route=>{
      const url=new URL(route.request().url());
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
@@ -203,7 +204,13 @@ const server=http.createServer(async(req,res)=>{
     await auto.locator('#search').fill(sourceTitle);
     console.error(name,'automatic source',JSON.stringify(actualPlan));
     await auto.locator('.track').filter({has:auto.getByText(sourceTitle,{exact:true})}).first().click();
-    await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,actualPlan,{timeout:20000});
+    try{await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,actualPlan,{timeout:20000});}
+    catch(error){console.error(name,'library start diagnostic',JSON.stringify(await auto.evaluate(()=>{
+     const a=MusicBoxBridge.audio();return {currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
+      paused:a.paused,src:a.currentSrc,readyState:a.readyState,networkState:a.networkState,error:a.error?.message,
+      toast:document.querySelector('#toast')?.textContent,search:document.querySelector('#search')?.value,
+      rows:[...document.querySelectorAll('.track')].map(x=>x.textContent),diagnostics:MusicBoxMix.diagnostics()};
+    })));throw error;}
     await auto.locator('#search').fill('');
     try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0,{timeout:20000});}
     catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection()}))));throw error;}
