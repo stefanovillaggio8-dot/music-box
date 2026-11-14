@@ -34,6 +34,7 @@ def main():
  if hashlib.sha256(checkpoint.read_bytes()).hexdigest()!=MODEL_SHA:raise ValueError('Model changed')
  os.environ['TORCH_HOME']=str(model_root/'torch');torch.set_num_threads(2);model=Audio2Frames(str(checkpoint),device='cpu')
  index=json.loads((ROOT/'dj-deep-analysis.json').read_text(encoding='utf-8'));shard,parts=map(int,args.shard.split('/'));audio.SR=pcm.SR
+ pathlib.Path(args.cache).mkdir(parents=True,exist_ok=True)
  keys=[k for i,k in enumerate(sorted(k for k,e in index['entries'].items() if e['status']=='ok')) if i%parts==shard]
  if args.limit:keys=keys[:args.limit]
  output=pathlib.Path(args.output);output.parent.mkdir(parents=True,exist_ok=True);entries={};errors=[]
