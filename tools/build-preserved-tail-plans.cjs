@@ -4,6 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {placements}=require('./pcm-affine-placements.cjs');
 const {metricalFit}=require('./pcm-metrical-fit.cjs');
+const {shortlist}=require('./shortlist-musical-windows.cjs');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const partial=arg('metrical','false')==='true';
 const initialBarLimit=Number(arg('initial-bar-limit','8'));
@@ -108,8 +109,7 @@ for(const a of prepared)for(const b of prepared){
  }
  count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':partial?'partialCandidates':'completeCandidates');
  if(choices.length){
-  choices.sort((x,y)=>y.fit.beats-x.fit.beats||x.fit.rms-y.fit.rms);const selected=[];
-  for(const c of choices){if(selected.length>=4)break;if(selected.some(x=>Math.abs(x.begin-c.begin)<.1&&Math.abs(x.tempo-c.tempo)<.0001))continue;selected.push(c);}
+  const selected=shortlist(choices);
   for(const [number,c] of selected.entries()){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
    const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial,metricalRhythmic:partial,

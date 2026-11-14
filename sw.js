@@ -62,7 +62,7 @@ const CORE = [
   "./audio-stretch-worker.js?v=3",
   "./audio-stretch-core.mjs?v=3",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6734&dj=44", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6734&dj=45", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -110,7 +110,7 @@ const OFFLINE_SHELL = [
   "./audio-stretch-worker.js?v=3",
   "./audio-stretch-core.mjs?v=3",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6734&dj=44",
+  "./mix-intelligente.js?v=6734&dj=45",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=9"
 ];

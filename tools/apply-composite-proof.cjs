@@ -19,8 +19,13 @@ for(const row of report.results){
   // certified window. Keep the already installed verified rendition.
   if(!cues.some(x=>x.composite.sha256===p.composite.sha256||sameWindow(x)))cues.push(p);
   const native=p=>p.nativeRatePreferred===true&&p.composite.postRenderRhythm.rmsSeconds<=.025;
+  // Within a 5-ms measured timing band, prefer the shorter certified
+  // overlap. More simultaneous seconds do not themselves improve a mix.
+  // Full/partial classification, native-rate preference and every
+  // certification threshold remain unchanged.
+  const timingBand=p=>Math.floor(p.composite.postRenderRhythm.rmsSeconds/.005);
   cues.sort((a,b)=>Number(b.measuredFullBeat)-Number(a.measuredFullBeat)||Number(native(b))-Number(native(a))||
-    a.composite.postRenderRhythm.rmsSeconds-b.composite.postRenderRhythm.rmsSeconds||b.score-a.score);
+    timingBand(a)-timingBand(b)||a.fade-b.fade||a.composite.postRenderRhythm.rmsSeconds-b.composite.postRenderRhythm.rmsSeconds||b.score-a.score);
   a.structuralBeatPlans[b.sha]={version:1,fromSha:a.sha,toSha:b.sha,sourceDuration:a.duration,nextDuration:b.duration,cue:cues[0],cues};
  }else{
   const record=a.pcmBeatPlans?.[b.sha];

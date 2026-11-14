@@ -34,6 +34,7 @@ const cacheFor=(file,report,id)=>file+'.'+crypto.createHash('sha256').update(JSO
 const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+':'+(r.start%60).toFixed(3).padStart(6,'0')+'] '+r.text).join('\n');
 (async()=>{
  const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,
+  observationPassesPerReferenceWindow:observations.reduce((s,[,r])=>s+Math.ceil(28/(r.inference.experimentalContext?.seconds||28)),0),
   referenceLanguages:[...new Set(references.map(r=>r.language||'en'))],
   runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js'].map(f=>
    [f,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')])),
@@ -66,7 +67,8 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
    const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001),tokens=line.text.match(/\S+\s*/gu)||[];
    if(tokens.length!==reference.length||tokens.some((t,i)=>normalize(t)!==normalize(reference[i].text)))continue;
    const measured=context.MusicBoxWordKaraoke.hasWordTiming(row)?row.words.map((w,i)=>({...w,wordIndex:i})):row?.acousticSpans||[];
-   for(const w of measured)errors.push({startErrorMs:1000*(w.t-reference[w.wordIndex].start),endErrorMs:1000*(w.end-reference[w.wordIndex].end)});
+   for(const w of measured)errors.push({lineSourceT:line.start,wordIndex:w.wordIndex,
+    startErrorMs:1000*(w.t-reference[w.wordIndex].start),endErrorMs:1000*(w.end-reference[w.wordIndex].end)});
   }
   output.cases.push({id:c.id,category:c.category,referenceWords:c.referenceWords,acceptedWords:errors.length,errors});
  }

@@ -151,8 +151,14 @@ const server=http.createServer(async(req,res)=>{
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue};
      }
      return null;
-    },{profile:playbackProfile,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)}))});
+    },{profile:playbackProfile,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
+     Number(b.from==='audio/songs/track-1183.mp3'&&b.to==='audio/songs/track-1198.mp3')-
+     Number(a.from==='audio/songs/track-1183.mp3'&&a.to==='audio/songs/track-1198.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
+    if(playbackProfile==='Emanuele'){
+     assert.equal(actualPlan.fromId,'b-track-1183');assert.equal(actualPlan.toId,'b-track-1198');
+     assert.ok(actualPlan.cue.fade<11);assert.ok(actualPlan.cue.tempo>1,'Exercise the shorter stretched cue through the real planner');
+    }
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{
       MusicBoxBridge.mixEnableAudio(event);
@@ -178,6 +184,9 @@ const server=http.createServer(async(req,res)=>{
     const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio())}));
     assert.equal(plannedPlayback.handoffs,1);assert.equal(plannedPlayback.paused,false);assert.equal(plannedPlayback.sourceMatches,true);
     await appContext.close();
+    // Independently exercise ordinary shuffle with a unique library title.
+    // It need not start on the same source as the explicit optimized mix.
+    const automaticPlan=playbackProfile==='Emanuele'?{fromId:'b-track-884',toId:'b-track-1043'}:actualPlan;
     // Independent fresh-listening session: the manual handoff above has
     // already played its target and must not be used to fake repeat-free
     // shuffle availability by erasing the active session's history.
@@ -195,11 +204,11 @@ const server=http.createServer(async(req,res)=>{
     await auto.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
     await auto.waitForFunction(({profile,fromId,toId})=>MusicBoxBridge.profile()===profile&&
      [fromId,toId].every(id=>MusicBoxBridge.allTracks().some(t=>t.id===id)),
-     {profile:playbackProfile,...actualPlan},{timeout:30000});
+     {profile:playbackProfile,...automaticPlan},{timeout:30000});
     // Start through the real library row, then restore the full library
     // search scope. This retains the actual tap/media activation and wins
     // over initial last-song restoration, just like an explicit selection.
-    const sourceTitle=await auto.evaluate(p=>MusicBoxBridge.allTracks().find(t=>t.id===p.fromId).title,actualPlan);
+    const sourceTitle=await auto.evaluate(p=>MusicBoxBridge.allTracks().find(t=>t.id===p.fromId).title,automaticPlan);
     await auto.locator('#search').click();
     await auto.locator('#search').fill(sourceTitle);
     // The app debounces filtering for 160 ms. Clicking a row from the
@@ -210,9 +219,9 @@ const server=http.createServer(async(req,res)=>{
      const rows=[...document.querySelectorAll('.track')];
      return rows.length===1&&rows[0].querySelector('.track-testo')?.textContent===title;
     },sourceTitle,{timeout:10000});
-    console.error(name,'automatic source',JSON.stringify(actualPlan));
+    console.error(name,'automatic source',JSON.stringify(automaticPlan));
     await auto.locator('.track .track-testo').click();
-    try{await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,actualPlan,{timeout:20000});}
+    try{await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,automaticPlan,{timeout:20000});}
     catch(error){console.error(name,'library start diagnostic',JSON.stringify(await auto.evaluate(()=>{
      const a=MusicBoxBridge.audio();return {currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
       paused:a.paused,src:a.currentSrc,readyState:a.readyState,networkState:a.networkState,error:a.error?.message,
@@ -231,7 +240,8 @@ const server=http.createServer(async(req,res)=>{
     await autoContext.close();
     results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
-     seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,muteDuringOverlap,automaticShuffle,physicalIPhone:false});
+     seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
+     optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));
