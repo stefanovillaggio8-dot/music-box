@@ -2417,13 +2417,13 @@
    },
    "[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 2,
-    "s": 494,
+    "s": 554,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
    "m:2026-11|[\"crudelia - i nervi\",\"marracash\"]": {
     "v": 2,
-    "s": 494,
+    "s": 554,
     "t": "CRUDELIA - I nervi",
     "a": "Marracash"
    },
@@ -10846,13 +10846,13 @@
     "a": "Luchè"
    },
    "[\"via del campo\",\"fabrizio de andré\"]": {
-    "v": 1,
+    "v": 2,
     "s": 162,
     "t": "Via del campo",
     "a": "Fabrizio De André"
    },
    "m:2026-11|[\"via del campo\",\"fabrizio de andré\"]": {
-    "v": 1,
+    "v": 2,
     "s": 162,
     "t": "Via del campo",
     "a": "Fabrizio De André"
