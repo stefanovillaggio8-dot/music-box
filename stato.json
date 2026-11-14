@@ -3887,13 +3887,13 @@
    },
    "[\"slrl\",\"thasup, lazza, sfera ebbasta\"]": {
     "v": 0,
-    "s": 278,
+    "s": 310,
     "t": "slrl",
     "a": "thasup, Lazza, Sfera Ebbasta"
    },
    "m:2026-11|[\"slrl\",\"thasup, lazza, sfera ebbasta\"]": {
     "v": 0,
-    "s": 278,
+    "s": 310,
     "t": "slrl",
     "a": "thasup, Lazza, Sfera Ebbasta"
    },
@@ -4091,13 +4091,13 @@
    },
    "[\"prima che\",\"nayt\"]": {
     "v": 1,
-    "s": 253,
+    "s": 302,
     "t": "Prima che",
     "a": "nayt"
    },
    "m:2026-11|[\"prima che\",\"nayt\"]": {
     "v": 1,
-    "s": 253,
+    "s": 302,
     "t": "Prima che",
     "a": "nayt"
    },
@@ -7390,14 +7390,14 @@
     "a": "Tiziano Ferro"
    },
    "[\"lo stesso viso\",\"luchÃÂÃÂÃÂÃÂ¨, da blonde\"]": {
-    "v": 1,
-    "s": 455,
+    "v": 2,
+    "s": 467,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂÃÂÃÂÃÂ¨, da blonde\"]": {
-    "v": 1,
-    "s": 455,
+    "v": 2,
+    "s": 467,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂÃÂÃÂ¨, Da Blonde"
    },
@@ -7912,14 +7912,14 @@
     "a": "MÃÂÃÂ¥neskin"
    },
    "[\"tutto fuori controllo ÃÂ¢ÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
-    "v": 2,
-    "s": 359,
+    "v": 3,
+    "s": 362,
     "t": "TUTTO FUORI CONTROLLO ÃÂ¢ÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo ÃÂ¢ÃÂÃÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
-    "v": 2,
-    "s": 359,
+    "v": 3,
+    "s": 362,
     "t": "TUTTO FUORI CONTROLLO ÃÂ¢ÃÂÃÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -8201,13 +8201,13 @@
    },
    "[\"lo stesso viso\",\"luchÃÂÃÂ¨, da blonde\"]": {
     "v": 2,
-    "s": 467,
+    "s": 540,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂ¨, Da Blonde"
    },
    "m:2026-11|[\"lo stesso viso\",\"luchÃÂÃÂ¨, da blonde\"]": {
     "v": 2,
-    "s": 467,
+    "s": 540,
     "t": "Lo Stesso Viso",
     "a": "LuchÃÂÃÂ¨, Da Blonde"
    },
@@ -8723,13 +8723,13 @@
    },
    "[\"tutto fuori controllo Ã¢ÂÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 3,
-    "s": 362,
+    "s": 438,
     "t": "TUTTO FUORI CONTROLLO Ã¢ÂÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo Ã¢ÂÂ (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 3,
-    "s": 362,
+    "s": 438,
     "t": "TUTTO FUORI CONTROLLO Ã¢ÂÂ (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
@@ -9533,13 +9533,13 @@
    },
    "[\"tutto fuori controllo â (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 3,
-    "s": 438,
+    "s": 445,
     "t": "TUTTO FUORI CONTROLLO â (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
    "m:2026-11|[\"tutto fuori controllo â (con franco 126, kid yugi, izi)\",\"mace, kid yugi, izi, franco126\"]": {
     "v": 3,
-    "s": 438,
+    "s": 445,
     "t": "TUTTO FUORI CONTROLLO â (con Franco 126, Kid Yugi, Izi)",
     "a": "MACE, Kid Yugi, Izi, Franco126"
    },
