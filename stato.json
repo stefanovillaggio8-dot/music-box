@@ -2693,13 +2693,13 @@
    },
    "[\"grazie a dio\",\"thasup\"]": {
     "v": 0,
-    "s": 144,
+    "s": 176,
     "t": "gRAZie A Dio",
     "a": "thasup"
    },
    "m:2026-11|[\"grazie a dio\",\"thasup\"]": {
     "v": 0,
-    "s": 144,
+    "s": 176,
     "t": "gRAZie A Dio",
     "a": "thasup"
    },
@@ -3221,13 +3221,13 @@
    },
    "[\"il giorno che aspettavo\",\"ultimo\"]": {
     "v": 0,
-    "s": 177,
+    "s": 215,
     "t": "IL GIORNO CHE ASPETTAVO",
     "a": "Ultimo"
    },
    "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
     "v": 0,
-    "s": 177,
+    "s": 215,
     "t": "IL GIORNO CHE ASPETTAVO",
     "a": "Ultimo"
    },
@@ -7366,14 +7366,14 @@
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
    "[\"balÃÂÃÂÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
-    "v": 1,
-    "s": 210,
+    "v": 2,
+    "s": 232,
     "t": "BALÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"balÃÂÃÂÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
-    "v": 1,
-    "s": 210,
+    "v": 2,
+    "s": 232,
     "t": "BALÃÂÃÂÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
@@ -8177,13 +8177,13 @@
    },
    "[\"balÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
     "v": 2,
-    "s": 232,
+    "s": 280,
     "t": "BALÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
    "m:2026-11|[\"balÃÂÃÂ¹ - acoustic version\",\"tonypitony\"]": {
     "v": 2,
-    "s": 232,
+    "s": 280,
     "t": "BALÃÂÃÂ - Acoustic Version",
     "a": "TonyPitony"
    },
