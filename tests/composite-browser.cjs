@@ -81,7 +81,9 @@ const server=http.createServer(async(req,res)=>{
        return player.play().catch(error=>{trace.playError=String(error);throw error});
       }};
      await new Promise((resolve,reject)=>{player.addEventListener('loadedmetadata',resolve,{once:true});player.addEventListener('error',reject,{once:true});player.load()});
-     player.currentTime=cue.begin-cue.composite.preRoll-.35;
+     // Let the freshly seeked native decoder settle before comparing its
+     // clock with AudioContext. The real planner arms during ongoing play.
+     player.currentTime=cue.begin-cue.composite.preRoll-1.5;
      await new Promise(resolve=>player.addEventListener('seeked',resolve,{once:true}));
      document.querySelector('#go').onclick=()=>{ctx.resume();player.play()};
     },plan);
@@ -96,7 +98,7 @@ const server=http.createServer(async(req,res)=>{
     await page.evaluate(async plan=>{
      player.pause();id='out';player=new Audio('/original/'+plan.fromSha+'.mp3');
      await new Promise(resolve=>{player.addEventListener('loadedmetadata',resolve,{once:true});player.load()});
-     player.currentTime=cue.begin-cue.composite.preRoll-.35;await new Promise(resolve=>player.addEventListener('seeked',resolve,{once:true}));
+     player.currentTime=cue.begin-cue.composite.preRoll-1.5;await new Promise(resolve=>player.addEventListener('seeked',resolve,{once:true}));
      document.querySelector('#go').onclick=()=>player.play();
     },plan);
     await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-cue.composite.preRoll-.14);

@@ -12,7 +12,12 @@ for(const row of report.results){
   if(c.rhythmVerified!==true||c.postRenderRhythm?.accepted!==true)throw Error('Missing actual rendered rhythm proof');
   a.structuralBeatPlans??={};
   const existing=a.structuralBeatPlans[b.sha],cues=existing?.cues||[];
-  if(!cues.some(x=>x.composite.sha256===p.composite.sha256))cues.push(p);
+  const sameWindow=x=>['begin','end','entry','fade','tempo'].every(k=>
+   Number.isFinite(x[k])&&Math.abs(x[k]-p[k])<.0001)&&
+   x.measuredFullBeat===p.measuredFullBeat&&x.metricalRhythmic===p.metricalRhythmic;
+  // A second OS/encoder may produce a different FLAC hash for the same
+  // certified window. Keep the already installed verified rendition.
+  if(!cues.some(x=>x.composite.sha256===p.composite.sha256||sameWindow(x)))cues.push(p);
   const native=p=>p.nativeRatePreferred===true&&p.composite.postRenderRhythm.rmsSeconds<=.025;
   cues.sort((a,b)=>Number(b.measuredFullBeat)-Number(a.measuredFullBeat)||Number(native(b))-Number(native(a))||
     a.composite.postRenderRhythm.rmsSeconds-b.composite.postRenderRhythm.rmsSeconds||b.score-a.score);
