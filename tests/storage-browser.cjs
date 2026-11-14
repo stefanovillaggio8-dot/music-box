@@ -1,6 +1,6 @@
 'use strict';
 // Isolated real browser storage. No user's database/cache is opened.
-const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),os=require('node:os'),assert=require('node:assert/strict');
 const {chromium,webkit}=require('playwright');
 const script=fs.readFileSync(path.join(__dirname,'../offline-storage-audit.js'));
 const server=http.createServer((req,res)=>{res.setHeader('Content-Type',req.url==='/audit.js'?'text/javascript':'text/html');res.end(req.url==='/audit.js'?script:'<link rel="icon" href="data:,"><script src="/audit.js"></script>');});
@@ -8,9 +8,12 @@ const server=http.createServer((req,res)=>{res.setHeader('Content-Type',req.url=
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const results=[];
  try{for(const [name,engine] of [['chromium',chromium],['webkit',webkit]]){
   if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&process.env.MUSICBOX_COMPOSITE_BROWSERS!==name)continue;
-  const browser=await engine.launch({headless:true});
+  // A real offline library uses a persistent profile. Linux WebKit's
+  // ephemeral context cannot prepare IDB Blob backing files reliably.
+  const temporary=fs.mkdtempSync(path.join(os.tmpdir(),'musicbox-storage-'));
+  const context=await engine.launchPersistentContext(temporary,{headless:true});
   try{
-   const page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port);
+   const page=await context.newPage();await page.goto('http://127.0.0.1:'+server.address().port);
    let requests=0;page.on('request',()=>requests++);
    const r=await page.evaluate(async()=>{
     let phase='seed caches';try{
@@ -41,7 +44,11 @@ const server=http.createServer((req,res)=>{res.setHeader('Content-Type',req.url=
    for(const key of ['cacheNamesUnchanged','offlineAudioByteExact','lyricsPreserved','favoritesPreserved','cancelled'])assert.equal(r[key],true,key);
    assert.equal(r.importedAudioBytes,6000);assert.equal(JSON.stringify(r.report).includes('never-export'),false);
    results.push({browser:name,...r,networkRequestsDuringAudit:requests,physicalIPhone:false});
-  }finally{await browser.close()}
+  }finally{
+   await context.close();
+   if(path.dirname(path.resolve(temporary))!==path.resolve(os.tmpdir())||!path.basename(temporary).startsWith('musicbox-storage-'))throw Error('Invalid isolated profile cleanup target');
+   fs.rmSync(temporary,{recursive:true,force:true});
+  }
  }}finally{server.close()}
  console.log(JSON.stringify({results},null,2));
 })().catch(error=>{console.error(error);server.close();process.exitCode=1});
