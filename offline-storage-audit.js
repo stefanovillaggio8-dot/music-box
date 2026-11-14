@@ -3,9 +3,9 @@
 (function(root){
 'use strict';
 const prefix='spotifynonavraiimieisoldi';
-const category=url=>{
- let path='';try{path=new URL(url).pathname}catch(_){}
- if(/\.mp3$/i.test(path))return 'audio';
+const category=(url,mime='')=>{
+ let path='',audio=false;try{const u=new URL(url);path=u.pathname;audio=u.searchParams.get('action')==='audio';}catch(_){}
+ if(audio||/^audio\//i.test(mime)||/\.mp3$/i.test(path))return 'audio';
  if(/dj-.*\.json$/i.test(path))return 'musicalAnalysis';
  if(/\.(onnx|bin)$/i.test(path))return 'models';
  if(/\.(png|jpe?g|webp|avif|svg)$/i.test(path))return 'coversAndImages';
@@ -32,7 +32,7 @@ async function inspect({db,cacheStorage=root.caches,storage=root.navigator?.stor
   cancelled();if(!name.startsWith(prefix)){report.unattributedCacheCount++;continue;}
   const cache=await cacheStorage.open(name),groups={};
   for(const request of await cache.keys()){
-   cancelled();const response=await cache.match(request),kind=category(request.url);
+   cancelled();const response=await cache.match(request),kind=category(request.url,response?.headers.get('content-type')||'');
    const group=groups[kind]??={entries:0,declaredBytes:0,unknownSizeEntries:0};group.entries++;
    const raw=response?.headers.get('content-length'),n=raw!=null&&raw.trim()!==''?Number(raw):NaN;
    if(response?.type!=='opaque'&&Number.isSafeInteger(n)&&n>=0)group.declaredBytes+=n;else group.unknownSizeEntries++;

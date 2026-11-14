@@ -36,9 +36,13 @@ jobs:
           set -o pipefail
           node tests/composite-browser.cjs | tee composite-browser-result.json
           node -e "const r=require('./composite-browser-result.json');if(r.results.length!==1||r.results.some(x=>x.browser!==process.env.MUSICBOX_COMPOSITE_BROWSERS||!x.actualSameProfilePlannerPlayback))process.exit(1)"
+      - name: Verify read-only offline inventory in real browser storage
+        run: node tests/storage-browser.cjs > storage-browser-result.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: common-pcm-browser-proof-${{ matrix.browser }}
-          path: composite-browser-result.json
+          path: |
+            composite-browser-result.json
+            storage-browser-result.json
           retention-days: 14

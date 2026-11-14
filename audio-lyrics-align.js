@@ -574,5 +574,9 @@ function diagnostics(){
   workerAlive:!!worker,fetchingAudio:!!downloadController,continuationScheduled:continuationTimer!=null,
   completedSessionWindows:[...sessionWindows.values()].reduce((s,n)=>s+n,0),cpuPercent:null,memoryBytes:null};
 }
+// No new analysis may start while hidden, and an inference already in
+// flight must not keep the optional GPU worker alive behind native music.
+if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{if(document.hidden)cancel();});
+root.addEventListener?.('pagehide',cancel);
 root.MusicBoxAudioAlign={request,cancel,diagnostics,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,analysisWindows,ownedContextWords,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);

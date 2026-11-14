@@ -125,7 +125,7 @@ Su iPhone resta una sola inferenza per richiesta e il limite già esistente di t
 
 Il solo contesto corto perdeva copertura (122/590): non è stato sostituito al passaggio originale. Il guadagno 135→160 deriva da osservazioni aggiuntive conservate dal salvataggio reale, senza abbassare i matcher completi o parziali.
 
-Controllo indipendente, scelto alfabeticamente prima di osservare l’ASR e disgiunto dai cinque brani di sviluppo: **Avercage – Embers** (inglese) e **Confession – Quesabe** (francese). Risultato **10/150→10/150**; rap 0/105, canto 10/45. Nessun miglioramento dimostrato su questo campione. Riferimenti e audio sono vincolati a revisione e hash; parole stimate escluse.
+Controllo indipendente, scelto alfabeticamente prima di osservare l’ASR e disgiunto dai cinque brani di sviluppo: **Avercage – Embers** (inglese) e **Confession – Quesabe** (francese). Risultato **10/150→10/150**; rap 10/105, canto 0/45. Nessun miglioramento dimostrato su questo campione. Riferimenti e audio sono vincolati a revisione e hash; parole stimate escluse.
 
 Sono misure CPU sul modello fissato, con ancoraggi di frase umani per isolare l’errore delle parole. Non dimostrano precisione italiana, prestazioni WebGPU identiche su iPhone o allineamento completo di testi LRC già sfasati. Le contrazioni italiane sono coperte da test funzionali, non da un nuovo benchmark italiano registrato.
 
