@@ -6802,20 +6802,30 @@ function rebuildAudio(autoplay) {
 
   let _precaricaInCorso = false;
   async function _precaricaInCache(t) {
+    if (_precaricaInCorso || !t || !t.url || !("caches" in window)) return;
+    // Lock before the first await: concurrent next-track preparations must
+    // not start duplicate MP3 transfers while CacheStorage is opening.
+    _precaricaInCorso = true;
+    const owner = profile;
     try {
-      if (_precaricaInCorso) return;
-      if (!t || !t.url) return;
       /* Cache SEPARATA: i brani che scarico in anticipo non devono stare
          dove stanno le tue download (altrimenti, quando il telefono e'
          pieno, si portano via le tue). */
-      if (!("caches" in window)) return;
+      const url = _urlDelBrano(t);
+      for (const name of [cacheBraniName(owner),cacheStreamName(owner),CACHE_PREFIX+"-prefetch-"+owner]) {
+        const saved = await (await caches.open(name)).match(url);
+        // Exact URL, current owner, complete readable response only. No
+        // alias deduplication between originals and bass/alternate masters.
+        if (saved?.status===200 && saved.type!=="opaque" &&
+            Number(saved.headers.get("content-length"))>=4096 &&
+            !/text\/html|application\/json/i.test(saved.headers.get("content-type")||"")) return;
+      }
       let cache = null;
-      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch-" + profile); } catch (e) { cache = null; }
+      try { cache = await caches.open("spotifynonavraiimieisoldi-prefetch-" + owner); } catch (e) { cache = null; }
       if (!cache) return;
-      _precaricaInCorso = true;
-      try { await fetchToCache(_urlDelBrano(t), cache, null); } catch (e) { }
-      _precaricaInCorso = false;
-    } catch (e) { _precaricaInCorso = false; }
+      try { await fetchToCache(url, cache, null); } catch (e) { }
+    } catch (e) { /* optional preparation; native playback continues */ }
+    finally { _precaricaInCorso = false; }
   }
 
   function _preparaIlSuccessivo(id) {
@@ -15123,13 +15133,38 @@ $("fabMenu").addEventListener("click", (e) => {
     }finally{offlineResumeBusy=false}
   }
 
+  let _offlineStorageRun = null;
+  async function _rapportoSpazioOffline() {
+    if (_offlineStorageRun || document.hidden || !window.MusicBoxStorageAudit) return;
+    const controller = new AbortController(),owner=profile,button=$("btnOfflineStorage");
+    _offlineStorageRun=controller;if(button)button.disabled=true;
+    const stop=()=>{if(document.hidden)controller.abort();};
+    document.addEventListener("visibilitychange",stop);
+    try {
+      const report=await window.MusicBoxStorageAudit.inspect({db,signal:controller.signal,profile:owner});
+      if(controller.signal.aborted || owner!==profile)return;
+      report.runtimeSnapshot={karaoke:window.MusicBoxAudioAlign?.diagnostics?.()||null,
+        prefetchInFlight:_precaricaInCorso,offlineDownloadInFlight:offlineBusy,
+        playbackPaused:audio.paused,visibility:document.visibilityState,
+        standalone:!!(navigator.standalone||window.matchMedia?.('(display-mode: standalone)').matches),
+        physicalCpuAndRamMeasured:false};
+      const output=$("offlineReportText"),panel=$("offlineReportBox");
+      if(output&&panel){output.value=JSON.stringify(report,null,2);panel.hidden=false;output.focus();output.select();}
+      toast("Rapporto spazio pronto da copiare. Nessun file eliminato.",6000);
+    } catch(error) {
+      if(!controller.signal.aborted)toast("Rapporto spazio non disponibile: "+String(error.message||error),6000);
+    } finally {
+      document.removeEventListener("visibilitychange",stop);
+      _offlineStorageRun=null;if(button)button.disabled=false;
+    }
+  }
   async function offlineSpaceInfo() {
     let txt = "";
     try {
       if (navigator.storage && navigator.storage.estimate) {
         const est = await navigator.storage.estimate();
         if (est && est.usage) {
-          txt = "Spazio usato dall'app: " + fmtBytes(est.usage) +
+          txt = "Stima dei dati di questo sito (origine): " + fmtBytes(est.usage) +
             (est.quota ? " (ne puoi usare " + fmtBytes(est.quota) + ")" : "");
         }
       }
@@ -15162,7 +15197,7 @@ $("fabMenu").addEventListener("click", (e) => {
         }
       }
     } catch (e) { }
-    if (!txt) txt = "Le canzoni offline occupano memoria sul telefono (circa 60 MB per tutte).";
+    if (!txt) txt = "Quantità non disponibile: lo spazio dipende dagli MP3 salvati. Il rapporto spazio distingue i dati leggibili da quelli non misurabili.";
     $("offlineSpace").textContent = txt;
   }
 
@@ -16336,6 +16371,7 @@ $("btnDaYouTube").addEventListener("click", () => { _chiudiAltro(); _aggiungiDaY
   });
   $("btnOfflineAll").addEventListener("click", downloadAllOffline);
   $("btnOfflineReport")?.addEventListener("click", _copiaProblemiOffline);
+  $("btnOfflineStorage")?.addEventListener("click", _rapportoSpazioOffline);
   $("btnOfflineFree").addEventListener("click", freeOffline);
   document.addEventListener("visibilitychange", () => {
     if(document.hidden) _workerOfflineBatch(profile);

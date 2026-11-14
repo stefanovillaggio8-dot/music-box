@@ -147,6 +147,10 @@ test("a new song aborts stale karaoke analysis and immediately accepts the next 
  assert.equal(aborted,true);assert.equal(writes.length,0,'cancellation cannot cause the 24h failure backoff');
  api.cancel();current='old';assert.equal(api.request('old'),true,'a cancelled window can be retried');
  api.cancel();
+ const state=api.diagnostics();
+ assert.equal(state.activeAnalyses,0);assert.equal(state.pendingInference,0);
+ assert.equal(state.workerAlive,false);assert.equal(state.fetchingAudio,false);
+ assert.equal(state.continuationScheduled,false);assert.equal(state.cpuPercent,null);
 });
 
 test("audio-measured short phrases survive actual application save and reload",async()=>{
@@ -195,6 +199,18 @@ test('overlapping short contexts own each actual observation once and never inve
  assert.equal(first.length,1);assert.equal(first[0],chunks[0]);
  assert.equal(second.length,1);assert.equal(second[0].text,'dopo');
  assert.equal(api.recognizedWords(second,12)[0].t,13.9);
+});
+
+test('fine karaoke retries require open-view allowance and completion of the coarser acoustic passes',()=>{
+ const api=win.MusicBoxAudioAlign,rows=[{t:2,text:'the words you know and never want'},
+  {t:18,text:'another phrase with several unresolved words'}];
+ assert.equal(api.analysisWindows(rows,28,()=>true,()=>true).some(w=>w.kind==='context7'),false);
+ assert.equal(api.analysisWindows(rows,28,()=>true,()=>false,true).some(w=>w.kind==='context7'),false);
+ const fine=api.analysisWindows(rows,28,()=>true,()=>true,true).filter(w=>w.kind==='context7');
+ assert.equal(fine.length,2);assert.ok(fine.every(w=>w.seconds<=11));
+ const word={text:'real',timestamp:[1,1.2]};
+ assert.equal(api.ownedContextWords([word],{kind:'context7',at:0,coreStart:0,coreEnd:7}).length,1);
+ assert.equal(api.ownedContextWords([word],{kind:'context7',at:0,coreStart:7,coreEnd:14}).length,0);
 });
 
 test('iPhone context refinement uses one inference per visit and the unchanged three-window session cap',async()=>{

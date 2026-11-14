@@ -537,7 +537,8 @@ test("a last-note onset is never permission to truncate a track",()=>{
 test("iPhone next-song preload cache matches service worker's per-profile cache",()=>{
  const app=fs.readFileSync(path.join(__dirname,"..","app.js"),"utf8");
  const sw=fs.readFileSync(path.join(__dirname,"..","sw.js"),"utf8");
- assert.ok(app.includes('caches.open("spotifynonavraiimieisoldi-prefetch-" + profile)'));
+ assert.ok(app.includes('caches.open("spotifynonavraiimieisoldi-prefetch-" + owner)'));
+ assert.ok(app.includes('const owner = profile;'));
  assert.ok(sw.includes('function cachePrefetchName(p) { return CACHE_PREFIX + "-prefetch-" + p; }'));
  assert.ok(sw.includes("cachePrefetchName(profile)"));
 });

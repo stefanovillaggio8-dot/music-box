@@ -371,7 +371,7 @@ function preferredWindows(lines,duration){
 }
 // A later request may revisit an unresolved passage with a shorter context.
 // It spends the EXISTING inference budget, and never replaces accepted words.
-function analysisWindows(lines,duration,wasAttempted=()=>false){
+function analysisWindows(lines,duration,wasAttempted=()=>false,contextAttempted=()=>false,allowFine=false){
  const result=[];
  for(const at of preferredWindows(lines,duration)){
   result.push({at,seconds:Math.min(WINDOW,duration-at),kind:'primary',parentAt:at});
@@ -383,13 +383,22 @@ function analysisWindows(lines,duration,wasAttempted=()=>false){
       Number(row.sourceT??row.t)>=coreStart-.15&&Number(row.sourceT??row.t)<coreEnd))continue;
    result.push({at:at+lo,seconds:hi-lo,kind:'context14',parentAt:at,coreStart,coreEnd});
   }
+  // Fine retries are a later stage in an OPEN karaoke view. They never
+  // replace the original or 14-second passes and spend the existing cap.
+  if(!allowFine||![at,at+14].every(core=>contextAttempted(at,core)||
+     !lines.some(row=>!hasWordTiming(row)&&Number(row.sourceT??row.t)>=core-.15&&Number(row.sourceT??row.t)<core+14)))continue;
+  for(const core of [0,7,14,21]){
+   const lo=Math.max(0,core-2),hi=Math.min(WINDOW,core+9,duration-at),coreStart=at+core,coreEnd=Math.min(at+core+7,duration);
+   if(hi-lo<4||!lines.some(row=>!hasWordTiming(row)&&Number(row.sourceT??row.t)>=coreStart-.15&&Number(row.sourceT??row.t)<coreEnd))continue;
+   result.push({at:at+lo,seconds:hi-lo,kind:'context7',parentAt:at,coreStart,coreEnd});
+  }
  }
  const now=Number(root.MusicBoxBridge?.audio?.()?.currentTime)||0;
  return result.sort((a,b)=>Math.floor(Math.abs(a.at-now)/12)-Math.floor(Math.abs(b.at-now)/12)||
   Number(a.kind!=='primary')-Number(b.kind!=='primary')||Math.abs(a.at-now)-Math.abs(b.at-now));
 }
 function ownedContextWords(chunks,spec){
- if(spec.kind!=='context14')return chunks;
+ if(spec.kind!=='context14'&&spec.kind!=='context7')return chunks;
  return (Array.isArray(chunks)?chunks:[]).filter(word=>{
   const ts=word?.timestamp;
   if(!Array.isArray(ts)||ts.length!==2||!ts.every(t=>typeof t==='number'&&Number.isFinite(t))||ts[0]<0||ts[1]<ts[0])return false;
@@ -430,9 +439,10 @@ async function analyze(id,epoch=alignmentEpoch){
  const clockDuration=Number(bridge.audio?.()?.duration)||0;
  const keyFor=at=>"mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
  const selected=at=>Date.now()-Number(sessionStorage.getItem(keyFor(at))||0)>=6*3600000;
- const candidateKey=spec=>spec.kind==='primary'?keyFor(spec.at):keyFor(spec.parentAt)+'.context14.'+spec.coreStart;
+ const candidateKey=spec=>spec.kind==='primary'?keyFor(spec.at):keyFor(spec.parentAt)+'.'+spec.kind+'.'+spec.coreStart;
  const candidateSelected=spec=>Date.now()-Number(sessionStorage.getItem(candidateKey(spec))||0)>=6*3600000;
- const candidates=(lines,duration)=>analysisWindows(lines,duration,at=>!selected(at));
+ const candidates=(lines,duration)=>analysisWindows(lines,duration,at=>!selected(at),
+  (parentAt,coreStart)=>!candidateSelected({kind:'context14',parentAt,coreStart}),karaokeViewOpen());
  const sessionCap=isPhone?(karaokeViewOpen()?
   Math.min(16,Math.max(MOBILE_SESSION_WINDOW_CAP,Math.ceil(clockDuration/STEP)+2)):
   MOBILE_SESSION_WINDOW_CAP):DESKTOP_SESSION_WINDOW_CAP;
@@ -559,5 +569,10 @@ function request(id){
  else setTimeout(start,1600);
  return true;
 }
-root.MusicBoxAudioAlign={request,cancel,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,analysisWindows,ownedContextWords,languageFromLyrics};
+function diagnostics(){
+ return {hidden:typeof document!=='undefined'?document.hidden:null,activeAnalyses:active.size,pendingInference:pending.size,
+  workerAlive:!!worker,fetchingAudio:!!downloadController,continuationScheduled:continuationTimer!=null,
+  completedSessionWindows:[...sessionWindows.values()].reduce((s,n)=>s+n,0),cpuPercent:null,memoryBytes:null};
+}
+root.MusicBoxAudioAlign={request,cancel,diagnostics,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,analysisWindows,ownedContextWords,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);

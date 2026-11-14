@@ -8,6 +8,8 @@ const root=path.resolve(__dirname,'..'),read=p=>JSON.parse(fs.readFileSync(p,'ut
 const references=read(arg('references','references.json'));
 const baselineFile=arg('baseline','baseline.json'),alternativeFile=arg('alternative','alternative.json');
 const baseline=read(baselineFile),alternative=read(alternativeFile);
+const additionalFile=arg('additional','');
+const observations=[[baselineFile,baseline],[alternativeFile,alternative],...(additionalFile?[[additionalFile,read(additionalFile)]]:[])];
 const context={};context.window=context;vm.createContext(context);
 for(const f of ['word-karaoke.js','audio-lyrics-align.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),context);
 const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
@@ -41,14 +43,16 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
   if(!other||c.sourceAudioSha256!==other.sourceAudioSha256)throw Error('Alternative recording identity mismatch');
   if(!record||record.audioSha256&&record.audioSha256!==c.sourceAudioSha256)throw Error('Reference recording identity mismatch');
   const state=fixture({synced:lrc(record.lines)});
-  for(const [file,report] of [[baselineFile,baseline],[alternativeFile,alternative]]){
+  for(const [file,report] of observations){
+   if(report.cases.find(x=>x.id===c.id)?.sourceAudioSha256!==c.sourceAudioSha256)throw Error('Additional recording identity mismatch');
    const observed=read(cacheFor(file,report,c.id));
-   const passes=report.inference.experimentalContext?.seconds===14?[0,14]:[null];
+   const coreSeconds=report.inference.experimentalContext?.seconds||28;
+   const passes=coreSeconds===28?[null]:Array.from({length:Math.ceil(28/coreSeconds)},(_,i)=>i*coreSeconds);
    for(const core of passes){
-    const lo=core==null?0:Math.max(0,core-2),hi=core==null?28:Math.min(28,core+16);
+    const lo=core==null?0:Math.max(0,core-2),hi=core==null?28:Math.min(28,core+coreSeconds+2);
     const chunks=core==null?observed:context.MusicBoxAudioAlign.ownedContextWords(
      observed.map(w=>({...w,timestamp:w.timestamp.map(t=>t-lo)})),
-     {kind:'context14',at:c.start+lo,coreStart:c.start+core,coreEnd:c.start+core+14});
+     {kind:'context14',at:c.start+lo,coreStart:c.start+core,coreEnd:c.start+core+coreSeconds});
     const rows=state.rows(),offset=c.start+lo,seconds=hi-lo;
     const aligned=context.MusicBoxAudioAlign.alignWindow(rows,chunks,offset,seconds),sourceAt=r=>r.sourceT??r.t;
     const partial=context.MusicBoxAudioAlign.alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,offset,seconds);

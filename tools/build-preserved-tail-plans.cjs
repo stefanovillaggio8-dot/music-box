@@ -2,7 +2,10 @@
 // Full outgoing recording + incoming recording from time zero. No early
 // content skip. Candidate data alone never authorizes runtime playback.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const {placements}=require('./pcm-affine-placements.cjs');
+const {metricalFit}=require('./pcm-metrical-fit.cjs');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
+const partial=arg('metrical','false')==='true';
 const initialBarLimit=Number(arg('initial-bar-limit','8'));
 if(![4,8].includes(initialBarLimit))throw Error('Supported initial-bar candidate limits: 4 or 8 seconds');
 const root=path.resolve(__dirname,'..'),index=JSON.parse(fs.readFileSync(arg('index',path.join(root,'dj-deep-analysis.json'))));
@@ -79,21 +82,15 @@ for(const a of prepared)for(const b of prepared){
  let tempo=false,voice=false,harmony=false;const choices=[];
  for(const x of a.source)for(const y of b.target){
   if(x.bars!==y.bars||x.meter!==y.meter)continue;
+  if(partial&&(a.raw.duration-x.end>.65||y.start>1.5))continue;
   const ratio=(y.end-y.start)/(x.end-x.start);if(ratio<.95||ratio>1.05)continue;
   const nearest=(beats,t)=>{let value=null,error=.075;for(const b of beats)if(Math.abs(b-t)<error){error=Math.abs(b-t);value=b}return value;};
   const sourceDown=x.downbeats.slice(0,-1).map(t=>nearest(a.outro.beats,t)),targetDown=y.downbeats.slice(0,-1).map(t=>nearest(b.intro.beats,t));
   if([...sourceDown,...targetDown].some(t=>t==null))continue;
   const paired=x.modelBeats.map((t,i)=>[nearest(a.outro.beats,t),nearest(b.intro.beats,y.modelBeats[i])]).filter(p=>p.every(t=>t!=null));
-  const rates=[1,ratio];
-  if(paired.length>=8){
-   const ma=paired.reduce((s,p)=>s+p[0],0)/paired.length,mb=paired.reduce((s,p)=>s+p[1],0)/paired.length;
-   const covariance=paired.reduce((s,p)=>s+(p[0]-ma)*(p[1]-mb),0),variance=paired.reduce((s,p)=>s+(p[0]-ma)**2,0);
-   const fitted=covariance/variance;if(fitted>=.95&&fitted<=1.05&&Math.abs(fitted/ratio-1)<=.025)rates.push(fitted);
-  }
-  for(const rate of [...new Set(rates)]){
-   const begin=paired.length>=8?paired.reduce((s,p)=>s+p[0]-p[1]/rate,0)/paired.length:sourceDown[0]-targetDown[0]/rate,
-    fade=a.raw.duration-begin,end=a.raw.duration;
-   if(begin<a.outro.start+.1||begin<26||fade<4.5||fade>16||fade*rate>b.intro.end-.1)continue;tempo=true;
+  for(const {rate,begin} of placements(paired,sourceDown.map((t,i)=>[t,targetDown[i]]),ratio)){
+   const fade=a.raw.duration-begin,end=a.raw.duration;
+   if(begin<a.outro.start+.1||begin<26||fade<4.5||fade>(partial?12:16)||fade*rate>b.intro.end-.1)continue;tempo=true;
    const guard=clear(b.e,0,fade*rate+.3);
    const incomingClear=guard?.clear&&!(Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<fade*rate+.3);
    const outgoingGuard=incomingClear?null:clear(a.e,begin-.3,end);
@@ -103,18 +100,19 @@ for(const a of prepared)for(const b of prepared){
    if(rms>.025||downbeatErrors.some(t=>Math.abs(t)>.05))continue;
    const h=engine.pcmFullHarmony(a.outro,b.intro,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(a.outro,b.intro,begin,rate,fade,'first-attack-033-v1');if(!h)continue;harmony=true;
    report.windows++;
-   const fit=engine.pcmFullBeatFit(a.outro,b.intro,begin,0,rate,fade);if(!fit)continue;
+   const full=engine.pcmFullBeatFit(a.outro,b.intro,begin,0,rate,fade);
+   const fit=partial?(!full&&metricalFit(a.outro,b.intro,x,y,begin,rate)):full;if(!fit)continue;
    choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:h,sourceWindow:x,targetWindow:y,incomingGuard:guard,outgoingGuard,
     vocalOverlapPolicy:incomingClear?'instrumental-incoming-v1':'instrumental-outgoing-v1',downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown});
   }
  }
- count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':'completeCandidates');
+ count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':partial?'partialCandidates':'completeCandidates');
  if(choices.length){
   choices.sort((x,y)=>y.fit.beats-x.fit.beats||x.fit.rms-y.fit.rms);const selected=[];
   for(const c of choices){if(selected.length>=4)break;if(selected.some(x=>Math.abs(x.begin-c.begin)<.1&&Math.abs(x.tempo-c.tempo)<.0001))continue;selected.push(c);}
   for(const [number,c] of selected.entries()){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
-   const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:true,metricalRhythmic:false,
+   const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial,metricalRhythmic:partial,
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
     begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
@@ -127,6 +125,7 @@ for(const a of prepared)for(const b of prepared){
     harmonicEvidence:h,harmonicMode:h.compatibleKey?'compatible-key':h.percussiveIntro?'percussion':'local-chords',
     percussiveIntro:!!h.percussiveIntro,harmonicScore:h.average,harmonicWeakest:h.weakest,
     structuralEvidence:{version:1,bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
+     ...(partial?{metricalCertificate:fit.metricalCertificate}:{}),
      downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,
      sourceObservedDownbeats:c.sourceObservedDownbeats,targetObservedDownbeats:c.targetObservedDownbeats,
      sourceModelDownbeats:x.downbeats,targetModelDownbeats:y.downbeats,

@@ -35,7 +35,7 @@ const report={schema:1,source:'https://huggingface.co/datasets/jamendolyrics/jam
  limitation:'External references with exact human line anchors isolate acoustic word timing. No claim of Italian or full-catalog word accuracy.',cases:[]};
 report.inference.revision=arg('revision',report.inference.model==='onnx-community/whisper-tiny_timestamped'?'517244293732ee2d58139af5814231b7e6830a0d':'main');
 const chunkSeconds=Number(arg('asr-chunk-seconds','28'));
-if(![14,28].includes(chunkSeconds))throw Error('Supported benchmark ASR contexts: 14 or 28 seconds');
+if(![7,14,28].includes(chunkSeconds))throw Error('Supported benchmark ASR contexts: 7, 14 or 28 seconds');
 if(chunkSeconds!==28)report.inference.experimentalContext={seconds:chunkSeconds,overlapSeconds:2,
  ownership:'word midpoint in nonoverlapping core; timestamps remain original ASR observations',
  deployedInPlayer:false};
