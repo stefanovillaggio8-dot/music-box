@@ -183,12 +183,19 @@ const server=http.createServer(async(req,res)=>{
     await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
     await auto.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     await auto.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
-    // Select the original through the app, then use its real Play button.
-    // A cold synthetic DJ handoff is not a user-started listening session
-    // and can be denied by WebKit's native autoplay policy.
-    await auto.evaluate(p=>MusicBoxBridge.play(p.fromId,false,0),actualPlan);
+    await auto.waitForFunction(({profile,fromId,toId})=>MusicBoxBridge.profile()===profile&&
+     [fromId,toId].every(id=>MusicBoxBridge.allTracks().some(t=>t.id===id)),
+     {profile:playbackProfile,...actualPlan},{timeout:30000});
+    // Start through the real library row, then restore the full library
+    // search scope. This retains the actual tap/media activation and wins
+    // over initial last-song restoration, just like an explicit selection.
+    const sourceTitle=await auto.evaluate(p=>MusicBoxBridge.allTracks().find(t=>t.id===p.fromId).title,actualPlan);
+    await auto.locator('#search').click();
+    await auto.locator('#search').fill(sourceTitle);
     console.error(name,'automatic source',JSON.stringify(actualPlan));
-    await auto.click('#btnPlay');
+    await auto.locator('.track').filter({has:auto.getByText(sourceTitle,{exact:true})}).first().click();
+    await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,actualPlan,{timeout:20000});
+    await auto.locator('#search').fill('');
     try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0,{timeout:20000});}
     catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection()}))));throw error;}
     const automaticShuffle=await auto.evaluate(()=>{

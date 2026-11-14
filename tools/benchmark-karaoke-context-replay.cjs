@@ -32,7 +32,10 @@ const cacheFor=(file,report,id)=>file+'.'+crypto.createHash('sha256').update(JSO
 const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+':'+(r.start%60).toFixed(3).padStart(6,'0')+'] '+r.text).join('\n');
 (async()=>{
  const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',deployedInPlayer:true,
-  limitation:'Additional ASR pass on existing English references, not independent Italian validation or physical phone inference.',cases:[]};
+  referenceLanguages:[...new Set(references.map(r=>r.language||'en'))],
+  runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js'].map(f=>
+   [f,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')])),
+  limitation:'Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.',cases:[]};
  for(const c of baseline.cases){
   const other=alternative.cases.find(a=>a.id===c.id),record=references.find(r=>r.name===c.record);
   if(!other||c.sourceAudioSha256!==other.sourceAudioSha256)throw Error('Alternative recording identity mismatch');

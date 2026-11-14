@@ -140,15 +140,31 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   averageOverlap:mixed?totals.overlapSum/mixed:0,averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
 }
+function inventory(profile,list,audit){
+ const full=[],seen=new Set();
+ for(const pair of audit.verifiedPairs.filter(p=>p.full)){
+  const fromSha=index.entries[pair.from]?.sha,toSha=index.entries[pair.to]?.sha;
+  for(const from of list.filter(t=>lookup(t)?.sha===fromSha))for(const to of list.filter(t=>lookup(t)?.sha===toSha)){
+   const key=from.id+'|'+to.id;if(seen.has(key))continue;seen.add(key);
+   const result=resultFor(from,to);if(result.kind!=='full')continue;
+   full.push({from:from.id,to:to.id,fromTitle:from.title,toTitle:to.title,fromSha,toSha,...result});
+  }
+ }
+ return {profile,members:list.length,completePairs:full.length,
+  uniqueRecordingPairs:new Set(full.map(p=>p.fromSha+'|'+p.toSha)).size,full};
+}
 (async()=>{
  const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
   sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
   offlineAssumption:'Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.',
-  limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[]};
+  limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[],inventories:[]};
+ const audit=arg('inventory-audit','')?JSON.parse(read(arg('inventory-audit',''))):null;
  const sessions=Number(arg('sessions','20')),steps=Number(arg('steps','40'));
  for(const [i,profile] of profiles.entries()){
   if(arg('only-profile','')&&arg('only-profile','')!==profile)continue;
   const library=members(profile);
+  if(audit)report.inventories.push(inventory(profile,library,audit));
+  if(arg('inventory-only','false')==='true')continue;
   for(const mode of ['ordered','manual-queue','shuffle','offline-shuffle']){
    if(arg('only-mode','')&&arg('only-mode','')!==mode)continue;
    const result=await simulate(profile,mode,library,mode==='ordered'||mode==='manual-queue'?1:sessions,mode==='ordered'?library.length-1:steps,20261114+i*100);
