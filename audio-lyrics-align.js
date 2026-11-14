@@ -4,7 +4,7 @@
 (function(root){
 "use strict";
 const $=id=>typeof document==="undefined"?null:document.getElementById(id);
-const VERSION=8,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
+const VERSION=9,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
@@ -369,6 +369,34 @@ function preferredWindows(lines,duration){
    coverage.get(b)-coverage.get(a)||da-db;
  });
 }
+// A later request may revisit an unresolved passage with a shorter context.
+// It spends the EXISTING inference budget, and never replaces accepted words.
+function analysisWindows(lines,duration,wasAttempted=()=>false){
+ const result=[];
+ for(const at of preferredWindows(lines,duration)){
+  result.push({at,seconds:Math.min(WINDOW,duration-at),kind:'primary',parentAt:at});
+  if(!wasAttempted(at))continue;
+  for(const core of [0,14]){
+   const lo=Math.max(0,core-2),hi=Math.min(WINDOW,core+16,duration-at);
+   const coreStart=at+core,coreEnd=Math.min(at+core+14,duration);
+   if(hi-lo<4||!lines.some(row=>!hasWordTiming(row)&&
+      Number(row.sourceT??row.t)>=coreStart-.15&&Number(row.sourceT??row.t)<coreEnd))continue;
+   result.push({at:at+lo,seconds:hi-lo,kind:'context14',parentAt:at,coreStart,coreEnd});
+  }
+ }
+ const now=Number(root.MusicBoxBridge?.audio?.()?.currentTime)||0;
+ return result.sort((a,b)=>Math.floor(Math.abs(a.at-now)/12)-Math.floor(Math.abs(b.at-now)/12)||
+  Number(a.kind!=='primary')-Number(b.kind!=='primary')||Math.abs(a.at-now)-Math.abs(b.at-now));
+}
+function ownedContextWords(chunks,spec){
+ if(spec.kind!=='context14')return chunks;
+ return (Array.isArray(chunks)?chunks:[]).filter(word=>{
+  const ts=word?.timestamp;
+  if(!Array.isArray(ts)||ts.length!==2||!ts.every(t=>typeof t==='number'&&Number.isFinite(t))||ts[0]<0||ts[1]<ts[0])return false;
+  const midpoint=(ts[0]+ts[1])/2+spec.at;
+  return midpoint>=spec.coreStart&&midpoint<spec.coreEnd;
+ });
+}
 async function analyze(id,epoch=alignmentEpoch){
  if(!canRun())return false;
  const bridge=window.MusicBoxBridge;
@@ -402,13 +430,16 @@ async function analyze(id,epoch=alignmentEpoch){
  const clockDuration=Number(bridge.audio?.()?.duration)||0;
  const keyFor=at=>"mb.audioWords.attempt."+VERSION+"."+profile+"."+id+"."+at;
  const selected=at=>Date.now()-Number(sessionStorage.getItem(keyFor(at))||0)>=6*3600000;
+ const candidateKey=spec=>spec.kind==='primary'?keyFor(spec.at):keyFor(spec.parentAt)+'.context14.'+spec.coreStart;
+ const candidateSelected=spec=>Date.now()-Number(sessionStorage.getItem(candidateKey(spec))||0)>=6*3600000;
+ const candidates=(lines,duration)=>analysisWindows(lines,duration,at=>!selected(at));
  const sessionCap=isPhone?(karaokeViewOpen()?
   Math.min(16,Math.max(MOBILE_SESSION_WINDOW_CAP,Math.ceil(clockDuration/STEP)+2)):
   MOBILE_SESSION_WINDOW_CAP):DESKTOP_SESSION_WINDOW_CAP;
  if((sessionWindows.get(sessionId)||0)>=sessionCap){
   completedInSession.add(sessionId);return false;
  }
- if(clockDuration>3&&!preferredWindows(rows,clockDuration).some(selected)){
+ if(clockDuration>3&&!candidates(rows,clockDuration).some(candidateSelected)){
   completedInSession.add(sessionId);return false;
  }
  setStatus("Analisi voce locale: preparo il brano…");
@@ -434,26 +465,27 @@ async function analyze(id,epoch=alignmentEpoch){
   const duration=Math.min(Number(decoded.duration)||0,3600);
   if(!Number.isFinite(duration)||duration<4||
      duration>(isPhone?300:600))throw Error("Track too long for safe analysis");
-  const windows=preferredWindows(rows,duration);
+  const windows=candidates(rows,duration);
   if(!windows.length)return false;
   // Mobile: only one short window per visit; no full-song inference in
   // the foreground, which could kill the PWA or interrupt Smart Mix.
   const budget=isPhone?1:3;
   let saved=0,scanned=0;
-  for(const at of windows){
+  for(const spec of windows){
+   const {at,seconds}=spec;
    if(epoch!==alignmentEpoch||scanned>=budget||active.has(sessionId)===false||document.hidden||
      bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
-   const key=keyFor(at);
-   if(!selected(at))continue;
+   const key=candidateKey(spec);
+   if(!candidateSelected(spec))continue;
    scanned++;
-   const sample=pcmSlice(decoded,at,WINDOW);
+   const sample=pcmSlice(decoded,at,seconds);
    setStatus("Analizzo la voce: "+Math.round(at)+"–"+
-     Math.round(Math.min(duration,at+WINDOW))+" s…");
-   const chunks=await requestWorker(sample,language);
+     Math.round(Math.min(duration,at+seconds))+" s…");
+   const chunks=ownedContextWords(await requestWorker(sample,language),spec);
    if(epoch!==alignmentEpoch||active.has(sessionId)===false||bridge.currentId?.()!==id||String(bridge.profile?.()||"")!==profile)break;
-   const aligned=alignWindow(rows,chunks,at,Math.min(WINDOW,duration-at));
+   const aligned=alignWindow(rows,chunks,at,seconds);
    const sourceAt=row=>row.sourceT??row.t;
-   const partial=alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,at,Math.min(WINDOW,duration-at));
+   const partial=alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,at,seconds);
    aligned.push(...partial);
    sessionStorage.setItem(key,String(Date.now()));
    if(!aligned.length)continue;
@@ -466,7 +498,7 @@ async function analyze(id,epoch=alignmentEpoch){
    sessionWindows.set(sessionId,total);
    // Keep the six-hour per-window cooldown. New requests can inspect only
    // a DIFFERENT passage, bounded per session and never during this pass.
-   if(total>=sessionCap||!preferredWindows(rows,duration).some(selected))
+   if(total>=sessionCap||!candidates(rows,duration).some(candidateSelected))
     completedInSession.add(sessionId);
   }
   if(!saved&&scanned)setStatus("Voce troppo ambigua: mantengo i tempi originali");
@@ -527,5 +559,5 @@ function request(id){
  else setTimeout(start,1600);
  return true;
 }
-root.MusicBoxAudioAlign={request,cancel,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,languageFromLyrics};
+root.MusicBoxAudioAlign={request,cancel,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,analysisWindows,ownedContextWords,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);

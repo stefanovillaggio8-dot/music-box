@@ -16,18 +16,28 @@ def get(name,limit):
     if len(content)>limit:raise ValueError('Reference download exceeds limit')
     return content
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',required=True)
+    parser.add_argument('--split',choices=('development','holdout'),default='development');args=parser.parse_args()
     output=pathlib.Path(args.output);output.mkdir(parents=True,exist_ok=True)
     content=get('metadata.jsonl',16*1024*1024)
     if hashlib.sha256(content).hexdigest()!=METADATA_SHA256:raise ValueError('Manual reference annotations changed')
+    rows=[json.loads(line) for line in content.decode('utf8').splitlines()]
+    selected=dict(SELECTED)
+    if args.split=='holdout':
+        # Fixed, disjoint selection before observing ANY model output.
+        # Alphabetical first remaining rap and English non-rap recordings,
+        # not best scores. The multilingual model receives the declared language.
+        pool=sorted((r for r in rows if r['name'] not in SELECTED),key=lambda r:r['name'])
+        rap=next(r for r in pool if r['genre']=='Hip-Hop')
+        singing=next(r for r in pool if r['genre']!='Hip-Hop' and r.get('language')=='en')
+        selected={rap['name']:'rap-dense',singing['name']:'singing-sparse'}
     records=[]
-    for line in content.decode('utf8').splitlines():
-        row=json.loads(line)
-        if row['name'] not in SELECTED:continue
-        row['benchmarkRole']=SELECTED[row['name']];target=output/(row['name']+'.mp3')
+    for row in rows:
+        if row['name'] not in selected:continue
+        row['benchmarkRole']=selected[row['name']];target=output/(row['name']+'.mp3')
         if not target.exists():target.write_bytes(get(row['file_name'],32*1024*1024))
         row['audioSha256']=hashlib.sha256(target.read_bytes()).hexdigest();records.append(row)
-    if len(records)!=len(SELECTED):raise ValueError('Missing manual references')
+    if len(records)!=len(selected):raise ValueError('Missing manual references')
     (output/'references.json').write_text(json.dumps(records,ensure_ascii=False)+'\n',encoding='utf8')
-    print(json.dumps({'recordings':len(records),'annotationRevision':REVISION,'roles':SELECTED}))
+    print(json.dumps({'recordings':len(records),'annotationRevision':REVISION,'split':args.split,'roles':selected}))
 if __name__=='__main__':main()

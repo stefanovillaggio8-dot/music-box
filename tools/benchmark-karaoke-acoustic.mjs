@@ -31,8 +31,14 @@ const report={schema:1,source:'https://huggingface.co/datasets/jamendolyrics/jam
  reference:'manually annotated word starts and ends, current dataset',
  inference:{model:arg('model','onnx-community/whisper-tiny_timestamped'),library:'transformers.js 3.8.1',device:'cpu',
  dtype:{encoder_model:'fp32',decoder_model_merged:'q4'},browserWebGPUVerified:false},
- limitation:'English external references; exact human line anchors isolate acoustic word timing. No claim of Italian or full-catalog word accuracy.',cases:[]};
+ referenceLanguages:[...new Set(records.map(r=>r.language||'en'))],
+ limitation:'External references with exact human line anchors isolate acoustic word timing. No claim of Italian or full-catalog word accuracy.',cases:[]};
 report.inference.revision=arg('revision',report.inference.model==='onnx-community/whisper-tiny_timestamped'?'517244293732ee2d58139af5814231b7e6830a0d':'main');
+const chunkSeconds=Number(arg('asr-chunk-seconds','28'));
+if(![14,28].includes(chunkSeconds))throw Error('Supported benchmark ASR contexts: 14 or 28 seconds');
+if(chunkSeconds!==28)report.inference.experimentalContext={seconds:chunkSeconds,overlapSeconds:2,
+ ownership:'word midpoint in nonoverlapping core; timestamps remain original ASR observations',
+ deployedInPlayer:false};
 const inferenceKey=crypto.createHash('sha256').update(JSON.stringify(report.inference)).digest('hex').slice(0,12);
 fs.mkdirSync(path.dirname(output),{recursive:true});
 const asr=await pipeline('automatic-speech-recognition',report.inference.model,{
@@ -76,7 +82,25 @@ for(const record of records){
    const decoded=spawnSync('ffmpeg',['-nostdin','-v','error','-i',file,'-ss',String(choice.start),'-t','28','-ac','1','-ar','16000','-f','f32le','pipe:1'],{maxBuffer:4e6});
    if(decoded.status!==0)throw Error('Reference decode failed');
    const bytes=decoded.stdout,pcm=new Float32Array(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
-   const inferAt=performance.now();chunks=(await asr(pcm,{return_timestamps:'word',task:'transcribe',language:record.language||'en'})).chunks??[];
+   const inferAt=performance.now();
+   if(chunkSeconds===28)chunks=(await asr(pcm,{return_timestamps:'word',task:'transcribe',language:record.language||'en'})).chunks??[];
+   else{
+    chunks=[];
+    // Keep the SAME reference window and denominator. These shorter ASR
+    // contexts are an offline experiment, not a reference-informed prompt.
+    for(let core=0;core<28;core+=chunkSeconds){
+     const lo=Math.max(0,core-2),hi=Math.min(28,core+chunkSeconds+2);
+     const observed=(await asr(pcm.slice(Math.round(lo*16000),Math.round(hi*16000)),
+      {return_timestamps:'word',task:'transcribe',language:record.language||'en'})).chunks??[];
+     for(const word of observed){
+      const ts=word.timestamp;
+      if(!Array.isArray(ts)||ts.length!==2||!ts.every(t=>typeof t==='number'&&Number.isFinite(t)))continue;
+      const midpoint=(ts[0]+ts[1])/2+lo;
+      if(midpoint>=core&&midpoint<Math.min(28,core+chunkSeconds))
+       chunks.push({...word,timestamp:ts.map(t=>t+lo)});
+     }
+    }
+   }
    inferenceMs=performance.now()-inferAt;
    fs.writeFileSync(cache,JSON.stringify(chunks));
   }

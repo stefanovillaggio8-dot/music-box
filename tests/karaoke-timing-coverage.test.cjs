@@ -173,3 +173,52 @@ test("audio-measured short phrases survive actual application save and reload",a
  assert.equal(rows[0].end,.6);assert.equal(rows[1].words.length,2);
  assert.equal(win.MusicBoxWordKaraoke.timingCoverage(rows).audio,2);
 });
+
+test('short-context retries require a previously analyzed unresolved passage',()=>{
+ const api=win.MusicBoxAudioAlign,rows=[{t:1,text:'non voglio perdere queste parole rapide'},
+  {t:16,text:'ancora questa frase senza un tempo'}];
+ assert.ok(api.analysisWindows(rows,28,()=>false).every(w=>w.kind==='primary'));
+ const retry=api.analysisWindows(rows,28,at=>at===0).filter(w=>w.kind==='context14');
+ assert.equal(retry.length,2);
+ assert.deepEqual(JSON.parse(JSON.stringify(retry.map(w=>[w.at,w.seconds,w.coreStart,w.coreEnd]))),[[0,16,0,14],[12,16,14,28]]);
+ const timed=rows.map(r=>({...r,words:r.text.split(' ').map((text,i)=>({text:text+' ',t:r.t+i*.1,end:r.t+i*.1+.08}))}));
+ assert.equal(api.analysisWindows(timed,28,()=>true).length,0);
+});
+
+test('overlapping short contexts own each actual observation once and never invent a timestamp',()=>{
+ const api=win.MusicBoxAudioAlign;
+ const chunks=[{text:'prima',timestamp:[13.7,13.9]},{text:'dopo',timestamp:[13.9,14.1]},
+  {text:'sconosciuta',timestamp:[null,14.2]},{text:'negativa',timestamp:[-1,.2]}];
+ const first=api.ownedContextWords(chunks,{kind:'context14',at:0,coreStart:0,coreEnd:14});
+ const second=api.ownedContextWords(chunks.map(w=>({...w,timestamp:w.timestamp.map(t=>typeof t==='number'?t-12:t)})),
+  {kind:'context14',at:12,coreStart:14,coreEnd:28});
+ assert.equal(first.length,1);assert.equal(first[0],chunks[0]);
+ assert.equal(second.length,1);assert.equal(second[0].text,'dopo');
+ assert.equal(api.recognizedWords(second,12)[0].t,13.9);
+});
+
+test('iPhone context refinement uses one inference per visit and the unchanged three-window session cap',async()=>{
+ let now=Date.now(),calls=[];const values=new Map(),pcm=new Float32Array(16000*40);
+ class Clock extends Date{static now(){return now}}
+ class Worker{postMessage(message){calls.push(message.pcm.length);queueMicrotask(()=>this.onmessage({data:{id:message.id,chunks:[]}}))}terminate(){}}
+ class Offline{async decodeAudioData(){return {sampleRate:16000,duration:40,length:pcm.length,numberOfChannels:1,getChannelData:()=>pcm}}}
+ const bridge={currentId:()=> 'song',profile:()=> 'Ste',audio:()=>({currentTime:0,duration:40}),
+  allTracks:()=>[{id:'song'}],mixUrl:()=> 'https://example.test/song.mp3',lyricsData:()=>({synced:[
+   {t:1,text:'the words you know and never want'},
+   {t:7,text:'your heart will always be with me'},
+   {t:16,text:'another first verse when we are here'}]})};
+ const context={window:{Worker,OfflineAudioContext:Offline,MusicBoxBridge:bridge},Worker,Date:Clock,
+  document:{hidden:false,baseURI:'https://example.test/',getElementById:()=>null},
+  navigator:{onLine:true,gpu:{},userAgent:'iPhone'},URL,AbortController,setTimeout,clearTimeout,
+  requestIdleCallback:fn=>fn(),sessionStorage:{getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,String(v))},
+  fetch:async()=>({ok:true,headers:{get:()=>null},blob:async()=>({size:20,arrayBuffer:async()=>new ArrayBuffer(20)})})};
+ vm.runInNewContext(fs.readFileSync(path.join(root,'audio-lyrics-align.js'),'utf8'),context);
+ const api=context.window.MusicBoxAudioAlign;
+ for(let i=0;i<3;i++){
+  assert.equal(api.request('song'),true);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(calls.length,i+1);now+=20000;
+ }
+ assert.deepEqual(calls,[28*16000,16*16000,16*16000]);
+ assert.equal(api.request('song'),false,'refinement cannot exceed the existing mobile session cap');
+ api.cancel();
+});

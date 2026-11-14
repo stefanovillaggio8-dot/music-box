@@ -175,6 +175,7 @@ const server=http.createServer(async(req,res)=>{
     // already played its target and must not be used to fake repeat-free
     // shuffle availability by erasing the active session's history.
     const autoContext=await browser.newContext({serviceWorkers:'block'}),auto=await autoContext.newPage();
+    auto.on('pageerror',e=>console.error(name,'shuffle page',e.message));
     await auto.route('https://**',async route=>{
      const url=new URL(route.request().url()),at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
      if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}await route.abort();
@@ -182,14 +183,13 @@ const server=http.createServer(async(req,res)=>{
     await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
     await auto.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     await auto.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
-    await auto.evaluate(p=>{
-     const button=document.createElement('button');button.id='auto-start';button.textContent='test';button.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
-     button.onclick=async event=>{
-      MusicBoxBridge.mixEnableAudio(event);await MusicBoxBridge.mixHandoff(p.fromId,0);
-     };document.body.append(button);
-    },actualPlan);
+    // Select the original through the app, then use its real Play button.
+    // A cold synthetic DJ handoff is not a user-started listening session
+    // and can be denied by WebKit's native autoplay policy.
+    await auto.evaluate(p=>MusicBoxBridge.play(p.fromId,false,0),actualPlan);
+    await auto.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2,{timeout:20000});
     console.error(name,'automatic source',JSON.stringify(actualPlan));
-    await auto.click('#auto-start');
+    await auto.click('#btnPlay');
     try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0,{timeout:20000});}
     catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection()}))));throw error;}
     const automaticShuffle=await auto.evaluate(()=>{

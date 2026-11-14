@@ -534,7 +534,7 @@ test("AI timing provenance survives browser restart and does not masquerade as L
  assert.match(engine,/completedInSession\.has\(sessionId\)/);
  assert.match(engine,/const limit=isPhone\?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES/);
  assert.match(engine,/window\.OfflineAudioContext\|\|window\.webkitOfflineAudioContext/);
- assert.match(engine,/if\(!selected\(at\)\)continue/);
+ assert.match(engine,/if\(!candidateSelected\(spec\)\)continue/);
 });
 
 test("audio word alignment overlaps lyric phrases crossing a 28-second boundary",()=>{
