@@ -2682,7 +2682,7 @@ function indexedFullBeatBridge(a,b,dur){
  if(expanded&&(!p.renderEvidence||p.outputHeadroom==null))return null;
  const sourceBpm=expanded?p.sourceTempoBpm:a?.bpm,targetBpm=expanded?p.targetTempoBpm:b?.bpm;
  if(![1,2].includes(record?.version)||record.fromSha!==a?.sha||record.toSha!==b?.sha||
-    !p||a.durationMismatch||b.durationMismatch||
+    !p||!incomingContentDecision(b,p).allowed||a.durationMismatch||b.durationMismatch||
     !Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     Math.abs(record.sourceDuration-a.duration)>.1||
     Math.abs(record.nextDuration-b.duration)>.1||
@@ -2756,6 +2756,13 @@ function structuralContentDecision(a,p){
     !Number.isFinite(m.sourceDuration)||Math.abs(m.sourceDuration-a.duration)>.1||
     ![m.audibleStart,m.audibleEnd,end].every(Number.isFinite)||
     !Array.isArray(m.vocalRegions)||!Array.isArray(m.boundaryTimes)||!Array.isArray(m.cutEvidence))return reject('missing-whole-content-evidence');
+ if(p?.preservedFileTail===true){
+  const c=p.composite;
+  if(p.nativeTailFullBeat!==true||p.preserveTail!==true||Math.abs(end-a.duration)>.001||
+     c?.outgoingEnvelope!=='unity-through-decoded-eof-v1'||c.sourceSha!==a.sha||
+     !Number.isFinite(c.sourceReadThrough)||Math.abs(c.sourceReadThrough-a.duration)>.1)return reject('missing-preserved-eof-proof');
+  return {allowed:true,reason:'entire-outgoing-file-preserved',penalty:0,remainingSeconds:0,unplayedFraction:0,semanticSectionsVerified:false};
+ }
  const remaining=Math.max(0,m.audibleEnd-end),span=m.audibleEnd-m.audibleStart;
  if(span<=0||end<m.audibleStart||end>m.audibleEnd+.1)return reject('invalid-content-span');
  const fraction=remaining/span;
@@ -2781,13 +2788,59 @@ function structuralContentDecision(a,p){
  return {allowed:true,reason:short?'bounded-final-instrumental-group':'pcm-repeated-decaying-instrumental-ending',
   penalty:fraction*100+remaining/10+Math.max(0,tail.remainingEnergyRatio-.5)*2,...details};
 }
+function incomingContentDecision(b,p){
+ if(!Number.isFinite(p?.entry)||p.entry<0)return {allowed:false,reason:'invalid-entry'};
+ if(p.entry<=.001)return {allowed:true,reason:'incoming-recording-from-start',skippedSeconds:0};
+ const proof=b?.musicalContent?.leadingDigitalSilence;
+ if(proof?.sourceSha===b.sha&&proof.method==='original-stereo-peak-prefix-v1'&&proof.sampleRate>=44100&&
+    Number.isFinite(proof.through)&&proof.through>=p.entry&&Number.isFinite(proof.maximumPeak)&&proof.maximumPeak<=.0001)
+  return {allowed:true,reason:'verified-digital-silence-only',skippedSeconds:0};
+ return {allowed:false,reason:'unverified-incoming-content-skip',skippedSeconds:p.entry};
+}
+function validatePreservedFileTailCue(record,p,a,b,dur){
+ const e=p?.structuralEvidence,c=p?.composite,h=p?.harmonicEvidence,r=c?.postRenderRhythm,g=e?.incomingWholeOverlap;
+ if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+    ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
+    !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
+    p.preservedFileTail!==true||p.structuralBeat!==true||p.measuredFullBeat!==true||p.metricalRhythmic!==false||
+    p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
+    a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
+    p.sourceSha!==a.sha||p.targetSha!==b.sha||p.entry!==0||p.vocalFadeSeconds!==0||p.gain!==1||
+    ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
+    ![p.fullOnsetFirst,p.fullOnsetSecond].every(Number.isFinite)||
+    p.measuredPulseMode&&![p.fullPulseFirst,p.fullPulseSecond,p.fullPulseAttackSupport].every(Number.isFinite)||
+    p.begin<26||p.fade<4.5||p.fade>16||Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
+    p.tempo<.95||p.tempo>1.05||p.entry+p.fade*p.tempo>b.duration-2||
+    !Number.isInteger(p.measuredBeatCount)||p.measuredBeatCount<8||p.beatPulseAgreement<.9||p.beatPulseAgreement>1||p.measuredPlacementError<0||p.measuredPlacementError>.040||p.grooveScore<.36||
+    (p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.9):
+     p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)||
+    e?.version!==1||![2,4,8,16].includes(e.bars)||![3,4,5].includes(e.beatsPerBar)||
+    ![e.sourcePhaseConfidence,e.targetPhaseConfidence,e.downbeatRms].every(Number.isFinite)||
+    e.sourcePhaseConfidence<.8||e.targetPhaseConfidence<.8||e.sourcePhaseConfidence>1||e.targetPhaseConfidence>1||e.downbeatRms<0||e.downbeatRms>.025||
+    g?.method!=='spleeter-2stems-energy-v1'||g.clear!==true||g.start!==0||!Number.isFinite(g.end)||g.end<p.fade*p.tempo+.29||
+    !Number.isFinite(g.maxVocalRms)||g.maxVocalRms>=.004||!Number.isFinite(g.maxRelativeVocal)||g.maxRelativeVocal>=.08||
+    Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<p.fade*p.tempo+.3||
+    c?.sourceSha!==a.sha||c.targetSha!==b.sha||c.pitchPreserved!==true||c.timingVerified!==true||
+    ![c.peak,c.overlapPeak,c.oversampledPeak,c.sourceReadThrough].every(Number.isFinite)||c.peak>.9991||c.overlapPeak>.961||c.oversampledPeak>1||
+    Math.abs(c.sourceReadThrough-a.duration)>.1||c.outgoingEnvelope!=='unity-through-decoded-eof-v1'||
+    c.rhythmVerified!==true||r?.method!=='rendered-hpss-attacks-v1'||r.accepted!==true||r.mode!=='full-pcm'||
+    ![r.matches,r.agreement,r.rmsSeconds,r.firstHalfMatches,r.secondHalfMatches,r.downbeatRmsSeconds,r.maximumDownbeatError,r.downbeatMatches].every(Number.isFinite)||
+    r.matches<8||r.agreement<.9||r.agreement>1||r.rmsSeconds<0||r.rmsSeconds>.04||r.firstHalfMatches<3||r.secondHalfMatches<3||r.downbeatsVerified!==true||
+    r.downbeatMatches!==e.bars||r.downbeatRmsSeconds>.025||r.maximumDownbeatError>.05)return null;
+ if(!h||(h.percussiveIntro?!(h.tonalRatioMax<=.12&&h.tonalPeakMax<=.23&&h.measuredRmsMin>=.005&&h.frames>=6):
+   h.compatibleKey?!(h.keyConfidence>=.70&&h.dissonanceMax<=.05&&h.rawDissonanceMax<=.45):!(h.average>=.78&&h.weakest>=.60)))return null;
+ if(h.method==='pcm-key-with-quiet-frame-bound-v1'&&!(h.sharedTonalFrames>=6&&h.frames>=h.sharedTonalFrames&&
+    h.quietInteractionMaximum===.05&&h.sourceGain===1&&h.incomingEnvelope==='native-tail-sine-033-v1'))return null;
+ return {...p};
+}
 function validateStructuralBeatCue(record,p,a,b,dur){
+ if(p?.preservedFileTail===true)return validatePreservedFileTailCue(record,p,a,b,dur);
  const e=p?.structuralEvidence;
  const strict=p?.measuredFullBeat===true&&p?.metricalRhythmic===false;
  const metrical=p?.measuredFullBeat===false&&p?.metricalRhythmic===true;
  const localVocalConflict=p&&[a?.lastVoiceAt,a?.lastLyricAt,...(a?.lyricStarts||[])].some(t=>
   Number.isFinite(t)&&t>=p.end-1.2&&t<p.end);
- if(!structuralContentDecision(a,p).allowed||record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
+ if(!structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     !p?.structuralBeat||(!strict&&!metrical)||p.kind!=="beat"||localVocalConflict||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
@@ -2899,6 +2952,7 @@ function pcmFullBeatWindowSearch(a,b,dur){
  const entries=[baseEntry,...intro.beats.filter(t=>t>baseEntry+.1&&
   t<=Math.min(baseEntry+8,firstVoice-5.4))];
  for(const entry of entries){
+ if(!incomingContentDecision(b,{entry}).allowed)continue;
  for(const oldBeat of outro.beats){
   if(oldBeat<end-16.0||oldBeat>end-3.0)continue;
   for(const nextBeat of intro.beats){
@@ -8188,13 +8242,17 @@ function start(){
  window.addEventListener("pageshow",()=>{if(enabled){plannedFor="";try{tick()}catch(e){}}});
 }
 window.MusicBoxMix={isEnabled:()=>enabled,
- contentCutSafe:(cue,id)=>{
+ contentCutSafe:(cue,id,toId)=>{
   if(!cue?.structuralBeat)return true;
   const app=bridge(),track=app?.allTracks?.().find(t=>t.id===id),a=track&&deepLookup(track);
   if(!a)return false;
   const lrc=app.mixLyricCues?.(id);
-  return structuralContentDecision({...a,lastLyricAt:Math.max(Number(a.lastLyricAt)||0,Number(lrc?.last)||0),
-   lyricStarts:[...(a.lyricStarts||[]),...(lrc?.starts||[])]},cue).allowed;
+  const from={...a,lastLyricAt:Math.max(Number(a.lastLyricAt)||0,Number(lrc?.last)||0),lyricStarts:[...(a.lyricStarts||[]),...(lrc?.starts||[])]};
+  const target=app.allTracks?.().find(t=>t.id===(toId||app.mixNext?.()?.id)),info=target&&deepLookup(target),nextLrc=target&&app.mixLyricCues?.(target.id);
+  const to=info&&Number.isFinite(nextLrc?.first)?{...info,firstLyricAt:Math.min(Number.isFinite(info.firstLyricAt)?info.firstLyricAt:Infinity,nextLrc.first)}:info;
+  if(!to)return false;
+  if(cue.preservedFileTail)return !!validatePreservedFileTailCue(a.structuralBeatPlans?.[to.sha],cue,from,to,a.duration);
+  return structuralContentDecision(from,cue).allowed&&incomingContentDecision(to,cue).allowed;
  },
  pauseForOffline:()=>{
   window.MusicBoxCompositeMix?.cancelPreparation?.();

@@ -9,7 +9,7 @@ function fixture(){
   vocalRegions:[[1,80]],boundaryTimes:[20,60],cutEvidence:[92,94].map(end=>({end,remainingEnergyRatio:.8,maximumRemainingBlockRatio:1}))};
  const p={kind:'beat',structuralBeat:true,measuredFullBeat:true,metricalRhythmic:false,
   nativeTailFullBeat:false,preserveTail:false,silenceTrim:false,vocalFadeSeconds:.4,
-  begin:84,end:92,fade:8,entry:80,tempo:1,sourceSha:a.sha,targetSha:b.sha,
+  begin:84,end:92,fade:8,entry:0,tempo:1,sourceSha:a.sha,targetSha:b.sha,
   measuredPlacementError:.015,grooveScore:.8,measuredBeatCount:16,beatPulseAgreement:1,
   measuredPulseMode:false,fullOnsetFirst:.8,fullOnsetSecond:.8,
   structuralEvidence:{version:1,bars:4,beatsPerBar:4,sourcePhaseConfidence:.95,targetPhaseConfidence:.95,downbeatRms:.01,
@@ -61,4 +61,34 @@ test('large unverified skips and later structural changes are denied despite per
  p.begin=84;p.end=92;p.structuralEvidence.outgoingVocalTail.start=90.8;p.structuralEvidence.outgoingVocalTail.end=92;
  a.musicalContent.boundaryTimes=[96];assert.equal(lookup(a,b,100),null);
  a.musicalContent.boundaryTimes=[];delete a.musicalContent;assert.equal(lookup(a,b,100),null);
+});
+
+
+test('an acoustically clean internal entry cannot skip unverified incoming content',()=>{
+ const {a,b,p}=fixture();p.entry=80;assert.equal(lookup(a,b,100),null);
+ b.musicalContent={leadingDigitalSilence:{sourceSha:b.sha,method:'original-stereo-peak-prefix-v1',sampleRate:48000,through:80,maximumPeak:0}};
+ assert.ok(lookup(a,b,100));b.musicalContent.leadingDigitalSilence.maximumPeak=.003;assert.equal(lookup(a,b,100),null);
+});
+function intactFixture(){
+ const f=fixture(),{a,b,p}=f;
+ Object.assign(p,{preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,softTailTrim:false,
+  begin:92,end:100,fade:8,entry:0,gain:1,vocalFadeSeconds:0});
+ a.lastVoiceAt=99.9;a.lastLyricAt=99.9;a.musicalContent.vocalRegions=[[1,100]];
+ Object.assign(p.structuralEvidence,{incomingWholeOverlap:{method:'spleeter-2stems-energy-v1',clear:true,start:0,end:8.3,maxVocalRms:.001,maxRelativeVocal:.01}});
+ Object.assign(p.composite,{sourceReadThrough:99.98,outgoingEnvelope:'unity-through-decoded-eof-v1'});
+ Object.assign(p.composite.postRenderRhythm,{downbeatsVerified:true,downbeatMatches:4,downbeatRmsSeconds:.01,maximumDownbeatError:.02});
+ return f;
+}
+test('a complete decoded file can overlap an instrumental opening without fading its final voice',()=>{
+ const {a,b}=intactFixture();assert.ok(lookup(a,b,100));
+});
+test('intact-file mode rejects cuts, hidden entrance skips, missing attacks and unsafe or stale proofs',()=>{
+ const mutations=[p=>p.end=99,p=>p.entry=1,p=>p.vocalFadeSeconds=.4,p=>p.preserveTail=false,
+ p=>p.composite.sourceReadThrough=98,p=>delete p.composite.outgoingEnvelope,
+ p=>p.structuralEvidence.incomingWholeOverlap.maxVocalRms=.004,p=>p.structuralEvidence.incomingWholeOverlap.end=8,
+ p=>delete p.fullOnsetFirst,p=>{p.measuredPulseMode=true;delete p.fullPulseAttackSupport},
+ p=>p.composite.postRenderRhythm.downbeatMatches=3,p=>p.composite.postRenderRhythm.downbeatRmsSeconds=.026,
+ p=>p.composite.postRenderRhythm.agreement=.89,p=>p.composite.oversampledPeak=1.01];
+ for(const change of mutations){const {a,b,p}=intactFixture();change(p);assert.equal(lookup(a,b,100),null);}
+ const {a,b}=intactFixture();b.firstLyricAt=7;assert.equal(lookup(a,b,100),null);
 });

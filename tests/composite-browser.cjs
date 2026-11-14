@@ -158,7 +158,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
-     diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.cue,p.fromId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.cue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     const muteDuringOverlap=await shell.evaluate(()=>{
      const button=document.querySelector('#btnVolIcon');button.click();

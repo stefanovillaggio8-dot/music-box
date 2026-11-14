@@ -45,8 +45,20 @@ def verify(outgoing,incoming,sr,cue,pre_roll):
         counts=[sum(start-.05<=t<(bars[i+1] if i+1<len(bars) else fade)-.05 for _,t,_ in matches) for i,start in enumerate(bars)]
         actual_downbeats=all(any(abs(t-start)<=.05 for t in a) for start in bars) and all(any(abs(t-start)<=.05 for t in b) for start in check['targetBars'])
         accepted=len(errors)>=8 and rms is not None and rms<=.020 and min(counts,default=0)>=2 and actual_downbeats
+    downbeat_verified=None;downbeat_error=None;downbeat_max=None;downbeat_matches=None
+    if cue.get('preservedFileTail'):
+        source_bars=observed(outgoing,sr,check['sourceBars'],pre_roll)
+        target_bars=observed(incoming,sr,check['targetBars'],pre_roll)
+        downbeat_matches=min(len(source_bars),len(target_bars))
+        if len(source_bars)==len(target_bars)==cue['structuralEvidence']['bars']:
+            differences=np.array(source_bars)-np.array(target_bars)
+            downbeat_error=float(np.sqrt(np.mean(differences**2)));downbeat_max=float(np.max(np.abs(differences)))
+            downbeat_verified=downbeat_error<=.025 and downbeat_max<=.05
+        else:downbeat_verified=False
+        accepted=accepted and downbeat_verified
     return {'method':'rendered-hpss-attacks-v1','mode':mode,'accepted':bool(accepted),
         'sourceAttacks':len(a),'incomingAttacks':len(b),'matches':len(errors),'agreement':ratio,
         'rmsSeconds':rms,'firstHalfMatches':first,'secondHalfMatches':second,
         'sharedPerBar':counts,'sourceObserved':a,'incomingObserved':b,
-        'notHumanListening':True}
+        'notHumanListening':True,**({'downbeatsVerified':bool(downbeat_verified),'downbeatRmsSeconds':downbeat_error,
+        'maximumDownbeatError':downbeat_max,'downbeatMatches':downbeat_matches} if cue.get('preservedFileTail') else {})}

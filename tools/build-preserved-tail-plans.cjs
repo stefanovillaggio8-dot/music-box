@@ -105,7 +105,30 @@ for(const a of prepared)for(const b of prepared){
  if(choices.length){
   choices.sort((x,y)=>y.fit.beats-x.fit.beats||x.fit.rms-y.fit.rms);const selected=[];
   for(const c of choices){if(selected.length>=4)break;if(selected.some(x=>Math.abs(x.begin-c.begin)<.1&&Math.abs(x.tempo-c.tempo)<.0001))continue;selected.push(c);}
-  for(const c of selected)report.plans.push({from:a.key,to:b.key,profiles,sourceSha:a.raw.sha,targetSha:b.raw.sha,...c});
+  for(const [number,c] of selected.entries()){
+   const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
+   const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:true,metricalRhythmic:false,
+    nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
+    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,
+    sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
+    sourceTempoBpm:60*x.bars*x.meter/(x.end-x.start),targetTempoBpm:60*y.bars*y.meter/(y.end-y.start),
+    nominalTempo:(y.end-y.start)/(x.end-x.start),nativeRatePreferred:c.tempo===1&&fit.rms<=.025,
+    beatAnchor:c.sourceObservedDownbeats[0],nextBeat:c.targetObservedDownbeats[0],beatPeriod:(x.end-x.start)/(x.bars*x.meter),
+    measuredBeatCount:fit.beats,beatPulseAgreement:fit.ratio,measuredPlacementError:fit.rms,
+    grooveScore:fit.score,score:fit.score,fullOnsetFirst:fit.firstHalf,fullOnsetSecond:fit.secondHalf,
+    measuredPulseMode:fit.observedPulses,fullPulseFirst:fit.firstBeats,fullPulseSecond:fit.secondBeats,fullPulseAttackSupport:fit.attackSupport,
+    harmonicEvidence:h,harmonicMode:h.compatibleKey?'compatible-key':h.percussiveIntro?'percussion':'local-chords',
+    percussiveIntro:!!h.percussiveIntro,harmonicScore:h.average,harmonicWeakest:h.weakest,
+    structuralEvidence:{version:1,bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
+     downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,
+     sourceObservedDownbeats:c.sourceObservedDownbeats,targetObservedDownbeats:c.targetObservedDownbeats,
+     sourceModelDownbeats:x.downbeats,targetModelDownbeats:y.downbeats,
+     pulseCheck:{source:a.outro.beats.filter(t=>t>=c.begin-.075&&t<=c.end-.12).map(t=>t-c.begin),
+      target:b.intro.beats.filter(t=>t>=0&&t<=c.fade*c.tempo-.12),
+      sourceBars:c.sourceObservedDownbeats.map(t=>t-c.begin),targetBars:c.targetObservedDownbeats.map(t=>t/c.tempo)},
+     method:'source-eof-and-original-pcm-initial-pickup-v1',humanVerified:false,semanticLabelsVerified:false}};
+   report.plans.push({from:a.key,to:b.key,profiles,primary:number===0,cue});
+  }
  }
 }
 const output=arg('output','preserved-tail-plans.json');fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({...report,plans:report.plans.length}));

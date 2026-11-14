@@ -20,14 +20,21 @@ function supports(cue){
   [c.seconds,c.peak,c.overlapPeak,c.oversampledPeak,c.begin,c.entry,c.fade,c.tempo,c.handoffPosition,c.nativeHandoffAt,c.nativeRevealAt].every(finite)&&[.3,.6,.9].includes(c.preRoll)&&
   (c.releaseSeconds==null||[.9,1.2,1.5].includes(c.releaseSeconds))&&
   ((c.preRoll===.3&&(c.releaseSeconds==null||c.releaseSeconds===.9))||
-   c.envelopeVersion===3&&finite(c.releaseSeconds)&&
+   [3,4].includes(c.envelopeVersion)&&finite(c.releaseSeconds)&&
    Math.abs(c.seconds-(c.preRoll+cue.fade+c.releaseSeconds+.9))<.002&&
    Math.abs(c.nativeRevealAt-(c.nativeHandoffAt+c.releaseSeconds+.15))<.002)&&
-  c.nativeHandoffAt>=cue.fade-.001&&c.nativeHandoffAt<=cue.fade+.2&&
+  c.nativeHandoffAt>=cue.fade-(cue.preservedFileTail?.1:.001)&&c.nativeHandoffAt<=cue.fade+.2&&
   c.nativeRevealAt>=c.nativeHandoffAt+1&&c.nativeRevealAt<=c.seconds-c.preRoll-.1&&
   c.peak>0&&c.peak<=.9991&&c.overlapPeak<=.961&&c.oversampledPeak<=1&&c.seconds>=cue.fade+1.7&&c.seconds<=20&&
   ['begin','entry','fade','tempo'].every(k=>Math.abs(c[k]-cue[k])<.0001)&&
   c.pitchPreserved===true&&c.timingVerified===true&&c.renderedFromOriginals===true&&
+  (c.envelopeVersion!==4||c.gainProof?.method==='offline-stereo-shared-lookahead-v1'&&
+   [c.gainProof.maximumReductionDb,c.gainProof.meanOverlapReductionDb].every(finite)&&
+   c.gainProof.maximumReductionDb>=0&&c.gainProof.maximumReductionDb<=4.5&&
+   c.gainProof.meanOverlapReductionDb>=0&&c.gainProof.meanOverlapReductionDb<=c.gainProof.maximumReductionDb&&
+   c.gainProof.attackDbPerSecond===40&&c.gainProof.releaseDbPerSecond===8&&c.gainProof.firstGain===1&&c.gainProof.nativeRevealGain===1)&&
+  (!cue.preservedFileTail||cue.entry===0&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&
+   c.outgoingEnvelope==='unity-through-decoded-eof-v1'&&finite(c.sourceReadThrough)&&Math.abs(c.sourceReadThrough-cue.end)<=.1)&&
   (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true);
 }
 async function prepare(cue,ctx){
@@ -103,7 +110,7 @@ function tryStart(cue,old,app,toId,ctx){
   // incoming native clock must match before its output is revealed.
   act.clockError=old.currentTime-cue.begin-elapsed;
   if(!act.handingOff&&(!Number.isFinite(act.vocalCheckedAt)||ctx.currentTime-act.vocalCheckedAt>.25)){
-   act.vocalCheckedAt=ctx.currentTime;if(app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId)===false){stop();return;}
+   act.vocalCheckedAt=ctx.currentTime;if(app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId,toId)===false){stop();return;}
   }
   if(ctx.state!=='running'||root.document?.hidden||app.wantsPlayback?.()===false||
      app.currentId()!==expectedId||(!act.handingOff&&((old.paused&&!(cue.nativeTailFullBeat&&old.ended))||old.seeking||app.audio()!==old||
@@ -137,7 +144,7 @@ function tryStart(cue,old,app,toId,ctx){
  };
  const launch=()=>{
   if(current!==act)return;
-  if(old.paused||old.seeking||app.currentId()!==fromId||app.mixNext?.()?.id!==toId||ctx.state!=='running'||root.document?.hidden||root.MusicBoxRoom?.isActive?.()||app.mixSourceMatches?.(fromId,old)!==true||app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId)===false){stop();return;}
+  if(old.paused||old.seeking||app.currentId()!==fromId||app.mixNext?.()?.id!==toId||ctx.state!=='running'||root.document?.hidden||root.MusicBoxRoom?.isActive?.()||app.mixSourceMatches?.(fromId,old)!==true||app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId,toId)===false){stop();return;}
   const startAt=cue.begin-cue.composite.preRoll;
   if(old.currentTime<startAt){act.timer=setTimeout(launch,old.currentTime<startAt-.12?35:8);return;}
   if(old.currentTime>startAt+.04){stop('late-start-clock');return;}

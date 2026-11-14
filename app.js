@@ -13213,6 +13213,8 @@ window.MusicBoxBridge = {
   },
   mixVocalCutSafe:(cue,id)=>{
     if(!cue?.structuralBeat)return true;
+    if(cue.preservedFileTail===true&&cue.entry===0&&cue.composite?.outgoingEnvelope==='unity-through-decoded-eof-v1'&&
+       Number.isFinite(cue.composite.sourceReadThrough)&&Math.abs(cue.composite.sourceReadThrough-cue.end)<=.1)return true;
     const local=_testoLocaleVerificato(id),candidate=(local?.synced?local:lyricsData[id])||null;
     if(!candidate)return true;
     const rows=_righeTestoConParole(candidate);

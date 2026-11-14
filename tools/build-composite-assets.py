@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--peak-ceiling',type=float,default=.96)
     parser.add_argument('--pre-roll',type=float,choices=(.3,.6,.9),default=.3)
     parser.add_argument('--release-seconds',type=float,choices=(.9,1.2,1.5),default=.9)
+    parser.add_argument('--gain-mode',choices=('constant','lookahead'),default='constant')
     parser.add_argument('--context-mode',choices=('auto','warm','cold'),default='auto');args=parser.parse_args()
     if args.rate not in (16000,44100,48000):raise ValueError('Unsupported sample rate')
     if not .85<=args.peak_ceiling<=.96:raise ValueError('Unsafe peak ceiling')
@@ -37,7 +38,7 @@ def main():
             temporary=pathlib.Path(temporary);warm_report=temporary/'warm.json';cold_report=temporary/'cold.json'
             common=[sys.executable,str(pathlib.Path(__file__).resolve()),'--assets='+str(assets.resolve()),
                 '--cache='+str(cache.resolve()),'--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling),
-                '--pre-roll='+str(args.pre_roll),'--release-seconds='+str(args.release_seconds)]
+                '--pre-roll='+str(args.pre_roll),'--release-seconds='+str(args.release_seconds),'--gain-mode='+args.gain_mode]
             subprocess.run(common+['--plans='+str(pathlib.Path(args.plans).resolve()),'--report='+str(warm_report),'--context-mode=warm'],check=True)
             warm=json.loads(warm_report.read_text())['results']
             failed=[p for p,r in zip(plans,warm) if r.get('error') and p['cue']['tempo']!=1]
@@ -63,7 +64,7 @@ def main():
         original_peak=None;incoming_peak=None;post_rhythm=None
         try:
             a=audit.source(p['from'],cue['sourceSha'],cache);b=audit.source(p['to'],cue['targetSha'],cache)
-            outgoing=audit.decode(a,cue['begin']-args.pre_roll,(cue['fade'] if cue.get('structuralBeat') else cue['fade']+2)+args.pre_roll)
+            outgoing=audit.decode(a,cue['begin']-args.pre_roll,(cue['fade'] if cue.get('structuralBeat') and not cue.get('preservedFileTail') else cue['fade']+2)+args.pre_roll)
             warmup=min(.8,cue['entry'])
             incoming=audit.decode(b,cue['entry']-warmup,cue['fade']*1.05+4+warmup)
             if len(incoming)/args.rate<warmup+cue['fade']*cue['tempo']+2.1:raise ValueError('Incomplete original incoming tail for native handoff')
@@ -75,7 +76,7 @@ def main():
                 ceiling=args.peak_ceiling;target=folder/'mix.flac'
                 for attempt in range(3):
                     (folder/'cue.json').write_text(json.dumps({**cue,'renderPeakCeiling':ceiling,'renderPreRoll':args.pre_roll,
-                        'renderReleaseSeconds':args.release_seconds,'warmupOriginal':args.context_mode=='warm'}))
+                        'renderReleaseSeconds':args.release_seconds,'renderGainMode':args.gain_mode,'warmupOriginal':args.context_mode=='warm'}))
                     run=subprocess.run(['node',str(ROOT/'tools/render-composite-mix.mjs'),
                         '--rate='+str(args.rate),'--cue='+str(folder/'cue.json'),
                         '--outgoing='+str(folder/'outgoing.f32'),'--incoming='+str(folder/'incoming.f32'),
@@ -114,6 +115,9 @@ def main():
                     'pitchPreserved':True,'timingVerified':True,'renderedFromOriginals':True,
                     'handoffPosition':proof['handoffPosition'],'sampleRate':args.rate}
                 composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','releaseSeconds','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
+                if 'gainProof' in proof:composite['gainProof']=proof['gainProof']
+                if cue.get('preservedFileTail'):
+                    composite.update({k:proof[k] for k in ('sourceReadThrough','outgoingEnvelope')})
                 composite['oversampledPeak']=true_peak
                 composite['oversampledOverlapPeak']=overlap_true_peak
                 composite['processing']=proof['timing'].get('method','soundtouch-wsola')

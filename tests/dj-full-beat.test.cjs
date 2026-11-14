@@ -76,30 +76,19 @@ test('full-band original percussion intro does not pretend to have matching chor
  assert.equal(engine.measuredFullBeatBridge(a,quiet,a.duration),null);
 });
 
-test('original MP3 fixtures prove a 6.8 second thirteen-beat mix, independent of compact flags',()=>{
- const fixture=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-584-336.json'),'utf8'));
+test('original MP3 pulse agreement cannot authorize a 2.38 second unverified opening skip',()=>{
+ const evidence=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-584-336.json'),'utf8'));
  const byKey=new Map(tracks),from='audio/songs/track-584.mp3',to='audio/songs/track-336.mp3';
- const a={...byKey.get(from),pcmTransition:fixture.entries[from].pcmTransition};
- const b={...byKey.get(to),pcmTransition:fixture.entries[to].pcmTransition};
- const p=engine.measuredFullBeatBridge(a,b,a.duration);
- assert.ok(p);assert.ok(p.fade>6.8&&p.fade<6.9);assert.equal(p.measuredBeatCount,13);
- assert.ok(p.measuredPlacementError<.025);assert.ok(p.fullOnsetCorrelation>.55);
- assert.equal(p.harmonicMode,'compatible-key');assert.equal(p.harmonicKeyFrom,'4A');assert.equal(p.harmonicKeyTo,'5A');
- assert.ok(p.harmonicKeyConfidence>.87);assert.ok(p.harmonicDissonanceMax<0);
- assert.equal(p.nativeTailFullBeat,true);assert.equal(p.quietCertified,false);
- assert.ok(Math.abs(p.end-a.duration)<.04);assert.equal(p.silenceTrim,false);
- assert.equal(engine.desktopBeatPairCertified(a,b,p),true);
- assert.equal(engine.desktopBeatPairCertified(a,b,{...p,beatAnchor:p.beatAnchor+.1}),false);
- const bad=structuredClone(b);bad.pcmTransition.intro.onset.fill(0);
- assert.equal(engine.measuredFullBeatBridge(a,bad,a.duration),null);
- const vocals={...b,firstVoiceAt:b.safeIntroAt+2};
- assert.equal(engine.measuredFullBeatBridge(a,vocals,a.duration),null);
+ const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
+ const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
+ const saved=a.pcmBeatPlans[b.sha].cue;
+ const fit=engine.pcmFullBeatFit(a.pcmTransition.outro,b.pcmTransition.intro,saved.begin,saved.entry,saved.tempo,saved.fade);
+ assert.ok(fit);assert.equal(fit.beats,13);assert.ok(fit.rms<.025);
+ assert.equal(saved.entry,2.38);assert.equal(engine.measuredFullBeatBridge(a,b,a.duration),null);
  delete a.pcmTransition;delete b.pcmTransition;
- const rendered=a.pcmBeatPlans[b.sha].cue;
- assert.equal(engine.desktopBeatPairCertified(a,b,p),false,'unrendered cue cannot bypass the measured common headroom');
- assert.equal(engine.desktopBeatPairCertified(a,b,rendered),true,'runtime uses the same SHA-bound rendered plan');
- assert.equal(engine.measuredFullBeatBridge(a,{...b,sha:'changed-audio'},a.duration),null);
+ assert.equal(engine.desktopBeatPairCertified(a,b,saved),false,'rendered rhythm does not prove silence in the omitted opening');
 });
+
 test('live phase feedback converges without moving or retiming the outgoing player',()=>{
  const code=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
  const helper=code.slice(code.indexOf('function fullBeatFeedbackRate('),code.indexOf('function djSoftFocusEnvelope('));
@@ -128,27 +117,18 @@ test('local pulse hypotheses rescue half-time metadata only with observed attack
  assert.equal(engine.measuredFullBeatBridge(a,fake,a.duration),null,'pulses in the trough cannot count');
 });
 
-test('extended native-tail windows keep both complete clocks and bounded mobile preparation',()=>{
+test('legacy extended and alternative-grid plans cannot discard an unverified incoming prefix',()=>{
  const evidence=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-multigrid.json'),'utf8'));
- const byKey=new Map(tracks),from='audio/songs/track-1008.mp3',to='audio/songs/track-51.mp3';
- const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
- const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
- const p=engine.measuredFullBeatBridge(a,b,a.duration);
- assert.ok(p.fade>8&&p.fade<=16);assert.equal(p.end,a.duration-.035);
- assert.equal(p.nativeTailFullBeat,true);assert.equal(p.silenceTrim,false);
+ const byKey=new Map(tracks);
+ for(const [from,to] of [['audio/songs/track-1008.mp3','audio/songs/track-51.mp3'],['audio/songs/track-347.mp3','audio/songs/track-219.mp3']]){
+  const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
+  const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
+  assert.ok(a.pcmBeatPlans[b.sha].cue.entry>0);
+  assert.equal(engine.measuredFullBeatBridge(a,b,a.duration),null);
+  assert.equal(engine.incomingContentDecision(b,a.pcmBeatPlans[b.sha].cue).allowed,false);
+ }
  const source=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8');
  assert.match(source,/clamp\(info\.pcmIntroSeconds,14,24\)/);
-});
-
-test('original PCM alternative grids add a real pair missed by the global beat grid',()=>{
- const evidence=JSON.parse(fs.readFileSync(path.join(__dirname,'fixtures/full-beat-multigrid.json'),'utf8'));
- const byKey=new Map(tracks),from='audio/songs/track-347.mp3',to='audio/songs/track-219.mp3';
- const a={...byKey.get(from),pcmTransition:evidence.entries[from].pcmTransition};
- const b={...byKey.get(to),pcmTransition:evidence.entries[to].pcmTransition};
- const p=engine.measuredFullBeatBridge(a,b,a.duration);assert.ok(p);assert.ok(p.measuredBeatCount>=8);
- const oldA=structuredClone(a),oldB=structuredClone(b);
- delete oldA.pcmTransition.outro.grids;delete oldB.pcmTransition.intro.grids;
- assert.equal(engine.measuredFullBeatBridge(oldA,oldB,a.duration),null);
 });
 
 test('rendered output headroom cannot be removed and hot sums retain the Safari fallback',()=>{

@@ -13,15 +13,17 @@ export function compositePCM(outgoing,incoming,cue){
  const preRoll=cue.renderPreRoll??.3,releaseSeconds=cue.renderReleaseSeconds??.9;
  if(![.3,.6,.9].includes(preRoll)||![.9,1.2,1.5].includes(releaseSeconds))throw Error('Unbounded common gain envelope');
  const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
- const nativeHandoffAt=cue.structuralBeat?cue.fade:(outgoing.channels[0].length-aOffset)/sr-preRoll;
- if(!cue.structuralBeat&&(nativeHandoffAt<cue.fade-.001||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
- if(aOffset<0||bOffset<0||outgoing.channels.some(c=>aOffset+Math.floor((preRoll+cue.fade)*sr)>c.length+1)||
+ const preserveFile=cue.preservedFileTail===true;
+ if(preserveFile&&(cue.nativeTailFullBeat!==true||cue.preserveTail!==true||cue.entry!==0||cue.vocalFadeSeconds!==0))throw Error('Unbound intact-file mode');
+ const nativeHandoffAt=cue.structuralBeat&&!preserveFile?cue.fade:(outgoing.channels[0].length-aOffset)/sr-preRoll;
+ if((!cue.structuralBeat||preserveFile)&&(nativeHandoffAt<cue.fade-.1||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
+ if(aOffset<0||bOffset<0||outgoing.channels.some(c=>aOffset+Math.floor((preRoll+(preserveFile?nativeHandoffAt:cue.fade))*sr)>c.length+1)||
     stretched.channels.some(c=>bOffset+Math.round((seconds-preRoll)*sr)>c.length))throw Error('Incomplete transition source');
  const raw=[new Float32Array(frames),new Float32Array(frames)],components={outgoing:[new Float32Array(frames),new Float32Array(frames)],incoming:[new Float32Array(frames),new Float32Array(frames)]};let overlapRawPeak=0;
  for(let i=0;i<frames;i++){
   const t=i/sr-preRoll,u=clamp(t/cue.fade,0,1);
   let a=1,b=.33*Math.sin(Math.min(1,u*1.5)*Math.PI/2);
-  if(cue.structuralBeat){
+  if(cue.structuralBeat&&!preserveFile){
    if(cue.vocalFadeSeconds!==.4)throw Error('Unbound vocal fade envelope');
    const fadeStart=cue.fade-cue.vocalFadeSeconds;
    const late=clamp((t-fadeStart)/cue.vocalFadeSeconds,0,1);
@@ -41,12 +43,39 @@ export function compositePCM(outgoing,incoming,cue){
  }
  const ceiling=Number.isFinite(cue.renderPeakCeiling)?cue.renderPeakCeiling:.96;
  if(ceiling<.85||ceiling>.96)throw Error('Invalid render peak target');
- const headroom=Math.min(1,ceiling/Math.max(.000001,overlapRawPeak)),smooth=t=>{const u=clamp(t,0,1);return u*u*(3-2*u)};
+ let headroom=Math.min(1,ceiling/Math.max(.000001,overlapRawPeak));
+ const smooth=t=>{const u=clamp(t,0,1);return u*u*(3-2*u)};
+ const gainMode=cue.renderGainMode??'constant';
+ if(!['constant','lookahead'].includes(gainMode))throw Error('Unknown common gain mode');
+ let gainEnvelope=null,gainProof=null;
+ if(gainMode==='lookahead'){
+  // Offline, identical gain for both channels and components. Bound each
+  // actual stereo sample, then reserve 25ms/dB attack and 125ms/dB release.
+  // No hard limiter, gain boost, or relaxed peak ceiling is involved.
+  const reduction=new Float64Array(frames),attack=40/sr,release=8/sr;
+  for(let i=0;i<frames;i++){
+   const t=i/sr-preRoll,bound=t>=0&&t<=nativeHandoffAt?ceiling:.999;
+   reduction[i]=Math.max(0,20*Math.log10(Math.max(Math.abs(raw[0][i]),Math.abs(raw[1][i]),1e-9)/bound));
+   if(i)reduction[i]=Math.max(reduction[i],reduction[i-1]-release);
+  }
+  for(let i=frames-2;i>=0;i--)reduction[i]=Math.max(reduction[i],reduction[i+1]-attack);
+  const reveal=Math.round((preRoll+nativeHandoffAt+releaseSeconds+.15)*sr);
+  if(reduction[0]>1e-6||reduction[reveal]>1e-6)throw Error('Lookahead gain cannot meet native boundaries');
+  const maximum=reduction.reduce((a,b)=>Math.max(a,b),0);
+  if(maximum>4.5)throw Error('Excessive shared gain reduction');
+  gainEnvelope=Float64Array.from(reduction,x=>10**(-x/20));headroom=10**(-maximum/20);
+  let sum=0,count=0;
+  for(let i=0;i<frames;i++)if(i/sr>=preRoll&&i/sr<=preRoll+nativeHandoffAt){sum+=reduction[i];count++;}
+  gainProof={method:'offline-stereo-shared-lookahead-v1',maximumReductionDb:maximum,meanOverlapReductionDb:sum/count,
+   attackDbPerSecond:40,releaseDbPerSecond:8,firstGain:gainEnvelope[0],nativeRevealGain:gainEnvelope[reveal]};
+ }
  let peak=0,overlapPeak=0;
- const channels=raw.map(c=>Float32Array.from(c,(x,i)=>{
-  const t=i/sr-preRoll,g=t<0?1-(1-headroom)*smooth((t+preRoll)/preRoll):
+ const audibleComponents={outgoing:components.outgoing.map(c=>c.slice()),incoming:components.incoming.map(c=>c.slice())};
+ const channels=raw.map((c,channel)=>Float32Array.from(c,(x,i)=>{
+  const t=i/sr-preRoll,g=gainEnvelope?gainEnvelope[i]:t<0?1-(1-headroom)*smooth((t+preRoll)/preRoll):
    t<=nativeHandoffAt?headroom:headroom+(1-headroom)*smooth((t-nativeHandoffAt)/releaseSeconds);
   const value=x*g;peak=Math.max(peak,Math.abs(value));
+  audibleComponents.outgoing[channel][i]*=g;audibleComponents.incoming[channel][i]*=g;
   // Shared headroom does not alter relative phase. Component envelopes
   // remain separate only for the independent offline rendered-attack audit.
   if(t>=0&&t<=nativeHandoffAt)overlapPeak=Math.max(overlapPeak,Math.abs(value));return value;
@@ -54,7 +83,8 @@ export function compositePCM(outgoing,incoming,cue){
  // Smooth entrance/release must itself remain safe. Reject hot source
  // masters rather than silently introducing a level step or hard limiter.
  if(peak>.999||overlapPeak>.961)throw Error('Smooth common gain exceeds safe peak');
- return {rate:sr,channels,components,seconds,preRoll,releaseSeconds,envelopeVersion:preRoll===.3&&releaseSeconds===.9?2:3,warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:nativeHandoffAt+releaseSeconds+.15,peak,overlapPeak,headroom,pitchPreserved:true,
+ return {rate:sr,channels,components,audibleComponents,seconds,preRoll,releaseSeconds,envelopeVersion:gainProof?4:preRoll===.3&&releaseSeconds===.9?2:3,...(gainProof?{gainProof}:{}),warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:nativeHandoffAt+releaseSeconds+.15,peak,overlapPeak,headroom,pitchPreserved:true,
+  ...(preserveFile?{sourceReadThrough:outgoing.start+outgoing.channels[0].length/sr,outgoingEnvelope:'unity-through-decoded-eof-v1'}:{}),
   timingVerified:true,timing:stretched.timing,
   handoffPosition:cue.entry+playedAt(cue.fade,cue.tempo,cue.fade,.85)};
 }

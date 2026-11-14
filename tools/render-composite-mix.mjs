@@ -12,8 +12,8 @@ const interleaved=new Float32Array(result.channels[0].length*2);
 for(let i=0;i<result.channels[0].length;i++)for(let c=0;c<2;c++)interleaved[i*2+c]=result.channels[c][i];
 fs.writeFileSync(arg('output'),Buffer.from(interleaved.buffer));
 for(const name of ['outgoing','incoming'])if(arg(name+'-component')){
- const interleaved=new Float32Array(result.components[name][0].length*2);
- for(let i=0;i<result.components[name][0].length;i++)for(let c=0;c<2;c++)interleaved[i*2+c]=result.components[name][c][i];
+ const interleaved=new Float32Array(result.audibleComponents[name][0].length*2);
+ for(let i=0;i<result.audibleComponents[name][0].length;i++)for(let c=0;c<2;c++)interleaved[i*2+c]=result.audibleComponents[name][c][i];
  fs.writeFileSync(arg(name+'-component'),Buffer.from(interleaved.buffer));
 }
-console.log(JSON.stringify({...result,channels:undefined,components:undefined}));
+console.log(JSON.stringify({...result,channels:undefined,components:undefined,audibleComponents:undefined}));
