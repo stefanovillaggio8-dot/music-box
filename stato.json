@@ -1205,7 +1205,7 @@
    },
    "[\"bring me to life\",\"evanescence\"]": {
     "v": 5,
-    "s": 264,
+    "s": 279,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -3737,7 +3737,7 @@
    },
    "m:2026-11|[\"bring me to life\",\"evanescence\"]": {
     "v": 5,
-    "s": 248,
+    "s": 263,
     "t": "Bring Me To Life",
     "a": "Evanescence"
    },
@@ -8416,13 +8416,13 @@
     "a": "LuchÃÂÃÂ¨"
    },
    "[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 1,
+    "v": 2,
     "s": 162,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
    },
    "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂÃÂ©\"]": {
-    "v": 1,
+    "v": 2,
     "s": 162,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂÃÂ©"
@@ -9227,13 +9227,13 @@
    },
    "[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
     "v": 2,
-    "s": 162,
+    "s": 200,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"via del campo\",\"fabrizio de andrÃÂ©\"]": {
     "v": 2,
-    "s": 162,
+    "s": 200,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -9324,13 +9324,25 @@
    "[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
-    "t": "Dimmi che c'Ã¨",
+    "t": "Dimmi Che C''",
     "a": "thasup"
    },
    "m:2026-10|[\"dimmi che c'Ã¨\",\"thasup\"]": {
     "v": 1,
     "s": 1,
     "t": "Dimmi che c'Ã¨",
+    "a": "thasup"
+   },
+   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 2,
+    "s": 124,
+    "t": "mi @mio Ã¨ f@ke",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
+    "v": 2,
+    "s": 124,
+    "t": "mi @mio Ã¨ f@ke",
     "a": "thasup"
    },
    "[\"cuore e vento (feat. tazenda)\",\"modÃ \"]": {
@@ -9591,18 +9603,6 @@
     "t": "Voglio di piÃ¹",
     "a": "nayt, 3D"
    },
-   "[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 124,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"mi @mio Ã¨ f@ke\",\"thasup\"]": {
-    "v": 2,
-    "s": 124,
-    "t": "mi @mio Ã¨ f@ke",
-    "a": "thasup"
-   },
    "[\"ma il cielo Ã¨ sempre piÃ¹ blu\",\"rino gaetano\"]": {
     "v": 1,
     "s": 496,
@@ -9687,6 +9687,18 @@
     "t": "Tutti il resto Ã¨ noi",
     "a": "nayt, 3D"
    },
+   "[\"passione maledetta\",\"modÃ \"]": {
+    "v": 6,
+    "s": 964,
+    "t": "Passione maledetta",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
+    "v": 6,
+    "s": 964,
+    "t": "Passione maledetta",
+    "a": "ModÃ "
+   },
    "[\"torna da me\",\"luchÃ¨\"]": {
     "v": 1,
     "s": 253,
@@ -9721,18 +9733,6 @@
     "v": 0,
     "s": 99,
     "t": "ArriverÃ ",
-    "a": "ModÃ "
-   },
-   "[\"passione maledetta\",\"modÃ \"]": {
-    "v": 6,
-    "s": 964,
-    "t": "Passione maledetta",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"passione maledetta\",\"modÃ \"]": {
-    "v": 6,
-    "s": 964,
-    "t": "Passione maledetta",
     "a": "ModÃ "
    },
    "[\"voodoo\",\"guÃ¨\"]": {
@@ -9993,48 +9993,6 @@
     "t": "LA CITTÃ",
     "a": "MOSTRO"
    },
-   "[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
-    "v": 1,
-    "s": 246,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃ©"
-   },
-   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
-    "v": 1,
-    "s": 246,
-    "t": "Il pescatore",
-    "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 1,
-    "s": 264,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
-    "v": 1,
-    "s": 264,
-    "t": "Non ti dimentico",
-    "a": "ModÃ "
-   },
-   "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
-    "v": 1,
-    "s": 444,
-    "t": "VENTANNI",
-    "a": "MÃ¥neskin"
-   },
-   "[\"nessuna\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 357,
-    "t": "Nessuna",
-    "a": "LuchÃ¨"
-   },
-   "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
-    "v": 2,
-    "s": 357,
-    "t": "Nessuna",
-    "a": "LuchÃ¨"
-   },
    "[\"via del campo\",\"fabrizio de andrÃ©\"]": {
     "v": 2,
     "s": 200,
@@ -10046,18 +10004,6 @@
     "s": 200,
     "t": "Via del campo",
     "a": "Fabrizio De AndrÃ©"
-   },
-   "[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 229,
-    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
-   },
-   "m:2026-11|[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
-    "v": 1,
-    "s": 229,
-    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
-    "a": "Jovanotti"
    },
    "[\"bocca di rosa\",\"fabrizio de andrÃ©\"]": {
     "v": 1,
@@ -10071,29 +10017,17 @@
     "t": "Bocca di rosa",
     "a": "Fabrizio De AndrÃ©"
    },
-   "[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
+   "[\"non ti dimentico\",\"modÃ \"]": {
     "v": 1,
-    "s": 111,
-    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
+    "s": 264,
+    "t": "Non ti dimentico",
     "a": "ModÃ "
    },
-   "m:2026-11|[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
+   "m:2026-11|[\"non ti dimentico\",\"modÃ \"]": {
     "v": 1,
-    "s": 111,
-    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
+    "s": 264,
+    "t": "Non ti dimentico",
     "a": "ModÃ "
-   },
-   "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 1,
-    "s": 97,
-    "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
-    "a": "thasup"
-   },
-   "m:2026-11|[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 1,
-    "s": 97,
-    "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
-    "a": "thasup"
    },
    "[\"ventanni\",\"måneskin\"]": {
     "v": 1,
@@ -10803,6 +10737,36 @@
     "t": "LA CITTÀ",
     "a": "MOSTRO"
    },
+   "[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
+    "v": 1,
+    "s": 246,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "m:2026-11|[\"il pescatore\",\"fabrizio de andrÃ©\"]": {
+    "v": 1,
+    "s": 246,
+    "t": "Il pescatore",
+    "a": "Fabrizio De AndrÃ©"
+   },
+   "m:2026-11|[\"ventanni\",\"mÃ¥neskin\"]": {
+    "v": 1,
+    "s": 444,
+    "t": "VENTANNI",
+    "a": "MÃ¥neskin"
+   },
+   "[\"nessuna\",\"luchÃ¨\"]": {
+    "v": 2,
+    "s": 357,
+    "t": "Nessuna",
+    "a": "LuchÃ¨"
+   },
+   "m:2026-11|[\"nessuna\",\"luchÃ¨\"]": {
+    "v": 2,
+    "s": 357,
+    "t": "Nessuna",
+    "a": "LuchÃ¨"
+   },
    "[\"via del campo\",\"fabrizio de andré\"]": {
     "v": 1,
     "s": 9,
@@ -10815,6 +10779,18 @@
     "t": "Via del campo",
     "a": "Fabrizio De André"
    },
+   "[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 229,
+    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
+   "m:2026-11|[\"il piÃ¹ grande spettacolo dopo il big bang\",\"jovanotti\"]": {
+    "v": 1,
+    "s": 229,
+    "t": "Il PiÃ¹ Grande Spettacolo Dopo Il Big Bang",
+    "a": "Jovanotti"
+   },
    "[\"bocca di rosa\",\"fabrizio de andré\"]": {
     "v": 1,
     "s": 1,
@@ -10826,6 +10802,30 @@
     "s": 1,
     "t": "Bocca di rosa",
     "a": "Fabrizio De André"
+   },
+   "[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
+    "v": 1,
+    "s": 111,
+    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃ "
+   },
+   "m:2026-11|[\"non Ã¨ mai abbastanza - videoclip ufficiale\",\"modÃ \"]": {
+    "v": 1,
+    "s": 111,
+    "t": "Non Ã¨ mai abbastanza - Videoclip Ufficiale",
+    "a": "ModÃ "
+   },
+   "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 1,
+    "s": 97,
+    "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
+    "a": "thasup"
+   },
+   "m:2026-11|[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
+    "v": 1,
+    "s": 97,
+    "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
+    "a": "thasup"
    },
    "[\"non ti dimentico\",\"modà\"]": {
     "v": 0,
@@ -13145,30 +13145,6 @@
     "t": "Voglio Di PiÃÂ¹",
     "a": "Silent Bob, Sick Budd"
    },
-   "[\"chicchi di caffÃÂ¨\",\"tony boy\"]": {
-    "v": 0,
-    "s": 35,
-    "t": "Chicchi di caffÃÂ¨",
-    "a": "Tony Boy"
-   },
-   "m:2026-11|[\"chicchi di caffÃÂ¨\",\"tony boy\"]": {
-    "v": 0,
-    "s": 35,
-    "t": "Chicchi di caffÃÂ¨",
-    "a": "Tony Boy"
-   },
-   "[\"un uomo solo puÃÂÃÂ² cambiare il mondo\",\"praci, 22simba\"]": {
-    "v": 1,
-    "s": 35,
-    "t": "UN UOMO SOLO PUÃÂÃÂ CAMBIARE IL MONDO",
-    "a": "PRACI, 22simba"
-   },
-   "m:2026-11|[\"un uomo solo puÃÂÃÂ² cambiare il mondo\",\"praci, 22simba\"]": {
-    "v": 1,
-    "s": 35,
-    "t": "UN UOMO SOLO PUÃÂÃÂ CAMBIARE IL MONDO",
-    "a": "PRACI, 22simba"
-   },
    "[\"voglio di più\",\"nayt, 3d\"]": {
     "v": 1,
     "s": 6,
@@ -13192,6 +13168,30 @@
     "s": 0,
     "t": "Voglio Di PiÃ¹",
     "a": "Silent Bob, Sick Budd"
+   },
+   "[\"chicchi di caffÃÂ¨\",\"tony boy\"]": {
+    "v": 0,
+    "s": 35,
+    "t": "Chicchi di caffÃÂ¨",
+    "a": "Tony Boy"
+   },
+   "m:2026-11|[\"chicchi di caffÃÂ¨\",\"tony boy\"]": {
+    "v": 0,
+    "s": 35,
+    "t": "Chicchi di caffÃÂ¨",
+    "a": "Tony Boy"
+   },
+   "[\"un uomo solo puÃÂÃÂ² cambiare il mondo\",\"praci, 22simba\"]": {
+    "v": 1,
+    "s": 35,
+    "t": "UN UOMO SOLO PUÃÂÃÂ CAMBIARE IL MONDO",
+    "a": "PRACI, 22simba"
+   },
+   "m:2026-11|[\"un uomo solo puÃÂÃÂ² cambiare il mondo\",\"praci, 22simba\"]": {
+    "v": 1,
+    "s": 35,
+    "t": "UN UOMO SOLO PUÃÂÃÂ CAMBIARE IL MONDO",
+    "a": "PRACI, 22simba"
    }
   },
   "Emanuele": {
