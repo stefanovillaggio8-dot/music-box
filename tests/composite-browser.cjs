@@ -202,8 +202,16 @@ const server=http.createServer(async(req,res)=>{
     const sourceTitle=await auto.evaluate(p=>MusicBoxBridge.allTracks().find(t=>t.id===p.fromId).title,actualPlan);
     await auto.locator('#search').click();
     await auto.locator('#search').fill(sourceTitle);
+    // The app debounces filtering for 160 ms. Clicking a row from the
+    // unfiltered DOM can lose pointer-up when render() replaces that row.
+    // Wait for the actual filtered list, then tap its title, not a row
+    // centre that can fall on a nested action at another browser's width.
+    await auto.waitForFunction(title=>{
+     const rows=[...document.querySelectorAll('.track')];
+     return rows.length===1&&rows[0].querySelector('.track-testo')?.textContent===title;
+    },sourceTitle,{timeout:10000});
     console.error(name,'automatic source',JSON.stringify(actualPlan));
-    await auto.locator('.track').filter({has:auto.getByText(sourceTitle,{exact:true})}).first().click();
+    await auto.locator('.track .track-testo').click();
     try{await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,actualPlan,{timeout:20000});}
     catch(error){console.error(name,'library start diagnostic',JSON.stringify(await auto.evaluate(()=>{
      const a=MusicBoxBridge.audio();return {currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
