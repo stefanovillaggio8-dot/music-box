@@ -3,7 +3,7 @@
    A missing asset/clock/decoder leaves the ordinary native player available. */
 (function(root){
 'use strict';
-const cache=new Map(),pending=new Map(),failures=new Map();let current=null;
+const cache=new Map(),pending=new Map(),failures=new Map();let current=null,lastStop=null;
 const finite=Number.isFinite,limit=(n,a,b)=>Math.max(a,Math.min(b,n));
 function outputLevel(app,audio){
  if(Number(app.volume())===0)return 0;
@@ -63,8 +63,9 @@ async function prepare(cue,ctx){
  }finally{if(pending.get(key)===entry)pending.delete(key)}
 }
 function cancelPreparation(){for(const job of pending.values())job.controller.abort();pending.clear();}
-function stop(){
+function stop(reason='cancelled'){
  const act=current;if(!act)return;current=null;clearTimeout(act.timer);
+ lastStop={reason,handingOff:act.handingOff,nativeTime:act.old.currentTime,clock:act.ctx.currentTime};
  try{act.source.stop()}catch(_){}try{act.source.disconnect();act.gain.disconnect()}catch(_){}
  const userMuted=Number(act.app.volume())===0;
  act.old._mbCommonMixMuted=false;act.old.muted=act.wasMuted||userMuted;
@@ -99,7 +100,7 @@ function tryStart(cue,old,app,toId,ctx){
   if(ctx.state!=='running'||root.document?.hidden||app.wantsPlayback?.()===false||
      app.currentId()!==expectedId||(!act.handingOff&&((old.paused&&!(cue.nativeTailFullBeat&&old.ended))||old.seeking||app.audio()!==old||
       app.mixNext?.()?.id!==toId||Math.abs(old.currentTime-cue.begin-elapsed)>.08))||
-     root.MusicBoxRoom?.isActive?.()){stop();return;}
+     root.MusicBoxRoom?.isActive?.()){stop('playback-state-or-clock-changed');return;}
   gain.gain.setTargetAtTime(outputLevel(app,app.audio()),ctx.currentTime,.025);
   if(!act.handingOff&&elapsed>=cue.composite.nativeHandoffAt){
    act.handingOff=true;
@@ -131,7 +132,7 @@ function tryStart(cue,old,app,toId,ctx){
   if(old.paused||old.seeking||app.currentId()!==fromId||app.mixNext?.()?.id!==toId||ctx.state!=='running'||root.document?.hidden||root.MusicBoxRoom?.isActive?.()||app.mixSourceMatches?.(fromId,old)!==true||app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId)===false){stop();return;}
   const startAt=cue.begin-cue.composite.preRoll;
   if(old.currentTime<startAt){act.timer=setTimeout(launch,old.currentTime<startAt-.12?35:8);return;}
-  if(old.currentTime>startAt+.04){stop();return;}
+  if(old.currentTime>startAt+.04){stop('late-start-clock');return;}
   offset=old.currentTime-cue.begin;started=ctx.currentTime;
   try{source.start(started,offset+cue.composite.preRoll);old._mbCommonMixMuted=true;old.muted=true}catch(_){stop();return;}
   act.timer=setTimeout(advance,20);
@@ -148,5 +149,5 @@ function onSeek(reason,audio){
 }
 root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,
  isPrepared:(cue,ctx)=>!!ctx&&supports(cue)&&cache.has(cue.composite.sha256+':'+ctx.sampleRate),
- active:()=>!!current,owns:audio=>!!current&&current.old===audio};
+ active:()=>!!current,diagnostics:()=>({active:!!current,lastStop}),owns:audio=>!!current&&current.old===audio};
 })(typeof window==='undefined'?globalThis:window);

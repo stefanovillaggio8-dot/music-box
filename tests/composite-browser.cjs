@@ -87,7 +87,8 @@ const server=http.createServer(async(req,res)=>{
     },plan);
     await page.click('#go');await page.waitForFunction(()=>!player.paused&&player.currentTime>=cue.begin-cue.composite.preRoll-.14);
     const started=await page.evaluate(()=>MusicBoxCompositeMix.tryStart(cue,player,app,'in',ctx));assert.equal(started,true);
-    await page.waitForFunction(()=>trace.handoffs===1&&!MusicBoxCompositeMix.active()&&!player.muted,{timeout:25000});
+    try{await page.waitForFunction(()=>trace.handoffs===1&&!MusicBoxCompositeMix.active()&&!player.muted,{timeout:25000});}
+    catch(error){console.error(name,'standalone failure',JSON.stringify(await page.evaluate(()=>({trace,time:player.currentTime,paused:player.paused,common:MusicBoxCompositeMix.diagnostics(),cue}))));throw error;}
     const state=await page.evaluate(()=>({id,handoffs:trace.handoffs,mutedBeforePlay:trace.mutedBeforePlay,paused:player.paused,at:player.currentTime,playError:trace.playError||null}));
     console.error(name,'native handoff',JSON.stringify(state));
     assert.equal(state.id,'in');assert.equal(state.handoffs,1);assert.equal(state.mutedBeforePlay,true);assert.equal(state.paused,false);
