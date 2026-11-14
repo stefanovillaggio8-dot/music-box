@@ -3,6 +3,8 @@
 // content skip. Candidate data alone never authorizes runtime playback.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
+const initialBarLimit=Number(arg('initial-bar-limit','8'));
+if(![4,8].includes(initialBarLimit))throw Error('Supported initial-bar candidate limits: 4 or 8 seconds');
 const root=path.resolve(__dirname,'..'),index=JSON.parse(fs.readFileSync(arg('index',path.join(root,'dj-deep-analysis.json'))));
 const allFiles=(dir,re)=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?allFiles(path.join(dir,e.name),re):re.test(e.name)?[path.join(dir,e.name)]:[]);
 const whole=new Map(),pcm=new Map();
@@ -61,13 +63,13 @@ for(const [key,raw] of Object.entries(index.entries)){
   const start=chain[0].start,end=chain.at(-1).end;
   const w={start,end,bars:n,meter:chain[0].beatsPerBar,phase:Math.min(...chain.map(x=>x.metricalPhaseConfidence)),downbeats:[...chain.map(x=>x.start),end],modelBeats:chain.flatMap(x=>x.modelBeats)};
   if(role==='outro'&&start>=26&&raw.duration-start<=16&&raw.duration-end>=-.001&&raw.duration-end<=8)source.push(w);
-  if(role==='intro'&&start<=4&&end<=p.intro.end-.1)target.push(w);
+  if(role==='intro'&&start<=initialBarLimit&&end<=p.intro.end-.1)target.push(w);
  }
  }
  }
  prepared.push({key,raw:engine.withGuardedLRC(raw),e,source,target,outro:observedGrid(p.outro,e),intro:observedGrid(p.intro,e),owners:owner(key)});
 }
-const report={version:1,method:'preserved-file-tail-original-pcm-v1',tracks:prepared.length,profileFunnel:{},plans:[],windows:0};
+const report={version:1,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},plans:[],windows:0};
 const count=(profiles,key)=>{for(const p of profiles){report.profileFunnel[p]??={};report.profileFunnel[p][key]=(report.profileFunnel[p][key]||0)+1;}};
 for(const a of prepared)for(const b of prepared){
  if(a.key===b.key||a.raw.sha===b.raw.sha||a.key.replace('/bassi/','/')===b.key.replace('/bassi/','/'))continue;

@@ -15,6 +15,17 @@ const rawCatalog=vm.runInNewContext(appSource.slice(a,b+2)+';BUILTIN');
 const idStart=appSource.indexOf('function _idBranoStabile('),idEnd=appSource.indexOf('// Queste funzioni',idStart);
 const stableId=new Function('BUILTIN',appSource.slice(idStart,idEnd)+'return _idBranoStabile;')(rawCatalog);
 const catalog=rawCatalog.map(t=>({...t,id:stableId(t)}));
+let appRecording=null;
+if(arg('boost-list','')){
+ const boosted=new Set(JSON.parse(read(arg('boost-list',''))).brani||[]);
+ const part=(from,to)=>appSource.slice(appSource.indexOf(from),appSource.indexOf(to,appSource.indexOf(from)));
+ const body=part('  function _urlDelBrano(','  function _branoInGym(')+
+  part('  function _branoInGym(','  function _doveStaIlBranoConBassi(')+
+  part('  function _playlistCercata(','  /* Ritorna la playlist con quel nome');
+ appRecording=new Function('playlists','_potenziatiCaricati','_ePotenziato','_doveStaIlBrano','_doveStaIlBranoConBassi','location',
+  body+'return _urlDelBrano;')(playlists,true,file=>boosted.has(file.replace(/^.*\//,'')),
+   file=>'audio/'+file,file=>'audio/'+file.replace('/','/bassi/'),{protocol:'https:'});
+}
 const snippet=(from,to)=>{const a=source.indexOf(from),b=source.indexOf(to,a+from.length);if(a<0||b<a)throw Error('Missing runtime slice '+from);return source.slice(a,b)};
 const sampleRate=48000,isIOS=arg('platform','safari')==='safari';
 const commonScope={Map,Set,Number,Array,Uint8Array,Float32Array};commonScope.window=commonScope;vm.createContext(commonScope);
@@ -56,7 +67,8 @@ function keyFor(t,boost=false){
  return candidates.find(k=>index.entries[k]?.status==='ok')||null;
 }
 function lookup(t){
- const key=t?.analysisKey||keyFor(t);if(!key)return null;
+ const key=t&&Object.hasOwn(t,'analysisKey')?t.analysisKey:keyFor(t);
+ if(!key||index.entries[key]?.status!=='ok')return null;
  if(!metaCache.has(key))metaCache.set(key,engine.withGuardedLRC(engine.verifiedIndexedGridTempo(index.entries[key])));
  return metaCache.get(key);
 }
@@ -73,7 +85,11 @@ function members(profile,playlist=null){
   !deleted.has(profile+'.'+t.id)&&!(profile==='Ste'&&deleted.has(t.id))&&
   (playlist?(playlist.tracks||[]).includes(t.id):!only.has(t.id)));
  const unique=new Map();for(const t of rows)if(!unique.has(t.id)||(t.profile||'Ste')===profile)unique.set(t.id,t);
- return [...unique.values()].map(t=>({...t,url:t.file,analysisKey:keyFor(t)}));
+ return [...unique.values()].map(t=>{
+  const url=appRecording?appRecording({...t,url:'audio/'+t.file}):t.file;
+  const boosted=url.includes('/bassi/');
+  return {...t,url,analysisKey:boosted?(index.entries[url]?.status==='ok'?url:null):keyFor(t),boosted};
+ });
 }
 function resultFor(from,to){
  if(scenarioOffline&&!available.has(to.id))return {kind:'unavailable',overlap:0,skipped:0};
@@ -135,7 +151,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   }
  }
  const mixed=totals.attempts-totals.normal-totals.unavailable;
- return {profile,mode,members:list.length,sessions,steps,seed,totals,
+ return {profile,mode,members:list.length,boostedMembers:list.filter(t=>t.boosted).length,sessions,steps,seed,totals,
   percent:Object.fromEntries(['full','partial','crossfade','normal','postlude','underlay','unavailable','early','safariFull'].map(k=>[k,totals.attempts?100*totals[k]/totals.attempts:0])),
   averageOverlap:mixed?totals.overlapSum/mixed:0,averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
@@ -155,6 +171,7 @@ function inventory(profile,list,audit){
 }
 (async()=>{
  const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
+  audioVariant:appRecording?'actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest':'original recordings; no loaded boost manifest',
   sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
   offlineAssumption:'Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.',
   limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[],inventories:[]};

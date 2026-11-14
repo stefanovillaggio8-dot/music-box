@@ -5,7 +5,7 @@ const fs=require("node:fs"),path=require("node:path");
 const root=path.join(__dirname,"..");
 const args=process.argv.slice(2);
 const arg=(key,otherwise)=>args.find(a=>a.startsWith("--"+key+"="))?.slice(key.length+3)??otherwise;
-const source=fs.readFileSync(path.join(root,"mix-intelligente.js"),"utf8");
+const source=fs.readFileSync(arg('engine',path.join(root,"mix-intelligente.js")),"utf8");
 const database=JSON.parse(fs.readFileSync(arg('index',path.join(root,"dj-deep-analysis.json")),"utf8"));
 const karaoke=JSON.parse(fs.readFileSync(path.join(root,"karaoke-index.json"),"utf8"));
 const lyricBoundaries=JSON.parse(fs.readFileSync(arg('lyrics',path.join(root,"dj-lyric-boundaries.json")),"utf8"));

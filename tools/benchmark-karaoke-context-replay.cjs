@@ -31,7 +31,7 @@ const stats=errors=>{
 const cacheFor=(file,report,id)=>file+'.'+crypto.createHash('sha256').update(JSON.stringify(report.inference)).digest('hex').slice(0,12)+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
 const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+':'+(r.start%60).toFixed(3).padStart(6,'0')+'] '+r.text).join('\n');
 (async()=>{
- const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',deployedInPlayer:true,
+ const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,
   referenceLanguages:[...new Set(references.map(r=>r.language||'en'))],
   runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js'].map(f=>
    [f,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')])),
@@ -39,6 +39,7 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
  for(const c of baseline.cases){
   const other=alternative.cases.find(a=>a.id===c.id),record=references.find(r=>r.name===c.record);
   if(!other||c.sourceAudioSha256!==other.sourceAudioSha256)throw Error('Alternative recording identity mismatch');
+  if(!record||record.audioSha256&&record.audioSha256!==c.sourceAudioSha256)throw Error('Reference recording identity mismatch');
   const state=fixture({synced:lrc(record.lines)});
   for(const [file,report] of [[baselineFile,baseline],[alternativeFile,alternative]]){
    const observed=read(cacheFor(file,report,c.id));
