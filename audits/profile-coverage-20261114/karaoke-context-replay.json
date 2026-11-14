@@ -1,0 +1,740 @@
+{
+  "version": 1,
+  "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+  "referenceLanguages": [
+    "en"
+  ],
+  "runtimeSha256": {
+    "audio-lyrics-align.js": "88fca4445ecda083f855e97c85672f45c38a07b63747af635286010925b6f674",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "app.js": "444942c8f452e1aee173eded0b2151e8695e055496249fc560c4cf2b6c426108"
+  },
+  "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+  "cases": [
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@156.225",
+      "category": "singing-sparse",
+      "referenceWords": 16,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Quentin_Hannappe_-_Keep_On@91.988",
+      "category": "repeated-phrase",
+      "referenceWords": 26,
+      "acceptedWords": 6,
+      "errors": [
+        {
+          "startErrorMs": -39.91503910000915,
+          "endErrorMs": 9.267700199998785
+        },
+        {
+          "startErrorMs": 9.267700199998785,
+          "endErrorMs": 116.34564210000065
+        },
+        {
+          "startErrorMs": 116.34564210000065,
+          "endErrorMs": -65.77288819998728
+        },
+        {
+          "startErrorMs": -65.77288819998728,
+          "endErrorMs": 108.81420900000194
+        },
+        {
+          "startErrorMs": 108.81420900000194,
+          "endErrorMs": 140.4502562999994
+        },
+        {
+          "startErrorMs": 140.4502562999994,
+          "endErrorMs": 290.54302980000557
+        }
+      ]
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@33.900",
+      "category": "rap-dense",
+      "referenceWords": 114,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Wordsmith_-_The_Statement@89.234",
+      "category": "repeated-phrase",
+      "referenceWords": 110,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@146.081",
+      "category": "rap-dense",
+      "referenceWords": 101,
+      "acceptedWords": 62,
+      "errors": [
+        {
+          "startErrorMs": 199.6096191000163,
+          "endErrorMs": 11.467529300006163
+        },
+        {
+          "startErrorMs": 11.467529300006163,
+          "endErrorMs": 69.70483400002081
+        },
+        {
+          "startErrorMs": 69.70483400002081,
+          "endErrorMs": 139.8916015999987
+        },
+        {
+          "startErrorMs": 139.8916015999987,
+          "endErrorMs": 109.57543949999149
+        },
+        {
+          "startErrorMs": 109.57543949999149,
+          "endErrorMs": 73.24975589997962
+        },
+        {
+          "startErrorMs": 9.147582999986525,
+          "endErrorMs": 126.95764160000067
+        },
+        {
+          "startErrorMs": 126.95764160000067,
+          "endErrorMs": 279.05786129997523
+        },
+        {
+          "startErrorMs": -146.72094729999685,
+          "endErrorMs": -3.714355500022748
+        },
+        {
+          "startErrorMs": -3.714355500022748,
+          "endErrorMs": 46.14343259999032
+        },
+        {
+          "startErrorMs": 46.14343259999032,
+          "endErrorMs": 43.3211670000162
+        },
+        {
+          "startErrorMs": 43.3211670000162,
+          "endErrorMs": 94.18176270000345
+        },
+        {
+          "startErrorMs": 94.18176270000345,
+          "endErrorMs": 0.7924805000243396
+        },
+        {
+          "startErrorMs": 0.7924805000243396,
+          "endErrorMs": 4.980712899993023
+        },
+        {
+          "startErrorMs": 4.980712899993023,
+          "endErrorMs": -15.94274899997572
+        },
+        {
+          "startErrorMs": -15.94274899997572,
+          "endErrorMs": 197.32690430001298
+        },
+        {
+          "startErrorMs": -115.21887210000159,
+          "endErrorMs": 59.606567400010135
+        },
+        {
+          "startErrorMs": 59.606567400010135,
+          "endErrorMs": 47.8078612999866
+        },
+        {
+          "startErrorMs": 47.8078612999866,
+          "endErrorMs": -2.0267333999868242
+        },
+        {
+          "startErrorMs": -2.0267333999868242,
+          "endErrorMs": 126.98510740000302
+        },
+        {
+          "startErrorMs": 126.98510740000302,
+          "endErrorMs": 73.21191409999983
+        },
+        {
+          "startErrorMs": 85.81933589999835,
+          "endErrorMs": 40.7564696999998
+        },
+        {
+          "startErrorMs": 40.7564696999998,
+          "endErrorMs": 59.84155270002134
+        },
+        {
+          "startErrorMs": 59.84155270002134,
+          "endErrorMs": 61.89355469999214
+        },
+        {
+          "startErrorMs": 61.89355469999214,
+          "endErrorMs": -6.445068399983711
+        },
+        {
+          "startErrorMs": -6.445068399983711,
+          "endErrorMs": 108.23205570000027
+        },
+        {
+          "startErrorMs": 108.23205570000027,
+          "endErrorMs": 106.8898926000088
+        },
+        {
+          "startErrorMs": 5.846191399996314,
+          "endErrorMs": 42.32263180000473
+        },
+        {
+          "startErrorMs": -188.76501459999417,
+          "endErrorMs": 31.239868199975263
+        },
+        {
+          "startErrorMs": 31.239868199975263,
+          "endErrorMs": 57.712646499993525
+        },
+        {
+          "startErrorMs": 57.712646499993525,
+          "endErrorMs": -41.246704099989984
+        },
+        {
+          "startErrorMs": -41.246704099989984,
+          "endErrorMs": 101.61157229998707
+        },
+        {
+          "startErrorMs": 101.61157229998707,
+          "endErrorMs": -15.289672899996276
+        },
+        {
+          "startErrorMs": -15.289672899996276,
+          "endErrorMs": 7.838989299983723
+        },
+        {
+          "startErrorMs": 7.838989299983723,
+          "endErrorMs": -24.513305699997545
+        },
+        {
+          "startErrorMs": -24.513305699997545,
+          "endErrorMs": 37.46972659999415
+        },
+        {
+          "startErrorMs": -30.094360399999687,
+          "endErrorMs": 60.210205100020175
+        },
+        {
+          "startErrorMs": 60.210205100020175,
+          "endErrorMs": 22.556396499993525
+        },
+        {
+          "startErrorMs": 22.556396499993525,
+          "endErrorMs": 177.1358642999985
+        },
+        {
+          "startErrorMs": 177.1358642999985,
+          "endErrorMs": 0.42016599999783466
+        },
+        {
+          "startErrorMs": 0.42016599999783466,
+          "endErrorMs": 41.59570310000049
+        },
+        {
+          "startErrorMs": 41.59570310000049,
+          "endErrorMs": -27.31665039999598
+        },
+        {
+          "startErrorMs": -27.31665039999598,
+          "endErrorMs": 102.80969240000104
+        },
+        {
+          "startErrorMs": -236.83569339999622,
+          "endErrorMs": 30.898681600007194
+        },
+        {
+          "startErrorMs": 30.898681600007194,
+          "endErrorMs": 71.13244629999826
+        },
+        {
+          "startErrorMs": 71.13244629999826,
+          "endErrorMs": -5.084594699980016
+        },
+        {
+          "startErrorMs": -5.084594699980016,
+          "endErrorMs": 105.47937009999941
+        },
+        {
+          "startErrorMs": 105.47937009999941,
+          "endErrorMs": 51.93505860000869
+        },
+        {
+          "startErrorMs": 45.97436520000997,
+          "endErrorMs": 24.51867679999964
+        },
+        {
+          "startErrorMs": 24.51867679999964,
+          "endErrorMs": 6.651245099988046
+        },
+        {
+          "startErrorMs": 6.651245099988046,
+          "endErrorMs": 161.26977540000098
+        },
+        {
+          "startErrorMs": 161.26977540000098,
+          "endErrorMs": 125.53186040000242
+        },
+        {
+          "startErrorMs": 52.86950680002178,
+          "endErrorMs": 30.348754900018093
+        },
+        {
+          "startErrorMs": 30.348754900018093,
+          "endErrorMs": 106.35583499998802
+        },
+        {
+          "startErrorMs": 106.35583499998802,
+          "endErrorMs": -0.8737793000079819
+        },
+        {
+          "startErrorMs": -0.8737793000079819,
+          "endErrorMs": 142.13525389999404
+        },
+        {
+          "startErrorMs": -35.82495119999862,
+          "endErrorMs": -2.6602782999987085
+        },
+        {
+          "startErrorMs": -2.6602782999987085,
+          "endErrorMs": -2.7249756000173875
+        },
+        {
+          "startErrorMs": -2.7249756000173875,
+          "endErrorMs": 3.324829099994986
+        },
+        {
+          "startErrorMs": 3.324829099994986,
+          "endErrorMs": 79.52600100000495
+        },
+        {
+          "startErrorMs": 79.52600100000495,
+          "endErrorMs": 28.167968800005383
+        },
+        {
+          "startErrorMs": 28.167968800005383,
+          "endErrorMs": 68.42797849998306
+        },
+        {
+          "startErrorMs": 68.42797849998306,
+          "endErrorMs": -31.802123999995047
+        }
+      ]
+    },
+    {
+      "id": "JASON_MILLER_-_CROWD_PLEASER@77.153",
+      "category": "repeated-phrase",
+      "referenceWords": 84,
+      "acceptedWords": 43,
+      "errors": [
+        {
+          "startErrorMs": 131.20037840000975,
+          "endErrorMs": 46.672180199990976
+        },
+        {
+          "startErrorMs": 46.672180199990976,
+          "endErrorMs": 119.01196290000371
+        },
+        {
+          "startErrorMs": 119.01196290000371,
+          "endErrorMs": 115.62512209999909
+        },
+        {
+          "startErrorMs": 115.62512209999909,
+          "endErrorMs": 30.259521500013875
+        },
+        {
+          "startErrorMs": 30.259521500013875,
+          "endErrorMs": -53.84814449999453
+        },
+        {
+          "startErrorMs": -53.84814449999453,
+          "endErrorMs": 45.24700929999881
+        },
+        {
+          "startErrorMs": 72.13299560000053,
+          "endErrorMs": -12.507812500004434
+        },
+        {
+          "startErrorMs": -12.507812500004434,
+          "endErrorMs": -33.54235839999831
+        },
+        {
+          "startErrorMs": -33.54235839999831,
+          "endErrorMs": 50.147522000003164
+        },
+        {
+          "startErrorMs": 50.147522000003164,
+          "endErrorMs": -80.93615720000003
+        },
+        {
+          "startErrorMs": -80.93615720000003,
+          "endErrorMs": -74.98522950000108
+        },
+        {
+          "startErrorMs": -41.331665000001294,
+          "endErrorMs": 109.98242189999985
+        },
+        {
+          "startErrorMs": 53.75378419999777,
+          "endErrorMs": 44.897277800004076
+        },
+        {
+          "startErrorMs": 44.897277800004076,
+          "endErrorMs": 117.5947266000037
+        },
+        {
+          "startErrorMs": 117.5947266000037,
+          "endErrorMs": 9.828308099997685
+        },
+        {
+          "startErrorMs": 9.828308099997685,
+          "endErrorMs": -99.92266849999965
+        },
+        {
+          "startErrorMs": -99.92266849999965,
+          "endErrorMs": 185.4609374999967
+        },
+        {
+          "startErrorMs": -90.99139399999956,
+          "endErrorMs": -19.75054930001363
+        },
+        {
+          "startErrorMs": -19.75054930001363,
+          "endErrorMs": 35.27020260000313
+        },
+        {
+          "startErrorMs": 35.27020260000313,
+          "endErrorMs": -9.553710899993462
+        },
+        {
+          "startErrorMs": -9.553710899993462,
+          "endErrorMs": 31.740539599994122
+        },
+        {
+          "startErrorMs": 31.740539599994122,
+          "endErrorMs": -8.371765099994377
+        },
+        {
+          "startErrorMs": -8.371765099994377,
+          "endErrorMs": 169.03576660000397
+        },
+        {
+          "startErrorMs": 170.32208250000735,
+          "endErrorMs": 56.17230219999669
+        },
+        {
+          "startErrorMs": 0.729492200008508,
+          "endErrorMs": 112.67681879999714
+        },
+        {
+          "startErrorMs": 112.67681879999714,
+          "endErrorMs": 67.90234380000015
+        },
+        {
+          "startErrorMs": 67.90234380000015,
+          "endErrorMs": 88.32836909999742
+        },
+        {
+          "startErrorMs": 35.700805700003,
+          "endErrorMs": 10.876892100000646
+        },
+        {
+          "startErrorMs": 10.876892100000646,
+          "endErrorMs": 166.0776978000058
+        },
+        {
+          "startErrorMs": 174.21490480001012,
+          "endErrorMs": -11.903564500002517
+        },
+        {
+          "startErrorMs": -11.903564500002517,
+          "endErrorMs": 79.72515870000052
+        },
+        {
+          "startErrorMs": 79.72515870000052,
+          "endErrorMs": 144.74255369999867
+        },
+        {
+          "startErrorMs": 144.74255369999867,
+          "endErrorMs": -16.737548799994784
+        },
+        {
+          "startErrorMs": -16.737548799994784,
+          "endErrorMs": -6.044494600004668
+        },
+        {
+          "startErrorMs": -67.58105469999975,
+          "endErrorMs": -55.83056639999029
+        },
+        {
+          "startErrorMs": -55.83056639999029,
+          "endErrorMs": 61.62243650000221
+        },
+        {
+          "startErrorMs": 61.62243650000221,
+          "endErrorMs": 88.70037840000577
+        },
+        {
+          "startErrorMs": 88.70037840000577,
+          "endErrorMs": 16.356323200000134
+        },
+        {
+          "startErrorMs": 16.356323200000134,
+          "endErrorMs": 5.557678200005967
+        },
+        {
+          "startErrorMs": 5.557678200005967,
+          "endErrorMs": 183.05493159999742
+        },
+        {
+          "startErrorMs": -36.56298829999116,
+          "endErrorMs": 201.49627690000216
+        },
+        {
+          "startErrorMs": -37.27374269999473,
+          "endErrorMs": 79.43066410000199
+        },
+        {
+          "startErrorMs": 79.43066410000199,
+          "endErrorMs": 191.6358643000109
+        }
+      ]
+    },
+    {
+      "id": "Slingshot_Miracle_-_Whistler@103.648",
+      "category": "singing-sparse",
+      "referenceWords": 17,
+      "acceptedWords": 0,
+      "errors": []
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@15.216",
+      "category": "singing-fast",
+      "referenceWords": 69,
+      "acceptedWords": 18,
+      "errors": [
+        {
+          "startErrorMs": -200.2113189999992,
+          "endErrorMs": 100.89791869999942
+        },
+        {
+          "startErrorMs": -7.613052399999987,
+          "endErrorMs": -13.017791700001169
+        },
+        {
+          "startErrorMs": -13.017791700001169,
+          "endErrorMs": 215.18296809999882
+        },
+        {
+          "startErrorMs": 96.46005249999945,
+          "endErrorMs": -13.795303300000228
+        },
+        {
+          "startErrorMs": -65.57409669999714,
+          "endErrorMs": -228.38804630000098
+        },
+        {
+          "startErrorMs": -45.483306899999576,
+          "endErrorMs": 138.3859405999992
+        },
+        {
+          "startErrorMs": 138.3859405999992,
+          "endErrorMs": 202.77070619999904
+        },
+        {
+          "startErrorMs": 202.77070619999904,
+          "endErrorMs": -41.14256289999929
+        },
+        {
+          "startErrorMs": -117.94577029999687,
+          "endErrorMs": 204.5710907
+        },
+        {
+          "startErrorMs": 104.34564210000019,
+          "endErrorMs": -334.4088592999981
+        },
+        {
+          "startErrorMs": 147.16119380000237,
+          "endErrorMs": 144.97933959999898
+        },
+        {
+          "startErrorMs": 65.72900389999603,
+          "endErrorMs": 71.9181212999942
+        },
+        {
+          "startErrorMs": 17.46713259999666,
+          "endErrorMs": 142.72500610000094
+        },
+        {
+          "startErrorMs": 142.72500610000094,
+          "endErrorMs": -50.35101320000024
+        },
+        {
+          "startErrorMs": 20.66445919999893,
+          "endErrorMs": 140.35989380000302
+        },
+        {
+          "startErrorMs": 140.35989380000302,
+          "endErrorMs": 74.40545650000274
+        },
+        {
+          "startErrorMs": 74.40545650000274,
+          "endErrorMs": 106.26596070000005
+        },
+        {
+          "startErrorMs": 106.26596070000005,
+          "endErrorMs": 100.89761350000259
+        }
+      ]
+    },
+    {
+      "id": "Explosive_Ear_Candy_-_Like_The_Sun@91.396",
+      "category": "repeated-phrase",
+      "referenceWords": 53,
+      "acceptedWords": 31,
+      "errors": [
+        {
+          "startErrorMs": -17.690795899994782,
+          "endErrorMs": 126.3381348000081
+        },
+        {
+          "startErrorMs": 126.3381348000081,
+          "endErrorMs": 58.083435100002134
+        },
+        {
+          "startErrorMs": 58.083435100002134,
+          "endErrorMs": 73.14111329999662
+        },
+        {
+          "startErrorMs": 19.613281200008714,
+          "endErrorMs": 43.347717300008526
+        },
+        {
+          "startErrorMs": -15.396484400000077,
+          "endErrorMs": 171.62530519999564
+        },
+        {
+          "startErrorMs": 171.62530519999564,
+          "endErrorMs": 38.589111299998535
+        },
+        {
+          "startErrorMs": 38.589111299998535,
+          "endErrorMs": 182.62048340000092
+        },
+        {
+          "startErrorMs": 182.62048340000092,
+          "endErrorMs": 48.65319820000025
+        },
+        {
+          "startErrorMs": -225.77612299998862,
+          "endErrorMs": 55.19158940001034
+        },
+        {
+          "startErrorMs": 55.19158940001034,
+          "endErrorMs": -11.506713900004684
+        },
+        {
+          "startErrorMs": -11.506713900004684,
+          "endErrorMs": 108.5988770000057
+        },
+        {
+          "startErrorMs": 108.5988770000057,
+          "endErrorMs": 126.13610840000433
+        },
+        {
+          "startErrorMs": 126.13610840000433,
+          "endErrorMs": -71.95410159999938
+        },
+        {
+          "startErrorMs": -71.95410159999938,
+          "endErrorMs": 143.84606929999677
+        },
+        {
+          "startErrorMs": -14.207824699994376,
+          "endErrorMs": 90.27032470000051
+        },
+        {
+          "startErrorMs": 90.27032470000051,
+          "endErrorMs": 103.0336914000003
+        },
+        {
+          "startErrorMs": 103.0336914000003,
+          "endErrorMs": 251.1400756999933
+        },
+        {
+          "startErrorMs": 251.1400756999933,
+          "endErrorMs": 203.46795649999194
+        },
+        {
+          "startErrorMs": 203.46795649999194,
+          "endErrorMs": -0.6528320000001031
+        },
+        {
+          "startErrorMs": -0.6528320000001031,
+          "endErrorMs": 47.124572800001374
+        },
+        {
+          "startErrorMs": 47.124572800001374,
+          "endErrorMs": 52.51306150000801
+        },
+        {
+          "startErrorMs": -63.74853520000556,
+          "endErrorMs": -53.69299320000209
+        },
+        {
+          "startErrorMs": -53.69299320000209,
+          "endErrorMs": 31.111999499998433
+        },
+        {
+          "startErrorMs": 31.111999499998433,
+          "endErrorMs": 19.67370610000785
+        },
+        {
+          "startErrorMs": -34.81542970000362,
+          "endErrorMs": 201.2957153000059
+        },
+        {
+          "startErrorMs": 201.2957153000059,
+          "endErrorMs": 26.72021479999387
+        },
+        {
+          "startErrorMs": 26.72021479999387,
+          "endErrorMs": 904.5696410999966
+        },
+        {
+          "startErrorMs": -149.8203124999975,
+          "endErrorMs": 345.805908199992
+        },
+        {
+          "startErrorMs": 345.805908199992,
+          "endErrorMs": 159.2617187999963
+        },
+        {
+          "startErrorMs": 38.67150880000736,
+          "endErrorMs": 205.860534699994
+        },
+        {
+          "startErrorMs": 205.860534699994,
+          "endErrorMs": -216.24670410000135
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "referenceWords": 590,
+    "acceptedWords": 160,
+    "coverage": 0.2711864406779661,
+    "onset": {
+      "count": 160,
+      "medianAbsoluteMs": 55.19158940001034,
+      "p95AbsoluteMs": 201.2957153000059
+    },
+    "end": {
+      "count": 160,
+      "medianAbsoluteMs": 65.77288819998728,
+      "p95AbsoluteMs": 216.24670410000135
+    }
+  },
+  "implementedInBranchPlayer": true,
+  "publicDeployment": false
+}

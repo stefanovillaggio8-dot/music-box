@@ -3,7 +3,7 @@
 // Replays the REAL selector and planner. No live user preference or queue
 // is written. Public snapshot membership and assumed offline state differ
 // explicitly; a source model, not listening judgement, supplies the evidence.
-const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(p,'utf8');
 const index=JSON.parse(read(arg('index',path.join(root,'dj-deep-analysis.json'))));
@@ -122,9 +122,10 @@ function resultFor(from,to){
  if(allowed){if(p.measuredFullBeat)kind='full';else if(p.metricalRhythmic||p.kind==='snap')kind='partial';
   else if(['soft','fade','rise'].includes(p.kind))kind='crossfade';else if(p.kind==='postlude')kind='postlude';else if(p.kind==='underlay')kind='underlay';}
  if(kind==='normal')return {...normal(),begin:p.begin,end:p.end};
- const skipped=p.structuralBeat&&allowed?Math.max(0,(a.musicalContent?.audibleEnd??a.last)-p.end):0;
+ const outgoingReadThrough=p.preservedFileTail||p.nativeTailFullBeat||p.subduedRhythmicUnderlay||p.postMusicalTailUnderlay?a.duration:p.end;
+ const skipped=allowed?Math.max(0,(a.musicalContent?.audibleEnd??a.last)-outgoingReadThrough):0;
  const incomingOmitted=kind==='normal'?0:Math.max(0,p.entry||0);
- return {kind,overlap:kind==='normal'?0:p.fade,skipped,incomingOmitted,
+ return {kind,overlap:kind==='normal'?0:p.fade,skipped,incomingOmitted,outgoingReadThrough,
   incomingAudibleUpperBound:Math.max(0,incomingOmitted-(b.musicalContent?.audibleStart??0)),begin:p.begin,end:p.end,
   earlyOverlapStart:!!(allowed&&p.begin<=a.duration-8),
   early:!!(allowed&&p.structuralBeat&&p.end<=a.duration-8),safariFull:kind==='full'&&(common||p.outputHeadroom>=.999),
@@ -185,7 +186,11 @@ function inventory(profile,list,audit){
 }
 (async()=>{
  const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
+  runtimeEvidence:{engineSha256:crypto.createHash('sha256').update(source).digest('hex'),
+   indexSha256:crypto.createHash('sha256').update(read(arg('index',path.join(root,'dj-deep-analysis.json')))).digest('hex'),
+   applicationSha256:crypto.createHash('sha256').update(appSource).digest('hex')},
   audioVariant:appRecording?'actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest':'original recordings; no loaded boost manifest',
+  sessionHistoryAssumption:'A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.',
   sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
   offlineAssumption:'Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.',
   limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[],inventories:[]};

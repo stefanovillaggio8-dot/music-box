@@ -1,0 +1,172 @@
+{
+  "method": "original-native-stereo-prefix-v1",
+  "scope": "historical full candidates with entry between zero and 18 seconds",
+  "maximumAllowedPeak": 0.0001,
+  "rows": [
+    {
+      "from": "audio/songs/bassi/track-53.mp3",
+      "to": "audio/songs/track-51.mp3",
+      "entry": 5.5263,
+      "sourceSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.7583705186843872,
+      "prefixRms": 0.1341152937423191,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-1122.mp3",
+      "to": "audio/songs/track-326.mp3",
+      "entry": 3.0999,
+      "sourceSha": "ae0191f839ee2d5fe7498f4594859c2f8f135a7a",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.9676647782325745,
+      "prefixRms": 0.08471547618677638,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-203.mp3",
+      "to": "audio/songs/track-451.mp3",
+      "entry": 5.8398,
+      "sourceSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+      "sampleRate": 44100,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.7512868642807007,
+      "prefixRms": 0.09363453250641716,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-347.mp3",
+      "to": "audio/songs/track-219.mp3",
+      "entry": 4.1,
+      "sourceSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.5292633175849915,
+      "prefixRms": 0.09486500237026232,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-348.mp3",
+      "to": "audio/songs/track-219.mp3",
+      "entry": 3.66,
+      "sourceSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.5292633175849915,
+      "prefixRms": 0.09111660817386145,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-353.mp3",
+      "to": "audio/songs/track-219.mp3",
+      "entry": 6.98,
+      "sourceSha": "cb4e547252779511d310f0c6f82f24645dc77e24",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.5292633175849915,
+      "prefixRms": 0.10613230434381572,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-388.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "entry": 0.5,
+      "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.6081346273422241,
+      "prefixRms": 0.14294743667291251,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-50.mp3",
+      "to": "audio/songs/track-474.mp3",
+      "entry": 0.9,
+      "sourceSha": "293125bd1c160577fc5b739676153a123ae7ceab",
+      "sampleRate": 44100,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.5797697305679321,
+      "prefixRms": 0.136041192800959,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-53.mp3",
+      "to": "audio/songs/track-51.mp3",
+      "entry": 5.5263,
+      "sourceSha": "1a0edf52fad1ce9da20993c1220df5838ccf5f98",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.7583705186843872,
+      "prefixRms": 0.1341152937423191,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-584.mp3",
+      "to": "audio/songs/track-336.mp3",
+      "entry": 2.38,
+      "sourceSha": "7c2338bc6a0daa32673dd6bbbc011255b61b2f08",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.01529964990913868,
+      "prefixRms": 0.0030647603194300186,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-584.mp3",
+      "to": "audio/songs/track-451.mp3",
+      "entry": 5.8398,
+      "sourceSha": "f9a7906bc22c4e408d178811ae1b0be1726206af",
+      "sampleRate": 44100,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.7512868642807007,
+      "prefixRms": 0.09363453250641716,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-588.mp3",
+      "to": "audio/songs/track-344.mp3",
+      "entry": 0.82,
+      "sourceSha": "29d53e8dcbdf0144deec5b38eb4f8090da8c32da",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.6518301963806152,
+      "prefixRms": 0.12403445851490026,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-599.mp3",
+      "to": "audio/songs/track-166.mp3",
+      "entry": 6.6757,
+      "sourceSha": "f1392f160613a77791b3f870e60541c692ed08ef",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 1.0273418426513672,
+      "prefixRms": 0.25080225099322334,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-844.mp3",
+      "to": "audio/songs/track-50.mp3",
+      "entry": 0.14,
+      "sourceSha": "c6852c3787cd781b3e806ac9b97559ac57c439ea",
+      "sampleRate": 48000,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.6081346273422241,
+      "prefixRms": 0.10146940090606263,
+      "digitalSilenceThroughEntry": false
+    },
+    {
+      "from": "audio/songs/track-856.mp3",
+      "to": "audio/songs/track-443.mp3",
+      "entry": 3.16,
+      "sourceSha": "dc1594d6a4b1061b2869855607c056040fc0c1c5",
+      "sampleRate": 44100,
+      "status": "decoded-native-stereo",
+      "maximumPrefixPeak": 0.5339679718017578,
+      "prefixRms": 0.060537654724842994,
+      "digitalSilenceThroughEntry": false
+    }
+  ]
+}
