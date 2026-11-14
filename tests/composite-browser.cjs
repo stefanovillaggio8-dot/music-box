@@ -68,7 +68,12 @@ const server=http.createServer(async(req,res)=>{
     },plans);
     console.error(name,'resampled',JSON.stringify(resampled));
     assert.equal(resampled.sampleRate,44100);assert.deepEqual(resampled.rejected,[]);
-    const plan=plans.find(p=>p.cue.composite.envelopeVersion===3)||[...plans].sort((a,b)=>a.cue.fade-b.cue.fade)[0];
+    // Exercise pitch-preserving stretch AND intact decoded EOF together,
+    // using an incoming recording from zero rather than a historical cut.
+    const plan=plans.filter(p=>p.cue.preservedFileTail&&p.cue.entry===0&&
+     p.cue.preservedEntrance==='first-attack-033-v1'&&Math.abs(p.cue.tempo-1)>.001)
+     .sort((a,b)=>a.cue.fade-b.cue.fade)[0];
+    assert.ok(plan,'A rendered intact-file stretch must be available');
     await original(plan.fromSha);await original(plan.toSha);
     await page.evaluate(async plan=>{
      window.cue=plan.cue;await MusicBoxCompositeMix.prepare(cue,ctx);
@@ -110,8 +115,10 @@ const server=http.createServer(async(req,res)=>{
     // Exercise the real app bridge as well as the bounded-mix controller.
     // Source assignment/play must see binary mute already applied on iOS.
     const appContext=await browser.newContext({serviceWorkers:'block'}),shell=await appContext.newPage();
-    await shell.route('https://**',async route=>{
-     const url=new URL(route.request().url()),at=url.pathname.indexOf('/songs/');
+    await shell.route('**/*',async route=>{
+     const url=new URL(route.request().url());
+     if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
+     const at=url.pathname.indexOf('/songs/');
      const key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
      if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}
      await route.abort();
@@ -176,8 +183,10 @@ const server=http.createServer(async(req,res)=>{
     // shuffle availability by erasing the active session's history.
     const autoContext=await browser.newContext({serviceWorkers:'block'}),auto=await autoContext.newPage();
     auto.on('pageerror',e=>console.error(name,'shuffle page',e.message));
-    await auto.route('https://**',async route=>{
-     const url=new URL(route.request().url()),at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
+    await auto.route('**/*',async route=>{
+     const url=new URL(route.request().url());
+     if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
+     const at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
      if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}await route.abort();
     });
     await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
@@ -205,7 +214,9 @@ const server=http.createServer(async(req,res)=>{
     });
     assert.equal(automaticShuffle.full,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
     await autoContext.close();
-    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,muteDuringOverlap,automaticShuffle,physicalIPhone:false});
+    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
+     nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
+     seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,muteDuringOverlap,automaticShuffle,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));
