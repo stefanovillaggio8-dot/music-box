@@ -27,7 +27,7 @@ def vocal_guard(vocals,mix,start,end,step=.1):
         'clear':bool(np.max(voice)<VOCAL_ABSOLUTE and np.max(ratio)<VOCAL_RELATIVE),
         'method':'spleeter-2stems-energy-v1','notHumanVerified':True}
 
-def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02):
+def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02,sparse_candidates=False):
     beats=np.asarray(beats);bars=[]
     if not len(beats):return bars
     # Refine only to real PCM attacks, retaining model locations separately.
@@ -63,7 +63,9 @@ def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02):
         # Metrical beats and audible drum attacks are different evidence.
         # Syncopation need not sound every quarter note. Only observed hits
         # are exported for the later independent >=90% pulse matcher.
-        if len(hits)<meter-1:continue
+        minimum=int(np.ceil(meter/2)) if sparse_candidates else meter-1
+        if len(hits)<minimum:continue
+        if sparse_candidates and not any(abs(r['t']-start)<=.06 for r in hits):continue
         probabilities=np.array([max(.001,at(beat_p,t,.02)) for t in raw])
         bp=float(np.exp(np.mean(np.log(probabilities))))
         dp=min(at(down_p,start,.02),at(down_p,end,.02))
@@ -72,7 +74,8 @@ def measured_bars(beats,downbeats,beat_p,down_p,onset,step=.02):
             'modelBeats':raw.tolist(),'beatProbabilityMin':float(np.min(probabilities)),
             'beatProbabilityGeometricMean':bp,'downbeatProbabilityMin':dp,
             'beatsPerBar':meter,'metricalPhaseConfidence':confidence,
-            'bpm':60/period,'gridRms':float(np.sqrt(np.mean((gaps-period)**2)))})
+            'bpm':60/period,'gridRms':float(np.sqrt(np.mean((gaps-period)**2))),
+            'candidateObservedMinimum':minimum,'sparseCandidateOnly':bool(sparse_candidates)})
     return bars
 
 def summarize_structure(bars,chroma,mfcc,rms,bass,frame_times,vocals=None):

@@ -55,6 +55,18 @@ class EvidenceTests(unittest.TestCase):
         b=bars();t=np.arange(0,128,.1);x=np.ones((12,len(t)))
         self.assertEqual(core.summarize_structure(b,x,x,np.ones(len(t)),np.ones(len(t)),t),([],[]))
 
+    def test_sparse_candidate_bars_keep_neural_gates_and_need_observed_downbeats(self):
+        beats=np.arange(.5,40,.5);bp=np.ones(2100)*.99;dp=np.ones(2100)*.01;onset=np.zeros(2100)
+        for i,t in enumerate(beats):
+            if i%4==0:dp[round(t/.02)]=.99
+            if i%2==0:onset[round(t/.02)]=1
+        self.assertEqual(core.measured_bars(beats,beats[::4],bp,dp,onset),[])
+        candidates=core.measured_bars(beats,beats[::4],bp,dp,onset,sparse_candidates=True)
+        self.assertGreater(len(candidates),10)
+        self.assertTrue(all(len(b['beats'])>=2 and b['sparseCandidateOnly'] for b in candidates))
+        self.assertEqual(core.measured_bars(beats,beats[::4],bp,np.ones(2100)*.25,onset,sparse_candidates=True),[])
+        self.assertEqual(core.measured_bars(beats,beats[::4],bp,dp,np.zeros(2100),sparse_candidates=True),[])
+
     def test_a_concluding_bar_group_cannot_skip_a_later_vocal(self):
         voice=np.zeros(1300);voice[1190:1270]=.02
         windows=core.candidate_windows(bars(),[],[],voice,np.ones(1300)*.1,128)

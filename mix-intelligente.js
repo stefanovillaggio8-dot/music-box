@@ -2638,6 +2638,41 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
   weakest=Math.min(...scores);
  return average>=.78&&weakest>=.60&&shared>=3?{average,weakest}:keyCompatible;
 }
+// Preserving a file tail can include measured digital silence. Silence is
+// not missing chroma and cannot create a harmonic clash. Keep the existing
+// key and clash limits on every meaningful frame; bound even an unknown
+// quiet frame by its worst possible cross interaction at the actual gain.
+function pcmPreservedTailHarmony(outro,intro,begin,rate,fade){
+ const nearest=(part,t)=>{
+  let row=null,distance=Infinity;
+  for(const r of part.harmony){const d=Math.abs(r.t-t);if(d<distance){distance=d;row=r}}
+  return distance<=.30&&Number.isFinite(row?.rms)&&row.rms>=0&&Number.isFinite(row?.tonalRatio)?row:null;
+ };
+ const normalize=notes=>{
+  if(!Array.isArray(notes)||notes.length!==12||!notes.every(n=>Number.isFinite(n)&&n>=0))return null;
+  const x=focusedChroma(notes),sum=x.reduce((s,n)=>s+n,0);return sum>.025?x.map(n=>n/sum):null;
+ };
+ const rough=x=>x.reduce((s,n,p)=>s+n*(x[(p+1)%12]+x[(p+11)%12]+.5*x[(p+6)%12]),0);
+ const source=[],target=[],clashes=[],excess=[];let boundedQuiet=0,frames=0;
+ for(let t=.5;t<=fade-.5;t+=.5){
+  const a=nearest(outro,begin+t),b=nearest(intro,t*rate);if(!a||!b)return null;frames++;
+  const incomingGain=.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
+   aa=a.rms,bb=b.rms*incomingGain,w=aa+bb>0?4*aa*bb/(aa+bb)**2:0;
+  if((a.rms<.005||b.rms<.005)&&w<=.05){boundedQuiet++;continue;}
+  const x=normalize(a.notes),y=normalize(b.notes);if(!x||!y)return null;
+  let clash=0;for(let p=0;p<12;p++)clash+=x[p]*(y[(p+1)%12]+y[(p+11)%12]+.5*y[(p+6)%12]);
+  clashes.push(clash);excess.push(clash-Math.max(rough(x),rough(y)));
+  if(a.rms>=.005&&b.rms>=.005){source.push(a.notes);target.push(b.notes);}
+ }
+ if(source.length<6||Math.max(...clashes)>.45||Math.max(...excess)>.05)return null;
+ const mean=rows=>Array.from({length:12},(_,p)=>rows.reduce((s,r)=>s+r[p],0)/rows.length),
+  a=camelotEstimate(mean(source)),b=camelotEstimate(mean(target));
+ if(!a||!b||Math.min(a.confidence,b.confidence)<.70||camelotMatch({camelot:a},{camelot:b}).score<.92)return null;
+ return {method:'pcm-key-with-quiet-frame-bound-v1',compatibleKey:true,keyFrom:a.code,keyTo:b.code,
+  keyConfidence:Math.min(a.confidence,b.confidence),dissonanceMax:Math.max(...excess),rawDissonanceMax:Math.max(...clashes),
+  frames,sharedTonalFrames:source.length,boundedQuietFrames:boundedQuiet,quietInteractionMaximum:.05,
+  sourceGain:1,incomingEnvelope:'native-tail-sine-033-v1'};
+}
 // Offline pair plans contain only the validated cue and evidence summary.
 // The large PCM contours stay in audit artifacts, never in the PWA index.
 function indexedFullBeatBridge(a,b,dur){
@@ -7086,7 +7121,8 @@ async function intelligentShuffle(app,audio,fromId){
  const fromInfo=await decode(from);
  if(!fromInfo||!enabled||app.currentId()!==fromId)return {retry:app.currentId()===fromId};
  const lastLyric=app.mixLyricCues?.(fromId)?.last;
- const old=Number.isFinite(lastLyric)?{...fromInfo,lastLyricAt:Math.max(Number(fromInfo.lastLyricAt)||0,lastLyric)}:fromInfo;
+ const old={...fromInfo,mixPosition:Number.isFinite(audio.currentTime)?audio.currentTime:0,
+  ...(Number.isFinite(lastLyric)?{lastLyricAt:Math.max(Number(fromInfo.lastLyricAt)||0,lastLyric)}:{})};
  const source=t=>String(app.mixUrl?.(t)||t.url||"");
  // Distinct IDs can contain the EXACT same recording (e.g. app/mobile).
  // Never promote the song that just played or count exact duplicate Git
@@ -7595,10 +7631,43 @@ async function intelligentShuffle(app,audio,fromId){
   !candidateAudit.musicalOverlays?"nessun punto di sovrapposizione musicale sicuro":
   !candidateAudit.verifiedBeats?"il punto di mix non supera i controlli di sicurezza":
   "transizioni certificate presenti";
+ let sequenceLookahead=null;
+ // A safe current raccordo can lead into a genuine subsequent beatmix.
+ // Consider only the SAME already-certified current tier, within 12% of
+ // its best musical score. Never replace a current full/partial beat,
+ // invent a certificate, escape the fresh scope or reorder a manual queue.
+ if(!scored.length&&!partialScored.length&&choicePool.length>1){
+  const byId=new Map(measured.map(x=>[x.track.id,x])),bySha=new Map(measured.map(x=>[audioSha(x.info),x]));
+  const top=choicePool[0].score,offline=typeof navigator!=='undefined'&&navigator.onLine===false;
+  for(const candidate of choicePool.filter(x=>x.score>=top*.88).slice(0,256)){
+   const source=byId.get(candidate.track.id);if(!source?.info)continue;
+   const targets=new Set([...Object.keys(source.info.structuralBeatPlans||{}),...Object.keys(source.info.pcmBeatPlans||{})]);
+   if(!targets.size)continue;
+   const lyric=app.mixLyricCues?.(candidate.track.id),from={...source.info,mixPosition:0,
+    ...(Number.isFinite(lyric?.last)?{lastLyricAt:Math.max(Number(source.info.lastLyricAt)||0,lyric.last),lyricStarts:lyric.starts||[]}: {})};
+   for(const sha of targets){
+    const follower=bySha.get(sha);if(!follower||follower.track.id===candidate.track.id||sha===audioSha(from))continue;
+    const lrc=app.mixLyricCues?.(follower.track.id),to=Number.isFinite(lrc?.first)?{...follower.info,
+     firstLyricAt:Math.min(Number.isFinite(follower.info.firstLyricAt)?follower.info.firstLyricAt:Infinity,lrc.first)}:follower.info;
+    const cue=transition(from,to,from.duration);
+    if(!cue?.measuredFullBeat||cue.entry>.001||!musicallyCompatibleOverlay(from,to,cue)||!desktopBeatPairCertified(from,to,cue)||
+       !iphoneQuietReleaseCertified(from,cue)||
+       isIOS&&(!mobileMixAllowed(cue,from,from.lastLyricAt)||!iphoneBeatPairCertified(from,to,cue)))continue;
+    const common=window.MusicBoxCompositeMix?.supports?.(cue)===true;
+    if(cue.structuralBeat&&!common||isIOS&&!common&&!(cue.outputHeadroom>=.999)||
+       offline&&common&&window.MusicBoxCompositeMix?.isPrepared?.(cue,app.mixRunningContext?.())!==true)continue;
+    candidate.sequenceScore=candidate.score+top*.12;
+    candidate.continuation={from:candidate.track.id,to:follower.track.id,kind:cue.kind,fade:cue.fade,measuredFullBeat:true};
+    break;
+   }
+  }
+  choicePool.sort((a,b)=>(b.sequenceScore??b.score)-(a.sequenceScore??a.score)||b.score-a.score);
+  if(choicePool[0]?.continuation)sequenceLookahead=choicePool[0].continuation;
+ }
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
-    (!current||best.score>current.score+.045)){
+    (!current||(best.sequenceScore??best.score)>(current.sequenceScore??current.score)+.045)){
   if(runGeneration!==null&&runGeneration!==shuffleGeneration)return {retry:false};
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
@@ -7609,7 +7678,7 @@ async function intelligentShuffle(app,audio,fromId){
     ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-    rejected,candidateAudit,limitingStage,chosen:best.track.id,
+    rejected,candidateAudit,limitingStage,chosen:best.track.id,sequenceLookahead,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
     reason:scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):partialScored.length?
@@ -7652,7 +7721,7 @@ async function intelligentShuffle(app,audio,fromId){
   ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-   rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,
+   rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,sequenceLookahead,
    vocalModelReady:!!old.voiceModel,
    outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
     Number.isFinite(old.voiceScannedEnd)&&Number.isFinite(old.last)&&

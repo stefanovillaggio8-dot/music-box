@@ -48,7 +48,7 @@ function fixture(options={}){
     Number(options.focused??.82)+
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
     Number(options.phrase??.81)+"});",
-  "const transition=(old,next)=>next.cue||null;",
+  "const transition=(old,next)=>old.future?.[next.sha]||next.cue||null;",
   ...(options.internalPlans?["const indexedStructuralBeatBridge=(old,next)=>next.cue?.structuralBeat&&!next.cue.invalidCertificate?next.cue:null;",
     "const fullBeatCueCertified=(old,next,cue)=>!cue.invalidCertificate;"]:[]),
   ...(options.neutralFallback?["const certifiedNeutralBridge=(old,next)=>next.safeNeutral||null;"]:[]),
@@ -485,4 +485,26 @@ test('partial structural rhythms remain a separate shuffle tier and never become
  const f=fixture({internalPlans:true,pool:[{cue:null},{analysis:{introDrive:.01},cue:{kind:'beat',structuralBeat:true,measuredFullBeat:false,metricalRhythmic:true,fade:6,begin:90,grooveScore:.9}}]});
  await f.run();assert.equal(f.selected()?.pickId,3);assert.equal(f.decision().beatCandidates,0);
  assert.equal(f.decision().partialBeatCandidates,1);
+});
+
+test('a safe same-tier successor can prepare a verified fresh continuation without claiming a current beat',async()=>{
+ const future={kind:'beat',measuredFullBeat:true,entry:0,fade:6,begin:90,end:96,grooveScore:.9};
+ const sha='c'.repeat(40),f=fixture({internalPlans:true,neutralFallback:true,pool:[
+  {cue:soft(4),analysis:{sha:'a'.repeat(40)}},
+  {cue:soft(4),analysis:{sha:'b'.repeat(40),pcmBeatPlans:{[sha]:{}},future:{[sha]:future}}},
+  {cue:null,analysis:{sha}}
+ ]});
+ await f.run();assert.equal(f.selected()?.pickId,3);assert.equal(f.decision().beatCandidates,0);
+ assert.equal(f.decision().sequenceLookahead?.to,4);
+});
+
+test('future certification cannot escape scope, skip an incoming verse or change a manual queue',async()=>{
+ const sha='c'.repeat(40),future={kind:'beat',measuredFullBeat:true,entry:80,fade:6,begin:90,end:96};
+ const specs=[{cue:soft(4),analysis:{sha:'a'.repeat(40)}},
+  {cue:soft(4),analysis:{sha:'b'.repeat(40),pcmBeatPlans:{[sha]:{}},future:{[sha]:future}}},
+  {cue:null,analysis:{sha}}];
+ const unsafe=fixture({internalPlans:true,pool:specs});await unsafe.run();assert.equal(unsafe.selected(),null);
+ specs[1].analysis.future[sha]={...future,entry:0};
+ const missing=fixture({internalPlans:true,pool:specs.slice(0,2)});await missing.run();assert.equal(missing.selected(),null);
+ const manual=fixture({internalPlans:true,manual:true,pool:specs});await manual.run();assert.equal(manual.selected(),null);
 });

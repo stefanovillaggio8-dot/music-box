@@ -1,0 +1,71 @@
+name: Profile-aware intact-song PCM edge analysis
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: intact-profile-edges-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/cache@v4
+        id: edges
+        with:
+          path: results
+          key: intact-edges-v1-${{ matrix.shard }}-${{ hashFiles('tools/dj-edge-grids.py', 'tools/dj-structure-core.py', 'tools/dj-transition-features.py', 'dj-deep-analysis.json') }}
+      - uses: actions/cache@v4
+        if: steps.edges.outputs.cache-hit != 'true'
+        with:
+          path: models/torch/hub/checkpoints
+          key: beat-this-final0-8c328b45
+      - if: steps.edges.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install torch==2.5.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install numpy==1.26.4 librosa==0.11.0 soxr beat-this==1.1.0
+          python tools/test-dj-whole-structure.py
+          python tools/dj-edge-grids.py --shard=${{ matrix.shard }}/16 --cache=original-mp3 --models=models --output=results/edge-${{ matrix.shard }}.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intact-edge-${{ matrix.shard }}
+          path: results/
+          retention-days: 14
+  compile:
+    needs: extract
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: intact-edge-*
+          path: edges
+      - run: |
+          gh run download 43463500768 --repo stefanovillaggio8-dot/music-box --pattern 'whole-structure-*' --dir whole
+          node tools/build-preserved-tail-plans.cjs --structure=whole --edges=edges --output=results/profile-preserved-tail-candidates.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: intact-profile-candidates
+          path: results/
+          retention-days: 14
