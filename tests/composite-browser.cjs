@@ -22,6 +22,17 @@ async function original(sha){
  const actual=crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
  if(actual!==sha)throw Error('Original SHA mismatch');sourceCache.set(sha,bytes);return bytes;
 }
+async function fulfillOriginal(route,sha){
+ const bytes=await original(sha),headers={'Accept-Ranges':'bytes','Access-Control-Allow-Origin':'*',
+  'Access-Control-Expose-Headers':'Content-Length, Content-Range, Accept-Ranges'};
+ const range=/^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range||'');
+ if(range){
+  const lo=Number(range[1]),hi=Math.min(bytes.length-1,range[2]?Number(range[2]):bytes.length-1);
+  if(lo>hi||lo>=bytes.length){await route.fulfill({status:416,headers:{...headers,'Content-Range':'bytes */'+bytes.length},body:''});return;}
+  const body=bytes.subarray(lo,hi+1);
+  await route.fulfill({status:206,contentType:'audio/mpeg',headers:{...headers,'Content-Range':`bytes ${lo}-${hi}/${bytes.length}`,'Content-Length':String(body.length)},body});
+ }else await route.fulfill({status:200,contentType:'audio/mpeg',headers:{...headers,'Content-Length':String(bytes.length)},body:bytes});
+}
 const server=http.createServer(async(req,res)=>{
  try{
   const pathname=new URL(req.url,'http://localhost').pathname;
@@ -121,7 +132,7 @@ const server=http.createServer(async(req,res)=>{
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
      const at=url.pathname.indexOf('/songs/');
      const key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
-     if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}
+     if(sha){await fulfillOriginal(route,sha);return;}
      await route.abort();
     });
     await shell.addInitScript(profile=>{
@@ -223,7 +234,7 @@ const server=http.createServer(async(req,res)=>{
      const url=new URL(route.request().url());
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
      const at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
-     if(sha){await route.fulfill({status:200,contentType:'audio/mpeg',body:await original(sha)});return;}await route.abort();
+     if(sha){await fulfillOriginal(route,sha);return;}await route.abort();
     });
     await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
     await auto.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
