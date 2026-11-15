@@ -161,10 +161,16 @@ const server=http.createServer(async(req,res)=>{
        error=>{__silentBridgeTrace.error=String(error)});document.body.append(button);
     },bridgeSource);
     await shell.click('#silent-handoff');
-    try{await shell.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2&&!MusicBoxBridge.audio().paused,null,{timeout:30000});}
+    // A provisional 0–1 ms decoder can already report readyState=4 and
+    // paused=false. The bridge proof must finish its requested seek before
+    // starting a different decoder/clock test on the same recording.
+    try{await shell.waitForFunction(()=>{
+     const a=MusicBoxBridge.audio();return a?.readyState>=2&&!a.paused&&!a.seeking&&
+      !a._mbInitialSeekCleanup&&Number(a.duration)>2.5&&a.currentTime>=1.8;
+    },null,{timeout:30000});}
     catch(error){console.error(name,'initial native bridge',JSON.stringify(await shell.evaluate(()=>{
      const a=MusicBoxBridge.audio();return {trace:__silentBridgeTrace,currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
-      paused:a?.paused,src:a?.currentSrc,readyState:a?.readyState,error:a?.error?.message,diagnostics:MusicBoxMix.diagnostics()};
+      paused:a?.paused,src:a?.currentSrc,readyState:a?.readyState,duration:a?.duration,time:a?.currentTime,pendingInitialSeek:!!a?._mbInitialSeekCleanup,error:a?.error?.message,diagnostics:MusicBoxMix.diagnostics()};
     })));throw error;}
     const silentBridge=await shell.evaluate(()=>({muted:MusicBoxBridge.audio().muted,lastPlayWasMuted:__nativePlayMutes.at(-1)}));
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
