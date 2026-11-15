@@ -2267,13 +2267,13 @@
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 2,
-    "s": 442,
+    "s": 488,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 2,
-    "s": 442,
+    "s": 488,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -8938,14 +8938,14 @@
     "a": "GuÃÂ¨"
    },
    "[\"g&v\",\"ivanbÃÂ¬\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂ¬\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBÃÂ¬"
    },
@@ -9749,13 +9749,13 @@
    },
    "[\"g&v\",\"ivanbÃ¬\"]": {
     "v": 1,
-    "s": 181,
+    "s": 219,
     "t": "G&V",
     "a": "ivanBÃ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃ¬\"]": {
     "v": 1,
-    "s": 181,
+    "s": 219,
     "t": "G&V",
     "a": "ivanBÃ¬"
    },
@@ -10894,14 +10894,14 @@
     "a": "Modà"
    },
    "[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
-    "v": 1,
-    "s": 97,
+    "v": 2,
+    "s": 121,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'è (feat. tedua)\",\"thasup\"]": {
-    "v": 1,
-    "s": 97,
+    "v": 2,
+    "s": 121,
     "t": "Dimmi Che C'è (feat. Tedua)",
     "a": "thasup"
    }
