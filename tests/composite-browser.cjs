@@ -130,16 +130,21 @@ const server=http.createServer(async(req,res)=>{
      HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);return play.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
-    await shell.waitForFunction(()=>!!window.MusicBoxBridge?.allTracks?.()?.length,{timeout:20000});
-    await shell.evaluate(knownFiles=>{
-     const track=MusicBoxBridge.allTracks().find(t=>knownFiles.includes(t.file));if(!track)throw Error('Native bridge reference not available');
+    const bridgeSource=playbackProfile==='Ste'?'b-track-4':'b-track-934';
+    // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
+    // can disappear when published deletions arrive (Ste's track-1 did).
+    // Use a verified, still-visible source from this exact profile.
+    await shell.waitForFunction(({profile,id})=>window.MusicBoxBridge?.profile?.()===profile&&
+     MusicBoxBridge.playable().some(t=>t.id===id),{profile:playbackProfile,id:bridgeSource},{timeout:20000});
+    await shell.evaluate(id=>{
+     const track=MusicBoxBridge.playable().find(t=>t.id===id);if(!track)throw Error('Native bridge reference not available');
      const button=document.createElement('button');button.id='silent-handoff';button.textContent='test';
      button.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
      window.__silentBridgeTrace={requested:track.id};
       button.onclick=()=>MusicBoxBridge.mixHandoff(track.id,2,{muted:true}).then(
        result=>{__silentBridgeTrace.resolved=true;__silentBridgeTrace.result=result},
        error=>{__silentBridgeTrace.error=String(error)});document.body.append(button);
-    },Array.from(catalog.values()).filter(k=>k.startsWith('audio/')).map(k=>k.slice(6)));
+    },bridgeSource);
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2&&!MusicBoxBridge.audio().paused,null,{timeout:30000});}
     catch(error){console.error(name,'initial native bridge',JSON.stringify(await shell.evaluate(()=>{
