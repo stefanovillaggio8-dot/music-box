@@ -2326,14 +2326,14 @@
     "a": "Cesare Cremonini"
    },
    "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
-    "v": 1,
-    "s": 305,
+    "v": 2,
+    "s": 307,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
-    "v": 1,
-    "s": 305,
+    "v": 2,
+    "s": 307,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
@@ -3197,13 +3197,13 @@
    },
    "[\"romantica\",\"ultimo\"]": {
     "v": 3,
-    "s": 219,
+    "s": 278,
     "t": "ROMANTICA",
     "a": "Ultimo"
    },
    "m:2026-11|[\"romantica\",\"ultimo\"]": {
     "v": 3,
-    "s": 219,
+    "s": 278,
     "t": "ROMANTICA",
     "a": "Ultimo"
    },
