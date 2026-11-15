@@ -6531,6 +6531,7 @@ a.addEventListener("pause", () => {
        in secondo piano e quando l'iPhone gestisce la barra di sistema. */
     a.addEventListener("seeking", () => {
       if (a !== audio) return;
+      try { a._mbInitialSeekCleanup?.(); } catch (_) {}
       _ultimoSeekUtente=Date.now();
       _ultimoScorrimento=Date.now();
       _ultimoAvanzamentoReale=Date.now();
@@ -8082,6 +8083,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
       const t = tracks.find((x) => x.id === id);
       if (!t) return;
       if (window.MusicBoxRoom?.interceptTrack?.(id)) return;
+      try { audio?._mbInitialSeekCleanup?.(); } catch (_) {}
       // Any new song selection wins over the initial page-reload recovery.
       // Otherwise a pending retry can restart the stale player mid-tap.
       if (autoplay) _ripresaGiaRiuscita = true;
@@ -8223,12 +8225,31 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
     if (!_adottaDj) _assegnaAudioSorgente(audio,_url);
     if (!_adottaDj && startAt > 0 && Number.isFinite(startAt)) {
       const target = audio;
-      const at = () => {
-        if (audio !== target || currentId !== id) return;
-        try { target.currentTime = Math.max(0, Math.min(startAt, Number(target.duration || Infinity)-0.5)); } catch (_) {}
+      let initialSeekClosed=false,initialSeekTimer;
+      const initialSeekEvents=['loadedmetadata','durationchange','canplay','playing'];
+      const cleanupInitialSeek=()=>{
+        if(initialSeekClosed)return;initialSeekClosed=true;
+        clearTimeout(initialSeekTimer);
+        for(const event of initialSeekEvents)target.removeEventListener?.(event,at);
+        if(target._mbInitialSeekCleanup===cleanupInitialSeek)delete target._mbInitialSeekCleanup;
       };
-      if (target.readyState >= 1) at();
-      else target.addEventListener("loadedmetadata", at, { once: true });
+      const at = () => {
+        if(initialSeekClosed)return;
+        if (audio !== target || currentId !== id) {cleanupInitialSeek();return;}
+        const duration=Number(target.duration);
+        // WebKit can announce 0–1 ms at loadedmetadata for a complete MP3,
+        // then publish its real duration when playback starts. Clamping a
+        // requested seek to that provisional EOF immediately ends the song.
+        if(target.readyState<1||!Number.isFinite(duration)||duration<=.05)return;
+        try {
+          target.currentTime = Math.max(0, Math.min(startAt, duration-0.5));
+          cleanupInitialSeek();
+        } catch (_) { /* retry only on the bounded native readiness events */ }
+      };
+      target._mbInitialSeekCleanup=cleanupInitialSeek;
+      for(const event of initialSeekEvents)target.addEventListener(event,at);
+      initialSeekTimer=setTimeout(cleanupInitialSeek,2000);
+      at();
     }
     // Start play() from the original tap / MediaSession gesture BEFORE
     // painting the heavy song list and calculating the random queue.
