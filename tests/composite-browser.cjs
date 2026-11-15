@@ -70,7 +70,7 @@ const server=http.createServer(async(req,res)=>{
     assert.equal(resampled.sampleRate,44100);assert.deepEqual(resampled.rejected,[]);
     // Exercise pitch-preserving stretch AND intact decoded EOF together,
     // using an incoming recording from zero rather than a historical cut.
-    const plan=plans.filter(p=>p.cue.preservedFileTail&&p.cue.entry===0&&
+    const plan=plans.filter(p=>p.from==='audio/songs/track-700.mp3'&&p.toSha===data.entries['audio/songs/track-521.mp3'].sha&&p.cue.preservedFileTail&&p.cue.entry===0&&
      p.cue.preservedEntrance==='first-attack-033-v1'&&Math.abs(p.cue.tempo-1)>.001)
      .sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     assert.ok(plan,'A rendered intact-file stretch must be available');
@@ -152,12 +152,12 @@ const server=http.createServer(async(req,res)=>{
      }
      return null;
     },{profile:playbackProfile,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
-     Number(b.from==='audio/songs/track-1183.mp3'&&b.to==='audio/songs/track-1198.mp3')-
-     Number(a.from==='audio/songs/track-1183.mp3'&&a.to==='audio/songs/track-1198.mp3'))});
+     Number(b.from==='audio/songs/track-934.mp3'&&b.to==='audio/songs/track-1124.mp3')-
+     Number(a.from==='audio/songs/track-934.mp3'&&a.to==='audio/songs/track-1124.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
     if(playbackProfile==='Emanuele'){
-     assert.equal(actualPlan.fromId,'b-track-1183');assert.equal(actualPlan.toId,'b-track-1198');
-     assert.ok(actualPlan.cue.fade<11);assert.ok(actualPlan.cue.tempo>1,'Exercise the shorter stretched cue through the real planner');
+     assert.equal(actualPlan.fromId,'b-track-934');assert.equal(actualPlan.toId,'b-track-1124');
+     assert.ok(actualPlan.cue.fade>13&&actualPlan.cue.fade<15);assert.ok(Math.abs(actualPlan.cue.tempo-1)>.001,'Exercise the new vocal-handoff cue through the real planner');
     }
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{
@@ -186,7 +186,7 @@ const server=http.createServer(async(req,res)=>{
     await appContext.close();
     // Independently exercise ordinary shuffle with a unique library title.
     // It need not start on the same source as the explicit optimized mix.
-    const automaticPlan=playbackProfile==='Emanuele'?{fromId:'b-track-884',toId:'b-track-1043'}:actualPlan;
+    const automaticPlan=playbackProfile==='Emanuele'?{fromId:'b-track-700',toId:'b-track-521'}:actualPlan;
     // Independent fresh-listening session: the manual handoff above has
     // already played its target and must not be used to fake repeat-free
     // shuffle availability by erasing the active session's history.

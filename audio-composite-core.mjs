@@ -2,7 +2,7 @@ import {stretchClip,playedAt} from './audio-stretch-core.mjs';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 // The final outgoing fade begins only inside the proven quiet vocal tail.
 // Both recordings share ONE constant peak bound, including different drums.
-export function compositePCM(outgoing,incoming,cue){
+export function compositePCM(outgoing,incoming,cue,options={}){
  const sr=outgoing.rate;
  if(sr!==incoming.rate||outgoing.channels.length!==2||incoming.channels.length!==2||
     !Number.isFinite(cue.fade)||cue.fade<4.5||cue.fade>16||
@@ -42,6 +42,10 @@ export function compositePCM(outgoing,incoming,cue){
    if(t>=0&&t<=nativeHandoffAt)overlapRawPeak=Math.max(overlapRawPeak,Math.abs(value));
   }
  }
+ options.onRaw?.({rate:sr,channels:raw});
+ const trueBounds=options.truePeakBounds;
+ if(trueBounds&&(!(trueBounds instanceof Float32Array)||trueBounds.length!==frames||
+    trueBounds.some(v=>!Number.isFinite(v)||v<0)))throw Error('Invalid original true-peak bounds');
  const ceiling=Number.isFinite(cue.renderPeakCeiling)?cue.renderPeakCeiling:.96;
  if(ceiling<.85||ceiling>.96)throw Error('Invalid render peak target');
  let headroom=Math.min(1,ceiling/Math.max(.000001,overlapRawPeak));
@@ -59,7 +63,7 @@ export function compositePCM(outgoing,incoming,cue){
    // A hot but safely attenuated source can otherwise compute as
    // .9990000000000001 and be spuriously rejected after smooth gain.
    const t=i/sr-preRoll,bound=t>=0&&t<=nativeHandoffAt?ceiling:.998999;
-   reduction[i]=Math.max(0,20*Math.log10(Math.max(Math.abs(raw[0][i]),Math.abs(raw[1][i]),1e-9)/bound));
+   reduction[i]=Math.max(0,20*Math.log10(Math.max(Math.abs(raw[0][i]),Math.abs(raw[1][i]),trueBounds?.[i]||0,1e-9)/bound));
    if(i)reduction[i]=Math.max(reduction[i],reduction[i-1]-release);
   }
   for(let i=frames-2;i>=0;i--)reduction[i]=Math.max(reduction[i],reduction[i+1]-attack);
@@ -70,7 +74,7 @@ export function compositePCM(outgoing,incoming,cue){
   gainEnvelope=Float64Array.from(reduction,x=>10**(-x/20));headroom=10**(-maximum/20);
   let sum=0,count=0;
   for(let i=0;i<frames;i++)if(i/sr>=preRoll&&i/sr<=preRoll+nativeHandoffAt){sum+=reduction[i];count++;}
-  gainProof={method:'offline-stereo-shared-lookahead-v1',maximumReductionDb:maximum,meanOverlapReductionDb:sum/count,
+  gainProof={method:'offline-stereo-shared-lookahead-v1',...(trueBounds?{truePeakLookahead:true}:{}),maximumReductionDb:maximum,meanOverlapReductionDb:sum/count,
    attackDbPerSecond:40,releaseDbPerSecond:8,firstGain:gainEnvelope[0],nativeRevealGain:gainEnvelope[reveal]};
  }
  let peak=0,overlapPeak=0;

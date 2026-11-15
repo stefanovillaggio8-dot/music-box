@@ -9,6 +9,7 @@ const references=read(arg('references','references.json'));
 const baselineFile=arg('baseline','baseline.json'),alternativeFile=arg('alternative','alternative.json');
 const baseline=read(baselineFile),alternative=read(alternativeFile);
 const additionalFile=arg('additional','');
+const consensus=arg('consensus','false')==='true';
 const observations=[[baselineFile,baseline],[alternativeFile,alternative],...(additionalFile?[[additionalFile,read(additionalFile)]]:[])];
 const context={};context.window=context;vm.createContext(context);
 for(const f of ['word-karaoke.js','audio-lyrics-align.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),context);
@@ -33,7 +34,7 @@ const stats=errors=>{
 const cacheFor=(file,report,id)=>file+'.'+crypto.createHash('sha256').update(JSON.stringify(report.inference)).digest('hex').slice(0,12)+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
 const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+':'+(r.start%60).toFixed(3).padStart(6,'0')+'] '+r.text).join('\n');
 (async()=>{
- const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,
+ const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,consensusEnabled:consensus,
   observationPassesPerReferenceWindow:observations.reduce((s,[,r])=>s+Math.ceil(28/(r.inference.experimentalContext?.seconds||28)),0),
   referenceLanguages:[...new Set(references.map(r=>r.language||'en'))],
   runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js'].map(f=>
@@ -43,7 +44,7 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
   const other=alternative.cases.find(a=>a.id===c.id),record=references.find(r=>r.name===c.record);
   if(!other||c.sourceAudioSha256!==other.sourceAudioSha256)throw Error('Alternative recording identity mismatch');
   if(!record||record.audioSha256&&record.audioSha256!==c.sourceAudioSha256)throw Error('Reference recording identity mismatch');
-  const state=fixture({synced:lrc(record.lines)});
+  const state=fixture({synced:lrc(record.lines)}),history=context.MusicBoxAudioAlign.createObservationHistory();
   for(const [file,report] of observations){
    if(report.cases.find(x=>x.id===c.id)?.sourceAudioSha256!==c.sourceAudioSha256)throw Error('Additional recording identity mismatch');
    const observed=read(cacheFor(file,report,c.id));
@@ -57,7 +58,9 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
     const rows=state.rows(),offset=c.start+lo,seconds=hi-lo;
     const aligned=context.MusicBoxAudioAlign.alignWindow(rows,chunks,offset,seconds),sourceAt=r=>r.sourceT??r.t;
     const partial=context.MusicBoxAudioAlign.alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,offset,seconds);
-    await state.save('song',[...aligned,...partial]);
+    const pending=[...aligned,...partial],current=rows.map(row=>pending.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row);
+    const corroborated=consensus?context.MusicBoxAudioAlign.alignConsensusSpans(current,history.observe(c.sourceAudioSha256+'|'+c.id,{at:offset,seconds},chunks)):[];
+    await state.save('song',[...aligned,...partial.filter(row=>!corroborated.some(c=>Math.abs(sourceAt(c)-sourceAt(row))<.002)),...corroborated]);
    }
   }
   const errors=[];

@@ -48,7 +48,7 @@ const CORE = [
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
-  "./audio-lyrics-align.js?v=6734&lang=19",
+  "./audio-lyrics-align.js?v=6734&lang=20",
   "./audio-lyrics-worker.js?v=6715&lang=2",
   "./offline-storage-audit.js?v=3",
   "./app.js?v=6734&words=12",
@@ -62,7 +62,7 @@ const CORE = [
   "./audio-stretch-worker.js?v=3",
   "./audio-stretch-core.mjs?v=3",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6734&dj=46", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6734&dj=47", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -96,7 +96,7 @@ const OFFLINE_SHELL = [
   "./style.css?v=6715&words=2",
   "./fuoco.js?v=6570",
   "./word-karaoke.js?v=6734&words=13",
-  "./audio-lyrics-align.js?v=6734&lang=19",
+  "./audio-lyrics-align.js?v=6734&lang=20",
   "./audio-lyrics-worker.js?v=6715&lang=2",
   "./offline-storage-audit.js?v=3",
   "./app.js?v=6734&words=12",
@@ -110,7 +110,7 @@ const OFFLINE_SHELL = [
   "./audio-stretch-worker.js?v=3",
   "./audio-stretch-core.mjs?v=3",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6734&dj=46",
+  "./mix-intelligente.js?v=6734&dj=47",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=9"
 ];

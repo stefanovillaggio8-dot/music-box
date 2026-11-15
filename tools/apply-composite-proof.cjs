@@ -6,6 +6,7 @@ if(process.argv.includes('--reset-structural'))for(const e of Object.values(inde
 for(const row of report.results){
  if(row.error)continue;
  const a=index.entries[row.from],b=index.entries[row.to],p=row.cue,c=p?.composite;
+ if(p?.experimentalSharedTempo||p?.sourceRate!=null)throw Error('Experimental source clock cannot be installed');
  if(!a||!b||a.sha!==p.sourceSha||b.sha!==p.targetSha||!c||c.overlapPeak>.961||c.peak>.9991||c.oversampledPeak>1||
     c.pitchPreserved!==true||c.timingVerified!==true||c.sourceSha!==a.sha||c.targetSha!==b.sha)throw Error('Unbound composite proof');
  if(p.structuralBeat){

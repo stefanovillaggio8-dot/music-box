@@ -245,6 +245,62 @@ function alignAcousticSpans(lines,transcribed,offset=0,duration=WINDOW){
  }
  return results;
 }
+// Two distinct acoustic contexts can corroborate short exact runs that
+// are unsafe as a single ASR observation. Keep an ACTUAL observed interval,
+// never average or interpolate timestamps, and preserve prior accepted words.
+function createObservationHistory(){
+ let source=null,sets=[];
+ return {clear(){source=null;sets=[];},size:()=>sets.length,
+  observe(identity,spec,chunks){
+   if(identity!==source){source=identity;sets=[];}
+   if(!identity||![spec?.at,spec?.seconds].every(Number.isFinite))return [];
+   const key=spec.at.toFixed(3)+'|'+spec.seconds.toFixed(3);
+   if(!sets.some(s=>s.key===key))sets.push({key,words:recognizedWords(chunks,spec.at).slice(0,240)});
+   if(sets.length>12)sets.shift();return sets;
+  }};
+}
+const observationHistory=createObservationHistory();
+function alignConsensusSpans(lines,observations){
+ if(!Array.isArray(lines)||!Array.isArray(observations))return [];
+ const sets=[...new Map(observations.filter(s=>s&&typeof s.key==='string'&&Array.isArray(s.words))
+  .map(s=>[s.key,s.words.slice(0,240)])).values()].slice(-12);
+ if(sets.length<2)return [];
+ const output=[];
+ for(let rowIndex=0;rowIndex<lines.length;rowIndex++){
+  const row=lines[rowIndex],start=Number(row?.sourceT??row?.t),next=Number(lines[rowIndex+1]?.sourceT??lines[rowIndex+1]?.t);
+  if(!Number.isFinite(start)||hasWordTiming(row))continue;
+  const tokens=wordTokens(row.text),keys=tokens.map(normalized),limit=Number.isFinite(next)&&next>start?next-.05:start+27;
+  if(keys.length<4||keys.length>80||keys.some(k=>!k))continue;
+  const pools=sets.map(ws=>ws.filter(w=>w.t>=start-.45&&w.end<=limit+.4));
+  const found=new Map((row.acousticSpans||[]).map(w=>[w.wordIndex,w]));
+  const before=found.size;
+  for(let i=0;i<keys.length-2;i++){
+   const seq=keys.slice(i,i+3);
+   if(new Set(seq).size<3||seq.join('').length<12||
+      keys.reduce((n,_,k)=>n+Number(seq.every((v,j)=>keys[k+j]===v)),0)!==1)continue;
+   const matches=pools.map(ws=>ws.flatMap((w,j)=>seq.every((v,k)=>ws[j+k]?.key===v)?[ws.slice(j,j+3)]:[])
+    .filter(v=>v.every(w=>w.end-w.t>=.035&&w.end-w.t<=.8)&&v.every((w,j)=>!j||
+     w.t>=v[j-1].end-.04&&w.t-v[j-1].end<=.25)));
+   for(let a=0;a<matches.length;a++)for(let b=a+1;b<matches.length;b++){
+    if(matches[a].length!==1||matches[b].length!==1)continue;
+    const x=matches[a][0],y=matches[b][0];
+    if(x.some((w,k)=>Math.abs(w.t-y[k].t)>.06||Math.abs(w.end-y[k].end)>.06))continue;
+    for(let j=0;j<3;j++){
+     // A long interval on a tiny function word can include a neighboring
+     // syllable. Two matching decodes are insufficient in this case.
+     const shortAndLong=seq[j].length<=2&&x[j].end-x[j].t>.25;
+     const third=!shortAndLong||matches.some((m,k)=>k!==a&&k!==b&&m.length===1&&
+      Math.abs(m[0][j].t-x[j].t)<=.06&&Math.abs(m[0][j].end-x[j].end)<=.06);
+     if(third&&!found.has(i+j))found.set(i+j,{wordIndex:i+j,text:tokens[i+j],t:x[j].t,end:x[j].end});
+    }
+   }
+  }
+  const spans=[...found.values()].sort((a,b)=>a.wordIndex-b.wordIndex);
+  const candidate={t:start,sourceT:start,text:String(row.text).trim(),partialAudio:true,acousticSpans:spans};
+  if(spans.length>before&&root.MusicBoxWordKaraoke?.hasPartialTiming?.(candidate))output.push(candidate);
+ }
+ return output;
+}
 function pcmSlice(buffer,from,seconds=WINDOW){
  const sr=Number(buffer?.sampleRate),count=Number(buffer?.length);
  if(!Number.isFinite(sr)||sr<FS||!Number.isFinite(count)||count<1)
@@ -464,6 +520,8 @@ async function analyze(id,epoch=alignmentEpoch){
   const blob=await response.blob();
   if(blob.size>limit)throw Error("Track too large");
   const bytes=await blob.arrayBuffer();
+  const digest=root.crypto?.subtle?await root.crypto.subtle.digest('SHA-256',bytes):null;
+  const acousticIdentity=digest?profile+'|'+id+'|'+absolute.href+'|'+Array.from(new Uint8Array(digest),v=>v.toString(16).padStart(2,'0')).join('')+'|'+lyricSignature(rows):null;
   if(epoch!==alignmentEpoch)return false;
   // Offline context does not claim the active iPhone audio session.
   // Never start a second live AudioContext while Music Box is playing.
@@ -496,7 +554,9 @@ async function analyze(id,epoch=alignmentEpoch){
    const aligned=alignWindow(rows,chunks,at,seconds);
    const sourceAt=row=>row.sourceT??row.t;
    const partial=alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,at,seconds);
-   aligned.push(...partial);
+   const pendingRows=[...aligned,...partial],currentRows=rows.map(row=>pendingRows.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row);
+   const corroborated=acousticIdentity?alignConsensusSpans(currentRows,observationHistory.observe(acousticIdentity,spec,chunks)):[];
+   aligned.push(...partial.filter(row=>!corroborated.some(c=>Math.abs(sourceAt(c)-sourceAt(row))<.002)),...corroborated);
    sessionStorage.setItem(key,String(Date.now()));
    if(!aligned.length)continue;
    const stored=await bridge.saveAudioWordRows?.(id,aligned);
@@ -525,6 +585,7 @@ async function analyze(id,epoch=alignmentEpoch){
  }
 }
 function cancel(){
+ observationHistory.clear();
  alignmentEpoch++;
  if(continuationTimer){clearTimeout(continuationTimer);continuationTimer=null;}
  for(const key of active)attempts.delete(key);
@@ -572,11 +633,11 @@ function request(id){
 function diagnostics(){
  return {hidden:typeof document!=='undefined'?document.hidden:null,activeAnalyses:active.size,pendingInference:pending.size,
   workerAlive:!!worker,fetchingAudio:!!downloadController,continuationScheduled:continuationTimer!=null,
-  completedSessionWindows:[...sessionWindows.values()].reduce((s,n)=>s+n,0),cpuPercent:null,memoryBytes:null};
+  consensusObservations:observationHistory.size(),completedSessionWindows:[...sessionWindows.values()].reduce((s,n)=>s+n,0),cpuPercent:null,memoryBytes:null};
 }
 // No new analysis may start while hidden, and an inference already in
 // flight must not keep the optional GPU worker alive behind native music.
 if(typeof document!=='undefined')document.addEventListener?.('visibilitychange',()=>{if(document.hidden)cancel();});
 root.addEventListener?.('pagehide',cancel);
-root.MusicBoxAudioAlign={request,cancel,diagnostics,alignWindow,alignAcousticSpans,recognizedWords,pcmSlice,preferredWindows,analysisWindows,ownedContextWords,languageFromLyrics};
+root.MusicBoxAudioAlign={request,cancel,diagnostics,alignWindow,alignAcousticSpans,alignConsensusSpans,createObservationHistory,recognizedWords,pcmSlice,preferredWindows,analysisWindows,ownedContextWords,languageFromLyrics};
 })(typeof window!=="undefined"?window:globalThis);

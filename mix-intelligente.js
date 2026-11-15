@@ -2506,11 +2506,12 @@ function pcmContourAt(part,time){
  if(i<0||i+1>=part.onset.length)return null;
  return part.onset[i]*(1-fraction)+part.onset[i+1]*fraction;
 }
-function pcmFullBeatFit(outro,intro,begin,entry,rate,fade){
+function pcmFullBeatFit(outro,intro,begin,entry,rate,fade,diagnosis){
+ const reject=reason=>{if(diagnosis)diagnosis.reason=reason;return null;};
  const old=outro.beats.filter(t=>t>=begin-.075&&t<=begin+fade-.12),
   next=intro.beats.map(t=>begin+(t-entry)/rate)
    .filter(t=>t>=begin&&t<=begin+fade-.12);
- if(old.length<8||next.length<8)return null;
+ if(old.length<8||next.length<8)return reject('observedPulseCount');
  let cursor=0,errors=[],matches=[],first=0,second=0;
  for(const t of next){
   while(cursor+1<old.length&&Math.abs(old[cursor+1]-t)<Math.abs(old[cursor]-t))cursor++;
@@ -2522,15 +2523,15 @@ function pcmFullBeatFit(outro,intro,begin,entry,rate,fade){
   }
  }
  const ratio=errors.length/Math.max(old.length,next.length);
- if(errors.length<8||ratio<.90||first<3||second<3)return null;
+ if(errors.length<8||ratio<.90||first<3||second<3)return reject('observedPulseAgreement');
  const rms=Math.sqrt(errors.reduce((sum,x)=>sum+x*x,0)/errors.length);
- if(rms>.040)return null;
+ if(rms>.040)return reject('observedPulseTiming');
  // Measure all real transients at their ACTUAL simultaneous positions,
  // including the second half; do not select the best lag after planning.
  const xs=[],ys=[];
  for(let t=.08;t<fade-.12;t+=.02){
   const x=pcmContourAt(outro,begin+t),y=pcmContourAt(intro,entry+t*rate);
-  if(x===null||y===null)return null;
+  if(x===null||y===null)return reject('pcmBounds');
   xs.push(x);ys.push(y);
  }
  const correlation=(lo,hi)=>{
@@ -2554,7 +2555,7 @@ function pcmFullBeatFit(outro,intro,begin,entry,rate,fade){
  const observedPulses=errors.length>=12&&ratio>=.95&&rms<=.025&&
   first>=5&&second>=5&&attackSupport>=.90;
  const correlated=onset>=.36&&firstHalf>=.22&&secondHalf>=.22;
- if(!correlated&&!observedPulses)return null;
+ if(!correlated&&!observedPulses)return reject('contourOrPulseSupport');
  return {beats:errors.length,ratio,rms,onset,firstHalf,secondHalf,
   observedPulses:!correlated&&observedPulses,firstBeats:first,secondBeats:second,
   attackSupport,score:correlated?onset:ratio*(1-rms/.10)};
@@ -2811,10 +2812,19 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  const outgoingQuiet=e?.vocalOverlapPolicy==='instrumental-outgoing-v1'&&quiet(outgoing)&&
   outgoing.start<=p.begin-.29&&outgoing.end>=p.end-.001&&
   ![a.lastVoiceAt,a.lastLyricAt,...(a.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=p.begin-.3&&t<p.end+.1);
+ const handoff=e?.vocalHandoff;
+ const separated=e?.vocalOverlapPolicy==='separated-vocal-handoff-v1'&&
+  handoff?.method==='original-pcm-separated-vocal-handoff-v1'&&handoff.marginSeconds===.3&&
+  Number.isFinite(handoff.at)&&handoff.at>=.6&&handoff.at<=p.fade-.6&&
+  quiet(handoff.outgoingQuietSuffix)&&quiet(handoff.incomingQuietPrefix)&&
+  handoff.outgoingQuietSuffix.start<=p.begin+handoff.at-.299&&handoff.outgoingQuietSuffix.end>=p.end-.001&&
+  handoff.incomingQuietPrefix.start===0&&handoff.incomingQuietPrefix.end>=(handoff.at+.299)*p.tempo&&
+  ![a.lastVoiceAt,a.lastLyricAt,...(a.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=handoff.outgoingQuietSuffix.start&&t<p.end+.1)&&
+  !(Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<handoff.incomingQuietPrefix.end);
  if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
-    p.preservedFileTail!==true||p.structuralBeat!==true||p.measuredFullBeat!==true||p.metricalRhythmic!==false||
+    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||p.measuredFullBeat!==true||p.metricalRhythmic!==false||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
     p.preservedEntrance!=null&&p.preservedEntrance!=='first-attack-033-v1'||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
@@ -2830,7 +2840,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     e?.version!==1||![2,4,8,16].includes(e.bars)||![3,4,5].includes(e.beatsPerBar)||
     ![e.sourcePhaseConfidence,e.targetPhaseConfidence,e.downbeatRms].every(Number.isFinite)||
     e.sourcePhaseConfidence<.8||e.targetPhaseConfidence<.8||e.sourcePhaseConfidence>1||e.targetPhaseConfidence>1||e.downbeatRms<0||e.downbeatRms>.025||
-    !incomingQuiet&&!outgoingQuiet||
+    !incomingQuiet&&!outgoingQuiet&&!separated||
     c?.sourceSha!==a.sha||c.targetSha!==b.sha||c.pitchPreserved!==true||c.timingVerified!==true||
     ![c.peak,c.overlapPeak,c.oversampledPeak,c.sourceReadThrough].every(Number.isFinite)||c.peak>.9991||c.overlapPeak>.961||c.oversampledPeak>1||
     Math.abs(c.sourceReadThrough-a.duration)>.1||c.outgoingEnvelope!=='unity-through-decoded-eof-v1'||

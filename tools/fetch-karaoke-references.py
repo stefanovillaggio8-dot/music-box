@@ -17,19 +17,23 @@ def get(name,limit):
     return content
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',required=True)
-    parser.add_argument('--split',choices=('development','holdout'),default='development');args=parser.parse_args()
+    parser.add_argument('--split',choices=('development','holdout','validation'),default='development');args=parser.parse_args()
     output=pathlib.Path(args.output);output.mkdir(parents=True,exist_ok=True)
     content=get('metadata.jsonl',16*1024*1024)
     if hashlib.sha256(content).hexdigest()!=METADATA_SHA256:raise ValueError('Manual reference annotations changed')
     rows=[json.loads(line) for line in content.decode('utf8').splitlines()]
     selected=dict(SELECTED)
-    if args.split=='holdout':
+    if args.split in ('holdout','validation'):
         # Fixed, disjoint selection before observing ANY model output.
         # Alphabetical first remaining rap and English non-rap recordings,
         # not best scores. The multilingual model receives the declared language.
         pool=sorted((r for r in rows if r['name'] not in SELECTED),key=lambda r:r['name'])
         rap=next(r for r in pool if r['genre']=='Hip-Hop')
         singing=next(r for r in pool if r['genre']!='Hip-Hop' and r.get('language')=='en')
+        if args.split=='validation':
+            pool=[r for r in pool if r['name'] not in {rap['name'],singing['name']}]
+            rap=next(r for r in pool if r['genre']=='Hip-Hop')
+            singing=next(r for r in pool if r['genre']!='Hip-Hop' and r.get('language')=='en')
         selected={rap['name']:'rap-dense',singing['name']:'singing-sparse'}
     records=[]
     for row in rows:

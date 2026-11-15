@@ -20,6 +20,7 @@ def main():
     parser.add_argument('--pre-roll',type=float,choices=(.3,.6,.9),default=.3)
     parser.add_argument('--release-seconds',type=float,choices=(.9,1.2,1.5),default=.9)
     parser.add_argument('--gain-mode',choices=('constant','lookahead'),default='constant')
+    parser.add_argument('--true-peak-lookahead',action='store_true')
     parser.add_argument('--context-mode',choices=('auto','warm','cold'),default='auto');args=parser.parse_args()
     if args.rate not in (16000,44100,48000):raise ValueError('Unsupported sample rate')
     if not .85<=args.peak_ceiling<=.96:raise ValueError('Unsafe peak ceiling')
@@ -38,7 +39,7 @@ def main():
             temporary=pathlib.Path(temporary);warm_report=temporary/'warm.json';cold_report=temporary/'cold.json'
             common=[sys.executable,str(pathlib.Path(__file__).resolve()),'--assets='+str(assets.resolve()),
                 '--cache='+str(cache.resolve()),'--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling),
-                '--pre-roll='+str(args.pre_roll),'--release-seconds='+str(args.release_seconds),'--gain-mode='+args.gain_mode]
+                '--pre-roll='+str(args.pre_roll),'--release-seconds='+str(args.release_seconds),'--gain-mode='+args.gain_mode]+(['--true-peak-lookahead'] if args.true_peak_lookahead else [])
             subprocess.run(common+['--plans='+str(pathlib.Path(args.plans).resolve()),'--report='+str(warm_report),'--context-mode=warm'],check=True)
             warm=json.loads(warm_report.read_text())['results']
             failed=[p for p,r in zip(plans,warm) if r.get('error') and p['cue']['tempo']!=1]
@@ -77,11 +78,19 @@ def main():
                 for attempt in range(3):
                     (folder/'cue.json').write_text(json.dumps({**cue,'renderPeakCeiling':ceiling,'renderPreRoll':args.pre_roll,
                         'renderReleaseSeconds':args.release_seconds,'renderGainMode':args.gain_mode,'warmupOriginal':args.context_mode=='warm'}))
-                    run=subprocess.run(['node',str(ROOT/'tools/render-composite-mix.mjs'),
+                    render_command=['node',str(ROOT/'tools/render-composite-mix.mjs'),
                         '--rate='+str(args.rate),'--cue='+str(folder/'cue.json'),
                         '--outgoing='+str(folder/'outgoing.f32'),'--incoming='+str(folder/'incoming.f32'),
                         '--output='+str(folder/'mix.f32'),'--outgoing-component='+str(folder/'old.f32'),
-                        '--incoming-component='+str(folder/'new.f32')],capture_output=True,text=True,timeout=90)
+                        '--incoming-component='+str(folder/'new.f32')]
+                    raw_path=folder/'raw.f32';bounds_path=folder/'true-peak.f32'
+                    run=subprocess.run(render_command+(['--raw-output='+str(raw_path)] if args.true_peak_lookahead else []),capture_output=True,text=True,timeout=90)
+                    if args.true_peak_lookahead and raw_path.exists():
+                        from scipy.signal import resample_poly
+                        unbounded=np.frombuffer(raw_path.read_bytes(),dtype='<f4').reshape(-1,2)
+                        true_bounds=np.max(np.abs(resample_poly(unbounded,4,1,axis=0)).reshape(len(unbounded),4,2),axis=(1,2))*1.001
+                        bounds_path.write_bytes(true_bounds.astype('<f4').tobytes())
+                        run=subprocess.run(render_command+['--true-peak-bounds='+str(bounds_path)],capture_output=True,text=True,timeout=90)
                     if run.returncode:
                         if attempt==0 and 'Smooth common gain exceeds safe peak' in run.stderr:
                             ceiling=.94;continue
@@ -106,7 +115,7 @@ def main():
                     if not post_rhythm['accepted']:raise ValueError('Post-render rhythm certificate failed')
                 content=target.read_bytes();sha=hashlib.sha256(content).hexdigest()
                 peak=float(np.max(np.abs(decoded)))
-                if peak>.9991 or true_peak>1 or abs(len(decoded)/args.rate-proof['seconds'])>.001:raise ValueError('Lossless/oversampled render validation failed')
+                if peak>.9991 or true_peak>1 or abs(len(decoded)/args.rate-proof['seconds'])>.001:raise ValueError(f'Lossless/oversampled render validation failed (sample={peak:.8f}, true={true_peak:.8f})')
                 (assets/(sha+'.flac')).write_bytes(content)
                 composite={'version':1,'path':'dj-mixes/'+sha+'.flac','sha256':sha,
                     'sourceSha':cue['sourceSha'],'targetSha':cue['targetSha'],

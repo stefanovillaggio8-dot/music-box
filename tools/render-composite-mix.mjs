@@ -7,7 +7,14 @@ function clip(file,start){
  const all=new Float32Array(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
  return {rate,start,channels:[0,1].map(c=>Float32Array.from({length:all.length/2},(_,i)=>all[i*2+c]))};
 }
-const result=compositePCM(clip(arg('outgoing'),cue.begin-(cue.renderPreRoll??.3)),clip(arg('incoming'),cue.entry-Math.min(.8,cue.entry)),cue);
+const boundsFile=arg('true-peak-bounds'),bytes=boundsFile&&fs.readFileSync(boundsFile);
+if(bytes&&bytes.length%4)throw Error('Invalid true-peak input');
+const options={...(bytes?{truePeakBounds:new Float32Array(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength))}:{}),
+ ...(arg('raw-output')?{onRaw({channels}){
+  const raw=new Float32Array(channels[0].length*2);for(let i=0;i<channels[0].length;i++)for(let c=0;c<2;c++)raw[i*2+c]=channels[c][i];
+  fs.writeFileSync(arg('raw-output'),Buffer.from(raw.buffer));
+ }}:{})};
+const result=compositePCM(clip(arg('outgoing'),cue.begin-(cue.renderPreRoll??.3)),clip(arg('incoming'),cue.entry-Math.min(.8,cue.entry)),cue,options);
 const interleaved=new Float32Array(result.channels[0].length*2);
 for(let i=0;i<result.channels[0].length;i++)for(let c=0;c<2;c++)interleaved[i*2+c]=result.channels[c][i];
 fs.writeFileSync(arg('output'),Buffer.from(interleaved.buffer));

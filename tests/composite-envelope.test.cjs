@@ -1,5 +1,20 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
+
+test('reconstructed peak bounds reserve smooth shared headroom without moving native boundaries',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,renderGainMode:'lookahead'};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>new Float32Array(Math.round(5.3*sr)).fill(.3))};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>new Float32Array(sr*10).fill(.3))};
+ const ordinary=compositePCM(outgoing,incoming,cue),bounds=new Float32Array(ordinary.channels[0].length);
+ bounds[Math.round(2.3*sr)]=1.2;
+ const safe=compositePCM(outgoing,incoming,cue,{truePeakBounds:bounds});
+ assert.equal(safe.gainProof.truePeakLookahead,true);assert.ok(safe.headroom<ordinary.headroom);
+ assert.equal(safe.gainProof.firstGain,1);assert.equal(safe.gainProof.nativeRevealGain,1);
+ assert.equal(safe.nativeHandoffAt,ordinary.nativeHandoffAt);assert.equal(safe.sourceReadThrough,ordinary.sourceReadThrough);
+ assert.deepEqual(safe.channels[0],safe.channels[1]);assert.ok(safe.peak<=.999);
+ assert.throws(()=>compositePCM(outgoing,incoming,cue,{truePeakBounds:new Float32Array(10)}),/true-peak bounds/);
+});
 test('a longer measured gain entrance recovers a hot transient without changing the vocal fade or clipping criteria',async()=>{
  const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000,fade=5;
  const cue={begin:32,entry:10,fade,tempo:1,structuralBeat:true,vocalFadeSeconds:.4};

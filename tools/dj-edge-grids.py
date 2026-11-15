@@ -5,7 +5,7 @@ They do NOT earn beatmatch certification; the unchanged full original-PCM
 and actual-render pulse checks decide that later. Original audio stays intact.
 """
 import argparse,hashlib,importlib.util,json,os,pathlib,time,urllib.request
-import numpy as np,torch,soxr
+import numpy as np,torch,soxr,librosa
 from beat_this.inference import Audio2Frames
 from beat_this.model.postprocessor import Postprocessor
 ROOT=pathlib.Path(__file__).resolve().parents[1]
@@ -16,7 +16,10 @@ MODEL_SHA='8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331'
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for k in ('cache','models','output'):p.add_argument('--'+k,required=True)
- p.add_argument('--shard',default='0/1');p.add_argument('--limit',type=int,default=0);args=p.parse_args()
+ p.add_argument('--shard',default='0/1');p.add_argument('--limit',type=int,default=0)
+ p.add_argument('--view',choices=('original','percussive'),default='original')
+ p.add_argument('--keys',help='JSON list of SHA-bound index keys; never changes library membership')
+ args=p.parse_args()
  model_root=pathlib.Path(args.models).resolve();checkpoint=model_root/'torch/hub/checkpoints/beat_this-final0.ckpt'
  if not checkpoint.exists() or hashlib.sha256(checkpoint.read_bytes()).hexdigest()!=MODEL_SHA:
   checkpoint.parent.mkdir(parents=True,exist_ok=True)
@@ -36,17 +39,27 @@ def main():
  index=json.loads((ROOT/'dj-deep-analysis.json').read_text(encoding='utf-8'));shard,parts=map(int,args.shard.split('/'));audio.SR=pcm.SR
  pathlib.Path(args.cache).mkdir(parents=True,exist_ok=True)
  keys=[k for i,k in enumerate(sorted(k for k,e in index['entries'].items() if e['status']=='ok')) if i%parts==shard]
+ if args.keys:
+  selected=json.loads(pathlib.Path(args.keys).read_text(encoding='utf-8-sig'))
+  if not isinstance(selected,list) or any(k not in index['entries'] for k in selected):raise ValueError('Unknown source key')
+  keys=[k for k in keys if k in selected]
  if args.limit:keys=keys[:args.limit]
  output=pathlib.Path(args.output);output.parent.mkdir(parents=True,exist_ok=True);entries={};errors=[]
  if output.exists():entries=json.loads(output.read_text()).get('entries',{})
  for key in keys:
   e=index['entries'][key]
-  if entries.get(key,{}).get('sha')==e['sha'] and entries[key].get('modelSha256')==MODEL_SHA:continue
+  if entries.get(key,{}).get('sha')==e['sha'] and entries[key].get('modelSha256')==MODEL_SHA and entries[key].get('analysisView','original')==args.view:continue
   try:
    at=time.monotonic();source=audio.source(key,e['sha'],pathlib.Path(args.cache));duration=e['duration'];result={}
    for role,start,seconds in [('intro',0,24),('outro',max(0,duration-48),48.1)]:
     samples=audio.decode(source,start,seconds).mean(axis=1)
-    signal=soxr.resample(samples,pcm.SR,22050);beat,down=model(signal,22050);beats,db=Postprocessor()(beat,down)
+    # Alternate evidence only. PCM contours, harmony and all downstream
+    # audio checks still use the unmodified original, never this view.
+    model_samples=samples
+    if args.view=='percussive':
+     _,model_samples=librosa.effects.hpss(samples,margin=(2.,2.))
+     model_samples=model_samples*(.95/max(.01,float(np.max(np.abs(model_samples)))))
+    signal=soxr.resample(model_samples,pcm.SR,22050);beat,down=model(signal,22050);beats,db=Postprocessor()(beat,down)
     section_start=0 if role=='intro' else max(0,duration-32)-start
     section_end=min(len(samples)/pcm.SR,20) if role=='intro' else len(samples)/pcm.SR
     section=pcm.section(samples[round(section_start*pcm.SR):round(section_end*pcm.SR)],start+section_start,e['bpm'])
@@ -62,7 +75,8 @@ def main():
     result[role]={'pcm':section,'bars':bars,'beats':[float(t)+start for t in beats],
      'frameStart':start,'frameStep':.02,'beatPosterior':[round(float(v),6) for v in beat.sigmoid()],
      'downbeatPosterior':[round(float(v),6) for v in down.sigmoid()]}
-   entries[key]={'sha':e['sha'],'duration':duration,'modelSha256':MODEL_SHA,'posteriorIsCalibratedAccuracy':False,**result}
+   entries[key]={'sha':e['sha'],'duration':duration,'modelSha256':MODEL_SHA,'analysisView':args.view,
+    'pcmFromUnmodifiedOriginal':True,'posteriorIsCalibratedAccuracy':False,**result}
    print(json.dumps({'key':key,'seconds':round(time.monotonic()-at,2),'introBars':len(result['intro']['bars']),'outroBars':len(result['outro']['bars'])}),flush=True)
   except Exception as ex:errors.append({'key':key,'error':str(ex)[:200]});print('ERROR',key,str(ex)[:180],flush=True)
   output.write_text(json.dumps({'version':1,'entries':entries,'errors':errors},separators=(',',':'))+'\n',encoding='utf-8')
