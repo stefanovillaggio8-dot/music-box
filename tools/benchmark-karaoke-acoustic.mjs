@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import crypto from 'node:crypto';
+import referenceLines from './karaoke-reference-lines.cjs';
+const {referenceWordLines,referenceForLine}=referenceLines;
 import {spawnSync} from 'node:child_process';
 import {pathToFileURL,fileURLToPath} from 'node:url';
 const arg=(key,fallback)=>process.argv.find(x=>x.startsWith('--'+key+'='))?.slice(key.length+3)??fallback;
@@ -27,7 +29,7 @@ const stats=values=>{
    within50:sorted.filter(x=>x<=50).length/values.length,within100:sorted.filter(x=>x<=100).length/values.length,
    within250:sorted.filter(x=>x<=250).length/values.length};
 };
-const report={schema:1,source:'https://huggingface.co/datasets/jamendolyrics/jamendolyrics',
+const report={schema:2,referenceWordOwnership:'annotation-line-end-v1',source:'https://huggingface.co/datasets/jamendolyrics/jamendolyrics',
  reference:'manually annotated word starts and ends, current dataset',
  inference:{model:arg('model','onnx-community/whisper-tiny_timestamped'),library:'transformers.js 3.8.1',device:'cpu',
  dtype:{encoder_model:'fp32',decoder_model_merged:'q4'},browserWebGPUVerified:false},
@@ -47,11 +49,12 @@ for(const record of records){
  const file=path.join(audio,record.name+'.mp3');
  const sha256=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
  if(record.audioSha256&&record.audioSha256!==sha256)throw Error('Reference recording changed');
+ const wordLines=referenceWordLines(record);
  const lines=record.lines.map((row,i)=>({...row,index:i,t:row.start}));
  const completeLines=start=>lines.filter(l=>l.start>=start+.15&&l.start<start+26.9&&l.end<start+27.96);
  const choices=lines.filter(l=>l.start>1).map(l=>{
   const start=Math.max(0,l.start-.5),selected=completeLines(start);
-  const words=record.words.filter(w=>selected.some(l=>w.start>=l.start-.001&&w.end<=l.end+.001));
+  const words=selected.flatMap(l=>referenceForLine(record,wordLines,l));
   return {start,selected,words,density:words.length/28};
  }).filter(c=>c.words.length>=12);
  const fast=record.genre==='Hip-Hop'||record.benchmarkRole==='singing-fast';
@@ -109,7 +112,7 @@ for(const record of records){
   const partialErrors=[];
   for(const row of partial){
    const line=choice.selected.find(l=>Math.abs(l.start-row.sourceT)<.002);
-   const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001);
+   const reference=referenceForLine(record,wordLines,line);
    const tokens=line.text.match(/\S+\s*/gu)||[];
    if(tokens.length!==reference.length||tokens.some((s,i)=>normalize(s)!==normalize(reference[i].text)))continue;
    for(const w of row.acousticSpans)partialErrors.push({wordIndex:w.wordIndex,lineIndex:line.index,
@@ -120,7 +123,7 @@ for(const record of records){
   const displayed=context.MusicBoxWordKaraoke.estimateRows(choice.selected.map(line=>
    aligned.find(r=>Math.abs(r.sourceT-line.start)<.002)||partial.find(r=>Math.abs(r.sourceT-line.start)<.002)||line));
   for(const line of choice.selected){
-   const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001);
+   const reference=referenceForLine(record,wordLines,line);
    denominator+=reference.length;
    const result=aligned.find(r=>Math.abs(r.sourceT-line.start)<.002);
    if(!result){

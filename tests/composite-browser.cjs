@@ -115,6 +115,7 @@ const server=http.createServer(async(req,res)=>{
     // Exercise the real app bridge as well as the bounded-mix controller.
     // Source assignment/play must see binary mute already applied on iOS.
     const appContext=await browser.newContext({serviceWorkers:'block'}),shell=await appContext.newPage();
+    shell.on('pageerror',e=>console.error(name,'app bridge page',e.message));
     await shell.route('**/*',async route=>{
      const url=new URL(route.request().url());
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
@@ -134,10 +135,17 @@ const server=http.createServer(async(req,res)=>{
      const track=MusicBoxBridge.allTracks().find(t=>knownFiles.includes(t.file));if(!track)throw Error('Native bridge reference not available');
      const button=document.createElement('button');button.id='silent-handoff';button.textContent='test';
      button.style.cssText='position:fixed;top:0;left:0;z-index:2147483647';
-     button.onclick=()=>MusicBoxBridge.mixHandoff(track.id,2,{muted:true});document.body.append(button);
+     window.__silentBridgeTrace={requested:track.id};
+      button.onclick=()=>MusicBoxBridge.mixHandoff(track.id,2,{muted:true}).then(
+       result=>{__silentBridgeTrace.resolved=true;__silentBridgeTrace.result=result},
+       error=>{__silentBridgeTrace.error=String(error)});document.body.append(button);
     },Array.from(catalog.values()).filter(k=>k.startsWith('audio/')).map(k=>k.slice(6)));
     await shell.click('#silent-handoff');
-    await shell.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2&&!MusicBoxBridge.audio().paused,{timeout:20000});
+    try{await shell.waitForFunction(()=>MusicBoxBridge.audio()?.readyState>=2&&!MusicBoxBridge.audio().paused,null,{timeout:30000});}
+    catch(error){console.error(name,'initial native bridge',JSON.stringify(await shell.evaluate(()=>{
+     const a=MusicBoxBridge.audio();return {trace:__silentBridgeTrace,currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
+      paused:a?.paused,src:a?.currentSrc,readyState:a?.readyState,error:a?.error?.message,diagnostics:MusicBoxMix.diagnostics()};
+    })));throw error;}
     const silentBridge=await shell.evaluate(()=>({muted:MusicBoxBridge.audio().muted,lastPlayWasMuted:__nativePlayMutes.at(-1)}));
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
     await shell.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});

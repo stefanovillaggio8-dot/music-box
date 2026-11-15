@@ -3,6 +3,7 @@
 // Replay measured ASR alternatives through the actual application save path.
 // Human references score the result only; they never supply an observation.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
+const {referenceWordLines,referenceForLine}=require('./karaoke-reference-lines.cjs');
 const arg=(k,d)=>process.argv.find(s=>s.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const root=path.resolve(__dirname,'..'),read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const references=read(arg('references','references.json'));
@@ -34,7 +35,7 @@ const stats=errors=>{
 const cacheFor=(file,report,id)=>file+'.'+crypto.createHash('sha256').update(JSON.stringify(report.inference)).digest('hex').slice(0,12)+'.'+id.replace(/[^a-zA-Z0-9_-]/g,'_')+'.asr.json';
 const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+':'+(r.start%60).toFixed(3).padStart(6,'0')+'] '+r.text).join('\n');
 (async()=>{
- const output={version:1,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,consensusEnabled:consensus,
+ const output={version:2,referenceWordOwnership:'annotation-line-end-v1',fixedWindowsFromOriginalReport:true,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,consensusEnabled:consensus,
   observationPassesPerReferenceWindow:observations.reduce((s,[,r])=>s+Math.ceil(28/(r.inference.experimentalContext?.seconds||28)),0),
   referenceLanguages:[...new Set(references.map(r=>r.language||'en'))],
   runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js'].map(f=>
@@ -44,6 +45,9 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
   const other=alternative.cases.find(a=>a.id===c.id),record=references.find(r=>r.name===c.record);
   if(!other||c.sourceAudioSha256!==other.sourceAudioSha256)throw Error('Alternative recording identity mismatch');
   if(!record||record.audioSha256&&record.audioSha256!==c.sourceAudioSha256)throw Error('Reference recording identity mismatch');
+  const wordLines=referenceWordLines(record);
+  const selectedLines=record.lines.filter(l=>l.start>=c.start+.15&&l.start<c.start+26.9&&l.end<c.start+27.96);
+  const denominator=selectedLines.reduce((n,l)=>n+referenceForLine(record,wordLines,l).length,0);
   const state=fixture({synced:lrc(record.lines)}),history=context.MusicBoxAudioAlign.createObservationHistory();
   for(const [file,report] of observations){
    if(report.cases.find(x=>x.id===c.id)?.sourceAudioSha256!==c.sourceAudioSha256)throw Error('Additional recording identity mismatch');
@@ -64,16 +68,16 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
    }
   }
   const errors=[];
-  for(const line of record.lines.filter(l=>l.start>=c.start+.15&&l.start<c.start+26.9&&l.end<c.start+27.96)){
+  for(const line of selectedLines){
    const row=state.rows().find(r=>Math.abs((r.sourceT??r.t)-line.start)<.002&&r.text===line.text);
    if(!row||row.estimated===true)continue;
-   const reference=record.words.filter(w=>w.start>=line.start-.001&&w.end<=line.end+.001),tokens=line.text.match(/\S+\s*/gu)||[];
+   const reference=referenceForLine(record,wordLines,line),tokens=line.text.match(/\S+\s*/gu)||[];
    if(tokens.length!==reference.length||tokens.some((t,i)=>normalize(t)!==normalize(reference[i].text)))continue;
    const measured=context.MusicBoxWordKaraoke.hasWordTiming(row)?row.words.map((w,i)=>({...w,wordIndex:i})):row?.acousticSpans||[];
    for(const w of measured)errors.push({lineSourceT:line.start,wordIndex:w.wordIndex,
     startErrorMs:1000*(w.t-reference[w.wordIndex].start),endErrorMs:1000*(w.end-reference[w.wordIndex].end)});
   }
-  output.cases.push({id:c.id,category:c.category,referenceWords:c.referenceWords,acceptedWords:errors.length,errors});
+  output.cases.push({id:c.id,category:c.category,referenceWords:denominator,legacyReferenceWords:c.referenceWords,acceptedWords:errors.length,errors});
  }
  const errors=output.cases.flatMap(c=>c.errors),total=output.cases.reduce((s,c)=>s+c.referenceWords,0);
  output.aggregate={referenceWords:total,acceptedWords:errors.length,coverage:errors.length/total,onset:stats(errors.map(e=>e.startErrorMs)),end:stats(errors.map(e=>e.endErrorMs))};
