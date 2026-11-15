@@ -71,7 +71,7 @@ const server=http.createServer(async(req,res)=>{
     // Exercise pitch-preserving stretch AND intact decoded EOF together,
     // using an incoming recording from zero rather than a historical cut.
     const plan=plans.filter(p=>p.from==='audio/songs/track-700.mp3'&&p.toSha===data.entries['audio/songs/track-521.mp3'].sha&&p.cue.preservedFileTail&&p.cue.entry===0&&
-     p.cue.preservedEntrance==='first-attack-033-v1'&&Math.abs(p.cue.tempo-1)>.001)
+     p.cue.preservedEntrance==='vocal-handoff-foreground-v1'&&Math.abs(p.cue.tempo-1)>.001)
      .sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     assert.ok(plan,'A rendered intact-file stretch must be available');
     await original(plan.fromSha);await original(plan.toSha);

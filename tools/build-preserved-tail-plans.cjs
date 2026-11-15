@@ -47,7 +47,7 @@ for(const song of catalog){
   !(state.eliminati||[]).includes(profile+'.'+id)&&!(profile==='Ste'&&(state.eliminati||[]).includes(id)))owners.get(song.file).add(profile);
 }
 const scopeFile=arg('scope',''),scope=scopeFile?JSON.parse(fs.readFileSync(scopeFile)):null;
-if(scope&&(!scope.name||!Array.isArray(scope.tracks)||scope.tracks.some(t=>index.entries[t.key]?.sha!==t.sha)))throw Error('Unbound library audit scope');
+if(scope&&(!scope.name||!Array.isArray(scope.tracks)||scope.tracks.some(t=>typeof t.key!=='string'||index.entries[t.key]?.status!=='ok'||!t.sha||index.entries[t.key]?.sha!==t.sha)))throw Error('Unbound library audit scope');
 const scopeKeys=new Set(scope?.tracks.map(t=>t.key)||[]);
 const owner=k=>scope?(scopeKeys.has(k)?new Set([scope.name]):new Set()):owners.get(k.replace(/^[^/]+\//,'').replace('/bassi/','/'))||new Set();
 const clear=(e,start,end)=>{
@@ -88,7 +88,7 @@ for(const [key,raw] of Object.entries(index.entries)){
  }
  prepared.push({key,raw:engine.withGuardedLRC(raw),e,source,target,outro:observedGrid(p.outro,e),intro:observedGrid(p.intro,e),owners:owner(key)});
 }
-const report={version:1,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},pairConditions:{},windowExclusions:{},plans:[],windows:0,alternateViewTracks:extraEdges.size,scope:scope?{name:scope.name,tracks:scope.tracks.length,source:scope.source}:null};
+const report={version:1,method:'preserved-file-tail-original-pcm-v1',initialBarCandidateLimitSeconds:initialBarLimit,tracks:prepared.length,profileFunnel:{},pairConditions:{},windowExclusions:{},plans:[],windows:0,alternateViewTracks:extraEdges.size,scope:scope?{name:scope.name,tracks:scope.tracks.length,unavailableMembers:scope.unavailable?.length||0,source:scope.source}:null};
 const count=(profiles,key)=>{for(const p of profiles){report.profileFunnel[p]??={};report.profileFunnel[p][key]=(report.profileFunnel[p][key]||0)+1;}};
 for(const a of prepared)for(const b of prepared){
  if(a.key===b.key||a.raw.sha===b.raw.sha||a.key.replace('/bassi/','/')===b.key.replace('/bassi/','/'))continue;
