@@ -660,9 +660,9 @@ test("continuity overlay is audible before EOF while preserving outgoing vocal",
 });
 test("the DJ preplans continuity and retries failed desktop previews",()=>{
  assert.ok(source.includes("const weakIphoneMatch=isIOS&&candidate&&"));
- assert.ok(source.includes("plan=(weakIphoneMatch||weakDesktopMatch)?"));
+ assert.ok(source.includes("return (weakIphoneMatch||weakDesktopMatch)?"));
  assert.ok(source.includes("certifiedQuietAlternative"),"uncertified beat must degrade to measured quiet fade, never a fake beat");
- assert.ok(source.includes("continuityFallback(currentAnalysis,nextAnalysis,audio.duration):null"));
+ assert.ok(source.includes("continuityFallback(a,b,dur):null"));
  assert.ok(source.includes("plan=null;"),"unmeasured outro must not trigger a speculative fade");
  assert.ok(!source.includes("plan=isIOS?null:continuityFallback(null,null,duration)"));
  assert.ok(source.includes("(prepared.failed&&Date.now()-(prepared.failedAt||0)>=11000)"));
@@ -920,7 +920,7 @@ test("desktop waits for an aligned beat instead of starting outside phase",()=>{
 });
 test("desktop runtime does not force an unverified beat overlap",()=>{
  assert.ok(source.includes("weakDesktopMatch=!isIOS&&candidate&&"));
- assert.ok(source.includes("desktopBeatPairCertified(currentAnalysis,nextAnalysis,candidate)"));
+ assert.ok(source.includes("desktopBeatPairCertified(a,b,candidate)"));
  assert.ok(source.includes("scored.length?scored:partialScored.length?partialScored:impactScored.length?impactScored:"));
 });
 
