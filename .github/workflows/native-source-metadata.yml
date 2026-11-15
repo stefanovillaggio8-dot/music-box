@@ -1,5 +1,10 @@
 name: Native original MP3 metadata diagnostic
 on:
+  push:
+    branches: [audit-karaoke-beatmatch-20261113]
+    paths:
+      - 'tests/native-source-metadata.cjs'
+      - '.github/workflows/native-source-metadata.yml'
   workflow_dispatch:
 permissions:
   contents: read
