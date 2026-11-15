@@ -1,0 +1,248 @@
+{
+  "method": "actual-browser-decode-v1",
+  "browser": "chromium",
+  "browserVersion": "156.0.8078.4",
+  "physicalIPhone": false,
+  "assets": [
+    {
+      "assetSha256": "dc6ac7fa554b3b146edc46670b7e1b0be2cad724b64b705d7cee073ba227ae2b",
+      "sampleRate": 44100,
+      "samplePeak": 0.9991183876991272,
+      "overlapPeak": 0.9599031805992126,
+      "channels": 2,
+      "duration": 16.8543537414966
+    },
+    {
+      "assetSha256": "c1daaf4113df8b124c16d6bc58f0376d4de63e44fbff3f810f2f8f285ad75445",
+      "sampleRate": 44100,
+      "samplePeak": 0.9983748197555542,
+      "overlapPeak": 0.9593708515167236,
+      "channels": 2,
+      "duration": 17.13126984126984
+    },
+    {
+      "assetSha256": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+      "sampleRate": 44100,
+      "samplePeak": 0.9787190556526184,
+      "overlapPeak": 0.9576860666275024,
+      "channels": 2,
+      "duration": 10.250272108843538
+    },
+    {
+      "assetSha256": "8be58c6c39a0737a6f07e784b363eb4ac693cb8ddc22accef1d88a107ad1396e",
+      "sampleRate": 44100,
+      "samplePeak": 0.9584710597991943,
+      "overlapPeak": 0.9584710597991943,
+      "channels": 2,
+      "duration": 10.425691609977324
+    },
+    {
+      "assetSha256": "7fcc29e8fce9d6260b432bda3149485271eb348948285c5425eb210bcbaa8a78",
+      "sampleRate": 44100,
+      "samplePeak": 0.9549533128738403,
+      "overlapPeak": 0.9549533128738403,
+      "channels": 2,
+      "duration": 10.448027210884353
+    },
+    {
+      "assetSha256": "933d522e4b56526085a0f53377dc5b79b2417637b2b207a740a63f5832d812f7",
+      "sampleRate": 44100,
+      "samplePeak": 0.9587984085083008,
+      "overlapPeak": 0.9587984085083008,
+      "channels": 2,
+      "duration": 10.431065759637189
+    },
+    {
+      "assetSha256": "2e62fe431819d9ed56005733229ddc53389adef4c4603ad4db5c13f66f96ec5a",
+      "sampleRate": 44100,
+      "samplePeak": 0.9578202962875366,
+      "overlapPeak": 0.9578202962875366,
+      "channels": 2,
+      "duration": 10.448707482993198
+    },
+    {
+      "assetSha256": "a95e967cce50ccaadc3575b40c3c687a5e17b6202e74ad5bcc6c9077f0e520e4",
+      "sampleRate": 44100,
+      "samplePeak": 0.9962762594223022,
+      "overlapPeak": 0.9584337472915649,
+      "channels": 2,
+      "duration": 16.392244897959184
+    },
+    {
+      "assetSha256": "0f8004366ec0bb81d728ebfec212459f38f96d5667ec60bcb6f5459f47cca55c",
+      "sampleRate": 44100,
+      "samplePeak": 0.9988641738891602,
+      "overlapPeak": 0.9592156410217285,
+      "channels": 2,
+      "duration": 15.98997732426304
+    },
+    {
+      "assetSha256": "68cbec7e1539103a315d75b773c931fa4866e758323d94d8a6136dd57b467b62",
+      "sampleRate": 44100,
+      "samplePeak": 0.8976906538009644,
+      "overlapPeak": 0.8976906538009644,
+      "channels": 2,
+      "duration": 16.073401360544217
+    },
+    {
+      "assetSha256": "87e7bf0f09c330e58ff3284e17dbf8c47158d6e6391b889ba4223631d1f31876",
+      "sampleRate": 44100,
+      "samplePeak": 0.6538541316986084,
+      "overlapPeak": 0.5539291501045227,
+      "channels": 2,
+      "duration": 9.357482993197278
+    },
+    {
+      "assetSha256": "015eaf13a1cefaacafc6f79c19c514153ea52caf5f2ebb5c41add8200c51bc97",
+      "sampleRate": 44100,
+      "samplePeak": 0.9971154928207397,
+      "overlapPeak": 0.959388017654419,
+      "channels": 2,
+      "duration": 10.784761904761904
+    },
+    {
+      "assetSha256": "a99ddf4a9dbd03171d7efda31dc6ceeb8ff578d7d0cbd04967e58e0f76afe57c",
+      "sampleRate": 44100,
+      "samplePeak": 0.9975615739822388,
+      "overlapPeak": 0.9591702222824097,
+      "channels": 2,
+      "duration": 10.78827664399093
+    },
+    {
+      "assetSha256": "3924d63487ab800caabfd416e237ef58e0e6907419ebb1203525aef8b13dfe76",
+      "sampleRate": 44100,
+      "samplePeak": 0.9981837272644043,
+      "overlapPeak": 0.9602028131484985,
+      "channels": 2,
+      "duration": 16.778299319727893
+    },
+    {
+      "assetSha256": "936d18c433c6be5a64450a136cb3a1a219fefcd77612a62032bcbafe21c8135f",
+      "sampleRate": 44100,
+      "samplePeak": 0.9966771602630615,
+      "overlapPeak": 0.9591777324676514,
+      "channels": 2,
+      "duration": 16.786145124716555
+    },
+    {
+      "assetSha256": "dc6ac7fa554b3b146edc46670b7e1b0be2cad724b64b705d7cee073ba227ae2b",
+      "sampleRate": 48000,
+      "samplePeak": 0.997366189956665,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 16.854375
+    },
+    {
+      "assetSha256": "c1daaf4113df8b124c16d6bc58f0376d4de63e44fbff3f810f2f8f285ad75445",
+      "sampleRate": 48000,
+      "samplePeak": 0.997366189956665,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 17.131270833333332
+    },
+    {
+      "assetSha256": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+      "sampleRate": 48000,
+      "samplePeak": 0.997366189956665,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 10.250291666666667
+    },
+    {
+      "assetSha256": "8be58c6c39a0737a6f07e784b363eb4ac693cb8ddc22accef1d88a107ad1396e",
+      "sampleRate": 48000,
+      "samplePeak": 0.9584308862686157,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 10.425708333333333
+    },
+    {
+      "assetSha256": "7fcc29e8fce9d6260b432bda3149485271eb348948285c5425eb210bcbaa8a78",
+      "sampleRate": 48000,
+      "samplePeak": 0.9584308862686157,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 10.448041666666667
+    },
+    {
+      "assetSha256": "933d522e4b56526085a0f53377dc5b79b2417637b2b207a740a63f5832d812f7",
+      "sampleRate": 48000,
+      "samplePeak": 0.9584307670593262,
+      "overlapPeak": 0.9584307670593262,
+      "channels": 2,
+      "duration": 10.431083333333333
+    },
+    {
+      "assetSha256": "2e62fe431819d9ed56005733229ddc53389adef4c4603ad4db5c13f66f96ec5a",
+      "sampleRate": 48000,
+      "samplePeak": 0.9584307670593262,
+      "overlapPeak": 0.9584307670593262,
+      "channels": 2,
+      "duration": 10.448729166666666
+    },
+    {
+      "assetSha256": "a95e967cce50ccaadc3575b40c3c687a5e17b6202e74ad5bcc6c9077f0e520e4",
+      "sampleRate": 48000,
+      "samplePeak": 0.9942981004714966,
+      "overlapPeak": 0.9578118324279785,
+      "channels": 2,
+      "duration": 16.39225
+    },
+    {
+      "assetSha256": "0f8004366ec0bb81d728ebfec212459f38f96d5667ec60bcb6f5459f47cca55c",
+      "sampleRate": 48000,
+      "samplePeak": 0.9650511741638184,
+      "overlapPeak": 0.9584307670593262,
+      "channels": 2,
+      "duration": 15.99
+    },
+    {
+      "assetSha256": "68cbec7e1539103a315d75b773c931fa4866e758323d94d8a6136dd57b467b62",
+      "sampleRate": 48000,
+      "samplePeak": 0.8637180328369141,
+      "overlapPeak": 0.8637180328369141,
+      "channels": 2,
+      "duration": 16.073416666666667
+    },
+    {
+      "assetSha256": "87e7bf0f09c330e58ff3284e17dbf8c47158d6e6391b889ba4223631d1f31876",
+      "sampleRate": 48000,
+      "samplePeak": 0.6775540113449097,
+      "overlapPeak": 0.559296727180481,
+      "channels": 2,
+      "duration": 9.3575
+    },
+    {
+      "assetSha256": "015eaf13a1cefaacafc6f79c19c514153ea52caf5f2ebb5c41add8200c51bc97",
+      "sampleRate": 48000,
+      "samplePeak": 0.9973659515380859,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 10.784770833333333
+    },
+    {
+      "assetSha256": "a99ddf4a9dbd03171d7efda31dc6ceeb8ff578d7d0cbd04967e58e0f76afe57c",
+      "sampleRate": 48000,
+      "samplePeak": 0.9973659515380859,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 10.788291666666666
+    },
+    {
+      "assetSha256": "3924d63487ab800caabfd416e237ef58e0e6907419ebb1203525aef8b13dfe76",
+      "sampleRate": 48000,
+      "samplePeak": 0.9973660707473755,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 16.7783125
+    },
+    {
+      "assetSha256": "936d18c433c6be5a64450a136cb3a1a219fefcd77612a62032bcbafe21c8135f",
+      "sampleRate": 48000,
+      "samplePeak": 0.9973660707473755,
+      "overlapPeak": 0.9584308862686157,
+      "channels": 2,
+      "duration": 16.786145833333332
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "baselineCommit": "a6dcabb02970a23f6b8398227d5ab7caaa911bd1",
+  "codeCommit": "851cb422f406416d3685c7ab844e21a691801882",
+  "runtimeIndexSha256": "f2f112cc99f87208f414cd401d71f3f321640600115b7982eb58b01941f5a68c",
+  "testResults": {
+    "full": {
+      "before": 655,
+      "passed": 668,
+      "failed": 0,
+      "run": 43713643539
+    },
+    "dj": {
+      "before": 597,
+      "passed": 606,
+      "failed": 0,
+      "run": 43712770967
+    },
+    "pythonStructure": {
+      "passed": 8,
+      "failed": 0
+    },
+    "pythonTail": {
+      "passed": 3,
+      "failed": 0
+    },
+    "pythonMp3ReservoirWindow": {
+      "passed": 1,
+      "failed": 0
+    }
+  },
+  "catalogue": {
+    "orderedPairs": 1381800,
+    "fullBefore": 11,
+    "fullAfter": 11,
+    "metricalPartialBefore": 0,
+    "metricalPartialAfter": 8,
+    "shortSnap": 1,
+    "structuralFileCuts": 0,
+    "safariFullWithCommon": 11
+  },
+  "browserResults": [
+    {
+      "browser": "chromium",
+      "profile": "Emanuele",
+      "allDecoded48": 121,
+      "allDecoded44": 121,
+      "sameProfilePlannerPlayed": true,
+      "automaticShuffle": {
+        "full": true,
+        "partial": false,
+        "manualQueue": 0,
+        "poolRespected": true
+      }
+    },
+    {
+      "browser": "webkit",
+      "profile": "Emanuele",
+      "allDecoded48": 121,
+      "allDecoded44": 121,
+      "sameProfilePlannerPlayed": true,
+      "automaticShuffle": {
+        "full": true,
+        "partial": false,
+        "manualQueue": 0,
+        "poolRespected": true
+      }
+    },
+    {
+      "browser": "chromium",
+      "profile": "Ste",
+      "allDecoded48": 121,
+      "allDecoded44": 121,
+      "sameProfilePlannerPlayed": true,
+      "automaticShuffle": {
+        "full": false,
+        "partial": true,
+        "manualQueue": 0,
+        "poolRespected": true
+      }
+    },
+    {
+      "browser": "webkit",
+      "profile": "Ste",
+      "allDecoded48": 121,
+      "allDecoded44": 121,
+      "sameProfilePlannerPlayed": true,
+      "automaticShuffle": {
+        "full": false,
+        "partial": true,
+        "manualQueue": 0,
+        "poolRespected": true
+      }
+    }
+  ],
+  "allFourBrowserResultsBindInstalledIndex": true,
+  "nativeDecodedNewAssetRateMeasurements": 60,
+  "nativeMeasuredMaximumSamplePeak": 0.9991183876991272,
+  "nativeMeasuredMaximumOverlapPeak": 0.9612768888473511,
+  "historicalContentGuardRejections": 39,
+  "physicalIPhoneTested": false,
+  "humanMusicalListeningPerformed": false,
+  "phoneStorageMeasured": false,
+  "spotifyEquivalence": "NOT_CERTIFIED",
+  "prDraft": true,
+  "publicDeployment": false,
+  "historicalFailures": [
+    {
+      "run": 43707997002,
+      "reason": "Relative offline true-peak prediction did not cover three native decoder kernels; absolute guards kept; actual native certificates added."
+    },
+    {
+      "run": 43711073666,
+      "reason": "Five source-text assertions referenced the old inline playback block; retargeted to the shared identical resolver."
+    },
+    {
+      "run": 43712771723,
+      "reason": "Browser fixture selected Ste track-1 before published deletions arrived; diagnosed and fixed."
+    },
+    {
+      "run": 43713336479,
+      "reason": "Added diagnostics proved track-1 had disappeared; corrected fixture waits for a still-visible actual-profile source."
+    }
+  ]
+}

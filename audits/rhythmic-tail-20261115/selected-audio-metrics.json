@@ -1,0 +1,634 @@
+[
+  {
+    "profile": "Ste",
+    "from": "b-track-4",
+    "to": "b-track-38",
+    "fromTitle": "Sono Ok",
+    "toTitle": "Gilgamesh",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 7.250282685512346,
+    "rhythmicSeconds": 5.473282685512345,
+    "tempo": 1.0442804428044306,
+    "sourceReadThrough": 126.87675898115432,
+    "sourceEOF": 126.877,
+    "incomingEntry": 0,
+    "sha256": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+    "rmsRhythm48Ms": 18.35698596378934,
+    "rmsRhythm44Ms": 18.35698596378934,
+    "agreement": 1,
+    "downbeatRmsMs": 4.104746847704305,
+    "maximumDownbeatErrorMs": 5.804988662131638,
+    "maximumSharedGainReductionDb": 0.582827499358178,
+    "meanOverlapReductionDb": 0.012944507568730881,
+    "oversampledPeak": 0.9980010986328125,
+    "oversampledOverlapPeak": 0.959050178527832,
+    "resampledOversampledPeak": 0.9984604120254517,
+    "resampledOverlapPeak": 0.960508406162262,
+    "harmony": {
+      "method": "pcm-key-with-quiet-frame-bound-v1",
+      "compatibleKey": true,
+      "keyFrom": "5A",
+      "keyTo": "4A",
+      "keyConfidence": 0.8419035289686184,
+      "keyCompatibility": 0.92,
+      "dissonanceMax": -0.01020872227097977,
+      "rawDissonanceMax": 0.21348056983702846,
+      "frames": 13,
+      "sharedTonalFrames": 11,
+      "boundedQuietFrames": 0,
+      "quietInteractionMaximum": 0.05,
+      "sourceGain": 1,
+      "incomingEnvelope": "rhythmic-tail-foreground-v1"
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 5.473282685512345,
+      "sourceTailThrough": 7.250282685512346,
+      "tailSeconds": 1.777000000000001,
+      "maximumTailOnset": 0,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.2816302180290222,
+      "maximumTailRms": 0.003187044756487012,
+      "maximumRelativeRms": 0.01131641618144323,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "73b26ec8e742e856dc3297a080efe95d2aba66fd8616cfe6a00e901b6e6ae56d",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9904512166976929,
+          "overlapPeak": 0.9584968090057373,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.997366189956665,
+          "overlapPeak": 0.9584308862686157,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Ste",
+    "from": "b-track-705",
+    "to": "b-track-50",
+    "fromTitle": "End of Beginning",
+    "toTitle": "la mia storia tra le dita",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 7.784780537711953,
+    "rhythmicSeconds": 6.123780537711951,
+    "tempo": 1.0146264262680071,
+    "sourceReadThrough": 159.3004902956214,
+    "sourceEOF": 159.301,
+    "incomingEntry": 0,
+    "sha256": "015eaf13a1cefaacafc6f79c19c514153ea52caf5f2ebb5c41add8200c51bc97",
+    "rmsRhythm48Ms": 13.767739472841878,
+    "rmsRhythm44Ms": 13.767739472841878,
+    "agreement": 1,
+    "downbeatRmsMs": 11.609977324262942,
+    "maximumDownbeatErrorMs": 11.609977324263054,
+    "maximumSharedGainReductionDb": 1.3298016021329486,
+    "meanOverlapReductionDb": 0.14340444370491073,
+    "oversampledPeak": 0.9980008602142334,
+    "oversampledOverlapPeak": 0.9590497016906738,
+    "resampledOversampledPeak": 0.997802734375,
+    "resampledOverlapPeak": 0.9600427150726318,
+    "harmony": {
+      "method": "pcm-key-with-quiet-frame-bound-v1",
+      "compatibleKey": true,
+      "keyFrom": "10B",
+      "keyTo": "9B",
+      "keyConfidence": 0.7354568923299806,
+      "keyCompatibility": 0.92,
+      "dissonanceMax": 0.010821740824154824,
+      "rawDissonanceMax": 0.20729697176342252,
+      "frames": 14,
+      "sharedTonalFrames": 12,
+      "boundedQuietFrames": 2,
+      "quietInteractionMaximum": 0.05,
+      "sourceGain": 1,
+      "incomingEnvelope": "rhythmic-tail-foreground-v1"
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 6.123780537711951,
+      "sourceTailThrough": 7.784780537711953,
+      "tailSeconds": 1.6610000000000014,
+      "maximumTailOnset": 0,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.23503433167934418,
+      "maximumTailRms": 9.510639938525856e-05,
+      "maximumRelativeRms": 0.0004046489664114756,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "015eaf13a1cefaacafc6f79c19c514153ea52caf5f2ebb5c41add8200c51bc97",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9973838329315186,
+          "overlapPeak": 0.9595924615859985,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.9973659515380859,
+          "overlapPeak": 0.9584308862686157,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Gym",
+    "from": "b-track-53",
+    "to": "b-track-51",
+    "fromTitle": "What I've Done",
+    "toTitle": "Animal I Have Become",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 14.154365482233516,
+    "rhythmicSeconds": 10.004365482233505,
+    "tempo": 0.9850000000000001,
+    "sourceReadThrough": 207.21490535109982,
+    "sourceEOF": 207.215,
+    "incomingEntry": 0,
+    "sha256": "dc6ac7fa554b3b146edc46670b7e1b0be2cad724b64b705d7cee073ba227ae2b",
+    "rmsRhythm48Ms": 19.20685434179948,
+    "rmsRhythm44Ms": 19.20685434179948,
+    "agreement": 0.95,
+    "downbeatRmsMs": 17.171388032579472,
+    "maximumDownbeatErrorMs": 29.024943310657747,
+    "maximumSharedGainReductionDb": 2.854164146927986,
+    "meanOverlapReductionDb": 0.9086719411412311,
+    "oversampledPeak": 0.998012363910675,
+    "oversampledOverlapPeak": 0.9590514898300171,
+    "resampledOversampledPeak": 0.9997743368148804,
+    "resampledOverlapPeak": 0.9605650901794434,
+    "harmony": {
+      "average": 0.7922453383733574,
+      "weakest": 0.6262014863917367
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 10.004365482233505,
+      "sourceTailThrough": 14.154365482233516,
+      "tailSeconds": 4.150000000000011,
+      "maximumTailOnset": 0.1485790586952971,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.30471640825271606,
+      "maximumTailRms": 0.09332460910081863,
+      "maximumRelativeRms": 0.30626709482418163,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "dc6ac7fa554b3b146edc46670b7e1b0be2cad724b64b705d7cee073ba227ae2b",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9991183876991272,
+          "overlapPeak": 0.9599031805992126,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.997366189956665,
+          "overlapPeak": 0.9584308862686157,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Emanuele",
+    "from": "b-track-830",
+    "to": "b-track-1198",
+    "fromTitle": "Wild Bandana (feat. Tedua & Vaz Tè)",
+    "toTitle": "Con il nastro rosa - Remastered",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 7.425700000000006,
+    "rhythmicSeconds": 5.275699999999995,
+    "tempo": 1.020408163265302,
+    "sourceReadThrough": 308.44227916666665,
+    "sourceEOF": 308.442,
+    "incomingEntry": 0,
+    "sha256": "8be58c6c39a0737a6f07e784b363eb4ac693cb8ddc22accef1d88a107ad1396e",
+    "rmsRhythm48Ms": 14.643808917464332,
+    "rmsRhythm44Ms": 14.643808917464332,
+    "agreement": 1,
+    "downbeatRmsMs": 4.104746847704227,
+    "maximumDownbeatErrorMs": 5.804988662131527,
+    "maximumSharedGainReductionDb": 1.9622128586279235,
+    "meanOverlapReductionDb": 0.047594501436355366,
+    "oversampledPeak": 0.9590493440628052,
+    "oversampledOverlapPeak": 0.9590493440628052,
+    "resampledOversampledPeak": 0.9592446684837341,
+    "resampledOverlapPeak": 0.9592446684837341,
+    "harmony": {
+      "method": "pcm-key-with-quiet-frame-bound-v1",
+      "compatibleKey": true,
+      "keyFrom": "1A",
+      "keyTo": "12A",
+      "keyConfidence": 0.8930504344449703,
+      "keyCompatibility": 0.92,
+      "dissonanceMax": 0.01401941574369409,
+      "rawDissonanceMax": 0.19965096948706224,
+      "frames": 13,
+      "sharedTonalFrames": 8,
+      "boundedQuietFrames": 2,
+      "quietInteractionMaximum": 0.05,
+      "sourceGain": 1,
+      "incomingEnvelope": "rhythmic-tail-foreground-v1"
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 5.275699999999995,
+      "sourceTailThrough": 7.425700000000006,
+      "tailSeconds": 2.150000000000011,
+      "maximumTailOnset": 0.1957432394500636,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.040292222052812576,
+      "maximumTailRms": 0.0009142630733549595,
+      "maximumRelativeRms": 0.022690807971737063,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "8be58c6c39a0737a6f07e784b363eb4ac693cb8ddc22accef1d88a107ad1396e",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9612768888473511,
+          "overlapPeak": 0.9612768888473511,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.9584308862686157,
+          "overlapPeak": 0.9584308862686157,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Emanuele",
+    "from": "b-track-636",
+    "to": "b-track-603",
+    "fromTitle": "Billie Jean",
+    "toTitle": "Coupé",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 12.989999999999895,
+    "rhythmicSeconds": 10.99999999999991,
+    "tempo": 0.9512195121951299,
+    "sourceReadThrough": 295.8338333333334,
+    "sourceEOF": 295.834,
+    "incomingEntry": 0,
+    "sha256": "0f8004366ec0bb81d728ebfec212459f38f96d5667ec60bcb6f5459f47cca55c",
+    "rmsRhythm48Ms": 30.222347155574848,
+    "rmsRhythm44Ms": 30.222347155574848,
+    "agreement": 0.9047619047619048,
+    "downbeatRmsMs": 20.930184274802354,
+    "maximumDownbeatErrorMs": 29.024943310657747,
+    "maximumSharedGainReductionDb": 0.777404359893886,
+    "meanOverlapReductionDb": 0.003102401032231617,
+    "oversampledPeak": 0.9980133175849915,
+    "oversampledOverlapPeak": 0.959043025970459,
+    "resampledOversampledPeak": 0.9983983635902405,
+    "resampledOverlapPeak": 0.9601702094078064,
+    "harmony": {
+      "method": "pcm-key-with-quiet-frame-bound-v1",
+      "compatibleKey": true,
+      "keyFrom": "2B",
+      "keyTo": "2A",
+      "keyConfidence": 0.7381493973517397,
+      "keyCompatibility": 0.97,
+      "dissonanceMax": 0.0073720970224067095,
+      "rawDissonanceMax": 0.3131036321955,
+      "frames": 24,
+      "sharedTonalFrames": 16,
+      "boundedQuietFrames": 3,
+      "quietInteractionMaximum": 0.05,
+      "sourceGain": 1,
+      "incomingEnvelope": "rhythmic-tail-foreground-v1"
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 10.99999999999991,
+      "sourceTailThrough": 12.989999999999895,
+      "tailSeconds": 1.989999999999986,
+      "maximumTailOnset": 0.01573599584402817,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.029344037175178528,
+      "maximumTailRms": 0.0002252570411656052,
+      "maximumRelativeRms": 0.007676416159809978,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "0f8004366ec0bb81d728ebfec212459f38f96d5667ec60bcb6f5459f47cca55c",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9988641738891602,
+          "overlapPeak": 0.9592156410217285,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.9650511741638184,
+          "overlapPeak": 0.9584307670593262,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Emanuele",
+    "from": "b-track-636",
+    "to": "b-track-700",
+    "fromTitle": "Billie Jean",
+    "toTitle": "E tu...",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 13.392244897959188,
+    "rhythmicSeconds": 11.402244897959202,
+    "tempo": 0.9560975609756177,
+    "sourceReadThrough": 295.8338384353741,
+    "sourceEOF": 295.834,
+    "incomingEntry": 0,
+    "sha256": "a95e967cce50ccaadc3575b40c3c687a5e17b6202e74ad5bcc6c9077f0e520e4",
+    "rmsRhythm48Ms": 24.179711535204536,
+    "rmsRhythm44Ms": 24.179711535204536,
+    "agreement": 0.9090909090909091,
+    "downbeatRmsMs": 16.41898739081722,
+    "maximumDownbeatErrorMs": 23.219954648526553,
+    "maximumSharedGainReductionDb": 2.2754615573887094,
+    "meanOverlapReductionDb": 0.03613256072112926,
+    "oversampledPeak": 0.9980133175849915,
+    "oversampledOverlapPeak": 0.9590502977371216,
+    "resampledOversampledPeak": 0.9997131824493408,
+    "resampledOverlapPeak": 0.9602993726730347,
+    "harmony": {
+      "method": "pcm-key-with-quiet-frame-bound-v1",
+      "compatibleKey": true,
+      "keyFrom": "2B",
+      "keyTo": "2B",
+      "keyConfidence": 0.7380546292394315,
+      "keyCompatibility": 1,
+      "dissonanceMax": -0.03033602224210294,
+      "rawDissonanceMax": 0.23912768321126895,
+      "frames": 25,
+      "sharedTonalFrames": 17,
+      "boundedQuietFrames": 3,
+      "quietInteractionMaximum": 0.05,
+      "sourceGain": 1,
+      "incomingEnvelope": "rhythmic-tail-foreground-v1"
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 11.402244897959202,
+      "sourceTailThrough": 13.392244897959188,
+      "tailSeconds": 1.989999999999986,
+      "maximumTailOnset": 0.012776733936421762,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.03045736625790596,
+      "maximumTailRms": 0.0002234332205262035,
+      "maximumRelativeRms": 0.007335933732228272,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "a95e967cce50ccaadc3575b40c3c687a5e17b6202e74ad5bcc6c9077f0e520e4",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9977977275848389,
+          "overlapPeak": 0.9584337472915649,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.9942981004714966,
+          "overlapPeak": 0.9578118324279785,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Emanuele",
+    "from": "b-track-1104",
+    "to": "b-track-745",
+    "fromTitle": "Buonanotte Amò",
+    "toTitle": "Un nuovo bacio",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 13.073418274920897,
+    "rhythmicSeconds": 8.383418274920894,
+    "tempo": 1.0464443236821788,
+    "sourceReadThrough": 161.72699839174578,
+    "sourceEOF": 161.727,
+    "incomingEntry": 0,
+    "sha256": "68cbec7e1539103a315d75b773c931fa4866e758323d94d8a6136dd57b467b62",
+    "rmsRhythm48Ms": 22.36703174819659,
+    "rmsRhythm44Ms": 21.720278707803526,
+    "agreement": 0.9285714285714286,
+    "downbeatRmsMs": 24.968200321574862,
+    "maximumDownbeatErrorMs": 34.82993197278894,
+    "maximumSharedGainReductionDb": 0,
+    "meanOverlapReductionDb": 0,
+    "oversampledPeak": 0.9002211689949036,
+    "oversampledOverlapPeak": 0.9002211689949036,
+    "resampledOversampledPeak": 0.8984543681144714,
+    "resampledOverlapPeak": 0.8984543681144714,
+    "harmony": {
+      "average": 0.8020819147263003,
+      "weakest": 0.6689069309593566
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 8.383418274920894,
+      "sourceTailThrough": 13.073418274920897,
+      "tailSeconds": 4.690000000000003,
+      "maximumTailOnset": 0.10916647176389073,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.2106025069952011,
+      "maximumTailRms": 0.10527914017438889,
+      "maximumRelativeRms": 0.4998949997152115,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "68cbec7e1539103a315d75b773c931fa4866e758323d94d8a6136dd57b467b62",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.9027106761932373,
+          "overlapPeak": 0.9027106761932373,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.8637180328369141,
+          "overlapPeak": 0.8637180328369141,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  },
+  {
+    "profile": "Emanuele",
+    "from": "b-track-626",
+    "to": "b-track-1195",
+    "fromTitle": "NULLA ACCADE (feat. Capo Plaza)",
+    "toTitle": "Fenomeno",
+    "full": false,
+    "partial": true,
+    "overlapSeconds": 6.3574999999999875,
+    "rhythmicSeconds": 5.107499999999982,
+    "tempo": 1,
+    "sourceReadThrough": 174.40508333333335,
+    "sourceEOF": 174.405,
+    "incomingEntry": 0,
+    "sha256": "87e7bf0f09c330e58ff3284e17dbf8c47158d6e6391b889ba4223631d1f31876",
+    "rmsRhythm48Ms": 18.559831745548912,
+    "rmsRhythm44Ms": 18.559831745548912,
+    "agreement": 1,
+    "downbeatRmsMs": 17.414965986394748,
+    "maximumDownbeatErrorMs": 17.414965986394915,
+    "maximumSharedGainReductionDb": 0,
+    "meanOverlapReductionDb": 0,
+    "oversampledPeak": 0.6833680868148804,
+    "oversampledOverlapPeak": 0.5596527457237244,
+    "resampledOversampledPeak": 0.6833024024963379,
+    "resampledOverlapPeak": 0.559384822845459,
+    "harmony": {
+      "method": "pcm-key-with-quiet-frame-bound-v1",
+      "compatibleKey": true,
+      "keyFrom": "9B",
+      "keyTo": "9B",
+      "keyConfidence": 0.7225402556141535,
+      "keyCompatibility": 1,
+      "dissonanceMax": -0.02356054091224702,
+      "rawDissonanceMax": 0.3349723378675304,
+      "frames": 11,
+      "sharedTonalFrames": 8,
+      "boundedQuietFrames": 1,
+      "quietInteractionMaximum": 0.05,
+      "sourceGain": 1,
+      "incomingEnvelope": "rhythmic-tail-foreground-v1"
+    },
+    "tailEvidence": {
+      "method": "unmodified-original-hpss-tail-v1",
+      "accepted": true,
+      "rhythmicSeconds": 5.107499999999982,
+      "sourceTailThrough": 6.3574999999999875,
+      "tailSeconds": 1.2500000000000053,
+      "maximumTailOnset": 0.010699987165151317,
+      "onsetThreshold": 0.25,
+      "bodyRmsMedian": 0.02445424348115921,
+      "maximumTailRms": 0.0007495517493225634,
+      "maximumRelativeRms": 0.030651193519850906,
+      "relativeRmsCeiling": 0.5,
+      "sourceGainApplied": false,
+      "searchedEntireTail": true,
+      "humanVerified": false
+    },
+    "nativeDecoderProof": {
+      "method": "actual-browser-decode-v1",
+      "assetSha256": "87e7bf0f09c330e58ff3284e17dbf8c47158d6e6391b889ba4223631d1f31876",
+      "rates": {
+        "44100": {
+          "samplePeak": 0.6660569906234741,
+          "overlapPeak": 0.5539291501045227,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        },
+        "48000": {
+          "samplePeak": 0.6775540113449097,
+          "overlapPeak": 0.559296727180481,
+          "browsers": [
+            "chromium",
+            "webkit"
+          ]
+        }
+      },
+      "physicalIPhone": false
+    }
+  }
+]

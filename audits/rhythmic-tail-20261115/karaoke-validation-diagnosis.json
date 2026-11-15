@@ -1,0 +1,153 @@
+{
+  "method": "evaluation-only-observation-upper-bound-v1",
+  "sourceReports": [
+    {
+      "file": "validation-28.json",
+      "sha256": "a6b29b4395bc4d8d6b877285cc1b85c55319a6006a87d9806580ab7017e00bf3",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d"
+      }
+    },
+    {
+      "file": "validation-14.json",
+      "sha256": "6d6610b3cfdd754f6df38339ef5c5a1d653fd6795ca0f09824e194a3f871b8a3",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 14,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    },
+    {
+      "file": "validation-7.json",
+      "sha256": "e94df78ef38524ab7f25facf9362d2944130af6206d92fb64f95338d7fe71ca4",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 7,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Human word boundaries are evaluation inputs only; never shipped as observed timestamps.",
+    "Exact normalized lexical match within 750ms is a generous upper bound, not WER or occurrence certification.",
+    "One observation within 100ms does not establish safe automatic selection among competing observations.",
+    "Contexts can share correlated recognizer mistakes; agreement is not independent musical truth."
+  ],
+  "groups": {
+    "all": {
+      "words": 166,
+      "noNearbyExactObservation": 81,
+      "nearbyExactObservation": 85,
+      "anyObservationWithin100msAtBothBoundaries": 44,
+      "consensusWithin60msButWrongOver250ms": 7
+    },
+    "shortAtMostTwoCharacters": {
+      "words": 24,
+      "noNearbyExactObservation": 13,
+      "nearbyExactObservation": 11,
+      "anyObservationWithin100msAtBothBoundaries": 2,
+      "consensusWithin60msButWrongOver250ms": 1
+    },
+    "repeatedInPhrase": {
+      "words": 8,
+      "noNearbyExactObservation": 1,
+      "nearbyExactObservation": 7,
+      "anyObservationWithin100msAtBothBoundaries": 2,
+      "consensusWithin60msButWrongOver250ms": 2
+    }
+  },
+  "cases": [
+    {
+      "id": "Color_Out_-_Falling_Star@184.349",
+      "category": "singing-sparse",
+      "words": 15,
+      "noNearbyExactObservation": 11,
+      "nearbyExactObservation": 4,
+      "anyObservationWithin100msAtBothBoundaries": 0,
+      "consensusWithin60msButWrongOver250ms": 0,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Color_Out_-_Falling_Star@107.629",
+      "category": "repeated-phrase",
+      "words": 47,
+      "noNearbyExactObservation": 24,
+      "nearbyExactObservation": 23,
+      "anyObservationWithin100msAtBothBoundaries": 0,
+      "consensusWithin60msButWrongOver250ms": 4,
+      "acceptedWords": 6,
+      "worstAcceptedBoundaryErrorMs": 406.33856199998775
+    },
+    {
+      "id": "Der_Musiker_-_d-music@42.578",
+      "category": "rap-dense",
+      "words": 86,
+      "noNearbyExactObservation": 34,
+      "nearbyExactObservation": 52,
+      "anyObservationWithin100msAtBothBoundaries": 41,
+      "consensusWithin60msButWrongOver250ms": 2,
+      "acceptedWords": 19,
+      "worstAcceptedBoundaryErrorMs": 384.893157999997
+    },
+    {
+      "id": "Der_Musiker_-_d-music@155.718",
+      "category": "repeated-phrase",
+      "words": 18,
+      "noNearbyExactObservation": 12,
+      "nearbyExactObservation": 6,
+      "anyObservationWithin100msAtBothBoundaries": 3,
+      "consensusWithin60msButWrongOver250ms": 1,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    }
+  ],
+  "acceptedReplayAggregate": {
+    "referenceWords": 166,
+    "acceptedWords": 25,
+    "coverage": 0.15060240963855423,
+    "onset": {
+      "count": 25,
+      "medianAbsoluteMs": 65.93472290000335,
+      "p95AbsoluteMs": 360.9120482999941
+    },
+    "end": {
+      "count": 25,
+      "medianAbsoluteMs": 76.91281130000505,
+      "p95AbsoluteMs": 384.893157999997
+    }
+  },
+  "productionChanged": false
+}

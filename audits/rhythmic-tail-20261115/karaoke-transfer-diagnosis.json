@@ -1,0 +1,153 @@
+{
+  "method": "evaluation-only-observation-upper-bound-v1",
+  "sourceReports": [
+    {
+      "file": "transfer-28.json",
+      "sha256": "e9fa7f37d7f6add3ba6d1ed26f7764eaace622202bff9f851e4e3f5bfb699fde",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d"
+      }
+    },
+    {
+      "file": "transfer-14.json",
+      "sha256": "23464c979974d936397d5c46fab8b613592528ccebc6ff65d2da2c4d6edd4b4f",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 14,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    },
+    {
+      "file": "transfer-7.json",
+      "sha256": "02fa9d1b6f67b41bfa299cfaf44f72531fc12c0e77b74c2207bb53daf5d28ab7",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 7,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Human word boundaries are evaluation inputs only; never shipped as observed timestamps.",
+    "Exact normalized lexical match within 750ms is a generous upper bound, not WER or occurrence certification.",
+    "One observation within 100ms does not establish safe automatic selection among competing observations.",
+    "Contexts can share correlated recognizer mistakes; agreement is not independent musical truth."
+  ],
+  "groups": {
+    "all": {
+      "words": 243,
+      "noNearbyExactObservation": 157,
+      "nearbyExactObservation": 86,
+      "anyObservationWithin100msAtBothBoundaries": 51,
+      "consensusWithin60msButWrongOver250ms": 7
+    },
+    "shortAtMostTwoCharacters": {
+      "words": 58,
+      "noNearbyExactObservation": 26,
+      "nearbyExactObservation": 32,
+      "anyObservationWithin100msAtBothBoundaries": 20,
+      "consensusWithin60msButWrongOver250ms": 3
+    },
+    "repeatedInPhrase": {
+      "words": 61,
+      "noNearbyExactObservation": 42,
+      "nearbyExactObservation": 19,
+      "anyObservationWithin100msAtBothBoundaries": 7,
+      "consensusWithin60msButWrongOver250ms": 2
+    }
+  },
+  "cases": [
+    {
+      "id": "Mes_Larmes_-_kobzx2z@14.202",
+      "category": "rap-dense",
+      "words": 108,
+      "noNearbyExactObservation": 65,
+      "nearbyExactObservation": 43,
+      "anyObservationWithin100msAtBothBoundaries": 35,
+      "consensusWithin60msButWrongOver250ms": 1,
+      "acceptedWords": 16,
+      "worstAcceptedBoundaryErrorMs": 203.36169429999984
+    },
+    {
+      "id": "Mes_Larmes_-_kobzx2z@107.771",
+      "category": "repeated-phrase",
+      "words": 70,
+      "noNearbyExactObservation": 65,
+      "nearbyExactObservation": 5,
+      "anyObservationWithin100msAtBothBoundaries": 2,
+      "consensusWithin60msButWrongOver250ms": 0,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Cortez_-_Feel__Stripped_@219.285",
+      "category": "singing-sparse",
+      "words": 23,
+      "noNearbyExactObservation": 9,
+      "nearbyExactObservation": 14,
+      "anyObservationWithin100msAtBothBoundaries": 6,
+      "consensusWithin60msButWrongOver250ms": 2,
+      "acceptedWords": 4,
+      "worstAcceptedBoundaryErrorMs": 136.63513180000564
+    },
+    {
+      "id": "Cortez_-_Feel__Stripped_@156.425",
+      "category": "repeated-phrase",
+      "words": 42,
+      "noNearbyExactObservation": 18,
+      "nearbyExactObservation": 24,
+      "anyObservationWithin100msAtBothBoundaries": 8,
+      "consensusWithin60msButWrongOver250ms": 4,
+      "acceptedWords": 4,
+      "worstAcceptedBoundaryErrorMs": 416.6625976999967
+    }
+  ],
+  "acceptedReplayAggregate": {
+    "referenceWords": 243,
+    "acceptedWords": 24,
+    "coverage": 0.09876543209876543,
+    "onset": {
+      "count": 24,
+      "medianAbsoluteMs": 29.111755399998884,
+      "p95AbsoluteMs": 227.5915527000052
+    },
+    "end": {
+      "count": 24,
+      "medianAbsoluteMs": 50.2540893999992,
+      "p95AbsoluteMs": 203.36169429999984
+    }
+  },
+  "productionChanged": false
+}
