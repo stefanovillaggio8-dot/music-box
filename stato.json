@@ -2327,13 +2327,13 @@
    },
    "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 2,
-    "s": 307,
+    "s": 370,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 2,
-    "s": 307,
+    "s": 370,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
@@ -10558,14 +10558,14 @@
     "a": "Guè"
    },
    "[\"g&v\",\"ivanbì\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBì"
    },
    "m:2026-11|[\"g&v\",\"ivanbì\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBì"
    },
