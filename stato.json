@@ -1882,14 +1882,14 @@
     "a": "JVKE"
    },
    "[\"disfruto - carla morrison\",\"carla morrison\"]": {
-    "v": 2,
-    "s": 324,
+    "v": 3,
+    "s": 338,
     "t": "Disfruto - Carla Morrison",
     "a": "Carla Morrison"
    },
    "m:2026-11|[\"disfruto - carla morrison\",\"carla morrison\"]": {
-    "v": 2,
-    "s": 324,
+    "v": 3,
+    "s": 338,
     "t": "Disfruto - Carla Morrison",
     "a": "Carla Morrison"
    },
@@ -1991,13 +1991,13 @@
    },
    "[\"a mano a mano\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 54,
+    "s": 109,
     "t": "A mano a mano",
     "a": "Rino Gaetano"
    },
    "m:2026-11|[\"a mano a mano\",\"rino gaetano\"]": {
     "v": 0,
-    "s": 54,
+    "s": 109,
     "t": "A mano a mano",
     "a": "Rino Gaetano"
    },
@@ -5381,13 +5381,13 @@
    },
    "[\"dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 128,
+    "s": 144,
     "t": "Dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 128,
+    "s": 144,
     "t": "Dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6185,13 +6185,13 @@
    },
    "[\"dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 144,
+    "s": 201,
     "t": "Dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
     "v": 1,
-    "s": 144,
+    "s": 201,
     "t": "Dove ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨ sempre sole",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6389,13 +6389,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 370,
+    "s": 390,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 370,
+    "s": 390,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
@@ -7199,13 +7199,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 390,
+    "s": 462,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 0,
-    "s": 390,
+    "s": 462,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
@@ -7792,13 +7792,13 @@
     "a": "ModÃÂÃÂ "
    },
    "[\"se si potesse non morire\",\"modÃÂÃÂ \"]": {
-    "v": 2,
+    "v": 3,
     "s": 534,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃÂÃÂ \"]": {
-    "v": 2,
+    "v": 3,
     "s": 534,
     "t": "Se si potesse non morire",
     "a": "ModÃÂÃÂ "
@@ -8603,13 +8603,13 @@
    },
    "[\"se si potesse non morire\",\"modÃÂ \"]": {
     "v": 3,
-    "s": 534,
+    "s": 599,
     "t": "Se si potesse non morire",
     "a": "ModÃÂ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃÂ \"]": {
     "v": 3,
-    "s": 534,
+    "s": 599,
     "t": "Se si potesse non morire",
     "a": "ModÃÂ "
    },
@@ -9413,13 +9413,13 @@
    },
    "[\"se si potesse non morire\",\"modÃ \"]": {
     "v": 3,
-    "s": 599,
+    "s": 649,
     "t": "Se si potesse non morire",
     "a": "ModÃ "
    },
    "m:2026-11|[\"se si potesse non morire\",\"modÃ \"]": {
     "v": 3,
-    "s": 599,
+    "s": 649,
     "t": "Se si potesse non morire",
     "a": "ModÃ "
    },
