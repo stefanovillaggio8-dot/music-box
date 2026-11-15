@@ -181,17 +181,18 @@ async function simulate(profile,mode,list,sessions,steps,seed){
 function inventory(profile,list,audit){
  // Availability inventory is online; never inherit the preceding offline scenario.
  scenarioOffline=false;
- const full=[],seen=new Set();
- for(const pair of audit.verifiedPairs.filter(p=>p.full)){
+ const full=[],partial=[],seen=new Set();
+ for(const pair of audit.verifiedPairs.filter(p=>p.full||p.partial)){
   const fromSha=index.entries[pair.from]?.sha,toSha=index.entries[pair.to]?.sha;
   for(const from of list.filter(t=>lookup(t)?.sha===fromSha))for(const to of list.filter(t=>lookup(t)?.sha===toSha)){
    const key=from.id+'|'+to.id;if(seen.has(key))continue;seen.add(key);
-   const result=resultFor(from,to);if(result.kind!=='full')continue;
-   full.push({from:from.id,to:to.id,fromTitle:from.title,toTitle:to.title,fromSha,toSha,...result});
+   const result=resultFor(from,to);if(!['full','partial'].includes(result.kind))continue;
+   (result.kind==='full'?full:partial).push({from:from.id,to:to.id,fromTitle:from.title,toTitle:to.title,fromSha,toSha,...result});
   }
  }
  return {profile,members:list.length,completePairs:full.length,
-  uniqueRecordingPairs:new Set(full.map(p=>p.fromSha+'|'+p.toSha)).size,full};
+  uniqueRecordingPairs:new Set(full.map(p=>p.fromSha+'|'+p.toSha)).size,
+  partialPairs:partial.length,uniquePartialRecordingPairs:new Set(partial.map(p=>p.fromSha+'|'+p.toSha)).size,full,partial};
 }
 (async()=>{
  const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
@@ -215,10 +216,12 @@ function inventory(profile,list,audit){
    const result=await simulate(profile,mode,library,mode==='ordered'||mode==='manual-queue'?1:sessions,mode==='ordered'?library.length-1:steps,20261114+i*100);
    report.results.push(result);console.log(JSON.stringify({profile,mode,members:library.length,full:result.totals.full,attempts:result.totals.attempts}));
   }
-  for(const playlist of playlists.filter(p=>p.nascostaDa===profile))for(const mode of ['playlist','playlist-shuffle']){
+  for(const playlist of playlists.filter(p=>p.nascostaDa===profile)){
+   if(audit)report.inventories.push(inventory(profile+' / '+playlist.name,members(profile,playlist),audit));
+   for(const mode of ['playlist','playlist-shuffle']){
    if(arg('only-mode','')&&arg('only-mode','')!==mode)continue;
    report.results.push({...await simulate(profile,mode,members(profile,playlist),mode==='playlist'?1:sessions,playlist.tracks.length-1,20261114+i),playlist:playlist.name});
-  }
+  }}
  }
  fs.writeFileSync(arg('output','listening-simulation.json'),JSON.stringify(report,null,2)+'\n');
 })().catch(e=>{console.error(e);process.exitCode=1});

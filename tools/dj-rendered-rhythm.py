@@ -22,8 +22,38 @@ def observed(stereo,sr,expected,pre_roll):
         if not result or actual-result[-1]>.20:result.append(actual)
     return result
 
+def tail_evidence(original,sr,cue,pre_roll):
+    """Inspect the entire remaining ORIGINAL signal, without expected-beat masks.
+
+    No gain reduction or stem filtering can hide a later drum/phrase restart.
+    A quiet, attack-free decay may remain audible; it is never cut from the mix.
+    """
+    seconds=cue['structuralEvidence']['rhythmicWindow']['seconds'];fade=cue['fade']
+    y=soxr.resample(original.mean(axis=1),sr,11025).astype(np.float32)
+    _,percussive=librosa.effects.hpss(y,margin=(2.,2.))
+    onset=librosa.onset.onset_strength(y=percussive,sr=11025,hop_length=64)
+    times=librosa.frames_to_time(np.arange(len(onset)),sr=11025,hop_length=64)-pre_roll
+    body=onset[(times>=.2)&(times<seconds-.15)]
+    tail=onset[(times>=seconds)&(times<=fade)]
+    rms=librosa.feature.rms(y=original.mean(axis=1),frame_length=round(sr*.05),hop_length=round(sr*.01))[0]
+    t=librosa.frames_to_time(np.arange(len(rms)),sr=sr,hop_length=round(sr*.01))-pre_roll
+    active_rms=rms[(t>=.2)&(t<seconds-.15)];tail_rms=rms[(t>=seconds)&(t<=fade)]
+    if min(len(body),len(tail),len(active_rms),len(tail_rms))<10:return {'accepted':False,'reason':'incomplete-original-tail'}
+    floor=float(np.quantile(body,.2));scale=max(.01,float(np.quantile(body,.95)-floor))
+    maximum=max(0.,float((np.max(tail)-floor)/scale))
+    body_level=float(np.median(active_rms));tail_level=float(np.max(tail_rms))
+    relative=tail_level/max(.003,body_level)
+    return {'method':'unmodified-original-hpss-tail-v1','accepted':bool(maximum<.25 and relative<=.5),
+        'rhythmicSeconds':seconds,'sourceTailThrough':fade,'tailSeconds':fade-seconds,
+        'maximumTailOnset':maximum,'onsetThreshold':.25,'bodyRmsMedian':body_level,
+        'maximumTailRms':tail_level,'maximumRelativeRms':relative,'relativeRmsCeiling':.5,
+        'sourceGainApplied':False,'searchedEntireTail':True,'humanVerified':False}
+
 def verify(outgoing,incoming,sr,cue,pre_roll):
-    check=cue['structuralEvidence']['pulseCheck'];fade=cue['fade']
+    check=cue['structuralEvidence']['pulseCheck']
+    protected=cue.get('rhythmicTailWindow') is True
+    full_window=cue['measuredFullBeat'] or protected
+    fade=cue['structuralEvidence']['rhythmicWindow']['seconds'] if protected else cue['fade']
     a=observed(outgoing,sr,check['source'],pre_roll)
     b=observed(incoming,sr,[t/cue['tempo'] for t in check['target']],pre_roll)
     a=[t for t in a if -.075<=t<=fade-.12];b=[t for t in b if -.075<=t<=fade-.12]
@@ -35,12 +65,12 @@ def verify(outgoing,incoming,sr,cue,pre_roll):
     errors=[x[2] for x in matches];ratio=len(errors)/max(1,len(a),len(b))
     rms=float(np.sqrt(np.mean(np.square(errors)))) if errors else None
     first=sum(t<fade/2 for _,t,_ in matches);second=len(matches)-first
-    mode='full-pcm' if cue['measuredFullBeat'] else 'metrical-rhythmic'
+    mode='protected-tail-rhythm' if protected else 'full-pcm' if cue['measuredFullBeat'] else 'metrical-rhythmic'
     accepted=len(errors)>=8 and rms is not None and rms<=.04 and ratio>=.90 and min(first,second)>=3
     counts=[]
-    if cue['measuredFullBeat'] and cue.get('measuredPulseMode'):
+    if full_window and cue.get('measuredPulseMode'):
         accepted=accepted and len(errors)>=12 and ratio>=.95 and rms<=.025 and min(first,second)>=5
-    elif not cue['measuredFullBeat']:
+    elif not full_window:
         bars=check['sourceBars']
         counts=[sum(start-.05<=t<(bars[i+1] if i+1<len(bars) else fade)-.05 for _,t,_ in matches) for i,start in enumerate(bars)]
         actual_downbeats=all(any(abs(t-start)<=.05 for t in a) for start in bars) and all(any(abs(t-start)<=.05 for t in b) for start in check['targetBars'])
@@ -60,5 +90,5 @@ def verify(outgoing,incoming,sr,cue,pre_roll):
         'sourceAttacks':len(a),'incomingAttacks':len(b),'matches':len(errors),'agreement':ratio,
         'rmsSeconds':rms,'firstHalfMatches':first,'secondHalfMatches':second,
         'sharedPerBar':counts,'sourceObserved':a,'incomingObserved':b,
-        'notHumanListening':True,**({'downbeatsVerified':bool(downbeat_verified),'downbeatRmsSeconds':downbeat_error,
+        'notHumanListening':True,**({'rhythmicWindowSeconds':fade} if protected else {}),**({'downbeatsVerified':bool(downbeat_verified),'downbeatRmsSeconds':downbeat_error,
         'maximumDownbeatError':downbeat_max,'downbeatMatches':downbeat_matches} if cue.get('preservedFileTail') else {})}

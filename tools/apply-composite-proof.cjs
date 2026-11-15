@@ -9,13 +9,17 @@ for(const row of report.results){
  if(p?.experimentalSharedTempo||p?.sourceRate!=null)throw Error('Experimental source clock cannot be installed');
  if(!a||!b||a.sha!==p.sourceSha||b.sha!==p.targetSha||!c||c.overlapPeak>.961||c.peak>.9991||c.oversampledPeak>1||
     c.pitchPreserved!==true||c.timingVerified!==true||c.sourceSha!==a.sha||c.targetSha!==b.sha)throw Error('Unbound composite proof');
+ if(p.rhythmicTailWindow&&(p.measuredFullBeat!==false||p.metricalRhythmic!==true||
+   p.preservedEntrance!=='rhythmic-tail-foreground-v1'||c.resampledCommonProof?.assetSha256!==c.sha256||
+   c.resampledCommonProof?.sampleRate!==44100||c.resampledCommonProof?.rhythm?.accepted!==true))throw Error('Missing actual common resampling proof');
  if(p.structuralBeat){
   if(c.rhythmVerified!==true||c.postRenderRhythm?.accepted!==true)throw Error('Missing actual rendered rhythm proof');
   a.structuralBeatPlans??={};
   const existing=a.structuralBeatPlans[b.sha],cues=existing?.cues||[];
   const sameWindow=x=>['begin','end','entry','fade','tempo'].every(k=>
    Number.isFinite(x[k])&&Math.abs(x[k]-p[k])<.0001)&&
-   x.measuredFullBeat===p.measuredFullBeat&&x.metricalRhythmic===p.metricalRhythmic&&x.preservedEntrance===p.preservedEntrance;
+   x.measuredFullBeat===p.measuredFullBeat&&x.metricalRhythmic===p.metricalRhythmic&&x.preservedEntrance===p.preservedEntrance&&x.rhythmicTailWindow===p.rhythmicTailWindow&&
+   (!p.rhythmicTailWindow||Math.abs(x.structuralEvidence?.rhythmicWindow?.seconds-p.structuralEvidence?.rhythmicWindow?.seconds)<.0001);
   // A second OS/encoder may produce a different FLAC hash for the same
   // certified window. Keep the already installed verified rendition.
   if(!cues.some(x=>x.composite.sha256===p.composite.sha256||sameWindow(x)))cues.push(p);

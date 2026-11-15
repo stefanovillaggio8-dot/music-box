@@ -6,8 +6,10 @@ const {placements}=require('./pcm-affine-placements.cjs');
 const {metricalFit}=require('./pcm-metrical-fit.cjs');
 const {shortlist}=require('./shortlist-musical-windows.cjs');
 const {vocalHandoff}=require('./pcm-vocal-handoff.cjs');
+const {rhythmicTail}=require('./pcm-rhythmic-tail.cjs');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const partial=arg('metrical','false')==='true';
+const tailWindows=arg('rhythmic-tail','true')==='true';
 const allowHandoff=arg('vocal-handoff','true')==='true';
 const separateGrids=arg('separate-grid-hypotheses','true')==='true';
 const initialBarLimit=Number(arg('initial-bar-limit','8'));
@@ -123,21 +125,26 @@ for(const a of prepared)for(const b of prepared){
    const h=engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,handoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',handoff?.at);if(!h){excluded('harmony');continue;}harmony=true;reached.add('harmony');
    report.windows++;
    const diagnosis={};const full=engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,fade,diagnosis);
-   const fit=partial?(!full&&metricalFit(pairOut,pairIn,x,y,begin,rate)):full;if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
-   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:h,sourceWindow:x,targetWindow:y,incomingGuard:guard,outgoingGuard,
+   const ending=tailWindows&&!partial&&!full?rhythmicTail(pairOut,begin,fade,x.end):null;
+   const windowFit=ending?engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,ending.seconds):null;
+   const fit=partial?(!full&&metricalFit(pairOut,pairIn,x,y,begin,rate)):(full||windowFit);if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
+   const windowHarmony=windowFit?(engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,'rhythmic-tail-foreground-v1',ending.seconds+.3)):h;
+   if(!windowHarmony){excluded('tailForegroundHarmony');continue;}
+   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,...(windowFit?{rhythmicTail:ending}:{}),incomingGuard:guard,outgoingGuard,
     vocalOverlapPolicy:incomingClear?'instrumental-incoming-v1':handoff?'separated-vocal-handoff-v1':'instrumental-outgoing-v1',vocalHandoff:handoff,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown,pairOut,pairIn});
   }
  }
- const firstMissing=['meterAndSpan','bpm','observedDownbeat','affineDownbeatFit','duration','voice','harmony'].find(k=>!reached.has(k))||(!choices.length?'independentBeatFit':'completeCandidates');
+ const firstMissing=['meterAndSpan','bpm','observedDownbeat','affineDownbeatFit','duration','voice','harmony'].find(k=>!reached.has(k))||(!choices.length?'independentBeatFit':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
  for(const p of profiles){report.pairConditions[p]??={};report.pairConditions[p][firstMissing]=(report.pairConditions[p][firstMissing]||0)+1;}
- count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':partial?'partialCandidates':'completeCandidates');
+ count(profiles,!tempo?'meterOrTempo':!voice?'incomingVocalOrLyric':!harmony?'localHarmony':!choices.length?'independentBeatFit':partial?'partialCandidates':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
  if(choices.length){
   const selected=shortlist(choices);
   for(const [number,c] of selected.entries()){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
-   const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial,metricalRhythmic:partial,
+   const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial&&!c.rhythmicTail,metricalRhythmic:partial||!!c.rhythmicTail,
+    ...(c.rhythmicTail?{rhythmicTailWindow:true}:{}),
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
-    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
+    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.rhythmicTail?'rhythmic-tail-foreground-v1':c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
     sourceTempoBpm:60*x.bars*x.meter/(x.end-x.start),targetTempoBpm:60*y.bars*y.meter/(y.end-y.start),
     nominalTempo:(y.end-y.start)/(x.end-x.start),nativeRatePreferred:c.tempo===1&&fit.rms<=.025,
@@ -149,6 +156,7 @@ for(const a of prepared)for(const b of prepared){
     percussiveIntro:!!h.percussiveIntro,harmonicScore:h.average,harmonicWeakest:h.weakest,
     structuralEvidence:{version:1,...(x.analysisView||y.analysisView?{edgeAnalysisViews:{source:x.analysisView||'original',target:y.analysisView||'original'}}:{}),bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
      ...(partial?{metricalCertificate:fit.metricalCertificate}:{}),
+     ...(c.rhythmicTail?{rhythmicWindow:c.rhythmicTail}:{}),
      downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,...(c.vocalHandoff?{vocalHandoff:c.vocalHandoff}:{}),
      sourceObservedDownbeats:c.sourceObservedDownbeats,targetObservedDownbeats:c.targetObservedDownbeats,
      sourceModelDownbeats:x.downbeats,targetModelDownbeats:y.downbeats,

@@ -19,10 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         browser: [chromium, webkit]
+        profile: [Emanuele, Ste]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
+      MUSICBOX_COMPOSITE_PROFILE: ${{ matrix.profile }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,7 +43,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: common-pcm-browser-proof-${{ matrix.browser }}
+          name: common-pcm-browser-proof-${{ matrix.profile }}-${{ matrix.browser }}
           path: |
             composite-browser-result.json
             storage-browser-result.json

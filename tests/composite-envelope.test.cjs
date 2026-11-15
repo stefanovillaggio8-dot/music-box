@@ -102,3 +102,17 @@ test('lookahead reserves numerical headroom for a hot original transient while k
  assert.equal(result.gainProof.firstGain,1);assert.equal(result.gainProof.nativeRevealGain,1);
  assert.equal(result.components.outgoing[0][1200],Math.fround(1.3285365),'original transient is preserved before shared safety gain');
 });
+
+test('a protected rhythmic decay promotes the new song before EOF without dropping the original tail',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:7.5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,
+  preserveTail:true,vocalFadeSeconds:0,rhythmicTailWindow:true,measuredFullBeat:false,metricalRhythmic:true,
+  preservedEntrance:'rhythmic-tail-foreground-v1',structuralEvidence:{rhythmicWindow:{seconds:5}}};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>new Float32Array(Math.round(7.8*sr)).fill(.05))};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>new Float32Array(sr*12).fill(.3))};
+ const result=compositePCM(outgoing,incoming,cue),at=Math.round((.3+5.7)*sr),last=outgoing.channels[0].length-1;
+ assert.equal(result.components.incoming[0][at],Math.fround(.3));
+ assert.equal(result.components.outgoing[0][at],Math.fround(.05));assert.equal(result.components.outgoing[0][last],Math.fround(.05));
+ assert.equal(result.components.incoming[0][last],result.components.incoming[0][last+1]);
+ assert.throws(()=>compositePCM(outgoing,incoming,{...cue,measuredFullBeat:true}),/Unbound rhythmic tail/);
+});

@@ -70,8 +70,8 @@ const server=http.createServer(async(req,res)=>{
     assert.equal(resampled.sampleRate,44100);assert.deepEqual(resampled.rejected,[]);
     // Exercise pitch-preserving stretch AND intact decoded EOF together,
     // using an incoming recording from zero rather than a historical cut.
-    const plan=plans.filter(p=>p.from==='audio/songs/track-700.mp3'&&p.toSha===data.entries['audio/songs/track-521.mp3'].sha&&p.cue.preservedFileTail&&p.cue.entry===0&&
-     p.cue.preservedEntrance==='vocal-handoff-foreground-v1'&&Math.abs(p.cue.tempo-1)>.001)
+    const plan=plans.filter(p=>p.from===(playbackProfile==='Ste'?'audio/songs/bassi/track-53.mp3':'audio/songs/track-700.mp3')&&p.toSha===data.entries[playbackProfile==='Ste'?'audio/songs/bassi/track-51.mp3':'audio/songs/track-521.mp3'].sha&&p.cue.preservedFileTail&&p.cue.entry===0&&
+     p.cue.preservedEntrance===(playbackProfile==='Ste'?'rhythmic-tail-foreground-v1':'vocal-handoff-foreground-v1')&&Math.abs(p.cue.tempo-1)>.001)
      .sort((a,b)=>a.cue.fade-b.cue.fade)[0];
     assert.ok(plan,'A rendered intact-file stretch must be available');
     await original(plan.fromSha);await original(plan.toSha);
@@ -144,7 +144,7 @@ const server=http.createServer(async(req,res)=>{
     const actualPlan=await shell.evaluate(({plans,profile})=>{
      const tracks=MusicBoxBridge.allTracks(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
-      if(!p.cue.structuralBeat||!p.cue.measuredFullBeat)continue;
+      if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow)continue;
       const a=find(p.from),b=find(p.to);
       if(!a||!b||(a.profile||'Ste')!==profile||(b.profile||'Ste')!==profile)continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
@@ -237,16 +237,16 @@ const server=http.createServer(async(req,res)=>{
       rows:[...document.querySelectorAll('.track')].map(x=>x.textContent),diagnostics:MusicBoxMix.diagnostics()};
     })));throw error;}
     await auto.locator('#search').fill('');
-    try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0,{timeout:20000});}
+    try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0||MusicBoxMix.diagnostics().shuffleSearch?.partialBeatCandidates>0,{timeout:20000});}
     catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection()}))));throw error;}
     const automaticShuffle=await auto.evaluate(()=>{
      const next=MusicBoxBridge.mixNext(),current=MusicBoxBridge.currentId(),state=MusicBoxBridge.mixShuffleSelection();
      return {full:MusicBoxMix.inspectPair(current,next.id).cue?.measuredFullBeat===true,
-      manualQueue:state.manualCount,poolRespected:MusicBoxBridge.mixShufflePool().some(t=>t.id===next.id)};
+      partial:MusicBoxMix.inspectPair(current,next.id).cue?.metricalRhythmic===true,manualQueue:state.manualCount,poolRespected:MusicBoxBridge.mixShufflePool().some(t=>t.id===next.id)};
     });
-    assert.equal(automaticShuffle.full,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
+    assert.equal(automaticShuffle.full,playbackProfile==='Emanuele');if(playbackProfile==='Ste')assert.equal(automaticShuffle.partial,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
     await autoContext.close();
-    results.push({browser:name,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
+    results.push({browser:name,profile:playbackProfile,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
      optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,physicalIPhone:false});

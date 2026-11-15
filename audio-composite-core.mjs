@@ -13,9 +13,11 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  const preRoll=cue.renderPreRoll??.3,releaseSeconds=cue.renderReleaseSeconds??.9;
  if(![.3,.6,.9].includes(preRoll)||![.9,1.2,1.5].includes(releaseSeconds))throw Error('Unbounded common gain envelope');
  const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
- const preserveFile=cue.preservedFileTail===true,foreground=preserveFile&&cue.preservedEntrance==='vocal-handoff-foreground-v1';
- const vocalAt=cue.structuralEvidence?.vocalHandoff?.at;
- if(foreground&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>cue.fade-.6||cue.structuralEvidence?.vocalOverlapPolicy!=='separated-vocal-handoff-v1'))throw Error('Unbound vocal foreground envelope');
+ const preserveFile=cue.preservedFileTail===true,tailForeground=preserveFile&&cue.preservedEntrance==='rhythmic-tail-foreground-v1',vocalForeground=preserveFile&&cue.preservedEntrance==='vocal-handoff-foreground-v1',foreground=tailForeground||vocalForeground;
+ const windowSeconds=cue.structuralEvidence?.rhythmicWindow?.seconds;
+ const vocalAt=tailForeground?windowSeconds+.3:cue.structuralEvidence?.vocalHandoff?.at;
+ if(tailForeground&&(cue.rhythmicTailWindow!==true||cue.measuredFullBeat!==false||cue.metricalRhythmic!==true||!Number.isFinite(windowSeconds)||windowSeconds<4.5||cue.fade-windowSeconds<.65||cue.fade-windowSeconds>8))throw Error('Unbound rhythmic tail envelope');
+ if(vocalForeground&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>cue.fade-.6||cue.structuralEvidence?.vocalOverlapPolicy!=='separated-vocal-handoff-v1'))throw Error('Unbound vocal foreground envelope');
  if(preserveFile&&(cue.nativeTailFullBeat!==true||cue.preserveTail!==true||cue.entry!==0||cue.vocalFadeSeconds!==0))throw Error('Unbound intact-file mode');
  const nativeHandoffAt=cue.structuralBeat&&!preserveFile?cue.fade:(outgoing.channels[0].length-aOffset)/sr-preRoll;
  if((!cue.structuralBeat||preserveFile)&&(nativeHandoffAt<cue.fade-.1||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
@@ -71,7 +73,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
   }
   for(let i=frames-2;i>=0;i--)reduction[i]=Math.max(reduction[i],reduction[i+1]-attack);
   const reveal=Math.round((preRoll+nativeHandoffAt+releaseSeconds+.15)*sr);
-  if(reduction[0]>1e-6||reduction[reveal]>1e-6)throw Error('Lookahead gain cannot meet native boundaries');
+  if(reduction[0]>1e-6||reduction[reveal]>1e-6)throw Error('Lookahead gain cannot meet native boundaries (entry='+reduction[0].toFixed(4)+'dB, reveal='+reduction[reveal].toFixed(4)+'dB)');
   const maximum=reduction.reduce((a,b)=>Math.max(a,b),0);
   if(maximum>4.5)throw Error('Excessive shared gain reduction');
   gainEnvelope=Float64Array.from(reduction,x=>10**(-x/20));headroom=10**(-maximum/20);

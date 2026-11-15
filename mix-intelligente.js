@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=7",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=8",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2644,7 +2644,7 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
 // key and clash limits on every meaningful frame; bound even an unknown
 // quiet frame by its worst possible cross interaction at the actual gain.
 function pcmPreservedTailHarmony(outro,intro,begin,rate,fade,entrance='native-tail-sine-033-v1',vocalAt=null){
- if(!['native-tail-sine-033-v1','first-attack-033-v1','vocal-handoff-foreground-v1'].includes(entrance)||entrance==='vocal-handoff-foreground-v1'&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>fade-.6))return null;
+ if(!['native-tail-sine-033-v1','first-attack-033-v1','vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(entrance)||['vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(entrance)&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>fade-(entrance==='rhythmic-tail-foreground-v1'?.3:.6)))return null;
  const nearest=(part,t)=>{
   let row=null,distance=Infinity;
   for(const r of part.harmony){const d=Math.abs(r.t-t);if(d<distance){distance=d;row=r}}
@@ -2659,7 +2659,7 @@ function pcmPreservedTailHarmony(outro,intro,begin,rate,fade,entrance='native-ta
  for(let t=.5;t<=fade-.5;t+=.5){
   const a=nearest(outro,begin+t),b=nearest(intro,t*rate);if(!a||!b)return null;frames++;
   const rise=Number.isFinite(vocalAt)?clamp((t-(vocalAt-.3))/.6,0,1):0;
-  const incomingGain=entrance==='vocal-handoff-foreground-v1'?.33+.67*rise*rise*(3-2*rise):entrance==='first-attack-033-v1'?.33:.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
+  const incomingGain=['vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(entrance)?.33+.67*rise*rise*(3-2*rise):entrance==='first-attack-033-v1'?.33:.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
    aa=a.rms,bb=b.rms*incomingGain,w=aa+bb>0?4*aa*bb/(aa+bb)**2:0;
   if((a.rms<.005||b.rms<.005)&&w<=.05){boundedQuiet++;continue;}
   const x=normalize(a.notes),y=normalize(b.notes);if(!x||!y)return null;
@@ -2804,6 +2804,29 @@ function incomingContentDecision(b,p){
 }
 function validatePreservedFileTailCue(record,p,a,b,dur){
  const e=p?.structuralEvidence,c=p?.composite,h=p?.harmonicEvidence,r=c?.postRenderRhythm,g=e?.incomingWholeOverlap;
+ const strict=p?.measuredFullBeat===true&&p?.metricalRhythmic===false&&p?.rhythmicTailWindow!==true;
+ const rhythmic=p?.measuredFullBeat===false&&p?.metricalRhythmic===true&&p?.rhythmicTailWindow===true;
+ const w=e?.rhythmicWindow,t=r?.tailEvidence;
+ const resampled=c?.resampledCommonProof,rr=resampled?.rhythm;
+ const tailValid=rhythmic&&p.preservedEntrance==='rhythmic-tail-foreground-v1'&&w?.method==='original-pcm-rhythm-ending-v1'&&w.tailPreserved===true&&
+  [w.seconds,w.tailSeconds,w.lastOriginalOnset,w.maximumTailOnset].every(Number.isFinite)&&
+  w.seconds>=4.5&&w.tailSeconds>=.65&&w.tailSeconds<=8&&Math.abs(w.seconds+w.tailSeconds-p.fade)<.001&&
+  w.lastOriginalOnset>=0&&w.lastOriginalOnset<w.seconds&&w.maximumTailOnset>=0&&w.maximumTailOnset<.25&&w.onsetThreshold===.25&&
+  t?.method==='unmodified-original-hpss-tail-v1'&&t.accepted===true&&t.sourceGainApplied===false&&t.searchedEntireTail===true&&
+  [t.rhythmicSeconds,t.sourceTailThrough,t.tailSeconds,t.maximumTailOnset,t.bodyRmsMedian,t.maximumTailRms,t.maximumRelativeRms,r.rhythmicWindowSeconds].every(Number.isFinite)&&
+  Math.abs(t.rhythmicSeconds-w.seconds)<.001&&Math.abs(r.rhythmicWindowSeconds-w.seconds)<.001&&
+  Math.abs(t.sourceTailThrough-p.fade)<.001&&Math.abs(t.tailSeconds-w.tailSeconds)<.001&&
+  t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&t.onsetThreshold===.25&&t.bodyRmsMedian>=.003&&
+  t.maximumTailRms>=0&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&t.relativeRmsCeiling===.5&&
+  c.sampleRate===48000&&resampled?.method==='encoded-common-resampling-v1'&&resampled.sampleRate===44100&&resampled.assetSha256===c.sha256&&
+  [resampled.samplePeak,resampled.oversampledPeak,resampled.oversampledOverlapPeak].every(Number.isFinite)&&
+  resampled.samplePeak>0&&resampled.samplePeak<=.9992&&resampled.oversampledPeak<=1&&resampled.oversampledOverlapPeak<=.961&&
+  rr?.method==='rendered-hpss-attacks-v1'&&rr.mode==='protected-tail-rhythm'&&rr.accepted===true&&
+  [rr.matches,rr.agreement,rr.rmsSeconds,rr.firstHalfMatches,rr.secondHalfMatches,rr.downbeatRmsSeconds,rr.maximumDownbeatError,rr.rhythmicWindowSeconds].every(Number.isFinite)&&
+  rr.matches>=8&&rr.agreement>=.9&&rr.agreement<=1&&rr.rmsSeconds>=0&&rr.rmsSeconds<=.04&&rr.firstHalfMatches>=3&&rr.secondHalfMatches>=3&&
+  rr.downbeatsVerified===true&&rr.downbeatMatches===e.bars&&rr.downbeatRmsSeconds>=0&&rr.downbeatRmsSeconds<=.025&&rr.maximumDownbeatError<=.05&&
+  Math.abs(rr.rhythmicWindowSeconds-w.seconds)<.001&&rr.tailEvidence?.accepted===true&&rr.tailEvidence.method==='unmodified-original-hpss-tail-v1'&&
+  rr.tailEvidence.searchedEntireTail===true&&rr.tailEvidence.sourceGainApplied===false&&rr.tailEvidence.maximumTailOnset<.25&&rr.tailEvidence.maximumRelativeRms<=.5;
  const quiet=proof=>proof?.method==='spleeter-2stems-energy-v1'&&proof.clear===true&&
   [proof.start,proof.end,proof.maxVocalRms,proof.maxRelativeVocal].every(Number.isFinite)&&
   proof.maxVocalRms>=0&&proof.maxVocalRms<.004&&proof.maxRelativeVocal>=0&&proof.maxRelativeVocal<.08;
@@ -2825,10 +2848,11 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
-    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||p.measuredFullBeat!==true||p.metricalRhythmic!==false||
+    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic)||rhythmic&&!tailValid||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
-    p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1'].includes(p.preservedEntrance)||
+    p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(p.preservedEntrance)||
     p.preservedEntrance==='vocal-handoff-foreground-v1'&&!separated||
+    p.preservedEntrance==='rhythmic-tail-foreground-v1'&&!rhythmic||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     p.sourceSha!==a.sha||p.targetSha!==b.sha||p.entry!==0||p.vocalFadeSeconds!==0||p.gain!==1||
     ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
@@ -2846,7 +2870,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     c?.sourceSha!==a.sha||c.targetSha!==b.sha||c.pitchPreserved!==true||c.timingVerified!==true||
     ![c.peak,c.overlapPeak,c.oversampledPeak,c.sourceReadThrough].every(Number.isFinite)||c.peak>.9991||c.overlapPeak>.961||c.oversampledPeak>1||
     Math.abs(c.sourceReadThrough-a.duration)>.1||c.outgoingEnvelope!=='unity-through-decoded-eof-v1'||
-    c.rhythmVerified!==true||r?.method!=='rendered-hpss-attacks-v1'||r.accepted!==true||r.mode!=='full-pcm'||
+    c.rhythmVerified!==true||r?.method!=='rendered-hpss-attacks-v1'||r.accepted!==true||r.mode!==(rhythmic?'protected-tail-rhythm':'full-pcm')||
     ![r.matches,r.agreement,r.rmsSeconds,r.firstHalfMatches,r.secondHalfMatches,r.downbeatRmsSeconds,r.maximumDownbeatError,r.downbeatMatches].every(Number.isFinite)||
     r.matches<8||r.agreement<.9||r.agreement>1||r.rmsSeconds<0||r.rmsSeconds>.04||r.firstHalfMatches<3||r.secondHalfMatches<3||r.downbeatsVerified!==true||
     r.downbeatMatches!==e.bars||r.downbeatRmsSeconds>.025||r.maximumDownbeatError>.05)return null;

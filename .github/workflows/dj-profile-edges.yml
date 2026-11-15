@@ -64,7 +64,7 @@ jobs:
           path: edges
       - run: |
           gh run download 43463500768 --repo stefanovillaggio8-dot/music-box --pattern 'whole-structure-*' --dir whole
-          node tools/build-preserved-tail-plans.cjs --structure=whole --edges=edges --output=results/profile-preserved-tail-candidates.json
+          node tools/build-preserved-tail-plans.cjs --rhythmic-tail=true --structure=whole --edges=edges --output=results/profile-preserved-tail-candidates.json
       - uses: actions/upload-artifact@v4
         with:
           name: intact-profile-candidates

@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--release-seconds',type=float,choices=(.9,1.2,1.5),default=.9)
     parser.add_argument('--gain-mode',choices=('constant','lookahead'),default='constant')
     parser.add_argument('--true-peak-lookahead',action='store_true')
+    parser.add_argument('--envelope-search',action='store_true',help='Retry only unsafe native splice boundaries with bounded existing envelopes; every retry retains all PCM gates')
     parser.add_argument('--context-mode',choices=('auto','warm','cold'),default='auto');args=parser.parse_args()
     if args.rate not in (16000,44100,48000):raise ValueError('Unsupported sample rate')
     if not .85<=args.peak_ceiling<=.96:raise ValueError('Unsafe peak ceiling')
@@ -30,6 +31,39 @@ def main():
     report_path=pathlib.Path(args.report);report_path.parent.mkdir(parents=True,exist_ok=True)
     if not plans:
         report_path.write_text(json.dumps({'requested':0,'rendered':0,'results':[]})+'\n')
+        return
+    if args.envelope_search:
+        # Arbitrary initial offsets can fall on a hot original transient.
+        # Try a bounded set of already supported native splice envelopes,
+        # never weakening the peak/gain bounds or retrying bad rhythm forever.
+        presets=list(dict.fromkeys([(args.pre_roll,args.release_seconds),(.9,1.2),(.3,1.5),(.9,1.5)]))
+        chosen=[None]*len(plans);history=[[] for _ in plans];pending=list(range(len(plans)))
+        with tempfile.TemporaryDirectory(prefix='envelope-audit-',dir=report_path.parent) as temporary:
+            temporary=pathlib.Path(temporary)
+            for attempt,(pre,release) in enumerate(presets):
+                if not pending:break
+                inputs=temporary/f'input-{attempt}.json';outputs=temporary/f'output-{attempt}.json'
+                inputs.write_text(json.dumps({'plans':[plans[i] for i in pending]}),encoding='utf8')
+                command=[sys.executable,str(pathlib.Path(__file__).resolve()),'--plans='+str(inputs),
+                    '--assets='+str(assets.resolve()),'--cache='+str(cache.resolve()),'--report='+str(outputs),
+                    '--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling),'--pre-roll='+str(pre),
+                    '--release-seconds='+str(release),'--gain-mode='+args.gain_mode,'--context-mode='+args.context_mode]
+                if args.true_peak_lookahead:command.append('--true-peak-lookahead')
+                subprocess.run(command,check=False)
+                if not outputs.exists():raise ValueError('Missing independent envelope report')
+                rows=json.loads(outputs.read_text(encoding='utf8'))['results']
+                if len(rows)!=len(pending):raise ValueError('Incomplete independent envelope report')
+                retry=[]
+                for i,row in zip(pending,rows):
+                    history[i].append({'preRoll':pre,'releaseSeconds':release,'error':row.get('error')})
+                    chosen[i]=row
+                    if 'native boundaries' in row.get('error',''):retry.append(i)
+                pending=retry
+        for i,row in enumerate(chosen):row['envelopeAttempts']=history[i]
+        rendered=sum('cue' in r for r in chosen)
+        report_path.write_text(json.dumps({'requested':len(plans),'rendered':rendered,
+            'envelopePolicy':'bounded-native-boundary-retries-v1','results':chosen},indent=2)+'\n',encoding='utf8')
+        if not rendered:raise SystemExit('No candidate passed actual PCM rendering')
         return
     if args.context_mode=='auto':
         # Context can improve a transient or move WSOLA's selected grain.
@@ -112,7 +146,35 @@ def main():
                     old=np.frombuffer((folder/'old.f32').read_bytes(),dtype='<f4').reshape(-1,2)
                     new=np.frombuffer((folder/'new.f32').read_bytes(),dtype='<f4').reshape(-1,2)
                     post_rhythm=rhythm.verify(old,new,args.rate,cue,proof['preRoll'])
+                    if cue.get('rhythmicTailWindow'):
+                        post_rhythm['tailEvidence']=rhythm.tail_evidence(outgoing,args.rate,cue,proof['preRoll'])
+                        post_rhythm['accepted']=post_rhythm['accepted'] and post_rhythm['tailEvidence']['accepted']
                     if not post_rhythm['accepted']:raise ValueError('Post-render rhythm certificate failed')
+                resampled_proof=None
+                if cue.get('rhythmicTailWindow') and args.rate==48000:
+                    # Safari decodes/resamples this deployed 48 kHz FLAC. It
+                    # does NOT rerun SoundTouch at 44.1 kHz. Certify that actual
+                    # path, including the encoded mixed signal and both audible
+                    # components, with exactly the same rhythmic/peak gates.
+                    old44=resample_poly(old,147,160,axis=0)
+                    new44=resample_poly(new,147,160,axis=0)
+                    raw44=resample_poly(outgoing,147,160,axis=0)
+                    proof44=rhythm.verify(old44,new44,44100,cue,proof['preRoll'])
+                    proof44['tailEvidence']=rhythm.tail_evidence(raw44,44100,cue,proof['preRoll'])
+                    proof44['accepted']=proof44['accepted'] and proof44['tailEvidence']['accepted']
+                    try:
+                        audit.SR=44100;decoded44=audit.decode(target,0,20)
+                    finally:audit.SR=args.rate
+                    oversampled44=resample_poly(decoded44,4,1,axis=0)
+                    lo44=round(proof['preRoll']*44100*4)
+                    hi44=round((proof['preRoll']+proof['nativeHandoffAt'])*44100*4)
+                    peak44=float(np.max(np.abs(decoded44)));true44=float(np.max(np.abs(oversampled44)))
+                    overlap44=float(np.max(np.abs(oversampled44[lo44:hi44])))
+                    resampled_proof={'method':'encoded-common-resampling-v1','sampleRate':44100,
+                        'samplePeak':peak44,'oversampledPeak':true44,'oversampledOverlapPeak':overlap44,
+                        'rhythm':proof44,'notASecondSoundTouchRender':True}
+                    if not proof44['accepted'] or peak44>.9992 or true44>1 or overlap44>.961:
+                        raise ValueError('Actual encoded common resampling certificate failed')
                 content=target.read_bytes();sha=hashlib.sha256(content).hexdigest()
                 peak=float(np.max(np.abs(decoded)))
                 if peak>.9991 or true_peak>1 or abs(len(decoded)/args.rate-proof['seconds'])>.001:raise ValueError(f'Lossless/oversampled render validation failed (sample={peak:.8f}, true={true_peak:.8f})')
@@ -132,6 +194,7 @@ def main():
                 composite['processing']=proof['timing'].get('method','soundtouch-wsola')
                 if post_rhythm:
                     composite['rhythmVerified']=True;composite['postRenderRhythm']=post_rhythm
+                if resampled_proof:composite['resampledCommonProof']={**resampled_proof,'assetSha256':sha}
                 results.append({**p,'cue':{**cue,'composite':composite},'renderProof':proof,'renderContext':args.context_mode,'bytes':len(content)})
                 print(json.dumps({'from':p['from'],'to':p['to'],'peak':peak,'bytes':len(content)}),flush=True)
         except Exception as error:
