@@ -1,0 +1,13 @@
+{
+  "id": "b-track-7@30c7dd0e01e288fdee55c9a92973855f5e98be9f",
+  "sourceAudioSha256": "13fd6ebb23a30846565648f4351381f4185765829d3113240097a8a9214601a4",
+  "windows": [
+    0,
+    24
+  ],
+  "observedRows": 7,
+  "observedWords": 48,
+  "estimatedRows": 0,
+  "wordReferenceTimesSupplied": false,
+  "outputSha256": "6a52220752bc01c511dacede4755dd709911fec3886cc86e7ae46beed842a2f9"
+}

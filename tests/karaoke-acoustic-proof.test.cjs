@@ -76,6 +76,16 @@ test('precomputed ASR restores measured words over estimates and rejects a chang
  assert.equal(f.api.recognizedRows([loaded[0],f.rows[1]],proof).length,0,'existing measured rows keep their own intervals');
  p.asr.revision='different';const changed=await f.api.prepare(p,estimated,'a'.repeat(64));assert.equal(f.api.recognizedRows(estimated,changed).length,0);
 });
+test('offline precomputed rows pass the real application save and preserve earlier partial intervals',async()=>{
+ const f=fixture();f.rows.push({t:12,text:'your heart will always be here with me'});
+ const original=f.observations.slice(0,4).map((w,i)=>({...w,wordIndex:i,t:+(w.t+.01).toFixed(3),end:+(w.end+.01).toFixed(3)}));
+ const create=require('../tools/karaoke-application-fixture.cjs'),state=create(f.c)({synced:f.rows.map(r=>'[00:'+r.t.toFixed(3).padStart(6,'0')+'] '+r.text).join('\n'),
+  wordRows:[{...f.rows[0],partialAudio:true,acousticSpans:original}]});
+ const candidate={t:1,sourceT:1,text:f.rows[0].text,words:f.observations.map((w,i)=>({text:w.text+(i<5?' ':''),t:w.t,end:w.end}))};
+ assert.equal(await state.save('song',[candidate]),1);
+ const row=state.rows()[0];assert.equal(row.estimated,undefined);assert.equal(row.words.length,6);
+ for(let i=0;i<4;i++){assert.equal(row.words[i].t,original[i].t);assert.equal(row.words[i].end,original[i].end);}
+});
 test('proof-only karaoke works without a GPU, decoder or worker and does not repeat MP3 reads',async()=>{
  const f=fixture(),p=await f.proof(),values=new Map(),events=new Map();
  f.rows.push({t:12,text:'your heart will always be here with me'});

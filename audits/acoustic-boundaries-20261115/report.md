@@ -67,7 +67,7 @@ Il motore, l'indice delle transizioni e gli asset audio già certificati non son
 
 ## Stabilità, spazio e verifiche
 
-Suite locale: 679/679; nuovi test del percorso delle prove: 11/11; regressioni karaoke/DJ mirate: 9/9; Python struttura: 8/8; nuovo core CTC: 3/3. Il core di produzione riproduce numericamente le osservazioni su 19 finestre di riferimento. Un primo test di cache ha richiesto di correggere la fixture dopo l'introduzione della cache in memoria; un test asincrono è stato reso deterministico aspettando l'effettivo avvio della richiesta invece di un numero arbitrario di giri dell'event loop.
+Suite locale finale: 680/680; nuovi test del percorso delle prove: 12/12; regressioni karaoke/DJ mirate: 9/9; Python struttura: 8/8; nuovo core CTC: 3/3. Il core di produzione riproduce numericamente le osservazioni su 19 finestre di riferimento. Un primo test di cache ha richiesto di correggere la fixture dopo l'introduzione della cache in memoria; un test asincrono è stato reso deterministico aspettando l'effettivo avvio della richiesta invece di un numero arbitrario di giri dell'event loop.
 
 Le verifiche browser native vengono eseguite in GitHub CI, non in raffica sul PC. Risultati finali e SHA del checkpoint saranno aggiunti dopo il completamento dei workflow.
 
@@ -88,3 +88,10 @@ Venti sessioni fresche, seed e registrazioni potenziate invariati. Tutte le 14 c
 | Gym | 460 | 0 → 0 | 20 → 20 | 16 | 283 |
 
 Postlude e underlay restano classi separate nei JSON. Nelle riproduzioni ordinate e nelle code manuali simulate risultano zero completi; la scelta manuale non viene alterata. Anche il sottoinsieme offline sintetico al 50%, senza buffer PCM comuni precaricati, dà zero completi: non è una misura dei download sul telefono. Contenuto saltato e uscite che troncano il file: zero. Durate degli overlap, raccordi normali e massime sequenze senza ritmo verificato sono conservati separatamente per ogni modalità in `listening-comparison.json`.
+
+
+## Riproducibilità del precomputo
+
+Il produttore Node `tools/precompute-karaoke-rows.mjs` esegue i contesti 28/14/7 secondi sul PCM originale, usa la protezione anti-fase del lettore e salva attraverso le funzioni effettive dell'app. Non esporta righe stimate. Una prova nuova sul primo brano Ste, finestre prefissate 0 e 24 secondi, produce 48 parole osservate in sette righe senza ricevere timestamp umani di parola. Il percorso completo e gli ambienti sono descritti in `tools/README-karaoke-acoustic.md`.
+
+Prima verifica CI del codice applicativo `a8284d71`: test DJ 617/617, karaoke mirato, volume, integrità, Chromium e WebKit generale superati. Le nuove prove karaoke con WebCrypto, fetch, hash, DOM e comportamento offline passano sia in Chromium sia in WebKit. La prima matrice audio completa ha però un timeout WebKit/Ste nell'attesa della sovrapposizione; gli altri sei job sono passati. Il risultato non viene ignorato. La fixture temporizzata ora acquisisce gli MP3 originali SHA-verificati sul server di test prima di aprire i nove secondi di preparazione, così la latenza Internet del runner non consuma quella finestra. Il lettore continua a scaricare/decodificare con il percorso reale e mantiene tutti i controlli; nessuna soglia musicale o di picco cambia. Una nuova matrice verifica questa fixture, con diagnostica aggiuntiva. Il primo timeout da solo non dimostra la causa né un problema su iPhone fisico.

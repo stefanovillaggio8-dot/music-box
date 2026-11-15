@@ -161,22 +161,30 @@ const server=http.createServer(async(req,res)=>{
       const a=find(p.from),b=find(p.to);
       if(!a||!b||(a.profile||'Ste')!==profile||(b.profile||'Ste')!==profile)continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
-      if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue};
+      if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
+       fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
      return null;
     },{profile:playbackProfile,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
      Number(b.from==='audio/songs/track-934.mp3'&&b.to==='audio/songs/track-1124.mp3')-
      Number(a.from==='audio/songs/track-934.mp3'&&a.to==='audio/songs/track-1124.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
+    // Network latency retrieving the external original must not consume the
+    // nine-second scheduling window. Only warm the Node fixture's SHA-checked
+    // bytes: the app still fetches, decodes and prepares through its real path.
+    await Promise.all([original(actualPlan.fromSha),original(actualPlan.toSha)]);
     if(playbackProfile==='Emanuele'){
      assert.equal(actualPlan.fromId,'b-track-934');assert.equal(actualPlan.toId,'b-track-1124');
      assert.ok(actualPlan.cue.fade>13&&actualPlan.cue.fade<15);assert.ok(Math.abs(actualPlan.cue.tempo-1)>.001,'Exercise the new vocal-handoff cue through the real planner');
     }
     await shell.evaluate(p=>{
      document.querySelector('#silent-handoff').onclick=async event=>{
+      window.__plannedSetup={stage:'handoff-requested'};
       MusicBoxBridge.mixEnableAudio(event);
       await MusicBoxBridge.mixHandoff(p.fromId,Math.max(0,p.cue.begin-9));
+      __plannedSetup={stage:'source-ready',id:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio().currentTime};
       if(MusicBoxBridge.mixEnqueue([p.toId])!==1)throw Error('Actual queue rejected target');
+      __plannedSetup.stage='target-queued';
       window.__plannedHandoffs=0;
       const handoff=MusicBoxBridge.mixHandoff;
       MusicBoxBridge.mixHandoff=(...args)=>{__plannedHandoffs++;return handoff(...args)};
@@ -185,7 +193,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
-     diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.cue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     setup:window.__plannedSetup,diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     const muteDuringOverlap=await shell.evaluate(()=>{
      const button=document.querySelector('#btnVolIcon');button.click();

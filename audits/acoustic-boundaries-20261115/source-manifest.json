@@ -12,9 +12,14 @@
     "tools/build-karaoke-acoustic.py": "81803ad62d11861cd6623c2cb4435aaaf4f70e06211c4775aa739c18e7e12fd8",
     "tools/build-karaoke-acoustic-index.cjs": "09cdea17e98d7161bf1f6e3111ddb7a76db7a5d6aa7f20fc44d4d4b2164b12eb",
     "tools/benchmark-karaoke-context-replay.cjs": "de62005aa61da1e14a601751d75984f3ddcd13e607c4e294b90f8f3642b5b1b5",
-    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb"
+    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb",
+    "tools/precompute-karaoke-rows.mjs": "b84c4712851a40d9e294686ca2538df114d79ff2f0ee7b40c270c92e5a13e2fc",
+    "tools/karaoke-application-fixture.cjs": "368b0f5cd26a762acae5540988236ef46b16d5959e2934f61b6ce15312a4ab13",
+    "tests/karaoke-acoustic-proof.test.cjs": "ff36da3fc028d1c2e3ebd6a44f7b0a4cf38cd66adcff7302c3ac711a96759caf",
+    "tests/composite-browser.cjs": "e94f59b7ae3546b690d029cc3c6faf3e84623354cb1cf5be6eea83b2eb7dbed0"
   },
   "mixEngineAndIndexUnchanged": true,
   "publicVersionUnchanged": true,
-  "physicalIPhoneTest": false
+  "physicalIPhoneTest": false,
+  "implementationCommit": "a8284d71ecd9a4b075fff0fec8ab20ade06c4835"
 }
