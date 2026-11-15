@@ -1589,13 +1589,13 @@
    },
    "[\"marte\",\"thasup\"]": {
     "v": 3,
-    "s": 234,
+    "s": 276,
     "t": "marte",
     "a": "thasup"
    },
    "m:2026-11|[\"marte\",\"thasup\"]": {
     "v": 3,
-    "s": 234,
+    "s": 276,
     "t": "marte",
     "a": "thasup"
    },
@@ -2362,14 +2362,14 @@
     "a": "Jovanotti"
    },
    "[\"sintetico\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 167,
+    "v": 2,
+    "s": 199,
     "t": "Sintetico",
     "a": "Kid Yugi"
    },
    "m:2026-11|[\"sintetico\",\"kid yugi\"]": {
-    "v": 1,
-    "s": 167,
+    "v": 2,
+    "s": 199,
     "t": "Sintetico",
     "a": "Kid Yugi"
    },
