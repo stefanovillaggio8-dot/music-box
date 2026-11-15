@@ -212,6 +212,9 @@ const server=http.createServer(async(req,res)=>{
     const sourceTitle=sourceInfo.title;
     await auto.locator('#search').click();
     await auto.locator('#search').fill(sourceTitle.replace(/[^\p{L}\p{N}\s]/gu,'').trim());
+    // Wait in the page's timer queue: the source can already exist in the
+    // OLD DOM, before the application's 160 ms debounced render removes it.
+    await auto.evaluate(()=>new Promise(resolve=>setTimeout(resolve,220)));
     // The app debounces filtering for 160 ms. Clicking a row from the
     // unfiltered DOM can lose pointer-up when render() replaces that row.
     // Wait for the actual filtered list, then tap its title, not a row
