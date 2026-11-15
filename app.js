@@ -5943,6 +5943,7 @@ const playFromRow = () => {
   }
 
   function handleEnded() {
+    if(audio?._mbInitialSeekCleanup&&Number(audio.duration)<=.05)return;
     try {
     if (window.MusicBoxRoom?.isActive()) {
       window.MusicBoxRoom.control("next"); return;
@@ -7079,13 +7080,14 @@ function rebuildAudio(autoplay) {
            schermo spento l'aveva già azzerato: quindi riaprendo l'app non
            ripartiva niente. Adesso guardo l'intento vero. */
         if (!_vuoleSuonare || !currentId || !audio) return;
+        if(audio._mbInitialSeekCleanup&&Number(audio.duration)<=.05)return;
         /* Il brano e' finito mentre l'app era in secondo piano? Allora NON
            riprovo a suonarlo (un brano finito non riparte, e l'utente resta
            fermo): vado al successivo. Anche qui non riscrivo la scelta del
            brano, chiamo _finitoSenzaAvanti(), che usa handleEnded(). */
         try {
           const finito = audio.ended ||
-            (isFinite(audio.duration) && audio.duration > 0 &&
+            (isFinite(audio.duration) && audio.duration > .05 &&
               audio.currentTime >= audio.duration - 0.4);
           if (finito) {
             toast("La canzone era finita: e' partita la successiva");
@@ -8116,7 +8118,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
       /* Prima di cambiare: metto in cronologia il brano che sto lasciando,
          cosi' il tasto "indietro" torna davvero a quello. */
       if (id !== currentId) _ricordaBrano(currentId);
-      if (id !== currentId) resumeAt = 0;
+      if (id !== currentId || Number.isFinite(startAt)&&startAt>0) resumeAt = 0;
       try { window.MusicBoxAudioAlign?.cancel?.(); } catch (_) {}
       currentId = id;
       // An explicit new selection must not inherit the old song's

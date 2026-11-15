@@ -41,3 +41,28 @@ test('slow network metadata does not lose the requested start to an arbitrary ti
  const f=fixture(NaN,0);assert.equal(f.writes.length,0);assert.equal(f.timers.size,0);
  f.player.readyState=4;f.player.duration=126;f.emit('loadedmetadata');assert.deepEqual(f.writes,[110.626717314]);
 });
+test('resume cannot infer song completion from the provisional millisecond duration',()=>{
+ const from=app.indexOf('  function _riprendiSeInAttesa() {'),to=app.indexOf('        if (!audio.paused)',from);
+ const check=new Function('audio','next',`const _iosInstallataComeApp=()=>false,document={hidden:false},window={},_vuoleSuonare=true,currentId='source';
+  const toast=()=>{},_finitoSenzaAvanti=next;${app.slice(from,to)}return 'ready';}return _riprendiSeInAttesa();`);
+ let next=0;const provisional={duration:.001,currentTime:.001,ended:false,_mbInitialSeekCleanup:()=>{}};
+ check(provisional,()=>next++);assert.equal(next,0);
+ delete provisional._mbInitialSeekCleanup;check(provisional,()=>next++);assert.equal(next,0);
+ check({duration:126,currentTime:126,ended:true},()=>next++);assert.equal(next,1);
+});
+test('native end dispatch waits for a pending initial seek only while metadata is provisional',()=>{
+ const from=app.indexOf('  function handleEnded() {'),to=app.indexOf('    try {',from);
+ const check=new Function('audio',`${app.slice(from,to)}return 'forward';}return handleEnded();`);
+ assert.equal(check({duration:.001,_mbInitialSeekCleanup:()=>{}}),undefined);
+ assert.equal(check({duration:126,_mbInitialSeekCleanup:()=>{}}),'forward');
+ assert.equal(check({duration:.001}),'forward');
+});
+test('DJ preparation does not run before the requested native initial position is ready',()=>{
+ const code=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8'),from=code.indexOf('function tick(){'),to=code.indexOf(' const next=app?.mixNext();',from);
+ const check=new Function('player','prepare',`const window={},document={hidden:false},isIOS=false,enabled=true,seekRecoveryUntil=0,
+  mobileActive=null,active=null,prepared=null,mobileFading=false;
+  const bridge=()=>({audio:()=>player,currentId:()=> 'source'});${code.slice(from,to)}prepare();}return tick();`);
+ let calls=0;const player={paused:false,seeking:false,readyState:4,duration:126,_mbInitialSeekCleanup:()=>{}};
+ check(player,()=>calls++);assert.equal(calls,0);delete player._mbInitialSeekCleanup;check(player,()=>calls++);assert.equal(calls,1);
+ assert.match(app,/id !== currentId \|\| Number\.isFinite\(startAt\)&&startAt>0\) resumeAt = 0/);
+});
