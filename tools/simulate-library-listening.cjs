@@ -29,6 +29,16 @@ if(arg('boost-list','')){
    file=>'audio/'+file,file=>'audio/'+file.replace('/','/bassi/'),{protocol:'https:'});
 }
 const snippet=(from,to)=>{const a=source.indexOf(from),b=source.indexOf(to,a+from.length);if(a<0||b<a)throw Error('Missing runtime slice '+from);return source.slice(a,b)};
+// Older checkpoints keep the playback resolver inside the live update closure.
+// Extract that actual owning block, rather than approximating its fallbacks.
+let legacyPlayback='';
+if(!source.includes('function playbackTransition(')){
+ const lo=source.indexOf('   let candidate=transition(currentAnalysis,nextAnalysis,audio.duration);'),hi=source.indexOf('   lastPlanMissing=',lo);
+ if(lo<0||hi<lo)throw Error('Missing actual checkpoint playback resolver');
+ legacyPlayback='function playbackTransition(a,b,dur){'+source.slice(lo,hi)
+  .replaceAll('currentAnalysis','a').replaceAll('nextAnalysis','b').replaceAll('audio.duration','dur')
+  .replace('   plan=(weakIphoneMatch||weakDesktopMatch)?','   return (weakIphoneMatch||weakDesktopMatch)?')+'}';
+}
 const sampleRate=48000,isIOS=arg('platform','safari')==='safari';
 const commonScope={Map,Set,Number,Array,Uint8Array,Float32Array};commonScope.window=commonScope;vm.createContext(commonScope);
 vm.runInContext(read(path.join(root,'audio-composite-mix.js')),commonScope);
@@ -56,7 +66,8 @@ const program=`const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  const key=[a.sha,b.sha,a.lastLyricAt,b.firstLyricAt,a.mixPosition||0,dur].join('|');
  if(!plans.has(key))plans.set(key,nativeTransition(a,b,dur));return plans.get(key);};`+
  snippet('async function intelligentShuffle(','let recentLibraryIds=')+
- `return {transition,desktopBeatPairCertified,iphoneBeatPairCertified,iphoneQuietReleaseCertified,mobileMixAllowed,
+ legacyPlayback+
+ `return {transition,playbackTransition,desktopBeatPairCertified,iphoneBeatPairCertified,iphoneQuietReleaseCertified,mobileMixAllowed,
  musicallyCompatibleOverlay,musicalIntroEntry,withGuardedLRC,verifiedIndexedGridTempo,intelligentShuffle,decision:()=>shuffleLastDecision};`;
 let scenarioOffline=false,available=new Set(),preparedMixes=new Set();
 const window={MusicBoxRoom:{isActive:()=>false},MusicBoxStretch:{},MusicBoxCompositeMix:{
@@ -111,7 +122,7 @@ function resultFor(from,to){
  if(!a||!b)return normal(true);
  let position=0,p=null;
  for(let retry=0;retry<18;retry++){
-  p=engine.transition({...a,mixPosition:position},b,a.duration);
+  p=engine.playbackTransition({...a,mixPosition:position},b,a.duration);
   if(!p?.structuralBeat||window.MusicBoxCompositeMix.supports(p))break;
   position=p.begin+.06;
  }
@@ -136,7 +147,7 @@ function resultFor(from,to){
 async function simulate(profile,mode,list,sessions,steps,seed){
  const totals={attempts:0,full:0,partial:0,crossfade:0,normal:0,postlude:0,underlay:0,unavailable:0,early:0,safariFull:0,
   overlapSum:0,fullOverlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
-  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,futurePartnerReservations:0,missingAnalysis:0};
+  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,futurePartnerReservations:0,missingAnalysis:0,longestWithoutRhythmic:0,partialOverlapSum:0};
  const trace=[],assetUse=new Map();scenarioOffline=mode==='offline-shuffle';preparedMixes=new Set();
  const random=rng(seed),offlineOrder=shuffled(list,random);available=new Set(offlineOrder.slice(0,Math.ceil(list.length/2)).map(t=>t.id));
  for(let session=0;session<sessions;session++){
@@ -144,7 +155,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   let fresh=ordered?list.slice():shuffled(list,random);
   if(scenarioOffline&&offlineFilterImplemented)fresh=fresh.filter(t=>available.has(t.id));
   const start=scenarioOffline?fresh.findIndex(t=>available.has(t.id)):0;
-  let current=start>=0?fresh.splice(start,1)[0]:null,streak=0;
+  let current=start>=0?fresh.splice(start,1)[0]:null,streak=0,rhythmicStreak=0;
   for(let step=0;current&&fresh.length&&step<steps;step++){
    let pool=fresh.slice(),next=pool[0],selected=false;
    if(!ordered){
@@ -159,6 +170,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
    const result=resultFor(current,next);totals.attempts++;totals[result.kind]++;totals.early+=!!result.early;totals.safariFull+=!!result.safariFull;
    totals.overlapSum+=result.overlap||0;totals.skippedSum+=result.skipped||0;totals.maxSkipped=Math.max(totals.maxSkipped,result.skipped||0);
    if(result.kind==='full')totals.fullOverlapSum+=result.overlap||0;
+   if(result.kind==='partial')totals.partialOverlapSum+=result.overlap||0;
    if((result.kind==='full'||result.kind==='partial')&&result.commonAssetSha)assetUse.set(result.commonAssetSha,(assetUse.get(result.commonAssetSha)||0)+1);
    totals.incomingOmittedSum+=result.incomingOmitted||0;totals.maxIncomingOmitted=Math.max(totals.maxIncomingOmitted,result.incomingOmitted||0);
    totals.incomingAudibleUpperBoundSum+=result.incomingAudibleUpperBound||0;totals.earlyOverlapStart+=!!result.earlyOverlapStart;
@@ -167,6 +179,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
    const decision=selected?engine.decision():null;
    totals.renderQualityPromotions+=!!(decision?.outgoing===current.id&&decision?.chosen===next.id&&decision?.renderPreference);
    totals.futurePartnerReservations+=!!(decision?.outgoing===current.id&&decision?.chosen===next.id&&decision?.futurePartnerReservation);
+   rhythmicStreak=['full','partial'].includes(result.kind)?0:rhythmicStreak+1;totals.longestWithoutRhythmic=Math.max(totals.longestWithoutRhythmic,rhythmicStreak);
    streak=result.kind==='full'?0:streak+1;totals.longestWithoutFull=Math.max(totals.longestWithoutFull,streak);
    if(trace.length<40||decision?.futurePartnerReservation)trace.push({session,step,from:current.id,to:next.id,...result,...(decision?.futurePartnerReservation?{futurePartnerReservation:decision.futurePartnerReservation}:{})});
    fresh=fresh.filter(t=>t.id!==next.id);current=next;
@@ -175,7 +188,7 @@ async function simulate(profile,mode,list,sessions,steps,seed){
  const mixed=totals.attempts-totals.normal-totals.unavailable;
  return {profile,mode,members:list.length,boostedMembers:list.filter(t=>t.boosted).length,sessions,steps,seed,totals,
   percent:Object.fromEntries(['full','partial','crossfade','normal','postlude','underlay','unavailable','early','safariFull'].map(k=>[k,totals.attempts?100*totals[k]/totals.attempts:0])),
-  averageOverlap:mixed?totals.overlapSum/mixed:0,averageFullOverlap:totals.full?totals.fullOverlapSum/totals.full:0,commonAssetUse:Object.fromEntries(assetUse),averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
+  averageOverlap:mixed?totals.overlapSum/mixed:0,averagePartialOverlap:totals.partial?totals.partialOverlapSum/totals.partial:0,averageFullOverlap:totals.full?totals.fullOverlapSum/totals.full:0,commonAssetUse:Object.fromEntries(assetUse),averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
 }
 function inventory(profile,list,audit){

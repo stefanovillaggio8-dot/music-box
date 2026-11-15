@@ -14,7 +14,7 @@ function fixture(options={}){
   run:()=>engine.intelligentShuffle(app,{duration:lookup(from).duration,currentTime:0},from.id)};
 }
 test('actual Diego shuffle preserves a fresh certified follower without calling its current natural change a beatmatch',async()=>{
- const f=fixture();await f.run();assert.equal(f.selected().pickId,f.alternative.id);
+ const f=fixture();await f.run();assert.equal(f.selected().pickId,f.predecessor.id,'prepare the certified successor instead of spending its follower');
  const d=f.engine.decision();assert.deepEqual(Array.from(d.futurePartnerReservation.futureSources),[f.predecessor.id]);
  assert.equal(d.beatCandidates,0);assert.ok(d.futurePartnerReservation.checkedLinks<=128);
  const a=f.lookup(f.predecessor),b=f.lookup(f.target),cue=f.engine.transition(a,b,a.duration);

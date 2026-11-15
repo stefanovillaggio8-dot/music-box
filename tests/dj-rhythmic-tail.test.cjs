@@ -24,7 +24,7 @@ for(const [from,to] of [['audio/songs/track-4.mp3','audio/songs/track-38.mp3'],[
 test('every previously verified full pair remains full after adding partial rhythmic tails',()=>{
  const baseline=JSON.parse(fs.readFileSync(path.join(root,'audits/architecture-20261115/pairs-summary.json'),'utf8'));
  const full=baseline.verifiedPairs.filter(p=>p.full);assert.equal(full.length,11);
- for(const p of full){const a=entries.get(p.from),b=entries.get(p.to),cue=engine.transition(a,b,a.duration);assert.equal(cue.measuredFullBeat,true,p.from+' -> '+p.to);}
+ for(const p of full){const a=entries.get(p.from),b=entries.get(p.to),cue=engine.transition(a,b,a.duration);assert.equal(cue.measuredFullBeat,true,p.from+' -> '+p.to);assert.equal(engine.playbackTransition(a,b,a.duration).measuredFullBeat,true);}
 });
 test('a later original attack cannot be hidden by shortening the rhythmic window',()=>{
  const {rhythmicTail}=require('../tools/pcm-rhythmic-tail.cjs'),onset=Array(501).fill(.01);
@@ -41,4 +41,26 @@ test('the actual Safari shuffle promotes a verified partial while keeping full c
   mixSelectShuffle:r=>{assert.ok(pool.some(t=>t.id===r.pickId));selected=r;return true}};
  await engine.intelligentShuffle(app,{duration:lookup(from).duration,currentTime:0},from.id);
  assert.equal(selected.pickId,target.id);assert.equal(engine.decision().beatCandidates,0);assert.equal(engine.decision().partialBeatCandidates,1);
+});
+
+test('the listening audit uses the actual live fallback resolver, including quiet filtered introductions',()=>{
+ const a=entries.get('audio/songs/bassi/track-259.mp3'),b=entries.get('audio/songs/bassi/track-51.mp3');
+ const p=engine.playbackTransition(a,b,a.duration);assert.equal(p.kind,'underlay');assert.equal(p.neutralAmbientUnderlay,true);
+ assert.equal(p.preserveTail,true);assert.equal(p.entry,0);assert.ok(p.underlayVolume<=.09);assert.notEqual(p.measuredFullBeat,true);
+});
+test('the real boosted Gym scope prepares a future rhythmic mix instead of consuming its follower as a weak bed',async()=>{
+ const source=fs.readFileSync(path.join(root,'tools/simulate-library-listening.cjs'),'utf8').replace(/^#![^\n]*\n/,'');
+ // A URL selector fixture is pinned to the same actual boost manifest used by
+ // the app. No library track or user-owned playlist is inserted or removed.
+ const oldArgs=process.argv;process.argv=[...oldArgs,'--boost-list='+path.join(root,'tests/fixtures/gym-boost-manifest.json')];
+ let fixture;try{fixture=new Function('require','__dirname',source.slice(0,source.indexOf('(async()=>'))+'return {engine,members,lookup};')(require,path.join(root,'tools'));}finally{process.argv=oldArgs;}
+ const playlist=JSON.parse(fs.readFileSync(path.join(root,'playlist.json'),'utf8')).find(p=>p.name==='gym'),list=fixture.members('Ste',playlist);
+ const get=id=>list.find(t=>t.id==='b-track-'+id),from=get(259),target=get(51),predecessor=get(53),pool=[target,...list.filter(t=>t.id!==from.id&&t.id!==target.id)];let selected=null;
+ const app={currentId:()=>from.id,allTracks:()=>list,mixUrl:t=>t.url,mixLyricCues:()=>null,mixRunningContext:()=>({sampleRate:48000}),
+  mixShuffleCandidates:()=>pool.slice(0,10),mixShufflePool:()=>pool,mixSelectShuffle:r=>{assert.ok(pool.some(t=>t.id===r.pickId));selected=r;return true}};
+ await fixture.engine.intelligentShuffle(app,{duration:fixture.lookup(from).duration,currentTime:0},from.id);
+ assert.equal(selected.pickId,predecessor.id);assert.equal(fixture.engine.decision().sequenceLookahead.measuredFullBeat,false);
+ assert.equal(fixture.engine.decision().sequenceLookahead.metricalRhythmic,true);assert.equal(fixture.engine.decision().beatCandidates,0);
+ const cue=fixture.engine.playbackTransition(fixture.lookup(predecessor),fixture.lookup(target),fixture.lookup(predecessor).duration);
+ assert.equal(cue.metricalRhythmic,true);assert.equal(cue.entry,0);
 });
