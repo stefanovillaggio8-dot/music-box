@@ -1499,13 +1499,13 @@
    },
    "[\"cosa conta davvero\",\"nayt\"]": {
     "v": 1,
-    "s": 340,
+    "s": 376,
     "t": "cosa conta davvero",
     "a": "nayt"
    },
    "m:2026-11|[\"cosa conta davvero\",\"nayt\"]": {
     "v": 1,
-    "s": 340,
+    "s": 376,
     "t": "cosa conta davvero",
     "a": "nayt"
    },
@@ -3221,13 +3221,13 @@
    },
    "[\"il giorno che aspettavo\",\"ultimo\"]": {
     "v": 0,
-    "s": 260,
+    "s": 301,
     "t": "IL GIORNO CHE ASPETTAVO",
     "a": "Ultimo"
    },
    "m:2026-11|[\"il giorno che aspettavo\",\"ultimo\"]": {
     "v": 0,
-    "s": 260,
+    "s": 301,
     "t": "IL GIORNO CHE ASPETTAVO",
     "a": "Ultimo"
    },
