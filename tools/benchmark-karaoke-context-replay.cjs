@@ -3,7 +3,7 @@
 // Replay measured ASR alternatives through the actual application save path.
 // Human references score the result only; they never supply an observation.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
-const {referenceWordLines,referenceForLine}=require('./karaoke-reference-lines.cjs');
+const {referenceWordLines,referenceForLine,assertSameRecognizer}=require('./karaoke-reference-lines.cjs');
 const arg=(k,d)=>process.argv.find(s=>s.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const root=path.resolve(__dirname,'..'),read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const references=read(arg('references','references.json'));
@@ -12,6 +12,7 @@ const baseline=read(baselineFile),alternative=read(alternativeFile);
 const additionalFile=arg('additional','');
 const consensus=arg('consensus','false')==='true';
 const observations=[[baselineFile,baseline],[alternativeFile,alternative],...(additionalFile?[[additionalFile,read(additionalFile)]]:[])];
+assertSameRecognizer(observations.map(([,report])=>report));
 const context={};context.window=context;vm.createContext(context);
 for(const f of ['word-karaoke.js','audio-lyrics-align.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),context);
 const app=fs.readFileSync(path.join(root,'app.js'),'utf8');

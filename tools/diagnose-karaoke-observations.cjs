@@ -3,13 +3,14 @@
 // Evaluation only: human word boundaries may diagnose missing observations,
 // but must never become inputs to the player or its acceptance decisions.
 const fs=require('node:fs'),crypto=require('node:crypto');
-const {referenceWordLines,referenceForLine}=require('./karaoke-reference-lines.cjs');
+const {referenceWordLines,referenceForLine,assertSameRecognizer}=require('./karaoke-reference-lines.cjs');
 const arg=(k,d)=>process.argv.find(s=>s.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const refs=read(arg('references','references.json'));
 const files=['baseline','alternative','additional'].map(k=>arg(k,'')).filter(Boolean);
 if(files.length!==3)throw Error('Provide the original 28, 14 and 7 second reports');
 const reports=files.map(read),replay=read(arg('replay','context-replay.json'));
+assertSameRecognizer(reports);
 const norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
 const totals=()=>({words:0,noNearbyExactObservation:0,nearbyExactObservation:0,
  anyObservationWithin100msAtBothBoundaries:0,consensusWithin60msButWrongOver250ms:0});

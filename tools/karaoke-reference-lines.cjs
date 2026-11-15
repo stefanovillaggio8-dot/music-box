@@ -24,4 +24,9 @@ function referenceForLine(record,groups,line){
  if(i<0)throw Error('Unknown annotated reference line');
  return groups[i];
 }
-module.exports={referenceWordLines,referenceForLine};
+function assertSameRecognizer(reports){
+ const signature=r=>JSON.stringify(['model','revision','library','device','dtype'].map(k=>r.inference?.[k]));
+ if(!reports.length||reports.some(r=>!r.inference?.model||!r.inference?.revision||signature(r)!==signature(reports[0])))
+  throw Error('Mixed or unpinned recognizers cannot certify one context replay');
+}
+module.exports={referenceWordLines,referenceForLine,assertSameRecognizer};
