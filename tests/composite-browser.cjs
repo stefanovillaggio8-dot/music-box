@@ -132,6 +132,10 @@ const server=http.createServer(async(req,res)=>{
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
      const at=url.pathname.indexOf('/songs/');
      const key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
+     // Native media loading is not equivalent to Playwright fulfillment,
+     // even with Range headers: the independent metadata probe compares
+     // both. Exercise GitHub's real HTTP transport for original URLs.
+     if(sha&&url.hostname==='raw.githubusercontent.com'){await route.continue();return;}
      if(sha){await fulfillOriginal(route,sha);return;}
      await route.abort();
     });
@@ -195,7 +199,7 @@ const server=http.createServer(async(req,res)=>{
       const pending=MusicBoxBridge.mixHandoff(p.fromId,Math.max(0,p.cue.begin-9));
       const source=MusicBoxBridge.audio();window.__plannedMedia=[];
       for(const event of ['loadedmetadata','playing','seeking','seeked','ended','pause','ratechange','timeupdate'])source.addEventListener(event,()=>{
-       if(__plannedMedia.length<32)__plannedMedia.push({event,at:source.currentTime,duration:source.duration,paused:source.paused,seeking:source.seeking,rate:source.playbackRate});
+       if(__plannedMedia.length<32)__plannedMedia.push({event,at:source.currentTime,duration:source.duration,paused:source.paused,seeking:source.seeking,rate:source.playbackRate,pendingInitialSeek:!!source._mbInitialSeekCleanup,src:source.currentSrc});
       });
       await pending;
       __plannedSetup={stage:'source-ready',id:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio().currentTime};
@@ -234,6 +238,7 @@ const server=http.createServer(async(req,res)=>{
      const url=new URL(route.request().url());
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
      const at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
+     if(sha&&url.hostname==='raw.githubusercontent.com'){await route.continue();return;}
      if(sha){await fulfillOriginal(route,sha);return;}await route.abort();
     });
     await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
