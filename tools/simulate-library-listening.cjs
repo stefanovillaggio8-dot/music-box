@@ -134,7 +134,7 @@ function resultFor(from,to){
 async function simulate(profile,mode,list,sessions,steps,seed){
  const totals={attempts:0,full:0,partial:0,crossfade:0,normal:0,postlude:0,underlay:0,unavailable:0,early:0,safariFull:0,
   overlapSum:0,fullOverlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
-  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,missingAnalysis:0};
+  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,futurePartnerReservations:0,missingAnalysis:0};
  const trace=[],assetUse=new Map();scenarioOffline=mode==='offline-shuffle';preparedMixes=new Set();
  const random=rng(seed),offlineOrder=shuffled(list,random);available=new Set(offlineOrder.slice(0,Math.ceil(list.length/2)).map(t=>t.id));
  for(let session=0;session<sessions;session++){
@@ -164,8 +164,9 @@ async function simulate(profile,mode,list,sessions,steps,seed){
    totals.automaticChanges+=selected;totals.missingAnalysis+=!!result.missingAnalysis;
    const decision=selected?engine.decision():null;
    totals.renderQualityPromotions+=!!(decision?.outgoing===current.id&&decision?.chosen===next.id&&decision?.renderPreference);
+   totals.futurePartnerReservations+=!!(decision?.outgoing===current.id&&decision?.chosen===next.id&&decision?.futurePartnerReservation);
    streak=result.kind==='full'?0:streak+1;totals.longestWithoutFull=Math.max(totals.longestWithoutFull,streak);
-   if(trace.length<40)trace.push({session,step,from:current.id,to:next.id,...result});
+   if(trace.length<40||decision?.futurePartnerReservation)trace.push({session,step,from:current.id,to:next.id,...result,...(decision?.futurePartnerReservation?{futurePartnerReservation:decision.futurePartnerReservation}:{})});
    fresh=fresh.filter(t=>t.id!==next.id);current=next;
   }
  }

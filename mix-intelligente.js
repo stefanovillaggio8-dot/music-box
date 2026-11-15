@@ -7764,6 +7764,48 @@ async function intelligentShuffle(app,audio,fromId){
   choicePool.sort((a,b)=>(b.sequenceScore??b.score)-(a.sequenceScore??a.score)||b.score-a.score);
   if(choicePool[0]?.continuation)sequenceLookahead=choicePool[0].continuation;
  }
+ // Preserve a future verified partner without changing the current safe tier.
+ let futurePartnerReservation=null;
+ const queueState=app.mixShuffleSelection?.();
+ const liveFreshIds=new Set((app.mixShufflePool?.()||pool).map(t=>t.id));
+ const freshMeasured=measured.filter(x=>liveFreshIds.has(x.track.id));
+ if(!queueState?.manualCount&&!queueState?.userReordered&&!scored.length&&!partialScored.length&&freshMeasured.length>2){
+  const byId=new Map(freshMeasured.map(x=>[x.track.id,x])),bySha=new Map(freshMeasured.filter(x=>audioSha(x.info)).map(x=>[audioSha(x.info),x]));
+  const reserved=new Map(),offline=typeof navigator!=='undefined'&&navigator.onLine===false;let checked=0;
+  opportunityScan:for(const source of freshMeasured){
+   const shaA=audioSha(source.info);if(!shaA)continue;
+   const keys=new Set([...Object.keys(source.info.structuralBeatPlans||{}),...Object.keys(source.info.pcmBeatPlans||{})]);
+   if(!keys.size)continue;
+   const lyric=app.mixLyricCues?.(source.track.id),from={...source.info,mixPosition:0,
+    ...(Number.isFinite(lyric?.last)?{lastLyricAt:Math.max(Number(source.info.lastLyricAt)||0,lyric.last)}:{}),
+    lyricStarts:[...(source.info.lyricStarts||[]),...(lyric?.starts||[])]};
+   for(const sha of keys){
+    const follower=bySha.get(sha);if(!follower||sha===shaA)continue;if(checked>=128)break opportunityScan;checked++;
+    const lrc=app.mixLyricCues?.(follower.track.id),to=Number.isFinite(lrc?.first)?{...follower.info,firstLyricAt:Math.min(Number.isFinite(follower.info.firstLyricAt)?follower.info.firstLyricAt:Infinity,lrc.first)}:follower.info;
+    const indexedCue=indexedStructuralBeatBridge(from,to,from.duration)||indexedFullBeatBridge(from,to,from.duration);
+    if(!indexedCue?.measuredFullBeat||indexedCue.entry>.001)continue;
+    const cue=transition(from,to,from.duration);
+    if(!cue?.measuredFullBeat||cue.entry>.001||!musicallyCompatibleOverlay(from,to,cue)||!desktopBeatPairCertified(from,to,cue)||!iphoneQuietReleaseCertified(from,cue)||
+       isIOS&&(!mobileMixAllowed(cue,from,from.lastLyricAt)||!iphoneBeatPairCertified(from,to,cue)))continue;
+    const common=window.MusicBoxCompositeMix?.supports?.(cue)===true;
+    if(cue.structuralBeat&&!common||isIOS&&!common&&!(cue.outputHeadroom>=.999)||offline&&common&&window.MusicBoxCompositeMix?.isPrepared?.(cue,app.mixRunningContext?.())!==true)continue;
+    if(!reserved.has(sha))reserved.set(sha,[]);reserved.get(sha).push(source.track.id);
+   }
+  }
+  const shaOf=c=>audioSha(byId.get(c?.track?.id)?.info),base=choicePool[0];
+  let replacement=null,protectedSha='';
+  if(base&&!base.continuation&&reserved.has(shaOf(base))){
+   replacement=choicePool.find(c=>liveFreshIds.has(c.track.id)&&c.score>=base.score*.97&&(!reserved.has(shaOf(c))||c.continuation));protectedSha=shaOf(base);
+  }else if(!base&&reserved.has(audioSha(byId.get(initialFirst)?.info))){
+   const next=sequence.map(t=>byId.get(t.id)).find(x=>x&&!reserved.has(audioSha(x.info)))||freshMeasured.find(x=>!reserved.has(audioSha(x.info)));
+   if(next){replacement={track:next.track,cue:null,score:0,reservationOrderOnly:true};protectedSha=audioSha(byId.get(initialFirst).info);choicePool.push(replacement);}
+  }
+  if(replacement){
+   const ix=choicePool.indexOf(replacement);if(ix>=0)choicePool.splice(ix,1);choicePool.unshift(replacement);
+   sequenceLookahead=replacement.continuation||null;
+   futurePartnerReservation={method:'fresh-certified-partner-preservation-v1',protectedSha,futureSources:reserved.get(protectedSha),chosen:replacement.track.id,maximumRelativeCurrentScoreLoss:.03,checkedLinks:checked};
+  }
+ }
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
  const renderedChoice=Boolean(scored.length&&best&&current&&renderedQuality(best)&&renderedQuality(current)&&
   best.score>=current.score*.97&&compareRendered(best,current)<0);
@@ -7773,7 +7815,7 @@ async function intelligentShuffle(app,audio,fromId){
  const noMatch=!best;
  if(best&&best.track.id!==initialFirst&&
     (!current||(best.sequenceScore??best.score)>(current.sequenceScore??current.score)+.045||
-      renderedChoice)){
+      renderedChoice||futurePartnerReservation)){
   if(runGeneration!==null&&runGeneration!==shuffleGeneration)return {retry:false};
   const selected=app.mixSelectShuffle({fromId,initialFirst,pickId:best.track.id});
   if(selected){
@@ -7784,9 +7826,9 @@ async function intelligentShuffle(app,audio,fromId){
     ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
     rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-    rejected,candidateAudit,limitingStage,chosen:best.track.id,sequenceLookahead,renderPreference,
+    rejected,candidateAudit,limitingStage,chosen:best.track.id,sequenceLookahead,renderPreference,futurePartnerReservation,
     shortRhythmicMix:!!best.cue?.rhythmicUnderlay,
-    reason:scored.length?(best.cue?.rhythmicUnderlay?
+    reason:best.reservationOrderOnly?'partner di un beatmatch futuro conservato; passaggio naturale':scored.length?(best.cue?.rhythmicUnderlay?
      "raccordo ritmico breve, finale preservato":"beat certificato"):partialScored.length?
      "transizione ritmica parziale verificata (non beatmatch completo)":impactScored.length?
      "ingresso sul colpo finale misurato, non beatmatch armonico":underlayScored.length?
@@ -7827,7 +7869,7 @@ async function intelligentShuffle(app,audio,fromId){
   ambientCandidates:ambientScored.length,nearCandidates:nearScored.length,sequenceCandidates:sequenceScored.length,
   rhythmCandidates,harmonicCandidates,rhythmOrderCandidates:rhythmOrderScored.length,
      rhythmOrderPickableCandidates:safeRhythmOrder.length,
-   rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,sequenceLookahead,
+   rejected,candidateAudit,limitingStage,chosen:current?.track.id||null,sequenceLookahead,futurePartnerReservation,
    vocalModelReady:!!old.voiceModel,
    outgoingVoiceScannedThroughEnd:!!(old.voiceModel&&
     Number.isFinite(old.voiceScannedEnd)&&Number.isFinite(old.last)&&
