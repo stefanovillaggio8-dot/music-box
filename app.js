@@ -8225,11 +8225,10 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
     if (!_adottaDj) _assegnaAudioSorgente(audio,_url);
     if (!_adottaDj && startAt > 0 && Number.isFinite(startAt)) {
       const target = audio;
-      let initialSeekClosed=false,initialSeekTimer;
+      let initialSeekClosed=false;
       const initialSeekEvents=['loadedmetadata','durationchange','canplay','playing'];
       const cleanupInitialSeek=()=>{
         if(initialSeekClosed)return;initialSeekClosed=true;
-        clearTimeout(initialSeekTimer);
         for(const event of initialSeekEvents)target.removeEventListener?.(event,at);
         if(target._mbInitialSeekCleanup===cleanupInitialSeek)delete target._mbInitialSeekCleanup;
       };
@@ -8244,11 +8243,10 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
         try {
           target.currentTime = Math.max(0, Math.min(startAt, duration-0.5));
           cleanupInitialSeek();
-        } catch (_) { /* retry only on the bounded native readiness events */ }
+        } catch (_) { /* retry only on native readiness events; no polling */ }
       };
       target._mbInitialSeekCleanup=cleanupInitialSeek;
       for(const event of initialSeekEvents)target.addEventListener(event,at);
-      initialSeekTimer=setTimeout(cleanupInitialSeek,2000);
       at();
     }
     // Start play() from the original tap / MediaSession gesture BEFORE
