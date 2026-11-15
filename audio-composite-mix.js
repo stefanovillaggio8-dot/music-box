@@ -140,7 +140,7 @@ function tryStart(cue,old,app,toId,ctx){
     // Native volume is unreliable on iOS: switch binary mute and stop
     // the common buffer in one JS turn. No simultaneous unattenuated sum.
     next.muted=Number(app.volume())===0;stop();return;
-   }else if(next.readyState>=2&&!next.paused&&Math.abs(next.currentTime-position)>.065&&!act.corrected){
+   }else if(next.readyState>=2&&!next.paused&&!next._mbInitialSeekCleanup&&Math.abs(next.currentTime-position)>.065&&!act.corrected){
     act.corrected=true;act.correctingSeekTarget=position;try{next.currentTime=position}catch(_){stop();return;}
    }
    if(elapsed>=cue.composite.seconds-cue.composite.preRoll-.12){stop();return;}

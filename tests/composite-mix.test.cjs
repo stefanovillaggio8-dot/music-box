@@ -75,6 +75,19 @@ test('a user seek during native handoff cancels the common clock and is never co
  next.currentTime=69.2;assert.equal(f.api.onSeek('user',next),false);
  assert.equal(f.api.active(),false);assert.equal(next.muted,false);assert.equal(next.currentTime,69.2);
 });
+test('the common clock waits for an owned initial seek before correcting a provisional native clock',async t=>{
+ const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);t.after(()=>f.api.stop());
+ const old={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,volume:1},writes=[];
+ const next={paused:false,seeking:false,muted:true,readyState:4,_mbInitialSeekCleanup:()=>{},
+  get currentTime(){return writes.at(-1)||0},set currentTime(value){writes.push(value)}};
+ let id='a',player=old;
+ const app={audio:()=>player,currentId:()=>id,mixNext:()=>({id:'b'}),volume:()=>1,wantsPlayback:()=>true,mixSourceMatches:()=>true,
+  mixHandoff:()=>{id='b';player=next;return Promise.resolve()}};
+ assert.equal(f.api.tryStart(p,old,app,'b',f.ctx),true);f.ctx.currentTime=5.32;old.currentTime=37.02;
+ await new Promise(resolve=>setTimeout(resolve,35));assert.equal(id,'b');assert.equal(writes.length,0);assert.equal(next.muted,true);
+ delete next._mbInitialSeekCleanup;f.ctx.currentTime=5.36;
+ await new Promise(resolve=>setTimeout(resolve,35));assert.equal(writes.length,1);assert.ok(writes[0]>69&&writes[0]<69.1);
+});
 test('a common handoff can retain the gesture-authorized native media element',async t=>{
  const f=fixture(),p=await cue(f);await f.api.prepare(p,f.ctx);t.after(()=>f.api.stop());
  const audio={...f.ctx,paused:false,seeking:false,muted:false,currentTime:31.7,readyState:2};let id='a';
