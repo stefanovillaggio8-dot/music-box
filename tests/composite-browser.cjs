@@ -208,19 +208,24 @@ const server=http.createServer(async(req,res)=>{
     // Start through the real library row, then restore the full library
     // search scope. This retains the actual tap/media activation and wins
     // over initial last-song restoration, just like an explicit selection.
-    const sourceTitle=await auto.evaluate(p=>MusicBoxBridge.allTracks().find(t=>t.id===p.fromId).title,automaticPlan);
+    const sourceInfo=await auto.evaluate(p=>{const t=MusicBoxBridge.allTracks().find(t=>t.id===p.fromId);return {title:t.title,artist:t.artist}},automaticPlan);
+    const sourceTitle=sourceInfo.title;
     await auto.locator('#search').click();
-    await auto.locator('#search').fill(sourceTitle);
+    await auto.locator('#search').fill(sourceTitle.replace(/[^\p{L}\p{N}\s]/gu,'').trim());
     // The app debounces filtering for 160 ms. Clicking a row from the
     // unfiltered DOM can lose pointer-up when render() replaces that row.
     // Wait for the actual filtered list, then tap its title, not a row
     // centre that can fall on a nested action at another browser's width.
-    await auto.waitForFunction(title=>{
-     const rows=[...document.querySelectorAll('.track')];
-     return rows.length===1&&rows[0].querySelector('.track-testo')?.textContent===title;
-    },sourceTitle,{timeout:10000});
+    const findSource=info=>{
+     const norm=s=>String(s||'').normalize('NFD').replace(/[^\p{L}\p{N}]/gu,'').toLowerCase();
+     return [...document.querySelectorAll('.track')].findIndex(row=>norm(row.querySelector('.track-testo')?.textContent)===norm(info.title)&&norm(row.querySelector('.track-meta')?.textContent).includes(norm(info.artist)));
+    };
+    const sourcePresent=info=>{const norm=s=>String(s||'').normalize('NFD').replace(/[^\p{L}\p{N}]/gu,'').toLowerCase();return [...document.querySelectorAll('.track')].some(row=>norm(row.querySelector('.track-testo')?.textContent)===norm(info.title)&&norm(row.querySelector('.track-meta')?.textContent).includes(norm(info.artist)));};
+    try{await auto.waitForFunction(sourcePresent,sourceInfo,{timeout:10000});}
+    catch(error){console.error(name,'filtered rows',JSON.stringify(await auto.evaluate(()=>({query:document.querySelector('#search').value,rows:[...document.querySelectorAll('.track')].map(r=>r.textContent)}))));throw error;}
     console.error(name,'automatic source',JSON.stringify(automaticPlan));
-    await auto.locator('.track .track-testo').click();
+    const sourceIndex=await auto.evaluate(findSource,sourceInfo);assert.ok(sourceIndex>=0);
+    await auto.locator('.track').nth(sourceIndex).locator('.track-testo').click();
     try{await auto.waitForFunction(p=>MusicBoxBridge.currentId()===p.fromId&&!MusicBoxBridge.audio().paused,automaticPlan,{timeout:20000});}
     catch(error){console.error(name,'library start diagnostic',JSON.stringify(await auto.evaluate(()=>{
      const a=MusicBoxBridge.audio();return {currentId:MusicBoxBridge.currentId(),profile:MusicBoxBridge.profile(),
