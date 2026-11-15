@@ -2267,13 +2267,13 @@
    },
    "[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 2,
-    "s": 407,
+    "s": 442,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
    "m:2026-11|[\"ho sbagliato ancora\",\"chiello\"]": {
     "v": 2,
-    "s": 407,
+    "s": 442,
     "t": "HO SBAGLIATO ANCORA",
     "a": "Chiello"
    },
@@ -9748,14 +9748,14 @@
     "a": "GuÃ¨"
    },
    "[\"g&v\",\"ivanbÃ¬\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBÃ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃ¬\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBÃ¬"
    },
@@ -10559,13 +10559,13 @@
    },
    "[\"g&v\",\"ivanbì\"]": {
     "v": 1,
-    "s": 181,
+    "s": 219,
     "t": "G&V",
     "a": "ivanBì"
    },
    "m:2026-11|[\"g&v\",\"ivanbì\"]": {
     "v": 1,
-    "s": 181,
+    "s": 219,
     "t": "G&V",
     "a": "ivanBì"
    },
