@@ -1,0 +1,14 @@
+✔ actual Diego shuffle preserves a fresh certified follower without calling its current natural change a beatmatch (1631.9444ms)
+✔ reservation cannot survive a predecessor removed from the latest fresh pool (1408.5017ms)
+✔ reservation respects manual and user-reordered queues (6071.2028ms)
+✔ new local lyrics veto a future partner whose acoustic handoff no longer passes (1482.3036ms)
+✔ the actual player planner selects the shorter four-bar intact cue and retains its historical alternative (2282.6348ms)
+✔ real Safari shuffle uses rendered precision to promote the better verified mix while respecting the fresh pool (2017.1521ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20821.827

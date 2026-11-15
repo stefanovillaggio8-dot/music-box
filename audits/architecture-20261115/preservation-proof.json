@@ -1,0 +1,17 @@
+{
+  "baselineCommit": "2aacc59ac998825fec04f1994ef1698380c938a2",
+  "codeCommit": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+  "unchangedFiles": {
+    "app.js": true,
+    "stato.json": true,
+    "playlist.json": true,
+    "word-karaoke.js": true,
+    "immersive.js": true,
+    "audio-composite-mix.js": true,
+    "audio-stretch-core.mjs": true
+  },
+  "baselineAssetsPreserved": 105,
+  "baselineAssetsRemoved": 0,
+  "currentAssets": 107,
+  "boostManifestUnchanged": true
+}

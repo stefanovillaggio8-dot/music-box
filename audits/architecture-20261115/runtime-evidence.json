@@ -1,0 +1,15 @@
+{
+  "codeCommit": "95c81f4dc8477e3238c2ed89eab088e42c9a00ba",
+  "sha256": {
+    "mix-intelligente.js": "8e0151efcd29375789881cc9bb434c5d5a4aa7b70fa8609a7da6936635655f71",
+    "dj-deep-analysis.json": "7c56274819ad31c3cec99ba41269567d24c53ed1b8eeaa735558ac4d50dcec02",
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+    "audio-lyrics-align.js": "374a1c6647c0ca807512097bce96d58f9dab97a151ce3cb7a220e01cb3699e8a",
+    "audio-composite-core.mjs": "79a9501eb08f8ade0e19c54a4760ae2d1c63482f620419bf6e4be145e82b9a2c",
+    "sw.js": "2033d008d70e8361c28123dd440479c142d041dc2cacd2f8e70577ea03edf507",
+    "index.html": "67a4ea1f0ae87b03699b6249e187d0b7adc51df297f524bbf504bb6a42ac6221",
+    "tools/simulate-library-listening.cjs": "0143f25677d996b07019ae5f3cc35421c2f0a1d21df2dd470407471f08c02bf1"
+  },
+  "publicDeployment": false,
+  "physicalIPhoneVerified": false
+}

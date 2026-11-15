@@ -17,7 +17,9 @@ const stableId=new Function('BUILTIN',appSource.slice(idStart,idEnd)+'return _id
 const catalog=rawCatalog.map(t=>({...t,id:stableId(t)}));
 let appRecording=null;
 if(arg('boost-list','')){
- const boosted=new Set(JSON.parse(read(arg('boost-list',''))).brani||[]);
+ const manifest=JSON.parse(read(arg('boost-list','')));
+ if(!Array.isArray(manifest.brani))throw Error('Expected a pinned boost manifest with brani[], not a proof descriptor');
+ const boosted=new Set(manifest.brani);
  const part=(from,to)=>appSource.slice(appSource.indexOf(from),appSource.indexOf(to,appSource.indexOf(from)));
  const body=part('  function _urlDelBrano(','  function _branoInGym(')+
   part('  function _branoInGym(','  function _doveStaIlBranoConBassi(')+
@@ -177,6 +179,8 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
 }
 function inventory(profile,list,audit){
+ // Availability inventory is online; never inherit the preceding offline scenario.
+ scenarioOffline=false;
  const full=[],seen=new Set();
  for(const pair of audit.verifiedPairs.filter(p=>p.full)){
   const fromSha=index.entries[pair.from]?.sha,toSha=index.entries[pair.to]?.sha;
