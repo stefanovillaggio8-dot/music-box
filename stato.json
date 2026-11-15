@@ -1060,8 +1060,8 @@
     "a": "Coez"
    },
    "[\"davverodavvero\",\"artie 5ive\"]": {
-    "v": 5,
-    "s": 188,
+    "v": 6,
+    "s": 258,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -1312,8 +1312,8 @@
     "a": "Kid Yugi"
    },
    "[\"l'immenso\",\"negromaro\"]": {
-    "v": 1,
-    "s": 289,
+    "v": 2,
+    "s": 298,
     "t": "L'immenso",
     "a": "Negromaro"
    },
@@ -1582,8 +1582,8 @@
     "a": "Gemitaiz, nayt"
    },
    "m:2026-11|[\"davverodavvero\",\"artie 5ive\"]": {
-    "v": 3,
-    "s": 162,
+    "v": 4,
+    "s": 232,
     "t": "DAVVERODAVVERO",
     "a": "Artie 5ive"
    },
@@ -3070,8 +3070,8 @@
     "a": "Kid Yugi, Tedua & Junior K"
    },
    "m:2026-11|[\"l'immenso\",\"negromaro\"]": {
-    "v": 1,
-    "s": 189,
+    "v": 2,
+    "s": 198,
     "t": "L'immenso",
     "a": "Negromaro"
    },
@@ -5422,14 +5422,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 1,
-    "s": 445,
+    "v": 2,
+    "s": 465,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
-    "v": 1,
-    "s": 445,
+    "v": 2,
+    "s": 465,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -6227,13 +6227,13 @@
    },
    "[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 2,
-    "s": 465,
+    "s": 546,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, sfera ebbasta, simba la rue\"]": {
     "v": 2,
-    "s": 465,
+    "s": 546,
     "t": "Miami Vice",
     "a": "LuchÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¨, Sfera Ebbasta, Simba La Rue"
    },
@@ -7403,13 +7403,13 @@
    },
    "[\"stella cadente\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 129,
+    "s": 198,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 129,
+    "s": 198,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -8213,13 +8213,13 @@
    },
    "[\"stella cadente\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 198,
+    "s": 249,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"stella cadente\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 198,
+    "s": 249,
     "t": "Stella Cadente",
     "a": "ModÃÂÃÂ "
    },
