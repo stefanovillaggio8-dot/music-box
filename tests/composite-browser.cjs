@@ -246,7 +246,7 @@ const server=http.createServer(async(req,res)=>{
     });
     assert.equal(automaticShuffle.full,playbackProfile==='Emanuele');if(playbackProfile==='Ste')assert.equal(automaticShuffle.partial,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
     await autoContext.close();
-    results.push({browser:name,profile:playbackProfile,decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
+    results.push({browser:name,profile:playbackProfile,indexSha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'dj-deep-analysis.json'))).digest('hex'),decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
      optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,physicalIPhone:false});

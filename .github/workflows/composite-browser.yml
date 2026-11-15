@@ -14,7 +14,51 @@ on:
 permissions:
   contents: read
 jobs:
+  native-decoders:
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --no-save --no-package-lock playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
+          node tests/native-decoder-peaks.cjs > native-decoder-peaks.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-decoder-${{ matrix.browser }}
+          path: native-decoder-peaks.json
+          retention-days: 14
+  certify-index:
+    needs: native-decoders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: native-decoder-*
+          path: native-proofs
+      - run: |
+          mkdir certified
+          node tools/apply-native-decoder-peaks.cjs --proofs=native-proofs --output=certified/dj-deep-analysis.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-certified-index
+          path: certified/dj-deep-analysis.json
+          retention-days: 14
   real-audio:
+    needs: certify-index
     strategy:
       fail-fast: false
       matrix:
@@ -33,6 +77,10 @@ jobs:
       - run: |
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps chromium webkit
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-certified-index
+          path: .
       - run: node --test tests/composite-mix.test.cjs
       - run: |
           set -o pipefail

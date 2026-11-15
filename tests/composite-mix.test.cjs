@@ -112,3 +112,16 @@ test('muted outgoing clock drift does not cancel the shared audible signal; rate
  assert.equal(f.api.active(),true);assert.equal(audio.muted,true);
  f.listeners.get('ratechange')();assert.equal(f.api.active(),false);assert.equal(audio.muted,false);
 });
+
+test('native decoder peak evidence is asset-bound and retains the absolute clipping limits',async()=>{
+ const f=fixture(),p=await cue(f);f.ctx.decodeAudioData=async()=>({duration:7.1,sampleRate:48000,numberOfChannels:2,getChannelData:()=>new Float32Array([.21,-.2])});
+ p.composite.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:p.composite.sha256,
+  rates:Object.fromEntries([44100,48000].map(sr=>[sr,{samplePeak:.21,overlapPeak:.21,browsers:['chromium','webkit']}]))};
+ assert.equal(f.api.supports(p),true);assert.equal(await f.api.prepare(p,f.ctx),true);
+ const invalid=structuredClone(p);invalid.composite.nativeDecoderProof.assetSha256='f'.repeat(64);assert.equal(f.api.supports(invalid),false);
+ const hot=structuredClone(p);hot.composite.nativeDecoderProof.rates[44100].samplePeak=1;assert.equal(f.api.supports(hot),false);
+ const missing=structuredClone(p);missing.composite.nativeDecoderProof.rates[48000].browsers=['webkit'];assert.equal(f.api.supports(missing),false);
+ const fresh=fixture(),q=await cue(fresh);q.composite.nativeDecoderProof=p.composite.nativeDecoderProof;
+ fresh.ctx.decodeAudioData=async()=>({duration:7.1,sampleRate:48000,numberOfChannels:2,getChannelData:()=>new Float32Array([1.001])});
+ await assert.rejects(fresh.api.prepare(q,fresh.ctx),/peak mismatch/);
+});

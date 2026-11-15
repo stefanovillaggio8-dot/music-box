@@ -35,7 +35,11 @@ function supports(cue){
    c.gainProof.attackDbPerSecond===40&&c.gainProof.releaseDbPerSecond===8&&c.gainProof.firstGain===1&&c.gainProof.nativeRevealGain===1)&&
   (!cue.preservedFileTail||cue.entry===0&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&
    c.outgoingEnvelope==='unity-through-decoded-eof-v1'&&finite(c.sourceReadThrough)&&Math.abs(c.sourceReadThrough-cue.end)<=.1)&&
-  (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true);
+  (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true)&&
+  (!c.nativeDecoderProof||c.nativeDecoderProof.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
+   [44100,48000].every(rate=>{const p=c.nativeDecoderProof.rates?.[rate];return p&&
+    [p.samplePeak,p.overlapPeak].every(finite)&&p.samplePeak>0&&p.samplePeak<=.9992&&p.overlapPeak>=0&&p.overlapPeak<=.962&&
+    Array.isArray(p.browsers)&&p.browsers.length===2&&p.browsers.includes('chromium')&&p.browsers.includes('webkit')}));
 }
 async function prepare(cue,ctx){
  if(!supports(cue)||!ctx?.decodeAudioData)throw Error('No certified common mix');
@@ -60,7 +64,8 @@ async function prepare(cue,ctx){
    if(i>=lo&&i<=hi)overlapPeak=Math.max(overlapPeak,Math.abs(value));
   }}
   // FLAC quantization and decoding can differ by a few least significant bits.
-  if(peak>.9992||overlapPeak>.962||peak>cue.composite.oversampledPeak+.001)throw Error('Mix peak mismatch');
+  const declared=Math.max(cue.composite.oversampledPeak,cue.composite.nativeDecoderProof?.rates?.[buffer.sampleRate]?.samplePeak||0);
+  if(peak>.9992||overlapPeak>.962||peak>declared+.001)throw Error('Mix peak mismatch');
   cache.set(key,buffer);while(cache.size>2)cache.delete(cache.keys().next().value);
   return true;
  })();entry.promise=job;pending.set(key,entry);
