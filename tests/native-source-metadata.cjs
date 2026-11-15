@@ -32,23 +32,35 @@ const selected=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['webkit','chromium']
   browser=await ({chromium,webkit}[selected]).launch({headless:true});const page=await browser.newPage(),base='http://127.0.0.1:'+server.address().port;
   await page.route('**/intercept/**',async route=>{const sha=new URL(route.request().url()).pathname.split('/')[2];requests.push({mode:'intercept',sha,range:route.request().headers().range||null});await route.fulfill({status:200,contentType:'audio/mpeg',body:data.get(sha)});});
   await page.goto(base);const results=[];
-  for(const key of keys)for(const mode of ['range','whole','intercept','blob',...(candidates[key]?['prefix-range','prefix-blob']:[])]){
-   const sha=entries[key].sha,url=base+'/'+mode+'/'+sha;
+  for(const key of keys)for(const mode of ['raw','range','whole','intercept','blob',...(candidates[key]?['prefix-range','prefix-blob']:[])]){
+   const sha=entries[key].sha,url=mode==='raw'?'https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+key.slice(6):base+'/'+mode+'/'+sha;
    await page.evaluate(()=>window.__probeReady=false);
-   const pending=page.evaluate(async({url,blob})=>{
+   const pending=page.evaluate(async({url,blob,expectedDuration})=>{
     const audio=new Audio();audio.preload='auto';audio.crossOrigin='anonymous';
     const mediaUrl=blob?URL.createObjectURL(new Blob([await(await fetch(url)).arrayBuffer()],{type:'audio/mpeg'})):url;
     const metadata=await new Promise(resolve=>{const timer=setTimeout(()=>resolve({timeout:true}),10000);audio.onloadedmetadata=()=>{clearTimeout(timer);resolve({duration:audio.duration,readyState:audio.readyState})};audio.onerror=()=>{clearTimeout(timer);resolve({error:audio.error?.code})};audio.src=mediaUrl;audio.load()});
     const playError=await new Promise(resolve=>{document.querySelector('#play').onclick=()=>{audio.muted=true;audio.play().then(()=>resolve(null),error=>resolve(String(error)))};window.__probeReady=true;});
     await new Promise(resolve=>setTimeout(resolve,600));
     const afterPlayback={duration:audio.duration,at:audio.currentTime,ended:audio.ended,paused:audio.paused,playError};audio.pause();
+    // The application can assign the same source again for an explicit
+    // handoff. Compare that path too, retaining the original MP3 bytes.
+    window.__probeReady=false;
+    const requestedPosition=expectedDuration-16,seekEvents=[];
+    const seek=()=>{if(audio.readyState>=1&&Number.isFinite(audio.duration)&&audio.duration>.05){audio.currentTime=requestedPosition;for(const event of seekEvents)audio.removeEventListener(event,seek)}};
+    for(const event of ['loadedmetadata','durationchange','canplay','playing']){seekEvents.push(event);audio.addEventListener(event,seek)}
+    const repeatedMetadata=await new Promise(resolve=>{const timer=setTimeout(()=>resolve({timeout:true}),10000);audio.onloadedmetadata=()=>{clearTimeout(timer);resolve({duration:audio.duration,readyState:audio.readyState})};audio.onerror=()=>{clearTimeout(timer);resolve({error:audio.error?.code})};audio.src=mediaUrl;});
+    const repeatedPlayError=await new Promise(resolve=>{document.querySelector('#play').onclick=()=>audio.play().then(()=>resolve(null),error=>resolve(String(error)));window.__probeReady=2;});
+    await new Promise(resolve=>setTimeout(resolve,600));
+    const repeatedPlayback={metadata:repeatedMetadata,requestedPosition,duration:audio.duration,at:audio.currentTime,ended:audio.ended,paused:audio.paused,playError:repeatedPlayError};audio.pause();
+    for(const event of seekEvents)audio.removeEventListener(event,seek);
     let decodedDuration=null,decodedPcmSha256=null,decodedFrames=null,decodeError=null;try{
      const bytes=await(await fetch(url)).arrayBuffer(),context=new OfflineAudioContext(2,44100,44100),buffer=await context.decodeAudioData(bytes);decodedDuration=buffer.duration;decodedFrames=buffer.length;
      decodedPcmSha256=await Promise.all(Array.from({length:buffer.numberOfChannels},async(_,i)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer.getChannelData(i)))).map(v=>v.toString(16).padStart(2,'0')).join('')));
     }catch(error){decodeError=String(error)}
-    audio.removeAttribute('src');audio.load();if(blob)URL.revokeObjectURL(mediaUrl);return {metadata,afterPlayback,decodedDuration,decodedFrames,decodedPcmSha256,decodeError};
-   },{url,blob:mode.endsWith('blob')});
-   await page.waitForFunction(()=>window.__probeReady);await page.click('#play');
+    audio.removeAttribute('src');audio.load();if(blob)URL.revokeObjectURL(mediaUrl);return {metadata,afterPlayback,repeatedPlayback,decodedDuration,decodedFrames,decodedPcmSha256,decodeError};
+   },{url,blob:mode.endsWith('blob'),expectedDuration:entries[key].duration});
+   await page.waitForFunction(()=>window.__probeReady===true);await page.click('#play');
+   await page.waitForFunction(()=>window.__probeReady===2);await page.click('#play');
    const result=await pending;results.push({key,sha,mode,expectedDuration:entries[key].duration,...result});
   }
   console.log(JSON.stringify({browser:selected,physicalIPhone:false,results,requests},null,2));
