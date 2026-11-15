@@ -1,5 +1,22 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
+
+test('completed observations are audio-bound and released when the page becomes hidden',async()=>{
+ const events=new Map(),values=new Map(),pcm=new Float32Array(16000*40);let closed=0;
+ class Worker{postMessage(data){queueMicrotask(()=>this.onmessage({data:{id:data.id,chunks:[]}}));}terminate(){}}
+ class Offline{async decodeAudioData(){return {sampleRate:16000,duration:40,length:pcm.length,numberOfChannels:1,getChannelData:()=>pcm};}async close(){closed++;}}
+ const doc={hidden:false,baseURI:'https://example.test/',getElementById:()=>null,addEventListener:(k,v)=>events.set(k,v)};
+ const window={crypto:require('node:crypto').webcrypto,Worker,OfflineAudioContext:Offline,addEventListener:(k,v)=>events.set(k,v),MusicBoxBridge:{
+  currentId:()=> 'song',profile:()=> 'Diego',audio:()=>({duration:40,paused:false}),allTracks:()=>[{id:'song'}],mixUrl:()=> 'https://example.test/song.mp3',
+  lyricsData:()=>({synced:[{t:1,text:'the words you know and never want'},{t:7,text:'your heart will always be with me'},{t:16,text:'another first verse when we are here'}]})}};
+ vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../audio-lyrics-align.js'),'utf8'),{window,Worker,document:doc,navigator:{onLine:true,gpu:{},userAgent:'iPhone'},URL,AbortController,setTimeout,clearTimeout,
+  requestIdleCallback:fn=>fn(),sessionStorage:{getItem:k=>values.get(k)||null,setItem:(k,v)=>values.set(k,String(v))},
+  fetch:async()=>({ok:true,headers:{get:()=>null},blob:async()=>({size:20,arrayBuffer:async()=>new ArrayBuffer(20)})})});
+ const api=window.MusicBoxAudioAlign;assert.equal(api.request('song'),true);
+ for(let i=0;i<20&&api.diagnostics().activeAnalyses;i++)await new Promise(resolve=>setTimeout(resolve,10));
+ assert.equal(api.diagnostics().consensusObservations,1);assert.equal(closed,1);
+ doc.hidden=true;events.get('visibilitychange')();assert.equal(api.diagnostics().consensusObservations,0);assert.equal(api.diagnostics().workerAlive,false);
+});
 test('background cancels actual pending analysis ownership across repeated hide/show cycles without touching music',async()=>{
  const events=new Map(),values=new Map(),pcm=new Float32Array(16000*40);let workers=0,terminated=0,closed=0,saved=0;
  class Worker{constructor(){workers++}postMessage(){}terminate(){terminated++}}

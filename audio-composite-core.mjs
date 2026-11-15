@@ -13,7 +13,9 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  const preRoll=cue.renderPreRoll??.3,releaseSeconds=cue.renderReleaseSeconds??.9;
  if(![.3,.6,.9].includes(preRoll)||![.9,1.2,1.5].includes(releaseSeconds))throw Error('Unbounded common gain envelope');
  const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
- const preserveFile=cue.preservedFileTail===true;
+ const preserveFile=cue.preservedFileTail===true,foreground=preserveFile&&cue.preservedEntrance==='vocal-handoff-foreground-v1';
+ const vocalAt=cue.structuralEvidence?.vocalHandoff?.at;
+ if(foreground&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>cue.fade-.6||cue.structuralEvidence?.vocalOverlapPolicy!=='separated-vocal-handoff-v1'))throw Error('Unbound vocal foreground envelope');
  if(preserveFile&&(cue.nativeTailFullBeat!==true||cue.preserveTail!==true||cue.entry!==0||cue.vocalFadeSeconds!==0))throw Error('Unbound intact-file mode');
  const nativeHandoffAt=cue.structuralBeat&&!preserveFile?cue.fade:(outgoing.channels[0].length-aOffset)/sr-preRoll;
  if((!cue.structuralBeat||preserveFile)&&(nativeHandoffAt<cue.fade-.1||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
@@ -23,6 +25,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  for(let i=0;i<frames;i++){
   const t=i/sr-preRoll,u=clamp(t/cue.fade,0,1);
   let a=1,b=.33*Math.sin(Math.min(1,u*1.5)*Math.PI/2);
+  if(foreground){const rise=clamp((t-(vocalAt-.3))/.6,0,1);b=(.33+.67*rise*rise*(3-2*rise))*Math.sin(clamp(t/.008,0,1)*Math.PI/2);}
   if(preserveFile&&cue.preservedEntrance==='first-attack-033-v1')b=.33*Math.sin(clamp(t/.008,0,1)*Math.PI/2);
   if(cue.structuralBeat&&!preserveFile){
    if(cue.vocalFadeSeconds!==.4)throw Error('Unbound vocal fade envelope');
@@ -32,7 +35,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
    // Preserve the first actual drum transient. A 450ms fade from zero
    // erased that downbeat and failed the independent rendered-pulse test.
    b=.28*Math.sin(clamp(t/.008,0,1)*Math.PI/2)+.17*Math.sin(clamp(t/.45,0,1)*Math.PI/2)+.55*Math.sin(late*Math.PI/2);
-  }else if(t>=nativeHandoffAt){a=0;b=.33+.67*clamp((t-nativeHandoffAt)/.55,0,1);}
+  }else if(t>=nativeHandoffAt){a=0;b=foreground?1:.33+.67*clamp((t-nativeHandoffAt)/.55,0,1);}
   if(t>=nativeHandoffAt)a=0;
   for(let c=0;c<2;c++){
    const incomingIndex=bOffset+i-Math.round(preRoll*sr);

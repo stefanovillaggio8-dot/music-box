@@ -2643,8 +2643,8 @@ function pcmFullHarmony(outro,intro,begin,entry,rate,fade){
 // not missing chroma and cannot create a harmonic clash. Keep the existing
 // key and clash limits on every meaningful frame; bound even an unknown
 // quiet frame by its worst possible cross interaction at the actual gain.
-function pcmPreservedTailHarmony(outro,intro,begin,rate,fade,entrance='native-tail-sine-033-v1'){
- if(!['native-tail-sine-033-v1','first-attack-033-v1'].includes(entrance))return null;
+function pcmPreservedTailHarmony(outro,intro,begin,rate,fade,entrance='native-tail-sine-033-v1',vocalAt=null){
+ if(!['native-tail-sine-033-v1','first-attack-033-v1','vocal-handoff-foreground-v1'].includes(entrance)||entrance==='vocal-handoff-foreground-v1'&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>fade-.6))return null;
  const nearest=(part,t)=>{
   let row=null,distance=Infinity;
   for(const r of part.harmony){const d=Math.abs(r.t-t);if(d<distance){distance=d;row=r}}
@@ -2658,7 +2658,8 @@ function pcmPreservedTailHarmony(outro,intro,begin,rate,fade,entrance='native-ta
  const source=[],target=[],clashes=[],excess=[];let boundedQuiet=0,frames=0;
  for(let t=.5;t<=fade-.5;t+=.5){
   const a=nearest(outro,begin+t),b=nearest(intro,t*rate);if(!a||!b)return null;frames++;
-  const incomingGain=entrance==='first-attack-033-v1'?.33:.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
+  const rise=Number.isFinite(vocalAt)?clamp((t-(vocalAt-.3))/.6,0,1):0;
+  const incomingGain=entrance==='vocal-handoff-foreground-v1'?.33+.67*rise*rise*(3-2*rise):entrance==='first-attack-033-v1'?.33:.33*Math.sin(Math.min(1,t/fade*1.5)*Math.PI/2),
    aa=a.rms,bb=b.rms*incomingGain,w=aa+bb>0?4*aa*bb/(aa+bb)**2:0;
   if((a.rms<.005||b.rms<.005)&&w<=.05){boundedQuiet++;continue;}
   const x=normalize(a.notes),y=normalize(b.notes);if(!x||!y)return null;
@@ -2826,7 +2827,8 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
     p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||p.measuredFullBeat!==true||p.metricalRhythmic!==false||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
-    p.preservedEntrance!=null&&p.preservedEntrance!=='first-attack-033-v1'||
+    p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1'].includes(p.preservedEntrance)||
+    p.preservedEntrance==='vocal-handoff-foreground-v1'&&!separated||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     p.sourceSha!==a.sha||p.targetSha!==b.sha||p.entry!==0||p.vocalFadeSeconds!==0||p.gain!==1||
     ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||

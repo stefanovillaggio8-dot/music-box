@@ -120,7 +120,7 @@ for(const a of prepared)for(const b of prepared){
    if(!incomingClear&&(!outgoingGuard?.clear||knownOutgoing)&&!handoff){excluded('voice');continue;}voice=true;reached.add('voice');
    const downbeatErrors=sourceDown.map((t,i)=>t-begin-targetDown[i]/rate),rms=Math.sqrt(downbeatErrors.reduce((s,x)=>s+x*x,0)/downbeatErrors.length);
    if(rms>.025||downbeatErrors.some(t=>Math.abs(t)>.05)){excluded('downbeatTiming');continue;}
-   const h=engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,'first-attack-033-v1');if(!h){excluded('harmony');continue;}harmony=true;reached.add('harmony');
+   const h=engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,handoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',handoff?.at);if(!h){excluded('harmony');continue;}harmony=true;reached.add('harmony');
    report.windows++;
    const diagnosis={};const full=engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,fade,diagnosis);
    const fit=partial?(!full&&metricalFit(pairOut,pairIn,x,y,begin,rate)):full;if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
@@ -137,7 +137,7 @@ for(const a of prepared)for(const b of prepared){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
    const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial,metricalRhythmic:partial,
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
-    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:'first-attack-033-v1',
+    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
     sourceTempoBpm:60*x.bars*x.meter/(x.end-x.start),targetTempoBpm:60*y.bars*y.meter/(y.end-y.start),
     nominalTempo:(y.end-y.start)/(x.end-x.start),nativeRatePreferred:c.tempo===1&&fit.rms<=.025,

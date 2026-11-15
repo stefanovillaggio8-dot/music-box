@@ -1,6 +1,19 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 
+test('a measured vocal gap brings the incoming voice to native level before EOF without a final level reset',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,
+  preservedEntrance:'vocal-handoff-foreground-v1',structuralEvidence:{vocalOverlapPolicy:'separated-vocal-handoff-v1',vocalHandoff:{at:2.5}}};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>new Float32Array(Math.round(5.3*sr)).fill(.2))};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>new Float32Array(sr*10).fill(.3))};
+ const r=compositePCM(outgoing,incoming,cue),sample=t=>r.components.incoming[0][Math.round((t+.3)*sr)];
+ assert.ok(Math.abs(sample(1)-.3*.33)<1e-6);assert.ok(Math.abs(sample(3)-.3)<1e-6);
+ assert.ok(Math.abs(sample(5.01)-sample(4.99))<1e-6,'incoming level cannot fall back to one third at EOF');
+ assert.equal(r.outgoingEnvelope,'unity-through-decoded-eof-v1');assert.ok(r.peak<.999);
+ assert.throws(()=>compositePCM(outgoing,incoming,{...cue,structuralEvidence:{}}),/foreground envelope/);
+});
+
 test('reconstructed peak bounds reserve smooth shared headroom without moving native boundaries',async()=>{
  const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
  const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,renderGainMode:'lookahead'};
