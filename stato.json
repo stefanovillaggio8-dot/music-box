@@ -3689,13 +3689,13 @@
    },
    "[\"solo per te\",\"negromaro\"]": {
     "v": 2,
-    "s": 258,
+    "s": 303,
     "t": "Solo Per Te",
     "a": "Negromaro"
    },
    "m:2026-11|[\"solo per te\",\"negromaro\"]": {
     "v": 2,
-    "s": 258,
+    "s": 303,
     "t": "Solo Per Te",
     "a": "Negromaro"
    },
@@ -10276,14 +10276,14 @@
     "a": "Modà"
    },
    "[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
-    "v": 1,
-    "s": 445,
+    "v": 2,
+    "s": 465,
     "t": "Miami Vice",
     "a": "Luchè, Sfera Ebbasta, Simba La Rue"
    },
    "m:2026-11|[\"miami vice\",\"luchè, sfera ebbasta, simba la rue\"]": {
-    "v": 1,
-    "s": 445,
+    "v": 2,
+    "s": 465,
     "t": "Miami Vice",
     "a": "Luchè, Sfera Ebbasta, Simba La Rue"
    },
