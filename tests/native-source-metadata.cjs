@@ -32,8 +32,10 @@ const selected=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['webkit','chromium']
   browser=await ({chromium,webkit}[selected]).launch({headless:true});const page=await browser.newPage(),base='http://127.0.0.1:'+server.address().port;
   await page.route('**/intercept/**',async route=>{const sha=new URL(route.request().url()).pathname.split('/')[2];requests.push({mode:'intercept',sha,range:route.request().headers().range||null});await route.fulfill({status:200,contentType:'audio/mpeg',body:data.get(sha)});});
   await page.goto(base);const results=[];
-  for(const key of keys)for(const mode of ['raw','range','whole','intercept','blob',...(candidates[key]?['prefix-range','prefix-blob']:[])]){
-   const sha=entries[key].sha,url=mode==='raw'?'https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+key.slice(6):base+'/'+mode+'/'+sha;
+  for(const key of keys)for(const mode of ['raw','range','routed-range','routed-raw','whole','intercept','blob',...(candidates[key]?['prefix-range','prefix-blob']:[])]){
+   const sha=entries[key].sha,url=mode.endsWith('raw')?'https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+key.slice(6):base+'/'+mode+'/'+sha;
+   const passthrough=route=>route.continue();
+   if(mode.startsWith('routed-'))await page.route('**/*',passthrough);
    await page.evaluate(()=>window.__probeReady=false);
    const pending=page.evaluate(async({url,blob,expectedDuration})=>{
     const audio=new Audio();audio.preload='auto';audio.crossOrigin='anonymous';
@@ -62,6 +64,7 @@ const selected=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['webkit','chromium']
    await page.waitForFunction(()=>window.__probeReady===true);await page.click('#play');
    await page.waitForFunction(()=>window.__probeReady===2);await page.click('#play');
    const result=await pending;results.push({key,sha,mode,expectedDuration:entries[key].duration,...result});
+   if(mode.startsWith('routed-'))await page.unroute('**/*',passthrough);
   }
   console.log(JSON.stringify({browser:selected,physicalIPhone:false,results,requests},null,2));
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
