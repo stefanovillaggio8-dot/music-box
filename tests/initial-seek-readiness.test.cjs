@@ -66,3 +66,12 @@ test('DJ preparation does not run before the requested native initial position i
  check(player,()=>calls++);assert.equal(calls,0);delete player._mbInitialSeekCleanup;check(player,()=>calls++);assert.equal(calls,1);
  assert.match(app,/id !== currentId \|\| Number\.isFinite\(startAt\)&&startAt>0\) resumeAt = 0/);
 });
+test('a wanted native resume can still play while metadata and its initial seek are pending',()=>{
+ const from=app.indexOf('  function _riprendiSeInAttesa() {'),to=app.indexOf('  ["visibilitychange", "focus", "pageshow"]',from);
+ assert.ok(to>from);let advances=0,plays=0;
+ const audio={duration:.001,currentTime:.001,ended:true,paused:true,_mbInitialSeekCleanup:()=>{},play:()=>{plays++;return Promise.resolve()}};
+ new Function('audio','advance',`const _iosInstallataComeApp=()=>false,document={hidden:false},window={},_vuoleSuonare=true,currentId='source';
+  let _ultimoScorrimento=0;const toast=()=>{},_finitoSenzaAvanti=advance,_controllaCheSuoni=()=>{},_riprovaPiuTardi=()=>{};
+  ${app.slice(from,to)}_riprendiSeInAttesa();`)(audio,()=>advances++);
+ assert.equal(advances,0);assert.equal(plays,1);
+});

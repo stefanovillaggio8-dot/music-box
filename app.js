@@ -7080,15 +7080,15 @@ function rebuildAudio(autoplay) {
            schermo spento l'aveva già azzerato: quindi riaprendo l'app non
            ripartiva niente. Adesso guardo l'intento vero. */
         if (!_vuoleSuonare || !currentId || !audio) return;
-        if(audio._mbInitialSeekCleanup&&Number(audio.duration)<=.05)return;
+        const initialSeekPending=audio._mbInitialSeekCleanup&&Number(audio.duration)<=.05;
         /* Il brano e' finito mentre l'app era in secondo piano? Allora NON
            riprovo a suonarlo (un brano finito non riparte, e l'utente resta
            fermo): vado al successivo. Anche qui non riscrivo la scelta del
            brano, chiamo _finitoSenzaAvanti(), che usa handleEnded(). */
         try {
-          const finito = audio.ended ||
+          const finito = !initialSeekPending&&(audio.ended ||
             (isFinite(audio.duration) && audio.duration > .05 &&
-              audio.currentTime >= audio.duration - 0.4);
+              audio.currentTime >= audio.duration - 0.4));
           if (finito) {
             toast("La canzone era finita: e' partita la successiva");
             _finitoSenzaAvanti();
