@@ -3700,14 +3700,14 @@
     "a": "Negromaro"
    },
    "[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 92,
+    "v": 1,
+    "s": 137,
     "t": "verdi nei viola",
     "a": "lazza"
    },
    "m:2026-11|[\"verdi nei viola\",\"lazza\"]": {
-    "v": 0,
-    "s": 92,
+    "v": 1,
+    "s": 137,
     "t": "verdi nei viola",
     "a": "lazza"
    },
@@ -4031,13 +4031,13 @@
    },
    "[\"le tasche piene di sassi\",\"jovanotti\"]": {
     "v": 3,
-    "s": 342,
+    "s": 377,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"le tasche piene di sassi\",\"jovanotti\"]": {
     "v": 3,
-    "s": 342,
+    "s": 377,
     "t": "Le Tasche Piene Di Sassi",
     "a": "Jovanotti"
    },
@@ -5356,14 +5356,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 295,
+    "v": 1,
+    "s": 296,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 0,
-    "s": 295,
+    "v": 1,
+    "s": 296,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6160,14 +6160,14 @@
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 296,
+    "v": 0,
+    "s": 370,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ \"]": {
-    "v": 1,
-    "s": 296,
+    "v": 0,
+    "s": 370,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ "
    },
@@ -6971,13 +6971,13 @@
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 370,
+    "s": 408,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂÃÂÃÂ \"]": {
     "v": 0,
-    "s": 370,
+    "s": 408,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂÃÂÃÂ "
    },
@@ -7781,13 +7781,13 @@
    },
    "[\"quel sorriso in volto\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 408,
+    "s": 427,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂ "
    },
    "m:2026-11|[\"quel sorriso in volto\",\"modÃÂÃÂ \"]": {
     "v": 0,
-    "s": 408,
+    "s": 427,
     "t": "Quel sorriso in volto",
     "a": "ModÃÂÃÂ "
    },
