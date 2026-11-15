@@ -2243,13 +2243,13 @@
    },
    "[\"ragazza magica\",\"jovanotti\"]": {
     "v": 2,
-    "s": 285,
+    "s": 355,
     "t": "Ragazza Magica",
     "a": "Jovanotti"
    },
    "m:2026-11|[\"ragazza magica\",\"jovanotti\"]": {
     "v": 2,
-    "s": 285,
+    "s": 355,
     "t": "Ragazza Magica",
     "a": "Jovanotti"
    },
@@ -7318,14 +7318,14 @@
     "a": "GuÃÂÃÂÃÂÃÂ¨"
    },
    "[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂ¬\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂÃÂÃÂ¬\"]": {
-    "v": 0,
-    "s": 179,
+    "v": 1,
+    "s": 181,
     "t": "G&V",
     "a": "ivanBÃÂÃÂÃÂÃÂ¬"
    },
@@ -8129,13 +8129,13 @@
    },
    "[\"g&v\",\"ivanbÃÂÃÂ¬\"]": {
     "v": 1,
-    "s": 181,
+    "s": 219,
     "t": "G&V",
     "a": "ivanBÃÂÃÂ¬"
    },
    "m:2026-11|[\"g&v\",\"ivanbÃÂÃÂ¬\"]": {
     "v": 1,
-    "s": 181,
+    "s": 219,
     "t": "G&V",
     "a": "ivanBÃÂÃÂ¬"
    },
@@ -9274,14 +9274,14 @@
     "a": "ModÃÂ "
    },
    "[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 1,
-    "s": 97,
+    "v": 2,
+    "s": 121,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'ÃÂ¨ (feat. tedua)\",\"thasup\"]": {
-    "v": 1,
-    "s": 97,
+    "v": 2,
+    "s": 121,
     "t": "Dimmi Che C'ÃÂ¨ (feat. Tedua)",
     "a": "thasup"
    },
@@ -10085,13 +10085,13 @@
    },
    "[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 121,
+    "s": 206,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
    },
    "m:2026-11|[\"dimmi che c'Ã¨ (feat. tedua)\",\"thasup\"]": {
     "v": 2,
-    "s": 121,
+    "s": 206,
     "t": "Dimmi Che C'Ã¨ (feat. Tedua)",
     "a": "thasup"
    },
