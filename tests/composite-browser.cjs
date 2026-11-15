@@ -181,7 +181,12 @@ const server=http.createServer(async(req,res)=>{
      document.querySelector('#silent-handoff').onclick=async event=>{
       window.__plannedSetup={stage:'handoff-requested'};
       MusicBoxBridge.mixEnableAudio(event);
-      await MusicBoxBridge.mixHandoff(p.fromId,Math.max(0,p.cue.begin-9));
+      const pending=MusicBoxBridge.mixHandoff(p.fromId,Math.max(0,p.cue.begin-9));
+      const source=MusicBoxBridge.audio();window.__plannedMedia=[];
+      for(const event of ['loadedmetadata','playing','seeking','seeked','ended','pause','ratechange','timeupdate'])source.addEventListener(event,()=>{
+       if(__plannedMedia.length<32)__plannedMedia.push({event,at:source.currentTime,duration:source.duration,paused:source.paused,seeking:source.seeking,rate:source.playbackRate});
+      });
+      await pending;
       __plannedSetup={stage:'source-ready',id:MusicBoxBridge.currentId(),time:MusicBoxBridge.audio().currentTime};
       if(MusicBoxBridge.mixEnqueue([p.toId])!==1)throw Error('Actual queue rejected target');
       __plannedSetup.stage='target-queued';
@@ -193,7 +198,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
-     setup:window.__plannedSetup,diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     setup:window.__plannedSetup,media:window.__plannedMedia,common:MusicBoxCompositeMix.diagnostics(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     const muteDuringOverlap=await shell.evaluate(()=>{
      const button=document.querySelector('#btnVolIcon');button.click();
