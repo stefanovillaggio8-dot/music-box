@@ -49,6 +49,7 @@ function fixture(options={}){
     ",phrase:Number.isFinite(b?.phraseScore)?b.phraseScore:"+
     Number(options.phrase??.81)+"});",
   "const transition=(old,next)=>old.future?.[next.sha]||next.cue||null;",
+  "const indexedFullBeatBridge=(old,next)=>old.future?.[next.sha]||null;",
   ...(options.internalPlans?["const indexedStructuralBeatBridge=(old,next)=>next.cue?.structuralBeat&&!next.cue.invalidCertificate?next.cue:null;",
     "const fullBeatCueCertified=(old,next,cue)=>!cue.invalidCertificate;"]:[]),
   ...(options.neutralFallback?["const certifiedNeutralBridge=(old,next)=>next.safeNeutral||null;"]:[]),
