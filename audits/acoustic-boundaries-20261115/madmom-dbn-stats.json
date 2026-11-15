@@ -1,0 +1,100 @@
+[
+  {
+    "key": "audio/songs/bassi/track-255.mp3",
+    "role": "intro",
+    "bars": 4,
+    "logProbability": -6550.5495052926235,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-255.mp3",
+    "role": "outro",
+    "bars": 0,
+    "logProbability": -13211.767918828209,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-257.mp3",
+    "role": "intro",
+    "bars": 2,
+    "logProbability": -6606.001172759791,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-257.mp3",
+    "role": "outro",
+    "bars": 0,
+    "logProbability": -13156.652963410947,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-262.mp3",
+    "role": "intro",
+    "bars": 0,
+    "logProbability": -6626.633356092193,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-262.mp3",
+    "role": "outro",
+    "bars": 0,
+    "logProbability": -13158.986910916328,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-54.mp3",
+    "role": "intro",
+    "bars": 2,
+    "logProbability": -6516.108087116792,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-54.mp3",
+    "role": "outro",
+    "bars": 6,
+    "logProbability": -13174.684283217006,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-60.mp3",
+    "role": "intro",
+    "bars": 3,
+    "logProbability": -6515.348576851594,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-60.mp3",
+    "role": "outro",
+    "bars": 5,
+    "logProbability": -13029.44794452658,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-61.mp3",
+    "role": "intro",
+    "bars": 4,
+    "logProbability": -6432.139244666766,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/bassi/track-61.mp3",
+    "role": "outro",
+    "bars": 0,
+    "logProbability": -13436.35037223592,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/track-9.mp3",
+    "role": "intro",
+    "bars": 0,
+    "logProbability": -6695.564663814499,
+    "hypothesisNotCertified": true
+  },
+  {
+    "key": "audio/songs/track-9.mp3",
+    "role": "outro",
+    "bars": 0,
+    "logProbability": -13344.018014933146,
+    "hypothesisNotCertified": true
+  }
+]

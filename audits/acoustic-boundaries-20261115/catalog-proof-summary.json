@@ -1,0 +1,31 @@
+[
+  {
+    "id": "b-track-7@30c7dd0e01e288fdee55c9a92973855f5e98be9f",
+    "audioSha256": "13fd6ebb23a30846565648f4351381f4185765829d3113240097a8a9214601a4",
+    "words": 26,
+    "bytes": 15507
+  },
+  {
+    "id": "b-track-46@e5a94fd8d85b4c3da386d83fe13b194d0067f61a",
+    "audioSha256": "5cee93c2b21c2da7ba9af6ea1e20b6ff1839e5cb63236b87a4b3fc0955069bb5",
+    "words": 27,
+    "bytes": 10863
+  },
+  {
+    "id": "b-track-47@9525b94a365fa71221d8eae69f4d1fe744fea74f",
+    "audioSha256": "0cd862f3ebf2907d0ed6ac15a2f9728c6fdd08a2edb2cf402e8f5f851fee15c8",
+    "words": 10,
+    "bytes": 7725
+  },
+  {
+    "id": "b-track-51@c2769419b29a9346b8eb4e22179c5c0f5661f41b",
+    "audioSha256": "03ef9dec1e014d24e2ce693f626930ffe3c16b81ea06e998d2dbdf8d734eab50",
+    "words": 15,
+    "bytes": 7720
+  },
+  {
+    "id": "b-track-53@8b7d6a9faae73cabe0524454b963b5e826a3333d",
+    "included": false,
+    "reason": "no-eligible-acoustic-evidence"
+  }
+]

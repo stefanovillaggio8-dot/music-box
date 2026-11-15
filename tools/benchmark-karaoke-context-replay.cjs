@@ -11,10 +11,12 @@ const baselineFile=arg('baseline','baseline.json'),alternativeFile=arg('alternat
 const baseline=read(baselineFile),alternative=read(alternativeFile);
 const additionalFile=arg('additional','');
 const consensus=arg('consensus','false')==='true';
+const proofFile=arg('acoustic-proof-report',''),proofReport=proofFile?read(proofFile):null;
+const {fromCtc}=require('./karaoke-acoustic-proof.cjs');
 const observations=[[baselineFile,baseline],[alternativeFile,alternative],...(additionalFile?[[additionalFile,read(additionalFile)]]:[])];
 assertSameRecognizer(observations.map(([,report])=>report));
-const context={};context.window=context;vm.createContext(context);
-for(const f of ['word-karaoke.js','audio-lyrics-align.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),context);
+const context={crypto:crypto.webcrypto,TextEncoder,TextDecoder};context.window=context;vm.createContext(context);
+for(const f of ['word-karaoke.js','audio-lyrics-align.js','karaoke-acoustic-proof.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),context);
 const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
 const slice=(from,to)=>app.slice(app.indexOf(from),app.indexOf(to,app.indexOf(from)));
 const parser=slice('  function parseSynced(','  function _righeTestoConParole(');
@@ -39,7 +41,10 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
  const output={version:2,referenceWordOwnership:'annotation-line-end-v1',fixedWindowsFromOriginalReport:true,method:'actual application save/reload and context ownership; unchanged full and partial acoustic gates',implementedInBranchPlayer:true,publicDeployment:false,consensusEnabled:consensus,
   observationPassesPerReferenceWindow:observations.reduce((s,[,r])=>s+Math.ceil(28/(r.inference.experimentalContext?.seconds||28)),0),
   referenceLanguages:[...new Set(references.map(r=>r.language||'en'))],
-  runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js'].map(f=>
+  acousticProof:proofReport?{method:'ctc-observed-word-separator-v1',modelSha256:proofReport.modelSha256,
+   observationsSha256:crypto.createHash('sha256').update(fs.readFileSync(proofFile)).digest('hex'),
+   existingWordsPreserved:true,appliedAfterNormalContexts:true}:null,
+  runtimeSha256:Object.fromEntries(['audio-lyrics-align.js','word-karaoke.js','app.js','karaoke-acoustic-proof.js'].map(f=>
    [f,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,f))).digest('hex')])),
   limitation:'Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.',cases:[]};
  for(const c of baseline.cases){
@@ -49,7 +54,11 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
   const wordLines=referenceWordLines(record);
   const selectedLines=record.lines.filter(l=>l.start>=c.start+.15&&l.start<c.start+26.9&&l.end<c.start+27.96);
   const denominator=selectedLines.reduce((n,l)=>n+referenceForLine(record,wordLines,l).length,0);
-  const state=fixture({synced:lrc(record.lines)}),history=context.MusicBoxAudioAlign.createObservationHistory();
+  const state=fixture({synced:lrc(record.lines)}),history=context.MusicBoxAudioAlign.createObservationHistory(),acousticSets=[];
+  const measured=proofReport?.cases.find(x=>x.id===c.id);
+  if(proofReport&&measured?.sourceAudioSha256!==c.sourceAudioSha256)throw Error('Acoustic proof audio mismatch');
+  const acousticProof=measured?await context.MusicBoxAcousticProof.prepare(
+    fromCtc(state.rows(),record.lines,measured.words,c.sourceAudioSha256,proofReport.modelSha256),state.rows(),c.sourceAudioSha256):null;
   for(const [file,report] of observations){
    if(report.cases.find(x=>x.id===c.id)?.sourceAudioSha256!==c.sourceAudioSha256)throw Error('Additional recording identity mismatch');
    const observed=read(cacheFor(file,report,c.id));
@@ -66,8 +75,10 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
     const pending=[...aligned,...partial],current=rows.map(row=>pending.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row);
     const corroborated=consensus?context.MusicBoxAudioAlign.alignConsensusSpans(current,history.observe(c.sourceAudioSha256+'|'+c.id,{at:offset,seconds},chunks)):[];
     await state.save('song',[...aligned,...partial.filter(row=>!corroborated.some(c=>Math.abs(sourceAt(c)-sourceAt(row))<.002)),...corroborated]);
+    acousticSets.push(context.MusicBoxAudioAlign.recognizedWords(chunks,offset));
    }
   }
+  if(acousticProof)await state.save('song',context.MusicBoxAcousticProof.proposals(state.rows(),acousticProof,acousticSets,{start:c.start,end:c.start+28}));
   const errors=[];
   for(const line of selectedLines){
    const row=state.rows().find(r=>Math.abs((r.sourceT??r.t)-line.start)<.002&&r.text===line.text);

@@ -9,6 +9,9 @@ on:
       - "immersive.js"
       - "word-karaoke.js"
       - "audio-lyrics-align.js"
+      - "karaoke-acoustic-proof.js"
+      - "karaoke-acoustic/**"
+      - "tests/karaoke-acoustic-proof.test.cjs"
       - "tests/karaoke-dj-regression.cjs"
       - ".github/workflows/karaoke-dj-regression.yml"
 jobs:
@@ -27,5 +30,8 @@ jobs:
           node --check immersive.js
           node --check word-karaoke.js
           node --check audio-lyrics-align.js
+          node --check karaoke-acoustic-proof.js
       - name: Karaoke and DJ regression tests
-        run: node tests/karaoke-dj-regression.cjs
+        run: |
+          node tests/karaoke-dj-regression.cjs
+          node --test tests/karaoke-acoustic-proof.test.cjs

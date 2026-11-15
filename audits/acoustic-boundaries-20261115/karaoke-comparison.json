@@ -1,0 +1,237 @@
+{
+  "main": {
+    "before": {
+      "referenceWords": 590,
+      "acceptedWords": 168,
+      "coverage": 0.2847457627118644,
+      "onset": {
+        "count": 168,
+        "medianAbsoluteMs": 53.84814449999453,
+        "p95AbsoluteMs": 200.2113189999992
+      },
+      "end": {
+        "count": 168,
+        "medianAbsoluteMs": 65.77288819998728,
+        "p95AbsoluteMs": 228.38804630000098
+      }
+    },
+    "after": {
+      "referenceWords": 590,
+      "acceptedWords": 182,
+      "coverage": 0.30847457627118646,
+      "onset": {
+        "count": 182,
+        "medianAbsoluteMs": 52.86950680002178,
+        "p95AbsoluteMs": 199.6096191000163
+      },
+      "end": {
+        "count": 182,
+        "medianAbsoluteMs": 60.38146980000647,
+        "p95AbsoluteMs": 216.24670410000135
+      }
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "21a157ba8ce74793c53603dbbc987e3ebe5af5ad8d7c8afde3f9e324db44e98f",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "transfer": {
+    "before": {
+      "referenceWords": 243,
+      "acceptedWords": 24,
+      "coverage": 0.09876543209876543,
+      "onset": {
+        "count": 24,
+        "medianAbsoluteMs": 29.111755399998884,
+        "p95AbsoluteMs": 227.5915527000052
+      },
+      "end": {
+        "count": 24,
+        "medianAbsoluteMs": 50.2540893999992,
+        "p95AbsoluteMs": 203.36169429999984
+      }
+    },
+    "after": {
+      "referenceWords": 243,
+      "acceptedWords": 25,
+      "coverage": 0.102880658436214,
+      "onset": {
+        "count": 25,
+        "medianAbsoluteMs": 29.111755399998884,
+        "p95AbsoluteMs": 227.5915527000052
+      },
+      "end": {
+        "count": 25,
+        "medianAbsoluteMs": 50.2540893999992,
+        "p95AbsoluteMs": 203.36169429999984
+      }
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "cdcd7ca16a9038157582de26522ff2d1159c951c5cc410420500b3ddc0326dce",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "validation": {
+    "before": {
+      "referenceWords": 166,
+      "acceptedWords": 25,
+      "coverage": 0.15060240963855423,
+      "onset": {
+        "count": 25,
+        "medianAbsoluteMs": 65.93472290000335,
+        "p95AbsoluteMs": 360.9120482999941
+      },
+      "end": {
+        "count": 25,
+        "medianAbsoluteMs": 76.91281130000505,
+        "p95AbsoluteMs": 384.893157999997
+      }
+    },
+    "after": {
+      "referenceWords": 166,
+      "acceptedWords": 26,
+      "coverage": 0.1566265060240964,
+      "onset": {
+        "count": 26,
+        "medianAbsoluteMs": 67.16937259999867,
+        "p95AbsoluteMs": 360.9120482999941
+      },
+      "end": {
+        "count": 26,
+        "medianAbsoluteMs": 76.91281130000505,
+        "p95AbsoluteMs": 384.893157999997
+      }
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "2305a28e856fbdcff0fb52b7d7f04a6e9ebc1c1e58754704a31cef2adcd1053d",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "holdout": {
+    "before": {
+      "referenceWords": 150,
+      "acceptedWords": 14,
+      "coverage": 0.09333333333333334,
+      "onset": {
+        "count": 14,
+        "medianAbsoluteMs": 33.942138699998736,
+        "p95AbsoluteMs": 156.6727904999965
+      },
+      "end": {
+        "count": 14,
+        "medianAbsoluteMs": 39.937866199991845,
+        "p95AbsoluteMs": 202.7949218999936
+      }
+    },
+    "after": {
+      "referenceWords": 150,
+      "acceptedWords": 14,
+      "coverage": 0.09333333333333334,
+      "onset": {
+        "count": 14,
+        "medianAbsoluteMs": 33.942138699998736,
+        "p95AbsoluteMs": 156.6727904999965
+      },
+      "end": {
+        "count": 14,
+        "medianAbsoluteMs": 39.937866199991845,
+        "p95AbsoluteMs": 202.7949218999936
+      }
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "bd9eb85379760d646e20860950c40a0744a095da07d8fe0b739199894ab598d8",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  },
+  "fresh": {
+    "before": {
+      "referenceWords": 110,
+      "acceptedWords": 32,
+      "coverage": 0.2909090909090909,
+      "onset": {
+        "count": 32,
+        "medianAbsoluteMs": 115.3563232000181,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 32,
+        "medianAbsoluteMs": 160.80554199999142,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    },
+    "after": {
+      "referenceWords": 110,
+      "acceptedWords": 33,
+      "coverage": 0.3,
+      "onset": {
+        "count": 33,
+        "medianAbsoluteMs": 109.94274899999823,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 33,
+        "medianAbsoluteMs": 156.7509154999982,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    },
+    "oldWordsMissing": 0,
+    "oldIntervalsChanged": 0,
+    "sourceHashes": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "proof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "3cde92b255200908a32a39d5763010df9333a1b3d9c547f07c55928344b12afd",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    }
+  }
+}

@@ -8,6 +8,8 @@ const VERSION=9,MAX_AUDIO_BYTES=18*1024*1024,WINDOW=28,STEP=24,FS=16000;
 const MAX_MOBILE_BYTES=8*1024*1024,WORKER_TIMEOUT_MS=90000;
 const RETRY_MS=24*3600000;
 const active=new Set(),completedInSession=new Set();
+const proofAttempts=new Set();
+const rememberProofAttempt=key=>{proofAttempts.add(key);if(proofAttempts.size>64)proofAttempts.delete(proofAttempts.values().next().value);};
 const attempts=new Map(),sessionWindows=new Map();
 const uncertainLanguageLyrics=new Map();
 // A provider can later replace an ambiguous LRC with one whose language
@@ -346,6 +348,10 @@ function canRun(){
  if(/2g|3g/.test(navigator.connection?.effectiveType||""))return false;
  return true;
 }
+function canReadProof(){
+ return typeof document!=='undefined'&&!document.hidden&&typeof navigator!=='undefined'&&
+  !navigator.connection?.saveData&&!!root.crypto?.subtle&&!!root.MusicBoxAcousticProof?.available;
+}
 let worker=null,sequence=0,pending=new Map();
 let alignmentEpoch=0,downloadController=null,continuationTimer=null;
 function stopWorker(reason){
@@ -463,7 +469,7 @@ function ownedContextWords(chunks,spec){
  });
 }
 async function analyze(id,epoch=alignmentEpoch){
- if(!canRun())return false;
+ if(!canRun()&&!canReadProof())return false;
  const bridge=window.MusicBoxBridge;
  if(epoch!==alignmentEpoch)return false;
  const profile=String(bridge?.profile?.()||"");
@@ -487,6 +493,8 @@ async function analyze(id,epoch=alignmentEpoch){
  if(typeof src!=="string"||!src)return false;
   const absolute=new URL(src,document.baseURI);
   if(!/^(https?:|blob:)$/i.test(absolute.protocol))return false;
+ const proofKey=sessionId+'|'+absolute.href+'|'+(root.MusicBoxAcousticProof?.canonical?.(rows)||lyricSignature(rows)),proofOnly=!canRun();
+ if(proofOnly&&proofAttempts.has(proofKey))return false;
  const isPhone=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")||
    (/Macintosh/i.test(navigator.userAgent||"")&&Number(navigator.maxTouchPoints)>1);
  const limit=isPhone?MAX_MOBILE_BYTES:MAX_AUDIO_BYTES;
@@ -512,6 +520,12 @@ async function analyze(id,epoch=alignmentEpoch){
  let ctx;
  const controller=new AbortController();downloadController=controller;
  try{
+  // With no GPU/offline, read audio bytes only for a recording actually
+  // present in the small proof index. No decoder, worker or model is needed.
+  if(proofOnly&&!await root.MusicBoxAcousticProof.available(id,controller.signal)){
+   if(epoch===alignmentEpoch&&!controller.signal.aborted)rememberProofAttempt(proofKey);
+   return false;
+  }
   const response=await fetch(absolute.href,{cache:"force-cache",signal:controller.signal});
   if(epoch!==alignmentEpoch)return false;
   if(!response.ok)throw Error("Music download unavailable");
@@ -521,8 +535,23 @@ async function analyze(id,epoch=alignmentEpoch){
   if(blob.size>limit)throw Error("Track too large");
   const bytes=await blob.arrayBuffer();
   const digest=root.crypto?.subtle?await root.crypto.subtle.digest('SHA-256',bytes):null;
-  const acousticIdentity=digest?profile+'|'+id+'|'+absolute.href+'|'+Array.from(new Uint8Array(digest),v=>v.toString(16).padStart(2,'0')).join('')+'|'+lyricSignature(rows):null;
+  const audioSha256=digest?Array.from(new Uint8Array(digest),v=>v.toString(16).padStart(2,'0')).join(''):null;
+  const acousticIdentity=audioSha256?profile+'|'+id+'|'+absolute.href+'|'+audioSha256+'|'+lyricSignature(rows):null;
   if(epoch!==alignmentEpoch)return false;
+  // Optional precomputed acoustic evidence is bound to THESE MP3 bytes and
+  // the complete original LRC. Heavy separation/CTC runs only offline.
+  const acoustic=root.MusicBoxAcousticProof;
+  const proof=audioSha256?await acoustic?.load(rows,audioSha256,controller.signal):null;
+  const proofCurrent=()=>epoch===alignmentEpoch&&!document.hidden&&active.has(sessionId)&&
+   bridge.currentId?.()===id&&String(bridge.profile?.()||'')===profile&&
+   bridge.mixUrl?.(track)===src;
+  if(!proofCurrent())return false;
+  const precomputed=proof?acoustic.recognizedRows?.(bridge.lyricsData?.()?.synced||[],proof)||[]:[];
+  const restored=precomputed.length?Number(await bridge.saveAudioWordRows?.(id,precomputed))||0:0;
+  if(!proofCurrent())return false;
+  rememberProofAttempt(proofKey);
+  if(restored){setStatus('Parole verificate sull’audio originale: '+restored+' frasi');return true;}
+  if(proofOnly)return false;
   // Offline context does not claim the active iPhone audio session.
   // Never start a second live AudioContext while Music Box is playing.
   const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;
@@ -555,12 +584,23 @@ async function analyze(id,epoch=alignmentEpoch){
    const sourceAt=row=>row.sourceT??row.t;
    const partial=alignAcousticSpans(rows.map(row=>aligned.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row),chunks,at,seconds);
    const pendingRows=[...aligned,...partial],currentRows=rows.map(row=>pendingRows.find(r=>Math.abs(sourceAt(r)-sourceAt(row))<.002)||row);
-   const corroborated=acousticIdentity?alignConsensusSpans(currentRows,observationHistory.observe(acousticIdentity,spec,chunks)):[];
+   const measuredSets=acousticIdentity?observationHistory.observe(acousticIdentity,spec,chunks):[];
+   const corroborated=acousticIdentity?alignConsensusSpans(currentRows,measuredSets):[];
    aligned.push(...partial.filter(row=>!corroborated.some(c=>Math.abs(sourceAt(c)-sourceAt(row))<.002)),...corroborated);
    sessionStorage.setItem(key,String(Date.now()));
-   if(!aligned.length)continue;
-   const stored=await bridge.saveAudioWordRows?.(id,aligned);
+   const stored=aligned.length?await bridge.saveAudioWordRows?.(id,aligned):0;
    saved+=Number(stored)||0;
+   const latestRows=bridge.lyricsData?.()?.synced||[];
+   // Complete the existing short-context passes FIRST. An early auxiliary
+   // observation must not occupy a word a later normal pass can recognize.
+   const proofReady=spec.kind==='context7'&&[0,7,14,21].every(core=>
+    !latestRows.some(row=>!hasWordTiming(row)&&sourceAt(row)>=spec.parentAt+core-.15&&sourceAt(row)<spec.parentAt+core+7)||
+    !candidateSelected({kind:'context7',parentAt:spec.parentAt,coreStart:spec.parentAt+core}));
+   if(proof&&proofReady&&proofCurrent()){
+    const additions=acoustic.proposals(latestRows,proof,measuredSets.map(set=>set.words),
+     {start:spec.parentAt,end:spec.parentAt+WINDOW});
+    if(additions.length&&proofCurrent())saved+=Number(await bridge.saveAudioWordRows?.(id,additions))||0;
+   }
    if(saved>0)setStatus("IA locale: "+saved+" frasi con parole allineate");
   }
   if(scanned){
@@ -598,7 +638,7 @@ function request(id){
  id=String(id||window.MusicBoxBridge?.currentId?.()||"");
  const sessionId=String(window.MusicBoxBridge?.profile?.()||"")+"|"+id;
  if(active.size&&!active.has(sessionId))cancel();
- if(!id||active.size||completedInSession.has(sessionId)||!canRun())return false;
+ if(!id||active.size||completedInSession.has(sessionId)||!canRun()&&!canReadProof())return false;
  const signature=lyricSignature(window.MusicBoxBridge?.lyricsData?.()?.synced);
  if(uncertainLanguageLyrics.has(sessionId)&&
     uncertainLanguageLyrics.get(sessionId)===signature)return false;

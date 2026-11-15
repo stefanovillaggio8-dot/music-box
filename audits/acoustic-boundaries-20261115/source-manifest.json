@@ -1,0 +1,20 @@
+{
+  "baseline": "d737a27fbc381a16972badf277d1d51ea61dd9e0",
+  "sha256": {
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+    "mix-intelligente.js": "d8ac42b1ee1bdeecdc087933ce6595ad375325420ad8aad57c83a0abf814bf50",
+    "dj-deep-analysis.json": "f2f112cc99f87208f414cd401d71f3f321640600115b7982eb58b01941f5a68c",
+    "dj-lyric-boundaries.json": "0414f6f64aa6facb47c3582050f13ac5f351c705996a954742757cace9b14913",
+    "tools/karaoke-ctc-boundaries.py": "a0dbb1f5dbe6843fcbe3be24b8620cf82fb953b7c2c75c6b048ac6469f6a32ea",
+    "tools/build-karaoke-acoustic.py": "81803ad62d11861cd6623c2cb4435aaaf4f70e06211c4775aa739c18e7e12fd8",
+    "tools/build-karaoke-acoustic-index.cjs": "09cdea17e98d7161bf1f6e3111ddb7a76db7a5d6aa7f20fc44d4d4b2164b12eb",
+    "tools/benchmark-karaoke-context-replay.cjs": "de62005aa61da1e14a601751d75984f3ddcd13e607c4e294b90f8f3642b5b1b5",
+    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb"
+  },
+  "mixEngineAndIndexUnchanged": true,
+  "publicVersionUnchanged": true,
+  "physicalIPhoneTest": false
+}

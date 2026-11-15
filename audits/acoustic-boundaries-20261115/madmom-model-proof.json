@@ -1,0 +1,15 @@
+{
+  "modelSha256": "bf4fb29b64e60a840453d1f8d66ebbaa191d76d274078e12cde7754c56ce38cb",
+  "weights": {
+    "downbeats_blstm_1.pkl": "b02c4b8aa963069449422fd5cc55bd4077105fe268b0d83036b7d68b5520f38d",
+    "downbeats_blstm_2.pkl": "6fa9d138ed84bed14ab5ef6f81f3a7e1a125ff8c571a255f6ce91ccf93390eee",
+    "downbeats_blstm_3.pkl": "adf6a3e3bf345a9172e8252a511dae28622afe26ee653354c0d4c9e37de8f89a",
+    "downbeats_blstm_4.pkl": "a4f9a09b1588ca74b0157251364650d3fe81e383019b5986941415e08b37fcde",
+    "downbeats_blstm_5.pkl": "e40aea9b8221babaf14a9211a48dccc3ebcecdf8bcd6d62d60f0949445de9bb6",
+    "downbeats_blstm_6.pkl": "89b6854c5d6b2381687731aedc9bce6c84894021d1c2eeb60d161cefe997d68c",
+    "downbeats_blstm_7.pkl": "371a319a66d32bee6ab8d4a15f6ae9e4ee22ff97b4276736bab93d9a994c06c1",
+    "downbeats_blstm_8.pkl": "a0d20e1922872a3e5b74df451d8b5701de6ca88d9f5739f313fb2991d7a84c77"
+  },
+  "sourceCommit": "27f032e8947204902c675e5e341a3faf5dc86dae",
+  "modelsCommit": "7e3dc1b0cad499792767074d03c38b194b9b0a79"
+}

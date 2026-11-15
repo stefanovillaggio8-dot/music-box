@@ -8,6 +8,9 @@ on:
       - 'dj-deep-analysis.json'
       - 'app.js'
       - 'mix-intelligente.js'
+      - 'audio-lyrics-align.js'
+      - 'karaoke-acoustic-proof.js'
+      - 'tests/karaoke-proof-browser.cjs'
       - 'tests/composite-*.cjs'
       - '.github/workflows/composite-browser.yml'
   workflow_dispatch:
@@ -32,10 +35,13 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps chromium webkit
           node tests/native-decoder-peaks.cjs > native-decoder-peaks.json
+          node tests/karaoke-proof-browser.cjs > karaoke-proof-browser.json
       - uses: actions/upload-artifact@v4
         with:
           name: native-decoder-${{ matrix.browser }}
-          path: native-decoder-peaks.json
+          path: |
+            native-decoder-peaks.json
+            karaoke-proof-browser.json
           retention-days: 14
   certify-index:
     needs: native-decoders

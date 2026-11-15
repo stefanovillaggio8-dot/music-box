@@ -1,0 +1,492 @@
+{
+  "auto": {
+    "Ste": {
+      "tracks": 227,
+      "scope": {
+        "name": "Ste",
+        "tracks": 227,
+        "unavailableMembers": 0,
+        "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+      },
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 11929,
+          "noCoherentInitialBars": 7868,
+          "incomingVocalOrLyric": 1151,
+          "localHarmony": 283,
+          "noCoherentEndingBars": 30050,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10586,
+          "meterAndSpan": 955,
+          "voice": 1151,
+          "harmony": 283,
+          "duration": 193,
+          "observedDownbeat": 64,
+          "affineDownbeatFit": 131,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "windowExclusions": {
+        "Ste": {
+          "bpm": 141688,
+          "barSpan": 162545,
+          "meter": 22181,
+          "voice": 41518,
+          "overlapDuration": 42003,
+          "affineDownbeatFit": 4127,
+          "harmony": 9277,
+          "observedDownbeat": 1320,
+          "observedPulseAgreement": 108
+        }
+      },
+      "windows": 256,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 2
+    },
+    "Gym": {
+      "tracks": 24,
+      "scope": {
+        "name": "Gym",
+        "tracks": 24,
+        "unavailableMembers": 0,
+        "source": "Real app URL selector, stored playlist membership, original boost manifest; no user data modified"
+      },
+      "profileFunnel": {
+        "Gym": {
+          "pairs": 552,
+          "noCoherentEndingBars": 368,
+          "noCoherentInitialBars": 32,
+          "meterOrTempo": 138,
+          "incomingVocalOrLyric": 12,
+          "rhythmicTailCandidates": 1,
+          "localHarmony": 1
+        }
+      },
+      "pairConditions": {
+        "Gym": {
+          "bpm": 131,
+          "voice": 12,
+          "observedDownbeat": 4,
+          "duration": 1,
+          "affineDownbeatFit": 2,
+          "rhythmicTailCandidates": 1,
+          "harmony": 1
+        }
+      },
+      "windowExclusions": {
+        "Gym": {
+          "bpm": 2884,
+          "barSpan": 5234,
+          "affineDownbeatFit": 119,
+          "voice": 1517,
+          "overlapDuration": 330,
+          "observedDownbeat": 57,
+          "harmony": 58,
+          "observedPulseAgreement": 6
+        }
+      },
+      "windows": 46,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 1
+    }
+  },
+  "half": {
+    "Ste": {
+      "tracks": 227,
+      "scope": {
+        "name": "Ste",
+        "tracks": 227,
+        "unavailableMembers": 0,
+        "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+      },
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 11786,
+          "noCoherentInitialBars": 7785,
+          "incomingVocalOrLyric": 1150,
+          "localHarmony": 284,
+          "noCoherentEndingBars": 30276,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10580,
+          "meterAndSpan": 818,
+          "voice": 1150,
+          "harmony": 284,
+          "duration": 193,
+          "observedDownbeat": 64,
+          "affineDownbeatFit": 131,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "windowExclusions": {
+        "Ste": {
+          "bpm": 140972,
+          "barSpan": 161443,
+          "meter": 13594,
+          "voice": 40873,
+          "overlapDuration": 41161,
+          "affineDownbeatFit": 4102,
+          "harmony": 9241,
+          "observedDownbeat": 1318,
+          "observedPulseAgreement": 108
+        }
+      },
+      "windows": 256,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 2
+    },
+    "Gym": {
+      "tracks": 24,
+      "scope": {
+        "name": "Gym",
+        "tracks": 24,
+        "unavailableMembers": 0,
+        "source": "Real app URL selector, stored playlist membership, original boost manifest; no user data modified"
+      },
+      "profileFunnel": {
+        "Gym": {
+          "pairs": 552,
+          "noCoherentEndingBars": 368,
+          "noCoherentInitialBars": 32,
+          "meterOrTempo": 138,
+          "incomingVocalOrLyric": 12,
+          "rhythmicTailCandidates": 1,
+          "localHarmony": 1
+        }
+      },
+      "pairConditions": {
+        "Gym": {
+          "bpm": 131,
+          "voice": 12,
+          "observedDownbeat": 4,
+          "duration": 1,
+          "affineDownbeatFit": 2,
+          "rhythmicTailCandidates": 1,
+          "harmony": 1
+        }
+      },
+      "windowExclusions": {
+        "Gym": {
+          "bpm": 2343,
+          "barSpan": 4317,
+          "affineDownbeatFit": 91,
+          "voice": 987,
+          "overlapDuration": 234,
+          "observedDownbeat": 56,
+          "harmony": 31,
+          "observedPulseAgreement": 3
+        }
+      },
+      "windows": 23,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 1
+    }
+  },
+  "double": {
+    "Ste": {
+      "tracks": 227,
+      "scope": {
+        "name": "Ste",
+        "tracks": 227,
+        "unavailableMembers": 0,
+        "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+      },
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 11787,
+          "noCoherentInitialBars": 7785,
+          "incomingVocalOrLyric": 1150,
+          "localHarmony": 283,
+          "noCoherentEndingBars": 30276,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10581,
+          "meterAndSpan": 818,
+          "voice": 1150,
+          "harmony": 283,
+          "duration": 193,
+          "observedDownbeat": 64,
+          "affineDownbeatFit": 131,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "windowExclusions": {
+        "Ste": {
+          "bpm": 140248,
+          "barSpan": 160907,
+          "meter": 13565,
+          "voice": 40835,
+          "overlapDuration": 41003,
+          "affineDownbeatFit": 4102,
+          "harmony": 9228,
+          "observedDownbeat": 1317,
+          "observedPulseAgreement": 108
+        }
+      },
+      "windows": 256,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 2
+    },
+    "Gym": {
+      "tracks": 24,
+      "scope": {
+        "name": "Gym",
+        "tracks": 24,
+        "unavailableMembers": 0,
+        "source": "Real app URL selector, stored playlist membership, original boost manifest; no user data modified"
+      },
+      "profileFunnel": {
+        "Gym": {
+          "pairs": 552,
+          "noCoherentEndingBars": 368,
+          "noCoherentInitialBars": 32,
+          "meterOrTempo": 138,
+          "incomingVocalOrLyric": 12,
+          "rhythmicTailCandidates": 1,
+          "localHarmony": 1
+        }
+      },
+      "pairConditions": {
+        "Gym": {
+          "bpm": 131,
+          "voice": 12,
+          "observedDownbeat": 4,
+          "duration": 1,
+          "affineDownbeatFit": 2,
+          "rhythmicTailCandidates": 1,
+          "harmony": 1
+        }
+      },
+      "windowExclusions": {
+        "Gym": {
+          "bpm": 2706,
+          "barSpan": 4929,
+          "affineDownbeatFit": 110,
+          "voice": 1350,
+          "overlapDuration": 305,
+          "observedDownbeat": 56,
+          "harmony": 58,
+          "observedPulseAgreement": 6
+        }
+      },
+      "windows": 46,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 1
+    }
+  },
+  "global": {
+    "Ste": {
+      "tracks": 227,
+      "scope": {
+        "name": "Ste",
+        "tracks": 227,
+        "unavailableMembers": 0,
+        "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+      },
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 11920,
+          "noCoherentInitialBars": 7868,
+          "incomingVocalOrLyric": 1159,
+          "localHarmony": 284,
+          "noCoherentEndingBars": 30050,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10704,
+          "meterAndSpan": 824,
+          "voice": 1159,
+          "harmony": 284,
+          "duration": 197,
+          "observedDownbeat": 64,
+          "affineDownbeatFit": 131,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "windowExclusions": {
+        "Ste": {
+          "bpm": 142403,
+          "barSpan": 163174,
+          "meter": 13680,
+          "voice": 41567,
+          "overlapDuration": 41894,
+          "affineDownbeatFit": 4124,
+          "harmony": 9250,
+          "observedDownbeat": 1322,
+          "observedPulseAgreement": 108
+        }
+      },
+      "windows": 256,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 2
+    },
+    "Gym": {
+      "tracks": 24,
+      "scope": {
+        "name": "Gym",
+        "tracks": 24,
+        "unavailableMembers": 0,
+        "source": "Real app URL selector, stored playlist membership, original boost manifest; no user data modified"
+      },
+      "profileFunnel": {
+        "Gym": {
+          "pairs": 552,
+          "noCoherentEndingBars": 368,
+          "noCoherentInitialBars": 32,
+          "meterOrTempo": 138,
+          "incomingVocalOrLyric": 12,
+          "rhythmicTailCandidates": 1,
+          "localHarmony": 1
+        }
+      },
+      "pairConditions": {
+        "Gym": {
+          "bpm": 131,
+          "voice": 12,
+          "observedDownbeat": 4,
+          "duration": 1,
+          "affineDownbeatFit": 2,
+          "rhythmicTailCandidates": 1,
+          "harmony": 1
+        }
+      },
+      "windowExclusions": {
+        "Gym": {
+          "bpm": 2884,
+          "barSpan": 5234,
+          "affineDownbeatFit": 119,
+          "voice": 1517,
+          "overlapDuration": 330,
+          "observedDownbeat": 57,
+          "harmony": 58,
+          "observedPulseAgreement": 6
+        }
+      },
+      "windows": 46,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 1
+    }
+  },
+  "dbn": {
+    "Ste": {
+      "tracks": 227,
+      "scope": {
+        "name": "Ste",
+        "tracks": 227,
+        "unavailableMembers": 0,
+        "source": "Actual app library snapshot, original recording URLs as in the before/after session comparison"
+      },
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12180,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1163,
+          "localHarmony": 305,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "voice": 1163,
+          "harmony": 305,
+          "duration": 193,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 138,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "windowExclusions": {
+        "Ste": {
+          "bpm": 151358,
+          "barSpan": 171638,
+          "meter": 14688,
+          "voice": 45138,
+          "overlapDuration": 44290,
+          "affineDownbeatFit": 4328,
+          "harmony": 10619,
+          "observedDownbeat": 1340,
+          "observedPulseAgreement": 143
+        }
+      },
+      "windows": 291,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 2
+    },
+    "Gym": {
+      "tracks": 24,
+      "scope": {
+        "name": "Gym",
+        "tracks": 24,
+        "unavailableMembers": 0,
+        "source": "Real app URL selector, stored playlist membership, original boost manifest; no user data modified"
+      },
+      "profileFunnel": {
+        "Gym": {
+          "pairs": 552,
+          "noCoherentEndingBars": 299,
+          "noCoherentInitialBars": 33,
+          "meterOrTempo": 198,
+          "localHarmony": 2,
+          "incomingVocalOrLyric": 19,
+          "rhythmicTailCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Gym": {
+          "bpm": 191,
+          "harmony": 2,
+          "voice": 19,
+          "observedDownbeat": 5,
+          "duration": 1,
+          "affineDownbeatFit": 1,
+          "rhythmicTailCandidates": 1
+        }
+      },
+      "windowExclusions": {
+        "Gym": {
+          "bpm": 5074,
+          "barSpan": 8871,
+          "affineDownbeatFit": 184,
+          "voice": 3157,
+          "harmony": 131,
+          "overlapDuration": 611,
+          "observedDownbeat": 81,
+          "observedPulseAgreement": 8
+        }
+      },
+      "windows": 49,
+      "fullRecordingPairs": 0,
+      "partialRecordingPairs": 1
+    }
+  }
+}

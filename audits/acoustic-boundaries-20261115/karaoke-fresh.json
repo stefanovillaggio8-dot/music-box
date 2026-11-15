@@ -1,0 +1,548 @@
+{
+  "before": {
+    "version": 2,
+    "referenceWordOwnership": "annotation-line-end-v1",
+    "fixedWindowsFromOriginalReport": true,
+    "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+    "implementedInBranchPlayer": true,
+    "publicDeployment": false,
+    "consensusEnabled": true,
+    "observationPassesPerReferenceWindow": 7,
+    "referenceLanguages": [
+      "en"
+    ],
+    "acousticProof": null,
+    "runtimeSha256": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+    "cases": [
+      {
+        "id": "HILA_-_Give_Me_the_Same@217.529",
+        "category": "singing-sparse",
+        "referenceWords": 16,
+        "legacyReferenceWords": 16,
+        "acceptedWords": 2,
+        "errors": [
+          {
+            "lineSourceT": 228.2950592041,
+            "wordIndex": 0,
+            "startErrorMs": 153.94079590001297,
+            "endErrorMs": 1.2064208999902348
+          },
+          {
+            "lineSourceT": 228.2950592041,
+            "wordIndex": 1,
+            "startErrorMs": 1.2064208999902348,
+            "endErrorMs": -635.769287100004
+          }
+        ]
+      },
+      {
+        "id": "HILA_-_Give_Me_the_Same@125.837",
+        "category": "repeated-phrase",
+        "referenceWords": 42,
+        "legacyReferenceWords": 42,
+        "acceptedWords": 17,
+        "errors": [
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 9,
+            "startErrorMs": 131.1943359000054,
+            "endErrorMs": 34.27294919998758
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 10,
+            "startErrorMs": -184.6906737999916,
+            "endErrorMs": 115.3563232000181
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 11,
+            "startErrorMs": 115.3563232000181,
+            "endErrorMs": 110.33984380000561
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 12,
+            "startErrorMs": 33.954345700010435,
+            "endErrorMs": -462.675293000018
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 4,
+            "startErrorMs": 78.88537600001655,
+            "endErrorMs": 106.32189940000103
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 5,
+            "startErrorMs": 106.32189940000103,
+            "endErrorMs": 15.46679690000019
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 6,
+            "startErrorMs": 15.46679690000019,
+            "endErrorMs": 248.1138916000134
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 7,
+            "startErrorMs": 131.0026855000217,
+            "endErrorMs": 387.1593017999828
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 8,
+            "startErrorMs": 228.63574219999805,
+            "endErrorMs": 309.5463866999921
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 9,
+            "startErrorMs": 183.17309569999907,
+            "endErrorMs": -373.7904053000136
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 10,
+            "startErrorMs": -483.22644039998863,
+            "endErrorMs": 66.79736329999741
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 11,
+            "startErrorMs": 66.79736329999741,
+            "endErrorMs": 192.31372069998542
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 12,
+            "startErrorMs": 192.31372069998542,
+            "endErrorMs": 57.59509279999975
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 0,
+            "startErrorMs": 65.96301269999572,
+            "endErrorMs": 171.86938479997593
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 1,
+            "startErrorMs": 171.86938479997593,
+            "endErrorMs": 121.75830079999628
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 2,
+            "startErrorMs": 121.75830079999628,
+            "endErrorMs": -9.036377000001039
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 3,
+            "startErrorMs": -109.94274899999823,
+            "endErrorMs": 160.80554199999142
+          }
+        ]
+      },
+      {
+        "id": "Kinematic_-_Peyote@123.810",
+        "category": "singing-sparse",
+        "referenceWords": 12,
+        "legacyReferenceWords": 12,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Kinematic_-_Peyote@88.278",
+        "category": "repeated-phrase",
+        "referenceWords": 40,
+        "legacyReferenceWords": 40,
+        "acceptedWords": 13,
+        "errors": [
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 0,
+            "startErrorMs": -429.45330809999405,
+            "endErrorMs": 96.0831909000035
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 1,
+            "startErrorMs": 96.0831909000035,
+            "endErrorMs": 221.6709595000026
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 2,
+            "startErrorMs": -34.249450699988415,
+            "endErrorMs": 135.50885009999547
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 3,
+            "startErrorMs": 32.08477779999441,
+            "endErrorMs": 156.7509154999982
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 4,
+            "startErrorMs": 58.3088379000003,
+            "endErrorMs": 123.161438000011
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 5,
+            "startErrorMs": 123.161438000011,
+            "endErrorMs": 247.70367430001272
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 6,
+            "startErrorMs": 247.70367430001272,
+            "endErrorMs": 387.38934330000063
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 0,
+            "startErrorMs": -65.35357670000508,
+            "endErrorMs": 61.73535160000654
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 1,
+            "startErrorMs": 61.73535160000654,
+            "endErrorMs": 186.16192630000228
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 2,
+            "startErrorMs": 90.74108890000332,
+            "endErrorMs": 144.19720460000462
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 3,
+            "startErrorMs": 144.19720460000462,
+            "endErrorMs": 209.97479249999174
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 4,
+            "startErrorMs": 209.97479249999174,
+            "endErrorMs": 180.8549194000051
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 5,
+            "startErrorMs": 80.60467530000892,
+            "endErrorMs": 173.77972410000098
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "referenceWords": 110,
+      "acceptedWords": 32,
+      "coverage": 0.2909090909090909,
+      "onset": {
+        "count": 32,
+        "medianAbsoluteMs": 115.3563232000181,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 32,
+        "medianAbsoluteMs": 160.80554199999142,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    }
+  },
+  "after": {
+    "version": 2,
+    "referenceWordOwnership": "annotation-line-end-v1",
+    "fixedWindowsFromOriginalReport": true,
+    "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+    "implementedInBranchPlayer": true,
+    "publicDeployment": false,
+    "consensusEnabled": true,
+    "observationPassesPerReferenceWindow": 7,
+    "referenceLanguages": [
+      "en"
+    ],
+    "acousticProof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "3cde92b255200908a32a39d5763010df9333a1b3d9c547f07c55928344b12afd",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    },
+    "runtimeSha256": {
+      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
+      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+    },
+    "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+    "cases": [
+      {
+        "id": "HILA_-_Give_Me_the_Same@217.529",
+        "category": "singing-sparse",
+        "referenceWords": 16,
+        "legacyReferenceWords": 16,
+        "acceptedWords": 2,
+        "errors": [
+          {
+            "lineSourceT": 228.2950592041,
+            "wordIndex": 0,
+            "startErrorMs": 153.94079590001297,
+            "endErrorMs": 1.2064208999902348
+          },
+          {
+            "lineSourceT": 228.2950592041,
+            "wordIndex": 1,
+            "startErrorMs": 1.2064208999902348,
+            "endErrorMs": -635.769287100004
+          }
+        ]
+      },
+      {
+        "id": "HILA_-_Give_Me_the_Same@125.837",
+        "category": "repeated-phrase",
+        "referenceWords": 42,
+        "legacyReferenceWords": 42,
+        "acceptedWords": 18,
+        "errors": [
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 3,
+            "startErrorMs": 46.714172299999746,
+            "endErrorMs": -40.89355469999134
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 9,
+            "startErrorMs": 131.1943359000054,
+            "endErrorMs": 34.27294919998758
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 10,
+            "startErrorMs": -184.6906737999916,
+            "endErrorMs": 115.3563232000181
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 11,
+            "startErrorMs": 115.3563232000181,
+            "endErrorMs": 110.33984380000561
+          },
+          {
+            "lineSourceT": 126.3366088867,
+            "wordIndex": 12,
+            "startErrorMs": 33.954345700010435,
+            "endErrorMs": -462.675293000018
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 4,
+            "startErrorMs": 78.88537600001655,
+            "endErrorMs": 106.32189940000103
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 5,
+            "startErrorMs": 106.32189940000103,
+            "endErrorMs": 15.46679690000019
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 6,
+            "startErrorMs": 15.46679690000019,
+            "endErrorMs": 248.1138916000134
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 7,
+            "startErrorMs": 131.0026855000217,
+            "endErrorMs": 387.1593017999828
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 8,
+            "startErrorMs": 228.63574219999805,
+            "endErrorMs": 309.5463866999921
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 9,
+            "startErrorMs": 183.17309569999907,
+            "endErrorMs": -373.7904053000136
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 10,
+            "startErrorMs": -483.22644039998863,
+            "endErrorMs": 66.79736329999741
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 11,
+            "startErrorMs": 66.79736329999741,
+            "endErrorMs": 192.31372069998542
+          },
+          {
+            "lineSourceT": 133.5466003418,
+            "wordIndex": 12,
+            "startErrorMs": 192.31372069998542,
+            "endErrorMs": 57.59509279999975
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 0,
+            "startErrorMs": 65.96301269999572,
+            "endErrorMs": 171.86938479997593
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 1,
+            "startErrorMs": 171.86938479997593,
+            "endErrorMs": 121.75830079999628
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 2,
+            "startErrorMs": 121.75830079999628,
+            "endErrorMs": -9.036377000001039
+          },
+          {
+            "lineSourceT": 146.8910369873,
+            "wordIndex": 3,
+            "startErrorMs": -109.94274899999823,
+            "endErrorMs": 160.80554199999142
+          }
+        ]
+      },
+      {
+        "id": "Kinematic_-_Peyote@123.810",
+        "category": "singing-sparse",
+        "referenceWords": 12,
+        "legacyReferenceWords": 12,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Kinematic_-_Peyote@88.278",
+        "category": "repeated-phrase",
+        "referenceWords": 40,
+        "legacyReferenceWords": 40,
+        "acceptedWords": 13,
+        "errors": [
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 0,
+            "startErrorMs": -429.45330809999405,
+            "endErrorMs": 96.0831909000035
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 1,
+            "startErrorMs": 96.0831909000035,
+            "endErrorMs": 221.6709595000026
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 2,
+            "startErrorMs": -34.249450699988415,
+            "endErrorMs": 135.50885009999547
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 3,
+            "startErrorMs": 32.08477779999441,
+            "endErrorMs": 156.7509154999982
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 4,
+            "startErrorMs": 58.3088379000003,
+            "endErrorMs": 123.161438000011
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 5,
+            "startErrorMs": 123.161438000011,
+            "endErrorMs": 247.70367430001272
+          },
+          {
+            "lineSourceT": 96.6474533081,
+            "wordIndex": 6,
+            "startErrorMs": 247.70367430001272,
+            "endErrorMs": 387.38934330000063
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 0,
+            "startErrorMs": -65.35357670000508,
+            "endErrorMs": 61.73535160000654
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 1,
+            "startErrorMs": 61.73535160000654,
+            "endErrorMs": 186.16192630000228
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 2,
+            "startErrorMs": 90.74108890000332,
+            "endErrorMs": 144.19720460000462
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 3,
+            "startErrorMs": 144.19720460000462,
+            "endErrorMs": 209.97479249999174
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 4,
+            "startErrorMs": 209.97479249999174,
+            "endErrorMs": 180.8549194000051
+          },
+          {
+            "lineSourceT": 104.0233535767,
+            "wordIndex": 5,
+            "startErrorMs": 80.60467530000892,
+            "endErrorMs": 173.77972410000098
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "referenceWords": 110,
+      "acceptedWords": 33,
+      "coverage": 0.3,
+      "onset": {
+        "count": 33,
+        "medianAbsoluteMs": 109.94274899999823,
+        "p95AbsoluteMs": 429.45330809999405
+      },
+      "end": {
+        "count": 33,
+        "medianAbsoluteMs": 156.7509154999982,
+        "p95AbsoluteMs": 462.675293000018
+      }
+    }
+  },
+  "preservation": {
+    "missing": [],
+    "changed": []
+  }
+}

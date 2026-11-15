@@ -1,0 +1,12 @@
+{
+  "experiment": "strong CTC confidence without independent ASR, including previously estimated-only rows",
+  "accepted": false,
+  "transfer": {
+    "referenceWords": 243,
+    "acceptedWords": 43,
+    "onsetP95AbsoluteMs": 968.3128661999945,
+    "endP95AbsoluteMs": 880.6728515999964
+  },
+  "reason": "confident recognition can select the wrong repeated phrase; final runtime requires independent actual ASR corroboration for every new CTC word",
+  "ordinaryFourWordPartialRequirementUnchanged": true
+}
