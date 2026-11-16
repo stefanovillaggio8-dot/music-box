@@ -1,5 +1,5 @@
 {
-  "identicalPlaybackSourceHashes": true,
+  "identicalPlaybackSourceHashes": false,
   "allFourteenModeTotalsUnchanged": true,
   "results": [
     {
@@ -856,5 +856,6 @@
         "partialOverlapSum": 0
       }
     }
-  ]
+  ],
+  "limitation": "Logical selector replay does not simulate provisional native MP3 metadata; real browser tests cover that separately."
 }

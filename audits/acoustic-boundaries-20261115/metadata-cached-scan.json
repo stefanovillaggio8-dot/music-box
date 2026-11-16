@@ -1,0 +1,30 @@
+{
+  "cachedEntries": 539,
+  "withoutFrameCountHeader": [
+    {
+      "key": "audio/songs/track-1142.mp3",
+      "sha": "7ccefb1d8cf473c3cef471368a17e30db037fe3b",
+      "duration": 120.111
+    },
+    {
+      "key": "audio/songs/track-6.mp3",
+      "sha": "8589db7007685af4066cd1767862a7c0211fa7fa",
+      "duration": 139.833
+    },
+    {
+      "key": "audio/songs/track-4.mp3",
+      "sha": "004e594c10688869197f21e31e748c1dd82901b4",
+      "duration": 126.877
+    },
+    {
+      "key": "audio/songs/track-16.mp3",
+      "sha": "1f92bca4ab5b502e319c100bc44096efa28dfba7",
+      "duration": 131.683
+    },
+    {
+      "key": "audio/songs/track-2.mp3",
+      "sha": "c6cbe35e749776e0fe218701e627a54fdd0c31e9",
+      "duration": 213.838
+    }
+  ]
+}

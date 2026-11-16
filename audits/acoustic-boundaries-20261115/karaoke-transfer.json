@@ -14,10 +14,10 @@
     ],
     "acousticProof": null,
     "runtimeSha256": {
-      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
       "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
-      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
-      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
     },
     "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
     "cases": [
@@ -238,10 +238,10 @@
       "appliedAfterNormalContexts": true
     },
     "runtimeSha256": {
-      "audio-lyrics-align.js": "fbf54ee3b44b753ac1d45113a2615103aa4d5bb71438bda9dd5c01e8c11d3965",
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
       "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
-      "app.js": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925",
-      "karaoke-acoustic-proof.js": "5650388f9ee720005924f46fe48f2cefb9089a935e06faabacedd229b78a3034"
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
     },
     "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
     "cases": [

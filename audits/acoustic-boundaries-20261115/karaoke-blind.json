@@ -1,0 +1,264 @@
+{
+  "before": {
+    "version": 2,
+    "referenceWordOwnership": "annotation-line-end-v1",
+    "fixedWindowsFromOriginalReport": true,
+    "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+    "implementedInBranchPlayer": true,
+    "publicDeployment": false,
+    "consensusEnabled": true,
+    "observationPassesPerReferenceWindow": 7,
+    "referenceLanguages": [
+      "en"
+    ],
+    "acousticProof": null,
+    "runtimeSha256": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+    "cases": [
+      {
+        "id": "LUNABLIND_-_Vision__Radio_Edit_@206.168",
+        "category": "singing-sparse",
+        "referenceWords": 15,
+        "legacyReferenceWords": 15,
+        "acceptedWords": 4,
+        "errors": [
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 0,
+            "startErrorMs": -96.40246579999712,
+            "endErrorMs": 69.35864260000812
+          },
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 1,
+            "startErrorMs": 69.35864260000812,
+            "endErrorMs": -13.099243199974353
+          },
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 2,
+            "startErrorMs": -13.099243199974353,
+            "endErrorMs": 108.4028319999959
+          },
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 3,
+            "startErrorMs": 108.4028319999959,
+            "endErrorMs": 304.93823239999074
+          }
+        ]
+      },
+      {
+        "id": "LUNABLIND_-_Vision__Radio_Edit_@106.864",
+        "category": "repeated-phrase",
+        "referenceWords": 29,
+        "legacyReferenceWords": 29,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Lower_Loveday_-_Is_It_Right_@163.662",
+        "category": "singing-sparse",
+        "referenceWords": 14,
+        "legacyReferenceWords": 14,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Lower_Loveday_-_Is_It_Right_@85.500",
+        "category": "repeated-phrase",
+        "referenceWords": 38,
+        "legacyReferenceWords": 38,
+        "acceptedWords": 5,
+        "errors": [
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 0,
+            "startErrorMs": -40.47302250000939,
+            "endErrorMs": 193.91143800000066
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 1,
+            "startErrorMs": 193.91143800000066,
+            "endErrorMs": 71.5866089000059
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 2,
+            "startErrorMs": 71.5866089000059,
+            "endErrorMs": 52.182006799995406
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 3,
+            "startErrorMs": 52.182006799995406,
+            "endErrorMs": 102.21496580000178
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 4,
+            "startErrorMs": 102.21496580000178,
+            "endErrorMs": 55.430297899988545
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "referenceWords": 96,
+      "acceptedWords": 9,
+      "coverage": 0.09375,
+      "onset": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 193.91143800000066
+      },
+      "end": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 304.93823239999074
+      }
+    }
+  },
+  "after": {
+    "version": 2,
+    "referenceWordOwnership": "annotation-line-end-v1",
+    "fixedWindowsFromOriginalReport": true,
+    "method": "actual application save/reload and context ownership; unchanged full and partial acoustic gates",
+    "implementedInBranchPlayer": true,
+    "publicDeployment": false,
+    "consensusEnabled": true,
+    "observationPassesPerReferenceWindow": 7,
+    "referenceLanguages": [
+      "en"
+    ],
+    "acousticProof": {
+      "method": "ctc-observed-word-separator-v1",
+      "modelSha256": "488fd4f16de84438ffc945334278c1b9fb9b7159a806c1080b16111a958c945d",
+      "observationsSha256": "a741be23229cd9f83f6f24792d4c0abb0de4be3ef4792b0d372118ff2323bc48",
+      "existingWordsPreserved": true,
+      "appliedAfterNormalContexts": true
+    },
+    "runtimeSha256": {
+      "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+      "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+      "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+      "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6"
+    },
+    "limitation": "Additional ASR passes with manual phrase anchors; not independent Italian validation or physical phone inference. Estimated words are excluded.",
+    "cases": [
+      {
+        "id": "LUNABLIND_-_Vision__Radio_Edit_@206.168",
+        "category": "singing-sparse",
+        "referenceWords": 15,
+        "legacyReferenceWords": 15,
+        "acceptedWords": 4,
+        "errors": [
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 0,
+            "startErrorMs": -96.40246579999712,
+            "endErrorMs": 69.35864260000812
+          },
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 1,
+            "startErrorMs": 69.35864260000812,
+            "endErrorMs": -13.099243199974353
+          },
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 2,
+            "startErrorMs": -13.099243199974353,
+            "endErrorMs": 108.4028319999959
+          },
+          {
+            "lineSourceT": 209.6844024658,
+            "wordIndex": 3,
+            "startErrorMs": 108.4028319999959,
+            "endErrorMs": 304.93823239999074
+          }
+        ]
+      },
+      {
+        "id": "LUNABLIND_-_Vision__Radio_Edit_@106.864",
+        "category": "repeated-phrase",
+        "referenceWords": 29,
+        "legacyReferenceWords": 29,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Lower_Loveday_-_Is_It_Right_@163.662",
+        "category": "singing-sparse",
+        "referenceWords": 14,
+        "legacyReferenceWords": 14,
+        "acceptedWords": 0,
+        "errors": []
+      },
+      {
+        "id": "Lower_Loveday_-_Is_It_Right_@85.500",
+        "category": "repeated-phrase",
+        "referenceWords": 38,
+        "legacyReferenceWords": 38,
+        "acceptedWords": 5,
+        "errors": [
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 0,
+            "startErrorMs": -40.47302250000939,
+            "endErrorMs": 193.91143800000066
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 1,
+            "startErrorMs": 193.91143800000066,
+            "endErrorMs": 71.5866089000059
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 2,
+            "startErrorMs": 71.5866089000059,
+            "endErrorMs": 52.182006799995406
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 3,
+            "startErrorMs": 52.182006799995406,
+            "endErrorMs": 102.21496580000178
+          },
+          {
+            "lineSourceT": 86.0004730225,
+            "wordIndex": 4,
+            "startErrorMs": 102.21496580000178,
+            "endErrorMs": 55.430297899988545
+          }
+        ]
+      }
+    ],
+    "aggregate": {
+      "referenceWords": 96,
+      "acceptedWords": 9,
+      "coverage": 0.09375,
+      "onset": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 193.91143800000066
+      },
+      "end": {
+        "count": 9,
+        "medianAbsoluteMs": 71.5866089000059,
+        "p95AbsoluteMs": 304.93823239999074
+      }
+    }
+  },
+  "preservation": {
+    "missing": [],
+    "changed": []
+  }
+}

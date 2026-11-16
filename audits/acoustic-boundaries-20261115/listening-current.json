@@ -3,9 +3,9 @@
   "platform": "safari-logical-capability",
   "seed": 20261114,
   "runtimeEvidence": {
-    "engineSha256": "d8ac42b1ee1bdeecdc087933ce6595ad375325420ad8aad57c83a0abf814bf50",
+    "engineSha256": "c19ee7401091678b62c76afbe0870ed0ae204b7cc80b2c78acba783284735257",
     "indexSha256": "f2f112cc99f87208f414cd401d71f3f321640600115b7982eb58b01941f5a68c",
-    "applicationSha256": "141463346f6eb38bb383b62a7ae75b6c06495abcf96c403cc9930324201ea925"
+    "applicationSha256": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598"
   },
   "audioVariant": "actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest",
   "sessionHistoryAssumption": "A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.",

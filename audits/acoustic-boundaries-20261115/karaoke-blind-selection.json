@@ -1,0 +1,39 @@
+{
+  "selection": "first two alphabetical unused English recordings; chosen after final karaoke gates were frozen, before download or inference",
+  "excluded": [
+    "Avercage_-_Embers",
+    "Color_Out_-_Falling_Star",
+    "Confession_-_Quesabe",
+    "Cortez_-_Feel__Stripped_",
+    "Der_Musiker_-_d-music",
+    "Explosive_Ear_Candy_-_Like_The_Sun",
+    "HILA_-_Give_Me_the_Same",
+    "JASON_MILLER_-_CROWD_PLEASER",
+    "Kinematic_-_Peyote",
+    "Mes_Larmes_-_kobzx2z",
+    "Quentin_Hannappe_-_Keep_On",
+    "Slingshot_Miracle_-_Whistler",
+    "Wordsmith_-_The_Statement"
+  ],
+  "selected": [
+    {
+      "name": "LUNABLIND_-_Vision__Radio_Edit_",
+      "genre": "Pop",
+      "language": "en",
+      "file_name": "subsets/en/mp3/LUNABLIND_-_Vision__Radio_Edit_.mp3"
+    },
+    {
+      "name": "Lower_Loveday_-_Is_It_Right_",
+      "genre": "Indie",
+      "language": "en",
+      "file_name": "subsets/en/mp3/Lower_Loveday_-_Is_It_Right_.mp3"
+    }
+  ],
+  "frozenSourcesSha256": {
+    "karaoke-acoustic-proof.js": "ec1975f7f0943d7be2dcac4774084aaa042fe5116f028da63c21f6966d6269c6",
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f"
+  },
+  "metadataSha256": "a214dbc7ca88fee4e41effa559502777365f5798e28ef585812e8413330be73b",
+  "noSubsequentKaraokeTuningPermitted": true
+}
