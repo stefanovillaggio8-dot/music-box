@@ -288,7 +288,16 @@ const server=http.createServer(async(req,res)=>{
      if(sha&&url.hostname==='raw.githubusercontent.com'&&!metadataFixture){await route.continue();return;}
      if(sha){await fulfillOriginal(route,sha);return;}await route.abort();
     });
-    await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
+    await auto.addInitScript(profile=>{
+     localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true');
+     window.__autoNativeTrace=[];const observed=new WeakSet(),play=HTMLMediaElement.prototype.play;
+     HTMLMediaElement.prototype.play=function(){
+      if(!observed.has(this)){observed.add(this);for(const event of ['loadedmetadata','durationchange','playing','seeking','seeked','ended','pause','error'])this.addEventListener(event,()=>{
+       if(__autoNativeTrace.length<64)__autoNativeTrace.push({event,id:window.MusicBoxBridge?.currentId?.(),src:this.currentSrc,duration:this.duration,time:this.currentTime,paused:this.paused,readyState:this.readyState});
+      });}
+      return play.apply(this,arguments);
+     };
+    },playbackProfile);
     await auto.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
     await auto.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
     await auto.waitForFunction(({profile,fromId,toId})=>MusicBoxBridge.profile()===profile&&
@@ -327,7 +336,7 @@ const server=http.createServer(async(req,res)=>{
     })));throw error;}
     await auto.locator('#search').fill('');
     try{await auto.waitForFunction(()=>MusicBoxMix.diagnostics().shuffleSearch?.beatCandidates>0||MusicBoxMix.diagnostics().shuffleSearch?.partialBeatCandidates>0,{timeout:20000});}
-    catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection()}))));throw error;}
+    catch(error){console.error(name,'shuffle diagnostic',JSON.stringify(await auto.evaluate(()=>({diagnostics:MusicBoxMix.diagnostics(),selection:MusicBoxBridge.mixShuffleSelection(),media:window.__autoNativeTrace}))));throw error;}
     const automaticShuffle=await auto.evaluate(()=>{
      const next=MusicBoxBridge.mixNext(),current=MusicBoxBridge.currentId(),state=MusicBoxBridge.mixShuffleSelection();
      return {full:MusicBoxMix.inspectPair(current,next.id).cue?.measuredFullBeat===true,
