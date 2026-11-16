@@ -40,6 +40,9 @@ function supports(cue){
   (!cue.metricalPickupWindow||cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
    cue.preservedEntrance==='metrical-pickup-033-v1'&&c.renderedEntrance===cue.preservedEntrance&&c.releaseSeconds===1.5&&!!c.nativeDecoderProof)&&
   (!cue.nativeOriginalReturn||cue.metricalPickupWindow&&c.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===cue.targetSha&&
+   finite(c.nativeSplice.returnEnergyRatio)&&c.nativeSplice.returnEnergyRatio>=.85&&c.nativeSplice.returnEnergyRatio<=1.000001&&
+   finite(c.nativeSplice.returnStart)&&finite(c.nativeSplice.returnEnd)&&c.nativeSplice.returnStart>=c.nativeHandoffAt+.849&&c.nativeSplice.returnStart<=c.nativeHandoffAt+1.081&&
+   Math.abs(c.nativeSplice.returnEnd-c.nativeSplice.returnStart-.02)<.00001&&c.nativeSplice.returnEnd<=c.nativeRevealAt-.3&&
    c.nativeSplice.unmodifiedOriginalComparison===true&&finite(c.nativeSplice.encodedMaximumDifference)&&c.nativeSplice.encodedMaximumDifference>=0&&c.nativeSplice.encodedMaximumDifference<=2e-6&&
    [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.targetSha===cue.targetSha&&
     finite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&finite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1}))&&

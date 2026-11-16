@@ -2831,7 +2831,8 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   c.nativeSplice.sampleRate===48000&&c.nativeSplice.verifiedFrames===4800&&c.nativeSplice.unmodifiedOriginalComparison===true&&
   [c.nativeSplice.returnStart,c.nativeSplice.returnEnd,c.nativeSplice.nativeResumeSeconds,c.nativeSplice.maximumLast100msDifference,c.nativeSplice.encodedMaximumDifference].every(Number.isFinite)&&
   c.nativeSplice.returnStart>=c.nativeHandoffAt+.849&&c.nativeSplice.returnEnd<=c.nativeRevealAt-.3&&
-  c.nativeSplice.returnEnd>c.nativeSplice.returnStart&&c.nativeSplice.maximumLast100msDifference>=0&&c.nativeSplice.maximumLast100msDifference<=2e-6&&
+  c.nativeSplice.returnStart<=c.nativeHandoffAt+1.081&&Math.abs(c.nativeSplice.returnEnd-c.nativeSplice.returnStart-.02)<.00001&&
+  Number.isFinite(c.nativeSplice.returnEnergyRatio)&&c.nativeSplice.returnEnergyRatio>=.85&&c.nativeSplice.returnEnergyRatio<=1.000001&&c.nativeSplice.maximumLast100msDifference>=0&&c.nativeSplice.maximumLast100msDifference<=2e-6&&
   c.nativeSplice.encodedMaximumDifference>=0&&c.nativeSplice.encodedMaximumDifference<=2e-6&&
   [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.targetSha===b.sha&&v.frames===Math.round(rate*.1)&&
    Number.isFinite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&Number.isFinite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')});
@@ -8574,6 +8575,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
    nextBeat:cue.nextBeat,protectedTail:!!cue.preserveTail,
    measuredBeatBridge:!!cue.measuredBeatBridge,
    measuredFullBeat:!!cue.measuredFullBeat,structuralBeat:!!cue.structuralBeat,metricalRhythmic:!!cue.metricalRhythmic,
+   nativeOriginalReturn:cue.nativeOriginalReturn===true,metricalPickupWindow:cue.metricalPickupWindow===true,
    instrumentalBeatBridge:!!cue.instrumentalBeatBridge,
    rhythmicGridJoin:!!cue.rhythmicGridJoin,
    independentLowBand:!!cue.independentLowBand,

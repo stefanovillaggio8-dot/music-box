@@ -26,7 +26,28 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  const revealAt=nativeHandoffAt+releaseSeconds+.15,revealFrame=Math.round((preRoll+revealAt)*sr);
  const nativeResumeSeconds=cue.entry+playedAt(revealAt,cue.tempo,cue.fade,.85);
  const nativeResumeFrame=Math.round((nativeResumeSeconds-incoming.start)*sr);
- const returnStart=nativeHandoffAt+.85,returnEnd=returnStart+.35;
+ let returnStart=nativeHandoffAt+.85,returnEnd=returnStart+.02,returnEnergyRatio=1;
+ if(nativeReturn){
+  // Choose a short splice from real, simultaneous component samples. A long
+  // crossfade between different WSOLA phases can cancel a guitar note.
+  // This searches ONLY post-EOF/after-tempo-return positions, never beats.
+  let best=null;const count=Math.round(.1*sr);
+  for(let start=nativeHandoffAt+.85;start<=nativeHandoffAt+1.08+.00001;start+=.005){
+   const lo=Math.round((preRoll+start-.04)*sr);let mixed=0,reference=0;
+   for(let i=lo;i<lo+count;i++){
+    const t=i/sr-preRoll,u=clamp((t-start)/.02,0,1),blend=u*u*(3-2*u);
+    const rise=clamp((t-nativeHandoffAt)/releaseSeconds,0,1),b=.33+.67*rise*rise*(3-2*rise);
+    for(let c=0;c<2;c++){
+     const x=stretched.channels[c][bOffset+i-Math.round(preRoll*sr)],y=incoming.channels[c][nativeResumeFrame+i-revealFrame];
+     if(!Number.isFinite(x)||!Number.isFinite(y))throw Error('Incomplete native return selection');
+     mixed+=((1-blend)*x+blend*y)**2*b*b;reference+=((1-blend)*x*x+blend*y*y)*b*b;
+    }
+   }
+   const ratio=mixed/Math.max(reference,1e-12);if(!best||ratio>best.ratio)best={start,ratio};
+  }
+  if(!best||best.ratio<.85)throw Error('Original native return cancels too much energy');
+  returnStart=best.start;returnEnd=best.start+.02;returnEnergyRatio=best.ratio;
+ }
  if((!cue.structuralBeat||preserveFile)&&(nativeHandoffAt<cue.fade-.1||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
  if(aOffset<0||bOffset<0||outgoing.channels.some(c=>aOffset+Math.floor((preRoll+(preserveFile?nativeHandoffAt:cue.fade))*sr)>c.length+1)||
     stretched.channels.some(c=>bOffset+Math.round((seconds-preRoll)*sr)>c.length))throw Error('Incomplete transition source');
@@ -119,7 +140,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
   const count=Math.round(.1*sr);let maximum=0;
   for(let i=revealFrame-count;i<revealFrame;i++)for(let c=0;c<2;c++)maximum=Math.max(maximum,Math.abs(channels[c][i]-incoming.channels[c][nativeResumeFrame+i-revealFrame]));
   if(maximum>2e-6)throw Error('Original native return is not sample coherent');
-  nativeSplice={method:'original-pcm-native-return-v1',targetSha:cue.targetSha,sampleRate:sr,returnStart,returnEnd,nativeResumeSeconds:incoming.start+nativeResumeFrame/sr,verifiedFrames:count,maximumLast100msDifference:maximum};
+  nativeSplice={method:'original-pcm-native-return-v1',targetSha:cue.targetSha,sampleRate:sr,returnStart,returnEnd,returnEnergyRatio,nativeResumeSeconds:incoming.start+nativeResumeFrame/sr,verifiedFrames:count,maximumLast100msDifference:maximum};
  }
  return {rate:sr,channels,components,audibleComponents,seconds,preRoll,releaseSeconds,envelopeVersion:gainProof?4:preRoll===.3&&releaseSeconds===.9?2:3,...(gainProof?{gainProof}:{}),...(nativeSplice?{nativeSplice}:{}),warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:revealAt,peak,overlapPeak,headroom,pitchPreserved:true,
   ...(preserveFile?{sourceReadThrough:outgoing.start+outgoing.channels[0].length/sr,outgoingEnvelope:'unity-through-decoded-eof-v1'}:{}),

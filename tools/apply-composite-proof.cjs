@@ -17,6 +17,8 @@ for(const row of report.results){
   c.resampledCommonProof?.assetSha256!==c.sha256||c.resampledCommonProof?.rhythm?.mode!=='metrical-rhythmic'||c.resampledCommonProof.rhythm.accepted!==true||
   !Number.isFinite(c.levelContinuity?.changeDb)||Math.abs(c.levelContinuity.changeDb)>3))throw Error('Missing observed-bar pickup render proof');
  if(p.nativeOriginalReturn&&(c.nativeSplice?.method!=='original-pcm-native-return-v1'||c.nativeSplice.targetSha!==b.sha||
+  !Number.isFinite(c.nativeSplice.returnEnergyRatio)||c.nativeSplice.returnEnergyRatio<.85||c.nativeSplice.returnEnergyRatio>1.000001||
+  c.nativeSplice.returnStart<c.nativeHandoffAt+.849||c.nativeSplice.returnStart>c.nativeHandoffAt+1.081||Math.abs(c.nativeSplice.returnEnd-c.nativeSplice.returnStart-.02)>.00001||
   c.nativeSplice.unmodifiedOriginalComparison!==true||!Number.isFinite(c.nativeSplice.encodedMaximumDifference)||c.nativeSplice.encodedMaximumDifference>2e-6))throw Error('Missing exact original native return');
  if(p.structuralBeat){
   if(c.rhythmVerified!==true||c.postRenderRhythm?.accepted!==true)throw Error('Missing actual rendered rhythm proof');

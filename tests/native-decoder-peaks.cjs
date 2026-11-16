@@ -57,7 +57,12 @@ const server=http.createServer((req,res)=>{
       }
       const correlation=xx>1e-10&&yy>1e-10?xy/Math.sqrt(xx*yy):error<1e-10?1:0;
       const relativeRms=Math.sqrt(error/Math.max(yy,1e-10));
-      if(correlation<.99||relativeRms>.10)throw Error('Actual native original splice differs: '+JSON.stringify({sampleRate,correlation,relativeRms}));
+      if(correlation<.99||relativeRms>.10){
+       // Diagnostic lag search never certifies or changes the nominal comparison.
+       let best={correlation:-1};const a=decoded.getChannelData(0),b=original.getChannelData(0);
+       for(let lag=-128;lag<=128;lag++){let xx=0,yy=0,xy=0;for(let i=0;i<count;i++){const x=a[at-count+i],y=b[to-count+i+lag];xx+=x*x;yy+=y*y;xy+=x*y;}const v=xy/Math.sqrt(xx*yy);if(v>best.correlation)best={lag,correlation:v};}
+       throw Error('Actual native original splice differs: '+JSON.stringify({sampleRate,correlation,relativeRms,diagnosticOnly:best,commonAtSeconds:at/sampleRate,originalAtSeconds:to/sampleRate,nativeResumeSeconds:c.nativeSplice.nativeResumeSeconds,revealAtSeconds:c.preRoll+c.nativeRevealAt,originalDuration:original.duration}));
+      }
       nativeSplice={method:'actual-native-original-splice-v1',targetSha:c.targetSha,frames:count,correlation,relativeRms};
      }
      results.push({assetSha256:sha,sampleRate,samplePeak,overlapPeak,channels:decoded.numberOfChannels,duration:decoded.duration,...(nativeSplice?{nativeSplice}:{})});
