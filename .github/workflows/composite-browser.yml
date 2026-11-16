@@ -14,6 +14,12 @@ on:
       - 'tests/composite-*.cjs'
       - '.github/workflows/composite-browser.yml'
   workflow_dispatch:
+    inputs:
+      webkit_runner:
+        description: 'Native media platform for WebKit; both platforms keep identical playback and peak checks'
+        type: choice
+        options: [ubuntu-latest, macos-latest]
+        default: ubuntu-latest
 permissions:
   contents: read
 jobs:
@@ -22,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         browser: [chromium, webkit]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.browser == 'webkit' && inputs.webkit_runner || 'ubuntu-latest' }}
     timeout-minutes: 10
     env:
       MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
@@ -70,7 +76,7 @@ jobs:
       matrix:
         browser: [chromium, webkit]
         profile: [Emanuele, Ste]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.browser == 'webkit' && inputs.webkit_runner || 'ubuntu-latest' }}
     timeout-minutes: 20
     env:
       MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
