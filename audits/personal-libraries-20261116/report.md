@@ -1,5 +1,7 @@
 # Librerie personali: primo completo Ste, verifica acustica e limiti ancora aperti
 
+Aggiornamento successivo alla baseline `c0cac345`: [sviluppo mirato Ste, isolamento account e simulazione continua](../ste-focus-20261116/report.md). Questo rapporto conserva il confronto storico del primo completo Ste.
+
 Baseline richiesta e verificata: `d1c848945bcece0dd448c1e3f28809a1550e8d33`. Implementazione prodotto verificata: `72907e26018a92022d7d23431b21c175bc1a936b`. Include il recupero dei metadati WebKit/Linux e le protezioni del clock nel lettore; nessun MP3 originale viene riscritto. PR #59 in bozza; nessun merge o pubblicazione.
 
 Il risultato è **un completo realmente riprodotto in Ste**, ottenuto sulla coppia già disponibile come raccordo parziale. Non è ancora il salto di copertura richiesto: nelle simulazioni cambia la qualità di quei passaggi, mentre il numero totale di raccordi ritmici non aumenta. Diego ed Emanuele mantengono i risultati precedenti. Nessuna equivalenza a Spotify Mixa è dimostrata.

@@ -1,0 +1,48 @@
+{
+  "baseline": "c0cac34523c904693a2e4adeb783fa9a8c8e878f",
+  "testedProductCommit": "0b3806c5463153fe98fd64f29717395374536a60",
+  "unchangedFromBaseline": {
+    "mix-intelligente.js": "4a0e30554cfe8bfde3ee2f7a6966ae7f7079207fe861c96e601288ae793a373d",
+    "dj-deep-analysis.json": "cb11b3d9ccc828fcaff8e5d4fd8bdcf81f082ff9ed85298adf89a7b0b171dad2",
+    "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "lyrics.json": "9b0c381181e792f76561348e51bde7671377ed5fe65bd1fbd9bbd97bbacda669",
+    "versione.json": "8772eefbac7224acd64727fac3100988025b3e05cb2995d6f67c90646ffd15d0",
+    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb",
+    "tools/precompute-karaoke-rows.mjs": "edc481499ac1f3ed8f0ff5e7092a9a6e6ad4749aa71421c3b0cce569cc6d8030",
+    "audio-lyrics-align.js": "a915a8d5f93e145e2f8e6ed032b876962e5e495dd4c248888715d7edc07af377",
+    "word-karaoke.js": "68647ff799f689b6135585d191b4fb717fc267c9d0f681bef6680a572e933b6f",
+    "immersive.js": "e38e61410cb23c0be52169c57637a768de79ec2c3d3fb2f8daf98e08d6fe171e",
+    "native-mp3-metadata.js": "5f2c2b23efb9efa8ee4491ecb91d4f66a793ae6c7b4c245f1b40f399afb17bd2",
+    "native-mp3-metadata.json": "94b2f005c18986ba68f7c6a648a52e7d32323898a2e714953fa008453227ba4c"
+  },
+  "changedRuntime": {
+    "app.js": "6b06ba86bc251a372932322d7925ec70dc9bce640184f812c8d91d5cfb090c4a",
+    "index.html": "6f6c89fccafa6bd89399e90f2babd7592c367010003014e7e8a70a5ed39a0c63",
+    "sw.js": "15774a43b50b8b8f2398d4b13600e3f6071944b8ebf5d9078d3ce8103a90649f"
+  },
+  "simulationToolSha256": "1f8e63da73217192d9d649ba06dc848ec15c3ed1632d544ee128d1f80cb6948f",
+  "originalMp3Rewritten": false,
+  "userDataModified": false,
+  "phoneModelsAdded": false,
+  "mainModified": false,
+  "publicDeployment": false,
+  "objectiveNewStePairsAchieved": false,
+  "researchScriptsSha256": {
+    "diagnose-partial.cjs": "d8285392d6577685e7b66387ba6693e98ee876c2fe5a6ebc7f7b7139ecdaa36b",
+    "probe-delayed-metrical-tail.cjs": "748c4d101a340389951a6b272c87993e49d2f9a020bf466cc726d11b8869f0d2",
+    "probe-delayed-metrical.cjs": "e5a0b1964571ebf4f93b22f4e8d27898ece3958e7f83c7c1edad5906cdc7225a",
+    "probe-dual-tempo.cjs": "5a211823995ef836d62500ea637535780479161cffd2c3c9dd339d4127754f63",
+    "probe-ensemble.py": "8f0b0b16b0d729b78b03fa4a1b5fbe2f4db0a006055219542216b102ee66c809",
+    "probe-leading.py": "3cab7714ada96a40d90f6692e43f4ce4cd8b2403bd3830a2337806dbc391d1ce",
+    "probe-local-tempo.cjs": "74296dbedecaa3275119ff2891c6cdc959c01b9ca3e49dda945ca96adfc2c1d5",
+    "probe-metrical-tail.cjs": "7f888c8226381cdf6d64ffdffb50f62274ea59606d53e1675762d7d54061766d",
+    "probe-percussive-source.cjs": "8cac690650afd0b71774dc24851ef74069aa11dca74fcb587237ab3e2643594d",
+    "probe-prefix-plans.cjs": "db46f06a44d80b61ecaf16a045deabbcd28f3a0247f79c03fff32e718a8ce3dd",
+    "probe-second-model.py": "c82b9fd20fbfdce9b993b7ffb23620b7fdb81ba0d8d3377293f40c6bde1329af",
+    "probe-seed-plans.cjs": "2cb13ffa96c8e7f9af28b5ed290eafa6d3b10d098c6abcc4d041aeaf823d1796",
+    "probe-subdivisions.cjs": "afaeca13b55095e1cb0fe4ac058fd384e7b6dbbbd1afc53dbd1c1846eb5875e7",
+    "render-rejected.py": "657549c26bd7dc967d6fe8457b673c2af65e04bc07c32919df52ae1e6ef1d996",
+    "select-model-sample.cjs": "73e988386fb674d18e122e9ae797b5edfc7905eb1ef7a8bb9f4b4a5ecd260366"
+  }
+}

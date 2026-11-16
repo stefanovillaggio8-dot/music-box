@@ -1,0 +1,439 @@
+{
+  "notPlaybackCertificates": true,
+  "qualityGatesNotChangedInProduct": true,
+  "modelsOfflineOnly": true,
+  "secondModel": {
+    "name": "Beat This final1",
+    "sha256": "365b553f43750717c907f32fbc42910f3b264d616654583df6e44472c93ead80",
+    "source": "https://cloud.cp.jku.at/public.php/dav/files/7ik4RrBKTS273gp/final1.ckpt",
+    "documentation": "https://github.com/CPJKU/beat_this#available-models",
+    "modelBytes": 81058141,
+    "testedTracks": 48
+  },
+  "experiments": [
+    {
+      "experiment": "dual-tempo-candidates",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 8,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 11007,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 2121,
+          "localHarmony": 513,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 17,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 9374,
+          "voice": 2121,
+          "meterAndSpan": 967,
+          "harmony": 513,
+          "duration": 323,
+          "affineDownbeatFit": 257,
+          "observedDownbeat": 86,
+          "independentBeatFit": 17,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "sourceReportSha256": "63d8ccab2c4a9cb3a57dcb7a5c8f555486d7d94980fcbf41fed01711abf5f7d4"
+    },
+    {
+      "experiment": "prefix-original-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 8,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12157,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1238,
+          "localHarmony": 252,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "voice": 1238,
+          "harmony": 252,
+          "duration": 170,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 138,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "sourceReportSha256": "0df33753c6563c4150fbafc36357608b1985ff5701046bbfa94f7b908aaad0c5"
+    },
+    {
+      "experiment": "local-tempo-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 7,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 11792,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1497,
+          "localHarmony": 358,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10502,
+          "duration": 254,
+          "voice": 1497,
+          "meterAndSpan": 967,
+          "harmony": 358,
+          "observedDownbeat": 59,
+          "independentBeatFit": 11,
+          "affineDownbeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "sourceReportSha256": "513bfa471eecf52d3f2140936051d243658d8841a2c9b5adb3c0725bdcacc4b7"
+    },
+    {
+      "experiment": "seed1-full-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 8,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 13140,
+          "noCoherentInitialBars": 7874,
+          "incomingVocalOrLyric": 1251,
+          "localHarmony": 320,
+          "noCoherentEndingBars": 28694,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 11627,
+          "meterAndSpan": 1097,
+          "voice": 1251,
+          "harmony": 320,
+          "duration": 233,
+          "observedDownbeat": 58,
+          "affineDownbeatFit": 125,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "sourceReportSha256": "971b70250af49e47737eef7dfe05a470ed454fba46a5dd32c8cd6ed6c017c76b"
+    },
+    {
+      "experiment": "seed1-partial-plans",
+      "notInstalled": true,
+      "candidatePairs": [],
+      "newPairs": [],
+      "candidateWindows": 0,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 14702,
+          "noCoherentInitialBars": 7874,
+          "incomingVocalOrLyric": 18,
+          "localHarmony": 4,
+          "noCoherentEndingBars": 28694
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 13597,
+          "meterAndSpan": 1097,
+          "voice": 18,
+          "harmony": 4,
+          "affineDownbeatFit": 3,
+          "duration": 4,
+          "observedDownbeat": 1
+        }
+      },
+      "sourceReportSha256": "ceb2112a0c21a6123800eda10dc30d4de97bba812907183c16acdac423eba249"
+    },
+    {
+      "experiment": "ensemble-full-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 8,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12945,
+          "noCoherentInitialBars": 7892,
+          "incomingVocalOrLyric": 1191,
+          "localHarmony": 332,
+          "noCoherentEndingBars": 28920,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 11451,
+          "meterAndSpan": 1090,
+          "voice": 1191,
+          "harmony": 332,
+          "duration": 214,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 133,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "sourceReportSha256": "a5c5181bb5502a9f12c1e7ec10ae4472a502dcbbe4dc0afc0120f02b89c7ae49"
+    },
+    {
+      "experiment": "subdivision-full-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 4,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12245,
+          "noCoherentInitialBars": 8034,
+          "localHarmony": 283,
+          "incomingVocalOrLyric": 1120,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "observedDownbeat": 157,
+          "harmony": 283,
+          "duration": 183,
+          "voice": 1120,
+          "affineDownbeatFit": 113,
+          "independentBeatFit": 11,
+          "rhythmicTailCandidates": 1
+        }
+      },
+      "sourceReportSha256": "c5fc744ec258dcbc516a1eb591e8fb89bffeb3bc7c471452d3ea06d4c187c975"
+    },
+    {
+      "experiment": "subdivision-partial-plans",
+      "notInstalled": true,
+      "candidatePairs": [],
+      "newPairs": [],
+      "candidateWindows": 0,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 13640,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 17,
+          "localHarmony": 3,
+          "noCoherentEndingBars": 29598
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 12665,
+          "meterAndSpan": 967,
+          "voice": 17,
+          "harmony": 3,
+          "affineDownbeatFit": 2,
+          "duration": 4,
+          "observedDownbeat": 2
+        }
+      },
+      "sourceReportSha256": "c2c2b56cb5ef6f59e3322c3b05a3e249b1f63c2ea6f1ad14e5f03ead6b5fcd1f"
+    },
+    {
+      "experiment": "metrical-tail-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 6,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12940,
+          "noCoherentInitialBars": 8034,
+          "localHarmony": 179,
+          "incomingVocalOrLyric": 533,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 6,
+          "partialCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 11580,
+          "meterAndSpan": 967,
+          "harmony": 179,
+          "voice": 533,
+          "observedDownbeat": 55,
+          "duration": 205,
+          "affineDownbeatFit": 133,
+          "independentBeatFit": 6,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "sourceReportSha256": "e2e07f720c503c02d461ed299813630a238ca3054d78cbd3facb5902266c57a2"
+    },
+    {
+      "experiment": "delayed-metrical-plans",
+      "notInstalled": true,
+      "candidatePairs": [],
+      "newPairs": [],
+      "candidateWindows": 0,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 13618,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 32,
+          "localHarmony": 8,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 12647,
+          "meterAndSpan": 967,
+          "voice": 32,
+          "duration": 2,
+          "harmony": 8,
+          "observedDownbeat": 1,
+          "affineDownbeatFit": 1,
+          "independentBeatFit": 2
+        }
+      },
+      "sourceReportSha256": "fcb9b4630ad0038992f5f39dd7ec59ff13a17f803c70fda51c30134f82dc3928"
+    },
+    {
+      "experiment": "delayed-metrical-tail-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 6,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12737,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 683,
+          "localHarmony": 229,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 9,
+          "partialCandidates": 2
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "duration": 750,
+          "voice": 683,
+          "harmony": 229,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 138,
+          "independentBeatFit": 9,
+          "rhythmicTailCandidates": 2
+        }
+      },
+      "sourceReportSha256": "6b5ff205132de370ccbd5f0f0694769fc392f9f3361ce50094a11441c931b238"
+    },
+    {
+      "experiment": "percussive-source-plans",
+      "notInstalled": true,
+      "candidatePairs": [
+        "audio/songs/track-4.mp3|audio/songs/track-38.mp3",
+        "audio/songs/track-705.mp3|audio/songs/track-50.mp3"
+      ],
+      "newPairs": [],
+      "candidateWindows": 8,
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12180,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1163,
+          "localHarmony": 305,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "pairConditions": {
+        "Ste": {
+          "bpm": 10825,
+          "meterAndSpan": 967,
+          "voice": 1163,
+          "harmony": 305,
+          "duration": 193,
+          "observedDownbeat": 57,
+          "affineDownbeatFit": 138,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "sourceReportSha256": "61e1eb69b9616df59d60cb3ece6d8e18406b14654c2dbd752eb30a422dcbd671"
+    }
+  ]
+}
