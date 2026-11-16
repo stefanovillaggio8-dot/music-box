@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=12",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=13",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2827,14 +2827,19 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   v.downbeatRmsSeconds>=0&&v.downbeatRmsSeconds<=.025&&v.maximumDownbeatError>=0&&v.maximumDownbeatError<=.05&&
   Array.isArray(v.sharedPerBar)&&v.sharedPerBar.length===e.bars&&v.sharedPerBar.every(n=>Number.isInteger(n)&&n>=2);
  const pickupCertificate=e?.metricalCertificate;
- const originalReturn=p?.nativeOriginalReturn!==true||c?.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===b?.sha&&
+ const clockBound=(v,sha,duration)=>v?.method==='original-mp3-gapless-metadata-v1'&&v.sourceSha===sha&&[44100,48000].includes(v.sampleRate)&&
+  [v.rawFrames,v.decodedFrames,v.primingFrames,v.paddingFrames].every(Number.isInteger)&&v.decodedFrames>26*v.sampleRate&&
+  v.primingFrames>=0&&v.primingFrames<=v.sampleRate*.1&&v.paddingFrames>=0&&v.paddingFrames<=v.sampleRate*.1&&
+  v.rawFrames===v.decodedFrames+v.primingFrames+v.paddingFrames&&Math.abs(v.decodedFrames/v.sampleRate-duration)<.002;
+
+ const originalReturn=p?.nativeOriginalReturn!==true||clockBound(c?.nativeSplice?.sourceClock,a?.sha,a?.duration)&&clockBound(c?.nativeSplice?.targetClock,b?.sha,b?.duration)&&c?.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===b?.sha&&
   c.nativeSplice.sampleRate===48000&&c.nativeSplice.verifiedFrames===4800&&c.nativeSplice.unmodifiedOriginalComparison===true&&
   [c.nativeSplice.returnStart,c.nativeSplice.returnEnd,c.nativeSplice.nativeResumeSeconds,c.nativeSplice.maximumLast100msDifference,c.nativeSplice.encodedMaximumDifference].every(Number.isFinite)&&
   c.nativeSplice.returnStart>=c.nativeHandoffAt+.849&&c.nativeSplice.returnEnd<=c.nativeRevealAt-.3&&
   c.nativeSplice.returnStart<=c.nativeHandoffAt+1.081&&Math.abs(c.nativeSplice.returnEnd-c.nativeSplice.returnStart-.02)<.00001&&
   Number.isFinite(c.nativeSplice.returnEnergyRatio)&&c.nativeSplice.returnEnergyRatio>=.85&&c.nativeSplice.returnEnergyRatio<=1.000001&&c.nativeSplice.maximumLast100msDifference>=0&&c.nativeSplice.maximumLast100msDifference<=2e-6&&
   c.nativeSplice.encodedMaximumDifference>=0&&c.nativeSplice.encodedMaximumDifference<=2e-6&&
-  [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.targetSha===b.sha&&v.frames===Math.round(rate*.1)&&
+  [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.clockMethod==='original-mp3-gapless-metadata-v1'&&v.targetSha===b.sha&&v.frames===Math.round(rate*.1)&&
    Number.isFinite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&Number.isFinite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')});
  const pickupAnchors=pickup&&Array.isArray(e.sourceObservedDownbeats)&&Array.isArray(e.targetObservedDownbeats)&&
   e.sourceObservedDownbeats.length===e.bars&&e.targetObservedDownbeats.length===e.bars&&
@@ -2843,7 +2848,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   [e.sourceObservedDownbeats,e.targetObservedDownbeats,e.sourceModelDownbeats,e.targetModelDownbeats].every(v=>v.every((n,i)=>Number.isFinite(n)&&(!i||n>v[i-1])))&&
   e.sourceObservedDownbeats.every((t,i)=>Math.abs(t-e.sourceModelDownbeats[i])<=.075&&Math.abs(t-p.begin-e.targetObservedDownbeats[i]/p.tempo)<=.05)&&
   e.targetObservedDownbeats.every((t,i)=>Math.abs(t-e.targetModelDownbeats[i])<=.075);
- const pickupValid=pickup&&originalReturn&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
+ const pickupValid=pickup&&p.nativeOriginalReturn===true&&originalReturn&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
   pickupCertificate.originalModelAnchorsRetained===true&&
   [pickupCertificate.gridRms,pickupCertificate.gridMaximum,pickupCertificate.observedSharedRms,pickupCertificate.observedShared,
    pickupCertificate.minimumSharedPerBar,pickupCertificate.observedDownbeats,pickupCertificate.modelGridPoints,

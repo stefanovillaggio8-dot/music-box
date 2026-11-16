@@ -5,7 +5,7 @@ const {engine,tracks}=new Function('require','__dirname',source.slice(0,source.i
 const entries=new Map(tracks);
 test('the installed original-source pair is usable through its actual native receipts and stays partial',()=>{
  const a=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3'),p=engine.transition(a,b,a.duration);
- assert.equal(p?.metricalPickupWindow,true);assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,true);
+ assert.equal(p?.metricalPickupWindow,true);assert.equal(p.nativeOriginalReturn,true);assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,true);
  assert.equal(engine.desktopBeatPairCertified(a,b,p),true);
  assert.equal(p.composite.nativeDecoderProof.assetSha256,p.composite.sha256);
  for(const rate of [44100,48000])assert.deepEqual(p.composite.nativeDecoderProof.rates[rate].browsers,['chromium','webkit']);
@@ -13,11 +13,7 @@ test('the installed original-source pair is usable through its actual native rec
 function fixture(){
  const originalA=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3');
  const original=originalA.structuralBeatPlans[b.sha],p=structuredClone(original.cue);
- // Unit tests exercise receipt validation, not a measurement of a decoder.
- // Actual native receipts are produced separately by the CI matrix.
- p.composite.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:p.composite.sha256,rates:{
-  44100:{samplePeak:p.composite.resampledCommonProof.samplePeak,overlapPeak:p.composite.resampledCommonProof.oversampledOverlapPeak,browsers:['chromium','webkit']},
-  48000:{samplePeak:p.composite.peak,overlapPeak:p.composite.oversampledOverlapPeak,browsers:['chromium','webkit']}}};
+ // Clone actual installed receipts, then mutate one safety condition per case.
  const record={...original,cue:p,cues:[p]},a={...originalA,structuralBeatPlans:{...originalA.structuralBeatPlans,[b.sha]:record}};
  return {a,b,p,record,validate:q=>engine.validatePreservedFileTailCue(record,q,a,b,a.duration)};
 }
@@ -32,7 +28,10 @@ test('late instrumental rhythm uses observed bars and remains explicitly partial
  assert.ok(Math.abs(plan.composite.levelContinuity.changeDb)<=3);
 });
 test('missing native/44.1 kHz evidence, drift, weak bars, volume jumps and content cuts invalidate the new partial',()=>{
- for(const mutate of [p=>delete p.composite.nativeDecoderProof,p=>p.composite.nativeDecoderProof.rates[44100].browsers=['webkit'],
+ for(const mutate of [p=>delete p.nativeOriginalReturn,p=>p.composite.nativeSplice.returnEnergyRatio=.849,
+  p=>p.composite.nativeSplice.returnEnd+=.3,p=>delete p.structuralEvidence.incomingNativeReturn,
+  p=>p.structuralEvidence.incomingNativeReturn.end=10.7,p=>p.composite.nativeDecoderProof.rates[44100].nativeSplice.minimumCorrelation=.989,
+  p=>p.composite.nativeDecoderProof.rates[48000].nativeSplice.maximumRelativeRms=.1001,p=>delete p.composite.nativeDecoderProof,p=>p.composite.nativeDecoderProof.rates[44100].browsers=['webkit'],
   p=>delete p.composite.resampledCommonProof,p=>p.composite.resampledCommonProof.rhythm.rmsSeconds=.02001,
   p=>p.composite.postRenderRhythm.matches=7,p=>p.composite.postRenderRhythm.sharedPerBar[0]=1,
   p=>p.composite.postRenderRhythm.downbeatRmsSeconds=.02501,p=>p.structuralEvidence.sourceObservedDownbeats[0]-=.2,

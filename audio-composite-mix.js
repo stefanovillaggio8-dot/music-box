@@ -12,6 +12,18 @@ function outputLevel(app,audio){
  // the native readback at both binary switches, including that case.
  return finite(native)?limit(native,0,1):limit(Number(app.volume())||0,0,1);
 }
+// MP3 decoders differ in whether their public clock retains declared codec
+// priming. Resolve only two container-evidenced durations; never fit a lag.
+function nativeClockOffset(metadata,sha,duration){
+ const p=metadata;
+ if(p?.method!=='original-mp3-gapless-metadata-v1'||p.sourceSha!==sha||![44100,48000].includes(p.sampleRate)||
+    ![p.rawFrames,p.decodedFrames,p.primingFrames,p.paddingFrames].every(Number.isInteger)||p.decodedFrames<=p.sampleRate*26||
+    p.primingFrames<0||p.primingFrames>p.sampleRate*.1||p.paddingFrames<0||p.paddingFrames>p.sampleRate*.1||
+    p.rawFrames!==p.decodedFrames+p.primingFrames+p.paddingFrames||!finite(duration))return null;
+ const gapless=Math.abs(duration-p.decodedFrames/p.sampleRate)<=.002,raw=Math.abs(duration-p.rawFrames/p.sampleRate)<=.002;
+ if(gapless&&raw&&p.primingFrames>0)return null;
+ return gapless?0:raw?p.primingFrames/p.sampleRate:null;
+}
 function supports(cue){
  const c=cue?.composite;
  return !!c&&c.version===1&&c.sourceSha===cue.sourceSha&&c.targetSha===cue.targetSha&&
@@ -37,14 +49,17 @@ function supports(cue){
   (!cue.preservedFileTail||cue.entry===0&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&
    c.outgoingEnvelope==='unity-through-decoded-eof-v1'&&finite(c.sourceReadThrough)&&Math.abs(c.sourceReadThrough-cue.end)<=.1)&&
   (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true)&&
-  (!cue.metricalPickupWindow||cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
+  (!cue.metricalPickupWindow||cue.nativeOriginalReturn===true&&cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
    cue.preservedEntrance==='metrical-pickup-033-v1'&&c.renderedEntrance===cue.preservedEntrance&&c.releaseSeconds===1.5&&!!c.nativeDecoderProof)&&
-  (!cue.nativeOriginalReturn||cue.metricalPickupWindow&&c.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===cue.targetSha&&
+  (!cue.nativeOriginalReturn||cue.metricalPickupWindow&&
+   nativeClockOffset(c.nativeSplice?.sourceClock,cue.sourceSha,c.nativeSplice?.sourceClock?.decodedFrames/c.nativeSplice?.sourceClock?.sampleRate)===0&&
+   nativeClockOffset(c.nativeSplice?.targetClock,cue.targetSha,c.nativeSplice?.targetClock?.decodedFrames/c.nativeSplice?.targetClock?.sampleRate)===0&&
+   c.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===cue.targetSha&&
    finite(c.nativeSplice.returnEnergyRatio)&&c.nativeSplice.returnEnergyRatio>=.85&&c.nativeSplice.returnEnergyRatio<=1.000001&&
    finite(c.nativeSplice.returnStart)&&finite(c.nativeSplice.returnEnd)&&c.nativeSplice.returnStart>=c.nativeHandoffAt+.849&&c.nativeSplice.returnStart<=c.nativeHandoffAt+1.081&&
    Math.abs(c.nativeSplice.returnEnd-c.nativeSplice.returnStart-.02)<.00001&&c.nativeSplice.returnEnd<=c.nativeRevealAt-.3&&
    c.nativeSplice.unmodifiedOriginalComparison===true&&finite(c.nativeSplice.encodedMaximumDifference)&&c.nativeSplice.encodedMaximumDifference>=0&&c.nativeSplice.encodedMaximumDifference<=2e-6&&
-   [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.targetSha===cue.targetSha&&
+   [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.clockMethod==='original-mp3-gapless-metadata-v1'&&v.targetSha===cue.targetSha&&
     finite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&finite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1}))&&
   (!c.nativeDecoderProof||c.nativeDecoderProof.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
    [44100,48000].every(rate=>{const p=c.nativeDecoderProof.rates?.[rate];return p&&
@@ -96,11 +111,14 @@ function stop(reason='cancelled'){
  for(const [target,event,listener] of act.listeners)target.removeEventListener(event,listener);
 }
 function tryStart(cue,old,app,toId,ctx){
+ const sourceOffset=cue?.nativeOriginalReturn?nativeClockOffset(cue.composite?.nativeSplice?.sourceClock,cue.sourceSha,old?.duration):0;
+ if(sourceOffset===null)return false;
+ const sourceTime=()=>old.currentTime-sourceOffset;
  const buffer=supports(cue)&&cache.get(cue.composite.sha256+':'+ctx?.sampleRate);
  if(current||!buffer||ctx?.state!=='running'||old?.paused||old.seeking||old.muted||
     root.document?.hidden||app.mixNext?.()?.id!==toId||root.MusicBoxRoom?.isActive?.()||
     app.mixSourceMatches?.(app.currentId(),old)!==true||
-    old.currentTime<cue.begin-5||old.currentTime>cue.begin-cue.composite.preRoll+.04)return false;
+    sourceTime()<cue.begin-5||sourceTime()>cue.begin-cue.composite.preRoll+.04)return false;
  const source=ctx.createBufferSource(),gain=ctx.createGain(),fromId=app.currentId();
  source.buffer=buffer;source.connect(gain);gain.connect(ctx.destination);
  gain.gain.value=outputLevel(app,old);
@@ -123,7 +141,7 @@ function tryStart(cue,old,app,toId,ctx){
   // common signal: both audible tracks now use this one AudioContext.
   // Seeking, pause, rate/source changes still cancel explicitly, and the
   // incoming native clock must match before its output is revealed.
-  act.clockError=old.currentTime-cue.begin-elapsed;
+  act.clockError=sourceTime()-cue.begin-elapsed;
   if(!act.handingOff&&(!Number.isFinite(act.vocalCheckedAt)||ctx.currentTime-act.vocalCheckedAt>.25)){
    act.vocalCheckedAt=ctx.currentTime;if(app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId,toId)===false){stop();return;}
   }
@@ -144,14 +162,24 @@ function tryStart(cue,old,app,toId,ctx){
   }
   if(act.handingOff){
    const next=act.successor;
+   const targetOffset=cue.nativeOriginalReturn?nativeClockOffset(cue.composite.nativeSplice.targetClock,cue.targetSha,next?.duration):0;
+   if(targetOffset===null){if(elapsed>=cue.composite.nativeRevealAt)stop('unknown-native-mp3-clock');else act.timer=setTimeout(advance,20);return;}
+   const nativePosition=position+targetOffset;
+   // Wait for the app's initial seek to finish, then correct the declared
+   // codec priming once. This is a clock conversion, not a user seek.
+   if(targetOffset>0&&!act.nativeClockMapped&&next.readyState>=2&&!next.seeking&&!next._mbInitialSeekCleanup){
+    act.nativeClockMapped=true;act.correctingSeekTarget=nativePosition;
+    try{next.currentTime=nativePosition}catch(_){stop('native-mp3-clock-seek');return;}
+    act.timer=setTimeout(advance,20);return;
+   }
    if(next!==app.audio()||next.seeking){
     if(elapsed>cue.fade+1.2){stop();return;}
-   }else if(next.readyState>=2&&!next.paused&&Math.abs(next.currentTime-position)<=.065&&elapsed>=cue.composite.nativeRevealAt){
+   }else if(next.readyState>=2&&!next.paused&&Math.abs(next.currentTime-nativePosition)<=.065&&elapsed>=cue.composite.nativeRevealAt){
     // Native volume is unreliable on iOS: switch binary mute and stop
     // the common buffer in one JS turn. No simultaneous unattenuated sum.
     next.muted=Number(app.volume())===0;stop();return;
-   }else if(next.readyState>=2&&!next.paused&&!next._mbInitialSeekCleanup&&Math.abs(next.currentTime-position)>.065&&!act.corrected){
-    act.corrected=true;act.correctingSeekTarget=position;try{next.currentTime=position}catch(_){stop();return;}
+   }else if(next.readyState>=2&&!next.paused&&!next._mbInitialSeekCleanup&&Math.abs(next.currentTime-nativePosition)>.065&&!act.corrected){
+    act.corrected=true;act.correctingSeekTarget=nativePosition;try{next.currentTime=nativePosition}catch(_){stop();return;}
    }
    if(elapsed>=cue.composite.seconds-cue.composite.preRoll-.12){stop();return;}
   }
@@ -161,9 +189,9 @@ function tryStart(cue,old,app,toId,ctx){
   if(current!==act)return;
   if(old.paused||old.seeking||app.currentId()!==fromId||app.mixNext?.()?.id!==toId||ctx.state!=='running'||root.document?.hidden||root.MusicBoxRoom?.isActive?.()||app.mixSourceMatches?.(fromId,old)!==true||app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId,toId)===false){stop();return;}
   const startAt=cue.begin-cue.composite.preRoll;
-  if(old.currentTime<startAt){act.timer=setTimeout(launch,old.currentTime<startAt-.12?35:8);return;}
-  if(old.currentTime>startAt+.04){stop('late-start-clock');return;}
-  offset=old.currentTime-cue.begin;started=ctx.currentTime;
+  if(sourceTime()<startAt){act.timer=setTimeout(launch,sourceTime()<startAt-.12?35:8);return;}
+  if(sourceTime()>startAt+.04){stop('late-start-clock');return;}
+  offset=sourceTime()-cue.begin;started=ctx.currentTime;
   try{source.start(started,offset+cue.composite.preRoll);old._mbCommonMixMuted=true;old.muted=true}catch(_){stop();return;}
   act.timer=setTimeout(advance,20);
  };
@@ -177,7 +205,7 @@ function onSeek(reason,audio){
  }
  stop();return false;
 }
-root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,
+root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,nativeClockOffset,
  isPrepared:(cue,ctx)=>!!ctx&&supports(cue)&&cache.has(cue.composite.sha256+':'+ctx.sampleRate),
  active:()=>!!current,diagnostics:()=>({active:!!current,lastStop}),owns:audio=>!!current&&current.old===audio};
 })(typeof window==='undefined'?globalThis:window);

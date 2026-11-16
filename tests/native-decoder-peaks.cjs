@@ -11,7 +11,8 @@ const name=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['chromium','webkit'].inc
 const originals=new Map();
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
- if(url.pathname==='/'){res.end('<!doctype html><title>Read-only native PCM measurement</title>');return;}
+ if(url.pathname==='/'){res.end('<!doctype html><title>Read-only native PCM measurement</title><script src="/audio-composite-mix.js"></script>');return;}
+ if(url.pathname==='/audio-composite-mix.js'){res.setHeader('Content-Type','text/javascript');res.end(fs.readFileSync(path.join(root,'audio-composite-mix.js')));return;}
  const original=/^\/original\/([a-f0-9]{40})\.mp3$/.exec(url.pathname);
  if(original&&originals.has(original[1])){const bytes=originals.get(original[1]);res.setHeader('Content-Type','audio/mpeg');res.end(bytes);return;}
  if(!/^\/dj-mixes\/[a-f0-9]{64}\.flac$/.test(url.pathname)){res.writeHead(404);res.end();return;}
@@ -53,7 +54,10 @@ const server=http.createServer((req,res)=>{
       const nativeMediaDuration=nativeAudio.duration;nativeAudio.removeAttribute('src');nativeAudio.load();
       console.error('Original clocks '+JSON.stringify({sampleRate,targetSha:c.targetSha,decodedDuration:original.duration,decodedFrames:original.length,nativeMediaDuration}));
 
-      const count=Math.round(.1*sampleRate),at=Math.round((c.preRoll+c.nativeRevealAt)*sampleRate),to=Math.round(c.nativeSplice.nativeResumeSeconds*sampleRate);
+      const decodedPrimingSeconds=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.targetClock,c.targetSha,original.duration);
+      const mediaPrimingSeconds=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.targetClock,c.targetSha,nativeMediaDuration);
+      if(decodedPrimingSeconds===null||mediaPrimingSeconds===null)throw Error('Unrecognized actual native MP3 clock');
+      const count=Math.round(.1*sampleRate),at=Math.round((c.preRoll+c.nativeRevealAt)*sampleRate),to=Math.round((c.nativeSplice.nativeResumeSeconds+decodedPrimingSeconds)*sampleRate);
       if(to<count||to>original.length||at>decoded.length)throw Error('Incomplete actual native original splice');
       let xx=0,yy=0,xy=0,error=0;
       for(let channel=0;channel<2;channel++){
@@ -68,7 +72,7 @@ const server=http.createServer((req,res)=>{
        for(let lag=-4096;lag<=4096;lag+=4){let xx=0,yy=0,xy=0;for(let i=0;i<count;i++){const x=a[at-count+i],y=b[to-count+i+lag];xx+=x*x;yy+=y*y;xy+=x*y;}const v=xy/Math.sqrt(xx*yy);if(v>best.correlation)best={lag,correlation:v};}
        console.error('Actual native original splice differs: '+JSON.stringify({sampleRate,correlation,relativeRms,diagnosticOnly:best,commonAtSeconds:at/sampleRate,originalAtSeconds:to/sampleRate,nativeResumeSeconds:c.nativeSplice.nativeResumeSeconds,revealAtSeconds:c.preRoll+c.nativeRevealAt,originalDuration:original.duration}));
       }
-      nativeSplice={method:'actual-native-original-splice-v1',targetSha:c.targetSha,frames:count,correlation,relativeRms};
+      nativeSplice={method:'actual-native-original-splice-v1',targetSha:c.targetSha,frames:count,correlation,relativeRms,clockMethod:'original-mp3-gapless-metadata-v1',decodedPrimingSeconds,mediaPrimingSeconds};
      }
      results.push({assetSha256:sha,sampleRate,samplePeak,overlapPeak,channels:decoded.numberOfChannels,duration:decoded.duration,...(nativeSplice?{nativeSplice}:{})});
     }}finally{await ctx.close()}

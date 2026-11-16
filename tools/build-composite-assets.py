@@ -11,6 +11,8 @@ spec=importlib.util.spec_from_file_location('audit',ROOT/'tools/audit-full-beat-
 audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
 spec=importlib.util.spec_from_file_location('rendered_rhythm',ROOT/'tools/dj-rendered-rhythm.py')
 rhythm=importlib.util.module_from_spec(spec);spec.loader.exec_module(rhythm)
+clock_spec=importlib.util.spec_from_file_location('mp3_clock',ROOT/'tools/mp3-gapless-clock.py')
+clock_module=importlib.util.module_from_spec(clock_spec);clock_spec.loader.exec_module(clock_module)
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -236,7 +238,8 @@ def main():
                     if actual.shape!=reference.shape or len(actual)!=count:raise ValueError('Incomplete original native return comparison')
                     difference=float(np.max(np.abs(actual-reference)))
                     if difference>2e-6:raise ValueError('Encoded original native return differs from original PCM')
-                    composite['nativeSplice']={**splice,'encodedMaximumDifference':difference,'unmodifiedOriginalComparison':True}
+                    composite['nativeSplice']={**splice,'encodedMaximumDifference':difference,'unmodifiedOriginalComparison':True,
+                        'sourceClock':clock_module.mp3_clock(a,cue['sourceSha']),'targetClock':clock_module.mp3_clock(b,cue['targetSha'])}
                 if 'gainProof' in proof:composite['gainProof']=proof['gainProof']
                 if cue.get('preservedFileTail'):
                     composite.update({k:proof[k] for k in ('sourceReadThrough','outgoingEnvelope')})

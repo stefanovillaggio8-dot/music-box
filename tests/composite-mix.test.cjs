@@ -138,3 +138,16 @@ test('native decoder peak evidence is asset-bound and retains the absolute clipp
  fresh.ctx.decodeAudioData=async()=>({duration:7.1,sampleRate:48000,numberOfChannels:2,getChannelData:()=>new Float32Array([1.001])});
  await assert.rejects(fresh.api.prepare(q,fresh.ctx),/peak mismatch/);
 });
+
+
+test('MP3 clocks use SHA-bound declared priming only at an exact known container duration',()=>{
+ const f=fixture(),sha='a'.repeat(40),p={method:'original-mp3-gapless-metadata-v1',sourceSha:sha,sampleRate:48000,
+  rawFrames:10063872,decodedFrames:10061671,primingFrames:1105,paddingFrames:1096};
+ assert.equal(f.api.nativeClockOffset(p,sha,p.decodedFrames/48000),0);
+ assert.equal(f.api.nativeClockOffset(p,sha,p.rawFrames/48000),1105/48000);
+ assert.equal(f.api.nativeClockOffset(p,'b'.repeat(40),p.rawFrames/48000),null);
+ for(const duration of [NaN,Infinity,.002,209,210])assert.equal(f.api.nativeClockOffset(p,sha,duration),null);
+ assert.equal(f.api.nativeClockOffset({...p,paddingFrames:0},sha,p.rawFrames/48000),null);
+ const ambiguous={...p,rawFrames:10061672,primingFrames:1,paddingFrames:0};
+ assert.equal(f.api.nativeClockOffset(ambiguous,sha,p.decodedFrames/48000),null);
+});

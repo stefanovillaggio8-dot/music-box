@@ -61,11 +61,11 @@ const CORE = [
   "./discord-fallback.webp",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
   "./audio-stretch.js?v=5",
-  "./audio-composite-mix.js?v=13",
+  "./audio-composite-mix.js?v=14",
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6734&dj=56", // Refresh the actual URL used by the PWA on worker install
+  "./mix-intelligente.js?v=6734&dj=57", // Refresh the actual URL used by the PWA on worker install
   "./mix-monitor-bridge.js?v=4",
   "./smart-mix-lab/index.html",
   "./smart-mix-lab/app.js",
@@ -112,11 +112,11 @@ const OFFLINE_SHELL = [
   "./voice-analysis.js?v=6570",
   "./dj-vocal-stem-runtime.js?v=6720&stem=1",
   "./audio-stretch.js?v=5",
-  "./audio-composite-mix.js?v=13",
+  "./audio-composite-mix.js?v=14",
   "./audio-stretch-worker.js?v=4",
   "./audio-stretch-core.mjs?v=4",
   "./vendor/soundtouchjs/soundtouch.mjs",
-  "./mix-intelligente.js?v=6734&dj=56",
+  "./mix-intelligente.js?v=6734&dj=57",
   "./mix-monitor-bridge.js?v=4",
   "./immersive.js?v=6734&words=9"
 ];
