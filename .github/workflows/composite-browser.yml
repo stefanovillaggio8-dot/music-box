@@ -42,6 +42,14 @@ on:
         type: choice
         options: ['1', '3']
         default: '1'
+      gstreamer_debug:
+        description: 'Linux WebKit backend trace only; no application workaround'
+        type: boolean
+        default: false
+      diagnostic_ste_only:
+        description: 'Restrict real-app diagnostics to WebKit Ste; does not replace the full browser matrix'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -96,8 +104,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, webkit]
-        profile: [Emanuele, Ste]
+        browser: ${{ fromJSON(inputs.diagnostic_ste_only && '["webkit"]' || '["chromium","webkit"]') }}
+        profile: ${{ fromJSON(inputs.diagnostic_ste_only && '["Ste"]' || '["Emanuele","Ste"]') }}
     runs-on: ${{ matrix.browser == 'webkit' && inputs.webkit_runner || 'ubuntu-latest' }}
     timeout-minutes: 20
     env:
@@ -108,6 +116,9 @@ jobs:
       MUSICBOX_METADATA_FIXTURE_TRANSPORT: ${{ inputs.metadata_fixture_transport || false }}
       MUSICBOX_NATIVE_UNIQUE_URL_PROBE: ${{ inputs.native_unique_url_probe || false }}
       MUSICBOX_COMPOSITE_REPETITIONS: ${{ inputs.playback_repetitions || '1' }}
+      GST_DEBUG: ${{ inputs.gstreamer_debug && matrix.browser == 'webkit' && '2,mpegaudioparse:6,playbin:4,playbin3:4,webkit*:5' || '' }}
+      GST_DEBUG_FILE: ${{ github.workspace }}/gstreamer-${{ matrix.profile }}.log
+      GST_DEBUG_NO_COLOR: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -134,4 +145,5 @@ jobs:
           path: |
             composite-browser-result.json
             storage-browser-result.json
+            gstreamer-*.log
           retention-days: 14
