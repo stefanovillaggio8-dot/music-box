@@ -41,7 +41,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
    const lo=Math.round((preRoll+start-.04)*sr);let mixed=0,reference=0;
    for(let i=lo;i<lo+count;i++){
     const t=i/sr-preRoll,u=clamp((t-start)/.02,0,1),blend=u*u*(3-2*u);
-    const rise=clamp((t-nativeHandoffAt)/releaseSeconds,0,1),b=.33+.67*recovery(rise);
+    const rise=clamp((t-nativeHandoffAt)/releaseSeconds,0,1),b=cadence?.33+.67*Math.sin(rise*Math.PI/2):.33+.67*rise*rise*(3-2*rise);
     for(let c=0;c<2;c++){
      const x=stretched.channels[c][bOffset+i-Math.round(preRoll*sr)],y=incoming.channels[c][nativeResumeFrame+i-revealFrame];
      if(!Number.isFinite(x)||!Number.isFinite(y))throw Error('Incomplete native return selection');

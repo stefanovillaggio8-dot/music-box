@@ -32,7 +32,19 @@ const server=http.createServer((req,res)=>{
   browser=await ({chromium,webkit}[name]).launch({headless:true});const page=await browser.newPage();page.on('console',m=>{if(m.type()==='error')console.error(m.text())});
   await page.goto('http://127.0.0.1:'+server.address().port);
   const measured=await page.evaluate(async descriptors=>{
-   const results=[];
+   const results=[],mediaClocks=new Map();
+   async function nativeDuration(sha){
+    // HTML media has its own clock, independent of AudioContext's rate.
+    // Retain one real metadata element per original across both PCM decodes;
+    // repeatedly tearing down/reopening the same GStreamer resource caused
+    // a NaN second probe despite a valid first duration on identical bytes.
+    if(!mediaClocks.has(sha)){
+     const media=new Audio('/original/'+sha+'.mp3');media.preload='metadata';media.load();mediaClocks.set(sha,media);
+     await new Promise(resolve=>{const start=Date.now(),poll=()=>Number.isFinite(media.duration)&&media.duration>26||Date.now()-start>5000?resolve():setTimeout(poll,25);poll()});
+    }
+    return mediaClocks.get(sha).duration;
+   }
+   try{
    for(const sampleRate of [44100,48000]){
     const ctx=new AudioContext({sampleRate});
     try{for(const c of descriptors){
@@ -49,20 +61,16 @@ const server=http.createServer((req,res)=>{
      let nativeSplice=null,nativeSourceClock=null;
      if(c.nativeRecoveryCurve){
       const decoded=await ctx.decodeAudioData(await (await fetch('original/'+c.sourceSha+'.mp3')).arrayBuffer());
-      const media=new Audio('/original/'+c.sourceSha+'.mp3');media.preload='metadata';media.load();
-      await new Promise(resolve=>{const start=Date.now(),poll=()=>Number.isFinite(media.duration)&&media.duration>26||Date.now()-start>5000?resolve():setTimeout(poll,25);poll()});
+      const mediaDuration=await nativeDuration(c.sourceSha);
       const decodedOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,decoded.duration);
-      const mediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,media.duration);
-      console.error('Cadence source clocks '+JSON.stringify({sourceSha:c.sourceSha,sampleRate,decodedDuration:decoded.duration,mediaDuration:media.duration,decodedOffset,mediaOffset}));
+      const mediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,mediaDuration);
+      console.error('Cadence source clocks '+JSON.stringify({sourceSha:c.sourceSha,sampleRate,decodedDuration:decoded.duration,mediaDuration,decodedOffset,mediaOffset}));
       if(decodedOffset===null||mediaOffset===null)throw Error('Unrecognized actual outgoing MP3 clock');
-      nativeSourceClock={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,decodedOffset,mediaOffset,decodedDuration:decoded.duration,mediaDuration:media.duration};
-      media.removeAttribute('src');media.load();
+      nativeSourceClock={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,decodedOffset,mediaOffset,decodedDuration:decoded.duration,mediaDuration};
      }
      if(c.nativeSplice){
       const original=await ctx.decodeAudioData(await (await fetch('original/'+c.targetSha+'.mp3')).arrayBuffer());
-      const nativeAudio=new Audio('/original/'+c.targetSha+'.mp3');nativeAudio.preload='metadata';nativeAudio.load();
-      await new Promise(resolve=>{const poll=()=>{if(Number.isFinite(nativeAudio.duration)&&nativeAudio.duration>.05)resolve();else if(Date.now()-start>5000)resolve();else setTimeout(poll,25)};const start=Date.now();poll()});
-      const nativeMediaDuration=nativeAudio.duration;nativeAudio.removeAttribute('src');nativeAudio.load();
+      const nativeMediaDuration=await nativeDuration(c.targetSha);
       console.error('Original clocks '+JSON.stringify({sampleRate,targetSha:c.targetSha,decodedDuration:original.duration,decodedFrames:original.length,nativeMediaDuration}));
 
       const decodedPrimingSeconds=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.targetClock,c.targetSha,original.duration);
@@ -89,9 +97,11 @@ const server=http.createServer((req,res)=>{
     }}finally{await ctx.close()}
    }
    return results;
+   }finally{for(const media of mediaClocks.values()){media.removeAttribute('src');media.load();}}
   },[...assets.values()]);
   assert.equal(measured.length,assets.size*2);
   assert.ok(measured.every(r=>!r.nativeSplice||r.nativeSplice.correlation>=.99&&r.nativeSplice.relativeRms<=.1),'Every nominal native splice must pass; diagnostic lag is never accepted');
-  console.log(JSON.stringify({method:'actual-browser-decode-v1',browser:name,browserVersion:browser.version(),physicalIPhone:false,assets:measured},null,2));
+  console.log(JSON.stringify({method:'actual-browser-decode-v1',browser:name,browserVersion:browser.version(),physicalIPhone:false,
+   nativeMediaClockScope:'one-live-HTML-media-element-per-original-across-two-AudioContext-rates',assets:measured},null,2));
  }finally{await browser?.close();server.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});
