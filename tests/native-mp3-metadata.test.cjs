@@ -2,7 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),crypto=require('crypto');
 const source=fs.readFileSync(require('path').join(__dirname,'../native-mp3-metadata.js'),'utf8');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-function fixture({ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 Safari/605.1.15',duration=.002}={}){
+function fixture({ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 Safari/605.1.15',platform='',duration=.002}={}){
  const timers=new Map(),events=new Map(),docEvents=new Map(),fetches=[],revoked=[],urls=new Map();let timer=0,current=true,wants=true;
  const original=Buffer.alloc(2048,24),prefix=Buffer.from('metadata'),wrapped=Buffer.concat([original.subarray(0,44),prefix,original.subarray(44)]);
  const proof={method:'mp3-frame-count-prefix-identical-pcm-v1',browserVerified:true,sourceSha256:sha(original),wrappedSha256:sha(wrapped),sourceBytes:original.length,wrappedBytes:wrapped.length,insertAt:44,prefixBase64:prefix.toString('base64'),duration:126,
@@ -12,7 +12,7 @@ function fixture({ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 Safar
  const audio={duration,readyState:4,currentTime:.002,muted:true,volume:.7,src:'http://localhost/songs/track-4.mp3',_mbMixSourceUrl:'http://localhost/songs/track-4.mp3',playCalls:0,
   addEventListener:(n,f)=>{if(!events.has(n))events.set(n,new Set());events.get(n).add(f)},removeEventListener:(n,f)=>events.get(n)?.delete(f),play(){this.playCalls++;return Promise.resolve()}};
  const doc={hidden:false,addEventListener:(n,f)=>{if(!docEvents.has(n))docEvents.set(n,new Set());docEvents.get(n).add(f)},removeEventListener:(n,f)=>docEvents.get(n)?.delete(f)};
- const c={navigator:{userAgent:ua},crypto:crypto.webcrypto,URL:LocalURL,Blob,Uint8Array,TextDecoder,AbortController,location:{href:'http://localhost/index.html'},document:doc,atob,
+ const c={navigator:{userAgent:ua,platform},crypto:crypto.webcrypto,URL:LocalURL,Blob,Uint8Array,TextDecoder,AbortController,location:{href:'http://localhost/index.html'},document:doc,atob,
   setTimeout:(f,ms)=>{timers.set(++timer,{f,ms});return timer},clearTimeout:id=>timers.delete(id)};
  c.fetch=async(url,options)=>{fetches.push({url,options});const b=url.includes('native-mp3-metadata.json')?Buffer.from(JSON.stringify({version:1,entries:{'audio/songs/track-4.mp3':proof}})):original;
   return {ok:true,headers:{get:()=>String(b.length)},arrayBuffer:async()=>b.buffer.slice(b.byteOffset,b.byteOffset+b.length)}};
@@ -77,4 +77,10 @@ test('hidden pages stop delayed and in-flight work while retaining an applied pl
 test('a new source releases its old object URL with no timer or stale owner',async()=>{
  const f=fixture();f.arm();await f.run();const old=f.audio.src;f.audio._mbNativeMetadataCleanup('source-assignment');assert.deepEqual(f.revoked,[old]);assert.equal(f.timers.size,0);assert.equal(f.audio._mbNativeMetadataCleanup,undefined);
  f.api.cancel('again');assert.deepEqual(f.revoked,[old]);
+});
+
+
+test('a Linux backend with Safari-compatible UA is detected without enabling an emulated iPhone',async()=>{
+ const f=fixture({ua:'Mozilla (Macintosh) AppleWebKit/605.1.15 Safari/605.1.15',platform:'Linux x86_64'});f.arm();await f.run();assert.equal(f.api.diagnostics().repairsApplied,1);
+ const phone=fixture({ua:'Mozilla (iPhone) AppleWebKit/605.1.15',platform:'Linux x86_64'});phone.arm();await phone.run();assert.equal(phone.fetches.length,0);assert.equal(phone.timers.size,0);
 });

@@ -27,6 +27,6 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
     }finally{await ctx.close()}
    },{sampleRate,proof});assert.equal(result.accepted,true,key+' at '+sampleRate);results.push({key,sourceSha:proof.sourceSha,sourceSha256:proof.sourceSha256,wrappedSha256:proof.wrappedSha256,...result});
   }
-  console.log(JSON.stringify({method:'native-mp3-metadata-identical-pcm-v1',browser:browserName,physicalIPhone:false,maximumAllowedDifference:0,results},null,2));
+  console.log(JSON.stringify({method:'native-mp3-metadata-identical-pcm-v1',browser:browserName,physicalIPhone:false,maximumAllowedDifference:0,environment:await page.evaluate(()=>({userAgent:navigator.userAgent,platform:navigator.platform})),results},null,2));
  }finally{await browser?.close();server.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

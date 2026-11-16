@@ -75,7 +75,7 @@ const server=http.createServer(async(req,res)=>{
    try{
     for(let trial=0;trial<repetitions;trial++){
     console.error(name,'native playback trial',trial+1,'of',repetitions);
-    const page=await browser.newPage();page.on('pageerror',e=>console.error(name,e.message));
+    const page=await browser.newPage();console.error(name,'native environment',JSON.stringify(await page.evaluate(()=>({userAgent:navigator.userAgent,platform:navigator.platform}))));page.on('pageerror',e=>console.error(name,e.message));
     await page.goto('http://127.0.0.1:'+server.address().port);
     await page.evaluate(()=>{document.querySelector('#go').onclick=()=>{window.ctx=new (window.AudioContext||window.webkitAudioContext)({sampleRate:48000});window.ctx.resume()}});
     await page.click('#go');

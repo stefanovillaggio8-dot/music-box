@@ -4,7 +4,7 @@
 'use strict';
 let active=null,index=null,repairsApplied=0,last={state:'idle'};
 const finite=Number.isFinite;
-const supported=()=>/Linux/i.test(root.navigator?.userAgent||'')&&/AppleWebKit\//.test(root.navigator?.userAgent||'')&&!/Chrome|Chromium|Edg|Android/i.test(root.navigator?.userAgent||'');
+const supported=()=>/Linux/i.test((root.navigator?.platform||'')+' '+(root.navigator?.userAgent||''))&&/AppleWebKit\//.test(root.navigator?.userAgent||'')&&!/Chrome|Chromium|Edg|Android|iPhone|iPad|iPod/i.test(root.navigator?.userAgent||'');
 const hash=async bytes=>Array.from(new Uint8Array(await root.crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');
 const visible=()=>!root.document?.hidden;
 function arm(audio,options={}){
@@ -78,5 +78,5 @@ function arm(audio,options={}){
  for(const e of events)audio.addEventListener(e,onEvent);audio.addEventListener('seeking',onSeek);root.document?.addEventListener('visibilitychange',onVisibility);onEvent();
  return s.cancel;
 }
-root.MusicBoxNativeMetadata={arm,cancel:reason=>active?.cancel(reason),diagnostics:()=>({...last,repairsApplied}),whenIdle:()=>active?.job||Promise.resolve()};
+root.MusicBoxNativeMetadata={arm,cancel:reason=>active?.cancel(reason),diagnostics:()=>({...last,repairsApplied,supported:supported(),platform:root.navigator?.platform||''}),whenIdle:()=>active?.job||Promise.resolve()};
 })(typeof window!=='undefined'?window:globalThis);
