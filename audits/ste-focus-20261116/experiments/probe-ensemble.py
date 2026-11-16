@@ -21,6 +21,7 @@ for key,e in new.items():
    for f in ['start','end']:bar[f]+=start
    for f in ['modelBeats','beats']:bar[f]=[v+start for v in bar[f]]
   result[role]={**x,'bars':bars,'beats':[float(t)+start for t in beats],'beatPosterior':bp.sigmoid().tolist(),'downbeatPosterior':dp.sigmoid().tolist()}
- entries[key]={**e,'analysisView':'independent-seed1',**result}
+ entries[key]={**e,'modelSha256':None,'analysisView':'ensemble-seed0-seed1-logit-mean-v1',
+ 'ensembleEvidence':{'method':'equal-logit-mean-v1','parents':['8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331','365b553f43750717c907f32fbc42910f3b264d616654583df6e44472c93ead80']},**result}
 p=work/'ensemble-edges/edge-0.json';p.parent.mkdir(exist_ok=True);p.write_text(json.dumps({'version':1,'entries':entries,'errors':[]},separators=(',',':')))
 print(len(entries))

@@ -161,7 +161,7 @@
           "completeCandidates": 1
         }
       },
-      "sourceReportSha256": "971b70250af49e47737eef7dfe05a470ed454fba46a5dd32c8cd6ed6c017c76b"
+      "sourceReportSha256": "6f21689577c7b37390d17d4a19d4200dd527867861a74e5a54873e75c5172692"
     },
     {
       "experiment": "seed1-partial-plans",
@@ -228,7 +228,7 @@
           "completeCandidates": 1
         }
       },
-      "sourceReportSha256": "a5c5181bb5502a9f12c1e7ec10ae4472a502dcbbe4dc0afc0120f02b89c7ae49"
+      "sourceReportSha256": "ac242018350535bd8f914800e11d1e96a5e7a11303e713a6d62cd646f5b51baf"
     },
     {
       "experiment": "subdivision-full-plans",
@@ -435,5 +435,13 @@
       },
       "sourceReportSha256": "61e1eb69b9616df59d60cb3ece6d8e18406b14654c2dbd752eb30a422dcbd671"
     }
-  ]
+  ],
+  "ensembleEvidence": {
+    "method": "equal-logit-mean-v1",
+    "parents": [
+      "8c328b45f59d8dd3dff219253ff6a8d6482be57d0133a29140e2febbf8eb8331",
+      "365b553f43750717c907f32fbc42910f3b264d616654583df6e44472c93ead80"
+    ],
+    "derivedPosteriorsNotSingleCheckpoint": true
+  }
 }
