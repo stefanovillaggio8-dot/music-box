@@ -322,5 +322,9 @@
         }
       ]
     }
-  ]
+  ],
+  "runnerPlatforms": {
+    "chromium": "Linux",
+    "webkit": "Linux"
+  }
 }

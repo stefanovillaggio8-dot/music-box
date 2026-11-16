@@ -320,5 +320,9 @@
         }
       ]
     }
-  ]
+  ],
+  "runnerPlatforms": {
+    "chromium": "Linux",
+    "webkit": "macOS Intel"
+  }
 }

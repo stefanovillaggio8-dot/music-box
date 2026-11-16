@@ -17,12 +17,20 @@
   "linuxNewPartialMatrix": {
     "passedJobs": 7,
     "failedJobs": 0,
-    "run": 43938097742
+    "run": 43938097742,
+    "platforms": {
+      "chromium": "Linux",
+      "webkit": "Linux"
+    }
   },
   "macOSIntelNewPartialMatrix": {
     "passedJobs": 7,
     "failedJobs": 0,
-    "run": 43938102887
+    "run": 43938102887,
+    "platforms": {
+      "chromium": "Linux",
+      "webkit": "macOS Intel"
+    }
   },
   "targetedTests": {
     "passed": 27,
