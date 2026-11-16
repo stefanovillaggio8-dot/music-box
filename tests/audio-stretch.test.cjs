@@ -34,6 +34,30 @@ test('time-stretch worker is local, bounded and required before a pitched mobile
  assert.match(source,/clip\.pitchPreserved\?0:/);
 });
 
+test('bounded transient profile preserves pitch and stereo phase; unknown profiles cannot bypass verification',async()=>{
+ const {stretchClip}=await import('../audio-stretch-core.mjs'),rate=48000,input=tone(rate,16,440);
+ const cue={entry:0,tempo:1.0167,fade:10.77,stretchProfile:'transient-60-12-8-v1'};
+ const out=stretchClip({rate,start:0,channels:[input,input.slice()]},cue);let crossing=0;
+ for(let i=rate+1;i<rate*3;i++){
+  if(out.channels[0][i-1]<0&&out.channels[0][i]>=0)crossing++;
+  assert.ok(Math.abs(out.channels[0][i]-out.channels[1][i])<1e-7);
+ }
+ assert.ok(Math.abs(crossing/2-440)<3);assert.equal(out.timing.processingProfile,cue.stretchProfile);
+ assert.throws(()=>stretchClip({rate,start:0,channels:[input]}, {...cue,stretchProfile:'unverified'}),/Unsupported/);
+});
+
+test('time-stretch cache and worker payload retain the verified processing profile',async()=>{
+ const {api,instances}=fakeStretchBrowser(),clip={rate:16000,start:0,channels:[new Float32Array(1024)]};
+ const base={entry:0,tempo:1.02,fade:8},profile={...base,stretchProfile:'transient-60-12-8-v1'};
+ const first=api.prepare(clip,base),a=instances[0].lastMessage;
+ const second=api.prepare(clip,profile),b=instances[0].lastMessage;
+ assert.notEqual(a.id,b.id);assert.equal(b.cue.stretchProfile,profile.stretchProfile);
+ instances[0].onmessage({data:{id:a.id,clip:{tag:'auto',pitchPreserved:true,timing:{verified:true}}}});
+ instances[0].onmessage({data:{id:b.id,clip:{tag:'profile',pitchPreserved:true,timing:{verified:true}}}});
+ assert.equal((await first).tag,'auto');assert.equal((await second).tag,'profile');
+ assert.equal(api.get(clip,base).tag,'auto');assert.equal(api.get(clip,profile).tag,'profile');api.cancel();
+});
+
 test('sixteen-second native-tail stretch keeps the measured tempo until EOF',async()=>{
  const {stretchClip,playedAt}=await import('../audio-stretch-core.mjs');
  const rate=16000,input=tone(rate,23,440);

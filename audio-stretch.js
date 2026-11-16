@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const clips=new WeakMap();let worker=null,sequence=0;const jobs=new Map();
-const key=p=>[p.entry,p.tempo,p.fade].map(n=>Number(n).toFixed(5)).join('|');
+const key=p=>[p.entry,p.tempo,p.fade].map(n=>Number(n).toFixed(5)).join('|')+'|'+(p.stretchProfile||'auto');
 function cancel(reason='cancelled'){
  const aborted=reason==='cancelled';
  for(const job of jobs.values()){
@@ -18,6 +18,7 @@ function cancel(reason='cancelled'){
 }
 function get(clip,cue){return clips.get(clip)?.get(key(cue))?.ready||null;}
 function prepare(clip,cue){
+ if(cue.stretchProfile!=null&&cue.stretchProfile!=='transient-60-12-8-v1')return Promise.resolve(null);
  let entries=clips.get(clip);if(!entries){entries=new Map();clips.set(clip,entries)}
  const k=key(cue),old=entries.get(k);
  if(old?.ready)return Promise.resolve(old.ready);
@@ -25,7 +26,7 @@ function prepare(clip,cue){
  if(old?.failedAt&&Date.now()-old.failedAt<25000)return Promise.resolve(null);
  if(!root.Worker)return Promise.resolve(null);
  if(!worker){
-  try{worker=new Worker('audio-stretch-worker.js?v=3',{type:'module'})}
+  try{worker=new Worker('audio-stretch-worker.js?v=4',{type:'module'})}
   catch(_){entries.set(k,{failedAt:Date.now()});return Promise.resolve(null)}
   worker.onmessage=({data})=>{
    const job=jobs.get(data.id);if(!job)return;
@@ -38,7 +39,8 @@ function prepare(clip,cue){
  const pending=new Promise((resolve,reject)=>{
   const timer=setTimeout(()=>cancel('worker-error'),12000);
   jobs.set(id,{resolve,reject,timer,entries,key:k});
-  try{worker.postMessage({id,clip:{...clip,channels},cue:{entry:cue.entry,tempo:cue.tempo,fade:cue.fade}},channels.map(c=>c.buffer))}
+  try{worker.postMessage({id,clip:{...clip,channels},cue:{entry:cue.entry,tempo:cue.tempo,fade:cue.fade,
+   ...(cue.stretchProfile?{stretchProfile:cue.stretchProfile}:{})}},channels.map(c=>c.buffer))}
   catch(error){jobs.delete(id);clearTimeout(timer);reject(error)}
  }).then(result=>{
   if(!result?.pitchPreserved||result.timing?.verified!==true)throw Error('Stretch timing not verified');

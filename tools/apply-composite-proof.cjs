@@ -14,6 +14,10 @@ for(const row of report.results){
    c.resampledCommonProof?.sampleRate!==44100||c.resampledCommonProof?.rhythm?.accepted!==true))throw Error('Missing actual common resampling proof');
  if(p.structuralBeat){
   if(c.rhythmVerified!==true||c.postRenderRhythm?.accepted!==true)throw Error('Missing actual rendered rhythm proof');
+  if(p.structuralEvidence?.exactSilentSuffix&&(p.measuredFullBeat!==true||p.metricalRhythmic!==false||
+   c.postRenderRhythm.exactSilentSuffix?.maximumPeak!==0||c.postRenderRhythm.exactSilentSuffix?.accepted!==true||
+   c.resampledCommonProof?.assetSha256!==c.sha256||c.resampledCommonProof?.rhythm?.exactSilentSuffix?.maximumPeak!==0||
+   c.resampledCommonProof?.rhythm?.exactSilentSuffix?.accepted!==true))throw Error('Unverified exact silent suffix');
   a.structuralBeatPlans??={};
   const existing=a.structuralBeatPlans[b.sha],cues=existing?.cues||[];
   const sameWindow=x=>['begin','end','entry','fade','tempo'].every(k=>

@@ -28,6 +28,7 @@ function supports(cue){
   c.peak>0&&c.peak<=.9991&&c.overlapPeak<=.961&&c.oversampledPeak<=1&&c.seconds>=cue.fade+1.7&&c.seconds<=20&&
   ['begin','entry','fade','tempo'].every(k=>Math.abs(c[k]-cue[k])<.0001)&&
   c.pitchPreserved===true&&c.timingVerified===true&&c.renderedFromOriginals===true&&
+  (cue.stretchProfile==null?c.stretchProfile==null:cue.stretchProfile==='transient-60-12-8-v1'&&c.stretchProfile===cue.stretchProfile)&&
   (c.envelopeVersion!==4||c.gainProof?.method==='offline-stereo-shared-lookahead-v1'&&
    [c.gainProof.maximumReductionDb,c.gainProof.meanOverlapReductionDb].every(finite)&&
    c.gainProof.maximumReductionDb>=0&&c.gainProof.maximumReductionDb<=4.5&&

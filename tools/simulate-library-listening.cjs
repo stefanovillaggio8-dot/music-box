@@ -97,12 +97,21 @@ const publicIntro=new Function('enabled','bridge','deepLookup','cache','clamp','
 const rng=seed=>()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
 const shuffled=(items,random)=>{const copy=items.slice();for(let i=copy.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy};
 const profiles=['Ste','Diego','Emanuele'],offlineFilterImplemented=appSource.includes('function _mixPlayableNow(');
+// Audit scope only: never writes app membership, playlists or device state.
+const excludedPlaylists=arg('exclude-playlists','').split(',').filter(Boolean).map(value=>{
+ const split=value.indexOf(':');if(split<1)throw Error('Expected PROFILE:PLAYLIST audit exclusion');
+ const profile=value.slice(0,split),name=value.slice(split+1);
+ const matches=playlists.filter(p=>p.nascostaDa===profile&&String(p.name).toLowerCase()===name.toLowerCase());
+ if(matches.length!==1)throw Error('Audit exclusion must resolve exactly one playlist: '+value);
+ return {profile,name:matches[0].name,ids:new Set(matches[0].tracks||[])};
+});
 function members(profile,playlist=null){
  const copies=new Set(state.miei?.[profile]||[]),deleted=new Set(state.eliminati||[]);
  const only=new Set((state.soloInPlaylist||[]).filter(x=>x.startsWith(profile+'.')).map(x=>x.slice(profile.length+1)));
  for(const p of playlists)if(p.nascosta&&p.nascostaDa===profile)for(const id of p.tracks||[])only.add(id);
  const rows=catalog.filter(t=>((t.profile||'Ste')===profile||copies.has(t.id))&&
   !deleted.has(profile+'.'+t.id)&&!(profile==='Ste'&&deleted.has(t.id))&&
+  !excludedPlaylists.some(p=>p.profile===profile&&p.ids.has(t.id))&&
   (playlist?(playlist.tracks||[]).includes(t.id):!only.has(t.id)));
  const unique=new Map();for(const t of rows)if(!unique.has(t.id)||(t.profile||'Ste')===profile)unique.set(t.id,t);
  return [...unique.values()].map(t=>{
@@ -215,6 +224,8 @@ function inventory(profile,list,audit){
   audioVariant:appRecording?'actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest':'original recordings; no loaded boost manifest',
   sessionHistoryAssumption:'A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.',
   sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
+  auditExclusions:excludedPlaylists.map(p=>({profile:p.profile,playlist:p.name})),
+  personalLibrariesOnly:arg('personal-only','false')==='true',
   offlineAssumption:'Synthetic fixed 50% MP3 manifest, no predecoded common buffers. NOT a measurement of the user device downloads.',
   limits:'Metadata/actual-code simulation; no human beauty judgement, physical browser latency or unknown device preferences. Missing analysis never becomes a verified transition.',results:[],inventories:[]};
  const audit=arg('inventory-audit','')?JSON.parse(read(arg('inventory-audit',''))):null;
@@ -222,6 +233,14 @@ function inventory(profile,list,audit){
  for(const [i,profile] of profiles.entries()){
   if(arg('only-profile','')&&arg('only-profile','')!==profile)continue;
   const library=members(profile);
+  if(arg('scope-dir','')){
+   const folder=path.resolve(arg('scope-dir',''));fs.mkdirSync(folder,{recursive:true});
+   const tracks=library.filter(t=>lookup(t)).map(t=>({id:t.id,key:t.analysisKey,sha:lookup(t).sha,title:t.title,artist:t.artist}));
+   fs.writeFileSync(path.join(folder,profile+'.json'),JSON.stringify({name:profile,tracks,
+    unavailable:library.filter(t=>!lookup(t)).map(t=>t.id),
+    source:'Actual personal library snapshot; audit-only exclusions; no user data modified',
+    auditExclusions:report.auditExclusions.filter(p=>p.profile===profile),runtimeEvidence:report.runtimeEvidence},null,2)+'\n');
+  }
   if(audit)report.inventories.push(inventory(profile,library,audit));
   if(arg('inventory-only','false')==='true')continue;
   for(const mode of ['ordered','manual-queue','shuffle','offline-shuffle']){
@@ -229,7 +248,8 @@ function inventory(profile,list,audit){
    const result=await simulate(profile,mode,library,mode==='ordered'||mode==='manual-queue'?1:sessions,mode==='ordered'?library.length-1:steps,20261114+i*100);
    report.results.push(result);console.log(JSON.stringify({profile,mode,members:library.length,full:result.totals.full,attempts:result.totals.attempts}));
   }
-  for(const playlist of playlists.filter(p=>p.nascostaDa===profile)){
+  for(const playlist of playlists.filter(p=>p.nascostaDa===profile&&
+   !report.personalLibrariesOnly&&!excludedPlaylists.some(x=>x.profile===profile&&x.name===p.name))){
    if(audit)report.inventories.push(inventory(profile+' / '+playlist.name,members(profile,playlist),audit));
    for(const mode of ['playlist','playlist-shuffle']){
    if(arg('only-mode','')&&arg('only-mode','')!==mode)continue;

@@ -7,12 +7,15 @@ const {metricalFit}=require('./pcm-metrical-fit.cjs');
 const {shortlist}=require('./shortlist-musical-windows.cjs');
 const {vocalHandoff}=require('./pcm-vocal-handoff.cjs');
 const {rhythmicTail}=require('./pcm-rhythmic-tail.cjs');
+const {validExactSuffix}=require('./exact-silent-suffix.cjs');
 const arg=(k,d)=>process.argv.find(x=>x.startsWith('--'+k+'='))?.slice(k.length+3)??d;
 const partial=arg('metrical','false')==='true';
 const tailWindows=arg('rhythmic-tail','true')==='true';
 const allowHandoff=arg('vocal-handoff','true')==='true';
 const separateGrids=arg('separate-grid-hypotheses','true')==='true';
 const initialBarLimit=Number(arg('initial-bar-limit','8'));
+const diagnose=arg('diagnostics','false')==='true',pulseRejections=[],octavePairs=new Map();
+const exactSilence=arg('exact-silence','')?JSON.parse(fs.readFileSync(arg('exact-silence',''))).entries:{};
 if(![4,8].includes(initialBarLimit))throw Error('Supported initial-bar candidate limits: 4 or 8 seconds');
 const root=path.resolve(__dirname,'..'),index=JSON.parse(fs.readFileSync(arg('index',path.join(root,'dj-deep-analysis.json'))));
 const allFiles=(dir,re)=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?allFiles(path.join(dir,e.name),re):re.test(e.name)?[path.join(dir,e.name)]:[]);
@@ -103,7 +106,14 @@ for(const a of prepared)for(const b of prepared){
   if(x.meter!==y.meter){excluded('meter');continue;}if(x.bars!==y.bars){excluded('barSpan');continue;}reached.add('meterAndSpan');
   const pairOut=x.observed||a.outro,pairIn=y.observed||b.intro;
   if(partial&&(a.raw.duration-x.end>.65||y.start>1.5))continue;
-  const ratio=(y.end-y.start)/(x.end-x.start);if(ratio<.95||ratio>1.05){excluded('bpm');continue;}reached.add('bpm');
+  const ratio=(y.end-y.start)/(x.end-x.start);if(ratio<.95||ratio>1.05){
+   if(diagnose){for(const factor of [.5,2])if(ratio*factor>=.95&&ratio*factor<=1.05){
+    const key=a.key+'|'+b.key,previous=octavePairs.get(key),cost=Math.abs(Math.log(ratio*factor));
+    if(!previous||cost<previous.cost)octavePairs.set(key,{from:a.key,to:b.key,ratio,factor,cost,
+     source:{start:x.start,end:x.end,bars:x.bars,meter:x.meter},target:{start:y.start,end:y.end,bars:y.bars,meter:y.meter}});
+   }}
+   excluded('bpm');continue;
+  }reached.add('bpm');
   const nearest=(beats,t)=>{let value=null,error=.075;for(const b of beats)if(Math.abs(b-t)<error){error=Math.abs(b-t);value=b}return value;};
   const sourceDown=x.downbeats.slice(0,-1).map(t=>nearest(pairOut.beats,t)),targetDown=y.downbeats.slice(0,-1).map(t=>nearest(pairIn.beats,t));
   if([...sourceDown,...targetDown].some(t=>t==null)){excluded('observedDownbeat');continue;}reached.add('observedDownbeat');
@@ -118,20 +128,35 @@ for(const a of prepared)for(const b of prepared){
    const incomingClear=guard?.clear&&!(Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<fade*rate+.3);
    const outgoingGuard=incomingClear?null:clear(a.e,begin-.3,end);
    const knownOutgoing=[a.raw.lastVoiceAt,a.raw.lastLyricAt,...(a.raw.lyricStarts||[])].some(t=>Number.isFinite(t)&&t>=begin-.3&&t<end+.1);
-   const handoff=allowHandoff&&!incomingClear&&(!outgoingGuard?.clear||knownOutgoing)?vocalHandoff(a.e,b.e,a.raw,b.raw,begin,end,rate,clear):null;
+   let handoff=allowHandoff&&!incomingClear&&(!outgoingGuard?.clear||knownOutgoing)?vocalHandoff(a.e,b.e,a.raw,b.raw,begin,end,rate,clear):null;
    if(!incomingClear&&(!outgoingGuard?.clear||knownOutgoing)&&!handoff){excluded('voice');continue;}voice=true;reached.add('voice');
    const downbeatErrors=sourceDown.map((t,i)=>t-begin-targetDown[i]/rate),rms=Math.sqrt(downbeatErrors.reduce((s,x)=>s+x*x,0)/downbeatErrors.length);
    if(rms>.025||downbeatErrors.some(t=>Math.abs(t)>.05)){excluded('downbeatTiming');continue;}
    const h=engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,handoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',handoff?.at);if(!h){excluded('harmony');continue;}harmony=true;reached.add('harmony');
    report.windows++;
    const diagnosis={};const full=engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,fade,diagnosis);
-   const ending=tailWindows&&!partial&&!full?rhythmicTail(pairOut,begin,fade,x.end):null;
+   const silence=exactSilence[a.key];
+   const silentSeconds=!partial&&!full&&validExactSuffix(silence,a.raw)?silence.zeroFrom-begin:null;
+   const zeroFit=silentSeconds>=4.5?engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,silentSeconds):null;
+   if(diagnose&&!full)pulseRejections.push({from:a.key,to:b.key,begin,fade,rate,reason:diagnosis.reason,
+    source:{start:x.start,end:x.end,bars:x.bars,meter:x.meter,modelBeats:x.modelBeats,downbeats:x.downbeats,
+     observed:pairOut.beats.filter(t=>t>=begin-.075&&t<=begin+fade-.12)},
+    target:{start:y.start,end:y.end,bars:y.bars,meter:y.meter,modelBeats:y.modelBeats,downbeats:y.downbeats,
+     observed:pairIn.beats.filter(t=>t>=0&&t<=fade*rate-.12)}});
+   const ending=tailWindows&&!partial&&!full&&!zeroFit?rhythmicTail(pairOut,begin,fade,x.end):null;
    const windowFit=ending?engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,ending.seconds):null;
-   const fit=partial?(!full&&metricalFit(pairOut,pairIn,x,y,begin,rate)):(full||windowFit);if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
-   const windowHarmony=windowFit?(engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,'rhythmic-tail-foreground-v1',ending.seconds+.3)):h;
+   const fit=partial?(!full&&metricalFit(pairOut,pairIn,x,y,begin,rate)):(full||zeroFit||windowFit);if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
+   let windowHarmony=!zeroFit&&windowFit?(engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,'rhythmic-tail-foreground-v1',ending.seconds+.3)):h;
+   if(zeroFit&&incomingClear&&allowHandoff){
+    const foreground=vocalHandoff(a.e,b.e,a.raw,b.raw,begin,end,rate,clear);
+    const verified=foreground&&engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,'vocal-handoff-foreground-v1',foreground.at);
+    if(verified){handoff=foreground;windowHarmony=verified;}
+   }
    if(!windowHarmony){excluded('tailForegroundHarmony');continue;}
-   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,...(windowFit?{rhythmicTail:ending}:{}),incomingGuard:guard,outgoingGuard,
-    vocalOverlapPolicy:incomingClear?'instrumental-incoming-v1':handoff?'separated-vocal-handoff-v1':'instrumental-outgoing-v1',vocalHandoff:handoff,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown,pairOut,pairIn});
+   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,
+    complete:!partial&&!!(full||zeroFit),...(windowFit?{rhythmicTail:ending}:{}),incomingGuard:guard,outgoingGuard,
+    vocalOverlapPolicy:handoff?'separated-vocal-handoff-v1':incomingClear?'instrumental-incoming-v1':'instrumental-outgoing-v1',vocalHandoff:handoff,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown,pairOut,pairIn,
+    ...(zeroFit?{exactSilentSuffix:{...silence,beatVerificationSeconds:silentSeconds}}:{})});
   }
  }
  const firstMissing=['meterAndSpan','bpm','observedDownbeat','affineDownbeatFit','duration','voice','harmony'].find(k=>!reached.has(k))||(!choices.length?'independentBeatFit':choices.some(c=>!c.rhythmicTail)?'completeCandidates':'rhythmicTailCandidates');
@@ -154,7 +179,7 @@ for(const a of prepared)for(const b of prepared){
     measuredPulseMode:fit.observedPulses,fullPulseFirst:fit.firstBeats,fullPulseSecond:fit.secondBeats,fullPulseAttackSupport:fit.attackSupport,
     harmonicEvidence:h,harmonicMode:h.compatibleKey?'compatible-key':h.percussiveIntro?'percussion':'local-chords',
     percussiveIntro:!!h.percussiveIntro,harmonicScore:h.average,harmonicWeakest:h.weakest,
-    structuralEvidence:{version:1,...(x.analysisView||y.analysisView?{edgeAnalysisViews:{source:x.analysisView||'original',target:y.analysisView||'original'}}:{}),bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
+    structuralEvidence:{version:1,...(c.exactSilentSuffix?{exactSilentSuffix:c.exactSilentSuffix}:{}),...(x.analysisView||y.analysisView?{edgeAnalysisViews:{source:x.analysisView||'original',target:y.analysisView||'original'}}:{}),bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
      ...(partial?{metricalCertificate:fit.metricalCertificate}:{}),
      ...(c.rhythmicTail?{rhythmicWindow:c.rhythmicTail}:{}),
      downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,...(c.vocalHandoff?{vocalHandoff:c.vocalHandoff}:{}),
@@ -168,4 +193,6 @@ for(const a of prepared)for(const b of prepared){
   }
  }
 }
-const output=arg('output','preserved-tail-plans.json');fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({...report,plans:report.plans.length}));
+if(diagnose)report.diagnostics={notPlaybackCertificates:true,pulseRejections,
+ octaveTempoPairs:octavePairs.size,octaveSamples:[...octavePairs.values()].sort((a,b)=>a.cost-b.cost||a.from.localeCompare(b.from)||a.to.localeCompare(b.to)).slice(0,64)};
+const output=arg('output','preserved-tail-plans.json');fs.mkdirSync(path.dirname(path.resolve(output)),{recursive:true});fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({...report,plans:report.plans.length,diagnostics:diagnose?{pulseWindows:pulseRejections.length,octaveTempoPairs:octavePairs.size}:undefined}));

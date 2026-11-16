@@ -22,6 +22,20 @@ def observed(stereo,sr,expected,pre_roll):
         if not result or actual-result[-1]>.20:result.append(actual)
     return result
 
+def exact_silence_evidence(original,sr,cue,pre_roll):
+    """Unattenuated ORIGINAL samples, both channels; no quietness threshold."""
+    proof=cue['structuralEvidence']['exactSilentSuffix']
+    seconds=proof['zeroFrom']-cue['begin']
+    nonzero=np.flatnonzero(np.any(original!=0,axis=1));lo=int(nonzero[-1])+1 if len(nonzero) else 0
+    actual_seconds=lo/sr-pre_roll
+    tail=original[lo:]
+    finite=bool(np.isfinite(original).all());maximum=float(np.max(np.abs(tail))) if len(tail) and finite else None
+    accepted=proof.get('sourceSha')==cue['sourceSha'] and len(tail)>=int(.25*sr) and finite and maximum==0 and abs(actual_seconds-seconds)<=.001
+    return {'method':'unmodified-original-exact-zero-tail-v1','sourceSha':cue['sourceSha'],
+        'sampleRate':sr,'beatVerificationSeconds':seconds,'sourceTailThrough':cue['fade'],
+        'verifiedFrames':len(tail),'maximumPeak':maximum,'actualZeroFromSeconds':actual_seconds,'sourceGainApplied':False,
+        'searchedEntireTail':True,'accepted':bool(accepted)}
+
 def tail_evidence(original,sr,cue,pre_roll):
     """Inspect the entire remaining ORIGINAL signal, without expected-beat masks.
 
@@ -53,7 +67,8 @@ def verify(outgoing,incoming,sr,cue,pre_roll):
     check=cue['structuralEvidence']['pulseCheck']
     protected=cue.get('rhythmicTailWindow') is True
     full_window=cue['measuredFullBeat'] or protected
-    fade=cue['structuralEvidence']['rhythmicWindow']['seconds'] if protected else cue['fade']
+    silent=cue.get('structuralEvidence',{}).get('exactSilentSuffix')
+    fade=cue['structuralEvidence']['rhythmicWindow']['seconds'] if protected else silent['zeroFrom']-cue['begin'] if silent else cue['fade']
     a=observed(outgoing,sr,check['source'],pre_roll)
     b=observed(incoming,sr,[t/cue['tempo'] for t in check['target']],pre_roll)
     a=[t for t in a if -.075<=t<=fade-.12];b=[t for t in b if -.075<=t<=fade-.12]
@@ -90,5 +105,5 @@ def verify(outgoing,incoming,sr,cue,pre_roll):
         'sourceAttacks':len(a),'incomingAttacks':len(b),'matches':len(errors),'agreement':ratio,
         'rmsSeconds':rms,'firstHalfMatches':first,'secondHalfMatches':second,
         'sharedPerBar':counts,'sourceObserved':a,'incomingObserved':b,
-        'notHumanListening':True,**({'rhythmicWindowSeconds':fade} if protected else {}),**({'downbeatsVerified':bool(downbeat_verified),'downbeatRmsSeconds':downbeat_error,
+        'notHumanListening':True,**({'rhythmicWindowSeconds':fade} if protected else {}),**({'beatVerificationSeconds':fade} if silent else {}),**({'downbeatsVerified':bool(downbeat_verified),'downbeatRmsSeconds':downbeat_error,
         'maximumDownbeatError':downbeat_max,'downbeatMatches':downbeat_matches} if cue.get('preservedFileTail') else {})}

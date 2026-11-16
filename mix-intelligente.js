@@ -2802,12 +2802,47 @@ function incomingContentDecision(b,p){
   return {allowed:true,reason:'verified-digital-silence-only',skippedSeconds:0};
  return {allowed:false,reason:'unverified-incoming-content-skip',skippedSeconds:p.entry};
 }
+function validExactSilentSuffix(p,source){
+ return p?.method==='original-stereo-exact-zero-suffix-v1'&&p.sourceSha===source?.sha&&
+  /^[a-f0-9]{64}$/.test(p.sourceSha256)&&p.threshold===0&&
+  [p.zeroFrom,p.through].every(Number.isFinite)&&Math.abs(p.through-source.duration)<.001&&
+  p.through-p.zeroFrom>=.25&&p.through-p.zeroFrom<=3&&[44100,48000].every(rate=>{
+   const r=p.rates?.[rate];return r&&Number.isInteger(r.frames)&&Number.isInteger(r.nonzeroThroughFrame)&&
+    r.frames>0&&r.nonzeroThroughFrame>=0&&r.nonzeroThroughFrame<r.frames&&r.maximumSuffixPeak===0&&
+    /^[a-f0-9]{64}$/.test(r.pcmSha256)&&Math.abs(r.decodedDuration-r.frames/rate)<1e-9&&
+    Math.abs(r.decodedDuration-p.through)<.1&&Math.abs(r.zeroFrom-r.nonzeroThroughFrame/rate)<1e-9&&
+    r.zeroFrom<=p.zeroFrom+1e-9&&p.zeroFrom<=r.decodedDuration-.25;
+  })&&Math.abs(p.zeroFrom-Math.max(p.rates[44100].zeroFrom,p.rates[48000].zeroFrom))<1e-9;
+}
 function validatePreservedFileTailCue(record,p,a,b,dur){
  const e=p?.structuralEvidence,c=p?.composite,h=p?.harmonicEvidence,r=c?.postRenderRhythm,g=e?.incomingWholeOverlap;
  const strict=p?.measuredFullBeat===true&&p?.metricalRhythmic===false&&p?.rhythmicTailWindow!==true;
  const rhythmic=p?.measuredFullBeat===false&&p?.metricalRhythmic===true&&p?.rhythmicTailWindow===true;
  const w=e?.rhythmicWindow,t=r?.tailEvidence;
  const resampled=c?.resampledCommonProof,rr=resampled?.rhythm;
+ const exact=e?.exactSilentSuffix;
+ const exactRendered=(render,rate)=>{
+  const tail=render?.exactSilentSuffix;
+  return render?.method==='rendered-hpss-attacks-v1'&&render.mode==='full-pcm'&&render.accepted===true&&
+   [render.matches,render.agreement,render.rmsSeconds,render.firstHalfMatches,render.secondHalfMatches,render.beatVerificationSeconds,
+    render.downbeatRmsSeconds,render.maximumDownbeatError].every(Number.isFinite)&&
+   render.matches>=8&&render.agreement>=.9&&render.agreement<=1&&render.rmsSeconds>=0&&render.rmsSeconds<=.04&&
+   render.firstHalfMatches>=3&&render.secondHalfMatches>=3&&render.downbeatsVerified===true&&render.downbeatMatches===e.bars&&
+   render.downbeatRmsSeconds>=0&&render.downbeatRmsSeconds<=.025&&render.maximumDownbeatError>=0&&render.maximumDownbeatError<=.05&&
+   Math.abs(render.beatVerificationSeconds-exact.beatVerificationSeconds)<.001&&
+   tail?.method==='unmodified-original-exact-zero-tail-v1'&&tail.accepted===true&&tail.sourceSha===a.sha&&tail.sampleRate===rate&&
+   tail.maximumPeak===0&&tail.sourceGainApplied===false&&tail.searchedEntireTail===true&&
+   Number.isInteger(tail.verifiedFrames)&&tail.verifiedFrames>=rate*.25&&
+   [tail.beatVerificationSeconds,tail.sourceTailThrough,tail.actualZeroFromSeconds].every(Number.isFinite)&&
+   Math.abs(tail.beatVerificationSeconds-exact.beatVerificationSeconds)<.001&&Math.abs(tail.sourceTailThrough-p.fade)<.001&&
+   Math.abs(tail.actualZeroFromSeconds-exact.beatVerificationSeconds)<=.001;
+ };
+ const exactValid=strict&&validExactSilentSuffix(exact,a)&&Number.isFinite(exact.beatVerificationSeconds)&&
+  exact.beatVerificationSeconds>=4.5&&Math.abs(exact.beatVerificationSeconds-(exact.zeroFrom-p.begin))<.001&&
+  c?.sampleRate===48000&&exactRendered(r,48000)&&resampled?.method==='encoded-common-resampling-v1'&&
+  resampled.sampleRate===44100&&resampled.assetSha256===c.sha256&&
+  [resampled.samplePeak,resampled.oversampledPeak,resampled.oversampledOverlapPeak].every(Number.isFinite)&&
+  resampled.samplePeak>0&&resampled.samplePeak<=.9992&&resampled.oversampledPeak<=1&&resampled.oversampledOverlapPeak<=.961&&exactRendered(rr,44100);
  const tailValid=rhythmic&&p.preservedEntrance==='rhythmic-tail-foreground-v1'&&w?.method==='original-pcm-rhythm-ending-v1'&&w.tailPreserved===true&&
   [w.seconds,w.tailSeconds,w.lastOriginalOnset,w.maximumTailOnset].every(Number.isFinite)&&
   w.seconds>=4.5&&w.tailSeconds>=.65&&w.tailSeconds<=8&&Math.abs(w.seconds+w.tailSeconds-p.fade)<.001&&
@@ -2849,6 +2884,8 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
     p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic)||rhythmic&&!tailValid||
+    (exact?!exactValid:r?.exactSilentSuffix!=null||r?.beatVerificationSeconds!=null)||
+    (p.stretchProfile!=null&&p.stretchProfile!=='transient-60-12-8-v1')||p.stretchProfile!==c?.stretchProfile||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
     p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(p.preservedEntrance)||
     p.preservedEntrance==='vocal-handoff-foreground-v1'&&!separated||

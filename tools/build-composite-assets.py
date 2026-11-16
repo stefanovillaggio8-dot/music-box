@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--release-seconds',type=float,choices=(.9,1.2,1.5),default=.9)
     parser.add_argument('--gain-mode',choices=('constant','lookahead'),default='constant')
     parser.add_argument('--true-peak-lookahead',action='store_true')
+    parser.add_argument('--transient-fallback',action='store_true',help='Offline-only bounded retry with a shorter WSOLA search; every original timing/render gate stays mandatory')
     parser.add_argument('--envelope-search',action='store_true',help='Retry only unsafe native splice boundaries with bounded existing envelopes; every retry retains all PCM gates')
     parser.add_argument('--context-mode',choices=('auto','warm','cold'),default='auto');args=parser.parse_args()
     if args.rate not in (16000,44100,48000):raise ValueError('Unsupported sample rate')
@@ -31,6 +32,33 @@ def main():
     report_path=pathlib.Path(args.report);report_path.parent.mkdir(parents=True,exist_ok=True)
     if not plans:
         report_path.write_text(json.dumps({'requested':0,'rendered':0,'results':[]})+'\n')
+        return
+    if args.transient_fallback:
+        with tempfile.TemporaryDirectory(prefix='stretch-profile-',dir=report_path.parent) as temporary:
+            temporary=pathlib.Path(temporary)
+            common=[sys.executable,str(pathlib.Path(__file__).resolve()),'--assets='+str(assets.resolve()),
+                '--cache='+str(cache.resolve()),'--rate='+str(args.rate),'--peak-ceiling='+str(args.peak_ceiling),
+                '--pre-roll='+str(args.pre_roll),'--release-seconds='+str(args.release_seconds),
+                '--gain-mode='+args.gain_mode,'--context-mode='+args.context_mode]
+            common+=(['--true-peak-lookahead'] if args.true_peak_lookahead else [])+(['--envelope-search'] if args.envelope_search else [])
+            initial=temporary/'initial.json'
+            subprocess.run(common+['--plans='+str(pathlib.Path(args.plans).resolve()),'--report='+str(initial)],check=False)
+            rows=json.loads(initial.read_text(encoding='utf8'))['results'];retry=[];indices=[]
+            for i,(p,row) in enumerate(zip(plans,rows)):
+                if not p['cue'].get('stretchProfile') and row.get('error') in ('Stretch timing failed','Post-render rhythm certificate failed'):
+                    retry.append({**p,'cue':{**p['cue'],'stretchProfile':'transient-60-12-8-v1'}});indices.append(i)
+                row['stretchProfileAttempts']=[{'profile':p['cue'].get('stretchProfile','auto'),'error':row.get('error')}]
+            if retry:
+                inputs=temporary/'retry.json';inputs.write_text(json.dumps({'plans':retry}),encoding='utf8');retried=temporary/'retried.json'
+                subprocess.run(common+['--plans='+str(inputs),'--report='+str(retried)],check=False)
+                alternate=json.loads(retried.read_text(encoding='utf8'))['results']
+                if len(alternate)!=len(indices):raise ValueError('Incomplete stretch retry report')
+                for i,row in zip(indices,alternate):
+                    row['stretchProfileAttempts']=rows[i]['stretchProfileAttempts']+[{'profile':'transient-60-12-8-v1','error':row.get('error')}];rows[i]=row
+            rendered=sum('cue' in r for r in rows)
+            report_path.write_text(json.dumps({'requested':len(plans),'rendered':rendered,
+                'stretchPolicy':'two-bounded-offline-profiles-original-gates-v1','results':rows},indent=2)+'\n',encoding='utf8')
+            if not rendered:raise SystemExit('No candidate passed actual PCM rendering')
         return
     if args.envelope_search:
         # Arbitrary initial offsets can fall on a hot original transient.
@@ -99,6 +127,9 @@ def main():
         original_peak=None;incoming_peak=None;post_rhythm=None
         try:
             a=audit.source(p['from'],cue['sourceSha'],cache);b=audit.source(p['to'],cue['targetSha'],cache)
+            exact=cue.get('structuralEvidence',{}).get('exactSilentSuffix')
+            if exact and hashlib.sha256(a.read_bytes()).hexdigest()!=exact.get('sourceSha256'):
+                raise ValueError('Exact silence original byte identity mismatch')
             outgoing=audit.decode(a,cue['begin']-args.pre_roll,(cue['fade'] if cue.get('structuralBeat') and not cue.get('preservedFileTail') else cue['fade']+2)+args.pre_roll)
             warmup=min(.8,cue['entry'])
             incoming=audit.decode(b,cue['entry']-warmup,cue['fade']*1.05+4+warmup)
@@ -149,9 +180,12 @@ def main():
                     if cue.get('rhythmicTailWindow'):
                         post_rhythm['tailEvidence']=rhythm.tail_evidence(outgoing,args.rate,cue,proof['preRoll'])
                         post_rhythm['accepted']=post_rhythm['accepted'] and post_rhythm['tailEvidence']['accepted']
+                    if cue.get('structuralEvidence',{}).get('exactSilentSuffix'):
+                        post_rhythm['exactSilentSuffix']=rhythm.exact_silence_evidence(outgoing,args.rate,cue,proof['preRoll'])
+                        post_rhythm['accepted']=post_rhythm['accepted'] and post_rhythm['exactSilentSuffix']['accepted']
                     if not post_rhythm['accepted']:raise ValueError('Post-render rhythm certificate failed')
                 resampled_proof=None
-                if cue.get('rhythmicTailWindow') and args.rate==48000:
+                if (cue.get('rhythmicTailWindow') or cue.get('structuralEvidence',{}).get('exactSilentSuffix')) and args.rate==48000:
                     # Safari decodes/resamples this deployed 48 kHz FLAC. It
                     # does NOT rerun SoundTouch at 44.1 kHz. Certify that actual
                     # path, including the encoded mixed signal and both audible
@@ -160,8 +194,12 @@ def main():
                     new44=resample_poly(new,147,160,axis=0)
                     raw44=resample_poly(outgoing,147,160,axis=0)
                     proof44=rhythm.verify(old44,new44,44100,cue,proof['preRoll'])
-                    proof44['tailEvidence']=rhythm.tail_evidence(raw44,44100,cue,proof['preRoll'])
-                    proof44['accepted']=proof44['accepted'] and proof44['tailEvidence']['accepted']
+                    if cue.get('rhythmicTailWindow'):
+                        proof44['tailEvidence']=rhythm.tail_evidence(raw44,44100,cue,proof['preRoll'])
+                        proof44['accepted']=proof44['accepted'] and proof44['tailEvidence']['accepted']
+                    else:
+                        proof44['exactSilentSuffix']=rhythm.exact_silence_evidence(raw44,44100,cue,proof['preRoll'])
+                        proof44['accepted']=proof44['accepted'] and proof44['exactSilentSuffix']['accepted']
                     try:
                         audit.SR=44100;decoded44=audit.decode(target,0,20)
                     finally:audit.SR=args.rate
@@ -192,6 +230,13 @@ def main():
                 composite['oversampledPeak']=true_peak
                 composite['oversampledOverlapPeak']=overlap_true_peak
                 composite['processing']=proof['timing'].get('method','soundtouch-wsola')
+                if cue.get('stretchProfile'):composite['stretchProfile']=cue['stretchProfile']
+                at=round((proof['preRoll']+proof['nativeHandoffAt'])*args.rate);half=round(.5*args.rate)
+                before=float(np.sqrt(np.mean(decoded[max(0,at-half):at]**2)))
+                after=float(np.sqrt(np.mean(decoded[at:at+half]**2)))
+                composite['levelContinuity']={'method':'rendered-half-second-eof-rms-v1','beforeRms':before,'afterRms':after,
+                    'changeDb':float(20*np.log10(after/before)) if min(before,after)>1e-9 else None,
+                    'includesOriginalSongDynamics':True,'notHumanListening':True}
                 if post_rhythm:
                     composite['rhythmVerified']=True;composite['postRenderRhythm']=post_rhythm
                 if resampled_proof:composite['resampledCommonProof']={**resampled_proof,'assetSha256':sha}

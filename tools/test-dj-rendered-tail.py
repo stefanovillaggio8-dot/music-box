@@ -4,6 +4,14 @@ spec=importlib.util.spec_from_file_location('rhythm',pathlib.Path(__file__).with
 rhythm=importlib.util.module_from_spec(spec);spec.loader.exec_module(rhythm)
 
 class TailEvidenceTests(unittest.TestCase):
+    def test_exact_zero_suffix_cannot_treat_a_quiet_note_as_silence(self):
+        sr=48000;y=np.zeros((sr*8,2),dtype=np.float32);y[:sr*7]=.1
+        cue={'begin':100,'fade':8,'sourceSha':'a'*40,'structuralEvidence':{'exactSilentSuffix':{'sourceSha':'a'*40,'zeroFrom':107}}}
+        self.assertTrue(rhythm.exact_silence_evidence(y,sr,cue,0)['accepted'])
+        y[sr*7+100,1]=1e-30
+        self.assertFalse(rhythm.exact_silence_evidence(y,sr,cue,0)['accepted'])
+        y[sr*7+100,1]=np.nan
+        self.assertFalse(rhythm.exact_silence_evidence(y,sr,cue,0)['accepted'])
     def fixture(self):
         sr=16000;t=np.arange(sr*10)/sr;y=.06*np.sin(2*np.pi*440*t)
         for at in np.arange(.5,6,.5):

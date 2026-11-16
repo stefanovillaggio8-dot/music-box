@@ -41,6 +41,7 @@ export function stretchClip(clip,cue){
   !Number.isFinite(sr)||sr<8000||sr>96000||!Number.isFinite(tempo)||tempo<.95||tempo>1.05||
   !Number.isFinite(fade)||fade<4.5||fade>16||
   channels.some(c=>!(c instanceof Float32Array)||c.length!==channels[0].length||c.length>sr*40))throw Error('Invalid time-stretch clip');
+ if(cue.stretchProfile!=null&&cue.stretchProfile!=='transient-60-12-8-v1')throw Error('Unsupported time-stretch profile');
  const offset=cue.entry-clip.start,prefix=Math.round(offset*sr),inputLength=channels[0].length-prefix;
  if(prefix<0||inputLength<sr*(fade*1.05+1))throw Error('Incomplete time-stretch source');
  if(tempo===1){
@@ -55,7 +56,7 @@ export function stretchClip(clip,cue){
  const context=cue.warmupOriginal===true?Math.min(prefix,Math.round(.8*sr)):0,sourceStart=prefix-context;
  const skip=Math.round(context/tempo),processLength=inputLength+context;
  const hold=fade,ramp=.85,pipe=new SoundTouch();
- pipe.stretch.setParameters(sr,0,0,0);pipe.pitch=1;pipe.rate=1;
+ pipe.stretch.setParameters(sr,...(cue.stretchProfile==='transient-60-12-8-v1'?[60,12,8]:[0,0,0]));pipe.pitch=1;pipe.rate=1;
  const source={extract(target,count,position){
   const real=Math.max(0,Math.min(count,processLength+Math.ceil(sr*.6)-position));
   for(let i=0;i<real;i++){
@@ -79,5 +80,6 @@ export function stretchClip(clip,cue){
   output[0][at]=part[i*2];if(output[1])output[1][at]=part[i*2+1];at++;
  }}
  const timing=timingCheck(channels[0],output[0],sr,offset,tempo,hold,ramp,fade);
+ if(cue.stretchProfile)timing.processingProfile=cue.stretchProfile;
  return {...clip,channels:output,pitchPreserved:true,rateSpeed:tempo,rateHold:hold,rateRamp:ramp,timing,warmupOriginalSeconds:context/sr};
 }
