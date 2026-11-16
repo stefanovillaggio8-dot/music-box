@@ -1,9 +1,9 @@
 {
   "baseline": "d1c848945bcece0dd448c1e3f28809a1550e8d33",
-  "productCommit": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
-  "testCommit": "7fb4cee1ed63a7e8c441ec566d4ab1d35839944d",
+  "productCommit": "72907e26018a92022d7d23431b21c175bc1a936b",
+  "testCommit": "72907e26018a92022d7d23431b21c175bc1a936b",
   "sha256": {
-    "mix-intelligente.js": "314dffb600d1de58d0331cc68e85df0013bcc59ab5c786841ff41828265c9dd6",
+    "mix-intelligente.js": "4a0e30554cfe8bfde3ee2f7a6966ae7f7079207fe861c96e601288ae793a373d",
     "audio-stretch.js": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
     "audio-stretch-core.mjs": "2438cfb97bd74663e3f9da5c328cedc4a37e20242412fdf01de02d6042a7e72b",
     "audio-stretch-worker.js": "27e5a6ea106a7bbb55fae382b46344ab0b0f96caab63f4b2351d72caacb23649",
@@ -17,19 +17,25 @@
     "tools/precompute-karaoke-rows.mjs": "edc481499ac1f3ed8f0ff5e7092a9a6e6ad4749aa71421c3b0cce569cc6d8030",
     "tools/benchmark-karaoke-context-replay.cjs": "d58fb7bf5019b822c186324a470caae42a0d765e867f39ef48313e568a5ae2cb",
     "dj-deep-analysis.json": "cb11b3d9ccc828fcaff8e5d4fd8bdcf81f082ff9ed85298adf89a7b0b171dad2",
-    "index.html": "a9430611236a345739049da464a501d819c1223d8fc6cd1f7ec70096aedb7b23",
-    "sw.js": "205f5839da182b49be3f7e6159a0b9a2e21c6f67249154277cfdb741280a624f",
-    "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+    "index.html": "7b3c8a9d106e77d76f81f6c9d4e092903e2edb17957310ab547955c59373b2f6",
+    "sw.js": "3f6bd5b685a02901ac51d534db968427fe68b73ceb8ad35b0f199268e19245dc",
+    "app.js": "818eda7ddf9a47bad0540e8cced2230d40553ae50d4912c1a1b93cf182de9a93",
     "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
     "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
     "lyrics.json": "9b0c381181e792f76561348e51bde7671377ed5fe65bd1fbd9bbd97bbacda669",
     "versione.json": "8772eefbac7224acd64727fac3100988025b3e05cb2995d6f67c90646ffd15d0",
     "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb",
-    "tests/composite-browser.cjs": "214f106883df0ae8aed2b91bcb2f7e330b4b712830647109a525e0829e8f803c",
-    ".github/workflows/composite-browser.yml": "a47c7af28484ce0e6982b9fa907be919c11f618ce73cdec98c9eb84453e44634"
+    "tests/composite-browser.cjs": "92412f3f446b9c96534411ac40883ab5083871d5d883598b5c3c921f53c98185",
+    ".github/workflows/composite-browser.yml": "2493091bcc4ccbc58e304c7fce8ff4889bb99898d1536a096c036f15ca49b1a1",
+    "native-mp3-metadata.js": "5f2c2b23efb9efa8ee4491ecb91d4f66a793ae6c7b4c245f1b40f399afb17bd2",
+    "native-mp3-metadata.json": "94b2f005c18986ba68f7c6a648a52e7d32323898a2e714953fa008453227ba4c",
+    "tools/apply-native-metadata-proofs.cjs": "9b152376d09e244a608793f9634fc87466ae6332f052a31c0cc915825f729ea4",
+    "tests/native-mp3-metadata.test.cjs": "33520bd2b64cbb1facc3d028e627eb262e9f270ba85a2ce491ca850d2c28a6e1",
+    "tests/native-metadata-pcm.cjs": "5f92f6ef38092f8aec8125d6bb9842f1b68b5532706424a34f0e9ce3a49f75b7",
+    "tools/build-mp3-metadata-repairs.py": "b56521c47a614c39b8a3d0872758ba093af9a2ca2d928e0d07a4a317fd9d284e",
+    "tools/README-native-metadata.md": "08e1ea51c424987287a264ed7a7f91cb258dfc5a9ae4f67b0687f79a3549555c"
   },
   "byteIdenticalToBaseline": [
-    "app.js",
     "stato.json",
     "playlist.json",
     "lyrics.json",
@@ -41,5 +47,11 @@
   "userDataDeleted": false,
   "physicalIPhoneVerified": false,
   "publicDeployment": false,
-  "latestPipelineCommit": "956cce249b934b9c93de2be939d6cf2c328c2526"
+  "latestPipelineCommit": "72907e26018a92022d7d23431b21c175bc1a936b",
+  "nativeMetadataRuntimeCommit": "8e36a2cbc8d2baad2044e8ba3b018a92968a8a63",
+  "proofCompilerCommit": "72907e26018a92022d7d23431b21c175bc1a936b",
+  "nativeMetadataRecoveryChangesStoredOriginals": false,
+  "nativeRecoveryPersistentWrites": false,
+  "inMemoryNativeRecoveryScope": "Linux WebKit only; source-bound representation verified sample-identical in both native decoders at both rates",
+  "logicalListeningReplayEquivalent": true
 }

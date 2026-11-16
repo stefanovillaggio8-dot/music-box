@@ -1,0 +1,6 @@
+{
+  "logicalMixProgramAndMembershipUnchanged": true,
+  "programSha256": "e63c77a643555bbbeb8741d0ba92fa134112fb38c60876221319b9c130790938",
+  "comparison": "Exact generated logical engine, catalog, user-state and playlist JSON; native-clock handling is covered separately by real browsers",
+  "nativePlaybackChanged": true
+}
