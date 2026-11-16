@@ -200,11 +200,13 @@ const server=http.createServer(async(req,res)=>{
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
     await shell.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
     const actualPlan=await shell.evaluate(({plans,profile,completeSte})=>{
-     const tracks=MusicBoxBridge.allTracks(),find=key=>tracks.find(t=>'audio/'+t.file===key);
+     // A published copy belongs to the active personal library although its
+     // original recording retains the source profile in t.profile.
+     const tracks=MusicBoxBridge.playable(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow)continue;
       const a=find(p.from),b=find(p.to);
-      if(!a||!b||(a.profile||'Ste')!==profile||(b.profile||'Ste')!==profile)continue;
+      if(!a||!b)continue;
       if(profile==='Ste'&&completeSte&&!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
