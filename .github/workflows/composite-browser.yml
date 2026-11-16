@@ -51,9 +51,9 @@ on:
         type: boolean
         default: false
       linux_virtual_audio:
-        description: 'Controlled Linux media output device; original MP3s and player remain unchanged'
+        description: 'Use an operating Linux media output; disable only for the explicit no-device control'
         type: boolean
-        default: false
+        default: true
 permissions:
   contents: read
 jobs:
@@ -121,7 +121,7 @@ jobs:
       MUSICBOX_NATIVE_UNIQUE_URL_PROBE: ${{ inputs.native_unique_url_probe || false }}
       MUSICBOX_COMPOSITE_REPETITIONS: ${{ inputs.playback_repetitions || '1' }}
       GST_DEBUG: ${{ inputs.gstreamer_debug && matrix.browser == 'webkit' && '2,mpegaudioparse:6,playbin:4,playbin3:4,webkit*:5' || '' }}
-      GST_DEBUG_FILE: ${{ github.workspace }}/gstreamer-${{ matrix.profile }}.log
+      GST_DEBUG_FILE: ${{ github.workspace }}/gstreamer-${{ matrix.profile }}-%p.log
       GST_DEBUG_NO_COLOR: '1'
     steps:
       - uses: actions/checkout@v4
@@ -132,15 +132,15 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps chromium webkit
       - name: Start isolated Linux audio output for the controlled diagnostic
-        if: inputs.linux_virtual_audio && runner.os == 'Linux'
+        if: runner.os == 'Linux' && matrix.browser == 'webkit' && (github.event_name != 'workflow_dispatch' || inputs.linux_virtual_audio)
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
           pulseaudio --start --exit-idle-time=-1 --log-target=file:/tmp/musicbox-pulse.log
           pactl load-module module-null-sink sink_name=musicbox_ci rate=48000 channels=2
           pactl set-default-sink musicbox_ci
-          pactl info
-          pactl list short sinks
+          pactl info | tee linux-audio-output.txt
+          pactl list short sinks | tee -a linux-audio-output.txt
       - uses: actions/download-artifact@v4
         with:
           name: native-certified-index
@@ -160,4 +160,5 @@ jobs:
             composite-browser-result.json
             storage-browser-result.json
             gstreamer-*.log
+            linux-audio-output.txt
           retention-days: 14
