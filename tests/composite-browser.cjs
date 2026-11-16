@@ -259,7 +259,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
-     setup:window.__plannedSetup,media:window.__plannedMedia,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     setup:window.__plannedSetup,media:window.__plannedMedia,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     assert.equal(await shell.evaluate(()=>MusicBoxBridge.currentId()),actualPlan.fromId,'Queued lyrics/track ownership must remain outgoing during its intact ending');
     const muteDuringOverlap=await shell.evaluate(()=>{
@@ -269,7 +269,7 @@ const server=http.createServer(async(req,res)=>{
     });
     assert.equal(muteDuringOverlap.muted,true);assert.equal(muteDuringOverlap.unmuteKeptCommonOwnership,true);
     await shell.waitForFunction(id=>MusicBoxBridge.currentId()===id&&!MusicBoxCompositeMix.active()&&!MusicBoxBridge.audio().muted,actualPlan.toId,{timeout:25000});
-    const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio())}));
+    const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio()),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.()||null}));
     assert.equal(plannedPlayback.handoffs,1);assert.equal(plannedPlayback.paused,false);assert.equal(plannedPlayback.sourceMatches,true);
     await appContext.close();
     // Independently exercise ordinary shuffle with a unique library title.

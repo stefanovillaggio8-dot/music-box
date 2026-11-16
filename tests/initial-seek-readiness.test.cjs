@@ -56,14 +56,16 @@ test('resume cannot infer song completion from the provisional millisecond durat
  let next=0;const provisional={duration:.001,currentTime:.001,ended:false,_mbInitialSeekCleanup:()=>{}};
  check(provisional,()=>next++);assert.equal(next,0);
  delete provisional._mbInitialSeekCleanup;check(provisional,()=>next++);assert.equal(next,0);
+ check({...provisional,ended:true},()=>next++);assert.equal(next,0);
  check({duration:126,currentTime:126,ended:true},()=>next++);assert.equal(next,1);
 });
-test('native end dispatch waits for a pending initial seek only while metadata is provisional',()=>{
+test('native end dispatch cannot consume the queue on provisional metadata, with or without an initial seek',()=>{
  const from=app.indexOf('  function handleEnded() {'),to=app.indexOf('    try {',from);
  const check=new Function('audio',`${app.slice(from,to)}return 'forward';}return handleEnded();`);
  assert.equal(check({duration:.001,_mbInitialSeekCleanup:()=>{}}),undefined);
  assert.equal(check({duration:126,_mbInitialSeekCleanup:()=>{}}),'forward');
- assert.equal(check({duration:.001}),'forward');
+ assert.equal(check({duration:.001}),undefined);
+ assert.equal(check({duration:.001,error:{code:4}}),'forward','genuine media-error fallback remains available');
 });
 test('DJ preparation does not run before the requested native initial position is ready',()=>{
  const code=fs.readFileSync(path.join(__dirname,'../mix-intelligente.js'),'utf8'),from=code.indexOf('function tick(){'),to=code.indexOf(' const next=app?.mixNext();',from);
@@ -72,6 +74,7 @@ test('DJ preparation does not run before the requested native initial position i
   const bridge=()=>({audio:()=>player,currentId:()=> 'source'});${code.slice(from,to)}prepare();}return tick();`);
  let calls=0;const player={paused:false,seeking:false,readyState:4,duration:126,_mbInitialSeekCleanup:()=>{}};
  check(player,()=>calls++);assert.equal(calls,0);delete player._mbInitialSeekCleanup;check(player,()=>calls++);assert.equal(calls,1);
+ player.duration=.002;check(player,()=>calls++);assert.equal(calls,1,'ordinary zero-start playback must also wait for real metadata');
  assert.match(app,/id !== currentId \|\| Number\.isFinite\(startAt\)&&startAt>0\) resumeAt = 0/);
 });
 test('a wanted native resume can still play while metadata and its initial seek are pending',()=>{

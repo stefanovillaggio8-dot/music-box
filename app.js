@@ -5943,6 +5943,9 @@ const playFromRow = () => {
   }
 
   function handleEnded() {
+    // A decoder can report a millisecond-long "file" before reading its
+    // MP3 timing metadata. It must not consume the real manual queue.
+    if(audio&&Number.isFinite(audio.duration)&&audio.duration<=.05&&!audio.error)return;
     if(audio?._mbInitialSeekCleanup&&Number(audio.duration)<=.05)return;
     try {
     if (window.MusicBoxRoom?.isActive()) {
@@ -6363,6 +6366,7 @@ function handleMetadata() {
   // for same-origin and GitHub raw MP3 URLs; other hosting services can lack
   // CORS headers, and enabling it for them would break playback entirely.
   function _assegnaAudioSorgente(a,source) {
+    try{a._mbNativeMetadataCleanup?.("source-assignment");}catch(_){}
     const target=String(source||"");
     if(target&&!/^blob:/i.test(target))a._mbMixSourceUrl=target;
     try {
@@ -6382,6 +6386,8 @@ function handleMetadata() {
     // The real play event clears this guard on successful restart.
     if(a===audio)a._mbCambioBrano=true;
     a.src=target;
+    if(a===audio)window.MusicBoxNativeMetadata?.arm(a,{url:target,canonical:a._mbMixSourceUrl||target,
+      current:()=>a===audio,wantsPlayback:()=>_vuoleSuonare});
   }
   // A native pause during iOS hide/show is a system interruption.
   // A deliberate foreground headphone/lockscreen pause still wins.
@@ -7086,7 +7092,7 @@ function rebuildAudio(autoplay) {
            fermo): vado al successivo. Anche qui non riscrivo la scelta del
            brano, chiamo _finitoSenzaAvanti(), che usa handleEnded(). */
         try {
-          const finito = !initialSeekPending&&(audio.ended ||
+          const finito = !initialSeekPending&&!(Number.isFinite(audio.duration)&&audio.duration<=.05)&&(audio.ended ||
             (isFinite(audio.duration) && audio.duration > .05 &&
               audio.currentTime >= audio.duration - 0.4));
           if (finito) {

@@ -6681,7 +6681,7 @@ function tick(){
  // Stop BEFORE mixNext/shuffle analysis, index scans or AudioContext work.
  // Waiting a bounded 1.6s after a seek is preferable to stalling the MP3.
  if(audio&&(audio.seeking||Date.now()<seekRecoveryUntil||audio._mbInitialSeekCleanup||
-    (audio.readyState<2&&!audio.paused))){
+    (Number.isFinite(audio.duration)&&audio.duration<=.05)||(audio.readyState<2&&!audio.paused))){
   // Range seeks have priority over optional Safari preview decoding.
   if(isIOS&&mobileActive&&!mobileActive.handingOff)stopMobileMix();
   return;

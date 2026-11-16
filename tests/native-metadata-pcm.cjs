@@ -2,7 +2,7 @@
 // Compare ORIGINAL and metadata-only representation through each native decoder.
 const fs=require('fs'),path=require('path'),crypto=require('crypto'),http=require('http'),assert=require('assert/strict');
 const {chromium,webkit}=require('playwright'),root=path.resolve(__dirname,'..');
-const entries=JSON.parse(fs.readFileSync(path.join(root,'audits/acoustic-boundaries-20261115/metadata-pilot-candidates.json'))).entries;
+const entries=JSON.parse(fs.readFileSync(path.join(root,'native-mp3-metadata.json'))).entries;
 const browserName=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['chromium','webkit'].includes(browserName))throw Error('One native decoder required');
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{
@@ -23,10 +23,10 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
      const a=await ctx.decodeAudioData(original),b=await ctx.decodeAudioData(wrapped);let maximumSampleDifference=0;
      if(a.length!==b.length||a.numberOfChannels!==b.numberOfChannels)return {sampleRate,originalFrames:a.length,wrappedFrames:b.length,accepted:false};
      for(let c=0;c<a.numberOfChannels;c++){const x=a.getChannelData(c),y=b.getChannelData(c);for(let i=0;i<x.length;i++)maximumSampleDifference=Math.max(maximumSampleDifference,Math.abs(x[i]-y[i]));}
-     return {sampleRate,originalFrames:a.length,wrappedFrames:b.length,channels:a.numberOfChannels,maximumSampleDifference,accepted:maximumSampleDifference<=1e-7};
+     return {sampleRate,originalFrames:a.length,wrappedFrames:b.length,channels:a.numberOfChannels,maximumSampleDifference,accepted:maximumSampleDifference===0};
     }finally{await ctx.close()}
    },{sampleRate,proof});assert.equal(result.accepted,true,key+' at '+sampleRate);results.push({key,sourceSha:proof.sourceSha,sourceSha256:proof.sourceSha256,wrappedSha256:proof.wrappedSha256,...result});
   }
-  console.log(JSON.stringify({method:'native-mp3-metadata-identical-pcm-v1',browser:browserName,physicalIPhone:false,maximumAllowedDifference:1e-7,results},null,2));
+  console.log(JSON.stringify({method:'native-mp3-metadata-identical-pcm-v1',browser:browserName,physicalIPhone:false,maximumAllowedDifference:0,results},null,2));
  }finally{await browser?.close();server.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

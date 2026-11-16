@@ -2,6 +2,9 @@ name: Common PCM mix Chromium and WebKit playback
 on:
   pull_request:
     paths:
+      - 'native-mp3-metadata.js'
+      - 'native-mp3-metadata.json'
+      - 'tests/native-metadata-pcm.cjs'
       - 'audio-composite-*.js'
       - 'audio-composite-*.mjs'
       - 'dj-mixes/**'
