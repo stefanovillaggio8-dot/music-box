@@ -8,14 +8,17 @@ const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json'),'
 for(const entry of Object.values(index.entries))for(const record of Object.values(entry.structuralBeatPlans||{}))
  for(const cue of record.cues||[record.cue])if((cue?.rhythmicTailWindow||cue?.metricalPickupWindow||cue?.structuralEvidence?.exactSilentSuffix)&&cue.composite)assets.set(cue.composite.sha256,cue.composite);
 const name=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['chromium','webkit'].includes(name))throw Error('Select one native decoder');
-const originals=new Map();
+const originals=new Map(),wrappedOriginals=new Map();
+const candidatePath=path.join(root,'audits/ste-architecture-20261116/source-metadata-candidate.json');
+const metadataCandidate=fs.existsSync(candidatePath)?JSON.parse(fs.readFileSync(candidatePath,'utf8')):null;
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
  if(url.pathname==='/'){res.end('<!doctype html><title>Read-only native PCM measurement</title><script src="/audio-composite-mix.js"></script>');return;}
  if(url.pathname==='/audio-composite-mix.js'){res.setHeader('Content-Type','text/javascript');res.end(fs.readFileSync(path.join(root,'audio-composite-mix.js')));return;}
- const original=/^\/original\/([a-f0-9]{40})\.mp3$/.exec(url.pathname);
- if(original&&originals.has(original[1])){
-  const bytes=originals.get(original[1]);res.setHeader('Content-Type','audio/mpeg');res.setHeader('Accept-Ranges','bytes');
+ const original=/^\/(original|wrapped)\/([a-f0-9]{40})\.mp3$/.exec(url.pathname);
+ const originalMap=original?.[1]==='wrapped'?wrappedOriginals:originals;
+ if(original&&originalMap.has(original[2])){
+  const bytes=originalMap.get(original[2]);res.setHeader('Content-Type','audio/mpeg');res.setHeader('Accept-Ranges','bytes');
   const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||'');
   if(range){const lo=Number(range[1]),hi=Math.min(bytes.length-1,range[2]?Number(range[2]):bytes.length-1);
    if(lo>hi||lo>=bytes.length){res.writeHead(416,{'Content-Range':'bytes */'+bytes.length});res.end();return;}
@@ -33,6 +36,12 @@ const server=http.createServer((req,res)=>{
   if(!response.ok)throw Error('Original splice source unavailable');const bytes=Buffer.from(await response.arrayBuffer());
   if(bytes.length>32e6||crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex')!==sha)throw Error('Original splice source identity changed');
   originals.set(sha,bytes);
+  if(metadataCandidate?.sourceSha===sha){
+   const p=metadataCandidate,prefix=Buffer.from(p.prefixBase64,'base64');
+   const wrapped=Buffer.concat([bytes.subarray(0,p.insertAt),prefix,bytes.subarray(p.insertAt)]);
+   if(crypto.createHash('sha256').update(bytes).digest('hex')!==p.sourceSha256||crypto.createHash('sha256').update(wrapped).digest('hex')!==p.wrappedSha256)throw Error('Diagnostic metadata representation changed');
+   wrappedOriginals.set(sha,wrapped);
+  }
  }
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;
  try{
@@ -70,6 +79,19 @@ const server=http.createServer((req,res)=>{
      let nativeSplice=null,nativeSourceClock=null;
      if(c.nativeRecoveryCurve||c.sourcePrerollProof){
       const originalSource=await ctx.decodeAudioData(await (await fetch('original/'+c.sourceSha+'.mp3')).arrayBuffer());
+      if(c.sourcePrerollProof){
+       // Read-only A/B evidence. Never substitutes a file in the player or a certificate.
+       const response=await fetch('wrapped/'+c.sourceSha+'.mp3');
+       if(response.ok){
+        const w=await ctx.decodeAudioData(await response.arrayBuffer()),n=Math.round(c.sourcePrerollProof.throughOffsetSeconds*sampleRate),at=Math.round((c.begin-c.preRoll)*sampleRate);
+        let xx=0,yy=0,xy=0,error=0,maximumDifference=0;
+        for(let ch=0;ch<2;ch++)for(let i=0;i<n;i++){
+         const x=decoded.getChannelData(ch)[i],y=w.getChannelData(ch)[at+i];xx+=x*x;yy+=y*y;xy+=x*y;error+=(x-y)**2;
+        }
+        if(w.length===originalSource.length)for(let ch=0;ch<2;ch++){const a=w.getChannelData(ch),b=originalSource.getChannelData(ch);for(let i=0;i<a.length;i++)maximumDifference=Math.max(maximumDifference,Math.abs(a[i]-b[i]));}
+        console.error('Diagnostic metadata-only source '+JSON.stringify({sampleRate,sourceSha:c.sourceSha,wrappedFrames:w.length,originalFrames:originalSource.length,correlation:xy/Math.sqrt(xx*yy),relativeRms:Math.sqrt(error/Math.max(yy,1e-10)),maximumOriginalDifference:maximumDifference,acceptedForPlayback:false}));
+       }
+      }
       const mediaDuration=await nativeDuration(c.sourceSha);
       const decodedOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,originalSource.duration);
       const mediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,mediaDuration);
