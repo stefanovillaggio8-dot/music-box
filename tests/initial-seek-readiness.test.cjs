@@ -19,6 +19,14 @@ test('provisional WebKit millisecond duration cannot clamp an initial seek to fa
  f.player.duration=126.876708333;f.emit('durationchange');assert.deepEqual(f.writes,[110.626717314]);
  f.emit('canplay');f.emit('playing');assert.equal(f.writes.length,1);assert.equal(f.listeners(),0);assert.equal(f.timers.size,0);
 });
+
+test('native duration can refine after playing without another metadata event',()=>{
+ for(const event of ['progress','timeupdate']){
+  const f=fixture();f.emit('loadedmetadata');f.emit('playing');assert.equal(f.writes.length,0);
+  f.player.duration=126.876708333;f.emit(event);
+  assert.deepEqual(f.writes,[110.626717314]);assert.equal(f.listeners(),0);assert.equal(f.timers.size,0);
+ }
+});
 test('ordinary valid metadata retains immediate initial seeking and genuine EOF bounds',()=>{
  const f=fixture(126.877);assert.deepEqual(f.writes,[110.626717314]);assert.equal(f.timers.size,0);
  const short=fixture(5);assert.deepEqual(short.writes,[4.5]);

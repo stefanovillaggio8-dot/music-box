@@ -8228,7 +8228,9 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
     if (!_adottaDj && startAt > 0 && Number.isFinite(startAt)) {
       const target = audio;
       let initialSeekClosed=false;
-      const initialSeekEvents=['loadedmetadata','durationchange','canplay','playing'];
+      // Some native MP3 decoders refine duration after playing without a
+      // new durationchange. Recheck on their real progress/time events too.
+      const initialSeekEvents=['loadedmetadata','durationchange','canplay','playing','progress','timeupdate'];
       const cleanupInitialSeek=()=>{
         if(initialSeekClosed)return;initialSeekClosed=true;
         for(const event of initialSeekEvents)target.removeEventListener?.(event,at);
