@@ -48,5 +48,15 @@
         }
       }
     }
-  }
+  },
+  "proofReceipts": [
+    {
+      "browser": "chromium",
+      "sha256": "fbdc41d817f1dd297d6bd3c90530c2989ee7831a19f7dfc5cb45874e11bdbbbb"
+    },
+    {
+      "browser": "webkit",
+      "sha256": "cbda05afd15c88eddd29614fbe9123b9163f74e92f9a84a6b7117bfc917d3b34"
+    }
+  ]
 }

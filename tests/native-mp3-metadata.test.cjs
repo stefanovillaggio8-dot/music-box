@@ -47,6 +47,14 @@ test('changed originals, prefixes and unverified representations cannot replace 
  for(const mutate of [p=>p.sourceSha256='c'.repeat(64),p=>p.wrappedSha256='c'.repeat(64),p=>p.browserVerified=false,p=>delete p.pcmIdentity[48000],p=>p.nativePcmIdentity.rates[48000].maximumSampleDifference=1e-9,p=>p.nativePcmIdentity.wrappedSha256='f'.repeat(64)]){
   const f=fixture();mutate(f.proof);f.arm();await f.run();assert.equal(f.audio.src,f.options.url);assert.equal(f.audio.playCalls,0);assert.equal(f.urls.size,0);
  }
+ const {certify}=require('../tools/apply-native-metadata-proofs.cjs');
+ const candidates=require('../audits/acoustic-boundaries-20261115/metadata-pilot-candidates.json');
+ const receipts=['chromium','webkit'].map(browser=>require('../audits/personal-libraries-20261116/native-metadata-'+browser+'.json'));
+ assert.deepEqual(certify(candidates,receipts).entries,require('../native-mp3-metadata.json').entries);
+ assert.throws(()=>certify(candidates,receipts.slice(0,1)));
+ for(const change of [r=>r[0].results[0].maximumSampleDifference=1e-9,r=>r[1].results[0].wrappedSha256='c'.repeat(64),r=>r[0].results.pop()]){
+  const changed=structuredClone(receipts);change(changed);assert.throws(()=>certify(candidates,changed));
+ }
 });
 
 test('superseding the owner during download aborts stale data without playing it',async()=>{

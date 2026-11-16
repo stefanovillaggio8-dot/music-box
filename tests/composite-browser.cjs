@@ -7,6 +7,11 @@ const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.joi
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
 const completeSte=process.env.MUSICBOX_STE_CASE==='complete-personal';
 const uniqueSourceProbe=process.env.MUSICBOX_NATIVE_UNIQUE_URL_PROBE==='true';
+const injectProvisionalMetadata=process.env.MUSICBOX_INJECT_PROVISIONAL_METADATA==='true';
+function nativeMetadataFault(){
+ const matches=a=>/\/songs\/track-4\.mp3(?:\?|$)/.test(a.src||'');
+ for(const key of ['duration','currentTime']){const property=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,key);Object.defineProperty(HTMLMediaElement.prototype,key,{...property,get(){return matches(this)?.002:property.get.call(this)}});}
+}
 const repetitions=Number(process.env.MUSICBOX_COMPOSITE_REPETITIONS||1);
 if(![1,3].includes(repetitions))throw Error('Bounded native playback repetitions required');
 const metadataProbe=process.env.MUSICBOX_METADATA_PREFIX_PROBE==='true',nativeCache=new Map();
@@ -168,6 +173,7 @@ const server=http.createServer(async(req,res)=>{
       return src.set.call(this,value);
      }});
     });
+    if(injectProvisionalMetadata)await shell.addInitScript(nativeMetadataFault);
     await shell.addInitScript(profile=>{
      localStorage.setItem('mb.profile',JSON.stringify(profile));window.__nativePlayMutes=[];
      window.__nativeSeekWrites=[];
@@ -271,6 +277,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.waitForFunction(id=>MusicBoxBridge.currentId()===id&&!MusicBoxCompositeMix.active()&&!MusicBoxBridge.audio().muted,actualPlan.toId,{timeout:25000});
     const plannedPlayback=await shell.evaluate(()=>({handoffs:__plannedHandoffs,paused:MusicBoxBridge.audio().paused,sourceMatches:MusicBoxBridge.mixSourceMatches(MusicBoxBridge.currentId(),MusicBoxBridge.audio()),nativeMetadata:window.MusicBoxNativeMetadata?.diagnostics?.()||null}));
     assert.equal(plannedPlayback.handoffs,1);assert.equal(plannedPlayback.paused,false);assert.equal(plannedPlayback.sourceMatches,true);
+    if(injectProvisionalMetadata)assert.ok(plannedPlayback.nativeMetadata?.repairsApplied>=2,'Injected persistent metadata must exercise actual source recovery');
     await appContext.close();
     // Independently exercise ordinary shuffle with a unique library title.
     // It need not start on the same source as the explicit optimized mix.
@@ -288,6 +295,7 @@ const server=http.createServer(async(req,res)=>{
      if(sha&&url.hostname==='raw.githubusercontent.com'&&!metadataFixture){await route.continue();return;}
      if(sha){await fulfillOriginal(route,sha);return;}await route.abort();
     });
+    if(injectProvisionalMetadata)await auto.addInitScript(nativeMetadataFault);
     await auto.addInitScript(profile=>{
      localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true');
      window.__autoNativeTrace=[];const observed=new WeakSet(),play=HTMLMediaElement.prototype.play;
@@ -348,7 +356,7 @@ const server=http.createServer(async(req,res)=>{
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
      optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,
-     completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,diagnosticUniqueSourceUrl:uniqueSourceProbe,physicalIPhone:false});
+     completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,diagnosticUniqueSourceUrl:uniqueSourceProbe,diagnosticInjectedProvisionalMetadata:injectProvisionalMetadata,physicalIPhone:false});
     }
    }finally{await browser.close()}
   }

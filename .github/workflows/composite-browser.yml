@@ -57,6 +57,10 @@ on:
         description: 'Use an operating Linux media output; disable only for the explicit no-device control'
         type: boolean
         default: true
+      inject_provisional_metadata:
+        description: 'Separate fault-injection integration test; never a normal native playback certificate'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -123,6 +127,7 @@ jobs:
       MUSICBOX_STE_CASE: ${{ inputs.ste_case || 'legacy-partial' }}
       MUSICBOX_METADATA_PREFIX_PROBE: ${{ inputs.metadata_prefix_probe || false }}
       MUSICBOX_METADATA_FIXTURE_TRANSPORT: ${{ inputs.metadata_fixture_transport || false }}
+      MUSICBOX_INJECT_PROVISIONAL_METADATA: ${{ inputs.inject_provisional_metadata || false }}
       MUSICBOX_NATIVE_UNIQUE_URL_PROBE: ${{ inputs.native_unique_url_probe || false }}
       MUSICBOX_COMPOSITE_REPETITIONS: ${{ inputs.playback_repetitions || '1' }}
       GST_DEBUG: ${{ inputs.gstreamer_debug && matrix.browser == 'webkit' && '2,mpegaudioparse:6,playbin:4,playbin3:4,webkit*:5' || '' }}
