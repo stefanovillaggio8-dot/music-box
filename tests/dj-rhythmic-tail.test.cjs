@@ -5,10 +5,20 @@ const {engine,tracks}=new Function('require','__dirname',tool.slice(0,tool.index
 const entries=new Map(tracks);
 for(const [from,to] of [['audio/songs/track-4.mp3','audio/songs/track-38.mp3'],['audio/songs/track-705.mp3','audio/songs/track-50.mp3'],['audio/songs/bassi/track-53.mp3','audio/songs/bassi/track-51.mp3']]){
  test(`protected rhythmic tail preserves the actual recording: ${from} -> ${to}`,()=>{
-  const a=entries.get(from),b=entries.get(to),p=engine.transition(a,b,a.duration),record=a.structuralBeatPlans[b.sha];
+  const a=entries.get(from),b=entries.get(to),record=a.structuralBeatPlans[b.sha];
+  // Retain and revalidate the historical partial even when a subsequently
+  // rendered full cue wins the real selector for this recording pair.
+  const p=(record.cues||[record.cue]).find(c=>c.rhythmicTailWindow);
+  assert.ok(p,'The previously certified partial remains available');
+  assert.ok(engine.validatePreservedFileTailCue(record,p,a,b,a.duration));
+  if(from==='audio/songs/track-705.mp3'){
+   const selected=engine.transition(a,b,a.duration);
+   assert.equal(selected.measuredFullBeat,true);assert.equal(selected.metricalRhythmic,false);
+   assert.equal(selected.structuralEvidence.exactSilentSuffix.method,'original-stereo-exact-zero-suffix-v1');
+  }
   assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,true);assert.equal(p.rhythmicTailWindow,true);
   assert.equal(p.entry,0);assert.equal(p.end,a.duration);assert.equal(p.composite.outgoingEnvelope,'unity-through-decoded-eof-v1');
-  assert.equal(engine.desktopBeatPairCertified(a,b,p),true);assert.ok(p.composite.postRenderRhythm.agreement>=.9);
+  assert.equal(engine.desktopBeatPairCertified(a,b,engine.transition(a,b,a.duration)),true);assert.ok(p.composite.postRenderRhythm.agreement>=.9);
   assert.equal(p.composite.resampledCommonProof.assetSha256,p.composite.sha256);assert.equal(p.composite.resampledCommonProof.rhythm.accepted,true);
   const validate=c=>engine.validatePreservedFileTailCue(record,c,a,b,a.duration);
   for(const mutate of [c=>c.measuredFullBeat=true,c=>c.entry=.1,c=>c.end-=1,
