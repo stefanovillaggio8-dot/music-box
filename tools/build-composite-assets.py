@@ -233,8 +233,14 @@ def main():
                 if cue.get('metricalCadenceWindow'):
                     window=cue['structuralEvidence']['cadenceWindow']
                     tail_cue={**cue,'structuralEvidence':{'rhythmicWindow':{'seconds':window['rhythmicSeconds']}}}
-                    tail=rhythm.tail_evidence(outgoing,args.rate,tail_cue,proof['preRoll'])
-                    tail44=rhythm.tail_evidence(raw44,44100,tail_cue,proof['preRoll'])
+                    def channel_tail(original,sr):
+                        result=rhythm.tail_evidence(original,sr,tail_cue,proof['preRoll'])
+                        result['sampleRate']=sr
+                        result['channelProofs']=[{**rhythm.tail_evidence(original[:,[c,c]],sr,tail_cue,proof['preRoll']),'sampleRate':sr} for c in range(2)]
+                        result['accepted']=result['accepted'] and all(t['accepted'] for t in result['channelProofs'])
+                        return result
+                    tail=channel_tail(outgoing,args.rate)
+                    tail44=channel_tail(raw44,44100)
                     if not tail['accepted'] or not tail44['accepted']:raise ValueError('Unmodified cadence decay is not safe')
                     composite['cadenceTailProof']={'sourceSha':cue['sourceSha'],'at48000':tail,'at44100':tail44}
                     composite['nativeRecoveryCurve']=cue['nativeRecoveryCurve']

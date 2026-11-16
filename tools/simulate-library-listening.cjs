@@ -41,7 +41,8 @@ if(!source.includes('function playbackTransition(')){
 }
 const sampleRate=48000,isIOS=arg('platform','safari')==='safari';
 const commonScope={Map,Set,Number,Array,Uint8Array,Float32Array};commonScope.window=commonScope;vm.createContext(commonScope);
-vm.runInContext(read(path.join(root,'audio-composite-mix.js')),commonScope);
+const compositeSource=read(arg('composite',path.join(root,'audio-composite-mix.js')));
+vm.runInContext(compositeSource,commonScope);
 const microtask=fn=>{queueMicrotask(fn);return 0;};
 const program=`const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  const enabled=true,style='auto',djLyricBoundaries=boundaries,cache=new Map(),deepIndex={analyzed:1176};
@@ -237,6 +238,7 @@ function inventory(profile,list,audit){
  const report={version:2,platform:isIOS?'safari-logical-capability':'desktop-logical-capability',seed:20261114,
   runtimeEvidence:{engineSha256:crypto.createHash('sha256').update(source).digest('hex'),
    indexSha256:crypto.createHash('sha256').update(read(arg('index',path.join(root,'dj-deep-analysis.json')))).digest('hex'),
+   compositeSha256:crypto.createHash('sha256').update(compositeSource).digest('hex'),
    applicationSha256:crypto.createHash('sha256').update(appSource).digest('hex')},
   audioVariant:appRecording?'actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest':'original recordings; no loaded boost manifest',
   sessionHistoryAssumption:arg('continuous-shuffle','false')==='true'?'Continuous shuffle exhausts the personal library before starting a new cycle, without resetting every 40 changes. Initial device history is empty, not reconstructed.':'A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.',

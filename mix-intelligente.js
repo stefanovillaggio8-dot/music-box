@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=14",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=15",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2849,12 +2849,13 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   e.sourceObservedDownbeats.every((t,i)=>Math.abs(t-e.sourceModelDownbeats[i])<=.075&&Math.abs(t-p.begin-e.targetObservedDownbeats[i]/p.tempo)<=.05)&&
   e.targetObservedDownbeats.every((t,i)=>Math.abs(t-e.targetModelDownbeats[i])<=.075);
  const cadence=p?.metricalCadenceWindow===true,cadenceWindow=e?.cadenceWindow;
- const cadenceTailValid=t=>t?.method==='unmodified-original-hpss-tail-v1'&&t.accepted===true&&
+ const cadenceTailValid=(t,rate,channels=true)=>t?.method==='unmodified-original-hpss-tail-v1'&&t.accepted===true&&t.sampleRate===rate&&
   t.sourceGainApplied===false&&t.searchedEntireTail===true&&t.onsetThreshold===.25&&t.relativeRmsCeiling===.5&&
   [t.rhythmicSeconds,t.sourceTailThrough,t.tailSeconds,t.maximumTailOnset,t.maximumRelativeRms,t.bodyRmsMedian,t.maximumTailRms].every(Number.isFinite)&&
   Math.abs(t.rhythmicSeconds-cadenceWindow.rhythmicSeconds)<.001&&Math.abs(t.tailSeconds-cadenceWindow.tailSeconds)<.001&&
   Math.abs(t.sourceTailThrough-p.fade)<.001&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&
-  t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&t.bodyRmsMedian>=.003&&t.maximumTailRms>=0;
+  t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&t.bodyRmsMedian>=.003&&t.maximumTailRms>=0&&
+  (!channels||Array.isArray(t.channelProofs)&&t.channelProofs.length===2&&t.channelProofs.every(v=>cadenceTailValid(v,rate,false)));
  const cadenceValid=cadence&&pickup&&originalReturn&&p.nativeRecoveryCurve==='sine-1.2-v1'&&c?.nativeRecoveryCurve===p.nativeRecoveryCurve&&
   e.bars===4&&cadenceWindow?.method==='four-observed-bars-and-preserved-decay-v1'&&
   [cadenceWindow.sourceStart,cadenceWindow.sourceEnd,cadenceWindow.targetStart,cadenceWindow.targetEnd,cadenceWindow.rhythmicSeconds,cadenceWindow.tailSeconds].every(Number.isFinite)&&
@@ -2864,7 +2865,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   cadenceWindow.sourceEnd>cadenceWindow.sourceStart&&cadenceWindow.targetEnd>cadenceWindow.targetStart&&
   Math.abs(cadenceWindow.sourceStart-e.sourceModelDownbeats?.[0])<.001&&Math.abs(cadenceWindow.sourceEnd-e.sourceModelDownbeats?.[4])<.001&&
   Math.abs(cadenceWindow.targetStart-e.targetModelDownbeats?.[0])<.001&&Math.abs(cadenceWindow.targetEnd-e.targetModelDownbeats?.[4])<.001&&
-  c.cadenceTailProof?.sourceSha===a.sha&&cadenceTailValid(c.cadenceTailProof.at48000)&&cadenceTailValid(c.cadenceTailProof.at44100)&&
+  c.cadenceTailProof?.sourceSha===a.sha&&cadenceTailValid(c.cadenceTailProof.at48000,48000)&&cadenceTailValid(c.cadenceTailProof.at44100,44100)&&
   [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.sourceClockProof;
    return v?.method==='actual-native-source-clock-v1'&&v.sourceSha===a.sha&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')&&
     [v.decodedOffsets,v.mediaOffsets].every(values=>Array.isArray(values)&&values.length>0&&values.every(n=>Number.isFinite(n)&&[0,c.nativeSplice.sourceClock.primingFrames/c.nativeSplice.sourceClock.sampleRate].some(e=>Math.abs(n-e)<1e-9)));});

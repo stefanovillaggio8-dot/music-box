@@ -62,7 +62,8 @@ function supports(cue){
      finite(w.rhythmicSeconds)&&finite(w.tailSeconds)&&w.rhythmicSeconds>=4.5&&w.tailSeconds>=.65&&w.tailSeconds<=4&&
      Math.abs(w.rhythmicSeconds+w.tailSeconds-cue.fade)<.001&&Math.abs(t.rhythmicSeconds-w.rhythmicSeconds)<.001&&
      Math.abs(t.tailSeconds-w.tailSeconds)<.001&&Math.abs(t.sourceTailThrough-cue.fade)<.001&&
-     finite(t.maximumTailOnset)&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&finite(t.maximumRelativeRms)&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5;
+     finite(t.maximumTailOnset)&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&finite(t.maximumRelativeRms)&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&
+     t.sampleRate===(k==='at48000'?48000:44100)&&Array.isArray(t.channelProofs)&&t.channelProofs.length===2&&t.channelProofs.every(v=>v.accepted===true&&v.method===t.method&&v.sampleRate===t.sampleRate&&v.sourceGainApplied===false&&v.searchedEntireTail===true&&finite(v.maximumTailOnset)&&v.maximumTailOnset>=0&&v.maximumTailOnset<.25&&finite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.5);
    }))&&
   (!cue.nativeOriginalReturn||cue.metricalPickupWindow&&
    nativeClockOffset(c.nativeSplice?.sourceClock,cue.sourceSha,c.nativeSplice?.sourceClock?.decodedFrames/c.nativeSplice?.sourceClock?.sampleRate)===0&&

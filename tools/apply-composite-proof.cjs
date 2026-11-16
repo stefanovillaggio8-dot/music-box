@@ -26,7 +26,8 @@ for(const row of report.results){
     t.sourceGainApplied===false&&t.searchedEntireTail===true&&Math.abs(t.sourceTailThrough-p.fade)<.001&&
     Math.abs(t.rhythmicSeconds-w.rhythmicSeconds)<.001&&Math.abs(t.tailSeconds-w.tailSeconds)<.001&&
     Number.isFinite(t.maximumTailOnset)&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&
-    Number.isFinite(t.maximumRelativeRms)&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5;}))throw Error('Missing original cadence tail proof');
+    Number.isFinite(t.maximumRelativeRms)&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5&&
+    t.sampleRate===(k==='at48000'?48000:44100)&&Array.isArray(t.channelProofs)&&t.channelProofs.length===2&&t.channelProofs.every(v=>v.accepted===true&&v.method===t.method&&v.sampleRate===t.sampleRate&&v.sourceGainApplied===false&&v.searchedEntireTail===true&&Number.isFinite(v.maximumTailOnset)&&v.maximumTailOnset>=0&&v.maximumTailOnset<.25&&Number.isFinite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.5);}))throw Error('Missing original cadence tail proof');
  }else if(p.nativeRecoveryCurve!=null||c.nativeRecoveryCurve!=null)throw Error('Unbound native recovery curve');
  if(p.nativeOriginalReturn&&(c.nativeSplice?.method!=='original-pcm-native-return-v1'||c.nativeSplice.targetSha!==b.sha||
   !Number.isFinite(c.nativeSplice.returnEnergyRatio)||c.nativeSplice.returnEnergyRatio<.85||c.nativeSplice.returnEnergyRatio>1.000001||

@@ -33,3 +33,25 @@ test('the original-source cadence cannot authorize playback without its native c
  delete p.composite.nativeDecoderProof;
  assert.equal(engine.validatePreservedFileTailCue(record,p,a,b,a.duration),null);
 });
+test('the installed cadence stays partial and rejects missing stereo tail evidence, clocks and level jumps',()=>{
+ const source=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
+ const {engine,tracks}=new Function('require','__dirname',source.slice(0,source.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks}')(require,path.join(root,'tools'));
+ const entries=new Map(tracks),original=entries.get('audio/songs/track-6.mp3'),b=entries.get('audio/songs/track-233.mp3');
+ const selected=engine.transition(original,b,original.duration);
+ assert.equal(selected.metricalCadenceWindow,true);assert.equal(selected.measuredFullBeat,false);assert.equal(selected.metricalRhythmic,true);
+ assert.equal(selected.entry,0);assert.equal(selected.end,original.duration);assert.ok(selected.composite.postRenderRhythm.rmsSeconds<=.020);
+ assert.equal(engine.desktopBeatPairCertified(original,b,selected),true);
+ for(const mutate of [p=>delete p.composite.nativeSplice,p=>delete p.composite.nativeDecoderProof.rates[44100].sourceClockProof,
+  p=>p.composite.nativeDecoderProof.rates[48000].sourceClockProof.sourceSha='a'.repeat(40),
+  p=>p.composite.nativeDecoderProof.rates[48000].sourceClockProof.decodedOffsets=[.01],
+  p=>delete p.structuralEvidence.cadenceWindow,p=>p.structuralEvidence.cadenceWindow.targetStart+=.1,
+  p=>delete p.composite.cadenceTailProof.at44100,p=>p.composite.cadenceTailProof.at48000.channelProofs.pop(),
+  p=>p.composite.cadenceTailProof.at44100.channelProofs[1].maximumTailOnset=.25,
+  p=>p.composite.cadenceTailProof.at48000.channelProofs[0].maximumRelativeRms=.5001,
+  p=>p.composite.cadenceTailProof.at48000.channelProofs[0].sampleRate=44100,
+  p=>p.composite.levelContinuity.changeDb=-3.0001,p=>p.composite.releaseSeconds=1.5,
+  p=>p.nativeRecoveryCurve='smooth',p=>p.measuredFullBeat=true,p=>p.entry=.1,p=>p.end-=.2]){
+  const a=structuredClone(original),r=a.structuralBeatPlans[b.sha],p=r.cue;mutate(p);
+  assert.equal(engine.validatePreservedFileTailCue(r,p,a,b,a.duration),null);
+ }
+});
