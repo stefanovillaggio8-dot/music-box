@@ -2904,6 +2904,10 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  const quiet=proof=>proof?.method==='spleeter-2stems-energy-v1'&&proof.clear===true&&
   [proof.start,proof.end,proof.maxVocalRms,proof.maxRelativeVocal].every(Number.isFinite)&&
   proof.maxVocalRms>=0&&proof.maxVocalRms<.004&&proof.maxRelativeVocal>=0&&proof.maxRelativeVocal<.08;
+ const nativeReturnVoice=e?.incomingNativeReturn;
+ const nativeReturnEnd=c?.nativeSplice?.nativeResumeSeconds+c?.nativeSplice?.returnEnd-c?.nativeRevealAt+.3;
+ if(p?.nativeOriginalReturn===true&&(!Number.isFinite(nativeReturnEnd)||!quiet(nativeReturnVoice)||nativeReturnVoice.start!==0||
+    nativeReturnVoice.end<nativeReturnEnd||Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<nativeReturnVoice.end))return null;
  const incomingQuiet=quiet(g)&&g.start===0&&g.end>=p.fade*p.tempo+.29&&
   !(Number.isFinite(b.firstLyricAt)&&b.firstLyricAt<p.fade*p.tempo+.3);
  const outgoing=e?.outgoingWholeOverlap;

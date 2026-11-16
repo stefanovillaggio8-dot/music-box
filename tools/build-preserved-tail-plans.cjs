@@ -155,7 +155,12 @@ for(const a of prepared)for(const b of prepared){
    }
    if(!windowHarmony){excluded('tailForegroundHarmony');continue;}
    const observedBarPartial=fit.metricalCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2';
-   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,observedBarPartial,
+   // The original-PCM phase return is after EOF/tempo return; keep its
+   // entire possible search region, plus a vocal margin, before any voice.
+   const nativeReturnEnd=fade*rate+.85*(rate+1)/2+.25+.3;
+   const nativeReturnGuard=observedBarPartial?clear(b.e,0,nativeReturnEnd):null;
+   if(observedBarPartial&&(!nativeReturnGuard?.clear||Number.isFinite(b.raw.firstLyricAt)&&b.raw.firstLyricAt<nativeReturnEnd)){excluded('nativeReturnVoice');continue;}
+   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,observedBarPartial,nativeReturnGuard,
     complete:!partial&&!!(full||zeroFit),...(windowFit?{rhythmicTail:ending}:{}),incomingGuard:guard,outgoingGuard,
     vocalOverlapPolicy:handoff?'separated-vocal-handoff-v1':incomingClear?'instrumental-incoming-v1':'instrumental-outgoing-v1',vocalHandoff:handoff,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown,pairOut,pairIn,
     ...(zeroFit?{exactSilentSuffix:{...silence,beatVerificationSeconds:silentSeconds}}:{})});
@@ -184,7 +189,7 @@ for(const a of prepared)for(const b of prepared){
     structuralEvidence:{version:1,...(c.exactSilentSuffix?{exactSilentSuffix:c.exactSilentSuffix}:{}),...(x.analysisView||y.analysisView?{edgeAnalysisViews:{source:x.analysisView||'original',target:y.analysisView||'original'}}:{}),bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
      ...(partial?{metricalCertificate:fit.metricalCertificate}:{}),
      ...(c.rhythmicTail?{rhythmicWindow:c.rhythmicTail}:{}),
-     downbeatRms:c.downbeatRms,incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,...(c.vocalHandoff?{vocalHandoff:c.vocalHandoff}:{}),
+     downbeatRms:c.downbeatRms,...(c.nativeReturnGuard?{incomingNativeReturn:c.nativeReturnGuard}:{}),incomingWholeOverlap:c.incomingGuard,outgoingWholeOverlap:c.outgoingGuard,vocalOverlapPolicy:c.vocalOverlapPolicy,...(c.vocalHandoff?{vocalHandoff:c.vocalHandoff}:{}),
      sourceObservedDownbeats:c.sourceObservedDownbeats,targetObservedDownbeats:c.targetObservedDownbeats,
      sourceModelDownbeats:x.downbeats,targetModelDownbeats:y.downbeats,
      pulseCheck:{source:c.pairOut.beats.filter(t=>t>=c.begin-.075&&t<=c.end-.12).map(t=>t-c.begin),

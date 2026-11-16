@@ -28,7 +28,7 @@ const server=http.createServer((req,res)=>{
  }
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;
  try{
-  browser=await ({chromium,webkit}[name]).launch({headless:true});const page=await browser.newPage();
+  browser=await ({chromium,webkit}[name]).launch({headless:true});const page=await browser.newPage();page.on('console',m=>{if(m.type()==='error')console.error(m.text())});
   await page.goto('http://127.0.0.1:'+server.address().port);
   const measured=await page.evaluate(async descriptors=>{
    const results=[];
@@ -60,8 +60,8 @@ const server=http.createServer((req,res)=>{
       if(correlation<.99||relativeRms>.10){
        // Diagnostic lag search never certifies or changes the nominal comparison.
        let best={correlation:-1};const a=decoded.getChannelData(0),b=original.getChannelData(0);
-       for(let lag=-128;lag<=128;lag++){let xx=0,yy=0,xy=0;for(let i=0;i<count;i++){const x=a[at-count+i],y=b[to-count+i+lag];xx+=x*x;yy+=y*y;xy+=x*y;}const v=xy/Math.sqrt(xx*yy);if(v>best.correlation)best={lag,correlation:v};}
-       throw Error('Actual native original splice differs: '+JSON.stringify({sampleRate,correlation,relativeRms,diagnosticOnly:best,commonAtSeconds:at/sampleRate,originalAtSeconds:to/sampleRate,nativeResumeSeconds:c.nativeSplice.nativeResumeSeconds,revealAtSeconds:c.preRoll+c.nativeRevealAt,originalDuration:original.duration}));
+       for(let lag=-4096;lag<=4096;lag+=4){let xx=0,yy=0,xy=0;for(let i=0;i<count;i++){const x=a[at-count+i],y=b[to-count+i+lag];xx+=x*x;yy+=y*y;xy+=x*y;}const v=xy/Math.sqrt(xx*yy);if(v>best.correlation)best={lag,correlation:v};}
+       console.error('Actual native original splice differs: '+JSON.stringify({sampleRate,correlation,relativeRms,diagnosticOnly:best,commonAtSeconds:at/sampleRate,originalAtSeconds:to/sampleRate,nativeResumeSeconds:c.nativeSplice.nativeResumeSeconds,revealAtSeconds:c.preRoll+c.nativeRevealAt,originalDuration:original.duration}));
       }
       nativeSplice={method:'actual-native-original-splice-v1',targetSha:c.targetSha,frames:count,correlation,relativeRms};
      }
@@ -71,6 +71,7 @@ const server=http.createServer((req,res)=>{
    return results;
   },[...assets.values()]);
   assert.equal(measured.length,assets.size*2);
+  assert.ok(measured.every(r=>!r.nativeSplice||r.nativeSplice.correlation>=.99&&r.nativeSplice.relativeRms<=.1),'Every nominal native splice must pass; diagnostic lag is never accepted');
   console.log(JSON.stringify({method:'actual-browser-decode-v1',browser:name,browserVersion:browser.version(),physicalIPhone:false,assets:measured},null,2));
  }finally{await browser?.close();server.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

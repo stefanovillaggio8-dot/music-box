@@ -9,6 +9,7 @@ test('original native return reproduces original samples before reveal and binds
  const incoming={rate:sr,start:0,channels:[0,1].map(()=>Float32Array.from({length:sr*10},(_,i)=>.3*Math.sin(i/sr*1234)))};
  const r=compositePCM(outgoing,incoming,cue),p=r.nativeSplice;
  assert.equal(p.targetSha,cue.targetSha);assert.equal(p.maximumLast100msDifference,0);assert.equal(p.verifiedFrames,800);
+ assert.ok(p.returnEnergyRatio>=.85&&p.returnEnergyRatio<=1.000001);assert.ok(Math.abs(p.returnEnd-p.returnStart-.02)<1e-9);
  assert.ok(p.returnStart>=r.nativeHandoffAt+.85);assert.ok(p.returnEnd<=r.nativeRevealAt-.3);
  const reveal=Math.round((r.preRoll+r.nativeRevealAt)*sr),original=Math.round(p.nativeResumeSeconds*sr);
  for(let i=1;i<=800;i++)assert.equal(r.channels[0][reveal-i],incoming.channels[0][original-i]);
