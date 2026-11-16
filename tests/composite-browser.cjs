@@ -7,6 +7,8 @@ const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.joi
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
 const completeSte=process.env.MUSICBOX_STE_CASE==='complete-personal';
 const uniqueSourceProbe=process.env.MUSICBOX_NATIVE_UNIQUE_URL_PROBE==='true';
+const repetitions=Number(process.env.MUSICBOX_COMPOSITE_REPETITIONS||1);
+if(![1,3].includes(repetitions))throw Error('Bounded native playback repetitions required');
 const metadataProbe=process.env.MUSICBOX_METADATA_PREFIX_PROBE==='true',nativeCache=new Map();
 const metadataFixture=metadataProbe||process.env.MUSICBOX_METADATA_FIXTURE_TRANSPORT==='true';
 const plans=Object.entries(data.entries).flatMap(([from,a])=>[...Object.values(a.pcmBeatPlans||{}),...Object.values(a.structuralBeatPlans||{})].flatMap(p=>(p.cues||[p.cue]).filter(c=>c?.composite).map(cue=>({from,...p,cue}))));
@@ -71,6 +73,8 @@ const server=http.createServer(async(req,res)=>{
    if(process.env.MUSICBOX_COMPOSITE_BROWSERS&&!process.env.MUSICBOX_COMPOSITE_BROWSERS.split(',').includes(name))continue;
    const browser=await engine.launch({headless:true});
    try{
+    for(let trial=0;trial<repetitions;trial++){
+    console.error(name,'native playback trial',trial+1,'of',repetitions);
     const page=await browser.newPage();page.on('pageerror',e=>console.error(name,e.message));
     await page.goto('http://127.0.0.1:'+server.address().port);
     await page.evaluate(()=>{document.querySelector('#go').onclick=()=>{window.ctx=new (window.AudioContext||window.webkitAudioContext)({sampleRate:48000});window.ctx.resume()}});
@@ -331,11 +335,12 @@ const server=http.createServer(async(req,res)=>{
     });
     assert.equal(automaticShuffle.full,playbackProfile==='Emanuele'||completeSte);if(playbackProfile==='Ste'&&!completeSte)assert.equal(automaticShuffle.partial,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
     await autoContext.close();
-    results.push({browser:name,profile:playbackProfile,indexSha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'dj-deep-analysis.json'))).digest('hex'),decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
+    results.push({browser:name,profile:playbackProfile,nativePlaybackTrial:trial+1,indexSha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'dj-deep-analysis.json'))).digest('hex'),decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
      optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,
      completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,diagnosticUniqueSourceUrl:uniqueSourceProbe,physicalIPhone:false});
+    }
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));
