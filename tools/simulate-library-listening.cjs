@@ -154,9 +154,13 @@ function resultFor(from,to){
   significantContentSkippedSeconds:null,semanticContentUnknown:true};
 }
 async function simulate(profile,mode,list,sessions,steps,seed){
+ const continuous=arg('continuous-shuffle','false')==='true'&&mode==='shuffle';
+ const permitted=new Set(list.map(t=>t.id));
+ if(permitted.size!==list.length)throw Error('Duplicated personal-library identity');
+ const usedPairs=new Map();let completedCycles=0;
  const totals={attempts:0,full:0,partial:0,crossfade:0,normal:0,postlude:0,underlay:0,unavailable:0,early:0,safariFull:0,
   overlapSum:0,fullOverlapSum:0,skippedSum:0,maxSkipped:0,incomingOmittedSum:0,maxIncomingOmitted:0,incomingAudibleUpperBoundSum:0,
-  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,futurePartnerReservations:0,missingAnalysis:0,longestWithoutRhythmic:0,partialOverlapSum:0};
+  earlyOverlapStart:0,longestWithoutFull:0,automaticChanges:0,manualQueueChanges:0,renderQualityPromotions:0,futurePartnerReservations:0,missingAnalysis:0,longestWithoutRhythmic:0,partialOverlapSum:0,outsideLibraryAttempts:0};
  const trace=[],assetUse=new Map();scenarioOffline=mode==='offline-shuffle';preparedMixes=new Set();
  const random=rng(seed),offlineOrder=shuffled(list,random);available=new Set(offlineOrder.slice(0,Math.ceil(list.length/2)).map(t=>t.id));
  for(let session=0;session<sessions;session++){
@@ -165,18 +169,29 @@ async function simulate(profile,mode,list,sessions,steps,seed){
   if(scenarioOffline&&offlineFilterImplemented)fresh=fresh.filter(t=>available.has(t.id));
   const start=scenarioOffline?fresh.findIndex(t=>available.has(t.id)):0;
   let current=start>=0?fresh.splice(start,1)[0]:null,streak=0,rhythmicStreak=0;
-  for(let step=0;current&&fresh.length&&step<steps;step++){
+  for(let step=0;current&&step<steps;step++){
+   if(!fresh.length){
+    if(!continuous)break;
+    // The actual app starts a new cycle only when every eligible recording
+    // has played. Never refresh the whole personal pool every 40 changes.
+    fresh=shuffled(list.filter(t=>t.id!==current.id),random);completedCycles++;
+    if(!fresh.length)break;
+   }
    let pool=fresh.slice(),next=pool[0],selected=false;
    if(!ordered){
     const app={currentId:()=>current.id,allTracks:()=>list,mixUrl:t=>t.url,mixLyricCues:()=>null,mixRunningContext:()=>({sampleRate}),
      mixShuffleCandidates:()=>pool.slice(0,10),mixShufflePool:()=>pool,
      mixSelectShuffle:({fromId,initialFirst,pickId})=>{
+      if(!permitted.has(pickId)){totals.outsideLibraryAttempts++;throw Error('Selector attempted a foreign personal-library recording');}
       if(fromId!==current.id||initialFirst!==pool[0].id||!pool.some(t=>t.id===pickId))throw Error('Selector escaped fresh profile/playlist pool');
       next=pool.find(t=>t.id===pickId);selected=true;return true;}};
     const data=lookup(current);if(data)await engine.intelligentShuffle(app,{duration:data.duration,currentTime:0},current.id);
    }
    if(!fresh.some(t=>t.id===next.id)||next.id===current.id)throw Error('Repeated or out-of-pool selection');
+   if(!permitted.has(current.id)||!permitted.has(next.id)){totals.outsideLibraryAttempts++;throw Error('Playback escaped personal membership');}
    const result=resultFor(current,next);totals.attempts++;totals[result.kind]++;totals.early+=!!result.early;totals.safariFull+=!!result.safariFull;
+   const pairKey=[current.id,next.id,result.kind].join('|'),pair=usedPairs.get(pairKey)||{from:current.id,to:next.id,kind:result.kind,uses:0};
+   pair.uses++;usedPairs.set(pairKey,pair);
    totals.overlapSum+=result.overlap||0;totals.skippedSum+=result.skipped||0;totals.maxSkipped=Math.max(totals.maxSkipped,result.skipped||0);
    if(result.kind==='full')totals.fullOverlapSum+=result.overlap||0;
    if(result.kind==='partial')totals.partialOverlapSum+=result.overlap||0;
@@ -196,6 +211,8 @@ async function simulate(profile,mode,list,sessions,steps,seed){
  }
  const mixed=totals.attempts-totals.normal-totals.unavailable;
  return {profile,mode,members:list.length,boostedMembers:list.filter(t=>t.boosted).length,sessions,steps,seed,totals,
+  scopeAudit:{permittedIds:[...permitted].sort(),membershipSha256:crypto.createHash('sha256').update([...permitted].sort().join('\n')).digest('hex'),everyAttemptChecked:true,outsideLibraryAttempts:totals.outsideLibraryAttempts},
+  continuousShuffle:continuous,completedCycles,distinctUsedPairs:[...usedPairs.values()],
   percent:Object.fromEntries(['full','partial','crossfade','normal','postlude','underlay','unavailable','early','safariFull'].map(k=>[k,totals.attempts?100*totals[k]/totals.attempts:0])),
   averageOverlap:mixed?totals.overlapSum/mixed:0,averagePartialOverlap:totals.partial?totals.partialOverlapSum/totals.partial:0,averageFullOverlap:totals.full?totals.fullOverlapSum/totals.full:0,commonAssetUse:Object.fromEntries(assetUse),averageSkippedAudible:totals.attempts?totals.skippedSum/totals.attempts:0,
   significantAudioSkipped:'NOT_SEMANTICALLY_ANNOTATED; audible seconds are an upper bound',trace};
@@ -222,7 +239,7 @@ function inventory(profile,list,audit){
    indexSha256:crypto.createHash('sha256').update(read(arg('index',path.join(root,'dj-deep-analysis.json')))).digest('hex'),
    applicationSha256:crypto.createHash('sha256').update(appSource).digest('hex')},
   audioVariant:appRecording?'actual app URL selector with canonical HTTPS sources and loaded, pinned boost manifest':'original recordings; no loaded boost manifest',
-  sessionHistoryAssumption:'A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.',
+  sessionHistoryAssumption:arg('continuous-shuffle','false')==='true'?'Continuous shuffle exhausts the personal library before starting a new cycle, without resetting every 40 changes. Initial device history is empty, not reconstructed.':'A fresh in-scope pool per session; no repeats within a session. Cross-session device history is not reconstructed. One-session full-cycle runs exhaust the library.',
   sourceSnapshot:'Unchanged BUILTIN + repository stato.json + playlist.json; includes ONLY explicit published copies, deletions and hidden playlist membership.',
   auditExclusions:excludedPlaylists.map(p=>({profile:p.profile,playlist:p.name})),
   personalLibrariesOnly:arg('personal-only','false')==='true',
