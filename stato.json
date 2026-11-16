@@ -12946,6 +12946,18 @@
     "s": 51,
     "t": "ADRENALINA",
     "a": "Samurai Jay, Vito Salamanca"
+   },
+   "[\"mezza siga\",\"nerone\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Mezza siga",
+    "a": "NERONE"
+   },
+   "m:2026-11|[\"mezza siga\",\"nerone\"]": {
+    "v": 1,
+    "s": 0,
+    "t": "Mezza siga",
+    "a": "NERONE"
    }
   },
   "Emanuele": {
