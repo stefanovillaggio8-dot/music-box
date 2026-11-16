@@ -1,0 +1,122 @@
+{
+  "installedInPlayer": false,
+  "experiments": [
+    {
+      "name": "wider-intro-Ste",
+      "newCandidatePairs": 0,
+      "sourceSha256": "fd455735969f546fec84046496f97a6e3c11bb1d48bccb272f542cbf8b59f742",
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 15705,
+          "noCoherentInitialBars": 4500,
+          "incomingVocalOrLyric": 1172,
+          "localHarmony": 305,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "certificationThresholdsChanged": false,
+      "candidateGeometryChangedOnly": true
+    },
+    {
+      "name": "short-two-bar-Ste",
+      "newCandidatePairs": 0,
+      "sourceSha256": "adae8c9595576607d2902be8d925f9be307ee1df7098e8e6fe51839b2f776352",
+      "profileFunnel": {
+        "Ste": {
+          "pairs": 51292,
+          "meterOrTempo": 12180,
+          "noCoherentInitialBars": 8034,
+          "incomingVocalOrLyric": 1163,
+          "localHarmony": 305,
+          "noCoherentEndingBars": 29598,
+          "independentBeatFit": 10,
+          "rhythmicTailCandidates": 1,
+          "completeCandidates": 1
+        }
+      },
+      "certificationThresholdsChanged": false,
+      "candidateGeometryChangedOnly": true
+    },
+    {
+      "name": "short-two-bar-Diego",
+      "newCandidatePairs": 0,
+      "sourceSha256": "45c7b6335da5b10e38bb4c7d5745d4e1b2a6136d9de157cfaab1d82d9aa660a6",
+      "profileFunnel": {
+        "Diego": {
+          "pairs": 44732,
+          "noCoherentEndingBars": 19201,
+          "meterOrTempo": 15312,
+          "noCoherentInitialBars": 8555,
+          "localHarmony": 208,
+          "incomingVocalOrLyric": 1453,
+          "completeCandidates": 2,
+          "independentBeatFit": 1
+        }
+      },
+      "certificationThresholdsChanged": false,
+      "candidateGeometryChangedOnly": true
+    },
+    {
+      "name": "short-two-bar-Emanuele",
+      "newCandidatePairs": 0,
+      "sourceSha256": "1951c5a37ebff51b795c95e9dc536a89d76a5487cb298121e2a967b7591ceee9",
+      "profileFunnel": {
+        "Emanuele": {
+          "pairs": 383772,
+          "meterOrTempo": 155032,
+          "noCoherentInitialBars": 91887,
+          "incomingVocalOrLyric": 16315,
+          "localHarmony": 2843,
+          "noCoherentEndingBars": 117606,
+          "independentBeatFit": 71,
+          "rhythmicTailCandidates": 11,
+          "completeCandidates": 7
+        }
+      },
+      "certificationThresholdsChanged": false,
+      "candidateGeometryChangedOnly": true
+    },
+    {
+      "name": "karaoke-multiview-main.json",
+      "aggregate": {
+        "referenceWords": 590,
+        "acceptedWords": 193,
+        "coverage": 0.3271186440677966,
+        "onset": {
+          "count": 193,
+          "medianAbsoluteMs": 47.124572800001374,
+          "p95AbsoluteMs": 199.6096191000163
+        },
+        "end": {
+          "count": 193,
+          "medianAbsoluteMs": 59.84155270002134,
+          "p95AbsoluteMs": 216.24670410000135
+        }
+      },
+      "sourceSha256": "1e27ca711c30fb324cf0d637aede510e65536ec5ec972e73fa0a50327a939c79",
+      "includedInAcceptedBenchmarkTotals": false,
+      "reason": "No improvement on new songs; no additional production path for a marginal development-only gain"
+    },
+    {
+      "name": "karaoke-multiview-unseen.json",
+      "aggregate": {
+        "referenceWords": 78,
+        "acceptedWords": 0,
+        "coverage": 0,
+        "onset": {
+          "count": 0
+        },
+        "end": {
+          "count": 0
+        }
+      },
+      "sourceSha256": "0d1974d3416f078a5980b43dfcfd48d25cca718f78fc78152f9bc5630821a7e4",
+      "includedInAcceptedBenchmarkTotals": false,
+      "reason": "No improvement on new songs; no additional production path for a marginal development-only gain"
+    }
+  ]
+}

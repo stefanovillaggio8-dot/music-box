@@ -1,0 +1,34 @@
+{
+  "raw": {
+    "logSha256": "a04974ed90c55309163c3963f3886fcb28bba90110aa3efffdab065469f48fd9",
+    "logBytes": 1232748,
+    "counts": {
+      "Failed to connect: Connection refused": 3,
+      "Time duration query failed": 11,
+      "Caps event received before stream-start": 1,
+      "Muted audio player not visible": 1
+    },
+    "firstOccurrences": {
+      "Failed to connect: Connection refused": "0:00:00.015914982       4910       4910 WARN                   pulse pulsesink.c:616:gst_pulseringbuffer_open_device:<autoaudiosink0-actual-sink-pulse> error: Failed to connect: Connection refused",
+      "Time duration query failed": "0:00:00.349929048       4910       4910 DEBUG      webkitmediaplayer MediaPlayerPrivateGStreamer.cpp:1487:platformDuration:<regular-media-player-0> Time duration query failed for http://127.0.0.1:38663/songs/track-4.mp3",
+      "Caps event received before stream-start": "0:00:00.345382890       4910       4976 WARN       webkitmediaplayer MediaPlayerPrivateGStreamer.cpp:3720:operator():<regular-media-player-0> Caps event received before stream-start. This shouldn't happen!",
+      "Muted audio player not visible": "0:00:00.039168412       4910       4910 INFO       webkitmediaplayer MediaPlayerPrivateGStreamer.cpp:4227:managePlayerSuspend:<regular-media-player-0> Muted audio player not visible in viewport"
+    }
+  },
+  "prefix": {
+    "logSha256": "29fa00da15164aa7337e6bd9af0ce2a013fc14783e343f5a70488d64f42dbf0a",
+    "logBytes": 8536465,
+    "counts": {
+      "Failed to connect: Connection refused": 7,
+      "Time duration query failed": 0,
+      "Caps event received before stream-start": 0,
+      "Muted audio player not visible": 1
+    },
+    "firstOccurrences": {
+      "Failed to connect: Connection refused": "0:00:00.024062412       5635       5635 WARN                   pulse pulsesink.c:616:gst_pulseringbuffer_open_device:<autoaudiosink0-actual-sink-pulse> error: Failed to connect: Connection refused",
+      "Time duration query failed": null,
+      "Caps event received before stream-start": null,
+      "Muted audio player not visible": "0:00:00.055072171       5635       5635 INFO       webkitmediaplayer MediaPlayerPrivateGStreamer.cpp:4227:managePlayerSuspend:<regular-media-player-0> Muted audio player not visible in viewport"
+    }
+  }
+}

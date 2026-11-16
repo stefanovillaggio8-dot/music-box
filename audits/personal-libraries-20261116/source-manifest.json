@@ -24,7 +24,9 @@
     "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
     "lyrics.json": "9b0c381181e792f76561348e51bde7671377ed5fe65bd1fbd9bbd97bbacda669",
     "versione.json": "8772eefbac7224acd64727fac3100988025b3e05cb2995d6f67c90646ffd15d0",
-    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb"
+    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb",
+    "tests/composite-browser.cjs": "214f106883df0ae8aed2b91bcb2f7e330b4b712830647109a525e0829e8f803c",
+    ".github/workflows/composite-browser.yml": "a47c7af28484ce0e6982b9fa907be919c11f618ce73cdec98c9eb84453e44634"
   },
   "byteIdenticalToBaseline": [
     "app.js",
@@ -38,5 +40,6 @@
   "phoneModelsAdded": false,
   "userDataDeleted": false,
   "physicalIPhoneVerified": false,
-  "publicDeployment": false
+  "publicDeployment": false,
+  "latestPipelineCommit": "956cce249b934b9c93de2be939d6cf2c328c2526"
 }

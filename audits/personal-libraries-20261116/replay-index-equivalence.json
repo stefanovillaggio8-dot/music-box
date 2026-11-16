@@ -1,0 +1,7 @@
+{
+  "sameCueGeometryAndEvidenceExceptNativeDecoderMeasurements": true,
+  "replayIndexSha256": "7255822d10ff9ef7e411e3d7bd6d13b514e1cf07cb2032d28d885d64f87506a5",
+  "finalIndexSha256": "cb11b3d9ccc828fcaff8e5d4fd8bdcf81f082ff9ed85298adf89a7b0b171dad2",
+  "comparison": "Recursive exact JSON equality after omitting nativeDecoderProof only; no other key is ignored",
+  "noRepeatedExhaustiveAuditClaim": true
+}
