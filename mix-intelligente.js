@@ -7922,6 +7922,25 @@ async function intelligentShuffle(app,audio,fromId){
     .sort((a,b)=>reservedLinks.get(endangered+'|'+b.track.id).rank-reservedLinks.get(endangered+'|'+a.track.id).rank)[0];
    if(source){replacement={track:source.track,cue:null,score:0,reservationOrderOnly:true,continuation:reservedLinks.get(endangered+'|'+source.track.id)};protectedSha=endangered;choicePool.push(replacement);}
   }
+  // A completed musical ending has no concurrent phrase/BPM to match.
+  // When two validated postludes use the identical outgoing envelope and
+  // both original intros are audible immediately, prepare the certified
+  // predecessor instead of spending its follower on a natural change.
+  // Recheck both actual plans; this does not certify a new overlap.
+  const identicalPostlude=c=>{
+   if(!base||choicePool!==postludeScored||!c||c===base)return false;
+   const a=byId.get(base.track.id)?.info,b=byId.get(c.track.id)?.info;
+   if(!a||!b)return false;
+   const x=transition(old,a,audio.duration),y=transition(old,b,audio.duration);
+   const valid=(p,t)=>p?.postMusicalTailUnderlay===true&&p.preserveTail===true&&p.entry===0&&p.tempo===1&&
+    p.begin>old.last+.20&&musicallyCompatibleOverlay(old,t,p)&&
+    t.musicalContent?.wholeCoverageVerified===true&&t.musicalContent.sourceSha===audioSha(t)&&Number.isFinite(t.musicalContent.audibleStart)&&t.musicalContent.audibleStart<=.25;
+   return valid(x,a)&&valid(y,b)&&['begin','end','fade','gain'].every(k=>x[k]===y[k]);
+  };
+  if(!replacement&&base&&reservedRanks.get(shaOf(base))===2&&(base.continuation?.rank||0)<2){
+   replacement=choicePool.find(c=>liveFreshIds.has(c.track.id)&&reservedLinks.get(shaOf(base)+'|'+c.track.id)?.rank===2&&identicalPostlude(c));
+   if(replacement){protectedSha=shaOf(base);replacement.continuation=reservedLinks.get(protectedSha+'|'+replacement.track.id);replacement.reservationEquivalentPostlude=true;}
+  }
   if(!replacement&&base&&reserved.has(shaOf(base))&&(base.continuation?.rank||0)<reservedRanks.get(shaOf(base))){
    replacement=choicePool.find(c=>liveFreshIds.has(c.track.id)&&c.score>=base.score*.97&&(!reserved.has(shaOf(c))||reservedRanks.get(shaOf(c))<reservedRanks.get(shaOf(base))||(c.continuation?.rank||0)>=reservedRanks.get(shaOf(c))));protectedSha=shaOf(base);
   }else if(!replacement&&!base&&reserved.has(audioSha(byId.get(initialFirst)?.info))){
@@ -7931,7 +7950,7 @@ async function intelligentShuffle(app,audio,fromId){
   if(replacement){
    const ix=choicePool.indexOf(replacement);if(ix>=0)choicePool.splice(ix,1);choicePool.unshift(replacement);
    sequenceLookahead=replacement.continuation||null;
-   futurePartnerReservation={method:'fresh-certified-partner-preservation-v1',protectedSha,futureSources:reserved.get(protectedSha),protectedRank:reservedRanks.get(protectedSha),chosen:replacement.track.id,maximumRelativeCurrentScoreLoss:replacement.reservationOrderOnly?null:.03,currentTransition:replacement.reservationOrderOnly?'natural-or-quiet-underlay':'same-certified-tier',checkedLinks:checked};
+   futurePartnerReservation={method:'fresh-certified-partner-preservation-v1',protectedSha,futureSources:reserved.get(protectedSha),protectedRank:reservedRanks.get(protectedSha),chosen:replacement.track.id,maximumRelativeCurrentScoreLoss:replacement.reservationOrderOnly||replacement.reservationEquivalentPostlude?null:.03,currentTransition:replacement.reservationEquivalentPostlude?'identical-validated-postlude':replacement.reservationOrderOnly?'natural-or-quiet-underlay':'same-certified-tier',checkedLinks:checked};
   }
  }
  const best=choicePool[0],current=choicePool.find(x=>x.track.id===initialFirst);
