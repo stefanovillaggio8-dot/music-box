@@ -9,7 +9,7 @@ if(proofs.length!==2||browsers.some(b=>proofs.filter(p=>p.browser===b).length!==
 let changed=0;const seen=new Set();
 for(const entry of Object.values(index.entries))for(const record of Object.values(entry.structuralBeatPlans||{}))
  for(const cue of [record.cue,...(record.cues||[])]){
-  if(!cue?.rhythmicTailWindow)continue;const c=cue.composite,rates={};
+  if(!cue?.rhythmicTailWindow&&!cue?.structuralEvidence?.exactSilentSuffix)continue;const c=cue.composite,rates={};
   for(const sampleRate of [44100,48000]){
    const rows=proofs.map(p=>p.assets.filter(r=>r.assetSha256===c.sha256&&r.sampleRate===sampleRate));
    if(rows.some(a=>a.length!==1))throw Error('Missing or duplicated source-bound native PCM proof');

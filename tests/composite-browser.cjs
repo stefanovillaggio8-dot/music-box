@@ -5,6 +5,9 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright');
 const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
+const completeSte=process.env.MUSICBOX_STE_CASE==='complete-personal';
+const metadataProbe=process.env.MUSICBOX_METADATA_PREFIX_PROBE==='true',nativeCache=new Map();
+const metadataFixture=metadataProbe||process.env.MUSICBOX_METADATA_FIXTURE_TRANSPORT==='true';
 const plans=Object.entries(data.entries).flatMap(([from,a])=>[...Object.values(a.pcmBeatPlans||{}),...Object.values(a.structuralBeatPlans||{})].flatMap(p=>(p.cues||[p.cue]).filter(c=>c?.composite).map(cue=>({from,...p,cue}))));
 if(!plans.length)throw Error('No actual composite plans to test');
 const catalog=new Map(Object.entries(data.entries).map(([k,e])=>[e.sha,k])),sourceCache=new Map();
@@ -22,8 +25,18 @@ async function original(sha){
  const actual=crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
  if(actual!==sha)throw Error('Original SHA mismatch');sourceCache.set(sha,bytes);return bytes;
 }
+async function nativeOriginal(sha){
+ const bytes=await original(sha);if(!metadataProbe)return bytes;
+ if(nativeCache.has(sha))return nativeCache.get(sha);
+ const records=JSON.parse(fs.readFileSync(path.join(root,'audits/acoustic-boundaries-20261115/metadata-pilot-candidates.json'))).entries;
+ const candidate=Object.values(records).find(p=>p.sourceSha===sha);if(!candidate)return bytes;
+ if(crypto.createHash('sha256').update(bytes).digest('hex')!==candidate.sourceSha256)throw Error('Diagnostic source identity changed');
+ const wrapped=Buffer.concat([bytes.subarray(0,candidate.insertAt),Buffer.from(candidate.prefixBase64,'base64'),bytes.subarray(candidate.insertAt)]);
+ if(crypto.createHash('sha256').update(wrapped).digest('hex')!==candidate.wrappedSha256)throw Error('Diagnostic metadata frame changed');
+ nativeCache.set(sha,wrapped);return wrapped;
+}
 async function fulfillOriginal(route,sha){
- const bytes=await original(sha),headers={'Accept-Ranges':'bytes','Access-Control-Allow-Origin':'*',
+ const bytes=await nativeOriginal(sha),headers={'Accept-Ranges':'bytes','Access-Control-Allow-Origin':'*',
   'Access-Control-Expose-Headers':'Content-Length, Content-Range, Accept-Ranges'};
  const range=/^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range||'');
  if(range){
@@ -39,7 +52,7 @@ const server=http.createServer(async(req,res)=>{
   if(pathname==='/'){res.setHeader('Content-Type','text/html');res.end('<button id="go">Audio</button><script src="/audio-composite-mix.js"></script>');return;}
   const originalSha=/^\/original\/[a-f0-9]{40}\.mp3$/.test(pathname)?pathname.slice(10,-4):data.entries['audio'+pathname]?.sha;
   if(originalSha&&pathname.endsWith('.mp3')){
-   const bytes=await original(originalSha);res.setHeader('Content-Type','audio/mpeg');res.setHeader('Accept-Ranges','bytes');
+   const bytes=await nativeOriginal(originalSha);res.setHeader('Content-Type','audio/mpeg');res.setHeader('Accept-Ranges','bytes');
    const range=/bytes=(\d+)-(\d*)/.exec(req.headers.range||'');
    if(range){const lo=Number(range[1]),hi=Math.min(bytes.length-1,range[2]?Number(range[2]):bytes.length-1);res.writeHead(206,{'Content-Range':`bytes ${lo}-${hi}/${bytes.length}`,'Content-Length':hi-lo+1});res.end(bytes.subarray(lo,hi+1));}
    else{res.setHeader('Content-Length',bytes.length);res.end(bytes);}return;
@@ -138,7 +151,7 @@ const server=http.createServer(async(req,res)=>{
      // Native media loading is not equivalent to Playwright fulfillment,
      // even with Range headers: the independent metadata probe compares
      // both. Exercise GitHub's real HTTP transport for original URLs.
-     if(sha&&url.hostname==='raw.githubusercontent.com'){await route.continue();return;}
+     if(sha&&url.hostname==='raw.githubusercontent.com'&&!metadataFixture){await route.continue();return;}
      if(sha){await fulfillOriginal(route,sha);return;}
      await route.abort();
     });
@@ -156,7 +169,7 @@ const server=http.createServer(async(req,res)=>{
      HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);return play.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
-    const bridgeSource=playbackProfile==='Ste'?'b-track-4':'b-track-934';
+    const bridgeSource=playbackProfile==='Ste'?(completeSte?'b-track-705':'b-track-4'):'b-track-934';
     // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
     // can disappear when published deletions arrive (Ste's track-1 did).
     // Use a verified, still-visible source from this exact profile.
@@ -186,18 +199,19 @@ const server=http.createServer(async(req,res)=>{
     const silentBridge=await shell.evaluate(()=>({muted:MusicBoxBridge.audio().muted,lastPlayWasMuted:__nativePlayMutes.at(-1)}));
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
     await shell.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
-    const actualPlan=await shell.evaluate(({plans,profile})=>{
+    const actualPlan=await shell.evaluate(({plans,profile,completeSte})=>{
      const tracks=MusicBoxBridge.allTracks(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow)continue;
       const a=find(p.from),b=find(p.to);
       if(!a||!b||(a.profile||'Ste')!==profile||(b.profile||'Ste')!==profile)continue;
+      if(profile==='Ste'&&completeSte&&!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
      return null;
-    },{profile:playbackProfile,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
+    },{profile:playbackProfile,completeSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
      Number(b.from==='audio/songs/track-934.mp3'&&b.to==='audio/songs/track-1124.mp3')-
      Number(a.from==='audio/songs/track-934.mp3'&&a.to==='audio/songs/track-1124.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
@@ -232,6 +246,7 @@ const server=http.createServer(async(req,res)=>{
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
      setup:window.__plannedSetup,media:window.__plannedMedia,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
+    assert.equal(await shell.evaluate(()=>MusicBoxBridge.currentId()),actualPlan.fromId,'Queued lyrics/track ownership must remain outgoing during its intact ending');
     const muteDuringOverlap=await shell.evaluate(()=>{
      const button=document.querySelector('#btnVolIcon');button.click();
      const muted=MusicBoxBridge.volume()===0&&MusicBoxBridge.audio().muted;
@@ -255,7 +270,7 @@ const server=http.createServer(async(req,res)=>{
      const url=new URL(route.request().url());
      if(url.origin==='http://127.0.0.1:'+server.address().port){await route.continue();return;}
      const at=url.pathname.indexOf('/songs/'),key=at>=0?'audio'+url.pathname.slice(at):'',sha=data.entries[key]?.sha;
-     if(sha&&url.hostname==='raw.githubusercontent.com'){await route.continue();return;}
+     if(sha&&url.hostname==='raw.githubusercontent.com'&&!metadataFixture){await route.continue();return;}
      if(sha){await fulfillOriginal(route,sha);return;}await route.abort();
     });
     await auto.addInitScript(profile=>{localStorage.setItem('mb.profile',JSON.stringify(profile));localStorage.setItem('mb.shuffle','true')},playbackProfile);
@@ -303,12 +318,13 @@ const server=http.createServer(async(req,res)=>{
      return {full:MusicBoxMix.inspectPair(current,next.id).cue?.measuredFullBeat===true,
       partial:MusicBoxMix.inspectPair(current,next.id).cue?.metricalRhythmic===true,manualQueue:state.manualCount,poolRespected:MusicBoxBridge.mixShufflePool().some(t=>t.id===next.id)};
     });
-    assert.equal(automaticShuffle.full,playbackProfile==='Emanuele');if(playbackProfile==='Ste')assert.equal(automaticShuffle.partial,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
+    assert.equal(automaticShuffle.full,playbackProfile==='Emanuele'||completeSte);if(playbackProfile==='Ste'&&!completeSte)assert.equal(automaticShuffle.partial,true);assert.equal(automaticShuffle.manualQueue,0);assert.equal(automaticShuffle.poolRespected,true);
     await autoContext.close();
     results.push({browser:name,profile:playbackProfile,indexSha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'dj-deep-analysis.json'))).digest('hex'),decodedOriginalMixes:decoded,resampled,actualNativeHandoff:state,
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
-     optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,physicalIPhone:false});
+     optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,
+     completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));

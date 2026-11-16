@@ -20,6 +20,19 @@ on:
         type: choice
         options: [ubuntu-latest, macos-latest]
         default: ubuntu-latest
+      ste_case:
+        description: 'Keep the legacy partial regression distinct from the new personal-library complete pair'
+        type: choice
+        options: [legacy-partial, complete-personal]
+        default: legacy-partial
+      metadata_prefix_probe:
+        description: 'Diagnostic only: add the proven metadata frame without changing original audio frame payloads'
+        type: boolean
+        default: false
+      metadata_fixture_transport:
+        description: 'Diagnostic A/B control: fulfill identical original bytes over the same transport used by the prefix probe'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -81,6 +94,9 @@ jobs:
     env:
       MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
       MUSICBOX_COMPOSITE_PROFILE: ${{ matrix.profile }}
+      MUSICBOX_STE_CASE: ${{ inputs.ste_case || 'legacy-partial' }}
+      MUSICBOX_METADATA_PREFIX_PROBE: ${{ inputs.metadata_prefix_probe || false }}
+      MUSICBOX_METADATA_FIXTURE_TRANSPORT: ${{ inputs.metadata_fixture_transport || false }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

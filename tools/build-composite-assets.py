@@ -45,7 +45,7 @@ def main():
             subprocess.run(common+['--plans='+str(pathlib.Path(args.plans).resolve()),'--report='+str(initial)],check=False)
             rows=json.loads(initial.read_text(encoding='utf8'))['results'];retry=[];indices=[]
             for i,(p,row) in enumerate(zip(plans,rows)):
-                if not p['cue'].get('stretchProfile') and row.get('error') in ('Stretch timing failed','Post-render rhythm certificate failed'):
+                if not p['cue'].get('stretchProfile') and p['cue'].get('structuralEvidence',{}).get('incomingWholeOverlap',{}).get('clear') is True and row.get('error') in ('Stretch timing failed','Post-render rhythm certificate failed'):
                     retry.append({**p,'cue':{**p['cue'],'stretchProfile':'transient-60-12-8-v1'}});indices.append(i)
                 row['stretchProfileAttempts']=[{'profile':p['cue'].get('stretchProfile','auto'),'error':row.get('error')}]
             if retry:

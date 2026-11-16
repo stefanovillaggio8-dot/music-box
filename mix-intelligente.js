@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=9",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=10",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2885,7 +2885,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
     p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic)||rhythmic&&!tailValid||
     (exact?!exactValid:r?.exactSilentSuffix!=null||r?.beatVerificationSeconds!=null)||
-    (p.stretchProfile!=null&&p.stretchProfile!=='transient-60-12-8-v1')||p.stretchProfile!==c?.stretchProfile||
+    (p.stretchProfile!=null&&(p.stretchProfile!=='transient-60-12-8-v1'||!incomingQuiet))||p.stretchProfile!==c?.stretchProfile||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
     p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(p.preservedEntrance)||
     p.preservedEntrance==='vocal-handoff-foreground-v1'&&!separated||
