@@ -3899,13 +3899,13 @@
    },
    "[\"l'anima\",\"madame\"]": {
     "v": 2,
-    "s": 396,
+    "s": 460,
     "t": "l'anima",
     "a": "madame"
    },
    "m:2026-11|[\"l'anima\",\"madame\"]": {
     "v": 2,
-    "s": 396,
+    "s": 460,
     "t": "l'anima",
     "a": "madame"
    },
@@ -10120,8 +10120,8 @@
     "a": "MOSTRO"
    },
    "[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 6,
-    "s": 262,
+    "v": 7,
+    "s": 270,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    },
@@ -10258,8 +10258,8 @@
     "a": "Coez"
    },
    "m:2026-11|[\"con te partirò\",\"andrea bocelli\"]": {
-    "v": 5,
-    "s": 260,
+    "v": 6,
+    "s": 268,
     "t": "Con Te Partirò",
     "a": "Andrea Bocelli"
    },
