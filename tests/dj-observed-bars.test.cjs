@@ -3,6 +3,13 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const root=path.resolve(__dirname,'..'),source=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
 const {engine,tracks}=new Function('require','__dirname',source.slice(0,source.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks}')(require,path.join(root,'tools'));
 const entries=new Map(tracks);
+test('the installed original-source pair is usable through its actual native receipts and stays partial',()=>{
+ const a=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3'),p=engine.transition(a,b,a.duration);
+ assert.equal(p?.metricalPickupWindow,true);assert.equal(p.measuredFullBeat,false);assert.equal(p.metricalRhythmic,true);
+ assert.equal(engine.desktopBeatPairCertified(a,b,p),true);
+ assert.equal(p.composite.nativeDecoderProof.assetSha256,p.composite.sha256);
+ for(const rate of [44100,48000])assert.deepEqual(p.composite.nativeDecoderProof.rates[rate].browsers,['chromium','webkit']);
+});
 function fixture(){
  const originalA=entries.get('audio/songs/track-166.mp3'),b=entries.get('audio/songs/track-181.mp3');
  const original=originalA.structuralBeatPlans[b.sha],p=structuredClone(original.cue);
