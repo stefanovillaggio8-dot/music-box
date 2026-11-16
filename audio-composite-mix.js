@@ -37,6 +37,8 @@ function supports(cue){
   (!cue.preservedFileTail||cue.entry===0&&cue.nativeTailFullBeat===true&&cue.preserveTail===true&&
    c.outgoingEnvelope==='unity-through-decoded-eof-v1'&&finite(c.sourceReadThrough)&&Math.abs(c.sourceReadThrough-cue.end)<=.1)&&
   (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true)&&
+  (!cue.metricalPickupWindow||cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
+   cue.preservedEntrance==='metrical-pickup-033-v1'&&c.renderedEntrance===cue.preservedEntrance&&c.releaseSeconds===1.5&&!!c.nativeDecoderProof)&&
   (!c.nativeDecoderProof||c.nativeDecoderProof.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
    [44100,48000].every(rate=>{const p=c.nativeDecoderProof.rates?.[rate];return p&&
     [p.samplePeak,p.overlapPeak].every(finite)&&p.samplePeak>0&&p.samplePeak<=.9992&&p.overlapPeak>=0&&p.overlapPeak<=.962&&

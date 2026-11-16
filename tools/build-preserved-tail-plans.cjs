@@ -3,7 +3,7 @@
 // content skip. Candidate data alone never authorizes runtime playback.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {placements}=require('./pcm-affine-placements.cjs');
-const {metricalFit}=require('./pcm-metrical-fit.cjs');
+const {metricalFit,observedBarMetricalFit}=require('./pcm-metrical-fit.cjs');
 const {shortlist}=require('./shortlist-musical-windows.cjs');
 const {vocalHandoff}=require('./pcm-vocal-handoff.cjs');
 const {rhythmicTail}=require('./pcm-rhythmic-tail.cjs');
@@ -105,7 +105,7 @@ for(const a of prepared)for(const b of prepared){
  for(const x of a.source)for(const y of b.target){
   if(x.meter!==y.meter){excluded('meter');continue;}if(x.bars!==y.bars){excluded('barSpan');continue;}reached.add('meterAndSpan');
   const pairOut=x.observed||a.outro,pairIn=y.observed||b.intro;
-  if(partial&&(a.raw.duration-x.end>.65||y.start>1.5))continue;
+  if(partial&&a.raw.duration-x.end>.65)continue;
   const ratio=(y.end-y.start)/(x.end-x.start);if(ratio<.95||ratio>1.05){
    if(diagnose){for(const factor of [.5,2])if(ratio*factor>=.95&&ratio*factor<=1.05){
     const key=a.key+'|'+b.key,previous=octavePairs.get(key),cost=Math.abs(Math.log(ratio*factor));
@@ -145,7 +145,8 @@ for(const a of prepared)for(const b of prepared){
      observed:pairIn.beats.filter(t=>t>=0&&t<=fade*rate-.12)}});
    const ending=tailWindows&&!partial&&!full&&!zeroFit?rhythmicTail(pairOut,begin,fade,x.end):null;
    const windowFit=ending?engine.pcmFullBeatFit(pairOut,pairIn,begin,0,rate,ending.seconds):null;
-   const fit=partial?(!full&&metricalFit(pairOut,pairIn,x,y,begin,rate)):(full||zeroFit||windowFit);if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
+   const fit=partial?(!full&&((y.start<=1.5&&metricalFit(pairOut,pairIn,x,y,begin,rate))||
+    observedBarMetricalFit(pairOut,pairIn,x,y,begin,rate,sourceDown,targetDown))):(full||zeroFit||windowFit);if(!fit){excluded(diagnosis.reason||'independentBeatFit');continue;}
    let windowHarmony=!zeroFit&&windowFit?(engine.pcmFullHarmony(pairOut,pairIn,begin,0,rate,fade)||engine.pcmPreservedTailHarmony(pairOut,pairIn,begin,rate,fade,'rhythmic-tail-foreground-v1',ending.seconds+.3)):h;
    if(zeroFit&&incomingClear&&allowHandoff){
     const foreground=vocalHandoff(a.e,b.e,a.raw,b.raw,begin,end,rate,clear);
@@ -153,7 +154,8 @@ for(const a of prepared)for(const b of prepared){
     if(verified){handoff=foreground;windowHarmony=verified;}
    }
    if(!windowHarmony){excluded('tailForegroundHarmony');continue;}
-   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,
+   const observedBarPartial=fit.metricalCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2';
+   choices.push({begin,end,fade,entry:0,tempo:rate,fit,harmony:windowHarmony,sourceWindow:x,targetWindow:y,observedBarPartial,
     complete:!partial&&!!(full||zeroFit),...(windowFit?{rhythmicTail:ending}:{}),incomingGuard:guard,outgoingGuard,
     vocalOverlapPolicy:handoff?'separated-vocal-handoff-v1':incomingClear?'instrumental-incoming-v1':'instrumental-outgoing-v1',vocalHandoff:handoff,downbeatRms:rms,sourceObservedDownbeats:sourceDown,targetObservedDownbeats:targetDown,pairOut,pairIn,
     ...(zeroFit?{exactSilentSuffix:{...silence,beatVerificationSeconds:silentSeconds}}:{})});
@@ -167,9 +169,9 @@ for(const a of prepared)for(const b of prepared){
   for(const [number,c] of selected.entries()){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
    const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial&&!c.rhythmicTail,metricalRhythmic:partial||!!c.rhythmicTail,
-    ...(c.rhythmicTail?{rhythmicTailWindow:true}:{}),
+    ...(c.rhythmicTail?{rhythmicTailWindow:true}:{}),...(c.observedBarPartial?{metricalPickupWindow:true}:{}),
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
-    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.rhythmicTail?'rhythmic-tail-foreground-v1':c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
+    begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.observedBarPartial?'metrical-pickup-033-v1':c.rhythmicTail?'rhythmic-tail-foreground-v1':c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,
     sourceTempoBpm:60*x.bars*x.meter/(x.end-x.start),targetTempoBpm:60*y.bars*y.meter/(y.end-y.start),
     nominalTempo:(y.end-y.start)/(x.end-x.start),nativeRatePreferred:c.tempo===1&&fit.rms<=.025,
@@ -177,7 +179,7 @@ for(const a of prepared)for(const b of prepared){
     measuredBeatCount:fit.beats,beatPulseAgreement:fit.ratio,measuredPlacementError:fit.rms,
     grooveScore:fit.score,score:fit.score,fullOnsetFirst:fit.firstHalf,fullOnsetSecond:fit.secondHalf,
     measuredPulseMode:fit.observedPulses,fullPulseFirst:fit.firstBeats,fullPulseSecond:fit.secondBeats,fullPulseAttackSupport:fit.attackSupport,
-    harmonicEvidence:h,harmonicMode:h.compatibleKey?'compatible-key':h.percussiveIntro?'percussion':'local-chords',
+    harmonicEvidence:c.observedBarPartial&&h.method==='pcm-key-with-quiet-frame-bound-v1'?{...h,incomingEnvelope:'metrical-pickup-033-v1'}:h,harmonicMode:h.compatibleKey?'compatible-key':h.percussiveIntro?'percussion':'local-chords',
     percussiveIntro:!!h.percussiveIntro,harmonicScore:h.average,harmonicWeakest:h.weakest,
     structuralEvidence:{version:1,...(c.exactSilentSuffix?{exactSilentSuffix:c.exactSilentSuffix}:{}),...(x.analysisView||y.analysisView?{edgeAnalysisViews:{source:x.analysisView||'original',target:y.analysisView||'original'}}:{}),bars:x.bars,beatsPerBar:x.meter,sourcePhaseConfidence:x.phase,targetPhaseConfidence:y.phase,
      ...(partial?{metricalCertificate:fit.metricalCertificate}:{}),

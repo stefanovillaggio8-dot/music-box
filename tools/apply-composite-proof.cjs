@@ -12,6 +12,10 @@ for(const row of report.results){
  if(p.rhythmicTailWindow&&(p.measuredFullBeat!==false||p.metricalRhythmic!==true||
    p.preservedEntrance!=='rhythmic-tail-foreground-v1'||c.resampledCommonProof?.assetSha256!==c.sha256||
    c.resampledCommonProof?.sampleRate!==44100||c.resampledCommonProof?.rhythm?.accepted!==true))throw Error('Missing actual common resampling proof');
+ if(p.metricalPickupWindow&&(p.measuredFullBeat!==false||p.metricalRhythmic!==true||p.rhythmicTailWindow===true||
+  p.preservedEntrance!=='metrical-pickup-033-v1'||c.renderedEntrance!==p.preservedEntrance||c.releaseSeconds!==1.5||
+  c.resampledCommonProof?.assetSha256!==c.sha256||c.resampledCommonProof?.rhythm?.mode!=='metrical-rhythmic'||c.resampledCommonProof.rhythm.accepted!==true||
+  !Number.isFinite(c.levelContinuity?.changeDb)||Math.abs(c.levelContinuity.changeDb)>3))throw Error('Missing observed-bar pickup render proof');
  if(p.structuralBeat){
   if(c.rhythmVerified!==true||c.postRenderRhythm?.accepted!==true)throw Error('Missing actual rendered rhythm proof');
   if(p.structuralEvidence?.exactSilentSuffix&&(p.measuredFullBeat!==true||p.metricalRhythmic!==false||

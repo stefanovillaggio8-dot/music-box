@@ -124,7 +124,7 @@ def main():
         return
     for p in plans:
         cue=p['cue']
-        original_peak=None;incoming_peak=None;post_rhythm=None
+        original_peak=None;incoming_peak=None;post_rhythm=None;resampled_proof=None
         try:
             a=audit.source(p['from'],cue['sourceSha'],cache);b=audit.source(p['to'],cue['targetSha'],cache)
             exact=cue.get('structuralEvidence',{}).get('exactSilentSuffix')
@@ -185,7 +185,7 @@ def main():
                         post_rhythm['accepted']=post_rhythm['accepted'] and post_rhythm['exactSilentSuffix']['accepted']
                     if not post_rhythm['accepted']:raise ValueError('Post-render rhythm certificate failed')
                 resampled_proof=None
-                if (cue.get('rhythmicTailWindow') or cue.get('structuralEvidence',{}).get('exactSilentSuffix')) and args.rate==48000:
+                if (cue.get('rhythmicTailWindow') or cue.get('metricalPickupWindow') or cue.get('structuralEvidence',{}).get('exactSilentSuffix')) and args.rate==48000:
                     # Safari decodes/resamples this deployed 48 kHz FLAC. It
                     # does NOT rerun SoundTouch at 44.1 kHz. Certify that actual
                     # path, including the encoded mixed signal and both audible
@@ -197,7 +197,7 @@ def main():
                     if cue.get('rhythmicTailWindow'):
                         proof44['tailEvidence']=rhythm.tail_evidence(raw44,44100,cue,proof['preRoll'])
                         proof44['accepted']=proof44['accepted'] and proof44['tailEvidence']['accepted']
-                    else:
+                    elif cue.get('structuralEvidence',{}).get('exactSilentSuffix'):
                         proof44['exactSilentSuffix']=rhythm.exact_silence_evidence(raw44,44100,cue,proof['preRoll'])
                         proof44['accepted']=proof44['accepted'] and proof44['exactSilentSuffix']['accepted']
                     try:
@@ -224,6 +224,9 @@ def main():
                     'pitchPreserved':True,'timingVerified':True,'renderedFromOriginals':True,
                     'handoffPosition':proof['handoffPosition'],'sampleRate':args.rate}
                 composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','releaseSeconds','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
+                if cue.get('metricalPickupWindow'):
+                    if args.release_seconds!=1.5:raise ValueError('Metrical pickup requires the verified slow native reveal')
+                    composite['renderedEntrance']=cue['preservedEntrance']
                 if 'gainProof' in proof:composite['gainProof']=proof['gainProof']
                 if cue.get('preservedFileTail'):
                     composite.update({k:proof[k] for k in ('sourceReadThrough','outgoingEnvelope')})
@@ -245,7 +248,8 @@ def main():
         except Exception as error:
             message=str(error).split('Error: ')[-1].splitlines()[0]
             results.append({'from':p['from'],'to':p['to'],'candidateCue':cue,'primary':p.get('primary'),
-                'error':message,'originalPeak':original_peak,'incomingPeak':incoming_peak,'postRenderRhythm':post_rhythm})
+                'error':message,'originalPeak':original_peak,'incomingPeak':incoming_peak,'postRenderRhythm':post_rhythm,
+                'resampledCommonAttempt':resampled_proof})
             print('ERROR',p['from'],p['to'],message,flush=True)
         pathlib.Path(args.report).write_text(json.dumps({'requested':len(plans),'rendered':sum('cue'in r for r in results),'results':results},indent=2)+'\n')
 

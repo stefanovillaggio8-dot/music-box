@@ -1,6 +1,20 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 
+test('a partial metrical pickup preserves source samples and completes its smooth reveal before native adoption',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,
+  measuredFullBeat:false,metricalRhythmic:true,metricalPickupWindow:true,preservedEntrance:'metrical-pickup-033-v1',renderReleaseSeconds:1.5};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>new Float32Array(Math.round(5.3*sr)).fill(.2))};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>new Float32Array(sr*10).fill(.3))};
+ const r=compositePCM(outgoing,incoming,cue),sample=t=>r.components.incoming[0][Math.round((t+.3)*sr)];
+ assert.ok(Math.abs(sample(4.9)-.099)<1e-6);assert.ok(sample(5.5)<.16);
+ assert.ok(Math.abs(sample(6.5)-.3)<1e-6);assert.ok(r.nativeRevealAt>=6.5);
+ assert.equal(r.outgoingEnvelope,'unity-through-decoded-eof-v1');
+ assert.ok(Math.abs(r.components.outgoing[0][Math.round(5.29*sr)]-.2)<1e-6);
+ assert.throws(()=>compositePCM(outgoing,incoming,{...cue,measuredFullBeat:true}),/pickup envelope/);
+});
+
 test('a measured vocal gap brings the incoming voice to native level before EOF without a final level reset',async()=>{
  const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
  const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,

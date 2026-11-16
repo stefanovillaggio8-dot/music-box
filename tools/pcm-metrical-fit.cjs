@@ -24,4 +24,24 @@ function metricalFit(outro,intro,x,y,begin,rate){
   rms:rms(shared),score:1-rms(grid)/.10,firstHalf:null,secondHalf:null,observedPulses:false,
   firstBeats:counts.slice(0,counts.length/2).reduce((s,n)=>s+n,0),secondBeats:counts.slice(counts.length/2).reduce((s,n)=>s+n,0),attackSupport:1,metricalCertificate:certificate};
 }
-module.exports={metricalFit};
+// A neural phase timestamp is not the actual attack. Use independently
+// observed bar anchors without changing any inter-recording timing bound.
+function observedBarMetricalFit(outro,intro,x,y,begin,rate,sourceBars,targetBars){
+ if(![sourceBars,targetBars].every(v=>Array.isArray(v)&&v.length===x.bars)||x.bars!==y.bars)return null;
+ const rms=v=>Math.sqrt(v.reduce((s,n)=>s+n*n,0)/v.length);
+ const shifts=[...sourceBars.map((t,i)=>t-x.downbeats[i]),...targetBars.map((t,i)=>t-y.downbeats[i])];
+ if(!shifts.every(Number.isFinite)||shifts.some(d=>Math.abs(d)>.075))return null;
+ const errors=sourceBars.map((t,i)=>t-begin-targetBars[i]/rate);
+ if(rms(errors)>.025||errors.some(d=>Math.abs(d)>.05))return null;
+ const peak=(p,t)=>Math.max(...[-.02,0,.02].map(d=>p.onset[Math.round((t+d-p.start)/p.step)]||0));
+ if(sourceBars.some(t=>peak(outro,t)<.35)||targetBars.some(t=>peak(intro,t)<.35))return null;
+ const fit=metricalFit(outro,intro,{...x,downbeats:[...sourceBars,x.end]},
+  {...y,downbeats:[...targetBars,y.end]},begin,rate);
+ if(!fit)return null;
+ return {...fit,metricalCertificate:{...fit.metricalCertificate,
+  method:'observed-bar-anchors-metrical-hypotheses-v2',
+  maximumModelAnchorRefinement:Math.max(...shifts.map(Math.abs)),
+  observedBarPairRms:rms(errors),observedBarPairMaximum:Math.max(...errors.map(Math.abs)),
+  originalModelAnchorsRetained:true}};
+}
+module.exports={metricalFit,observedBarMetricalFit};

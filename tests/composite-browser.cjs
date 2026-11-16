@@ -6,6 +6,7 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
 const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
 const completeSte=process.env.MUSICBOX_STE_CASE==='complete-personal';
+const pickupSte=process.env.MUSICBOX_STE_CASE==='observed-bars-partial';
 const uniqueSourceProbe=process.env.MUSICBOX_NATIVE_UNIQUE_URL_PROBE==='true';
 const injectProvisionalMetadata=process.env.MUSICBOX_INJECT_PROVISIONAL_METADATA==='true';
 function nativeMetadataFault(){
@@ -188,7 +189,7 @@ const server=http.createServer(async(req,res)=>{
      HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);return play.apply(this,arguments)};
     },playbackProfile);
     await shell.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'domcontentloaded'});
-    const bridgeSource=playbackProfile==='Ste'?(completeSte?'b-track-705':'b-track-4'):'b-track-934';
+    const bridgeSource=playbackProfile==='Ste'?(pickupSte?'b-track-166':completeSte?'b-track-705':'b-track-4'):'b-track-934';
     // The initial BUILTIN list precedes loadAll(). A first arbitrary entry
     // can disappear when published deletions arrive (Ste's track-1 did).
     // Use a verified, still-visible source from this exact profile.
@@ -218,21 +219,21 @@ const server=http.createServer(async(req,res)=>{
     const silentBridge=await shell.evaluate(()=>({muted:MusicBoxBridge.audio().muted,lastPlayWasMuted:__nativePlayMutes.at(-1)}));
     assert.equal(silentBridge.muted,true);assert.equal(silentBridge.lastPlayWasMuted,true);
     await shell.waitForFunction(()=>MusicBoxMix.diagnostics().deepIndexLoaded,{timeout:20000});
-    const actualPlan=await shell.evaluate(({plans,profile,completeSte})=>{
+    const actualPlan=await shell.evaluate(({plans,profile,completeSte,pickupSte})=>{
      // A published copy belongs to the active personal library although its
      // original recording retains the source profile in t.profile.
      const tracks=MusicBoxBridge.playable(),find=key=>tracks.find(t=>'audio/'+t.file===key);
      for(const p of plans){
-      if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow)continue;
+      if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow&&!p.cue.metricalPickupWindow)continue;
       const a=find(p.from),b=find(p.to);
       if(!a||!b)continue;
-      if(profile==='Ste'&&(completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
+      if(profile==='Ste'&&(pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
      }
      return null;
-    },{profile:playbackProfile,completeSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
+    },{profile:playbackProfile,completeSte,pickupSte,plans:plans.map(p=>({...p,to:catalog.get(p.toSha)})).sort((a,b)=>
      Number(b.from==='audio/songs/track-934.mp3'&&b.to==='audio/songs/track-1124.mp3')-
      Number(a.from==='audio/songs/track-934.mp3'&&a.to==='audio/songs/track-1124.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
@@ -356,7 +357,7 @@ const server=http.createServer(async(req,res)=>{
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
      optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,
-     completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,diagnosticUniqueSourceUrl:uniqueSourceProbe,diagnosticInjectedProvisionalMetadata:injectProvisionalMetadata,physicalIPhone:false});
+     completePersonalSte:completeSte,observedBarsPartialSte:pickupSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,diagnosticUniqueSourceUrl:uniqueSourceProbe,diagnosticInjectedProvisionalMetadata:injectProvisionalMetadata,physicalIPhone:false});
     }
    }finally{await browser.close()}
   }

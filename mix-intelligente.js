@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=10",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=11",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2818,8 +2818,38 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  const e=p?.structuralEvidence,c=p?.composite,h=p?.harmonicEvidence,r=c?.postRenderRhythm,g=e?.incomingWholeOverlap;
  const strict=p?.measuredFullBeat===true&&p?.metricalRhythmic===false&&p?.rhythmicTailWindow!==true;
  const rhythmic=p?.measuredFullBeat===false&&p?.metricalRhythmic===true&&p?.rhythmicTailWindow===true;
+ const pickup=p?.measuredFullBeat===false&&p?.metricalRhythmic===true&&p?.metricalPickupWindow===true&&p?.rhythmicTailWindow!==true;
  const w=e?.rhythmicWindow,t=r?.tailEvidence;
  const resampled=c?.resampledCommonProof,rr=resampled?.rhythm;
+ const pickupRendered=v=>v?.method==='rendered-hpss-attacks-v1'&&v.mode==='metrical-rhythmic'&&v.accepted===true&&
+  [v.matches,v.rmsSeconds,v.downbeatRmsSeconds,v.maximumDownbeatError].every(Number.isFinite)&&
+  v.matches>=8&&v.rmsSeconds>=0&&v.rmsSeconds<=.020&&v.downbeatsVerified===true&&v.downbeatMatches===e.bars&&
+  v.downbeatRmsSeconds>=0&&v.downbeatRmsSeconds<=.025&&v.maximumDownbeatError>=0&&v.maximumDownbeatError<=.05&&
+  Array.isArray(v.sharedPerBar)&&v.sharedPerBar.length===e.bars&&v.sharedPerBar.every(n=>Number.isInteger(n)&&n>=2);
+ const pickupCertificate=e?.metricalCertificate;
+ const pickupAnchors=pickup&&Array.isArray(e.sourceObservedDownbeats)&&Array.isArray(e.targetObservedDownbeats)&&
+  e.sourceObservedDownbeats.length===e.bars&&e.targetObservedDownbeats.length===e.bars&&
+  Array.isArray(e.sourceModelDownbeats)&&Array.isArray(e.targetModelDownbeats)&&
+  e.sourceModelDownbeats.length===e.bars+1&&e.targetModelDownbeats.length===e.bars+1&&
+  [e.sourceObservedDownbeats,e.targetObservedDownbeats,e.sourceModelDownbeats,e.targetModelDownbeats].every(v=>v.every((n,i)=>Number.isFinite(n)&&(!i||n>v[i-1])))&&
+  e.sourceObservedDownbeats.every((t,i)=>Math.abs(t-e.sourceModelDownbeats[i])<=.075&&Math.abs(t-p.begin-e.targetObservedDownbeats[i]/p.tempo)<=.05)&&
+  e.targetObservedDownbeats.every((t,i)=>Math.abs(t-e.targetModelDownbeats[i])<=.075);
+ const pickupValid=pickup&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
+  pickupCertificate.originalModelAnchorsRetained===true&&
+  [pickupCertificate.gridRms,pickupCertificate.gridMaximum,pickupCertificate.observedSharedRms,pickupCertificate.observedShared,
+   pickupCertificate.minimumSharedPerBar,pickupCertificate.observedDownbeats,pickupCertificate.modelGridPoints,
+   pickupCertificate.maximumModelAnchorRefinement,pickupCertificate.observedBarPairRms,pickupCertificate.observedBarPairMaximum].every(Number.isFinite)&&
+  pickupCertificate.gridRms>=0&&pickupCertificate.gridRms<=.025&&pickupCertificate.gridMaximum>=0&&pickupCertificate.gridMaximum<=.05&&
+  pickupCertificate.observedSharedRms>=0&&pickupCertificate.observedSharedRms<=.020&&pickupCertificate.observedShared>=8&&
+  pickupCertificate.minimumSharedPerBar>=2&&pickupCertificate.observedDownbeats===e.bars&&pickupCertificate.modelGridPoints===e.bars*e.beatsPerBar&&
+  pickupCertificate.maximumModelAnchorRefinement>=0&&pickupCertificate.maximumModelAnchorRefinement<=.075&&
+  pickupCertificate.observedBarPairRms>=0&&pickupCertificate.observedBarPairRms<=.025&&pickupCertificate.observedBarPairMaximum>=0&&pickupCertificate.observedBarPairMaximum<=.05&&
+  p.preservedEntrance==='metrical-pickup-033-v1'&&c?.renderedEntrance===p.preservedEntrance&&c.releaseSeconds===1.5&&
+  c.envelopeVersion===4&&c.sampleRate===48000&&c.nativeDecoderProof?.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
+  [44100,48000].every(rate=>{const v=c.nativeDecoderProof.rates?.[rate];return v&&[v.samplePeak,v.overlapPeak].every(Number.isFinite)&&v.samplePeak>0&&v.samplePeak<=.9992&&v.overlapPeak>=0&&v.overlapPeak<=.962&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')})&&
+  pickupRendered(r)&&resampled?.method==='encoded-common-resampling-v1'&&resampled.sampleRate===44100&&resampled.assetSha256===c.sha256&&
+  [resampled.samplePeak,resampled.oversampledPeak,resampled.oversampledOverlapPeak].every(Number.isFinite)&&resampled.samplePeak>0&&resampled.samplePeak<=.9992&&resampled.oversampledPeak<=1&&resampled.oversampledOverlapPeak<=.961&&pickupRendered(rr)&&
+  c.levelContinuity?.method==='rendered-half-second-eof-rms-v1'&&Number.isFinite(c.levelContinuity.changeDb)&&Math.abs(c.levelContinuity.changeDb)<=3;
  const exact=e?.exactSilentSuffix;
  const exactRendered=(render,rate)=>{
   const tail=render?.exactSilentSuffix;
@@ -2883,23 +2913,24 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
-    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic)||rhythmic&&!tailValid||
+    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic&&!pickup)||p.metricalPickupWindow===true&&!pickup||rhythmic&&!tailValid||pickup&&!pickupValid||
     (exact?!exactValid:r?.exactSilentSuffix!=null||r?.beatVerificationSeconds!=null)||
     (p.stretchProfile!=null&&(p.stretchProfile!=='transient-60-12-8-v1'||!incomingQuiet))||p.stretchProfile!==c?.stretchProfile||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||
-    p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1'].includes(p.preservedEntrance)||
+    p.preservedEntrance!=null&&!['first-attack-033-v1','vocal-handoff-foreground-v1','rhythmic-tail-foreground-v1','metrical-pickup-033-v1'].includes(p.preservedEntrance)||
+    p.preservedEntrance==='metrical-pickup-033-v1'&&!pickup||
     p.preservedEntrance==='vocal-handoff-foreground-v1'&&!separated||
     p.preservedEntrance==='rhythmic-tail-foreground-v1'&&!rhythmic||
     a.durationMismatch||b.durationMismatch||!Number.isFinite(dur)||Math.abs(dur-a.duration)>1.5||
     p.sourceSha!==a.sha||p.targetSha!==b.sha||p.entry!==0||p.vocalFadeSeconds!==0||p.gain!==1||
     ![p.begin,p.end,p.fade,p.tempo,p.measuredBeatCount,p.beatPulseAgreement,p.measuredPlacementError,p.grooveScore].every(Number.isFinite)||
-    ![p.fullOnsetFirst,p.fullOnsetSecond].every(Number.isFinite)||
+    !pickup&&![p.fullOnsetFirst,p.fullOnsetSecond].every(Number.isFinite)||
     p.measuredPulseMode&&![p.fullPulseFirst,p.fullPulseSecond,p.fullPulseAttackSupport].every(Number.isFinite)||
     p.begin<26||p.fade<4.5||p.fade>16||Math.abs(p.end-a.duration)>.001||Math.abs(p.end-p.begin-p.fade)>.001||
     p.tempo<.95||p.tempo>1.05||p.entry+p.fade*p.tempo>b.duration-2||
-    !Number.isInteger(p.measuredBeatCount)||p.measuredBeatCount<8||p.beatPulseAgreement<.9||p.beatPulseAgreement>1||p.measuredPlacementError<0||p.measuredPlacementError>.040||p.grooveScore<.36||
-    (p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.9):
-     p.fullOnsetFirst<.22||p.fullOnsetSecond<.22)||
+    !Number.isInteger(p.measuredBeatCount)||p.measuredBeatCount<8||p.beatPulseAgreement<0||!pickup&&p.beatPulseAgreement<.9||p.beatPulseAgreement>1||p.measuredPlacementError<0||p.measuredPlacementError>(pickup?.020:.040)||p.grooveScore<.36||
+    (!pickup&&(p.measuredPulseMode?(p.measuredBeatCount<12||p.beatPulseAgreement<.95||p.measuredPlacementError>.025||p.fullPulseFirst<5||p.fullPulseSecond<5||p.fullPulseAttackSupport<.9):
+     p.fullOnsetFirst<.22||p.fullOnsetSecond<.22))||
     e?.version!==1||![2,4,8,16].includes(e.bars)||![3,4,5].includes(e.beatsPerBar)||
     ![e.sourcePhaseConfidence,e.targetPhaseConfidence,e.downbeatRms].every(Number.isFinite)||
     e.sourcePhaseConfidence<.8||e.targetPhaseConfidence<.8||e.sourcePhaseConfidence>1||e.targetPhaseConfidence>1||e.downbeatRms<0||e.downbeatRms>.025||
@@ -2907,9 +2938,9 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
     c?.sourceSha!==a.sha||c.targetSha!==b.sha||c.pitchPreserved!==true||c.timingVerified!==true||
     ![c.peak,c.overlapPeak,c.oversampledPeak,c.sourceReadThrough].every(Number.isFinite)||c.peak>.9991||c.overlapPeak>.961||c.oversampledPeak>1||
     Math.abs(c.sourceReadThrough-a.duration)>.1||c.outgoingEnvelope!=='unity-through-decoded-eof-v1'||
-    c.rhythmVerified!==true||r?.method!=='rendered-hpss-attacks-v1'||r.accepted!==true||r.mode!==(rhythmic?'protected-tail-rhythm':'full-pcm')||
+    c.rhythmVerified!==true||r?.method!=='rendered-hpss-attacks-v1'||r.accepted!==true||r.mode!==(pickup?'metrical-rhythmic':rhythmic?'protected-tail-rhythm':'full-pcm')||
     ![r.matches,r.agreement,r.rmsSeconds,r.firstHalfMatches,r.secondHalfMatches,r.downbeatRmsSeconds,r.maximumDownbeatError,r.downbeatMatches].every(Number.isFinite)||
-    r.matches<8||r.agreement<.9||r.agreement>1||r.rmsSeconds<0||r.rmsSeconds>.04||r.firstHalfMatches<3||r.secondHalfMatches<3||r.downbeatsVerified!==true||
+    r.matches<8||r.agreement<0||!pickup&&r.agreement<.9||r.agreement>1||r.rmsSeconds<0||r.rmsSeconds>(pickup?.02:.04)||!pickup&&(r.firstHalfMatches<3||r.secondHalfMatches<3)||r.downbeatsVerified!==true||
     r.downbeatMatches!==e.bars||r.downbeatRmsSeconds>.025||r.maximumDownbeatError>.05)return null;
  if(!h||(h.percussiveIntro?!(h.tonalRatioMax<=.12&&h.tonalPeakMax<=.23&&h.measuredRmsMin>=.005&&h.frames>=6):
    h.compatibleKey?!(h.keyConfidence>=.70&&h.dissonanceMax<=.05&&h.rawDissonanceMax<=.45):!(h.average>=.78&&h.weakest>=.60)))return null;

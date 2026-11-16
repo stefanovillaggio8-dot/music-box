@@ -5,7 +5,7 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {chromium,webkit}=require('playwright'),root=path.resolve(__dirname,'..');
 const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json'),'utf8')),assets=new Map();
 for(const entry of Object.values(index.entries))for(const record of Object.values(entry.structuralBeatPlans||{}))
- for(const cue of record.cues||[record.cue])if((cue?.rhythmicTailWindow||cue?.structuralEvidence?.exactSilentSuffix)&&cue.composite)assets.set(cue.composite.sha256,cue.composite);
+ for(const cue of record.cues||[record.cue])if((cue?.rhythmicTailWindow||cue?.metricalPickupWindow||cue?.structuralEvidence?.exactSilentSuffix)&&cue.composite)assets.set(cue.composite.sha256,cue.composite);
 const name=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['chromium','webkit'].includes(name))throw Error('Select one native decoder');
 const server=http.createServer((req,res)=>{
  const url=new URL(req.url,'http://localhost');
