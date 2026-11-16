@@ -1,169 +1,178 @@
 {
-  "productCommit": "0b3806c5463153fe98fd64f29717395374536a60",
-  "runtimeCommit": "018a7af10ba48501dbca487f20fc5f94c264509b",
+  "baseline": "c0cac34523c904693a2e4adeb783fa9a8c8e878f",
+  "verifiedProductCommit": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+  "runtimeClockCommit": "061547977e71ecbc719d7bd5fbf4901a4756a34b",
   "fullSuite": {
-    "passed": 715,
+    "passed": 723,
     "failed": 0,
-    "run": 43887452385
+    "skipped": 0,
+    "run": 43938750108
   },
   "djSuite": {
-    "passed": 652,
+    "passed": 659,
     "failed": 0,
-    "run": 43887451335
+    "skipped": 0,
+    "run": 43938749562
   },
-  "normalLinuxMatrix": {
-    "passed": 7,
-    "failed": 0,
-    "run": 43886888289
+  "linuxNewPartialMatrix": {
+    "passedJobs": 7,
+    "failedJobs": 0,
+    "run": 43938097742
   },
-  "macOSMatrix": {
-    "run": 43886964116,
-    "status": "queued",
-    "completedJobs": 5,
-    "pendingJobs": 2,
-    "runnerAssignedToPendingJobs": false,
-    "countedAsPassed": false
+  "macOSIntelNewPartialMatrix": {
+    "passedJobs": 7,
+    "failedJobs": 0,
+    "run": 43938102887
   },
-  "isolatedBehaviorTests": {
-    "passed": 75,
+  "targetedTests": {
+    "passed": 27,
     "failed": 0
   },
-  "scopeAndContinuousTests": {
-    "passed": 7,
-    "failed": 0
+  "python": {
+    "structure": {
+      "passed": 8,
+      "failed": 0,
+      "logSha256": "6bfcb971259f4f8a74a730e0b358d7595ecc0d8a957d51b105dcb08a351ef976"
+    },
+    "protectedTail": {
+      "passed": 4,
+      "failed": 0,
+      "logSha256": "1b7c03a30117901bd20c755da8e4da9c7af5845834f1a390edf0fc938ccef07a"
+    },
+    "originalMp3Window": {
+      "passed": 1,
+      "failed": 0,
+      "logSha256": "b5a1f36ef9c740d115dd915dcb223ca9f4e343a4fce27d6895fb664155ddd6c1"
+    },
+    "karaokeCtcBoundaries": {
+      "passed": 3,
+      "failed": 0,
+      "logSha256": "7d4980533fb9ded4fe611c54f097468c3583a27125b4c3362d7bfb3a3b399d3c"
+    }
   },
-  "renderedRejectedCandidates": {
-    "count": 4,
-    "accepted48000": 0,
-    "accepted44100": 0,
-    "deployed": 0
+  "fullPairAudit": {
+    "analyzedPairs": 1381800,
+    "errors": 0,
+    "allExistingFullPairsRetained": true
   },
-  "newStePairs": 0,
+  "finalPipeline": {
+    "requested": 1,
+    "rendered": 1,
+    "reproducesInstalledAssetSha256": true,
+    "rates": [
+      48000,
+      44100
+    ]
+  },
+  "newDistinctStePartialPairs": 1,
+  "newSteFullBeatmatches": 0,
   "karaokeAccuracyBenchmarkRerun": false,
   "previousKaraokeEvidencePreserved": true,
   "physicalIPhoneVerified": false,
   "humanListeningVerified": false,
+  "prSnapshot": {
+    "headRefOid": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+    "isDraft": true,
+    "mergeable": "CONFLICTING",
+    "url": "https://github.com/stefanovillaggio8-dot/music-box/pull/59"
+  },
   "workflows": [
     {
       "conclusion": "success",
-      "databaseId": 43887451323,
-      "headSha": "0b3806c5463153fe98fd64f29717395374536a60",
-      "name": "Karaoke and DJ regression checks",
+      "databaseId": 43938097742,
+      "headSha": "061547977e71ecbc719d7bd5fbf4901a4756a34b",
+      "name": "Common PCM mix Chromium and WebKit playback",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43887451323"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938097742"
     },
     {
       "conclusion": "success",
-      "databaseId": 43887451335,
-      "headSha": "0b3806c5463153fe98fd64f29717395374536a60",
-      "name": "DJ Mix regression tests",
+      "databaseId": 43938102887,
+      "headSha": "061547977e71ecbc719d7bd5fbf4901a4756a34b",
+      "name": "Common PCM mix Chromium and WebKit playback",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43887451335"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938102887"
     },
     {
       "conclusion": "success",
-      "databaseId": 43887452385,
-      "headSha": "0b3806c5463153fe98fd64f29717395374536a60",
+      "databaseId": 43938750108,
+      "headSha": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
       "name": "iPhone DJ WebKit foreground smoke",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43887452385"
-    },
-    {
-      "conclusion": "",
-      "databaseId": 43886964116,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "Common PCM mix Chromium and WebKit playback",
-      "status": "queued",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43886964116"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938750108"
     },
     {
       "conclusion": "success",
-      "databaseId": 43886894054,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "Verifica integrita Music Box",
+      "databaseId": 43938749562,
+      "headSha": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+      "name": "DJ Mix regression tests",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43886894054"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938749562"
     },
     {
       "conclusion": "success",
-      "databaseId": 43886888289,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "Common PCM mix Chromium and WebKit playback",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43886888289"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43886882956,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
+      "databaseId": 43938761988,
+      "headSha": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
       "name": "Desktop DJ Chromium playback smoke",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43886882956"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938761988"
     },
     {
       "conclusion": "success",
-      "databaseId": 43886877190,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "iPhone DJ WebKit foreground smoke",
+      "databaseId": 43938756072,
+      "headSha": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+      "name": "Verifica integrita Music Box",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43886877190"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938756072"
     },
     {
       "conclusion": "success",
-      "databaseId": 43885448235,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
+      "databaseId": 43938749180,
+      "headSha": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+      "name": "Music Box DJ independent raw-audio audit",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938749180"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43938749970,
+      "headSha": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
+      "name": "Karaoke and DJ regression checks",
+      "status": "completed",
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938749970"
+    },
+    {
+      "conclusion": "success",
+      "databaseId": 43938097772,
+      "headSha": "061547977e71ecbc719d7bd5fbf4901a4756a34b",
       "name": "Volume precision tests",
       "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43885448235"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43885448472,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "Music Box title display and original metadata regression",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43885448472"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43885448722,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "Karaoke and DJ regression checks",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43885448722"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43885448124,
-      "headSha": "018a7af10ba48501dbca487f20fc5f94c264509b",
-      "name": "DJ Mix regression tests",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43885448124"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43831638155,
-      "headSha": "c0cac34523c904693a2e4adeb783fa9a8c8e878f",
-      "name": "Karaoke and DJ regression checks",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43831638155"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43828767089,
-      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
-      "name": "iPhone DJ WebKit foreground smoke",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828767089"
-    },
-    {
-      "conclusion": "success",
-      "databaseId": 43828763137,
-      "headSha": "72907e26018a92022d7d23431b21c175bc1a936b",
-      "name": "Common PCM mix Chromium and WebKit playback",
-      "status": "completed",
-      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43828763137"
+      "url": "https://github.com/stefanovillaggio8-dot/music-box/actions/runs/43938097772"
     }
   ],
-  "allRequestedChecksComplete": false
+  "resolvedIntermediateFailures": [
+    {
+      "runs": [
+        43898901860
+      ],
+      "reason": "Diagnostic inspectPair omitted the nativeOriginalReturn flag; exposed the actual flag and retained the strict assertion."
+    },
+    {
+      "runs": [
+        43898908669,
+        43900917191,
+        43901567040,
+        43902080078
+      ],
+      "reason": "Linux WebKit retained authentic MP3 priming/padding; nominal gapless and raw native clocks differed. Fixed with original SHA-bound metadata and actual duration; no lag-search result accepted."
+    }
+  ],
+  "macOSArmCapacityAttempt": {
+    "run": 43886964116,
+    "passedJobs": 5,
+    "cancelledJobs": 2,
+    "applicationFailureDemonstrated": false,
+    "reason": "GitHub hosted runner was not acquired; explicit Intel runner used with identical assertions"
+  },
+  "notAllHistoricalRunsClaimedGreen": true
 }

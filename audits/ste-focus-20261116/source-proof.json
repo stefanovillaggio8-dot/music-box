@@ -1,9 +1,7 @@
 {
   "baseline": "c0cac34523c904693a2e4adeb783fa9a8c8e878f",
-  "testedProductCommit": "0b3806c5463153fe98fd64f29717395374536a60",
+  "productCommit": "4428b63c9f435c69d297dc7ebcf96afc0af45d14",
   "unchangedFromBaseline": {
-    "mix-intelligente.js": "4a0e30554cfe8bfde3ee2f7a6966ae7f7079207fe861c96e601288ae793a373d",
-    "dj-deep-analysis.json": "cb11b3d9ccc828fcaff8e5d4fd8bdcf81f082ff9ed85298adf89a7b0b171dad2",
     "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
     "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
     "lyrics.json": "9b0c381181e792f76561348e51bde7671377ed5fe65bd1fbd9bbd97bbacda669",
@@ -16,33 +14,26 @@
     "native-mp3-metadata.js": "5f2c2b23efb9efa8ee4491ecb91d4f66a793ae6c7b4c245f1b40f399afb17bd2",
     "native-mp3-metadata.json": "94b2f005c18986ba68f7c6a648a52e7d32323898a2e714953fa008453227ba4c"
   },
-  "changedRuntime": {
+  "changedProduct": {
     "app.js": "6b06ba86bc251a372932322d7925ec70dc9bce640184f812c8d91d5cfb090c4a",
-    "index.html": "6f6c89fccafa6bd89399e90f2babd7592c367010003014e7e8a70a5ed39a0c63",
-    "sw.js": "15774a43b50b8b8f2398d4b13600e3f6071944b8ebf5d9078d3ce8103a90649f"
+    "audio-composite-core.mjs": "129957b6215b44761756b1e18138fb0028a634ae4e6d81f0fd4dd8a5c9d9948c",
+    "audio-composite-mix.js": "0d033d31695c12832c1e473265e6a97ca91e061aef5197d2075085a7e76139b5",
+    "mix-intelligente.js": "28bcdd314e9a13ce2ca5cd3b18abff829bdbd34ae3d94bfb2600582e1783f08e",
+    "dj-deep-analysis.json": "2a6ed1d43f3d46a889fae1ac38e5fd40603c01f72ede9e5823fd1ef52959ad53",
+    "index.html": "d9d167a6c351d5bd1fbe2a1fc130e0c69a85c80295ed3d7021b9b825ea6e2830",
+    "sw.js": "159515f7561b7acca1358da0acae82a10efb1aa63d8693578a19c4bc4e5a3ff4"
   },
+  "allPreExistingAnalysisAndCueRecordsSemanticallyUnchanged": true,
+  "soleNewDirectedRecordingPair": [
+    "audio/songs/track-166.mp3",
+    "audio/songs/track-181.mp3"
+  ],
   "simulationToolSha256": "1f8e63da73217192d9d649ba06dc848ec15c3ed1632d544ee128d1f80cb6948f",
   "originalMp3Rewritten": false,
   "userDataModified": false,
   "phoneModelsAdded": false,
   "mainModified": false,
   "publicDeployment": false,
-  "objectiveNewStePairsAchieved": false,
-  "researchScriptsSha256": {
-    "diagnose-partial.cjs": "d8285392d6577685e7b66387ba6693e98ee876c2fe5a6ebc7f7b7139ecdaa36b",
-    "probe-delayed-metrical-tail.cjs": "748c4d101a340389951a6b272c87993e49d2f9a020bf466cc726d11b8869f0d2",
-    "probe-delayed-metrical.cjs": "e5a0b1964571ebf4f93b22f4e8d27898ece3958e7f83c7c1edad5906cdc7225a",
-    "probe-dual-tempo.cjs": "5a211823995ef836d62500ea637535780479161cffd2c3c9dd339d4127754f63",
-    "probe-ensemble.py": "ffc358378cda101229aa5dd21e6fac9b1be58cdf1942c2161f38955820d5fc37",
-    "probe-leading.py": "3cab7714ada96a40d90f6692e43f4ce4cd8b2403bd3830a2337806dbc391d1ce",
-    "probe-local-tempo.cjs": "74296dbedecaa3275119ff2891c6cdc959c01b9ca3e49dda945ca96adfc2c1d5",
-    "probe-metrical-tail.cjs": "7f888c8226381cdf6d64ffdffb50f62274ea59606d53e1675762d7d54061766d",
-    "probe-percussive-source.cjs": "8cac690650afd0b71774dc24851ef74069aa11dca74fcb587237ab3e2643594d",
-    "probe-prefix-plans.cjs": "db46f06a44d80b61ecaf16a045deabbcd28f3a0247f79c03fff32e718a8ce3dd",
-    "probe-second-model.py": "c82b9fd20fbfdce9b993b7ffb23620b7fdb81ba0d8d3377293f40c6bde1329af",
-    "probe-seed-plans.cjs": "de6f0d5f9af6fd2ef816db42dfae004956753a1d98267beccdecb211e7fa17fc",
-    "probe-subdivisions.cjs": "afaeca13b55095e1cb0fe4ac058fd384e7b6dbbbd1afc53dbd1c1846eb5875e7",
-    "render-rejected.py": "657549c26bd7dc967d6fe8457b673c2af65e04bc07c32919df52ae1e6ef1d996",
-    "select-model-sample.cjs": "73e988386fb674d18e122e9ae797b5edfc7905eb1ef7a8bb9f4b4a5ecd260366"
-  }
+  "newSteDistinctPartialPairs": 1,
+  "newSteCompletePairs": 0
 }

@@ -1,6 +1,5 @@
 {
   "notPlaybackCertificates": true,
-  "qualityGatesNotChangedInProduct": true,
   "modelsOfflineOnly": true,
   "secondModel": {
     "name": "Beat This final1",
@@ -443,5 +442,34 @@
       "365b553f43750717c907f32fbc42910f3b264d616654583df6e44472c93ead80"
     ],
     "derivedPosteriorsNotSingleCheckpoint": true
+  },
+  "fullBeatmatchQualityGatesUnchanged": true,
+  "newPartialUsesExistingObservedHitAndBarBounds": true,
+  "acceptedGeneralizableStrategy": {
+    "producer": "tools/build-preserved-tail-plans.cjs",
+    "metricalFit": "tools/pcm-metrical-fit.cjs#observedBarMetricalFit",
+    "newDistinctStePairs": 1,
+    "newFullBeatmatches": 0,
+    "notSpecificToTitleOrProfile": true
+  },
+  "rejectedNativeReturnPrototypes": [
+    {
+      "assetSha256": "ace2ab20e871878d67e003420c4df2225e6330862ebfb584b742df7e492d330f",
+      "problem": "WSOLA waveform phase before original native return",
+      "offlineBinarySampleDelta": 0.629172
+    },
+    {
+      "assetSha256": "81cc02eaa49acb33b320aecde8fcdb074b6151cd6e7658cbb463dd247219e6ef",
+      "problem": "350 ms return cancels a sustained note",
+      "minimumSameTimeOriginalRmsDb": -7.076870850092213
+    }
+  ],
+  "acceptedReturn": {
+    "assetSha256": "6b4c71156b309b4322f251c87186b549c741f7b1bd54658ce70fc42d3d6de9cc",
+    "seconds": 0.02,
+    "surroundingEnergyRatio": 0.9267303775087273,
+    "boundedExtraCancellationDb": -0.3304660090660116,
+    "method": "offline actual simultaneous samples over a 100 ms window; no gain boost",
+    "nativeClockConversion": "declared SHA-bound MP3 priming/padding and actual duration, not a fitted lag"
   }
 }

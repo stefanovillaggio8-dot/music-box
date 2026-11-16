@@ -1,0 +1,50 @@
+{
+  "tracks": 227,
+  "profileFunnel": {
+    "Ste": {
+      "pairs": 51292,
+      "meterOrTempo": 13618,
+      "noCoherentInitialBars": 8034,
+      "incomingVocalOrLyric": 32,
+      "localHarmony": 8,
+      "noCoherentEndingBars": 29598,
+      "partialCandidates": 1,
+      "independentBeatFit": 1
+    }
+  },
+  "pairConditions": {
+    "Ste": {
+      "bpm": 12647,
+      "meterAndSpan": 967,
+      "voice": 32,
+      "duration": 2,
+      "harmony": 8,
+      "observedDownbeat": 1,
+      "affineDownbeatFit": 1,
+      "completeCandidates": 1,
+      "independentBeatFit": 1
+    }
+  },
+  "windowExclusions": {
+    "Ste": {
+      "barSpan": 171638,
+      "meter": 14688,
+      "bpm": 1571,
+      "voice": 520,
+      "affineDownbeatFit": 94,
+      "overlapDuration": 345,
+      "harmony": 94,
+      "observedDownbeat": 22,
+      "observedPulseAgreement": 6
+    }
+  },
+  "scope": {
+    "name": "Ste",
+    "tracks": 227,
+    "unavailableMembers": 0,
+    "source": "Actual personal library snapshot; audit-only exclusions; no user data modified"
+  },
+  "candidateWindows": 2,
+  "newDistinctPartialPairs": 1,
+  "caveat": "Producer audit only; rejection order matters; window exclusions are not mutually exclusive; model absence is not a verified musical incompatibility"
+}
