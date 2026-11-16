@@ -26,13 +26,20 @@ for(const entry of Object.values(index.entries))for(const record of Object.value
      decodedPrimingSeconds:[...new Set(splice.map(r=>r.decodedPrimingSeconds))].sort(),mediaPrimingSeconds:[...new Set(splice.map(r=>r.mediaPrimingSeconds))].sort()};
    }
   }
-  if(c.nativeRecoveryCurve)for(const sampleRate of [44100,48000]){
+  if(c.nativeRecoveryCurve||c.sourcePrerollProof)for(const sampleRate of [44100,48000]){
    const values=proofs.map(p=>p.assets.find(r=>r.assetSha256===c.sha256&&r.sampleRate===sampleRate)?.nativeSourceClock);
    const expected=[0,c.nativeSplice.sourceClock.primingFrames/c.nativeSplice.sourceClock.sampleRate];
    if(values.some(v=>v?.method!=='actual-native-source-clock-v1'||v.sourceSha!==c.sourceSha||
     ![v.decodedOffset,v.mediaOffset].every(n=>Number.isFinite(n)&&expected.some(e=>Math.abs(e-n)<1e-9))))throw Error('Missing actual native outgoing clock');
    rates[sampleRate].sourceClockProof={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,browsers,
     decodedOffsets:[...new Set(values.map(v=>v.decodedOffset))],mediaOffsets:[...new Set(values.map(v=>v.mediaOffset))]};
+   if(c.sourcePrerollProof){
+    const prefix=values.map(v=>v.prerollProof),frames=Math.round(c.sourcePrerollProof.throughOffsetSeconds*sampleRate);
+    if(prefix.some(v=>v?.method!=='actual-native-original-preroll-v1'||v.sourceSha!==c.sourceSha||v.frames!==frames||
+     !Number.isFinite(v.correlation)||v.correlation<.99||!Number.isFinite(v.relativeRms)||v.relativeRms<0||v.relativeRms>.1))throw Error('Missing actual original-only native preroll');
+    rates[sampleRate].originalPrerollProof={method:'actual-native-original-preroll-v1',sourceSha:c.sourceSha,frames,browsers,
+     minimumCorrelation:Math.min(...prefix.map(v=>v.correlation)),maximumRelativeRms:Math.max(...prefix.map(v=>v.relativeRms))};
+   }
   }
   c.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:c.sha256,rates,physicalIPhone:false};changed++;seen.add(c.sha256);
  }

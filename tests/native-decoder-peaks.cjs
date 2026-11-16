@@ -26,7 +26,7 @@ const server=http.createServer((req,res)=>{
  const bytes=fs.readFileSync(path.join(root,url.pathname));res.setHeader('Content-Type','audio/flac');res.setHeader('Content-Length',bytes.length);res.end(bytes);
 });
 (async()=>{
- for(const c of assets.values())for(const sha of c.nativeSplice?[c.targetSha,...(c.nativeRecoveryCurve?[c.sourceSha]:[])]:[])if(!originals.has(sha)){
+ for(const c of assets.values())for(const sha of c.nativeSplice?[c.targetSha,...(c.nativeRecoveryCurve||c.sourcePrerollProof?[c.sourceSha]:[])]:[])if(!originals.has(sha)){
   const key=Object.keys(index.entries).find(k=>index.entries[k].sha===sha),[origin,...parts]=key.split('/');
   const base={audio:'music-box-brani/main',app:'music-box/main',mobile:'music-box/mobile-audio'}[origin];
   const response=await fetch('https://raw.githubusercontent.com/stefanovillaggio8-dot/'+base+'/'+parts.join('/'));
@@ -68,14 +68,27 @@ const server=http.createServer((req,res)=>{
      }
      if(samplePeak>.9992||overlapPeak>.962||decoded.numberOfChannels!==2||Math.abs(decoded.duration-c.seconds)>.04)throw Error('Native absolute peak/duration certificate failed');
      let nativeSplice=null,nativeSourceClock=null;
-     if(c.nativeRecoveryCurve){
-      const decoded=await ctx.decodeAudioData(await (await fetch('original/'+c.sourceSha+'.mp3')).arrayBuffer());
+     if(c.nativeRecoveryCurve||c.sourcePrerollProof){
+      const originalSource=await ctx.decodeAudioData(await (await fetch('original/'+c.sourceSha+'.mp3')).arrayBuffer());
       const mediaDuration=await nativeDuration(c.sourceSha);
-      const decodedOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,decoded.duration);
+      const decodedOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,originalSource.duration);
       const mediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,mediaDuration);
-      console.error('Cadence source clocks '+JSON.stringify({sourceSha:c.sourceSha,sampleRate,decodedDuration:decoded.duration,mediaDuration,decodedOffset,mediaOffset}));
+      console.error('Cadence source clocks '+JSON.stringify({sourceSha:c.sourceSha,sampleRate,decodedDuration:originalSource.duration,mediaDuration,decodedOffset,mediaOffset}));
       if(decodedOffset===null||mediaOffset===null)throw Error('Unrecognized actual outgoing MP3 clock');
-      nativeSourceClock={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,decodedOffset,mediaOffset,decodedDuration:decoded.duration,mediaDuration};
+      nativeSourceClock={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,decodedOffset,mediaOffset,decodedDuration:originalSource.duration,mediaDuration};
+      if(c.sourcePrerollProof){
+       const count=Math.round(c.sourcePrerollProof.throughOffsetSeconds*sampleRate),at=Math.round((c.begin-c.preRoll+decodedOffset)*sampleRate);
+       if(!Number.isInteger(count)||count<=0||count>sampleRate*c.preRoll||at<0||at+count>originalSource.length)throw Error('Unbounded original preroll comparison');
+       let xx=0,yy=0,xy=0,error=0;
+       for(let channel=0;channel<2;channel++){
+        const a=decoded.getChannelData(channel),b=originalSource.getChannelData(Math.min(channel,originalSource.numberOfChannels-1));
+        for(let i=0;i<count;i++){const x=a[i],y=b[at+i];xx+=x*x;yy+=y*y;xy+=x*y;error+=(x-y)**2;}
+       }
+       const correlation=xy/Math.sqrt(xx*yy),relativeRms=Math.sqrt(error/Math.max(yy,1e-10));
+       console.error('Actual original preroll '+JSON.stringify({sampleRate,sourceSha:c.sourceSha,correlation,relativeRms,count}));
+       if(!Number.isFinite(correlation)||correlation<.99||!Number.isFinite(relativeRms)||relativeRms>.1)throw Error('Actual original-only native preroll differs');
+       nativeSourceClock.prerollProof={method:'actual-native-original-preroll-v1',sourceSha:c.sourceSha,frames:count,correlation,relativeRms};
+      }
      }
      if(c.nativeSplice){
       const original=await ctx.decodeAudioData(await (await fetch('original/'+c.targetSha+'.mp3')).arrayBuffer());

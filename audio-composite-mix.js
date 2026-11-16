@@ -124,6 +124,20 @@ function stop(reason='cancelled'){
  if(act.successor){act.successor._mbCommonMixMuted=false;act.successor.muted=userMuted;}
  for(const [target,event,listener] of act.listeners)target.removeEventListener(event,listener);
 }
+function latestLaunchTime(cue){
+ const c=cue.composite,p=c.sourcePrerollProof,legacy=cue.begin-c.preRoll+.04;
+ if(cue.nativeOriginalReturn!==true||p?.method!=='original-only-preroll-with-common-gain-v1'||p.assetSha256!==c.sha256||p.sourceSha!==cue.sourceSha||
+    p.sharedGainOnly!==true||p.fromOffsetSeconds!==0||p.sampleRate!==c.sampleRate||
+    ![p.frames,p.throughOffsetSeconds,p.maximumReductionDb,p.maximumOriginalWaveformResidual,p.maximumEncodedDifference,p.incomingMaximumPeak].every(finite)||
+    !Number.isInteger(p.frames)||p.frames<=0||p.throughOffsetSeconds<=.04||p.throughOffsetSeconds>c.preRoll-.0199||
+    Math.abs(p.frames/p.sampleRate-p.throughOffsetSeconds)>.00001||p.maximumReductionDb<0||p.maximumReductionDb>.1||
+    p.maximumOriginalWaveformResidual<0||p.maximumOriginalWaveformResidual>2e-6||p.maximumEncodedDifference<0||p.maximumEncodedDifference>2e-6||p.incomingMaximumPeak!==0||
+    c.nativeDecoderProof?.assetSha256!==c.sha256||![44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.originalPrerollProof;
+     return v?.method==='actual-native-original-preroll-v1'&&v.sourceSha===cue.sourceSha&&v.frames===Math.round(p.throughOffsetSeconds*rate)&&
+      finite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&finite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1&&
+      Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit');}))return legacy;
+ return Math.max(legacy,Math.min(cue.begin-.02,cue.begin-c.preRoll+p.throughOffsetSeconds));
+}
 function tryStart(cue,old,app,toId,ctx){
  const sourceOffset=cue?.nativeOriginalReturn?nativeClockOffset(cue.composite?.nativeSplice?.sourceClock,cue.sourceSha,old?.duration):0;
  if(sourceOffset===null)return false;
@@ -132,7 +146,7 @@ function tryStart(cue,old,app,toId,ctx){
  if(current||!buffer||ctx?.state!=='running'||old?.paused||old.seeking||old.muted||
     root.document?.hidden||app.mixNext?.()?.id!==toId||root.MusicBoxRoom?.isActive?.()||
     app.mixSourceMatches?.(app.currentId(),old)!==true||
-    sourceTime()<cue.begin-5||sourceTime()>cue.begin-cue.composite.preRoll+.04)return false;
+    sourceTime()<cue.begin-5||sourceTime()>latestLaunchTime(cue))return false;
  const source=ctx.createBufferSource(),gain=ctx.createGain(),fromId=app.currentId();
  source.buffer=buffer;source.connect(gain);gain.connect(ctx.destination);
  gain.gain.value=outputLevel(app,old);
@@ -204,7 +218,7 @@ function tryStart(cue,old,app,toId,ctx){
   if(old.paused||old.seeking||app.currentId()!==fromId||app.mixNext?.()?.id!==toId||ctx.state!=='running'||root.document?.hidden||root.MusicBoxRoom?.isActive?.()||app.mixSourceMatches?.(fromId,old)!==true||app.mixVocalCutSafe?.(cue,fromId)===false||root.MusicBoxMix?.contentCutSafe?.(cue,fromId,toId)===false){stop();return;}
   const startAt=cue.begin-cue.composite.preRoll;
   if(sourceTime()<startAt){act.timer=setTimeout(launch,sourceTime()<startAt-.12?35:8);return;}
-  if(sourceTime()>startAt+.04){stop('late-start-clock');return;}
+  if(sourceTime()>latestLaunchTime(cue)){stop('late-start-clock');return;}
   offset=sourceTime()-cue.begin;started=ctx.currentTime;
   try{source.start(started,offset+cue.composite.preRoll);old._mbCommonMixMuted=true;old.muted=true}catch(_){stop();return;}
   act.timer=setTimeout(advance,20);
@@ -219,7 +233,7 @@ function onSeek(reason,audio){
  }
  stop();return false;
 }
-root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,nativeClockOffset,
+root.MusicBoxCompositeMix={supports,prepare,tryStart,stop,cancelPreparation,onSeek,nativeClockOffset,latestLaunchTime,
  isPrepared:(cue,ctx)=>!!ctx&&supports(cue)&&cache.has(cue.composite.sha256+':'+ctx.sampleRate),
  active:()=>!!current,diagnostics:()=>({active:!!current,lastStop}),owns:audio=>!!current&&current.old===audio};
 })(typeof window==='undefined'?globalThis:window);
