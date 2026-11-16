@@ -48,6 +48,11 @@ const server=http.createServer((req,res)=>{
      let nativeSplice=null;
      if(c.nativeSplice){
       const original=await ctx.decodeAudioData(await (await fetch('original/'+c.targetSha+'.mp3')).arrayBuffer());
+      const nativeAudio=new Audio('/original/'+c.targetSha+'.mp3');nativeAudio.preload='metadata';nativeAudio.load();
+      await new Promise(resolve=>{const poll=()=>{if(Number.isFinite(nativeAudio.duration)&&nativeAudio.duration>.05)resolve();else if(Date.now()-start>5000)resolve();else setTimeout(poll,25)};const start=Date.now();poll()});
+      const nativeMediaDuration=nativeAudio.duration;nativeAudio.removeAttribute('src');nativeAudio.load();
+      console.error('Original clocks '+JSON.stringify({sampleRate,targetSha:c.targetSha,decodedDuration:original.duration,decodedFrames:original.length,nativeMediaDuration}));
+
       const count=Math.round(.1*sampleRate),at=Math.round((c.preRoll+c.nativeRevealAt)*sampleRate),to=Math.round(c.nativeSplice.nativeResumeSeconds*sampleRate);
       if(to<count||to>original.length||at>decoded.length)throw Error('Incomplete actual native original splice');
       let xx=0,yy=0,xy=0,error=0;
