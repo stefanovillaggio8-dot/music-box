@@ -75,12 +75,14 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps chromium webkit
           node tests/native-decoder-peaks.cjs > native-decoder-peaks.json
+          node tests/native-metadata-pcm.cjs > native-metadata-pcm.json
           node tests/karaoke-proof-browser.cjs > karaoke-proof-browser.json
       - uses: actions/upload-artifact@v4
         with:
           name: native-decoder-${{ matrix.browser }}
           path: |
             native-decoder-peaks.json
+            native-metadata-pcm.json
             karaoke-proof-browser.json
           retention-days: 14
   certify-index:
