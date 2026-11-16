@@ -727,7 +727,7 @@ function loadDeepIndex(force=false){
   // A 5.3 MB index cannot arrive in 25 seconds over a 0.1 MB/s link.
   const timeout=setTimeout(()=>ctrl.abort(),isIOS?180000:60000);
   try{
-   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=11",{
+   const resp=await fetch("dj-deep-analysis.json?pcm=1&structure=12",{
     cache:"no-cache",signal:ctrl.signal
    });
    if(!resp.ok)throw Error("Indice DJ non disponibile");
@@ -2751,7 +2751,7 @@ function indexedStructuralBeatBridge(a,b,dur){
   if(valid)eligible.push({cue:valid,content:structuralContentDecision(a,p)});
  }
  const attack=p=>p.preservedEntrance==='first-attack-033-v1'&&p.composite?.postRenderRhythm?.rmsSeconds<=.025;
- eligible.sort((x,y)=>x.content.penalty-y.content.penalty||Number(y.cue.measuredFullBeat)-Number(x.cue.measuredFullBeat)||Number(attack(y.cue))-Number(attack(x.cue)));
+ eligible.sort((x,y)=>x.content.penalty-y.content.penalty||Number(y.cue.measuredFullBeat)-Number(x.cue.measuredFullBeat)||Number(y.cue.nativeOriginalReturn===true)-Number(x.cue.nativeOriginalReturn===true)||Number(attack(y.cue))-Number(attack(x.cue)));
  return eligible[0]?.cue||null;
 }
 function structuralContentDecision(a,p){
@@ -2827,6 +2827,14 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   v.downbeatRmsSeconds>=0&&v.downbeatRmsSeconds<=.025&&v.maximumDownbeatError>=0&&v.maximumDownbeatError<=.05&&
   Array.isArray(v.sharedPerBar)&&v.sharedPerBar.length===e.bars&&v.sharedPerBar.every(n=>Number.isInteger(n)&&n>=2);
  const pickupCertificate=e?.metricalCertificate;
+ const originalReturn=p?.nativeOriginalReturn!==true||c?.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===b?.sha&&
+  c.nativeSplice.sampleRate===48000&&c.nativeSplice.verifiedFrames===4800&&c.nativeSplice.unmodifiedOriginalComparison===true&&
+  [c.nativeSplice.returnStart,c.nativeSplice.returnEnd,c.nativeSplice.nativeResumeSeconds,c.nativeSplice.maximumLast100msDifference,c.nativeSplice.encodedMaximumDifference].every(Number.isFinite)&&
+  c.nativeSplice.returnStart>=c.nativeHandoffAt+.849&&c.nativeSplice.returnEnd<=c.nativeRevealAt-.3&&
+  c.nativeSplice.returnEnd>c.nativeSplice.returnStart&&c.nativeSplice.maximumLast100msDifference>=0&&c.nativeSplice.maximumLast100msDifference<=2e-6&&
+  c.nativeSplice.encodedMaximumDifference>=0&&c.nativeSplice.encodedMaximumDifference<=2e-6&&
+  [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.targetSha===b.sha&&v.frames===Math.round(rate*.1)&&
+   Number.isFinite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&Number.isFinite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')});
  const pickupAnchors=pickup&&Array.isArray(e.sourceObservedDownbeats)&&Array.isArray(e.targetObservedDownbeats)&&
   e.sourceObservedDownbeats.length===e.bars&&e.targetObservedDownbeats.length===e.bars&&
   Array.isArray(e.sourceModelDownbeats)&&Array.isArray(e.targetModelDownbeats)&&
@@ -2834,7 +2842,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
   [e.sourceObservedDownbeats,e.targetObservedDownbeats,e.sourceModelDownbeats,e.targetModelDownbeats].every(v=>v.every((n,i)=>Number.isFinite(n)&&(!i||n>v[i-1])))&&
   e.sourceObservedDownbeats.every((t,i)=>Math.abs(t-e.sourceModelDownbeats[i])<=.075&&Math.abs(t-p.begin-e.targetObservedDownbeats[i]/p.tempo)<=.05)&&
   e.targetObservedDownbeats.every((t,i)=>Math.abs(t-e.targetModelDownbeats[i])<=.075);
- const pickupValid=pickup&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
+ const pickupValid=pickup&&originalReturn&&pickupAnchors&&pickupCertificate?.method==='observed-bar-anchors-metrical-hypotheses-v2'&&
   pickupCertificate.originalModelAnchorsRetained===true&&
   [pickupCertificate.gridRms,pickupCertificate.gridMaximum,pickupCertificate.observedSharedRms,pickupCertificate.observedShared,
    pickupCertificate.minimumSharedPerBar,pickupCertificate.observedDownbeats,pickupCertificate.modelGridPoints,
@@ -2913,7 +2921,7 @@ function validatePreservedFileTailCue(record,p,a,b,dur){
  if(record?.version!==1||record.fromSha!==a?.sha||record.toSha!==b?.sha||
     ![record.sourceDuration,record.nextDuration].every(Number.isFinite)||Math.abs(record.sourceDuration-a.duration)>.1||Math.abs(record.nextDuration-b.duration)>.1||
     !structuralContentDecision(a,p).allowed||!incomingContentDecision(b,p).allowed||
-    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic&&!pickup)||p.metricalPickupWindow===true&&!pickup||rhythmic&&!tailValid||pickup&&!pickupValid||
+    p.experimentalSharedTempo===true||p.sourceRate!=null||p.preservedFileTail!==true||p.structuralBeat!==true||(!strict&&!rhythmic&&!pickup)||p.metricalPickupWindow===true&&!pickup||p.nativeOriginalReturn===true&&!pickup||rhythmic&&!tailValid||pickup&&!pickupValid||
     (exact?!exactValid:r?.exactSilentSuffix!=null||r?.beatVerificationSeconds!=null)||
     (p.stretchProfile!=null&&(p.stretchProfile!=='transient-60-12-8-v1'||!incomingQuiet))||p.stretchProfile!==c?.stretchProfile||
     p.kind!=='beat'||p.nativeTailFullBeat!==true||p.preserveTail!==true||p.silenceTrim!==false||p.softTailTrim!==false||

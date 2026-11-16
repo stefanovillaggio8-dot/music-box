@@ -1,6 +1,19 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 
+test('original native return reproduces original samples before reveal and binds the source clock',async()=>{
+ const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
+ const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,
+  measuredFullBeat:false,metricalRhythmic:true,metricalPickupWindow:true,nativeOriginalReturn:true,preservedEntrance:'metrical-pickup-033-v1',renderReleaseSeconds:1.5,targetSha:'a'.repeat(40)};
+ const outgoing={rate:sr,start:31.7,channels:[0,1].map(()=>new Float32Array(Math.round(5.3*sr)).fill(.2))};
+ const incoming={rate:sr,start:0,channels:[0,1].map(()=>Float32Array.from({length:sr*10},(_,i)=>.3*Math.sin(i/sr*1234)))};
+ const r=compositePCM(outgoing,incoming,cue),p=r.nativeSplice;
+ assert.equal(p.targetSha,cue.targetSha);assert.equal(p.maximumLast100msDifference,0);assert.equal(p.verifiedFrames,800);
+ assert.ok(p.returnStart>=r.nativeHandoffAt+.85);assert.ok(p.returnEnd<=r.nativeRevealAt-.3);
+ const reveal=Math.round((r.preRoll+r.nativeRevealAt)*sr),original=Math.round(p.nativeResumeSeconds*sr);
+ for(let i=1;i<=800;i++)assert.equal(r.channels[0][reveal-i],incoming.channels[0][original-i]);
+});
+
 test('a partial metrical pickup preserves source samples and completes its smooth reveal before native adoption',async()=>{
  const {compositePCM}=await import('../audio-composite-core.mjs'),sr=8000;
  const cue={begin:32,entry:0,fade:5,tempo:1,structuralBeat:true,preservedFileTail:true,nativeTailFullBeat:true,preserveTail:true,vocalFadeSeconds:0,

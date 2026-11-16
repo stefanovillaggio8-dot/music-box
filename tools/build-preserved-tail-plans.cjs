@@ -169,7 +169,7 @@ for(const a of prepared)for(const b of prepared){
   for(const [number,c] of selected.entries()){
    const x=c.sourceWindow,y=c.targetWindow,fit=c.fit,h=c.harmony;
    const cue={kind:'beat',structuralBeat:true,preservedFileTail:true,measuredFullBeat:!partial&&!c.rhythmicTail,metricalRhythmic:partial||!!c.rhythmicTail,
-    ...(c.rhythmicTail?{rhythmicTailWindow:true}:{}),...(c.observedBarPartial?{metricalPickupWindow:true}:{}),
+    ...(c.rhythmicTail?{rhythmicTailWindow:true}:{}),...(c.observedBarPartial?{metricalPickupWindow:true,nativeOriginalReturn:true}:{}),
     nativeTailFullBeat:true,preserveTail:true,quietCertified:false,silenceTrim:false,softTailTrim:false,
     begin:c.begin,end:c.end,fade:c.fade,entry:0,tempo:c.tempo,gain:1,vocalFadeSeconds:0,preservedEntrance:c.observedBarPartial?'metrical-pickup-033-v1':c.rhythmicTail?'rhythmic-tail-foreground-v1':c.vocalHandoff?'vocal-handoff-foreground-v1':'first-attack-033-v1',
     sourceSha:a.raw.sha,targetSha:b.raw.sha,contentPenalty:0,

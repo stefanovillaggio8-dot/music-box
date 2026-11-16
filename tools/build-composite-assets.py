@@ -227,6 +227,16 @@ def main():
                 if cue.get('metricalPickupWindow'):
                     if args.release_seconds!=1.5:raise ValueError('Metrical pickup requires the verified slow native reveal')
                     composite['renderedEntrance']=cue['preservedEntrance']
+                if cue.get('nativeOriginalReturn'):
+                    splice=proof.get('nativeSplice')
+                    if not splice or splice.get('targetSha')!=cue['targetSha']:raise ValueError('Missing original native return proof')
+                    count=round(.1*args.rate);reveal=round((proof['preRoll']+proof['nativeRevealAt'])*args.rate)
+                    original=round((splice['nativeResumeSeconds']-(cue['entry']-warmup))*args.rate)
+                    actual=decoded[reveal-count:reveal];reference=incoming[original-count:original]
+                    if actual.shape!=reference.shape or len(actual)!=count:raise ValueError('Incomplete original native return comparison')
+                    difference=float(np.max(np.abs(actual-reference)))
+                    if difference>2e-6:raise ValueError('Encoded original native return differs from original PCM')
+                    composite['nativeSplice']={**splice,'encodedMaximumDifference':difference,'unmodifiedOriginalComparison':True}
                 if 'gainProof' in proof:composite['gainProof']=proof['gainProof']
                 if cue.get('preservedFileTail'):
                     composite.update({k:proof[k] for k in ('sourceReadThrough','outgoingEnvelope')})

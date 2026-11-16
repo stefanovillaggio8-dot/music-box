@@ -227,7 +227,7 @@ const server=http.createServer(async(req,res)=>{
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow&&!p.cue.metricalPickupWindow)continue;
       const a=find(p.from),b=find(p.to);
       if(!a||!b)continue;
-      if(profile==='Ste'&&(pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
+      if(profile==='Ste'&&(pickupSte?!(a.id==='b-track-166'&&b.id==='b-track-181'&&p.cue.metricalPickupWindow&&p.cue.nativeOriginalReturn):completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
@@ -237,6 +237,7 @@ const server=http.createServer(async(req,res)=>{
      Number(b.from==='audio/songs/track-934.mp3'&&b.to==='audio/songs/track-1124.mp3')-
      Number(a.from==='audio/songs/track-934.mp3'&&a.to==='audio/songs/track-1124.mp3'))});
     assert.ok(actualPlan,'A real same-profile structural pair must be available');
+    if(pickupSte&&playbackProfile==='Ste')assert.equal(actualPlan.cue.nativeOriginalReturn,true,'Exercise the waveform-coherent rendition, never the earlier prototype');
     // Network latency retrieving the external original must not consume the
     // nine-second scheduling window. Only warm the Node fixture's SHA-checked
     // bytes: the app still fetches, decodes and prepares through its real path.

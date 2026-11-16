@@ -16,6 +16,13 @@ for(const entry of Object.values(index.entries))for(const record of Object.value
    const measured=rows.map(a=>a[0]);
    if(measured.some(r=>![r.samplePeak,r.overlapPeak,r.duration].every(Number.isFinite)||r.channels!==2||r.samplePeak<=0||r.samplePeak>.9992||r.overlapPeak<0||r.overlapPeak>.962||Math.abs(r.duration-c.seconds)>.04))throw Error('Invalid native PCM bounds');
    rates[sampleRate]={samplePeak:Math.max(...measured.map(r=>r.samplePeak)),overlapPeak:Math.max(...measured.map(r=>r.overlapPeak)),browsers};
+   if(c.nativeSplice){
+    const splice=measured.map(r=>r.nativeSplice);
+    if(splice.some(r=>r?.method!=='actual-native-original-splice-v1'||r.targetSha!==c.targetSha||r.frames!==Math.round(sampleRate*.1)||
+     !Number.isFinite(r.correlation)||r.correlation<.99||!Number.isFinite(r.relativeRms)||r.relativeRms<0||r.relativeRms>.10))throw Error('Missing actual native original-splice coherence');
+    rates[sampleRate].nativeSplice={method:'actual-native-original-splice-v1',targetSha:c.targetSha,frames:Math.round(sampleRate*.1),
+     minimumCorrelation:Math.min(...splice.map(r=>r.correlation)),maximumRelativeRms:Math.max(...splice.map(r=>r.relativeRms)),browsers};
+   }
   }
   c.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:c.sha256,rates,physicalIPhone:false};changed++;seen.add(c.sha256);
  }

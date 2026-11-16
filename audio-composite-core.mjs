@@ -14,6 +14,8 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  if(![.3,.6,.9].includes(preRoll)||![.9,1.2,1.5].includes(releaseSeconds))throw Error('Unbounded common gain envelope');
  const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
  const preserveFile=cue.preservedFileTail===true,metricalPickup=preserveFile&&cue.metricalPickupWindow===true&&cue.preservedEntrance==='metrical-pickup-033-v1',tailForeground=preserveFile&&cue.preservedEntrance==='rhythmic-tail-foreground-v1',vocalForeground=preserveFile&&cue.preservedEntrance==='vocal-handoff-foreground-v1',foreground=tailForeground||vocalForeground;
+ const nativeReturn=metricalPickup&&cue.nativeOriginalReturn===true;
+ if(cue.nativeOriginalReturn&&!nativeReturn)throw Error('Unbound original native return');
  if(cue.metricalPickupWindow&&(!metricalPickup||cue.measuredFullBeat!==false||cue.metricalRhythmic!==true))throw Error('Unbound metrical pickup envelope');
  const windowSeconds=cue.structuralEvidence?.rhythmicWindow?.seconds;
  const vocalAt=tailForeground?windowSeconds+.3:cue.structuralEvidence?.vocalHandoff?.at;
@@ -21,6 +23,10 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  if(vocalForeground&&(!Number.isFinite(vocalAt)||vocalAt<.6||vocalAt>cue.fade-.6||cue.structuralEvidence?.vocalOverlapPolicy!=='separated-vocal-handoff-v1'))throw Error('Unbound vocal foreground envelope');
  if(preserveFile&&(cue.nativeTailFullBeat!==true||cue.preserveTail!==true||cue.entry!==0||cue.vocalFadeSeconds!==0))throw Error('Unbound intact-file mode');
  const nativeHandoffAt=cue.structuralBeat&&!preserveFile?cue.fade:(outgoing.channels[0].length-aOffset)/sr-preRoll;
+ const revealAt=nativeHandoffAt+releaseSeconds+.15,revealFrame=Math.round((preRoll+revealAt)*sr);
+ const nativeResumeSeconds=cue.entry+playedAt(revealAt,cue.tempo,cue.fade,.85);
+ const nativeResumeFrame=Math.round((nativeResumeSeconds-incoming.start)*sr);
+ const returnStart=nativeHandoffAt+.85,returnEnd=returnStart+.35;
  if((!cue.structuralBeat||preserveFile)&&(nativeHandoffAt<cue.fade-.1||nativeHandoffAt>cue.fade+.2))throw Error('Native tail duration mismatch');
  if(aOffset<0||bOffset<0||outgoing.channels.some(c=>aOffset+Math.floor((preRoll+(preserveFile?nativeHandoffAt:cue.fade))*sr)>c.length+1)||
     stretched.channels.some(c=>bOffset+Math.round((seconds-preRoll)*sr)>c.length))throw Error('Incomplete transition source');
@@ -42,7 +48,18 @@ export function compositePCM(outgoing,incoming,cue,options={}){
   if(t>=nativeHandoffAt)a=0;
   for(let c=0;c<2;c++){
    const incomingIndex=bOffset+i-Math.round(preRoll*sr);
-   const old=t<nativeHandoffAt?(outgoing.channels[c][aOffset+i]??0)*a:0,next=t>=0?stretched.channels[c][incomingIndex]*b:0;
+   let transformed=stretched.channels[c][incomingIndex];
+   // WSOLA may retain a waveform-phase offset after tempo reaches one.
+   // Restore the original, at the actual native-clock mapping, only AFTER
+   // the outgoing EOF and completed tempo return. Before reveal the common
+   // buffer then contains the same original samples as the native deck.
+   if(nativeReturn&&t>=returnStart){
+    const originalIndex=nativeResumeFrame+i-revealFrame;
+    if(originalIndex<0||originalIndex>=incoming.channels[c].length)throw Error('Incomplete original native return');
+    const u=clamp((t-returnStart)/(returnEnd-returnStart),0,1),blend=u*u*(3-2*u);
+    transformed=transformed*(1-blend)+incoming.channels[c][originalIndex]*blend;
+   }
+   const old=t<nativeHandoffAt?(outgoing.channels[c][aOffset+i]??0)*a:0,next=t>=0?transformed*b:0;
    const value=old+next;components.outgoing[c][i]=old;components.incoming[c][i]=next;
    if(!Number.isFinite(value))throw Error('Invalid original PCM');raw[c][i]=value;
    if(t>=0&&t<=nativeHandoffAt)overlapRawPeak=Math.max(overlapRawPeak,Math.abs(value));
@@ -97,7 +114,14 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  // Smooth entrance/release must itself remain safe. Reject hot source
  // masters rather than silently introducing a level step or hard limiter.
  if(peak>.999||overlapPeak>.961)throw Error('Smooth common gain exceeds safe peak ('+peak+', overlap '+overlapPeak+')');
- return {rate:sr,channels,components,audibleComponents,seconds,preRoll,releaseSeconds,envelopeVersion:gainProof?4:preRoll===.3&&releaseSeconds===.9?2:3,...(gainProof?{gainProof}:{}),warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:nativeHandoffAt+releaseSeconds+.15,peak,overlapPeak,headroom,pitchPreserved:true,
+ let nativeSplice=null;
+ if(nativeReturn){
+  const count=Math.round(.1*sr);let maximum=0;
+  for(let i=revealFrame-count;i<revealFrame;i++)for(let c=0;c<2;c++)maximum=Math.max(maximum,Math.abs(channels[c][i]-incoming.channels[c][nativeResumeFrame+i-revealFrame]));
+  if(maximum>2e-6)throw Error('Original native return is not sample coherent');
+  nativeSplice={method:'original-pcm-native-return-v1',targetSha:cue.targetSha,sampleRate:sr,returnStart,returnEnd,nativeResumeSeconds:incoming.start+nativeResumeFrame/sr,verifiedFrames:count,maximumLast100msDifference:maximum};
+ }
+ return {rate:sr,channels,components,audibleComponents,seconds,preRoll,releaseSeconds,envelopeVersion:gainProof?4:preRoll===.3&&releaseSeconds===.9?2:3,...(gainProof?{gainProof}:{}),...(nativeSplice?{nativeSplice}:{}),warmupOriginalSeconds:stretched.warmupOriginalSeconds||0,nativeHandoffAt,nativeRevealAt:revealAt,peak,overlapPeak,headroom,pitchPreserved:true,
   ...(preserveFile?{sourceReadThrough:outgoing.start+outgoing.channels[0].length/sr,outgoingEnvelope:'unity-through-decoded-eof-v1'}:{}),
   timingVerified:true,timing:stretched.timing,
   handoffPosition:cue.entry+playedAt(cue.fade,cue.tempo,cue.fade,.85)};

@@ -39,6 +39,10 @@ function supports(cue){
   (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true)&&
   (!cue.metricalPickupWindow||cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
    cue.preservedEntrance==='metrical-pickup-033-v1'&&c.renderedEntrance===cue.preservedEntrance&&c.releaseSeconds===1.5&&!!c.nativeDecoderProof)&&
+  (!cue.nativeOriginalReturn||cue.metricalPickupWindow&&c.nativeSplice?.method==='original-pcm-native-return-v1'&&c.nativeSplice.targetSha===cue.targetSha&&
+   c.nativeSplice.unmodifiedOriginalComparison===true&&finite(c.nativeSplice.encodedMaximumDifference)&&c.nativeSplice.encodedMaximumDifference>=0&&c.nativeSplice.encodedMaximumDifference<=2e-6&&
+   [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.nativeSplice;return v?.method==='actual-native-original-splice-v1'&&v.targetSha===cue.targetSha&&
+    finite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&finite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1}))&&
   (!c.nativeDecoderProof||c.nativeDecoderProof.method==='actual-browser-decode-v1'&&c.nativeDecoderProof.assetSha256===c.sha256&&
    [44100,48000].every(rate=>{const p=c.nativeDecoderProof.rates?.[rate];return p&&
     [p.samplePeak,p.overlapPeak].every(finite)&&p.samplePeak>0&&p.samplePeak<=.9992&&p.overlapPeak>=0&&p.overlapPeak<=.962&&

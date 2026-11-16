@@ -16,6 +16,8 @@ for(const row of report.results){
   p.preservedEntrance!=='metrical-pickup-033-v1'||c.renderedEntrance!==p.preservedEntrance||c.releaseSeconds!==1.5||
   c.resampledCommonProof?.assetSha256!==c.sha256||c.resampledCommonProof?.rhythm?.mode!=='metrical-rhythmic'||c.resampledCommonProof.rhythm.accepted!==true||
   !Number.isFinite(c.levelContinuity?.changeDb)||Math.abs(c.levelContinuity.changeDb)>3))throw Error('Missing observed-bar pickup render proof');
+ if(p.nativeOriginalReturn&&(c.nativeSplice?.method!=='original-pcm-native-return-v1'||c.nativeSplice.targetSha!==b.sha||
+  c.nativeSplice.unmodifiedOriginalComparison!==true||!Number.isFinite(c.nativeSplice.encodedMaximumDifference)||c.nativeSplice.encodedMaximumDifference>2e-6))throw Error('Missing exact original native return');
  if(p.structuralBeat){
   if(c.rhythmVerified!==true||c.postRenderRhythm?.accepted!==true)throw Error('Missing actual rendered rhythm proof');
   if(p.structuralEvidence?.exactSilentSuffix&&(p.measuredFullBeat!==true||p.metricalRhythmic!==false||
@@ -26,7 +28,7 @@ for(const row of report.results){
   const existing=a.structuralBeatPlans[b.sha],cues=existing?.cues||[];
   const sameWindow=x=>['begin','end','entry','fade','tempo'].every(k=>
    Number.isFinite(x[k])&&Math.abs(x[k]-p[k])<.0001)&&
-   x.measuredFullBeat===p.measuredFullBeat&&x.metricalRhythmic===p.metricalRhythmic&&x.preservedEntrance===p.preservedEntrance&&x.rhythmicTailWindow===p.rhythmicTailWindow&&
+   x.measuredFullBeat===p.measuredFullBeat&&x.metricalRhythmic===p.metricalRhythmic&&x.preservedEntrance===p.preservedEntrance&&x.rhythmicTailWindow===p.rhythmicTailWindow&&x.nativeOriginalReturn===p.nativeOriginalReturn&&
    (!p.rhythmicTailWindow||Math.abs(x.structuralEvidence?.rhythmicWindow?.seconds-p.structuralEvidence?.rhythmicWindow?.seconds)<.0001);
   // A second OS/encoder may produce a different FLAC hash for the same
   // certified window. Keep the already installed verified rendition.
