@@ -2327,13 +2327,13 @@
    },
    "[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 3,
-    "s": 423,
+    "s": 446,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
    "m:2026-11|[\"a lei\",\"papa v, nerissima serpe, fritu\"]": {
     "v": 3,
-    "s": 423,
+    "s": 446,
     "t": "A Lei",
     "a": "Papa V, Nerissima Serpe, Fritu"
    },
@@ -6077,7 +6077,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
-    "s": 262,
+    "s": 270,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -6209,7 +6209,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 260,
+    "s": 268,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -6881,7 +6881,7 @@
    },
    "[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
-    "s": 270,
+    "s": 353,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7019,7 +7019,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 268,
+    "s": 351,
     "t": "Con Te PartirÃÂÃÂÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7691,7 +7691,7 @@
    },
    "[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 9,
-    "s": 353,
+    "s": 370,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -7829,7 +7829,7 @@
    },
    "m:2026-11|[\"con te partirÃÂÃÂ²\",\"andrea bocelli\"]": {
     "v": 8,
-    "s": 351,
+    "s": 368,
     "t": "Con Te PartirÃÂÃÂ²",
     "a": "Andrea Bocelli"
    },
@@ -8224,14 +8224,14 @@
     "a": "ModÃÂÃÂ "
    },
    "[\"le luci della cittÃÂÃÂ \",\"coez\"]": {
-    "v": 3,
-    "s": 562,
+    "v": 4,
+    "s": 624,
     "t": "Le luci della cittÃÂÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂÃÂ \",\"coez\"]": {
-    "v": 3,
-    "s": 562,
+    "v": 4,
+    "s": 624,
     "t": "Le luci della cittÃÂÃÂ ",
     "a": "Coez"
    },
@@ -8747,13 +8747,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃÂ©\"]": {
     "v": 0,
-    "s": 340,
+    "s": 399,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃÂ©\"]": {
     "v": 0,
-    "s": 340,
+    "s": 399,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃÂ©"
    },
@@ -9035,13 +9035,13 @@
    },
    "[\"le luci della cittÃÂ \",\"coez\"]": {
     "v": 4,
-    "s": 624,
+    "s": 640,
     "t": "Le luci della cittÃÂ ",
     "a": "Coez"
    },
    "m:2026-11|[\"le luci della cittÃÂ \",\"coez\"]": {
     "v": 4,
-    "s": 624,
+    "s": 640,
     "t": "Le luci della cittÃÂ ",
     "a": "Coez"
    },
@@ -9557,13 +9557,13 @@
    },
    "[\"la guerra di piero\",\"fabrizio de andrÃ©\"]": {
     "v": 0,
-    "s": 399,
+    "s": 416,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃ©"
    },
    "m:2026-11|[\"la guerra di piero\",\"fabrizio de andrÃ©\"]": {
     "v": 0,
-    "s": 399,
+    "s": 416,
     "t": "La guerra di Piero",
     "a": "Fabrizio De AndrÃ©"
    },
@@ -10511,13 +10511,13 @@
    },
    "[\"non abbiamo età\",\"luchè\"]": {
     "v": 1,
-    "s": 416,
+    "s": 472,
     "t": "Non Abbiamo Età",
     "a": "Luchè"
    },
    "m:2026-11|[\"non abbiamo età\",\"luchè\"]": {
     "v": 1,
-    "s": 416,
+    "s": 472,
     "t": "Non Abbiamo Età",
     "a": "Luchè"
    },
