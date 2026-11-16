@@ -86,7 +86,13 @@ const server=http.createServer((req,res)=>{
        }
        const correlation=xy/Math.sqrt(xx*yy),relativeRms=Math.sqrt(error/Math.max(yy,1e-10));
        console.error('Actual original preroll '+JSON.stringify({sampleRate,sourceSha:c.sourceSha,correlation,relativeRms,count}));
-       if(!Number.isFinite(correlation)||correlation<.99||!Number.isFinite(relativeRms)||relativeRms>.1)throw Error('Actual original-only native preroll differs');
+       if(!Number.isFinite(correlation)||correlation<.99||!Number.isFinite(relativeRms)||relativeRms>.1){
+        // Evidence only: a fitted lag never changes the nominal comparison.
+        let best={correlation:-1};const a=decoded.getChannelData(0),b=originalSource.getChannelData(0);
+        for(let lag=-4096;lag<=4096;lag++){let xx=0,yy=0,xy=0;for(let i=0;i<count;i+=4){const x=a[i],y=b[at+i+lag];xx+=x*x;yy+=y*y;xy+=x*y;}const v=xy/Math.sqrt(xx*yy);if(v>best.correlation)best={lag,correlation:v};}
+        console.error('Original preroll diagnostic only '+JSON.stringify({sampleRate,at,decodedFrames:originalSource.length,commonFrames:decoded.length,begin:c.begin,preRoll:c.preRoll,nominal:{correlation,relativeRms},best}));
+        throw Error('Actual original-only native preroll differs');
+       }
        nativeSourceClock.prerollProof={method:'actual-native-original-preroll-v1',sourceSha:c.sourceSha,frames:count,correlation,relativeRms};
       }
      }
