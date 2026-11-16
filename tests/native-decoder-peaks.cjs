@@ -14,7 +14,14 @@ const server=http.createServer((req,res)=>{
  if(url.pathname==='/'){res.end('<!doctype html><title>Read-only native PCM measurement</title><script src="/audio-composite-mix.js"></script>');return;}
  if(url.pathname==='/audio-composite-mix.js'){res.setHeader('Content-Type','text/javascript');res.end(fs.readFileSync(path.join(root,'audio-composite-mix.js')));return;}
  const original=/^\/original\/([a-f0-9]{40})\.mp3$/.exec(url.pathname);
- if(original&&originals.has(original[1])){const bytes=originals.get(original[1]);res.setHeader('Content-Type','audio/mpeg');res.end(bytes);return;}
+ if(original&&originals.has(original[1])){
+  const bytes=originals.get(original[1]);res.setHeader('Content-Type','audio/mpeg');res.setHeader('Accept-Ranges','bytes');
+  const range=/^bytes=(\d+)-(\d*)$/.exec(req.headers.range||'');
+  if(range){const lo=Number(range[1]),hi=Math.min(bytes.length-1,range[2]?Number(range[2]):bytes.length-1);
+   if(lo>hi||lo>=bytes.length){res.writeHead(416,{'Content-Range':'bytes */'+bytes.length});res.end();return;}
+   res.writeHead(206,{'Content-Range':`bytes ${lo}-${hi}/${bytes.length}`,'Content-Length':hi-lo+1});res.end(bytes.subarray(lo,hi+1));
+  }else{res.setHeader('Content-Length',bytes.length);res.end(bytes);}return;
+ }
  if(!/^\/dj-mixes\/[a-f0-9]{64}\.flac$/.test(url.pathname)){res.writeHead(404);res.end();return;}
  const bytes=fs.readFileSync(path.join(root,url.pathname));res.setHeader('Content-Type','audio/flac');res.setHeader('Content-Length',bytes.length);res.end(bytes);
 });
@@ -42,7 +49,9 @@ const server=http.createServer((req,res)=>{
      const media=new Audio('/original/'+sha+'.mp3');media.preload='metadata';media.load();mediaClocks.set(sha,media);
      await new Promise(resolve=>{const start=Date.now(),poll=()=>Number.isFinite(media.duration)&&media.duration>26||Date.now()-start>5000?resolve():setTimeout(poll,25);poll()});
     }
-    return mediaClocks.get(sha).duration;
+    const media=mediaClocks.get(sha);
+    if(!Number.isFinite(media.duration)||media.duration<=26)console.error('Native metadata probe failure '+JSON.stringify({sha,duration:media.duration,readyState:media.readyState,networkState:media.networkState,error:media.error?.message,errorCode:media.error?.code,seekable:media.seekable.length,buffered:media.buffered.length}));
+    return media.duration;
    }
    try{
    for(const sampleRate of [44100,48000]){
