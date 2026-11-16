@@ -1300,8 +1300,8 @@
     "a": "Oasis"
    },
    "[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 4,
-    "s": 630,
+    "v": 5,
+    "s": 632,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -2098,8 +2098,8 @@
     "a": "Antonello Venditti"
    },
    "m:2026-11|[\"tristano e isotta\",\"kid yugi\"]": {
-    "v": 3,
-    "s": 552,
+    "v": 4,
+    "s": 554,
     "t": "Tristano e Isotta",
     "a": "Kid Yugi"
    },
@@ -4145,13 +4145,13 @@
    },
    "[\"oh 9od\",\"thasup, nayt\"]": {
     "v": 2,
-    "s": 190,
+    "s": 264,
     "t": "oh 9od",
     "a": "thasup, nayt"
    },
    "m:2026-11|[\"oh 9od\",\"thasup, nayt\"]": {
     "v": 2,
-    "s": 190,
+    "s": 264,
     "t": "oh 9od",
     "a": "thasup, nayt"
    },
@@ -7439,13 +7439,13 @@
    },
    "[\"esistere (piÃÂÃÂÃÂÃÂ¹ di me)\",\"nayt\"]": {
     "v": 1,
-    "s": 302,
+    "s": 332,
     "t": "Esistere (piÃÂÃÂÃÂÃÂ¹ di me)",
     "a": "nayt"
    },
    "m:2026-11|[\"esistere (piÃÂÃÂÃÂÃÂ¹ di me)\",\"nayt\"]": {
     "v": 1,
-    "s": 302,
+    "s": 332,
     "t": "Esistere (piÃÂÃÂÃÂÃÂ¹ di me)",
     "a": "nayt"
    },
@@ -8249,13 +8249,13 @@
    },
    "[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
     "v": 1,
-    "s": 332,
+    "s": 370,
     "t": "Esistere (piÃÂÃÂ¹ di me)",
     "a": "nayt"
    },
    "m:2026-11|[\"esistere (piÃÂÃÂ¹ di me)\",\"nayt\"]": {
     "v": 1,
-    "s": 332,
+    "s": 370,
     "t": "Esistere (piÃÂÃÂ¹ di me)",
     "a": "nayt"
    },
