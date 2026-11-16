@@ -54,6 +54,10 @@ function supports(cue){
   (cue.nativeRecoveryCurve==null&&!cue.metricalCadenceWindow&&c.nativeRecoveryCurve==null||
    cue.metricalCadenceWindow===true&&cue.metricalPickupWindow===true&&cue.nativeRecoveryCurve==='sine-1.2-v1'&&
    c.nativeRecoveryCurve===cue.nativeRecoveryCurve&&cue.fade<=18&&cue.structuralEvidence?.bars===4&&
+   // A duration-only certificate misses Apple's headerless-MP3 waveform shift.
+   // New cadences need nominal original-prefix coherence on BOTH backends.
+   Array.isArray(c.nativeDecoderProof?.sourcePlatformCoverage)&&['linux','darwin'].every(os=>c.nativeDecoderProof.sourcePlatformCoverage.includes(os))&&
+   latestLaunchTime(cue)>cue.begin-c.preRoll+.04&&
    cue.structuralEvidence?.cadenceWindow?.method==='four-observed-bars-and-preserved-decay-v1'&&
    [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.sourceClockProof;return v?.method==='actual-native-source-clock-v1'&&v.sourceSha===cue.sourceSha&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')})&&
    c.cadenceTailProof?.sourceSha===cue.sourceSha&&['at48000','at44100'].every(k=>{

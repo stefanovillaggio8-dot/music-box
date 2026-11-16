@@ -29,29 +29,17 @@ test('the original-source cadence cannot authorize playback without its native c
  const source=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
  const {engine,tracks}=new Function('require','__dirname',source.slice(0,source.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks}')(require,path.join(root,'tools'));
  const entries=new Map(tracks),a=structuredClone(entries.get('audio/songs/track-6.mp3')),b=entries.get('audio/songs/track-233.mp3');
- const record=a.structuralBeatPlans[b.sha],p=record.cue;assert.equal(p.metricalCadenceWindow,true);
+ const record=structuredClone(require('../audits/ste-architecture-20261116/unreleased-cadence-candidate.json').record);a.structuralBeatPlans={...(a.structuralBeatPlans||{}),[b.sha]:record};const p=record.cue;assert.equal(p.metricalCadenceWindow,true);
  delete p.composite.nativeDecoderProof;
  assert.equal(engine.validatePreservedFileTailCue(record,p,a,b,a.duration),null);
 });
-test('the installed cadence stays partial and rejects missing stereo tail evidence, clocks and level jumps',()=>{
- const source=fs.readFileSync(path.join(root,'tools/dj-equivalence-audit.cjs'),'utf8');
- const {engine,tracks}=new Function('require','__dirname',source.slice(0,source.indexOf('// Independent PCM spotchecks'))+'return {engine,tracks}')(require,path.join(root,'tools'));
- const entries=new Map(tracks),original=entries.get('audio/songs/track-6.mp3'),b=entries.get('audio/songs/track-233.mp3');
- const selected=engine.transition(original,b,original.duration);
- assert.equal(selected.metricalCadenceWindow,true);assert.equal(selected.measuredFullBeat,false);assert.equal(selected.metricalRhythmic,true);
- assert.equal(selected.entry,0);assert.equal(selected.end,original.duration);assert.ok(selected.composite.postRenderRhythm.rmsSeconds<=.020);
- assert.equal(engine.desktopBeatPairCertified(original,b,selected),true);
- for(const mutate of [p=>delete p.composite.nativeSplice,p=>delete p.composite.nativeDecoderProof.rates[44100].sourceClockProof,
-  p=>p.composite.nativeDecoderProof.rates[48000].sourceClockProof.sourceSha='a'.repeat(40),
-  p=>p.composite.nativeDecoderProof.rates[48000].sourceClockProof.decodedOffsets=[.01],
-  p=>delete p.structuralEvidence.cadenceWindow,p=>p.structuralEvidence.cadenceWindow.targetStart+=.1,
-  p=>delete p.composite.cadenceTailProof.at44100,p=>p.composite.cadenceTailProof.at48000.channelProofs.pop(),
-  p=>p.composite.cadenceTailProof.at44100.channelProofs[1].maximumTailOnset=.25,
-  p=>p.composite.cadenceTailProof.at48000.channelProofs[0].maximumRelativeRms=.5001,
-  p=>p.composite.cadenceTailProof.at48000.channelProofs[0].sampleRate=44100,
-  p=>p.composite.levelContinuity.changeDb=-3.0001,p=>p.composite.releaseSeconds=1.5,
-  p=>p.nativeRecoveryCurve='smooth',p=>p.measuredFullBeat=true,p=>p.entry=.1,p=>p.end-=.2]){
-  const a=structuredClone(original),r=a.structuralBeatPlans[b.sha],p=r.cue;mutate(p);
-  assert.equal(engine.validatePreservedFileTailCue(r,p,a,b,a.duration),null);
- }
+test('the nominal outgoing waveform failure keeps the research cadence out of production',()=>{
+ const index=require('../dj-deep-analysis.json'),candidate=require('../audits/ste-architecture-20261116/unreleased-cadence-candidate.json');
+ const a=index.entries[candidate.sourceKey],b=index.entries[candidate.targetKey];
+ assert.equal(a.structuralBeatPlans?.[b.sha],undefined);
+ const vm=require('node:vm'),scope={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'audio-composite-mix.js'),'utf8'),scope);
+ const p=structuredClone(candidate.record.cue);assert.equal(p.measuredFullBeat,false);assert.equal(p.entry,0);assert.equal(p.end,a.duration);
+ assert.equal(scope.window.MusicBoxCompositeMix.supports(p),false,'Linux-only/duration-only receipts cannot activate a universal native handoff');
+ p.composite.nativeDecoderProof.sourcePlatformCoverage=['linux','darwin'];
+ assert.equal(scope.window.MusicBoxCompositeMix.supports(p),false,'platform labels alone cannot replace actual source waveform comparisons');
 });

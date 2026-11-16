@@ -4,7 +4,7 @@
 // original-return cue also fetches its SHA-bound original for splice proof.
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {chromium,webkit}=require('playwright'),root=path.resolve(__dirname,'..');
-const index=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json'),'utf8')),assets=new Map();
+const index=JSON.parse(fs.readFileSync(process.env.MUSICBOX_NATIVE_INDEX||path.join(root,'dj-deep-analysis.json'),'utf8')),assets=new Map();
 for(const entry of Object.values(index.entries))for(const record of Object.values(entry.structuralBeatPlans||{}))
  for(const cue of record.cues||[record.cue])if((cue?.rhythmicTailWindow||cue?.metricalPickupWindow||cue?.structuralEvidence?.exactSilentSuffix)&&cue.composite)assets.set(cue.composite.sha256,cue.composite);
 const name=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['chromium','webkit'].includes(name))throw Error('Select one native decoder');
@@ -151,7 +151,7 @@ const server=http.createServer((req,res)=>{
   },[...assets.values()]);
   assert.equal(measured.length,assets.size*2);
   assert.ok(measured.every(r=>!r.nativeSplice||r.nativeSplice.correlation>=.99&&r.nativeSplice.relativeRms<=.1),'Every nominal native splice must pass; diagnostic lag is never accepted');
-  console.log(JSON.stringify({method:'actual-browser-decode-v1',browser:name,browserVersion:browser.version(),physicalIPhone:false,
+  console.log(JSON.stringify({method:'actual-browser-decode-v1',browser:name,browserVersion:browser.version(),nativePlatform:process.platform,physicalIPhone:false,
    nativeMediaClockScope:'one-live-HTML-media-element-per-original-across-two-AudioContext-rates',assets:measured},null,2));
  }finally{await browser?.close();server.close()}
 })().catch(error=>{console.error(error);process.exitCode=1});

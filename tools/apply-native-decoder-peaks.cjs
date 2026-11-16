@@ -5,7 +5,8 @@ const index=JSON.parse(fs.readFileSync(arg('index','dj-deep-analysis.json'),'utf
 if(!folder||!output)throw Error('Explicit proof directory and output index required');
 const files=fs.readdirSync(folder,{recursive:true}).filter(f=>f.endsWith('.json')).map(f=>JSON.parse(fs.readFileSync(path.join(folder,f),'utf8')));
 const proofs=files.filter(p=>p.method==='actual-browser-decode-v1'),browsers=['chromium','webkit'];
-if(proofs.length!==2||browsers.some(b=>proofs.filter(p=>p.browser===b).length!==1))throw Error('Both actual decoders required, exactly once');
+if(![2,3].includes(proofs.length)||proofs.filter(p=>p.browser==='chromium').length!==1||![1,2].includes(proofs.filter(p=>p.browser==='webkit').length)||proofs.some(p=>!browsers.includes(p.browser)))throw Error('One Chromium and one or two distinct-platform WebKit receipts required');
+if(proofs.length===3&&new Set(proofs.filter(p=>p.browser==='webkit').map(p=>p.nativePlatform)).size!==2)throw Error('Duplicate WebKit platform receipts');
 let changed=0;const seen=new Set();
 for(const entry of Object.values(index.entries))for(const record of Object.values(entry.structuralBeatPlans||{}))
  for(const cue of [record.cue,...(record.cues||[])]){
@@ -41,6 +42,11 @@ for(const entry of Object.values(index.entries))for(const record of Object.value
      minimumCorrelation:Math.min(...prefix.map(v=>v.correlation)),maximumRelativeRms:Math.max(...prefix.map(v=>v.relativeRms))};
    }
   }
-  c.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:c.sha256,rates,physicalIPhone:false};changed++;seen.add(c.sha256);
+  let sourcePlatformCoverage;
+  if(c.nativeRecoveryCurve){
+   sourcePlatformCoverage=[...new Set(proofs.filter(p=>p.browser==='webkit').map(p=>p.nativePlatform))].sort();
+   if(!['linux','darwin'].every(os=>sourcePlatformCoverage.includes(os))||!c.sourcePrerollProof)throw Error('Cadence requires nominal outgoing waveform proofs on Linux AND macOS WebKit');
+  }
+  c.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:c.sha256,rates,physicalIPhone:false,...(sourcePlatformCoverage?{sourcePlatformCoverage}:{})};changed++;seen.add(c.sha256);
  }
 fs.writeFileSync(output,JSON.stringify(index)+'\n');console.log(JSON.stringify({cueCopiesCertified:changed,uniqueAssets:seen.size}));
