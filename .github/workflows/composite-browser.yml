@@ -21,7 +21,7 @@ on:
       webkit_runner:
         description: 'Native media platform for WebKit; both platforms keep identical playback and peak checks'
         type: choice
-        options: [ubuntu-latest, macos-latest]
+        options: [ubuntu-latest, macos-latest, macos-26-intel]
         default: ubuntu-latest
       ste_case:
         description: 'Keep the legacy partial regression distinct from the new personal-library complete pair'
