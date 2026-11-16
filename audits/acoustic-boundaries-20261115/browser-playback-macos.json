@@ -1,0 +1,218 @@
+[
+  {
+    "browser": "chromium",
+    "profile": "Emanuele",
+    "indexSha256": "e1939c9f65c9b7ec90370866bd7ec3b47fb734be336f4f0b76f4a86a68d78e3c",
+    "decodedOriginalMixes": 121,
+    "resampled": {
+      "sampleRate": 44100,
+      "decoded": 121,
+      "rejected": []
+    },
+    "actualNativeHandoff": {
+      "id": "in",
+      "handoffs": 1,
+      "mutedBeforePlay": true,
+      "paused": false,
+      "at": 12.095249,
+      "playError": null
+    },
+    "nativeHandoffMode": {
+      "preservedFileTail": true,
+      "entry": 0,
+      "tempo": 0.9615025480209735
+    },
+    "seekRollback": true,
+    "silentAppBridge": {
+      "muted": true,
+      "lastPlayWasMuted": true
+    },
+    "actualSameProfilePlannerPlayback": {
+      "handoffs": 1,
+      "paused": false,
+      "sourceMatches": true
+    },
+    "optimizedCue": {
+      "from": "b-track-934",
+      "to": "b-track-1124",
+      "fade": 13.88620921984716,
+      "tempo": 1.046014715892516
+    },
+    "muteDuringOverlap": {
+      "muted": true,
+      "unmuteKeptCommonOwnership": true
+    },
+    "automaticShuffle": {
+      "full": true,
+      "partial": false,
+      "manualQueue": 0,
+      "poolRespected": true
+    },
+    "physicalIPhone": false,
+    "sourceRun": 43789096589,
+    "webkitRunner": "macos-latest",
+    "chromiumRunner": "ubuntu-latest"
+  },
+  {
+    "browser": "webkit",
+    "profile": "Emanuele",
+    "indexSha256": "e1939c9f65c9b7ec90370866bd7ec3b47fb734be336f4f0b76f4a86a68d78e3c",
+    "decodedOriginalMixes": 121,
+    "resampled": {
+      "sampleRate": 44100,
+      "decoded": 121,
+      "rejected": []
+    },
+    "actualNativeHandoff": {
+      "id": "in",
+      "handoffs": 1,
+      "mutedBeforePlay": true,
+      "paused": false,
+      "at": 12.750580183666656,
+      "playError": null
+    },
+    "nativeHandoffMode": {
+      "preservedFileTail": true,
+      "entry": 0,
+      "tempo": 0.9615025480209735
+    },
+    "seekRollback": true,
+    "silentAppBridge": {
+      "muted": true,
+      "lastPlayWasMuted": true
+    },
+    "actualSameProfilePlannerPlayback": {
+      "handoffs": 1,
+      "paused": false,
+      "sourceMatches": true
+    },
+    "optimizedCue": {
+      "from": "b-track-934",
+      "to": "b-track-1124",
+      "fade": 13.88620921984716,
+      "tempo": 1.046014715892516
+    },
+    "muteDuringOverlap": {
+      "muted": true,
+      "unmuteKeptCommonOwnership": true
+    },
+    "automaticShuffle": {
+      "full": true,
+      "partial": false,
+      "manualQueue": 0,
+      "poolRespected": true
+    },
+    "physicalIPhone": false,
+    "sourceRun": 43789096589,
+    "webkitRunner": "macos-latest",
+    "chromiumRunner": "ubuntu-latest"
+  },
+  {
+    "browser": "chromium",
+    "profile": "Ste",
+    "indexSha256": "e1939c9f65c9b7ec90370866bd7ec3b47fb734be336f4f0b76f4a86a68d78e3c",
+    "decodedOriginalMixes": 121,
+    "resampled": {
+      "sampleRate": 44100,
+      "decoded": 121,
+      "rejected": []
+    },
+    "actualNativeHandoff": {
+      "id": "in",
+      "handoffs": 1,
+      "mutedBeforePlay": true,
+      "paused": false,
+      "at": 15.34055,
+      "playError": null
+    },
+    "nativeHandoffMode": {
+      "preservedFileTail": true,
+      "entry": 0,
+      "tempo": 0.989949748743714
+    },
+    "seekRollback": true,
+    "silentAppBridge": {
+      "muted": true,
+      "lastPlayWasMuted": true
+    },
+    "actualSameProfilePlannerPlayback": {
+      "handoffs": 1,
+      "paused": false,
+      "sourceMatches": true
+    },
+    "optimizedCue": {
+      "from": "b-track-4",
+      "to": "b-track-38",
+      "fade": 7.250282685512346,
+      "tempo": 1.0442804428044306
+    },
+    "muteDuringOverlap": {
+      "muted": true,
+      "unmuteKeptCommonOwnership": true
+    },
+    "automaticShuffle": {
+      "full": false,
+      "partial": true,
+      "manualQueue": 0,
+      "poolRespected": true
+    },
+    "physicalIPhone": false,
+    "sourceRun": 43789096589,
+    "webkitRunner": "macos-latest",
+    "chromiumRunner": "ubuntu-latest"
+  },
+  {
+    "browser": "webkit",
+    "profile": "Ste",
+    "indexSha256": "e1939c9f65c9b7ec90370866bd7ec3b47fb734be336f4f0b76f4a86a68d78e3c",
+    "decodedOriginalMixes": 121,
+    "resampled": {
+      "sampleRate": 44100,
+      "decoded": 121,
+      "rejected": []
+    },
+    "actualNativeHandoff": {
+      "id": "in",
+      "handoffs": 1,
+      "mutedBeforePlay": true,
+      "paused": false,
+      "at": 16.023965175333355,
+      "playError": null
+    },
+    "nativeHandoffMode": {
+      "preservedFileTail": true,
+      "entry": 0,
+      "tempo": 0.989949748743714
+    },
+    "seekRollback": true,
+    "silentAppBridge": {
+      "muted": true,
+      "lastPlayWasMuted": true
+    },
+    "actualSameProfilePlannerPlayback": {
+      "handoffs": 1,
+      "paused": false,
+      "sourceMatches": true
+    },
+    "optimizedCue": {
+      "from": "b-track-4",
+      "to": "b-track-38",
+      "fade": 7.250282685512346,
+      "tempo": 1.0442804428044306
+    },
+    "muteDuringOverlap": {
+      "muted": true,
+      "unmuteKeptCommonOwnership": true
+    },
+    "automaticShuffle": {
+      "full": false,
+      "partial": true,
+      "manualQueue": 0,
+      "poolRespected": true
+    },
+    "physicalIPhone": false,
+    "sourceRun": 43789096589,
+    "webkitRunner": "macos-latest",
+    "chromiumRunner": "ubuntu-latest"
+  }
+]

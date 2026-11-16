@@ -64,16 +64,28 @@
     "jobsFailed": 1,
     "failedJob": "real-audio (webkit, Ste)",
     "nextRun": 43788780959,
-    "nextRunStatus": "in_progress"
+    "nextRunStatus": "failure"
   },
   "physicalIPhone": false,
   "phoneCpuRamMeasured": false,
   "offlineUserDataDeleted": false,
   "commonPcmMac": {
     "run": 43789096589,
-    "status": "in_progress",
+    "status": "completed",
     "webkitRunner": "macos-latest",
     "chromiumRunner": "ubuntu-latest",
-    "sameAssertions": true
+    "sameAssertions": true,
+    "conclusion": "success",
+    "jobsPassed": 7,
+    "jobsFailed": 0,
+    "repeatedSteJobId": 133043694471,
+    "repeatStatus": "success",
+    "repeatAttempt": 2,
+    "repeatActualHandoff": {
+      "handoffs": 1,
+      "paused": false,
+      "sourceMatches": true
+    },
+    "allSevenPassedAttempt1": true
   }
 }

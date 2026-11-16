@@ -22,12 +22,15 @@
     "sw.js": "9efee3131dced17c21e1be2cf5e806cde578f1612374079197ce5fd78acfc5aa",
     "tests/composite-mix.test.cjs": "41eadeed41091f22613462dcd1683cfdff879fe0466374042626828cb7aed2fb",
     "tests/dj-lyrics-regression.test.cjs": "a8e88bd2d025a97405f659880e9b01da8ebe14ba8d6d23a9fe70e2e8b615b528",
-    "tests/initial-seek-readiness.test.cjs": "d39bc479f854f41a1b16fdbbff69383b6760ed7caacfaa2f154f8c88023cb76d"
+    "tests/initial-seek-readiness.test.cjs": "d39bc479f854f41a1b16fdbbff69383b6760ed7caacfaa2f154f8c88023cb76d",
+    ".github/workflows/composite-browser.yml": "e425aff1757508022939c52658dec7ba9ebe58b918b298d051705fa75edc20b0",
+    "tests/native-source-metadata.cjs": "216e0fbf021d3288cee8335046bdd20fe45be8e9509b828dc96bc352b0a54f94",
+    "tests/native-decoder-peaks.cjs": "f1e1b5e78dad36f7241aa1a5a7bc982d0f20b1c022b9e17112b014000718a478"
   },
   "publicVersionUnchanged": true,
   "physicalIPhoneTest": false,
   "implementationCommit": "a8284d71ecd9a4b075fff0fec8ab20ade06c4835",
-  "validatedCodeCommit": "556dc4dd9f38e6083942a225caa78ac7300bb54d",
+  "validatedCodeCommit": "e74456965a6561223e6265ffcc7cf5e097e03414",
   "musicalAuditFactoryUnchanged": true,
   "musicalIndexUnchanged": true,
   "nativeReadinessAndInitialSeekChanged": true,
