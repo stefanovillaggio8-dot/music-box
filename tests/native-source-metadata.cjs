@@ -32,13 +32,14 @@ const selected=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['webkit','chromium']
   browser=await ({chromium,webkit}[selected]).launch({headless:true});const page=await browser.newPage(),base='http://127.0.0.1:'+server.address().port;
   await page.route('**/intercept/**',async route=>{const sha=new URL(route.request().url()).pathname.split('/')[2];requests.push({mode:'intercept',sha,range:route.request().headers().range||null});await route.fulfill({status:200,contentType:'audio/mpeg',body:data.get(sha)});});
   await page.goto(base);const results=[];
-  for(const key of keys)for(const mode of ['raw','range','routed-range','routed-raw','eager-range','eager-raw','unmuted-eager-range','context-range','context-eager-range','context-eager-raw','context-eager-load-range','fresh-seek-context-eager-range','fresh-playing-context-eager-range','whole','intercept','blob',...(candidates[key]?['prefix-range','prefix-blob']:[])]){
+  for(const key of keys)for(const mode of ['raw','range','routed-range','routed-raw','eager-range','eager-raw','unmuted-eager-range','context-range','context-eager-range','context-eager-raw','context-eager-load-range','fresh-seek-context-eager-range','fresh-playing-context-eager-range','fresh-new-context-eager-range','fresh-new-retire-context-eager-range','fresh-new-load-context-eager-range','whole','intercept','blob',...(candidates[key]?['prefix-range','prefix-blob']:[])]){
    const sha=entries[key].sha,url=mode.endsWith('raw')?'https://raw.githubusercontent.com/stefanovillaggio8-dot/music-box-brani/main/'+key.slice(6):base+'/'+mode+'/'+sha;
    const passthrough=route=>route.continue();
    if(mode.startsWith('routed-'))await page.route('**/*',passthrough);
    await page.evaluate(()=>window.__probeReady=false);
-   const pending=page.evaluate(async({url,blob,expectedDuration,eager,unmuted,context,explicitLoad,freshSeek,waitForPlaying})=>{
-    const audio=new Audio();audio.preload='auto';audio.crossOrigin='anonymous';
+   const pending=page.evaluate(async({url,blob,expectedDuration,eager,unmuted,context,explicitLoad,freshSeek,waitForPlaying,newDecoder,retirePrevious})=>{
+    const makeAudio=()=>{const a=new Audio();a.preload='auto';a.crossOrigin='anonymous';return a};
+    let audio=makeAudio();const obsolete=[];
     let liveContext=null;
     const play=()=>{if(context){liveContext||=new AudioContext();liveContext.resume()}audio.muted=!unmuted;return audio.play().then(()=>null,error=>String(error))};
     const freshWrites=[];let freshPlaying=false;
@@ -62,6 +63,7 @@ const selected=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['webkit','chromium']
     // The application can assign the same source again for an explicit
     // handoff. Compare that path too, retaining the original MP3 bytes.
     window.__probeReady=false;
+    if(newDecoder){obsolete.push(audio);if(retirePrevious){audio.removeAttribute('src');audio.load()}audio=makeAudio()}
     const requestedPosition=expectedDuration-16,seekEvents=[];
     const seek=()=>{if(audio.readyState>=1&&Number.isFinite(audio.duration)&&audio.duration>.05){audio.currentTime=requestedPosition;for(const event of seekEvents)audio.removeEventListener(event,seek)}};
     for(const event of ['loadedmetadata','durationchange','canplay','playing']){seekEvents.push(event);audio.addEventListener(event,seek)}
@@ -78,8 +80,8 @@ const selected=process.env.MUSICBOX_COMPOSITE_BROWSERS;if(!['webkit','chromium']
      const bytes=await(await fetch(url)).arrayBuffer(),context=new OfflineAudioContext(2,44100,44100),buffer=await context.decodeAudioData(bytes);decodedDuration=buffer.duration;decodedFrames=buffer.length;
      decodedPcmSha256=await Promise.all(Array.from({length:buffer.numberOfChannels},async(_,i)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer.getChannelData(i)))).map(v=>v.toString(16).padStart(2,'0')).join('')));
     }catch(error){decodeError=String(error)}
-    audio.removeAttribute('src');audio.load();if(blob)URL.revokeObjectURL(mediaUrl);await liveContext?.close();return {metadata,afterPlayback,repeatedPlayback,decodedDuration,decodedFrames,decodedPcmSha256,decodeError};
-   },{url,blob:mode.endsWith('blob'),expectedDuration:entries[key].duration,eager:mode.includes('eager'),unmuted:mode.includes('unmuted')||mode.includes('context-'),context:mode.includes('context-'),explicitLoad:mode.includes('-load-'),freshSeek:mode.startsWith('fresh-'),waitForPlaying:mode.startsWith('fresh-playing-')});
+    audio.removeAttribute('src');audio.load();for(const old of obsolete){old.removeAttribute('src');old.load()}if(blob)URL.revokeObjectURL(mediaUrl);await liveContext?.close();return {metadata,afterPlayback,repeatedPlayback,decodedDuration,decodedFrames,decodedPcmSha256,decodeError};
+   },{url,blob:mode.endsWith('blob'),expectedDuration:entries[key].duration,eager:mode.includes('eager'),unmuted:mode.includes('unmuted')||mode.includes('context-'),context:mode.includes('context-'),explicitLoad:mode.includes('-load-'),freshSeek:mode.startsWith('fresh-'),waitForPlaying:mode.startsWith('fresh-playing-'),newDecoder:mode.includes('-new-'),retirePrevious:mode.includes('-retire-')});
    await page.waitForFunction(()=>window.__probeReady===true);await page.click('#play');
    await page.waitForFunction(()=>window.__probeReady===2);await page.click('#play');
    const result=await pending;results.push({key,sha,mode,expectedDuration:entries[key].duration,...result});
