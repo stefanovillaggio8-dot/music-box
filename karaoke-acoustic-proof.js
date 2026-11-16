@@ -37,7 +37,11 @@ async function prepare(proof,rows,audioSha256,signal){
   unique.add(key);words.push(Object.freeze({...w,key,text:tokens[w.wordIndex],normalized:token}));
  }
  const recognized=[];
- if(proof.asr?.model==='onnx-community/whisper-tiny_timestamped'&&
+ const extra=proof.asr?.supplementalCtcCorroborator;
+ const validExtra=extra==null||extra.method==='ctc-only-after-original-v1'&&
+  extra.model==='onnx-community/whisper-base_timestamped'&&extra.revision==='608c49e61301901684bc36cac8f74b95ff6b5a8e'&&
+  extra.dtype?.encoder_model==='fp32'&&extra.dtype?.decoder_model_merged==='q4';
+ if(validExtra&&proof.asr?.model==='onnx-community/whisper-tiny_timestamped'&&
     proof.asr?.revision==='517244293732ee2d58139af5814231b7e6830a0d'&&
     proof.asr?.dtype?.encoder_model==='fp32'&&proof.asr?.dtype?.decoder_model_merged==='q4'&&
     Array.isArray(proof.recognizedRows)&&proof.recognizedRows.length<=800){

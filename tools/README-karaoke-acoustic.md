@@ -34,3 +34,8 @@ PYTHON_TORCH tools/test-karaoke-ctc-boundaries.py
 ```
 
 Le prove Chromium/WebKit si eseguono nel workflow CI `composite-browser.yml`. Non certificano un iPhone fisico. Il manifest deve avere almeno tre frasi utilizzabili per attraversare il salvataggio applicativo.
+
+
+L'opzione offline `--ctc-corroborator=base` aggiunge un solo passaggio di Whisper Base a 28 secondi per finestra. Le sue osservazioni corroborano soltanto confini CTC già misurati, dopo i passaggi Tiny e CTC precedenti; non forniscono direttamente tempi al karaoke. Revisione e dtype sono vincolati nel produttore e nella prova esportata. Il telefono riceve solo JSON, senza caricare Base. Il precomputo ricarica inoltre le righe già esportate, anche fuori dalle nuove finestre, e rifiuta l'esportazione se un intervallo precedentemente accettato viene perso o spostato.
+
+Il benchmark accetta `--ctc-corroboration-report=REPORT_BASE` per confrontare questo stesso ordine di proposte e salvataggio, mantenendo i contesti Tiny originali. Gli hash degli MP3 e delle osservazioni devono corrispondere; non si possono miscelare revisioni arbitrarie. Un miglioramento sul campione di sviluppo non dimostra un miglioramento su nuovi brani: congelare la scelta del campione indipendente prima dell'inferenza e riportare anche gli esiti senza guadagni.

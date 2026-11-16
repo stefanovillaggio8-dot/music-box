@@ -125,3 +125,18 @@ test('a superseded track during proof download cannot decode audio or save stale
  assert.ok(release);id='different';release(null);await new Promise(setImmediate);
  assert.equal(decoded,0);assert.equal(saved,0);assert.equal(window.MusicBoxAudioAlign.diagnostics().activeAnalyses,0);
 });
+
+
+test('supplemental offline corroboration is source-bound and cannot load an unpinned model on the phone',async()=>{
+ const f=fixture(),p=await f.proof();
+ p.asr={model:'onnx-community/whisper-tiny_timestamped',revision:'517244293732ee2d58139af5814231b7e6830a0d',dtype:{encoder_model:'fp32',decoder_model_merged:'q4'},
+  supplementalCtcCorroborator:{method:'ctc-only-after-original-v1',model:'onnx-community/whisper-base_timestamped',revision:'608c49e61301901684bc36cac8f74b95ff6b5a8e',dtype:{encoder_model:'fp32',decoder_model_merged:'q4'}}};
+ p.recognizedRows=[{rowIndex:0,sourceT:1,t:1,partialAudio:false,words:f.observations.map((w,i)=>({wordIndex:i,t:w.t,end:w.end}))}];
+ f.c.fetch=()=>{throw Error('No model or PCM download is necessary to load observations')};
+ const proof=await f.api.prepare(p,f.rows,'a'.repeat(64));assert.equal(f.api.recognizedRows(f.rows,proof)[0].words.length,6);
+ assert.equal(await f.api.prepare(p,f.rows,'b'.repeat(64)),null);
+ for(const mutate of [x=>x.revision='main',x=>x.model='other',x=>x.method='asr-estimate',x=>x.dtype.decoder_model_merged='fp32']){
+  const changed=structuredClone(p);mutate(changed.asr.supplementalCtcCorroborator);
+  const rejected=await f.api.prepare(changed,f.rows,'a'.repeat(64));assert.equal(f.api.recognizedRows(f.rows,rejected).length,0);
+ }
+});

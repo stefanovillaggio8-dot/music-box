@@ -19,6 +19,11 @@ env.cacheDir=path.resolve(arg('cache','.cache/karaoke'));
 env.backends.onnx.wasm.numThreads=2;
 const inference={model:'onnx-community/whisper-tiny_timestamped',revision:'517244293732ee2d58139af5814231b7e6830a0d',
  dtype:{encoder_model:'fp32',decoder_model_merged:'q4'}};
+const corroborator=arg('ctc-corroborator','none');
+if(!['none','base'].includes(corroborator))throw Error('Unknown offline CTC corroborator');
+const auxiliary={model:'onnx-community/whisper-base_timestamped',revision:'608c49e61301901684bc36cac8f74b95ff6b5a8e',dtype:{encoder_model:'fp32',decoder_model_merged:'q4'}};
+let auxiliaryModel=null;
+if(corroborator==='base')inference.supplementalCtcCorroborator={...auxiliary,method:'ctc-only-after-original-v1'};
 const model=await pipeline('automatic-speech-recognition',inference.model,{
  device:'cpu',revision:inference.revision,dtype:inference.dtype,session_options:{intraOpNumThreads:2,interOpNumThreads:1}});
 const context={crypto:crypto.webcrypto,TextEncoder,TextDecoder};context.window=context;vm.createContext(context);
@@ -34,9 +39,21 @@ for(const record of manifest.records){
  const source=path.resolve(record.file),audioSha256=sha(fs.readFileSync(source));
  if(record.audioSha256&&record.audioSha256!==audioSha256)throw Error('Recording changed');
  const state=fixture({synced:asLrc(record.rows)}),history=align.createObservationHistory(),all=[];
+ const descriptor=index?.entries?.[audioSha256];let proof=null;
+ if(descriptor){
+  if(!/^karaoke-acoustic\/[a-f0-9]{64}\.json$/.test(descriptor.path))throw Error('Invalid proof path');
+  const bytes=fs.readFileSync(path.join(path.dirname(path.resolve(proofFile)),descriptor.path));
+  if(sha(bytes)!==descriptor.sha256)throw Error('CTC proof changed');
+  proof=await acoustic.prepare(JSON.parse(bytes),state.rows(),audioSha256);
+  // A bounded rerun must retain previously exported observations outside
+  // its new windows too. The phone never needs to repeat this inference.
+  await state.save('song',acoustic.recognizedRows(state.rows(),proof));
+ }
+ const certified=()=>state.rows().filter(r=>!r.estimated&&(context.MusicBoxWordKaraoke.hasWordTiming(r)||context.MusicBoxWordKaraoke.hasPartialTiming(r))).flatMap(r=>(r.words||r.acousticSpans||[]).map((w,i)=>({key:(r.sourceT??r.t)+'|'+r.text+'|'+(w.wordIndex??i),t:w.t,end:w.end})));
+ const previous=certified();
  for(const start of record.windows){
   if(!Number.isFinite(start)||start<0||start>=3600)throw Error('Invalid source window');
-  const identity={audioSha256,start,seconds:28,inference,method:'original-stereo-app-pcm-slice-contexts-28-14-7-v1'};
+  const identity={audioSha256,start,seconds:28,inference:{model:inference.model,revision:inference.revision,dtype:inference.dtype},method:'original-stereo-app-pcm-slice-contexts-28-14-7-v1'};
   const cache=path.join(work,sha(JSON.stringify(identity))+'.asr.json');let passes;
   if(fs.existsSync(cache)){
    const cached=read(cache);if(JSON.stringify(cached.identity)!==JSON.stringify(identity))throw Error('ASR cache identity mismatch');passes=cached.passes;
@@ -69,14 +86,31 @@ for(const record of manifest.records){
   }
   console.log(JSON.stringify({id:record.id,window:start}));
  }
- const descriptor=index?.entries?.[audioSha256];
- if(descriptor){
-  if(!/^karaoke-acoustic\/[a-f0-9]{64}\.json$/.test(descriptor.path))throw Error('Invalid proof path');
-  const bytes=fs.readFileSync(path.join(path.dirname(path.resolve(proofFile)),descriptor.path));
-  if(sha(bytes)!==descriptor.sha256)throw Error('CTC proof changed');
-  const proof=await acoustic.prepare(JSON.parse(bytes),state.rows(),audioSha256);
+ if(proof){
   await state.save('song',acoustic.proposals(state.rows(),proof,all));
+  if(corroborator==='base'){
+   // Supplemental ASR only corroborates existing observed CTC boundaries;
+   // its own timestamps can never replace an accepted word or make a row.
+   for(const start of record.windows){
+    const identity={audioSha256,start,seconds:28,inference:auxiliary,method:'original-pcm-ctc-corroboration-v1'};
+    const file=path.join(work,sha(JSON.stringify(identity))+'.asr.json');let chunks;
+    if(fs.existsSync(file)){
+     const cached=read(file);if(JSON.stringify(cached.identity)!==JSON.stringify(identity))throw Error('Auxiliary ASR cache identity mismatch');chunks=cached.chunks;
+    }else{
+     auxiliaryModel??=await pipeline('automatic-speech-recognition',auxiliary.model,{device:'cpu',revision:auxiliary.revision,dtype:auxiliary.dtype,session_options:{intraOpNumThreads:2,interOpNumThreads:1}});
+     const decoded=spawnSync('ffmpeg',['-nostdin','-v','error','-i',source,'-ss',String(start),'-t','28','-ar','16000','-ac','1','-f','f32le','pipe:1'],{maxBuffer:4e6,timeout:60000});
+     if(decoded.status)throw Error('Auxiliary original PCM decode failed');
+     const bytes=decoded.stdout,mono=new Float32Array(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+     chunks=(await auxiliaryModel(mono,{language:'en',task:'transcribe',return_timestamps:'word'})).chunks||[];
+     fs.writeFileSync(file,JSON.stringify({identity,chunks}));
+    }
+    const observed=align.recognizedWords(chunks,start);
+    await state.save('song',acoustic.proposals(state.rows(),proof,[...all,observed],{start,end:start+28}));
+   }
+  }
  }
+ const final=new Map(certified().map(w=>[w.key,w]));
+ if(previous.some(w=>!final.has(w.key)||final.get(w.key).t!==w.t||final.get(w.key).end!==w.end))throw Error('Previously accepted word interval changed; refusing export');
  const engine=context.MusicBoxWordKaraoke;
  results.push({id:record.id,audioSha256,rows:state.rows().filter(r=>!r.estimated&&(engine.hasWordTiming(r)||engine.hasPartialTiming(r)))});
  fs.writeFileSync(output,JSON.stringify({inference,records:results},null,2)+'\n');

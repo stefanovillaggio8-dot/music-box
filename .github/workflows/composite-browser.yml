@@ -33,6 +33,10 @@ on:
         description: 'Diagnostic A/B control: fulfill identical original bytes over the same transport used by the prefix probe'
         type: boolean
         default: false
+      native_unique_url_probe:
+        description: 'Diagnostic only: same original bytes with a distinct URL for each source assignment'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -97,6 +101,7 @@ jobs:
       MUSICBOX_STE_CASE: ${{ inputs.ste_case || 'legacy-partial' }}
       MUSICBOX_METADATA_PREFIX_PROBE: ${{ inputs.metadata_prefix_probe || false }}
       MUSICBOX_METADATA_FIXTURE_TRANSPORT: ${{ inputs.metadata_fixture_transport || false }}
+      MUSICBOX_NATIVE_UNIQUE_URL_PROBE: ${{ inputs.native_unique_url_probe || false }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

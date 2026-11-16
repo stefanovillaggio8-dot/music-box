@@ -12,6 +12,10 @@ const baseline=read(baselineFile),alternative=read(alternativeFile);
 const additionalFile=arg('additional','');
 const consensus=arg('consensus','false')==='true';
 const proofFile=arg('acoustic-proof-report',''),proofReport=proofFile?read(proofFile):null;
+const corroborationFile=arg('ctc-corroboration-report',''),corroboration=corroborationFile?read(corroborationFile):null;
+if(corroboration&&(corroboration.inference?.model!=='onnx-community/whisper-base_timestamped'||
+ corroboration.inference.revision!=='608c49e61301901684bc36cac8f74b95ff6b5a8e'||
+ corroboration.inference.dtype?.encoder_model!=='fp32'||corroboration.inference.dtype?.decoder_model_merged!=='q4'))throw Error('Unpinned offline CTC corroborator');
 const {fromCtc}=require('./karaoke-acoustic-proof.cjs');
 const observations=[[baselineFile,baseline],[alternativeFile,alternative],...(additionalFile?[[additionalFile,read(additionalFile)]]:[])];
 assertSameRecognizer(observations.map(([,report])=>report));
@@ -79,6 +83,14 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
    }
   }
   if(acousticProof)await state.save('song',context.MusicBoxAcousticProof.proposals(state.rows(),acousticProof,acousticSets,{start:c.start,end:c.start+28}));
+  if(corroboration&&acousticProof){
+   if(corroboration.cases.find(x=>x.id===c.id)?.sourceAudioSha256!==c.sourceAudioSha256)throw Error('Supplemental original recording mismatch');
+   const chunks=read(cacheFor(corroborationFile,corroboration,c.id));
+   const observed=context.MusicBoxAudioAlign.recognizedWords(chunks,c.start);
+   // Only CTC proposals see these observations, after all earlier passes.
+   // No supplemental ASR alignment or consensus can displace prior words.
+   await state.save('song',context.MusicBoxAcousticProof.proposals(state.rows(),acousticProof,[...acousticSets,observed],{start:c.start,end:c.start+28}));
+  }
   const errors=[];
   for(const line of selectedLines){
    const row=state.rows().find(r=>Math.abs((r.sourceT??r.t)-line.start)<.002&&r.text===line.text);
@@ -92,6 +104,7 @@ const lrc=rows=>rows.map(r=>'['+String(Math.floor(r.start/60)).padStart(2,'0')+'
   output.cases.push({id:c.id,category:c.category,referenceWords:denominator,legacyReferenceWords:c.referenceWords,acceptedWords:errors.length,errors});
  }
  const errors=output.cases.flatMap(c=>c.errors),total=output.cases.reduce((s,c)=>s+c.referenceWords,0);
+ output.supplementalCtcCorroborator=corroboration?{method:'ctc-only-after-original-v1',inference:corroboration.inference,sourceReportSha256:crypto.createHash('sha256').update(fs.readFileSync(corroborationFile)).digest('hex')}:null;
  output.aggregate={referenceWords:total,acceptedWords:errors.length,coverage:errors.length/total,onset:stats(errors.map(e=>e.startErrorMs)),end:stats(errors.map(e=>e.endErrorMs))};
  fs.writeFileSync(arg('output','context-replay.json'),JSON.stringify(output,null,2)+'\n');console.log(JSON.stringify(output.aggregate));
 })().catch(e=>{console.error(e);process.exitCode=1});

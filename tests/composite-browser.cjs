@@ -6,6 +6,7 @@ const assert=require('node:assert/strict'),{chromium,webkit}=require('playwright
 const root=path.resolve(__dirname,'..'),data=JSON.parse(fs.readFileSync(path.join(root,'dj-deep-analysis.json')));
 const playbackProfile=process.env.MUSICBOX_COMPOSITE_PROFILE||'Emanuele';
 const completeSte=process.env.MUSICBOX_STE_CASE==='complete-personal';
+const uniqueSourceProbe=process.env.MUSICBOX_NATIVE_UNIQUE_URL_PROBE==='true';
 const metadataProbe=process.env.MUSICBOX_METADATA_PREFIX_PROBE==='true',nativeCache=new Map();
 const metadataFixture=metadataProbe||process.env.MUSICBOX_METADATA_FIXTURE_TRANSPORT==='true';
 const plans=Object.entries(data.entries).flatMap(([from,a])=>[...Object.values(a.pcmBeatPlans||{}),...Object.values(a.structuralBeatPlans||{})].flatMap(p=>(p.cues||[p.cue]).filter(c=>c?.composite).map(cue=>({from,...p,cue}))));
@@ -155,6 +156,14 @@ const server=http.createServer(async(req,res)=>{
      if(sha){await fulfillOriginal(route,sha);return;}
      await route.abort();
     });
+    if(uniqueSourceProbe)await shell.addInitScript(()=>{
+     let assignment=0;const src=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'src');
+     Object.defineProperty(HTMLMediaElement.prototype,'src',{...src,set(value){
+      const url=new URL(value,location.href);
+      if(url.pathname.endsWith('/songs/track-4.mp3')){url.searchParams.set('native-assignment-probe',String(++assignment));value=url.href;}
+      return src.set.call(this,value);
+     }});
+    });
     await shell.addInitScript(profile=>{
      localStorage.setItem('mb.profile',JSON.stringify(profile));window.__nativePlayMutes=[];
      window.__nativeSeekWrites=[];
@@ -207,7 +216,7 @@ const server=http.createServer(async(req,res)=>{
       if(!p.cue.structuralBeat||!p.cue.measuredFullBeat&&!p.cue.rhythmicTailWindow)continue;
       const a=find(p.from),b=find(p.to);
       if(!a||!b)continue;
-      if(profile==='Ste'&&completeSte&&!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat))continue;
+      if(profile==='Ste'&&(completeSte?!(a.id==='b-track-705'&&b.id==='b-track-50'&&p.cue.measuredFullBeat):!(a.id==='b-track-4'&&b.id==='b-track-38'&&p.cue.rhythmicTailWindow)))continue;
       const inspected=MusicBoxMix.inspectPair(a.id,b.id);
       if(inspected.approved&&inspected.cue?.structuralBeat)return {fromId:a.id,toId:b.id,cue:inspected.cue,
        fromSha:p.fromSha,toSha:p.toSha,sourceBoundCue:p.cue};
@@ -326,7 +335,7 @@ const server=http.createServer(async(req,res)=>{
      nativeHandoffMode:{preservedFileTail:plan.cue.preservedFileTail,entry:plan.cue.entry,tempo:plan.cue.tempo},
      seekRollback:true,silentAppBridge:silentBridge,actualSameProfilePlannerPlayback:plannedPlayback,
      optimizedCue:{from:actualPlan.fromId,to:actualPlan.toId,fade:actualPlan.cue.fade,tempo:actualPlan.cue.tempo},muteDuringOverlap,automaticShuffle,
-     completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,physicalIPhone:false});
+     completePersonalSte:completeSte,diagnosticMetadataPrefixProbe:metadataProbe,diagnosticMetadataFixtureTransport:metadataFixture,diagnosticUniqueSourceUrl:uniqueSourceProbe,physicalIPhone:false});
    }finally{await browser.close()}
   }
   console.log(JSON.stringify({results},null,2));
