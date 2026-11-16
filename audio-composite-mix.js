@@ -136,7 +136,7 @@ function latestLaunchTime(cue){
     !Number.isInteger(p.frames)||p.frames<=0||p.throughOffsetSeconds<=.04||p.throughOffsetSeconds>c.preRoll-.0199||
     Math.abs(p.frames/p.sampleRate-p.throughOffsetSeconds)>.00001||p.maximumReductionDb<0||p.maximumReductionDb>.1||
     p.maximumOriginalWaveformResidual<0||p.maximumOriginalWaveformResidual>2e-6||p.maximumEncodedDifference<0||p.maximumEncodedDifference>2e-6||p.incomingMaximumPeak!==0||
-    c.nativeDecoderProof?.assetSha256!==c.sha256||![44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.originalPrerollProof;
+    c.nativeDecoderProof?.assetSha256!==c.sha256||!Array.isArray(c.nativeDecoderProof.sourcePlatformCoverage)||!['linux','darwin'].every(os=>c.nativeDecoderProof.sourcePlatformCoverage.includes(os))||![44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.originalPrerollProof;
      return v?.method==='actual-native-original-preroll-v1'&&v.sourceSha===cue.sourceSha&&v.frames===Math.round(p.throughOffsetSeconds*rate)&&
       finite(v.minimumCorrelation)&&v.minimumCorrelation>=.99&&finite(v.maximumRelativeRms)&&v.maximumRelativeRms>=0&&v.maximumRelativeRms<=.1&&
       Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit');}))return legacy;

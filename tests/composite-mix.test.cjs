@@ -35,12 +35,13 @@ test('recovering an original-only preroll needs both native waveform receipts an
   sampleRate:48000,frames:13440,fromOffsetSeconds:0,throughOffsetSeconds:.28,sharedGainOnly:true,
   maximumReductionDb:.033,maximumOriginalWaveformResidual:1e-7,maximumEncodedDifference:1e-7,incomingMaximumPeak:0};
  assert.equal(f.api.latestLaunchTime(p),legacy,'offline evidence alone cannot extend a native launch window');
- c.nativeDecoderProof={assetSha256:c.sha256,rates:Object.fromEntries([44100,48000].map(rate=>[rate,{originalPrerollProof:{
+ c.nativeDecoderProof={assetSha256:c.sha256,sourcePlatformCoverage:['linux','darwin'],rates:Object.fromEntries([44100,48000].map(rate=>[rate,{originalPrerollProof:{
   method:'actual-native-original-preroll-v1',sourceSha:p.sourceSha,frames:Math.round(.28*rate),minimumCorrelation:.999,maximumRelativeRms:.03,browsers:['chromium','webkit']}}]))};
  assert.ok(Math.abs(f.api.latestLaunchTime(p)-(p.begin-.02))<1e-9);
  for(const mutate of [q=>q.composite.sourcePrerollProof.maximumReductionDb=.1001,
   q=>q.composite.sourcePrerollProof.maximumOriginalWaveformResidual=2.1e-6,q=>q.composite.sourcePrerollProof.incomingMaximumPeak=1e-8,
   q=>q.composite.sourcePrerollProof.throughOffsetSeconds=.3,q=>q.composite.sourcePrerollProof.sourceSha='f'.repeat(40),
+  q=>q.composite.nativeDecoderProof.sourcePlatformCoverage=['linux'],
   q=>delete q.composite.nativeDecoderProof.rates[44100].originalPrerollProof,
   q=>q.composite.nativeDecoderProof.rates[48000].originalPrerollProof.minimumCorrelation=.989,
   q=>q.composite.nativeDecoderProof.rates[44100].originalPrerollProof.maximumRelativeRms=.1001]){

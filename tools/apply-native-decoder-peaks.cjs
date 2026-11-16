@@ -43,7 +43,7 @@ for(const entry of Object.values(index.entries))for(const record of Object.value
    }
   }
   let sourcePlatformCoverage;
-  if(c.nativeRecoveryCurve){
+  if(c.nativeRecoveryCurve||c.sourcePrerollProof){
    sourcePlatformCoverage=[...new Set(proofs.filter(p=>p.browser==='webkit').map(p=>p.nativePlatform))].sort();
    if(!['linux','darwin'].every(os=>sourcePlatformCoverage.includes(os))||!c.sourcePrerollProof)throw Error('Cadence requires nominal outgoing waveform proofs on Linux AND macOS WebKit');
   }
