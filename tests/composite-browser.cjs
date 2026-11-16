@@ -122,7 +122,10 @@ const server=http.createServer(async(req,res)=>{
     assert.equal(await page.evaluate(()=>MusicBoxCompositeMix.tryStart(cue,player,app,'in',ctx)),true);
     await page.waitForFunction(()=>player.muted);await page.evaluate(()=>{player.currentTime+=2});
     await page.waitForFunction(()=>!MusicBoxCompositeMix.active()&&!player.muted);
-    await page.evaluate(()=>{player.pause();ctx.close()});
+    // These are independent contracts. Fully close the standalone decoder
+    // and its context before opening the real app's native audio session.
+    await page.evaluate(async()=>{player.pause();await ctx.close()});
+    await page.close();
     // Exercise the real app bridge as well as the bounded-mix controller.
     // Source assignment/play must see binary mute already applied on iOS.
     const appContext=await browser.newContext({serviceWorkers:'block'}),shell=await appContext.newPage();
@@ -141,6 +144,14 @@ const server=http.createServer(async(req,res)=>{
     });
     await shell.addInitScript(profile=>{
      localStorage.setItem('mb.profile',JSON.stringify(profile));window.__nativePlayMutes=[];
+     window.__nativeSeekWrites=[];
+     const seek=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
+     Object.defineProperty(HTMLMediaElement.prototype,'currentTime',{...seek,set(value){
+      const item={value,at:seek.get.call(this),duration:this.duration,readyState:this.readyState,src:this.currentSrc,
+       stack:new Error().stack?.split('\n').slice(1,5).join('\n')};
+      if(__nativeSeekWrites.length<64)__nativeSeekWrites.push(item);
+      try{return seek.set.call(this,value)}catch(error){item.error=String(error);throw error}
+     }});
      const play=HTMLMediaElement.prototype.play;
      HTMLMediaElement.prototype.play=function(){window.__nativePlayMutes.push(this.muted);return play.apply(this,arguments)};
     },playbackProfile);
@@ -219,7 +230,7 @@ const server=http.createServer(async(req,res)=>{
     await shell.click('#silent-handoff');
     try{await shell.waitForFunction(()=>MusicBoxCompositeMix.active()&&MusicBoxBridge.audio()._mbCommonMixMuted===true,{timeout:22000});}
     catch(error){console.error(name,'planner diagnostic',JSON.stringify(await shell.evaluate(p=>({pair:p,
-     setup:window.__plannedSetup,media:window.__plannedMedia,common:MusicBoxCompositeMix.diagnostics(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
+     setup:window.__plannedSetup,media:window.__plannedMedia,seekWrites:window.__nativeSeekWrites,common:MusicBoxCompositeMix.diagnostics(),diagnostics:MusicBoxMix.diagnostics(),contentSafe:MusicBoxMix.contentCutSafe(p.sourceBoundCue,p.fromId,p.toId),lyric:MusicBoxBridge.mixLyricCues(p.fromId),
      inspection:MusicBoxMix.inspectPair(p.fromId,p.toId)}),actualPlan)));throw error;}
     const muteDuringOverlap=await shell.evaluate(()=>{
      const button=document.querySelector('#btnVolIcon');button.click();
