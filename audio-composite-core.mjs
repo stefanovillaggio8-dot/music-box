@@ -1,11 +1,11 @@
-import {stretchClip,playedAt} from './audio-stretch-core.mjs';
+import {stretchClip,playedAt,cadenceSpanValid} from './audio-stretch-core.mjs';
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 // The final outgoing fade begins only inside the proven quiet vocal tail.
 // Both recordings share ONE constant peak bound, including different drums.
 export function compositePCM(outgoing,incoming,cue,options={}){
  const sr=outgoing.rate;
  if(sr!==incoming.rate||outgoing.channels.length!==2||incoming.channels.length!==2||
-    !Number.isFinite(cue.fade)||cue.fade<4.5||cue.fade>16||
+    !Number.isFinite(cue.fade)||cue.fade<4.5||cue.fade>(cadenceSpanValid(cue)?18:16)||
     outgoing.channels.some(c=>!(c instanceof Float32Array))||
     incoming.channels.some(c=>!(c instanceof Float32Array)))throw Error('Invalid stereo source');
  const stretched=stretchClip(incoming,cue);
@@ -15,6 +15,10 @@ export function compositePCM(outgoing,incoming,cue,options={}){
  const tail=releaseSeconds+.9,seconds=preRoll+cue.fade+tail,frames=Math.round(seconds*sr),aOffset=Math.round((cue.begin-preRoll-outgoing.start)*sr),bOffset=Math.round((cue.entry-stretched.start)*sr);
  const preserveFile=cue.preservedFileTail===true,metricalPickup=preserveFile&&cue.metricalPickupWindow===true&&cue.preservedEntrance==='metrical-pickup-033-v1',tailForeground=preserveFile&&cue.preservedEntrance==='rhythmic-tail-foreground-v1',vocalForeground=preserveFile&&cue.preservedEntrance==='vocal-handoff-foreground-v1',foreground=tailForeground||vocalForeground;
  const nativeReturn=metricalPickup&&cue.nativeOriginalReturn===true;
+ const cadence=cadenceSpanValid(cue);
+ if(cue.metricalCadenceWindow&&!cadence||cue.nativeRecoveryCurve!=null&&!cadence)throw Error('Unbound cadence recovery');
+ if(cadence&&releaseSeconds!==1.2)throw Error('Unbound cadence release');
+ const recovery=rise=>cadence?Math.sin(rise*Math.PI/2):rise*rise*(3-2*rise);
  if(cue.nativeOriginalReturn&&!nativeReturn)throw Error('Unbound original native return');
  if(cue.metricalPickupWindow&&(!metricalPickup||cue.measuredFullBeat!==false||cue.metricalRhythmic!==true))throw Error('Unbound metrical pickup envelope');
  const windowSeconds=cue.structuralEvidence?.rhythmicWindow?.seconds;
@@ -32,11 +36,12 @@ export function compositePCM(outgoing,incoming,cue,options={}){
   // crossfade between different WSOLA phases can cancel a guitar note.
   // This searches ONLY post-EOF/after-tempo-return positions, never beats.
   let best=null;const count=Math.round(.1*sr);
-  for(let start=nativeHandoffAt+.85;start<=nativeHandoffAt+1.08+.00001;start+=.005){
+  const latestReturn=Math.min(1.08,releaseSeconds-.17);
+  for(let start=nativeHandoffAt+.85;start<=nativeHandoffAt+latestReturn+.00001;start+=.005){
    const lo=Math.round((preRoll+start-.04)*sr);let mixed=0,reference=0;
    for(let i=lo;i<lo+count;i++){
     const t=i/sr-preRoll,u=clamp((t-start)/.02,0,1),blend=u*u*(3-2*u);
-    const rise=clamp((t-nativeHandoffAt)/releaseSeconds,0,1),b=.33+.67*rise*rise*(3-2*rise);
+    const rise=clamp((t-nativeHandoffAt)/releaseSeconds,0,1),b=.33+.67*recovery(rise);
     for(let c=0;c<2;c++){
      const x=stretched.channels[c][bOffset+i-Math.round(preRoll*sr)],y=incoming.channels[c][nativeResumeFrame+i-revealFrame];
      if(!Number.isFinite(x)||!Number.isFinite(y))throw Error('Incomplete native return selection');
@@ -65,7 +70,7 @@ export function compositePCM(outgoing,incoming,cue,options={}){
    // Preserve the first actual drum transient. A 450ms fade from zero
    // erased that downbeat and failed the independent rendered-pulse test.
    b=.28*Math.sin(clamp(t/.008,0,1)*Math.PI/2)+.17*Math.sin(clamp(t/.45,0,1)*Math.PI/2)+.55*Math.sin(late*Math.PI/2);
-  }else if(t>=nativeHandoffAt){a=0;const rise=clamp((t-nativeHandoffAt)/(metricalPickup?releaseSeconds:.55),0,1);b=foreground?1:.33+.67*(metricalPickup?rise*rise*(3-2*rise):rise);}
+  }else if(t>=nativeHandoffAt){a=0;const rise=clamp((t-nativeHandoffAt)/(metricalPickup?releaseSeconds:.55),0,1);b=foreground?1:.33+.67*(metricalPickup?recovery(rise):rise);}
   if(t>=nativeHandoffAt)a=0;
   for(let c=0;c<2;c++){
    const incomingIndex=bOffset+i-Math.round(preRoll*sr);

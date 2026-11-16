@@ -26,6 +26,14 @@ for(const entry of Object.values(index.entries))for(const record of Object.value
      decodedPrimingSeconds:[...new Set(splice.map(r=>r.decodedPrimingSeconds))].sort(),mediaPrimingSeconds:[...new Set(splice.map(r=>r.mediaPrimingSeconds))].sort()};
    }
   }
+  if(c.nativeRecoveryCurve)for(const sampleRate of [44100,48000]){
+   const values=proofs.map(p=>p.assets.find(r=>r.assetSha256===c.sha256&&r.sampleRate===sampleRate)?.nativeSourceClock);
+   const expected=[0,c.nativeSplice.sourceClock.primingFrames/c.nativeSplice.sourceClock.sampleRate];
+   if(values.some(v=>v?.method!=='actual-native-source-clock-v1'||v.sourceSha!==c.sourceSha||
+    ![v.decodedOffset,v.mediaOffset].every(n=>Number.isFinite(n)&&expected.some(e=>Math.abs(e-n)<1e-9))))throw Error('Missing actual native outgoing clock');
+   rates[sampleRate].sourceClockProof={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,browsers,
+    decodedOffsets:[...new Set(values.map(v=>v.decodedOffset))],mediaOffsets:[...new Set(values.map(v=>v.mediaOffset))]};
+  }
   c.nativeDecoderProof={method:'actual-browser-decode-v1',assetSha256:c.sha256,rates,physicalIPhone:false};changed++;seen.add(c.sha256);
  }
 fs.writeFileSync(output,JSON.stringify(index)+'\n');console.log(JSON.stringify({cueCopiesCertified:changed,uniqueAssets:seen.size}));

@@ -50,7 +50,20 @@ function supports(cue){
    c.outgoingEnvelope==='unity-through-decoded-eof-v1'&&finite(c.sourceReadThrough)&&Math.abs(c.sourceReadThrough-cue.end)<=.1)&&
   (!cue.structuralBeat||c.rhythmVerified===true&&c.postRenderRhythm?.accepted===true)&&
   (!cue.metricalPickupWindow||cue.nativeOriginalReturn===true&&cue.measuredFullBeat===false&&cue.metricalRhythmic===true&&
-   cue.preservedEntrance==='metrical-pickup-033-v1'&&c.renderedEntrance===cue.preservedEntrance&&c.releaseSeconds===1.5&&!!c.nativeDecoderProof)&&
+   cue.preservedEntrance==='metrical-pickup-033-v1'&&c.renderedEntrance===cue.preservedEntrance&&c.releaseSeconds===(cue.metricalCadenceWindow?1.2:1.5)&&!!c.nativeDecoderProof)&&
+  (cue.nativeRecoveryCurve==null&&!cue.metricalCadenceWindow&&c.nativeRecoveryCurve==null||
+   cue.metricalCadenceWindow===true&&cue.metricalPickupWindow===true&&cue.nativeRecoveryCurve==='sine-1.2-v1'&&
+   c.nativeRecoveryCurve===cue.nativeRecoveryCurve&&cue.fade<=18&&cue.structuralEvidence?.bars===4&&
+   cue.structuralEvidence?.cadenceWindow?.method==='four-observed-bars-and-preserved-decay-v1'&&
+   [44100,48000].every(rate=>{const v=c.nativeDecoderProof?.rates?.[rate]?.sourceClockProof;return v?.method==='actual-native-source-clock-v1'&&v.sourceSha===cue.sourceSha&&Array.isArray(v.browsers)&&v.browsers.length===2&&v.browsers.includes('chromium')&&v.browsers.includes('webkit')})&&
+   c.cadenceTailProof?.sourceSha===cue.sourceSha&&['at48000','at44100'].every(k=>{
+    const t=c.cadenceTailProof[k],w=cue.structuralEvidence.cadenceWindow;
+    return t?.method==='unmodified-original-hpss-tail-v1'&&t.accepted===true&&t.sourceGainApplied===false&&t.searchedEntireTail===true&&
+     finite(w.rhythmicSeconds)&&finite(w.tailSeconds)&&w.rhythmicSeconds>=4.5&&w.tailSeconds>=.65&&w.tailSeconds<=4&&
+     Math.abs(w.rhythmicSeconds+w.tailSeconds-cue.fade)<.001&&Math.abs(t.rhythmicSeconds-w.rhythmicSeconds)<.001&&
+     Math.abs(t.tailSeconds-w.tailSeconds)<.001&&Math.abs(t.sourceTailThrough-cue.fade)<.001&&
+     finite(t.maximumTailOnset)&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&finite(t.maximumRelativeRms)&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5;
+   }))&&
   (!cue.nativeOriginalReturn||cue.metricalPickupWindow&&
    nativeClockOffset(c.nativeSplice?.sourceClock,cue.sourceSha,c.nativeSplice?.sourceClock?.decodedFrames/c.nativeSplice?.sourceClock?.sampleRate)===0&&
    nativeClockOffset(c.nativeSplice?.targetClock,cue.targetSha,c.nativeSplice?.targetClock?.decodedFrames/c.nativeSplice?.targetClock?.sampleRate)===0&&

@@ -19,13 +19,13 @@ const server=http.createServer((req,res)=>{
  const bytes=fs.readFileSync(path.join(root,url.pathname));res.setHeader('Content-Type','audio/flac');res.setHeader('Content-Length',bytes.length);res.end(bytes);
 });
 (async()=>{
- for(const c of assets.values())if(c.nativeSplice&&!originals.has(c.targetSha)){
-  const key=Object.keys(index.entries).find(k=>index.entries[k].sha===c.targetSha),[origin,...parts]=key.split('/');
+ for(const c of assets.values())for(const sha of c.nativeSplice?[c.targetSha,...(c.nativeRecoveryCurve?[c.sourceSha]:[])]:[])if(!originals.has(sha)){
+  const key=Object.keys(index.entries).find(k=>index.entries[k].sha===sha),[origin,...parts]=key.split('/');
   const base={audio:'music-box-brani/main',app:'music-box/main',mobile:'music-box/mobile-audio'}[origin];
   const response=await fetch('https://raw.githubusercontent.com/stefanovillaggio8-dot/'+base+'/'+parts.join('/'));
   if(!response.ok)throw Error('Original splice source unavailable');const bytes=Buffer.from(await response.arrayBuffer());
-  if(bytes.length>32e6||crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex')!==c.targetSha)throw Error('Original splice source identity changed');
-  originals.set(c.targetSha,bytes);
+  if(bytes.length>32e6||crypto.createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex')!==sha)throw Error('Original splice source identity changed');
+  originals.set(sha,bytes);
  }
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser;
  try{
@@ -46,7 +46,18 @@ const server=http.createServer((req,res)=>{
       for(let i=0;i<values.length;i++){if(!Number.isFinite(values[i]))throw Error('Nonfinite native PCM');const v=Math.abs(values[i]);samplePeak=Math.max(samplePeak,v);if(i>=lo&&i<=hi)overlapPeak=Math.max(overlapPeak,v);}
      }
      if(samplePeak>.9992||overlapPeak>.962||decoded.numberOfChannels!==2||Math.abs(decoded.duration-c.seconds)>.04)throw Error('Native absolute peak/duration certificate failed');
-     let nativeSplice=null;
+     let nativeSplice=null,nativeSourceClock=null;
+     if(c.nativeRecoveryCurve){
+      const decoded=await ctx.decodeAudioData(await (await fetch('original/'+c.sourceSha+'.mp3')).arrayBuffer());
+      const media=new Audio('/original/'+c.sourceSha+'.mp3');media.preload='metadata';media.load();
+      await new Promise(resolve=>{const start=Date.now(),poll=()=>Number.isFinite(media.duration)&&media.duration>26||Date.now()-start>5000?resolve():setTimeout(poll,25);poll()});
+      const decodedOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,decoded.duration);
+      const mediaOffset=MusicBoxCompositeMix.nativeClockOffset(c.nativeSplice.sourceClock,c.sourceSha,media.duration);
+      console.error('Cadence source clocks '+JSON.stringify({sourceSha:c.sourceSha,sampleRate,decodedDuration:decoded.duration,mediaDuration:media.duration,decodedOffset,mediaOffset}));
+      if(decodedOffset===null||mediaOffset===null)throw Error('Unrecognized actual outgoing MP3 clock');
+      nativeSourceClock={method:'actual-native-source-clock-v1',sourceSha:c.sourceSha,decodedOffset,mediaOffset,decodedDuration:decoded.duration,mediaDuration:media.duration};
+      media.removeAttribute('src');media.load();
+     }
      if(c.nativeSplice){
       const original=await ctx.decodeAudioData(await (await fetch('original/'+c.targetSha+'.mp3')).arrayBuffer());
       const nativeAudio=new Audio('/original/'+c.targetSha+'.mp3');nativeAudio.preload='metadata';nativeAudio.load();
@@ -74,7 +85,7 @@ const server=http.createServer((req,res)=>{
       }
       nativeSplice={method:'actual-native-original-splice-v1',targetSha:c.targetSha,frames:count,correlation,relativeRms,clockMethod:'original-mp3-gapless-metadata-v1',decodedPrimingSeconds,mediaPrimingSeconds};
      }
-     results.push({assetSha256:sha,sampleRate,samplePeak,overlapPeak,channels:decoded.numberOfChannels,duration:decoded.duration,...(nativeSplice?{nativeSplice}:{})});
+     results.push({assetSha256:sha,sampleRate,samplePeak,overlapPeak,channels:decoded.numberOfChannels,duration:decoded.duration,...(nativeSplice?{nativeSplice}:{}),...(nativeSourceClock?{nativeSourceClock}:{})});
     }}finally{await ctx.close()}
    }
    return results;

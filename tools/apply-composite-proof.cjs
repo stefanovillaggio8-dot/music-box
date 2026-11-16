@@ -13,9 +13,21 @@ for(const row of report.results){
    p.preservedEntrance!=='rhythmic-tail-foreground-v1'||c.resampledCommonProof?.assetSha256!==c.sha256||
    c.resampledCommonProof?.sampleRate!==44100||c.resampledCommonProof?.rhythm?.accepted!==true))throw Error('Missing actual common resampling proof');
  if(p.metricalPickupWindow&&(p.measuredFullBeat!==false||p.metricalRhythmic!==true||p.rhythmicTailWindow===true||
-  p.preservedEntrance!=='metrical-pickup-033-v1'||c.renderedEntrance!==p.preservedEntrance||c.releaseSeconds!==1.5||
+  p.preservedEntrance!=='metrical-pickup-033-v1'||c.renderedEntrance!==p.preservedEntrance||c.releaseSeconds!==(p.metricalCadenceWindow?1.2:1.5)||
   c.resampledCommonProof?.assetSha256!==c.sha256||c.resampledCommonProof?.rhythm?.mode!=='metrical-rhythmic'||c.resampledCommonProof.rhythm.accepted!==true||
   !Number.isFinite(c.levelContinuity?.changeDb)||Math.abs(c.levelContinuity.changeDb)>3))throw Error('Missing observed-bar pickup render proof');
+ if(p.metricalCadenceWindow){
+  const w=p.structuralEvidence?.cadenceWindow;
+  if(!p.metricalPickupWindow||p.nativeRecoveryCurve!=='sine-1.2-v1'||c.nativeRecoveryCurve!==p.nativeRecoveryCurve||p.fade>18||
+   p.structuralEvidence?.bars!==4||w?.method!=='four-observed-bars-and-preserved-decay-v1'||
+   !Number.isFinite(w.rhythmicSeconds)||w.rhythmicSeconds<4.5||!Number.isFinite(w.tailSeconds)||w.tailSeconds<.65||w.tailSeconds>4||
+   Math.abs(w.rhythmicSeconds+w.tailSeconds-p.fade)>.001||c.cadenceTailProof?.sourceSha!==a.sha||
+   !['at48000','at44100'].every(k=>{const t=c.cadenceTailProof[k];return t?.accepted===true&&t.method==='unmodified-original-hpss-tail-v1'&&
+    t.sourceGainApplied===false&&t.searchedEntireTail===true&&Math.abs(t.sourceTailThrough-p.fade)<.001&&
+    Math.abs(t.rhythmicSeconds-w.rhythmicSeconds)<.001&&Math.abs(t.tailSeconds-w.tailSeconds)<.001&&
+    Number.isFinite(t.maximumTailOnset)&&t.maximumTailOnset>=0&&t.maximumTailOnset<.25&&
+    Number.isFinite(t.maximumRelativeRms)&&t.maximumRelativeRms>=0&&t.maximumRelativeRms<=.5;}))throw Error('Missing original cadence tail proof');
+ }else if(p.nativeRecoveryCurve!=null||c.nativeRecoveryCurve!=null)throw Error('Unbound native recovery curve');
  if(p.nativeOriginalReturn&&(c.nativeSplice?.method!=='original-pcm-native-return-v1'||c.nativeSplice.targetSha!==b.sha||
   !Number.isFinite(c.nativeSplice.returnEnergyRatio)||c.nativeSplice.returnEnergyRatio<.85||c.nativeSplice.returnEnergyRatio>1.000001||
   c.nativeSplice.returnStart<c.nativeHandoffAt+.849||c.nativeSplice.returnStart>c.nativeHandoffAt+1.081||Math.abs(c.nativeSplice.returnEnd-c.nativeSplice.returnStart-.02)>.00001||

@@ -26,7 +26,7 @@ on:
       ste_case:
         description: 'Keep the legacy partial regression distinct from the new personal-library complete pair'
         type: choice
-        options: [legacy-partial, complete-personal, observed-bars-partial]
+        options: [legacy-partial, complete-personal, observed-bars-partial, cadence-partial]
         default: legacy-partial
       metadata_prefix_probe:
         description: 'Diagnostic only: add the proven metadata frame without changing original audio frame payloads'

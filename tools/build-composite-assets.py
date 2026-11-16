@@ -227,8 +227,17 @@ def main():
                     'handoffPosition':proof['handoffPosition'],'sampleRate':args.rate}
                 composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','releaseSeconds','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
                 if cue.get('metricalPickupWindow'):
-                    if args.release_seconds!=1.5:raise ValueError('Metrical pickup requires the verified slow native reveal')
+                    expected_release=1.2 if cue.get('metricalCadenceWindow') else 1.5
+                    if args.release_seconds!=expected_release:raise ValueError('Metrical pickup requires its verified native reveal')
                     composite['renderedEntrance']=cue['preservedEntrance']
+                if cue.get('metricalCadenceWindow'):
+                    window=cue['structuralEvidence']['cadenceWindow']
+                    tail_cue={**cue,'structuralEvidence':{'rhythmicWindow':{'seconds':window['rhythmicSeconds']}}}
+                    tail=rhythm.tail_evidence(outgoing,args.rate,tail_cue,proof['preRoll'])
+                    tail44=rhythm.tail_evidence(raw44,44100,tail_cue,proof['preRoll'])
+                    if not tail['accepted'] or not tail44['accepted']:raise ValueError('Unmodified cadence decay is not safe')
+                    composite['cadenceTailProof']={'sourceSha':cue['sourceSha'],'at48000':tail,'at44100':tail44}
+                    composite['nativeRecoveryCurve']=cue['nativeRecoveryCurve']
                 if cue.get('nativeOriginalReturn'):
                     splice=proof.get('nativeSplice')
                     if not splice or splice.get('targetSha')!=cue['targetSha']:raise ValueError('Missing original native return proof')
@@ -253,6 +262,8 @@ def main():
                 composite['levelContinuity']={'method':'rendered-half-second-eof-rms-v1','beforeRms':before,'afterRms':after,
                     'changeDb':float(20*np.log10(after/before)) if min(before,after)>1e-9 else None,
                     'includesOriginalSongDynamics':True,'notHumanListening':True}
+                if cue.get('metricalCadenceWindow') and (composite['levelContinuity']['changeDb'] is None or abs(composite['levelContinuity']['changeDb'])>3):
+                    raise ValueError('Cadence native reveal changes level by more than 3 dB')
                 if post_rhythm:
                     composite['rhythmVerified']=True;composite['postRenderRhythm']=post_rhythm
                 if resampled_proof:composite['resampledCommonProof']={**resampled_proof,'assetSha256':sha}
