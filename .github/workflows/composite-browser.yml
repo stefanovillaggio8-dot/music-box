@@ -50,6 +50,10 @@ on:
         description: 'Restrict real-app diagnostics to WebKit Ste; does not replace the full browser matrix'
         type: boolean
         default: false
+      linux_virtual_audio:
+        description: 'Controlled Linux media output device; original MP3s and player remain unchanged'
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -127,6 +131,16 @@ jobs:
       - run: |
           npm install --no-save --no-package-lock playwright@1.64.1
           npx playwright install --with-deps chromium webkit
+      - name: Start isolated Linux audio output for the controlled diagnostic
+        if: inputs.linux_virtual_audio && runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends pulseaudio pulseaudio-utils
+          pulseaudio --start --exit-idle-time=-1 --log-target=file:/tmp/musicbox-pulse.log
+          pactl load-module module-null-sink sink_name=musicbox_ci rate=48000 channels=2
+          pactl set-default-sink musicbox_ci
+          pactl info
+          pactl list short sinks
       - uses: actions/download-artifact@v4
         with:
           name: native-certified-index
