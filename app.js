@@ -8322,7 +8322,7 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
          l'indice punta a un brano diverso (e' successo: avanti suonava un
          brano nascosto perche' gli indici venivano da due liste diverse). */
       const lista = _listaPerIlSeguito();
-      const t = (lista && lista[indice]) ? lista[indice] : tracks[indice];
+      const t = lista && lista[indice];
       return (t && t.id) ? t.id : "";
     }
 
@@ -8338,7 +8338,8 @@ async function playById(id, autoplay = true, startAt = 0, liveDjAudio = null, si
      suonare qualcosa, non solo sfogliare: cambia il comportamento (vedi
      visibleTracks). */
   function _listaPerIlSeguito() {
-    try { return visibleTracks(true); } catch (e) { return tracks; }
+    // A failed filter must not widen personal playback to the loaded catalog.
+    try { return visibleTracks(true); } catch (e) { return []; }
   }
 
   let _djCatalogoPrecedente=new Map();
@@ -13323,11 +13324,14 @@ window.MusicBoxBridge = {
     const idx=_casualeProgrammate.indexOf(pickId);
     if(idx===0)return false;
     if(!_casualeFresche?.has(pickId)||pickId===currentId)return false;
+    // Revalidate after asynchronous analysis, including candidates that were
+    // already in the preview. Account/filter/download state can change while
+    // the planner yields; an old preview is not current authorization.
+    const pool=window.MusicBoxBridge.mixShufflePool();
+    if(!pool.some(t=>t.id===pickId))return false;
     if(idx<0){
       // This song can be outside the ten preselected shuffle items.
       // Only a fresh, playable member of the CURRENT playlist is eligible.
-      const pool=window.MusicBoxBridge.mixShufflePool();
-      if(!pool.some(t=>t.id===pickId))return false;
       _casualeProgrammate.unshift(pickId);
       if(_casualeProgrammate.length>10)_casualeProgrammate.pop();
     }else{
