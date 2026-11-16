@@ -1,0 +1,42 @@
+{
+  "baseline": "d1c848945bcece0dd448c1e3f28809a1550e8d33",
+  "productCommit": "4f5ea238280c65e6f9a29e490cce2a52015c1779",
+  "testCommit": "7fb4cee1ed63a7e8c441ec566d4ab1d35839944d",
+  "sha256": {
+    "mix-intelligente.js": "314dffb600d1de58d0331cc68e85df0013bcc59ab5c786841ff41828265c9dd6",
+    "audio-stretch.js": "c50dced48e35b78f10ba91908d3c32de3903ead1bd5e05aa58a889957e49fbfe",
+    "audio-stretch-core.mjs": "2438cfb97bd74663e3f9da5c328cedc4a37e20242412fdf01de02d6042a7e72b",
+    "audio-stretch-worker.js": "27e5a6ea106a7bbb55fae382b46344ab0b0f96caab63f4b2351d72caacb23649",
+    "audio-composite-mix.js": "395d7da0a4dce21e176229f7393afc424a5619dc49b41632ad450da6181e4d75",
+    "karaoke-acoustic-proof.js": "0b12f36d42dcc6608aa636dc7ef054ae90719b7a62523946cefb70a77fedcbca",
+    "tools/build-preserved-tail-plans.cjs": "d0a9e8ce060f83275a25b324562b19efcd6aaa74d14fba4ee891cb28a0fc8aed",
+    "tools/build-exact-silent-suffix.py": "2d102a8ffd943403de9086f3aa3a63eea79943fa5aa12aff0efb45b97ab8bedb",
+    "tools/shortlist-musical-windows.cjs": "75b307f503d5c8d175fa597fce73f2e69f0810246fb1dc8b2bc65fc304c7941a",
+    "tools/build-composite-assets.py": "f817c0096067f4ab06d001a0be3f9511959799fd8ef5471d8a5f173755320525",
+    "tools/dj-rendered-rhythm.py": "5b2b3a5b53b5f11dfbd70b89119786ceffc68dcc5d0fd02d7f28f2118e4025e2",
+    "tools/precompute-karaoke-rows.mjs": "edc481499ac1f3ed8f0ff5e7092a9a6e6ad4749aa71421c3b0cce569cc6d8030",
+    "tools/benchmark-karaoke-context-replay.cjs": "d58fb7bf5019b822c186324a470caae42a0d765e867f39ef48313e568a5ae2cb",
+    "dj-deep-analysis.json": "cb11b3d9ccc828fcaff8e5d4fd8bdcf81f082ff9ed85298adf89a7b0b171dad2",
+    "index.html": "a9430611236a345739049da464a501d819c1223d8fc6cd1f7ec70096aedb7b23",
+    "sw.js": "205f5839da182b49be3f7e6159a0b9a2e21c6f67249154277cfdb741280a624f",
+    "app.js": "f3ce376161c15163d8526daf3beb5faefa377c170bf05813f4e2bf2d75e08598",
+    "stato.json": "b5715619ee3de728989433f1b7f555e2ba0f5b971d5532db1fa9806d8a8721ee",
+    "playlist.json": "cee226a4a09f1f02b08747a7bf143680a8e9eb715b4cf6fc3d22464318b5f88e",
+    "lyrics.json": "9b0c381181e792f76561348e51bde7671377ed5fe65bd1fbd9bbd97bbacda669",
+    "versione.json": "8772eefbac7224acd64727fac3100988025b3e05cb2995d6f67c90646ffd15d0",
+    "karaoke-acoustic-index.json": "423ac63623a2ee4ae0c236a7eb1dd480dc8de3f3adeecdb0d1e3666b3cc0b0fb"
+  },
+  "byteIdenticalToBaseline": [
+    "app.js",
+    "stato.json",
+    "playlist.json",
+    "lyrics.json",
+    "versione.json",
+    "karaoke-acoustic-index.json"
+  ],
+  "originalMp3Rewritten": false,
+  "phoneModelsAdded": false,
+  "userDataDeleted": false,
+  "physicalIPhoneVerified": false,
+  "publicDeployment": false
+}

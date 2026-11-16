@@ -1,0 +1,138 @@
+{
+  "method": "evaluation-only-observation-upper-bound-v1",
+  "sourceReports": [
+    {
+      "file": "unseen-tiny28.json",
+      "sha256": "36bc9c69efefecfb84a65777f206724990284604d97f8111ee71b3b66e34e02e",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d"
+      }
+    },
+    {
+      "file": "unseen-tiny14.json",
+      "sha256": "311b3f9e47616948c764a5b3dba20623c5aea1ab7e0b99ffd377b31e0d004f81",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 14,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    },
+    {
+      "file": "unseen-tiny7.json",
+      "sha256": "306249ca813e5dfcfcd4dd58aab649bf954fecf2a51826f9f28b30c1d7a8a80d",
+      "inference": {
+        "model": "onnx-community/whisper-tiny_timestamped",
+        "library": "transformers.js 3.8.1",
+        "device": "cpu",
+        "dtype": {
+          "encoder_model": "fp32",
+          "decoder_model_merged": "q4"
+        },
+        "browserWebGPUVerified": false,
+        "revision": "517244293732ee2d58139af5814231b7e6830a0d",
+        "experimentalContext": {
+          "seconds": 7,
+          "overlapSeconds": 2,
+          "ownership": "word midpoint in nonoverlapping core; timestamps remain original ASR observations",
+          "deployedInPlayer": false
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Human word boundaries are evaluation inputs only; never shipped as observed timestamps.",
+    "Exact normalized lexical match within 750ms is a generous upper bound, not WER or occurrence certification.",
+    "One observation within 100ms does not establish safe automatic selection among competing observations.",
+    "Contexts can share correlated recognizer mistakes; agreement is not independent musical truth."
+  ],
+  "groups": {
+    "all": {
+      "words": 78,
+      "noNearbyExactObservation": 55,
+      "nearbyExactObservation": 23,
+      "anyObservationWithin100msAtBothBoundaries": 7,
+      "consensusWithin60msButWrongOver250ms": 2
+    },
+    "shortAtMostTwoCharacters": {
+      "words": 18,
+      "noNearbyExactObservation": 14,
+      "nearbyExactObservation": 4,
+      "anyObservationWithin100msAtBothBoundaries": 1,
+      "consensusWithin60msButWrongOver250ms": 2
+    },
+    "repeatedInPhrase": {
+      "words": 8,
+      "noNearbyExactObservation": 8,
+      "nearbyExactObservation": 0,
+      "anyObservationWithin100msAtBothBoundaries": 0,
+      "consensusWithin60msButWrongOver250ms": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "Pure_Mids_-_The_Leader@63.507",
+      "category": "singing-sparse",
+      "words": 14,
+      "noNearbyExactObservation": 8,
+      "nearbyExactObservation": 6,
+      "anyObservationWithin100msAtBothBoundaries": 1,
+      "consensusWithin60msButWrongOver250ms": 2,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Moon_I_Mean_-_Wrong_Concept@177.506",
+      "category": "singing-sparse",
+      "words": 14,
+      "noNearbyExactObservation": 14,
+      "nearbyExactObservation": 0,
+      "anyObservationWithin100msAtBothBoundaries": 0,
+      "consensusWithin60msButWrongOver250ms": 0,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    },
+    {
+      "id": "Moon_I_Mean_-_Wrong_Concept@109.340",
+      "category": "repeated-phrase",
+      "words": 50,
+      "noNearbyExactObservation": 33,
+      "nearbyExactObservation": 17,
+      "anyObservationWithin100msAtBothBoundaries": 6,
+      "consensusWithin60msButWrongOver250ms": 0,
+      "acceptedWords": 0,
+      "worstAcceptedBoundaryErrorMs": 0
+    }
+  ],
+  "acceptedReplayAggregate": {
+    "referenceWords": 78,
+    "acceptedWords": 0,
+    "coverage": 0,
+    "onset": {
+      "count": 0
+    },
+    "end": {
+      "count": 0
+    }
+  },
+  "productionChanged": false
+}

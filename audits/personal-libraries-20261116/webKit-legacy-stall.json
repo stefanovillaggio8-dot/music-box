@@ -1,0 +1,64 @@
+{
+  "setup": {
+    "stage": "target-queued",
+    "id": "b-track-4",
+    "time": 0.00133584
+  },
+  "media": [
+    {
+      "event": "loadedmetadata",
+      "at": 0.00133584,
+      "duration": 0.00133584,
+      "paused": false,
+      "seeking": false,
+      "rate": 1,
+      "pendingInitialSeek": true,
+      "src": "http://127.0.0.1:33759/songs/track-4.mp3"
+    },
+    {
+      "event": "playing",
+      "at": 0.00133584,
+      "duration": 0.00133584,
+      "paused": false,
+      "seeking": false,
+      "rate": 1,
+      "pendingInitialSeek": true,
+      "src": "http://127.0.0.1:33759/songs/track-4.mp3"
+    },
+    {
+      "event": "timeupdate",
+      "at": 0.00133584,
+      "duration": 0.00133584,
+      "paused": false,
+      "seeking": false,
+      "rate": 1,
+      "pendingInitialSeek": true,
+      "src": "http://127.0.0.1:33759/songs/track-4.mp3"
+    }
+  ],
+  "seekWrites": [
+    {
+      "value": 2,
+      "at": 0.000967064,
+      "duration": 126.876708333,
+      "readyState": 4,
+      "src": "http://127.0.0.1:33759/songs/track-4.mp3",
+      "stack": "at@http://127.0.0.1:33759/app.js:8248:17"
+    }
+  ],
+  "common": {
+    "active": false,
+    "lastStop": null
+  },
+  "diagnostics": {
+    "current": "b-track-4",
+    "next": "b-track-38",
+    "playbackTime": 0,
+    "playerDuration": null,
+    "playerPaused": false,
+    "playerReadyState": 4,
+    "lastError": null,
+    "preparing": null,
+    "deepIndexLoaded": true
+  }
+}
