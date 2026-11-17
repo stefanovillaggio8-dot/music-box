@@ -23,6 +23,14 @@ for key,entry in incoming.get("entries",{}).items():
     # from an older runner.
     if old and old.get("checkedAt","")>entry.get("checkedAt",""):
         continue
+    # A new basic-analysis batch knows nothing about independently rendered
+    # plans. Retain those SAME-RECORDING extensions rather than silently
+    # removing inbound/outbound opportunities whenever the analyzer updates.
+    # Never inherit certificates across a replaced MP3 or a failed analysis.
+    if old and old.get("sha")==entry.get("sha") and entry.get("status")=="ok":
+        entry={**{name:old[name] for name in
+            ("musicalContent","structuralBeatPlans","pcmBeatPlans","pcmTransition")
+            if name in old},**entry}
     if old!=entry:
         records[key]=entry
         changed+=1

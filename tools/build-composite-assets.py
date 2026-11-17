@@ -226,6 +226,11 @@ def main():
                     'pitchPreserved':True,'timingVerified':True,'renderedFromOriginals':True,
                     'handoffPosition':proof['handoffPosition'],'sampleRate':args.rate}
                 composite.update({k:proof[k] for k in ('nativeHandoffAt','nativeRevealAt','preRoll','releaseSeconds','overlapPeak','envelopeVersion','warmupOriginalSeconds')})
+                exposure=proof['introductionExposure']
+                composite['introductionExposure']={**exposure,'sourceSha':cue['sourceSha'],
+                    'targetSha':cue['targetSha'],'assetSha256':sha}
+                if not exposure['accepted']:
+                    raise ValueError('Rendered incoming introduction is persistently masked')
                 if cue.get('metricalPickupWindow'):
                     expected_release=1.2 if cue.get('metricalCadenceWindow') else 1.5
                     if args.release_seconds!=expected_release:raise ValueError('Metrical pickup requires its verified native reveal')

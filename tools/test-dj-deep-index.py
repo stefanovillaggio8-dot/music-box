@@ -129,3 +129,27 @@ assert all(e["direction"]=="harmonic" for e in harmonic)
 assert len(harmonic)<=8
 assert any(abs(e["at"]-40)<4 for e in harmonic),harmonic
 print("PASS: timbre/harmonic structural boundaries independent of RMS crescendos.")
+
+# A new catalog recording is discovered without a code release. Fetching a
+# moving branch must not certify replacement bytes under a stale Git SHA.
+import hashlib,json,sys
+with tempfile.TemporaryDirectory(prefix='mb-future-analysis-') as folder:
+    payload=b'original future recording'*500
+    sha=hashlib.sha1(b'blob '+str(len(payload)).encode()+b'\0'+payload).hexdigest()
+    mod.DEST=pathlib.Path(folder)/'index.json'
+    mod.catalog=lambda:{'audio/songs/unseen-recording.mp3':{
+        'sha':sha,'repo':'example/music','branch':'main','path':'songs/unseen-recording.mp3'}}
+    mod.fetch=lambda *args,**kwargs:payload
+    # Independent DSP tests above already ran the real analyzer. This
+    # fixture isolates discovery, identity, scheduling and persistence.
+    mod.analyze=lambda file:{'bpm':123,'duration':180,'chroma':[1/12]*12,
+        'analyzer':'librosa-onsets-chroma-rms-v8-harmonic-sections','outroOnsetWindows':[]}
+    mod.main()
+    entry=json.loads(mod.DEST.read_text())['entries']['audio/songs/unseen-recording.mp3']
+    assert entry['status']=='ok' and entry['sha']==sha and entry['bpm']==123
+    mod.DEST.unlink()
+    mod.fetch=lambda *args,**kwargs:payload+b'changed'
+    mod.main()
+    entry=json.loads(mod.DEST.read_text())['entries']['audio/songs/unseen-recording.mp3']
+    assert entry['status']=='failed' and 'identity changed' in entry['reason']
+print('PASS: future recording automatically discovered/persisted; replacement-byte race rejected.')

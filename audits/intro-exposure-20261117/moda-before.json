@@ -1,0 +1,198 @@
+{
+  "actualInstalledAssetReproduced": true,
+  "assetSha256": "6b4c71156b309b4322f251c87186b549c741f7b1bd54658ce70fc42d3d6de9cc",
+  "sourceKey": "audio/songs/track-166.mp3",
+  "targetKey": "audio/songs/track-181.mp3",
+  "entry": 0,
+  "incomingFirstStrongSound": 4.3,
+  "fade": 9.988267326732654,
+  "rows": [
+    {
+      "mixSeconds": 0.0,
+      "originalIncomingSeconds": 0.0,
+      "outgoingRms": 0.35927239060401917,
+      "incomingRms": 9.600648627383634e-05,
+      "incomingToOutgoingDb": -71.46246536957446
+    },
+    {
+      "mixSeconds": 0.5,
+      "originalIncomingSeconds": 0.5206185567010314,
+      "outgoingRms": 0.36930450797080994,
+      "incomingRms": 0.0003960083704441786,
+      "incomingToOutgoingDb": -59.393604864845564
+    },
+    {
+      "mixSeconds": 1.0,
+      "originalIncomingSeconds": 1.0412371134020628,
+      "outgoingRms": 0.3624492585659027,
+      "incomingRms": 0.0008867590222507715,
+      "incomingToOutgoingDb": -52.228831996597755
+    },
+    {
+      "mixSeconds": 1.5,
+      "originalIncomingSeconds": 1.5618556701030943,
+      "outgoingRms": 0.3469298183917999,
+      "incomingRms": 0.0014764221850782633,
+      "incomingToOutgoingDb": -47.42062132773968
+    },
+    {
+      "mixSeconds": 2.0,
+      "originalIncomingSeconds": 2.0824742268041256,
+      "outgoingRms": 0.3788435459136963,
+      "incomingRms": 0.0028858317527920008,
+      "incomingToOutgoingDb": -42.36377770482257
+    },
+    {
+      "mixSeconds": 2.5,
+      "originalIncomingSeconds": 2.603092783505157,
+      "outgoingRms": 0.3551193177700043,
+      "incomingRms": 0.004008824471384287,
+      "incomingToOutgoingDb": -38.947145136835005
+    },
+    {
+      "mixSeconds": 3.0,
+      "originalIncomingSeconds": 3.1237113402061887,
+      "outgoingRms": 0.38289350271224976,
+      "incomingRms": 0.005356605164706707,
+      "incomingToOutgoingDb": -37.083767223825376
+    },
+    {
+      "mixSeconds": 3.5,
+      "originalIncomingSeconds": 3.64432989690722,
+      "outgoingRms": 0.34465882182121277,
+      "incomingRms": 0.007140796631574631,
+      "incomingToOutgoingDb": -33.672854689157376
+    },
+    {
+      "mixSeconds": 4.0,
+      "originalIncomingSeconds": 4.164948453608251,
+      "outgoingRms": 0.3673965334892273,
+      "incomingRms": 0.009095619432628155,
+      "incomingToOutgoingDb": -32.12605546825193
+    },
+    {
+      "mixSeconds": 4.5,
+      "originalIncomingSeconds": 4.685567010309283,
+      "outgoingRms": 0.367766410112381,
+      "incomingRms": 0.01113805640488863,
+      "incomingToOutgoingDb": -30.375252951982368
+    },
+    {
+      "mixSeconds": 5.0,
+      "originalIncomingSeconds": 5.206185567010314,
+      "outgoingRms": 0.3683520257472992,
+      "incomingRms": 0.012976225465536118,
+      "incomingToOutgoingDb": -29.062293593481993
+    },
+    {
+      "mixSeconds": 5.5,
+      "originalIncomingSeconds": 5.726804123711346,
+      "outgoingRms": 0.36021116375923157,
+      "incomingRms": 0.01953657902777195,
+      "incomingToOutgoingDb": -25.31417299981735
+    },
+    {
+      "mixSeconds": 6.0,
+      "originalIncomingSeconds": 6.247422680412377,
+      "outgoingRms": 0.3407145142555237,
+      "incomingRms": 0.048846740275621414,
+      "incomingToOutgoingDb": -16.87110095471398
+    },
+    {
+      "mixSeconds": 6.5,
+      "originalIncomingSeconds": 6.768041237113408,
+      "outgoingRms": 0.35235536098480225,
+      "incomingRms": 0.05249463766813278,
+      "incomingToOutgoingDb": -16.537318821926565
+    },
+    {
+      "mixSeconds": 7.0,
+      "originalIncomingSeconds": 7.28865979381444,
+      "outgoingRms": 0.34214600920677185,
+      "incomingRms": 0.055654797703027725,
+      "incomingToOutgoingDb": -15.774177405094672
+    },
+    {
+      "mixSeconds": 7.5,
+      "originalIncomingSeconds": 7.809278350515471,
+      "outgoingRms": 0.33008503913879395,
+      "incomingRms": 0.05241357535123825,
+      "incomingToOutgoingDb": -15.983641098518255
+    },
+    {
+      "mixSeconds": 8.0,
+      "originalIncomingSeconds": 8.329896907216503,
+      "outgoingRms": 0.3266882598400116,
+      "incomingRms": 0.04127420485019684,
+      "incomingToOutgoingDb": -17.969096245086963
+    },
+    {
+      "mixSeconds": 8.5,
+      "originalIncomingSeconds": 8.850515463917533,
+      "outgoingRms": 0.31956174969673157,
+      "incomingRms": 0.03415152430534363,
+      "incomingToOutgoingDb": -19.422893956227366
+    },
+    {
+      "mixSeconds": 9.0,
+      "originalIncomingSeconds": 9.371134020618566,
+      "outgoingRms": 0.2586723268032074,
+      "incomingRms": 0.03932267427444458,
+      "incomingToOutgoingDb": -16.362138475826747
+    }
+  ],
+  "renderProof": {
+    "rate": 48000,
+    "seconds": 12.688267326732655,
+    "preRoll": 0.3,
+    "releaseSeconds": 1.5,
+    "envelopeVersion": 4,
+    "gainProof": {
+      "method": "offline-stereo-shared-lookahead-v1",
+      "truePeakLookahead": true,
+      "maximumReductionDb": 1.5666024238444634,
+      "meanOverlapReductionDb": 0.4298408038576678,
+      "attackDbPerSecond": 40,
+      "releaseDbPerSecond": 8,
+      "firstGain": 1,
+      "nativeRevealGain": 1
+    },
+    "nativeSplice": {
+      "method": "original-pcm-native-return-v1",
+      "targetSha": "63c06ebbf31ba1bb90929731ef8cf25e4e6f4746",
+      "sampleRate": 48000,
+      "returnStart": 10.913083333333343,
+      "returnEnd": 10.933083333333343,
+      "returnEnergyRatio": 0.9267303775087273,
+      "nativeResumeSeconds": 12.0675,
+      "verifiedFrames": 4800,
+      "maximumLast100msDifference": 0
+    },
+    "warmupOriginalSeconds": 0,
+    "nativeHandoffAt": 9.988083333333332,
+    "nativeRevealAt": 11.638083333333332,
+    "peak": 0.9971577686506207,
+    "overlapPeak": 0.9484472282976488,
+    "headroom": 0.8349680908689907,
+    "pitchPreserved": true,
+    "sourceReadThrough": 229.00681600660067,
+    "outgoingEnvelope": "unity-through-decoded-eof-v1",
+    "timingVerified": true,
+    "timing": {
+      "whole": {
+        "score": 0.5612549154181375,
+        "lagMs": -10
+      },
+      "first": {
+        "score": 0.6913916807553779,
+        "lagMs": -10
+      },
+      "second": {
+        "score": 0.552080660259792,
+        "lagMs": -10
+      },
+      "verified": true
+    },
+    "handoffPosition": 10.400154639175247
+  }
+}

@@ -555,6 +555,38 @@ function analysisDatabase(){
 // Deep DJ index measures real MP3 audio in bounded cloud batches.
 // New or offline songs still fall back to local waveform analysis.
 let deepIndex=null,deepIndexPromise=null,deepRetryAfter=0,deepRetryTimer=null,deepLoadFailures=0;
+let deepRefreshNeeded=false,deepRefreshAttemptAt=0,deepRefreshRunning=false;
+function deepRefreshAllowed(state){
+ if(!state.needed||state.running||!state.enabled||state.hidden||state.offline||
+    state.transferring||state.mixing||state.seeking||state.now<state.retryAfter||
+    (state.attemptAt>0&&state.now-state.attemptAt<15*60000))return false;
+ if(state.paused)return true;
+ return state.readyState>=3&&state.bufferedAhead>=10&&state.remaining>45;
+}
+function refreshNewTrackIndex(app,audio){
+ if(!deepRefreshNeeded||deepRefreshRunning)return;
+ let ahead=0;
+ try{for(let i=0;i<audio?.buffered?.length;i++)
+  if(audio.buffered.start(i)<=audio.currentTime&&audio.buffered.end(i)>=audio.currentTime)
+   ahead=audio.buffered.end(i)-audio.currentTime;
+ }catch(_){}
+ if(!deepRefreshAllowed({needed:deepRefreshNeeded,running:deepRefreshRunning,enabled,
+  hidden:document.hidden,offline:typeof navigator!=='undefined'&&navigator.onLine===false,
+  transferring:offlineTransferPriority||app?.offlineBusy?.(),mixing:mixing||!!active||!!mobileActive,
+  seeking:audio?.seeking||Date.now()<seekRecoveryUntil,now:Date.now(),retryAfter:deepRetryAfter,
+  attemptAt:deepRefreshAttemptAt,paused:!audio||audio.paused||audio.ended,
+  readyState:audio?.readyState,bufferedAhead:ahead,remaining:audio?.duration-audio?.currentTime}))return;
+ deepRefreshRunning=true;deepRefreshAttemptAt=Date.now();
+ // Revalidate server metadata, never download models or MP3s here. Keep the
+ // request pending while a just-imported recording awaits its hourly batch.
+ loadDeepIndex(true).then(()=>{
+  const all=app?.allTracks?.()||[];
+  deepRefreshNeeded=recentLibraryIds.some(id=>{
+   const track=all.find(t=>t.id===id);
+   return track&&!deepLookup(track);
+  });
+ }).catch(()=>{}).finally(()=>{deepRefreshRunning=false});
+}
 // Existing timed lyrics are useful for SAFETY only: an LRC line marks
 // the beginning of words, not the moment the singer stopped singing.
 // Offline-built SHA/duration-bound metadata adds conservative guards.
@@ -742,6 +774,8 @@ function loadDeepIndex(force=false){
    const next=app?.allTracks?.()?.find(t=>t.id===nextId);
    const beforeNow=now?deepLookup(now):null;
    const beforeNext=next?deepLookup(next):null;
+   const recent=recentLibraryIds.map(id=>app?.allTracks?.()?.find(t=>t.id===id)).filter(Boolean);
+   const beforeRecent=JSON.stringify(recent.map(t=>deepLookup(t)));
    deepIndex=json;
    if(typeof window!=="undefined")loadDJLyricBoundaries();
    if(typeof window!=="undefined")window.MusicBoxVocalStems?.load?.();
@@ -754,6 +788,7 @@ function loadDeepIndex(force=false){
    const changed=!previous||
      previous.analyzed!==json.analyzed||
      previous.sourceCount!==json.sourceCount||
+     beforeRecent!==JSON.stringify(recent.map(t=>deepLookup(t)))||
      JSON.stringify(beforeNow)!==JSON.stringify(now?deepLookup(now):null)||
      JSON.stringify(beforeNext)!==JSON.stringify(next?deepLookup(next):null);
    deepLoadFailures=0;deepRetryAfter=0;
@@ -2794,6 +2829,14 @@ function structuralContentDecision(a,p){
   penalty:fraction*100+remaining/10+Math.max(0,tail.remainingEnergyRatio-.5)*2,...details};
 }
 function incomingContentDecision(b,p){
+ const exposure=p?.composite?.introductionExposure;
+ // Entry zero alone does not preserve an introduction: it can be played
+ // inaudibly underneath the outgoing recording. Failed rendered exposure
+ // must veto the cue before its rhythmic certificate can promote it.
+ if(exposure&&(exposure.accepted!==true||exposure.targetSha!==b?.sha||
+    exposure.assetSha256!==p?.composite?.sha256||
+    exposure.method!=='rendered-introduction-masking-screen-v1'))
+  return {allowed:false,reason:'rendered-incoming-introduction-obscured',skippedSeconds:0};
  if(!Number.isFinite(p?.entry)||p.entry<0)return {allowed:false,reason:'invalid-entry'};
  if(p.entry<=.001)return {allowed:true,reason:'incoming-recording-from-start',skippedSeconds:0};
  const proof=b?.musicalContent?.leadingDigitalSilence;
@@ -6758,6 +6801,7 @@ function tick(){
   return;
  }
  const next=app?.mixNext();
+ refreshNewTrackIndex(app,audio);
  if(id&&naturalEndHandoff.inFlight===id)return;
  // Timeupdate fires much faster than planning needs; never throttle cues
  // within five seconds of their start or the dedicated precision timer.
@@ -8806,6 +8850,7 @@ window.MusicBoxMix={isEnabled:()=>enabled,
   // the CURRENT song. Preserve the actual playback and manually queued items.
   const added=Array.isArray(change?.addedIds)?change.addedIds:[];
   recentLibraryIds=[...new Set([...added,...recentLibraryIds])].slice(0,32);
+  if(added.length)deepRefreshNeeded=true;
   shuffleGeneration++;shuffleBusy=false;shuffleRunFor="";
   shuffleRetryAt=0;shuffleAttempts=0;shuffleLastDecision=null;
   if(!mixing&&!active&&!mobileActive){

@@ -35,7 +35,7 @@ on:
         description: 'Keep the legacy partial regression distinct from the new personal-library complete pair'
         type: choice
         options: [legacy-partial, complete-personal, observed-bars-partial, cadence-partial]
-        default: legacy-partial
+        default: complete-personal
       metadata_prefix_probe:
         description: 'Diagnostic only: add the proven metadata frame without changing original audio frame payloads'
         type: boolean
@@ -147,7 +147,7 @@ jobs:
     env:
       MUSICBOX_COMPOSITE_BROWSERS: ${{ matrix.browser }}
       MUSICBOX_COMPOSITE_PROFILE: ${{ matrix.profile }}
-      MUSICBOX_STE_CASE: ${{ inputs.ste_case || 'legacy-partial' }}
+      MUSICBOX_STE_CASE: ${{ inputs.ste_case || 'complete-personal' }}
       MUSICBOX_METADATA_PREFIX_PROBE: ${{ inputs.metadata_prefix_probe || false }}
       MUSICBOX_METADATA_FIXTURE_TRANSPORT: ${{ inputs.metadata_fixture_transport || false }}
       MUSICBOX_INJECT_PROVISIONAL_METADATA: ${{ inputs.inject_provisional_metadata || false }}
