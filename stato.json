@@ -1157,7 +1157,7 @@
    },
    "[\"romantici terroni\",\"saitta\"]": {
     "v": 2,
-    "s": 172,
+    "s": 180,
     "t": "Romantici Terroni",
     "a": "SAITTA"
    },
@@ -1547,13 +1547,13 @@
    },
    "[\"domenica\",\"coez\"]": {
     "v": 1,
-    "s": 467,
+    "s": 476,
     "t": "Domenica",
     "a": "Coez"
    },
    "m:2026-11|[\"domenica\",\"coez\"]": {
     "v": 1,
-    "s": 467,
+    "s": 476,
     "t": "Domenica",
     "a": "Coez"
    },
@@ -1973,7 +1973,7 @@
    },
    "m:2026-11|[\"romantici terroni\",\"saitta\"]": {
     "v": 1,
-    "s": 169,
+    "s": 177,
     "t": "Romantici Terroni",
     "a": "SAITTA"
    },
@@ -2176,14 +2176,14 @@
     "a": "Lil Peep"
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ": {
-    "v": 0,
-    "s": 462,
+    "v": 1,
+    "s": 517,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ": {
-    "v": 0,
-    "s": 462,
+    "v": 1,
+    "s": 517,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃ"
    },
@@ -3233,13 +3233,13 @@
    },
    "[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 3,
-    "s": 315,
+    "s": 321,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
    "m:2026-11|[\"stanotte\",\"ty1, coez, massimo pericolo\"]": {
     "v": 3,
-    "s": 315,
+    "s": 321,
     "t": "STANOTTE",
     "a": "TY1, Coez, Massimo Pericolo"
    },
@@ -3604,26 +3604,26 @@
     "a": "Matteo Romano"
    },
    "[\"una direzione giusta\",\"tha supreme\"]": {
-    "v": 1,
-    "s": 234,
+    "v": 2,
+    "s": 235,
     "t": "uNa DiReZioNe giUsTa",
     "a": "tha supreme"
    },
    "m:2026-11|[\"una direzione giusta\",\"tha supreme\"]": {
-    "v": 1,
-    "s": 234,
+    "v": 2,
+    "s": 235,
     "t": "uNa DiReZioNe giUsTa",
     "a": "tha supreme"
    },
    "[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
     "v": 4,
-    "s": 472,
+    "s": 484,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
    "m:2026-11|[\"la canzone dellamore perduto ft. joan thiele [sanremo 2026]\",\"nayt\"]": {
     "v": 4,
-    "s": 472,
+    "s": 484,
     "t": "La canzone dellamore perduto ft. Joan Thiele [Sanremo 2026]",
     "a": "nayt"
    },
@@ -4103,13 +4103,13 @@
    },
    "[\"non avere paura\",\"tommaso paradiso\"]": {
     "v": 1,
-    "s": 327,
+    "s": 353,
     "t": "non avere paura",
     "a": "tommaso paradiso"
    },
    "m:2026-11|[\"non avere paura\",\"tommaso paradiso\"]": {
     "v": 1,
-    "s": 327,
+    "s": 353,
     "t": "non avere paura",
     "a": "tommaso paradiso"
    },
@@ -4372,14 +4372,14 @@
     "a": "l'elfo"
    },
    "[\"oh 9od - feat. nayt\",\"tha supreme, nayt\"]": {
-    "v": 0,
-    "s": 101,
+    "v": 1,
+    "s": 106,
     "t": "oh 9od - feat. Nayt",
     "a": "tha Supreme, nayt"
    },
    "m:2026-11|[\"oh 9od - feat. nayt\",\"tha supreme, nayt\"]": {
-    "v": 0,
-    "s": 101,
+    "v": 1,
+    "s": 106,
     "t": "oh 9od - feat. Nayt",
     "a": "tha Supreme, nayt"
    },
@@ -4781,13 +4781,13 @@
    },
    "[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 1,
-    "s": 517,
+    "s": 551,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
    "m:2026-11|[\"ti amo ma non posso dirlo\",\"modÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , bianca atzei\"]": {
     "v": 1,
-    "s": 517,
+    "s": 551,
     "t": "Ti amo ma non posso dirlo",
     "a": "ModÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ , Bianca Atzei"
    },
@@ -10535,13 +10535,13 @@
    },
    "[\"passione maledetta\",\"modà\"]": {
     "v": 6,
-    "s": 1055,
+    "s": 1059,
     "t": "Passione maledetta",
     "a": "Modà"
    },
    "m:2026-11|[\"passione maledetta\",\"modà\"]": {
     "v": 6,
-    "s": 1055,
+    "s": 1059,
     "t": "Passione maledetta",
     "a": "Modà"
    },
